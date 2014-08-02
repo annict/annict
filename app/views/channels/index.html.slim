@@ -1,0 +1,20 @@
+.container
+  = render 'nav'
+
+  #accordion.panel-group
+    - @channel_groups.each do |cg|
+      .panel.panel-default
+        .panel-heading
+          .panel-title
+            = link_to cg.name, "#collapse#{cg.id}", data: { toggle: 'collapse', parent: '#accordion' }
+        .panel-collapse.collapse id="collapse#{cg.id}"
+          .panel-body
+            ul.channels
+              - cg.channels.published.each do |c|
+                li.channel
+                  .name
+                    = c.name
+                  .receive-button ng-controller='ReceiveButtonCtrl' ng-init="init(#{current_user.receiving?(c)})"
+                    button.btn ng-click="toggle(#{c.id})" ng-class="{ 'btn-success': !isReceiving, 'btn-info': isReceiving }"
+                      i.fa ng-class="{ 'fa-plus': !isReceiving, 'fa-minus': isReceiving }"
+                .clearfix

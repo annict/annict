@@ -1,0 +1,20 @@
+.container
+  h2 = t('titles.profile')
+
+  = form_for @profile, url: setting_path do |f|
+    = render 'error_panel', resource: @profile
+
+    .form-group
+      = f.label :name
+      = f.text_field :name, class: 'form-control', autofocus: true
+    .form-group
+      = f.label :description
+      = f.text_field :description, class: 'form-control'
+    .form-group
+      = f.label :avatar
+      = f.file_field :avatar
+    .form-group
+      = f.label :background_image
+      = f.file_field :background_image
+    .form-submit
+      = f.submit class: 'btn btn-primary'

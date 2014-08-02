@@ -1,0 +1,33 @@
+= content_for :site_page_title, "「#{@work.title}」のエピソード"
+
+.header
+  .pull-left
+    h1
+      = link_to @work.title, marie_work_path(@work)
+      |  > 
+      | エピソード一覧
+
+  .pull-right
+    = link_to 'CSVから作成', new_from_csv_marie_work_episodes_path(@work), class: 'btn btn-default'
+
+.clearfix
+
+hr
+
+table.table.table-striped
+  thead
+    tr
+      th = t('activerecord.attributes.episode.id')
+      th = t('activerecord.attributes.episode.sort_number')
+      th = t('activerecord.attributes.episode.number')
+      th = t('activerecord.attributes.episode.title')
+      th = t('activerecord.attributes.episode.single')
+  tbody
+    - @episodes.each do |episode|
+      tr
+        td = episode.id
+        td = episode.sort_number
+        td = episode.number
+        td = episode.title
+        td = episode.single? ? '○' : '×'
+        td = link_to t('words.edit'), edit_marie_work_episode_path(@work, episode)

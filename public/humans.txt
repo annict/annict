@@ -1,0 +1,11 @@
+/* TEAM */
+	Developer: Koji Shimba
+	Twitter: @bojovs
+	From: Kanagawa, Japan
+
+
+/* SITE */
+  Last update: 2014/08/02
+	Language: Japanese
+	Doctype: HTML5
+	Software: Ruby on Rails, Angular.js, RubyMine

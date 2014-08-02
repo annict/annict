@@ -1,0 +1,28 @@
+.container
+  - if @friends.present?
+    .friends
+      - @friends.each do |friend|
+        .friend
+          = render 'users/user', user: friend
+          hr
+
+      .text-center
+        = paginate @friends
+  - else
+    .info.well
+      .icon
+        i.fa.fa-info-circle
+      p = t('friends.missing', provider_name: current_user.provider_name)
+
+  h2.text-center
+    = t('friends.other_users')
+  hr
+  - if @users.present?
+    - @users.each do |user|
+      = render 'users/user', user: user
+      hr
+  - else
+    .info.well
+      .icon
+        i.fa.fa-info-circle
+      p = t('friends.others_missing')

@@ -1,0 +1,103 @@
+@mixin profile-header {
+  .profile-header {
+    text-align: center;
+
+    .profile {
+      height: 303px;
+
+      .background {
+        img {
+          @if $browser == pc {
+            width: 500px;
+          }
+          @if $browser == mobile {
+            width: 320px;
+          }
+
+          display: block;
+          left: 0;
+          margin: auto;
+          position: absolute;
+          right: 0;
+          top: 48px;
+        }
+      }
+
+      .foreground {
+        @if $browser == pc {
+          width: 500px;
+          margin: -170px 0 0 -250px;
+          top: 245px;
+        }
+        @if $browser == mobile {
+          width: 320px;
+          margin: -70px 0 0 -160px;
+          top: 145px;
+        }
+        color: #ffffff;
+        left: 50%;
+        position: absolute;
+        text-align: center;
+
+        h1 {
+          margin: {
+            bottom: 3px;
+            top: 16px;
+          }
+
+          @if $browser == pc {
+            font-size: 30px;
+          }
+          @if $browser == mobile {
+            font-size: 20px;
+          }
+        }
+
+        .username, .description {
+          color: $color-gray-light;
+        }
+
+        .username {
+          margin-bottom: 7px;
+        }
+
+        .description {
+          padding: 0 6px;
+        }
+
+        .url {
+          margin-top: 7px;
+        }
+
+        .follow-button {
+          margin-top: 15px;
+
+          i {
+            margin-right: 5px;
+          }
+        }
+      }
+    }
+
+    .statuses {
+      margin-top: 10px;
+
+      .status {
+        text-align: center;
+
+        .count {
+          font-size: 18px;
+        }
+
+        .text {
+          color: $color-gray-dark-light;
+          font-size: 10px;
+        }
+      }
+
+      hr {
+        margin-top: 10px;
+      }
+    }
+  }
+}

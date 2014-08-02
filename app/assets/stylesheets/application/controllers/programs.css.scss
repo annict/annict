@@ -1,0 +1,38 @@
+body.programs-index {
+  @include top-group-tab;
+
+  .programs {
+    .loading {
+      display: table-cell;
+      text-align: center;
+      vertical-align: middle;
+      width: 500px;
+    }
+
+    .media {
+      .media-body {
+        .work-title {
+          font-size:     12px;
+          margin-bottom: 5px;
+        }
+
+        .episode-title {
+          margin-bottom: 7px;
+        }
+
+        .footer {
+          color:     $color-gray-dark-light;
+          font-size: 12px;
+
+          .channel-name {
+            float: left;
+          }
+
+          .started-at {
+            float: right;
+          }
+        }
+      }
+    }
+  }
+}

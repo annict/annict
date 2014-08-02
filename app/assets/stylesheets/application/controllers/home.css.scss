@@ -1,0 +1,139 @@
+body.home-index {
+  &.not-signed-in {
+    .background-video {
+      video {
+        height: 100%;
+        left: -50%;
+        position: fixed;
+        width: 200%;
+      }
+
+      .filter {
+        background-color: rgba(0, 0, 0, 0.2);
+        left: 0;
+        margin: auto;
+        min-height: 100%;
+        min-width: 50%;
+        position: absolute;
+        right: 0;
+        top: 0;
+      }
+    }
+
+    .background-image {
+      height: 200%;
+      left: -50%;
+      position: fixed;
+      width: 200%;
+
+      img {
+        display: block;
+        left: 0;
+        margin: auto;
+        min-height: 50%;
+        min-width: 50%;
+        position: absolute;
+        right: 0;
+        top: 0;
+      }
+    }
+
+    .alert {
+      position: absolute;
+      text-align: center;
+      top: 0%;
+      width: 100%;
+      z-index: 1;
+    }
+
+    .container {
+      bottom: 0;
+      left: 0;
+      position: absolute;
+      right: 0;
+      top: 0;
+
+      .wrapper {
+        color: #ffffff;
+        left: 50%;
+        margin: -160px 0 0 -160px;
+        position: absolute;
+        text-align: center;
+        top: 50%;
+        width: 320px;
+
+        h1 {
+          font-family: 'Titillium Web', sans-serif;
+          font-size: 70px;
+        }
+
+        .lead {
+          color: #e6e6e6;
+          font-size: 17px;
+        }
+
+        .signin-buttons {
+          display: inline-block;
+
+          .signin-button {
+            a {
+              &.btn-twitter {
+                background-color: #24b1ec;
+              }
+
+              &.btn-facebook {
+                background-color: #2e6499;
+              }
+              border: none;
+              color: #ffffff;
+              line-height: 30px;
+              margin-bottom: 12px;
+              padding: 0;
+              width: 260px;
+
+              .icon {
+                height: 42px;
+                padding: 6px 6px;
+                text-align: center;
+                width: 42px;
+
+                i {
+                  font-size: 20px;
+                  padding-top: 5px;
+                }
+              }
+
+              .text {
+                padding: 6px 0;
+                text-align: left;
+              }
+            }
+          }
+        }
+      }
+
+      .about {
+        margin: 30px 0;
+
+        .btn-transparency {
+          &.btn-about {
+            border-color: white;
+            color: white;
+
+            &:hover {
+              background-color: rgba(0, 0, 0, 0);
+            }
+
+            i {
+              margin-right: 5px;
+            }
+          }
+        }
+      }
+    }
+  }
+
+  &.signed-in {
+    @include top-group-tab;
+  }
+}

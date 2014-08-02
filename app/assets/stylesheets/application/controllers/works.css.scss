@@ -1,0 +1,125 @@
+.works-index, .works-search, .works-on_air, .works-season, .works-popular, .works-recommend {
+  @include works-list;
+}
+
+.works-search {
+  .search-form {
+    margin: 25px 0 10px 0;
+  }
+}
+
+.works-popular {
+  .btn-group-tab {
+    .btn-group {
+      width:   180px;
+    }
+  }
+}
+
+.works-season {
+  .btn-group-tab {
+    .btn-group {
+      width:   270px;
+    }
+  }
+}
+
+.works-show {
+  @include work-profile;
+
+  margin-top: -20px;
+
+  .ani-status-selector {
+    width: 120px;
+  }
+
+  .welcome-to-annict {
+    margin-top: 15px;
+  }
+
+  .work-chart {
+    .wrapper {
+      display: block;
+    }
+  }
+
+  .work-info {
+    margin-top: 15px;
+
+    h2 {
+      margin-top: 0;
+    }
+
+    .info {
+      margin-bottom: 10px;
+    }
+  }
+
+  .work-episodes {
+    .fake-link-small {
+      font-size: 12px;
+    }
+
+    .multiple-checkin {
+      margin-bottom: 5px;
+    }
+
+    table {
+      margin-bottom: 0;
+      width: 100%;
+
+      tbody {
+        td {
+          vertical-align: middle;
+
+          &.number {
+            width: 24%;
+          }
+
+          &.checkbox-column {
+            width: 30px;
+          }
+
+          &.number {
+            width: 72px;
+          }
+
+          &.checkins {
+            padding: 8px 0;
+            position: relative;
+            width: 30px;
+
+            .badge {
+              font-size: 10px;
+              left: 35%;
+              padding: 3px 5px;
+              position: absolute;
+              top: 9%;
+            }
+          }
+        }
+      }
+    }
+
+    .submit-menu {
+      float: right;
+      margin-top: 10px;
+
+      .fake-link {
+        margin-right: 8px;
+      }
+
+      .btn-submitting {
+        i {
+          margin-right: 6px;
+        }
+      }
+    }
+
+    .update-request {
+      color: $color-gray-dark-light;
+      font-size: 12px;
+      margin-top: 20px;
+    }
+  }
+}

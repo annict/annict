@@ -1,0 +1,30 @@
+.user-list {
+  .center {
+    padding: 0 10px;
+    @if $browser == pc {
+      width: 378px;
+    }
+    @if $browser == mobile {
+      width: 198px;
+    }
+
+    .top {
+      margin-bottom: 5px;
+
+      .name {
+        margin-right: 5px;
+      }
+
+      .username {
+        color: $color-gray-dark;
+        font-size: 12px;
+      }
+    }
+
+    .bottom {
+      .description {
+        font-size: 12px;
+      }
+    }
+  }
+}

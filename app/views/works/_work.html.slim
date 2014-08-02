@@ -1,0 +1,25 @@
+.work ng-controller='WorksListWorkCtrl' ng-hide='hid'
+  .media
+    = link_to work_path(work), class: 'pull-left' do
+      = image_tag work.main_item.image.thumb('140x140').url, size: '70x70', alt: work.title
+    .media-body
+      .title
+        = link_to work.title.truncate(29), work_path(work)
+    .work-statistics
+      span.watchers-count
+        i.fa.fa-eye
+        = work.watchers_count
+      span.checkins-count
+        i.fa.fa-check
+        = work.checkins_count
+    - if user_signed_in? && user == current_user
+      - if 'channel_works' != params[:controller]
+        = render 'status_selector', mini: true, work: work
+      - else
+        - if work.channels.present?
+          = render 'works/channel_selector', mini: true, work: work
+
+      - if 'recommend' == params[:action]
+        .hide-work.fake-link ng-click="hide(#{work.id})"
+          = t('works.hide')
+  hr

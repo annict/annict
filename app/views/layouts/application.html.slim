@@ -1,0 +1,21 @@
+doctype html
+html lang='ja' ng-app='annict'
+  head
+    = render 'head'
+  body class="#{body_class} #{user_signed_in? ? 'signed-in' : 'not-signed-in'}" ng-controller='ApplicationCtrl'
+    = render 'navbar'
+
+    .content
+      .flash ng-controller='FlashCtrl' ng-init='init()' ng-show='display' ng-click='close()'
+        .alert ng-class='type'
+          .content
+            i.fa ng-class='iconType'
+            span ng-bind-html='body'
+
+      = yield :welcome_to_annict
+      = yield
+
+    - unless content_for(:no_footer)
+      = render 'footer'
+
+    = render 'analytics'

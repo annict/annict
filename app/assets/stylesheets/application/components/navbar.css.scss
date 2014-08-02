@@ -1,0 +1,135 @@
+// Bootstrap 3でHeadroom.jsを使うためのおまじない
+// http://stackoverflow.com/questions/20648451/how-do-you-use-headroom-js-with-bootstrap-3-navbar
+.headroom {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  transition: all .2s ease-in-out;
+}
+
+.headroom--unpinned {
+  top: -100px;
+}
+
+.headroom--pinned {
+  top: 0;
+}
+
+.navbar {
+  -moz-box-shadow: none;
+  -webkit-box-shadow: none;
+  background-image: none;
+  border: none;
+  box-shadow: none;
+  min-height: 48px;
+
+  .navbar-content {
+    margin: 0 auto;
+    max-width: 500px;
+
+    .navbar-header {
+      float: left;
+      .navbar-brand {
+        height: 48px;
+        padding: 0;
+      }
+    }
+
+    .shortcuts {
+      -webkit-padding-start: 0;
+      float: left;
+      margin: 0 5px;
+      padding: 5px 0;
+
+      a {
+        color: #ffffff;
+        display: inline-block;
+        margin-right: 3px;
+        text-align: center;
+        width: 65px;
+
+        &:hover {
+          text-decoration: none;
+        }
+
+        .caption {
+          font-size: 10px;
+          margin-top: 2px;
+        }
+      }
+    }
+
+    .dropdown {
+      float: right;
+      line-height: 20px;
+      padding: 14px 15px;
+
+      a.dropdown-toggle {
+        color: #ffffff;
+        text-decoration: none;
+
+        i {
+          margin-left: 7px;
+          position: relative;
+
+          .notifications-count {
+            background-color: $color-mizuho;
+            border-radius: 10px;
+            font-size: 12px;
+            left: 50%;
+            line-height: 1;
+            padding: 1px 4px;
+            position: absolute;
+            top: -80%;
+          }
+        }
+      }
+
+      ul.dropdown-menu {
+        -moz-padding-start: 0;
+        -webkit-padding-start: 0;
+        left: 50%;
+        list-style-type: none;
+        margin: 0 0 0 -150px;
+        padding: 0;
+        text-align: left;
+        width: 175px;
+
+        li {
+          font-size: 14px;
+
+          a {
+            display: block;
+            padding: 15px 0 15px 15px;
+
+            i, .emoji {
+              margin-right: 10px;
+            }
+
+            .notifications-count {
+              background-color: $color-mizuho;
+              border-radius: 10px;
+              color: #ffffff;
+              float: right;
+              font-size: 12px;
+              margin: 2px 15px 0 0;
+              padding: 1px 6px;
+            }
+          }
+        }
+      }
+    }
+
+    .default-title {
+      font-size: 18px;
+      line-height: 20px;
+      padding: 15px 15px;
+
+      a {
+        color: #ffffff;
+        text-decoration: none;
+      }
+    }
+  }
+}

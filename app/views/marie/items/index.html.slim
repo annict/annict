@@ -1,0 +1,25 @@
+h1 = link_to @work.title, marie_work_path(@work)
+
+.pull-right
+  = link_to '新規登録', new_marie_work_item_path(@work), class: 'btn btn-primary'
+
+table.table.table-striped
+  thead
+    tr
+      th ID
+      th 画像
+      th 商品名
+      th URL
+      th メイン?
+      th 編集
+      th 削除
+  tbody
+    - @items.each do |item|
+      tr
+        td = item.id
+        td = image_tag item.image.thumb('200x200').url
+        td = item.name
+        td = item.url.truncate(30)
+        td = item.main? ? '○' : '-'
+        td = link_to '編集', edit_marie_work_item_path(@work, item), class: 'btn'
+        td = link_to '削除', marie_work_item_path(@work, item), method: :delete, class: 'btn', data: { confirm: 'いいの?' }

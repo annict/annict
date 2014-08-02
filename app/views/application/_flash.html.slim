@@ -1,0 +1,19 @@
+- if flash[:success].present?
+  .alert.alert-success
+    = flash[:success]
+- elsif flash[:notice].present?
+  .alert.alert-success
+    = flash[:notice].html_safe
+- elsif flash[:info].present?
+  .alert.alert-info
+    = flash[:info]
+- elsif flash[:warning].present?
+  .alert.alert-warning
+    = flash[:warning]
+- elsif flash[:danger].present?
+  .alert.alert-danger
+    = flash[:danger]
+/ Devise用
+- elsif flash[:alert].present?
+  .alert.alert-danger
+    = flash[:alert]

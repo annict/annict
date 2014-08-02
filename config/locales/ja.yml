@@ -1,0 +1,252 @@
+ja:
+  activerecord:
+    attributes:
+      appeal:
+        body: 備考
+        category: カテゴリ
+      checkin:
+        comment: コメント
+        spoil: ネタバレを含む
+      comment:
+        body: コメント
+      episode:
+        number: 話数
+        sort_number: ソート番号
+        title: タイトル
+        single: シングル
+      profile:
+        avatar: プロフィール画像
+        background_image: 背景画像
+        description: ヒトコト
+        name: 名前
+      user:
+        email: メールアドレス
+        terms: 利用規約とプライバシーポリシー
+        username: ユーザ名
+      work:
+        media: メディア
+        nicoch_started_at: ニコニコチャンネル配信開始日
+        official_site_url: 公式サイト
+        released_at: リリース日
+        title: タイトル
+        twitter_hashtag: ハッシュタグ
+        twitter_username: 公式Twitter
+        wikipedia_url: Wikipedia
+    errors:
+      messages:
+        accepted: に同意してください。
+  appeals:
+    receive_update_request: 【Annict】更新リクエストが届きました
+    sent_html: 更新リクエストを送信しました
+  channel_works:
+    nav_title: 作品
+  checkins:
+    delete_confirm: チェックインを削除します。よろしいですか？
+    deleted: チェックインを削除しました。
+    facebook_share_text: '%{title}を見ました | Annict'
+    input_a_comment: 見た感想を残してみませんか？
+    new: '%{episode_number_title}にチェックイン'
+    no_checkin: まだチェックインされていません
+    no_comments: まだコメントされていません
+    page_title: '%{username}さんのチェックイン'
+    save: チェックインする
+    saved: チェックインしました。
+    social_click_count: '%{click_count}クリック'
+    spoil_comment: 'ネタバレを含んでいます (%{action}で展開)'
+    updated: チェックインを更新しました。
+    facebook_share: Facebookにシェアする
+    twitter_share: Twitterにシェアする
+  comments:
+    comment: コメントする
+    comment_textarea_placeholder: チェックインにコメントしよう！
+    saved: コメントを投稿しました
+  datetime:
+    distance_in_words:
+      almost_x_years:
+        one: 1年
+        other: ! '%{count}年'
+      half_a_minute: 30秒
+      less_than_x_minutes:
+        one: 1分
+        other: ! '%{count}分'
+      less_than_x_seconds:
+        one: 1秒
+        other: ! '%{count}秒'
+      over_x_years:
+        one: 1年
+        other: ! '%{count}年'
+  devise:
+    confirmations:
+      user:
+        confirmed: メールアドレスの確認が完了しました。Annictにようこそ！
+    failure:
+      already_authenticated: 'すでに認証されています'
+      user:
+        unauthenticated: ログインしてください
+        unconfirmed: メールアドレスの確認が完了していないため、ログインできませんでした
+    mailer:
+      confirmation_instructions:
+        subject: メールアドレスの確認
+    sessions:
+      staff:
+        signed_in: 'お帰りなさいませ、ご主人さま'
+        signed_out: 'いってらっしゃいませ、ご主人さま'
+      user:
+        signed_out: ''
+  enumerize:
+    appeal:
+      category:
+        work_update: 作品情報の更新リクエスト
+        episode_update: エピソード情報の更新リクエスト
+        other: その他
+    status:
+      kind:
+        wanna_watch: 見たい
+        watching: 見てる
+        watched: 見た
+        stop_watching: 見るのやめた
+    work:
+      media:
+        tv: TV
+        ova: OVA
+        movie: 映画
+        web: Web
+        other: その他
+  episodes:
+    checkin: チェックインする
+    created_notification: エピソードが追加されました
+    delete_confirm: エピソードを削除します。よろしいですか？
+    deleted: エピソードを削除しました。
+    edit: エピソード情報を編集
+    new: エピソードを追加する
+    no_checkins: チェックインされていません。
+    no_episodes: エピソードが登録されていません。
+    saved: エピソードを追加しました。
+    updated: エピソードを更新しました。
+    updated_notification: エピソードタイトルが更新されました
+    work_title: 作品タイトル
+  friends:
+    missing: 'まだフォローしていない%{provider_name}の友達はいませんでした。'
+    other_users: その他利用者の皆さん
+    others_missing: まだフォローしていないその他利用者の皆さんはいませんでした。
+  home:
+    index:
+      signout:
+        catch_copy: 見たアニメを記録して、発見しよう
+    no_timeline: 友達のアクティビティはありませんでした。
+    no_timeline_find_friends_html: '「%{friends}」から友達を探すことができます。'
+  notifications:
+    comments_create_checkin_html: '%{action_username}が%{work_title}%{episode_number}への%{checkin}にコメントしました'
+    follows_create_html: '%{action_username}があなたをフォローしました'
+    likes_create_checkin_html: '%{action_username}が%{work_title}%{episode_number}への%{checkin}に「いいね！」しました'
+    likes_create_comment_html: '%{action_username}が%{work_title}%{episode_number}の%{checkin}へのコメントに「いいね！」しました'
+    likes_create_status_html: '%{action_username}が%{work_title}のステータス変更に「いいね！」しました'
+    no_notifications: 通知はありません。
+  og:
+    description: Annictは、アニメの視聴記録をシェアできるWebサービスです。
+  profiles:
+    saved: プロフィールを保存しました
+  programs:
+    channel_list: チャンネル一覧ページ
+    no_program: 番組情報はありません
+    please_set_channel_html: 'チャンネルの設定をしていない場合は、%{channels_link} から、普段見ているチャンネルの設定をお願いします。'
+  registrations:
+    create:
+      confirmation_mail_has_sent: メールアドレス確認用のメールを送信しました
+    new:
+      button: 登録する
+    terms_and_privacy_agreement_html: "%{terms_link}と%{privacy_link}に同意する"
+    thank_you_for_signin_with_oauth_html: '%{provider_name}連携機能を利用して登録します。Annictで使用するユーザ名、メールアドレスを教えて下さい！'
+  stats:
+    no_checkins: チェックインしていません
+    weekly_checkins: 過去1週間のチェックイン
+  statuses:
+    no_select: 'ステータス'
+  titles:
+    about: Annictとは？
+    friends: '%{provider_name}の友達'
+    notifications: 通知
+    privacy: プライバシーポリシー
+    profile: プロフィール
+    setting: 設定
+    terms: 利用規約
+    timeline: タイムライン
+    works:
+      index: 見つける
+      search: 作品検索
+      show: 作品詳細
+    works_user_action: 'が%{action}'
+  users:
+    no_activities: アクティビティはありません
+    page_title: '%{username}さんのプロフィール'
+  views:
+    pagination:
+      first: 最初へ
+      last: 最後へ
+      next: 次へ
+      previous: 前へ
+      truncate: ...
+  words:
+    activity: アクティビティ
+    ago: 前
+    all: 全て
+    blog: ブログ
+    cancel: キャンセル
+    channel: チャンネル
+    checkin: チェックイン
+    click: クリック
+    close: 閉じる
+    comment: コメント
+    current_season: 今期
+    delete: 削除
+    edit: 編集
+    episode: エピソード
+    error: エラー
+    more_detail: もっと詳しく
+    multiple_checkin: 一括チェックイン
+    next_season: 来期
+    on_air: 放送中
+    option: 任意
+    popular: 人気
+    previous_season: 前期
+    profile: プロフィール
+    program: 番組情報
+    recommend: オススメ
+    save: 保存する
+    search: 検索
+    season: 期間
+    send: 送信する
+    signin: ログイン
+    signin_with_facebook: Facebookアカウントでログイン
+    signin_with_twitter: Twitterアカウントでログイン
+    signout: ログアウト
+    signup: ユーザ登録
+    site_name: Annict (アニクト)
+    site_name_kana: アニクト
+    status: ステータス
+    tap: タップ
+    top_page: トップページ
+    twitter_account: AnnictのTwitterアカウント
+    update: 更新する
+    works: 作品
+  works:
+    about_amazon_item_1_html: 'この画像は「%{link}」の製品画像です。'
+    about_amazon_item_2: '(Amazonアソシエイト・プログラムの限定的ライセンスに基いて表示しています。)'
+    about_this_image: この画像について
+    about_works_image: 作品画像について
+    check_all: 全て選択
+    checkin_chart: チェックイン推移
+    edit: 作品情報を編集
+    example_of_released_at: '例: 2013-03-10'
+    go_amazon: Amazonで見てみる
+    hide: 表示しない
+    input_work_title: キーワードを入力してください
+    new: 新規登録
+    no_works: 作品はありません
+    send_update_request_1: 更新リクエストを送信
+    send_update_request_2: 更新リクエストを送る
+    send_update_request_confirm: 更新リクエストを送信しますか？
+    uncheck_all: 全て解除
+    update_request_text_html: '最新のエピソードが登録されていない場合は、お手数ですが%{link}してください。<br>更新の完了は%{twitter_link}でお知らせします。'
+    updated: 作品情報を更新しました
+    work_info: 作品情報

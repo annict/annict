@@ -1,0 +1,8 @@
+.media
+  a ng-href='/users/{{activity.links.user.username}}' class='profile-image pull-left'
+    img ng-src='{{activity.links.profile.avatar_url}}' width='50' height='50' class='img-circle'
+  .media-body
+    div ng-if='"checkins.create" === activity.action'
+      = render 'activities/checkins_create'
+    div ng-if='"statuses.create" === activity.action'
+      = render 'activities/statuses_create'

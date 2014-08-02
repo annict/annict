@@ -1,0 +1,66 @@
+@mixin works-list {
+  .works-list {
+    .work {
+      margin-bottom: 15px;
+      position: relative;
+
+      .work-statistics {
+        width: 70px;
+        margin-top: 2px;
+        text-align: center;
+
+        .watchers-count, .checkins-count {
+          color: $color-gray-dark-light;
+          font-size: 10px;
+
+          i {
+            margin-right: 3px;
+          }
+        }
+
+        .watchers-count {
+          margin-right: 6px;
+        }
+      }
+
+      .media-body {
+        height: 70px;
+
+        .title {
+          margin-bottom: 10px;
+        }
+      }
+
+      .hide-work {
+        font-size: 10px;
+        position: absolute;
+        text-align: right;
+        top: 80px;
+        width: 100px;
+      }
+
+      .ani-status-selector {
+        @if $browser == pc {
+          left: 370px;
+        }
+        @if $browser == mobile {
+          left: 190px;
+        }
+      }
+
+      .ani-channel-selector {
+        @if $browser == pc {
+          left: 340px;
+        }
+        @if $browser == mobile {
+          left: 160px;
+        }
+      }
+    }
+
+    hr {
+      margin-top: 15px;
+      margin-bottom: 15px;
+    }
+  }
+}

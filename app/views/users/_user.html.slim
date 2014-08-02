@@ -1,0 +1,19 @@
+.user-list
+  .left.pull-left
+    .profile-image
+      = link_to user_path(user.username), class: 'pull-left' do
+        = image_tag user.profile.avatar.url, size: '50x50', class: 'img-circle'
+  .center.pull-left
+    .top
+      = link_to user_path(user.username) do
+        span.name
+          = user.profile.name
+        span.username
+          = "@#{user.username}"
+    .bottom
+      .description
+        = user.profile.description
+  .right.pull-left
+    = render 'follow_button', user: user, type: :icon
+
+.clearfix

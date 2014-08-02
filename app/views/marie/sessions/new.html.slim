@@ -1,0 +1,10 @@
+= form_for resource, as: resource_name, url: session_path(resource_name) do |f|
+  .form-group
+    = f.label :email
+    = f.email_field :email, class: 'form-control', autofocus: true
+
+  .form-group
+    = f.label :password
+    = f.password_field :password, class: 'form-control'
+
+  = f.submit 'Sign in', class: 'btn btn-default'

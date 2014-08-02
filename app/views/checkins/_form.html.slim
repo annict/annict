@@ -1,0 +1,27 @@
+= form_for [work, episode, checkin], role: 'form', html: { class: 'checkin-form', :'ng-controller' => 'CheckinFormCtrl' } do |f|
+  = render 'error_panel', resource: checkin
+
+  .form-group
+    = f.text_area :comment, class: 'form-control', rows: 2, :'ng-click' => 'expand($event)', placeholder: t('checkins.input_a_comment')
+  .checkbox
+    label
+      = f.check_box :spoil
+      = t('activerecord.attributes.checkin.spoil')
+  - if current_user.authorized_to?(:twitter)
+    .checkbox
+      label
+        = check_box_tag 'checkin[twitter_share]'
+        = t('checkins.twitter_share')
+  - if current_user.authorized_to?(:facebook)
+    .checkbox
+      label
+        = check_box_tag 'checkin[facebook_share]'
+        = t('checkins.facebook_share')
+  .checkin-button.text-center
+    = f.button class: 'btn btn-primary' do
+      - if checkin.new_record?
+        i.fa.fa-check
+        = t('checkins.save')
+      - else
+        i.fa.fa-edit
+        = t('words.update')

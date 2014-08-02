@@ -1,0 +1,27 @@
+footer {
+  background-color: $color-gray-dark;
+  padding: 15px 0 20px 0;
+
+  .wrapper {
+    margin: {
+      left: auto;
+      right: auto;
+    }
+    max-width: 500px;
+
+    .links {
+      margin-bottom: 15px;
+      text-align: center;
+
+      .left {
+        margin-right: 20px;
+      }
+    }
+
+    .copyright {
+      color: $color-gray-dark-light;
+      margin-top: 10px;
+      text-align: center;
+    }
+  }
+}

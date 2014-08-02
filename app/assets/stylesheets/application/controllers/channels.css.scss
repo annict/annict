@@ -1,0 +1,25 @@
+body.channels-index {
+  ul.channels {
+    -moz-padding-start: 0;
+    -webkit-padding-start: 0;
+    list-style-type: none;
+
+
+    li {
+      display: table;
+      margin-bottom: 10px;
+      table-layout: fixed;
+      width: 100%;
+
+      .name {
+        display: table-cell;
+      }
+
+      .receive-button {
+        display: table-cell;
+        text-align: right;
+        width: 50px;
+      }
+    }
+  }
+}

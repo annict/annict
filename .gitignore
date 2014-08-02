@@ -1,0 +1,11 @@
+.DS_Store
+
+/.bundle
+/.idea
+/app/assets/videos/*
+/config/application.yml
+/config/database.yml
+/coverage
+/log/*.log
+/public/dragonfly
+/tmp

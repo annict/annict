@@ -1,0 +1,40 @@
+.pull-right
+  = link_to '編集', edit_marie_work_path(@work), class: 'btn btn-primary'
+  = link_to t('words.episode'), marie_work_episodes_path(@work), class: 'btn'
+  = link_to '画像一覧', marie_work_items_path(@work), class: 'btn'
+
+.clearfix
+
+dl.dl-horizontal
+  dt ID
+  dd = link_to @work.id, work_path(@work), target: '_blank'
+
+  dt シーズン
+  dd = @work.season.try(:name).presence || '-'
+
+  dt タイトル
+  dd = @work.title
+
+  dt メディア
+  dd = @work.media_text
+
+  dt 公式サイト
+  dd = @work.official_site_url
+
+  dt Wikipedia
+  dd = @work.wikipedia_url
+
+  dt 公式Twitter
+  dd = @work.twitter_url
+
+  dt ハッシュタグ
+  dd = @work.twitter_hashtag
+
+  dt リリース
+  dd = @work.released_at
+
+  dt ニコニコチャンネル配信開始日
+  dd = @work.nicoch_started_at.presence || '-'
+
+  dt 放送中
+  dd = @work.on_air? ? '放送中' : '-'

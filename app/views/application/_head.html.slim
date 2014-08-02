@@ -1,0 +1,25 @@
+title
+  = page_title(page_title_symbol: :site_page_title, separator: ' | ')
+
+meta name='viewport' content='width=device-width, initial-scale=1.0 user-scalable=no'
+
+= render 'og'
+
+link href='/images/favicon.png' rel='shortcut icon' type='image/png'
+link href='/images/apple-touch-icon-144x144.png' rel='apple-touch-icon-precomposed' sizes='144x144'
+link href='/images/apple-touch-icon-114x114.png' rel='apple-touch-icon-precomposed' sizes='114x114'
+link href='/images/apple-touch-icon-72x72.png' rel='apple-touch-icon-precomposed' sizes='72x72'
+link href='/images/apple-touch-icon-57x57.png' rel='apple-touch-icon-precomposed' sizes='57x57'
+
+link type='text/plain' rel='author' href='http://www.annict.com/humans.txt'
+
+- if browser.mobile?
+  = stylesheet_link_tag 'application_mobile', media: 'all'
+- else
+  = stylesheet_link_tag 'application_pc', media: 'all'
+
+link href='http://fonts.googleapis.com/css?family=Titillium+Web' rel='stylesheet' type='text/css'
+
+= include_gon
+= javascript_include_tag 'application'
+= csrf_meta_tags

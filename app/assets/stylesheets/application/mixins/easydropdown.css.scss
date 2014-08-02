@@ -1,0 +1,87 @@
+@mixin selector-carat {
+  border: 4px solid transparent;
+  border-top: 6px solid #ffffff;
+  margin-top: -3px;
+}
+
+@mixin easydropdown {
+  &.easydropdown {
+    background-color: rgba(255,255,255,0);
+    border: solid 1px #ffffff;
+    border-radius: 0;
+    height: 30px;
+    left: 50%;
+    margin-left: -60px;
+    text-align: left;
+
+    &.open {
+      .carat {
+        @include selector-carat;
+      }
+    }
+
+    &.mini {
+      border: solid 1px $color-gray-dark-light;
+      height: 20px;
+      margin-left: 0;
+      top: 50px;
+
+      .selected, li {
+        @if $browser == pc {
+          padding: 4px 5px;
+        }
+        @if $browser == mobile {
+          padding: 4px 5px;
+        }
+      }
+
+      .selected, ul li {
+        font-size: 10px;
+      }
+
+      .selected {
+        color: $color-gray-dark-light;
+      }
+
+      .carat {
+        border-top: 6px solid $color-gray-dark-light;
+        right: 6px;
+
+        @if $browser == pc {
+          margin-top: -3px;
+        }
+        @if $browser == mobile {
+          margin-top: -3px;
+        }
+      }
+    }
+
+    .selected, ul li {
+      @if $browser == pc {
+        font-size: 14px;
+      }
+      @if $browser == mobile {
+        font-size: 12px;
+      }
+    }
+
+    .selected {
+      color: #ffffff;
+      padding: 8px 12px;
+
+      &:after {
+        box-shadow: none;
+      }
+    }
+
+    .carat {
+      @include selector-carat;
+    }
+
+    ul {
+      -moz-padding-start: 0;
+      -webkit-padding-start: 0;
+      padding-start: 0;
+    }
+  }
+}

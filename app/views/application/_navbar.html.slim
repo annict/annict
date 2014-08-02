@@ -1,0 +1,41 @@
+nav.headroom.navbar.navbar-default.navbar-fixed-top
+  .navbar-content
+    .navbar-header
+      = link_to root_path, class: 'navbar-brand' do
+        = image_tag 'navbar/logo.png', size: '48x48', alt: 'Annict'
+    .shortcuts
+      - if user_signed_in?
+        = link_to user_works_user_path(current_user.username, :watching) do
+          i.fa.fa-play
+          .caption
+            = t('enumerize.status.kind.watching') + t('words.works')
+        = link_to works_path do
+          i.fa.fa-search
+          .caption
+            = t('titles.works.index')
+        = link_to user_path(current_user.username) do
+          i.fa.fa-user
+          .caption
+            = t('titles.profile')
+      - else
+        = link_to works_path do
+          i.fa.fa-search
+          .caption
+            = t('titles.works.index')
+        = link_to about_path do
+          i.fa.fa-lightbulb-o
+          .caption
+            = t('titles.about')
+        = link_to root_path do
+          i.fa.fa-power-off
+          .caption
+            = t('words.signin')
+    - if user_signed_in?
+      .dropdown
+        a.dropdown-toggle href='#' data-toggle='dropdown'
+          i.fa.fa-bars
+            - if user_signed_in? && current_user.notifications_count > 0
+              span.notifications-count
+                span.count
+                  = current_user.notifications_count
+        = render 'menu'

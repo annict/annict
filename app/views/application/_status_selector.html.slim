@@ -1,0 +1,4 @@
+- status_kind = current_user.status(work).try(:kind).presence || ''
+
+select.ani-status-selector data-work-id="#{work.id}" data-status-kind="#{status_kind}" data-mini-selector="#{mini}"
+  = options_for_select(Status.kind.options.insert(0, t('statuses.no_select')), status_kind)

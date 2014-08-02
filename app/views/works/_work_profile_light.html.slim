@@ -1,0 +1,24 @@
+.container
+  .work-profile-light
+    .work-image
+      = link_to work_path(work) do
+        = annict_image_tag work.main_item.image.thumb('300x300').url, psize: '200x200', msize: '150x150', alt: work.title
+    - if @work.items.present?
+      .amazon-associates-link
+        = link_to t('works.about_this_image'), work_path(work, anchor: 'about-works-image')
+    .work-title
+      h1
+        = link_to work.title, work_path(work)
+      - if episode.number.present? && episode.title.present?
+        .episode-title
+          - if 'checkins' == params[:controller]
+            span.number
+              = episode.number
+            = link_to work_episode_path(work, episode) do
+              span.title
+                = episode.title
+          - else
+            span.number
+              = episode.number
+            span.title
+              = episode.title

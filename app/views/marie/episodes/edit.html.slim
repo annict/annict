@@ -1,0 +1,16 @@
+= form_for [:marie, @work, @episode] do |f|
+  .form-group
+    = f.label :number
+    = f.text_field :number, class: 'form-control'
+  .form-group
+    = f.label :sort_number
+    = f.text_field :sort_number, class: 'form-control'
+  .form-group
+    = f.label :title
+    = f.text_field :title, class: 'form-control'
+  .checkbox
+    = f.label :single do
+      = f.check_box :single
+      | シングル
+
+  = f.submit class: 'btn btn-primary'

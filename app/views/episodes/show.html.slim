@@ -1,0 +1,25 @@
+- content_for(:site_page_title, "#{@work.title} #{@episode.number}「#{@episode.title}」")
+
+= render 'works/work_profile_light', work: @work, episode: @episode
+
+- if user_signed_in?
+  hr
+  .container
+    = render 'checkins/form', work: @work, episode: @episode, checkin: @checkin
+
+hr
+
+.checkin-comments
+  .container
+    h2
+      = t('words.checkin')
+
+    - if @checkins.present?
+      - @checkins.each do |checkin|
+        = render 'checkins/checkin', checkin: checkin
+        hr
+    - else
+      .info.well
+        .icon
+          i.fa.fa-info-circle
+        p = t('episodes.no_checkins')

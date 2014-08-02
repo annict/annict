@@ -1,0 +1,19 @@
+- content_for :site_page_title, "#{t('words.site_name_kana')} - #{t('words.program')}"
+- content_for :no_footer, true
+
+.container
+  .btn-group-tab
+    .btn-group.btn-group-sm
+      = link_to t('words.activity'), root_path, class: "btn btn-default #{current_page?(controller: 'home') ? 'active' : ''}"
+      = link_to t('words.program'), programs_path, class: "btn btn-default #{current_page?(controller: 'programs') ? 'active' : ''}"
+
+  .programs ng-controller='ProgramsCtrl' ani-loading='loading'
+    div infinite-scroll='addMorePrograms()' infinite-scroll-disabled='disabled' infinite-scroll-distance='2'
+      .program ng-repeat='program in programs' ng-show='0 < programs.length'
+        = render 'programs/program'
+        hr
+    .info.well ng-show='0 === programs.length'
+      .icon
+        i.fa.fa-info-circle
+      p = t('programs.no_program')
+      p = t('programs.please_set_channel_html', channels_link: link_to(t('programs.channel_list'), channels_path))

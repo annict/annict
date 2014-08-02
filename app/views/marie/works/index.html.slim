@@ -1,0 +1,47 @@
+.pull-right
+  = link_to t('works.new'), new_marie_work_path, class: 'btn btn-primary'
+
+ul.nav.nav-tabs
+  li class="#{'active' if !params.key?(:season) && 'index' == params[:action]}"
+    = link_to t('words.all'), marie_works_path
+  li class="#{'active' if current_page?(action: 'on_air')}"
+    = link_to t('words.on_air'), on_air_marie_works_path
+  li class="#{'active' if current_page?(season: ENV['ANNICT_CURRENT_SEASON'])}"
+    = link_to t('words.current_season'), marie_works_path(season: ENV['ANNICT_CURRENT_SEASON'])
+  li class="#{'active' if current_page?(season: ENV['ANNICT_PREVIOUS_SEASON'])}"
+    = link_to t('words.previous_season'), marie_works_path(season: ENV['ANNICT_PREVIOUS_SEASON'])
+
+= search_form_for @q, url: marie_works_path, html: { class: 'form-inline', role: 'form' } do |f|
+  .form-group
+    = f.label :title_cont, class: 'sr-only'
+    = f.text_field :title_cont, class: 'form-control', placeholder: t('works.input_work_title'), autofocus: true
+  = f.submit t('words.search'), class: 'btn btn-default'
+
+table.table.table-striped
+  thead
+    tr
+      th = t('activerecord.attributes.work.id')
+      th = t('activerecord.attributes.work.title')
+      th Watchers
+      th = t('activerecord.attributes.work.released_at')
+      th 放送中
+      th 画像登録
+      th 作品詳細
+      th エピソード
+      th 編集
+  tbody
+    - @works.each do |work|
+      tr
+        td = work.id
+        td = link_to work.title, marie_work_path(work)
+        td = work.watchers_count
+        td = work.released_at.presence || '-'
+        td = work.on_air? ? '放送中' : '-'
+        td = work.items.where(main: true).present? ? '○' : '×'
+        td
+          = link_to work_path(work), target: '_blank' do
+            i.fa.fa-external-link
+        td = link_to t('words.episode'), marie_work_episodes_path(work)
+        td = link_to '編集', edit_marie_work_path(work)
+
+= paginate @works

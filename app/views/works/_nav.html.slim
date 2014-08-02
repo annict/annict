@@ -1,0 +1,12 @@
+ul.nav.nav-tabs
+  li class="#{'active' if 'index' == params[:action]}"
+    = link_to t('words.on_air'), works_path
+  li class="#{'active' if 'popular' == params[:action]}"
+    = link_to t('words.popular'), popular_works_path(filter: 'on_air')
+  - if user_signed_in?
+    li class="#{'active' if 'recommend' == params[:action]}"
+      = link_to t('words.recommend'), recommend_works_path
+  li class="#{'active' if 'season' == params[:action]}"
+    = link_to t('words.season'), season_works_path(name: ENV['ANNICT_CURRENT_SEASON'])
+  li class="#{'active' if current_page?(action: 'search')}"
+    = link_to t('words.search'), search_works_path

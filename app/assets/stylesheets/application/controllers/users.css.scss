@@ -1,0 +1,24 @@
+body.users-show {
+  @include profile-header;
+
+  h2 {
+    margin: 0px 0 15px 0;
+  }
+
+  .ani-user-checkin-chart {
+    margin-left: -5px;
+  }
+}
+
+body.users-works {
+  @include works-list;
+
+  h2 {
+    margin: 0px 0 15px 0;
+    text-align: center;
+
+    span.username {
+      margin-right: 5px;
+    }
+  }
+}

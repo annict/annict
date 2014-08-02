@@ -1,0 +1,14 @@
+.spoil-guard {
+  background-color: #fcf8e3;
+  font-size: 12px;
+  padding: 10px;
+
+  &:hover {
+    cursor: pointer;
+  }
+
+  i {
+    color: #ff0000;
+    margin-right: 5px;
+  }
+}

@@ -1,0 +1,6 @@
+.ani-channel-selector {
+  @include easydropdown;
+
+  position: absolute;
+  width: 130px;
+}

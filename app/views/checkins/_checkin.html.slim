@@ -1,0 +1,35 @@
+.checkin-comment
+  .media id="#{checkin.id}"
+    = link_to user_path(checkin.user.username), class: 'pull-left' do
+      = image_tag checkin.user.profile.avatar.thumb('100x100').url, size: '50x50', class: 'img-circle'
+    .media-body
+      .top
+        .pull-left
+          span.name
+            = link_to checkin.user.username, user_path(checkin.user.username)
+        .pull-right
+          - if checkin.modify_comment?
+            i.modified.fa.fa-pencil
+          span.created-at
+            = link_to work_episode_checkin_path(checkin.episode.work, checkin.episode, checkin) do
+              = custom_time_ago_in_words(checkin.created_at)
+      .middle
+        = render 'checkins/checkin_comment_body', checkin: checkin
+      .bottom
+        .top
+          .pull-left
+            = render 'social_click_counter', checkin: checkin
+          .pull-right
+            = render 'like_button', recipient: checkin
+            = link_to work_episode_checkin_path(checkin.episode.work, checkin.episode, checkin), class: 'comment-button' do
+              i.fa.fa-comment
+              = checkin.comments_count
+        .bottom
+          - if checkin.user == current_user
+            .pull-right
+              = link_to edit_work_episode_checkin_path(checkin.episode.work, checkin.episode, checkin), class: 'edit-button' do
+                i.fa.fa-edit
+                = t('words.edit')
+              = link_to work_episode_checkin_path(checkin.episode.work, checkin.episode, checkin), class: 'delete-button', method: :delete, data: { confirm: t('checkins.delete_confirm') } do
+                i.fa.fa-trash-o
+                = t('words.delete')

@@ -1,0 +1,11 @@
+- action_user = notification.action_user
+
+- action_username = link_to action_user.username, user_path(action_user.username), class: 'username'
+
+.notification-action.follows-create
+  .top
+    span.body
+      = t('notifications.follows_create_html', action_username: action_username)
+  .bottom
+    span.created-at
+      = custom_time_ago_in_words(notification.created_at)

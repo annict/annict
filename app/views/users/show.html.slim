@@ -1,0 +1,34 @@
+- content_for :site_page_title, t('users.page_title', username: @user.username)
+- content_for :no_footer,       true
+
+= render 'profile_header', user: @user
+
+.container
+  .graphs
+    h2.text-center = t('stats.weekly_checkins')
+    - if @user.checkins_count > 0
+      - values = @user.checkin_chart_values
+      .ani-user-checkin-chart.wrapper data-labels="#{@user.checkin_chart_labels}" data-values="#{values}" data-step-width="#{chart_step_width(values)}"
+        - if browser.mobile?
+          canvas width='285' height='150'
+        - else
+          canvas width='460' height='200'
+    - else
+      .info.well
+        .icon
+          i.fa.fa-info-circle
+        p = t('stats.no_checkins')
+
+hr
+
+.container
+  .activities ng-controller='UserActivitiesCtrl' ng-init='init("#{@user.username}")' ani-loading='loading'
+    div infinite-scroll='addMoreActivities()' infinite-scroll-disabled='disabled' infinite-scroll-distance='2'
+      h2.text-center = t('words.activity')
+      .activity ng-repeat='activity in activities' ng-show='0 < activities.length'
+        = render 'activities/activity'
+        hr
+    .info.well ng-show='0 === activities.length'
+      .icon
+        i.fa.fa-info-circle
+      p = t('users.no_activities')

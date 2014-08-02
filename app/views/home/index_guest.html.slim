@@ -1,0 +1,35 @@
+= content_for(:site_page_title, "#{t('words.site_name_kana')} - #{t('home.index.signout.catch_copy')}")
+
+- if browser.mobile?
+  .background-image
+    = image_tag 'background_mobile.jpg'
+- else
+  .background-video
+    = background_video_tag
+    .filter
+
+.container
+  .wrapper
+    h1 Annict
+    p.lead
+      = t('home.index.signout.catch_copy')
+
+    .about
+      = link_to about_path, class: 'btn btn-primary btn-transparency btn-about' do
+        i.fa.fa-lightbulb-o
+        span = t('words.more_detail')
+
+    .signin-buttons
+      .signin-button
+        = link_to user_omniauth_authorize_path(:twitter), class: 'btn btn-twitter' do
+          .icon.pull-left
+            i.fa.fa-twitter
+          .text
+            = t('words.signin_with_twitter')
+          .clearfix
+      .signin-button
+        = link_to user_omniauth_authorize_path(:facebook), class: 'facebook btn btn-facebook' do
+          .icon.pull-left
+            i.fa.fa-facebook
+          .text
+            = t('words.signin_with_facebook')

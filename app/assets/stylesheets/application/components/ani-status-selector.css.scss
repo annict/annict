@@ -1,0 +1,6 @@
+.ani-status-selector {
+  @include easydropdown;
+
+  position: absolute;
+  width: 100px;
+}

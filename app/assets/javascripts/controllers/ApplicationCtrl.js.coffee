@@ -1,0 +1,1 @@
+Annict.angular.controller 'ApplicationCtrl', ($scope) ->

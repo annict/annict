@@ -1,0 +1,8 @@
+<%= paginator.render do -%>
+  <ul class="pagination">
+    <%= first_page_tag unless current_page.first? %>
+    <%= prev_page_tag unless current_page.first? %>
+    <%= next_page_tag unless current_page.last? %>
+    <%= last_page_tag unless current_page.last? %>
+  </ul>
+<% end -%>

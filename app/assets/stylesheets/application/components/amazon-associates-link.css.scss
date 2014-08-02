@@ -1,0 +1,11 @@
+.amazon-associates-link {
+  margin: 5px 5px 0 0;
+  text-align: right;
+
+  @if $browser == pc {
+    font-size: 12px;
+  }
+  @if $browser == mobile {
+    font-size: 10px;
+  }
+}

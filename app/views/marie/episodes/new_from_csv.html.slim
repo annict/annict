@@ -1,0 +1,4 @@
+= form_tag create_from_csv_marie_work_episodes_path(@work) do
+  .form-group
+    = text_area_tag 'episodes', nil, class: 'form-control', rows: 30, autofocus: true
+  = button_tag 'Create', class: 'btn btn-default'

@@ -1,0 +1,4 @@
+ul.nav.nav-tabs
+  - [:watching, :wanna_watch, :watched, :stop_watching].each do |status_kind|
+    li class="#{'active' if status_kind.to_s == params[:status_kind]}"
+      = link_to t("enumerize.status.kind.#{status_kind}"), user_works_user_path(@user.username, status_kind)

@@ -1,0 +1,25 @@
+.container
+  .alert.alert-info
+    = t('registrations.thank_you_for_signin_with_oauth_html', provider_name: @oauth[:provider].humanize)
+
+.container
+  = form_for @user, url: user_registration_path, role: 'form' do |f|
+    = render 'error_panel', resource: @user
+
+    .form-group
+      = f.label :username
+      = f.text_field :username, class: 'form-control', placeholder: t('activerecord.attributes.user.username')
+
+    .form-group
+      = f.label :email
+      = f.text_field :email, type: 'email', class: 'form-control', placeholder: t('activerecord.attributes.user.email')
+
+    .checkbox
+      - terms_link = link_to t('titles.terms'), terms_path, target: '_blank'
+      - privacy_link = link_to t('titles.privacy'), privacy_path, target: '_blank'
+      = f.label :terms do
+        = f.check_box :terms
+        = t('registrations.terms_and_privacy_agreement_html', terms_link: terms_link, privacy_link: privacy_link)
+
+    .text-center
+      = f.button t('registrations.new.button'), class: 'btn btn-primary'

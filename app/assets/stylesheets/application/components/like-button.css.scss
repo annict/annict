@@ -1,0 +1,17 @@
+.like-button {
+  span {
+    color: $color-gray-dark-light;
+
+    &:hover {
+      cursor: pointer;
+    }
+
+    &.liked {
+      color: $brand-primary;
+    }
+
+    i {
+      margin-right: 3px;
+    }
+  }
+}

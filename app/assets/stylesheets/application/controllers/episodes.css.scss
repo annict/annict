@@ -1,0 +1,21 @@
+.episodes {
+  &.episodes-show {
+    @include work-profile-light;
+
+    h2 {
+      margin: 0 0 10px 0;
+    }
+
+    .checkin-comments {
+      @include checkin-comment;
+
+      h2 {
+        text-align: center;
+      }
+
+      .checkin-comment {
+        position: relative;
+      }
+    }
+  }
+}
