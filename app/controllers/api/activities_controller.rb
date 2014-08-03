@@ -3,7 +3,7 @@ class Api::ActivitiesController < Api::ApplicationController
 
   def index(page)
     @activities = current_user.following_activities
-                    .order(created_at: :desc)
+                    .order(id: :desc)
                     .includes(:recipient, :trackable, user: :profile)
                     .page(page)
   end
