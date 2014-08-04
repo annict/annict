@@ -3,21 +3,48 @@ body.home-index {
     .hero-content {
       position: relative;
       color: white;
-      margin-bottom: 50px;
       height: 500px;
       background: #333;
 
       ul.images {
         li {
-          img {
+          img.cover {
             position: absolute; top: 0px; left: 0px; width: 1272px; height: 500px;
+          }
+          
+          .info {
+            font-size: 12px;
+            position: absolute;
+            right: 0;
+            top: 440px;
+            width: 320px;
+            z-index: 20;
+
+            a {
+              color: #ececec;
+
+              &:hover {
+                text-decoration: none;
+              }
+            }
+
+            .left {
+              float: left;
+              margin-right: 7px;
+            }
+
+            .right {
+              display: table-cell;
+              height: 46px;
+              vertical-align: middle;
+            }
           }
         }
       }
 
       .welcome {
         position: absolute;
-        top: 45%;
+        top: 30%;
         left: 0;
         margin: 0;
         text-align: center;
@@ -26,202 +53,16 @@ body.home-index {
 
         h1 {
           font-family: 'Titillium Web', sans-serif;
+          font-size: 90px;
+          margin-bottom: 5px;
         }
 
         .lead {
           font-family: 'NotoSansJP';
+          font-size: 22px;
+          margin-bottom: 50px;
         }
 
-        .signin-buttons {
-          display: inline-block;
-
-          .signin-button {
-            a {
-              &.btn-twitter {
-                background-color: #24b1ec;
-              }
-
-              &.btn-facebook {
-                background-color: #2e6499;
-              }
-              border: none;
-              color: #ffffff;
-              line-height: 30px;
-              margin-bottom: 12px;
-              padding: 0;
-              width: 260px;
-
-              .icon {
-                height: 42px;
-                padding: 6px 6px;
-                text-align: center;
-                width: 42px;
-
-                i {
-                  font-size: 20px;
-                  padding-top: 5px;
-                }
-              }
-
-              .text {
-                padding: 6px 0;
-                text-align: left;
-              }
-            }
-          }
-        }
-        .signin-buttons {
-          display: inline-block;
-
-          .signin-button {
-            a {
-              &.btn-twitter {
-                background-color: #24b1ec;
-              }
-
-              &.btn-facebook {
-                background-color: #2e6499;
-              }
-              border: none;
-              color: #ffffff;
-              line-height: 30px;
-              margin-bottom: 12px;
-              padding: 0;
-              width: 260px;
-
-              .icon {
-                height: 42px;
-                padding: 6px 6px;
-                text-align: center;
-                width: 42px;
-
-                i {
-                  font-size: 20px;
-                  padding-top: 5px;
-                }
-              }
-
-              .text {
-                padding: 6px 0;
-                text-align: left;
-              }
-            }
-          }
-        }
-        .signin-buttons {
-          display: inline-block;
-
-          .signin-button {
-            a {
-              &.btn-twitter {
-                background-color: #24b1ec;
-              }
-
-              &.btn-facebook {
-                background-color: #2e6499;
-              }
-              border: none;
-              color: #ffffff;
-              line-height: 30px;
-              margin-bottom: 12px;
-              padding: 0;
-              width: 260px;
-
-              .icon {
-                height: 42px;
-                padding: 6px 6px;
-                text-align: center;
-                width: 42px;
-
-                i {
-                  font-size: 20px;
-                  padding-top: 5px;
-                }
-              }
-
-              .text {
-                padding: 6px 0;
-                text-align: left;
-              }
-            }
-          }
-        }
-        .signin-buttons {
-          display: inline-block;
-
-          .signin-button {
-            a {
-              &.btn-twitter {
-                background-color: #24b1ec;
-              }
-
-              &.btn-facebook {
-                background-color: #2e6499;
-              }
-              border: none;
-              color: #ffffff;
-              line-height: 30px;
-              margin-bottom: 12px;
-              padding: 0;
-              width: 260px;
-
-              .icon {
-                height: 42px;
-                padding: 6px 6px;
-                text-align: center;
-                width: 42px;
-
-                i {
-                  font-size: 20px;
-                  padding-top: 5px;
-                }
-              }
-
-              .text {
-                padding: 6px 0;
-                text-align: left;
-              }
-            }
-          }
-        }
-        .signin-buttons {
-          display: inline-block;
-
-          .signin-button {
-            a {
-              &.btn-twitter {
-                background-color: #24b1ec;
-              }
-
-              &.btn-facebook {
-                background-color: #2e6499;
-              }
-              border: none;
-              color: #ffffff;
-              line-height: 30px;
-              margin-bottom: 12px;
-              padding: 0;
-              width: 260px;
-
-              .icon {
-                height: 42px;
-                padding: 6px 6px;
-                text-align: center;
-                width: 42px;
-
-                i {
-                  font-size: 20px;
-                  padding-top: 5px;
-                }
-              }
-
-              .text {
-                padding: 6px 0;
-                text-align: left;
-              }
-            }
-          }
-        }
         .signin-buttons {
           display: inline-block;
 
@@ -262,7 +103,34 @@ body.home-index {
         }
       }
     }
- }
+
+    .feature {
+      background-color: #ffffff;
+      padding: 50px 0;
+
+      h2 {
+        font-family: 'NotoSansJP';
+        font-size: 32px;
+        font-weight: normal;
+        margin-bottom: 30px;
+        text-align: center;
+      }
+
+      p {
+        color: #3f3f3f;
+      }
+
+      .screenshot {
+        margin-top: 40px;
+
+        img {
+          border: 1px solid $color-gray-light;
+          display: block;
+          margin: 0 auto;
+        }
+      }
+    }
+  }
 
   &.signed-in {
     @include top-group-tab;

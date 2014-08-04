@@ -2,7 +2,21 @@
 
 .hero-content
   ul.images
-    li = image_tag 'cover-image-1.png', alt: '木崎湖'
+    li
+      = image_tag 'cover-image-1.jpg', alt: '木崎湖', class: 'cover'
+      .info
+        - work = Work.find(304)
+        .left
+          = link_to work_path(work) do
+            = annict_image_tag work.main_item.image.thumb('46x46').url, psize: '46x46', msize: '23x23', alt: work.title
+        .right
+          .location-name
+            = link_to work_path(work) do
+              | 撮影地：
+              | 長野県大町市 木崎湖
+          .related-work
+            = link_to work_path(work) do
+              = "アニメ「#{work.title}」の舞台"
   .welcome
     h1 Annict
     p.lead
@@ -21,3 +35,11 @@
             i.fa.fa-facebook
           .text
             = t('words.signin_with_facebook')
+
+.feature
+  .container
+    h2 見たアニメが記録できる
+    p アニメのエピソードに「チェックイン」して、見たものを記録することができます。
+
+    .screenshot
+      = image_tag 'feature-1.png', size: '400x660'
