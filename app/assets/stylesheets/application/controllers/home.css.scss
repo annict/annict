@@ -1,5 +1,51 @@
 body.home-index {
   &.not-signed-in {
+    h2 {
+      font-family: 'NotoSansJP';
+      font-size: 32px;
+      font-weight: normal;
+      margin-bottom: 30px;
+      text-align: center;
+    }
+    .signin-buttons {
+      display: inline-block;
+
+      .signin-button {
+        a {
+          &.btn-twitter {
+            background-color: #24b1ec;
+          }
+
+          &.btn-facebook {
+            background-color: #2e6499;
+          }
+          border: none;
+          color: #ffffff;
+          line-height: 30px;
+          margin-bottom: 12px;
+          padding: 0;
+          width: 260px;
+
+          .icon {
+            height: 42px;
+            padding: 6px 6px;
+            text-align: center;
+            width: 42px;
+
+            i {
+              font-size: 20px;
+              padding-top: 5px;
+            }
+          }
+
+          .text {
+            padding: 6px 0;
+            text-align: left;
+          }
+        }
+      }
+    }
+
     .hero-content {
       position: relative;
       color: white;
@@ -62,45 +108,13 @@ body.home-index {
           font-size: 22px;
           margin-bottom: 50px;
         }
+      }
+    }
 
-        .signin-buttons {
-          display: inline-block;
-
-          .signin-button {
-            a {
-              &.btn-twitter {
-                background-color: #24b1ec;
-              }
-
-              &.btn-facebook {
-                background-color: #2e6499;
-              }
-              border: none;
-              color: #ffffff;
-              line-height: 30px;
-              margin-bottom: 12px;
-              padding: 0;
-              width: 260px;
-
-              .icon {
-                height: 42px;
-                padding: 6px 6px;
-                text-align: center;
-                width: 42px;
-
-                i {
-                  font-size: 20px;
-                  padding-top: 5px;
-                }
-              }
-
-              .text {
-                padding: 6px 0;
-                text-align: left;
-              }
-            }
-          }
-        }
+    .feature, .join, .about-me {
+      p {
+        font-size: 15px;
+        line-height: 1.5;
       }
     }
 
@@ -108,26 +122,46 @@ body.home-index {
       background-color: #ffffff;
       padding: 50px 0;
 
-      h2 {
-        font-family: 'NotoSansJP';
-        font-size: 32px;
-        font-weight: normal;
-        margin-bottom: 30px;
-        text-align: center;
-      }
-
       p {
         color: #3f3f3f;
       }
 
       .screenshot {
-        margin-top: 40px;
+        margin: 40px 0 80px 0;
+
+        &.feature-5 {
+          margin: 40px 0 15px 0;
+        }
 
         img {
           border: 1px solid $color-gray-light;
           display: block;
           margin: 0 auto;
         }
+      }
+    }
+
+    .join {
+      background-color: #f7f7f7;
+      padding: 50px 0;
+
+      .signin-buttons {
+        margin: 10px 0 15px 0;
+        text-align: center;
+        width: 100%;
+
+        a.btn-facebook {
+          margin-bottom: 0;
+        }
+      }
+    }
+
+    .about-me {
+      background-color: #ededed;
+      padding: 50px 0;
+
+      p {
+        text-align: center;
       }
     }
   }
