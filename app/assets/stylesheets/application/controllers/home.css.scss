@@ -47,15 +47,36 @@ body.home-index {
     }
 
     .hero-content {
-      position: relative;
+      background: #333;
       color: white;
       height: 500px;
-      background: #333;
+      position: relative;
 
       ul.images {
+        -moz-padding-start: 0;
+        -webkit-padding-start: 0;
+        height: 500px;
+        left: 0;
+        list-style-type: none;
+        position: absolute;
+        top: 0;
+        width: 100%;
+
         li {
+          &:not(:first-child) {
+            display: none;
+            opacity: 0;
+          }
+
+          position: relative;
+          z-index: 5;
+
           img.cover {
-            position: absolute; top: 0px; left: 0px; width: 1272px; height: 500px;
+            height: 500px;
+            left: 0px;
+            position: absolute;
+            top: 0px;
+            width: 1272px;
           }
           
           .info {

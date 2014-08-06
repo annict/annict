@@ -1,9 +1,9 @@
 = content_for(:site_page_title, "#{t('words.site_name_kana')} - #{t('home.index.signout.catch_copy')}")
 
 .hero-content
-  ul.images
+  ul.images(ani-cover-image)
     li
-      = image_tag 'cover-image-1.jpg', alt: '木崎湖', class: 'cover'
+      = image_tag 'cover-image-1.jpg', alt: '木崎湖', class: 'cover js-cover'
       .info
         - work = Work.find(304)
         .left
@@ -14,6 +14,21 @@
             = link_to work_path(work) do
               | 撮影地：
               | 長野県大町市 木崎湖
+          .related-work
+            = link_to work_path(work) do
+              = "アニメ「#{work.title}」の舞台"
+    li
+      = image_tag 'cover-image-2.jpg', alt: '尾道の路地', class: 'cover js-cover'
+      .info
+        - work = Work.find(379)
+        .left
+          = link_to work_path(work) do
+            = annict_image_tag work.main_item.image.thumb('46x46').url, psize: '46x46', msize: '23x23', alt: work.title
+        .right
+          .location-name
+            = link_to work_path(work) do
+              | 撮影地：
+              | 広島県尾道市
           .related-work
             = link_to work_path(work) do
               = "アニメ「#{work.title}」の舞台"
