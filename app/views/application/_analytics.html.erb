@@ -13,4 +13,9 @@
   ga('create', '<%= tracking_id %>', 'annict.com');
   ga('send', 'pageview');
 
+  <% if user_signed_in? %>
+    ga('set', 'dimension1', 'ログイン済み');
+  <% else %>
+    ga('set', 'dimension1', '未ログイン');
+  <% end %>
 </script>
