@@ -1,3 +1,4 @@
+[![Stories in Ready](https://badge.waffle.io/annict/annict.png?label=ready&title=Ready)](https://waffle.io/annict/annict)
 # Annict
 
 [![Gitter chat](https://badges.gitter.im/annict/annict.png)](https://gitter.im/annict/annict)
