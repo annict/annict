@@ -24,8 +24,9 @@ class CheckinsController < ApplicationController
   end
 
   def create_all(episode_ids)
-    if episode_ids =~ /\[([0-9]+,*)+\]/ # 括弧とカンマ、数字だけだったら
-      episodes = eval(episode_ids).reverse.map { |id| Episode.find(id) }
+    if episode_ids =~ /\A\[([0-9]+,*)+\]\z/ # 括弧とカンマ、数字だけだったら
+      episodes = Episode.where(id: eval(episode_ids)).order(:sort_number)
+      raise if episodes.blank?
 
       episodes.each do |episode|
         episode.checkins.create(user: current_user)
