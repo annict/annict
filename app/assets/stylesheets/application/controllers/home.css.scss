@@ -1,12 +1,19 @@
 body.home-index {
   &.not-signed-in {
     h2 {
+      @if $browser == pc {
+        font-size: 32px;
+      }
+      @if $browser == mobile {
+        font-size: 24px;
+      }
+
       font-family: 'NotoSansJP';
-      font-size: 32px;
       font-weight: normal;
       margin-bottom: 30px;
       text-align: center;
     }
+
     .signin-buttons {
       display: inline-block;
 
@@ -19,26 +26,52 @@ body.home-index {
           &.btn-facebook {
             background-color: #2e6499;
           }
+
+          @if $browser == pc {
+            line-height: 30px;
+            margin-bottom: 12px;
+            width: 260px;
+          }
+          @if $browser == mobile {
+            line-height: 24px;
+            margin-bottom: 14px;
+            width: 230px;
+          }
+
           border: none;
           color: #ffffff;
-          line-height: 30px;
-          margin-bottom: 12px;
           padding: 0;
-          width: 260px;
 
           .icon {
-            height: 42px;
-            padding: 6px 6px;
+            @if $browser == pc {
+              height: 42px;
+              padding: 6px 6px;
+            }
+            @if $browser == mobile {
+              height: 36px;
+              padding: 2px 6px;
+            }
+
             text-align: center;
             width: 42px;
 
             i {
+              @if $browser == pc {
+                padding-top: 5px;
+              }
+              @if $browser == mobile {
+                padding-top: 6px;
+              }
+
               font-size: 20px;
-              padding-top: 5px;
             }
           }
 
           .text {
+            @if $browser == mobile {
+              font-size: 12px;
+            }
+
             padding: 6px 0;
             text-align: left;
           }
@@ -47,15 +80,20 @@ body.home-index {
     }
 
     .hero-content {
+      @if $browser == pc {
+        height: 500px;
+      }
+      @if $browser == mobile {
+        height: 330px;
+      }
+
       background: #333;
       color: white;
-      height: 500px;
       position: relative;
 
       ul.images {
         -moz-padding-start: 0;
         -webkit-padding-start: 0;
-        height: 500px;
         left: 0;
         list-style-type: none;
         position: absolute;
@@ -72,8 +110,14 @@ body.home-index {
           z-index: 5;
 
           .image {
+            @if $browser == pc {
+              height: 500px;
+            }
+            @if $browser == mobile {
+              height: 330px;
+            }
+
             background-size: cover !important;
-            height: 500px;
             left: 0px;
             position: absolute;
             top: 0px;
@@ -81,11 +125,20 @@ body.home-index {
           }
           
           .info {
-            font-size: 12px;
+            @if $browser == pc {
+              font-size: 12px;
+              top: 440px;
+              right: 0;
+              width: 320px;
+            }
+            @if $browser == mobile {
+              font-size: 10px;
+              left: 0;
+              margin-left: 6px;
+              top: 290px;
+            }
+
             position: absolute;
-            right: 0;
-            top: 440px;
-            width: 320px;
             z-index: 20;
 
             a {
@@ -102,8 +155,14 @@ body.home-index {
             }
 
             .right {
+              @if $browser == pc {
+                height: 46px;
+              }
+              @if $browser == mobile {
+                height: 36px;
+              }
+
               display: table-cell;
-              height: 46px;
               vertical-align: middle;
             }
           }
@@ -111,8 +170,14 @@ body.home-index {
       }
 
       .welcome {
+        @if $browser == pc {
+          top: 30%;
+        }
+        @if $browser == mobile {
+          top: 4%;
+        }
+
         position: absolute;
-        top: 30%;
         left: 0;
         margin: 0;
         text-align: center;
@@ -120,37 +185,69 @@ body.home-index {
         z-index: 10;
 
         h1 {
+          @if $browser == pc {
+            font-size: 90px;
+          }
+          @if $browser == mobile {
+            font-size: 60px;
+          }
+
           font-family: 'Titillium Web', sans-serif;
-          font-size: 90px;
           margin-bottom: 5px;
         }
 
         .lead {
-          color: #e6e6e6;
+          @if $browser == pc {
+            color: #e6e6e6;
+            font-size: 22px;
+            margin-bottom: 50px;
+          }
+          @if $browser == mobile {
+            color: #ffffff;
+            font-size: 16px;
+            font-weight: bold;
+            margin-bottom: 40px;
+          }
+
           font-family: 'NotoSansJP';
-          font-size: 22px;
-          margin-bottom: 50px;
         }
       }
     }
 
     .feature, .join, .about-me {
       p {
-        font-size: 15px;
+        @if $browser == pc {
+          font-size: 15px;
+        }
+        @if $browser == mobile {
+          font-size: 14px;
+        }
+
         line-height: 1.5;
       }
     }
 
     .feature {
+      @if $browser == pc {
+        padding: 50px 0;
+      }
+      @if $browser == mobile {
+        padding: 20px 0;
+      }
+
       background-color: #ffffff;
-      padding: 50px 0;
 
       p {
         color: #3f3f3f;
       }
 
       .screenshot {
-        margin: 40px 0 80px 0;
+        @if $browser == pc {
+          margin: 40px 0 80px 0;
+        }
+        @if $browser == mobile {
+          margin: 30px 0 60px 0;
+        }
 
         &.feature-5 {
           margin: 40px 0 15px 0;
@@ -165,8 +262,14 @@ body.home-index {
     }
 
     .join {
+      @if $browser == pc {
+        padding: 50px 0;
+      }
+      @if $browser == mobile {
+        padding: 20px 0;
+      }
+
       background-color: #f7f7f7;
-      padding: 50px 0;
 
       .signin-buttons {
         margin: 10px 0 15px 0;
@@ -180,8 +283,14 @@ body.home-index {
     }
 
     .about-me {
+      @if $browser == pc {
+        padding: 50px 0;
+      }
+      @if $browser == mobile {
+        padding: 20px 0;
+      }
+
       background-color: #ededed;
-      padding: 50px 0;
 
       p {
         text-align: center;

@@ -4,13 +4,13 @@
   ul.images(ani-cover-image)
     - eval(ENV['ANNICT_COVER_IMAGE_DATA']).each do |data|
       - work = Work.find(data['work_id'])
-      - cover_image_url = image_url(data['image_file'])
+      - cover_image_url = browser.mobile? ? image_url(data['image_file_sp']) : image_url(data['image_file'])
       li
         .image style="background: url('#{cover_image_url}') no-repeat top center;"
         .info
           .left
             = link_to work_path(work) do
-              = annict_image_tag work.main_item.image.thumb('46x46').url, psize: '46x46', msize: '23x23', alt: work.title
+              = annict_image_tag work.main_item.image.thumb('64x64').url, psize: '46x46', msize: '32x32', alt: work.title
           .right
             .location-name
               = link_to work_path(work) do
@@ -42,29 +42,34 @@
     h2 見たアニメが記録できる
     p アニメのエピソードに「チェックイン」して、見たものを記録することができます。
     .screenshot
-      = image_tag 'feature-1.png', size: '400x660'
+      - image_size = browser.mobile? ? '280x462' : '400x660'
+      = image_tag 'feature-1.png', size: image_size
 
     h2 見たいアニメも記録
     p
       | アニメに対して、「見たい」「見てる」「見た」「見るのやめた」という4つのステータスの中から1つ設定することができます。
       | 例えば来期の気になるアニメを「見たい」に設定すれば、忘れずに済みそうです。
     .screenshot
-      = image_tag 'feature-2.png', size: '400x720'
+      - image_size = browser.mobile? ? '280x504' : '400x720'
+      = image_tag 'feature-2.png', size: image_size
 
     h2 視聴状況をチェック
     p プロフィールページにはチェックイン数やグラフが表示されるため、どれだけアニメを見ているのか知ることができます。
     .screenshot
-      = image_tag 'feature-3.png', size: '400x800'
+      - image_size = browser.mobile? ? '280x560' : '400x800'
+      = image_tag 'feature-3.png', size: image_size
 
     h2 友達の視聴状況もチェック
     p Annictの利用者をフォローすると、その人のステータス変更やチェックインといった活動がタイムラインに表示されます。
     .screenshot
-      = image_tag 'feature-4.png', size: '400x634'
+      - image_size = browser.mobile? ? '280x444' : '400x634'
+      = image_tag 'feature-4.png', size: image_size
 
     h2 今晩見れるアニメがわかる
     p 普段見ているテレビのチャンネルを設定すると、見ているアニメの放送時間をタイムライン形式で見ることができます。
     .screenshot.feature-5
-      = image_tag 'feature-5.png', size: '400x550'
+      - image_size = browser.mobile? ? '280x384' : '400x550'
+      = image_tag 'feature-5.png', size: image_size
 
 .join
   .container
