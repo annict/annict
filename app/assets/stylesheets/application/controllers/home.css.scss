@@ -71,12 +71,13 @@ body.home-index {
           position: relative;
           z-index: 5;
 
-          img.cover {
+          .image {
+            background-size: cover !important;
             height: 500px;
             left: 0px;
             position: absolute;
             top: 0px;
-            width: 1272px;
+            width: 100%;
           }
           
           .info {
