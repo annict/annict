@@ -9,12 +9,18 @@ footer {
     }
     max-width: 500px;
 
-    .links {
+    ul.links {
+      -webkit-padding-start: 0;
+      -moz-padding-start: 0;
       margin-bottom: 15px;
       text-align: center;
 
-      .left {
-        margin-right: 20px;
+      li {
+        display: inline;
+
+        &:not(:last-child) {
+          margin-right: 15px;
+        }
       }
     }
 
