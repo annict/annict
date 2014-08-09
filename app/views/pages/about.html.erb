@@ -3,65 +3,12 @@
 <div class="container">
   <p>Annict (アニクト) は、見たアニメを記録したり、人気のアニメやオススメのアニメを見つけることができる、アニメ視聴記録サービスです。</p>
 
-  <h2>Annictの特徴</h2>
-  <h3>見たアニメが記録できる</h3>
-  <p>アニメのエピソードに「チェックイン」して、見たものを記録することができます。</p>
-
-  <div class="image">
-    <%= image_tag 'about_checkin.png', size: '250x283' %>
-  </div>
-
-  <p style="margin-top: 25px;">プロフィールにはチェックイン数が表示されるため、どれだけアニメを見ているのか知ることができます。</p>
-
-  <div class="image">
-    <%= image_tag 'about_profile.png', size: '250x510' %>
-  </div>
-
-  <h3>見るのをやめたアニメも記録できる</h3>
-  <p>アニメに対して、「見たい」「見てる」「見た」「見るのやめた」という4つのステータスの中から1つ設定することができます。</p>
-
-  <div class="image">
-    <%= image_tag 'about_work.png', size: '250x456' %>
-  </div>
-
-  <p style="margin-top: 25px;">この4つのステータスは、プロフィールページから見ることができます。自分や友達が何を見ていて、何を見るのをやめたのかを見ることができます。</p>
-
-  <div class="image">
-    <%= image_tag 'about_watching.png', size: '250x403' %>
-  </div>
-
-  <h3>自分に合った作品を見つけることができる</h3>
-  <p>リコメンド機能により、自分が見ている作品に似た作品を見つけることができます。気になった作品はステータスを「見たい」にしておくことで、何が見たかったのか忘れてしまった！ということも無くなります。</p>
-
-  <div class="image">
-    <%= image_tag 'about_osusume.png', size: '250x357' %>
-  </div>
-
-  <h3>ソーシャル</h3>
-  <p>Annictの利用者をフォローすると、その人のステータス変更やチェックインといった活動がタイムラインに表示されます。いいね！やコメントなどをして交流を楽しむことができます。</p>
-
-  <div class="image">
-    <%= image_tag 'about_timeline.png', size: '250x363' %>
-  </div>
-
   <h2>管理者について</h2>
   <p><a href="http://www.annict.com/users/bojovs">@bojovs</a> が個人で開発、運営しています。</p>
 
-  <% if user_signed_in? %>
-    <h2>アニメデータについて</h2>
-    <p>このサービスに登録されているアニメのデータは<a href="http://lain.gr.jp/" target="_blank">.lain</a>と<a href="http://cal.syoboi.jp/" target="_blank">しょぼいカレンダー</a>を参考にさせて頂いています。ありがとうございます。</p>
+  <h2>アニメデータについて</h2>
+  <p>このサービスに登録されているアニメのデータは<a href="http://lain.gr.jp/" target="_blank">.lain</a>と<a href="http://cal.syoboi.jp/" target="_blank">しょぼいカレンダー</a>を参考にさせて頂いています。ありがとうございます。</p>
 
-    <h2>お問い合わせ</h2>
-    <p>何かありましたら、Annictの<a href="https://twitter.com/anannict" target="_blank">Twitterアカウント</a>か<a href="mailto:anannict@gmail.com">anannict@gmail.com</a>までお願いします。</p>
-  <% end %>
-
-  <% unless user_signed_in? %>
-    <hr>
-    <div class='text-center try-to-use'>
-      <%= link_to root_path, class: 'btn btn-primary' do %>
-        <i class="fa fa-rocket"></i>
-        使ってみる
-      <% end %>
-    </div>
-  <% end %>
+  <h2>お問い合わせ</h2>
+  <p>何かありましたら、Annictの<a href="https://twitter.com/anannict" target="_blank">Twitterアカウント</a>か<a href="mailto:anannict@gmail.com">anannict@gmail.com</a>までお願いします。</p>
 </div>

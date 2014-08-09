@@ -6,6 +6,6 @@
       .form-group
         = f.label :title_cont, class: 'sr-only'
         = f.text_field :title_cont, class: 'form-control', placeholder: t('works.input_work_title')
-      = f.submit t('words.search'), class: 'btn btn-default'
+      = f.submit t('words.search'), class: 'btn btn-primary'
 
   = render 'works', works: @works, user: current_user

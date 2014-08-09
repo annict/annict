@@ -1,134 +1,299 @@
 body.home-index {
   &.not-signed-in {
-    .background-video {
-      video {
-        height: 100%;
-        left: -50%;
-        position: fixed;
-        width: 200%;
+    h2 {
+      @if $browser == pc {
+        font-size: 32px;
+      }
+      @if $browser == mobile {
+        font-size: 24px;
       }
 
-      .filter {
-        background-color: rgba(0, 0, 0, 0.2);
-        left: 0;
-        margin: auto;
-        min-height: 100%;
-        min-width: 50%;
-        position: absolute;
-        right: 0;
-        top: 0;
-      }
-    }
-
-    .background-image {
-      height: 200%;
-      left: -50%;
-      position: fixed;
-      width: 200%;
-
-      img {
-        display: block;
-        left: 0;
-        margin: auto;
-        min-height: 50%;
-        min-width: 50%;
-        position: absolute;
-        right: 0;
-        top: 0;
-      }
-    }
-
-    .alert {
-      position: absolute;
+      font-family: 'NotoSansJP';
+      font-weight: normal;
+      margin-bottom: 30px;
       text-align: center;
-      top: 0%;
-      width: 100%;
-      z-index: 1;
     }
 
-    .container {
-      bottom: 0;
-      left: 0;
-      position: absolute;
-      right: 0;
-      top: 0;
+    .signin-buttons {
+      display: inline-block;
 
-      .wrapper {
-        color: #ffffff;
-        left: 50%;
-        margin: -160px 0 0 -160px;
+      .signin-button {
+        a {
+          &.btn-twitter {
+            background-color: #24b1ec;
+          }
+
+          &.btn-facebook {
+            background-color: #2e6499;
+          }
+
+          @if $browser == pc {
+            line-height: 30px;
+            margin-bottom: 12px;
+            width: 260px;
+          }
+          @if $browser == mobile {
+            line-height: 24px;
+            margin-bottom: 14px;
+            width: 230px;
+          }
+
+          border: none;
+          color: #ffffff;
+          padding: 0;
+
+          .icon {
+            @if $browser == pc {
+              height: 42px;
+              padding: 6px 6px;
+            }
+            @if $browser == mobile {
+              height: 36px;
+              padding: 2px 6px;
+            }
+
+            text-align: center;
+            width: 42px;
+
+            i {
+              @if $browser == pc {
+                padding-top: 5px;
+              }
+              @if $browser == mobile {
+                padding-top: 6px;
+              }
+
+              font-size: 20px;
+            }
+          }
+
+          .text {
+            @if $browser == mobile {
+              font-size: 12px;
+            }
+
+            padding: 6px 0;
+            text-align: left;
+          }
+        }
+      }
+    }
+
+    .hero-content {
+      @if $browser == pc {
+        height: 500px;
+      }
+      @if $browser == mobile {
+        height: 330px;
+      }
+
+      background: #333;
+      color: white;
+      position: relative;
+
+      ul.images {
+        -moz-padding-start: 0;
+        -webkit-padding-start: 0;
+        left: 0;
+        list-style-type: none;
         position: absolute;
+        top: 0;
+        width: 100%;
+
+        li {
+          &:not(:first-child) {
+            display: none;
+            opacity: 0;
+          }
+
+          position: relative;
+          z-index: 5;
+
+          .image {
+            @if $browser == pc {
+              height: 500px;
+            }
+            @if $browser == mobile {
+              height: 330px;
+            }
+
+            background-size: cover !important;
+            left: 0px;
+            position: absolute;
+            top: 0px;
+            width: 100%;
+          }
+          
+          .info {
+            @if $browser == pc {
+              font-size: 12px;
+              top: 440px;
+              right: 0;
+              width: 320px;
+            }
+            @if $browser == mobile {
+              font-size: 10px;
+              left: 0;
+              margin-left: 6px;
+              top: 290px;
+            }
+
+            position: absolute;
+            z-index: 20;
+
+            a {
+              color: #ececec;
+
+              &:hover {
+                text-decoration: none;
+              }
+            }
+
+            .left {
+              float: left;
+              margin-right: 7px;
+            }
+
+            .right {
+              @if $browser == pc {
+                height: 46px;
+              }
+              @if $browser == mobile {
+                height: 36px;
+              }
+
+              display: table-cell;
+              vertical-align: middle;
+            }
+          }
+        }
+      }
+
+      .welcome {
+        @if $browser == pc {
+          top: 30%;
+        }
+        @if $browser == mobile {
+          top: 4%;
+        }
+
+        position: absolute;
+        left: 0;
+        margin: 0;
         text-align: center;
-        top: 50%;
-        width: 320px;
+        width: 100%;
+        z-index: 10;
 
         h1 {
+          @if $browser == pc {
+            font-size: 90px;
+          }
+          @if $browser == mobile {
+            font-size: 60px;
+          }
+
           font-family: 'Titillium Web', sans-serif;
-          font-size: 70px;
+          margin-bottom: 5px;
         }
 
         .lead {
-          color: #e6e6e6;
-          font-size: 17px;
-        }
-
-        .signin-buttons {
-          display: inline-block;
-
-          .signin-button {
-            a {
-              &.btn-twitter {
-                background-color: #24b1ec;
-              }
-
-              &.btn-facebook {
-                background-color: #2e6499;
-              }
-              border: none;
-              color: #ffffff;
-              line-height: 30px;
-              margin-bottom: 12px;
-              padding: 0;
-              width: 260px;
-
-              .icon {
-                height: 42px;
-                padding: 6px 6px;
-                text-align: center;
-                width: 42px;
-
-                i {
-                  font-size: 20px;
-                  padding-top: 5px;
-                }
-              }
-
-              .text {
-                padding: 6px 0;
-                text-align: left;
-              }
-            }
+          @if $browser == pc {
+            color: #e6e6e6;
+            font-size: 22px;
+            margin-bottom: 50px;
           }
+          @if $browser == mobile {
+            color: #ffffff;
+            font-size: 16px;
+            font-weight: bold;
+            margin-bottom: 40px;
+          }
+
+          font-family: 'NotoSansJP';
         }
       }
+    }
 
-      .about {
-        margin: 30px 0;
-
-        .btn-transparency {
-          &.btn-about {
-            border-color: white;
-            color: white;
-
-            &:hover {
-              background-color: rgba(0, 0, 0, 0);
-            }
-
-            i {
-              margin-right: 5px;
-            }
-          }
+    .feature, .join, .about-me {
+      p {
+        @if $browser == pc {
+          font-size: 15px;
         }
+        @if $browser == mobile {
+          font-size: 14px;
+        }
+
+        line-height: 1.5;
+      }
+    }
+
+    .feature {
+      @if $browser == pc {
+        padding: 50px 0;
+      }
+      @if $browser == mobile {
+        padding: 20px 0;
+      }
+
+      background-color: #ffffff;
+
+      p {
+        color: #3f3f3f;
+      }
+
+      .screenshot {
+        @if $browser == pc {
+          margin: 40px 0 80px 0;
+        }
+        @if $browser == mobile {
+          margin: 30px 0 60px 0;
+        }
+
+        &.feature-5 {
+          margin: 40px 0 15px 0;
+        }
+
+        img {
+          border: 1px solid $color-gray-light;
+          display: block;
+          margin: 0 auto;
+        }
+      }
+    }
+
+    .join {
+      @if $browser == pc {
+        padding: 50px 0;
+      }
+      @if $browser == mobile {
+        padding: 20px 0;
+      }
+
+      background-color: #f7f7f7;
+
+      .signin-buttons {
+        margin: 10px 0 15px 0;
+        text-align: center;
+        width: 100%;
+
+        a.btn-facebook {
+          margin-bottom: 0;
+        }
+      }
+    }
+
+    .about-me {
+      @if $browser == pc {
+        padding: 50px 0;
+      }
+      @if $browser == mobile {
+        padding: 20px 0;
+      }
+
+      background-color: #ededed;
+
+      p {
+        text-align: center;
       }
     }
   }

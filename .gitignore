@@ -2,7 +2,6 @@
 
 /.bundle
 /.idea
-/app/assets/videos/*
 /config/application.yml
 /config/database.yml
 /coverage
