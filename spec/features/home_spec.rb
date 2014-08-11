@@ -1,6 +1,8 @@
 require 'spec_helper'
 
 describe 'トップページ' do
+  let!(:work) { create(:work, :with_item, id: 1) }
+
   context 'ログインしていないとき' do
     before do
       visit '/'
@@ -11,13 +13,13 @@ describe 'トップページ' do
     end
 
     it 'Twitterでログインをクリックするとユーザ登録ページが表示される' do
-      click_link 'Twitterアカウントでログイン'
+      find('.welcome').click_link('Twitterアカウントでログイン')
 
       expect(current_path).to eq '/users/sign_up'
     end
 
     it 'Facebookでログインをクリックするとユーザ登録ページが表示される' do
-      click_link 'Facebookアカウントでログイン'
+      find('.welcome').click_link('Facebookアカウントでログイン')
 
       expect(current_path).to eq '/users/sign_up'
     end

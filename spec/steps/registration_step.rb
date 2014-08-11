@@ -3,6 +3,6 @@ module RegistrationStep
 
   def click_signin_with_twitter_link
     visit '/'
-    click_link 'Twitterアカウントでログイン'
+    find('.welcome').click_link('Twitterアカウントでログイン')
   end
 end

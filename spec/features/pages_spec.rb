@@ -1,13 +1,15 @@
 require 'spec_helper'
 
 describe 'Annictについて' do
+  let!(:work) { create(:work, :with_item) }
+
   context '未ログイン時' do
     before do
       visit '/about'
     end
 
     it 'アクセスするとページが表示される' do
-      expect(page).to have_content('Annictの特徴')
+      expect(page).to have_content('管理者について')
     end
   end
 end

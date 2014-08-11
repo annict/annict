@@ -1,6 +1,8 @@
 require 'spec_helper'
 
 describe 'ユーザ登録機能' do
+  let!(:work) { create(:work, :with_item, id: 1) }
+
   before do
     mock_auth_hash
     click_signin_with_twitter_link
