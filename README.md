@@ -1,6 +1,6 @@
 # Annict
 
-[![Stories in Ready](https://badge.waffle.io/annict/annict.png?label=ready&title=Ready)](https://waffle.io/annict/annict) [![Gitter chat](https://badges.gitter.im/annict/annict.png)](https://gitter.im/annict/annict)
+[![Travis CI](https://travis-ci.org/annict/annict.svg?branch=master)](https://travis-ci.org/annict/annict) [![Stories in Ready](https://badge.waffle.io/annict/annict.png?label=ready&title=Ready)](https://waffle.io/annict/annict) [![Gitter chat](https://badges.gitter.im/annict/annict.png)](https://gitter.im/annict/annict)
 
 [![木崎湖](http://d3a8d1smk6xli.cloudfront.net/github/kizakiko.png)](http://ja.wikipedia.org/wiki/%E6%9C%A8%E5%B4%8E%E6%B9%96)
 
