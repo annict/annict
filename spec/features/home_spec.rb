@@ -1,7 +1,8 @@
 require 'spec_helper'
 
 describe 'トップページ' do
-  let!(:work) { create(:work, :with_item, id: 1) }
+  let(:cover_work_id) { eval(ENV['ANNICT_COVER_IMAGE_DATA']).first['work_id'] }
+  let!(:work) { create(:work, :with_item, id: cover_work_id) }
 
   context 'ログインしていないとき' do
     before do

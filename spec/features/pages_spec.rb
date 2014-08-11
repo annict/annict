@@ -1,8 +1,6 @@
 require 'spec_helper'
 
 describe 'Annictについて' do
-  let!(:work) { create(:work, :with_item) }
-
   context '未ログイン時' do
     before do
       visit '/about'
