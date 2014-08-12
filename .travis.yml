@@ -1,5 +1,7 @@
 language: ruby
 bundler_args: --without production
+services:
+  - redis-server
 before_script:
   - 'cp config/database.yml.example config/database.yml'
   - 'cp config/application.yml.example config/application.yml'
