@@ -12,6 +12,7 @@ require 'capybara/rspec'
 # Requires supporting ruby files with custom matchers and macros, etc,
 # in spec/support/ and its subdirectories.
 Dir[
+  Rails.root.join('spec/support/helper.rb'),
   Rails.root.join('spec/support/**/*.rb'),
   Rails.root.join('spec/elements/**/*.rb'),
   Rails.root.join('spec/steps/**/*.rb')
