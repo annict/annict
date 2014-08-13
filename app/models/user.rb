@@ -78,8 +78,10 @@ class User < ActiveRecord::Base
     end
 
     self.build_profile do |p|
+      description = oauth[:info][:description]
+
       p.name        = oauth[:info][:name].presence || oauth[:info][:nickname]
-      p.description = oauth[:info][:description].presence || ''
+      p.description = description.present? ? description.truncate(150) : ''
       p.avatar_url  = get_large_avatar_image(oauth[:provider], oauth[:info][:image])
     end
 
