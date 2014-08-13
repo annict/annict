@@ -11,11 +11,13 @@ class Comment < ActiveRecord::Base
   private
 
   def save_notification
-    Notification.create do |n|
-      n.user        = checkin.user
-      n.action_user = user
-      n.trackable   = self
-      n.action      = 'comments.create'
+    if checkin.user != user
+      Notification.create do |n|
+        n.user        = checkin.user
+        n.action_user = user
+        n.trackable   = self
+        n.action      = 'comments.create'
+      end
     end
   end
 
