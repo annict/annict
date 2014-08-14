@@ -39,7 +39,7 @@
         width: 100px;
       }
 
-      .ani-status-selector {
+      .ani-status-selector, .hide-work {
         @if $browser == pc {
           left: 370px;
         }

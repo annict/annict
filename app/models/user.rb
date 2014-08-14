@@ -49,6 +49,10 @@ class User < ActiveRecord::Base
     Work.joins(:statuses).merge(wanna_watch_or_watching_statuses)
   end
 
+  def unknown_works
+    Work.where.not(id: latest_statuses.pluck(:work_id))
+  end
+
   # 指定した作品の中のチェックインしていないエピソードを返す
   def unchecked_episodes(work)
     episode_ids = work.episodes.pluck(:id)

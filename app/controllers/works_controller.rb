@@ -19,7 +19,10 @@ class WorksController < ApplicationController
   end
 
   def recommend(page)
-    @works = current_user.recommended_works.page(page)
+    work_ids = current_user.recommended_works(100).map(&:id)
+    @works = current_user.unknown_works.where(id: work_ids)
+      .order(watchers_count: :desc)
+      .page(page)
     render :index
   end
 
