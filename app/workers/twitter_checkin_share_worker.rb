@@ -24,10 +24,10 @@ class TwitterCheckinShareWorker
   private
 
   def get_work_title
+    max_length = 35
     title = @checkin.work.title
 
     if @checkin.comment.present?
-      max_length = 20
       if max_length < title.length
         title.truncate(max_length)
       else
@@ -35,7 +35,7 @@ class TwitterCheckinShareWorker
         title
       end
     else
-      title.truncate(30)
+      title.truncate(max_length)
     end
   end
 
@@ -55,23 +55,22 @@ class TwitterCheckinShareWorker
     title = @checkin.episode.single? ? '' : @checkin.episode.title
     title = (title == '-') ? '' : title
 
-    title = if @checkin.comment.present?
-      max_length = 10
-      if max_length < title.length
+    if @checkin.comment.present?
+      @rest += 10
+    else
+      max_length = 30
+      title = if max_length < title.length
         title.truncate(max_length)
       else
-        @rest += (max_length - title.length)
         title
       end
-    else
-      title.truncate(30)
-    end
 
-    title.length > 0 ? "「#{title}」" : ' '
+      title.length > 0 ? "「#{title}」" : ' '
+    end
   end
 
   def get_share_url
-    "http://#{ENV['HOST']}/checkins/redirect/tw/#{@checkin.twitter_url_hash}"
+    "http://#{ENV['HOST']}/r/tw/#{@checkin.twitter_url_hash}"
   end
 
   def get_share_hashtag
@@ -97,7 +96,7 @@ class TwitterCheckinShareWorker
 
     if comment.present?
       comment_length = max_length + @rest
-      "#{comment.truncate(comment_length)} / #{work_title} #{episode_number}#{episode_title}にチェックイン！#{share_url} #{share_hashtag}"
+      "#{comment.truncate(comment_length)} / #{work_title} #{episode_number}にチェックイン！#{share_url} #{share_hashtag}"
     else
       "#{work_title} #{episode_number}#{episode_title}にチェックイン！#{share_url} #{share_hashtag}"
     end

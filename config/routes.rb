@@ -53,6 +53,7 @@ Annict::Application.routes.draw do
   resources :channels, only: [:index]
 
   resources :checkins, only: [] do
+    # 旧リダイレクト用URL
     get 'redirect/:provider/:url_hash',
       on: :collection,
       as: :redirect,
@@ -122,6 +123,12 @@ Annict::Application.routes.draw do
   get 'about',   to: 'pages#about'
   get 'privacy', to: 'pages#privacy'
   get 'terms',   to: 'pages#terms'
+
+  # 新リダイレクト用URL
+  get 'r/:provider/:url_hash',
+    to: 'checkins#redirect',
+    provider: /fb|tw/,
+    url_hash: /[0-9a-zA-Z_-]{10}/
 
   root 'home#index'
 end
