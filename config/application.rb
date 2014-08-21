@@ -30,7 +30,7 @@ module Annict
     config.i18n.available_locales = ['en-US', :ja]
 
     config.autoload_paths += %W(#{config.root}/lib)
-    ['fonts', 'videos'].each do |dir_name|
+    ['fonts'].each do |dir_name|
       config.assets.paths << "#{Rails.root}/app/assets/#{dir_name}"
     end
 
