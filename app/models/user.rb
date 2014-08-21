@@ -77,15 +77,13 @@ class User < ActiveRecord::Base
       p.name             = oauth[:provider]
       p.uid              = oauth[:uid]
       p.token            = oauth[:credentials][:token]
-      p.token_expires_at = oauth[:credentials][:expires_at] if 'facebook' == oauth[:provider]
-      p.token_secret     = oauth[:credentials][:secret] if 'twitter' == oauth[:provider]
+      p.token_expires_at = oauth[:credentials][:expires_at]
+      p.token_secret     = oauth[:credentials][:secret]
     end
 
     self.build_profile do |p|
-      description = oauth[:info][:description]
-
       p.name        = oauth[:info][:name].presence || oauth[:info][:nickname]
-      p.description = description.present? ? description.truncate(150) : ''
+      p.description = oauth[:info][:description]
       p.avatar_url  = get_large_avatar_image(oauth[:provider], oauth[:info][:image])
     end
 

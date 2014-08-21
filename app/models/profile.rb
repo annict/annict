@@ -12,6 +12,11 @@ class Profile < ActiveRecord::Base
   before_validation :rename_file
 
 
+  def description=(description)
+    description.present? ? description.truncate(150) : ''
+  end
+
+
   private
 
   def rename_file
