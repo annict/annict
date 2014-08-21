@@ -7,11 +7,6 @@ class WorksController < ApplicationController
     @works = Work.on_air.order(released_at: :desc).page(page)
   end
 
-  def on_air(page)
-    @works = Work.on_air.order(released_at: :desc).page(page)
-    render :index
-  end
-
   def popular(page, filter)
     @works = ('on_air' == filter) ? Work.where(on_air: true) : Work
     @works = @works.order(watchers_count: :desc).page(page)
