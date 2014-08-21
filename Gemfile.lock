@@ -178,6 +178,9 @@ GEM
     foreigner (1.6.1)
       activerecord (>= 3.0.0)
     formatador (0.2.5)
+    fuubar (2.0.0)
+      rspec (~> 3.0)
+      ruby-progressbar (~> 1.4)
     gon (5.1.2)
       actionpack (>= 2.3.0)
       json
@@ -245,8 +248,6 @@ GEM
       rails (>= 3.1)
     nokogiri (1.6.3.1)
       mini_portile (= 0.6.0)
-    nyan-cat-formatter (0.10.0)
-      rspec (>= 2.99, >= 2.14.2, < 4)
     oauth (0.4.7)
     oauth2 (1.0.0)
       faraday (>= 0.8, < 0.10)
@@ -377,6 +378,7 @@ GEM
       rspec-mocks (~> 3.0.0)
       rspec-support (~> 3.0.0)
     rspec-support (3.0.3)
+    ruby-progressbar (1.5.1)
     sass (3.2.19)
     sass-rails (4.0.3)
       railties (>= 4.0.0, < 5.0)
@@ -500,6 +502,7 @@ DEPENDENCIES
   flutie
   font-awesome-sass
   foreigner
+  fuubar
   gon
   hirb
   hirb-unicode
@@ -513,7 +516,6 @@ DEPENDENCIES
   newrelic_rpm
   ngannotate-rails
   nokogiri
-  nyan-cat-formatter
   omniauth-facebook
   omniauth-twitter
   paper_trail
