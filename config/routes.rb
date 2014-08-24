@@ -32,6 +32,8 @@ Annict::Application.routes.draw do
 
   namespace :marie do
     resources :works do
+      get :on_air, on: :collection
+
       resources :episodes, only: [:index, :edit, :update] do
         collection do
           get  :new_from_csv
