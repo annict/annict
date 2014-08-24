@@ -96,7 +96,7 @@ class TwitterCheckinShareWorker
 
     if comment.present?
       comment_length = max_length + @rest
-      "#{comment.truncate(comment_length)} / #{work_title} #{episode_number}にチェックイン！#{share_url} #{share_hashtag}"
+      "#{comment.truncate(comment_length)} / #{work_title} #{episode_number} にチェックイン！#{share_url} #{share_hashtag}"
     else
       "#{work_title} #{episode_number}#{episode_title}にチェックイン！#{share_url} #{share_hashtag}"
     end
