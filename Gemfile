@@ -56,8 +56,6 @@ end
 
 group :development do
   gem 'aws-sdk'
-  gem 'better_errors'
-  gem 'binding_of_caller' # using better_errors
   gem 'bullet'
   gem 'capistrano'
   gem 'capistrano-rails'
@@ -65,11 +63,11 @@ group :development do
   gem 'capistrano-sidekiq'
   gem 'capistrano-unicorn-nginx'
   gem 'letter_opener'
-  gem 'meta_request'
   gem 'quiet_assets'
   gem 'spring-commands-rspec', require: false
   gem 'spring'
   gem 'thin'
+  gem 'web-console', '2.0.0.beta3'
 end
 
 group :test do
