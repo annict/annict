@@ -2,10 +2,11 @@ require 'spec_helper'
 
 describe 'ユーザ登録機能' do
   let(:cover_work_id) { eval(ENV['ANNICT_COVER_IMAGE_DATA']).first['work_id'] }
-  let!(:work) { create(:work, :with_item, id: cover_work_id) }
+  let!(:work)         { create(:work, :with_item, id: cover_work_id) }
+  let!(:mock_hash)    { mock_auth_hash }
 
   before do
-    mock_auth_hash
+
     click_signin_with_twitter_link
   end
 
@@ -24,6 +25,11 @@ describe 'ユーザ登録機能' do
     it 'ユーザ情報がデータベースに保存される' do
       expect(User.count).to eq 1
       expect(User.first.username).to eq username
+    end
+
+    it 'OAuth情報がデータベースに保存される' do
+      expect(Provider.first.token).to        eq mock_hash[:credentials][:token]
+      expect(Provider.first.token_secret).to eq mock_hash[:credentials][:secret]
     end
   end
 end

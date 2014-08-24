@@ -3,10 +3,12 @@ class Provider < ActiveRecord::Base
 
 
   def token_expires_at=(expires_at)
-    expires_at if 'facebook' == name
+    value = expires_at if name == 'facebook'
+    write_attribute(:token_expires_at, value)
   end
-  
+
   def token_secret=(secret)
-    secret if 'twitter' == name
+    value = secret if 'twitter' == name
+    write_attribute(:token_secret, value)
   end
 end

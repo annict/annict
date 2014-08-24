@@ -13,7 +13,8 @@ class Profile < ActiveRecord::Base
 
 
   def description=(description)
-    description.present? ? description.truncate(150) : ''
+    value = description.present? ? description.truncate(150) : ''
+    write_attribute(:description, value)
   end
 
 

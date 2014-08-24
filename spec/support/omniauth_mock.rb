@@ -4,9 +4,7 @@ module OmniauthMock
   rspec
 
   def mock_auth_hash(uid = '12345')
-    # The mock_auth configuration allows you to set per-provider (or default)
-    # authentication hashes to return during integration testing.
-    OmniAuth.config.mock_auth[:twitter] = {
+    hash = {
       provider: 'twitter',
       uid:      uid,
       info: {
@@ -18,8 +16,13 @@ module OmniauthMock
         secret: 'mock_secret'
       }
     }
+
+    # The mock_auth configuration allows you to set per-provider (or default)
+    # authentication hashes to return during integration testing.
+    OmniAuth.config.mock_auth[:twitter] = hash
+
+    hash
   end
 
   OmniAuth.config.test_mode = true
 end
-
