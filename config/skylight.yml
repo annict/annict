@@ -1,6 +1,0 @@
----
-# The Skylight ID for the application.
-application: Annict
-
-# The authentication token for the application.
-authentication: <%= ENV['SKYLIGHT_AUTHENTICATION'] %>

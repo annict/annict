@@ -76,7 +76,3 @@ group :test do
   gem 'fuubar'
   gem 'poltergeist'
 end
-
-group :production do
-  gem 'skylight'
-end
