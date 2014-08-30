@@ -29,6 +29,8 @@ development:
 
   HOST: localhost:3000
 
+  REDIS_HOST: localhost
+
   DRAGONFLY_URL_HOST: http://localhost:3000
 
   TWITTER_CONSUMER_KEY: 12345
