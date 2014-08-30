@@ -5,10 +5,11 @@ require 'capistrano/setup'
 require 'capistrano/deploy'
 
 # Includes tasks from other gems included in your Gemfile
-require 'capistrano/rvm'
+require 'capistrano/rbenv'
+require 'capistrano/bundler'
 require 'capistrano/rails'
-require 'capistrano/sidekiq'
-require 'capistrano/unicorn_nginx'
+# require 'capistrano/sidekiq'
+# require 'capistrano/unicorn_nginx'
 require 'whenever/capistrano'
 
 # Loads custom tasks from `lib/capistrano/tasks' if you have any defined.

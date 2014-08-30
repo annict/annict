@@ -1,6 +1,6 @@
 source 'https://rubygems.org'
 
-ruby '2.1.1'
+ruby '2.1.2'
 
 gem 'rails', '4.1.5'
 
@@ -59,9 +59,7 @@ group :development do
   gem 'bullet'
   gem 'capistrano'
   gem 'capistrano-rails'
-  gem 'capistrano-rvm'
-  gem 'capistrano-sidekiq'
-  gem 'capistrano-unicorn-nginx'
+  gem 'capistrano-rbenv'
   gem 'letter_opener'
   gem 'quiet_assets'
   gem 'spring-commands-rspec', require: false
