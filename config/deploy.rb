@@ -10,5 +10,5 @@ set :linked_dirs,  %w(log)
 set :rbenv_type, :system
 set :rbenv_ruby, '2.1.2'
 
-# set :sidekiq_pid, File.join(shared_path, 'pids', 'sidekiq.pid')
-# set :sidekiq_options, "-C #{current_path}/config/sidekiq.yml"
+after 'deploy:publishing', 'eye:unicorn:restart'
+after 'deploy:publishing', 'eye:sidekiq:restart'
