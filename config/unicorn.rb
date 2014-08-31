@@ -6,7 +6,7 @@ shared_path  = "#{app_path}/shared"
 listen "#{shared_path}/sockets/unicorn.sock"
 pid    "#{shared_path}/pids/unicorn.pid"
 
-worker_processes 1
+worker_processes 5
 # ダウンタイムをなくす
 preload_app true
 
