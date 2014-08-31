@@ -1,4 +1,4 @@
-server 'annict2', roles: %w(web app db)
+server 'annict3-web', roles: %w(web app db)
 
 set :branch, 'master'
 
