@@ -2,22 +2,20 @@
 
 .hero-content
   ul.images(ani-cover-image)
-    - eval(ENV['ANNICT_COVER_IMAGE_DATA']).shuffle.each do |data|
-      - work = Work.find(data['work_id'])
-      - cover_image_url = image_url(data['image_file'])
+    - CoverImage.includes(:work).all.shuffle.each do |ci|
       li
-        .image style="background: url('#{cover_image_url}') no-repeat top center;"
+        .image style="background: url('#{image_url(ci.file_name)}') no-repeat top center;"
         .info
           .left
-            = link_to work_path(work) do
-              = annict_image_tag work.main_item.image.thumb('64x64').url, psize: '46x46', msize: '32x32', alt: work.title
+            = link_to work_path(ci.work) do
+              = annict_image_tag ci.work.main_item.image.thumb('64x64').url, psize: '46x46', msize: '32x32', alt: ci.work.title
           .right
             .location-name
-              = link_to work_path(work) do
-                = "撮影地：#{data['location']}"
+              = link_to work_path(ci.work) do
+                = "撮影地：#{ci.location}"
             .related-work
-              = link_to work_path(work) do
-                = "アニメ「#{work.title}」の舞台"
+              = link_to work_path(ci.work) do
+                = "アニメ「#{ci.work.title}」の舞台"
   .welcome
     h1 Annict
     p.lead
