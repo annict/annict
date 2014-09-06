@@ -52,6 +52,9 @@ GEM
       thor
     browser (0.6.0)
     buftok (0.2.0)
+    bugsnag (2.4.1)
+      httparty (>= 0.6, < 1.0)
+      multi_json (~> 1.0)
     builder (3.2.2)
     bullet (4.13.0)
       activesupport (>= 3.0.0)
@@ -187,6 +190,9 @@ GEM
     http (0.6.1)
       http_parser.rb (~> 0.6.0)
     http_parser.rb (0.6.0)
+    httparty (0.13.1)
+      json (~> 1.8)
+      multi_xml (>= 0.5.2)
     i18n (0.6.11)
     inflecto (0.0.2)
     ipaddress (0.8.0)
@@ -318,6 +324,11 @@ GEM
       rails (>= 4.0)
       rails (>= 4.0)
       rails (>= 4.0)
+    rails_12factor (0.0.2)
+      rails_serve_static_assets
+      rails_stdout_logging
+    rails_serve_static_assets (0.0.2)
+    rails_stdout_logging (0.0.3)
     railties (4.1.5)
       actionpack (= 4.1.5)
       activesupport (= 4.1.5)
@@ -467,6 +478,7 @@ DEPENDENCIES
   bootstrap-sass
   bourbon (= 3.2.3)
   browser
+  bugsnag
   bullet
   capistrano
   capistrano-rails
@@ -508,6 +520,7 @@ DEPENDENCIES
   rails (= 4.1.5)
   rails-flog
   rails-i18n
+  rails_12factor
   ransack
   recommendable
   rspec-rails
