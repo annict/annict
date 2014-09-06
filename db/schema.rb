@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20140906180904) do
+ActiveRecord::Schema.define(version: 20140906212132) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -65,17 +65,17 @@ ActiveRecord::Schema.define(version: 20140906180904) do
   add_index "channels", ["sc_chid"], name: "channels_sc_chid_key", unique: true, using: :btree
 
   create_table "checkins", force: true do |t|
-    t.integer  "user_id",                                      null: false
-    t.integer  "episode_id",                                   null: false
+    t.integer  "user_id",                                          null: false
+    t.integer  "episode_id",                                       null: false
     t.text     "comment"
-    t.boolean  "spoil",                                        null: false
-    t.boolean  "modify_comment",                               null: false
+    t.boolean  "spoil",                                            null: false
+    t.boolean  "modify_comment",                   default: false, null: false
     t.string   "twitter_url_hash",     limit: 510
     t.string   "facebook_url_hash",    limit: 510
-    t.integer  "twitter_click_count",              default: 0, null: false
-    t.integer  "facebook_click_count",             default: 0, null: false
-    t.integer  "comments_count",                   default: 0, null: false
-    t.integer  "likes_count",                      default: 0, null: false
+    t.integer  "twitter_click_count",              default: 0,     null: false
+    t.integer  "facebook_click_count",             default: 0,     null: false
+    t.integer  "comments_count",                   default: 0,     null: false
+    t.integer  "likes_count",                      default: 0,     null: false
     t.datetime "created_at"
     t.datetime "updated_at"
   end
