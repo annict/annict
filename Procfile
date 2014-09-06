@@ -1,2 +1,2 @@
-web: bundle exec rails s -p ${PORT:="3000"}
+web: bundle exec unicorn -p $PORT -c ./config/unicorn.rb
 worker: bundle exec sidekiq
