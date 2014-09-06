@@ -222,7 +222,6 @@ GEM
     multi_json (1.10.1)
     multi_xml (0.5.5)
     multipart-post (2.0.0)
-    mysql2 (0.3.16)
     naught (1.0.0)
     net-scp (1.2.1)
       net-ssh (>= 2.6.5)
@@ -261,6 +260,7 @@ GEM
     paper_trail (3.0.5)
       activerecord (>= 3.0, < 5.0)
       activesupport (>= 3.0, < 5.0)
+    pg (0.17.1)
     poltergeist (1.5.1)
       capybara (~> 2.1)
       cliver (~> 0.3.1)
@@ -494,13 +494,13 @@ DEPENDENCIES
   kaminari
   koala
   letter_opener
-  mysql2
   newrelic_rpm
   ngannotate-rails
   nokogiri
   omniauth-facebook
   omniauth-twitter
   paper_trail
+  pg
   poltergeist
   pry-byebug
   pry-rails
