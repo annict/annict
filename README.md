@@ -63,8 +63,8 @@ GitHub Issuesに投稿されたIssueは[Waffle.io](https://waffle.io/annict/anni
 
 Annictは以下のソフトウェアを使用して開発しています。事前にこれらをインストールしてください。
 
-* Ruby 2.1.1
-* MySQL 5.5
+* Ruby 2.1.2
+* PostgreSQL 9.3.5.0
 * Redis 2.8.3
 * ImageMagick 6.7
 * PhantomJS 1.9
