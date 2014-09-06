@@ -91,11 +91,4 @@ Annict::Application.configure do
       password:       ENV['SMTP_PASSWORD'],
       authentication: :plain
   }
-
-  config.middleware.use ExceptionNotification::Rack,
-  email: {
-    email_prefix: '[Exception: www.annict.com (production)] ',
-    sender_address: %{'Exception Notifier' <no-reply@annict.com>},
-    exception_recipients: %w(bojovs@gmail.com)
-  }
 end

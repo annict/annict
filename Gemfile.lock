@@ -127,9 +127,6 @@ GEM
     equalizer (0.0.9)
     erubis (2.7.0)
     eventmachine (1.0.3)
-    exception_notification (4.0.1)
-      actionmailer (>= 3.0.4)
-      activesupport (>= 3.0.4)
     excon (0.39.0)
     execjs (2.2.1)
     factory_girl (4.4.0)
@@ -491,7 +488,6 @@ DEPENDENCIES
   dragonfly-s3_data_store
   email_validator
   enumerize
-  exception_notification
   factory_girl_rails
   figaro (= 1.0.0.rc1)
   flutie

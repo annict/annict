@@ -57,4 +57,7 @@ production:
   pool: 5
   username: annict
   password:
+  # `.where('started_at < ?', Date.tomorrow + 1.day + 5.hours)` というメソッドを実行すると
+  # エラーになったので、prepared_statementsをfalseにする
+  # http://stackoverflow.com/questions/21035561/why-am-i-getting-these-postgresql-errors-since-upgrading-to-rails-4
   prepared_statements: false
