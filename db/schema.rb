@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20140707140832) do
+ActiveRecord::Schema.define(version: 20140906095802) do
 
   create_table "activities", force: true do |t|
     t.integer  "user_id",        null: false
@@ -102,7 +102,6 @@ ActiveRecord::Schema.define(version: 20140707140832) do
     t.string   "number"
     t.integer  "sort_number",    default: 0,     null: false
     t.integer  "sc_count"
-    t.string   "sc_number"
     t.string   "title"
     t.boolean  "single",         default: false
     t.integer  "checkins_count", default: 0,     null: false
@@ -111,9 +110,8 @@ ActiveRecord::Schema.define(version: 20140707140832) do
   end
 
   add_index "episodes", ["checkins_count"], name: "index_episodes_on_checkins_count", using: :btree
-  add_index "episodes", ["sc_number"], name: "index_episodes_on_sc_number", using: :btree
   add_index "episodes", ["work_id", "sc_count"], name: "index_episodes_on_work_id_and_sc_count", unique: true, using: :btree
-  add_index "episodes", ["work_id", "sc_number"], name: "index_episodes_on_work_id_and_sc_number", unique: true, using: :btree
+  add_index "episodes", ["work_id"], name: "episodes_work_id_fk", using: :btree
 
   create_table "follows", force: true do |t|
     t.integer  "user_id",      null: false
