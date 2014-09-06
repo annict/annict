@@ -30,7 +30,7 @@ development:
 
   HOST: localhost:3000
 
-  REDIS_HOST: localhost
+  REDIS_URL: redis://localhost:6379/12
 
   DRAGONFLY_URL_HOST: http://localhost:3000
 
