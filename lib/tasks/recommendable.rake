@@ -1,6 +1,6 @@
 namespace :recommendable do
   task update: :environment do
-    r = Redis.new
+    r = Redis.new(url: ENV['REDIS_URL'])
     keys = r.keys('recommendable:*')
     r.del(keys) if keys.present?
 
