@@ -4,7 +4,12 @@ Recommendable.configure do |config|
   # Recommendable's connection to Redis.
   #
   # Default: localhost:6379/0
-  config.redis = Redis.new(host: ENV['REDIS_HOST'], port: 6379, db: 0)
+  params = if Rails.env.development?
+    { host: ENV['REDIS_HOST'], port: ENV['REDIS_PORT'], db: 0 }
+  else
+    { url: ENV['REDISCLOUD_URL'] }
+  end
+  config.redis = Redis.new(params)
 
   # A prefix for all keys Recommendable uses.
   #
