@@ -6,18 +6,6 @@ DEVISE_SECRET: 12345
 NEW_RELIC_LICENSE_KEY: 12345
 RAILS_SECRET_TOKEN: 12345
 
-TWITTER_BOTS:
-  - Crowsnest
-  - FlipboardProxy
-  - FriendFeedBot
-  - Google-HTTP-Java-Client
-  - Livelapbot
-  - MetaURI API
-  - PaperLiBot
-  - ShowyouBot
-  - Twitterbot
-  - Yahoo! Slurp
-
 
 development:
   FACEBOOK_APP_ID: 12345

@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20140906175518) do
+ActiveRecord::Schema.define(version: 20140906180904) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -264,6 +264,14 @@ ActiveRecord::Schema.define(version: 20140906175518) do
 
   add_index "statuses", ["user_id"], name: "statuses_user_id_idx", using: :btree
   add_index "statuses", ["work_id"], name: "statuses_work_id_idx", using: :btree
+
+  create_table "twitter_bots", force: true do |t|
+    t.string   "name",       null: false
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "twitter_bots", ["name"], name: "index_twitter_bots_on_name", unique: true, using: :btree
 
   create_table "users", force: true do |t|
     t.string   "username",             limit: 510,              null: false

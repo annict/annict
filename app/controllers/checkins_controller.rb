@@ -58,7 +58,7 @@ class CheckinsController < ApplicationController
     if 'tw' == provider
       checkin = Checkin.find_by!(twitter_url_hash: url_hash)
 
-      bots = eval(ENV['TWITTER_BOTS'])
+      bots = TwitterBot.pluck(:name)
       no_bots = bots.map { |bot| request.user_agent.present? && !request.user_agent.include?(bot) }
       checkin.increment!(:twitter_click_count) if no_bots.all?
 
