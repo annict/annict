@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20140906212132) do
+ActiveRecord::Schema.define(version: 20140907083945) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -68,7 +68,7 @@ ActiveRecord::Schema.define(version: 20140906212132) do
     t.integer  "user_id",                                          null: false
     t.integer  "episode_id",                                       null: false
     t.text     "comment"
-    t.boolean  "spoil",                                            null: false
+    t.boolean  "spoil",                            default: false, null: false
     t.boolean  "modify_comment",                   default: false, null: false
     t.string   "twitter_url_hash",     limit: 510
     t.string   "facebook_url_hash",    limit: 510
@@ -253,11 +253,11 @@ ActiveRecord::Schema.define(version: 20140906212132) do
   add_index "staffs", ["email"], name: "staffs_email_key", unique: true, using: :btree
 
   create_table "statuses", force: true do |t|
-    t.integer  "user_id",                 null: false
-    t.integer  "work_id",                 null: false
-    t.integer  "kind",                    null: false
-    t.boolean  "latest",                  null: false
-    t.integer  "likes_count", default: 0, null: false
+    t.integer  "user_id",                     null: false
+    t.integer  "work_id",                     null: false
+    t.integer  "kind",                        null: false
+    t.boolean  "latest",      default: false, null: false
+    t.integer  "likes_count", default: 0,     null: false
     t.datetime "created_at"
     t.datetime "updated_at"
   end
