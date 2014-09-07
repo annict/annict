@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20140907083945) do
+ActiveRecord::Schema.define(version: 20140907135553) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -154,12 +154,12 @@ ActiveRecord::Schema.define(version: 20140907083945) do
   add_index "likes", ["user_id"], name: "likes_user_id_idx", using: :btree
 
   create_table "notifications", force: true do |t|
-    t.integer  "user_id",                    null: false
-    t.integer  "action_user_id",             null: false
-    t.integer  "trackable_id",               null: false
-    t.string   "trackable_type", limit: 510, null: false
-    t.string   "action",         limit: 510, null: false
-    t.boolean  "read",                       null: false
+    t.integer  "user_id",                                    null: false
+    t.integer  "action_user_id",                             null: false
+    t.integer  "trackable_id",                               null: false
+    t.string   "trackable_type", limit: 510,                 null: false
+    t.string   "action",         limit: 510,                 null: false
+    t.boolean  "read",                       default: false, null: false
     t.datetime "created_at"
     t.datetime "updated_at"
   end
