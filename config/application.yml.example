@@ -11,6 +11,8 @@ development:
   FACEBOOK_APP_ID: 12345
   FACEBOOK_SECRET_KEY: 12345
 
+  GA_TRACKING_ID: UA-00000000-0
+
   HOST: localhost:3000
 
   REDIS_URL: redis://localhost:6379/12

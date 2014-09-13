@@ -11,7 +11,7 @@ Annict.angular.directive 'aniStatusSelector', ->
         data = { workId: attributes.workId, prevStatusKind: attributes.statusKind, statusKind: selected.value }
         scope.$emit('changed', data)
 
-  controller: ($scope, $element, $http, usSpinnerService) ->
+  controller: ($scope, $element, $http, $analytics, usSpinnerService) ->
     $scope.$on 'changed', (event, data) ->
       if $element.data('workId') == parseInt(data.workId)
         statusKinds = ['wanna_watch', 'watching', 'watched', 'stop_watching']
@@ -21,4 +21,5 @@ Annict.angular.directive 'aniStatusSelector', ->
 
           $http.post("/works/#{data.workId}/statuses/select", status_kind: data.statusKind).success ->
             $scope.statusKind = data.statusKind
+            $analytics.eventTrack('ステータス変更', { category: 'statuses', label: $scope.statusKind })
             usSpinnerService.stop('saving-status-kind')

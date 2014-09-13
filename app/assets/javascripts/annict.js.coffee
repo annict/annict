@@ -1,6 +1,14 @@
 window.Annict = {}
 
-modules = ['ngAnimate', 'ngSanitize', 'angularSpinner', 'pascalprecht.translate', 'infinite-scroll']
+modules = [
+  'angulartics',
+  'angulartics.google.analytics',
+  'ngAnimate',
+  'ngSanitize',
+  'angularSpinner',
+  'pascalprecht.translate',
+  'infinite-scroll'
+]
 Annict.angular = angular.module('annict', modules)
 
 # Making it work with CSRF protection

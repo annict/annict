@@ -1,4 +1,4 @@
-Annict.angular.controller 'UserFollowButtonCtrl', ($scope, $http, $translate) ->
+Annict.angular.controller 'UserFollowButtonCtrl', ($scope, $http, $translate, $analytics) ->
   $scope.init = (isFollowing, type) ->
     $scope.isFollowing = isFollowing
     $scope.type = type
@@ -17,9 +17,11 @@ Annict.angular.controller 'UserFollowButtonCtrl', ($scope, $http, $translate) ->
   $scope.toggle = (userId) ->
     if $scope.isFollowing
       $http.delete("/users/#{userId}/unfollow").success (data) ->
+        $analytics.eventTrack('アンフォロー', { category: 'follows' })
         $scope.isFollowing = false
         $scope.setFollowButtonText()
     else
       $http.post("/users/#{userId}/follow").success (data) ->
+        $analytics.eventTrack('フォロー', { category: 'follows' })
         $scope.isFollowing = true
         $scope.setFollowButtonText()

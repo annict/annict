@@ -5,6 +5,8 @@
 //= require angular-animate.min
 //= require angular-sanitize.min
 //= require angular-translate.min
+//= require angulartics.min
+//= require angulartics-ga.min
 //= require bootstrap-sprockets
 //= require spin.min
 //= require angular-spinner.min

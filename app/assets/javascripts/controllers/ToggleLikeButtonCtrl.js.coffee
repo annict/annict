@@ -1,4 +1,4 @@
-Annict.angular.controller 'ToggleLikeButtonCtrl', ($scope, $http, ActivityRecipient) ->
+Annict.angular.controller 'ToggleLikeButtonCtrl', ($scope, $http, $analytics, ActivityRecipient) ->
   $scope.init = (activity) ->
     $scope.recipient = new ActivityRecipient(activity)
     $scope.liked = activity.links.meta.liked
@@ -14,5 +14,6 @@ Annict.angular.controller 'ToggleLikeButtonCtrl', ($scope, $http, ActivityRecipi
         $scope.liked = false
     else
       $http.post("/#{recipientName}/#{recipientId}/like").success (data) =>
+        $analytics.eventTrack('Like', { category: 'likes', label: recipientName })
         $scope.likesCount += 1
         $scope.liked = true

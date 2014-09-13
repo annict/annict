@@ -5,29 +5,29 @@ nav.headroom.navbar.navbar-default.navbar-fixed-top
         = image_tag 'navbar/logo.png', size: '48x48', alt: 'Annict'
     .shortcuts
       - if user_signed_in?
-        = link_to user_works_user_path(current_user.username, :watching) do
+        = link_to user_works_user_path(current_user.username, :watching), 'analytics-on' => 'click', 'analytics-event' => '見てる作品', 'analytics-category' => 'navbar' do
           i.fa.fa-play
           .caption
             = t('enumerize.status.kind.watching') + t('words.works')
-        = link_to works_path do
+        = link_to works_path, 'analytics-on' => 'click', 'analytics-event' => '見つける', 'analytics-category' => 'navbar' do
           i.fa.fa-search
           .caption
             = t('titles.works.index')
-        = link_to user_path(current_user.username) do
+        = link_to user_path(current_user.username), 'analytics-on' => 'click', 'analytics-event' => 'プロフィール', 'analytics-category' => 'navbar' do
           i.fa.fa-user
           .caption
             = t('titles.profile')
       - else
-        = link_to works_path do
+        = link_to works_path, 'analytics-on' => 'click', 'analytics-event' => '見つける', 'analytics-category' => 'navbar' do
           i.fa.fa-search
           .caption
             = t('titles.works.index')
-        = link_to root_path do
+        = link_to root_path, 'analytics-on' => 'click', 'analytics-event' => 'ログイン', 'analytics-category' => 'navbar' do
           i.fa.fa-power-off
           .caption
             = t('words.signin')
     - if user_signed_in?
-      .dropdown
+      .dropdown analytics-on='click' analytics-event='メニュー' analytics-category='navbar'
         a.dropdown-toggle href='#' data-toggle='dropdown'
           i.fa.fa-bars
             - if user_signed_in? && current_user.notifications_count > 0

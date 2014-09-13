@@ -18,10 +18,11 @@
         = check_box_tag 'checkin[facebook_share]'
         = t('checkins.facebook_share')
   .checkin-button.text-center
-    = f.button class: 'btn btn-primary' do
-      - if checkin.new_record?
+    - if checkin.new_record?
+      = f.button class: 'btn btn-primary', 'analytics-on' => 'click', 'analytics-event' => 'チェックイン作成', 'analytics-category' => 'checkins' do
         i.fa.fa-check
         = t('checkins.save')
-      - else
+    - else
+      = f.button class: 'btn btn-primary', 'analytics-on' => 'click', 'analytics-event' => 'チェックイン更新', 'analytics-category' => 'checkins' do
         i.fa.fa-edit
         = t('words.update')
