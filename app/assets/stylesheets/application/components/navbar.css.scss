@@ -39,15 +39,20 @@
     .shortcuts {
       -webkit-padding-start: 0;
       float: left;
-      margin: 0 5px;
+      margin-left: 5px;
       padding: 5px 0;
 
       a {
         color: #ffffff;
         display: inline-block;
-        margin-right: 3px;
         text-align: center;
-        width: 65px;
+        width: 50px;
+        @if $browser == pc {
+          margin-right: 8px;
+        }
+        @if $browser == mobile {
+          margin-right: 5px;
+        }
 
         &:hover {
           text-decoration: none;
@@ -63,14 +68,13 @@
     .dropdown {
       float: right;
       line-height: 20px;
-      padding: 14px 15px;
 
       a.dropdown-toggle {
         color: #ffffff;
         text-decoration: none;
 
         i {
-          margin-left: 7px;
+          padding: 17px 15px;
           position: relative;
 
           .notifications-count {

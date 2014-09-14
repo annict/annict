@@ -148,8 +148,8 @@ ja:
     saved: プロフィールを保存しました
   programs:
     channel_list: チャンネル一覧ページ
-    no_program: 番組情報はありません
-    please_set_channel_html: 'チャンネルの設定をしていない場合は、%{channels_link} から、普段見ているチャンネルの設定をお願いします。'
+    no_program: 表示できる番組はありません
+    please_set_channel_html: '<p>普段見ているテレビのチャンネルをAnnictに教えると、ここにそのチャンネルで放送されるアニメが表示されます。</p><p>チャンネルの設定をしていない場合は、%{channels_link}からお願いします。</p>'
   registrations:
     create:
       confirmation_mail_has_sent: メールアドレス確認用のメールを送信しました
@@ -167,7 +167,8 @@ ja:
     friends: '%{provider_name}の友達'
     notifications: 通知
     privacy: プライバシーポリシー
-    profile: プロフィール
+    account: アカウント
+    program: 放送予定
     setting: 設定
     terms: 利用規約
     timeline: タイムライン
@@ -210,7 +211,7 @@ ja:
     popular: 人気
     previous_season: 前期
     profile: プロフィール
-    program: 番組情報
+    program: 放送予定
     recommend: オススメ
     save: 保存する
     search: 検索
