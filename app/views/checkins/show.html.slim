@@ -1,5 +1,4 @@
 = content_for :site_page_title, "#{t('checkins.page_title', username: @checkin.user.username)}"
-= content_for :welcome_to_annict, render('welcome_to_annict') unless user_signed_in?
 
 = render 'works/work_profile_light', work: @work, episode: @episode
 
@@ -9,6 +8,9 @@ hr
   = render 'checkins/checkin', checkin: @checkin
 
 hr
+
+- unless user_signed_in?
+  = render('welcome_to_annict')
 
 .container
   - if user_signed_in?
