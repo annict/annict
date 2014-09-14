@@ -71,22 +71,22 @@
 
       a.dropdown-toggle {
         color: #ffffff;
+        position: relative;
         text-decoration: none;
 
         i {
           padding: 17px 15px;
-          position: relative;
+        }
 
-          .notifications-count {
-            background-color: $color-mizuho;
-            border-radius: 10px;
-            font-size: 12px;
-            left: 50%;
-            line-height: 1;
-            padding: 1px 4px;
-            position: absolute;
-            top: -80%;
-          }
+        .notifications-count {
+          background-color: $color-mizuho;
+          border-radius: 10px;
+          font-size: 12px;
+          left: 50%;
+          line-height: 1;
+          padding: 2px 4px;
+          position: absolute;
+          top: -60%;
         }
       }
 
