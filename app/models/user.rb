@@ -72,6 +72,10 @@ class User < ActiveRecord::Base
     latest_statuses.with_kind(:wanna_watch, :watching)
   end
 
+  def status(work)
+    latest_statuses.find_by(work_id: work.id)
+  end
+
   def watching_works
     Work.joins(:statuses).merge(watching_statuses)
   end
@@ -119,10 +123,6 @@ class User < ActiveRecord::Base
     end
 
     self
-  end
-
-  def status(work)
-    statuses.where(work_id: work.id).last
   end
 
   def following?(user)

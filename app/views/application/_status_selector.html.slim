@@ -5,4 +5,4 @@
   span us-spinner="{ color: '#{spinner_color}', lines: 8, length: 3, radius: 3, width: 1, zIndex: 1 }" spinner-key="saving-status-kind-#{work.id}"
   i.fa.fa-check-circle ng-show='showCircle'
 select.ani-status-selector data-work-id="#{work.id}" data-status-kind="#{status_kind}" data-mini-selector="#{mini}"
-  = options_for_select(Status.kind.options.insert(0, t('statuses.no_select')), status_kind)
+  = options_for_select(Status.kind.options.insert(0, [t('statuses.no_select'), 'no_select']), status_kind)
