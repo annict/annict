@@ -98,12 +98,14 @@ ActiveRecord::Schema.define(version: 20140907135553) do
   add_index "comments", ["user_id"], name: "comments_user_id_idx", using: :btree
 
   create_table "cover_images", force: true do |t|
-    t.integer  "work_id",    null: false
-    t.string   "file_name",  null: false
-    t.string   "location",   null: false
+    t.integer  "work_id",                null: false
+    t.string   "file_name",  limit: 510, null: false
+    t.string   "location",   limit: 510, null: false
     t.datetime "created_at"
     t.datetime "updated_at"
   end
+
+  add_index "cover_images", ["work_id"], name: "cover_images_work_id_idx", using: :btree
 
   create_table "episodes", force: true do |t|
     t.integer  "work_id",                                null: false
@@ -266,12 +268,12 @@ ActiveRecord::Schema.define(version: 20140907135553) do
   add_index "statuses", ["work_id"], name: "statuses_work_id_idx", using: :btree
 
   create_table "twitter_bots", force: true do |t|
-    t.string   "name",       null: false
+    t.string   "name",       limit: 510, null: false
     t.datetime "created_at"
     t.datetime "updated_at"
   end
 
-  add_index "twitter_bots", ["name"], name: "index_twitter_bots_on_name", unique: true, using: :btree
+  add_index "twitter_bots", ["name"], name: "twitter_bots_name_key", unique: true, using: :btree
 
   create_table "users", force: true do |t|
     t.string   "username",             limit: 510,              null: false

@@ -6,6 +6,7 @@ gem 'rails', '4.1.5'
 
 gem 'action_args'
 gem 'activerecord-session_store'
+gem 'annotate'
 gem 'asset_sync'
 gem 'bootstrap-sass'
 gem 'bourbon', '3.2.3' # sass-railsがsass 3.3系をサポートするまで3系を使用する
