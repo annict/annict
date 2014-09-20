@@ -19,13 +19,13 @@ dl.dl-horizontal
   dd = @work.media_text
 
   dt 公式サイト
-  dd = @work.official_site_url
+  dd = link_to @work.official_site_url, @work.official_site_url, target: '_blank'
 
   dt Wikipedia
-  dd = @work.wikipedia_url
+  dd = link_to @work.wikipedia_url, @work.wikipedia_url, target: '_blank'
 
   dt 公式Twitter
-  dd = @work.twitter_url
+  dd = link_to @work.twitter_url, @work.twitter_url, target: '_blank'
 
   dt ハッシュタグ
   dd = @work.twitter_hashtag
@@ -38,3 +38,6 @@ dl.dl-horizontal
 
   dt 放送中
   dd = @work.on_air? ? '放送中' : '-'
+
+  dt しょぼかるからデータを
+  dd = @work.fetch_syobocal? ? '取得する' : '取得しない'
