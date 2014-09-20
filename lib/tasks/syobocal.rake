@@ -106,7 +106,7 @@ namespace :syobocal do
         else
           episode = work.episodes.create do |e|
             e.number      = "##{count}"
-            e.sort_number = work.episodes.count + 1
+            e.sort_number = (work.episodes.count + 1) * 10
             e.sc_count    = count
             e.title       = title
           end

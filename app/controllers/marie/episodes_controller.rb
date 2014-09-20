@@ -25,10 +25,10 @@ class Marie::EpisodesController < Marie::ApplicationController
       title = ary[1].gsub("__double_quote__", '"') if ary[1].present?
       [ary[0], title]
     end
-    sort_number = @work.episodes.size
+    sort_number = @work.episodes.count
 
     episodes.each do |episode|
-      sort_number += 1
+      sort_number = (sort_number + 1) * 10
       @work.episodes.create(number: episode[0], sort_number: sort_number, title: episode[1])
     end
 
