@@ -33,6 +33,35 @@
     width: 120px;
   }
 
+  .ani-status-selector-spinner {
+    .spinner {
+      @if $browser == pc {
+        left: 170px !important;
+        top: 266px !important;
+      }
+      @if $browser == mobile {
+        left: 80px !important;
+        top: 192px !important;
+      }
+    }
+
+    i {
+      color: $btn-success-bg;
+      font-size: 17px;
+      position: absolute;
+      z-index: 2;
+
+      @if $browser == pc {
+        left: 163px;
+        top: 259px;
+      }
+      @if $browser == mobile {
+        left: 73px;
+        top: 184px;
+      }
+    }
+  }
+
   .welcome-to-annict {
     margin-top: 15px;
   }

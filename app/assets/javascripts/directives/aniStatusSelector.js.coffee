@@ -17,9 +17,9 @@ Annict.angular.directive 'aniStatusSelector', ->
         statusKinds = ['wanna_watch', 'watching', 'watched', 'stop_watching']
 
         if data.prevStatusKind != data.statusKind && _.contains(statusKinds, data.statusKind)
-          usSpinnerService.spin('saving-status-kind')
+          $scope.$emit('showSpinner')
 
           $http.post("/works/#{data.workId}/statuses/select", status_kind: data.statusKind).success ->
             $scope.statusKind = data.statusKind
             $analytics.eventTrack('ステータス変更', { category: 'statuses', label: $scope.statusKind })
-            usSpinnerService.stop('saving-status-kind')
+            $scope.$emit('hideSpinner')
