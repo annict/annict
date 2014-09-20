@@ -4,7 +4,7 @@
   .pull-left
     h1
       = link_to @work.title, marie_work_path(@work)
-      |  > 
+      |  >
       | エピソード一覧
 
   .pull-right
@@ -22,6 +22,8 @@ table.table.table-striped
       th = t('activerecord.attributes.episode.number')
       th = t('activerecord.attributes.episode.title')
       th = t('activerecord.attributes.episode.single')
+      th 編集
+      th 削除
   tbody
     - @episodes.each do |episode|
       tr
@@ -31,3 +33,4 @@ table.table.table-striped
         td = episode.title
         td = episode.single? ? '○' : '×'
         td = link_to t('words.edit'), edit_marie_work_episode_path(@work, episode)
+        td = link_to t('words.delete'), marie_work_episode_path(@work, episode), data: { method: :delete, confirm: 'OK?' }

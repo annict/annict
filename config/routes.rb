@@ -34,7 +34,7 @@ Annict::Application.routes.draw do
     resources :works do
       get :on_air, on: :collection
 
-      resources :episodes, only: [:index, :edit, :update] do
+      resources :episodes, only: [:index, :edit, :update, :destroy] do
         collection do
           get  :new_from_csv
           post :create_from_csv

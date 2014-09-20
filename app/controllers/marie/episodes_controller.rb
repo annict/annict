@@ -3,8 +3,8 @@ require 'csv'
 class Marie::EpisodesController < Marie::ApplicationController
   permits :number, :sort_number, :title, :single
 
-  before_filter :set_work, only: [:index, :edit, :update, :new_from_csv, :create_from_csv]
-  before_filter :set_episode, only: [:edit, :update]
+  before_filter :set_work, only: [:index, :edit, :update, :destroy, :new_from_csv, :create_from_csv]
+  before_filter :set_episode, only: [:edit, :update, :destroy]
 
 
   def index
@@ -33,6 +33,11 @@ class Marie::EpisodesController < Marie::ApplicationController
     end
 
     redirect_to marie_work_episodes_path(@work)
+  end
+
+  def destroy
+    @episode.destroy
+    redirect_to marie_work_episodes_path(@work), notice: 'エピソードを削除しました'
   end
 
 
