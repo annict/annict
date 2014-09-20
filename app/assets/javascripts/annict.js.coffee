@@ -20,7 +20,3 @@ Annict.angular.config ($httpProvider) ->
 # Moment.jsを日本語で使う
 # http://momentjs.com/docs/#/i18n/changing-language/
 moment.lang('ja')
-
-$ ->
-  # http://wicky.nillia.ms/headroom.js/
-  $('nav').headroom(tolerance: 10)

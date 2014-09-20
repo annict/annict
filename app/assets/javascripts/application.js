@@ -14,9 +14,7 @@
 //= require jquery.easydropdown.min
 //= require moment-with-langs.min
 //= require ng-infinite-scroll.min
-//= require headroom.min
 //= require jquery.easing.1.3
-//= require jQuery.headroom.min
 
 //= require_self
 
