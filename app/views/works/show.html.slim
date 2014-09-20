@@ -56,38 +56,26 @@
     .info
       dt = t('activerecord.attributes.work.media')
       dd = @work.media.text
-    .info
-      dt = t('activerecord.attributes.work.official_site_url')
-      dd
-        - if @work.official_site_url.present?
-          = link_to @work.official_site_url, @work.official_site_url, target: '_blank'
-        - else
-          | -
-    .info
-      dt
-        = t('activerecord.attributes.work.wikipedia_url')
-      dd
-        - if @work.wikipedia_url.present?
-          = link_to t('words.wikipedia'), @work.wikipedia_url, target: '_blank'
-        - else
-          | -
-    .info
-      dt = t('activerecord.attributes.work.twitter_username')
-      dd
-        - if@work.twitter_username.present?
-          = link_to "@#{@work.twitter_username}", @work.twitter_url, target: '_blank'
-        - else
-          | -
-    .info
-      dt = t('activerecord.attributes.work.twitter_hashtag')
-      dd
-        - if@work.twitter_hashtag.present?
-          = link_to @work.twitter_hashtag, @work.twitter_hashtag_url, target: '_blank'
-        - else
-          | -
-    .info
-      dt = t('activerecord.attributes.work.released_at')
-      dd = @work.released_at
+    - if @work.official_site_url.present?
+      .info
+        dt = t('activerecord.attributes.work.official_site_url')
+        dd = link_to @work.official_site_url, @work.official_site_url, target: '_blank'
+    - if @work.wikipedia_url.present?
+      .info
+        dt = t('activerecord.attributes.work.wikipedia_url')
+        dd = link_to t('words.wikipedia'), @work.wikipedia_url, target: '_blank'
+    - if@work.twitter_username.present?
+      .info
+        dt = t('activerecord.attributes.work.twitter_username')
+        dd = link_to "@#{@work.twitter_username}", @work.twitter_url, target: '_blank'
+    - if@work.twitter_hashtag.present?
+      .info
+        dt = t('activerecord.attributes.work.twitter_hashtag')
+        dd = link_to @work.twitter_hashtag, @work.twitter_hashtag_url, target: '_blank'
+    - @work.released_at.present?
+      .info
+        dt = t('activerecord.attributes.work.released_at')
+        dd = @work.released_at
 
 hr
 
