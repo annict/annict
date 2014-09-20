@@ -21,14 +21,14 @@
     .shortcuts {
       -webkit-padding-start: 0;
       float: left;
-      margin-left: 5px;
+      margin-left: 4px;
       padding: 6px 0 5px 0;
 
       a {
         color: #ffffff;
         display: inline-block;
         text-align: center;
-        width: 50px;
+        width: 51px;
         @if $browser == pc {
           margin-right: 8px;
         }
