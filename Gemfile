@@ -57,9 +57,6 @@ end
 group :development do
   gem 'aws-sdk'
   gem 'bullet'
-  gem 'capistrano'
-  gem 'capistrano-rails'
-  gem 'capistrano-rbenv'
   gem 'letter_opener'
   gem 'quiet_assets'
   gem 'spring-commands-rspec', require: false
