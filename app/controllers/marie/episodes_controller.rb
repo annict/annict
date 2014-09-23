@@ -28,8 +28,9 @@ class Marie::EpisodesController < Marie::ApplicationController
     sort_number = @work.episodes.count
 
     episodes.each do |episode|
-      sort_number = (sort_number + 1) * 10
-      @work.episodes.create(number: episode[0], sort_number: sort_number, title: episode[1])
+      sort_number += 1
+      new_sort_number = sort_number * 10
+      @work.episodes.create(number: episode[0], sort_number: new_sort_number, title: episode[1])
     end
 
     redirect_to marie_work_episodes_path(@work)
