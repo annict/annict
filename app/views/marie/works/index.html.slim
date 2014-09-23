@@ -8,6 +8,8 @@ ul.nav.nav-tabs
     = link_to t('words.on_air'), on_air_marie_works_path
   li class="#{'active' if current_page?(season: ENV['ANNICT_CURRENT_SEASON'])}"
     = link_to t('words.current_season'), marie_works_path(season: ENV['ANNICT_CURRENT_SEASON'])
+  li class="#{'active' if current_page?(season: ENV['ANNICT_NEXT_SEASON'])}"
+    = link_to t('words.next_season'), marie_works_path(season: ENV['ANNICT_NEXT_SEASON'])
   li class="#{'active' if current_page?(season: ENV['ANNICT_PREVIOUS_SEASON'])}"
     = link_to t('words.previous_season'), marie_works_path(season: ENV['ANNICT_PREVIOUS_SEASON'])
 
