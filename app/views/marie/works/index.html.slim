@@ -22,6 +22,7 @@ table.table.table-striped
     tr
       th = t('activerecord.attributes.work.id')
       th = t('activerecord.attributes.work.title')
+      th = t('activerecord.attributes.work.sc_tid')
       th Watchers
       th = t('activerecord.attributes.work.released_at')
       th 放送中
@@ -34,6 +35,7 @@ table.table.table-striped
       tr
         td = work.id
         td = link_to work.title, marie_work_path(work)
+        td = work.sc_tid
         td = work.watchers_count
         td = work.released_at.presence || '-'
         td = work.on_air? ? '放送中' : '-'
