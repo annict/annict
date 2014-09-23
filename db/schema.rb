@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20140907135553) do
+ActiveRecord::Schema.define(version: 20140923115945) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -276,12 +276,12 @@ ActiveRecord::Schema.define(version: 20140907135553) do
   add_index "twitter_bots", ["name"], name: "twitter_bots_name_key", unique: true, using: :btree
 
   create_table "users", force: true do |t|
-    t.string   "username",             limit: 510,              null: false
-    t.string   "email",                limit: 510,              null: false
-    t.integer  "role",                                          null: false
-    t.string   "encrypted_password",   limit: 510, default: "", null: false
+    t.string   "username",             limit: 510,                 null: false
+    t.string   "email",                limit: 510,                 null: false
+    t.integer  "role",                                             null: false
+    t.string   "encrypted_password",   limit: 510, default: "",    null: false
     t.datetime "remember_created_at"
-    t.integer  "sign_in_count",                    default: 0,  null: false
+    t.integer  "sign_in_count",                    default: 0,     null: false
     t.datetime "current_sign_in_at"
     t.datetime "last_sign_in_at"
     t.string   "current_sign_in_ip",   limit: 510
@@ -290,10 +290,11 @@ ActiveRecord::Schema.define(version: 20140907135553) do
     t.datetime "confirmed_at"
     t.datetime "confirmation_sent_at"
     t.string   "unconfirmed_email",    limit: 510
-    t.integer  "checkins_count",                   default: 0,  null: false
-    t.integer  "notifications_count",              default: 0,  null: false
+    t.integer  "checkins_count",                   default: 0,     null: false
+    t.integer  "notifications_count",              default: 0,     null: false
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.boolean  "share_checkin",                    default: false
   end
 
   add_index "users", ["confirmation_token"], name: "users_confirmation_token_key", unique: true, using: :btree

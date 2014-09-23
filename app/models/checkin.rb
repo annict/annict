@@ -38,6 +38,7 @@ class Checkin < ActiveRecord::Base
   after_destroy :delete_activity
   after_save    :share_to_twitter
   after_save    :share_to_facebook
+  after_save    :update_share_checkin_status
   before_update :check_comment_modified
 
 
@@ -48,6 +49,7 @@ class Checkin < ActiveRecord::Base
   def work
     episode.work
   end
+
 
   private
 
@@ -75,5 +77,13 @@ class Checkin < ActiveRecord::Base
 
   def check_comment_modified
     self.modify_comment = true if comment_changed?
+  end
+
+  def update_share_checkin_status
+    if twitter_share.present? || facebook_share.present?
+      user.update_column(:share_checkin, true) unless user.share_checkin?
+    else
+      user.update_column(:share_checkin, false) if user.share_checkin?
+    end
   end
 end

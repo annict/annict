@@ -10,12 +10,12 @@
   - if current_user.authorized_to?(:twitter)
     .checkbox
       label
-        = check_box_tag 'checkin[twitter_share]'
+        = check_box_tag 'checkin[twitter_share]', 1, current_user.share_checkin?
         = t('checkins.twitter_share')
   - if current_user.authorized_to?(:facebook)
     .checkbox
       label
-        = check_box_tag 'checkin[facebook_share]'
+        = check_box_tag 'checkin[facebook_share]', 1, current_user.share_checkin?
         = t('checkins.facebook_share')
   .checkin-button.text-center
     - if checkin.new_record?

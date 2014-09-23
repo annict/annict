@@ -21,6 +21,7 @@
 #  notifications_count  :integer          default(0), not null
 #  created_at           :datetime
 #  updated_at           :datetime
+#  share_checkin        :boolean          default(FALSE)
 #
 # Indexes
 #
