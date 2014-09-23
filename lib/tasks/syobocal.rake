@@ -5,7 +5,6 @@ namespace :syobocal do
     [
       :save_channel_groups,
       :save_channels,
-      :save_sc_tid_on_works,
       :save_programs
     ].each do |task_name|
       puts "============== #{task_name} =============="
@@ -48,27 +47,6 @@ namespace :syobocal do
         end
       else
         puts 'new!!'
-      end
-    end
-  end
-
-  task save_sc_tid_on_works: :environment do
-    doc = Nokogiri::XML(open('http://cal.syoboi.jp/db.php?Command=TitleLookup&TID=*&Fields=TID,Title,Cat'))
-    doc.css('TitleItem').each do |item|
-      tid      = item.xpath('TID').text.to_i
-      title    = item.xpath('Title').text
-      # タイトルのカテゴリ値 https://sites.google.com/site/syobocal/spec/title-cat
-      category = item.xpath('Cat').text.to_i
-
-      # アニメ、アニメ(終了/再放送)、OVA、映画だったら
-      if [1, 10, 7, 8].include?(category)
-        work = Work.find_by(title: title)
-
-        if work.present? && work.sc_tid.blank?
-          work.update_column(:sc_tid, tid)
-
-          puts "workを更新しました。#{work.title}: #{work.sc_tid}"
-        end
       end
     end
   end
