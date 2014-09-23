@@ -38,6 +38,7 @@ Annict::Application.routes.draw do
         collection do
           get  :new_from_csv
           post :create_from_csv
+          post :update_sort_number
         end
       end
 

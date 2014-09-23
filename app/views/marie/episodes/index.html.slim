@@ -8,6 +8,7 @@
       | エピソード一覧
 
   .pull-right
+    = link_to 'ソート番号再設定', update_sort_number_marie_work_episodes_path(@work), class: 'btn btn-default', data: { method: :post, confirm: '再設定しますか?' }
     = link_to 'CSVから作成', new_from_csv_marie_work_episodes_path(@work), class: 'btn btn-default'
 
 .clearfix

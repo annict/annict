@@ -3,20 +3,13 @@ require 'csv'
 class Marie::EpisodesController < Marie::ApplicationController
   permits :number, :sort_number, :title, :single
 
-  before_filter :set_work, only: [:index, :edit, :update, :destroy, :new_from_csv, :create_from_csv]
+  before_filter :set_work, only: [:index, :edit, :update, :update_sort_number,
+    :destroy, :new_from_csv, :create_from_csv]
   before_filter :set_episode, only: [:edit, :update, :destroy]
 
 
   def index
     @episodes = @work.episodes.order(:sort_number)
-  end
-
-  def update(episode)
-    if @episode.update_attributes(episode)
-      redirect_to marie_work_episodes_path(@work)
-    else
-      render 'edit'
-    end
   end
 
   def create_from_csv(episodes)
@@ -31,6 +24,23 @@ class Marie::EpisodesController < Marie::ApplicationController
       sort_number += 1
       new_sort_number = sort_number * 10
       @work.episodes.create(number: episode[0], sort_number: new_sort_number, title: episode[1])
+    end
+
+    redirect_to marie_work_episodes_path(@work)
+  end
+
+  def update(episode)
+    if @episode.update_attributes(episode)
+      redirect_to marie_work_episodes_path(@work)
+    else
+      render 'edit'
+    end
+  end
+
+  def update_sort_number
+    episodes = @work.episodes.order(:sort_number)
+    episodes.each_with_index do |episode, i|
+      episode.update_column(:sort_number, (i + 1) * 10)
     end
 
     redirect_to marie_work_episodes_path(@work)
