@@ -26,7 +26,7 @@
 #
 
 class Checkin < ActiveRecord::Base
-  attr_accessor :facebook_share, :twitter_share
+  attr_accessor :facebook_share, :twitter_share, :request_from_sns
 
   belongs_to :episode,  counter_cache: true
   belongs_to :user,     counter_cache: true
@@ -80,10 +80,12 @@ class Checkin < ActiveRecord::Base
   end
 
   def update_share_checkin_status
-    if twitter_share.present? || facebook_share.present?
-      user.update_column(:share_checkin, true) unless user.share_checkin?
-    else
-      user.update_column(:share_checkin, false) if user.share_checkin?
+    if !request_from_sns
+      if (twitter_share.present? || facebook_share.present?)
+        user.update_column(:share_checkin, true) unless user.share_checkin?
+      else
+        user.update_column(:share_checkin, false) if user.share_checkin?
+      end
     end
   end
 end

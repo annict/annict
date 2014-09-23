@@ -57,7 +57,7 @@ class CheckinsController < ApplicationController
   def redirect(provider, url_hash)
     if 'tw' == provider
       checkin = Checkin.find_by!(twitter_url_hash: url_hash)
-      checkin.twitter_share = true
+      checkin.request_from_sns = true
 
       bots = TwitterBot.pluck(:name)
       no_bots = bots.map { |bot| request.user_agent.present? && !request.user_agent.include?(bot) }
@@ -66,7 +66,7 @@ class CheckinsController < ApplicationController
       redirect_to work_episode_checkin_path(checkin.episode.work, checkin.episode, checkin)
     elsif 'fb' == provider
       checkin = Checkin.find_by!(facebook_url_hash: url_hash)
-      checkin.facebook_share = true
+      checkin.request_from_sns = true
       checkin.increment!(:facebook_click_count)
 
       redirect_to work_episode_checkin_path(checkin.episode.work, checkin.episode, checkin)
