@@ -5,6 +5,9 @@
     = f.label :season_id
     = f.select :season_id, options_from_collection_for_select(Season.all, :id, :name, work.season_id), prompt: '', class: 'form-control'
   .form-group
+    = f.label :sc_tid
+    = f.text_field :sc_tid, class: 'form-control'
+  .form-group
     = f.label :title
     = f.text_field :title, class: 'form-control', autofocus: true
   .form-group

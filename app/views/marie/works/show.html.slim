@@ -12,6 +12,9 @@ dl.dl-horizontal
   dt シーズン
   dd = @work.season.try(:name).presence || '-'
 
+  dt しょぼかるID
+  dd = @work.sc_tid
+
   dt タイトル
   dd = @work.title
 
