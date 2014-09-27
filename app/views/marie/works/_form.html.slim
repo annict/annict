@@ -30,7 +30,7 @@
     = f.text_field :released_at, class: 'form-control'
   .form-group
     = f.label :nicoch_started_at
-    = f.text_field :nicoch_started_at, class: 'form-control'
+    = f.datetime_select :nicoch_started_at, class: 'form-control', prompt: true
   .checkbox
     = f.label :on_air do
       = f.check_box :on_air

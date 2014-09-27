@@ -36,6 +36,10 @@ class Marie::WorksController < Marie::ApplicationController
     end
   end
 
+  def edit
+    @work.nicoch_started_at = @work.nicoch_started_at.try(:+, (Time.now.utc_offset))
+  end
+
   def update(work)
     if @work.update_attributes(clean(work))
       redirect_to marie_work_path(@work)
