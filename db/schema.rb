@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20140923115945) do
+ActiveRecord::Schema.define(version: 20140927222132) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -53,10 +53,10 @@ ActiveRecord::Schema.define(version: 20140923115945) do
   add_index "channel_works", ["work_id"], name: "channel_works_work_id_idx", using: :btree
 
   create_table "channels", force: true do |t|
-    t.integer  "channel_group_id",             null: false
-    t.integer  "sc_chid",                      null: false
-    t.string   "name",             limit: 510, null: false
-    t.boolean  "published",                    null: false
+    t.integer  "channel_group_id",                            null: false
+    t.integer  "sc_chid",                                     null: false
+    t.string   "name",             limit: 510,                null: false
+    t.boolean  "published",                    default: true, null: false
     t.datetime "created_at"
     t.datetime "updated_at"
   end
