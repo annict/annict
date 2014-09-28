@@ -21,5 +21,6 @@
 //= require annict
 //= require_tree ./config
 //= require_tree ./directives
+//= require_tree ./filters
 //= require_tree ./services
 //= require_tree ./controllers

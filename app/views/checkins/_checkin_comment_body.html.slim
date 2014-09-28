@@ -4,7 +4,7 @@
       i.fa.fa-exclamation
       - action = browser.mobile? ? t('words.tap') : t('words.click')
       = t('checkins.spoil_comment', action: action)
-    .body ng-show='!display'
+    .body.ani-simple-format ng-show='!display'
       = checkin.comment
 - else
   .checkin-comment ng-controller='CheckinCommentCtrl' ng-init="init(activity.links.checkin.spoil)"
@@ -12,5 +12,4 @@
       i.fa.fa-exclamation
       - action = browser.mobile? ? t('words.tap') : t('words.click')
       = t('checkins.spoil_comment', action: action)
-    .body ng-show='!display'
-      | {{activity.links.checkin.comment}}
+    .body ng-show='!display' ng-bind-html='activity.links.checkin.comment | simpleFormat'
