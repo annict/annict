@@ -6,9 +6,8 @@ Annict::Application.routes.draw do
 
   devise_for :users,
               controllers: {
-                confirmations: :confirmations,
                 omniauth_callbacks: :callbacks,
-                registrations: 'registrations'
+                registrations: :registrations
               },
               path_names: { sign_out: 'signout' }
 
@@ -70,6 +69,8 @@ Annict::Application.routes.draw do
     delete :like, to: 'likes#comment_destroy'
     post   :like, to: 'likes#comment_create'
   end
+
+  resource :confirmation, only: [:show]
 
   resources :friends, only: [:index]
 

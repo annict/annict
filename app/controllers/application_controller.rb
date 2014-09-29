@@ -37,9 +37,8 @@ class ApplicationController < ActionController::Base
   end
 
   def store_flash_message
-    message = if flash[:notice].present?
-                { type: 'notice', body: flash[:notice] }
-              end
+    key = flash.keys.first
+    message = { type: key.to_s, body: flash[key] } if flash[key].present?
 
     gon.push(flash: message.presence || {})
   end

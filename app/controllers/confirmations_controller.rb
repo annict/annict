@@ -1,8 +1,11 @@
-class ConfirmationsController < Devise::ConfirmationsController
-  private
+class ConfirmationsController < ApplicationController
+  def show
+    user = User.confirm_by_token(params[:confirmation_token])
 
-  def after_confirmation_path_for(resource_name, resource)
-    sign_in(resource, bypass: true)
-    after_sign_in_path_for(resource)
+    if user.errors.empty?
+      redirect_to root_path, notice: t('confirmations.confirmed')
+    else
+      redirect_to root_path, danger: t('confirmations.failure')
+    end
   end
 end

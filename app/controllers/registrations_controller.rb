@@ -13,8 +13,10 @@ class RegistrationsController < Devise::RegistrationsController
     @user = User.new(user_params).build_relations(@oauth)
 
     if @user.save
+      sign_in(@user, bypass: true)
+
       flash[:info] = t('registrations.create.confirmation_mail_has_sent')
-      respond_with @user, location: root_path
+      redirect_to after_sign_in_path_for(@user)
     else
       render 'new'
     end

@@ -31,11 +31,15 @@
 #
 
 class User < ActiveRecord::Base
+  # registrations#createが実行されたあとメールアドレスの確認を挟まず
+  # ログインできるようにするため、Confirmableモジュールを直接includeする
+  include Devise::Models::Confirmable
+
   extend Enumerize
 
   # Include default devise modules. Others available are:
-  # :lockable, :timeoutable, :recoverable, :rememberable
-  devise :confirmable, :database_authenticatable, :omniauthable, :registerable,
+  # :confirmable, :lockable, :timeoutable, :recoverable, :rememberable
+  devise :database_authenticatable, :omniauthable, :registerable,
          :trackable, omniauth_providers: [:facebook, :twitter]
 
   enumerize :role, in: { people: 0, admin: 1, editor: 2 }, default: :people

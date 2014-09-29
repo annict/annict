@@ -12,8 +12,10 @@ Annict.angular.controller 'FlashCtrl', ($scope, $timeout) ->
   $scope.$on 'renderFlash', (evnet, data) ->
     $scope.type = switch data.type
       when 'notice' then 'alert-success'
+      when 'info' then 'alert-info'
     $scope.iconType = switch data.type
       when 'notice' then 'fa-check-circle'
+      when 'info' then 'fa-info-circle'
 
     $scope.body      = data.body
     $scope.display   = true
