@@ -62,6 +62,8 @@ GEM
     bullet (4.13.0)
       activesupport (>= 3.0.0)
       uniform_notifier (>= 1.6.0)
+    by_star (2.2.1)
+      activesupport
     byebug (2.7.0)
       columnize (~> 0.3)
       debugger-linecache (~> 1.2)
@@ -468,6 +470,7 @@ DEPENDENCIES
   browser
   bugsnag
   bullet
+  by_star
   capybara
   coffee-rails
   coveralls
