@@ -1,15 +1,17 @@
 class WorksController < ApplicationController
-  before_filter :set_work, only: [:show, :edit, :update]
-  before_filter :authenticate_user!, only: [:recommend]
+  before_action :authenticate_user!, only: [:recommend]
 
-
-  def index(page)
-    @works = Work.on_air.order(released_at: :desc).page(page)
+  def index
+    redirect_to on_air_works_path
   end
 
-  def popular(page, filter)
-    @works = ('on_air' == filter) ? Work.where(on_air: true) : Work
-    @works = @works.order(watchers_count: :desc).page(page)
+  def on_air(page)
+    @works = Work.on_air.order(watchers_count: :desc).page(page)
+    render :index
+  end
+
+  def popular(page)
+    @works = Work.order(watchers_count: :desc).page(page)
     render :index
   end
 
@@ -22,11 +24,12 @@ class WorksController < ApplicationController
   end
 
   def season(page, name)
-    @works = Work.by_season(name).order(released_at: :desc).page(page)
+    @works = Work.by_season(name).order(watchers_count: :desc).page(page)
     render :index
   end
 
   def show
+    @work = Work.find(params[:id])
     @status = current_user.status(@work) if user_signed_in?
   end
 
@@ -38,12 +41,5 @@ class WorksController < ApplicationController
     else
       Work.none
     end
-  end
-
-
-  private
-
-  def set_work
-    @work = Work.find(params[:id])
   end
 end

@@ -1,16 +1,3 @@
-- if 'popular' == params[:action]
-  .btn-group-tab
-    .btn-group.btn-group-sm
-      = link_to t('words.on_air'), popular_works_path(filter: 'on_air'), class: "btn btn-default #{params[:filter].present? ? 'active' : ''}"
-      = link_to t('words.all'), popular_works_path, class: "btn btn-default #{params[:filter].blank? ? 'active' : ''}"
-
-- if 'season' == params[:action]
-  .btn-group-tab
-    .btn-group.btn-group-sm
-      = link_to t('words.current_season'), season_works_path(name: ENV['ANNICT_CURRENT_SEASON']), class: "btn btn-default #{params[:name] == ENV['ANNICT_CURRENT_SEASON'] ? 'active' : ''}"
-      = link_to t('words.previous_season'), season_works_path(name: ENV['ANNICT_PREVIOUS_SEASON']), class: "btn btn-default #{params[:name] == ENV['ANNICT_PREVIOUS_SEASON'] ? 'active' : ''}"
-      = link_to t('words.next_season'), season_works_path(name: ENV['ANNICT_NEXT_SEASON']), class: "btn btn-default #{params[:name] == ENV['ANNICT_NEXT_SEASON'] ? 'active' : ''}"
-
 - if works.present?
   .works-list
     - works.each do |work|
@@ -19,7 +6,7 @@
   .text-center
     = paginate works
 - else
-  - if ['index', 'works', 'recommend'].include?(params[:action]) || ('search' == params[:action] && params[:q].present?)
+  - if %w(season recommend).include?(params[:action]) || (params[:action] == 'search' && params[:q].present?)
     .info.well
       .icon
         i.fa.fa-info-circle
