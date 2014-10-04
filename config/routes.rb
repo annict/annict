@@ -43,6 +43,7 @@ Annict::Application.routes.draw do
       end
 
       resources :items
+      resources :programs, except: [:show]
     end
 
     root 'home#index'
