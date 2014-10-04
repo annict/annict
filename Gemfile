@@ -49,6 +49,7 @@ group :development, :test do
   gem 'hirb-unicode'
   gem 'hirb'
   gem 'pry-byebug'
+  gem 'pry-coolline'
   gem 'pry-rails'
   gem 'rails-flog', require: 'flog'
   gem 'rspec-rails'
