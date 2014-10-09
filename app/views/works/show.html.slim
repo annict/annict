@@ -1,4 +1,6 @@
-- content_for(:site_page_title, @work.title)
+- title @work.title
+- description meta_description("#{@work.title}を見たらAnnictに記録しよう！")
+- keywords meta_keywords([@work.title])
 
 .work-profile
   .work-image

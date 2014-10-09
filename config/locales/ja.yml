@@ -136,6 +136,8 @@ ja:
         catch_copy: 見たアニメを記録して、発見しよう
     no_timeline: 友達のアクティビティはありませんでした。
     no_timeline_find_friends_html: '「%{friends}」から友達を探すことができます。'
+  meta:
+    description: Annict (アニクト)は、見たアニメを記録することができるWebサービスです。
   notifications:
     comments_create_checkin_html: '%{action_username}が%{work_title}%{episode_number}への%{checkin}にコメントしました'
     follows_create_html: '%{action_username}があなたをフォローしました'
@@ -180,7 +182,6 @@ ja:
     works_user_action: 'が%{action}'
   users:
     no_activities: アクティビティはありません
-    page_title: '%{username}さんのプロフィール'
   views:
     pagination:
       first: 最初へ

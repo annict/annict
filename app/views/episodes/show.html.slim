@@ -1,4 +1,6 @@
-- content_for(:site_page_title, "#{@work.title} #{@episode.number}「#{@episode.title}」")
+- title "#{@work.title} 「#{@episode.title}」"
+- description meta_description("#{@work.title} #{@episode.number}の感想をチェック！")
+- keywords meta_keywords([@work.title, @episode.number, @episode.title])
 
 = render 'works/work_profile_light', work: @work, episode: @episode
 
