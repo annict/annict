@@ -17,23 +17,8 @@ module ApplicationHelper
     text + t('meta.description')
   end
 
-  def meta_keywords(keywords = [])
-    default_keywords = [
-      'annict',
-      'アニクト',
-      'アニメ',
-      '深夜アニメ',
-      '視聴記録',
-      '視聴管理',
-      '見た',
-      '観た',
-      '記録',
-      '管理',
-      '感想',
-      'sns',
-      'ソーシャル'
-    ]
-
+  def meta_keywords(*keywords)
+    default_keywords = t('meta.keywords').split(',')
     (keywords + default_keywords).join(',')
   end
 end

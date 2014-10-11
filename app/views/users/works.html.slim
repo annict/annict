@@ -1,5 +1,9 @@
 - action = t("enumerize.status.kind.#{params[:status_kind]}")
 
+- title "#{@user.profile.name} (@#{@user.username})さんが#{action}#{t('words.anime')}"
+- description meta_description("#{@user.profile.name}さんが#{action}#{t('words.anime')}をチェック！")
+- keywords meta_keywords(@user.profile.name, @user.username)
+
 h2
   span.username = link_to "@#{@user.username}", user_path(@user.username)
   = t('titles.works_user_action', action: action + t('words.works'))

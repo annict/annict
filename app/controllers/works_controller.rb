@@ -1,4 +1,6 @@
 class WorksController < ApplicationController
+  include ApplicationHelper
+
   before_action :authenticate_user!, only: [:recommend]
 
   def index
@@ -7,11 +9,21 @@ class WorksController < ApplicationController
 
   def on_air(page)
     @works = Work.on_air.order(watchers_count: :desc).page(page)
+
+    @page_title = '現在放送中のアニメ一覧'
+    @page_description = meta_description('現在放送中のアニメをチェック！')
+    @page_keywords = meta_keywords('放送中', '今期')
+
     render :index
   end
 
   def popular(page)
     @works = Work.order(watchers_count: :desc).page(page)
+
+    @page_title = '人気アニメ一覧'
+    @page_description = meta_description('Annictユーザに人気のアニメをチェック！')
+    @page_keywords = meta_keywords('人気', '評判')
+
     render :index
   end
 
@@ -20,11 +32,20 @@ class WorksController < ApplicationController
     @works = current_user.unknown_works.where(id: work_ids)
       .order(watchers_count: :desc)
       .page(page)
+
+    @page_title = "あなたにオススメのアニメ一覧"
+
     render :index
   end
 
   def season(page, name)
     @works = Work.by_season(name).order(watchers_count: :desc).page(page)
+
+    season = Season.find_by(slug: name)
+    @page_title = "#{season.name}アニメ一覧"
+    @page_description = meta_description("#{season.name}アニメをチェック！")
+    @page_keywords = meta_keywords(season.name, '人気', '評判')
+
     render :index
   end
 

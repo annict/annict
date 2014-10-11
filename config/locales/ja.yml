@@ -137,7 +137,8 @@ ja:
     no_timeline: 友達のアクティビティはありませんでした。
     no_timeline_find_friends_html: '「%{friends}」から友達を探すことができます。'
   meta:
-    description: Annict (アニクト)は、見たアニメを記録することができるWebサービスです。
+    description: Annict (アニクト)は、見たアニメを記録したり、見た感想を友達にシェアすることができるWebサービスです。「今どの作品を何話まで見ているんだっけ？」を解消します。
+    keywords: annict,アニクト,アニメ,深夜アニメ,視聴記録,視聴管理,見た,観た,記録,管理,感想,レビュー,sns,ソーシャル
   notifications:
     comments_create_checkin_html: '%{action_username}が%{work_title}%{episode_number}への%{checkin}にコメントしました'
     follows_create_html: '%{action_username}があなたをフォローしました'
@@ -146,7 +147,7 @@ ja:
     likes_create_status_html: '%{action_username}が%{work_title}のステータス変更に「いいね！」しました'
     no_notifications: 通知はありません。
   og:
-    description: Annictは、アニメの視聴記録をシェアできるWebサービスです。
+    description: Annict (アニクト)は、見たアニメを記録したり、見た感想を友達にシェアすることができるWebサービスです。
   profiles:
     saved: プロフィールを保存しました
   programs:
@@ -193,6 +194,7 @@ ja:
     activity: アクティビティ
     ago: 前
     all: 全て
+    anime: アニメ
     blog: ブログ
     cancel: キャンセル
     channel: チャンネル
