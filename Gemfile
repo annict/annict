@@ -60,7 +60,7 @@ end
 group :development do
   gem 'aws-sdk'
   gem 'bullet'
-  gem 'letter_opener'
+  gem 'letter_opener_web'
   gem 'quiet_assets'
   gem 'spring-commands-rspec', require: false
   gem 'spring'

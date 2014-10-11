@@ -1,0 +1,33 @@
+.container
+  h2 = t('words.account')
+
+  = form_for current_user, url: users_path, method: :patch do |f|
+    = render 'error_panel', resource: current_user
+
+    .form-group
+      = f.label :email
+      = f.text_field :email, class: 'form-control'
+    .form-submit
+      = f.submit class: 'btn btn-primary'
+
+  hr
+
+  h2 = t('words.profile')
+
+  = form_for current_user.profile, url: profile_path do |f|
+    = render 'error_panel', resource: current_user.profile
+
+    .form-group
+      = f.label :name
+      = f.text_field :name, class: 'form-control'
+    .form-group
+      = f.label :description
+      = f.text_field :description, class: 'form-control'
+    .form-group
+      = f.label :avatar
+      = f.file_field :avatar
+    .form-group
+      = f.label :background_image
+      = f.file_field :background_image
+    .form-submit
+      = f.submit class: 'btn btn-primary'

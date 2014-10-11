@@ -1,11 +1,9 @@
-.settings {
-  &.settings-edit, &.settings-update {
-    h2, .form-submit {
-      text-align: center;
-    }
+.settings-show, .profiles-update, .users-update {
+  h2, .form-submit {
+    text-align: center;
+  }
 
-    .form-submit {
-      margin-top: 20px;
-    }
+  .form-submit {
+    margin-top: 20px;
   }
 }

@@ -1,15 +1,22 @@
 Annict::Application.routes.draw do
+  if Rails.env.development?
+    mount LetterOpenerWeb::Engine, at: '/low'
+  end
+
   devise_for :staffs,
     path: :marie,
     controllers: { sessions: 'marie/sessions' },
     path_names: { sign_in: :signin, sign_out: :signout }
 
   devise_for :users,
-              controllers: {
-                omniauth_callbacks: :callbacks,
-                registrations: :registrations
-              },
+              controllers: { omniauth_callbacks: :callbacks },
+              skip: [:registrations],
               path_names: { sign_out: 'signout' }
+
+  devise_scope :user do
+    get 'users/sign_up', to: 'registrations#new', as: :new_user_registration
+    post 'users', to: 'registrations#create', as: :user_registration
+  end
 
   namespace :api do
     resources :activities, only: [:index]
@@ -77,23 +84,27 @@ Annict::Application.routes.draw do
 
   resources :notifications, only: [:index]
 
+  resource  :profile, only: [:update]
+
   resources :programs, only: [:index]
 
-  resource :setting, only: [:edit, :update]
+  resource :setting, only: [:show]
 
   resources :statuses, only: [] do
     delete :like, to: 'likes#status_destroy'
     post   :like, to: 'likes#status_create'
   end
 
-  resources :users,    only: [:show] do
+  resources :users, only: [:show] do
+    patch :update, on: :collection
+
     member do
       delete :unfollow, controller: :follows, action: :destroy
       get ':status_kind',
         to: 'users#works',
         as: :user_works,
         constraints: { status_kind: /wanna_watch|watching|watched|stop_watching/ }
-      post   :follow,   controller: :follows, action: :create
+      post :follow, controller: :follows, action: :create
     end
   end
 

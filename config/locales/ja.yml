@@ -62,7 +62,7 @@ ja:
     comment_textarea_placeholder: チェックインにコメントしよう！
     saved: コメントを投稿しました
   confirmations:
-    confirmed: メールアドレスの確認が完了しました。Annictにようこそ！
+    confirmed: メールアドレスを確認しました
     failure: メールアドレスの確認に失敗しました
   datetime:
     distance_in_words:
@@ -191,6 +191,7 @@ ja:
       previous: 前へ
       truncate: ...
   words:
+    account: アカウント
     activity: アクティビティ
     ago: 前
     all: 全て
