@@ -42,6 +42,7 @@ Annict::Application.routes.draw do
       end
 
       resources :items
+      resources :programs, except: [:show]
     end
 
     root 'home#index'
@@ -101,7 +102,10 @@ Annict::Application.routes.draw do
       get :on_air
       get :popular
       get :recommend
-      get :season
+      get ':name',
+        action: :season,
+        name: /[0-9]{4}-(spring|summer|autumn|winter)/,
+        as: :season
     end
 
     resources :appeals,      only: [:create]

@@ -1,5 +1,6 @@
 .pull-right
   = link_to '編集', edit_marie_work_path(@work), class: 'btn btn-primary'
+  = link_to t('words.program'), marie_work_programs_path(@work), class: 'btn'
   = link_to t('words.episode'), marie_work_episodes_path(@work), class: 'btn'
   = link_to '画像一覧', marie_work_items_path(@work), class: 'btn'
 

@@ -19,6 +19,7 @@ development:
   encoding: unicode
   database: annict_development
   pool: 5
+  user: postgres
   password:
   prepared_statements: false
 
@@ -48,6 +49,7 @@ test:
   encoding: unicode
   database: annict_test
   pool: 5
+  user: postgres
   password:
 
 production:
