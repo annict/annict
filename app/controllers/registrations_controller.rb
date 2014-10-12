@@ -13,6 +13,7 @@ class RegistrationsController < Devise::RegistrationsController
     @user = User.new(user_params).build_relations(@oauth)
 
     if @user.save
+      Keen.publish(:users, action: :create)
       sign_in(@user, bypass: true)
 
       flash[:info] = t('registrations.create.confirmation_mail_has_sent')

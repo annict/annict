@@ -19,10 +19,10 @@
         = t('checkins.facebook_share')
   .checkin-button.text-center
     - if checkin.new_record?
-      = f.button class: 'btn btn-primary', 'analytics-on' => 'click', 'analytics-event' => 'チェックイン作成', 'analytics-category' => 'checkins' do
+      = f.button class: 'btn btn-primary' do
         i.fa.fa-check
         = t('checkins.save')
     - else
-      = f.button class: 'btn btn-primary', 'analytics-on' => 'click', 'analytics-event' => 'チェックイン更新', 'analytics-category' => 'checkins' do
+      = f.button class: 'btn btn-primary' do
         i.fa.fa-edit
         = t('words.update')

@@ -8,6 +8,7 @@ class StatusesController < ApplicationController
       status = current_user.statuses.new(work_id: @work.id, kind: status_kind)
 
       if status.save
+        Keen.publish(:statuses, action: :create, user_id: current_user.id)
         render status: 200, nothing: true
       end
     elsif status_kind == 'no_select'
