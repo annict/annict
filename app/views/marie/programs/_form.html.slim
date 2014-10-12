@@ -1,7 +1,7 @@
 = form_for [:marie, @work, @program] do |f|
   .form-group
     = f.label :channel_id
-    = f.select :channel_id, options_from_collection_for_select(Channel.published, :id, :name, @program.channel.try(:id)), include_blank: true
+    = f.select :channel_id, options_from_collection_for_select(Channel.published.order(:name), :id, :name, @program.channel.try(:id)), include_blank: true
   .form-group
     = f.label :episode_id
     = f.select :episode_id, options_for_select(@work.episodes.map { |episode| ["#{episode.number} #{episode.title}", episode.id] }, @program.episode.try(:id)), include_blank: true
