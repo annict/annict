@@ -53,7 +53,7 @@ namespace :syobocal do
 
   task save_programs: :environment do
     tids        = get_work_sc_tids
-    fields      = 'TID,StTime,Count,Deleted,ChID,STSubTitle,LastUpdate'
+    fields      = 'PID,TID,StTime,Count,SubTitle,ProgComment,Flag,Deleted,ChID,STSubTitle,LastUpdate'
     started_on  = (Date.today - 5.days).strftime('%Y%m%d')
     ended_on    = (Date.today + 5.days).strftime('%Y%m%d')
     range       = "#{started_on}_000000-#{ended_on}_235959"
@@ -66,59 +66,13 @@ namespace :syobocal do
     doc = Nokogiri::XML(open(request_url))
 
     doc.css('ProgItem').each do |item|
-      tid   = item.xpath('TID').text.to_i
-      title = item.xpath('STSubTitle').text
-      count = item.xpath('Count').text.to_i
-      work  = Work.find_by(sc_tid: tid)
+      prog_item = Syobocal::ProgItem.new(item)
 
-      if work.present? && (count.present? && count >= 1)
-        episode = work.episodes.find_by(title: title).presence || work.episodes.find_by(sc_count: count)
-        title   = title.presence || '-'
-
-        if episode.present?
-          if episode.title != title || episode.sc_count.blank?
-            episode.update_attributes(title: title, sc_count: count)
-
-            puts "episodeを更新しました。id: #{episode.id}, number: #{episode.number}, episode_title: #{episode.title}"
-          end
-        else
-          episode = work.episodes.create do |e|
-            e.number      = "##{count}"
-            e.sort_number = (work.episodes.count + 1) * 10
-            e.sc_count    = count
-            e.title       = title
-          end
-
-          puts "episodeを作成しました。id: #{episode.id}, number: #{episode.number}, episode_title: #{episode.title}"
-          SyobocalMailer.delay.episode_created_notification(episode.id)
-        end
-
-        chid    = item.xpath('ChID').text.to_i
-        channel = Channel.find_by(sc_chid: chid)
-
-        #「ニコニコチャンネル (165 == chid)」に対しての番組情報は別の手段で登録する
-        if 165 != chid && channel.present?
-          program     = channel.programs.find_by(episode_id: episode.id)
-          st_time     = DateTime.parse(item.xpath('StTime').text).in_time_zone('Asia/Tokyo') - 9.hours
-          last_update = DateTime.parse(item.xpath('LastUpdate').text).in_time_zone('Asia/Tokyo') - 9.hours
-
-          if program.present?
-            if last_update > program.sc_last_update
-              deleted = item.xpath('Deleted').text == '1' ? true : false
-
-              if deleted
-                program.destroy
-                puts 'programを削除しました。'
-              else
-                program.update_attributes(sc_last_update: last_update, started_at: st_time)
-                puts 'programを更新しました。'
-              end
-            end
-          else
-            program = channel.programs.create(episode_id: episode.id, work_id: episode.work.id, sc_last_update: last_update, started_at: st_time)
-            puts "programを作成しました。channel: #{program.channel.name}, work: #{program.work.title}, episode: #{program.episode.number} #{program.episode.title}"
-          end
-        end
+      if prog_item.normal_program?
+        episode = prog_item.save_episode
+        prog_item.save_program(episode)
+      else
+        prog_item.save_alert
       end
     end
   end

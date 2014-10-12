@@ -100,6 +100,10 @@ class Work < ActiveRecord::Base
     twitter_hashtag.present? ? URI.encode("https://twitter.com/search?q=#{twitter_hashtag}&src=hash") : ''
   end
 
+  def syobocal_url
+    "http://cal.syoboi.jp/tid/#{sc_tid}"
+  end
+
   def channels
     if episodes.present?
       programs = Program.where(episode_id: episodes.order(:sort_number).first.id)

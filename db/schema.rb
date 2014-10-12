@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20140927222132) do
+ActiveRecord::Schema.define(version: 20141012034243) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -267,6 +267,19 @@ ActiveRecord::Schema.define(version: 20140927222132) do
   add_index "statuses", ["user_id"], name: "statuses_user_id_idx", using: :btree
   add_index "statuses", ["work_id"], name: "statuses_work_id_idx", using: :btree
 
+  create_table "syobocal_alerts", force: true do |t|
+    t.integer  "work_id"
+    t.integer  "kind",            null: false
+    t.integer  "sc_prog_item_id"
+    t.string   "sc_sub_title"
+    t.string   "sc_prog_comment"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "syobocal_alerts", ["kind"], name: "index_syobocal_alerts_on_kind", using: :btree
+  add_index "syobocal_alerts", ["sc_prog_item_id"], name: "index_syobocal_alerts_on_sc_prog_item_id", using: :btree
+
   create_table "twitter_bots", force: true do |t|
     t.string   "name",       limit: 510, null: false
     t.datetime "created_at"
@@ -373,6 +386,8 @@ ActiveRecord::Schema.define(version: 20140927222132) do
 
   add_foreign_key "statuses", "users", name: "statuses_user_id_fk", dependent: :delete
   add_foreign_key "statuses", "works", name: "statuses_work_id_fk", dependent: :delete
+
+  add_foreign_key "syobocal_alerts", "works", name: "syobocal_alerts_work_id_fk", dependent: :delete
 
   add_foreign_key "works", "seasons", name: "works_season_id_fk", dependent: :delete
 

@@ -1,0 +1,11 @@
+「<%= link_to "#{@work.title}", work_url(@work) %>」に特別番組が追加されている可能性があります。<br>
+<br>
+sub_title: <%= @sub_title %><br>
+prog_comment: <%= @prog_comment %><br>
+<br>
+<%= link_to @work.syobocal_url, @work.syobocal_url %><br>
+<%= link_to marie_work_episodes_url(@work), marie_work_episodes_url(@work) %><br>
+<br>
+<br>
+---<br>
+http://www.annict.com
