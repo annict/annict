@@ -40,6 +40,7 @@ gem 'ransack'
 gem 'sass-rails'
 gem 'sidekiq'
 gem 'sidekiq-middleware' # Recommendableで使用
+gem 'sinatra', require: nil
 gem 'slim'
 gem 'recommendable' # gem 'sidekiq' より下に置く必要があるらしい
 gem 'twitter'
