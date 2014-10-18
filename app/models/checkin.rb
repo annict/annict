@@ -16,6 +16,8 @@
 #  likes_count          :integer          default(0), not null
 #  created_at           :datetime
 #  updated_at           :datetime
+#  shared_twitter       :boolean          default(FALSE), not null
+#  shared_facebook      :boolean          default(FALSE), not null
 #
 # Indexes
 #
@@ -26,7 +28,7 @@
 #
 
 class Checkin < ActiveRecord::Base
-  attr_accessor :facebook_share, :twitter_share, :request_from_sns
+  attr_accessor :request_from_sns
 
   belongs_to :episode,  counter_cache: true
   belongs_to :user,     counter_cache: true
@@ -50,15 +52,24 @@ class Checkin < ActiveRecord::Base
     episode.work
   end
 
+  def set_shared_sns(user)
+    case user.provider_name
+    when 'Twitter'
+      self.shared_twitter = user.share_checkin?
+    when 'Facebook'
+      self.shared_facebook = user.share_checkin?
+    end
+  end
+
 
   private
 
   def share_to_twitter
-    TwitterCheckinShareWorker.perform_async(id) if twitter_share.present?
+    TwitterCheckinShareWorker.perform_async(id) if shared_twitter?
   end
 
   def share_to_facebook
-    FacebookCheckinShareWorker.perform_async(id) if facebook_share.present?
+    FacebookCheckinShareWorker.perform_async(id) if shared_facebook?
   end
 
   def save_activity
@@ -81,7 +92,7 @@ class Checkin < ActiveRecord::Base
 
   def update_share_checkin_status
     if !request_from_sns
-      if (twitter_share.present? || facebook_share.present?)
+      if shared_twitter? || shared_facebook?
         user.update_column(:share_checkin, true) unless user.share_checkin?
       else
         user.update_column(:share_checkin, false) if user.share_checkin?

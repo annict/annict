@@ -6,6 +6,8 @@ ja:
         category: カテゴリ
       checkin:
         comment: コメント
+        shared_facebook: Facebookにシェアする
+        shared_twitter: Twitterにシェアする
         spoil: ネタバレを含む
       comment:
         body: コメント
@@ -55,8 +57,6 @@ ja:
     social_click_count: '%{click_count}クリック'
     spoil_comment: 'ネタバレを含んでいます (%{action}で展開)'
     updated: チェックインを更新しました。
-    facebook_share: Facebookにシェアする
-    twitter_share: Twitterにシェアする
   comments:
     comment: コメントする
     comment_textarea_placeholder: チェックインにコメントしよう！

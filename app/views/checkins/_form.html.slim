@@ -10,13 +10,13 @@
   - if current_user.authorized_to?(:twitter)
     .checkbox
       label
-        = check_box_tag 'checkin[twitter_share]', 1, current_user.share_checkin?
-        = t('checkins.twitter_share')
+        = f.check_box :shared_twitter
+        = t('activerecord.attributes.checkin.shared_twitter')
   - if current_user.authorized_to?(:facebook)
     .checkbox
       label
-        = check_box_tag 'checkin[facebook_share]', 1, current_user.share_checkin?
-        = t('checkins.facebook_share')
+        = f.check_box :shared_facebook
+        = t('activerecord.attributes.checkin.shared_facebook')
   .checkin-button.text-center
     - if checkin.new_record?
       = f.button class: 'btn btn-primary' do

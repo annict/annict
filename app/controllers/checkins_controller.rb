@@ -1,5 +1,5 @@
 class CheckinsController < ApplicationController
-  permits :comment, :facebook_share, :spoil, :twitter_share
+  permits :comment, :shared_twitter, :shared_facebook, :spoil
 
   before_filter :authenticate_user!, only: [:new, :create, :create_all, :edit, :update, :destroy]
   before_filter :set_work,           only: [:new, :create, :create_all, :show, :edit, :update, :destroy]

@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20141012034243) do
+ActiveRecord::Schema.define(version: 20141018054223) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -78,6 +78,8 @@ ActiveRecord::Schema.define(version: 20141012034243) do
     t.integer  "likes_count",                      default: 0,     null: false
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.boolean  "shared_twitter",                   default: false, null: false
+    t.boolean  "shared_facebook",                  default: false, null: false
   end
 
   add_index "checkins", ["episode_id"], name: "checkins_episode_id_idx", using: :btree

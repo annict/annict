@@ -1,9 +1,9 @@
-- if checkin.twitter_url_hash.present?
+- if checkin.shared_twitter? || checkin.twitter_url_hash.present?
   span.twitter-click-counter
     i.fa.fa-twitter
     = t('checkins.social_click_count', click_count: checkin.twitter_click_count)
 
-- if checkin.facebook_url_hash.present?
+- if checkin.shared_facebook? || checkin.facebook_url_hash.present?
   span.facebook-click-counter
     i.fa.fa-facebook
     = t('checkins.social_click_count', click_count: checkin.facebook_click_count)

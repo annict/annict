@@ -5,7 +5,11 @@ class EpisodesController < ApplicationController
 
   def show
     @checkins = @episode.checkins.order(created_at: :desc)
-    @checkin = @episode.checkins.new if user_signed_in?
+
+    if user_signed_in?
+      @checkin = @episode.checkins.new
+      @checkin.set_shared_sns(current_user)
+    end
   end
 
 
