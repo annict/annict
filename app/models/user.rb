@@ -64,6 +64,16 @@ class User < ActiveRecord::Base
                        format: { with: /\A[A-Za-z0-9_]+\z/ }
   validates :terms, acceptance: true
 
+  after_commit  :publish_events, on: :create
+
+
+  def first_status
+    statuses.order(:id).first
+  end
+
+  def first_status?(status)
+    statuses.count == 1 && statuses.first.id == status.id
+  end
 
   def latest_statuses
     statuses.where(latest: true)
@@ -298,6 +308,14 @@ class User < ActiveRecord::Base
     channel_work.destroy if channel_work.present?
   end
 
+  def first_checkin
+    checkins.order(:id).first
+  end
+
+  def first_checkin?(checkin)
+    checkins.count == 1 && checkins.first.id == checkin.id
+  end
+
 
   private
 
@@ -324,5 +342,9 @@ class User < ActiveRecord::Base
           when 'facebook' then "#{image_url}?type=large"
           end
     url
+  end
+
+  def publish_events
+    UsersEvent.publish(:create, self)
   end
 end

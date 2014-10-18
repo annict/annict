@@ -17,7 +17,6 @@ class CheckinsController < ApplicationController
     @checkin.user = current_user
 
     if @checkin.save
-      Keen.publish(:checkins, action: :create, user_id: current_user.id)
       redirect_to work_episode_path(@work, @episode), notice: t('checkins.saved')
     else
       render 'new'

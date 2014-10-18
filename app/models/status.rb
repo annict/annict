@@ -30,6 +30,7 @@ class Status < ActiveRecord::Base
   after_create :refresh_watchers_count
   after_create :update_recommendable
   after_create :update_channel_work
+  after_commit :publish_events, on: :create
 
 
   private
@@ -95,5 +96,13 @@ class Status < ActiveRecord::Base
     else
       user.delete_channel_work(work)
     end
+  end
+
+
+  private
+
+  def publish_events
+    FirstStatusesEvent.publish(:create, self) if user.first_status?(self)
+    StatusesEvent.publish(:create, self)
   end
 end

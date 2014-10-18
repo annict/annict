@@ -21,6 +21,7 @@ class Follow < ActiveRecord::Base
 
   after_create  :save_notification
   after_destroy :delete_notification
+  after_commit  :publish_events, on: :create
 
 
   private
@@ -36,5 +37,9 @@ class Follow < ActiveRecord::Base
 
   def delete_notification
     Notification.where(trackable_type: 'Follow', trackable_id: id).destroy_all
+  end
+
+  def publish_events
+    FollowsEvent.publish(:create, self)
   end
 end

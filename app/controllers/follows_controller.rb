@@ -5,7 +5,6 @@ class FollowsController < ApplicationController
 
   def create
     current_user.follow(@user)
-    Keen.publish(:follows, action: :create, user_id: current_user.id, following_id: @user.id)
 
     render status: 200, nothing: true
   end

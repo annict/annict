@@ -42,6 +42,7 @@ class Checkin < ActiveRecord::Base
   after_save    :update_share_checkin_status
   after_commit  :share_to_twitter
   after_commit  :share_to_facebook
+  after_commit  :publish_events, on: :create
 
 
   def generate_url_hash
@@ -59,6 +60,11 @@ class Checkin < ActiveRecord::Base
     when 'Facebook'
       self.shared_facebook = user.share_checkin?
     end
+  end
+
+  def shared_sns?
+    twitter_url_hash.present? || facebook_url_hash.present? ||
+    shared_twitter? || shared_facebook?
   end
 
 
@@ -98,5 +104,10 @@ class Checkin < ActiveRecord::Base
         user.update_column(:share_checkin, false) if user.share_checkin?
       end
     end
+  end
+
+  def publish_events
+    FirstCheckinsEvent.publish(:create, self) if user.first_checkin?(self)
+    CheckinsEvent.publish(:create, self)
   end
 end
