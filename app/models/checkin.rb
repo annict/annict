@@ -71,11 +71,11 @@ class Checkin < ActiveRecord::Base
   private
 
   def share_to_twitter
-    TwitterCheckinShareWorker.perform_async(id) if shared_twitter?
+    TwitterCheckinShareWorker.perform_async(id) if shared_twitter? && !request_from_sns
   end
 
   def share_to_facebook
-    FacebookCheckinShareWorker.perform_async(id) if shared_facebook?
+    FacebookCheckinShareWorker.perform_async(id) if shared_facebook? && !request_from_sns
   end
 
   def save_activity
