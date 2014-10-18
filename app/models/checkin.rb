@@ -34,12 +34,12 @@ class Checkin < ActiveRecord::Base
 
   validates :comment, length: { maximum: 500 }
 
+  before_update :check_comment_modified
   after_create  :save_activity
   after_destroy :delete_activity
-  after_save    :share_to_twitter
-  after_save    :share_to_facebook
   after_save    :update_share_checkin_status
-  before_update :check_comment_modified
+  after_commit  :share_to_twitter
+  after_commit  :share_to_facebook
 
 
   def generate_url_hash
