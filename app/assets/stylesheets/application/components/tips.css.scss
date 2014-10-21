@@ -1,0 +1,30 @@
+.tips {
+  background-color: #038c8c;
+  margin-bottom: 19px;
+  padding: 7px 5px;
+
+  &:hover {
+    cursor: pointer;
+  }
+
+  .title {
+    color: #ffffff;
+    float: left;
+
+    .icon {
+      margin-right: 5px;
+    }
+
+    .text {
+      text-decoration: underline;
+
+      &:hover {
+        text-decoration: none;
+      }
+    }
+  }
+
+  .hide-button {
+    float: right;
+  }
+}

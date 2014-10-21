@@ -49,6 +49,7 @@ class User < ActiveRecord::Base
   has_many :activities,    dependent: :destroy
   has_many :channel_works, dependent: :destroy
   has_many :checkins,      dependent: :destroy
+  has_many :finished_tips, dependent: :destroy
   has_many :follows,       dependent: :destroy
   has_many :followings,    through:   :follows
   has_many :r_likes,       dependent: :destroy, class_name: 'Like'
@@ -120,6 +121,12 @@ class User < ActiveRecord::Base
     end
 
     Program.where(id: program_ids.flatten)
+  end
+
+  def unfinished_tips(target)
+    tip_ids = Tip.with_target(target).pluck(:id)
+    finished_tip_ids = finished_tips.pluck(:id)
+    Tip.where(id: tip_ids - finished_tip_ids).order(:id)
   end
 
   def build_relations(oauth)

@@ -1,0 +1,15 @@
+- current_user.unfinished_tips(:new_user).each do |t|
+  .tips ng-controller='TipsModalCtrl' data-toggle='modal' data-target="#js-modal-#{t.partial_name}"
+    .title
+      span.icon = icon('bullhorn')
+      span.text = t.title
+    .hide-button = icon('times')
+    .clearfix
+
+  .modal.fade id="js-modal-#{t.partial_name}"
+    .modal-dialog
+      .modal-content
+        .modal-header
+          h4.modal-title = t.title
+        .modal-body
+          = render "/tips/#{t.partial_name}"

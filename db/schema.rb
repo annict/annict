@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20141018054223) do
+ActiveRecord::Schema.define(version: 20141021143930) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -123,6 +123,13 @@ ActiveRecord::Schema.define(version: 20141018054223) do
 
   add_index "episodes", ["work_id", "sc_count"], name: "episodes_work_id_sc_count_key", unique: true, using: :btree
   add_index "episodes", ["work_id"], name: "episodes_work_id_idx", using: :btree
+
+  create_table "finished_tips", force: true do |t|
+    t.integer  "user_id",    null: false
+    t.integer  "tip_id",     null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
 
   create_table "follows", force: true do |t|
     t.integer  "user_id",      null: false
@@ -282,6 +289,14 @@ ActiveRecord::Schema.define(version: 20141018054223) do
   add_index "syobocal_alerts", ["kind"], name: "index_syobocal_alerts_on_kind", using: :btree
   add_index "syobocal_alerts", ["sc_prog_item_id"], name: "index_syobocal_alerts_on_sc_prog_item_id", using: :btree
 
+  create_table "tips", force: true do |t|
+    t.string   "title",        null: false
+    t.string   "partial_name", null: false
+    t.integer  "target",       null: false
+    t.datetime "created_at",   null: false
+    t.datetime "updated_at",   null: false
+  end
+
   create_table "twitter_bots", force: true do |t|
     t.string   "name",       limit: 510, null: false
     t.datetime "created_at"
@@ -364,6 +379,9 @@ ActiveRecord::Schema.define(version: 20141018054223) do
   add_foreign_key "cover_images", "works", name: "cover_images_work_id_fk", dependent: :delete
 
   add_foreign_key "episodes", "works", name: "episodes_work_id_fk", dependent: :delete
+
+  add_foreign_key "finished_tips", "tips", name: "finished_tips_tip_id_fk", dependent: :delete
+  add_foreign_key "finished_tips", "users", name: "finished_tips_user_id_fk", dependent: :delete
 
   add_foreign_key "follows", "users", name: "follows_following_id_fk", column: "following_id", dependent: :delete
   add_foreign_key "follows", "users", name: "follows_user_id_fk", dependent: :delete
