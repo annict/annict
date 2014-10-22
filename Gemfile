@@ -6,7 +6,6 @@ gem 'rails', '4.1.5'
 
 gem 'action_args'
 gem 'activerecord-session_store'
-gem 'annotate'
 gem 'asset_sync'
 gem 'bootstrap-sass'
 gem 'bourbon', '3.2.3' # sass-railsがsass 3.3系をサポートするまで3系を使用する
@@ -37,6 +36,7 @@ gem 'paper_trail'
 gem 'pg'
 gem 'rails-i18n'
 gem 'ransack'
+gem 'ridgepole'
 gem 'sass-rails'
 gem 'sidekiq'
 gem 'sidekiq-middleware' # Recommendableで使用

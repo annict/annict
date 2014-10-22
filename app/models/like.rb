@@ -1,19 +1,3 @@
-# == Schema Information
-#
-# Table name: likes
-#
-#  id             :integer          not null, primary key
-#  user_id        :integer          not null
-#  recipient_id   :integer          not null
-#  recipient_type :string(510)      not null
-#  created_at     :datetime
-#  updated_at     :datetime
-#
-# Indexes
-#
-#  likes_user_id_idx  (user_id)
-#
-
 class Like < ActiveRecord::Base
   belongs_to :recipient, polymorphic: true, counter_cache: true
   belongs_to :user

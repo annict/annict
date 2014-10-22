@@ -1,24 +1,3 @@
-# == Schema Information
-#
-# Table name: episodes
-#
-#  id             :integer          not null, primary key
-#  work_id        :integer          not null
-#  number         :string(510)
-#  sort_number    :integer          default(0), not null
-#  sc_count       :integer
-#  title          :string(510)
-#  single         :boolean
-#  checkins_count :integer          default(0), not null
-#  created_at     :datetime
-#  updated_at     :datetime
-#
-# Indexes
-#
-#  episodes_work_id_idx           (work_id)
-#  episodes_work_id_sc_count_key  (work_id,sc_count) UNIQUE
-#
-
 class Episode < ActiveRecord::Base
   has_paper_trail
 
