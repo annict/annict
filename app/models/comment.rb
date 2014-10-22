@@ -1,21 +1,3 @@
-# == Schema Information
-#
-# Table name: comments
-#
-#  id          :integer          not null, primary key
-#  user_id     :integer          not null
-#  checkin_id  :integer          not null
-#  body        :text             not null
-#  likes_count :integer          default(0), not null
-#  created_at  :datetime
-#  updated_at  :datetime
-#
-# Indexes
-#
-#  comments_checkin_id_idx  (checkin_id)
-#  comments_user_id_idx     (user_id)
-#
-
 class Comment < ActiveRecord::Base
   belongs_to :checkin, counter_cache: true
   belongs_to :user

@@ -34,9 +34,6 @@ GEM
       tzinfo (~> 1.1)
     addressable (2.3.6)
     anbt-sql-formatter (0.0.2)
-    annotate (2.6.5)
-      activerecord (>= 2.3.0)
-      rake (>= 0.8.7)
     arel (5.0.1.20140414130214)
     asset_sync (1.0.0)
       activemodel
@@ -355,6 +352,8 @@ GEM
     rest-client (1.7.2)
       mime-types (>= 1.16, < 3.0)
       netrc (~> 0.7)
+    ridgepole (0.4.9)
+      activerecord
     rspec (3.0.0)
       rspec-core (~> 3.0.0)
       rspec-expectations (~> 3.0.0)
@@ -475,7 +474,6 @@ PLATFORMS
 DEPENDENCIES
   action_args
   activerecord-session_store
-  annotate
   asset_sync
   awesome_print
   aws-sdk
@@ -527,6 +525,7 @@ DEPENDENCIES
   rails_12factor
   ransack
   recommendable
+  ridgepole
   rspec-rails
   sass-rails
   sidekiq
