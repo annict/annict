@@ -10,6 +10,9 @@
     .modal-dialog
       .modal-content
         .modal-header
+          button.close type='button' data-dismiss='modal'
+            span &times;
+            span.sr-only Close
           h4.modal-title = t.title
         .modal-body
           = render "/tips/#{t.partial_name}"
