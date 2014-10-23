@@ -1,30 +1,41 @@
 .tips {
-  background-color: #038c8c;
-  margin-bottom: 19px;
-  padding: 7px 5px;
+  .wrapper {
+    margin-bottom: 10px;
 
-  &:hover {
-    cursor: pointer;
-  }
-
-  .title {
-    color: #ffffff;
-    float: left;
-
-    .icon {
-      margin-right: 5px;
+    &:last-child {
+      margin-bottom: 20px;
     }
 
-    .text {
-      text-decoration: underline;
+    .tip {
+      background-color: #ae8572;
+      padding: 7px;
 
       &:hover {
-        text-decoration: none;
+        cursor: pointer;
+      }
+
+      .title {
+        color: #ffffff;
+        float: left;
+
+        .icon {
+          margin-right: 7px;
+        }
+
+        .text {
+          text-decoration: underline;
+
+          &:hover {
+            text-decoration: none;
+          }
+        }
+      }
+
+      .hide-button {
+        color: #ffffff;
+        float: right;
+        margin-right: 3px;
       }
     }
-  }
-
-  .hide-button {
-    float: right;
   }
 }

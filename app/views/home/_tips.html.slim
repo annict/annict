@@ -1,18 +1,19 @@
-- current_user.unfinished_tips(:new_user).each do |t|
-  .tips ng-controller='TipsModalCtrl' data-toggle='modal' data-target="#js-modal-#{t.partial_name}"
-    .title
-      span.icon = icon('bullhorn')
-      span.text = t.title
-    .hide-button = icon('times')
-    .clearfix
+.tips
+  - current_user.unfinished_tips(:new_user).each do |t|
+    .wrapper
+      .tip ng-controller='TipModalCtrl' data-toggle='modal' data-target="#js-modal-#{t.partial_name}"
+        .title
+          span.icon = icon(t.icon_name.dasherize)
+          span.text = t.title
+        .hide-button = icon(:times)
+        .clearfix
 
-  .modal.fade id="js-modal-#{t.partial_name}"
-    .modal-dialog
-      .modal-content
-        .modal-header
-          button.close type='button' data-dismiss='modal'
-            span &times;
-            span.sr-only Close
-          h4.modal-title = t.title
-        .modal-body
-          = render "/tips/#{t.partial_name}"
+      .modal.fade id="js-modal-#{t.partial_name}" tabindex='-1' role='dialog' aria-labelledby='modalLabel' aria-hidden='true'
+        .modal-dialog
+          .modal-content
+            .modal-header
+              button.close type='button' data-dismiss='modal'
+                span aria-hidden='true' = icon(:times)
+              h4.modal-title = t.title
+            .modal-body
+              = render "/tips/#{t.partial_name}"
