@@ -8,9 +8,3 @@ create_table "notifications", force: true do |t|
   t.datetime "created_at"
   t.datetime "updated_at"
 end
-
-add_index "notifications", ["action_user_id"], name: "notifications_action_user_id_idx", using: :btree
-add_index "notifications", ["user_id"], name: "notifications_user_id_idx", using: :btree
-
-add_foreign_key "notifications", "users", name: "notifications_action_user_id_fk", column: "action_user_id", dependent: :delete
-add_foreign_key "notifications", "users", name: "notifications_user_id_fk", dependent: :delete

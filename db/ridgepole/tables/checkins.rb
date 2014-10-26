@@ -15,11 +15,3 @@ create_table "checkins", force: true do |t|
   t.boolean  "shared_twitter",                   default: false, null: false
   t.boolean  "shared_facebook",                  default: false, null: false
 end
-
-add_index "checkins", ["episode_id"], name: "checkins_episode_id_idx", using: :btree
-add_index "checkins", ["facebook_url_hash"], name: "checkins_facebook_url_hash_key", unique: true, using: :btree
-add_index "checkins", ["twitter_url_hash"], name: "checkins_twitter_url_hash_key", unique: true, using: :btree
-add_index "checkins", ["user_id"], name: "checkins_user_id_idx", using: :btree
-
-add_foreign_key "checkins", "episodes", name: "checkins_episode_id_fk", dependent: :delete
-add_foreign_key "checkins", "users", name: "checkins_user_id_fk", dependent: :delete
