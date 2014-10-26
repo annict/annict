@@ -95,6 +95,9 @@ add_foreign_key "cover_images", "works", name: "cover_images_work_id_fk", depend
 
 add_foreign_key "episodes", "works", name: "episodes_work_id_fk", dependent: :delete
 
+add_foreign_key "finished_tips", "tips", name: "finished_tips_tip_id_fk", dependent: :delete
+add_foreign_key "finished_tips", "users", name: "finished_tips_user_id_fk", dependent: :delete
+
 add_foreign_key "follows", "users", name: "follows_following_id_fk", column: "following_id", dependent: :delete
 add_foreign_key "follows", "users", name: "follows_user_id_fk", dependent: :delete
 
