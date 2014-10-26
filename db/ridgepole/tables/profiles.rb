@@ -7,8 +7,3 @@ create_table "profiles", force: true do |t|
   t.datetime "created_at"
   t.datetime "updated_at"
 end
-
-add_index "profiles", ["user_id"], name: "profiles_user_id_idx", using: :btree
-add_index "profiles", ["user_id"], name: "profiles_user_id_key", unique: true, using: :btree
-
-add_foreign_key "profiles", "users", name: "profiles_user_id_fk", dependent: :delete

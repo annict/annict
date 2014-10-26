@@ -19,7 +19,3 @@ create_table "users", force: true do |t|
   t.datetime "updated_at"
   t.boolean  "share_checkin",                    default: false
 end
-
-add_index "users", ["confirmation_token"], name: "users_confirmation_token_key", unique: true, using: :btree
-add_index "users", ["email"], name: "users_email_key", unique: true, using: :btree
-add_index "users", ["username"], name: "users_username_key", unique: true, using: :btree
