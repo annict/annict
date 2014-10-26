@@ -91,8 +91,9 @@ class User < ActiveRecord::Base
     Program.where(id: program_ids.flatten)
   end
 
-  def unfinished_tips(target)
-    tip_ids = Tip.with_target(target).pluck(:id)
+  def unfinished_tips(target = :all)
+    values = (target == :all) ? Tip.target.values : target
+    tip_ids = Tip.with_target(*values).pluck(:id)
     finished_tip_ids = finished_tips.pluck(:id)
     Tip.where(id: tip_ids - finished_tip_ids).order(:id)
   end

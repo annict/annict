@@ -1,41 +1,50 @@
 .tips {
-  .wrapper {
-    margin-bottom: 10px;
+  background-color: #f6e5ca;
+  margin: -20px 0 20px 0;
+  padding-bottom: 10px;
 
-    &:last-child {
-      margin-bottom: 20px;
+  h2 {
+    font-family: 'Noto Sans Japanese', serif;
+    font-size: 25px;
+    font-weight: 100;
+    margin-bottom: 20px;
+    text-align: center;
+  }
+
+  p {
+    margin-bottom: 20px;
+  }
+
+  .tip {
+    background-color: #ae8572;
+    margin-bottom: 10px;
+    padding: 7px;
+
+    &:hover {
+      cursor: pointer;
     }
 
-    .tip {
-      background-color: #ae8572;
-      padding: 7px;
+    .title {
+      color: #ffffff;
+      float: left;
 
-      &:hover {
-        cursor: pointer;
+      .icon {
+        margin-right: 7px;
       }
 
-      .title {
-        color: #ffffff;
-        float: left;
+      .text {
+        text-decoration: underline;
 
-        .icon {
-          margin-right: 7px;
-        }
-
-        .text {
-          text-decoration: underline;
-
-          &:hover {
-            text-decoration: none;
-          }
+        &:hover {
+          text-decoration: none;
         }
       }
+    }
 
-      .hide-button {
-        color: #ffffff;
-        float: right;
-        margin-right: 3px;
-      }
+    .hide-button {
+      color: #ffffff;
+      float: right;
+      margin-right: 3px;
     }
   }
 }

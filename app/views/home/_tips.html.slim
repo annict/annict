@@ -1,19 +1,10 @@
 .tips
-  - current_user.unfinished_tips(:new_user).each do |t|
-    .wrapper
-      .tip ng-controller='TipModalCtrl' data-toggle='modal' data-target="#js-modal-#{t.partial_name}"
-        .title
-          span.icon = icon(t.icon_name.dasherize)
-          span.text = t.title
-        .hide-button = icon(:times)
-        .clearfix
-
-      .modal.fade id="js-modal-#{t.partial_name}" tabindex='-1' role='dialog' aria-labelledby='modalLabel' aria-hidden='true'
-        .modal-dialog
-          .modal-content
-            .modal-header
-              button.close type='button' data-dismiss='modal'
-                span aria-hidden='true' = icon(:times)
-              h4.modal-title = t.title
-            .modal-body
-              = render "/tips/#{t.partial_name}"
+  .container
+    - if current_user.unfinished_tips(:new_user).present?
+      h2 Annictにようこそ
+      p 初めてご利用される方を対象に、いくつか利用方法をご紹介します。
+      - current_user.unfinished_tips(:new_user).each do |t|
+        = render 'tip_modal', tip: t
+    - else
+      - current_user.unfinished_tips(:user).each do |t|
+        = render 'tip_modal', tip: t

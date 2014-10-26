@@ -3,9 +3,10 @@
 - keywords meta_keywords
 - content_for :no_footer, true
 
-.container
+- if current_user.unfinished_tips.present?
   = render 'tips'
 
+.container
   .activities ng-controller='ActivitiesCtrl' ani-loading='loading'
     div infinite-scroll='addMoreActivities()' infinite-scroll-disabled='disabled' infinite-scroll-distance='2'
       .activity ng-repeat='activity in activities' ng-show='0 < activities.length'
