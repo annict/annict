@@ -58,5 +58,26 @@
             font-size: 15px;
       }
     }
+
+    .modal-body {
+      .image {
+        @if $browser == pc {
+          margin: 40px 0;
+        }
+        @if $browser == mobile {
+          margin: 30px 0;
+        }
+
+        img {
+          border: 1px solid $color-gray-light;
+          display: block;
+          margin: 0 auto;
+        }
+      }
+
+      .link {
+        text-align: center;
+      }
+    }
   }
 }

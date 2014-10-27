@@ -1,0 +1,18 @@
+<p>
+  作品に対して「見てる」「見た」のようなステータスを設定することができます。
+  設定すると、プロフィールに反映されるほか、作品のステータスに合った情報が表示されるようになります。
+  <br>
+  例えば「放送予定」ページでは、自分が見ている、または見たい作品のテレビ番組表を表示します。
+</p>
+<p>
+  「<%= link_to '見つける', works_path %>」ページににあるセレクトボックスからステータスが選ぶことができます。
+</p>
+
+<div class='image'>
+  <% image_size = browser.mobile? ? '280x109' : '400x218' %>
+  <%= image_tag 'tips/status.png', size: image_size %>
+</div>
+
+<div class='link'>
+  <%= link_to '「見つける」ページへ', works_path, class: 'btn btn-primary' %>
+</div>
