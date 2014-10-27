@@ -5,24 +5,24 @@ nav.navbar.navbar-default.navbar-fixed-top
         = image_tag 'navbar/logo.png', size: '48x48', alt: 'Annict'
     .shortcuts
       - if user_signed_in?
-        = link_to programs_path, 'analytics-on' => 'click', 'analytics-event' => '放送予定', 'analytics-category' => 'navbar' do
+        = link_to programs_path, class: "#{programs_page? ? 'active' : ''}", 'analytics-on' => 'click', 'analytics-event' => '放送予定', 'analytics-category' => 'navbar' do
           = icon 'calendar'
           .caption
             = t('titles.program')
-        = link_to user_works_user_path(current_user.username, :watching), 'analytics-on' => 'click', 'analytics-event' => '見てる作品', 'analytics-category' => 'navbar' do
+        = link_to user_works_user_path(current_user.username, :watching), class: "#{user_works_page? ? 'active' : ''}", 'analytics-on' => 'click', 'analytics-event' => '見てる作品', 'analytics-category' => 'navbar' do
           = icon 'play'
           .caption
             = t('enumerize.status.kind.watching') + t('words.works')
-        = link_to works_path, 'analytics-on' => 'click', 'analytics-event' => '見つける', 'analytics-category' => 'navbar' do
+        = link_to works_path, class: "#{works_page? ? 'active' : ''}", 'analytics-on' => 'click', 'analytics-event' => '見つける', 'analytics-category' => 'navbar' do
           = icon 'search'
           .caption
             = t('titles.works.index')
-        = link_to user_path(current_user.username), 'analytics-on' => 'click', 'analytics-event' => 'アカウント', 'analytics-category' => 'navbar' do
+        = link_to user_path(current_user.username), class: "#{user_profile_page? ? 'active' : ''}", 'analytics-on' => 'click', 'analytics-event' => 'アカウント', 'analytics-category' => 'navbar' do
           = icon 'user'
           .caption
             = t('titles.account')
       - else
-        = link_to works_path, 'analytics-on' => 'click', 'analytics-event' => '見つける', 'analytics-category' => 'navbar' do
+        = link_to works_path, class: "#{works_page? ? 'active' : ''}", 'analytics-on' => 'click', 'analytics-event' => '見つける', 'analytics-category' => 'navbar' do
           = icon 'search'
           .caption
             = t('titles.works.index')

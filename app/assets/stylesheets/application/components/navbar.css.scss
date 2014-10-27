@@ -46,6 +46,10 @@
           text-decoration: none;
         }
 
+        &.active {
+          color: $color-kei;
+        }
+
         .caption {
           font-size: 10px;
           margin-top: 2px;

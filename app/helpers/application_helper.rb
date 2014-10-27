@@ -21,4 +21,25 @@ module ApplicationHelper
     default_keywords = t('meta.keywords').split(',')
     (keywords + default_keywords).join(',')
   end
+
+  def programs_page?
+    params[:controller] == 'programs' && params[:action] == 'index'
+  end
+
+  def user_works_page?
+    params[:controller] == 'users' && params[:action] == 'works'
+  end
+
+  def works_page?
+    params[:controller] == 'works' &&
+    (params[:action] == 'on_air' ||
+     params[:action] == 'season' ||
+     params[:action] == 'popular' ||
+     params[:action] == 'recommend' ||
+     params[:action] == 'search')
+  end
+
+  def user_profile_page?
+    params[:controller] == 'users' && params[:action] == 'show'
+  end
 end
