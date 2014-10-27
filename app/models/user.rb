@@ -94,8 +94,12 @@ class User < ActiveRecord::Base
   def unfinished_tips(target = :all)
     values = (target == :all) ? Tip.target.values : target
     tip_ids = Tip.with_target(*values).pluck(:id)
-    finished_tip_ids = finished_tips.pluck(:id)
+    finished_tip_ids = finished_tips.pluck(:tip_id)
     Tip.where(id: tip_ids - finished_tip_ids).order(:id)
+  end
+
+  def first_reception?(reception)
+    receptions.count == 1 && receptions.first.id == reception.id
   end
 
   def build_relations(oauth)
@@ -290,6 +294,10 @@ class User < ActiveRecord::Base
 
   def first_checkin?(checkin)
     checkins.count == 1 && checkins.first.id == checkin.id
+  end
+
+  def finish_tip!(tip)
+    finished_tips.create!(tip: tip)
   end
 
 

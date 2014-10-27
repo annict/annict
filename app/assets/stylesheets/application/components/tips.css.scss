@@ -1,5 +1,5 @@
 .tips {
-  background-color: #f6e5ca;
+  background-color: #eae2d9;
   margin: -20px 0 20px 0;
   padding-bottom: 10px;
 
@@ -16,13 +16,9 @@
   }
 
   .tip {
-    background-color: #ae8572;
+    background-color: #6aaba0;
     margin-bottom: 10px;
     padding: 7px;
-
-    &:hover {
-      cursor: pointer;
-    }
 
     .title {
       color: #ffffff;
@@ -36,15 +32,31 @@
         text-decoration: underline;
 
         &:hover {
+          cursor: pointer;
           text-decoration: none;
         }
       }
     }
 
     .hide-button {
-      color: #ffffff;
+      color: rgba(41, 80, 74, 0.5);
       float: right;
       margin-right: 3px;
+
+      &:hover {
+        cursor: pointer;
+      }
+    }
+  }
+
+  .modal {
+    h4 {
+      @if $browser == pc {
+            font-size: 20px;
+      }
+      @if $browser == mobile {
+            font-size: 15px;
+      }
     }
   }
 }

@@ -1,9 +1,11 @@
-.ani-tip-modal
-  .tip data-target="#js-modal-#{tip.partial_name}" ng-click='openModal()'
+.ani-tip-modal ng-show='display'
+  .tip data-target="#js-modal-#{tip.partial_name}"
     .title
       span.icon = icon(tip.icon_name.dasherize)
-      span.text = tip.title
-    .hide-button = icon(:times)
+      span.text ng-click='openModal()'
+        = tip.title
+    .hide-button ng-click="finishTip('#{tip.partial_name}')"
+      = icon(:times)
     .clearfix
 
   .modal.fade id="js-modal-#{tip.partial_name}" tabindex='-1' role='dialog' aria-labelledby='modalLabel' aria-hidden='true'

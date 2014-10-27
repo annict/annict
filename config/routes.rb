@@ -27,6 +27,9 @@ Annict::Application.routes.draw do
   namespace :api do
     resources :activities, only: [:index]
     resources :receptions, only: [:create, :destroy]
+    resources :tips, only: [] do
+      post :finish, on: :collection
+    end
     resources :users,      only: [] do
       get :activities
     end

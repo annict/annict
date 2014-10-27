@@ -11,6 +11,7 @@ class Status < ActiveRecord::Base
   after_create :refresh_watchers_count
   after_create :update_recommendable
   after_create :update_channel_work
+  after_create :finish_tips
   after_commit :publish_events, on: :create
 
 
@@ -85,5 +86,12 @@ class Status < ActiveRecord::Base
   def publish_events
     FirstStatusesEvent.publish(:create, self) if user.first_status?(self)
     StatusesEvent.publish(:create, self)
+  end
+
+  def finish_tips
+    if user.first_status?(self)
+      tip = Tip.find_by(partial_name: 'status')
+      user.finish_tip!(tip)
+    end
   end
 end

@@ -9,6 +9,7 @@ class Checkin < ActiveRecord::Base
 
   before_update :check_comment_modified
   after_create  :save_activity
+  after_create  :finish_tips
   after_destroy :delete_activity
   after_save    :update_share_checkin_status
   after_commit  :share_to_twitter
@@ -80,5 +81,12 @@ class Checkin < ActiveRecord::Base
   def publish_events
     FirstCheckinsEvent.publish(:create, self) if user.first_checkin?(self)
     CheckinsEvent.publish(:create, self)
+  end
+
+  def finish_tips
+    if user.first_checkin?(self)
+      tip = Tip.find_by(partial_name: 'checkin')
+      user.finish_tip!(tip)
+    end
   end
 end
