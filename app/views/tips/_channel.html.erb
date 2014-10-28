@@ -1,0 +1,11 @@
+<p>普段見ているテレビのチャンネルをAnnictに設定すると、「<%= link_to '放送予定', programs_path %>」ページで自分が見てる・見たい作品の放送予定を見ることができます。</p>
+<p>チャンネルの設定は「<%= link_to 'チャンネル', channels_path %>」ページでできます。</p>
+
+<div class='image'>
+  <% image_size = browser.mobile? ? '268x176' : '400x263' %>
+  <%= image_tag 'tips/channel.png', size: image_size %>
+</div>
+
+<div class='link'>
+  <%= link_to '「チャンネル」ページへ', channels_path, class: 'btn btn-primary' %>
+</div>
