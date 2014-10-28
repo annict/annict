@@ -10,9 +10,7 @@
 #
 # Indexes
 #
-#  receptions_channel_id_idx          (channel_id)
-#  receptions_user_id_channel_id_key  (user_id,channel_id) UNIQUE
-#  receptions_user_id_idx             (user_id)
+#  index_receptions_on_user_id_and_channel_id  (user_id,channel_id) UNIQUE
 #
 
 class Reception < ActiveRecord::Base

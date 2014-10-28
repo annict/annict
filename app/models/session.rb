@@ -3,14 +3,15 @@
 # Table name: sessions
 #
 #  id         :integer          not null, primary key
-#  session_id :string(510)      not null
+#  session_id :string(255)      not null
 #  data       :text
 #  created_at :datetime
 #  updated_at :datetime
 #
 # Indexes
 #
-#  sessions_session_id_key  (session_id) UNIQUE
+#  index_sessions_on_session_id  (session_id) UNIQUE
+#  index_sessions_on_updated_at  (updated_at)
 #
 
 class Session < ActiveRecord::Base

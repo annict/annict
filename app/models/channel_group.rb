@@ -3,15 +3,15 @@
 # Table name: channel_groups
 #
 #  id          :integer          not null, primary key
-#  sc_chgid    :string(510)      not null
-#  name        :string(510)      not null
+#  sc_chgid    :string(255)      not null
+#  name        :string(255)      not null
 #  sort_number :integer
 #  created_at  :datetime
 #  updated_at  :datetime
 #
 # Indexes
 #
-#  channel_groups_sc_chgid_key  (sc_chgid) UNIQUE
+#  index_channel_groups_on_sc_chgid  (sc_chgid) UNIQUE
 #
 
 class ChannelGroup < ActiveRecord::Base
