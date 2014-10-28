@@ -2,7 +2,7 @@
   .container
     - if current_user.unfinished_tips(:new_user).present?
       h2 Annictにようこそ
-      p まずはざっくりと使ってもらうために、設定方法などを簡単にまとめてみました。
+      p Annictでできることを簡単にまとめてみました。良かったらご覧ください。
       - current_user.unfinished_tips(:new_user).each do |t|
         = render 'tip_modal', tip: t
     - else
