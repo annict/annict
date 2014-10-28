@@ -6,3 +6,8 @@ create_table "channels", force: true do |t|
   t.datetime "created_at"
   t.datetime "updated_at"
 end
+
+add_index "channels", ["channel_group_id"], name: "channels_channel_group_id_idx", using: :btree
+add_index "channels", ["sc_chid"], name: "channels_sc_chid_key", unique: true, using: :btree
+
+add_foreign_key "channels", "channel_groups", name: "channels_channel_group_id_fk", dependent: :delete

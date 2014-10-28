@@ -9,3 +9,5 @@ create_table "staffs", force: true do |t|
   t.datetime "created_at"
   t.datetime "updated_at"
 end
+
+add_index "staffs", ["email"], name: "staffs_email_key", unique: true, using: :btree

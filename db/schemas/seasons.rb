@@ -4,3 +4,5 @@ create_table "seasons", force: true do |t|
   t.datetime "created_at"
   t.datetime "updated_at"
 end
+
+add_index "seasons", ["slug"], name: "seasons_slug_key", unique: true, using: :btree
