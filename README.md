@@ -63,7 +63,7 @@ GitHub Issuesに投稿されたIssueは[Waffle.io](https://waffle.io/annict/anni
 
 Annictは以下のソフトウェアを使用して開発しています。事前にこれらをインストールしてください。
 
-* Ruby 2.1.3
+* Ruby 2.1.2
 * PostgreSQL 9.3.5.0
 * Redis 2.8.3
 * ImageMagick 6.7
@@ -78,7 +78,8 @@ GitHubからソースコードをcloneしてから以下のコマンドを実行
 ```
 $ cd annict
 $ bundle install
-$ bundle exec rake ridgepole:reset
+$ bundle exec rake db:create
+$ bundle exec rake db:setup
 $ bundle exec foreman start
 ```
 

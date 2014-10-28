@@ -1,3 +1,0 @@
-schemas_dir = File.expand_path('../db/schemas', __FILE__)
-schemas = Dir.entries(schemas_dir).select { |f| f =~ /\.rb\z/ }.map { |f| "db/schemas/#{f}" }.flatten
-schemas.each { |f| require f }
