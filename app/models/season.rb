@@ -3,14 +3,14 @@
 # Table name: seasons
 #
 #  id         :integer          not null, primary key
-#  name       :string(255)      not null
-#  slug       :string(255)      not null
+#  name       :string(510)      not null
+#  slug       :string(510)      not null
 #  created_at :datetime
 #  updated_at :datetime
 #
 # Indexes
 #
-#  index_seasons_on_slug  (slug) UNIQUE
+#  seasons_slug_key  (slug) UNIQUE
 #
 
 class Season < ActiveRecord::Base
