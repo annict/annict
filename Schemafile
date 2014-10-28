@@ -1,5 +1,0 @@
-tables_dir = File.expand_path('../db/ridgepole/tables', __FILE__)
-tables = Dir.entries(tables_dir).select { |f| f =~ /\.rb\z/ }.map { |f| "db/ridgepole/tables/#{f}" }.flatten
-
-pathes = tables + ['db/ridgepole/indexes.rb']
-pathes.each { |f| require f }

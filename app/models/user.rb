@@ -1,3 +1,35 @@
+# == Schema Information
+#
+# Table name: users
+#
+#  id                   :integer          not null, primary key
+#  username             :string(510)      not null
+#  email                :string(510)      not null
+#  role                 :integer          not null
+#  encrypted_password   :string(510)      default(""), not null
+#  remember_created_at  :datetime
+#  sign_in_count        :integer          default(0), not null
+#  current_sign_in_at   :datetime
+#  last_sign_in_at      :datetime
+#  current_sign_in_ip   :string(510)
+#  last_sign_in_ip      :string(510)
+#  confirmation_token   :string(510)
+#  confirmed_at         :datetime
+#  confirmation_sent_at :datetime
+#  unconfirmed_email    :string(510)
+#  checkins_count       :integer          default(0), not null
+#  notifications_count  :integer          default(0), not null
+#  created_at           :datetime
+#  updated_at           :datetime
+#  share_checkin        :boolean          default(FALSE)
+#
+# Indexes
+#
+#  users_confirmation_token_key  (confirmation_token) UNIQUE
+#  users_email_key               (email) UNIQUE
+#  users_username_key            (username) UNIQUE
+#
+
 class User < ActiveRecord::Base
   # registrations#createが実行されたあとメールアドレスの確認を挟まず
   # ログインできるようにするため、Confirmableモジュールを直接includeする

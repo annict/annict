@@ -1,3 +1,31 @@
+# == Schema Information
+#
+# Table name: works
+#
+#  id                :integer          not null, primary key
+#  season_id         :integer
+#  sc_tid            :integer
+#  title             :string(510)      not null
+#  media             :integer          not null
+#  official_site_url :string(510)      default(""), not null
+#  wikipedia_url     :string(510)      default(""), not null
+#  episodes_count    :integer          default(0), not null
+#  watchers_count    :integer          default(0), not null
+#  released_at       :date
+#  nicoch_started_at :datetime
+#  created_at        :datetime
+#  updated_at        :datetime
+#  on_air            :boolean          not null
+#  fetch_syobocal    :boolean          not null
+#  twitter_username  :string(510)
+#  twitter_hashtag   :string(510)
+#
+# Indexes
+#
+#  works_sc_tid_key     (sc_tid) UNIQUE
+#  works_season_id_idx  (season_id)
+#
+
 class Work < ActiveRecord::Base
   extend Enumerize
 
