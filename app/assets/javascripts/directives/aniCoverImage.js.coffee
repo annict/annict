@@ -28,4 +28,4 @@ _cycleCoverImage = ($interval, element) ->
       opacity: 1
     , 1000, 'easeOutQuad', ->
       nextCoverIndex += 1
-  , 7000
+  , 20000
