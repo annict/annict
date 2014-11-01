@@ -112,7 +112,7 @@ Annict::Application.routes.draw do
       get ':status_kind',
         to: 'users#works',
         as: :user_works,
-        constraints: { status_kind: /wanna_watch|watching|watched|stop_watching/ }
+        constraints: { status_kind: /wanna_watch|watching|watched|on_hold|stop_watching/ }
       post :follow, controller: :follows, action: :create
     end
   end

@@ -6,7 +6,7 @@
   .text-center
     = paginate works
 - else
-  - if %w(season recommend).include?(params[:action]) || (params[:action] == 'search' && params[:q].present?)
+  - if %w(season recommend works).include?(params[:action]) || (params[:action] == 'search' && params[:q].present?)
     .info.well
       .icon
         i.fa.fa-info-circle

@@ -5,7 +5,8 @@ Annict.angular.config ($translateProvider) ->
         wanna_watch: '見たい'
         watching: '見てる'
         watched: '見た'
-        stop_watching: '見るのやめた'
+        on_hold: '中断'
+        stop_watching: '中止'
       no_select: 'ステータス'
     titles:
       timeline: 'タイムライン'

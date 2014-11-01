@@ -20,7 +20,7 @@
 class Status < ActiveRecord::Base
   extend Enumerize
 
-  enumerize :kind, in: { wanna_watch: 1, watching: 2, watched: 3, stop_watching: 4 }, scope: true
+  enumerize :kind, in: { wanna_watch: 1, watching: 2, watched: 3, on_hold: 5, stop_watching: 4 }, scope: true
 
   belongs_to :user
   belongs_to :work
@@ -70,7 +70,7 @@ class Status < ActiveRecord::Base
     if statuses.length == 2
       return :watch if !watches.include?(prev_status) && watches.include?(new_status)
       return :drop  if watches.include?(prev_status)  && !watches.include?(new_status)
-      return :keep # 見たい系 -> 見たい系 または 見るのやめた系 -> 見るのやめた系
+      return :keep # 見たい系 -> 見たい系 または 中止系 -> 中止系
     end
 
     watches.include?(new_status) ? :watch : :drop_first
