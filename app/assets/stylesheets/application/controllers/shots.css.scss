@@ -1,0 +1,54 @@
+body.shots-show {
+  font-family: 'Noto Sans Japanese', serif;
+
+  .container {
+    background-color: #ffffff;
+    max-width: 900px;
+    padding: 20px;
+
+    .about {
+      font-size: 12px;
+      text-align: right;
+
+      .generated-by {
+        color: $color-gray-dark-light;
+      }
+
+      .logo {
+        margin: -3px 3px 0 5px;
+      }
+
+      .annict {
+        font-family: 'Titillium Web';
+        font-size: 14px;
+      }
+    }
+
+    .title {
+      text-align: center;
+
+      h1 {
+        font-size: 30px;
+      }
+
+      .updated-on {
+        color: $color-gray-dark-light;
+      }
+    }
+
+    .works {
+      .work {
+        .caption {
+          height: 70px;
+          padding: 9px 0;
+
+          h2 {
+            font-weight: normal;
+            line-height: 1.4;
+            margin: 0 0 15px 0;
+          }
+        }
+      }
+    }
+  }
+}
