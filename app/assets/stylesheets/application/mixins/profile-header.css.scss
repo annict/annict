@@ -3,78 +3,42 @@
     text-align: center;
 
     .profile {
-      height: 303px;
+      background-size: cover;
+      color: #ffffff;
+      margin-top: -20px;
+      padding: 20px 10px;
 
-      .background {
-        img {
-          @if $browser == pc {
-            width: 500px;
-          }
-          @if $browser == mobile {
-            width: 320px;
-          }
+      h1 {
+        margin: {
+          bottom: 3px;
+          top: 16px;
+        }
 
-          display: block;
-          left: 0;
-          margin: auto;
-          position: absolute;
-          right: 0;
-          top: 48px;
+        @if $browser == pc {
+          font-size: 30px;
+        }
+        @if $browser == mobile {
+          font-size: 20px;
         }
       }
 
-      .foreground {
-        @if $browser == pc {
-          width: 500px;
-          margin: -170px 0 0 -250px;
-          top: 245px;
-        }
-        @if $browser == mobile {
-          width: 320px;
-          margin: -70px 0 0 -160px;
-          top: 145px;
-        }
-        color: #ffffff;
-        left: 50%;
-        position: absolute;
-        text-align: center;
+      .username, .description {
+        color: $color-gray-light;
+      }
 
-        h1 {
-          margin: {
-            bottom: 3px;
-            top: 16px;
-          }
+      .username {
+        margin-bottom: 7px;
+      }
 
-          @if $browser == pc {
-            font-size: 30px;
-          }
-          @if $browser == mobile {
-            font-size: 20px;
-          }
-        }
+      .url {
+        margin-top: 7px;
+      }
 
-        .username, .description {
-          color: $color-gray-light;
-        }
+      .follow-button, .share-button {
+        margin-top: 15px;
 
-        .username {
-          margin-bottom: 7px;
-        }
-
-        .description {
-          padding: 0 6px;
-        }
-
-        .url {
-          margin-top: 7px;
-        }
-
-        .follow-button {
-          margin-top: 15px;
-
-          i {
-            margin-right: 5px;
-          }
+        i {
+          margin-right: 5px;
         }
       }
     }

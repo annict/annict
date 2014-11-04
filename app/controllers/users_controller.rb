@@ -5,6 +5,10 @@ class UsersController < ApplicationController
   before_filter :set_user, only: [:show, :works]
 
 
+  def show
+    @works = @user.watching_works.order(released_at: :desc)
+  end
+
   def works(status_kind, page)
     @works = @user.works_on(status_kind).page(page)
   end

@@ -8,6 +8,44 @@ body.users-show {
   .ani-user-checkin-chart {
     margin-left: -5px;
   }
+
+  .watching-works {
+    .works {
+      padding: 0 10px;
+
+      .work {
+        padding: 0 5px;
+
+        .thumbnail {
+          margin-bottom: 10px;
+          padding: 4px 4px 0 4px;
+
+          .caption {
+            padding: 9px 0;
+
+            h3 {
+              font-size: 10px;
+              font-weight: normal;
+              margin-bottom: 0;
+              margin-top: 0;
+              overflow: hidden;
+              text-overflow: ellipsis;
+              white-space: nowrap;
+            }
+          }
+        }
+      }
+    }
+
+    .more {
+      margin-top: 10px;
+      text-align: right;
+
+      i {
+        margin-left: 5px;
+      }
+    }
+  }
 }
 
 body.users-works {

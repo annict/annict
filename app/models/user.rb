@@ -332,6 +332,10 @@ class User < ActiveRecord::Base
     finished_tips.create!(tip: tip)
   end
 
+  def shareable_to?(provider_name)
+    providers.pluck(:name).include?(provider_name.to_s)
+  end
+
 
   private
 
