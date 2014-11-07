@@ -41,6 +41,73 @@
           margin-right: 5px;
         }
       }
+
+      .share-button {
+        .modal {
+          color: #000000;
+          text-align: left;
+
+          .modal-header {
+            .close {
+              margin-top: 0px;
+            }
+          }
+
+          .modal-body {
+            .description {
+              color: #000000;
+              margin-bottom: 15px;
+            }
+
+            .image {
+              .loading {
+                border: 1px solid $color-gray-light;
+                height: 200px;
+                margin: 0 auto;
+                width: 200px;
+
+                .spinner {
+                  top: 37% !important;
+                }
+
+                .message {
+                  color: $color-gray-dark;
+                  font-size: 12px;
+                  position: relative;
+                  text-align: center;
+                  top: 130px;
+                }
+              }
+
+              img {
+                border: 1px solid $color-gray-light;
+                display: block;
+                margin: 0 auto;
+                text-align: center;
+              }
+            }
+
+            form {
+              margin-top: 20px;
+
+              .body-count {
+                color: $color-gray-dark;
+                margin: 10px 0 20px 0;
+                text-align: right;
+
+                &.over {
+                  color: #ff0000;
+                }
+              }
+
+              button {
+                display: block;
+                margin: 0 auto;
+              }
+            }
+          }
+        }
+      }
     }
 
     .statuses {

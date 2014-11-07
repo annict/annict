@@ -70,7 +70,7 @@ class TwitterCheckinShareWorker
   end
 
   def get_share_url
-    "http://#{ENV['HOST']}/r/tw/#{@checkin.twitter_url_hash}"
+    "#{ENV['ANNICT_URL']}/r/tw/#{@checkin.twitter_url_hash}"
   end
 
   def get_share_hashtag

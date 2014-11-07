@@ -101,5 +101,9 @@ body {
   .btn-twitter {
     color: #ffffff;
     background-color: $color-twitter;
+
+    &:hover {
+      color: #ffffff;
+    }
   }
 }

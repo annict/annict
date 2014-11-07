@@ -57,6 +57,7 @@ class User < ActiveRecord::Base
   has_many :providers,     dependent: :destroy
   has_many :receptions,    dependent: :destroy
   has_many :channels,      through:   :receptions
+  has_many :shots,         dependent: :destroy
   has_many :statuses,      dependent: :destroy
   has_one  :profile,       dependent: :destroy
 
@@ -334,6 +335,19 @@ class User < ActiveRecord::Base
 
   def shareable_to?(provider_name)
     providers.pluck(:name).include?(provider_name.to_s)
+  end
+
+  def twitter_client
+    twitter = providers.where(name: 'twitter').first
+
+    return nil if twitter.blank?
+
+    Twitter::REST::Client.new do |config|
+      config.consumer_key        = ENV['TWITTER_CONSUMER_KEY']
+      config.consumer_secret     = ENV['TWITTER_CONSUMER_SECRET']
+      config.access_token        = twitter.token
+      config.access_token_secret = twitter.token_secret
+    end
   end
 
 

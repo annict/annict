@@ -82,7 +82,7 @@ Annict::Application.configure do
   # https://shellycloud.com/blog/2013/10/how-to-integrate-angularjs-with-rails-4
   config.assets.js_compressor = Uglifier.new(mangle: false)
 
-  config.action_mailer.default_url_options = { protocol: 'http://', host: ENV['HOST'] }
+  config.action_mailer.default_url_options = { protocol: 'http://', host: ENV['ANNICT_HOST'] }
   config.action_mailer.delivery_method = :smtp
   config.action_mailer.smtp_settings = {
       address:        ENV['SMTP_HOST'],

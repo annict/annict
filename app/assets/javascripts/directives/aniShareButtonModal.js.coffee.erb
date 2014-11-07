@@ -1,0 +1,25 @@
+Annict.angular.directive 'aniShareButtonModal', (usSpinnerService) ->
+  restrict: 'C'
+  scope: true
+
+  link: (scope, element, attributes) ->
+    scope.username = element.data('username')
+    scope.isMobile = element.data('is-mobile')
+    scope.potteUrl = '<%= ENV["ANNICT_POTTE_URL"] %>'
+    scope.bodyCount = 50
+    scope.bodyCountOver = false
+
+  controller: ($scope, $element, $http) ->
+    $scope.openModal = ->
+      $('#js-share-button-modal').modal()
+      usSpinnerService.spin('shareImageLoading')
+
+      $http.post("#{$scope.potteUrl}/api/shots", username: $scope.username).success (data) ->
+        $scope.thumbnailUrl = data.thumbnail.url
+        $scope.shareImageLoaded = true
+
+        usSpinnerService.stop('shareImageLoading')
+
+    $scope.countDownBody = ->
+      $scope.bodyCount = 50 - $scope.body.length
+      $scope.bodyCountOver = $scope.bodyCount < 0

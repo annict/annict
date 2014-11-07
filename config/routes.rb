@@ -109,7 +109,10 @@ Annict::Application.routes.draw do
   end
 
   resources :users, only: [:show] do
-    patch :update, on: :collection
+    collection do
+      patch :update
+      post :share
+    end
 
     member do
       delete :unfollow, controller: :follows, action: :destroy

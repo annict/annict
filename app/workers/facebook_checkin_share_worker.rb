@@ -19,7 +19,7 @@ class FacebookCheckinShareWorker
     link = if Rails.env.development?
              "http://www.annict.com/checkins/redirect/fb/#{checkin.facebook_url_hash}"
            else
-             "http://#{ENV['HOST']}/checkins/redirect/fb/#{checkin.facebook_url_hash}"
+             "#{ENV['ANNICT_URL']}/checkins/redirect/fb/#{checkin.facebook_url_hash}"
            end
     name = I18n.t('checkins.facebook_share_text', title: title)
     caption = "Checkined by #{checkin.user.username}"

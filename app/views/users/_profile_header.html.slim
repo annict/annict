@@ -16,10 +16,7 @@
         = user.profile.description
     - if user_signed_in? && current_user == user
       - if user.shareable_to?(:twitter)
-        .share-button
-          = link_to '#', class: 'btn btn-twitter' do
-            = icon('twitter')
-            | 見てるアニメをツイートする
+        = render 'share_button', user: user
     - else
       = render 'follow_button', user: user
 

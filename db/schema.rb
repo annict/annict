@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20141021143930) do
+ActiveRecord::Schema.define(version: 20141105161907) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -251,6 +251,15 @@ ActiveRecord::Schema.define(version: 20141021143930) do
 
   add_index "sessions", ["session_id"], name: "sessions_session_id_key", unique: true, using: :btree
 
+  create_table "shots", force: true do |t|
+    t.integer  "user_id",    null: false
+    t.string   "image_uid",  null: false
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "shots", ["image_uid"], name: "index_shots_on_image_uid", unique: true, using: :btree
+
   create_table "staffs", force: true do |t|
     t.string   "email",              limit: 510, default: "", null: false
     t.string   "encrypted_password", limit: 510, default: "", null: false
@@ -408,6 +417,8 @@ ActiveRecord::Schema.define(version: 20141021143930) do
 
   add_foreign_key "receptions", "channels", name: "receptions_channel_id_fk", dependent: :delete
   add_foreign_key "receptions", "users", name: "receptions_user_id_fk", dependent: :delete
+
+  add_foreign_key "shots", "users", name: "shots_user_id_fk", dependent: :delete
 
   add_foreign_key "statuses", "users", name: "statuses_user_id_fk", dependent: :delete
   add_foreign_key "statuses", "works", name: "statuses_work_id_fk", dependent: :delete
