@@ -14,11 +14,11 @@
     - if user.profile.description.present?
       .description
         = user.profile.description
-    - if user_signed_in? && current_user == user
-      - if user.shareable_to?(:twitter)
+    - if user_signed_in?
+      - if current_user == user && user.shareable_to?(:twitter)
         = render 'share_button', user: user
-    - else
-      = render 'follow_button', user: user
+      - if current_user != user
+        = render 'follow_button', user: user
 
   .statuses
     .watching.status.col-xs-3
