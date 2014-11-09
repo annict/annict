@@ -376,16 +376,12 @@ ActiveRecord::Schema.define(version: 20141105161907) do
   add_index "works", ["sc_tid"], name: "works_sc_tid_key", unique: true, using: :btree
   add_index "works", ["season_id"], name: "works_season_id_idx", using: :btree
 
-  add_foreign_key "activities", "users", name: "activities_user_id_fk", dependent: :delete
-
   add_foreign_key "channel_works", "channels", name: "channel_works_channel_id_fk", dependent: :delete
-  add_foreign_key "channel_works", "users", name: "channel_works_user_id_fk", dependent: :delete
   add_foreign_key "channel_works", "works", name: "channel_works_work_id_fk", dependent: :delete
 
   add_foreign_key "channels", "channel_groups", name: "channels_channel_group_id_fk", dependent: :delete
 
   add_foreign_key "checkins", "episodes", name: "checkins_episode_id_fk", dependent: :delete
-  add_foreign_key "checkins", "users", name: "checkins_user_id_fk", dependent: :delete
 
   add_foreign_key "comments", "checkins", name: "comments_checkin_id_fk", dependent: :delete
   add_foreign_key "comments", "users", name: "comments_user_id_fk", dependent: :delete
@@ -395,32 +391,17 @@ ActiveRecord::Schema.define(version: 20141105161907) do
   add_foreign_key "episodes", "works", name: "episodes_work_id_fk", dependent: :delete
 
   add_foreign_key "finished_tips", "tips", name: "finished_tips_tip_id_fk", dependent: :delete
-  add_foreign_key "finished_tips", "users", name: "finished_tips_user_id_fk", dependent: :delete
-
-  add_foreign_key "follows", "users", name: "follows_following_id_fk", column: "following_id", dependent: :delete
-  add_foreign_key "follows", "users", name: "follows_user_id_fk", dependent: :delete
 
   add_foreign_key "items", "works", name: "items_work_id_fk", dependent: :delete
-
-  add_foreign_key "likes", "users", name: "likes_user_id_fk", dependent: :delete
-
-  add_foreign_key "notifications", "users", name: "notifications_action_user_id_fk", column: "action_user_id", dependent: :delete
-  add_foreign_key "notifications", "users", name: "notifications_user_id_fk", dependent: :delete
-
-  add_foreign_key "profiles", "users", name: "profiles_user_id_fk", dependent: :delete
 
   add_foreign_key "programs", "channels", name: "programs_channel_id_fk", dependent: :delete
   add_foreign_key "programs", "episodes", name: "programs_episode_id_fk", dependent: :delete
   add_foreign_key "programs", "works", name: "programs_work_id_fk", dependent: :delete
 
-  add_foreign_key "providers", "users", name: "providers_user_id_fk", dependent: :delete
-
   add_foreign_key "receptions", "channels", name: "receptions_channel_id_fk", dependent: :delete
-  add_foreign_key "receptions", "users", name: "receptions_user_id_fk", dependent: :delete
 
   add_foreign_key "shots", "users", name: "shots_user_id_fk", dependent: :delete
 
-  add_foreign_key "statuses", "users", name: "statuses_user_id_fk", dependent: :delete
   add_foreign_key "statuses", "works", name: "statuses_work_id_fk", dependent: :delete
 
   add_foreign_key "syobocal_alerts", "works", name: "syobocal_alerts_work_id_fk", dependent: :delete
