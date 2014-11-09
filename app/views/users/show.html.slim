@@ -9,20 +9,26 @@
 .container
   .watching-works
     h2.text-center 見てるアニメ
-    .works.row
-      - @works.limit(9).each do |work|
-        = link_to work_path(work) do
-          .work.col-xs-4
-            .thumbnail
-              = annict_image_tag work.main_item.image.thumb('160x160').url, psize: '150x150', msize: '80x80', alt: work.title
-              .caption
-                h3 = work.title
+    - if @works.present?
+      .works.row
+        - @works.limit(9).each do |work|
+          = link_to work_path(work) do
+            .work.col-xs-4
+              .thumbnail
+                = annict_image_tag work.main_item.image.thumb('160x160').url, psize: '140x140', msize: '80x80', alt: work.title
+                .caption
+                  h3 = work.title.truncate(16)
 
-    - if @works.count > 9
-      .more
-        = link_to user_works_user_path(@user.username, :watching) do
-          = "全#{@works.count}本の見てるアニメを見る"
-          = icon('angle-right')
+      - if @works.count > 9
+        .more
+          = link_to user_works_user_path(@user.username, :watching) do
+            = "見てるアニメ全#{@works.count}作品を見る"
+            = icon('angle-right')
+    - else
+      .info.well
+        .icon
+          i.fa.fa-info-circle
+        p 見てるアニメはありません
 
 hr
 
