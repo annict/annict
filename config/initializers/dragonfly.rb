@@ -7,7 +7,7 @@ Dragonfly.app.configure do
 
   secret ENV['DRAGONFLY_SECRET']
 
-  url_format '/media/:job/:name'
+  url_format '/media/:job/:sha/:name'
   url_host   ENV['DRAGONFLY_URL_HOST']
 
   common_s3_settings = {
