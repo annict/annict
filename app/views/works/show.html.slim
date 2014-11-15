@@ -54,30 +54,34 @@
 .work-info.container
   h2.text-center
     = t('works.work_info')
-  dl.dl-horizontal
-    .info
-      dt = t('activerecord.attributes.work.media')
-      dd = @work.media.text
+  ul.list-unstyled
+    li
+      i.icon &#x1F4FA;
+      = @work.media.text
+    - if @work.released_at.present?
+      li
+        = icon('calendar-o')
+        = @work.released_at
     - if @work.official_site_url.present?
-      .info
-        dt = t('activerecord.attributes.work.official_site_url')
-        dd = link_to @work.official_site_url, @work.official_site_url, target: '_blank'
+      li
+        = icon('home')
+        = link_to '公式サイト', @work.official_site_url, target: '_blank'
     - if @work.wikipedia_url.present?
-      .info
-        dt = t('activerecord.attributes.work.wikipedia_url')
-        dd = link_to t('words.wikipedia'), @work.wikipedia_url, target: '_blank'
+      li
+        = icon('external-link')
+        = link_to t('words.wikipedia'), @work.wikipedia_url, target: '_blank'
+    - if @work.sc_tid.present?
+      li
+        = icon('external-link')
+        = link_to 'しょぼかる', @work.syobocal_url, target: '_blank'
     - if@work.twitter_username.present?
-      .info
-        dt = t('activerecord.attributes.work.twitter_username')
-        dd = link_to "@#{@work.twitter_username}", @work.twitter_url, target: '_blank'
+      li
+        = icon('twitter')
+        = link_to "@#{@work.twitter_username}", @work.twitter_url, target: '_blank'
     - if@work.twitter_hashtag.present?
-      .info
-        dt = t('activerecord.attributes.work.twitter_hashtag')
-        dd = link_to @work.twitter_hashtag, @work.twitter_hashtag_url, target: '_blank'
-    - @work.released_at.present?
-      .info
-        dt = t('activerecord.attributes.work.released_at')
-        dd = @work.released_at
+      li
+        = icon('twitter')
+        = link_to @work.twitter_hashtag, @work.twitter_hashtag_url, target: '_blank'
 
 hr
 

@@ -79,8 +79,36 @@
       margin-top: 0;
     }
 
-    .info {
-      margin-bottom: 10px;
+    ul {
+      li {
+        float: left;
+        height: 30px;
+        line-height: 30px;
+        margin-bottom: 5px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        width: 50%;
+
+        @if $browser == pc {
+          padding-left: 25px;
+        }
+        @if $browser == mobile {
+          padding-left: 10px;
+        }
+
+        i {
+          color: $color-gray-dark-light;
+          margin-right: 10px;
+
+          &.icon {
+            font-size: 16px;
+            font-style: normal;
+            font-weight: normal;
+            line-height: 1;
+          }
+        }
+      }
     }
   }
 
