@@ -5,7 +5,7 @@ Annict.angular.directive 'aniShareButtonModal', ($rootScope, usSpinnerService) -
   link: (scope, element, attributes) ->
     scope.username = element.data('username')
     scope.isMobile = element.data('is-mobile')
-    scope.potteUrl = '<%= ENV["ANNICT_POTTE_URL"] %>'
+    scope.potteUrl = element.data('potte-url')
     scope.bodyCount = 50
     scope.bodyCountOver = false
 
