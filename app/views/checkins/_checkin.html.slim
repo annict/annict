@@ -6,7 +6,7 @@
       .top
         .pull-left
           span.name
-            = link_to checkin.user.username, user_path(checkin.user.username)
+            = link_to checkin.user.profile.name, user_path(checkin.user.username)
         .pull-right
           - if checkin.modify_comment?
             i.modified.fa.fa-pencil

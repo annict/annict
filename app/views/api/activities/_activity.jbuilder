@@ -7,6 +7,7 @@ json.links do
 
   json.profile do
     json.avatar_url activity.user.profile.avatar.thumb('100x100').url
+    json.name activity.user.profile.name
   end
 
   json.meta do

@@ -3,7 +3,7 @@
     span.body
       div ng-if='activity.links.episode.number && activity.links.episode.title'
         a ng-href='/users/{{activity.links.user.username}}' class='username'
-          | {{activity.links.user.username}}
+          | {{activity.links.profile.name}}
         | が
         a ng-href='/works/{{activity.links.work.id}}' class='work-title'
           | {{activity.links.work.title}}
