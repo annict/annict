@@ -130,15 +130,12 @@
           vertical-align: middle;
 
           &.number {
-            width: 24%;
+            white-space: nowrap;
+            width: 1%;
           }
 
           &.checkbox-column {
             width: 30px;
-          }
-
-          &.number {
-            width: 72px;
           }
 
           &.checkins {
