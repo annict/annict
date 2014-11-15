@@ -68,11 +68,11 @@
         = link_to '公式サイト', @work.official_site_url, target: '_blank'
     - if @work.wikipedia_url.present?
       li
-        = icon('external-link')
+        = icon('link')
         = link_to t('words.wikipedia'), @work.wikipedia_url, target: '_blank'
     - if @work.sc_tid.present?
       li
-        = icon('external-link')
+        = icon('link')
         = link_to 'しょぼかる', @work.syobocal_url, target: '_blank'
     - if@work.twitter_username.present?
       li
