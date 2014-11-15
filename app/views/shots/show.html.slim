@@ -10,10 +10,12 @@
 
   hr
 
-  .works.row
-    - @user.watching_works.order(released_at: :desc).each do |work|
-      .work.col-md-3
-        .thumbnail
-          = image_tag work.main_item.image.thumb('223x223').url, size: '223x223', alt: work.title
-          .caption
-            h2 = work.title
+  - @seasons.each do |season_name, works|
+    h2 = season_name
+    .works.row
+      - works.each do |work|
+        .work.col-md-3
+          .thumbnail
+            = image_tag work.main_item.image.thumb('223x223').url, size: '223x223', alt: work.title
+            .caption
+              h3 = work.title

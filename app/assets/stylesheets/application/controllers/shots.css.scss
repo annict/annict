@@ -36,13 +36,19 @@ body.shots-show {
       }
     }
 
+    h2 {
+      color: $color-gray-dark;
+      margin: 25px 0;
+      text-align: center;
+    }
+
     .works {
       .work {
         .caption {
           height: 70px;
           padding: 9px 0;
 
-          h2 {
+          h3 {
             font-weight: normal;
             line-height: 1.4;
             margin: 0 0 15px 0;
