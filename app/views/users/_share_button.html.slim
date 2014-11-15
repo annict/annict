@@ -19,7 +19,7 @@
             img ng-src='{{thumbnailUrl}}' width='200' height='200' ng-show='shareImageLoaded'
 
           = form_tag share_users_path do
-            = text_area_tag 'body', nil, class: 'form-control', rows: '3', :'ng-model' => 'body', :'ng-keyup' => 'countDownBody()'
+            = text_area_tag 'body', nil, class: 'form-control', rows: '3', placeholder: 'コメントを書いてツイートしよう！', :'ng-model' => 'body', :'ng-keyup' => 'countDownBody()'
             .body-count ng-class='{ over: bodyCountOver }' {{bodyCount}}
             = button_tag class: 'btn btn-twitter', :'ng-disabled' => '!shareImageLoaded || bodyCountOver' do
               = icon('twitter')
