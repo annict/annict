@@ -59,6 +59,7 @@ class Work < ActiveRecord::Base
   }
 
   scope :broadcasted_on_nicoch, -> { where('nicoch_started_at IS NOT NULL') }
+  scope :checkined, -> (user) { joins(episodes: :checkins).merge(user.checkins) }
 
   before_save :change_to_utc_datetime
 
