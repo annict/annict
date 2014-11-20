@@ -15,6 +15,7 @@ class CheckinsController < ApplicationController
   def create(checkin)
     @checkin = @episode.checkins.new(checkin)
     @checkin.user = current_user
+    @checkin.work = @work
 
     if @checkin.save
       redirect_to work_episode_path(@work, @episode), notice: t('checkins.saved')
@@ -29,7 +30,7 @@ class CheckinsController < ApplicationController
       raise if episodes.blank?
 
       episodes.each do |episode|
-        episode.checkins.create(user: current_user)
+        episode.checkins.create(user: current_user, work: @work)
       end
 
       return redirect_to work_path(@work), notice: t('checkins.saved')

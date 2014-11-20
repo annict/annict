@@ -18,6 +18,7 @@
 #  updated_at           :datetime
 #  shared_twitter       :boolean          default(FALSE), not null
 #  shared_facebook      :boolean          default(FALSE), not null
+#  work_id              :integer
 #
 # Indexes
 #
@@ -25,11 +26,13 @@
 #  checkins_facebook_url_hash_key  (facebook_url_hash) UNIQUE
 #  checkins_twitter_url_hash_key   (twitter_url_hash) UNIQUE
 #  checkins_user_id_idx            (user_id)
+#  index_checkins_on_work_id       (work_id)
 #
 
 class Checkin < ActiveRecord::Base
   attr_accessor :request_from_sns
 
+  belongs_to :work
   belongs_to :episode,  counter_cache: true
   belongs_to :user,     counter_cache: true
   has_many   :comments, dependent: :destroy

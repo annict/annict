@@ -33,6 +33,7 @@ class Work < ActiveRecord::Base
   has_paper_trail
 
   belongs_to :season
+  has_many   :checkins
   has_many   :episodes, dependent: :destroy
   has_many   :items,    dependent: :destroy
   has_many   :programs, dependent: :destroy
@@ -58,8 +59,14 @@ class Work < ActiveRecord::Base
     where(id: work_ids)
   }
 
+  scope :checkedin_by, -> (user) {
+    joins(
+      "INNER JOIN (
+        SELECT DISTINCT work_id, MAX(id) AS checkin_id FROM checkins WHERE checkins.user_id = #{user.id} GROUP BY work_id
+      ) AS c2 ON works.id = c2.work_id")
+  }
+
   scope :broadcasted_on_nicoch, -> { where('nicoch_started_at IS NOT NULL') }
-  scope :checkined, -> (user) { joins(episodes: :checkins).merge(user.checkins) }
 
   before_save :change_to_utc_datetime
 

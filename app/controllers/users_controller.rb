@@ -7,9 +7,9 @@ class UsersController < ApplicationController
 
   def show
     @watching_works = @user.watching_works
-    checkined_works = @watching_works.checkined(@user).order('checkins.id DESC')
-    other_works = @watching_works.where.not(id: checkined_works.pluck(:id))
-    @works = (checkined_works + other_works).first(9)
+    checkedin_works = @watching_works.checkedin_by(@user).order('c2.checkin_id DESC')
+    other_works = @watching_works.where.not(id: checkedin_works.pluck(:id))
+    @works = (checkedin_works + other_works).first(9)
   end
 
   def works(status_kind, page)
