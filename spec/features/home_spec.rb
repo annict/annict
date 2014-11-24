@@ -1,10 +1,11 @@
 require 'spec_helper'
 
 describe 'トップページ' do
-  let!(:work) { create(:work, :with_item) }
-  let!(:cover_image) { create(:cover_image, work: work) }
 
   context 'ログインしていないとき' do
+    let(:work) { create(:work, :with_item) }
+    let(:cover_image) { create(:cover_image, work: work) }
+
     before do
       visit '/'
     end
@@ -38,19 +39,15 @@ describe 'トップページ' do
         visit '/'
       end
 
-      it 'アクティビティが存在しない旨を表示すること' do
+      it 'アクティビティが存在しない旨を表示すること', js: true do
         expect(page).to have_content('アクティビティはありませんでした')
       end
     end
 
     context '自分がチェックインしているとき' do
-      let!(:checkin_tip) { create(:checkin_tip) }
-      let(:work) { create(:work, :with_item) }
-      let(:episode) { create(:episode, work: work) }
+      let!(:checkin) { create(:checkin, user: user, comment: 'おもしろかったよ') }
 
       before do
-        user.checkins.create(episode: episode, comment: 'おもしろかったよ')
-
         visit '/'
       end
 
@@ -60,14 +57,11 @@ describe 'トップページ' do
     end
 
     context 'フォローしている人がチェックインしているとき' do
-      let!(:checkin_tip) { create(:checkin_tip) }
-      let(:following_user) { create(:registered_user) }
-      let(:work) { create(:work, :with_item) }
-      let(:episode) { create(:episode, work: work) }
+      let!(:following_user) { create(:registered_user) }
+      let!(:checkin) { create(:checkin, user: following_user, comment: 'たのしかったよ') }
 
       before do
         user.follow(following_user)
-        following_user.checkins.create(episode: episode, comment: 'たのしかったよ')
 
         visit '/'
       end

@@ -23,7 +23,8 @@ class Episode < ActiveRecord::Base
   has_paper_trail
 
   belongs_to :work, counter_cache: true
-  has_many   :checkins
+  has_many :checkins
+  has_many :programs
 
   after_create :create_nicoch_program
 
