@@ -70,8 +70,8 @@ GitHubからソースコードをcloneしてから以下のコマンドを実行
 ```
 $ cd annict
 $ bundle install
-$ bundle exec rake db:create
-$ bundle exec rake db:setup
+$ bin/rake db:create
+$ bin/rake db:setup
 $ bundle exec foreman start
 ```
 
@@ -83,7 +83,8 @@ http://localhost:5000 にアクセスすると、サイトのトップページ�
 以下のコマンドでテストが実行できます。
 
 ```
-$ bundle exec rspec
+$ bin/rake db:migrate RAILS_ENV=test
+$ bin/rspec
 ```
 
 

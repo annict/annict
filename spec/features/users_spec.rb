@@ -1,8 +1,9 @@
 require 'spec_helper'
 
 describe 'プロフィールページ' do
-  let(:user)    { create(:registered_user) }
-  let(:work)    { create(:work, :with_item) }
+  let!(:checkin_tip) { create(:checkin_tip) }
+  let(:user) { create(:registered_user) }
+  let(:work) { create(:work, :with_item) }
   let(:episode) { create(:episode, work: work) }
 
   before do
@@ -28,6 +29,7 @@ describe '見てる作品一覧ページ' do
   end
 
   context '見てる作品があるとき' do
+    let!(:status_tip) { create(:status_tip) }
     let(:work) { create(:work, :with_item) }
 
     before do

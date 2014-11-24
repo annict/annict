@@ -1,8 +1,8 @@
 require 'spec_helper'
 
 describe 'トップページ' do
-  let(:cover_work_id) { eval(ENV['ANNICT_COVER_IMAGE_DATA']).first['work_id'] }
-  let!(:work) { create(:work, :with_item, id: cover_work_id) }
+  let!(:work) { create(:work, :with_item) }
+  let!(:cover_image) { create(:cover_image, work: work) }
 
   context 'ログインしていないとき' do
     before do
@@ -44,7 +44,8 @@ describe 'トップページ' do
     end
 
     context '自分がチェックインしているとき' do
-      let(:work)    { create(:work, :with_item) }
+      let!(:checkin_tip) { create(:checkin_tip) }
+      let(:work) { create(:work, :with_item) }
       let(:episode) { create(:episode, work: work) }
 
       before do
@@ -59,13 +60,14 @@ describe 'トップページ' do
     end
 
     context 'フォローしている人がチェックインしているとき' do
+      let!(:checkin_tip) { create(:checkin_tip) }
       let(:following_user) { create(:registered_user) }
-      let(:work)           { create(:work, :with_item) }
-      let(:episode)        { create(:episode, work: work) }
+      let(:work) { create(:work, :with_item) }
+      let(:episode) { create(:episode, work: work) }
 
       before do
         user.follow(following_user)
-        user.checkins.create(episode: episode, comment: 'たのしかったよ')
+        following_user.checkins.create(episode: episode, comment: 'たのしかったよ')
 
         visit '/'
       end

@@ -1,12 +1,11 @@
 require 'spec_helper'
 
 describe 'ユーザ登録機能' do
-  let(:cover_work_id) { eval(ENV['ANNICT_COVER_IMAGE_DATA']).first['work_id'] }
-  let!(:work)         { create(:work, :with_item, id: cover_work_id) }
-  let!(:mock_hash)    { mock_auth_hash }
+  let!(:work) { create(:work, :with_item) }
+  let!(:cover_image) { create(:cover_image, work: work) }
+  let!(:mock_hash) { mock_auth_hash }
 
   before do
-
     click_signin_with_twitter_link
   end
 

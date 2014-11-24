@@ -1,8 +1,9 @@
 require 'spec_helper'
 
 describe '番組情報ページ' do
-  let(:user)    { create(:registered_user) }
-  let(:work)    { create(:work, :on_air, :with_item) }
+  let!(:status_tip) { create(:status_tip) }
+  let(:user) { create(:registered_user) }
+  let(:work) { create(:work, :on_air, :with_item) }
   let(:episode) { create(:episode, work: work) }
   let(:channel) { create(:channel) }
 
