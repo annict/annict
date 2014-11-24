@@ -162,9 +162,6 @@ GEM
     foreigner (1.6.1)
       activerecord (>= 3.0.0)
     formatador (0.2.5)
-    fuubar (2.0.0)
-      rspec (~> 3.0)
-      ruby-progressbar (~> 1.4)
     gon (5.1.2)
       actionpack (>= 2.3.0)
       json
@@ -355,10 +352,6 @@ GEM
     rest-client (1.7.2)
       mime-types (>= 1.16, < 3.0)
       netrc (~> 0.7)
-    rspec (3.0.0)
-      rspec-core (~> 3.0.0)
-      rspec-expectations (~> 3.0.0)
-      rspec-mocks (~> 3.0.0)
     rspec-core (3.0.3)
       rspec-support (~> 3.0.0)
     rspec-expectations (3.0.3)
@@ -375,7 +368,6 @@ GEM
       rspec-mocks (~> 3.0.0)
       rspec-support (~> 3.0.0)
     rspec-support (3.0.3)
-    ruby-progressbar (1.5.1)
     sass (3.2.19)
     sass-rails (4.0.3)
       railties (>= 4.0.0, < 5.0)
@@ -501,7 +493,6 @@ DEPENDENCIES
   flutie
   font-awesome-sass
   foreigner
-  fuubar
   gon
   hirb
   hirb-unicode

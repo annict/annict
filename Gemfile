@@ -81,6 +81,5 @@ group :test do
   gem 'coveralls', require: false
   gem 'database_rewinder'
   gem 'factory_girl_rails'
-  gem 'fuubar'
   gem 'poltergeist'
 end
