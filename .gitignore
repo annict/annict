@@ -4,6 +4,7 @@
 /.idea
 /config/application.yml
 /coverage
+/heroku.dump
 /log/*.log
 /public/dragonfly
 /tmp
