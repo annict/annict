@@ -7,8 +7,6 @@ describe 'プロフィールページ' do
   let(:episode) { create(:episode, work: work) }
 
   before do
-    user.checkins.create(episode: episode, comment: 'おもしろかったよ')
-
     visit "/users/#{user.username}"
   end
 
@@ -16,8 +14,30 @@ describe 'プロフィールページ' do
     expect(find('.profile h1')).to have_content(user.profile.name)
   end
 
-  it 'アクティビティにチェックイン情報が表示されること', js: true do
-    expect(find('.activities')).to have_content('おもしろかったよ')
+  describe 'アクティビティ' do
+    before do
+      user.checkins.create(episode: episode, comment: 'おもしろかったよ')
+
+      visit "/users/#{user.username}"
+    end
+
+    it 'チェックイン情報が表示されること', js: true do
+      expect(find('.activities')).to have_content('おもしろかったよ')
+    end
+  end
+
+  describe '見てるアニメ' do
+    let!(:status_tip) { create(:status_tip) }
+
+    before do
+      user.statuses.create(work: work, kind: :watching)
+
+      visit "/users/#{user.username}"
+    end
+
+    it '作品が表示されること' do
+      expect(find('.watching-works')).to have_content(work.title)
+    end
   end
 end
 

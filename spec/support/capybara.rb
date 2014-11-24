@@ -13,7 +13,7 @@ end
 Capybara.javascript_driver = :poltergeist
 
 ##
-# スクショ画像を作成するためのメソッド。`spec/render` 以下に画像が保存されます。
+# スクショ画像を作成するためのメソッド。`tmp/render` 以下に画像が保存されます。
 # 注意: このメソッドを使用するときは、`js` オプションを `context` メソッドなどに指定してください。
 #
 # 例:
@@ -25,7 +25,7 @@ Capybara.javascript_driver = :poltergeist
 #
 def render_page(name)
   png_name = name.strip.gsub(/\W+/, '-')
-  path = File.join(Rails.application.config.integration_test_render_dir, "#{png_name}.png")
+  path = File.join('tmp/render', "#{png_name}.png")
   save_screenshot(path)
 end
 
