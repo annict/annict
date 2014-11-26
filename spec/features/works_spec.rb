@@ -56,3 +56,25 @@ describe '作品検索ページ' do
     expect(find('.works-list')).to have_content(work.title)
   end
 end
+
+describe '作品詳細ページ' do
+  let!(:work) { create(:work, :with_item) }
+
+  context 'ログインしているとき' do
+    let(:user) { create(:registered_user) }
+
+    before do
+      login_as(user, scope: :user)
+    end
+
+    context '作品ページにアクセスしたとき' do
+      before do
+        visit "/works/#{work.id}"
+      end
+
+      it 'ページが表示される' do
+        expect(page).to have_content(work.title)
+      end
+    end
+  end
+end
