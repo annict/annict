@@ -1,6 +1,6 @@
 # Annict
 
-[![Travis CI](https://travis-ci.org/annict/annict.svg?branch=master)](https://travis-ci.org/annict/annict) [![Code Climate](https://codeclimate.com/github/annict/annict/badges/gpa.svg)](https://codeclimate.com/github/annict/annict) [![Coverage Status](https://coveralls.io/repos/annict/annict/badge.png)](https://coveralls.io/r/annict/annict) [![Stories in Ready](https://badge.waffle.io/annict/annict.png?label=ready&title=Ready)](https://waffle.io/annict/annict) [![Gitter chat](https://badges.gitter.im/annict/annict.png)](https://gitter.im/annict/annict)
+[![Travis CI](https://travis-ci.org/annict/annict.svg?branch=master)](https://travis-ci.org/annict/annict) [![Code Climate](https://codeclimate.com/github/annict/annict/badges/gpa.svg)](https://codeclimate.com/github/annict/annict) [![Coverage Status](https://coveralls.io/repos/annict/annict/badge.png)](https://coveralls.io/r/annict/annict) [![Stories in Ready](https://badge.waffle.io/annict/annict.png?label=ready&title=Ready)](https://waffle.io/annict/annict)
 
 [![木崎湖](http://d3a8d1smk6xli.cloudfront.net/github/kizakiko.png)](http://ja.wikipedia.org/wiki/%E6%9C%A8%E5%B4%8E%E6%B9%96)
 
@@ -29,7 +29,7 @@ Twitterなど、第三者に公開されている場所に投稿しないでも�
 
 #### Pull Requests
 
-絶賛募集中です！以下の項目を守った上で送ってもらえると助かります。
+絶賛募集中です！以下の項目を守った上で送ってもらえると嬉しいです。
 
 * [コーディング規約](https://github.com/annict/annict/wiki/%E3%82%B3%E3%83%BC%E3%83%87%E3%82%A3%E3%83%B3%E3%82%B0%E8%A6%8F%E7%B4%84)を意識したコードを書いてください
 * 新たに機能を追加したときはそのテストも追加してください
@@ -43,12 +43,12 @@ Annictでは開発に関係するタスク管理を[GitHub Issues](https://githu
 
 | ラベル   | 意味        |
 | ------- | -----------|
-| draft   | システム内に取り込むことが決定していない漠然としたアイデアなどが書かれたIssueに付与しています |
-| ready   | システム内に取り込むことが決定したIssueに付与しています |
-| working | 現在取り組んでいるIssueに付与しています |
-| feature | 新機能に関するIssueに付与しています |
-| todo    | 雑多なタスクが書かれたIssueに付与しています |
-| bug     | バグに関するIssueに付与しています |
+| Ideas   | システム内に取り込むことが決定していない漠然としたアイデアなどが書かれたIssueに付与しています |
+| Ready   | システム内に取り込むことが決定したIssueに付与しています |
+| Working | 現在取り組んでいるIssueに付与しています |
+| Feature | 新機能に関するIssueに付与しています |
+| Todo    | 雑多なタスクが書かれたIssueに付与しています |
+| Bug     | バグに関するIssueに付与しています |
 
 
 #### Waffle.ioについて
@@ -63,7 +63,7 @@ GitHub Issuesに投稿されたIssueは[Waffle.io](https://waffle.io/annict/anni
 
 Annictは以下のソフトウェアを使用して開発しています。事前にこれらをインストールしてください。
 
-* Ruby 2.1.2
+* Ruby 2.1.5
 * PostgreSQL 9.3.5.0
 * Redis 2.8.3
 * ImageMagick 6.7
