@@ -34,4 +34,8 @@ Annict::Application.configure do
 
   # Print deprecation notices to the stderr.
   config.active_support.deprecation = :stderr
+
+  # 「RuntimeError: Circular dependency detected...」を防ぐ
+  # http://stackoverflow.com/questions/24673301/runtimeerror-circular-dependency-detected-while-autoloading-constant
+  config.allow_concurrency = false
 end
