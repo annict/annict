@@ -1,7 +1,7 @@
 class NotificationsController < ApplicationController
   before_filter :authenticate_user!
 
-  def index(page)
+  def index(page: nil)
     @notifications = current_user
                        .notifications
                        .includes(:action_user)

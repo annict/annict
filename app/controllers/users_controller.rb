@@ -12,7 +12,7 @@ class UsersController < ApplicationController
     @works = (checkedin_works + other_works).first(9)
   end
 
-  def works(status_kind, page)
+  def works(status_kind, page: nil)
     @works = @user.works_on(status_kind).page(page)
   end
 
