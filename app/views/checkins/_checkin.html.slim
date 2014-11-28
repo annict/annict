@@ -1,7 +1,8 @@
 .checkin-comment
   .media id="#{checkin.id}"
-    = link_to user_path(checkin.user.username), class: 'pull-left' do
-      = image_tag checkin.user.profile.avatar.thumb('100x100').url, size: '50x50', class: 'img-circle'
+    .media-left
+      = link_to user_path(checkin.user.username), class: 'pull-left' do
+        = image_tag checkin.user.profile.avatar.thumb('100x100').url, size: '50x50', class: 'img-circle'
     .media-body
       .top
         .pull-left
