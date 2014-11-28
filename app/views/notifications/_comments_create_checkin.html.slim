@@ -3,7 +3,7 @@
 - episode = trackable.checkin.episode
 - work = episode.work
 
-- action_username = link_to action_user.username, user_path(action_user.username), class: 'username'
+- action_name = link_to action_user.profile.name, user_path(action_user.username), class: 'username'
 - work_title = link_to work.title, work_path(work), class: 'work-title'
 - episode_number = link_to "#{episode.number}", work_episode_path(work, episode), class: 'episode-number'
 - checkin = link_to t('words.checkin'), work_episode_checkin_path(work, episode, trackable.checkin), class: 'checkin'
@@ -11,7 +11,7 @@
 .notification-action.comments-create
   .top
     span.body
-      = t('notifications.comments_create_checkin_html', action_username: action_username, work_title: work_title, episode_number: episode_number, checkin: checkin)
+      = t('notifications.comments_create_checkin_html', action_name: action_name, work_title: work_title, episode_number: episode_number, checkin: checkin)
   .bottom
     span.created-at
       = custom_time_ago_in_words(notification.created_at)

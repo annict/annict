@@ -2,13 +2,13 @@
 - like = notification.trackable
 - work = like.recipient.work
 
-- action_username = link_to action_user.username, user_path(action_user.username), class: 'username'
+- action_name = link_to action_user.profile.name, user_path(action_user.username), class: 'username'
 - work_title = link_to work.title, work_path(work), class: 'work-title'
 
 .notification-action.likes-create
   .top
     span.body
-      = t('notifications.likes_create_status_html', action_username: action_username, work_title: work_title)
+      = t('notifications.likes_create_status_html', action_name: action_name, work_title: work_title)
   .bottom
     span.created-at
       = custom_time_ago_in_words(notification.created_at)
