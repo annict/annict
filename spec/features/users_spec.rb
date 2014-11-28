@@ -63,3 +63,25 @@ describe '見てる作品一覧ページ' do
     end
   end
 end
+
+describe 'アカウント設定ページ' do
+  let(:user) { create(:registered_user) }
+
+  before do
+    login_as(user, scope: :user)
+    visit "/setting"
+  end
+
+  context 'メールアドレスを変更したとき' do
+    before do
+      within('form.edit_user') do
+        fill_in 'user_email', with: 'fumoffu@example.com'
+        click_button '更新する'
+      end
+    end
+
+    it '要確認メールアドレスとしてデータベースに保存されること' do
+      expect(user.reload.unconfirmed_email).to eq('fumoffu@example.com')
+    end
+  end
+end
