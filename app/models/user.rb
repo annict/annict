@@ -74,7 +74,7 @@ class User < ActiveRecord::Base
   end
 
   def first_status?(status)
-    statuses.count == 1 && statuses.first.id == status.id
+    statuses.count == 1 && first_status.id == status.id
   end
 
   def latest_statuses

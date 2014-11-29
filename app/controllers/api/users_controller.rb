@@ -1,7 +1,7 @@
 class Api::UsersController < Api::ApplicationController
   before_filter :set_user, only: [:activities]
 
-  def activities(page)
+  def activities(page: nil)
     @activities = @user.activities
                     .includes(:recipient, :trackable, :user)
                     .order(created_at: :desc)

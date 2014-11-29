@@ -89,10 +89,6 @@ class Work < ActiveRecord::Base
     items.find_by(main: true).presence || Item.find(1)
   end
 
-  def latest_statuses
-    statuses.where(latest: true)
-  end
-
   def comments_count
     episode_ids = episodes.pluck(:id)
     checkins = Checkin.where(episode_id: episode_ids).where('comment != ?', '')

@@ -1,10 +1,11 @@
 require 'spec_helper'
 
 describe 'トップページ' do
-  let(:cover_work_id) { eval(ENV['ANNICT_COVER_IMAGE_DATA']).first['work_id'] }
-  let!(:work) { create(:work, :with_item, id: cover_work_id) }
 
   context 'ログインしていないとき' do
+    let(:work) { create(:work, :with_item) }
+    let(:cover_image) { create(:cover_image, work: work) }
+
     before do
       visit '/'
     end
@@ -38,18 +39,15 @@ describe 'トップページ' do
         visit '/'
       end
 
-      it 'アクティビティが存在しない旨を表示すること' do
+      it 'アクティビティが存在しない旨を表示すること', js: true do
         expect(page).to have_content('アクティビティはありませんでした')
       end
     end
 
     context '自分がチェックインしているとき' do
-      let(:work)    { create(:work, :with_item) }
-      let(:episode) { create(:episode, work: work) }
+      let!(:checkin) { create(:checkin, user: user, comment: 'おもしろかったよ') }
 
       before do
-        user.checkins.create(episode: episode, comment: 'おもしろかったよ')
-
         visit '/'
       end
 
@@ -59,13 +57,11 @@ describe 'トップページ' do
     end
 
     context 'フォローしている人がチェックインしているとき' do
-      let(:following_user) { create(:registered_user) }
-      let(:work)           { create(:work, :with_item) }
-      let(:episode)        { create(:episode, work: work) }
+      let!(:following_user) { create(:registered_user) }
+      let!(:checkin) { create(:checkin, user: following_user, comment: 'たのしかったよ') }
 
       before do
         user.follow(following_user)
-        user.checkins.create(episode: episode, comment: 'たのしかったよ')
 
         visit '/'
       end

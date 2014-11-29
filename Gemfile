@@ -2,7 +2,7 @@ source 'https://rubygems.org'
 
 ruby '2.1.5'
 
-gem 'rails', '4.1.5'
+gem 'rails', '4.1.8'
 
 gem 'action_args'
 gem 'activerecord-session_store'
@@ -18,7 +18,7 @@ gem 'dragonfly', '1.0.7'
 gem 'dragonfly-s3_data_store'
 gem 'email_validator'
 gem 'enumerize'
-gem 'figaro', '1.0.0.rc1'
+gem 'figaro'
 gem 'flutie'
 gem 'font-awesome-sass'
 gem 'foreigner'
@@ -67,7 +67,7 @@ group :development do
   gem 'spring-commands-rspec', require: false
   gem 'spring'
   gem 'thin'
-  gem 'web-console', '2.0.0.beta3'
+  gem 'web-console'
 end
 
 group :production do
@@ -81,6 +81,5 @@ group :test do
   gem 'coveralls', require: false
   gem 'database_rewinder'
   gem 'factory_girl_rails'
-  gem 'fuubar'
   gem 'poltergeist'
 end

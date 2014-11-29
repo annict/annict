@@ -7,7 +7,7 @@ class WorksController < ApplicationController
     redirect_to on_air_works_path
   end
 
-  def on_air(page)
+  def on_air(page: nil)
     @works = Work.on_air.order(watchers_count: :desc).page(page)
 
     @page_title = '現在放送中のアニメ一覧'
@@ -17,7 +17,7 @@ class WorksController < ApplicationController
     render :index
   end
 
-  def popular(page)
+  def popular(page: nil)
     @works = Work.order(watchers_count: :desc).page(page)
 
     @page_title = '人気アニメ一覧'
@@ -27,7 +27,7 @@ class WorksController < ApplicationController
     render :index
   end
 
-  def recommend(page)
+  def recommend(page: nil)
     work_ids = current_user.recommended_works(100).map(&:id)
     @works = current_user.unknown_works.where(id: work_ids)
       .order(watchers_count: :desc)
@@ -38,7 +38,7 @@ class WorksController < ApplicationController
     render :index
   end
 
-  def season(page, name)
+  def season(name, page: nil)
     @works = Work.by_season(name).order(watchers_count: :desc).page(page)
 
     season = Season.find_by(slug: name)
@@ -54,7 +54,7 @@ class WorksController < ApplicationController
     @status = current_user.status(@work) if user_signed_in?
   end
 
-  def search(q, page)
+  def search(q: nil, page: nil)
     @q = Work.search(q)
 
     @works = if q.present?

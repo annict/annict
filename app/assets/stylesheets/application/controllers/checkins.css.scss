@@ -12,8 +12,37 @@ body {
     }
 
     .comments {
-      .created-at {
-        color: $color-gray-light;
+      .media-body {
+        width: 100%;
+
+        .top {
+          height: 17px;
+          line-height: 17px;
+
+          .name {
+            margin-right: 5px;
+          }
+
+          .pull-right {
+            font-size: 12px;
+
+            .created-at {
+              a {
+                color: $color-gray-dark-light;
+              }
+            }
+          }
+        }
+
+        .middle {
+          margin: 7px 0 20px 0;
+        }
+
+        .bottom {
+          font-size: 12px;
+
+          margin-bottom: 5px;
+        }
       }
     }
   }

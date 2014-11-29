@@ -148,11 +148,11 @@ ja:
     description: Annict (アニクト)は、見たアニメを記録したり、見た感想を友達にシェアすることができるWebサービスです。「今どの作品を何話まで見ているんだっけ？」を解消します。
     keywords: annict,アニクト,アニメ,深夜アニメ,視聴記録,視聴管理,見た,観た,記録,管理,感想,レビュー,sns,ソーシャル
   notifications:
-    comments_create_checkin_html: '%{action_username}が%{work_title}%{episode_number}への%{checkin}にコメントしました'
-    follows_create_html: '%{action_username}があなたをフォローしました'
-    likes_create_checkin_html: '%{action_username}が%{work_title}%{episode_number}への%{checkin}に「いいね！」しました'
-    likes_create_comment_html: '%{action_username}が%{work_title}%{episode_number}の%{checkin}へのコメントに「いいね！」しました'
-    likes_create_status_html: '%{action_username}が%{work_title}のステータス変更に「いいね！」しました'
+    comments_create_checkin_html: '%{action_name}が%{work_title}%{episode_number}への%{checkin}にコメントしました'
+    follows_create_html: '%{action_name}があなたをフォローしました'
+    likes_create_checkin_html: '%{action_name}が%{work_title}%{episode_number}への%{checkin}に「いいね！」しました'
+    likes_create_comment_html: '%{action_name}が%{work_title}%{episode_number}の%{checkin}へのコメントに「いいね！」しました'
+    likes_create_status_html: '%{action_name}が%{work_title}のステータス変更に「いいね！」しました'
     no_notifications: 通知はありません。
   og:
     description: Annict (アニクト)は、見たアニメを記録したり、見た感想を友達にシェアすることができるWebサービスです。
