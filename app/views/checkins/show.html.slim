@@ -32,17 +32,21 @@ hr
       - @comments.each do |comment|
         - if comment.persisted?
           .media
-            = link_to user_path(comment.user.username), class: 'pull-left' do
-              = image_tag comment.user.profile.avatar.thumb('100x100').url, size: '50x50', class: 'img-circle'
+            .media-left
+              = link_to user_path(comment.user.username), class: 'pull-left' do
+                = image_tag comment.user.profile.avatar.thumb('100x100').url, size: '50x50', class: 'img-circle'
             .media-body
-              .top.small
-                span.username
-                  = link_to comment.user.username, user_path(comment.user.username)
-                span.created-at.pull-right
-                  = custom_time_ago_in_words(comment.created_at)
+              .top
+                .pull-left
+                  span.name
+                    = link_to comment.user.profile.name, user_path(comment.user.username)
+                .pull-right
+                  span.created-at
+                    = custom_time_ago_in_words(comment.created_at)
+                .clearfix
               .middle
                 = comment.body
-              .bottom.small
+              .bottom
                 .pull-right
                   = render 'like_button', recipient: comment
         hr
