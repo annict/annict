@@ -1,17 +1,18 @@
 module Syobocal
   class ProgItem
     def initialize(item)
-      @pid = item.xpath('PID').text.to_i
-      @tid = item.xpath('TID').text.to_i
-      @title = item.xpath('STSubTitle').text
-      @sub_title = item.xpath('SubTitle').text
-      @count = item.xpath('Count').text.to_i
-      @chid = item.xpath('ChID').text.to_i
-      @st_time = DateTime.parse(item.xpath('StTime').text).in_time_zone('Asia/Tokyo') - 9.hours
-      @last_update = DateTime.parse(item.xpath('LastUpdate').text).in_time_zone('Asia/Tokyo') - 9.hours
-      @deleted = item.xpath('Deleted').text.to_i
-      @flag = item.xpath('Flag').text.to_i
-      @prog_comment = item.xpath('ProgComment').text
+      @item = item
+      @pid = item_text('PID').to_i
+      @tid = item_text('TID').to_i
+      @title = item_text('STSubTitle')
+      @sub_title = item_text('SubTitle')
+      @count = item_text('Count').to_i
+      @chid = item_text('ChID').to_i
+      @st_time = item_datetime('StTime')
+      @last_update = item_datetime('LastUpdate')
+      @deleted = item_text('Deleted').to_i
+      @flag = item_text('Flag').to_i
+      @prog_comment = item_text('ProgComment')
     end
 
     def work
@@ -19,7 +20,9 @@ module Syobocal
     end
 
     def episode
-      @episode ||= (work.episodes.find_by(title: @title).presence || work.episodes.find_by(sc_count: @count))
+      episode_by_title = work.episodes.find_by(title: @title)
+      episode_by_sc_count = work.episodes.find_by(sc_count: @count)
+      @episode ||= (episode_by_title.presence || episode_by_sc_count)
     end
 
     def channel
@@ -85,15 +88,19 @@ module Syobocal
         end
 
         SyobocalMailer.delay.special_program_notification(alert.id)
-
-        message = "alertを作成しました。id: #{alert.id}, kind: #{alert.kind_text}, sc_sub_title: #{alert.sc_sub_title}"
-        puts message
-        Rails.logger.info(message)
       end
     end
 
 
     private
+
+    def item_text(name)
+      @item.xpath(name).text
+    end
+
+    def item_datetime(name)
+      DateTime.parse(item_text(name)).in_time_zone('Asia/Tokyo') - 9.hours
+    end
 
     def create_episode(title)
       episode = work.episodes.create do |e|
@@ -105,20 +112,12 @@ module Syobocal
 
       SyobocalMailer.delay.episode_created_notification(episode.id)
 
-      message = "episodeを作成しました。id: #{episode.id}, number: #{episode.number}, episode_title: #{episode.title}"
-      puts message
-      Rails.logger.info(message)
-
       episode
     end
 
     def update_episode(title)
       if episode.sc_count.blank? || episode.title != title
         episode.update_attributes(title: title, sc_count: @count)
-
-        message = "episodeを更新しました。id: #{episode.id}, number: #{episode.number}, episode_title: #{episode.title}"
-        Rails.logger.info(message)
-        puts message
       end
 
       episode
@@ -131,26 +130,15 @@ module Syobocal
         p.sc_last_update = @last_update
         p.started_at = @st_time
       end
-
-      message = "programを作成しました。channel: #{program.channel.name}, work: #{program.work.title}, episode: #{program.episode.number} #{program.episode.title}"
-      Rails.logger.info(message)
-      puts message
     end
 
     def update_program(program)
       if @last_update > program.sc_last_update
         if deleted?
           program.destroy
-
-          message = "programを削除しました。channel: #{program.channel.name}, work: #{program.work.title}, episode: #{program.episode.number} #{program.episode.title}"
         else
           program.update_attributes(sc_last_update: @last_update, started_at: @st_time)
-
-          message = "programを更新しました。channel: #{program.channel.name}, work: #{program.work.title}, episode: #{program.episode.number} #{program.episode.title}"
         end
-
-        Rails.logger.info(message)
-        puts message
       end
     end
   end
