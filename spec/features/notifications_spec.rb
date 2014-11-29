@@ -13,7 +13,7 @@ describe '通知ページ' do
     end
 
     it 'フォローされたことが表示されること' do
-      expect(page).to have_link(user2.username)
+      expect(page).to have_link(user2.profile.name)
     end
   end
 
