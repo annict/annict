@@ -1,7 +1,7 @@
 class FriendsController < ApplicationController
   before_filter :authenticate_user!
 
-  def index(page)
+  def index(page: nil)
     me_and_following_ids = current_user.followings.pluck(:id) << current_user.id
 
     friend_ids = current_user.social_friends.pluck(:id)
