@@ -32,7 +32,7 @@ class Reception < ActiveRecord::Base
   def finish_tips
     if user.receptions.initial?(self)
       tip = Tip.find_by(partial_name: 'channel')
-      user.finish_tip!(tip)
+      user.tips.finish!(tip)
     end
   end
 end

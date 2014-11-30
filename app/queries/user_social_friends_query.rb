@@ -6,8 +6,8 @@ class UserSocialFriendsQuery
   def all
     provider = @user.providers.first
     uids = case provider.name
-      when 'twitter'  then @user.twitter_uids
-      when 'facebook' then @user.facebook_uids
+      when 'twitter'  then TwitterService.new(@user).uids
+      when 'facebook' then FacebookService.new(@user).uids
       end
 
     User.joins(:providers).where(providers: { name: provider.name, uid: uids })

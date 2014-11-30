@@ -51,7 +51,7 @@ class WorksController < ApplicationController
 
   def show
     @work = Work.find(params[:id])
-    @status = current_user.status(@work) if user_signed_in?
+    @status = current_user.statuses.kind_of(@work) if user_signed_in?
   end
 
   def search(q: nil, page: nil)

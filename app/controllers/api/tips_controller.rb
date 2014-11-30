@@ -3,7 +3,7 @@ class Api::TipsController < ApplicationController
 
   def finish(partial_name)
     tip = Tip.find_by(partial_name: partial_name)
-    current_user.finish_tip!(tip)
+    current_user.tips.finish!(tip)
 
     render status: 200, nothing: true
   end

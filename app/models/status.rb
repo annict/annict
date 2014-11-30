@@ -110,9 +110,9 @@ class Status < ActiveRecord::Base
   def update_channel_work
     case kind
     when 'wanna_watch', 'watching'
-      user.create_channel_work(work)
+      ChannelWorkService.new(user).create(work)
     else
-      user.delete_channel_work(work)
+      ChannelWorkService.new(user).delete(work)
     end
   end
 
@@ -127,7 +127,7 @@ class Status < ActiveRecord::Base
   def finish_tips
     if user.statuses.initial?(self)
       tip = Tip.find_by(partial_name: 'status')
-      user.finish_tip!(tip)
+      user.tips.finish!(tip)
     end
   end
 end

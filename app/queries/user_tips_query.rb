@@ -8,4 +8,8 @@ class UserTipsQuery
     finished_tip_ids = @user.finished_tips.pluck(:tip_id)
     Tip.where.not(id: finished_tip_ids).order(:id)
   end
+
+  def finish!(tip)
+    @user.finished_tips.create!(tip: tip)
+  end
 end
