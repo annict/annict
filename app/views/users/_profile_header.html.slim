@@ -1,9 +1,9 @@
 .profile-header
   - convert_options = '-blur 0x2 -evaluate multiply 0.5'
   - if browser.mobile?
-    - image_url = user.profile.background_image.thumb('640x650#').convert(convert_options).url
+    - image_url = user.profile.background_image_or_avatar.thumb('640x650#').convert(convert_options).url
   - else
-    - image_url = user.profile.background_image.thumb('500x325#').convert(convert_options).url
+    - image_url = user.profile.background_image_or_avatar.thumb('500x325#').convert(convert_options).url
   .profile style="background-image: url(#{image_url});"
     .avatar
       = image_tag Dragonfly.app.fetch(user.profile.avatar_uid).thumb('200x200#').url, size: '100x100', class: 'img-circle'
