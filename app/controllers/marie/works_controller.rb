@@ -6,7 +6,7 @@ class Marie::WorksController < Marie::ApplicationController
   before_filter :set_work, only: [:show, :edit, :update]
 
 
-  def index(page, q, season)
+  def index(page: nil, q: nil, season: nil)
     @q = Work.search(q)
     @works = if q.present?
       @q.result.order(released_at: :desc).page(page)
@@ -15,7 +15,7 @@ class Marie::WorksController < Marie::ApplicationController
     end
   end
 
-  def on_air(page, q)
+  def on_air(page: nil, q: nil)
     @q = Work.search(q)
     @works = Work.on_air.order(released_at: :desc).page(page)
 
