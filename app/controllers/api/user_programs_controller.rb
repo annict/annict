@@ -3,9 +3,9 @@ class Api::UserProgramsController < ApplicationController
 
 
   def index(page: nil)
-    @programs = current_user.unchecked_programs
+    @programs = current_user.programs.unchecked
                   .where('started_at < ?', Date.tomorrow + 1.day + 5.hours)
-                  .includes(:channel, episode: [:work])
+                  .includes(:channel, :work, episode: [:work])
                   .order(started_at: :desc)
                   .page(page)
   end

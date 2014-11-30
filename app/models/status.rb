@@ -25,6 +25,10 @@ class Status < ActiveRecord::Base
   belongs_to :user
   belongs_to :work
 
+  scope :latest, -> { where(latest: true) }
+  scope :watching, -> { latest.with_kind(:watching) }
+  scope :wanna_watch_and_watching, -> { latest.with_kind(:wanna_watch, :watching) }
+
   after_create :change_latest
   after_create :save_activity
   after_create :refresh_watchers_count
@@ -32,6 +36,19 @@ class Status < ActiveRecord::Base
   after_create :update_channel_work
   after_create :finish_tips
   after_commit :publish_events, on: :create
+
+
+  def self.initial
+    order(:id).first
+  end
+
+  def self.initial?(status)
+    self.count == 1 && initial.id == status.id
+  end
+
+  def self.kind_of(work)
+    latest.find_by(work_id: work.id)
+  end
 
 
   private
@@ -103,12 +120,12 @@ class Status < ActiveRecord::Base
   private
 
   def publish_events
-    FirstStatusesEvent.publish(:create, self) if user.first_status?(self)
+    FirstStatusesEvent.publish(:create, self) if user.statuses.initial?(self)
     StatusesEvent.publish(:create, self)
   end
 
   def finish_tips
-    if user.first_status?(self)
+    if user.statuses.initial?(self)
       tip = Tip.find_by(partial_name: 'status')
       user.finish_tip!(tip)
     end

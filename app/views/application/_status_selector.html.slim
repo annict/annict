@@ -1,4 +1,4 @@
-- status_kind = current_user.status(work).try(:kind).presence || ''
+- status_kind = current_user.statuses.kind_of(work).try(:kind).presence || ''
 
 .ani-status-selector-spinner data-work-id="#{work.id}"
   - spinner_color = mini ? '#000000' : '#ffffff'

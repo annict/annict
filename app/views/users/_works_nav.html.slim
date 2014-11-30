@@ -2,7 +2,7 @@
   - [:watching, :wanna_watch, :watched, :on_hold, :stop_watching].each do |status_kind|
     div class="status #{'active' if status_kind.to_s == params[:status_kind]}"
       = link_to user_works_user_path(@user.username, status_kind) do
-        .count = @user.latest_statuses.with_kind(status_kind).count
+        .count = @user.statuses.latest.with_kind(status_kind).count
         .text
           = t("enumerize.status.kind.#{status_kind}")
   .clearfix

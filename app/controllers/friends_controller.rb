@@ -4,7 +4,7 @@ class FriendsController < ApplicationController
   def index(page: nil)
     me_and_following_ids = current_user.followings.pluck(:id) << current_user.id
 
-    friend_ids = current_user.social_friends.pluck(:id)
+    friend_ids = current_user.social_friends.all.pluck(:id)
     not_following_friends_ids = friend_ids - me_and_following_ids
     @friends = User.where(id: not_following_friends_ids).page(page)
 

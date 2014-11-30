@@ -1,10 +1,10 @@
 .tips
   .container
-    - if current_user.unfinished_tips(:new_user).present?
+    - if current_user.tips.unfinished(:new_user).present?
       h2 Annictにようこそ
       p Annictでできることを簡単にまとめてみました。良かったらご覧ください。
-      - current_user.unfinished_tips(:new_user).each do |t|
+      - current_user.tips.unfinished(:new_user).each do |t|
         = render 'tip_modal', tip: t
     - else
-      - current_user.unfinished_tips(:user).each do |t|
+      - current_user.tips.unfinished(:user).each do |t|
         = render 'tip_modal', tip: t

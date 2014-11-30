@@ -35,6 +35,10 @@ class User < ActiveRecord::Base
   # ログインできるようにするため、Confirmableモジュールを直接includeする
   include Devise::Models::Confirmable
 
+  include UserFollowable
+  include UserLikable
+  include UserReceivable
+
   extend Enumerize
 
   # Include default devise modules. Others available are:
@@ -69,70 +73,24 @@ class User < ActiveRecord::Base
   after_commit  :publish_events, on: :create
 
 
-  def first_status
-    statuses.order(:id).first
+  def works
+    @works ||= UserWorksQuery.new(self)
   end
 
-  def first_status?(status)
-    statuses.count == 1 && first_status.id == status.id
+  def episodes(work_or_works)
+    UserEpisodesQuery.new(self, work_or_works)
   end
 
-  def latest_statuses
-    statuses.where(latest: true)
+  def programs
+    @programs ||= UserProgramsQuery.new(self)
   end
 
-  def watching_statuses
-    latest_statuses.with_kind(:watching)
+  def tips
+    @tips ||= UserTipsQuery.new(self)
   end
 
-  def wanna_watch_or_watching_statuses
-    latest_statuses.with_kind(:wanna_watch, :watching)
-  end
-
-  def status(work)
-    latest_statuses.find_by(work_id: work.id)
-  end
-
-  def watching_works
-    Work.joins(:statuses).merge(watching_statuses)
-  end
-
-  def wanna_watch_or_watching_works
-    Work.joins(:statuses).merge(wanna_watch_or_watching_statuses)
-  end
-
-  def unknown_works
-    Work.where.not(id: latest_statuses.pluck(:work_id))
-  end
-
-  # 指定した作品の中のチェックインしていないエピソードを返す
-  def unchecked_episodes(work)
-    episode_ids = work.episodes.pluck(:id)
-    checked_episode_ids = checkins.pluck(:episode_id)
-    work.episodes.where(id: (episode_ids - checked_episode_ids))
-  end
-
-  # チェックインしていないエピソードと紐づく番組情報を返す
-  def unchecked_programs
-    program_ids = []
-
-    channel_works.includes(:work).where(work_id: wanna_watch_or_watching_works).references(:work).each do |cw|
-      episode_ids = unchecked_episodes(cw.work).pluck(:id)
-      program_ids << Program.where(channel_id: cw.channel_id, episode_id: episode_ids).pluck(:id)
-    end
-
-    Program.where(id: program_ids.flatten)
-  end
-
-  def unfinished_tips(target = :all)
-    values = (target == :all) ? Tip.target.values : target
-    tip_ids = Tip.with_target(*values).pluck(:id)
-    finished_tip_ids = finished_tips.pluck(:tip_id)
-    Tip.where(id: tip_ids - finished_tip_ids).order(:id)
-  end
-
-  def first_reception?(reception)
-    receptions.count == 1 && receptions.first.id == reception.id
+  def social_friends
+    @social_friends ||= UserSocialFriendsQuery.new(self)
   end
 
   def build_relations(oauth)
@@ -153,50 +111,9 @@ class User < ActiveRecord::Base
     self
   end
 
-  def following?(user)
-    followings.where(id: user.id).present?
-  end
-
-  def followers
-    Follow.where(following_id: id)
-  end
-
-  def follow(user)
-    follows.create(following: user) unless following?(user)
-  end
-
-  def unfollow(user)
-    following = follows.where(following_id: user.id).first
-    following.destroy if following.present?
-  end
-
-  def receiving?(channel)
-    receptions.where(channel_id: channel.id).present?
-  end
-
-  def receive(channel)
-    unless receiving?(channel)
-      receptions.create(channel: channel)
-      ChannelWorksCreatingWorker.perform_async(id, channel.id)
-    end
-  end
-
-  def unreceive(channel)
-    reception = receptions.where(channel_id: channel.id).first
-
-    if reception.present?
-      reception.destroy
-      ChannelWorksDestroyingWorker.perform_async(id, channel.id)
-    end
-  end
-
   def trim_username!
     # Facebookからのユーザ登録のとき `username` に「.」が含まれている可能性があるので除去する
     username.delete!('.')
-  end
-
-  def authorized_to?(provider)
-    providers.pluck(:name).include?(provider.to_s)
   end
 
   def following_activities
@@ -206,43 +123,16 @@ class User < ActiveRecord::Base
     Activity.where(user_id: following_ids)
   end
 
-  def like_r?(recipient)
-    r_likes.where(recipient: recipient).present?
-  end
-
-  #「Recommendable」の `like` メソッドと衝突したため、"_r" というサフィックスをつける羽目になった
-  def like_r(recipient)
-    r_likes.create(recipient: recipient) unless like_r?(recipient)
-  end
-
-  def unlike_r(recipient)
-    like = r_likes.where(recipient: recipient).first
-
-    like.destroy if like.present?
-  end
-
   def watching_count
     statuses.where(latest: true).with_kind(:watching).count
   end
 
-  def social_friends
-    provider = providers.first
-    uids = case provider.name
-      when 'twitter'  then twitter_uids
-      when 'facebook' then facebook_uids
-      end
-
-    User.joins(:providers).where(providers: { name: provider.name, uid: uids })
+  def authorized_to?(provider)
+    providers.pluck(:name).include?(provider.to_s)
   end
 
   def provider_name
     providers.first.name.humanize
-  end
-
-  def works_on(status_kind)
-    work_ids = latest_statuses.with_kind(status_kind).pluck(:work_id)
-
-    Work.where(id: work_ids).order(released_at: :desc)
   end
 
   def read_notifications!
@@ -252,55 +142,12 @@ class User < ActiveRecord::Base
     end
   end
 
-  def background_image
-    profile.background_image.presence || profile.avatar
-  end
-
-  def checkin_chart_labels
-    today = Date.today
-    week_days = (today - 6.days)..today
-
-    week_days.map { |day| day.strftime('%-m/%d') }
-  end
-
-  def checkin_chart_values
-    today = Date.today
-    week_days = (today - 6.days).beginning_of_day..today.end_of_day
-    weekly_checkins = checkins.where(created_at: week_days)
-    weekly_checkins = weekly_checkins
-                        .select('date(created_at) as checkins_day, count(*) as checkins_count')
-                        .group('date(created_at)')
-
-    weekly_checkins_hash = {}
-    weekly_checkins.each do |checkin|
-      weekly_checkins_hash[checkin.checkins_day.strftime('%-m/%d')] = checkin.checkins_count
-    end
-
-    checkins = []
-    checkin_chart_labels.each do |label|
-      checkins << (weekly_checkins_hash[label].presence || 0)
-    end
-
-    checkins
-  end
-
-  def fastest_channel(work)
-    receivable_channel_ids = receptions.pluck(:channel_id)
-
-    if receivable_channel_ids.present? && work.episodes.present?
-      conditions = { channel_id: receivable_channel_ids, episode: work.episodes.first }
-      fastest_program = Program.where(conditions).order(:started_at).first
-
-      fastest_program.present? ? fastest_program.channel : nil
-    end
-  end
-
   # チャンネルと紐付いていない作品と最速放送チャンネルとを紐付ける
   def create_channel_work(work)
     channel_work = channel_works.find_by(work_id: work.id)
 
     if channel_work.blank?
-      channel = fastest_channel(work)
+      channel = channels.fastest(work)
 
       channel_works.create(work: work, channel: channel) if channel.present?
     end
@@ -309,7 +156,7 @@ class User < ActiveRecord::Base
   # まだ番組情報が存在しなかったために `channel_works` に
   # どのチャンネルで見るかの情報が保存されなかった作品にcronで対処するためのメソッド
   def update_channel_work
-    wanna_watch_or_watching_works.each do |work|
+    works.wanna_watch_and_watching.each do |work|
       channel_work = channel_works.find_by(work_id: work.id)
 
       create_channel_work(work) if channel_work.blank?
