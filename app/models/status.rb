@@ -126,8 +126,7 @@ class Status < ActiveRecord::Base
 
   def finish_tips
     if user.statuses.initial?(self)
-      tip = Tip.find_by(partial_name: 'status')
-      user.tips.finish!(tip)
+      UserTipsService.new(user).finish!(:status)
     end
   end
 end

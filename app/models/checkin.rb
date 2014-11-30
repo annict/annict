@@ -52,7 +52,7 @@ class Checkin < ActiveRecord::Base
   def self.initial?(checkin)
     count == 1 && first.id == checkin.id
   end
-  
+
   def initial
     order(:id).first
   end
@@ -125,8 +125,7 @@ class Checkin < ActiveRecord::Base
 
   def finish_tips
     if user.checkins.initial?(self)
-      tip = Tip.find_by(partial_name: 'checkin')
-      user.tips.finish!(tip)
+      UserTipsService.new(user).finish!(:checkin)
     end
   end
 end

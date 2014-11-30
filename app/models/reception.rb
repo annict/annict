@@ -31,8 +31,7 @@ class Reception < ActiveRecord::Base
 
   def finish_tips
     if user.receptions.initial?(self)
-      tip = Tip.find_by(partial_name: 'channel')
-      user.tips.finish!(tip)
+      UserTipsService.new(user).finish!(:channel)
     end
   end
 end
