@@ -96,13 +96,14 @@ class Status < ActiveRecord::Base
   # ステータスの変更があったとき、「Recommendable」の `like`, `dislike` などを呼び出して
   # オススメ作品を更新する
   def update_recommendable
-    if become_to == :watch
+    case become_to
+    when :watch
       user.undislike(work) if user.dislikes?(work)
       user.like(work)
-    elsif become_to == :drop
+    when :drop
       user.unlike(work) if user.likes?(work)
       user.dislike(work)
-    elsif become_to == :drop_first
+    when :drop_first
       user.dislike(work)
     end
   end
