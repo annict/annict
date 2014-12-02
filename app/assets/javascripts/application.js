@@ -1,20 +1,13 @@
 //= require jquery
 //= require jquery_ujs
-//= require lodash.min
-//= require angular.min
-//= require angular-animate.min
-//= require angular-sanitize.min
-//= require angular-translate.min
-//= require angulartics.min
-//= require angulartics-ga.min
-//= require bootstrap-sprockets
-//= require spin.min
-//= require angular-spinner.min
-//= require Chart.min
 //= require jquery.easydropdown.min
-//= require moment-with-langs.min
-//= require ng-infinite-scroll.min
-//= require jquery.easing.1.3
+//= require jquery.easing
+//= require bootstrap-sprockets
+//= require vue
+//= require lodash
+//= require spin.js
+//= require chartist
+//= require moment
 
 //= require_self
 
