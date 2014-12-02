@@ -10,6 +10,6 @@ class TwitterWatchingShareWorker
     body = body.present? ? "#{body.truncate(53)} " : ''
     tweet = "#{body}#{ENV['ANNICT_URL']}/users/#{user.username} "
 
-    user.twitter_client.update_with_media(tweet, image_url)
+    TwitterService.new(user).client.update_with_media(tweet, image_url)
   end
 end

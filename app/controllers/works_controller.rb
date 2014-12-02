@@ -29,7 +29,7 @@ class WorksController < ApplicationController
 
   def recommend(page: nil)
     work_ids = current_user.recommended_works(100).map(&:id)
-    @works = current_user.unknown_works.where(id: work_ids)
+    @works = current_user.works.unknown.where(id: work_ids)
       .order(watchers_count: :desc)
       .page(page)
 
@@ -51,7 +51,7 @@ class WorksController < ApplicationController
 
   def show
     @work = Work.find(params[:id])
-    @status = current_user.status(@work) if user_signed_in?
+    @status = current_user.statuses.kind_of(@work) if user_signed_in?
   end
 
   def search(q: nil, page: nil)

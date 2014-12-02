@@ -22,12 +22,15 @@ class Reception < ActiveRecord::Base
   after_create :finish_tips
 
 
+  def self.initial?(reception)
+    count == 1 && first.id == reception.id
+  end
+
   private
 
   def finish_tips
-    if user.first_reception?(self)
-      tip = Tip.find_by(partial_name: 'channel')
-      user.finish_tip!(tip)
+    if user.receptions.initial?(self)
+      UserTipsService.new(user).finish!(:channel)
     end
   end
 end

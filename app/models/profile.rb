@@ -36,6 +36,10 @@ class Profile < ActiveRecord::Base
     write_attribute(:description, value)
   end
 
+  def background_image_or_avatar
+    background_image.presence || avatar
+  end
+
 
   private
 

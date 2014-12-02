@@ -49,6 +49,14 @@ class Checkin < ActiveRecord::Base
   after_commit  :publish_events, on: :create
 
 
+  def self.initial?(checkin)
+    count == 1 && first.id == checkin.id
+  end
+
+  def initial
+    order(:id).first
+  end
+
   def generate_url_hash
     SecureRandom.urlsafe_base64.slice(0, 10)
   end
@@ -111,14 +119,13 @@ class Checkin < ActiveRecord::Base
   end
 
   def publish_events
-    FirstCheckinsEvent.publish(:create, self) if user.first_checkin?(self)
+    FirstCheckinsEvent.publish(:create, self) if user.checkins.initial?(self)
     CheckinsEvent.publish(:create, self)
   end
 
   def finish_tips
-    if user.first_checkin?(self)
-      tip = Tip.find_by(partial_name: 'checkin')
-      user.finish_tip!(tip)
+    if user.checkins.initial?(self)
+      UserTipsService.new(user).finish!(:checkin)
     end
   end
 end

@@ -25,6 +25,10 @@ class Status < ActiveRecord::Base
   belongs_to :user
   belongs_to :work
 
+  scope :latest, -> { where(latest: true) }
+  scope :watching, -> { latest.with_kind(:watching) }
+  scope :wanna_watch_and_watching, -> { latest.with_kind(:wanna_watch, :watching) }
+
   after_create :change_latest
   after_create :save_activity
   after_create :refresh_watchers_count
@@ -33,6 +37,18 @@ class Status < ActiveRecord::Base
   after_create :finish_tips
   after_commit :publish_events, on: :create
 
+
+  def self.initial
+    order(:id).first
+  end
+
+  def self.initial?(status)
+    count == 1 && initial.id == status.id
+  end
+
+  def self.kind_of(work)
+    latest.find_by(work_id: work.id)
+  end
 
   private
 
@@ -79,13 +95,14 @@ class Status < ActiveRecord::Base
   # ステータスの変更があったとき、「Recommendable」の `like`, `dislike` などを呼び出して
   # オススメ作品を更新する
   def update_recommendable
-    if become_to == :watch
+    case become_to
+    when :watch
       user.undislike(work) if user.dislikes?(work)
       user.like(work)
-    elsif become_to == :drop
+    when :drop
       user.unlike(work) if user.likes?(work)
       user.dislike(work)
-    elsif become_to == :drop_first
+    when :drop_first
       user.dislike(work)
     end
   end
@@ -93,9 +110,9 @@ class Status < ActiveRecord::Base
   def update_channel_work
     case kind
     when 'wanna_watch', 'watching'
-      user.create_channel_work(work)
+      ChannelWorkService.new(user).create(work)
     else
-      user.delete_channel_work(work)
+      ChannelWorkService.new(user).delete(work)
     end
   end
 
@@ -103,14 +120,13 @@ class Status < ActiveRecord::Base
   private
 
   def publish_events
-    FirstStatusesEvent.publish(:create, self) if user.first_status?(self)
+    FirstStatusesEvent.publish(:create, self) if user.statuses.initial?(self)
     StatusesEvent.publish(:create, self)
   end
 
   def finish_tips
-    if user.first_status?(self)
-      tip = Tip.find_by(partial_name: 'status')
-      user.finish_tip!(tip)
+    if user.statuses.initial?(self)
+      UserTipsService.new(user).finish!(:status)
     end
   end
 end

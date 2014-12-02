@@ -20,7 +20,7 @@ describe StatusesController do
       end
 
       it 'ステータスが「見てる」になること' do
-        expect(user.status(work).kind).to eq 'watching'
+        expect(user.statuses.kind_of(work).kind).to eq 'watching'
       end
     end
 
