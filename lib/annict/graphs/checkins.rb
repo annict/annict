@@ -11,14 +11,16 @@ module Annict
       def self.values(user)
         today = Date.today
         week_days = (today - 6.days).beginning_of_day..today.end_of_day
+        sql = 'date(created_at) as checkins_day, count(*) as checkins_count'
         weekly_checkins = user.checkins.where(created_at: week_days)
         weekly_checkins = weekly_checkins
-                            .select('date(created_at) as checkins_day, count(*) as checkins_count')
+                            .select(sql)
                             .group('date(created_at)')
 
         weekly_checkins_hash = {}
         weekly_checkins.each do |checkin|
-          weekly_checkins_hash[checkin.checkins_day.strftime('%-m/%d')] = checkin.checkins_count
+          checkin_date = checkin.checkins_day.strftime('%-m/%d')
+          weekly_checkins_hash[checkin_date] = checkin.checkins_count
         end
 
         checkins = []

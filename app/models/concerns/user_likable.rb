@@ -6,7 +6,7 @@ module UserLikable
       r_likes.where(recipient: recipient).present?
     end
 
-    #「Recommendable」の `like` メソッドと衝突したため、"_r" というサフィックスをつける羽目になった
+    # 「Recommendable」の `like` メソッドと衝突したため、"_r" というサフィックスをつける羽目になった
     def like_r(recipient)
       r_likes.create(recipient: recipient) unless like_r?(recipient)
     end

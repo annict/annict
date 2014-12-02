@@ -43,7 +43,7 @@ class Status < ActiveRecord::Base
   end
 
   def self.initial?(status)
-    self.count == 1 && initial.id == status.id
+    count == 1 && initial.id == status.id
   end
 
   def self.kind_of(work)
