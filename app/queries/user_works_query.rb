@@ -18,4 +18,10 @@ class UserWorksQuery
   def on(status_kind)
     Work.joins(:statuses).merge(@user.statuses.latest.with_kind(status_kind))
   end
+
+  def watching_with_season
+    columns = ['works.id', 'works.title', 'seasons.name as season_name']
+    watching.where.not(season_id: nil).order(released_at: :desc)
+      .joins(:season).select(columns)
+  end
 end
