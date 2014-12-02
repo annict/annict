@@ -22,7 +22,6 @@ class Channel < ActiveRecord::Base
 
   scope :published, -> { where(published: true) }
 
-
   def self.fastest(work)
     receivable_channel_ids = pluck(:id)
 

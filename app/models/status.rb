@@ -50,7 +50,6 @@ class Status < ActiveRecord::Base
     latest.find_by(work_id: work.id)
   end
 
-
   private
 
   def change_latest

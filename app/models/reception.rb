@@ -26,7 +26,6 @@ class Reception < ActiveRecord::Base
     count == 1 && first.id == reception.id
   end
 
-
   private
 
   def finish_tips
