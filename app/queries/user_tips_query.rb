@@ -3,7 +3,7 @@ class UserTipsQuery
     @user = user
   end
 
-  def unfinished(target = :all)
+  def unfinished
     finished_tip_ids = @user.finished_tips.pluck(:tip_id)
     Tip.where.not(id: finished_tip_ids).order(:id)
   end
