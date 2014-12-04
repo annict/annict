@@ -8,10 +8,24 @@ class UserProgramsQuery
     works = @user.works.wanna_watch_and_watching
     channel_works = @user.channel_works.where(work: works)
 
-    conditions = channel_works.map do |cw|
-      "(work_id = #{cw.work_id} and channel_id = #{cw.channel_id})"
+    Program.where(id: unchecked_program_ids(channel_works))
+  end
+
+  private
+
+  def unchecked_episodes(work)
+    UserEpisodesQuery.new(@user, work).unchecked
+  end
+
+  def unchecked_program_ids(channel_works)
+    program_ids = []
+
+    channel_works.each do |cw|
+      episode_ids = unchecked_episodes(cw.work).pluck(:id)
+      conditions = { channel_id: cw.channel_id, episode_id: episode_ids }
+      program_ids << Program.where(conditions).pluck(:id)
     end
 
-    Program.where(conditions.join(' OR '))
+    program_ids.flatten
   end
 end
