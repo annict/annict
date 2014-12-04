@@ -1,8 +1,8 @@
 .media
-  a ng-href='/users/{{activity.links.user.username}}' class='profile-image pull-left'
-    img ng-src='{{activity.links.profile.avatar_url}}' width='50' height='50' class='img-circle'
+  a href='/users/{{activity.links.user.username}}' class='profile-image pull-left'
+    img.img-circle width='50' height='50' v-attr='src: activity.links.profile.avatar_url'
   .media-body
-    div ng-if='"checkins.create" === activity.action'
+    div v-if='"checkins.create" === activity.action'
       = render 'activities/checkins_create'
-    div ng-if='"statuses.create" === activity.action'
+    div v-if='"statuses.create" === activity.action'
       = render 'activities/statuses_create'
