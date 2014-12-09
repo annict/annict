@@ -42,4 +42,8 @@ module ApplicationHelper
   def user_profile_page?
     params[:controller] == 'users' && params[:action] == 'show'
   end
+
+  def js_template(name)
+    render('js_template', name: name)
+  end
 end
