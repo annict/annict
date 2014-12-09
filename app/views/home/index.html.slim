@@ -7,15 +7,14 @@
   = render 'tips'
 
 .container
-  #js-activities.activities ani-loading='loading'
-    div v-component='activities-component' v-with='activities : activities'
+  #js-activities.activities v-ann-loading='loading'
 
 script#js-activities-template type='x-template'
   div infinite-scroll='addMoreActivities()' infinite-scroll-disabled='disabled' infinite-scroll-distance='2'
-    .activity v-repeat='activity : activities' v-show='0 < activities.length'
+    .activity v-repeat='activity : activities' v-show='activities && activities.length > 0'
       = render 'activities/activity'
       hr
-  .info.well v-if='0 === activities.length'
+  .info.well v-show='activities && activities.length === 0'
     .icon
       i.fa.fa-info-circle
     p = t('home.no_timeline')

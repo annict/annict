@@ -13,4 +13,5 @@
 
 //= require annict
 //= require_tree ./components
+//= require_tree ./directives
 //= require_tree ./view_models

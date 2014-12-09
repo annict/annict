@@ -1,10 +1,10 @@
 .activity-action.statuses-create
   .top
     span.body
-      a ng-href='/users/{{activity.links.user.username}}' class='username'
+      a href='/users/{{activity.links.user.username}}' class='username'
         | {{activity.links.profile.name}}
       | が
-      a ng-href='/works/{{activity.links.work.id}}' class='work-title'
+      a href='/works/{{activity.links.work.id}}' class='work-title'
         | {{activity.links.work.title}}
       | のステータスを「{{activity.links.status.kind}}」に変更しました
 
