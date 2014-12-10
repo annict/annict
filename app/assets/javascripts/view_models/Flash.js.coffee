@@ -1,4 +1,4 @@
-vm = new Vue
+new Vue
   el: '#js-flash'
   template: '#js-flash-template'
   data:
