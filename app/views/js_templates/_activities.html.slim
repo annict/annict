@@ -1,6 +1,6 @@
 div infinite-scroll='addMoreActivities()' infinite-scroll-disabled='disabled' infinite-scroll-distance='2'
   .activity v-repeat='activity : activities' v-show='activities && activities.length > 0'
-    = render 'activities/activity'
+    = render 'js_templates/activities/activity'
     hr
 .info.well v-show='activities && activities.length === 0'
   .icon

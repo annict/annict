@@ -3,6 +3,6 @@
     img.img-circle width='50' height='50' v-attr='src: activity.links.profile.avatar_url'
   .media-body
     div v-if='"checkins.create" === activity.action'
-      = render 'activities/checkins_create'
+      = render 'js_templates/activities/checkins_create'
     div v-if='"statuses.create" === activity.action'
-      = render 'activities/statuses_create'
+      = render 'js_templates/activities/statuses_create'
