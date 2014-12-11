@@ -1,0 +1,9 @@
+.work-info
+  a href='/works/{{activity.links.work.id}}'
+    .work
+      .image
+        img width='40' height='40' alt='{{activity.links.work.title}}' v-attr='src: activity.links.main_item.image_url'
+      .title
+        | {{activity.links.work.title}}
+      .clearfix
+    .clearfix

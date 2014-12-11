@@ -10,18 +10,16 @@
     width: 320px;
   }
 
-  &.ng-hide-add, &.ng-hide-remove {
+  &.hide-enter, &.hide-leave {
     @include transition(all linear 1s);
     display: block !important;
   }
 
-  &.ng-hide-add.ng-hide-add-active,
-  &.ng-hide-remove {
+  &.hide-leave {
     top: -500px;
   }
 
-  &.ng-hide-add,
-  &.ng-hide-remove.ng-hide-remove-active {
+  &.hide-enter {
     top: 0;
   }
 

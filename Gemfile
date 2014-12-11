@@ -1,4 +1,5 @@
 source 'https://rubygems.org'
+source 'https://rails-assets.org'
 
 ruby '2.1.5'
 
@@ -29,7 +30,6 @@ gem 'kaminari'
 gem 'keen'
 gem 'koala'
 gem 'meta-tags'
-gem 'ngannotate-rails'
 gem 'nokogiri'
 gem 'omniauth-facebook'
 gem 'omniauth-twitter'
@@ -47,6 +47,13 @@ gem 'twitter'
 gem 'uglifier'
 gem 'unicorn'
 gem 'whenever', require: false
+
+gem 'rails-assets-chartist'
+gem 'rails-assets-jquery.easing'
+gem 'rails-assets-lodash'
+gem 'rails-assets-moment'
+gem 'rails-assets-spin.js'
+gem 'rails-assets-vue'
 
 group :development, :test do
   gem 'awesome_print'

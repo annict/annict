@@ -5,4 +5,5 @@ html lang='ja' ng-app='annict'
   body class="#{body_class} #{user_signed_in? ? 'signed-in' : 'not-signed-in'}"
     = render 'flash'
     = yield
+    = render 'scripts'
     = render 'analytics'

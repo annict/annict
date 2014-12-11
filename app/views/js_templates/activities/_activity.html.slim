@@ -1,0 +1,8 @@
+.media
+  a href='/users/{{activity.links.user.username}}' class='profile-image pull-left'
+    img.img-circle width='50' height='50' v-attr='src: activity.links.profile.avatar_url'
+  .media-body
+    div v-if='"checkins.create" === activity.action'
+      = render 'js_templates/activities/checkins_create'
+    div v-if='"statuses.create" === activity.action'
+      = render 'js_templates/activities/statuses_create'

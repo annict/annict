@@ -1,0 +1,35 @@
+.activity-action.checkins-create
+  .top
+    span.body
+      div v-if='activity.links.episode.number && activity.links.episode.title'
+        a href='/users/{{activity.links.user.username}}' class='username'
+          | {{activity.links.profile.name}}
+        | が
+        a href='/works/{{activity.links.work.id}}' class='work-title'
+          | {{activity.links.work.title}}
+        a href='/works/{{activity.links.work.id}}/episodes/{{activity.links.episode.id}}'
+          | {{activity.links.episode.number}}「{{activity.links.episode.title}}」
+        | にチェックインしました
+
+      div v-if='!activity.links.episode.number || !activity.links.episode.title'
+        a href='/users/{{activity.links.user.username}}' class='username'
+          | {{activity.links.user.username}}
+        | が
+        a href='/works/{{activity.links.work.id}}' class='work-title'
+          | {{activity.links.work.title}}
+        | にチェックインしました
+  .middle
+    div v-if='activity.links.checkin.comment.length > 0'
+      blockquote
+        = render 'checkins/checkin_comment_body'
+    = render 'js_templates/activities/work_info'
+  .bottom
+    .pull-right
+      = render 'js_templates/like_button'
+      a href='/works/{{activity.links.work.id}}/episodes/{{activity.links.episode.id}}/checkins/{{activity.links.checkin.id}}' class='comment-button'
+        i.fa.fa-comment
+        | {{activity.links.checkin.comments_count}}
+    .pull-left
+      span.created-at
+        a href='/works/{{activity.links.work.id}}/episodes/{{activity.links.episode.id}}/checkins/{{activity.links.checkin.id}}'
+          span ani-time-ago='{{activity.created_at}}'

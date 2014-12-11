@@ -1,18 +1,19 @@
 .activity-action.statuses-create
   .top
     span.body
-      a ng-href='/users/{{activity.links.user.username}}' class='username'
+      a.username href='/users/{{activity.links.user.username}}'
         | {{activity.links.profile.name}}
       | が
-      a ng-href='/works/{{activity.links.work.id}}' class='work-title'
+      a.work-title href='/works/{{activity.links.work.id}}'
         | {{activity.links.work.title}}
       | のステータスを「{{activity.links.status.kind}}」に変更しました
-
     .middle
-      = render 'activities/work_info'
+      = render 'js_templates/activities/work_info'
   .bottom
     .pull-right
-      = render 'like_button'
+      span.like-button v-component='like-button' v-with='activity'
     .pull-left
       span.status.created-at
         span ani-time-ago='{{activity.created_at}}'
+
+= js_template 'like_button'
