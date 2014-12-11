@@ -12,5 +12,6 @@
 //= require_self
 
 //= require annict
+//= require_tree ./services
 //= require_tree ./directives
 //= require_tree ./view_models

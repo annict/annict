@@ -11,7 +11,9 @@
       = render 'js_templates/activities/work_info'
   .bottom
     .pull-right
-      = render 'js_templates/like_button'
+      span.like-button v-component='like-button' v-with='activity'
     .pull-left
       span.status.created-at
         span ani-time-ago='{{activity.created_at}}'
+
+= js_template 'like_button'

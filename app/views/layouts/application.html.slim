@@ -14,5 +14,7 @@ html lang='ja'
     - unless content_for(:no_footer)
       = render 'footer'
 
+    = yield :js_templates
+
     = render 'scripts'
     = render 'analytics'

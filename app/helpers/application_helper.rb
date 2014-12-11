@@ -44,6 +44,8 @@ module ApplicationHelper
   end
 
   def js_template(name)
-    render('js_template', name: name)
+    content_for :js_templates do
+      render('js_template', name: name)
+    end
   end
 end
