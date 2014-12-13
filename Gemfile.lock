@@ -267,9 +267,6 @@ GEM
       net-ssh (>= 2.6.5)
     net-ssh (2.9.1)
     netrc (0.8.0)
-    ngannotate-rails (0.13.0)
-      execjs
-      rails (>= 3.1)
     nokogiri (1.6.5)
       mini_portile (~> 0.6.0)
     oauth (0.4.7)
@@ -533,7 +530,6 @@ DEPENDENCIES
   koala
   letter_opener_web
   meta-tags
-  ngannotate-rails
   nokogiri
   omniauth-facebook
   omniauth-twitter
