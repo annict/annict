@@ -36,6 +36,7 @@ gem 'paper_trail'
 gem 'pg'
 gem 'rails-i18n'
 gem 'ransack'
+gem 'react-rails', '~> 1.0.0.pre', github: 'reactjs/react-rails'
 gem 'sass-rails'
 gem 'sidekiq'
 gem 'sidekiq-middleware' # Recommendableで使用

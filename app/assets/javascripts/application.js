@@ -1,5 +1,7 @@
 //= require jquery
 //= require jquery_ujs
+//= require react
+//= require react_ujs
 //= require lodash.min
 //= require bootstrap-sprockets
 //= require spin.min
@@ -11,3 +13,4 @@
 //= require_self
 
 //= require annict
+//= require components
