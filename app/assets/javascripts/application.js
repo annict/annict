@@ -9,8 +9,9 @@
 //= require jquery.easydropdown.min
 //= require moment-with-langs.min
 //= require jquery.easing.1.3
+//= require uri.js
 
 //= require_self
-
 //= require annict
-//= require components
+//= require_tree ./utils
+//= require_tree ./components

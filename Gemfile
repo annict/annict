@@ -1,4 +1,5 @@
 source 'https://rubygems.org'
+source 'https://rails-assets.org'
 
 ruby '2.1.5'
 
@@ -47,6 +48,8 @@ gem 'twitter'
 gem 'uglifier'
 gem 'unicorn'
 gem 'whenever', require: false
+
+gem 'rails-assets-uri.js'
 
 group :development, :test do
   gem 'awesome_print'
