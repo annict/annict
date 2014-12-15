@@ -26,14 +26,16 @@ Annict.Components.ActivityAction = React.createClass
                 meta={this.props.meta}
                 checkin={this.props.checkin}
               />
-              <a className="comment-button" ng-href="/works/{{this.props.work.id}}/episodes/{{this.props.episode.id}}/checkins/{{this.props.checkin.id}}">
-                <i className="fa fa-comment"></i>{{this.props.checkin.comments_count}}
-              </a>
+              <Annict.Components.CommentButton
+                checkin={this.props.checkin}
+                episode={this.props.episode}
+                work={this.props.work}
+              />
             </div>
-            <div className="pull-left">
-              <span className="created-at">
-                <a ng-href="/works/{{this.props.work.id}}/episodes/{{this.props.episode.id}}/checkins/{{this.props.checkin.id}}">
-                  <span ani-time-ago="{{activity.created_at}}"></span>
+            <div className='pull-left'>
+              <span className='created-at'>
+                <a href={'/works/' + this.props.work.id + '/episodes/' + this.props.episode.id + '/checkins/' + this.props.checkin.id}>
+                  <span>{this.props.created_at}</span>
                 </a>
               </span>
             </div>
