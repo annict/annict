@@ -9,4 +9,5 @@ Annict.Components.Activity = React.createClass
           <Annict.Components.ActivityAction activity={activity} />
         </div>
       </div>
+      <hr />
     </div>`
