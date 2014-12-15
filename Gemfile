@@ -49,8 +49,8 @@ gem 'uglifier'
 gem 'unicorn'
 gem 'whenever', require: false
 
-gem 'rails-assets-uri.js'
 gem 'rails-assets-moment'
+gem 'rails-assets-uri.js'
 
 group :development, :test do
   gem 'awesome_print'
