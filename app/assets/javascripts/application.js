@@ -7,7 +7,7 @@
 //= require spin.min
 //= require Chart.min
 //= require jquery.easydropdown.min
-//= require moment-with-langs.min
+//= require moment/min/moment-with-locales
 //= require jquery.easing.1.3
 //= require uri.js
 

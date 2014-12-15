@@ -348,6 +348,7 @@ GEM
       railties (= 4.1.8)
       sprockets-rails (~> 2.0)
     rails-assets-jquery (2.1.1)
+    rails-assets-moment (2.8.4)
     rails-assets-uri.js (1.14.1)
       rails-assets-jquery (>= 1.7.0)
     rails-flog (1.3.2)
@@ -556,6 +557,7 @@ DEPENDENCIES
   pry-rails
   quiet_assets
   rails (= 4.1.8)
+  rails-assets-moment
   rails-assets-uri.js
   rails-flog
   rails-i18n

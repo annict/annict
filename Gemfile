@@ -50,6 +50,7 @@ gem 'unicorn'
 gem 'whenever', require: false
 
 gem 'rails-assets-uri.js'
+gem 'rails-assets-moment'
 
 group :development, :test do
   gem 'awesome_print'
