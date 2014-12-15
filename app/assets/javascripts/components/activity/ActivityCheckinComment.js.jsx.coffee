@@ -1,13 +1,15 @@
 Annict.Components.ActivityCheckinComment = React.createClass
   getInitialState: ->
     spoilGuardClasses:
-      'hide': !@props.checkin.spoil
+      'hide': !@props.activity.checkin.spoil
     bodyClasses:
-      'hide': @props.checkin.spoil
+      'hide': @props.activity.checkin.spoil
   hideSpoilGuard: ->
     @setState(spoilGuardClasses: { hide: true }, bodyClasses: { hide: false })
   render: ->
-    if this.props.checkin.comment?.length > 0
+    activity = @props.activity
+
+    if activity.checkin.comment?.length > 0
       classSet = React.addons.classSet
 
       `<blockquote>
@@ -17,7 +19,7 @@ Annict.Components.ActivityCheckinComment = React.createClass
           </div>
           <div
             className={'body ' + classSet(this.state.bodyClasses)}
-            dangerouslySetInnerHTML={{__html: Annict.Utils.simpleFormat(this.props.checkin.comment)}}
+            dangerouslySetInnerHTML={{__html: Annict.Utils.simpleFormat(activity.checkin.comment)}}
           />
         </div>
       </blockquote>`

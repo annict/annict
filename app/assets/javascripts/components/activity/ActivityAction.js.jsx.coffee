@@ -1,41 +1,26 @@
 Annict.Components.ActivityAction = React.createClass
   render: ->
-    switch @props.action
+    activity = @props.activity
+
+    switch activity.action
       when 'checkins.create'
         `<div className='activity-action checkins-create'>
           <div className='top'>
-            <Annict.Components.ActivityCheckinBody
-              user={this.props.user}
-              profile={this.props.profile}
-              work={this.props.work}
-              episode={this.props.episode}
-            />
+            <Annict.Components.ActivityCheckinBody activity={activity} />
           </div>
           <div className='middle'>
-            <Annict.Components.ActivityCheckinComment
-              checkin={this.props.checkin}
-            />
-            <Annict.Components.ActivityWorkInfo
-              work={this.props.work}
-              item={this.props.item}
-            />
+            <Annict.Components.ActivityCheckinComment activity={activity} />
+            <Annict.Components.ActivityWorkInfo activity={activity} />
           </div>
           <div className='bottom'>
             <div className='pull-right'>
-              <Annict.Components.LikeButton
-                meta={this.props.meta}
-                checkin={this.props.checkin}
-              />
-              <Annict.Components.CommentButton
-                checkin={this.props.checkin}
-                episode={this.props.episode}
-                work={this.props.work}
-              />
+              <Annict.Components.LikeButton meta={activity.meta} checkin={activity.checkin} />
+              <Annict.Components.CommentButton checkin={activity.checkin} episode={activity.episode} work={activity.work} />
             </div>
             <div className='pull-left'>
               <span className='created-at'>
-                <a href={'/works/' + this.props.work.id + '/episodes/' + this.props.episode.id + '/checkins/' + this.props.checkin.id}>
-                  <span>{this.props.created_at}</span>
+                <a href={'/works/' + activity.work.id + '/episodes/' + activity.episode.id + '/checkins/' + activity.checkin.id}>
+                  <span>{activity.created_at}</span>
                 </a>
               </span>
             </div>
