@@ -12,7 +12,7 @@ Annict.Components.CheckinActivity = React.createClass
       </div>
       <div className='bottom'>
         <div className='pull-right'>
-          <Annict.Components.LikeButton meta={activity.meta} resource={activity.checkin} />
+          <Annict.Components.LikeButton meta={activity.meta} resource={activity.checkin} resourceName='checkins' />
           <Annict.Components.CommentButton checkin={activity.checkin} episode={activity.episode} work={activity.work} />
         </div>
         <div className='pull-left'>

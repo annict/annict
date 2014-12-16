@@ -11,7 +11,7 @@ Annict.Components.StatusActivity = React.createClass
       </div>
       <div className='bottom'>
         <div className='pull-right'>
-          <Annict.Components.LikeButton meta={activity.meta} resource={activity.status} />
+          <Annict.Components.LikeButton meta={activity.meta} resource={activity.status} resourceName='statuses' />
         </div>
         <div className='pull-left'>
           <span className='status created-at'>
