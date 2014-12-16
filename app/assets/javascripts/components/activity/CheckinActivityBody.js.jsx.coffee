@@ -1,4 +1,4 @@
-Annict.Components.ActivityCheckinBody = React.createClass
+Annict.Components.CheckinActivityBody = React.createClass
   render: ->
     activity = @props.activity
 

@@ -4,6 +4,8 @@ Annict.Components.ActivityAction = React.createClass
 
     switch activity.action
       when 'checkins.create'
-        `<Annict.Components.ActivityCheckin activity={activity} />`
+        `<Annict.Components.CheckinActivity activity={activity} />`
+      when 'statuses.create'
+        `<Annict.Components.StatusActivity activity={activity} />`
       else
         false

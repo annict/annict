@@ -1,4 +1,4 @@
-Annict.Components.ActivityCheckinComment = React.createClass
+Annict.Components.CheckinActivityComment = React.createClass
   getInitialState: ->
     spoilGuardClasses:
       'hide': !@props.activity.checkin.spoil

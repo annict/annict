@@ -1,18 +1,18 @@
-Annict.Components.ActivityCheckin = React.createClass
+Annict.Components.CheckinActivity = React.createClass
   render: ->
     activity = @props.activity
 
     `<div className='activity-action checkins-create'>
       <div className='top'>
-        <Annict.Components.ActivityCheckinBody activity={activity} />
+        <Annict.Components.CheckinActivityBody activity={activity} />
       </div>
       <div className='middle'>
-        <Annict.Components.ActivityCheckinComment activity={activity} />
+        <Annict.Components.CheckinActivityComment activity={activity} />
         <Annict.Components.ActivityWorkInfo activity={activity} />
       </div>
       <div className='bottom'>
         <div className='pull-right'>
-          <Annict.Components.LikeButton meta={activity.meta} checkin={activity.checkin} />
+          <Annict.Components.LikeButton meta={activity.meta} resource={activity.checkin} />
           <Annict.Components.CommentButton checkin={activity.checkin} episode={activity.episode} work={activity.work} />
         </div>
         <div className='pull-left'>

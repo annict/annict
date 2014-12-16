@@ -2,7 +2,7 @@ Annict.Components.LikeButton = React.createClass
   getInitialState: ->
     likedClass:
       liked: @props.meta.liked
-    likesCount: @props.checkin.likes_count
+    likesCount: @props.resource.likes_count
   toggle: ->
     @setState(likedClass: { liked: true })
   render: ->
