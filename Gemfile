@@ -49,6 +49,8 @@ gem 'uglifier'
 gem 'unicorn'
 gem 'whenever', require: false
 
+gem 'rails-assets-EventEmitter.js'
+gem 'rails-assets-flux'
 gem 'rails-assets-moment'
 gem 'rails-assets-uri.js'
 

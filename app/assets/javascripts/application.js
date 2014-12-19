@@ -2,6 +2,8 @@
 //= require jquery_ujs
 //= require react
 //= require react_ujs
+//= require flux
+//= require EventEmitter.js
 //= require lodash.min
 //= require bootstrap-sprockets
 //= require spin.min
@@ -14,4 +16,8 @@
 //= require_self
 //= require annict
 //= require_tree ./utils
+//= require_tree ./constants
+//= require_tree ./dispatcher
+//= require_tree ./stores
+//= require_tree ./actions
 //= require_tree ./components
