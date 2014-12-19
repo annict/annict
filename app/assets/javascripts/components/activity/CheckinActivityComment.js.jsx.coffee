@@ -1,9 +1,9 @@
 Annict.Components.CheckinActivityComment = React.createClass
   getInitialState: ->
     spoilGuardClasses:
-      'hide': !@props.activity.checkin.spoil
+      'hidden': !@props.activity.checkin.spoil
     bodyClasses:
-      'hide': @props.activity.checkin.spoil
+      'hidden': @props.activity.checkin.spoil
   hideSpoilGuard: ->
     @setState(spoilGuardClasses: { hide: true }, bodyClasses: { hide: false })
   render: ->

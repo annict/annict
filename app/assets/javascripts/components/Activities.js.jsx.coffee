@@ -13,8 +13,6 @@ Annict.Components.Activities = React.createClass
         hasMore: true
 
   loadMoreActivities: (page) ->
-    console.log 'page:', page
-
     $.ajax
       url: "/api/activities?page=#{page}"
     .done (data) =>
