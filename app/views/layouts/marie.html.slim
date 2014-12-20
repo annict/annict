@@ -3,8 +3,8 @@ html lang='ja'
   head
     title
       = page_title(app_name: 'Annict::Marie', page_title_symbol: :site_page_title, separator: ' | ')
-    = stylesheet_link_tag 'marie', media: 'all'
-    = javascript_include_tag 'marie'
+    = stylesheet_link_tag 'marie', media: 'all', 'data-turbolinks-track' => true
+    = javascript_include_tag 'marie', 'data-turbolinks-track' => true
     = csrf_meta_tags
   body class="#{body_class}"
     nav.navbar.navbar-default.navbar-fixed-top role='navigation'
