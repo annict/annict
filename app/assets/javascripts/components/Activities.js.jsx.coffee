@@ -17,8 +17,16 @@ Annict.Components.Activities = React.createClass
       `<Annict.Components.Activity key={activity.id} activity={activity} />`
     loader = `<Annict.Components.Loader loading={this.state.loading} />`
 
-    `<div className='activities'>
-      <Annict.Components.InfiniteScroll loadMore={ActivitiesActions.getActivities} hasMore={this.state.hasMore} loader={loader}>
-        {activities}
-      </Annict.Components.InfiniteScroll>
-    </div>`
+    if !@state.loading && _.isEmpty(activities)
+      `<div className='info well'>
+        <div className='icon'>
+          <i className='fa fa-info-circle'></i>
+        </div>
+        <p>表示できるアクティビティはまだありません。</p>
+      </div>`
+    else
+      `<div className='activities'>
+        <Annict.Components.InfiniteScroll loadMore={ActivitiesActions.getActivities} hasMore={this.state.hasMore} loader={loader}>
+          {activities}
+        </Annict.Components.InfiniteScroll>
+      </div>`
