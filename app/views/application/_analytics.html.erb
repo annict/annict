@@ -4,15 +4,12 @@
   m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
   })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
 
-  $(document).on('page:load page:restore', function() {
-    ga('set', 'location', location.href.split('#')[0]);
-    ga('create', '<%= ENV['GA_TRACKING_ID'] %>', 'annict.com');
-    ga('send', 'pageview');
+  ga('create', '<%= ENV['GA_TRACKING_ID'] %>', 'annict.com');
+  ga('send', 'pageview');
 
-    <% if user_signed_in? %>
+  <% if user_signed_in? %>
     ga('set', 'dimension1', 'ログイン済み');
-    <% else %>
+  <% else %>
     ga('set', 'dimension1', '未ログイン');
-    <% end %>
-  });
+  <% end %>
 </script>
