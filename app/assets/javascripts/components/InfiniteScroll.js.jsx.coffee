@@ -32,7 +32,14 @@ Annict.Components.InfiniteScroll = React.createClass
 
     if (top + height - scrollTop - innerHeight) < Number(@props.threshold)
       @detachScrollListener()
-      @props.loadMore(@pageLoaded += 1)
+
+      _.bind(@props.loadMore, @getLoadMoreContext(), @pageLoaded += 1)()
+
+  getLoadMoreContext: ->
+    if _.isEmpty(@props.loadMoreContext)
+      @props
+    else
+      @props.loadMoreContext
 
   attachScrollListener: ->
     return if !@props.hasMore

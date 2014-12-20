@@ -5,6 +5,9 @@ Annict.Components.Activities = React.createClass
   getInitialState: ->
     ActivitiesStore.getState()
 
+  componentWillMount: ->
+    ActivitiesActions.setUsername(@props.username)
+
   componentDidMount: ->
     ActivitiesStore.addChangeListener(@_onChange)
     ActivitiesActions.getActivities()
@@ -26,7 +29,7 @@ Annict.Components.Activities = React.createClass
       </div>`
     else
       `<div className='activities'>
-        <Annict.Components.InfiniteScroll loadMore={ActivitiesActions.getActivities} hasMore={this.state.hasMore} loader={loader}>
+        <Annict.Components.InfiniteScroll loadMore={ActivitiesActions.getActivities} loadMoreContext={ActivitiesActions} hasMore={this.state.hasMore} loader={loader}>
           {activities}
         </Annict.Components.InfiniteScroll>
       </div>`
