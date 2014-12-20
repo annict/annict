@@ -8,14 +8,3 @@
 
 .container
   = react_component('Annict.Components.Activities')
-
-  / .activities ng-controller='ActivitiesCtrl' ani-loading='loading'
-  /   div infinite-scroll='addMoreActivities()' infinite-scroll-disabled='disabled' infinite-scroll-distance='2'
-  /     .activity ng-repeat='activity in activities' ng-show='0 < activities.length'
-  /       = render 'activities/activity'
-  /       hr
-  /   .info.well ng-show='0 === activities.length'
-  /     .icon
-  /       i.fa.fa-info-circle
-  /     p = t('home.no_timeline')
-  /     p = t('home.no_timeline_find_friends_html', friends: link_to(t('titles.friends', provider_name: current_user.provider_name), friends_path))
