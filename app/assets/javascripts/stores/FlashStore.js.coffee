@@ -15,6 +15,10 @@ Annict.Stores.FlashStore = _.extend EventEmitter.prototype,
     iconType: @iconType()
     body: @body
 
+  destroy: ->
+    @setType('')
+    @setBody('')
+
   alertType: ->
     switch @type
       when 'notice' then 'alert-success'
@@ -27,8 +31,8 @@ Annict.Stores.FlashStore = _.extend EventEmitter.prototype,
       when 'info' then 'fa-info-circle'
       when 'danger' then 'fa-exclamation-triangle'
 
-  emitChange: ->
-    @emit(FlashConstants.CHANGE)
+  emitChange: (actionType) ->
+    @emit(FlashConstants.CHANGE, actionType)
 
   addChangeListener: (callback) ->
     @on(FlashConstants.CHANGE, callback)
@@ -38,11 +42,15 @@ Annict.AppDispatcher.register (payload) ->
   FlashConstants = Annict.Constants.FlashConstants
   FlashStore = Annict.Stores.FlashStore
 
-  switch payload.action._type
+  actionType = payload.action._type
+
+  switch actionType
     when FlashConstants.SHOW
       FlashStore.setType(payload.action.type)
       FlashStore.setBody(payload.action.body)
+    when FlashConstants.HIDE
+      FlashStore.destroy()
 
-  FlashStore.emitChange()
+  FlashStore.emitChange(actionType)
 
   true

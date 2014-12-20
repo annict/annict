@@ -1,4 +1,6 @@
 FlashStore = Annict.Stores.FlashStore
+FlashConstants = Annict.Constants.FlashConstants
+FlashActions = Annict.Actions.FlashActions
 
 Annict.Components.Flash = React.createClass
   getInitialState: ->
@@ -7,28 +9,27 @@ Annict.Components.Flash = React.createClass
   componentDidMount: ->
     FlashStore.addChangeListener(@_onChange)
 
-  getDefaultProps: ->
-    hidden: true
-
-  hide: ->
-    @setProps(hidden: true)
-
-  _onChange: ->
+  _onChange: (actionType) ->
     @setState(FlashStore.getState())
-    @setProps(hidden: false)
 
-    setTimeout =>
-      @hide()
-    , 6000
+    if actionType == FlashConstants.SHOW
+      setTimeout ->
+        FlashActions.hide()
+      , 6000
 
   render: ->
     classSet = React.addons.classSet
 
-    `<div className={classSet({flash: true, hidden: this.props.hidden})} onClick={this.hide}>
-      <div className={'alert ' + this.state.alertType}>
+    state = @state
+    flashClasses =
+      flash: true
+      'flash-enter': !_.isEmpty(state.body)
+
+    `<div className={classSet(flashClasses)} onClick={this.hide} key='flash'>
+      <div className={'alert ' + state.alertType}>
         <div className='content'>
-          <i className={'fa ' + this.state.iconType}></i>
-          <span>{this.state.body}</span>
+          <i className={'fa ' + state.iconType}></i>
+          <span>{state.body}</span>
         </div>
       </div>
     </div>`

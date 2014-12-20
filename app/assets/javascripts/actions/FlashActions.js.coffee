@@ -6,3 +6,7 @@ Annict.Actions.FlashActions =
       _type: FlashConstants.SHOW
       type: type
       body: body
+
+  hide: ->
+    Annict.AppDispatcher.handleViewAction
+      _type: FlashConstants.HIDE
