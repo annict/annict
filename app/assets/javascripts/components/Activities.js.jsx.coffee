@@ -1,23 +1,16 @@
+ActivitiesStore = Annict.Stores.ActivitiesStore
+ActivitiesActions = Annict.Actions.ActivitiesActions
+
 Annict.Components.Activities = React.createClass
   getInitialState: ->
-    activities: []
-    loading: true
-    hasMore: false
+    ActivitiesStore.getState()
 
   componentDidMount: ->
-    $.ajax
-      url: '/api/activities'
-    .done (data) =>
-      @setState
-        activities: data.activities
-        hasMore: true
+    ActivitiesStore.addChangeListener(@_onChange)
+    ActivitiesActions.getActivities()
 
-  loadMoreActivities: (page) ->
-    $.ajax
-      url: "/api/activities?page=#{page}"
-    .done (data) =>
-      @setState(activities: @state.activities.concat(data.activities))
-      @setState(loading: false) if _.isEmpty(data.activities)
+  _onChange: ->
+    @setState(ActivitiesStore.getState())
 
   render: ->
     activities = @state.activities.map (activity) ->
@@ -25,7 +18,7 @@ Annict.Components.Activities = React.createClass
     loader = `<Annict.Components.Loader loading={this.state.loading} />`
 
     `<div className='activities'>
-      <Annict.Components.InfiniteScroll loadMore={this.loadMoreActivities} hasMore={this.state.hasMore} loader={loader}>
+      <Annict.Components.InfiniteScroll loadMore={ActivitiesActions.getActivities} hasMore={this.state.hasMore} loader={loader}>
         {activities}
       </Annict.Components.InfiniteScroll>
     </div>`

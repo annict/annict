@@ -1,6 +1,6 @@
 FlashConstants = Annict.Constants.FlashConstants
 
-Annict.Stores.FlashStore = _.extend EventEmitter.prototype,
+Annict.Stores.FlashStore = _.extend {}, EventEmitter.prototype,
   type: ''
   body: ''
 
