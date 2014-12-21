@@ -351,6 +351,7 @@ GEM
     rails-assets-flux (2.0.2)
     rails-assets-jquery (2.1.1)
     rails-assets-moment (2.8.4)
+    rails-assets-spin.js (2.0.1)
     rails-assets-uri.js (1.14.1)
       rails-assets-jquery (>= 1.7.0)
     rails-flog (1.3.2)
@@ -562,6 +563,7 @@ DEPENDENCIES
   rails-assets-EventEmitter.js
   rails-assets-flux
   rails-assets-moment
+  rails-assets-spin.js
   rails-assets-uri.js
   rails-flog
   rails-i18n

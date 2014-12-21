@@ -1,0 +1,31 @@
+.status-selector {
+  .selector {
+    border-radius: 0;
+    border: solid 1px #ffffff;
+    color: #ffffff;
+    display: inline-block;
+    height: 30px;
+    overflow: hidden;
+    position: relative;
+    width: 120px;
+
+    i {
+      font-size: 15px;
+      position: absolute;
+      right: 7px;
+      top: 7px;
+    }
+
+    select {
+      @include appearance(none);
+
+      background-color: rgba(255,255,255,0);
+      border-radius: 0;
+      border: 0;
+      cursor: pointer;
+      height: 30px;
+      padding-left: 7px;
+      width: 130%;
+    }
+  }
+}

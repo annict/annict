@@ -6,9 +6,9 @@
 //= require EventEmitter.js
 //= require lodash.min
 //= require bootstrap-sprockets
-//= require spin.min
+//= require spin.js
+//= require spin.js/jquery.spin
 //= require Chart.min
-//= require jquery.easydropdown.min
 //= require moment/min/moment-with-locales
 //= require jquery.easing.1.3
 //= require uri.js

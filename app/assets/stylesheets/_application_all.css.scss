@@ -8,7 +8,6 @@
 @import 'bourbon';
 @import 'font-awesome-sprockets';
 @import 'font-awesome';
-@import 'easydropdown';
 
 @import 'application/mixins/checkin-comment';
 @import 'application/mixins/easydropdown';
@@ -23,20 +22,20 @@
 
 @import 'application/components/about-works-image';
 @import 'application/components/activities';
-@import 'application/components/ani-channel-selector';
-@import 'application/components/ani-status-selector';
-@import 'application/components/ani-status-selector-spinner';
-@import 'application/components/btn-group-tab';
-@import 'application/components/flash';
 @import 'application/components/amazon-associates-link';
+@import 'application/components/ani-channel-selector';
+@import 'application/components/btn-group-tab';
 @import 'application/components/checkin-form';
 @import 'application/components/error-panel';
+@import 'application/components/flash';
 @import 'application/components/footer';
 @import 'application/components/like-button';
 @import 'application/components/loading';
 @import 'application/components/navbar';
+@import 'application/components/selector-spinner';
 @import 'application/components/social-click-counter';
 @import 'application/components/spoil-guard';
+@import 'application/components/status-selector';
 @import 'application/components/tips';
 @import 'application/components/user-list';
 @import 'application/components/welcome-to-annict';
