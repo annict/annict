@@ -1,13 +1,33 @@
 .status-selector {
+  height: 30px;
+  margin: 0 auto;
+  position: relative;
+  width: 120px;
+
+  .selector-spinner {
+    display: inline-block;
+    left: -80px;
+    position: relative;
+    top: 0;
+    width: 12px;
+
+    i {
+      color: #64e86f;
+      left: 0;
+      position: absolute;
+      top: -6px;
+    }
+  }
+
   .selector {
     border-radius: 0;
     border: solid 1px #ffffff;
     color: #ffffff;
     display: inline-block;
-    height: 30px;
     overflow: hidden;
     position: relative;
-    width: 120px;
+    top: -20px;
+    width: 100%;
 
     i {
       font-size: 15px;

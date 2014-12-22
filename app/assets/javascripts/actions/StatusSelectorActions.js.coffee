@@ -17,7 +17,8 @@ class Annict.Actions.StatusSelectorActions
         url: "/works/#{@selectedWorkId}/statuses/select"
         data:
           status_kind: @newStatusKind
-      .done (data) ->
+      .done (data) =>
+        @currentStatusKind = @newStatusKind
         SelectorSpinnerActions.hide()
 
   _didStatusKindChange: ->

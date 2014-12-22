@@ -1,19 +1,22 @@
 SelectorSpinnerConstants = Annict.Constants.SelectorSpinnerConstants
 
+_hidden = true
+
+setHidden = (hidden) ->
+  _hidden = hidden
+
 Annict.Stores.SelectorSpinnerStore = _.extend {}, EventEmitter.prototype,
-  hidden: true
-
-  setHidden: (hidden) ->
-    @hidden = hidden
-
   getState: ->
-    hidden: @hidden
+    hidden: _hidden
 
   emitChange: ->
     @emit(SelectorSpinnerConstants.CHANGE)
 
   addChangeListener: (callback) ->
     @on(SelectorSpinnerConstants.CHANGE, callback)
+
+  removeChangeListener: (callback) ->
+    @removeListener(SelectorSpinnerConstants.CHANGE, callback)
 
 
 Annict.AppDispatcher.register (payload) ->
@@ -23,9 +26,9 @@ Annict.AppDispatcher.register (payload) ->
 
   switch actionType
     when SelectorSpinnerConstants.SHOW
-      SelectorSpinnerStore.setHidden(false)
+      setHidden(false)
     when SelectorSpinnerConstants.HIDE
-      SelectorSpinnerStore.setHidden(true)
+      setHidden(true)
 
   SelectorSpinnerStore.emitChange()
 
