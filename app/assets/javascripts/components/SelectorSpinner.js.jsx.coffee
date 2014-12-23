@@ -15,7 +15,7 @@ Annict.Components.SelectorSpinner = React.createClass
   _onChange: ->
     state = SelectorSpinnerStore.getState()
 
-    $spinner = $(@getDOMNode())
+    $spinner = $(@getDOMNode()).filter("[data-target-id=#{state.targetId}]")
     spinnerColor = if @props.isMini then '#000000' else '#ffffff'
     spinnerOptions = { color: spinnerColor, lines: 8, length: 3, radius: 3, width: 1 }
 
@@ -33,6 +33,6 @@ Annict.Components.SelectorSpinner = React.createClass
   render: ->
     classSet = React.addons.classSet
 
-    `<span className='selector-spinner' data-work-id={this.props.workId}>
+    `<span className='selector-spinner' data-target-id={this.props.targetId}>
       <i className='fa fa-check-circle hidden'></i>
     </span>`

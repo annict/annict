@@ -10,7 +10,7 @@ class Annict.Actions.StatusSelectorActions
     @selectedWorkId = $(event.target).data('workId')
 
     if @workId == @selectedWorkId && @_didStatusKindChange()
-      SelectorSpinnerActions.show()
+      SelectorSpinnerActions.show(@workId)
 
       $.ajax
         type: 'POST'
@@ -19,7 +19,7 @@ class Annict.Actions.StatusSelectorActions
           status_kind: @newStatusKind
       .done (data) =>
         @currentStatusKind = @newStatusKind
-        SelectorSpinnerActions.hide()
+        SelectorSpinnerActions.hide(@workId)
 
   _didStatusKindChange: ->
     @currentStatusKind != @newStatusKind &&

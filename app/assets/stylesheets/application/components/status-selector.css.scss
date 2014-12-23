@@ -49,3 +49,31 @@
     }
   }
 }
+
+.status-selector.is-mini {
+  bottom: 20px;
+  height: 23px;
+  margin-right: 0;
+  position: static;
+  width: 100px;
+
+  .selector-spinner {
+    left: -22px;
+    top: -2px;
+  }
+
+  .selector {
+    border: solid 1px $color-gray-dark-light;
+    color: $color-gray-dark-light;
+
+    i {
+      top: 3px;
+    }
+
+    select {
+      font-size: 10px;
+      height: 23px;
+      line-height: 23px;
+    }
+  }
+}

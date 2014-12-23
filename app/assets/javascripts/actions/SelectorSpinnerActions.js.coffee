@@ -1,10 +1,12 @@
 SelectorSpinnerConstants = Annict.Constants.SelectorSpinnerConstants
 
 Annict.Actions.SelectorSpinnerActions =
-  show: ->
+  show: (targetId) ->
     Annict.AppDispatcher.handleViewAction
       _type: SelectorSpinnerConstants.SHOW
+      targetId: targetId
 
-  hide: ->
+  hide: (targetId) ->
     Annict.AppDispatcher.handleViewAction
       _type: SelectorSpinnerConstants.HIDE
+      targetId: targetId

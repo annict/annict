@@ -5,11 +5,13 @@ Annict.Components.StatusSelector = React.createClass
     @actions = new StatusSelectorActions(@props)
 
   render: ->
+    classSet = React.addons.classSet
     props = @props
     handleChange = _.bind(@actions.handleChange, @actions)
+    statusSelectorClasses = classSet('status-selector': true, 'is-mini': props.isMini)
 
-    `<div className='status-selector'>
-      <Annict.Components.SelectorSpinner isMini={props.isMini} workId={props.workId} />
+    `<div className={statusSelectorClasses}>
+      <Annict.Components.SelectorSpinner isMini={props.isMini} targetId={props.workId} />
       <div className='selector'>
         <i className='fa fa-caret-down'></i>
         <select defaultValue={props.currentStatusKind} onChange={handleChange} data-work-id={props.workId}>
