@@ -19,5 +19,12 @@
 //= require_tree ./constants
 //= require_tree ./dispatcher
 //= require_tree ./stores
-//= require_tree ./actions
+
+//= require ./actions/SelectorSpinnerActions
+//= require ./actions/ActivitiesActions
+//= require ./actions/ChannelSelectorActions
+//= require ./actions/FlashActions
+//= require ./actions/ProgramsActions
+//= require ./actions/StatusSelectorActions
+
 //= require_tree ./components

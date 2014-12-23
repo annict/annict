@@ -1,0 +1,9 @@
+.channel-selector {
+  @include selector;
+}
+
+.channel-selector.is-mini {
+  @include selector-mini;
+
+  width: 130px !important;
+}

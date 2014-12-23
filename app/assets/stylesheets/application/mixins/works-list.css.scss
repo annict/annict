@@ -38,15 +38,6 @@
         top: 80px;
         width: 100px;
       }
-
-      .ani-channel-selector {
-        @if $browser == pc {
-          left: 340px;
-        }
-        @if $browser == mobile {
-          left: 160px;
-        }
-      }
     }
 
     hr {

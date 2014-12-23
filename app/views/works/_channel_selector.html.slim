@@ -1,4 +1,4 @@
 - current_channel_id = current_user.channel_works.current_channel(work).try(:id).presence || nil
+- channels = work.channels.map { |c| { id: c.id, name: c.name } }
 
-select.ani-channel-selector data-work-id="#{work.id}" data-channel-id="#{current_channel_id}" data-mini-selector="#{mini}"
-  = options_for_select(work.channels.pluck(:name, :id).insert(0, t('words.channel')), current_channel_id)
+= react_component('Annict.Components.ChannelSelector', workId: work.id, currentChannelId: current_channel_id, isMini: mini, channels: channels)
