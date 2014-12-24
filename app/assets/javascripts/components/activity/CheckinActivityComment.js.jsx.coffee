@@ -14,7 +14,7 @@ Annict.Components.CheckinActivityComment = React.createClass
 
       `<blockquote>
         <div className='checkin-comment'>
-          <div className={'spoil-guard ' + classSet(this.state.spoilGuardClasses)} onClick={this.hideSpoilGuard}>
+          <div className={'spoil-guard ' + classSet(this.state.spoilGuardClasses)} onClick={this.hideSpoilGuard} onTouchStart={this.hideSpoilGuard}>
             <i className="fa fa-exclamation"></i>ネタバレを含んでいます (クリックで展開)
           </div>
           <div
