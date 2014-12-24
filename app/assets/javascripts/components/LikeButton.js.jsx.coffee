@@ -3,12 +3,11 @@ Annict.Components.LikeButton = React.createClass
     @requestPath = "/#{@props.resourceName}/#{@props.resource.id}/like"
 
   getInitialState: ->
-    likedClass:
-      liked: @props.meta.liked
+    liked: @props.meta.liked
     likesCount: @props.resource.likes_count
 
   toggle: ->
-    if @props.meta.liked
+    if @state.liked
       @dislike()
     else
       @like()
@@ -20,7 +19,7 @@ Annict.Components.LikeButton = React.createClass
     .done =>
       @setState
         likesCount: @state.likesCount + 1
-        likedClass: { liked: true }
+        liked: true
   dislike: ->
     $.ajax
       method: 'DELETE'
@@ -28,13 +27,14 @@ Annict.Components.LikeButton = React.createClass
     .done =>
       @setState
         likesCount: @state.likesCount - 1
-        likedClass: { liked: false }
+        liked: false
 
   render: ->
     classSet = React.addons.classSet
+    likedClass = classSet(liked: @state.liked)
 
     `<span className='like-button'>
-      <span className={classSet(this.state.likedClass)} onClick={this.toggle}>
+      <span className={likedClass} onClick={this.toggle}>
         <i className='fa fa-star'></i>{this.state.likesCount}
       </span>
     </span>`
