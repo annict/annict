@@ -1,7 +1,7 @@
 class UsersController < ApplicationController
   permits :email
 
-  before_filter :authenticate_user!, only: [:update, :share]
+  before_filter :authenticate_user!, only: [:update]
   before_filter :set_user, only: [:show, :works]
 
 
@@ -27,13 +27,6 @@ class UsersController < ApplicationController
       render '/settings/show'
     end
   end
-
-  def share(body)
-    TwitterWatchingShareWorker.perform_async(current_user.id, body)
-
-    redirect_to user_path(current_user.username), notice: 'ツイートしました。'
-  end
-
 
   private
 

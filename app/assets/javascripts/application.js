@@ -20,11 +20,13 @@
 //= require_tree ./dispatcher
 //= require_tree ./stores
 
+//= require ./actions/SpinnerActions
 //= require ./actions/SelectorSpinnerActions
 //= require ./actions/ActivitiesActions
 //= require ./actions/ChannelSelectorActions
 //= require ./actions/FlashActions
 //= require ./actions/ProgramsActions
 //= require ./actions/StatusSelectorActions
+//= require ./actions/UserShareButtonActions
 
 //= require_tree ./components

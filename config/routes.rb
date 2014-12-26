@@ -32,6 +32,7 @@ Annict::Application.routes.draw do
     end
     resources :users,      only: [] do
       get :activities
+      post :share, on: :collection
     end
     resource  :user,       only: [] do
       resources :programs, only: [:index], controller: 'user_programs'
@@ -111,7 +112,6 @@ Annict::Application.routes.draw do
   resources :users, only: [:show] do
     collection do
       patch :update
-      post :share
     end
 
     member do
