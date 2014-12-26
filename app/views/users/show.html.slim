@@ -36,7 +36,7 @@ hr
   .graphs
     h2.text-center = t('stats.weekly_checkins')
     - if @user.checkins_count > 0
-      = react_component('Annict.Components.UserCheckinsChart', labels: @graph_labels, values: @graph_values, isMobile: browser.mobile?)
+      = react_component('Annict.Components.UserCheckinsChart', labels: @graph_labels, values: @graph_values)
     - else
       .info.well
         .icon
