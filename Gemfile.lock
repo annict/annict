@@ -348,6 +348,7 @@ GEM
       railties (= 4.1.8)
       sprockets-rails (~> 2.0)
     rails-assets-EventEmitter.js (4.2.11)
+    rails-assets-chartjs (0.2.0)
     rails-assets-flux (2.0.2)
     rails-assets-jquery (2.1.1)
     rails-assets-moment (2.8.4)
@@ -561,6 +562,7 @@ DEPENDENCIES
   quiet_assets
   rails (= 4.1.8)
   rails-assets-EventEmitter.js
+  rails-assets-chartjs
   rails-assets-flux
   rails-assets-moment
   rails-assets-spin.js

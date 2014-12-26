@@ -8,7 +8,7 @@
 //= require bootstrap-sprockets
 //= require spin.js
 //= require spin.js/jquery.spin
-//= require Chart.min
+//= require chartjs
 //= require moment/min/moment-with-locales
 //= require jquery.easing.1.3
 //= require uri.js

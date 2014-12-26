@@ -36,12 +36,7 @@ hr
   .graphs
     h2.text-center = t('stats.weekly_checkins')
     - if @user.checkins_count > 0
-      - values = Annict::Graphs::Checkins.values(@user)
-      .ani-user-checkin-chart.wrapper data-labels="#{Annict::Graphs::Checkins.labels}" data-values="#{values}" data-step-width="#{chart_step_width(values)}"
-        - if browser.mobile?
-          canvas width='285' height='150'
-        - else
-          canvas width='460' height='200'
+      = react_component('Annict.Components.UserCheckinsChart', labels: @graph_labels, values: @graph_values, isMobile: browser.mobile?)
     - else
       .info.well
         .icon
@@ -51,4 +46,5 @@ hr
 hr
 
 .container
+  h2.text-center = t('words.activity')
   = react_component('Annict.Components.Activities', username: @user.username)

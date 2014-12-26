@@ -8,6 +8,8 @@
 @import 'bourbon';
 @import 'font-awesome-sprockets';
 @import 'font-awesome';
+@import 'chartist/scss/settings/_chartist-settings';
+@import 'chartist';
 
 @import 'application/mixins/checkin-comment';
 @import 'application/mixins/profile-header';

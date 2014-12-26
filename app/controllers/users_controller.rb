@@ -10,6 +10,8 @@ class UsersController < ApplicationController
     checkedin_works = @watching_works.checkedin_by(@user).order('c2.checkin_id DESC')
     other_works = @watching_works.where.not(id: checkedin_works.pluck(:id))
     @works = (checkedin_works + other_works).first(9)
+    @graph_labels = Annict::Graphs::Checkins.labels
+    @graph_values = Annict::Graphs::Checkins.values(@user)
   end
 
   def works(status_kind, page: nil)
