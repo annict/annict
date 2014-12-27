@@ -1,4 +1,0 @@
-- type = type.presence || :text
-
-.follow-button ng-controller='UserFollowButtonCtrl' ng-init="init(#{current_user.following?(user)}, '#{type}')"
-  button.btn class="#{type}" ng-click="toggle(#{user.id})" ng-class="{ 'btn-success': !isFollowing, 'btn-info': isFollowing }" ng-bind-html='setFollowButtonText()'

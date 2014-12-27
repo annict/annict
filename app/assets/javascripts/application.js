@@ -27,6 +27,7 @@
 //= require ./actions/FlashActions
 //= require ./actions/ProgramsActions
 //= require ./actions/StatusSelectorActions
+//= require ./actions/UserFollowButtonActions
 //= require ./actions/UserShareButtonActions
 
 //= require_tree ./components
