@@ -23,6 +23,7 @@
 //= require ./actions/SpinnerActions
 //= require ./actions/SelectorSpinnerActions
 //= require ./actions/ActivitiesActions
+//= require ./actions/ChannelReceiveButtonActions
 //= require ./actions/ChannelSelectorActions
 //= require ./actions/FlashActions
 //= require ./actions/HideRecommendedWorkLinkActions
