@@ -1,4 +1,4 @@
-.work ng-controller='WorksListWorkCtrl' ng-hide='hid'
+.work data-work-id="#{work.id}"
   .media
     = link_to work_path(work), class: 'pull-left' do
       = image_tag work.main_item.image.thumb('140x140').url, size: '70x70', alt: work.title
@@ -20,6 +20,5 @@
           = render 'works/channel_selector', mini: true, work: work
 
       - if 'recommend' == params[:action]
-        .hide-work.fake-link ng-click="hide(#{work.id})"
-          = t('works.hide')
+        = react_component('Annict.Components.HideRecommendedWorkLink', workId: work.id)
   hr

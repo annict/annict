@@ -25,6 +25,7 @@
 //= require ./actions/ActivitiesActions
 //= require ./actions/ChannelSelectorActions
 //= require ./actions/FlashActions
+//= require ./actions/HideRecommendedWorkLinkActions
 //= require ./actions/ProgramsActions
 //= require ./actions/StatusSelectorActions
 //= require ./actions/UserFollowButtonActions
