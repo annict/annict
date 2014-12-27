@@ -1,13 +1,15 @@
 UserFollowButtonConstants = Annict.Constants.UserFollowButtonConstants
 
-_isFollowing = false
+window._users = []
 
-setIsFollowing = (isFollowing) ->
-  _isFollowing = isFollowing
+setUser = (user) ->
+  _users[user.id] =
+    isFollowing: user.isFollowing
 
 Annict.Stores.UserFollowButtonStore = _.extend {}, EventEmitter.prototype,
-  getState: ->
-    isFollowing: _isFollowing
+  getStateByUserId: (userId) ->
+    user = _users[userId]
+    isFollowing: user.isFollowing
 
   emitChange: ->
     @emit(UserFollowButtonConstants.CHANGE)
@@ -21,11 +23,17 @@ Annict.AppDispatcher.register (payload) ->
 
   switch actionType
     when UserFollowButtonConstants.SET_DEFAULT
-      setIsFollowing(payload.action.isFollowing)
+      setUser
+        id: payload.action.userId
+        isFollowing: payload.action.isFollowing
     when UserFollowButtonConstants.FOLLOW
-      setIsFollowing(true)
+      setUser
+        id: payload.action.userId
+        isFollowing: true
     when UserFollowButtonConstants.UNFOLLOW
-      setIsFollowing(false)
+      setUser
+        id: payload.action.userId
+        isFollowing: false
 
   Annict.Stores.UserFollowButtonStore.emitChange()
 

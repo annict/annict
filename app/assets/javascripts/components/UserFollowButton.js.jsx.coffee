@@ -10,7 +10,7 @@ Annict.Components.UserFollowButton = React.createClass
     UserFollowButtonStore.addChangeListener(@_onChange)
 
   _onChange: ->
-    @setState(UserFollowButtonStore.getState())
+    @setState(UserFollowButtonStore.getStateByUserId(@props.userId))
 
   toggle: ->
     UserFollowButtonActions.toggle(@props.userId, @state.isFollowing)
