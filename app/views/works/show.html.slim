@@ -40,11 +40,7 @@
 .work-chart.container
   h2.text-center = t('works.checkin_chart')
   - if @work.checkins_count > 0
-    ani-work-chart.wrapper data-labels="#{@work.chart_labels}" data-values="#{@work.chart_values}"
-      - if browser.mobile?
-        canvas width='285' height='150'
-      - else
-        canvas width='460' height='200'
+    = react_component('Annict.Components.WorkCheckinsChart', labels: @work.chart_labels, values: @work.chart_values)
   - else
     .info.well
       .icon
