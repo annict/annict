@@ -12,11 +12,16 @@ Annict.Components.UserCheckinsChart = React.createClass
           data: @props.values
         }
       ]
+    scaleStartValue = if (_.max(@props.values) - 15) < 0
+      0
+    else
+      _.max(@props.values) - 15
     attrs =
       pointDot: false
       scaleOverride: true
-      scaleSteps: _.max(@props.values) + 3
-      scaleStepWidth: 1
+      scaleSteps: 10
+      scaleStepWidth: 2
+      scaleStartValue: scaleStartValue
 
     new Chart(ctx).Line(data, attrs)
 
