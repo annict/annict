@@ -69,6 +69,10 @@ Annict.Components.Episodes = React.createClass
       hidden: !props.isSignedIn || !state.isMultipleCheckinMode || !@isCheckingAll()
     formClass = classSet
       hidden: !state.isMultipleCheckinMode
+    checkIconClass = classSet
+      fa: true
+      hidden: @state.submitting
+      'fa-check': true
 
     `<div className='work-episodes container'>
       <h2 className='text-center'>エピソード</h2>
@@ -87,7 +91,9 @@ Annict.Components.Episodes = React.createClass
             className='btn btn-submitting btn-primary btn-sm'
             disabled={(state.submitting || state.checkedEpisodeIds.length === 0) ? 'disabled' : false}
             onClick={this.submit}>
-            <i className='fa fa-check'></i>チェックインする
+            <Annict.Components.Spinner target='multipleCheckin' />
+            <i className={checkIconClass}></i>
+            チェックインする
           </button>
         </div>
         <div className='clearfix'></div>

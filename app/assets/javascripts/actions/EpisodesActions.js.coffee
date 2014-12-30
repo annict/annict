@@ -40,6 +40,7 @@ Annict.Actions.EpisodesActions =
       _type: EpisodesConstants.UNCHECK_All
 
   submit: (workId, episodeIds) ->
+    Annict.Actions.SpinnerActions.show('multipleCheckin')
     Annict.AppDispatcher.handleViewAction
       _type: EpisodesConstants.BEFORE_SUBMIT
 
@@ -49,6 +50,7 @@ Annict.Actions.EpisodesActions =
       data:
         episode_ids: episodeIds
     .done (data) ->
+      Annict.Actions.SpinnerActions.hide('multipleCheckin')
       Annict.Actions.FlashActions.show('notice', 'チェックインしました。')
       Annict.AppDispatcher.handleViewAction
         _type: EpisodesConstants.AFTER_SUBMIT
