@@ -51,6 +51,7 @@ class WorksController < ApplicationController
 
   def show
     @work = Work.find(params[:id])
+    @episodes = @work.episodes.order(:sort_number)
     @status = current_user.statuses.kind_of(@work) if user_signed_in?
   end
 

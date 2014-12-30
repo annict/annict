@@ -19,17 +19,7 @@
 //= require_tree ./constants
 //= require_tree ./dispatcher
 //= require_tree ./stores
-
-//= require ./actions/SpinnerActions
-//= require ./actions/SelectorSpinnerActions
-//= require ./actions/ActivitiesActions
-//= require ./actions/ChannelReceiveButtonActions
-//= require ./actions/ChannelSelectorActions
-//= require ./actions/FlashActions
-//= require ./actions/HideRecommendedWorkLinkActions
-//= require ./actions/ProgramsActions
-//= require ./actions/StatusSelectorActions
-//= require ./actions/UserFollowButtonActions
-//= require ./actions/UserShareButtonActions
-
+//= require_tree ./base_actions
+//= require_tree ./actions
+//= require_tree ./base_components
 //= require_tree ./components

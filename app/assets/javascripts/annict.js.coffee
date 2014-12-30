@@ -1,6 +1,13 @@
 window.Annict = {}
 
-namespaces = ['Actions', 'Components', 'Constants', 'Dispatcher', 'Stores', 'Utils']
+namespaces = [
+  'Actions'
+  'Components'
+  'Constants'
+  'Dispatcher'
+  'Stores'
+  'Utils'
+]
 _.each namespaces, (ns) ->
   Annict[ns] = {}
 

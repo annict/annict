@@ -81,68 +81,14 @@
 
 hr
 
-.work-episodes.container ng-controller='WorkEpisodesCtrl'
-  h2.text-center
-    = t('words.episode')
-
-  - if @work.episodes.present?
-    - if user_signed_in?
-      .multiple-checkin
-        .fake-link.fake-link-small ng-click='showCheckinCheckbox()' ng-hide='showingCheckinCheckbox'
-          = t('words.multiple_checkin')
-        span.fake-link.fake-link-small ng-click="checkAll(#{@work.episodes.pluck(:id)})" ng-show='!allChecking && showingCheckinCheckbox'
-          = t('works.check_all')
-        span.fake-link.fake-link-small ng-click="uncheckAll()" ng-show='allChecking'
-          = t('works.uncheck_all')
-    table.table.table-striped
-      tbody
-        - @work.episodes.order(:sort_number).each do |episode|
-          tr
-            - if user_signed_in?
-              td.checkbox-column ng-show='showingCheckinCheckbox'
-                input ng-click="check($event, #{episode.id})" ng-checked='allChecking' type='checkbox'
-            - if episode.number.present? && episode.title.present?
-              td.number
-                = link_to work_episode_path(@work, episode) do
-                  = episode.number
-              td.title
-                = link_to work_episode_path(@work, episode) do
-                  = episode.title
-            - else
-              td.title
-                = link_to work_episode_path(@work, episode) do
-                  = episode.work.title
-            - if user_signed_in?
-              td.checkins
-                - checkins = current_user.checkins.where(episode_id: episode.id)
-                - if checkins.count > 0
-                  i.fa.fa-check
-                  - if checkins.count > 1
-                    span.badge
-                      = checkins.count
-    - if user_signed_in?
-      = form_tag create_all_work_checkins_path(@work) do
-        = hidden_field_tag :episode_ids, '{{episodeIds}}'
-        .submit-menu
-          span.fake-link.fake-link-small ng-click='showingCheckinCheckbox = false' ng-show='showingCheckinCheckbox'
-            = t('words.cancel')
-          button.btn-submitting.btn.btn-primary.btn-sm type='submit' ng-show='showingCheckinCheckbox' ng-disabled='episodeIds.length === 0'
-            i.fa.fa-check
-            = t('episodes.checkin')
-        .clearfix ng-show='showingCheckinCheckbox'
-
-    - if user_signed_in?
-      .update-request
-        - link = link_to t('works.send_update_request_1'), work_appeals_path(@work), data: { method: :post, confirm: t('works.send_update_request_confirm') }
-        - twitter_link = link_to 'Twitter', 'https://twitter.com/anannict', target: '_blank'
-        = t('works.update_request_text_html', link: link, twitter_link: twitter_link)
-
-  - else
-    .info.well
-      .icon
-        i.fa.fa-info-circle
-      p = t('episodes.no_episodes')
-      = link_to t('works.send_update_request_2'), work_appeals_path(@work), class: 'btn btn-primary', data: { method: :post }
+- if @work.episodes.present?
+  = react_component('Annict.Components.Episodes', render('works/episodes', episodes: @episodes, work: @work, user: current_user.presence || nil))
+- else
+  .info.well
+    .icon
+      i.fa.fa-info-circle
+    p = t('episodes.no_episodes')
+    = link_to t('works.send_update_request_2'), work_appeals_path(@work), class: 'btn btn-primary', data: { method: :post }
 
 - if @work.items.present?
   hr

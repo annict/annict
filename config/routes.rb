@@ -43,6 +43,10 @@ Annict::Application.routes.draw do
       resources :channels, only: [] do
         post :select, on: :collection
       end
+
+      resources :checkins, only: [] do
+        post :create_all, on: :collection
+      end
     end
   end
 
@@ -144,10 +148,6 @@ Annict::Application.routes.draw do
 
     resources :statuses,     only: [] do
       post :select, on: :collection
-    end
-
-    resources :checkins, only: [] do
-      post :create_all, on: :collection
     end
 
     get :search, on: :collection
