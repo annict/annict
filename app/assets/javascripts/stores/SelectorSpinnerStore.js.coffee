@@ -1,18 +1,27 @@
 SelectorSpinnerConstants = Annict.Constants.SelectorSpinnerConstants
 
-_hidden = true
-_targetId = null
+_spinningTargets = []
+_doneTargets = []
 
-setHidden = (hidden) ->
-  _hidden = hidden
+addTarget = (target) ->
+  _spinningTargets.push(target)
+  _spinningTargets = _.uniq(_spinningTargets)
 
-setTargetId = (targetId) ->
-  _targetId = targetId
+changeTargetToDone = (target) ->
+  _.remove _spinningTargets, (t) -> t == target
+  _spinningTargets = _.uniq(_spinningTargets)
+  _doneTargets.push(target)
+  _doneTargets = _.uniq(_doneTargets)
+
+removeTarget = (target) ->
+  _.remove _doneTargets, (t) -> t == target
+  _doneTargets = _.uniq(_doneTargets)
+
 
 Annict.Stores.SelectorSpinnerStore = _.extend {}, EventEmitter.prototype,
   getState: ->
-    hidden: _hidden
-    targetId: _targetId
+    spinningTargets: _spinningTargets
+    doneTargets: _doneTargets
 
   emitChange: ->
     @emit(SelectorSpinnerConstants.CHANGE)
@@ -25,18 +34,19 @@ Annict.Stores.SelectorSpinnerStore = _.extend {}, EventEmitter.prototype,
 
 
 Annict.AppDispatcher.register (payload) ->
-  SelectorSpinnerStore = Annict.Stores.SelectorSpinnerStore
-
   actionType = payload.action._type
+  target = payload.action.target
 
   switch actionType
     when SelectorSpinnerConstants.SHOW
-      setHidden(false)
+      addTarget(target)
+
+    when SelectorSpinnerConstants.DONE
+      changeTargetToDone(target)
+
     when SelectorSpinnerConstants.HIDE
-      setHidden(true)
+      removeTarget(target)
 
-  setTargetId(payload.action.targetId)
-
-  SelectorSpinnerStore.emitChange()
+  Annict.Stores.SelectorSpinnerStore.emitChange()
 
   true

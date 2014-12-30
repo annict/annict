@@ -12,10 +12,18 @@
     width: 12px;
 
     i {
-      color: #64e86f;
       left: 0;
       position: absolute;
       top: -6px;
+
+      &.spinner {
+        color: $color-gray-light;
+        font-size: 13px;
+      }
+
+      &.check {
+        color: #64e86f;
+      }
     }
   }
 

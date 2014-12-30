@@ -1,5 +1,4 @@
 SelectorSpinnerStore = Annict.Stores.SelectorSpinnerStore
-SelectorSpinnerConstants = Annict.Constants.SelectorSpinnerConstants
 SelectorSpinnerActions = Annict.Actions.SelectorSpinnerActions
 
 Annict.Components.SelectorSpinner = React.createClass
@@ -10,29 +9,27 @@ Annict.Components.SelectorSpinner = React.createClass
     SelectorSpinnerStore.addChangeListener(@_onChange)
 
   componentWillUnmount: ->
-    SelectorSpinnerStore.removeChangeListener(@_onChange);
+    SelectorSpinnerStore.removeChangeListener(@_onChange)
 
   _onChange: ->
-    state = SelectorSpinnerStore.getState()
-
-    $spinner = $(@getDOMNode()).filter("[data-target-id=#{state.targetId}]")
-    spinnerColor = if @props.isMini then '#000000' else '#ffffff'
-    spinnerOptions = { color: spinnerColor, lines: 8, length: 3, radius: 3, width: 1 }
-
-    if state.hidden
-      $circle = $spinner.find('i')
-      $spinner.spin(false)
-      $circle.removeClass('hidden')
-
-      setTimeout ->
-        $circle.addClass('hidden')
-      , 2000
-    else
-      $spinner.spin(spinnerOptions)
+    @setState(SelectorSpinnerStore.getState())
 
   render: ->
     classSet = React.addons.classSet
 
-    `<span className='selector-spinner' data-target-id={this.props.targetId}>
-      <i className='fa fa-check-circle hidden'></i>
+    spinnerClass = classSet
+      fa: true
+      spinner: true
+      hidden: !_.contains(@state.spinningTargets, @props.target)
+      'fa-circle-o-notch': true
+      'fa-spin': true
+    checkClass = classSet
+      fa: true
+      check: true
+      hidden: !_.contains(@state.doneTargets, @props.target)
+      'fa-check-circle': true
+
+    `<span className='selector-spinner'>
+      <i className={spinnerClass}></i>
+      <i className={checkClass}></i>
     </span>`

@@ -19,7 +19,7 @@ class Annict.Actions.StatusSelectorActions
           status_kind: @newStatusKind
       .done (data) =>
         @currentStatusKind = @newStatusKind
-        SelectorSpinnerActions.hide(@workId)
+        SelectorSpinnerActions.done(@workId)
 
   _didStatusKindChange: ->
     @currentStatusKind != @newStatusKind &&

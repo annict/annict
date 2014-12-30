@@ -14,7 +14,7 @@ Annict.Components.ChannelSelector = React.createClass
       `<option value={c.id} key={c.id}>{c.name}</option>`
 
     `<div className={channelSelectorClasses}>
-      <Annict.Components.SelectorSpinner isMini={props.isMini} targetId={props.workId} />
+      <Annict.Components.SelectorSpinner isMini={props.isMini} target={props.workId} />
       <div className='selector'>
         <i className='fa fa-caret-down'></i>
         <select defaultValue={props.currentChannelId} onChange={handleChange} data-work-id={props.workId}>

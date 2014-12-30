@@ -19,7 +19,7 @@ class Annict.Actions.ChannelSelectorActions
           channel_id: @newChannelId
       .done =>
         @currentChannelId = @newChannelId
-        SelectorSpinnerActions.hide(@workId)
+        SelectorSpinnerActions.done(@workId)
 
   _didChannelIdChange: ->
     @currentChannelId != @newChannelId &&

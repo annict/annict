@@ -67,7 +67,10 @@
                 width: 200px;
 
                 .spinner {
-                  top: 37% !important;
+                  color: $color-gray-light;
+                  left: 47%;
+                  position: relative;
+                  top: 90px;
                 }
 
                 .message {

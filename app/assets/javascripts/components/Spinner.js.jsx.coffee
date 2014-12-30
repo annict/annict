@@ -1,6 +1,9 @@
 SpinnerStore = Annict.Stores.SpinnerStore
 
 Annict.Components.Spinner = React.createClass
+  getInitialState: ->
+    SpinnerStore.getState()
+
   componentDidMount: ->
     SpinnerStore.addChangeListener(@_onChange)
 
@@ -8,15 +11,16 @@ Annict.Components.Spinner = React.createClass
     SpinnerStore.removeChangeListener(@_onChange);
 
   _onChange: ->
-    state = SpinnerStore.getState()
-
-    $spinner = $(@getDOMNode())
-    spinnerOptions = { color: '#000000', lines: 8, length: 3, radius: 3, width: 1 }
-
-    if state.hidden
-      $spinner.spin(false)
-    else
-      $spinner.spin(spinnerOptions)
+    @setState(SpinnerStore.getState())
 
   render: ->
-    `<span className='spinner' data-target={this.props.target}></span>`
+    classSet = React.addons.classSet
+
+    spinnerClass = classSet
+      spinner: true
+      fa: true
+      hidden: !_.contains(@state.visibleSpinners, @props.target)
+      'fa-circle-o-notch': true
+      'fa-spin': true
+
+    `<i className={spinnerClass}></i>`

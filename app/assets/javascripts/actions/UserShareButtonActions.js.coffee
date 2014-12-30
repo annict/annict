@@ -7,7 +7,7 @@ Annict.Actions.UserShareButtonActions =
     @loadThumbnail(potteUrl, username)
 
   loadThumbnail: (potteUrl, username) ->
-    SpinnerActions.show()
+    SpinnerActions.show('shareImageLoading')
 
     $.ajax
       type: 'POST'
@@ -15,7 +15,7 @@ Annict.Actions.UserShareButtonActions =
       data:
         username: username
     .done (data) ->
-      SpinnerActions.hide()
+      SpinnerActions.hide('shareImageLoading')
       Annict.AppDispatcher.handleViewAction
         _type: UserShareButtonConstants.LOAD_THUMBNAIL
         thumbnailUrl: data.thumbnail.url
@@ -49,7 +49,7 @@ Annict.Actions.UserShareButtonActions =
       Annict.Actions.FlashActions.show('notice', 'ツイートしました。')
 
   resetModal: ->
-    SpinnerActions.hide()
+    SpinnerActions.hide('shareImageLoading')
     $('#js-share-button-modal').modal('hide')
     Annict.AppDispatcher.handleViewAction
       _type: UserShareButtonConstants.RESET_MODAL

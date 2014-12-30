@@ -110,4 +110,8 @@ body {
   .hidden {
     display: none !important;
   }
+
+  .fa-spin {
+    @include animation(fa-spin 1s infinite linear);
+  }
 }

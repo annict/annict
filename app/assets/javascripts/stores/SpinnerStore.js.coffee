@@ -1,19 +1,19 @@
 SpinnerConstants = Annict.Constants.SpinnerConstants
 
-_hidden = true
-_target = null
+_visibleSpinners = []
 
-setHidden = (hidden) ->
-  _hidden = hidden
+addSpinner = (target) ->
+  _visibleSpinners.push(target)
+  _visibleSpinners = _.uniq(_visibleSpinners)
 
-setTarget = (target) ->
-  _target = target
+removeSpinner = (target) ->
+  _.remove _visibleSpinners, (t) -> t == target
+  _visibleSpinners = _.uniq(_visibleSpinners)
 
 
 Annict.Stores.SpinnerStore = _.extend {}, EventEmitter.prototype,
   getState: ->
-    hidden: _hidden
-    target: _target
+    visibleSpinners: _visibleSpinners
 
   emitChange: ->
     @emit(SpinnerConstants.CHANGE)
@@ -27,14 +27,13 @@ Annict.Stores.SpinnerStore = _.extend {}, EventEmitter.prototype,
 
 Annict.AppDispatcher.register (payload) ->
   actionType = payload.action._type
+  target = payload.action.target
 
   switch actionType
     when SpinnerConstants.SHOW
-      setHidden(false)
+      addSpinner(target)
     when SpinnerConstants.HIDE
-      setHidden(true)
-
-  setTarget(payload.action.target)
+      removeSpinner(target)
 
   Annict.Stores.SpinnerStore.emitChange()
 

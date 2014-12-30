@@ -1,12 +1,21 @@
 SelectorSpinnerConstants = Annict.Constants.SelectorSpinnerConstants
 
 Annict.Actions.SelectorSpinnerActions =
-  show: (targetId) ->
+  show: (target) ->
     Annict.AppDispatcher.handleViewAction
       _type: SelectorSpinnerConstants.SHOW
-      targetId: targetId
+      target: target
 
-  hide: (targetId) ->
+  done: (target) ->
+    Annict.AppDispatcher.handleViewAction
+      _type: SelectorSpinnerConstants.DONE
+      target: target
+
+    setTimeout =>
+      @hide(target)
+    , 2000
+
+  hide: (target) ->
     Annict.AppDispatcher.handleViewAction
       _type: SelectorSpinnerConstants.HIDE
-      targetId: targetId
+      target: target

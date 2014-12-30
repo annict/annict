@@ -53,7 +53,6 @@ gem 'rails-assets-chartjs'
 gem 'rails-assets-EventEmitter.js'
 gem 'rails-assets-flux'
 gem 'rails-assets-moment'
-gem 'rails-assets-spin.js'
 gem 'rails-assets-uri.js'
 
 group :development, :test do

@@ -1,4 +1,13 @@
-Annict.Constants.SpinnerConstants =
-  CHANGE: 'spinner_change'
-  SHOW: 'spinner_show'
-  HIDE: 'spinner_hide'
+setupConstants = ->
+  keys = [
+    'CHANGE'
+    'SHOW'
+    'HIDE'
+  ]
+
+  _.reduce keys, (result, key) ->
+    result[key] = "SpinnerConstants:#{key}"
+    result
+  , {}
+
+Annict.Constants.SpinnerConstants = setupConstants()
