@@ -7,7 +7,7 @@
 - if user_signed_in?
   hr
   .container
-    = render 'checkins/form', work: @work, episode: @episode, checkin: @checkin
+    = react_component('Annict.Components.CheckinForm', workId: @work.id, episodeId: @episode.id, checkin: @checkin.to_json, fromTwitter: current_user.authorized_to?(:twitter))
 
 hr
 
