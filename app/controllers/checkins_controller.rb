@@ -29,6 +29,9 @@ class CheckinsController < ApplicationController
       episodes = Episode.where(id: eval(episode_ids)).order(:sort_number)
       raise if episodes.blank?
 
+      # 一括チェックインによって「Twitter/Facebookにシェアする」のチェックが外れないようにする
+      Checkin.skip_callback(:save, :after, :update_share_checkin_status)
+
       episodes.each do |episode|
         episode.checkins.create(user: current_user, work: @work)
       end
