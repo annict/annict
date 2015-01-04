@@ -17,9 +17,9 @@ hr
       = t('words.checkin')
 
     - if @checkins.present?
-      - @checkins.each do |checkin|
-        = render 'checkins/checkin', checkin: checkin
-        hr
+      - current_user_props = current_user.presence || {}.to_json
+      - options = { currentUser: current_user_props, checkins: render('api/checkins/checkins', checkins: @checkins), workId: @work.id, episodeId: @episode.id }
+      = react_component('Annict.Components.Checkins', options)
     - else
       .info.well
         .icon

@@ -79,7 +79,6 @@ class Checkin < ActiveRecord::Base
     shared_twitter? || shared_facebook?
   end
 
-
   private
 
   def share_to_twitter

@@ -7,13 +7,13 @@
     }
 
     .checkin-comments {
-      @include checkin-comment;
+      @include checkin;
 
       h2 {
         text-align: center;
       }
 
-      .checkin-comment {
+      .checkin {
         position: relative;
       }
     }

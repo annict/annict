@@ -20,12 +20,15 @@ Annict.Stores.CheckinFormStore = _.extend {}, EventEmitter.prototype,
     @on(CheckinFormConstants.CHANGE, callback)
 
 
-Annict.AppDispatcher.register (payload) ->
+Annict.Stores.CheckinFormStore.dispatcherIndex = Annict.AppDispatcher.register (payload) ->
   actionType = payload.action._type
 
   switch actionType
     when CheckinFormConstants.EXPAND_TEXTAREA
       setTextareaRows(MAX_TEXTAREA_ROWS) if _textareaRows != MAX_TEXTAREA_ROWS
+
+    when CheckinFormConstants.SUBMIT
+      setTextareaRows(DEFAULT_TEXTAREA_ROWS)
 
   Annict.Stores.CheckinFormStore.emitChange()
 

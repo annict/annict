@@ -1,3 +1,6 @@
+SpinnerActions = Annict.Actions.SpinnerActions
+
+CheckinsActions = Annict.Actions.CheckinsActions
 CheckinFormConstants = Annict.Constants.CheckinFormConstants
 
 Annict.Actions.CheckinFormActions =
@@ -9,5 +12,20 @@ Annict.Actions.CheckinFormActions =
     comment = refs.comment.getDOMNode().value
     isSpoiled = $(refs.spoil.getDOMNode()).prop('checked')
     isSharedTwitter = $(refs.sharedTwitter.getDOMNode()).prop('checked')
-    console.log 'spoil',spoil
-    console.log 'shared_twitter',shared_twitter
+
+    SpinnerActions.show('createCheckin')
+
+    $.ajax
+      type: 'POST'
+      url: submitPath
+      data:
+        checkin:
+          comment: comment
+          shared_twitter: isSharedTwitter
+          spoil: isSpoiled
+    .done (checkin) ->
+      SpinnerActions.hide('createCheckin')
+      Annict.Actions.FlashActions.show('notice', 'チェックインしました。')
+
+      Annict.AppDispatcher.handleViewAction
+        _type: CheckinFormConstants.SUBMIT

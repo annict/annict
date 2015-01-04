@@ -47,6 +47,10 @@ Annict::Application.routes.draw do
       resources :checkins, only: [] do
         post :create_all, on: :collection
       end
+
+      resources :episodes, only: [] do
+        resources :checkins, only: [:create, :update]
+      end
     end
   end
 
@@ -141,7 +145,7 @@ Annict::Application.routes.draw do
 
     resources :appeals,      only: [:create]
     resources :episodes,     only: [:show] do
-      resources :checkins do
+      resources :checkins, only: [:index, :show, :destroy] do
         resources :comments, only: [:create]
       end
     end

@@ -16,12 +16,11 @@ Annict.Components.CheckinForm = React.createClass
   expand: ->
     CheckinFormActions.expand()
 
-  submitPath: ->
-    "/works/#{@props.workId}/episodes/#{@props.episodeId}/checkins"
-
   submit: (event) ->
     event.preventDefault()
-    CheckinFormActions.submit(@submitPath(), @refs)
+
+    submitPath = "/api/works/#{@props.workId}/episodes/#{@props.episodeId}/checkins"
+    CheckinFormActions.submit(submitPath, @refs)
 
   render: ->
     state = @state
@@ -53,6 +52,7 @@ Annict.Components.CheckinForm = React.createClass
       </If>
       <div className='checkin-button text-center'>
         <button className='btn btn-primary' type='submit' onClick={this.submit}>
+          <Annict.Components.Spinner target='createCheckin' />
           <i className='fa fa-check'></i>
           チェックインする
         </button>

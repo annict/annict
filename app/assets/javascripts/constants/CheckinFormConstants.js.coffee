@@ -2,6 +2,7 @@ setupConstants = ->
   keys = [
     'CHANGE'
     'EXPAND_TEXTAREA'
+    'SUBMIT'
   ]
 
   _.reduce keys, (result, key) ->
