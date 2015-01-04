@@ -14,7 +14,5 @@
                 li.channel
                   .name
                     = c.name
-                  .receive-button ng-controller='ReceiveButtonCtrl' ng-init="init(#{current_user.receiving?(c)})"
-                    button.btn ng-click="toggle(#{c.id})" ng-class="{ 'btn-success': !isReceiving, 'btn-info': isReceiving }"
-                      i.fa ng-class="{ 'fa-plus': !isReceiving, 'fa-minus': isReceiving }"
+                  = react_component('Annict.Components.ChannelReceiveButton', { channelId: c.id, isReceiving: current_user.receiving?(c) }, { class: 'receive-button' })
                 .clearfix

@@ -1,56 +1,13 @@
 class CheckinsController < ApplicationController
-  permits :comment, :shared_twitter, :shared_facebook, :spoil
-
-  before_filter :authenticate_user!, only: [:new, :create, :create_all, :edit, :update, :destroy]
-  before_filter :set_work,           only: [:new, :create, :create_all, :show, :edit, :update, :destroy]
-  before_filter :set_episode,        only: [:new, :create, :show, :edit, :update, :destroy]
-  before_filter :set_checkin,        only: [:show, :edit, :update, :destroy]
-  before_filter :redirect_to_top,    only: [:edit, :update, :destroy]
-
-
-  def new
-    @checkin = @episode.checkins.new
-  end
-
-  def create(checkin)
-    @checkin = @episode.checkins.new(checkin)
-    @checkin.user = current_user
-    @checkin.work = @work
-
-    if @checkin.save
-      redirect_to work_episode_path(@work, @episode), notice: t('checkins.saved')
-    else
-      render 'new'
-    end
-  end
-
-  def create_all(episode_ids)
-    if episode_ids =~ /\A\[([0-9]+,*)+\]\z/ # 括弧とカンマ、数字だけだったら
-      episodes = Episode.where(id: eval(episode_ids)).order(:sort_number)
-      raise if episodes.blank?
-
-      # 一括チェックインによって「Twitter/Facebookにシェアする」のチェックが外れないようにする
-      Checkin.skip_callback(:save, :after, :update_share_checkin_status)
-
-      episodes.each do |episode|
-        episode.checkins.create(user: current_user, work: @work)
-      end
-
-      return redirect_to work_path(@work), notice: t('checkins.saved')
-    end
-  end
+  before_filter :authenticate_user!, only: [:destroy]
+  before_filter :set_work,           only: [:show, :destroy]
+  before_filter :set_episode,        only: [:show, :destroy]
+  before_filter :set_checkin,        only: [:show, :destroy]
+  before_filter :redirect_to_top,    only: [:destroy]
 
   def show
     @comments = @checkin.comments.order(created_at: :desc)
     @comment = Comment.new
-  end
-
-  def update(checkin)
-    if @checkin.update_attributes(checkin)
-      redirect_to work_episode_checkin_path(@work, @episode, @checkin), notice: t('checkins.updated')
-    else
-      render :edit
-    end
   end
 
   def destroy
@@ -78,7 +35,6 @@ class CheckinsController < ApplicationController
       redirect_to root_path
     end
   end
-
 
   private
 

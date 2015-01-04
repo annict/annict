@@ -14,6 +14,6 @@
       .description
         = user.profile.description
   .right.pull-left
-    = render 'follow_button', user: user, type: :icon
+    = react_component('Annict.Components.UserFollowButton', userId: user.id, isFollowing: current_user.following?(user), type: 'icon')
 
 .clearfix

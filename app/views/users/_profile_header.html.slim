@@ -16,9 +16,9 @@
         = user.profile.description
     - if user_signed_in?
       - if current_user == user && user.shareable_to?(:twitter)
-        = render 'share_button', user: user
+        = react_component('Annict.Components.UserShareButton', potteUrl: ENV['ANNICT_POTTE_URL'], username: user.username)
       - if current_user != user
-        = render 'follow_button', user: user
+        = react_component('Annict.Components.UserFollowButton', userId: user.id, isFollowing: current_user.following?(user), type: 'text')
 
   .statuses
     .watching.status.col-xs-3

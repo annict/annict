@@ -1,0 +1,7 @@
+.status-selector {
+  @include selector;
+}
+
+.status-selector.is-mini {
+  @include selector-mini;
+}

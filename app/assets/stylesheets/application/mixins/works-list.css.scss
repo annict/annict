@@ -33,57 +33,8 @@
 
       .hide-work {
         font-size: 10px;
-        position: absolute;
+        margin-top: 12px;
         text-align: right;
-        top: 80px;
-        width: 100px;
-      }
-
-      .ani-status-selector, .hide-work {
-        @if $browser == pc {
-          left: 370px;
-        }
-        @if $browser == mobile {
-          left: 190px;
-        }
-      }
-
-      .ani-status-selector-spinner {
-        .spinner {
-          @if $browser == pc {
-            left: 353px !important;
-            top: 60px !important;
-          }
-          @if $browser == mobile {
-            left: 175px !important;
-            top: 59px !important;
-          }
-        }
-
-        i {
-          color: $btn-success-bg;
-          font-size: 17px;
-          position: absolute;
-          z-index: 2;
-
-          @if $browser == pc {
-            left: 346px;
-            top: 52px;
-          }
-          @if $browser == mobile {
-            left: 168px;
-            top: 51px;
-          }
-        }
-      }
-
-      .ani-channel-selector {
-        @if $browser == pc {
-          left: 340px;
-        }
-        @if $browser == mobile {
-          left: 160px;
-        }
       }
     }
 

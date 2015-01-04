@@ -1,4 +1,5 @@
 source 'https://rubygems.org'
+source 'https://rails-assets.org'
 
 ruby '2.1.5'
 
@@ -29,7 +30,6 @@ gem 'kaminari'
 gem 'keen'
 gem 'koala'
 gem 'meta-tags'
-gem 'ngannotate-rails'
 gem 'nokogiri'
 gem 'omniauth-facebook'
 gem 'omniauth-twitter'
@@ -37,6 +37,7 @@ gem 'paper_trail'
 gem 'pg'
 gem 'rails-i18n'
 gem 'ransack'
+gem 'react-rails', '~> 1.0.0.pre', github: 'reactjs/react-rails'
 gem 'sass-rails'
 gem 'sidekiq'
 gem 'sidekiq-middleware' # Recommendableで使用
@@ -47,6 +48,12 @@ gem 'twitter'
 gem 'uglifier'
 gem 'unicorn'
 gem 'whenever', require: false
+
+gem 'rails-assets-chartjs'
+gem 'rails-assets-EventEmitter.js'
+gem 'rails-assets-flux'
+gem 'rails-assets-moment'
+gem 'rails-assets-uri.js'
 
 group :development, :test do
   gem 'awesome_print'

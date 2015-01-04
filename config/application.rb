@@ -39,5 +39,8 @@ module Annict
                                routing_specs: false, view_specs: false
       g.factory_girl false
     end
+
+    # https://github.com/reactjs/react-rails#add-ons
+    config.react.addons = true
   end
 end

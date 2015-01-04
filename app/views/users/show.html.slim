@@ -36,12 +36,7 @@ hr
   .graphs
     h2.text-center = t('stats.weekly_checkins')
     - if @user.checkins_count > 0
-      - values = Annict::Graphs::Checkins.values(@user)
-      .ani-user-checkin-chart.wrapper data-labels="#{Annict::Graphs::Checkins.labels}" data-values="#{values}" data-step-width="#{chart_step_width(values)}"
-        - if browser.mobile?
-          canvas width='285' height='150'
-        - else
-          canvas width='460' height='200'
+      = react_component('Annict.Components.UserCheckinsChart', labels: @graph_labels, values: @graph_values)
     - else
       .info.well
         .icon
@@ -51,13 +46,5 @@ hr
 hr
 
 .container
-  .activities ng-controller='UserActivitiesCtrl' ng-init='init("#{@user.username}")' ani-loading='loading'
-    div infinite-scroll='addMoreActivities()' infinite-scroll-disabled='disabled' infinite-scroll-distance='2'
-      h2.text-center = t('words.activity')
-      .activity ng-repeat='activity in activities' ng-show='0 < activities.length'
-        = render 'activities/activity'
-        hr
-    .info.well ng-show='0 === activities.length'
-      .icon
-        i.fa.fa-info-circle
-      p = t('users.no_activities')
+  h2.text-center = t('words.activity')
+  = react_component('Annict.Components.Activities', username: @user.username)

@@ -1,7 +1,7 @@
 class UsersController < ApplicationController
   permits :email
 
-  before_filter :authenticate_user!, only: [:update, :share]
+  before_filter :authenticate_user!, only: [:update]
   before_filter :set_user, only: [:show, :works]
 
 
@@ -10,6 +10,8 @@ class UsersController < ApplicationController
     checkedin_works = @watching_works.checkedin_by(@user).order('c2.checkin_id DESC')
     other_works = @watching_works.where.not(id: checkedin_works.pluck(:id))
     @works = (checkedin_works + other_works).first(9)
+    @graph_labels = Annict::Graphs::Checkins.labels
+    @graph_values = Annict::Graphs::Checkins.values(@user)
   end
 
   def works(status_kind, page: nil)
@@ -27,13 +29,6 @@ class UsersController < ApplicationController
       render '/settings/show'
     end
   end
-
-  def share(body)
-    TwitterWatchingShareWorker.perform_async(current_user.id, body)
-
-    redirect_to user_path(current_user.username), notice: 'ツイートしました。'
-  end
-
 
   private
 
