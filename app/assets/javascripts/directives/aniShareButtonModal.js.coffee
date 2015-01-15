@@ -1,4 +1,4 @@
-Annict.angular.directive 'aniShareButtonModal', ($rootScope, usSpinnerService) ->
+Annict.angular.directive 'aniShareButtonModal', ($rootScope) ->
   restrict: 'C'
   scope: true
 
@@ -16,14 +16,14 @@ Annict.angular.directive 'aniShareButtonModal', ($rootScope, usSpinnerService) -
   controller: ($scope, $element, $http) ->
     $scope.openModal = ->
       $('#js-share-button-modal').modal()
-      usSpinnerService.spin('shareImageLoading')
+      $scope.$emit("showSpinner-#{$scope.username}")
 
       $http.post("#{$scope.potteUrl}/api/shots", username: $scope.username)
         .success (data) ->
           $scope.thumbnailUrl = data.thumbnail.url
           $scope.shareImageLoaded = true
 
-          usSpinnerService.stop('shareImageLoading')
+          $scope.$emit("showSpinner-#{$scope.username}")
         .error ->
           $('#js-share-button-modal').modal('hide')
           $rootScope.$broadcast('renderFlash', { type: 'danger', body: 'エラー！再度お試し下さい。' })

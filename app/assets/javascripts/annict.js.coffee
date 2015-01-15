@@ -5,8 +5,6 @@ modules = [
   'angulartics.google.analytics',
   'ngAnimate',
   'ngSanitize',
-  'angularSpinner',
-  'pascalprecht.translate',
   'infinite-scroll'
 ]
 Annict.angular = angular.module('annict', modules)
@@ -19,4 +17,4 @@ Annict.angular.config ($httpProvider) ->
 
 # Moment.jsを日本語で使う
 # http://momentjs.com/docs/#/i18n/changing-language/
-moment.lang('ja')
+moment.locale('ja')

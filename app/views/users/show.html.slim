@@ -36,8 +36,7 @@ hr
   .graphs
     h2.text-center = t('stats.weekly_checkins')
     - if @user.checkins_count > 0
-      - values = Annict::Graphs::Checkins.values(@user)
-      .ani-user-checkin-chart.wrapper data-labels="#{Annict::Graphs::Checkins.labels}" data-values="#{values}" data-step-width="#{chart_step_width(values)}"
+      .ann-user-checkin-chart.wrapper data-labels="#{@graph_labels}" data-values="#{@graph_values}"
         - if browser.mobile?
           canvas width='285' height='150'
         - else

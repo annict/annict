@@ -1,7 +1,7 @@
 @import url(http://fonts.googleapis.com/earlyaccess/notosansjapanese.css);
 
-@import 'application/base/variables';
-@import 'application/base/bootstrap-variables';
+@import 'application/config/variables';
+@import 'application/config/bootstrap-variables';
 
 @import 'bootstrap-sprockets';
 @import 'bootstrap';
@@ -11,8 +11,8 @@
 @import 'easydropdown';
 
 @import 'application/mixins/checkin-comment';
-@import 'application/mixins/easydropdown';
 @import 'application/mixins/profile-header';
+@import 'application/mixins/selector';
 @import 'application/mixins/top-group-tab';
 @import 'application/mixins/work-profile';
 @import 'application/mixins/work-profile-light';
@@ -23,14 +23,14 @@
 
 @import 'application/components/about-works-image';
 @import 'application/components/activities';
-@import 'application/components/ani-channel-selector';
-@import 'application/components/ani-status-selector';
-@import 'application/components/ani-status-selector-spinner';
-@import 'application/components/btn-group-tab';
-@import 'application/components/flash';
 @import 'application/components/amazon-associates-link';
+@import 'application/components/ani-status-selector-spinner';
+@import 'application/components/ann-channel-selector';
+@import 'application/components/ann-status-selector';
+@import 'application/components/btn-group-tab';
 @import 'application/components/checkin-form';
 @import 'application/components/error-panel';
+@import 'application/components/flash';
 @import 'application/components/footer';
 @import 'application/components/like-button';
 @import 'application/components/loading';

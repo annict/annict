@@ -1,0 +1,7 @@
+.ann-status-selector {
+  @include selector;
+}
+
+.ann-status-selector.is-mini {
+  @include selector-mini;
+}
