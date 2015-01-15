@@ -68,20 +68,17 @@ body.users-works {
   }
 
   .statuses-tab {
+    @include display(flex);
+    @include justify-content(center);
+
     margin-bottom: 20px;
 
     .status {
+      @include flex(1);
+
       border-bottom: solid 3px $color-gray-light;
-      float: left;
       padding: 5px 0;
       text-align: center;
-
-      @if $browser == pc {
-        width: 100px;
-      }
-      @if $browser == mobile {
-        width: 64px;
-      }
 
       &.active {
         border-bottom: solid 3px $color-mizuho;
