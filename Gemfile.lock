@@ -36,6 +36,8 @@ GEM
       tzinfo (~> 1.1)
     addressable (2.3.6)
     anbt-sql-formatter (0.0.2)
+    angular_rails_csrf (1.0.3)
+      rails (>= 3, < 5)
     annotate (2.6.5)
       activerecord (>= 2.3.0)
       rake (>= 0.8.7)
@@ -519,6 +521,7 @@ PLATFORMS
 DEPENDENCIES
   action_args
   activerecord-session_store
+  angular_rails_csrf
   annotate
   asset_sync
   awesome_print

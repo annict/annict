@@ -7,6 +7,7 @@ gem 'rails', '4.1.8'
 
 gem 'action_args'
 gem 'activerecord-session_store'
+gem 'angular_rails_csrf'
 gem 'annotate'
 gem 'asset_sync'
 gem 'bootstrap-sass'
