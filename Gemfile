@@ -3,7 +3,7 @@ source 'https://rails-assets.org'
 
 ruby '2.2.0'
 
-gem 'rails', '4.1.8'
+gem 'rails', '4.2.0'
 
 gem 'action_args'
 gem 'activerecord-session_store'
@@ -69,6 +69,7 @@ group :development, :test do
   gem 'pry-rails'
   gem 'rails-flog', require: 'flog'
   gem 'rspec-rails'
+  gem 'rspec-mocks'
 end
 
 group :development do
