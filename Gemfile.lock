@@ -124,7 +124,7 @@ GEM
       fog
     email_validator (1.5.0)
       activemodel
-    enumerize (0.8.0)
+    enumerize (0.9.0)
       activesupport (>= 3.2)
     equalizer (0.0.9)
     erubis (2.7.0)
