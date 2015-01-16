@@ -7,12 +7,18 @@ Annict.angular.directive 'annStatusSelector', ->
     $scope.workId = $element.data('workId')
 
     $scope.select = (workId) ->
-      if $element.data('workId') == workId && $scope.prevStatusKind != $scope.statusKind
+      if $element.data('workId') == workId && !sameKindSelected()
         # 未選択状態で「ステータス」を選択してなかったら
         if !($scope.prevStatusKind == '' && $scope.statusKind == 'no_select')
           $scope.prevStatusKind = $scope.statusKind
           $scope.$emit("showSpinner-#{workId}")
 
-          $http.post("/works/#{workId}/statuses/select", status_kind: $scope.statusKind).success ->
-            $analytics.eventTrack('ステータス変更', { category: 'statuses', label: $scope.statusKind })
+          data = { status_kind: $scope.statusKind }
+          $http.post("/works/#{workId}/statuses/select", data).success ->
+            $analytics.eventTrack 'ステータス変更',
+              category: 'statuses',
+              label: $scope.statusKind
             $scope.$emit("hideSpinner-#{workId}")
+
+    sameKindSelected = ->
+      $scope.prevStatusKind == $scope.statusKind
