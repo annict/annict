@@ -297,8 +297,4 @@ body.home-index {
       }
     }
   }
-
-  &.signed-in {
-    @include top-group-tab;
-  }
 }

@@ -13,7 +13,6 @@
 @import 'application/mixins/checkin-comment';
 @import 'application/mixins/profile-header';
 @import 'application/mixins/selector';
-@import 'application/mixins/top-group-tab';
 @import 'application/mixins/work-profile';
 @import 'application/mixins/work-profile-light';
 @import 'application/mixins/works-list';
@@ -27,6 +26,7 @@
 @import 'application/components/ani-status-selector-spinner';
 @import 'application/components/ann-channel-selector';
 @import 'application/components/ann-status-selector';
+@import 'application/components/ann-tabs';
 @import 'application/components/btn-group-tab';
 @import 'application/components/checkin-form';
 @import 'application/components/error-panel';

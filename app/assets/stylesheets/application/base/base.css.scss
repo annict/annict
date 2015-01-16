@@ -1,6 +1,7 @@
 body {
   background-color: #f0f0f1;
   font-family: 'Lucida Grande', 'Hiragino Kaku Gothic ProN', Meiryo, EmojiSymbols, sans-serif;
+  padding-top: 48px;
 
   .container {
     max-width: 500px;
@@ -8,14 +9,13 @@ body {
 
   > .content {
     background-color: #ffffff;
-    padding-bottom: 20px;
+    padding: 20px 0;
 
     margin: {
       left: auto;
       right: auto;
     }
     max-width: 500px;
-    padding-top: 68px;
   }
 
   h2 {

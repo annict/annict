@@ -32,18 +32,9 @@
       }
 
       .hide-work {
-        @if $browser == pc {
-          left: 370px;
-        }
-        @if $browser == mobile {
-          left: 190px;
-        }
-
         font-size: 10px;
-        position: absolute;
+        margin-top: 10px;
         text-align: right;
-        top: 80px;
-        width: 100px;
       }
     }
 

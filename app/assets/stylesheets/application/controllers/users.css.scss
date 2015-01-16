@@ -1,6 +1,10 @@
 body.users-show {
   @include profile-header;
 
+  > .content {
+    padding: 0 0 20px 0;
+  }
+
   h2 {
     margin: 0px 0 15px 0;
   }
@@ -63,40 +67,6 @@ body.users-works {
       }
       @if $browser == mobile {
         font-size: 14px;
-      }
-    }
-  }
-
-  .statuses-tab {
-    @include display(flex);
-    @include justify-content(center);
-
-    margin-bottom: 20px;
-
-    .status {
-      @include flex(1);
-
-      border-bottom: solid 3px $color-gray-light;
-      padding: 5px 0;
-      text-align: center;
-
-      &.active {
-        border-bottom: solid 3px $color-mizuho;
-      }
-
-      a {
-        &:hover {
-          text-decoration: none;
-        }
-
-        .text {
-          @if $browser == pc {
-            font-size: 12px;
-          }
-          @if $browser == mobile {
-            font-size: 10px;
-          }
-        }
       }
     }
   }
