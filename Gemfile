@@ -11,7 +11,7 @@ gem 'angular_rails_csrf'
 gem 'annotate'
 gem 'asset_sync'
 gem 'bootstrap-sass'
-gem 'bourbon', '3.2.3' # sass-railsがsass 3.3系をサポートするまで3系を使用する
+gem 'bourbon'
 gem 'browser'
 gem 'by_star'
 gem 'coffee-rails'
