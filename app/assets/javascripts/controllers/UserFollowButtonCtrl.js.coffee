@@ -1,4 +1,4 @@
-Annict.angular.controller 'UserFollowButtonCtrl', ($scope, $http, $translate, $analytics) ->
+Annict.angular.controller 'UserFollowButtonCtrl', ($scope, $http, $analytics) ->
   $scope.init = (isFollowing, type) ->
     $scope.isFollowing = isFollowing
     $scope.type = type
@@ -9,8 +9,10 @@ Annict.angular.controller 'UserFollowButtonCtrl', ($scope, $http, $translate, $a
 
     switch $scope.type
       when 'text'
-        follow = ''
-        if $scope.isFollowing then followingIcon + $translate('users.following') else followIcon + $translate('users.follow')
+        if $scope.isFollowing
+          "#{followingIcon}フォロー中"
+        else
+          "#{followIcon}フォローする"
       when 'icon'
         if $scope.isFollowing then followingIcon else followIcon
 

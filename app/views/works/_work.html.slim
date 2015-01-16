@@ -4,7 +4,7 @@
       = image_tag work.main_item.image.thumb('140x140').url, size: '70x70', alt: work.title
     .media-body
       .title
-        = link_to work.title.truncate(29), work_path(work)
+        = link_to work.title, work_path(work)
     .work-statistics
       span.watchers-count
         i.fa.fa-eye

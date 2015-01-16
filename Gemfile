@@ -1,15 +1,17 @@
 source 'https://rubygems.org'
+source 'https://rails-assets.org'
 
-ruby '2.1.5'
+ruby '2.2.0'
 
-gem 'rails', '4.1.8'
+gem 'rails', '4.2.0'
 
 gem 'action_args'
 gem 'activerecord-session_store'
+gem 'angular_rails_csrf'
 gem 'annotate'
 gem 'asset_sync'
 gem 'bootstrap-sass'
-gem 'bourbon', '3.2.3' # sass-railsがsass 3.3系をサポートするまで3系を使用する
+gem 'bourbon'
 gem 'browser'
 gem 'by_star'
 gem 'coffee-rails'
@@ -48,6 +50,16 @@ gem 'uglifier'
 gem 'unicorn'
 gem 'whenever', require: false
 
+gem 'rails-assets-angular'
+gem 'rails-assets-angular-animate'
+gem 'rails-assets-angular-sanitize'
+gem 'rails-assets-angulartics'
+gem 'rails-assets-chartjs'
+gem 'rails-assets-jquery-easing-original'
+gem 'rails-assets-lodash'
+gem 'rails-assets-moment'
+gem 'rails-assets-ng-infinite-scroller-origin'
+
 group :development, :test do
   gem 'awesome_print'
   gem 'hirb-unicode'
@@ -57,6 +69,7 @@ group :development, :test do
   gem 'pry-rails'
   gem 'rails-flog', require: 'flog'
   gem 'rspec-rails'
+  gem 'rspec-mocks'
 end
 
 group :development do

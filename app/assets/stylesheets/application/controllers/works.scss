@@ -1,10 +1,14 @@
 .works-index, .works-search, .works-on_air, .works-season, .works-popular, .works-recommend {
   @include works-list;
+
+  > .content {
+    padding: 0 0 20px 0;
+  }
 }
 
 .works-search {
   .search-form {
-    margin: 25px 0 10px 0;
+    margin-bottom: 10px;
   }
 }
 

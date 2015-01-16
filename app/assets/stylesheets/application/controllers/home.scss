@@ -1,5 +1,7 @@
 body.home-index {
   &.not-signed-in {
+    padding-top: 0;
+    
     h2 {
       @if $browser == pc {
         font-size: 32px;
@@ -296,9 +298,5 @@ body.home-index {
         text-align: center;
       }
     }
-  }
-
-  &.signed-in {
-    @include top-group-tab;
   }
 }

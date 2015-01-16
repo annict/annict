@@ -1,10 +1,9 @@
-Annict.angular.directive 'aniUserCheckinChart', ->
+Annict.angular.directive 'annUserCheckinChart', ->
   restrict: 'C'
 
   link: (scope, element) ->
     labels = element.data('labels')
     values = element.data('values')
-    stepWidth = element.data('step-width')
 
     ctx = element.find('canvas').get(0).getContext('2d')
     data =
@@ -18,10 +17,16 @@ Annict.angular.directive 'aniUserCheckinChart', ->
           data: values
         }
       ]
+    scaleStartValue = if (_.max(values) - 15) < 0
+      0
+    else
+      _.max(values) - 15
 
     attrs =
       pointDot: false
       scaleOverride: true
       scaleSteps: 10
-      scaleStepWidth: stepWidth
+      scaleStepWidth: 2
+      scaleStartValue: scaleStartValue
+
     new Chart(ctx).Line(data, attrs)

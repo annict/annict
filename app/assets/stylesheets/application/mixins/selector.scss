@@ -1,0 +1,87 @@
+@mixin selector {
+  height: 30px;
+  margin: 0 auto;
+  position: relative;
+  width: 120px;
+
+  .selector-spinner {
+    display: inline-block;
+    left: -80px;
+    position: relative;
+    top: 0;
+    width: 12px;
+
+    i {
+      left: 0;
+      position: absolute;
+      top: -6px;
+
+      &.spinner {
+        color: $color-gray-light;
+        font-size: 13px;
+      }
+
+      &.check {
+        color: #64e86f;
+      }
+    }
+  }
+
+  .selector {
+    border-radius: 0;
+    border: solid 1px #ffffff;
+    color: #ffffff;
+    display: inline-block;
+    overflow: hidden;
+    position: relative;
+    top: -20px;
+    width: 100%;
+
+    i {
+      font-size: 15px;
+      position: absolute;
+      right: 7px;
+      top: 7px;
+    }
+
+    select {
+      @include appearance(none);
+
+      background-color: rgba(255,255,255,0);
+      border-radius: 0;
+      border: 0;
+      cursor: pointer;
+      height: 30px;
+      padding-left: 7px;
+      width: 130%;
+    }
+  }
+}
+
+@mixin selector-mini {
+  bottom: 20px;
+  height: 23px;
+  margin-right: 0;
+  position: static;
+  width: 100px;
+
+  .selector-spinner {
+    left: -22px;
+    top: -2px;
+  }
+
+  .selector {
+    border: solid 1px $color-gray-dark-light;
+    color: $color-gray-dark-light;
+
+    i {
+      top: 3px;
+    }
+
+    select {
+      font-size: 10px;
+      height: 23px;
+      line-height: 23px;
+    }
+  }
+}

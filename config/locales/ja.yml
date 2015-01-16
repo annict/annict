@@ -161,7 +161,7 @@ ja:
   programs:
     channel_list: チャンネル一覧ページ
     no_program: 表示できる番組はありません
-    please_set_channel_html: '<p>普段見ているテレビのチャンネルをAnnictに設定すると、このページにそのチャンネルで放送されるアニメが表示されます。</p><p>チャンネルの設定をしていない場合は、%{channels_link}からお願いします。</p>'
+    please_set_channel_html: '<p>普段見ているテレビのチャンネルをAnnictに設定すると、このページにそのチャンネルで放送されるアニメが表示されます。</p><p>チャンネルは%{channels_link}で設定できます。</p>'
   registrations:
     create:
       confirmation_mail_has_sent: メールアドレス確認用のメールを送信しました

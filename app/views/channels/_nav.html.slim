@@ -1,5 +1,3 @@
-ul.nav.nav-tabs
-  li class="#{'active' if 'channels' == params[:controller]}"
-    = link_to t('words.channel'), channels_path
-  li class="#{'active' if 'channel_works' == params[:controller]}"
-    = link_to t('channel_works.nav_title'), channel_works_path
+.ann-tabs
+  = link_to t('words.channel'), channels_path, class: "tab #{'active' if 'channels' == params[:controller]}"
+  = link_to t('channel_works.nav_title'), channel_works_path, class: "tab #{'active' if 'channel_works' == params[:controller]}"
