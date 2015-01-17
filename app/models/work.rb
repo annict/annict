@@ -19,6 +19,7 @@
 #  fetch_syobocal    :boolean          not null
 #  twitter_username  :string(510)
 #  twitter_hashtag   :string(510)
+#  released_at_about :string
 #
 # Indexes
 #
@@ -119,6 +120,9 @@ class Work < ActiveRecord::Base
     nicoch_started_at.present?
   end
 
+  def release_date
+    released_at.presence || released_at_about.presence || ''
+  end
 
   private
 

@@ -37,6 +37,9 @@ dl.dl-horizontal
   dt リリース
   dd = @work.released_at
 
+  dt リリース (大体)
+  dd = @work.released_at_about
+
   dt ニコニコチャンネル配信開始日
   dd = @work.nicoch_started_at.try(:to_time).presence || '-'
 

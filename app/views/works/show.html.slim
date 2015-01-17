@@ -58,10 +58,10 @@
     li
       i.icon &#x1F4FA;
       = @work.media.text
-    - if @work.released_at.present?
+    - if @work.release_date.present?
       li
         = icon('calendar-o')
-        = @work.released_at
+        = @work.release_date
     - if @work.official_site_url.present?
       li
         = icon('home')
