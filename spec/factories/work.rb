@@ -4,6 +4,7 @@ FactoryGirl.define do
     media :tv
     official_site_url 'http://example.com'
     wikipedia_url 'http://example.com'
+    on_air false
 
     trait :on_air do
       on_air true
