@@ -4,19 +4,18 @@
 #
 #  id             :integer          not null, primary key
 #  work_id        :integer          not null
-#  number         :string
+#  number         :string(510)
 #  sort_number    :integer          default("0"), not null
-#  title          :string
+#  sc_count       :integer
+#  title          :string(510)
+#  checkins_count :integer          default("0"), not null
 #  created_at     :datetime
 #  updated_at     :datetime
-#  checkins_count :integer          default("0"), not null
-#  single         :boolean          default("false")
-#  sc_count       :integer
 #
 # Indexes
 #
-#  index_episodes_on_checkins_count        (checkins_count)
-#  index_episodes_on_work_id_and_sc_count  (work_id,sc_count) UNIQUE
+#  episodes_work_id_idx           (work_id)
+#  episodes_work_id_sc_count_key  (work_id,sc_count) UNIQUE
 #
 
 class Episode < ActiveRecord::Base
@@ -33,6 +32,11 @@ class Episode < ActiveRecord::Base
     "#{number}「#{title}」"
   end
 
+  # 映画やOVAなどの実質エピソードを持たない作品かどうかを判定する
+  def single?
+    number.blank? && title.present?
+  end
+  
   private
 
   def create_nicoch_program

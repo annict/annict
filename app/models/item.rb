@@ -4,12 +4,16 @@
 #
 #  id         :integer          not null, primary key
 #  work_id    :integer
-#  name       :string           not null
-#  url        :string           not null
-#  image_uid  :string           not null
-#  main       :boolean          default("false"), not null
+#  name       :string(510)      not null
+#  url        :string(510)      not null
+#  image_uid  :string(510)      not null
+#  main       :boolean          not null
 #  created_at :datetime
 #  updated_at :datetime
+#
+# Indexes
+#
+#  items_work_id_idx  (work_id)
 #
 
 class Item < ActiveRecord::Base

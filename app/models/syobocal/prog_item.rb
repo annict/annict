@@ -58,7 +58,7 @@ module Syobocal
     end
 
     def save_episode
-      title = @title.presence || '-'
+      title = @title.presence || nil
 
       episode = self.episode.present? ? update_episode(title) : create_episode(title)
       episode

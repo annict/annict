@@ -20,9 +20,3 @@ Annict.angular.controller 'ProgramsCtrl', ($scope, $http) ->
 
   $scope.dateFormat = (date) ->
     moment(date).format('M/D H:mm')
-
-  $scope.formatEpisodeTitle = (title) ->
-    if title == '-'
-      ''
-    else
-      "「#{title}」"

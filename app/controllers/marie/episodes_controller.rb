@@ -1,7 +1,7 @@
 require 'csv'
 
 class Marie::EpisodesController < Marie::ApplicationController
-  permits :number, :sort_number, :title, :single
+  permits :number, :sort_number, :title
 
   before_filter :set_work, only: [:index, :edit, :update, :update_sort_number,
     :destroy, :new_from_csv, :create_from_csv]

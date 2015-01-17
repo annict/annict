@@ -4,16 +4,17 @@
 #
 #  id                   :integer          not null, primary key
 #  user_id              :integer          not null
-#  name                 :string           default(""), not null
-#  description          :string           default(""), not null
+#  name                 :string(510)      default(""), not null
+#  description          :string(510)      default(""), not null
+#  avatar_uid           :string(510)
+#  background_image_uid :string(510)
 #  created_at           :datetime
 #  updated_at           :datetime
-#  avatar_uid           :string
-#  background_image_uid :string
 #
 # Indexes
 #
-#  index_profiles_on_user_id  (user_id) UNIQUE
+#  profiles_user_id_idx  (user_id)
+#  profiles_user_id_key  (user_id) UNIQUE
 #
 
 class Profile < ActiveRecord::Base

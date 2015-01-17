@@ -105,17 +105,18 @@ hr
             - if user_signed_in?
               td.checkbox-column ng-show='showingCheckinCheckbox'
                 input ng-click="check($event, #{episode.id})" ng-checked='allChecking' type='checkbox'
-            - if episode.number.present? && episode.title.present?
-              td.number
-                = link_to work_episode_path(@work, episode) do
-                  = episode.number
+            - if episode.single?
               td.title
                 = link_to work_episode_path(@work, episode) do
                   = episode.title
             - else
-              td.title
+              td.number
                 = link_to work_episode_path(@work, episode) do
-                  = episode.work.title
+                  = episode.number
+              td.title
+                - if episode.title.present?
+                  = link_to work_episode_path(@work, episode) do
+                    = episode.title
             - if user_signed_in?
               td.checkins
                 - checkins = current_user.checkins.where(episode_id: episode.id)

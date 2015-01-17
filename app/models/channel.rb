@@ -5,15 +5,15 @@
 #  id               :integer          not null, primary key
 #  channel_group_id :integer          not null
 #  sc_chid          :integer          not null
-#  name             :string           not null
+#  name             :string(510)      not null
+#  published        :boolean          default("true"), not null
 #  created_at       :datetime
 #  updated_at       :datetime
-#  published        :boolean          default("true"), not null
 #
 # Indexes
 #
-#  index_channels_on_published  (published)
-#  index_channels_on_sc_chid    (sc_chid) UNIQUE
+#  channels_channel_group_id_idx  (channel_group_id)
+#  channels_sc_chid_key           (sc_chid) UNIQUE
 #
 
 class Channel < ActiveRecord::Base

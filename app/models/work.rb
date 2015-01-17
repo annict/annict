@@ -3,31 +3,27 @@
 # Table name: works
 #
 #  id                :integer          not null, primary key
-#  title             :string           not null
+#  season_id         :integer
+#  sc_tid            :integer
+#  title             :string(510)      not null
 #  media             :integer          not null
-#  official_site_url :string           default(""), not null
-#  wikipedia_url     :string           default(""), not null
+#  official_site_url :string(510)      default(""), not null
+#  wikipedia_url     :string(510)      default(""), not null
+#  episodes_count    :integer          default("0"), not null
+#  watchers_count    :integer          default("0"), not null
 #  released_at       :date
+#  nicoch_started_at :datetime
 #  created_at        :datetime
 #  updated_at        :datetime
-#  episodes_count    :integer          default("0"), not null
-#  season_id         :integer
-#  on_air            :boolean          default("false"), not null
-#  twitter_username  :string
-#  twitter_hashtag   :string
-#  watchers_count    :integer          default("0"), not null
-#  sc_tid            :integer
-#  fetch_syobocal    :boolean          default("false"), not null
-#  nicoch_started_at :datetime
+#  on_air            :boolean          not null
+#  fetch_syobocal    :boolean          not null
+#  twitter_username  :string(510)
+#  twitter_hashtag   :string(510)
 #
 # Indexes
 #
-#  index_works_on_episodes_count  (episodes_count)
-#  index_works_on_media           (media)
-#  index_works_on_on_air          (on_air)
-#  index_works_on_released_at     (released_at)
-#  index_works_on_sc_tid          (sc_tid) UNIQUE
-#  index_works_on_watchers_count  (watchers_count)
+#  works_sc_tid_key     (sc_tid) UNIQUE
+#  works_season_id_idx  (season_id)
 #
 
 class Work < ActiveRecord::Base
