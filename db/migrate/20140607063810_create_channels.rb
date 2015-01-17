@@ -5,10 +5,10 @@ class CreateChannels < ActiveRecord::Migration
       t.integer :sc_chid,          null: false
       t.string  :name,             null: false
       t.timestamps
-
-      t.foreign_key :channel_groups, dependent: :delete
     end
 
     add_index :channels, :sc_chid, unique: true
+
+    add_foreign_key :channels, :channel_groups
   end
 end

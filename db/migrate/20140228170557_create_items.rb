@@ -7,8 +7,8 @@ class CreateItems < ActiveRecord::Migration
       t.string  :image_uid, null: false
       t.boolean :main,      null: false, default: false
       t.timestamps
-
-      t.foreign_key :works, dependent: :delete
     end
+
+    add_foreign_key :items, :works
   end
 end

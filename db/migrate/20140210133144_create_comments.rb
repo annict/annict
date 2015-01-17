@@ -5,9 +5,9 @@ class CreateComments < ActiveRecord::Migration
       t.integer :checkin_id, null: false
       t.text    :body,       null: false
       t.timestamps
-
-      t.foreign_key :users,    dependent: :delete
-      t.foreign_key :checkins, dependent: :delete
     end
+
+    add_foreign_key :comments, :users
+    add_foreign_key :comments, :checkins
   end
 end

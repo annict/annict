@@ -8,11 +8,11 @@ class CreateActivities < ActiveRecord::Migration
       t.string  :trackable_type, null: false
       t.string  :action,         null: false
       t.timestamps
-
-      t.foreign_key :users, dependent: :delete
     end
 
     add_index :activities, [:recipient_id, :recipient_type]
     add_index :activities, [:trackable_id, :trackable_type]
+
+    add_foreign_key :activities, :users
   end
 end

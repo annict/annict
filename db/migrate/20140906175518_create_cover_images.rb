@@ -5,8 +5,8 @@ class CreateCoverImages < ActiveRecord::Migration
       t.string :file_name, null: false
       t.string :location, null: false
       t.timestamps
-
-      t.foreign_key :works, dependent: :delete
     end
+
+    add_foreign_key :cover_images, :works
   end
 end

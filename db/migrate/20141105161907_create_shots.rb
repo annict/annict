@@ -4,10 +4,10 @@ class CreateShots < ActiveRecord::Migration
       t.integer :user_id, null: false
       t.string :image_uid, null: false
       t.timestamps
-
-      t.foreign_key :users, dependent: :delete
     end
 
     add_index :shots, :image_uid, unique: true
+
+    add_foreign_key :shots, :users
   end
 end

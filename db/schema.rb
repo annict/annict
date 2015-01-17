@@ -11,12 +11,12 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20141119155031) do
+ActiveRecord::Schema.define(version: 20150117060033) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
-  create_table "activities", force: true do |t|
+  create_table "activities", force: :cascade do |t|
     t.integer  "user_id",        null: false
     t.integer  "recipient_id",   null: false
     t.string   "recipient_type", null: false
@@ -30,7 +30,7 @@ ActiveRecord::Schema.define(version: 20141119155031) do
   add_index "activities", ["recipient_id", "recipient_type"], name: "index_activities_on_recipient_id_and_recipient_type", using: :btree
   add_index "activities", ["trackable_id", "trackable_type"], name: "index_activities_on_trackable_id_and_trackable_type", using: :btree
 
-  create_table "channel_groups", force: true do |t|
+  create_table "channel_groups", force: :cascade do |t|
     t.string   "sc_chgid",    null: false
     t.string   "name",        null: false
     t.integer  "sort_number"
@@ -40,7 +40,7 @@ ActiveRecord::Schema.define(version: 20141119155031) do
 
   add_index "channel_groups", ["sc_chgid"], name: "index_channel_groups_on_sc_chgid", unique: true, using: :btree
 
-  create_table "channel_works", force: true do |t|
+  create_table "channel_works", force: :cascade do |t|
     t.integer  "user_id",    null: false
     t.integer  "work_id",    null: false
     t.integer  "channel_id", null: false
@@ -51,7 +51,7 @@ ActiveRecord::Schema.define(version: 20141119155031) do
   add_index "channel_works", ["user_id", "work_id", "channel_id"], name: "index_channel_works_on_user_id_and_work_id_and_channel_id", unique: true, using: :btree
   add_index "channel_works", ["user_id", "work_id"], name: "index_channel_works_on_user_id_and_work_id", using: :btree
 
-  create_table "channels", force: true do |t|
+  create_table "channels", force: :cascade do |t|
     t.integer  "channel_group_id",                null: false
     t.integer  "sc_chid",                         null: false
     t.string   "name",                            null: false
@@ -63,7 +63,7 @@ ActiveRecord::Schema.define(version: 20141119155031) do
   add_index "channels", ["published"], name: "index_channels_on_published", using: :btree
   add_index "channels", ["sc_chid"], name: "index_channels_on_sc_chid", unique: true, using: :btree
 
-  create_table "checkins", force: true do |t|
+  create_table "checkins", force: :cascade do |t|
     t.integer  "user_id",                              null: false
     t.integer  "episode_id",                           null: false
     t.text     "comment"
@@ -86,7 +86,7 @@ ActiveRecord::Schema.define(version: 20141119155031) do
   add_index "checkins", ["twitter_url_hash"], name: "index_checkins_on_twitter_url_hash", unique: true, using: :btree
   add_index "checkins", ["work_id"], name: "index_checkins_on_work_id", using: :btree
 
-  create_table "comments", force: true do |t|
+  create_table "comments", force: :cascade do |t|
     t.integer  "user_id",                 null: false
     t.integer  "checkin_id",              null: false
     t.text     "body",                    null: false
@@ -95,7 +95,7 @@ ActiveRecord::Schema.define(version: 20141119155031) do
     t.integer  "likes_count", default: 0, null: false
   end
 
-  create_table "cover_images", force: true do |t|
+  create_table "cover_images", force: :cascade do |t|
     t.integer  "work_id",    null: false
     t.string   "file_name",  null: false
     t.string   "location",   null: false
@@ -103,7 +103,7 @@ ActiveRecord::Schema.define(version: 20141119155031) do
     t.datetime "updated_at"
   end
 
-  create_table "episodes", force: true do |t|
+  create_table "episodes", force: :cascade do |t|
     t.integer  "work_id",                        null: false
     t.string   "number"
     t.integer  "sort_number",    default: 0,     null: false
@@ -118,7 +118,7 @@ ActiveRecord::Schema.define(version: 20141119155031) do
   add_index "episodes", ["checkins_count"], name: "index_episodes_on_checkins_count", using: :btree
   add_index "episodes", ["work_id", "sc_count"], name: "index_episodes_on_work_id_and_sc_count", unique: true, using: :btree
 
-  create_table "finished_tips", force: true do |t|
+  create_table "finished_tips", force: :cascade do |t|
     t.integer  "user_id",    null: false
     t.integer  "tip_id",     null: false
     t.datetime "created_at", null: false
@@ -127,7 +127,7 @@ ActiveRecord::Schema.define(version: 20141119155031) do
 
   add_index "finished_tips", ["user_id", "tip_id"], name: "index_finished_tips_on_user_id_and_tip_id", unique: true, using: :btree
 
-  create_table "follows", force: true do |t|
+  create_table "follows", force: :cascade do |t|
     t.integer  "user_id",      null: false
     t.integer  "following_id", null: false
     t.datetime "created_at"
@@ -136,7 +136,7 @@ ActiveRecord::Schema.define(version: 20141119155031) do
 
   add_index "follows", ["user_id", "following_id"], name: "index_follows_on_user_id_and_following_id", unique: true, using: :btree
 
-  create_table "items", force: true do |t|
+  create_table "items", force: :cascade do |t|
     t.integer  "work_id"
     t.string   "name",                       null: false
     t.string   "url",                        null: false
@@ -146,7 +146,7 @@ ActiveRecord::Schema.define(version: 20141119155031) do
     t.datetime "updated_at"
   end
 
-  create_table "likes", force: true do |t|
+  create_table "likes", force: :cascade do |t|
     t.integer  "user_id",        null: false
     t.integer  "recipient_id",   null: false
     t.string   "recipient_type", null: false
@@ -156,7 +156,7 @@ ActiveRecord::Schema.define(version: 20141119155031) do
 
   add_index "likes", ["recipient_id", "recipient_type"], name: "index_likes_on_recipient_id_and_recipient_type", using: :btree
 
-  create_table "notifications", force: true do |t|
+  create_table "notifications", force: :cascade do |t|
     t.integer  "user_id",                        null: false
     t.integer  "action_user_id",                 null: false
     t.integer  "trackable_id",                   null: false
@@ -170,7 +170,7 @@ ActiveRecord::Schema.define(version: 20141119155031) do
   add_index "notifications", ["read"], name: "index_notifications_on_read", using: :btree
   add_index "notifications", ["trackable_id", "trackable_type"], name: "index_notifications_on_trackable_id_and_trackable_type", using: :btree
 
-  create_table "profiles", force: true do |t|
+  create_table "profiles", force: :cascade do |t|
     t.integer  "user_id",                           null: false
     t.string   "name",                 default: "", null: false
     t.string   "description",          default: "", null: false
@@ -182,7 +182,7 @@ ActiveRecord::Schema.define(version: 20141119155031) do
 
   add_index "profiles", ["user_id"], name: "index_profiles_on_user_id", unique: true, using: :btree
 
-  create_table "programs", force: true do |t|
+  create_table "programs", force: :cascade do |t|
     t.integer  "channel_id",     null: false
     t.integer  "episode_id",     null: false
     t.integer  "work_id",        null: false
@@ -194,7 +194,7 @@ ActiveRecord::Schema.define(version: 20141119155031) do
 
   add_index "programs", ["channel_id", "episode_id"], name: "index_programs_on_channel_id_and_episode_id", unique: true, using: :btree
 
-  create_table "providers", force: true do |t|
+  create_table "providers", force: :cascade do |t|
     t.integer  "user_id",          null: false
     t.string   "name",             null: false
     t.string   "uid",              null: false
@@ -207,7 +207,7 @@ ActiveRecord::Schema.define(version: 20141119155031) do
 
   add_index "providers", ["name", "uid"], name: "index_providers_on_name_and_uid", unique: true, using: :btree
 
-  create_table "receptions", force: true do |t|
+  create_table "receptions", force: :cascade do |t|
     t.integer  "user_id",    null: false
     t.integer  "channel_id", null: false
     t.datetime "created_at"
@@ -216,7 +216,7 @@ ActiveRecord::Schema.define(version: 20141119155031) do
 
   add_index "receptions", ["user_id", "channel_id"], name: "index_receptions_on_user_id_and_channel_id", unique: true, using: :btree
 
-  create_table "seasons", force: true do |t|
+  create_table "seasons", force: :cascade do |t|
     t.string   "name",       null: false
     t.string   "slug",       null: false
     t.datetime "created_at"
@@ -225,7 +225,7 @@ ActiveRecord::Schema.define(version: 20141119155031) do
 
   add_index "seasons", ["slug"], name: "index_seasons_on_slug", unique: true, using: :btree
 
-  create_table "sessions", force: true do |t|
+  create_table "sessions", force: :cascade do |t|
     t.string   "session_id", null: false
     t.text     "data"
     t.datetime "created_at"
@@ -235,7 +235,7 @@ ActiveRecord::Schema.define(version: 20141119155031) do
   add_index "sessions", ["session_id"], name: "index_sessions_on_session_id", unique: true, using: :btree
   add_index "sessions", ["updated_at"], name: "index_sessions_on_updated_at", using: :btree
 
-  create_table "shots", force: true do |t|
+  create_table "shots", force: :cascade do |t|
     t.integer  "user_id",    null: false
     t.string   "image_uid",  null: false
     t.datetime "created_at"
@@ -244,7 +244,7 @@ ActiveRecord::Schema.define(version: 20141119155031) do
 
   add_index "shots", ["image_uid"], name: "index_shots_on_image_uid", unique: true, using: :btree
 
-  create_table "staffs", force: true do |t|
+  create_table "staffs", force: :cascade do |t|
     t.string   "email",              default: "", null: false
     t.string   "encrypted_password", default: "", null: false
     t.integer  "sign_in_count",      default: 0,  null: false
@@ -258,7 +258,7 @@ ActiveRecord::Schema.define(version: 20141119155031) do
 
   add_index "staffs", ["email"], name: "index_staffs_on_email", unique: true, using: :btree
 
-  create_table "statuses", force: true do |t|
+  create_table "statuses", force: :cascade do |t|
     t.integer  "user_id",                     null: false
     t.integer  "work_id",                     null: false
     t.integer  "kind",                        null: false
@@ -270,7 +270,7 @@ ActiveRecord::Schema.define(version: 20141119155031) do
 
   add_index "statuses", ["user_id", "latest"], name: "index_statuses_on_user_id_and_latest", using: :btree
 
-  create_table "syobocal_alerts", force: true do |t|
+  create_table "syobocal_alerts", force: :cascade do |t|
     t.integer  "work_id"
     t.integer  "kind",            null: false
     t.integer  "sc_prog_item_id"
@@ -283,7 +283,7 @@ ActiveRecord::Schema.define(version: 20141119155031) do
   add_index "syobocal_alerts", ["kind"], name: "index_syobocal_alerts_on_kind", using: :btree
   add_index "syobocal_alerts", ["sc_prog_item_id"], name: "index_syobocal_alerts_on_sc_prog_item_id", using: :btree
 
-  create_table "tips", force: true do |t|
+  create_table "tips", force: :cascade do |t|
     t.integer  "target",       null: false
     t.string   "partial_name", null: false
     t.string   "title",        null: false
@@ -294,7 +294,7 @@ ActiveRecord::Schema.define(version: 20141119155031) do
 
   add_index "tips", ["partial_name"], name: "index_tips_on_partial_name", unique: true, using: :btree
 
-  create_table "twitter_bots", force: true do |t|
+  create_table "twitter_bots", force: :cascade do |t|
     t.string   "name",       null: false
     t.datetime "created_at"
     t.datetime "updated_at"
@@ -302,7 +302,7 @@ ActiveRecord::Schema.define(version: 20141119155031) do
 
   add_index "twitter_bots", ["name"], name: "index_twitter_bots_on_name", unique: true, using: :btree
 
-  create_table "users", force: true do |t|
+  create_table "users", force: :cascade do |t|
     t.string   "username",                             null: false
     t.string   "email",                                null: false
     t.string   "encrypted_password",   default: "",    null: false
@@ -329,7 +329,7 @@ ActiveRecord::Schema.define(version: 20141119155031) do
   add_index "users", ["role"], name: "index_users_on_role", using: :btree
   add_index "users", ["username"], name: "index_users_on_username", unique: true, using: :btree
 
-  create_table "versions", force: true do |t|
+  create_table "versions", force: :cascade do |t|
     t.string   "item_type",  null: false
     t.integer  "item_id",    null: false
     t.string   "event",      null: false
@@ -340,7 +340,7 @@ ActiveRecord::Schema.define(version: 20141119155031) do
 
   add_index "versions", ["item_type", "item_id"], name: "index_versions_on_item_type_and_item_id", using: :btree
 
-  create_table "works", force: true do |t|
+  create_table "works", force: :cascade do |t|
     t.string   "title",                             null: false
     t.integer  "media",                             null: false
     t.string   "official_site_url", default: "",    null: false
@@ -366,56 +366,36 @@ ActiveRecord::Schema.define(version: 20141119155031) do
   add_index "works", ["sc_tid"], name: "index_works_on_sc_tid", unique: true, using: :btree
   add_index "works", ["watchers_count"], name: "index_works_on_watchers_count", using: :btree
 
-  add_foreign_key "activities", "users", name: "activities_user_id_fk", dependent: :delete
-
-  add_foreign_key "channel_works", "channels", name: "channel_works_channel_id_fk", dependent: :delete
-  add_foreign_key "channel_works", "users", name: "channel_works_user_id_fk", dependent: :delete
-  add_foreign_key "channel_works", "works", name: "channel_works_work_id_fk", dependent: :delete
-
-  add_foreign_key "channels", "channel_groups", name: "channels_channel_group_id_fk", dependent: :delete
-
-  add_foreign_key "checkins", "episodes", name: "checkins_episode_id_fk", dependent: :delete
-  add_foreign_key "checkins", "users", name: "checkins_user_id_fk", dependent: :delete
-  add_foreign_key "checkins", "works", name: "checkins_work_id_fk"
-
-  add_foreign_key "comments", "checkins", name: "comments_checkin_id_fk", dependent: :delete
-  add_foreign_key "comments", "users", name: "comments_user_id_fk", dependent: :delete
-
-  add_foreign_key "cover_images", "works", name: "cover_images_work_id_fk", dependent: :delete
-
-  add_foreign_key "episodes", "works", name: "episodes_work_id_fk", dependent: :delete
-
-  add_foreign_key "finished_tips", "tips", name: "finished_tips_tip_id_fk", dependent: :delete
-  add_foreign_key "finished_tips", "users", name: "finished_tips_user_id_fk", dependent: :delete
-
-  add_foreign_key "follows", "users", name: "follows_following_id_fk", column: "following_id", dependent: :delete
-  add_foreign_key "follows", "users", name: "follows_user_id_fk", dependent: :delete
-
-  add_foreign_key "items", "works", name: "items_work_id_fk", dependent: :delete
-
-  add_foreign_key "likes", "users", name: "likes_user_id_fk", dependent: :delete
-
-  add_foreign_key "notifications", "users", name: "notifications_action_user_id_fk", column: "action_user_id", dependent: :delete
-  add_foreign_key "notifications", "users", name: "notifications_user_id_fk", dependent: :delete
-
-  add_foreign_key "profiles", "users", name: "profiles_user_id_fk", dependent: :delete
-
-  add_foreign_key "programs", "channels", name: "programs_channel_id_fk", dependent: :delete
-  add_foreign_key "programs", "episodes", name: "programs_episode_id_fk", dependent: :delete
-  add_foreign_key "programs", "works", name: "programs_work_id_fk", dependent: :delete
-
-  add_foreign_key "providers", "users", name: "providers_user_id_fk", dependent: :delete
-
-  add_foreign_key "receptions", "channels", name: "receptions_channel_id_fk", dependent: :delete
-  add_foreign_key "receptions", "users", name: "receptions_user_id_fk", dependent: :delete
-
-  add_foreign_key "shots", "users", name: "shots_user_id_fk", dependent: :delete
-
-  add_foreign_key "statuses", "users", name: "statuses_user_id_fk", dependent: :delete
-  add_foreign_key "statuses", "works", name: "statuses_work_id_fk", dependent: :delete
-
-  add_foreign_key "syobocal_alerts", "works", name: "syobocal_alerts_work_id_fk", dependent: :delete
-
-  add_foreign_key "works", "seasons", name: "works_season_id_fk", dependent: :delete
-
+  add_foreign_key "activities", "users"
+  add_foreign_key "channel_works", "channels"
+  add_foreign_key "channel_works", "users"
+  add_foreign_key "channel_works", "works"
+  add_foreign_key "channels", "channel_groups"
+  add_foreign_key "checkins", "episodes"
+  add_foreign_key "checkins", "users"
+  add_foreign_key "checkins", "works"
+  add_foreign_key "comments", "checkins"
+  add_foreign_key "comments", "users"
+  add_foreign_key "cover_images", "works"
+  add_foreign_key "episodes", "works"
+  add_foreign_key "finished_tips", "tips"
+  add_foreign_key "finished_tips", "users"
+  add_foreign_key "follows", "users"
+  add_foreign_key "follows", "users", column: "following_id"
+  add_foreign_key "items", "works"
+  add_foreign_key "likes", "users"
+  add_foreign_key "notifications", "users"
+  add_foreign_key "notifications", "users", column: "action_user_id"
+  add_foreign_key "profiles", "users"
+  add_foreign_key "programs", "channels"
+  add_foreign_key "programs", "episodes"
+  add_foreign_key "programs", "works"
+  add_foreign_key "providers", "users"
+  add_foreign_key "receptions", "channels"
+  add_foreign_key "receptions", "users"
+  add_foreign_key "shots", "users"
+  add_foreign_key "statuses", "users"
+  add_foreign_key "statuses", "works"
+  add_foreign_key "syobocal_alerts", "works"
+  add_foreign_key "works", "seasons"
 end

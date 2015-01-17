@@ -10,6 +10,6 @@ class CreateProfiles < ActiveRecord::Migration
     end
 
     add_index       :profiles, :user_id, unique: true
-    add_foreign_key :profiles, :users, dependent: :delete
+    add_foreign_key :profiles, :users
   end
 end

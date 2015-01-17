@@ -2,7 +2,6 @@ class CreateProviders < ActiveRecord::Migration
   def change
     create_table :providers do |t|
       t.integer     :user_id,         null: false
-      t.foreign_key :users,           dependent: :delete
       t.string      :name,            null: false
       t.string      :uid,             null: false
       t.string      :token,           null: false
@@ -10,5 +9,7 @@ class CreateProviders < ActiveRecord::Migration
       t.string      :token_secret,    null: ''
       t.timestamps
     end
+
+    add_foreign_key :providers, :users
   end
 end

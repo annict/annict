@@ -208,8 +208,6 @@ GEM
       nokogiri (~> 1.5, >= 1.5.11)
     font-awesome-sass (4.2.2)
       sass (~> 3.2)
-    foreigner (1.7.2)
-      activerecord (>= 3.0.0)
     formatador (0.2.5)
     globalid (0.3.0)
       activesupport (>= 4.1.0)
@@ -565,7 +563,6 @@ DEPENDENCIES
   figaro
   flutie
   font-awesome-sass
-  foreigner
   gon
   hirb
   hirb-unicode

@@ -5,13 +5,13 @@ class CreateLikes < ActiveRecord::Migration
       t.integer :recipient_id,   null: false
       t.string  :recipient_type, null: false
       t.timestamps
-
-      t.foreign_key :users, dependent: :delete
     end
 
     add_column :checkins, :likes_count, :integer, null: false, default: 0, after: :comments_count
     add_column :comments, :likes_count, :integer, null: false, default: 0, after: :body
 
     add_index :likes, [:recipient_id, :recipient_type]
+
+    add_foreign_key :likes, :users
   end
 end

@@ -7,11 +7,11 @@ class CreateSyobocalAlerts < ActiveRecord::Migration
       t.string :sc_sub_title
       t.string :sc_prog_comment
       t.timestamps
-
-      t.foreign_key :works, dependent: :delete
     end
 
     add_index :syobocal_alerts, :kind
     add_index :syobocal_alerts, :sc_prog_item_id
+
+    add_foreign_key :syobocal_alerts, :works
   end
 end

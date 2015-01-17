@@ -4,19 +4,19 @@
 #
 #  id             :integer          not null, primary key
 #  work_id        :integer          not null
-#  number         :string(510)
-#  sort_number    :integer          default(0), not null
-#  sc_count       :integer
-#  title          :string(510)
-#  single         :boolean
-#  checkins_count :integer          default(0), not null
+#  number         :string
+#  sort_number    :integer          default("0"), not null
+#  title          :string
 #  created_at     :datetime
 #  updated_at     :datetime
+#  checkins_count :integer          default("0"), not null
+#  single         :boolean          default("false")
+#  sc_count       :integer
 #
 # Indexes
 #
-#  episodes_work_id_idx           (work_id)
-#  episodes_work_id_sc_count_key  (work_id,sc_count) UNIQUE
+#  index_episodes_on_checkins_count        (checkins_count)
+#  index_episodes_on_work_id_and_sc_count  (work_id,sc_count) UNIQUE
 #
 
 class Episode < ActiveRecord::Base
@@ -32,7 +32,6 @@ class Episode < ActiveRecord::Base
   def number_title
     "#{number}「#{title}」"
   end
-
 
   private
 
