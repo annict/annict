@@ -5,7 +5,7 @@
 #  id               :integer          not null, primary key
 #  channel_group_id :integer          not null
 #  sc_chid          :integer          not null
-#  name             :string(510)      not null
+#  name             :string           not null
 #  published        :boolean          default("true"), not null
 #  created_at       :datetime
 #  updated_at       :datetime
