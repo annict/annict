@@ -25,7 +25,6 @@ body.users-show {
           padding: 4px 4px 0 4px;
 
           .caption {
-            height: 40px;
             padding: 9px 0;
 
             h3 {
@@ -33,6 +32,9 @@ body.users-show {
               font-weight: normal;
               margin-bottom: 0;
               margin-top: 0;
+              overflow:hidden;
+              text-overflow: ellipsis;
+              white-space: nowrap;
             }
           }
         }
