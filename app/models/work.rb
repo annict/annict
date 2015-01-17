@@ -15,8 +15,8 @@
 #  nicoch_started_at :datetime
 #  created_at        :datetime
 #  updated_at        :datetime
-#  on_air            :boolean          not null
-#  fetch_syobocal    :boolean          not null
+#  on_air            :boolean          default("false"), not null
+#  fetch_syobocal    :boolean          default("false"), not null
 #  twitter_username  :string(510)
 #  twitter_hashtag   :string(510)
 #  released_at_about :string

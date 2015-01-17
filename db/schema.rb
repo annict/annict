@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150117125806) do
+ActiveRecord::Schema.define(version: 20150117134132) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -358,18 +358,18 @@ ActiveRecord::Schema.define(version: 20150117125806) do
   create_table "works", force: :cascade do |t|
     t.integer  "season_id"
     t.integer  "sc_tid"
-    t.string   "title",             limit: 510,              null: false
-    t.integer  "media",                                      null: false
-    t.string   "official_site_url", limit: 510, default: "", null: false
-    t.string   "wikipedia_url",     limit: 510, default: "", null: false
-    t.integer  "episodes_count",                default: 0,  null: false
-    t.integer  "watchers_count",                default: 0,  null: false
+    t.string   "title",             limit: 510,                 null: false
+    t.integer  "media",                                         null: false
+    t.string   "official_site_url", limit: 510, default: "",    null: false
+    t.string   "wikipedia_url",     limit: 510, default: "",    null: false
+    t.integer  "episodes_count",                default: 0,     null: false
+    t.integer  "watchers_count",                default: 0,     null: false
     t.date     "released_at"
     t.datetime "nicoch_started_at"
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.boolean  "on_air",                                     null: false
-    t.boolean  "fetch_syobocal",                             null: false
+    t.boolean  "on_air",                        default: false, null: false
+    t.boolean  "fetch_syobocal",                default: false, null: false
     t.string   "twitter_username",  limit: 510
     t.string   "twitter_hashtag",   limit: 510
     t.string   "released_at_about"
