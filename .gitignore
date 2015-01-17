@@ -5,6 +5,7 @@
 /config/application.yml
 /coverage
 /heroku.dump
+/lib/tasks/data.rake
 /log/*.log
 /public/dragonfly
 /tmp
