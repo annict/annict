@@ -52,8 +52,11 @@ class TwitterCheckinShareWorker
   end
 
   def get_episode_title
-    title = @checkin.episode.single? ? '' : @checkin.episode.title
-    title = (title == '-') ? '' : title
+    title = if @checkin.episode.single?
+      ''
+    else
+      @checkin.episode.title.presence || ''
+    end
 
     if @checkin.comment.present?
       @rest += 10
@@ -65,7 +68,7 @@ class TwitterCheckinShareWorker
         title
       end
 
-      title.length > 0 ? "「#{title}」" : ' '
+      title.present? ? "「#{title}」" : ' '
     end
   end
 
