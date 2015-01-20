@@ -77,6 +77,7 @@ GitHubからソースコードをcloneしてから以下のコマンドを実行
 
 ```
 $ cd annict
+$ cp config/application.yml{.example,}
 $ bundle install
 $ bundle exec rake db:create
 $ bundle exec rake db:setup
