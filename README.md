@@ -81,7 +81,7 @@ $ cp config/application.yml{.example,}
 $ bundle install
 $ bundle exec rake db:create
 $ bundle exec rake db:setup
-$ bundle exec foreman start
+$ foreman start
 ```
 
 http://localhost:5000 にアクセスすると、サイトのトップページが表示されるはずです。
