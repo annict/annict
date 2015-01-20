@@ -21,7 +21,7 @@ class UserWorksQuery
 
   def watching_with_season
     columns = ['works.id', 'works.title', 'seasons.name as season_name']
-    watching.where.not(season_id: nil).order(released_at: :desc)
+    watching.where.not(season_id: nil).order('seasons.id DESC')
       .joins(:season).select(columns)
   end
 end
