@@ -36,7 +36,6 @@ class UsersController < ApplicationController
     redirect_to user_path(current_user.username), notice: 'ツイートしました。'
   end
 
-
   private
 
   def set_user

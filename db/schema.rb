@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150117134132) do
+ActiveRecord::Schema.define(version: 20150123161810) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -182,13 +182,14 @@ ActiveRecord::Schema.define(version: 20150117134132) do
   add_index "notifications", ["user_id"], name: "notifications_user_id_idx", using: :btree
 
   create_table "profiles", force: :cascade do |t|
-    t.integer  "user_id",                                       null: false
-    t.string   "name",                 limit: 510, default: "", null: false
-    t.string   "description",          limit: 510, default: "", null: false
-    t.string   "avatar_uid",           limit: 510
-    t.string   "background_image_uid", limit: 510
+    t.integer  "user_id",                                               null: false
+    t.string   "name",                      limit: 510, default: "",    null: false
+    t.string   "description",               limit: 510, default: "",    null: false
+    t.string   "avatar_uid",                limit: 510
+    t.string   "background_image_uid",      limit: 510
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.boolean  "background_image_animated",             default: false, null: false
   end
 
   add_index "profiles", ["user_id"], name: "profiles_user_id_idx", using: :btree

@@ -42,4 +42,15 @@ module ApplicationHelper
   def user_profile_page?
     params[:controller] == 'users' && params[:action] == 'show'
   end
+
+  def thumb_url(model, accessor_name, size)
+    path = model.send("#{accessor_name}_uid")
+
+    # プロフィール背景画像がGifアニメのときは、S3に保存された画像をそのまま返す
+    if accessor_name == :background_image && model.background_image_animated?
+      return "#{ENV['ANNICT_IMAGE2_URL']}/images/#{path}"
+    end
+
+    "#{ENV['ANNICT_IMAGE2_URL']}/#{size}/#{path}"
+  end
 end

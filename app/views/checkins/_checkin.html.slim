@@ -2,7 +2,7 @@
   .media id="#{checkin.id}"
     .media-left
       = link_to user_path(checkin.user.username), class: 'pull-left' do
-        = image_tag checkin.user.profile.avatar.thumb('100x100').url, size: '50x50', class: 'img-circle'
+        = image_tag thumb_url(checkin.user.profile, :avatar, '100x100c'), size: '50x50', class: 'img-circle'
     .media-body
       .top
         .pull-left
