@@ -2,14 +2,15 @@
 #
 # Table name: profiles
 #
-#  id                   :integer          not null, primary key
-#  user_id              :integer          not null
-#  name                 :string(510)      default(""), not null
-#  description          :string(510)      default(""), not null
-#  avatar_uid           :string(510)
-#  background_image_uid :string(510)
-#  created_at           :datetime
-#  updated_at           :datetime
+#  id                        :integer          not null, primary key
+#  user_id                   :integer          not null
+#  name                      :string(510)      default(""), not null
+#  description               :string(510)      default(""), not null
+#  avatar_uid                :string(510)
+#  background_image_uid      :string(510)
+#  created_at                :datetime
+#  updated_at                :datetime
+#  background_image_animated :boolean          default("false"), not null
 #
 # Indexes
 #
@@ -29,17 +30,13 @@ class Profile < ActiveRecord::Base
   validates :name, presence: true
 
   before_validation :rename_file
+  before_save :check_animated_gif
 
 
   def description=(description)
     value = description.present? ? description.truncate(150) : ''
     write_attribute(:description, value)
   end
-
-  def background_image_or_avatar
-    background_image.presence || avatar
-  end
-
 
   private
 
@@ -51,5 +48,16 @@ class Profile < ActiveRecord::Base
   def random_file_name(file)
     ext = file.name.scan(/\.[a-zA-Z]+$/).first.presence || ''
     SecureRandom.hex(16) + ext
+  end
+
+  def check_animated_gif
+    if background_image_uid_changed?
+      image = Magick::ImageList.new(background_image.file)
+      # sceneが0より大きければGifアニメ画像
+      # http://stackoverflow.com/questions/27238816/how-to-tell-if-gif-is-animated
+      self.background_image_animated = (image.scene > 0)
+    end
+
+    self
   end
 end

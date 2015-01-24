@@ -420,6 +420,7 @@ GEM
     rest-client (1.7.2)
       mime-types (>= 1.16, < 3.0)
       netrc (~> 0.7)
+    rmagick (2.13.4)
     rspec-core (3.1.7)
       rspec-support (~> 3.1.0)
     rspec-expectations (3.1.2)
@@ -599,6 +600,7 @@ DEPENDENCIES
   rails_12factor
   ransack
   recommendable
+  rmagick
   rspec-mocks
   rspec-rails
   sass-rails

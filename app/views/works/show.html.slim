@@ -4,7 +4,7 @@
 
 .work-profile
   .work-image
-    = annict_image_tag @work.main_item.image.thumb('640x640').url, psize: '500x500', msize: '320x320', alt: @work.title
+    = annict_image_tag thumb_url(@work.main_item, :image, '640x640'), psize: '500x500', msize: '320x320', alt: @work.title
   .wrapper
     .work-title
       h1
@@ -159,7 +159,7 @@ hr
 
       .media
         = link_to @work.main_item.url, class: 'pull-left' do
-          = image_tag @work.main_item.image.thumb('160x160').url, size: '80x80', alt: @work.main_item.name
+          = image_tag thumb_url(@work.main_item, :image, '160x160'), size: '80x80', alt: @work.main_item.name
         .media-body
           .description
             - link = link_to @work.main_item.name, @work.main_item.url, target: '_blank'

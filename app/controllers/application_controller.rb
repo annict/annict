@@ -6,6 +6,14 @@ class ApplicationController < ActionController::Base
   before_filter :store_flash_message
 
 
+  # テスト実行時にDragonflyでアップロードした画像を読み込むときに呼ばれるアクション
+  # 画像サーバはこのRailsアプリから切り離しているので、CircleCI等でテストを実行するときは
+  # このダミーのアクションを画像だと思って呼ぶ
+  def dummy_image
+    # テストを実行するときは画像は表示されていなくて良いので、ただ200を返す
+    head 200
+  end
+
   private
 
   def after_sign_in_path_for(resource)

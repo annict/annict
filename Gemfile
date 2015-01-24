@@ -38,6 +38,7 @@ gem 'paper_trail'
 gem 'pg'
 gem 'rails-i18n'
 gem 'ransack'
+gem 'rmagick'
 gem 'sass-rails'
 gem 'sidekiq'
 gem 'sidekiq-middleware' # Recommendableで使用

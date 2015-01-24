@@ -1,24 +1,21 @@
 .profile-header
-  - convert_options = '-blur 0x2 -evaluate multiply 0.5'
-  - if browser.mobile?
-    - image_url = user.profile.background_image_or_avatar.thumb('640x650#').convert(convert_options).url
-  - else
-    - image_url = user.profile.background_image_or_avatar.thumb('500x325#').convert(convert_options).url
-  .profile style="background-image: url(#{image_url});"
-    .avatar
-      = image_tag Dragonfly.app.fetch(user.profile.avatar_uid).thumb('200x200#').url, size: '100x100', class: 'img-circle'
-    h1
-      = user.profile.name
-    .username
-      = "@#{user.username}"
-    - if user.profile.description.present?
-      .description
-        = user.profile.description
-    - if user_signed_in?
-      - if current_user == user && user.shareable_to?(:twitter)
-        = render 'share_button', user: user
-      - if current_user != user
-        = render 'follow_button', user: user
+  .profile
+    .background style="background-image: url(#{background_image_url(user.profile)});"
+    .foreground
+      .avatar
+        = image_tag(thumb_url(user.profile, :avatar, '200x200c'), size: '100x100', class: 'img-circle')
+      h1
+        = user.profile.name
+      .username
+        = "@#{user.username}"
+      - if user.profile.description.present?
+        .description
+          = user.profile.description
+      - if user_signed_in?
+        - if current_user == user && user.shareable_to?(:twitter)
+          = render 'share_button', user: user
+        - if current_user != user
+          = render 'follow_button', user: user
 
   .statuses
     .watching.status.col-xs-3
