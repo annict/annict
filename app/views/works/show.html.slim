@@ -3,8 +3,7 @@
 - keywords meta_keywords(@work.title)
 
 .work-profile
-  .work-image
-    = annict_image_tag thumb_url(@work.main_item, :image, '640x640e'), psize: '500x500', msize: '320x320', alt: @work.title
+  .work-image style="background-image: url(#{thumb_url(@work.main_item, :image, '640x640e')});"
   .wrapper
     .work-title
       h1
@@ -13,17 +12,17 @@
       = render 'status_selector', mini: false, work: @work
 
     .work-statistics
-      .col-xs-4
+      .status
         .count
           = @work.checkins_count
         .text
           | Checkins
-      .col-xs-4
+      .status
         .count
           = @work.watchers_count
         .text
           | Watchers
-      .col-xs-4
+      .status
         .count
           = @work.comments_count
         .text

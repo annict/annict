@@ -1,5 +1,5 @@
 module ProfilesHelper
-  def background_image_url(model)
+  def profile_background_image_url(model)
     size = browser.mobile? ? '640x650e' : '500x325e'
     accessor_name = model.background_image.present? ? :background_image : :avatar
 

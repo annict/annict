@@ -14,6 +14,20 @@
     position: relative;
     text-align: center;
 
+    @if $browser == pc {
+      height: 500px;
+      width: 500px;
+    }
+    @if $browser == mobile {
+      height: 320px;
+      width: 100%;
+    }
+
+    .work-image {
+      background-size: cover;
+      height: 100%;
+    }
+
     .wrapper {
       background-color: rgba(0,0,0,0.5);
       left: 0;
@@ -47,30 +61,36 @@
       }
 
       .work-statistics {
-        bottom: 10px;
-        position: absolute;
+        @include display(flex);
+        @include justify-content(center);
+
+        position: relative;
 
         @if $browser == pc {
-          margin-left: 25%;
+          top: 160px;
         }
         @if $browser == mobile {
-          margin-left: 10%;
+          top: 60px;
         }
 
-        .count {
-          color: #ffffff;
+        .status {
+          @include flex-basis(100px);
 
-          @if $browser == pc {
-            font-size: 18px;
-          }
-          @if $browser == mobile {
-            font-size: 15px;
-          }
-        }
+          .count {
+            color: #ffffff;
 
-        .text {
-          color: #b4b4b4;
-          font-size: 12px;
+            @if $browser == pc {
+              font-size: 18px;
+            }
+            @if $browser == mobile {
+              font-size: 15px;
+            }
+          }
+
+          .text {
+            color: #b4b4b4;
+            font-size: 12px;
+          }
         }
       }
     }

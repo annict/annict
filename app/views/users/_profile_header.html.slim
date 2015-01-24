@@ -1,6 +1,6 @@
 .profile-header
   .profile
-    .background style="background-image: url(#{background_image_url(user.profile)});"
+    .background style="background-image: url(#{profile_background_image_url(user.profile)});"
     .foreground
       .avatar
         = image_tag(thumb_url(user.profile, :avatar, '200x200e'), size: '100x100', class: 'img-circle')
