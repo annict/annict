@@ -3,7 +3,7 @@ json.work do
 end
 
 json.main_item do
-  json.image_url thumb_url(activity.recipient.main_item, :image, '80x80')
+  json.image_url thumb_url(activity.recipient.main_item, :image, '80x80e')
 end
 
 json.status do

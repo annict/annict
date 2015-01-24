@@ -15,7 +15,7 @@
           = link_to work_path(work) do
             .work.col-xs-4
               .thumbnail
-                = annict_image_tag thumb_url(work.main_item, :image, '160x160'), psize: '140x140', msize: '80x80', alt: work.title
+                = annict_image_tag thumb_url(work.main_item, :image, '160x160e'), psize: '140x140', msize: '80x80', alt: work.title
                 .caption
                   h3 = work.title
 

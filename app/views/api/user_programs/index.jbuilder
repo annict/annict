@@ -15,7 +15,7 @@ json.programs @programs do |program|
     json.work do
       json.id program.work.id
       json.title program.episode.work.title
-      json.image_url thumb_url(program.work.main_item, :image, '140x140')
+      json.image_url thumb_url(program.work.main_item, :image, '140x140e')
     end
   end
 end

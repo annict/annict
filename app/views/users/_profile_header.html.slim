@@ -3,7 +3,7 @@
     .background style="background-image: url(#{background_image_url(user.profile)});"
     .foreground
       .avatar
-        = image_tag(thumb_url(user.profile, :avatar, '200x200c'), size: '100x100', class: 'img-circle')
+        = image_tag(thumb_url(user.profile, :avatar, '200x200e'), size: '100x100', class: 'img-circle')
       h1
         = user.profile.name
       .username

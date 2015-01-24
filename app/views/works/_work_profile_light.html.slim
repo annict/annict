@@ -2,7 +2,7 @@
   .work-profile-light
     .work-image
       = link_to work_path(work) do
-        = annict_image_tag thumb_url(work.main_item, :image, '300x300'), psize: '200x200', msize: '150x150', alt: work.title
+        = annict_image_tag thumb_url(work.main_item, :image, '300x300e'), psize: '200x200', msize: '150x150', alt: work.title
     - if @work.items.present?
       .amazon-associates-link
         = link_to t('works.about_this_image'), work_path(work, anchor: 'about-works-image')
