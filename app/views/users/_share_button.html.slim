@@ -14,7 +14,7 @@
           .description 見てるアニメを画像付きでツイートします。実際にツイートされる画像は下のサンプル画像より大きいものになります。
           .image
             .loading ng-hide='shareImageLoaded'
-              = render 'selector_spinner', target: user.username
+              = render 'spinner', target: user.username
               .message 画像を生成中...
             img ng-src='{{thumbnailUrl}}' width='200' height='200' ng-show='shareImageLoaded'
 
