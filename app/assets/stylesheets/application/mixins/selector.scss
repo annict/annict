@@ -18,11 +18,21 @@
 
       &.spinner {
         color: $color-gray-light;
+        display: none;
         font-size: 13px;
+
+        &.show {
+          display: inline;
+        }
       }
 
       &.check {
         color: #64e86f;
+        display: none;
+
+        &.show {
+          display: inline;
+        }
       }
     }
   }

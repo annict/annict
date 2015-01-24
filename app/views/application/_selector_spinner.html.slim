@@ -1,4 +1,4 @@
 .ann-selector-spinner data-target="#{target}"
   .selector-spinner
-    = icon 'circle-o-notch', '', class: 'spinner', 'ng-show' => 'isSpinning', 'ng-class' => '{"fa-spin": isSpinning}'
-    = icon 'check-circle', '', class: 'check', 'ng-show' => '!isSpinning && done'
+    = icon 'circle-o-notch', '', class: 'spinner', 'ng-class' => '{ "fa-spin": isSpinning, "show": isSpinning }'
+    = icon 'check-circle', '', class: 'check', 'ng-class' => '{ "show": !isSpinning && done }'
