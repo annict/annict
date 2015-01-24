@@ -6,6 +6,12 @@ class ApplicationController < ActionController::Base
   before_filter :store_flash_message
 
 
+  # テスト実行時にDragonflyでアップロードした画像を読み込むときに呼ばれるアクション
+  # テストを実行するときは画像は表示されていなくて良いので、ただ200を返す
+  def dummy_image
+    head 200
+  end
+
   private
 
   def after_sign_in_path_for(resource)
