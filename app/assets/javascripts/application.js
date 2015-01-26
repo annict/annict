@@ -11,6 +11,7 @@
 //= require moment/min/moment-with-locales
 //= require ng-infinite-scroller-origin
 //= require jquery-easing-original/jquery.easing.1.3
+//= require clamp.min
 
 //= require_self
 

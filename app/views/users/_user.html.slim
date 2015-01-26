@@ -1,19 +1,15 @@
-.user-list
-  .left.pull-left
-    .profile-image
-      = link_to user_path(user.username), class: 'pull-left' do
-        = image_tag thumb_url(user.profile, :avatar, '100x100e'), size: '50x50', class: 'img-circle'
-  .center.pull-left
-    .top
-      = link_to user_path(user.username) do
-        span.name
+= link_to user_path(user.username), class: 'user' do
+  .background style="background-image: url(#{profile_background_image_url(user.profile, mini: true)});"
+  .foreground
+    .content-background
+    .content
+      .left
+        .profile-image
+          = image_tag thumb_url(user.profile, :avatar, '140x140e'), size: '70x70', class: 'img-circle'
+        - if user_signed_in?
+          = render 'follow_button', user: user
+      .right
+        .name
           = user.profile.name
-        span.username
-          = "@#{user.username}"
-    .bottom
-      .description
-        = user.profile.description
-  .right.pull-left
-    = render 'follow_button', user: user, type: :icon
-
-.clearfix
+        .description ann-truncate='{ clamp: 2 }'
+          = user.profile.description

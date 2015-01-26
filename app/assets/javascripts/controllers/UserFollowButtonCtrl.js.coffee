@@ -12,7 +12,7 @@ Annict.angular.controller 'UserFollowButtonCtrl', ($scope, $http, $analytics) ->
         if $scope.isFollowing
           "#{followingIcon}フォロー中"
         else
-          "#{followIcon}フォローする"
+          "#{followIcon}フォロー"
       when 'icon'
         if $scope.isFollowing then followingIcon else followIcon
 

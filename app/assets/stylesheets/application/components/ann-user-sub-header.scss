@@ -1,0 +1,17 @@
+.ann-user-sub-header {
+  margin-bottom: 20px;
+  text-align: center;
+
+  h1 {
+    line-height: 23px;
+    margin-bottom: 0;
+    margin-top: 10px;
+
+    @if $browser == pc {
+      font-size: 16px;
+    }
+    @if $browser == mobile {
+      font-size: 14px;
+    }
+  }
+}

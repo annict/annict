@@ -54,22 +54,18 @@ body.users-show {
 
 body.users-works {
   @include works-list;
+}
 
-  .header {
-    margin-bottom: 20px;
-    text-align: center;
+body.users-following, body.users-followers {
+  > .content {
+    background-color: transparent;
+    box-shadow: none;
+    padding: 0;
+  }
 
-    h1 {
-      line-height: 23px;
-      margin-bottom: 0;
-      margin-top: 10px;
-
-      @if $browser == pc {
-        font-size: 16px;
-      }
-      @if $browser == mobile {
-        font-size: 14px;
-      }
-    }
+  .header-wrapper {
+    background-color: #ffffff;
+    box-shadow: 0 1px 1px rgba(0, 0, 0, 0.05);
+    padding-top: 20px;
   }
 }

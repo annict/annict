@@ -14,7 +14,7 @@ Annict.angular.config ($translateProvider) ->
       works: '作品を探す'
       works_search: '作品検索'
     users:
-      follow: 'フォローする'
+      follow: 'フォロー'
       following: 'フォロー中'
 
   $translateProvider.preferredLanguage('ja')
