@@ -1,28 +1,27 @@
-.container
-  - if @friends.present?
-    .friends
+- if @friends.present?
+  .friends
+    h2
+      = "#{current_user.provider_name}の友達"
+    .user-list
       - @friends.each do |friend|
-        .friend
-          = render 'users/user', user: friend
-          hr
+        = render 'users/user', user: friend
+- else
+  .friends.none
+    .container
+      .info.well
+        .icon
+          i.fa.fa-info-circle
+        p = t('friends.missing', provider_name: current_user.provider_name)
 
-      .text-center
-        = paginate @friends
-  - else
-    .info.well
-      .icon
-        i.fa.fa-info-circle
-      p = t('friends.missing', provider_name: current_user.provider_name)
+h2.other-users
+  = t('friends.other_users')
 
-  h2.text-center
-    = t('friends.other_users')
-  hr
-  - if @users.present?
+- if @users.present?
+  .user-list
     - @users.each do |user|
       = render 'users/user', user: user
-      hr
-  - else
-    .info.well
-      .icon
-        i.fa.fa-info-circle
-      p = t('friends.others_missing')
+- else
+  .info.well
+    .icon
+      i.fa.fa-info-circle
+    p = t('friends.others_missing')
