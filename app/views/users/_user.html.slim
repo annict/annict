@@ -6,7 +6,7 @@
       .left
         .profile-image
           = image_tag thumb_url(user.profile, :avatar, '140x140e'), size: '70x70', class: 'img-circle'
-        - if user_signed_in?
+        - if user_signed_in? && current_user != user
           = render 'follow_button', user: user
       .right
         .name
