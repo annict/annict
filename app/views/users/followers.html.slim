@@ -1,0 +1,23 @@
+- title "#{@user.profile.name} (@#{@user.username})さんをフォローしている人"
+- description meta_description("#{@user.profile.name}さんをフォローしている人をチェック！")
+- keywords meta_keywords(@user.profile.name, @user.username)
+
+.header-wrapper
+  .ann-user-sub-header.container
+    = link_to user_path(@user.username) do
+      = annict_image_tag thumb_url(@user.profile, :avatar, '140x140e'), psize: '70x70', msize: '50x50', class: 'img-circle'
+    h1
+      = link_to @user.profile.name, user_path(@user.username)
+      = "をフォローしている人"
+
+  = render 'users/follow_nav'
+
+- if @users.present?
+  .user-list
+    - @users.each do |user|
+      = render 'users/user', user: user
+- else
+  .info.well
+    .icon
+      i.fa.fa-info-circle
+    p フォローされている人はいません。

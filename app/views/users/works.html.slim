@@ -4,7 +4,7 @@
 - description meta_description("#{@user.profile.name}さんが#{action}#{t('words.anime')}をチェック！")
 - keywords meta_keywords(@user.profile.name, @user.username)
 
-.header.container
+.ann-user-sub-header.container
   = link_to user_path(@user.username) do
     = annict_image_tag thumb_url(@user.profile, :avatar, '140x140e'), psize: '70x70', msize: '50x50', class: 'img-circle'
   h1

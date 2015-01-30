@@ -1,29 +1,92 @@
 .user-list {
-  .center {
-    padding: 0 10px;
-    @if $browser == pc {
-      width: 378px;
-    }
-    @if $browser == mobile {
-      width: 198px;
+  .user {
+    box-shadow: 0 1px 1px rgba(0, 0, 0, 0.2);
+    display: block;
+    height: 235px;
+    margin-bottom: 15px;
+    position: relative;
+
+    &:hover {
+      text-decoration: none;
     }
 
-    .top {
-      margin-bottom: 5px;
+    .background {
+      background-size: cover;
+      height: 100%;
+      left: 0;
+      position: absolute;
+      top: 0;
+      width: 100%;
+      z-index: 1;
+    }
 
-      .name {
-        margin-right: 5px;
+    .foreground {
+      height: 85px;
+      position: relative;
+      top: 150px;
+      z-index: 2;
+
+      .content-background {
+        background-color: rgba(255, 255, 255, 0.8);
+        height: 100%;
+        position: absolute;
+        width: 100%;
+        z-index: 1;
       }
 
-      .username {
-        color: $color-gray-dark;
-        font-size: 12px;
-      }
-    }
+      .content {
+        height: 100%;
+        padding: 10px;
+        position: relative;
+        z-index: 2;
 
-    .bottom {
-      .description {
-        font-size: 12px;
+        .left {
+          float: left;
+          margin-right: 10px;
+          width: 100px;
+
+          .profile-image {
+            display: inline-block;
+            position: relative;
+            text-align: center;
+            top: -50px;
+            width: 100%;
+
+            img {
+              border: 2px #ffffff solid;
+            }
+          }
+
+          .follow-button {
+            position: relative;
+            text-align: center;
+            top: -40px;
+
+            .btn {
+              padding: 3px 6px;
+
+              i {
+                margin-right: 5px;
+              }
+            }
+          }
+        }
+
+        .right {
+          @include flex(1);
+
+          .name {
+            color: #000000;
+            font-size: 15px;
+            margin-bottom: 5px;
+          }
+
+          .description {
+            color: $color-gray-dark;
+            height: 40px;
+            overflow: hidden;
+          }
+        }
       }
     }
   }

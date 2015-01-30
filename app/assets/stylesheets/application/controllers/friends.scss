@@ -1,0 +1,30 @@
+body.friends-index {
+  > .content {
+    background-color: transparent;
+    box-shadow: none;
+    padding: 0;
+  }
+
+  .friends {
+    margin-top: 20px;
+
+    &.none {
+      background-color: #ffffff;
+      box-shadow: 0 1px 1px rgba(0, 0, 0, 0.05);
+
+      .well {
+        margin-top: 20px;
+      }
+    }
+  }
+
+  h2 {
+    color: $color-gray-dark-light;
+    margin-top: 20px;
+    text-align: center;
+
+    &.other-users {
+      margin-top: 30px;
+    }
+  }
+}

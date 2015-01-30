@@ -2,7 +2,7 @@ class UsersController < ApplicationController
   permits :email
 
   before_filter :authenticate_user!, only: [:update, :share]
-  before_filter :set_user, only: [:show, :works]
+  before_filter :set_user, only: [:show, :works, :following, :followers]
 
 
   def show
@@ -34,6 +34,14 @@ class UsersController < ApplicationController
     TwitterWatchingShareWorker.perform_async(current_user.id, body)
 
     redirect_to user_path(current_user.username), notice: 'ツイートしました。'
+  end
+
+  def following
+    @users = @user.followings.order('follows.id DESC')
+  end
+
+  def followers
+    @users = @user.followers.order('follows.id DESC')
   end
 
   private

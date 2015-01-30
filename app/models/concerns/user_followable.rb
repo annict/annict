@@ -7,7 +7,7 @@ module UserFollowable
     end
 
     def followers
-      Follow.where(following_id: id)
+      User.includes(:profile).joins(:follows).where('follows.following_id': id)
     end
 
     def follow(user)

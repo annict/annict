@@ -18,24 +18,24 @@
           = render 'follow_button', user: user
 
   .statuses
-    .watching.status.col-xs-3
-      .count
-        = link_to user.watching_count, user_works_user_path(user.username, :watching)
-      .text
-        | Watching
     .checkin.status.col-xs-3
       .count
         = user.checkins_count
       .text
         | Checkins
+    .watching.status.col-xs-3
+      .count
+        = link_to user.watching_count, user_works_user_path(user.username, :watching)
+      .text
+        | Watching
     .following.status.col-xs-3
       .count
-        = user.followings.count
+        = link_to user.followings.count, following_user_path(user.username)
       .text
         | Following
     .follower.status.col-xs-3
       .count
-        = user.followers.count
+        = link_to user.followers.count, following_user_path(user.username)
       .text
         | Followers
     .clearfix
