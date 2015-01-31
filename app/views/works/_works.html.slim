@@ -1,8 +1,7 @@
 - if works.present?
   .works-list
     - works.each do |work|
-      - checkin_progress = CheckinProgressService.new(user, work)
-      = render 'works/work', work: work, user: user, checkin_progress: checkin_progress
+      = render 'works/work', work: work, user: user
 
   .text-center
     = paginate works

@@ -37,7 +37,7 @@ class CheckinProgressService
   end
 
   def ratio
-    (halfway_checked_count / work.episodes_count.to_f rescue 1) * 100
+    (halfway_checked_count / work.episodes.count.to_f rescue 1) * 100
   end
 
   private

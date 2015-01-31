@@ -54,6 +54,14 @@ body.users-show {
 
 body.users-works {
   @include works-list;
+
+  .bottom {
+    margin-top: 7px;
+
+    .ann-status-selector.is-mini {
+      margin-left: 15px;
+    }
+  }
 }
 
 body.users-following, body.users-followers {
