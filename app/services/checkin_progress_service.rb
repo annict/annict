@@ -36,6 +36,10 @@ class CheckinProgressService
     (episode_ids & ids).count
   end
 
+  def ratio
+    (halfway_checked_count / work.episodes_count.to_f rescue 1) * 100
+  end
+
   private
 
   # 何周見たかを返す

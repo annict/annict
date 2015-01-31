@@ -36,6 +36,17 @@
         margin-top: 10px;
         text-align: right;
       }
+
+      .bottom {
+        @include display(flex);
+        @include justify-content(center);
+
+        margin-top: 7px;
+
+        .ann-checkin-progress {
+          @include flex(1);
+        }
+      }
     }
 
     hr {
