@@ -146,40 +146,6 @@ class User < ActiveRecord::Base
     providers.pluck(:name).include?(provider_name.to_s)
   end
 
-  # 指定した作品を何周見ているかを返す
-  def episodes_round(work)
-    episode_ids = work.episodes.pluck(:id)
-    checked_episode_ids = checkins.where(work: work).pluck(:episode_id)
-    all_checkins_count = work.all_checkins_count(checked_episode_ids.dup)
-
-    if checked_episode_ids.count > episode_ids.count * all_checkins_count
-      all_checkins_count + 1
-    elsif checked_episode_ids.count == episode_ids.count * all_checkins_count
-      all_checkins_count
-    else
-      0
-    end
-  end
-
-  def halfway_checked_count(work)
-    episode_ids = work.episodes.pluck(:id)
-    checked_episode_ids = checkins.where(work: work).pluck(:episode_id)
-    all_checkins_count = work.all_checkins_count(checked_episode_ids.dup)
-
-    if episode_ids.count == (episode_ids & checked_episode_ids).count && checked_episode_ids.count > episode_ids.count * all_checkins_count
-      all_checkins_count.times do
-        episode_ids.each do |eid|
-          i = checked_episode_ids.index(eid)
-          checked_episode_ids.delete_at(i) if i.present?
-        end
-      end
-
-      return checked_episode_ids.count
-    end
-
-    (episode_ids & checked_episode_ids).count
-  end
-
   private
 
   def get_large_avatar_image(provider, image_url)

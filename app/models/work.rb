@@ -124,23 +124,6 @@ class Work < ActiveRecord::Base
     released_at.presence || released_at_about.presence || ''
   end
 
-  def all_checkins_count(checked_episode_ids, count = 0)
-    episode_ids = episodes.pluck(:id)
-    unchecked_episode_ids = episode_ids - checked_episode_ids
-
-    return count if unchecked_episode_ids.present?
-
-    if checked_episode_ids.present?
-      episode_ids.each do |eid|
-        checked_episode_ids.delete_at(checked_episode_ids.index(eid))
-      end
-
-      all_checkins_count(checked_episode_ids, count + 1)
-    else
-      count
-    end
-  end
-
   private
 
   # データベースには標準時 (UTC) を保存する
