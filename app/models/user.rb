@@ -146,7 +146,6 @@ class User < ActiveRecord::Base
     providers.pluck(:name).include?(provider_name.to_s)
   end
 
-
   private
 
   def get_large_avatar_image(provider, image_url)
