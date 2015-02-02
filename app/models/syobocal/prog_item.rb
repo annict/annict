@@ -20,9 +20,9 @@ module Syobocal
     end
 
     def episode
-      episode_by_title = work.episodes.find_by(title: @title)
       episode_by_sc_count = work.episodes.find_by(sc_count: @count)
-      @episode ||= (episode_by_title.presence || episode_by_sc_count)
+      episode_by_title = work.episodes.find_by(title: @title)
+      @episode ||= (episode_by_sc_count.presence || episode_by_title)
     end
 
     def channel
@@ -90,7 +90,6 @@ module Syobocal
         SyobocalMailer.delay.special_program_notification(alert.id)
       end
     end
-
 
     private
 
