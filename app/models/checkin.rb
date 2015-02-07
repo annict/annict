@@ -33,10 +33,11 @@ class Checkin < ActiveRecord::Base
   attr_accessor :request_from_sns
 
   belongs_to :work
-  belongs_to :episode,  counter_cache: true
-  belongs_to :user,     counter_cache: true
-  has_many   :comments, dependent: :destroy
-  has_many   :likes, foreign_key: :recipient_id, foreign_type: :recipient, dependent: :destroy
+  belongs_to :episode, counter_cache: true
+  belongs_to :user,    counter_cache: true
+  has_many   :comments,   dependent: :destroy
+  has_many   :activities, dependent: :destroy, foreign_key: :recipient_id, foreign_type: :recipient
+  has_many   :likes,      dependent: :destroy, foreign_key: :recipient_id, foreign_type: :recipient
 
   validates :comment, length: { maximum: 500 }
 
@@ -45,7 +46,6 @@ class Checkin < ActiveRecord::Base
   before_update :check_comment_modified
   after_create  :save_activity
   after_create  :finish_tips
-  after_destroy :delete_activity
   after_save    :update_share_checkin_status
   after_commit  :share_to_twitter
   after_commit  :share_to_facebook
@@ -100,11 +100,6 @@ class Checkin < ActiveRecord::Base
       a.trackable = self
       a.action    = 'checkins.create'
     end
-  end
-
-  def delete_activity
-    activity = Activity.find_by(trackable_id: id, trackable_type: 'Checkin')
-    activity.destroy
   end
 
   def check_comment_modified
