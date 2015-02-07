@@ -15,7 +15,7 @@
         - if @checkin_user_ids.length > 5
           = "+ #{@checkin_user_ids.length - 5}人がチェックイン"
         - else
-          | がチェックイン
+          = "の#{@checkin_user_ids.length}人がチェックイン"
 
   hr.cu
 
