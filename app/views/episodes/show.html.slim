@@ -4,15 +4,18 @@
 
 = render 'works/work_profile_light', work: @work, episode: @episode
 
-- if @checkins.present?
+- if @checkin_user_ids.present?
   .container
     .checkin-users
-      - @checkins.take(5).each do |c|
-        = link_to user_path(c.user.username), class: 'pull-left' do
-          = image_tag thumb_url(c.user.profile, :avatar, '60x60e'), size: '30x30', class: 'img-circle'
-      - if @checkins.count > 5
-        span.checkins-count
-          = "+ #{@checkins.count - 5}人がチェックイン"
+      - @checkin_user_ids.take(5).each do |user_id|
+        - user = User.find(user_id)
+        = link_to user_path(user.username), class: 'pull-left' do
+          = image_tag thumb_url(user.profile, :avatar, '60x60e'), size: '30x30', class: 'img-circle'
+      span.checkins-count
+        - if @checkin_user_ids.length > 5
+          = "+ #{@checkin_user_ids.length - 5}人がチェックイン"
+        - else
+          | がチェックイン
 
   hr.cu
 

@@ -5,7 +5,12 @@ class EpisodesController < ApplicationController
 
 
   def show
-    @checkins = @episode.checkins.order(created_at: :desc)
+    @checkins = @episode.checkins.includes(user: :profile).order(created_at: :desc)
+    checkin_users = User.joins(:checkins)
+                        .where('checkins.episode_id': @episode.id)
+                        .where('checkins.user_id': @checkins.pluck(:user_id).uniq)
+                        .order('checkins.id DESC')
+    @checkin_user_ids = checkin_users.pluck(:id).uniq
 
     if @checkin_user.present?
       @user_checkins = @checkins.where(user: @checkin_user)

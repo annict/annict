@@ -1,5 +1,6 @@
 .ann-work-profile-light {
   height: 250px;
+  margin-bottom: 20px;
   margin-top: -20px;
   position: relative;
 
@@ -33,7 +34,7 @@
     h1, .episode-title .wrapper, .checkins-count .wrapper {
       background-color: rgba(0, 0, 0, 0.7);
       display: inline-block;
-      margin-left: 10px;
+      margin: 0 10px;
       padding: 3px 5px;
       position: relative;
     }
@@ -51,7 +52,7 @@
     .episode-title {
       .wrapper {
         color: #ffffff;
-        top: 90px;
+        top: 100px;
 
         .number {
           margin-right: 5px;
@@ -67,7 +68,7 @@
       .wrapper {
         color: #e1e1e1;
         font-size: 12px;
-        top: 90px;
+        top: 100px;
 
         i {
           color: #64e86f;
