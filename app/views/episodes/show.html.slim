@@ -20,18 +20,30 @@
   .container
     = render 'checkins/form', work: @work, episode: @episode, checkin: @checkin
   hr
+- else
+  = render('welcome_to_annict')
+
+- if @user_checkins.present?
+  .user-checkins
+    .container
+      h2 = "#{@checkin_user.profile.name}さんのチェックイン"
+      - @user_checkins.each_with_index do |checkin, i|
+        - if i != 0
+          hr
+        = render 'checkins/checkin', checkin: checkin
+  hr
 
 .checkin-comments
   .container
-    h2
-      = t('words.checkin')
-
-    - if @checkins.present?
-      - @checkins.each do |checkin|
+    h2 = "#{@user_checkins.present? ? 'その他皆さんの感想' : '見た感想'}"
+    - checkins = @user_checkins.present? ? @checkins.where.not(id: @user_checkins.pluck(:id)) : @checkins
+    - if checkins.with_comment.present?
+      - checkins.with_comment.each_with_index do |checkin, i|
+        - if i != 0
+          hr
         = render 'checkins/checkin', checkin: checkin
-        hr
     - else
       .info.well
         .icon
           i.fa.fa-info-circle
-        p = t('episodes.no_checkins')
+        p まだ感想は書き込まれていません

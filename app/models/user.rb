@@ -35,6 +35,7 @@ class User < ActiveRecord::Base
   # ログインできるようにするため、Confirmableモジュールを直接includeする
   include Devise::Models::Confirmable
 
+  include UserCheckable
   include UserFollowable
   include UserLikable
   include UserReceivable

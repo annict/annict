@@ -2,15 +2,11 @@
 
 = render 'works/work_profile_light', work: @work, episode: @episode
 
-hr
+- unless user_signed_in?
+  = render('welcome_to_annict')
 
 .container
   = render 'checkins/checkin', checkin: @checkin
-
-hr
-
-- unless user_signed_in?
-  = render('welcome_to_annict')
 
 .container
   - if user_signed_in?

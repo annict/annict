@@ -1,12 +1,15 @@
 .ann-work-profile-light
   .background style="background-image: url(#{thumb_url(work.main_item, :image, '800x400e')});"
   .foreground
+    = link_to work_path(work), class: 'work-detail' do
+      = icon('angle-left')
+      | 作品ページ
     h1
       = link_to work.title, work_path(work)
     - unless episode.single?
       .episode-title
         .wrapper
-          - if 'checkins' == params[:controller]
+          - if params[:controller] == 'checkins'
             span.number
               = episode.number
             - if episode.title.present?
@@ -19,3 +22,8 @@
             - if episode.title.present?
               span.title
                 = episode.title
+    - if user_signed_in? && current_user.checkedin?(episode)
+      .checkins-count
+        .wrapper
+          = icon('check')
+          = "#{current_user.checkins_count(episode)}回チェックイン"

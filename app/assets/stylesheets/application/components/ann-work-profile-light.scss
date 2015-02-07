@@ -16,7 +16,21 @@
     position: relative;
     z-index: 2;
 
-    h1, .episode-title .wrapper {
+    .work-detail {
+      background-color: rgba(224, 86, 118, 0.8);
+      color: #ffffff;
+      font-size: 12px;
+      display: inline-block;
+      padding: 3px 5px;
+      position: absolute;
+      top: 35px;
+
+      i {
+        margin-right: 5px;
+      }
+    }
+
+    h1, .episode-title .wrapper, .checkins-count .wrapper {
       background-color: rgba(0, 0, 0, 0.7);
       display: inline-block;
       margin-left: 10px;
@@ -27,7 +41,7 @@
     h1 {
       display: inline-block;
       font-size: 20px;
-      top: 110px;
+      top: 100px;
 
       a {
         color: #ffffff;
@@ -37,9 +51,26 @@
     .episode-title {
       .wrapper {
         color: #ffffff;
-        top: 100px;
+        top: 90px;
 
         .number {
+          margin-right: 5px;
+        }
+
+        a {
+          color: #ffffff;
+        }
+      }
+    }
+
+    .checkins-count {
+      .wrapper {
+        color: #e1e1e1;
+        font-size: 12px;
+        top: 90px;
+
+        i {
+          color: #64e86f;
           margin-right: 5px;
         }
       }

@@ -39,6 +39,8 @@ class Checkin < ActiveRecord::Base
 
   validates :comment, length: { maximum: 500 }
 
+  scope :with_comment, -> { where.not(comment: '') }
+
   before_update :check_comment_modified
   after_create  :save_activity
   after_create  :finish_tips
