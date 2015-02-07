@@ -93,6 +93,6 @@ class CheckinsController < ApplicationController
     work = checkin.episode.work
     username = checkin.user.username
 
-    return redirect_to work_episode_path(work, checkin.episode, username: username)
+    redirect_to work_episode_path(work, checkin.episode, username: username)
   end
 end
