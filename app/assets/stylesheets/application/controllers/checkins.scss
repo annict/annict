@@ -1,11 +1,6 @@
 body {
-  &.checkins-new, &.checkins-create, &.checkins-edit, &.checkins-update {
-    @include work-profile-light;
-  }
-
   &.checkins-show, &.comments-create {
     @include checkin-comment;
-    @include work-profile-light;
 
     .welcome-to-annict {
       margin-top: -5px;

@@ -4,12 +4,22 @@
 
 = render 'works/work_profile_light', work: @work, episode: @episode
 
+- if @checkins.present?
+  .container
+    .checkin-users
+      - @checkins.take(5).each do |c|
+        = link_to user_path(c.user.username), class: 'pull-left' do
+          = image_tag thumb_url(c.user.profile, :avatar, '60x60e'), size: '30x30', class: 'img-circle'
+      - if @checkins.count > 5
+        span.checkins-count
+          = "+ #{@checkins.count - 5}人がチェックイン"
+
+  hr.cu
+
 - if user_signed_in?
-  hr
   .container
     = render 'checkins/form', work: @work, episode: @episode, checkin: @checkin
-
-hr
+  hr
 
 .checkin-comments
   .container

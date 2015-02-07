@@ -1,16 +1,11 @@
-.container
-  .work-profile-light
-    .work-image
-      = link_to work_path(work) do
-        = annict_image_tag thumb_url(work.main_item, :image, '300x300e'), psize: '200x200', msize: '150x150', alt: work.title
-    - if @work.items.present?
-      .amazon-associates-link
-        = link_to t('works.about_this_image'), work_path(work, anchor: 'about-works-image')
-    .work-title
-      h1
-        = link_to work.title, work_path(work)
-      - unless episode.single?
-        .episode-title
+.ann-work-profile-light
+  .background style="background-image: url(#{thumb_url(work.main_item, :image, '800x400e')});"
+  .foreground
+    h1
+      = link_to work.title, work_path(work)
+    - unless episode.single?
+      .episode-title
+        .wrapper
           - if 'checkins' == params[:controller]
             span.number
               = episode.number

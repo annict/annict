@@ -1,0 +1,48 @@
+.ann-work-profile-light {
+  height: 250px;
+  margin-top: -20px;
+  position: relative;
+
+  .background {
+    background-size: cover;
+    height: 250px;
+    left: 0;
+    position: absolute;
+    top: 0;
+    width: 100%;
+  }
+
+  .foreground {
+    position: relative;
+    z-index: 2;
+
+    h1, .episode-title .wrapper {
+      background-color: rgba(0, 0, 0, 0.7);
+      display: inline-block;
+      margin-left: 10px;
+      padding: 3px 5px;
+      position: relative;
+    }
+
+    h1 {
+      display: inline-block;
+      font-size: 20px;
+      top: 110px;
+
+      a {
+        color: #ffffff;
+      }
+    }
+
+    .episode-title {
+      .wrapper {
+        color: #ffffff;
+        top: 100px;
+
+        .number {
+          margin-right: 5px;
+        }
+      }
+    }
+  }
+}
