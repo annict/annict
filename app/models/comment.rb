@@ -19,11 +19,12 @@
 class Comment < ActiveRecord::Base
   belongs_to :checkin, counter_cache: true
   belongs_to :user
+  has_many   :likes, foreign_key: :recipient_id, foreign_type: :recipient, dependent: :destroy
+  has_many   :notifications, foreign_key: :trackable_id, foreign_type: :trackable, dependent: :destroy
 
   validates :body, presence: true, length: { maximum: 500 }
 
   after_create  :save_notification
-  after_destroy :delete_notification
 
 
   private
@@ -37,9 +38,5 @@ class Comment < ActiveRecord::Base
         n.action      = 'comments.create'
       end
     end
-  end
-
-  def delete_notification
-    Notification.where(trackable_type: 'Comment', trackable_id: id).destroy_all
   end
 end

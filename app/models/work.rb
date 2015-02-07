@@ -34,7 +34,8 @@ class Work < ActiveRecord::Base
   has_paper_trail
 
   belongs_to :season
-  has_many   :checkins
+  has_many   :activities, foreign_key: :recipient_id, foreign_type: :recipient, dependent: :destroy
+  has_many   :checkins, dependent: :destroy
   has_many   :episodes, dependent: :destroy
   has_many   :items,    dependent: :destroy
   has_many   :programs, dependent: :destroy

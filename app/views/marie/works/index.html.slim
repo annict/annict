@@ -32,6 +32,7 @@ table.table.table-striped
       th 作品詳細
       th エピソード
       th 編集
+      th 削除
   tbody
     - @works.each do |work|
       tr
@@ -47,5 +48,6 @@ table.table.table-striped
             i.fa.fa-external-link
         td = link_to t('words.episode'), marie_work_episodes_path(work)
         td = link_to '編集', edit_marie_work_path(work)
+        td = link_to t('words.delete'), marie_work_path(work), data: { method: :delete, confirm: 'OK?' }
 
 = paginate @works

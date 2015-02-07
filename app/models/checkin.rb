@@ -36,6 +36,7 @@ class Checkin < ActiveRecord::Base
   belongs_to :episode,  counter_cache: true
   belongs_to :user,     counter_cache: true
   has_many   :comments, dependent: :destroy
+  has_many   :likes, foreign_key: :recipient_id, foreign_type: :recipient, dependent: :destroy
 
   validates :comment, length: { maximum: 500 }
 

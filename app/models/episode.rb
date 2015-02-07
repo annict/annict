@@ -22,6 +22,7 @@ class Episode < ActiveRecord::Base
   has_paper_trail
 
   belongs_to :work, counter_cache: true
+  has_many :activities, foreign_key: :recipient_id, foreign_type: :recipient, dependent: :destroy
   has_many :checkins
   has_many :programs
 
@@ -36,7 +37,7 @@ class Episode < ActiveRecord::Base
   def single?
     number.blank? && title.present?
   end
-  
+
   private
 
   def create_nicoch_program

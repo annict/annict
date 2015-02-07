@@ -17,9 +17,9 @@
 class Like < ActiveRecord::Base
   belongs_to :recipient, polymorphic: true, counter_cache: true
   belongs_to :user
+  has_many   :notifications, foreign_key: :trackable_id, foreign_type: :trackable, dependent: :destroy
 
   after_create  :save_notification
-  after_destroy :delete_notification
 
 
   private
@@ -31,9 +31,5 @@ class Like < ActiveRecord::Base
       n.trackable   = self
       n.action      = 'likes.create'
     end
-  end
-
-  def delete_notification
-    Notification.where(trackable_type: 'Like', trackable_id: id).destroy_all
   end
 end

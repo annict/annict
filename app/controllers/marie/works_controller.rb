@@ -3,7 +3,7 @@ class Marie::WorksController < Marie::ApplicationController
           :released_at, :released_at_about, :nicoch_started_at, :on_air,
           :twitter_username, :twitter_hashtag, :fetch_syobocal
 
-  before_filter :set_work, only: [:show, :edit, :update]
+  before_filter :set_work, only: [:show, :edit, :update, :destroy]
 
 
   def index(page: nil, q: nil, season: nil)
@@ -48,6 +48,10 @@ class Marie::WorksController < Marie::ApplicationController
     end
   end
 
+  def destroy
+    @work.destroy
+    redirect_to marie_works_path, notice: '作品を削除しました'
+  end
 
   private
 
