@@ -1,48 +1,53 @@
-body {
-  &.checkins-new, &.checkins-create, &.checkins-edit, &.checkins-update {
-    @include work-profile-light;
+.checkins-show, .comments-create {
+  @include checkin-comment;
+
+  > .navbar {
+    margin-bottom: 0;
   }
 
-  &.checkins-show, &.comments-create {
-    @include checkin-comment;
-    @include work-profile-light;
+  > .content {
+    margin-top: -20px;
+  }
 
-    .welcome-to-annict {
-      margin-top: -5px;
-    }
+  .welcome-to-annict {
+    margin-top: 20px;
+  }
 
-    .comments {
-      .media-body {
-        width: 100%;
+  .checkin-comment {
+    margin-top: 20px;
+  }
 
-        .top {
-          height: 17px;
-          line-height: 17px;
+  .comments {
+    .media-body {
+      width: 100%;
 
-          .name {
-            margin-right: 5px;
-          }
+      .top {
+        height: 17px;
+        line-height: 17px;
 
-          .pull-right {
-            font-size: 12px;
+        .name {
+          margin-right: 5px;
+        }
 
-            .created-at {
-              a {
-                color: $color-gray-dark-light;
-              }
+        .pull-right {
+          font-size: 12px;
+
+          .created-at {
+            a {
+              color: $color-gray-dark-light;
             }
           }
         }
+      }
 
-        .middle {
-          margin: 7px 0 20px 0;
-        }
+      .middle {
+        margin: 7px 0 20px 0;
+      }
 
-        .bottom {
-          font-size: 12px;
+      .bottom {
+        font-size: 12px;
 
-          margin-bottom: 5px;
-        }
+        margin-bottom: 5px;
       }
     }
   }

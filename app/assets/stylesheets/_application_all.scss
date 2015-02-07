@@ -14,7 +14,6 @@
 @import 'application/mixins/profile-header';
 @import 'application/mixins/selector';
 @import 'application/mixins/work-profile';
-@import 'application/mixins/work-profile-light';
 @import 'application/mixins/works-list';
 
 @import 'application/base/fonts';
@@ -28,6 +27,7 @@
 @import 'application/components/ann-status-selector';
 @import 'application/components/ann-tabs';
 @import 'application/components/ann-user-sub-header';
+@import 'application/components/ann-work-profile-light';
 @import 'application/components/btn-group-tab';
 @import 'application/components/checkin-form';
 @import 'application/components/error-panel';

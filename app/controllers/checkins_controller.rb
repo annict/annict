@@ -67,18 +67,17 @@ class CheckinsController < ApplicationController
       no_bots = bots.map { |bot| request.user_agent.present? && !request.user_agent.include?(bot) }
       checkin.increment!(:twitter_click_count) if no_bots.all?
 
-      redirect_to work_episode_checkin_path(checkin.episode.work, checkin.episode, checkin)
+      redirect_to_episode(checkin)
     elsif 'fb' == provider
       checkin = Checkin.find_by!(facebook_url_hash: url_hash)
       checkin.request_from_sns = true
       checkin.increment!(:facebook_click_count)
 
-      redirect_to work_episode_checkin_path(checkin.episode.work, checkin.episode, checkin)
+      redirect_to_episode(checkin)
     else
       redirect_to root_path
     end
   end
-
 
   private
 
@@ -88,5 +87,12 @@ class CheckinsController < ApplicationController
 
   def redirect_to_top
     return redirect_to root_path if @checkin.user != current_user
+  end
+
+  def redirect_to_episode(checkin)
+    work = checkin.episode.work
+    username = checkin.user.username
+
+    redirect_to work_episode_path(work, checkin.episode, username: username)
   end
 end

@@ -1,12 +1,38 @@
 .episodes {
   &.episodes-show {
-    @include work-profile-light;
-
-    h2 {
-      margin: 0 0 10px 0;
+    > .navbar {
+      margin-bottom: 0;
     }
 
-    .checkin-comments {
+    > .content {
+      margin-top: -20px;
+    }
+
+    .checkin-users {
+      height: 30px;
+      line-height: 30px;
+      margin-top: -10px;
+
+      a {
+        margin-right: 5px;
+      }
+
+      .checkins-count {
+        color: $color-gray-dark-light;
+        font-size: 12px;
+        margin-left: 3px;
+      }
+    }
+
+    hr.cu {
+      margin-top: 10px;
+    }
+
+    h2 {
+      margin: 0 0 25px 0;
+    }
+
+    .checkin-comments, .user-checkins {
       @include checkin-comment;
 
       h2 {

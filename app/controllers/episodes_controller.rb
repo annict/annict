@@ -1,10 +1,20 @@
 class EpisodesController < ApplicationController
-  before_filter :set_work,    only: [:index, :show]
-  before_filter :set_episode, only: [:show]
+  before_filter :set_work,         only: [:index, :show]
+  before_filter :set_episode,      only: [:show]
+  before_filter :set_checkin_user, only: [:show]
 
 
   def show
-    @checkins = @episode.checkins.order(created_at: :desc)
+    @checkins = @episode.checkins.includes(user: :profile).order(created_at: :desc)
+    checkin_users = User.joins(:checkins)
+                        .where('checkins.episode_id': @episode.id)
+                        .where('checkins.user_id': @checkins.pluck(:user_id).uniq)
+                        .order('checkins.id DESC')
+    @checkin_user_ids = checkin_users.pluck(:id).uniq
+
+    if @checkin_user.present?
+      @user_checkins = @checkins.where(user: @checkin_user)
+    end
 
     if user_signed_in?
       @checkin = @episode.checkins.new
@@ -12,10 +22,15 @@ class EpisodesController < ApplicationController
     end
   end
 
-
   private
 
   def set_episode
     @episode = @work.episodes.find(params[:id])
+  end
+
+  def set_checkin_user
+    if params[:username].present?
+      @checkin_user = User.find_by(username: params[:username])
+    end
   end
 end
