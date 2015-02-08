@@ -167,8 +167,7 @@ ja:
     create:
       confirmation_mail_has_sent: メールアドレス確認用のメールを送信しました
     new:
-      button: 登録する
-    terms_and_privacy_agreement_html: "%{terms_link}と%{privacy_link}に同意する"
+      button: 同意して登録する
     thank_you_for_signin_with_oauth_html: '%{provider_name}連携機能を利用して登録します。Annictで使用するユーザ名、メールアドレスを教えて下さい！'
   stats:
     no_checkins: チェックインしていません

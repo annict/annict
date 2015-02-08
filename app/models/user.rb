@@ -69,7 +69,6 @@ class User < ActiveRecord::Base
   validates :email, presence: true, uniqueness: true, email: true
   validates :username, presence: true, uniqueness: true, length: { maximum: 20 },
                        format: { with: /\A[A-Za-z0-9_]+\z/ }
-  validates :terms, acceptance: true
 
   after_commit :publish_events, on: :create
 

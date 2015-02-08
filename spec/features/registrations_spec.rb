@@ -16,7 +16,6 @@ describe 'ユーザ登録機能' do
       within('#new_user') do
         fill_in 'user_username', with: username
         fill_in 'user_email',    with: 'test@example.com'
-        check   'user_terms'
         click_button '登録する'
       end
     end

@@ -14,12 +14,12 @@
       = f.label :email
       = f.text_field :email, type: 'email', class: 'form-control', placeholder: t('activerecord.attributes.user.email')
 
-    .checkbox
+    .terms-privacy
       - terms_link = link_to t('titles.terms'), terms_path, target: '_blank'
       - privacy_link = link_to t('titles.privacy'), privacy_path, target: '_blank'
-      = f.label :terms do
-        = f.check_box :terms
-        = t('registrations.terms_and_privacy_agreement_html', terms_link: terms_link, privacy_link: privacy_link)
+      = "#{terms_link}と#{privacy_link}に同意の上、登録ボタンを押してください。".html_safe
 
-    .text-center
-      = f.button t('registrations.new.button'), class: 'btn btn-primary'
+    .registration-button
+      = f.button class: 'btn btn-primary' do
+        = icon('rocket')
+        = t('registrations.new.button')
