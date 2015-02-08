@@ -42,7 +42,7 @@
     h2 見たアニメが記録できる
     p アニメのエピソードに「チェックイン」して、見たものを記録することができます。
     .screenshot
-      - image_size = browser.mobile? ? '280x459' : '400x656'
+      - image_size = browser.mobile? ? '280x400' : '400x572'
       = image_tag 'feature-1.png', size: image_size
 
     h2 見たいアニメも記録
@@ -50,25 +50,25 @@
       | アニメに対して、「見てる」「見たい」「見た」「中断」「中止」という5つのステータスの中から1つ設定することができます。
       | 例えば来期の気になるアニメを「見たい」に設定すれば、忘れずに済みそうです。
     .screenshot
-      - image_size = browser.mobile? ? '280x459' : '400x656'
+      - image_size = browser.mobile? ? '280x563' : '400x804'
       = image_tag 'feature-2.png', size: image_size
 
     h2 視聴状況をチェック
-    p プロフィールページにはチェックイン数やグラフが表示されるため、どれだけアニメを見ているのか知ることができます。
+    p プロフィールページにはチェックイン数や見てるアニメ、グラフなどが表示され、どれだけアニメを見ているのか知ることができます。
     .screenshot
-      - image_size = browser.mobile? ? '280x569' : '400x813'
+      - image_size = browser.mobile? ? '280x648' : '400x926'
       = image_tag 'feature-3.png', size: image_size
 
     h2 友達の視聴状況もチェック
     p Annictの利用者をフォローすると、その人のステータス変更やチェックインといった活動がタイムラインに表示されます。
     .screenshot
-      - image_size = browser.mobile? ? '280x422' : '400x603'
+      - image_size = browser.mobile? ? '280x468' : '400x669'
       = image_tag 'feature-4.png', size: image_size
 
     h2 今晩見れるアニメがわかる
     p 普段見ているテレビのチャンネルを設定すると、見ているアニメの放送時間をタイムライン形式で見ることができます。
     .screenshot.feature-5
-      - image_size = browser.mobile? ? '280x438' : '400x625'
+      - image_size = browser.mobile? ? '280x416' : '400x594'
       = image_tag 'feature-5.png', size: image_size
 
 .join

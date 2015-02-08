@@ -11,7 +11,7 @@ describe 'トップページ' do
     end
 
     it 'アクセスするとページが表示される' do
-      expect(page).to have_content('見たアニメを記録して、発見しよう')
+      expect(page).to have_content('見たアニメを記録して、共有しよう')
     end
 
     it 'Twitterでログインをクリックするとユーザ登録ページが表示される' do
