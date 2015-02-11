@@ -61,20 +61,15 @@
       }
 
       .work-statistics {
-        @include display(flex);
-        @include justify-content(center);
-
-        position: relative;
-
-        @if $browser == pc {
-          top: 160px;
-        }
-        @if $browser == mobile {
-          top: 60px;
-        }
+        bottom: 10px;
+        left: 50%;
+        margin-left: -135px;
+        position: absolute;
+        width: 270px;
 
         .status {
-          @include flex-basis(100px);
+          display: inline-block;
+          width: 90px;
 
           .count {
             color: #ffffff;
