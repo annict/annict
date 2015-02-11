@@ -18,6 +18,8 @@ class CheckinsController < ApplicationController
     @checkin.work = @work
 
     if @checkin.save
+      @checkin.update_share_checkin_status
+      @checkin.share_to_sns
       redirect_to work_episode_path(@work, @episode), notice: t('checkins.saved')
     else
       render 'new'
@@ -28,9 +30,6 @@ class CheckinsController < ApplicationController
     if episode_ids =~ /\A\[([0-9]+,*)+\]\z/ # 括弧とカンマ、数字だけだったら
       episodes = Episode.where(id: eval(episode_ids)).order(:sort_number)
       raise if episodes.blank?
-
-      # 一括チェックインによって「Twitter/Facebookにシェアする」のチェックが外れないようにする
-      Checkin.skip_callback(:save, :after, :update_share_checkin_status)
 
       episodes.each do |episode|
         episode.checkins.create(user: current_user, work: @work)
@@ -47,6 +46,8 @@ class CheckinsController < ApplicationController
 
   def update(checkin)
     if @checkin.update_attributes(checkin)
+      @checkin.update_share_checkin_status
+      @checkin.share_to_sns
       redirect_to work_episode_checkin_path(@work, @episode, @checkin), notice: t('checkins.updated')
     else
       render :edit
@@ -61,7 +62,8 @@ class CheckinsController < ApplicationController
   def redirect(provider, url_hash)
     if 'tw' == provider
       checkin = Checkin.find_by!(twitter_url_hash: url_hash)
-      checkin.request_from_sns = true
+
+      logger.info("Twitterからのアクセス remote_host: #{request.remote_host}, remote_ip: #{request.remote_ip}, remote_user: #{request.remote_user}")
 
       bots = TwitterBot.pluck(:name)
       no_bots = bots.map { |bot| request.user_agent.present? && !request.user_agent.include?(bot) }
@@ -70,7 +72,6 @@ class CheckinsController < ApplicationController
       redirect_to_episode(checkin)
     elsif 'fb' == provider
       checkin = Checkin.find_by!(facebook_url_hash: url_hash)
-      checkin.request_from_sns = true
       checkin.increment!(:facebook_click_count)
 
       redirect_to_episode(checkin)

@@ -30,8 +30,6 @@
 #
 
 class Checkin < ActiveRecord::Base
-  attr_accessor :request_from_sns
-
   belongs_to :work
   belongs_to :episode, counter_cache: true
   belongs_to :user,    counter_cache: true
@@ -46,9 +44,6 @@ class Checkin < ActiveRecord::Base
   before_update :check_comment_modified
   after_create  :save_activity
   after_create  :finish_tips
-  after_save    :update_share_checkin_status
-  after_commit  :share_to_twitter
-  after_commit  :share_to_facebook
   after_commit  :publish_events, on: :create
 
 
@@ -82,16 +77,23 @@ class Checkin < ActiveRecord::Base
     shared_twitter? || shared_facebook?
   end
 
+  def update_share_checkin_status
+    if shared_twitter? || shared_facebook?
+      user.update_column(:share_checkin, true) unless user.share_checkin?
+    else
+      user.update_column(:share_checkin, false) if user.share_checkin?
+    end
+  end
+
+  def share_to_sns
+    if shared_twitter?
+      TwitterCheckinShareWorker.perform_async(id)
+    elsif shared_facebook?
+      FacebookCheckinShareWorker.perform_async(id)
+    end
+  end
 
   private
-
-  def share_to_twitter
-    TwitterCheckinShareWorker.perform_async(id) if shared_twitter? && !request_from_sns
-  end
-
-  def share_to_facebook
-    FacebookCheckinShareWorker.perform_async(id) if shared_facebook? && !request_from_sns
-  end
 
   def save_activity
     Activity.create do |a|
@@ -104,16 +106,6 @@ class Checkin < ActiveRecord::Base
 
   def check_comment_modified
     self.modify_comment = true if comment_changed?
-  end
-
-  def update_share_checkin_status
-    if !request_from_sns
-      if shared_twitter? || shared_facebook?
-        user.update_column(:share_checkin, true) unless user.share_checkin?
-      else
-        user.update_column(:share_checkin, false) if user.share_checkin?
-      end
-    end
   end
 
   def publish_events
