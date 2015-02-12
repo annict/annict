@@ -27,10 +27,21 @@
   = render('welcome_to_annict')
 
 - if @user_checkins.present?
+  - if (user_signed_in? && current_user != @checkin_user) || !user_signed_in?
+    .user-checkins
+      .container
+        h2 = "#{@checkin_user.profile.name}さんのチェックイン"
+        - @user_checkins.each_with_index do |checkin, i|
+          - if i != 0
+            hr
+          = render 'checkins/checkin', checkin: checkin
+    hr
+
+- if @current_user_checkins.present?
   .user-checkins
     .container
-      h2 = "#{@checkin_user.profile.name}さんのチェックイン"
-      - @user_checkins.each_with_index do |checkin, i|
+      h2 あなたのチェックイン
+      - @current_user_checkins.each_with_index do |checkin, i|
         - if i != 0
           hr
         = render 'checkins/checkin', checkin: checkin
@@ -38,10 +49,9 @@
 
 .checkin-comments
   .container
-    h2 = "#{@user_checkins.present? ? 'その他皆さんの感想' : '見た感想'}"
-    - checkins = @user_checkins.present? ? @checkins.where.not(id: @user_checkins.pluck(:id)) : @checkins
-    - if checkins.with_comment.present?
-      - checkins.with_comment.each_with_index do |checkin, i|
+    h2 = "#{@user_checkins.present? || @current_user_checkins.present? ? 'その他皆さんの感想' : '見た感想'}"
+    - if @checkins.with_comment.present?
+      - @checkins.with_comment.each_with_index do |checkin, i|
         - if i != 0
           hr
         = render 'checkins/checkin', checkin: checkin
