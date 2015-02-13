@@ -2,7 +2,7 @@
   .background style="background-image: url(#{thumb_url(work.main_item, :image, '800x400e')});"
   .foreground
     = link_to work_path(work), class: 'work-detail' do
-      = icon('angle-left')
+      = icon('angle-double-left')
       | 作品ページ
     h1
       = link_to work.title, work_path(work)
@@ -27,3 +27,12 @@
         .wrapper
           = icon('check')
           = "#{current_user.checkins_count_in(episode)}回チェックイン"
+
+    - if episode.prev_episode.present?
+      = link_to work_episode_path(work, episode.prev_episode), class: 'prev-episode' do
+        = icon('angle-left')
+        = episode.prev_episode.number
+    - if episode.next_episode.present?
+      = link_to work_episode_path(work, episode.next_episode), class: 'next-episode'
+        = episode.next_episode.number
+        = icon('angle-right')
