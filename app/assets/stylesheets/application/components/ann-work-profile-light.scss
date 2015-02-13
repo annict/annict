@@ -76,5 +76,29 @@
         }
       }
     }
+
+    .prev-episode, .next-episode {
+      background-color: rgba(224, 86, 118, 0.8);
+      color: #ffffff;
+      font-size: 12px;
+      display: inline-block;
+      padding: 3px 5px;
+      position: absolute;
+      top: 215px;
+    }
+
+    .prev-episode {
+      i {
+        margin-right: 5px;
+      }
+    }
+
+    .next-episode {
+      right: 0;
+
+      i {
+        margin-left: 5px;
+      }
+    }
   }
 }

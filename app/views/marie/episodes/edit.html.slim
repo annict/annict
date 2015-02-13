@@ -8,5 +8,8 @@
   .form-group
     = f.label :title
     = f.text_field :title, class: 'form-control'
+  .form-group
+    = f.label :next_episode_id
+    = f.select :next_episode_id, options_for_select(@work.episodes.order(:sort_number).map { |episode| ["#{episode.number} #{episode.title}", episode.id] }, @episode.next_episode_id), include_blank: true
 
   = f.submit class: 'btn btn-primary'

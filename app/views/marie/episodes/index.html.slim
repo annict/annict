@@ -22,6 +22,7 @@ table.table.table-striped
       th = t('activerecord.attributes.episode.sort_number')
       th = t('activerecord.attributes.episode.number')
       th = t('activerecord.attributes.episode.title')
+      th 次のエピソード
       th チェックイン数
       th 編集
       th 削除
@@ -32,6 +33,11 @@ table.table.table-striped
         td = episode.sort_number
         td = episode.number
         td = episode.title
+        td
+          - if episode.next_episode.present?
+            = episode.next_episode.number
+          - else
+            | -
         td = episode.checkins.count
         td = link_to t('words.edit'), edit_marie_work_episode_path(@work, episode)
         td = link_to t('words.delete'), marie_work_episode_path(@work, episode), data: { method: :delete, confirm: 'OK?' }

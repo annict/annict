@@ -12,6 +12,7 @@ ja:
       comment:
         body: コメント
       episode:
+        next_episode_id: 次のエピソード
         number: 話数
         sort_number: ソート番号
         title: タイトル

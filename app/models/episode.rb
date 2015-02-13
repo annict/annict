@@ -2,25 +2,29 @@
 #
 # Table name: episodes
 #
-#  id             :integer          not null, primary key
-#  work_id        :integer          not null
-#  number         :string(510)
-#  sort_number    :integer          default("0"), not null
-#  sc_count       :integer
-#  title          :string(510)
-#  checkins_count :integer          default("0"), not null
-#  created_at     :datetime
-#  updated_at     :datetime
+#  id              :integer          not null, primary key
+#  work_id         :integer          not null
+#  number          :string(510)
+#  sort_number     :integer          default("0"), not null
+#  sc_count        :integer
+#  title           :string(510)
+#  checkins_count  :integer          default("0"), not null
+#  created_at      :datetime
+#  updated_at      :datetime
+#  next_episode_id :integer
 #
 # Indexes
 #
-#  episodes_work_id_idx           (work_id)
-#  episodes_work_id_sc_count_key  (work_id,sc_count) UNIQUE
+#  episodes_work_id_idx               (work_id)
+#  episodes_work_id_sc_count_key      (work_id,sc_count) UNIQUE
+#  index_episodes_on_next_episode_id  (next_episode_id)
 #
 
 class Episode < ActiveRecord::Base
   has_paper_trail
 
+  belongs_to :next_episode, class_name: 'Episode', foreign_key: :next_episode_id
+  belongs_to :next_episode, class_name: 'Episode', foreign_key: :next_episode_id
   belongs_to :work, counter_cache: true
   has_many :activities, dependent: :destroy, foreign_key: :recipient_id, foreign_type: :recipient
   has_many :checkins,   dependent: :destroy
@@ -28,6 +32,10 @@ class Episode < ActiveRecord::Base
 
   after_create :create_nicoch_program
 
+
+  def prev_episode
+    work.episodes.find_by(next_episode: self)
+  end
 
   def number_title
     "#{number}「#{title}」"
