@@ -7,4 +7,9 @@ namespace :work do
     Work.where(id: ended_work_ids).update_all(on_air: false)
     Work.where(id: recent_work_ids).update_all(on_air: true)
   end
+
+  task notify_untouched_works: :environment do
+    works = Work.where(episodes_count: 0).order(watchers_count: :desc).limit(3)
+    WorkMailer.delay.untouched_works_notification(works.pluck(:id))
+  end
 end
