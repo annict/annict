@@ -15,7 +15,13 @@ FactoryGirl.define do
       end
     end
 
-    factory :registered_user, traits: [:with_profile, :with_provider] do
+    trait :with_setting do
+      after :create do |user|
+        create(:setting, { user: user })
+      end
+    end
+
+    factory :registered_user, traits: [:with_profile, :with_provider, :with_setting] do
       after :create, &:confirm!
     end
   end
