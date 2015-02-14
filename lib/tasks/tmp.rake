@@ -13,4 +13,12 @@ namespace :tmp do
       end
     end
   end
+
+  task build_setting: :environment do
+    User.all.order(:id).each do |user|
+      puts "user_id: #{user.id}"
+      user.build_setting
+      user.save
+    end
+  end
 end

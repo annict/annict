@@ -8,7 +8,6 @@ ja:
         comment: コメント
         shared_facebook: Facebookにシェアする
         shared_twitter: Twitterにシェアする
-        spoil: ネタバレを含む
       comment:
         body: コメント
       episode:
@@ -57,7 +56,6 @@ ja:
     save: チェックインする
     saved: チェックインしました。
     social_click_count: '%{click_count}クリック'
-    spoil_comment: 'ネタバレを含んでいます (%{action}で展開)'
     updated: チェックインを更新しました。
   comments:
     comment: コメントする

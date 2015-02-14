@@ -65,6 +65,7 @@ class User < ActiveRecord::Base
   has_many :shots,         dependent: :destroy
   has_many :statuses,      dependent: :destroy
   has_one  :profile,       dependent: :destroy
+  has_one  :setting,       dependent: :destroy
 
   validates :email, presence: true, uniqueness: true, email: true
   validates :username, presence: true, uniqueness: true, length: { maximum: 20 },
@@ -108,6 +109,8 @@ class User < ActiveRecord::Base
       p.avatar_url  = get_large_avatar_image(oauth[:provider], oauth[:info][:image])
     end
 
+    self.build_setting
+
     self
   end
 
@@ -144,6 +147,14 @@ class User < ActiveRecord::Base
 
   def shareable_to?(provider_name)
     providers.pluck(:name).include?(provider_name.to_s)
+  end
+
+  def hide_checkin_comment?(checkin)
+    checkin.comment.present? &&
+    checkin.user != self &&
+    setting.hide_checkin_comment? &&
+    works.wanna_watch_and_watching.include?(checkin.episode.work) &&
+    !checkins.pluck(:episode_id).include?(checkin.episode_id)
   end
 
   private

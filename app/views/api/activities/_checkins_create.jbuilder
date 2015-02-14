@@ -11,5 +11,6 @@ json.episode do
 end
 
 json.checkin do
-  json.(activity.trackable, :id, :comment, :spoil, :comments_count, :likes_count)
+  json.(activity.trackable, :id, :comment, :comments_count, :likes_count)
+  json.hide_comment user_signed_in? && current_user.hide_checkin_comment?(activity.trackable)
 end

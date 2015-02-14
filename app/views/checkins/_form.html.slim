@@ -3,10 +3,6 @@
 
   .form-group
     = f.text_area :comment, class: 'form-control', rows: 2, :'ng-click' => 'expand($event)', placeholder: t('checkins.input_a_comment')
-  .checkbox
-    label
-      = f.check_box :spoil
-      = t('activerecord.attributes.checkin.spoil')
   - if current_user.authorized_to?(:twitter)
     .checkbox
       label

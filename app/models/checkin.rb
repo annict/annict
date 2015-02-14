@@ -6,7 +6,6 @@
 #  user_id              :integer          not null
 #  episode_id           :integer          not null
 #  comment              :text
-#  spoil                :boolean          default("false"), not null
 #  modify_comment       :boolean          default("false"), not null
 #  twitter_url_hash     :string(510)
 #  facebook_url_hash    :string(510)

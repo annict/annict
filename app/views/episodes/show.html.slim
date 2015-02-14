@@ -51,7 +51,7 @@
 
 .checkin-comments
   .container
-    h2 = "#{@user_checkins.present? || @current_user_checkins.present? ? 'その他皆さんの感想' : '見た感想'}"
+    h2 = "#{@user_checkins.present? || @current_user_checkins.present? ? 'その他皆さんの感想' : '感想'}"
     - if @checkins.with_comment.present?
       - @checkins.with_comment.each_with_index do |checkin, i|
         - if i != 0

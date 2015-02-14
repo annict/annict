@@ -31,3 +31,18 @@
       = f.file_field :background_image
     .form-submit
       = f.submit class: 'btn btn-primary'
+
+  hr
+
+  h2 その他
+
+  = form_for current_user.setting, url: setting_path do |f|
+    = render 'error_panel', resource: current_user.setting
+
+    .checkbox
+      label
+        = f.check_box :hide_checkin_comment
+        | 他の利用者の感想を隠す
+        .detail 見てる/見たいアニメの中で、チェックインしていないエピソードに投稿された他の利用者からの感想を隠します。
+    .form-submit
+      = f.submit class: 'btn btn-primary'
