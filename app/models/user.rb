@@ -153,7 +153,7 @@ class User < ActiveRecord::Base
     checkin.comment.present? &&
     checkin.user != self &&
     setting.hide_checkin_comment? &&
-    works.wanna_watch_and_watching.include?(checkin.episode.work) &&
+    works.desiring_to_watch.include?(checkin.episode.work) &&
     !checkins.pluck(:episode_id).include?(checkin.episode_id)
   end
 

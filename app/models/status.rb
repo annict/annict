@@ -28,6 +28,7 @@ class Status < ActiveRecord::Base
   scope :latest, -> { where(latest: true) }
   scope :watching, -> { latest.with_kind(:watching) }
   scope :wanna_watch_and_watching, -> { latest.with_kind(:wanna_watch, :watching) }
+  scope :desiring_to_watch, -> { latest.with_kind(:wanna_watch, :watching, :on_hold) }
 
   after_create :change_latest
   after_create :save_activity

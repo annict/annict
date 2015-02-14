@@ -11,6 +11,10 @@ class UserWorksQuery
     Work.joins(:statuses).merge(@user.statuses.wanna_watch_and_watching)
   end
 
+  def desiring_to_watch
+    Work.joins(:statuses).merge(@user.statuses.desiring_to_watch)
+  end
+
   def unknown
     Work.where.not(id: @user.statuses.latest.pluck(:work_id))
   end
