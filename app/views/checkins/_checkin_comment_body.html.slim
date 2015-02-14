@@ -1,15 +1,14 @@
 - if defined? checkin
-  .checkin-comment ng-controller='CheckinCommentCtrl' ng-init="init(#{checkin.spoil})"
-    .spoil-guard ng-show='display' ng-click='hide()'
-      i.fa.fa-exclamation
-      - action = browser.mobile? ? t('words.tap') : t('words.click')
-      = t('checkins.spoil_comment', action: action)
-    .body.ani-simple-format ng-show='!display'
+  - hide_comment = user_signed_in? && current_user.hide_checkin_comment?(checkin)
+  .checkin-comment ng-controller='CheckinCommentCtrl' ng-init="init({ hideComment: #{hide_comment} })"
+    .wrapper ng-class='{ "hide-comment": hideComment }' class="#{hide_comment ? 'hide-comment' : ''}"
+      .show-comment-button.btn.btn-primary.btn-sm ng-show='hideComment' ng-click='showComment()'
+        = "感想を見る"
+    .body.ani-simple-format class="#{hide_comment ? 'hide-comment' : ''}" ng-class='{ "hide-comment": hideComment }'
       = checkin.comment
 - else
-  .checkin-comment ng-controller='CheckinCommentCtrl' ng-init="init(activity.links.checkin.spoil)"
-    .spoil-guard ng-show='display' ng-click='hide()'
-      i.fa.fa-exclamation
-      - action = browser.mobile? ? t('words.tap') : t('words.click')
-      = t('checkins.spoil_comment', action: action)
-    .body ng-show='!display' ng-bind-html='activity.links.checkin.comment | simpleFormat'
+  .checkin-comment ng-controller='CheckinCommentCtrl' ng-init='init({ hideComment: activity.links.checkin.hide_comment })'
+    .wrapper ng-class='{ "hide-comment": hideComment }'
+      .show-comment-button.btn.btn-primary.btn-sm ng-show='hideComment' ng-click='showComment()'
+        = "感想を見る"
+    .body ng-class='{ "hide-comment": hideComment }' ng-bind-html='activity.links.checkin.comment | simpleFormat'

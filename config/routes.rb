@@ -105,7 +105,7 @@ Annict::Application.routes.draw do
 
   resources :programs, only: [:index]
 
-  resource :setting, only: [:show]
+  resource :setting, only: [:show, :update]
 
   resource :shot, only: [] do
     get ':username', to: 'shots#show', as: :user

@@ -10,7 +10,6 @@
 @import 'font-awesome';
 @import 'easydropdown';
 
-@import 'application/mixins/checkin-comment';
 @import 'application/mixins/profile-header';
 @import 'application/mixins/selector';
 @import 'application/mixins/work-profile';
@@ -29,7 +28,9 @@
 @import 'application/components/ann-user-sub-header';
 @import 'application/components/ann-work-profile-light';
 @import 'application/components/btn-group-tab';
+@import 'application/components/checkin-comment';
 @import 'application/components/checkin-form';
+@import 'application/components/checkin';
 @import 'application/components/error-panel';
 @import 'application/components/flash';
 @import 'application/components/footer';
@@ -37,7 +38,6 @@
 @import 'application/components/loading';
 @import 'application/components/navbar';
 @import 'application/components/social-click-counter';
-@import 'application/components/spoil-guard';
 @import 'application/components/tips';
 @import 'application/components/user-list';
 @import 'application/components/welcome-to-annict';

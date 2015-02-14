@@ -74,13 +74,14 @@ end
 
 group :development do
   gem 'aws-sdk'
+  gem 'better_errors'
+  gem 'binding_of_caller' # better_errorsで使用
   gem 'bullet'
   gem 'letter_opener_web'
   gem 'quiet_assets'
   gem 'spring-commands-rspec', require: false
   gem 'spring'
   gem 'thin'
-  gem 'web-console'
 end
 
 group :production do

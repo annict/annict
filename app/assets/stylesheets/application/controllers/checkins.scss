@@ -1,6 +1,4 @@
 .checkins-show, .comments-create {
-  @include checkin-comment;
-
   > .navbar {
     margin-bottom: 0;
   }
