@@ -36,4 +36,8 @@ Annict::Application.configure do
     Bullet.console       = true
     Bullet.rails_logger  = true
   end
+
+  # Vagrant環境でもBetter Errorsが使いたい
+  # https://github.com/charliesome/better_errors#security
+  BetterErrors::Middleware.allow_ip! '192.168.33.1'
 end
