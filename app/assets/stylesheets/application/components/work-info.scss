@@ -1,0 +1,28 @@
+.work-info {
+  @include align-items(center);
+  @include display(flex);
+
+  background-color: #f6f6f6;
+  font-size: 12px;
+  margin: 10px 0;
+  padding: 3px;
+
+  > .image {
+    @include flex-shrink(0);
+
+    display: inline-block;
+    margin-right: 3px;
+  }
+
+  > .work {
+    margin: 0 5px;
+  }
+
+  > .work > .title {
+    margin-bottom: 3px;
+  }
+
+  > .work > .episode {
+    display: block;
+  }
+}

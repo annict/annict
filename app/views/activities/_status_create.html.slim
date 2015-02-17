@@ -1,0 +1,18 @@
+.top ng-if='activity.links.status.kind !== "見たい" && activity.links.status.kind !== "見てる"'
+  a.name ng-href='/users/{{activity.links.user.username}}'
+    | {{activity.links.profile.name}}
+  | が
+  a.title ng-href='/works/{{activity.links.work.id}}'
+    | {{activity.links.work.title}}
+  | のステータスを「{{activity.links.status.kind}}」に変更しました
+.top ng-if='activity.links.status.kind === "見たい" || activity.links.status.kind === "見てる"'
+  a.name ng-href='/users/{{activity.links.user.username}}'
+    | {{activity.links.profile.name}}
+  | がステータスを「{{activity.links.status.kind}}」に変更しました
+
+.middle ng-if='activity.links.status.kind === "見たい" || activity.links.status.kind === "見てる"'
+  = render 'activities/work_info'
+
+.activity-bottom
+  .time ani-time-ago='{{activity.created_at}}'
+  = render 'like_button'

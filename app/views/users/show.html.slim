@@ -53,9 +53,7 @@ hr
   .activities ng-controller='UserActivitiesCtrl' ng-init='init("#{@user.username}")' ani-loading='loading'
     div infinite-scroll='addMoreActivities()' infinite-scroll-disabled='disabled' infinite-scroll-distance='2'
       h2.text-center = t('words.activity')
-      .activity ng-repeat='activity in activities' ng-show='0 < activities.length'
-        = render 'activities/activity'
-        hr
+      = render 'activities/activity'
     .info.well ng-show='0 === activities.length'
       .icon
         i.fa.fa-info-circle

@@ -23,8 +23,9 @@
           .pull-right
             = render 'like_button', recipient: checkin
             = link_to work_episode_checkin_path(checkin.episode.work, checkin.episode, checkin), class: 'comment-button' do
-              i.fa.fa-comment
-              = checkin.comments_count
+              i.icon.fa.fa-comment-o
+              span.count
+                = checkin.comments_count
         .bottom
           - if checkin.user == current_user
             .pull-right

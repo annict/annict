@@ -4,3 +4,6 @@ ruby:
 
 coffee_script:
   enabled: true
+
+scss:
+  config_file: scss.yml

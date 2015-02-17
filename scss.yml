@@ -1,0 +1,4 @@
+linters:
+  SelectorDepth:
+    enabled: true
+    max_depth: 3

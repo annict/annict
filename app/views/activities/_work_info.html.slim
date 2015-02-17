@@ -1,9 +1,12 @@
 .work-info
-  a ng-href='/works/{{activity.links.work.id}}'
-    .work
-      .image
-        img ng-src='{{activity.links.main_item.image_url}}' width='40' height='40' alt='{{activity.links.work.title}}'
-      .title
-        | {{activity.links.work.title}}
-      .clearfix
-    .clearfix
+  a.image ng-href='/works/{{activity.links.work.id}}'
+    - size = browser.mobile? ? 70 : 100
+    img ng-src='{{activity.links.main_item.image_url}}' width="#{size}" height="#{size}" alt='{{activity.links.work.title}}'
+  .work
+    a.title ng-href='/works/{{activity.links.work.id}}'
+      | {{activity.links.work.title}}
+    a.episode ng-href='/works/{{activity.links.work.id}}/episodes/{{activity.links.episode.id}}' ng-if='activity.links.episode'
+      span.number ng-if='!(!activity.links.episode.number && activity.links.episode.title)'
+        | {{activity.links.episode.number}}
+      span.title ng-if='activity.links.episode.title'
+        | 「{{activity.links.episode.title}}」
