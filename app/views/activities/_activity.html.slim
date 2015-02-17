@@ -1,8 +1,11 @@
-.media
-  a ng-href='/users/{{activity.links.user.username}}' class='profile-image pull-left'
-    img ng-src='{{activity.links.profile.avatar_url}}' width='50' height='50' class='img-circle'
-  .media-body
-    div ng-if='"checkins.create" === activity.action'
-      = render 'activities/checkins_create'
-    div ng-if='"statuses.create" === activity.action'
-      = render 'activities/statuses_create'
+.activity-box ng-repeat='activity in activities' ng-show='0 < activities.length'
+  .wrapper
+    .left
+      a.icon ng-href='/users/{{activity.links.user.username}}'
+        img.img-circle ng-src='{{activity.links.profile.avatar_url}}' width='35' height='35'
+    .right
+      .checkin-create ng-if='activity.action === "checkins.create"'
+        = render 'activities/checkin_create'
+      .status-create ng-if='activity.action === "statuses.create"'
+        = render 'activities/status_create'
+  hr

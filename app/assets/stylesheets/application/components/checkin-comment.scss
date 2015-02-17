@@ -1,34 +1,21 @@
 .checkin-comment {
   position: relative;
 
-  .wrapper {
-    &.hide-comment {
-      background-color: rgba(255, 255, 255, 0.5);
-      height: 100%;
-      position: absolute;
-      width: 100%;
-      z-index: 2;
-    }
-
-    .show-comment-button {
-      background-color: rgba(255, 255, 255, 0.7);
-      color: $color-mizuho;
-      height: 30px;
-      left: 50%;
-      line-height: 20px;
-      margin-left: -65px;
-      margin-top: -15px;
-      position: absolute;
-      top: 50%;
-      width: 130px;
-      z-index: 2;
-    }
+  &:hover {
+    cursor: pointer;
   }
 
-  .body {
-    &.hide-comment {
-      @include filter(blur(3px));
-      background-color: rgba(255, 255, 255, 0.8);
-    }
+  > .wrapper.hide-comment {
+    background-color: rgba(255, 255, 255, 0.5);
+    height: 100%;
+    left: -5px;
+    position: absolute;
+    width: 102%;
+    z-index: 2;
+  }
+
+  > .body.hide-comment {
+    @include filter(blur(3px));
+    background-color: rgba(255, 255, 255, 0.8);
   }
 }

@@ -1,17 +1,17 @@
 .like-button {
-  span {
+  > .wrapper {
     color: $color-gray-dark-light;
+  }
 
-    &:hover {
-      cursor: pointer;
-    }
+  > .wrapper:hover {
+    cursor: pointer;
+  }
 
-    &.liked {
-      color: $brand-primary;
-    }
+  > .wrapper.liked {
+    color: $brand-primary;
+  }
 
-    i {
-      margin-right: 3px;
-    }
+  > .wrapper > .icon {
+    margin-right: 3px;
   }
 }
