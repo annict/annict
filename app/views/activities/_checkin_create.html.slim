@@ -23,4 +23,5 @@
     = render 'like_button'
     a.comment-button ng-href='/works/{{activity.links.work.id}}/episodes/{{activity.links.episode.id}}/checkins/{{activity.links.checkin.id}}'
       i.icon.fa.fa-comment-o
-      | {{activity.links.checkin.comments_count}}
+      span.count
+        | {{activity.links.checkin.comments_count}}
