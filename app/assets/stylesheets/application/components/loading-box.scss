@@ -30,7 +30,8 @@
     width: 0.9em;
   }
 
-  > .core:not(:required):before, .core:not(:required):after {
+  > .core:not(:required):before,
+  > .core:not(:required):after {
     background: #ebe2e4;
     content: '\x200B';
     display: inline-block;

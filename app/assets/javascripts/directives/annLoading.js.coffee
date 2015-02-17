@@ -4,6 +4,11 @@ Annict.angular.directive 'annLoading', ->
 
     scope.$watch loading, ->
       if scope[loading]
-        $(elm).append('<div class="loading-box"><div class="core">Loading...</div></div>')
+        html = '''
+          <div class="loading-box">
+            <div class="core">Loading...</div>
+          </div>
+          '''
+        $(elm).append(html)
       else
         $(elm).children('.loading-box').remove()
