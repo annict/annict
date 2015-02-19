@@ -92,7 +92,6 @@ end
 
 group :test do
   gem 'capybara'
-  gem 'coveralls', require: false
   gem 'database_rewinder'
   gem 'factory_girl_rails'
   gem 'poltergeist'
