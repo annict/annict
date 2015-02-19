@@ -92,6 +92,7 @@ end
 
 group :test do
   gem "capybara"
+  gem "codeclimate-test-reporter", require: nil
   gem "database_rewinder"
   gem "factory_girl_rails"
   gem "poltergeist"

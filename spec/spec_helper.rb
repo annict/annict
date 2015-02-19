@@ -1,18 +1,21 @@
-ENV['RAILS_ENV'] ||= 'test'
+ENV["RAILS_ENV"] ||= "test"
 
-require File.expand_path('../../config/environment', __FILE__)
-require 'rspec/rails'
-require 'capybara/poltergeist'
-require 'capybara/rails'
-require 'capybara/rspec'
+require "codeclimate-test-reporter"
+CodeClimate::TestReporter.start
+
+require File.expand_path("../../config/environment", __FILE__)
+require "rspec/rails"
+require "capybara/poltergeist"
+require "capybara/rails"
+require "capybara/rspec"
 
 # Requires supporting ruby files with custom matchers and macros, etc,
 # in spec/support/ and its subdirectories.
 Dir[
-  Rails.root.join('spec/support/helper.rb'),
-  Rails.root.join('spec/support/**/*.rb'),
-  Rails.root.join('spec/elements/**/*.rb'),
-  Rails.root.join('spec/steps/**/*.rb')
+  Rails.root.join("spec/support/helper.rb"),
+  Rails.root.join("spec/support/**/*.rb"),
+  Rails.root.join("spec/elements/**/*.rb"),
+  Rails.root.join("spec/steps/**/*.rb")
 ].each { |f| require f }
 
 # Checks for pending migrations before tests are run.
@@ -28,7 +31,7 @@ RSpec.configure do |config|
   # http://willnet.in/119
   config.infer_spec_type_from_file_location!
 
-  # If you're not using ActiveRecord, or you'd prefer not to run each of your
+  # If you"re not using ActiveRecord, or you"d prefer not to run each of your
   # examples within a transaction, remove the following line or assign false
   # instead of true.
   config.use_transactional_fixtures = false
@@ -42,5 +45,5 @@ RSpec.configure do |config|
   # order dependency and want to debug it, you can fix the order by providing
   # the seed, which is printed after each run.
   #     --seed 1234
-  config.order = 'random'
+  config.order = "random"
 end
