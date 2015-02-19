@@ -1,5 +1,4 @@
 source "https://rubygems.org"
-source "https://rails-assets.org"
 
 ruby "2.2.0"
 
@@ -50,15 +49,17 @@ gem "uglifier"
 gem "unicorn"
 gem "whenever", require: false
 
-gem "rails-assets-angular"
-gem "rails-assets-angular-animate"
-gem "rails-assets-angular-sanitize"
-gem "rails-assets-angulartics"
-gem "rails-assets-chartjs"
-gem "rails-assets-jquery-easing-original"
-gem "rails-assets-lodash"
-gem "rails-assets-moment"
-gem "rails-assets-ng-infinite-scroller-origin"
+source "https://rails-assets.org" do
+  gem "rails-assets-angular"
+  gem "rails-assets-angular-animate"
+  gem "rails-assets-angular-sanitize"
+  gem "rails-assets-angulartics"
+  gem "rails-assets-chartjs"
+  gem "rails-assets-jquery-easing-original"
+  gem "rails-assets-lodash"
+  gem "rails-assets-moment"
+  gem "rails-assets-ng-infinite-scroller-origin"
+end
 
 group :development, :test do
   gem "awesome_print"
