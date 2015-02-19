@@ -2,7 +2,7 @@
 - content_for :no_footer, true
 
 .container
-  .programs ng-controller='ProgramsCtrl' ani-loading='loading'
+  .programs ng-controller='ProgramsCtrl' ann-loading='loading'
     div infinite-scroll='addMorePrograms()' infinite-scroll-disabled='disabled' infinite-scroll-distance='2'
       .program ng-repeat='program in programs' ng-show='0 < programs.length'
         = render 'programs/program'

@@ -50,7 +50,7 @@ hr
 hr
 
 .container
-  .activities ng-controller='UserActivitiesCtrl' ng-init='init("#{@user.username}")' ani-loading='loading'
+  .activities ng-controller='UserActivitiesCtrl' ng-init='init("#{@user.username}")' ann-loading='loading'
     div infinite-scroll='addMoreActivities()' infinite-scroll-disabled='disabled' infinite-scroll-distance='2'
       h2.text-center = t('words.activity')
       = render 'activities/activity'
