@@ -11,7 +11,7 @@
   | がステータスを「{{activity.links.status.kind}}」に変更しました
 
 .middle ng-if='activity.links.status.kind === "見たい" || activity.links.status.kind === "見てる"'
-  = render 'activities/work_info'
+  = render 'activities/activity_work_info'
 
 .activity-bottom
   .time ani-time-ago='{{activity.created_at}}'
