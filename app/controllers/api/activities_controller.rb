@@ -4,7 +4,7 @@ class Api::ActivitiesController < Api::ApplicationController
   def index(page: nil)
     @activities = current_user.following_activities
                     .order(id: :desc)
-                    .includes(:recipient, :trackable, user: :profile)
+                    .includes(:recipient, trackable: :user, user: :profile)
                     .page(page)
   end
 end
