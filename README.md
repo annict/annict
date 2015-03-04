@@ -1,6 +1,6 @@
 # Annict
 
-[![Circle CI](https://circleci.com/gh/annict/annict/tree/master.svg?style=svg)](https://circleci.com/gh/annict/annict/tree/master)  [![Code Climate](https://codeclimate.com/github/annict/annict/badges/gpa.svg)](https://codeclimate.com/github/annict/annict) [![Test Coverage](https://codeclimate.com/github/annict/annict/badges/coverage.svg)](https://codeclimate.com/github/annict/annict) [![Dependency Status](https://gemnasium.com/annict/annict.svg)](https://gemnasium.com/annict/annict) [![Stories in Ready](https://badge.waffle.io/annict/annict.png?label=ready&title=Ready)](https://waffle.io/annict/annict)
+[![Circle CI](https://circleci.com/gh/annict/annict/tree/master.svg?style=svg)](https://circleci.com/gh/annict/annict/tree/master)  [![Code Climate](https://codeclimate.com/github/annict/annict/badges/gpa.svg)](https://codeclimate.com/github/annict/annict) [![Test Coverage](https://codeclimate.com/github/annict/annict/badges/coverage.svg)](https://codeclimate.com/github/annict/annict) [![Dependency Status](https://gemnasium.com/annict/annict.svg)](https://gemnasium.com/annict/annict)  [![Gitter](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/annict/annict)
 
 [![木崎湖](http://d3a8d1smk6xli.cloudfront.net/github/kizakiko.png)](http://ja.wikipedia.org/wiki/%E6%9C%A8%E5%B4%8E%E6%B9%96)
 
@@ -16,9 +16,12 @@ http://www.annict.com
 
 ### 開発に参加する
 
-#### バグの報告
+#### 新機能・改善案の話やバグの話など
 
-不思議な挙動を発見したときは、[GitHub Issues](https://github.com/annict/annict) にその旨を投稿してください。
+開発に関わるもろもろのやり取りは、以下のサービスで行っています。
+
+* [GitHub Issues](https://github.com/annict/annict)
+* [Gitter](https://gitter.im/annict/annict)
 
 
 #### セキュリティに関わるバグの報告
@@ -36,28 +39,22 @@ Twitterなど、第三者に公開されている場所に投稿しないでも�
 * 既存のテストを全てパスすることを確認してください
 
 
-#### GitHub Issuesについて
+#### タスク管理について
 
-Annictでは開発に関係するタスク管理を[GitHub Issues](https://github.com/annict/annict/issues)で行っています。
-投稿されたIssuesにラベルを付与して管理しています。
+Annictでは開発に関係するタスク管理を[Trello](https://trello.com/b/UinnA33N/annict)で行っています。
+各タスクは以下のリストに入れて管理していて、上に置かれているタスクから順に対応しています。
 
-| ラベル   | 意味        |
-| ------- | -----------|
-| Ideas   | システム内に取り込むことが決定していない漠然としたアイデアなどが書かれたIssueに付与しています |
-| Ready   | システム内に取り込むことが決定したIssueに付与しています |
-| Working | 現在取り組んでいるIssueに付与しています |
-| Feature | 新機能に関するIssueに付与しています |
-| Todo    | 雑多なタスクが書かれたIssueに付与しています |
-| Bug     | バグに関するIssueに付与しています |
-
-
-#### Waffle.ioについて
-
-GitHub Issuesに投稿されたIssueは[Waffle.io](https://waffle.io/annict/annict)で「かんばん」風に管理しています。
-上にあるIssueから順に対応しています。
+| リスト名 | どんなタスクを入れているか |
+| ------- | ----------- |
+| Idea   | システム内に取り込むことが決定していない漠然としたアイデアなどを入れています |
+| Todo   | システム内に取り込むことが決定したタスクを入れています |
+| Doing | 現在取り組んでいるタスクを入れています |
+| Done | 作業が完了したタスクを入れています |
 
 
 #### 開発環境を作る
+
+** :warning: ここに書かれている情報は古いです。開発のほうが落ち着いたら更新しますm(__)m (2015年3月5日現在) **
 
 ##### 依存関係
 
@@ -98,7 +95,7 @@ $ bundle exec rspec
 
 ### ライセンス
 
-Copyright 2014 Annict
+Copyright 2015 Annict
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
