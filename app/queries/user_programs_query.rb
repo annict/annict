@@ -1,12 +1,14 @@
 class UserProgramsQuery
+  attr_reader :user
+
   def initialize(user)
     @user = user
   end
 
   # チェックインしていないエピソードと紐づく番組情報を返す
   def unchecked
-    works = @user.works.wanna_watch_and_watching
-    channel_works = @user.channel_works.where(work: works)
+    works = user.works.wanna_watch_and_watching
+    channel_works = user.channel_works.where(work: works)
 
     Program.where(id: unchecked_program_ids(channel_works))
   end
@@ -14,7 +16,7 @@ class UserProgramsQuery
   private
 
   def unchecked_episodes(work)
-    UserEpisodesQuery.new(@user, work).unchecked
+    UserEpisodesQuery.new(user).unchecked(work)
   end
 
   def unchecked_program_ids(channel_works)

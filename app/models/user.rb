@@ -54,6 +54,7 @@ class User < ActiveRecord::Base
   has_many :activities,    dependent: :destroy
   has_many :channel_works, dependent: :destroy
   has_many :checkins,      dependent: :destroy
+  has_many :checks,        dependent: :destroy
   has_many :finished_tips, dependent: :destroy
   has_many :follows,       dependent: :destroy
   has_many :followings,    through:   :follows
@@ -74,12 +75,16 @@ class User < ActiveRecord::Base
   after_commit :publish_events, on: :create
 
 
+  def checking_works
+    @checking_works ||= CheckingWorks.new(read_attribute(:checking_works))
+  end
+
   def works
     @works ||= UserWorksQuery.new(self)
   end
 
-  def episodes(work_or_works)
-    UserEpisodesQuery.new(self, work_or_works)
+  def episodes
+    @episodes ||= UserEpisodesQuery.new(self)
   end
 
   def programs

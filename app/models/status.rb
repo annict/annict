@@ -27,6 +27,7 @@ class Status < ActiveRecord::Base
 
   scope :latest, -> { where(latest: true) }
   scope :watching, -> { latest.with_kind(:watching) }
+  scope :wanna_watch, -> { latest.with_kind(:wanna_watch) }
   scope :wanna_watch_and_watching, -> { latest.with_kind(:wanna_watch, :watching) }
   scope :desiring_to_watch, -> { latest.with_kind(:wanna_watch, :watching, :on_hold) }
 
@@ -36,6 +37,7 @@ class Status < ActiveRecord::Base
   after_create :update_recommendable
   after_create :update_channel_work
   after_create :finish_tips
+  after_create :refresh_check
   after_commit :publish_events, on: :create
 
 
@@ -128,6 +130,21 @@ class Status < ActiveRecord::Base
   def finish_tips
     if user.statuses.initial?(self)
       UserTipsService.new(user).finish!(:status)
+    end
+  end
+
+  def refresh_check
+    check = user.checks.find_by(work_id: work.id)
+    is_watch_status = %w(wanna_watch watching).include?(kind.to_s)
+    is_unwatch_status = %w(watched on_hold stop_watching).include?(kind.to_s)
+
+    if check.blank? && is_watch_status
+      check = user.checks.create(work: work)
+      check.update_episode_to_unchecked
+    elsif check.present? && is_watch_status && check.episode.blank?
+      check.update_episode_to_first
+    elsif check.present? && is_unwatch_status
+      check.destroy
     end
   end
 end

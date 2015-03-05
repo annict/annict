@@ -6,6 +6,7 @@ gem "rails", "4.2.0"
 
 gem "action_args"
 gem "activerecord-session_store"
+gem "acts_as_list"
 gem "angular_rails_csrf"
 gem "annotate"
 gem "asset_sync"

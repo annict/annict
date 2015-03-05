@@ -43,6 +43,7 @@ class Checkin < ActiveRecord::Base
   before_update :check_comment_modified
   after_create  :save_activity
   after_create  :finish_tips
+  after_create  :refresh_check
   after_commit  :publish_events, on: :create
 
 
@@ -116,5 +117,10 @@ class Checkin < ActiveRecord::Base
     if user.checkins.initial?(self)
       UserTipsService.new(user).finish!(:checkin)
     end
+  end
+
+  def refresh_check
+    check = user.checks.find_by(work_id: work.id)
+    check.update_episode_to_next(checkin: self)
   end
 end
