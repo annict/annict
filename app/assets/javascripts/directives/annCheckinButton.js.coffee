@@ -3,7 +3,7 @@ Annict.angular.directive "annCheckinButton", ($rootScope) ->
 
   controller: ($scope, $element, $http) ->
     $scope.loading = true
-    $scope.contentHeight = $(window).height() - 110;
+    $scope.contentHeight = $(window).height() - 110
     $scope.sharableToTwitter = gon.sharableToTwitter
     $scope.shareCheckin = gon.shareCheckin
 
@@ -15,4 +15,7 @@ Annict.angular.directive "annCheckinButton", ($rootScope) ->
         $scope.checks = checks
       .error ->
         $("#js-checkin-button-modal").modal("hide")
-        $rootScope.$broadcast("renderFlash", { type: "danger", body: "エラー！再度お試し下さい。" })
+        data =
+          type: "danger"
+          body: "エラー！再度お試し下さい。"
+        $rootScope.$broadcast("renderFlash", data)

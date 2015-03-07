@@ -5,10 +5,10 @@ Annict.angular.directive "annCheck", ->
     $scope.expand = false
 
     $scope.skipEpisode = ->
-      if confirm('このエピソードをスキップして次のエピソードを表示しますか？')
-        checkId = $scope.check.id
+      if confirm("このエピソードをスキップして次のエピソードを表示しますか？")
+        path = "/api/user/checks/#{$scope.check.id}/skip_episode"
 
-        $http.patch("/api/user/checks/#{checkId}/skip_episode").success (check) ->
+        $http.patch(path).success (check) ->
           $scope.check = check
           $scope.actionPath = getActionPath()
 
