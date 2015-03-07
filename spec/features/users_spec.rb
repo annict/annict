@@ -16,7 +16,11 @@ describe 'プロフィールページ' do
 
   describe 'アクティビティ' do
     before do
-      user.checkins.create(episode: episode, comment: 'おもしろかったよ')
+      user.checkins.create do |c|
+        c.work = episode.work
+        c.episode = episode
+        c.comment = 'おもしろかったよ'
+      end
 
       visit "/users/#{user.username}"
     end

@@ -4,6 +4,7 @@ class ApplicationController < ActionController::Base
   protect_from_forgery with: :exception
 
   before_filter :store_flash_message
+  before_filter :store_user_info
 
 
   # テスト実行時にDragonflyでアップロードした画像を読み込むときに呼ばれるアクション
@@ -49,5 +50,16 @@ class ApplicationController < ActionController::Base
     message = { type: key.to_s, body: flash[key] } if flash[key].present?
 
     gon.push(flash: message.presence || {})
+  end
+
+  def store_user_info
+    if user_signed_in?
+      user_info = {
+        shareCheckin: current_user.share_checkin?,
+        sharableToTwitter: current_user.shareable_to?(:twitter)
+      }
+
+      gon.push(user_info)
+    end
   end
 end

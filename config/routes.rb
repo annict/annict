@@ -42,6 +42,9 @@ Annict::Application.routes.draw do
       get :activities
     end
     resource  :user,       only: [] do
+      resources :checks,   only: [:index], controller: "user_checks" do
+        patch :skip_episode
+      end
       resources :programs, only: [:index], controller: 'user_programs'
     end
     resources :works,      only: [] do

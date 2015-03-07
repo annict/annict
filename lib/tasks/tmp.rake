@@ -21,4 +21,15 @@ namespace :tmp do
       user.save
     end
   end
+
+  task set_checks: :environment do
+    User.find_each do |user|
+      puts "user: #{user.id}"
+      works = user.works.wanna_watch_and_watching.order(released_at: :desc)
+      works.each do |work|
+        unchecked_episode = user.episodes.unchecked(work).first
+        user.checks.create(work: work, episode: unchecked_episode)
+      end
+    end
+  end
 end

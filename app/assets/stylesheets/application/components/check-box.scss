@@ -1,0 +1,103 @@
+.check-box > .info {
+  @include display(flex);
+
+  > .left {
+    @include flex-basis(40px);
+    @include flex-shrink(0); // 横幅を40pxに固定する
+
+    width: 40px;
+  }
+
+  > .right {
+    margin-left: 10px;
+    width: 100%;
+  }
+
+  > .right > .work {
+    margin-bottom: 3px;
+
+    @if $browser == mobile {
+      font-size: 12px;
+    }
+  }
+
+  > .right > .episode,
+  > .right > .no-episode {
+    @if $browser == pc {
+      font-size: 12px;
+    }
+
+    @if $browser == mobile {
+      font-size: 10px;
+    }
+  }
+
+  > .skip {
+    @include flex-basis(60px);
+    @include flex-shrink(0);
+
+    color: $color-gray-dark-light;
+    font-size: 10px;
+    text-align: right;
+    width: 60px;
+
+    &:hover {
+      cursor: pointer;
+    }
+  }
+
+  > .skip > i {
+    margin-right: 3px;
+  }
+}
+
+.check-box > .checkin {
+  margin-top: 10px;
+
+  > form > .top {
+    @include display(flex);
+
+    height: 30px;
+
+    textarea {
+      height: 30px;
+    }
+
+    > .wrapper {
+      @include flex-basis(80px);
+      @include flex-shrink(0);
+
+      line-height: 30px;
+      text-align: right;
+    }
+
+    > .wrapper > .share {
+      line-height: 30px;
+      padding-right: 10px;
+      text-align: right;
+    }
+
+    > .wrapper > .share > i {
+      color: $color-twitter;
+      margin-right: 3px;
+    }
+
+    > .wrapper > .btn > .btn-sm {
+      padding: 4px 8px;
+    }
+  }
+}
+
+.check-box > .checkin.expand {
+  height: 100px;
+
+  > form > .top {
+    textarea {
+      height: 100px;
+    }
+  }
+}
+
+.check-box.last > hr {
+  display: none;
+}

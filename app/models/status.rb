@@ -27,8 +27,10 @@ class Status < ActiveRecord::Base
 
   scope :latest, -> { where(latest: true) }
   scope :watching, -> { latest.with_kind(:watching) }
+  scope :wanna_watch, -> { latest.with_kind(:wanna_watch) }
   scope :wanna_watch_and_watching, -> { latest.with_kind(:wanna_watch, :watching) }
   scope :desiring_to_watch, -> { latest.with_kind(:wanna_watch, :watching, :on_hold) }
+  scope :on_hold, -> { latest.with_kind(:on_hold) }
 
   after_create :change_latest
   after_create :save_activity
@@ -36,6 +38,7 @@ class Status < ActiveRecord::Base
   after_create :update_recommendable
   after_create :update_channel_work
   after_create :finish_tips
+  after_create :refresh_check
   after_commit :publish_events, on: :create
 
 
@@ -128,6 +131,27 @@ class Status < ActiveRecord::Base
   def finish_tips
     if user.statuses.initial?(self)
       UserTipsService.new(user).finish!(:status)
+    end
+  end
+
+  def refresh_check
+    is_watch_status      = %w(wanna_watch watching).include?(kind.to_s)
+    is_on_hold_status    = %w(on_hold).include?(kind.to_s)
+    is_watch_over_status = %w(watched stop_watching).include?(kind.to_s)
+
+    check = user.checks.find_by(work_id: work.id)
+
+    # 初めてそのアニメを「見てる」などにしたとき
+    if check.blank? && is_watch_status
+      check = user.checks.create(work: work)
+      check.update_episode_to_first
+    # 「見たい」状態の新作アニメを「見てる」に変えたときなど
+    elsif check.present? && is_watch_status && check.episode.blank?
+      check.update_episode_to_unchecked
+    elsif check.present? && is_on_hold_status
+      check.update_column(:episode_id, nil)
+    elsif check.present? && is_watch_over_status
+      check.destroy
     end
   end
 end

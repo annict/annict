@@ -12,6 +12,9 @@ html lang='ja' ng-app='annict'
             i.fa ng-class='iconType'
             span ng-bind-html='body'
 
+      - if user_signed_in?
+        = render 'checkin_button'
+
       = yield
 
     - unless content_for(:no_footer)
