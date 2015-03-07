@@ -1,40 +1,49 @@
 .checkin-button.ann-checkin-button
-  .button ng-click='openModal()'
-    = icon('twitter')
+  .wrapper
+    .button ng-click='openModal()'
+      i.icon-checkin
 
-  .modal.fade#js-checkin-button-modal tabindex='-1' role='dialog' aria-labelledby='modalLabel' aria-hidden='true'
+  .modal#js-checkin-button-modal tabindex='-1' role='dialog' aria-labelledby='modalLabel' aria-hidden='true'
     .modal-dialog
       .modal-content
         .modal-header
           button.close type='button' data-dismiss='modal'
             span aria-hidden='true' = icon(:times)
-        .modal-body
+        .modal-body ng-style='{ maxHeight: contentHeight }'
           .checks ann-loading='loading'
             .check-box.ann-check ng-repeat='check in checks'
-              a.icon ng-href='/works/{{check.work.id}}'
-                img ng-src='{{check.work.image_url}}' width='70' height='70' alt='{{check.work.title}}'
-              .work
-                a.title ng-href='/works/{{check.work.id}}'
-                  | {{check.work.title}}
-              .episode ng-if='check.episode'
-                a.title ng-href='/works/{{check.work.id}}/episodes/{{check.episode.id}}'
-                  | {{check.episode.number}}
-                  span ng-if='check.episode.title' 「{{check.episode.title}}」
-              .checkin ng-if='check.episode'
+              hr ng-if='checks[0] !== check'
+              .info
+                .left
+                  a.icon ng-href='/works/{{check.work.id}}'
+                    img ng-src='{{check.work.image_url}}' width='40' height='40' alt='{{check.work.title}}'
+                .right
+                  .work
+                    a.title ng-href='/works/{{check.work.id}}'
+                      | {{check.work.title}}
+                  .episode ng-if='check.episode'
+                    a.title ng-href='/works/{{check.work.id}}/episodes/{{check.episode.id}}'
+                      | {{check.episode.number}}
+                      span ng-if='check.episode.title' 「{{check.episode.title}}」
+                .skip ng-click='skipEpisode()'
+                  i.fa.fa-forward
+                  | スキップ
+              .checkin ng-if='check.episode' ng-class='{ expand: expand }'
                 form action='{{actionPath}}' method='post'
-                  input type='hidden' name='authenticity_token' value='{{csrfToken}}'
-                  textarea.form-control name="checkin[comment]"
-                  .checkbox
-                    label
-                      input name='checkin[shared_twitter]' type='hidden' value='0'
-                      input type='checkbox' value='1' name='checkin[shared_twitter]'
-                      | Twitterにシェアする
-                  button.btn.btn-primary
-                    i.fa.fa-check
-                    | チェックインする
-                  .skip ng-click='skipEpisode()'
-                    i.fa.fa-forward
-                    | スキップ
+                  input type='hidden' name='authenticity_token'
+                  .top
+                    textarea.form-control name="checkin[comment]" ng-focus='expandTextarea()'
+                    .wrapper
+                      label.share
+                        i.fa.fa-twitter
+                        input name='checkin[shared_twitter]' type='hidden' value='0'
+                        input type='checkbox' value='1' name='checkin[shared_twitter]'
+                      button.btn.btn-primary.btn-sm
+                        i.fa.fa-check
               .blank ng-if='!check.episode'
                 | チェックインできるエピソードはありません。
-              hr
+          .info.well ng-if='!loading && checks.length === 0'
+            .icon
+              i.fa.fa-info-circle
+            p ここには「見てる」または「見たい」アニメの中で、チェックインしていないエピソードが表示されます。
+            p = "「#{link_to('見つける', works_path)}」ページでアニメのステータスを変えてみましょう！".html_safe

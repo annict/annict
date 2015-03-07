@@ -10,8 +10,32 @@ http://emojisymbols.com/
   font-style: normal;
 }
 
-
 @font-face {
   font-family: 'NotoSansJP';
   src:font-url('NotoSansJP-Thin.otf') format('opentype');
+}
+
+@font-face {
+  font-family: 'icomoon';
+  font-style: normal;
+  font-weight: normal;
+  src:font-url('icomoon.woff') format('woff');
+}
+
+[class^="icon-"], [class*=" icon-"] {
+    font-family: 'icomoon';
+    speak: none;
+    font-style: normal;
+    font-weight: normal;
+    font-variant: normal;
+    text-transform: none;
+    line-height: 1;
+
+    /* Better Font Rendering =========== */
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+.icon-checkin:before {
+    content: "\e600";
 }

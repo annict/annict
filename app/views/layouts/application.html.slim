@@ -12,7 +12,8 @@ html lang='ja' ng-app='annict'
             i.fa ng-class='iconType'
             span ng-bind-html='body'
 
-      = render 'checkin_button'
+      - if user_signed_in?
+        = render 'checkin_button'
 
       = yield
 
