@@ -32,7 +32,8 @@ class Check < ActiveRecord::Base
     checks = user.checks.includes(:work).where(episode_id: nil)
 
     checks.each do |check|
-      if user.statuses.kind_of(check.work).try(:kind) != 'on_hold'
+      kind = user.statuses.kind_of(check.work).try(:kind)
+      unless %w(on_hold wanna_watch).include?(kind.try(:to_s))
         check.update_episode_to_unchecked
       end
     end
@@ -69,7 +70,10 @@ class Check < ActiveRecord::Base
   def update_episode_to_first
     first_episode = work.episodes.order(sort_number: :asc).first
 
-    update_column(:episode_id, first_episode.id) if first_episode.present?
+    if first_episode.present?
+      update_column(:episode_id, first_episode.id)
+      move_to_top
+    end
   end
 
   def skip_episode

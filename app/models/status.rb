@@ -83,17 +83,26 @@ class Status < ActiveRecord::Base
   # ステータスを何から何に変えたかを返す
   def become_to
     watches  = [:wanna_watch, :watching, :watched]
-    statuses = user.statuses.where(work_id: work.id).includes(:work).last(2)
-    prev_status = statuses.first.kind.to_sym
-    new_status  = statuses.last.kind.to_sym
 
-    if statuses.length == 2
+    if last_2_statuses.length == 2
       return :watch if !watches.include?(prev_status) && watches.include?(new_status)
       return :drop  if watches.include?(prev_status)  && !watches.include?(new_status)
       return :keep # 見たい系 -> 見たい系 または 中止系 -> 中止系
     end
 
     watches.include?(new_status) ? :watch : :drop_first
+  end
+
+  def last_2_statuses
+    @last_2_statuses ||= user.statuses.where(work_id: work.id).includes(:work).last(2)
+  end
+
+  def prev_status
+    @prev_status ||= last_2_statuses.first.kind.to_sym
+  end
+
+  def new_status
+    @new_status ||= last_2_statuses.last.kind.to_sym
   end
 
   # ステータスの変更があったとき、「Recommendable」の `like`, `dislike` などを呼び出して
@@ -135,22 +144,28 @@ class Status < ActiveRecord::Base
   end
 
   def refresh_check
-    is_watch_status      = %w(wanna_watch watching).include?(kind.to_s)
-    is_on_hold_status    = %w(on_hold).include?(kind.to_s)
-    is_watch_over_status = %w(watched stop_watching).include?(kind.to_s)
+    is_watching      = kind.to_s == 'watching'
+    is_watch_someday = %w(on_hold wanna_watch).include?(kind.to_s)
+    is_watch_over    = %w(watched stop_watching).include?(kind.to_s)
 
     check = user.checks.find_by(work_id: work.id)
 
-    # 初めてそのアニメを「見てる」などにしたとき
-    if check.blank? && is_watch_status
+    # 「見たい」アニメを「見てる」に変えたとき
+    if check.blank? && (prev_status == :wanna_watch) && is_watching
+      check = user.checks.create(work: work)
+      check.update_episode_to_unchecked
+
+    # 初めて「見てる」にしたとき
+    elsif check.blank? && is_watching
       check = user.checks.create(work: work)
       check.update_episode_to_first
-    # 「見たい」状態の新作アニメを「見てる」に変えたときなど
-    elsif check.present? && is_watch_status && check.episode.blank?
-      check.update_episode_to_unchecked
-    elsif check.present? && is_on_hold_status
+
+    # 「見てる」アニメを「中断」または「見たい」状態に変えたとき
+    elsif check.present? && is_watch_someday
       check.update_column(:episode_id, nil)
-    elsif check.present? && is_watch_over_status
+
+    # 「見てる」アニメを見終えたとき
+    elsif check.present? && is_watch_over
       check.destroy
     end
   end

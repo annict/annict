@@ -22,13 +22,12 @@ namespace :tmp do
     end
   end
 
-  task set_checks: :environment do
+  task update_checks: :environment do
     User.find_each do |user|
       puts "user: #{user.id}"
-      works = user.works.wanna_watch_and_watching.order(released_at: :desc)
-      works.each do |work|
-        unchecked_episode = user.episodes.unchecked(work).first
-        user.checks.create(work: work, episode: unchecked_episode)
+      watching_works = user.works.watching
+      user.checks.each do |check|
+        check.destroy unless watching_works.exists?(id: check.work.id)
       end
     end
   end
