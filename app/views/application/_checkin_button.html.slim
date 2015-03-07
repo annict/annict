@@ -34,10 +34,10 @@
                   .top
                     textarea.form-control name="checkin[comment]" ng-focus='expandTextarea()'
                     .wrapper
-                      label.share
+                      label.share ng-if='sharableToTwitter'
                         i.fa.fa-twitter
                         input name='checkin[shared_twitter]' type='hidden' value='0'
-                        input type='checkbox' value='1' name='checkin[shared_twitter]'
+                        input type='checkbox' value='1' name='checkin[shared_twitter]' ng-checked='shareCheckin'
                       button.btn.btn-primary.btn-sm
                         i.fa.fa-check
               .blank ng-if='!check.episode'
