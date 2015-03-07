@@ -2,12 +2,14 @@ Annict.angular.directive "annCheckinButton", ($rootScope) ->
   restrict: "C"
 
   controller: ($scope, $element, $http) ->
-    $scope.loading = true
     $scope.contentHeight = $(window).height() - 110
     $scope.sharableToTwitter = gon.sharableToTwitter
     $scope.shareCheckin = gon.shareCheckin
 
     $scope.openModal = ->
+      $scope.loading = true
+      $scope.checks = []
+
       $("#js-checkin-button-modal").modal()
 
       $http.get("/api/user/checks").success (checks) ->
