@@ -1,4 +1,3 @@
-<link href="https://fonts.googleapis.com/css?family=Titillium+Web" rel="stylesheet" type="text/css">
 <p align="center">
   <a href="http://www.annict.com" target="_blank">
     <img src="http://d3a8d1smk6xli.cloudfront.net/github/annict-logo2.png" alt="Annict" width="200" height="200">
