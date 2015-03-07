@@ -121,6 +121,6 @@ class Checkin < ActiveRecord::Base
 
   def refresh_check
     check = user.checks.find_by(work_id: work.id)
-    check.update_episode_to_next(checkin: self)
+    check.update_episode_to_next(checkin: self) if check.present?
   end
 end
