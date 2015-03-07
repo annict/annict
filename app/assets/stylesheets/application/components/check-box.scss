@@ -21,7 +21,8 @@
     }
   }
 
-  > .right > .episode {
+  > .right > .episode,
+  > .right > .no-episode {
     @if $browser == pc {
       font-size: 12px;
     }
@@ -95,4 +96,8 @@
       height: 100px;
     }
   }
+}
+
+.check-box.last > hr {
+  display: none;
 }

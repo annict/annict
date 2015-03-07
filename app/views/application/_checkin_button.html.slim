@@ -11,8 +11,7 @@
             span aria-hidden='true' = icon(:times)
         .modal-body ng-style='{ maxHeight: contentHeight }'
           .checks ann-loading='loading'
-            .check-box.ann-check ng-repeat='check in checks'
-              hr ng-if='checks[0] !== check'
+            .check-box.ann-check ng-repeat='check in checks' ng-class='{ last: $last }'
               .info
                 .left
                   a.icon ng-href='/works/{{check.work.id}}'
@@ -25,7 +24,9 @@
                     a.title ng-href='/works/{{check.work.id}}/episodes/{{check.episode.id}}'
                       | {{check.episode.number}}
                       span ng-if='check.episode.title' 「{{check.episode.title}}」
-                .skip ng-click='skipEpisode()'
+                  .no-episode ng-if='!check.episode'
+                    | チェックインしていないエピソードはありません。
+                .skip ng-click='skipEpisode()' ng-if='check.episode'
                   i.fa.fa-forward
                   | スキップ
               .checkin ng-if='check.episode' ng-class='{ expand: expand }'
@@ -40,8 +41,7 @@
                         input type='checkbox' value='1' name='checkin[shared_twitter]' ng-checked='shareCheckin'
                       button.btn.btn-primary.btn-sm
                         i.fa.fa-check
-              .blank ng-if='!check.episode'
-                | チェックインできるエピソードはありません。
+              hr
           .info.well ng-if='!loading && checks.length === 0'
             .icon
               i.fa.fa-info-circle

@@ -30,6 +30,7 @@ class Status < ActiveRecord::Base
   scope :wanna_watch, -> { latest.with_kind(:wanna_watch) }
   scope :wanna_watch_and_watching, -> { latest.with_kind(:wanna_watch, :watching) }
   scope :desiring_to_watch, -> { latest.with_kind(:wanna_watch, :watching, :on_hold) }
+  scope :on_hold, -> { latest.with_kind(:on_hold) }
 
   after_create :change_latest
   after_create :save_activity
@@ -134,16 +135,22 @@ class Status < ActiveRecord::Base
   end
 
   def refresh_check
-    check = user.checks.find_by(work_id: work.id)
-    is_watch_status = %w(wanna_watch watching).include?(kind.to_s)
-    is_unwatch_status = %w(watched on_hold stop_watching).include?(kind.to_s)
+    is_watch_status      = %w(wanna_watch watching).include?(kind.to_s)
+    is_on_hold_status    = %w(on_hold).include?(kind.to_s)
+    is_watch_over_status = %w(watched stop_watching).include?(kind.to_s)
 
+    check = user.checks.find_by(work_id: work.id)
+
+    # 初めてそのアニメを「見てる」などにしたとき
     if check.blank? && is_watch_status
       check = user.checks.create(work: work)
-      check.update_episode_to_unchecked
-    elsif check.present? && is_watch_status && check.episode.blank?
       check.update_episode_to_first
-    elsif check.present? && is_unwatch_status
+    # 「見たい」状態の新作アニメを「見てる」に変えたときなど
+    elsif check.present? && is_watch_status && check.episode.blank?
+      check.update_episode_to_unchecked
+    elsif check.present? && is_on_hold_status
+      check.update_column(:episode_id, nil)
+    elsif check.present? && is_watch_over_status
       check.destroy
     end
   end

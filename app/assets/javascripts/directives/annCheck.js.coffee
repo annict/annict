@@ -3,7 +3,6 @@ Annict.angular.directive "annCheck", ->
 
   controller: ($scope, $element, $http) ->
     $scope.expand = false
-    $scope.actionPath = "/works/#{$scope.check.work.id}/episodes/#{$scope.check.episode.id}/checkins"
 
     $scope.skipEpisode = ->
       if confirm('このエピソードをスキップして次のエピソードを表示しますか？')
@@ -11,9 +10,19 @@ Annict.angular.directive "annCheck", ->
 
         $http.patch("/api/user/checks/#{checkId}/skip_episode").success (check) ->
           $scope.check = check
+          $scope.actionPath = getActionPath()
 
     $scope.expandTextarea = ->
       $scope.expand = true
 
     $scope.contractTextarea = ->
       $scope.expand = false
+
+    getActionPath = ->
+      if $scope.check.episode
+        workId = $scope.check.work.id
+        episodeId = $scope.check.episode.id
+
+        "/works/#{workId}/episodes/#{episodeId}/checkins"
+
+    $scope.actionPath = getActionPath()

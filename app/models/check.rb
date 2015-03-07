@@ -32,16 +32,23 @@ class Check < ActiveRecord::Base
     checks = user.checks.includes(:work).where(episode_id: nil)
 
     checks.each do |check|
-      check.update_episode_to_unchecked
+      if user.statuses.kind_of(check.work).try(:kind) != 'on_hold'
+        check.update_episode_to_unchecked
+      end
     end
   end
 
+  # チェックインしていないエピソードに設定する
   def update_episode_to_unchecked
     unchecked_episode = user.episodes.unchecked(work)
       .where.not(id: skipped_episode_ids).order(sort_number: :asc).first
 
     if unchecked_episode.present?
       update_column(:episode_id, unchecked_episode.id)
+    elsif work.on_air?
+      # 放送中のアニメの場合はまだ最新エピソードが登録される可能性があるので、
+      # nilを設定しておく
+      update_column(:episode_id, nil)
     else
       update_episode_to_first
     end

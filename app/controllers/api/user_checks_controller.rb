@@ -3,7 +3,8 @@ class Api::UserChecksController < Api::ApplicationController
 
   def index
     Check.refresh_episode(current_user)
-    @checks = current_user.checks.has_episode
+    @checks = current_user.checks
+      .has_episode
       .order(:position)
       .includes(:work, :episode)
   end
