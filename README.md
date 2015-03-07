@@ -1,18 +1,24 @@
-# Annict
+<link href="https://fonts.googleapis.com/css?family=Titillium+Web" rel="stylesheet" type="text/css">
+<p align="center">
+  <a href="http://www.annict.com" target="_blank">
+    <img src="http://d3a8d1smk6xli.cloudfront.net/github/annict-logo2.png" alt="Annict" width="200" height="200">
+  </a>
+  <br>
+  <br>
+  <img src="http://d3a8d1smk6xli.cloudfront.net/github/annict-text-logo.png" alt="Annict" width="240" height="60">
+  <br>
+  見たアニメを記録して、共有しよう<br>
+  <a href="http://www.annict.com" target="_blank">http://www.annict.com</a>
+  <br>
+  <br>
+  <a href="https://circleci.com/gh/annict/annict/tree/master"><img src="https://circleci.com/gh/annict/annict/tree/master.svg?style=svg"></a>
+  <a href="https://codeclimate.com/github/annict/annict"><img src="https://codeclimate.com/github/annict/annict/badges/gpa.svg"></a>
+  <a href="https://codeclimate.com/github/annict/annict"><img src="https://codeclimate.com/github/annict/annict/badges/coverage.svg"></a>
+  <a href="https://gemnasium.com/annict/annict"><img src="https://gemnasium.com/annict/annict.svg"></a>
+  <a href="https://gitter.im/annict/annict"><img src="https://badges.gitter.im/Join%20Chat.svg"></a>
+</p>
 
-[![Circle CI](https://circleci.com/gh/annict/annict/tree/master.svg?style=svg)](https://circleci.com/gh/annict/annict/tree/master)  [![Code Climate](https://codeclimate.com/github/annict/annict/badges/gpa.svg)](https://codeclimate.com/github/annict/annict) [![Test Coverage](https://codeclimate.com/github/annict/annict/badges/coverage.svg)](https://codeclimate.com/github/annict/annict) [![Dependency Status](https://gemnasium.com/annict/annict.svg)](https://gemnasium.com/annict/annict)  [![Gitter](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/annict/annict)
-
-[![木崎湖](http://d3a8d1smk6xli.cloudfront.net/github/kizakiko.png)](http://ja.wikipedia.org/wiki/%E6%9C%A8%E5%B4%8E%E6%B9%96)
-
-http://www.annict.com
-
-見たアニメを記録するWebサービスです。
-
-
-### スクショ
-
-[![](http://d3a8d1smk6xli.cloudfront.net/github/screenshot3.gif)](http://d3a8d1smk6xli.cloudfront.net/github/screenshot3.gif)
-
+---
 
 ### 開発に参加する
 
