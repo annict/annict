@@ -37,6 +37,7 @@ gem "omniauth-facebook"
 gem "omniauth-twitter"
 gem "paper_trail"
 gem "pg"
+gem "puma"
 gem "rails-i18n"
 gem "ransack"
 gem "rmagick"
@@ -48,7 +49,6 @@ gem "slim"
 gem "recommendable" # gem "sidekiq" より下に置く必要があるらしい
 gem "twitter"
 gem "uglifier"
-gem "unicorn"
 gem "whenever", require: false
 
 source "https://rails-assets.org" do
