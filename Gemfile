@@ -66,6 +66,7 @@ end
 
 group :development, :test do
   gem "awesome_print"
+  gem "did_you_mean"
   gem "hirb-unicode"
   gem "hirb"
   gem "pry-byebug"

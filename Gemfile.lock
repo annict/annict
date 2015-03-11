@@ -132,6 +132,8 @@ GEM
       responders
       thread_safe (~> 0.1)
       warden (~> 1.2.3)
+    did_you_mean (0.9.6)
+      interception
     diff-lcs (1.2.5)
     docile (1.1.5)
     dragonfly (1.0.7)
@@ -240,6 +242,7 @@ GEM
     http_parser.rb (0.6.0)
     i18n (0.7.0)
     inflecto (0.0.2)
+    interception (0.5)
     ipaddress (0.8.0)
     jbuilder (2.2.11)
       activesupport (>= 3.0.0, < 5)
@@ -559,6 +562,7 @@ DEPENDENCIES
   coffee-rails
   database_rewinder
   devise
+  did_you_mean
   dragonfly (= 1.0.7)
   dragonfly-s3_data_store
   email_validator
