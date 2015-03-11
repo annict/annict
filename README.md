@@ -25,7 +25,7 @@
 
 開発に関わるもろもろのやり取りは、以下のサービスで行っています。
 
-* [GitHub Issues](https://github.com/annict/annict)
+* [GitHub Issues](https://github.com/annict/annict/issues)
 * [Gitter](https://gitter.im/annict/annict)
 
 
