@@ -1,8 +1,7 @@
 class Marie::ApplicationController < ActionController::Base
   layout 'marie'
 
-  before_filter :authenticate_staff!
-
+  before_action :authenticate_user!
 
   private
 

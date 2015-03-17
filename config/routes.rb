@@ -17,11 +17,6 @@ Annict::Application.routes.draw do
         image_path: %r([0-9]{4}/[0-9]{2}/[0-9]{2}/.+)
   end
 
-  devise_for :staffs,
-    path: :marie,
-    controllers: { sessions: 'marie/sessions' },
-    path_names: { sign_in: :signin, sign_out: :signout }
-
   devise_for :users,
               controllers: { omniauth_callbacks: :callbacks },
               skip: [:registrations],
