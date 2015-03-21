@@ -57,7 +57,6 @@ source "https://rails-assets.org" do
   gem "rails-assets-angular-sanitize"
   gem "rails-assets-angulartics"
   gem "rails-assets-chartjs"
-  gem "rails-assets-fastclick"
   gem "rails-assets-jquery-easing-original"
   gem "rails-assets-lodash"
   gem "rails-assets-moment"
