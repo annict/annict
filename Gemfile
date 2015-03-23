@@ -52,7 +52,7 @@ gem "uglifier"
 gem "whenever", require: false
 
 source "https://rails-assets.org" do
-  gem "rails-assets-angular"
+  gem "rails-assets-angularjs"
   gem "rails-assets-angular-animate"
   gem "rails-assets-angular-sanitize"
   gem "rails-assets-angulartics"
