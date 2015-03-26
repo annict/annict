@@ -162,7 +162,7 @@ class Status < ActiveRecord::Base
 
     # 「見てる」アニメを「中断」または「見たい」状態に変えたとき
     elsif check.present? && is_watch_someday
-      check.update_column(:episode_id, nil)
+      check.update(episode_id: nil)
 
     # 「見てる」アニメを見終えたとき
     elsif check.present? && is_watch_over

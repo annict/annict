@@ -45,11 +45,11 @@ class Check < ActiveRecord::Base
       .where.not(id: skipped_episode_ids).order(sort_number: :asc).first
 
     if unchecked_episode.present?
-      update_column(:episode_id, unchecked_episode.id)
+      update(episode_id: unchecked_episode.id)
     elsif work.on_air?
       # 放送中のアニメの場合はまだ最新エピソードが登録される可能性があるので、
       # nilを設定しておく
-      update_column(:episode_id, nil)
+      update(episode_id: nil)
     else
       update_episode_to_first
     end
@@ -60,18 +60,19 @@ class Check < ActiveRecord::Base
     next_episode = model.episode.try(:next_episode)
 
     if next_episode.present?
-      update_column(:episode_id, next_episode.id)
-      move_to_top
+      update(episode_id: next_episode.id)
     else
-      update_column(:episode_id, nil)
+      update(episode_id: nil)
     end
+
+    move_to_top
   end
 
   def update_episode_to_first
     first_episode = work.episodes.order(sort_number: :asc).first
 
     if first_episode.present?
-      update_column(:episode_id, first_episode.id)
+      update(episode_id: first_episode.id)
       move_to_top
     end
   end
