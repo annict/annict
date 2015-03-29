@@ -8,7 +8,7 @@
 #  trackable_id   :integer          not null
 #  trackable_type :string(510)      not null
 #  action         :string(510)      not null
-#  read           :boolean          default("false"), not null
+#  read           :boolean          default(FALSE), not null
 #  created_at     :datetime
 #  updated_at     :datetime
 #

@@ -5,10 +5,10 @@
 #  id              :integer          not null, primary key
 #  work_id         :integer          not null
 #  number          :string(510)
-#  sort_number     :integer          default("0"), not null
+#  sort_number     :integer          default(0), not null
 #  sc_count        :integer
 #  title           :string(510)
-#  checkins_count  :integer          default("0"), not null
+#  checkins_count  :integer          default(0), not null
 #  created_at      :datetime
 #  updated_at      :datetime
 #  next_episode_id :integer

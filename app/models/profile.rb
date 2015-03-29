@@ -10,7 +10,7 @@
 #  background_image_uid      :string(510)
 #  created_at                :datetime
 #  updated_at                :datetime
-#  background_image_animated :boolean          default("false"), not null
+#  background_image_animated :boolean          default(FALSE), not null
 #
 # Indexes
 #

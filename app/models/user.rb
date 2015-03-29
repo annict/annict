@@ -8,7 +8,7 @@
 #  role                 :integer          not null
 #  encrypted_password   :string(510)      default(""), not null
 #  remember_created_at  :datetime
-#  sign_in_count        :integer          default("0"), not null
+#  sign_in_count        :integer          default(0), not null
 #  current_sign_in_at   :datetime
 #  last_sign_in_at      :datetime
 #  current_sign_in_ip   :string(510)
@@ -17,11 +17,11 @@
 #  confirmed_at         :datetime
 #  confirmation_sent_at :datetime
 #  unconfirmed_email    :string(510)
-#  checkins_count       :integer          default("0"), not null
-#  notifications_count  :integer          default("0"), not null
+#  checkins_count       :integer          default(0), not null
+#  notifications_count  :integer          default(0), not null
 #  created_at           :datetime
 #  updated_at           :datetime
-#  share_checkin        :boolean          default("false")
+#  share_checkin        :boolean          default(FALSE)
 #
 # Indexes
 #

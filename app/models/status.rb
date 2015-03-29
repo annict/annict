@@ -6,8 +6,8 @@
 #  user_id     :integer          not null
 #  work_id     :integer          not null
 #  kind        :integer          not null
-#  latest      :boolean          default("false"), not null
-#  likes_count :integer          default("0"), not null
+#  latest      :boolean          default(FALSE), not null
+#  likes_count :integer          default(0), not null
 #  created_at  :datetime
 #  updated_at  :datetime
 #

@@ -6,8 +6,8 @@
 #  user_id             :integer          not null
 #  work_id             :integer          not null
 #  episode_id          :integer
-#  skipped_episode_ids :integer          default("{}"), not null, is an Array
-#  position            :integer          default("0"), not null
+#  skipped_episode_ids :integer          default([]), not null, is an Array
+#  position            :integer          default(0), not null
 #  created_at          :datetime         not null
 #  updated_at          :datetime         not null
 #

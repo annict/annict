@@ -6,17 +6,17 @@
 #  user_id              :integer          not null
 #  episode_id           :integer          not null
 #  comment              :text
-#  modify_comment       :boolean          default("false"), not null
+#  modify_comment       :boolean          default(FALSE), not null
 #  twitter_url_hash     :string(510)
 #  facebook_url_hash    :string(510)
-#  twitter_click_count  :integer          default("0"), not null
-#  facebook_click_count :integer          default("0"), not null
-#  comments_count       :integer          default("0"), not null
-#  likes_count          :integer          default("0"), not null
+#  twitter_click_count  :integer          default(0), not null
+#  facebook_click_count :integer          default(0), not null
+#  comments_count       :integer          default(0), not null
+#  likes_count          :integer          default(0), not null
 #  created_at           :datetime
 #  updated_at           :datetime
-#  shared_twitter       :boolean          default("false"), not null
-#  shared_facebook      :boolean          default("false"), not null
+#  shared_twitter       :boolean          default(FALSE), not null
+#  shared_facebook      :boolean          default(FALSE), not null
 #  work_id              :integer
 #
 # Indexes

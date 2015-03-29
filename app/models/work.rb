@@ -9,14 +9,14 @@
 #  media             :integer          not null
 #  official_site_url :string(510)      default(""), not null
 #  wikipedia_url     :string(510)      default(""), not null
-#  episodes_count    :integer          default("0"), not null
-#  watchers_count    :integer          default("0"), not null
+#  episodes_count    :integer          default(0), not null
+#  watchers_count    :integer          default(0), not null
 #  released_at       :date
 #  nicoch_started_at :datetime
 #  created_at        :datetime
 #  updated_at        :datetime
-#  on_air            :boolean          default("false"), not null
-#  fetch_syobocal    :boolean          default("false"), not null
+#  on_air            :boolean          default(FALSE), not null
+#  fetch_syobocal    :boolean          default(FALSE), not null
 #  twitter_username  :string(510)
 #  twitter_hashtag   :string(510)
 #  released_at_about :string
