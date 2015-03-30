@@ -8,6 +8,10 @@ if Rails.env.development?
   options = base_options.merge(
     path: ":rails_root/public/#{ENV['PAPERCLIP_PATH']}"
   )
+elsif Rails.env.test?
+  options = base_options.merge(
+    path: ":rails_root/spec/test_files/#{ENV['PAPERCLIP_PATH']}"
+  )
 else
   options = base_options.merge(
     storage: :s3,

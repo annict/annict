@@ -39,12 +39,10 @@ class Profile < ActiveRecord::Base
 
   validates :description, length: { maximum: 150 }
   validates :name, presence: true
-  validates :tombo_avatar, attachment_presence: true,
-                           attachment_content_type: {
+  validates :tombo_avatar, attachment_content_type: {
                              content_type: /\Aimage/
                            }
-  validates :tombo_background_image, attachment_presence: true,
-                                     attachment_content_type: {
+  validates :tombo_background_image, attachment_content_type: {
                                        content_type: /\Aimage/
                                      }
 
