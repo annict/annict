@@ -40,10 +40,13 @@ class Profile < ActiveRecord::Base
   validates :description, length: { maximum: 150 }
   validates :name, presence: true
   validates :tombo_avatar, attachment_presence: true,
-            attachment_content_type: { content_type: /\Aimage/ }
+                           attachment_content_type: {
+                             content_type: /\Aimage/
+                           }
   validates :tombo_background_image, attachment_presence: true,
-            attachment_content_type: { content_type: /\Aimage/ }
-
+                                     attachment_content_type: {
+                                       content_type: /\Aimage/
+                                     }
 
   before_validation :rename_file
   before_save :check_animated_gif
