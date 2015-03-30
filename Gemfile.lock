@@ -70,6 +70,9 @@ GEM
       multi_xml (~> 0.5)
     aws-sdk-resources (2.0.29)
       aws-sdk-core (= 2.0.29)
+    aws-sdk-v1 (1.63.0)
+      json (~> 1.4)
+      nokogiri (>= 1.4.4)
     bcrypt (3.1.9)
     better_errors (2.1.1)
       coderay (>= 1.0.0)
@@ -106,7 +109,11 @@ GEM
     celluloid (0.16.0)
       timers (~> 4.0.0)
     chronic (0.10.2)
+    climate_control (0.0.3)
+      activesupport (>= 3.0)
     cliver (0.3.2)
+    cocaine (0.5.7)
+      climate_control (>= 0.0.3, < 1.0)
     codeclimate-test-reporter (0.4.7)
       simplecov (>= 0.7.1, < 1.0.0)
     coderay (1.1.0)
@@ -329,6 +336,11 @@ GEM
     paper_trail (3.0.7)
       activerecord (>= 3.0, < 5.0)
       activesupport (>= 3.0, < 5.0)
+    paperclip (4.2.1)
+      activemodel (>= 3.0.0)
+      activesupport (>= 3.0.0)
+      cocaine (~> 0.5.3)
+      mime-types
     pg (0.18.1)
     poltergeist (1.6.0)
       capybara (~> 2.1)
@@ -382,7 +394,7 @@ GEM
     rails-assets-chartjs (1.0.2)
     rails-assets-jquery (2.1.3)
     rails-assets-jquery-easing-original (1.3.1)
-    rails-assets-lodash (3.5.0)
+    rails-assets-lodash (3.6.0)
     rails-assets-moment (2.9.0)
     rails-assets-ng-infinite-scroller-origin (1.2.0)
       rails-assets-angular (>= 1.2.0)
@@ -549,6 +561,7 @@ DEPENDENCIES
   asset_sync
   awesome_print
   aws-sdk
+  aws-sdk-v1
   better_errors
   binding_of_caller
   bootstrap-sass
@@ -587,6 +600,7 @@ DEPENDENCIES
   omniauth-facebook
   omniauth-twitter
   paper_trail
+  paperclip
   pg
   poltergeist
   pry-byebug

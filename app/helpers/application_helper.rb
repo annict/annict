@@ -53,4 +53,15 @@ module ApplicationHelper
 
     "#{ENV['ANNICT_IMAGE2_URL']}/#{size}/#{path}"
   end
+
+  def tombo_thumb_url(model, accessor_name, size = "")
+    image = model.send(accessor_name)
+
+    # プロフィール背景画像がGifアニメのときは、S3に保存された画像をそのまま返す
+    if accessor_name == :tombo_background_image && model.background_image_animated?
+      return "#{ENV['ANNICT_FILE_STORAGE_URL']}/#{image.path(:original)}"
+    end
+
+    "#{ENV['ANNICT_TOMBO_URL']}/#{size}/#{image.path(:master)}"
+  end
 end

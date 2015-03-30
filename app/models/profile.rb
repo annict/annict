@@ -2,15 +2,23 @@
 #
 # Table name: profiles
 #
-#  id                        :integer          not null, primary key
-#  user_id                   :integer          not null
-#  name                      :string(510)      default(""), not null
-#  description               :string(510)      default(""), not null
-#  avatar_uid                :string(510)
-#  background_image_uid      :string(510)
-#  created_at                :datetime
-#  updated_at                :datetime
-#  background_image_animated :boolean          default(FALSE), not null
+#  id                                  :integer          not null, primary key
+#  user_id                             :integer          not null
+#  name                                :string(510)      default(""), not null
+#  description                         :string(510)      default(""), not null
+#  avatar_uid                          :string(510)
+#  background_image_uid                :string(510)
+#  created_at                          :datetime
+#  updated_at                          :datetime
+#  background_image_animated           :boolean          default(FALSE), not null
+#  tombo_avatar_file_name              :string
+#  tombo_avatar_content_type           :string
+#  tombo_avatar_file_size              :integer
+#  tombo_avatar_updated_at             :datetime
+#  tombo_background_image_file_name    :string
+#  tombo_background_image_content_type :string
+#  tombo_background_image_file_size    :integer
+#  tombo_background_image_updated_at   :datetime
 #
 # Indexes
 #
@@ -24,10 +32,18 @@ class Profile < ActiveRecord::Base
   end
   dragonfly_accessor :background_image
 
+  has_attached_file :tombo_avatar
+  has_attached_file :tombo_background_image
+
   belongs_to :user
 
   validates :description, length: { maximum: 150 }
   validates :name, presence: true
+  validates :tombo_avatar, attachment_presence: true,
+            attachment_content_type: { content_type: /\Aimage/ }
+  validates :tombo_background_image, attachment_presence: true,
+            attachment_content_type: { content_type: /\Aimage/ }
+
 
   before_validation :rename_file
   before_save :check_animated_gif

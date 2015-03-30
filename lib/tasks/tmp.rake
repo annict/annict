@@ -31,4 +31,29 @@ namespace :tmp do
       end
     end
   end
+
+  task convert_image_for_paperclip: :environment do
+    host = "http://d3a8d1smk6xli.cloudfront.net/"
+
+    Item.where(tombo_image_file_name: nil).order(:id).each do |i|
+      puts "Item: #{i.id}"
+      image_url = host + i.image_uid
+      i.tombo_image = URI.parse(image_url)
+      i.save
+    end
+
+    Profile.where(tombo_avatar_file_name: nil).where.not(avatar_uid: nil).order(:id).each do |p|
+      puts "avatar Profile: #{p.id}"
+      image_url = host + p.avatar_uid
+      p.tombo_avatar = URI.parse(image_url)
+      p.save(validate: false)
+    end
+
+    Profile.where(tombo_background_image_file_name: nil).where.not(background_image_uid: nil).order(:id).each do |p|
+      puts "background Profile: #{p.id}"
+      image_url = host + p.background_image_uid
+      p.tombo_background_image = URI.parse(image_url)
+      p.save(validate: false)
+    end
+  end
 end
