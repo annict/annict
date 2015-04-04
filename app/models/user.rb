@@ -109,9 +109,9 @@ class User < ActiveRecord::Base
     end
 
     self.build_profile do |p|
-      p.name        = oauth[:info][:name].presence || oauth[:info][:nickname]
-      p.description = oauth[:info][:description]
-      p.avatar_url  = get_large_avatar_image(oauth[:provider], oauth[:info][:image])
+      p.name         = oauth[:info][:name].presence || oauth[:info][:nickname]
+      p.description  = oauth[:info][:description]
+      p.tombo_avatar = URI.parse(get_large_avatar_image(oauth[:provider], oauth[:info][:image]))
     end
 
     self.build_setting
