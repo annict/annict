@@ -7,5 +7,5 @@
 /heroku.dump
 /lib/tasks/data.rake
 /log/*.log
-/public/dragonfly
+/public/paperclip
 /tmp
