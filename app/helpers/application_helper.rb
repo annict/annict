@@ -48,9 +48,9 @@ module ApplicationHelper
 
     # プロフィール背景画像がGifアニメのときは、S3に保存された画像をそのまま返す
     if accessor_name == :tombo_background_image && model.background_image_animated?
-      return "#{ENV['ANNICT_FILE_STORAGE_URL']}/#{image.url(:original)}"
+      return "#{ENV['ANNICT_FILE_STORAGE_URL']}/#{image.path(:original)}"
     end
 
-    "#{ENV['ANNICT_TOMBO_URL']}/#{size}/#{image.url(:master)}"
+    "#{ENV['ANNICT_TOMBO_URL']}/#{size}/#{image.path(:master)}"
   end
 end
