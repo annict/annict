@@ -4,7 +4,7 @@
     = image_tag 'navbar/logo.png', size: '20x20', alt: 'Annict', class: 'logo'
     span.annict Annict
   .title
-    = image_tag thumb_url(@user.profile, :avatar, '150x150e'), size: '150x150', class: 'img-circle'
+    = image_tag tombo_thumb_url(@user.profile, :tombo_avatar, 'w:150,h:150'), size: '150x150', class: 'img-circle'
     h1 = "#{@user.profile.name}が見てるアニメ"
     .updated-on = "(#{Time.now.strftime('%Y年%m月%d日更新')})"
 
@@ -16,6 +16,6 @@
       - works.each do |work|
         .work.col-md-3
           .thumbnail
-            = image_tag thumb_url(work.main_item, :image, '159x159e'), size: '159x159', alt: work.title
+            = image_tag tombo_thumb_url(work.main_item, :tombo_image, 'w:159,h:159'), size: '159x159', alt: work.title
             .caption
               h3 = work.title

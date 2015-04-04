@@ -27,11 +27,6 @@
 #
 
 class Profile < ActiveRecord::Base
-  dragonfly_accessor :avatar do
-    default 'public/images/no_image.png'
-  end
-  dragonfly_accessor :background_image
-
   has_attached_file :tombo_avatar
   has_attached_file :tombo_background_image
 
@@ -46,7 +41,6 @@ class Profile < ActiveRecord::Base
                                        content_type: /\Aimage/
                                      }
 
-  before_validation :rename_file
   before_save :check_animated_gif
 
 
@@ -57,19 +51,10 @@ class Profile < ActiveRecord::Base
 
   private
 
-  def rename_file
-    avatar.name = random_file_name(avatar) if avatar.present?
-    background_image.name = random_file_name(background_image) if background_image.present?
-  end
-
-  def random_file_name(file)
-    ext = file.name.scan(/\.[a-zA-Z]+$/).first.presence || ''
-    SecureRandom.hex(16) + ext
-  end
-
   def check_animated_gif
-    if background_image_uid_changed?
-      image = Magick::ImageList.new(background_image.file)
+    if tombo_background_image_updated_at_changed?
+      file_path = Paperclip.io_adapters.for(tombo_background_image).path
+      image = Magick::ImageList.new(file_path)
       # sceneが0より大きければGifアニメ画像
       # http://stackoverflow.com/questions/27238816/how-to-tell-if-gif-is-animated
       self.background_image_animated = (image.scene > 0)

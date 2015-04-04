@@ -3,7 +3,7 @@
 - keywords meta_keywords(@work.title)
 
 .work-profile
-  .work-image style="background-image: url(#{thumb_url(@work.main_item, :image, '640x640e')});"
+  .work-image style="background-image: url(#{tombo_thumb_url(@work.main_item, :tombo_image, 'w:640,h:640')});"
   .wrapper
     .work-title
       h1
@@ -158,7 +158,7 @@ hr
 
       .media
         = link_to @work.main_item.url, class: 'pull-left' do
-          = image_tag thumb_url(@work.main_item, :image, '160x160e'), size: '80x80', alt: @work.main_item.name
+          = image_tag tombo_thumb_url(@work.main_item, :tombo_image, 'w:160,h:160'), size: '80x80', alt: @work.main_item.name
         .media-body
           .description
             - link = link_to @work.main_item.name, @work.main_item.url, target: '_blank'

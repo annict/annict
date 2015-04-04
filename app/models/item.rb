@@ -21,7 +21,6 @@
 #
 
 class Item < ActiveRecord::Base
-  dragonfly_accessor :image
   has_attached_file :tombo_image
 
   belongs_to :work

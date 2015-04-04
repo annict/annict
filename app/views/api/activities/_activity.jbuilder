@@ -6,7 +6,7 @@ json.links do
   end
 
   json.profile do
-    json.avatar_url thumb_url(activity.user.profile, :avatar, '70x70e')
+    json.avatar_url tombo_thumb_url(activity.user.profile, :tombo_avatar, 'w:70,h:70')
     json.name activity.user.profile.name
   end
 

@@ -1,7 +1,7 @@
 .work ng-controller='WorksListWorkCtrl' ng-hide='hid'
   .media
     = link_to work_path(work), class: 'pull-left' do
-      = image_tag thumb_url(work.main_item, :image, '140x140e'), size: '70x70', alt: work.title
+      = image_tag tombo_thumb_url(work.main_item, :tombo_image, 'w:140,h:140'), size: '70x70', alt: work.title
     .media-body
       .title
         = link_to work.title, work_path(work)
