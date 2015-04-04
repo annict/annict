@@ -6,8 +6,6 @@
 #  user_id                             :integer          not null
 #  name                                :string(510)      default(""), not null
 #  description                         :string(510)      default(""), not null
-#  avatar_uid                          :string(510)
-#  background_image_uid                :string(510)
 #  created_at                          :datetime
 #  updated_at                          :datetime
 #  background_image_animated           :boolean          default(FALSE), not null

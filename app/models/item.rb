@@ -6,7 +6,6 @@
 #  work_id                  :integer
 #  name                     :string(510)      not null
 #  url                      :string(510)      not null
-#  image_uid                :string(510)
 #  main                     :boolean          not null
 #  created_at               :datetime
 #  updated_at               :datetime
