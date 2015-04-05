@@ -155,9 +155,9 @@ class Status < ActiveRecord::Base
       check = user.checks.create(work: work)
       check.update_episode_to_unchecked
 
-    # 初めて「見てる」にしたとき
-    elsif check.blank? && is_watching
-      check = user.checks.create(work: work)
+    # 「見てる」にしたとき
+    elsif is_watching
+      check = user.checks.create(work: work) if check.blank?
       check.update_episode_to_first
 
     # 「見てる」アニメを「中断」または「見たい」状態に変えたとき
