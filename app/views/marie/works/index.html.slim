@@ -4,8 +4,6 @@
 ul.nav.nav-tabs
   li class="#{'active' if !params.key?(:season) && 'index' == params[:action]}"
     = link_to t('words.all'), marie_works_path
-  li class="#{'active' if current_page?(action: 'on_air')}"
-    = link_to t('words.on_air'), on_air_marie_works_path
   li class="#{'active' if current_page?(season: ENV['ANNICT_CURRENT_SEASON'])}"
     = link_to t('words.current_season'), marie_works_path(season: ENV['ANNICT_CURRENT_SEASON'])
   li class="#{'active' if current_page?(season: ENV['ANNICT_NEXT_SEASON'])}"
@@ -27,7 +25,6 @@ table.table.table-striped
       th = t('activerecord.attributes.work.sc_tid')
       th Watchers
       th = t('activerecord.attributes.work.released_at')
-      th 放送中
       th 画像登録
       th 作品詳細
       th エピソード
@@ -41,7 +38,6 @@ table.table.table-striped
         td = work.sc_tid
         td = work.watchers_count
         td = work.released_at.presence || '-'
-        td = work.on_air? ? '放送中' : '-'
         td = work.items.where(main: true).present? ? '○' : '×'
         td
           = link_to work_path(work), target: '_blank' do

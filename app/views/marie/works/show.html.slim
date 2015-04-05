@@ -43,8 +43,5 @@ dl.dl-horizontal
   dt ニコニコチャンネル配信開始日
   dd = @work.nicoch_started_at.try(:to_time).presence || '-'
 
-  dt 放送中
-  dd = @work.on_air? ? '放送中' : '-'
-
   dt しょぼかるからデータを
   dd = @work.fetch_syobocal? ? '取得する' : '取得しない'

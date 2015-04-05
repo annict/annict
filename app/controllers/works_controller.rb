@@ -4,17 +4,7 @@ class WorksController < ApplicationController
   before_action :authenticate_user!, only: [:recommend]
 
   def index
-    redirect_to on_air_works_path
-  end
-
-  def on_air(page: nil)
-    @works = Work.on_air.order(watchers_count: :desc).page(page)
-
-    @page_title = '現在放送中のアニメ一覧'
-    @page_description = meta_description('現在放送中のアニメをチェック！')
-    @page_keywords = meta_keywords('放送中', '今期')
-
-    render :index
+    redirect_to season_works_path(ENV["ANNICT_CURRENT_SEASON"])
   end
 
   def popular(page: nil)

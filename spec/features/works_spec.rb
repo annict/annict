@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 describe '放送中の作品一覧ページ' do
-  let!(:work) { create(:work, :on_air, :with_item) }
+  let!(:work) { create(:work, :with_item) }
 
   before do
     visit '/works'
@@ -41,7 +41,7 @@ describe '人気の作品一覧ページ' do
 end
 
 describe '作品検索ページ' do
-  let!(:work) { create(:work, :on_air, :with_item) }
+  let!(:work) { create(:work, :with_item) }
 
   before do
     visit '/works/search'

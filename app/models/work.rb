@@ -15,7 +15,6 @@
 #  nicoch_started_at :datetime
 #  created_at        :datetime
 #  updated_at        :datetime
-#  on_air            :boolean          default(FALSE), not null
 #  fetch_syobocal    :boolean          default(FALSE), not null
 #  twitter_username  :string(510)
 #  twitter_hashtag   :string(510)
@@ -54,8 +53,6 @@ class Work < ActiveRecord::Base
 
     where(season_id: season.id)
   }
-
-  scope :on_air, -> { where(on_air: true) }
 
   scope :program_registered, -> {
     work_ids = joins(:programs).merge(Program.where(work_id: all.pluck(:id))).pluck(:id).uniq

@@ -32,8 +32,7 @@ module ApplicationHelper
 
   def works_page?
     params[:controller] == 'works' &&
-    (params[:action] == 'on_air' ||
-     params[:action] == 'season' ||
+    (params[:action] == 'season' ||
      params[:action] == 'popular' ||
      params[:action] == 'recommend' ||
      params[:action] == 'search')

@@ -58,8 +58,6 @@ Annict::Application.routes.draw do
 
   namespace :marie do
     resources :works do
-      get :on_air, on: :collection
-
       resources :episodes, only: [:index, :edit, :update, :destroy] do
         collection do
           get  :new_from_csv
@@ -139,7 +137,6 @@ Annict::Application.routes.draw do
 
   resources :works, only: [:index, :show] do
     collection do
-      get :on_air
       get :popular
       get :recommend
       get ':name',

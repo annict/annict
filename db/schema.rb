@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150404074101) do
+ActiveRecord::Schema.define(version: 20150405033916) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -383,7 +383,6 @@ ActiveRecord::Schema.define(version: 20150404074101) do
     t.datetime "updated_at"
     t.integer  "episodes_count",                default: 0,     null: false
     t.integer  "season_id"
-    t.boolean  "on_air",                        default: false, null: false
     t.string   "twitter_username",  limit: 255
     t.string   "twitter_hashtag",   limit: 255
     t.integer  "watchers_count",                default: 0,     null: false
@@ -395,7 +394,6 @@ ActiveRecord::Schema.define(version: 20150404074101) do
 
   add_index "works", ["episodes_count"], name: "index_works_on_episodes_count", using: :btree
   add_index "works", ["media"], name: "index_works_on_media", using: :btree
-  add_index "works", ["on_air"], name: "index_works_on_on_air", using: :btree
   add_index "works", ["released_at"], name: "index_works_on_released_at", using: :btree
   add_index "works", ["sc_tid"], name: "index_works_on_sc_tid", unique: true, using: :btree
   add_index "works", ["watchers_count"], name: "index_works_on_watchers_count", using: :btree
