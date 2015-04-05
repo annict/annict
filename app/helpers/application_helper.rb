@@ -51,6 +51,7 @@ module ApplicationHelper
       return "#{ENV['ANNICT_FILE_STORAGE_URL']}/#{path}"
     end
 
-    image.url(:master, size: size)
+    path = image.path(:master).sub(%r(\A.*paperclip/), "paperclip/")
+    "#{ENV['ANNICT_TOMBO_URL']}/#{size}/#{path}"
   end
 end
