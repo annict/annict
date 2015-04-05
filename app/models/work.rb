@@ -126,6 +126,14 @@ class Work < ActiveRecord::Base
     released_at.presence || released_at_about.presence || ''
   end
 
+  def current_season?
+    season.present? && season.slug == ENV["ANNICT_CURRENT_SEASON"]
+  end
+
+  def next_season?
+    season.present? && season.slug == ENV["ANNICT_NEXT_SEASON"]
+  end
+
   private
 
   # データベースには標準時 (UTC) を保存する
