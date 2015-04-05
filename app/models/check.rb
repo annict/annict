@@ -46,9 +46,9 @@ class Check < ActiveRecord::Base
 
     if unchecked_episode.present?
       update(episode_id: unchecked_episode.id)
-    elsif work.on_air?
-      # 放送中のアニメの場合はまだ最新エピソードが登録される可能性があるので、
-      # nilを設定しておく
+    elsif work.current_season? || work.next_season?
+      # 放送中の可能性が高いアニメ(今期アニメや来期アニメ)の場合は
+      # まだ最新エピソードが登録される可能性があるので、nilを設定しておく
       update(episode_id: nil)
     else
       update_episode_to_first

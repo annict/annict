@@ -1,6 +1,6 @@
 class Marie::WorksController < Marie::ApplicationController
   permits :season_id, :sc_tid, :title, :media, :official_site_url, :wikipedia_url,
-          :released_at, :released_at_about, :nicoch_started_at, :on_air,
+          :released_at, :released_at_about, :nicoch_started_at,
           :twitter_username, :twitter_hashtag, :fetch_syobocal
 
   before_filter :set_work, only: [:show, :edit, :update, :destroy]
@@ -13,13 +13,6 @@ class Marie::WorksController < Marie::ApplicationController
     else
       Work.by_season(season).order(released_at: :desc).page(page)
     end
-  end
-
-  def on_air(page: nil, q: nil)
-    @q = Work.search(q)
-    @works = Work.on_air.order(released_at: :desc).page(page)
-
-    render :index
   end
 
   def new

@@ -32,8 +32,7 @@ module ApplicationHelper
 
   def works_page?
     params[:controller] == 'works' &&
-    (params[:action] == 'on_air' ||
-     params[:action] == 'season' ||
+    (params[:action] == 'season' ||
      params[:action] == 'popular' ||
      params[:action] == 'recommend' ||
      params[:action] == 'search')
@@ -48,9 +47,10 @@ module ApplicationHelper
 
     # プロフィール背景画像がGifアニメのときは、S3に保存された画像をそのまま返す
     if accessor_name == :tombo_background_image && model.background_image_animated?
-      return "#{ENV['ANNICT_FILE_STORAGE_URL']}/#{image.path(:original)}"
+      path = image.path(:original).sub(%r(\A.*paperclip/), "paperclip/")
+      return "#{ENV['ANNICT_FILE_STORAGE_URL']}/#{path}"
     end
 
-    "#{ENV['ANNICT_TOMBO_URL']}/#{size}/#{image.path(:master)}"
+    image.url(:master, size: size)
   end
 end

@@ -1,4 +1,4 @@
-.works-index, .works-search, .works-on_air, .works-season, .works-popular, .works-recommend {
+.works-index, .works-search, .works-season, .works-popular, .works-recommend {
   @include works-list;
 
   > .content {
