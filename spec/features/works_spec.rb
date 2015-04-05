@@ -1,13 +1,13 @@
 require 'spec_helper'
 
-describe '放送中の作品一覧ページ' do
-  let!(:work) { create(:work, :with_item) }
+describe "今期作品一覧ページ" do
+  let!(:work) { create(:work, :with_item, :with_current_season) }
 
   before do
-    visit '/works'
+    visit "/works"
   end
 
-  it '放送中の作品が表示されること' do
+  it "今期の作品が表示されること" do
     expect(page).to have_content(work.title)
   end
 end

@@ -10,5 +10,12 @@ FactoryGirl.define do
         create(:item, { work: work })
       end
     end
+
+    trait :with_current_season do
+      after :create do |work|
+        season = create(:season, slug: ENV["ANNICT_CURRENT_SEASON"])
+        work.update(season_id: season.id)
+      end
+    end
   end
 end
