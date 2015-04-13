@@ -162,7 +162,7 @@ class User < ActiveRecord::Base
   def get_large_avatar_image(provider, image_url)
     url = case provider
           when 'twitter'  then image_url.sub('_normal', '')
-          when 'facebook' then "#{image_url}?type=large"
+          when 'facebook' then "#{image_url.sub("http://", "https://")}?type=large"
           end
     url
   end
