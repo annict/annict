@@ -119,11 +119,6 @@ class User < ActiveRecord::Base
     self
   end
 
-  def trim_username!
-    # Facebookからのユーザ登録のとき `username` に「.」が含まれている可能性があるので除去する
-    username.delete!('.')
-  end
-
   def following_activities
     following_ids = followings.pluck(:id)
     following_ids << self.id
@@ -167,7 +162,7 @@ class User < ActiveRecord::Base
   def get_large_avatar_image(provider, image_url)
     url = case provider
           when 'twitter'  then image_url.sub('_normal', '')
-          when 'facebook' then "#{image_url}?type=large"
+          when 'facebook' then "#{image_url.sub("http://", "https://")}?type=large"
           end
     url
   end
