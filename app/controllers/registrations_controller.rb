@@ -5,8 +5,11 @@ class RegistrationsController < Devise::RegistrationsController
     username = @oauth[:info][:nickname].presence || ''
     email = @oauth[:info][:email].presence || ''
 
+    # Facebookからのユーザ登録のとき `username` に「.」が
+    # 含まれている可能性があるので除去する
+    username.gsub!(".", "_")
+
     @user = User.new(username: username, email: email)
-    @user.trim_username!
   end
 
   def create

@@ -119,11 +119,6 @@ class User < ActiveRecord::Base
     self
   end
 
-  def trim_username!
-    # Facebookからのユーザ登録のとき `username` に「.」が含まれている可能性があるので除去する
-    username.delete!('.')
-  end
-
   def following_activities
     following_ids = followings.pluck(:id)
     following_ids << self.id
