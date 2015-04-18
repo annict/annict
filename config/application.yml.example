@@ -15,7 +15,6 @@ development:
   HOST: 'localhost:3000'
 
   ANNICT_IMAGE2_URL: 'http://192.168.33.11'
-  REDIS_URL: 'redis://localhost:6379/12'
 
   DRAGONFLY_URL_HOST: 'http://localhost:3000'
 

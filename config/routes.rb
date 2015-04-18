@@ -1,10 +1,4 @@
 Annict::Application.routes.draw do
-  require 'sidekiq/web'
-
-  authenticate :user, lambda { |u| u.role.admin? } do
-    mount Sidekiq::Web => '/sidekiq'
-  end
-
   if Rails.env.development?
     mount LetterOpenerWeb::Engine, at: '/low'
   end
