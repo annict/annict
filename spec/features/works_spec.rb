@@ -78,23 +78,3 @@ describe '作品詳細ページ' do
     end
   end
 end
-
-describe '作品オススメページ' do
-  context 'ログインしているとき' do
-    let(:user) { create(:registered_user) }
-
-    before do
-      login_as(user, scope: :user)
-    end
-
-    context '作品オススメページにアクセスしたとき' do
-      before do
-        visit "/works/recommend"
-      end
-
-      it 'ページが表示される' do
-        expect(page).to have_content('作品はありません')
-      end
-    end
-  end
-end

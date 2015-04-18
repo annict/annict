@@ -35,7 +35,6 @@ class Status < ActiveRecord::Base
   after_create :change_latest
   after_create :save_activity
   after_create :refresh_watchers_count
-  after_create :update_recommendable
   after_create :update_channel_work
   after_create :finish_tips
   after_create :refresh_check
@@ -105,21 +104,6 @@ class Status < ActiveRecord::Base
     @new_status ||= last_2_statuses.last.kind.to_sym
   end
 
-  # ステータスの変更があったとき、「Recommendable」の `like`, `dislike` などを呼び出して
-  # オススメ作品を更新する
-  def update_recommendable
-    case become_to
-    when :watch
-      user.undislike(work) if user.dislikes?(work)
-      user.like(work)
-    when :drop
-      user.unlike(work) if user.likes?(work)
-      user.dislike(work)
-    when :drop_first
-      user.dislike(work)
-    end
-  end
-
   def update_channel_work
     case kind
     when 'wanna_watch', 'watching'
@@ -128,7 +112,6 @@ class Status < ActiveRecord::Base
       ChannelWorkService.new(user).delete(work)
     end
   end
-
 
   private
 

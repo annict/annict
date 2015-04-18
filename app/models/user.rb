@@ -49,8 +49,6 @@ class User < ActiveRecord::Base
 
   enumerize :role, in: { user: 0, admin: 1, editor: 2 }, default: :user
 
-  recommends :works
-
   has_many :activities,    dependent: :destroy
   has_many :channel_works, dependent: :destroy
   has_many :checkins,      dependent: :destroy
