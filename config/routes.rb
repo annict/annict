@@ -100,10 +100,6 @@ Annict::Application.routes.draw do
 
   resource :setting, only: [:show, :update]
 
-  resource :shot, only: [] do
-    get ':username', to: 'shots#show', as: :user
-  end
-
   resources :statuses, only: [] do
     delete :like, to: 'likes#status_destroy'
     post   :like, to: 'likes#status_create'

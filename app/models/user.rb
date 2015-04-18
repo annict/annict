@@ -61,7 +61,6 @@ class User < ActiveRecord::Base
   has_many :providers,     dependent: :destroy
   has_many :receptions,    dependent: :destroy
   has_many :channels,      through:   :receptions
-  has_many :shots,         dependent: :destroy
   has_many :statuses,      dependent: :destroy
   has_one  :profile,       dependent: :destroy
   has_one  :setting,       dependent: :destroy

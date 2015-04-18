@@ -144,13 +144,6 @@ GEM
       interception
     diff-lcs (1.2.5)
     docile (1.1.5)
-    dragonfly (1.0.7)
-      addressable (~> 2.3)
-      multi_json (~> 1.0)
-      rack
-    dragonfly-s3_data_store (1.0.4)
-      dragonfly (~> 1.0)
-      fog
     email_validator (1.5.0)
       activemodel
     enumerize (0.10.1)
@@ -555,8 +548,6 @@ DEPENDENCIES
   delayed_job_active_record
   devise
   did_you_mean
-  dragonfly (= 1.0.7)
-  dragonfly-s3_data_store
   email_validator
   enumerize
   factory_girl_rails
