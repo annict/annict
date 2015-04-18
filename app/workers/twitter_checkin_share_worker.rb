@@ -56,12 +56,12 @@ class TwitterCheckinShareWorker
   def generate_tweet_body(data)
     if data[:comment].present?
       "#{data[:comment]}／#{data[:work_title]} #{data[:episode_number]}" +
-        "にチェックイン！#{data[:share_url]} #{data[:share_hashtag]}"
+        " にチェックイン！#{data[:share_url]} #{data[:share_hashtag]}"
     else
       episode_title = data[:episode_title].present? ? "「#{data[:episode_title]}」" : ""
 
       "#{data[:work_title]} #{data[:episode_number]}#{episode_title}" +
-        "にチェックイン！#{data[:share_url]} #{data[:share_hashtag]}"
+        " にチェックイン！#{data[:share_url]} #{data[:share_hashtag]}"
     end
   end
 
