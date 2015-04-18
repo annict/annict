@@ -1,8 +1,6 @@
 class WorksController < ApplicationController
   include ApplicationHelper
 
-  before_action :authenticate_user!, only: [:recommend]
-
   def index
     redirect_to season_works_path(ENV["ANNICT_CURRENT_SEASON"])
   end
@@ -13,17 +11,6 @@ class WorksController < ApplicationController
     @page_title = '人気アニメ一覧'
     @page_description = meta_description('Annictユーザに人気のアニメをチェック！')
     @page_keywords = meta_keywords('人気', '評判')
-
-    render :index
-  end
-
-  def recommend(page: nil)
-    work_ids = current_user.recommended_works(100).map(&:id)
-    @works = current_user.works.unknown.where(id: work_ids)
-      .order(watchers_count: :desc)
-      .page(page)
-
-    @page_title = "あなたにオススメのアニメ一覧"
 
     render :index
   end

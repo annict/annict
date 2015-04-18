@@ -1,6 +1,6 @@
 source "https://rubygems.org"
 
-ruby "2.2.1"
+ruby "2.2.2"
 
 gem "rails", "4.2.1"
 
@@ -16,6 +16,7 @@ gem "bourbon"
 gem "browser"
 gem "by_star"
 gem "coffee-rails"
+gem "delayed_job_active_record"
 gem "devise"
 gem "dragonfly", "1.0.7"
 gem "dragonfly-s3_data_store"
@@ -44,14 +45,10 @@ gem "rails-i18n"
 gem "ransack"
 gem "rmagick"
 gem "sass-rails"
-gem "sidekiq"
-gem "sidekiq-middleware" # Recommendableで使用
 gem "sinatra", require: nil
 gem "slim"
-gem "recommendable" # gem "sidekiq" より下に置く必要があるらしい
 gem "twitter"
 gem "uglifier"
-gem "whenever", require: false
 
 source "https://rails-assets.org" do
   gem "rails-assets-angularjs"

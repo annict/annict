@@ -87,9 +87,9 @@ class Checkin < ActiveRecord::Base
 
   def share_to_sns
     if shared_twitter?
-      TwitterCheckinShareWorker.perform_async(id)
+      TwitterService.new(user).delay.share!(self)
     elsif shared_facebook?
-      FacebookCheckinShareWorker.perform_async(id)
+      FacebookService.new(user).delay.share!(self)
     end
   end
 

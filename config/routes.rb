@@ -1,10 +1,4 @@
 Annict::Application.routes.draw do
-  require 'sidekiq/web'
-
-  authenticate :user, lambda { |u| u.role.admin? } do
-    mount Sidekiq::Web => '/sidekiq'
-  end
-
   if Rails.env.development?
     mount LetterOpenerWeb::Engine, at: '/low'
   end
@@ -48,8 +42,6 @@ Annict::Application.routes.draw do
       resources :programs, only: [:index], controller: 'user_programs'
     end
     resources :works,      only: [] do
-      post :hide, on: :member
-
       resources :channels, only: [] do
         post :select, on: :collection
       end
@@ -138,7 +130,6 @@ Annict::Application.routes.draw do
   resources :works, only: [:index, :show] do
     collection do
       get :popular
-      get :recommend
       get ':name',
         action: :season,
         name: /[0-9]{4}-(spring|summer|autumn|winter)/,
