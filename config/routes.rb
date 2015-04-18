@@ -42,8 +42,6 @@ Annict::Application.routes.draw do
       resources :programs, only: [:index], controller: 'user_programs'
     end
     resources :works,      only: [] do
-      post :hide, on: :member
-
       resources :channels, only: [] do
         post :select, on: :collection
       end

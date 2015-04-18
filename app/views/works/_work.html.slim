@@ -1,4 +1,4 @@
-.work ng-controller='WorksListWorkCtrl' ng-hide='hid'
+.work
   .media
     = link_to work_path(work), class: 'pull-left' do
       = image_tag tombo_thumb_url(work.main_item, :tombo_image, 'w:140,h:140'), size: '70x70', alt: work.title
@@ -27,8 +27,4 @@
           = render 'works/channel_selector', mini: true, work: work
         - else
           = render 'status_selector', mini: true, work: work
-
-        - if params[:action] == 'recommend'
-          .hide-work.fake-link ng-click="hide(#{work.id})"
-            = t('works.hide')
   hr
