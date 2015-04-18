@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150418082724) do
+ActiveRecord::Schema.define(version: 20150418164640) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -284,15 +284,6 @@ ActiveRecord::Schema.define(version: 20150418082724) do
 
   add_index "settings", ["user_id"], name: "index_settings_on_user_id", using: :btree
 
-  create_table "shots", force: :cascade do |t|
-    t.integer  "user_id",                null: false
-    t.string   "image_uid",  limit: 255, null: false
-    t.datetime "created_at"
-    t.datetime "updated_at"
-  end
-
-  add_index "shots", ["image_uid"], name: "index_shots_on_image_uid", unique: true, using: :btree
-
   create_table "staffs", force: :cascade do |t|
     t.string   "email",              limit: 255, default: "", null: false
     t.string   "encrypted_password", limit: 255, default: "", null: false
@@ -446,7 +437,6 @@ ActiveRecord::Schema.define(version: 20150418082724) do
   add_foreign_key "receptions", "channels", name: "receptions_channel_id_fk", on_delete: :cascade
   add_foreign_key "receptions", "users", name: "receptions_user_id_fk", on_delete: :cascade
   add_foreign_key "settings", "users"
-  add_foreign_key "shots", "users", name: "shots_user_id_fk", on_delete: :cascade
   add_foreign_key "statuses", "users", name: "statuses_user_id_fk", on_delete: :cascade
   add_foreign_key "statuses", "works", name: "statuses_work_id_fk", on_delete: :cascade
   add_foreign_key "syobocal_alerts", "works", name: "syobocal_alerts_work_id_fk", on_delete: :cascade

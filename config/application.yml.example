@@ -16,8 +16,6 @@ development:
 
   ANNICT_IMAGE2_URL: 'http://192.168.33.11'
 
-  DRAGONFLY_URL_HOST: 'http://localhost:3000'
-
   TWITTER_CONSUMER_KEY: '12345'
   TWITTER_CONSUMER_SECRET: '12345'
 
