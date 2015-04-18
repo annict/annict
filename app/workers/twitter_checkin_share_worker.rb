@@ -27,7 +27,7 @@ class TwitterCheckinShareWorker
       work_title: checkin.work.title,
       episode_number: get_episode_number(checkin),
       episode_title: get_episode_title(checkin),
-      share_url: "#{ENV['ANNICT_URL']}/r/tw/#{checkin.twitter_url_hash}",
+      share_url: "#{ENV['ANNICT_HOST_SHORT']}/r/tw/#{checkin.twitter_url_hash}",
       share_hashtag: get_share_hashtag(checkin),
       comment: checkin.comment
     }
