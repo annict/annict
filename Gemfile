@@ -51,7 +51,6 @@ gem "slim"
 gem "recommendable" # gem "sidekiq" より下に置く必要があるらしい
 gem "twitter"
 gem "uglifier"
-gem "whenever", require: false
 
 source "https://rails-assets.org" do
   gem "rails-assets-angularjs"
