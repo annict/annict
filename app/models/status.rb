@@ -6,8 +6,8 @@
 #  user_id     :integer          not null
 #  work_id     :integer          not null
 #  kind        :integer          not null
-#  latest      :boolean          default("false"), not null
-#  likes_count :integer          default("0"), not null
+#  latest      :boolean          default(FALSE), not null
+#  likes_count :integer          default(0), not null
 #  created_at  :datetime
 #  updated_at  :datetime
 #
@@ -35,7 +35,6 @@ class Status < ActiveRecord::Base
   after_create :change_latest
   after_create :save_activity
   after_create :refresh_watchers_count
-  after_create :update_recommendable
   after_create :update_channel_work
   after_create :finish_tips
   after_create :refresh_check
@@ -105,21 +104,6 @@ class Status < ActiveRecord::Base
     @new_status ||= last_2_statuses.last.kind.to_sym
   end
 
-  # ステータスの変更があったとき、「Recommendable」の `like`, `dislike` などを呼び出して
-  # オススメ作品を更新する
-  def update_recommendable
-    case become_to
-    when :watch
-      user.undislike(work) if user.dislikes?(work)
-      user.like(work)
-    when :drop
-      user.unlike(work) if user.likes?(work)
-      user.dislike(work)
-    when :drop_first
-      user.dislike(work)
-    end
-  end
-
   def update_channel_work
     case kind
     when 'wanna_watch', 'watching'
@@ -128,7 +112,6 @@ class Status < ActiveRecord::Base
       ChannelWorkService.new(user).delete(work)
     end
   end
-
 
   private
 
@@ -155,14 +138,14 @@ class Status < ActiveRecord::Base
       check = user.checks.create(work: work)
       check.update_episode_to_unchecked
 
-    # 初めて「見てる」にしたとき
-    elsif check.blank? && is_watching
-      check = user.checks.create(work: work)
+    # 「見てる」にしたとき
+    elsif is_watching
+      check = user.checks.create(work: work) if check.blank?
       check.update_episode_to_first
 
     # 「見てる」アニメを「中断」または「見たい」状態に変えたとき
     elsif check.present? && is_watch_someday
-      check.update_column(:episode_id, nil)
+      check.update(episode_id: nil)
 
     # 「見てる」アニメを見終えたとき
     elsif check.present? && is_watch_over

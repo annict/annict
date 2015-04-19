@@ -1,13 +1,13 @@
 require 'spec_helper'
 
-describe '放送中の作品一覧ページ' do
-  let!(:work) { create(:work, :on_air, :with_item) }
+describe "今期作品一覧ページ" do
+  let!(:work) { create(:work, :with_item, :with_current_season) }
 
   before do
-    visit '/works'
+    visit "/works"
   end
 
-  it '放送中の作品が表示されること' do
+  it "今期の作品が表示されること" do
     expect(page).to have_content(work.title)
   end
 end
@@ -41,7 +41,7 @@ describe '人気の作品一覧ページ' do
 end
 
 describe '作品検索ページ' do
-  let!(:work) { create(:work, :on_air, :with_item) }
+  let!(:work) { create(:work, :with_item) }
 
   before do
     visit '/works/search'
@@ -74,26 +74,6 @@ describe '作品詳細ページ' do
 
       it 'ページが表示される' do
         expect(page).to have_content(work.title)
-      end
-    end
-  end
-end
-
-describe '作品オススメページ' do
-  context 'ログインしているとき' do
-    let(:user) { create(:registered_user) }
-
-    before do
-      login_as(user, scope: :user)
-    end
-
-    context '作品オススメページにアクセスしたとき' do
-      before do
-        visit "/works/recommend"
-      end
-
-      it 'ページが表示される' do
-        expect(page).to have_content('作品はありません')
       end
     end
   end

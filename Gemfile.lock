@@ -4,40 +4,40 @@ GEM
   specs:
     CFPropertyList (2.2.8)
     action_args (1.5.2)
-    actionmailer (4.2.0)
-      actionpack (= 4.2.0)
-      actionview (= 4.2.0)
-      activejob (= 4.2.0)
+    actionmailer (4.2.1)
+      actionpack (= 4.2.1)
+      actionview (= 4.2.1)
+      activejob (= 4.2.1)
       mail (~> 2.5, >= 2.5.4)
       rails-dom-testing (~> 1.0, >= 1.0.5)
-    actionpack (4.2.0)
-      actionview (= 4.2.0)
-      activesupport (= 4.2.0)
-      rack (~> 1.6.0)
+    actionpack (4.2.1)
+      actionview (= 4.2.1)
+      activesupport (= 4.2.1)
+      rack (~> 1.6)
       rack-test (~> 0.6.2)
       rails-dom-testing (~> 1.0, >= 1.0.5)
       rails-html-sanitizer (~> 1.0, >= 1.0.1)
-    actionview (4.2.0)
-      activesupport (= 4.2.0)
+    actionview (4.2.1)
+      activesupport (= 4.2.1)
       builder (~> 3.1)
       erubis (~> 2.7.0)
       rails-dom-testing (~> 1.0, >= 1.0.5)
       rails-html-sanitizer (~> 1.0, >= 1.0.1)
-    activejob (4.2.0)
-      activesupport (= 4.2.0)
+    activejob (4.2.1)
+      activesupport (= 4.2.1)
       globalid (>= 0.3.0)
-    activemodel (4.2.0)
-      activesupport (= 4.2.0)
+    activemodel (4.2.1)
+      activesupport (= 4.2.1)
       builder (~> 3.1)
-    activerecord (4.2.0)
-      activemodel (= 4.2.0)
-      activesupport (= 4.2.0)
+    activerecord (4.2.1)
+      activemodel (= 4.2.1)
+      activesupport (= 4.2.1)
       arel (~> 6.0)
     activerecord-session_store (0.1.1)
       actionpack (>= 4.0.0, < 5)
       activerecord (>= 4.0.0, < 5)
       railties (>= 4.0.0, < 5)
-    activesupport (4.2.0)
+    activesupport (4.2.1)
       i18n (~> 0.7)
       json (~> 1.7, >= 1.7.7)
       minitest (~> 5.1)
@@ -49,15 +49,15 @@ GEM
     anbt-sql-formatter (0.0.2)
     angular_rails_csrf (1.0.3)
       rails (>= 3, < 5)
-    annotate (2.6.6)
-      activerecord (>= 2.3.0)
-      rake (~> 10.4.2, >= 10.4.2)
+    annotate (2.6.8)
+      activerecord (>= 3.2, <= 4.3)
+      rake (~> 10.4)
     arel (6.0.0)
     asset_sync (1.1.0)
       activemodel
       fog (>= 1.8.0)
       unf
-    autoprefixer-rails (5.1.6)
+    autoprefixer-rails (5.1.7.1)
       execjs
       json
     awesome_print (1.6.1)
@@ -70,6 +70,9 @@ GEM
       multi_xml (~> 0.5)
     aws-sdk-resources (2.0.29)
       aws-sdk-core (= 2.0.29)
+    aws-sdk-v1 (1.63.0)
+      json (~> 1.4)
+      nokogiri (>= 1.4.4)
     bcrypt (3.1.9)
     better_errors (2.1.1)
       coderay (>= 1.0.0)
@@ -77,7 +80,7 @@ GEM
       rack (>= 0.9.0)
     binding_of_caller (0.7.2)
       debug_inspector (>= 0.0.1)
-    bootstrap-sass (3.3.3)
+    bootstrap-sass (3.3.4.1)
       autoprefixer-rails (>= 5.0.0.1)
       sass (>= 3.2.19)
     bourbon (4.2.1)
@@ -103,10 +106,11 @@ GEM
       rack (>= 1.0.0)
       rack-test (>= 0.5.4)
       xpath (~> 2.0)
-    celluloid (0.16.0)
-      timers (~> 4.0.0)
-    chronic (0.10.2)
+    climate_control (0.0.3)
+      activesupport (>= 3.0)
     cliver (0.3.2)
+    cocaine (0.5.7)
+      climate_control (>= 0.0.3, < 1.0)
     codeclimate-test-reporter (0.4.7)
       simplecov (>= 0.7.1, < 1.0.0)
     coderay (1.1.0)
@@ -118,13 +122,17 @@ GEM
       execjs
     coffee-script-source (1.8.0)
     columnize (0.9.0)
-    connection_pool (2.1.1)
     coolline (0.5.0)
       unicode_utils (~> 1.4)
     daemons (1.1.9)
     database_rewinder (0.5.1)
     debug_inspector (0.0.2)
     debugger-linecache (1.2.0)
+    delayed_job (4.0.6)
+      activesupport (>= 3.0, < 5.0)
+    delayed_job_active_record (4.0.3)
+      activerecord (>= 3.0, < 5.0)
+      delayed_job (>= 3.0, < 4.1)
     devise (3.4.1)
       bcrypt (~> 3.0)
       orm_adapter (~> 0.1)
@@ -136,13 +144,6 @@ GEM
       interception
     diff-lcs (1.2.5)
     docile (1.1.5)
-    dragonfly (1.0.7)
-      addressable (~> 2.3)
-      multi_json (~> 1.0)
-      rack
-    dragonfly-s3_data_store (1.0.4)
-      dragonfly (~> 1.0)
-      fog
     email_validator (1.5.0)
       activemodel
     enumerize (0.10.1)
@@ -218,7 +219,7 @@ GEM
     fog-xml (0.1.1)
       fog-core
       nokogiri (~> 1.5, >= 1.5.11)
-    font-awesome-sass (4.3.1)
+    font-awesome-sass (4.3.2.1)
       sass (~> 3.2)
     formatador (0.2.5)
     globalid (0.3.3)
@@ -234,9 +235,6 @@ GEM
     hirb-unicode (0.0.5)
       hirb (~> 0.5)
       unicode-display_width (~> 0.1.1)
-    hitimes (1.2.2)
-    hooks (0.4.0)
-      uber (~> 0.0.4)
     http (0.6.3)
       http_parser.rb (~> 0.6.0)
     http_parser.rb (0.6.0)
@@ -244,7 +242,7 @@ GEM
     inflecto (0.0.2)
     interception (0.5)
     ipaddress (0.8.0)
-    jbuilder (2.2.11)
+    jbuilder (2.2.12)
       activesupport (>= 3.0.0, < 5)
       multi_json (~> 1.2)
     jmespath (1.0.2)
@@ -292,7 +290,7 @@ GEM
     net-scp (1.2.1)
       net-ssh (>= 2.6.5)
     net-ssh (2.9.2)
-    newrelic_rpm (3.10.0.279)
+    newrelic_rpm (3.11.0.283)
     ngannotate-rails (0.15.4)
       execjs
       rails (>= 3.1)
@@ -329,6 +327,11 @@ GEM
     paper_trail (3.0.7)
       activerecord (>= 3.0, < 5.0)
       activesupport (>= 3.0, < 5.0)
+    paperclip (4.2.1)
+      activemodel (>= 3.0.0)
+      activesupport (>= 3.0.0)
+      cocaine (~> 0.5.3)
+      mime-types
     pg (0.18.1)
     poltergeist (1.6.0)
       capybara (~> 2.1)
@@ -357,32 +360,32 @@ GEM
       rack
     rack-test (0.6.3)
       rack (>= 1.0)
-    rails (4.2.0)
-      actionmailer (= 4.2.0)
-      actionpack (= 4.2.0)
-      actionview (= 4.2.0)
-      activejob (= 4.2.0)
-      activemodel (= 4.2.0)
-      activerecord (= 4.2.0)
-      activesupport (= 4.2.0)
+    rails (4.2.1)
+      actionmailer (= 4.2.1)
+      actionpack (= 4.2.1)
+      actionview (= 4.2.1)
+      activejob (= 4.2.1)
+      activemodel (= 4.2.1)
+      activerecord (= 4.2.1)
+      activesupport (= 4.2.1)
       bundler (>= 1.3.0, < 2.0)
-      railties (= 4.2.0)
+      railties (= 4.2.1)
       sprockets-rails
     rails-assets-SHA-1 (0.1.1)
-    rails-assets-angular (1.3.14)
-    rails-assets-angular-animate (1.3.14)
-      rails-assets-angular (= 1.3.14)
-    rails-assets-angular-sanitize (1.3.14)
-      rails-assets-angular (= 1.3.14)
+    rails-assets-angular (1.3.15)
+    rails-assets-angular-animate (1.3.15)
+      rails-assets-angular (= 1.3.15)
+    rails-assets-angular-sanitize (1.3.15)
+      rails-assets-angular (= 1.3.15)
+    rails-assets-angularjs (1.3.15)
     rails-assets-angulartics (0.17.2)
       rails-assets-SHA-1
       rails-assets-angular (>= 1.1.5)
       rails-assets-waypoints (~> 2.0.3)
     rails-assets-chartjs (1.0.2)
-    rails-assets-fastclick (1.0.6)
     rails-assets-jquery (2.1.3)
     rails-assets-jquery-easing-original (1.3.1)
-    rails-assets-lodash (3.5.0)
+    rails-assets-lodash (3.6.0)
     rails-assets-moment (2.9.0)
     rails-assets-ng-infinite-scroller-origin (1.2.0)
       rails-assets-angular (>= 1.2.0)
@@ -390,7 +393,7 @@ GEM
       rails-assets-jquery (>= 1.8)
     rails-deprecated_sanitizer (1.0.3)
       activesupport (>= 4.2.0.alpha)
-    rails-dom-testing (1.0.5)
+    rails-dom-testing (1.0.6)
       activesupport (>= 4.2.0.beta, < 5.0)
       nokogiri (~> 1.6.0)
       rails-deprecated_sanitizer (>= 1.0.1)
@@ -398,7 +401,7 @@ GEM
       anbt-sql-formatter
       awesome_print
       rails (>= 3.2.0)
-    rails-html-sanitizer (1.0.1)
+    rails-html-sanitizer (1.0.2)
       loofah (~> 2.0)
     rails-i18n (4.0.4)
       i18n (~> 0.6)
@@ -408,13 +411,13 @@ GEM
       rails_stdout_logging
     rails_serve_static_assets (0.0.2)
     rails_stdout_logging (0.0.3)
-    railties (4.2.0)
-      actionpack (= 4.2.0)
-      activesupport (= 4.2.0)
+    railties (4.2.1)
+      actionpack (= 4.2.1)
+      activesupport (= 4.2.1)
       rake (>= 0.8.7)
       thor (>= 0.18.1, < 2.0)
     rake (10.4.2)
-    ransack (1.6.3)
+    ransack (1.6.4)
       actionpack (>= 3.0)
       activerecord (>= 3.0)
       activesupport (>= 3.0)
@@ -424,13 +427,6 @@ GEM
       builder
       nokogiri (>= 1.4.1)
       trollop
-    recommendable (2.2.0)
-      activesupport (>= 3.0.0)
-      hooks (>= 0.2.1)
-      redis (>= 2.2.0)
-    redis (3.2.1)
-    redis-namespace (1.5.1)
-      redis (~> 3.0, >= 3.0.4)
     request_store (1.1.0)
     responders (2.0.2)
       railties (>= 4.2.0.alpha, < 5)
@@ -459,14 +455,6 @@ GEM
       sprockets (>= 2.8, < 4.0)
       sprockets-rails (>= 2.0, < 4.0)
       tilt (~> 1.1)
-    sidekiq (3.3.2)
-      celluloid (>= 0.16.0)
-      connection_pool (>= 2.1.1)
-      json
-      redis (>= 3.0.6)
-      redis-namespace (>= 1.3.1)
-    sidekiq-middleware (0.3.0)
-      sidekiq (>= 2.12.4)
     simple_oauth (0.3.1)
     simplecov (0.9.2)
       docile (~> 1.1.0)
@@ -499,10 +487,8 @@ GEM
       eventmachine (~> 1.0)
       rack (~> 1.0)
     thor (0.19.1)
-    thread_safe (0.3.4)
+    thread_safe (0.3.5)
     tilt (1.4.1)
-    timers (4.0.1)
-      hitimes
     trollop (2.0)
     twitter (5.14.0)
       addressable (~> 2.3)
@@ -517,7 +503,6 @@ GEM
       simple_oauth (~> 0.3.0)
     tzinfo (1.2.2)
       thread_safe (~> 0.1)
-    uber (0.0.13)
     uglifier (2.7.1)
       execjs (>= 0.3.0)
       json (>= 1.8.0)
@@ -532,8 +517,6 @@ GEM
     websocket-driver (0.5.1)
       websocket-extensions (>= 0.1.0)
     websocket-extensions (0.1.1)
-    whenever (0.9.4)
-      chronic (>= 0.6.3)
     xpath (2.0.0)
       nokogiri (~> 1.3)
 
@@ -549,6 +532,7 @@ DEPENDENCIES
   asset_sync
   awesome_print
   aws-sdk
+  aws-sdk-v1
   better_errors
   binding_of_caller
   bootstrap-sass
@@ -561,10 +545,9 @@ DEPENDENCIES
   codeclimate-test-reporter
   coffee-rails
   database_rewinder
+  delayed_job_active_record
   devise
   did_you_mean
-  dragonfly (= 1.0.7)
-  dragonfly-s3_data_store
   email_validator
   enumerize
   factory_girl_rails
@@ -587,6 +570,7 @@ DEPENDENCIES
   omniauth-facebook
   omniauth-twitter
   paper_trail
+  paperclip
   pg
   poltergeist
   pry-byebug
@@ -594,13 +578,12 @@ DEPENDENCIES
   pry-rails
   puma
   quiet_assets
-  rails (= 4.2.0)
-  rails-assets-angular!
+  rails (= 4.2.1)
   rails-assets-angular-animate!
   rails-assets-angular-sanitize!
+  rails-assets-angularjs!
   rails-assets-angulartics!
   rails-assets-chartjs!
-  rails-assets-fastclick!
   rails-assets-jquery-easing-original!
   rails-assets-lodash!
   rails-assets-moment!
@@ -609,13 +592,10 @@ DEPENDENCIES
   rails-i18n
   rails_12factor
   ransack
-  recommendable
   rmagick
   rspec-mocks
   rspec-rails
   sass-rails
-  sidekiq
-  sidekiq-middleware
   sinatra
   slim
   spring
@@ -623,4 +603,3 @@ DEPENDENCIES
   thin
   twitter
   uglifier
-  whenever

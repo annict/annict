@@ -6,7 +6,7 @@
 #  user_id     :integer          not null
 #  checkin_id  :integer          not null
 #  body        :text             not null
-#  likes_count :integer          default("0"), not null
+#  likes_count :integer          default(0), not null
 #  created_at  :datetime
 #  updated_at  :datetime
 #

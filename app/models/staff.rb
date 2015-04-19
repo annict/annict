@@ -5,7 +5,7 @@
 #  id                 :integer          not null, primary key
 #  email              :string(510)      default(""), not null
 #  encrypted_password :string(510)      default(""), not null
-#  sign_in_count      :integer          default("0"), not null
+#  sign_in_count      :integer          default(0), not null
 #  current_sign_in_at :datetime
 #  last_sign_in_at    :datetime
 #  current_sign_in_ip :string(510)

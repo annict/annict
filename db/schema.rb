@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150228061604) do
+ActiveRecord::Schema.define(version: 20150418164640) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -116,6 +116,22 @@ ActiveRecord::Schema.define(version: 20150228061604) do
     t.datetime "updated_at"
   end
 
+  create_table "delayed_jobs", force: :cascade do |t|
+    t.integer  "priority",   default: 0, null: false
+    t.integer  "attempts",   default: 0, null: false
+    t.text     "handler",                null: false
+    t.text     "last_error"
+    t.datetime "run_at"
+    t.datetime "locked_at"
+    t.datetime "failed_at"
+    t.string   "locked_by"
+    t.string   "queue"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "delayed_jobs", ["priority", "run_at"], name: "delayed_jobs_priority", using: :btree
+
   create_table "episodes", force: :cascade do |t|
     t.integer  "work_id",                                 null: false
     t.string   "number",          limit: 255
@@ -152,12 +168,15 @@ ActiveRecord::Schema.define(version: 20150228061604) do
 
   create_table "items", force: :cascade do |t|
     t.integer  "work_id"
-    t.string   "name",       limit: 255,                 null: false
-    t.string   "url",        limit: 255,                 null: false
-    t.string   "image_uid",  limit: 255,                 null: false
-    t.boolean  "main",                   default: false, null: false
+    t.string   "name",                     limit: 255,                 null: false
+    t.string   "url",                      limit: 255,                 null: false
+    t.boolean  "main",                                 default: false, null: false
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.string   "tombo_image_file_name"
+    t.string   "tombo_image_content_type"
+    t.integer  "tombo_image_file_size"
+    t.datetime "tombo_image_updated_at"
   end
 
   create_table "likes", force: :cascade do |t|
@@ -185,14 +204,20 @@ ActiveRecord::Schema.define(version: 20150228061604) do
   add_index "notifications", ["trackable_id", "trackable_type"], name: "index_notifications_on_trackable_id_and_trackable_type", using: :btree
 
   create_table "profiles", force: :cascade do |t|
-    t.integer  "user_id",                                               null: false
-    t.string   "name",                      limit: 255, default: "",    null: false
-    t.string   "description",               limit: 255, default: "",    null: false
+    t.integer  "user_id",                                                         null: false
+    t.string   "name",                                limit: 255, default: "",    null: false
+    t.string   "description",                         limit: 255, default: "",    null: false
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.string   "avatar_uid",                limit: 255
-    t.string   "background_image_uid",      limit: 255
-    t.boolean  "background_image_animated",             default: false, null: false
+    t.boolean  "background_image_animated",                       default: false, null: false
+    t.string   "tombo_avatar_file_name"
+    t.string   "tombo_avatar_content_type"
+    t.integer  "tombo_avatar_file_size"
+    t.datetime "tombo_avatar_updated_at"
+    t.string   "tombo_background_image_file_name"
+    t.string   "tombo_background_image_content_type"
+    t.integer  "tombo_background_image_file_size"
+    t.datetime "tombo_background_image_updated_at"
   end
 
   add_index "profiles", ["user_id"], name: "index_profiles_on_user_id", unique: true, using: :btree
@@ -258,15 +283,6 @@ ActiveRecord::Schema.define(version: 20150228061604) do
   end
 
   add_index "settings", ["user_id"], name: "index_settings_on_user_id", using: :btree
-
-  create_table "shots", force: :cascade do |t|
-    t.integer  "user_id",                null: false
-    t.string   "image_uid",  limit: 255, null: false
-    t.datetime "created_at"
-    t.datetime "updated_at"
-  end
-
-  add_index "shots", ["image_uid"], name: "index_shots_on_image_uid", unique: true, using: :btree
 
   create_table "staffs", force: :cascade do |t|
     t.string   "email",              limit: 255, default: "", null: false
@@ -374,7 +390,6 @@ ActiveRecord::Schema.define(version: 20150228061604) do
     t.datetime "updated_at"
     t.integer  "episodes_count",                default: 0,     null: false
     t.integer  "season_id"
-    t.boolean  "on_air",                        default: false, null: false
     t.string   "twitter_username",  limit: 255
     t.string   "twitter_hashtag",   limit: 255
     t.integer  "watchers_count",                default: 0,     null: false
@@ -386,7 +401,6 @@ ActiveRecord::Schema.define(version: 20150228061604) do
 
   add_index "works", ["episodes_count"], name: "index_works_on_episodes_count", using: :btree
   add_index "works", ["media"], name: "index_works_on_media", using: :btree
-  add_index "works", ["on_air"], name: "index_works_on_on_air", using: :btree
   add_index "works", ["released_at"], name: "index_works_on_released_at", using: :btree
   add_index "works", ["sc_tid"], name: "index_works_on_sc_tid", unique: true, using: :btree
   add_index "works", ["watchers_count"], name: "index_works_on_watchers_count", using: :btree
@@ -423,7 +437,6 @@ ActiveRecord::Schema.define(version: 20150228061604) do
   add_foreign_key "receptions", "channels", name: "receptions_channel_id_fk", on_delete: :cascade
   add_foreign_key "receptions", "users", name: "receptions_user_id_fk", on_delete: :cascade
   add_foreign_key "settings", "users"
-  add_foreign_key "shots", "users", name: "shots_user_id_fk", on_delete: :cascade
   add_foreign_key "statuses", "users", name: "statuses_user_id_fk", on_delete: :cascade
   add_foreign_key "statuses", "works", name: "statuses_work_id_fk", on_delete: :cascade
   add_foreign_key "syobocal_alerts", "works", name: "syobocal_alerts_work_id_fk", on_delete: :cascade

@@ -1,8 +1,8 @@
 source "https://rubygems.org"
 
-ruby "2.2.1"
+ruby "2.2.2"
 
-gem "rails", "4.2.0"
+gem "rails", "4.2.1"
 
 gem "action_args"
 gem "activerecord-session_store"
@@ -10,14 +10,14 @@ gem "acts_as_list"
 gem "angular_rails_csrf"
 gem "annotate"
 gem "asset_sync"
+gem "aws-sdk-v1" # Paperclipで使用
 gem "bootstrap-sass"
 gem "bourbon"
 gem "browser"
 gem "by_star"
 gem "coffee-rails"
+gem "delayed_job_active_record"
 gem "devise"
-gem "dragonfly", "1.0.7"
-gem "dragonfly-s3_data_store"
 gem "email_validator"
 gem "enumerize"
 gem "figaro"
@@ -36,28 +36,24 @@ gem "nokogiri"
 gem "omniauth-facebook"
 gem "omniauth-twitter"
 gem "paper_trail"
+gem "paperclip"
 gem "pg"
 gem "puma"
 gem "rails-i18n"
 gem "ransack"
 gem "rmagick"
 gem "sass-rails"
-gem "sidekiq"
-gem "sidekiq-middleware" # Recommendableで使用
 gem "sinatra", require: nil
 gem "slim"
-gem "recommendable" # gem "sidekiq" より下に置く必要があるらしい
 gem "twitter"
 gem "uglifier"
-gem "whenever", require: false
 
 source "https://rails-assets.org" do
-  gem "rails-assets-angular"
+  gem "rails-assets-angularjs"
   gem "rails-assets-angular-animate"
   gem "rails-assets-angular-sanitize"
   gem "rails-assets-angulartics"
   gem "rails-assets-chartjs"
-  gem "rails-assets-fastclick"
   gem "rails-assets-jquery-easing-original"
   gem "rails-assets-lodash"
   gem "rails-assets-moment"

@@ -17,7 +17,7 @@ table.table.table-striped
     - @items.each do |item|
       tr
         td = item.id
-        td = image_tag thumb_url(item, :image, '200x200e')
+        td = image_tag tombo_thumb_url(item, :tombo_image, 'w:200,h:200')
         td = item.name
         td = item.url.truncate(30)
         td = item.main? ? '○' : '-'

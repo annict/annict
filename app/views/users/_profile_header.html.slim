@@ -1,9 +1,9 @@
 .profile-header
   .profile
-    .background style="background-image: url(#{profile_background_image_url(user.profile)});"
+    .background style="background-image: url(#{tombo_profile_background_image_url(user.profile)});"
     .foreground
       .avatar
-        = image_tag(thumb_url(user.profile, :avatar, '200x200e'), size: '100x100', class: 'img-circle')
+        = image_tag(tombo_thumb_url(user.profile, :tombo_avatar, 'w:200,h:200'), size: '100x100', class: 'img-circle')
       h1
         = user.profile.name
       .username
@@ -12,8 +12,6 @@
         .description
           = user.profile.description
       - if user_signed_in?
-        - if current_user == user && user.shareable_to?(:twitter)
-          = render 'share_button', user: user
         - if current_user != user
           = render 'follow_button', user: user
 

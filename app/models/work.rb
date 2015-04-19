@@ -9,14 +9,13 @@
 #  media             :integer          not null
 #  official_site_url :string(510)      default(""), not null
 #  wikipedia_url     :string(510)      default(""), not null
-#  episodes_count    :integer          default("0"), not null
-#  watchers_count    :integer          default("0"), not null
+#  episodes_count    :integer          default(0), not null
+#  watchers_count    :integer          default(0), not null
 #  released_at       :date
 #  nicoch_started_at :datetime
 #  created_at        :datetime
 #  updated_at        :datetime
-#  on_air            :boolean          default("false"), not null
-#  fetch_syobocal    :boolean          default("false"), not null
+#  fetch_syobocal    :boolean          default(FALSE), not null
 #  twitter_username  :string(510)
 #  twitter_hashtag   :string(510)
 #  released_at_about :string
@@ -54,8 +53,6 @@ class Work < ActiveRecord::Base
 
     where(season_id: season.id)
   }
-
-  scope :on_air, -> { where(on_air: true) }
 
   scope :program_registered, -> {
     work_ids = joins(:programs).merge(Program.where(work_id: all.pluck(:id))).pluck(:id).uniq
@@ -124,6 +121,14 @@ class Work < ActiveRecord::Base
 
   def release_date
     released_at.presence || released_at_about.presence || ''
+  end
+
+  def current_season?
+    season.present? && season.slug == ENV["ANNICT_CURRENT_SEASON"]
+  end
+
+  def next_season?
+    season.present? && season.slug == ENV["ANNICT_NEXT_SEASON"]
   end
 
   private

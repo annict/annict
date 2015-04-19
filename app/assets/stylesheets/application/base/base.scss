@@ -59,6 +59,11 @@ body {
     }
   }
 
+  .modal-backdrop {
+    height: 100%;
+    z-index: 999;
+  }
+
   .info.well {
     -moz-box-shadow: none;
     -webkit-box-shadow: none;

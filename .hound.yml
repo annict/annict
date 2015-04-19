@@ -1,9 +1,5 @@
 ruby:
-  enabled: true
-  config_file: .rubocop.yml
-
-coffee_script:
-  enabled: true
+  config_file: config/styles/ruby.yml
 
 scss:
-  config_file: scss.yml
+  config_file: config/styles/scss.yml

@@ -30,7 +30,7 @@
           .media
             .media-left
               = link_to user_path(comment.user.username), class: 'pull-left' do
-                = image_tag thumb_url(comment.user.profile, :avatar, '100x100e'), size: '50x50', class: 'img-circle'
+                = image_tag tombo_thumb_url(comment.user.profile, :tombo_avatar, 'w:100,h:100'), size: '50x50', class: 'img-circle'
             .media-body
               .top
                 .pull-left

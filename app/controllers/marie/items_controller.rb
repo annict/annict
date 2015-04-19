@@ -1,5 +1,5 @@
 class Marie::ItemsController < Marie::ApplicationController
-  permits :name, :image, :main, :url
+  permits :name, :tombo_image, :main, :url
 
   before_filter :set_work, only: [:index, :new, :create, :edit, :update, :destroy]
   before_filter :set_item, only: [:edit, :update, :destroy]

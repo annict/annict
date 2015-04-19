@@ -8,7 +8,7 @@
 #  role                 :integer          not null
 #  encrypted_password   :string(510)      default(""), not null
 #  remember_created_at  :datetime
-#  sign_in_count        :integer          default("0"), not null
+#  sign_in_count        :integer          default(0), not null
 #  current_sign_in_at   :datetime
 #  last_sign_in_at      :datetime
 #  current_sign_in_ip   :string(510)
@@ -17,11 +17,11 @@
 #  confirmed_at         :datetime
 #  confirmation_sent_at :datetime
 #  unconfirmed_email    :string(510)
-#  checkins_count       :integer          default("0"), not null
-#  notifications_count  :integer          default("0"), not null
+#  checkins_count       :integer          default(0), not null
+#  notifications_count  :integer          default(0), not null
 #  created_at           :datetime
 #  updated_at           :datetime
-#  share_checkin        :boolean          default("false")
+#  share_checkin        :boolean          default(FALSE)
 #
 # Indexes
 #
@@ -49,8 +49,6 @@ class User < ActiveRecord::Base
 
   enumerize :role, in: { user: 0, admin: 1, editor: 2 }, default: :user
 
-  recommends :works
-
   has_many :activities,    dependent: :destroy
   has_many :channel_works, dependent: :destroy
   has_many :checkins,      dependent: :destroy
@@ -63,7 +61,6 @@ class User < ActiveRecord::Base
   has_many :providers,     dependent: :destroy
   has_many :receptions,    dependent: :destroy
   has_many :channels,      through:   :receptions
-  has_many :shots,         dependent: :destroy
   has_many :statuses,      dependent: :destroy
   has_one  :profile,       dependent: :destroy
   has_one  :setting,       dependent: :destroy
@@ -109,19 +106,14 @@ class User < ActiveRecord::Base
     end
 
     self.build_profile do |p|
-      p.name        = oauth[:info][:name].presence || oauth[:info][:nickname]
-      p.description = oauth[:info][:description]
-      p.avatar_url  = get_large_avatar_image(oauth[:provider], oauth[:info][:image])
+      p.name         = oauth[:info][:name].presence || oauth[:info][:nickname]
+      p.description  = oauth[:info][:description]
+      p.tombo_avatar = URI.parse(get_large_avatar_image(oauth[:provider], oauth[:info][:image]))
     end
 
     self.build_setting
 
     self
-  end
-
-  def trim_username!
-    # Facebookからのユーザ登録のとき `username` に「.」が含まれている可能性があるので除去する
-    username.delete!('.')
   end
 
   def following_activities
@@ -167,7 +159,7 @@ class User < ActiveRecord::Base
   def get_large_avatar_image(provider, image_url)
     url = case provider
           when 'twitter'  then image_url.sub('_normal', '')
-          when 'facebook' then "#{image_url}?type=large"
+          when 'facebook' then "#{image_url.sub("http://", "https://")}?type=large"
           end
     url
   end

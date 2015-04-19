@@ -32,8 +32,7 @@ module ApplicationHelper
 
   def works_page?
     params[:controller] == 'works' &&
-    (params[:action] == 'on_air' ||
-     params[:action] == 'season' ||
+    (params[:action] == 'season' ||
      params[:action] == 'popular' ||
      params[:action] == 'recommend' ||
      params[:action] == 'search')
@@ -43,14 +42,16 @@ module ApplicationHelper
     params[:controller] == 'users' && params[:action] == 'show'
   end
 
-  def thumb_url(model, accessor_name, size)
-    path = model.send("#{accessor_name}_uid")
+  def tombo_thumb_url(model, accessor_name, size = "")
+    image = model.send(accessor_name)
 
     # プロフィール背景画像がGifアニメのときは、S3に保存された画像をそのまま返す
-    if accessor_name == :background_image && model.background_image_animated?
-      return "#{ENV['ANNICT_IMAGE2_URL']}/images/#{path}"
+    if accessor_name == :tombo_background_image && model.background_image_animated?
+      path = image.path(:original).sub(%r(\A.*paperclip/), "paperclip/")
+      return "#{ENV['ANNICT_FILE_STORAGE_URL']}/#{path}"
     end
 
-    "#{ENV['ANNICT_IMAGE2_URL']}/#{size}/#{path}"
+    path = image.path(:master).sub(%r(\A.*paperclip/), "paperclip/")
+    "#{ENV['ANNICT_TOMBO_URL']}/#{size}/#{path}"
   end
 end
