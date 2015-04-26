@@ -1,0 +1,39 @@
+= content_for :site_page_title, "「#{@work.title}」のエピソード"
+
+= render "db/works/header", work: @work
+
+hr
+
+.pull-right
+  = link_to "新規登録", new_db_work_episode_path(@work), class: "btn btn-primary"
+
+.clearfix
+
+table.table.table-striped
+  thead
+    tr
+      th ID
+      th 話数
+      th サブタイトル
+      th 次のエピソード
+      th ソート番号
+      th チェックイン数
+      th 編集
+      - if current_user.role.admin?
+        th 削除
+  tbody
+    - @episodes.each do |episode|
+      tr
+        td = link_to episode.id, work_episode_path(@work, episode), target: "_blank"
+        td = episode.number.presence || "-"
+        td = episode.title.presence || "-"
+        td = episode.next_episode.try(:number).presence || "-"
+        td = episode.sort_number
+        td = episode.checkins.count
+        td = link_to "編集", edit_db_work_episode_path(@work, episode)
+        - if current_user.role.admin?
+          td = link_to "削除", db_work_episode_path(@work, episode), data: { method: :delete, confirm: "このエピソードを削除しますか？" }
+
+
+- if @episodes.blank?
+  .well 登録されているエピソードはありません。

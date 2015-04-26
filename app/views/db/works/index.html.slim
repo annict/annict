@@ -1,0 +1,47 @@
+.pull-right
+  = link_to "新規登録", new_db_work_path, class: "btn btn-primary"
+
+ul.nav.nav-tabs
+  = active_link_to db_works_path, wrap_tag: :li, active: params[:action] == "index" do
+    | 全て
+    .badge = @all_works.count
+  = active_link_to season_db_works_path(slug: ENV["ANNICT_CURRENT_SEASON"]), wrap_tag: :li, active: (params[:slug] == ENV["ANNICT_CURRENT_SEASON"]) do
+    | 今期
+    .badge = @current_season_works.count
+  = active_link_to season_db_works_path(slug: ENV["ANNICT_NEXT_SEASON"]), wrap_tag: :li, active: (params[:slug] == ENV["ANNICT_NEXT_SEASON"]) do
+    | 来期
+    .badge = @next_season_works.count
+  = active_link_to season_db_works_path(slug: ENV["ANNICT_PREVIOUS_SEASON"]), wrap_tag: :li, active: (params[:slug] == ENV["ANNICT_PREVIOUS_SEASON"]) do
+    | 前期
+    .badge = @previous_season_works.count
+  = active_link_to resourceless_db_works_path(_name: :episode), wrap_tag: :li, active: (params[:name] == "episode") do
+    | エピソード未登録
+    .badge = @episodeless_works.count
+  = active_link_to resourceless_db_works_path(name: :item), wrap_tag: :li, active: (params[:name] == "item") do
+    | 作品画像未登録
+    .badge = @itemless_works.count
+
+table.table.table-striped
+  thead
+    tr
+      th ID
+      th タイトル
+      th しょぼかるID
+      th 視聴者数
+      th リリース日
+      th 作品画像
+  tbody
+    - @works.each do |work|
+      tr
+        td = link_to work.id, work_path(work), target: "_blank"
+        td = link_to work.title, edit_db_work_path(work)
+        td
+          - if work.sc_tid.present?
+            = link_to work.sc_tid, work.syobocal_url, target: "_blank"
+          - else
+            = "-"
+        td = "#{work.watchers_count}人"
+        td = work.released_at.presence || "-"
+        td = image_tag tombo_thumb_url(work.main_item, :tombo_image, "w:70,h:70")
+
+= paginate @works

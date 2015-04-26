@@ -43,21 +43,20 @@ Annict::Application.routes.draw do
     end
   end
 
-  namespace :marie do
-    resources :works do
-      resources :episodes, only: [:index, :edit, :update, :destroy] do
-        collection do
-          get  :new_from_csv
-          post :create_from_csv
-          post :update_sort_number
-        end
+  namespace :db do
+    resources :works, only: [:index, :new, :create, :edit, :update, :destroy] do
+      collection do
+        get :season
+        get :resourceless
+        get :search
       end
 
+      resources :episodes, only: [:index, :new, :create, :edit, :update, :destroy]
       resources :items
       resources :programs, except: [:show]
     end
 
-    root 'home#index'
+    root "home#index"
   end
 
   resource  :channel, only: [] do

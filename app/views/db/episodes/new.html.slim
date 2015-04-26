@@ -1,0 +1,12 @@
+= render "db/works/header", work: @work
+
+hr
+
+.row
+  .col-sm-7
+    = form_tag db_work_episodes_path(@work) do
+      .form-group
+        = text_area_tag "episodes", nil, class: "form-control", rows: 30, autofocus: true
+      = button_tag "保存する", class: "btn btn-primary"
+  .col-sm-5
+    = render "sidebar", action: :new

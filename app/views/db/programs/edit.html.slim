@@ -1,0 +1,9 @@
+= render "db/works/header", work: @work
+
+hr
+
+.row
+  .col-sm-7
+    = render "form", work: @work, program: @program
+  .col-sm-5
+    = render "sidebar"

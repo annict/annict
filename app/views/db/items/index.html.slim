@@ -1,0 +1,33 @@
+= render "db/works/header", work: @work
+
+hr
+
+.pull-right
+  = link_to "新規登録", new_db_work_item_path(@work), class: "btn btn-primary"
+.clearfix
+
+table.table.table-striped
+  thead
+    tr
+      th ID
+      th 画像
+      th 商品名
+      th URL
+      th サイト内で使用する
+      th 編集
+      - if current_user.role.admin?
+        th 削除
+  tbody
+    - @items.each do |item|
+      tr
+        td = item.id
+        td = image_tag tombo_thumb_url(item, :tombo_image, "w:200,h:200")
+        td = item.name
+        td = item.url.truncate(30)
+        td = item.main? ? "使用する" : "使用しない"
+        td = link_to "編集", edit_db_work_item_path(@work, item)
+        - if current_user.role.admin?
+          td = link_to "削除", db_work_item_path(@work, item), method: :delete, data: { confirm: "作品画像を削除しますか？" }
+
+- if @items.blank?
+  .well 登録されている作品画像はありません。

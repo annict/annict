@@ -12,18 +12,19 @@
 #  episodes_count    :integer          default(0), not null
 #  watchers_count    :integer          default(0), not null
 #  released_at       :date
-#  nicoch_started_at :datetime
 #  created_at        :datetime
 #  updated_at        :datetime
 #  fetch_syobocal    :boolean          default(FALSE), not null
 #  twitter_username  :string(510)
 #  twitter_hashtag   :string(510)
 #  released_at_about :string
+#  items_count       :integer          default(0), not null
 #
 # Indexes
 #
-#  works_sc_tid_key     (sc_tid) UNIQUE
-#  works_season_id_idx  (season_id)
+#  index_works_on_items_count  (items_count)
+#  works_sc_tid_key            (sc_tid) UNIQUE
+#  works_season_id_idx         (season_id)
 #
 
 class Work < ActiveRecord::Base
@@ -41,8 +42,12 @@ class Work < ActiveRecord::Base
   has_many   :programs, dependent: :destroy
   has_many   :statuses, dependent: :destroy
 
-  validates :media, presence: true
+  validates :sc_tid, numericality: { only_integer: true }, uniqueness: true,
+                     allow_blank: true
   validates :title, presence: true, uniqueness: true
+  validates :media, presence: true
+  validates :official_site_url, url: { allow_blank: true }
+  validates :wikipedia_url, url: { allow_blank: true }
 
   scope :by_season, -> (season_slug) {
     return self if season_slug.blank?
@@ -65,10 +70,6 @@ class Work < ActiveRecord::Base
         SELECT DISTINCT work_id, MAX(id) AS checkin_id FROM checkins WHERE checkins.user_id = #{user.id} GROUP BY work_id
       ) AS c2 ON works.id = c2.work_id")
   }
-
-  scope :broadcasted_on_nicoch, -> { where('nicoch_started_at IS NOT NULL') }
-
-  before_save :change_to_utc_datetime
 
 
   # 作品のエピソード数分の空白文字列が入った配列を返す
@@ -115,10 +116,6 @@ class Work < ActiveRecord::Base
     end
   end
 
-  def broadcast_on_nicoch?
-    nicoch_started_at.present?
-  end
-
   def release_date
     released_at.presence || released_at_about.presence || ''
   end
@@ -129,12 +126,5 @@ class Work < ActiveRecord::Base
 
   def next_season?
     season.present? && season.slug == ENV["ANNICT_NEXT_SEASON"]
-  end
-
-  private
-
-  # データベースには標準時 (UTC) を保存する
-  def change_to_utc_datetime
-    self.nicoch_started_at = nicoch_started_at.try(:-, (Time.now.utc_offset))
   end
 end

@@ -13,25 +13,34 @@ ja:
       episode:
         next_episode_id: 次のエピソード
         number: 話数
+        number_and_title: 話数とサブタイトル
         sort_number: ソート番号
-        title: タイトル
+        title: サブタイトル
         single: シングル
+      item:
+        name: 商品名
+        url: URL
+        tombo_image: 画像ファイル
       profile:
         avatar: プロフィール画像
         background_image: 背景画像
         description: ヒトコト
         name: 名前
+      program:
+        channel_id: チャンネル
+        episode_id: エピソード
+        started_at: 放送開始日時
       user:
         email: メールアドレス
         terms: 利用規約とプライバシーポリシー
         username: ユーザ名
       work:
         media: メディア
-        nicoch_started_at: ニコニコチャンネル配信開始日
         official_site_url: 公式サイト
         released_at: リリース日
         released_at_about: リリース日 (大体)
         sc_tid: しょぼかるID
+        season_id: 放送時期
         title: タイトル
         twitter_hashtag: ハッシュタグ
         twitter_username: 公式Twitter
@@ -39,6 +48,7 @@ ja:
     errors:
       messages:
         accepted: に同意してください。
+        url: にはURLを入力してください。
   appeals:
     receive_update_request: 【Annict】更新リクエストが届きました
     sent_html: 更新リクエストを送信しました
@@ -253,7 +263,6 @@ ja:
     edit: 作品情報を編集
     example_of_released_at: '例: 2013-03-10'
     go_amazon: Amazonで見てみる
-    input_work_title: キーワードを入力してください
     new: 新規登録
     no_works: 作品はありません
     send_update_request_1: 更新リクエストを送信

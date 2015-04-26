@@ -31,8 +31,8 @@ class Episode < ActiveRecord::Base
   has_many :checks,     dependent: :destroy
   has_many :programs,   dependent: :destroy
 
-  after_create :create_nicoch_program
-
+  validates :sort_number, presence: true, numericality: { only_integer: true }
+  validate :presence_number_or_title
 
   def prev_episode
     work.episodes.find_by(next_episode: self)
@@ -49,13 +49,9 @@ class Episode < ActiveRecord::Base
 
   private
 
-  def create_nicoch_program
-    if work.broadcast_on_nicoch?
-      channel = Channel.find_by(name: 'ニコニコチャンネル')
-      nicoch_started_day = (7 * work.episodes.count) - 7
-      started_at = work.nicoch_started_at + nicoch_started_day.day
-
-      work.programs.create(channel_id: channel.id, episode_id: id, started_at: started_at)
+  def presence_number_or_title
+    if number.blank? && title.blank?
+      errors.add(:number_and_title, "は両方入力するか、どちらかを入力してください。")
     end
   end
 end

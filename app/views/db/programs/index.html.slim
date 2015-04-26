@@ -1,0 +1,34 @@
+= render "db/works/header", work: @work
+
+hr
+
+.pull-right
+  = link_to "新規登録", new_db_work_program_path(@work), class: "btn btn-primary"
+.clearfix
+
+table.table.table-striped
+  thead
+    tr
+      th ID
+      th チャンネル
+      th エピソード
+      th 開始日
+      th しょぼかる最終更新日時
+      th 編集
+      - if current_user.role.admin?
+        th 削除
+  tbody
+    - @programs.each do |program|
+      tr
+        td = program.id
+        td = program.channel.name
+        td = "#{program.episode.number}「#{program.episode.title}」"
+        td = program.started_at.try(:to_time).try(:strftime, "%Y/%m/%d %H:%M")
+        td = program.sc_last_update.try(:to_time).try(:strftime, "%Y/%m/%d %H:%M:%S")
+        td = link_to "編集", edit_db_work_program_path(@work, program)
+        - if current_user.role.admin?
+          td
+            = link_to "削除", db_work_program_path(@work, program), data: { method: :delete, confirm: "番組情報を削除しますか？" }
+
+- if @programs.blank?
+  .well 登録されている番組情報はありません。

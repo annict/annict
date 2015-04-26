@@ -23,4 +23,11 @@ class Program < ActiveRecord::Base
   belongs_to :channel
   belongs_to :episode
   belongs_to :work
+
+  validates :channel_id, presence: true
+  validates :episode_id, presence: true,
+                         uniqueness: {
+                           scope: :channel_id,
+                           message: "はすでに選択したチャンネルと紐付いています" }
+  validates :started_at, presence: true
 end
