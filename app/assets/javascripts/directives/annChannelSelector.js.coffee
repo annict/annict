@@ -1,5 +1,6 @@
 Annict.angular.directive 'annChannelSelector', ->
   restrict: 'C'
+  scope: true
 
   controller: ($scope, $element, $http) ->
     $scope.isMini = $element.data('miniSelector')
