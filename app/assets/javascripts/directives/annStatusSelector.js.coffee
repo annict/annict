@@ -1,5 +1,6 @@
 Annict.angular.directive 'annStatusSelector', ->
   restrict: 'C'
+  scope: true
 
   controller: ($scope, $element, $http, $analytics) ->
     $scope.isMini = $element.data('miniSelector')
