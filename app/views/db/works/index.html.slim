@@ -1,5 +1,5 @@
 .pull-right
-  = link_to "新規登録", new_db_work_path, class: "btn btn-primary"
+  = link_to "新規登録", new_db_works_edit_request_path, class: "btn btn-primary"
 
 ul.nav.nav-tabs
   = active_link_to db_works_path, wrap_tag: :li, active: params[:action] == "index" do
@@ -30,11 +30,12 @@ table.table.table-striped
       th 視聴者数
       th リリース日
       th 作品画像
+      th 編集リクエスト
   tbody
     - @works.each do |work|
       tr
         td = link_to work.id, work_path(work), target: "_blank"
-        td = link_to work.title, edit_db_work_path(work)
+        td = work.title
         td
           - if work.sc_tid.present?
             = link_to work.sc_tid, work.syobocal_url, target: "_blank"
@@ -43,5 +44,6 @@ table.table.table-striped
         td = "#{work.watchers_count}人"
         td = work.released_at.presence || "-"
         td = image_tag tombo_thumb_url(work.main_item, :tombo_image, "w:70,h:70")
+        td = link_to "編集する", new_db_work_edit_request_path(work), class: "btn btn-primary"
 
 = paginate @works

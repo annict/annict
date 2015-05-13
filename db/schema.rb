@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150425141357) do
+ActiveRecord::Schema.define(version: 20150430142134) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -139,6 +139,35 @@ ActiveRecord::Schema.define(version: 20150425141357) do
   end
 
   add_index "delayed_jobs", ["priority", "run_at"], name: "delayed_jobs_priority", using: :btree
+
+  create_table "edit_request_comments", force: :cascade do |t|
+    t.integer  "edit_request_id", null: false
+    t.integer  "user_id",         null: false
+    t.text     "body",            null: false
+    t.datetime "created_at",      null: false
+    t.datetime "updated_at",      null: false
+  end
+
+  add_index "edit_request_comments", ["edit_request_id"], name: "index_edit_request_comments_on_edit_request_id", using: :btree
+  add_index "edit_request_comments", ["user_id"], name: "index_edit_request_comments_on_user_id", using: :btree
+
+  create_table "edit_requests", force: :cascade do |t|
+    t.integer  "user_id",                           null: false
+    t.integer  "kind",                              null: false
+    t.integer  "status",                default: 1, null: false
+    t.integer  "resource_id"
+    t.string   "resource_type"
+    t.json     "draft_resource_params",             null: false
+    t.string   "title",                             null: false
+    t.text     "body"
+    t.datetime "merged_at"
+    t.datetime "closed_at"
+    t.datetime "created_at",                        null: false
+    t.datetime "updated_at",                        null: false
+  end
+
+  add_index "edit_requests", ["resource_id", "resource_type"], name: "index_edit_requests_on_resource_id_and_resource_type", using: :btree
+  add_index "edit_requests", ["user_id"], name: "index_edit_requests_on_user_id", using: :btree
 
   create_table "episodes", force: :cascade do |t|
     t.integer  "work_id",                                 null: false
@@ -432,6 +461,9 @@ ActiveRecord::Schema.define(version: 20150425141357) do
   add_foreign_key "comments", "checkins", name: "comments_checkin_id_fk", on_delete: :cascade
   add_foreign_key "comments", "users", name: "comments_user_id_fk", on_delete: :cascade
   add_foreign_key "cover_images", "works", name: "cover_images_work_id_fk", on_delete: :cascade
+  add_foreign_key "edit_request_comments", "edit_requests", on_delete: :cascade
+  add_foreign_key "edit_request_comments", "users", on_delete: :cascade
+  add_foreign_key "edit_requests", "users", on_delete: :cascade
   add_foreign_key "episodes", "episodes", column: "next_episode_id"
   add_foreign_key "episodes", "works", name: "episodes_work_id_fk", on_delete: :cascade
   add_foreign_key "finished_tips", "tips", name: "finished_tips_tip_id_fk", on_delete: :cascade

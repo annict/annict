@@ -1,0 +1,10 @@
+h1 = @edit_request.title
+= @edit_request.status_label
+= link_to(@edit_request.user.profile.name, user_path(@edit_request.user), target: "_blank")
+| さんからの編集リクエスト
+.text-muted #{time_ago_in_words(@edit_request.created_at)}前
+= @edit_request.body
+.pull-right
+  = link_to "編集する", @edit_request.decorate.edit_path
+
+= render "show_#{@edit_request.kind}", edit_request: @edit_request

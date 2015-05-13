@@ -1,11 +1,6 @@
 class Db::WorksController < Db::ApplicationController
-  permits :season_id, :sc_tid, :title, :media, :official_site_url, :wikipedia_url,
-          :released_at, :released_at_about, :twitter_username,
-          :twitter_hashtag, :fetch_syobocal
-
   before_action :load_works, only: [:index, :season, :resourceless, :search]
-  before_action :set_work, only: [:show, :edit, :update, :destroy]
-
+  before_action :set_work, only: [:destroy]
 
   def index(page: nil)
     @works = @all_works.order("released_at DESC NULLS LAST").page(page)
@@ -35,28 +30,6 @@ class Db::WorksController < Db::ApplicationController
                  .order("released_at DESC NULLS LAST")
                  .page(page)
     render :index
-  end
-
-  def new
-    @work = Work.new
-  end
-
-  def create(work)
-    @work = Work.new(work)
-
-    if @work.save
-      redirect_to edit_db_work_path(@work), notice: "作品を登録しました"
-    else
-      render :new
-    end
-  end
-
-  def update(work)
-    if @work.update_attributes(work)
-      redirect_to edit_db_work_path(@work), notice: "作品を更新しました"
-    else
-      render :edit
-    end
   end
 
   def destroy

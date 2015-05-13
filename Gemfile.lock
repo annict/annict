@@ -75,6 +75,10 @@ GEM
     aws-sdk-v1 (1.63.0)
       json (~> 1.4)
       nokogiri (>= 1.4.4)
+    axiom-types (0.1.1)
+      descendants_tracker (~> 0.0.4)
+      ice_nine (~> 0.11.0)
+      thread_safe (~> 0.3, >= 0.3.1)
     bcrypt (3.1.9)
     better_errors (2.1.1)
       coderay (>= 1.0.0)
@@ -116,6 +120,8 @@ GEM
     codeclimate-test-reporter (0.4.7)
       simplecov (>= 0.7.1, < 1.0.0)
     coderay (1.1.0)
+    coercible (1.0.0)
+      descendants_tracker (~> 0.0.1)
     coffee-rails (4.1.0)
       coffee-script (>= 2.2.0)
       railties (>= 4.0.0, < 5.0)
@@ -135,6 +141,8 @@ GEM
     delayed_job_active_record (4.0.3)
       activerecord (>= 3.0, < 5.0)
       delayed_job (>= 3.0, < 4.1)
+    descendants_tracker (0.0.4)
+      thread_safe (~> 0.3, >= 0.3.1)
     devise (3.4.1)
       bcrypt (~> 3.0)
       orm_adapter (~> 0.1)
@@ -146,6 +154,11 @@ GEM
       interception
     diff-lcs (1.2.5)
     docile (1.1.5)
+    draper (2.1.0)
+      actionpack (>= 3.0)
+      activemodel (>= 3.0)
+      activesupport (>= 3.0)
+      request_store (~> 1.0)
     email_validator (1.5.0)
       activemodel
     enumerize (0.10.1)
@@ -231,6 +244,7 @@ GEM
       json
       multi_json
       request_store (>= 1.0.5)
+    hashdiff (0.2.2)
     hashie (3.4.0)
     hike (1.2.3)
     hirb (0.7.3)
@@ -241,6 +255,7 @@ GEM
       http_parser.rb (~> 0.6.0)
     http_parser.rb (0.6.0)
     i18n (0.7.0)
+    ice_nine (0.11.1)
     inflecto (0.0.2)
     interception (0.5)
     ipaddress (0.8.0)
@@ -517,6 +532,11 @@ GEM
     validate_url (1.0.0)
       activemodel (>= 3.0.0)
       addressable
+    virtus (1.0.5)
+      axiom-types (~> 0.1)
+      coercible (~> 1.0)
+      descendants_tracker (~> 0.0, >= 0.0.3)
+      equalizer (~> 0.0, >= 0.0.9)
     warden (1.2.3)
       rack (>= 1.0)
     websocket-driver (0.5.1)
@@ -554,6 +574,7 @@ DEPENDENCIES
   delayed_job_active_record
   devise
   did_you_mean
+  draper
   email_validator
   enumerize
   factory_girl_rails
@@ -561,6 +582,7 @@ DEPENDENCIES
   flutie
   font-awesome-sass
   gon
+  hashdiff
   hirb
   hirb-unicode
   jbuilder
@@ -610,3 +632,4 @@ DEPENDENCIES
   twitter
   uglifier
   validate_url
+  virtus

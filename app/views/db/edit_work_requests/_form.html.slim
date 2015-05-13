@@ -1,0 +1,68 @@
+= form_for form, url: url, method: (form.edit_request_persisted? ? :patch : :post), html: { class: "form-horizontal" } do |f|
+  = render "application/error_panel", resource: f.object
+
+  .form-group
+    = f.label :work_season_id, class: "col-sm-3 control-label"
+    .col-sm-9
+      .row
+        .col-sm-5
+          = f.select :work_season_id, options_from_collection_for_select(Season.all, :id, :name, f.object.work_season_id), { include_blank: true }, { class: "form-control" }
+  .form-group
+    = f.label :work_sc_tid, class: "col-sm-3 control-label"
+    .col-sm-9
+      = f.text_field :work_sc_tid, class: "form-control"
+  .form-group
+    = f.label :work_title, class: "col-sm-3 control-label"
+    .col-sm-9
+      = f.text_field :work_title, class: "form-control", autofocus: true
+  .form-group
+    = f.label :work_media, class: "col-sm-3 control-label"
+    .col-sm-9
+      .row
+        .col-sm-5
+          = f.select :work_media, options_for_select(Work.media.options, f.object.work_media), { include_blank: true }, { class: "form-control" }
+  .form-group
+    = f.label :work_official_site_url, class: "col-sm-3 control-label"
+    .col-sm-9
+      = f.text_field :work_official_site_url, class: "form-control"
+  .form-group
+    = f.label :work_wikipedia_url, class: "col-sm-3 control-label"
+    .col-sm-9
+      = f.text_field :work_wikipedia_url, class: "form-control"
+  .form-group
+    = f.label :work_twitter_username, class: "col-sm-3 control-label"
+    .col-sm-9
+      = f.text_field :work_twitter_username, class: "form-control"
+  .form-group
+    = f.label :work_twitter_hashtag, class: "col-sm-3 control-label"
+    .col-sm-9
+      = f.text_field :work_twitter_hashtag, class: "form-control"
+  .form-group
+    = f.label :work_released_at, class: "col-sm-3 control-label"
+    .col-sm-9
+      = f.text_field :work_released_at, class: "form-control", placeholder: "例: 2015-4-1"
+  .form-group
+    = f.label :work_released_at_about, class: "col-sm-3 control-label"
+    .col-sm-9
+      = f.text_field :work_released_at_about, class: "form-control"
+  .form-group
+    .col-sm-offset-3.col-sm-9
+      .checkbox
+        = f.label :work_fetch_syobocal do
+          = f.check_box :work_fetch_syobocal
+          | しょぼかるからデータ取得
+  
+  hr
+  
+  .form-group
+    = f.label :edit_request_title, class: "col-sm-3 control-label"
+    .col-sm-9
+      = f.text_field :edit_request_title, class: "form-control"
+  .form-group
+    = f.label :edit_request_body, class: "col-sm-3 control-label"
+    .col-sm-9
+      = f.text_area :edit_request_body, class: "form-control", rows: 5
+  
+  .form-group
+    .col-sm-offset-3.col-sm-9
+      = f.submit class: "btn btn-primary"

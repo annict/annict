@@ -44,7 +44,15 @@ Annict::Application.routes.draw do
   end
 
   namespace :db do
-    resources :works, only: [:index, :new, :create, :edit, :update, :destroy] do
+    scope :works, as: :works do
+      resources :edit_requests, only: [:new, :create, :edit, :update],
+                                controller: "edit_work_requests"
+    end
+    resources :edit_requests, only: [:index, :show, :destroy]
+
+    resources :works, only: [:index, :destroy] do
+      resources :edit_requests, only: [:new, :create],
+                                controller: "edit_work_requests"
       collection do
         get :season
         get :resourceless
