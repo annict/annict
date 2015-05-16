@@ -235,7 +235,7 @@ GEM
     hirb-unicode (0.0.5)
       hirb (~> 0.5)
       unicode-display_width (~> 0.1.1)
-    http (0.6.3)
+    http (0.6.4)
       http_parser.rb (~> 0.6.0)
     http_parser.rb (0.6.0)
     i18n (0.7.0)
