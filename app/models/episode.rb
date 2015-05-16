@@ -47,6 +47,12 @@ class Episode < ActiveRecord::Base
     number.blank? && title.present?
   end
 
+  def to_diffable_hash
+    white_list = %w(number sort_number title next_episode_id)
+    hash = as_json.slice(*white_list)
+    hash.reject { |k, v| v.blank? }
+  end
+
   private
 
   def presence_number_or_title

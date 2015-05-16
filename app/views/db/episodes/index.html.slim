@@ -1,11 +1,11 @@
 = content_for :site_page_title, "「#{@work.title}」のエピソード"
 
-= render "db/works/header", work: @work
+= render "db/edit_work_requests/header", work: @work
 
 hr
 
 .pull-right
-  = link_to "新規登録", new_db_work_episode_path(@work), class: "btn btn-primary"
+  = link_to "新規登録", new_db_work_episodes_edit_request_path(@work), class: "btn btn-primary"
 
 .clearfix
 
@@ -30,7 +30,7 @@ table.table.table-striped
         td = episode.next_episode.try(:number).presence || "-"
         td = episode.sort_number
         td = episode.checkins.count
-        td = link_to "編集", edit_db_work_episode_path(@work, episode)
+        td = link_to "編集", new_db_work_episode_edit_request_path(@work, episode)
         - if current_user.role.admin?
           td = link_to "削除", db_work_episode_path(@work, episode), data: { method: :delete, confirm: "このエピソードを削除しますか？" }
 

@@ -1,0 +1,34 @@
+= form_for form, url: url, method: (form.persisted? ? :patch : :post), html: { class: "form-horizontal" } do |f|
+  = render "application/error_panel", resource: f.object
+
+  .form-group
+    = f.label :episode_number, class: "col-sm-3 control-label"
+    .col-sm-9
+      = f.text_field :episode_number, class: "form-control"
+  .form-group
+    = f.label :episode_sort_number, class: "col-sm-3 control-label"
+    .col-sm-9
+      = f.text_field :episode_sort_number, class: "form-control"
+  .form-group
+    = f.label :episode_title, class: "col-sm-3 control-label"
+    .col-sm-9
+      = f.text_field :episode_title, class: "form-control"
+  .form-group
+    = f.label :episode_next_episode_id, class: "col-sm-3 control-label"
+    .col-sm-9
+      = f.select :episode_next_episode_id, options_for_select(form.work.episodes.order(:sort_number).map { |episode| ["#{episode.number} #{episode.title}", episode.id] }, form.episode_next_episode_id), { include_blank: true }, { class: "form-control" }
+  
+  hr
+  
+  .form-group
+    = f.label :edit_request_title, class: "col-sm-3 control-label"
+    .col-sm-9
+      = f.text_field :edit_request_title, class: "form-control"
+  .form-group
+    = f.label :edit_request_body, class: "col-sm-3 control-label"
+    .col-sm-9
+      = f.text_area :edit_request_body, class: "form-control", rows: 5
+  
+  .form-group
+    .col-sm-offset-3.col-sm-9
+      = f.submit class: "btn btn-primary"

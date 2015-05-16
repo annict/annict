@@ -1,0 +1,10 @@
+table.table.table-bordered.table-hover
+  thead
+    tr
+      th 話数
+      th タイトル
+  tbody
+    - episodes.each do |e|
+      tr
+        td = e[0]
+        td = e[1]

@@ -1,0 +1,9 @@
+= render "db/edit_work_requests/header", work: @work
+
+hr
+
+.row
+  .col-sm-7
+    = render "form", form: @form, url: db_work_episode_edit_requests_path(@work, @episode)
+  .col-sm-5
+    = render "sidebar"

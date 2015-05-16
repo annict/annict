@@ -1,3 +1,8 @@
+- if @work.present?
+  = render "header", work: @work
+
+hr
+
 .row
   .col-sm-7
     = render "form", form: @form, url: @form.create_path(controller)

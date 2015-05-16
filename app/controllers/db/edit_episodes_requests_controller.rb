@@ -1,20 +1,16 @@
-class Db::EditWorkRequestsController < Db::ApplicationController
-  before_action :set_work, only: [:new, :create]
+class Db::EditEpisodesRequestsController < Db::ApplicationController
+  before_action :set_work, only: [:new, :create, :edit, :update]
   before_action :set_edit_request, only: [:edit, :update]
 
   def new
-    @form = EditRequest::WorkForm.new
-
-    if @work.present?
-      @form.attrs = @work
-      @form.work = @work
-    end
+    @form = EditRequest::EpisodesForm.new
+    @form.work = @work
   end
 
-  def create(edit_request_work_form)
-    @form = EditRequest::WorkForm.new(edit_request_work_form)
-    @form.work = @work
+  def create(edit_request_episodes_form)
+    @form = EditRequest::EpisodesForm.new(edit_request_episodes_form)
     @form.user = current_user
+    @form.work = @work
 
     if @form.save
       flash[:notice] = "編集リクエストを送信しました"
@@ -25,15 +21,15 @@ class Db::EditWorkRequestsController < Db::ApplicationController
   end
 
   def edit
-    @form = EditRequest::WorkForm.new
-    @form.edit_request = @edit_request
+    @form = EditRequest::EpisodesForm.new
+    @form.attrs = @edit_request
   end
 
-  def update(edit_request_work_form)
-    @form = EditRequest::WorkForm.new(edit_request_work_form)
+  def update(edit_request_episodes_form)
+    @form = EditRequest::EpisodesForm.new(edit_request_episodes_form)
     @form.edit_request_id = @edit_request.id
-    @form.user = @edit_request.user
-    @form.work = @edit_request.resource
+    @form.user = current_user
+    @form.work = @work
 
     if @form.save
       flash[:notice] = "編集リクエストを更新しました"
@@ -46,8 +42,6 @@ class Db::EditWorkRequestsController < Db::ApplicationController
   private
 
   def set_work
-    return unless params.has_key?(:work_id)
-
     @work = Work.find(params[:work_id])
   end
 

@@ -5,6 +5,10 @@ class EditRequestDecorator < Draper::Decorator
     case object.kind
     when "work"
       h.edit_db_works_edit_request_path(object)
+    when "episodes"
+      h.edit_db_work_episodes_edit_request_path(object.trackable, object)
+    when "episode"
+      h.edit_db_work_episode_edit_request_path(object.trackable, object.resource, object)
     end
   end
 

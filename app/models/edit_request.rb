@@ -25,11 +25,12 @@
 class EditRequest < ActiveRecord::Base
   extend Enumerize
 
-  enumerize :kind, in: { work: 1, episode: 2 }
+  enumerize :kind, in: { work: 1, episodes: 2, episode: 3 }
   enumerize :status, in: { opened: 1, merged: 2, closed: 3 }
 
   belongs_to :user
   belongs_to :resource, polymorphic: true
+  belongs_to :trackable, polymorphic: true
 
 
   def to_diffable_draft_resource_hash

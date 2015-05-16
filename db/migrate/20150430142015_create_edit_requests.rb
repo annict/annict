@@ -6,6 +6,8 @@ class CreateEditRequests < ActiveRecord::Migration
       t.integer :status, null: false, default: 1
       t.integer :resource_id
       t.string :resource_type
+      t.integer :trackable_id
+      t.string :trackable_type
       t.json :draft_resource_params, null: false
       t.string :title, null: false
       t.text :body
@@ -16,6 +18,7 @@ class CreateEditRequests < ActiveRecord::Migration
 
     add_index :edit_requests, :user_id
     add_index :edit_requests, [:resource_id, :resource_type]
+    add_index :edit_requests, [:trackable_id, :trackable_type]
     add_foreign_key :edit_requests, :users, on_delete: :cascade
   end
 end
