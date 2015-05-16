@@ -5,21 +5,23 @@
       position: relative;
 
       .work-statistics {
+        @include display(flex);
+        @include justify-content(space-around);
+
         width: 70px;
-        margin-top: 2px;
-        text-align: center;
+        margin-top: 3px;
 
         .watchers-count, .checkins-count {
+          @include flex-basis(35px);
+
           color: $color-gray-dark-light;
           font-size: 10px;
+          text-align: center;
 
           i {
-            margin-right: 3px;
+            display: block;
+            margin-bottom: 1px;
           }
-        }
-
-        .watchers-count {
-          margin-right: 6px;
         }
       }
 
