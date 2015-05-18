@@ -30,7 +30,7 @@ class CheckinProgressService
         ids = remove_checked_episode_id(ids)
       end
 
-      return ids.count
+      return ids.uniq.count
     end
 
     (episode_ids & ids).count

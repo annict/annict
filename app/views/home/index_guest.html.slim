@@ -28,14 +28,14 @@
           .icon.pull-left
             i.fa.fa-twitter
           .text
-            = t('words.signin_with_twitter')
+            | Twitterアカウントで始める
           .clearfix
       .signin-button
         = link_to user_omniauth_authorize_path(:facebook), class: 'facebook btn btn-facebook', 'analytics-on' => 'click', 'analytics-event' => 'ログイン', 'analytics-category' => 'callbacks', 'analytics-label' => 'Facebook ページ上部' do
           .icon.pull-left
             i.fa.fa-facebook
           .text
-            = t('words.signin_with_facebook')
+            | Facebookアカウントで始める
 
 .feature
   .container
@@ -81,18 +81,18 @@
           .icon.pull-left
             i.fa.fa-twitter
           .text
-            = t('words.signin_with_twitter')
+            | Twitterアカウントで始める
           .clearfix
       .signin-button
         = link_to user_omniauth_authorize_path(:facebook), class: 'facebook btn btn-facebook', 'analytics-on' => 'click', 'analytics-event' => 'ログイン', 'analytics-category' => 'callbacks', 'analytics-label' => 'Facebook ページ下部' do
           .icon.pull-left
             i.fa.fa-facebook
           .text
-            = t('words.signin_with_facebook')
+            | Facebookアカウントで始める
 
 .about-me
   .container
     h2 管理者について
-    p <a href="https://twitter.com/bojovs">@bojovs</a> が個人で開発、運営しています。
+    p <a href="https://twitter.com/shimbaco">@shimbaco</a> が個人で開発、運営しています。
 
 = render 'footer'

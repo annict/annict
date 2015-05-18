@@ -17,16 +17,16 @@ Annict.angular.directive 'annUserCheckinChart', ->
           data: values
         }
       ]
-    scaleStartValue = if (_.max(values) - 15) < 0
-      0
+    scaleStepWidth = if _.max(values) > 0
+      Math.round(_.max(values) / 10)
     else
-      _.max(values) - 15
+      0
 
     attrs =
       pointDot: false
       scaleOverride: true
       scaleSteps: 10
-      scaleStepWidth: 2
-      scaleStartValue: scaleStartValue
+      scaleStepWidth: scaleStepWidth
+      scaleStartValue: 0
 
     new Chart(ctx).Line(data, attrs)
