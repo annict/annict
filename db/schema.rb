@@ -157,6 +157,8 @@ ActiveRecord::Schema.define(version: 20150430142134) do
     t.integer  "status",                default: 1, null: false
     t.integer  "resource_id"
     t.string   "resource_type"
+    t.integer  "trackable_id"
+    t.string   "trackable_type"
     t.json     "draft_resource_params",             null: false
     t.string   "title",                             null: false
     t.text     "body"
@@ -167,6 +169,7 @@ ActiveRecord::Schema.define(version: 20150430142134) do
   end
 
   add_index "edit_requests", ["resource_id", "resource_type"], name: "index_edit_requests_on_resource_id_and_resource_type", using: :btree
+  add_index "edit_requests", ["trackable_id", "trackable_type"], name: "index_edit_requests_on_trackable_id_and_trackable_type", using: :btree
   add_index "edit_requests", ["user_id"], name: "index_edit_requests_on_user_id", using: :btree
 
   create_table "episodes", force: :cascade do |t|

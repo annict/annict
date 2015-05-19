@@ -1,10 +1,55 @@
-h1 = @edit_request.title
-= @edit_request.status_label
-= link_to(@edit_request.user.profile.name, user_path(@edit_request.user), target: "_blank")
-| さんからの編集リクエスト
-.text-muted #{time_ago_in_words(@edit_request.created_at)}前
-= @edit_request.body
-.pull-right
-  = link_to "編集する", @edit_request.decorate.edit_path
+.header
+  h1.h2 = @edit_request.title
+  .pull-right
+    = link_to "編集する", @edit_request.decorate.edit_path
+  = @edit_request.status_label
 
-= render "show_#{@edit_request.kind}", edit_request: @edit_request
+.media
+  .media-left
+    = link_to user_path(@edit_request.user) do
+      = image_tag tombo_thumb_url(@edit_request.user.profile, :tombo_avatar, "w:140,h:140"), size: "70x70", class: "img-circle"
+  .media-body
+    .media-heading
+      .pull-left
+        = link_to @edit_request.user.profile.name, user_path(@edit_request.user.username)
+      .pull-right.text-muted
+        = "#{time_ago_in_words(@edit_request.created_at)}前"
+      .clearfix
+    
+    - if @edit_request.body.present?
+      = simple_format(@edit_request.body)
+    - else
+      | コメントはありません
+
+ul.nav.nav-tabs
+  li.active
+    = link_to "会話", "#conversation", data: { toggle: "tab" }
+  li
+    = link_to "変更点", "#changes", data: { toggle: "tab" }
+
+.tab-content
+  #conversation.tab-pane.active
+    - if @comments.present?
+      - @comments.each do |c|
+        .media
+          .media-left
+            = link_to user_path(c.user.username) do
+              = image_tag tombo_thumb_url(c.user.profile, :tombo_avatar, "w:140,h:140"), size: "70x70", class: "img-circle", alt: c.user.username
+          .media-body
+            .media-heading
+              .pull-left
+                = link_to c.user.profile.name, user_path(c.user.username)
+              .pull-right.text-muted
+                = "#{time_ago_in_words(c.created_at)}前"
+              .clearfix
+            = simple_format(c.body)
+        
+        hr
+    
+    = form_for @comment, url: db_edit_request_comments_path(@edit_request) do |f|
+      = render "application/error_panel", resource: f.object
+      .form-group
+        = f.text_area :body, class: "form-control", rows: 5
+      = f.submit "投稿する", class: "btn btn-primary"
+  #changes.tab-pane
+    = render "/db/edit_requests/show_#{@edit_request.kind}", edit_request: @edit_request

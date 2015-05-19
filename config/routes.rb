@@ -48,7 +48,9 @@ Annict::Application.routes.draw do
       resources :edit_requests, only: [:new, :create, :edit, :update],
                                 controller: "edit_work_requests"
     end
-    resources :edit_requests, only: [:index, :show, :destroy]
+    resources :edit_requests, only: [:index, :show, :destroy] do
+      resources :comments, controller: "edit_request_comments", only: [:create]
+    end
 
     resources :works, only: [:index, :destroy] do
       resource :episodes, only: [] do
