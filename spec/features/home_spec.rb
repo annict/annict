@@ -15,7 +15,7 @@ describe 'トップページ' do
     end
 
     it 'Twitterでログインをクリックするとユーザ登録ページが表示される' do
-      find('.welcome').click_link('Twitterアカウントでログイン')
+      find('.welcome').click_link('Twitterアカウントで始める')
 
       expect(current_path).to eq '/users/sign_up'
     end
