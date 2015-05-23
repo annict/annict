@@ -21,7 +21,7 @@ describe 'トップページ' do
     end
 
     it 'Facebookでログインをクリックするとユーザ登録ページが表示される' do
-      find('.welcome').click_link('Facebookアカウントでログイン')
+      find('.welcome').click_link('Facebookアカウントで始める')
 
       expect(current_path).to eq '/users/sign_up'
     end
