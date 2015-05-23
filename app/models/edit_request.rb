@@ -28,7 +28,7 @@
 class EditRequest < ActiveRecord::Base
   extend Enumerize
 
-  enumerize :kind, in: { work: 1, episodes: 2, episode: 3 }
+  enumerize :kind, in: { work: 1, episodes: 2, episode: 3, program: 4 }
   enumerize :status, in: { opened: 1, merged: 2, closed: 3 }
 
   belongs_to :user
@@ -36,17 +36,6 @@ class EditRequest < ActiveRecord::Base
   belongs_to :trackable, polymorphic: true
   has_many :comments, class_name: "EditRequestComment"
 
-
-  def to_diffable_draft_resource_hash
-    hash = draft_resource_params
-
-    case kind
-    when "work"
-      hash["media"] = Work.media.find_value(hash["media"]).text
-    end
-
-    hash.reject { |k, v| v.blank? }
-  end
 
   def closed?
     closed_at.present?

@@ -1,0 +1,9 @@
+= render "db/edit_work_requests/header", work: @work
+
+hr
+
+.row
+  .col-sm-7
+    = render "form", form: @form, url: @form.update_path(controller)
+  .col-sm-5
+    = render "sidebar"

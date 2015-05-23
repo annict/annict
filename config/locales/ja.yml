@@ -1,4 +1,12 @@
 ja:
+  activemodel:
+    attributes:
+      edit_request/program_form:
+        program_channel_id: チャンネル
+        program_episode_id: エピソード
+        program_started_at: 放送開始日時
+        edit_request_title: タイトル
+        edit_request_body: ヒトコト
   activerecord:
     attributes:
       appeal:

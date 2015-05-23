@@ -21,7 +21,7 @@ class FacebookService
     end
 
     work_title = checkin.episode.work.title
-    episode_number_title = checkin.episode.number_title
+    episode_number_title = checkin.episode.decorate.title_with_number
     title = "#{work_title} #{episode_number_title}".truncate(30)
 
     message = checkin.comment.squish.truncate(50) if checkin.comment.present?

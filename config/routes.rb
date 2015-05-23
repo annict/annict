@@ -57,6 +57,12 @@ Annict::Application.routes.draw do
         resources :edit_requests, only: [:new, :create, :edit, :update],
                                   controller: "edit_episodes_requests"
       end
+
+      resource :programs, only: [] do
+        resources :edit_requests, only: [:new, :create, :edit, :update],
+                                  controller: "edit_program_requests"
+      end
+
       resources :edit_requests, only: [:new, :create],
                                 controller: "edit_work_requests"
       collection do
@@ -70,7 +76,10 @@ Annict::Application.routes.draw do
                                   controller: "edit_episode_requests"
       end
       resources :items
-      resources :programs, except: [:show]
+      resources :programs, only: [:index, :destroy] do
+        resources :edit_requests, only: [:new, :create, :edit, :update],
+                                  controller: "edit_program_requests"
+      end
     end
 
     root "home#index"

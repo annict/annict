@@ -9,6 +9,12 @@ class EditRequestDecorator < Draper::Decorator
       h.edit_db_work_episodes_edit_request_path(object.trackable, object)
     when "episode"
       h.edit_db_work_episode_edit_request_path(object.trackable, object.resource, object)
+    when "program"
+      if object.resource.present?
+        h.edit_db_work_program_edit_request_path(object.trackable, object.resource, object)
+      else
+        h.edit_db_work_programs_edit_request_path(object.trackable, object)
+      end
     end
   end
 
@@ -27,5 +33,46 @@ class EditRequestDecorator < Draper::Decorator
     elsif status.closed?
       h.content_tag :span, "クローズ", class: "label label-danger"
     end
+  end
+
+  def to_diffable_draft_resource
+    case object.kind
+    when "work"
+      hash["media"] = Work.media.find_value(hash["media"]).text
+    when "program"
+      to_diffable_program!
+    end
+  end
+
+  private
+
+  def to_diffable_program!
+    hash = {}
+
+    object.draft_resource_params.each do |key, val|
+      case key
+      when "channel_id"
+        hash[key] = {
+          data: val,
+          value: Channel.find(val).name
+        }
+      when "episode_id"
+        episode = Episode.find(val)
+        episode_path = h.work_episode_path(episode.work, episode)
+        episode_title = episode.decorate.title_with_number
+
+        hash[key] = {
+          data: val,
+          value: h.link_to(episode_title, episode_path, target: "_blank")
+        }
+      else
+        hash[key] = {
+          data: val,
+          value: val
+        }
+      end
+    end
+
+    hash
   end
 end

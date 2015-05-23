@@ -1,9 +1,9 @@
-= render "db/works/header", work: @work
+= render "db/edit_work_requests/header", work: @work
 
 hr
 
 .pull-right
-  = link_to "新規登録", new_db_work_program_path(@work), class: "btn btn-primary"
+  = link_to "新規登録", new_db_work_programs_edit_request_path(@work), class: "btn btn-primary"
 .clearfix
 
 table.table.table-striped
@@ -23,9 +23,9 @@ table.table.table-striped
         td = program.id
         td = program.channel.name
         td = "#{program.episode.number}「#{program.episode.title}」"
-        td = program.started_at.try(:to_time).try(:strftime, "%Y/%m/%d %H:%M")
+        td = program.started_at.to_time.try(:strftime, "%Y/%m/%d %H:%M")
         td = program.sc_last_update.try(:to_time).try(:strftime, "%Y/%m/%d %H:%M:%S")
-        td = link_to "編集", edit_db_work_program_path(@work, program)
+        td = link_to "編集", new_db_work_program_edit_request_path(@work, program)
         - if current_user.role.admin?
           td
             = link_to "削除", db_work_program_path(@work, program), data: { method: :delete, confirm: "番組情報を削除しますか？" }

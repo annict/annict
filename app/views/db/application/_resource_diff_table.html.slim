@@ -7,17 +7,17 @@ table.table.table-bordered.table-hover
   tbody
     - diff.each do |row|
       tr
-        td = row[1]
+        td = translated_key(row[1])
         - if row[0] == "+"
-          td.success = row[2]
+          td.success = draft_value[row[1]]
         - elsif row[0] == "-"
           td
         - elsif row[0] == "~"
-          td.warning = row[3]
+          td.warning = draft_value[row[1]]
         
         - if row[0] == "+"
           td
         - elsif row[0] == "-"
-          td.danger = row[2]
+          td.danger = value[row[1]]
         - elsif row[0] == "~"
-          td.warning = row[2]
+          td.warning = value[row[1]]

@@ -38,10 +38,6 @@ class Episode < ActiveRecord::Base
     work.episodes.find_by(next_episode: self)
   end
 
-  def number_title
-    "#{number}「#{title}」"
-  end
-
   # 映画やOVAなどの実質エピソードを持たない作品かどうかを判定する
   def single?
     number.blank? && title.present?
