@@ -1,5 +1,8 @@
 Style/DotPosition:
   EnforcedStyle: leading
 
+Style/MultilineOperationIndentation:
+  EnforcedStyle: indented
+
 Metrics/LineLength:
   Max: 90

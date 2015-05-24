@@ -4,7 +4,6 @@ class Db::ItemsController < Db::ApplicationController
   before_action :set_work, only: [:index, :new, :create, :edit, :update, :destroy]
   before_action :set_item, only: [:edit, :update, :destroy]
 
-
   def index
     @items = @work.items
   end

@@ -4,7 +4,6 @@ class Db::ProgramsController < Db::ApplicationController
   before_action :set_work, only: [:index, :new, :create, :edit, :update, :destroy]
   before_action :set_program, only: [:edit, :update, :destroy]
 
-
   def index
     @programs = @work.programs
   end
