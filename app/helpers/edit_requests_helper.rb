@@ -49,7 +49,17 @@ module EditRequestsHelper
     case key
     when "channel_id" then "チャンネル"
     when "episode_id" then "エピソード"
+    when "sc_tid" then "しょぼかるID"
+    when "season_id" then "シーズン"
     when "started_at" then "放送開始日時"
+    when "title" then "タイトル"
+    when "media" then "メディア"
+    when "official_site_url" then "公式サイト"
+    when "wikipedia_url" then "Wikipedia"
+    when "twitter_username" then "Twitterアカウント"
+    when "twitter_hashtag" then "Twitterハッシュタグ"
+    when "released_at" then "リリース日"
+    when "released_at_about" then "リリース日 (大体)"
     end
   end
 end

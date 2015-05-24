@@ -42,8 +42,8 @@ class Work < ActiveRecord::Base
   has_many   :programs, dependent: :destroy
   has_many   :statuses, dependent: :destroy
 
-  validates :sc_tid, numericality: { only_integer: true }, uniqueness: true,
-                     allow_blank: true
+  validates :sc_tid, numericality: { only_integer: true }, allow_blank: true,
+                     uniqueness: true
   validates :title, presence: true, uniqueness: true
   validates :media, presence: true
   validates :official_site_url, url: { allow_blank: true }
@@ -126,16 +126,5 @@ class Work < ActiveRecord::Base
 
   def next_season?
     season.present? && season.slug == ENV["ANNICT_NEXT_SEASON"]
-  end
-
-  def to_diffable_hash
-    white_list = %w(
-      season_id sc_tid title media official_site_url wikipedia_url
-      twitter_username twitter_hashtag released_at released_at_about fetch_syobocal
-    )
-    hash = as_json.slice(*white_list)
-    hash["media"] = hash["media"].text
-    hash["released_at"] = hash["released_at"].to_s
-    hash.reject { |k, v| v.blank? }
   end
 end

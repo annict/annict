@@ -12,11 +12,16 @@ class EditRequest::WorkForm
   attribute :work_twitter_hashtag, String
   attribute :work_released_at, String
   attribute :work_released_at_about, String
-  attribute :work_fetch_syobocal, Axiom::Types::Boolean
   attribute :edit_request_title, String
   attribute :edit_request_body, String
 
   attr_reader :edit_request, :edit_request_id, :user, :work
+
+  validates :work_sc_tid, numericality: { only_integer: true }, allow_blank: true
+  validates :work_title, presence: true
+  validates :work_media, presence: true
+  validates :work_official_site_url, url: { allow_blank: true }
+  validates :work_wikipedia_url, url: { allow_blank: true }
 
   def edit_request_id=(id)
     @edit_request_id ||= id
@@ -59,10 +64,10 @@ class EditRequest::WorkForm
     end
 
     edit_request = if persisted?
-      EditRequest.find(edit_request_id)
-    else
-      EditRequest.new
-    end
+                     EditRequest.find(edit_request_id)
+                   else
+                     EditRequest.new
+                   end
 
     edit_request.attributes = {
       user: user,
@@ -77,16 +82,6 @@ class EditRequest::WorkForm
     self.edit_request_id = edit_request.id
 
     true
-  end
-
-  def valid?
-    work_errors, edit_request_errors = validate_resources
-
-    {}.merge(work_errors).merge(edit_request_errors).each do |key, errors|
-      self.errors.add(key, *errors)
-    end
-
-    self.errors.blank?
   end
 
   def persisted?

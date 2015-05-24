@@ -1,4 +1,6 @@
 class EditRequestDecorator < Draper::Decorator
+  include DiffableWork
+
   delegate_all
 
   def edit_path
@@ -39,13 +41,23 @@ class EditRequestDecorator < Draper::Decorator
   def to_diffable_draft_resource
     case object.kind
     when "work"
-      hash["media"] = Work.media.find_value(hash["media"]).text
+      to_diffable_work!
     when "program"
       to_diffable_program!
     end
   end
 
   private
+
+  def to_diffable_work!
+    hash = {}
+
+    object.draft_resource_params.each do |key, val|
+      hash[key] = get_diffable_work(key, val)
+    end
+
+    hash
+  end
 
   def to_diffable_program!
     hash = {}

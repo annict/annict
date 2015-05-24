@@ -1,6 +1,19 @@
 ja:
   activemodel:
     attributes:
+      edit_request/work_form:
+        work_season_id: 放送時期
+        work_sc_tid: しょぼかるID
+        work_title: タイトル
+        work_media: メディア
+        work_official_site_url: 公式サイト
+        work_wikipedia_url: Wikipedia
+        work_twitter_username: Twitterアカウント
+        work_twitter_hashtag: Twitterハッシュタグ
+        work_released_at: リリース日
+        work_released_at_about: リリース日 (大体)
+        edit_request_title: タイトル
+        edit_request_body: コメント
       edit_request/program_form:
         program_channel_id: チャンネル
         program_episode_id: エピソード
