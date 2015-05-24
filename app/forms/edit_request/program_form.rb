@@ -57,10 +57,6 @@ class EditRequest::ProgramForm
     end
   end
 
-  def persisted?
-    edit_request_id.present?
-  end
-
   def valid?
     program = Program.new do |p|
       p.channel_id = program_channel_id

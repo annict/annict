@@ -53,7 +53,7 @@ class EditRequestDecorator < Draper::Decorator
     object.draft_resource_params.each do |key, val|
       hash[key] = case key
                   when "channel_id"
-                     { data: val, value: Channel.find(val).name }
+                    { data: val, value: Channel.find(val).name }
                   when "episode_id"
                     episode = Episode.find(val)
                     episode_path = h.work_episode_path(episode.work, episode)
