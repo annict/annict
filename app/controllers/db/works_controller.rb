@@ -27,8 +27,8 @@ class Db::WorksController < Db::ApplicationController
 
   def search(page: nil, q: "")
     @works = Work.where("lower(title) LIKE ?", "%#{q}%")
-              .order("released_at DESC NULLS LAST")
-              .page(page)
+      .order("released_at DESC NULLS LAST")
+      .page(page)
     render :index
   end
 

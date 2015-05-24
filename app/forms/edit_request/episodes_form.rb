@@ -33,10 +33,10 @@ class EditRequest::EpisodesForm
     return false unless valid?
 
     edit_request = if persisted?
-      EditRequest.find(edit_request_id)
-    else
-      EditRequest.new
-    end
+                     EditRequest.find(edit_request_id)
+                   else
+                     EditRequest.new
+                   end
 
     edit_request.attributes = {
       user: user,
@@ -49,6 +49,7 @@ class EditRequest::EpisodesForm
 
     edit_request.save(validate: false)
     self.edit_request_id = edit_request.id
+
     true
   end
 

@@ -51,27 +51,21 @@ class EditRequestDecorator < Draper::Decorator
     hash = {}
 
     object.draft_resource_params.each do |key, val|
-      case key
-      when "channel_id"
-        hash[key] = {
-          data: val,
-          value: Channel.find(val).name
-        }
-      when "episode_id"
-        episode = Episode.find(val)
-        episode_path = h.work_episode_path(episode.work, episode)
-        episode_title = episode.decorate.title_with_number
+      hash[key] = case key
+                  when "channel_id"
+                     { data: val, value: Channel.find(val).name }
+                  when "episode_id"
+                    episode = Episode.find(val)
+                    episode_path = h.work_episode_path(episode.work, episode)
+                    episode_title = episode.decorate.title_with_number
 
-        hash[key] = {
-          data: val,
-          value: h.link_to(episode_title, episode_path, target: "_blank")
-        }
-      else
-        hash[key] = {
-          data: val,
-          value: val
-        }
-      end
+                    {
+                      data: val,
+                      value: h.link_to(episode_title, episode_path, target: "_blank")
+                    }
+                  else
+                    { data: val, value: val }
+                  end
     end
 
     hash
