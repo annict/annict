@@ -11,7 +11,8 @@ class EditRequestDecorator < Draper::Decorator
       h.edit_db_work_episode_edit_request_path(object.trackable, object.resource, object)
     when "program"
       if object.resource.present?
-        h.edit_db_work_program_edit_request_path(object.trackable, object.resource, object)
+        args = [object.trackable, object.resource, object]
+        h.edit_db_work_program_edit_request_path(*args)
       else
         h.edit_db_work_programs_edit_request_path(object.trackable, object)
       end

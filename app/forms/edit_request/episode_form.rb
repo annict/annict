@@ -70,10 +70,10 @@ class EditRequest::EpisodeForm
     end
 
     edit_request = if persisted?
-      EditRequest.find(edit_request_id)
-    else
-      EditRequest.new
-    end
+                     EditRequest.find(edit_request_id)
+                   else
+                     EditRequest.new
+                   end
 
     edit_request.attributes = {
       user: user,
