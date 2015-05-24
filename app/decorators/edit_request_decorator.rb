@@ -1,5 +1,5 @@
 class EditRequestDecorator < Draper::Decorator
-  include DiffableWork
+  include Diffable
 
   delegate_all
 
@@ -40,24 +40,18 @@ class EditRequestDecorator < Draper::Decorator
 
   def to_diffable_draft_resource
     case object.kind
-    when "work"
-      to_diffable_work!
+    when "work", "episode"
+      hash = {}
+      object.draft_resource_params.each do |key, val|
+        hash[key] = self.send("get_diffable_#{object.kind}", key, val)
+      end
+      hash
     when "program"
       to_diffable_program!
     end
   end
 
   private
-
-  def to_diffable_work!
-    hash = {}
-
-    object.draft_resource_params.each do |key, val|
-      hash[key] = get_diffable_work(key, val)
-    end
-
-    hash
-  end
 
   def to_diffable_program!
     hash = {}

@@ -1,5 +1,5 @@
 class WorkDecorator < Draper::Decorator
-  include DiffableWork
+  include Diffable
 
   delegate_all
 

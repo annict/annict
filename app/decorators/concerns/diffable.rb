@@ -1,4 +1,4 @@
-module DiffableWork
+module Diffable
   def get_diffable_work(column_name, value)
     case column_name.to_s
     when "season_id"
@@ -25,6 +25,19 @@ module DiffableWork
         released_at = value.strftime("%Y-%m-%d")
         { data: released_at, value: released_at }
       end
+    else
+      { data: value, value: value }
+    end
+  end
+
+  def get_diffable_episode(column_name, value)
+    case column_name.to_s
+    when "next_episode_id"
+      episode = Episode.find(value)
+      title = episode.decorate.title_with_number
+      path = h.work_episode_path(episode.work, episode)
+
+      { data: value, value: h.link_to(title, path, target: "_blank") }
     else
       { data: value, value: value }
     end
