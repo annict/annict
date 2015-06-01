@@ -48,8 +48,10 @@ module EditRequestsHelper
   def translated_key(key)
     case key
     when "channel_id" then "チャンネル"
+    when "edit_request_image_id" then "画像"
     when "episode_id" then "エピソード"
     when "media" then "メディア"
+    when "name" then "名前"
     when "next_episode_id" then "次のエピソード"
     when "official_site_url" then "公式サイト"
     when "released_at_about" then "リリース日 (大体)"
@@ -60,6 +62,7 @@ module EditRequestsHelper
     when "title" then "タイトル"
     when "twitter_hashtag" then "Twitterハッシュタグ"
     when "twitter_username" then "Twitterアカウント"
+    when "url" then "URL"
     when "wikipedia_url" then "Wikipedia"
     end
   end

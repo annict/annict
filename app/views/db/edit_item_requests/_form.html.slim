@@ -1,0 +1,30 @@
+= form_for form, url: url, method: (form.persisted? ? :patch : :post), html: { class: "form-horizontal" } do |f|
+  = render "application/error_panel", resource: f.object
+
+  .form-group
+    = f.label :item_name, class: "col-sm-3 control-label"
+    .col-sm-9
+      = f.text_field :item_name, class: "form-control", autofocus: true
+  .form-group
+    = f.label :item_url, class: "col-sm-3 control-label"
+    .col-sm-9
+      = f.text_field :item_url, class: "form-control"
+  .form-group
+    = f.label :edit_request_image_file, class: "col-sm-3 control-label"
+    .col-sm-9
+      = f.file_field :edit_request_image_file
+
+  hr
+    
+  .form-group
+    = f.label :edit_request_title, class: "col-sm-3 control-label"
+    .col-sm-9
+      = f.text_field :edit_request_title, class: "form-control"
+  .form-group
+    = f.label :edit_request_body, class: "col-sm-3 control-label"
+    .col-sm-9
+      = f.text_area :edit_request_body, class: "form-control", rows: 5
+
+  .form-group
+    .col-sm-offset-3.col-sm-9
+      = f.submit class: "btn btn-primary"

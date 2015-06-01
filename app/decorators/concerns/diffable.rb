@@ -42,4 +42,17 @@ module Diffable
       { data: value, value: value }
     end
   end
+
+  def get_diffable_item(column_name, value)
+    case column_name.to_s
+    when "url"
+      { data: value, value: h.link_to(value, value, target: "_blank") }
+    when "edit_request_image_id"
+      record = EditRequestImage.find(value)
+      image_url = h.tombo_thumb_url(record, :image, "w:200,h:200")
+      { data: record.image.size, value: h.image_tag(image_url) }
+    else
+      { data: value, value: value }
+    end
+  end
 end

@@ -18,6 +18,8 @@ class EditRequestDecorator < Draper::Decorator
       else
         h.edit_db_work_programs_edit_request_path(object.trackable, object)
       end
+    when "item"
+      h.edit_db_work_items_edit_request_path(object.trackable, object)
     end
   end
 
@@ -40,7 +42,7 @@ class EditRequestDecorator < Draper::Decorator
 
   def to_diffable_draft_resource
     case object.kind
-    when "work", "episode"
+    when "work", "episode", "item"
       hash = {}
       object.draft_resource_params.each do |key, val|
         hash[key] = self.send("get_diffable_#{object.kind}", key, val)

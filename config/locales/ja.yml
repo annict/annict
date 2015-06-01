@@ -20,6 +20,12 @@ ja:
         program_started_at: 放送開始日時
         edit_request_title: タイトル
         edit_request_body: ヒトコト
+      edit_request/item_form:
+        item_name: 商品名
+        item_url: 商品URL
+        edit_request_image_file: 作品画像
+        edit_request_title: タイトル
+        edit_request_body: ヒトコト
   activerecord:
     attributes:
       appeal:
