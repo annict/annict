@@ -12,27 +12,26 @@
 #  episodes_count    :integer          default(0), not null
 #  watchers_count    :integer          default(0), not null
 #  released_at       :date
-#  nicoch_started_at :datetime
 #  created_at        :datetime
 #  updated_at        :datetime
 #  fetch_syobocal    :boolean          default(FALSE), not null
 #  twitter_username  :string(510)
 #  twitter_hashtag   :string(510)
 #  released_at_about :string
+#  items_count       :integer          default(0), not null
 #
 # Indexes
 #
-#  works_sc_tid_key     (sc_tid) UNIQUE
-#  works_season_id_idx  (season_id)
+#  index_works_on_items_count  (items_count)
+#  works_sc_tid_key            (sc_tid) UNIQUE
+#  works_season_id_idx         (season_id)
 #
 
 class Work < ActiveRecord::Base
-  extend Enumerize
+  include WorkCommon
 
-  enumerize :media, in: { tv: 1, ova: 2, movie: 3, web: 4, other: 0 }
   has_paper_trail
 
-  belongs_to :season
   has_many   :activities, foreign_key: :recipient_id, foreign_type: :recipient, dependent: :destroy
   has_many   :checkins, dependent: :destroy
   has_many   :checks,   dependent: :destroy
@@ -40,9 +39,6 @@ class Work < ActiveRecord::Base
   has_many   :items,    dependent: :destroy
   has_many   :programs, dependent: :destroy
   has_many   :statuses, dependent: :destroy
-
-  validates :media, presence: true
-  validates :title, presence: true, uniqueness: true
 
   scope :by_season, -> (season_slug) {
     return self if season_slug.blank?

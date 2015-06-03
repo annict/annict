@@ -23,6 +23,8 @@ GEM
       erubis (~> 2.7.0)
       rails-dom-testing (~> 1.0, >= 1.0.5)
       rails-html-sanitizer (~> 1.0, >= 1.0.1)
+    active_link_to (1.0.3)
+      actionpack
     activejob (4.2.1)
       activesupport (= 4.2.1)
       globalid (>= 0.3.0)
@@ -229,6 +231,7 @@ GEM
       json
       multi_json
       request_store (>= 1.0.5)
+    hashdiff (0.2.2)
     hashie (3.4.0)
     hike (1.2.3)
     hirb (0.7.3)
@@ -512,6 +515,9 @@ GEM
     unicode-display_width (0.1.1)
     unicode_utils (1.4.0)
     uniform_notifier (1.7.0)
+    validate_url (1.0.0)
+      activemodel (>= 3.0.0)
+      addressable
     warden (1.2.3)
       rack (>= 1.0)
     websocket-driver (0.5.1)
@@ -525,6 +531,7 @@ PLATFORMS
 
 DEPENDENCIES
   action_args
+  active_link_to
   activerecord-session_store
   acts_as_list
   angular_rails_csrf
@@ -555,6 +562,7 @@ DEPENDENCIES
   flutie
   font-awesome-sass
   gon
+  hashdiff
   hirb
   hirb-unicode
   jbuilder
@@ -603,3 +611,4 @@ DEPENDENCIES
   thin
   twitter
   uglifier
+  validate_url

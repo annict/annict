@@ -47,7 +47,7 @@ class User < ActiveRecord::Base
   devise :database_authenticatable, :omniauthable, :registerable,
          :trackable, omniauth_providers: [:facebook, :twitter]
 
-  enumerize :role, in: { user: 0, admin: 1, editor: 2 }, default: :user
+  enumerize :role, in: { user: 0, admin: 1 }, default: :user
 
   has_many :activities,    dependent: :destroy
   has_many :channel_works, dependent: :destroy

@@ -1,0 +1,27 @@
+doctype html
+html lang="ja"
+  head
+    title
+      = page_title(app_name: "Annict::DB", page_title_symbol: :site_page_title, separator: " | ")
+    = stylesheet_link_tag "db", media: "all"
+    = javascript_include_tag "db"
+    = csrf_meta_tags
+  body class="#{body_class}"
+    nav.navbar.navbar-default.navbar-fixed-top role="navigation"
+      .container-fluid
+        .navbar-header
+          = link_to "Annict::DB", db_root_path, class: "navbar-brand"
+        .collapse.navbar-collapse
+          ul.nav.navbar-nav
+            li = link_to "作品", db_works_path
+            li = link_to "シーズン", "#"
+          = form_tag search_db_works_path, method: :get, class: "navbar-form navbar-left", role: "form" do
+            .form-group
+              = text_field_tag :q, params[:q], class: "form-control", placeholder: "作品名で検索..."
+          ul.nav.navbar-nav.navbar-right
+            - if user_signed_in?
+              li = link_to "サインアウト", destroy_user_session_path, method: :delete
+
+    .container
+      = render "application/flash"
+      = yield

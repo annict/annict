@@ -5,6 +5,7 @@ ruby "2.2.2"
 gem "rails", "4.2.1"
 
 gem "action_args"
+gem "active_link_to"
 gem "activerecord-session_store"
 gem "acts_as_list"
 gem "angular_rails_csrf"
@@ -24,6 +25,7 @@ gem "figaro"
 gem "flutie"
 gem "font-awesome-sass"
 gem "gon"
+gem "hashdiff"
 gem "jbuilder"
 gem "jquery-rails"
 gem "kaminari"
@@ -47,6 +49,7 @@ gem "sinatra", require: nil
 gem "slim"
 gem "twitter"
 gem "uglifier"
+gem "validate_url"
 
 source "https://rails-assets.org" do
   gem "rails-assets-angularjs"
