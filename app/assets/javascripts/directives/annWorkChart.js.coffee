@@ -17,10 +17,10 @@ Annict.angular.directive 'annWorkChart', ->
           data: values
         }
       ]
-    scaleStepWidth = if _.max(values) > 0
+    scaleStepWidth = if _.max(values) >= 10
       Math.round(_.max(values) / 10)
     else
-      0
+      1
 
     attrs =
       pointDot: false
