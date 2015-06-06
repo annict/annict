@@ -46,6 +46,9 @@ ja:
         twitter_hashtag: ハッシュタグ
         twitter_username: 公式Twitter
         wikipedia_url: Wikipedia
+      edit_request:
+        title: タイトル
+        body: ヒトコト
     errors:
       messages:
         accepted: に同意してください。

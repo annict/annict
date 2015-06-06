@@ -172,16 +172,16 @@ ActiveRecord::Schema.define(version: 20150602150804) do
   add_index "edit_request_comments", ["user_id"], name: "index_edit_request_comments_on_user_id", using: :btree
 
   create_table "edit_requests", force: :cascade do |t|
-    t.integer  "user_id",                         null: false
-    t.integer  "draft_resource_id",               null: false
-    t.string   "draft_resource_type",             null: false
-    t.string   "title",                           null: false
+    t.integer  "user_id",                                null: false
+    t.integer  "draft_resource_id",                      null: false
+    t.string   "draft_resource_type",                    null: false
+    t.string   "title",                                  null: false
     t.text     "body"
-    t.integer  "status",              default: 1, null: false
+    t.string   "aasm_state",          default: "opened", null: false
     t.datetime "merged_at"
     t.datetime "closed_at"
-    t.datetime "created_at",                      null: false
-    t.datetime "updated_at",                      null: false
+    t.datetime "created_at",                             null: false
+    t.datetime "updated_at",                             null: false
   end
 
   add_index "edit_requests", ["draft_resource_id", "draft_resource_type"], name: "index_er_on_drid_and_drtype", using: :btree

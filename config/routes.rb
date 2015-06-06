@@ -49,8 +49,10 @@ Annict::Application.routes.draw do
   end
 
   namespace :db do
-    resources :draft_works, only: [:new, :create]
-    resources :edit_requests, only: [:show]
+    resources :draft_works, except: [:index]
+    resources :edit_requests, only: [:show] do
+      resources :comments, only: [:create], controller: "edit_request_comments"
+    end
     resources :works, only: [:index] do
       collection do
         get :season

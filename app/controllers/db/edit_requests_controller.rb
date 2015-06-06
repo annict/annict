@@ -1,6 +1,7 @@
-class Db::EditRequestsController < ApplicationController
+class Db::EditRequestsController < Db::ApplicationController
   def show(id)
-    binding.pry
     @edit_request = EditRequest.find(id)
+    @comment = @edit_request.comments.new
+    @comments = @edit_request.comments.order(id: :asc)
   end
 end

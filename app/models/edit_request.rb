@@ -8,7 +8,7 @@
 #  draft_resource_type :string           not null
 #  title               :string           not null
 #  body                :text
-#  status              :integer          default(1), not null
+#  aasm_state          :string           default("opened"), not null
 #  merged_at           :datetime
 #  closed_at           :datetime
 #  created_at          :datetime         not null
@@ -21,6 +21,27 @@
 #
 
 class EditRequest < ActiveRecord::Base
+  include AASM
+
   belongs_to :user
   belongs_to :draft_resource, polymorphic: true
+  has_many :comments, class_name: "EditRequestComment"
+
+  aasm do
+    state :opened, initial: true
+    state :merged
+    state :closed
+
+    event :merge do
+      transitions from: :opened, to: :merged
+    end
+
+    event :close do
+      transitions from: [:opened, :merged], to: :closed
+    end
+  end
+
+  def kind
+    draft_resource.class.name.underscore
+  end
 end
