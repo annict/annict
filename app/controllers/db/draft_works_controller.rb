@@ -5,8 +5,8 @@ class Db::DraftWorksController < Db::ApplicationController
 
   def new(id: nil)
     @draft_work = if id.present?
-      work = Work.find(id)
-      DraftWork.new(work.attributes.slice(*Work::DIFF_FIELDS.map(&:to_s)))
+      @work = Work.find(id)
+      DraftWork.new(@work.attributes.slice(*Work::DIFF_FIELDS.map(&:to_s)))
     else
       DraftWork.new
     end
@@ -16,7 +16,11 @@ class Db::DraftWorksController < Db::ApplicationController
   def create(draft_work)
     @draft_work = DraftWork.new(draft_work)
     @draft_work.edit_request.user = current_user
-    @draft_work.origin = Work.find(draft_work[:work_id]) if draft_work[:work_id].present?
+
+    if draft_work[:work_id].present?
+      @work = Work.find(draft_work[:work_id])
+      @draft_work.origin = @work
+    end
 
     if @draft_work.save
       flash[:notice] = "作品の編集リクエストを作成しました"

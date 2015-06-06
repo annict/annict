@@ -1,0 +1,7 @@
+ul.nav.nav-pills.pull-right
+  = active_link_to "作品情報", new_db_draft_work_path(id: work.id), wrap_tag: :li
+  = active_link_to "エピソード", db_work_episodes_path(work), wrap_tag: :li
+  = active_link_to "番組情報", db_work_programs_path(work), wrap_tag: :li
+  = active_link_to "作品画像", db_work_items_path(work), wrap_tag: :li
+
+.clearfix

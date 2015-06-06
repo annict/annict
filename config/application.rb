@@ -30,8 +30,9 @@ module Annict
     config.i18n.available_locales = ['en-US', :ja]
 
     config.autoload_paths += %W(
-      #{config.root}/lib
       #{config.root}/app/decorators/concerns
+      #{config.root}/app/validators
+      #{config.root}/lib
     )
 
     ['fonts'].each do |dir_name|

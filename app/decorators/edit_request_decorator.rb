@@ -10,11 +10,11 @@ class EditRequestDecorator < ApplicationDecorator
   end
 
   def resource_diff_table
-    origin_hash = draft_resource.origin.try(:to_diffable_hash).presence || {}
+    origin_hash = draft_resource.try(:origin).try(:to_diffable_hash).presence || {}
     draft_hash = draft_resource.to_diffable_hash
 
     diffs = HashDiff.diff(origin_hash, draft_hash)
-    origin_values = draft_resource.origin.try(:decorate).try(:to_values)
+    origin_values = draft_resource.try(:origin).try(:decorate).try(:to_values)
     draft_values = draft_resource.decorate.to_values
 
     data = {
@@ -25,5 +25,14 @@ class EditRequestDecorator < ApplicationDecorator
     }
 
     h.render("db/application/resource_diff_table", data)
+  end
+
+  def edit_draft_resource_path
+    case draft_resource
+    when DraftMultipleEpisode
+      h.edit_db_work_draft_multiple_episode_path(draft_resource.work, draft_resource)
+    when DraftWork
+      h.edit_db_draft_work_path(draft_resource)
+    end
   end
 end

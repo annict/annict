@@ -1,7 +1,7 @@
 .header
   h1.h2 = @edit_request.title
   .pull-right
-    = link_to "編集する", edit_db_draft_work_path(@edit_request.draft_resource)
+    = link_to "編集する", @edit_request.decorate.edit_draft_resource_path
   = @edit_request.decorate.status_label
 
 .media

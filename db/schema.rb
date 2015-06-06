@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150602150804) do
+ActiveRecord::Schema.define(version: 20150602150805) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -139,6 +139,15 @@ ActiveRecord::Schema.define(version: 20150602150804) do
   end
 
   add_index "delayed_jobs", ["priority", "run_at"], name: "delayed_jobs_priority", using: :btree
+
+  create_table "draft_multiple_episodes", force: :cascade do |t|
+    t.integer  "work_id",    null: false
+    t.text     "body",       null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  add_index "draft_multiple_episodes", ["work_id"], name: "index_draft_multiple_episodes_on_work_id", using: :btree
 
   create_table "draft_works", force: :cascade do |t|
     t.integer  "work_id"
@@ -466,6 +475,7 @@ ActiveRecord::Schema.define(version: 20150602150804) do
   add_foreign_key "comments", "checkins", name: "comments_checkin_id_fk", on_delete: :cascade
   add_foreign_key "comments", "users", name: "comments_user_id_fk", on_delete: :cascade
   add_foreign_key "cover_images", "works", name: "cover_images_work_id_fk", on_delete: :cascade
+  add_foreign_key "draft_multiple_episodes", "works"
   add_foreign_key "draft_works", "seasons"
   add_foreign_key "draft_works", "works"
   add_foreign_key "edit_request_comments", "edit_requests", on_delete: :cascade
