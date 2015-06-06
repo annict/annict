@@ -35,6 +35,7 @@ class Work < ActiveRecord::Base
   has_many   :activities, foreign_key: :recipient_id, foreign_type: :recipient, dependent: :destroy
   has_many   :checkins, dependent: :destroy
   has_many   :checks,   dependent: :destroy
+  has_many   :draft_episodes, dependent: :destroy
   has_many   :draft_multiple_episodes, dependent: :destroy
   has_many   :episodes, dependent: :destroy
   has_many   :items,    dependent: :destroy

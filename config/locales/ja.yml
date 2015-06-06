@@ -15,7 +15,6 @@ ja:
         number: 話数
         sort_number: ソート番号
         title: タイトル
-        single: シングル
       profile:
         avatar: プロフィール画像
         background_image: 背景画像
@@ -35,6 +34,11 @@ ja:
         twitter_hashtag: ハッシュタグ
         twitter_username: 公式Twitter
         wikipedia_url: Wikipedia
+      draft_episode:
+        next_episode_id: 次のエピソード
+        number: 話数
+        sort_number: ソート番号
+        title: タイトル
       draft_multiple_episode:
         body: エピソード
       draft_work:

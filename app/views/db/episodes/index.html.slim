@@ -30,7 +30,7 @@ table.table.table-striped
         td = episode.next_episode.try(:number).presence || "-"
         td = episode.sort_number
         td = episode.checkins.count
-        td = link_to "編集", edit_db_work_draft_episode_path(@work, episode)
+        td = link_to "編集", new_db_work_draft_episode_path(@work, id: episode)
         / - if current_user.role.admin?
         /   td = link_to "削除", db_work_episode_path(@work, episode), data: { method: :delete, confirm: "このエピソードを削除しますか？" }
 

@@ -21,10 +21,11 @@
 #
 
 class Episode < ActiveRecord::Base
+  include EpisodeCommon
+
   has_paper_trail
 
-  belongs_to :next_episode, class_name: 'Episode', foreign_key: :next_episode_id
-  belongs_to :next_episode, class_name: 'Episode', foreign_key: :next_episode_id
+  belongs_to :next_episode, class_name: "Episode", foreign_key: :next_episode_id
   belongs_to :work, counter_cache: true
   has_many :activities, dependent: :destroy, foreign_key: :recipient_id, foreign_type: :recipient
   has_many :checkins,   dependent: :destroy
@@ -32,7 +33,6 @@ class Episode < ActiveRecord::Base
   has_many :programs,   dependent: :destroy
 
   after_create :create_nicoch_program
-
 
   def prev_episode
     work.episodes.find_by(next_episode: self)
