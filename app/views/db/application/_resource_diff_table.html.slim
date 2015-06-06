@@ -6,19 +6,20 @@ table.table.table-bordered.table-hover
       th 既存の内容
   tbody
     - draft_resource.class::DIFF_FIELDS.each do |field|
-      tr
-        td = t("activerecord.attributes.#{draft_resource.class.name.underscore}.#{field}")
-        - diff = select_diff_by_field(diffs, field)
-        - if diff[0] == "+"
-          td.success = draft_values[field]
-        - elsif diff[0] == "-"
-          td
-        - elsif diff[0] == "~"
-          td.warning = draft_values[diff[1]]
-        
-        - if diff[0] == "+"
-          td
-        - elsif diff[0] == "-"
-          td.danger = origin_values[diff[1]]
-        - elsif diff[0] == "~"
-          td.warning = origin_values[diff[1]]
+      - diff = select_diff_by_field(diffs, field)
+      - if diff.present?
+        tr
+          td = t("activerecord.attributes.#{draft_resource.class.name.underscore}.#{field}")
+          - if diff[0] == "+"
+            td.success = draft_values[field]
+          - elsif diff[0] == "-"
+            td
+          - elsif diff[0] == "~"
+            td.warning = draft_values[field]
+          
+          - if diff[0] == "+"
+            td
+          - elsif diff[0] == "-"
+            td.danger = origin_values[field]
+          - elsif diff[0] == "~"
+            td.warning = origin_values[field]

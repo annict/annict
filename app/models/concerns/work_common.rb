@@ -17,5 +17,20 @@ module WorkCommon
     validates :media, presence: true
     validates :official_site_url, url: { allow_blank: true }
     validates :wikipedia_url, url: { allow_blank: true }
+
+    def to_diffable_hash
+      self.class::DIFF_FIELDS.inject({}) do |hash, field|
+        hash[field] = case field
+        when :media
+          send(field).to_s
+        when :released_at
+          send(field).try(:strftime, "%Y/%m/%d")
+        else
+          send(field)
+        end
+
+        hash
+      end
+    end
   end
 end

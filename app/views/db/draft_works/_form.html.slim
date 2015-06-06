@@ -46,6 +46,8 @@
     .col-sm-9
       = f.text_field :released_at_about, class: "form-control"
   
+  = hidden_field_tag "draft_work[work_id]", (f.object.work_id.presence || params[:id])
+  
   hr
   
   = f.fields_for :edit_request do |erf|
