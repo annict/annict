@@ -37,6 +37,7 @@ class Work < ActiveRecord::Base
   has_many   :checks,   dependent: :destroy
   has_many   :draft_episodes, dependent: :destroy
   has_many   :draft_multiple_episodes, dependent: :destroy
+  has_many   :draft_programs, dependent: :destroy
   has_many   :episodes, dependent: :destroy
   has_many   :items,    dependent: :destroy
   has_many   :programs, dependent: :destroy

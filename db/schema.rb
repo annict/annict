@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150602150806) do
+ActiveRecord::Schema.define(version: 20150602150807) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -163,6 +163,21 @@ ActiveRecord::Schema.define(version: 20150602150806) do
   end
 
   add_index "draft_multiple_episodes", ["work_id"], name: "index_draft_multiple_episodes_on_work_id", using: :btree
+
+  create_table "draft_programs", force: :cascade do |t|
+    t.integer  "program_id", null: false
+    t.integer  "channel_id", null: false
+    t.integer  "episode_id", null: false
+    t.integer  "work_id",    null: false
+    t.datetime "started_at", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  add_index "draft_programs", ["channel_id"], name: "index_draft_programs_on_channel_id", using: :btree
+  add_index "draft_programs", ["episode_id"], name: "index_draft_programs_on_episode_id", using: :btree
+  add_index "draft_programs", ["program_id"], name: "index_draft_programs_on_program_id", using: :btree
+  add_index "draft_programs", ["work_id"], name: "index_draft_programs_on_work_id", using: :btree
 
   create_table "draft_works", force: :cascade do |t|
     t.integer  "work_id"
@@ -494,6 +509,10 @@ ActiveRecord::Schema.define(version: 20150602150806) do
   add_foreign_key "draft_episodes", "episodes", column: "next_episode_id"
   add_foreign_key "draft_episodes", "works"
   add_foreign_key "draft_multiple_episodes", "works"
+  add_foreign_key "draft_programs", "channels"
+  add_foreign_key "draft_programs", "episodes"
+  add_foreign_key "draft_programs", "programs"
+  add_foreign_key "draft_programs", "works"
   add_foreign_key "draft_works", "seasons"
   add_foreign_key "draft_works", "works"
   add_foreign_key "edit_request_comments", "edit_requests", on_delete: :cascade

@@ -1,0 +1,27 @@
+= render "db/works/header", work: @work
+
+hr
+
+.pull-right
+  = link_to "新規登録", new_db_work_draft_program_path(@work), class: "btn btn-primary"
+
+.clearfix
+
+table.table.table-striped
+  thead
+    tr
+      th = t('activerecord.attributes.episode.id')
+      th = t('words.channel')
+      th = t('words.episode')
+      th 放送日時
+      th 編集
+      th 削除
+  tbody
+    - @programs.each do |program|
+      tr
+        td = program.id
+        td = program.channel.name
+        td = program.episode.decorate.title_with_number
+        td = program.started_at.try(:to_time).try(:strftime, "%Y-%m-%d %H:%M")
+        td = link_to "編集", new_db_work_draft_program_path(@work, id: program.id)
+        / td = link_to "削除", marie_work_program_path(@work, program), data: { method: :delete, confirm: 'OK?' }

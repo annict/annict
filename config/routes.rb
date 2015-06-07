@@ -61,6 +61,7 @@ Annict::Application.routes.draw do
       end
       resources :draft_episodes, except: [:index]
       resources :draft_multiple_episodes, except: [:index]
+      resources :draft_programs, except: [:index]
       resources :episodes, only: [:index]
       resources :items, only: [:index]
       resources :programs, only: [:index]

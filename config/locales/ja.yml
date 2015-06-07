@@ -41,6 +41,11 @@ ja:
         title: タイトル
       draft_multiple_episode:
         body: エピソード
+      draft_program:
+        channel_id: チャンネル
+        episode_id: エピソード
+        work_id: 作品名
+        started_at: 放送日時
       draft_work:
         season_id: 放送時期
         media: メディア
