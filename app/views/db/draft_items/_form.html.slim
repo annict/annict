@@ -1,0 +1,33 @@
+= form_for [:db, work, draft_item], html: { class: "form-horizontal" } do |f|
+  = render "application/error_panel", resource: f.object
+
+  .form-group
+    = f.label :name, class: "col-sm-3 control-label"
+    .col-sm-9
+      = f.text_field :name, class: "form-control", autofocus: true
+  .form-group
+    = f.label :url, class: "col-sm-3 control-label"
+    .col-sm-9
+      = f.text_field :url, class: "form-control"
+  .form-group
+    = f.label :tombo_image, class: "col-sm-3 control-label"
+    .col-sm-9
+      = f.file_field :tombo_image
+    
+  = hidden_field_tag "draft_item[item_id]", (item.try(:id).presence || draft_item.try(:origin).try(:id))
+  
+  hr
+  
+  = f.fields_for :edit_request do |erf|
+    .form-group
+      = erf.label :title, class: "col-sm-3 control-label"
+      .col-sm-9
+        = erf.text_field :title, class: "form-control", placeholder: "無題"
+    .form-group
+      = erf.label :body, class: "col-sm-3 control-label"
+      .col-sm-9
+        = erf.text_area :body, class: "form-control", rows: 5
+  
+  .form-group
+    .col-sm-offset-3.col-sm-9
+      = f.submit class: "btn btn-primary"

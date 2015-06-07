@@ -1,0 +1,8 @@
+- if @work.present?
+  = render "db/works/header", work: @work
+
+.row
+  .col-sm-7
+    = render "form", work: @work, item: @item, draft_item: @draft_item
+  .col-sm-5
+    = render "sidebar"

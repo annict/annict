@@ -37,6 +37,8 @@ class EditRequestDecorator < ApplicationDecorator
       h.edit_db_work_draft_episode_path(draft_resource.work, draft_resource)
     when DraftProgram
       h.edit_db_work_draft_program_path(draft_resource.work, draft_resource)
+    when DraftItem
+      h.edit_db_work_draft_item_path(draft_resource.work, draft_resource)
     end
   end
 end

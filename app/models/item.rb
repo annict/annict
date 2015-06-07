@@ -20,10 +20,7 @@
 #
 
 class Item < ActiveRecord::Base
-  has_attached_file :tombo_image
+  include ItemCommon
 
   belongs_to :work, counter_cache: true
-
-  validates :tombo_image, attachment_presence: true,
-                          attachment_content_type: { content_type: /\Aimage/ }
 end

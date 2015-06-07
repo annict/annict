@@ -39,6 +39,10 @@ ja:
         number: 話数
         sort_number: ソート番号
         title: タイトル
+      draft_item:
+        name: 商品名
+        url: URL
+        tombo_image: 作品画像
       draft_multiple_episode:
         body: エピソード
       draft_program:
@@ -63,6 +67,7 @@ ja:
     errors:
       messages:
         accepted: に同意してください。
+        url: にはURLを入力してください。
   appeals:
     receive_update_request: 【Annict】更新リクエストが届きました
     sent_html: 更新リクエストを送信しました

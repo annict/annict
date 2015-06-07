@@ -3,7 +3,7 @@
 # Table name: draft_programs
 #
 #  id         :integer          not null, primary key
-#  program_id :integer          not null
+#  program_id :integer
 #  channel_id :integer          not null
 #  episode_id :integer          not null
 #  work_id    :integer          not null

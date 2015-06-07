@@ -60,6 +60,7 @@ Annict::Application.routes.draw do
         get :search
       end
       resources :draft_episodes, except: [:index]
+      resources :draft_items, except: [:index]
       resources :draft_multiple_episodes, except: [:index]
       resources :draft_programs, except: [:index]
       resources :episodes, only: [:index]
