@@ -1,0 +1,14 @@
+table.table.table-striped
+  tbody
+    - @edit_requests.each do |er|
+      tr
+        td
+          = link_to er.title, db_edit_request_path(er)
+          .user
+            = link_to user_path(er.user.username) do
+              = image_tag(tombo_thumb_url(er.user.profile, :tombo_avatar, "w:50,h:50"), size: "25x25", class: "img-circle")
+              = er.user.profile.name
+        td = er.decorate.status_label
+        td = custom_time_ago_in_words(er.created_at)
+
+= paginate @edit_requests
