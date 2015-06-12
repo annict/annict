@@ -64,6 +64,8 @@ ja:
       edit_request:
         title: タイトル
         body: ヒトコト
+      edit_request_comment:
+        body: 本文
     errors:
       messages:
         accepted: に同意してください。
