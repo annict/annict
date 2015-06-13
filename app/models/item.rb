@@ -23,4 +23,14 @@ class Item < ActiveRecord::Base
   include ItemCommon
 
   belongs_to :work, counter_cache: true
+
+  before_save :switch_main_flag
+
+  private
+
+  def switch_main_flag
+    if main?
+      work.items.where.not(id: id).update_all(main: false)
+    end
+  end
 end

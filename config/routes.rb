@@ -51,6 +51,7 @@ Annict::Application.routes.draw do
   namespace :db do
     resources :draft_works, except: [:index]
     resources :edit_requests, only: [:index, :show] do
+      post :publish, on: :member
       resources :comments, only: [:create], controller: "edit_request_comments"
     end
     resources :works, only: [:index] do

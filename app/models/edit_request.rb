@@ -9,7 +9,7 @@
 #  title               :string           not null
 #  body                :text
 #  aasm_state          :string           default("opened"), not null
-#  merged_at           :datetime
+#  published_at        :datetime
 #  closed_at           :datetime
 #  created_at          :datetime         not null
 #  updated_at          :datetime         not null
@@ -27,21 +27,43 @@ class EditRequest < ActiveRecord::Base
   belongs_to :draft_resource, polymorphic: true
   has_many :comments, class_name: "EditRequestComment"
 
+  validates :title, presence: true
+
   aasm do
     state :opened, initial: true
-    state :merged
+    state :published
     state :closed
 
-    event :merge do
-      transitions from: :opened, to: :merged
+    event :publish do
+      transitions from: :opened, to: :published do
+        after do
+          publish_edit_request!
+        end
+      end
     end
 
     event :close do
-      transitions from: [:opened, :merged], to: :closed
+      transitions from: [:opened, :published], to: :closed
     end
   end
 
   def kind
     draft_resource.class.name.underscore
+  end
+
+  private
+
+  def publish_edit_request!
+    attrs = draft_resource.slice(*draft_resource.class::PUBLISH_FIELDS)
+
+    if draft_resource.origin.present?
+      draft_resource.origin.update(attrs)
+    else
+      origin_class = draft_resource.class.reflections["origin"]
+                                   .class_name.constantize
+      origin_class.create(attrs)
+    end
+
+    update_column(:published_at, Time.now)
   end
 end

@@ -1,5 +1,5 @@
 class Db::DraftItemsController < Db::ApplicationController
-  permits :name, :url, :tombo_image, :item_id,
+  permits :name, :url, :tombo_image, :item_id, :main,
           edit_request_attributes: [:id, :title, :body]
 
   before_action :set_work, only: [:new, :create, :edit, :update]

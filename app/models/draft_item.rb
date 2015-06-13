@@ -5,8 +5,8 @@
 #  id                       :integer          not null, primary key
 #  item_id                  :integer
 #  work_id                  :integer          not null
-#  name                     :integer          not null
-#  url                      :integer          not null
+#  name                     :string           not null
+#  url                      :string           not null
 #  main                     :boolean          default(FALSE), not null
 #  tombo_image_file_name    :string           not null
 #  tombo_image_content_type :string           not null

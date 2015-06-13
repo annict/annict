@@ -3,6 +3,7 @@ module EpisodeCommon
 
   included do
     DIFF_FIELDS = %i(number sort_number title next_episode_id)
+    PUBLISH_FIELDS = DIFF_FIELDS + %i(work_id)
 
     validates :number, presence: true
     validates :sort_number, presence: true, numericality: { only_integer: true }

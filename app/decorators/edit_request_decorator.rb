@@ -2,8 +2,8 @@ class EditRequestDecorator < ApplicationDecorator
   def status_label
     if opened?
       h.content_tag :span, "オープン", class: "label label-success"
-    elsif merged?
-      h.content_tag :span, "反映済み", class: "label label-info"
+    elsif published?
+      h.content_tag :span, "公開済み", class: "label label-info"
     elsif closed?
       h.content_tag :span, "クローズ", class: "label label-danger"
     end

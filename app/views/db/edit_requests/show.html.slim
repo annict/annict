@@ -1,6 +1,7 @@
 .header
   h1.h2 = @edit_request.title
   .pull-right
+    = link_to "公開する", publish_db_edit_request_path(@edit_request), class: "btn btn-primary", data: { method: :post, confirm: "この編集内容を公開しますか？" }
     = link_to "編集する", @edit_request.decorate.edit_draft_resource_path
   = @edit_request.decorate.status_label
 

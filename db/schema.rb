@@ -158,8 +158,8 @@ ActiveRecord::Schema.define(version: 20150602150808) do
   create_table "draft_items", force: :cascade do |t|
     t.integer  "item_id"
     t.integer  "work_id",                                  null: false
-    t.integer  "name",                                     null: false
-    t.integer  "url",                                      null: false
+    t.string   "name",                                     null: false
+    t.string   "url",                                      null: false
     t.boolean  "main",                     default: false, null: false
     t.string   "tombo_image_file_name",                    null: false
     t.string   "tombo_image_content_type",                 null: false
@@ -234,7 +234,7 @@ ActiveRecord::Schema.define(version: 20150602150808) do
     t.string   "title",                                  null: false
     t.text     "body"
     t.string   "aasm_state",          default: "opened", null: false
-    t.datetime "merged_at"
+    t.datetime "published_at"
     t.datetime "closed_at"
     t.datetime "created_at",                             null: false
     t.datetime "updated_at",                             null: false

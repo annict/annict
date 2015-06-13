@@ -3,6 +3,7 @@ module ProgramCommon
 
   included do
     DIFF_FIELDS = %i(channel_id episode_id work_id started_at)
+    PUBLISH_FIELDS = DIFF_FIELDS
 
     belongs_to :channel
     belongs_to :episode

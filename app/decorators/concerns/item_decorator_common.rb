@@ -10,6 +10,8 @@ module ItemDecoratorCommon
         when :tombo_image
           image_url = h.tombo_thumb_url(self, :tombo_image, "w:200,h:200")
           h.image_tag(image_url, size: "200x200")
+        when :main
+          send(field) ? "使用する" : "使用しない"
         else
           send(field)
         end

@@ -2,7 +2,8 @@ module ItemCommon
   extend ActiveSupport::Concern
 
   included do
-    DIFF_FIELDS = %i(name url tombo_image)
+    DIFF_FIELDS = %i(name url tombo_image main)
+    PUBLISH_FIELDS = DIFF_FIELDS + %i(work_id)
 
     has_attached_file :tombo_image
 

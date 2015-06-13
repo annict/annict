@@ -43,6 +43,7 @@ ja:
         name: 商品名
         url: URL
         tombo_image: 作品画像
+        main: サイト内で使用する
       draft_multiple_episode:
         body: エピソード
       draft_program:
