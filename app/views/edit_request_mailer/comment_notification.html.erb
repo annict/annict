@@ -1,0 +1,9 @@
+編集リクエスト「<%= @edit_request.title %>」にコメントが書き込まれました。<br>
+<br>
+<%= link_to @name, user_url(@user.username) %>:<br>
+<%= simple_format(@edit_request_comment.body) %><br>
+<br>
+<%= link_to "編集リクエストページへ", db_edit_request_url(@edit_request) %><br>
+<br>
+---<br>
+http://www.annict.com

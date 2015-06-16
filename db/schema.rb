@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150616125506) do
+ActiveRecord::Schema.define(version: 20150616140258) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -123,6 +123,20 @@ ActiveRecord::Schema.define(version: 20150616125506) do
   end
 
   add_index "cover_images", ["work_id"], name: "cover_images_work_id_idx", using: :btree
+
+  create_table "db_activities", force: :cascade do |t|
+    t.integer  "user_id",        null: false
+    t.integer  "recipient_id",   null: false
+    t.string   "recipient_type", null: false
+    t.integer  "trackable_id",   null: false
+    t.string   "trackable_type", null: false
+    t.string   "action",         null: false
+    t.datetime "created_at",     null: false
+    t.datetime "updated_at",     null: false
+  end
+
+  add_index "db_activities", ["recipient_id", "recipient_type"], name: "index_db_activities_on_recipient_id_and_recipient_type", using: :btree
+  add_index "db_activities", ["trackable_id", "trackable_type"], name: "index_db_activities_on_trackable_id_and_trackable_type", using: :btree
 
   create_table "delayed_jobs", force: :cascade do |t|
     t.integer  "priority",   default: 0, null: false
@@ -533,6 +547,7 @@ ActiveRecord::Schema.define(version: 20150616125506) do
   add_foreign_key "comments", "checkins", name: "comments_checkin_id_fk", on_delete: :cascade
   add_foreign_key "comments", "users", name: "comments_user_id_fk", on_delete: :cascade
   add_foreign_key "cover_images", "works", name: "cover_images_work_id_fk", on_delete: :cascade
+  add_foreign_key "db_activities", "users"
   add_foreign_key "draft_episodes", "episodes"
   add_foreign_key "draft_episodes", "episodes", column: "next_episode_id"
   add_foreign_key "draft_episodes", "works"

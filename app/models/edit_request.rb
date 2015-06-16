@@ -33,6 +33,7 @@ class EditRequest < ActiveRecord::Base
   validates :title, presence: true
 
   after_create :create_participant
+  after_create :create_db_activity
 
   aasm do
     state :opened, initial: true
@@ -76,6 +77,14 @@ class EditRequest < ActiveRecord::Base
   def create_participant
     participants.create do |p|
       p.user = user
+    end
+  end
+
+  def create_db_activity
+    DbActivity.create do |a|
+      a.user = user
+      a.trackable = self
+      a.action = "edit_requests.create"
     end
   end
 end

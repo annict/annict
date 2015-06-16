@@ -22,10 +22,20 @@ class EditRequestComment < ActiveRecord::Base
   validates :body, presence: true
 
   after_create :create_participant
+  after_create :create_db_activity
 
   private
 
   def create_participant
     edit_request.participants.where(user: user).first_or_create
+  end
+
+  def create_db_activity
+    DbActivity.create do |a|
+      a.user = user
+      a.recipient = edit_request
+      a.trackable = self
+      a.action = "edit_request_comments.create"
+    end
   end
 end
