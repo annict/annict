@@ -45,6 +45,12 @@ class EditRequest < ActiveRecord::Base
         after do
           publish_edit_request!
           participants.where(user: publisher).first_or_create
+
+          DbActivity.create do |a|
+            a.user = publisher
+            a.trackable = self
+            a.action = "edit_requests.publish"
+          end
         end
       end
     end

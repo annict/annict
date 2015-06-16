@@ -32,7 +32,9 @@ class DbActivity < ActiveRecord::Base
   def send_notification
     case action
     when "edit_request_comments.create"
-      EditRequestMailer.comment_notification(id).deliver
+      EditRequestMailer.comment_notification(id).deliver_later
+    when "edit_requests.publish"
+      EditRequestMailer.publish_notification(id).deliver_later
     end
   end
 end

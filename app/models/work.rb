@@ -68,9 +68,6 @@ class Work < ActiveRecord::Base
 
   scope :broadcasted_on_nicoch, -> { where('nicoch_started_at IS NOT NULL') }
 
-  before_save :change_to_utc_datetime
-
-
   # 作品のエピソード数分の空白文字列が入った配列を返す
   # Chart.jsのx軸のラベルを消すにはこれしか方法がなかったんだ…! たぶん…。
   def chart_labels
@@ -129,12 +126,5 @@ class Work < ActiveRecord::Base
 
   def next_season?
     season.present? && season.slug == ENV["ANNICT_NEXT_SEASON"]
-  end
-
-  private
-
-  # データベースには標準時 (UTC) を保存する
-  def change_to_utc_datetime
-    self.nicoch_started_at = nicoch_started_at.try(:-, (Time.now.utc_offset))
   end
 end
