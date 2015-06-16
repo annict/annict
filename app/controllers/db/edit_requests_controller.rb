@@ -11,10 +11,19 @@ class Db::EditRequestsController < Db::ApplicationController
 
   def publish(id)
     @edit_request = EditRequest.find(id)
-    @edit_request.publisher = current_user
+    @edit_request.proposer = current_user
     @edit_request.publish!
 
-    flash[:notice] = "公開しました"
+    flash[:notice] = "編集リクエストを公開しました"
+    redirect_to db_edit_request_path(@edit_request)
+  end
+
+  def close(id)
+    @edit_request = EditRequest.find(id)
+    @edit_request.proposer = current_user
+    @edit_request.close!
+
+    flash[:notice] = "編集リクエストを閉じました"
     redirect_to db_edit_request_path(@edit_request)
   end
 end

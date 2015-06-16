@@ -35,6 +35,8 @@ class DbActivity < ActiveRecord::Base
       EditRequestMailer.comment_notification(id).deliver_later
     when "edit_requests.publish"
       EditRequestMailer.publish_notification(id).deliver_later
+    when "edit_requests.close"
+      EditRequestMailer.close_notification(id).deliver_later
     end
   end
 end

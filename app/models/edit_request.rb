@@ -23,7 +23,7 @@
 class EditRequest < ActiveRecord::Base
   include AASM
 
-  attr_accessor :publisher
+  attr_accessor :proposer
 
   belongs_to :user
   belongs_to :draft_resource, polymorphic: true
@@ -44,10 +44,10 @@ class EditRequest < ActiveRecord::Base
       transitions from: :opened, to: :published do
         after do
           publish_edit_request!
-          participants.where(user: publisher).first_or_create
+          participants.where(user: proposer).first_or_create
 
           DbActivity.create do |a|
-            a.user = publisher
+            a.user = proposer
             a.trackable = self
             a.action = "edit_requests.publish"
           end
@@ -56,7 +56,17 @@ class EditRequest < ActiveRecord::Base
     end
 
     event :close do
-      transitions from: [:opened, :published], to: :closed
+      transitions from: :opened, to: :closed do
+        after do
+          participants.where(user: proposer).first_or_create
+
+          DbActivity.create do |a|
+            a.user = proposer
+            a.trackable = self
+            a.action = "edit_requests.close"
+          end
+        end
+      end
     end
   end
 
