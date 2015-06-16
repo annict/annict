@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150602150808) do
+ActiveRecord::Schema.define(version: 20150616125506) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -226,6 +226,17 @@ ActiveRecord::Schema.define(version: 20150602150808) do
 
   add_index "edit_request_comments", ["edit_request_id"], name: "index_edit_request_comments_on_edit_request_id", using: :btree
   add_index "edit_request_comments", ["user_id"], name: "index_edit_request_comments_on_user_id", using: :btree
+
+  create_table "edit_request_participants", force: :cascade do |t|
+    t.integer  "edit_request_id", null: false
+    t.integer  "user_id",         null: false
+    t.datetime "created_at",      null: false
+    t.datetime "updated_at",      null: false
+  end
+
+  add_index "edit_request_participants", ["edit_request_id", "user_id"], name: "index_edit_request_participants_on_edit_request_id_and_user_id", unique: true, using: :btree
+  add_index "edit_request_participants", ["edit_request_id"], name: "index_edit_request_participants_on_edit_request_id", using: :btree
+  add_index "edit_request_participants", ["user_id"], name: "index_edit_request_participants_on_user_id", using: :btree
 
   create_table "edit_requests", force: :cascade do |t|
     t.integer  "user_id",                                null: false
@@ -536,6 +547,8 @@ ActiveRecord::Schema.define(version: 20150602150808) do
   add_foreign_key "draft_works", "works"
   add_foreign_key "edit_request_comments", "edit_requests", on_delete: :cascade
   add_foreign_key "edit_request_comments", "users", on_delete: :cascade
+  add_foreign_key "edit_request_participants", "edit_requests"
+  add_foreign_key "edit_request_participants", "users"
   add_foreign_key "edit_requests", "users", on_delete: :cascade
   add_foreign_key "episodes", "episodes", column: "next_episode_id"
   add_foreign_key "episodes", "works", name: "episodes_work_id_fk", on_delete: :cascade

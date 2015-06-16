@@ -23,11 +23,16 @@
 class EditRequest < ActiveRecord::Base
   include AASM
 
+  attr_accessor :publisher
+
   belongs_to :user
   belongs_to :draft_resource, polymorphic: true
   has_many :comments, class_name: "EditRequestComment"
+  has_many :participants, class_name: "EditRequestParticipant"
 
   validates :title, presence: true
+
+  after_create :create_participant
 
   aasm do
     state :opened, initial: true
@@ -38,6 +43,7 @@ class EditRequest < ActiveRecord::Base
       transitions from: :opened, to: :published do
         after do
           publish_edit_request!
+          participants.where(user: publisher).first_or_create
         end
       end
     end
@@ -65,5 +71,11 @@ class EditRequest < ActiveRecord::Base
     end
 
     update_column(:published_at, Time.now)
+  end
+
+  def create_participant
+    participants.create do |p|
+      p.user = user
+    end
   end
 end

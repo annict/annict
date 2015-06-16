@@ -16,7 +16,16 @@
 #
 
 class EditRequestComment < ActiveRecord::Base
+  belongs_to :edit_request
   belongs_to :user
 
   validates :body, presence: true
+
+  after_create :create_participant
+
+  private
+
+  def create_participant
+    edit_request.participants.where(user: user).first_or_create
+  end
 end
