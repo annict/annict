@@ -7,8 +7,21 @@
     margin-top: 20px;
   }
 
-  .detail {
-    color: $color-gray-dark-light;
-    font-size: 10px;
+  .option {
+    .detail {
+      color: $color-gray-dark-light;
+      font-size: 10px;
+    }
+  }
+
+  .sayonara {
+    .description {
+      font-size: 12px;
+      margin-bottom: 10px;
+    }
+
+    .action {
+      text-align: center;
+    }
   }
 }
