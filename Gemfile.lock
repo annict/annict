@@ -152,7 +152,7 @@ GEM
     erubis (2.7.0)
     eventmachine (1.0.4)
     excon (0.43.0)
-    execjs (2.4.0)
+    execjs (2.5.2)
     factory_girl (4.5.0)
       activesupport (>= 3.0.0)
     factory_girl_rails (4.5.0)
@@ -290,7 +290,7 @@ GEM
       net-ssh (>= 2.6.5)
     net-ssh (2.9.2)
     newrelic_rpm (3.11.0.283)
-    ngannotate-rails (0.15.4)
+    ngannotate-rails (1.0.2)
       execjs
       rails (>= 3.1)
     nokogiri (1.6.6.2)
