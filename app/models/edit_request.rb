@@ -59,6 +59,7 @@ class EditRequest < ActiveRecord::Base
       transitions from: :opened, to: :closed do
         after do
           participants.where(user: proposer).first_or_create
+          update_column(:closed_at, Time.now)
 
           DbActivity.create do |a|
             a.user = proposer
@@ -72,6 +73,14 @@ class EditRequest < ActiveRecord::Base
 
   def kind
     draft_resource.class.name.underscore
+  end
+
+  def db_activities
+    condition = <<-SQL
+      (recipient_type = 'EditRequest' AND recipient_id = ?) OR
+      (trackable_type = 'EditRequest' AND trackable_id = ?)
+    SQL
+    DbActivity.where(condition, id, id)
   end
 
   private

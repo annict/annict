@@ -4,8 +4,8 @@
 #
 #  id             :integer          not null, primary key
 #  user_id        :integer          not null
-#  recipient_id   :integer          not null
-#  recipient_type :string           not null
+#  recipient_id   :integer
+#  recipient_type :string
 #  trackable_id   :integer          not null
 #  trackable_type :string           not null
 #  action         :string           not null

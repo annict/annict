@@ -43,7 +43,7 @@ table.table.table-striped
             = "-"
         td = "#{work.watchers_count}人"
         td = work.released_at.presence || "-"
-        td = image_tag tombo_thumb_url(work.main_item, :tombo_image, "w:70,h:70")
+        td = image_tag tombo_thumb_url(work.main_item, :tombo_image, "w:70,h:70"), size: "70x70"
         td = link_to "編集する", new_db_draft_work_path(id: work.id), class: "btn btn-primary"
 
 = paginate @works

@@ -1,0 +1,12 @@
+.media
+  .media-left
+    = link_to user_path(activity.user.username) do
+      = image_tag tombo_thumb_url(activity.user.profile, :tombo_avatar, "w:140,h:140"), size: "70x70", class: "img-circle", alt: activity.user.username
+  .media-body
+    .media-heading
+      .pull-left
+        = link_to activity.user.profile.name, user_path(activity.user.username)
+      .pull-right.text-muted
+        = "#{time_ago_in_words(activity.trackable.created_at)}前"
+      .clearfix
+    = simple_format(activity.trackable.body)

@@ -6,7 +6,9 @@ class Db::EditRequestsController < Db::ApplicationController
   def show(id)
     @edit_request = EditRequest.find(id)
     @comment = @edit_request.comments.new
-    @comments = @edit_request.comments.order(id: :asc)
+    @db_activities = @edit_request.db_activities
+                      .where.not(action: "edit_requests.create")
+                      .order(id: :asc)
   end
 
   def publish(id)

@@ -31,20 +31,9 @@ ul.nav.nav-tabs
 
 .tab-content
   #conversation.tab-pane.active
-    - if @comments.present?
-      - @comments.each do |c|
-        .media
-          .media-left
-            = link_to user_path(c.user.username) do
-              = image_tag tombo_thumb_url(c.user.profile, :tombo_avatar, "w:140,h:140"), size: "70x70", class: "img-circle", alt: c.user.username
-          .media-body
-            .media-heading
-              .pull-left
-                = link_to c.user.profile.name, user_path(c.user.username)
-              .pull-right.text-muted
-                = "#{time_ago_in_words(c.created_at)}前"
-              .clearfix
-            = simple_format(c.body)
+    - if @db_activities.present?
+      - @db_activities.each do |activity|
+        = render "db/edit_requests/activities/activity", activity: activity
         
         hr
     

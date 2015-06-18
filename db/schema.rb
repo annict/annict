@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150418164640) do
+ActiveRecord::Schema.define(version: 20150616140258) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -124,6 +124,20 @@ ActiveRecord::Schema.define(version: 20150418164640) do
 
   add_index "cover_images", ["work_id"], name: "cover_images_work_id_idx", using: :btree
 
+  create_table "db_activities", force: :cascade do |t|
+    t.integer  "user_id",        null: false
+    t.integer  "recipient_id"
+    t.string   "recipient_type"
+    t.integer  "trackable_id",   null: false
+    t.string   "trackable_type", null: false
+    t.string   "action",         null: false
+    t.datetime "created_at",     null: false
+    t.datetime "updated_at",     null: false
+  end
+
+  add_index "db_activities", ["recipient_id", "recipient_type"], name: "index_db_activities_on_recipient_id_and_recipient_type", using: :btree
+  add_index "db_activities", ["trackable_id", "trackable_type"], name: "index_db_activities_on_trackable_id_and_trackable_type", using: :btree
+
   create_table "delayed_jobs", force: :cascade do |t|
     t.integer  "priority",   default: 0, null: false
     t.integer  "attempts",   default: 0, null: false
@@ -139,6 +153,120 @@ ActiveRecord::Schema.define(version: 20150418164640) do
   end
 
   add_index "delayed_jobs", ["priority", "run_at"], name: "delayed_jobs_priority", using: :btree
+
+  create_table "draft_episodes", force: :cascade do |t|
+    t.integer  "episode_id",                  null: false
+    t.integer  "work_id",                     null: false
+    t.string   "number"
+    t.integer  "sort_number",     default: 0, null: false
+    t.string   "title"
+    t.integer  "next_episode_id"
+    t.datetime "created_at",                  null: false
+    t.datetime "updated_at",                  null: false
+  end
+
+  add_index "draft_episodes", ["episode_id"], name: "index_draft_episodes_on_episode_id", using: :btree
+  add_index "draft_episodes", ["next_episode_id"], name: "index_draft_episodes_on_next_episode_id", using: :btree
+  add_index "draft_episodes", ["work_id"], name: "index_draft_episodes_on_work_id", using: :btree
+
+  create_table "draft_items", force: :cascade do |t|
+    t.integer  "item_id"
+    t.integer  "work_id",                                  null: false
+    t.string   "name",                                     null: false
+    t.string   "url",                                      null: false
+    t.boolean  "main",                     default: false, null: false
+    t.string   "tombo_image_file_name",                    null: false
+    t.string   "tombo_image_content_type",                 null: false
+    t.integer  "tombo_image_file_size",                    null: false
+    t.datetime "tombo_image_updated_at",                   null: false
+    t.datetime "created_at",                               null: false
+    t.datetime "updated_at",                               null: false
+  end
+
+  add_index "draft_items", ["item_id"], name: "index_draft_items_on_item_id", using: :btree
+  add_index "draft_items", ["work_id"], name: "index_draft_items_on_work_id", using: :btree
+
+  create_table "draft_multiple_episodes", force: :cascade do |t|
+    t.integer  "work_id",    null: false
+    t.text     "body",       null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  add_index "draft_multiple_episodes", ["work_id"], name: "index_draft_multiple_episodes_on_work_id", using: :btree
+
+  create_table "draft_programs", force: :cascade do |t|
+    t.integer  "program_id"
+    t.integer  "channel_id", null: false
+    t.integer  "episode_id", null: false
+    t.integer  "work_id",    null: false
+    t.datetime "started_at", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  add_index "draft_programs", ["channel_id"], name: "index_draft_programs_on_channel_id", using: :btree
+  add_index "draft_programs", ["episode_id"], name: "index_draft_programs_on_episode_id", using: :btree
+  add_index "draft_programs", ["program_id"], name: "index_draft_programs_on_program_id", using: :btree
+  add_index "draft_programs", ["work_id"], name: "index_draft_programs_on_work_id", using: :btree
+
+  create_table "draft_works", force: :cascade do |t|
+    t.integer  "work_id"
+    t.integer  "season_id"
+    t.integer  "sc_tid"
+    t.string   "title",                          null: false
+    t.integer  "media",                          null: false
+    t.string   "official_site_url", default: "", null: false
+    t.string   "wikipedia_url",     default: "", null: false
+    t.date     "released_at"
+    t.string   "twitter_username"
+    t.string   "twitter_hashtag"
+    t.string   "released_at_about"
+    t.datetime "created_at",                     null: false
+    t.datetime "updated_at",                     null: false
+  end
+
+  add_index "draft_works", ["sc_tid"], name: "index_draft_works_on_sc_tid", unique: true, using: :btree
+  add_index "draft_works", ["season_id"], name: "index_draft_works_on_season_id", using: :btree
+  add_index "draft_works", ["work_id"], name: "index_draft_works_on_work_id", using: :btree
+
+  create_table "edit_request_comments", force: :cascade do |t|
+    t.integer  "edit_request_id", null: false
+    t.integer  "user_id",         null: false
+    t.text     "body",            null: false
+    t.datetime "created_at",      null: false
+    t.datetime "updated_at",      null: false
+  end
+
+  add_index "edit_request_comments", ["edit_request_id"], name: "index_edit_request_comments_on_edit_request_id", using: :btree
+  add_index "edit_request_comments", ["user_id"], name: "index_edit_request_comments_on_user_id", using: :btree
+
+  create_table "edit_request_participants", force: :cascade do |t|
+    t.integer  "edit_request_id", null: false
+    t.integer  "user_id",         null: false
+    t.datetime "created_at",      null: false
+    t.datetime "updated_at",      null: false
+  end
+
+  add_index "edit_request_participants", ["edit_request_id", "user_id"], name: "index_edit_request_participants_on_edit_request_id_and_user_id", unique: true, using: :btree
+  add_index "edit_request_participants", ["edit_request_id"], name: "index_edit_request_participants_on_edit_request_id", using: :btree
+  add_index "edit_request_participants", ["user_id"], name: "index_edit_request_participants_on_user_id", using: :btree
+
+  create_table "edit_requests", force: :cascade do |t|
+    t.integer  "user_id",                                null: false
+    t.integer  "draft_resource_id",                      null: false
+    t.string   "draft_resource_type",                    null: false
+    t.string   "title",                                  null: false
+    t.text     "body"
+    t.string   "aasm_state",          default: "opened", null: false
+    t.datetime "published_at"
+    t.datetime "closed_at"
+    t.datetime "created_at",                             null: false
+    t.datetime "updated_at",                             null: false
+  end
+
+  add_index "edit_requests", ["draft_resource_id", "draft_resource_type"], name: "index_er_on_drid_and_drtype", using: :btree
+  add_index "edit_requests", ["user_id"], name: "index_edit_requests_on_user_id", using: :btree
 
   create_table "episodes", force: :cascade do |t|
     t.integer  "work_id",                                 null: false
@@ -302,20 +430,6 @@ ActiveRecord::Schema.define(version: 20150418164640) do
 
   add_index "settings", ["user_id"], name: "index_settings_on_user_id", using: :btree
 
-  create_table "staffs", force: :cascade do |t|
-    t.string   "email",              limit: 510, default: "", null: false
-    t.string   "encrypted_password", limit: 510, default: "", null: false
-    t.integer  "sign_in_count",                  default: 0,  null: false
-    t.datetime "current_sign_in_at"
-    t.datetime "last_sign_in_at"
-    t.string   "current_sign_in_ip", limit: 510
-    t.string   "last_sign_in_ip",    limit: 510
-    t.datetime "created_at"
-    t.datetime "updated_at"
-  end
-
-  add_index "staffs", ["email"], name: "staffs_email_key", unique: true, using: :btree
-
   create_table "statuses", force: :cascade do |t|
     t.integer  "user_id",                     null: false
     t.integer  "work_id",                     null: false
@@ -406,15 +520,16 @@ ActiveRecord::Schema.define(version: 20150418164640) do
     t.integer  "episodes_count",                default: 0,     null: false
     t.integer  "watchers_count",                default: 0,     null: false
     t.date     "released_at"
-    t.datetime "nicoch_started_at"
     t.datetime "created_at"
     t.datetime "updated_at"
     t.boolean  "fetch_syobocal",                default: false, null: false
     t.string   "twitter_username",  limit: 510
     t.string   "twitter_hashtag",   limit: 510
     t.string   "released_at_about"
+    t.integer  "items_count",                   default: 0,     null: false
   end
 
+  add_index "works", ["items_count"], name: "index_works_on_items_count", using: :btree
   add_index "works", ["sc_tid"], name: "works_sc_tid_key", unique: true, using: :btree
   add_index "works", ["season_id"], name: "works_season_id_idx", using: :btree
 
@@ -432,6 +547,24 @@ ActiveRecord::Schema.define(version: 20150418164640) do
   add_foreign_key "comments", "checkins", name: "comments_checkin_id_fk", on_delete: :cascade
   add_foreign_key "comments", "users", name: "comments_user_id_fk", on_delete: :cascade
   add_foreign_key "cover_images", "works", name: "cover_images_work_id_fk", on_delete: :cascade
+  add_foreign_key "db_activities", "users"
+  add_foreign_key "draft_episodes", "episodes"
+  add_foreign_key "draft_episodes", "episodes", column: "next_episode_id"
+  add_foreign_key "draft_episodes", "works"
+  add_foreign_key "draft_items", "items"
+  add_foreign_key "draft_items", "works"
+  add_foreign_key "draft_multiple_episodes", "works"
+  add_foreign_key "draft_programs", "channels"
+  add_foreign_key "draft_programs", "episodes"
+  add_foreign_key "draft_programs", "programs"
+  add_foreign_key "draft_programs", "works"
+  add_foreign_key "draft_works", "seasons"
+  add_foreign_key "draft_works", "works"
+  add_foreign_key "edit_request_comments", "edit_requests", on_delete: :cascade
+  add_foreign_key "edit_request_comments", "users", on_delete: :cascade
+  add_foreign_key "edit_request_participants", "edit_requests"
+  add_foreign_key "edit_request_participants", "users"
+  add_foreign_key "edit_requests", "users", on_delete: :cascade
   add_foreign_key "episodes", "episodes", column: "next_episode_id"
   add_foreign_key "episodes", "works", name: "episodes_work_id_fk", on_delete: :cascade
   add_foreign_key "finished_tips", "tips", name: "finished_tips_tip_id_fk", on_delete: :cascade
