@@ -13,10 +13,12 @@ Annict.angular.controller 'FlashCtrl', ($scope, $timeout) ->
     $scope.type = switch data.type
       when 'notice' then 'alert-success'
       when 'info' then 'alert-info'
+      when 'alert' then 'alert-warning'
       when 'danger' then 'alert-danger'
     $scope.iconType = switch data.type
       when 'notice' then 'fa-check-circle'
       when 'info' then 'fa-info-circle'
+      when 'alert' then 'fa-exclamation-circle'
       when 'danger' then 'fa-exclamation-triangle'
 
     $scope.body      = data.body

@@ -117,6 +117,7 @@ Annict::Application.routes.draw do
 
   resources :users, only: [:show] do
     collection do
+      delete :destroy
       patch :update
       post :share
     end

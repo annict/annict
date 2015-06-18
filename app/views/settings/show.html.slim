@@ -1,48 +1,62 @@
 .container
-  h2 = t('words.account')
+  .account
+    h2 = t('words.account')
 
-  = form_for current_user, url: users_path, method: :patch do |f|
-    = render 'error_panel', resource: current_user
+    = form_for current_user, url: users_path, method: :patch do |f|
+      = render 'error_panel', resource: current_user
 
-    .form-group
-      = f.label :email
-      = f.text_field :email, class: 'form-control'
-    .form-submit
-      = f.submit class: 'btn btn-primary'
-
-  hr
-
-  h2 = t('words.profile')
-
-  = form_for current_user.profile, url: profile_path do |f|
-    = render 'error_panel', resource: current_user.profile
-
-    .form-group
-      = f.label :name
-      = f.text_field :name, class: 'form-control'
-    .form-group
-      = f.label :description
-      = f.text_field :description, class: 'form-control'
-    .form-group
-      = f.label :avatar
-      = f.file_field :tombo_avatar
-    .form-group
-      = f.label :background_image
-      = f.file_field :tombo_background_image
-    .form-submit
-      = f.submit class: 'btn btn-primary'
+      .form-group
+        = f.label :email
+        = f.text_field :email, class: 'form-control'
+      .form-submit
+        = f.submit class: 'btn btn-primary'
 
   hr
 
-  h2 その他
+  .profile
+    h2 = t('words.profile')
 
-  = form_for current_user.setting, url: setting_path do |f|
-    = render 'error_panel', resource: current_user.setting
+    = form_for current_user.profile, url: profile_path do |f|
+      = render 'error_panel', resource: current_user.profile
 
-    .checkbox
-      label
-        = f.check_box :hide_checkin_comment
-        | 他の利用者の感想を表示しない
-        .detail 見てる、見たい、または中断したアニメの中で、チェックインしていないエピソードに投稿された他の利用者からの感想を表示しないようにします。
-    .form-submit
-      = f.submit class: 'btn btn-primary'
+      .form-group
+        = f.label :name
+        = f.text_field :name, class: 'form-control'
+      .form-group
+        = f.label :description
+        = f.text_field :description, class: 'form-control'
+      .form-group
+        = f.label :avatar
+        = f.file_field :tombo_avatar
+      .form-group
+        = f.label :background_image
+        = f.file_field :tombo_background_image
+      .form-submit
+        = f.submit class: 'btn btn-primary'
+
+  hr
+
+  .option
+    h2 オプション
+
+    = form_for current_user.setting, url: setting_path do |f|
+      = render 'error_panel', resource: current_user.setting
+
+      .checkbox
+        label
+          = f.check_box :hide_checkin_comment
+          | 他の利用者の感想を表示しない
+          .detail 見てる、見たい、または中断したアニメの中で、チェックインしていないエピソードに投稿された他の利用者からの感想を表示しないようにします。
+      .form-submit
+        = f.submit class: 'btn btn-primary'
+
+  hr
+  
+  .sayonara
+    h2 退会
+    
+    .description
+      | 退会すると、アカウント情報やチェックイン、ステータス変更等のデータが全て削除されます。
+    
+    .action
+      = link_to "退会する", users_path, data: { confirm: "退会しますか？", method: :delete }

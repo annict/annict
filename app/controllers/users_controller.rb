@@ -1,7 +1,7 @@
 class UsersController < ApplicationController
   permits :email
 
-  before_filter :authenticate_user!, only: [:update, :share]
+  before_filter :authenticate_user!, only: [:update, :destroy, :share]
   before_filter :set_user, only: [:show, :works, :following, :followers]
 
 
@@ -42,6 +42,11 @@ class UsersController < ApplicationController
 
   def followers
     @users = @user.followers.order('follows.id DESC')
+  end
+
+  def destroy
+    current_user.destroy
+    redirect_to root_path, notice: "退会しました。(´・ω;:.."
   end
 
   private
