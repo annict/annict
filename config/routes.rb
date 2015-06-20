@@ -11,11 +11,6 @@ Annict::Application.routes.draw do
         image_path: %r([0-9]{4}/[0-9]{2}/[0-9]{2}/.+)
   end
 
-  devise_for :staffs,
-    path: :marie,
-    controllers: { sessions: 'marie/sessions' },
-    path_names: { sign_in: :signin, sign_out: :signout }
-
   devise_for :users,
               controllers: { omniauth_callbacks: :callbacks },
               skip: [:registrations],
@@ -49,7 +44,7 @@ Annict::Application.routes.draw do
   end
 
   namespace :db do
-    resources :draft_works, except: [:index]
+    resources :draft_works, only: [:new, :create, :edit, :update]
     resources :edit_requests, only: [:index, :show] do
       member do
         post :close
@@ -63,10 +58,10 @@ Annict::Application.routes.draw do
         get :resourceless
         get :search
       end
-      resources :draft_episodes, except: [:index]
-      resources :draft_items, except: [:index]
-      resources :draft_multiple_episodes, except: [:index]
-      resources :draft_programs, except: [:index]
+      resources :draft_episodes, only: [:new, :create, :edit, :update]
+      resources :draft_items, only: [:new, :create, :edit, :update]
+      resources :draft_multiple_episodes, only: [:new, :create, :edit, :update]
+      resources :draft_programs, only: [:new, :create, :edit, :update]
       resources :episodes, only: [:index]
       resources :items, only: [:index]
       resources :programs, only: [:index]
