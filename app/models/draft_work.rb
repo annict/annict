@@ -25,10 +25,8 @@
 #
 
 class DraftWork < ActiveRecord::Base
+  include DraftCommon
   include WorkCommon
 
   belongs_to :origin, class_name: "Work", foreign_key: :work_id
-  has_one :edit_request, as: :draft_resource
-
-  accepts_nested_attributes_for :edit_request
 end

@@ -16,12 +16,11 @@ require "csv"
 #
 
 class DraftMultipleEpisode < ActiveRecord::Base
+  include DraftCommon
+
   DIFF_FIELDS = %i(body)
 
   belongs_to :work
-  has_one :edit_request, as: :draft_resource
-
-  accepts_nested_attributes_for :edit_request
 
   validates :body, presence: true, multiple_episode: true
 

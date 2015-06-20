@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150616140258) do
+ActiveRecord::Schema.define(version: 20150620115430) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -263,6 +263,9 @@ ActiveRecord::Schema.define(version: 20150616140258) do
     t.datetime "closed_at"
     t.datetime "created_at",                             null: false
     t.datetime "updated_at",                             null: false
+    t.json     "diffs",               default: [],       null: false
+    t.json     "draft_values",        default: {},       null: false
+    t.json     "origin_values",       default: {},       null: false
   end
 
   add_index "edit_requests", ["draft_resource_id", "draft_resource_type"], name: "index_er_on_drid_and_drtype", using: :btree

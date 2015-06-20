@@ -10,13 +10,6 @@ class EditRequestDecorator < ApplicationDecorator
   end
 
   def resource_diff_table
-    origin_hash = draft_resource.try(:origin).try(:to_diffable_hash).presence || {}
-    draft_hash = draft_resource.to_diffable_hash
-
-    diffs = HashDiff.diff(origin_hash, draft_hash)
-    origin_values = draft_resource.try(:origin).try(:decorate).try(:to_values)
-    draft_values = draft_resource.decorate.to_values
-
     data = {
       draft_resource: draft_resource,
       diffs: diffs,

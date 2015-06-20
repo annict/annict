@@ -20,10 +20,8 @@
 #
 
 class DraftProgram < ActiveRecord::Base
+  include DraftCommon
   include ProgramCommon
 
   belongs_to :origin, class_name: "Program", foreign_key: :program_id
-  has_one :edit_request, as: :draft_resource
-
-  accepts_nested_attributes_for :edit_request
 end

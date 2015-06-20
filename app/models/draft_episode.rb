@@ -20,11 +20,9 @@
 #
 
 class DraftEpisode < ActiveRecord::Base
+  include DraftCommon
   include EpisodeCommon
 
   belongs_to :origin, class_name: "Episode", foreign_key: :episode_id
   belongs_to :work
-  has_one :edit_request, as: :draft_resource
-
-  accepts_nested_attributes_for :edit_request
 end
