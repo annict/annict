@@ -49,6 +49,7 @@ gem "rmagick"
 gem "sass-rails"
 gem "sinatra", require: nil
 gem "slim"
+gem "traceroute"
 gem "twitter"
 gem "uglifier"
 gem "validate_url"
