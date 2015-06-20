@@ -1,0 +1,2 @@
+class DraftItemPolicy < DraftResourcePolicy
+end

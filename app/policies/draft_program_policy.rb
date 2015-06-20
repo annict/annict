@@ -1,0 +1,2 @@
+class DraftProgramPolicy < DraftResourcePolicy
+end

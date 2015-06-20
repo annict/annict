@@ -36,10 +36,13 @@ class Db::DraftProgramsController < Db::ApplicationController
 
   def edit(id)
     @draft_program = @work.draft_programs.find(id)
+    authorize @draft_program, :edit?
   end
 
   def update(id, draft_program)
     @draft_program = @work.draft_programs.find(id)
+    authorize @draft_program, :update?
+
     @draft_program.attributes = draft_program
 
     if @draft_program.valid?

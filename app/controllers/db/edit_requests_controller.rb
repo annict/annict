@@ -13,6 +13,8 @@ class Db::EditRequestsController < Db::ApplicationController
 
   def publish(id)
     @edit_request = EditRequest.find(id)
+    authorize @edit_request, :publish?
+
     @edit_request.proposer = current_user
     @edit_request.publish!
 
@@ -22,6 +24,8 @@ class Db::EditRequestsController < Db::ApplicationController
 
   def close(id)
     @edit_request = EditRequest.find(id)
+    authorize @edit_request, :close?
+
     @edit_request.proposer = current_user
     @edit_request.close!
 

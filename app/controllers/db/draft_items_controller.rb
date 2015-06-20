@@ -34,10 +34,12 @@ class Db::DraftItemsController < Db::ApplicationController
 
   def edit(id)
     @draft_item = @work.draft_items.find(id)
+    authorize @draft_item, :edit?
   end
 
   def update(id, draft_item)
     @draft_item = @work.draft_items.find(id)
+    authorize @draft_item, :update?
 
     if @draft_item.update(draft_item)
       flash[:notice] = "作品画像の編集リクエストを更新しました"

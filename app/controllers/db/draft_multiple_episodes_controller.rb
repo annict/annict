@@ -22,10 +22,12 @@ class Db::DraftMultipleEpisodesController < Db::ApplicationController
 
   def edit(id)
     @draft_multiple_episode = @work.draft_multiple_episodes.find(id)
+    authorize @draft_multiple_episode, :edit?
   end
 
   def update(id, draft_multiple_episode)
     @draft_multiple_episode = @work.draft_multiple_episodes.find(id)
+    authorize @draft_multiple_episode, :update?
 
     if @draft_multiple_episode.update(draft_multiple_episode)
       flash[:notice] = "作品の編集リクエストを更新しました"

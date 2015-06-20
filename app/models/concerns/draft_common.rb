@@ -16,7 +16,7 @@ module DraftCommon
                       try(:to_diffable_hash).presence || {}
       draft_hash = edit_request.draft_resource.to_diffable_hash
 
-      diffs = HashDiff.diff(origin_hash, draft_hash)
+      diffs = HashDiff.diff(origin_hash, draft_hash).delete_if { |diff| diff[2].blank? }
       origin_values = edit_request.draft_resource.
                         try(:origin).try(:decorate).try(:to_values)
       draft_values = edit_request.draft_resource.decorate.to_values

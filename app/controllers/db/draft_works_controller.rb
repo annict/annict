@@ -32,10 +32,12 @@ class Db::DraftWorksController < Db::ApplicationController
 
   def edit(id)
     @draft_work = DraftWork.find(id)
+    authorize @draft_work, :edit?
   end
 
   def update(id, draft_work)
     @draft_work = DraftWork.find(id)
+    authorize @draft_work, :update?
 
     if @draft_work.update(draft_work)
       flash[:notice] = "作品の編集リクエストを更新しました"
