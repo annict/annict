@@ -1,3 +1,16 @@
+GIT
+  remote: git://github.com/yuki24/activerecord-correctable.git
+  revision: ca900709205a404c4a0bee885b3d452d42fb67e3
+  specs:
+    activerecord-correctable (0.1.0)
+
+GIT
+  remote: git://github.com/yuki24/did_you_mean.git
+  revision: 68707e2e0b4111af99f2321b382f026f7c86bcc8
+  specs:
+    did_you_mean (0.10.0.alpha)
+      interception
+
 GEM
   remote: https://rubygems.org/
   remote: https://rails-assets.org/
@@ -143,8 +156,6 @@ GEM
       responders
       thread_safe (~> 0.1)
       warden (~> 1.2.3)
-    did_you_mean (0.9.6)
-      interception
     diff-lcs (1.2.5)
     docile (1.1.5)
     draper (2.1.0)
@@ -537,6 +548,7 @@ DEPENDENCIES
   aasm
   action_args
   active_link_to
+  activerecord-correctable!
   activerecord-session_store
   acts_as_list
   angular_rails_csrf
@@ -559,7 +571,7 @@ DEPENDENCIES
   database_rewinder
   delayed_job_active_record
   devise
-  did_you_mean
+  did_you_mean!
   draper
   email_validator
   enumerize

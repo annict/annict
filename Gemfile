@@ -67,8 +67,9 @@ source "https://rails-assets.org" do
 end
 
 group :development, :test do
+  gem "activerecord-correctable", github: "yuki24/activerecord-correctable"
   gem "awesome_print"
-  gem "did_you_mean"
+  gem "did_you_mean", github: "yuki24/did_you_mean"
   gem "hirb-unicode"
   gem "hirb"
   gem "pry-byebug"
