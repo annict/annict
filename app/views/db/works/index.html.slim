@@ -38,7 +38,7 @@ table.table.table-striped
         td = work.title
         td
           - if work.sc_tid.present?
-            = link_to work.sc_tid, work.syobocal_url, target: "_blank"
+            = work.decorate.syobocal_link
           - else
             = "-"
         td = "#{work.watchers_count}人"

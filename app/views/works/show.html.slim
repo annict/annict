@@ -72,15 +72,15 @@
     - if @work.sc_tid.present?
       li
         = icon('link')
-        = link_to 'しょぼかる', @work.syobocal_url, target: '_blank'
+        = @work.decorate.syobocal_link("しょぼかる")
     - if@work.twitter_username.present?
       li
         = icon('twitter')
-        = link_to "@#{@work.twitter_username}", @work.twitter_url, target: '_blank'
+        = @work.decorate.twitter_username_link
     - if@work.twitter_hashtag.present?
       li
         = icon('twitter')
-        = link_to @work.twitter_hashtag, @work.twitter_hashtag_url, target: '_blank'
+        = @work.decorate.twitter_hashtag_link
 
 hr
 

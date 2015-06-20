@@ -93,14 +93,6 @@ class Work < ActiveRecord::Base
     checkins.count
   end
 
-  def twitter_url
-    twitter_username.present? ? "https://twitter.com/#{twitter_username}" : ''
-  end
-
-  def twitter_hashtag_url
-    twitter_hashtag.present? ? URI.encode("https://twitter.com/search?q=#{twitter_hashtag}&src=hash") : ''
-  end
-
   def syobocal_url
     "http://cal.syoboi.jp/tid/#{sc_tid}"
   end
