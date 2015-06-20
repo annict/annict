@@ -1,9 +1,9 @@
 doctype html
-html lang="ja"
+html lang="ja" ng-app="annict"
   head
-    title
-      = page_title(app_name: "Annict DB", page_title_symbol: :site_page_title, separator: " | ")
     = stylesheet_link_tag "db", media: "all"
+    = include_gon
+    = javascript_include_tag "base"
     = javascript_include_tag "db"
     = csrf_meta_tags
   body class="#{body_class}"

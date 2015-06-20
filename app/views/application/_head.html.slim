@@ -1,7 +1,7 @@
 = display_meta_tags(site: 'Annict')
 meta name='viewport' content='width=device-width, initial-scale=1.0 user-scalable=no'
 
-= render 'og'
+= render "og"
 
 link href='/images/favicon.png' rel='shortcut icon' type='image/png'
 link href='/images/apple-touch-icon-144x144.png' rel='apple-touch-icon-precomposed' sizes='144x144'
@@ -19,5 +19,6 @@ link type='text/plain' rel='author' href='http://www.annict.com/humans.txt'
 link href='https://fonts.googleapis.com/css?family=Titillium+Web' rel='stylesheet' type='text/css'
 
 = include_gon
-= javascript_include_tag 'application'
+= javascript_include_tag "base"
+= javascript_include_tag "application"
 = csrf_meta_tags

@@ -1,9 +1,10 @@
 class ApplicationController < ActionController::Base
+  include FlashMessage
+
   # Prevent CSRF attacks by raising an exception.
   # For APIs, you may want to use :null_session instead.
   protect_from_forgery with: :exception
 
-  before_filter :store_flash_message
   before_filter :store_user_info
 
 
@@ -43,13 +44,6 @@ class ApplicationController < ActionController::Base
 
   def set_checkin
     @checkin = @episode.checkins.find(params[:checkin_id])
-  end
-
-  def store_flash_message
-    key = flash.keys.first
-    message = { type: key.to_s, body: flash[key] } if flash[key].present?
-
-    gon.push(flash: message.presence || {})
   end
 
   def store_user_info
