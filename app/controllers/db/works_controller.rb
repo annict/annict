@@ -31,6 +31,15 @@ class Db::WorksController < Db::ApplicationController
     render :index
   end
 
+  def destroy(id)
+    @work = Work.find(id)
+    authorize @work, :destroy?
+
+    @work.destroy
+
+    redirect_to db_works_path, notice: "作品を削除しました"
+  end
+
   private
 
   def load_works

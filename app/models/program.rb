@@ -21,4 +21,6 @@
 
 class Program < ActiveRecord::Base
   include ProgramCommon
+
+  has_many :draft_programs, dependent: :destroy
 end

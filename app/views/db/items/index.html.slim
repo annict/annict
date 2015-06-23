@@ -15,7 +15,7 @@ table.table.table-striped
       th URL
       th サイト内で
       th 編集
-      - if current_user.role.admin?
+      - if policy(@items).destroy?
         th 削除
   tbody
     - @items.each do |item|
@@ -26,8 +26,8 @@ table.table.table-striped
         td = item.url.truncate(30)
         td = item.main? ? "使用する" : "使用しない"
         td = link_to "編集", new_db_work_draft_item_path(@work, id: item.id)
-        / - if current_user.role.admin?
-        /   td = link_to "削除", db_work_item_path(@work, item), method: :delete, data: { confirm: "作品画像を削除しますか？" }
+        - if policy(item).destroy?
+          td = link_to "削除", db_work_item_path(@work, item), method: :delete, data: { confirm: "作品画像を削除しますか？" }
 
 - if @items.blank?
   .well 登録されている作品画像はありません。

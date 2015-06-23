@@ -52,7 +52,7 @@ Annict::Application.routes.draw do
       end
       resources :comments, only: [:create], controller: "edit_request_comments"
     end
-    resources :works, only: [:index] do
+    resources :works, only: [:index, :destroy] do
       collection do
         get :season
         get :resourceless
@@ -62,9 +62,9 @@ Annict::Application.routes.draw do
       resources :draft_items, only: [:new, :create, :edit, :update]
       resources :draft_multiple_episodes, only: [:new, :create, :edit, :update]
       resources :draft_programs, only: [:new, :create, :edit, :update]
-      resources :episodes, only: [:index]
-      resources :items, only: [:index]
-      resources :programs, only: [:index]
+      resources :episodes, only: [:index, :destroy]
+      resources :items, only: [:index, :destroy]
+      resources :programs, only: [:index, :destroy]
     end
 
     root "home#index"

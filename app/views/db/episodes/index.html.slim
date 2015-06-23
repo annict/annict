@@ -5,7 +5,7 @@
 hr
 
 .pull-right
-  = link_to "新規登録", new_db_work_draft_multiple_episode_path(@work), class: "btn btn-primary"
+  = link_to "新規編集リクエスト", new_db_work_draft_multiple_episode_path(@work), class: "btn btn-primary"
 
 .clearfix
 
@@ -19,7 +19,7 @@ table.table.table-striped
       th ソート番号
       th チェックイン数
       th 編集
-      - if current_user.role.admin?
+      - if policy(@episodes).destroy?
         th 削除
   tbody
     - @episodes.each do |episode|
@@ -31,8 +31,8 @@ table.table.table-striped
         td = episode.sort_number
         td = episode.checkins.count
         td = link_to "編集", new_db_work_draft_episode_path(@work, id: episode)
-        / - if current_user.role.admin?
-        /   td = link_to "削除", db_work_episode_path(@work, episode), data: { method: :delete, confirm: "このエピソードを削除しますか？" }
+        - if policy(episode).destroy?
+          td = link_to "削除", db_work_episode_path(@work, episode), data: { method: :delete, confirm: "このエピソードを削除しますか？" }
 
 
 - if @episodes.blank?

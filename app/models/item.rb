@@ -23,6 +23,7 @@ class Item < ActiveRecord::Base
   include ItemCommon
 
   belongs_to :work, counter_cache: true
+  has_many :draft_items, dependent: :destroy
 
   before_save :switch_main_flag
 

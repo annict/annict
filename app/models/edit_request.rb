@@ -30,8 +30,8 @@ class EditRequest < ActiveRecord::Base
 
   belongs_to :user
   belongs_to :draft_resource, polymorphic: true
-  has_many :comments, class_name: "EditRequestComment"
-  has_many :participants, class_name: "EditRequestParticipant"
+  has_many :comments, class_name: "EditRequestComment", dependent: :destroy
+  has_many :participants, class_name: "EditRequestParticipant", dependent: :destroy
 
   validates :title, presence: true
 

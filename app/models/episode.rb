@@ -30,9 +30,11 @@ class Episode < ActiveRecord::Base
   has_many :activities, dependent: :destroy, foreign_key: :recipient_id, foreign_type: :recipient
   has_many :checkins,   dependent: :destroy
   has_many :checks,     dependent: :destroy
+  has_many :draft_episodes, dependent: :destroy
   has_many :programs,   dependent: :destroy
 
   after_create :create_nicoch_program
+  before_destroy :unset_next_id_on_prev_episode
 
   def prev_episode
     work.episodes.find_by(next_episode: self)
@@ -56,6 +58,12 @@ class Episode < ActiveRecord::Base
       started_at = work.nicoch_started_at + nicoch_started_day.day
 
       work.programs.create(channel_id: channel.id, episode_id: id, started_at: started_at)
+    end
+  end
+
+  def unset_next_id_on_prev_episode
+    if prev_episode.present? && (self == prev_episode.next_episode)
+      prev_episode.update_column(:next_episode_id, nil)
     end
   end
 end

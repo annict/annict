@@ -1,5 +1,5 @@
 .pull-right
-  = link_to "新規登録", new_db_draft_work_path, class: "btn btn-primary"
+  = link_to "新規編集リクエスト", new_db_draft_work_path, class: "btn btn-primary"
 
 ul.nav.nav-tabs
   = active_link_to db_works_path, wrap_tag: :li, active: params[:action] == "index" do
@@ -31,6 +31,8 @@ table.table.table-striped
       th リリース日
       th 作品画像
       th 編集リクエスト
+      - if policy(@works).destroy?
+        th 削除
   tbody
     - @works.each do |work|
       tr
@@ -44,6 +46,8 @@ table.table.table-striped
         td = "#{work.watchers_count}人"
         td = work.released_at.presence || "-"
         td = image_tag tombo_thumb_url(work.main_item, :tombo_image, "w:70,h:70"), size: "70x70"
-        td = link_to "編集する", new_db_draft_work_path(id: work.id), class: "btn btn-primary"
+        td = link_to "作成する", new_db_draft_work_path(id: work.id), class: "btn btn-primary"
+        - if policy(work).destroy?
+          td = link_to "削除する", db_work_path(work), class: "btn btn-danger", data: { method: "delete", confirm: "この作品を削除しますか？" }
 
 = paginate @works
