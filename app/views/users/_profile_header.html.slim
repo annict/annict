@@ -33,7 +33,7 @@
         | Following
     .follower.status.col-xs-3
       .count
-        = link_to user.followers.count, following_user_path(user.username)
+        = link_to user.followers.count, followers_user_path(user.username)
       .text
         | Followers
     .clearfix
