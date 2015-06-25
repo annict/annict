@@ -37,6 +37,7 @@ class EditRequest < ActiveRecord::Base
 
   after_create :create_participant
   after_create :create_db_activity
+  after_create :notify_new_edit_request
 
   aasm do
     state :opened, initial: true
@@ -114,5 +115,9 @@ class EditRequest < ActiveRecord::Base
       a.trackable = self
       a.action = "edit_requests.create"
     end
+  end
+
+  def notify_new_edit_request
+    EditRequestMailer.new_edit_request_notification(id).deliver_later
   end
 end

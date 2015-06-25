@@ -43,4 +43,16 @@ class EditRequestMailer < ActionMailer::Base
       mail(to: p.user.email, subject: subject)
     end
   end
+
+  def new_edit_request_notification(edit_request_id)
+    @edit_request = EditRequest.find(edit_request_id)
+    @user = @edit_request.user
+    @name = @user.profile.name
+
+    subject = "【Annict DB】#{@name}さんが編集リクエストを作成しました"
+
+    User.where.not(id: @edit_request.user.id).with_role(:editor, :admin).each do |u|
+      mail(to: u.email, subject: subject)
+    end
+  end
 end
