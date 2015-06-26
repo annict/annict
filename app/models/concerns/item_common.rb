@@ -1,10 +1,10 @@
 module ItemCommon
   extend ActiveSupport::Concern
 
-  included do
-    DIFF_FIELDS = %i(name url tombo_image main)
-    PUBLISH_FIELDS = DIFF_FIELDS + %i(work_id)
+  DIFF_FIELDS = %i(name url tombo_image main)
+  PUBLISH_FIELDS = DIFF_FIELDS + %i(work_id)
 
+  included do
     has_attached_file :tombo_image
 
     validates :name, presence: true

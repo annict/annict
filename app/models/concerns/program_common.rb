@@ -1,10 +1,10 @@
 module ProgramCommon
   extend ActiveSupport::Concern
 
-  included do
-    DIFF_FIELDS = %i(channel_id episode_id started_at)
-    PUBLISH_FIELDS = DIFF_FIELDS + %i(work_id)
+  DIFF_FIELDS = %i(channel_id episode_id started_at)
+  PUBLISH_FIELDS = DIFF_FIELDS + %i(work_id)
 
+  included do
     belongs_to :channel
     belongs_to :episode
     belongs_to :work
