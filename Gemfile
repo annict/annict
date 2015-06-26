@@ -2,7 +2,7 @@ source "https://rubygems.org"
 
 ruby "2.2.2"
 
-gem "rails", "4.2.2"
+gem "rails", "4.2.3"
 
 gem "action_args"
 gem "activerecord-session_store"
