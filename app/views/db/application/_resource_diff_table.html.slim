@@ -11,15 +11,15 @@ table.table.table-bordered.table-hover
         tr
           td = t("activerecord.attributes.#{draft_resource.class.name.underscore}.#{field}")
           - if diff[0] == "+"
-            td.success = draft_values[field.to_s].html_safe
+            td.success = draft_values[field].html_safe
           - elsif diff[0] == "-"
             td
           - elsif diff[0] == "~"
-            td.warning = draft_values[field.to_s].html_safe
+            td.warning = draft_values[field].html_safe
           
           - if diff[0] == "+"
             td
           - elsif diff[0] == "-"
-            td.danger = origin_values[field.to_s].html_safe
+            td.danger = origin_values[field].html_safe
           - elsif diff[0] == "~"
-            td.warning = origin_values[field.to_s].html_safe
+            td.warning = origin_values[field].html_safe

@@ -10,7 +10,7 @@ module EpisodeCommon
 
     def to_diffable_hash
       self.class::DIFF_FIELDS.inject({}) do |hash, field|
-        hash[field] = send(field)
+        hash[field] = send(field) if send(field).present?
         hash
       end
     end

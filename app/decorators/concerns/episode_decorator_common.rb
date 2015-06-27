@@ -6,12 +6,14 @@ module EpisodeDecoratorCommon
       model.class::DIFF_FIELDS.inject({}) do |hash, field|
         hash[field] = case field
         when :prev_episode_id
-          episode = work.episodes.find(send(field))
-          title = episode.decorate.title_with_number
-          path = h.work_episode_path(episode.work, episode)
-          h.link_to(title, path, target: "_blank")
+          if send(field).present?
+            episode = work.episodes.find(send(field))
+            title = episode.decorate.title_with_number
+            path = h.work_episode_path(episode.work, episode)
+            h.link_to(title, path, target: "_blank")
+          end.to_s
         else
-          send(field)
+          send(field).to_s
         end
 
         hash

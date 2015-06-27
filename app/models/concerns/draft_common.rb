@@ -6,26 +6,21 @@ module DraftCommon
 
     accepts_nested_attributes_for :edit_request
 
-    after_save :update_diffs_and_values
-
-    private
-
-    def update_diffs_and_values
+    def diffs
       origin_hash = edit_request.draft_resource.
                       try(:origin).
                       try(:to_diffable_hash).presence || {}
       draft_hash = edit_request.draft_resource.to_diffable_hash
 
-      diffs = HashDiff.diff(origin_hash, draft_hash).delete_if { |diff| diff[2].blank? }
-      origin_values = edit_request.draft_resource.
-                        try(:origin).try(:decorate).try(:to_values)
-      draft_values = edit_request.draft_resource.decorate.to_values
+      HashDiff.diff(origin_hash, draft_hash).delete_if { |diff| diff[2].blank? }
+    end
 
-      edit_request.update(
-        diffs: diffs,
-        draft_values: draft_values,
-        origin_values: origin_values
-      )
+    def origin_values
+      edit_request.draft_resource.try(:origin).try(:decorate).try(:to_values)
+    end
+
+    def draft_values
+      edit_request.draft_resource.decorate.to_values
     end
   end
 end

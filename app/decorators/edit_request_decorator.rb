@@ -12,9 +12,9 @@ class EditRequestDecorator < ApplicationDecorator
   def resource_diff_table
     data = {
       draft_resource: draft_resource,
-      diffs: diffs,
-      draft_values: draft_values,
-      origin_values: origin_values
+      diffs: draft_resource.diffs,
+      draft_values: draft_resource.draft_values,
+      origin_values: draft_resource.origin_values
     }
 
     h.render("db/application/resource_diff_table", data)
