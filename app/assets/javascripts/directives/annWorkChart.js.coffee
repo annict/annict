@@ -18,7 +18,7 @@ Annict.angular.directive 'annWorkChart', ->
         }
       ]
     scaleStepWidth = if _.max(values) >= 10
-      Math.round(_.max(values) / 10)
+      Math.ceil(_.max(values) / 10)
     else
       1
 
