@@ -12,12 +12,14 @@
 #  created_at      :datetime
 #  updated_at      :datetime
 #  next_episode_id :integer
+#  prev_episode_id :integer
 #
 # Indexes
 #
 #  episodes_work_id_idx               (work_id)
 #  episodes_work_id_sc_count_key      (work_id,sc_count) UNIQUE
 #  index_episodes_on_next_episode_id  (next_episode_id)
+#  index_episodes_on_prev_episode_id  (prev_episode_id)
 #
 
 class Episode < ActiveRecord::Base
@@ -25,7 +27,8 @@ class Episode < ActiveRecord::Base
 
   has_paper_trail
 
-  belongs_to :next_episode, class_name: "Episode", foreign_key: :next_episode_id
+  belongs_to :old_next_episode, class_name: "Episode", foreign_key: :next_episode_id
+  belongs_to :prev_episode, class_name: "Episode", foreign_key: :prev_episode_id
   belongs_to :work, counter_cache: true
   has_many :activities, dependent: :destroy, foreign_key: :recipient_id, foreign_type: :recipient
   has_many :checkins,   dependent: :destroy
@@ -36,8 +39,12 @@ class Episode < ActiveRecord::Base
   after_create :create_nicoch_program
   before_destroy :unset_next_id_on_prev_episode
 
-  def prev_episode
-    work.episodes.find_by(next_episode: self)
+  def old_prev_episode
+    work.episodes.find_by(old_next_episode: self)
+  end
+
+  def next_episode
+    work.episodes.find_by(prev_episode: self)
   end
 
   def number_title

@@ -103,16 +103,15 @@ module Syobocal
 
     def create_episode(title)
       prev_episode = work.episodes.order(sort_number: :desc).first
-      episode = work.episodes.create do |e|
+      episode = work.episodes.new do |e|
         e.number = "##{@count}"
         e.sort_number = (work.episodes.count + 1) * 10
         e.sc_count = @count
         e.title = title
       end
+      episode.prev_episode_id = prev_episode.id if prev_episode.present?
 
-      if prev_episode.present?
-        prev_episode.update_column(:next_episode_id, episode.id)
-      end
+      episode.save!
 
       SyobocalMailer.delay.episode_created_notification(episode.id)
 

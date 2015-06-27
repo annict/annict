@@ -1,5 +1,5 @@
 class Db::DraftEpisodesController < Db::ApplicationController
-  permits :number, :sort_number, :title, :next_episode_id, :episode_id,
+  permits :number, :sort_number, :title, :prev_episode_id, :episode_id,
           edit_request_attributes: [:id, :title, :body]
 
   before_action :set_work, only: [:new, :create, :edit, :update]
@@ -41,7 +41,7 @@ class Db::DraftEpisodesController < Db::ApplicationController
   end
 
   private
-  
+
   def set_work
     @work = Work.find(params[:work_id])
   end

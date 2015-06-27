@@ -13,9 +13,9 @@
 #  closed_at           :datetime
 #  created_at          :datetime         not null
 #  updated_at          :datetime         not null
-#  diffs               :json             default([]), not null
-#  draft_values        :json             default({}), not null
-#  origin_values       :json             default({}), not null
+#  diffs               :json             not null
+#  origin_values       :json
+#  draft_values        :json             not null
 #
 # Indexes
 #

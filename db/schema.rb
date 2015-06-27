@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150620115430) do
+ActiveRecord::Schema.define(version: 20150626152128) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -163,10 +163,12 @@ ActiveRecord::Schema.define(version: 20150620115430) do
     t.integer  "next_episode_id"
     t.datetime "created_at",                  null: false
     t.datetime "updated_at",                  null: false
+    t.integer  "prev_episode_id"
   end
 
   add_index "draft_episodes", ["episode_id"], name: "index_draft_episodes_on_episode_id", using: :btree
   add_index "draft_episodes", ["next_episode_id"], name: "index_draft_episodes_on_next_episode_id", using: :btree
+  add_index "draft_episodes", ["prev_episode_id"], name: "index_draft_episodes_on_prev_episode_id", using: :btree
   add_index "draft_episodes", ["work_id"], name: "index_draft_episodes_on_work_id", using: :btree
 
   create_table "draft_items", force: :cascade do |t|
@@ -263,9 +265,9 @@ ActiveRecord::Schema.define(version: 20150620115430) do
     t.datetime "closed_at"
     t.datetime "created_at",                             null: false
     t.datetime "updated_at",                             null: false
-    t.json     "diffs",               default: [],       null: false
-    t.json     "draft_values",        default: {},       null: false
-    t.json     "origin_values",       default: {},       null: false
+    t.json     "diffs",                                  null: false
+    t.json     "origin_values"
+    t.json     "draft_values",                           null: false
   end
 
   add_index "edit_requests", ["draft_resource_id", "draft_resource_type"], name: "index_er_on_drid_and_drtype", using: :btree
@@ -281,9 +283,11 @@ ActiveRecord::Schema.define(version: 20150620115430) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.integer  "next_episode_id"
+    t.integer  "prev_episode_id"
   end
 
   add_index "episodes", ["next_episode_id"], name: "index_episodes_on_next_episode_id", using: :btree
+  add_index "episodes", ["prev_episode_id"], name: "index_episodes_on_prev_episode_id", using: :btree
   add_index "episodes", ["work_id", "sc_count"], name: "episodes_work_id_sc_count_key", unique: true, using: :btree
   add_index "episodes", ["work_id"], name: "episodes_work_id_idx", using: :btree
 
@@ -553,6 +557,7 @@ ActiveRecord::Schema.define(version: 20150620115430) do
   add_foreign_key "db_activities", "users"
   add_foreign_key "draft_episodes", "episodes"
   add_foreign_key "draft_episodes", "episodes", column: "next_episode_id"
+  add_foreign_key "draft_episodes", "episodes", column: "prev_episode_id"
   add_foreign_key "draft_episodes", "works"
   add_foreign_key "draft_items", "items"
   add_foreign_key "draft_items", "works"
@@ -569,6 +574,7 @@ ActiveRecord::Schema.define(version: 20150620115430) do
   add_foreign_key "edit_request_participants", "users"
   add_foreign_key "edit_requests", "users", on_delete: :cascade
   add_foreign_key "episodes", "episodes", column: "next_episode_id"
+  add_foreign_key "episodes", "episodes", column: "prev_episode_id"
   add_foreign_key "episodes", "works", name: "episodes_work_id_fk", on_delete: :cascade
   add_foreign_key "finished_tips", "tips", name: "finished_tips_tip_id_fk", on_delete: :cascade
   add_foreign_key "finished_tips", "users", name: "finished_tips_user_id_fk", on_delete: :cascade

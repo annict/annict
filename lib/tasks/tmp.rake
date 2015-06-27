@@ -7,4 +7,11 @@ namespace :tmp do
       end
     end
   end
+
+  task move_next_episode_id_to_prev_episode_id: :environment do
+    Episode.where.not(next_episode_id: nil).find_each do |e|
+      puts "episode_id: #{e.id}"
+      e.old_next_episode.update_column(:prev_episode_id, e.id)
+    end
+  end
 end

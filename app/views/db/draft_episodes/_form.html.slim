@@ -14,9 +14,9 @@
     .col-sm-9
       = f.text_field :title, class: "form-control", autofocus: true
   .form-group
-    = f.label :next_episode_id, class: "col-sm-3 control-label"
+    = f.label :prev_episode_id, class: "col-sm-3 control-label"
     .col-sm-9
-      = f.select :next_episode_id, options_for_select(work.episodes.order(:sort_number).map { |episode| ["#{episode.number} #{episode.title}", episode.id] }, f.object.next_episode_id), { include_blank: true }, { class: "form-control" }
+      = f.select :prev_episode_id, options_for_select(work.episodes.order(:sort_number).map { |episode| ["#{episode.number} #{episode.title}", episode.id] }, f.object.prev_episode_id), { include_blank: true }, { class: "form-control" }
     
   = hidden_field_tag "draft_episode[episode_id]", episode.id
   

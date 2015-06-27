@@ -5,7 +5,7 @@ module EpisodeDecoratorCommon
     def to_values
       model.class::DIFF_FIELDS.inject({}) do |hash, field|
         hash[field] = case field
-        when :next_episode_id
+        when :prev_episode_id
           episode = work.episodes.find(send(field))
           title = episode.decorate.title_with_number
           path = h.work_episode_path(episode.work, episode)
