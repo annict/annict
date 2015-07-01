@@ -100,7 +100,7 @@ class Work < ActiveRecord::Base
 
   def channels
     if episodes.present?
-      programs = Program.where(episode_id: episodes.order(:sort_number).first.id)
+      programs = Program.where(episode_id: episodes.pluck(:id))
       Channel.where(id: programs.pluck(:channel_id).uniq) if programs.present?
     end
   end
