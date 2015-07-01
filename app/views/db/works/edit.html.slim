@@ -1,1 +1,6 @@
+- if @work.present?
+  = render "db/works/header", work: @work
+
+hr
+
 = render "form", work: @work

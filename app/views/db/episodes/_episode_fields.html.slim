@@ -1,0 +1,16 @@
+.form-group
+  = f.label :number, class: "col-sm-3 control-label"
+  .col-sm-9
+    = f.text_field :number, class: "form-control"
+.form-group
+  = f.label :sort_number, class: "col-sm-3 control-label"
+  .col-sm-9
+    = f.text_field :sort_number, class: "form-control"
+.form-group
+  = f.label :title, class: "col-sm-3 control-label"
+  .col-sm-9
+    = f.text_field :title, class: "form-control", autofocus: true
+.form-group
+  = f.label :prev_episode_id, class: "col-sm-3 control-label"
+  .col-sm-9
+    = f.select :prev_episode_id, options_for_select(work.episodes.order(:sort_number).map { |episode| ["#{episode.number} #{episode.title}", episode.id] }, f.object.prev_episode_id), { include_blank: true }, { class: "form-control" }
