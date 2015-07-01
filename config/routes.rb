@@ -52,7 +52,7 @@ Annict::Application.routes.draw do
       end
       resources :comments, only: [:create], controller: "edit_request_comments"
     end
-    resources :works, only: [:index, :destroy] do
+    resources :works, only: [:index, :edit, :update, :destroy] do
       collection do
         get :season
         get :resourceless

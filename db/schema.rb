@@ -160,14 +160,12 @@ ActiveRecord::Schema.define(version: 20150626152128) do
     t.string   "number"
     t.integer  "sort_number",     default: 0, null: false
     t.string   "title"
-    t.integer  "next_episode_id"
     t.datetime "created_at",                  null: false
     t.datetime "updated_at",                  null: false
     t.integer  "prev_episode_id"
   end
 
   add_index "draft_episodes", ["episode_id"], name: "index_draft_episodes_on_episode_id", using: :btree
-  add_index "draft_episodes", ["next_episode_id"], name: "index_draft_episodes_on_next_episode_id", using: :btree
   add_index "draft_episodes", ["prev_episode_id"], name: "index_draft_episodes_on_prev_episode_id", using: :btree
   add_index "draft_episodes", ["work_id"], name: "index_draft_episodes_on_work_id", using: :btree
 
@@ -556,7 +554,6 @@ ActiveRecord::Schema.define(version: 20150626152128) do
   add_foreign_key "cover_images", "works", name: "cover_images_work_id_fk", on_delete: :cascade
   add_foreign_key "db_activities", "users"
   add_foreign_key "draft_episodes", "episodes"
-  add_foreign_key "draft_episodes", "episodes", column: "next_episode_id"
   add_foreign_key "draft_episodes", "episodes", column: "prev_episode_id"
   add_foreign_key "draft_episodes", "works"
   add_foreign_key "draft_items", "items"

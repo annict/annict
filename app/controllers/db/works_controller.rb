@@ -1,4 +1,8 @@
 class Db::WorksController < Db::ApplicationController
+  permits :season_id, :sc_tid, :title, :media, :official_site_url, :wikipedia_url,
+          :twitter_username, :twitter_hashtag, :released_at, :released_at_about,
+          :fetch_syobocal
+
   before_action :load_works, only: [:index, :season, :resourceless, :search]
 
   def index(page: nil)
@@ -31,6 +35,22 @@ class Db::WorksController < Db::ApplicationController
     render :index
   end
 
+  def edit(id)
+    @work = Work.find(id)
+    authorize @work, :edit?
+  end
+
+  def update(id, work)
+    @work = Work.find(id)
+    authorize @work, :update?
+
+    if @work.update_attributes(format_params(work))
+      redirect_to db_works_path, notice: "作品を更新しました"
+    else
+      render :edit
+    end
+  end
+
   def destroy(id)
     @work = Work.find(id)
     authorize @work, :destroy?
@@ -49,5 +69,11 @@ class Db::WorksController < Db::ApplicationController
     @previous_season_works = Work.by_season(ENV["ANNICT_PREVIOUS_SEASON"])
     @episodeless_works = Work.where(episodes_count: 0)
     @itemless_works = Work.where(items_count: 0)
+  end
+
+  def format_params(work_params)
+    released_at = work_params[:released_at].strip.gsub(/年|月/, '-').delete('日')
+    work_params[:released_at] = released_at
+    work_params
   end
 end

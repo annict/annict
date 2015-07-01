@@ -26,6 +26,7 @@ ja:
         terms: 利用規約とプライバシーポリシー
         username: ユーザ名
       work:
+        season_id: 放送時期
         media: メディア
         official_site_url: 公式サイト
         released_at: リリース日

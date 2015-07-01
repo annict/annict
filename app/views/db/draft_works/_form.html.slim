@@ -1,50 +1,7 @@
 = form_for [:db, draft_work], html: { class: "form-horizontal" } do |f|
   = render "application/error_panel", resource: f.object
 
-  .form-group
-    = f.label :season_id, class: "col-sm-3 control-label"
-    .col-sm-9
-      .row
-        .col-sm-5
-          = f.select :season_id, options_from_collection_for_select(Season.all, :id, :name, f.object.season_id), { include_blank: true }, { class: "form-control" }
-  .form-group
-    = f.label :sc_tid, class: "col-sm-3 control-label"
-    .col-sm-9
-      = f.text_field :sc_tid, class: "form-control"
-  .form-group
-    = f.label :title, class: "col-sm-3 control-label"
-    .col-sm-9
-      = f.text_field :title, class: "form-control", autofocus: true
-  .form-group
-    = f.label :media, class: "col-sm-3 control-label"
-    .col-sm-9
-      .row
-        .col-sm-5
-          = f.select :media, options_for_select(Work.media.options, f.object.media), { include_blank: true }, { class: "form-control" }
-  .form-group
-    = f.label :official_site_url, class: "col-sm-3 control-label"
-    .col-sm-9
-      = f.text_field :official_site_url, class: "form-control"
-  .form-group
-    = f.label :wikipedia_url, class: "col-sm-3 control-label"
-    .col-sm-9
-      = f.text_field :wikipedia_url, class: "form-control"
-  .form-group
-    = f.label :twitter_username, class: "col-sm-3 control-label"
-    .col-sm-9
-      = f.text_field :twitter_username, class: "form-control"
-  .form-group
-    = f.label :twitter_hashtag, class: "col-sm-3 control-label"
-    .col-sm-9
-      = f.text_field :twitter_hashtag, class: "form-control"
-  .form-group
-    = f.label :released_at, class: "col-sm-3 control-label"
-    .col-sm-9
-      = f.text_field :released_at, class: "form-control", placeholder: "例: 2015-4-1"
-  .form-group
-    = f.label :released_at_about, class: "col-sm-3 control-label"
-    .col-sm-9
-      = f.text_field :released_at_about, class: "form-control"
+  = render "db/works/work_fields", f: f
   
   = hidden_field_tag "draft_work[work_id]", (f.object.work_id.presence || params[:id])
   
