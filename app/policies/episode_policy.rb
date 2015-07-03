@@ -1,6 +1,6 @@
 class EpisodePolicy < ApplicationPolicy
   def update?
-    user.role.admin?
+    user.role.editor? || user.role.admin?
   end
 
   def destroy?
