@@ -1,0 +1,7 @@
+ul.nav.nav-tabs.nav-justified
+  = active_link_to "編集リクエスト", new_db_draft_work_path, wrap_tag: :li, active: params[:controller] == "db/draft_works" && params[:action] == "new"
+  - if current_user.role.editor? || current_user.role.admin?
+    = active_link_to "直接登録", new_db_work_path, wrap_tag: :li, active: params[:controller] == "db/works" && params[:action] == "new"
+  - else
+    li.disabled data-toggle="tooltip" title="編集者になると直接登録できるようになります"
+      = link_to "直接登録", "#"

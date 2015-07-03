@@ -1,5 +1,8 @@
 .pull-right
-  = link_to "新規編集リクエスト", new_db_draft_work_path, class: "btn btn-primary"
+  - if current_user.role.admin?
+    = link_to "新規登録", new_db_work_path, class: "btn btn-primary"
+  - else
+    = link_to "新規登録", new_db_draft_work_path, class: "btn btn-primary"
 
 ul.nav.nav-tabs
   = active_link_to db_works_path, wrap_tag: :li, active: params[:action] == "index" do

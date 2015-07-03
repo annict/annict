@@ -35,6 +35,22 @@ class Db::WorksController < Db::ApplicationController
     render :index
   end
 
+  def new
+    @work = Work.new
+    authorize @work, :new?
+  end
+
+  def create(work)
+    @work = Work.new(format_params(work))
+    authorize @work, :create?
+
+    if @work.save
+      redirect_to db_works_path, notice: "作品を登録しました"
+    else
+      render :new
+    end
+  end
+
   def edit(id)
     @work = Work.find(id)
     authorize @work, :edit?
