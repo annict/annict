@@ -21,6 +21,10 @@ ja:
         background_image: 背景画像
         description: ヒトコト
         name: 名前
+      program:
+        channel_id: チャンネル
+        episode_id: エピソード
+        started_at: 放送日時
       user:
         email: メールアドレス
         terms: 利用規約とプライバシーポリシー

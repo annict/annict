@@ -1,18 +1,7 @@
 = form_for [:db, work, draft_program], html: { class: "form-horizontal" } do |f|
   = render "application/error_panel", resource: f.object
 
-  .form-group
-    = f.label :channel_id, class: "col-sm-3 control-label"
-    .col-sm-9
-      = f.select :channel_id, options_from_collection_for_select(Channel.published.order(:name), :id, :name, draft_program.channel.try(:id)), { include_blank: true }, { class: "form-control" }
-  .form-group
-    = f.label :episode_id, class: "col-sm-3 control-label"
-    .col-sm-9
-      = f.select :episode_id, options_for_select(work.episodes.order(:sort_number).map { |episode| [episode.decorate.title_with_number, episode.id] }, draft_program.episode.try(:id)), { include_blank: true }, { class: "form-control" }
-  .form-group
-    = f.label :started_at, class: "col-sm-3 control-label"
-    .col-sm-9
-      = f.text_field :started_at, class: "form-control", value: f.object.started_at.try(:to_time).try(:strftime, "%Y-%m-%d %H:%M"), placeholder: "例: 2015-04-01 23:00"
+  = render "db/programs/program_fields", f: f, work: work
     
   = hidden_field_tag "draft_program[program_id]", (program.try(:id).presence || draft_program.try(:origin).try(:id))
   
