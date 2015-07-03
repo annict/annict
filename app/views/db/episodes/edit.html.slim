@@ -1,1 +1,10 @@
-= render "form", work: @work, episode: @episode
+- if @work.present?
+  = render "db/works/header", work: @work
+
+= render "edit_type_tab", work: @work, episode: @episode
+
+.row
+  .col-sm-7
+    = render "form", work: @work, episode: @episode
+  .col-sm-5
+    = render "sidebar"
