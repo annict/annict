@@ -21,11 +21,15 @@ table.table.table-striped
     - @items.each do |item|
       tr
         td = item.id
-        td = image_tag tombo_thumb_url(item, :tombo_image, "w:200,h:200")
+        td = image_tag tombo_thumb_url(item, :tombo_image, "w:200,h:200"), size: "200x200"
         td = item.name
         td = item.url.truncate(30)
         td = item.main? ? "使用する" : "使用しない"
-        td = link_to "編集", new_db_work_draft_item_path(@work, id: item.id)
+        td
+          - if current_user.role.admin?
+            = link_to "編集", edit_db_work_item_path(@work, item), class: "btn btn-primary"
+          - else
+            = link_to "編集", new_db_work_draft_item_path(@work, id: item.id), class: "btn btn-primary"
         - if policy(item).destroy?
           td = link_to "削除", db_work_item_path(@work, item), method: :delete, data: { confirm: "作品画像を削除しますか？" }
 

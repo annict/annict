@@ -1,0 +1,7 @@
+ul.nav.nav-tabs.nav-justified
+  = active_link_to "編集リクエスト", new_db_work_draft_item_path(work, id: item.id), wrap_tag: :li, active: params[:controller] == "db/draft_items" && params[:action] == "new"
+  - if policy(item).edit?
+    = active_link_to "直接編集", edit_db_work_item_path(work, item), wrap_tag: :li, active: params[:controller] == "db/items" && params[:action] == "edit"
+  - else
+    li.disabled data-toggle="tooltip" title="編集者になると直接編集できるようになります"
+      = link_to "直接編集", "#"

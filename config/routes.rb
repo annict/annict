@@ -63,7 +63,7 @@ Annict::Application.routes.draw do
       resources :draft_multiple_episodes, only: [:new, :create, :edit, :update]
       resources :draft_programs, only: [:new, :create, :edit, :update]
       resources :episodes, only: [:index, :edit, :update, :destroy]
-      resources :items, only: [:index, :destroy]
+      resources :items, only: [:index, :edit, :update, :destroy]
       resources :programs, only: [:index, :edit, :update, :destroy]
     end
 

@@ -1,0 +1,25 @@
+= form_for [:db, work, item], html: { class: "form-horizontal" } do |f|
+  = render "application/error_panel", resource: f.object
+
+  .form-group
+    = f.label :name, class: "col-sm-3 control-label"
+    .col-sm-9
+      = f.text_field :name, class: "form-control", autofocus: true
+  .form-group
+    = f.label :url, class: "col-sm-3 control-label"
+    .col-sm-9
+      = f.text_field :url, class: "form-control"
+  .form-group
+    = f.label :tombo_image, class: "col-sm-3 control-label"
+    .col-sm-9
+      = f.file_field :tombo_image
+  .form-group
+    .col-sm-offset-3.col-sm-9
+      .checkbox
+        = f.label :main do
+          = f.check_box :main
+          | サイト内で使用する
+    
+  .form-group
+    .col-sm-offset-3.col-sm-9
+      = f.submit class: "btn btn-primary"

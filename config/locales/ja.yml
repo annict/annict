@@ -16,6 +16,11 @@ ja:
         number: 話数
         sort_number: ソート番号
         title: タイトル
+      item:
+        name: 商品名
+        url: URL
+        tombo_image: 作品画像
+        main: サイト内で使用する
       profile:
         avatar: プロフィール画像
         background_image: 背景画像
