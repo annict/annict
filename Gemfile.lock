@@ -352,9 +352,10 @@ GEM
       nokogiri
       rbvmomi
     orm_adapter (0.5.0)
-    paper_trail (3.0.7)
-      activerecord (>= 3.0, < 5.0)
-      activesupport (>= 3.0, < 5.0)
+    paper_trail (4.0.0.rc1)
+      activerecord (>= 3.0, < 6.0)
+      activesupport (>= 3.0, < 6.0)
+      request_store (~> 1.1.0)
     paperclip (4.2.4)
       activemodel (>= 3.2.0)
       activesupport (>= 3.2.0)
@@ -611,7 +612,7 @@ DEPENDENCIES
   nokogiri
   omniauth-facebook
   omniauth-twitter
-  paper_trail
+  paper_trail (~> 4.0.0.rc)
   paperclip
   pg
   poltergeist
