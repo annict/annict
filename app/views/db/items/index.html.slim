@@ -3,7 +3,11 @@
 hr
 
 .pull-right
-  = link_to "新規登録", new_db_work_draft_item_path(@work), class: "btn btn-primary"
+  - if current_user.role.admin?
+    = link_to "新規登録", new_db_work_item_path(@work), class: "btn btn-primary"
+  - else
+    = link_to "新規登録", new_db_work_draft_item_path(@work), class: "btn btn-primary"
+
 .clearfix
 
 table.table.table-striped
