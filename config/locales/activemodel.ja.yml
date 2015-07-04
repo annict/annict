@@ -1,0 +1,5 @@
+ja:
+  activemodel:
+    attributes:
+      db/multiple_episodes_form:
+        body: エピソード

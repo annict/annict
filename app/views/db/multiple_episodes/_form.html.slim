@@ -1,0 +1,8 @@
+= form_for [:db, work, multiple_episode], url: db_work_multiple_episodes_path(work), html: { class: "form-horizontal" } do |f|
+  = render "application/error_panel", resource: f.object
+
+  = render "fields", f: f
+
+  .form-group
+    .col-sm-offset-3.col-sm-9
+      = f.submit class: "btn btn-primary"

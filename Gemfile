@@ -54,6 +54,7 @@ gem "traceroute"
 gem "twitter"
 gem "uglifier"
 gem "validate_url"
+gem "virtus"
 
 source "https://rails-assets.org" do
   gem "rails-assets-angularjs"

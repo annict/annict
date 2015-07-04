@@ -1,5 +1,3 @@
-require "csv"
-
 # == Schema Information
 #
 # Table name: draft_multiple_episodes
@@ -17,21 +15,13 @@ require "csv"
 
 class DraftMultipleEpisode < ActiveRecord::Base
   include DraftCommon
+  include MultipleEpisodesFormatter
 
   DIFF_FIELDS = %i(body)
 
   belongs_to :work
 
   validates :body, presence: true, multiple_episode: true
-
-  def to_episode_hash
-    body = self.body.gsub(/([^\\])\"/, %q/\\1__double_quote__/)
-
-    CSV.parse(body).map do |ary|
-      title = ary[1].gsub("__double_quote__", '"').try(:strip) if ary[1].present?
-      { number: ary[0].try(:strip), title: title }
-    end
-  end
 
   def to_diffable_hash
     self.class::DIFF_FIELDS.inject({}) do |hash, field|

@@ -1,7 +1,7 @@
 class Db::EpisodesController < Db::ApplicationController
   permits :number, :sort_number, :title, :prev_episode_id
 
-  before_action :load_work, only: [:index, :edit, :update, :destroy]
+  before_action :load_work, only: [:index, :new, :create, :edit, :update, :destroy]
 
   def index
     @episodes = @work.episodes.order(:sort_number)

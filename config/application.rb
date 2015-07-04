@@ -31,6 +31,7 @@ module Annict
 
     config.autoload_paths += %W(
       #{config.root}/app/decorators/concerns
+      #{config.root}/app/forms
       #{config.root}/app/validators
       #{config.root}/lib
     )

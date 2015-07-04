@@ -1,0 +1,27 @@
+ja:
+  enumerize:
+    appeal:
+      category:
+        work_update: 作品情報の更新リクエスト
+        episode_update: エピソード情報の更新リクエスト
+        other: その他
+    status:
+      kind:
+        wanna_watch: 見たい
+        watching: 見てる
+        watched: 見た
+        on_hold: 中断
+        stop_watching: 中止
+      kind_action:
+        wanna_watch: 見たい
+        watching: 見てる
+        watched: 見た
+        on_hold: 中断した
+        stop_watching: 中止した
+    work:
+      media:
+        tv: TV
+        ova: OVA
+        movie: 映画
+        web: Web
+        other: その他

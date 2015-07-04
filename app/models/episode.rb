@@ -36,8 +36,20 @@ class Episode < ActiveRecord::Base
   has_many :draft_episodes, dependent: :destroy
   has_many :programs,   dependent: :destroy
 
-  after_create :create_nicoch_program
+  after_create :update_prev_episode
   before_destroy :unset_next_id_on_prev_episode
+
+  def self.create_from_multiple_episodes(work, multiple_episodes)
+    episodes_count = work.episodes.count
+    multiple_episodes.each do |episode|
+      episodes_count += 1
+      work.episodes.create do |e|
+        e.number = episode[:number]
+        e.sort_number = episodes_count * 10
+        e.title = episode[:title]
+      end
+    end
+  end
 
   def old_prev_episode
     work.episodes.find_by(old_next_episode: self)
@@ -58,19 +70,14 @@ class Episode < ActiveRecord::Base
 
   private
 
-  def create_nicoch_program
-    if work.broadcast_on_nicoch?
-      channel = Channel.find_by(name: 'ニコニコチャンネル')
-      nicoch_started_day = (7 * work.episodes.count) - 7
-      started_at = work.nicoch_started_at + nicoch_started_day.day
-
-      work.programs.create(channel_id: channel.id, episode_id: id, started_at: started_at)
-    end
-  end
-
   def unset_next_id_on_prev_episode
     if prev_episode.present? && (self == prev_episode.next_episode)
       prev_episode.update_column(:next_episode_id, nil)
     end
+  end
+
+  def update_prev_episode
+    prev_episode = work.episodes.where.not(id: id).order(sort_number: :desc).first
+    update_column(:prev_episode_id, prev_episode.id) if prev_episode.present?
   end
 end

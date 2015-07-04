@@ -1,0 +1,16 @@
+ja:
+  devise:
+    failure:
+      already_authenticated: 'すでに認証されています'
+      user:
+        unauthenticated: ログインしてください
+        unconfirmed: メールアドレスの確認が完了していないため、ログインできませんでした
+    mailer:
+      confirmation_instructions:
+        subject: メールアドレスの確認
+    sessions:
+      staff:
+        signed_in: 'お帰りなさいませ、ご主人さま'
+        signed_out: 'いってらっしゃいませ、ご主人さま'
+      user:
+        signed_out: ''

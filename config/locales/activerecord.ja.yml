@@ -1,0 +1,85 @@
+ja:
+  activerecord:
+    attributes:
+      appeal:
+        body: 備考
+        category: カテゴリ
+      checkin:
+        comment: コメント
+        shared_facebook: Facebookにシェアする
+        shared_twitter: Twitterにシェアする
+      comment:
+        body: コメント
+      episode:
+        next_episode_id: 次のエピソード
+        prev_episode_id: 前のエピソード
+        number: 話数
+        sort_number: ソート番号
+        title: タイトル
+      item:
+        name: 商品名
+        url: URL
+        tombo_image: 作品画像
+        main: サイト内で使用する
+      profile:
+        avatar: プロフィール画像
+        background_image: 背景画像
+        description: ヒトコト
+        name: 名前
+      program:
+        channel_id: チャンネル
+        episode_id: エピソード
+        started_at: 放送日時
+      user:
+        email: メールアドレス
+        terms: 利用規約とプライバシーポリシー
+        username: ユーザ名
+      work:
+        season_id: 放送時期
+        media: メディア
+        official_site_url: 公式サイト
+        released_at: リリース日
+        released_at_about: リリース日 (大体)
+        sc_tid: しょぼかるID
+        title: タイトル
+        twitter_hashtag: ハッシュタグ
+        twitter_username: 公式Twitter
+        wikipedia_url: Wikipedia
+      draft_episode:
+        next_episode_id: 次のエピソード
+        prev_episode_id: 前のエピソード
+        number: 話数
+        sort_number: ソート番号
+        title: タイトル
+      draft_item:
+        name: 商品名
+        url: URL
+        tombo_image: 作品画像
+        main: サイト内で使用する
+      draft_multiple_episode:
+        body: エピソード
+      draft_program:
+        channel_id: チャンネル
+        episode_id: エピソード
+        work_id: 作品名
+        started_at: 放送日時
+      draft_work:
+        season_id: 放送時期
+        media: メディア
+        official_site_url: 公式サイト
+        released_at: リリース日
+        released_at_about: リリース日 (大体)
+        sc_tid: しょぼかるID
+        title: タイトル
+        twitter_hashtag: ハッシュタグ
+        twitter_username: 公式Twitter
+        wikipedia_url: Wikipedia
+      edit_request:
+        title: タイトル
+        body: ヒトコト
+      edit_request_comment:
+        body: 本文
+    errors:
+      messages:
+        accepted: に同意してください。
+        url: にはURLを入力してください。
