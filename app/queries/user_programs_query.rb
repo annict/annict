@@ -5,7 +5,7 @@ class UserProgramsQuery
     @user = user
   end
 
-  # チェックインしていないエピソードと紐づく番組情報を返す
+  # チェックインしていないエピソードと紐づく放送予定を返す
   def unchecked
     works = user.works.wanna_watch_and_watching
     channel_works = user.channel_works.where(work: works)

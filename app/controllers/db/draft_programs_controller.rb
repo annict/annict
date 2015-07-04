@@ -27,7 +27,7 @@ class Db::DraftProgramsController < Db::ApplicationController
     if @draft_program.valid?
       @draft_program.started_at = @draft_program.started_at - 9.hours
       @draft_program.save(validate: false)
-      flash[:notice] = "番組情報の編集リクエストを作成しました"
+      flash[:notice] = "放送予定の編集リクエストを作成しました"
       redirect_to db_edit_request_path(@draft_program.edit_request)
     else
       render :new

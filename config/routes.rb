@@ -65,7 +65,7 @@ Annict::Application.routes.draw do
       resources :episodes, only: [:index, :edit, :update, :destroy]
       resources :items, only: [:index, :edit, :update, :destroy]
       resources :multiple_episodes, only: [:new, :create]
-      resources :programs, only: [:index, :edit, :update, :destroy]
+      resources :programs, except: [:show]
     end
 
     root "home#index"

@@ -16,7 +16,7 @@ class ChannelWorkService
     end
   end
 
-  # まだ番組情報が存在しなかったために `channel_works` に
+  # まだ放送予定が存在しなかったために `channel_works` に
   # どのチャンネルで見るかの情報が保存されなかった作品にcronで対処するためのメソッド
   def update
     @user.works.wanna_watch_and_watching.each do |work|

@@ -1,7 +1,9 @@
-- if @work.present?
-  = render "db/works/header", work: @work
+= render "db/works/header", work: @work
 
-= render "db/programs/edit_type_tab", work: @work, program: @program
+- if params[:id].present?
+  = render "db/programs/edit_type_tab", work: @work, program: @program
+- else
+  = render "db/programs/create_type_tab", work: @work, program: @program
 
 .row
   .col-sm-7

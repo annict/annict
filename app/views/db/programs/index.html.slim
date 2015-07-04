@@ -3,7 +3,10 @@
 hr
 
 .pull-right
-  = link_to "新規登録", new_db_work_draft_program_path(@work), class: "btn btn-primary"
+  - if current_user.role.admin?
+    = link_to "新規登録", new_db_work_program_path(@work), class: "btn btn-primary"
+  - else
+    = link_to "新規登録", new_db_work_draft_program_path(@work), class: "btn btn-primary"
 
 .clearfix
 
@@ -30,4 +33,4 @@ table.table.table-striped
           - else
             = link_to "編集", new_db_work_draft_program_path(@work, id: program.id), class: "btn btn-primary btn-sm"
         - if policy(program).destroy?
-          td = link_to "削除", db_work_program_path(@work, program), class: "btn btn-danger btn-sm", data: { method: :delete, confirm: "番組情報を削除しますか？" }
+          td = link_to "削除", db_work_program_path(@work, program), class: "btn btn-danger btn-sm", data: { method: :delete, confirm: "放送予定を削除しますか？" }

@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe '番組情報ページ' do
+describe '放送予定ページ' do
   let!(:status_tip) { create(:status_tip) }
   let(:user) { create(:registered_user) }
   let(:work) { create(:work, :with_item) }

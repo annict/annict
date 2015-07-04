@@ -1,4 +1,8 @@
 class ProgramPolicy < ApplicationPolicy
+  def create?
+    user.role.editor? || user.role.admin?
+  end
+
   def update?
     user.role.editor? || user.role.admin?
   end
