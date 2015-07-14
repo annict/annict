@@ -30,7 +30,7 @@
 class Work < ActiveRecord::Base
   include WorkCommon
 
-  has_paper_trail
+  has_paper_trail only: DIFF_FIELDS
 
   has_many   :activities, foreign_key: :recipient_id, foreign_type: :recipient, dependent: :destroy
   has_many   :checkins, dependent: :destroy

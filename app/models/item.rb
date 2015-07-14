@@ -22,6 +22,8 @@
 class Item < ActiveRecord::Base
   include ItemCommon
 
+  has_paper_trail only: DIFF_FIELDS
+
   belongs_to :work, counter_cache: true
   has_many :draft_items, dependent: :destroy
 

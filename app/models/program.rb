@@ -22,5 +22,7 @@
 class Program < ActiveRecord::Base
   include ProgramCommon
 
+  has_paper_trail only: DIFF_FIELDS
+
   has_many :draft_programs, dependent: :destroy
 end

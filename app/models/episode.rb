@@ -25,7 +25,7 @@
 class Episode < ActiveRecord::Base
   include EpisodeCommon
 
-  has_paper_trail
+  has_paper_trail only: DIFF_FIELDS
 
   belongs_to :old_next_episode, class_name: "Episode", foreign_key: :next_episode_id
   belongs_to :prev_episode, class_name: "Episode", foreign_key: :prev_episode_id
