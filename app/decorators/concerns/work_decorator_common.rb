@@ -6,7 +6,7 @@ module WorkDecoratorCommon
       model.class::DIFF_FIELDS.inject({}) do |hash, field|
         hash[field] = case field
         when :season_id
-          Season.find(send(:season_id)).name
+          Season.find(send(:season_id)).name if send(:season_id).present?
         when :sc_tid
           sc_tid = send(:sc_tid)
           if sc_tid.present?
