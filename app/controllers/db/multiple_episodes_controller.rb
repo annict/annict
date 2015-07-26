@@ -1,6 +1,7 @@
 class Db::MultipleEpisodesController < Db::ApplicationController
   permits :body
 
+  before_action :authenticate_user!
   before_action :load_work, only: [:new, :create]
 
   def new

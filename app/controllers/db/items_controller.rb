@@ -1,6 +1,7 @@
 class Db::ItemsController < Db::ApplicationController
   permits :name, :url, :tombo_image, :main
 
+  before_action :authenticate_user!
   before_action :load_work, only: [:index, :new, :create, :edit, :update, :destroy]
   before_action :load_item, only: [:edit, :update, :destroy]
 

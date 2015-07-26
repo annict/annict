@@ -2,6 +2,7 @@ class Db::DraftProgramsController < Db::ApplicationController
   permits :channel_id, :episode_id, :work_id, :started_at, :program_id,
           edit_request_attributes: [:id, :title, :body]
 
+  before_action :authenticate_user!
   before_action :set_work, only: [:new, :create, :edit, :update]
 
   def new(id: nil)

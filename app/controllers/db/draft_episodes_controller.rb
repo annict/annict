@@ -2,6 +2,7 @@ class Db::DraftEpisodesController < Db::ApplicationController
   permits :number, :sort_number, :title, :prev_episode_id, :episode_id,
           edit_request_attributes: [:id, :title, :body]
 
+  before_action :authenticate_user!
   before_action :set_work, only: [:new, :create, :edit, :update]
 
   def new(id)

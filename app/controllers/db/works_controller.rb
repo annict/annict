@@ -3,6 +3,7 @@ class Db::WorksController < Db::ApplicationController
           :twitter_username, :twitter_hashtag, :released_at, :released_at_about,
           :fetch_syobocal
 
+  before_action :authenticate_user!, only: [:new, :create, :edit, :update, :destroy]
   before_action :load_works, only: [:index, :season, :resourceless, :search]
 
   def index(page: nil)

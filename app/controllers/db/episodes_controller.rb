@@ -1,6 +1,7 @@
 class Db::EpisodesController < Db::ApplicationController
   permits :number, :sort_number, :title, :prev_episode_id
 
+  before_action :authenticate_user!
   before_action :load_work, only: [:index, :new, :create, :edit, :update, :destroy]
 
   def index

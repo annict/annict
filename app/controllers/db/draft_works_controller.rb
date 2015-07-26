@@ -3,6 +3,8 @@ class Db::DraftWorksController < Db::ApplicationController
           :twitter_username, :twitter_hashtag, :released_at, :released_at_about,
           :work_id, edit_request_attributes: [:id, :title, :body]
 
+  before_action :authenticate_user!
+
   def new(id: nil)
     @draft_work = if id.present?
       @work = Work.find(id)

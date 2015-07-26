@@ -5,7 +5,8 @@
       = link_to "公開する", publish_db_edit_request_path(@edit_request), class: "btn btn-primary", data: { method: :post, confirm: "この編集内容を公開しますか？" }
     - if policy(@edit_request).close? && @edit_request.may_close?
       = link_to "閉じる", close_db_edit_request_path(@edit_request), class: "btn", data: { method: :post, confirm: "この編集リクエストを公開せずに閉じますか？" }
-    = link_to "編集する", @edit_request.decorate.edit_draft_resource_path
+    - if policy(@edit_request.draft_resource).edit?
+      = link_to "編集する", @edit_request.decorate.edit_draft_resource_path
   = @edit_request.decorate.status_label
 
 .media
@@ -37,11 +38,12 @@ ul.nav.nav-tabs
         
         hr
     
-    = form_for @comment, url: db_edit_request_comments_path(@edit_request) do |f|
-      = render "application/error_panel", resource: f.object
-      .form-group
-        = f.text_area :body, class: "form-control", rows: 5
-      = f.submit "投稿する", class: "btn btn-primary"
+    - if policy(@comment).create?
+      = form_for @comment, url: db_edit_request_comments_path(@edit_request) do |f|
+        = render "application/error_panel", resource: f.object
+        .form-group
+          = f.text_area :body, class: "form-control", rows: 5
+        = f.submit "投稿する", class: "btn btn-primary"
   
   #changes.tab-pane
     = @edit_request.decorate.resource_diff_table

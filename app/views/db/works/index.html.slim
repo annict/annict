@@ -1,8 +1,9 @@
-.pull-right
-  - if current_user.role.admin?
-    = link_to "新規登録", new_db_work_path, class: "btn btn-primary"
-  - else
-    = link_to "新規登録", new_db_draft_work_path, class: "btn btn-primary"
+- if user_signed_in?
+  .pull-right
+    - if current_user.role.admin?
+      = link_to "新規登録", new_db_work_path, class: "btn btn-primary"
+    - else
+      = link_to "新規登録", new_db_draft_work_path, class: "btn btn-primary"
 
 ul.nav.nav-tabs
   = active_link_to db_works_path, wrap_tag: :li, active: params[:action] == "index" do
@@ -33,7 +34,8 @@ table.table.table-striped
       th 視聴者数
       th リリース日
       th 作品画像
-      th 編集
+      - if user_signed_in?
+        th 編集
       - if policy(@works).destroy?
         th 削除
   tbody
@@ -49,11 +51,12 @@ table.table.table-striped
         td = "#{work.watchers_count}人"
         td = work.released_at.presence || "-"
         td = image_tag tombo_thumb_url(work.main_item, :tombo_image, "w:70,h:70"), size: "70x70"
-        td
-          - if current_user.role.admin?
-            = link_to "編集", edit_db_work_path(work), class: "btn btn-primary btn-sm"
-          - else
-            = link_to "編集", new_db_draft_work_path(id: work.id), class: "btn btn-primary btn-sm"
+        - if user_signed_in?
+          td
+            - if current_user.role.admin?
+              = link_to "編集", edit_db_work_path(work), class: "btn btn-primary btn-sm"
+            - else
+              = link_to "編集", new_db_draft_work_path(id: work.id), class: "btn btn-primary btn-sm"
         - if policy(work).destroy?
           td = link_to "削除", db_work_path(work), class: "btn btn-danger btn-sm", data: { method: "delete", confirm: "この作品を削除しますか？" }
 

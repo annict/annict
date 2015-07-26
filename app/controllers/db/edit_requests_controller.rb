@@ -1,4 +1,6 @@
 class Db::EditRequestsController < Db::ApplicationController
+  before_action :authenticate_user!, only: [:publish, :close]
+
   def index(page: nil)
     @edit_requests = EditRequest.order(id: :desc).page(page)
   end

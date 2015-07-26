@@ -1,6 +1,7 @@
 class Db::DraftMultipleEpisodesController < Db::ApplicationController
   permits :body, edit_request_attributes: [:id, :title, :body]
 
+  before_action :authenticate_user!
   before_action :set_work, only: [:new, :create, :edit, :update]
 
   def new(work_id)
