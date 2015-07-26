@@ -1,10 +1,5 @@
 ja:
   enumerize:
-    appeal:
-      category:
-        work_update: 作品情報の更新リクエスト
-        episode_update: エピソード情報の更新リクエスト
-        other: その他
     status:
       kind:
         wanna_watch: 見たい

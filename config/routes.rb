@@ -139,7 +139,6 @@ Annict::Application.routes.draw do
         as: :season
     end
 
-    resources :appeals,      only: [:create]
     resources :episodes,     only: [:show] do
       resources :checkins do
         resources :comments, only: [:create]

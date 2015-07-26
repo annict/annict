@@ -137,16 +137,23 @@ hr
 
     - if user_signed_in?
       .update-request
-        - link = link_to t('works.send_update_request_1'), work_appeals_path(@work), data: { method: :post, confirm: t('works.send_update_request_confirm') }
-        - twitter_link = link_to 'Twitter', 'https://twitter.com/anannict', target: '_blank'
-        = t('works.update_request_text_html', link: link, twitter_link: twitter_link)
+        | 最新のエピソードが登録されていない場合は、お手数ですが
+        = link_to "編集リクエストを作成", new_db_work_draft_episode_path(@work)
+        | して頂けるとありがたいです。- 
+        = link_to "編集リクエストとは？", db_root_path
 
   - else
     .info.well
       .icon
         i.fa.fa-info-circle
-      p = t('episodes.no_episodes')
-      = link_to t('works.send_update_request_2'), work_appeals_path(@work), class: 'btn btn-primary', data: { method: :post }
+      p エピソードが登録されていません
+      - if user_signed_in?
+        .new-edit-request-btn
+          = link_to new_db_work_draft_episode_path(@work), class: "btn btn-primary" do
+            = icon('pencil')
+            | 編集リクエストを作る
+        .edit-request-description-btn
+          = link_to "編集リクエストとは？", db_root_path
 
 - if @work.items.present?
   hr

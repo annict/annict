@@ -31,8 +31,7 @@ ja:
     deleted: エピソードを削除しました。
     edit: エピソード情報を編集
     new: エピソードを追加する
-    no_checkins: チェックインされていません。
-    no_episodes: エピソードが登録されていません。
+    no_checkins: チェックインされていません
     saved: エピソードを追加しました。
     updated: エピソードを更新しました。
     updated_notification: エピソードタイトルが更新されました
@@ -157,10 +156,6 @@ ja:
     go_amazon: Amazonで見てみる
     new: 新規登録
     no_works: 作品はありません
-    send_update_request_1: 更新リクエストを送信
-    send_update_request_2: 更新リクエストを送る
-    send_update_request_confirm: 更新リクエストを送信しますか？
     uncheck_all: 全て解除
-    update_request_text_html: '最新のエピソードが登録されていない場合は、お手数ですが%{link}してください。<br>更新の完了は%{twitter_link}でお知らせします。'
     updated: 作品情報を更新しました
     work_info: 作品情報
