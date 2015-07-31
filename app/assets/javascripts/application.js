@@ -5,12 +5,12 @@
 //= require angular-animate
 //= require angular-sanitize
 //= require angulartics/angulartics
-//= require angulartics/angulartics-ga
+//= require angulartics-google-analytics.min
 //= require bootstrap-sprockets
 //= require chartjs
 //= require moment/min/moment-with-locales
 //= require ng-infinite-scroller-origin
-//= require jquery-easing-original/jquery.easing.1.3
+//= require jquery-easing-original/jquery.easing
 //= require clamp.min
 
 //= require_self
