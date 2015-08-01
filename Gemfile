@@ -49,9 +49,9 @@ gem "twitter"
 gem "uglifier"
 
 source "https://rails-assets.org" do
-  gem "rails-assets-angularjs"
-  gem "rails-assets-angular-animate"
-  gem "rails-assets-angular-sanitize"
+  gem "rails-assets-angularjs", "~> 1.3.17"
+  gem "rails-assets-angular-animate", "~> 1.3.17"
+  gem "rails-assets-angular-sanitize", "~> 1.3.17"
   gem "rails-assets-angulartics"
   gem "rails-assets-chartjs"
   gem "rails-assets-jquery-easing-original"
