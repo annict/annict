@@ -1,6 +1,6 @@
 <p align="center">
   <a href="http://www.annict.com" target="_blank">
-    <img src="http://d3a8d1smk6xli.cloudfront.net/github/annict-logo2.png" alt="Annict" width="200" height="200">
+    <img src="http://d3a8d1smk6xli.cloudfront.net/github/annict-logo2.png" alt="Annict" width="150" height="150">
   </a>
   <br>
   <br>
@@ -59,17 +59,16 @@ Annictでは開発に関係するタスク管理を[Trello](https://trello.com/b
 
 #### 開発環境を作る
 
-** :warning: ここに書かれている情報は古いです。開発のほうが落ち着いたら更新しますm(__)m (2015年3月5日現在) **
-
 ##### 依存関係
 
-Annictは以下のソフトウェアを使用して開発しています。事前にこれらをインストールしてください。
+Annictは以下のソフトウェアを使用して開発しています。
+Annictを動かすには事前にこれらをインストールする必要があります。
 
-* Ruby 2.1.5
-* PostgreSQL 9.3.5.0
-* Redis 2.8.3
-* ImageMagick 6.7
-* PhantomJS 1.9
+* Ruby 2.2.2
+* PostgreSQL 9.3
+* ImageMagick
+* Node.js 0.12
+* PhantomJS
   * テストの実行時にしています。Annictをローカルで動かすだけであれば不要です
 
 
@@ -83,10 +82,16 @@ $ cp config/application.yml{.example,}
 $ bundle install
 $ bundle exec rake db:create
 $ bundle exec rake db:setup
-$ foreman start
+$ bundle exec rails s
 ```
 
-http://localhost:5000 にアクセスすると、サイトのトップページが表示されるはずです。
+[http://localhost:3000](http://localhost:3000) にアクセスすると、サイトのトップページが表示されるはずです。
+
+##### 画像変換サーバ「Tombo」について
+
+Annictでは作品やアバターなど画像を表示するとき、「Tombo」という動的にリサイズする画像変換サーバを使用しています。
+動かし方などは[Tomboのリポジトリ](https://github.com/shimbaco/tombo)をご覧ください。
+AnnictでTomboを使用するときは `localhost:5000` でサーバを起動します。
 
 
 #### テストを実行する
