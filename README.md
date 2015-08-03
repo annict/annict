@@ -89,9 +89,15 @@ $ bundle exec rails s
 
 ##### 画像変換サーバ「Tombo」について
 
-Annictでは作品やアバターなど画像を表示するとき、「Tombo」という動的にリサイズする画像変換サーバを使用しています。
-動かし方などは[Tomboのリポジトリ](https://github.com/shimbaco/tombo)をご覧ください。
+Annictでは作品やアバターなど画像を表示するとき、「Tombo」という動的にリサイズする画像変換サーバを使用しています。動かし方などは[Tomboのリポジトリ](https://github.com/shimbaco/tombo)をご覧ください。
 AnnictでTomboを使用するときは `localhost:5000` でサーバを起動します。
+
+
+##### application.ymlを編集する
+
+AnnictのRailsアプリに必要な設定値は全て `config/application.yml` に記述しています。開発環境でも必要に応じて設定を変更する必要があります。
+
+例えばTwitterアカウントを使用してローカル環境でユーザ登録をしたいときは、TwitterでOAuth認証用のアプリを作成し、`config/application.yml` の `TWITTER_CONSUMER_KEY` と `TWITTER_CONSUMER_SECRET` に値を設定します。
 
 
 #### テストを実行する
