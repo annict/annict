@@ -59,7 +59,7 @@ Annictでは開発に関係するタスク管理を[Trello](https://trello.com/b
 
 #### 開発環境を作る
 
-##### 依存関係
+##### 必要なものをインストールする
 
 Annictは以下のソフトウェアを使用して開発しています。
 Annictを動かすには事前にこれらをインストールする必要があります。
@@ -69,7 +69,7 @@ Annictを動かすには事前にこれらをインストールする必要が�
 * ImageMagick
 * Node.js 0.12
 * PhantomJS
-  * テストの実行時にしています。Annictをローカルで動かすだけであれば不要です
+  * テストを実行するときに使用しています。Annictをローカルで動かすだけであれば不要です
 
 
 ##### Annictを動かす
@@ -81,23 +81,35 @@ $ cd annict
 $ cp config/application.yml{.example,}
 $ bundle install
 $ bundle exec rake db:create
-$ bundle exec rake db:setup
+// 開発時用のデータをデータベースに保存する
+$ pg_restore --clean -h localhost -U postgres -d annict_development db/dump/annict_development.dump
 $ bundle exec rails s
 ```
 
-[http://localhost:3000](http://localhost:3000) にアクセスすると、サイトのトップページが表示されるはずです。
+[http://localhost:3000](http://localhost:3000) にアクセスすると、
+サイトのトップページが表示されるはずです。
+
+ただ、上記コマンドを実行しただけでは作品画像などは表示されないはずです。
+画像を表示するには「Tombo」という画像変換サーバを別途起動する必要があります。
+
 
 ##### 画像変換サーバ「Tombo」について
 
-Annictでは作品やアバターなど画像を表示するとき、「Tombo」という動的にリサイズする画像変換サーバを使用しています。動かし方などは[Tomboのリポジトリ](https://github.com/shimbaco/tombo)をご覧ください。
+Annictでは作品やアバターなど画像を表示するとき、
+「Tombo」という画像を動的にリサイズする画像変換サーバを使用しています。
+動かし方などは[Tomboのリポジトリ](https://github.com/shimbaco/tombo)をご覧ください。
+
 AnnictでTomboを使用するときは `localhost:5000` でサーバを起動します。
 
 
 ##### application.ymlを編集する
 
-AnnictのRailsアプリに必要な設定値は全て `config/application.yml` に記述しています。開発環境でも必要に応じて設定を変更する必要があります。
+AnnictのRailsアプリに必要な設定値は全て `config/application.yml` に記述しています。
+開発環境でも必要に応じて設定を変更する必要があります。
 
-例えばTwitterアカウントを使用してローカル環境でユーザ登録をしたいときは、TwitterでOAuth認証用のアプリを作成し、`config/application.yml` の `TWITTER_CONSUMER_KEY` と `TWITTER_CONSUMER_SECRET` に値を設定します。
+例えばTwitterアカウントを使用してローカル環境でユーザ登録をしたいときは、
+TwitterでOAuth認証用のアプリを作成し、`config/application.yml` に記述されている
+`TWITTER_CONSUMER_KEY` と `TWITTER_CONSUMER_SECRET` を変更します。
 
 
 #### テストを実行する
