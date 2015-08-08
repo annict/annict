@@ -83,8 +83,8 @@ $ cd annict
 $ cp config/application.yml{.example,}
 $ bundle install
 $ bundle exec rake db:create
-// 開発時用のデータをデータベースに保存する
-$ pg_restore --clean -h localhost -U postgres -d annict_development db/dump/annict_development.dump
+$ bundle exec rake db:migrate
+$ bundle exec rake db:seed
 $ bundle exec rails s
 ```
 
@@ -102,6 +102,28 @@ Annictでは作品やアバターなど画像を表示するとき、
 動かし方などは[Tomboのリポジトリ](https://github.com/shimbaco/tombo)をご覧ください。
 
 AnnictでTomboを使用するときは `localhost:5000` でサーバを起動します。
+
+
+##### テストデータの読み込みについて
+
+作品情報などのテストデータは以下のコマンドで読み込むことができます。
+
+```
+$ bundle exec rake db:seed
+```
+
+処理に時間がかかるため、デフォルトでは50件だけ作品を保存しています。
+もし100件保存したい場合は、`limit` という引数を指定します。
+
+```
+$ bundle exec rake db:seed limit=100
+```
+
+全作品を保存したいときは `limit=0` を指定します。
+
+```
+bundle exec rake db:seed limit=0
+```
 
 
 ##### application.ymlを編集する
