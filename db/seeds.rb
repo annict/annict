@@ -207,3 +207,44 @@ CSV.foreach("#{Dir.pwd}/db/data/csv/items.csv", headers: true) do |row|
     puts "item: #{item.id}"
   end
 end
+
+
+# ==============================================================================
+# User
+# ==============================================================================
+
+10.times do |i|
+  user = User.new do |u|
+    u.username = "user#{i + 1}"
+    u.email = "user#{i + 1}@example.com"
+    u.password = "password"
+  end
+
+  user.confirm
+
+  oauth = {
+    provider: "twitter",
+    uid: i + 1,
+    credentials: {
+      token: "tokentokentokentokentoken",
+      expires_at: Time.now,
+      secret: "secretsecretsecretsecretsecret"
+    },
+    info: {
+      name: "User #{i + 1}",
+      description: "descriptiondescriptiondescriptiondescriptiondescription",
+      image: "https://robohash.org/user#{i + 1}.png"
+    }
+  }
+  user.build_relations(oauth)
+
+  user.save!
+  puts "user: #{user.id}"
+
+  episode_ids = Episode.pluck(:id).sample(20)
+  episode_ids.each do |episode_id|
+    episode = Episode.find(episode_id)
+    checkin = user.checkins.create(episode_id: episode_id, work_id: episode.work.id)
+    puts "checkin: #{checkin.id}"
+  end
+end
