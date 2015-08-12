@@ -1,9 +1,9 @@
 = render "db/works/header", work: @work
 
-= render "create_type_tab", work: @work
+= render "db/multiple_episodes/create_type_tab", work: @work
 
 .row
   .col-sm-7
-    = render "db/multiple_episodes/form", draft_multiple_episode: @draft_multiple_episode
+    = render "db/multiple_episodes/form", work: @work, multiple_episode: @draft_multiple_episode
   .col-sm-5
     = render "sidebar"
