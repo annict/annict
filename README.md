@@ -1,6 +1,6 @@
 <p align="center">
   <a href="http://www.annict.com" target="_blank">
-    <img src="http://d3a8d1smk6xli.cloudfront.net/github/annict-logo2.png" alt="Annict" width="200" height="200">
+    <img src="http://d3a8d1smk6xli.cloudfront.net/github/annict-logo2.png" alt="Annict" width="150" height="150">
   </a>
   <br>
   <br>
@@ -46,31 +46,32 @@ Twitterなど、第三者に公開されている場所に投稿しないでも�
 
 #### タスク管理について
 
-Annictでは開発に関係するタスク管理を[Trello](https://trello.com/b/UinnA33N/annict)で行っています。
-各タスクは以下のリストに入れて管理していて、上に置かれているタスクから順に対応しています。
+Annictでは開発に関係するタスク管理を[GitHub Issues](https://github.com/annict/annict/issues)で行っています。
+各タスクは以下のラベルを紐付けて管理しています。
 
-| リスト名 | どんなタスクを入れているか |
+| ラベル名 | 概要 |
 | ------- | ----------- |
-| Idea   | システム内に取り込むことが決定していない漠然としたアイデアなどを入れています |
-| Todo   | システム内に取り込むことが決定したタスクを入れています |
-| Doing | 現在取り組んでいるタスクを入れています |
-| Done | 作業が完了したタスクを入れています |
+| Ideas   | システム内に取り込むことが決定していない漠然としたタスク |
+| Ready   | システム内に取り込むことが決定したタスク |
+| Working | 現在取り組んでいるタスク |
+| Priority: 1 | 優先度が高いタスク |
+| Priority: 2 | 優先度がそれなりに高いタスク |
+| Priority: 3 | Priorityラベルが付いていないタスクよりは優先度が高いタスク |
 
 
 #### 開発環境を作る
 
-** :warning: ここに書かれている情報は古いです。開発のほうが落ち着いたら更新しますm(__)m (2015年3月5日現在) **
+##### 必要なものをインストールする
 
-##### 依存関係
+Annictは以下のソフトウェアを使用して開発しています。
+Annictを動かすには事前にこれらをインストールする必要があります。
 
-Annictは以下のソフトウェアを使用して開発しています。事前にこれらをインストールしてください。
-
-* Ruby 2.1.5
-* PostgreSQL 9.3.5.0
-* Redis 2.8.3
-* ImageMagick 6.7
-* PhantomJS 1.9
-  * テストの実行時にしています。Annictをローカルで動かすだけであれば不要です
+* Ruby 2.2.2
+* PostgreSQL 9.3
+* ImageMagick
+* Node.js 0.12
+* PhantomJS
+  * テストを実行するときに使用しています。Annictをローカルで動かすだけであれば不要です
 
 
 ##### Annictを動かす
@@ -82,11 +83,73 @@ $ cd annict
 $ cp config/application.yml{.example,}
 $ bundle install
 $ bundle exec rake db:create
-$ bundle exec rake db:setup
-$ foreman start
+$ bundle exec rake db:migrate
+$ bundle exec rake db:seed
+$ bundle exec rails s
 ```
 
-http://localhost:5000 にアクセスすると、サイトのトップページが表示されるはずです。
+[http://localhost:3000](http://localhost:3000) にアクセスすると、
+サイトのトップページが表示されるはずです。
+
+ただ、上記コマンドを実行しただけでは作品画像などは表示されないはずです。
+画像を表示するには「Tombo」という画像変換サーバを別途起動する必要があります。
+
+
+##### 画像変換サーバ「Tombo」について
+
+Annictでは作品やアバターなど画像を表示するとき、
+「Tombo」という画像を動的にリサイズする画像変換サーバを使用しています。
+動かし方などは[Tomboのリポジトリ](https://github.com/shimbaco/tombo)をご覧ください。
+
+AnnictでTomboを使用するときは `localhost:5000` でサーバを起動します。
+
+
+##### テストデータの読み込みについて
+
+作品情報などのテストデータは以下のコマンドで読み込むことができます。
+
+```
+$ bundle exec rake db:seed
+```
+
+処理に時間がかかるため、デフォルトでは50件だけ作品を保存しています。
+もし100件保存したい場合は、`limit` という引数を指定します。
+
+```
+$ bundle exec rake db:seed limit=100
+```
+
+全作品を保存したいときは `limit=0` を指定します。
+
+```
+bundle exec rake db:seed limit=0
+```
+
+
+##### application.ymlを編集する
+
+AnnictのRailsアプリに必要な設定値は全て `config/application.yml` に記述しています。
+開発環境でも必要に応じて設定を変更する必要があります。
+
+例えばTwitterアカウントを使用してローカル環境でユーザ登録をしたいときは、
+TwitterでOAuth認証用のアプリを作成し、`config/application.yml` に記述されている
+`TWITTER_CONSUMER_KEY` と `TWITTER_CONSUMER_SECRET` を変更します。
+
+
+##### 管理画面について
+
+Annictには作品やエピソードの情報をWebブラウザから編集することができる管理画面が存在します。
+管理画面は以下のステップを踏むことで見ることができます。
+
+まず、`staffs` テーブルに管理画面にログインするアカウントを登録します。
+
+```
+$ bundle exec rails c
+> Staff.create(email: '(メールアドレス)', password: '(パスワード)')
+```
+
+そして [http://localhost:3000/marie/signin](http://localhost:3000/marie/signin) にアクセスし、
+先ほど登録したアカウント情報を入力すると、ログインすることができます。
 
 
 #### テストを実行する

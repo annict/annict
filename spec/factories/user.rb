@@ -22,7 +22,7 @@ FactoryGirl.define do
     end
 
     factory :registered_user, traits: [:with_profile, :with_provider, :with_setting] do
-      after :create, &:confirm!
+      after :create, &:confirm
     end
   end
 end

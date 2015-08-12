@@ -1,24 +1,28 @@
-ANNICT_NEXT_SEASON: '2014-autumn'
-ANNICT_CURRENT_SEASON: '2014-summer'
-ANNICT_PREVIOUS_SEASON: '2014-spring'
+ANNICT_NEXT_SEASON: '2015-autumn'
+ANNICT_CURRENT_SEASON: '2015-summer'
+ANNICT_PREVIOUS_SEASON: '2015-spring'
+ANNICT_PAPERCLIP_PATH: 'paperclip/:class/:id/:attachment/:style/:hash.:extension'
+ANNICT_PAPERCLIP_RANDOM_SECRET: 'abcdefghijklmnopqrstuvwxyz'
+ANNICT_MARIE_USER_ID: "1"
 
-DEVISE_SECRET: '12345'
-RAILS_SECRET_TOKEN: '12345'
-
+DEVISE_SECRET: 'abcdefghijklmnopqrstuvwxyz'
+RAILS_SECRET_KEY_BASE: 'abcdefghijklmnopqrstuvwxyz'
 
 development:
-  FACEBOOK_APP_ID: '12345'
-  FACEBOOK_SECRET_KEY: '12345'
+  FACEBOOK_APP_ID: '000000000000000'
+  FACEBOOK_SECRET_KEY: 'xxxxxxxxxxxxxxxxxxxxxxxx'
 
-  GA_TRACKING_ID: 'UA-00000000-0'
+  GA_TRACKING_ID: UA-000000000-3
 
-  HOST: 'localhost:3000'
+  ANNICT_FILE_STORAGE_URL: 'http://localhost:3000'
+  ANNICT_HOST: 'localhost:3000'
+  ANNICT_HOST_SHORT: 'localhost:3000'
+  ANNICT_TOMBO_URL: 'http://localhost:5000'
+  ANNICT_URL: 'http://localhost:3000'
 
-  ANNICT_IMAGE2_URL: 'http://192.168.33.11'
-
-  TWITTER_CONSUMER_KEY: '12345'
-  TWITTER_CONSUMER_SECRET: '12345'
-
+  TWITTER_CONSUMER_KEY: 'xxxxxxxxxxxxxxxxxxxxx'
+  TWITTER_CONSUMER_SECRET: 'xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx'
 
 test:
-  HOST: 'localhost:3000'
+  ANNICT_HOST: 'localhost:3000'
+  ANNICT_TOMBO_URL: 'http://localhost:5000'

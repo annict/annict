@@ -57,9 +57,9 @@ gem "validate_url"
 gem "virtus"
 
 source "https://rails-assets.org" do
-  gem "rails-assets-angularjs"
-  gem "rails-assets-angular-animate"
-  gem "rails-assets-angular-sanitize"
+  gem "rails-assets-angularjs", "~> 1.3.17"
+  gem "rails-assets-angular-animate", "~> 1.3.17"
+  gem "rails-assets-angular-sanitize", "~> 1.3.17"
   gem "rails-assets-angulartics"
   gem "rails-assets-chartjs"
   gem "rails-assets-jquery-easing-original"
@@ -89,8 +89,9 @@ group :development do
   gem "bullet"
   gem "letter_opener_web"
   gem "quiet_assets"
-  gem "spring-commands-rspec", require: false
+  gem "ruby_identicon"
   gem "spring"
+  gem "spring-commands-rspec", require: false
   gem "thin"
 end
 
