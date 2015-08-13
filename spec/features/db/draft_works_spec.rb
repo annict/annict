@@ -28,6 +28,11 @@ describe "Annict DB" do
         expect(edit_request.title).to eq "「のんのんびよりを登録」"
         expect(edit_request.draft_resource.present?).to be true
       end
+
+      it "編集リクエスト詳細ページに遷移すること" do
+        edit_request = EditRequest.first
+        expect(current_path).to eq "/db/edit_requests/#{edit_request.id}"
+      end
     end
   end
 end
