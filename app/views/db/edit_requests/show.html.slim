@@ -50,4 +50,7 @@ ul.nav.nav-tabs
         = f.submit "コメントする", class: "btn btn-primary"
   
   #changes.tab-pane
-    = @edit_request.decorate.resource_diff_table
+    - if @edit_request.published? || @edit_request.closed?
+      .well 公開、またはクローズした編集リクエストの変更点は見ることができません。(仕様です…)
+    - else
+      = @edit_request.decorate.resource_diff_table
