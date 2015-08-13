@@ -5,9 +5,9 @@ class Db::DraftWorksController < Db::ApplicationController
 
   before_action :authenticate_user!
 
-  def new(id: nil)
-    @draft_work = if id.present?
-      @work = Work.find(id)
+  def new(work_id: nil)
+    @draft_work = if work_id.present?
+      @work = Work.find(work_id)
       DraftWork.new(@work.attributes.slice(*Work::DIFF_FIELDS.map(&:to_s)))
     else
       DraftWork.new

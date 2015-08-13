@@ -5,7 +5,8 @@
 
   = render "db/works/work_fields", f: f
   
-  = hidden_field_tag "draft_work[work_id]", (f.object.work_id.presence || params[:id])
+  - if params[:action] == "edit" || params[:action] == "update"
+    = hidden_field_tag "draft_work[work_id]", (f.object.work_id.presence || params[:work_id])
   
   hr
   
