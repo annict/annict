@@ -85,7 +85,7 @@ $ bundle install
 $ bundle exec rake db:create
 $ bundle exec rake db:migrate
 $ bundle exec rake db:seed
-$ bundle exec rails s
+$ bundle exec rails s -b 0.0.0.0
 ```
 
 [http://localhost:3000](http://localhost:3000) にアクセスすると、
