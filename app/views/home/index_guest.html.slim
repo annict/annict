@@ -10,7 +10,7 @@
         .info
           .left
             = link_to work_path(ci.work) do
-              = annict_image_tag tombo_thumb_url(ci.work.main_item, :tombo_image, 'w:64,h:64'), psize: '46x46', msize: '32x32', alt: ci.work.title
+              = annict_image_tag ci.work.decorate.item_image_url('w:64,h:64') , psize: '46x46', msize: '32x32', alt: ci.work.title
           .right
             .location-name
               = link_to work_path(ci.work) do

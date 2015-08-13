@@ -1,5 +1,5 @@
 .ann-work-profile-light
-  .background style="background-image: url(#{tombo_thumb_url(work.main_item, :tombo_image, 'w:800,h:400')});"
+  .background style="background-image: url(#{work.decorate.item_image_url('w:800,h:400')});"
   .foreground
     = link_to work_path(work), class: 'work-detail' do
       = icon('angle-double-left')

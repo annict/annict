@@ -83,7 +83,7 @@ class Work < ActiveRecord::Base
   end
 
   def main_item
-    items.find_by(main: true).presence || Item.find(1)
+    items.find_by(main: true).presence || Item.find_by(id: 1)
   end
 
   def comments_count
