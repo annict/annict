@@ -1,5 +1,2 @@
-Style/DotPosition:
-  EnforcedStyle: leading
-
 Metrics/LineLength:
   Max: 90
