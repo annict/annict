@@ -16,7 +16,11 @@ module DraftCommon
     end
 
     def origin_values
-      edit_request.draft_resource.try(:origin).try(:decorate).try(:to_values)
+      edit_request.draft_resource.
+        try(:origin).
+        try(:decorate).
+        try(:to_values).
+        presence || {}
     end
 
     def draft_values

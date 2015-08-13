@@ -8,18 +8,20 @@ table.table.table-bordered.table-hover
     - draft_resource.class::DIFF_FIELDS.each do |field|
       - diff = select_diff_by_field(diffs, field)
       - if diff.present?
+        - draft_value = draft_values[field].presence || ""
+        - origin_value = origin_values[field].presence || ""
         tr
           td = t("activerecord.attributes.#{draft_resource.class.name.underscore}.#{field}")
           - if diff[0] == "+"
-            td.success = draft_values[field].html_safe
+            td.success = draft_value.html_safe
           - elsif diff[0] == "-"
             td
           - elsif diff[0] == "~"
-            td.warning = draft_values[field].html_safe
+            td.warning = draft_value.html_safe
           
           - if diff[0] == "+"
             td
           - elsif diff[0] == "-"
-            td.danger = origin_values[field].html_safe
+            td.danger = origin_value.html_safe
           - elsif diff[0] == "~"
-            td.warning = origin_values[field].html_safe
+            td.warning = origin_value.html_safe
