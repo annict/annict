@@ -151,11 +151,11 @@
 
   .info {
     .new-edit-request-btn {
-      margin: 14px 0 10px 0;
+      margin: 14px 0 10px;
+    }
 
-      i {
-        margin-right: 5px;
-      }
+    .new-edit-request-btn > i {
+      margin-right: 5px;
     }
 
     .edit-request-description-btn a {

@@ -1,6 +1,6 @@
-require 'spec_helper'
+require "spec_helper"
 
-describe '放送予定ページ' do
+describe "放送予定ページ" do
   let!(:status_tip) { create(:status_tip) }
   let(:user) { create(:registered_user) }
   let(:work) { create(:work, :with_item) }
@@ -14,10 +14,10 @@ describe '放送予定ページ' do
     user.channel_works.create(work: work, channel: channel)
     user.statuses.create(work: work, kind: :watching)
 
-    visit '/programs'
+    visit "/programs"
   end
 
-  it '登録しているチャンネルで放送されるエピソードが表示されること', js: true do
-    expect(find('.container .programs')).to have_content(episode.title)
+  it "登録しているチャンネルで放送されるエピソードが表示されること", js: true do
+    expect(find(".container .programs")).to have_content(episode.title)
   end
 end

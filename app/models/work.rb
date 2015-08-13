@@ -32,18 +32,18 @@ class Work < ActiveRecord::Base
 
   has_paper_trail only: DIFF_FIELDS
 
-  has_many   :activities, foreign_key: :recipient_id, foreign_type: :recipient, dependent: :destroy
-  has_many   :checkins, dependent: :destroy
-  has_many   :checks,   dependent: :destroy
-  has_many   :draft_episodes, dependent: :destroy
-  has_many   :draft_items, dependent: :destroy
-  has_many   :draft_multiple_episodes, dependent: :destroy
-  has_many   :draft_programs, dependent: :destroy
-  has_many   :draft_works, dependent: :destroy
-  has_many   :episodes, dependent: :destroy
-  has_many   :items,    dependent: :destroy
-  has_many   :programs, dependent: :destroy
-  has_many   :statuses, dependent: :destroy
+  has_many :activities, foreign_key: :recipient_id, foreign_type: :recipient, dependent: :destroy
+  has_many :checkins, dependent: :destroy
+  has_many :checks, dependent: :destroy
+  has_many :draft_episodes, dependent: :destroy
+  has_many :draft_items, dependent: :destroy
+  has_many :draft_multiple_episodes, dependent: :destroy
+  has_many :draft_programs, dependent: :destroy
+  has_many :draft_works, dependent: :destroy
+  has_many :episodes, dependent: :destroy
+  has_many :items, dependent: :destroy
+  has_many :programs, dependent: :destroy
+  has_many :statuses, dependent: :destroy
 
   scope :by_season, -> (season_slug) {
     return self if season_slug.blank?
