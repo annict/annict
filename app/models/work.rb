@@ -67,8 +67,6 @@ class Work < ActiveRecord::Base
       ) AS c2 ON works.id = c2.work_id")
   }
 
-  scope :broadcasted_on_nicoch, -> { where('nicoch_started_at IS NOT NULL') }
-
   # 作品のエピソード数分の空白文字列が入った配列を返す
   # Chart.jsのx軸のラベルを消すにはこれしか方法がなかったんだ…! たぶん…。
   def chart_labels
