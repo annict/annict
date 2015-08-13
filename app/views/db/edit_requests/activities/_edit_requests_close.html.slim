@@ -1,3 +1,4 @@
-span = activity.user.decorate.name_link
-| がクローズしました
-= "#{time_ago_in_words(activity.trackable.closed_at)}前"
+.activity
+  span.user-name = activity.user.decorate.name_link
+  | がクローズしました
+  = "#{time_ago_in_words(activity.trackable.closed_at)}前"

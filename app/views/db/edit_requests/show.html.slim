@@ -1,28 +1,15 @@
 .header
-  h1.h2 = @edit_request.title
+  .pull-left
+    h1 = @edit_request.title
+    = @edit_request.decorate.status_label
   .pull-right
     - if policy(@edit_request).publish? && @edit_request.may_publish?
       = link_to "公開する", publish_db_edit_request_path(@edit_request), class: "btn btn-primary", data: { method: :post, confirm: "この編集内容を公開しますか？" }
     - if policy(@edit_request).close? && @edit_request.may_close?
       = link_to "閉じる", close_db_edit_request_path(@edit_request), class: "btn", data: { method: :post, confirm: "この編集リクエストを公開せずに閉じますか？" }
     - if policy(@edit_request.draft_resource).edit?
-      = link_to "編集する", @edit_request.decorate.edit_draft_resource_path
-  = @edit_request.decorate.status_label
-
-.media
-  .media-left
-    = link_to user_path(@edit_request.user.username) do
-      = image_tag tombo_thumb_url(@edit_request.user.profile, :tombo_avatar, "w:140,h:140"), size: "70x70", class: "img-circle"
-  .media-body
-    .media-heading
-      .pull-left
-        = link_to @edit_request.user.profile.name, user_path(@edit_request.user.username)
-      .pull-right.text-muted
-        = "#{time_ago_in_words(@edit_request.created_at)}前"
-      .clearfix
-    
-    - if @edit_request.body.present?
-      = simple_format(@edit_request.body)
+      = link_to "編集する", @edit_request.decorate.edit_draft_resource_path, class: "btn"
+  .clearfix
 
 ul.nav.nav-tabs
   li.active
@@ -32,6 +19,23 @@ ul.nav.nav-tabs
 
 .tab-content
   #conversation.tab-pane.active
+    .media.activity
+      .media-left
+        = link_to user_path(@edit_request.user.username) do
+          = image_tag tombo_thumb_url(@edit_request.user.profile, :tombo_avatar, "w:140,h:140"), size: "70x70", class: "img-circle"
+      .media-body
+        .media-heading
+          .pull-left
+            = link_to @edit_request.user.profile.name, user_path(@edit_request.user.username)
+          .pull-right.text-muted
+            = "#{time_ago_in_words(@edit_request.created_at)}前"
+          .clearfix
+        
+        - if @edit_request.body.present?
+          = simple_format(@edit_request.body)
+    
+    hr
+    
     - if @db_activities.present?
       - @db_activities.each do |activity|
         = render "db/edit_requests/activities/activity", activity: activity
@@ -43,7 +47,7 @@ ul.nav.nav-tabs
         = render "application/error_panel", resource: f.object
         .form-group
           = f.text_area :body, class: "form-control", rows: 5
-        = f.submit "投稿する", class: "btn btn-primary"
+        = f.submit "コメントする", class: "btn btn-primary"
   
   #changes.tab-pane
     = @edit_request.decorate.resource_diff_table

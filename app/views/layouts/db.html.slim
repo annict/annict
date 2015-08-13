@@ -22,7 +22,10 @@ html lang="ja" ng-app="annict"
               = text_field_tag :q, params[:q], class: "form-control", placeholder: "作品名で検索..."
           ul.nav.navbar-nav.navbar-right
             - if user_signed_in?
-              li = link_to "サインアウト", destroy_user_session_path, method: :delete
+              li = link_to "ログアウト", destroy_user_session_path, method: :delete
+            li
+              = link_to root_path do
+                = image_tag "navbar/logo.png", size: "30x30"
 
     .container
       = render "application/flash"

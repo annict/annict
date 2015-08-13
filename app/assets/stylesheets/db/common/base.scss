@@ -1,3 +1,31 @@
 body {
   padding-top: 70px;
 }
+
+nav.navbar {
+  height: 60px;
+  line-height: 60px;
+
+  .navbar-header .navbar-brand {
+    height: 60px;
+    line-height: 60px;
+    padding: 0 15px;
+  }
+
+  .navbar-collapse {
+    .navbar-nav a {
+      line-height: 60px;
+      padding: 0 15px;
+    }
+
+    form.navbar-form {
+      height: 60px;
+      line-height: 56px;
+      margin: 0;
+
+      input.form-control {
+        width: 300px;
+      }
+    }
+  }
+}
