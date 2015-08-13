@@ -65,7 +65,7 @@ module Syobocal
     end
 
     def save_program(episode)
-      #「ニコニコチャンネル」に対しての放送予定は別の手段で登録する
+      # 「ニコニコチャンネル」に対しての放送予定は別の手段で登録する
       if !niconico_ch? && channel.present?
         program = channel.programs.find_by(episode_id: episode.id)
 

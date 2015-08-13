@@ -13,7 +13,7 @@ class CreateEditRequests < ActiveRecord::Migration
 
     add_index :edit_requests, :user_id
     add_index :edit_requests, [:draft_resource_id, :draft_resource_type],
-      name: :index_er_on_drid_and_drtype
+              name: :index_er_on_drid_and_drtype
     add_foreign_key :edit_requests, :users, on_delete: :cascade
   end
 end
