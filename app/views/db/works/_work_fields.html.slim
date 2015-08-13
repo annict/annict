@@ -41,7 +41,7 @@
 .form-group
   = f.label :released_at_about, class: "col-sm-3 control-label"
   .col-sm-9
-    = f.text_field :released_at_about, class: "form-control"
+    = f.text_field :released_at_about, class: "form-control", placeholder: "例: 2015年春"
 - if f.object.instance_of?(Work) && current_user.role.admin?
   .form-group
     .col-sm-offset-3.col-sm-9

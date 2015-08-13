@@ -1,17 +1,21 @@
 = form_for [:db, draft_work], html: { class: "form-horizontal" } do |f|
   = render "application/error_panel", resource: f.object
 
+  h4.work-fields 作品情報
+
   = render "db/works/work_fields", f: f
   
   = hidden_field_tag "draft_work[work_id]", (f.object.work_id.presence || params[:id])
   
   hr
   
+  h4.edit-request-fields 編集リクエスト
+  
   = f.fields_for :edit_request do |erf|
     .form-group
       = erf.label :title, class: "col-sm-3 control-label"
       .col-sm-9
-        = erf.text_field :title, class: "form-control", placeholder: "無題"
+        = erf.text_field :title, class: "form-control", placeholder: "例: (作品タイトル)を登録"
     .form-group
       = erf.label :body, class: "col-sm-3 control-label"
       .col-sm-9

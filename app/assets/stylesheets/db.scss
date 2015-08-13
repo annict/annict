@@ -5,4 +5,7 @@
 @import "font-awesome-sprockets";
 @import "font-awesome";
 
+@import "application/components_old/error-panel";
+
 @import "db/common/base";
+@import "db/controllers/*";
