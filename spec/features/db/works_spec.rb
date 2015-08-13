@@ -78,4 +78,37 @@ describe "Annict DB" do
       end
     end
   end
+
+  describe "作品作成ページ" do
+    let(:user) { create(:registered_user, :with_editor_role) }
+
+    before do
+      login_as(user, scope: :user)
+      visit "/db/works/new"
+    end
+
+    it "ページが表示されること" do
+      expect(page).to have_content("放送時期")
+    end
+
+    context "入力して送信したとき" do
+      before do
+        within("#new_work") do
+          fill_in "work[title]", with: "ご注文はうさぎですか?"
+          select "TV", from: "work[media]"
+          click_button "登録する"
+        end
+      end
+
+      it "編集リクエストが登録されること" do
+        work = Work.find_by(title: "ご注文はうさぎですか?")
+        expect(work.present?).to be true
+      end
+
+      it "作品編集ページに遷移すること" do
+        work = Work.find_by(title: "ご注文はうさぎですか?")
+        expect(current_path).to eq "/db/works/#{work.id}/edit"
+      end
+    end
+  end
 end

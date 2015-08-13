@@ -40,7 +40,7 @@ class Db::WorksController < Db::ApplicationController
     authorize @work, :create?
 
     if @work.save
-      redirect_to db_works_path, notice: "作品を登録しました"
+      redirect_to edit_db_work_path(@work), notice: "作品を登録しました"
     else
       render :new
     end
@@ -56,7 +56,7 @@ class Db::WorksController < Db::ApplicationController
     authorize @work, :update?
 
     if @work.update_attributes(format_params(work))
-      redirect_to db_works_path, notice: "作品を更新しました"
+      redirect_to edit_db_work_path(@work), notice: "作品を更新しました"
     else
       render :edit
     end

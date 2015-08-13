@@ -21,6 +21,10 @@ FactoryGirl.define do
       end
     end
 
+    trait :with_editor_role do
+      role :editor
+    end
+
     factory :registered_user, traits: [:with_profile, :with_provider, :with_setting] do
       after :create, &:confirm
     end
