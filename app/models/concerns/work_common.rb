@@ -12,9 +12,6 @@ module WorkCommon
 
     belongs_to :season
 
-    validates :sc_tid, numericality: { only_integer: true }, allow_blank: true,
-                       uniqueness: true
-    validates :title, presence: true, uniqueness: true
     validates :media, presence: true
     validates :official_site_url, url: { allow_blank: true }
     validates :wikipedia_url, url: { allow_blank: true }

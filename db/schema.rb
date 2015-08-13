@@ -226,7 +226,7 @@ ActiveRecord::Schema.define(version: 20150626152128) do
     t.datetime "updated_at",                     null: false
   end
 
-  add_index "draft_works", ["sc_tid"], name: "index_draft_works_on_sc_tid", unique: true, using: :btree
+  add_index "draft_works", ["sc_tid"], name: "index_draft_works_on_sc_tid", using: :btree
   add_index "draft_works", ["season_id"], name: "index_draft_works_on_season_id", using: :btree
   add_index "draft_works", ["work_id"], name: "index_draft_works_on_work_id", using: :btree
 

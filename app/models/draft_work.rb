@@ -19,7 +19,7 @@
 #
 # Indexes
 #
-#  index_draft_works_on_sc_tid     (sc_tid) UNIQUE
+#  index_draft_works_on_sc_tid     (sc_tid)
 #  index_draft_works_on_season_id  (season_id)
 #  index_draft_works_on_work_id    (work_id)
 #
@@ -29,4 +29,7 @@ class DraftWork < ActiveRecord::Base
   include WorkCommon
 
   belongs_to :origin, class_name: "Work", foreign_key: :work_id
+
+  validates :sc_tid, numericality: { only_integer: true }, allow_blank: true
+  validates :title, presence: true
 end

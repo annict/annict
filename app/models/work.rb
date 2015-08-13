@@ -46,6 +46,10 @@ class Work < ActiveRecord::Base
   has_many :programs, dependent: :destroy
   has_many :statuses, dependent: :destroy
 
+  validates :sc_tid, numericality: { only_integer: true }, allow_blank: true,
+                     uniqueness: true
+  validates :title, presence: true, uniqueness: true
+
   scope :by_season, -> (season_slug) {
     return self if season_slug.blank?
 

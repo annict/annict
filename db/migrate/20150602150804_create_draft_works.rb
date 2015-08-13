@@ -15,7 +15,7 @@ class CreateDraftWorks < ActiveRecord::Migration
       t.timestamps null: false
     end
 
-    add_index :draft_works, :sc_tid, unique: true
+    add_index :draft_works, :sc_tid
     add_index :draft_works, :work_id
     add_index :draft_works, :season_id
     add_foreign_key :draft_works, :works
