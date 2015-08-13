@@ -7,7 +7,7 @@ FactoryGirl.define do
 
     trait :with_item do
       after :create do |work|
-        create(:item, { work: work })
+        create(:item, work: work)
       end
     end
 
@@ -15,6 +15,26 @@ FactoryGirl.define do
       after :create do |work|
         season = create(:season, slug: ENV["ANNICT_CURRENT_SEASON"])
         work.update(season_id: season.id)
+      end
+    end
+
+    trait :with_next_season do
+      after :create do |work|
+        season = create(:season, slug: ENV["ANNICT_NEXT_SEASON"])
+        work.update(season_id: season.id)
+      end
+    end
+
+    trait :with_prev_season do
+      after :create do |work|
+        season = create(:season, slug: ENV["ANNICT_PREVIOUS_SEASON"])
+        work.update(season_id: season.id)
+      end
+    end
+
+    trait :with_episode do
+      after :create do |work|
+        create(:episode, work: work)
       end
     end
   end

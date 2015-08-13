@@ -1,3 +1,5 @@
+- title "アニメ作品一覧"
+
 - if user_signed_in?
   .pull-right
     - if current_user.role.admin?
@@ -8,22 +10,16 @@
 ul.nav.nav-tabs
   = active_link_to db_works_path, wrap_tag: :li, active: params[:action] == "index" do
     | 全て
-    .badge = @all_works.count
   = active_link_to season_db_works_path(slug: ENV["ANNICT_CURRENT_SEASON"]), wrap_tag: :li, active: (params[:slug] == ENV["ANNICT_CURRENT_SEASON"]) do
     | 今期
-    .badge = @current_season_works.count
   = active_link_to season_db_works_path(slug: ENV["ANNICT_NEXT_SEASON"]), wrap_tag: :li, active: (params[:slug] == ENV["ANNICT_NEXT_SEASON"]) do
     | 来期
-    .badge = @next_season_works.count
   = active_link_to season_db_works_path(slug: ENV["ANNICT_PREVIOUS_SEASON"]), wrap_tag: :li, active: (params[:slug] == ENV["ANNICT_PREVIOUS_SEASON"]) do
     | 前期
-    .badge = @previous_season_works.count
-  = active_link_to resourceless_db_works_path(_name: :episode), wrap_tag: :li, active: (params[:name] == "episode") do
+  = active_link_to resourceless_db_works_path(name: :episode), wrap_tag: :li, active: (params[:name] == "episode") do
     | エピソード未登録
-    .badge = @episodeless_works.count
   = active_link_to resourceless_db_works_path(name: :item), wrap_tag: :li, active: (params[:name] == "item") do
     | 作品画像未登録
-    .badge = @itemless_works.count
 
 table.table.table-striped
   thead
@@ -31,7 +27,7 @@ table.table.table-striped
       th ID
       th タイトル
       th しょぼかるID
-      th 視聴者数
+      th Watchers
       th リリース日
       th 作品画像
       - if user_signed_in?
@@ -50,7 +46,7 @@ table.table.table-striped
             = "-"
         td = "#{work.watchers_count}人"
         td = work.released_at.presence || "-"
-        td = image_tag tombo_thumb_url(work.main_item, :tombo_image, "w:70,h:70"), size: "70x70"
+        td = image_tag work.decorate.item_image_url("w:70,h:70"), size: "70x70"
         - if user_signed_in?
           td
             - if current_user.role.admin?
