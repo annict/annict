@@ -21,6 +21,10 @@ nav.navbar.navbar-default.navbar-fixed-top
           = icon 'user'
           .caption
             = t('titles.account')
+        - unless browser.mobile?
+          = link_to db_root_path, target: '_self', 'analytics-on' => 'click', 'analytics-event' => 'Annict DB', 'analytics-category' => 'navbar' do
+            = icon 'database'
+            .caption Annict DB
       - else
         = link_to works_path, class: "#{works_page? ? 'active' : ''}", target: '_self', 'analytics-on' => 'click', 'analytics-event' => '見つける', 'analytics-category' => 'navbar' do
           = icon 'search'
