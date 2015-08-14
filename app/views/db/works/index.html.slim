@@ -6,6 +6,7 @@
       = link_to "新規登録", new_db_work_path, class: "btn btn-primary"
     - else
       = link_to "新規登録", new_db_draft_work_path, class: "btn btn-primary"
+  .clearfix
 
 ul.nav.nav-tabs
   = active_link_to db_works_path, wrap_tag: :li, active: params[:action] == "index" do

@@ -1,4 +1,4 @@
-ul.nav.nav-tabs.nav-justified
+ul.nav.nav-tabs.nav-justified.edit-type-tabs
   = active_link_to "編集リクエスト", new_db_work_draft_episode_path(work, id: episode), wrap_tag: :li, active: params[:controller] == "db/draft_episodes" && params[:action] == "new"
   - if policy(episode).edit?
     = active_link_to "直接編集", edit_db_work_episode_path(work, episode), wrap_tag: :li, active: params[:controller] == "db/episodes" && params[:action] == "edit"

@@ -1,8 +1,4 @@
 body.db-works, body.db-draft_works {
-  .nav-tabs {
-    margin-bottom: 30px;
-  }
-
   form {
     h4 {
       text-align: center;
@@ -15,5 +11,11 @@ body.db-works, body.db-draft_works {
         margin: 30px 0;
       }
     }
+  }
+}
+
+body.db-works-index, body.db-works-season, body.db-works-resourceless {
+  .nav-tabs {
+    margin-bottom: 20px;
   }
 }

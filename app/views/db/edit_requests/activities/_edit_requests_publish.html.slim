@@ -1,4 +1,7 @@
 .activity
-  span.user-name = activity.user.decorate.name_link
-  | が公開しました
-  = "#{time_ago_in_words(activity.trackable.published_at)}前"
+  .pull-left
+    span.user-name = activity.user.decorate.name_link
+    | が公開しました
+  .pull-right.text-muted
+    = "#{time_ago_in_words(activity.trackable.published_at)}前"
+  .clearfix

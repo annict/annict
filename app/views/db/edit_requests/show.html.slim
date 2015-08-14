@@ -2,6 +2,9 @@
   .pull-left
     h1 = @edit_request.title
     = @edit_request.decorate.status_label
+    - if @work.present?
+      span.work-annotation.text-mute
+        = "「#{link_to @work.title, work_path(@work), target: '_blank'}」への編集リクエスト".html_safe
   .pull-right
     - if policy(@edit_request).publish? && @edit_request.may_publish?
       = link_to "公開する", publish_db_edit_request_path(@edit_request), class: "btn btn-primary", data: { method: :post, confirm: "この編集内容を公開しますか？" }
