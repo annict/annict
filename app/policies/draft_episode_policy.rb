@@ -1,0 +1,2 @@
+class DraftEpisodePolicy < DraftResourcePolicy
+end
