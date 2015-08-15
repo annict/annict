@@ -16,6 +16,7 @@ class Db::ProgramsController < Db::ApplicationController
   def create(program)
     @program = @work.programs.new(program)
     authorize @program, :create?
+    change_to_utc_datetime!
 
     if @program.save
       redirect_to db_work_programs_path(@work), notice: "放送予定を登録しました"
@@ -31,9 +32,11 @@ class Db::ProgramsController < Db::ApplicationController
 
   def update(id, program)
     @program = @work.programs.find(id)
+    @program.attributes = program
     authorize @program, :update?
+    change_to_utc_datetime!
 
-    if @program.update_attributes(program)
+    if @program.save
       redirect_to db_work_programs_path(@work), notice: "放送予定を更新しました"
     else
       render :edit
@@ -53,5 +56,10 @@ class Db::ProgramsController < Db::ApplicationController
 
   def load_work
     @work = Work.find(params[:work_id])
+  end
+
+  def change_to_utc_datetime!
+    @program.started_at = @program.started_at.in_time_zone("Asia/Tokyo") - 9.hours
+    @program.sc_last_update = Time.now.in_time_zone("Asia/Tokyo")
   end
 end
