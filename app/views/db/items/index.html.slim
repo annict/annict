@@ -1,7 +1,5 @@
 = render "db/works/header", work: @work
 
-hr
-
 .pull-right
   - if current_user.role.admin?
     = link_to "新規登録", new_db_work_item_path(@work), class: "btn btn-primary"
@@ -31,11 +29,11 @@ table.table.table-striped
         td = item.main? ? "使用する" : "使用しない"
         td
           - if current_user.role.admin?
-            = link_to "編集", edit_db_work_item_path(@work, item), class: "btn btn-primary"
+            = link_to "編集", edit_db_work_item_path(@work, item), class: "btn btn-primary btn-sm"
           - else
-            = link_to "編集", new_db_work_draft_item_path(@work, id: item.id), class: "btn btn-primary"
+            = link_to "編集", new_db_work_draft_item_path(@work, id: item.id), class: "btn btn-primary btn-sm"
         - if policy(item).destroy?
-          td = link_to "削除", db_work_item_path(@work, item), method: :delete, data: { confirm: "作品画像を削除しますか？" }
+          td = link_to "削除", db_work_item_path(@work, item), class: "btn btn-danger btn-sm", data: { method: :delete, confirm: "作品画像を削除しますか？" }
 
 - if @items.blank?
   .well 登録されている作品画像はありません。

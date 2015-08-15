@@ -16,7 +16,6 @@ html lang="ja" ng-app="annict"
           ul.nav.navbar-nav
             li = link_to "編集リクエスト", db_edit_requests_path
             li = link_to "作品", db_works_path
-            li = link_to "シーズン", "#"
           = form_tag search_db_works_path, method: :get, class: "navbar-form navbar-left", role: "form" do
             .form-group
               = text_field_tag :q, params[:q], class: "form-control", placeholder: "作品名で検索..."

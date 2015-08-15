@@ -1,7 +1,5 @@
 = render "db/works/header", work: @work
 
-hr
-
 .pull-right
   - if current_user.role.admin?
     = link_to "新規登録", new_db_work_program_path(@work), class: "btn btn-primary"
