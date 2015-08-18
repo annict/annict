@@ -1,3 +1,28 @@
+body.db-edit_requests-index {
+  table {
+    td.title-user {
+      .title {
+        margin-bottom: 3px;
+      }
+
+      .user {
+        a {
+          color: #9a9a9a;
+          font-size: 12px;
+
+          &:hover {
+            text-decoration: none;
+          }
+        }
+
+        img {
+          margin-right: 5px;
+        }
+      }
+    }
+  }
+}
+
 body.db-edit_requests-show {
   .header {
     margin: 20px 0;

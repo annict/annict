@@ -29,6 +29,7 @@ class DraftWork < ActiveRecord::Base
   include WorkCommon
 
   belongs_to :origin, class_name: "Work", foreign_key: :work_id
+  belongs_to :work
 
   validates :sc_tid, numericality: { only_integer: true }, allow_blank: true
   validates :title, presence: true
