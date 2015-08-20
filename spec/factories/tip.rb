@@ -16,7 +16,7 @@ FactoryGirl.define do
   factory :checkin_tip, class: Tip do
     target 0
     partial_name 'checkin'
-    title 'エピソードにチェックインしよう'
+    title 'エピソードに記録しよう'
     icon_name 0
   end
 end

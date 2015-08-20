@@ -26,7 +26,7 @@
       .checkins-count
         .wrapper
           = icon('check')
-          = "#{current_user.checkins_count_in(episode)}回チェックイン"
+          = "#{current_user.checkins_count_in(episode)}回記録"
 
     - if episode.prev_episode.present?
       = link_to work_episode_path(work, episode.prev_episode), class: 'prev-episode' do

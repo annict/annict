@@ -5,7 +5,7 @@ class UserEpisodesQuery
     @user = user
   end
 
-  # 指定した作品の中のチェックインしていないエピソードを返す
+  # 指定した作品の中の記録していないエピソードを返す
   def unchecked(work_or_works)
     checked_episode_ids = user.checkins.where(work: work_or_works).pluck(:episode_id)
     Episode.where(work: work_or_works).where.not(id: checked_episode_ids)
