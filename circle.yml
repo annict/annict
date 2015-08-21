@@ -1,3 +1,11 @@
-notify:
-  webhooks:
-    - url: https://webhooks.gitter.im/e/ffbeed5104d7311fa626
+machine:
+  environment:
+    ANNICT_CURRENT_SEASON: 2015-summer
+    ANNICT_HOST: localhost:3000
+    ANNICT_NEXT_SEASON: 2015-autumn
+    ANNICT_PAPERCLIP_PATH: paperclip/:class/:id/:attachment/:style/:hash.:extension
+    ANNICT_PAPERCLIP_RANDOM_SECRET: secretsecretsecretsecretsecretsecret
+    ANNICT_PREVIOUS_SEASON: 2015-spring
+    ANNICT_TOMBO_URL: http://localhost:5000
+    DEVISE_SECRET: secretsecretsecretsecretsecretsecret
+    RAILS_SECRET_KEY_BASE: secretsecretsecretsecretsecretsecret
