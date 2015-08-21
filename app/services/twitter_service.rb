@@ -64,12 +64,12 @@ class TwitterService
   def generate_tweet_body(data)
     if data[:comment].present?
       "#{data[:comment]}／#{data[:work_title]} #{data[:episode_number]}" +
-        " に記録！#{data[:share_url]} #{data[:share_hashtag]}"
+        " を見ました#{data[:share_url]} #{data[:share_hashtag]}"
     else
       episode_title = data[:episode_title].present? ? "「#{data[:episode_title]}」" : ""
 
       "#{data[:work_title]} #{data[:episode_number]}#{episode_title}" +
-        " に記録！#{data[:share_url]} #{data[:share_hashtag]}"
+        " を見ました#{data[:share_url]} #{data[:share_hashtag]}"
     end
   end
 
