@@ -1,4 +1,4 @@
-- title t('home.index.title', catch_copy: t('home.index.signout.catch_copy'))
+- title t("home.index.title", catch_copy: t("home.index.signout.catch_copy"))
 - description meta_description
 - keywords meta_keywords
 
@@ -10,7 +10,7 @@
         .info
           .left
             = link_to work_path(ci.work) do
-              = annict_image_tag tombo_thumb_url(ci.work.main_item, :tombo_image, 'w:64,h:64'), psize: '46x46', msize: '32x32', alt: ci.work.title
+              = annict_image_tag tombo_thumb_url(ci.work.main_item, :tombo_image, "w:64,h:64"), psize: "46x46", msize: "32x32", alt: ci.work.title
           .right
             .location-name
               = link_to work_path(ci.work) do
@@ -21,17 +21,17 @@
   .welcome
     h1 Annict
     p.lead
-      = t('home.index.signout.catch_copy')
+      = t("home.index.signout.catch_copy")
     .signin-buttons
       .signin-button
-        = link_to user_omniauth_authorize_path(:twitter), class: 'btn btn-twitter', 'analytics-on' => 'click', 'analytics-event' => 'ログイン', 'analytics-category' => 'callbacks', 'analytics-label' => 'Twitter ページ上部' do
+        = link_to user_omniauth_authorize_path(:twitter), class: "btn btn-twitter", "analytics-on" => "click", "analytics-event" => "ログイン", "analytics-category" => "callbacks", "analytics-label" => "Twitter ページ上部" do
           .icon.pull-left
             i.fa.fa-twitter
           .text
             | Twitterアカウントで始める
           .clearfix
       .signin-button
-        = link_to user_omniauth_authorize_path(:facebook), class: 'facebook btn btn-facebook', 'analytics-on' => 'click', 'analytics-event' => 'ログイン', 'analytics-category' => 'callbacks', 'analytics-label' => 'Facebook ページ上部' do
+        = link_to user_omniauth_authorize_path(:facebook), class: "facebook btn btn-facebook", "analytics-on" => "click", "analytics-event" => "ログイン", "analytics-category" => "callbacks", "analytics-label" => "Facebook ページ上部" do
           .icon.pull-left
             i.fa.fa-facebook
           .text
@@ -42,34 +42,36 @@
     h2 見たアニメが記録できる
     p 「何話まで見たっけ？」とならないように、見たアニメを記録することができます。
     .screenshot
-      - image_size = browser.mobile? ? '280x400' : '400x572'
-      = image_tag 'feature-1.png', size: image_size
+      - image_size = browser.mobile? ? "280x382" : "400x545"
+      = image_tag "feature-1.jpg", size: image_size
 
     h2 見たいアニメも記録
     p
       | アニメに対して、「見てる」「見たい」「見た」「中断」「中止」という5つのステータスの中から1つ設定することができます。
       | 例えば来期の気になるアニメを「見たい」に設定すれば、忘れずに済みそうです。
     .screenshot
-      - image_size = browser.mobile? ? '280x563' : '400x804'
-      = image_tag 'feature-2.png', size: image_size
+      - image_size = browser.mobile? ? "280x599" : "400x855"
+      = image_tag "feature-2.jpg", size: image_size
 
     h2 視聴状況をチェック
     p プロフィールページには記録数や見てるアニメ、グラフなどが表示され、どれだけアニメを見ているのか知ることができます。
     .screenshot
-      - image_size = browser.mobile? ? '280x648' : '400x926'
-      = image_tag 'feature-3.png', size: image_size
+      - image_size = browser.mobile? ? "280x614" : "400x877"
+      = image_tag "feature-3.jpg", size: image_size
 
     h2 友達の視聴状況もチェック
-    p Annictの利用者をフォローすると、その人が見たアニメの記録がタイムラインに表示されます。
+    p
+      | Annictの利用者をフォローすると、その人が見たアニメの記録がタイムラインに表示されます。
+      | また、ネタバレを防止するため、自分が見ていないエピソードへの感想にはぼかしが入るようになっています。
     .screenshot
-      - image_size = browser.mobile? ? '280x468' : '400x669'
-      = image_tag 'feature-4.png', size: image_size
+      - image_size = browser.mobile? ? "280x469" : "400x669"
+      = image_tag "feature-4.jpg", size: image_size
 
     h2 今晩見れるアニメがわかる
     p 普段見ているテレビのチャンネルを設定すると、見ているアニメの放送時間をタイムライン形式で見ることができます。
     .screenshot.feature-5
-      - image_size = browser.mobile? ? '280x416' : '400x594'
-      = image_tag 'feature-5.png', size: image_size
+      - image_size = browser.mobile? ? "280x469" : "400x669"
+      = image_tag "feature-5.jpg", size: image_size
 
 .join
   .container
@@ -77,14 +79,14 @@
 
     .signin-buttons
       .signin-button
-        = link_to user_omniauth_authorize_path(:twitter), class: 'btn btn-twitter', 'analytics-on' => 'click', 'analytics-event' => 'ログイン', 'analytics-category' => 'callbacks', 'analytics-label' => 'Twitter ページ下部' do
+        = link_to user_omniauth_authorize_path(:twitter), class: "btn btn-twitter", "analytics-on" => "click", "analytics-event" => "ログイン", "analytics-category" => "callbacks", "analytics-label" => "Twitter ページ下部" do
           .icon.pull-left
             i.fa.fa-twitter
           .text
             | Twitterアカウントで始める
           .clearfix
       .signin-button
-        = link_to user_omniauth_authorize_path(:facebook), class: 'facebook btn btn-facebook', 'analytics-on' => 'click', 'analytics-event' => 'ログイン', 'analytics-category' => 'callbacks', 'analytics-label' => 'Facebook ページ下部' do
+        = link_to user_omniauth_authorize_path(:facebook), class: "facebook btn btn-facebook", "analytics-on" => "click", "analytics-event" => "ログイン", "analytics-category" => "callbacks", "analytics-label" => "Facebook ページ下部" do
           .icon.pull-left
             i.fa.fa-facebook
           .text
@@ -95,4 +97,4 @@
     h2 管理者について
     p <a href="https://twitter.com/shimbaco">@shimbaco</a> が個人で開発、運営しています。
 
-= render 'footer'
+= render "footer"
