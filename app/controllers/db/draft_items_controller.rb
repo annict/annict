@@ -6,13 +6,15 @@ class Db::DraftItemsController < Db::ApplicationController
   before_action :set_work, only: [:new, :create, :edit, :update]
 
   def new(id: nil)
-    @draft_item = if id.present?
+    if id.present?
       @item = @work.items.find(id)
       attributes = @item.attributes.slice(*Item::DIFF_FIELDS.map(&:to_s))
-      @work.draft_items.new(attributes)
+      @draft_item = @work.draft_items.new(attributes)
+      @draft_item.origin = @item
     else
-      @work.draft_items.new
+      @draft_item = @work.draft_items.new
     end
+
     @draft_item.build_edit_request
   end
 
@@ -23,6 +25,7 @@ class Db::DraftItemsController < Db::ApplicationController
     if draft_item[:item_id].present?
       @item = @work.items.find(draft_item[:item_id])
       @draft_item.origin = @item
+      @draft_item.tombo_image = @item.tombo_image if draft_item[:tombo_image].blank?
     end
 
     if @draft_item.save
