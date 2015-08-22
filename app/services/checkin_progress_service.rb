@@ -56,12 +56,12 @@ class CheckinProgressService
     end
   end
 
-  # 全てのエピソードにチェックインしているかどうか
+  # 全てのエピソードを記録しているかどうか
   def all_checked?
     episode_ids.count == (episode_ids & checked_episode_ids).count
   end
 
-  # 全てのエピソードにチェックインした上で、さらに何本かのエピソードにチェックインしているかどうか
+  # 全てのエピソードを記録した上で、さらに何本かのエピソードを記録しているかどうか
   def over_checkin?
     checked_episode_ids.count > episode_ids.count * all_checkins_count
   end

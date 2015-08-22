@@ -25,7 +25,7 @@ describe 'プロフィールページ' do
       visit "/users/#{user.username}"
     end
 
-    it 'チェックイン情報が表示されること', js: true do
+    it "記録情報が表示されること", js: true do
       expect(find('.activities')).to have_content('おもしろかったよ')
     end
   end

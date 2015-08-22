@@ -17,7 +17,7 @@ describe '通知ページ' do
     end
   end
 
-  context '自分のチェックインが「いいね！」されたとき' do
+  context "自分の記録が「いいね！」されたとき" do
     let(:user1) { create(:registered_user) }
     let(:user2) { create(:registered_user) }
     let(:checkin) { create(:checkin, user: user1) }
@@ -31,7 +31,7 @@ describe '通知ページ' do
 
     it 'いいね！されたことが表示されること' do
       path = work_episode_checkin_path(checkin.work, checkin.episode, checkin)
-      expect(page).to have_link('チェックイン', href: path)
+      expect(page).to have_link("記録", href: path)
     end
 
     context '「いいね！」が取り消されたとき' do

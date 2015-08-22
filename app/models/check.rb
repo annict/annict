@@ -39,7 +39,7 @@ class Check < ActiveRecord::Base
     end
   end
 
-  # チェックインしていないエピソードに設定する
+  # 記録していないエピソードに設定する
   def update_episode_to_unchecked
     unchecked_episode = user.episodes.unchecked(work)
       .where.not(id: skipped_episode_ids).order(sort_number: :asc).first

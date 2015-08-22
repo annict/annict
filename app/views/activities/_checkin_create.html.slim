@@ -1,7 +1,7 @@
 .top ng-if='activity.links.checkin.comment.length > 0'
   a.name ng-href='/users/{{activity.links.user.username}}'
     | {{activity.links.profile.name}}
-  | がチェックインしました
+  | が見ました
 .top ng-if='!(activity.links.checkin.comment.length > 0)'
   a.name ng-href='/users/{{activity.links.user.username}}'
     | {{activity.links.profile.name}}
@@ -10,7 +10,7 @@
     | {{activity.links.work.title}}
   a.number ng-href='/works/{{activity.links.work.id}}/episodes/{{activity.links.episode.id}}' ng-if='!(!activity.links.episode.number && activity.links.episode.title)'
     | {{activity.links.episode.number}}
-  | にチェックインしました
+  | を見ました
 
 = render 'checkins/checkin_comment_body'
 
