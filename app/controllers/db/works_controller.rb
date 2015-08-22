@@ -6,11 +6,11 @@ class Db::WorksController < Db::ApplicationController
   before_action :authenticate_user!, only: [:new, :create, :edit, :update, :destroy]
 
   def index(page: nil)
-    @works = Work.order("released_at DESC NULLS LAST").page(page)
+    @works = Work.order(id: :desc).page(page)
   end
 
   def season(page: nil, slug: ENV["ANNICT_CURRENT_SEASON"])
-    @works = Work.by_season(slug).order("released_at DESC NULLS LAST").page(page)
+    @works = Work.by_season(slug).order(id: :desc).page(page)
     render :index
   end
 
@@ -25,7 +25,7 @@ class Db::WorksController < Db::ApplicationController
 
   def search(page: nil, q: "")
     @works = Work.where("lower(title) LIKE ?", "%#{q}%")
-      .order("released_at DESC NULLS LAST")
+      .order(id: :desc)
       .page(page)
     render :index
   end
