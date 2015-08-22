@@ -53,7 +53,7 @@ table.table.table-striped
             - if current_user.role.admin?
               = link_to "編集", edit_db_work_path(work), class: "btn btn-primary btn-sm"
             - else
-              = link_to "編集", new_db_draft_work_path(id: work.id), class: "btn btn-primary btn-sm"
+              = link_to "編集", new_db_draft_work_path(work_id: work.id), class: "btn btn-primary btn-sm"
         - if policy(work).destroy?
           td = link_to "削除", db_work_path(work), class: "btn btn-danger btn-sm", data: { method: "delete", confirm: "この作品を削除しますか？" }
 
