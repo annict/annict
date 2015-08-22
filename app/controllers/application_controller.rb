@@ -19,19 +19,11 @@ class ApplicationController < ActionController::Base
   private
 
   def after_sign_in_path_for(resource)
-    if 'Staff' == resource.class.name
-      marie_root_path
-    else
-      root_path
-    end
+    root_path
   end
 
   def after_sign_out_path_for(resource_or_scope)
-    if :staff == resource_or_scope
-      new_staff_session_path
-    else
-      root_path
-    end
+    root_path
   end
 
   def set_work

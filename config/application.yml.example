@@ -3,7 +3,6 @@ ANNICT_CURRENT_SEASON: '2015-summer'
 ANNICT_PREVIOUS_SEASON: '2015-spring'
 ANNICT_PAPERCLIP_PATH: 'paperclip/:class/:id/:attachment/:style/:hash.:extension'
 ANNICT_PAPERCLIP_RANDOM_SECRET: 'abcdefghijklmnopqrstuvwxyz'
-ANNICT_MARIE_USER_ID: "1"
 
 DEVISE_SECRET: 'abcdefghijklmnopqrstuvwxyz'
 RAILS_SECRET_KEY_BASE: 'abcdefghijklmnopqrstuvwxyz'

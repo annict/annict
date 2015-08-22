@@ -136,22 +136,6 @@ TwitterでOAuth認証用のアプリを作成し、`config/application.yml` に�
 `TWITTER_CONSUMER_KEY` と `TWITTER_CONSUMER_SECRET` を変更します。
 
 
-##### 管理画面について
-
-Annictには作品やエピソードの情報をWebブラウザから編集することができる管理画面が存在します。
-管理画面は以下のステップを踏むことで見ることができます。
-
-まず、`staffs` テーブルに管理画面にログインするアカウントを登録します。
-
-```
-$ bundle exec rails c
-> Staff.create(email: '(メールアドレス)', password: '(パスワード)')
-```
-
-そして [http://localhost:3000/marie/signin](http://localhost:3000/marie/signin) にアクセスし、
-先ほど登録したアカウント情報を入力すると、ログインすることができます。
-
-
 #### テストを実行する
 
 以下のコマンドでテストが実行できます。

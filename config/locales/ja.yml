@@ -26,7 +26,7 @@ ja:
     failure: メールアドレスの確認に失敗しました
   episodes:
     checkin: チェックインする
-    created_notification: 【Annict::Marie】エピソードが追加されました
+    created_notification: 【Annict DB】エピソードが追加されました
     delete_confirm: エピソードを削除します。よろしいですか？
     deleted: エピソードを削除しました。
     edit: エピソード情報を編集
@@ -77,7 +77,7 @@ ja:
   statuses:
     no_select: 'ステータス'
   syobocal:
-    special_program_notification: 【Annict::Marie】特別番組を検知した気がします
+    special_program_notification: 【Annict DB】特別番組を検知した気がします
   titles:
     about: Annictとは？
     friends: '%{provider_name}の友達'
