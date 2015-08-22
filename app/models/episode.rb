@@ -23,6 +23,7 @@
 #
 
 class Episode < ActiveRecord::Base
+  include DbActivityMethods
   include EpisodeCommon
 
   has_paper_trail only: DIFF_FIELDS

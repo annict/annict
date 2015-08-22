@@ -18,7 +18,7 @@ class Db::ItemsController < Db::ApplicationController
     @item = @work.items.new(item)
     authorize @item, :create?
 
-    if @item.save
+    if @item.save_and_create_db_activity(current_user, "items.create")
       redirect_to db_work_items_path(@work), notice: "作品画像を登録しました"
     else
       render :new
@@ -32,7 +32,8 @@ class Db::ItemsController < Db::ApplicationController
   def update(item)
     authorize @item, :update?
 
-    if @item.update_attributes(item)
+    @item.attributes = item
+    if @item.save_and_create_db_activity(current_user, "items.update")
       redirect_to db_work_items_path(@work), notice: "作品画像を更新しました"
     else
       render :edit

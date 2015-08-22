@@ -17,7 +17,8 @@ class Db::EpisodesController < Db::ApplicationController
     @episode = @work.episodes.find(id)
     authorize @episode, :update?
 
-    if @episode.update_attributes(episode)
+    @episode.attributes = episode
+    if @episode.save_and_create_db_activity(current_user, "episodes.update")
       redirect_to db_work_episodes_path(@work), notice: "エピソードを更新しました"
     else
       render :edit

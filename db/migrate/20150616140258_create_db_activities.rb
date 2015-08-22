@@ -7,6 +7,7 @@ class CreateDbActivities < ActiveRecord::Migration
       t.integer :trackable_id, null: false
       t.string :trackable_type, null: false
       t.string :action, null: false
+      t.json :parameters
       t.timestamps null: false
     end
 

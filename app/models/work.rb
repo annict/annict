@@ -28,6 +28,7 @@
 #
 
 class Work < ActiveRecord::Base
+  include DbActivityMethods
   include WorkCommon
 
   has_paper_trail only: DIFF_FIELDS

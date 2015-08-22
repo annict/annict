@@ -20,6 +20,7 @@
 #
 
 class Program < ActiveRecord::Base
+  include DbActivityMethods
   include ProgramCommon
 
   has_paper_trail only: DIFF_FIELDS

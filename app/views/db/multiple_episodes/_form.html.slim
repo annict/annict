@@ -1,4 +1,4 @@
-= form_for [:db, work, multiple_episode], url: db_work_multiple_episodes_path(work), html: { class: "form-horizontal" } do |f|
+= form_for [:db, work, me_form], url: db_work_multiple_episodes_path(work), html: { class: "form-horizontal" } do |f|
   = render "application/error_panel", resource: f.object
 
   = render "db/multiple_episodes/fields", f: f

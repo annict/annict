@@ -20,6 +20,7 @@
 #
 
 class Item < ActiveRecord::Base
+  include DbActivityMethods
   include ItemCommon
 
   has_paper_trail only: DIFF_FIELDS

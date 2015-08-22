@@ -39,7 +39,7 @@ class Db::WorksController < Db::ApplicationController
     @work = Work.new(format_params(work))
     authorize @work, :create?
 
-    if @work.save
+    if @work.save_and_create_db_activity(current_user, "works.create")
       redirect_to edit_db_work_path(@work), notice: "作品を登録しました"
     else
       render :new
@@ -55,7 +55,8 @@ class Db::WorksController < Db::ApplicationController
     @work = Work.find(id)
     authorize @work, :update?
 
-    if @work.update_attributes(format_params(work))
+    @work.attributes = format_params(work)
+    if @work.save_and_create_db_activity(current_user, "works.update")
       redirect_to edit_db_work_path(@work), notice: "作品を更新しました"
     else
       render :edit
