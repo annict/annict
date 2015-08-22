@@ -1,5 +1,26 @@
 body {
+  color: rgba(0, 0, 0, 0.8);
+  font-family: "Lucida Grande", "Hiragino Kaku Gothic ProN", Meiryo, sans-serif;
+  font-size: 14px;
+  letter-spacing: 0.03em;
   padding-top: 80px;
+}
+
+h1, h2 {
+  margin-top: 30px;
+}
+
+h1 {
+  font-size: 26px;
+}
+
+h2 {
+  font-size: 20px;
+}
+
+p {
+  line-height: 1.8;
+  margin-bottom: 30px;
 }
 
 nav.navbar {
