@@ -131,9 +131,9 @@ ActiveRecord::Schema.define(version: 20150626152128) do
     t.integer  "trackable_id",   null: false
     t.string   "trackable_type", null: false
     t.string   "action",         null: false
+    t.json     "parameters"
     t.datetime "created_at",     null: false
     t.datetime "updated_at",     null: false
-    t.json     "parameters"
   end
 
   add_index "db_activities", ["recipient_id", "recipient_type"], name: "index_db_activities_on_recipient_id_and_recipient_type", using: :btree
@@ -264,9 +264,6 @@ ActiveRecord::Schema.define(version: 20150626152128) do
     t.datetime "closed_at"
     t.datetime "created_at",                             null: false
     t.datetime "updated_at",                             null: false
-    t.json     "diffs"
-    t.json     "origin_values"
-    t.json     "draft_values"
   end
 
   add_index "edit_requests", ["draft_resource_id", "draft_resource_type"], name: "index_er_on_drid_and_drtype", using: :btree

@@ -13,9 +13,6 @@
 #  closed_at           :datetime
 #  created_at          :datetime         not null
 #  updated_at          :datetime         not null
-#  diffs               :json
-#  origin_values       :json
-#  draft_values        :json
 #
 # Indexes
 #
