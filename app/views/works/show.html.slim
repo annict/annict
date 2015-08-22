@@ -3,13 +3,13 @@
 - keywords meta_keywords(@work.title)
 
 .work-profile
-  .work-image style="background-image: url(#{tombo_thumb_url(@work.main_item, :tombo_image, 'w:640,h:640')});"
+  .work-image style="background-image: url(#{tombo_thumb_url(@work.main_item, :tombo_image, "w:640,h:640")});"
   .wrapper
     .work-title
       h1
         = @work.title
     - if user_signed_in?
-      = render 'status_selector', mini: false, work: @work
+      = render "status_selector", mini: false, work: @work
 
     .work-statistics
       .status
@@ -31,79 +31,79 @@
 
 - if @work.items.present?
   .amazon-associates-link
-    = link_to t('works.about_this_image'), '#about-works-image'
+    = link_to t("works.about_this_image"), "#about-works-image"
 
 - unless user_signed_in?
-  = render('welcome_to_annict')
+  = render("welcome_to_annict")
 
 .work-chart.container
-  h2.text-center = t('works.checkin_chart')
+  h2.text-center = t("works.checkin_chart")
   - if @work.checkins_count > 0
     ann-work-chart.wrapper data-labels="#{@work.chart_labels}" data-values="#{@work.chart_values}"
       - if browser.mobile?
-        canvas width='285' height='150'
+        canvas width="285" height="150"
       - else
-        canvas width='460' height='200'
+        canvas width="460" height="200"
   - else
     .info.well
       .icon
         i.fa.fa-info-circle
-      p = t('episodes.no_checkins')
+      p = t("episodes.no_checkins")
 
 .work-info.container
   h2.text-center
-    = t('works.work_info')
+    = t("works.work_info")
   ul.list-unstyled
     li
       i.icon &#x1F4FA;
       = @work.media.text
     - if @work.release_date.present?
       li
-        = icon('calendar-o')
+        = icon("calendar-o")
         = @work.release_date
     - if @work.official_site_url.present?
       li
-        = icon('home')
-        = link_to '公式サイト', @work.official_site_url, target: '_blank'
+        = icon("home")
+        = link_to "公式サイト", @work.official_site_url, target: "_blank"
     - if @work.wikipedia_url.present?
       li
-        = icon('link')
-        = link_to t('words.wikipedia'), @work.wikipedia_url, target: '_blank'
+        = icon("link")
+        = link_to t("words.wikipedia"), @work.wikipedia_url, target: "_blank"
     - if @work.sc_tid.present?
       li
-        = icon('link')
-        = link_to 'しょぼかる', @work.syobocal_url, target: '_blank'
+        = icon("link")
+        = link_to "しょぼかる", @work.syobocal_url, target: "_blank"
     - if@work.twitter_username.present?
       li
-        = icon('twitter')
-        = link_to "@#{@work.twitter_username}", @work.twitter_url, target: '_blank'
+        = icon("twitter")
+        = link_to "@#{@work.twitter_username}", @work.twitter_url, target: "_blank"
     - if@work.twitter_hashtag.present?
       li
-        = icon('twitter')
-        = link_to @work.twitter_hashtag, @work.twitter_hashtag_url, target: '_blank'
+        = icon("twitter")
+        = link_to @work.twitter_hashtag, @work.twitter_hashtag_url, target: "_blank"
 
 hr
 
-.work-episodes.container ng-controller='WorkEpisodesCtrl'
+.work-episodes.container ng-controller="WorkEpisodesCtrl"
   h2.text-center
-    = t('words.episode')
+    = t("words.episode")
 
   - if @work.episodes.present?
     - if user_signed_in?
       .multiple-checkin
-        .fake-link.fake-link-small ng-click='showCheckinCheckbox()' ng-hide='showingCheckinCheckbox'
-          = t('words.multiple_checkin')
-        span.fake-link.fake-link-small ng-click="checkAll(#{@work.episodes.pluck(:id)})" ng-show='!allChecking && showingCheckinCheckbox'
-          = t('works.check_all')
-        span.fake-link.fake-link-small ng-click="uncheckAll()" ng-show='allChecking'
-          = t('works.uncheck_all')
+        .fake-link.fake-link-small ng-click="showCheckinCheckbox()" ng-hide="showingCheckinCheckbox"
+          = t("words.multiple_checkin")
+        span.fake-link.fake-link-small ng-click="checkAll(#{@work.episodes.pluck(:id)})" ng-show="!allChecking && showingCheckinCheckbox"
+          = t("works.check_all")
+        span.fake-link.fake-link-small ng-click="uncheckAll()" ng-show="allChecking"
+          = t("works.uncheck_all")
     table.table.table-striped
       tbody
         - @work.episodes.order(:sort_number).each do |episode|
           tr
             - if user_signed_in?
-              td.checkbox-column ng-show='showingCheckinCheckbox'
-                input ng-click="check($event, #{episode.id})" ng-checked='allChecking' type='checkbox'
+              td.checkbox-column ng-show="showingCheckinCheckbox"
+                input ng-click="check($event, #{episode.id})" ng-checked="allChecking" type="checkbox"
             - if episode.single?
               td.title
                 = link_to work_episode_path(@work, episode) do
@@ -126,44 +126,44 @@ hr
                       = checkins.count
     - if user_signed_in?
       = form_tag create_all_work_checkins_path(@work) do
-        = hidden_field_tag :episode_ids, '{{episodeIds}}'
+        = hidden_field_tag :episode_ids, "{{episodeIds}}"
         .submit-menu
-          span.fake-link.fake-link-small ng-click='showingCheckinCheckbox = false' ng-show='showingCheckinCheckbox'
-            = t('words.cancel')
-          button.btn-submitting.btn.btn-primary.btn-sm type='submit' ng-show='showingCheckinCheckbox' ng-disabled='episodeIds.length === 0'
+          span.fake-link.fake-link-small ng-click="showingCheckinCheckbox = false" ng-show="showingCheckinCheckbox"
+            = t("words.cancel")
+          button.btn-submitting.btn.btn-primary.btn-sm type="submit" ng-show="showingCheckinCheckbox" ng-disabled="episodeIds.length === 0"
             i.fa.fa-check
-            = t('episodes.checkin')
-        .clearfix ng-show='showingCheckinCheckbox'
+            = t("episodes.checkin")
+        .clearfix ng-show="showingCheckinCheckbox"
 
     - if user_signed_in?
       .update-request
-        - link = link_to t('works.send_update_request_1'), work_appeals_path(@work), data: { method: :post, confirm: t('works.send_update_request_confirm') }
-        - twitter_link = link_to 'Twitter', 'https://twitter.com/anannict', target: '_blank'
-        = t('works.update_request_text_html', link: link, twitter_link: twitter_link)
+        - link = link_to t("works.send_update_request_1"), work_appeals_path(@work), data: { method: :post, confirm: t("works.send_update_request_confirm") }
+        - twitter_link = link_to "Twitter", "https://twitter.com/anannict", target: "_blank"
+        = t("works.update_request_text_html", link: link, twitter_link: twitter_link)
 
   - else
     .info.well
       .icon
         i.fa.fa-info-circle
-      p = t('episodes.no_episodes')
-      = link_to t('works.send_update_request_2'), work_appeals_path(@work), class: 'btn btn-primary', data: { method: :post }
+      p = t("episodes.no_episodes")
+      = link_to t("works.send_update_request_2"), work_appeals_path(@work), class: "btn btn-primary", data: { method: :post }
 
 - if @work.items.present?
   hr
 
   #about-works-image
     .container
-      h2.text-center
-        = t('works.about_works_image')
-
+      h2.text-center 作品画像について
       .media
-        = link_to @work.main_item.url, class: 'pull-left' do
-          = image_tag tombo_thumb_url(@work.main_item, :tombo_image, 'w:160,h:160'), size: '80x80', alt: @work.main_item.name
+        = link_to @work.main_item.url, class: "pull-left" do
+          = image_tag tombo_thumb_url(@work.main_item, :tombo_image, "w:160,h:160"), size: "80x80", alt: @work.main_item.name
         .media-body
           .description
-            - link = link_to @work.main_item.name, @work.main_item.url, target: '_blank'
-            = t('works.about_amazon_item_1_html', link: link)
+            - link = link_to @work.main_item.name, @work.main_item.url, target: "_blank"
+            = t("works.about_amazon_item_1_html", link: link)
             .detail
-              = t('works.about_amazon_item_2')
+              = t("works.about_amazon_item_2")
           .amazon-btn
-            = link_to t('works.go_amazon'), @work.main_item.url, class: 'btn btn-primary', target: '_blank'
+            = link_to @work.main_item.url, class: "btn btn-primary", target: "_blank" do
+              = icon("amazon")
+              | Amazonで見てみる
