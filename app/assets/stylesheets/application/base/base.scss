@@ -1,6 +1,6 @@
 body {
   background-color: #f0f0f1;
-  font-family: 'Lucida Grande', 'Hiragino Kaku Gothic ProN', Meiryo, EmojiSymbols, sans-serif;
+  font-family: 'Lucida Grande', 'Hiragino Kaku Gothic ProN', Meiryo, sans-serif;
   padding-top: 48px;
 
   .container {
@@ -37,10 +37,6 @@ body {
     -webkit-appearance: none;
     padding-left: 0.4em !important;
     padding-right: 0.4em !important;
-  }
-
-  .emoji {
-    font-family: 'EmojiSymbols';
   }
 
   .form-control {

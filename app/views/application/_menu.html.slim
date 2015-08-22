@@ -14,7 +14,7 @@ ul.dropdown-menu role='menu'
         = t('titles.friends', provider_name: current_user.provider_name)
     li
       = link_to channels_path do
-        span.emoji &#x1F4FA;
+        = icon("tv")
         = t('words.channel')
     li
       = link_to setting_path do
