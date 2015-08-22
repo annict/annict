@@ -49,8 +49,6 @@ ja:
     deleted: 記録を削除しました。
     facebook_share_text: '%{title}を見ました | Annict'
     input_a_comment: 見た感想を残してみませんか？
-    new: '%{episode_number_title}に記録'
-    no_checkin: まだ記録されていません
     no_comments: まだコメントされていません
     page_title: '%{username}さんの記録'
     save: 記録する
@@ -247,7 +245,7 @@ ja:
     about_this_image: この画像について
     about_works_image: 作品画像について
     check_all: 全て選択
-    checkin_chart: 記録推移
+    checkin_chart: 記録の推移
     edit: 作品情報を編集
     example_of_released_at: '例: 2013-03-10'
     go_amazon: Amazonで見てみる
