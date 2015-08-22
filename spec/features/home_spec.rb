@@ -44,19 +44,19 @@ describe 'トップページ' do
       end
     end
 
-    context '自分がチェックインしているとき' do
+    context "自分が記録しているとき" do
       let!(:checkin) { create(:checkin, user: user, comment: 'おもしろかったよ') }
 
       before do
         visit '/'
       end
 
-      it 'アクティビティに自分のチェックイン情報が表示されること', js: true do
+      it "アクティビティに自分の記録情報が表示されること", js: true do
         expect(page).to have_content('おもしろかったよ')
       end
     end
 
-    context 'フォローしている人がチェックインしているとき' do
+    context "フォローしている人が記録しているとき" do
       let!(:following_user) { create(:registered_user) }
       let!(:checkin) { create(:checkin, user: following_user, comment: 'たのしかったよ') }
 
@@ -66,7 +66,7 @@ describe 'トップページ' do
         visit '/'
       end
 
-      it 'アクティビティにフォローしている人のチェックイン情報が表示されること', js: true do
+      it "アクティビティにフォローしている人の記録情報が表示されること", js: true do
         expect(page).to have_content('たのしかったよ')
       end
     end

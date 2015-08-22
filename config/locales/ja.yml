@@ -45,21 +45,19 @@ ja:
   channel_works:
     nav_title: 作品
   checkins:
-    delete_confirm: チェックインを削除します。よろしいですか？
-    deleted: チェックインを削除しました。
+    delete_confirm: 記録を削除します。よろしいですか？
+    deleted: 記録を削除しました。
     facebook_share_text: '%{title}を見ました | Annict'
     input_a_comment: 見た感想を残してみませんか？
-    new: '%{episode_number_title}にチェックイン'
-    no_checkin: まだチェックインされていません
     no_comments: まだコメントされていません
-    page_title: '%{username}さんのチェックイン'
-    save: チェックインする
-    saved: チェックインしました。
+    page_title: '%{username}さんの記録'
+    save: 記録する
+    saved: 記録しました。
     social_click_count: '%{click_count}クリック'
-    updated: チェックインを更新しました。
+    updated: 記録を更新しました。
   comments:
     comment: コメントする
-    comment_textarea_placeholder: チェックインにコメントしよう！
+    comment_textarea_placeholder: 記録にコメントしよう！
     saved: コメントを投稿しました
   confirmations:
     confirmed: メールアドレスを確認しました
@@ -121,13 +119,13 @@ ja:
         web: Web
         other: その他
   episodes:
-    checkin: チェックインする
+    checkin: 記録する
     created_notification: 【Annict::Marie】エピソードが追加されました
     delete_confirm: エピソードを削除します。よろしいですか？
     deleted: エピソードを削除しました。
     edit: エピソード情報を編集
     new: エピソードを追加する
-    no_checkins: チェックインされていません。
+    no_checkins: 記録されていません。
     no_episodes: エピソードが登録されていません。
     saved: エピソードを追加しました。
     updated: エピソードを更新しました。
@@ -169,8 +167,8 @@ ja:
       button: 同意して登録する
     thank_you_for_signin_with_oauth_html: '%{provider_name}連携機能を利用して登録します。Annictで使用するユーザ名、メールアドレスを教えて下さい！'
   stats:
-    no_checkins: チェックインしていません
-    weekly_checkins: 過去1週間のチェックイン
+    no_checkins: 記録していません
+    weekly_checkins: 過去1週間の記録
   statuses:
     no_select: 'ステータス'
   syobocal:
@@ -208,7 +206,7 @@ ja:
     blog: ブログ
     cancel: キャンセル
     channel: チャンネル
-    checkin: チェックイン
+    checkin: 記録
     click: クリック
     close: 閉じる
     comment: コメント
@@ -218,7 +216,7 @@ ja:
     episode: エピソード
     error: エラー
     more_detail: もっと詳しく
-    multiple_checkin: 一括チェックイン
+    multiple_checkin: 一括記録
     next_season: 来期
     option: 任意
     popular: 人気
@@ -247,7 +245,7 @@ ja:
     about_this_image: この画像について
     about_works_image: 作品画像について
     check_all: 全て選択
-    checkin_chart: チェックイン推移
+    checkin_chart: 記録の推移
     edit: 作品情報を編集
     example_of_released_at: '例: 2013-03-10'
     go_amazon: Amazonで見てみる

@@ -25,7 +25,7 @@
                       | {{check.episode.number}}
                       span ng-if='check.episode.title' 「{{check.episode.title}}」
                   .no-episode ng-if='!check.episode'
-                    | チェックインしていないエピソードはありません。
+                    | 記録していないエピソードはありません。
                 .skip ng-click='skipEpisode()' ng-if='check.episode'
                   i.fa.fa-forward
                   | スキップ
@@ -45,5 +45,5 @@
           .info.well ng-if='!loading && checks.length === 0'
             .icon
               i.fa.fa-info-circle
-            p ここには「見てる」アニメの中で、チェックインしていないエピソードが表示されます。
+            p ここには「見てる」アニメの中で、記録していないエピソードが表示されます。
             p = "「#{link_to('見つける', works_path)}」ページでアニメのステータスを変えてみましょう！".html_safe
