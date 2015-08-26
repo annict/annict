@@ -1,5 +1,3 @@
-require 'spec_helper'
-
 describe "今期作品一覧ページ" do
   let!(:work) { create(:work, :with_item, :with_current_season) }
 

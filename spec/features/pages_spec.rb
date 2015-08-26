@@ -1,5 +1,3 @@
-require 'spec_helper'
-
 describe 'Annictについて' do
   context '未ログイン時' do
     before do

@@ -1,5 +1,3 @@
-require 'spec_helper'
-
 describe '作品別チャンネル設定ページ' do
   let(:user) { create(:registered_user) }
   let(:episode) { create(:episode) }

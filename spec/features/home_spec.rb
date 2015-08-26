@@ -1,5 +1,3 @@
-require 'spec_helper'
-
 describe 'トップページ' do
 
   context 'ログインしていないとき' do

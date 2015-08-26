@@ -1,5 +1,3 @@
-require 'spec_helper'
-
 describe Episode do
   describe '#create_nicoch_program' do
     let!(:channel) { create(:channel, name: 'ニコニコチャンネル') }
