@@ -20,7 +20,7 @@ class WorkDecorator < ApplicationDecorator
     if main_item.present? && main_item.id != 1
       h.tombo_thumb_url(main_item, :tombo_image, size)
     else
-      path = h.image_path('no-image.jpg')
+      path = h.image_path("no-image.jpg")
       "#{ENV['ANNICT_TOMBO_URL']}/#{size}#{path}"
     end
   end

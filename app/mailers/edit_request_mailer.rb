@@ -1,5 +1,5 @@
 class EditRequestMailer < ActionMailer::Base
-  default from: 'Annict <no-reply@annict.com>'
+  default from: "Annict <no-reply@annict.com>"
 
   def comment_notification(db_activity_id)
     db_activity = DbActivity.find(db_activity_id)

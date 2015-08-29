@@ -88,15 +88,17 @@ class EditRequest < ActiveRecord::Base
 
   def publish_edit_request!
     if draft_resource.instance_of?(DraftMultipleEpisode)
-      Episode.create_from_multiple_episodes(draft_resource.work, draft_resource.to_episode_hash)
+      work = draft_resource.work
+      hash = draft_resource.to_episode_hash
+      Episode.create_from_multiple_episodes(work, hash)
     else
       attrs = draft_resource.slice(*draft_resource.class::PUBLISH_FIELDS)
 
       if draft_resource.origin.present?
         draft_resource.origin.update(attrs)
       else
-        origin_class = draft_resource.class.reflections["origin"]
-                                     .class_name.constantize
+        origin_class = draft_resource.class.reflections["origin"].
+                       class_name.constantize
         origin_class.create(attrs)
       end
     end

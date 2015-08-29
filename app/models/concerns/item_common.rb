@@ -10,7 +10,7 @@ module ItemCommon
     validates :name, presence: true
     validates :url, presence: true, url: true, amazon: true
     validates :tombo_image, attachment_presence: true,
-                          attachment_content_type: { content_type: /\Aimage/ }
+                            attachment_content_type: { content_type: /\Aimage/ }
 
     after_save :switch_main_flag
 

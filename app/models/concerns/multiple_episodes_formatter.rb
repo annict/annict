@@ -5,7 +5,9 @@ module MultipleEpisodesFormatter
 
   included do
     def to_episode_hash
-      body = self.body.gsub(/([^\\])\"/, %q/\\1__double_quote__/)
+      # ダブルクォートを含んだ文字列を `CSV.parse` すると `CSV::MalformedCSVError` が
+      # 発生するので、パース前に置換する
+      body = self.body.gsub(/"/, "__double_quote__")
 
       CSV.parse(body).map do |ary|
         title = ary[1].gsub("__double_quote__", '"').try(:strip) if ary[1].present?
