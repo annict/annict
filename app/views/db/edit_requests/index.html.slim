@@ -1,20 +1,23 @@
-table.table.table-striped
-  tbody
-    - @edit_requests.each do |er|
-      tr
-        td.title-user
-          .title
-            = link_to er.title, db_edit_request_path(er)
-          .user
-            = link_to user_path(er.user.username) do
-              = image_tag(tombo_thumb_url(er.user.profile, :tombo_avatar, "w:40,h:40"), size: "20x20", class: "img-circle")
-              = er.user.profile.name
-        td
-          - if er.draft_resource.work.present?
-            = link_to er.draft_resource.work.title, work_path(er.draft_resource.work), target: "_blank"
-          - else
-            | -
-        td = er.decorate.status_label
-        td = custom_time_ago_in_words(er.created_at)
+- if @edit_requests.present?
+  table.table.table-striped
+    tbody
+      - @edit_requests.each do |er|
+        tr
+          td.title-user
+            .title
+              = link_to er.title, db_edit_request_path(er)
+            .user
+              = link_to user_path(er.user.username) do
+                = image_tag(tombo_thumb_url(er.user.profile, :tombo_avatar, "w:40,h:40"), size: "20x20", class: "img-circle")
+                = er.user.profile.name
+          td
+            - if er.draft_resource.work.present?
+              = link_to er.draft_resource.work.title, work_path(er.draft_resource.work), target: "_blank"
+            - else
+              | -
+          td = er.decorate.status_label
+          td = custom_time_ago_in_words(er.created_at)
 
-= paginate @edit_requests
+  = paginate @edit_requests
+- else
+  .well 編集リクエストはありません。
