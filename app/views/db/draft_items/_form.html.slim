@@ -12,8 +12,11 @@
   .form-group
     = f.label :tombo_image, class: "col-sm-3 control-label"
     .col-sm-9
-      - if f.object.origin.present?
-        = image_tag tombo_thumb_url(f.object.origin, :tombo_image, 'w:100,h:100'), size: '50x50'
+      - if draft_item.persisted?
+        = image_tag tombo_thumb_url(draft_item, :tombo_image, "w:100,h:100"), size: "50x50"
+      - else
+        - if draft_item.origin.persisted?
+          = image_tag tombo_thumb_url(draft_item.origin, :tombo_image, "w:100,h:100"), size: "50x50"
       = f.file_field :tombo_image
   .form-group
     .col-sm-offset-3.col-sm-9
