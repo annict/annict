@@ -1,5 +1,8 @@
+coffeescript:
+  enabled: false
+
 ruby:
   config_file: config/styles/ruby.yml
 
 scss:
-  config_file: config/styles/scss.yml
+  enabled: false
