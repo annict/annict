@@ -2,7 +2,8 @@ class Db::EditRequestsController < Db::ApplicationController
   before_action :authenticate_user!, only: [:publish, :close]
 
   def index(page: nil)
-    @edit_requests = EditRequest.order(id: :desc).page(page)
+    @edit_requests = EditRequest.includes(draft_resource: :work, user: :profile).
+                     order(id: :desc).page(page)
   end
 
   def show(id)
