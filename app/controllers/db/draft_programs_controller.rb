@@ -25,8 +25,8 @@ class Db::DraftProgramsController < Db::ApplicationController
       @draft_program.origin = @program
     end
 
+    @draft_program.started_at = @draft_program.started_at.try(:-, 9.hours)
     if @draft_program.valid?
-      @draft_program.started_at = @draft_program.started_at - 9.hours
       @draft_program.save(validate: false)
       flash[:notice] = "放送予定の編集リクエストを作成しました"
       redirect_to db_edit_request_path(@draft_program.edit_request)
@@ -46,8 +46,8 @@ class Db::DraftProgramsController < Db::ApplicationController
 
     @draft_program.attributes = draft_program
 
+    @draft_program.started_at = @draft_program.started_at.try(:-, 9.hours)
     if @draft_program.valid?
-      @draft_program.started_at = @draft_program.started_at - 9.hours
       @draft_program.save(validate: false)
       flash[:notice] = "エピソードの編集リクエストを更新しました"
       redirect_to db_edit_request_path(@draft_program.edit_request)
