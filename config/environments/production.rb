@@ -58,8 +58,7 @@ Annict::Application.configure do
   # `no-image.jpg` はTombo経由で表示するため、`image_path("no-image.jpg")` の返り値に
   # CloudFrontのURLを付加しないようにする
   config.action_controller.asset_host = Proc.new do |source, request|
-    case source
-    when "/assets/no-image.jpg"
+    if %r(/assets/no-image) === source
       nil
     else
       "https://d3a8d1smk6xli.cloudfront.net"
