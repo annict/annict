@@ -17,7 +17,7 @@ module WorkCommon
     validates :wikipedia_url, url: { allow_blank: true }
 
     def to_diffable_hash
-      self.class::DIFF_FIELDS.inject({}) do |hash, field|
+      data = self.class::DIFF_FIELDS.inject({}) do |hash, field|
         hash[field] = case field
         when :media
           send(field).to_s
@@ -28,7 +28,9 @@ module WorkCommon
         end
 
         hash
-      end.delete_if { |_, v| v.blank? }
+      end
+
+      data.delete_if { |_, v| v.blank? }
     end
   end
 end

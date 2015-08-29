@@ -9,10 +9,12 @@ module EpisodeCommon
     validates :sort_number, presence: true, numericality: { only_integer: true }
 
     def to_diffable_hash
-      self.class::DIFF_FIELDS.inject({}) do |hash, field|
+      data = self.class::DIFF_FIELDS.inject({}) do |hash, field|
         hash[field] = send(field) if send(field).present?
         hash
-      end.delete_if { |_, v| v.blank? }
+      end
+
+      data.delete_if { |_, v| v.blank? }
     end
   end
 end

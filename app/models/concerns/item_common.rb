@@ -13,7 +13,7 @@ module ItemCommon
                             attachment_content_type: { content_type: /\Aimage/ }
 
     def to_diffable_hash
-      self.class::DIFF_FIELDS.inject({}) do |hash, field|
+      data = self.class::DIFF_FIELDS.inject({}) do |hash, field|
         hash[field] = case field
         when :tombo_image
           send(field).size
@@ -22,7 +22,9 @@ module ItemCommon
         end
 
         hash
-      end.delete_if { |_, v| v.blank? }
+      end
+
+      data.delete_if { |_, v| v.blank? }
     end
   end
 end

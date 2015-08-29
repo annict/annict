@@ -14,10 +14,12 @@ module ProgramCommon
     validates :started_at, presence: true
 
     def to_diffable_hash
-      self.class::DIFF_FIELDS.inject({}) do |hash, field|
+      data = self.class::DIFF_FIELDS.inject({}) do |hash, field|
         hash[field] = send(field)
         hash
-      end.delete_if { |_, v| v.blank? }
+      end
+
+      data.delete_if { |_, v| v.blank? }
     end
   end
 end
