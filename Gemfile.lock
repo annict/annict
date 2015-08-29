@@ -57,17 +57,17 @@ GEM
       activemodel
       fog (>= 1.8.0)
       unf
-    autoprefixer-rails (5.2.1.1)
+    autoprefixer-rails (5.2.1.3)
       execjs
       json
     awesome_print (1.6.1)
-    aws-sdk (2.1.11)
-      aws-sdk-resources (= 2.1.11)
-    aws-sdk-core (2.1.11)
+    aws-sdk (2.1.17)
+      aws-sdk-resources (= 2.1.17)
+    aws-sdk-core (2.1.17)
       jmespath (~> 1.0)
-    aws-sdk-resources (2.1.11)
-      aws-sdk-core (= 2.1.11)
-    aws-sdk-v1 (1.64.0)
+    aws-sdk-resources (2.1.17)
+      aws-sdk-core (= 2.1.17)
+    aws-sdk-v1 (1.65.0)
       json (~> 1.4)
       nokogiri (>= 1.4.4)
     bcrypt (3.1.10)
@@ -80,12 +80,12 @@ GEM
     bootstrap-sass (3.3.5.1)
       autoprefixer-rails (>= 5.0.0.1)
       sass (>= 3.3.0)
-    bourbon (4.2.3)
+    bourbon (4.2.4)
       sass (~> 3.4)
-      thor
-    browser (0.9.1)
+      thor (~> 0.19)
+    browser (1.0.1)
     buftok (0.2.0)
-    bugsnag (2.8.11)
+    bugsnag (2.8.12)
       json (~> 1.7, >= 1.7.7)
     builder (3.2.2)
     bullet (4.14.7)
@@ -95,7 +95,7 @@ GEM
       activesupport
     byebug (5.0.0)
       columnize (= 0.9.0)
-    capybara (2.4.4)
+    capybara (2.5.0)
       mime-types (>= 1.16)
       nokogiri (>= 1.3.3)
       rack (>= 1.0.0)
@@ -128,24 +128,24 @@ GEM
     delayed_job_active_record (4.0.3)
       activerecord (>= 3.0, < 5.0)
       delayed_job (>= 3.0, < 4.1)
-    devise (3.5.1)
+    devise (3.5.2)
       bcrypt (~> 3.0)
       orm_adapter (~> 0.1)
       railties (>= 3.2.6, < 5)
       responders
       thread_safe (~> 0.1)
       warden (~> 1.2.3)
-    did_you_mean (0.9.10)
+    did_you_mean (0.10.0)
       interception
     diff-lcs (1.2.5)
     docile (1.1.5)
     email_validator (1.6.0)
       activemodel
-    enumerize (0.11.0)
+    enumerize (1.0.0)
       activesupport (>= 3.2)
     equalizer (0.0.11)
     erubis (2.7.0)
-    eventmachine (1.0.7)
+    eventmachine (1.0.8)
     excon (0.45.4)
     execjs (2.6.0)
     factory_girl (4.5.0)
@@ -160,11 +160,12 @@ GEM
     fission (0.5.0)
       CFPropertyList (~> 2.2)
     flutie (2.0.0)
-    fog (1.32.0)
+    fog (1.33.0)
       fog-atmos
       fog-aws (>= 0.6.0)
       fog-brightbox (~> 0.4)
       fog-core (~> 1.32)
+      fog-dynect
       fog-ecloud (= 0.1.1)
       fog-google (>= 0.0.2)
       fog-json
@@ -186,22 +187,26 @@ GEM
     fog-atmos (0.1.0)
       fog-core
       fog-xml
-    fog-aws (0.7.4)
+    fog-aws (0.7.6)
       fog-core (~> 1.27)
       fog-json (~> 1.0)
       fog-xml (~> 0.1)
       ipaddress (~> 0.8)
-    fog-brightbox (0.8.0)
+    fog-brightbox (0.9.0)
       fog-core (~> 1.22)
       fog-json
       inflecto (~> 0.0.2)
-    fog-core (1.32.0)
+    fog-core (1.32.1)
       builder
       excon (~> 0.45)
       formatador (~> 0.2)
       mime-types
       net-scp (~> 1.1)
       net-ssh (>= 2.1.3)
+    fog-dynect (0.0.2)
+      fog-core
+      fog-json
+      fog-xml
     fog-ecloud (0.1.1)
       fog-core
       fog-xml
@@ -290,10 +295,10 @@ GEM
     kaminari (0.16.3)
       actionpack (>= 3.0.0)
       activesupport (>= 3.0.0)
-    keen (0.9.2)
+    keen (0.9.3)
       addressable (~> 2.3.5)
       multi_json (~> 1.3)
-    koala (2.0.0)
+    koala (2.2.0)
       addressable
       faraday
       multi_json
@@ -325,8 +330,8 @@ GEM
     net-scp (1.2.1)
       net-ssh (>= 2.6.5)
     net-ssh (2.9.2)
-    newrelic_rpm (3.12.1.298)
-    ngannotate-rails (1.0.2)
+    newrelic_rpm (3.13.0.299)
+    ngannotate-rails (1.0.3)
       execjs
       rails (>= 3.1)
     nokogiri (1.6.6.2)
@@ -382,7 +387,7 @@ GEM
       coolline (~> 0.5)
     pry-rails (0.3.4)
       pry (>= 0.9.10)
-    puma (2.12.2)
+    puma (2.13.4)
     quiet_assets (1.1.0)
       railties (>= 3.1, < 5.0)
     rack (1.6.4)
@@ -402,19 +407,19 @@ GEM
       railties (= 4.2.4)
       sprockets-rails
     rails-assets-SHA-1 (0.1.1)
-    rails-assets-angular (1.3.17)
-    rails-assets-angular-animate (1.3.17)
-      rails-assets-angular (= 1.3.17)
-    rails-assets-angular-sanitize (1.3.17)
-      rails-assets-angular (= 1.3.17)
-    rails-assets-angularjs (1.3.17)
+    rails-assets-angular (1.3.18)
+    rails-assets-angular-animate (1.3.18)
+      rails-assets-angular (= 1.3.18)
+    rails-assets-angular-sanitize (1.3.18)
+      rails-assets-angular (= 1.3.18)
+    rails-assets-angularjs (1.3.18)
     rails-assets-angulartics (0.20.0)
       rails-assets-SHA-1
       rails-assets-angular (>= 1.1.5)
       rails-assets-waypoints (~> 3.1.1)
     rails-assets-chartjs (1.0.2)
     rails-assets-jquery-easing-original (1.3.2)
-    rails-assets-lodash (3.10.0)
+    rails-assets-lodash (3.10.1)
     rails-assets-moment (2.10.6)
     rails-assets-ng-infinite-scroller-origin (1.2.1)
       rails-assets-angular (>= 1.2.0)
@@ -438,14 +443,14 @@ GEM
       rails_serve_static_assets
       rails_stdout_logging
     rails_serve_static_assets (0.0.4)
-    rails_stdout_logging (0.0.3)
+    rails_stdout_logging (0.0.4)
     railties (4.2.4)
       actionpack (= 4.2.4)
       activesupport (= 4.2.4)
       rake (>= 0.8.7)
       thor (>= 0.18.1, < 2.0)
     rake (10.4.2)
-    ransack (1.6.6)
+    ransack (1.7.0)
       actionpack (>= 3.0)
       activerecord (>= 3.0)
       activesupport (>= 3.0)
@@ -454,7 +459,7 @@ GEM
     request_store (1.2.0)
     responders (2.1.0)
       railties (>= 4.2.0, < 5)
-    rmagick (2.15.3)
+    rmagick (2.15.4)
     rspec-core (3.3.2)
       rspec-support (~> 3.3.0)
     rspec-expectations (3.3.1)
@@ -474,7 +479,7 @@ GEM
     rspec-support (3.3.0)
     ruby_identicon (0.0.4)
       chunky_png (~> 1.3.0)
-    sass (3.4.17)
+    sass (3.4.18)
     sass-rails (5.0.3)
       railties (>= 4.0.0, < 5.0)
       sass (~> 3.1)
