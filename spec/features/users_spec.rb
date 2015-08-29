@@ -1,5 +1,3 @@
-require 'spec_helper'
-
 describe 'プロフィールページ' do
   let!(:checkin_tip) { create(:checkin_tip) }
   let(:user) { create(:registered_user) }

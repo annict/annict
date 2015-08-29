@@ -1,5 +1,3 @@
-require 'spec_helper'
-
 describe 'ユーザ登録機能' do
   let!(:work) { create(:work, :with_item) }
   let!(:cover_image) { create(:cover_image, work: work) }

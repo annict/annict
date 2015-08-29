@@ -1,5 +1,3 @@
-require 'spec_helper'
-
 describe Api::TipsController do
   let(:user) { create(:registered_user) }
   let(:tip) { create(:status_tip) }

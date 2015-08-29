@@ -15,6 +15,7 @@
   <a href="https://codeclimate.com/github/annict/annict"><img src="https://codeclimate.com/github/annict/annict/badges/coverage.svg"></a>
   <a href="https://gemnasium.com/annict/annict"><img src="https://gemnasium.com/annict/annict.svg"></a>
   <a href="http://slack.annict.com"><img src="http://slack.annict.com/badge.svg"></a>
+  <a href="https://waffle.io/annict/annict"><img src="https://badge.waffle.io/annict/annict.svg?label=ready&title=Ready"></a>
 </p>
 
 ---
@@ -46,7 +47,7 @@ Twitterなど、第三者に公開されている場所に投稿しないでも�
 
 #### タスク管理について
 
-Annictでは開発に関係するタスク管理を[GitHub Issues](https://github.com/annict/annict/issues)で行っています。
+Annictでは開発に関係するタスク管理を[Waffle.io](https://waffle.io/annict/annict)で行っています。
 各タスクは以下のラベルを紐付けて管理しています。
 
 | ラベル名 | 概要 |
@@ -54,9 +55,14 @@ Annictでは開発に関係するタスク管理を[GitHub Issues](https://githu
 | Ideas   | システム内に取り込むことが決定していない漠然としたタスク |
 | Ready   | システム内に取り込むことが決定したタスク |
 | Working | 現在取り組んでいるタスク |
-| Priority: 1 | 優先度が高いタスク |
-| Priority: 2 | 優先度がそれなりに高いタスク |
-| Priority: 3 | Priorityラベルが付いていないタスクよりは優先度が高いタスク |
+| Help    | 誰か実装してくれないかなあ(ﾁﾗｯﾁﾗｯ というタスク |
+
+「Help」ラベルは、他の実装予定のタスクに依存しない比較的実装が容易そうなタスクに付けています。
+もし「Annictのコードを弄りたいけど、何から弄れば良いかわからない…」という方がいらっしゃれば、
+このラベルを見てもらうと良いかもしれません。
+
+優先度の設定も[Waffle.io](https://waffle.io/annict/annict)で行っています。
+「Ready」リストの上から順に優先度が高いタスクとなっています。
 
 
 #### 開発環境を作る

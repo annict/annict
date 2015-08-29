@@ -1,5 +1,3 @@
-require 'spec_helper'
-
 describe '友達ページ' do
   let(:user) { create(:registered_user) }
 

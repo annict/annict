@@ -1,5 +1,3 @@
-require 'spec_helper'
-
 describe StatusesController do
   let(:user) { create(:registered_user) }
   let(:work) { create(:work) }

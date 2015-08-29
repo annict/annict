@@ -1,5 +1,3 @@
-require 'spec_helper'
-
 describe 'エピソード詳細ページ' do
   let(:work)    { create(:work, :with_item) }
   let(:episode) { create(:episode, work: work) }

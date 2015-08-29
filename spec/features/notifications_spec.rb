@@ -1,5 +1,3 @@
-require 'spec_helper'
-
 describe '通知ページ' do
   context 'ユーザにフォローされたとき' do
     let(:user1) { create(:registered_user) }
