@@ -70,8 +70,7 @@ end
 
 group :development, :test do
   gem "awesome_print"
-  gem "did_you_mean", github: "yuki24/did_you_mean"
-  gem "activerecord-correctable", github: "yuki24/activerecord-correctable" # did_you_meanより後に配置する必要がある
+  gem "did_you_mean"
   gem "hirb-unicode"
   gem "hirb"
   gem "pry-byebug"
