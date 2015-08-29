@@ -437,6 +437,8 @@ GEM
       rails-assets-SHA-1
       rails-assets-angular (>= 1.1.5)
       rails-assets-waypoints (~> 3.1.1)
+    rails-assets-angulartics-google-analytics (0.1.1)
+      rails-assets-angulartics (~> 0.20)
     rails-assets-chartjs (1.0.2)
     rails-assets-jquery-easing-original (1.3.2)
     rails-assets-lodash (3.10.1)
@@ -645,6 +647,7 @@ DEPENDENCIES
   rails-assets-angular-sanitize (~> 1.3.17)!
   rails-assets-angularjs (~> 1.3.17)!
   rails-assets-angulartics!
+  rails-assets-angulartics-google-analytics!
   rails-assets-chartjs!
   rails-assets-jquery-easing-original!
   rails-assets-lodash!

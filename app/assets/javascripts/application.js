@@ -1,5 +1,5 @@
 //= require chartjs
-//= require jquery-easing-original/jquery.easing.1.3
+//= require jquery-easing-original/jquery.easing
 //= require clamp.min
 
 //= require_self

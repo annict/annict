@@ -61,6 +61,7 @@ source "https://rails-assets.org" do
   gem "rails-assets-angular-animate", "~> 1.3.17"
   gem "rails-assets-angular-sanitize", "~> 1.3.17"
   gem "rails-assets-angulartics"
+  gem "rails-assets-angulartics-google-analytics"
   gem "rails-assets-chartjs"
   gem "rails-assets-jquery-easing-original"
   gem "rails-assets-lodash"

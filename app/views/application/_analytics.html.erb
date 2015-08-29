@@ -5,7 +5,6 @@
   })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
 
   ga('create', '<%= ENV['GA_TRACKING_ID'] %>', 'annict.com');
-  ga('send', 'pageview');
 
   <% if user_signed_in? %>
     ga('set', 'dimension1', 'ログイン済み');
