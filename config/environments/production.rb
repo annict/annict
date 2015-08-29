@@ -55,7 +55,16 @@ Annict::Application.configure do
   # config.cache_store = :mem_cache_store
 
   # Enable serving of images, stylesheets, and JavaScripts from an asset server.
-  config.action_controller.asset_host = 'https://d3a8d1smk6xli.cloudfront.net'
+  # `no-image.jpg` はTombo経由で表示するため、`image_path("no-image.jpg")` の返り値に
+  # CloudFrontのURLを付加しないようにする
+  config.action_controller.asset_host = Proc.new do |source, request|
+    case source
+    when "/assets/no-image.jpg"
+      nil
+    else
+      "https://d3a8d1smk6xli.cloudfront.net"
+    end
+  end
 
   # Precompile additional assets.
   # application.js, application.css, and all non-JS/CSS in app/assets folder are already added.
