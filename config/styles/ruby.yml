@@ -1,3 +1,5 @@
+Lint/EndAlignment:
+  AlignWith: variable
 Metrics/LineLength:
   Max: 90
 Style/CaseIndentation:
