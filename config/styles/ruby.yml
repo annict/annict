@@ -1,2 +1,4 @@
 Metrics/LineLength:
   Max: 90
+Style/CaseIndentation:
+  IndentWhenRelativeTo: end
