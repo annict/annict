@@ -12,7 +12,7 @@ module DraftCommon
                     try(:to_diffable_hash).presence || {}
       draft_hash = edit_request.draft_resource.to_diffable_hash
 
-      HashDiff.diff(origin_hash, draft_hash).delete_if { |diff| diff[2].blank? }
+      HashDiff.diff(origin_hash, draft_hash)
     end
 
     def origin_values

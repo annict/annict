@@ -27,6 +27,6 @@ class DraftMultipleEpisode < ActiveRecord::Base
     self.class::DIFF_FIELDS.inject({}) do |hash, field|
       hash[field] = send(field)
       hash
-    end
+    end.delete_if { |_, v| v.blank? }
   end
 end

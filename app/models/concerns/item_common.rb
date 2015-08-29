@@ -24,7 +24,7 @@ module ItemCommon
         end
 
         hash
-      end
+      end.delete_if { |_, v| v.blank? }
     end
 
     private

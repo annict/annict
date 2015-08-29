@@ -12,7 +12,7 @@ module EpisodeCommon
       self.class::DIFF_FIELDS.inject({}) do |hash, field|
         hash[field] = send(field) if send(field).present?
         hash
-      end
+      end.delete_if { |_, v| v.blank? }
     end
   end
 end
