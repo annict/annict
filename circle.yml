@@ -2,6 +2,7 @@ machine:
   environment:
     ANNICT_CURRENT_SEASON: 2015-summer
     ANNICT_HOST: localhost:3000
+    ANNICT_HOST_SHORT: localhost:3000
     ANNICT_NEXT_SEASON: 2015-autumn
     ANNICT_PAPERCLIP_PATH: paperclip/:class/:id/:attachment/:style/:hash.:extension
     ANNICT_PAPERCLIP_RANDOM_SECRET: secretsecretsecretsecretsecretsecret
