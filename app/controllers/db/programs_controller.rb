@@ -5,7 +5,7 @@ class Db::ProgramsController < Db::ApplicationController
   before_action :load_work, only: [:index, :new, :create, :edit, :update, :destroy]
 
   def index
-    @programs = @work.programs.order(:started_at, :channel_id)
+    @programs = @work.programs.order(started_at: :desc).order(:channel_id)
   end
 
   def new
