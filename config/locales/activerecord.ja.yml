@@ -11,7 +11,6 @@ ja:
       comment:
         body: コメント
       episode:
-        next_episode_id: 次のエピソード
         prev_episode_id: 前のエピソード
         number: 話数
         sort_number: ソート番号
@@ -46,7 +45,6 @@ ja:
         twitter_username: 公式Twitter
         wikipedia_url: Wikipedia
       draft_episode:
-        next_episode_id: 次のエピソード
         prev_episode_id: 前のエピソード
         number: 話数
         sort_number: ソート番号
