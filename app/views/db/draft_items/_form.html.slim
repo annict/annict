@@ -15,7 +15,7 @@
       - if draft_item.persisted?
         = image_tag tombo_thumb_url(draft_item, :tombo_image, "w:100,h:100"), size: "50x50"
       - else
-        - if draft_item.origin.persisted?
+        - if draft_item.origin.present?
           = image_tag tombo_thumb_url(draft_item.origin, :tombo_image, "w:100,h:100"), size: "50x50"
       = f.file_field :tombo_image
   .form-group
@@ -41,4 +41,4 @@
   
   .form-group
     .col-sm-offset-3.col-sm-9
-      = f.submit class: "btn btn-primary"
+      = f.submit "作成する", class: "btn btn-primary"
