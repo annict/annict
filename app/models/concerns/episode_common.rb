@@ -5,7 +5,6 @@ module EpisodeCommon
   PUBLISH_FIELDS = DIFF_FIELDS + %i(work_id)
 
   included do
-    validates :number, presence: true
     validates :sort_number, presence: true, numericality: { only_integer: true }
 
     def to_diffable_hash
