@@ -143,19 +143,6 @@ CSV.foreach("#{Dir.pwd}/db/data/csv/episodes.csv", headers: true) do |row|
   end
 end
 
-Work.find_each do |work|
-  prev_episode = nil
-
-  work.episodes.order(:sort_number).find_each do |episode|
-    if prev_episode.present?
-      prev_episode.update_column(:next_episode_id, episode.id)
-      puts "episode: #{episode.id}のnext_episode_idを更新..."
-    end
-
-    prev_episode = episode
-  end
-end
-
 
 # ==============================================================================
 # Program
