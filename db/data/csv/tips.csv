@@ -1,4 +1,4 @@
 id,target,partial_name,title,icon_name,created_at,updated_at
 1,new_user,status,作品のステータスを変更しよう,lightbulb_o,2014-10-29 00:00:00 UTC,2014-10-29 00:00:00 UTC
 2,new_user,channel,チャンネルを設定しよう,lightbulb_o,2014-10-29 00:00:00 UTC,2014-10-29 00:00:00 UTC
-3,new_user,checkin,エピソードを記録しよう,lightbulb_o,2014-10-29 00:00:00 UTC,2014-10-29 00:00:00 UTC
+3,new_user,checkin,見たエピソードを記録しよう,lightbulb_o,2014-10-29 00:00:00 UTC,2014-10-29 00:00:00 UTC
