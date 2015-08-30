@@ -6,6 +6,11 @@
   = f.label :sort_number, class: "col-sm-3 control-label"
   .col-sm-9
     = f.text_field :sort_number, class: "form-control"
+- if current_user.role.admin?
+  .form-group
+    = f.label :sc_count, class: "col-sm-3 control-label"
+    .col-sm-9
+      = f.text_field :sc_count, class: "form-control"
 .form-group
   = f.label :title, class: "col-sm-3 control-label"
   .col-sm-9

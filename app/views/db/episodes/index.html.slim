@@ -18,6 +18,8 @@ table.table.table-striped
       th サブタイトル
       th 次のエピソード
       th ソート番号
+      - if current_user.role.admin?
+        th しょぼかる番号
       th 記録数
       th 編集
       - if policy(@episodes).destroy?
@@ -30,6 +32,8 @@ table.table.table-striped
         td = episode.title.presence || "-"
         td = episode.next_episode.try(:number).presence || "-"
         td = episode.sort_number
+        - if current_user.role.admin?
+          td = episode.sc_count
         td = episode.checkins.count
         td
           - if current_user.role.admin?

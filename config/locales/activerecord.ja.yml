@@ -11,8 +11,9 @@ ja:
       comment:
         body: コメント
       episode:
-        prev_episode_id: 前のエピソード
         number: 話数
+        prev_episode_id: 前のエピソード
+        sc_count: しょぼかる番号
         sort_number: ソート番号
         title: タイトル
       item:

@@ -4,7 +4,10 @@
     = @edit_request.decorate.status_label
     - if @work.present?
       span.work-annotation.text-mute
-        = "「#{link_to @work.title, work_path(@work), target: '_blank'}」への編集リクエスト".html_safe
+        - if current_user.role.admin?
+          = "「#{link_to @work.title, edit_db_work_path(@work)}」への編集リクエスト".html_safe
+        - else
+          = "「#{link_to @work.title, new_db_draft_work_path(work_id: @work.id)}」への編集リクエスト".html_safe
   .pull-right
     - if policy(@edit_request).publish? && @edit_request.may_publish?
       = link_to "公開する", publish_db_edit_request_path(@edit_request), class: "btn btn-primary", data: { method: :post, confirm: "この編集内容を公開しますか？" }
