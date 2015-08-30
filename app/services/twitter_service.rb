@@ -74,6 +74,10 @@ class TwitterService
   end
 
   def adjust_tweet_body(body, data)
+    # 話数表記にシャープ記号が入っているとき (例: #1)、
+    # 後続のテキストとくっついてハッシュタグにならないよう半角スペースを追加する
+    data[:episode_number] += " " if data[:episode_number].include?("#")
+
     if body.length > 140
       if data[:comment].present?
         data[:comment] = truncate_text(data[:comment], body)
