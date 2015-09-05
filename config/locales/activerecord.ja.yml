@@ -69,13 +69,13 @@ ja:
         released_at: リリース日
         released_at_about: リリース日 (大体)
         sc_tid: しょぼかるID
-        title: タイトル
+        title: 作品タイトル
         twitter_hashtag: ハッシュタグ
         twitter_username: 公式Twitter
         wikipedia_url: Wikipedia
       edit_request:
-        title: タイトル
-        body: ヒトコト
+        title: リクエストタイトル
+        body: コメント
       edit_request_comment:
         body: 本文
     errors:
