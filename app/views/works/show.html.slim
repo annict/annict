@@ -29,9 +29,12 @@
           | Comments
       .clearfix
 
-- if @work.items.present?
-  .amazon-associates-link
-    = link_to t("works.about_this_image"), "#about-works-image"
+- if user_signed_in? && !browser.mobile?
+  .annict-db-link
+    - if current_user.role.admin?
+      = link_to "作品を編集する", edit_db_work_path(@work)
+    - else
+      = link_to "作品を編集する", new_db_draft_work_path(work_id: @work.id)
 
 - unless user_signed_in?
   = render("welcome_to_annict")

@@ -145,7 +145,6 @@ ja:
   works:
     about_amazon_item_1_html: 'この画像は「%{link}」の製品画像です。'
     about_amazon_item_2: '(Amazonアソシエイト・プログラムの限定的ライセンスに基いて表示しています。)'
-    about_this_image: この画像について
     check_all: 全て選択
     checkin_chart: 記録の推移
     edit: 作品情報を編集
