@@ -1,14 +1,4 @@
 .form-group
-  = f.label :season_id, class: "col-sm-3 control-label"
-  .col-sm-9
-    .row
-      .col-sm-5
-        = f.select :season_id, options_from_collection_for_select(Season.all, :id, :name, f.object.season_id), { include_blank: true }, { class: "form-control" }
-.form-group
-  = f.label :sc_tid, class: "col-sm-3 control-label"
-  .col-sm-9
-    = f.text_field :sc_tid, class: "form-control"
-.form-group
   = f.label :title, class: "col-sm-3 control-label"
   .col-sm-9
     = f.text_field :title, class: "form-control", autofocus: true
@@ -18,6 +8,12 @@
     .row
       .col-sm-5
         = f.select :media, options_for_select(Work.media.options, f.object.media), { include_blank: true }, { class: "form-control" }
+.form-group
+  = f.label :season_id, class: "col-sm-3 control-label"
+  .col-sm-9
+    .row
+      .col-sm-5
+        = f.select :season_id, options_from_collection_for_select(Season.all, :id, :name, f.object.season_id), { include_blank: true }, { class: "form-control" }
 .form-group
   = f.label :official_site_url, class: "col-sm-3 control-label"
   .col-sm-9
@@ -34,6 +30,10 @@
   = f.label :twitter_hashtag, class: "col-sm-3 control-label"
   .col-sm-9
     = f.text_field :twitter_hashtag, class: "form-control", placeholder: "例: なのん"
+.form-group
+  = f.label :sc_tid, class: "col-sm-3 control-label"
+  .col-sm-9
+    = f.text_field :sc_tid, class: "form-control"
 .form-group
   = f.label :released_at, class: "col-sm-3 control-label"
   .col-sm-9
