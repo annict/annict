@@ -9,4 +9,4 @@
       .pull-right.text-muted
         = "#{time_ago_in_words(activity.trackable.created_at)}前"
       .clearfix
-    = simple_format(activity.trackable.body)
+    = auto_link(simple_format(activity.trackable.body), html: { target: "_blank" })
