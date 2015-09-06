@@ -14,7 +14,10 @@ body.db-works, body.db-draft_works {
   }
 }
 
-body.db-works-index, body.db-works-season, body.db-works-resourceless {
+body.db-works-index,
+body.db-works-season,
+body.db-works-resourceless,
+body.db-works-search {
   .nav-tabs {
     margin-bottom: 20px;
   }

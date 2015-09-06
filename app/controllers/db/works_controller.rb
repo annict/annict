@@ -23,10 +23,14 @@ class Db::WorksController < Db::ApplicationController
     render :index
   end
 
-  def search(page: nil, q: "")
-    @works = Work.where("lower(title) LIKE ?", "%#{q}%")
-      .order(id: :desc)
-      .page(page)
+  def search(q: nil, page: nil)
+    @works = if q.present?
+      @q.result.order(id: :desc)
+    else
+      Work.none
+    end
+    @works = @works.page(page)
+
     render :index
   end
 
