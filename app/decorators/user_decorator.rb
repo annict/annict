@@ -4,8 +4,10 @@ class UserDecorator < ApplicationDecorator
   end
 
   def role_label
-    h.content_tag(:span, class: "role-label label label-default") do
-      role_text
+    if role.editor? || role.admin?
+      h.content_tag(:span, class: "role-label label label-default") do
+        role_text
+      end
     end
   end
 end
