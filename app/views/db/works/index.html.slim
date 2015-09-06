@@ -27,7 +27,7 @@ table.table.table-striped
     tr
       th ID
       th タイトル
-      th しょぼかるID
+      th しょぼかる
       th Watchers
       th リリース日
       th 作品画像
@@ -43,8 +43,12 @@ table.table.table-striped
         td
           - if work.sc_tid.present?
             = work.decorate.syobocal_link
+            - if work.fetch_syobocal?
+              = icon("cloud-download", class: "fetch-syobocal enabled", "data-toggle" => "tooltip", title: "しょぼかるから定期的にエピソードや番組情報を取得しています")
+            - else
+              = icon("cloud-download", class: "fetch-syobocal disabled", "data-toggle" => "tooltip", title: "しょぼかるからデータを取得する設定をオフにしています")
           - else
-            = "-"
+            = "未設定"
         td = "#{work.watchers_count}人"
         td = work.released_at.presence || "-"
         td = image_tag work.decorate.item_image_url("w:70,h:70"), size: "70x70"
