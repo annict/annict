@@ -1,0 +1,24 @@
+.syobocal-alert
+  - if work.fetch_syobocal?
+    .alert.alert-success
+      = icon("info-circle", class: "info-icon")
+      .body
+        | この作品のエピソード情報は
+        = link_to "http://cal.syoboi.jp/", target: "_blank" do
+          | しょぼかる
+          = icon("external-link")
+        | から取得しています。
+        br
+        | しょぼかるに登録されているエピソードは自動的にAnnictに登録されるはずです。
+        | (話数のフォーマットは手動で更新しています)
+  - else
+    .alert.alert-warning
+      = icon("info-circle", class: "info-icon")
+      .body
+        | この作品のエピソード情報は
+        = link_to "http://cal.syoboi.jp/", target: "_blank" do
+          | しょぼかる
+          = icon("external-link")
+        | から取得していません。
+        br
+        | エピソードが登録されていない場合、手動で登録する必要があります。

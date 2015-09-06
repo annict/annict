@@ -1,5 +1,7 @@
 = render "db/works/header", work: @work
 
+= render "syobocal_alert.html.slim", work: @work
+
 .pull-right
   - if current_user.role.admin?
     = link_to "新規作成", new_db_work_program_path(@work), class: "btn btn-primary"

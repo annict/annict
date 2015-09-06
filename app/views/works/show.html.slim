@@ -141,7 +141,7 @@ hr
     - if user_signed_in?
       .update-request
         | 最新のエピソードが登録されていない場合は
-        = link_to "編集リクエストを作成", new_db_work_draft_multiple_episode_path(@work)
+        = link_to "編集リクエストを作成", db_work_episodes_path(@work)
         | することで自分でエピソードを登録することができます。- 
         = link_to "編集リクエストとは？", db_root_path
   - else
@@ -151,7 +151,7 @@ hr
       p エピソードが登録されていません
       - if user_signed_in?
         .new-edit-request-btn
-          = link_to new_db_work_draft_multiple_episode_path(@work), class: "btn btn-primary" do
+          = link_to db_work_episodes_path(@work), class: "btn btn-primary" do
             = icon('pencil')
             | 編集リクエストを作る
         .edit-request-description-btn
