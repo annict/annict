@@ -13,6 +13,10 @@ ja:
         watched: 見た
         on_hold: 中断した
         stop_watching: 中止した
+    user:
+      role:
+        admin: 管理者
+        editor: 編集者
     work:
       media:
         tv: TV
