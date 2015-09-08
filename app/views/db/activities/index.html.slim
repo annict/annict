@@ -1,0 +1,7 @@
+.activities
+  - @activities.each do |activity|
+    - case activity.action
+    - when "works.update"
+     = render "activity_works_update", activity: activity
+
+= paginate @activities

@@ -28,6 +28,10 @@ class DbActivity < ActiveRecord::Base
 
   after_create :send_notification
 
+  def diffs
+    HashDiff.diff(parameters["old"], parameters["new"])
+  end
+
   private
 
   def send_notification
