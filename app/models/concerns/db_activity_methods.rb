@@ -24,14 +24,16 @@ module DbActivityMethods
   private
 
   def create_db_activity(user, old_diffable_hash, new_diffable_hash, action, trackable: self)
-    DbActivity.create do |dba|
-      dba.user = user
-      dba.trackable = trackable
-      dba.action = action
-      dba.parameters = if old_diffable_hash.blank?
-        { new: new_diffable_hash }
-      else
-        { old: old_diffable_hash, new: new_diffable_hash }
+    if old_diffable_hash != new_diffable_hash
+      DbActivity.create do |dba|
+        dba.user = user
+        dba.trackable = trackable
+        dba.action = action
+        dba.parameters = if old_diffable_hash.blank?
+          { new: new_diffable_hash }
+        else
+          { old: old_diffable_hash, new: new_diffable_hash }
+        end
       end
     end
   end

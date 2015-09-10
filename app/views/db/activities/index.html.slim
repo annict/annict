@@ -2,6 +2,10 @@
   - @activities.each do |activity|
     - case activity.action
     - when "works.update"
-     = render "activity_works_update", activity: activity
+      = render "activity_works_update", activity: activity
+    - when "episodes.update"
+      = render "activity_episodes_update", activity: activity
+    - when "multiple_episodes.create"
+      = render "activity_multiple_episodes_create", activity: activity
 
 = paginate @activities
