@@ -15,9 +15,15 @@ html lang="ja" ng-app="annict"
           = link_to "Annict DB", db_root_path, class: "navbar-brand"
         .collapse.navbar-collapse
           ul.nav.navbar-nav
-            li = link_to "編集リクエスト", db_edit_requests_path
-            li = link_to "アクティビティ", db_activities_path
-            li = link_to "作品", db_works_path
+            li
+              = link_to db_edit_requests_path do
+                | 編集リクエスト 
+                - if @opened_edit_requests.present?
+                  span.badge = @opened_edit_requests.count
+            li
+              = link_to "アクティビティ", db_activities_path
+            li
+              = link_to "作品", db_works_path
           = search_form_for @q, url: search_db_works_path, class: "navbar-form navbar-left", role: "form" do |f|
             = f.text_field :title_cont, class: "form-control", placeholder: "作品名で検索..."
           ul.nav.navbar-nav.navbar-right
