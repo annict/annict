@@ -146,6 +146,14 @@ class User < ActiveRecord::Base
     providers.pluck(:name).include?(provider_name.to_s)
   end
 
+  def twitter
+    providers.where(name: "twitter").first
+  end
+
+  def facebook
+    providers.where(name: "facebook").first
+  end
+
   def hide_checkin_comment?(checkin)
     checkin.comment.present? &&
     checkin.user != self &&

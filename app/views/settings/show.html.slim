@@ -33,6 +33,37 @@
         = f.file_field :tombo_background_image
       .form-submit
         = f.submit class: 'btn btn-primary'
+        
+  hr
+
+  .options-sns
+    h2 SNS連携
+    .options-sns-twitter
+      .options-sns-twitter-head
+        | Twitter
+      .options-sns-twitter-body
+        - if current_user.shareable_to?(:twitter)
+          - if current_user.shareable_to?(:facebook)
+            = link_to "解除する", provider_path(current_user.twitter), class: "btn btn-sm btn-link", data: { method: :delete }
+          - else
+            span.options-sns-cancel-disabled 解除できません
+        - else
+          = link_to user_omniauth_authorize_path(:twitter, back: "/setting"), class: "btn btn-sm btn-twitter" do
+            = icon("twitter", class: "options-sns-twitter-body-icon")
+            | 連携する
+    .options-sns-facebook
+      .options-sns-facebook-head
+        | Facebook
+      .options-sns-facebook-body
+        - if current_user.shareable_to?(:facebook)
+          - if current_user.shareable_to?(:twitter)
+            = link_to "解除する", provider_path(current_user.facebook), class: "btn btn-sm btn-link", data: { method: :delete }
+          - else
+            span.options-sns-cancel-disabled 解除できません
+        - else
+          = link_to user_omniauth_authorize_path(:facebook, back: "/setting"), class: "btn btn-sm btn-facebook" do
+            = icon("facebook", class: "options-sns-facebook-body-icon")
+            | 連携する
 
   hr
 

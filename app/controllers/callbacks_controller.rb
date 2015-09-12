@@ -7,23 +7,43 @@ class CallbacksController < Devise::OmniauthCallbacksController
   def facebook
   end
 
-
   private
 
   def authorize
-    auth = request.env['omniauth.auth']
+    auth = request.env["omniauth.auth"]
     provider = Provider.find_by(name: auth[:provider], uid: auth[:uid])
 
     if provider.present?
-      provider.token            = auth[:credentials][:token]
-      provider.token_expires_at = auth[:credentials][:expires_at] if 'facebook' == auth[:provider]
-      provider.token_secret     = auth[:credentials][:secret]     if 'twitter' == auth[:provider]
+      provider.attributes = provider_attributes(auth)
       provider.save
+      return sign_in_and_redirect(provider.user, event: :authentication)
+    end
 
-      sign_in_and_redirect(provider.user, event: :authentication)
+    if user_signed_in?
+      current_user.providers.create(provider_attributes(auth))
+      omni_params = request.env["omniauth.params"]
+      redirect_path = omni_params["back"].presence || root_path
+      redirect_to redirect_path, notice: "連携しました"
     else
-      session['devise.oauth_data'] = auth
+      session["devise.oauth_data"] = auth
       redirect_to new_user_registration_path
     end
+  end
+
+  private
+
+  def provider_attributes(auth)
+    credentials = auth[:credentials]
+
+    expires_at = (auth[:provider] == "facebook") ? credentials[:expires_at] : nil
+    token_secret = (auth[:provider] == "twitter") ? credentials[:secret] : nil
+
+    {
+      name: auth[:provider],
+      uid: auth[:uid],
+      token: credentials[:token],
+      token_expires_at: expires_at,
+      token_secret: token_secret,
+    }
   end
 end

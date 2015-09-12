@@ -109,6 +109,15 @@ body {
     }
   }
 
+  .btn-facebook {
+    color: #ffffff;
+    background-color: $color-facebook;
+    
+    &:hover {
+      color: #ffffff;
+    }
+  }
+
   .fa-spin {
     @include animation(fa-spin 1s infinite linear);
   }
