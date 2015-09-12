@@ -1,6 +1,8 @@
 .activities
   - @activities.each do |activity|
     - case activity.action
+    - when "works.create"
+      = render "activity_works_create", activity: activity
     - when "works.update"
       = render "activity_works_update", activity: activity
     - when "episodes.update"

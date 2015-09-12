@@ -4,13 +4,17 @@ class DbActivityDecorator < ApplicationDecorator
       data = init_multiple_episodes_data
     else
       new_resource = init_resource(parameters["new"])
-      old_resource = init_resource(parameters["old"])
+      origin_values = if parameters["old"]
+        init_resource(parameters["old"]).decorate.to_values
+      else
+        {}
+      end
 
       data = {
         resource: trackable,
         diffs: diffs,
         draft_values: new_resource.decorate.to_values,
-        origin_values: old_resource.decorate.to_values
+        origin_values: origin_values
       }
     end
 

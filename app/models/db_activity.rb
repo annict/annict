@@ -29,7 +29,8 @@ class DbActivity < ActiveRecord::Base
   after_create :send_notification
 
   def diffs
-    HashDiff.diff(parameters["old"], parameters["new"])
+    old_params = parameters["old"].presence || {}
+    HashDiff.diff(old_params, parameters["new"])
   end
 
   private
