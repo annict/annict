@@ -3,16 +3,17 @@ class DbActivityDecorator < ApplicationDecorator
     if action == "multiple_episodes.create"
       data = init_multiple_episodes_data
     else
-      new_resource = init_resource(parameters["new"])
+      new_resource = trackable.class.new(parameters["new"])
+      old_resource = trackable.class.new(parameters["old"])
       origin_values = if parameters["old"]
-        init_resource(parameters["old"]).decorate.to_values
+        old_resource.decorate.to_values
       else
         {}
       end
 
       data = {
         resource: trackable,
-        diffs: diffs,
+        diffs: diffs(new_resource, old_resource),
         draft_values: new_resource.decorate.to_values,
         origin_values: origin_values
       }
@@ -22,17 +23,6 @@ class DbActivityDecorator < ApplicationDecorator
   end
 
   private
-
-  def init_resource(params)
-    resource = trackable.class.new(params)
-
-    case trackable_type
-    when "Episode", "Program"
-      resource.work = trackable.work
-    end
-
-    resource
-  end
 
   def init_multiple_episodes_data
     body = parameters["new"].map { |p| "#{p['number']},#{p['title']}" }.join("\n")

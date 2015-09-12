@@ -5,7 +5,7 @@ module ItemCommon
   PUBLISH_FIELDS = DIFF_FIELDS + %i(work_id)
 
   included do
-    has_attached_file :tombo_image
+    has_attached_file :tombo_image, preserve_files: true
 
     validates :name, presence: true
     validates :url, presence: true, url: true, amazon: true

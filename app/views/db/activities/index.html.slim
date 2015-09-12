@@ -13,5 +13,9 @@
       = render "activity_programs_create", activity: activity
     - when "programs.update"
       = render "activity_programs_update", activity: activity
+    - when "items.create"
+      = render "activity_items_create", activity: activity
+    - when "items.update"
+      = render "activity_items_update", activity: activity
 
 = paginate @activities
