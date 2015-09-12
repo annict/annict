@@ -5,7 +5,7 @@
 = render "syobocal_alert.html.slim", work: @work
 
 .pull-right
-  - if current_user.role.admin?
+  - if current_user.role.admin? || current_user.role.editor?
     = link_to "新規作成", new_db_work_multiple_episode_path(@work), class: "btn btn-primary"
   - else
     = link_to "新規作成", new_db_work_draft_multiple_episode_path(@work), class: "btn btn-primary"
@@ -38,7 +38,7 @@ table.table.table-striped
           td = episode.sc_count
         td = episode.checkins.count
         td
-          - if current_user.role.admin?
+          - if current_user.role.admin? || current_user.role.editor?
             = link_to "編集", edit_db_work_episode_path(@work, episode), class: "btn btn-primary btn-sm"
           - else
             = link_to "編集", new_db_work_draft_episode_path(@work, id: episode), class: "btn btn-primary btn-sm"
