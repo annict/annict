@@ -44,6 +44,7 @@ Annict::Application.routes.draw do
   end
 
   namespace :db do
+    resources :activities, only: [:index]
     resources :draft_works, only: [:new, :create, :edit, :update]
     resources :edit_requests, only: [:index, :show] do
       member do

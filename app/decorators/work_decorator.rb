@@ -24,4 +24,8 @@ class WorkDecorator < ApplicationDecorator
       "#{ENV['ANNICT_TOMBO_URL']}/#{size}#{path}"
     end
   end
+
+  def title_link(options)
+    h.link_to title, h.work_path(self), options
+  end
 end
