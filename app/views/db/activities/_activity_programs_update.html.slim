@@ -1,0 +1,11 @@
+.activity.activity-works-update
+  = activity.user.decorate.name_link
+  | が
+  = activity.trackable.work.title
+  | の放送予定を更新しました
+  .activity-info
+    ul
+      li = "チャンネル: #{activity.trackable.channel.name}"
+      li = "エピソード: #{activity.trackable.episode.decorate.title_with_number}"
+  .activity-diff
+    = activity.decorate.resource_diff_table
