@@ -1,8 +1,8 @@
-table.table.table-bordered.table-hover
+table.table.table-bordered.resource-diff-table
   thead
     tr
-      th 項目
-      th 更新後
-      th 更新前
+      th.resource-diff-table-header-column 項目
+      th.resource-diff-table-header-new 更新後
+      th.resource-diff-table-header-old 更新前
   tbody
     = render "db/application/resource_diff_table_body", resource: resource, diffs: diffs, draft_values: draft_values, origin_values: origin_values

@@ -1,7 +1,16 @@
-.activity.activity-works-update
-  = activity.user.decorate.name_link
-  | が
-  = activity.trackable.work.title
-  | の放送予定を登録しました
-  .activity-diff
+.db-activity
+  .db-activity-header
+    .db-activity-header-description
+      span.db-activity-description-user-avatar
+        = link_to user_path(activity.user.username) do
+          = image_tag tombo_thumb_url(activity.user.profile, :tombo_avatar, "w:70,h:70"), size: "35x35", class: "img-circle"
+      span.db-activity-description-user-link
+        = activity.user.decorate.name_link
+      | が
+      span.db-activity-description-work-title
+        = "「#{activity.trackable.work.decorate.title_link(target: "_blank")}」".html_safe
+      | の放送予定を登録しました
+    .db-activity-header-date
+      = "#{time_ago_in_words(activity.created_at)}前"
+  .db-activity-diff
     = activity.decorate.resource_diff_table

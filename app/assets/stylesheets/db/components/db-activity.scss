@@ -1,0 +1,18 @@
+.db-activity {
+  .db-activity-header {
+    display: flex;
+    height: 35px;
+    justify-content: space-between;
+    line-height: 35px;
+    margin-bottom: 10px;
+  }
+
+  .db-activity-description-user-avatar {
+    margin-right: 7px;
+  }
+
+  .db-activity-header-date {
+    color: #9a9a9a;
+    font-size: 12px;
+  }
+}
