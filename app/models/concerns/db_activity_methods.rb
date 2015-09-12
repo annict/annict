@@ -13,9 +13,10 @@ module DbActivityMethods
         end
       else
         ActiveRecord::Base.transaction do
-          old_diffable_hash = new_record? ? nil : self.class.find(id).to_diffable_hash
+          old_attributes = to_attributes
           save(validate: false)
-          create_db_activity(user, old_diffable_hash, to_diffable_hash, action)
+          new_attributes = to_attributes
+          create_db_activity(user, old_attributes, new_attributes, action)
         end
       end
     end
@@ -23,16 +24,24 @@ module DbActivityMethods
 
   private
 
-  def create_db_activity(user, old_diffable_hash, new_diffable_hash, action, trackable: self)
-    DbActivity.create do |dba|
-      dba.user = user
-      dba.trackable = trackable
-      dba.action = action
-      dba.parameters = if old_diffable_hash.blank?
-        { new: new_diffable_hash }
-      else
-        { old: old_diffable_hash, new: new_diffable_hash }
+  def create_db_activity(user, old_attributes, new_attributes, action, trackable: self)
+    if old_attributes != new_attributes
+      DbActivity.create do |dba|
+        dba.user = user
+        dba.trackable = trackable
+        dba.action = action
+        dba.parameters = if old_attributes.blank?
+          { new: new_attributes }
+        else
+          { old: old_attributes, new: new_attributes }
+        end
       end
     end
+  end
+
+  def to_attributes
+    return nil if new_record?
+
+    self.class.find(id).attributes
   end
 end

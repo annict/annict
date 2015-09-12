@@ -28,6 +28,10 @@ class DbActivity < ActiveRecord::Base
 
   after_create :send_notification
 
+  def diffs(new_resource, old_resource)
+    HashDiff.diff(old_resource.to_diffable_hash, new_resource.to_diffable_hash)
+  end
+
   private
 
   def send_notification
