@@ -7,7 +7,6 @@ ja:
   checkins:
     delete_confirm: 記録を削除します。よろしいですか？
     deleted: 記録を削除しました。
-    facebook_share_text: '%{title}を見ました | Annict'
     input_a_comment: 見た感想を残してみませんか？
     no_comments: まだコメントされていません
     page_title: '%{username}さんの記録'
