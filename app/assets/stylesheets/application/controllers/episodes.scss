@@ -1,4 +1,23 @@
 .episodes {
+  .checkin-form-comment {
+    margin-bottom: 10px;
+  }
+
+  .checkin-form-share-twitter,
+  .checkin-form-share-facebook {
+    margin-right: 10px;
+  }
+
+  .checkin-form-share-twitter i {
+    color: $color-twitter;
+    margin-right: 3px;
+  }
+
+  .checkin-form-share-facebook i {
+    color: $color-facebook;
+    margin-right: 5px;
+  }
+
   &.episodes-show {
     > .navbar {
       margin-bottom: 0;

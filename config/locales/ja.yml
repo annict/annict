@@ -12,7 +12,6 @@ ja:
     page_title: '%{username}さんの記録'
     save: 記録する
     saved: 記録しました。
-    social_click_count: '%{click_count}クリック'
     updated: 記録を更新しました。
   comments:
     comment: コメントする
