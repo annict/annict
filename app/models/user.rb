@@ -131,10 +131,6 @@ class User < ActiveRecord::Base
     providers.pluck(:name).include?(provider.to_s)
   end
 
-  def provider_name
-    providers.first.name.humanize
-  end
-
   def read_notifications!
     transaction do
       unread_count = notifications.unread.update_all(read: true)

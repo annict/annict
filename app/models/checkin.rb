@@ -64,12 +64,8 @@ class Checkin < ActiveRecord::Base
   end
 
   def set_shared_sns(user)
-    case user.provider_name
-    when 'Twitter'
-      self.shared_twitter = user.share_checkin?
-    when 'Facebook'
-      self.shared_facebook = user.share_checkin?
-    end
+    self.shared_twitter = user.setting.share_record_to_twitter?
+    self.shared_facebook = user.setting.share_record_to_facebook?
   end
 
   def shared_sns?

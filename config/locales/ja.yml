@@ -35,7 +35,6 @@ ja:
     updated_notification: エピソードタイトルが更新されました
     work_title: 作品タイトル
   friends:
-    missing: 'まだフォローしていない%{provider_name}の友達はいませんでした。'
     other_users: その他利用者の皆さん
     others_missing: まだフォローしていないその他利用者の皆さんはいませんでした。
   home:
@@ -44,7 +43,7 @@ ja:
         catch_copy: 見たアニメを記録して、共有しよう
       title: 'アニクト - %{catch_copy}'
     no_timeline: 友達のアクティビティはありませんでした。
-    no_timeline_find_friends_html: '「%{friends}」から友達を探すことができます。'
+    no_timeline_find_friends_html: ''
   meta:
     description: Annict (アニクト)は、見たアニメを記録したり、見た感想を友達にシェアすることができるWebサービスです。「今どの作品を何話まで見ているんだっけ？」を解消します。
     keywords: annict,アニクト,アニメ,深夜アニメ,視聴記録,視聴管理,見た,観た,記録,管理,感想,レビュー,sns,ソーシャル
@@ -78,7 +77,6 @@ ja:
     special_program_notification: 【Annict DB】特別番組を検知した気がします
   titles:
     about: Annictとは？
-    friends: '%{provider_name}の友達'
     notifications: 通知
     privacy: プライバシーポリシー
     account: アカウント
