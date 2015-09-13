@@ -44,7 +44,7 @@
       .options-sns-twitter-body
         - if current_user.shareable_to?(:twitter)
           - if current_user.shareable_to?(:facebook)
-            = link_to "解除する", provider_path(current_user.twitter), class: "btn btn-sm btn-link", data: { method: :delete }
+            = link_to "解除する", provider_path(current_user.twitter), class: "btn btn-sm btn-link", data: { method: :delete, confirm: "解除しますか？" }
           - else
             span.options-sns-cancel-disabled 解除できません
         - else
@@ -57,7 +57,7 @@
       .options-sns-facebook-body
         - if current_user.shareable_to?(:facebook)
           - if current_user.shareable_to?(:twitter)
-            = link_to "解除する", provider_path(current_user.facebook), class: "btn btn-sm btn-link", data: { method: :delete }
+            = link_to "解除する", provider_path(current_user.facebook), class: "btn btn-sm btn-link", data: { method: :delete, confirm: "解除しますか？" }
           - else
             span.options-sns-cancel-disabled 解除できません
         - else
