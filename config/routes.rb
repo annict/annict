@@ -105,6 +105,8 @@ Annict::Application.routes.draw do
 
   resources :programs, only: [:index]
 
+  resources :providers, only: [:destroy]
+
   resource :setting, only: [:show, :update]
 
   resources :statuses, only: [] do

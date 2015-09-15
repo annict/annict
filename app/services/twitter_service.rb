@@ -8,6 +8,8 @@ class TwitterService
   end
 
   def client
+    return nil if provider.blank?
+
     @client ||= Twitter::REST::Client.new do |config|
       config.consumer_key        = ENV['TWITTER_CONSUMER_KEY']
       config.consumer_secret     = ENV['TWITTER_CONSUMER_SECRET']
@@ -17,6 +19,8 @@ class TwitterService
   end
 
   def uids
+    return [] if client.blank?
+
     client.friend_ids.to_a.map(&:to_s)
   end
 

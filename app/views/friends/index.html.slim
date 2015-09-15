@@ -1,7 +1,6 @@
 - if @friends.present?
   .friends
-    h2
-      = "#{current_user.provider_name}の友達"
+    h2 SNSの友達
     .user-list
       - @friends.each do |friend|
         = render 'users/user', user: friend
@@ -11,7 +10,7 @@
       .info.well
         .icon
           i.fa.fa-info-circle
-        p = t('friends.missing', provider_name: current_user.provider_name)
+        p まだフォローしていないSNSの友達はいませんでした。
 
 h2.other-users
   = t('friends.other_users')

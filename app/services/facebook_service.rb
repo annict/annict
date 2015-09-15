@@ -20,24 +20,28 @@ class FacebookService
       checkin.update_column(:facebook_url_hash, checkin.generate_url_hash)
     end
 
-    work_title = checkin.episode.work.title
-    episode_number_title = checkin.episode.number_title
-    title = "#{work_title} #{episode_number_title}".truncate(30)
-
-    message = checkin.comment.squish.truncate(50) if checkin.comment.present?
+    title = checkin.work.title
+    episode_title = checkin.episode.decorate.title_with_number
+    title += " #{episode_title}" if title != episode_title
+    message = checkin.comment.squish if checkin.comment.present?
     link = if Rails.env.development?
-             "http://www.annict.com/checkins/redirect/fb/#{checkin.facebook_url_hash}"
+             "http://www.annict.com/r/fb/#{checkin.facebook_url_hash}"
            else
-             "#{ENV['ANNICT_URL']}/checkins/redirect/fb/#{checkin.facebook_url_hash}"
+             "#{ENV['ANNICT_URL']}/r/fb/#{checkin.facebook_url_hash}"
            end
-    name = I18n.t("checkins.facebook_share_text", title: title)
-    caption = "Checkined by #{checkin.user.username}"
+    caption = "Annict | アニクト - 見たアニメを記録して、共有しよう"
+    source = if Rails.env.development?
+      "https://ddge3q17cfscg.cloudfront.net/w:1200,h:630/paperclip/items/1050/tombo_images/master/e2a38ae349260e86b8d72be27cad84f992dff781.jpg"
+    else
+      checkin.work.decorate.item_image_url("w:1200,h:630")
+    end
 
     client.put_connections("me", "feed",
-      message:      message,
-      link:         link,
-      name:         name,
-      caption:      caption
+      name: title,
+      message: message,
+      link: link,
+      caption: caption,
+      source: source
     )
   end
 end

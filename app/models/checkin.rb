@@ -64,12 +64,8 @@ class Checkin < ActiveRecord::Base
   end
 
   def set_shared_sns(user)
-    case user.provider_name
-    when 'Twitter'
-      self.shared_twitter = user.share_checkin?
-    when 'Facebook'
-      self.shared_facebook = user.share_checkin?
-    end
+    self.shared_twitter = user.setting.share_record_to_twitter?
+    self.shared_facebook = user.setting.share_record_to_facebook?
   end
 
   def shared_sns?
@@ -78,19 +74,18 @@ class Checkin < ActiveRecord::Base
   end
 
   def update_share_checkin_status
-    if shared_twitter? || shared_facebook?
-      user.update_column(:share_checkin, true) unless user.share_checkin?
-    else
-      user.update_column(:share_checkin, false) if user.share_checkin?
+    if user.setting.share_record_to_twitter? != shared_twitter?
+      user.setting.update_column(:share_record_to_twitter, shared_twitter?)
+    end
+
+    if user.setting.share_record_to_facebook? != shared_facebook?
+      user.setting.update_column(:share_record_to_facebook, shared_facebook?)
     end
   end
 
   def share_to_sns
-    if shared_twitter?
-      TwitterService.new(user).delay.share!(self)
-    elsif shared_facebook?
-      FacebookService.new(user).delay.share!(self)
-    end
+    TwitterService.new(user).delay.share!(self) if shared_twitter?
+    FacebookService.new(user).delay.share!(self) if shared_facebook?
   end
 
   private

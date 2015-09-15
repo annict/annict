@@ -54,44 +54,49 @@
 .check-box > .checkin {
   margin-top: 10px;
 
-  > form > .top {
+  .checkin-top {
     @include display(flex);
 
-    height: 30px;
+    height: 50px;
+  }
 
-    textarea {
-      height: 30px;
-    }
+  .checkin-top-wrapper {
+    @include align-items(center);
+    @include display(flex);
+    @include flex-basis(90px);
+    @include flex-shrink(0);
+  }
 
-    > .wrapper {
-      @include flex-basis(80px);
-      @include flex-shrink(0);
+  .share-to-sns {
+    margin-left: 7px;
+  }
 
-      line-height: 30px;
-      text-align: right;
-    }
+  .share-to-sns-facebook label {
+    margin-bottom: 0;
+  }
 
-    > .wrapper > .share {
-      line-height: 30px;
-      padding-right: 10px;
-      text-align: right;
-    }
+  .share-to-sns-twitter i {
+    color: $color-twitter;
+    margin-right: 3px;
+  }
 
-    > .wrapper > .share > i {
-      color: $color-twitter;
-      margin-right: 3px;
-    }
+  .share-to-sns-facebook i {
+    color: $color-facebook;
+    margin-right: 7px;
+  }
 
-    > .wrapper > .btn > .btn-sm {
-      padding: 4px 8px;
-    }
+  .record-button {
+    display: inline-block;
+    height: 50px;
+    line-height: 50px;
+    margin-left: 10px;
   }
 }
 
 .check-box > .checkin.expand {
   height: 100px;
 
-  > form > .top {
+  > form > .checkin-top {
     textarea {
       height: 100px;
     }

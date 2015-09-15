@@ -131,10 +131,6 @@ class User < ActiveRecord::Base
     providers.pluck(:name).include?(provider.to_s)
   end
 
-  def provider_name
-    providers.first.name.humanize
-  end
-
   def read_notifications!
     transaction do
       unread_count = notifications.unread.update_all(read: true)
@@ -144,6 +140,14 @@ class User < ActiveRecord::Base
 
   def shareable_to?(provider_name)
     providers.pluck(:name).include?(provider_name.to_s)
+  end
+
+  def twitter
+    providers.where(name: "twitter").first
+  end
+
+  def facebook
+    providers.where(name: "facebook").first
   end
 
   def hide_checkin_comment?(checkin)

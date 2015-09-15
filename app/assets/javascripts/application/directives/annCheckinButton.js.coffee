@@ -4,7 +4,9 @@ Annict.angular.directive "annCheckinButton", ($rootScope) ->
   controller: ($scope, $element, $http) ->
     $scope.contentHeight = $(window).height() - 110
     $scope.sharableToTwitter = gon.sharableToTwitter
-    $scope.shareCheckin = gon.shareCheckin
+    $scope.sharableToFacebook = gon.sharableToFacebook
+    $scope.shareRecordToTwitter = gon.shareRecordToTwitter
+    $scope.shareRecordToFacebook = gon.shareRecordToFacebook
 
     $scope.openModal = ->
       $scope.loading = true

@@ -41,8 +41,10 @@ class ApplicationController < ActionController::Base
   def store_user_info
     if user_signed_in?
       user_info = {
-        shareCheckin: current_user.share_checkin?,
-        sharableToTwitter: current_user.shareable_to?(:twitter)
+        shareRecordToTwitter: current_user.setting.share_record_to_twitter?,
+        shareRecordToFacebook: current_user.setting.share_record_to_facebook?,
+        sharableToTwitter: current_user.shareable_to?(:twitter),
+        sharableToFacebook: current_user.shareable_to?(:facebook)
       }
 
       gon.push(user_info)

@@ -32,15 +32,23 @@
               .checkin ng-if='check.episode' ng-class='{ expand: expand }'
                 form action='{{actionPath}}' method='post'
                   input type='hidden' name='authenticity_token'
-                  .top
+                  .checkin-top
                     textarea.form-control name="checkin[comment]" ng-focus='expandTextarea()'
-                    .wrapper
-                      label.share ng-if='sharableToTwitter'
-                        i.fa.fa-twitter
-                        input name='checkin[shared_twitter]' type='hidden' value='0'
-                        input type='checkbox' value='1' name='checkin[shared_twitter]' ng-checked='shareCheckin'
-                      button.btn.btn-primary.btn-sm
-                        i.fa.fa-check
+                    .checkin-top-wrapper
+                      .share-to-sns
+                        .share-to-sns-twitter
+                          label.share ng-if='sharableToTwitter'
+                            i.fa.fa-twitter
+                            input name='checkin[shared_twitter]' type='hidden' value='0'
+                            input type='checkbox' value='1' name='checkin[shared_twitter]' ng-checked='shareRecordToTwitter'
+                        .share-to-sns-facebook
+                          label.share ng-if='sharableToFacebook'
+                            i.fa.fa-facebook
+                            input name='checkin[shared_facebook]' type='hidden' value='0'
+                            input type='checkbox' value='1' name='checkin[shared_facebook]' ng-checked='shareRecordToFacebook'
+                      .record-button
+                        button.btn.btn-primary.btn-sm
+                          i.fa.fa-check
               hr
           .info.well ng-if='!loading && checks.length === 0'
             .icon
