@@ -12,7 +12,7 @@ class Db::EditRequestsController < Db::ApplicationController
     @comment = @edit_request.comments.new
     @db_activities = @edit_request.db_activities
                       .where.not(action: "edit_requests.create")
-                      .order(id: :asc)
+                      .order(created_at: :asc)
   end
 
   def publish(id)
