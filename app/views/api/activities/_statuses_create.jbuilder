@@ -2,7 +2,7 @@ json.work do
   json.(activity.recipient, :id, :title)
 end
 
-json.main_item do
+json.item do
   json.image_url activity.recipient.decorate.item_image_url('w:140,h:140')
 end
 

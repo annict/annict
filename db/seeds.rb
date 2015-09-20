@@ -169,26 +169,16 @@ end
 # Item
 # ==============================================================================
 
-identicon = RubyIdenticon.create("1", background_color: "ffffff")
-Item.create do |i|
-  i.id          = 1
-  i.name        = "no name"
-  i.url         = "http://example.com"
-  i.main        = false
-  i.tombo_image = StringIO.new(identicon)
-end
-
 CSV.foreach("#{Dir.pwd}/db/data/csv/items.csv", headers: true) do |row|
   work_id = row[1].to_i
 
-  if row[0] != "1" && work_ids.include?(work_id)
+  if work_ids.include?(work_id)
     identicon = RubyIdenticon.create(row[0], background_color: "ffffff")
     item = Item.create do |i|
       i.id          = row[0]
       i.work_id     = work_id
       i.name        = row[2]
       i.url         = row[3]
-      i.main        = (row[4] == "true")
       i.tombo_image = StringIO.new(identicon)
     end
     puts "item: #{item.id}"

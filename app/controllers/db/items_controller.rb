@@ -1,25 +1,25 @@
 class Db::ItemsController < Db::ApplicationController
-  permits :name, :url, :tombo_image, :main
+  permits :name, :url, :tombo_image
 
   before_action :authenticate_user!
-  before_action :load_work, only: [:index, :new, :create, :edit, :update, :destroy]
+  before_action :load_work, only: [:show, :new, :create, :edit, :update, :destroy]
   before_action :load_item, only: [:edit, :update, :destroy]
 
-  def index
-    @items = @work.items
+  def show
+    @item = @work.item
   end
 
   def new
-    @item = @work.items.new
+    @item = @work.build_item
     authorize @item, :new?
   end
 
   def create(item)
-    @item = @work.items.new(item)
+    @item = @work.build_item(item)
     authorize @item, :create?
 
     if @item.save_and_create_db_activity(current_user, "items.create")
-      redirect_to db_work_items_path(@work), notice: "作品画像を登録しました"
+      redirect_to db_work_item_path(@work), notice: "作品画像を登録しました"
     else
       render :new
     end
@@ -34,18 +34,18 @@ class Db::ItemsController < Db::ApplicationController
 
     @item.attributes = item
     if @item.save_and_create_db_activity(current_user, "items.update")
-      redirect_to db_work_items_path(@work), notice: "作品画像を更新しました"
+      redirect_to db_work_item_path(@work), notice: "作品画像を更新しました"
     else
       render :edit
     end
   end
 
-  def destroy(id)
+  def destroy
     authorize @item, :destroy?
 
     @item.destroy
 
-    redirect_to db_work_items_path(@work), notice: "作品画像を削除しました"
+    redirect_to db_work_item_path(@work), notice: "作品画像を削除しました"
   end
 
   private
@@ -55,6 +55,7 @@ class Db::ItemsController < Db::ApplicationController
   end
 
   def load_item
-    @item = @work.items.find(params[:id])
+    @item = @work.item
+    raise ActiveRecord::RecordNotFound if @item.blank?
   end
 end

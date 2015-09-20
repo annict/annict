@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150917124829) do
+ActiveRecord::Schema.define(version: 20150920010436) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -309,7 +309,6 @@ ActiveRecord::Schema.define(version: 20150917124829) do
     t.integer  "work_id"
     t.string   "name",                     limit: 510, null: false
     t.string   "url",                      limit: 510, null: false
-    t.boolean  "main",                                 null: false
     t.datetime "created_at"
     t.datetime "updated_at"
     t.string   "tombo_image_file_name"
@@ -318,7 +317,7 @@ ActiveRecord::Schema.define(version: 20150917124829) do
     t.datetime "tombo_image_updated_at"
   end
 
-  add_index "items", ["work_id"], name: "items_work_id_idx", using: :btree
+  add_index "items", ["work_id"], name: "index_items_on_work_id", unique: true, using: :btree
 
   create_table "likes", force: :cascade do |t|
     t.integer  "user_id",                    null: false
@@ -528,10 +527,8 @@ ActiveRecord::Schema.define(version: 20150917124829) do
     t.string   "twitter_username",  limit: 510
     t.string   "twitter_hashtag",   limit: 510
     t.string   "released_at_about"
-    t.integer  "items_count",                   default: 0,     null: false
   end
 
-  add_index "works", ["items_count"], name: "index_works_on_items_count", using: :btree
   add_index "works", ["sc_tid"], name: "works_sc_tid_key", unique: true, using: :btree
   add_index "works", ["season_id"], name: "works_season_id_idx", using: :btree
 

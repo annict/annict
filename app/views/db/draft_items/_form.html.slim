@@ -18,17 +18,11 @@
         - if draft_item.origin.present?
           = image_tag tombo_thumb_url(draft_item.origin, :tombo_image, "w:100,h:100"), size: "50x50"
       = f.file_field :tombo_image
-  .form-group
-    .col-sm-offset-3.col-sm-9
-      .checkbox
-        = f.label :main do
-          = f.check_box :main
-          | サイト内で使用する
     
   = hidden_field_tag "draft_item[item_id]", (item.try(:id).presence || draft_item.try(:origin).try(:id))
-  
+
   hr
-  
+
   = f.fields_for :edit_request do |erf|
     .form-group
       = erf.label :title, class: "col-sm-3 control-label"
@@ -38,7 +32,7 @@
       = erf.label :body, class: "col-sm-3 control-label"
       .col-sm-9
         = erf.text_area :body, class: "form-control", rows: 5
-  
+
   .form-group
     .col-sm-offset-3.col-sm-9
       = f.submit "作成する", class: "btn btn-primary"
