@@ -2,22 +2,23 @@
 
 .activities
   - @activities.each do |activity|
-    - case activity.action
-    - when "works.create"
-      = render "activity_works_create", activity: activity
-    - when "works.update"
-      = render "activity_works_update", activity: activity
-    - when "multiple_episodes.create"
-      = render "activity_multiple_episodes_create", activity: activity
-    - when "episodes.update"
-      = render "activity_episodes_update", activity: activity
-    - when "programs.create"
-      = render "activity_programs_create", activity: activity
-    - when "programs.update"
-      = render "activity_programs_update", activity: activity
-    - when "items.create"
-      = render "activity_items_create", activity: activity
-    - when "items.update"
-      = render "activity_items_update", activity: activity
+    - if activity.trackable.present?
+      - case activity.action
+      - when "works.create"
+        = render "activity_works_create", activity: activity
+      - when "works.update"
+        = render "activity_works_update", activity: activity
+      - when "multiple_episodes.create"
+        = render "activity_multiple_episodes_create", activity: activity
+      - when "episodes.update"
+        = render "activity_episodes_update", activity: activity
+      - when "programs.create"
+        = render "activity_programs_create", activity: activity
+      - when "programs.update"
+        = render "activity_programs_update", activity: activity
+      - when "items.create"
+        = render "activity_items_create", activity: activity
+      - when "items.update"
+        = render "activity_items_update", activity: activity
 
 = paginate @activities
