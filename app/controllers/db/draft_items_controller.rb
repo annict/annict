@@ -5,9 +5,9 @@ class Db::DraftItemsController < Db::ApplicationController
   before_action :authenticate_user!
   before_action :set_work, only: [:new, :create, :edit, :update]
 
-  def new(id: nil)
-    if id.present?
-      @item = @work.items.find(id)
+  def new(item_id: nil)
+    if item_id.present?
+      @item = @work.item
       attributes = @item.attributes.slice(*Item::DIFF_FIELDS.map(&:to_s))
       @draft_item = @work.draft_items.new(attributes)
       @draft_item.origin = @item
@@ -23,7 +23,7 @@ class Db::DraftItemsController < Db::ApplicationController
     @draft_item.edit_request.user = current_user
 
     if draft_item[:item_id].present?
-      @item = @work.items.find(draft_item[:item_id])
+      @item = @work.item
       @draft_item.origin = @item
       @draft_item.tombo_image = @item.tombo_image if draft_item[:tombo_image].blank?
     end

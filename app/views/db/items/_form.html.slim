@@ -1,4 +1,4 @@
-= form_for [:db, work, item], html: { class: "form-horizontal" } do |f|
+= form_for [:db, work, item], url: db_work_item_path, html: { class: "form-horizontal" } do |f|
   = render "application/error_panel", resource: f.object
 
   .form-group
@@ -13,13 +13,7 @@
     = f.label :tombo_image, class: "col-sm-3 control-label"
     .col-sm-9
       = f.file_field :tombo_image
-  .form-group
-    .col-sm-offset-3.col-sm-9
-      .checkbox
-        = f.label :main do
-          = f.check_box :main
-          | サイト内で使用する
-    
+
   .form-group
     .col-sm-offset-3.col-sm-9
       = f.submit class: "btn btn-primary"

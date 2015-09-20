@@ -17,7 +17,7 @@ class Db::WorksController < Db::ApplicationController
   def resourceless(page: nil, name: "episode")
     @works = case name
              when "episode" then Work.where(episodes_count: 0)
-             when "item" then Work.where(items_count: 0)
+             when "item" then Work.itemless.includes(:item)
              end
     @works = @works.order(watchers_count: :desc).page(page)
     render :index

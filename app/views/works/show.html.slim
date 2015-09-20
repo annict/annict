@@ -142,7 +142,7 @@ hr
       .update-request
         | 最新のエピソードが登録されていない場合は
         = link_to "編集リクエストを作成", db_work_episodes_path(@work)
-        | することで自分でエピソードを登録することができます。- 
+        | することで自分でエピソードを登録することができます。-
         = link_to "編集リクエストとは？", db_root_path
   - else
     .info.well
@@ -157,22 +157,22 @@ hr
         .edit-request-description-btn
           = link_to "編集リクエストとは？", db_root_path
 
-- if @work.items.present?
+- if @work.item.present?
   hr
 
   #about-works-image
     .container
       h2.text-center 作品画像について
       .media
-        = link_to @work.main_item.url, class: "pull-left" do
-          = image_tag tombo_thumb_url(@work.main_item, :tombo_image, "w:160,h:160"), size: "80x80", alt: @work.main_item.name
+        = link_to @work.item.url, class: "pull-left" do
+          = image_tag tombo_thumb_url(@work.item, :tombo_image, "w:160,h:160"), size: "80x80", alt: @work.item.name
         .media-body
           .description
-            - link = link_to @work.main_item.name, @work.main_item.url, target: "_blank"
+            - link = link_to @work.item.name, @work.item.url, target: "_blank"
             = t("works.about_amazon_item_1_html", link: link)
             .detail
               = t("works.about_amazon_item_2")
           .amazon-btn
-            = link_to @work.main_item.url, class: "btn btn-primary", target: "_blank" do
+            = link_to @work.item.url, class: "btn btn-primary", target: "_blank" do
               = icon("amazon")
               | Amazonで見てみる

@@ -18,13 +18,11 @@
 #  twitter_username  :string(510)
 #  twitter_hashtag   :string(510)
 #  released_at_about :string
-#  items_count       :integer          default(0), not null
 #
 # Indexes
 #
-#  index_works_on_items_count  (items_count)
-#  works_sc_tid_key            (sc_tid) UNIQUE
-#  works_season_id_idx         (season_id)
+#  works_sc_tid_key     (sc_tid) UNIQUE
+#  works_season_id_idx  (season_id)
 #
 
 class Work < ActiveRecord::Base
@@ -42,9 +40,9 @@ class Work < ActiveRecord::Base
   has_many :draft_programs, dependent: :destroy
   has_many :draft_works, dependent: :destroy
   has_many :episodes, dependent: :destroy
-  has_many :items, dependent: :destroy
   has_many :programs, dependent: :destroy
   has_many :statuses, dependent: :destroy
+  has_one :item, dependent: :destroy
 
   validates :sc_tid, numericality: { only_integer: true }, allow_blank: true,
                      uniqueness: true
@@ -72,6 +70,11 @@ class Work < ActiveRecord::Base
       ) AS c2 ON works.id = c2.work_id")
   }
 
+  # 作品画像が設定されていない作品
+  scope :itemless, -> {
+    joins("LEFT OUTER JOIN items ON items.work_id = works.id").where("items.id IS NULL")
+  }
+
   # 作品のエピソード数分の空白文字列が入った配列を返す
   # Chart.jsのx軸のラベルを消すにはこれしか方法がなかったんだ…! たぶん…。
   def chart_labels
@@ -84,10 +87,6 @@ class Work < ActiveRecord::Base
 
   def checkins_count
     chart_values.reduce(&:+).presence || 0
-  end
-
-  def main_item
-    items.find_by(main: true).presence || Item.find_by(id: 1)
   end
 
   def comments_count

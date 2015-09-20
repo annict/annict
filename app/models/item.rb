@@ -6,7 +6,6 @@
 #  work_id                  :integer
 #  name                     :string(510)      not null
 #  url                      :string(510)      not null
-#  main                     :boolean          not null
 #  created_at               :datetime
 #  updated_at               :datetime
 #  tombo_image_file_name    :string
@@ -16,7 +15,7 @@
 #
 # Indexes
 #
-#  items_work_id_idx  (work_id)
+#  index_items_on_work_id  (work_id) UNIQUE
 #
 
 class Item < ActiveRecord::Base
@@ -25,16 +24,6 @@ class Item < ActiveRecord::Base
 
   has_paper_trail only: DIFF_FIELDS
 
-  belongs_to :work, counter_cache: true
+  belongs_to :work
   has_many :draft_items, dependent: :destroy
-
-  before_save :switch_main_flag
-
-  private
-
-  def switch_main_flag
-    if main?
-      work.items.where.not(id: id).update_all(main: false)
-    end
-  end
 end
