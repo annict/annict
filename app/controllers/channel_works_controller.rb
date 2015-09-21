@@ -1,5 +1,5 @@
 class ChannelWorksController < ApplicationController
-  before_filter :authenticate_user!
+  before_action :authenticate_user!
 
   def index(page: nil)
     @works = current_user.works.wanna_watch_and_watching

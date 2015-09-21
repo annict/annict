@@ -1,5 +1,5 @@
 class Api::TipsController < ApplicationController
-  before_filter :authenticate_user!, only: [:finish]
+  before_action :authenticate_user!, only: [:finish]
 
   def finish(partial_name)
     UserTipsService.new(current_user).finish!(partial_name)

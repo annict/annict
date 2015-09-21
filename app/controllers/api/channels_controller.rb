@@ -1,6 +1,6 @@
 class Api::ChannelsController < Api::ApplicationController
-  before_filter :authenticate_user!
-  before_filter :set_work
+  before_action :authenticate_user!
+  before_action :set_work
 
 
   def select(channel_id)

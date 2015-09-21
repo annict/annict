@@ -1,7 +1,7 @@
 class EpisodesController < ApplicationController
-  before_filter :set_work,         only: [:index, :show]
-  before_filter :set_episode,      only: [:show]
-  before_filter :set_checkin_user, only: [:show]
+  before_action :set_work,         only: [:index, :show]
+  before_action :set_episode,      only: [:show]
+  before_action :set_checkin_user, only: [:show]
 
 
   def show
