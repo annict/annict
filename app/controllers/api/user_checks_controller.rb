@@ -1,5 +1,5 @@
 class Api::UserChecksController < Api::ApplicationController
-  before_filter :authenticate_user!
+  before_action :authenticate_user!
 
   def index
     Check.refresh_episode(current_user)

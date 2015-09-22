@@ -1,11 +1,11 @@
 class CheckinsController < ApplicationController
   permits :comment, :shared_twitter, :shared_facebook
 
-  before_filter :authenticate_user!, only: [:new, :create, :create_all, :edit, :update, :destroy]
-  before_filter :set_work,           only: [:new, :create, :create_all, :show, :edit, :update, :destroy]
-  before_filter :set_episode,        only: [:new, :create, :show, :edit, :update, :destroy]
-  before_filter :set_checkin,        only: [:show, :edit, :update, :destroy]
-  before_filter :redirect_to_top,    only: [:edit, :update, :destroy]
+  before_action :authenticate_user!, only: [:new, :create, :create_all, :edit, :update, :destroy]
+  before_action :set_work,           only: [:new, :create, :create_all, :show, :edit, :update, :destroy]
+  before_action :set_episode,        only: [:new, :create, :show, :edit, :update, :destroy]
+  before_action :set_checkin,        only: [:show, :edit, :update, :destroy]
+  before_action :redirect_to_top,    only: [:edit, :update, :destroy]
 
 
   def new

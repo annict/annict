@@ -1,8 +1,8 @@
 class UsersController < ApplicationController
   permits :email
 
-  before_filter :authenticate_user!, only: [:update, :destroy, :share]
-  before_filter :set_user, only: [:show, :works, :following, :followers]
+  before_action :authenticate_user!, only: [:update, :destroy, :share]
+  before_action :set_user, only: [:show, :works, :following, :followers]
 
 
   def show

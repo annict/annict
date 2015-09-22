@@ -1,10 +1,10 @@
 class CommentsController < ApplicationController
   permits :body
 
-  before_filter :authenticate_user!
-  before_filter :set_work,    only: [:create]
-  before_filter :set_episode, only: [:create]
-  before_filter :set_checkin, only: [:create]
+  before_action :authenticate_user!
+  before_action :set_work,    only: [:create]
+  before_action :set_episode, only: [:create]
+  before_action :set_checkin, only: [:create]
 
 
   def create(comment)

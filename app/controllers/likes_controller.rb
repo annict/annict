@@ -1,5 +1,5 @@
 class LikesController < ApplicationController
-  before_filter :authenticate_user!
+  before_action :authenticate_user!
 
   def checkin_create(checkin_id)
     create_like(Checkin, checkin_id)

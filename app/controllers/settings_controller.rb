@@ -1,7 +1,7 @@
 class SettingsController < ApplicationController
   permits :hide_checkin_comment
 
-  before_filter :authenticate_user!
+  before_action :authenticate_user!
 
   def update(setting)
     if current_user.setting.update_attributes(setting)

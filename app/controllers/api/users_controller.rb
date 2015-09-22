@@ -1,5 +1,5 @@
 class Api::UsersController < Api::ApplicationController
-  before_filter :set_user, only: [:activities]
+  before_action :set_user, only: [:activities]
 
   def activities(page: nil)
     @activities = @user.activities

@@ -1,6 +1,6 @@
 class Api::ReceptionsController < ApplicationController
-  before_filter :authenticate_user!
-  before_filter :set_channel, only: [:create, :destroy]
+  before_action :authenticate_user!
+  before_action :set_channel, only: [:create, :destroy]
 
 
   def create

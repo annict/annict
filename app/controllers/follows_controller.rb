@@ -1,6 +1,6 @@
 class FollowsController < ApplicationController
-  before_filter :authenticate_user!
-  before_filter :set_user, only: [:create, :destroy]
+  before_action :authenticate_user!
+  before_action :set_user, only: [:create, :destroy]
 
 
   def create
