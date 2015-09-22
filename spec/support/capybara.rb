@@ -1,4 +1,4 @@
-Capybara.default_wait_time = 8 # Seconds to wait before timeout error. Default is 2
+Capybara.default_max_wait_time = 8 # Seconds to wait before timeout error. Default is 2
 
 # Register slightly larger than default window size...
 Capybara.register_driver :poltergeist do |app|

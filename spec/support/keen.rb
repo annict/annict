@@ -1,5 +1,5 @@
 RSpec.configure do |config|
   config.before :each do
-    Keen.stub(:publish)
+    allow(Keen).to receive(:publish)
   end
 end
