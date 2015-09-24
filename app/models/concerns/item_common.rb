@@ -8,7 +8,7 @@ module ItemCommon
     has_attached_file :tombo_image, preserve_files: true
 
     validates :name, presence: true
-    validates :url, presence: true, url: true, amazon: true
+    validates :url, presence: true, url: true, amazon: true, length: { maximum: 500 }
     validates :tombo_image, attachment_presence: true,
                             attachment_content_type: { content_type: /\Aimage/ }
 
