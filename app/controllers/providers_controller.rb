@@ -1,5 +1,5 @@
 class ProvidersController < ApplicationController
-  before_filter :authenticate_user!
+  before_action :authenticate_user!
 
   def destroy(id)
     provider = current_user.providers.find(id)

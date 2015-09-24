@@ -1,5 +1,5 @@
 class CallbacksController < Devise::OmniauthCallbacksController
-  before_filter :authorize, only: [:facebook, :twitter]
+  before_action :authorize, only: [:facebook, :twitter]
 
   def twitter
   end

@@ -2,7 +2,7 @@ module FlashMessage
   extend ActiveSupport::Concern
 
   included do
-    before_filter :store_flash_message
+    before_action :store_flash_message
   end
 
   private

@@ -1,5 +1,5 @@
 class RegistrationsController < Devise::RegistrationsController
-  before_filter :set_oauth, only: [:new, :create]
+  before_action :set_oauth, only: [:new, :create]
 
   def new
     username = @oauth[:info][:nickname].presence || ''
