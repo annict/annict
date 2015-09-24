@@ -7,10 +7,14 @@ module EpisodeDecoratorCommon
         hash[field] = case field
         when :prev_episode_id
           if send(field).present?
-            episode = work.episodes.find(send(field))
-            title = episode.decorate.title_with_number
-            path = h.work_episode_path(episode.work, episode)
-            h.link_to(title, path, target: "_blank")
+            episode = work.episodes.where(id: send(field)).first
+            if episode.present?
+              title = episode.decorate.title_with_number
+              path = h.work_episode_path(episode.work, episode)
+              h.link_to(title, path, target: "_blank")
+            else
+              ""
+            end
           end.to_s
         else
           send(field).to_s
