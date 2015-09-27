@@ -9,7 +9,7 @@ link href='/images/apple-touch-icon-114x114.png' rel='apple-touch-icon-precompos
 link href='/images/apple-touch-icon-72x72.png' rel='apple-touch-icon-precomposed' sizes='72x72'
 link href='/images/apple-touch-icon-57x57.png' rel='apple-touch-icon-precomposed' sizes='57x57'
 
-link type='text/plain' rel='author' href='http://www.annict.com/humans.txt'
+link type='text/plain' rel='author' href="#{ENV['ANNICT_URL']}/humans.txt"
 
 - if browser.mobile?
   = stylesheet_link_tag 'application_mobile', media: 'all'

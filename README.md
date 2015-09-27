@@ -1,5 +1,5 @@
 <p align="center">
-  <a href="http://www.annict.com" target="_blank">
+  <a href="https://annict.com" target="_blank">
     <img src="http://d3a8d1smk6xli.cloudfront.net/github/annict-logo2.png" alt="Annict" width="150" height="150">
   </a>
   <br>
@@ -7,7 +7,7 @@
   <img src="http://d3a8d1smk6xli.cloudfront.net/github/annict-text-logo.png" alt="Annict" width="240" height="60">
   <br>
   見たアニメを記録して、共有しよう<br>
-  <a href="http://www.annict.com" target="_blank">http://www.annict.com</a>
+  <a href="https://annict.com" target="_blank">https://annict.com</a>
   <br>
   <br>
   <a href="https://circleci.com/gh/annict/annict/tree/master"><img src="https://circleci.com/gh/annict/annict/tree/master.svg?style=svg"></a>
