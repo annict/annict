@@ -1,6 +1,6 @@
 /* TEAM */
 	Developer: Koji Shimba
-	Twitter: @bojovs
+	Twitter: @shimbaco
 	From: Kanagawa, Japan
 
 
