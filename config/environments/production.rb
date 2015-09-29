@@ -105,4 +105,11 @@ Annict::Application.configure do
       password:       ENV['SMTP_PASSWORD'],
       authentication: :plain
   }
+
+  config.middleware.insert_before(Rack::Runtime, Rack::Rewrite) do
+    # http://www.annict.com へのリクエストを https://annict.com にリダイレクトする
+    r301 %r{.*}, "https://annict.com$&", if: Proc.new { |rack_env|
+      rack_env["SERVER_NAME"] == "www.annict.com"
+    }
+  end
 end
