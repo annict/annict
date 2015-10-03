@@ -6,7 +6,7 @@ namespace :work do
 
   # 指定したWorkを削除する
   # コマンド実行例: rake work:delete_overlapped_work[4458,4485]
-  task :delete_overlapped_work, [:target_work_id, :original_work_id] do |t, args|
+  task :delete_overlapped_work, [:target_work_id, :original_work_id] => :environment do |t, args|
     # 削除対象のWork
     target_work = Work.find(args[:target_work_id])
     # オリジナルのWork
