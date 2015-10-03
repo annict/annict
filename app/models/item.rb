@@ -16,6 +16,7 @@
 # Indexes
 #
 #  index_items_on_work_id  (work_id) UNIQUE
+#  items_work_id_idx       (work_id)
 #
 
 class Item < ActiveRecord::Base

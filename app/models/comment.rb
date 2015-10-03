@@ -9,16 +9,19 @@
 #  likes_count :integer          default(0), not null
 #  created_at  :datetime
 #  updated_at  :datetime
+#  work_id     :integer
 #
 # Indexes
 #
-#  comments_checkin_id_idx  (checkin_id)
-#  comments_user_id_idx     (user_id)
+#  comments_checkin_id_idx    (checkin_id)
+#  comments_user_id_idx       (user_id)
+#  index_comments_on_work_id  (work_id)
 #
 
 class Comment < ActiveRecord::Base
   belongs_to :checkin, counter_cache: true
   belongs_to :user
+  belongs_to :work
   has_many   :likes, foreign_key: :recipient_id, foreign_type: :recipient, dependent: :destroy
   has_many   :notifications, foreign_key: :trackable_id, foreign_type: :trackable, dependent: :destroy
 
