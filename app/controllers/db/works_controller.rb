@@ -73,7 +73,7 @@ class Db::WorksController < Db::ApplicationController
 
     @work.hide!
 
-    redirect_to db_works_path, notice: "作品を非公開にしました"
+    redirect_to :back, notice: "作品を非公開にしました"
   end
 
   def destroy(id)

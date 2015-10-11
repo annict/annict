@@ -2,7 +2,7 @@ class Db::EpisodesController < Db::ApplicationController
   permits :number, :sort_number, :sc_count, :title, :prev_episode_id
 
   before_action :authenticate_user!
-  before_action :load_work, only: [:index, :new, :create, :edit, :update, :destroy]
+  before_action :load_work, only: [:index, :new, :create, :edit, :update, :hide, :destroy]
 
   def index
     @episodes = @work.episodes.order(:sort_number)
@@ -23,6 +23,15 @@ class Db::EpisodesController < Db::ApplicationController
     else
       render :edit
     end
+  end
+
+  def hide(id)
+    @episode = @work.episodes.find(id)
+    authorize @episode, :hide?
+
+    @episode.hide!
+
+    redirect_to :back, notice: "エピソードを削除しました"
   end
 
   def destroy(id)

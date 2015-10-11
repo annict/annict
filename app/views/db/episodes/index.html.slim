@@ -24,12 +24,19 @@ table.table.table-striped
         th しょぼかる番号
       th 記録数
       th 編集
+      - if policy(@episodes).hide?
+        th 非公開
       - if policy(@episodes).destroy?
         th 削除
   tbody
     - @episodes.each do |episode|
       tr
-        td = link_to episode.id, work_episode_path(@work, episode), target: "_blank"
+        td
+          = link_to episode.id, work_episode_path(@work, episode), target: "_blank"
+          - if episode.published?
+            = icon("check-circle-o", class: "status-published enabled", "data-toggle" => "tooltip", title: "このエピソードは公開されています")
+          - else
+            = icon("check-circle-o", class: "status-published disabled", "data-toggle" => "tooltip", title: "このエピソードは非公開になっています")
         td = episode.number.presence || "-"
         td = episode.title.presence || "-"
         td = episode.next_episode.try(:number).presence || "-"
@@ -42,6 +49,10 @@ table.table.table-striped
             = link_to "編集", edit_db_work_episode_path(@work, episode), class: "btn btn-primary btn-sm"
           - else
             = link_to "編集", new_db_work_draft_episode_path(@work, id: episode), class: "btn btn-primary btn-sm"
+        - if policy(episode).hide?
+          td
+            - if episode.published?
+              = link_to "非公開", hide_db_work_episode_path(@work, episode), class: "btn btn-warning btn-sm", data: { method: "patch", confirm: "このエピソードを非公開にしますか？" }
         - if policy(episode).destroy?
           td = link_to "削除", db_work_episode_path(@work, episode), class: "btn btn-danger btn-sm", data: { method: :delete, confirm: "このエピソードを削除しますか？" }
 

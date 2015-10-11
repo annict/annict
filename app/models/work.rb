@@ -39,6 +39,10 @@ class Work < ActiveRecord::Base
     state :hidden
 
     event :hide do
+      after do
+        episodes.each(&:hide!)
+      end
+
       transitions from: :published, to: :hidden
     end
   end

@@ -91,7 +91,7 @@ hr
   h2.text-center
     = t("words.episode")
 
-  - if @work.episodes.present?
+  - if @work.episodes.published.present?
     - if user_signed_in?
       .multiple-checkin
         .fake-link.fake-link-small ng-click="showCheckinCheckbox()" ng-hide="showingCheckinCheckbox"
@@ -102,7 +102,7 @@ hr
           = t("works.uncheck_all")
     table.table.table-striped
       tbody
-        - @work.episodes.order(:sort_number).each do |episode|
+        - @work.episodes.published.order(:sort_number).each do |episode|
           tr
             - if user_signed_in?
               td.checkbox-column ng-show="showingCheckinCheckbox"

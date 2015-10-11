@@ -27,11 +27,11 @@ class ApplicationController < ActionController::Base
   end
 
   def set_work
-    @work = Work.find(params[:work_id])
+    @work = Work.published.find(params[:work_id])
   end
 
   def set_episode
-    @episode = @work.episodes.find(params[:episode_id])
+    @episode = @work.episodes.published.find(params[:episode_id])
   end
 
   def set_checkin

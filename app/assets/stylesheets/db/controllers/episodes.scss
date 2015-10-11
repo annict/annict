@@ -1,5 +1,17 @@
 body.db-episodes-index {
   table {
     margin-top: 10px;
+
+    .status-published {
+      margin-left: 7px;
+
+      &.enabled {
+        color: #5cb85c;
+      }
+
+      &.disabled {
+        color: #e1e1e1;
+      }
+    }
   }
 }
