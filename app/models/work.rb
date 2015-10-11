@@ -62,7 +62,7 @@ class Work < ActiveRecord::Base
 
   validates :sc_tid, numericality: { only_integer: true }, allow_blank: true,
                      uniqueness: true
-  validates :title, presence: true, uniqueness: { conditions: -> { published }}
+  validates :title, presence: true, uniqueness: { conditions: -> { published } }
 
   scope :by_season, -> (season_slug) {
     return self if season_slug.blank?
