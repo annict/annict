@@ -38,7 +38,7 @@ ul.nav.nav-tabs
           .clearfix
         
         - if @edit_request.body.present?
-          = simple_format(@edit_request.body)
+          = auto_link(simple_format(@edit_request.body), html: { target: "_blank" })
     
     hr
     
