@@ -31,6 +31,7 @@ class Status < ActiveRecord::Base
   scope :wanna_watch_and_watching, -> { latest.with_kind(:wanna_watch, :watching) }
   scope :desiring_to_watch, -> { latest.with_kind(:wanna_watch, :watching, :on_hold) }
   scope :on_hold, -> { latest.with_kind(:on_hold) }
+  scope :work_published, -> { joins(:work).merge(Work.published) }
 
   after_create :change_latest
   after_create :save_activity
@@ -51,6 +52,10 @@ class Status < ActiveRecord::Base
 
   def self.kind_of(work)
     latest.find_by(work_id: work.id)
+  end
+
+  def self.count_on(status_kind)
+    latest.work_published.with_kind(status_kind).count
   end
 
   private

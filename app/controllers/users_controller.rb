@@ -6,7 +6,7 @@ class UsersController < ApplicationController
 
 
   def show
-    @watching_works = @user.works.watching
+    @watching_works = @user.works.watching.published
     checkedin_works = @watching_works.checkedin_by(@user).order('c2.checkin_id DESC')
     other_works = @watching_works.where.not(id: checkedin_works.pluck(:id))
     @works = (checkedin_works + other_works).first(9)
@@ -15,7 +15,7 @@ class UsersController < ApplicationController
   end
 
   def works(status_kind, page: nil)
-    @works = @user.works.on(status_kind).order(released_at: :desc).page(page)
+    @works = @user.works.on(status_kind).published.order(released_at: :desc).page(page)
   end
 
   def update(user)

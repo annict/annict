@@ -33,12 +33,19 @@ table.table.table-striped
       th 作品画像
       - if user_signed_in?
         th 編集
+      - if policy(@works).hide?
+        th 非公開
       - if policy(@works).destroy?
         th 削除
   tbody
     - @works.each do |work|
       tr
-        td = link_to work.id, work_path(work), target: "_blank"
+        td
+          = link_to work.id, work_path(work), target: "_blank"
+          - if work.published?
+            = icon("check-circle-o", class: "status-published enabled", "data-toggle" => "tooltip", title: "この作品は公開されています")
+          - else
+            = icon("check-circle-o", class: "status-published disabled", "data-toggle" => "tooltip", title: "この作品は非公開になっています")
         td = work.title
         td
           - if work.sc_tid.present?
@@ -58,6 +65,10 @@ table.table.table-striped
               = link_to "編集", edit_db_work_path(work), class: "btn btn-primary btn-sm"
             - else
               = link_to "編集", new_db_draft_work_path(work_id: work.id), class: "btn btn-primary btn-sm"
+        - if policy(work).hide?
+          td
+            - if work.published?
+              = link_to "非公開", hide_db_work_path(work), class: "btn btn-warning btn-sm", data: { method: "patch", confirm: "この作品を非公開にしますか？" }
         - if policy(work).destroy?
           td = link_to "削除", db_work_path(work), class: "btn btn-danger btn-sm", data: { method: "delete", confirm: "この作品を削除しますか？" }
 

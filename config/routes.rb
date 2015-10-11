@@ -59,6 +59,9 @@ Annict::Application.routes.draw do
         get :resourceless
         get :search
       end
+      member do
+        patch :hide
+      end
       resources :draft_episodes, only: [:new, :create, :edit, :update]
       resources :draft_items, only: [:new, :create, :edit, :update]
       resources :draft_multiple_episodes, only: [:new, :create, :edit, :update]

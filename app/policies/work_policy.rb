@@ -7,6 +7,10 @@ class WorkPolicy < ApplicationPolicy
     user.present? && user.role.editor? || user.role.admin?
   end
 
+  def hide?
+    user.present? && user.role.admin?
+  end
+
   def destroy?
     user.present? && user.role.admin?
   end

@@ -25,5 +25,8 @@ class Program < ActiveRecord::Base
 
   has_paper_trail only: DIFF_FIELDS
 
+  belongs_to :work
   has_many :draft_programs, dependent: :destroy
+
+  scope :work_published, -> { joins(:work).merge(Work.published) }
 end
