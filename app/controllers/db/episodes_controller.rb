@@ -31,7 +31,7 @@ class Db::EpisodesController < Db::ApplicationController
 
     @episode.hide!
 
-    redirect_to :back, notice: "エピソードを削除しました"
+    redirect_to :back, notice: "エピソードを非公開にしました"
   end
 
   def destroy(id)
