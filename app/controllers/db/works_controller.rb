@@ -67,6 +67,15 @@ class Db::WorksController < Db::ApplicationController
     end
   end
 
+  def hide(id)
+    @work = Work.find(id)
+    authorize @work, :hide?
+
+    @work.hide!
+
+    redirect_to :back, notice: "作品を非公開にしました"
+  end
+
   def destroy(id)
     @work = Work.find(id)
     authorize @work, :destroy?

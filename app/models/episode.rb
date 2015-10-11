@@ -12,19 +12,31 @@
 #  created_at      :datetime
 #  updated_at      :datetime
 #  prev_episode_id :integer
+#  aasm_state      :string           default("published"), not null
 #
 # Indexes
 #
 #  episodes_work_id_idx               (work_id)
 #  episodes_work_id_sc_count_key      (work_id,sc_count) UNIQUE
+#  index_episodes_on_aasm_state       (aasm_state)
 #  index_episodes_on_prev_episode_id  (prev_episode_id)
 #
 
 class Episode < ActiveRecord::Base
+  include AASM
   include DbActivityMethods
   include EpisodeCommon
 
   has_paper_trail only: DIFF_FIELDS
+
+  aasm do
+    state :published, initial: true
+    state :hidden
+
+    event :hide do
+      transitions from: :published, to: :hidden
+    end
+  end
 
   belongs_to :prev_episode, class_name: "Episode", foreign_key: :prev_episode_id
   belongs_to :work, counter_cache: true

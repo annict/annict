@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20151003131229) do
+ActiveRecord::Schema.define(version: 20151011014019) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -272,17 +272,19 @@ ActiveRecord::Schema.define(version: 20151003131229) do
   add_index "edit_requests", ["user_id"], name: "index_edit_requests_on_user_id", using: :btree
 
   create_table "episodes", force: :cascade do |t|
-    t.integer  "work_id",                                 null: false
+    t.integer  "work_id",                                           null: false
     t.string   "number",          limit: 510
-    t.integer  "sort_number",                 default: 0, null: false
+    t.integer  "sort_number",                 default: 0,           null: false
     t.integer  "sc_count"
     t.string   "title",           limit: 510
-    t.integer  "checkins_count",              default: 0, null: false
+    t.integer  "checkins_count",              default: 0,           null: false
     t.datetime "created_at"
     t.datetime "updated_at"
     t.integer  "prev_episode_id"
+    t.string   "aasm_state",                  default: "published", null: false
   end
 
+  add_index "episodes", ["aasm_state"], name: "index_episodes_on_aasm_state", using: :btree
   add_index "episodes", ["prev_episode_id"], name: "index_episodes_on_prev_episode_id", using: :btree
   add_index "episodes", ["work_id", "sc_count"], name: "episodes_work_id_sc_count_key", unique: true, using: :btree
   add_index "episodes", ["work_id"], name: "episodes_work_id_idx", using: :btree
@@ -517,21 +519,23 @@ ActiveRecord::Schema.define(version: 20151003131229) do
   create_table "works", force: :cascade do |t|
     t.integer  "season_id"
     t.integer  "sc_tid"
-    t.string   "title",             limit: 510,                 null: false
-    t.integer  "media",                                         null: false
-    t.string   "official_site_url", limit: 510, default: "",    null: false
-    t.string   "wikipedia_url",     limit: 510, default: "",    null: false
-    t.integer  "episodes_count",                default: 0,     null: false
-    t.integer  "watchers_count",                default: 0,     null: false
+    t.string   "title",             limit: 510,                       null: false
+    t.integer  "media",                                               null: false
+    t.string   "official_site_url", limit: 510, default: "",          null: false
+    t.string   "wikipedia_url",     limit: 510, default: "",          null: false
+    t.integer  "episodes_count",                default: 0,           null: false
+    t.integer  "watchers_count",                default: 0,           null: false
     t.date     "released_at"
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.boolean  "fetch_syobocal",                default: false, null: false
+    t.boolean  "fetch_syobocal",                default: false,       null: false
     t.string   "twitter_username",  limit: 510
     t.string   "twitter_hashtag",   limit: 510
     t.string   "released_at_about"
+    t.string   "aasm_state",                    default: "published", null: false
   end
 
+  add_index "works", ["aasm_state"], name: "index_works_on_aasm_state", using: :btree
   add_index "works", ["sc_tid"], name: "works_sc_tid_key", unique: true, using: :btree
   add_index "works", ["season_id"], name: "works_season_id_idx", using: :btree
 

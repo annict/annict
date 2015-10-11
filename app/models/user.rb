@@ -122,10 +122,6 @@ class User < ActiveRecord::Base
     Activity.where(user_id: following_ids)
   end
 
-  def watching_count
-    statuses.where(latest: true).with_kind(:watching).count
-  end
-
   def authorized_to?(provider)
     providers.pluck(:name).include?(provider.to_s)
   end

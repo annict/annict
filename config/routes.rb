@@ -59,11 +59,18 @@ Annict::Application.routes.draw do
         get :resourceless
         get :search
       end
+      member do
+        patch :hide
+      end
       resources :draft_episodes, only: [:new, :create, :edit, :update]
       resources :draft_items, only: [:new, :create, :edit, :update]
       resources :draft_multiple_episodes, only: [:new, :create, :edit, :update]
       resources :draft_programs, only: [:new, :create, :edit, :update]
-      resources :episodes, only: [:index, :edit, :update, :destroy]
+      resources :episodes, only: [:index, :edit, :update, :destroy] do
+        member do
+          patch :hide
+        end
+      end
       resources :multiple_episodes, only: [:new, :create]
       resources :programs, except: [:show]
       resource :item, except: [:index]

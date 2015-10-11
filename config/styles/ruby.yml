@@ -4,3 +4,5 @@ Metrics/LineLength:
   Max: 90
 Style/CaseIndentation:
   IndentWhenRelativeTo: end
+Style/MultilineOperationIndentation:
+  EnforcedStyle: indented

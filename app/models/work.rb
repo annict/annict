@@ -18,18 +18,34 @@
 #  twitter_username  :string(510)
 #  twitter_hashtag   :string(510)
 #  released_at_about :string
+#  aasm_state        :string           default("published"), not null
 #
 # Indexes
 #
-#  works_sc_tid_key     (sc_tid) UNIQUE
-#  works_season_id_idx  (season_id)
+#  index_works_on_aasm_state  (aasm_state)
+#  works_sc_tid_key           (sc_tid) UNIQUE
+#  works_season_id_idx        (season_id)
 #
 
 class Work < ActiveRecord::Base
+  include AASM
   include DbActivityMethods
   include WorkCommon
 
   has_paper_trail only: DIFF_FIELDS
+
+  aasm do
+    state :published, initial: true
+    state :hidden
+
+    event :hide do
+      after do
+        episodes.each(&:hide!)
+      end
+
+      transitions from: :published, to: :hidden
+    end
+  end
 
   has_many :activities, foreign_key: :recipient_id, foreign_type: :recipient, dependent: :destroy
   has_many :checkins, dependent: :destroy
@@ -46,7 +62,7 @@ class Work < ActiveRecord::Base
 
   validates :sc_tid, numericality: { only_integer: true }, allow_blank: true,
                      uniqueness: true
-  validates :title, presence: true, uniqueness: true
+  validates :title, presence: true, uniqueness: { conditions: -> { published } }
 
   scope :by_season, -> (season_slug) {
     return self if season_slug.blank?

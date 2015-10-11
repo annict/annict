@@ -6,7 +6,7 @@ class WorksController < ApplicationController
   end
 
   def popular(page: nil)
-    @works = Work.order(watchers_count: :desc).page(page)
+    @works = Work.published.order(watchers_count: :desc).page(page)
 
     @page_title = '人気アニメ一覧'
     @page_description = meta_description('Annictユーザに人気のアニメをチェック！')
@@ -16,7 +16,7 @@ class WorksController < ApplicationController
   end
 
   def season(name, page: nil)
-    @works = Work.by_season(name).order(watchers_count: :desc).page(page)
+    @works = Work.published.by_season(name).order(watchers_count: :desc).page(page)
 
     season = Season.find_by(slug: name)
     @page_title = "#{season.name}アニメ一覧"
@@ -27,12 +27,12 @@ class WorksController < ApplicationController
   end
 
   def show
-    @work = Work.find(params[:id])
+    @work = Work.published.find(params[:id])
     @status = current_user.statuses.kind_of(@work) if user_signed_in?
   end
 
   def search(q: nil, page: nil)
-    @q = Work.search(q)
+    @q = Work.published.search(q)
 
     @works = if q.present?
       @q.result.order(released_at: :desc).page(page)
