@@ -152,6 +152,8 @@ GEM
     docile (1.1.5)
     domain_name (0.5.25)
       unf (>= 0.0.5, < 1.0.0)
+    doorkeeper (3.0.1)
+      railties (>= 3.2)
     draper (2.1.0)
       actionpack (>= 3.0)
       activemodel (>= 3.0)
@@ -619,6 +621,7 @@ DEPENDENCIES
   delayed_job_active_record
   devise
   did_you_mean
+  doorkeeper
   draper
   email_validator
   enumerize

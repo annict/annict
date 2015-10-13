@@ -1,4 +1,5 @@
 Annict::Application.routes.draw do
+  use_doorkeeper
   if Rails.env.development?
     mount LetterOpenerWeb::Engine, at: '/low'
   end
