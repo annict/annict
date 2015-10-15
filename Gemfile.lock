@@ -64,12 +64,12 @@ GEM
       execjs
       json
     awesome_print (1.6.1)
-    aws-sdk (2.1.29)
-      aws-sdk-resources (= 2.1.29)
-    aws-sdk-core (2.1.29)
+    aws-sdk (2.1.30)
+      aws-sdk-resources (= 2.1.30)
+    aws-sdk-core (2.1.30)
       jmespath (~> 1.0)
-    aws-sdk-resources (2.1.29)
-      aws-sdk-core (= 2.1.29)
+    aws-sdk-resources (2.1.30)
+      aws-sdk-core (= 2.1.30)
     aws-sdk-v1 (1.66.0)
       json (~> 1.4)
       nokogiri (>= 1.4.4)
@@ -259,7 +259,7 @@ GEM
     fog-serverlove (0.1.2)
       fog-core
       fog-json
-    fog-softlayer (0.4.7)
+    fog-softlayer (1.0.0)
       fog-core
       fog-json
     fog-storm_on_demand (0.1.1)
@@ -401,7 +401,7 @@ GEM
       websocket-driver (>= 0.2.0)
     polyamorous (1.2.0)
       activerecord (>= 3.0)
-    pry (0.10.2)
+    pry (0.10.3)
       coderay (~> 1.1.0)
       method_source (~> 0.8.1)
       slop (~> 3.4)
