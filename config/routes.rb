@@ -23,23 +23,25 @@ Annict::Application.routes.draw do
   end
 
   namespace :api do
-    resources :activities, only: [:index]
-    resources :receptions, only: [:create, :destroy]
-    resources :tips, only: [] do
-      post :finish, on: :collection
-    end
-    resources :users,      only: [] do
-      get :activities
-    end
-    resource  :user,       only: [] do
-      resources :checks,   only: [:index], controller: "user_checks" do
-        patch :skip_episode
+    namespace :private do
+      resources :activities, only: [:index]
+      resources :receptions, only: [:create, :destroy]
+      resources :tips, only: [] do
+        post :finish, on: :collection
       end
-      resources :programs, only: [:index], controller: 'user_programs'
-    end
-    resources :works,      only: [] do
-      resources :channels, only: [] do
-        post :select, on: :collection
+      resources :users, only: [] do
+        get :activities
+      end
+      resource :user, only: [] do
+        resources :checks, only: [:index], controller: "user_checks" do
+          patch :skip_episode
+        end
+        resources :programs, only: [:index], controller: 'user_programs'
+      end
+      resources :works, only: [] do
+        resources :channels, only: [] do
+          post :select, on: :collection
+        end
       end
     end
   end

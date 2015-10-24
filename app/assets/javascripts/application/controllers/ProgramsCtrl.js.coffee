@@ -3,7 +3,7 @@ Annict.angular.controller 'ProgramsCtrl', ($scope, $http) ->
   $scope.disabled = false
   $scope.loading  = true
 
-  $http.get('/api/user/programs').success (data) ->
+  $http.get('/api/private/user/programs').success (data) ->
     $scope.loading = false
     $scope.programs = data.programs
 
@@ -12,7 +12,7 @@ Annict.angular.controller 'ProgramsCtrl', ($scope, $http) ->
       $scope.disabled = true
       page += 1
 
-      $http.get("/api/user/programs?page=#{page}").success (data) ->
+      $http.get("/api/private/user/programs?page=#{page}").success (data) ->
         if data.programs.length > 0
           $scope.disabled = false
           $scope.programs = $scope.programs.concat(data.programs)

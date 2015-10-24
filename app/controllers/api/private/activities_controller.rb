@@ -1,4 +1,4 @@
-class Api::ActivitiesController < Api::ApplicationController
+class Api::Private::ActivitiesController < Api::Private::ApplicationController
   before_action :authenticate_user!, only: [:index]
 
   def index(page: nil)

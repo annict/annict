@@ -13,5 +13,5 @@ Annict.angular.directive 'aniTipModal', ->
 
     $scope.finishTip = (partialName) ->
       if confirm('非表示にします。よろしいですか？')
-        $http.post('/api/tips/finish', partial_name: partialName).success ->
+        $http.post('/api/private/tips/finish', partial_name: partialName).success ->
           $scope.display = false

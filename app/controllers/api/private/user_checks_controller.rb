@@ -1,4 +1,4 @@
-class Api::UserChecksController < Api::ApplicationController
+class Api::Private::UserChecksController < Api::Private::ApplicationController
   before_action :authenticate_user!
 
   def index

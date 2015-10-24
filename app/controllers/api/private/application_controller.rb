@@ -1,4 +1,4 @@
-class Api::ApplicationController < ActionController::Base
+class Api::Private::ApplicationController < ActionController::Base
   private
 
   def set_work

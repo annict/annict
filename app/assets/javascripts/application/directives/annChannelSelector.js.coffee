@@ -11,7 +11,7 @@ Annict.angular.directive 'annChannelSelector', ->
       if $scope.prevChannelId != $scope.channelId
         $scope.$emit("showSpinner-#{workId}")
 
-        $http.post "/api/works/#{$scope.workId}/channels/select",
+        $http.post "/api/private/works/#{$scope.workId}/channels/select",
           channel_id: $scope.channelId
         .success ->
           $scope.prevChannelId = $scope.channelId

@@ -1,4 +1,4 @@
-class Api::TipsController < ApplicationController
+class Api::Private::TipsController < Api::Private::ApplicationController
   before_action :authenticate_user!, only: [:finish]
 
   def finish(partial_name)

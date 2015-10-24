@@ -14,7 +14,7 @@ Annict.angular.directive "annCheckinButton", ($rootScope) ->
 
       $("#js-checkin-button-modal").modal()
 
-      $http.get("/api/user/checks").success (checks) ->
+      $http.get("/api/private/user/checks").success (checks) ->
         $scope.loading = false
         $scope.checks = checks
       .error ->

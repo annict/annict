@@ -1,4 +1,4 @@
-class Api::ReceptionsController < ApplicationController
+class Api::Private::ReceptionsController < Api::Private::ApplicationController
   before_action :authenticate_user!
   before_action :set_channel, only: [:create, :destroy]
 
