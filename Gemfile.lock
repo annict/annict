@@ -298,7 +298,7 @@ GEM
       multi_json
       request_store (>= 1.0)
     hashdiff (0.2.2)
-    hashie (3.4.2)
+    hashie (3.4.3)
     hirb (0.7.3)
     hirb-unicode (0.0.5)
       hirb (~> 0.5)
