@@ -1,4 +1,4 @@
-class Api::UsersController < Api::ApplicationController
+class Api::Private::UsersController < Api::Private::ApplicationController
   before_action :set_user, only: [:activities]
 
   def activities(page: nil)

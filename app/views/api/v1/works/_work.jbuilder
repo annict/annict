@@ -1,0 +1,1 @@
+json.(work, :id, :title)

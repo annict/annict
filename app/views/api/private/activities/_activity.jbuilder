@@ -15,8 +15,8 @@ json.links do
   end
 
   if activity.action == 'checkins.create'
-    json.partial!('/api/activities/checkins_create', activity: activity)
+    json.partial!('/api/private/activities/checkins_create', activity: activity)
   elsif activity.action == 'statuses.create'
-    json.partial!('/api/activities/statuses_create', activity: activity)
+    json.partial!('/api/private/activities/statuses_create', activity: activity)
   end
 end

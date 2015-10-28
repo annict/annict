@@ -1,4 +1,4 @@
-class Api::ChannelsController < Api::ApplicationController
+class Api::Private::ChannelsController < Api::Private::ApplicationController
   before_action :authenticate_user!
   before_action :set_work
 

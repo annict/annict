@@ -3,7 +3,7 @@ Annict.angular.controller 'ActivitiesCtrl', ($scope, $http) =>
   $scope.disabled = false
   $scope.loading  = true
 
-  $http.get('/api/activities').success (data) ->
+  $http.get('/api/private/activities').success (data) ->
     $scope.loading = false
     $scope.activities = data.activities
 
@@ -12,7 +12,7 @@ Annict.angular.controller 'ActivitiesCtrl', ($scope, $http) =>
       $scope.disabled = true
       page += 1
 
-      $http.get("/api/activities?page=#{page}").success (data) ->
+      $http.get("/api/private/activities?page=#{page}").success (data) ->
         if data.activities.length > 0
           $scope.disabled = false
           $scope.activities = $scope.activities.concat(data.activities)

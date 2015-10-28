@@ -1,4 +1,4 @@
-class Api::UserProgramsController < ApplicationController
+class Api::Private::UserProgramsController < Api::Private::ApplicationController
   before_action :authenticate_user!
 
   def index(page: nil)

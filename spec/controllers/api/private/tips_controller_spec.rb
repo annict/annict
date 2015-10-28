@@ -1,4 +1,4 @@
-describe Api::TipsController do
+describe Api::Private::TipsController do
   let(:user) { create(:registered_user) }
   let(:tip) { create(:status_tip) }
 

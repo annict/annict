@@ -21,24 +21,39 @@ Annict::Application.routes.draw do
     post 'users', to: 'registrations#create', as: :user_registration
   end
 
+  use_doorkeeper
+
   namespace :api do
-    resources :activities, only: [:index]
-    resources :receptions, only: [:create, :destroy]
-    resources :tips, only: [] do
-      post :finish, on: :collection
-    end
-    resources :users,      only: [] do
-      get :activities
-    end
-    resource  :user,       only: [] do
-      resources :checks,   only: [:index], controller: "user_checks" do
-        patch :skip_episode
+    namespace :private do
+      resources :activities, only: [:index]
+      resources :receptions, only: [:create, :destroy]
+      resources :tips, only: [] do
+        post :finish, on: :collection
       end
-      resources :programs, only: [:index], controller: 'user_programs'
+      resources :users, only: [] do
+        get :activities
+      end
+      resource :user, only: [] do
+        resources :checks, only: [:index], controller: "user_checks" do
+          patch :skip_episode
+        end
+        resources :programs, only: [:index], controller: 'user_programs'
+      end
+      resources :works, only: [] do
+        resources :channels, only: [] do
+          post :select, on: :collection
+        end
+      end
     end
-    resources :works,      only: [] do
-      resources :channels, only: [] do
-        post :select, on: :collection
+  end
+
+  scope module: :api do
+    constraints Annict::Subdomain do
+      namespace :v1 do
+        resources :users, only: [] do
+          get :me, on: :collection
+        end
+        resources :works, only: [:index]
       end
     end
   end
