@@ -1,5 +1,4 @@
 Annict::Application.routes.draw do
-  use_doorkeeper
   if Rails.env.development?
     mount LetterOpenerWeb::Engine, at: '/low'
   end
@@ -22,6 +21,8 @@ Annict::Application.routes.draw do
     post 'users', to: 'registrations#create', as: :user_registration
   end
 
+  use_doorkeeper
+
   namespace :api do
     namespace :private do
       resources :activities, only: [:index]
@@ -42,6 +43,17 @@ Annict::Application.routes.draw do
         resources :channels, only: [] do
           post :select, on: :collection
         end
+      end
+    end
+  end
+
+  scope module: :api do
+    constraints Annict::Subdomain do
+      namespace :v1 do
+        resources :users, only: [] do
+          get :me, on: :collection
+        end
+        resources :works, only: [:index]
       end
     end
   end

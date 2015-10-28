@@ -1,0 +1,1 @@
+json.(user, :id, :title)
