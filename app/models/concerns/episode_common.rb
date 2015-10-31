@@ -1,7 +1,7 @@
 module EpisodeCommon
   extend ActiveSupport::Concern
 
-  DIFF_FIELDS = %i(number sort_number title prev_episode_id)
+  DIFF_FIELDS = %i(number sort_number title prev_episode_id fetch_syobocal)
   PUBLISH_FIELDS = DIFF_FIELDS + %i(work_id)
 
   included do

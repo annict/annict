@@ -19,3 +19,9 @@
   = f.label :prev_episode_id, class: "col-sm-3 control-label"
   .col-sm-9
     = f.select :prev_episode_id, options_for_select(work.episodes.order(:sort_number).map { |episode| ["#{episode.number} #{episode.title}", episode.id] }, f.object.prev_episode_id), { include_blank: true }, { class: "form-control" }
+.form-group
+  .col-sm-offset-3.col-sm-9
+    .checkbox
+      = f.label :fetch_syobocal do
+        = f.check_box :fetch_syobocal
+        | しょぼかると同期する

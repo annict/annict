@@ -108,6 +108,7 @@ module Syobocal
         e.sort_number = (work.episodes.count + 1) * 10
         e.sc_count = @count
         e.title = title
+        e.fetch_syobocal = true
       end
       episode.prev_episode_id = prev_episode.id if prev_episode.present?
 
@@ -119,7 +120,7 @@ module Syobocal
     end
 
     def update_episode(title)
-      if episode.sc_count.blank? || episode.title != title
+      if episode.fetch_syobocal? && (episode.sc_count.blank? || episode.title != title)
         episode.update_attributes(title: title, sc_count: @count)
       end
 

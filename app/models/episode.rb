@@ -13,6 +13,7 @@
 #  updated_at      :datetime
 #  prev_episode_id :integer
 #  aasm_state      :string           default("published"), not null
+#  fetch_syobocal  :boolean          default(FALSE), not null
 #
 # Indexes
 #

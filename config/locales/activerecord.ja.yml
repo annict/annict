@@ -14,6 +14,7 @@ ja:
         sc_count: しょぼかる番号
         sort_number: ソート番号
         title: タイトル
+        fetch_syobocal: しょぼかると同期する
       item:
         name: 商品名
         url: URL
@@ -47,6 +48,7 @@ ja:
         number: 話数
         sort_number: ソート番号
         title: タイトル
+        fetch_syobocal: しょぼかると同期する
       draft_item:
         name: 商品名
         url: URL
