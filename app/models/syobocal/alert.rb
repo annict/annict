@@ -6,8 +6,8 @@
 #  work_id         :integer
 #  kind            :integer          not null
 #  sc_prog_item_id :integer
-#  sc_sub_title    :string(255)
-#  sc_prog_comment :string(255)
+#  sc_sub_title    :string
+#  sc_prog_comment :string
 #  created_at      :datetime
 #  updated_at      :datetime
 #
