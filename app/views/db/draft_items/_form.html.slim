@@ -13,10 +13,9 @@
     = f.label :tombo_image, class: "col-sm-3 control-label"
     .col-sm-9
       - if draft_item.persisted?
-        = image_tag tombo_thumb_url(draft_item, :tombo_image, "w:100,h:100"), size: "50x50"
-      - else
-        - if draft_item.origin.present?
-          = image_tag tombo_thumb_url(draft_item.origin, :tombo_image, "w:100,h:100"), size: "50x50"
+        = annict_image_tag(draft_item, :tombo_image, size: "50x50")
+      - elsif draft_item.origin.present?
+        = annict_image_tag(draft_item.origin, :tombo_image, size: "50x50")
       = f.file_field :tombo_image
     
   = hidden_field_tag "draft_item[item_id]", (item.try(:id).presence || draft_item.try(:origin).try(:id))

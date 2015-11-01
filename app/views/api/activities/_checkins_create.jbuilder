@@ -3,7 +3,7 @@ json.work do
 end
 
 json.item do
-  json.image_url activity.recipient.work.decorate.item_image_url('w:140,h:140')
+  json.image_url annict_image_url(activity.recipient.work.item, :tombo_image, size: "140x140")
 end
 
 json.episode do

@@ -1,17 +1,15 @@
 module ProfilesHelper
-  def tombo_profile_background_image_url(profile, mini: false)
-    size = if mini
-             browser.mobile? ? "w:640,h:320" : "w:500,h:250"
-           else
-             browser.mobile? ? "w:640,h:650" : "w:500,h:325"
-           end
+  def profile_background_image_url(profile, options)
+    background_image = profile.tombo_background_image
+    field = background_image.present? ? :tombo_background_image : :tombo_avatar
+    image = profile.send(field)
 
-    accessor_name = if profile.tombo_background_image.present?
-                      :tombo_background_image
-                    else
-                      :tombo_avatar
-                    end
+    # プロフィール背景画像がGifアニメのときは、S3に保存された画像をそのまま返す
+    if background_image.present? && profile.background_image_animated?
+      path = image.path(:original).sub(%r(\A.*paperclip/), "paperclip/")
+      return "#{ENV['ANNICT_FILE_STORAGE_URL']}/#{path}"
+    end
 
-    tombo_thumb_url(profile, accessor_name, size)
+    annict_image_url(profile, field, options)
   end
 end

@@ -8,8 +8,7 @@ module ItemDecoratorCommon
         when :url
           h.link_to(send(:url).truncate(30), send(:url), target: "_blank")
         when :tombo_image
-          image_url = h.tombo_thumb_url(self, :tombo_image, "w:200,h:200")
-          h.image_tag(image_url, size: "200x200")
+          h.annict_image_tag(self, :tombo_image, size: "200x200")
         else
           send(field)
         end

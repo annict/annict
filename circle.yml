@@ -6,6 +6,6 @@ machine:
     ANNICT_PAPERCLIP_PATH: paperclip/:class/:id/:attachment/:style/:hash.:extension
     ANNICT_PAPERCLIP_RANDOM_SECRET: secretsecretsecretsecretsecretsecret
     ANNICT_PREVIOUS_SEASON: 2015-spring
-    ANNICT_TOMBO_URL: http://localhost:5000
+    ANNICT_URL: http://localhost:3000
     DEVISE_SECRET: secretsecretsecretsecretsecretsecret
     RAILS_SECRET_KEY_BASE: secretsecretsecretsecretsecretsecret

@@ -3,7 +3,7 @@
 - keywords meta_keywords(@work.title)
 
 .work-profile
-  .work-image style="background-image: url(#{@work.decorate.item_image_url('w:640,h:640')});"
+  .work-image style="background-image: url(#{annict_image_url(@work.item, :tombo_image, msize: '320x320', size: '640x640')});"
   .wrapper
     .work-title
       h1
@@ -165,7 +165,7 @@ hr
       h2.text-center 作品画像について
       .media
         = link_to @work.item.url, class: "pull-left" do
-          = image_tag tombo_thumb_url(@work.item, :tombo_image, "w:160,h:160"), size: "80x80", alt: @work.item.name
+          = annict_image_tag(@work.item, :tombo_image, size: "80x80", alt: @work.item.name)
         .media-body
           .description
             - link = link_to @work.item.name, @work.item.url, target: "_blank"

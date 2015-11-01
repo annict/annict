@@ -2,7 +2,7 @@ json.(check, :id)
 
 json.work do
   json.(check.work, :id, :title)
-  json.image_url check.work.decorate.item_image_url("w:80,h:80")
+  json.image_url annict_image_url(check.work.item, :tombo_image, size: "40x40")
 end
 
 if check.episode.present?

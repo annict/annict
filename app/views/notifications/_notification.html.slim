@@ -1,7 +1,7 @@
 .notification
   .media
     = link_to user_path(notification.action_user.username), class: 'profile-image pull-left' do
-      = image_tag tombo_thumb_url(notification.action_user.profile, :tombo_avatar, 'w:100,h:100'), size: '50x50', class: 'img-circle'
+      = annict_image_tag(notification.action_user.profile, :tombo_avatar, size: "50x50", class: "img-circle")
     .media-body
       - if 'follows.create' == notification.action
         = render 'notifications/follows_create', notification: notification

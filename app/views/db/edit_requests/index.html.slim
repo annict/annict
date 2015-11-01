@@ -10,7 +10,7 @@
               = link_to er.title, db_edit_request_path(er)
             .user
               = link_to user_path(er.user.username) do
-                = image_tag(tombo_thumb_url(er.user.profile, :tombo_avatar, "w:40,h:40"), size: "20x20", class: "img-circle")
+                = annict_image_tag(er.user.profile, :tombo_avatar, size: "20x20", class: "img-circle")
                 = er.user.profile.name
           td
             - if er.draft_resource.work.present?

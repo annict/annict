@@ -27,7 +27,7 @@ ul.nav.nav-tabs
     .media.activity
       .media-left
         = link_to user_path(@edit_request.user.username) do
-          = image_tag tombo_thumb_url(@edit_request.user.profile, :tombo_avatar, "w:140,h:140"), size: "70x70", class: "img-circle"
+          = annict_image_tag(@edit_request.user.profile, :tombo_avatar, size: "70x70", class: "img-circle")
       .media-body
         .media-heading
           .pull-left
