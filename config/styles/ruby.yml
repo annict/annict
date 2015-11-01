@@ -1,8 +1,15 @@
 Lint/EndAlignment:
   AlignWith: variable
+
 Metrics/LineLength:
   Max: 90
+
+# 日本語のコメントを許可する
+Style/AsciiComments:
+  Enabled: false
+
 Style/CaseIndentation:
   IndentWhenRelativeTo: end
+
 Style/MultilineOperationIndentation:
   EnforcedStyle: indented

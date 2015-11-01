@@ -31,7 +31,8 @@ class FacebookService
            end
     caption = "Annict | アニクト - 見たアニメを記録して、共有しよう"
     view_context = controller.view_context
-    source = view_context.annict_image_url(checkin.work.item, :tombo_image, size: "600x315")
+    item = checkin.work.item
+    source = view_context.annict_image_url(item, :tombo_image, size: "600x315")
 
     client.delay.put_connections("me", "feed",
       name: title,

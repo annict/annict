@@ -14,7 +14,7 @@ module ApplicationHelper
 
     msize = options[:msize]
     options[:size] = msize if browser.mobile? && msize.present?
-    options.delete(:msize) if options.has_key?(:msize)
+    options.delete(:msize) if options.key?(:msize)
 
     image_tag(url, options)
   end
