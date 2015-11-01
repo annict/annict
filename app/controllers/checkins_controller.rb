@@ -47,7 +47,7 @@ class CheckinsController < ApplicationController
   def update(checkin)
     if @checkin.update_attributes(checkin)
       @checkin.update_share_checkin_status
-      @checkin.share_to_sns
+      @checkin.share_to_sns(self)
       redirect_to work_episode_checkin_path(@work, @episode, @checkin), notice: t('checkins.updated')
     else
       render :edit
