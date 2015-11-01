@@ -112,4 +112,9 @@ Annict::Application.configure do
       rack_env["SERVER_NAME"] == "www.annict.com"
     }
   end
+
+  config.imgix = {
+    secure: true,
+    source: ENV.fetch("IMGIX_SOURCE")
+  }
 end

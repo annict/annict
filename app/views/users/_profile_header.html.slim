@@ -1,9 +1,9 @@
 .profile-header
   .profile
-    .background style="background-image: url(#{tombo_profile_background_image_url(user.profile)});"
+    .background style="background-image: url(#{profile_background_image_url(user.profile, msize: '320x325', size: '500x325')});"
     .foreground
       .avatar
-        = image_tag(tombo_thumb_url(user.profile, :tombo_avatar, 'w:200,h:200'), size: '100x100', class: 'img-circle')
+        = annict_image_tag(user.profile, :tombo_avatar, size: "100x100", class: "img-circle")
       h1
         = user.profile.name
       .username

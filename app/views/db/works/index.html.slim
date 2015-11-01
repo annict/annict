@@ -58,7 +58,7 @@ table.table.table-striped
             = "未設定"
         td = "#{work.watchers_count}人"
         td = work.released_at.presence || "-"
-        td = image_tag work.decorate.item_image_url("w:70,h:70"), size: "70x70"
+        td = annict_image_tag(work.item, :tombo_image, size: "70x70")
         - if user_signed_in?
           td
             - if current_user.role.admin? || current_user.role.editor?

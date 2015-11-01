@@ -1,12 +1,22 @@
 module ApplicationHelper
-  def annict_image_tag(source, options = {})
-    options[:size] = if browser.mobile?
-      options[:msize]
-    else
-      options[:psize]
-    end
+  def annict_image_url(record, field, options = {})
+    path = record.send(field).path(:master) rescue "no-image.jpg"
 
-    image_tag(source, options)
+    msize = options[:msize]
+    size = (browser.mobile? && msize.present?) ? msize : options[:size]
+    width, height = size.split("x").map { |s| s.to_i * 2 }
+
+    ix_image_url(path, w: width, h: height, fit: "crop")
+  end
+
+  def annict_image_tag(record, field, options = {})
+    url = annict_image_url(record, field, options)
+
+    msize = options[:msize]
+    options[:size] = msize if browser.mobile? && msize.present?
+    options.delete(:msize) if options.key?(:msize)
+
+    image_tag(url, options)
   end
 
   def custom_time_ago_in_words(date)
@@ -40,19 +50,5 @@ module ApplicationHelper
 
   def user_profile_page?
     params[:controller] == 'users' && params[:action] == 'show'
-  end
-
-  def tombo_thumb_url(model, accessor_name, size = "")
-    image = model.send(accessor_name)
-
-    # プロフィール背景画像がGifアニメのときは、S3に保存された画像をそのまま返す
-    if accessor_name == :tombo_background_image && model.background_image_animated?
-      path = image.path(:original).sub(%r(\A.*paperclip/), "paperclip/")
-      return "#{ENV['ANNICT_FILE_STORAGE_URL']}/#{path}"
-    end
-
-    path = image.path(:master).presence || "assets/no-image.jpg"
-    path = path.sub(%r(\A.*paperclip/), "paperclip/")
-    "#{ENV['ANNICT_TOMBO_URL']}/#{size}/#{path}"
   end
 end

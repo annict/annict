@@ -11,6 +11,7 @@
 #  created_at      :datetime         not null
 #  updated_at      :datetime         not null
 #  prev_episode_id :integer
+#  fetch_syobocal  :boolean          default(FALSE), not null
 #
 # Indexes
 #

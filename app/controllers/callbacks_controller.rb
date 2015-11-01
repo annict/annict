@@ -30,8 +30,6 @@ class CallbacksController < Devise::OmniauthCallbacksController
     end
   end
 
-  private
-
   def provider_attributes(auth)
     credentials = auth[:credentials]
 

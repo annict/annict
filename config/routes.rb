@@ -4,11 +4,7 @@ Annict::Application.routes.draw do
   end
 
   if Rails.env.test?
-    # テスト実行時にDragonflyでアップロードした画像を読み込むときに呼ばれるアクション
-    get ':image_size/:image_path',
-        to: 'application#dummy_image',
-        image_size: /[0-9]+x[0-9]+e*/,
-        image_path: %r([0-9]{4}/[0-9]{2}/[0-9]{2}/.+)
+    get "dummy_image", to: "application#dummy_image"
   end
 
   devise_for :users,

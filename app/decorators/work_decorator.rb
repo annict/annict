@@ -16,15 +16,6 @@ class WorkDecorator < ApplicationDecorator
     h.link_to title, syobocal_url, target: "_blank"
   end
 
-  def item_image_url(size)
-    if item.present?
-      h.tombo_thumb_url(item, :tombo_image, size)
-    else
-      path = h.image_path("no-image.jpg")
-      "#{ENV['ANNICT_TOMBO_URL']}/#{size}#{path}"
-    end
-  end
-
   def title_link(options)
     h.link_to title, h.work_path(self), options
   end

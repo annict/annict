@@ -3,7 +3,7 @@
     .db-activity-header-description
       span.db-activity-description-user-avatar
         = link_to user_path(activity.user.username) do
-          = image_tag tombo_thumb_url(activity.user.profile, :tombo_avatar, "w:70,h:70"), size: "35x35", class: "img-circle"
+          = annict_image_tag(activity.user.profile, :tombo_avatar, size: "35x35", class: "img-circle")
       span.db-activity-description-user-link
         = activity.user.decorate.name_link
       | が
