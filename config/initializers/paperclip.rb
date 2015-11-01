@@ -4,8 +4,8 @@ base_options = {
   convert_options: { master: "-quality 90 -strip" }
 }
 
-if Rails.env.development? || Rails.env.production?
-  options = base_options.merge(
+options = if Rails.env.production?
+  base_options.merge(
     storage: :s3,
     path: ENV["ANNICT_PAPERCLIP_PATH"],
     s3_credentials: {
@@ -14,9 +14,13 @@ if Rails.env.development? || Rails.env.production?
       secret_access_key: ENV["S3_SECRET_ACCESS_KEY"]
     }
   )
-else
-  options = base_options.merge(
+elsif Rails.env.test?
+  base_options.merge(
     path: ":rails_root/spec/test_files/#{ENV['ANNICT_PAPERCLIP_PATH']}"
+  )
+else
+  base_options.merge(
+    path: ENV.fetch("ANNICT_PAPERCLIP_PATH")
   )
 end
 
