@@ -3,7 +3,7 @@ GEM
   remote: https://rails-assets.org/
   specs:
     CFPropertyList (2.3.2)
-    aasm (4.3.0)
+    aasm (4.4.0)
     action_args (2.0.0)
     actionmailer (4.2.4)
       actionpack (= 4.2.4)
@@ -64,12 +64,12 @@ GEM
       execjs
       json
     awesome_print (1.6.1)
-    aws-sdk (2.1.31)
-      aws-sdk-resources (= 2.1.31)
-    aws-sdk-core (2.1.31)
+    aws-sdk (2.1.32)
+      aws-sdk-resources (= 2.1.32)
+    aws-sdk-core (2.1.32)
       jmespath (~> 1.0)
-    aws-sdk-resources (2.1.31)
-      aws-sdk-core (= 2.1.31)
+    aws-sdk-resources (2.1.32)
+      aws-sdk-core (= 2.1.32)
     aws-sdk-v1 (1.66.0)
       json (~> 1.4)
       nokogiri (>= 1.4.4)
@@ -361,7 +361,7 @@ GEM
     mime-types (2.6.2)
     mimemagic (0.3.0)
     mini_portile (0.6.2)
-    minitest (5.8.1)
+    minitest (5.8.2)
     multi_json (1.11.2)
     multi_xml (0.5.5)
     multipart-post (2.0.0)
@@ -385,7 +385,7 @@ GEM
     omniauth (1.2.2)
       hashie (>= 1.2, < 4)
       rack (~> 1.0)
-    omniauth-facebook (2.0.1)
+    omniauth-facebook (3.0.0)
       omniauth-oauth2 (~> 1.2)
     omniauth-oauth (1.1.0)
       oauth
