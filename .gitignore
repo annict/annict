@@ -9,3 +9,4 @@
 /log/*.log
 /public/paperclip
 /tmp
+/spec/test_files/paperclip

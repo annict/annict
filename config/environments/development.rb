@@ -40,4 +40,9 @@ Annict::Application.configure do
   # Vagrant環境でもBetter Errorsが使いたい
   # https://github.com/charliesome/better_errors#security
   BetterErrors::Middleware.allow_ip! '192.168.33.1'
+
+  config.imgix = {
+    secure: true,
+    source: ENV.fetch("IMGIX_SOURCE")
+  }
 end
