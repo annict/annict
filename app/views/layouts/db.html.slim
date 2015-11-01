@@ -12,18 +12,18 @@ html lang="ja" ng-app="annict"
     nav.navbar.navbar-default.navbar-fixed-top role="navigation"
       .container-fluid
         .navbar-header
-          = link_to "Annict DB", db_root_path, class: "navbar-brand"
+          = link_to "Annict DB", db_root_path, class: "navbar-brand", target: "_self"
         .collapse.navbar-collapse
           ul.nav.navbar-nav
             li
-              = link_to db_edit_requests_path do
+              = link_to db_edit_requests_path, target: "_self" do
                 | 編集リクエスト 
                 - if @opened_edit_requests.present?
                   span.badge = @opened_edit_requests.count
             li
-              = link_to "アクティビティ", db_activities_path
+              = link_to "アクティビティ", db_activities_path, target: "_self"
             li
-              = link_to "作品", db_works_path
+              = link_to "作品", db_works_path, target: "_self"
           = search_form_for @q, url: search_db_works_path, class: "navbar-form navbar-left", role: "form" do |f|
             = f.text_field :title_cont, class: "form-control", placeholder: "作品名で検索..."
           ul.nav.navbar-nav.navbar-right

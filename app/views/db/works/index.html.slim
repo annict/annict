@@ -9,17 +9,17 @@
   .clearfix
 
 ul.nav.nav-tabs
-  = active_link_to db_works_path, wrap_tag: :li, active: params[:action] == "index" do
+  = active_link_to db_works_path, wrap_tag: :li, active: params[:action] == "index", target: "_self" do
     | 全て
-  = active_link_to season_db_works_path(slug: ENV["ANNICT_CURRENT_SEASON"]), wrap_tag: :li, active: (params[:slug] == ENV["ANNICT_CURRENT_SEASON"]) do
+  = active_link_to season_db_works_path(slug: ENV["ANNICT_CURRENT_SEASON"]), wrap_tag: :li, active: (params[:slug] == ENV["ANNICT_CURRENT_SEASON"]), target: "_self" do
     | 今期
-  = active_link_to season_db_works_path(slug: ENV["ANNICT_NEXT_SEASON"]), wrap_tag: :li, active: (params[:slug] == ENV["ANNICT_NEXT_SEASON"]) do
+  = active_link_to season_db_works_path(slug: ENV["ANNICT_NEXT_SEASON"]), wrap_tag: :li, active: (params[:slug] == ENV["ANNICT_NEXT_SEASON"]), target: "_self" do
     | 来期
-  = active_link_to season_db_works_path(slug: ENV["ANNICT_PREVIOUS_SEASON"]), wrap_tag: :li, active: (params[:slug] == ENV["ANNICT_PREVIOUS_SEASON"]) do
+  = active_link_to season_db_works_path(slug: ENV["ANNICT_PREVIOUS_SEASON"]), wrap_tag: :li, active: (params[:slug] == ENV["ANNICT_PREVIOUS_SEASON"]), target: "_self" do
     | 前期
-  = active_link_to resourceless_db_works_path(name: :episode), wrap_tag: :li, active: (params[:name] == "episode") do
+  = active_link_to resourceless_db_works_path(name: :episode), wrap_tag: :li, active: (params[:name] == "episode"), target: "_self" do
     | エピソード未登録
-  = active_link_to resourceless_db_works_path(name: :item), wrap_tag: :li, active: (params[:name] == "item") do
+  = active_link_to resourceless_db_works_path(name: :item), wrap_tag: :li, active: (params[:name] == "item"), target: "_self" do
     | 作品画像未登録
 
 table.table.table-striped
