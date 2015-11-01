@@ -51,5 +51,10 @@ module Annict
     config.active_record.raise_in_transactional_callbacks = true
 
     config.active_job.queue_adapter = :delayed_job
+
+    config.imgix = {
+      secure: true,
+      source: ENV.fetch("IMGIX_SOURCE")
+    }
   end
 end

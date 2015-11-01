@@ -1,7 +1,7 @@
 .work
   .media
     = link_to work_path(work), class: 'pull-left' do
-      = image_tag work.decorate.item_image_url('w:140,h:140'), size: '70x70', alt: work.title
+      = annict_image_tag(work.item, :tombo_image, size: "70x70", alt: work.title)
     .media-body
       .title
         = link_to work.title, work_path(work)

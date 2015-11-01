@@ -20,7 +20,7 @@
 .item-detail.container
   .col-md-4
     .thumbnail
-      = image_tag @work.decorate.item_image_url("w:350,h:350"), size: "350x350"
+      = annict_image_tag(@work.item, :tombo_image, size: "350x350")
   .col-md-8
     - if @item.present?
       dl

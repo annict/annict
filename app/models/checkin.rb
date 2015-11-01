@@ -83,9 +83,9 @@ class Checkin < ActiveRecord::Base
     end
   end
 
-  def share_to_sns
+  def share_to_sns(controller)
     TwitterService.new(user).delay.share!(self) if shared_twitter?
-    FacebookService.new(user).delay.share!(self) if shared_facebook?
+    FacebookService.new(user).share!(self, controller) if shared_facebook?
   end
 
   private
