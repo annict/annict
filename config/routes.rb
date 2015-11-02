@@ -139,7 +139,7 @@ Annict::Application.routes.draw do
   resources :works, only: [:index, :show] do
     collection do
       get :popular
-      get ':slug',
+      get ":slug",
         action: :season,
         slug: /[0-9]{4}-(spring|summer|autumn|winter)/,
         as: :season
