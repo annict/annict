@@ -67,11 +67,9 @@ class Work < ActiveRecord::Base
   scope :by_season, -> (season_slug) {
     return self if season_slug.blank?
 
-    season = Season.find_by(slug: season_slug)
+    year, name = season_slug.split("-")
 
-    return none if season.blank?
-
-    where(season_id: season.id)
+    joins(:season).where(seasons: { year: year, name: name })
   }
 
   scope :program_registered, -> {
