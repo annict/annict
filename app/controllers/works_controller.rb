@@ -15,12 +15,13 @@ class WorksController < ApplicationController
     render :index
   end
 
-  def season(name, page: nil)
-    @works = Work.published.by_season(name).order(watchers_count: :desc).page(page)
+  def season(slug, page: nil)
+    @works = Work.published.by_season(slug).order(watchers_count: :desc).page(page)
 
-    season = Season.find_by(slug: name)
-    @page_title = "#{season.name}アニメ一覧"
-    @page_description = meta_description("#{season.name}アニメをチェック！")
+    season = Season.find_by_slug(slug)
+    yearly_season_ja = season.decorate.yearly_season_ja
+    @page_title = "#{yearly_season_ja}アニメ一覧"
+    @page_description = meta_description("#{yearly_season_ja}アニメをチェック！")
     @page_keywords = meta_keywords(season.name, '人気', '評判')
 
     render :index
@@ -35,7 +36,7 @@ class WorksController < ApplicationController
     @q = Work.published.search(q)
 
     @works = if q.present?
-      @q.result.order(released_at: :desc).page(page)
+      @q.result.order_latest.page(page)
     else
       Work.none
     end

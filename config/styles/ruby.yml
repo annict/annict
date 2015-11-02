@@ -11,5 +11,10 @@ Style/AsciiComments:
 Style/CaseIndentation:
   IndentWhenRelativeTo: end
 
+# `lambda` のブロック内が複数行になるときもRuby 1.9から入った `-> {}` 記法で書く
+# `lambda` より `->` のほうがすっきりするため。
+Style/Lambda:
+  Enabled: false
+
 Style/MultilineOperationIndentation:
   EnforcedStyle: indented

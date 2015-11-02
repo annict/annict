@@ -1,6 +1,8 @@
 FactoryGirl.define do
   factory :season do
-    sequence(:name) { |n| "20#{sprintf('%02d', n)}年春季" }
-    sequence(:slug) { |n| "20#{sprintf('%02d', n)}-spring" }
+    sequence(:year) { |n| format("20%02d", n).to_i }
+    name "winter"
+    sequence(:sort_number) { |n| n }
+    sequence(:slug) { |n| format("20%02d-spring", n) }
   end
 end

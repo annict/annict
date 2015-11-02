@@ -1,4 +1,4 @@
 .ann-tabs
-  = link_to t('words.current_season'), season_works_path(name: ENV['ANNICT_CURRENT_SEASON']), class: "tab #{'active' if params[:action] == 'season'}"
+  = link_to t('words.current_season'), season_works_path(slug: ENV['ANNICT_CURRENT_SEASON']), class: "tab #{'active' if params[:action] == 'season'}"
   = link_to t('words.popular'), popular_works_path, class: "tab #{'active' if params[:action] == 'popular'}"
   = link_to t('words.search'), search_works_path, class: "tab #{'active' if current_page?(action: 'search')}"

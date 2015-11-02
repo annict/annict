@@ -29,7 +29,7 @@ table.table.table-striped
       th タイトル
       th しょぼかる
       th Watchers
-      th リリース日
+      th リリース時期
       th 作品画像
       - if user_signed_in?
         th 編集
@@ -57,7 +57,7 @@ table.table.table-striped
           - else
             = "未設定"
         td = "#{work.watchers_count}人"
-        td = work.released_at.presence || "-"
+        td = work.decorate.release_season.presence || "-"
         td = annict_image_tag(work.item, :tombo_image, size: "70x70")
         - if user_signed_in?
           td

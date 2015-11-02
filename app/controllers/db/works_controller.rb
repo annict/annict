@@ -1,6 +1,6 @@
 class Db::WorksController < Db::ApplicationController
   permits :season_id, :sc_tid, :title, :media, :official_site_url, :wikipedia_url,
-          :twitter_username, :twitter_hashtag, :released_at, :released_at_about,
+          :twitter_username, :twitter_hashtag, :released_at_about,
           :fetch_syobocal
 
   before_action :authenticate_user!, only: [:new, :create, :edit, :update, :destroy]
@@ -40,7 +40,7 @@ class Db::WorksController < Db::ApplicationController
   end
 
   def create(work)
-    @work = Work.new(format_params(work))
+    @work = Work.new(work)
     authorize @work, :create?
 
     if @work.save_and_create_db_activity(current_user, "works.create")
@@ -59,7 +59,7 @@ class Db::WorksController < Db::ApplicationController
     @work = Work.find(id)
     authorize @work, :update?
 
-    @work.attributes = format_params(work)
+    @work.attributes = work
     if @work.save_and_create_db_activity(current_user, "works.update")
       redirect_to edit_db_work_path(@work), notice: "作品を更新しました"
     else
@@ -83,13 +83,5 @@ class Db::WorksController < Db::ApplicationController
     @work.destroy
 
     redirect_to db_works_path, notice: "作品を削除しました"
-  end
-
-  private
-
-  def format_params(work_params)
-    released_at = work_params[:released_at].strip.gsub(/年|月/, '-').delete('日')
-    work_params[:released_at] = released_at
-    work_params
   end
 end

@@ -6,7 +6,9 @@ module WorkDecoratorCommon
       model.class::DIFF_FIELDS.inject({}) do |hash, field|
         hash[field] = case field
         when :season_id
-          Season.find(send(:season_id)).name if send(:season_id).present?
+          if send(:season_id).present?
+            Season.find(send(:season_id)).decorate.yearly_season_ja
+          end
         when :sc_tid
           sc_tid = send(:sc_tid)
           if sc_tid.present?
@@ -25,8 +27,6 @@ module WorkDecoratorCommon
           if url.present?
             h.link_to(URI.decode(url), url, target: "_blank")
           end
-        when :released_at
-          send(:released_at).try(:strftime, "%Y/%m/%d")
         when :twitter_username
           username = send(:twitter_username)
           if username.present?

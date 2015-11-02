@@ -67,11 +67,9 @@ class Work < ActiveRecord::Base
   scope :by_season, -> (season_slug) {
     return self if season_slug.blank?
 
-    season = Season.find_by(slug: season_slug)
+    year, name = season_slug.split("-")
 
-    return none if season.blank?
-
-    where(season_id: season.id)
+    joins(:season).where(seasons: { year: year, name: name })
   }
 
   scope :program_registered, -> {
@@ -89,6 +87,12 @@ class Work < ActiveRecord::Base
   # 作品画像が設定されていない作品
   scope :itemless, -> {
     joins("LEFT OUTER JOIN items ON items.work_id = works.id").where("items.id IS NULL")
+  }
+
+  # リリース時期が最近のものから順に並べる
+  scope :order_latest, -> {
+    joins('LEFT OUTER JOIN "seasons" ON "seasons"."id" = "works"."season_id"').
+      order("seasons.sort_number DESC, works.id DESC")
   }
 
   # 作品のエピソード数分の空白文字列が入った配列を返す
@@ -125,10 +129,6 @@ class Work < ActiveRecord::Base
 
   def broadcast_on_nicoch?
     nicoch_started_at.present?
-  end
-
-  def release_date
-    released_at.presence || released_at_about.presence || ''
   end
 
   def current_season?

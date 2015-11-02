@@ -19,4 +19,9 @@ class WorkDecorator < ApplicationDecorator
   def title_link(options)
     h.link_to title, h.work_path(self), options
   end
+
+  def release_season
+    return season.decorate.yearly_season_ja if season.present?
+    released_at_about.presence || ""
+  end
 end

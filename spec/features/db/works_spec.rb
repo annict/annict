@@ -88,7 +88,7 @@ describe "Annict DB" do
     end
 
     it "ページが表示されること" do
-      expect(page).to have_content("放送時期")
+      expect(page).to have_content("リリース時期")
     end
 
     context "入力して送信したとき" do
