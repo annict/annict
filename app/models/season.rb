@@ -28,7 +28,7 @@ class Season < ActiveRecord::Base
     find_by(year: year, name: name)
   end
 
-  # def slug
-  #   "#{year}-#{name}"
-  # end
+  def slug
+    "#{year}-#{name}"
+  end
 end
