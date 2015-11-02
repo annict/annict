@@ -8,7 +8,7 @@ class ChannelWorksController < ApplicationController
       published.
       program_registered.
       includes(:episodes).
-      order(released_at: :desc).
+      order_latest.
       page(page)
   end
 end

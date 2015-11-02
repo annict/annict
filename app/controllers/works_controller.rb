@@ -35,7 +35,7 @@ class WorksController < ApplicationController
     @q = Work.published.search(q)
 
     @works = if q.present?
-      @q.result.order(released_at: :desc).page(page)
+      @q.result.order_latest.page(page)
     else
       Work.none
     end

@@ -91,6 +91,12 @@ class Work < ActiveRecord::Base
     joins("LEFT OUTER JOIN items ON items.work_id = works.id").where("items.id IS NULL")
   }
 
+  # リリース時期が最近のものから順に並べる
+  scope :order_latest, -> {
+    joins(:season).
+    order("seasons.sort_number DESC, works.id DESC")
+  }
+
   # 作品のエピソード数分の空白文字列が入った配列を返す
   # Chart.jsのx軸のラベルを消すにはこれしか方法がなかったんだ…! たぶん…。
   def chart_labels
@@ -125,10 +131,6 @@ class Work < ActiveRecord::Base
 
   def broadcast_on_nicoch?
     nicoch_started_at.present?
-  end
-
-  def release_date
-    released_at.presence || released_at_about.presence || ''
   end
 
   def current_season?

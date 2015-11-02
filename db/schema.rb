@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20151101141404) do
+ActiveRecord::Schema.define(version: 20151102154624) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -415,11 +415,14 @@ ActiveRecord::Schema.define(version: 20151101141404) do
     t.string   "slug",        limit: 510, null: false
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.integer  "sort_number"
+    t.integer  "sort_number",             null: false
+    t.integer  "year"
   end
 
   add_index "seasons", ["slug"], name: "seasons_slug_key", unique: true, using: :btree
   add_index "seasons", ["sort_number"], name: "index_seasons_on_sort_number", unique: true, using: :btree
+  add_index "seasons", ["year", "name"], name: "index_seasons_on_year_and_name", unique: true, using: :btree
+  add_index "seasons", ["year"], name: "index_seasons_on_year", using: :btree
 
   create_table "sessions", force: :cascade do |t|
     t.string   "session_id", limit: 510, null: false

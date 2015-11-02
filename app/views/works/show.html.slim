@@ -60,10 +60,10 @@
     li
       = icon("tv")
       = @work.media.text
-    - if @work.release_date.present?
+    - if @work.decorate.release_season.present?
       li
         = icon("calendar-o")
-        = @work.release_date
+        = @work.decorate.release_season
     - if @work.official_site_url.present?
       li
         = icon("home")
