@@ -22,4 +22,13 @@ class Season < ActiveRecord::Base
   has_many :works
 
   delegate :yearly_season_ja, to: :decorate
+
+  def self.find_by_slug(slug)
+    year, name = slug.split("-")
+    find_by(year: year, name: name)
+  end
+
+  def slug
+    "#{year}-#{name}"
+  end
 end

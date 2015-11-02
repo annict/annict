@@ -18,10 +18,10 @@ class WorksController < ApplicationController
   def season(slug, page: nil)
     @works = Work.published.by_season(slug).order(watchers_count: :desc).page(page)
 
-    year, name = slug.split("-")
-    season = Season.find_by(year: year, name: name)
-    @page_title = "#{season.name}アニメ一覧"
-    @page_description = meta_description("#{season.name}アニメをチェック！")
+    season = Season.find_by_slug(slug)
+    yearly_season_ja = season.decorate.yearly_season_ja
+    @page_title = "#{yearly_season_ja}アニメ一覧"
+    @page_description = meta_description("#{yearly_season_ja}アニメをチェック！")
     @page_keywords = meta_keywords(season.name, '人気', '評判')
 
     render :index
