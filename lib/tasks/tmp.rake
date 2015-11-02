@@ -32,4 +32,21 @@ namespace :tmp do
       Season.create(name: s[:name], slug: s[:slug], sort_number: s[:sort_number])
     end
   end
+
+  task update_work_season: :environment do
+    Work.find_each do |w|
+      next if w.season.present? || w.released_at.blank?
+
+      year = w.released_at.year
+      slug = case w.released_at.month
+      when 1..3 then "#{year}-winter"
+      when 4..6 then "#{year}-spring"
+      when 7..9 then "#{year}-summer"
+      when 10..12 then "#{year}-autumn"
+      end
+      season = Season.find_by(slug: slug)
+      w.update_column(:season_id, season.id)
+      puts "work: #{w.id}"
+    end
+  end
 end
