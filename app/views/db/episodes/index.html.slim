@@ -40,7 +40,7 @@ table.table.table-striped
             = icon("check-circle-o", class: "status-published disabled", "data-toggle" => "tooltip", title: "このエピソードは非公開になっています")
         td = episode.number.presence || "-"
         td = episode.title.presence || "-"
-        td = episode.next_episode.try(:number).presence || "-"
+        td = episode.next_episode.try!(:number).presence || "-"
         td
           - if episode.fetch_syobocal?
             | 同期中
