@@ -1,4 +1,4 @@
-- current_channel_id = current_user.channel_works.current_channel(work).try(:id).presence || 'no_select'
+- current_channel_id = current_user.channel_works.current_channel(work).try!(:id).presence || 'no_select'
 
 .ann-channel-selector data-work-id="#{work.id}" data-channel-id="#{current_channel_id}" data-mini-selector="#{mini}" ng-class='{"is-mini": isMini}'
   = render 'selector_spinner', target: work.id

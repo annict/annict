@@ -26,7 +26,7 @@ table.table.table-striped
         td = program.id
         td = program.channel.name
         td = program.episode.decorate.title_with_number
-        td = program.started_at.try(:to_time).try(:strftime, "%Y-%m-%d %H:%M")
+        td = program.started_at.try!(:to_time).try!(:strftime, "%Y-%m-%d %H:%M")
         td
           - if current_user.role.admin? || current_user.role.editor?
             = link_to "編集", edit_db_work_program_path(@work, program), class: "btn btn-primary btn-sm"

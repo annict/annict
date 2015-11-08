@@ -3,7 +3,7 @@
 
   = render "db/programs/program_fields", f: f, work: work
     
-  = hidden_field_tag "draft_program[program_id]", (program.try(:id).presence || draft_program.try(:origin).try(:id))
+  = hidden_field_tag "draft_program[program_id]", (program.try!(:id).presence || draft_program.try!(:origin).try!(:id))
   
   hr
   

@@ -32,8 +32,8 @@ class Check < ActiveRecord::Base
     checks = user.checks.includes(:work).where(episode_id: nil)
 
     checks.each do |check|
-      kind = user.statuses.kind_of(check.work).try(:kind)
-      unless %w(on_hold wanna_watch).include?(kind.try(:to_s))
+      kind = user.statuses.kind_of(check.work).try!(:kind)
+      unless %w(on_hold wanna_watch).include?(kind.try!(:to_s))
         check.update_episode_to_unchecked
       end
     end
@@ -53,7 +53,7 @@ class Check < ActiveRecord::Base
 
   def update_episode_to_next(options = {})
     model = options[:checkin].presence || self
-    next_episode = model.episode.try(:next_episode)
+    next_episode = model.episode.try!(:next_episode)
 
     if next_episode.present?
       update(episode_id: next_episode.id)
