@@ -1,8 +1,19 @@
+AllCops:
+  Exclude:
+    - "vendor/**/*"
+    - "db/schema.rb"
+
 Lint/EndAlignment:
   AlignWith: variable
 
 Metrics/LineLength:
   Max: 90
+
+Metrics/AbcSize:
+  Enabled: false
+
+Metrics/MethodLength:
+  Enabled: false
 
 # 日本語のコメントを許可する
 Style/AsciiComments:
@@ -11,6 +22,9 @@ Style/AsciiComments:
 Style/CaseIndentation:
   IndentWhenRelativeTo: end
 
+Style/Documentation:
+  Enabled: false
+
 # `lambda` のブロック内が複数行になるときもRuby 1.9から入った `-> {}` 記法で書く
 # `lambda` より `->` のほうがすっきりするため。
 Style/Lambda:
@@ -18,3 +32,6 @@ Style/Lambda:
 
 Style/MultilineOperationIndentation:
   EnforcedStyle: indented
+
+Style/StringLiterals:
+  EnforcedStyle: double_quotes
