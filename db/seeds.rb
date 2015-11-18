@@ -39,8 +39,8 @@ CSV.foreach("#{Dir.pwd}/db/data/csv/seasons.csv", headers: true) do |row|
   season = Season.create do |s|
     s.id   = row[0]
     s.name = row[1]
-    s.sort_number = row[4]
-    s.year = row[5]
+    s.sort_number = row[2]
+    s.year = row[3]
   end
   puts "season: #{season.id}"
 end
