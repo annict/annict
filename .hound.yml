@@ -2,7 +2,7 @@ coffeescript:
   enabled: false
 
 ruby:
-  config_file: config/styles/ruby.yml
+  config_file: .rubocop.yml
 
 scss:
   enabled: false
