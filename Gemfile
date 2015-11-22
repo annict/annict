@@ -64,19 +64,6 @@ gem "uglifier"
 gem "validate_url"
 gem "virtus"
 
-source "https://rails-assets.org" do
-  gem "rails-assets-angularjs", "~> 1.3.17"
-  gem "rails-assets-angular-animate", "~> 1.3.17"
-  gem "rails-assets-angular-sanitize", "~> 1.3.17"
-  gem "rails-assets-angulartics"
-  gem "rails-assets-angulartics-google-analytics"
-  gem "rails-assets-chartjs"
-  gem "rails-assets-jquery-easing-original"
-  gem "rails-assets-lodash"
-  gem "rails-assets-moment"
-  gem "rails-assets-ng-infinite-scroller-origin"
-end
-
 group :development, :test do
   gem "awesome_print"
   gem "did_you_mean"
