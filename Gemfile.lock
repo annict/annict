@@ -536,6 +536,8 @@ GEM
       rack (~> 1.4)
       rack-protection (~> 1.4)
       tilt (>= 1.3, < 3)
+    sitemap_generator (5.1.0)
+      builder
     slim (3.0.6)
       temple (~> 0.7.3)
       tilt (>= 1.3.3, < 2.1)
@@ -687,6 +689,7 @@ DEPENDENCIES
   ruby_identicon
   sass-rails
   sinatra
+  sitemap_generator
   slim
   spring
   spring-commands-rspec
