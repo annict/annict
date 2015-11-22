@@ -138,6 +138,11 @@ hr
             = t("episodes.checkin")
         .clearfix ng-show="showingCheckinCheckbox"
 
+      p.multiple-records-hint ng-show="showingCheckinCheckbox"
+        | ※一括記録は「記録する」ボタンを押してもすぐには反映されません。
+        | ボタンを押したあと、このページをリロードしてみて下さい。
+        | しばらく経つと全て記録されます。
+
     - if user_signed_in?
       .update-request
         | 最新のエピソードが登録されていない場合は

@@ -1,12 +1,13 @@
 class CheckinsController < ApplicationController
   permits :comment, :shared_twitter, :shared_facebook
 
-  before_action :authenticate_user!, only: [:new, :create, :create_all, :edit, :update, :destroy]
-  before_action :set_work,           only: [:new, :create, :create_all, :show, :edit, :update, :destroy]
-  before_action :set_episode,        only: [:new, :create, :show, :edit, :update, :destroy]
-  before_action :set_checkin,        only: [:show, :edit, :update, :destroy]
-  before_action :redirect_to_top,    only: [:edit, :update, :destroy]
-
+  before_action :authenticate_user!, only: [:new, :create, :create_all, :edit,
+                                            :update, :destroy]
+  before_action :set_work, only: [:new, :create, :create_all, :show, :edit,
+                                  :update, :destroy]
+  before_action :set_episode, only: [:new, :create, :show, :edit, :update, :destroy]
+  before_action :set_checkin, only: [:show, :edit, :update, :destroy]
+  before_action :redirect_to_top, only: [:edit, :update, :destroy]
 
   def new
     @checkin = @episode.checkins.new
@@ -20,23 +21,16 @@ class CheckinsController < ApplicationController
     if @checkin.save
       @checkin.update_share_checkin_status
       @checkin.share_to_sns(self)
-      redirect_to work_episode_path(@work, @episode), notice: t('checkins.saved')
+      redirect_to work_episode_path(@work, @episode), notice: t("checkins.saved")
     else
-      render 'new'
+      render :new
     end
   end
 
   def create_all(episode_ids)
-    if episode_ids =~ /\A\[([0-9]+,*)+\]\z/ # 括弧とカンマ、数字だけだったら
-      episodes = Episode.where(id: eval(episode_ids)).order(:sort_number)
-      raise if episodes.blank?
-
-      episodes.each do |episode|
-        episode.checkins.create(user: current_user, work: @work)
-      end
-
-      return redirect_to work_path(@work), notice: t('checkins.saved')
-    end
+    records = MultipleRecordsService.new(current_user)
+    records.delay.save!(episode_ids)
+    redirect_to work_path(@work), notice: t("checkins.saved")
   end
 
   def show
