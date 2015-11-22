@@ -7,7 +7,7 @@
 //= require angular-animate
 //= require angular-sanitize
 //= require angulartics/angulartics
-//= require angulartics-google-analytics/angulartics-google-analytics.min
+//= require angulartics-google-analytics
 //= require ng-infinite-scroller-origin
 
 //= require_self
