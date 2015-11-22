@@ -9,12 +9,12 @@ Annict::Application.routes.draw do
 
   devise_for :users,
               controllers: { omniauth_callbacks: :callbacks },
-              skip: [:registrations],
-              path_names: { sign_out: 'signout' }
+              skip: [:registrations, :sessions]
 
   devise_scope :user do
-    get 'users/sign_up', to: 'registrations#new', as: :new_user_registration
-    post 'users', to: 'registrations#create', as: :user_registration
+    get "sign_up", to: "registrations#new", as: :new_user_registration
+    post "users", to: "registrations#create", as: :user_registration
+    delete "sign_out", to: "devise/sessions#destroy", as: :destroy_user_session
   end
 
   namespace :api do
@@ -117,21 +117,30 @@ Annict::Application.routes.draw do
     post   :like, to: 'likes#status_create'
   end
 
-  resources :users, only: [:show] do
+  get "@:username", to: "users#show", username: /[A-Za-z0-9_]+/, as: :user
+  get "@:username/:status_kind",
+      to: "users#works",
+      as: :user_works,
+      constraints: {
+        username: /[A-Za-z0-9_]+/,
+        status_kind: /wanna_watch|watching|watched|on_hold|stop_watching/
+      }
+  get "@:username/following",
+      to: "users#following",
+      username: /[A-Za-z0-9_]+/,
+      as: :following_user
+  get "@:username/followers",
+      to: "users#followers",
+      username: /[A-Za-z0-9_]+/,
+      as: :followers_user
+  resources :users, only: [] do
     collection do
       delete :destroy
       patch :update
-      post :share
     end
 
     member do
       delete :unfollow, controller: :follows, action: :destroy
-      get ':status_kind',
-        to: 'users#works',
-        as: :user_works,
-        constraints: { status_kind: /wanna_watch|watching|watched|on_hold|stop_watching/ }
-      get :following
-      get :followers
       post :follow, controller: :follows, action: :create
     end
   end

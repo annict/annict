@@ -1,7 +1,7 @@
 .activity-box ng-repeat='activity in activities' ng-show='0 < activities.length'
   .wrapper
     .left
-      a.icon ng-href='/users/{{activity.links.user.username}}'
+      a.icon ng-href='/@{{activity.links.user.username}}'
         img.img-circle ng-src='{{activity.links.profile.avatar_url}}' width='35' height='35'
     .right
       .checkin-create ng-if='activity.action === "checkins.create"'

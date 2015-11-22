@@ -51,5 +51,10 @@ module Annict
     config.active_record.raise_in_transactional_callbacks = true
 
     config.active_job.queue_adapter = :delayed_job
+
+    config.middleware.insert_before(Rack::Runtime, Rack::Rewrite) do
+      r301 %r{\A/users/([A-Za-z0-9_]+)\z}, "/@$1"
+      r301 %r{\A/users/([A-Za-z0-9_]+)/(following|followers|wanna_watch|watching|watched|on_hold|stop_watching)\z}, "/@$1/$2"
+    end
   end
 end

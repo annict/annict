@@ -20,8 +20,6 @@ SitemapGenerator::Sitemap.create do
   add db_activities_path, priority: 0.6
   add db_edit_requests_path, priority: 0.6
   add db_root_path, priority: 0.6
-  add new_user_registration_path, priority: 0.7
-  add new_user_session_path, priority: 0.7
   add popular_works_path, priority: 0.9
   add privacy_path
   add resourceless_db_works_path
@@ -36,6 +34,10 @@ SitemapGenerator::Sitemap.create do
     add following_user_path(u.username), priority: 0.8
     add followers_user_path(u.username), priority: 0.8
     add user_path(u.username), priority: 0.9, lastmod: u.updated_at
+
+    Status.kind.values.each do |k|
+      add user_works_path(u.username, k), priority: 0.8
+    end
   end
 
   Season.find_each do |s|
