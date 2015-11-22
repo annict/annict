@@ -1,1 +1,1 @@
-Sitemap: https://annict.com/sitemap.xml.gz
+Sitemap: https://s3-ap-northeast-1.amazonaws.com/annict-production/sitemaps/sitemap.xml.gz
