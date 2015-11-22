@@ -35,6 +35,7 @@ gem "kaminari"
 gem "keen"
 gem "koala"
 gem "meta-tags"
+gem "net-ssh" # fog を使用している asset_sync で使用
 gem "newrelic_rpm"
 gem "ngannotate-rails"
 gem "nokogiri"
