@@ -1,6 +1,6 @@
 module ApplicationHelper
   def annict_image_url(record, field, options = {})
-    path = record.send(field).path(:master) rescue "no-image.jpg"
+    path = record.try!(:send, field).try!(:path, :master).presence || "no-image.jpg"
 
     msize = options[:msize]
     size = (browser.mobile? && msize.present?) ? msize : options[:size]
