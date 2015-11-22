@@ -8,5 +8,6 @@
 /lib/tasks/data.rake
 /log/*.log
 /public/paperclip
+/public/sitemap*
 /tmp
 /spec/test_files/paperclip
