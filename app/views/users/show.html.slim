@@ -21,7 +21,7 @@
 
       - if @watching_works.count > 9
         .more
-          = link_to user_works_user_path(@user.username, :watching) do
+          = link_to user_works_path(@user.username, :watching) do
             = "見てるアニメ全#{@watching_works.count}作品を見る"
             = icon('angle-right')
     - else

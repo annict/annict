@@ -1,5 +1,5 @@
 <p>見た記録を残したり感想を書いたりすることができます。</p>
-<p>「<%= link_to "見てる作品", user_works_user_path(current_user.username, :watching) %>」ページから作品を選んで、見たエピソードを記録してみましょう。</p>
+<p>「<%= link_to "見てる作品", user_works_path(current_user.username, :watching) %>」ページから作品を選んで、見たエピソードを記録してみましょう。</p>
 
 <div class="image">
   <% image_size = browser.mobile? ? "268x437" : "400x652" %>
@@ -7,5 +7,5 @@
 </div>
 
 <div class="link">
-  <%= link_to "「見てる作品」ページへ", user_works_user_path(current_user.username, :watching), class: "btn btn-primary" %>
+  <%= link_to "「見てる作品」ページへ", user_works_path(current_user.username, :watching), class: "btn btn-primary" %>
 </div>

@@ -1,9 +1,9 @@
 .top ng-if='activity.links.checkin.comment.length > 0'
-  a.name ng-href='/users/{{activity.links.user.username}}'
+  a.name ng-href='/@{{activity.links.user.username}}'
     | {{activity.links.profile.name}}
   | が見ました
 .top ng-if='!(activity.links.checkin.comment.length > 0)'
-  a.name ng-href='/users/{{activity.links.user.username}}'
+  a.name ng-href='/@{{activity.links.user.username}}'
     | {{activity.links.profile.name}}
   | が
   a.title ng-href='/works/{{activity.links.work.id}}'

@@ -30,12 +30,6 @@ class UsersController < ApplicationController
     end
   end
 
-  def share(body)
-    TwitterWatchingShareWorker.perform_async(current_user.id, body)
-
-    redirect_to user_path(current_user.username), notice: 'ツイートしました。'
-  end
-
   def following
     @users = @user.followings.order('follows.id DESC')
   end
@@ -52,6 +46,6 @@ class UsersController < ApplicationController
   private
 
   def set_user
-    @user = User.find_by!(username: params[:id])
+    @user = User.find_by!(username: params[:username])
   end
 end

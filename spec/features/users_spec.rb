@@ -5,7 +5,7 @@ describe 'プロフィールページ' do
   let(:episode) { create(:episode, work: work) }
 
   before do
-    visit "/users/#{user.username}"
+    visit "/@#{user.username}"
   end
 
   it 'ページが表示されること' do
@@ -20,7 +20,7 @@ describe 'プロフィールページ' do
         c.comment = 'おもしろかったよ'
       end
 
-      visit "/users/#{user.username}"
+      visit "/@#{user.username}"
     end
 
     it "記録情報が表示されること", js: true do
@@ -34,7 +34,7 @@ describe 'プロフィールページ' do
     before do
       user.statuses.create(work: work, kind: :watching)
 
-      visit "/users/#{user.username}"
+      visit "/@#{user.username}"
     end
 
     it '作品が表示されること' do
@@ -57,7 +57,7 @@ describe '見てる作品一覧ページ' do
     before do
       user.statuses.create(work: work, kind: :watching)
 
-      visit "/users/#{user.username}/watching"
+      visit "/@#{user.username}/watching"
     end
 
     it '見てる作品が表示されること' do
