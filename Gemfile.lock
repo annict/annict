@@ -1,6 +1,5 @@
 GEM
   remote: https://rubygems.org/
-  remote: https://rails-assets.org/
   specs:
     CFPropertyList (2.3.2)
     aasm (4.5.0)
@@ -442,26 +441,6 @@ GEM
       bundler (>= 1.3.0, < 2.0)
       railties (= 4.2.5)
       sprockets-rails
-    rails-assets-SHA-1 (0.1.1)
-    rails-assets-angular (1.3.20)
-    rails-assets-angular-animate (1.3.20)
-      rails-assets-angular (= 1.3.20)
-    rails-assets-angular-sanitize (1.3.20)
-      rails-assets-angular (= 1.3.20)
-    rails-assets-angularjs (1.3.20)
-    rails-assets-angulartics (0.20.2)
-      rails-assets-SHA-1
-      rails-assets-angular (>= 1.1.5)
-      rails-assets-waypoints (~> 3.1.1)
-    rails-assets-angulartics-google-analytics (0.1.2)
-      rails-assets-angulartics (~> 0.20)
-    rails-assets-chartjs (1.0.2)
-    rails-assets-jquery-easing-original (1.3.2)
-    rails-assets-lodash (3.10.1)
-    rails-assets-moment (2.10.6)
-    rails-assets-ng-infinite-scroller-origin (1.2.1)
-      rails-assets-angular (>= 1.2.0)
-    rails-assets-waypoints (3.1.1)
     rails-deprecated_sanitizer (1.0.3)
       activesupport (>= 4.2.0.alpha)
     rails-dom-testing (1.0.7)
@@ -668,16 +647,6 @@ DEPENDENCIES
   quiet_assets
   rack-rewrite
   rails (= 4.2.5)
-  rails-assets-angular-animate (~> 1.3.17)!
-  rails-assets-angular-sanitize (~> 1.3.17)!
-  rails-assets-angularjs (~> 1.3.17)!
-  rails-assets-angulartics!
-  rails-assets-angulartics-google-analytics!
-  rails-assets-chartjs!
-  rails-assets-jquery-easing-original!
-  rails-assets-lodash!
-  rails-assets-moment!
-  rails-assets-ng-infinite-scroller-origin!
   rails-flog
   rails-i18n
   rails_12factor
