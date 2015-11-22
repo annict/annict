@@ -1,0 +1,1 @@
+//= require chartjs/Chart.js

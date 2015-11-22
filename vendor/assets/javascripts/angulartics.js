@@ -1,0 +1,13 @@
+//= require angulartics/angulartics.js
+//= require angulartics/angulartics-clicky.js
+//= require angulartics/angulartics-cnzz.js
+//= require angulartics/angulartics-ga-cordova.js
+//= require angulartics/angulartics-gtm.js
+//= require angulartics/angulartics-piwik.js
+//= require angulartics/angulartics-scroll.js
+//= require angulartics/angulartics-splunk.js
+//= require angulartics/angulartics-woopra.js
+//= require angulartics/angulartics-marketo.js
+//= require angulartics/angulartics-intercom.js
+//= require angulartics/angulartics-inspectlet.js
+//= require angulartics/angulartics-newrelic-insights.js
