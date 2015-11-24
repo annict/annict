@@ -59,16 +59,16 @@ GEM
       activemodel
       fog (>= 1.8.0)
       unf
-    autoprefixer-rails (6.1.0.1)
+    autoprefixer-rails (6.1.1)
       execjs
       json
     awesome_print (1.6.1)
-    aws-sdk (2.2.1)
-      aws-sdk-resources (= 2.2.1)
-    aws-sdk-core (2.2.1)
+    aws-sdk (2.2.3)
+      aws-sdk-resources (= 2.2.3)
+    aws-sdk-core (2.2.3)
       jmespath (~> 1.0)
-    aws-sdk-resources (2.2.1)
-      aws-sdk-core (= 2.2.1)
+    aws-sdk-resources (2.2.3)
+      aws-sdk-core (= 2.2.3)
     aws-sdk-v1 (1.66.0)
       json (~> 1.4)
       nokogiri (>= 1.4.4)
