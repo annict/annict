@@ -1,9 +1,4 @@
-.c-tabs
-  .c-tabs__content
-    = link_to "アカウント", account_path, class: "c-tabs__tab #{params[:controller] == 'accounts' ? 'c-tabs__tab--active' : ''}"
-    = link_to "プロフィール", "", class: "c-tabs__tab"
-    = link_to "ソーシャル", "", class: "c-tabs__tab"
-    = link_to "オプション", "", class: "c-tabs__tab"
+= render "settings_tabs"
 
 .content
   .container

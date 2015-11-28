@@ -1,0 +1,2 @@
+class SayonaraController < ApplicationController
+end

@@ -1,0 +1,21 @@
+= render "settings_tabs"
+
+.content
+  .container
+    = form_for current_user.profile, url: profile_path, method: :patch do |f|
+      = render "error_panel", resource: current_user.profile
+
+      .form-group
+        = f.label :name
+        = f.text_field :name, class: "form-control"
+      .form-group
+        = f.label :description
+        = f.text_field :description, class: "form-control"
+      .form-group
+        = f.label :avatar
+        = f.file_field :tombo_avatar
+      .form-group
+        = f.label :background_image
+        = f.file_field :tombo_background_image
+      .form-submit
+        = f.submit class: "btn btn-primary"

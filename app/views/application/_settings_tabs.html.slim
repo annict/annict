@@ -1,0 +1,7 @@
+.c-tabs
+  .c-tabs__content
+    = link_to "プロフィール", profile_path, class: "c-tabs__tab #{params[:controller] == 'profiles' ? 'c-tabs__tab--active' : ''}"
+    = link_to "アカウント", account_path, class: "c-tabs__tab #{params[:controller] == 'accounts' ? 'c-tabs__tab--active' : ''}"
+    = link_to "ソーシャル連携", providers_path, class: "c-tabs__tab #{params[:controller] == 'providers' ? 'c-tabs__tab--active' : ''}"
+    = link_to "オプション", options_path, class: "c-tabs__tab #{params[:controller] == 'options' ? 'c-tabs__tab--active' : ''}"
+    = link_to "退会", sayonara_path, class: "c-tabs__tab #{params[:controller] == 'sayonara' ? 'c-tabs__tab--active' : ''}"
