@@ -84,6 +84,7 @@ group :development do
   gem "bullet"
   gem "letter_opener_web"
   gem "quiet_assets"
+  gem "rubocop"
   gem "ruby_identicon"
   gem "spring"
   gem "spring-commands-rspec", require: false
