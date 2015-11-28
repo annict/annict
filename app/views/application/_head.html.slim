@@ -15,10 +15,11 @@ link type='text/plain' rel='author' href="#{ENV['ANNICT_URL']}/humans.txt"
   = stylesheet_link_tag 'application_mobile', media: 'all'
 - else
   = stylesheet_link_tag 'application_pc', media: 'all'
+= ann_stylesheet_link_tag "application"
 
 link href='https://fonts.googleapis.com/css?family=Titillium+Web' rel='stylesheet' type='text/css'
 
 = include_gon
-= javascript_include_tag "base"
 = javascript_include_tag "application"
+= ann_javascript_include_tag "application"
 = csrf_meta_tags

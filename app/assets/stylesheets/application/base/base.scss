@@ -1,23 +1,5 @@
 body {
-  background-color: #f0f0f1;
   font-family: 'Lucida Grande', 'Hiragino Kaku Gothic ProN', Meiryo, sans-serif;
-  padding-top: 48px;
-
-  .container {
-    max-width: 500px;
-  }
-
-  > .content {
-    background-color: #ffffff;
-    box-shadow: 0 1px 1px rgba(0, 0, 0, 0.05);
-    padding: 20px 0;
-
-    margin: {
-      left: auto;
-      right: auto;
-    }
-    max-width: 500px;
-  }
 
   h2 {
     font-size: 14px;
@@ -41,18 +23,6 @@ body {
 
   .form-control {
     box-shadow: none;
-  }
-
-  .nav {
-    &.nav-tabs {
-      margin-bottom: 15px;
-    }
-
-    li {
-      a {
-        padding: 7px;
-      }
-    }
   }
 
   .modal-backdrop {
@@ -112,7 +82,7 @@ body {
   .btn-facebook {
     color: #ffffff;
     background-color: $color-facebook;
-    
+
     &:hover {
       color: #ffffff;
     }

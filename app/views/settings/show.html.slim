@@ -1,18 +1,4 @@
 .container
-  .account
-    h2 = t('words.account')
-
-    = form_for current_user, url: users_path, method: :patch do |f|
-      = render 'error_panel', resource: current_user
-
-      .form-group
-        = f.label :email
-        = f.text_field :email, class: 'form-control'
-      .form-submit
-        = f.submit class: 'btn btn-primary'
-
-  hr
-
   .profile
     h2 = t('words.profile')
 

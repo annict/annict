@@ -19,6 +19,34 @@ module ApplicationHelper
     image_tag(url, options)
   end
 
+  def ann_stylesheet_link_tag(source)
+    if Rails.env.development?
+      dir = "/assets/stylesheets"
+      if browser.mobile?
+        stylesheet_link_tag("#{dir}/#{source}_mobile.css", media: "all")
+      else
+        stylesheet_link_tag("#{dir}/#{source}.css", media: "all")
+      end
+    end
+  end
+
+  def ann_javascript_include_tag(source)
+    if Rails.env.development?
+      dir = "/assets/javascripts"
+      if browser.mobile?
+        javascript_include_tag("#{dir}/#{source}_mobile.js")
+      else
+        javascript_include_tag("#{dir}/#{source}.js")
+      end
+    end
+  end
+
+  def ann_image_tag(source, options = {})
+    if Rails.env.development?
+      image_tag("/assets/images/#{source}", options)
+    end
+  end
+
   def custom_time_ago_in_words(date)
     "#{time_ago_in_words(date)}#{t('words.ago')}"
   end

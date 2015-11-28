@@ -1,0 +1,97 @@
+.sidebar
+  .sidebar__header
+    = link_to root_path, target: "_self" do
+      = ann_image_tag "sidebar/logo.png", size: "48x48", alt: "Annict"
+  .sidebar__body
+    ul
+      - if user_signed_in?
+        li
+          = link_to programs_path, class: "#{programs_page? ? 'active' : ''}", target: "_self" do
+            = icon "calendar"
+            .sidebar__body__caption
+              | 放送予定
+        li
+          = link_to user_works_path(current_user.username, :watching), class: "#{user_works_page? ? 'active' : ''}", target: "_self" do
+            = icon "play"
+            .sidebar__body__caption
+              | 見てるアニメ
+        li
+          = link_to works_path, class: "#{works_page? ? 'active' : ''}", target: "_self" do
+            = icon "search"
+            .sidebar__body__caption
+              | 見つける
+        li
+          = link_to user_path(current_user.username), class: "#{user_profile_page? ? 'active' : ''}", target: "_self" do
+            = icon "user"
+            .sidebar__body__caption
+              | プロフィール
+        li
+          = link_to db_root_path, target: "_self" do
+            = icon "database"
+            .sidebar__body__caption
+              | Annict DB
+        li
+          = link_to notifications_path do
+            = icon "bell"
+            .sidebar__body__caption
+              | 通知
+            - if current_user.notifications_count > 0
+              span.notifications-count
+                span.count
+                  = current_user.notifications_count
+        li
+          = link_to friends_path do
+            = icon "smile-o"
+            .sidebar__body__caption
+              | 友達を探す
+        li
+          = link_to channels_path do
+            = icon "tv"
+            .sidebar__body__caption
+              | チャンネル
+        li
+          = link_to account_path do
+            = icon "cog"
+            .sidebar__body__caption
+              | 設定
+        li
+          = link_to about_path do
+            = icon "lightbulb-o"
+            .sidebar__body__caption
+              | Annictについて
+        li
+          = link_to destroy_user_session_path, method: "delete" do
+            = icon "power-off"
+            .sidebar__body__caption
+              | ログアウト
+      - else
+        li
+          = link_to works_path, class: "#{works_page? ? 'active' : ''}", target: "_self" do
+            = icon "search"
+            .sidebar__body__caption
+              | 見つける
+        li
+          = link_to about_path do
+            = icon "lightbulb-o"
+            .sidebar__body__caption
+              | Annictについて
+        li
+          = link_to root_path, target: "_self" do
+            = icon "power-off"
+            .sidebar__body__caption
+              | ログイン
+  .sidebar__footer
+    ul.links.links-1
+      li
+        = link_to 'Twitter', 'https://twitter.com/anannict', target: '_blank'
+      li
+        = link_to t('words.blog'), 'http://blog.annict.com/', target: '_blank'
+      li
+        = link_to 'GitHub', 'https://github.com/annict', target: '_blank'
+    ul.links.links-2
+      li
+        = link_to t('titles.terms'), terms_path
+      li
+        = link_to t('titles.privacy'), privacy_path
+    .copyright
+      | (c) 2014-2015 Annict

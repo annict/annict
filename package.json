@@ -17,8 +17,7 @@
     "webpack": "^1.12.8"
   },
   "dependencies": {
-    "extract-text-webpack-plugin": "^0.9.1",
     "jquery": "^2.1.4",
-    "vue": "^1.0.8"
+    "vue": "^1.0.10"
   }
 }

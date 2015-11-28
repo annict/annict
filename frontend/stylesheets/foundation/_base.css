@@ -1,0 +1,19 @@
+html,
+body {
+  height: 100%;
+}
+
+.app-with-sidebar {
+  display: flex;
+  height: 100%;
+}
+
+.app__main {
+  background-color: $color-gallery;
+  flex-grow: 1;
+}
+
+/* Bootstrapのwidthを上書き */
+.container {
+  width: auto;
+}

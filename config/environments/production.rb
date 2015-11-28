@@ -71,7 +71,6 @@ Annict::Application.configure do
     application_pc.scss
     application_mobile.scss
     db.scss
-    base.js
     db.js
   )
 

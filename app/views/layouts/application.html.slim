@@ -1,19 +1,17 @@
 doctype html
-html lang='ja' ng-app='annict'
+html lang="ja" ng-app="annict"
   head
-    = render 'head'
-  body class="#{body_class} #{user_signed_in? ? 'signed-in' : 'not-signed-in'}" ng-controller='ApplicationCtrl'
-    = render 'navbar'
+    = render "head"
+  body#js-annict class="#{body_class} #{user_signed_in? ? 'signed-in' : 'not-signed-in'}" ng-controller="ApplicationCtrl"
+    .app.app-with-sidebar
+      = render "sidebar"
+      
+      .app__main
+        = render "flash"
 
-    .content
-      = render 'flash'
+        - if user_signed_in?
+          = render "checkin_button"
 
-      - if user_signed_in?
-        = render 'checkin_button'
+        = yield
 
-      = yield
-
-    - unless content_for(:no_footer)
-      = render 'footer'
-
-    = render 'analytics'
+    = render "analytics"

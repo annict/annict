@@ -2,8 +2,12 @@
  * Basic
  */
 
-$gray-dark:    $color-gray-dark;
+$gray-dark: $color-gray-dark;
 $gray-lighter: $color-gray-light;
+$state-success-bg: #b9f6ca;
+$state-info-bg: #80d8ff;
+$state-warning-bg: #ffff8d;
+$state-danger-bg: #ff8a80;
 
 /*
  * Color system
@@ -27,9 +31,9 @@ $font-size-base: 14px;
  * Components
  */
 
-$border-radius-base:  0px;
-$border-radius-large: 0px;
-$border-radius-small: 0px;
+$border-radius-base: 0;
+$border-radius-large: 0;
+$border-radius-small: 0;
 
 /*
  * Buttons
@@ -42,5 +46,5 @@ $btn-primary-border: $brand-primary;
  */
 
 $navbar-default-link-color: #f0f0de;
-$navbar-default-bg:         $color-gray-dark;
-$navbar-default-border:     $navbar-default-bg;
+$navbar-default-bg: $color-gray-dark;
+$navbar-default-border: $navbar-default-bg;
