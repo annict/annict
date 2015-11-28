@@ -4,9 +4,9 @@
 
 .c-tabs__content {
   display: flex;
-  height: 70px;
+  height: 60px;
   justify-content: center;
-  line-height: 70px;
+  line-height: 60px;
   margin: 0 auto;
   max-width: 1200px;
 }
