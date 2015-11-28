@@ -7,6 +7,8 @@
 /heroku.dump
 /lib/tasks/data.rake
 /log/*.log
+/node_modules
+/public/assets
 /public/paperclip
 /public/sitemap*
 /tmp
