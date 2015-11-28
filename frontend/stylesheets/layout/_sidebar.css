@@ -1,6 +1,6 @@
 .sidebar {
   background-color: $color-mine-shaft;
-  flex-basis: 240px;
+  flex-basis: 200px;
   height: 100%;
 }
 
@@ -30,7 +30,7 @@
   color: #fff;
   display: inline-block;
   font-size: 12px;
-  padding: 3px 20px;
+  padding: 3px 15px;
   width: 100%;
 }
 
