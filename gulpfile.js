@@ -1,8 +1,9 @@
 var autoprefixer = require("autoprefixer");
 var gulp = require("gulp");
+var sync = require("gulp-directory-sync");
 var postcss = require("gulp-postcss");
 var gutil = require("gulp-util");
-var watch = require('gulp-watch');
+var watch = require("gulp-watch");
 var precss = require("precss");
 var webpack = require("webpack");
 
@@ -42,9 +43,15 @@ gulp.task("webpack", function(callback) {
   });
 });
 
+gulp.task("image", function() {
+  return gulp.src("")
+    .pipe(sync("./frontend/images", "./public/assets/images", { printSummary: true }));
+});
+
 gulp.task("watch", function() {
-  gulp.watch("./frontend/stylesheets/**/*.css", ["postcss"]);
-  gulp.watch("./frontend/javascripts/**/*.js", ["webpack"]);
+  gulp.watch("frontend/stylesheets/**/*.css", ["postcss"]);
+  gulp.watch("frontend/javascripts/**/*.js", ["webpack"]);
+  gulp.watch("frontend/images/**/*.*", ["image"]);
 });
 
 gulp.task("default", ["watch"]);

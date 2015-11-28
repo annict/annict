@@ -3,3 +3,69 @@
   flex-basis: 240px;
   height: 100%;
 }
+
+.sidebar__header {
+  background-color: $color-mizuho;
+  display: block;
+  height: 60px;
+  padding-top: 5px;
+  text-align: center;
+}
+
+.sidebar__body a,
+.sidebar__body i,
+.sidebar__body .caption {
+  line-height: 40px;
+}
+
+.sidebar__body i {
+  color: $color-gunsmoke;
+  float: left;
+  font-size: 20px;
+  text-align: center;
+  width: 24px;
+}
+
+.sidebar__body a {
+  color: #fff;
+  display: inline-block;
+  font-size: 12px;
+  padding: 3px 20px;
+  width: 100%;
+}
+
+.sidebar__body a:first-child {
+  margin-top: 20px;
+}
+
+.sidebar__body a:hover {
+  background-color: #383838;
+}
+
+.sidebar__body .caption {
+  display: inline-block;
+  margin-left: 10px;
+}
+
+.sidebar__line {
+  border-top: 1px solid rgba(0, 0, 0, 0.3);
+  box-shadow: 0 1px 0 rgba(255, 255, 255, 0.1);
+  margin-bottom: 25px;
+  margin-top: 15px;
+}
+
+.sidebar__footer {
+  text-align: center;
+}
+
+.sidebar__footer a {
+  color: #c1c1c1;
+  font-size: 10px;
+  margin-right: 12px;
+}
+
+.sidebar__footer .copyright {
+  color: $color-gunsmoke;
+  font-size: 10px;
+  margin-top: 10px;
+}
