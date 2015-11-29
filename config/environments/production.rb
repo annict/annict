@@ -111,6 +111,8 @@ Annict::Application.configure do
     r301 %r{.*}, "https://annict.com$&", if: Proc.new { |rack_env|
       rack_env["SERVER_NAME"] == "www.annict.com"
     }
+    # https://annict.com/sitemap.xml.gz でS3にアップロードされてるサイトマップを取得する
+    r301 %r{/sitemap.xml.gz}, ENV.fetch("ANNICT_SITEMAP_URL")
   end
 
   config.imgix = {
