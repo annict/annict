@@ -17,6 +17,7 @@ development:
   ANNICT_HOST: 'localhost:3000'
   ANNICT_TOMBO_URL: 'http://localhost:5000'
   ANNICT_URL: 'http://localhost:3000'
+  ANNICT_SITEMAP_URL: ''
 
   TWITTER_CONSUMER_KEY: 'xxxxxxxxxxxxxxxxxxxxx'
   TWITTER_CONSUMER_SECRET: 'xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx'
