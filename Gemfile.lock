@@ -309,6 +309,9 @@ GEM
       domain_name (~> 0.5)
     http-form_data (1.0.1)
     http_parser.rb (0.6.0)
+    httparty (0.13.7)
+      json (~> 1.8)
+      multi_xml (>= 0.5.2)
     i18n (0.7.0)
     ice_nine (0.11.1)
     imgix (0.3.5)
@@ -635,6 +638,7 @@ DEPENDENCIES
   hashdiff
   hirb
   hirb-unicode
+  httparty
   imgix-rails
   jbuilder
   jquery-rails
