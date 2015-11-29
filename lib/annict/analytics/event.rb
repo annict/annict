@@ -5,8 +5,9 @@ module Annict
 
       base_uri "https://ssl.google-analytics.com"
 
-      def initialize(request)
+      def initialize(request, user)
         @request = request
+        @user = user
       end
 
       # イベントを送る
@@ -20,11 +21,12 @@ module Annict
         body = {
           v: 1,
           tid: ENV.fetch("GA_TRACKING_ID"),
-          cid: SecureRandom.uuid, # TODO: 雑にcidを生成しちゃってるけどこれで良いのか?
+          cid: @request.uuid,
           t: "event",
           ec: ec,
           ea: ea
         }
+        body[:uid] = Digest::SHA256.hexdigest(@user.id.to_s) if @user.present?
         body[:el] = el if el.present?
         body[:ev] = ev if ev.present?
 

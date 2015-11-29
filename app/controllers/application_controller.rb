@@ -27,7 +27,7 @@ class ApplicationController < ActionController::Base
   end
 
   def ga_client
-    @ga_client ||= Annict::Analytics::Client.new(request)
+    @ga_client ||= Annict::Analytics::Client.new(request, current_user)
   end
 
   def set_work
