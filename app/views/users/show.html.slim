@@ -2,8 +2,6 @@
 - description meta_description("#{@user.profile.description} / ")
 - keywords meta_keywords(@user.profile.name, @user.username)
 
-- content_for :no_footer, true
-
 = render 'profile_header', user: @user
 
 .container

@@ -4,13 +4,12 @@ body {
 }
 
 .app-with-sidebar {
-  display: flex;
   height: 100%;
 }
 
 .app__main {
   background-color: $color-gallery;
-  flex-grow: 1;
+  margin-left: 200px;
 }
 
 /* Bootstrapのwidthを上書き */

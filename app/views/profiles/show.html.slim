@@ -1,6 +1,6 @@
 = render "settings_tabs"
 
-.content
+.content--narrow
   .container
     = form_for current_user.profile, url: profile_path, method: :patch do |f|
       = render "error_panel", resource: current_user.profile

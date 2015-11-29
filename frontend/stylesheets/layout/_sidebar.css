@@ -1,7 +1,10 @@
 .sidebar {
   background-color: $color-mine-shaft;
-  flex-basis: 200px;
+  float: left;
   height: 100%;
+  position: fixed;
+  top: 0;
+  width: 200px;
 }
 
 .sidebar__header {

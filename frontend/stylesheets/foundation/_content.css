@@ -1,13 +1,14 @@
-.content {
+@define-extend content {
   background-color: #fff;
   margin: 0 auto;
 }
 
-.accounts .content,
-.options .content,
-.profiles .content,
-.providers .content,
-.sayonara .content {
+.content {
+  @extend content;
+}
+
+.content--narrow {
+  @extend content;
   box-shadow: 0 1px 1px rgba(0, 0, 0, 0.05);
   margin-top: 30px;
   max-width: 500px;
