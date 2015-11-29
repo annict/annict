@@ -17,20 +17,22 @@ module Annict
       # el: Event label.
       # ev: Event value.
       def create(ec, ea, el: "", ev: "")
-        headers = { "User-Agent" => @request.user_agent || "" }
+        puts "@request.ip: #{@request.ip}"
         body = {
           v: 1,
           tid: ENV.fetch("GA_TRACKING_ID"),
           cid: @request.uuid,
           t: "event",
           ec: ec,
-          ea: ea
+          ea: ea,
+          uip: @request.ip,
+          ua: @request.user_agent
         }
         body[:uid] = Digest::SHA256.hexdigest(@user.id.to_s) if @user.present?
         body[:el] = el if el.present?
         body[:ev] = ev if ev.present?
 
-        self.class.delay.post("/collect", headers: headers, body: body)
+        self.class.delay.post("/collect", body: body)
       end
     end
   end
