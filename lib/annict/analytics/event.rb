@@ -17,7 +17,6 @@ module Annict
       # el: Event label.
       # ev: Event value.
       def create(ec, ea, el: "", ev: "")
-        puts "@request.ip: #{@request.ip}"
         body = {
           v: 1,
           tid: ENV.fetch("GA_TRACKING_ID"),
