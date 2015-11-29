@@ -9,3 +9,4 @@ machine:
     ANNICT_URL: http://localhost:3000
     DEVISE_SECRET: secretsecretsecretsecretsecretsecret
     RAILS_SECRET_KEY_BASE: secretsecretsecretsecretsecretsecret
+    GA_TRACKING_ID: UA-00000000-0

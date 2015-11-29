@@ -2,7 +2,7 @@ Annict.angular.directive 'annStatusSelector', ->
   restrict: 'C'
   scope: true
 
-  controller: ($scope, $element, $http, $analytics) ->
+  controller: ($scope, $element, $http) ->
     $scope.isMini = $element.data('miniSelector')
     $scope.statusKind = $scope.prevStatusKind = $element.data('statusKind')
     $scope.workId = $element.data('workId')
@@ -16,9 +16,6 @@ Annict.angular.directive 'annStatusSelector', ->
 
           data = { status_kind: $scope.statusKind }
           $http.post("/works/#{workId}/statuses/select", data).success ->
-            $analytics.eventTrack 'ステータス変更',
-              category: 'statuses',
-              label: $scope.statusKind
             $scope.$emit("hideSpinner-#{workId}")
 
     sameKindSelected = ->
