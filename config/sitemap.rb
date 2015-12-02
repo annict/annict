@@ -36,10 +36,10 @@ SitemapGenerator::Sitemap.create do
     add season_works_path(s.slug), priority: 0.9
   end
 
-  Work.find_each do |w|
+  Work.published.find_each do |w|
     add work_path(w.id), priority: 1.0, lastmod: w.updated_at
 
-    w.episodes.find_each do |e|
+    w.episodes.published.find_each do |e|
       add work_episode_path(w.id, e.id), priority: 1.0
 
       e.checkins.find_each do |c|

@@ -4,7 +4,7 @@ class CheckinProgressService
   def initialize(user, work)
     @user = user
     @work = work
-    @episode_ids = work.episodes.pluck(:id)
+    @episode_ids = work.episodes.published.pluck(:id)
     @checked_episode_ids = user.checkins.where(work: work).pluck(:episode_id)
     @all_checkins_count = get_all_checkins_count(checked_episode_ids)
   end
@@ -37,7 +37,7 @@ class CheckinProgressService
   end
 
   def ratio
-    (halfway_checked_count / work.episodes.count.to_f rescue 1) * 100
+    (halfway_checked_count / work.episodes.published.count.to_f rescue 1) * 100
   end
 
   private

@@ -25,7 +25,7 @@ class EpisodesController < ApplicationController
   private
 
   def set_episode
-    @episode = @work.episodes.find(params[:id])
+    @episode = @work.episodes.published.find(params[:id])
   end
 
   def set_checkin_user

@@ -19,7 +19,7 @@
           - color = shirobako_color(checkin_progress.episodes_round)
           .background class="#{color}" style="width: #{checkin_progress.ratio}%;"
           .foreground
-            .ratio = "#{checkin_progress.halfway_checked_count}/#{work.episodes.count}エピソード"
+            .ratio = "#{checkin_progress.halfway_checked_count}/#{work.episodes.published.count}エピソード"
             .round = "#{checkin_progress.episodes_round}周目"
             .clearfix
       - if user_signed_in? && user == current_user

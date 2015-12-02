@@ -96,7 +96,7 @@ hr
       .multiple-checkin
         .fake-link.fake-link-small ng-click="showCheckinCheckbox()" ng-hide="showingCheckinCheckbox"
           = t("words.multiple_checkin")
-        span.fake-link.fake-link-small ng-click="checkAll(#{@work.episodes.pluck(:id)})" ng-show="!allChecking && showingCheckinCheckbox"
+        span.fake-link.fake-link-small ng-click="checkAll(#{@work.episodes.published.pluck(:id)})" ng-show="!allChecking && showingCheckinCheckbox"
           = t("works.check_all")
         span.fake-link.fake-link-small ng-click="uncheckAll()" ng-show="allChecking"
           = t("works.uncheck_all")
