@@ -5,6 +5,7 @@ class FollowsController < ApplicationController
 
   def create
     current_user.follow(@user)
+    ga_client.events.create("follows", "create")
 
     render status: 200, nothing: true
   end

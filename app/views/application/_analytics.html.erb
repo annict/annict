@@ -5,10 +5,15 @@
   })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
 
   ga('create', '<%= ENV['GA_TRACKING_ID'] %>', 'annict.com');
+  <%# // ga('send', 'pageview'); // Angulartics導入のためコメントアウト %>
 
+  <%# カスタムディメンション「ログイン」 %>
   <% if user_signed_in? %>
     ga('set', 'dimension1', 'ログイン済み');
   <% else %>
     ga('set', 'dimension1', '未ログイン');
   <% end %>
+
+  <%# カスタムディメンション「ページカテゴリ」 %>
+  ga('set', 'dimension2', '<%= ga_page_category %>');
 </script>

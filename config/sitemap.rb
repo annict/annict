@@ -17,18 +17,10 @@ SitemapGenerator::Sitemap.adapter = SitemapGenerator::S3Adapter.new(adapter_opti
 
 SitemapGenerator::Sitemap.create do
   add about_path, priority: 0.7
-  add db_activities_path, priority: 0.6
-  add db_edit_requests_path, priority: 0.6
-  add db_root_path, priority: 0.6
   add popular_works_path, priority: 0.9
   add privacy_path
-  add resourceless_db_works_path
   add search_works_path, priority: 0.8
   add terms_path
-
-  EditRequest.find_each do |er|
-    add db_edit_request_path(er.id), priority: 0.7
-  end
 
   User.find_each do |u|
     add following_user_path(u.username), priority: 0.8
@@ -44,10 +36,10 @@ SitemapGenerator::Sitemap.create do
     add season_works_path(s.slug), priority: 0.9
   end
 
-  Work.find_each do |w|
+  Work.published.find_each do |w|
     add work_path(w.id), priority: 1.0, lastmod: w.updated_at
 
-    w.episodes.find_each do |e|
+    w.episodes.published.find_each do |e|
       add work_episode_path(w.id, e.id), priority: 1.0
 
       e.checkins.find_each do |c|
