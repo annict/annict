@@ -1,0 +1,14 @@
+.checkin-create {
+  > .top > .name {
+    margin-right: 3px;
+  }
+
+  > .top > .title,
+  > .top > .number {
+    margin: 0 3px;
+  }
+
+  > .checkin-comment {
+    margin: 10px 0;
+  }
+}

@@ -1,0 +1,66 @@
+.checkin-button {
+  > .wrapper {
+    bottom: 0;
+    margin: 30px;
+    position: fixed;
+    right: 0;
+    z-index: 100;
+  }
+
+  > .wrapper > .button {
+    background-color: $color-mizuho;
+    border-radius: 50%;
+    box-shadow: 0 0 0 rgba(0, 0, 0, 0.5),0 2px 6px rgba(0, 0, 0, 0.20);
+    height: 50px;
+    width: 50px;
+
+    &:hover {
+      cursor: pointer;
+    }
+  }
+
+  > .wrapper > .button > .icon-checkin {
+    color: #ffffff;
+    display: block;
+    line-height: 50px;
+    text-align: center;
+  }
+
+  .modal-dialog {
+    margin: 20px;
+  }
+
+  .modal-content {
+    background-color: transparent;
+    border: none;
+    box-shadow: none;
+    -moz-box-shadow: none;
+    -webkit-box-shadow: none;
+  }
+
+  .modal-content > .modal-header {
+    border-bottom: none;
+    height: 20px;
+    margin: 10px;
+    padding: 0;
+  }
+
+  .modal-content > .modal-header > .close {
+    color: #ffffff;
+    opacity: 1;
+    text-shadow: none;
+  }
+
+  .modal-content > .modal-body {
+    background-color: #ffffff;
+    overflow-y: scroll;
+    width: 100%;
+  }
+
+  .modal-content > .modal-body > .checks > .loading-box {
+    height: initial;
+    margin: 0 auto;
+    padding: 50px 0;
+    width: 60px;
+  }
+}

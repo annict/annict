@@ -11,15 +11,12 @@ link href='/images/apple-touch-icon-57x57.png' rel='apple-touch-icon-precomposed
 
 link type='text/plain' rel='author' href="#{ENV['ANNICT_URL']}/humans.txt"
 
-- if browser.mobile?
-  = stylesheet_link_tag 'application_mobile', media: 'all'
-- else
-  = stylesheet_link_tag 'application_pc', media: 'all'
-= ann_stylesheet_link_tag "application"
+= stylesheet_link_tag "old/application", media: "all"
+= stylesheet_link_tag "application", media: "all"
 
 link href='https://fonts.googleapis.com/css?family=Titillium+Web' rel='stylesheet' type='text/css'
 
 = include_gon
+= javascript_include_tag "old/application"
 = javascript_include_tag "application"
-= ann_javascript_include_tag "application"
 = csrf_meta_tags

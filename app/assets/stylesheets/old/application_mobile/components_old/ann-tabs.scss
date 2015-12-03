@@ -1,0 +1,23 @@
+.ann-tabs {
+  @include display(flex);
+  @include justify-content(center);
+
+  margin-bottom: 20px;
+
+  a.tab {
+    @include flex(1);
+
+    border-bottom: solid 2px $color-gray-light;
+    padding: 12px 0 10px 0;
+    text-align: center;
+    text-decoration: none;
+
+    &.active {
+      border-bottom: solid 2px $color-mizuho;
+    }
+
+    .text {
+      font-size: 10px;
+    }
+  }
+}

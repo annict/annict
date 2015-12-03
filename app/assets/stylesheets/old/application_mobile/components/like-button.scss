@@ -1,0 +1,22 @@
+.like-button {
+  > .wrapper {
+    color: $color-gray-dark-light;
+    font-size: 14px;
+  }
+
+  > .wrapper:hover {
+    cursor: pointer;
+  }
+
+  > .wrapper.liked {
+    color: $brand-primary;
+  }
+
+  > .wrapper > .icon {
+    margin-right: 3px;
+  }
+
+  > .wrapper > .count {
+    font-size: 12px;
+  }
+}

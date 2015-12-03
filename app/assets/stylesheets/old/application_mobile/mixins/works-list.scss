@@ -1,0 +1,51 @@
+@mixin works-list {
+  .works-list {
+    .work {
+      margin-bottom: 15px;
+      position: relative;
+
+      .work-statistics {
+        @include display(flex);
+        @include justify-content(space-around);
+
+        width: 70px;
+        margin-top: 3px;
+
+        .watchers-count, .checkins-count {
+          @include flex-basis(35px);
+
+          color: $color-gray-dark-light;
+          font-size: 10px;
+          text-align: center;
+
+          i {
+            display: block;
+            margin-bottom: 1px;
+          }
+        }
+      }
+
+      .media-body {
+        height: 70px;
+
+        .title {
+          margin-bottom: 10px;
+        }
+      }
+
+      .bottom {
+        @include display(flex);
+        @include justify-content(center);
+
+        .ann-checkin-progress {
+          @include flex(1);
+        }
+      }
+    }
+
+    hr {
+      margin-top: 15px;
+      margin-bottom: 15px;
+    }
+  }
+}

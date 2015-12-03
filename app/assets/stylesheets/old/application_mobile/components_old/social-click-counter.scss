@@ -1,0 +1,16 @@
+.twitter-click-counter, .facebook-click-counter {
+  font-size: 10px;
+
+  i {
+    margin-right: 3px;
+  }
+}
+
+.twitter-click-counter {
+  color: $color-twitter;
+  margin-right: 7px;
+}
+
+.facebook-click-counter {
+  color: $color-facebook;
+}

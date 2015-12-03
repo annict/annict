@@ -1,0 +1,64 @@
+@mixin work-profile {
+  &.not-signed-in {
+    .work-title {
+      margin: 240px 10px 25px 10px !important;
+    }
+  }
+
+  .work-profile {
+    height: 500px;
+    position: relative;
+    text-align: center;
+    width: 500px;
+
+    .work-image {
+      background-size: cover;
+      height: 100%;
+    }
+
+    .wrapper {
+      background-color: rgba(0,0,0,0.5);
+      left: 0;
+      min-height: 100%;
+      position: absolute;
+      right: 0;
+      top: 0;
+
+      .work-title {
+        margin: 200px 10px 25px 10px;
+
+        h1 {
+          color: #ffffff;
+          font-size: 25px;
+          margin: {
+            bottom: 10px;
+            top: 0;
+          }
+        }
+      }
+
+      .work-statistics {
+        bottom: 10px;
+        left: 50%;
+        margin-left: -135px;
+        position: absolute;
+        width: 270px;
+
+        .status {
+          display: inline-block;
+          width: 90px;
+
+          .count {
+            color: #ffffff;
+            font-size: 18px;
+          }
+
+          .text {
+            color: #b4b4b4;
+            font-size: 12px;
+          }
+        }
+      }
+    }
+  }
+}

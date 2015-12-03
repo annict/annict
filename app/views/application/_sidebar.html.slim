@@ -1,6 +1,6 @@
 .sidebar
   = link_to root_path, target: "_self", class: "sidebar__header" do
-    = ann_image_tag "sidebar/logo.png", size: "48x48", alt: "Annict"
+    = image_tag "sidebar/logo.png", size: "48x48", alt: "Annict"
   .sidebar__body
     - if user_signed_in?
       = link_to programs_path, class: "#{programs_page? ? 'active' : ''}", target: "_self" do
