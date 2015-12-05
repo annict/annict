@@ -1,0 +1,120 @@
+.navbar {
+  -moz-box-shadow: none;
+  -webkit-box-shadow: none;
+  background-image: none;
+  border: none;
+  box-shadow: 0 1px 1px rgba(0, 0, 0, 0.2);
+  min-height: 48px;
+
+  .navbar-content {
+    margin: 0 auto;
+    max-width: 500px;
+
+    .navbar-header {
+      float: left;
+      .navbar-brand {
+        height: 48px;
+        padding: 0;
+      }
+    }
+
+    .shortcuts {
+      -webkit-padding-start: 0;
+      float: left;
+      margin-left: 4px;
+      padding-top: 7px;
+
+      a {
+        color: #ffffff;
+        display: inline-block;
+        margin-right: 5px;
+        text-align: center;
+        width: 51px;
+
+        &:hover {
+          text-decoration: none;
+        }
+
+        &.active {
+          color: $color-kei;
+        }
+
+        .caption {
+          font-size: 10px;
+          margin-top: 2px;
+        }
+      }
+    }
+
+    .dropdown {
+      float: right;
+      line-height: 20px;
+
+      a.dropdown-toggle {
+        color: #ffffff;
+        position: relative;
+        text-decoration: none;
+
+        i {
+          padding: 17px 15px;
+        }
+
+        .notifications-count {
+          background-color: $color-mizuho;
+          border-radius: 10px;
+          font-size: 12px;
+          left: 50%;
+          line-height: 1;
+          padding: 2px 4px;
+          position: absolute;
+          top: -60%;
+        }
+      }
+
+      ul.dropdown-menu {
+        -moz-padding-start: 0;
+        -webkit-padding-start: 0;
+        left: 50%;
+        list-style-type: none;
+        margin: 0 0 0 -150px;
+        padding: 0;
+        text-align: left;
+        width: 175px;
+
+        li {
+          font-size: 14px;
+
+          a {
+            display: block;
+            padding: 15px 0 15px 15px;
+
+            i, .emoji {
+              margin-right: 10px;
+            }
+
+            .notifications-count {
+              background-color: $color-mizuho;
+              border-radius: 10px;
+              color: #ffffff;
+              float: right;
+              font-size: 12px;
+              margin: 2px 15px 0 0;
+              padding: 1px 6px;
+            }
+          }
+        }
+      }
+    }
+
+    .default-title {
+      font-size: 18px;
+      line-height: 20px;
+      padding: 15px 15px;
+
+      a {
+        color: #ffffff;
+        text-decoration: none;
+      }
+    }
+  }
+}

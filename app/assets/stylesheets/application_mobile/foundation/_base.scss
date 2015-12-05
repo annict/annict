@@ -1,5 +1,11 @@
 body {
   font-family: 'Lucida Grande', 'Hiragino Kaku Gothic ProN', Meiryo, sans-serif;
+  width: 100%;
+  height: 100%;
+
+  .app__main {
+    background-color: $color-gallery;
+  }
 
   h2 {
     font-size: 14px;
@@ -19,33 +25,6 @@ body {
     -webkit-appearance: none;
     padding-left: 0.4em !important;
     padding-right: 0.4em !important;
-  }
-
-  .form-control {
-    box-shadow: none;
-  }
-
-  .modal-backdrop {
-    height: 100%;
-    z-index: 999;
-  }
-
-  .info.well {
-    -moz-box-shadow: none;
-    -webkit-box-shadow: none;
-    box-shadow: none;
-    padding: 10px 15px;
-    text-align: center;
-
-    .icon {
-      color: $color-gunsmoke;
-      font-size: 20px;
-      margin-bottom: 10px;
-    }
-
-    p:last-child {
-      margin: 0;
-    }
   }
 
   .btn-transparency {

@@ -1,4 +1,5 @@
 class ApplicationController < ActionController::Base
+  include ViewSelector
   include FlashMessage
 
   # Prevent CSRF attacks by raising an exception.
