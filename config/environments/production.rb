@@ -68,11 +68,9 @@ Annict::Application.configure do
   # Precompile additional assets.
   # application.js, application.css, and all non-JS/CSS in app/assets folder are already added.
   config.assets.precompile += %w(
-    old/application_mobile.scss
-    old/application.scss
-    old/db.scss
-    old/application.js
-    old/db.js
+    application_mobile.scss
+    application_common.js.coffee
+    db.scss
   )
 
   # Ignore bad email addresses and do not raise email delivery errors.

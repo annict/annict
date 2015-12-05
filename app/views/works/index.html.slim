@@ -1,11 +1,12 @@
-= render 'nav'
+.content--narrow
+  = render 'nav'
 
-.container
-  - if params[:action] == 'season'
-    .btn-group-tab
-      .btn-group.btn-group-sm
-        = link_to t('words.previous_season'), season_works_path(slug: ENV['ANNICT_PREVIOUS_SEASON']), class: "btn btn-default #{params[:slug] == ENV['ANNICT_PREVIOUS_SEASON'] ? 'active' : ''}"
-        = link_to t('words.current_season'), season_works_path(slug: ENV['ANNICT_CURRENT_SEASON']), class: "btn btn-default #{params[:slug] == ENV['ANNICT_CURRENT_SEASON'] ? 'active' : ''}"
-        = link_to t('words.next_season'), season_works_path(slug: ENV['ANNICT_NEXT_SEASON']), class: "btn btn-default #{params[:slug] == ENV['ANNICT_NEXT_SEASON'] ? 'active' : ''}"
+  .container
+    - if params[:action] == 'season'
+      .btn-group-tab
+        .btn-group.btn-group-sm
+          = link_to t('words.previous_season'), season_works_path(slug: ENV['ANNICT_PREVIOUS_SEASON']), class: "btn btn-default #{params[:slug] == ENV['ANNICT_PREVIOUS_SEASON'] ? 'active' : ''}"
+          = link_to t('words.current_season'), season_works_path(slug: ENV['ANNICT_CURRENT_SEASON']), class: "btn btn-default #{params[:slug] == ENV['ANNICT_CURRENT_SEASON'] ? 'active' : ''}"
+          = link_to t('words.next_season'), season_works_path(slug: ENV['ANNICT_NEXT_SEASON']), class: "btn btn-default #{params[:slug] == ENV['ANNICT_NEXT_SEASON'] ? 'active' : ''}"
 
-  = render 'works', works: @works, user: current_user
+    = render 'works', works: @works, user: current_user

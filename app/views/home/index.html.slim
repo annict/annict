@@ -5,12 +5,13 @@
 - if current_user.tips.unfinished.present?
   = render 'tips'
 
-.container
-  .activities-box ng-controller='ActivitiesCtrl' ann-loading='loading'
-    div infinite-scroll='addMoreActivities()' infinite-scroll-disabled='disabled' infinite-scroll-distance='2'
-      = render 'activities/activity'
-    .info.well ng-show='0 === activities.length'
-      .icon
-        i.fa.fa-info-circle
-      p = t('home.no_timeline')
-      p = "「#{link_to('友達を探す', friends_path)}」ページで友達を探すことができます。".html_safe
+.content--narrow
+  .container
+    .activities-box ng-controller='ActivitiesCtrl' ann-loading='loading'
+      div infinite-scroll='addMoreActivities()' infinite-scroll-disabled='disabled' infinite-scroll-distance='2'
+        = render 'activities/activity'
+      .info.well ng-show='0 === activities.length'
+        .icon
+          i.fa.fa-info-circle
+        p = t('home.no_timeline')
+        p = "「#{link_to('友達を探す', friends_path)}」ページで友達を探すことができます。".html_safe

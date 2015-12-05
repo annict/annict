@@ -2,13 +2,56 @@
  *= require_self
  */
 
-@import "./foundation/variables";
-@import "./foundation/bootstrap";
-@import "./foundation/base";
-@import "./foundation/content";
-@import "./layout/sidebar";
-@import "./object/components/flash";
-@import "./object/components/tabs";
-@import "./object/projects/settings-option";
-@import "./object/projects/settings-providers";
-@import "./object/projects/settings-sayonara";
+@import "application/foundation/variables";
+@import "application/foundation/bootstrap-variables";
+
+@import url("https://fonts.googleapis.com/earlyaccess/notosansjapanese.css");
+@import "bootstrap-sprockets";
+@import "bootstrap";
+@import "bourbon";
+@import "font-awesome-sprockets";
+@import "font-awesome";
+@import "easydropdown";
+
+@import "application/old/mixins/profile-header";
+@import "application/old/mixins/selector";
+@import "application/old/mixins/work-profile";
+@import "application/old/mixins/works-list";
+@import "application/old/base/fonts";
+@import "application/old/base/base";
+@import "application/old/components/*";
+@import "application/old/components_old/about-works-image";
+@import "application/old/components_old/ann-channel-selector";
+@import "application/old/components_old/ann-checkin-progress";
+@import "application/old/components_old/ann-status-selector";
+@import "application/old/components_old/ann-tabs";
+@import "application/old/components_old/ann-user-sub-header";
+@import "application/old/components_old/ann-work-profile-light";
+@import "application/old/components_old/btn-group-tab";
+@import "application/old/components_old/checkin-form";
+@import "application/old/components_old/checkin";
+@import "application/old/components_old/error-panel";
+@import "application/old/components_old/social-click-counter";
+@import "application/old/components_old/tips";
+@import "application/old/components_old/user-list";
+@import "application/old/components_old/welcome-to-annict";
+@import "application/old/controllers/channel-works";
+@import "application/old/controllers/channels";
+@import "application/old/controllers/checkins";
+@import "application/old/controllers/episodes";
+@import "application/old/controllers/friends";
+@import "application/old/controllers/home";
+@import "application/old/controllers/notifications";
+@import "application/old/controllers/pages";
+@import "application/old/controllers/programs";
+@import "application/old/controllers/registrations";
+@import "application/old/controllers/users";
+@import "application/old/controllers/works";
+
+@import "application/foundation/base";
+@import "application/foundation/bootstrap";
+@import "application/foundation/content";
+@import "application/layout/sidebar";
+@import "application/object/components/flash";
+@import "application/object/components/tabs";
+@import "application/object/projects/*";

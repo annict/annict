@@ -4,14 +4,14 @@
 - description meta_description("#{@user.profile.name}さんが#{action}#{t('words.anime')}をチェック！")
 - keywords meta_keywords(@user.profile.name, @user.username)
 
-.ann-user-sub-header.container
-  = link_to user_path(@user.username) do
-    = annict_image_tag(@user.profile, :tombo_avatar, msize: "50x50", size: "70x70", class: "img-circle")
-  h1
-    = link_to @user.profile.name, user_path(@user.username)
-    = "が#{action}アニメ"
-
-= render 'works_nav'
-
-.container
-  = render 'works/works', works: @works, user: @user
+.content--narrow
+  .ann-user-sub-header
+    = link_to user_path(@user.username) do
+      = annict_image_tag(@user.profile, :tombo_avatar, msize: "50x50", size: "70x70", class: "img-circle")
+    h1
+      = link_to @user.profile.name, user_path(@user.username)
+      = "が#{action}アニメ"
+  
+  = render 'works_nav'
+  .container
+    = render 'works/works', works: @works, user: @user

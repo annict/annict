@@ -1,7 +1,8 @@
-.tips
-  .container
-    - if current_user.tips.unfinished.present?
-      h2 Annictにようこそ
-      p Annictでできることを簡単にまとめてみました。良かったらご覧ください。
-      - current_user.tips.unfinished.each do |t|
-        = render 'tip_modal', tip: t
+.content--narrow
+  .tips
+    .container
+      - if current_user.tips.unfinished.present?
+        h2 Annictにようこそ
+        p Annictでできることを簡単にまとめてみました。良かったらご覧ください。
+        - current_user.tips.unfinished.each do |t|
+          = render 'tip_modal', tip: t

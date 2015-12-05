@@ -1,12 +1,14 @@
-.container
-  - if @notifications.present?
-    - @notifications.each do |notification|
-      = render 'notification', notification: notification
+.content--narrow
+  .container
+    .notifications
+      - if @notifications.present?
+        - @notifications.each do |notification|
+          = render 'notification', notification: notification
 
-    .text-center
-      = paginate @notifications
-  - else
-    .info.well
-      .icon
-        i.fa.fa-info-circle
-      p = t('notifications.no_notifications')
+        .text-center
+          = paginate @notifications
+      - else
+        .info.well
+          .icon
+            i.fa.fa-info-circle
+          p = t('notifications.no_notifications')

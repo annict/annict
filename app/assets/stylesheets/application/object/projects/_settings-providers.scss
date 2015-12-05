@@ -1,0 +1,37 @@
+.settings__providers {
+  margin: 15px 0;
+
+  .providers__twitter,
+  .providers__facebook {
+    display: flex;
+    height: 30px;
+    justify-content: space-between;
+    line-height: 30px;
+  }
+
+  .providers__twitter {
+    margin-bottom: 20px;
+  }
+
+  .twitter__head,
+  .facebook__head {
+    flex-basis: 50%;
+    margin-right: 15px;
+    text-align: right;
+  }
+
+  .twitter__body,
+  .facebook__body {
+    flex-basis: 50%;
+    margin-left: 15px;
+    text-align: left;
+  }
+
+  .icon {
+    margin-right: 7px;
+  }
+
+  .cancel-disabled {
+    font-size: 12px;
+  }
+}

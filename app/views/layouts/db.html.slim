@@ -5,10 +5,10 @@ html lang="ja" ng-app="annict"
     link href="/images/favicon.png" rel="shortcut icon" type="image/png"
     = stylesheet_link_tag "db", media: "all"
     = include_gon
-    = javascript_include_tag "base"
-    = javascript_include_tag "db"
+    = javascript_include_tag "application_common"
+    = javascript_include_tag "application"
     = csrf_meta_tags
-  body class="#{body_class}"
+  body#js-annict class="#{body_class}"
     nav.navbar.navbar-default.navbar-fixed-top role="navigation"
       .container-fluid
         .navbar-header
