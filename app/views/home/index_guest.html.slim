@@ -24,14 +24,14 @@
       = t("home.index.signout.catch_copy")
     .signin-buttons
       .signin-button
-        = link_to user_omniauth_authorize_path(:twitter), class: "btn btn-twitter", "analytics-on" => "click", "analytics-event" => "ログイン", "analytics-category" => "callbacks", "analytics-label" => "Twitter ページ上部" do
+        = link_to user_omniauth_authorize_path(:twitter), class: "btn btn-twitter" do
           .icon.pull-left
             i.fa.fa-twitter
           .text
             | Twitterアカウントで始める
           .clearfix
       .signin-button
-        = link_to user_omniauth_authorize_path(:facebook), class: "facebook btn btn-facebook", "analytics-on" => "click", "analytics-event" => "ログイン", "analytics-category" => "callbacks", "analytics-label" => "Facebook ページ上部" do
+        = link_to user_omniauth_authorize_path(:facebook), class: "facebook btn btn-facebook" do
           .icon.pull-left
             i.fa.fa-facebook
           .text
@@ -79,14 +79,14 @@
 
     .signin-buttons
       .signin-button
-        = link_to user_omniauth_authorize_path(:twitter), class: "btn btn-twitter", "analytics-on" => "click", "analytics-event" => "ログイン", "analytics-category" => "callbacks", "analytics-label" => "Twitter ページ下部" do
+        = link_to user_omniauth_authorize_path(:twitter), class: "btn btn-twitter" do
           .icon.pull-left
             i.fa.fa-twitter
           .text
             | Twitterアカウントで始める
           .clearfix
       .signin-button
-        = link_to user_omniauth_authorize_path(:facebook), class: "facebook btn btn-facebook", "analytics-on" => "click", "analytics-event" => "ログイン", "analytics-category" => "callbacks", "analytics-label" => "Facebook ページ下部" do
+        = link_to user_omniauth_authorize_path(:facebook), class: "facebook btn btn-facebook" do
           .icon.pull-left
             i.fa.fa-facebook
           .text

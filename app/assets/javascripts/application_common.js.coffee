@@ -6,8 +6,6 @@
 #= require angular
 #= require angular-animate
 #= require angular-sanitize
-#= require angulartics/angulartics
-#= require angulartics-google-analytics
 #= require ng-infinite-scroller-origin
 #= require chartjs
 #= require jquery-easing-original/jquery.easing

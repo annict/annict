@@ -5,8 +5,6 @@ window.AnnictOld = {}
 moment.locale("ja")
 
 modules = [
-  "angulartics"
-  "angulartics.google.analytics"
   "ngAnimate"
   "ngSanitize"
   "infinite-scroll"

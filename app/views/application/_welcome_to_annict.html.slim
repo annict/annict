@@ -6,6 +6,6 @@
     .panel-body
       | Annict (アニクト) は、見たアニメを記録したり、感想をシェアしたりすることができるWebサービスです。
       .more
-        = link_to root_path, class: 'btn btn-primary btn-transparency', 'analytics-on' => 'click', 'analytics-event' => 'もっと詳しく', 'analytics-category' => 'home' do
+        = link_to root_path, class: 'btn btn-primary btn-transparency' do
           i.fa.fa-lightbulb-o
           = t('words.more_detail')
