@@ -1,4 +1,4 @@
-AnnictOld.angular.controller 'OldToggleLikeButtonCtrl', ($scope, $http, $analytics) ->
+AnnictOld.angular.controller 'OldToggleLikeButtonCtrl', ($scope, $http) ->
   $scope.toggle = (recipientName, recipientId) ->
     if $scope.liked
       $http.delete("/#{recipientName}/#{recipientId}/like").success =>
@@ -6,6 +6,5 @@ AnnictOld.angular.controller 'OldToggleLikeButtonCtrl', ($scope, $http, $analyti
         $scope.liked = false
     else
       $http.post("/#{recipientName}/#{recipientId}/like").success =>
-        $analytics.eventTrack('Like', { category: 'likes', label: recipientName })
         $scope.likesCount += 1
         $scope.liked = true

@@ -6,26 +6,24 @@
 #  user_id              :integer          not null
 #  episode_id           :integer          not null
 #  comment              :text
-#  modify_comment       :boolean          default(FALSE), not null
-#  twitter_url_hash     :string(510)
-#  facebook_url_hash    :string(510)
+#  twitter_url_hash     :string
 #  twitter_click_count  :integer          default(0), not null
+#  created_at           :datetime
+#  updated_at           :datetime
+#  facebook_url_hash    :string
 #  facebook_click_count :integer          default(0), not null
 #  comments_count       :integer          default(0), not null
 #  likes_count          :integer          default(0), not null
-#  created_at           :datetime
-#  updated_at           :datetime
+#  modify_comment       :boolean          default(FALSE), not null
 #  shared_twitter       :boolean          default(FALSE), not null
 #  shared_facebook      :boolean          default(FALSE), not null
 #  work_id              :integer
 #
 # Indexes
 #
-#  checkins_episode_id_idx         (episode_id)
-#  checkins_facebook_url_hash_key  (facebook_url_hash) UNIQUE
-#  checkins_twitter_url_hash_key   (twitter_url_hash) UNIQUE
-#  checkins_user_id_idx            (user_id)
-#  index_checkins_on_work_id       (work_id)
+#  index_checkins_on_facebook_url_hash  (facebook_url_hash) UNIQUE
+#  index_checkins_on_twitter_url_hash   (twitter_url_hash) UNIQUE
+#  index_checkins_on_work_id            (work_id)
 #
 
 class Checkin < ActiveRecord::Base
@@ -44,8 +42,6 @@ class Checkin < ActiveRecord::Base
   after_create  :save_activity
   after_create  :finish_tips
   after_create  :refresh_check
-  after_commit  :publish_events, on: :create
-
 
   def self.initial?(checkin)
     count == 1 && first.id == checkin.id
@@ -101,11 +97,6 @@ class Checkin < ActiveRecord::Base
 
   def check_comment_modified
     self.modify_comment = true if comment_changed?
-  end
-
-  def publish_events
-    FirstCheckinsEvent.publish(:create, self) if user.checkins.initial?(self)
-    CheckinsEvent.publish(:create, self)
   end
 
   def finish_tips
