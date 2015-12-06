@@ -32,7 +32,6 @@ class LikesController < ApplicationController
     recipient = recipient_model.find(recipient_id)
 
     current_user.like_r(recipient)
-    ga_client.events.create("likes", "create")
 
     render status: 200, nothing: true
   end
