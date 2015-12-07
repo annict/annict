@@ -15,23 +15,13 @@
 
 @import "application_mobile/foundation/base";
 @import "application_mobile/foundation/bootstrap_base";
-
-@import "application_mobile/old/mixins/profile-header";
-@import "application_mobile/old/mixins/selector";
-@import "application_mobile/old/mixins/work-profile";
-@import "application_mobile/old/mixins/works-list";
+@import "application_mobile/foundation/content";
 @import "application_mobile/old/base/fonts";
+
+@import "application_mobile/object/component/*";
+@import "application_mobile/object/project/*";
+
+@import "application_mobile/old/mixins/*";
 @import "application_mobile/old/components/*";
 @import "application_mobile/old/components_old/*";
-@import "application_mobile/old/controllers/channel-works";
-@import "application_mobile/old/controllers/channels";
-@import "application_mobile/old/controllers/checkins";
-@import "application_mobile/old/controllers/episodes";
-@import "application_mobile/old/controllers/friends";
-@import "application_mobile/old/controllers/home";
-@import "application_mobile/old/controllers/notifications";
-@import "application_mobile/old/controllers/pages";
-@import "application_mobile/old/controllers/programs";
-@import "application_mobile/old/controllers/registrations";
-@import "application_mobile/old/controllers/users";
-@import "application_mobile/old/controllers/works";
+@import "application_mobile/old/controllers/*";

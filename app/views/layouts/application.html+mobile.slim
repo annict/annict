@@ -9,7 +9,10 @@ html lang="ja" ng-app="annict"
       .app__main
         = render "flash"
         = yield
-      
+        
+        - unless content_for :no_footer
+          = render "footer"
+
       - if user_signed_in?
         = render "checkin_button"
 

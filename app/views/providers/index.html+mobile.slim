@@ -1,0 +1,28 @@
+.p-provider-settings.content
+  .container
+    .p-provider-settings__twitter
+      .head
+        | Twitter
+      .body
+        - if current_user.shareable_to?(:twitter)
+          - if current_user.shareable_to?(:facebook)
+            = link_to "解除する", provider_path(current_user.twitter), class: "btn btn-sm btn-link", data: { method: :delete, confirm: "解除しますか？" }
+          - else
+            span.cancel-disabled 解除できません
+        - else
+          = link_to user_omniauth_authorize_path(:twitter, back: providers_path), class: "btn btn-sm btn-twitter" do
+            = icon("twitter", class: "icon")
+            | 連携する
+    .p-provider-settings__facebook
+      .head
+        | Facebook
+      .body
+        - if current_user.shareable_to?(:facebook)
+          - if current_user.shareable_to?(:twitter)
+            = link_to "解除する", provider_path(current_user.facebook), class: "btn btn-sm btn-link", data: { method: :delete, confirm: "解除しますか？" }
+          - else
+            span.cancel-disabled 解除できません
+        - else
+          = link_to user_omniauth_authorize_path(:facebook, back: providers_path), class: "btn btn-sm btn-facebook" do
+            = icon("facebook", class: "icon")
+            | 連携する

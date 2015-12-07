@@ -75,6 +75,7 @@ Annict::Application.routes.draw do
     root "home#index"
   end
 
+  resources :settings, only: [:index]
   scope :settings do
     resource :account, only: [:show, :update]
     resource :profile, only: [:show, :update]
@@ -112,7 +113,6 @@ Annict::Application.routes.draw do
   resources :friends, only: [:index]
   resources :notifications, only: [:index]
   resources :programs, only: [:index]
-  resource :setting, only: [:show, :update]
 
   resources :statuses, only: [] do
     delete :like, to: 'likes#status_destroy'

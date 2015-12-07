@@ -1,0 +1,60 @@
+- title "#{@user.profile.name} (#{@user.username})さんのプロフィール"
+- description meta_description("#{@user.profile.description} / ")
+- keywords meta_keywords(@user.profile.name, @user.username)
+- content_for(:no_footer, true)
+
+.content
+  = render 'profile_header', user: @user
+
+  .container
+    .watching-works
+      h2.text-center 見てるアニメ
+      - if @works.present?
+        .works.row
+          - @works.each do |work|
+            = link_to work_path(work) do
+              .work.col-xs-4
+                .thumbnail
+                  = annict_image_tag(work.item, :tombo_image, msize: "80x80", size: "140x140", alt: work.title)
+                  .caption
+                    h3 = work.title
+
+        - if @watching_works.count > 9
+          .more
+            = link_to user_works_path(@user.username, :watching) do
+              = "見てるアニメ全#{@watching_works.count}作品を見る"
+              = icon('angle-right')
+      - else
+        .info.well
+          .icon
+            i.fa.fa-info-circle
+          p 見てるアニメはありません
+
+  hr
+
+  .container
+    .graphs
+      h2.text-center = t('stats.weekly_checkins')
+      - if @user.checkins_count > 0
+        .ann-user-checkin-chart.wrapper data-labels="#{@graph_labels}" data-values="#{@graph_values}"
+          - if browser.mobile?
+            canvas width='285' height='150'
+          - else
+            canvas width='460' height='200'
+      - else
+        .info.well
+          .icon
+            i.fa.fa-info-circle
+          p = t('stats.no_checkins')
+
+  hr
+
+  .container
+    .activities ng-controller='UserActivitiesCtrl' ng-init='init("#{@user.username}")' ann-loading='loading'
+      div infinite-scroll='addMoreActivities()' infinite-scroll-disabled='disabled' infinite-scroll-distance='2'
+        h2.text-center = t('words.activity')
+        = render 'activities/activity'
+      .info.well ng-show='0 === activities.length'
+        .icon
+          i.fa.fa-info-circle
+        p = t('users.no_activities')
