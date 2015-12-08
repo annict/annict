@@ -2,7 +2,7 @@
 - description meta_description("#{@user.profile.description} / ")
 - keywords meta_keywords(@user.profile.name, @user.username)
 
-.content--narrow
+.p-profile.content--narrow
   = render 'profile_header', user: @user
 
   .container

@@ -2,6 +2,8 @@
   background-color: $color-mine-shaft;
   float: left;
   height: 100%;
+  overflow-y: scroll;
+  padding-bottom: 15px;
   position: fixed;
   top: 0;
   width: 200px;
