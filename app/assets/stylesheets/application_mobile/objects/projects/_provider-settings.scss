@@ -1,0 +1,23 @@
+.p-provider-settings {
+  padding: 15px 0;
+
+  &__twitter,
+  &__facebook {
+    display: flex;
+    height: 30px;
+    justify-content: space-between;
+    line-height: 30px;
+  }
+
+  &__twitter {
+    margin-bottom: 20px;
+  }
+
+  .icon {
+    margin-right: 7px;
+  }
+
+  .cancel-disabled {
+    font-size: 12px;
+  }
+}

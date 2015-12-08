@@ -1,0 +1,16 @@
+.registrations-new, .registrations-create {
+  .terms-privacy {
+    color: $color-gunsmoke;
+    font-size: 12px;
+    margin: 25px 0 15px 0;
+    text-align: center;
+  }
+
+  .registration-button {
+    text-align: center;
+
+    i {
+      margin-right: 7px;
+    }
+  }
+}

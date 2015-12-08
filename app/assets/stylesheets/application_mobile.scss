@@ -2,6 +2,26 @@
  *= require_self
  */
 
-$browser: mobile;
+@import "application_common/foundations/variables";
+@import "application_common/foundations/bootstrap-variables";
 
-@import '_application_all';
+@import url("https://fonts.googleapis.com/earlyaccess/notosansjapanese.css");
+@import "bootstrap-sprockets";
+@import "bootstrap";
+@import "bourbon";
+@import "font-awesome-sprockets";
+@import "font-awesome";
+@import "easydropdown";
+
+@import "application_mobile/foundations/base";
+@import "application_mobile/foundations/bootstrap_base";
+@import "application_mobile/foundations/content";
+@import "application_mobile/old/base/fonts";
+
+@import "application_mobile/objects/components/*";
+@import "application_mobile/objects/projects/*";
+
+@import "application_mobile/old/mixins/*";
+@import "application_mobile/old/components/*";
+@import "application_mobile/old/components_old/*";
+@import "application_mobile/old/controllers/*";

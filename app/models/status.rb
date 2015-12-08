@@ -6,15 +6,14 @@
 #  user_id     :integer          not null
 #  work_id     :integer          not null
 #  kind        :integer          not null
-#  latest      :boolean          default(FALSE), not null
-#  likes_count :integer          default(0), not null
 #  created_at  :datetime
 #  updated_at  :datetime
+#  latest      :boolean          default(FALSE), not null
+#  likes_count :integer          default(0), not null
 #
 # Indexes
 #
-#  statuses_user_id_idx  (user_id)
-#  statuses_work_id_idx  (work_id)
+#  index_statuses_on_user_id_and_latest  (user_id,latest)
 #
 
 class Status < ActiveRecord::Base
@@ -39,8 +38,6 @@ class Status < ActiveRecord::Base
   after_create :update_channel_work
   after_create :finish_tips
   after_create :refresh_check
-  after_commit :publish_events, on: :create
-
 
   def self.initial
     order(:id).first
@@ -119,11 +116,6 @@ class Status < ActiveRecord::Base
   end
 
   private
-
-  def publish_events
-    FirstStatusesEvent.publish(:create, self) if user.statuses.initial?(self)
-    StatusesEvent.publish(:create, self)
-  end
 
   def finish_tips
     if user.statuses.initial?(self)

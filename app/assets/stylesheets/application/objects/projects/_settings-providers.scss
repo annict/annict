@@ -1,0 +1,23 @@
+.settings__providers {
+  margin: 15px 0;
+
+  .providers__twitter,
+  .providers__facebook {
+    display: flex;
+    height: 30px;
+    justify-content: space-between;
+    line-height: 30px;
+  }
+
+  .providers__twitter {
+    margin-bottom: 20px;
+  }
+
+  .icon {
+    margin-right: 7px;
+  }
+
+  .cancel-disabled {
+    font-size: 12px;
+  }
+}

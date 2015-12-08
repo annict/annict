@@ -75,6 +75,17 @@ Annict::Application.routes.draw do
     root "home#index"
   end
 
+  resources :settings, only: [:index]
+  scope :settings do
+    resource :account, only: [:show, :update]
+    resource :profile, only: [:show, :update]
+    resource :sayonara, only: [:show], controller: :sayonara
+    resources :options, only: [:index]
+    resources :providers, only: [:index, :destroy]
+
+    patch "options", to: "options#update"
+  end
+
   resource  :channel, only: [] do
     resources :works, only: [:index], controller: 'channel_works'
   end
@@ -99,18 +110,9 @@ Annict::Application.routes.draw do
   end
 
   resource :confirmation, only: [:show]
-
   resources :friends, only: [:index]
-
   resources :notifications, only: [:index]
-
-  resource  :profile, only: [:update]
-
   resources :programs, only: [:index]
-
-  resources :providers, only: [:destroy]
-
-  resource :setting, only: [:show, :update]
 
   resources :statuses, only: [] do
     delete :like, to: 'likes#status_destroy'
@@ -136,7 +138,6 @@ Annict::Application.routes.draw do
   resources :users, only: [] do
     collection do
       delete :destroy
-      patch :update
     end
 
     member do

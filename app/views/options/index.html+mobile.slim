@@ -1,0 +1,13 @@
+.p-option-settings.content
+  .container
+    .settings__option
+      = form_for current_user.setting, url: options_path do |f|
+        = render "error_panel", resource: current_user.setting
+
+        .checkbox
+          label
+            = f.check_box :hide_checkin_comment
+            | 未記録エピソードのネタバレを防ぐ
+            .detail 見てる、見たい、または中断したアニメの中で、記録していないエピソードに投稿された他の利用者からの感想を表示しないようにします。
+        .form-submit
+          = f.submit class: "btn btn-primary"

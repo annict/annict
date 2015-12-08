@@ -1,0 +1,79 @@
+.sidebar
+  = link_to root_path, target: "_self", class: "sidebar__header" do
+    = image_tag "sidebar/logo.png", size: "48x48", alt: "Annict"
+  .sidebar__body
+    - if user_signed_in?
+      = link_to programs_path, class: "#{programs_page? ? 'active' : ''}", target: "_self" do
+        = icon "calendar"
+        .caption
+          | 放送予定
+      = link_to user_works_path(current_user.username, :watching), class: "#{user_works_page? ? 'active' : ''}", target: "_self" do
+        = icon "play"
+        .caption
+          | 見てるアニメ
+      = link_to works_path, class: "#{works_page? ? 'active' : ''}", target: "_self" do
+        = icon "search"
+        .caption
+          | 見つける
+      = link_to user_path(current_user.username), class: "#{user_profile_page? ? 'active' : ''}", target: "_self" do
+        = icon "user"
+        .caption
+          | プロフィール
+      = link_to db_root_path, target: "_self" do
+        = icon "database"
+        .caption
+          | Annict DB
+      = link_to notifications_path do
+        = icon "bell"
+        .caption
+          | 通知
+        - if current_user.notifications_count > 0
+          span.notifications-count
+            span.count
+              = current_user.notifications_count
+      = link_to friends_path do
+        = icon "smile-o"
+        .caption
+          | 友達を探す
+      = link_to channels_path do
+        = icon "tv"
+        .caption
+          | チャンネル
+      = link_to profile_path do
+        = icon "cog"
+        .caption
+          | 設定
+      = link_to about_path do
+        = icon "lightbulb-o"
+        .caption
+          | Annictについて
+      = link_to destroy_user_session_path, method: "delete" do
+        = icon "sign-out"
+        .caption
+          | ログアウト
+    - else
+      = link_to works_path, class: "#{works_page? ? 'active' : ''}", target: "_self" do
+        = icon "search"
+        .caption
+          | 見つける
+      = link_to about_path do
+        = icon "lightbulb-o"
+        .caption
+          | Annictについて
+      = link_to root_path, target: "_self" do
+        = icon "power-off"
+        .caption
+          | ログイン
+
+  hr.sidebar__line
+
+  .sidebar__footer
+    .links-top
+      = link_to 'Twitter', 'https://twitter.com/anannict', target: '_blank'
+      = link_to t('words.blog'), 'http://blog.annict.com/', target: '_blank'
+      = link_to 'GitHub', 'https://github.com/annict', target: '_blank'
+    .links-bottom
+      = link_to t('titles.terms'), terms_path
+      = link_to t('titles.privacy'), privacy_path
+    .copyright
+      | (c) 2014-2015 Annict

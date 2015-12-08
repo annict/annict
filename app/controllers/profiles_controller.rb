@@ -5,9 +5,9 @@ class ProfilesController < ApplicationController
 
   def update(profile)
     if current_user.profile.update_attributes(profile)
-      redirect_to setting_path, notice: t("profiles.saved")
+      redirect_to profile_path, notice: t("profiles.saved")
     else
-      render "/settings/show"
+      render :show
     end
   end
 end

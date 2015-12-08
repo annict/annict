@@ -1,0 +1,8 @@
+.p-sayonara-settings.content
+  .container
+    .settings__sayonara
+      .description
+        | 退会すると、アカウント情報や見たアニメの記録、ステータス変更等のデータが全て削除されます。
+      
+      .action
+        = link_to "退会する", users_path, data: { confirm: "本当に、本当に退会しますか？", method: :delete }

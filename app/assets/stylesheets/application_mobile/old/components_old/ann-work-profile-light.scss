@@ -1,0 +1,104 @@
+.ann-work-profile-light {
+  height: 250px;
+  margin-bottom: 20px;
+  margin-top: -20px;
+  position: relative;
+
+  .background {
+    background-size: cover;
+    height: 250px;
+    left: 0;
+    position: absolute;
+    top: 0;
+    width: 100%;
+  }
+
+  .foreground {
+    position: relative;
+    z-index: 2;
+
+    .work-detail {
+      background-color: rgba(224, 86, 118, 0.8);
+      color: #ffffff;
+      font-size: 12px;
+      display: inline-block;
+      padding: 3px 5px;
+      position: absolute;
+      top: 35px;
+
+      i {
+        margin-right: 5px;
+      }
+    }
+
+    h1, .episode-title .wrapper, .checkins-count .wrapper {
+      background-color: rgba(0, 0, 0, 0.7);
+      display: inline-block;
+      margin: 0 10px;
+      padding: 3px 5px;
+      position: relative;
+    }
+
+    h1 {
+      display: inline-block;
+      font-size: 20px;
+      top: 100px;
+
+      a {
+        color: #ffffff;
+      }
+    }
+
+    .episode-title {
+      .wrapper {
+        color: #ffffff;
+        top: 100px;
+
+        .number {
+          margin-right: 5px;
+        }
+
+        a {
+          color: #ffffff;
+        }
+      }
+    }
+
+    .checkins-count {
+      .wrapper {
+        color: #e1e1e1;
+        font-size: 12px;
+        top: 100px;
+
+        i {
+          color: #64e86f;
+          margin-right: 5px;
+        }
+      }
+    }
+
+    .prev-episode, .next-episode {
+      background-color: rgba(224, 86, 118, 0.8);
+      color: #ffffff;
+      font-size: 12px;
+      display: inline-block;
+      padding: 3px 5px;
+      position: absolute;
+      top: 215px;
+    }
+
+    .prev-episode {
+      i {
+        margin-right: 5px;
+      }
+    }
+
+    .next-episode {
+      right: 0;
+
+      i {
+        margin-left: 5px;
+      }
+    }
+  }
+}

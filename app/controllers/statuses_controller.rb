@@ -8,7 +8,7 @@ class StatusesController < ApplicationController
       status = current_user.statuses.new(work_id: @work.id, kind: status_kind)
 
       if status.save
-        ga_client.events.create("statuses", "create")
+        keen_client.statuses.create(status)
         render status: 200, nothing: true
       end
     elsif status_kind == 'no_select'

@@ -1,0 +1,26 @@
+.c-tabs {
+  background-color: #fff;
+}
+
+.c-tabs__content {
+  display: flex;
+  height: 60px;
+  justify-content: center;
+  line-height: 60px;
+  margin: 0 auto;
+  max-width: 1200px;
+}
+
+.c-tabs__tab {
+  flex: 1;
+  text-align: center;
+  text-decoration: none;
+}
+
+.c-tabs__tab:hover {
+  text-decoration: none;
+}
+
+.c-tabs__tab--active {
+  border-bottom: solid 2px $color-mizuho;
+}

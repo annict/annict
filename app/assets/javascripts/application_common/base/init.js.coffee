@@ -1,0 +1,2 @@
+window.Ann = {}
+Ann.Components = {}

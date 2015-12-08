@@ -2,17 +2,18 @@
 - description meta_description("全#{Work.count}作品の中から気になるアニメを検索！")
 - keywords meta_keywords("検索")
 
-= render "nav"
+.content--narrow
+  = render "nav"
 
-.container
-  .search-form.text-center
-    = search_form_for @q, url: search_works_path, html: { role: "form" } do |f|
-      .form-group
-        = f.label :title_cont, class: "sr-only"
-        = f.text_field :title_cont, class: "form-control", placeholder: "作品名を入力...", autofocus: true
-      = f.submit t("words.search"), class: "btn btn-primary"
+  .container
+    .search-form.text-center
+      = search_form_for @q, url: search_works_path, html: { role: "form" } do |f|
+        .form-group
+          = f.label :title_cont, class: "sr-only"
+          = f.text_field :title_cont, class: "form-control", placeholder: "作品名を入力...", autofocus: true
+        = f.submit t("words.search"), class: "btn btn-primary"
 
-  - if params.has_key?(:utf8)
-    hr
+    - if params.has_key?(:utf8)
+      hr
 
-  = render "works", works: @works, user: current_user
+    = render "works", works: @works, user: current_user

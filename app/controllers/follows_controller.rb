@@ -4,8 +4,8 @@ class FollowsController < ApplicationController
 
 
   def create
-    current_user.follow(@user)
-    ga_client.events.create("follows", "create")
+    follow = current_user.follow(@user)
+    keen_client.follows.create(follow) if follow.present?
 
     render status: 200, nothing: true
   end

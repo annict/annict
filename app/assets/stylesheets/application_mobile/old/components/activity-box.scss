@@ -1,0 +1,29 @@
+@include keyframes(activities-fade-in) {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+.activity-box.ng-enter {
+  @include animation(activities-fade-in 0.1s ease-in);
+}
+
+.activity-box > .wrapper {
+  @include display(flex);
+
+  > .left {
+    @include flex-basis(35px);
+    @include flex-shrink(0); // 横幅を35pxに固定する
+
+    width: 35px;
+  }
+
+  > .right {
+    margin-left: 10px;
+    width: 100%;
+  }
+}

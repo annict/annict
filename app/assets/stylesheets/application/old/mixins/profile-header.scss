@@ -1,0 +1,148 @@
+@mixin profile-header {
+  .profile-header {
+    text-align: center;
+
+    .profile {
+      color: #ffffff;
+      padding: 20px 10px;
+      position: relative;
+
+      .background {
+        @include filter(brightness(60%));
+
+        background-size: cover;
+        height: 100%;
+        left: 0;
+        position: absolute;
+        top: 0;
+        width: 100%;
+        z-index: 1;
+      }
+
+      .foreground {
+        position: relative;
+        z-index: 2;
+
+        h1 {
+          margin: {
+            bottom: 3px;
+            top: 16px;
+          }
+
+          font-size: 30px;
+        }
+
+        .username, .description {
+          color: $color-alto;
+        }
+
+        .username {
+          margin-bottom: 7px;
+        }
+
+        .url {
+          margin-top: 7px;
+        }
+
+        .follow-button, .share-button {
+          margin-top: 15px;
+
+          i {
+            margin-right: 5px;
+          }
+        }
+
+        .share-button {
+          .modal {
+            color: #000000;
+            text-align: left;
+
+            .modal-header {
+              .close {
+                margin-top: 0px;
+              }
+            }
+
+            .modal-body {
+              .description {
+                color: #000000;
+                margin-bottom: 15px;
+              }
+
+              .image {
+                .loading {
+                  border: 1px solid $color-alto;
+                  height: 200px;
+                  margin: 0 auto;
+                  width: 200px;
+
+                  .spinner {
+                    color: $color-alto;
+                    left: 47%;
+                    position: relative;
+                    top: 90px;
+                  }
+
+                  .message {
+                    color: $color-mine-shaft;
+                    font-size: 12px;
+                    position: relative;
+                    text-align: center;
+                    top: 130px;
+                  }
+                }
+
+                img {
+                  border: 1px solid $color-alto;
+                  display: block;
+                  margin: 0 auto;
+                  text-align: center;
+                }
+              }
+
+              form {
+                margin-top: 20px;
+
+                .body-count {
+                  color: $color-mine-shaft;
+                  margin: 10px 0 20px 0;
+                  text-align: right;
+
+                  &.over {
+                    color: #ff0000;
+                  }
+                }
+
+                button {
+                  display: block;
+                  margin: 0 auto;
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+
+    .statuses {
+      margin-top: 10px;
+
+      .status {
+        text-align: center;
+
+        .count {
+          font-size: 18px;
+        }
+
+        .text {
+          color: $color-gunsmoke;
+          font-size: 10px;
+        }
+      }
+
+      hr {
+        margin-top: 10px;
+      }
+    }
+  }
+}

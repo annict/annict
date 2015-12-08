@@ -1,4 +1,5 @@
-= render 'channels/nav'
+.content--narrow
+  = render 'channels/nav'
 
-.container
-  = render 'works/works', works: @works, user: current_user
+  .container
+    = render 'works/works', works: @works, user: current_user

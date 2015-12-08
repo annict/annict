@@ -4,9 +4,9 @@
 #
 #  id           :integer          not null, primary key
 #  target       :integer          not null
-#  partial_name :string(255)      not null
-#  title        :string(255)      not null
-#  icon_name    :string(255)      not null
+#  partial_name :string           not null
+#  title        :string           not null
+#  icon_name    :string           not null
 #  created_at   :datetime         not null
 #  updated_at   :datetime         not null
 #

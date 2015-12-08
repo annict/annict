@@ -1,4 +1,5 @@
 class ApplicationController < ActionController::Base
+  include ViewSelector
   include FlashMessage
 
   # Prevent CSRF attacks by raising an exception.
@@ -18,16 +19,16 @@ class ApplicationController < ActionController::Base
 
   private
 
+  def keen_client
+    @keen_client ||= Annict::Keen::Client.new(request)
+  end
+
   def after_sign_in_path_for(resource)
     root_path
   end
 
   def after_sign_out_path_for(resource_or_scope)
     root_path
-  end
-
-  def ga_client
-    @ga_client ||= Annict::Analytics::Client.new(request, current_user)
   end
 
   def set_work

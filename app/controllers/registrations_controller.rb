@@ -16,7 +16,7 @@ class RegistrationsController < Devise::RegistrationsController
     @user = User.new(user_params).build_relations(@oauth)
 
     if @user.save
-      ga_client.events.create("users", "create")
+      keen_client.users.create(@user)
       sign_in(@user, bypass: true)
 
       flash[:info] = t('registrations.create.confirmation_mail_has_sent')

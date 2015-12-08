@@ -1,0 +1,13 @@
+html,
+body {
+  height: 100%;
+}
+
+.app-with-sidebar {
+  height: 100%;
+}
+
+.app__main {
+  background-color: $color-gallery;
+  margin-left: 200px;
+}

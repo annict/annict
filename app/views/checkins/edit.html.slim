@@ -1,4 +1,6 @@
-= render 'works/work_profile_light', work: @work, episode: @episode
+.content--narrow
+  .wrapper
+    = render 'works/work_profile_light', work: @work, episode: @episode
 
-.container
-  = render 'form', work: @work, episode: @episode, checkin: @checkin
+    .container
+      = render 'form', work: @work, episode: @episode, checkin: @checkin

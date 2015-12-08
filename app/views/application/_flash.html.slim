@@ -1,5 +1,9 @@
-.flash ng-controller='FlashCtrl' ng-init='init()' ng-show='display' ng-click='close()'
-  .alert ng-class='type'
-    .content
-      i.fa ng-class='iconType'
-      span ng-bind-html='body'
+ann-flash
+
+script#js-ann-flash type="x-template"
+  .c-flash v-on:click="close" v-show="show" transition="c-flash--expand"
+    .c-flash__alert.alert :class="alertClass"
+      .c-flash__content
+        i.fa :class="alertIcon"
+        span
+          | {{{ body }}}

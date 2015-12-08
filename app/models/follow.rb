@@ -10,9 +10,7 @@
 #
 # Indexes
 #
-#  follows_following_id_idx          (following_id)
-#  follows_user_id_following_id_key  (user_id,following_id) UNIQUE
-#  follows_user_id_idx               (user_id)
+#  index_follows_on_user_id_and_following_id  (user_id,following_id) UNIQUE
 #
 
 class Follow < ActiveRecord::Base
@@ -21,8 +19,6 @@ class Follow < ActiveRecord::Base
 
   after_create  :save_notification
   after_destroy :delete_notification
-  after_commit  :publish_events, on: :create
-
 
   private
 
@@ -37,9 +33,5 @@ class Follow < ActiveRecord::Base
 
   def delete_notification
     Notification.where(trackable_type: 'Follow', trackable_id: id).destroy_all
-  end
-
-  def publish_events
-    FollowsEvent.publish(:create, self)
   end
 end

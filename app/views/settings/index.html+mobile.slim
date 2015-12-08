@@ -1,0 +1,18 @@
+.content
+  .container
+    .p-settings
+      = link_to profile_path do
+        = icon "smile-o"
+        span プロフィール編集
+      = link_to account_path do
+        = icon "user"
+        span アカウント設定
+      = link_to providers_path do
+        = icon "share-alt"
+        span ソーシャル連携
+      = link_to options_path do
+        = icon "cog"
+        span オプション設定
+      = link_to sayonara_path do
+        = icon "hand-paper-o"
+        span 退会

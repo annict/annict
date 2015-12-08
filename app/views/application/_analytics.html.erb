@@ -5,7 +5,7 @@
   })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
 
   ga('create', '<%= ENV['GA_TRACKING_ID'] %>', 'annict.com');
-  <%# // ga('send', 'pageview'); // Angulartics導入のためコメントアウト %>
+  ga('send', 'pageview');
 
   <%# カスタムディメンション「ログイン」 %>
   <% if user_signed_in? %>
