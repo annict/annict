@@ -71,7 +71,7 @@ describe 'アカウント設定ページ' do
 
   before do
     login_as(user, scope: :user)
-    visit "/setting"
+    visit "/settings/account"
   end
 
   context 'メールアドレスを変更したとき' do
