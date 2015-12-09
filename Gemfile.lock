@@ -2,7 +2,7 @@ GEM
   remote: https://rubygems.org/
   specs:
     CFPropertyList (2.3.2)
-    aasm (4.5.0)
+    aasm (4.5.1)
     action_args (2.0.0)
     actionmailer (4.2.5)
       actionpack (= 4.2.5)
@@ -66,12 +66,12 @@ GEM
       execjs
       json
     awesome_print (1.6.1)
-    aws-sdk (2.2.3)
-      aws-sdk-resources (= 2.2.3)
-    aws-sdk-core (2.2.3)
+    aws-sdk (2.2.5)
+      aws-sdk-resources (= 2.2.5)
+    aws-sdk-core (2.2.5)
       jmespath (~> 1.0)
-    aws-sdk-resources (2.2.3)
-      aws-sdk-core (= 2.2.3)
+    aws-sdk-resources (2.2.5)
+      aws-sdk-core (= 2.2.5)
     aws-sdk-v1 (1.66.0)
       json (~> 1.4)
       nokogiri (>= 1.4.4)
@@ -94,7 +94,7 @@ GEM
       thor (~> 0.19)
     browser (1.0.1)
     buftok (0.2.0)
-    bugsnag (2.8.12)
+    bugsnag (2.8.13)
       json (~> 1.7, >= 1.7.7)
     builder (3.2.2)
     bullet (4.14.10)
@@ -127,6 +127,7 @@ GEM
       coffee-script-source
       execjs
     coffee-script-source (1.10.0)
+    concurrent-ruby (1.0.0)
     coolline (0.5.0)
       unicode_utils (~> 1.4)
     daemons (1.2.3)
@@ -217,7 +218,7 @@ GEM
       fog-json (~> 1.0)
       fog-xml (~> 0.1)
       ipaddress (~> 0.8)
-    fog-brightbox (0.10.0)
+    fog-brightbox (0.10.1)
       fog-core (~> 1.22)
       fog-json
       inflecto (~> 0.0.2)
@@ -257,7 +258,7 @@ GEM
       fog-core
       fog-json
       fog-xml
-    fog-sakuracloud (1.4.0)
+    fog-sakuracloud (1.5.0)
       fog-core
       fog-json
     fog-serverlove (0.1.2)
@@ -523,7 +524,7 @@ GEM
       sprockets-rails (>= 2.0, < 4.0)
       tilt (>= 1.1, < 3)
     simple_oauth (0.3.1)
-    simplecov (0.11.0)
+    simplecov (0.11.1)
       docile (~> 1.1.0)
       json (~> 1.8)
       simplecov-html (~> 0.10.0)
@@ -541,7 +542,8 @@ GEM
     spring (1.5.0)
     spring-commands-rspec (1.0.4)
       spring (>= 0.9.1)
-    sprockets (3.4.1)
+    sprockets (3.5.2)
+      concurrent-ruby (~> 1.0)
       rack (> 1, < 3)
     sprockets-rails (2.3.3)
       actionpack (>= 3.0)
