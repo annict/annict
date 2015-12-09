@@ -43,8 +43,12 @@
         .url {
           margin-top: 7px;
 
-          a:hover {
-            text-decoration: none;
+          a {
+            color: $color-alto;
+
+            &:hover {
+              text-decoration: none;
+            }
           }
         }
 
