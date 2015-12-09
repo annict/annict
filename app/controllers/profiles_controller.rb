@@ -1,5 +1,5 @@
 class ProfilesController < ApplicationController
-  permits :tombo_avatar, :tombo_background_image, :description, :name
+  permits :tombo_avatar, :tombo_background_image, :description, :name, :url
 
   before_action :authenticate_user!
 

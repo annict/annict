@@ -24,6 +24,7 @@ ja:
         background_image: 背景画像
         description: ヒトコト
         name: 名前
+        url: URL
       program:
         channel_id: チャンネル
         episode_id: エピソード

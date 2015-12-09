@@ -42,6 +42,10 @@
 
         .url {
           margin-top: 7px;
+          
+          a:hover {
+            text-decoration: none;
+          }
         }
 
         .follow-button, .share-button {

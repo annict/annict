@@ -4,8 +4,8 @@
 #
 #  id                                  :integer          not null, primary key
 #  user_id                             :integer          not null
-#  name                                :string           default(""), not null
-#  description                         :string           default(""), not null
+#  name                                :string(510)      default(""), not null
+#  description                         :string(510)      default(""), not null
 #  created_at                          :datetime
 #  updated_at                          :datetime
 #  background_image_animated           :boolean          default(FALSE), not null
@@ -17,10 +17,12 @@
 #  tombo_background_image_content_type :string
 #  tombo_background_image_file_size    :integer
 #  tombo_background_image_updated_at   :datetime
+#  url                                 :string
 #
 # Indexes
 #
-#  index_profiles_on_user_id  (user_id) UNIQUE
+#  profiles_user_id_idx  (user_id)
+#  profiles_user_id_key  (user_id) UNIQUE
 #
 
 class Profile < ActiveRecord::Base
@@ -31,6 +33,7 @@ class Profile < ActiveRecord::Base
 
   validates :description, length: { maximum: 150 }
   validates :name, presence: true
+  validates :url, url: { allow_blank: true }
   validates :tombo_avatar, attachment_content_type: {
                              content_type: /\Aimage/
                            }
