@@ -10,7 +10,8 @@ module ItemCommon
     validates :name, presence: true
     validates :url, presence: true, url: true, amazon: true, length: { maximum: 500 }
     validates :tombo_image, attachment_presence: true,
-                            attachment_content_type: { content_type: /\Aimage/ }
+                            attachment_content_type: { content_type: /\Aimage/ },
+                            attachment_square: true
 
     def to_diffable_hash
       data = self.class::DIFF_FIELDS.inject({}) do |hash, field|

@@ -1,6 +1,7 @@
 module ApplicationHelper
   def annict_image_url(record, field, options = {})
     path = record.try!(:send, field).try!(:path, :master).presence || "no-image.jpg"
+    path = path.sub(%r{\A.*paperclip/}, "paperclip/") unless Rails.env.production?
 
     msize = options[:msize]
     size = (browser.mobile? && msize.present?) ? msize : options[:size]

@@ -361,6 +361,7 @@ GEM
     method_source (0.8.2)
     mime-types (2.99)
     mimemagic (0.3.0)
+    mini_magick (4.3.6)
     mini_portile2 (2.0.0)
     minitest (5.8.3)
     multi_json (1.11.2)
@@ -649,6 +650,7 @@ DEPENDENCIES
   koala
   letter_opener_web
   meta-tags
+  mini_magick
   net-ssh
   newrelic_rpm
   ngannotate-rails
