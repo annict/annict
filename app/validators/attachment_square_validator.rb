@@ -5,7 +5,7 @@ class AttachmentSquareValidator < ActiveModel::EachValidator
       image = MiniMagick::Image.open(image_path)
 
       if image.width != image.height
-        record.errors.add(:tombo_image, "には縦横1:1の画像を指定してください。")
+        record.errors.add(:tombo_image, "には縦横1対1の画像を指定してください。")
       end
     end
   end
