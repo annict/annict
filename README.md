@@ -14,7 +14,6 @@
   <a href="https://codeclimate.com/github/annict/annict"><img src="https://codeclimate.com/github/annict/annict/badges/gpa.svg"></a>
   <a href="https://codeclimate.com/github/annict/annict"><img src="https://codeclimate.com/github/annict/annict/badges/coverage.svg"></a>
   <a href="https://gemnasium.com/annict/annict"><img src="https://gemnasium.com/annict/annict.svg"></a>
-  <a href="http://slack.annict.com"><img src="http://slack.annict.com/badge.svg"></a>
   <a href="https://waffle.io/annict/annict"><img src="https://badge.waffle.io/annict/annict.svg?label=ready&title=Ready"></a>
 </p>
 
@@ -27,7 +26,7 @@
 開発に関わるもろもろのやり取りは、以下のサービスで行っています。
 
 * [GitHub Issues](https://github.com/annict/annict/issues)
-* [Slack](http://slack.annict.com)
+* [Idobata](https://idobata.io/organizations/annict/rooms/lounge/join_request/30557888-d8b5-4d44-8483-bebf79a73aaa)
 
 
 #### セキュリティに関わるバグの報告
