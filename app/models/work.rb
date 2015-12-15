@@ -56,8 +56,13 @@ class Work < ActiveRecord::Base
   has_many :draft_programs, dependent: :destroy
   has_many :draft_works, dependent: :destroy
   has_many :episodes, dependent: :destroy
+  has_many :organizations, through: :work_organizations
+  has_many :participations, dependent: :destroy
+  has_many :staffs, through: :staff_participations
   has_many :programs, dependent: :destroy
   has_many :statuses, dependent: :destroy
+  has_many :work_organizations, dependent: :destroy
+  has_many :staff_participations, dependent: :destroy
   has_one :item, dependent: :destroy
 
   validates :sc_tid, numericality: { only_integer: true }, allow_blank: true,
