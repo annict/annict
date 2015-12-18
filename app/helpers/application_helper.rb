@@ -20,8 +20,14 @@ module ApplicationHelper
     image_tag(url, options)
   end
 
-  def custom_time_ago_in_words(date)
-    "#{time_ago_in_words(date)}#{t('words.ago')}"
+  def custom_time_ago_in_words(datetime)
+    days = (Time.now.to_date - datetime.to_date).to_i
+
+    if days > 3
+      datetime.strftime("%Y/%m/%d")
+    else
+      "#{time_ago_in_words(datetime)}#{t('words.ago')}"
+    end
   end
 
   def meta_description(text = "")
