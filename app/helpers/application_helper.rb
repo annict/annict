@@ -21,7 +21,7 @@ module ApplicationHelper
   end
 
   def custom_time_ago_in_words(datetime)
-    days = (Time.now.to_date - datetime.to_date).to_i
+    days = (Time.zone.now.to_date - datetime.to_date).to_i
 
     if days > 3
       datetime.strftime("%Y/%m/%d")
