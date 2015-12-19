@@ -1,12 +1,16 @@
 AnnictOld.angular.directive "aniTimeAgo", ->
   (scope, elm, attr) ->
-    date = moment(attr.aniTimeAgo)
-    passageDays = moment().diff(moment(date), "days")
+    datetime = moment(attr.aniTimeAgo)
+    current = moment()
+    date = datetime.format("YYYY-MM-DD")
+    currentDate = current.format("YYYY-MM-DD")
+
+    passageDays = moment(currentDate).diff(moment(date), "days")
 
     text = if passageDays > 3
-      date.format("YYYY/MM/DD")
+      datetime.format("YYYY/MM/DD")
     else
-      date.fromNow()
+      datetime.fromNow()
 
     elm.prop("title", date.format("YYYY/MM/DD HH:mm"))
     elm.text(text)
