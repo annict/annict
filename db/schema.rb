@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20151212101014) do
+ActiveRecord::Schema.define(version: 20151219113921) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -211,6 +211,27 @@ ActiveRecord::Schema.define(version: 20151212101014) do
 
   add_index "draft_multiple_episodes", ["work_id"], name: "index_draft_multiple_episodes_on_work_id", using: :btree
 
+  create_table "draft_people", force: :cascade do |t|
+    t.integer  "person_id",        null: false
+    t.integer  "prefecture_id"
+    t.string   "name",             null: false
+    t.string   "name_kana"
+    t.string   "nickname"
+    t.string   "gender"
+    t.string   "url"
+    t.string   "wikipedia_url"
+    t.string   "twitter_username"
+    t.date     "birthday"
+    t.string   "blood_type"
+    t.integer  "height"
+    t.datetime "created_at",       null: false
+    t.datetime "updated_at",       null: false
+  end
+
+  add_index "draft_people", ["name"], name: "index_draft_people_on_name", using: :btree
+  add_index "draft_people", ["person_id"], name: "index_draft_people_on_person_id", using: :btree
+  add_index "draft_people", ["prefecture_id"], name: "index_draft_people_on_prefecture_id", using: :btree
+
   create_table "draft_programs", force: :cascade do |t|
     t.integer  "program_id"
     t.integer  "channel_id", null: false
@@ -385,7 +406,7 @@ ActiveRecord::Schema.define(version: 20151212101014) do
 
   create_table "people", force: :cascade do |t|
     t.integer  "prefecture_id"
-    t.string   "name",             null: false
+    t.string   "name",                                   null: false
     t.string   "name_kana"
     t.string   "nickname"
     t.string   "gender"
@@ -395,8 +416,9 @@ ActiveRecord::Schema.define(version: 20151212101014) do
     t.date     "birthday"
     t.string   "blood_type"
     t.integer  "height"
-    t.datetime "created_at",       null: false
-    t.datetime "updated_at",       null: false
+    t.datetime "created_at",                             null: false
+    t.datetime "updated_at",                             null: false
+    t.string   "aasm_state",       default: "published", null: false
   end
 
   add_index "people", ["name"], name: "index_people_on_name", unique: true, using: :btree
@@ -655,6 +677,7 @@ ActiveRecord::Schema.define(version: 20151212101014) do
   add_foreign_key "draft_items", "items"
   add_foreign_key "draft_items", "works"
   add_foreign_key "draft_multiple_episodes", "works"
+  add_foreign_key "draft_people", "prefectures"
   add_foreign_key "draft_programs", "channels"
   add_foreign_key "draft_programs", "episodes"
   add_foreign_key "draft_programs", "programs"

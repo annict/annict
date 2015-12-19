@@ -16,6 +16,7 @@
 #  height           :integer
 #  created_at       :datetime         not null
 #  updated_at       :datetime         not null
+#  aasm_state       :string           default("published"), not null
 #
 # Indexes
 #
@@ -24,9 +25,26 @@
 #
 
 class Person < ActiveRecord::Base
+  extend Enumerize
+  include AASM
+
+  aasm do
+    state :published, initial: true
+    state :hidden
+
+    event :hide do
+      after do
+        cast_participations.each(&:hide!)
+        staff_participations.each(&:hide!)
+      end
+
+      transitions from: :published, to: :hidden
+    end
+  end
+
+  enumerize :gender, in: [:male, :female, :other], default: :other
+
   belongs_to :prefecture
-  has_many :org_participations, dependent: :destroy
-  has_many :organizations, through: :org_participations
-  has_many :work_participations, dependent: :destroy
-  has_many :works, through: :work_participations
+  has_many :cast_participations, dependent: :destroy
+  has_many :staff_participations, dependent: :destroy
 end
