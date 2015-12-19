@@ -115,7 +115,7 @@ Annict::Application.configure do
   end
 
   config.imgix = {
-    secure: true,
+    use_https: true,
     source: ENV.fetch("IMGIX_SOURCE")
   }
 end
