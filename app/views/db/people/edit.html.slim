@@ -1,0 +1,10 @@
+- if @person.present?
+  = render "db/people/header", person: @person
+
+= render "edit_type_tab", person: @person
+
+.row
+  .col-sm-7
+    = render "form", person: @person
+  .col-sm-5
+    = render "sidebar"

@@ -1,0 +1,36 @@
+body.db-people, body.db-draft_people {
+  form {
+    h4 {
+      text-align: center;
+
+      &.work-fields {
+        margin-bottom: 30px;
+      }
+
+      &.edit-request-fields {
+        margin: 30px 0;
+      }
+    }
+  }
+}
+
+body.db-people-index,
+body.db-people-season,
+body.db-people-resourceless,
+body.db-people-search {
+  .nav-tabs {
+    margin-bottom: 20px;
+  }
+
+  .fetch-syobocal, .status-published {
+    margin-left: 7px;
+
+    &.enabled {
+      color: #5cb85c;
+    }
+
+    &.disabled {
+      color: #e1e1e1;
+    }
+  }
+}
