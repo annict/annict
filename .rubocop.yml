@@ -25,6 +25,10 @@ Style/CaseIndentation:
 Style/Documentation:
   Enabled: false
 
+# メソッドを複数行に分けて記述したとき、`.` は行末に配置する
+Style/DotPosition:
+  EnforcedStyle: trailing
+
 # `lambda` のブロック内が複数行になるときもRuby 1.9から入った `-> {}` 記法で書く
 # `lambda` より `->` のほうがすっきりするため。
 Style/Lambda:
