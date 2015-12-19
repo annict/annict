@@ -2,7 +2,7 @@
   background-color: $color-mine-shaft;
   float: left;
   height: 100%;
-  overflow-y: scroll;
+  overflow-y: auto;
   padding-bottom: 15px;
   position: fixed;
   top: 0;
@@ -10,10 +10,9 @@
 }
 
 .sidebar__header {
-  background-color: $color-mizuho;
+  background-color: rgba(0, 0, 0, 0.13);
   display: block;
-  height: 60px;
-  padding-top: 5px;
+  padding: 8px 0;
   text-align: center;
 }
 
