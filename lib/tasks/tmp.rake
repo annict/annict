@@ -1,3 +1,94 @@
+namespace :tmp do
+  task create_data: :environment do
+    PREFECTURES.each do |prefecture_name|
+      prefecture = Prefecture.where(name: prefecture_name).first_or_create
+      puts "prefecture: #{prefecture.name}"
+    end
+
+    work_staff_participation_roles = StaffParticipation.role.values.map do |role_value|
+      { value: role_value, text: I18n.t("enumerize.work_staff_participation.role.#{role_value}") }
+    end
+
+    works = Work.where.not(sc_tid: nil).order(:id)
+    works = works.where("id >= ?", 1)
+    works.find_each do |work|
+      puts "work_id: #{work.id}"
+      doc = Nokogiri::XML(open("http://cal.syoboi.jp/db.php?TID=#{work.sc_tid}&Command=TitleLookup"))
+      doc.css("Comment").each do |item|
+        begin
+          comment = item.text + "*"
+          comment = comment.
+            gsub(/\n/, ",").
+            gsub(":,", ",").
+            gsub(";", ":").
+            gsub("：", ":")
+
+          save_staff_info(work, comment)
+          save_cast_info(work, comment)
+        rescue => e
+          binding.pry
+        end
+      end
+    end
+  end
+end
+
+def save_staff_info(work, comment)
+  staff_str = comment[/\*(スタッフ.+?)\*/, 1]
+
+  if staff_str.present?
+    staff_ary = staff_str.split(",").select { |str| str.include?(":") }
+    staffs = staff_ary.map { |str| str.split(/:(.*):/).select(&:present?) }
+    staffs = staffs[0..-2] if work.id == 2121
+    staffs = staffs.to_h
+    org_str = staffs["アニメーション制作"] ||
+              staffs["制作"] ||
+              staffs["制作スタジオ"] ||
+              staffs["アニメーション製作"] ||
+              staffs["アニメ制作"]
+    orgs = org_str.try!(:split, "、")
+    if orgs.present?
+      orgs.each do |org|
+        organization = Organization.where(name: org).first_or_create
+        work_organization = work.work_organizations.
+                                 where(organization: organization, role: :producer).
+                                 first_or_create
+      end
+    end
+
+    staffs = staffs.except("アニメーション制作", "制作", "制作スタジオ", "アニメーション製作", "アニメ制作")
+
+    work_staff_participation_roles.each do |wsp_role|
+      name = staffs[wsp_role[:text]]
+      next if name.blank?
+      person = Person.where(name: name).first_or_create
+      wsp = work.staff_participations.where(person: person, role: wsp_role[:value]).first_or_create
+    end
+
+    staffs = staffs.except(*(work_staff_participation_roles.map { |wspr| wspr[:text] }))
+
+    staffs.each do |role, name|
+      person = Person.where(name: name).first_or_create
+      work.staff_participations.where(person: person, role: :other, role_other: role).first_or_create
+    end
+  end
+end
+
+def save_cast_info(work, comment)
+  cast_str = comment[/\*(キャスト.+?)\*/, 1]
+
+  if cast_str.present?
+    cast_ary = cast_str.split(",").select { |str| str.include?(":") }
+    casts = cast_ary.map { |str| str.split(/:(.*):/).select(&:present?) }
+    casts = casts.select { |cast| cast.length == 2 }.to_h
+
+    casts.each do |character_name, name|
+      person = Person.where(name: name).first_or_create
+      work.cast_participations.where(person: person, character_name: character_name).first_or_create
+    end
+  end
+end
+
 PREFECTURES = %w(
   北海道
   青森県
@@ -48,72 +139,3 @@ PREFECTURES = %w(
   沖縄県
   海外
 )
-
-namespace :tmp do
-  task create_data: :environment do
-    PREFECTURES.each do |prefecture_name|
-      prefecture = Prefecture.where(name: prefecture_name).first_or_create
-      puts "prefecture: #{prefecture.name}"
-    end
-
-    work_staff_participation_roles = StaffParticipation.role.values.map do |role_value|
-      { value: role_value, text: I18n.t("enumerize.work_staff_participation.role.#{role_value}") }
-    end
-
-    works = Work.where.not(sc_tid: nil).order(:id)
-    works = works.where("id >= ?", 1)
-    works.find_each do |work|
-      puts "work_id: #{work.id}"
-      doc = Nokogiri::XML(open("http://cal.syoboi.jp/db.php?TID=#{work.sc_tid}&Command=TitleLookup"))
-      doc.css("Comment").each do |item|
-        begin
-          comment = item.text + "*"
-          comment = comment.gsub(/\n/, ",").gsub(":,", ",").gsub(";", ":").gsub("：", ":")
-
-          staff_str = comment[/\*(スタッフ.+?)\*/, 1]
-
-          if staff_str.present?
-            staff_ary = staff_str.split(",").select { |str| str.include?(":") }
-            staffs = staff_ary.map { |str| str.split(/:(.*):/).select(&:present?) }
-            staffs = staffs[0..-2] if work.id == 2121
-            staffs = staffs.to_h
-            org_str = staffs["アニメーション制作"] ||
-                      staffs["制作"] ||
-                      staffs["制作スタジオ"] ||
-                      staffs["アニメーション製作"] ||
-                      staffs["アニメ制作"]
-            orgs = org_str.try!(:split, "、")
-            if orgs.present?
-              orgs.each do |org|
-                organization = Organization.where(name: org).first_or_create
-                work_organization = work.work_organizations.
-                                         where(organization: organization, role: :producer).
-                                         first_or_create
-              end
-            end
-
-            staffs = staffs.except("アニメーション制作", "制作", "制作スタジオ", "アニメーション製作", "アニメ制作")
-
-            work_staff_participation_roles.each do |wsp_role|
-              name = staffs[wsp_role[:text]]
-              next if name.blank?
-              person = Person.where(name: name).first_or_create
-              wsp = work.staff_participations.where(person: person, role: wsp_role[:value]).first_or_create
-            end
-
-            staffs = staffs.except(*(work_staff_participation_roles.map { |wspr| wspr[:text] }))
-
-            staffs.each do |role, name|
-              person = Person.where(name: name).first_or_create
-              wsp = work.staff_participations.where(person: person, role: :other, role_other: role).first_or_create
-            end
-          end
-
-          binding.pry
-        rescue => e
-          binding.pry
-        end
-      end
-    end
-  end
-end
