@@ -12,5 +12,5 @@ AnnictOld.angular.directive "aniTimeAgo", ->
     else
       datetime.fromNow()
 
-    elm.prop("title", date.format("YYYY/MM/DD HH:mm"))
+    elm.prop("title", datetime.format("YYYY/MM/DD HH:mm"))
     elm.text(text)
