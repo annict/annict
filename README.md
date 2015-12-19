@@ -71,7 +71,7 @@ Annictでは開発に関係するタスク管理を[Waffle.io](https://waffle.io
 Annictは以下のソフトウェアを使用して開発しています。
 Annictを動かすには事前にこれらをインストールする必要があります。
 
-* Ruby 2.2.3
+* Ruby 2.2
 * PostgreSQL 9.3
 * ImageMagick
 * Node.js 0.12
