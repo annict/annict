@@ -8,8 +8,8 @@ module DraftCommon
 
     def diffs
       origin_hash = edit_request.draft_resource.
-                    try(:origin).
-                    try(:to_diffable_hash).presence || {}
+        try!(:origin).
+        try!(:to_diffable_hash).presence || {}
       draft_hash = edit_request.draft_resource.to_diffable_hash
 
       HashDiff.diff(origin_hash, draft_hash)
@@ -17,9 +17,9 @@ module DraftCommon
 
     def origin_values
       edit_request.draft_resource.
-        try(:origin).
-        try(:decorate).
-        try(:to_values).
+        try!(:origin).
+        try!(:decorate).
+        try!(:to_values).
         presence || {}
     end
 
