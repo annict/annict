@@ -1,8 +1,8 @@
 module PersonCommon
   extend ActiveSupport::Concern
 
-  DIFF_FIELDS = %i(season_id sc_tid title media official_site_url wikipedia_url
-                   twitter_username twitter_hashtag released_at_about)
+  DIFF_FIELDS = %i(prefecture_id name name_kana nickname gender url wikipedia_url
+                   twitter_username birthday blood_type height)
   PUBLISH_FIELDS = DIFF_FIELDS
 
   included do
