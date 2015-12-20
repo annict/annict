@@ -65,7 +65,7 @@ class Check < ActiveRecord::Base
   end
 
   def update_episode_to_first
-    first_episode = work.episodes.order(sort_number: :asc).first
+    first_episode = work.episodes.published.order(sort_number: :asc).first
 
     if first_episode.present?
       update(episode_id: first_episode.id)
