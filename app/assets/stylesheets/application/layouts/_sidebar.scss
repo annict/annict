@@ -36,19 +36,29 @@
   font-size: 12px;
   padding: 3px 15px;
   width: 100%;
-}
 
-.sidebar__body a:first-child {
-  margin-top: 20px;
-}
+  &:first-child {
+    margin-top: 20px;
+  }
 
-.sidebar__body a:hover {
-  background-color: #383838;
+  &:hover {
+    background-color: #383838;
+    text-decoration: none;
+  }
 }
 
 .sidebar__body .caption {
   display: inline-block;
   margin-left: 10px;
+}
+
+.sidebar__notifications-count {
+  background-color: $color-mizuho;
+  border-radius: 10px;
+  font-size: 12px;
+  left: 50%;
+  padding: 2px 6px;
+  position: relative;
 }
 
 .sidebar__line {
