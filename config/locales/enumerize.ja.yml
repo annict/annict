@@ -1,5 +1,14 @@
 ja:
   enumerize:
+    person:
+      blood_type:
+        a: A型
+        b: B型
+        ab: AB型
+        o: O型
+      gender:
+        female: 女性
+        male: 男性
     status:
       kind:
         wanna_watch: 見たい

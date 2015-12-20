@@ -12,50 +12,51 @@
   = f.label :nickname, class: "col-sm-3 control-label"
   .col-sm-9
     = f.text_field :nickname, class: "form-control"
-
+    
+.form-group
+  = f.label :gender, class: "col-sm-3 control-label"
+  .col-sm-9
+    .row
+      .col-sm-5
+        = f.select :gender, options_for_select(Person.gender.options, f.object.gender), { include_blank: true }, { class: "form-control" }
+        
+.form-group
+  = f.label :blood_type, class: "col-sm-3 control-label"
+  .col-sm-9
+    .row
+      .col-sm-5
+        = f.select :blood_type, options_for_select(Person.blood_type.options, f.object.blood_type), { include_blank: true }, { class: "form-control" }
+        
 .form-group
   = f.label :prefecture_id, class: "col-sm-3 control-label"
   .col-sm-9
     .row
       .col-sm-5
         = f.select :prefecture_id, options_from_collection_for_select(Prefecture.all, :id, :name), { include_blank: true }, { class: "form-control" }
-
+    
 .form-group
-  - binding.pry
-  = f.label :gender, class: "col-sm-3 control-label"
+  = f.label :birthday, class: "col-sm-3 control-label"
+  .col-sm-9
+    = f.date_field :birthday, class: "form-control"
+            
+.form-group
+  = f.label :height, class: "col-sm-3 control-label"
+  .col-sm-9
+    .input-group
+      = f.number_field :height, class: "form-control"
+      .input-group-addon cm
 
 .form-group
   = f.label :url, class: "col-sm-3 control-label"
   .col-sm-9
-    = f.text_field :url, class: "form-control"
+    = f.url_field :url, class: "form-control"
 
 .form-group
   = f.label :wikipedia_url, class: "col-sm-3 control-label"
   .col-sm-9
-    = f.text_field :wikipedia_url, class: "form-control"
+    = f.url_field :wikipedia_url, class: "form-control"
 
 .form-group
   = f.label :twitter_username, class: "col-sm-3 control-label"
   .col-sm-9
     = f.text_field :twitter_username, class: "form-control", placeholder: "例: nazukakaori"
-
-.form-group
-  = f.label :birthday, class: "col-sm-3 control-label"
-  .col-sm-9
-    = f.text_field :birthday, class: "form-control", placeholder: "例: 1985-04-24"
-
-.form-group
-  = f.label :sc_tid, class: "col-sm-3 control-label"
-  .col-sm-9
-    = f.text_field :sc_tid, class: "form-control"
-.form-group
-  = f.label :released_at_about, class: "col-sm-3 control-label"
-  .col-sm-9
-    = f.text_field :released_at_about, class: "form-control", placeholder: "例: 2015年"
-- if f.object.instance_of?(Work) && current_user.role.admin?
-  .form-group
-    .col-sm-offset-3.col-sm-9
-      .checkbox
-        = f.label :fetch_syobocal do
-          = f.check_box :fetch_syobocal
-          | しょぼかるからデータを取得する
