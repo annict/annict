@@ -26,4 +26,10 @@
 #
 
 class DraftPerson < ActiveRecord::Base
+  extend Enumerize
+  include DraftCommon
+  include PersonCommon
+
+  belongs_to :origin, class_name: "Person", foreign_key: :person_id
+  belongs_to :person
 end
