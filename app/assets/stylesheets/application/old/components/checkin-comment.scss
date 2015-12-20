@@ -1,9 +1,5 @@
 .checkin-comment {
   position: relative;
-
-  &:hover {
-    cursor: pointer;
-  }
 }
 
 .checkin-comment__wrapper.hide-comment {
@@ -13,6 +9,10 @@
   position: absolute;
   width: 102%;
   z-index: 2;
+  
+  &:hover {
+    cursor: pointer;
+  }
 }
 
 .checkin-comment__body.hide-comment {
