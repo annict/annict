@@ -5,7 +5,7 @@ class CreatePeople < ActiveRecord::Migration
       t.string :name, null: false
       t.string :name_kana
       t.string :nickname
-      t.string :gender, null: false, default: "other"
+      t.string :gender
       t.string :url
       t.string :wikipedia_url
       t.string :twitter_username
