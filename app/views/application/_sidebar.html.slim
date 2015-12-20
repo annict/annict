@@ -28,9 +28,8 @@
         .caption
           | 通知
         - if current_user.notifications_count > 0
-          span.notifications-count
-            span.count
-              = current_user.notifications_count
+          span.sidebar__notifications-count
+            = current_user.notifications_count
       = link_to friends_path do
         = icon "smile-o"
         .caption

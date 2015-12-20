@@ -25,7 +25,7 @@ class Notification < ActiveRecord::Base
 
   scope :unread, -> { where(read: false) }
 
-  after_create  :increment_notifications_count
+  after_create :increment_notifications_count
   after_destroy :decrement_notifications_count
 
 
@@ -38,6 +38,6 @@ class Notification < ActiveRecord::Base
   end
 
   def decrement_notifications_count
-    user.decrement!(:notifications_count)
+    user.decrement!(:notifications_count) if user.notifications_count > 0
   end
 end
