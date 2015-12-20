@@ -4,18 +4,18 @@
   &:hover {
     cursor: pointer;
   }
+}
 
-  > .wrapper.hide-comment {
-    background-color: rgba(255, 255, 255, 0.5);
-    height: 100%;
-    left: -5px;
-    position: absolute;
-    width: 102%;
-    z-index: 2;
-  }
+.checkin-comment__wrapper.hide-comment {
+  background-color: rgba(255, 255, 255, 0.5);
+  height: 100%;
+  left: -5px;
+  position: absolute;
+  width: 102%;
+  z-index: 2;
+}
 
-  > .body.hide-comment {
-    @include filter(blur(3px));
-    background-color: rgba(255, 255, 255, 0.8);
-  }
+.checkin-comment__body.hide-comment {
+  @include filter(blur(3px));
+  background-color: rgba(255, 255, 255, 0.8);
 }
