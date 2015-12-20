@@ -27,6 +27,8 @@
 class Person < ActiveRecord::Base
   extend Enumerize
   include AASM
+  include DbActivityMethods
+  include PersonCommon
 
   aasm do
     state :published, initial: true
@@ -41,8 +43,6 @@ class Person < ActiveRecord::Base
       transitions from: :published, to: :hidden
     end
   end
-
-  enumerize :gender, in: [:male, :female, :other], default: :other
 
   belongs_to :prefecture
   has_many :cast_participations, dependent: :destroy
