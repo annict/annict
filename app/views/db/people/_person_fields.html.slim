@@ -32,7 +32,7 @@
   .col-sm-9
     .row
       .col-sm-5
-        = f.select :prefecture_id, options_from_collection_for_select(Prefecture.all, :id, :name), { include_blank: true }, { class: "form-control" }
+        = f.select :prefecture_id, options_from_collection_for_select(Prefecture.all, :id, :name, f.object.prefecture_id), { include_blank: true }, { class: "form-control" }
     
 .form-group
   = f.label :birthday, class: "col-sm-3 control-label"

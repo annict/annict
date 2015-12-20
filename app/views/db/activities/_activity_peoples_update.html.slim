@@ -7,9 +7,9 @@
       span.db-activity-description-user-link
         = activity.user.decorate.name_link
       | が
-      span.db-activity-description-work-title
-        = "「#{activity.trackable.work.decorate.db_detail_link}」".html_safe
-      | の商品画像を登録しました
+      span.db-activity-description-person-name
+        = "「#{activity.trackable.decorate.db_detail_link}」".html_safe
+      | を更新しました
     .db-activity-header-date
       = "#{time_ago_in_words(activity.created_at)}前"
   .db-activity-diff

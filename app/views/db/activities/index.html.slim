@@ -20,5 +20,7 @@
         = render "activity_items_create", activity: activity
       - when "items.update"
         = render "activity_items_update", activity: activity
+      - when "people.update"
+        = render "activity_peoples_update", activity: activity
 
 = paginate @activities

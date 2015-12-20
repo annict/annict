@@ -16,8 +16,14 @@ class WorkDecorator < ApplicationDecorator
     h.link_to title, syobocal_url, target: "_blank"
   end
 
-  def title_link(options)
-    h.link_to title, h.work_path(self), options
+  def db_detail_link(options = {})
+    path = if h.current_user.role.admin? || h.current_user.role.editor?
+      h.edit_db_work_path(self)
+    else
+      h.new_db_draft_work_path(work_id: id)
+    end
+
+    h.link_to title, path, options
   end
 
   def release_season
