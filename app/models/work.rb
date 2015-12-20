@@ -98,7 +98,7 @@ class Work < ActiveRecord::Base
   # 作品のエピソード数分の空白文字列が入った配列を返す
   # Chart.jsのx軸のラベルを消すにはこれしか方法がなかったんだ…! たぶん…。
   def chart_labels
-    episodes.published.pluck(:id).map {''}
+    episodes.published.pluck(:id).map { "" }
   end
 
   def chart_values
