@@ -43,6 +43,7 @@ Annict::Application.routes.draw do
     resources :activities, only: [:index]
     resources :draft_works, only: [:new, :create, :edit, :update]
     resources :draft_people, only: [:new, :create, :edit, :update]
+    resource :search, only: [:show]
 
     resources :edit_requests, only: [:index, :show] do
       member do
@@ -60,7 +61,6 @@ Annict::Application.routes.draw do
       collection do
         get :season
         get :resourceless
-        get :search
       end
 
       member do

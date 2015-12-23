@@ -12,7 +12,7 @@
 
 .clearfix
 
-table.table.table-striped
+table.table.table-striped.c-resource-list
   thead
     tr
       th ID
@@ -35,9 +35,9 @@ table.table.table-striped
         td
           = link_to episode.id, work_episode_path(@work, episode), target: "_blank"
           - if episode.published?
-            = icon("check-circle-o", class: "status-published enabled", "data-toggle" => "tooltip", title: "このエピソードは公開されています")
+            = icon("check-circle-o", class: "c-resource-list__status-published enabled", "data-toggle" => "tooltip", title: "このエピソードは公開されています")
           - else
-            = icon("check-circle-o", class: "status-published disabled", "data-toggle" => "tooltip", title: "このエピソードは非公開になっています")
+            = icon("check-circle-o", class: "c-resource-list__status-published disabled", "data-toggle" => "tooltip", title: "このエピソードは非公開になっています")
         td = episode.number.presence || "-"
         td = episode.title.presence || "-"
         td = episode.next_episode.try!(:number).presence || "-"

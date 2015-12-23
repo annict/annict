@@ -1,0 +1,15 @@
+h2 作品
+
+- if @works.present?
+  = render "db/works/works_list", works: @works
+- else
+  .well 作品は見つかりませんでした
+
+hr
+
+h2 スタッフ / キャスト
+
+- if @people.present?
+  = render "db/people/people_list", people: @people
+- else
+  .well スタッフ / キャストは見つかりませんでした

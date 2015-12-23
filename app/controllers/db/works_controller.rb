@@ -23,17 +23,6 @@ class Db::WorksController < Db::ApplicationController
     render :index
   end
 
-  def search(q: nil, page: nil)
-    @works = if q.present?
-      @q.result.order(id: :desc)
-    else
-      Work.none
-    end
-    @works = @works.page(page)
-
-    render :index
-  end
-
   def new
     @work = Work.new
     authorize @work, :new?
