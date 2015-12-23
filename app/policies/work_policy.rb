@@ -1,10 +1,10 @@
 class WorkPolicy < ApplicationPolicy
   def create?
-    user.present? && user.role.editor? || user.role.admin?
+    user.present? && user.committer?
   end
 
   def update?
-    user.present? && user.role.editor? || user.role.admin?
+    user.present? && user.committer?
   end
 
   def hide?

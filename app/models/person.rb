@@ -14,12 +14,13 @@
 #  birthday         :date
 #  blood_type       :string
 #  height           :integer
+#  aasm_state       :string           default("published"), not null
 #  created_at       :datetime         not null
 #  updated_at       :datetime         not null
-#  aasm_state       :string           default("published"), not null
 #
 # Indexes
 #
+#  index_people_on_aasm_state     (aasm_state)
 #  index_people_on_name           (name) UNIQUE
 #  index_people_on_prefecture_id  (prefecture_id)
 #

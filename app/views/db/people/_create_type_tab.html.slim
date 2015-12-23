@@ -1,6 +1,6 @@
 ul.nav.nav-tabs.nav-justified.edit-type-tabs
   = active_link_to "編集リクエスト", new_db_draft_person_path, wrap_tag: :li, active: params[:controller] == "db/draft_people" && (params[:action] == "new" || params[:action] == "create")
-  - if current_user.role.editor? || current_user.role.admin?
+  - if current_user.committer?
     - if params[:person_id].present?
       = active_link_to "直接編集", edit_db_person_path(person), wrap_tag: :li, active: params[:controller] == "db/people" && (params[:action] == "edit" || params[:action] == "update")
     - else

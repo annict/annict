@@ -2,7 +2,7 @@
 
 - if user_signed_in?
   .pull-right
-    - if current_user.role.admin? || current_user.role.editor?
+    - if current_user.committer?
       = link_to "新規作成", new_db_work_path, class: "btn btn-primary"
     - else
       = link_to "新規作成", new_db_draft_work_path, class: "btn btn-primary"
@@ -61,7 +61,7 @@ table.table.table-striped
         td = annict_image_tag(work.item, :tombo_image, size: "70x70")
         - if user_signed_in?
           td
-            - if current_user.role.admin? || current_user.role.editor?
+            - if current_user.committer?
               = link_to "編集", edit_db_work_path(work), class: "btn btn-primary btn-sm"
             - else
               = link_to "編集", new_db_draft_work_path(work_id: work.id), class: "btn btn-primary btn-sm"

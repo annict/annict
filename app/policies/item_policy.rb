@@ -1,10 +1,10 @@
 class ItemPolicy < ApplicationPolicy
   def create?
-    user.role.editor? || user.role.admin?
+    user.committer?
   end
 
   def update?
-    user.role.editor? || user.role.admin?
+    user.committer?
   end
 
   def destroy?

@@ -2,7 +2,7 @@
 
 - if user_signed_in?
   .item-action-buttons.pull-right
-    - if current_user.role.admin? || current_user.role.editor?
+    - if current_user.committer?
       - if @item.blank?
         = link_to "新規登録", new_db_work_item_path(@work), class: "btn btn-primary"
       - else

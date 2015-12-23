@@ -4,10 +4,10 @@ class UserDecorator < ApplicationDecorator
   end
 
   def role_label
-    if role.editor? || role.admin?
-      h.content_tag(:span, class: "role-label label label-default") do
-        role_text
-      end
+    return "" unless committer?
+
+    h.content_tag(:span, class: "role-label label label-default") do
+      role_text
     end
   end
 end
