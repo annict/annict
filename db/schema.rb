@@ -369,17 +369,6 @@ ActiveRecord::Schema.define(version: 20151219113921) do
 
   add_index "likes", ["user_id"], name: "likes_user_id_idx", using: :btree
 
-  create_table "member_participations", force: :cascade do |t|
-    t.integer  "person_id",       null: false
-    t.integer  "organization_id", null: false
-    t.datetime "created_at",      null: false
-    t.datetime "updated_at",      null: false
-  end
-
-  add_index "member_participations", ["organization_id"], name: "index_member_participations_on_organization_id", using: :btree
-  add_index "member_participations", ["person_id", "organization_id"], name: "index_member_participations_on_person_id_and_organization_id", unique: true, using: :btree
-  add_index "member_participations", ["person_id"], name: "index_member_participations_on_person_id", using: :btree
-
   create_table "notifications", force: :cascade do |t|
     t.integer  "user_id",                                    null: false
     t.integer  "action_user_id",                             null: false
@@ -416,11 +405,12 @@ ActiveRecord::Schema.define(version: 20151219113921) do
     t.date     "birthday"
     t.string   "blood_type"
     t.integer  "height"
+    t.string   "aasm_state",       default: "published", null: false
     t.datetime "created_at",                             null: false
     t.datetime "updated_at",                             null: false
-    t.string   "aasm_state",       default: "published", null: false
   end
 
+  add_index "people", ["aasm_state"], name: "index_people_on_aasm_state", using: :btree
   add_index "people", ["name"], name: "index_people_on_name", unique: true, using: :btree
   add_index "people", ["prefecture_id"], name: "index_people_on_prefecture_id", using: :btree
 
@@ -697,8 +687,6 @@ ActiveRecord::Schema.define(version: 20151219113921) do
   add_foreign_key "follows", "users", name: "follows_user_id_fk", on_delete: :cascade
   add_foreign_key "items", "works", name: "items_work_id_fk", on_delete: :cascade
   add_foreign_key "likes", "users", name: "likes_user_id_fk", on_delete: :cascade
-  add_foreign_key "member_participations", "organizations"
-  add_foreign_key "member_participations", "people"
   add_foreign_key "notifications", "users", column: "action_user_id", name: "notifications_action_user_id_fk", on_delete: :cascade
   add_foreign_key "notifications", "users", name: "notifications_user_id_fk", on_delete: :cascade
   add_foreign_key "people", "prefectures"
