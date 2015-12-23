@@ -17,7 +17,6 @@ module Db
     end
 
     def create(draft_person)
-      binding.pry
       @draft_person = DraftPerson.new(draft_person)
       @draft_person.edit_request.user = current_user
 

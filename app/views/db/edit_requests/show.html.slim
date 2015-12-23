@@ -1,12 +1,12 @@
 - title "編集リクエスト | #{@edit_request.title}"
 
-.header
+.p-db-edit_requests--show__header
   .pull-left
     h1 = @edit_request.title
     = @edit_request.decorate.status_label
-    - if @work.present?
-      span.work-annotation.text-mute
-        = "「#{link_to @work.title, work_path(@work), target: "_blank"}」への編集リクエスト".html_safe
+    = @edit_request.decorate.resource_label
+    span.text-mute.p-db-edit_requests--show__resource-annotation
+      = "「#{@edit_request.origin.decorate.db_detail_link}」への編集リクエスト".html_safe
   .pull-right
     - if policy(@edit_request).publish? && @edit_request.may_publish?
       = link_to "公開する", publish_db_edit_request_path(@edit_request), class: "btn btn-primary", data: { method: :post, confirm: "この編集内容を公開しますか？" }
@@ -16,7 +16,7 @@
       = link_to "編集する", @edit_request.decorate.edit_draft_resource_path, class: "btn"
   .clearfix
 
-ul.nav.nav-tabs
+ul.nav.nav-tabs.p-db-edit_requests--show__tabs
   li.active
     = link_to "会話", "#conversation", data: { toggle: "tab" }
   li
@@ -24,7 +24,7 @@ ul.nav.nav-tabs
 
 .tab-content
   #conversation.tab-pane.active
-    .media.activity
+    .media.p-db-edit_requests--show__activity
       .media-left
         = link_to user_path(@edit_request.user.username) do
           = annict_image_tag(@edit_request.user.profile, :tombo_avatar, size: "70x70", class: "img-circle")

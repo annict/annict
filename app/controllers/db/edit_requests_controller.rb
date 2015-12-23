@@ -10,7 +10,6 @@ module Db
 
     def show(id)
       @edit_request = EditRequest.find(id)
-      @work = @edit_request.draft_resource.work
       @comment = @edit_request.comments.new
       @db_activities = @edit_request.db_activities.
         where.not(action: "edit_requests.create").

@@ -67,6 +67,18 @@ ja:
         tombo_image: 作品画像
       draft_multiple_episode:
         body: エピソード
+      draft_person:
+        name: 名前
+        name_kana: 名前 (かな)
+        nickname: ニックネーム
+        gender: 性別
+        blood_type: 血液型
+        prefecture_id: 出身地
+        birthday: 誕生日
+        height: 身長
+        url: URL
+        wikipedia_url: Wikipedia
+        twitter_username: Twitter
       draft_program:
         channel_id: チャンネル
         episode_id: エピソード

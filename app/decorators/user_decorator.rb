@@ -6,7 +6,7 @@ class UserDecorator < ApplicationDecorator
   def role_label
     return "" unless committer?
 
-    h.content_tag(:span, class: "role-label label label-default") do
+    h.content_tag(:span, class: "label label-default c-label--transparent") do
       role_text
     end
   end

@@ -1,0 +1,2 @@
+class DraftPersonPolicy < DraftResourcePolicy
+end

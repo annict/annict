@@ -76,6 +76,10 @@ class EditRequest < ActiveRecord::Base
     draft_resource.class.name.underscore
   end
 
+  def origin
+    draft_resource.origin
+  end
+
   def db_activities
     condition = <<-SQL
       (recipient_type = 'EditRequest' AND recipient_id = ?) OR

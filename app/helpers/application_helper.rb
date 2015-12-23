@@ -90,4 +90,19 @@ module ApplicationHelper
   def top_page?
     params[:controller] == "home" && params[:action] == "index"
   end
+
+  def page_project_class(options = {})
+    extra_body_classes_symbol = options[:extra_body_classes_symbol] || :extra_body_classes
+    qualified_controller_name = controller.controller_path.tr("/", "-")
+    basic_body_class = [
+      "p-#{qualified_controller_name}",
+      "p-#{qualified_controller_name}--#{controller.action_name}"
+    ].join(" ")
+
+    if content_for?(extra_body_classes_symbol)
+      [basic_body_class, content_for(extra_body_classes_symbol)].join(" ")
+    else
+      basic_body_class
+    end
+  end
 end
