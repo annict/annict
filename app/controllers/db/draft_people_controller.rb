@@ -43,7 +43,7 @@ module Db
       authorize @draft_person, :update?
 
       if @draft_person.update(draft_person)
-        flash[:notice] = "作品の編集リクエストを更新しました"
+        flash[:notice] = "編集リクエストを更新しました"
         redirect_to db_edit_request_path(@draft_person.edit_request)
       else
         render :edit
