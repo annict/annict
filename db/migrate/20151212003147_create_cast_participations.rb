@@ -4,7 +4,7 @@ class CreateCastParticipations < ActiveRecord::Migration
       t.integer :person_id, null: false
       t.integer :work_id, null: false
       t.string :name
-      t.string :character_name, null: false
+      t.string :part, null: false
       t.timestamps null: false
     end
 

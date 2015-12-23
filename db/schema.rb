@@ -30,12 +30,12 @@ ActiveRecord::Schema.define(version: 20151219113921) do
   add_index "activities", ["user_id"], name: "activities_user_id_idx", using: :btree
 
   create_table "cast_participations", force: :cascade do |t|
-    t.integer  "person_id",      null: false
-    t.integer  "work_id",        null: false
+    t.integer  "person_id",  null: false
+    t.integer  "work_id",    null: false
     t.string   "name"
-    t.string   "character_name", null: false
-    t.datetime "created_at",     null: false
-    t.datetime "updated_at",     null: false
+    t.string   "part",       null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
   end
 
   add_index "cast_participations", ["person_id"], name: "index_cast_participations_on_person_id", using: :btree
