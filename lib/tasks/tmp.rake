@@ -81,9 +81,9 @@ def save_cast_info(work, comment)
     casts = cast_ary.map { |str| str.split(/:(.*):/).select(&:present?) }
     casts = casts.select { |cast| cast.length == 2 }.to_h
 
-    casts.each do |character_name, name|
+    casts.each do |part, name|
       person = Person.where(name: name).first_or_create
-      work.cast_participations.where(person: person, character_name: character_name).first_or_create
+      work.cast_participations.where(person: person, part: part).first_or_create
     end
   end
 end
