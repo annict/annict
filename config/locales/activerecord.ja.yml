@@ -4,6 +4,10 @@ ja:
       appeal:
         body: 備考
         category: カテゴリ
+      cast_participation:
+        work_id: 作品
+        name: 名義
+        character_name: キャラクター名
       checkin:
         comment: コメント
       comment:

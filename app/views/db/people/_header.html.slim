@@ -6,9 +6,7 @@ ul.nav.nav-pills.pull-right.resource-nav-pills
     li = link_to "基本情報", edit_db_person_path(person)
   - else
     li = link_to "基本情報", new_db_draft_person_path(person_id: person.id)
-  - if @person.cast_participations.present?
-    li = link_to "出演作品", ""
-  - if @person.staff_participations.present?
-    li = link_to "参加作品", ""
+  li = link_to "出演作品", db_person_cast_participations_path(person)
+  li = link_to "参加作品", ""
 
 .clearfix

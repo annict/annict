@@ -15,7 +15,7 @@ module PersonCommon
 
     def attributes=(params)
       super
-      self.birthday = Date.parse(params[:birthday])
+      self.birthday = Date.parse(params[:birthday]) if params[:birthday].present?
     end
 
     def to_diffable_hash
