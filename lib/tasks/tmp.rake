@@ -5,10 +5,6 @@ namespace :tmp do
       puts "prefecture: #{prefecture.name}"
     end
 
-    work_staff_participation_roles = StaffParticipation.role.values.map do |role_value|
-      { value: role_value, text: I18n.t("enumerize.work_staff_participation.role.#{role_value}") }
-    end
-
     works = Work.where.not(sc_tid: nil).order(:id)
     works = works.where("id >= ?", 1)
     works.find_each do |work|
@@ -58,6 +54,9 @@ def save_staff_info(work, comment)
 
     staffs = staffs.except("アニメーション制作", "制作", "制作スタジオ", "アニメーション製作", "アニメ制作")
 
+    work_staff_participation_roles = StaffParticipation.role.values.map do |role_value|
+      { value: role_value, text: I18n.t("enumerize.work_staff_participation.role.#{role_value}") }
+    end
     work_staff_participation_roles.each do |wsp_role|
       name = staffs[wsp_role[:text]]
       next if name.blank?
