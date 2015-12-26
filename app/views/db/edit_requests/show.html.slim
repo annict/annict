@@ -6,7 +6,7 @@
     = @edit_request.decorate.status_label
     = @edit_request.decorate.resource_label
     span.text-mute.p-db-edit_requests--show__resource-annotation
-      = "「#{@edit_request.origin.decorate.db_detail_link}」への編集リクエスト".html_safe
+      = @edit_request.origin.decorate.db_detail_link(name: "編集元")
   .pull-right
     - if policy(@edit_request).publish? && @edit_request.may_publish?
       = link_to "公開する", publish_db_edit_request_path(@edit_request), class: "btn btn-primary", data: { method: :post, confirm: "この編集内容を公開しますか？" }

@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20151219113921) do
+ActiveRecord::Schema.define(version: 20151226133209) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -29,17 +29,17 @@ ActiveRecord::Schema.define(version: 20151219113921) do
 
   add_index "activities", ["user_id"], name: "activities_user_id_idx", using: :btree
 
-  create_table "cast_participations", force: :cascade do |t|
+  create_table "casts", force: :cascade do |t|
     t.integer  "person_id",  null: false
     t.integer  "work_id",    null: false
-    t.string   "name"
+    t.string   "name",       null: false
     t.string   "part",       null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end
 
-  add_index "cast_participations", ["person_id"], name: "index_cast_participations_on_person_id", using: :btree
-  add_index "cast_participations", ["work_id"], name: "index_cast_participations_on_work_id", using: :btree
+  add_index "casts", ["person_id"], name: "index_cast_participations_on_person_id", using: :btree
+  add_index "casts", ["work_id"], name: "index_cast_participations_on_work_id", using: :btree
 
   create_table "channel_groups", force: :cascade do |t|
     t.string   "sc_chgid",    limit: 510, null: false
@@ -168,6 +168,20 @@ ActiveRecord::Schema.define(version: 20151219113921) do
   end
 
   add_index "delayed_jobs", ["priority", "run_at"], name: "delayed_jobs_priority", using: :btree
+
+  create_table "draft_casts", force: :cascade do |t|
+    t.integer  "cast_id",    null: false
+    t.integer  "person_id",  null: false
+    t.integer  "work_id",    null: false
+    t.string   "name",       null: false
+    t.string   "part",       null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  add_index "draft_casts", ["cast_id"], name: "index_draft_casts_on_cast_id", using: :btree
+  add_index "draft_casts", ["person_id"], name: "index_draft_casts_on_person_id", using: :btree
+  add_index "draft_casts", ["work_id"], name: "index_draft_casts_on_work_id", using: :btree
 
   create_table "draft_episodes", force: :cascade do |t|
     t.integer  "episode_id",                      null: false
@@ -515,7 +529,7 @@ ActiveRecord::Schema.define(version: 20151219113921) do
 
   add_index "settings", ["user_id"], name: "index_settings_on_user_id", using: :btree
 
-  create_table "staff_participations", force: :cascade do |t|
+  create_table "staffs", force: :cascade do |t|
     t.integer  "person_id",  null: false
     t.integer  "work_id",    null: false
     t.string   "name"
@@ -525,8 +539,8 @@ ActiveRecord::Schema.define(version: 20151219113921) do
     t.datetime "updated_at", null: false
   end
 
-  add_index "staff_participations", ["person_id"], name: "index_staff_participations_on_person_id", using: :btree
-  add_index "staff_participations", ["work_id"], name: "index_staff_participations_on_work_id", using: :btree
+  add_index "staffs", ["person_id"], name: "index_staff_participations_on_person_id", using: :btree
+  add_index "staffs", ["work_id"], name: "index_staff_participations_on_work_id", using: :btree
 
   create_table "statuses", force: :cascade do |t|
     t.integer  "user_id",                     null: false
@@ -644,8 +658,8 @@ ActiveRecord::Schema.define(version: 20151219113921) do
   add_index "works", ["season_id"], name: "works_season_id_idx", using: :btree
 
   add_foreign_key "activities", "users", name: "activities_user_id_fk", on_delete: :cascade
-  add_foreign_key "cast_participations", "people"
-  add_foreign_key "cast_participations", "works"
+  add_foreign_key "casts", "people"
+  add_foreign_key "casts", "works"
   add_foreign_key "channel_works", "channels", name: "channel_works_channel_id_fk", on_delete: :cascade
   add_foreign_key "channel_works", "users", name: "channel_works_user_id_fk", on_delete: :cascade
   add_foreign_key "channel_works", "works", name: "channel_works_work_id_fk", on_delete: :cascade
@@ -661,6 +675,9 @@ ActiveRecord::Schema.define(version: 20151219113921) do
   add_foreign_key "comments", "works"
   add_foreign_key "cover_images", "works", name: "cover_images_work_id_fk", on_delete: :cascade
   add_foreign_key "db_activities", "users"
+  add_foreign_key "draft_casts", "casts"
+  add_foreign_key "draft_casts", "people"
+  add_foreign_key "draft_casts", "works"
   add_foreign_key "draft_episodes", "episodes"
   add_foreign_key "draft_episodes", "episodes", column: "prev_episode_id"
   add_foreign_key "draft_episodes", "works"
@@ -698,8 +715,8 @@ ActiveRecord::Schema.define(version: 20151219113921) do
   add_foreign_key "receptions", "channels", name: "receptions_channel_id_fk", on_delete: :cascade
   add_foreign_key "receptions", "users", name: "receptions_user_id_fk", on_delete: :cascade
   add_foreign_key "settings", "users"
-  add_foreign_key "staff_participations", "people"
-  add_foreign_key "staff_participations", "works"
+  add_foreign_key "staffs", "people"
+  add_foreign_key "staffs", "works"
   add_foreign_key "statuses", "users", name: "statuses_user_id_fk", on_delete: :cascade
   add_foreign_key "statuses", "works", name: "statuses_work_id_fk", on_delete: :cascade
   add_foreign_key "syobocal_alerts", "works", name: "syobocal_alerts_work_id_fk", on_delete: :cascade

@@ -31,5 +31,4 @@ class DraftPerson < ActiveRecord::Base
   include PersonCommon
 
   belongs_to :origin, class_name: "Person", foreign_key: :person_id
-  belongs_to :person
 end

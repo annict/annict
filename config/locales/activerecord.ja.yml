@@ -4,10 +4,10 @@ ja:
       appeal:
         body: 備考
         category: カテゴリ
-      cast_participation:
+      cast:
         work_id: 作品
         name: 名義
-        character_name: キャラクター名
+        part: 役名
       checkin:
         comment: コメント
       comment:
@@ -59,6 +59,10 @@ ja:
         twitter_hashtag: ハッシュタグ
         twitter_username: 公式Twitter
         wikipedia_url: Wikipedia
+      draft_cast:
+        work_id: 作品
+        name: 名義
+        part: 役名
       draft_episode:
         prev_episode_id: 前のエピソード
         number: 話数

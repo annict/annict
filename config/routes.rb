@@ -56,8 +56,8 @@ Annict::Application.routes.draw do
     resources :people, except: [:show] do
       patch :hide, on: :member
 
-      resources :cast_participations, except: [:show]
-      resources :draft_cast_participations, only: [:new, :create, :edit, :update]
+      resources :casts, except: [:show]
+      resources :draft_casts, only: [:new, :create, :edit, :update]
     end
 
     resources :works, except: [:show] do

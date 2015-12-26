@@ -1,4 +1,4 @@
-class CastParticipationPolicy < ApplicationPolicy
+class CastPolicy < ApplicationPolicy
   def create?
     user.committer?
   end

@@ -22,5 +22,7 @@
         = render "activity_items_update", activity: activity
       - when "people.update"
         = render "activity_peoples_update", activity: activity
+      - when "casts.update"
+        = render "activity_casts_update", activity: activity
 
 = paginate @activities

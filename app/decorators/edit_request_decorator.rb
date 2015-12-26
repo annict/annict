@@ -10,13 +10,14 @@ class EditRequestDecorator < ApplicationDecorator
   end
 
   def resource_label
-    text = {
-      draft_work: "作品",
-      draft_person: "スタッフ / キャスト"
-    }
+    text = case kind
+    when :draft_work
+      "作品"
+    when :draft_cast, :draft_person
+      "スタッフ / キャスト"
+    end
 
-    h.content_tag :span, text[kind.to_sym],
-                  class: "label label-default c-label--transparent"
+    h.content_tag :span, text, class: "label label-default c-label--transparent"
   end
 
   def resource_diff_table
@@ -44,6 +45,8 @@ class EditRequestDecorator < ApplicationDecorator
       h.edit_db_work_draft_item_path(draft_resource.work, draft_resource)
     when DraftPerson
       h.edit_db_draft_person_path(draft_resource)
+    when DraftCast
+      h.edit_db_person_draft_cast_path(draft_resource.person, draft_resource)
     end
   end
 end

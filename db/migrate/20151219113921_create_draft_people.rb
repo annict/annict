@@ -20,6 +20,7 @@ class CreateDraftPeople < ActiveRecord::Migration
     add_index :draft_people, :prefecture_id
     add_index :draft_people, :name
 
+    add_foreign_key :draft_people, :people
     add_foreign_key :draft_people, :prefectures
   end
 end

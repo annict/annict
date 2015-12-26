@@ -1,6 +1,6 @@
 # == Schema Information
 #
-# Table name: staff_participations
+# Table name: staffs
 #
 #  id         :integer          not null, primary key
 #  person_id  :integer          not null
@@ -17,7 +17,7 @@
 #  index_staff_participations_on_work_id    (work_id)
 #
 
-class StaffParticipation < ActiveRecord::Base
+class Staff < ActiveRecord::Base
   extend Enumerize
 
   enumerize :role, in: %w(

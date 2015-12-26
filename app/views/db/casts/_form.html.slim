@@ -1,7 +1,7 @@
-= form_for [:db, person, cast_participation], html: { class: "form-horizontal" } do |f|
+= form_for [:db, person, cast], html: { class: "form-horizontal" } do |f|
   = render "application/error_panel", resource: f.object
 
-  = render "cast_participation_fields", f: f, person: person
+  = render "cast_fields", f: f, person: person
     
   .form-group
     .col-sm-offset-3.col-sm-9

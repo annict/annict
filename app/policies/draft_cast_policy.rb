@@ -1,0 +1,2 @@
+class DraftCastPolicy < DraftResourcePolicy
+end

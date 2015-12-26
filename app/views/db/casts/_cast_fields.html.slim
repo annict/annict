@@ -5,8 +5,8 @@
 .form-group
   = f.label :name, class: "col-sm-3 control-label"
   .col-sm-9
-    = f.text_field :name, class: "form-control"
+    = f.text_field :name, class: "form-control", value: (f.object.name.presence || f.object.person.name)
 .form-group
-  = f.label :character_name, class: "col-sm-3 control-label"
+  = f.label :part, class: "col-sm-3 control-label"
   .col-sm-9
-    = f.text_field :character_name, class: "form-control"
+    = f.text_field :part, class: "form-control"

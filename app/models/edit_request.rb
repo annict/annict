@@ -73,7 +73,7 @@ class EditRequest < ActiveRecord::Base
   end
 
   def kind
-    draft_resource.class.name.underscore
+    draft_resource.class.name.underscore.to_sym
   end
 
   def origin

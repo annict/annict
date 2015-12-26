@@ -54,21 +54,21 @@ def save_staff_info(work, comment)
 
     staffs = staffs.except("アニメーション制作", "制作", "制作スタジオ", "アニメーション製作", "アニメ制作")
 
-    work_staff_participation_roles = StaffParticipation.role.values.map do |role_value|
-      { value: role_value, text: I18n.t("enumerize.work_staff_participation.role.#{role_value}") }
+    work_staff_roles = Staff.role.values.map do |role_value|
+      { value: role_value, text: I18n.t("enumerize.work_staff.role.#{role_value}") }
     end
-    work_staff_participation_roles.each do |wsp_role|
+    work_staff_roles.each do |wsp_role|
       name = staffs[wsp_role[:text]]
       next if name.blank?
       person = Person.where(name: name).first_or_create
-      wsp = work.staff_participations.where(person: person, role: wsp_role[:value]).first_or_create
+      wsp = work.staffs.where(person: person, role: wsp_role[:value]).first_or_create
     end
 
-    staffs = staffs.except(*(work_staff_participation_roles.map { |wspr| wspr[:text] }))
+    staffs = staffs.except(*(work_staff_roles.map { |wspr| wspr[:text] }))
 
     staffs.each do |role, name|
       person = Person.where(name: name).first_or_create
-      work.staff_participations.where(person: person, role: :other, role_other: role).first_or_create
+      work.staffs.where(person: person, role: :other, role_other: role).first_or_create
     end
   end
 end
@@ -83,7 +83,7 @@ def save_cast_info(work, comment)
 
     casts.each do |part, name|
       person = Person.where(name: name).first_or_create
-      work.cast_participations.where(person: person, part: part).first_or_create
+      work.casts.where(person: person, name: person.name, part: part).first_or_create
     end
   end
 end

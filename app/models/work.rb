@@ -48,8 +48,8 @@ class Work < ActiveRecord::Base
   end
 
   has_many :activities, foreign_key: :recipient_id, foreign_type: :recipient, dependent: :destroy
-  has_many :cast_participations, dependent: :destroy
-  has_many :casts, through: :cast_participations
+  has_many :casts, dependent: :destroy
+  has_many :casts, through: :casts
   has_many :checkins, dependent: :destroy
   has_many :checks, dependent: :destroy
   has_many :draft_episodes, dependent: :destroy
@@ -60,11 +60,11 @@ class Work < ActiveRecord::Base
   has_many :episodes, dependent: :destroy
   has_many :organizations, through: :work_organizations
   has_many :participations, dependent: :destroy
-  has_many :staffs, through: :staff_participations
+  has_many :staffs, through: :staffs
   has_many :programs, dependent: :destroy
   has_many :statuses, dependent: :destroy
   has_many :work_organizations, dependent: :destroy
-  has_many :staff_participations, dependent: :destroy
+  has_many :staffs, dependent: :destroy
   has_one :item, dependent: :destroy
 
   validates :sc_tid, numericality: { only_integer: true }, allow_blank: true,

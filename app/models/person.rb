@@ -37,8 +37,8 @@ class Person < ActiveRecord::Base
 
     event :hide do
       after do
-        cast_participations.each(&:hide!)
-        staff_participations.each(&:hide!)
+        casts.each(&:hide!)
+        staffs.each(&:hide!)
       end
 
       transitions from: :published, to: :hidden
@@ -46,6 +46,7 @@ class Person < ActiveRecord::Base
   end
 
   belongs_to :prefecture
-  has_many :cast_participations, dependent: :destroy
-  has_many :staff_participations, dependent: :destroy
+  has_many :casts, dependent: :destroy
+  has_many :draft_casts, dependent: :destroy
+  has_many :staffs, dependent: :destroy
 end
