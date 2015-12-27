@@ -1,0 +1,9 @@
+= render "db/organizations/header", organization: @organization
+
+= render "create_type_tab", organization: @organization, work_organization: @work_organization
+
+.row
+  .col-sm-7
+    = render "form", organization: @organization, work_organization: @work_organization
+  .col-sm-5
+    = render "sidebar"

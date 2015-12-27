@@ -9,7 +9,7 @@ module Db
     def new(staff_id: nil)
       @draft_staff = if staff_id.present?
         @staff = @person.staffs.find(staff_id)
-        @person.draft_staffs.new(@staff.attributes.slice(*Cast::DIFF_FIELDS.map(&:to_s)))
+        @person.draft_staffs.new(@staff.attributes.slice(*Staff::DIFF_FIELDS.map(&:to_s)))
       else
         @person.draft_staffs.new
       end

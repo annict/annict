@@ -1,0 +1,35 @@
+= render "db/organizations/header", organization: @organization
+
+.pull-right
+  - if current_user.committer?
+    = link_to "新規作成", new_db_organization_work_organization_path(@organization), class: "btn btn-primary"
+  - else
+    = link_to "新規作成", new_db_organization_draft_work_organization_path(@organization), class: "btn btn-primary"
+
+.clearfix
+
+table.table.table-striped
+  thead
+    tr
+      th ID
+      th 作品
+      th 担当
+      th 編集
+      - if policy(@work_organizations).destroy?
+        th 削除
+  tbody
+    - @work_organizations.each do |work_organization|
+      tr
+        td = work_organization.id
+        td = work_organization.work.title
+        td = work_organization.decorate.role_name
+        td
+          - if current_user.committer?
+            = link_to "編集", edit_db_organization_work_organization_path(@organization, work_organization), class: "btn btn-primary btn-sm"
+          - else
+            = link_to "編集", new_db_organization_draft_work_organization_path(@organization, work_organization_id: work_organization.id), class: "btn btn-primary btn-sm"
+        - if policy(work_organization).destroy?
+          td = link_to "削除", db_organization_work_organization_path(@organization, work_organization), class: "btn btn-danger btn-sm", data: { method: :delete, confirm: "削除しますか？" }
+
+- if @work_organizations.blank?
+  .well 登録されている出演作品はありません。

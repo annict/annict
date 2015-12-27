@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20151227064731) do
+ActiveRecord::Schema.define(version: 20151227101344) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -288,6 +288,20 @@ ActiveRecord::Schema.define(version: 20151227064731) do
   add_index "draft_staffs", ["person_id"], name: "index_draft_staffs_on_person_id", using: :btree
   add_index "draft_staffs", ["staff_id"], name: "index_draft_staffs_on_staff_id", using: :btree
   add_index "draft_staffs", ["work_id"], name: "index_draft_staffs_on_work_id", using: :btree
+
+  create_table "draft_work_organizations", force: :cascade do |t|
+    t.integer  "work_organization_id"
+    t.integer  "work_id",              null: false
+    t.integer  "organization_id",      null: false
+    t.string   "role",                 null: false
+    t.string   "role_other"
+    t.datetime "created_at",           null: false
+    t.datetime "updated_at",           null: false
+  end
+
+  add_index "draft_work_organizations", ["organization_id"], name: "index_draft_work_organizations_on_organization_id", using: :btree
+  add_index "draft_work_organizations", ["work_id"], name: "index_draft_work_organizations_on_work_id", using: :btree
+  add_index "draft_work_organizations", ["work_organization_id"], name: "index_draft_work_organizations_on_work_organization_id", using: :btree
 
   create_table "draft_works", force: :cascade do |t|
     t.integer  "work_id"
@@ -652,12 +666,13 @@ ActiveRecord::Schema.define(version: 20151227064731) do
   end
 
   create_table "work_organizations", force: :cascade do |t|
-    t.integer  "work_id",         null: false
-    t.integer  "organization_id", null: false
-    t.string   "role",            null: false
+    t.integer  "work_id",                               null: false
+    t.integer  "organization_id",                       null: false
+    t.string   "role",                                  null: false
     t.string   "role_other"
-    t.datetime "created_at",      null: false
-    t.datetime "updated_at",      null: false
+    t.datetime "created_at",                            null: false
+    t.datetime "updated_at",                            null: false
+    t.string   "aasm_state",      default: "published", null: false
   end
 
   add_index "work_organizations", ["organization_id"], name: "index_work_organizations_on_organization_id", using: :btree
@@ -723,6 +738,9 @@ ActiveRecord::Schema.define(version: 20151227064731) do
   add_foreign_key "draft_staffs", "people"
   add_foreign_key "draft_staffs", "staffs"
   add_foreign_key "draft_staffs", "works"
+  add_foreign_key "draft_work_organizations", "organizations"
+  add_foreign_key "draft_work_organizations", "work_organizations"
+  add_foreign_key "draft_work_organizations", "works"
   add_foreign_key "draft_works", "seasons"
   add_foreign_key "draft_works", "works"
   add_foreign_key "edit_request_comments", "edit_requests", on_delete: :cascade

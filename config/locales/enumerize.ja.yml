@@ -24,6 +24,10 @@ ja:
         script: 脚本
         series_composition: シリーズ構成
         sound_director: 音響監督
+    draft_work_organization:
+      role:
+        producer: アニメーション制作
+        other: その他
     person:
       blood_type:
         a: A型
@@ -75,3 +79,4 @@ ja:
     work_organization:
       role:
         producer: アニメーション制作
+        other: その他

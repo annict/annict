@@ -36,5 +36,9 @@
         = render "activity_organizations_create", activity: activity
       - when "organizations.update"
         = render "activity_organizations_update", activity: activity
+      - when "work_organizations.create"
+        = render "activity_work_organizations_create", activity: activity
+      - when "work_organizations.update"
+        = render "activity_work_organizations_update", activity: activity
 
 = paginate @activities

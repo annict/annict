@@ -9,6 +9,7 @@
 #  role_other      :string
 #  created_at      :datetime         not null
 #  updated_at      :datetime         not null
+#  aasm_state      :string           default("published"), not null
 #
 # Indexes
 #
@@ -18,7 +19,9 @@
 #
 
 class WorkOrganization < ActiveRecord::Base
-  extend Enumerize
+  include AASM
+  include DbActivityMethods
+  include WorkOrganizationCommon
 
   aasm do
     state :published, initial: true
@@ -28,11 +31,4 @@ class WorkOrganization < ActiveRecord::Base
       transitions from: :published, to: :hidden
     end
   end
-
-  enumerize :role, in: %w(
-    producer
-  )
-
-  belongs_to :organization
-  belongs_to :work
 end

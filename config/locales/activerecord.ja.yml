@@ -22,6 +22,10 @@ ja:
         name: 名義
         role: 担当
         role_other: 担当 (その他)
+      draft_work_organization:
+        work_id: 作品
+        role: 担当
+        role_other: 担当 (その他)
       episode:
         number: 話数
         prev_episode_id: 前のエピソード
@@ -127,6 +131,10 @@ ja:
         body: コメント
       edit_request_comment:
         body: 本文
+      work_organization:
+        work_id: 作品
+        role: 担当
+        role_other: 担当 (その他)
     errors:
       messages:
         accepted: に同意してください。
