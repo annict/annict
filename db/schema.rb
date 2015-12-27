@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20151226133209) do
+ActiveRecord::Schema.define(version: 20151227035952) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -260,6 +260,21 @@ ActiveRecord::Schema.define(version: 20151226133209) do
   add_index "draft_programs", ["episode_id"], name: "index_draft_programs_on_episode_id", using: :btree
   add_index "draft_programs", ["program_id"], name: "index_draft_programs_on_program_id", using: :btree
   add_index "draft_programs", ["work_id"], name: "index_draft_programs_on_work_id", using: :btree
+
+  create_table "draft_staffs", force: :cascade do |t|
+    t.integer  "staff_id",   null: false
+    t.integer  "person_id",  null: false
+    t.integer  "work_id",    null: false
+    t.string   "name",       null: false
+    t.string   "role",       null: false
+    t.string   "role_other"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  add_index "draft_staffs", ["person_id"], name: "index_draft_staffs_on_person_id", using: :btree
+  add_index "draft_staffs", ["staff_id"], name: "index_draft_staffs_on_staff_id", using: :btree
+  add_index "draft_staffs", ["work_id"], name: "index_draft_staffs_on_work_id", using: :btree
 
   create_table "draft_works", force: :cascade do |t|
     t.integer  "work_id"
@@ -532,7 +547,7 @@ ActiveRecord::Schema.define(version: 20151226133209) do
   create_table "staffs", force: :cascade do |t|
     t.integer  "person_id",  null: false
     t.integer  "work_id",    null: false
-    t.string   "name"
+    t.string   "name",       null: false
     t.string   "role",       null: false
     t.string   "role_other"
     t.datetime "created_at", null: false
@@ -689,6 +704,9 @@ ActiveRecord::Schema.define(version: 20151226133209) do
   add_foreign_key "draft_programs", "episodes"
   add_foreign_key "draft_programs", "programs"
   add_foreign_key "draft_programs", "works"
+  add_foreign_key "draft_staffs", "people"
+  add_foreign_key "draft_staffs", "staffs"
+  add_foreign_key "draft_staffs", "works"
   add_foreign_key "draft_works", "seasons"
   add_foreign_key "draft_works", "works"
   add_foreign_key "edit_request_comments", "edit_requests", on_delete: :cascade

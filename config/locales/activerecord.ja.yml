@@ -12,6 +12,11 @@ ja:
         comment: コメント
       comment:
         body: コメント
+      draft_staff:
+        work_id: 作品
+        name: 名義
+        role: 担当
+        role_other: 担当 (その他)
       episode:
         number: 話数
         prev_episode_id: 前のエピソード
@@ -45,6 +50,11 @@ ja:
         channel_id: チャンネル
         episode_id: エピソード
         started_at: 放送日時
+      staff:
+        work_id: 作品
+        name: 名義
+        role: 担当
+        role_other: 担当 (その他)
       user:
         email: メールアドレス
         terms: 利用規約とプライバシーポリシー

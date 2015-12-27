@@ -80,6 +80,15 @@ class EditRequest < ActiveRecord::Base
     draft_resource.origin
   end
 
+  def draft_resource_parent
+    case draft_resource.class.name
+    when "DraftEpisode", "DraftItem", "DraftMultipleEpisode", "DraftProgram"
+      draft_resource.work
+    when "DraftCast", "DraftStaff"
+      draft_resource.person
+    end
+  end
+
   def db_activities
     condition = <<-SQL
       (recipient_type = 'EditRequest' AND recipient_id = ?) OR
@@ -103,7 +112,7 @@ class EditRequest < ActiveRecord::Base
       else
         origin_class = draft_resource.class.reflections["origin"].
                        class_name.constantize
-        origin_class.create(attrs)
+        origin_class.create!(attrs)
       end
     end
 

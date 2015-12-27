@@ -9,6 +9,21 @@ ja:
       gender:
         female: 女性
         male: 男性
+    draft_staff:
+      role:
+        animation_director: 作画監督
+        art_director: 美術監督
+        character_design: キャラクターデザイン
+        chief_animation_director: 総作画監督
+        chief_director: 総監督
+        director: 監督
+        music: 音楽
+        original_character_design: キャラクター原案
+        original_creator: 原作
+        other: その他
+        script: 脚本
+        series_composition: シリーズ構成
+        sound_director: 音響監督
     person:
       blood_type:
         a: A型
@@ -18,6 +33,21 @@ ja:
       gender:
         female: 女性
         male: 男性
+    staff:
+      role:
+        animation_director: 作画監督
+        art_director: 美術監督
+        character_design: キャラクターデザイン
+        chief_animation_director: 総作画監督
+        chief_director: 総監督
+        director: 監督
+        music: 音楽
+        original_character_design: キャラクター原案
+        original_creator: 原作
+        other: その他
+        script: 脚本
+        series_composition: シリーズ構成
+        sound_director: 音響監督
     status:
       kind:
         wanna_watch: 見たい
@@ -45,18 +75,3 @@ ja:
     work_organization:
       role:
         producer: アニメーション制作
-    work_staff:
-      role:
-        animation_director: 作画監督
-        art_director: 美術監督
-        character_design: キャラクターデザイン
-        chief_animation_director: 総作画監督
-        chief_director: 総監督
-        director: 監督
-        music: 音楽
-        original_character_design: キャラクター原案
-        original_creator: 原作
-        other: その他
-        script: 脚本
-        series_composition: シリーズ構成
-        sound_director: 音響監督

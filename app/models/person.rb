@@ -48,5 +48,6 @@ class Person < ActiveRecord::Base
   belongs_to :prefecture
   has_many :casts, dependent: :destroy
   has_many :draft_casts, dependent: :destroy
+  has_many :draft_staffs, dependent: :destroy
   has_many :staffs, dependent: :destroy
 end

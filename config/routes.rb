@@ -58,6 +58,8 @@ Annict::Application.routes.draw do
 
       resources :casts, except: [:show]
       resources :draft_casts, only: [:new, :create, :edit, :update]
+      resources :draft_staffs, only: [:new, :create, :edit, :update]
+      resources :staffs, except: [:show]
     end
 
     resources :works, except: [:show] do

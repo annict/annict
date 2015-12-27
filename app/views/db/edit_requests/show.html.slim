@@ -5,8 +5,12 @@
     h1 = @edit_request.title
     = @edit_request.decorate.status_label
     = @edit_request.decorate.resource_label
-    span.text-mute.p-db-edit_requests--show__resource-annotation
-      = @edit_request.origin.decorate.db_detail_link(name: "編集元")
+    - if @edit_request.draft_resource_parent.present?
+      span.text-mute.p-db-edit_requests--show__resource-annotation
+        = "「#{@edit_request.draft_resource_parent.decorate.db_detail_link}」".html_safe
+    - if @edit_request.origin.present?
+      span.text-mute.p-db-edit_requests--show__resource-annotation
+        = @edit_request.origin.decorate.db_detail_link(name: "編集元")
   .pull-right
     - if policy(@edit_request).publish? && @edit_request.may_publish?
       = link_to "公開する", publish_db_edit_request_path(@edit_request), class: "btn btn-primary", data: { method: :post, confirm: "この編集内容を公開しますか？" }

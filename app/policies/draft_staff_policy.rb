@@ -1,0 +1,2 @@
+class DraftStaffPolicy < DraftResourcePolicy
+end

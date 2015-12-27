@@ -1,7 +1,7 @@
 class CreateDraftCasts < ActiveRecord::Migration
   def change
     create_table :draft_casts do |t|
-      t.integer :cast_id, null: false
+      t.integer :cast_id
       t.integer :person_id, null: false
       t.integer :work_id, null: false
       t.string :name, null: false

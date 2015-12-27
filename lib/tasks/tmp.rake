@@ -68,7 +68,7 @@ def save_staff_info(work, comment)
 
     staffs.each do |role, name|
       person = Person.where(name: name).first_or_create
-      work.staffs.where(person: person, role: :other, role_other: role).first_or_create
+      work.staffs.where(person: person, name: person.name, role: :other, role_other: role).first_or_create
     end
   end
 end

@@ -1,0 +1,7 @@
+= render "db/people/header", person: @person
+
+.row
+  .col-sm-7
+    = render "form", person: @person, draft_staff: @draft_staff
+  .col-sm-5
+    = render "db/staffs/sidebar"

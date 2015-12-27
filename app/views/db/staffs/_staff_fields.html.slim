@@ -1,0 +1,18 @@
+.form-group
+  = f.label :work_id, class: "col-sm-3 control-label"
+  .col-sm-9
+    = f.select :work_id, options_from_collection_for_select(Work.published.order(id: :desc), :id, :title, f.object.work.try!(:id)), { include_blank: true }, { class: "form-control js-cast-participation-works" }
+.form-group
+  = f.label :name, class: "col-sm-3 control-label"
+  .col-sm-9
+    = f.text_field :name, class: "form-control", value: (f.object.name.presence || f.object.person.name)
+.form-group
+  = f.label :role, class: "col-sm-3 control-label"
+  .col-sm-9
+    .row
+      .col-sm-5
+        = f.select :role, options_for_select(Staff.role.options, f.object.role), { include_blank: true }, { class: "form-control" }
+.form-group
+  = f.label :role_other, class: "col-sm-3 control-label"
+  .col-sm-9
+    = f.text_field :role_other, class: "form-control"

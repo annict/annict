@@ -1,7 +1,7 @@
 class CreateDraftPeople < ActiveRecord::Migration
   def change
     create_table :draft_people do |t|
-      t.integer :person_id, null: false
+      t.integer :person_id
       t.integer :prefecture_id
       t.string :name, null: false
       t.string :name_kana
