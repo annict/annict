@@ -147,7 +147,6 @@ GEM
       responders
       thread_safe (~> 0.1)
       warden (~> 1.2.3)
-    did_you_mean (1.0.0)
     diff-lcs (1.2.5)
     docile (1.1.5)
     domain_name (0.5.25)
@@ -635,7 +634,6 @@ DEPENDENCIES
   database_rewinder
   delayed_job_active_record
   devise
-  did_you_mean
   draper
   email_validator
   enumerize
@@ -700,4 +698,4 @@ DEPENDENCIES
   virtus
 
 BUNDLED WITH
-   1.10.6
+   1.11.2
