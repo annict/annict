@@ -1,5 +1,6 @@
 .sidebar {
-  background-color: $color-mine-shaft;
+  background-color: $color-gallery;
+  box-shadow: 0 1px 2px rgba(43,59,93,.29);
   float: left;
   height: 100%;
   overflow-y: auto;
@@ -10,9 +11,8 @@
 }
 
 .sidebar__header {
-  background-color: rgba(0, 0, 0, 0.13);
   display: block;
-  padding: 8px 0;
+  padding: 11px 0;
   text-align: center;
 }
 
@@ -31,18 +31,14 @@
 }
 
 .sidebar__body a {
-  color: #fff;
+  color: $color-mine-shaft;
   display: inline-block;
   font-size: 12px;
   padding: 3px 15px;
   width: 100%;
 
-  &:first-child {
-    margin-top: 20px;
-  }
-
   &:hover {
-    background-color: #383838;
+    background-color: rgba(0,0,0,.03);
     text-decoration: none;
   }
 }
@@ -62,8 +58,6 @@
 }
 
 .sidebar__line {
-  border-top: 1px solid rgba(0, 0, 0, 0.3);
-  box-shadow: 0 1px 0 rgba(255, 255, 255, 0.1);
   margin-bottom: 25px;
   margin-top: 15px;
 }

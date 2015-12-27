@@ -1,6 +1,6 @@
 = content_for :site_page_title, "#{t('checkins.page_title', username: @checkin.user.username)}"
 
-.content--narrow
+.content--narrow.c-card
   .wrapper
     = render 'works/work_profile_light', work: @work, episode: @episode
 

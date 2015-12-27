@@ -1,6 +1,6 @@
 = render "settings_tabs"
 
-.content--narrow
+.content--narrow.c-card
   .container
     .settings__option
       = form_for current_user.setting, url: options_path do |f|

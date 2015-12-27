@@ -48,9 +48,11 @@
 @import "application/old/controllers/users";
 @import "application/old/controllers/works";
 
+@import "application_common/components/*";
+
 @import "application/foundations/base";
 @import "application/foundations/bootstrap";
 @import "application/foundations/content";
 @import "application/layouts/sidebar";
-@import "application/objects/components/*";
-@import "application/objects/projects/*";
+@import "application/components/*";
+@import "application/projects/*";
