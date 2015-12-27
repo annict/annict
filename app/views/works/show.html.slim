@@ -2,7 +2,7 @@
 - description meta_description("#{@work.title}を見たらAnnictに記録しよう！")
 - keywords meta_keywords(@work.title)
 
-.content--narrow
+.content--narrow.c-card
   .wrapper
     .work-profile
       .work-image style="background-image: url(#{annict_image_url(@work.item, :tombo_image, msize: '320x320', size: '640x640')});"

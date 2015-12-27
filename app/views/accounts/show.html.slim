@@ -1,6 +1,6 @@
 = render "settings_tabs"
 
-.content--narrow
+.content--narrow.c-card
   .container
     .settings__account
       = form_for @user, url: account_path, method: :patch do |f|

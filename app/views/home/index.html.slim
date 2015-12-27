@@ -5,7 +5,7 @@
 - if current_user.tips.unfinished.present?
   = render 'tips'
 
-.content--narrow
+.content--narrow.c-card
   .container
     .activities-box ng-controller='ActivitiesCtrl' ann-loading='loading'
       div infinite-scroll='addMoreActivities()' infinite-scroll-disabled='disabled' infinite-scroll-distance='2'

@@ -2,7 +2,7 @@
 - description meta_description("#{@work.title} #{@episode.number}の感想をチェック！")
 - keywords meta_keywords([@work.title, @episode.number, @episode.title])
 
-.content--narrow
+.content--narrow.c-card
   .wrapper
     = render 'works/work_profile_light', work: @work, episode: @episode
 

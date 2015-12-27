@@ -1,11 +1,8 @@
 .content {
-  background-color: #fff;
   margin: 0 auto;
 
   &--narrow {
     @extend .content;
-    box-shadow: 0 1px 1px rgba(0, 0, 0, 0.05);
-    margin-top: 20px;
     max-width: 500px;
   }
 }
