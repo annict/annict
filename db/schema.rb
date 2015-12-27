@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20151227035952) do
+ActiveRecord::Schema.define(version: 20151227064731) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -170,7 +170,7 @@ ActiveRecord::Schema.define(version: 20151227035952) do
   add_index "delayed_jobs", ["priority", "run_at"], name: "delayed_jobs_priority", using: :btree
 
   create_table "draft_casts", force: :cascade do |t|
-    t.integer  "cast_id",    null: false
+    t.integer  "cast_id"
     t.integer  "person_id",  null: false
     t.integer  "work_id",    null: false
     t.string   "name",       null: false
@@ -225,8 +225,21 @@ ActiveRecord::Schema.define(version: 20151227035952) do
 
   add_index "draft_multiple_episodes", ["work_id"], name: "index_draft_multiple_episodes_on_work_id", using: :btree
 
+  create_table "draft_organizations", force: :cascade do |t|
+    t.integer  "organization_id"
+    t.string   "name",             null: false
+    t.string   "url"
+    t.string   "wikipedia_url"
+    t.string   "twitter_username"
+    t.datetime "created_at",       null: false
+    t.datetime "updated_at",       null: false
+  end
+
+  add_index "draft_organizations", ["name"], name: "index_draft_organizations_on_name", using: :btree
+  add_index "draft_organizations", ["organization_id"], name: "index_draft_organizations_on_organization_id", using: :btree
+
   create_table "draft_people", force: :cascade do |t|
-    t.integer  "person_id",        null: false
+    t.integer  "person_id"
     t.integer  "prefecture_id"
     t.string   "name",             null: false
     t.string   "name_kana"
@@ -262,7 +275,7 @@ ActiveRecord::Schema.define(version: 20151227035952) do
   add_index "draft_programs", ["work_id"], name: "index_draft_programs_on_work_id", using: :btree
 
   create_table "draft_staffs", force: :cascade do |t|
-    t.integer  "staff_id",   null: false
+    t.integer  "staff_id"
     t.integer  "person_id",  null: false
     t.integer  "work_id",    null: false
     t.string   "name",       null: false
@@ -413,11 +426,13 @@ ActiveRecord::Schema.define(version: 20151227035952) do
   add_index "notifications", ["user_id"], name: "notifications_user_id_idx", using: :btree
 
   create_table "organizations", force: :cascade do |t|
-    t.string   "name",          null: false
+    t.string   "name",                                   null: false
     t.string   "url"
     t.string   "wikipedia_url"
-    t.datetime "created_at",    null: false
-    t.datetime "updated_at",    null: false
+    t.datetime "created_at",                             null: false
+    t.datetime "updated_at",                             null: false
+    t.string   "twitter_username"
+    t.string   "aasm_state",       default: "published", null: false
   end
 
   add_index "organizations", ["name"], name: "index_organizations_on_name", unique: true, using: :btree
@@ -699,6 +714,7 @@ ActiveRecord::Schema.define(version: 20151227035952) do
   add_foreign_key "draft_items", "items"
   add_foreign_key "draft_items", "works"
   add_foreign_key "draft_multiple_episodes", "works"
+  add_foreign_key "draft_organizations", "organizations"
   add_foreign_key "draft_people", "prefectures"
   add_foreign_key "draft_programs", "channels"
   add_foreign_key "draft_programs", "episodes"

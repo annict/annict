@@ -6,11 +6,13 @@ class CreateStaffs < ActiveRecord::Migration
       t.string :name, null: false
       t.string :role, null: false
       t.string :role_other
+      t.string :aasm_state, null: false, default: "published"
       t.timestamps null: false
     end
 
     add_index :staffs, :person_id
     add_index :staffs, :work_id
+    add_index :staffs, :aasm_state
 
     add_foreign_key :staffs, :people
     add_foreign_key :staffs, :works

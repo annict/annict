@@ -12,4 +12,8 @@ class SearchService
   def people
     Person.search(name_cont: q).result
   end
+
+  def organizations
+    Organization.search(name_cont: q).result
+  end
 end

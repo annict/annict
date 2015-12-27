@@ -3,6 +3,7 @@ module Db
     def show
       @works = @search.works
       @people = @search.people
+      @organizations = @search.organizations
     end
   end
 end

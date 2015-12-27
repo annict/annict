@@ -12,6 +12,11 @@ ja:
         comment: コメント
       comment:
         body: コメント
+      draft_organization:
+        name: 名前
+        url: URL
+        wikipedia_url: Wikipedia
+        twitter_username: Twitter
       draft_staff:
         work_id: 作品
         name: 名義
@@ -28,6 +33,11 @@ ja:
         name: 商品名
         url: URL
         tombo_image: 作品画像
+      organization:
+        name: 名前
+        url: URL
+        wikipedia_url: Wikipedia
+        twitter_username: Twitter
       person:
         name: 名前
         name_kana: 名前 (かな)

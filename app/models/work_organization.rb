@@ -20,6 +20,15 @@
 class WorkOrganization < ActiveRecord::Base
   extend Enumerize
 
+  aasm do
+    state :published, initial: true
+    state :hidden
+
+    event :hide do
+      transitions from: :published, to: :hidden
+    end
+  end
+
   enumerize :role, in: %w(
     producer
   )

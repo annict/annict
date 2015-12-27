@@ -7,9 +7,18 @@ h2 作品
 
 hr
 
-h2 スタッフ / キャスト
+h2 スタッフ/キャスト
 
 - if @people.present?
   = render "db/people/people_list", people: @people
 - else
-  .well スタッフ / キャストは見つかりませんでした
+  .well スタッフ/キャストは見つかりませんでした
+  
+hr
+
+h2 制作会社/団体
+
+- if @organizations.present?
+  = render "db/organizations/organizations_list", organizations: @organizations
+- else
+  .well 制作会社/団体は見つかりませんでした

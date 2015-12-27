@@ -14,7 +14,7 @@ class EditRequestDecorator < ApplicationDecorator
     when :draft_work
       "作品"
     when :draft_cast, :draft_person
-      "スタッフ / キャスト"
+      "スタッフ/キャスト"
     end
 
     h.content_tag :span, text, class: "label label-default c-label--transparent"
@@ -49,6 +49,8 @@ class EditRequestDecorator < ApplicationDecorator
       h.edit_db_person_draft_cast_path(draft_resource.person, draft_resource)
     when DraftStaff
       h.edit_db_person_draft_staff_path(draft_resource.person, draft_resource)
+    when DraftOrganization
+      h.edit_db_draft_organization_path(draft_resource)
     end
   end
 end

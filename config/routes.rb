@@ -41,8 +41,9 @@ Annict::Application.routes.draw do
 
   namespace :db do
     resources :activities, only: [:index]
-    resources :draft_works, only: [:new, :create, :edit, :update]
+    resources :draft_organizations, only: [:new, :create, :edit, :update]
     resources :draft_people, only: [:new, :create, :edit, :update]
+    resources :draft_works, only: [:new, :create, :edit, :update]
     resource :search, only: [:show]
 
     resources :edit_requests, only: [:index, :show] do
@@ -51,6 +52,13 @@ Annict::Application.routes.draw do
         post :publish
       end
       resources :comments, only: [:create], controller: "edit_request_comments"
+    end
+
+    resources :organizations, except: [:show] do
+      patch :hide, on: :member
+
+      resources :draft_work_organizations, only: [:new, :create, :edit, :update]
+      resources :work_organizations, except: [:show]
     end
 
     resources :people, except: [:show] do

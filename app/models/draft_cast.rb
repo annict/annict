@@ -3,7 +3,7 @@
 # Table name: draft_casts
 #
 #  id         :integer          not null, primary key
-#  cast_id    :integer          not null
+#  cast_id    :integer
 #  person_id  :integer          not null
 #  work_id    :integer          not null
 #  name       :string           not null

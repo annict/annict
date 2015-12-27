@@ -21,9 +21,9 @@
       - when "items.update"
         = render "activity_items_update", activity: activity
       - when "people.create"
-        = render "activity_peoples_create", activity: activity
+        = render "activity_people_create", activity: activity
       - when "people.update"
-        = render "activity_peoples_update", activity: activity
+        = render "activity_people_update", activity: activity
       - when "casts.create"
         = render "activity_casts_create", activity: activity
       - when "casts.update"
@@ -32,5 +32,9 @@
         = render "activity_staffs_create", activity: activity
       - when "staffs.update"
         = render "activity_staffs_update", activity: activity
+      - when "organizations.create"
+        = render "activity_organizations_create", activity: activity
+      - when "organizations.update"
+        = render "activity_organizations_update", activity: activity
 
 = paginate @activities

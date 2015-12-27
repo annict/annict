@@ -3,7 +3,7 @@
 # Table name: draft_people
 #
 #  id               :integer          not null, primary key
-#  person_id        :integer          not null
+#  person_id        :integer
 #  prefecture_id    :integer
 #  name             :string           not null
 #  name_kana        :string
