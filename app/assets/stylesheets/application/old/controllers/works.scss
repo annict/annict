@@ -1,6 +1,4 @@
 .works-index, .works-search, .works-season, .works-popular, .works-recommend {
-  @include works-list;
-
   > .content {
     padding: 0 0 20px 0;
   }
