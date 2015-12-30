@@ -21,9 +21,37 @@ class Season < ActiveRecord::Base
 
   delegate :yearly_season_ja, to: :decorate
 
-  def self.find_by_slug(slug)
+  NAME_DATA = {
+    winter: "冬季",
+    spring: "春季",
+    summer: "夏季",
+    autumn: "秋季"
+  }.freeze
+
+  def self.find_or_new_by_slug(slug)
     year, name = slug.split("-")
-    find_by(year: year, name: name)
+    attrs = { year: year, name: name }
+
+    # seasonsテーブルには name: "all" なレコードを保存していないため、newする
+    return new(attrs) if name == "all"
+
+    find_by(attrs)
+  end
+
+  def self.slug_options
+    options = []
+    years.each do |year|
+      options << ["#{year}年", "#{year}-all"]
+      NAME_DATA.each do |key, val|
+        options << ["#{year}年#{val}", "#{year}-#{key}"]
+      end
+    end
+    options
+  end
+
+  def self.years
+    # 降順で取得する
+    pluck(:year).uniq.sort { |a, b| b <=> a }
   end
 
   def slug

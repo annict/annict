@@ -5,4 +5,9 @@
     @extend .content;
     max-width: 500px;
   }
+
+  &--wide {
+    @extend .content;
+    max-width: 900px;
+  }
 }

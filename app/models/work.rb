@@ -76,7 +76,8 @@ class Work < ActiveRecord::Base
 
     year, name = season_slug.split("-")
 
-    joins(:season).where(seasons: { year: year, name: name })
+    season_conds = (name == "all") ? { year: year } : { year: year, name: name }
+    joins(:season).where(seasons: season_conds)
   }
 
   scope :program_registered, -> {

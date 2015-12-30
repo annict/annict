@@ -2,7 +2,7 @@ doctype html
 html lang="ja" ng-app="annict"
   head
     = render "head"
-  body#js-annict class="#{body_class} #{user_signed_in? ? 'signed-in' : 'not-signed-in'}" ng-controller="ApplicationCtrl"
+  body#ann class="#{body_class} #{user_signed_in? ? 'signed-in' : 'not-signed-in'}" ng-controller="ApplicationCtrl"
     .app
       = render "navbar"
 
