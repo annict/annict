@@ -1,5 +1,6 @@
 AllCops:
   Exclude:
+    - "**/*.slim"
     - "vendor/**/*"
     - "db/schema.rb"
 
