@@ -1,9 +1,9 @@
-= render "db/people/header", person: @person
+= render "db/works/header", work: @work
 
-= render "db/casts/create_type_tab", person: @person
+= render "db/casts/create_type_tab", work: @work
 
 .row
   .col-sm-7
-    = render "form", person: @person, draft_cast: @draft_cast
+    = render "form", work: @work, draft_cast: @draft_cast
   .col-sm-5
     = render "db/casts/sidebar"

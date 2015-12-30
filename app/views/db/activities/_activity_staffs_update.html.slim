@@ -8,8 +8,8 @@
         = activity.user.decorate.name_link
       | が
       span.db-activity-description-person-name
-        = "「#{activity.trackable.person.decorate.db_detail_link}」".html_safe
-      | の参加作品を更新しました
+        = "「#{activity.trackable.work.decorate.db_detail_link}」".html_safe
+      | のスタッフを更新しました
     .db-activity-header-date
       = "#{time_ago_in_words(activity.created_at)}前"
   .db-activity-diff

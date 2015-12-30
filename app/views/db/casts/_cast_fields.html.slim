@@ -1,11 +1,11 @@
 .form-group
-  = f.label :work_id, class: "col-sm-3 control-label"
+  = f.label :person_id, class: "col-sm-3 control-label"
   .col-sm-9
-    = f.select :work_id, options_from_collection_for_select(Work.published.order(id: :desc), :id, :title, f.object.work.try!(:id)), { include_blank: true }, { class: "form-control js-cast-participation-works" }
+    = f.select :person_id, options_from_collection_for_select(Person.published.order(id: :desc), :id, :name, f.object.person.try!(:id)), { include_blank: true }, { class: "form-control js-cast-participation-works" }
 .form-group
   = f.label :name, class: "col-sm-3 control-label"
   .col-sm-9
-    = f.text_field :name, class: "form-control", value: (f.object.name.presence || f.object.person.name)
+    = f.text_field :name, class: "form-control"
 .form-group
   = f.label :part, class: "col-sm-3 control-label"
   .col-sm-9

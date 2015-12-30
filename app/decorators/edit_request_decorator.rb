@@ -46,9 +46,9 @@ class EditRequestDecorator < ApplicationDecorator
     when DraftPerson
       h.edit_db_draft_person_path(draft_resource)
     when DraftCast
-      h.edit_db_person_draft_cast_path(draft_resource.person, draft_resource)
+      h.edit_db_work_draft_cast_path(draft_resource.work, draft_resource)
     when DraftStaff
-      h.edit_db_person_draft_staff_path(draft_resource.person, draft_resource)
+      h.edit_db_work_draft_staff_path(draft_resource.work, draft_resource)
     when DraftOrganization
       h.edit_db_draft_organization_path(draft_resource)
     when DraftWorkOrganization

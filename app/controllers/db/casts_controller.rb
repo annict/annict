@@ -1,46 +1,48 @@
 module Db
   class CastsController < Db::ApplicationController
-    permits :work_id, :name, :part
+    permits :person_id, :name, :part
 
     before_action :authenticate_user!
-    before_action :load_person, only: [:index, :new, :create, :edit, :update]
+    before_action :load_work, only: [:index, :new, :create, :edit, :update]
 
     def index
-      @casts = @person.casts.order(id: :desc)
+      @casts = @work.casts.order(id: :desc)
     end
 
     def new
-      @cast = @person.casts.new
+      @cast = @work.casts.new
       authorize @cast, :new?
     end
 
     def create(cast)
-      @cast = @person.casts.new(cast)
+      @cast = @work.casts.new(cast)
       authorize @cast, :create?
+      @cast.name = @cast.person.name if @cast.name.blank? && @cast.person.present?
 
       if @cast.valid?
         key = "casts.create"
         @cast.save_and_create_db_activity(current_user, key)
-        redirect_to db_person_casts_path(@person), notice: "登録しました"
+        redirect_to db_work_casts_path(@work), notice: "登録しました"
       else
         render :new
       end
     end
 
     def edit(id)
-      @cast = @person.casts.find(id)
+      @cast = @work.casts.find(id)
       authorize @cast, :edit?
     end
 
     def update(id, cast)
-      @cast = @person.casts.find(id)
+      @cast = @work.casts.find(id)
       authorize @cast, :update?
       @cast.attributes = cast
+      @cast.name = @cast.person.name if @cast.name.blank? && @cast.person.present?
 
       if @cast.valid?
         key = "casts.update"
         @cast.save_and_create_db_activity(current_user, key)
-        redirect_to db_person_casts_path(@person), notice: "更新しました"
+        redirect_to db_work_casts_path(@work), notice: "更新しました"
       else
         render :edit
       end
@@ -48,8 +50,8 @@ module Db
 
     private
 
-    def load_person
-      @person = Person.find(params[:person_id])
+    def load_work
+      @work = Work.find(params[:work_id])
     end
   end
 end

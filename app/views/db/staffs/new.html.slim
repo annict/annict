@@ -1,9 +1,9 @@
-= render "db/people/header", person: @person
+= render "db/works/header", work: @work
 
-= render "create_type_tab", person: @person, staff: @staff
+= render "create_type_tab", work: @work, staff: @staff
 
 .row
   .col-sm-7
-    = render "form", person: @person, staff: @staff
+    = render "form", work: @work, staff: @staff
   .col-sm-5
     = render "sidebar"

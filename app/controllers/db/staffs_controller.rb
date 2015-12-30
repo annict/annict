@@ -1,46 +1,48 @@
 module Db
   class StaffsController < Db::ApplicationController
-    permits :work_id, :name, :role, :role_other
+    permits :person_id, :name, :role, :role_other
 
     before_action :authenticate_user!
-    before_action :load_person, only: [:index, :new, :create, :edit, :update]
+    before_action :load_work, only: [:index, :new, :create, :edit, :update]
 
     def index
-      @staffs = @person.staffs.order(id: :desc)
+      @staffs = @work.staffs.order(id: :desc)
     end
 
     def new
-      @staff = @person.staffs.new
+      @staff = @work.staffs.new
       authorize @staff, :new?
     end
 
     def create(staff)
-      @staff = @person.staffs.new(staff)
+      @staff = @work.staffs.new(staff)
       authorize @staff, :create?
+      @staff.name = @staff.person.name if @staff.name.blank? && @staff.person.present?
 
       if @staff.valid?
         key = "staffs.create"
         @staff.save_and_create_db_activity(current_user, key)
-        redirect_to db_person_staffs_path(@person), notice: "登録しました"
+        redirect_to db_work_staffs_path(@work), notice: "登録しました"
       else
         render :new
       end
     end
 
     def edit(id)
-      @staff = @person.staffs.find(id)
+      @staff = @work.staffs.find(id)
       authorize @staff, :edit?
     end
 
     def update(id, staff)
-      @staff = @person.staffs.find(id)
+      @staff = @work.staffs.find(id)
       authorize @staff, :update?
       @staff.attributes = staff
+      @staff.name = @staff.person.name if @staff.name.blank? && @staff.person.present?
 
       if @staff.valid?
         key = "staffs.update"
         @staff.save_and_create_db_activity(current_user, key)
-        redirect_to db_person_staffs_path(@person), notice: "更新しました"
+        redirect_to db_work_staffs_path(@work), notice: "更新しました"
       else
         render :edit
       end
@@ -48,8 +50,8 @@ module Db
 
     private
 
-    def load_person
-      @person = Person.find(params[:person_id])
+    def load_work
+      @work = Work.find(params[:work_id])
     end
   end
 end

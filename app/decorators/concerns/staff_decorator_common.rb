@@ -5,9 +5,9 @@ module StaffDecoratorCommon
     def to_values
       model.class::DIFF_FIELDS.each_with_object({}) do |field, hash|
         hash[field] = case field
-        when :work_id
-          work_id = send(:work_id)
-          Work.find(work_id).title if work_id.present?
+        when :person_id
+          person_id = send(:person_id)
+          Person.find(person_id).name if person_id.present?
         when :role
           send(:role_text)
         else

@@ -1,7 +1,7 @@
 ul.nav.nav-tabs.nav-justified.edit-type-tabs
-  = active_link_to "編集リクエスト", new_db_person_draft_cast_path(person, cast_id: cast.id), wrap_tag: :li, active: params[:controller] == "db/draft_casts" && params[:action] == "new"
+  = active_link_to "編集リクエスト", new_db_work_draft_cast_path(work, cast_id: cast.id), wrap_tag: :li, active: params[:controller] == "db/draft_casts" && params[:action] == "new"
   - if policy(cast).edit?
-    = active_link_to "直接編集", edit_db_person_cast_path(person, cast), wrap_tag: :li, active: params[:controller] == "db/casts" && params[:action] == "edit"
+    = active_link_to "直接編集", edit_db_work_cast_path(work, cast), wrap_tag: :li, active: params[:controller] == "db/casts" && params[:action] == "edit"
   - else
     li.disabled data-toggle="tooltip" title="編集者になると直接編集できるようになります"
       = link_to "直接編集", "#"

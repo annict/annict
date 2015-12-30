@@ -1,4 +1,4 @@
-= form_for [:db, person, draft_staff], html: { class: "form-horizontal" } do |f|
+= form_for [:db, work, draft_staff], html: { class: "form-horizontal" } do |f|
   = render "application/error_panel", resource: f.object
 
   h4.staff-fields 基本情報
@@ -16,7 +16,7 @@
     .form-group
       = erf.label :title, class: "col-sm-3 control-label"
       .col-sm-9
-        = erf.text_field :title, class: "form-control", placeholder: "例: 参加作品を登録"
+        = erf.text_field :title, class: "form-control", placeholder: "例: スタッフを登録"
     .form-group
       = erf.label :body, class: "col-sm-3 control-label"
       .col-sm-9

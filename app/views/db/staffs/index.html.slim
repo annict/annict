@@ -1,10 +1,10 @@
-= render "db/people/header", person: @person
+= render "db/works/header", work: @work
 
 .pull-right
   - if current_user.committer?
-    = link_to "新規作成", new_db_person_staff_path(@person), class: "btn btn-primary"
+    = link_to "新規作成", new_db_work_staff_path(@work), class: "btn btn-primary"
   - else
-    = link_to "新規作成", new_db_person_draft_staff_path(@person), class: "btn btn-primary"
+    = link_to "新規作成", new_db_work_draft_staff_path(@work), class: "btn btn-primary"
 
 .clearfix
 
@@ -12,7 +12,7 @@ table.table.table-striped
   thead
     tr
       th ID
-      th 作品
+      th 名前
       th 名義
       th 担当
       th 編集
@@ -22,16 +22,16 @@ table.table.table-striped
     - @staffs.each do |staff|
       tr
         td = staff.id
-        td = staff.work.title
+        td = staff.person.name
         td = staff.name.presence || "-"
         td = staff.decorate.role_name
         td
           - if current_user.committer?
-            = link_to "編集", edit_db_person_staff_path(@person, staff), class: "btn btn-primary btn-sm"
+            = link_to "編集", edit_db_work_staff_path(@work, staff), class: "btn btn-primary btn-sm"
           - else
-            = link_to "編集", new_db_person_draft_staff_path(@person, staff_id: staff.id), class: "btn btn-primary btn-sm"
+            = link_to "編集", new_db_work_draft_staff_path(@work, staff_id: staff.id), class: "btn btn-primary btn-sm"
         - if policy(staff).destroy?
-          td = link_to "削除", db_person_staff_path(@person, staff), class: "btn btn-danger btn-sm", data: { method: :delete, confirm: "削除しますか？" }
+          td = link_to "削除", db_work_staff_path(@work, staff), class: "btn btn-danger btn-sm", data: { method: :delete, confirm: "削除しますか？" }
 
 - if @staffs.blank?
-  .well 登録されている出演作品はありません。
+  .well 登録されているスタッフはいません。

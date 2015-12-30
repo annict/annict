@@ -1,27 +1,30 @@
 module Db
   class DraftStaffsController < Db::ApplicationController
-    permits :work_id, :staff_id, :name, :role, :role_other,
-            edit_request_attributes: [:id, :title, :body]
+    permits :person_id, :staff_id, :name, :role, :role_other,
+      edit_request_attributes: [:id, :title, :body]
 
     before_action :authenticate_user!
-    before_action :load_person, only: [:new, :create, :edit, :update]
+    before_action :load_work, only: [:new, :create, :edit, :update]
 
     def new(staff_id: nil)
       @draft_staff = if staff_id.present?
-        @staff = @person.staffs.find(staff_id)
-        @person.draft_staffs.new(@staff.attributes.slice(*Staff::DIFF_FIELDS.map(&:to_s)))
+        @staff = @work.staffs.find(staff_id)
+        @work.draft_staffs.new(@staff.attributes.slice(*Staff::DIFF_FIELDS.map(&:to_s)))
       else
-        @person.draft_staffs.new
+        @work.draft_staffs.new
       end
       @draft_staff.build_edit_request
     end
 
     def create(draft_staff)
-      @draft_staff = @person.draft_staffs.new(draft_staff)
+      @draft_staff = @work.draft_staffs.new(draft_staff)
       @draft_staff.edit_request.user = current_user
+      if @draft_staff.name.blank? && @draft_staff.person.present?
+        @draft_staff.name = @draft_staff.person.name
+      end
 
       if draft_staff[:staff_id].present?
-        @staff = @person.staffs.find(draft_staff[:staff_id])
+        @staff = @work.staffs.find(draft_staff[:staff_id])
         @draft_staff.origin = @staff
       end
 
@@ -34,13 +37,16 @@ module Db
     end
 
     def edit(id)
-      @draft_staff = @person.draft_staffs.find(id)
+      @draft_staff = @work.draft_staffs.find(id)
       authorize @draft_staff, :edit?
     end
 
     def update(id, draft_staff)
-      @draft_staff = @person.draft_staffs.find(id)
+      @draft_staff = @work.draft_staffs.find(id)
       authorize @draft_staff, :update?
+      if @draft_staff.name.blank? && @draft_staff.person.present?
+        @draft_staff.name = @draft_staff.person.name
+      end
 
       if @draft_staff.update(draft_staff)
         flash[:notice] = "編集リクエストを更新しました"
@@ -52,8 +58,8 @@ module Db
 
     private
 
-    def load_person
-      @person = Person.find(params[:person_id])
+    def load_work
+      @work = Work.find(params[:work_id])
     end
   end
 end

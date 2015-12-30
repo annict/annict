@@ -1,8 +1,8 @@
 module CastCommon
   extend ActiveSupport::Concern
 
-  DIFF_FIELDS = %i(work_id name part)
-  PUBLISH_FIELDS = DIFF_FIELDS + %i(person_id)
+  DIFF_FIELDS = %i(person_id name part)
+  PUBLISH_FIELDS = DIFF_FIELDS + %i(work_id)
 
   included do
     belongs_to :person
