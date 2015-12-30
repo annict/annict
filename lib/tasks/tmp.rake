@@ -55,20 +55,22 @@ def save_staff_info(work, comment)
     staffs = staffs.except("アニメーション制作", "制作", "制作スタジオ", "アニメーション製作", "アニメ制作")
 
     work_staff_roles = Staff.role.values.map do |role_value|
-      { value: role_value, text: I18n.t("enumerize.work_staff.role.#{role_value}") }
+      { value: role_value, text: I18n.t("enumerize.staff.role.#{role_value}") }
     end
-    work_staff_roles.each do |wsp_role|
+    work_staff_roles.each_with_index do |wsp_role, i|
       name = staffs[wsp_role[:text]]
       next if name.blank?
       person = Person.where(name: name).first_or_create
-      wsp = work.staffs.where(person: person, role: wsp_role[:value]).first_or_create
+      staff = work.staffs.where(person: person, role: wsp_role[:value]).first_or_create
+      staff.update_column(:sort_number, (i + 1) * 10)
     end
 
     staffs = staffs.except(*(work_staff_roles.map { |wspr| wspr[:text] }))
 
     staffs.each do |role, name|
       person = Person.where(name: name).first_or_create
-      work.staffs.where(person: person, name: person.name, role: :other, role_other: role).first_or_create
+      staff = work.staffs.where(person: person, name: person.name, role: :other, role_other: role).first_or_create
+      staff.update_column(:sort_number, 100)
     end
   end
 end
@@ -81,9 +83,12 @@ def save_cast_info(work, comment)
     casts = cast_ary.map { |str| str.split(/:(.*):/).select(&:present?) }
     casts = casts.select { |cast| cast.length == 2 }.to_h
 
+    i = 1
     casts.each do |part, name|
       person = Person.where(name: name).first_or_create
-      work.casts.where(person: person, name: person.name, part: part).first_or_create
+      cast = work.casts.where(person: person, name: person.name, part: part).first_or_create
+      cast.update_column(:sort_number, i * 10)
+      i += 1
     end
   end
 end
