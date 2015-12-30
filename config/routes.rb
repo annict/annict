@@ -56,9 +56,6 @@ Annict::Application.routes.draw do
 
     resources :organizations, except: [:show] do
       patch :hide, on: :member
-
-      resources :draft_work_organizations, only: [:new, :create, :edit, :update]
-      resources :work_organizations, except: [:show]
     end
 
     resources :people, except: [:show] do
@@ -82,9 +79,11 @@ Annict::Application.routes.draw do
       resources :draft_multiple_episodes, only: [:new, :create, :edit, :update]
       resources :draft_programs, only: [:new, :create, :edit, :update]
       resources :draft_staffs, only: [:new, :create, :edit, :update]
+      resources :draft_work_organizations, only: [:new, :create, :edit, :update]
       resources :multiple_episodes, only: [:new, :create]
       resources :programs, except: [:show]
       resources :staffs, except: [:show]
+      resources :work_organizations, except: [:show]
       resource :item, except: [:index]
 
       resources :episodes, only: [:index, :edit, :update, :destroy] do

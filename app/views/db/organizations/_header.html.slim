@@ -1,11 +1,4 @@
 h1.header-organization-title
   = @organization.name
 
-ul.nav.nav-pills.pull-right.resource-nav-pills
-  - if current_user.role.admin?
-    li = link_to "基本情報", edit_db_organization_path(organization)
-  - else
-    li = link_to "基本情報", new_db_draft_organization_path(organization_id: organization.id)
-  li = link_to "参加作品", db_organization_work_organizations_path(organization)
-
 .clearfix

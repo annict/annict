@@ -25,6 +25,7 @@ ja:
         role: 担当
         role_other: 担当 (その他)
       draft_work_organization:
+        organization_id: 制作会社/団体
         work_id: 作品
         role: 担当
         role_other: 担当 (その他)
@@ -136,6 +137,7 @@ ja:
       edit_request_comment:
         body: 本文
       work_organization:
+        organization_id: 制作会社/団体
         work_id: 作品
         role: 担当
         role_other: 担当 (その他)

@@ -1,9 +1,9 @@
-= render "db/organizations/header", organization: @organization
+= render "db/works/header", work: @work
 
-= render "edit_type_tab", organization: @organization, work_organization: @work_organization
+= render "edit_type_tab", work: @work, work_organization: @work_organization
 
 .row
   .col-sm-7
-    = render "form", organization: @organization, work_organization: @work_organization
+    = render "form", work: @work, work_organization: @work_organization
   .col-sm-5
     = render "sidebar"

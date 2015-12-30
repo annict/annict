@@ -1,8 +1,8 @@
 module WorkOrganizationCommon
   extend ActiveSupport::Concern
 
-  DIFF_FIELDS = %i(work_id role role_other)
-  PUBLISH_FIELDS = DIFF_FIELDS + %i(organization_id)
+  DIFF_FIELDS = %i(organization_id role role_other)
+  PUBLISH_FIELDS = DIFF_FIELDS + %i(work_id)
 
   included do
     extend Enumerize

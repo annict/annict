@@ -1,7 +1,7 @@
-= form_for [:db, organization, work_organization], html: { class: "form-horizontal" } do |f|
+= form_for [:db, work, work_organization], html: { class: "form-horizontal" } do |f|
   = render "application/error_panel", resource: f.object
 
-  = render "work_organization_fields", f: f, organization: organization
+  = render "work_organization_fields", f: f, work: work
     
   .form-group
     .col-sm-offset-3.col-sm-9
