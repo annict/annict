@@ -28,7 +28,7 @@ html lang="ja" ng-app="annict"
             li
               = link_to "スタッフ/キャスト", db_people_path, target: "_self"
             li
-              = link_to "制作会社/団体", db_organizations_path, target: "_self"
+              = link_to "会社/団体", db_organizations_path, target: "_self"
           = form_tag db_search_path, method: :get, class: "navbar-form navbar-left", role: "form" do
             = text_field_tag :q, @search.q, class: "form-control", placeholder: "キーワードで検索..."
           ul.nav.navbar-nav.navbar-right
