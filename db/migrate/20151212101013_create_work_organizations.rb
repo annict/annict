@@ -6,6 +6,7 @@ class CreateWorkOrganizations < ActiveRecord::Migration
       t.string :role, null: false
       t.string :role_other
       t.string :aasm_state, null: false, default: "published"
+      t.integer :sort_number, null: false, default: 0
       t.timestamps null: false
     end
 
@@ -13,6 +14,7 @@ class CreateWorkOrganizations < ActiveRecord::Migration
     add_index :work_organizations, :organization_id
     add_index :work_organizations, [:work_id, :organization_id], unique: true
     add_index :work_organizations, :aasm_state
+    add_index :work_organizations, :sort_number
 
     add_foreign_key :work_organizations, :works
     add_foreign_key :work_organizations, :organizations

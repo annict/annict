@@ -30,16 +30,20 @@ ActiveRecord::Schema.define(version: 20151227101344) do
   add_index "activities", ["user_id"], name: "activities_user_id_idx", using: :btree
 
   create_table "casts", force: :cascade do |t|
-    t.integer  "person_id",  null: false
-    t.integer  "work_id",    null: false
-    t.string   "name",       null: false
-    t.string   "part",       null: false
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.integer  "person_id",                         null: false
+    t.integer  "work_id",                           null: false
+    t.string   "name",                              null: false
+    t.string   "part",                              null: false
+    t.string   "aasm_state",  default: "published", null: false
+    t.integer  "sort_number", default: 0,           null: false
+    t.datetime "created_at",                        null: false
+    t.datetime "updated_at",                        null: false
   end
 
-  add_index "casts", ["person_id"], name: "index_cast_participations_on_person_id", using: :btree
-  add_index "casts", ["work_id"], name: "index_cast_participations_on_work_id", using: :btree
+  add_index "casts", ["aasm_state"], name: "index_casts_on_aasm_state", using: :btree
+  add_index "casts", ["person_id"], name: "index_casts_on_person_id", using: :btree
+  add_index "casts", ["sort_number"], name: "index_casts_on_sort_number", using: :btree
+  add_index "casts", ["work_id"], name: "index_casts_on_work_id", using: :btree
 
   create_table "channel_groups", force: :cascade do |t|
     t.string   "sc_chgid",    limit: 510, null: false
@@ -171,16 +175,18 @@ ActiveRecord::Schema.define(version: 20151227101344) do
 
   create_table "draft_casts", force: :cascade do |t|
     t.integer  "cast_id"
-    t.integer  "person_id",  null: false
-    t.integer  "work_id",    null: false
-    t.string   "name",       null: false
-    t.string   "part",       null: false
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.integer  "person_id",               null: false
+    t.integer  "work_id",                 null: false
+    t.string   "name",                    null: false
+    t.string   "part",                    null: false
+    t.integer  "sort_number", default: 0, null: false
+    t.datetime "created_at",              null: false
+    t.datetime "updated_at",              null: false
   end
 
   add_index "draft_casts", ["cast_id"], name: "index_draft_casts_on_cast_id", using: :btree
   add_index "draft_casts", ["person_id"], name: "index_draft_casts_on_person_id", using: :btree
+  add_index "draft_casts", ["sort_number"], name: "index_draft_casts_on_sort_number", using: :btree
   add_index "draft_casts", ["work_id"], name: "index_draft_casts_on_work_id", using: :btree
 
   create_table "draft_episodes", force: :cascade do |t|
@@ -276,30 +282,34 @@ ActiveRecord::Schema.define(version: 20151227101344) do
 
   create_table "draft_staffs", force: :cascade do |t|
     t.integer  "staff_id"
-    t.integer  "person_id",  null: false
-    t.integer  "work_id",    null: false
-    t.string   "name",       null: false
-    t.string   "role",       null: false
+    t.integer  "person_id",               null: false
+    t.integer  "work_id",                 null: false
+    t.string   "name",                    null: false
+    t.string   "role",                    null: false
     t.string   "role_other"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.integer  "sort_number", default: 0, null: false
+    t.datetime "created_at",              null: false
+    t.datetime "updated_at",              null: false
   end
 
   add_index "draft_staffs", ["person_id"], name: "index_draft_staffs_on_person_id", using: :btree
+  add_index "draft_staffs", ["sort_number"], name: "index_draft_staffs_on_sort_number", using: :btree
   add_index "draft_staffs", ["staff_id"], name: "index_draft_staffs_on_staff_id", using: :btree
   add_index "draft_staffs", ["work_id"], name: "index_draft_staffs_on_work_id", using: :btree
 
   create_table "draft_work_organizations", force: :cascade do |t|
     t.integer  "work_organization_id"
-    t.integer  "work_id",              null: false
-    t.integer  "organization_id",      null: false
-    t.string   "role",                 null: false
+    t.integer  "work_id",                          null: false
+    t.integer  "organization_id",                  null: false
+    t.string   "role",                             null: false
     t.string   "role_other"
-    t.datetime "created_at",           null: false
-    t.datetime "updated_at",           null: false
+    t.integer  "sort_number",          default: 0, null: false
+    t.datetime "created_at",                       null: false
+    t.datetime "updated_at",                       null: false
   end
 
   add_index "draft_work_organizations", ["organization_id"], name: "index_draft_work_organizations_on_organization_id", using: :btree
+  add_index "draft_work_organizations", ["sort_number"], name: "index_draft_work_organizations_on_sort_number", using: :btree
   add_index "draft_work_organizations", ["work_id"], name: "index_draft_work_organizations_on_work_id", using: :btree
   add_index "draft_work_organizations", ["work_organization_id"], name: "index_draft_work_organizations_on_work_organization_id", using: :btree
 
@@ -443,12 +453,13 @@ ActiveRecord::Schema.define(version: 20151227101344) do
     t.string   "name",                                   null: false
     t.string   "url"
     t.string   "wikipedia_url"
-    t.datetime "created_at",                             null: false
-    t.datetime "updated_at",                             null: false
     t.string   "twitter_username"
     t.string   "aasm_state",       default: "published", null: false
+    t.datetime "created_at",                             null: false
+    t.datetime "updated_at",                             null: false
   end
 
+  add_index "organizations", ["aasm_state"], name: "index_organizations_on_aasm_state", using: :btree
   add_index "organizations", ["name"], name: "index_organizations_on_name", unique: true, using: :btree
 
   create_table "people", force: :cascade do |t|
@@ -574,17 +585,21 @@ ActiveRecord::Schema.define(version: 20151227101344) do
   add_index "settings", ["user_id"], name: "index_settings_on_user_id", using: :btree
 
   create_table "staffs", force: :cascade do |t|
-    t.integer  "person_id",  null: false
-    t.integer  "work_id",    null: false
-    t.string   "name",       null: false
-    t.string   "role",       null: false
+    t.integer  "person_id",                         null: false
+    t.integer  "work_id",                           null: false
+    t.string   "name",                              null: false
+    t.string   "role",                              null: false
     t.string   "role_other"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.string   "aasm_state",  default: "published", null: false
+    t.integer  "sort_number", default: 0,           null: false
+    t.datetime "created_at",                        null: false
+    t.datetime "updated_at",                        null: false
   end
 
-  add_index "staffs", ["person_id"], name: "index_staff_participations_on_person_id", using: :btree
-  add_index "staffs", ["work_id"], name: "index_staff_participations_on_work_id", using: :btree
+  add_index "staffs", ["aasm_state"], name: "index_staffs_on_aasm_state", using: :btree
+  add_index "staffs", ["person_id"], name: "index_staffs_on_person_id", using: :btree
+  add_index "staffs", ["sort_number"], name: "index_staffs_on_sort_number", using: :btree
+  add_index "staffs", ["work_id"], name: "index_staffs_on_work_id", using: :btree
 
   create_table "statuses", force: :cascade do |t|
     t.integer  "user_id",                     null: false
@@ -670,12 +685,15 @@ ActiveRecord::Schema.define(version: 20151227101344) do
     t.integer  "organization_id",                       null: false
     t.string   "role",                                  null: false
     t.string   "role_other"
+    t.string   "aasm_state",      default: "published", null: false
+    t.integer  "sort_number",     default: 0,           null: false
     t.datetime "created_at",                            null: false
     t.datetime "updated_at",                            null: false
-    t.string   "aasm_state",      default: "published", null: false
   end
 
+  add_index "work_organizations", ["aasm_state"], name: "index_work_organizations_on_aasm_state", using: :btree
   add_index "work_organizations", ["organization_id"], name: "index_work_organizations_on_organization_id", using: :btree
+  add_index "work_organizations", ["sort_number"], name: "index_work_organizations_on_sort_number", using: :btree
   add_index "work_organizations", ["work_id", "organization_id"], name: "index_work_organizations_on_work_id_and_organization_id", unique: true, using: :btree
   add_index "work_organizations", ["work_id"], name: "index_work_organizations_on_work_id", using: :btree
 
@@ -730,6 +748,7 @@ ActiveRecord::Schema.define(version: 20151227101344) do
   add_foreign_key "draft_items", "works"
   add_foreign_key "draft_multiple_episodes", "works"
   add_foreign_key "draft_organizations", "organizations"
+  add_foreign_key "draft_people", "people"
   add_foreign_key "draft_people", "prefectures"
   add_foreign_key "draft_programs", "channels"
   add_foreign_key "draft_programs", "episodes"
