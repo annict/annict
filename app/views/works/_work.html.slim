@@ -26,13 +26,13 @@
           .middle__casts
             .title キャスト
             ul.middle__cast-list
-              - work.casts.limit(10).each do |cast|
+              - work.casts.order(:sort_number).limit(10).each do |cast|
                 li = cast.person.name
         - if work.staffs.present?
           .middle__staffs
             .title スタッフ
             ul.middle__staff-list
-              - work.staffs.limit(10).each do |staff|
+              - work.staffs.order(:sort_number).limit(10).each do |staff|
                 li = "#{staff.decorate.role_name}: #{staff.person.name}"
       .right
         - if user_signed_in? && user == current_user
