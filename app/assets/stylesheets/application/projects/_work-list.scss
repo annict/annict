@@ -10,10 +10,6 @@
   @include display(flex);
   padding: 15px 0;
 
-  .left {
-    @include flex(0 160px);
-  }
-
   .left__work-image {
     display: inline-block;
     margin-bottom: 7px;
@@ -24,19 +20,19 @@
   }
 
   .left__work-statistics {
+    @include display(flex);
+    @include justify-content(center);
     color: $color-gunsmoke;
     font-size: 12px;
     text-align: center;
   }
 
-  .left .work-statistics__watchers-count {
-    margin-right: 10px;
-  }
-
   .left .work-statistics__watchers-count,
   .left .work-statistics__records-count {
+    @include flex(0 35px);
+
     i {
-      margin-right: 3px;
+      display: block;
     }
   }
 
@@ -47,11 +43,27 @@
 
   .middle__work-title {
     font-size: 16px;
+    font-weight: normal;
     margin-top: 0;
   }
 
+  .right {
+    @include align-items(center);
+    @include display(flex);
+    @include flex(0 100px);
+  }
+}
+
+.p-work-list__work--large {
+  @extend .p-work-list__work;
+
+  .left {
+    @include flex(0 160px);
+  }
+
   .middle__casts,
-  .middle__staffs {
+  .middle__staffs,
+  .middle__work-organizations {
     .title {
       font-size: 13px;
       font-weight: bold;
@@ -59,7 +71,8 @@
   }
 
   .middle__cast-list,
-  .middle__staff-list {
+  .middle__staff-list,
+  .middle__work-organization-list {
     -moz-padding-start: 0;
     -webkit-padding-start: 0;
     list-style-type: none;
@@ -70,10 +83,12 @@
       margin-right: 7px;
     }
   }
+}
 
-  .right {
-    @include align-items(center);
-    @include display(flex);
-    @include flex(0 100px);
+.p-work-list__work--compact {
+  @extend .p-work-list__work;
+
+  .left {
+    @include flex(0 70px);
   }
 }

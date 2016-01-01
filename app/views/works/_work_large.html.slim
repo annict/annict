@@ -1,6 +1,6 @@
 .content--wide.c-card
   .container
-    .p-work-list__work
+    .p-work-list__work--large
       .left
         = link_to work_path(work), class: "left__work-image" do
           = annict_image_tag(work.item, :tombo_image, size: "160x160", alt: work.title)
@@ -11,15 +11,6 @@
           span.work-statistics__records-count
             i.fa.fa-check
             = work.checkins_count
-        - if params[:controller] == "users" && params[:action] == "works"
-          - checkin_progress = CheckinProgressService.new(user, work)
-          .left__record-progress
-            - color = shirobako_color(checkin_progress.episodes_round)
-            .background class="#{color}" style="width: #{checkin_progress.ratio}%;"
-            .foreground
-              .ratio = "#{checkin_progress.halfway_checked_count}/#{work.episodes.published.count}エピソード"
-              .round = "#{checkin_progress.episodes_round}周目"
-              .clearfix
       .middle
         h2.middle__work-title = link_to work.title, work_path(work)
         - if work.casts.present?
@@ -34,6 +25,12 @@
             ul.middle__staff-list
               - work.staffs.order(:sort_number).limit(10).each do |staff|
                 li = "#{staff.decorate.role_name}: #{staff.person.name}"
+        - if work.work_organizations.with_role(:producer).present?
+          .middle__work-organizations
+            .title アニメーション制作
+            ul.middle__work-organization-list
+              - work.work_organizations.with_role(:producer).order(:sort_number).each do |wo|
+                li = wo.organization.name
       .right
         - if user_signed_in? && user == current_user
           - if params[:controller] == 'channel_works' && work.channels.present?

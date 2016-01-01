@@ -10,7 +10,7 @@ module WorkOrganizationCommon
     enumerize :role, in: %w(
       producer
       other
-    )
+    ), scope: true
 
     belongs_to :organization
     belongs_to :work

@@ -1,3 +1,17 @@
 .p-user-works {
-  padding-bottom: 15px;
+  .c-tabs--independent {
+    box-shadow: none;
+  }
+
+  .c-tabs__content {
+    line-height: normal;
+  }
+
+  .c-tabs__tab {
+    padding-top: 12px;
+  }
+
+  .c-tabs__text {
+    font-size: 12px;
+  }
 }

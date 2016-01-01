@@ -4,7 +4,7 @@
   .p-season-work-list__selectors.content--wide
     ann-season-selector slug-options="#{Season.slug_options}" current-slug="#{@season.slug}"
 
-  = render "work_list", works: @works, user: current_user
+  = render "work_list", works: @works, user: current_user, compact: false
 
 script#ann-season-selector type="x-template"
   .p-season-selector

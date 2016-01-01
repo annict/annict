@@ -1,6 +1,6 @@
-.ann-checkin-progress {
-  border: solid 1px #e7e7e7;
-  height: 25px;
+.c-record-progress {
+  border-top: solid 1px $color-alto;
+  height: 24px;
   position: relative;
 
   .background {
@@ -11,14 +11,14 @@
       }
     }
 
-    height: 23px;
+    height: 24px;
     position: absolute;
   }
 
   .foreground {
     color: $color-gunsmoke;
     font-size: 10px;
-    line-height: 25px;
+    line-height: 24px;
     position: relative;
 
     .ratio {
