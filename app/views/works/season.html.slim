@@ -1,8 +1,10 @@
 = render "nav"
 
 .p-season-work-list
-  .p-season-work-list__selectors.content--wide
-    ann-season-selector slug-options="#{Season.slug_options}" current-slug="#{@season.slug}"
+  .p-season-work-list__header.content--wide
+    h1 = @page_title
+    .p-season-work-list__selectors.content--wide
+      ann-season-selector slug-options="#{Season.slug_options}" current-slug="#{@season.slug}"
 
   = render "work_list", works: @works, user: current_user, compact: false
 
