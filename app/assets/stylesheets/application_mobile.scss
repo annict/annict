@@ -18,10 +18,12 @@
 @import "application_mobile/foundations/content";
 @import "application_mobile/old/base/fonts";
 
-@import "application_mobile/objects/components/*";
-@import "application_mobile/objects/projects/*";
-
 @import "application_mobile/old/mixins/*";
 @import "application_mobile/old/components/*";
 @import "application_mobile/old/components_old/*";
 @import "application_mobile/old/controllers/*";
+
+@import "application_common/components/*";
+
+@import "application_mobile/components/*";
+@import "application_mobile/projects/*";

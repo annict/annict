@@ -1,0 +1,26 @@
+.c-selector {
+  border-radius: 0;
+  border: solid 1px $color-alto;
+  color: $color-gunsmoke;
+  display: inline-block;
+  overflow: hidden;
+  position: relative;
+}
+
+.c-selector__icon {
+  font-size: 15px;
+  position: absolute;
+  right: 7px;
+  top: 3px;
+}
+
+.c-selector__select {
+  @include appearance(none);
+  background-color: rgba(255,255,255,0);
+  border-radius: 0;
+  border: 0;
+  cursor: pointer;
+  outline: none;
+  padding-left: 7px;
+  width: 100%;
+}

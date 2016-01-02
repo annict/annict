@@ -1,0 +1,94 @@
+.p-work-list {
+  margin: 20px 0;
+
+  .c-card {
+    margin-bottom: 20px;
+  }
+}
+
+.p-work-list__work {
+  @include display(flex);
+  padding: 15px 0;
+
+  .left__work-image {
+    display: inline-block;
+    margin-bottom: 7px;
+
+    img {
+      border: 1px solid $color-alto;
+    }
+  }
+
+  .left__work-statistics {
+    @include display(flex);
+    @include justify-content(center);
+    color: $color-gunsmoke;
+    font-size: 12px;
+    text-align: center;
+  }
+
+  .left .work-statistics__watchers-count,
+  .left .work-statistics__records-count {
+    @include flex(0 35px);
+
+    i {
+      display: block;
+    }
+  }
+
+  .middle {
+    @include flex(2);
+    margin: 0 15px;
+  }
+
+  .middle__work-title {
+    font-size: 16px;
+    font-weight: normal;
+    margin-top: 0;
+  }
+
+  .right {
+    @include align-items(center);
+    @include display(flex);
+    @include flex(0 100px);
+  }
+}
+
+.p-work-list__work--large {
+  @extend .p-work-list__work;
+
+  .left {
+    @include flex(0 160px);
+  }
+
+  .middle__casts,
+  .middle__staffs,
+  .middle__work-organizations {
+    .title {
+      font-size: 13px;
+      font-weight: bold;
+    }
+  }
+
+  .middle__cast-list,
+  .middle__staff-list,
+  .middle__work-organization-list {
+    -moz-padding-start: 0;
+    -webkit-padding-start: 0;
+    list-style-type: none;
+
+    li {
+      display: inline;
+      font-size: 13px;
+      margin-right: 7px;
+    }
+  }
+}
+
+.p-work-list__work--compact {
+  @extend .p-work-list__work;
+
+  .left {
+    @include flex(0 70px);
+  }
+}
