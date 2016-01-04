@@ -1,14 +1,9 @@
 = render "nav"
 
 .p-season-work-list
-  .p-season-work-list__selectors.content--wide
-    ann-season-selector slug-options="#{Season.slug_options}" current-slug="#{@season.slug}"
+  .p-season-work-list__header.content--wide
+    h1 = @page_title
+    .p-season-work-list__selectors
+      = render "season_selector", slug_options: Season.slug_options, current_slug: @season.slug
 
-  = render "work_list", works: @works, user: current_user
-
-script#ann-season-selector type="x-template"
-  .p-season-selector
-    .c-selector
-      = icon "caret-down", class: "c-selector__icon"
-      select.c-selector__select v-model="slug" @change="reload"
-        option v-for="option in slugOptions" value="{{option[1]}}" {{option[0]}}
+  = render "work_list", works: @works, user: current_user, compact: false

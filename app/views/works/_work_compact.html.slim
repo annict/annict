@@ -1,0 +1,31 @@
+.content--wide.c-card
+  .container
+    .p-work-list__work--compact
+      .left
+        = link_to work_path(work), class: "left__work-image" do
+          = annict_image_tag(work.item, :tombo_image, size: "70x70", alt: work.title)
+        .left__work-statistics
+          span.work-statistics__watchers-count
+            i.fa.fa-eye
+            = work.watchers_count
+          span.work-statistics__records-count
+            i.fa.fa-check
+            = work.checkins_count
+      .middle
+        h2.middle__work-title = link_to work.title, work_path(work)
+      .right
+        - if user_signed_in? && user == current_user
+          - if params[:controller] == 'channel_works' && work.channels.present?
+            = render 'works/channel_selector', mini: true, work: work
+          - else
+            = render 'status_selector', mini: true, work: work
+
+  - if params[:controller] == "users" && params[:action] == "works"
+    - checkin_progress = CheckinProgressService.new(user, work)
+    .c-record-progress
+      - color = shirobako_color(checkin_progress.episodes_round)
+      .background class="#{color}" style="width: #{checkin_progress.ratio}%;"
+      .foreground
+        .ratio = "#{checkin_progress.halfway_checked_count}/#{work.episodes.published.count}エピソード"
+        .round = "#{checkin_progress.episodes_round}周目"
+        .clearfix

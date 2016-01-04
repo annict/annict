@@ -6,14 +6,15 @@
 #  name             :string           not null
 #  url              :string
 #  wikipedia_url    :string
-#  created_at       :datetime         not null
-#  updated_at       :datetime         not null
 #  twitter_username :string
 #  aasm_state       :string           default("published"), not null
+#  created_at       :datetime         not null
+#  updated_at       :datetime         not null
 #
 # Indexes
 #
-#  index_organizations_on_name  (name) UNIQUE
+#  index_organizations_on_aasm_state  (aasm_state)
+#  index_organizations_on_name        (name) UNIQUE
 #
 
 class Organization < ActiveRecord::Base

@@ -1,7 +1,8 @@
 .p-work-list
   - if works.present?
+    - partial_name = compact ? "work_compact" : "work_large"
     - works.each do |work|
-      = render "works/work", work: work, user: user
+      = render "works/#{partial_name}", work: work, user: user
 
     .text-center
       = paginate works

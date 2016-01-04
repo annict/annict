@@ -1,7 +1,7 @@
 namespace :tmp do
   task create_data: :environment do
     PREFECTURES.each do |prefecture_name|
-      prefecture = Prefecture.where(name: prefecture_name).first_or_create
+      prefecture = Prefecture.where(name: prefecture_name).first_or_create!
       puts "prefecture: #{prefecture.name}"
     end
 
@@ -45,10 +45,8 @@ def save_staff_info(work, comment)
     orgs = org_str.try!(:split, "、")
     if orgs.present?
       orgs.each do |org|
-        organization = Organization.where(name: org).first_or_create
-        work_organization = work.work_organizations.
-                                 where(organization: organization, role: :producer).
-                                 first_or_create
+        organization = Organization.where(name: org).first_or_create!
+        work.work_organizations.where(organization: organization, role: :producer, sort_number: 10).first_or_create!
       end
     end
 
@@ -57,20 +55,24 @@ def save_staff_info(work, comment)
     work_staff_roles = Staff.role.values.map do |role_value|
       { value: role_value, text: I18n.t("enumerize.staff.role.#{role_value}") }
     end
-    work_staff_roles.each_with_index do |wsp_role, i|
+    i = 1
+    work_staff_roles.each do |wsp_role|
       name = staffs[wsp_role[:text]]
       next if name.blank?
-      person = Person.where(name: name).first_or_create
-      staff = work.staffs.where(person: person, role: wsp_role[:value]).first_or_create
-      staff.update_column(:sort_number, (i + 1) * 10)
+      person = Person.where(name: name).first_or_create!
+      work.staffs.where(person: person, name: person.name, role: wsp_role[:value]).first_or_create! do |staff|
+        staff.sort_number = i * 10
+        i += 1
+      end
     end
 
     staffs = staffs.except(*(work_staff_roles.map { |wspr| wspr[:text] }))
 
     staffs.each do |role, name|
-      person = Person.where(name: name).first_or_create
-      staff = work.staffs.where(person: person, name: person.name, role: :other, role_other: role).first_or_create
-      staff.update_column(:sort_number, 100)
+      person = Person.where(name: name).first_or_create!
+      work.staffs.where(person: person, name: person.name, role: :other, role_other: role).first_or_create! do |staff|
+        staff.sort_number = 100
+      end
     end
   end
 end
@@ -85,10 +87,11 @@ def save_cast_info(work, comment)
 
     i = 1
     casts.each do |part, name|
-      person = Person.where(name: name).first_or_create
-      cast = work.casts.where(person: person, name: person.name, part: part).first_or_create
-      cast.update_column(:sort_number, i * 10)
-      i += 1
+      person = Person.where(name: name).first_or_create!
+      work.casts.where(person: person, name: person.name, part: part).first_or_create! do |cast|
+        cast.sort_number = i * 10
+        i += 1
+      end
     end
   end
 end

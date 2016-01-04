@@ -1,0 +1,7 @@
+.ann-tabs
+  - [:watching, :wanna_watch, :watched, :on_hold, :stop_watching].each do |status_kind|
+    = link_to user_works_path(@user.username, status_kind), class: "tab #{'active' if status_kind.to_s == params[:status_kind]}" do
+      .count = @user.statuses.count_on(status_kind)
+      .text
+        = t("enumerize.status.kind.#{status_kind}")
+  .clearfix
