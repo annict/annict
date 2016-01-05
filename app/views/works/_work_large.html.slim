@@ -23,7 +23,7 @@
           .middle__staffs
             .title スタッフ
             ul.middle__staff-list
-              - work.staffs.order(:sort_number).limit(10).each do |staff|
+              - work.staffs.major.order(:sort_number).limit(10).each do |staff|
                 li = "#{staff.decorate.role_name}: #{staff.person.name}"
         - if work.work_organizations.with_role(:producer).present?
           .middle__work-organizations

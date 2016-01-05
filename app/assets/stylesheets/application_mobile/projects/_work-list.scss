@@ -6,73 +6,34 @@
   }
 }
 
-.p-work-list__work {
-  @include display(flex);
+.p-work-list__work--large {
   padding: 15px 0;
+}
 
-  .left__work-image {
-    display: inline-block;
-    margin-bottom: 7px;
+.p-work-list__work-image {
+  text-align: center;
 
-    img {
-      border: 1px solid $color-alto;
-    }
-  }
-
-  .left__work-statistics {
-    @include display(flex);
-    @include justify-content(center);
-    color: $color-gunsmoke;
-    font-size: 12px;
-    text-align: center;
-  }
-
-  .left .work-statistics__watchers-count,
-  .left .work-statistics__records-count {
-    @include flex(0 35px);
-
-    i {
-      display: block;
-    }
-  }
-
-  .middle {
-    @include flex(2);
-    margin: 0 15px;
-  }
-
-  .middle__work-title {
-    font-size: 16px;
-    font-weight: normal;
-    margin-top: 0;
-  }
-
-  .right {
-    @include align-items(center);
-    @include display(flex);
-    @include flex(0 100px);
+  img {
+    border: 1px solid $color-alto;
   }
 }
 
-.p-work-list__work--large {
-  @extend .p-work-list__work;
+.p-work-list__work-title {
+  font-size: 16px;
+  font-weight: normal;
+  margin-bottom: 5px;
+  margin-top: 10px;
+}
 
-  .left {
-    @include flex(0 160px);
+.p-work-list__casts,
+.p-work-list__staffs,
+.p-work-list__work-organizations {
+  .title {
+    font-size: 13px;
+    font-weight: bold;
   }
 
-  .middle__casts,
-  .middle__staffs,
-  .middle__work-organizations {
-    .title {
-      font-size: 13px;
-      font-weight: bold;
-    }
-  }
-
-  .middle__cast-list,
-  .middle__staff-list,
-  .middle__work-organization-list {
+  ul {
     -moz-padding-start: 0;
     -webkit-padding-start: 0;
     list-style-type: none;
@@ -85,10 +46,15 @@
   }
 }
 
-.p-work-list__work--compact {
-  @extend .p-work-list__work;
+.p-work-list__work-statistics {
+  color: $color-gunsmoke;
+  font-size: 10px;
 
-  .left {
-    @include flex(0 70px);
+  i {
+    margin-right: 3px;
+  }
+
+  .watchers-count {
+    margin-right: 7px;
   }
 }

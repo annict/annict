@@ -30,6 +30,8 @@ module StaffCommon
     validates :name, presence: true
     validates :role, presence: true
 
+    scope :major, -> { where.not(role: "other") }
+
     def to_diffable_hash
       data = self.class::DIFF_FIELDS.each_with_object({}) do |field, hash|
         hash[field] = case field
