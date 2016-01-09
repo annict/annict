@@ -6,23 +6,27 @@ body.works-season {
   .content {
     @include content(wide);
 
-    h1 {
-      color: $color-gunsmoke;
-      float: left;
-      font-size: 18px;
-      line-height: 32px;
-      margin-bottom: 0;
-      margin-top: 0;
-    }
+    .header {
+      height: 32px;
 
-    .season-selector-wrapper {
-      text-align: right;
-
-      .season-selector {
-        @include selector;
-        height: 32px;
+      h1 {
+        color: $color-gunsmoke;
+        float: left;
+        font-size: 18px;
         line-height: 32px;
-        width: 120px;
+        margin-bottom: 0;
+        margin-top: 0;
+      }
+
+      .season-selector-wrapper {
+        text-align: right;
+
+        .season-selector {
+          @include selector;
+          height: 32px;
+          line-height: 32px;
+          width: 120px;
+        }
       }
     }
 
