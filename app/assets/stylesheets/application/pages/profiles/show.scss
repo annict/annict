@@ -1,0 +1,11 @@
+body.profiles-show,
+body.profiles-update {
+  .content {
+    @include content(narrow);
+    @include card;
+
+    form {
+      margin: 15px 0;
+    }
+  }
+}

@@ -1,0 +1,17 @@
+- type = compact ? "compact" : "large"
+
+.works
+  - if works.present?
+    - works.each do |work|
+      = render "works/work_#{type}", work: work, user: user
+
+    .text-center
+      = paginate works
+  - else
+    - if %w(season recommend works).include?(params[:action]) || (params[:action] == "search" && params[:q].present?)
+      .content--wide.c-card
+        .container
+          .info.well
+            .icon
+              i.fa.fa-info-circle
+            p = t('works.no_works')

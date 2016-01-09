@@ -4,16 +4,14 @@
 
 = render "nav"
 
-.p-works-search
-  .content--wide.c-card
-    .container
-      .p-works-search__search-form
-        = search_form_for @q, url: search_works_path, html: { role: "form" } do |f|
-          .form-group
-            = f.label :title_cont, class: "sr-only"
-            = f.text_field :title_cont, class: "form-control", placeholder: "作品名を入力...", autofocus: true
-          = f.button class: "btn btn-primary", method: :get do
-            = icon "search"
-            | 検索
+.c-content
+  .container
+    = search_form_for @q, url: search_works_path, html: { role: "form" } do |f|
+      .form-group
+        = f.label :title_cont, class: "sr-only"
+        = f.text_field :title_cont, class: "form-control", placeholder: "作品名を入力...", autofocus: true
+      = f.button class: "btn btn-primary", method: :get do
+        = icon "search"
+        | 検索
 
-  = render "work_list", works: @works, user: current_user, compact: false
+= render "works", works: @works, user: current_user, compact: false

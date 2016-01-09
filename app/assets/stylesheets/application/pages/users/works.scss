@@ -1,0 +1,34 @@
+body.users-works {
+  .app__main {
+    > .content {
+      @include content(wide);
+      @include card;
+
+      .c-tabs {
+        @include tabs(independent);
+        box-shadow: none;
+
+        .content {
+          line-height: normal;
+        }
+
+        .tab {
+          padding-top: 12px;
+        }
+
+        .text {
+          font-size: 12px;
+        }
+      }
+    }
+
+    .works {
+      @include content(wide);
+
+      .work {
+        @include work(compact);
+        @include card;
+      }
+    }
+  }
+}

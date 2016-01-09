@@ -47,8 +47,8 @@ class WorksController < ApplicationController
     @season = Season.find_or_new_by_slug(slug)
 
     yearly_season_ja = @season.decorate.yearly_season_ja
-    @page_title = "#{yearly_season_ja}のアニメ一覧"
-    @page_description = meta_description("#{yearly_season_ja}のアニメをチェック！")
+    @page_title = "#{yearly_season_ja}アニメ一覧"
+    @page_description = meta_description("#{yearly_season_ja}アニメをチェック！")
     @page_keywords = meta_keywords(yearly_season_ja, "人気", "評判")
   end
 

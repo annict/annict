@@ -1,0 +1,39 @@
+body.users-works {
+  .user-works-content {
+    @include content(narrow);
+    @include card;
+
+    .c-tabs {
+      @include tabs(independent);
+      box-shadow: none;
+
+      .content {
+        height: auto;
+        line-height: normal;
+      }
+
+      .tab {
+        padding-bottom: 3px;
+        padding-top: 12px;
+      }
+
+      .text {
+        font-size: 10px;
+      }
+    }
+  }
+
+  .works {
+    @include content(narrow);
+
+    .work {
+      @include work(compact);
+      @include card;
+      margin: 20px 0;
+
+      .ann-status-selector {
+        margin-left: 0;
+      }
+    }
+  }
+}

@@ -46,11 +46,12 @@
 @import "application/old/controllers/users";
 @import "application/old/controllers/works";
 
+@import "application/old/foundations/base";
+@import "application/old/foundations/bootstrap";
+@import "application/old/layouts/sidebar";
+
+@import "application_common/mixins/*";
 @import "application_common/components/*";
 
-@import "application/foundations/base";
-@import "application/foundations/bootstrap";
-@import "application/foundations/content";
-@import "application/layouts/sidebar";
-@import "application/components/*";
-@import "application/projects/*";
+@import "application/_components/**/*";
+@import "application/pages/**/*";

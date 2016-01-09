@@ -1,0 +1,15 @@
+body.works-popular {
+  .c-tabs {
+    @include tabs(independent);
+  }
+
+  .works {
+    @include content(wide);
+    margin-bottom: 20px;
+
+    .work {
+      @include card;
+      @include work(large);
+    }
+  }
+}

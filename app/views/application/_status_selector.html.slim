@@ -1,8 +1,8 @@
 - status_kind = current_user.statuses.kind_of(work).try!(:kind).presence || 'no_select'
 
 .ann-status-selector data-work-id="#{work.id}" data-status-kind="#{status_kind}" data-mini-selector="#{mini}" ng-class='{"is-mini": isMini}'
-  = render 'selector_spinner', target: work.id
   .selector
-    = icon('caret-down')
-    select ng-model='statusKind' ng-change="select(#{work.id})"
-      = options_for_select(Status.kind.options.insert(0, [t('statuses.no_select'), 'no_select']), status_kind)
+    = icon("caret-down")
+    select ng-model="statusKind" ng-change="select(#{work.id})"
+      = options_for_select(Status.kind.options.insert(0, [t("statuses.no_select"), "no_select"]), status_kind)
+  = render "selector_spinner", target: work.id

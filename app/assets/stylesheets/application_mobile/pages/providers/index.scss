@@ -1,0 +1,27 @@
+body.providers-index {
+  .content {
+    @include content(narrow);
+    @include card;
+    padding: 15px 0;
+
+    .twitter,
+    .facebook {
+      @include display(flex);
+      @include justify-content(space-between);
+      height: 30px;
+      line-height: 30px;
+    }
+
+    .twitter {
+      margin-bottom: 20px;
+    }
+
+    .icon {
+      margin-right: 7px;
+    }
+
+    .cancel-disabled {
+      font-size: 12px;
+    }
+  }
+}

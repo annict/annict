@@ -22,10 +22,10 @@ class Season < ActiveRecord::Base
   delegate :yearly_season_ja, to: :decorate
 
   NAME_DATA = {
-    winter: "冬季",
-    spring: "春季",
-    summer: "夏季",
-    autumn: "秋季"
+    winter: "冬",
+    spring: "春",
+    summer: "夏",
+    autumn: "秋"
   }.freeze
 
   def self.find_or_new_by_slug(slug)

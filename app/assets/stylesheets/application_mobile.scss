@@ -13,9 +13,6 @@
 @import "font-awesome";
 @import "easydropdown";
 
-@import "application_mobile/foundations/base";
-@import "application_mobile/foundations/bootstrap_base";
-@import "application_mobile/foundations/content";
 @import "application_mobile/old/base/fonts";
 
 @import "application_mobile/old/mixins/*";
@@ -23,7 +20,11 @@
 @import "application_mobile/old/components_old/*";
 @import "application_mobile/old/controllers/*";
 
+@import "application_mobile/old/foundations/base";
+@import "application_mobile/old/foundations/bootstrap_base";
+
+@import "application_common/mixins/*";
 @import "application_common/components/*";
 
-@import "application_mobile/components/*";
-@import "application_mobile/projects/*";
+@import "application_mobile/_components/**/*";
+@import "application_mobile/pages/**/*";

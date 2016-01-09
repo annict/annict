@@ -1,16 +1,15 @@
 = render "settings_tabs"
 
-.content--narrow.c-card
+.content
   .container
-    .settings__account
-      = form_for @user, url: account_path, method: :patch do |f|
-        = render "error_panel", resource: @user
+    = form_for @user, url: account_path, method: :patch do |f|
+      = render "error_panel", resource: @user
 
-        .form-group
-          = f.label :username
-          = f.text_field :username, class: "form-control"
-        .form-group
-          = f.label :email
-          = f.text_field :email, class: "form-control"
-        .form-submit
-          = f.submit class: "btn btn-primary"
+      .form-group
+        = f.label :username
+        = f.text_field :username, class: "form-control"
+      .form-group
+        = f.label :email
+        = f.text_field :email, class: "form-control"
+      .form-submit
+        = f.submit class: "btn btn-primary"

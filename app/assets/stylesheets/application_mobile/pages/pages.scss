@@ -1,0 +1,7 @@
+body.pages {
+  .content {
+    @include content(narrow);
+    @include card;
+    padding: 15px 0;
+  }
+}

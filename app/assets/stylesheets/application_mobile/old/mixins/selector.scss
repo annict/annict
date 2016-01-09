@@ -1,20 +1,15 @@
 @mixin selector {
   height: 30px;
   margin: 0 auto;
-  position: relative;
-  width: 120px;
 
   .selector-spinner {
-    display: inline-block;
-    left: -80px;
     position: relative;
-    top: 0;
     width: 12px;
 
     i {
       left: 0;
       position: absolute;
-      top: -6px;
+      top: 5px;
 
       &.spinner {
         color: $color-alto;
@@ -38,14 +33,13 @@
   }
 
   .selector {
+    @include flex(0 120px);
     border-radius: 0;
     border: solid 1px #ffffff;
     color: #ffffff;
-    display: inline-block;
+    margin-right: 5px;
     overflow: hidden;
     position: relative;
-    top: -20px;
-    width: 100%;
 
     i {
       font-size: 15px;
@@ -73,17 +67,13 @@
   bottom: 20px;
   height: 25px;
   margin-right: 0;
-  position: static;
   width: 100px;
 
-  .selector-spinner {
-    left: -22px;
-    top: -2px;
-  }
-
   .selector {
+    @include flex(0 100px);
     border: solid 1px $color-gunsmoke;
     color: $color-gunsmoke;
+    margin-right: 5px;
 
     i {
       top: 3px;

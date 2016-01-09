@@ -1,0 +1,7 @@
+body.users-show {
+  .content {
+    @include content(narrow);
+    @include card;
+    padding-bottom: 15px;
+  }
+}

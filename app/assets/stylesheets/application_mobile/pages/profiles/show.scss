@@ -1,0 +1,12 @@
+body.profiles-show,
+body.profiles-update {
+  .content {
+    @include content(narrow);
+    @include card;
+    padding: 15px 0;
+
+    .form-submit {
+      text-align: center;
+    }
+  }
+}

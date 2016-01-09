@@ -1,18 +1,18 @@
-.content--wide.c-card
+.work
   .container
-    .p-work-list__work--compact
+    .work-content
       .left
-        = link_to work_path(work), class: "left__work-image" do
+        = link_to work_path(work), class: "work-image" do
           = annict_image_tag(work.item, :tombo_image, size: "70x70", alt: work.title)
-        .left__work-statistics
-          span.work-statistics__watchers-count
+        .statistics
+          span.watchers-count
             i.fa.fa-eye
             = work.watchers_count
-          span.work-statistics__records-count
+          span.records-count
             i.fa.fa-check
             = work.checkins_count
       .middle
-        h2.middle__work-title = link_to work.title, work_path(work)
+        h2 = link_to work.title, work_path(work)
       .right
         - if user_signed_in? && user == current_user
           - if params[:controller] == 'channel_works' && work.channels.present?
