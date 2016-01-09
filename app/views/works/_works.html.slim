@@ -8,8 +8,8 @@
     .text-center
       = paginate works
   - else
-    - if %w(season recommend works).include?(params[:action]) || (params[:action] == "search" && params[:q].present?)
-      .content--wide.c-card
+    - if %w(season works).include?(params[:action]) || (params[:action] == "search" && params[:q].present?)
+      .no-works
         .container
           .info.well
             .icon

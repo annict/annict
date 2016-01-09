@@ -1,6 +1,7 @@
 @mixin selector {
   height: 30px;
   margin: 0 auto;
+  width: 120px;
 
   .selector-spinner {
     position: relative;
@@ -9,7 +10,7 @@
     i {
       left: -20px;
       position: absolute;
-      top: -24px;
+      top: -28px;
 
       &.spinner {
         color: $color-alto;
@@ -70,6 +71,13 @@
   margin-right: 0;
   position: static;
   width: 100px;
+
+  .selector-spinner {
+    i {
+      left: -20px;
+      top: -24px;
+    }
+  }
 
   .selector {
     border: solid 1px $color-gunsmoke;

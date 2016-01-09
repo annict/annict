@@ -1,14 +1,20 @@
 body.options-index {
-  .content {
-    @include content(narrow);
-    @include card;
+  .c-tabs {
+    @include tabs(independent);
+  }
 
-    .wrapper {
-      margin: 15px 0;
+  .app__main {
+    > .content {
+      @include content(narrow);
+      @include card;
 
-      .detail {
-        color: $color-gunsmoke;
-        font-size: 10px;
+      .wrapper {
+        margin: 15px 0;
+
+        .detail {
+          color: $color-gunsmoke;
+          font-size: 10px;
+        }
       }
     }
   }

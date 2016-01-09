@@ -1,6 +1,6 @@
 - content_for :site_page_title, "#{t('words.site_name_kana')} - #{t('words.program')}"
 
-.content--narrow.c-card
+.content
   .container
     .programs ng-controller='ProgramsCtrl' ann-loading='loading'
       div infinite-scroll='addMorePrograms()' infinite-scroll-disabled='disabled' infinite-scroll-distance='2'

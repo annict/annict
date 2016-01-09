@@ -1,0 +1,6 @@
+body.programs-index {
+  .content {
+    @include content(narrow);
+    @include card;
+  }
+}

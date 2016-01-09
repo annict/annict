@@ -1,29 +1,35 @@
 body.providers-index {
-  .content {
-    @include content(narrow);
-    @include card;
+  .c-tabs {
+    @include tabs(independent);
+  }
 
-    .wrapper {
-      margin: 15px 0;
+  .app__main {
+    > .content {
+      @include content(narrow);
+      @include card;
 
-      .twitter,
-      .facebook {
-        display: flex;
-        height: 30px;
-        justify-content: space-between;
-        line-height: 30px;
-      }
+      .wrapper {
+        margin: 15px 0;
 
-      .twitter {
-        margin-bottom: 20px;
-      }
+        .twitter,
+        .facebook {
+          display: flex;
+          height: 30px;
+          justify-content: space-between;
+          line-height: 30px;
+        }
 
-      .icon {
-        margin-right: 7px;
-      }
+        .twitter {
+          margin-bottom: 20px;
+        }
 
-      .cancel-disabled {
-        font-size: 12px;
+        .icon {
+          margin-right: 7px;
+        }
+
+        .cancel-disabled {
+          font-size: 12px;
+        }
       }
     }
   }

@@ -1,0 +1,6 @@
+body.checkins-edit {
+  .content {
+    @include content(narrow);
+    @include card;
+  }
+}

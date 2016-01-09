@@ -25,6 +25,11 @@ body.users-works {
     .works {
       @include content(wide);
 
+      .no-works {
+        @include card;
+        padding: 15px 0;
+      }
+
       .work {
         @include work(compact);
         @include card;

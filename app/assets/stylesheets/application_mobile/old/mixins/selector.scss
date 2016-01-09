@@ -1,15 +1,16 @@
 @mixin selector {
   height: 30px;
   margin: 0 auto;
+  width: 120px;
 
   .selector-spinner {
     position: relative;
     width: 12px;
 
     i {
-      left: 0;
+      left: 128px;
       position: absolute;
-      top: 5px;
+      top: -22px;
 
       &.spinner {
         color: $color-alto;
@@ -33,11 +34,9 @@
   }
 
   .selector {
-    @include flex(0 120px);
     border-radius: 0;
     border: solid 1px #ffffff;
     color: #ffffff;
-    margin-right: 5px;
     overflow: hidden;
     position: relative;
 
@@ -68,6 +67,13 @@
   height: 25px;
   margin-right: 0;
   width: 100px;
+
+  .selector-spinner {
+    i {
+      left: 102px;
+      top: -18px;
+    }
+  }
 
   .selector {
     @include flex(0 100px);

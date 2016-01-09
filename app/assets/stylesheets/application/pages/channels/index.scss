@@ -1,0 +1,6 @@
+body.channels-index {
+  .content {
+    @include content(narrow);
+    @include card;
+  }
+}
