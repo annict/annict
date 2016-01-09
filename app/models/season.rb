@@ -42,7 +42,7 @@ class Season < ActiveRecord::Base
     options = []
     years.each do |year|
       options << ["#{year}年", "#{year}-all"]
-      NAME_DATA.each do |key, val|
+      NAME_DATA.reverse_each do |key, val|
         options << ["#{year}年#{val}", "#{year}-#{key}"]
       end
     end
