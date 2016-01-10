@@ -1,8 +1,8 @@
 module Db
   class DraftPeopleController < Db::ApplicationController
     permits :name, :name_kana, :nickname, :gender, :blood_type, :prefecture_id,
-            :birthday, :height, :url, :wikipedia_url, :twitter_username,
-            :person_id, edit_request_attributes: [:id, :title, :body]
+      :birthday, :height, :url, :wikipedia_url, :twitter_username,
+      :person_id, edit_request_attributes: [:id, :title, :body]
 
     before_action :authenticate_user!
 

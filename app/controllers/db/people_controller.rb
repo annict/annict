@@ -1,7 +1,7 @@
 module Db
   class PeopleController < Db::ApplicationController
     permits :name, :name_kana, :nickname, :gender, :blood_type, :prefecture_id,
-            :birthday, :height, :url, :wikipedia_url, :twitter_username
+      :birthday, :height, :url, :wikipedia_url, :twitter_username
 
     before_action :authenticate_user!, only: [:new, :create, :edit, :update, :destroy]
 

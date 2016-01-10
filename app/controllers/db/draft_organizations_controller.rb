@@ -1,14 +1,15 @@
 module Db
   class DraftOrganizationsController < Db::ApplicationController
     permits :name, :url, :wikipedia_url, :twitter_username, :organization_id,
-            edit_request_attributes: [:id, :title, :body]
+      edit_request_attributes: [:id, :title, :body]
 
     before_action :authenticate_user!
 
     def new(organization_id: nil)
       @draft_organization = if organization_id.present?
         @organization = Organization.find(organization_id)
-        DraftOrganization.new(@organization.attributes.slice(*Organization::DIFF_FIELDS.map(&:to_s)))
+        diff_fields = Organization::DIFF_FIELDS.map(&:to_s)
+        DraftOrganization.new(@organization.attributes.slice(*diff_fields))
       else
         DraftOrganization.new
       end
