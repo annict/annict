@@ -40,5 +40,23 @@ module Db
         render :edit
       end
     end
+
+    def hide(id)
+      @organization = Organization.find(id)
+      authorize @organization, :hide?
+
+      @organization.hide!
+
+      redirect_to :back, notice: "非公開にしました"
+    end
+
+    def destroy(id)
+      @organization = Organization.find(id)
+      authorize @organization, :destroy?
+
+      @organization.destroy
+
+      redirect_to :back, notice: "削除しました"
+    end
   end
 end

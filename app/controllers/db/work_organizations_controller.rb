@@ -3,7 +3,7 @@ module Db
     permits :organization_id, :name, :role, :role_other
 
     before_action :authenticate_user!
-    before_action :load_work, only: [:index, :new, :create, :edit, :update]
+    before_action :load_work, only: [:index, :new, :create, :edit, :update, :destroy]
 
     def index
       @work_organizations = @work.work_organizations.order(id: :desc)
@@ -46,6 +46,15 @@ module Db
       else
         render :edit
       end
+    end
+
+    def destroy(id)
+      @work_organization = @work.work_organizations.find(id)
+      authorize @work_organization, :destroy?
+
+      @work_organization.destroy
+
+      redirect_to :back, notice: "削除しました"
     end
 
     private

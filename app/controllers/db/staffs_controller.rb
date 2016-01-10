@@ -3,7 +3,7 @@ module Db
     permits :person_id, :name, :role, :role_other
 
     before_action :authenticate_user!
-    before_action :load_work, only: [:index, :new, :create, :edit, :update]
+    before_action :load_work, only: [:index, :new, :create, :edit, :update, :destroy]
 
     def index
       @staffs = @work.staffs.order(id: :desc)
@@ -46,6 +46,15 @@ module Db
       else
         render :edit
       end
+    end
+
+    def destroy(id)
+      @staff = @work.staffs.find(id)
+      authorize @staff, :destroy?
+
+      @staff.destroy
+
+      redirect_to :back, notice: "削除しました"
     end
 
     private
