@@ -1,3 +1,5 @@
+# rubocop:disable all
+
 # == Schema Information
 #
 # Table name: work_organizations
@@ -20,6 +22,8 @@
 #  index_work_organizations_on_work_id                      (work_id)
 #  index_work_organizations_on_work_id_and_organization_id  (work_id,organization_id) UNIQUE
 #
+
+# rubocop:enable all
 
 class WorkOrganization < ActiveRecord::Base
   include AASM
