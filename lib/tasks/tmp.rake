@@ -8,6 +8,10 @@ namespace :tmp do
     works = Work.where.not(sc_tid: nil).order(:id)
     works = works.where("id >= ?", 1)
     works.find_each do |work|
+      if [4583].include?(work.id)
+        puts "work_id: #{work.id} skipped"
+        next
+      end
       puts "work_id: #{work.id}"
       doc = Nokogiri::XML(open("http://cal.syoboi.jp/db.php?TID=#{work.sc_tid}&Command=TitleLookup"))
       doc.css("Comment").each do |item|
