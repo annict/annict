@@ -5,7 +5,7 @@
     h1 = @edit_request.title
     = @edit_request.decorate.status_label
     = @edit_request.decorate.resource_label
-    - if @edit_request.draft_resource.work.present?
+    - if @edit_request.draft_resource.respond_to?(:work) && @edit_request.draft_resource.work.present?
       span.text-mute.p-db-edit_requests--show__resource-annotation
         = "「#{@edit_request.draft_resource.work.decorate.db_detail_link}」".html_safe
     - if @edit_request.origin.present?
