@@ -1,6 +1,6 @@
-.p-provider-settings.content
+.content
   .container
-    .p-provider-settings__twitter
+    .twitter
       .head
         | Twitter
       .body
@@ -13,7 +13,7 @@
           = link_to user_omniauth_authorize_path(:twitter, back: providers_path), class: "btn btn-sm btn-twitter" do
             = icon("twitter", class: "icon")
             | 連携する
-    .p-provider-settings__facebook
+    .facebook
       .head
         | Facebook
       .body

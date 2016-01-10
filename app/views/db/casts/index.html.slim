@@ -1,0 +1,37 @@
+= render "db/works/header", work: @work
+
+.pull-right
+  - if current_user.committer?
+    = link_to "新規作成", new_db_work_cast_path(@work), class: "btn btn-primary"
+  - else
+    = link_to "新規作成", new_db_work_draft_cast_path(@work), class: "btn btn-primary"
+
+.clearfix
+
+table.table.table-striped
+  thead
+    tr
+      th ID
+      th 名前
+      th 名義
+      th 役名
+      th 編集
+      - if policy(@casts).destroy?
+        th 削除
+  tbody
+    - @casts.each do |cast|
+      tr
+        td = cast.id
+        td = cast.person.name
+        td = cast.name.presence || "-"
+        td = cast.part.presence || "-"
+        td
+          - if current_user.committer?
+            = link_to "編集", edit_db_work_cast_path(@work, cast), class: "btn btn-primary btn-sm"
+          - else
+            = link_to "編集", new_db_work_draft_cast_path(@work, cast_id: cast.id), class: "btn btn-primary btn-sm"
+        - if policy(cast).destroy?
+          td = link_to "削除", db_work_cast_path(@work, cast), class: "btn btn-danger btn-sm", data: { method: :delete, confirm: "削除しますか？" }
+
+- if @casts.blank?
+  .well 登録されているキャストはいません。

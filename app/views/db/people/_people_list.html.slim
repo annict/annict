@@ -1,0 +1,35 @@
+table.table.table-striped.c-resource-list
+  thead
+    tr
+      th ID
+      th 名前
+      th 名前 (かな)
+      - if user_signed_in?
+        th 編集
+      - if policy(people).hide?
+        th 非公開
+      - if policy(people).destroy?
+        th 削除
+  tbody
+    - people.each do |person|
+      tr
+        td
+          = person.id
+          - if person.published?
+            = icon("check-circle-o", class: "c-resource-list__status-published enabled", "data-toggle" => "tooltip", title: "公開されています")
+          - else
+            = icon("check-circle-o", class: "c-resource-list__status-published disabled", "data-toggle" => "tooltip", title: "非公開になっています")
+        td = person.name
+        td = person.name_kana.presence || "-"
+        - if user_signed_in?
+          td
+            - if current_user.committer?
+              = link_to "編集", edit_db_person_path(person), class: "btn btn-primary btn-sm"
+            - else
+              = link_to "編集", new_db_draft_person_path(person_id: person.id), class: "btn btn-primary btn-sm"
+        - if policy(person).hide?
+          td
+            - if person.published?
+              = link_to "非公開", hide_db_person_path(person), class: "btn btn-warning btn-sm", data: { method: "patch", confirm: "非公開にしますか？" }
+        - if policy(person).destroy?
+          td = link_to "削除", db_person_path(person), class: "btn btn-danger btn-sm", data: { method: "delete", confirm: "削除しますか？" }

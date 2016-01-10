@@ -1,12 +1,23 @@
 class EditRequestDecorator < ApplicationDecorator
   def status_label
     if opened?
-      h.content_tag :span, "オープン", class: "label label-success"
+      h.content_tag :span, "オープン", class: "label label-success c-label--status"
     elsif published?
-      h.content_tag :span, "公開済み", class: "label label-info"
+      h.content_tag :span, "公開済み", class: "label label-info c-label--status"
     elsif closed?
-      h.content_tag :span, "クローズ", class: "label label-danger"
+      h.content_tag :span, "クローズ", class: "label label-danger c-label--status"
     end
+  end
+
+  def resource_label
+    text = case kind
+    when :draft_work
+      "作品"
+    when :draft_cast, :draft_person
+      "スタッフ/キャスト"
+    end
+
+    h.content_tag :span, text, class: "label label-default c-label--transparent"
   end
 
   def resource_diff_table
@@ -32,6 +43,17 @@ class EditRequestDecorator < ApplicationDecorator
       h.edit_db_work_draft_program_path(draft_resource.work, draft_resource)
     when DraftItem
       h.edit_db_work_draft_item_path(draft_resource.work, draft_resource)
+    when DraftPerson
+      h.edit_db_draft_person_path(draft_resource)
+    when DraftCast
+      h.edit_db_work_draft_cast_path(draft_resource.work, draft_resource)
+    when DraftStaff
+      h.edit_db_work_draft_staff_path(draft_resource.work, draft_resource)
+    when DraftOrganization
+      h.edit_db_draft_organization_path(draft_resource)
+    when DraftWorkOrganization
+      h.edit_db_work_draft_work_organization_path(
+        draft_resource.work, draft_resource)
     end
   end
 end

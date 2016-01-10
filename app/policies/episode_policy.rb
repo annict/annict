@@ -1,6 +1,6 @@
 class EpisodePolicy < ApplicationPolicy
   def update?
-    user.role.editor? || user.role.admin?
+    user.committer?
   end
 
   def hide?

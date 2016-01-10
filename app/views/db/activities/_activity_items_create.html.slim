@@ -8,7 +8,7 @@
         = activity.user.decorate.name_link
       | が
       span.db-activity-description-work-title
-        = "「#{activity.trackable.work.decorate.title_link(target: "_blank")}」".html_safe
+        = "「#{activity.trackable.work.decorate.db_detail_link}」".html_safe
       | の商品画像を登録しました
     .db-activity-header-date
       = "#{time_ago_in_words(activity.created_at)}前"

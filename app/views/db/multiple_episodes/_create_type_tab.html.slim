@@ -1,6 +1,6 @@
 ul.nav.nav-tabs.nav-justified.edit-type-tabs
   = active_link_to "編集リクエスト", new_db_work_draft_multiple_episode_path(work), wrap_tag: :li, active: params[:controller] == "db/draft_multiple_episodes" && params[:action] == "new"
-  - if current_user.role.editor? || current_user.role.admin?
+  - if current_user.committer?
     = active_link_to "直接登録", new_db_work_multiple_episode_path, wrap_tag: :li, active: params[:controller] == "db/multiple_episodes" && params[:action] == "new"
   - else
     li.disabled data-toggle="tooltip" title="編集者になると直接登録できるようになります"

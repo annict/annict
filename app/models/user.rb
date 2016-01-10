@@ -150,6 +150,10 @@ class User < ActiveRecord::Base
     !checkins.pluck(:episode_id).include?(checkin.episode_id)
   end
 
+  def committer?
+    role.admin? || role.editor?
+  end
+
   private
 
   def get_large_avatar_image(provider, image_url)

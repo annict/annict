@@ -6,13 +6,13 @@ class Db::ApplicationController < ActionController::Base
 
   rescue_from Pundit::NotAuthorizedError, with: :user_not_authorized
 
-  before_action :set_ransack_params
+  before_action :set_search_params
   before_action :set_opened_edit_requests
 
   private
 
-  def set_ransack_params
-    @q = Work.search(params[:q])
+  def set_search_params
+    @search = SearchService.new(params[:q])
   end
 
   def set_opened_edit_requests

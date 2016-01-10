@@ -1,3 +1,32 @@
+# == Schema Information
+#
+# Table name: works
+#
+#  id                :integer          not null, primary key
+#  season_id         :integer
+#  sc_tid            :integer
+#  title             :string(510)      not null
+#  media             :integer          not null
+#  official_site_url :string(510)      default(""), not null
+#  wikipedia_url     :string(510)      default(""), not null
+#  episodes_count    :integer          default(0), not null
+#  watchers_count    :integer          default(0), not null
+#  released_at       :date
+#  created_at        :datetime
+#  updated_at        :datetime
+#  fetch_syobocal    :boolean          default(FALSE), not null
+#  twitter_username  :string(510)
+#  twitter_hashtag   :string(510)
+#  released_at_about :string
+#  aasm_state        :string           default("published"), not null
+#
+# Indexes
+#
+#  index_works_on_aasm_state  (aasm_state)
+#  works_sc_tid_key           (sc_tid) UNIQUE
+#  works_season_id_idx        (season_id)
+#
+
 class WorksController < ApplicationController
   include ApplicationHelper
 
@@ -11,20 +40,16 @@ class WorksController < ApplicationController
     @page_title = '人気アニメ一覧'
     @page_description = meta_description('Annictユーザに人気のアニメをチェック！')
     @page_keywords = meta_keywords('人気', '評判')
-
-    render :index
   end
 
   def season(slug, page: nil)
     @works = Work.published.by_season(slug).order(watchers_count: :desc).page(page)
+    @season = Season.find_or_new_by_slug(slug)
 
-    season = Season.find_by_slug(slug)
-    yearly_season_ja = season.decorate.yearly_season_ja
+    yearly_season_ja = @season.decorate.yearly_season_ja
     @page_title = "#{yearly_season_ja}アニメ一覧"
     @page_description = meta_description("#{yearly_season_ja}アニメをチェック！")
-    @page_keywords = meta_keywords(season.name, '人気', '評判')
-
-    render :index
+    @page_keywords = meta_keywords(yearly_season_ja, "人気", "評判")
   end
 
   def show

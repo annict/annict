@@ -1,0 +1,27 @@
+= form_for [:db, draft_organization], html: { class: "form-horizontal" } do |f|
+  = render "application/error_panel", resource: f.object
+
+  h4.organization-fields 基本情報
+
+  = render "db/organizations/organization_fields", f: f
+  
+  - if params[:action] == "new" || params[:action] == "create"
+    = hidden_field_tag "draft_organization[organization_id]", (f.object.organization_id.presence || params[:organization_id])
+  
+  hr
+  
+  h4.edit-request-fields 編集リクエスト
+  
+  = f.fields_for :edit_request do |erf|
+    .form-group
+      = erf.label :title, class: "col-sm-3 control-label"
+      .col-sm-9
+        = erf.text_field :title, class: "form-control", placeholder: "例: (名称)を登録"
+    .form-group
+      = erf.label :body, class: "col-sm-3 control-label"
+      .col-sm-9
+        = erf.text_area :body, class: "form-control", rows: 5
+  
+  .form-group
+    .col-sm-offset-3.col-sm-9
+      = f.submit "作成する", class: "btn btn-primary"

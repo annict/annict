@@ -1,0 +1,7 @@
+ann-season-selector slug-options="#{slug_options}" current-slug="#{current_slug}"
+
+script#ann-season-selector type="x-template"
+  .season-selector
+    = icon "caret-down"
+    select v-model="slug" @change="reload"
+      option v-for="option in slugOptions" value="{{option[1]}}" {{option[0]}}

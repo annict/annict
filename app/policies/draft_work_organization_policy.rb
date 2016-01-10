@@ -1,0 +1,2 @@
+class DraftWorkOrganizationPolicy < DraftResourcePolicy
+end

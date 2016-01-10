@@ -1,9 +1,9 @@
 = render "settings_tabs"
 
-.content--narrow.c-card
+.content
   .container
-    .settings__providers
-      .providers__twitter
+    .wrapper
+      .twitter
         .head
           | Twitter
         .body
@@ -16,7 +16,7 @@
             = link_to user_omniauth_authorize_path(:twitter, back: providers_path), class: "btn btn-sm btn-twitter" do
               = icon("twitter", class: "icon")
               | 連携する
-      .providers__facebook
+      .facebook
         .head
           | Facebook
         .body

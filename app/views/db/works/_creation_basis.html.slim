@@ -17,7 +17,7 @@
     | 話数がTVシリーズ準拠でも別作品として登録します。
     | 3部作のような場合は、3つの作品として登録します。(1部ごとにリリース時期やスタッフが違ったりするため)
 
-  - if user_signed_in? && (current_user.role.editor? || current_user.role.admin?)
+  - if user_signed_in? && current_user.committer?
     p 判断に迷ったときは直接登録せず、編集リクエストで他の編集者さんや管理者までご相談ください。m(__)m
 
   hr

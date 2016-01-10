@@ -51,7 +51,7 @@ describe '作品検索ページ' do
   end
 
   it '検索結果に該当の作品が表示されること' do
-    expect(find('.works-list')).to have_content(work.title)
+    expect(find('.app__main > .works')).to have_content(work.title)
   end
 end
 

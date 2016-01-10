@@ -7,8 +7,9 @@ html lang="ja" ng-app="annict"
     = include_gon
     = javascript_include_tag "application_common"
     = javascript_include_tag "application"
+    = javascript_include_tag "db"
     = csrf_meta_tags
-  body#js-annict class="#{body_class}"
+  body#ann class="#{page_project_class}"
     nav.navbar.navbar-default.navbar-fixed-top role="navigation"
       .container-fluid
         .navbar-header
@@ -24,8 +25,12 @@ html lang="ja" ng-app="annict"
               = link_to "アクティビティ", db_activities_path, target: "_self"
             li
               = link_to "作品", db_works_path, target: "_self"
-          = search_form_for @q, url: search_db_works_path, class: "navbar-form navbar-left", role: "form" do |f|
-            = f.text_field :title_cont, class: "form-control", placeholder: "作品名で検索..."
+            li
+              = link_to "スタッフ/キャスト", db_people_path, target: "_self"
+            li
+              = link_to "会社/団体", db_organizations_path, target: "_self"
+          = form_tag db_search_path, method: :get, class: "navbar-form navbar-left", role: "form" do
+            = text_field_tag :q, @search.q, class: "form-control", placeholder: "キーワードで検索..."
           ul.nav.navbar-nav.navbar-right
             - if user_signed_in?
               li = link_to "ログアウト", destroy_user_session_path, method: :delete

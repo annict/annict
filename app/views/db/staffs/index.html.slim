@@ -1,0 +1,37 @@
+= render "db/works/header", work: @work
+
+.pull-right
+  - if current_user.committer?
+    = link_to "新規作成", new_db_work_staff_path(@work), class: "btn btn-primary"
+  - else
+    = link_to "新規作成", new_db_work_draft_staff_path(@work), class: "btn btn-primary"
+
+.clearfix
+
+table.table.table-striped
+  thead
+    tr
+      th ID
+      th 名前
+      th 名義
+      th 担当
+      th 編集
+      - if policy(@staffs).destroy?
+        th 削除
+  tbody
+    - @staffs.each do |staff|
+      tr
+        td = staff.id
+        td = staff.person.name
+        td = staff.name.presence || "-"
+        td = staff.decorate.role_name
+        td
+          - if current_user.committer?
+            = link_to "編集", edit_db_work_staff_path(@work, staff), class: "btn btn-primary btn-sm"
+          - else
+            = link_to "編集", new_db_work_draft_staff_path(@work, staff_id: staff.id), class: "btn btn-primary btn-sm"
+        - if policy(staff).destroy?
+          td = link_to "削除", db_work_staff_path(@work, staff), class: "btn btn-danger btn-sm", data: { method: :delete, confirm: "削除しますか？" }
+
+- if @staffs.blank?
+  .well 登録されているスタッフはいません。

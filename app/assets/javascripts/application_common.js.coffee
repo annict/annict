@@ -20,9 +20,3 @@
 
 #= require ./application_common/base/init
 #= require_tree ./application_common/components
-
-$ ->
-  Vue.component("ann-flash", Ann.Components.Flash)
-
-  new Vue
-    el: "#js-annict"

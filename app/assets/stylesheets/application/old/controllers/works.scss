@@ -1,14 +1,6 @@
 .works-index, .works-search, .works-season, .works-popular, .works-recommend {
-  @include works-list;
-
   > .content {
     padding: 0 0 20px 0;
-  }
-}
-
-.works-search {
-  .search-form {
-    margin-bottom: 10px;
   }
 }
 

@@ -16,13 +16,11 @@
 @import "application/old/mixins/profile-header";
 @import "application/old/mixins/selector";
 @import "application/old/mixins/work-profile";
-@import "application/old/mixins/works-list";
 @import "application/old/base/fonts";
 @import "application/old/base/base";
 @import "application/old/components/*";
 @import "application/old/components_old/about-works-image";
 @import "application/old/components_old/ann-channel-selector";
-@import "application/old/components_old/ann-checkin-progress";
 @import "application/old/components_old/ann-status-selector";
 @import "application/old/components_old/ann-tabs";
 @import "application/old/components_old/ann-user-sub-header";
@@ -48,11 +46,12 @@
 @import "application/old/controllers/users";
 @import "application/old/controllers/works";
 
+@import "application/old/foundations/base";
+@import "application/old/foundations/bootstrap";
+@import "application/old/layouts/sidebar";
+
+@import "application_common/mixins/*";
 @import "application_common/components/*";
 
-@import "application/foundations/base";
-@import "application/foundations/bootstrap";
-@import "application/foundations/content";
-@import "application/layouts/sidebar";
-@import "application/components/*";
-@import "application/projects/*";
+@import "application/_components/**/*";
+@import "application/pages/**/*";

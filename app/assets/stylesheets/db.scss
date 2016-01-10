@@ -4,9 +4,13 @@
 @import "bootstrap";
 @import "font-awesome-sprockets";
 @import "font-awesome";
+@import "select2.min";
 
 @import "application/old/components_old/error-panel";
 
-@import "db/base/base";
+@import "db/foundations/_base";
+
+@import "db/old/components/*";
+@import "db/old/controllers/*";
 @import "db/components/*";
-@import "db/controllers/*";
+@import "db/projects/*";

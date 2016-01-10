@@ -1,0 +1,30 @@
+@mixin tabs($type) {
+  background-color: #fff;
+
+  .content {
+    @include display(flex);
+    @include justify-content(center);
+    height: 50px;
+    line-height: 50px;
+    margin: 0 auto;
+    max-width: 100%;
+  }
+
+  .tab {
+    @include flex(1);
+    text-align: center;
+    text-decoration: none;
+
+    &:hover {
+      text-decoration: none;
+    }
+    &--active {
+      border-bottom: solid 2px $color-mizuho;
+    }
+  }
+
+  @if $type == independent {
+    box-shadow: 0 0 1px rgba(43,59,93,.29);
+    margin-bottom: 20px;
+  }
+}

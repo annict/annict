@@ -41,7 +41,11 @@ Annict::Application.routes.draw do
 
   namespace :db do
     resources :activities, only: [:index]
+    resources :draft_organizations, only: [:new, :create, :edit, :update]
+    resources :draft_people, only: [:new, :create, :edit, :update]
     resources :draft_works, only: [:new, :create, :edit, :update]
+    resource :search, only: [:show]
+
     resources :edit_requests, only: [:index, :show] do
       member do
         post :close
@@ -49,27 +53,44 @@ Annict::Application.routes.draw do
       end
       resources :comments, only: [:create], controller: "edit_request_comments"
     end
+
+    resources :organizations, except: [:show] do
+      patch :hide, on: :member
+    end
+
+    resources :people, except: [:show] do
+      patch :hide, on: :member
+    end
+
     resources :works, except: [:show] do
       collection do
         get :season
         get :resourceless
-        get :search
       end
+
       member do
         patch :hide
       end
+
+      resources :casts, except: [:show]
+      resources :draft_casts, only: [:new, :create, :edit, :update]
       resources :draft_episodes, only: [:new, :create, :edit, :update]
       resources :draft_items, only: [:new, :create, :edit, :update]
       resources :draft_multiple_episodes, only: [:new, :create, :edit, :update]
       resources :draft_programs, only: [:new, :create, :edit, :update]
+      resources :draft_staffs, only: [:new, :create, :edit, :update]
+      resources :draft_work_organizations, only: [:new, :create, :edit, :update]
+      resources :multiple_episodes, only: [:new, :create]
+      resources :programs, except: [:show]
+      resources :staffs, except: [:show]
+      resources :work_organizations, except: [:show]
+      resource :item, except: [:index]
+
       resources :episodes, only: [:index, :edit, :update, :destroy] do
         member do
           patch :hide
         end
       end
-      resources :multiple_episodes, only: [:new, :create]
-      resources :programs, except: [:show]
-      resource :item, except: [:index]
     end
 
     root "home#index"
@@ -151,7 +172,7 @@ Annict::Application.routes.draw do
       get :popular
       get ":slug",
         action: :season,
-        slug: /[0-9]{4}-(spring|summer|autumn|winter)/,
+        slug: /[0-9]{4}-(all|spring|summer|autumn|winter)/,
         as: :season
     end
 

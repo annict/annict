@@ -1,0 +1,6 @@
+body.works-show {
+  .content {
+    @include content(wide);
+    @include card;
+  }
+}

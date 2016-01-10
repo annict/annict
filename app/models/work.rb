@@ -48,16 +48,24 @@ class Work < ActiveRecord::Base
   end
 
   has_many :activities, foreign_key: :recipient_id, foreign_type: :recipient, dependent: :destroy
+  has_many :casts, dependent: :destroy
   has_many :checkins, dependent: :destroy
   has_many :checks, dependent: :destroy
   has_many :draft_episodes, dependent: :destroy
+  has_many :draft_casts, dependent: :destroy
   has_many :draft_items, dependent: :destroy
   has_many :draft_multiple_episodes, dependent: :destroy
   has_many :draft_programs, dependent: :destroy
+  has_many :draft_staffs, dependent: :destroy
+  has_many :draft_work_organizations, dependent: :destroy
   has_many :draft_works, dependent: :destroy
   has_many :episodes, dependent: :destroy
+  has_many :organizations, through: :work_organizations
+  has_many :participations, dependent: :destroy
   has_many :programs, dependent: :destroy
   has_many :statuses, dependent: :destroy
+  has_many :work_organizations, dependent: :destroy
+  has_many :staffs, dependent: :destroy
   has_one :item, dependent: :destroy
 
   validates :sc_tid, numericality: { only_integer: true }, allow_blank: true,
@@ -69,7 +77,8 @@ class Work < ActiveRecord::Base
 
     year, name = season_slug.split("-")
 
-    joins(:season).where(seasons: { year: year, name: name })
+    season_conds = (name == "all") ? { year: year } : { year: year, name: name }
+    joins(:season).where(seasons: season_conds)
   }
 
   scope :program_registered, -> {

@@ -1,8 +1,8 @@
 = render "settings_tabs"
 
-.content--narrow.c-card
+.content
   .container
-    .settings__option
+    .wrapper
       = form_for current_user.setting, url: options_path do |f|
         = render "error_panel", resource: current_user.setting
 

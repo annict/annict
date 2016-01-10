@@ -1,0 +1,17 @@
+body.profiles-show,
+body.profiles-update {
+  .c-tabs {
+    @include tabs(independent);
+  }
+
+  .app__main {
+    > .content {
+      @include content(narrow);
+      @include card;
+
+      form {
+        margin: 15px 0;
+      }
+    }
+  }
+}

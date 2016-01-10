@@ -1,0 +1,9 @@
+= render "nav"
+
+.content
+  .header
+    h1 = @page_title
+    .season-selector-wrapper
+      = render "season_selector", slug_options: Season.slug_options, current_slug: @season.slug
+
+  = render "works", works: @works, user: current_user, compact: false

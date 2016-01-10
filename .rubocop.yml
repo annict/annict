@@ -16,6 +16,10 @@ Metrics/AbcSize:
 Metrics/MethodLength:
   Enabled: false
 
+# メソッド呼び出しの行から1段階インデントする
+Style/AlignParameters:
+  EnforcedStyle: with_fixed_indentation
+
 # 日本語のコメントを許可する
 Style/AsciiComments:
   Enabled: false

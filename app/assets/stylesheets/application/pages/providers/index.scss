@@ -1,0 +1,36 @@
+body.providers-index {
+  .c-tabs {
+    @include tabs(independent);
+  }
+
+  .app__main {
+    > .content {
+      @include content(narrow);
+      @include card;
+
+      .wrapper {
+        margin: 15px 0;
+
+        .twitter,
+        .facebook {
+          display: flex;
+          height: 30px;
+          justify-content: space-between;
+          line-height: 30px;
+        }
+
+        .twitter {
+          margin-bottom: 20px;
+        }
+
+        .icon {
+          margin-right: 7px;
+        }
+
+        .cancel-disabled {
+          font-size: 12px;
+        }
+      }
+    }
+  }
+}

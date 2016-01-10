@@ -20,5 +20,25 @@
         = render "activity_items_create", activity: activity
       - when "items.update"
         = render "activity_items_update", activity: activity
+      - when "people.create"
+        = render "activity_people_create", activity: activity
+      - when "people.update"
+        = render "activity_people_update", activity: activity
+      - when "casts.create"
+        = render "activity_casts_create", activity: activity
+      - when "casts.update"
+        = render "activity_casts_update", activity: activity
+      - when "staffs.create"
+        = render "activity_staffs_create", activity: activity
+      - when "staffs.update"
+        = render "activity_staffs_update", activity: activity
+      - when "organizations.create"
+        = render "activity_organizations_create", activity: activity
+      - when "organizations.update"
+        = render "activity_organizations_update", activity: activity
+      - when "work_organizations.create"
+        = render "activity_work_organizations_create", activity: activity
+      - when "work_organizations.update"
+        = render "activity_work_organizations_update", activity: activity
 
 = paginate @activities

@@ -1,13 +1,17 @@
-- if works.present?
-  .works-list
-    - works.each do |work|
-      = render 'works/work', work: work, user: user
+- type = compact ? "compact" : "large"
 
-  .text-center
-    = paginate works
-- else
-  - if %w(season recommend works).include?(params[:action]) || (params[:action] == 'search' && params[:q].present?)
-    .info.well
-      .icon
-        i.fa.fa-info-circle
-      p = t('works.no_works')
+.works
+  - if works.present?
+    - works.each do |work|
+      = render "works/work_#{type}", work: work, user: user
+
+    .text-center
+      = paginate works
+  - else
+    - if %w(season works).include?(params[:action]) || (params[:action] == "search" && params[:q].present?)
+      .no-works
+        .container
+          .info.well
+            .icon
+              i.fa.fa-info-circle
+            p = t('works.no_works')

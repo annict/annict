@@ -13,8 +13,10 @@
                 = annict_image_tag(er.user.profile, :tombo_avatar, size: "20x20", class: "img-circle")
                 = er.user.profile.name
           td
-            - if er.draft_resource.work.present?
+            - if er.draft_resource.try(:work).present?
               = link_to er.draft_resource.work.title, work_path(er.draft_resource.work), target: "_blank"
+            - elsif er.draft_resource.try(:person).present?
+              = er.draft_resource.person.name
             - else
               | -
           td = er.decorate.status_label

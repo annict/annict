@@ -1,0 +1,19 @@
+.form-group
+  = f.label :name, class: "col-sm-3 control-label"
+  .col-sm-9
+    = f.text_field :name, class: "form-control", autofocus: true
+
+.form-group
+  = f.label :url, class: "col-sm-3 control-label"
+  .col-sm-9
+    = f.url_field :url, class: "form-control"
+
+.form-group
+  = f.label :wikipedia_url, class: "col-sm-3 control-label"
+  .col-sm-9
+    = f.url_field :wikipedia_url, class: "form-control"
+
+.form-group
+  = f.label :twitter_username, class: "col-sm-3 control-label"
+  .col-sm-9
+    = f.text_field :twitter_username, class: "form-control", placeholder: "例: paworks_info"

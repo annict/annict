@@ -1,0 +1,9 @@
+= render "db/works/header", work: @work
+
+= render "db/work_organizations/create_type_tab", work: @work
+
+.row
+  .col-sm-7
+    = render "form", work: @work, draft_work_organization: @draft_wo
+  .col-sm-5
+    = render "db/work_organizations/sidebar"

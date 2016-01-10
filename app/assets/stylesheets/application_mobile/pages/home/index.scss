@@ -1,0 +1,8 @@
+body.home-index {
+  &.signed-in {
+    .content {
+      @include content(wide);
+      @include card;
+    }
+  }
+}

@@ -30,6 +30,8 @@ class EditRequest < ActiveRecord::Base
   has_many :comments, class_name: "EditRequestComment", dependent: :destroy
   has_many :participants, class_name: "EditRequestParticipant", dependent: :destroy
 
+  delegate :origin, to: :draft_resource
+
   validates :title, presence: true
 
   after_create :create_participant
@@ -73,7 +75,16 @@ class EditRequest < ActiveRecord::Base
   end
 
   def kind
-    draft_resource.class.name.underscore
+    draft_resource.class.name.underscore.to_sym
+  end
+
+  def draft_resource_parent
+    case draft_resource.class.name
+    when "DraftEpisode", "DraftItem", "DraftMultipleEpisode", "DraftProgram"
+      draft_resource.work
+    when "DraftCast", "DraftStaff"
+      draft_resource.person
+    end
   end
 
   def db_activities
@@ -99,7 +110,7 @@ class EditRequest < ActiveRecord::Base
       else
         origin_class = draft_resource.class.reflections["origin"].
                        class_name.constantize
-        origin_class.create(attrs)
+        origin_class.create!(attrs)
       end
     end
 
