@@ -2,7 +2,7 @@ module DraftCommon
   extend ActiveSupport::Concern
 
   included do
-    has_one :edit_request, as: :draft_resource, dependent: :destroy
+    has_one :edit_request, as: :draft_resource
 
     accepts_nested_attributes_for :edit_request
 

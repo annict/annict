@@ -31,4 +31,9 @@ class DraftMultipleEpisode < ActiveRecord::Base
 
     data.delete_if { |_, v| v.blank? }
   end
+
+  # 他の元データが存在するモデルと同じように処理するためのメソッド
+  def origin
+    nil
+  end
 end

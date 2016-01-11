@@ -5,18 +5,19 @@
     h1 = @edit_request.title
     = @edit_request.decorate.status_label
     = @edit_request.decorate.resource_label
-    - if @edit_request.draft_resource.respond_to?(:work) && @edit_request.draft_resource.work.present?
-      span.text-mute.p-db-edit_requests--show__resource-annotation
-        = "「#{@edit_request.draft_resource.work.decorate.db_detail_link}」".html_safe
-    - if @edit_request.origin.present?
-      span.text-mute.p-db-edit_requests--show__resource-annotation
-        = @edit_request.origin.decorate.db_detail_link(name: "編集元")
+    - if @edit_request.draft_resource.present?
+      - if @edit_request.draft_resource.respond_to?(:work) && @edit_request.draft_resource.work.present?
+        span.text-mute.p-db-edit_requests--show__resource-annotation
+          = "「#{@edit_request.draft_resource.work.decorate.db_detail_link}」".html_safe
+      - if @edit_request.origin.present?
+        span.text-mute.p-db-edit_requests--show__resource-annotation
+          = @edit_request.origin.decorate.db_detail_link(name: "編集元")
   .pull-right
-    - if policy(@edit_request).publish? && @edit_request.may_publish?
+    - if @edit_request.draft_resource.present? && policy(@edit_request).publish? && @edit_request.may_publish?
       = link_to "公開する", publish_db_edit_request_path(@edit_request), class: "btn btn-primary", data: { method: :post, confirm: "この編集内容を公開しますか？" }
     - if policy(@edit_request).close? && @edit_request.may_close?
       = link_to "閉じる", close_db_edit_request_path(@edit_request), class: "btn", data: { method: :post, confirm: "この編集リクエストを公開せずに閉じますか？" }
-    - if policy(@edit_request.draft_resource).edit?
+    - if @edit_request.draft_resource.present? && policy(@edit_request.draft_resource).edit?
       = link_to "編集する", @edit_request.decorate.edit_draft_resource_path, class: "btn"
   .clearfix
 
@@ -60,7 +61,9 @@ ul.nav.nav-tabs.p-db-edit_requests--show__tabs
         = f.submit "コメントする", class: "btn btn-primary"
   
   #changes.tab-pane
-    - if @edit_request.published? || @edit_request.closed?
+    - if @edit_request.draft_resource.blank?
+      .well この編集リクエストの元になったデータが削除されているため、差分が表示できません。
+    - elsif @edit_request.published? || @edit_request.closed?
       .well 公開、またはクローズした編集リクエストの変更点は見ることができません。(仕様です…)
     - else
       = @edit_request.decorate.resource_diff_table
