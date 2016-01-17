@@ -44,4 +44,8 @@ class CallbacksController < Devise::OmniauthCallbacksController
       token_secret: token_secret,
     }
   end
+
+  def after_omniauth_failure_path_for(scope)
+    root_path(scope)
+  end
 end

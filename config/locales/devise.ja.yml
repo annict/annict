@@ -8,9 +8,9 @@ ja:
     mailer:
       confirmation_instructions:
         subject: メールアドレスの確認
+    omniauth_callbacks:
+      user:
+        failure: 認証に失敗しました。時間をおいて再度お願いします
     sessions:
-      staff:
-        signed_in: 'お帰りなさいませ、ご主人さま'
-        signed_out: 'いってらっしゃいませ、ご主人さま'
       user:
         signed_out: ''
