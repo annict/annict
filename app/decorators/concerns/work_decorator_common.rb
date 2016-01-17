@@ -17,15 +17,10 @@ module WorkDecoratorCommon
           end
         when :media
           Work.media.find_value(send(:media)).text
-        when :official_site_url
+        when :official_site_url, :wikipedia_url
           url = send(field)
           if url.present?
-            h.link_to(url, url, target: "_blank")
-          end
-        when :wikipedia_url
-          url = send(field)
-          if url.present?
-            h.link_to(URI.decode(url), url, target: "_blank")
+            h.link_to(URI.decode(url), url, target: "_blank") rescue url
           end
         when :twitter_username
           username = send(:twitter_username)
