@@ -56,5 +56,10 @@ module Annict
       r301 %r{\A/users/([A-Za-z0-9_]+)\z}, "/@$1"
       r301 %r{\A/users/([A-Za-z0-9_]+)/(following|followers|wanna_watch|watching|watched|on_hold|stop_watching)\z}, "/@$1/$2"
     end
+
+    unless Rails.env.test?
+      config.cache_store = :redis_store, "#{ENV.fetch('REDIS_URL')}/0/annict_cache",
+        { expires_in: 90.minutes }
+    end
   end
 end
