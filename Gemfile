@@ -19,7 +19,7 @@ gem "browser"
 gem "by_star"
 gem "coffee-rails"
 gem "delayed_job_active_record"
-gem "devise"
+gem "devise", ">= 3.5.4"
 gem "draper"
 gem "email_validator"
 gem "enumerize"
@@ -40,7 +40,7 @@ gem "mini_magick"
 gem "net-ssh" # fog を使用している asset_sync で使用
 gem "newrelic_rpm"
 gem "ngannotate-rails"
-gem "nokogiri"
+gem "nokogiri", ">= 1.6.7.2"
 gem "omniauth-facebook"
 # 1.4系だとFacebookのOAuth周りでおかしくなるので1.3系を使う
 # https://github.com/intridea/omniauth-oauth2/issues/81
