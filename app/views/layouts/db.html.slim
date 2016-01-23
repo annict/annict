@@ -32,8 +32,6 @@ html lang="ja" ng-app="annict"
           = form_tag db_search_path, method: :get, class: "navbar-form navbar-left", role: "form" do
             = text_field_tag :q, @search.q, class: "form-control", placeholder: "キーワードで検索..."
           ul.nav.navbar-nav.navbar-right
-            - if user_signed_in?
-              li = link_to "ログアウト", destroy_user_session_path, method: :delete
             li
               = link_to root_path do
                 = image_tag "navbar/logo.png", size: "30x30"
