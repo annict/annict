@@ -15,6 +15,7 @@ table.table.table-striped
       th 名前
       th 名義
       th 役名
+      th ソート番号
       th 編集
       - if policy(@casts).destroy?
         th 削除
@@ -25,6 +26,7 @@ table.table.table-striped
         td = cast.person.name
         td = cast.name.presence || "-"
         td = cast.part.presence || "-"
+        td = cast.sort_number
         td
           - if current_user.committer?
             = link_to "編集", edit_db_work_cast_path(@work, cast), class: "btn btn-primary btn-sm"

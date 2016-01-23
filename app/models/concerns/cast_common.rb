@@ -1,7 +1,7 @@
 module CastCommon
   extend ActiveSupport::Concern
 
-  DIFF_FIELDS = %i(person_id name part)
+  DIFF_FIELDS = %i(person_id name part sort_number)
   PUBLISH_FIELDS = DIFF_FIELDS + %i(work_id)
 
   included do
