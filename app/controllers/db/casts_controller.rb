@@ -1,12 +1,12 @@
 module Db
   class CastsController < Db::ApplicationController
-    permits :person_id, :name, :part
+    permits :person_id, :name, :part, :sort_number
 
     before_action :authenticate_user!
     before_action :load_work, only: [:index, :new, :create, :edit, :update, :destroy]
 
     def index
-      @casts = @work.casts.order(id: :desc)
+      @casts = @work.casts.order(:sort_number)
     end
 
     def new

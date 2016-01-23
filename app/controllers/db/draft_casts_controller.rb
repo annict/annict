@@ -1,6 +1,6 @@
 module Db
   class DraftCastsController < Db::ApplicationController
-    permits :person_id, :cast_id, :name, :part,
+    permits :person_id, :cast_id, :name, :part, :sort_number,
       edit_request_attributes: [:id, :title, :body]
 
     before_action :authenticate_user!

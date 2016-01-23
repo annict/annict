@@ -1,12 +1,12 @@
 module Db
   class StaffsController < Db::ApplicationController
-    permits :person_id, :name, :role, :role_other
+    permits :person_id, :name, :role, :role_other, :sort_number
 
     before_action :authenticate_user!
     before_action :load_work, only: [:index, :new, :create, :edit, :update, :destroy]
 
     def index
-      @staffs = @work.staffs.order(id: :desc)
+      @staffs = @work.staffs.order(:sort_number)
     end
 
     def new

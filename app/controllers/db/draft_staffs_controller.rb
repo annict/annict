@@ -1,6 +1,6 @@
 module Db
   class DraftStaffsController < Db::ApplicationController
-    permits :person_id, :staff_id, :name, :role, :role_other,
+    permits :person_id, :staff_id, :name, :role, :role_other, :sort_number,
       edit_request_attributes: [:id, :title, :body]
 
     before_action :authenticate_user!

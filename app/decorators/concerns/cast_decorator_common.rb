@@ -8,6 +8,8 @@ module CastDecoratorCommon
         when :person_id
           person_id = send(:person_id)
           Person.find(person_id).name if person_id.present?
+        when :sort_number
+          send(:sort_number).to_s
         else
           send(field)
         end

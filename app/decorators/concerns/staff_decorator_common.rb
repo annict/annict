@@ -10,6 +10,8 @@ module StaffDecoratorCommon
           Person.find(person_id).name if person_id.present?
         when :role
           send(:role_text)
+        when :sort_number
+          send(:sort_number).to_s
         else
           send(field)
         end

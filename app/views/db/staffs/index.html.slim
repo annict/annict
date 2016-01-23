@@ -15,6 +15,7 @@ table.table.table-striped
       th 名前
       th 名義
       th 担当
+      th ソート番号
       th 編集
       - if policy(@staffs).destroy?
         th 削除
@@ -25,6 +26,7 @@ table.table.table-striped
         td = staff.person.name
         td = staff.name.presence || "-"
         td = staff.decorate.role_name
+        td = staff.sort_number
         td
           - if current_user.committer?
             = link_to "編集", edit_db_work_staff_path(@work, staff), class: "btn btn-primary btn-sm"
