@@ -27,7 +27,7 @@
               .title キャスト
               ul
                 - work.casts.order(:sort_number).limit(10).each do |cast|
-                  li = cast.person.name
+                  li = "#{cast.part}: #{cast.person.name}"
           - if work.staffs.present?
             .staffs
               .title スタッフ
