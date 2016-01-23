@@ -13,7 +13,7 @@ module WorkOrganizationCommon
     ), scope: true
 
     belongs_to :organization
-    belongs_to :work
+    belongs_to :work, touch: true
 
     validates :organization_id, presence: true
     validates :work_id, presence: true

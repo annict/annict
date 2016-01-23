@@ -23,7 +23,7 @@ class Status < ActiveRecord::Base
   enumerize :kind, in: { wanna_watch: 1, watching: 2, watched: 3, on_hold: 5, stop_watching: 4 }, scope: true
 
   belongs_to :user
-  belongs_to :work
+  belongs_to :work, touch: true
 
   scope :latest, -> { where(latest: true) }
   scope :watching, -> { latest.with_kind(:watching) }

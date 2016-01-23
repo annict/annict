@@ -23,7 +23,7 @@ module StaffCommon
     )
 
     belongs_to :person
-    belongs_to :work
+    belongs_to :work, touch: true
 
     validates :person_id, presence: true
     validates :work_id, presence: true

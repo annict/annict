@@ -7,7 +7,7 @@ module ProgramCommon
   included do
     belongs_to :channel
     belongs_to :episode
-    belongs_to :work
+    belongs_to :work, touch: true
 
     validates :channel_id, presence: true
     validates :episode_id, presence: true

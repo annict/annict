@@ -25,6 +25,6 @@ class Item < ActiveRecord::Base
 
   has_paper_trail only: DIFF_FIELDS
 
-  belongs_to :work
+  belongs_to :work, touch: true
   has_many :draft_items, dependent: :destroy
 end
