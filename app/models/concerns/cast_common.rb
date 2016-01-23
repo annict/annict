@@ -1,8 +1,8 @@
 module CastCommon
   extend ActiveSupport::Concern
 
-  DIFF_FIELDS = %i(person_id name part sort_number)
-  PUBLISH_FIELDS = DIFF_FIELDS + %i(work_id)
+  DIFF_FIELDS = %i(person_id name part sort_number).freeze
+  PUBLISH_FIELDS = (DIFF_FIELDS + %i(work_id)).freeze
 
   included do
     belongs_to :person

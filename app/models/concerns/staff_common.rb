@@ -1,8 +1,8 @@
 module StaffCommon
   extend ActiveSupport::Concern
 
-  DIFF_FIELDS = %i(person_id name role role_other sort_number)
-  PUBLISH_FIELDS = DIFF_FIELDS + %i(work_id)
+  DIFF_FIELDS = %i(person_id name role role_other sort_number).freeze
+  PUBLISH_FIELDS = (DIFF_FIELDS + %i(work_id)).freeze
 
   included do
     extend Enumerize
