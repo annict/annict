@@ -24,7 +24,7 @@
           .staffs
             .title スタッフ
             ul
-              - work.staffs.major.order(:sort_number).limit(10).each do |staff|
+              - work.staffs.showable(10).order(:sort_number).each do |staff|
                 - cache staff do
                   li = "#{staff.decorate.role_name}: #{staff.decorate.name_with_old}"
         - if work.work_organizations.with_role(:producer).present?

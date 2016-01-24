@@ -24,5 +24,10 @@ module StaffDecoratorCommon
       return role_other if role_value == "other"
       role_text
     end
+    
+    def name_with_old
+      return name if name == person.name
+      "#{name} (#{person.name})"
+    end
   end
 end
