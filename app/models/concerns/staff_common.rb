@@ -31,15 +31,6 @@ module StaffCommon
     validates :role, presence: true
 
     scope :major, -> { where.not(role: "other") }
-    scope :other, -> { where(role: "other") }
-    scope :showable, -> (limit) {
-      return major.limit(limit) if major.count > limit
-
-      major_staff_ids = major.pluck(:id)
-      other_limit = limit - major_staff_ids.length
-      other_staff_ids = other.order(:sort_number).limit(other_limit).pluck(:id)
-      where(id: major_staff_ids + other_staff_ids)
-    }
 
     def to_diffable_hash
       data = self.class::DIFF_FIELDS.each_with_object({}) do |field, hash|

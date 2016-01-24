@@ -11,4 +11,9 @@ class StaffDecorator < ApplicationDecorator
 
     h.link_to name, path, options
   end
+
+  def name_with_old
+    return name if name == person.name
+    "#{name} (#{person.name})"
+  end
 end
