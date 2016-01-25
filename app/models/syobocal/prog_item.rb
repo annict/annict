@@ -57,6 +57,14 @@ module Syobocal
       @flag == 4
     end
 
+    def rebroadcast_program?
+      @flag == 8
+    end
+
+    def saved_program?
+      Program.exists?(sc_pid: @pid) || channel.programs.find_by(episode_id: episode.id)
+    end
+
     def save_episode
       title = @title.presence || nil
 
@@ -67,9 +75,7 @@ module Syobocal
     def save_program(episode)
       # 「ニコニコチャンネル」に対しての放送予定は別の手段で登録する
       if !niconico_ch? && channel.present?
-        program = channel.programs.find_by(episode_id: episode.id)
-
-        if program.present?
+        if saved_program?
           update_program(program)
         else
           create_program(episode)
@@ -131,6 +137,8 @@ module Syobocal
       program = channel.programs.create do |p|
         p.episode_id = episode.id
         p.work_id = episode.work.id
+        p.sc_pid = @pid
+        p.rebroadcast = rebroadcast_program?
         p.sc_last_update = @last_update
         p.started_at = @st_time
       end
