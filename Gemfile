@@ -2,7 +2,7 @@ source "https://rubygems.org"
 
 ruby "2.3.0"
 
-gem "rails", "4.2.5"
+gem "rails", "~> 4.2.5.1"
 
 gem "aasm"
 gem "action_args"
@@ -105,3 +105,5 @@ group :test do
   gem "factory_girl_rails"
   gem "poltergeist"
 end
+
+gem "rails-html-sanitizer", "~> 1.0.3"
