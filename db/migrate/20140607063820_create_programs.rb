@@ -8,8 +8,6 @@ class CreatePrograms < ActiveRecord::Migration
       t.timestamps
     end
 
-    add_index :programs, [:channel_id, :episode_id], unique: true
-
     add_foreign_key :programs, :channels
     add_foreign_key :programs, :episodes
     add_foreign_key :programs, :works

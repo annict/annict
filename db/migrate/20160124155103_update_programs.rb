@@ -4,6 +4,7 @@ class UpdatePrograms < ActiveRecord::Migration
     add_column :programs, :rebroadcast, :boolean, null: false, default: false
 
     add_index :programs, :sc_pid, unique: true
-    remove_index :programs, name: :programs_channel_id_episode_id_key
+
+    add_column :draft_programs, :rebroadcast, :boolean, null: false, default: false
   end
 end

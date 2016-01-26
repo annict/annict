@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20151227101344) do
+ActiveRecord::Schema.define(version: 20160126134423) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -267,12 +267,13 @@ ActiveRecord::Schema.define(version: 20151227101344) do
 
   create_table "draft_programs", force: :cascade do |t|
     t.integer  "program_id"
-    t.integer  "channel_id", null: false
-    t.integer  "episode_id", null: false
-    t.integer  "work_id",    null: false
-    t.datetime "started_at", null: false
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.integer  "channel_id",                  null: false
+    t.integer  "episode_id",                  null: false
+    t.integer  "work_id",                     null: false
+    t.datetime "started_at",                  null: false
+    t.datetime "created_at",                  null: false
+    t.datetime "updated_at",                  null: false
+    t.boolean  "rebroadcast", default: false, null: false
   end
 
   add_index "draft_programs", ["channel_id"], name: "index_draft_programs_on_channel_id", using: :btree
@@ -513,18 +514,20 @@ ActiveRecord::Schema.define(version: 20151227101344) do
   add_index "profiles", ["user_id"], name: "profiles_user_id_key", unique: true, using: :btree
 
   create_table "programs", force: :cascade do |t|
-    t.integer  "channel_id",     null: false
-    t.integer  "episode_id",     null: false
-    t.integer  "work_id",        null: false
-    t.datetime "started_at",     null: false
+    t.integer  "channel_id",                     null: false
+    t.integer  "episode_id",                     null: false
+    t.integer  "work_id",                        null: false
+    t.datetime "started_at",                     null: false
     t.datetime "sc_last_update"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.integer  "sc_pid"
+    t.boolean  "rebroadcast",    default: false, null: false
   end
 
-  add_index "programs", ["channel_id", "episode_id"], name: "programs_channel_id_episode_id_key", unique: true, using: :btree
   add_index "programs", ["channel_id"], name: "programs_channel_id_idx", using: :btree
   add_index "programs", ["episode_id"], name: "programs_episode_id_idx", using: :btree
+  add_index "programs", ["sc_pid"], name: "index_programs_on_sc_pid", unique: true, using: :btree
   add_index "programs", ["work_id"], name: "programs_work_id_idx", using: :btree
 
   create_table "providers", force: :cascade do |t|
