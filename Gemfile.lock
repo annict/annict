@@ -157,7 +157,7 @@ GEM
       request_store (~> 1.0)
     email_validator (1.6.0)
       activemodel
-    enumerize (1.1.0)
+    enumerize (1.1.1)
       activesupport (>= 3.2)
     equalizer (0.0.10)
     erubis (2.7.0)
@@ -368,7 +368,7 @@ GEM
     multipart-post (2.0.0)
     naught (1.1.0)
     net-ssh (3.0.2)
-    newrelic_rpm (3.14.1.311)
+    newrelic_rpm (3.14.2.312)
     ngannotate-rails (1.0.3)
       execjs
       rails (>= 3.1)
