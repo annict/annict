@@ -10,8 +10,11 @@
         | {{program.links.episode.number}}
         span ng-if='program.links.episode.title' 「{{program.links.episode.title}}」
     .footer
-      .channel-name
-        | {{program.links.channel.name}}
-      .started-at
-        | {{dateFormat(program.started_at)}} ~
+      .left
+        span.channel-name
+          | {{program.links.channel.name}}
+      .right
+        span.rebroadcast ng-if='program.rebroadcast' 再
+        span.started-at
+          | {{dateFormat(program.started_at)}} ~
       .clearfix

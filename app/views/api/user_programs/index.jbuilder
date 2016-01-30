@@ -1,5 +1,5 @@
 json.programs @programs do |program|
-  json.(program, :started_at)
+  json.(program, :started_at, :rebroadcast)
 
   json.links do
     json.channel do

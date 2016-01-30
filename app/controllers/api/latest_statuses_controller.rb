@@ -6,6 +6,7 @@ module Api
       LatestStatus.refresh_next_episode(current_user)
       @latest_statuses = current_user.
         latest_statuses.
+        watching.
         has_next_episode.
         order(:position)
     end
