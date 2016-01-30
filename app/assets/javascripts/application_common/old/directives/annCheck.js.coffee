@@ -6,10 +6,10 @@ AnnictOld.angular.directive "annCheck", ->
 
     $scope.skipEpisode = ->
       if confirm("このエピソードをスキップして次のエピソードを表示しますか？")
-        path = "/api/user/checks/#{$scope.check.id}/skip_episode"
+        path = "/api/latest_statuses/#{$scope.latestStatus.id}/skip_episode"
 
-        $http.patch(path).success (check) ->
-          $scope.check = check
+        $http.patch(path).success (latestStatus) ->
+          $scope.latestStatus = latestStatus
           $scope.actionPath = getActionPath()
 
     $scope.expandTextarea = ->
@@ -19,9 +19,9 @@ AnnictOld.angular.directive "annCheck", ->
       $scope.expand = false
 
     getActionPath = ->
-      if $scope.check.episode
-        workId = $scope.check.work.id
-        episodeId = $scope.check.episode.id
+      if $scope.latestStatus.next_episode
+        workId = $scope.latestStatus.work.id
+        episodeId = $scope.latestStatus.next_episode.id
 
         "/works/#{workId}/episodes/#{episodeId}/checkins"
 

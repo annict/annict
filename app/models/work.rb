@@ -60,6 +60,7 @@ class Work < ActiveRecord::Base
   has_many :draft_work_organizations, dependent: :destroy
   has_many :draft_works, dependent: :destroy
   has_many :episodes, dependent: :destroy
+  has_many :latest_statuses, dependent: :destroy
   has_many :organizations, through: :work_organizations
   has_many :programs, dependent: :destroy
   has_many :statuses, dependent: :destroy

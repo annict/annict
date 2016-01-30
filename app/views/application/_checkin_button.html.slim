@@ -11,25 +11,25 @@
             span aria-hidden='true' = icon(:times)
         .modal-body ng-style='{ maxHeight: contentHeight }'
           .checks ann-loading='loading'
-            .check-box.ann-check ng-repeat='check in checks' ng-class='{ last: $last }'
+            .check-box.ann-check ng-repeat='latestStatus in latestStatuses' ng-class='{ last: $last }'
               .info
                 .left
-                  a.icon ng-href='/works/{{check.work.id}}'
-                    img ng-src='{{check.work.image_url}}' width='40' height='40' alt='{{check.work.title}}'
+                  a.icon ng-href='/works/{{latestStatus.work.id}}'
+                    img ng-src='{{latestStatus.work.image_url}}' width='40' height='40' alt='{{latestStatus.work.title}}'
                 .right
                   .work
-                    a.title ng-href='/works/{{check.work.id}}'
-                      | {{check.work.title}}
-                  .episode ng-if='check.episode'
-                    a.title ng-href='/works/{{check.work.id}}/episodes/{{check.episode.id}}'
-                      | {{check.episode.number}}
-                      span ng-if='check.episode.title' 「{{check.episode.title}}」
-                  .no-episode ng-if='!check.episode'
+                    a.title ng-href='/works/{{latestStatus.work.id}}'
+                      | {{latestStatus.work.title}}
+                  .episode ng-if='latestStatus.next_episode'
+                    a.title ng-href='/works/{{latestStatus.work.id}}/episodes/{{latestStatus.next_episode.id}}'
+                      | {{latestStatus.next_episode.number}}
+                      span ng-if='latestStatus.next_episode.title' 「{{latestStatus.next_episode.title}}」
+                  .no-episode ng-if='!latestStatus.next_episode'
                     | 記録していないエピソードはありません。
-                .skip ng-click='skipEpisode()' ng-if='check.episode'
+                .skip ng-click='skipEpisode()' ng-if='latestStatus.next_episode'
                   i.fa.fa-forward
                   | スキップ
-              .checkin ng-if='check.episode' ng-class='{ expand: expand }'
+              .checkin ng-if='latestStatus.next_episode' ng-class='{ expand: expand }'
                 form action='{{actionPath}}' method='post'
                   input type='hidden' name='authenticity_token'
                   .checkin-top
@@ -50,7 +50,7 @@
                         button.btn.btn-primary.btn-sm
                           i.fa.fa-check
               hr
-          .info.well ng-if='!loading && checks.length === 0'
+          .info.well ng-if='!loading && latestStatuses.length === 0'
             .icon
               i.fa.fa-info-circle
             p ここには「見てる」アニメの中で、記録していないエピソードが表示されます。

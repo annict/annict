@@ -26,7 +26,7 @@
         | Records
     .watching.status.col-xs-3
       .count
-        = link_to user.statuses.count_on(:watching), user_works_path(user.username, :watching)
+        = link_to user.latest_statuses.count_on(:watching), user_works_path(user.username, :watching)
       .text
         | Watching
     .following.status.col-xs-3

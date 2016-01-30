@@ -18,27 +18,13 @@
 #
 
 class Status < ActiveRecord::Base
-  extend Enumerize
+  include StatusCommon
 
-  enumerize :kind, in: { wanna_watch: 1, watching: 2, watched: 3, on_hold: 5, stop_watching: 4 }, scope: true
-
-  belongs_to :user
-  belongs_to :work
-
-  scope :latest, -> { where(latest: true) }
-  scope :watching, -> { latest.with_kind(:watching) }
-  scope :wanna_watch, -> { latest.with_kind(:wanna_watch) }
-  scope :wanna_watch_and_watching, -> { latest.with_kind(:wanna_watch, :watching) }
-  scope :desiring_to_watch, -> { latest.with_kind(:wanna_watch, :watching, :on_hold) }
-  scope :on_hold, -> { latest.with_kind(:on_hold) }
-  scope :work_published, -> { joins(:work).merge(Work.published) }
-
-  after_create :change_latest
   after_create :save_activity
   after_create :refresh_watchers_count
   after_create :update_channel_work
   after_create :finish_tips
-  after_create :refresh_check
+  after_create :save_latest_status
 
   def self.initial
     order(:id).first
@@ -48,22 +34,7 @@ class Status < ActiveRecord::Base
     count == 1 && initial.id == status.id
   end
 
-  def self.kind_of(work)
-    latest.find_by(work_id: work.id)
-  end
-
-  def self.count_on(status_kind)
-    latest.work_published.with_kind(status_kind).count
-  end
-
   private
-
-  def change_latest
-    latest_status = user.statuses.find_by(work_id: work.id, latest: true)
-    latest_status.update_column(:latest, false) if latest_status.present?
-
-    update_column(:latest, true)
-  end
 
   def save_activity
     Activity.create do |a|
@@ -124,30 +95,10 @@ class Status < ActiveRecord::Base
     end
   end
 
-  def refresh_check
-    is_watching      = kind.to_s == 'watching'
-    is_watch_someday = %w(on_hold wanna_watch).include?(kind.to_s)
-    is_watch_over    = %w(watched stop_watching).include?(kind.to_s)
-
-    check = user.checks.find_by(work_id: work.id)
-
-    # 「見たい」アニメを「見てる」に変えたとき
-    if check.blank? && (prev_status == :wanna_watch) && is_watching
-      check = user.checks.create(work: work)
-      check.update_episode_to_unchecked
-
-    # 「見てる」にしたとき
-    elsif is_watching
-      check = user.checks.create(work: work) if check.blank?
-      check.update_episode_to_first
-
-    # 「見てる」アニメを「中断」または「見たい」状態に変えたとき
-    elsif check.present? && is_watch_someday
-      check.update(episode_id: nil)
-
-    # 「見てる」アニメを見終えたとき
-    elsif check.present? && is_watch_over
-      check.destroy
-    end
+  def save_latest_status
+    latest_status = user.latest_statuses.find_or_initialize_by(work: work)
+    latest_status.kind = kind
+    latest_status.watched_episode_ids = [] if ["watched", "stop_watching"].include?(kind)
+    latest_status.save!
   end
 end

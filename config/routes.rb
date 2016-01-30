@@ -19,6 +19,9 @@ Annict::Application.routes.draw do
 
   namespace :api do
     resources :activities, only: [:index]
+    resources :latest_statuses, only: [:index] do
+      patch :skip_episode
+    end
     resources :people, only: [:index]
     resources :receptions, only: [:create, :destroy]
     resources :tips, only: [] do
@@ -28,9 +31,6 @@ Annict::Application.routes.draw do
       get :activities
     end
     resource  :user,       only: [] do
-      resources :checks,   only: [:index], controller: "user_checks" do
-        patch :skip_episode
-      end
       resources :programs, only: [:index], controller: 'user_programs'
     end
     resources :works,      only: [] do
