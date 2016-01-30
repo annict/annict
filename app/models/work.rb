@@ -136,10 +136,6 @@ class Work < ActiveRecord::Base
     end
   end
 
-  def broadcast_on_nicoch?
-    nicoch_started_at.present?
-  end
-
   def current_season?
     season.present? && season.slug == ENV["ANNICT_CURRENT_SEASON"]
   end
