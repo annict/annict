@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20151227101344) do
+ActiveRecord::Schema.define(version: 20160128143628) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -267,12 +267,13 @@ ActiveRecord::Schema.define(version: 20151227101344) do
 
   create_table "draft_programs", force: :cascade do |t|
     t.integer  "program_id"
-    t.integer  "channel_id", null: false
-    t.integer  "episode_id", null: false
-    t.integer  "work_id",    null: false
-    t.datetime "started_at", null: false
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.integer  "channel_id",                  null: false
+    t.integer  "episode_id",                  null: false
+    t.integer  "work_id",                     null: false
+    t.datetime "started_at",                  null: false
+    t.datetime "created_at",                  null: false
+    t.datetime "updated_at",                  null: false
+    t.boolean  "rebroadcast", default: false, null: false
   end
 
   add_index "draft_programs", ["channel_id"], name: "index_draft_programs_on_channel_id", using: :btree
@@ -425,6 +426,23 @@ ActiveRecord::Schema.define(version: 20151227101344) do
   add_index "items", ["work_id"], name: "index_items_on_work_id", unique: true, using: :btree
   add_index "items", ["work_id"], name: "items_work_id_idx", using: :btree
 
+  create_table "latest_statuses", force: :cascade do |t|
+    t.integer  "user_id",                          null: false
+    t.integer  "work_id",                          null: false
+    t.integer  "next_episode_id"
+    t.integer  "kind",                             null: false
+    t.integer  "watched_episode_ids", default: [], null: false, array: true
+    t.integer  "position",            default: 0,  null: false
+    t.datetime "created_at",                       null: false
+    t.datetime "updated_at",                       null: false
+  end
+
+  add_index "latest_statuses", ["next_episode_id"], name: "index_latest_statuses_on_next_episode_id", using: :btree
+  add_index "latest_statuses", ["user_id", "position"], name: "index_latest_statuses_on_user_id_and_position", using: :btree
+  add_index "latest_statuses", ["user_id", "work_id"], name: "index_latest_statuses_on_user_id_and_work_id", unique: true, using: :btree
+  add_index "latest_statuses", ["user_id"], name: "index_latest_statuses_on_user_id", using: :btree
+  add_index "latest_statuses", ["work_id"], name: "index_latest_statuses_on_work_id", using: :btree
+
   create_table "likes", force: :cascade do |t|
     t.integer  "user_id",                    null: false
     t.integer  "recipient_id",               null: false
@@ -513,18 +531,20 @@ ActiveRecord::Schema.define(version: 20151227101344) do
   add_index "profiles", ["user_id"], name: "profiles_user_id_key", unique: true, using: :btree
 
   create_table "programs", force: :cascade do |t|
-    t.integer  "channel_id",     null: false
-    t.integer  "episode_id",     null: false
-    t.integer  "work_id",        null: false
-    t.datetime "started_at",     null: false
+    t.integer  "channel_id",                     null: false
+    t.integer  "episode_id",                     null: false
+    t.integer  "work_id",                        null: false
+    t.datetime "started_at",                     null: false
     t.datetime "sc_last_update"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.integer  "sc_pid"
+    t.boolean  "rebroadcast",    default: false, null: false
   end
 
-  add_index "programs", ["channel_id", "episode_id"], name: "programs_channel_id_episode_id_key", unique: true, using: :btree
   add_index "programs", ["channel_id"], name: "programs_channel_id_idx", using: :btree
   add_index "programs", ["episode_id"], name: "programs_episode_id_idx", using: :btree
+  add_index "programs", ["sc_pid"], name: "index_programs_on_sc_pid", unique: true, using: :btree
   add_index "programs", ["work_id"], name: "programs_work_id_idx", using: :btree
 
   create_table "providers", force: :cascade do |t|
@@ -774,6 +794,9 @@ ActiveRecord::Schema.define(version: 20151227101344) do
   add_foreign_key "follows", "users", column: "following_id", name: "follows_following_id_fk", on_delete: :cascade
   add_foreign_key "follows", "users", name: "follows_user_id_fk", on_delete: :cascade
   add_foreign_key "items", "works", name: "items_work_id_fk", on_delete: :cascade
+  add_foreign_key "latest_statuses", "episodes", column: "next_episode_id"
+  add_foreign_key "latest_statuses", "users"
+  add_foreign_key "latest_statuses", "works"
   add_foreign_key "likes", "users", name: "likes_user_id_fk", on_delete: :cascade
   add_foreign_key "notifications", "users", column: "action_user_id", name: "notifications_action_user_id_fk", on_delete: :cascade
   add_foreign_key "notifications", "users", name: "notifications_user_id_fk", on_delete: :cascade

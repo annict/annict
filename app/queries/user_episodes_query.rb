@@ -1,13 +1,14 @@
 class UserEpisodesQuery
-  attr_reader :user
-
   def initialize(user)
     @user = user
   end
 
-  # 指定した作品の中の記録していないエピソードを返す
-  def unchecked(work_or_works)
-    checked_episode_ids = user.checkins.where(work: work_or_works).pluck(:episode_id)
-    Episode.where(work: work_or_works).where.not(id: checked_episode_ids)
+  def unwatched(work)
+    latest_status = @user.latest_statuses.find_by(work: work)
+
+    return Episode.none if latest_status.blank?
+
+    episode_ids = work.episodes.published.pluck(:id)
+    work.episodes.where(id: (episode_ids - latest_status.watched_episode_ids))
   end
 end

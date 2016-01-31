@@ -4,32 +4,26 @@ class UserWorksQuery
   end
 
   def watching
-    Work.joins(:statuses).merge(@user.statuses.watching)
+    Work.joins(:latest_statuses).merge(@user.latest_statuses.watching)
   end
 
   def wanna_watch_and_watching
-    Work.joins(:statuses).merge(@user.statuses.wanna_watch_and_watching)
+    Work.joins(:latest_statuses).merge(@user.latest_statuses.wanna_watch_and_watching)
   end
 
   def desiring_to_watch
-    Work.joins(:statuses).merge(@user.statuses.desiring_to_watch)
+    Work.joins(:latest_statuses).merge(@user.latest_statuses.desiring_to_watch)
   end
 
   def on_hold
-    Work.joins(:statuses).merge(@user.statuses.on_hold)
+    Work.joins(:latest_statuses).merge(@user.latest_statuses.on_hold)
   end
 
   def unknown
-    Work.where.not(id: @user.statuses.latest.pluck(:work_id))
+    Work.where.not(id: @user.latest_statuses.pluck(:work_id))
   end
 
   def on(status_kind)
-    Work.joins(:statuses).merge(@user.statuses.latest.with_kind(status_kind))
-  end
-
-  def watching_with_season
-    columns = ['works.id', 'works.title', 'seasons.name as season_name']
-    watching.where.not(season_id: nil).order('seasons.id DESC')
-      .joins(:season).select(columns)
+    Work.joins(:latest_statuses).merge(@user.latest_statuses.with_kind(status_kind))
   end
 end

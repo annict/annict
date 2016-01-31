@@ -43,7 +43,7 @@ class Checkin < ActiveRecord::Base
   before_update :check_comment_modified
   after_create  :save_activity
   after_create  :finish_tips
-  after_create  :refresh_check
+  after_create  :update_latest_status
 
   def self.initial?(checkin)
     count == 1 && first.id == checkin.id
@@ -107,8 +107,8 @@ class Checkin < ActiveRecord::Base
     end
   end
 
-  def refresh_check
-    check = user.checks.find_by(work_id: work.id)
-    check.update_episode_to_next(checkin: self) if check.present?
+  def update_latest_status
+    latest_status = user.latest_statuses.find_by(work: work)
+    latest_status.append_episode(episode) if latest_status.present?
   end
 end

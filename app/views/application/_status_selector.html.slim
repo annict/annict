@@ -1,4 +1,4 @@
-- status_kind = current_user.statuses.kind_of(work).try!(:kind).presence || 'no_select'
+- status_kind = current_user.latest_statuses.find_by(work: work).try!(:kind).presence || 'no_select'
 
 .ann-status-selector data-work-id="#{work.id}" data-status-kind="#{status_kind}" data-mini-selector="#{mini}" ng-class='{"is-mini": isMini}'
   .selector

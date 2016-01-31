@@ -26,12 +26,20 @@ body.programs-index {
           color:     $color-gunsmoke;
           font-size: 12px;
 
-          .channel-name {
+          .left {
             float: left;
           }
 
-          .started-at {
+          .right {
             float: right;
+
+            .rebroadcast {
+              border: 1px solid;
+              color: $color-kei;
+              font-size: 10px;
+              margin-right: 5px;
+              padding: 1px;
+            }
           }
         }
       }

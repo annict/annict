@@ -52,34 +52,34 @@ namespace :syobocal do
   end
 
   task save_programs: :environment do
-    tids        = get_work_sc_tids
-    fields      = 'PID,TID,StTime,Count,SubTitle,ProgComment,Flag,Deleted,ChID,STSubTitle,LastUpdate'
-    started_on  = (Date.today - 5.days).strftime('%Y%m%d')
-    ended_on    = (Date.today + 5.days).strftime('%Y%m%d')
-    range       = "#{started_on}_000000-#{ended_on}_235959"
-    request_url = "http://cal.syoboi.jp/db.php" +
-                  "?Command=ProgLookup" +
-                  "&TID=#{tids}" +
-                  "&JOIN=SubTitles" +
-                  "&Fields=#{fields}" +
-                  "&Range=#{range}"
-    doc = Nokogiri::XML(open(request_url))
+    sc_tid_groups.each do |sc_tid_group|
+      fields      = 'PID,TID,StTime,Count,SubTitle,ProgComment,Flag,Deleted,ChID,STSubTitle,LastUpdate'
+      started_on  = (Date.today - 5.days).strftime('%Y%m%d')
+      ended_on    = (Date.today + 10.days).strftime('%Y%m%d')
+      range       = "#{started_on}_000000-#{ended_on}_235959"
+      request_url = "http://cal.syoboi.jp/db.php" +
+                    "?Command=ProgLookup" +
+                    "&TID=#{sc_tid_group}" +
+                    "&JOIN=SubTitles" +
+                    "&Fields=#{fields}" +
+                    "&Range=#{range}"
+      doc = Nokogiri::XML(open(request_url))
 
-    doc.css('ProgItem').each do |item|
-      prog_item = Syobocal::ProgItem.new(item)
+      doc.css('ProgItem').each do |item|
+        prog_item = Syobocal::ProgItem.new(item)
 
-      if prog_item.normal_program?
-        episode = prog_item.save_episode
-        prog_item.save_program(episode)
-      else
-        prog_item.save_alert
+        if prog_item.normal_program?
+          episode = prog_item.save_episode
+          prog_item.save_program(episode)
+        else
+          prog_item.save_alert
+        end
       end
     end
   end
 
-  def get_work_sc_tids
-    work_sc_tids = Work.where(fetch_syobocal: true).pluck(:sc_tid).select { |sid| sid.present? }
-
-    work_sc_tids.to_s.gsub(/\[|\]| /, '')
+  def sc_tid_groups
+    works = Work.where.not(sc_tid: nil)
+    works.pluck(:sc_tid).in_groups_of(300, false).map { |group| group.join(",") }
   end
 end

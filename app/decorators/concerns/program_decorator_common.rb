@@ -17,6 +17,8 @@ module ProgramDecoratorCommon
           h.link_to(work.title, path, target: "_blank")
         when :started_at
           send(field).to_time.strftime("%Y/%m/%d %H:%M")
+        when :rebroadcast
+          send(field) ? h.icon("check") : "-"
         else
           send(field)
         end

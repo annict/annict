@@ -1,5 +1,5 @@
 class Db::ProgramsController < Db::ApplicationController
-  permits :channel_id, :episode_id, :started_at
+  permits :channel_id, :episode_id, :started_at, :rebroadcast
 
   before_action :authenticate_user!
   before_action :load_work, only: [:index, :new, :create, :edit, :update, :destroy]

@@ -17,6 +17,7 @@ table.table.table-striped
       th チャンネル
       th エピソード
       th 放送日時
+      th 再放送
       th 編集
       - if policy(@programs).destroy?
         th 削除
@@ -27,6 +28,7 @@ table.table.table-striped
         td = program.channel.name
         td = program.episode.decorate.title_with_number
         td = program.started_at.try!(:to_time).try!(:strftime, "%Y-%m-%d %H:%M")
+        td = program.rebroadcast? ? icon("check") : "-"
         td
           - if current_user.committer?
             = link_to "編集", edit_db_work_program_path(@work, program), class: "btn btn-primary btn-sm"
