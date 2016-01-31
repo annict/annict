@@ -1,7 +1,7 @@
 module ProgramCommon
   extend ActiveSupport::Concern
 
-  DIFF_FIELDS = %i(channel_id episode_id started_at rebroadcast)
+  DIFF_FIELDS = %i(channel_id episode_id started_at rebroadcast).freeze
   PUBLISH_FIELDS = DIFF_FIELDS + %i(work_id)
 
   included do

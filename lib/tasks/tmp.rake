@@ -16,7 +16,7 @@ namespace :tmp do
       if c.episode_id.present?
         begin
           index = episode_ids.index(c.episode_id) - 1
-          watched_episode_ids = index > 0 ? episode_ids[0..index] : []
+          watched_episode_ids = index >= 0 ? episode_ids[0..index] : []
         rescue
           binding.pry
         end
@@ -36,6 +36,31 @@ namespace :tmp do
         latest_status.save!
       rescue
         binding.pry
+      end
+    end
+  end
+
+  task export_csv: :environment do
+    CSV.open("latest_statuses.csv", "wb") do |csv|
+      LatestStatus.find_each do |s|
+        csv << [s.id, s.user_id, s.work_id, s.next_episode_id, s.kind_value, s.watched_episode_ids, s.position]
+      end
+    end
+  end
+
+  task import_csv: :environment do
+    url = "https://s3-ap-northeast-1.amazonaws.com/annict-development/latest_statuses.csv"
+    CSV.foreach(open(url)) do |row|
+      id, user_id, work_id, next_episode_id, kind, watched_episode_ids, position = row
+      puts id
+      LatestStatus.create do |s|
+        s.id = id
+        s.user_id = user_id
+        s.work_id = work_id
+        s.next_episode_id = next_episode_id
+        s.kind = kind
+        s.watched_episode_ids = eval(watched_episode_ids)
+        s.position = position
       end
     end
   end

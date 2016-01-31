@@ -98,7 +98,7 @@ class Status < ActiveRecord::Base
   def save_latest_status
     latest_status = user.latest_statuses.find_or_initialize_by(work: work)
     latest_status.kind = kind
-    latest_status.watched_episode_ids = [] if ["watched", "stop_watching"].include?(kind)
+    latest_status.watched_episode_ids = [] if %w(watched stop_watching).include?(kind)
     latest_status.save!
   end
 end
