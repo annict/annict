@@ -1,152 +1,67 @@
 namespace :tmp do
-  task create_data: :environment do
-    PREFECTURES.each do |prefecture_name|
-      prefecture = Prefecture.where(name: prefecture_name).first_or_create!
-      puts "prefecture: #{prefecture.name}"
+  task create_latest_status: :environment do
+    Status.where(latest: true).find_each do |s|
+      puts "status: #{s.id}"
+      latest_status = s.user.latest_statuses.find_or_initialize_by(work: s.work)
+      latest_status.kind = s.kind
+      latest_status.save!
     end
+  end
 
-    works = Work.where.not(sc_tid: nil).order(:id)
-    works = works.where("id >= ?", 1)
-    works.find_each do |work|
-      if [4583].include?(work.id)
-        puts "work_id: #{work.id} skipped"
-        next
-      end
-      puts "work_id: #{work.id}"
-      doc = Nokogiri::XML(open("http://cal.syoboi.jp/db.php?TID=#{work.sc_tid}&Command=TitleLookup"))
-      doc.css("Comment").each do |item|
+  task move_checks_to_latest_statuses: :environment do
+    Check.find_each do |c|
+      puts "check: #{c.id}"
+
+      episode_ids = c.work.episodes.order(:sort_number).pluck(:id)
+      if c.episode_id.present?
         begin
-          comment = item.text + "*"
-          comment = comment.
-            gsub(/\n/, ",").
-            gsub(":,", ",").
-            gsub(";", ":").
-            gsub("：", ":")
-
-          save_staff_info(work, comment)
-          save_cast_info(work, comment)
-        rescue => e
+          index = episode_ids.index(c.episode_id) - 1
+          watched_episode_ids = index >= 0 ? episode_ids[0..index] : []
+        rescue
           binding.pry
         end
+      else
+        watched_episode_ids = episode_ids
+      end
+      watched_episode_ids = (watched_episode_ids + c.skipped_episode_ids).uniq
+
+      begin
+        latest_status = c.user.latest_statuses.find_by(work: c.work)
+        if latest_status.blank?
+          status = c.user.statuses.where(work: c.work).order(id: :desc).first
+          latest_status = c.user.latest_statuses.create(work: c.work, kind: status.kind)
+        end
+        latest_status.watched_episode_ids = watched_episode_ids
+        latest_status.position = c.position
+        latest_status.save!
+      rescue
+        binding.pry
+      end
+    end
+  end
+
+  task export_csv: :environment do
+    CSV.open("latest_statuses.csv", "wb") do |csv|
+      LatestStatus.find_each do |s|
+        csv << [s.id, s.user_id, s.work_id, s.next_episode_id, s.kind_value, s.watched_episode_ids, s.position]
+      end
+    end
+  end
+
+  task import_csv: :environment do
+    url = "https://s3-ap-northeast-1.amazonaws.com/annict-development/latest_statuses.csv"
+    CSV.foreach(open(url)) do |row|
+      id, user_id, work_id, next_episode_id, kind, watched_episode_ids, position = row
+      puts id
+      LatestStatus.create do |s|
+        s.id = id
+        s.user_id = user_id
+        s.work_id = work_id
+        s.next_episode_id = next_episode_id
+        s.kind = kind
+        s.watched_episode_ids = eval(watched_episode_ids)
+        s.position = position
       end
     end
   end
 end
-
-def save_staff_info(work, comment)
-  staff_str = comment[/\*(スタッフ.+?)\*/, 1]
-
-  if staff_str.present?
-    staff_ary = staff_str.split(",").select { |str| str.include?(":") }
-    staffs = staff_ary.map { |str| str.split(/:(.*):/).select(&:present?) }
-    staffs = staffs[0..-2] if work.id == 2121
-    staffs = staffs.to_h
-    org_str = staffs["アニメーション制作"] ||
-              staffs["制作"] ||
-              staffs["制作スタジオ"] ||
-              staffs["アニメーション製作"] ||
-              staffs["アニメ制作"]
-    orgs = org_str.try!(:split, "、")
-    if orgs.present?
-      orgs.each do |org|
-        organization = Organization.where(name: org).first_or_create!
-        work.work_organizations.where(organization: organization, role: :producer, sort_number: 10).first_or_create!
-      end
-    end
-
-    staffs = staffs.except("アニメーション制作", "制作", "制作スタジオ", "アニメーション製作", "アニメ制作")
-
-    work_staff_roles = Staff.role.values.map do |role_value|
-      { value: role_value, text: I18n.t("enumerize.staff.role.#{role_value}") }
-    end
-    i = 1
-    work_staff_roles.each do |wsp_role|
-      name = staffs[wsp_role[:text]]
-      next if name.blank?
-      person = Person.where(name: name).first_or_create!
-      work.staffs.where(person: person, name: person.name, role: wsp_role[:value]).first_or_create! do |staff|
-        staff.sort_number = i * 10
-        i += 1
-      end
-    end
-
-    staffs = staffs.except(*(work_staff_roles.map { |wspr| wspr[:text] }))
-
-    staffs.each do |role, name|
-      person = Person.where(name: name).first_or_create!
-      work.staffs.where(person: person, name: person.name, role: :other, role_other: role).first_or_create! do |staff|
-        staff.sort_number = 100
-      end
-    end
-  end
-end
-
-def save_cast_info(work, comment)
-  cast_str = comment[/\*(キャスト.+?)\*/, 1]
-
-  if cast_str.present?
-    cast_ary = cast_str.split(",").select { |str| str.include?(":") }
-    casts = cast_ary.map { |str| str.split(/:(.*):/).select(&:present?) }
-    casts = casts.select { |cast| cast.length == 2 }.to_h
-
-    i = 1
-    casts.each do |part, name|
-      person = Person.where(name: name).first_or_create!
-      work.casts.where(person: person, name: person.name, part: part).first_or_create! do |cast|
-        cast.sort_number = i * 10
-        i += 1
-      end
-    end
-  end
-end
-
-PREFECTURES = %w(
-  北海道
-  青森県
-  岩手県
-  宮城県
-  秋田県
-  山形県
-  福島県
-  茨城県
-  栃木県
-  群馬県
-  埼玉県
-  千葉県
-  東京都
-  神奈川県
-  新潟県
-  富山県
-  石川県
-  福井県
-  山梨県
-  長野県
-  岐阜県
-  静岡県
-  愛知県
-  三重県
-  滋賀県
-  京都府
-  大阪府
-  兵庫県
-  奈良県
-  和歌山県
-  鳥取県
-  島根県
-  岡山県
-  広島県
-  山口県
-  徳島県
-  香川県
-  愛媛県
-  高知県
-  福岡県
-  佐賀県
-  長崎県
-  熊本県
-  大分県
-  宮崎県
-  鹿児島県
-  沖縄県
-  海外
-)

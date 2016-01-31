@@ -60,6 +60,7 @@ class Work < ActiveRecord::Base
   has_many :draft_work_organizations, dependent: :destroy
   has_many :draft_works, dependent: :destroy
   has_many :episodes, dependent: :destroy
+  has_many :latest_statuses, dependent: :destroy
   has_many :organizations, through: :work_organizations
   has_many :programs, dependent: :destroy
   has_many :statuses, dependent: :destroy
@@ -133,10 +134,6 @@ class Work < ActiveRecord::Base
       programs = Program.where(episode_id: episodes.pluck(:id))
       Channel.where(id: programs.pluck(:channel_id).uniq) if programs.present?
     end
-  end
-
-  def broadcast_on_nicoch?
-    nicoch_started_at.present?
   end
 
   def current_season?
