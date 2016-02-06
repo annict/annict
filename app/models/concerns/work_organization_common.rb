@@ -1,7 +1,7 @@
 module WorkOrganizationCommon
   extend ActiveSupport::Concern
 
-  DIFF_FIELDS = %i(organization_id role role_other)
+  DIFF_FIELDS = %i(organization_id role role_other sort_number)
   PUBLISH_FIELDS = DIFF_FIELDS + %i(work_id)
 
   included do

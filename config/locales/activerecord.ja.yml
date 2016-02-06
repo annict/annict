@@ -31,6 +31,7 @@ ja:
         work_id: 作品
         role: 担当
         role_other: 担当 (その他)
+        sort_number: ソート番号
       episode:
         number: 話数
         prev_episode_id: 前のエピソード
@@ -147,6 +148,7 @@ ja:
         work_id: 作品
         role: 担当
         role_other: 担当 (その他)
+        sort_number: ソート番号
     errors:
       messages:
         accepted: に同意してください。

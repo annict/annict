@@ -1,12 +1,12 @@
 module Db
   class WorkOrganizationsController < Db::ApplicationController
-    permits :organization_id, :name, :role, :role_other
+    permits :organization_id, :name, :role, :role_other, :sort_number
 
     before_action :authenticate_user!
     before_action :load_work, only: [:index, :new, :create, :edit, :update, :destroy]
 
     def index
-      @work_organizations = @work.work_organizations.order(id: :desc)
+      @work_organizations = @work.work_organizations.order(:sort_number)
     end
 
     def new

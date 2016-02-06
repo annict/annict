@@ -14,6 +14,7 @@ table.table.table-striped
       th ID
       th 会社/団体
       th 担当
+      th ソート番号
       th 編集
       - if policy(@work_organizations).destroy?
         th 削除
@@ -23,6 +24,7 @@ table.table.table-striped
         td = work_organization.id
         td = work_organization.organization.name
         td = work_organization.decorate.role_name
+        td = work_organization.sort_number
         td
           - if current_user.committer?
             = link_to "編集", edit_db_work_work_organization_path(@work, work_organization), class: "btn btn-primary btn-sm"
