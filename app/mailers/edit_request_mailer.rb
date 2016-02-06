@@ -1,7 +1,7 @@
 class EditRequestMailer < ActionMailer::Base
   default from: "Annict <no-reply@annict.com>"
 
-  def comment_notification(db_activity_id)
+  def comment_notification(db_activity_id, email)
     db_activity = DbActivity.find(db_activity_id)
 
     @edit_request = db_activity.recipient
@@ -11,12 +11,10 @@ class EditRequestMailer < ActionMailer::Base
 
     subject = "【Annict DB】#{@name}さんが編集リクエストにコメントしました"
 
-    @edit_request.participants.where.not(user: @user).each do |p|
-      mail(to: p.user.email, subject: subject)
-    end
+    mail(to: email, subject: subject)
   end
 
-  def publish_notification(db_activity_id)
+  def publish_notification(db_activity_id, email)
     db_activity = DbActivity.find(db_activity_id)
 
     @edit_request = db_activity.trackable
@@ -25,12 +23,10 @@ class EditRequestMailer < ActionMailer::Base
 
     subject = "【Annict DB】#{@name}さんが編集リクエストを公開しました"
 
-    @edit_request.participants.where.not(user: @user).each do |p|
-      mail(to: p.user.email, subject: subject)
-    end
+    mail(to: email, subject: subject)
   end
 
-  def close_notification(db_activity_id)
+  def close_notification(db_activity_id, email)
     db_activity = DbActivity.find(db_activity_id)
 
     @edit_request = db_activity.trackable
@@ -39,20 +35,16 @@ class EditRequestMailer < ActionMailer::Base
 
     subject = "【Annict DB】#{@name}さんが編集リクエストを閉じました"
 
-    @edit_request.participants.where.not(user: @user).each do |p|
-      mail(to: p.user.email, subject: subject)
-    end
+    mail(to: email, subject: subject)
   end
 
-  def new_edit_request_notification(edit_request_id)
+  def new_edit_request_notification(edit_request_id, email)
     @edit_request = EditRequest.find(edit_request_id)
     @user = @edit_request.user
     @name = @user.profile.name
 
     subject = "【Annict DB】#{@name}さんが編集リクエストを作成しました"
 
-    User.where.not(id: @edit_request.user.id).with_role(:editor, :admin).each do |u|
-      mail(to: u.email, subject: subject)
-    end
+    mail(to: email, subject: subject)
   end
 end

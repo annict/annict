@@ -18,6 +18,7 @@
 class EditRequestComment < ActiveRecord::Base
   belongs_to :edit_request
   belongs_to :user
+  has_many :db_activities, as: :trackable, dependent: :destroy
 
   validates :body, presence: true
 

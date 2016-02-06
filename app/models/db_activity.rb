@@ -35,13 +35,16 @@ class DbActivity < ActiveRecord::Base
   private
 
   def send_notification
-    case action
-    when "edit_request_comments.create"
-      EditRequestMailer.comment_notification(id).deliver_later
-    when "edit_requests.publish"
-      EditRequestMailer.publish_notification(id).deliver_later
-    when "edit_requests.close"
-      EditRequestMailer.close_notification(id).deliver_later
+    method = case action
+      when "edit_request_comments.create" then :comment_notification
+      when "edit_requests.publish" then :publish_notification
+      when "edit_requests.close" then :close_notification
+      end
+
+    if method.present?
+      recipient.participants.where.not(user: user).each do |p|
+        EditRequestMailer.send(method, id, p.user.email).deliver_later
+      end
     end
   end
 end

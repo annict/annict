@@ -1,6 +1,6 @@
 module Db
   class DraftWorkOrganizationsController < Db::ApplicationController
-    permits :organization_id, :work_organization_id, :role, :role_other,
+    permits :organization_id, :work_organization_id, :role, :role_other, :sort_number,
       edit_request_attributes: [:id, :title, :body]
 
     before_action :authenticate_user!

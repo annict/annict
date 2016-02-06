@@ -54,11 +54,7 @@ ul.nav.nav-tabs.p-db-edit_requests--show__tabs
         hr
     
     - if policy(@comment).create?
-      = form_for @comment, url: db_edit_request_comments_path(@edit_request) do |f|
-        = render "application/error_panel", resource: f.object
-        .form-group
-          = f.text_area :body, class: "form-control", rows: 5
-        = f.submit "コメントする", class: "btn btn-primary"
+      = render "db/edit_request_comments/fields", edit_request: @edit_request, comment: @comment
   
   #changes.tab-pane
     - if @edit_request.draft_resource.blank?

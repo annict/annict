@@ -10,6 +10,8 @@ module WorkOrganizationDecoratorCommon
           Organization.find(organization_id).name if organization_id.present?
         when :role
           send(:role_text)
+        when :sort_number
+          send(:sort_number).to_s
         else
           send(field)
         end
