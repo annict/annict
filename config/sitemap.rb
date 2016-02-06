@@ -23,8 +23,6 @@ SitemapGenerator::Sitemap.create do
   add terms_path
 
   User.find_each do |u|
-    add following_user_path(u.username), priority: 0.8
-    add followers_user_path(u.username), priority: 0.8
     add user_path(u.username), priority: 0.9, lastmod: u.updated_at
 
     Status.kind.values.each do |k|
@@ -40,10 +38,8 @@ SitemapGenerator::Sitemap.create do
     add work_path(w.id), priority: 1.0, lastmod: w.updated_at
 
     w.episodes.published.find_each do |e|
-      add work_episode_path(w.id, e.id), priority: 1.0
-
-      e.checkins.find_each do |c|
-        add work_episode_checkin_path(w.id, e.id, c.id), priority: 0.8
+      if e.checkins.present?
+        add work_episode_path(w.id, e.id), priority: 1.0
       end
     end
   end
