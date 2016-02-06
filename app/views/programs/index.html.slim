@@ -2,7 +2,7 @@
 
 .content
   .container
-    .programs ng-controller='ProgramsCtrl' ann-loading='loading'
+    .programs ng-controller='ProgramsCtrl' ann-loading='loading' ng-style="{'display': 'block'}"
       div infinite-scroll='addMorePrograms()' infinite-scroll-disabled='disabled' infinite-scroll-distance='2'
         .program ng-repeat='program in programs' ng-show='0 < programs.length'
           = render 'programs/program'

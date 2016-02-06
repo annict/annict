@@ -1,8 +1,9 @@
 doctype html
 html lang='ja' ng-app='annict'
   head
-    = render 'head'
+    = render "head"
   body#ann class="#{body_class} #{user_signed_in? ? 'signed-in' : 'not-signed-in'}"
-    = render 'flash'
+    = render "flash"
     = yield
-    = render 'analytics'
+    = render "foot"
+    = render "analytics"
