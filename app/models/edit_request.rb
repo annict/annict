@@ -132,6 +132,8 @@ class EditRequest < ActiveRecord::Base
   end
 
   def notify_new_edit_request
-    EditRequestMailer.new_edit_request_notification(id).deliver_later
+    User.where.not(id: user.id).with_role(:editor, :admin).each do |u|
+      EditRequestMailer.new_edit_request_notification(id, u.email).deliver_later
+    end
   end
 end
