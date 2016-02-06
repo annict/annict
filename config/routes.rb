@@ -52,7 +52,7 @@ Annict::Application.routes.draw do
         post :close
         post :publish
       end
-      resources :comments, only: [:create], controller: "edit_request_comments"
+      resources :comments, only: [:create, :edit, :update, :destroy], controller: "edit_request_comments"
     end
 
     resources :organizations, except: [:show] do

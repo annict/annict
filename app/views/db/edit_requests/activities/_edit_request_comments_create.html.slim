@@ -11,3 +11,9 @@
         = "#{time_ago_in_words(activity.trackable.created_at)}前"
       .clearfix
     = auto_link(simple_format(activity.trackable.body), html: { target: "_blank" })
+    .media-footer
+      .pull-right
+        - if policy(activity.trackable).update?
+          = link_to "編集", edit_db_edit_request_comment_path(activity.recipient, activity.trackable)
+        - if policy(activity.trackable).destroy?
+          = link_to "削除", db_edit_request_comment_path(activity.recipient, activity.trackable), data: { method: :delete, confirm: "削除しますか？" }
