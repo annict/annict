@@ -20,6 +20,7 @@ class UserProgramsQuery
 
     channel_works.each do |cw|
       episode_ids = user.episodes.unwatched(cw.work).pluck(:id)
+      next if episode_ids.blank?
       # 過去の放送を取得しないようにするため、直近の放送分のみ取得する
       sql = <<-SQL
         WITH ranked_programs AS (
