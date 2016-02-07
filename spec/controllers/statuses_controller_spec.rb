@@ -6,7 +6,6 @@
 #  user_id     :integer          not null
 #  work_id     :integer          not null
 #  kind        :integer          not null
-#  latest      :boolean          default(FALSE), not null
 #  likes_count :integer          default(0), not null
 #  created_at  :datetime
 #  updated_at  :datetime
@@ -50,10 +49,6 @@ describe StatusesController do
 
       it '200を返すこと' do
         expect(response.status).to eq(200)
-      end
-
-      it 'ステータスがリセットされること' do
-        expect(user.statuses.first.latest).to eq(false)
       end
     end
   end

@@ -12,13 +12,12 @@ namespace :counter_cache do
   task refresh_watchers_count: :environment do
     Work.find_each do |work|
       kinds = %w(wanna_watch watching watched)
-      watchers_count = work.statuses.latest.with_kind(*kinds).count
+      watchers_count = work.latest_statuses.with_kind(*kinds).count
 
       if work.watchers_count != watchers_count
         work.update_column(:watchers_count, watchers_count)
+        puts "Work ID: #{work.id} の watchers_count を更新しました。"
       end
-
-      puts "Work ID: #{work.id} の watchers_count を更新しました。"
     end
   end
 
