@@ -33,7 +33,7 @@ class UserProgramsQuery
             episode_id IN (#{episode_ids.join(",")})
         )
         SELECT id FROM ranked_programs WHERE
-		      episode_rank = (SELECT max(episode_rank) FROM ranked_programs);
+          episode_rank = (SELECT max(episode_rank) FROM ranked_programs);
       SQL
       program_ids << Program.find_by_sql(sql).map(&:id)
     end
