@@ -43,7 +43,6 @@ class Episode < ActiveRecord::Base
   belongs_to :work, counter_cache: true
   has_many :activities, dependent: :destroy, foreign_key: :recipient_id, foreign_type: :recipient
   has_many :checkins,   dependent: :destroy
-  has_many :checks,     dependent: :destroy
   has_many :draft_episodes, dependent: :destroy
   has_many :programs,   dependent: :destroy
 

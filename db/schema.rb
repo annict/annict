@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160207115414) do
+ActiveRecord::Schema.define(version: 20160207120355) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -103,20 +103,6 @@ ActiveRecord::Schema.define(version: 20160207115414) do
   add_index "checkins", ["twitter_url_hash"], name: "checkins_twitter_url_hash_key", unique: true, using: :btree
   add_index "checkins", ["user_id"], name: "checkins_user_id_idx", using: :btree
   add_index "checkins", ["work_id"], name: "index_checkins_on_work_id", using: :btree
-
-  create_table "checks", force: :cascade do |t|
-    t.integer  "user_id",                          null: false
-    t.integer  "work_id",                          null: false
-    t.integer  "episode_id"
-    t.integer  "skipped_episode_ids", default: [], null: false, array: true
-    t.integer  "position",            default: 0,  null: false
-    t.datetime "created_at",                       null: false
-    t.datetime "updated_at",                       null: false
-  end
-
-  add_index "checks", ["user_id", "position"], name: "index_checks_on_user_id_and_position", using: :btree
-  add_index "checks", ["user_id", "work_id"], name: "index_checks_on_user_id_and_work_id", unique: true, using: :btree
-  add_index "checks", ["user_id"], name: "index_checks_on_user_id", using: :btree
 
   create_table "comments", force: :cascade do |t|
     t.integer  "user_id",                 null: false
@@ -748,9 +734,6 @@ ActiveRecord::Schema.define(version: 20160207115414) do
   add_foreign_key "checkins", "episodes", name: "checkins_episode_id_fk", on_delete: :cascade
   add_foreign_key "checkins", "users", name: "checkins_user_id_fk", on_delete: :cascade
   add_foreign_key "checkins", "works", name: "checkins_work_id_fk"
-  add_foreign_key "checks", "episodes"
-  add_foreign_key "checks", "users"
-  add_foreign_key "checks", "works"
   add_foreign_key "comments", "checkins", name: "comments_checkin_id_fk", on_delete: :cascade
   add_foreign_key "comments", "users", name: "comments_user_id_fk", on_delete: :cascade
   add_foreign_key "comments", "works"

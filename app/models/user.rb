@@ -51,7 +51,6 @@ class User < ActiveRecord::Base
   has_many :activities,    dependent: :destroy
   has_many :channel_works, dependent: :destroy
   has_many :checkins,      dependent: :destroy
-  has_many :checks,        dependent: :destroy
   has_many :finished_tips, dependent: :destroy
   has_many :follows,       dependent: :destroy
   has_many :followings,    through:   :follows
