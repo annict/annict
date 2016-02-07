@@ -14,7 +14,6 @@
 #  released_at       :date
 #  created_at        :datetime
 #  updated_at        :datetime
-#  fetch_syobocal    :boolean          default(FALSE), not null
 #  twitter_username  :string(510)
 #  twitter_hashtag   :string(510)
 #  released_at_about :string

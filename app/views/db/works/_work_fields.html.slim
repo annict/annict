@@ -38,10 +38,3 @@
   = f.label :released_at_about, class: "col-sm-3 control-label"
   .col-sm-9
     = f.text_field :released_at_about, class: "form-control", placeholder: "例: 2015年"
-- if f.object.instance_of?(Work) && current_user.role.admin?
-  .form-group
-    .col-sm-offset-3.col-sm-9
-      .checkbox
-        = f.label :fetch_syobocal do
-          = f.check_box :fetch_syobocal
-          | しょぼかるからデータを取得する

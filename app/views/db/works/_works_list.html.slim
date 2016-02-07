@@ -26,10 +26,6 @@ table.table.table-striped.c-resource-list
         td
           - if work.sc_tid.present?
             = work.decorate.syobocal_link
-            - if work.fetch_syobocal?
-              = icon("cloud-download", class: "c-resource-list__fetch-syobocal enabled", "data-toggle" => "tooltip", title: "しょぼかるから定期的にエピソードや番組情報を取得しています")
-            - else
-              = icon("cloud-download", class: "c-resource-list__fetch-syobocal disabled", "data-toggle" => "tooltip", title: "しょぼかるからデータを取得する設定をオフにしています")
           - else
             = "未設定"
         td = "#{work.watchers_count}人"

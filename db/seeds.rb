@@ -94,7 +94,6 @@ works.each do |row|
     w.wikipedia_url     = row[6].presence || ""
     w.watchers_count    = row[8]
     w.released_at       = row[9]
-    w.fetch_syobocal    = (row[13] == "true")
     w.twitter_username  = row[14].presence || ""
     w.twitter_hashtag   = row[15].presence || ""
     w.released_at_about = row[16].presence || nil

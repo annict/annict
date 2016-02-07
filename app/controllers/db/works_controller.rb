@@ -1,7 +1,6 @@
 class Db::WorksController < Db::ApplicationController
   permits :season_id, :sc_tid, :title, :media, :official_site_url, :wikipedia_url,
-          :twitter_username, :twitter_hashtag, :released_at_about,
-          :fetch_syobocal
+          :twitter_username, :twitter_hashtag, :released_at_about
 
   before_action :authenticate_user!, only: [:new, :create, :edit, :update, :destroy]
 

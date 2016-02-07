@@ -42,7 +42,7 @@ class DbActivity < ActiveRecord::Base
       end
 
     if method.present?
-      recipient.participants.where.not(user: user).each do |p|
+      (recipient.presence || trackable).participants.where.not(user: user).each do |p|
         EditRequestMailer.send(method, id, p.user.email).deliver_later
       end
     end
