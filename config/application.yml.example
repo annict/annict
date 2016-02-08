@@ -7,6 +7,8 @@ ANNICT_PAPERCLIP_RANDOM_SECRET: 'abcdefghijklmnopqrstuvwxyz'
 DEVISE_SECRET: 'abcdefghijklmnopqrstuvwxyz'
 RAILS_SECRET_KEY_BASE: 'abcdefghijklmnopqrstuvwxyz'
 
+REDIS_URL: 'redis:127.0.0.1:6379'
+
 development:
   FACEBOOK_APP_ID: '000000000000000'
   FACEBOOK_SECRET_KEY: 'xxxxxxxxxxxxxxxxxxxxxxxx'
