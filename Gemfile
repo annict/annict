@@ -39,7 +39,6 @@ gem "redis-rails"
 gem "meta-tags"
 gem "mini_magick"
 gem "net-ssh" # fog を使用している asset_sync で使用
-gem "newrelic_rpm"
 gem "ngannotate-rails"
 gem "nokogiri", ">= 1.6.7.2"
 gem "omniauth-facebook"
