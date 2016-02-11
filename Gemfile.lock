@@ -360,7 +360,7 @@ GEM
     method_source (0.8.2)
     mime-types (2.99)
     mimemagic (0.3.0)
-    mini_magick (4.3.6)
+    mini_magick (4.4.0)
     mini_portile2 (2.0.0)
     minitest (5.8.4)
     multi_json (1.11.2)
@@ -406,7 +406,7 @@ GEM
       cocaine (~> 0.5.5)
       mime-types
       mimemagic (= 0.3.0)
-    parser (2.3.0.2)
+    parser (2.3.0.3)
       ast (~> 2.2)
     pg (0.18.4)
     poltergeist (1.9.0)
