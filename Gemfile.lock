@@ -64,12 +64,12 @@ GEM
       execjs
       json
     awesome_print (1.6.1)
-    aws-sdk (2.2.15)
-      aws-sdk-resources (= 2.2.15)
-    aws-sdk-core (2.2.15)
+    aws-sdk (2.2.16)
+      aws-sdk-resources (= 2.2.16)
+    aws-sdk-core (2.2.16)
       jmespath (~> 1.0)
-    aws-sdk-resources (2.2.15)
-      aws-sdk-core (= 2.2.15)
+    aws-sdk-resources (2.2.16)
+      aws-sdk-core (= 2.2.16)
     aws-sdk-v1 (1.66.0)
       json (~> 1.4)
       nokogiri (>= 1.4.4)
@@ -295,7 +295,7 @@ GEM
       json
       multi_json
       request_store (>= 1.0)
-    hashdiff (0.2.3)
+    hashdiff (0.3.0)
     hashie (3.4.3)
     hirb (0.7.3)
     hirb-unicode (0.0.5)
