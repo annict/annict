@@ -21,7 +21,7 @@ module Syobocal
 
     def episode
       episode_by_sc_count = work.episodes.find_by(sc_count: @count)
-      episode_by_title = work.episodes.find_by(title: @title)
+      episode_by_title = @title.blank? ? nil : work.episodes.find_by(title: @title)
       @episode ||= (episode_by_sc_count.presence || episode_by_title)
     end
 
