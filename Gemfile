@@ -95,6 +95,7 @@ end
 group :production do
   gem "bugsnag"
   gem "rails_12factor"
+  gem "skylight"
 end
 
 group :test do
