@@ -1,8 +1,9 @@
 - action = t("enumerize.status.kind_action.#{params[:status_kind]}")
 
-- title "#{@user.profile.name} (#{@user.username})さんが#{action}#{t('words.anime')}"
-- description meta_description("#{@user.profile.name}さんが#{action}#{t('words.anime')}をチェック！")
-- keywords meta_keywords(@user.profile.name, @user.username)
+- title = "#{@user.profile.name} (#{@user.username})さんが#{action}#{t('words.anime')}"
+- description = meta_description("#{@user.profile.name}さんが#{action}#{t('words.anime')}をチェック！")
+- keywords = meta_keywords(@user.profile.name, @user.username)
+- set_meta_tags(title: title, description: description, keywords: keywords, reverse: true)
 
 .content
   .ann-user-sub-header

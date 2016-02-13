@@ -36,10 +36,6 @@ ja:
     other_users: その他利用者の皆さん
     others_missing: まだフォローしていないその他利用者の皆さんはいませんでした。
   home:
-    index:
-      signout:
-        catch_copy: 見たアニメを記録して、共有しよう
-      title: 'アニクト - %{catch_copy}'
     no_timeline: 友達のアクティビティはありませんでした。
     no_timeline_find_friends_html: ''
   meta:

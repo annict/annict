@@ -1,6 +1,7 @@
-- title @work.title
-- description meta_description("#{@work.title}を見たらAnnictに記録しよう！")
-- keywords meta_keywords(@work.title)
+- title = "アニメ「#{@work.title}」"
+- description = meta_description("#{@work.title}を見たらAnnictに記録しよう！")
+- keywords = meta_keywords(@work.title)
+- set_meta_tags(title: title, description: description, keywords: keywords, reverse: true, prefix: false)
 
 .content
   .wrapper

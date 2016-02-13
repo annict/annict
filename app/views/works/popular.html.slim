@@ -1,3 +1,8 @@
+- title = "人気アニメ一覧"
+- description = meta_description("Annictユーザに人気のアニメをチェック！")
+- keywords = meta_keywords("人気", "評判", "ランキング")
+- set_meta_tags(title: title, description: description, keywords: keywords, reverse: true)
+
 = render "nav"
 
 = render "works", works: @works, user: current_user, compact: false

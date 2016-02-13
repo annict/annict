@@ -1,6 +1,7 @@
-- title t("home.index.title", catch_copy: t("home.index.signout.catch_copy"))
-- description meta_description
-- keywords meta_keywords
+- title = "アニクト - 見たアニメを記録して、共有しよう"
+- description = meta_description
+- keywords = meta_keywords
+- set_meta_tags(title: title, description: description, keywords: keywords)
 
 .hero-content
   ul.images(ani-cover-image)
@@ -21,7 +22,7 @@
   .welcome
     h1 Annict
     p.lead
-      = t("home.index.signout.catch_copy")
+      | 見たアニメを記録して、共有しよう
     .signin-buttons
       .signin-button
         = link_to user_omniauth_authorize_path(:twitter), class: "btn btn-twitter" do
