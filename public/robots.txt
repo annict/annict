@@ -1,4 +1,4 @@
-User-Agent:*
+User-Agent: *
 Disallow: /db/
 
 Sitemap: https://annict.com/sitemap.xml.gz
