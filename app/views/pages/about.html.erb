@@ -1,4 +1,7 @@
-<%= content_for :site_page_title, "#{t('titles.about')}" %>
+<% title = "Annict (アニクト)について" %>
+<% description = meta_description %>
+<% keywords = meta_keywords %>
+<% set_meta_tags(title: title, description: description, keywords: keywords, reverse: true) %>
 
 <div class="content">
   <div class="container">

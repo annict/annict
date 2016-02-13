@@ -1,6 +1,7 @@
-- title "#{@work.title} #{@episode.number}「#{@episode.title}」"
-- description meta_description("#{@work.title} #{@episode.number}の感想をチェック！")
-- keywords meta_keywords([@work.title, @episode.number, @episode.title])
+- title = "アニメ「#{@work.title}」#{@episode.decorate.meta_number(prefix: true)}#{@episode.decorate.meta_title}"
+- description = meta_description("「#{@work.title}」#{@episode.decorate.meta_number}の感想をチェック！")
+- keywords = meta_keywords([@work.title, @episode.decorate.meta_number, @episode.number, @episode.title])
+- set_meta_tags(title: title, description: description, keywords: keywords, reverse: true)
 
 .content
   .wrapper

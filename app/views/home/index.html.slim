@@ -1,6 +1,7 @@
-- title t('home.index.title', catch_copy: t('home.index.signout.catch_copy'))
-- description meta_description
-- keywords meta_keywords
+- title = "Annict"
+- description = meta_description
+- keywords = meta_keywords
+- set_meta_tags(title: title, description: description, keywords: keywords, site: false)
 
 - if current_user.tips.unfinished.present?
   = render 'tips'

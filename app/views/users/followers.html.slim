@@ -1,6 +1,7 @@
-- title "#{@user.profile.name} (#{@user.username})さんをフォローしている人"
-- description meta_description("#{@user.profile.name}さんをフォローしている人をチェック！")
-- keywords meta_keywords(@user.profile.name, @user.username)
+- title = "#{@user.profile.name} (#{@user.username})さんをフォローしている人"
+- description = meta_description("#{@user.profile.name}さんをフォローしている人をチェック！")
+- keywords = meta_keywords(@user.profile.name, @user.username)
+- set_meta_tags(title: title, description: description, keywords: keywords, reverse: true)
 
 .header-wrapper
   .ann-user-sub-header.container

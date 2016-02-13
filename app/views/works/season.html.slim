@@ -1,3 +1,9 @@
+- yearly_season_ja = @season.decorate.yearly_season_ja
+- title = "#{yearly_season_ja}アニメ一覧"
+- description = meta_description("#{yearly_season_ja}アニメをチェック！")
+- keywords = meta_keywords(yearly_season_ja, "人気", "評判")
+- set_meta_tags(title: title, description: description, keywords: keywords, reverse: true)
+
 = render "nav"
 
 .content

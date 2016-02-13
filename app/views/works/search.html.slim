@@ -1,6 +1,7 @@
-- title "アニメ検索"
-- description meta_description("全#{Work.published.count}作品の中から気になるアニメを検索！")
-- keywords meta_keywords("検索")
+- title = "アニメ検索"
+- description = meta_description("全#{Work.published.count}作品の中から気になるアニメを検索！")
+- keywords = meta_keywords("検索")
+- set_meta_tags(title: title, description: description, keywords: keywords, reverse: true)
 
 = render "nav"
 

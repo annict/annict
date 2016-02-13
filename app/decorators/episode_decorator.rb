@@ -11,4 +11,15 @@ class EpisodeDecorator < ApplicationDecorator
 
     h.link_to name, path, options
   end
+
+  def meta_number(prefix: false)
+    result = raw_number.present? ? "第#{raw_number}話" : (number.presence || "")
+    return "- #{result}" if result.present? && prefix
+    result
+  end
+
+  def meta_title
+    return "" if title == work.title
+    "「#{title}」"
+  end
 end
