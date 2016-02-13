@@ -68,7 +68,7 @@ gem "virtus"
 
 group :development, :test do
   gem "awesome_print"
-  gem "hirb-unicode"
+  gem "hirb-unicode-steakknife"
   gem "hirb"
   gem "pry-byebug"
   gem "pry-coolline"
