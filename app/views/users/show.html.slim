@@ -1,5 +1,5 @@
 - title = "#{@user.profile.name} (#{@user.username})さんのプロフィール"
-- description = meta_description("#{@user.profile.description} / ")
+- description = meta_description("#{@user.profile.description.presence || "#{@user.profile.name}さんのプロフィール。"} / ")
 - keywords = meta_keywords(@user.profile.name, @user.username)
 - set_meta_tags(title: title, description: description, keywords: keywords, reverse: true)
 
