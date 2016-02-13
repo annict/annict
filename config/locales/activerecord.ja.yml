@@ -34,6 +34,7 @@ ja:
         sort_number: ソート番号
       episode:
         number: 話数
+        raw_number: 話数 (raw)
         prev_episode_id: 前のエピソード
         sc_count: しょぼかる番号
         sort_number: ソート番号
@@ -92,6 +93,7 @@ ja:
         twitter_hashtag: ハッシュタグ
         twitter_username: 公式Twitter
         wikipedia_url: Wikipedia
+        number_format_id: 話数フォーマット
       draft_cast:
         person_id: キャスト
         work_id: 作品
@@ -138,6 +140,7 @@ ja:
         twitter_hashtag: ハッシュタグ
         twitter_username: 公式Twitter
         wikipedia_url: Wikipedia
+        number_format_id: 話数フォーマット
       edit_request:
         title: リクエストタイトル
         body: コメント

@@ -15,8 +15,10 @@ table.table.table-striped.c-resource-list
     tr
       th ID
       th 話数
+      - if current_user.role.admin?
+        th 話数 (raw)
       th サブタイトル
-      th 次のエピソード
+      th 前のエピソード
       th しょぼかる
       th ソート番号
       - if current_user.role.admin?
@@ -37,8 +39,10 @@ table.table.table-striped.c-resource-list
           - else
             = icon("check-circle-o", class: "c-resource-list__status-published disabled", "data-toggle" => "tooltip", title: "このエピソードは非公開になっています")
         td = episode.number.presence || "-"
+        - if current_user.role.admin?
+          td = episode.raw_number.presence || "-"
         td = episode.title.presence || "-"
-        td = episode.next_episode.try!(:number).presence || "-"
+        td = episode.prev_episode&.number.presence || "-"
         td
           - if episode.fetch_syobocal?
             | 同期中

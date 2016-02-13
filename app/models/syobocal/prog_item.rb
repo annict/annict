@@ -109,7 +109,8 @@ module Syobocal
     def create_episode(title)
       prev_episode = work.episodes.order(sort_number: :desc).first
       episode = work.episodes.new do |e|
-        e.number = "##{@count}"
+        e.number = formatted_number(@count).presence || "##{@count}"
+        e.raw_number = @count
         e.sort_number = (work.episodes.count + 1) * 10
         e.sc_count = @count
         e.title = title
@@ -130,6 +131,11 @@ module Syobocal
       end
 
       episode
+    end
+
+    def formatted_number(count)
+      return nil if work.number_format.blank?
+      work.number_format.data[count - 1]
     end
 
     def create_program(episode)

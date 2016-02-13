@@ -16,12 +16,14 @@
 #  released_at_about :string
 #  created_at        :datetime         not null
 #  updated_at        :datetime         not null
+#  number_format_id  :integer
 #
 # Indexes
 #
-#  index_draft_works_on_sc_tid     (sc_tid)
-#  index_draft_works_on_season_id  (season_id)
-#  index_draft_works_on_work_id    (work_id)
+#  index_draft_works_on_number_format_id  (number_format_id)
+#  index_draft_works_on_sc_tid            (sc_tid)
+#  index_draft_works_on_season_id         (season_id)
+#  index_draft_works_on_work_id           (work_id)
 #
 
 class DraftWork < ActiveRecord::Base
