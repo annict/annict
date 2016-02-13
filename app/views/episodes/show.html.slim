@@ -1,7 +1,8 @@
 - title = "アニメ「#{@work.title}」#{@episode.decorate.meta_number(prefix: true)}#{@episode.decorate.meta_title}"
 - description = meta_description("「#{@work.title}」#{@episode.decorate.meta_number}の感想をチェック！")
 - keywords = meta_keywords([@work.title, @episode.decorate.meta_number, @episode.number, @episode.title])
-- set_meta_tags(title: title, description: description, keywords: keywords, reverse: true)
+- canonical = url_for(only_path: false, overwrite_params: nil)
+- set_meta_tags(title: title, description: description, keywords: keywords, canonical: canonical, reverse: true)
 
 .content
   .wrapper
