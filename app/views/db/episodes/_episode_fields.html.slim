@@ -2,6 +2,11 @@
   = f.label :number, class: "col-sm-3 control-label"
   .col-sm-9
     = f.text_field :number, class: "form-control", autofocus: true
+- if current_user.role.admin? && f.object.instance_of?(Episode)
+  .form-group
+    = f.label :raw_number, class: "col-sm-3 control-label"
+    .col-sm-9
+      = f.text_field :raw_number, class: "form-control"
 .form-group
   = f.label :sort_number, class: "col-sm-3 control-label"
   .col-sm-9

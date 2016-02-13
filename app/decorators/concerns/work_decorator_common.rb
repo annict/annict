@@ -34,6 +34,8 @@ module WorkDecoratorCommon
             url = "https://twitter.com/search?q=%23#{hashtag}"
             h.link_to("##{hashtag}", url, target: "_blank")
           end
+        when :number_format_id
+          send(:number_format).name if send(:number_format_id).present?
         else
           send(field)
         end

@@ -18,12 +18,14 @@
 #  twitter_hashtag   :string(510)
 #  released_at_about :string
 #  aasm_state        :string           default("published"), not null
+#  number_format_id  :integer
 #
 # Indexes
 #
-#  index_works_on_aasm_state  (aasm_state)
-#  works_sc_tid_key           (sc_tid) UNIQUE
-#  works_season_id_idx        (season_id)
+#  index_works_on_aasm_state        (aasm_state)
+#  index_works_on_number_format_id  (number_format_id)
+#  works_sc_tid_key                 (sc_tid) UNIQUE
+#  works_season_id_idx              (season_id)
 #
 
 module WorksHelper

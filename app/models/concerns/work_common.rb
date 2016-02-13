@@ -2,7 +2,7 @@ module WorkCommon
   extend ActiveSupport::Concern
 
   DIFF_FIELDS = %i(season_id sc_tid title media official_site_url wikipedia_url
-                   twitter_username twitter_hashtag released_at_about)
+                   twitter_username twitter_hashtag released_at_about number_format_id)
   PUBLISH_FIELDS = DIFF_FIELDS
 
   included do
@@ -10,6 +10,7 @@ module WorkCommon
 
     enumerize :media, in: { tv: 1, ova: 2, movie: 3, web: 4, other: 0 }
 
+    belongs_to :number_format
     belongs_to :season
 
     validates :media, presence: true
