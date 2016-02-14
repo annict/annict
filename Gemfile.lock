@@ -60,7 +60,7 @@ GEM
       fog (>= 1.8.0)
       unf
     ast (2.2.0)
-    autoprefixer-rails (6.3.2)
+    autoprefixer-rails (6.3.3)
       execjs
       json
     awesome_print (1.6.1)
