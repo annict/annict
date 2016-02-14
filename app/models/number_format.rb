@@ -2,11 +2,12 @@
 #
 # Table name: number_formats
 #
-#  id         :integer          not null, primary key
-#  name       :string           not null
-#  data       :string           default([]), not null, is an Array
-#  created_at :datetime         not null
-#  updated_at :datetime         not null
+#  id          :integer          not null, primary key
+#  name        :string           not null
+#  data        :string           default([]), not null, is an Array
+#  created_at  :datetime         not null
+#  updated_at  :datetime         not null
+#  sort_number :integer          default(0), not null
 #
 # Indexes
 #

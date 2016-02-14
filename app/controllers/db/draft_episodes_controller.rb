@@ -1,6 +1,6 @@
 class Db::DraftEpisodesController < Db::ApplicationController
   permits :number, :sort_number, :title, :prev_episode_id, :episode_id, :fetch_syobocal,
-          edit_request_attributes: [:id, :title, :body]
+    :raw_number, :sc_count, edit_request_attributes: [:id, :title, :body]
 
   before_action :authenticate_user!
   before_action :set_work, only: [:new, :create, :edit, :update]

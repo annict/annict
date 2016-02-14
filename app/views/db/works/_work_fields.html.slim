@@ -45,3 +45,5 @@
       .row
         .col-sm-5
           = f.select :number_format_id, options_from_collection_for_select(NumberFormat.order(:sort_number), :id, :name, f.object.number_format_id), { include_blank: true }, { class: "form-control" }
+- else
+  = f.hidden_field :number_format_id

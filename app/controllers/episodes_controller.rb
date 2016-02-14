@@ -14,7 +14,7 @@
 #  prev_episode_id :integer
 #  aasm_state      :string           default("published"), not null
 #  fetch_syobocal  :boolean          default(FALSE), not null
-#  raw_number      :integer
+#  raw_number      :string(510)
 #
 # Indexes
 #

@@ -12,7 +12,8 @@
 #  updated_at      :datetime         not null
 #  prev_episode_id :integer
 #  fetch_syobocal  :boolean          default(FALSE), not null
-#  raw_number      :integer
+#  raw_number      :string(510)
+#  sc_count        :integer
 #
 # Indexes
 #
