@@ -64,12 +64,12 @@ GEM
       execjs
       json
     awesome_print (1.6.1)
-    aws-sdk (2.2.16)
-      aws-sdk-resources (= 2.2.16)
-    aws-sdk-core (2.2.16)
+    aws-sdk (2.2.17)
+      aws-sdk-resources (= 2.2.17)
+    aws-sdk-core (2.2.17)
       jmespath (~> 1.0)
-    aws-sdk-resources (2.2.16)
-      aws-sdk-core (= 2.2.16)
+    aws-sdk-resources (2.2.17)
+      aws-sdk-core (= 2.2.17)
     aws-sdk-v1 (1.66.0)
       json (~> 1.4)
       nokogiri (>= 1.4.4)
