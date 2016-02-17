@@ -164,6 +164,36 @@
             .edit-request-description-btn
               = link_to "編集リクエストとは？", db_root_path
 
+    - if @work.casts.present?
+      hr
+      .casts.container
+        h2.text-center キャスト
+        table
+          tbody
+            - @work.casts.order(:sort_number).each do |cast|
+              - cache cast do
+                tr
+                  th = cast.part
+                  td = cast.decorate.name_with_old
+
+    - if @work.staffs.present?
+      hr
+      .staffs.container
+        h2.text-center スタッフ
+        table
+          tbody
+            - @work.staffs.order(:sort_number).each do |staff|
+              - cache staff do
+                tr
+                  th = staff.decorate.role_name
+                  td = staff.decorate.name_with_old
+            - if @work.work_organizations.present?
+              - @work.work_organizations.order(:sort_number).each do |wo|
+                - cache wo do
+                  tr
+                    th = wo.decorate.role_name
+                    td = wo.organization.name
+
     - if @work.item.present?
       hr
 
