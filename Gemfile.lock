@@ -320,7 +320,7 @@ GEM
     imgix-rails (1.0.0)
       imgix (~> 1.0, >= 1.0.0)
     inflecto (0.0.2)
-    ipaddress (0.8.2)
+    ipaddress (0.8.3)
     jbuilder (2.4.1)
       activesupport (>= 3.0.0, < 5.1)
       multi_json (~> 1.2)
