@@ -8,7 +8,7 @@
 
 .content
   .header
-    h1 = @page_title
+    h1 = title
     .season-selector-wrapper
       = render "season_selector", slug_options: Season.slug_options, current_slug: @season.slug
 

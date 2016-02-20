@@ -16,19 +16,19 @@
       }
 
       .statistics {
-        @include display(flex);
-        @include justify-content(center);
         color: $color-gunsmoke;
         font-size: 12px;
         text-align: center;
 
         .watchers-count,
         .records-count {
-          @include flex(0 35px);
-
           i {
-            display: block;
+            margin-right: 3px;
           }
+        }
+
+        .watchers-count {
+          margin-right: 7px;
         }
       }
     }
