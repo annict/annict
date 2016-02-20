@@ -154,6 +154,13 @@ class User < ActiveRecord::Base
     role.admin? || role.editor?
   end
 
+  def friends_interested_in(work)
+    status_kinds = %w(wanna_watch watching watched)
+    latest_statuses = LatestStatus.where(work: work).with_kind(*status_kinds)
+
+    followings.joins(:latest_statuses).merge(latest_statuses)
+  end
+
   private
 
   def get_large_avatar_image(provider, image_url)

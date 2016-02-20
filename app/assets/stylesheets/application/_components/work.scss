@@ -56,6 +56,30 @@
       }
 
       .middle {
+        .friends {
+          .title {
+            font-size: 13px;
+            font-weight: bold;
+            margin-bottom: 3px;
+          }
+
+          ul {
+            -moz-padding-start: 0;
+            -webkit-padding-start: 0;
+            list-style-type: none;
+
+            li {
+              display: inline-block;
+              margin: 0 3px 3px 0;
+
+              &.more {
+                font-size: 12px;
+                margin-left: 5px;
+              }
+            }
+          }
+        }
+
         .casts,
         .staffs,
         .work-organizations {

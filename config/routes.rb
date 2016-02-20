@@ -27,8 +27,12 @@ Annict::Application.routes.draw do
     resources :tips, only: [] do
       post :finish, on: :collection
     end
-    resources :users,      only: [] do
+    resources :users, only: [] do
       get :activities
+
+      resources :works, only: [] do
+        get :friends
+      end
     end
     resource  :user,       only: [] do
       resources :programs, only: [:index], controller: 'user_programs'

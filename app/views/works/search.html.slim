@@ -16,3 +16,6 @@
         | 検索
 
 = render "works", works: @works, user: current_user, compact: false
+
+- content_for :js_templates do
+  = render "application/components/work_friends"
