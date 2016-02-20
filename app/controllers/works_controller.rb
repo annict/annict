@@ -36,11 +36,16 @@ class WorksController < ApplicationController
   end
 
   def popular(page: nil)
-    @works = Work.published.order(watchers_count: :desc).page(page)
+    @works = Work.published.order(watchers_count: :desc).page(page).per(15)
   end
 
   def season(slug, page: nil)
-    @works = Work.published.by_season(slug).order(watchers_count: :desc).page(page)
+    @works = Work.
+      published.
+      by_season(slug).
+      order(watchers_count: :desc).
+      page(page).
+      per(15)
     @season = Season.find_or_new_by_slug(slug)
   end
 
