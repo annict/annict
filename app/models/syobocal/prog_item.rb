@@ -58,7 +58,7 @@ module Syobocal
     end
 
     def rebroadcast_program?
-      @flag == 8
+      @flag.in?([8, 9, 10, 11, 12, 13])
     end
 
     def save_episode
