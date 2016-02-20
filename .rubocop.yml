@@ -42,5 +42,8 @@ Style/Lambda:
 Style/MultilineOperationIndentation:
   EnforcedStyle: indented
 
+Style/MultilineMethodCallIndentation:
+  EnforcedStyle: indented
+
 Style/StringLiterals:
   EnforcedStyle: double_quotes
