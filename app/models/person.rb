@@ -50,4 +50,12 @@ class Person < ActiveRecord::Base
   has_many :draft_casts, dependent: :destroy
   has_many :draft_staffs, dependent: :destroy
   has_many :staffs, dependent: :destroy
+
+  def voice_actor?
+    casts.exists?
+  end
+
+  def staff?
+    staffs.exists?
+  end
 end

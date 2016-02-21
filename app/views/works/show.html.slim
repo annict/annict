@@ -79,11 +79,11 @@
           li
             = icon("link")
             = @work.decorate.syobocal_link("しょぼかる")
-        - if@work.twitter_username.present?
+        - if @work.twitter_username.present?
           li
             = icon("twitter")
             = @work.decorate.twitter_username_link
-        - if@work.twitter_hashtag.present?
+        - if @work.twitter_hashtag.present?
           li
             = icon("twitter")
             = @work.decorate.twitter_hashtag_link
