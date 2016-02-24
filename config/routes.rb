@@ -101,6 +101,7 @@ Annict::Application.routes.draw do
     root "home#index"
   end
 
+  resources :organizations, only: [:show]
   resources :people, only: [:show]
 
   resources :settings, only: [:index]

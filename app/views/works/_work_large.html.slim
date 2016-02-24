@@ -37,7 +37,7 @@
           ul
             - work.work_organizations.with_role(:producer).order(:sort_number).each do |wo|
               - cache wo do
-                li = wo.organization.name
+                li = wo.organization.decorate.name_link
       - if user_signed_in?
         - users = current_user.friends_interested_in(work).includes(:profile).order("latest_statuses.id DESC")
         - if users.present?

@@ -193,7 +193,7 @@
                 - cache wo do
                   tr
                     th = wo.decorate.role_name
-                    td = wo.organization.name
+                    td = wo.organization.decorate.name_link
 
     - if @work.item.present?
       hr
