@@ -176,16 +176,16 @@ ActiveRecord::Schema.define(version: 20160214140638) do
   add_index "draft_casts", ["work_id"], name: "index_draft_casts_on_work_id", using: :btree
 
   create_table "draft_episodes", force: :cascade do |t|
-    t.integer  "episode_id",                                  null: false
-    t.integer  "work_id",                                     null: false
+    t.integer  "episode_id",                      null: false
+    t.integer  "work_id",                         null: false
     t.string   "number"
-    t.integer  "sort_number",                 default: 0,     null: false
+    t.integer  "sort_number",     default: 0,     null: false
     t.string   "title"
-    t.datetime "created_at",                                  null: false
-    t.datetime "updated_at",                                  null: false
+    t.datetime "created_at",                      null: false
+    t.datetime "updated_at",                      null: false
     t.integer  "prev_episode_id"
-    t.boolean  "fetch_syobocal",              default: false, null: false
-    t.string   "raw_number",      limit: 510
+    t.boolean  "fetch_syobocal",  default: false, null: false
+    t.string   "raw_number"
     t.integer  "sc_count"
   end
 
@@ -374,7 +374,7 @@ ActiveRecord::Schema.define(version: 20160214140638) do
     t.integer  "prev_episode_id"
     t.string   "aasm_state",                  default: "published", null: false
     t.boolean  "fetch_syobocal",              default: false,       null: false
-    t.string   "raw_number",      limit: 510
+    t.string   "raw_number"
   end
 
   add_index "episodes", ["aasm_state"], name: "index_episodes_on_aasm_state", using: :btree
@@ -461,9 +461,9 @@ ActiveRecord::Schema.define(version: 20160214140638) do
   create_table "number_formats", force: :cascade do |t|
     t.string   "name",                     null: false
     t.string   "data",        default: [], null: false, array: true
+    t.integer  "sort_number", default: 0,  null: false
     t.datetime "created_at",               null: false
     t.datetime "updated_at",               null: false
-    t.integer  "sort_number", default: 0,  null: false
   end
 
   add_index "number_formats", ["name"], name: "index_number_formats_on_name", unique: true, using: :btree

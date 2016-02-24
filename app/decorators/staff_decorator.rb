@@ -1,5 +1,6 @@
 class StaffDecorator < ApplicationDecorator
   include StaffDecoratorCommon
+  include PersonableDecorator
 
   def db_detail_link(options = {})
     name = options.delete(:name).presence || name
@@ -10,10 +11,5 @@ class StaffDecorator < ApplicationDecorator
     end
 
     h.link_to name, path, options
-  end
-
-  def name_with_old
-    return name if name == person.name
-    "#{name} (#{person.name})"
   end
 end

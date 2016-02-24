@@ -25,37 +25,24 @@
 #  index_people_on_prefecture_id  (prefecture_id)
 #
 
-class Person < ActiveRecord::Base
-  extend Enumerize
-  include AASM
-  include DbActivityMethods
-  include PersonCommon
+class PeopleController < ApplicationController
+  def show(id)
+    @person = Person.published.find(id)
 
-  aasm do
-    state :published, initial: true
-    state :hidden
-
-    event :hide do
-      after do
-        casts.each(&:hide!)
-        staffs.each(&:hide!)
-      end
-
-      transitions from: :published, to: :hidden
+    if @person.voice_actor?
+      @casts_with_year = @person.
+        casts.
+        includes(work: [:season, :item]).
+        group_by { |cast| cast.work.season&.year.presence || 0 }
+      @cast_years = @casts_with_year.keys.sort.reverse
     end
-  end
 
-  belongs_to :prefecture
-  has_many :casts, dependent: :destroy
-  has_many :draft_casts, dependent: :destroy
-  has_many :draft_staffs, dependent: :destroy
-  has_many :staffs, dependent: :destroy
-
-  def voice_actor?
-    casts.exists?
-  end
-
-  def staff?
-    staffs.exists?
+    if @person.staff?
+      @staffs_with_year = @person.
+        staffs.
+        includes(work: [:season, :item]).
+        group_by { |staff| staff.work.season&.year.presence || 0 }
+      @staff_years = @staffs_with_year.keys.sort.reverse
+    end
   end
 end

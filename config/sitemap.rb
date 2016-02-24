@@ -34,6 +34,18 @@ SitemapGenerator::Sitemap.create do
     add season_works_path(s.slug), priority: 0.9
   end
 
+  Person.published.find_each do |p|
+    if p.casts.present?
+      add person_path(p), priority: 0.8, lastmod: p.updated_at
+    end
+  end
+
+  Organization.published.find_each do |o|
+    if o.work_organizations.present?
+      add organization_path(o), priority: 0.8, lastmod: o.updated_at
+    end
+  end
+
   Work.published.find_each do |w|
     add work_path(w.id), priority: 1.0, lastmod: w.updated_at
 

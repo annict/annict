@@ -1,0 +1,52 @@
+- title = @organization.name
+- description = meta_description("#{title}の情報、参加作品をチェック！")
+- keywords = meta_keywords(@organization.name)
+- set_meta_tags(title: title, description: description, keywords: keywords, reverse: true)
+
+.content.header
+  .container
+    h1
+      .name = @organization.name
+
+.content.info
+  .container
+    h2.title 基本情報
+    table
+      tbody
+        tr
+          th 名前
+          td = @organization.name
+        - if @organization.url.present?
+          tr
+            th 公式サイト
+            td = @organization.decorate.url_link
+        - if @organization.twitter_username.present?
+          tr
+            th Twitter
+            td = @organization.decorate.twitter_username_link
+        - if @organization.wikipedia_url.present?
+          tr
+            th Wikipedia
+            td = @organization.decorate.wikipedia_url_link
+    
+    .edit-link
+      - if user_signed_in? && !browser.mobile?
+        - if current_user.committer?
+          = link_to "編集する", edit_db_organization_path(@organization)
+        - else
+          = link_to "編集する", new_db_draft_organization_path(organization_id: @organization.id)
+
+.content.works
+  .container
+    h2.title 参加作品
+    - @wo_years.each do |year|
+      h3.title-year = "#{year}年"
+      .cards
+        - @wos_with_year[year].group_by(&:work_id).each do |_, wos|
+          - work = wos.first.work
+          .card
+            = link_to work_path(work) do
+              = annict_image_tag(work.item, :tombo_image, msize: "80x80", size: "140x140", alt: work.title)
+            = link_to work_path(work) do
+              .work-title = work.title
+            .wo-role = wos.map { |wo| wo.decorate.role_name }.join("、")

@@ -19,21 +19,25 @@
           ul
             - work.casts.order(:sort_number).limit(10).each do |cast|
               - cache cast do
-                li = "#{cast.part}: #{cast.decorate.name_with_old}"
+                li
+                  = "#{cast.part}: "
+                  = cast.decorate.name_with_old_link
       - if work.staffs.present?
         .staffs
           .title スタッフ
           ul
             - work.staffs.major.order(:sort_number).limit(10).each do |staff|
               - cache staff do
-                li = "#{staff.decorate.role_name}: #{staff.decorate.name_with_old}"
+                li
+                  = "#{staff.decorate.role_name}: "
+                  = staff.decorate.name_with_old_link
       - if work.work_organizations.with_role(:producer).present?
         .work-organizations
           .title アニメーション制作
           ul
             - work.work_organizations.with_role(:producer).order(:sort_number).each do |wo|
               - cache wo do
-                li = wo.organization.name
+                li = wo.organization.decorate.name_link
       - if user_signed_in?
         - users = current_user.friends_interested_in(work).includes(:profile).order("latest_statuses.id DESC")
         - if users.present?
