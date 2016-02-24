@@ -175,7 +175,7 @@
               - cache cast do
                 tr
                   th = cast.part
-                  td = cast.decorate.name_with_old
+                  td = cast.decorate.name_with_old_link
 
     - if @work.staffs.present?
       hr
@@ -187,7 +187,7 @@
               - cache staff do
                 tr
                   th = staff.decorate.role_name
-                  td = staff.decorate.name_with_old
+                  td = staff.decorate.name_with_old_link
             - if @work.work_organizations.present?
               - @work.work_organizations.order(:sort_number).each do |wo|
                 - cache wo do

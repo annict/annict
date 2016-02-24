@@ -74,25 +74,29 @@
     - if @person.voice_actor?
       - @cast_years.each do |year|
         h3.title-year = "#{year}年"
-        .cards
+        ul
           - @casts_with_year[year].group_by(&:work_id).each do |_, casts|
             - work = casts.first.work
-            .card
-              = link_to work_path(work) do
-                = annict_image_tag(work.item, :tombo_image, msize: "80x80", size: "140x140", alt: work.title)
-              = link_to work_path(work) do
-                .work-title = work.title
-              .cast-part = casts.map { |cast| cast.decorate.part }.join("、")
+            li
+              .left
+                = link_to work_path(work) do
+                  = annict_image_tag(work.item, :tombo_image, msize: "60x60", size: "140x140", alt: work.title)
+              .right
+                = link_to work_path(work) do
+                  .work-title = work.title
+                .cast-part = casts.map { |cast| cast.decorate.part }.join("、")
 
     - if @person.staff?
       - @staff_years.each do |year|
         h3.title-year = "#{year}年"
-        .cards
+        ul
           - @staffs_with_year[year].group_by(&:work_id).each do |_, staffs|
             - work = staffs.first.work
-            .card
-              = link_to work_path(work) do
-                = annict_image_tag(work.item, :tombo_image, msize: "80x80", size: "140x140", alt: work.title)
-              = link_to work_path(work) do
-                .work-title = work.title
-              .staff-role = staffs.map { |staff| staff.decorate.role_name }.join("、")
+            li
+              .left
+                = link_to work_path(work) do
+                  = annict_image_tag(work.item, :tombo_image, msize: "60x60", size: "140x140", alt: work.title)
+              .right
+                = link_to work_path(work) do
+                  .work-title = work.title
+                .staff-role = staffs.map { |staff| staff.decorate.role_name }.join("、")
