@@ -14,7 +14,7 @@ table.table.table-striped.c-resource-list
     - people.each do |person|
       tr
         td
-          = person.id
+          = link_to person.id, person_path(person), target: "_blank"
           - if person.published?
             = icon("check-circle-o", class: "c-resource-list__status-published enabled", "data-toggle" => "tooltip", title: "公開されています")
           - else
