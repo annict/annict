@@ -27,7 +27,7 @@
 
 * [Slack](http://slack.annict.com)
 * [Twitter](https://twitter.com)
-  * [@anannict](https://twitter.com/anannict) または [@shimbaco](https://twitter.com/shimbaco) へのメンションや、本文に `annict` または `アニクト` が含まれるツイートに反応します
+  * [@anannict](https://twitter.com/anannict) へのメンションなどに反応します
 
 
 #### セキュリティに関わるバグの報告
