@@ -14,8 +14,7 @@
   <a href="https://codeclimate.com/github/annict/annict"><img src="https://codeclimate.com/github/annict/annict/badges/gpa.svg"></a>
   <a href="https://codeclimate.com/github/annict/annict"><img src="https://codeclimate.com/github/annict/annict/badges/coverage.svg"></a>
   <a href="https://gemnasium.com/annict/annict"><img src="https://gemnasium.com/annict/annict.svg"></a>
-  <a href="https://gitter.im/annict/annict"><img src="https://badges.gitter.im/annict/annict.svg"></a>
-  <a href="https://waffle.io/annict/annict"><img src="https://badge.waffle.io/annict/annict.svg?label=ready&title=Ready"></a>
+  <a href="http://slack.annict.com"><img src="http://slack.annict.com/badge.svg"></a>
 </p>
 
 ---
@@ -24,15 +23,16 @@
 
 #### 新機能・改善案の話やバグの話など
 
-開発に関わるもろもろのやり取りは、以下のサービスで行っています。
+開発に関するもろもろのやり取りは、以下のサービスで行っています。
 
-* [GitHub Issues](https://github.com/annict/annict/issues)
-* [Gitter](https://gitter.im/annict/annict)
+* [Slack](http://slack.annict.com)
+* [Twitter](https://twitter.com)
+  * [@anannict](https://twitter.com/anannict) または [@shimbaco](https://twitter.com/shimbaco) へのメンションや、本文に `annict` または `アニクト` が含まれるツイートに反応します
 
 
 #### セキュリティに関わるバグの報告
 
-anannict@gmail.com までメールをください。
+admin@annict.com までメールをください。
 Twitterなど、第三者に公開されている場所に投稿しないでもらえるとありがたいです。
 
 
@@ -47,21 +47,16 @@ Twitterなど、第三者に公開されている場所に投稿しないでも�
 
 #### タスク管理について
 
-Annictでは開発に関係するタスク管理を[Waffle.io](https://waffle.io/annict/annict)で行っています。
-各タスクは以下のラベルを紐付けて管理しています。
+Annictでは開発に関係するタスク管理を[Trello](https://trello.com/b/cBvJjGA5/annict)で行っています。
+各タスクは以下のリストで管理しています。
 
-| ラベル名 | 概要 |
+| リスト名 | 概要 |
 | ------- | ----------- |
-| Ideas   | システム内に取り込むことが決定していない漠然としたタスク |
+| Idea   | システム内に取り込むことが決定していない漠然としたタスク |
 | Ready   | システム内に取り込むことが決定したタスク |
 | Working | 現在取り組んでいるタスク |
-| Help    | 誰か実装してくれないかなあ(ﾁﾗｯﾁﾗｯ というタスク |
+| Done    | 作業が完了したタスク |
 
-「Help」ラベルは、他の実装予定のタスクに依存しない比較的実装が容易そうなタスクに付けています。
-もし「Annictのコードを弄りたいけど、何から弄れば良いかわからない…」という方がいらっしゃれば、
-このラベルを見てもらうと良いかもしれません。
-
-優先度の設定も[Waffle.io](https://waffle.io/annict/annict)で行っています。
 「Ready」リストの上から順に優先度が高いタスクとなっています。
 
 
