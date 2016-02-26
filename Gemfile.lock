@@ -2,7 +2,7 @@ GEM
   remote: https://rubygems.org/
   specs:
     CFPropertyList (2.3.2)
-    aasm (4.8.0)
+    aasm (4.9.0)
     action_args (2.0.0)
     actionmailer (4.2.5.1)
       actionpack (= 4.2.5.1)
@@ -60,9 +60,8 @@ GEM
       fog (>= 1.8.0)
       unf
     ast (2.2.0)
-    autoprefixer-rails (6.3.3)
+    autoprefixer-rails (6.3.3.1)
       execjs
-      json
     awesome_print (1.6.1)
     aws-sdk (2.2.18)
       aws-sdk-resources (= 2.2.18)
@@ -358,7 +357,7 @@ GEM
     meta-tags (2.1.0)
       actionpack (>= 3.0.0)
     method_source (0.8.2)
-    mime-types (2.99)
+    mime-types (2.99.1)
     mimemagic (0.3.0)
     mini_magick (4.4.0)
     mini_portile2 (2.0.0)
