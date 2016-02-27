@@ -1,4 +1,6 @@
-Ann.Components.AnnWorkFriends = Vue.extend
+Vue = require "vue"
+
+module.exports = Vue.extend
   template: "#js-ann-work-friends"
 
   props:

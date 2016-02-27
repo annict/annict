@@ -1,4 +1,6 @@
-Ann.Components.AnnSeasonSelector = Vue.extend
+Vue = require "vue"
+
+module.exports = Vue.extend
   template: "#ann-season-selector"
   props:
     currentSlug: String

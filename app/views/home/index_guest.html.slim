@@ -4,21 +4,6 @@
 - set_meta_tags(title: title, description: description, keywords: keywords)
 
 .hero-content
-  ul.images(ani-cover-image)
-    - CoverImage.includes(:work).all.shuffle.each do |ci|
-      li
-        .image style="background: url('#{image_url(ci.file_name)}') no-repeat top center;"
-        .info
-          .left
-            = link_to work_path(ci.work) do
-              = annict_image_tag(ci.work.item, :tombo_image, msize: "32x32", size: "46x46", alt: ci.work.title)
-          .right
-            .location-name
-              = link_to work_path(ci.work) do
-                = "撮影地：#{ci.location}"
-            .related-work
-              = link_to work_path(ci.work) do
-                = "アニメ「#{ci.work.title}」の舞台"
   .welcome
     h1 Annict
     p.lead
@@ -38,41 +23,6 @@
           .text
             | Facebookアカウントで始める
 
-.feature
-  .container
-    h2 見たアニメが記録できる
-    p 「何話まで見たっけ？」とならないように、見たアニメを記録することができます。
-    .screenshot
-      - image_size = browser.mobile? ? "280x398" : "400x569"
-      = image_tag "feature-1.jpg", size: image_size
-
-    h2 見たいアニメも記録
-    p
-      | アニメに対して、「見てる」「見たい」「見た」「中断」「中止」という5つのステータスの中から1つ設定することができます。
-      | 例えば来期の気になるアニメを「見たい」に設定すれば、忘れずに済みそうです。
-    .screenshot
-      - image_size = browser.mobile? ? "280x599" : "400x855"
-      = image_tag "feature-2.jpg", size: image_size
-
-    h2 視聴状況をチェック
-    p プロフィールページには記録数や見てるアニメ、グラフなどが表示され、どれだけアニメを見ているのか知ることができます。
-    .screenshot
-      - image_size = browser.mobile? ? "280x614" : "400x877"
-      = image_tag "feature-3.jpg", size: image_size
-
-    h2 友達の視聴状況もチェック
-    p
-      | Annictの利用者をフォローすると、その人が見たアニメの記録がタイムラインに表示されます。
-      | また、ネタバレを防止するため、自分が見ていないエピソードへの感想にはぼかしが入るようになっています。
-    .screenshot
-      - image_size = browser.mobile? ? "280x469" : "400x669"
-      = image_tag "feature-4.jpg", size: image_size
-
-    h2 今晩見れるアニメがわかる
-    p 普段見ているテレビのチャンネルを設定すると、見ているアニメの放送時間をタイムライン形式で見ることができます。
-    .screenshot.feature-5
-      - image_size = browser.mobile? ? "280x469" : "400x669"
-      = image_tag "feature-5.jpg", size: image_size
 
 .join
   .container
@@ -92,8 +42,3 @@
             i.fa.fa-facebook
           .text
             | Facebookアカウントで始める
-
-.about-me
-  .container
-    h2 管理者について
-    p <a href="https://twitter.com/shimbaco">@shimbaco</a> が個人で開発、運営しています。

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 source "https://rubygems.org"
 
 ruby "2.3.0"
@@ -16,6 +18,7 @@ gem "aws-sdk-v1" # Paperclipで使用
 gem "bootstrap-sass"
 gem "bourbon"
 gem "browser"
+gem "browserify-rails"
 gem "by_star"
 gem "coffee-rails"
 gem "delayed_job_active_record"
@@ -35,7 +38,6 @@ gem "jquery-rails"
 gem "kaminari"
 gem "keen"
 gem "koala"
-gem "redis-rails"
 gem "meta-tags"
 gem "mini_magick"
 gem "net-ssh" # fog を使用している asset_sync で使用
@@ -55,12 +57,14 @@ gem "rack-rewrite"
 gem "rails_autolink"
 gem "rails-i18n"
 gem "ransack"
+gem "redis-rails"
 gem "rmagick"
 gem "sass-rails"
 gem "sinatra", require: nil
 gem "sitemap_generator"
 gem "slim"
 gem "traceroute"
+gem "turbolinks", "~> 5.0.0.beta"
 gem "twitter"
 gem "uglifier"
 gem "validate_url"

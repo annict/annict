@@ -1,4 +1,6 @@
-Ann.Components.Flash = Vue.extend
+Vue = require "vue"
+
+module.exports = Vue.extend
   template: "#js-ann-flash"
 
   data: ->

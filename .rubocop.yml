@@ -17,6 +17,9 @@ Metrics/AbcSize:
 Metrics/MethodLength:
   Enabled: false
 
+Style/AlignArray:
+  Enabled: false
+
 # メソッド呼び出しの行から1段階インデントする
 Style/AlignParameters:
   EnforcedStyle: with_fixed_indentation
