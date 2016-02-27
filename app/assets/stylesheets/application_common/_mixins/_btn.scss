@@ -1,0 +1,11 @@
+@mixin btn($type, $color) {
+  padding: 10px 17px;
+
+  @if $type == transparency {
+    border: solid 1px $color;
+    color: $color;
+  } else {
+    background-color: $color;
+    color: #fff;
+  }
+}

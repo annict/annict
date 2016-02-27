@@ -3,13 +3,19 @@
  */
 
 @import url("http://fonts.googleapis.com/earlyaccess/notosansjp.css");
+
+@import "normalize";
 @import "bourbon";
 @import "font-awesome-sprockets";
 @import "font-awesome";
 @import "easydropdown";
 
-@import "application_common/foundations/variables";
-@import "application_common/mixins/*";
+@import "application_common/_mixins/*";
 
-@import "application/mixins/*";
+@import "application_common/foundations/variables";
+@import "application_common/foundations/base";
+
+@import "application/_mixins/*";
+
+@import "application/components/**/*";
 @import "application/pages/**/*";

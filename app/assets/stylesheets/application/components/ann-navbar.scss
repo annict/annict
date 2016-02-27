@@ -1,0 +1,114 @@
+.ann-navbar {
+  @include display(flex);
+  @include justify-content(space-between);
+  background-color: $color-mine-shaft;
+  height: 60px;
+  line-height: 60px;
+  width: 100%;
+
+  ul {
+    display: inline-block;
+    list-style-type: none;
+
+    li {
+      display: inline;
+
+      a {
+        color: $color-alto;
+        display: inline-block;
+        height: 100%;
+        transition: all .1s ease-in-out;
+
+        &:hover {
+          color: #fff;
+        }
+      }
+    }
+  }
+
+  .left {
+    @include display(flex);
+
+    .logo {
+      display: inline-block;
+      float: left;
+      height: 60px;
+    }
+
+    ul {
+      margin: 0 35px 0 20px;
+
+      li {
+        margin-left: 15px;
+      }
+    }
+
+    .search-form {
+      @include display(flex);
+      height: 32px;
+      margin: 13px 0;
+      position: relative;
+
+      input,
+      button {
+        background-color: rgba(0, 0, 0, .1);
+        border: 1px solid $color-alto;
+        border-color: rgba(255, 255, 255, .15);
+        color: $color-alto;
+      }
+
+      input {
+        border-right-width: 0;
+        line-height: 1.1;
+        padding: 7px 0 7px 12px;
+        width: 300px;
+      }
+
+      button {
+        border-left-width: 0;
+        line-height: 0;
+        padding: 0 10px;
+
+        &:before {
+          color: $color-alto;
+          content: "";
+          font: normal normal normal 14px/1 FontAwesome;
+        }
+      }
+    }
+  }
+
+  .right {
+    margin-right: 20px;
+
+    ul {
+      margin: 0;
+
+      li {
+        margin-right: 15px;
+
+        &.sign-in {
+          @include fake-link;
+          color: $color-alto;
+          display: inline-block;
+          transition: all .1s ease-in-out;
+
+          &:hover {
+            color: #fff;
+          }
+        }
+
+        &.sign-up {
+          @include btn(transparency, $color-mizuho);
+          transition: all .1s ease-in-out;
+
+          &:hover {
+            background-color: $color-mizuho;
+            color: #fff;
+            cursor: pointer;
+          }
+        }
+      }
+    }
+  }
+}

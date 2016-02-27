@@ -3,7 +3,6 @@
  */
 
 @import "application_common/foundations/variables";
-@import "application_common/foundations/bootstrap-variables";
 
 @import url("http://fonts.googleapis.com/earlyaccess/notosansjp.css");
 @import "bootstrap-sprockets";
@@ -23,8 +22,7 @@
 @import "application_mobile/old/foundations/base";
 @import "application_mobile/old/foundations/bootstrap_base";
 
-@import "application_common/mixins/*";
-@import "application_common/components/*";
+@import "application_common/_mixins/*";
 
 @import "application_mobile/_components/**/*";
 @import "application_mobile/pages/**/*";

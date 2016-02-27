@@ -1,0 +1,8 @@
+@mixin fake-link {
+  color: $color-mizuho;
+
+  &:hover {
+    color: #c5244a;
+    cursor: pointer;
+  }
+}

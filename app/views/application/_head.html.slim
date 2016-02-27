@@ -12,11 +12,12 @@ link href='/images/apple-touch-icon-57x57.png' rel='apple-touch-icon-precomposed
 link type='text/plain' rel='author' href="#{ENV['ANNICT_URL']}/humans.txt"
 
 - if browser.mobile?
-  = stylesheet_link_tag "application_mobile", media: "all"
+  = stylesheet_link_tag "application_mobile", media: "all", "data-turbolinks-track": true
+  = javascript_include_tag "application_mobile", "data-turbolinks-track": true
 - else
-  = stylesheet_link_tag "application", media: "all"
+  = stylesheet_link_tag "application", media: "all", "data-turbolinks-track": true
+  = javascript_include_tag "application", "data-turbolinks-track": true
 
 link href='https://fonts.googleapis.com/css?family=Titillium+Web' rel='stylesheet' type='text/css'
 
-= include_gon
 = csrf_meta_tags
