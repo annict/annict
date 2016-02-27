@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class MultipleRecordsService
   attr_reader :user
 
@@ -8,7 +10,7 @@ class MultipleRecordsService
   def save!(episode_ids)
     # 括弧とカンマ、数字だけかを確認する
     regex = /\A\[([0-9]+,*)+\]\z/
-    fail Annict::Exceptions::UnexpectedEpisodeIdsError unless episode_ids =~ regex
+    return unless episode_ids =~ regex
 
     episode_ids = episode_ids.gsub(/\[|\]/, "").split(",")
     episodes = Episode.where(id: episode_ids).order(:sort_number)
