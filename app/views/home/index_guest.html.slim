@@ -5,42 +5,14 @@
 
 = render "navbar"
 
-.hero-content
-  .welcome
-    h1 Annict
-    p.lead
-      | 見たアニメを記録して、共有しよう
-    .signin-buttons
-      .signin-button
-        = link_to user_omniauth_authorize_path(:twitter), class: "btn btn-twitter" do
-          .icon.pull-left
-            i.fa.fa-twitter
-          .text
-            | Twitterアカウントで始める
-          .clearfix
-      .signin-button
-        = link_to user_omniauth_authorize_path(:facebook), class: "facebook btn btn-facebook" do
-          .icon.pull-left
-            i.fa.fa-facebook
-          .text
-            | Facebookアカウントで始める
-
-
-.join
-  .container
-    h2 視聴記録をはじめよう
-
-    .signin-buttons
-      .signin-button
-        = link_to user_omniauth_authorize_path(:twitter), class: "btn btn-twitter" do
-          .icon.pull-left
-            i.fa.fa-twitter
-          .text
-            | Twitterアカウントで始める
-          .clearfix
-      .signin-button
-        = link_to user_omniauth_authorize_path(:facebook), class: "facebook btn btn-facebook" do
-          .icon.pull-left
-            i.fa.fa-facebook
-          .text
-            | Facebookアカウントで始める
+.hero
+  .work-image style="background-image: url(#{annict_image_url(Work.find(4552).item, :tombo_image, size: '640x640', blur: 200)});"
+  .content
+    h1 見たアニメを記録して、共有しよう。
+    .description
+      p Annict (アニクト) は、アニメの視聴記録ができるWebサービスです。
+      p 人気ランキングや友達の視聴記録から好きなアニメを見つけて、管理することができます。
+    .signup-btn
+      ann-modal template-id="signup-modal" show="true"
+        = icon "rocket"
+        .text アカウント登録して記録する

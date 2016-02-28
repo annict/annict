@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 if Rails.env.development?
   module Imgix
     module Rails
@@ -6,8 +8,8 @@ if Rails.env.development?
         # 開発環境ではTomboを利用して画像のリサイズを行う
         def ix_image_url(source, options = {})
           tombo_url = ENV.fetch("ANNICT_TOMBO_URL")
-          size = "w:#{options[:w]},h:#{options[:h]}"
-          "#{tombo_url}/#{size}/#{source}"
+          params = "w:#{options[:w]},h:#{options[:h]},b:#{options[:blur] / 10}"
+          "#{tombo_url}/#{params}/#{source}"
         end
       end
     end

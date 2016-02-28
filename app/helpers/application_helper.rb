@@ -7,7 +7,9 @@ module ApplicationHelper
     size = (browser.mobile? && msize.present?) ? msize : options[:size]
     width, height = size.split("x").map { |s| s.to_i * 2 }
 
-    ix_image_url(path, w: width, h: height, fit: "crop", auto: "format")
+    blur = options[:blur].presence || 0
+
+    ix_image_url(path, w: width, h: height, fit: "crop", auto: "format", blur: blur)
   end
 
   def annict_image_tag(record, field, options = {})

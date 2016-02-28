@@ -9,6 +9,10 @@
     text-align: center;
   }
 
+  &:hover {
+    cursor: pointer;
+  }
+
   @if $type == transparency {
     border: solid 1px $color;
     color: $color;

@@ -1,0 +1,46 @@
+body.home-index.not-signed-in {
+  .hero {
+    height: 300px;
+    position: relative;
+    text-align: center;
+    width: 100%;
+
+    .work-image {
+      @include filter(brightness(50%));
+      background-position: center;
+      background-size: cover;
+      height: 100%;
+    }
+
+    .content {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      min-height: 100%;
+
+      h1 {
+        color: #fff;
+        font-family: "Noto Sans JP", sans-serif;
+        font-size: 30px;
+        font-weight: 100;
+        margin: 70px 0 14px 0;
+      }
+
+      .description {
+        margin-bottom: 35px;
+
+        p {
+          color: #fff;
+          margin: 7px 0;
+        }
+      }
+
+      .signup-btn {
+        @include btn($color-mizuho, $icon: true);
+        margin: 0 auto;
+        width: 220px;
+      }
+    }
+  }
+}
