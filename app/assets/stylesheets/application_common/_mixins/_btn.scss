@@ -1,11 +1,35 @@
-@mixin btn($type, $color) {
-  padding: 10px 17px;
+@mixin btn($color, $type: normal, $icon: false) {
+  border-radius: 2px;
+  padding: 10px 16px;
+
+  .text {
+    display: inline-block;
+    height: 20px;
+    line-height: 20px;
+    text-align: center;
+  }
 
   @if $type == transparency {
     border: solid 1px $color;
     color: $color;
-  } else {
+  } @else {
     background-color: $color;
     color: #fff;
+  }
+
+  @if $icon {
+    @include display(flex);
+
+    i {
+      @include flex-basis(20px);
+      @include flex-shrink(0);
+      display: inline-block;
+      height: 20px;
+      line-height: 20px;
+    }
+
+    .text {
+      width: 100%;
+    }
   }
 }

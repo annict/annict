@@ -6,7 +6,7 @@ html lang="ja"
     = render "flash"
 
     = yield
+    = yield :parts
 
     = include_gon
-    = yield :js_templates
     = render "analytics"

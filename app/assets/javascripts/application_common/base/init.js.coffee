@@ -1,2 +1,0 @@
-window.Ann = {}
-Ann.Components = {}

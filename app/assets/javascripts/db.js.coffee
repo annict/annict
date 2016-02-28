@@ -1,6 +1,8 @@
 #= require select2.full.min
 
 $ ->
+  $("[data-toggle=tooltip]").tooltip()
+
   $(".js-cast-participation-works").select2
     placeholder: ""
 

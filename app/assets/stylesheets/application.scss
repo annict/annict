@@ -11,11 +11,10 @@
 @import "easydropdown";
 
 @import "application_common/_mixins/*";
-
 @import "application_common/foundations/variables";
 @import "application_common/foundations/base";
+@import "application_common/components/**/*";
 
 @import "application/_mixins/*";
-
 @import "application/components/**/*";
 @import "application/pages/**/*";

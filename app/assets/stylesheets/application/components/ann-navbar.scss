@@ -99,7 +99,7 @@
         }
 
         &.sign-up {
-          @include btn(transparency, $color-mizuho);
+          @include btn($color-mizuho, $type: transparency);
           transition: all .1s ease-in-out;
 
           &:hover {
