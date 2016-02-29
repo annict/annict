@@ -1,5 +1,5 @@
 body.home-index.not-signed-in {
-  .hero {
+  > .hero {
     height: 300px;
     position: relative;
     text-align: center;
@@ -40,6 +40,125 @@ body.home-index.not-signed-in {
         @include btn($color-mizuho, $icon: true);
         margin: 0 auto;
         width: 220px;
+      }
+    }
+  }
+
+  > .content {
+    @include display(flex);
+    @include justify-content(center);
+
+    .main {
+      @include flex-basis(800px);
+
+      .section {
+        h2 {
+          font-family: "Noto Sans JP", sans-serif;
+          font-size: 20px;
+          font-weight: 100;
+        }
+
+        .wrapper {
+          @include card;
+          padding: 14px;
+
+          .top-work {
+            @include display(flex);
+            margin-bottom: 35px;
+
+            .left {
+              margin-right: 14px;
+
+              .image {
+                display: block;
+                height: 250px;
+                margin-bottom: 14px;
+
+                img {
+                  border: 1px solid $color-alto;
+                }
+              }
+
+              .library-btn {
+                @include btn($color-mizuho, $size: mini, $icon: true);
+                margin: 0 auto;
+                width: 150px;
+              }
+            }
+
+            .right {
+              h3 {
+                font-family: "Noto Sans JP", sans-serif;
+                font-size: 22px;
+                font-weight: 500;
+                margin: 0 0 10px 0;
+              }
+
+              .watchers-count {
+                margin-bottom: 3px;
+
+                .count {
+                  font-weight: bold;
+                  margin-right: 3px;
+                }
+
+                .text {
+                  color: $color-gunsmoke;
+                  font-size: 12px;
+                }
+              }
+
+              .casts,
+              .staffs,
+              .work-organizations {
+                .title {
+                  font-weight: bold;
+                }
+
+                ul {
+                  list-style-type: none;
+                  margin-top: 3px;
+
+                  li {
+                    display: inline-block;
+                    margin-right: 10px;
+
+                    &:last-child {
+                      margin-right: 0;
+                    }
+                  }
+                }
+              }
+            }
+          }
+
+          .works {
+            @include display(flex);
+            @include flex-wrap(wrap);
+
+            .work {
+              @include flex-basis(178px);
+              margin: 0 14px 14px 0;
+
+              .image {
+                background-size: cover;
+                height: 178px;
+              }
+            }
+          }
+        }
+      }
+    }
+
+    .side {
+      @include flex-basis(400px);
+      @include flex-shrink(0); // 横幅を400pxに固定する
+      width: 400px;
+
+      h2 {
+        font-family: "Noto Sans JP", sans-serif;
+        font-size: 20px;
+        font-weight: 100;
       }
     }
   }

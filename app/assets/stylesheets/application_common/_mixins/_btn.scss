@@ -1,6 +1,5 @@
-@mixin btn($color, $type: normal, $icon: false) {
+@mixin btn($color, $size: normal, $type: normal, $icon: false) {
   border-radius: 2px;
-  padding: 10px 16px;
 
   .text {
     display: inline-block;
@@ -11,6 +10,12 @@
 
   &:hover {
     cursor: pointer;
+  }
+
+  @if $size == mini {
+    padding: 5px 12px;
+  } @else {
+    padding: 10px 16px;
   }
 
   @if $type == transparency {

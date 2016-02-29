@@ -3,8 +3,8 @@
     = link_to root_path, class: "logo" do
       = image_tag "navbar/logo-120x120.png", size: "60x60", alt: "Annict"
     ul
-      li = link_to "今期アニメ", season_works_path(slug: ENV["ANNICT_CURRENT_SEASON"])
-      li = link_to "人気アニメ", popular_works_path
+      li = link_to "今期のアニメ", season_works_path(slug: ENV["ANNICT_CURRENT_SEASON"])
+      li = link_to "人気のアニメ", popular_works_path
     = form_tag search_works_path, method: :get, class: "search-form" do
       = text_field_tag :q, @search.q, placeholder: "キーワードで検索..."
       = button_tag "", type: :submit

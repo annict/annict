@@ -1,3 +1,15 @@
+::selection {
+  background: $color-mizuho;
+  color: #fff;
+  text-shadow: none;
+}
+
+html {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
 body {
   background-color: #f9f9f9;
   color: rgba(0, 0, 0, 0.8);
@@ -10,6 +22,11 @@ body {
 a {
   color: $color-mizuho;
   text-decoration: none;
+  transition: color .05s ease-out;
+
+  &:hover {
+    color: #c5244a;
+  }
 }
 
 textarea,

@@ -6,7 +6,7 @@
 = render "navbar"
 
 .hero
-  .work-image style="background-image: url(#{annict_image_url(Work.find(4552).item, :tombo_image, size: '640x640', blur: 200)});"
+  .work-image style="background-image: url(#{annict_image_url(@cover_image_work.item, :tombo_image, size: '640x640', blur: 200)});"
   .content
     h1 見たアニメを記録して、共有しよう。
     .description
@@ -16,3 +16,53 @@
       ann-modal template-id="signup-modal" show="true"
         = icon "rocket"
         .text アカウント登録して記録する
+
+.content
+  .main
+    .section
+      h2 今期の人気アニメ
+      .wrapper
+        .top-work
+          .left
+            = link_to work_path(@season_top_work), class: "image" do
+              = annict_image_tag(@season_top_work.item, :tombo_image, size: "250x250", alt: @season_top_work.title)
+            .library-btn
+              ann-modal template-id="prevent-modal" show="true"
+                = icon "plus"
+                .text ライブラリに追加
+          .right
+            .watchers-count
+              span.count = @season_top_work.watchers_count
+              span.text watchers
+            h3 = link_to @season_top_work.title, work_path(@season_top_work)
+            - if @season_top_work.casts.present?
+              .casts
+                .title キャスト
+                ul
+                  - @season_top_work.casts.order(:sort_number).limit(5).each do |cast|
+                    - cache cast do
+                      li
+                        = "#{cast.part}: "
+                        = cast.decorate.name_with_old_link
+            - if @season_top_work.staffs.present?
+              .staffs
+                .title スタッフ
+                ul
+                  - @season_top_work.staffs.major.order(:sort_number).limit(5).each do |staff|
+                    - cache staff do
+                      li
+                        = "#{staff.decorate.role_name}: "
+                        = staff.decorate.name_with_old_link
+            - if @season_top_work.work_organizations.with_role(:producer).present?
+              .work-organizations
+                .title アニメーション制作
+                ul
+                  - @season_top_work.work_organizations.with_role(:producer).order(:sort_number).each do |wo|
+                    - cache wo do
+                      li = wo.organization.decorate.name_link
+        .works
+          - @season_works.each do |work|
+            .work
+              .image style="background-image: url(#{annict_image_url(work.item, :tombo_image, size: '178x178')});"
+  .side
+    h2 みんなの視聴記録
