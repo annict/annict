@@ -170,7 +170,7 @@
         h2.text-center キャスト
         table
           tbody
-            - @work.casts.order(:sort_number).each do |cast|
+            - @work.casts.published.order(:sort_number).each do |cast|
               - cache cast do
                 tr
                   th = cast.part
@@ -182,7 +182,7 @@
         h2.text-center スタッフ
         table
           tbody
-            - @work.staffs.order(:sort_number).each do |staff|
+            - @work.staffs.published.order(:sort_number).each do |staff|
               - cache staff do
                 tr
                   th = staff.decorate.role_name

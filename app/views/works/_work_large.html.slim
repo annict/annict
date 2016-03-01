@@ -17,7 +17,7 @@
         .casts
           .title キャスト
           ul
-            - work.casts.order(:sort_number).limit(10).each do |cast|
+            - work.casts.published.order(:sort_number).limit(10).each do |cast|
               - cache cast do
                 li
                   = "#{cast.part}: "
@@ -26,7 +26,7 @@
         .staffs
           .title スタッフ
           ul
-            - work.staffs.major.order(:sort_number).limit(10).each do |staff|
+            - work.staffs.published.major.order(:sort_number).limit(10).each do |staff|
               - cache staff do
                 li
                   = "#{staff.decorate.role_name}: "
