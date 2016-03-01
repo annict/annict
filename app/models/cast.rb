@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 # == Schema Information
 #
 # Table name: casts
@@ -21,6 +22,16 @@
 #
 
 class Cast < ActiveRecord::Base
+  include AASM
   include DbActivityMethods
   include CastCommon
+
+  aasm do
+    state :published, initial: true
+    state :hidden
+
+    event :hide do
+      transitions from: :published, to: :hidden
+    end
+  end
 end
