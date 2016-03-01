@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 # == Schema Information
 #
 # Table name: staffs
@@ -22,6 +23,16 @@
 #
 
 class Staff < ActiveRecord::Base
+  include AASM
   include DbActivityMethods
   include StaffCommon
+
+  aasm do
+    state :published, initial: true
+    state :hidden
+
+    event :hide do
+      transitions from: :published, to: :hidden
+    end
+  end
 end

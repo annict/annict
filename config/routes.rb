@@ -87,7 +87,6 @@ Annict::Application.routes.draw do
       resources :draft_work_organizations, only: [:new, :create, :edit, :update]
       resources :multiple_episodes, only: [:new, :create]
       resources :programs, except: [:show]
-      resources :staffs, except: [:show]
       resources :work_organizations, except: [:show]
       resource :item, except: [:index]
 
@@ -95,6 +94,10 @@ Annict::Application.routes.draw do
         member do
           patch :hide
         end
+      end
+
+      resources :staffs, except: [:show] do
+        patch :hide, on: :member
       end
     end
 
