@@ -19,10 +19,12 @@ module StaffCommon
       art_director
       sound_director
       music
+      studio
       other
     )
 
     belongs_to :person
+    belongs_to :resource, polymorphic: true
     belongs_to :work, touch: true
 
     validates :person_id, presence: true

@@ -83,10 +83,8 @@ Annict::Application.routes.draw do
       resources :draft_multiple_episodes, only: [:new, :create, :edit, :update]
       resources :draft_programs, only: [:new, :create, :edit, :update]
       resources :draft_staffs, only: [:new, :create, :edit, :update]
-      resources :draft_work_organizations, only: [:new, :create, :edit, :update]
       resources :multiple_episodes, only: [:new, :create]
       resources :programs, except: [:show]
-      resources :work_organizations, except: [:show]
       resource :item, except: [:index]
 
       resources :casts, except: [:show] do

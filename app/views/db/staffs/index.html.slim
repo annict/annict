@@ -31,7 +31,7 @@ table.table.table-striped
             = icon("check-circle-o", class: "c-resource-list__status-published enabled", "data-toggle": "tooltip", title: "公開されています")
           - else
             = icon("check-circle-o", class: "c-resource-list__status-published disabled", "data-toggle": "tooltip", title: "非公開になっています")
-        td = staff.person.name
+        td = staff.resource.name
         td = staff.name.presence || "-"
         td = staff.decorate.role_name
         td = staff.sort_number

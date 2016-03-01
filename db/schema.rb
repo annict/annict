@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160214140638) do
+ActiveRecord::Schema.define(version: 20160301144255) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -606,19 +606,22 @@ ActiveRecord::Schema.define(version: 20160214140638) do
   add_index "settings", ["user_id"], name: "index_settings_on_user_id", using: :btree
 
   create_table "staffs", force: :cascade do |t|
-    t.integer  "person_id",                         null: false
-    t.integer  "work_id",                           null: false
-    t.string   "name",                              null: false
-    t.string   "role",                              null: false
+    t.integer  "person_id",                           null: false
+    t.integer  "work_id",                             null: false
+    t.string   "name",                                null: false
+    t.string   "role",                                null: false
     t.string   "role_other"
-    t.string   "aasm_state",  default: "published", null: false
-    t.integer  "sort_number", default: 0,           null: false
-    t.datetime "created_at",                        null: false
-    t.datetime "updated_at",                        null: false
+    t.string   "aasm_state",    default: "published", null: false
+    t.integer  "sort_number",   default: 0,           null: false
+    t.datetime "created_at",                          null: false
+    t.datetime "updated_at",                          null: false
+    t.integer  "resource_id"
+    t.string   "resource_type"
   end
 
   add_index "staffs", ["aasm_state"], name: "index_staffs_on_aasm_state", using: :btree
   add_index "staffs", ["person_id"], name: "index_staffs_on_person_id", using: :btree
+  add_index "staffs", ["resource_id", "resource_type"], name: "index_staffs_on_resource_id_and_resource_type", using: :btree
   add_index "staffs", ["sort_number"], name: "index_staffs_on_sort_number", using: :btree
   add_index "staffs", ["work_id"], name: "index_staffs_on_work_id", using: :btree
 

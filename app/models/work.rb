@@ -57,14 +57,12 @@ class Work < ActiveRecord::Base
   has_many :draft_multiple_episodes, dependent: :destroy
   has_many :draft_programs, dependent: :destroy
   has_many :draft_staffs, dependent: :destroy
-  has_many :draft_work_organizations, dependent: :destroy
   has_many :draft_works, dependent: :destroy
   has_many :episodes, dependent: :destroy
   has_many :latest_statuses, dependent: :destroy
-  has_many :organizations, through: :work_organizations
+  has_many :organizations, through: :staffs, source: :resource, source_type: "Organization"
   has_many :programs, dependent: :destroy
   has_many :statuses, dependent: :destroy
-  has_many :work_organizations, dependent: :destroy
   has_many :staffs, dependent: :destroy
   has_one :item, dependent: :destroy
 

@@ -187,12 +187,6 @@
                 tr
                   th = staff.decorate.role_name
                   td = staff.decorate.name_with_old_link
-            - if @work.work_organizations.present?
-              - @work.work_organizations.order(:sort_number).each do |wo|
-                - cache wo do
-                  tr
-                    th = wo.decorate.role_name
-                    td = wo.organization.decorate.name_link
 
     - if @work.item.present?
       hr

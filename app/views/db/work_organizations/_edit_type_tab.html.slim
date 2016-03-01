@@ -1,7 +1,0 @@
-ul.nav.nav-tabs.nav-justified.edit-type-tabs
-  = active_link_to "編集リクエスト", new_db_work_draft_work_organization_path(work, work_organization_id: work_organization.id), wrap_tag: :li, active: params[:controller] == "db/draft_work_organizations" && params[:action] == "new"
-  - if policy(work_organization).edit?
-    = active_link_to "直接編集", edit_db_work_work_organization_path(work, work_organization), wrap_tag: :li, active: params[:controller] == "db/work_organizations" && params[:action] == "edit"
-  - else
-    li.disabled data-toggle="tooltip" title="編集者になると直接編集できるようになります"
-      = link_to "直接編集", "#"

@@ -48,8 +48,8 @@ class Person < ActiveRecord::Base
   belongs_to :prefecture
   has_many :casts, dependent: :destroy
   has_many :draft_casts, dependent: :destroy
-  has_many :draft_staffs, dependent: :destroy
-  has_many :staffs, dependent: :destroy
+  has_many :draft_staffs, as: :resource, dependent: :destroy
+  has_many :staffs, as: :resource, dependent: :destroy
 
   def voice_actor?
     casts.exists?

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # == Schema Information
 #
 # Table name: organizations
@@ -35,6 +37,6 @@ class Organization < ActiveRecord::Base
     end
   end
 
-  has_many :draft_work_organizations, dependent: :destroy
-  has_many :work_organizations, dependent: :destroy
+  has_many :draft_staffs, as: :resource, dependent: :destroy
+  has_many :staffs, as: :resource, dependent: :destroy
 end
