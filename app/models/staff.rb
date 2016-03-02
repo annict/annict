@@ -4,7 +4,7 @@
 # Table name: staffs
 #
 #  id            :integer          not null, primary key
-#  person_id     :integer          not null
+#  person_id     :integer
 #  work_id       :integer          not null
 #  name          :string           not null
 #  role          :string           not null

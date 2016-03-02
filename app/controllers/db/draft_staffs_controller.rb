@@ -1,7 +1,9 @@
+# frozen_string_literal: true
+
 module Db
   class DraftStaffsController < Db::ApplicationController
-    permits :person_id, :staff_id, :name, :role, :role_other, :sort_number,
-      edit_request_attributes: [:id, :title, :body]
+    permits :resource_id, :resource_type, :staff_id, :name, :role, :role_other,
+      :sort_number, edit_request_attributes: [:id, :title, :body]
 
     before_action :authenticate_user!
     before_action :load_work, only: [:new, :create, :edit, :update]
@@ -19,8 +21,8 @@ module Db
     def create(draft_staff)
       @draft_staff = @work.draft_staffs.new(draft_staff)
       @draft_staff.edit_request.user = current_user
-      if @draft_staff.name.blank? && @draft_staff.person.present?
-        @draft_staff.name = @draft_staff.person.name
+      if @draft_staff.name.blank? && @draft_staff.resource.present?
+        @draft_staff.name = @draft_staff.resource.name
       end
 
       if draft_staff[:staff_id].present?

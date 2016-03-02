@@ -22,6 +22,7 @@ Annict::Application.routes.draw do
     resources :latest_statuses, only: [:index] do
       patch :skip_episode
     end
+    resources :organizations, only: [:index]
     resources :people, only: [:index]
     resources :receptions, only: [:create, :destroy]
     resources :tips, only: [] do

@@ -13,8 +13,10 @@ class EditRequestDecorator < ApplicationDecorator
     text = case kind
     when :draft_work
       "作品"
-    when :draft_cast, :draft_person
-      "スタッフ/キャスト"
+    when :draft_cast
+      "キャスト"
+    when :draft_person
+      "人物"
     end
 
     h.content_tag :span, text, class: "label label-default c-label--transparent"

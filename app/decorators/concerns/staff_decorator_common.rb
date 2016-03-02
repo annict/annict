@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module StaffDecoratorCommon
   extend ActiveSupport::Concern
 
@@ -5,9 +7,8 @@ module StaffDecoratorCommon
     def to_values
       model.class::DIFF_FIELDS.each_with_object({}) do |field, hash|
         hash[field] = case field
-        when :person_id
-          person_id = send(:person_id)
-          Person.find(person_id).name if person_id.present?
+        when :resource_id
+          resource&.name
         when :role
           send(:role_text)
         when :sort_number

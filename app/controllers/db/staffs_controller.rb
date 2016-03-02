@@ -2,7 +2,7 @@
 
 module Db
   class StaffsController < Db::ApplicationController
-    permits :person_id, :name, :role, :role_other, :sort_number
+    permits :resource_id, :resource_type, :name, :role, :role_other, :sort_number
 
     before_action :authenticate_user!
     before_action :load_work, only: [
@@ -21,7 +21,7 @@ module Db
     def create(staff)
       @staff = @work.staffs.new(staff)
       authorize @staff, :create?
-      @staff.name = @staff.person.name if @staff.name.blank? && @staff.person.present?
+      @staff.name = @staff.resource.name if @staff.name.blank? && @staff.resource.present?
 
       if @staff.valid?
         key = "staffs.create"

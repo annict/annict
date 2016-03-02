@@ -1,8 +1,8 @@
 module StaffCommon
   extend ActiveSupport::Concern
 
-  DIFF_FIELDS = %i(person_id name role role_other sort_number).freeze
-  PUBLISH_FIELDS = (DIFF_FIELDS + %i(work_id)).freeze
+  DIFF_FIELDS = %i(resource_id name role role_other sort_number).freeze
+  PUBLISH_FIELDS = (DIFF_FIELDS + %i(work_id resource_type)).freeze
 
   included do
     extend Enumerize
@@ -27,7 +27,7 @@ module StaffCommon
     belongs_to :resource, polymorphic: true
     belongs_to :work, touch: true
 
-    validates :person_id, presence: true
+    validates :resource, presence: true
     validates :work_id, presence: true
     validates :name, presence: true
     validates :role, presence: true

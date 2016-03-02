@@ -1,11 +1,21 @@
 .form-group
-  = f.label :person_id, class: "col-sm-3 control-label"
-  .col-sm-9
-    = f.select :person_id, nil, { include_blank: true }, { class: "form-control js-people-selector" }
-      - if f.object.person&.id.present?
-        option value="#{f.object.person.id}" selected="" = f.object.person.name
-      - else
-        option value="" selected=""
+  - if f.object&.resource_type == "Person" || params[:type] == "person"
+    = f.label :resource_id, value: "人物", class: "col-sm-3 control-label"
+    .col-sm-9
+      = f.select :resource_id, nil, { include_blank: true }, { class: "form-control js-people-selector" }
+        - if f.object.resource&.id.present?
+          option value="#{f.object.resource.id}" selected="" = f.object.resource.name
+        - else
+          option value="" selected=""
+  - elsif f.object&.resource_type == "Organization" || params[:type] == "organization"
+    = f.label :resource_id, value: "団体", class: "col-sm-3 control-label"
+    .col-sm-9
+      = f.select :resource_id, nil, { include_blank: true }, { class: "form-control js-organizations-selector" }
+        - if f.object.resource&.id.present?
+          option value="#{f.object.resource.id}" selected="" = f.object.resource.name
+        - else
+          option value="" selected=""
+  = hidden_field_tag "#{f.object.class.name.underscore}[resource_type]", f.object&.resource_type.presence || params[:type]&.classify
 .form-group
   = f.label :name, class: "col-sm-3 control-label"
   .col-sm-9

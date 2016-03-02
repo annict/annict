@@ -30,7 +30,7 @@ class Organization < ActiveRecord::Base
 
     event :hide do
       after do
-        work_organizations.each(&:hide!)
+        staffs.each(&:hide!)
       end
 
       transitions from: :published, to: :hidden
