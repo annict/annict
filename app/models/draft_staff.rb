@@ -4,7 +4,6 @@
 #
 #  id            :integer          not null, primary key
 #  staff_id      :integer
-#  person_id     :integer          not null
 #  work_id       :integer          not null
 #  name          :string           not null
 #  role          :string           not null
@@ -17,7 +16,6 @@
 #
 # Indexes
 #
-#  index_draft_staffs_on_person_id                      (person_id)
 #  index_draft_staffs_on_resource_id_and_resource_type  (resource_id,resource_type)
 #  index_draft_staffs_on_sort_number                    (sort_number)
 #  index_draft_staffs_on_staff_id                       (staff_id)
