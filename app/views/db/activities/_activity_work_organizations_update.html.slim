@@ -9,7 +9,7 @@
       | が
       span.db-activity-description-organization-name
         = "「#{activity.trackable.work.decorate.db_detail_link}」".html_safe
-      | の会社/団体を更新しました
+      | の団体を更新しました
     .db-activity-header-date
       = "#{time_ago_in_words(activity.created_at)}前"
   .db-activity-diff

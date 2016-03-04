@@ -1,10 +1,12 @@
 = render "db/works/header", work: @work
 
-.pull-right
+.pull-right.actions
   - if current_user.committer?
-    = link_to "新規作成", new_db_work_staff_path(@work), class: "btn btn-primary"
+    = link_to "人物を新規登録", new_db_work_staff_path(@work, type: :person), class: "btn btn-primary"
+    = link_to "団体を新規登録", new_db_work_staff_path(@work, type: :organization), class: "btn btn-primary"
   - else
-    = link_to "新規作成", new_db_work_draft_staff_path(@work), class: "btn btn-primary"
+    = link_to "人物を新規登録", new_db_work_draft_staff_path(@work, type: :person), class: "btn btn-primary"
+    = link_to "団体を新規登録", new_db_work_draft_staff_path(@work, type: :organization), class: "btn btn-primary"
 
 .clearfix
 
@@ -31,7 +33,7 @@ table.table.table-striped
             = icon("check-circle-o", class: "c-resource-list__status-published enabled", "data-toggle": "tooltip", title: "公開されています")
           - else
             = icon("check-circle-o", class: "c-resource-list__status-published disabled", "data-toggle": "tooltip", title: "非公開になっています")
-        td = staff.person.name
+        td = staff.resource.name
         td = staff.name.presence || "-"
         td = staff.decorate.role_name
         td = staff.sort_number

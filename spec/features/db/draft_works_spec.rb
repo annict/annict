@@ -19,7 +19,7 @@ describe "Annict DB" do
           fill_in "draft_work[title]", with: "のんのんびより"
           select "TV", from: "draft_work[media]"
           fill_in "draft_work[edit_request_attributes][title]", with: "「のんのんびよりを登録」"
-          click_button "作成する"
+          click_button "登録する"
         end
       end
 

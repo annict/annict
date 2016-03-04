@@ -35,13 +35,13 @@ SitemapGenerator::Sitemap.create do
   end
 
   Person.published.find_each do |p|
-    if p.casts.present?
+    if p.casts.published.present? || p.staffs.published.present?
       add person_path(p), priority: 0.8, lastmod: p.updated_at
     end
   end
 
   Organization.published.find_each do |o|
-    if o.work_organizations.present?
+    if o.staffs.published.present?
       add organization_path(o), priority: 0.8, lastmod: o.updated_at
     end
   end

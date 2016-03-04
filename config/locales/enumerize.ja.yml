@@ -24,10 +24,7 @@ ja:
         script: 脚本
         series_composition: シリーズ構成
         sound_director: 音響監督
-    draft_work_organization:
-      role:
-        producer: アニメーション制作
-        other: その他
+        studio: アニメーション制作
     person:
       blood_type:
         a: A型
@@ -52,6 +49,7 @@ ja:
         script: 脚本
         series_composition: シリーズ構成
         sound_director: 音響監督
+        studio: アニメーション制作
     status:
       kind:
         wanna_watch: 見たい
@@ -75,8 +73,4 @@ ja:
         ova: OVA
         movie: 映画
         web: Web
-        other: その他
-    work_organization:
-      role:
-        producer: アニメーション制作
         other: その他
