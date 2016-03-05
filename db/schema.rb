@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160226153926) do
+ActiveRecord::Schema.define(version: 20160305153926) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -261,17 +261,18 @@ ActiveRecord::Schema.define(version: 20160226153926) do
 
   create_table "draft_staffs", force: :cascade do |t|
     t.integer  "staff_id"
-    t.integer  "person_id",               null: false
-    t.integer  "work_id",                 null: false
-    t.string   "name",                    null: false
-    t.string   "role",                    null: false
+    t.integer  "work_id",                   null: false
+    t.string   "name",                      null: false
+    t.string   "role",                      null: false
     t.string   "role_other"
-    t.integer  "sort_number", default: 0, null: false
-    t.datetime "created_at",              null: false
-    t.datetime "updated_at",              null: false
+    t.integer  "sort_number",   default: 0, null: false
+    t.datetime "created_at",                null: false
+    t.datetime "updated_at",                null: false
+    t.integer  "resource_id"
+    t.string   "resource_type"
   end
 
-  add_index "draft_staffs", ["person_id"], name: "index_draft_staffs_on_person_id", using: :btree
+  add_index "draft_staffs", ["resource_id", "resource_type"], name: "index_draft_staffs_on_resource_id_and_resource_type", using: :btree
   add_index "draft_staffs", ["sort_number"], name: "index_draft_staffs_on_sort_number", using: :btree
   add_index "draft_staffs", ["staff_id"], name: "index_draft_staffs_on_staff_id", using: :btree
   add_index "draft_staffs", ["work_id"], name: "index_draft_staffs_on_work_id", using: :btree
@@ -596,19 +597,20 @@ ActiveRecord::Schema.define(version: 20160226153926) do
   add_index "settings", ["user_id"], name: "index_settings_on_user_id", using: :btree
 
   create_table "staffs", force: :cascade do |t|
-    t.integer  "person_id",                         null: false
-    t.integer  "work_id",                           null: false
-    t.string   "name",                              null: false
-    t.string   "role",                              null: false
+    t.integer  "work_id",                             null: false
+    t.string   "name",                                null: false
+    t.string   "role",                                null: false
     t.string   "role_other"
-    t.string   "aasm_state",  default: "published", null: false
-    t.integer  "sort_number", default: 0,           null: false
-    t.datetime "created_at",                        null: false
-    t.datetime "updated_at",                        null: false
+    t.string   "aasm_state",    default: "published", null: false
+    t.integer  "sort_number",   default: 0,           null: false
+    t.datetime "created_at",                          null: false
+    t.datetime "updated_at",                          null: false
+    t.integer  "resource_id",                         null: false
+    t.string   "resource_type",                       null: false
   end
 
   add_index "staffs", ["aasm_state"], name: "index_staffs_on_aasm_state", using: :btree
-  add_index "staffs", ["person_id"], name: "index_staffs_on_person_id", using: :btree
+  add_index "staffs", ["resource_id", "resource_type"], name: "index_staffs_on_resource_id_and_resource_type", using: :btree
   add_index "staffs", ["sort_number"], name: "index_staffs_on_sort_number", using: :btree
   add_index "staffs", ["work_id"], name: "index_staffs_on_work_id", using: :btree
 
@@ -761,7 +763,6 @@ ActiveRecord::Schema.define(version: 20160226153926) do
   add_foreign_key "draft_programs", "episodes"
   add_foreign_key "draft_programs", "programs"
   add_foreign_key "draft_programs", "works"
-  add_foreign_key "draft_staffs", "people"
   add_foreign_key "draft_staffs", "staffs"
   add_foreign_key "draft_staffs", "works"
   add_foreign_key "draft_work_organizations", "organizations"
@@ -797,7 +798,6 @@ ActiveRecord::Schema.define(version: 20160226153926) do
   add_foreign_key "receptions", "channels", name: "receptions_channel_id_fk", on_delete: :cascade
   add_foreign_key "receptions", "users", name: "receptions_user_id_fk", on_delete: :cascade
   add_foreign_key "settings", "users"
-  add_foreign_key "staffs", "people"
   add_foreign_key "staffs", "works"
   add_foreign_key "statuses", "users", name: "statuses_user_id_fk", on_delete: :cascade
   add_foreign_key "statuses", "works", name: "statuses_work_id_fk", on_delete: :cascade
