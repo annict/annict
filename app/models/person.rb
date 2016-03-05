@@ -31,6 +31,8 @@ class Person < ActiveRecord::Base
   include DbActivityMethods
   include PersonCommon
 
+  validates :name, uniqueness: true
+
   aasm do
     state :published, initial: true
     state :hidden

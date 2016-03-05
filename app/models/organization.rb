@@ -24,6 +24,8 @@ class Organization < ActiveRecord::Base
   include DbActivityMethods
   include OrganizationCommon
 
+  validates :name, uniqueness: true
+
   aasm do
     state :published, initial: true
     state :hidden
