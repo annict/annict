@@ -13,6 +13,7 @@ module Db
       else
         @work.draft_casts.new
       end
+      @draft_cast.sort_number = (@work.casts.count * 10) + 10
       @draft_cast.build_edit_request
     end
 

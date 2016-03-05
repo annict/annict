@@ -15,6 +15,7 @@ module Db
 
     def new
       @cast = @work.casts.new
+      @cast.sort_number = (@work.casts.count * 10) + 10
       authorize @cast, :new?
     end
 

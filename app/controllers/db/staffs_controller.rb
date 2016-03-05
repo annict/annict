@@ -15,6 +15,7 @@ module Db
 
     def new
       @staff = @work.staffs.new
+      @staff.sort_number = (@work.staffs.count * 10) + 10
       authorize @staff, :new?
     end
 
