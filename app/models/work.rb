@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 # == Schema Information
 #
 # Table name: works
@@ -41,7 +42,7 @@ class Work < ActiveRecord::Base
 
     event :hide do
       after do
-        episodes.each(&:hide!)
+        episodes.published.each(&:hide!)
       end
 
       transitions from: :published, to: :hidden

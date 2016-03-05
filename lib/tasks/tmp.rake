@@ -1,9 +1,9 @@
 # frozen_string_literal: true
 
 namespace :tmp do
-  task :move_org_from_people_to_orgs, [:person_id, :org_id] => :environment do |_, args|
+  task :move_org_from_people_to_orgs, [:person_id] => :environment do |_, args|
     person = Person.find(args[:person_id])
-    org = Organization.find(args[:org_id])
+    org = Organization.where(name: person.name).first_or_create!
 
     person.staffs.find_each do |staff|
       puts "staff: #{staff.id}"

@@ -37,8 +37,8 @@ class Person < ActiveRecord::Base
 
     event :hide do
       after do
-        casts.each(&:hide!)
-        staffs.each(&:hide!)
+        casts.published.each(&:hide!)
+        staffs.published.each(&:hide!)
       end
 
       transitions from: :published, to: :hidden
