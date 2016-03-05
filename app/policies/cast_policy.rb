@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class CastPolicy < ApplicationPolicy
   def create?
     user.committer?
@@ -5,6 +7,10 @@ class CastPolicy < ApplicationPolicy
 
   def update?
     user.committer?
+  end
+
+  def hide?
+    signed_in? && user.role.admin?
   end
 
   def destroy?

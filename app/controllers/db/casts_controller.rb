@@ -1,12 +1,16 @@
+# frozen_string_literal: true
+
 module Db
   class CastsController < Db::ApplicationController
     permits :person_id, :name, :part, :sort_number
 
     before_action :authenticate_user!
-    before_action :load_work, only: [:index, :new, :create, :edit, :update, :destroy]
+    before_action :load_work, only: [
+      :index, :new, :create, :edit, :update, :hide, :destroy
+    ]
 
     def index
-      @casts = @work.casts.order(:sort_number)
+      @casts = @work.casts.order(aasm_state: :desc, sort_number: :asc)
     end
 
     def new
@@ -46,6 +50,15 @@ module Db
       else
         render :edit
       end
+    end
+
+    def hide(id)
+      @cast = @work.casts.find(id)
+      authorize @cast, :hide?
+
+      @cast.hide!
+
+      redirect_to :back, notice: "非公開にしました"
     end
 
     def destroy(id)

@@ -1,6 +1,7 @@
+# frozen_string_literal: true
+
 class CastDecorator < ApplicationDecorator
   include CastDecoratorCommon
-  include PersonableDecorator
 
   def db_detail_link(options = {})
     name = options.delete(:name).presence || name
@@ -11,5 +12,14 @@ class CastDecorator < ApplicationDecorator
     end
 
     h.link_to name, path, options
+  end
+
+  def name_with_old
+    return name if name == person.name
+    "#{name} (#{person.name})"
+  end
+
+  def name_with_old_link
+    h.link_to name_with_old, h.person_path(person)
   end
 end

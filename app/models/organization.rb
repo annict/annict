@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # == Schema Information
 #
 # Table name: organizations
@@ -22,19 +24,21 @@ class Organization < ActiveRecord::Base
   include DbActivityMethods
   include OrganizationCommon
 
+  validates :name, uniqueness: true
+
   aasm do
     state :published, initial: true
     state :hidden
 
     event :hide do
       after do
-        work_organizations.each(&:hide!)
+        staffs.published.each(&:hide!)
       end
 
       transitions from: :published, to: :hidden
     end
   end
 
-  has_many :draft_work_organizations, dependent: :destroy
-  has_many :work_organizations, dependent: :destroy
+  has_many :draft_staffs, as: :resource, dependent: :destroy
+  has_many :staffs, as: :resource, dependent: :destroy
 end

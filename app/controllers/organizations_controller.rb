@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 # == Schema Information
 #
 # Table name: organizations
@@ -20,10 +21,11 @@
 class OrganizationsController < ApplicationController
   def show(id)
     @organization = Organization.published.find(id)
-    @wos_with_year = @organization.
-      work_organizations.
-      includes(work: [:season, :item]).
-      group_by { |wo| wo.work.season&.year.presence || 0 }
-    @wo_years = @wos_with_year.keys.sort.reverse
+    @staffs_with_year = @organization.
+      staffs.
+      published.
+      # includes(work: [:season, :item]).
+      group_by { |s| s.work.season&.year.presence || 0 }
+    @staff_years = @staffs_with_year.keys.sort.reverse
   end
 end

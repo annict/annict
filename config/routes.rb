@@ -22,6 +22,7 @@ Annict::Application.routes.draw do
     resources :latest_statuses, only: [:index] do
       patch :skip_episode
     end
+    resources :organizations, only: [:index]
     resources :people, only: [:index]
     resources :receptions, only: [:create, :destroy]
     resources :tips, only: [] do
@@ -77,24 +78,28 @@ Annict::Application.routes.draw do
         patch :hide
       end
 
-      resources :casts, except: [:show]
       resources :draft_casts, only: [:new, :create, :edit, :update]
       resources :draft_episodes, only: [:new, :create, :edit, :update]
       resources :draft_items, only: [:new, :create, :edit, :update]
       resources :draft_multiple_episodes, only: [:new, :create, :edit, :update]
       resources :draft_programs, only: [:new, :create, :edit, :update]
       resources :draft_staffs, only: [:new, :create, :edit, :update]
-      resources :draft_work_organizations, only: [:new, :create, :edit, :update]
       resources :multiple_episodes, only: [:new, :create]
       resources :programs, except: [:show]
-      resources :staffs, except: [:show]
-      resources :work_organizations, except: [:show]
       resource :item, except: [:index]
+
+      resources :casts, except: [:show] do
+        patch :hide, on: :member
+      end
 
       resources :episodes, only: [:index, :edit, :update, :destroy] do
         member do
           patch :hide
         end
+      end
+
+      resources :staffs, except: [:show] do
+        patch :hide, on: :member
       end
     end
 

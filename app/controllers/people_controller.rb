@@ -32,6 +32,7 @@ class PeopleController < ApplicationController
     if @person.voice_actor?
       @casts_with_year = @person.
         casts.
+        published.
         includes(work: [:season, :item]).
         group_by { |cast| cast.work.season&.year.presence || 0 }
       @cast_years = @casts_with_year.keys.sort.reverse
@@ -40,6 +41,7 @@ class PeopleController < ApplicationController
     if @person.staff?
       @staffs_with_year = @person.
         staffs.
+        published.
         includes(work: [:season, :item]).
         group_by { |staff| staff.work.season&.year.presence || 0 }
       @staff_years = @staffs_with_year.keys.sort.reverse

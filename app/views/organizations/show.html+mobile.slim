@@ -39,10 +39,10 @@
 .content.works
   .container
     h2.title 参加作品
-    - @wo_years.each do |year|
+    - @staff_years.each do |year|
       h3.title-year = "#{year}年"
       ul
-        - @wos_with_year[year].group_by(&:work_id).each do |_, wos|
+        - @staffs_with_year[year].group_by(&:work_id).each do |_, wos|
           - work = wos.first.work
           li
             .left

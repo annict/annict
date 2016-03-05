@@ -31,14 +31,16 @@ class Person < ActiveRecord::Base
   include DbActivityMethods
   include PersonCommon
 
+  validates :name, uniqueness: true
+
   aasm do
     state :published, initial: true
     state :hidden
 
     event :hide do
       after do
-        casts.each(&:hide!)
-        staffs.each(&:hide!)
+        casts.published.each(&:hide!)
+        staffs.published.each(&:hide!)
       end
 
       transitions from: :published, to: :hidden
@@ -48,8 +50,8 @@ class Person < ActiveRecord::Base
   belongs_to :prefecture
   has_many :casts, dependent: :destroy
   has_many :draft_casts, dependent: :destroy
-  has_many :draft_staffs, dependent: :destroy
-  has_many :staffs, dependent: :destroy
+  has_many :draft_staffs, as: :resource, dependent: :destroy
+  has_many :staffs, as: :resource, dependent: :destroy
 
   def voice_actor?
     casts.exists?

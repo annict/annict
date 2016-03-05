@@ -20,14 +20,14 @@ ja:
         wikipedia_url: Wikipedia
         twitter_username: Twitter
       draft_staff:
-        person_id: スタッフ
+        resource_id: 人物または団体
         work_id: 作品
         name: 名義
         role: 担当
         role_other: 担当 (その他)
         sort_number: ソート番号
       draft_work_organization:
-        organization_id: 会社/団体
+        organization_id: 団体
         work_id: 作品
         role: 担当
         role_other: 担当 (その他)
@@ -73,7 +73,7 @@ ja:
         started_at: 放送日時
         rebroadcast: 再放送
       staff:
-        person_id: スタッフ
+        resource_id: 人物または団体
         work_id: 作品
         name: 名義
         role: 担当
@@ -147,7 +147,7 @@ ja:
       edit_request_comment:
         body: 本文
       work_organization:
-        organization_id: 会社/団体
+        organization_id: 団体
         work_id: 作品
         role: 担当
         role_other: 担当 (その他)

@@ -1,10 +1,12 @@
 = render "db/works/header", work: @work
 
-.pull-right
+.pull-right.actions
   - if current_user.committer?
-    = link_to "新規作成", new_db_work_staff_path(@work), class: "btn btn-primary"
+    = link_to "人物を新規登録", new_db_work_staff_path(@work, type: :person), class: "btn btn-primary"
+    = link_to "団体を新規登録", new_db_work_staff_path(@work, type: :organization), class: "btn btn-primary"
   - else
-    = link_to "新規作成", new_db_work_draft_staff_path(@work), class: "btn btn-primary"
+    = link_to "人物を新規登録", new_db_work_draft_staff_path(@work, type: :person), class: "btn btn-primary"
+    = link_to "団体を新規登録", new_db_work_draft_staff_path(@work, type: :organization), class: "btn btn-primary"
 
 .clearfix
 
@@ -16,22 +18,35 @@ table.table.table-striped
       th 名義
       th 担当
       th ソート番号
-      th 編集
+      - if user_signed_in?
+        th 編集
+      - if policy(@staffs).hide?
+        th 非公開
       - if policy(@staffs).destroy?
         th 削除
   tbody
     - @staffs.each do |staff|
       tr
-        td = staff.id
-        td = staff.person.name
+        td
+          = staff.id
+          - if staff.published?
+            = icon("check-circle-o", class: "c-resource-list__status-published enabled", "data-toggle": "tooltip", title: "公開されています")
+          - else
+            = icon("check-circle-o", class: "c-resource-list__status-published disabled", "data-toggle": "tooltip", title: "非公開になっています")
+        td = staff.resource.name
         td = staff.name.presence || "-"
         td = staff.decorate.role_name
         td = staff.sort_number
-        td
-          - if current_user.committer?
-            = link_to "編集", edit_db_work_staff_path(@work, staff), class: "btn btn-primary btn-sm"
-          - else
-            = link_to "編集", new_db_work_draft_staff_path(@work, staff_id: staff.id), class: "btn btn-primary btn-sm"
+        - if user_signed_in?
+          td
+            - if current_user.committer?
+              = link_to "編集", edit_db_work_staff_path(@work, staff), class: "btn btn-primary btn-sm"
+            - else
+              = link_to "編集", new_db_work_draft_staff_path(@work, staff_id: staff.id), class: "btn btn-primary btn-sm"
+        - if policy(staff).hide?
+          td
+            - if staff.published?
+              = link_to "非公開", hide_db_work_staff_path(@work, staff), class: "btn btn-warning btn-sm", data: { method: "patch", confirm: "非公開にしますか？" }
         - if policy(staff).destroy?
           td = link_to "削除", db_work_staff_path(@work, staff), class: "btn btn-danger btn-sm", data: { method: :delete, confirm: "削除しますか？" }
 

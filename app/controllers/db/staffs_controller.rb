@@ -1,12 +1,16 @@
+# frozen_string_literal: true
+
 module Db
   class StaffsController < Db::ApplicationController
-    permits :person_id, :name, :role, :role_other, :sort_number
+    permits :resource_id, :resource_type, :name, :role, :role_other, :sort_number
 
     before_action :authenticate_user!
-    before_action :load_work, only: [:index, :new, :create, :edit, :update, :destroy]
+    before_action :load_work, only: [
+      :index, :new, :create, :edit, :update, :hide, :destroy
+    ]
 
     def index
-      @staffs = @work.staffs.order(:sort_number)
+      @staffs = @work.staffs.order(aasm_state: :desc, sort_number: :asc)
     end
 
     def new
@@ -17,7 +21,7 @@ module Db
     def create(staff)
       @staff = @work.staffs.new(staff)
       authorize @staff, :create?
-      @staff.name = @staff.person.name if @staff.name.blank? && @staff.person.present?
+      @staff.name = @staff.resource.name if @staff.name.blank? && @staff.resource.present?
 
       if @staff.valid?
         key = "staffs.create"
@@ -46,6 +50,15 @@ module Db
       else
         render :edit
       end
+    end
+
+    def hide(id)
+      @staff = @work.staffs.find(id)
+      authorize @staff, :hide?
+
+      @staff.hide!
+
+      redirect_to :back, notice: "非公開にしました"
     end
 
     def destroy(id)

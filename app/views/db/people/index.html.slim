@@ -1,11 +1,11 @@
-- title "スタッフ/キャスト一覧"
+- title "人物一覧"
 
 - if user_signed_in?
   .pull-right
     - if current_user.committer?
-      = link_to "新規作成", new_db_person_path, class: "btn btn-primary"
+      = link_to "新規登録", new_db_person_path, class: "btn btn-primary"
     - else
-      = link_to "新規作成", new_db_draft_person_path, class: "btn btn-primary"
+      = link_to "新規登録", new_db_draft_person_path, class: "btn btn-primary"
   .clearfix
 
 = render "people_list", people: @people
