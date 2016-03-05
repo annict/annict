@@ -204,6 +204,7 @@ body.home-index.guest {
         .activity {
           .header {
             font-size: 12px;
+            margin-bottom: 7px;
 
             .time {
               color: $color-gunsmoke;
@@ -226,6 +227,43 @@ body.home-index.guest {
               .text {
                 line-height: 25px;
                 margin-left: 3px;
+              }
+            }
+          }
+
+          .body {
+            margin-left: 28px;
+
+            .record-comment {
+              font-size: 12px;
+              margin-bottom: 10px;
+            }
+
+            .work {
+              @include display(flex);
+
+              .image {
+                @include flex-basis(30px);
+                margin-right: 7px;
+
+                img {
+                  border: 1px solid $color-alto;
+                }
+              }
+
+              .info {
+                font-size: 12px;
+
+                .status {
+                  background-color: $color-kei;
+                  border-radius: 2px;
+                  color: #fff;
+                  display: inline-block;
+                  font-size: 12px;
+                  font-weight: bold;
+                  line-height: 1;
+                  padding: 3px 5px;
+                }
               }
             }
           }

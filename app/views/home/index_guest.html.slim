@@ -86,15 +86,32 @@
                 - if act.create_record?
                   | 記録しました
                 - elsif act.create_status?
-                  | ライブラリに追加しました
+                  | ステータスを変更しました
           .body
-            .work
-              = annict_image_tag(act.trackable.work.item, :tombo_image, size: "30x30")
-              = act.trackable.work.title
-            - if act.create_record? && act.trackable.comment.present?
-              = act.trackable.comment
+            - if act.create_record?
+              - if act.trackable.comment.present?
+                ann-comment-guard inline-template=""
+                  .record-comment v-on:click="remove"
+                    = act.trackable.comment
+              .work
+                .image
+                  = link_to work_path(act.trackable.work) do
+                    = annict_image_tag(act.trackable.work.item, :tombo_image, size: "30x30")
+                .info
+                  .title
+                    = link_to act.trackable.work.title, work_path(act.trackable.work)
+                  .episode
+                    = link_to act.recipient.number, work_episode_path(act.trackable.work, act.recipient)
             - elsif act.create_status?
-              = act.trackable.kind_text
+              .work
+                .image
+                  = link_to work_path(act.trackable.work) do
+                    = annict_image_tag(act.trackable.work.item, :tombo_image, size: "30x30")
+                .info
+                  .title
+                    = link_to act.trackable.work.title, work_path(act.trackable.work)
+                  .status
+                    = act.trackable.kind_text
             
 
 - content_for :parts do
