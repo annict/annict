@@ -27,19 +27,19 @@
             = link_to work_path(@season_top_work), class: "image" do
               = annict_image_tag(@season_top_work.item, :tombo_image, size: "250x250", alt: @season_top_work.title)
             .library-btn
-              ann-modal template-id="prevent-modal" show="true"
+              ann-modal template-id="prevent-add-to-library-modal" show="true"
                 = icon "plus"
                 .text ライブラリに追加
           .right
             .watchers-count
               span.count = @season_top_work.watchers_count
-              span.text watchers
+              span.text Watchers
             h3 = link_to @season_top_work.title, work_path(@season_top_work)
             - if @season_top_work.casts.present?
               .casts
                 .title キャスト
                 ul
-                  - @season_top_work.casts.order(:sort_number).limit(5).each do |cast|
+                  - @season_top_work.casts.order(:sort_number).limit(10).each do |cast|
                     - cache cast do
                       li
                         = "#{cast.part}: "
@@ -48,14 +48,73 @@
               .staffs
                 .title スタッフ
                 ul
-                  - @season_top_work.staffs.major.order(:sort_number).limit(5).each do |staff|
+                  - @season_top_work.staffs.major.order(:sort_number).limit(10).each do |staff|
                     - cache staff do
                       li
                         = "#{staff.decorate.role_name}: "
                         = staff.decorate.name_with_old_link
         .works
-          - @season_works.each do |work|
-            .work
-              .image style="background-image: url(#{annict_image_url(work.item, :tombo_image, size: '178x178')});"
+          - @season_works.each_slice(4).each do |works|
+            .row
+              - works.each do |work|
+                .work
+                  = link_to work_path(work) do
+                    .image style="background-image: url(#{annict_image_url(work.item, :tombo_image, size: '178x178')});"
+                  .watchers-count
+                    span.count = work.watchers_count
+                    span.text Watchers
+                  = link_to work.title, work_path(work), class: "title"
+                  .library-btn
+                    ann-modal template-id="prevent-add-to-library-modal" show="true"
+                      = icon "plus"
+                      .text ライブラリに追加
   .side
     h2 みんなの視聴記録
+    .activities
+      - @activities.each do |act|
+        .activity
+          .header
+            .time
+              = custom_time_ago_in_words(act.created_at)
+            .user
+              .avatar
+                = link_to user_path(username: act.user.username) do
+                  = annict_image_tag(act.user.profile, :tombo_avatar, size: "25x25")
+              .text
+                = link_to act.user.profile.name, user_path(username: act.user.username)
+                | が
+                - if act.create_record?
+                  | 記録しました
+                - elsif act.create_status?
+                  | ライブラリに追加しました
+          .body
+            .work
+              = annict_image_tag(act.trackable.work.item, :tombo_image, size: "30x30")
+              = act.trackable.work.title
+            - if act.create_record? && act.trackable.comment.present?
+              = act.trackable.comment
+            - elsif act.create_status?
+              = act.trackable.kind_text
+            
+
+- content_for :parts do
+  #prevent-add-to-library-modal.ann-modal-content
+    .header
+      .logo
+        = image_tag "navbar/logo-120x120.png", size: "50x50", alt: "Annict"
+      .title 
+      .words
+        p
+          | ライブラリに追加するにはアカウント登録が必要です。<br>
+          | TwitterやFacebookのアカウントを使用して登録することができます。<br>
+        p
+          | 登録後に勝手にツイートなどをすることは絶対にやりませんので、<br>
+          | ご安心ください。
+    .body
+      .buttons
+        = link_to user_omniauth_authorize_path(:twitter), class: "twitter" do
+          = icon("twitter")
+          .text Twitterアカウントで登録
+        = link_to user_omniauth_authorize_path(:facebook), class: "facebook" do
+          = icon("facebook")
+          .text Facebookアカウントで登録

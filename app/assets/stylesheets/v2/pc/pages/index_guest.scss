@@ -50,12 +50,13 @@ body.home-index.guest {
 
     .main {
       @include flex-basis(800px);
+      padding-right: 7px;
 
       .section {
         h2 {
           font-family: "Noto Sans JP", sans-serif;
           font-size: 20px;
-          font-weight: 100;
+          font-weight: 300;
         }
 
         .wrapper {
@@ -80,7 +81,7 @@ body.home-index.guest {
               }
 
               .library-btn {
-                @include btn($color-mizuho, $size: mini, $icon: true);
+                @include btn($color-pelorous, $size: mini, $icon: true);
                 margin: 0 auto;
                 width: 150px;
               }
@@ -133,16 +134,50 @@ body.home-index.guest {
           }
 
           .works {
-            @include display(flex);
-            @include flex-wrap(wrap);
+            .row {
+              @include display(flex);
+              @include justify-content(space-between);
+              margin-bottom: 21px;
 
-            .work {
-              @include flex-basis(178px);
-              margin: 0 14px 14px 0;
+              .work {
+                @include flex-grow(1);
+                margin-right: 14px;
 
-              .image {
-                background-size: cover;
-                height: 178px;
+                &:last-child {
+                  margin-right: 0;
+                }
+
+                .image {
+                  background-size: cover;
+                  border: 1px solid $color-alto;
+                  height: 178px;
+                }
+
+                .watchers-count {
+                  .count {
+                    font-size: 12px;
+                    font-weight: bold;
+                    margin-right: 3px;
+                  }
+
+                  .text {
+                    color: $color-gunsmoke;
+                    font-size: 10px;
+                  }
+                }
+
+                .title {
+                  display: block;
+                  margin-bottom: 7px;
+                  overflow: hidden;
+                  text-overflow: ellipsis;
+                  white-space: nowrap;
+                  width: 175px;
+                }
+
+                .library-btn {
+                  @include btn($color-pelorous, $icon: true, $size: mini);
+                }
               }
             }
           }
@@ -153,12 +188,48 @@ body.home-index.guest {
     .side {
       @include flex-basis(400px);
       @include flex-shrink(0); // 横幅を400pxに固定する
+      padding-left: 7px;
       width: 400px;
 
       h2 {
         font-family: "Noto Sans JP", sans-serif;
         font-size: 20px;
-        font-weight: 100;
+        font-weight: 300;
+      }
+
+      .activities {
+        @include card;
+        padding: 14px;
+
+        .activity {
+          .header {
+            font-size: 12px;
+
+            .time {
+              color: $color-gunsmoke;
+              font-size: 10px;
+              text-align: right;
+            }
+
+            .user {
+              @include display(flex);
+              height: 25px;
+
+              .avatar {
+                @include flex-basis(25px);
+
+                img {
+                  @include img-circle;
+                }
+              }
+
+              .text {
+                line-height: 25px;
+                margin-left: 3px;
+              }
+            }
+          }
+        }
       }
     }
   }

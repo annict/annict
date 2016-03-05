@@ -21,6 +21,11 @@ class HomeController < ApplicationController
       cover_image_work_id = [@season_top_work.id, @season_works.pluck(:id)].flatten.sample
       @cover_image_work = Work.find(cover_image_work_id)
 
+      @activities = Activity.where(action: ["checkins.create", "statuses.create"]).
+        order(id: :desc).
+        includes(:recipient, trackable: :user, user: :profile).
+        limit(30)
+
       render :index_guest, layout: "v2/application"
     end
   end

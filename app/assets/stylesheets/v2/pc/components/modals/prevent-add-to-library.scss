@@ -1,0 +1,40 @@
+#prevent-add-to-library-modal {
+  padding: 20px;
+
+  .header {
+    margin-bottom: 30px;
+    text-align: center;
+
+    .logo {
+      height: 50px;
+      margin-bottom: 20px;
+    }
+
+    .title {
+      font-family: "Noto Sans JP", sans-serif;
+      font-size: 24px;
+      font-weight: 100;
+      margin-bottom: 7px;
+    }
+  }
+
+  .body {
+    .buttons {
+      margin: 0 auto;
+      width: 270px;
+
+      a {
+        display: block;
+
+        &.twitter {
+          @include btn($color-twitter, $icon: true);
+          margin-bottom: 14px;
+        }
+
+        &.facebook {
+          @include btn($color-facebook, $icon: true);
+        }
+      }
+    }
+  }
+}
