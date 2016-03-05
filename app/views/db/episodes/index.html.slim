@@ -67,3 +67,6 @@ table.table.table-striped.c-resource-list
 
 - if @episodes.blank?
   .well 登録されているエピソードはありません。
+- else
+  .text-center
+    = paginate @episodes

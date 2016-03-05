@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class Db::EpisodesController < Db::ApplicationController
   permits :number, :sort_number, :sc_count, :title, :prev_episode_id, :fetch_syobocal,
     :raw_number
@@ -5,8 +7,8 @@ class Db::EpisodesController < Db::ApplicationController
   before_action :authenticate_user!
   before_action :load_work, only: [:index, :new, :create, :edit, :update, :hide, :destroy]
 
-  def index
-    @episodes = @work.episodes.order(:sort_number)
+  def index(page: nil)
+    @episodes = @work.episodes.order(sort_number: :desc).page(page)
   end
 
   def edit(id)
