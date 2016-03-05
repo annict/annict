@@ -53,13 +53,6 @@
                       li
                         = "#{staff.decorate.role_name}: "
                         = staff.decorate.name_with_old_link
-            - if @season_top_work.work_organizations.with_role(:producer).present?
-              .work-organizations
-                .title アニメーション制作
-                ul
-                  - @season_top_work.work_organizations.with_role(:producer).order(:sort_number).each do |wo|
-                    - cache wo do
-                      li = wo.organization.decorate.name_link
         .works
           - @season_works.each do |work|
             .work
