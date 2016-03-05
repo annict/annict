@@ -2,7 +2,7 @@
 
 .works
   - if works.present?
-    = render partial: "works/work_#{type}", collection: works.includes(:item, :casts, :staffs), as: :work, locals: { user: user }
+    = render partial: "works/work_#{type}", collection: works.includes(:casts, :staffs), as: :work, locals: { user: user }
 
     .text-center
       = paginate works
