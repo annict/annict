@@ -10,7 +10,7 @@ module Db
     ]
 
     def index
-      @staffs = @work.staffs.order(:sort_number)
+      @staffs = @work.staffs.order(aasm_state: :desc, sort_number: :asc)
     end
 
     def new

@@ -10,7 +10,7 @@ module Db
     ]
 
     def index
-      @casts = @work.casts.order(:sort_number)
+      @casts = @work.casts.order(aasm_state: :desc, sort_number: :asc)
     end
 
     def new
