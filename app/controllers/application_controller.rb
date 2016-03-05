@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class ApplicationController < ActionController::Base
   include ViewSelector
   include FlashMessage
@@ -23,11 +25,11 @@ class ApplicationController < ActionController::Base
     @keen_client ||= Annict::Keen::Client.new(request)
   end
 
-  def after_sign_in_path_for(resource)
+  def after_sign_in_path_for
     root_path
   end
 
-  def after_sign_out_path_for(resource_or_scope)
+  def after_sign_out_path_for
     root_path
   end
 
@@ -58,5 +60,8 @@ class ApplicationController < ActionController::Base
 
       gon.push(user_info)
     end
+  end
+
+  def use_v1_layout
   end
 end
