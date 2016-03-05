@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module StaffCommon
   extend ActiveSupport::Concern
 
@@ -23,7 +25,6 @@ module StaffCommon
       other
     )
 
-    belongs_to :person
     belongs_to :resource, polymorphic: true
     belongs_to :work, touch: true
 

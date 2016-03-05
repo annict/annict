@@ -15,6 +15,7 @@ module Db
       else
         @work.draft_staffs.new
       end
+      @draft_staff.resource_type = (params[:type].presence || "").classify
       @draft_staff.build_edit_request
     end
 
