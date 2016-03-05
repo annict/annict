@@ -20,6 +20,11 @@ class StaffDecorator < ApplicationDecorator
   end
 
   def name_with_old_link
-    h.link_to name_with_old, h.person_path(resource)
+    path = case resource_type
+    when "Person" then h.person_path(resource)
+    when "Organization" then h.organization_path(resource)
+    end
+
+    h.link_to name_with_old, path
   end
 end
