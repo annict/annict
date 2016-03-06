@@ -161,42 +161,7 @@
                   .status
                     = act.trackable.kind_text
 
-.footer
-  table
-    tbody
-      tr
-        th サービス
-        th コミュニティ
-        th シーズン別アニメ一覧
-      tr
-        td
-          ul
-            li = link_to "Annictについて", about_path
-            li = link_to "利用規約", terms_path
-            li = link_to "プライバシーポリシー", privacy_path
-        td
-          ul
-            li = link_to "ブログ", "http://blog.annict.com", target: "_blank"
-            li = link_to "Twitter", "https://twitter.com/anannict", target: "_blank"
-            li = link_to "GitHub", "https://github.com/annict", target: "_blank"
-            li = link_to "Slack", "http://slack.annict.com", target: "_blank"
-        td
-          - next_season_slug = ENV.fetch("ANNICT_NEXT_SEASON")
-          - year, name = next_season_slug.split("-")
-          - years = year.to_i.downto(2000).to_a
-          - name_data = Season::NAME_DATA
-          - names = name_data.keys.map(&:to_s).reverse
-          - slugs = years.map { |y| names.map { |sn| "#{y}-#{sn}" } }.flatten
-          - index = slugs.index(next_season_slug)
-          - slugs = slugs[index..index + 4]
-          ul
-            - slugs.each do |slug|
-              li
-                - year, name = slug.split("-")
-                = link_to "#{year}年#{name_data[name.to_sym]}アニメ", season_works_path(slug: slug)
-  .copyright
-    = image_tag "navbar/logo-120x120.png", size: "35x35", alt: "Annict"
-    .text © 2014-2016 Annict
+= render "application/v2/components/footer"
 
 - content_for :parts do
   = render "application/v2/components/status_selector"

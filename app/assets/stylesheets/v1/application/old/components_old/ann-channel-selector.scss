@@ -1,9 +1,0 @@
-.ann-channel-selector {
-  @include selector;
-}
-
-.ann-channel-selector.is-mini {
-  @include selector-mini;
-
-  width: 130px;
-}

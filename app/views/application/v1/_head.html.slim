@@ -1,7 +1,7 @@
 = display_meta_tags(site: "Annict")
 meta name='viewport' content='width=device-width, initial-scale=1.0 user-scalable=no'
 
-= render "og"
+= render "application/v2/og"
 
 link href='/images/favicon.png' rel='shortcut icon' type='image/png'
 link href='/images/apple-touch-icon-144x144.png' rel='apple-touch-icon-precomposed' sizes='144x144'
@@ -12,11 +12,11 @@ link href='/images/apple-touch-icon-57x57.png' rel='apple-touch-icon-precomposed
 link type='text/plain' rel='author' href="#{ENV['ANNICT_URL']}/humans.txt"
 
 - if browser.mobile?
-  = stylesheet_link_tag "application_mobile", media: "all"
-  = javascript_include_tag "application_mobile"
+  = stylesheet_link_tag "v1/application_mobile", media: "all"
+  = javascript_include_tag "v1/application_mobile"
 - else
-  = stylesheet_link_tag "application", media: "all"
-  = javascript_include_tag "application"
+  = stylesheet_link_tag "v1/application", media: "all"
+  = javascript_include_tag "v1/application"
 
 link href='https://fonts.googleapis.com/css?family=Titillium+Web' rel='stylesheet' type='text/css'
 

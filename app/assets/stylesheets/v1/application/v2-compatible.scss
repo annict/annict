@@ -1,0 +1,44 @@
+*,
+*:before,
+*:after {
+  @include box-sizing(border-box);
+}
+
+::selection {
+  background: $color-kei;
+  color: #fff;
+  text-shadow: none;
+}
+
+html {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
+body {
+  color: rgba(0, 0, 0, 0.8);
+  letter-spacing: 0.03em;
+  line-height: 1.4;
+}
+
+a {
+  color: $color-mizuho;
+  transition: color .05s ease-out;
+
+  &:hover {
+    color: #c5244a;
+    text-decoration: none;
+  }
+}
+
+ul {
+  -moz-padding-start: 0;
+  -webkit-padding-start: 0;
+}
+
+.ann-navbar {
+  img {
+    vertical-align: baseline;
+  }
+}

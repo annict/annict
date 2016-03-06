@@ -47,6 +47,8 @@ class WorksController < ApplicationController
       page(page).
       per(15)
     @season = Season.find_or_new_by_slug(slug)
+
+    render layout: "v1/application"
   end
 
   def show
