@@ -1,5 +1,7 @@
 = content_for :site_page_title, "#{t('titles.terms')}"
 
+= render "application/v2/navbar"
+
 .content
   .container
     p
@@ -380,3 +382,5 @@
 
     p
       | 【2014年3月10日制定】
+
+= render "application/v2/components/footer"

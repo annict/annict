@@ -39,7 +39,7 @@
           = link_to "作品を編集する", new_db_draft_work_path(work_id: @work.id)
 
     - unless user_signed_in?
-      = render("welcome_to_annict")
+      = render("application/v1/welcome_to_annict")
 
     .work-chart.container
       h2.text-center = t("works.checkin_chart")

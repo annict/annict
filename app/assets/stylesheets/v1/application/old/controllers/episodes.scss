@@ -23,8 +23,10 @@
       margin-bottom: 0;
     }
 
-    > .content {
-      margin-top: -20px;
+    .app__main {
+      > .content {
+        margin-top: 20px;
+      }
     }
 
     .wrapper {

@@ -3,6 +3,8 @@
 - keywords = meta_keywords(@user.profile.name, @user.username)
 - set_meta_tags(title: title, description: description, keywords: keywords, reverse: true)
 
+= render "application/v2/navbar"
+
 .content
   = render 'profile_header', user: @user
 

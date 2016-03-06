@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 # == Schema Information
 #
 # Table name: users
@@ -40,18 +41,26 @@ class UsersController < ApplicationController
     @works = (checkedin_works + other_works).first(9)
     @graph_labels = Annict::Graphs::Checkins.labels
     @graph_values = Annict::Graphs::Checkins.values(@user)
+
+    render layout: "v1/application"
   end
 
   def works(status_kind, page: nil)
     @works = @user.works.on(status_kind).published.order_latest.page(page)
+
+    render layout: "v1/application"
   end
 
   def following
     @users = @user.followings.order('follows.id DESC')
+
+    render layout: "v1/application"
   end
 
   def followers
     @users = @user.followers.order('follows.id DESC')
+
+    render layout: "v1/application"
   end
 
   def destroy

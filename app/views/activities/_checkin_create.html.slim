@@ -20,7 +20,7 @@
 .activity-bottom
   .time ani-time-ago='{{activity.created_at}}'
   .buttons
-    = render 'like_button'
+    = render 'application/v1/like_button'
     a.comment-button ng-href='/works/{{activity.links.work.id}}/episodes/{{activity.links.episode.id}}/checkins/{{activity.links.checkin.id}}'
       i.icon.fa.fa-comment-o
       span.count

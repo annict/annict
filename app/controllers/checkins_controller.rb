@@ -63,6 +63,8 @@ class CheckinsController < ApplicationController
   def show
     @comments = @checkin.comments.order(created_at: :desc)
     @comment = Comment.new
+
+    render layout: "v1/application"
   end
 
   def update(checkin)

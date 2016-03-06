@@ -1,15 +1,19 @@
+# frozen_string_literal: true
+
 class RegistrationsController < Devise::RegistrationsController
   before_action :set_oauth, only: [:new, :create]
 
   def new
-    username = @oauth[:info][:nickname].presence || ''
-    email = @oauth[:info][:email].presence || ''
+    username = @oauth[:info][:nickname].presence || ""
+    email = @oauth[:info][:email].presence || ""
 
     # Facebookからのユーザ登録のとき `username` に「.」が
     # 含まれている可能性があるので除去する
     username.gsub!(".", "_")
 
     @user = User.new(username: username, email: email)
+
+    render layout: "v1/application"
   end
 
   def create
@@ -19,13 +23,12 @@ class RegistrationsController < Devise::RegistrationsController
       keen_client.users.create(@user)
       sign_in(@user, bypass: true)
 
-      flash[:info] = t('registrations.create.confirmation_mail_has_sent')
+      flash[:info] = t("registrations.create.confirmation_mail_has_sent")
       redirect_to after_sign_in_path_for(@user)
     else
-      render 'new'
+      render :new, layout: "v1/application"
     end
   end
-
 
   private
 
@@ -34,6 +37,6 @@ class RegistrationsController < Devise::RegistrationsController
   end
 
   def set_oauth
-    @oauth = session['devise.oauth_data']
+    @oauth = session["devise.oauth_data"]
   end
 end

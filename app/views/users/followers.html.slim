@@ -3,6 +3,8 @@
 - keywords = meta_keywords(@user.profile.name, @user.username)
 - set_meta_tags(title: title, description: description, keywords: keywords, reverse: true)
 
+= render "application/v2/navbar"
+
 .header-wrapper
   .ann-user-sub-header.container
     = link_to user_path(@user.username) do
@@ -22,3 +24,5 @@
     .icon
       i.fa.fa-info-circle
     p フォローされている人はいません。
+
+= render "application/v2/components/footer"

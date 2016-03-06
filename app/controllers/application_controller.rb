@@ -25,11 +25,11 @@ class ApplicationController < ActionController::Base
     @keen_client ||= Annict::Keen::Client.new(request)
   end
 
-  def after_sign_in_path_for
+  def after_sign_in_path_for(resource)
     root_path
   end
 
-  def after_sign_out_path_for
+  def after_sign_out_path_for(resource_or_scope)
     root_path
   end
 

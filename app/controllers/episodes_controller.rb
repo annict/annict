@@ -46,6 +46,8 @@ class EpisodesController < ApplicationController
     end
 
     @checkins = @checkins.where.not(id: get_checkin_ids)
+
+    render layout: "v1/application"
   end
 
   private

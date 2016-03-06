@@ -5,7 +5,8 @@ html lang="ja" ng-app="annict"
   body#ann class="#{body_class} #{user_signed_in? ? 'signed-in' : 'not-signed-in'}" ng-controller="ApplicationCtrl"
     = render "application/v1/flash"
 
-    = yield
+    .app__main
+      = yield
     = yield :parts
     ann-modal
 

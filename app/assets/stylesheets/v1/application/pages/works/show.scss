@@ -1,4 +1,8 @@
 body.works-show {
+  .ann-navbar {
+    margin-top: 20px;
+  }
+
   .content {
     @include content(narrow);
     @include card;

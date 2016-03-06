@@ -3,6 +3,8 @@
 - keywords = meta_keywords(@work.title)
 - set_meta_tags(title: title, description: description, keywords: keywords, reverse: true, prefix: false)
 
+= render "application/v2/navbar"
+
 .content
   .wrapper
     .work-profile
@@ -40,7 +42,7 @@
           = link_to "作品を編集する", new_db_draft_work_path(work_id: @work.id)
 
     - unless user_signed_in?
-      = render("welcome_to_annict")
+      = render("application/v1/welcome_to_annict")
 
     .work-chart.container
       h2.text-center = t("works.checkin_chart")
@@ -208,3 +210,5 @@
                 = link_to @work.item.url, class: "btn btn-primary", target: "_blank" do
                   = icon("amazon")
                   | Amazonで見てみる
+
+= render "application/v2/components/footer"
