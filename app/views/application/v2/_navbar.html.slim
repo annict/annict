@@ -6,7 +6,7 @@
       li = link_to "今期のアニメ", season_works_path(slug: ENV["ANNICT_CURRENT_SEASON"])
       li = link_to "人気のアニメ", popular_works_path
     = form_tag search_works_path, method: :get, class: "search-form" do
-      = text_field_tag :q, @search.q, placeholder: "キーワードで検索..."
+      = text_field_tag :q, @search.q, placeholder: "アニメタイトルで検索..."
       = button_tag "", type: :submit
   .right
     - if user_signed_in?

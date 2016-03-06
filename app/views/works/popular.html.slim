@@ -3,9 +3,12 @@
 - keywords = meta_keywords("人気", "評判", "ランキング")
 - set_meta_tags(title: title, description: description, keywords: keywords, reverse: true)
 
+= render "application/v2/navbar"
 = render "nav"
 
 = render "works", works: @works, user: current_user, compact: false
 
+= render "application/v2/components/footer"
+
 - content_for :js_templates do
-  = render "application/components/work_friends"
+  = render "application/v1/components/work_friends"

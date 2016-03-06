@@ -37,6 +37,12 @@ ul {
   -webkit-padding-start: 0;
 }
 
+textarea,
+input[type="text"],
+button {
+  outline: none;
+}
+
 .ann-navbar {
   img {
     vertical-align: baseline;

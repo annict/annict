@@ -3,19 +3,19 @@
 - keywords = meta_keywords("検索")
 - set_meta_tags(title: title, description: description, keywords: keywords, reverse: true)
 
+= render "application/v2/navbar"
 = render "nav"
 
 .c-content
   .container
-    = search_form_for @q, url: search_works_path, html: { role: "form" } do |f|
+    = form_tag search_works_path, method: :get, html: { role: "form" } do
       .form-group
-        = f.label :title_cont, class: "sr-only"
-        = f.text_field :title_cont, class: "form-control", placeholder: "作品名を入力...", autofocus: true
-      = f.button class: "btn btn-primary", method: :get do
+        = text_field_tag :q, @search.q, placeholder: "アニメタイトルで検索...", class: "form-control", autofocus: true
+      = button_tag class: "btn btn-primary" do
         = icon "search"
         | 検索
 
 = render "works", works: @works, user: current_user, compact: false
 
 - content_for :js_templates do
-  = render "application/components/work_friends"
+  = render "application/v1/components/work_friends"
