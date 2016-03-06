@@ -53,6 +53,8 @@ body.home-index.guest {
       padding-right: 7px;
 
       .section {
+        margin-bottom: 42px;
+
         h2 {
           font-family: "Noto Sans JP", sans-serif;
           font-size: 20px;
@@ -181,6 +183,14 @@ body.home-index.guest {
               }
             }
           }
+
+          .more {
+            text-align: right;
+
+            i {
+              margin-left: 7px;
+            }
+          }
         }
       }
     }
@@ -202,6 +212,8 @@ body.home-index.guest {
         padding: 14px;
 
         .activity {
+          margin-bottom: 7px;
+
           .header {
             font-size: 12px;
             margin-bottom: 7px;
