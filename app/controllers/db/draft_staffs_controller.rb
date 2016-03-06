@@ -16,6 +16,7 @@ module Db
         @work.draft_staffs.new
       end
       @draft_staff.resource_type = (params[:type].presence || "").classify
+      @draft_staff.sort_number = (@work.staffs.count * 10) + 10
       @draft_staff.build_edit_request
     end
 
