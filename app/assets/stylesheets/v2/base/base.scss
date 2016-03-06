@@ -1,5 +1,11 @@
+*,
+*:before,
+*:after {
+  @include box-sizing(border-box);
+}
+
 ::selection {
-  background: $color-mizuho;
+  background: $color-kei;
   color: #fff;
   text-shadow: none;
 }

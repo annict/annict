@@ -15,10 +15,10 @@
       ul
         li = link_to "Annictについて", about_path
         li.sign-in
-          ann-modal template-id="signin-modal" show="true"
+          ann-action-blocker modal-template-id="signin-modal" is-blocked="true"
             | ログイン
         li.sign-up
-          ann-modal template-id="signup-modal" show="true"
+          ann-action-blocker modal-template-id="signup-modal" is-blocked="true"
             .text アカウント登録
 
 - content_for :parts do

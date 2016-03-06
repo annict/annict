@@ -1,22 +1,15 @@
 Vue = require "vue"
 
 module.exports = Vue.extend
-  props:
-    templateId:
-      type: String
-      required: true
-      coerce: (val) ->
-        "##{val}"
-    show:
-      type: Boolean
-      required: true
-      coerce: (val) ->
-        JSON.parse(val)
+  data: ->
+    $modal: null
+
+  events:
+    "AnnModal:showModal": (templateId) ->
+      @$modal = $("##{templateId}")
+      @showModal()
 
   methods:
-    $content: ->
-      $(@templateId)
-
     showModal: ->
       @showBackdrop =>
         @showContent()
@@ -31,8 +24,8 @@ module.exports = Vue.extend
       , 100
 
     showContent: ->
-      top = ($(window).height() / 2) - (@$content().height() / 2)
-      @$content().css(top: top, opacity: 1).show()
+      top = ($(window).height() / 2) - (@$modal.height() / 2)
+      @$modal.css(top: top, opacity: 1).show()
 
     hideModal: ->
       @hideBackdrop =>
@@ -48,7 +41,4 @@ module.exports = Vue.extend
       , 100
 
     hideContent: ->
-      @$content().css(opacity: 0).hide()
-
-  ready: ->
-    $(@$el.parentNode).on("click", @showModal) if @show
+      @$modal.css(opacity: 0).hide()

@@ -5,6 +5,7 @@ html lang="ja"
   body#ann class="#{body_class} #{user_signed_in? ? 'user' : 'guest'}"
     = yield
     = yield :parts
+    ann-modal
 
     = include_gon
     = render "application/v2/analytics"

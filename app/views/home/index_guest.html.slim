@@ -13,7 +13,7 @@
       p Annict (アニクト) は、アニメの視聴記録ができるWebサービスです。
       p 人気ランキングや友達の視聴記録から好きなアニメを見つけて、管理することができます。
     .signup-btn
-      ann-modal template-id="signup-modal" show="true"
+      ann-action-blocker modal-template-id="signup-modal" is-blocked="true"
         = icon "rocket"
         .text アカウント登録して記録する
 
@@ -26,10 +26,7 @@
           .left
             = link_to work_path(@season_top_work), class: "image" do
               = annict_image_tag(@season_top_work.item, :tombo_image, size: "250x250", alt: @season_top_work.title)
-            .library-btn
-              ann-modal template-id="prevent-add-to-library-modal" show="true"
-                = icon "plus"
-                .text ライブラリに追加
+            ann-status-selector work-id="#{@season_top_work.id}" is-prevented="true"
           .right
             .watchers-count
               span.count = @season_top_work.watchers_count
@@ -64,10 +61,7 @@
                     span.count = work.watchers_count
                     span.text Watchers
                   = link_to work.title, work_path(work), class: "title"
-                  .library-btn
-                    ann-modal template-id="prevent-add-to-library-modal" show="true"
-                      = icon "plus"
-                      .text ライブラリに追加
+                  ann-status-selector work-id="#{@season_top_work.id}" is-prevented="true"
         .more
           = link_to season_works_path(slug: ENV["ANNICT_CURRENT_SEASON"]) do
             | 今期アニメを全て見る
@@ -81,9 +75,7 @@
             = link_to work_path(@top_work), class: "image" do
               = annict_image_tag(@top_work.item, :tombo_image, size: "250x250", alt: @top_work.title)
             .library-btn
-              ann-modal template-id="prevent-add-to-library-modal" show="true"
-                = icon "plus"
-                .text ライブラリに追加
+              ann-status-selector work-id="#{@season_top_work.id}" is-prevented="true"
           .right
             .watchers-count
               span.count = @top_work.watchers_count
@@ -118,10 +110,7 @@
                     span.count = work.watchers_count
                     span.text Watchers
                   = link_to work.title, work_path(work), class: "title"
-                  .library-btn
-                    ann-modal template-id="prevent-add-to-library-modal" show="true"
-                      = icon "plus"
-                      .text ライブラリに追加
+                  ann-status-selector work-id="#{@season_top_work.id}" is-prevented="true"
         .more
           = link_to popular_works_path do
             | 人気アニメを全て見る
@@ -171,17 +160,55 @@
                     = link_to act.trackable.work.title, work_path(act.trackable.work)
                   .status
                     = act.trackable.kind_text
-            
+
+.footer
+  table
+    tbody
+      tr
+        th サービス
+        th コミュニティ
+        th シーズン別アニメ一覧
+      tr
+        td
+          ul
+            li = link_to "Annictについて", about_path
+            li = link_to "利用規約", terms_path
+            li = link_to "プライバシーポリシー", privacy_path
+        td
+          ul
+            li = link_to "ブログ", "http://blog.annict.com", target: "_blank"
+            li = link_to "Twitter", "https://twitter.com/anannict", target: "_blank"
+            li = link_to "GitHub", "https://github.com/annict", target: "_blank"
+            li = link_to "Slack", "http://slack.annict.com", target: "_blank"
+        td
+          - next_season_slug = ENV.fetch("ANNICT_NEXT_SEASON")
+          - year, name = next_season_slug.split("-")
+          - years = year.to_i.downto(2000).to_a
+          - name_data = Season::NAME_DATA
+          - names = name_data.keys.map(&:to_s).reverse
+          - slugs = years.map { |y| names.map { |sn| "#{y}-#{sn}" } }.flatten
+          - index = slugs.index(next_season_slug)
+          - slugs = slugs[index..index + 4]
+          ul
+            - slugs.each do |slug|
+              li
+                - year, name = slug.split("-")
+                = link_to "#{year}年#{name_data[name.to_sym]}アニメ", season_works_path(slug: slug)
+  .copyright
+    = image_tag "navbar/logo-120x120.png", size: "35x35", alt: "Annict"
+    .text © 2014-2016 Annict
 
 - content_for :parts do
-  #prevent-add-to-library-modal.ann-modal-content
+  = render "application/v2/components/status_selector"
+
+  #prevent-change-status-modal.ann-modal-content
     .header
       .logo
         = image_tag "navbar/logo-120x120.png", size: "50x50", alt: "Annict"
       .title 
       .words
         p
-          | ライブラリに追加するにはアカウント登録が必要です。<br>
+          | ステータスを変更するにはアカウント登録が必要です。<br>
           | TwitterやFacebookのアカウントを使用して登録することができます。<br>
         p
           | 登録後に勝手にツイートなどをすることは絶対にやりませんので、<br>
