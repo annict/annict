@@ -8,7 +8,7 @@ class AccountsController < ApplicationController
   end
 
   def update(user)
-    @user = User.find(current_user)
+    @user = User.find(current_user.id)
     @user.attributes = user
 
     if @user.valid?
