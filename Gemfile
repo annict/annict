@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 source "https://rubygems.org"
 
 ruby "2.3.0"
@@ -15,7 +17,8 @@ gem "asset_sync"
 gem "aws-sdk-v1" # Paperclipで使用
 gem "bootstrap-sass"
 gem "bourbon"
-gem "browser"
+# 2系対応が面倒くさそうなので一旦1系を使い続ける
+gem "browser", "~> 1.1.0"
 gem "by_star"
 gem "coffee-rails"
 gem "delayed_job_active_record"
