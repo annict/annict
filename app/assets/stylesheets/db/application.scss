@@ -1,0 +1,17 @@
+//= require_self
+
+@import "bootstrap-sprockets";
+@import "bootstrap";
+@import "font-awesome-sprockets";
+@import "font-awesome";
+@import "select2.min";
+
+@import "../v1/application/old/components_old/error-panel";
+
+@import "foundations/_base";
+
+@import "old/components/*";
+@import "old/controllers/*";
+@import "components/*";
+@import "projects/*";
+@import "pages/**/*";

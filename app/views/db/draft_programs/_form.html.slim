@@ -1,5 +1,5 @@
 = form_for [:db, work, draft_program], html: { class: "form-horizontal" } do |f|
-  = render "application/error_panel", resource: f.object
+  = render "application/v1/error_panel", resource: f.object
 
   = render "db/programs/program_fields", f: f, work: work
     
