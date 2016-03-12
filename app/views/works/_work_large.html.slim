@@ -37,5 +37,12 @@
           - users_json = render("application/v2/components/work_friends.jbuilder", users: users.limit(12))
           ann-work-friends users="#{users_json}" is-all="#{users.count <= 12}" work-id="#{work.id}"
     .right
-      - if user_signed_in? && user == current_user
-        ann-status-selector work-id="#{work.id}" status-kind="#{current_user.status_kind(work)}"
+      - if user_signed_in?
+        - if user == current_user
+          ann-status-selector work-id="#{work.id}" status-kind="#{current_user.status_kind(work)}"
+      - else
+        ann-status-selector work-id="#{work.id}" status-kind="no_select" is-prevented="true"
+
+- content_for :parts do
+  - unless user_signed_in?
+    = render "application/v2/components/prevent_change_status_modal"

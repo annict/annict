@@ -61,7 +61,7 @@ body.home-index.guest {
           font-weight: 300;
         }
 
-        .wrapper {
+        > .wrapper {
           @include card;
           padding: 14px;
 
@@ -170,15 +170,34 @@ body.home-index.guest {
                   white-space: nowrap;
                   width: 175px;
                 }
+
+                .ann-status-selector {
+                  .selector {
+                    &:hover {
+                      color: #fff;
+                    }
+
+                    select {
+                      height: 28px;
+                    }
+
+                    i {
+                      top: 6px;
+                    }
+                  }
+                }
               }
             }
           }
 
-          .more {
-            text-align: right;
+          > .more {
+            height: 35px;
+            text-align: center;
 
-            i {
-              margin-left: 7px;
+            a {
+              @include btn($color-mizuho);
+              line-height: 35px;
+              padding: 9px 63px;
             }
           }
         }

@@ -8,19 +8,27 @@
     margin: 0 auto;
     margin-bottom: 28px;
 
-    th {
-      text-align: left;
-      width: 250px;
-    }
+    tr {
+      &.header {
+        th {
+          padding-bottom: 7px;
+        }
+      }
 
-    td {
-      vertical-align: top;
+      th {
+        text-align: left;
+        width: 250px;
+      }
 
-      ul {
-        list-style-type: none;
+      td {
+        vertical-align: top;
 
-        li {
-          margin-bottom: 3px;
+        ul {
+          list-style-type: none;
+
+          li {
+            margin-bottom: 3px;
+          }
         }
       }
     }

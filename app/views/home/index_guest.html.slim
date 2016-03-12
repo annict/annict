@@ -20,7 +20,7 @@
 .content
   .main
     .section
-      h2 人気アニメ (今期)
+      h2 今期のアニメ
       .wrapper
         .top-work
           .left
@@ -64,11 +64,10 @@
                   ann-status-selector work-id="#{work.id}" status-kind="no_select" is-prevented="true" is-transparent="true"
         .more
           = link_to season_works_path(slug: ENV["ANNICT_CURRENT_SEASON"]) do
-            | 今期アニメを全て見る
-            = icon "angle-double-right"
+            | 今期のアニメを全て見る
 
     .section
-      h2 人気アニメ (全体)
+      h2 人気アニメ
       .wrapper
         .top-work
           .left
@@ -114,7 +113,6 @@
         .more
           = link_to popular_works_path do
             | 人気アニメを全て見る
-            = icon "angle-double-right"
   
   .side
     h2 みんなの視聴記録
@@ -165,24 +163,5 @@
 
 - content_for :parts do
   = render "application/v2/components/status_selector"
-
-  #prevent-change-status-modal.ann-modal-content
-    .header
-      .logo
-        = image_tag "navbar/logo-120x120.png", size: "50x50", alt: "Annict"
-      .title 
-      .words
-        p
-          | ステータスを変更するにはアカウント登録が必要です。<br>
-          | TwitterやFacebookのアカウントを使用して登録することができます。<br>
-        p
-          | 登録後に勝手にツイートなどをすることは絶対にやりませんので、<br>
-          | ご安心ください。
-    .body
-      .buttons
-        = link_to user_omniauth_authorize_path(:twitter), class: "twitter" do
-          = icon("twitter")
-          .text Twitterアカウントで登録
-        = link_to user_omniauth_authorize_path(:facebook), class: "facebook" do
-          = icon("facebook")
-          .text Facebookアカウントで登録
+  - unless user_signed_in?
+    = render "application/v2/components/prevent_change_status_modal"

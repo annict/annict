@@ -15,6 +15,8 @@
             = @work.title
         - if user_signed_in?
           ann-status-selector work-id="#{@work.id}" status-kind="#{current_user.status_kind(@work)}"
+        - else
+          ann-status-selector work-id="#{@work.id}" status-kind="no_select" is-prevented="true"
 
         .work-statistics
           .status
@@ -215,3 +217,5 @@
 
 - content_for :parts do
   = render "application/v2/components/status_selector"
+  - unless user_signed_in?
+    = render "application/v2/components/prevent_change_status_modal"

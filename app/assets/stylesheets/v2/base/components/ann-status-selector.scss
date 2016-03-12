@@ -31,6 +31,10 @@
       outline: none;
       padding-left: 7px;
       width: 130%;
+
+      &:hover {
+        background-color: lighten($color-pelorous, 2%);
+      }
     }
 
     i {
