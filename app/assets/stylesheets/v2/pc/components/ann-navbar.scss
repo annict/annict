@@ -4,6 +4,7 @@
   background-color: $color-mine-shaft;
   height: 60px;
   line-height: 60px;
+  padding: 0 35px;
   width: 100%;
 
   ul {
@@ -33,20 +34,24 @@
       display: inline-block;
       float: left;
       height: 60px;
+
+      img {
+        vertical-align: middle;
+      }
     }
 
     ul {
-      margin: 0 35px 0 20px;
+      margin-left: 7px;
 
       li {
-        margin-left: 15px;
+        margin-left: 14px;
       }
     }
 
     .search-form {
       @include display(flex);
       height: 32px;
-      margin: 13px 0;
+      margin: 14px 0 14px 14px;
       position: relative;
 
       input,
@@ -79,8 +84,6 @@
   }
 
   .right {
-    margin-right: 20px;
-
     ul {
       margin: 0;
 

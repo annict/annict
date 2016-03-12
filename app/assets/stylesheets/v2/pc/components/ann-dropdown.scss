@@ -1,0 +1,29 @@
+.ann-dropdown {
+  position: relative;
+
+  > a {
+    &:hover {
+      & + .menu {
+        display: block;
+      }
+    }
+  }
+
+  ul.menu {
+    background-color: $color-mine-shaft;
+    display: none;
+    left: -20px;
+    position: absolute;
+    width: 150px;
+
+    &:hover {
+      display: block;
+    }
+
+    li {
+      display: block;
+      height: 35px;
+      line-height: 35px;
+    }
+  }
+}

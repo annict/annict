@@ -1,10 +1,20 @@
 .ann-navbar
   .left
     = link_to root_path, class: "logo" do
-      = image_tag "navbar/logo-120x120.png", size: "60x60", alt: "Annict"
+      = image_tag "logo.png", size: "33x40", alt: "Annict"
     ul
-      li = link_to "今期のアニメ", season_works_path(slug: ENV["ANNICT_CURRENT_SEASON"])
-      li = link_to "人気のアニメ", popular_works_path
+      - if user_signed_in?
+        li = link_to "放送予定", programs_path
+        li.ann-dropdown
+          = link_to "見てるアニメ", user_works_path(current_user.username, :watching)
+          ul.menu
+            li = link_to "見たいアニメ", user_works_path(current_user.username, :wanna_watch)
+            li = link_to "見たアニメ", user_works_path(current_user.username, :watched)
+            li = link_to "中断したアニメ", user_works_path(current_user.username, :on_hold)
+            li = link_to "中止したアニメ", user_works_path(current_user.username, :stop_watching)
+        li = link_to "今期のアニメ", season_works_path(slug: ENV["ANNICT_CURRENT_SEASON"])
+      - else
+        li = link_to "今期のアニメ", season_works_path(slug: ENV["ANNICT_CURRENT_SEASON"])
     = form_tag search_works_path, method: :get, class: "search-form" do
       = text_field_tag :q, @search.q, placeholder: "アニメタイトルで検索..."
       = button_tag "", type: :submit
