@@ -47,7 +47,7 @@
     .right {
       @include align-items(center);
       @include display(flex);
-      @include flex(0 100px);
+      @include flex(0 150px);
     }
 
     @if $type == large {

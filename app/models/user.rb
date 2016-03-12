@@ -161,6 +161,10 @@ class User < ActiveRecord::Base
     followings.joins(:latest_statuses).merge(latest_statuses)
   end
 
+  def status_kind(work)
+    latest_statuses.find_by(work: work)&.kind.presence || "no_select"
+  end
+
   private
 
   def get_large_avatar_image(provider, image_url)

@@ -18,7 +18,7 @@
           - if params[:controller] == 'channel_works' && work.channels.present?
             = render 'works/channel_selector', mini: true, work: work
           - else
-            = render 'status_selector', mini: true, work: work
+            ann-status-selector work-id="#{work.id}" status-kind="#{current_user.status_kind(work)}"
 
   - if params[:controller] == "users" && params[:action] == "works"
     - checkin_progress = CheckinProgressService.new(user, work)

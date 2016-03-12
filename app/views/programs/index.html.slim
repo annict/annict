@@ -1,5 +1,7 @@
 - content_for :site_page_title, "#{t('words.site_name_kana')} - #{t('words.program')}"
 
+= render "application/v2/navbar"
+
 .content
   .container
     .programs ng-controller='ProgramsCtrl' ann-loading='loading' ng-style="{'display': 'block'}"

@@ -1,8 +1,9 @@
 script#ann-status-selector type="x-template"
   .ann-status-selector
-    select v-model="kind" v-on:change="change"
-      - status_kind = user_signed_in? ? current_user.latest_statuses.find_by(work: work)&.(:kind).presence || "no_select" : "no_select"
-      - options = Status.kind.options.insert(0, ["ステータスを選択", "no_select"])
-      - options = options.insert(-1, ["未選択状態に戻す", "reset"]) if status_kind != "no_select"
-      = options_for_select(options, status_kind)
-    = icon "caret-down"
+    .selector
+      select v-model="statusKind" v-on:change="change"
+        - options = Status.kind.options.insert(0, ["ステータスを選択", "no_select"])
+        = options_for_select(options)
+      = icon "caret-down"
+    .loader v-show="isLoading" transition="loading"
+      = icon "circle-o-notch", class: "fa-spin"

@@ -18,5 +18,7 @@
   = render "works_nav"
 
 = render "works/works", works: @works, user: @user, compact: true
-
 = render "application/v2/components/footer"
+
+- content_for :parts do
+  = render "application/v2/components/status_selector"

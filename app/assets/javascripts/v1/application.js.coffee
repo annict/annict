@@ -23,6 +23,7 @@ AnnActionBlocker = require "../v2/base/components/AnnActionBlocker"
 AnnFlash = require "./application_common/components/AnnFlash"
 AnnModal = require "../v2/base/components/AnnModal"
 AnnSeasonSelector = require "./application_common/components/AnnSeasonSelector"
+AnnStatusSelector = require "../v2/base/components/AnnStatusSelector"
 AnnWorkFriends = require "./application_common/components/AnnWorkFriends"
 
 $ ->
@@ -30,6 +31,7 @@ $ ->
   Vue.component("ann-flash", AnnFlash)
   Vue.component("ann-modal", AnnModal)
   Vue.component("ann-season-selector", AnnSeasonSelector)
+  Vue.component("ann-status-selector", AnnStatusSelector)
   Vue.component("ann-work-friends", AnnWorkFriends)
 
   new Vue

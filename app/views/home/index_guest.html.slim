@@ -61,7 +61,7 @@
                     span.count = work.watchers_count
                     span.text Watchers
                   = link_to work.title, work_path(work), class: "title"
-                  ann-status-selector work-id="#{@season_top_work.id}" is-prevented="true"
+                  ann-status-selector work-id="#{work.id}" is-prevented="true"
         .more
           = link_to season_works_path(slug: ENV["ANNICT_CURRENT_SEASON"]) do
             | 今期アニメを全て見る
