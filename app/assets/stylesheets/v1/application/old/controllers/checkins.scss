@@ -59,22 +59,28 @@
 
 .checkins-edit,
 .checkins-update {
-  .wrapper {
-    padding-bottom: 15px;
-  }
+  > .app__main {
+    > .content {
+      margin-top: 20px !important;
 
-  .checkin-form-share-twitter,
-  .checkin-form-share-facebook {
-    margin-right: 10px;
-  }
+      .wrapper {
+        padding-bottom: 15px;
+      }
 
-  .checkin-form-share-twitter i {
-    color: $color-twitter;
-    margin-right: 3px;
-  }
+      .checkin-form-share-twitter,
+      .checkin-form-share-facebook {
+        margin-right: 10px;
+      }
 
-  .checkin-form-share-facebook i {
-    color: $color-facebook;
-    margin-right: 5px;
+      .checkin-form-share-twitter i {
+        color: $color-twitter;
+        margin-right: 3px;
+      }
+
+      .checkin-form-share-facebook i {
+        color: $color-facebook;
+        margin-right: 5px;
+      }
+    }
   }
 }

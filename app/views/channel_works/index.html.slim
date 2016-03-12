@@ -1,4 +1,8 @@
+= render "application/v2/navbar"
+
 .content
   = render "channels/nav"
 
   = render "works/works", works: @works, user: current_user, compact: true
+
+= render "application/v2/components/footer"

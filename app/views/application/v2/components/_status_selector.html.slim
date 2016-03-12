@@ -1,5 +1,5 @@
 script#ann-status-selector type="x-template"
-  .ann-status-selector
+  .ann-status-selector v-bind:class="{ 'transparent': isTransparent }"
     .selector
       select v-model="statusKind" v-on:change="change"
         - options = Status.kind.options.insert(0, ["ステータスを選択", "no_select"])

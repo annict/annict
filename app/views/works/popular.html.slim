@@ -10,5 +10,6 @@
 
 = render "application/v2/components/footer"
 
-- content_for :js_templates do
-  = render "application/v1/components/work_friends"
+- content_for :parts do
+  = render "application/v2/components/work_friends"
+  = render "application/v2/components/status_selector"

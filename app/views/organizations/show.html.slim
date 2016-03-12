@@ -3,6 +3,8 @@
 - keywords = meta_keywords(@organization.name)
 - set_meta_tags(title: title, description: description, keywords: keywords, reverse: true)
 
+= render "application/v2/navbar"
+
 .content.header
   .container
     h1
@@ -50,3 +52,5 @@
             = link_to work_path(work) do
               .work-title = work.title
             .wo-role = wos.map { |wo| wo.decorate.role_name }.join("、")
+
+= render "application/v2/components/footer"

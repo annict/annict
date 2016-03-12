@@ -6,6 +6,18 @@
   position: relative;
   width: 100%;
 
+  &.transparent {
+    color: $color-pelorous;
+
+    > .selector {
+      border: solid 1px $color-pelorous;
+
+      select {
+        background-color: rgba(255, 255, 255, 0);
+      }
+    }
+  }
+
   > .selector {
     position: relative;
 

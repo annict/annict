@@ -1,10 +1,13 @@
+# frozen_string_literal: true
+
 module Api
   class WorksController < Api::ApplicationController
-    def friends(user_id, work_id)
-      user = User.find(user_id)
+    before_action :authenticate_user!
+
+    def friends(work_id)
       work = Work.find(work_id)
 
-      @users = user.friends_interested_in(work).
+      @users = current_user.friends_interested_in(work).
         includes(:profile).
         order("latest_statuses.id DESC")
     end

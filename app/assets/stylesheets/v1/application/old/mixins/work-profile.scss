@@ -37,6 +37,19 @@
         }
       }
 
+      .ann-status-selector {
+        color: #fff;
+        width: 150px;
+
+        > .selector {
+          border: solid 1px #fff;
+
+          select {
+            background-color: rgba(255, 255, 255, 0);
+          }
+        }
+      }
+
       .work-statistics {
         bottom: 10px;
         left: 50%;

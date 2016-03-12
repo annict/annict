@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 # == Schema Information
 #
 # Table name: people
@@ -46,5 +47,7 @@ class PeopleController < ApplicationController
         group_by { |staff| staff.work.season&.year.presence || 0 }
       @staff_years = @staffs_with_year.keys.sort.reverse
     end
+
+    render layout: "v1/application"
   end
 end

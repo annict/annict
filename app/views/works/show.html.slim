@@ -14,7 +14,7 @@
           h1
             = @work.title
         - if user_signed_in?
-          = render "status_selector", mini: false, work: @work
+          ann-status-selector work-id="#{@work.id}" status-kind="#{current_user.status_kind(@work)}"
 
         .work-statistics
           .status
@@ -212,3 +212,6 @@
                   | Amazonで見てみる
 
 = render "application/v2/components/footer"
+
+- content_for :parts do
+  = render "application/v2/components/status_selector"

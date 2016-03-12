@@ -20,11 +20,11 @@
 Vue = require "vue"
 
 AnnActionBlocker = require "../v2/base/components/AnnActionBlocker"
-AnnFlash = require "./application_common/components/AnnFlash"
+AnnFlash = require "../v2/base/components/AnnFlash"
 AnnModal = require "../v2/base/components/AnnModal"
 AnnSeasonSelector = require "./application_common/components/AnnSeasonSelector"
 AnnStatusSelector = require "../v2/base/components/AnnStatusSelector"
-AnnWorkFriends = require "./application_common/components/AnnWorkFriends"
+AnnWorkFriends = require "../v2/base/components/AnnWorkFriends"
 
 $ ->
   Vue.component("ann-action-blocker", AnnActionBlocker)

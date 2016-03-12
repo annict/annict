@@ -3,6 +3,8 @@
 - keywords = meta_keywords(@person.name)
 - set_meta_tags(title: title, description: description, keywords: keywords, reverse: true)
 
+= render "application/v2/navbar"
+
 .content.header style="background-color: #{@person.decorate.background_color};"
   .container
     - if @person.voice_actor? || @person.staff?
@@ -96,3 +98,5 @@
               = link_to work_path(work) do
                 .work-title = work.title
               .staff-role = staffs.map { |staff| staff.decorate.role_name }.join("、")
+
+= render "application/v2/components/footer"

@@ -26,7 +26,7 @@
           .left
             = link_to work_path(@season_top_work), class: "image" do
               = annict_image_tag(@season_top_work.item, :tombo_image, size: "250x250", alt: @season_top_work.title)
-            ann-status-selector work-id="#{@season_top_work.id}" is-prevented="true"
+            ann-status-selector work-id="#{@season_top_work.id}" status-kind="no_select" is-prevented="true"
           .right
             .watchers-count
               span.count = @season_top_work.watchers_count
@@ -61,7 +61,7 @@
                     span.count = work.watchers_count
                     span.text Watchers
                   = link_to work.title, work_path(work), class: "title"
-                  ann-status-selector work-id="#{work.id}" is-prevented="true"
+                  ann-status-selector work-id="#{work.id}" status-kind="no_select" is-prevented="true" is-transparent="true"
         .more
           = link_to season_works_path(slug: ENV["ANNICT_CURRENT_SEASON"]) do
             | 今期アニメを全て見る
@@ -75,7 +75,7 @@
             = link_to work_path(@top_work), class: "image" do
               = annict_image_tag(@top_work.item, :tombo_image, size: "250x250", alt: @top_work.title)
             .library-btn
-              ann-status-selector work-id="#{@season_top_work.id}" is-prevented="true"
+              ann-status-selector work-id="#{@season_top_work.id}" status-kind="no_select" is-prevented="true"
           .right
             .watchers-count
               span.count = @top_work.watchers_count
@@ -110,7 +110,7 @@
                     span.count = work.watchers_count
                     span.text Watchers
                   = link_to work.title, work_path(work), class: "title"
-                  ann-status-selector work-id="#{@season_top_work.id}" is-prevented="true"
+                  ann-status-selector work-id="#{@season_top_work.id}" status-kind="no_select" is-prevented="true" is-transparent="true"
         .more
           = link_to popular_works_path do
             | 人気アニメを全て見る

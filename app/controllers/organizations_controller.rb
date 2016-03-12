@@ -27,5 +27,7 @@ class OrganizationsController < ApplicationController
       # includes(work: [:season, :item]).
       group_by { |s| s.work.season&.year.presence || 0 }
     @staff_years = @staffs_with_year.keys.sort.reverse
+
+    render layout: "v1/application"
   end
 end

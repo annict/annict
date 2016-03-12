@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 # == Schema Information
 #
 # Table name: checkins
@@ -64,6 +65,10 @@ class CheckinsController < ApplicationController
     @comments = @checkin.comments.order(created_at: :desc)
     @comment = Comment.new
 
+    render layout: "v1/application"
+  end
+
+  def edit
     render layout: "v1/application"
   end
 

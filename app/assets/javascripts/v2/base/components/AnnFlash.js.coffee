@@ -1,7 +1,7 @@
 Vue = require "vue"
 
 module.exports = Vue.extend
-  template: "#js-ann-flash"
+  template: "#ann-flash"
 
   data: ->
     type: gon.flash.type || "notice"

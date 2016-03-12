@@ -24,6 +24,12 @@ module.exports = Vue.extend
       coerce: (val) ->
         JSON.parse(val)
 
+    isTransparent:
+      type: Boolean
+      default: false
+      coerce: (val) ->
+        JSON.parse(val)
+
   methods:
     resetKind: ->
       @statusKind = "no_select"

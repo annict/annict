@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class AccountsController < ApplicationController
   permits :username, :email, model_name: "User"
 
@@ -5,6 +7,7 @@ class AccountsController < ApplicationController
 
   def show
     @user = current_user
+    render layout: "v1/application"
   end
 
   def update(user)
@@ -26,7 +29,7 @@ class AccountsController < ApplicationController
 
       redirect_to account_path, notice: (message.presence || "保存しました")
     else
-      render "/accounts/show"
+      render "/accounts/show", layout: "v1/application"
     end
   end
 end

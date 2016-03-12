@@ -1,10 +1,9 @@
 Vue = require "vue"
 
 module.exports = Vue.extend
-  template: "#js-ann-work-friends"
+  template: "#ann-work-friends"
 
   props:
-    userId: String
     workId: String
     isAll:
       coerce: (val) ->
@@ -16,7 +15,7 @@ module.exports = Vue.extend
   methods:
     more: ->
       $.ajax
-        url: "/api/users/#{@userId}/works/#{@workId}/friends"
+        url: "/api/works/#{@workId}/friends"
       .done (users)=>
         @users = users
         @isAll = true

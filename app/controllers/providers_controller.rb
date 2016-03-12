@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 # == Schema Information
 #
 # Table name: providers
@@ -20,6 +21,10 @@
 
 class ProvidersController < ApplicationController
   before_action :authenticate_user!
+
+  def index
+    render layout: "v1/application"
+  end
 
   def destroy(id)
     provider = current_user.providers.find(id)

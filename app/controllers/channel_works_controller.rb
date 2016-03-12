@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 # == Schema Information
 #
 # Table name: channel_works
@@ -29,5 +30,7 @@ class ChannelWorksController < ApplicationController
       includes(:episodes).
       order_latest.
       page(page)
+
+    render layout: "v1/application"
   end
 end

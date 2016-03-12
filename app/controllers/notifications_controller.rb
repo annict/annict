@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 # == Schema Information
 #
 # Table name: notifications
@@ -22,12 +23,14 @@ class NotificationsController < ApplicationController
   before_action :authenticate_user!
 
   def index(page: nil)
-    @notifications = current_user
-                       .notifications
-                       .includes(:action_user)
-                       .order(created_at: :desc)
-                       .page(page)
+    @notifications = current_user.
+      notifications.
+      includes(:action_user).
+      order(created_at: :desc).
+      page(page)
 
     current_user.read_notifications! if 0 < current_user.notifications_count
+
+    render layout: "v1/application"
   end
 end

@@ -16,7 +16,7 @@
       - if user_signed_in?
         .comment-form
           = form_for [@work, @episode, @checkin, @comment], html: { role: 'form' } do |f|
-            = render 'error_panel', resource: @comment
+            = render "application/v1/error_panel", resource: @comment
 
             .form-group
               = f.text_area :body, class: 'form-control', rows: '5', placeholder: t('comments.comment_textarea_placeholder')
