@@ -16,7 +16,7 @@ namespace :tmp do
     person.hide!
   end
 
-  task :hide_duplicate_resources, :environment do
+  task hide_duplicate_resources: :environment do
     results = []
 
     Person.find_each do |p|
