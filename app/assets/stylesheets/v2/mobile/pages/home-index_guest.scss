@@ -24,23 +24,33 @@ body.home-index.guest {
         font-family: "Noto Sans JP", sans-serif;
         font-size: 56px;
         font-weight: 400;
+        line-height: 1.4;
         margin: 70px 0 0 0;
       }
 
       > .description {
         color: #fff;
-        margin-bottom: 35px;
+        margin-bottom: 21px;
       }
 
-      > .signup-btn {
-        @include btn($color-mizuho, $icon: true);
-        margin: 0 auto;
-        width: 180px;
+      > .btns {
+        @include display(flex);
+        @include justify-content(center);
+
+        > .about-btn {
+          @include btn(#fff, $type: transparency);
+          margin-right: 7px;
+        }
+
+        > .signup-btn {
+          @include btn($color-mizuho, $icon: true);
+          width: 170px;
+        }
       }
 
       > .signin {
         color: #fff;
-        margin-top: 14px;
+        margin-top: 21px;
       }
     }
   }

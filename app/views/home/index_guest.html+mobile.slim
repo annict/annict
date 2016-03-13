@@ -9,10 +9,12 @@
     h1 Annict
     .description
       | 見たアニメを記録して、共有しよう。
-    .signup-btn
-      ann-action-blocker modal-template-id="signup-modal" is-blocked="true"
-        = icon "rocket"
-        .text アカウント登録
+    .btns
+      = link_to "詳しく", about_path, class: "about-btn"
+      .signup-btn
+        ann-action-blocker v-cloak="" modal-template-id="signup-modal" is-blocked="true"
+          = icon "rocket"
+          .text アカウント登録
     .signin
       ann-action-blocker modal-template-id="signin-modal" is-blocked="true"
         | ログイン

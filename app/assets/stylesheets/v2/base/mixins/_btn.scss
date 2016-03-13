@@ -9,7 +9,9 @@
   }
 
   &:hover {
-    background-color: lighten($color, 2%);
+    @if $type != transparency {
+      background-color: lighten($color, 2%);
+    }
     cursor: pointer;
   }
 

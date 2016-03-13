@@ -70,6 +70,8 @@ body.home-index.guest {
             margin-bottom: 35px;
 
             .left {
+              @include flex-basis(250px);
+              @include flex-shrink(0);
               margin-right: 14px;
 
               .image {

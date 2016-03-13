@@ -53,3 +53,7 @@ ul {
   -webkit-padding-start: 0;
   margin-top: 0;
 }
+
+[v-cloak] {
+  display: none;
+}
