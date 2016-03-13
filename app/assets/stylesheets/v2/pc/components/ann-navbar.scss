@@ -24,7 +24,7 @@
       a {
         color: $color-alto;
         display: inline-block;
-        height: 60px;
+        height: 100%;
         transition: all .1s ease-in-out;
 
         &:hover {
@@ -84,6 +84,10 @@
         margin-left: 14px;
 
         &.dropdown {
+          > a {
+            height: 60px;
+          }
+
           ul.menu {
             left: -20px;
           }
