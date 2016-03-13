@@ -4,12 +4,6 @@
   box-sizing: border-box;
 }
 
-::selection {
-  background: $color-kei;
-  color: #fff;
-  text-shadow: none;
-}
-
 html {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
