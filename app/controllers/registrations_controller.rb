@@ -9,7 +9,7 @@ class RegistrationsController < Devise::RegistrationsController
 
     # Facebookからのユーザ登録のとき `username` に「.」が
     # 含まれている可能性があるので除去する
-    username.gsub!(".", "_")
+    username = username.tr(".", "_")
 
     @user = User.new(username: username, email: email)
 
