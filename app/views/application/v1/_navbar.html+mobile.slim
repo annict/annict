@@ -2,7 +2,7 @@ nav.navbar.navbar-default.navbar-fixed-top
   .navbar-content
     .navbar-header
       = link_to root_path, class: 'navbar-brand', target: '_self' do
-        = image_tag 'navbar/logo.png', size: '48x48', alt: 'Annict'
+        = image_tag 'navbar/logo-120x120.png', size: '48x48', alt: 'Annict'
     .shortcuts
       - if user_signed_in?
         = link_to programs_path, class: "#{programs_page? ? 'active' : ''}", target: '_self' do

@@ -2,6 +2,8 @@
 - description meta_description("#{@work.title}を見たらAnnictに記録しよう！")
 - keywords meta_keywords(@work.title)
 
+= render "application/v1/navbar"
+
 .content
   .wrapper
     .work-profile
@@ -207,3 +209,5 @@
                 = link_to @work.item.url, class: "btn btn-primary", target: "_blank" do
                   = icon("amazon")
                   | Amazonで見てみる
+
+= render "application/v2/components/footer"

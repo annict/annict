@@ -1,6 +1,8 @@
 body.episodes-show {
-  .content {
-    @include content(wide);
-    @include card;
+  > .app__main {
+    > .content {
+      @include content(wide);
+      @include card;
+    }
   }
 }

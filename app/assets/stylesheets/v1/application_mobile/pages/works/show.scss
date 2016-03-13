@@ -1,23 +1,25 @@
 body.works-show {
-  .content {
-    @include content(wide);
-    @include card;
+  > .app__main {
+    > .content {
+      @include content(wide);
+      @include card;
 
-    .casts, .staffs {
-      table {
-        width: 100%;
+      .casts, .staffs {
+        table {
+          width: 100%;
 
-        tr {
-          th {
-            font-weight: normal;
-            padding: 5px 10px 5px 0;
-            text-align: right;
-            width: 50%;
-          }
+          tr {
+            th {
+              font-weight: normal;
+              padding: 5px 10px 5px 0;
+              text-align: right;
+              width: 50%;
+            }
 
-          td {
-            padding: 5px 0 5px 10px;
-            width: 50%;
+            td {
+              padding: 5px 0 5px 10px;
+              width: 50%;
+            }
           }
         }
       }
