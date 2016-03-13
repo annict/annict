@@ -1,10 +1,4 @@
 @mixin work-profile {
-  &.not-signed-in {
-    .work-title {
-      margin: 150px 10px 25px 10px !important;
-    }
-  }
-
   .work-profile {
     height: 320px;
     position: relative;
@@ -25,7 +19,7 @@
       top: 0;
 
       .work-title {
-        margin: 130px 10px 25px 10px;
+        margin: 130px 10px 14px 10px;
 
         h1 {
           color: #ffffff;
@@ -35,6 +29,24 @@
           }
 
           font-size: 20px;
+        }
+      }
+
+      .ann-status-selector {
+        color: #fff;
+        width: 150px;
+
+        > .selector {
+          border: solid 1px #fff;
+
+          > select {
+            background-color: rgba(255, 255, 255, 0);
+            height: 30px;
+          }
+
+          > i {
+            top: 7px;
+          }
         }
       }
 

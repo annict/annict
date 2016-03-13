@@ -30,6 +30,12 @@ module.exports = Vue.extend
       coerce: (val) ->
         JSON.parse(val)
 
+    isMini:
+      type: Boolean
+      default: false
+      coerce: (val) ->
+        JSON.parse(val)
+
   methods:
     resetKind: ->
       @statusKind = "no_select"

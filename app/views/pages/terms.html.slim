@@ -1,6 +1,9 @@
 = content_for :site_page_title, "#{t('titles.terms')}"
 
-= render "application/v2/navbar"
+- if browser.mobile?
+  = render "application/v1/navbar"
+- else
+  = render "application/v2/navbar"
 
 .content
   .container

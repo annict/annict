@@ -3,7 +3,10 @@
 - keywords = meta_keywords
 - set_meta_tags(title: title, description: description, keywords: keywords, reverse: true)
 
-= render "application/v2/navbar"
+- if browser.mobile?
+  = render "application/v1/navbar"
+- else
+  = render "application/v2/navbar"
 
 .content
   h1 Annictについて

@@ -1,7 +1,9 @@
+= render "application/v1/navbar"
+
 .content
   .container
     = form_for current_user.setting, url: options_path do |f|
-      = render "error_panel", resource: current_user.setting
+      = render "application/v1/error_panel", resource: current_user.setting
 
       .checkbox
         label
@@ -10,3 +12,5 @@
           .detail 見てる、見たい、または中断したアニメの中で、記録していないエピソードに投稿された他の利用者からの感想を表示しないようにします。
       .form-submit
         = f.submit class: "btn btn-primary"
+
+= render "application/v2/components/footer"

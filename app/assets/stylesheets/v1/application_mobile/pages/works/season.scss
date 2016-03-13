@@ -45,10 +45,6 @@ body.works-season {
       @include card;
       @include work(large);
       margin: 20px 0;
-
-      .ann-status-selector {
-        margin-left: 0;
-      }
     }
   }
 }

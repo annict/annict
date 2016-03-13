@@ -18,6 +18,20 @@
     }
   }
 
+  &.mini {
+    width: 150px;
+
+    > .selector {
+      > select {
+        height: 30px;
+      }
+
+      > i {
+        top: 7px;
+      }
+    }
+  }
+
   > .selector {
     position: relative;
 

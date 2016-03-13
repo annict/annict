@@ -5,7 +5,7 @@
 @import "../v2/base/variables";
 @import "application_common/foundations/bootstrap-variables";
 
-@import url("https://fonts.googleapis.com/earlyaccess/notosansjapanese.css");
+@import url("http://fonts.googleapis.com/earlyaccess/notosansjp.css");
 @import "bootstrap-sprockets";
 @import "bootstrap";
 @import "bourbon";
@@ -28,4 +28,11 @@
 @import "application_mobile/_components/**/*";
 @import "application_mobile/pages/**/*";
 
+@import "../v2/base/mixins/*";
+@import "../v2/base/components/ann-modal";
+@import "../v2/base/components/ann-status-selector";
+@import "../v2/base/components/modals/prevent-change-status";
+@import "../v2/base/components/modals/signinup";
 @import "../v2/mobile/components/ann-footer";
+
+@import "application_mobile/v2-compatible";

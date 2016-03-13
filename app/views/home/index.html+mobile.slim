@@ -1,0 +1,20 @@
+- title = "Annict"
+- description = meta_description
+- keywords = meta_keywords
+- set_meta_tags(title: title, description: description, keywords: keywords, site: false)
+
+= render "application/v1/navbar"
+
+- if current_user.tips.unfinished.present?
+  = render "tips"
+
+.content
+  .container
+    .activities-box ng-controller='ActivitiesCtrl' ann-loading='loading' ng-style="{'display': 'block'}"
+      div infinite-scroll='addMoreActivities()' infinite-scroll-disabled='disabled' infinite-scroll-distance='2'
+        = render 'activities/activity'
+      .info.well ng-show='0 === activities.length'
+        .icon
+          i.fa.fa-info-circle
+        p = t('home.no_timeline')
+        p = "「#{link_to('友達を探す', friends_path)}」ページで友達を探すことができます。".html_safe

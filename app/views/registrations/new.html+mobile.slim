@@ -1,3 +1,5 @@
+= render "application/v1/navbar"
+
 .content
   .container
     .alert.alert-info
@@ -5,7 +7,7 @@
 
   .container
     = form_for @user, url: user_registration_path, role: 'form' do |f|
-      = render 'error_panel', resource: @user
+      = render 'application/v1/error_panel', resource: @user
 
       .form-group
         = f.label :username
@@ -24,3 +26,5 @@
         = f.button class: 'btn btn-primary' do
           = icon('rocket')
           = t('registrations.new.button')
+
+= render "application/v2/components/footer"

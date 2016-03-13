@@ -1,12 +1,14 @@
 body.accounts-show,
 body.accounts-update {
-  .content {
-    @include content(narrow);
-    @include card;
-    padding: 15px 0;
+  > .app__main {
+    > .content {
+      @include content(narrow);
+      @include card;
+      padding: 15px 0;
 
-    .form-submit {
-      text-align: center;
+      .form-submit {
+        text-align: center;
+      }
     }
   }
 }

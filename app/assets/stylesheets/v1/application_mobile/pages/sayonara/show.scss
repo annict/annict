@@ -1,16 +1,18 @@
 body.sayonara-show {
-  .content {
-    @include content(narrow);
-    @include card;
-    padding: 15px 0;
+  > .app__main {
+    > .content {
+      @include content(narrow);
+      @include card;
+      padding: 15px 0;
 
-    .description {
-      font-size: 12px;
-      margin-bottom: 10px;
-    }
+      .description {
+        font-size: 12px;
+        margin-bottom: 10px;
+      }
 
-    .action {
-      text-align: center;
+      .action {
+        text-align: center;
+      }
     }
   }
 }
