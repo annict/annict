@@ -17,14 +17,12 @@
 #= require_tree ./application_common/old/services
 #= require_tree ./application_common/old/controllers
 
-#= require_tree ./application_common/components
-
 Vue = require "vue"
 
 AnnActionBlocker = require "../v2/base/components/AnnActionBlocker"
 AnnFlash = require "../v2/base/components/AnnFlash"
 AnnModal = require "../v2/base/components/AnnModal"
-AnnSeasonSelector = require "./application_common/components/AnnSeasonSelector"
+AnnSeasonSelector = require "../v2/base/components/AnnSeasonSelector"
 AnnStatusSelector = require "../v2/base/components/AnnStatusSelector"
 AnnWorkFriends = require "../v2/base/components/AnnWorkFriends"
 
