@@ -1,4 +1,6 @@
 body.users-show {
+  padding-top: 60px;
+
   .content {
     @include content(narrow);
     @include card;

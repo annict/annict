@@ -1,4 +1,6 @@
 body.users-works {
+  padding-top: 60px;
+
   .app__main {
     > .content {
       @include content(wide);

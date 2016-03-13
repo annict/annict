@@ -1,4 +1,6 @@
 body.people-show {
+  padding-top: 60px;
+
   .content {
     @include content(wide);
     @include card;

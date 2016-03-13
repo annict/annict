@@ -1,7 +1,5 @@
 body.works-show {
-  .ann-navbar {
-    margin-top: 20px;
-  }
+  padding-top: 60px;
 
   .content {
     @include content(narrow);

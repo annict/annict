@@ -1,4 +1,6 @@
 body.sayonara-show {
+  padding-top: 60px;
+
   .c-tabs {
     @include tabs(independent);
   }

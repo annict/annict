@@ -6,11 +6,11 @@
   .app__main {
     > .content {
       margin-top: 20px !important;
-    }
-  }
 
-  .wrapper {
-    padding-bottom: 15px;
+      > .wrapper {
+        padding-bottom: 15px;
+      }
+    }
   }
 
   .welcome-to-annict {
@@ -63,7 +63,7 @@
     > .content {
       margin-top: 20px !important;
 
-      .wrapper {
+      > .wrapper {
         padding-bottom: 15px;
       }
 

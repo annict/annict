@@ -5,7 +5,10 @@
   height: 60px;
   line-height: 60px;
   padding: 0 35px;
+  position: fixed;
+  top: 0;
   width: 100%;
+  z-index: 200;
 
   img {
     vertical-align: middle;

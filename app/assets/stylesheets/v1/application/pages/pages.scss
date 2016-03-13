@@ -1,4 +1,6 @@
 body.pages {
+  padding-top: 60px;
+
   > .app__main {
     > .content {
       @include content(narrow);
@@ -8,6 +10,7 @@ body.pages {
       h1,
       h2 {
         font-family: "Noto Sans JP", sans-serif;
+        font-weight: 300;
         text-align: center;
       }
 
@@ -18,7 +21,6 @@ body.pages {
 
       h2 {
         font-size: 18px;
-        font-weight: 300;
         margin-top: 35px;
 
         &:first-child {

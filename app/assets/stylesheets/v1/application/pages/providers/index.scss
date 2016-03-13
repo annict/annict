@@ -1,4 +1,6 @@
 body.providers-index {
+  padding-top: 60px;
+
   .c-tabs {
     @include tabs(independent);
   }

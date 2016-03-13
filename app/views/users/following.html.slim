@@ -20,9 +20,10 @@
     - @users.each do |user|
       = render 'users/user', user: user
 - else
-  .info.well
-    .icon
-      i.fa.fa-info-circle
-    p フォローしている人はいません。
+  .wrapper
+    .info.well
+      .icon
+        i.fa.fa-info-circle
+      p フォローしている人はいません。
 
 = render "application/v2/components/footer"

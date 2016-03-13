@@ -1,5 +1,7 @@
 body.profiles-show,
 body.profiles-update {
+  padding-top: 60px;
+
   .c-tabs {
     @include tabs(independent);
   }

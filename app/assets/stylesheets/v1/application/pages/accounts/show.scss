@@ -1,5 +1,7 @@
 body.accounts-show,
 body.accounts-update {
+  padding-top: 60px;
+
   .c-tabs {
     @include tabs(independent);
   }

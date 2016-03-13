@@ -1,4 +1,6 @@
 body.works-season {
+  padding-top: 60px;
+
   .c-tabs {
     @include tabs(independent);
   }
