@@ -1,0 +1,14 @@
+#signin-modal.ann-modal-content
+  .header
+    .logo
+      = image_tag "navbar/logo-120x120.png", size: "50x50", alt: "Annict"
+    .title ログイン
+    .words おかえりなさい！
+  .body
+    .buttons
+      = link_to user_omniauth_authorize_path(:twitter), class: "twitter" do
+        = icon("twitter")
+        .text Twitterアカウントでログイン
+      = link_to user_omniauth_authorize_path(:facebook), class: "facebook" do
+        = icon("facebook")
+        .text Facebookアカウントでログイン

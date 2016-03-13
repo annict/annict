@@ -24,8 +24,18 @@ module.exports = Vue.extend
       , 100
 
     showContent: ->
-      top = ($(window).height() / 2) - (@$modal.height() / 2)
-      @$modal.css(top: top, opacity: 1).show()
+      $window = $(window)
+      top = ($window.height() / 2) - (@$modal.height() / 2)
+      width = 500
+      if $window.width() < width
+        width = $window.width() - 28
+
+      @$modal.css
+        width: width
+        marginLeft: -(width / 2)
+        top: top
+        opacity: 1
+      .show()
 
     hideModal: ->
       @hideBackdrop =>

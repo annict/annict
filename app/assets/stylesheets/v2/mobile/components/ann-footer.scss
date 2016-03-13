@@ -1,0 +1,41 @@
+.ann-footer {
+  border-top: 1px solid $color-alto;
+  color: $color-gunsmoke;
+  margin-top: 35px;
+  padding: 28px;
+
+  > .section {
+    margin-bottom: 21px;
+
+    > .title {
+      font-size: 13px;
+      font-weight: bold;
+      margin-bottom: 7px;
+    }
+
+    > .content {
+      font-size: 12px;
+
+      > a {
+        margin-right: 7px;
+
+        &:last-child {
+          margin-right: 0;
+        }
+      }
+    }
+  }
+
+  > .copyright {
+    text-align: center;
+
+    img {
+      margin-bottom: 7px;
+    }
+
+    .text {
+      color: $color-gunsmoke;
+      font-size: 13px;
+    }
+  }
+}

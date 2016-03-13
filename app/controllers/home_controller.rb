@@ -10,7 +10,7 @@ class HomeController < ApplicationController
       @top_work = GuestTopPageService.top_work
       @works = GuestTopPageService.works
       @cover_image_work = GuestTopPageService.cover_image_work
-      @activities = GuestTopPageService.activities
+      @activities = GuestTopPageService.activities unless browser.mobile?
 
       render :index_guest, layout: "v2/application"
     end

@@ -1,7 +1,7 @@
 doctype html
 html lang="ja"
   head
-    = render "head"
+    = render "application/v2/head"
   body#ann class="#{body_class} #{user_signed_in? ? 'signed-in' : 'not-signed-in'}" ng-controller="ApplicationCtrl"
     .app
       = render "navbar"

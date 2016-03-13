@@ -3,7 +3,7 @@
 = render "application/v2/og"
 
 link href='/images/favicon.png' rel='shortcut icon' type='image/png'
-link type='text/plain' rel='author' href="#{ENV['ANNICT_URL']}/humans.txt"
+link type='text/plain' rel='author' href="#{ENV.fetch('ANNICT_URL')}/humans.txt"
 
 = stylesheet_link_tag "v2/pc", media: "all"
 = javascript_include_tag "v2/pc"
