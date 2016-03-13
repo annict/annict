@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 # == Schema Information
 #
 # Table name: activities
@@ -21,4 +22,12 @@ class Activity < ActiveRecord::Base
   belongs_to :recipient, polymorphic: true
   belongs_to :trackable, polymorphic: true
   belongs_to :user
+
+  def create_record?
+    action == "checkins.create"
+  end
+
+  def create_status?
+    action == "statuses.create"
+  end
 end

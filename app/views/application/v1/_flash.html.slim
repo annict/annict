@@ -1,0 +1,9 @@
+ann-flash
+
+script#ann-flash type="x-template"
+  .c-flash v-on:click="close" v-show="show" transition="c-flash--expand"
+    .c-flash__alert.alert :class="alertClass"
+      .c-flash__content
+        i.fa :class="alertIcon"
+        span
+          | {{{ body }}}

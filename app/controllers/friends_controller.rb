@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class FriendsController < ApplicationController
   before_action :authenticate_user!
 
@@ -15,5 +17,7 @@ class FriendsController < ApplicationController
 
     user_ids = (User.pluck(:id) - (me_and_following_ids + @friends.map(&:id)))
     @users = User.where(id: user_ids).past_month(field: :current_sign_in_at).sample(20)
+
+    render layout: "v1/application"
   end
 end

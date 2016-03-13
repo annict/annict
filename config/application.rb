@@ -1,4 +1,6 @@
-require File.expand_path('../boot', __FILE__)
+# frozen_string_literal: true
+
+require File.expand_path("../boot", __FILE__)
 
 # Pick the frameworks you want:
 require "active_record/railtie"
@@ -17,17 +19,19 @@ module Annict
     # Application configuration should go into files in config/initializers
     # -- all .rb files in that directory are automatically loaded.
 
-    # Set Time.zone default to the specified zone and make Active Record auto-convert to this zone.
+    # Set Time.zone default to the specified zone and
+    # make Active Record auto-convert to this zone.
     # Run "rake -D time" for a list of tasks for finding time zone names. Default is UTC.
     # config.time_zone = 'Asia/Tokyo'
     # config.active_record.default_timezone = :local
 
     config.i18n.enforce_available_locales = false
 
-    # The default locale is :en and all translations from config/locales/*.rb,yml are auto loaded.
+    # The default locale is :en and all translations from
+    # config/locales/*.rb,yml are auto loaded.
     # config.i18n.load_path += Dir[Rails.root.join('my', 'locales', '*.{rb,yml}').to_s]
     config.i18n.default_locale = :ja
-    config.i18n.available_locales = ['en-US', :ja]
+    config.i18n.available_locales = ["en-US", :ja]
 
     config.autoload_paths += %W(
       #{config.root}/app/decorators/concerns
@@ -36,7 +40,7 @@ module Annict
       #{config.root}/lib
     )
 
-    ['fonts'].each do |dir_name|
+    ["fonts"].each do |dir_name|
       config.assets.paths << "#{Rails.root}/app/assets/#{dir_name}"
     end
 
@@ -54,12 +58,18 @@ module Annict
 
     config.middleware.insert_before(Rack::Runtime, Rack::Rewrite) do
       r301 %r{\A/users/([A-Za-z0-9_]+)\z}, "/@$1"
+      # rubocop:disable Metrics/LineLength
       r301 %r{\A/users/([A-Za-z0-9_]+)/(following|followers|wanna_watch|watching|watched|on_hold|stop_watching)\z}, "/@$1/$2"
+      # rubocop:enable Metrics/LineLength
     end
 
     unless Rails.env.test?
-      config.cache_store = :redis_store, "#{ENV.fetch('REDIS_URL')}/0/annict_cache",
+      config.cache_store = :redis_store,
+        "#{ENV.fetch('REDIS_URL')}/0/annict_cache",
         { expires_in: 90.minutes }
     end
+
+    commandline_options = "-t coffeeify --extension=\".js.coffee\""
+    config.browserify_rails.commandline_options = commandline_options
   end
 end

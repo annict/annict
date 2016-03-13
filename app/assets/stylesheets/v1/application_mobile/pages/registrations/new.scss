@@ -1,0 +1,10 @@
+body.registrations-new,
+body.registrations-create {
+  > .app__main {
+    > .content {
+      @include content(narrow);
+      @include card;
+      padding: 15px 0;
+    }
+  }
+}

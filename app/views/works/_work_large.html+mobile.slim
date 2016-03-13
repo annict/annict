@@ -16,11 +16,11 @@
                 = work.checkins_count
         .right
           h2 = link_to work.title, work_path(work)
-          - if user_signed_in? && user == current_user
-            - if params[:controller] == "channel_works" && work.channels.present?
-              = render "works/channel_selector", mini: true, work: work
-            - else
-              = render "status_selector", mini: true, work: work
+          - if user_signed_in?
+            - if user == current_user
+              ann-status-selector work-id="#{work.id}" status-kind="#{current_user.status_kind(work)}" is-mini="true"
+          - else
+            ann-status-selector work-id="#{work.id}" status-kind="no_select" is-prevented="true" is-mini="true"
       - if work.casts.present? || work.staffs.present?
         .detail
           - if work.casts.present?
@@ -44,5 +44,9 @@
           - if user_signed_in?
             - users = current_user.friends_interested_in(work).includes(:profile).order("latest_statuses.id DESC")
             - if users.present?
-              - users_json = render("application/components/work_friends.jbuilder", users: users.limit(15))
+              - users_json = render("application/v2/components/work_friends.jbuilder", users: users.limit(15))
               ann-work-friends users="#{users_json}" is-all="#{users.count <= 15}" user-id="#{current_user.id}" work-id="#{work.id}"
+
+- content_for :parts do
+  - unless user_signed_in?
+    = render "application/v2/components/prevent_change_status_modal"

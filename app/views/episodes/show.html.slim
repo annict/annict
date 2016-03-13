@@ -4,6 +4,8 @@
 - canonical = url_for(only_path: false, overwrite_params: nil)
 - set_meta_tags(title: title, description: description, keywords: keywords, canonical: canonical, reverse: true)
 
+= render "application/v2/navbar"
+
 .content
   .wrapper
     = render 'works/work_profile_light', work: @work, episode: @episode
@@ -30,7 +32,7 @@
         = render 'checkins/form', work: @work, episode: @episode, checkin: @checkin
       hr
     - else
-      = render('welcome_to_annict')
+      = render("application/v1/welcome_to_annict")
 
     - if @user_checkins.present?
       - if (user_signed_in? && current_user != @checkin_user) || !user_signed_in?
@@ -66,3 +68,5 @@
             .icon
               i.fa.fa-info-circle
             p まだ感想は書き込まれていません
+
+= render "application/v2/components/footer"

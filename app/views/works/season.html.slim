@@ -4,6 +4,7 @@
 - keywords = meta_keywords(yearly_season_ja, "人気", "評判")
 - set_meta_tags(title: title, description: description, keywords: keywords, reverse: true)
 
+= render "application/v2/navbar"
 = render "nav"
 
 .content
@@ -14,5 +15,8 @@
 
   = render "works", works: @works, user: current_user, compact: false
 
-- content_for :js_templates do
-  = render "application/components/work_friends"
+= render "application/v2/components/footer"
+
+- content_for :parts do
+  = render "application/v2/components/work_friends"
+  = render "application/v2/components/status_selector"

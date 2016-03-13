@@ -65,8 +65,6 @@ ja:
   stats:
     no_checkins: 記録していません
     weekly_checkins: 過去1週間の記録
-  statuses:
-    no_select: 'ステータス'
   syobocal:
     special_program_notification: 【Annict DB】特別番組を検知した気がします
   titles:
@@ -110,7 +108,6 @@ ja:
     edit: 編集
     episode: エピソード
     error: エラー
-    more_detail: もっと詳しく
     multiple_checkin: 一括記録
     next_season: 来期
     option: 任意

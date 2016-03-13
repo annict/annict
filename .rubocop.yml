@@ -17,6 +17,9 @@ Metrics/AbcSize:
 Metrics/MethodLength:
   Enabled: false
 
+Style/AlignArray:
+  Enabled: false
+
 Style/AlignParameters:
   EnforcedStyle: with_fixed_indentation
 

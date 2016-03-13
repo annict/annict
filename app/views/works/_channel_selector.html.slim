@@ -5,4 +5,4 @@
     = icon('caret-down')
     select ng-model='channelId' ng-change="select(#{work.id})"
       = options_for_select(work.channels.pluck(:name, :id).insert(0, [t('words.channel'), 'no_select']), current_channel_id)
-  = render 'selector_spinner', target: work.id
+  = render "application/v1/selector_spinner", target: work.id

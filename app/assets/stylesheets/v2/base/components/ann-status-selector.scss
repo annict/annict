@@ -1,0 +1,84 @@
+.ann-status-selector {
+  border-radius: 2px;
+  color: #fff;
+  display: inline-block;
+  overflow: hidden;
+  position: relative;
+  width: 100%;
+
+  &.transparent {
+    color: $color-pelorous;
+
+    > .selector {
+      border: solid 1px $color-pelorous;
+
+      select {
+        background-color: rgba(255, 255, 255, 0);
+      }
+    }
+  }
+
+  &.mini {
+    width: 150px;
+
+    > .selector {
+      > select {
+        height: 30px;
+      }
+
+      > i {
+        top: 7px;
+      }
+    }
+  }
+
+  > .selector {
+    position: relative;
+
+    select {
+      @include appearance(none);
+      background-color: $color-pelorous;
+      border-radius: 0;
+      border: 0;
+      cursor: pointer;
+      height: 35px;
+      outline: none;
+      padding-left: 7px;
+      width: 130%;
+
+      &:hover {
+        background-color: lighten($color-pelorous, 2%);
+      }
+    }
+
+    i {
+      font-size: 15px;
+      position: absolute;
+      right: 7px;
+      top: 9px;
+    }
+  }
+
+  > .loader {
+    background-color: rgba(255, 255, 255, 0.85);
+    height: 100%;
+    position: absolute;
+    top: 0;
+    width: 100%;
+
+    &.loading-transition {
+      line-height: 35px;
+      text-align: center;
+      transition: all .1s ease-out;
+    }
+
+    &.loading-enter,
+    &.loading-leave {
+      opacity: 0;
+    }
+
+    > i {
+      color: $color-pelorous;
+    }
+  }
+}

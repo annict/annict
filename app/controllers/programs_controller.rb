@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # == Schema Information
 #
 # Table name: programs
@@ -23,4 +25,8 @@
 
 class ProgramsController < ApplicationController
   before_action :authenticate_user!
+
+  def index
+    render :index, layout: "v1/application"
+  end
 end

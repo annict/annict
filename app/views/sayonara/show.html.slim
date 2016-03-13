@@ -1,4 +1,5 @@
-= render "settings_tabs"
+= render "application/v2/navbar"
+= render "application/v1/settings_tabs"
 
 .content
   .container
@@ -8,3 +9,5 @@
       
       .action
         = link_to "退会する", users_path, data: { confirm: "本当に、本当に退会しますか？", method: :delete }
+
+= render "application/v2/components/footer"

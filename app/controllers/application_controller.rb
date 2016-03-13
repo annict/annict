@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class ApplicationController < ActionController::Base
   include ViewSelector
   include FlashMessage
@@ -7,7 +9,7 @@ class ApplicationController < ActionController::Base
   protect_from_forgery with: :exception
 
   before_action :store_user_info
-
+  before_action :set_search_params
 
   # テスト実行時にDragonflyでアップロードした画像を読み込むときに呼ばれるアクション
   # 画像サーバはこのRailsアプリから切り離しているので、CircleCI等でテストを実行するときは
@@ -43,6 +45,10 @@ class ApplicationController < ActionController::Base
     @checkin = @episode.checkins.find(params[:checkin_id])
   end
 
+  def set_search_params
+    @search = SearchService.new(params[:q])
+  end
+
   def store_user_info
     if user_signed_in?
       user_info = {
@@ -54,5 +60,8 @@ class ApplicationController < ActionController::Base
 
       gon.push(user_info)
     end
+  end
+
+  def use_v1_layout
   end
 end

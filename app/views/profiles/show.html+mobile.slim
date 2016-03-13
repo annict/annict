@@ -1,7 +1,9 @@
+= render "application/v1/navbar"
+
 .content
   .container
     = form_for current_user.profile, url: profile_path, method: :patch do |f|
-      = render "error_panel", resource: current_user.profile
+      = render "application/v1/error_panel", resource: current_user.profile
 
       .form-group
         = f.label :name
@@ -20,3 +22,5 @@
         = f.file_field :tombo_background_image
       .form-submit
         = f.submit class: "btn btn-primary"
+
+= render "application/v2/components/footer"

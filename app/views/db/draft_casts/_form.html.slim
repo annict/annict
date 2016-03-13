@@ -1,5 +1,5 @@
 = form_for [:db, work, draft_cast], html: { class: "form-horizontal" } do |f|
-  = render "application/error_panel", resource: f.object
+  = render "application/v1/error_panel", resource: f.object
 
   h4.cast-fields 基本情報
 

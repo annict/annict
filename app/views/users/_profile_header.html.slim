@@ -16,7 +16,7 @@
           = link_to user.profile.decorate.shorten_url, user.profile.url, target: "_blank"
       - if user_signed_in?
         - if current_user != user
-          = render 'follow_button', user: user
+          = render "application/v1/follow_button", user: user
 
   .statuses
     .checkin.status.col-xs-3

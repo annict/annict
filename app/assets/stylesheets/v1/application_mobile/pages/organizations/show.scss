@@ -1,0 +1,99 @@
+body.organizations-show {
+  > .app__main {
+    > .content {
+      @include content(wide);
+      @include card;
+
+      &.header,
+      &.info,
+      &.works {
+        margin-bottom: 20px;
+        padding: 30px 0;
+      }
+
+      &.info,
+      &.works {
+        .title {
+          margin-top: 0;
+          text-align: center;
+        }
+      }
+
+      &.header {
+        background-color: $color-musani;
+        text-align: center;
+
+        h1 {
+          color: #ffffff;
+          font-size: 28px;
+          margin-top: 0;
+          margin-bottom: 0;
+
+          .name {
+            margin-bottom: 3px;
+          }
+        }
+      }
+
+      &.info {
+        table {
+          width: 100%;
+
+          tr {
+            th {
+              font-weight: normal;
+              padding: 5px 10px 5px 0;
+              text-align: right;
+              width: 50%;
+            }
+
+            td {
+              padding: 5px 0 5px 10px;
+              width: 50%;
+            }
+          }
+        }
+
+        .edit-link {
+          font-size: 12px;
+          margin-top: 10px;
+          text-align: right;
+        }
+      }
+
+      &.works {
+        .title-year {
+          font-weight: bold;
+        }
+
+        ul {
+          -moz-padding-start: 0;
+          -webkit-padding-start: 0;
+          list-style-type: none;
+
+          li {
+            @include display(flex);
+            margin-bottom: 10px;
+
+            .left {
+              @include flex-basis(60px);
+              @include flex-shrink(0); // 横幅を60pxに固定する
+              margin-right: 7px;
+
+              img {
+                border: solid 1px $color-alto;
+              }
+            }
+
+            .right {
+              .wo-role {
+                color: $color-gunsmoke;
+                font-size: 12px;
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

@@ -1,26 +1,30 @@
-class Db::ApplicationController < ActionController::Base
-  include Pundit
-  include FlashMessage
+# frozen_string_literal: true
 
-  layout "db"
+module Db
+  class ApplicationController < ActionController::Base
+    include Pundit
+    include FlashMessage
 
-  rescue_from Pundit::NotAuthorizedError, with: :user_not_authorized
+    layout "db"
 
-  before_action :set_search_params
-  before_action :set_opened_edit_requests
+    rescue_from Pundit::NotAuthorizedError, with: :user_not_authorized
 
-  private
+    before_action :set_opened_edit_requests
+    before_action :set_search_params
 
-  def set_search_params
-    @search = SearchService.new(params[:q])
-  end
+    private
 
-  def set_opened_edit_requests
-    @opened_edit_requests = EditRequest.opened
-  end
+    def set_search_params
+      @search = SearchService.new(params[:q], scope: :all)
+    end
 
-  def user_not_authorized
-    flash[:alert] = "アクセスが許可されていません"
-    redirect_to(request.referrer || db_root_path)
+    def set_opened_edit_requests
+      @opened_edit_requests = EditRequest.opened
+    end
+
+    def user_not_authorized
+      flash[:alert] = "アクセスが許可されていません"
+      redirect_to(request.referrer || db_root_path)
+    end
   end
 end

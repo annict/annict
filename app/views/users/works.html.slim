@@ -5,6 +5,8 @@
 - keywords = meta_keywords(@user.profile.name, @user.username)
 - set_meta_tags(title: title, description: description, keywords: keywords, reverse: true)
 
+= render "application/v2/navbar"
+
 .content
   .ann-user-sub-header
     = link_to user_path(@user.username) do
@@ -16,3 +18,7 @@
   = render "works_nav"
 
 = render "works/works", works: @works, user: @user, compact: true
+= render "application/v2/components/footer"
+
+- content_for :parts do
+  = render "application/v2/components/status_selector"

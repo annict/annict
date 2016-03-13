@@ -1,3 +1,5 @@
+= render "application/v1/navbar"
+
 .content
   .container
     .twitter
@@ -26,3 +28,5 @@
           = link_to user_omniauth_authorize_path(:facebook, back: providers_path), class: "btn btn-sm btn-facebook" do
             = icon("facebook", class: "icon")
             | 連携する
+
+= render "application/v2/components/footer"

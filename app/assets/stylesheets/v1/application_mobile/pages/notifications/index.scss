@@ -1,0 +1,8 @@
+body.notifications-index {
+  > .app__main {
+    > .content {
+      @include content(wide);
+      @include card;
+    }
+  }
+}

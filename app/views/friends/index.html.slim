@@ -1,3 +1,5 @@
+= render "application/v2/navbar"
+
 - if @friends.present?
   .friends
     h2 SNSの友達
@@ -24,3 +26,5 @@ h2.other-users
     .icon
       i.fa.fa-info-circle
     p = t('friends.others_missing')
+
+= render "application/v2/components/footer"

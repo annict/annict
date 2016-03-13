@@ -1,9 +1,10 @@
-= render "settings_tabs"
+= render "application/v2/navbar"
+= render "application/v1/settings_tabs"
 
 .content
   .container
     = form_for @user, url: account_path, method: :patch do |f|
-      = render "error_panel", resource: @user
+      = render "application/v1/error_panel", resource: @user
 
       .form-group
         = f.label :username
@@ -13,3 +14,5 @@
         = f.text_field :email, class: "form-control"
       .form-submit
         = f.submit class: "btn btn-primary"
+
+= render "application/v2/components/footer"

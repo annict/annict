@@ -1,0 +1,46 @@
+- title = "アニクト - 見たアニメを記録して、共有しよう"
+- description = meta_description
+- keywords = meta_keywords
+- set_meta_tags(title: title, description: description, keywords: keywords)
+
+.hero
+  .work-image style="background-image: url(#{annict_image_url(@cover_image_work.item, :tombo_image, size: '640x640', blur: 200)});"
+  .content
+    h1 Annict
+    .description
+      | 見たアニメを記録して、共有しよう。
+    .btns
+      = link_to "詳しく", about_path, class: "about-btn"
+      .signup-btn
+        ann-action-blocker v-cloak="" modal-template-id="signup-modal" is-blocked="true"
+          = icon "rocket"
+          .text アカウント登録
+    .signin
+      ann-action-blocker modal-template-id="signin-modal" is-blocked="true"
+        | ログイン
+
+.content
+  .section
+    h2 今期の人気アニメ
+    .content
+      = render "works", top_work: @season_top_work, works: @season_works
+      .more
+        = link_to season_works_path(slug: ENV["ANNICT_CURRENT_SEASON"]) do
+          | 今期のアニメを全て見る
+
+  .section
+    h2 人気アニメ
+    .content
+      = render "works", top_work: @top_work, works: @works
+      .more
+        = link_to popular_works_path do
+          | 人気アニメを全て見る
+
+= render "application/v2/components/footer"
+
+- content_for :parts do
+  = render "application/v2/components/status_selector"
+  - unless user_signed_in?
+    = render "application/v2/components/prevent_change_status_modal"
+    = render "application/v2/components/signin_modal"
+    = render "application/v2/components/signup_modal"

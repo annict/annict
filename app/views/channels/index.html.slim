@@ -1,3 +1,5 @@
+= render "application/v2/navbar"
+
 .content
   = render 'nav'
 
@@ -19,3 +21,5 @@
                       button.btn ng-click="toggle(#{c.id})" ng-class="{ 'btn-success': !isReceiving, 'btn-info': isReceiving }"
                         i.fa ng-class="{ 'fa-plus': !isReceiving, 'fa-minus': isReceiving }"
                   .clearfix
+
+= render "application/v2/components/footer"

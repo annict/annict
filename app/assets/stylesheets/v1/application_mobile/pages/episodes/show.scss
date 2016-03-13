@@ -1,0 +1,8 @@
+body.episodes-show {
+  > .app__main {
+    > .content {
+      @include content(wide);
+      @include card;
+    }
+  }
+}

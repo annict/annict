@@ -2,7 +2,7 @@
 - button_text = comment.persisted? ? "更新する" : "コメントする"
 
 = form_for comment, url: url do |f|
-  = render "application/error_panel", resource: f.object
+  = render "application/v1/error_panel", resource: f.object
   .form-group
     = f.text_area :body, class: "form-control", rows: 5
   = f.submit button_text, class: "btn btn-primary"

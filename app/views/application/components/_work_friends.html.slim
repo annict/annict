@@ -1,8 +1,0 @@
-script#js-ann-work-friends type="x-template"
-  .friends
-    .title チェックしている友達
-    ul
-      li v-for="user in users"
-        = link_to "/@{{user.username}}" do
-          img.img-circle v-bind:src="user.avatar_url" width="30" height="30" alt="{{user.username}}"
-      li.more.fake-link v-if="!isAll" v-on:click="more" 全員表示

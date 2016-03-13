@@ -1,0 +1,30 @@
+= render "application/v1/navbar"
+
+- if @friends.present?
+  .friends
+    h2 SNSの友達
+    .user-list
+      - @friends.each do |friend|
+        = render 'users/user', user: friend
+- else
+  .friends.none
+    .container
+      .info.well
+        .icon
+          i.fa.fa-info-circle
+        p まだフォローしていないSNSの友達はいませんでした。
+
+h2.other-users
+  = t('friends.other_users')
+
+- if @users.present?
+  .user-list
+    - @users.each do |user|
+      = render 'users/user', user: user
+- else
+  .info.well
+    .icon
+      i.fa.fa-info-circle
+    p = t('friends.others_missing')
+
+= render "application/v2/components/footer"

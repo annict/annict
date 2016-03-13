@@ -1,5 +1,10 @@
 = content_for :site_page_title, "#{t('titles.privacy')}"
 
+- if browser.mobile?
+  = render "application/v1/navbar"
+- else
+  = render "application/v2/navbar"
+
 .content
   .container
     p
@@ -203,3 +208,5 @@
       | 本サービスの公式TwitterアカウントまたはFacebookアカウントにてユーザに通知いたします。
       | ただし、法令上ユーザの同意が必要となるような内容の変更の場合は、
       | 運営者所定の方法でユーザの同意を得るものとします。
+
+= render "application/v2/components/footer"

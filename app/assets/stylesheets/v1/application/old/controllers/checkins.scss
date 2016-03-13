@@ -1,0 +1,86 @@
+.checkins-show, .comments-create {
+  > .navbar {
+    margin-bottom: 0;
+  }
+
+  .app__main {
+    > .content {
+      margin-top: 20px !important;
+    }
+  }
+
+  .wrapper {
+    padding-bottom: 15px;
+  }
+
+  .welcome-to-annict {
+    margin-top: 20px;
+  }
+
+  .comment-form {
+    margin-top: 20px;
+  }
+
+  .comments {
+    .media-body {
+      width: 100%;
+
+      .top {
+        height: 17px;
+        line-height: 17px;
+
+        .name {
+          margin-right: 5px;
+        }
+
+        .pull-right {
+          font-size: 12px;
+
+          .created-at {
+            a {
+              color: $color-gunsmoke;
+            }
+          }
+        }
+      }
+
+      .middle {
+        margin: 7px 0 20px 0;
+      }
+
+      .bottom {
+        font-size: 12px;
+
+        margin-bottom: 5px;
+      }
+    }
+  }
+}
+
+.checkins-edit,
+.checkins-update {
+  > .app__main {
+    > .content {
+      margin-top: 20px !important;
+
+      .wrapper {
+        padding-bottom: 15px;
+      }
+
+      .checkin-form-share-twitter,
+      .checkin-form-share-facebook {
+        margin-right: 10px;
+      }
+
+      .checkin-form-share-twitter i {
+        color: $color-twitter;
+        margin-right: 3px;
+      }
+
+      .checkin-form-share-facebook i {
+        color: $color-facebook;
+        margin-right: 5px;
+      }
+    }
+  }
+}

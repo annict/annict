@@ -1,18 +1,18 @@
+# frozen_string_literal: true
+
 class HomeController < ApplicationController
-  layout :set_layout
-
   def index
-    render user_signed_in? ? 'index' : 'index_guest'
-  end
-
-
-  private
-
-  def set_layout
     if user_signed_in?
-      'application'
+      render :index, layout: "v1/application"
     else
-      'application_no_navbar'
+      @season_top_work = GuestTopPageService.season_top_work
+      @season_works = GuestTopPageService.season_works
+      @top_work = GuestTopPageService.top_work
+      @works = GuestTopPageService.works
+      @cover_image_work = GuestTopPageService.cover_image_work
+      @activities = GuestTopPageService.activities unless browser.mobile?
+
+      render :index_guest, layout: "v2/application"
     end
   end
 end

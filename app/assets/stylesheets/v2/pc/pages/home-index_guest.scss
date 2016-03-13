@@ -1,0 +1,297 @@
+body.home-index.guest {
+  > .hero {
+    height: 300px;
+    position: relative;
+    text-align: center;
+    width: 100%;
+
+    .work-image {
+      @include filter(brightness(50%));
+      background-position: center;
+      background-size: cover;
+      height: 100%;
+    }
+
+    .content {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      min-height: 100%;
+
+      h1 {
+        color: #fff;
+        font-family: "Noto Sans JP", sans-serif;
+        font-size: 30px;
+        font-weight: 100;
+        margin: 70px 0 14px 0;
+      }
+
+      .description {
+        margin-bottom: 35px;
+
+        p {
+          color: #fff;
+          margin: 7px 0;
+        }
+      }
+
+      .signup-btn {
+        @include btn($color-mizuho, $icon: true);
+        margin: 0 auto;
+        width: 250px;
+      }
+    }
+  }
+
+  > .content {
+    @include display(flex);
+    @include justify-content(center);
+
+    .main {
+      @include flex-basis(800px);
+      padding-right: 7px;
+
+      .section {
+        margin-bottom: 42px;
+
+        h2 {
+          font-family: "Noto Sans JP", sans-serif;
+          font-size: 20px;
+          font-weight: 300;
+        }
+
+        > .wrapper {
+          @include card;
+          padding: 14px;
+
+          .top-work {
+            @include display(flex);
+            margin-bottom: 35px;
+
+            .left {
+              @include flex-basis(250px);
+              @include flex-shrink(0);
+              margin-right: 14px;
+
+              .image {
+                display: block;
+                height: 250px;
+                margin-bottom: 14px;
+
+                img {
+                  border: 1px solid $color-alto;
+                }
+              }
+            }
+
+            .right {
+              h3 {
+                font-family: "Noto Sans JP", sans-serif;
+                font-size: 22px;
+                font-weight: 500;
+                margin: 0 0 10px 0;
+              }
+
+              .watchers-count {
+                margin-bottom: 3px;
+
+                .count {
+                  font-weight: bold;
+                  margin-right: 3px;
+                }
+
+                .text {
+                  color: $color-gunsmoke;
+                  font-size: 12px;
+                }
+              }
+
+              .casts,
+              .staffs,
+              .work-organizations {
+                .title {
+                  font-weight: bold;
+                }
+
+                ul {
+                  list-style-type: none;
+                  margin-top: 3px;
+
+                  li {
+                    display: inline-block;
+                    margin-right: 10px;
+
+                    &:last-child {
+                      margin-right: 0;
+                    }
+                  }
+                }
+              }
+            }
+          }
+
+          .works {
+            .row {
+              @include display(flex);
+              @include justify-content(space-between);
+              margin-bottom: 21px;
+
+              .work {
+                @include flex-grow(1);
+                margin-right: 14px;
+
+                &:last-child {
+                  margin-right: 0;
+                }
+
+                .image {
+                  background-size: cover;
+                  border: 1px solid $color-alto;
+                  height: 178px;
+                }
+
+                .watchers-count {
+                  .count {
+                    font-size: 12px;
+                    font-weight: bold;
+                    margin-right: 3px;
+                  }
+
+                  .text {
+                    color: $color-gunsmoke;
+                    font-size: 10px;
+                  }
+                }
+
+                .title {
+                  display: block;
+                  margin-bottom: 7px;
+                  overflow: hidden;
+                  text-overflow: ellipsis;
+                  white-space: nowrap;
+                  width: 175px;
+                }
+
+                .ann-status-selector {
+                  .selector {
+                    &:hover {
+                      color: #fff;
+                    }
+
+                    select {
+                      height: 28px;
+                    }
+
+                    i {
+                      top: 6px;
+                    }
+                  }
+                }
+              }
+            }
+          }
+
+          > .more {
+            height: 35px;
+            text-align: center;
+
+            a {
+              @include btn($color-mizuho);
+              line-height: 35px;
+              padding: 9px 63px;
+            }
+          }
+        }
+      }
+    }
+
+    .side {
+      @include flex-basis(400px);
+      @include flex-shrink(0); // 横幅を400pxに固定する
+      padding-left: 7px;
+      width: 400px;
+
+      h2 {
+        font-family: "Noto Sans JP", sans-serif;
+        font-size: 20px;
+        font-weight: 300;
+      }
+
+      .activities {
+        @include card;
+        padding: 14px;
+
+        .activity {
+          margin-bottom: 7px;
+
+          .header {
+            font-size: 12px;
+            margin-bottom: 7px;
+
+            .time {
+              color: $color-gunsmoke;
+              font-size: 10px;
+              text-align: right;
+            }
+
+            .user {
+              @include display(flex);
+              height: 25px;
+
+              .avatar {
+                @include flex-basis(25px);
+
+                img {
+                  @include img-circle;
+                }
+              }
+
+              .text {
+                line-height: 25px;
+                margin-left: 3px;
+              }
+            }
+          }
+
+          .body {
+            margin-left: 28px;
+
+            .record-comment {
+              font-size: 12px;
+              margin-bottom: 10px;
+            }
+
+            .work {
+              @include display(flex);
+
+              .image {
+                @include flex-basis(30px);
+                margin-right: 7px;
+
+                img {
+                  border: 1px solid $color-alto;
+                }
+              }
+
+              .info {
+                font-size: 12px;
+
+                .status {
+                  background-color: $color-kei;
+                  border-radius: 2px;
+                  color: #fff;
+                  display: inline-block;
+                  font-size: 12px;
+                  font-weight: bold;
+                  line-height: 1;
+                  padding: 3px 5px;
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

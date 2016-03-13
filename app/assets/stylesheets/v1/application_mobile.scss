@@ -1,0 +1,38 @@
+/*
+ *= require_self
+ */
+
+@import "../v2/base/variables";
+@import "application_common/foundations/bootstrap-variables";
+
+@import url("https://fonts.googleapis.com/earlyaccess/notosansjp.css");
+@import "bootstrap-sprockets";
+@import "bootstrap";
+@import "bourbon";
+@import "font-awesome-sprockets";
+@import "font-awesome";
+
+@import "application_mobile/old/base/fonts";
+
+@import "application_mobile/old/mixins/*";
+@import "application_mobile/old/components/*";
+@import "application_mobile/old/components_old/*";
+@import "application_mobile/old/controllers/*";
+
+@import "application_mobile/old/foundations/base";
+@import "application_mobile/old/foundations/bootstrap_base";
+
+@import "application_common/mixins/*";
+@import "application_common/components/*";
+
+@import "application_mobile/_components/**/*";
+@import "application_mobile/pages/**/*";
+
+@import "../v2/base/mixins/*";
+@import "../v2/base/components/ann-modal";
+@import "../v2/base/components/ann-status-selector";
+@import "../v2/base/components/modals/prevent-change-status";
+@import "../v2/base/components/modals/signinup";
+@import "../v2/mobile/components/ann-footer";
+
+@import "application_mobile/v2-compatible";

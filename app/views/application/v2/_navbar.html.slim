@@ -1,0 +1,55 @@
+.ann-navbar
+  .left
+    = link_to root_path, class: "logo" do
+      = image_tag "logo.png", size: "33x40", alt: "Annict"
+    ul
+      - if user_signed_in?
+        li = link_to "放送予定", programs_path
+        li.dropdown
+          = link_to "見てるアニメ", user_works_path(current_user.username, :watching)
+          ul.menu
+            li = link_to "見たいアニメ", user_works_path(current_user.username, :wanna_watch)
+            li = link_to "見たアニメ", user_works_path(current_user.username, :watched)
+            li = link_to "中断したアニメ", user_works_path(current_user.username, :on_hold)
+            li = link_to "中止したアニメ", user_works_path(current_user.username, :stop_watching)
+        li = link_to "今期のアニメ", season_works_path(slug: ENV["ANNICT_CURRENT_SEASON"])
+      - else
+        li = link_to "今期のアニメ", season_works_path(slug: ENV["ANNICT_CURRENT_SEASON"])
+    = form_tag search_works_path, method: :get, class: "search-form" do
+      = text_field_tag :q, @search.q, placeholder: "アニメタイトルで検索..."
+      = button_tag "", type: :submit
+  .right
+    ul
+      - if user_signed_in?
+        li.dropdown
+          = link_to user_path(current_user.username) do
+            = annict_image_tag(current_user.profile, :tombo_avatar, size: "30x30", class: "avatar")
+          - if current_user.notifications_count > 0
+            .notifications-count
+              = current_user.notifications_count
+          ul.menu
+            li.notification
+              = link_to notifications_path do
+                | 通知
+                - if current_user.notifications_count > 0
+                  span.count
+                    = current_user.notifications_count
+            li = link_to "友達を探す", friends_path
+            li = link_to "チャンネル", channels_path
+            li = link_to "設定", profile_path
+            li = link_to "Annict DB", db_root_path
+            li = link_to "Annictについて", about_path
+            li = link_to "ログアウト", destroy_user_session_path, method: "delete"
+      - else
+        li = link_to "Annictについて", about_path
+        li.sign-in
+          ann-action-blocker modal-template-id="signin-modal" is-blocked="true"
+            | ログイン
+        li.sign-up
+          ann-action-blocker modal-template-id="signup-modal" is-blocked="true"
+            .text アカウント登録
+
+- content_for :parts do
+  - unless user_signed_in?
+  = render "application/v2/components/signin_modal"
+  = render "application/v2/components/signup_modal"

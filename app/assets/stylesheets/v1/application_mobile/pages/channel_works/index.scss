@@ -1,0 +1,18 @@
+body.channel_works-index {
+  > .app__main {
+    > .content {
+      @include content(wide);
+      @include card;
+
+      .works {
+        .work {
+          @include work(compact);
+
+          .ann-channel-selector {
+            margin-left: 0;
+          }
+        }
+      }
+    }
+  }
+}

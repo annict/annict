@@ -1,0 +1,8 @@
+.ann-comment-guard {
+  @include filter(blur(3px));
+  color: rgba(0, 0, 0, 0.5);
+
+  &:hover {
+    cursor: pointer;
+  }
+}

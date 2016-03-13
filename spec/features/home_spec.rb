@@ -1,7 +1,8 @@
+# frozen_string_literal: true
+
 describe "トップページ" do
   context "ログインしていないとき" do
-    let(:work) { create(:work, :with_item) }
-    let(:cover_image) { create(:cover_image, work: work) }
+    let!(:work) { create(:work, :with_item, :with_current_season) }
 
     before do
       visit "/"
@@ -12,13 +13,15 @@ describe "トップページ" do
     end
 
     it "Twitterでログインをクリックするとユーザ登録ページが表示される" do
-      find(".welcome").click_link("Twitterアカウントで始める")
+      find(".ann-navbar .sign-up").click
+      find("#signup-modal").click_link("Twitterアカウントで登録")
 
       expect(current_path).to eq "/sign_up"
     end
 
     it "Facebookでログインをクリックするとユーザ登録ページが表示される" do
-      find(".welcome").click_link("Facebookアカウントで始める")
+      find(".ann-navbar .sign-up").click
+      find("#signup-modal").click_link("Facebookアカウントで登録")
 
       expect(current_path).to eq "/sign_up"
     end

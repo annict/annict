@@ -1,0 +1,112 @@
+@mixin work($type) {
+  margin: 20px 0;
+
+  .work-content {
+    @include display(flex);
+    padding: 15px 0;
+
+    .left {
+      .work-image {
+        display: inline-block;
+        margin-bottom: 7px;
+
+        img {
+          border: 1px solid $color-alto;
+        }
+      }
+
+      .statistics {
+        color: $color-gunsmoke;
+        font-size: 12px;
+        text-align: center;
+
+        .watchers-count,
+        .records-count {
+          i {
+            margin-right: 3px;
+          }
+        }
+
+        .watchers-count {
+          margin-right: 7px;
+        }
+      }
+    }
+
+    .middle {
+      @include flex(2);
+      margin: 0 15px;
+
+      h2 {
+        font-size: 16px;
+        font-weight: normal;
+        margin-top: 0;
+      }
+    }
+
+    .right {
+      @include align-items(center);
+      @include display(flex);
+      @include flex(0 150px);
+    }
+
+    @if $type == large {
+      .left {
+        @include flex(0 160px);
+      }
+
+      .middle {
+        .friends {
+          .title {
+            font-size: 13px;
+            font-weight: bold;
+            margin-bottom: 3px;
+          }
+
+          ul {
+            -moz-padding-start: 0;
+            -webkit-padding-start: 0;
+            list-style-type: none;
+
+            li {
+              display: inline-block;
+              margin: 0 3px 3px 0;
+
+              &.more {
+                font-size: 12px;
+                margin-left: 5px;
+              }
+            }
+          }
+        }
+
+        .casts,
+        .staffs,
+        .work-organizations {
+          .title {
+            font-size: 13px;
+            font-weight: bold;
+          }
+
+          ul {
+            -moz-padding-start: 0;
+            -webkit-padding-start: 0;
+            list-style-type: none;
+
+            li {
+              display: inline;
+              font-size: 13px;
+              margin-right: 10px;
+            }
+          }
+        }
+      }
+    }
+
+    @if $type == compact {
+      .left {
+        @include flex(0 70px);
+      }
+    }
+  }
+}

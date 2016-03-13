@@ -1,0 +1,17 @@
+doctype html
+html lang="ja" ng-app="annict"
+  head
+    = render "application/v1/head"
+  body#ann class="#{body_class} #{user_signed_in? ? 'signed-in' : 'not-signed-in'}" ng-controller="ApplicationCtrl"
+    = render "application/v1/flash"
+
+    .app__main
+      = yield
+    = yield :parts
+    ann-modal
+
+    - if user_signed_in?
+      = render "application/v1/checkin_button"
+
+    = include_gon
+    = render "application/v2/analytics"

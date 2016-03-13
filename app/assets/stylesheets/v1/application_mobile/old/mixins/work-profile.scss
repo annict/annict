@@ -1,0 +1,77 @@
+@mixin work-profile {
+  .work-profile {
+    height: 320px;
+    position: relative;
+    text-align: center;
+    width: 100%;
+
+    .work-image {
+      background-size: cover;
+      height: 100%;
+    }
+
+    .wrapper {
+      background-color: rgba(0,0,0,0.5);
+      left: 0;
+      min-height: 100%;
+      position: absolute;
+      right: 0;
+      top: 0;
+
+      .work-title {
+        margin: 130px 10px 14px 10px;
+
+        h1 {
+          color: #ffffff;
+          margin: {
+            bottom: 10px;
+            top: 0;
+          }
+
+          font-size: 20px;
+        }
+      }
+
+      .ann-status-selector {
+        color: #fff;
+        width: 150px;
+
+        > .selector {
+          border: solid 1px #fff;
+
+          > select {
+            background-color: rgba(255, 255, 255, 0);
+            height: 30px;
+          }
+
+          > i {
+            top: 7px;
+          }
+        }
+      }
+
+      .work-statistics {
+        bottom: 10px;
+        left: 50%;
+        margin-left: -135px;
+        position: absolute;
+        width: 270px;
+
+        .status {
+          display: inline-block;
+          width: 90px;
+
+          .count {
+            color: #ffffff;
+            font-size: 15px;
+          }
+
+          .text {
+            color: #b4b4b4;
+            font-size: 12px;
+          }
+        }
+      }
+    }
+  }
+}

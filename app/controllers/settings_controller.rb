@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 # == Schema Information
 #
 # Table name: settings
@@ -19,7 +20,7 @@ class SettingsController < ApplicationController
   before_action :authenticate_user!
 
   def index
-    return render(:index) if browser.mobile?
+    return render(:index, layout: "v1/application") if browser.mobile?
     redirect_to profile_path
   end
 end

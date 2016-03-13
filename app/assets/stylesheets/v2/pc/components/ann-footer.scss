@@ -1,0 +1,48 @@
+.ann-footer {
+  border-top: 1px solid $color-alto;
+  color: $color-gunsmoke;
+  margin-top: 35px;
+  padding: 28px;
+
+  table {
+    margin: 0 auto;
+    margin-bottom: 28px;
+
+    tr {
+      &.header {
+        th {
+          padding-bottom: 7px;
+        }
+      }
+
+      th {
+        text-align: left;
+        width: 250px;
+      }
+
+      td {
+        vertical-align: top;
+
+        ul {
+          list-style-type: none;
+
+          li {
+            margin-bottom: 3px;
+          }
+        }
+      }
+    }
+  }
+
+  .copyright {
+    text-align: center;
+
+    img {
+      margin-bottom: 7px;
+    }
+
+    .text {
+      color: $color-gunsmoke;
+    }
+  }
+}

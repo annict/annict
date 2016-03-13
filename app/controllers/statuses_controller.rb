@@ -28,7 +28,7 @@ class StatusesController < ApplicationController
         keen_client.statuses.create(status)
         render status: 200, nothing: true
       end
-    elsif status_kind == "no_select"
+    elsif status_kind == "no_select" || status_kind == "reset"
       latest_status = current_user.latest_statuses.find_by(work: @work)
       latest_status.destroy! if latest_status.present?
       render status: 200, nothing: true

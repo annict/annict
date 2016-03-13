@@ -1,10 +1,14 @@
+= render "application/v1/navbar"
+
 .content
   .container
     = form_for current_user, url: account_path, method: :patch do |f|
-      = render "error_panel", resource: current_user
+      = render "application/v1/error_panel", resource: current_user
 
       .form-group
         = f.label :email
         = f.text_field :email, class: "form-control"
       .form-submit
         = f.submit class: "btn btn-primary"
+
+= render "application/v2/components/footer"

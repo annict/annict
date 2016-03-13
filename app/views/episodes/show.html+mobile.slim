@@ -1,0 +1,72 @@
+- title = "アニメ「#{@work.title}」#{@episode.decorate.meta_number(prefix: true)}#{@episode.decorate.meta_title}"
+- description = meta_description("「#{@work.title}」#{@episode.decorate.meta_number}の感想をチェック！")
+- keywords = meta_keywords([@work.title, @episode.decorate.meta_number, @episode.number, @episode.title])
+- canonical = url_for(only_path: false, overwrite_params: nil)
+- set_meta_tags(title: title, description: description, keywords: keywords, canonical: canonical, reverse: true)
+
+= render "application/v1/navbar"
+
+.content
+  .wrapper
+    = render 'works/work_profile_light', work: @work, episode: @episode
+
+    - if @checkin_user_ids.present?
+      .container
+        .checkin-users
+          - @checkin_user_ids.take(5).each do |user_id|
+            - user = User.find(user_id)
+            = link_to user_path(user.username), class: 'pull-left' do
+              = annict_image_tag(user.profile, :tombo_avatar, size: "30x30", class: "img-circle")
+          span.checkins-count
+            - if @checkin_user_ids.length > 5
+              = "+ #{@checkin_user_ids.length - 5}人が見ました"
+            - elsif @checkin_user_ids.length == 1
+              = 'が見ました'
+            - else
+              = "の#{@checkin_user_ids.length}人が見ました"
+
+      hr.cu
+
+    - if user_signed_in?
+      .container
+        = render 'checkins/form', work: @work, episode: @episode, checkin: @checkin
+      hr
+    - else
+      = render("application/v1/welcome_to_annict")
+
+    - if @user_checkins.present?
+      - if (user_signed_in? && current_user != @checkin_user) || !user_signed_in?
+        .user-checkins
+          .container
+            h2 = "#{@checkin_user.profile.name}さんの記録"
+            - @user_checkins.each_with_index do |checkin, i|
+              - if i != 0
+                hr
+              = render 'checkins/checkin', checkin: checkin
+        hr
+
+    - if @current_user_checkins.present?
+      .user-checkins
+        .container
+          h2 あなたの記録
+          - @current_user_checkins.each_with_index do |checkin, i|
+            - if i != 0
+              hr
+            = render 'checkins/checkin', checkin: checkin
+      hr
+
+    .checkin-comments
+      .container
+        h2 = "#{@user_checkins.present? || @current_user_checkins.present? ? 'その他皆さんの感想' : '感想'}"
+        - if @checkins.with_comment.present?
+          - @checkins.with_comment.each_with_index do |checkin, i|
+            - if i != 0
+              hr
+            = render 'checkins/checkin', checkin: checkin
+        - else
+          .info.well
+            .icon
+              i.fa.fa-info-circle
+            p まだ感想は書き込まれていません
+
+= render "application/v2/components/footer"

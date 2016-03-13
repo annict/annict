@@ -1,0 +1,18 @@
+/*
+ *= require_self
+ */
+
+@import url("https://fonts.googleapis.com/earlyaccess/notosansjp.css");
+
+@import "normalize";
+@import "bourbon";
+@import "font-awesome-sprockets";
+@import "font-awesome";
+
+@import "base/mixins/*";
+@import "base/variables";
+@import "base/base";
+@import "base/components/**/*";
+
+@import "mobile/components/**/*";
+@import "mobile/pages/**/*";

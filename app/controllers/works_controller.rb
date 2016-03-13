@@ -37,6 +37,8 @@ class WorksController < ApplicationController
 
   def popular(page: nil)
     @works = Work.published.order(watchers_count: :desc).page(page).per(15)
+
+    render layout: "v1/application"
   end
 
   def season(slug, page: nil)
@@ -47,20 +49,24 @@ class WorksController < ApplicationController
       page(page).
       per(15)
     @season = Season.find_or_new_by_slug(slug)
+
+    render layout: "v1/application"
   end
 
   def show
     @work = Work.published.find(params[:id])
     @status = current_user.latest_statuses.find_by(work: @work) if user_signed_in?
+
+    render layout: "v1/application"
   end
 
   def search(q: nil, page: nil)
-    @q = Work.published.search(q)
-
     @works = if q.present?
-      @q.result.order_latest.page(page)
+      @search.works.order_latest.page(page)
     else
       Work.none
     end
+
+    render layout: "v1/application"
   end
 end

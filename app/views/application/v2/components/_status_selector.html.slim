@@ -1,0 +1,9 @@
+script#ann-status-selector type="x-template"
+  .ann-status-selector v-bind:class="{ 'transparent': isTransparent, 'mini': isMini }"
+    .selector
+      select v-model="statusKind" v-on:change="change"
+        - options = Status.kind.options.insert(0, ["ステータスを選択", "no_select"])
+        = options_for_select(options)
+      = icon "caret-down"
+    .loader v-show="isLoading" transition="loading"
+      = icon "circle-o-notch", class: "fa-spin"

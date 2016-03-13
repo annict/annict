@@ -3,97 +3,165 @@
 - keywords = meta_keywords
 - set_meta_tags(title: title, description: description, keywords: keywords)
 
-.hero-content
-  ul.images(ani-cover-image)
-    - CoverImage.includes(:work).all.shuffle.each do |ci|
-      li
-        .image style="background: url('#{image_url(ci.file_name)}') no-repeat top center;"
-        .info
+= render "application/v2/navbar"
+
+.hero
+  .work-image style="background-image: url(#{annict_image_url(@cover_image_work.item, :tombo_image, size: '640x640', blur: 200)});"
+  .content
+    h1 見たアニメを記録して、共有しよう。
+    .description
+      p Annict (アニクト) は、アニメの視聴記録ができるWebサービスです。
+      p 人気ランキングや友達の視聴記録から好きなアニメを見つけて、管理することができます。
+    .signup-btn
+      ann-action-blocker v-cloak="" modal-template-id="signup-modal" is-blocked="true"
+        = icon "rocket"
+        .text アカウント登録して記録する
+
+.content
+  .main
+    .section
+      h2 今期の人気アニメ
+      .wrapper
+        .top-work
           .left
-            = link_to work_path(ci.work) do
-              = annict_image_tag(ci.work.item, :tombo_image, msize: "32x32", size: "46x46", alt: ci.work.title)
+            = link_to work_path(@season_top_work), class: "image" do
+              = annict_image_tag(@season_top_work.item, :tombo_image, size: "250x250", alt: @season_top_work.title)
+            ann-status-selector work-id="#{@season_top_work.id}" status-kind="no_select" is-prevented="true"
           .right
-            .location-name
-              = link_to work_path(ci.work) do
-                = "撮影地：#{ci.location}"
-            .related-work
-              = link_to work_path(ci.work) do
-                = "アニメ「#{ci.work.title}」の舞台"
-  .welcome
-    h1 Annict
-    p.lead
-      | 見たアニメを記録して、共有しよう
-    .signin-buttons
-      .signin-button
-        = link_to user_omniauth_authorize_path(:twitter), class: "btn btn-twitter" do
-          .icon.pull-left
-            i.fa.fa-twitter
-          .text
-            | Twitterアカウントで始める
-          .clearfix
-      .signin-button
-        = link_to user_omniauth_authorize_path(:facebook), class: "facebook btn btn-facebook" do
-          .icon.pull-left
-            i.fa.fa-facebook
-          .text
-            | Facebookアカウントで始める
+            .watchers-count
+              span.count = @season_top_work.watchers_count
+              span.text Watchers
+            h3 = link_to @season_top_work.title, work_path(@season_top_work)
+            - if @season_top_work.casts.present?
+              .casts
+                .title キャスト
+                ul
+                  - @season_top_work.casts.order(:sort_number).limit(10).each do |cast|
+                    - cache cast do
+                      li
+                        = "#{cast.part}: "
+                        = cast.decorate.name_with_old_link
+            - if @season_top_work.staffs.present?
+              .staffs
+                .title スタッフ
+                ul
+                  - @season_top_work.staffs.major.order(:sort_number).limit(10).each do |staff|
+                    - cache staff do
+                      li
+                        = "#{staff.decorate.role_name}: "
+                        = staff.decorate.name_with_old_link
+        .works
+          - @season_works.each_slice(4).each do |works|
+            .row
+              - works.each do |work|
+                .work
+                  = link_to work_path(work) do
+                    .image style="background-image: url(#{annict_image_url(work.item, :tombo_image, size: '178x178')});"
+                  .watchers-count
+                    span.count = work.watchers_count
+                    span.text Watchers
+                  = link_to work.title, work_path(work), class: "title"
+                  ann-status-selector work-id="#{work.id}" status-kind="no_select" is-prevented="true" is-transparent="true"
+        .more
+          = link_to season_works_path(slug: ENV["ANNICT_CURRENT_SEASON"]) do
+            | 今期のアニメを全て見る
 
-.feature
-  .container
-    h2 見たアニメが記録できる
-    p 「何話まで見たっけ？」とならないように、見たアニメを記録することができます。
-    .screenshot
-      - image_size = browser.mobile? ? "280x398" : "400x569"
-      = image_tag "feature-1.jpg", size: image_size
+    .section
+      h2 人気アニメ
+      .wrapper
+        .top-work
+          .left
+            = link_to work_path(@top_work), class: "image" do
+              = annict_image_tag(@top_work.item, :tombo_image, size: "250x250", alt: @top_work.title)
+            .library-btn
+              ann-status-selector work-id="#{@season_top_work.id}" status-kind="no_select" is-prevented="true"
+          .right
+            .watchers-count
+              span.count = @top_work.watchers_count
+              span.text Watchers
+            h3 = link_to @top_work.title, work_path(@top_work)
+            - if @top_work.casts.present?
+              .casts
+                .title キャスト
+                ul
+                  - @top_work.casts.order(:sort_number).limit(10).each do |cast|
+                    - cache cast do
+                      li
+                        = "#{cast.part}: "
+                        = cast.decorate.name_with_old_link
+            - if @top_work.staffs.present?
+              .staffs
+                .title スタッフ
+                ul
+                  - @top_work.staffs.major.order(:sort_number).limit(10).each do |staff|
+                    - cache staff do
+                      li
+                        = "#{staff.decorate.role_name}: "
+                        = staff.decorate.name_with_old_link
+        .works
+          - @works.each_slice(4).each do |works|
+            .row
+              - works.each do |work|
+                .work
+                  = link_to work_path(work) do
+                    .image style="background-image: url(#{annict_image_url(work.item, :tombo_image, size: '178x178')});"
+                  .watchers-count
+                    span.count = work.watchers_count
+                    span.text Watchers
+                  = link_to work.title, work_path(work), class: "title"
+                  ann-status-selector work-id="#{@season_top_work.id}" status-kind="no_select" is-prevented="true" is-transparent="true"
+        .more
+          = link_to popular_works_path do
+            | 人気アニメを全て見る
+  
+  .side
+    h2 みんなの視聴記録
+    .activities
+      - @activities.each do |act|
+        .activity
+          .header
+            .time
+              = custom_time_ago_in_words(act.created_at)
+            .user
+              .avatar
+                = link_to user_path(username: act.user.username) do
+                  = annict_image_tag(act.user.profile, :tombo_avatar, size: "25x25")
+              .text
+                = link_to act.user.profile.name, user_path(username: act.user.username)
+                | が
+                - if act.create_record?
+                  | 記録しました
+                - elsif act.create_status?
+                  | ステータスを変更しました
+          .body
+            - if act.create_record?
+              - if act.trackable.comment.present?
+                ann-comment-guard inline-template=""
+                  .record-comment v-on:click="remove"
+                    = act.trackable.comment
+              .work
+                .image
+                  = link_to work_path(act.trackable.work) do
+                    = annict_image_tag(act.trackable.work.item, :tombo_image, size: "30x30")
+                .info
+                  .title
+                    = link_to act.trackable.work.title, work_path(act.trackable.work)
+                  .episode
+                    = link_to act.recipient.number, work_episode_path(act.trackable.work, act.recipient)
+            - elsif act.create_status?
+              .work
+                .image
+                  = link_to work_path(act.trackable.work) do
+                    = annict_image_tag(act.trackable.work.item, :tombo_image, size: "30x30")
+                .info
+                  .title
+                    = link_to act.trackable.work.title, work_path(act.trackable.work)
+                  .status
+                    = act.trackable.kind_text
 
-    h2 見たいアニメも記録
-    p
-      | アニメに対して、「見てる」「見たい」「見た」「中断」「中止」という5つのステータスの中から1つ設定することができます。
-      | 例えば来期の気になるアニメを「見たい」に設定すれば、忘れずに済みそうです。
-    .screenshot
-      - image_size = browser.mobile? ? "280x599" : "400x855"
-      = image_tag "feature-2.jpg", size: image_size
+= render "application/v2/components/footer"
 
-    h2 視聴状況をチェック
-    p プロフィールページには記録数や見てるアニメ、グラフなどが表示され、どれだけアニメを見ているのか知ることができます。
-    .screenshot
-      - image_size = browser.mobile? ? "280x614" : "400x877"
-      = image_tag "feature-3.jpg", size: image_size
-
-    h2 友達の視聴状況もチェック
-    p
-      | Annictの利用者をフォローすると、その人が見たアニメの記録がタイムラインに表示されます。
-      | また、ネタバレを防止するため、自分が見ていないエピソードへの感想にはぼかしが入るようになっています。
-    .screenshot
-      - image_size = browser.mobile? ? "280x469" : "400x669"
-      = image_tag "feature-4.jpg", size: image_size
-
-    h2 今晩見れるアニメがわかる
-    p 普段見ているテレビのチャンネルを設定すると、見ているアニメの放送時間をタイムライン形式で見ることができます。
-    .screenshot.feature-5
-      - image_size = browser.mobile? ? "280x469" : "400x669"
-      = image_tag "feature-5.jpg", size: image_size
-
-.join
-  .container
-    h2 視聴記録をはじめよう
-
-    .signin-buttons
-      .signin-button
-        = link_to user_omniauth_authorize_path(:twitter), class: "btn btn-twitter" do
-          .icon.pull-left
-            i.fa.fa-twitter
-          .text
-            | Twitterアカウントで始める
-          .clearfix
-      .signin-button
-        = link_to user_omniauth_authorize_path(:facebook), class: "facebook btn btn-facebook" do
-          .icon.pull-left
-            i.fa.fa-facebook
-          .text
-            | Facebookアカウントで始める
-
-.about-me
-  .container
-    h2 管理者について
-    p <a href="https://twitter.com/shimbaco">@shimbaco</a> が個人で開発、運営しています。
+- content_for :parts do
+  = render "application/v2/components/status_selector"
+  - unless user_signed_in?
+    = render "application/v2/components/prevent_change_status_modal"

@@ -2,6 +2,8 @@
 - description meta_description("#{@work.title}を見たらAnnictに記録しよう！")
 - keywords meta_keywords(@work.title)
 
+= render "application/v1/navbar"
+
 .content
   .wrapper
     .work-profile
@@ -11,7 +13,9 @@
           h1
             = @work.title
         - if user_signed_in?
-          = render "status_selector", mini: false, work: @work
+          ann-status-selector work-id="#{@work.id}" status-kind="#{current_user.status_kind(@work)}"
+        - else
+          ann-status-selector work-id="#{@work.id}" status-kind="no_select" is-prevented="true"
 
         .work-statistics
           .status
@@ -39,7 +43,7 @@
           = link_to "作品を編集する", new_db_draft_work_path(work_id: @work.id)
 
     - unless user_signed_in?
-      = render("welcome_to_annict")
+      = render("application/v1/welcome_to_annict")
 
     .work-chart.container
       h2.text-center = t("works.checkin_chart")
@@ -207,3 +211,10 @@
                 = link_to @work.item.url, class: "btn btn-primary", target: "_blank" do
                   = icon("amazon")
                   | Amazonで見てみる
+
+= render "application/v2/components/footer"
+
+- content_for :parts do
+  = render "application/v2/components/status_selector"
+  - unless user_signed_in?
+    = render "application/v2/components/prevent_change_status_modal"
