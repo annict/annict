@@ -1,9 +1,11 @@
+# frozen_string_literal: true
+
 module Annict
   module Keen
     module Collections
       class LikesCollection < ApplicationCollection
         def create(like)
-          ::Keen.delay.publish(:likes, properties(:create, like))
+          ::Keen.delay(priority: 10).publish(:likes, properties(:create, like))
         end
 
         private

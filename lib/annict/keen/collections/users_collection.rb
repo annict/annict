@@ -1,9 +1,11 @@
+# frozen_string_literal: true
+
 module Annict
   module Keen
     module Collections
       class UsersCollection < ApplicationCollection
         def create(user)
-          ::Keen.delay.publish(:users, properties(:create, user))
+          ::Keen.delay(priority: 10).publish(:users, properties(:create, user))
         end
 
         private

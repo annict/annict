@@ -1,9 +1,11 @@
+# frozen_string_literal: true
+
 module Annict
   module Keen
     module Collections
       class FollowsCollection < ApplicationCollection
         def create(follow)
-          ::Keen.delay.publish(:follows, properties(:create, follow))
+          ::Keen.delay(priority: 10).publish(:follows, properties(:create, follow))
         end
 
         private

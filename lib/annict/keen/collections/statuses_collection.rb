@@ -1,9 +1,11 @@
+# frozen_string_literal: true
+
 module Annict
   module Keen
     module Collections
       class StatusesCollection < ApplicationCollection
         def create(status)
-          ::Keen.delay.publish(:statuses, properties(:create, status))
+          ::Keen.delay(priority: 10).publish(:statuses, properties(:create, status))
         end
 
         private
