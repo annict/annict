@@ -48,7 +48,6 @@ class CheckinsController < ApplicationController
     if @checkin.save
       @checkin.update_share_checkin_status
       @checkin.share_to_sns(self)
-      keen_client.records.create(@checkin)
       redirect_to work_episode_path(@work, @episode), notice: t("checkins.saved")
     else
       render :new

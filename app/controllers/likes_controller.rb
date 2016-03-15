@@ -48,8 +48,6 @@ class LikesController < ApplicationController
     recipient = recipient_model.find(recipient_id)
 
     like = current_user.like_r(recipient)
-    keen_client.likes.create(like) if like
-
     render status: 200, nothing: true
   end
 
