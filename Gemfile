@@ -65,7 +65,6 @@ gem "sinatra", require: nil
 gem "sitemap_generator"
 gem "slim"
 gem "traceroute"
-gem "turbolinks", "~> 5.0.0.beta"
 gem "twitter"
 gem "uglifier"
 gem "validate_url"
