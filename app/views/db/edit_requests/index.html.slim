@@ -2,6 +2,13 @@
 
 - if @edit_requests.present?
   table.table.table-striped
+    thead
+      tr
+        th タイトル
+        th 作品
+        th 状態
+        th 作成日時
+        th コメント
     tbody
       - @edit_requests.each do |er|
         tr
@@ -21,6 +28,7 @@
               | -
           td = er.decorate.status_label
           td = custom_time_ago_in_words(er.created_at)
+          td = "#{er.comments.count}件"
 
   = paginate @edit_requests
 - else
