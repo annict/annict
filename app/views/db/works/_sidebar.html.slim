@@ -1,3 +1,15 @@
+- if ["new", "create"].include?(params[:action])
+  h4 登録して良い作品について
+  p
+    | Annictにはアニメ作品のみ登録することができます。
+    | 例えば以下のような作品はアニメではないため、登録できません。
+  ul
+    li 特撮ヒーローもの
+    li 声優やスタッフ本人が出演するもの
+  p また、アダルトアニメに関しては、Annictはアダルトサイトではないため、登録できません。
+
+  hr
+
 = render "db/works/creation_basis"
 
 h4 リリース時期
