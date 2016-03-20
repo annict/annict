@@ -19,6 +19,7 @@
 #  shared_twitter       :boolean          default(FALSE), not null
 #  shared_facebook      :boolean          default(FALSE), not null
 #  work_id              :integer
+#  rating               :float
 #
 # Indexes
 #
@@ -30,7 +31,7 @@
 #
 
 class CheckinsController < ApplicationController
-  permits :comment, :shared_twitter, :shared_facebook
+  permits :comment, :shared_twitter, :shared_facebook, :rating
 
   before_action :authenticate_user!, only: [:create, :create_all, :edit,
                                             :update, :destroy]

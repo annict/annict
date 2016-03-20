@@ -15,6 +15,8 @@
             = link_to work_episode_checkin_path(checkin.episode.work, checkin.episode, checkin), title: checkin.created_at.to_time.strftime("%Y/%m/%d %H:%M") do
               = custom_time_ago_in_words(checkin.created_at)
       .middle
+        - if user_signed_in? && !current_user.hide_checkin_comment?(checkin)
+          = checkin.decorate.rating_label
         = render 'checkins/checkin_comment_body', checkin: checkin
       .bottom
         .top
