@@ -7,12 +7,16 @@ module.exports = Vue.extend
       default: true
       coerce: (val) ->
         JSON.parse(val)
-    comment:
-      type: String
+    activity:
+      type: Object
 
   methods:
+    $comment: ->
+      $(@$el).parent().find(".record-comment")
+
     remove: ->
-      $(@$el).removeClass("ann-comment-guard")
+      @$comment().removeClass("ann-comment-guard")
+      @isSpoiler = false
 
   ready: ->
-    $(@$el).addClass("ann-comment-guard") if @isSpoiler
+    @$comment().addClass("ann-comment-guard") if @isSpoiler

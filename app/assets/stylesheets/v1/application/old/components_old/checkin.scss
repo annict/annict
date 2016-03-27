@@ -30,17 +30,8 @@
       .middle {
         margin: 7px 0 20px 0;
 
-        > .rating-label {
+        > .ann-rating-label {
           margin-bottom: 3px;
-
-          i.fa {
-            color: $color-stars;
-          }
-
-          .text {
-            font-size: 13px;
-            margin-left: 3px;
-          }
         }
       }
 

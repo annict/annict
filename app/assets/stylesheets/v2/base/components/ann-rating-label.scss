@@ -1,0 +1,10 @@
+.ann-rating-label {
+  > i.fa {
+    color: $color-stars;
+  }
+
+  > .text {
+    font-size: 13px;
+    margin-left: 3px;
+  }
+}

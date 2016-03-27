@@ -15,10 +15,9 @@
             = link_to work_episode_checkin_path(checkin.episode.work, checkin.episode, checkin), title: checkin.created_at.to_time.strftime("%Y/%m/%d %H:%M") do
               = custom_time_ago_in_words(checkin.created_at)
       .middle
-        - if user_signed_in? && !current_user.hide_checkin_comment?(checkin)
-          = checkin.decorate.rating_label
-        ann-comment-guard inline-template="" is-spoiler="#{user_signed_in? && !current_user.checkedin?(checkin.episode)}"
-          .checkin-comment v-ann-simple-format="" @click="remove"
+        ann-comment-guard inline-template="" is-spoiler="#{user_signed_in? && current_user.hide_checkin_comment?(checkin)}"
+          ann-rating-label rating="#{checkin.rating}" :is-spoiler="isSpoiler" v-show="!isSpoiler"
+          .checkin-comment.record-comment v-ann-simple-format="" @click="remove"
             = checkin.comment
       .bottom
         .top

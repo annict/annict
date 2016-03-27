@@ -24,6 +24,7 @@ AnnCommentGuard = require "../v2/base/components/AnnCommentGuard"
 AnnFlash = require "../v2/base/components/AnnFlash"
 AnnLikeButton = require "../v2/base/components/AnnLikeButton"
 AnnModal = require "../v2/base/components/AnnModal"
+AnnRatingLabel = require "../v2/base/components/AnnRatingLabel"
 AnnRecordRating = require "../v2/base/components/AnnRecordRating"
 AnnSeasonSelector = require "../v2/base/components/AnnSeasonSelector"
 AnnStatusSelector = require "../v2/base/components/AnnStatusSelector"
@@ -39,6 +40,7 @@ $ ->
   Vue.component("ann-flash", AnnFlash)
   Vue.component("ann-modal", AnnModal)
   Vue.component("ann-like-button", AnnLikeButton)
+  Vue.component("ann-rating-label", AnnRatingLabel)
   Vue.component("ann-record-rating", AnnRecordRating)
   Vue.component("ann-season-selector", AnnSeasonSelector)
   Vue.component("ann-status-selector", AnnStatusSelector)
