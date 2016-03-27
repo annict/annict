@@ -3,11 +3,16 @@
 module Api
   module Internal
     class ActivitiesController < Api::ApplicationController
-      before_action :authenticate_user!, only: [:index]
+      def index(username: nil, page: nil)
+        return render(status: 404, nothing: true) if username.blank? && !user_signed_in?
 
-      def index(page: nil)
-        @activities = current_user.
-          following_activities.
+        activities = if username.blank?
+          current_user.following_activities
+        else
+          User.find_by(username: username).activities
+        end
+
+        @activities = activities.
           order(id: :desc).
           includes(:recipient, trackable: :user, user: :profile).
           page(page)

@@ -9,7 +9,6 @@ AnnActivities = require "./base/components/AnnActivities"
 AnnCommentGuard = require "./base/components/AnnCommentGuard"
 AnnLikeButton = require "./base/components/AnnLikeButton"
 AnnModal = require "./base/components/AnnModal"
-AnnRecordComment = require "./base/components/AnnRecordComment"
 AnnStatusSelector = require "./base/components/AnnStatusSelector"
 AnnTimeAgo = require "./base/components/AnnTimeAgo"
 
@@ -23,7 +22,6 @@ $ ->
   Vue.component("ann-comment-guard", AnnCommentGuard)
   Vue.component("ann-like-button", AnnLikeButton)
   Vue.component("ann-modal", AnnModal)
-  Vue.component("ann-record-comment", AnnRecordComment)
   Vue.component("ann-status-selector", AnnStatusSelector)
   Vue.component("ann-time-ago", AnnTimeAgo)
 

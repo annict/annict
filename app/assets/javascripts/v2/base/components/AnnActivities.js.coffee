@@ -6,6 +6,10 @@ AnnCreateStatusActivity = require "./AnnCreateStatusActivity"
 module.exports = Vue.extend
   template: "#ann-activities"
 
+  props:
+    username:
+      type: String
+
   data: ->
     isLoading: true
     isDisabled: false
@@ -17,6 +21,12 @@ module.exports = Vue.extend
     "ann-create-status-activity": AnnCreateStatusActivity
 
   methods:
+    requestData: ->
+      data =
+        page: @page
+      data.username = @username if @username
+      data
+
     loadMore: ->
       return if @isLoading
 
@@ -25,7 +35,8 @@ module.exports = Vue.extend
 
       $.ajax
         method: "GET"
-        url: "/api/internal/activities?page=#{@page}"
+        url: "/api/internal/activities"
+        data: @requestData()
       .done (data) =>
         if data.activities.length > 0
           @isLoading = @isDisabled = false
@@ -37,6 +48,7 @@ module.exports = Vue.extend
     $.ajax
       method: "GET"
       url: "/api/internal/activities"
+      data: @requestData()
     .done (data) =>
       @isLoading = false
       @activities = data.activities
