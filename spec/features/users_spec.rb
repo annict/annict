@@ -20,13 +20,14 @@ describe "プロフィールページ" do
         c.work = episode.work
         c.episode = episode
         c.comment = "おもしろかったよ"
+        c.rating = 3.0
       end
 
       visit "/@#{user.username}"
     end
 
     it "記録情報が表示されること", js: true do
-      expect(find(".activities")).to have_content("おもしろかったよ")
+      expect(find(".ann-activities")).to have_content("おもしろかったよ")
     end
   end
 
