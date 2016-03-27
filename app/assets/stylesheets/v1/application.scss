@@ -53,6 +53,7 @@
 @import "application/pages/**/*";
 
 @import "../v2/base/mixins/*";
+@import "../v2/base/components/ann-activities";
 @import "../v2/base/components/ann-comment-guard";
 @import "../v2/base/components/ann-like-button";
 @import "../v2/base/components/ann-loading";
@@ -61,7 +62,6 @@
 @import "../v2/base/components/ann-record-rating";
 @import "../v2/base/components/modals/prevent-change-status";
 @import "../v2/base/components/modals/signinup";
-@import "../v2/pc/components/ann-activities";
 @import "../v2/pc/components/ann-footer";
 @import "../v2/pc/components/ann-navbar";
 

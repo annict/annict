@@ -50,12 +50,10 @@
 
   hr
 
-  .container
-    .activities ng-controller='UserActivitiesCtrl' ng-init='init("#{@user.username}")' ann-loading='loading'
-      div infinite-scroll='addMoreActivities()' infinite-scroll-disabled='disabled' infinite-scroll-distance='2'
-        h2.text-center = t('words.activity')
-        = render 'activities/activity'
-      .info.well ng-show='0 === activities.length'
-        .icon
-          i.fa.fa-info-circle
-        p = t('users.no_activities')
+  ann-activities username="#{@user.username}"
+
+- content_for :parts do
+  = render "application/v2/components/activities"
+  = render "application/v2/components/create_record_activity"
+  = render "application/v2/components/create_status_activity"
+  = render "application/v2/components/like_button"

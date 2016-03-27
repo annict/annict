@@ -1,10 +1,8 @@
 # frozen_string_literal: true
 
 class HomeController < ApplicationController
-  layout "v2/application"
-
   def index
-    return render :index if user_signed_in?
+    return render :index, layout: layout if user_signed_in?
 
     @season_top_work = GuestTopPageService.season_top_work
     @season_works = GuestTopPageService.season_works
@@ -13,6 +11,13 @@ class HomeController < ApplicationController
     @cover_image_work = GuestTopPageService.cover_image_work
     @activities = GuestTopPageService.activities unless browser.mobile?
 
-    render :index_guest
+    render :index_guest, layout: "v2/application"
+  end
+
+  private
+
+  def layout
+    return "v1/application" if browser.mobile?
+    "v2/application"
   end
 end
