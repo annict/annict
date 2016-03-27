@@ -1,5 +1,7 @@
+# frozen_string_literal: true
+
 json.work do
-  json.(activity.recipient, :id, :title)
+  json.call(activity.recipient, :id, :title)
 end
 
 json.item do
@@ -7,6 +9,6 @@ json.item do
 end
 
 json.status do
-  json.(activity.trackable, :id, :likes_count)
+  json.call(activity.trackable, :id, :likes_count)
   json.kind activity.trackable.kind.text
 end

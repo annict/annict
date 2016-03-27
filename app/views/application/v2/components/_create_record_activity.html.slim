@@ -1,0 +1,39 @@
+script#ann-create-record-activity type="x-template"
+  .ann-create-record-activity
+    .header
+      a.avatar href="/@{{ activity.user.username }}"
+        img :src="activity.profile.avatar_url" width="25" height="25"
+      a.name href="/@{{ activity.user.username }}"
+        | {{ activity.profile.name }}
+      | が
+      a.work-title href="/works/{{ activity.work.id }}"
+        | {{ activity.work.title }}
+      a.episode-number href="/works/{{ activity.work.id }}/episodes/{{ activity.episode.id }}"
+        | {{ activity.episode.number }}
+      | を見ました
+    
+    template v-if="activity.record.comment"
+      .body :class="{ 'ann-comment-guard': activity.record.hide_comment }" @click="showComment"
+        | {{ activity.record.comment }}
+
+      .work-info
+        a href="/works/{{ activity.work.id }}"
+          img :src="activity.item.image_url" width="100" height="100" alt="{{ activity.work.title }}"
+        .work
+          a href="/works/{{ activity.work.id }}"
+            | {{ activity.work.title }}
+          a href="/works/{{ activity.work.id }}/episodes/{{ activity.episode.id }}" v-if="activity.episode"
+            span v-if="!(!activity.episode.number && activity.episode.title)"
+              | {{ activity.episode.number }}
+            span v-if="activity.episode.title"
+              | 「{{ activity.episode.title }}」
+
+    .footer
+      ann-time-ago :time="activity.created_at"
+      .actions
+        ann-like-button resource-name="records" :resource-id="activity.record.id" :likes-count="activity.record.likes_count" :is-liked="activity.meta.liked"
+        .comment-button
+          a href="/works/{{ activity.work.id }}/episodes/{{ activity.episode.id }}/checkins/{{ activity.record.id }}"
+            = icon "comment-o"
+            span.count
+              | {{ activity.record.comments_count }}

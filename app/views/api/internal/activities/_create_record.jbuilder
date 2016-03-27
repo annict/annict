@@ -1,5 +1,7 @@
+# frozen_string_literal: true
+
 json.work do
-  json.(activity.recipient.work, :id, :title)
+  json.call(activity.recipient.work, :id, :title)
 end
 
 json.item do
@@ -7,10 +9,10 @@ json.item do
 end
 
 json.episode do
-  json.(activity.recipient, :id, :number, :title)
+  json.call(activity.recipient, :id, :number, :title)
 end
 
-json.checkin do
-  json.(activity.trackable, :id, :comment, :comments_count, :likes_count)
+json.record do
+  json.call(activity.trackable, :id, :comment, :comments_count, :likes_count)
   json.hide_comment user_signed_in? && current_user.hide_checkin_comment?(activity.trackable)
 end
