@@ -17,7 +17,6 @@ class HomeController < ApplicationController
   private
 
   def layout
-    return "v1/application" if browser.mobile?
-    "v2/application"
+    "v1/application"
   end
 end

@@ -71,6 +71,7 @@
       }
 
       > .actions {
+        @include align-items(center);
         @include display(flex);
 
         > .comment-button {
