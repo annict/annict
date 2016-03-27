@@ -1,18 +1,19 @@
 Vue = require "vue"
 
 module.exports = Vue.extend
+  template: "#ann-record-comment"
+
   props:
     isSpoiler:
       type: Boolean
+      required: true
       default: true
       coerce: (val) ->
         JSON.parse(val)
     comment:
       type: String
+      required: true
 
   methods:
-    remove: ->
-      $(@$el).removeClass("ann-comment-guard")
-
-  ready: ->
-    $(@$el).addClass("ann-comment-guard") if @isSpoiler
+    show: ->
+      @isSpoiler = false

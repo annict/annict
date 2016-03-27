@@ -7,7 +7,3 @@ module.exports = Vue.extend
     activity:
       type: Object
       required: true
-
-  methods:
-    showComment: ->
-      @activity.record.hide_comment = false

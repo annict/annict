@@ -13,7 +13,6 @@
 
 #= require ./application_common/old/init
 #= require_tree ./application_common/old/directives
-#= require_tree ./application_common/old/filters
 #= require_tree ./application_common/old/controllers
 
 Vue = require "vue"

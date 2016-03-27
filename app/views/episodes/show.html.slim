@@ -70,3 +70,7 @@
             p まだ感想は書き込まれていません
 
 = render "application/v2/components/footer"
+
+- content_for :parts do
+  = render "application/v2/components/like_button"
+  = render "application/v2/components/record_comment"

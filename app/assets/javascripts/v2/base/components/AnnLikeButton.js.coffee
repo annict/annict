@@ -10,6 +10,8 @@ module.exports = Vue.extend
     resourceId:
       type: Number
       required: true
+      coerce: (val) ->
+        Number(val)
     likesCount:
       type: Number
       required: true

@@ -48,7 +48,7 @@
                     = comment.body
                   .bottom
                     .pull-right
-                      = render 'application/v1/like_button', recipient: comment
+                      ann-like-button resource-name="comments" resource-id="#{comment.id}" likes-count="#{comment.likes_count}" is-liked="#{user_signed_in? && current_user.like_r?(comment)}"
             hr
         - else
           .info.well
@@ -57,3 +57,6 @@
             p = t('checkins.no_comments')
 
 = render "application/v2/components/footer"
+
+- content_for :parts do
+  = render "application/v2/components/like_button"
