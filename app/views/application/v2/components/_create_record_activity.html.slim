@@ -15,7 +15,7 @@ script#ann-create-record-activity type="x-template"
     
     template v-if="activity.record.comment"
       .body :class="{ 'ann-comment-guard': activity.record.hide_comment }" @click="showComment"
-        | {{ activity.record.comment }}
+        | {{{ activity.record.comment | newLine | linkify }}}
 
       .work-info
         a.image href="/works/{{ activity.work.id }}"

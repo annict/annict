@@ -25,6 +25,9 @@ $ ->
   Vue.component("ann-status-selector", AnnStatusSelector)
   Vue.component("ann-time-ago", AnnTimeAgo)
 
+  Vue.filter("linkify", require("./base/filters/linkify"))
+  Vue.filter("newLine", require("./base/filters/newLine"))
+
   new Vue
     el: "#ann"
     events:
