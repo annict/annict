@@ -1,0 +1,16 @@
+.ann-like-button {
+  color: $color-gunsmoke;
+
+  &.is-liked {
+    color: $color-mizuho;
+  }
+
+  &:hover {
+    cursor: pointer;
+  }
+
+  > .count {
+    font-size: 12px;
+    margin-left: 3px;
+  }
+}

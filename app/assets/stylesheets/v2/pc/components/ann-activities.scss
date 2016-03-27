@@ -1,0 +1,95 @@
+.ann-activities {
+  padding: 14px 0;
+
+  .activity {
+    padding: 0 14px;
+
+    > .header {
+      @include display(flex);
+
+      > .avatar {
+        @include flex-basis(25px);
+        @include flex-shrink(0);
+        display: inline-block;
+        height: 25px;
+
+        > img {
+          @include img-circle;
+        }
+      }
+
+      > .description {
+        line-height: 25px;
+        margin-left: 5px;
+
+        > .episode-number {
+          margin-left: 3px;
+        }
+      }
+    }
+
+    > .body {
+      margin-top: 14px;
+    }
+
+    > .work-info {
+      @include align-items(center);
+      @include display(flex);
+      background-color: #f6f6f6;
+      height: 100px;
+      margin-top: 14px;
+
+      > .image {
+        @include flex-basis(100px);
+        @include flex-shrink(0);
+        height: 100px;
+      }
+
+      > .detail {
+        font-size: 12px;
+        margin-left: 7px;
+
+        > .episode {
+          margin-top: 3px;
+        }
+      }
+    }
+
+    > .footer {
+      @include align-items(center);
+      @include justify-content(space-between);
+      @include display(flex);
+      margin-top: 7px;
+
+      > .ann-time-ago {
+        color: $color-gunsmoke;
+        font-size: 12px;
+      }
+
+      > .actions {
+        @include display(flex);
+
+        > .comment-button {
+          margin-left: 7px;
+
+          > a {
+            color: $color-gunsmoke;
+
+            &:hover {
+              color: $color-gunsmoke;
+            }
+
+            > .count {
+              font-size: 12px;
+              margin-left: 3px;
+            }
+          }
+        }
+      }
+    }
+  }
+
+  hr {
+    margin: 21px 14px;
+  }
+}

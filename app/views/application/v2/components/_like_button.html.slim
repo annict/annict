@@ -1,5 +1,5 @@
 script#ann-like-button type="x-template"
-  .ann-like-button @click="toggleLike"
+  .ann-like-button :class="{ 'is-liked': isLiked }" @click="toggleLike"
     i.fa :class="{ 'fa-heart-o': !isLiked, 'fa-heart': isLiked }"
     span.count
       | {{ likesCount }}

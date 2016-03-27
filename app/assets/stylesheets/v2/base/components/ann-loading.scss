@@ -15,6 +15,9 @@
 }
 
 .ann-loading {
+  @include align-items(center);
+  @include justify-content(center);
+  @include display(flex);
   height: 100px;
 
   /* :not(:required) hides these rules from IE9 and below */
