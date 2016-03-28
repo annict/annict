@@ -2,7 +2,7 @@
 
 namespace :tmp do
   task convert_activity_actions: :environment do
-    Activity.order(id: :desc).find_each do |a|
+    Activity.find_each do |a|
       puts "activity id: #{a.id}"
 
       case a.action
