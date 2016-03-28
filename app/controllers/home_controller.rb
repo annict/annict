@@ -2,17 +2,21 @@
 
 class HomeController < ApplicationController
   def index
-    if user_signed_in?
-      render :index, layout: "v1/application"
-    else
-      @season_top_work = GuestTopPageService.season_top_work
-      @season_works = GuestTopPageService.season_works
-      @top_work = GuestTopPageService.top_work
-      @works = GuestTopPageService.works
-      @cover_image_work = GuestTopPageService.cover_image_work
-      @activities = GuestTopPageService.activities unless browser.mobile?
+    return render :index, layout: layout if user_signed_in?
 
-      render :index_guest, layout: "v2/application"
-    end
+    @season_top_work = GuestTopPageService.season_top_work
+    @season_works = GuestTopPageService.season_works
+    @top_work = GuestTopPageService.top_work
+    @works = GuestTopPageService.works
+    @cover_image_work = GuestTopPageService.cover_image_work
+    @activities = GuestTopPageService.activities unless browser.mobile?
+
+    render :index_guest, layout: "v2/application"
+  end
+
+  private
+
+  def layout
+    "v1/application"
   end
 end

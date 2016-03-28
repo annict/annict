@@ -40,7 +40,7 @@ class Status < ActiveRecord::Base
       a.user      = user
       a.recipient = work
       a.trackable = self
-      a.action    = 'statuses.create'
+      a.action    = "create_status"
     end
   end
 

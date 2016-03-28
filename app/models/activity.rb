@@ -19,15 +19,16 @@
 #
 
 class Activity < ActiveRecord::Base
+  extend Enumerize
+
+  enumerize :action, in: %w(
+    create_status
+    create_record
+    statuses.create
+    checkins.create
+  )
+
   belongs_to :recipient, polymorphic: true
   belongs_to :trackable, polymorphic: true
   belongs_to :user
-
-  def create_record?
-    action == "checkins.create"
-  end
-
-  def create_status?
-    action == "statuses.create"
-  end
 end

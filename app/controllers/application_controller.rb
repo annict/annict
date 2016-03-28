@@ -33,6 +33,10 @@ class ApplicationController < ActionController::Base
     root_path
   end
 
+  def ga_client
+    @ga_client ||= Annict::Analytics::Client.new(request, current_user)
+  end
+
   def set_work
     @work = Work.published.find(params[:work_id])
   end

@@ -13,7 +13,7 @@
       p Annict (アニクト) は、アニメの視聴記録ができるWebサービスです。
       p 人気ランキングや友達の視聴記録から好きなアニメを見つけて、管理することができます。
     .signup-btn
-      ann-action-blocker v-cloak="" modal-template-id="signup-modal" is-blocked="true"
+      ann-action-blocker modal-template-id="signup-modal" is-blocked="true"
         = icon "rocket"
         .text アカウント登録して記録する
 
@@ -129,12 +129,12 @@
               .text
                 = link_to act.user.profile.name, user_path(username: act.user.username)
                 | が
-                - if act.create_record?
+                - if act.action.create_record?
                   | 記録しました
-                - elsif act.create_status?
+                - elsif act.action.create_status?
                   | ステータスを変更しました
           .body
-            - if act.create_record?
+            - if act.action.create_record?
               - if act.trackable.comment.present?
                 ann-comment-guard inline-template=""
                   .record-comment v-on:click="remove"
@@ -148,7 +148,7 @@
                     = link_to act.trackable.work.title, work_path(act.trackable.work)
                   .episode
                     = link_to act.recipient.number, work_episode_path(act.trackable.work, act.recipient)
-            - elsif act.create_status?
+            - elsif act.action.create_status?
               .work
                 .image
                   = link_to work_path(act.trackable.work) do

@@ -29,6 +29,10 @@
 
       .middle {
         margin: 7px 0 20px 0;
+
+        > .ann-rating-label {
+          margin-bottom: 3px;
+        }
       }
 
       .bottom {

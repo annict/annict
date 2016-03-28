@@ -18,7 +18,22 @@ Annict::Application.routes.draw do
   end
 
   namespace :api do
-    resources :activities, only: [:index]
+    namespace :internal do
+      resources :activities, only: [:index]
+      resources :records, only: [] do
+        delete :like, to: "likes#record_destroy"
+        post   :like, to: "likes#record_create"
+      end
+      resources :comments, only: [] do
+        delete :like, to: "likes#comment_destroy"
+        post   :like, to: "likes#comment_create"
+      end
+      resources :statuses, only: [] do
+        delete :like, to: "likes#status_destroy"
+        post   :like, to: "likes#status_create"
+      end
+    end
+
     resources :latest_statuses, only: [:index] do
       patch :skip_episode
     end
@@ -27,9 +42,6 @@ Annict::Application.routes.draw do
     resources :receptions, only: [:create, :destroy]
     resources :tips, only: [] do
       post :finish, on: :collection
-    end
-    resources :users, only: [] do
-      get :activities
     end
     resource  :user,       only: [] do
       resources :programs, only: [:index], controller: 'user_programs'
@@ -130,25 +142,12 @@ Annict::Application.routes.draw do
       to: 'checkins#redirect',
       provider: /fb|tw/,
       url_hash: /[0-9a-zA-Z_-]{10}/
-
-    delete :like, to: 'likes#checkin_destroy'
-    post   :like, to: 'likes#checkin_create'
-  end
-
-  resources :comments, only: [] do
-    delete :like, to: 'likes#comment_destroy'
-    post   :like, to: 'likes#comment_create'
   end
 
   resource :confirmation, only: [:show]
   resources :friends, only: [:index]
   resources :notifications, only: [:index]
   resources :programs, only: [:index]
-
-  resources :statuses, only: [] do
-    delete :like, to: 'likes#status_destroy'
-    post   :like, to: 'likes#status_create'
-  end
 
   get "@:username", to: "users#show", username: /[A-Za-z0-9_]+/, as: :user
   get "@:username/:status_kind",

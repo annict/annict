@@ -30,7 +30,7 @@ class GuestTopPageService
   end
 
   def self.activities
-    Activity.where(action: ["checkins.create", "statuses.create"]).
+    Activity.where(action: %w(create_status create_record)).
       order(id: :desc).
       includes(:recipient, trackable: :user, user: :profile).
       limit(20)

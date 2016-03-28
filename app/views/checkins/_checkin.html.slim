@@ -15,13 +15,16 @@
             = link_to work_episode_checkin_path(checkin.episode.work, checkin.episode, checkin), title: checkin.created_at.to_time.strftime("%Y/%m/%d %H:%M") do
               = custom_time_ago_in_words(checkin.created_at)
       .middle
-        = render 'checkins/checkin_comment_body', checkin: checkin
+        ann-comment-guard inline-template="" is-spoiler="#{user_signed_in? && current_user.hide_checkin_comment?(checkin)}"
+          ann-rating-label rating="#{checkin.rating}" :is-spoiler="isSpoiler" v-show="!isSpoiler"
+          .checkin-comment.record-comment v-ann-simple-format="" @click="remove"
+            = checkin.comment
       .bottom
         .top
           .pull-left
             = render "application/v1/social_click_counter", checkin: checkin
           .pull-right
-            = render 'application/v1/like_button', recipient: checkin
+            ann-like-button resource-name="records" resource-id="#{checkin.id}" likes-count="#{checkin.likes_count}" is-liked="#{user_signed_in? && current_user.like_r?(checkin)}"
             = link_to work_episode_checkin_path(checkin.episode.work, checkin.episode, checkin), class: 'comment-button' do
               i.icon.fa.fa-comment-o
               span.count

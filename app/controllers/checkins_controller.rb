@@ -19,6 +19,7 @@
 #  shared_twitter       :boolean          default(FALSE), not null
 #  shared_facebook      :boolean          default(FALSE), not null
 #  work_id              :integer
+#  rating               :float
 #
 # Indexes
 #
@@ -30,7 +31,7 @@
 #
 
 class CheckinsController < ApplicationController
-  permits :comment, :shared_twitter, :shared_facebook
+  permits :comment, :shared_twitter, :shared_facebook, :rating
 
   before_action :authenticate_user!, only: [:create, :create_all, :edit,
                                             :update, :destroy]
@@ -48,6 +49,7 @@ class CheckinsController < ApplicationController
     if @checkin.save
       @checkin.update_share_checkin_status
       @checkin.share_to_sns(self)
+      ga_client.events.create("records", "create")
       redirect_to work_episode_path(@work, @episode), notice: t("checkins.saved")
     else
       render :new

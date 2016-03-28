@@ -1,6 +1,7 @@
 = form_for [work, episode, checkin], role: 'form', html: { class: 'checkin-form', :'ng-controller' => 'CheckinFormCtrl' } do |f|
   = render "application/v1/error_panel", resource: checkin
-
+  
+  ann-record-rating rating="#{checkin.rating.presence || 3}"
   .form-group.checkin-form-comment
     = f.text_area :comment, class: 'form-control', rows: 2, :'ng-click' => 'expand($event)', placeholder: t('checkins.input_a_comment')
   .checkin-form-share
@@ -23,3 +24,6 @@
       = f.button class: 'btn btn-primary' do
         i.fa.fa-edit
         = t('words.update')
+
+- content_for :parts do
+  = render "application/v2/components/record_rating"

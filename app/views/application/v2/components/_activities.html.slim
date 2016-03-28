@@ -1,0 +1,17 @@
+script#ann-activities type="x-template"
+  .ann-activities
+    template v-if="activities.length > 0"
+      div v-infinite-scroll="loadMore()" infinite-scroll-disabled="isDisabled" infinite-scroll-distance="2"
+        template v-for="activity in activities"
+          template v-if="activity.action === 'create_record'"
+            ann-create-record-activity :activity="activity"
+          template v-if="activity.action === 'create_status'"
+            ann-create-status-activity :activity="activity"
+          hr
+    template v-if="!isLoading && activities.length === 0"
+      .info.well
+        .icon
+          i.fa.fa-info-circle
+        p アクティビティはありません
+    .ann-loading v-show="isLoading"
+      .core Loading...

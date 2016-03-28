@@ -1,0 +1,9 @@
+body.home-index.user {
+  padding-top: 60px;
+
+  > .content {
+    @include card;
+    margin: 0 auto;
+    max-width: 500px;
+  }
+}
