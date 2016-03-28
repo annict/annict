@@ -39,13 +39,14 @@ class Checkin < ActiveRecord::Base
 
   validates :comment, length: { maximum: 500 }
   validates :rating, numericality: {
-    greater_than_or_equal_to: 1,
+    greater_than_or_equal_to: 0,
     less_than_or_equal_to: 5
   }
 
   scope :with_comment, -> { where.not(comment: '') }
 
   before_update :check_comment_modified
+  before_save :update_rating
   after_create  :save_activity
   after_create  :finish_tips
   after_create  :update_latest_status
@@ -115,5 +116,9 @@ class Checkin < ActiveRecord::Base
   def update_latest_status
     latest_status = user.latest_statuses.find_by(work: work)
     latest_status.append_episode(episode) if latest_status.present?
+  end
+
+  def update_rating
+    self.rating = nil if rating < 1
   end
 end

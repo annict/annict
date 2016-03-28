@@ -2,11 +2,11 @@ script#ann-record-rating type="x-template"
   .ann-record-rating
     .rating
       span.stars
-        i.fa.fa-star
+        i.fa :class="{ 'fa-star-o': (rating <= 0), 'fa-star-half-o': (0 < rating && rating < 1), 'fa-star': (1 <= rating) }"
         i.fa :class="{ 'fa-star-o': (rating <= 1), 'fa-star-half-o': (1 < rating && rating < 2), 'fa-star': (2 <= rating) }"
         i.fa :class="{ 'fa-star-o': (rating <= 2), 'fa-star-half-o': (2 < rating && rating < 3), 'fa-star': (3 <= rating) }"
         i.fa :class="{ 'fa-star-o': (rating <= 3), 'fa-star-half-o': (3 < rating && rating < 4), 'fa-star': (4 <= rating) }"
         i.fa :class="{ 'fa-star-o': (rating <= 4), 'fa-star-half-o': (4 < rating && rating < 5), 'fa-star': (5 <= rating) }"
       span.text
         | {{ fixedRating }}
-    input type="range" name="checkin[rating]" max="5" min="1" step="0.1" v-model="rating"
+    input type="range" name="checkin[rating]" max="5" min="0" step="0.1" v-model="rating"

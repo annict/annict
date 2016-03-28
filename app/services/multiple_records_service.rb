@@ -16,7 +16,7 @@ class MultipleRecordsService
     episodes = Episode.where(id: episode_ids).order(:sort_number)
 
     episodes.each do |episode|
-      episode.checkins.create(user: user, work: episode.work)
+      episode.checkins.create(user: user, work: episode.work, rating: 0)
     end
   end
 end
