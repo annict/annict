@@ -119,6 +119,6 @@ class Checkin < ActiveRecord::Base
   end
 
   def update_rating
-    self.rating = nil if rating < 1
+    self.rating = nil if rating.present? && rating < 1
   end
 end
