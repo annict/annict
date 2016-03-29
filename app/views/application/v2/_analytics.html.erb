@@ -4,7 +4,18 @@
   m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
   })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
 
-  ga('create', '<%= ENV['GA_TRACKING_ID'] %>', 'annict.com');
+  <% if user_signed_in? %>
+  ga("create", "<%= ENV['GA_TRACKING_ID'] %>", {
+    "storage": "none",
+    "clientId": "<%= cookies[:ann_ga_cid] %>",
+    "userId": "<%= current_user.ga_uid %>"
+  });
+  <% else %>
+  ga("create", "<%= ENV['GA_TRACKING_ID'] %>", {
+    "storage": "none",
+    "clientId": "<%= cookies[:ann_ga_cid] %>"
+  });
+  <% end %>
   ga('send', 'pageview');
 
   <%# カスタムディメンション「ログイン」 %>

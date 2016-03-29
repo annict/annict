@@ -165,6 +165,10 @@ class User < ActiveRecord::Base
     latest_statuses.find_by(work: work)&.kind.presence || "no_select"
   end
 
+  def ga_uid
+    Digest::SHA256.hexdigest(id.to_s)
+  end
+
   private
 
   def get_large_avatar_image(provider, image_url)

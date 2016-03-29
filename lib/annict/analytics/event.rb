@@ -29,7 +29,7 @@ module Annict
           uip: @request.ip,
           ua: @request.user_agent
         }
-        body[:uid] = Digest::SHA256.hexdigest(@user.id.to_s) if @user.present?
+        body[:uid] = @user.ga_uid if @user.present?
         body[:el] = el if el.present?
         body[:ev] = ev if ev.present?
 
