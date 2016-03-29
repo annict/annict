@@ -9,7 +9,7 @@ module OmniauthMock
       uid:      uid,
       info: {
         nickname:  'mockuser',
-        image: 'http://lorempixel.com/300/300/people/'
+        image: "http://placehold.it/300x300"
       },
       credentials: {
         token:  'mock_token',
