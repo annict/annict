@@ -2,9 +2,7 @@
 
 module Api
   class ApplicationController < ActionController::Base
-    def ga_client
-      @ga_client ||= Annict::Analytics::Client.new(request, current_user)
-    end
+    include AnalyticsFilter
 
     private
 

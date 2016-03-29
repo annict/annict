@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Annict
   module Analytics
     class Event
@@ -20,7 +22,7 @@ module Annict
         body = {
           v: 1,
           tid: ENV.fetch("GA_TRACKING_ID"),
-          cid: @request.uuid,
+          cid: @request.cookies["ann_ga_cid"],
           t: "event",
           ec: ec,
           ea: ea,

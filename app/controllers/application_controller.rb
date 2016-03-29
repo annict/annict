@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 class ApplicationController < ActionController::Base
+  include AnalyticsFilter
   include ViewSelector
   include FlashMessage
 
@@ -33,10 +34,6 @@ class ApplicationController < ActionController::Base
     root_path
   end
 
-  def ga_client
-    @ga_client ||= Annict::Analytics::Client.new(request, current_user)
-  end
-
   def set_work
     @work = Work.published.find(params[:work_id])
   end
@@ -64,8 +61,5 @@ class ApplicationController < ActionController::Base
 
       gon.push(user_info)
     end
-  end
-
-  def use_v1_layout
   end
 end
