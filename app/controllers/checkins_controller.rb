@@ -45,6 +45,7 @@ class CheckinsController < ApplicationController
     @checkin = @episode.checkins.new(checkin)
     @checkin.user = current_user
     @checkin.work = @work
+    @checkin.rating = 0 if checkin[:rating].blank?
 
     if @checkin.save
       @checkin.update_share_checkin_status
