@@ -12,9 +12,19 @@
             li = link_to "見たアニメ", user_works_path(current_user.username, :watched)
             li = link_to "中断したアニメ", user_works_path(current_user.username, :on_hold)
             li = link_to "中止したアニメ", user_works_path(current_user.username, :stop_watching)
-        li = link_to "今期のアニメ", season_works_path(slug: ENV["ANNICT_CURRENT_SEASON"])
+        li.dropdown
+          = link_to "今期のアニメ", season_works_path(slug: ENV["ANNICT_CURRENT_SEASON"])
+          ul.menu
+            li = link_to "来期のアニメ", season_works_path(slug: ENV["ANNICT_NEXT_SEASON"])
+            li = link_to "前期のアニメ", season_works_path(slug: ENV["ANNICT_PREVIOUS_SEASON"])
+            li = link_to "人気のアニメ", popular_works_path
       - else
-        li = link_to "今期のアニメ", season_works_path(slug: ENV["ANNICT_CURRENT_SEASON"])
+        li.dropdown
+          = link_to "今期のアニメ", season_works_path(slug: ENV["ANNICT_CURRENT_SEASON"])
+          ul.menu
+            li = link_to "来期のアニメ", season_works_path(slug: ENV["ANNICT_NEXT_SEASON"])
+            li = link_to "前期のアニメ", season_works_path(slug: ENV["ANNICT_PREVIOUS_SEASON"])
+            li = link_to "人気のアニメ", popular_works_path
     = form_tag search_works_path, method: :get, class: "search-form" do
       = text_field_tag :q, @search.q, placeholder: "アニメタイトルで検索..."
       = button_tag "", type: :submit
