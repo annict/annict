@@ -6,11 +6,14 @@ module.exports = Vue.extend
   props:
     rating:
       type: Number
-      required: true
-      default: 3.0
       coerce: (val) ->
         Number(val)
 
   computed:
     fixedRating: ->
-      @rating.toFixed(1)
+      return "-" if @rating < 1
+      Number(@rating).toFixed(1)
+
+  watch:
+    rating: (val) ->
+      @rating = 1 if 0 < val && val < 1

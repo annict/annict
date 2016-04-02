@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 class ApplicationController < ActionController::Base
+  include AnalyticsFilter
   include ViewSelector
   include FlashMessage
 
@@ -60,8 +61,5 @@ class ApplicationController < ActionController::Base
 
       gon.push(user_info)
     end
-  end
-
-  def use_v1_layout
   end
 end

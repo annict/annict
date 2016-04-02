@@ -40,7 +40,7 @@ describe "トップページ" do
       end
 
       it "アクティビティが存在しない旨を表示すること", js: true do
-        expect(page).to have_content("アクティビティはありませんでした")
+        expect(page).to have_content("アクティビティはありません")
       end
     end
 

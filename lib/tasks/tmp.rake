@@ -2,7 +2,7 @@
 
 namespace :tmp do
   task convert_activity_actions: :environment do
-    Activity.order(id: :desc).find_each do |a|
+    def update_activity(a)
       puts "activity id: #{a.id}"
 
       case a.action
@@ -11,6 +11,14 @@ namespace :tmp do
       when "checkins.create"
         a.update_column :action, "create_record"
       end
+    end
+
+    Activity.order(id: :desc).limit(3000).each do |a|
+      update_activity a
+    end
+
+    Activity.find_each do |a|
+      update_activity a
     end
   end
 end
