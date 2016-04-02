@@ -1,20 +1,22 @@
 .notification
   .media
-    = link_to user_path(notification.action_user.username), class: 'profile-image pull-left' do
+    = link_to user_path(notification.action_user.username), class: "profile-image pull-left" do
       = annict_image_tag(notification.action_user.profile, :tombo_avatar, size: "50x50", class: "img-circle")
     .media-body
-      - if 'follows.create' == notification.action
-        = render 'notifications/follows_create', notification: notification
+      - if "follows.create" == notification.action
+        = render "notifications/follows_create", notification: notification
 
-      - elsif 'likes.create' == notification.action
-        - if 'Checkin' == notification.trackable.recipient.class.name
-          = render 'notifications/likes_create_checkin', notification: notification
-        - elsif 'Comment' == notification.trackable.recipient.class.name
-          = render 'notifications/likes_create_comment', notification: notification
-        - elsif 'Status' == notification.trackable.recipient.class.name
-          = render 'notifications/likes_create_status', notification: notification
+      - elsif "likes.create" == notification.action
+        - if "Checkin" == notification.trackable.recipient.class.name
+          = render "notifications/likes_create_checkin", notification: notification
+        - elsif "MultipleRecord" == notification.trackable.recipient.class.name
+          = render "notifications/likes_create_multiple_records", notification: notification
+        - elsif "Comment" == notification.trackable.recipient.class.name
+          = render "notifications/likes_create_comment", notification: notification
+        - elsif "Status" == notification.trackable.recipient.class.name
+          = render "notifications/likes_create_status", notification: notification
 
-      - elsif 'comments.create' == notification.action
-        = render 'notifications/comments_create_checkin', notification: notification
+      - elsif "comments.create" == notification.action
+        = render "notifications/comments_create_checkin", notification: notification
 
 hr

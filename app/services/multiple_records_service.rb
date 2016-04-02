@@ -15,8 +15,19 @@ class MultipleRecordsService
     episode_ids = episode_ids.gsub(/\[|\]/, "").split(",")
     episodes = Episode.where(id: episode_ids).order(:sort_number)
 
-    episodes.each do |episode|
-      episode.checkins.create(user: user, work: episode.work, rating: 0)
+    return if episodes.blank?
+
+    ActiveRecord::Base.transaction do
+      multiple_record = user.multiple_records.create!(work: episodes.first.work)
+
+      episodes.each do |episode|
+        episode.checkins.create! do |c|
+          c.user = user
+          c.work = episode.work
+          c.rating = 0
+          c.multiple_record_id = multiple_record.id
+        end
+      end
     end
   end
 end

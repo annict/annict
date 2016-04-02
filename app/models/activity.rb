@@ -24,8 +24,7 @@ class Activity < ActiveRecord::Base
   enumerize :action, in: %w(
     create_status
     create_record
-    statuses.create
-    checkins.create
+    create_multiple_records
   )
 
   belongs_to :recipient, polymorphic: true

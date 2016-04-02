@@ -131,6 +131,8 @@
                 | が
                 - if act.action.create_record?
                   | 記録しました
+                - elsif act.action.create_multiple_records?
+                  | 一括記録しました
                 - elsif act.action.create_status?
                   | ステータスを変更しました
           .body
@@ -148,6 +150,21 @@
                     = link_to act.trackable.work.title, work_path(act.trackable.work)
                   .episode
                     = link_to act.recipient.number, work_episode_path(act.trackable.work, act.recipient)
+            - elsif act.action.create_multiple_records?
+              .work
+                .image
+                  = link_to work_path(act.recipient) do
+                    = annict_image_tag(act.recipient.item, :tombo_image, size: "30x30")
+                .info
+                  .title
+                    = link_to act.recipient.title, work_path(act.recipient)
+                  .episodes
+                    - if act.trackable.checkins.count > 1
+                      = link_to act.trackable.checkins.first.episode.number, work_episode_path(act.recipient, act.trackable.checkins.first.episode)
+                      |  ~ 
+                      = link_to act.trackable.checkins.last.episode.number, work_episode_path(act.recipient, act.trackable.checkins.last.episode)
+                    - else
+                      = link_to act.trackable.checkins.first.episode.number, work_episode_path(act.recipient, act.trackable.checkins.first.episode)
             - elsif act.action.create_status?
               .work
                 .image

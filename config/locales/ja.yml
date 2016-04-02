@@ -42,6 +42,7 @@ ja:
     comments_create_checkin_html: '%{action_name}が%{work_title}%{episode_number}への%{checkin}にコメントしました'
     follows_create_html: '%{action_name}があなたをフォローしました'
     likes_create_checkin_html: '%{action_name}が%{work_title}%{episode_number}への%{checkin}に「いいね！」しました'
+    likes_create_multiple_records_html: '%{user_name}が%{work_title}への一括記録に「いいね！」しました'
     likes_create_comment_html: '%{action_name}が%{work_title}%{episode_number}の%{checkin}へのコメントに「いいね！」しました'
     likes_create_status_html: '%{action_name}が%{work_title}のステータス変更に「いいね！」しました'
     no_notifications: 通知はありません。

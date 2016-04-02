@@ -30,7 +30,7 @@ class GuestTopPageService
   end
 
   def self.activities
-    Activity.where(action: %w(create_status create_record)).
+    Activity.where(action: %w(create_status create_record create_multiple_records)).
       order(id: :desc).
       includes(:recipient, trackable: :user, user: :profile).
       limit(20)

@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160320055926) do
+ActiveRecord::Schema.define(version: 20160320200438) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -98,10 +98,12 @@ ActiveRecord::Schema.define(version: 20160320055926) do
     t.boolean  "shared_facebook",                  default: false, null: false
     t.integer  "work_id"
     t.float    "rating"
+    t.integer  "multiple_record_id"
   end
 
   add_index "checkins", ["episode_id"], name: "checkins_episode_id_idx", using: :btree
   add_index "checkins", ["facebook_url_hash"], name: "checkins_facebook_url_hash_key", unique: true, using: :btree
+  add_index "checkins", ["multiple_record_id"], name: "index_checkins_on_multiple_record_id", using: :btree
   add_index "checkins", ["twitter_url_hash"], name: "checkins_twitter_url_hash_key", unique: true, using: :btree
   add_index "checkins", ["user_id"], name: "checkins_user_id_idx", using: :btree
   add_index "checkins", ["work_id"], name: "index_checkins_on_work_id", using: :btree
@@ -447,6 +449,17 @@ ActiveRecord::Schema.define(version: 20160320055926) do
 
   add_index "likes", ["user_id"], name: "likes_user_id_idx", using: :btree
 
+  create_table "multiple_records", force: :cascade do |t|
+    t.integer  "user_id",                 null: false
+    t.integer  "work_id",                 null: false
+    t.integer  "likes_count", default: 0, null: false
+    t.datetime "created_at",              null: false
+    t.datetime "updated_at",              null: false
+  end
+
+  add_index "multiple_records", ["user_id"], name: "index_multiple_records_on_user_id", using: :btree
+  add_index "multiple_records", ["work_id"], name: "index_multiple_records_on_work_id", using: :btree
+
   create_table "notifications", force: :cascade do |t|
     t.integer  "user_id",                                    null: false
     t.integer  "action_user_id",                             null: false
@@ -753,6 +766,7 @@ ActiveRecord::Schema.define(version: 20160320055926) do
   add_foreign_key "channel_works", "works", name: "channel_works_work_id_fk", on_delete: :cascade
   add_foreign_key "channels", "channel_groups", name: "channels_channel_group_id_fk", on_delete: :cascade
   add_foreign_key "checkins", "episodes", name: "checkins_episode_id_fk", on_delete: :cascade
+  add_foreign_key "checkins", "multiple_records"
   add_foreign_key "checkins", "users", name: "checkins_user_id_fk", on_delete: :cascade
   add_foreign_key "checkins", "works", name: "checkins_work_id_fk"
   add_foreign_key "comments", "checkins", name: "comments_checkin_id_fk", on_delete: :cascade
@@ -800,6 +814,8 @@ ActiveRecord::Schema.define(version: 20160320055926) do
   add_foreign_key "latest_statuses", "users"
   add_foreign_key "latest_statuses", "works"
   add_foreign_key "likes", "users", name: "likes_user_id_fk", on_delete: :cascade
+  add_foreign_key "multiple_records", "users"
+  add_foreign_key "multiple_records", "works"
   add_foreign_key "notifications", "users", column: "action_user_id", name: "notifications_action_user_id_fk", on_delete: :cascade
   add_foreign_key "notifications", "users", name: "notifications_user_id_fk", on_delete: :cascade
   add_foreign_key "people", "prefectures"
