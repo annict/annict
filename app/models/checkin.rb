@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 # == Schema Information
 #
 # Table name: checkins
@@ -19,20 +20,23 @@
 #  shared_facebook      :boolean          default(FALSE), not null
 #  work_id              :integer
 #  rating               :float
+#  multiple_record_id   :integer
 #
 # Indexes
 #
-#  checkins_episode_id_idx         (episode_id)
-#  checkins_facebook_url_hash_key  (facebook_url_hash) UNIQUE
-#  checkins_twitter_url_hash_key   (twitter_url_hash) UNIQUE
-#  checkins_user_id_idx            (user_id)
-#  index_checkins_on_work_id       (work_id)
+#  checkins_episode_id_idx               (episode_id)
+#  checkins_facebook_url_hash_key        (facebook_url_hash) UNIQUE
+#  checkins_twitter_url_hash_key         (twitter_url_hash) UNIQUE
+#  checkins_user_id_idx                  (user_id)
+#  index_checkins_on_multiple_record_id  (multiple_record_id)
+#  index_checkins_on_work_id             (work_id)
 #
 
 class Checkin < ActiveRecord::Base
   belongs_to :work
   belongs_to :episode, counter_cache: true
-  belongs_to :user,    counter_cache: true
+  belongs_to :multiple_record
+  belongs_to :user, counter_cache: true
   has_many   :comments,   dependent: :destroy
   has_many   :activities, dependent: :destroy, foreign_key: :trackable_id, foreign_type: :trackable
   has_many   :likes,      dependent: :destroy, foreign_key: :recipient_id, foreign_type: :recipient
@@ -95,11 +99,13 @@ class Checkin < ActiveRecord::Base
   private
 
   def save_activity
-    Activity.create do |a|
-      a.user      = user
-      a.recipient = episode
-      a.trackable = self
-      a.action    = "create_record"
+    if multiple_record.blank?
+      Activity.create do |a|
+        a.user      = user
+        a.recipient = episode
+        a.trackable = self
+        a.action    = "create_record"
+      end
     end
   end
 

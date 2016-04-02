@@ -17,6 +17,8 @@ end
 
 if activity.action.create_record?
   json.partial!("/api/internal/activities/create_record", activity: activity)
+elsif activity.action.create_multiple_records?
+  json.partial!("/api/internal/activities/create_multiple_records", activity: activity)
 elsif activity.action.create_status?
   json.partial!("/api/internal/activities/create_status", activity: activity)
 end

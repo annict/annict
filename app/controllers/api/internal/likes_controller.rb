@@ -28,6 +28,14 @@ module Api
         destroy_like(Checkin, record_id)
       end
 
+      def multiple_record_create(multiple_record_id)
+        create_like(MultipleRecord, multiple_record_id)
+      end
+
+      def multiple_record_destroy(multiple_record_id)
+        destroy_like(MultipleRecord, multiple_record_id)
+      end
+
       def comment_create(comment_id)
         create_like(Comment, comment_id)
       end

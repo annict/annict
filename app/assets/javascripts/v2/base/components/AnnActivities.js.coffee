@@ -1,6 +1,7 @@
 Vue = require "vue"
 
 AnnCreateRecordActivity = require "./AnnCreateRecordActivity"
+AnnCreateMultipleRecordsActivity = require "./AnnCreateMultipleRecordsActivity"
 AnnCreateStatusActivity = require "./AnnCreateStatusActivity"
 
 module.exports = Vue.extend
@@ -18,6 +19,7 @@ module.exports = Vue.extend
 
   components:
     "ann-create-record-activity": AnnCreateRecordActivity
+    "ann-create-multiple-records-activity": AnnCreateMultipleRecordsActivity
     "ann-create-status-activity": AnnCreateStatusActivity
 
   methods:

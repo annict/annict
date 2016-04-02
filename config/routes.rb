@@ -24,6 +24,10 @@ Annict::Application.routes.draw do
         delete :like, to: "likes#record_destroy"
         post   :like, to: "likes#record_create"
       end
+      resources :multiple_records, only: [] do
+        delete :like, to: "likes#multiple_record_destroy"
+        post   :like, to: "likes#multiple_record_create"
+      end
       resources :comments, only: [] do
         delete :like, to: "likes#comment_destroy"
         post   :like, to: "likes#comment_create"

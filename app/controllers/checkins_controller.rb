@@ -20,14 +20,16 @@
 #  shared_facebook      :boolean          default(FALSE), not null
 #  work_id              :integer
 #  rating               :float
+#  multiple_record_id   :integer
 #
 # Indexes
 #
-#  checkins_episode_id_idx         (episode_id)
-#  checkins_facebook_url_hash_key  (facebook_url_hash) UNIQUE
-#  checkins_twitter_url_hash_key   (twitter_url_hash) UNIQUE
-#  checkins_user_id_idx            (user_id)
-#  index_checkins_on_work_id       (work_id)
+#  checkins_episode_id_idx               (episode_id)
+#  checkins_facebook_url_hash_key        (facebook_url_hash) UNIQUE
+#  checkins_twitter_url_hash_key         (twitter_url_hash) UNIQUE
+#  checkins_user_id_idx                  (user_id)
+#  index_checkins_on_multiple_record_id  (multiple_record_id)
+#  index_checkins_on_work_id             (work_id)
 #
 
 class CheckinsController < ApplicationController
@@ -60,6 +62,7 @@ class CheckinsController < ApplicationController
   def create_all(episode_ids)
     records = MultipleRecordsService.new(current_user)
     records.delay.save!(episode_ids)
+    ga_client.events.create("multiple_records", "create")
     redirect_to work_path(@work), notice: t("checkins.saved")
   end
 
