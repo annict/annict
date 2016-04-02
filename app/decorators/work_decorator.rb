@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class WorkDecorator < ApplicationDecorator
   include WorkDecoratorCommon
 
@@ -30,5 +32,10 @@ class WorkDecorator < ApplicationDecorator
   def release_season
     return season.decorate.yearly_season_ja if season.present?
     released_at_about.presence || ""
+  end
+
+  def release_season_link
+    return release_season if season.blank?
+    h.link_to release_season, h.season_works_path(season.slug)
   end
 end

@@ -70,7 +70,7 @@
         - if @work.decorate.release_season.present?
           li
             = icon("calendar-o")
-            = @work.decorate.release_season
+            = @work.decorate.release_season_link
         - if @work.official_site_url.present?
           li
             = icon("home")
