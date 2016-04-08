@@ -33,6 +33,7 @@ class Work < ActiveRecord::Base
   include AASM
   include DbActivityMethods
   include WorkCommon
+  include ElasticSearchable
 
   has_paper_trail only: DIFF_FIELDS
 
@@ -46,6 +47,15 @@ class Work < ActiveRecord::Base
       end
 
       transitions from: :published, to: :hidden
+    end
+  end
+
+  settings SETTINGS do
+    mapping do
+      indexes :title,
+        type: "string",
+        analyzer: "index_analyzer",
+        search_analyzer: "search_analyzer"
     end
   end
 

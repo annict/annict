@@ -30,6 +30,7 @@ class Person < ActiveRecord::Base
   include AASM
   include DbActivityMethods
   include PersonCommon
+  include ElasticSearchable
 
   validates :name, uniqueness: true
 
@@ -44,6 +45,19 @@ class Person < ActiveRecord::Base
       end
 
       transitions from: :published, to: :hidden
+    end
+  end
+
+  settings SETTINGS do
+    mapping do
+      indexes :name,
+        type: "string",
+        analyzer: "index_analyzer",
+        search_analyzer: "search_analyzer"
+      indexes :name_kana,
+        type: "string",
+        analyzer: "index_analyzer",
+        search_analyzer: "search_analyzer"
     end
   end
 
