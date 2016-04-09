@@ -25,9 +25,7 @@
             li = link_to "来期のアニメ", season_works_path(slug: ENV.fetch("ANNICT_NEXT_SEASON"))
             li = link_to "前期のアニメ", season_works_path(slug: ENV.fetch("ANNICT_PREVIOUS_SEASON"))
             li = link_to "人気のアニメ", popular_works_path
-    = form_tag search_works_path, method: :get, class: "search-form" do
-      = text_field_tag :q, @search.q, placeholder: "アニメタイトルで検索..."
-      = button_tag "", type: :submit
+    ann-search-form q="#{@search.q}"
   .right
     ul
       - if user_signed_in?
@@ -60,6 +58,7 @@
             .text アカウント登録
 
 - content_for :parts do
+  = render "application/v2/components/search_form"
   - unless user_signed_in?
-  = render "application/v2/components/signin_modal"
-  = render "application/v2/components/signup_modal"
+    = render "application/v2/components/signin_modal"
+    = render "application/v2/components/signup_modal"

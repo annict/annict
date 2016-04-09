@@ -8,6 +8,10 @@ class SearchService
     @scope = scope
   end
 
+  def all
+    Elasticsearch::Model.search(query, [Work, Person, Organization]).results
+  end
+
   def works
     collection(Work).search(title_cont: @q).result
   end
@@ -21,6 +25,16 @@ class SearchService
   end
 
   private
+
+  def query
+    {
+      query: {
+        match: {
+          _all: @q
+        }
+      }
+    }
+  end
 
   def collection(model)
     case @scope

@@ -19,6 +19,7 @@ Annict::Application.routes.draw do
 
   namespace :api do
     namespace :internal do
+      resource :search, only: [:show]
       resources :activities, only: [:index]
       resources :records, only: [] do
         delete :like, to: "likes#record_destroy"

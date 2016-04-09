@@ -94,40 +94,6 @@
         }
       }
     }
-
-    .search-form {
-      @include display(flex);
-      height: 32px;
-      margin: 14px 0 14px 14px;
-      position: relative;
-
-      input,
-      button {
-        background-color: rgba(0, 0, 0, .1);
-        border: 1px solid $color-alto;
-        border-color: rgba(255, 255, 255, .15);
-        color: $color-alto;
-      }
-
-      input {
-        border-right-width: 0;
-        line-height: 1.1;
-        padding: 7px 0 7px 12px;
-        width: 300px;
-      }
-
-      button {
-        border-left-width: 0;
-        line-height: 0;
-        padding: 0 10px;
-
-        &:before {
-          color: $color-alto;
-          content: "";
-          font: normal normal normal 14px/1 FontAwesome;
-        }
-      }
-    }
   }
 
   .right {
