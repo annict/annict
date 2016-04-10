@@ -20,6 +20,7 @@
 #  released_at_about :string
 #  aasm_state        :string           default("published"), not null
 #  number_format_id  :integer
+#  title_kana        :string           default(""), not null
 #
 # Indexes
 #
@@ -33,7 +34,6 @@ class Work < ActiveRecord::Base
   include AASM
   include DbActivityMethods
   include WorkCommon
-  include ElasticSearchable
 
   has_paper_trail only: DIFF_FIELDS
 
@@ -47,15 +47,6 @@ class Work < ActiveRecord::Base
       end
 
       transitions from: :published, to: :hidden
-    end
-  end
-
-  settings SETTINGS do
-    mapping do
-      indexes :title,
-        type: "string",
-        analyzer: "index_analyzer",
-        search_analyzer: "search_analyzer"
     end
   end
 
@@ -80,6 +71,7 @@ class Work < ActiveRecord::Base
   validates :sc_tid, numericality: { only_integer: true }, allow_blank: true,
                      uniqueness: true
   validates :title, presence: true, uniqueness: { conditions: -> { published } }
+  validates :title_kana, presence: true
 
   scope :by_season, -> (season_slug) {
     return self if season_slug.blank?

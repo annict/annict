@@ -11,6 +11,7 @@
 #  aasm_state       :string           default("published"), not null
 #  created_at       :datetime         not null
 #  updated_at       :datetime         not null
+#  name_kana        :string           default(""), not null
 #
 # Indexes
 #

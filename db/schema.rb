@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160320200438) do
+ActiveRecord::Schema.define(version: 20160410033114) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -492,6 +492,7 @@ ActiveRecord::Schema.define(version: 20160320200438) do
     t.string   "aasm_state",       default: "published", null: false
     t.datetime "created_at",                             null: false
     t.datetime "updated_at",                             null: false
+    t.string   "name_kana",        default: "",          null: false
   end
 
   add_index "organizations", ["aasm_state"], name: "index_organizations_on_aasm_state", using: :btree
@@ -500,7 +501,7 @@ ActiveRecord::Schema.define(version: 20160320200438) do
   create_table "people", force: :cascade do |t|
     t.integer  "prefecture_id"
     t.string   "name",                                   null: false
-    t.string   "name_kana"
+    t.string   "name_kana",        default: "",          null: false
     t.string   "nickname"
     t.string   "gender"
     t.string   "url"
@@ -751,6 +752,7 @@ ActiveRecord::Schema.define(version: 20160320200438) do
     t.string   "released_at_about"
     t.string   "aasm_state",                    default: "published", null: false
     t.integer  "number_format_id"
+    t.string   "title_kana",                    default: "",          null: false
   end
 
   add_index "works", ["aasm_state"], name: "index_works_on_aasm_state", using: :btree

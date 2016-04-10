@@ -5,19 +5,32 @@ module.exports = Vue.extend
   template: "#ann-search-form"
 
   data: ->
-    results: []
+    works: []
+    people: []
+    organizations: []
     index: -1
 
   props:
     q: String
 
+  computed:
+    results: ->
+      _.each @works, (work) -> work.resourceType = "work"
+      _.each @people, (person) -> person.resourceType = "person"
+      _.each @organizations, (org) -> org.resourceType = "organization"
+      results = []
+      results.push.apply(results, @works)
+      results.push.apply(results, @people)
+      results.push.apply(results, @organizations)
+      results
+
   methods:
     resultPath: (result) ->
-      resourceName = switch result.resource_type
+      resourceName = switch result.resourceType
         when "work" then "works"
         when "person" then "people"
         when "organization" then "organizations"
-      "/#{resourceName}/#{result.resource.id}"
+      "/#{resourceName}/#{result.id}"
 
     onKeyup: ->
       $.ajax
@@ -26,7 +39,9 @@ module.exports = Vue.extend
         data:
           q: @q
       .done (data) =>
-        @results = data.results
+        @works = data.works
+        @people = data.people
+        @organizations = data.organizations
 
     next: ->
       if @results.length

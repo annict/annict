@@ -1,24 +1,17 @@
 # frozen_string_literal: true
 
 namespace :tmp do
-  task convert_activity_actions: :environment do
-    def update_activity(a)
-      puts "activity id: #{a.id}"
-
-      case a.action
-      when "statuses.create"
-        a.update_column :action, "create_status"
-      when "checkins.create"
-        a.update_column :action, "create_record"
-      end
-    end
-
-    Activity.order(id: :desc).limit(3000).each do |a|
-      update_activity a
-    end
-
-    Activity.find_each do |a|
-      update_activity a
+  task update_title_kana: :environment do
+    tids = Work.where.not(sc_tid: nil).pluck(:sc_tid)
+    url = "http://cal.syoboi.jp/db.php?Command=TitleLookup&TID=#{tids.join(',')}&Fields=TitleYomi"
+    doc = Nokogiri::XML(open(url))
+    doc.css("TitleItem").each do |item|
+      sc_tid = item.attribute("id").value
+      next if sc_tid.blank?
+      title_kana = item.css("TitleYomi").text
+      next if title_kana.blank?
+      Work.find_by(sc_tid: sc_tid).update_column(:title_kana, title_kana)
+      puts "updated. sc_tid: #{sc_tid}, title_kana: #{title_kana}"
     end
   end
 end

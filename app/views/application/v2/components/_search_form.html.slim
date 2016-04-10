@@ -5,15 +5,15 @@ script#ann-search-form type="x-template"
     .results v-if="results.length"
       ul
         li v-for="(i, result) in results" :class="{ active: i === index }" @mouseover="onMouseover(i)" @click="select"
-          template v-if="result.resource_type === 'work'"
+          template v-if="result.resourceType === 'work'"
             span.label.work 作品
             span.name
-              | {{ result.resource.title }}
-          template v-if="result.resource_type === 'person'"
+              | {{ result.title }}
+          template v-if="result.resourceType === 'person'"
             span.label.person 人物
             span.name
-              | {{ result.resource.name }}
-          template v-if="result.resource_type === 'organization'"
+              | {{ result.name }}
+          template v-if="result.resourceType === 'organization'"
             span.label.organization 団体
             span.name
-              | {{ result.resource.name }}
+              | {{ result.name }}

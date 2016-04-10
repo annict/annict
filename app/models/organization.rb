@@ -1,5 +1,4 @@
 # frozen_string_literal: true
-
 # == Schema Information
 #
 # Table name: organizations
@@ -12,6 +11,7 @@
 #  aasm_state       :string           default("published"), not null
 #  created_at       :datetime         not null
 #  updated_at       :datetime         not null
+#  name_kana        :string           default(""), not null
 #
 # Indexes
 #
@@ -23,9 +23,9 @@ class Organization < ActiveRecord::Base
   include AASM
   include DbActivityMethods
   include OrganizationCommon
-  include ElasticSearchable
 
   validates :name, uniqueness: true
+  validates :name_kana, uniqueness: true
 
   aasm do
     state :published, initial: true
@@ -37,19 +37,6 @@ class Organization < ActiveRecord::Base
       end
 
       transitions from: :published, to: :hidden
-    end
-  end
-
-  settings SETTINGS do
-    mapping do
-      indexes :name,
-        type: "string",
-        analyzer: "index_analyzer",
-        search_analyzer: "search_analyzer"
-      indexes :name_kana,
-        type: "string",
-        analyzer: "index_analyzer",
-        search_analyzer: "search_analyzer"
     end
   end
 
