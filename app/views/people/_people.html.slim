@@ -1,0 +1,11 @@
+.people
+  - if people.present?
+    = render partial: "people/person", collection: people, as: :person, locals: { user: user }
+  - else
+    - if params[:q].present?
+      .no-people
+        .container
+          .info.well
+            .icon
+              i.fa.fa-info-circle
+            p 人物は登録されていません

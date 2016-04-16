@@ -8,7 +8,7 @@
 
 .c-content
   .container
-    = form_tag search_works_path, method: :get, html: { role: "form" } do
+    = form_tag search_path, method: :get, html: { role: "form" } do
       .form-group
         = text_field_tag :q, @search.q, placeholder: "アニメタイトルで検索...", class: "form-control", autofocus: true
       = button_tag class: "btn btn-primary" do

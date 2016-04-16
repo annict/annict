@@ -57,7 +57,7 @@ module.exports = Vue.extend
       event.preventDefault()
 
       path = if @index == -1
-        "/works/search?q=#{@q}"
+        "/search?q=#{@q}"
       else
         @resultPath(@results[@index])
 

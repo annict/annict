@@ -1,4 +1,4 @@
-body.works-search {
+body.searches-show {
   padding-top: 60px;
 
   .c-tabs {
@@ -23,13 +23,30 @@ body.works-search {
     }
   }
 
-  .works {
+  .works-content,
+  .people-content,
+  .orgs-content {
     @include content(wide);
     margin-bottom: 20px;
 
+    .no-works,
+    .no-people,
+    .no-organizations {
+      @include card;
+      padding: 15px 0;
+    }
+  }
+
+  .works-content {
     .work {
       @include card;
       @include work(large);
+    }
+  }
+
+  .people-content {
+    .person {
+      @include card;
     }
   }
 }

@@ -19,7 +19,7 @@ SitemapGenerator::Sitemap.create do
   add about_path, priority: 0.7
   add popular_works_path, priority: 0.9
   add privacy_path
-  add search_works_path, priority: 0.8
+  add search_path, priority: 0.8
   add terms_path
 
   User.find_each do |u|

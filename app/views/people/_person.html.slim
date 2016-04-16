@@ -1,0 +1,20 @@
+.person
+  h2
+    = link_to person.name, person_path(person), class: "name"
+    - if person.voice_actor?
+      span.label 声優
+    - if person.staff?
+      span.label スタッフ
+
+  .works
+    .title 参加作品
+    - person.casts.includes(:work).joins(:work).order("works.watchers_count DESC").limit(6).each_slice(2).each do |casts|
+      .casts
+        - casts.each do |cast|
+          .work
+            = cast.work.title
+    - person.staffs.includes(:work).joins(:work).order("works.watchers_count DESC").limit(6).each_slice(2).each do |staffs|
+      .staffs
+        - staffs.each do |staff|
+          .work
+            = staff.work.title
