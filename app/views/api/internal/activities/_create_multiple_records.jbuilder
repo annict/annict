@@ -12,6 +12,7 @@ json.multiple_record do
   json.call(activity.trackable, :id, :likes_count)
 end
 
-json.episodes activity.trackable.checkins do |record|
+records = activity.trackable.checkins.joins(:episode).order("episodes.sort_number ASC")
+json.episodes records do |record|
   json.call(record.episode, :id, :number, :title)
 end
