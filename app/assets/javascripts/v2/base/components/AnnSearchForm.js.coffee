@@ -65,3 +65,6 @@ module.exports = Vue.extend
 
     onMouseover: (index)->
       @index = index
+
+    hideResults: ->
+      @works = @people = @organizations = []
