@@ -30,7 +30,7 @@ script#ann-create-record-activity type="x-template"
             a href="/works/{{ activity.work.id }}/episodes/{{ activity.episode.id }}" v-if="activity.episode"
               span v-if="!(!activity.episode.number && activity.episode.title)"
                 | {{ activity.episode.number }}
-              span v-if="activity.episode.title"
+              span v-if="activity.episode.number && activity.work.title !== activity.episode.title"
                 | 「{{ activity.episode.title }}」
 
     .footer

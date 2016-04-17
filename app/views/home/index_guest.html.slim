@@ -148,8 +148,9 @@
                 .info
                   .title
                     = link_to act.trackable.work.title, work_path(act.trackable.work)
-                  .episode
-                    = link_to act.recipient.number, work_episode_path(act.trackable.work, act.recipient)
+                  - unless act.trackable.work.single?
+                    .episode
+                      = link_to act.recipient.number, work_episode_path(act.trackable.work, act.recipient)
             - elsif act.action.create_multiple_records?
               .work
                 .image
@@ -159,12 +160,14 @@
                   .title
                     = link_to act.recipient.title, work_path(act.recipient)
                   .episodes
-                    - if act.trackable.checkins.count > 1
-                      = link_to act.trackable.checkins.first.episode.number, work_episode_path(act.recipient, act.trackable.checkins.first.episode)
-                      |  ~ 
-                      = link_to act.trackable.checkins.last.episode.number, work_episode_path(act.recipient, act.trackable.checkins.last.episode)
+                    - records = act.trackable.checkins.joins(:episode).order("episodes.sort_number ASC")
+                    - if records.count > 1
+                      = link_to records.first.episode.number, work_episode_path(act.recipient, records.first.episode)
+                      | から
+                      = link_to records.last.episode.number, work_episode_path(act.recipient, records.last.episode)
                     - else
-                      = link_to act.trackable.checkins.first.episode.number, work_episode_path(act.recipient, act.trackable.checkins.first.episode)
+                      - unless act.recipient.single?
+                        = link_to records.first.episode.number, work_episode_path(act.recipient, records.first.episode)
             - elsif act.action.create_status?
               .work
                 .image
