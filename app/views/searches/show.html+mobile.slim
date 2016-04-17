@@ -4,7 +4,7 @@
 - set_meta_tags(title: title, description: description, keywords: keywords, reverse: true)
 
 = render "application/v1/navbar"
-= render "nav"
+= render "works/nav"
 
 .c-content
   .container
@@ -15,7 +15,17 @@
         = icon "search"
         | 検索
 
-= render "works", works: @works, user: current_user, compact: false
+.results
+  h2 作品
+  = render "works/works", works: @works, user: current_user, compact: false
+.results
+  h2 人物
+  = render "people/people", people: @people, user: current_user
+.results
+  h2 団体
+  = render "organizations/organizations", organizations: @organizations, user: current_user
+
+= render "application/v2/components/footer"
 
 - content_for :parts do
   = render "application/v2/components/work_friends"
