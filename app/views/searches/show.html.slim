@@ -15,13 +15,13 @@
         = icon "search"
         | 検索
 
-.works-content
+.results
   h2 作品
   = render "works/works", works: @works, user: current_user, compact: false
-.people-content
+.results
   h2 人物
   = render "people/people", people: @people, user: current_user
-.orgs-content
+.results
   h2 団体
   = render "organizations/organizations", organizations: @organizations, user: current_user
 

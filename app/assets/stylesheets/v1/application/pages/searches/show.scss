@@ -23,30 +23,93 @@ body.searches-show {
     }
   }
 
-  .works-content,
-  .people-content,
-  .orgs-content {
+  .results {
     @include content(wide);
     margin-bottom: 20px;
+
+    > .works {
+      .work {
+        @include card;
+        @include work(large);
+      }
+    }
+
+    > .people,
+    > .organizations {
+      > .person,
+      > .organization {
+        @include card;
+        margin: 20px 0;
+        padding: 15px;
+
+        > h2 {
+          font-size: 16px;
+          font-weight: normal;
+          margin: 0 0 14px 0;
+
+          > .label-wrapper {
+            margin-top: 5px;
+
+            > .label {
+              color: #fff;
+              font-size: 10px;
+              margin-right: 5px;
+
+              &.voice-actor {
+                background-color: $color-zuka;
+              }
+
+              &.staff {
+                background-color: $color-miyamori;
+              }
+            }
+          }
+        }
+
+        > .works {
+          > .title {
+            font-size: 13px;
+            font-weight: bold;
+            margin-bottom: 3px;
+          }
+
+          > .list {
+            @include display(flex);
+            margin-bottom: 7px;
+
+            &:last-child {
+              margin-bottom: 0;
+            }
+
+            > .work {
+              @include align-items(center);
+              @include display(flex);
+              @include flex-basis(50%);
+
+              > .image {
+                @include flex-basis(50px);
+                @include flex-shrink(0);
+                margin-right: 7px;
+              }
+
+              > .info {
+                > .part,
+                > .role {
+                  color: $color-gunsmoke;
+                  font-size: 12px;
+                }
+              }
+            }
+          }
+        }
+      }
+    }
 
     .no-works,
     .no-people,
     .no-organizations {
       @include card;
       padding: 15px 0;
-    }
-  }
-
-  .works-content {
-    .work {
-      @include card;
-      @include work(large);
-    }
-  }
-
-  .people-content {
-    .person {
-      @include card;
     }
   }
 }
