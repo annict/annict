@@ -3,6 +3,10 @@
   .col-sm-9
     = f.text_field :title, class: "form-control", autofocus: true
 .form-group
+  = f.label :title_kana, class: "col-sm-3 control-label"
+  .col-sm-9
+    = f.text_field :title_kana, class: "form-control"
+.form-group
   = f.label :media, class: "col-sm-3 control-label"
   .col-sm-9
     .row

@@ -19,6 +19,7 @@
 #  released_at_about :string
 #  aasm_state        :string           default("published"), not null
 #  number_format_id  :integer
+#  title_kana        :string           default(""), not null
 #
 # Indexes
 #

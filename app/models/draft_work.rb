@@ -17,6 +17,7 @@
 #  created_at        :datetime         not null
 #  updated_at        :datetime         not null
 #  number_format_id  :integer
+#  title_kana        :string           default(""), not null
 #
 # Indexes
 #

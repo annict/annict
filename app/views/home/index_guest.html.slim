@@ -166,7 +166,7 @@
                       | から
                       = link_to records.last.episode.number, work_episode_path(act.recipient, records.last.episode)
                     - else
-                      - unless act.recipient.single?
+                      - if records.first&.episode.present? && !act.recipient.single?
                         = link_to records.first.episode.number, work_episode_path(act.recipient, records.first.episode)
             - elsif act.action.create_status?
               .work

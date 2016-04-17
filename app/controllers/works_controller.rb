@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 # == Schema Information
 #
 # Table name: works
@@ -19,6 +20,7 @@
 #  released_at_about :string
 #  aasm_state        :string           default("published"), not null
 #  number_format_id  :integer
+#  title_kana        :string           default(""), not null
 #
 # Indexes
 #
@@ -56,16 +58,6 @@ class WorksController < ApplicationController
   def show
     @work = Work.published.find(params[:id])
     @status = current_user.latest_statuses.find_by(work: @work) if user_signed_in?
-
-    render layout: "v1/application"
-  end
-
-  def search(q: nil, page: nil)
-    @works = if q.present?
-      @search.works.order_latest.page(page)
-    else
-      Work.none
-    end
 
     render layout: "v1/application"
   end

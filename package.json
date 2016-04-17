@@ -4,11 +4,12 @@
     "browserify": "^10.2.4",
     "browserify-incremental": "^3.0.1",
     "coffeeify": "^0.6",
+    "linkifyjs": "^2.0.0-beta.9",
     "lodash": "^4.6.1",
     "moment": "^2.12.0",
+    "mousetrap": "^1.5.3",
     "vue": "^1.0.16",
-    "vue-infinite-scroll": "^0.2.2",
-    "linkifyjs": "^2.0.0-beta.9"
+    "vue-infinite-scroll": "^0.2.2"
   },
   "engines": {
     "node": "~> 4.3.1"

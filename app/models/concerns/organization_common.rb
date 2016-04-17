@@ -1,11 +1,14 @@
+# frozen_string_literal: true
+
 module OrganizationCommon
   extend ActiveSupport::Concern
 
-  DIFF_FIELDS = %i(name url wikipedia_url twitter_username)
+  DIFF_FIELDS = %i(name name_kana url wikipedia_url twitter_username).freeze
   PUBLISH_FIELDS = DIFF_FIELDS
 
   included do
     validates :name, presence: true
+    validates :name_kana, presence: true
     validates :url, url: { allow_blank: true }
     validates :wikipedia_url, url: { allow_blank: true }
 

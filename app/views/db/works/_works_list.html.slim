@@ -22,7 +22,11 @@ table.table.table-striped.c-resource-list
             = icon("check-circle-o", class: "c-resource-list__status-published enabled", "data-toggle" => "tooltip", title: "この作品は公開されています")
           - else
             = icon("check-circle-o", class: "c-resource-list__status-published disabled", "data-toggle" => "tooltip", title: "この作品は非公開になっています")
-        td = work.title
+        td
+          = work.title
+          - if work.title_kana.present?
+            br
+            = "(#{work.title_kana})"
         td
           - if work.sc_tid.present?
             = work.decorate.syobocal_link

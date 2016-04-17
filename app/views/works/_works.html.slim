@@ -4,13 +4,14 @@
   - if works.present?
     = render partial: "works/work_#{type}", collection: works.includes(:casts, :staffs), as: :work, locals: { user: user }
 
-    .text-center
-      = paginate works
+    - if params[:controller] != "searches"
+      .text-center
+        = paginate works
   - else
-    - if %w(season works).include?(params[:action]) || (params[:action] == "search" && params[:q].present?)
+    - if %w(season works).include?(params[:action]) || (params[:controller] == "searches" && params[:q].present?)
       .no-works
         .container
           .info.well
             .icon
               i.fa.fa-info-circle
-            p = t('works.no_works')
+            p 作品は登録されていません

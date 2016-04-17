@@ -1,0 +1,16 @@
+.organization
+  h2
+    = link_to organization.name, organization_path(organization), class: "name"
+
+  .works
+    .title 参加作品
+    - organization.staffs.includes(:work).joins(:work).order("works.watchers_count DESC").limit(4).each do |staff|
+      .work
+        .image
+          = link_to work_path(staff.work) do
+            = annict_image_tag(staff.work.item, :tombo_image, size: "50x50", alt: staff.work.title)
+        .info
+          .title
+            = link_to staff.work.title, work_path(staff.work)
+          .role
+            = staff.decorate.role_name

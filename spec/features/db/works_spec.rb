@@ -95,6 +95,7 @@ describe "Annict DB" do
       before do
         within("#new_work") do
           fill_in "work[title]", with: "ご注文はうさぎですか?"
+          fill_in "work[title_kana]", with: "ごちゅうもんはうさぎですか"
           select "TV", from: "work[media]"
           click_button "登録する"
         end

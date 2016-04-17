@@ -1,0 +1,10 @@
+.organizations
+  - if organizations.present?
+    = render partial: "organizations/organization", collection: organizations, as: :organization, locals: { user: user }
+  - elsif params[:q].present?
+    .no-organizations
+      .container
+        .info.well
+          .icon
+            i.fa.fa-info-circle
+          p 団体は登録されていません

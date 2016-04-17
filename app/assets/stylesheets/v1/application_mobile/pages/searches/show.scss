@@ -1,0 +1,119 @@
+body.searches-show {
+  .c-tabs {
+    @include tabs(independent);
+  }
+
+  .c-content {
+    @include content(narrow);
+    @include card;
+
+    form {
+      padding: 15px 0;
+      text-align: center;
+
+      .form-group {
+        margin-bottom: 10px;
+      }
+
+      i {
+        margin-right: 7px;
+      }
+    }
+  }
+
+  .results {
+    @include content(narrow);
+    margin-bottom: 20px;
+
+    > .works {
+      margin-bottom: 20px;
+
+      .work {
+        @include card;
+        @include work(large);
+        margin: 20px 0;
+
+        .ann-status-selector {
+          margin-left: 0;
+        }
+      }
+    }
+
+    > .people,
+    > .organizations {
+      > .person,
+      > .organization {
+        @include card;
+        margin: 20px 0;
+        padding: 15px;
+
+        > h2 {
+          font-size: 14px;
+          font-weight: normal;
+          margin: 0 0 14px 0;
+
+          > .label-wrapper {
+            margin-top: 5px;
+
+            > .label {
+              color: #fff;
+              font-size: 10px;
+              margin-right: 5px;
+
+              &.voice-actor {
+                background-color: $color-zuka;
+              }
+
+              &.staff {
+                background-color: $color-miyamori;
+              }
+            }
+          }
+        }
+
+        > .works {
+          > .title {
+            font-size: 12px;
+            font-weight: bold;
+            margin-bottom: 3px;
+          }
+
+          > .work {
+            @include align-items(center);
+            @include display(flex);
+            margin-bottom: 7px;
+
+            &:last-child {
+              margin-bottom: 0;
+            }
+
+            > .image {
+              @include flex-basis(50px);
+              @include flex-shrink(0);
+              margin-right: 7px;
+            }
+
+            > .info {
+              > .part,
+              > .role {
+                color: $color-gunsmoke;
+                font-size: 12px;
+              }
+            }
+          }
+        }
+      }
+    }
+
+    .no-works,
+    .no-people,
+    .no-organizations {
+      @include card;
+      padding: 15px 0;
+
+      .well {
+        margin-bottom: 0;
+      }
+    }
+  }
+}

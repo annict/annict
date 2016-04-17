@@ -19,6 +19,7 @@ Annict::Application.routes.draw do
 
   namespace :api do
     namespace :internal do
+      resource :search, only: [:show]
       resources :activities, only: [:index]
       resources :records, only: [] do
         delete :like, to: "likes#record_destroy"
@@ -119,6 +120,8 @@ Annict::Application.routes.draw do
     root "home#index"
   end
 
+  resource :search, only: [:show]
+
   resources :organizations, only: [:show]
   resources :people, only: [:show]
 
@@ -202,8 +205,6 @@ Annict::Application.routes.draw do
     resources :checkins, only: [] do
       post :create_all, on: :collection
     end
-
-    get :search, on: :collection
   end
 
   get 'about',   to: 'pages#about'

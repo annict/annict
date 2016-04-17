@@ -5,7 +5,7 @@
 #  id               :integer          not null, primary key
 #  prefecture_id    :integer
 #  name             :string           not null
-#  name_kana        :string
+#  name_kana        :string           default(""), not null
 #  nickname         :string
 #  gender           :string
 #  url              :string

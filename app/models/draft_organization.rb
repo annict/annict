@@ -10,6 +10,7 @@
 #  twitter_username :string
 #  created_at       :datetime         not null
 #  updated_at       :datetime         not null
+#  name_kana        :string           default(""), not null
 #
 # Indexes
 #

@@ -1,6 +1,8 @@
+# frozen_string_literal: true
+
 module Db
   class OrganizationsController < Db::ApplicationController
-    permits :name, :url, :wikipedia_url, :twitter_username
+    permits :name, :name_kana, :url, :wikipedia_url, :twitter_username
 
     before_action :authenticate_user!, only: [:new, :create, :edit, :update, :destroy]
 
