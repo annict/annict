@@ -68,3 +68,4 @@ module.exports = Vue.extend
 
     hideResults: ->
       @works = @people = @organizations = []
+      $(@$el).find("input").blur()

@@ -3,6 +3,7 @@
 
 Vue = require "vue"
 infiniteScroll =  require "vue-infinite-scroll"
+Mousetrap =  require "mousetrap"
 
 AnnActionBlocker = require "./base/components/AnnActionBlocker"
 AnnActivities = require "./base/components/AnnActivities"
@@ -39,3 +40,7 @@ $ ->
     events:
       "AnnModal:showModal": (templateId) ->
         @$broadcast "AnnModal:showModal", templateId
+
+  Mousetrap.bind "/", ->
+    $(".ann-search-form input").focus()
+    false
