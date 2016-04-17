@@ -217,12 +217,13 @@ ActiveRecord::Schema.define(version: 20160410033114) do
 
   create_table "draft_organizations", force: :cascade do |t|
     t.integer  "organization_id"
-    t.string   "name",             null: false
+    t.string   "name",                          null: false
     t.string   "url"
     t.string   "wikipedia_url"
     t.string   "twitter_username"
-    t.datetime "created_at",       null: false
-    t.datetime "updated_at",       null: false
+    t.datetime "created_at",                    null: false
+    t.datetime "updated_at",                    null: false
+    t.string   "name_kana",        default: "", null: false
   end
 
   add_index "draft_organizations", ["name"], name: "index_draft_organizations_on_name", using: :btree
@@ -314,6 +315,7 @@ ActiveRecord::Schema.define(version: 20160410033114) do
     t.datetime "created_at",                     null: false
     t.datetime "updated_at",                     null: false
     t.integer  "number_format_id"
+    t.string   "title_kana",        default: "", null: false
   end
 
   add_index "draft_works", ["number_format_id"], name: "index_draft_works_on_number_format_id", using: :btree
@@ -548,7 +550,6 @@ ActiveRecord::Schema.define(version: 20160410033114) do
     t.boolean  "rebroadcast",    default: false, null: false
   end
 
-  add_index "programs", ["channel_id", "episode_id"], name: "index_programs_on_channel_id_and_episode_id", unique: true, using: :btree
   add_index "programs", ["sc_pid"], name: "index_programs_on_sc_pid", unique: true, using: :btree
 
   create_table "providers", force: :cascade do |t|

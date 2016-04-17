@@ -17,6 +17,7 @@ describe "Annict DB" do
       before do
         within("#new_draft_work") do
           fill_in "draft_work[title]", with: "のんのんびより"
+          fill_in "draft_work[title_kana]", with: "のんのんびより"
           select "TV", from: "draft_work[media]"
           fill_in "draft_work[edit_request_attributes][title]", with: "「のんのんびよりを登録」"
           click_button "登録する"
