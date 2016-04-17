@@ -1,6 +1,8 @@
+# frozen_string_literal: true
+
 module Db
   class DraftOrganizationsController < Db::ApplicationController
-    permits :name, :url, :wikipedia_url, :twitter_username, :organization_id,
+    permits :name, :name_kana, :url, :wikipedia_url, :twitter_username, :organization_id,
       edit_request_attributes: [:id, :title, :body]
 
     before_action :authenticate_user!

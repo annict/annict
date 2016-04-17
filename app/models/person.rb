@@ -32,7 +32,6 @@ class Person < ActiveRecord::Base
   include PersonCommon
 
   validates :name, uniqueness: true
-  validates :name_kana, presence: true
 
   aasm do
     state :published, initial: true

@@ -16,6 +16,7 @@ ja:
         body: コメント
       draft_organization:
         name: 名前
+        name_kana: 名前 (かな)
         url: URL
         wikipedia_url: Wikipedia
         twitter_username: Twitter
@@ -46,6 +47,7 @@ ja:
         tombo_image: 作品画像
       organization:
         name: 名前
+        name_kana: 名前 (かな)
         url: URL
         wikipedia_url: Wikipedia
         twitter_username: Twitter
@@ -90,6 +92,7 @@ ja:
         released_at_about: リリース時期 (大体)
         sc_tid: しょぼかるID
         title: タイトル
+        title_kana: 作品タイトル (かな)
         twitter_hashtag: ハッシュタグ
         twitter_username: 公式Twitter
         wikipedia_url: Wikipedia
@@ -137,6 +140,7 @@ ja:
         released_at_about: リリース時期 (大体)
         sc_tid: しょぼかるID
         title: 作品タイトル
+        title_kana: 作品タイトル (かな)
         twitter_hashtag: ハッシュタグ
         twitter_username: 公式Twitter
         wikipedia_url: Wikipedia

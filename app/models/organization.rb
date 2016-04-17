@@ -25,7 +25,6 @@ class Organization < ActiveRecord::Base
   include OrganizationCommon
 
   validates :name, uniqueness: true
-  validates :name_kana, uniqueness: true
 
   aasm do
     state :published, initial: true

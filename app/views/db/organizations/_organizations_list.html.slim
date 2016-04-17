@@ -3,6 +3,7 @@ table.table.table-striped.c-resource-list
     tr
       th ID
       th 名前
+      th 名前 (かな)
       th URL
       - if user_signed_in?
         th 編集
@@ -20,6 +21,7 @@ table.table.table-striped.c-resource-list
           - else
             = icon("check-circle-o", class: "c-resource-list__status-published disabled", "data-toggle" => "tooltip", title: "非公開になっています")
         td = organization.name
+        td = organization.name_kana.presence || "-"
         td = organization.url.presence || "-"
         - if user_signed_in?
           td

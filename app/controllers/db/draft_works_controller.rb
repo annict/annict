@@ -1,7 +1,9 @@
+# frozen_string_literal: true
+
 class Db::DraftWorksController < Db::ApplicationController
-  permits :season_id, :sc_tid, :title, :media, :official_site_url, :wikipedia_url,
-    :twitter_username, :twitter_hashtag, :released_at_about, :number_format_id,
-    :work_id, edit_request_attributes: [:id, :title, :body]
+  permits :season_id, :sc_tid, :title, :title_kana, :media, :official_site_url,
+    :wikipedia_url, :twitter_username, :twitter_hashtag, :released_at_about,
+    :number_format_id, :work_id, edit_request_attributes: [:id, :title, :body]
 
   before_action :authenticate_user!
 

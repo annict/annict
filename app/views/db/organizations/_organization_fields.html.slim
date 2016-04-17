@@ -4,6 +4,11 @@
     = f.text_field :name, class: "form-control", autofocus: true
 
 .form-group
+  = f.label :name_kana, class: "col-sm-3 control-label"
+  .col-sm-9
+    = f.text_field :name_kana, class: "form-control"
+
+.form-group
   = f.label :url, class: "col-sm-3 control-label"
   .col-sm-9
     = f.url_field :url, class: "form-control"

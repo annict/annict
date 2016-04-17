@@ -1,7 +1,10 @@
+# frozen_string_literal: true
+
 module Db
   class WorksController < Db::ApplicationController
-    permits :season_id, :sc_tid, :title, :media, :official_site_url, :wikipedia_url,
-      :twitter_username, :twitter_hashtag, :released_at_about, :number_format_id
+    permits :season_id, :sc_tid, :title, :title_kana, :media, :official_site_url,
+      :wikipedia_url, :twitter_username, :twitter_hashtag, :released_at_about,
+      :number_format_id
 
     before_action :authenticate_user!, only: [:new, :create, :edit, :update, :destroy]
 
