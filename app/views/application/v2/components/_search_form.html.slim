@@ -4,7 +4,7 @@ script#ann-search-form type="x-template"
     button name="button" type="submit"
     .results v-if="results.length"
       ul
-        li v-for="(i, result) in results" :class="{ active: i === index }" @mouseover="onMouseover(i)" @click="select"
+        li v-for="(i, result) in results" :class="{ active: i === index }" @mouseover="onMouseover(i)" @mousedown="select"
           template v-if="result.resourceType === 'work'"
             span.label.work 作品
             span.name
