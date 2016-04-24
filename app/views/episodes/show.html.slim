@@ -4,6 +4,9 @@
 - canonical = url_for(only_path: false, overwrite_params: nil)
 - set_meta_tags(title: title, description: description, keywords: keywords, canonical: canonical, reverse: true)
 
+- content_for :head do
+  = render "application/v2/twitter", title: title, description: description, image: annict_image_url(@work.item, :tombo_image, size: "640x640")
+
 = render "application/v2/navbar"
 
 .content

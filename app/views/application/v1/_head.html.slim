@@ -19,3 +19,5 @@ link type='text/plain' rel='author' href="#{ENV['ANNICT_URL']}/humans.txt"
   = javascript_include_tag "v1/application"
 
 = csrf_meta_tags
+
+= yield :head

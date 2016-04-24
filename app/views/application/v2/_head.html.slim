@@ -9,3 +9,5 @@ link type='text/plain' rel='author' href="#{ENV.fetch('ANNICT_URL')}/humans.txt"
 = javascript_include_tag "v2/pc"
 
 = csrf_meta_tags
+
+= yield :head
