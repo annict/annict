@@ -12,7 +12,7 @@
           - else
             span.cancel-disabled 解除できません
         - else
-          = link_to user_omniauth_authorize_path(:twitter, back: providers_path), class: "btn btn-sm btn-twitter" do
+          = link_to user_twitter_omniauth_authorize_path(back: providers_path), class: "btn btn-sm btn-twitter" do
             = icon("twitter", class: "icon")
             | 連携する
     .facebook
@@ -25,7 +25,7 @@
           - else
             span.cancel-disabled 解除できません
         - else
-          = link_to user_omniauth_authorize_path(:facebook, back: providers_path), class: "btn btn-sm btn-facebook" do
+          = link_to user_facebook_omniauth_authorize_path(back: providers_path), class: "btn btn-sm btn-facebook" do
             = icon("facebook", class: "icon")
             | 連携する
 

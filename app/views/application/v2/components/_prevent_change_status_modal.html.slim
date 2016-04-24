@@ -12,9 +12,9 @@
         | ご安心ください。
   .body
     .buttons
-      = link_to user_omniauth_authorize_path(:twitter), class: "twitter" do
+      = link_to user_twitter_omniauth_authorize_path, class: "twitter" do
         = icon("twitter")
         .text Twitterアカウントで登録
-      = link_to user_omniauth_authorize_path(:facebook), class: "facebook" do
+      = link_to user_facebook_omniauth_authorize_path, class: "facebook" do
         = icon("facebook")
         .text Facebookアカウントで登録
