@@ -5,9 +5,10 @@
 #  id          :integer          not null, primary key
 #  name        :string           not null
 #  data        :string           default([]), not null, is an Array
+#  sort_number :integer          default(0), not null
 #  created_at  :datetime         not null
 #  updated_at  :datetime         not null
-#  sort_number :integer          default(0), not null
+#  format      :string           default(""), not null
 #
 # Indexes
 #

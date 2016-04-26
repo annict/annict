@@ -135,7 +135,8 @@ module Syobocal
 
     def formatted_number(count)
       return nil if work.number_format.blank?
-      work.number_format.data[count - 1]
+      return work.number_format.data[count - 1] if work.number_format.format.blank?
+      work.number_format.format % count
     end
 
     def create_program(episode)
