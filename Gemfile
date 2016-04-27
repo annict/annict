@@ -2,7 +2,7 @@
 
 source "https://rubygems.org"
 
-ruby "2.3.0"
+ruby "2.3.1"
 
 gem "rails", "~> 4.2.5.2"
 
@@ -56,6 +56,7 @@ gem "puma"
 gem "pundit"
 gem "rack-rewrite"
 gem "rails_autolink"
+gem "rails-html-sanitizer"
 gem "rails-i18n"
 gem "ransack"
 gem "redis-rails"
@@ -109,5 +110,3 @@ group :test do
   gem "factory_girl_rails"
   gem "poltergeist"
 end
-
-gem "rails-html-sanitizer", "~> 1.0.3"

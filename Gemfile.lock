@@ -711,7 +711,7 @@ DEPENDENCIES
   rack-rewrite
   rails (~> 4.2.5.2)
   rails-flog
-  rails-html-sanitizer (~> 1.0.3)
+  rails-html-sanitizer
   rails-i18n
   rails_12factor
   rails_autolink
