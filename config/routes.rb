@@ -21,40 +21,48 @@ Annict::Application.routes.draw do
     namespace :internal do
       resource :search, only: [:show]
       resources :activities, only: [:index]
-      resources :records, only: [] do
-        delete :like, to: "likes#record_destroy"
-        post   :like, to: "likes#record_create"
-      end
-      resources :multiple_records, only: [] do
-        delete :like, to: "likes#multiple_record_destroy"
-        post   :like, to: "likes#multiple_record_create"
-      end
+      resources :organizations, only: [:index]
+      resources :people, only: [:index]
+      resources :receptions, only: [:create, :destroy]
+
       resources :comments, only: [] do
         delete :like, to: "likes#comment_destroy"
         post   :like, to: "likes#comment_create"
       end
+
+      resources :latest_statuses, only: [:index] do
+        patch :skip_episode
+      end
+
+      resources :multiple_records, only: [] do
+        delete :like, to: "likes#multiple_record_destroy"
+        post   :like, to: "likes#multiple_record_create"
+      end
+
+      resources :records, only: [] do
+        delete :like, to: "likes#record_destroy"
+        post   :like, to: "likes#record_create"
+      end
+
       resources :statuses, only: [] do
         delete :like, to: "likes#status_destroy"
         post   :like, to: "likes#status_create"
       end
-    end
 
-    resources :latest_statuses, only: [:index] do
-      patch :skip_episode
-    end
-    resources :organizations, only: [:index]
-    resources :people, only: [:index]
-    resources :receptions, only: [:create, :destroy]
-    resources :tips, only: [] do
-      post :finish, on: :collection
-    end
-    resource :user, only: [] do
-      resources :programs, only: [:index], controller: "user_programs"
-    end
-    resources :works, only: [] do
-      get :friends
-      resources :channels, only: [] do
-        post :select, on: :collection
+      resources :tips, only: [] do
+        post :finish, on: :collection
+      end
+
+      resource :user, only: [] do
+        resources :programs, only: [:index], controller: "user_programs"
+      end
+
+      resources :works, only: [] do
+        get :friends
+
+        resources :channels, only: [] do
+          post :select, on: :collection
+        end
       end
     end
   end

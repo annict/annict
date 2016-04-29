@@ -1,9 +1,9 @@
-AnnictOld.angular.controller 'ProgramsCtrl', ($scope, $http) ->
+AnnictOld.angular.controller "ProgramsCtrl", ($scope, $http) ->
   page = 1
   $scope.disabled = false
   $scope.loading  = true
 
-  $http.get('/api/user/programs').success (data) ->
+  $http.get("/api/internal/user/programs").success (data) ->
     $scope.loading = false
     $scope.programs = data.programs
 
@@ -12,7 +12,7 @@ AnnictOld.angular.controller 'ProgramsCtrl', ($scope, $http) ->
       $scope.disabled = true
       page += 1
 
-      $http.get("/api/user/programs?page=#{page}").success (data) ->
+      $http.get("/api/internal/user/programs?page=#{page}").success (data) ->
         if data.programs.length > 0
           $scope.disabled = false
           $scope.programs = $scope.programs.concat(data.programs)
@@ -20,4 +20,4 @@ AnnictOld.angular.controller 'ProgramsCtrl', ($scope, $http) ->
           $scope.disabled = true
 
   $scope.dateFormat = (date) ->
-    moment(date).format('M/D H:mm')
+    moment(date).format("M/D H:mm")

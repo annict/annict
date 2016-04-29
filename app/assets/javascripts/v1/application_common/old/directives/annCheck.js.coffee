@@ -6,7 +6,7 @@ AnnictOld.angular.directive "annCheck", ->
 
     $scope.skipEpisode = ->
       if confirm("このエピソードをスキップして次のエピソードを表示しますか？")
-        path = "/api/latest_statuses/#{$scope.latestStatus.id}/skip_episode"
+        path = "/api/internal/latest_statuses/#{$scope.latestStatus.id}/skip_episode"
 
         $http.patch(path).success (latestStatus) ->
           $scope.latestStatus = latestStatus

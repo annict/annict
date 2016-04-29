@@ -1,5 +1,7 @@
+# frozen_string_literal: true
+
 json.programs @programs do |program|
-  json.(program, :started_at, :rebroadcast)
+  json.call(program, :started_at, :rebroadcast)
 
   json.links do
     json.channel do

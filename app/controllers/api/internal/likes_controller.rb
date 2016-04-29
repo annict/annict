@@ -17,7 +17,7 @@
 
 module Api
   module Internal
-    class LikesController < Api::ApplicationController
+    class LikesController < Api::Internal::ApplicationController
       before_action :authenticate_user!
 
       def record_create(record_id)
