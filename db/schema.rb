@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160426132549) do
+ActiveRecord::Schema.define(version: 20160429044406) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -487,6 +487,47 @@ ActiveRecord::Schema.define(version: 20160426132549) do
 
   add_index "number_formats", ["name"], name: "index_number_formats_on_name", unique: true, using: :btree
 
+  create_table "oauth_access_grants", force: :cascade do |t|
+    t.integer  "user_id",        null: false
+    t.integer  "application_id", null: false
+    t.string   "token",          null: false
+    t.integer  "expires_in",     null: false
+    t.text     "redirect_uri",   null: false
+    t.datetime "created_at",     null: false
+    t.datetime "revoked_at"
+    t.string   "scopes"
+  end
+
+  add_index "oauth_access_grants", ["token"], name: "index_oauth_access_grants_on_token", unique: true, using: :btree
+
+  create_table "oauth_access_tokens", force: :cascade do |t|
+    t.integer  "resource_owner_id"
+    t.integer  "application_id",                      null: false
+    t.string   "token",                               null: false
+    t.string   "refresh_token"
+    t.integer  "expires_in"
+    t.datetime "revoked_at"
+    t.datetime "created_at",                          null: false
+    t.string   "scopes"
+    t.string   "previous_refresh_token", default: "", null: false
+  end
+
+  add_index "oauth_access_tokens", ["refresh_token"], name: "index_oauth_access_tokens_on_refresh_token", unique: true, using: :btree
+  add_index "oauth_access_tokens", ["resource_owner_id"], name: "index_oauth_access_tokens_on_resource_owner_id", using: :btree
+  add_index "oauth_access_tokens", ["token"], name: "index_oauth_access_tokens_on_token", unique: true, using: :btree
+
+  create_table "oauth_applications", force: :cascade do |t|
+    t.string   "name",                      null: false
+    t.string   "uid",                       null: false
+    t.string   "secret",                    null: false
+    t.text     "redirect_uri",              null: false
+    t.string   "scopes",       default: "", null: false
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "oauth_applications", ["uid"], name: "index_oauth_applications_on_uid", unique: true, using: :btree
+
   create_table "organizations", force: :cascade do |t|
     t.string   "name",                                   null: false
     t.string   "url"
@@ -823,6 +864,9 @@ ActiveRecord::Schema.define(version: 20160426132549) do
   add_foreign_key "multiple_records", "works"
   add_foreign_key "notifications", "users", column: "action_user_id", name: "notifications_action_user_id_fk", on_delete: :cascade
   add_foreign_key "notifications", "users", name: "notifications_user_id_fk", on_delete: :cascade
+  add_foreign_key "oauth_access_grants", "oauth_applications", column: "application_id"
+  add_foreign_key "oauth_access_grants", "users"
+  add_foreign_key "oauth_access_tokens", "oauth_applications", column: "application_id"
   add_foreign_key "people", "prefectures"
   add_foreign_key "profiles", "users", name: "profiles_user_id_fk", on_delete: :cascade
   add_foreign_key "programs", "channels", name: "programs_channel_id_fk", on_delete: :cascade
