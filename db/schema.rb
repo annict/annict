@@ -488,12 +488,12 @@ ActiveRecord::Schema.define(version: 20160429044406) do
   add_index "number_formats", ["name"], name: "index_number_formats_on_name", unique: true, using: :btree
 
   create_table "oauth_access_grants", force: :cascade do |t|
-    t.integer  "user_id",        null: false
-    t.integer  "application_id", null: false
-    t.string   "token",          null: false
-    t.integer  "expires_in",     null: false
-    t.text     "redirect_uri",   null: false
-    t.datetime "created_at",     null: false
+    t.integer  "resource_owner_id", null: false
+    t.integer  "application_id",    null: false
+    t.string   "token",             null: false
+    t.integer  "expires_in",        null: false
+    t.text     "redirect_uri",      null: false
+    t.datetime "created_at",        null: false
     t.datetime "revoked_at"
     t.string   "scopes"
   end
@@ -501,7 +501,7 @@ ActiveRecord::Schema.define(version: 20160429044406) do
   add_index "oauth_access_grants", ["token"], name: "index_oauth_access_grants_on_token", unique: true, using: :btree
 
   create_table "oauth_access_tokens", force: :cascade do |t|
-    t.integer  "resource_owner_id"
+    t.integer  "resource_owner_id",                   null: false
     t.integer  "application_id",                      null: false
     t.string   "token",                               null: false
     t.string   "refresh_token"
@@ -865,8 +865,9 @@ ActiveRecord::Schema.define(version: 20160429044406) do
   add_foreign_key "notifications", "users", column: "action_user_id", name: "notifications_action_user_id_fk", on_delete: :cascade
   add_foreign_key "notifications", "users", name: "notifications_user_id_fk", on_delete: :cascade
   add_foreign_key "oauth_access_grants", "oauth_applications", column: "application_id"
-  add_foreign_key "oauth_access_grants", "users"
+  add_foreign_key "oauth_access_grants", "users", column: "resource_owner_id"
   add_foreign_key "oauth_access_tokens", "oauth_applications", column: "application_id"
+  add_foreign_key "oauth_access_tokens", "users", column: "resource_owner_id"
   add_foreign_key "people", "prefectures"
   add_foreign_key "profiles", "users", name: "profiles_user_id_fk", on_delete: :cascade
   add_foreign_key "programs", "channels", name: "programs_channel_id_fk", on_delete: :cascade

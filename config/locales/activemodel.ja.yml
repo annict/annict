@@ -1,5 +1,10 @@
 ja:
   activemodel:
     attributes:
+      api/v1/works_index_params:
+        fields: fields
+        page: page
+        per_page: per_page
+        sort: sort
       db/multiple_episodes_form:
         body: エピソード
