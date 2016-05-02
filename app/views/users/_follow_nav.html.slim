@@ -1,8 +1,8 @@
 .ann-tabs
-  = link_to following_user_path(@user.username), class: "tab #{'active' if current_page?(action: :following)}" do
-    .count = @user.followings.count
+  = link_to following_user_path(user.username), class: "tab #{'active' if current_page?(action: :following)}" do
+    .count = user.followings.count
     .text Following
-  = link_to followers_user_path(@user.username), class: "tab #{'active' if current_page?(action: :followers)}" do
-    .count = @user.followers.count
+  = link_to followers_user_path(user.username), class: "tab #{'active' if current_page?(action: :followers)}" do
+    .count = user.followers.count
     .text Followers
   .clearfix
