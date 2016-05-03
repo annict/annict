@@ -6,12 +6,15 @@ module ActiveParameter
   included do
     include ActiveModel::Model
 
-    attr_accessor :controller, :action, :access_token
+    BASIC_ATTRS = %i(controller action access_token).freeze
+
+    attr_accessor *BASIC_ATTRS
     define_model_callbacks :initialize
 
     def initialize(params = {})
+      @params = params
       run_callbacks :initialize do
-        super params
+        super @params.slice(*BASIC_ATTRS)
       end
     end
 
@@ -24,8 +27,8 @@ module ActiveParameter
       define_method(method_name) do
         return send(attr) if send(attr).present?
 
-        value = default.is_a?(Proc) ? default.call : default
-        send("#{attr}=", value)
+        default_value = default.is_a?(Proc) ? default.call : default
+        send("#{attr}=", (default_value.presence || @params[attr]))
       end
 
       private method_name
