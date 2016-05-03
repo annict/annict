@@ -2,18 +2,16 @@
 
 module Api
   module V1
-    class WorksIndexParams
+    class EpisodesIndexParams
       include ActiveParameter
 
       param :fields
       param :filter_ids
-      param :filter_season
-      param :filter_title
+      param :filter_work_id
       param :page, default: 1
       param :per_page, default: 25
       param :sort_id
-      param :sort_season
-      param :sort_watchers_count
+      param :sort_sort_number
 
       validates :fields,
         allow_blank: true,
@@ -21,9 +19,12 @@ module Api
       validates :filter_ids,
         allow_blank: true,
         filter_ids_params: true
-      validates :filter_season,
+      validates :filter_work_id,
         allow_blank: true,
-        filter_season_params: true
+        numericality: {
+          only_integer: true,
+          greater_than_or_equal_to: 1
+        }
       validates :per_page,
         allow_blank: true,
         numericality: {
@@ -40,10 +41,7 @@ module Api
       validates :sort_id,
         allow_blank: true,
         sort_params: true
-      validates :sort_season,
-        allow_blank: true,
-        sort_params: true
-      validates :sort_watchers_count,
+      validates :sort_sort_number,
         allow_blank: true,
         sort_params: true
     end

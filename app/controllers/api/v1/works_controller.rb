@@ -6,7 +6,7 @@ module Api
       before_action :prepare_params!, only: [:index]
 
       def index
-        @works = Work.published.page(@params.page).per(@params.per_page)
+        @works = Work.published
         @works = @works.where(id: @params.filter_ids) if @params.filter_ids.present?
         @works = @works.by_season(@params.filter_season) if @params.filter_season.present?
         if @params.filter_title.present?
@@ -19,6 +19,7 @@ module Api
         if @params.sort_watchers_count.present?
           @works = @works.order(watchers_count: @params.sort_watchers_count)
         end
+        @works = @works.page(@params.page).per(@params.per_page)
       end
     end
   end

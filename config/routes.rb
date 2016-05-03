@@ -70,6 +70,7 @@ Annict::Application.routes.draw do
   scope module: :api do
     constraints Annict::Subdomain do
       namespace :v1 do
+        resources :episodes, only: [:index]
         resources :works, only: [:index]
       end
     end

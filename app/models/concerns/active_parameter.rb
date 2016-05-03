@@ -30,5 +30,9 @@ module ActiveParameter
 
       private method_name
     end
+
+    def fields_contain?(field)
+      fields.blank? || fields.split(",").include?(field)
+    end
   end
 end
