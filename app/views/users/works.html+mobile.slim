@@ -14,7 +14,7 @@
       = link_to @user.profile.name, user_path(@user.username)
       = "が#{action}アニメ"
 
-  = render "works_nav"
+  = render "works_nav", user: @user
 
 = render "works/works", works: @works, user: @user, compact: true
 
