@@ -98,10 +98,10 @@ class Work < ActiveRecord::Base
     joins("LEFT OUTER JOIN items ON items.work_id = works.id").where("items.id IS NULL")
   }
 
-  # リリース時期が最近のものから順に並べる
-  scope :order_latest, -> {
+  # リリース時期順に並べる
+  scope :order_by_season, -> (type = :asc) {
     joins('LEFT OUTER JOIN "seasons" ON "seasons"."id" = "works"."season_id"').
-      order("seasons.sort_number DESC NULLS LAST, works.id DESC")
+      order("seasons.sort_number #{type} NULLS LAST, works.id #{type}")
   }
 
   # 作品のエピソード数分の空白文字列が入った配列を返す

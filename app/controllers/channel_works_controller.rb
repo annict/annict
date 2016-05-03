@@ -28,7 +28,7 @@ class ChannelWorksController < ApplicationController
       published.
       program_registered.
       includes(:episodes).
-      order_latest.
+      order_by_season(:desc).
       page(page)
 
     render layout: "v1/application"

@@ -3,8 +3,13 @@ ja:
     attributes:
       api/v1/works_index_params:
         fields: fields
+        filter_ids: filter_ids
+        filter_season: filter_season
+        filter_title: filter_title
         page: page
         per_page: per_page
-        sort: sort
+        sort_id: sort_id
+        sort_season: sort_season
+        sort_watchers_count: sort_watchers_count
       db/multiple_episodes_form:
         body: エピソード

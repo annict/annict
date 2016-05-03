@@ -12,6 +12,13 @@ module Api
         if @params.filter_title.present?
           @works = @works.search(title_or_title_kana_cont: @params.filter_title).result
         end
+        @works = @works.order(id: @params.sort_id) if @params.sort_id.present?
+        if @params.sort_season.present?
+          @works = @works.order_by_season(@params.sort_season)
+        end
+        if @params.sort_watchers_count.present?
+          @works = @works.order(watchers_count: @params.sort_watchers_count)
+        end
       end
     end
   end

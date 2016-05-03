@@ -46,7 +46,7 @@ class UsersController < ApplicationController
   end
 
   def works(status_kind, page: nil)
-    @works = @user.works.on(status_kind).published.order_latest.page(page)
+    @works = @user.works.on(status_kind).published.order_by_season(:desc).page(page)
 
     render layout: "v1/application"
   end
