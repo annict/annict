@@ -13,7 +13,7 @@
       = link_to @user.profile.name, user_path(@user.username)
       = "がフォローしている人"
 
-  = render 'users/follow_nav'
+  = render 'users/follow_nav', user: @user
 
 - if @users.present?
   .user-list

@@ -1,6 +1,6 @@
 h1.header-work-title
-  = @work.title
-  = link_to work_path(@work), target: "_blank", class: "icon" do
+  = work.title
+  = link_to work_path(work), target: "_blank", class: "icon" do
     = icon("external-link")
 
 ul.nav.nav-pills.pull-right.resource-nav-pills
