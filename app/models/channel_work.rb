@@ -11,10 +11,8 @@
 #
 # Indexes
 #
-#  channel_works_channel_id_idx                  (channel_id)
-#  channel_works_user_id_idx                     (user_id)
-#  channel_works_user_id_work_id_channel_id_key  (user_id,work_id,channel_id) UNIQUE
-#  channel_works_work_id_idx                     (work_id)
+#  index_channel_works_on_user_id_and_work_id                 (user_id,work_id)
+#  index_channel_works_on_user_id_and_work_id_and_channel_id  (user_id,work_id,channel_id) UNIQUE
 #
 
 class ChannelWork < ActiveRecord::Base
