@@ -15,15 +15,16 @@ module Api
       end
 
       def response_params_error
-        data = {
-          errors: [{
+        errors = @params.errors.full_messages.map do |message|
+          {
             type: "invalid_params",
-            message: @params.errors.full_messages.first,
+            message: "リクエストに失敗しました",
+            developer_message: message,
             url: "http://example.com/docs/api/validations"
-          }]
-        }
+          }
+        end
 
-        render json: data, status: 400
+        render json: { errors: errors }, status: 400
       end
     end
   end

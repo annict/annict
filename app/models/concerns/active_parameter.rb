@@ -6,7 +6,7 @@ module ActiveParameter
   included do
     include ActiveModel::Model
 
-    attr_accessor :controller, :action
+    attr_accessor :controller, :action, :access_token
     define_model_callbacks :initialize
 
     def initialize(params = {})
