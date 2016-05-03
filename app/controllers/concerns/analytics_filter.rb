@@ -15,7 +15,7 @@ module AnalyticsFilter
     def store_ann_ga_cid
       return if cookies[:ann_ga_cid].present?
 
-      domain = Rails.env.development? ? "localhost" : ".annict.com"
+      domain = Rails.env.development? ? ".annict.dev" : ".annict.com"
       cookies[:ann_ga_cid] = {
         value: SecureRandom.uuid,
         expires: 2.year.from_now,

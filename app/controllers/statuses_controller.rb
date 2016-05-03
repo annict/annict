@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 # == Schema Information
 #
 # Table name: statuses
@@ -21,17 +22,7 @@ class StatusesController < ApplicationController
   before_action :set_work
 
   def select(status_kind)
-    if Status.kind.values.include?(status_kind)
-      status = current_user.statuses.new(work: @work, kind: status_kind)
-
-      if status.save!
-        ga_client.events.create("statuses", "create")
-        render status: 200, nothing: true
-      end
-    elsif status_kind == "no_select" || status_kind == "reset"
-      latest_status = current_user.latest_statuses.find_by(work: @work)
-      latest_status.destroy! if latest_status.present?
-      render status: 200, nothing: true
-    end
+    status = StatusService.new(current_user, @work, ga_client)
+    render(status: 200, nothing: true) if status.change(status_kind)
   end
 end

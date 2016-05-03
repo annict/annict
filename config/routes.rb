@@ -72,6 +72,12 @@ Annict::Application.routes.draw do
       namespace :v1 do
         resources :episodes, only: [:index]
         resources :works, only: [:index]
+
+        resource :me, only: [] do
+          resources :statuses, only: [:create]
+        end
+
+        match "*path", to: "application#not_found", via: :all
       end
     end
   end

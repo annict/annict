@@ -3,9 +3,31 @@
 module Api
   module V1
     class ApplicationController < ActionController::Base
-      before_action :doorkeeper_authorize!
+      include AnalyticsFilter
+
+      attr_reader :current_user
+
+      before_action -> { doorkeeper_authorize! :read }, only: %i(index show)
+      before_action only: %i(create update destroy) do
+        doorkeeper_authorize! :write
+      end
+
+      def not_found
+        error = {
+          type: "unknown_route",
+          message: "リクエストに失敗しました",
+          developer_message: "404 Not Found",
+          url: "http://example.com/docs/api/validations"
+        }
+        render json: { errors: [error] }, status: 404
+      end
 
       private
+
+      def current_user
+        return nil if doorkeeper_token.blank?
+        @current_user ||= User.find(doorkeeper_token.resource_owner_id)
+      end
 
       def prepare_params!
         class_name = self.class.name
