@@ -4,30 +4,31 @@
 # Table name: users
 #
 #  id                   :integer          not null, primary key
-#  username             :string(510)      not null
-#  email                :string(510)      not null
-#  role                 :integer          not null
-#  encrypted_password   :string(510)      default(""), not null
+#  username             :string           not null
+#  email                :string           not null
+#  encrypted_password   :string           default(""), not null
 #  remember_created_at  :datetime
 #  sign_in_count        :integer          default(0), not null
 #  current_sign_in_at   :datetime
 #  last_sign_in_at      :datetime
-#  current_sign_in_ip   :string(510)
-#  last_sign_in_ip      :string(510)
-#  confirmation_token   :string(510)
+#  current_sign_in_ip   :string
+#  last_sign_in_ip      :string
+#  confirmation_token   :string
 #  confirmed_at         :datetime
 #  confirmation_sent_at :datetime
-#  unconfirmed_email    :string(510)
-#  checkins_count       :integer          default(0), not null
-#  notifications_count  :integer          default(0), not null
 #  created_at           :datetime
 #  updated_at           :datetime
+#  unconfirmed_email    :string
+#  role                 :integer          not null
+#  checkins_count       :integer          default(0), not null
+#  notifications_count  :integer          default(0), not null
 #
 # Indexes
 #
-#  users_confirmation_token_key  (confirmation_token) UNIQUE
-#  users_email_key               (email) UNIQUE
-#  users_username_key            (username) UNIQUE
+#  index_users_on_confirmation_token  (confirmation_token) UNIQUE
+#  index_users_on_email               (email) UNIQUE
+#  index_users_on_role                (role)
+#  index_users_on_username            (username) UNIQUE
 #
 
 class UsersController < ApplicationController

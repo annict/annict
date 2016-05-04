@@ -4,8 +4,8 @@
 #
 #  id                                  :integer          not null, primary key
 #  user_id                             :integer          not null
-#  name                                :string(510)      default(""), not null
-#  description                         :string(510)      default(""), not null
+#  name                                :string           default(""), not null
+#  description                         :string           default(""), not null
 #  created_at                          :datetime
 #  updated_at                          :datetime
 #  background_image_animated           :boolean          default(FALSE), not null
@@ -21,8 +21,7 @@
 #
 # Indexes
 #
-#  profiles_user_id_idx  (user_id)
-#  profiles_user_id_key  (user_id) UNIQUE
+#  index_profiles_on_user_id  (user_id) UNIQUE
 #
 
 class Profile < ActiveRecord::Base

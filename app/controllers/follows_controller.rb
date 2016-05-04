@@ -10,9 +10,7 @@
 #
 # Indexes
 #
-#  follows_following_id_idx          (following_id)
-#  follows_user_id_following_id_key  (user_id,following_id) UNIQUE
-#  follows_user_id_idx               (user_id)
+#  index_follows_on_user_id_and_following_id  (user_id,following_id) UNIQUE
 #
 
 class FollowsController < ApplicationController
