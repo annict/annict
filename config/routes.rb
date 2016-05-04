@@ -11,8 +11,10 @@ Annict::Application.routes.draw do
 
   devise_scope :user do
     get "sign_up", to: "registrations#new", as: :new_user_registration
+    get "sign_in", to: "sessions#new", as: :new_user_session
+    post "sign_in", to: "sessions#create", as: :user_session
     post "users", to: "registrations#create", as: :user_registration
-    delete "sign_out", to: "devise/sessions#destroy", as: :destroy_user_session
+    delete "sign_out", to: "sessions#destroy", as: :destroy_user_session
   end
 
   use_doorkeeper

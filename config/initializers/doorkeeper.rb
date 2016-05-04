@@ -6,20 +6,13 @@ Doorkeeper.configure do
 
   # This block will be called to check whether the resource owner is authenticated or not.
   resource_owner_authenticator do
-    if Rails.env.development?
-      user = User.find(2) # shimbaco
-      sign_in(user)
-    end
-
-    current_user || redirect_to(root_url)
+    current_user || redirect_to(new_user_session_url(back: request.fullpath))
   end
 
   # If you want to restrict access to the web interface for adding oauth authorized
   # applications, you need to declare the block below.
   admin_authenticator do
-    # Put your admin authentication logic here.
-    # Example implementation:
-    current_user || redirect_to(root_url)
+    current_user || redirect_to(new_user_session_url(back: request.fullpath))
   end
 
   # Authorization Code expiration time (default 10 minutes).
