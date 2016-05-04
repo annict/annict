@@ -6,17 +6,16 @@
 #  id             :integer          not null, primary key
 #  user_id        :integer          not null
 #  recipient_id   :integer          not null
-#  recipient_type :string           not null
+#  recipient_type :string(510)      not null
 #  trackable_id   :integer          not null
-#  trackable_type :string           not null
-#  action         :string           not null
+#  trackable_type :string(510)      not null
+#  action         :string(510)      not null
 #  created_at     :datetime
 #  updated_at     :datetime
 #
 # Indexes
 #
-#  index_activities_on_recipient_id_and_recipient_type  (recipient_id,recipient_type)
-#  index_activities_on_trackable_id_and_trackable_type  (trackable_id,trackable_type)
+#  activities_user_id_idx  (user_id)
 #
 
 class Activity < ActiveRecord::Base

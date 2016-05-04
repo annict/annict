@@ -4,13 +4,13 @@
 #
 #  id              :integer          not null, primary key
 #  work_id         :integer          not null
-#  number          :string
+#  number          :string(510)
 #  sort_number     :integer          default(0), not null
-#  title           :string
+#  sc_count        :integer
+#  title           :string(510)
+#  checkins_count  :integer          default(0), not null
 #  created_at      :datetime
 #  updated_at      :datetime
-#  checkins_count  :integer          default(0), not null
-#  sc_count        :integer
 #  prev_episode_id :integer
 #  aasm_state      :string           default("published"), not null
 #  fetch_syobocal  :boolean          default(FALSE), not null
@@ -18,10 +18,10 @@
 #
 # Indexes
 #
-#  index_episodes_on_aasm_state            (aasm_state)
-#  index_episodes_on_checkins_count        (checkins_count)
-#  index_episodes_on_prev_episode_id       (prev_episode_id)
-#  index_episodes_on_work_id_and_sc_count  (work_id,sc_count) UNIQUE
+#  episodes_work_id_idx               (work_id)
+#  episodes_work_id_sc_count_key      (work_id,sc_count) UNIQUE
+#  index_episodes_on_aasm_state       (aasm_state)
+#  index_episodes_on_prev_episode_id  (prev_episode_id)
 #
 
 class EpisodesController < ApplicationController

@@ -6,13 +6,13 @@
 #  id             :integer          not null, primary key
 #  user_id        :integer          not null
 #  recipient_id   :integer          not null
-#  recipient_type :string           not null
+#  recipient_type :string(510)      not null
 #  created_at     :datetime
 #  updated_at     :datetime
 #
 # Indexes
 #
-#  index_likes_on_recipient_id_and_recipient_type  (recipient_id,recipient_type)
+#  likes_user_id_idx  (user_id)
 #
 
 class Like < ActiveRecord::Base
