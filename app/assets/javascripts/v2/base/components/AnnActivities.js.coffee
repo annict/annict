@@ -40,8 +40,9 @@ module.exports = Vue.extend
         url: "/api/internal/activities"
         data: @requestData()
       .done (data) =>
+        @isLoading = false
         if data.activities.length > 0
-          @isLoading = @isDisabled = false
+          @isDisabled = false
           @activities.push.apply(@activities, data.activities)
         else
           @isDisabled = true
