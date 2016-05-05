@@ -28,7 +28,7 @@ module ActiveParameter
         return send(attr) if send(attr).present?
 
         default_value = default.is_a?(Proc) ? default.call : default
-        send("#{attr}=", (default_value.presence || @params[attr]))
+        send("#{attr}=", (@params[attr].presence || default_value))
       end
 
       private method_name

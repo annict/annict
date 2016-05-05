@@ -73,6 +73,7 @@ Annict::Application.routes.draw do
     constraints Annict::Subdomain do
       namespace :v1 do
         resources :episodes, only: [:index]
+        resources :records, only: [:index]
         resources :works, only: [:index]
 
         resource :me, only: [] do

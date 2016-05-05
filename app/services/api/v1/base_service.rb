@@ -20,6 +20,11 @@ module Api
         @collection.where(work_id: @params.filter_work_id)
       end
 
+      def filter_episode_id
+        return @collection if @params.filter_episode_id.blank?
+        @collection.where(episode_id: @params.filter_episode_id)
+      end
+
       def sort_id
         return @collection if @params.sort_id.blank?
         @collection.order(id: @params.sort_id)
