@@ -12,6 +12,7 @@ ja:
         sort_number: ソート番号
       checkin:
         comment: コメント
+        rating: レーティング
       comment:
         body: コメント
       draft_organization:

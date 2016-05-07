@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160429044406) do
+ActiveRecord::Schema.define(version: 20160507035528) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -96,7 +96,7 @@ ActiveRecord::Schema.define(version: 20160429044406) do
     t.datetime "updated_at"
     t.boolean  "shared_twitter",                   default: false, null: false
     t.boolean  "shared_facebook",                  default: false, null: false
-    t.integer  "work_id"
+    t.integer  "work_id",                                          null: false
     t.float    "rating"
     t.integer  "multiple_record_id"
   end

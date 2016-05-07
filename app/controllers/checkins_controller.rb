@@ -18,7 +18,7 @@
 #  updated_at           :datetime
 #  shared_twitter       :boolean          default(FALSE), not null
 #  shared_facebook      :boolean          default(FALSE), not null
-#  work_id              :integer
+#  work_id              :integer          not null
 #  rating               :float
 #  multiple_record_id   :integer
 #
@@ -44,18 +44,22 @@ class CheckinsController < ApplicationController
   before_action :redirect_to_top, only: [:edit, :update, :destroy]
 
   def create(checkin)
-    @checkin = @episode.checkins.new(checkin)
-    @checkin.user = current_user
-    @checkin.work = @work
-    @checkin.rating = 0 if checkin[:rating].blank?
+    record = @episode.checkins.new(checkin)
+    service = NewRecordService.new(current_user, record, ga_client)
 
-    if @checkin.save
-      @checkin.update_share_checkin_status
-      @checkin.share_to_sns(self)
-      ga_client.events.create("records", "create")
+    if service.save
       redirect_to work_episode_path(@work, @episode), notice: t("checkins.saved")
     else
-      render :new
+      service = RecordsListService.new(@episode, current_user, nil)
+
+      @record_user_ids = service.record_user_ids
+      @user_records = service.user_records
+      @current_user_records = service.current_user_records
+      @records = service.records
+
+      @record = record_service.record
+
+      render "/episodes/show", layout: "v1/application"
     end
   end
 
@@ -78,6 +82,8 @@ class CheckinsController < ApplicationController
   end
 
   def update(checkin)
+    @checkin.modify_comment = true
+
     if @checkin.update_attributes(checkin)
       @checkin.update_share_checkin_status
       @checkin.share_to_sns(self)

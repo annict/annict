@@ -1,6 +1,8 @@
 ja:
   activemodel:
     attributes:
+      api/v1/records_create_params:
+        episode_id: episode_id
       api/v1/statuses_create_params:
         kind: kind
         work_id: work_id

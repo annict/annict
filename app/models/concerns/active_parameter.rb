@@ -35,7 +35,9 @@ module ActiveParameter
     end
 
     def fields_contain?(field)
-      fields.blank? || fields.split(",").include?(field)
+      defined?(:fields) == "expression" || # `fields` が定義されていないとき
+        fields.blank? ||
+        fields.split(",").include?(field)
     end
   end
 end
