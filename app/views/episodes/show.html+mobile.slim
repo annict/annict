@@ -42,30 +42,30 @@
         .user-checkins
           .container
             h2 = "#{@record_user.profile.name}さんの記録"
-            - @user_records.each_with_index do |checkin, i|
+            - @user_records.each_with_index do |record, i|
               - if i != 0
                 hr
-              = render 'checkins/checkin', checkin: checkin
+              = render 'checkins/checkin', record: record
         hr
 
     - if @current_user_records.present?
       .user-checkins
         .container
           h2 あなたの記録
-          - @current_user_records.each_with_index do |checkin, i|
+          - @current_user_records.each_with_index do |record, i|
             - if i != 0
               hr
-            = render 'checkins/checkin', checkin: checkin
+            = render 'checkins/checkin', record: record
       hr
 
     .checkin-comments
       .container
         h2 = "#{@user_records.present? || @current_user_records.present? ? 'その他皆さんの感想' : '感想'}"
         - if @records.with_comment.present?
-          - @records.with_comment.each_with_index do |checkin, i|
+          - @records.with_comment.each_with_index do |record, i|
             - if i != 0
               hr
-            = render 'checkins/checkin', checkin: checkin
+            = render 'checkins/checkin', record: record
         - else
           .info.well
             .icon

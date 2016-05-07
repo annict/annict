@@ -44,8 +44,8 @@ class ApplicationController < ActionController::Base
     @episode = @work.episodes.published.find(params[:episode_id])
   end
 
-  def set_checkin
-    @checkin = @episode.checkins.find(params[:checkin_id])
+  def load_record
+    @record = @episode.checkins.find(params[:checkin_id])
   end
 
   def set_search_params

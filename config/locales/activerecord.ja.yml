@@ -11,7 +11,7 @@ ja:
         part: 役名
         sort_number: ソート番号
       checkin:
-        comment: コメント
+        comment: 感想
         rating: レーティング
       comment:
         body: コメント

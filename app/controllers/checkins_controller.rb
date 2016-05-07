@@ -40,7 +40,7 @@ class CheckinsController < ApplicationController
   before_action :set_work, only: [:create, :create_all, :show, :edit,
                                   :update, :destroy]
   before_action :set_episode, only: [:create, :show, :edit, :update, :destroy]
-  before_action :set_checkin, only: [:show, :edit, :update, :destroy]
+  before_action :load_record, only: [:show, :edit, :update, :destroy]
   before_action :redirect_to_top, only: [:edit, :update, :destroy]
 
   def create(checkin)
@@ -71,7 +71,7 @@ class CheckinsController < ApplicationController
   end
 
   def show
-    @comments = @checkin.comments.order(created_at: :desc)
+    @comments = @record.comments.order(created_at: :desc)
     @comment = Comment.new
 
     render layout: "v1/application"
@@ -82,20 +82,20 @@ class CheckinsController < ApplicationController
   end
 
   def update(checkin)
-    @checkin.modify_comment = true
+    @record.modify_comment = true
 
-    if @checkin.update_attributes(checkin)
-      @checkin.update_share_checkin_status
-      @checkin.share_to_sns(self)
-      redirect_to work_episode_checkin_path(@work, @episode, @checkin), notice: t('checkins.updated')
+    if @record.update_attributes(checkin)
+      @record.update_share_checkin_status
+      @record.share_to_sns
+      redirect_to work_episode_checkin_path(@work, @episode, @record), notice: t('checkins.updated')
     else
       render :edit
     end
   end
 
   def destroy
-    @checkin.destroy
-    redirect_to work_episode_path(@work, @episode), notice: t('checkins.deleted')
+    @record.destroy
+    redirect_to work_episode_path(@work, @episode), notice: t("checkins.deleted")
   end
 
   def redirect(provider, url_hash)
@@ -121,12 +121,12 @@ class CheckinsController < ApplicationController
 
   private
 
-  def set_checkin
-    @checkin = @episode.checkins.find(params[:id])
+  def load_record
+    @record = @episode.checkins.find(params[:id])
   end
 
   def redirect_to_top
-    return redirect_to root_path if @checkin.user != current_user
+    return redirect_to root_path if @record.user != current_user
   end
 
   def redirect_to_episode(checkin)

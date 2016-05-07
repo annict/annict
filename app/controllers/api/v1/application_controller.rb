@@ -5,6 +5,8 @@ module Api
     class ApplicationController < ActionController::Base
       include AnalyticsFilter
 
+      rescue_from ActiveRecord::RecordNotFound, with: :not_found
+
       attr_reader :current_user
 
       before_action -> { doorkeeper_authorize! :read }, only: %i(index show)
