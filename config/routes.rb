@@ -76,7 +76,7 @@ Annict::Application.routes.draw do
         resources :records, only: [:index]
         resources :works, only: [:index]
 
-        resource :me, only: [] do
+        namespace :me do
           resources :records, only: [:create, :update, :destroy]
           resources :statuses, only: [:create]
         end
