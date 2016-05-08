@@ -3,7 +3,7 @@
 module Api
   module V1
     class RecordsController < Api::V1::ApplicationController
-      before_action :prepare_params!, only: [:index, :create, :update]
+      before_action :prepare_params!, only: %i(index create update destroy)
 
       def index
         @records = Checkin.includes(episode: { work: :season }, user: :profile).all
@@ -45,6 +45,12 @@ module Api
         else
           render_validation_errors(@record)
         end
+      end
+
+      def destroy
+        @record = current_user.checkins.find(@params.id)
+        @record.destroy
+        render status: 204, nothing: true
       end
 
       private
