@@ -20,10 +20,10 @@ module Api
           }
         validates :share_twitter,
           allow_blank: true,
-          format: { with: /\A(true|false)\z/, message: "の値が不正です。" }
+          filter_boolean_params: true
         validates :share_facebook,
           allow_blank: true,
-          format: { with: /\A(true|false)\z/, message: "の値が不正です。" }
+          filter_boolean_params: true
       end
     end
   end

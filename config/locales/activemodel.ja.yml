@@ -1,6 +1,19 @@
 ja:
   activemodel:
     attributes:
+      api/v1/me/programs_index_params:
+        fields: fields
+        filter_ids: filter_ids
+        filter_channel_ids: filter_channel_ids
+        filter_work_ids: filter_work_ids
+        filter_started_at_gt: filter_started_at_gt
+        filter_started_at_lt: filter_started_at_lt
+        filter_unwatched: filter_unwatched
+        filter_rebroadcast: filter_rebroadcast
+        page: page
+        per_page: per_page
+        sort_id: sort_id
+        sort_season: sort_started_at
       api/v1/me/works_index_params:
         fields: fields
         filter_ids: filter_ids
