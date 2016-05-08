@@ -35,9 +35,10 @@ module ActiveParameter
     end
 
     def fields_contain?(field)
-      defined?(:fields) == "expression" || # `fields` が定義されていないとき
-        fields.blank? ||
-        fields.split(",").include?(field)
+      # `ActiveParameter` をincludeしたクラス内で `param :fields` を
+      # 宣言していないとき、`fields` メソッドが未定義状態になるため、
+      # `try(:fields)` としている
+      try(:fields).blank? || fields.split(",").include?(field)
     end
   end
 end

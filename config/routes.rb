@@ -79,6 +79,7 @@ Annict::Application.routes.draw do
         namespace :me do
           resources :records, only: [:create, :update, :destroy]
           resources :statuses, only: [:create]
+          resources :works, only: [:index]
         end
 
         match "*path", to: "application#not_found", via: :all

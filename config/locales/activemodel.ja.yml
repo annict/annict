@@ -1,6 +1,17 @@
 ja:
   activemodel:
     attributes:
+      api/v1/me/works_index_params:
+        fields: fields
+        filter_ids: filter_ids
+        filter_season: filter_season
+        filter_title: filter_title
+        filter_status: filter_status
+        page: page
+        per_page: per_page
+        sort_id: sort_id
+        sort_season: sort_season
+        sort_watchers_count: sort_watchers_count
       api/v1/records_create_params:
         episode_id: episode_id
       api/v1/statuses_create_params:
