@@ -1,0 +1,31 @@
+html {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
+.button {
+  border-radius: 2px;
+
+  &.ann-twitter {
+    background-color: $color-twitter;
+
+    &:hover,
+    &:focus {
+      background-color: scale-color($color-twitter, $lightness: -15%);
+    }
+  }
+
+  &.ann-facebook {
+    background-color: $color-facebook;
+
+    &:hover,
+    &:focus {
+      background-color: scale-color($color-facebook, $lightness: -15%);
+    }
+  }
+}
+
+[v-cloak] {
+  display: none;
+}

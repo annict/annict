@@ -14,8 +14,9 @@
 #  sessions_session_id_key  (session_id) UNIQUE
 #
 
-
 class SessionsController < Devise::SessionsController
+  layout "v3/application"
+
   def new
     store_location_for(:user, params[:back]) if params[:back].present?
     super
