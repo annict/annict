@@ -15,3 +15,5 @@ json.records @records do |record|
     json.partial!("/api/v1/episodes/episode", episode: record.episode, params: @params, field_prefix: "episode.")
   end
 end
+
+json.partial!("/api/v1/application/pagination", collection: @records, params: @params)

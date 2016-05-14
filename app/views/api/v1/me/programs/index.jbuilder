@@ -15,3 +15,5 @@ json.programs @programs do |program|
     json.partial!("/api/v1/episodes/episode", episode: program.episode, params: @params, field_prefix: "episode.")
   end
 end
+
+json.partial!("/api/v1/application/pagination", collection: @programs, params: @params)

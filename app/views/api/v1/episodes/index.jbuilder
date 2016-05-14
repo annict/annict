@@ -23,3 +23,5 @@ json.episodes @episodes do |episode|
     json.next_episode nil if @params.fields.blank? || @params.fields.include?("next_episode")
   end
 end
+
+json.partial!("/api/v1/application/pagination", collection: @episodes, params: @params)
