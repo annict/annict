@@ -11,7 +11,7 @@ class StatusService
 
   def change(kind)
     if Status.kind.values.include?(kind)
-      status = @user.statuses.new(work: @work, kind: kind)
+      status = @user.statuses.new(work: @work, kind: kind, oauth_application: @app)
 
       if status.save
         create_ga_event

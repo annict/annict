@@ -21,15 +21,17 @@
 #  work_id              :integer          not null
 #  rating               :float
 #  multiple_record_id   :integer
+#  oauth_application_id :integer
 #
 # Indexes
 #
-#  checkins_episode_id_idx               (episode_id)
-#  checkins_facebook_url_hash_key        (facebook_url_hash) UNIQUE
-#  checkins_twitter_url_hash_key         (twitter_url_hash) UNIQUE
-#  checkins_user_id_idx                  (user_id)
-#  index_checkins_on_multiple_record_id  (multiple_record_id)
-#  index_checkins_on_work_id             (work_id)
+#  checkins_episode_id_idx                 (episode_id)
+#  checkins_facebook_url_hash_key          (facebook_url_hash) UNIQUE
+#  checkins_twitter_url_hash_key           (twitter_url_hash) UNIQUE
+#  checkins_user_id_idx                    (user_id)
+#  index_checkins_on_multiple_record_id    (multiple_record_id)
+#  index_checkins_on_oauth_application_id  (oauth_application_id)
+#  index_checkins_on_work_id               (work_id)
 #
 
 class CheckinsController < ApplicationController

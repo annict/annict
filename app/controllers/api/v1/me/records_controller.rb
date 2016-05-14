@@ -13,6 +13,7 @@ module Api
             r.comment = @params.comment
             r.shared_twitter = @params.share_twitter == "true"
             r.shared_facebook = @params.share_facebook == "true"
+            r.oauth_application = doorkeeper_token.application
           end
 
           service = NewRecordService.new(current_user, record, ga_client)
@@ -31,6 +32,7 @@ module Api
           @record.shared_twitter = @params.share_twitter == "true"
           @record.shared_facebook = @params.share_facebook == "true"
           @record.modify_comment = true
+          @record.oauth_application = doorkeeper_token.application
 
           if @record.valid?
             ActiveRecord::Base.transaction do

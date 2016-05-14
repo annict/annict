@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160507035528) do
+ActiveRecord::Schema.define(version: 20160514062037) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -99,11 +99,13 @@ ActiveRecord::Schema.define(version: 20160507035528) do
     t.integer  "work_id",                                          null: false
     t.float    "rating"
     t.integer  "multiple_record_id"
+    t.integer  "oauth_application_id"
   end
 
   add_index "checkins", ["episode_id"], name: "checkins_episode_id_idx", using: :btree
   add_index "checkins", ["facebook_url_hash"], name: "checkins_facebook_url_hash_key", unique: true, using: :btree
   add_index "checkins", ["multiple_record_id"], name: "index_checkins_on_multiple_record_id", using: :btree
+  add_index "checkins", ["oauth_application_id"], name: "index_checkins_on_oauth_application_id", using: :btree
   add_index "checkins", ["twitter_url_hash"], name: "checkins_twitter_url_hash_key", unique: true, using: :btree
   add_index "checkins", ["user_id"], name: "checkins_user_id_idx", using: :btree
   add_index "checkins", ["work_id"], name: "index_checkins_on_work_id", using: :btree
@@ -685,14 +687,16 @@ ActiveRecord::Schema.define(version: 20160507035528) do
   add_index "staffs", ["work_id"], name: "index_staffs_on_work_id", using: :btree
 
   create_table "statuses", force: :cascade do |t|
-    t.integer  "user_id",                 null: false
-    t.integer  "work_id",                 null: false
-    t.integer  "kind",                    null: false
-    t.integer  "likes_count", default: 0, null: false
+    t.integer  "user_id",                          null: false
+    t.integer  "work_id",                          null: false
+    t.integer  "kind",                             null: false
+    t.integer  "likes_count",          default: 0, null: false
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.integer  "oauth_application_id"
   end
 
+  add_index "statuses", ["oauth_application_id"], name: "index_statuses_on_oauth_application_id", using: :btree
   add_index "statuses", ["user_id"], name: "statuses_user_id_idx", using: :btree
   add_index "statuses", ["work_id"], name: "statuses_work_id_idx", using: :btree
 
@@ -813,6 +817,7 @@ ActiveRecord::Schema.define(version: 20160507035528) do
   add_foreign_key "channels", "channel_groups", name: "channels_channel_group_id_fk", on_delete: :cascade
   add_foreign_key "checkins", "episodes", name: "checkins_episode_id_fk", on_delete: :cascade
   add_foreign_key "checkins", "multiple_records"
+  add_foreign_key "checkins", "oauth_applications"
   add_foreign_key "checkins", "users", name: "checkins_user_id_fk", on_delete: :cascade
   add_foreign_key "checkins", "works", name: "checkins_work_id_fk"
   add_foreign_key "comments", "checkins", name: "comments_checkin_id_fk", on_delete: :cascade
@@ -878,6 +883,7 @@ ActiveRecord::Schema.define(version: 20160507035528) do
   add_foreign_key "receptions", "users", name: "receptions_user_id_fk", on_delete: :cascade
   add_foreign_key "settings", "users"
   add_foreign_key "staffs", "works"
+  add_foreign_key "statuses", "oauth_applications"
   add_foreign_key "statuses", "users", name: "statuses_user_id_fk", on_delete: :cascade
   add_foreign_key "statuses", "works", name: "statuses_work_id_fk", on_delete: :cascade
   add_foreign_key "syobocal_alerts", "works", name: "syobocal_alerts_work_id_fk", on_delete: :cascade
