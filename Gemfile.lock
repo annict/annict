@@ -63,12 +63,12 @@ GEM
     autoprefixer-rails (6.3.6)
       execjs
     awesome_print (1.6.1)
-    aws-sdk (2.2.36)
-      aws-sdk-resources (= 2.2.36)
-    aws-sdk-core (2.2.36)
+    aws-sdk (2.3.0)
+      aws-sdk-resources (= 2.3.0)
+    aws-sdk-core (2.3.0)
       jmespath (~> 1.0)
-    aws-sdk-resources (2.2.36)
-      aws-sdk-core (= 2.2.36)
+    aws-sdk-resources (2.3.0)
+      aws-sdk-core (= 2.3.0)
     aws-sdk-v1 (1.66.0)
       json (~> 1.4)
       nokogiri (>= 1.4.4)
@@ -101,7 +101,7 @@ GEM
       uniform_notifier (~> 1.9.0)
     by_star (2.2.1)
       activesupport
-    byebug (8.2.4)
+    byebug (8.2.5)
     capybara (2.7.0)
       addressable
       mime-types (>= 1.16)
@@ -429,7 +429,7 @@ GEM
       cocaine (~> 0.5.5)
       mime-types
       mimemagic (= 0.3.0)
-    parser (2.3.0.7)
+    parser (2.3.1.0)
       ast (~> 2.2)
     pg (0.18.4)
     poltergeist (1.9.0)
