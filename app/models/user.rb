@@ -62,6 +62,7 @@ class User < ActiveRecord::Base
   has_many :channels,      through:   :receptions
   has_many :statuses,      dependent: :destroy
   has_many :multiple_records, dependent: :destroy
+  has_many :oauth_applications, class_name: "Doorkeeper::Application", as: :owner
   has_one  :profile,       dependent: :destroy
   has_one  :setting,       dependent: :destroy
 
