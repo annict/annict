@@ -44,6 +44,10 @@ input[type="text"] {
   -webkit-appearance: none;
 }
 
+code {
+  background-color: $color-gallery;
+}
+
 .button {
   &.ann-twitter {
     background-color: $color-twitter;

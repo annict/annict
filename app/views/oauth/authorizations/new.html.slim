@@ -1,0 +1,37 @@
+- title = "アクセス許可"
+- description = meta_description
+- keywords = meta_keywords
+- set_meta_tags(title: title, description: description, keywords: keywords, reverse: true)
+
+.ann_container.row
+  .ann_wrapper.large-6.small-12.column.align-self-middle.large-offset-3
+    .ann_logo.text-center
+      = link_to root_path do
+        = image_tag "navbar/logo-120x120.png", size: "60x60", alt: "Annict"
+    .ann-card
+      h1.text-center アクセス許可
+      p = "「#{@pre_auth.client.name}」からのアクセスを許可しますか？"
+      
+      h2 アクセス範囲
+      - if @pre_auth.scopes.present?
+        ul
+          - @pre_auth.scopes.each do |scope|
+            li = t scope, scope: [:doorkeeper, :scopes]
+
+      .row
+        .small-6.columns.text-right
+          = form_tag oauth_authorization_path, method: :delete do
+            = hidden_field_tag :client_id, @pre_auth.client.uid
+            = hidden_field_tag :redirect_uri, @pre_auth.redirect_uri
+            = hidden_field_tag :state, @pre_auth.state
+            = hidden_field_tag :response_type, @pre_auth.response_type
+            = hidden_field_tag :scope, @pre_auth.scope
+            = submit_tag "拒否する", class: "button secondary hollow"
+        .small-6.columns.text-left
+          = form_tag oauth_authorization_path, method: :post do
+            = hidden_field_tag :client_id, @pre_auth.client.uid
+            = hidden_field_tag :redirect_uri, @pre_auth.redirect_uri
+            = hidden_field_tag :state, @pre_auth.state
+            = hidden_field_tag :response_type, @pre_auth.response_type
+            = hidden_field_tag :scope, @pre_auth.scope
+            = submit_tag "許可する", class: "button"

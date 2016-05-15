@@ -18,7 +18,9 @@ Annict::Application.routes.draw do
   end
 
   use_doorkeeper do
-    controllers applications: "oauth/applications"
+    controllers applications: "oauth/applications",
+                authorizations: "oauth/authorizations"
+    skip_controllers :authorized_applications
   end
 
   namespace :api do

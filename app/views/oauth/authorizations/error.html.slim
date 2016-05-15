@@ -1,0 +1,13 @@
+- title = "認証エラー"
+- description = meta_description
+- keywords = meta_keywords
+- set_meta_tags(title: title, description: description, keywords: keywords, reverse: true)
+
+.ann_container.row
+  .ann_wrapper.large-8.small-12.column.align-self-middle.large-offset-2
+    .ann_logo.text-center
+      = link_to root_path do
+        = image_tag "navbar/logo-120x120.png", size: "60x60", alt: "Annict"
+    .ann-card
+      h1.text-center 認証エラー
+      pre = @pre_auth.error_response.body[:error_description]
