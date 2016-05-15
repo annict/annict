@@ -17,7 +17,9 @@ Annict::Application.routes.draw do
     delete "sign_out", to: "sessions#destroy", as: :destroy_user_session
   end
 
-  use_doorkeeper
+  use_doorkeeper do
+    controllers applications: "oauth/applications"
+  end
 
   namespace :api do
     namespace :internal do

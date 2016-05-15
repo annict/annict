@@ -1,0 +1,28 @@
+- title = "アプリケーション"
+- description = meta_description
+- keywords = meta_keywords
+- set_meta_tags(title: title, description: description, keywords: keywords, reverse: true)
+
+= render "application/v2/navbar"
+
+.ann-content.row.align-center
+  .small-12.columns
+    .ann-new-button.text-right
+      = link_to "新規登録", new_oauth_application_path, class: "button"
+
+    table
+      thead
+        tr
+          th 名前
+          th コールバックURL
+          th 編集
+          th 削除
+      tbody
+        - @applications.each do |application|
+          tr
+            td = link_to application.name, oauth_application_path(application)
+            td = application.redirect_uri
+            td = link_to "編集", edit_oauth_application_path(application), class: "button warning"
+            td = link_to "削除", oauth_application_path(application), class: "button alert", data: { method: :delete, confirm: "削除しますか？" }
+
+= render "application/v2/components/footer"

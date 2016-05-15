@@ -1,0 +1,22 @@
+= form_for application, url: doorkeeper_submit_path(application) do |f|
+  = render "application/v3/error_panel", resource: @application
+
+  = f.label :name do
+    | アプリケーション名
+    = f.text_field :name
+
+  = f.label :redirect_uri
+    | リダイレクトURI
+    = f.text_area :redirect_uri, rows: 5
+    p.help-text
+      | URIを一行ごと入力してください
+    - if Doorkeeper.configuration.native_redirect_uri
+      p.help-text
+        = "ローカル環境でテストする場合は #{Doorkeeper.configuration.native_redirect_uri} をご利用ください"
+
+  = f.label :scopes
+    | スコープ
+    = select_tag "doorkeeper_application[scopes]", options_for_select([["読み込み専用", "read"], ["読み込み + 書き込み", "read write"]])
+    = doorkeeper_errors_for application, :scopes
+
+  = f.submit "登録する", class: "button"

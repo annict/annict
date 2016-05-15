@@ -2,6 +2,7 @@
 
 @import url("https://fonts.googleapis.com/earlyaccess/notosansjp.css");
 
+@import "base/variables";
 @import "base/foundation_settings";
 @import "foundation";
 
@@ -54,6 +55,5 @@
 // @include motion-ui-transitions;
 // @include motion-ui-animations;
 
-@import "base/variables";
 @import "base/base";
 @import "base/pages/**/*";

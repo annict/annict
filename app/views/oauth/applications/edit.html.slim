@@ -1,0 +1,13 @@
+- title = "#{@application.name} の編集"
+- description = meta_description
+- keywords = meta_keywords
+- set_meta_tags(title: title, description: description, keywords: keywords, reverse: true)
+
+= render "application/v2/navbar"
+
+.ann-content.row.align-center
+  .small-6.columns
+    h1 = title
+    = render "form", application: @application
+
+= render "application/v2/components/footer"

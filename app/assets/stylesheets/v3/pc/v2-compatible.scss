@@ -1,0 +1,37 @@
+.ann-navbar {
+  .dropdown {
+    line-height: 60px;
+  }
+}
+
+.ann-footer {
+  table {
+    border-collapse: separate;
+    border-radius: initial;
+    border-spacing: 2px;
+    width: auto;
+
+    tbody {
+      background-color: transparent;
+      border: none;
+
+      tr {
+        &:nth-child(even) {
+          background-color: transparent;
+        }
+
+        th {
+          padding: 0;
+        }
+
+        td {
+          padding: 0;
+
+          ul {
+            margin-left: 0;
+          }
+        }
+      }
+    }
+  }
+}

@@ -15,6 +15,10 @@ ja:
         rating: レーティング
       comment:
         body: コメント
+      doorkeeper/application:
+        name: アプリケーション名
+        redirect_uri: リダイレクトURI
+        scopes: スコープ
       draft_organization:
         name: 名前
         name_kana: 名前 (かな)

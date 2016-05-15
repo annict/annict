@@ -7,4 +7,10 @@
 @import "font-awesome";
 
 @import "base/variables";
-// @import "pc/pages/**/*";
+
+@import "../v2/base/mixins/*";
+@import "../v2/pc/components/ann-navbar";
+@import "../v2/pc/components/ann-footer";
+
+@import "pc/v2-compatible";
+@import "pc/pages/**/*";
