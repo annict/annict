@@ -45,7 +45,7 @@ Doorkeeper.configure do
   # ownership of a registered application
   # Note: you must also run the rails g doorkeeper:application_owner generator
   # to provide the necessary support
-  enable_application_owner confirmation: true
+  enable_application_owner confirmation: false
 
   # Define access token scopes for your provider
   # For more information go to
@@ -110,4 +110,23 @@ Doorkeeper.configure do
 
   # WWW-Authenticate Realm (default "Doorkeeper").
   # realm "Doorkeeper"
+end
+
+Doorkeeper::Application.class_eval do
+  include AASM
+
+  aasm do
+    state :published, initial: true
+    state :hidden
+
+    event :hide do
+      transitions from: :published, to: :hidden
+    end
+  end
+
+  scope :available, -> { published.where.not(owner: nil) }
+  scope :unavailable, -> {
+    conditions = unscoped.where(aasm_state: ["hidden"]).where(owner: nil).where_values
+    where(conditions.reduce(:or))
+  }
 end

@@ -8,7 +8,7 @@ class Oauth::ApplicationsController < Doorkeeper::ApplicationsController
   before_action :set_search_params
 
   def index
-    @applications = current_user.oauth_applications
+    @applications = current_user.oauth_applications.available
   end
 
   def create
@@ -23,10 +23,15 @@ class Oauth::ApplicationsController < Doorkeeper::ApplicationsController
     end
   end
 
+  def destroy
+    @application.hide!
+    redirect_to oauth_applications_url
+  end
+
   private
 
   def set_application
-    @application = current_user.oauth_applications.find(params[:id])
+    @application = current_user.oauth_applications.available.find(params[:id])
   end
 
   def set_search_params

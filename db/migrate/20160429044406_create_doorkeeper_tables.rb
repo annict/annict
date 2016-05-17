@@ -8,6 +8,7 @@ class CreateDoorkeeperTables < ActiveRecord::Migration
       t.string  :secret,       null: false
       t.text    :redirect_uri, null: false
       t.string  :scopes,       null: false, default: ""
+      t.string :aasm_state, null: false, default: "published"
       t.timestamps
     end
 
