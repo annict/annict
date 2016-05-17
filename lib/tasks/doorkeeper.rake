@@ -5,7 +5,7 @@ namespace :doorkeeper do
   # 生成されたアクセストークンを無効にする
   task revoke_access_tokens: :environment do
     Doorkeeper::Application.unavailable.find_each do |app|
-      app.access_tokens.each(&:revoke)
+      app.access_tokens.where.not(revoked_at: nil).each(&:revoke)
     end
   end
 end

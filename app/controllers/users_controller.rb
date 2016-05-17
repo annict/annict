@@ -64,7 +64,8 @@ class UsersController < ApplicationController
   end
 
   def destroy
-    current_user.destroy
+    sayonara = SayonaraService.new(current_user)
+    sayonara.bye_bye!
     redirect_to root_path, notice: "退会しました。(´・ω;:.."
   end
 
