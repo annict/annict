@@ -1,0 +1,25 @@
+body.apps-index {
+  padding-top: 60px;
+
+  .c-tabs {
+    @include tabs(independent);
+  }
+
+  .app__main {
+    > .content {
+      @include content(narrow);
+      @include card;
+
+      .wrapper {
+        margin: 15px 0;
+
+        .app {
+          display: flex;
+          height: 30px;
+          justify-content: space-between;
+          line-height: 30px;
+        }
+      }
+    }
+  }
+}

@@ -167,6 +167,9 @@ Annict::Application.routes.draw do
     resource :sayonara, only: [:show], controller: :sayonara
     resources :options, only: [:index]
     resources :providers, only: [:index, :destroy]
+    resources :apps, only: [:index] do
+      patch :revoke
+    end
 
     patch "options", to: "options#update"
   end

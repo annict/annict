@@ -1,0 +1,16 @@
+body.apps-index {
+  > .app__main {
+    > .content {
+      @include content(narrow);
+      @include card;
+      padding: 15px 0;
+
+      .app {
+        @include display(flex);
+        @include justify-content(space-between);
+        height: 30px;
+        line-height: 30px;
+      }
+    }
+  }
+}
