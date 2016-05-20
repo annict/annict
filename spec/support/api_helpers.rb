@@ -1,0 +1,22 @@
+# frozen_string_literal: true
+
+module ApiHelpers
+  def api(path, data = {})
+    return path if data.blank?
+
+    params = data.map { |key, val| "#{key}=#{val}" }.join("&")
+    "#{path}?#{params}"
+  end
+
+  def json
+    JSON.parse(response.body)
+  end
+end
+
+RSpec.configure do |config|
+  config.before :each do
+    host! "api.annict.dev:3000"
+  end
+
+  config.include ApiHelpers, type: :request
+end

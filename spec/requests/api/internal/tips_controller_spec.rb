@@ -1,4 +1,6 @@
-describe Api::TipsController do
+# frozen_string_literal: true
+
+describe Api::Internal::TipsController do
   let(:user) { create(:registered_user) }
   let(:tip) { create(:status_tip) }
 

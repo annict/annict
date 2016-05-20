@@ -18,8 +18,7 @@ module Api
         error = {
           type: "unknown_route",
           message: "リクエストに失敗しました",
-          developer_message: "404 Not Found",
-          url: "http://example.com/docs/api/validations"
+          developer_message: "404 Not Found"
         }
         render json: { errors: [error] }, status: 404
       end
@@ -43,8 +42,7 @@ module Api
           {
             type: "invalid_params",
             message: "リクエストに失敗しました",
-            developer_message: message,
-            url: "http://example.com/docs/api/validations"
+            developer_message: message
           }
         end
 
