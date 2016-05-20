@@ -9,6 +9,7 @@ module Db
 
     rescue_from Pundit::NotAuthorizedError, with: :user_not_authorized
 
+    before_action :set_paper_trail_whodunnit
     before_action :set_opened_edit_requests
     before_action :set_search_params
 
