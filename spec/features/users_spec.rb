@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 describe "プロフィールページ" do
-  let!(:checkin_tip) { create(:checkin_tip) }
+  let!(:record_tip) { create(:record_tip) }
   let(:user) { create(:registered_user) }
   let(:work) { create(:work, :with_item) }
   let(:episode) { create(:episode, work: work) }

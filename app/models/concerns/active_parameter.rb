@@ -3,12 +3,15 @@
 module ActiveParameter
   extend ActiveSupport::Concern
 
+  BASIC_ATTRS = %i(controller action access_token).freeze
+
   included do
     include ActiveModel::Model
 
-    BASIC_ATTRS = %i(controller action access_token).freeze
-
+    # rubocop:disable AmbiguousOperator
     attr_accessor *BASIC_ATTRS
+    # rubocop:enable AmbiguousOperator
+
     define_model_callbacks :initialize
 
     def initialize(params = {})
