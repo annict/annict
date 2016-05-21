@@ -41,9 +41,9 @@ module Annict
     config.i18n.available_locales = ["en-US", :ja]
 
     config.autoload_paths += %W(
-      #{config.root}/app/decorators/concerns
-      #{config.root}/app/forms
-      #{config.root}/app/validators
+      #{config.root}/lib
+    )
+    config.eager_load_paths += %W(
       #{config.root}/lib
     )
 
