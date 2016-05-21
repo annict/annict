@@ -12,7 +12,7 @@
       | URIを一行ごと入力してください
     - if Doorkeeper.configuration.native_redirect_uri
       p.help-text
-        = "ローカル環境でテストする場合は #{Doorkeeper.configuration.native_redirect_uri} をご利用ください"
+        = "ローカルアプリ用に #{Doorkeeper.configuration.native_redirect_uri} もご利用頂けます"
 
   = f.label :scopes
     | スコープ

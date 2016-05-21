@@ -10,19 +10,23 @@
     .ann-new-button.text-right
       = link_to "新規登録", new_oauth_application_path, class: "button"
 
-    table
-      thead
-        tr
-          th 名前
-          th コールバックURL
-          th 編集
-          th 削除
-      tbody
-        - @applications.each do |application|
+    - if @applications.present?
+      table
+        thead
           tr
-            td = link_to application.name, oauth_application_path(application)
-            td = application.redirect_uri
-            td = link_to "編集", edit_oauth_application_path(application), class: "button warning"
-            td = link_to "削除", oauth_application_path(application), class: "button alert", data: { method: :delete, confirm: "削除しますか？" }
+            th 名前
+            th コールバックURL
+            th 編集
+            th 削除
+        tbody
+          - @applications.each do |application|
+            tr
+              td = link_to application.name, oauth_application_path(application)
+              td = application.redirect_uri
+              td = link_to "編集", edit_oauth_application_path(application), class: "button warning"
+              td = link_to "削除", oauth_application_path(application), class: "button alert", data: { method: :delete, confirm: "削除しますか？" }
+    - else
+      .callout.secondary
+        p アプリケーションはありません
 
 = render "application/v2/components/footer"
