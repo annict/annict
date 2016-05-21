@@ -544,7 +544,23 @@ GEM
       builder
       nokogiri (>= 1.4.1)
       trollop
-    redis-rails (0.0.0)
+    redis (3.3.0)
+    redis-actionpack (5.0.0.pre)
+      actionpack (>= 4.0.0, < 6)
+      redis-rack (~> 2.0.0.pre)
+      redis-store (~> 1.2.0.pre)
+    redis-activesupport (5.0.0.pre)
+      activesupport (>= 3, < 6)
+      redis-store (~> 1.2.0.pre)
+    redis-rack (2.0.0.pre)
+      rack (> 1.5, < 3)
+      redis-store (~> 1.2.0.pre)
+    redis-rails (5.0.0.pre)
+      redis-actionpack (~> 5.0.0.pre)
+      redis-activesupport (~> 5.0.0.pre)
+      redis-store (~> 1.2.0.pre)
+    redis-store (1.2.0.pre)
+      redis (>= 2.2)
     request_store (1.3.1)
     responders (2.2.0)
       railties (>= 4.2.0, < 5.1)
@@ -739,7 +755,8 @@ DEPENDENCIES
   rails_12factor
   rails_autolink
   ransack
-  redis-rails
+  redis-actionpack (~> 5.0.0.pre)
+  redis-rails (~> 5.0.0.pre)
   rmagick
   rspec-mocks
   rspec-rails
