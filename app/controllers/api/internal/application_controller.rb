@@ -5,6 +5,8 @@ module Api
     class ApplicationController < ActionController::Base
       include AnalyticsFilter
 
+      before_action :set_paper_trail_whodunnit
+
       private
 
       def set_work
