@@ -25,7 +25,7 @@ table.table.table-striped
         td = program.id
         td = program.channel.name
         td = program.episode.decorate.title_with_number
-        td = program.started_at.try!(:to_time).try!(:strftime, "%Y-%m-%d %H:%M")
+        td = program.started_at&.in_time_zone("Asia/Tokyo")&.strftime("%Y-%m-%d %H:%M")
         td = program.rebroadcast? ? icon("check") : "-"
         td
           - if current_user.committer?

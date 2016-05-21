@@ -9,7 +9,7 @@
 .form-group
   = f.label :started_at, class: "col-sm-3 control-label"
   .col-sm-9
-    = f.text_field :started_at, class: "form-control", value: f.object.started_at.try!(:to_time).try!(:strftime, "%Y-%m-%d %H:%M"), placeholder: "例: 2015-04-01 23:00"
+    = f.text_field :started_at, class: "form-control", value: f.object.started_at&.in_time_zone("Asia/Tokyo")&.strftime("%Y-%m-%d %H:%M"), placeholder: "例: 2015-04-01 23:00"
 .form-group
   .col-sm-offset-3.col-sm-9
     .checkbox

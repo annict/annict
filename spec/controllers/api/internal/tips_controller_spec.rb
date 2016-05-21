@@ -10,7 +10,7 @@ describe Api::Internal::TipsController do
 
   describe "POST finish" do
     before do
-      post :finish, partial_name: tip.partial_name
+      post :finish, params: { partial_name: tip.partial_name }
     end
 
     it "200が返ること" do

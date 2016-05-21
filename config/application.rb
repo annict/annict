@@ -1,17 +1,24 @@
 # frozen_string_literal: true
 
-require File.expand_path("../boot", __FILE__)
+require_relative "boot"
 
-# Pick the frameworks you want:
-require "active_record/railtie"
-require "action_controller/railtie"
-require "action_mailer/railtie"
-require "sprockets/railtie"
-# require "rails/test_unit/railtie"
+%w(
+  rails
+  active_model/railtie
+  active_job/railtie
+  active_record/railtie
+  action_controller/railtie
+  action_mailer/railtie
+  action_view/railtie
+  action_cable/engine
+  sprockets/railtie
+).each do |railtie|
+  require railtie
+end
 
 # Require the gems listed in Gemfile, including any gems
 # you've limited to :test, :development, or :production.
-Bundler.require(:default, Rails.env)
+Bundler.require(*Rails.groups)
 
 module Annict
   class Application < Rails::Application
@@ -22,7 +29,7 @@ module Annict
     # Set Time.zone default to the specified zone and
     # make Active Record auto-convert to this zone.
     # Run "rake -D time" for a list of tasks for finding time zone names. Default is UTC.
-    # config.time_zone = 'Asia/Tokyo'
+    # config.time_zone = 'UTC'
     # config.active_record.default_timezone = :local
 
     config.i18n.enforce_available_locales = false
@@ -39,10 +46,6 @@ module Annict
       #{config.root}/app/validators
       #{config.root}/lib
     )
-
-    ["fonts"].each do |dir_name|
-      config.assets.paths << "#{Rails.root}/app/assets/#{dir_name}"
-    end
 
     config.generators do |g|
       g.test_framework :rspec, controller_specs: false, helper_specs: false,

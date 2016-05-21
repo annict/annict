@@ -12,7 +12,7 @@
           - if record.modify_comment?
             i.modified.fa.fa-pencil
           span.created-at
-            = link_to work_episode_checkin_path(record.episode.work, record.episode, record), title: record.created_at.to_time.strftime("%Y/%m/%d %H:%M") do
+            = link_to work_episode_checkin_path(record.episode.work, record.episode, record), title: record.created_at.in_time_zone("Asia/Tokyo").strftime("%Y/%m/%d %H:%M") do
               = custom_time_ago_in_words(record.created_at)
       .middle
         ann-comment-guard inline-template="" is-spoiler="#{user_signed_in? && current_user.hide_checkin_comment?(record)}"
