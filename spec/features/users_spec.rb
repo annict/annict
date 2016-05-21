@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 describe "プロフィールページ" do
-  let!(:checkin_tip) { create(:checkin_tip) }
+  let!(:record_tip) { create(:record_tip) }
   let(:user) { create(:registered_user) }
   let(:work) { create(:work, :with_item) }
   let(:episode) { create(:episode, work: work) }
@@ -16,12 +16,15 @@ describe "プロフィールページ" do
 
   describe "アクティビティ" do
     before do
-      user.checkins.create do |c|
+      Delayed::Worker.delay_jobs = false
+
+      record = user.checkins.new do |c|
         c.work = episode.work
         c.episode = episode
         c.comment = "おもしろかったよ"
         c.rating = 3.0
       end
+      NewRecordService.new(user, record).save
 
       visit "/@#{user.username}"
     end

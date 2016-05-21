@@ -13,59 +13,59 @@
   .wrapper
     = render 'works/work_profile_light', work: @work, episode: @episode
 
-    - if @checkin_user_ids.present?
+    - if @record_user_ids.present?
       .container
         .checkin-users
-          - @checkin_user_ids.take(5).each do |user_id|
+          - @record_user_ids.take(5).each do |user_id|
             - user = User.find(user_id)
             = link_to user_path(user.username), class: 'pull-left' do
               = annict_image_tag(user.profile, :tombo_avatar, size: "30x30", class: "img-circle")
           span.checkins-count
-            - if @checkin_user_ids.length > 5
-              = "+ #{@checkin_user_ids.length - 5}人が見ました"
-            - elsif @checkin_user_ids.length == 1
+            - if @record_user_ids.length > 5
+              = "+ #{@record_user_ids.length - 5}人が見ました"
+            - elsif @record_user_ids.length == 1
               = 'が見ました'
             - else
-              = "の#{@checkin_user_ids.length}人が見ました"
+              = "の#{@record_user_ids.length}人が見ました"
 
       hr.cu
 
     - if user_signed_in?
       .container
-        = render 'checkins/form', work: @work, episode: @episode, checkin: @checkin
+        = render 'checkins/form', work: @work, episode: @episode, record: @record
       hr
     - else
       = render("application/v1/welcome_to_annict")
 
-    - if @user_checkins.present?
-      - if (user_signed_in? && current_user != @checkin_user) || !user_signed_in?
+    - if @user_records.present?
+      - if (user_signed_in? && current_user != @record_user) || !user_signed_in?
         .user-checkins
           .container
-            h2 = "#{@checkin_user.profile.name}さんの記録"
-            - @user_checkins.each_with_index do |checkin, i|
+            h2 = "#{@record_user.profile.name}さんの記録"
+            - @user_records.each_with_index do |record, i|
               - if i != 0
                 hr
-              = render 'checkins/checkin', checkin: checkin
+              = render 'checkins/checkin', record: record
         hr
 
-    - if @current_user_checkins.present?
+    - if @current_user_records.present?
       .user-checkins
         .container
           h2 あなたの記録
-          - @current_user_checkins.each_with_index do |checkin, i|
+          - @current_user_records.each_with_index do |record, i|
             - if i != 0
               hr
-            = render 'checkins/checkin', checkin: checkin
+            = render 'checkins/checkin', record: record
       hr
 
     .checkin-comments
       .container
-        h2 = "#{@user_checkins.present? || @current_user_checkins.present? ? 'その他皆さんの感想' : '感想'}"
-        - if @checkins.with_comment.present?
-          - @checkins.with_comment.each_with_index do |checkin, i|
+        h2 = "#{@user_records.present? || @current_user_records.present? ? 'その他皆さんの感想' : '感想'}"
+        - if @records.with_comment.present?
+          - @records.with_comment.each_with_index do |record, i|
             - if i != 0
               hr
-            = render 'checkins/checkin', checkin: checkin
+            = render 'checkins/checkin', record: record
         - else
           .info.well
             .icon

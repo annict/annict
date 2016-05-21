@@ -4,19 +4,19 @@
 # Table name: works
 #
 #  id                :integer          not null, primary key
-#  title             :string           not null
+#  season_id         :integer
+#  sc_tid            :integer
+#  title             :string(510)      not null
 #  media             :integer          not null
-#  official_site_url :string           default(""), not null
-#  wikipedia_url     :string           default(""), not null
+#  official_site_url :string(510)      default(""), not null
+#  wikipedia_url     :string(510)      default(""), not null
+#  episodes_count    :integer          default(0), not null
+#  watchers_count    :integer          default(0), not null
 #  released_at       :date
 #  created_at        :datetime
 #  updated_at        :datetime
-#  episodes_count    :integer          default(0), not null
-#  season_id         :integer
-#  twitter_username  :string
-#  twitter_hashtag   :string
-#  watchers_count    :integer          default(0), not null
-#  sc_tid            :integer
+#  twitter_username  :string(510)
+#  twitter_hashtag   :string(510)
 #  released_at_about :string
 #  aasm_state        :string           default("published"), not null
 #  number_format_id  :integer
@@ -25,12 +25,9 @@
 # Indexes
 #
 #  index_works_on_aasm_state        (aasm_state)
-#  index_works_on_episodes_count    (episodes_count)
-#  index_works_on_media             (media)
 #  index_works_on_number_format_id  (number_format_id)
-#  index_works_on_released_at       (released_at)
-#  index_works_on_sc_tid            (sc_tid) UNIQUE
-#  index_works_on_watchers_count    (watchers_count)
+#  works_sc_tid_key                 (sc_tid) UNIQUE
+#  works_season_id_idx              (season_id)
 #
 
 class Work < ActiveRecord::Base
@@ -101,10 +98,10 @@ class Work < ActiveRecord::Base
     joins("LEFT OUTER JOIN items ON items.work_id = works.id").where("items.id IS NULL")
   }
 
-  # リリース時期が最近のものから順に並べる
-  scope :order_latest, -> {
+  # リリース時期順に並べる
+  scope :order_by_season, -> (type = :asc) {
     joins('LEFT OUTER JOIN "seasons" ON "seasons"."id" = "works"."season_id"').
-      order("seasons.sort_number DESC NULLS LAST, works.id DESC")
+      order("seasons.sort_number #{type} NULLS LAST, works.id #{type}")
   }
 
   # 作品のエピソード数分の空白文字列が入った配列を返す

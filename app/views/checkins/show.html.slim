@@ -1,4 +1,4 @@
-= content_for :site_page_title, "#{t('checkins.page_title', username: @checkin.user.username)}"
+= content_for :site_page_title, "#{t('checkins.page_title', username: @record.user.username)}"
 
 = render "application/v2/navbar"
 
@@ -10,12 +10,12 @@
       = render('application/v1/welcome_to_annict')
 
     .container
-      = render 'checkins/checkin', checkin: @checkin
+      = render 'checkins/checkin', record: @record
 
     .container
       - if user_signed_in?
         .comment-form
-          = form_for [@work, @episode, @checkin, @comment], html: { role: 'form' } do |f|
+          = form_for [@work, @episode, @record, @comment], html: { role: 'form' } do |f|
             = render "application/v1/error_panel", resource: @comment
 
             .form-group

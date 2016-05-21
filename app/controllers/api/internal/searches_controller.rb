@@ -2,7 +2,7 @@
 
 module Api
   module Internal
-    class SearchesController < Api::ApplicationController
+    class SearchesController < Api::Internal::ApplicationController
       def show(q: nil)
         search = SearchService.new(q)
         @works = search.works.order(id: :desc).limit(5)

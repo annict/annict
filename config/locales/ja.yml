@@ -20,6 +20,10 @@ ja:
   confirmations:
     confirmed: メールアドレスを確認しました
     failure: メールアドレスの確認に失敗しました
+  doorkeeper:
+    scopes:
+      read: データの読み込み
+      write: データの書き込み
   episodes:
     checkin: 記録する
     created_notification: 【Annict DB】エピソードが追加されました

@@ -27,6 +27,8 @@ class ApplicationController < ActionController::Base
   end
 
   def after_sign_in_path_for(resource)
+    path = stored_location_for(resource)
+    return path if path.present?
     root_path
   end
 
@@ -42,8 +44,8 @@ class ApplicationController < ActionController::Base
     @episode = @work.episodes.published.find(params[:episode_id])
   end
 
-  def set_checkin
-    @checkin = @episode.checkins.find(params[:checkin_id])
+  def load_record
+    @record = @episode.checkins.find(params[:checkin_id])
   end
 
   def set_search_params

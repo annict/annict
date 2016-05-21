@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class UserProgramsQuery
   attr_reader :user
 
@@ -7,20 +9,31 @@ class UserProgramsQuery
 
   # 記録していないエピソードと紐づく番組情報を返す
   def unwatched
-    works = user.works.wanna_watch_and_watching
-    channel_works = user.channel_works.where(work: works)
+    Program.where(id: program_ids(channel_works, scope: :unwatched))
+  end
 
-    Program.where(id: unwatched_program_ids(channel_works))
+  def all
+    Program.where(id: program_ids(channel_works, scope: :all))
   end
 
   private
 
-  def unwatched_program_ids(channel_works)
+  def channel_works
+    works = user.works.wanna_watch_and_watching
+    user.channel_works.where(work: works)
+  end
+
+  def program_ids(channel_works, scope: :all)
     program_ids = []
 
     channel_works.each do |cw|
-      episode_ids = user.episodes.unwatched(cw.work).pluck(:id)
+      episode_ids = case scope
+      when :all then cw.work.episodes.published.pluck(:id)
+      when :unwatched then user.episodes.unwatched(cw.work).pluck(:id)
+      end
+
       next if episode_ids.blank?
+
       # 過去の放送を取得しないようにするため、直近の放送分のみ取得する
       sql = <<-SQL
         WITH ranked_programs AS (

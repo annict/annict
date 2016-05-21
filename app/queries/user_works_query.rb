@@ -26,4 +26,8 @@ class UserWorksQuery
   def on(status_kind)
     Work.joins(:latest_statuses).merge(@user.latest_statuses.with_kind(status_kind))
   end
+
+  def all
+    Work.joins(:latest_statuses).merge(@user.latest_statuses)
+  end
 end

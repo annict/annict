@@ -1,23 +1,25 @@
+# frozen_string_literal: true
+
 FactoryGirl.define do
   factory :user do
     sequence(:username) { |n| "user_#{n}" }
     sequence(:email)    { |n| "user_#{n}@example.com" }
 
     trait :with_profile do
-      after :create do |user|
-        create(:profile, { user: user })
+      after(:create) do |user|
+        create(:profile, user: user)
       end
     end
 
     trait :with_provider do
       after :create do |user|
-        create(:provider, { user: user })
+        create(:provider, user: user)
       end
     end
 
     trait :with_setting do
       after :create do |user|
-        create(:setting, { user: user })
+        create(:setting, user: user)
       end
     end
 

@@ -1,14 +1,22 @@
+# frozen_string_literal: true
 # == Schema Information
 #
 # Table name: statuses
 #
-#  id          :integer          not null, primary key
-#  user_id     :integer          not null
-#  work_id     :integer          not null
-#  kind        :integer          not null
-#  created_at  :datetime
-#  updated_at  :datetime
-#  likes_count :integer          default(0), not null
+#  id                   :integer          not null, primary key
+#  user_id              :integer          not null
+#  work_id              :integer          not null
+#  kind                 :integer          not null
+#  likes_count          :integer          default(0), not null
+#  created_at           :datetime
+#  updated_at           :datetime
+#  oauth_application_id :integer
+#
+# Indexes
+#
+#  index_statuses_on_oauth_application_id  (oauth_application_id)
+#  statuses_user_id_idx                    (user_id)
+#  statuses_work_id_idx                    (work_id)
 #
 
 class StatusesController < ApplicationController
@@ -16,17 +24,7 @@ class StatusesController < ApplicationController
   before_action :set_work
 
   def select(status_kind)
-    if Status.kind.values.include?(status_kind)
-      status = current_user.statuses.new(work: @work, kind: status_kind)
-
-      if status.save!
-        ga_client.events.create("statuses", "create")
-        render status: 200, nothing: true
-      end
-    elsif status_kind == "no_select" || status_kind == "reset"
-      latest_status = current_user.latest_statuses.find_by(work: @work)
-      latest_status.destroy! if latest_status.present?
-      render status: 200, nothing: true
-    end
+    status = StatusService.new(current_user, @work, ga_client)
+    render(status: 200, nothing: true) if status.change(status_kind)
   end
 end

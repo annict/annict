@@ -1,0 +1,26 @@
+body.oauth-authorizations-show {
+  background-color: $color-gallery;
+
+  .ann_container {
+    height: 100%;
+
+    .ann_logo {
+      margin-bottom: 28px;
+    }
+
+    .ann-card {
+      padding: 14px;
+
+      h1 {
+        font-family: "Noto Sans JP", sans-serif;
+        font-size: 25px;
+        font-weight: 100;
+        margin-bottom: 21px;
+      }
+
+      code {
+        word-wrap: break-word;
+      }
+    }
+  }
+}

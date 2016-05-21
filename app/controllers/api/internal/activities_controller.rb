@@ -2,7 +2,7 @@
 
 module Api
   module Internal
-    class ActivitiesController < Api::ApplicationController
+    class ActivitiesController < Api::Internal::ApplicationController
       def index(username: nil, page: nil)
         return render(status: 404, nothing: true) if username.blank? && !user_signed_in?
 

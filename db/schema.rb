@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160426132549) do
+ActiveRecord::Schema.define(version: 20160515160618) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -94,13 +94,15 @@ ActiveRecord::Schema.define(version: 20160426132549) do
     t.boolean  "modify_comment",       default: false, null: false
     t.boolean  "shared_twitter",       default: false, null: false
     t.boolean  "shared_facebook",      default: false, null: false
-    t.integer  "work_id"
+    t.integer  "work_id",                              null: false
     t.float    "rating"
     t.integer  "multiple_record_id"
+    t.integer  "oauth_application_id"
   end
 
   add_index "checkins", ["facebook_url_hash"], name: "index_checkins_on_facebook_url_hash", unique: true, using: :btree
   add_index "checkins", ["multiple_record_id"], name: "index_checkins_on_multiple_record_id", using: :btree
+  add_index "checkins", ["oauth_application_id"], name: "index_checkins_on_oauth_application_id", using: :btree
   add_index "checkins", ["twitter_url_hash"], name: "index_checkins_on_twitter_url_hash", unique: true, using: :btree
   add_index "checkins", ["work_id"], name: "index_checkins_on_work_id", using: :btree
 
@@ -476,6 +478,51 @@ ActiveRecord::Schema.define(version: 20160426132549) do
 
   add_index "number_formats", ["name"], name: "index_number_formats_on_name", unique: true, using: :btree
 
+  create_table "oauth_access_grants", force: :cascade do |t|
+    t.integer  "resource_owner_id", null: false
+    t.integer  "application_id",    null: false
+    t.string   "token",             null: false
+    t.integer  "expires_in",        null: false
+    t.text     "redirect_uri",      null: false
+    t.datetime "created_at",        null: false
+    t.datetime "revoked_at"
+    t.string   "scopes"
+  end
+
+  add_index "oauth_access_grants", ["token"], name: "index_oauth_access_grants_on_token", unique: true, using: :btree
+
+  create_table "oauth_access_tokens", force: :cascade do |t|
+    t.integer  "resource_owner_id",                   null: false
+    t.integer  "application_id",                      null: false
+    t.string   "token",                               null: false
+    t.string   "refresh_token"
+    t.integer  "expires_in"
+    t.datetime "revoked_at"
+    t.datetime "created_at",                          null: false
+    t.string   "scopes"
+    t.string   "previous_refresh_token", default: "", null: false
+  end
+
+  add_index "oauth_access_tokens", ["refresh_token"], name: "index_oauth_access_tokens_on_refresh_token", unique: true, using: :btree
+  add_index "oauth_access_tokens", ["resource_owner_id"], name: "index_oauth_access_tokens_on_resource_owner_id", using: :btree
+  add_index "oauth_access_tokens", ["token"], name: "index_oauth_access_tokens_on_token", unique: true, using: :btree
+
+  create_table "oauth_applications", force: :cascade do |t|
+    t.string   "name",                               null: false
+    t.string   "uid",                                null: false
+    t.string   "secret",                             null: false
+    t.text     "redirect_uri",                       null: false
+    t.string   "scopes",       default: "",          null: false
+    t.string   "aasm_state",   default: "published", null: false
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.integer  "owner_id"
+    t.string   "owner_type"
+  end
+
+  add_index "oauth_applications", ["owner_id", "owner_type"], name: "index_oauth_applications_on_owner_id_and_owner_type", using: :btree
+  add_index "oauth_applications", ["uid"], name: "index_oauth_applications_on_uid", unique: true, using: :btree
+
   create_table "organizations", force: :cascade do |t|
     t.string   "name",                                   null: false
     t.string   "url"
@@ -627,13 +674,16 @@ ActiveRecord::Schema.define(version: 20160426132549) do
   add_index "staffs", ["work_id"], name: "index_staffs_on_work_id", using: :btree
 
   create_table "statuses", force: :cascade do |t|
-    t.integer  "user_id",                 null: false
-    t.integer  "work_id",                 null: false
-    t.integer  "kind",                    null: false
+    t.integer  "user_id",                          null: false
+    t.integer  "work_id",                          null: false
+    t.integer  "kind",                             null: false
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.integer  "likes_count", default: 0, null: false
+    t.integer  "likes_count",          default: 0, null: false
+    t.integer  "oauth_application_id"
   end
+
+  add_index "statuses", ["oauth_application_id"], name: "index_statuses_on_oauth_application_id", using: :btree
 
   create_table "syobocal_alerts", force: :cascade do |t|
     t.integer  "work_id"
@@ -758,6 +808,7 @@ ActiveRecord::Schema.define(version: 20160426132549) do
   add_foreign_key "channels", "channel_groups"
   add_foreign_key "checkins", "episodes"
   add_foreign_key "checkins", "multiple_records"
+  add_foreign_key "checkins", "oauth_applications"
   add_foreign_key "checkins", "users"
   add_foreign_key "checkins", "works"
   add_foreign_key "comments", "checkins"
@@ -809,6 +860,10 @@ ActiveRecord::Schema.define(version: 20160426132549) do
   add_foreign_key "multiple_records", "works"
   add_foreign_key "notifications", "users"
   add_foreign_key "notifications", "users", column: "action_user_id"
+  add_foreign_key "oauth_access_grants", "oauth_applications", column: "application_id"
+  add_foreign_key "oauth_access_grants", "users", column: "resource_owner_id"
+  add_foreign_key "oauth_access_tokens", "oauth_applications", column: "application_id"
+  add_foreign_key "oauth_access_tokens", "users", column: "resource_owner_id"
   add_foreign_key "people", "prefectures"
   add_foreign_key "profiles", "users"
   add_foreign_key "programs", "channels"
@@ -819,6 +874,7 @@ ActiveRecord::Schema.define(version: 20160426132549) do
   add_foreign_key "receptions", "users"
   add_foreign_key "settings", "users"
   add_foreign_key "staffs", "works"
+  add_foreign_key "statuses", "oauth_applications"
   add_foreign_key "statuses", "users"
   add_foreign_key "statuses", "works"
   add_foreign_key "syobocal_alerts", "works"

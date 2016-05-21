@@ -1,7 +1,7 @@
-= form_for [work, episode, checkin], role: 'form', html: { class: 'checkin-form', :'ng-controller' => 'CheckinFormCtrl' } do |f|
-  = render "application/v1/error_panel", resource: checkin
+= form_for [work, episode, record], role: 'form', html: { class: 'checkin-form', :'ng-controller' => 'CheckinFormCtrl' } do |f|
+  = render "application/v1/error_panel", resource: record
   
-  ann-record-rating rating="#{checkin.rating.presence || 0}"
+  ann-record-rating rating="#{record.rating.presence || 0}"
   .form-group.checkin-form-comment
     = f.text_area :comment, class: 'form-control', rows: 2, :'ng-click' => 'expand($event)', placeholder: t('checkins.input_a_comment')
   .checkin-form-share
@@ -16,7 +16,7 @@
           = icon("facebook")
           = f.check_box :shared_facebook
   .checkin-button.text-center
-    - if checkin.new_record?
+    - if record.new_record?
       = f.button class: 'btn btn-primary' do
         i.fa.fa-check
         = t('checkins.save')

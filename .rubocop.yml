@@ -10,6 +10,8 @@ Lint/EndAlignment:
 
 Metrics/LineLength:
   Max: 90
+  Exclude:
+    - "**/*.jbuilder"
 
 Metrics/AbcSize:
   Enabled: false

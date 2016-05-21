@@ -2,17 +2,26 @@
 #
 # Table name: statuses
 #
-#  id          :integer          not null, primary key
-#  user_id     :integer          not null
-#  work_id     :integer          not null
-#  kind        :integer          not null
-#  created_at  :datetime
-#  updated_at  :datetime
-#  likes_count :integer          default(0), not null
+#  id                   :integer          not null, primary key
+#  user_id              :integer          not null
+#  work_id              :integer          not null
+#  kind                 :integer          not null
+#  likes_count          :integer          default(0), not null
+#  created_at           :datetime
+#  updated_at           :datetime
+#  oauth_application_id :integer
+#
+# Indexes
+#
+#  index_statuses_on_oauth_application_id  (oauth_application_id)
+#  statuses_user_id_idx                    (user_id)
+#  statuses_work_id_idx                    (work_id)
 #
 
 class Status < ActiveRecord::Base
   include StatusCommon
+
+  belongs_to :oauth_application, class_name: "Doorkeeper::Application"
 
   after_create :save_activity
   after_create :refresh_watchers_count

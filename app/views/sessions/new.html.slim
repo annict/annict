@@ -1,0 +1,13 @@
+.ann-sign-in.row.align-center.align-middle
+  .small-12.columns
+    .ann-logo.text-center
+      = link_to root_path do
+        = image_tag "navbar/logo-120x120.png", size: "60x60", alt: "Annict"
+    .ann-button.text-center
+      = link_to user_twitter_omniauth_authorize_path, class: "button ann-twitter" do
+        = icon "twitter"
+        span.ann-text Twitterアカウントでログイン
+    .ann-button.text-center
+      = link_to user_facebook_omniauth_authorize_path, class: "button ann-facebook" do
+        = icon "facebook"
+        span.ann-text Facebookアカウントでログイン

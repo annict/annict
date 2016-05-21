@@ -11,9 +11,14 @@ ja:
         part: 役名
         sort_number: ソート番号
       checkin:
-        comment: コメント
+        comment: 感想
+        rating: レーティング
       comment:
         body: コメント
+      doorkeeper/application:
+        name: アプリケーション名
+        redirect_uri: リダイレクトURI
+        scopes: スコープ
       draft_organization:
         name: 名前
         name_kana: 名前 (かな)

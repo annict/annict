@@ -5,7 +5,7 @@ $ ->
 
   $(".js-people-selector").select2
     ajax:
-      url: "/api/people"
+      url: "/api/internal/people"
       delay: 250
       data: (params) ->
         q: params.term
@@ -16,7 +16,7 @@ $ ->
 
   $(".js-organizations-selector").select2
     ajax:
-      url: "/api/organizations"
+      url: "/api/internal/organizations"
       delay: 250
       data: (params) ->
         q: params.term

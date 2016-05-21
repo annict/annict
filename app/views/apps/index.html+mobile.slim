@@ -1,0 +1,19 @@
+= render "application/v1/navbar"
+
+.content
+  .container
+    .wrapper
+      - if @access_tokens.present?
+        - @access_tokens.each do |access_token|
+          .app
+            .head
+              = access_token.application.name
+            .body
+              = link_to "解除する", app_revoke_path(access_token.application), class: "btn btn-sm btn-link", data: { method: :patch, confirm: "解除しますか？" }
+      - else
+        .info.well
+          .icon
+            i.fa.fa-info-circle
+          p 連携しているアプリケーションはありません
+
+= render "application/v2/components/footer"

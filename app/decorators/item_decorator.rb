@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 class ItemDecorator < ApplicationDecorator
+  include ImageMethods
   include ItemDecoratorCommon
 
   def db_detail_link(options = {})

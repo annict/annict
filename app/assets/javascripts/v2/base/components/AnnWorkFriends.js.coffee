@@ -15,7 +15,7 @@ module.exports = Vue.extend
   methods:
     more: ->
       $.ajax
-        url: "/api/works/#{@workId}/friends"
+        url: "/api/internal/works/#{@workId}/friends"
       .done (users)=>
         @users = users
         @isAll = true

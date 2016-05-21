@@ -7,27 +7,31 @@
 #  user_id              :integer          not null
 #  episode_id           :integer          not null
 #  comment              :text
-#  twitter_url_hash     :string
+#  modify_comment       :boolean          default(FALSE), not null
+#  twitter_url_hash     :string(510)
+#  facebook_url_hash    :string(510)
 #  twitter_click_count  :integer          default(0), not null
-#  created_at           :datetime
-#  updated_at           :datetime
-#  facebook_url_hash    :string
 #  facebook_click_count :integer          default(0), not null
 #  comments_count       :integer          default(0), not null
 #  likes_count          :integer          default(0), not null
-#  modify_comment       :boolean          default(FALSE), not null
+#  created_at           :datetime
+#  updated_at           :datetime
 #  shared_twitter       :boolean          default(FALSE), not null
 #  shared_facebook      :boolean          default(FALSE), not null
-#  work_id              :integer
+#  work_id              :integer          not null
 #  rating               :float
 #  multiple_record_id   :integer
+#  oauth_application_id :integer
 #
 # Indexes
 #
-#  index_checkins_on_facebook_url_hash   (facebook_url_hash) UNIQUE
-#  index_checkins_on_multiple_record_id  (multiple_record_id)
-#  index_checkins_on_twitter_url_hash    (twitter_url_hash) UNIQUE
-#  index_checkins_on_work_id             (work_id)
+#  checkins_episode_id_idx                 (episode_id)
+#  checkins_facebook_url_hash_key          (facebook_url_hash) UNIQUE
+#  checkins_twitter_url_hash_key           (twitter_url_hash) UNIQUE
+#  checkins_user_id_idx                    (user_id)
+#  index_checkins_on_multiple_record_id    (multiple_record_id)
+#  index_checkins_on_oauth_application_id  (oauth_application_id)
+#  index_checkins_on_work_id               (work_id)
 #
 
 class CheckinsController < ApplicationController
@@ -38,22 +42,26 @@ class CheckinsController < ApplicationController
   before_action :set_work, only: [:create, :create_all, :show, :edit,
                                   :update, :destroy]
   before_action :set_episode, only: [:create, :show, :edit, :update, :destroy]
-  before_action :set_checkin, only: [:show, :edit, :update, :destroy]
+  before_action :load_record, only: [:show, :edit, :update, :destroy]
   before_action :redirect_to_top, only: [:edit, :update, :destroy]
 
   def create(checkin)
-    @checkin = @episode.checkins.new(checkin)
-    @checkin.user = current_user
-    @checkin.work = @work
-    @checkin.rating = 0 if checkin[:rating].blank?
+    record = @episode.checkins.new(checkin)
+    service = NewRecordService.new(current_user, record, ga_client)
 
-    if @checkin.save
-      @checkin.update_share_checkin_status
-      @checkin.share_to_sns(self)
-      ga_client.events.create("records", "create")
+    if service.save
       redirect_to work_episode_path(@work, @episode), notice: t("checkins.saved")
     else
-      render :new
+      service = RecordsListService.new(@episode, current_user, nil)
+
+      @record_user_ids = service.record_user_ids
+      @user_records = service.user_records
+      @current_user_records = service.current_user_records
+      @records = service.records
+
+      @record = record_service.record
+
+      render "/episodes/show", layout: "v1/application"
     end
   end
 
@@ -65,7 +73,7 @@ class CheckinsController < ApplicationController
   end
 
   def show
-    @comments = @checkin.comments.order(created_at: :desc)
+    @comments = @record.comments.order(created_at: :desc)
     @comment = Comment.new
 
     render layout: "v1/application"
@@ -76,18 +84,20 @@ class CheckinsController < ApplicationController
   end
 
   def update(checkin)
-    if @checkin.update_attributes(checkin)
-      @checkin.update_share_checkin_status
-      @checkin.share_to_sns(self)
-      redirect_to work_episode_checkin_path(@work, @episode, @checkin), notice: t('checkins.updated')
+    @record.modify_comment = true
+
+    if @record.update_attributes(checkin)
+      @record.update_share_checkin_status
+      @record.share_to_sns
+      redirect_to work_episode_checkin_path(@work, @episode, @record), notice: t('checkins.updated')
     else
       render :edit
     end
   end
 
   def destroy
-    @checkin.destroy
-    redirect_to work_episode_path(@work, @episode), notice: t('checkins.deleted')
+    @record.destroy
+    redirect_to work_episode_path(@work, @episode), notice: t("checkins.deleted")
   end
 
   def redirect(provider, url_hash)
@@ -113,12 +123,12 @@ class CheckinsController < ApplicationController
 
   private
 
-  def set_checkin
-    @checkin = @episode.checkins.find(params[:id])
+  def load_record
+    @record = @episode.checkins.find(params[:id])
   end
 
   def redirect_to_top
-    return redirect_to root_path if @checkin.user != current_user
+    return redirect_to root_path if @record.user != current_user
   end
 
   def redirect_to_episode(checkin)

@@ -18,7 +18,8 @@ module Annict
       # ea: Event Action. Required.
       # el: Event label.
       # ev: Event value.
-      def create(ec, ea, el: "", ev: "")
+      # ds: Data source.
+      def create(ec, ea, el: "", ev: "", ds: "web")
         body = {
           v: 1,
           tid: ENV.fetch("GA_TRACKING_ID"),
@@ -27,7 +28,8 @@ module Annict
           ec: ec,
           ea: ea,
           uip: @request.ip,
-          ua: @request.user_agent
+          ua: @request.user_agent,
+          ds: ds
         }
         body[:uid] = @user.ga_uid if @user.present?
         body[:el] = el if el.present?

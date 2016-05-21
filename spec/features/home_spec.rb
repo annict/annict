@@ -45,9 +45,20 @@ describe "トップページ" do
     end
 
     context "自分が記録しているとき" do
-      let!(:checkin) { create(:checkin, user: user, comment: "おもしろかったよ") }
+      let!(:record_tip) { create(:record_tip) }
+      let(:episode) { create(:episode) }
 
       before do
+        Delayed::Worker.delay_jobs = false
+
+        record = user.checkins.new do |c|
+          c.work = episode.work
+          c.episode = episode
+          c.comment = "おもしろかったよ"
+          c.rating = 3.0
+        end
+        NewRecordService.new(user, record).save
+
         visit "/"
       end
 
@@ -57,10 +68,21 @@ describe "トップページ" do
     end
 
     context "フォローしている人が記録しているとき" do
+      let!(:record_tip) { create(:record_tip) }
       let!(:following_user) { create(:registered_user) }
-      let!(:checkin) { create(:checkin, user: following_user, comment: "たのしかったよ") }
+      let(:episode) { create(:episode) }
 
       before do
+        Delayed::Worker.delay_jobs = false
+
+        record = following_user.checkins.new do |c|
+          c.work = episode.work
+          c.episode = episode
+          c.comment = "たのしかったよ"
+          c.rating = 3.0
+        end
+        NewRecordService.new(user, record).save
+
         user.follow(following_user)
 
         visit "/"
