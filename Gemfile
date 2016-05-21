@@ -28,7 +28,9 @@ gem "coffee-rails"
 gem "delayed_job_active_record"
 gem "devise"
 gem "doorkeeper", ">= 4.0.0.rc3"
-gem "draper"
+# DraperをRails 5で動かす
+# https://github.com/drapergem/draper/issues/681
+gem "draper", github: "audionerd/draper", branch: "rails5"
 gem "email_validator"
 gem "enumerize"
 gem "figaro"

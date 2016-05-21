@@ -7,6 +7,17 @@ GIT
       actionpack (>= 3.0.0)
       activesupport (>= 3.0.0)
 
+GIT
+  remote: git://github.com/audionerd/draper.git
+  revision: e816e0e5876b76c648c0928f1c3f2aa2c7a3d1f2
+  branch: rails5
+  specs:
+    draper (2.1.0)
+      actionpack (>= 3.0)
+      activemodel (>= 3.0)
+      activesupport (>= 3.0)
+      request_store (~> 1.0)
+
 GEM
   remote: https://rubygems.org/
   specs:
@@ -174,11 +185,6 @@ GEM
       unf (>= 0.0.5, < 1.0.0)
     doorkeeper (4.0.0.rc4)
       railties (>= 4.2)
-    draper (2.1.0)
-      actionpack (>= 3.0)
-      activemodel (>= 3.0)
-      activesupport (>= 3.0)
-      request_store (~> 1.0)
     email_validator (1.6.0)
       activemodel
     enumerize (1.1.1)
@@ -708,7 +714,7 @@ DEPENDENCIES
   delayed_job_active_record
   devise
   doorkeeper (>= 4.0.0.rc3)
-  draper
+  draper!
   email_validator
   enumerize
   factory_girl_rails
