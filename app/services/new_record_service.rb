@@ -3,7 +3,7 @@
 class NewRecordService
   attr_reader :record
 
-  def initialize(user, record, ga_client)
+  def initialize(user, record, ga_client = nil)
     @user = user
     @record = record
     @ga_client = ga_client
@@ -22,7 +22,7 @@ class NewRecordService
       save_activity
       finish_tips
       update_latest_status
-      create_ga_event
+      create_ga_event if @ga_client.present?
     end
 
     true

@@ -14,7 +14,7 @@ module ApiHelpers
 end
 
 RSpec.configure do |config|
-  config.before :each do
+  config.before :each, type: :request do
     host! "api.annict.dev:3000"
   end
 

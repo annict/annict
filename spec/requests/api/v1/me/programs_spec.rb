@@ -2,14 +2,17 @@
 
 describe "Api::V1::Me::Programs" do
   let(:access_token) { create(:oauth_access_token) }
-  let(:work) { create(:work, :with_current_season) }
-  let(:episode) { create(:episode, work: work) }
-  let!(:program) { create(:program, episode: episode) }
+  let(:episode) { create(:episode) }
+  let!(:status) do
+    create(:status, kind: "watching", work: episode.work, user: access_token.owner)
+  end
+  let(:channel_work) do
+    create(:channel_work, user: access_token.owner, work: episode.work)
+  end
+  let!(:program) { create(:program, episode: episode, channel: channel_work.channel) }
 
   describe "GET /v1/me/programs" do
     before do
-      access_token.owner.receive(program.channel)
-
       data = {
         access_token: access_token.token
       }

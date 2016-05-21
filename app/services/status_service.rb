@@ -17,7 +17,7 @@ class StatusService
         create_ga_event
         return true
       end
-    elsif status_kind == "no_select"
+    elsif kind == "no_select"
       latest_status = @user.latest_statuses.find_by(work: @work)
       latest_status.destroy! if latest_status.present?
       return true
