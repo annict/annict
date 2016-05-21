@@ -46,8 +46,8 @@
             li = link_to "チャンネル", channels_path
             li = link_to "設定", profile_path
             li = link_to "Annict DB", db_root_path
+            li = link_to "Annict API", "https://annict.wikihub.io/wiki/api", target: "_blank"
             li = link_to "Annictについて", about_path
-            li = link_to "開発者向け", oauth_applications_path
             li = link_to "ログアウト", destroy_user_session_path, method: "delete"
       - else
         li = link_to "Annictについて", about_path
