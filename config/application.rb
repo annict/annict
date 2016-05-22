@@ -43,6 +43,8 @@ module Annict
     config.autoload_paths += %W(
       #{config.root}/lib
     )
+    # Rails 5から必要になった?
+    # これを設定しないとproductionで `lib/` 以下のモジュールが読み込まれない
     config.eager_load_paths += %W(
       #{config.root}/lib
     )
