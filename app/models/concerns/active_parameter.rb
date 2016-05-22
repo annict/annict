@@ -17,7 +17,7 @@ module ActiveParameter
     def initialize(params = {})
       @params = params
       run_callbacks :initialize do
-        super @params.slice(*BASIC_ATTRS)
+        super @params.permit(*BASIC_ATTRS)
       end
     end
 

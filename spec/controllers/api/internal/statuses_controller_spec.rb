@@ -31,7 +31,11 @@ describe Api::Internal::StatusesController do
     context "「見てる」に変更したとき" do
       before do
         Status.skip_callback(:create, :after, :finish_tips)
-        post :select, work_id: work.id, status_kind: :watching
+        post :select, params: { work_id: work.id, status_kind: :watching }
+      end
+
+      after do
+        Status.set_callback(:create, :after, :finish_tips)
       end
 
       it "200が返ること" do
@@ -47,7 +51,7 @@ describe Api::Internal::StatusesController do
       let!(:status) { create(:status, user: user, work: work) }
 
       before do
-        post :select, work_id: work.id, status_kind: :no_select
+        post :select, params: { work_id: work.id, status_kind: :no_select }
       end
 
       it "200を返すこと" do

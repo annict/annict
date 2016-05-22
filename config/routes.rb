@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-Annict::Application.routes.draw do
+Rails.application.routes.draw do
   mount LetterOpenerWeb::Engine, at: "/low" if Rails.env.development?
 
   get "dummy_image", to: "application#dummy_image" if Rails.env.test?
