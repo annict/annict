@@ -1,9 +1,11 @@
+# frozen_string_literal: true
+
 module WorkDecoratorCommon
   extend ActiveSupport::Concern
 
   included do
     def to_values
-      model.class::DIFF_FIELDS.inject({}) do |hash, field|
+      model.class::DIFF_FIELDS.each_with_object({}) do |field, hash|
         hash[field] = case field
         when :season_id
           if send(:season_id).present?
@@ -20,7 +22,11 @@ module WorkDecoratorCommon
         when :official_site_url, :wikipedia_url
           url = send(field)
           if url.present?
-            h.link_to(URI.decode(url), url, target: "_blank") rescue url
+            begin
+              h.link_to(URI.decode(url), url, target: "_blank")
+            rescue
+              url
+            end
           end
         when :twitter_username
           username = send(:twitter_username)

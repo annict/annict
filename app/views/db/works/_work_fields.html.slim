@@ -42,12 +42,9 @@
   = f.label :released_at_about, class: "col-sm-3 control-label"
   .col-sm-9
     = f.text_field :released_at_about, class: "form-control", placeholder: "例: 2015年"
-- if current_user.role.admin? && f.object.instance_of?(Work)
-  .form-group
-    = f.label :number_format_id, class: "col-sm-3 control-label"
-    .col-sm-9
-      .row
-        .col-sm-5
-          = f.select :number_format_id, options_from_collection_for_select(NumberFormat.order(:sort_number), :id, :name, f.object.number_format_id), { include_blank: true }, { class: "form-control" }
-- else
-  = f.hidden_field :number_format_id
+.form-group
+  = f.label :number_format_id, class: "col-sm-3 control-label"
+  .col-sm-9
+    .row
+      .col-sm-5
+        = f.select :number_format_id, options_from_collection_for_select(NumberFormat.order(:sort_number), :id, :name, f.object.number_format_id), { include_blank: true }, { class: "form-control" }
