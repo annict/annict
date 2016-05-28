@@ -1,6 +1,6 @@
 script#ann-search-form type="x-template"
-  form.ann-search-form action="/works/search" accept-charset="UTF-8" method="get"
-    input type="text" placeholder="キーワードで検索..." v-model="q" @keyup="onKeyup | debounce 300" @keydown.down="next" @keydown.up="prev" @keydown.enter="select" @blur="hideResults" @keydown.esc="hideResults"
+  form.ann-search-form action="/search" accept-charset="UTF-8" method="get"
+    input type="text" name="q" placeholder="キーワードで検索..." v-model="q" @keyup="onKeyup | debounce 300" @keydown.down="next" @keydown.up="prev" @keydown.enter="select" @blur="hideResults" @keydown.esc="hideResults"
     button name="button" type="submit"
     .results v-if="results.length"
       ul
