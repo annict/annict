@@ -19,7 +19,7 @@ class EpisodeDecorator < ApplicationDecorator
   end
 
   def meta_title
-    return "" if title == work.title
+    return "" if title.blank? || title == work.title
     "「#{title}」"
   end
 end
