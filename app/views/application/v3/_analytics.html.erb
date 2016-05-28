@@ -5,26 +5,30 @@
   })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
 
   <% if user_signed_in? %>
-  ga("create", "<%= ENV['GA_TRACKING_ID'] %>", {
+  ga("create", "<%= ENV.fetch('GA_TRACKING_ID') %>", {
     "storage": "none",
     "clientId": "<%= cookies[:ann_ga_cid] %>",
     "userId": "<%= current_user.ga_uid %>"
   });
   <% else %>
-  ga("create", "<%= ENV['GA_TRACKING_ID'] %>", {
+  ga("create", "<%= ENV.fetch('GA_TRACKING_ID') %>", {
     "storage": "none",
     "clientId": "<%= cookies[:ann_ga_cid] %>"
   });
   <% end %>
-  ga('send', 'pageview');
 
   <%# カスタムディメンション「ログイン」 %>
   <% if user_signed_in? %>
-    ga('set', 'dimension1', 'ログイン済み');
+  var dimension1 = "user";
   <% else %>
-    ga('set', 'dimension1', '未ログイン');
+  var dimension1 = "guest";
   <% end %>
 
   <%# カスタムディメンション「ページカテゴリ」 %>
-  ga('set', 'dimension2', '<%= ga_page_category %>');
+  var dimension2 = "<%= ga_page_category %>";
+
+  ga("send", "pageview", {
+    dimension1: dimension1,
+    dimension2: dimension2
+  });
 </script>
