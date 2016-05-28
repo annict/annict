@@ -13,7 +13,7 @@ nav.navbar.navbar-default.navbar-fixed-top
           = icon 'play'
           .caption
             = t('enumerize.status.kind.watching') + t('words.works')
-        = link_to works_path, class: "#{works_page? ? 'active' : ''}", target: '_self' do
+        = link_to works_path, class: "#{works_season_page? ? 'active' : ''}", target: '_self' do
           = icon 'search'
           .caption
             = t('titles.works.index')
@@ -26,7 +26,7 @@ nav.navbar.navbar-default.navbar-fixed-top
             = icon 'database'
             .caption Annict DB
       - else
-        = link_to works_path, class: "#{works_page? ? 'active' : ''}", target: '_self' do
+        = link_to works_path, class: "#{works_season_page? ? 'active' : ''}", target: '_self' do
           = icon 'search'
           .caption
             = t('titles.works.index')
