@@ -20,7 +20,6 @@ Rails.application.config.assets.precompile += %w(
   v2/pc.scss
   v3/mobile.js.coffee
   v3/pc.js.coffee
-  v3/base.scss
   v3/mobile.scss
   v3/pc.scss
 )

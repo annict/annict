@@ -1,0 +1,19 @@
+.button {
+  &.ann-twitter {
+    background-color: $color-twitter;
+
+    &:hover,
+    &:focus {
+      background-color: scale-color($color-twitter, $lightness: -15%);
+    }
+  }
+
+  &.ann-facebook {
+    background-color: $color-facebook;
+
+    &:hover,
+    &:focus {
+      background-color: scale-color($color-facebook, $lightness: -15%);
+    }
+  }
+}

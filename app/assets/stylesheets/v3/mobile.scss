@@ -2,9 +2,6 @@
  *= require_self
  */
 
-@import "bourbon";
-@import "font-awesome-sprockets";
-@import "font-awesome";
+@charset "utf-8";
 
-@import "base/variables";
-// @import "mobile/pages/**/*";
+@import "base/base";

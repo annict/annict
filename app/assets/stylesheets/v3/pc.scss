@@ -2,11 +2,9 @@
  *= require_self
  */
 
-@import "bourbon";
-@import "font-awesome-sprockets";
-@import "font-awesome";
+@charset "utf-8";
 
-@import "base/variables";
+@import "base/base";
 
 @import "../v2/base/mixins/*";
 @import "../v2/pc/components/ann-navbar";
