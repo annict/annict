@@ -4,7 +4,7 @@
       = image_tag "logo.png", size: "33x40", alt: "Annict"
     ul
       - if user_signed_in?
-        li = link_to "放送予定", programs_path
+        li = link_to "Inbox", inbox_path
         li.dropdown
           = link_to "見てるアニメ", user_works_path(current_user.username, :watching)
           ul.menu

@@ -5,10 +5,10 @@ nav.navbar.navbar-default.navbar-fixed-top
         = image_tag 'navbar/logo-120x120.png', size: '48x48', alt: 'Annict'
     .shortcuts
       - if user_signed_in?
-        = link_to programs_path, class: "#{programs_page? ? 'active' : ''}", target: '_self' do
-          = icon 'calendar'
+        = link_to inbox_path, class: "#{inbox_page? ? 'active' : ''}", target: '_self' do
+          = icon "inbox"
           .caption
-            = t('titles.program')
+            = Inbox
         = link_to user_works_path(current_user.username, :watching), class: "#{user_works_page? ? 'active' : ''}", target: '_self' do
           = icon 'play'
           .caption

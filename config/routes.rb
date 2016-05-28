@@ -156,6 +156,7 @@ Rails.application.routes.draw do
   end
 
   resource :search, only: [:show]
+  resource :inbox, only: [:show]
 
   resources :organizations, only: [:show]
   resources :people, only: [:show]
@@ -192,7 +193,6 @@ Rails.application.routes.draw do
   resource :confirmation, only: [:show]
   resources :friends, only: [:index]
   resources :notifications, only: [:index]
-  resources :programs, only: [:index]
 
   get "@:username", to: "users#show", username: /[A-Za-z0-9_]+/, as: :user
   get "@:username/:status_kind",

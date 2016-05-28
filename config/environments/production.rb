@@ -134,6 +134,8 @@ Rails.application.configure do
     }
     # https://annict.com/sitemap.xml.gz でS3にアップロードされてるサイトマップを取得する
     r301 %r{/sitemap.xml.gz}, ENV.fetch("ANNICT_SITEMAP_URL")
+    # /programs -> /inbox
+    r301 "/programs", "/inbox"
   end
 
   config.imgix = {
