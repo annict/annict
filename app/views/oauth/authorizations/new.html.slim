@@ -3,12 +3,12 @@
 - keywords = meta_keywords
 - set_meta_tags(title: title, description: description, keywords: keywords, reverse: true)
 
-.ann_container.row
-  .ann_wrapper.large-6.small-12.column.align-self-middle.large-offset-3
-    .ann_logo.text-center
+.a-container.row
+  .a-wrapper.large-6.small-12.column.align-self-middle.large-offset-3
+    .a-logo.text-center
       = link_to root_path do
         = image_tag "navbar/logo-120x120.png", size: "60x60", alt: "Annict"
-    .ann-card
+    .card
       h1.text-center アクセス許可
       p = "「#{@pre_auth.client.name}」からのアクセスを許可しますか？"
       

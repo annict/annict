@@ -1,17 +1,3 @@
-@charset "utf-8";
-
-@import url("https://fonts.googleapis.com/earlyaccess/notosansjp.css");
-
-@import "base/variables";
-@import "base/foundation_settings";
-@import "foundation";
-
-// If you"d like to include motion-ui the foundation-rails gem comes prepackaged with it, uncomment the 3 @imports, if you are not using the gem you need to install the motion-ui sass package.
-//
-// @import "motion-ui/motion-ui";
-
-// We include everything by default.  To slim your CSS, remove components you don"t use.
-
 @include foundation-global-styles;
 @include foundation-typography;
 @include foundation-button;
@@ -49,14 +35,3 @@
 @include foundation-title-bar;
 @include foundation-tooltip;
 @include foundation-top-bar;
-
-// If you"d like to include motion-ui the foundation-rails gem comes prepackaged with it, uncomment the 3 @imports, if you are not using the gem you need to install the motion-ui sass package.
-//
-// @include motion-ui-transitions;
-// @include motion-ui-animations;
-
-@import "base/base";
-@import "base/mixins/**/*";
-@import "base/pages/**/*";
-
-@include ann-card;

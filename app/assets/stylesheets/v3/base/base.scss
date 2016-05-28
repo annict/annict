@@ -1,73 +1,15 @@
-html {
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-rendering: optimizeLegibility;
-}
+@import url("https://fonts.googleapis.com/earlyaccess/notosansjp.css");
 
-dl {
-  dd {
-    margin-bottom: 0.5rem;
-  }
-}
+@import "./variables/annict";
+@import "./variables/foundation";
 
-[type='text'],
-[type='password'],
-[type='date'],
-[type='datetime'],
-[type='datetime-local'],
-[type='month'],
-[type='week'],
-[type='email'],
-[type='number'],
-[type='search'],
-[type='tel'],
-[type='time'],
-[type='url'],
-[type='color'],
-textarea {
-  box-shadow: none;
+@import "bourbon";
+@import "font-awesome-sprockets";
+@import "font-awesome";
 
-  &:focus {
-    box-shadow: none;
-  }
-}
+@import "foundation";
 
-textarea,
-select,
-input[type="text"],
-button {
-  outline: none;
-}
-
-textarea,
-input[type="text"] {
-  -webkit-appearance: none;
-}
-
-code {
-  background-color: $color-gallery;
-}
-
-.button {
-  &.ann-twitter {
-    background-color: $color-twitter;
-
-    &:hover,
-    &:focus {
-      background-color: scale-color($color-twitter, $lightness: -15%);
-    }
-  }
-
-  &.ann-facebook {
-    background-color: $color-facebook;
-
-    &:hover,
-    &:focus {
-      background-color: scale-color($color-facebook, $lightness: -15%);
-    }
-  }
-}
-
-[v-cloak] {
-  display: none;
-}
+@import "./mixins/**/*";
+@import "./overwrites/**/*";
+@import "./components/**/*";
+@import "./pages/**/*";

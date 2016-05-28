@@ -10,5 +10,5 @@
 /node_modules
 /public/paperclip
 /public/sitemap*
-/tmp
 /spec/test_files/paperclip
+/tmp
