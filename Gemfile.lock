@@ -134,7 +134,7 @@ GEM
       uniform_notifier (~> 1.10.0)
     by_star (2.2.1)
       activesupport
-    byebug (9.0.4)
+    byebug (9.0.5)
     capybara (2.7.1)
       addressable
       mime-types (>= 1.16)
@@ -586,6 +586,7 @@ GEM
       rspec-core (~> 2.99.0)
       rspec-expectations (~> 2.99.0)
       rspec-mocks (~> 2.99.0)
+    rspec-support (3.4.1)
     rubocop (0.40.0)
       parser (>= 2.3.1.0, < 3.0)
       powerpack (~> 0.1)
