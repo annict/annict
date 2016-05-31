@@ -1,13 +1,4 @@
 GIT
-  remote: git://github.com/amatsuda/kaminari.git
-  revision: 8a14d33aa15161d7e1bee41970ced10f57e7f1e4
-  branch: 0-17-stable
-  specs:
-    kaminari (0.17.0)
-      actionpack (>= 3.0.0)
-      activesupport (>= 3.0.0)
-
-GIT
   remote: git://github.com/audionerd/draper.git
   revision: e816e0e5876b76c648c0928f1c3f2aa2c7a3d1f2
   branch: rails5
@@ -385,6 +376,9 @@ GEM
     json (1.8.3)
     json_pure (1.8.3)
     jwt (1.5.1)
+    kaminari (0.17.0)
+      actionpack (>= 3.0.0)
+      activesupport (>= 3.0.0)
     keen (0.9.5)
       addressable (~> 2.3.5)
       multi_json (~> 1.3)
@@ -586,7 +580,6 @@ GEM
       rspec-core (~> 2.99.0)
       rspec-expectations (~> 2.99.0)
       rspec-mocks (~> 2.99.0)
-    rspec-support (3.4.1)
     rubocop (0.40.0)
       parser (>= 2.3.1.0, < 3.0)
       powerpack (~> 0.1)
@@ -731,7 +724,7 @@ DEPENDENCIES
   imgix-rails
   jbuilder
   jquery-rails
-  kaminari!
+  kaminari
   keen
   koala
   letter_opener_web
