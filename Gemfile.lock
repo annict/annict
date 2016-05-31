@@ -1,13 +1,4 @@
 GIT
-  remote: git://github.com/amatsuda/kaminari.git
-  revision: 39f5ce887040ad0940032473c3f09828ae849f2b
-  branch: 0-17-stable
-  specs:
-    kaminari (0.17.0.alpha)
-      actionpack (>= 3.0.0)
-      activesupport (>= 3.0.0)
-
-GIT
   remote: git://github.com/audionerd/draper.git
   revision: e816e0e5876b76c648c0928f1c3f2aa2c7a3d1f2
   branch: rails5
@@ -134,7 +125,7 @@ GEM
       uniform_notifier (~> 1.10.0)
     by_star (2.2.1)
       activesupport
-    byebug (9.0.4)
+    byebug (9.0.5)
     capybara (2.7.1)
       addressable
       mime-types (>= 1.16)
@@ -373,7 +364,7 @@ GEM
       imgix (~> 1.1, >= 1.1.0)
     inflecto (0.0.2)
     ipaddress (0.8.3)
-    jbuilder (2.4.1)
+    jbuilder (2.5.0)
       activesupport (>= 3.0.0, < 5.1)
       multi_json (~> 1.2)
     jmespath (1.2.4)
@@ -385,6 +376,9 @@ GEM
     json (1.8.3)
     json_pure (1.8.3)
     jwt (1.5.1)
+    kaminari (0.17.0)
+      actionpack (>= 3.0.0)
+      activesupport (>= 3.0.0)
     keen (0.9.5)
       addressable (~> 2.3.5)
       multi_json (~> 1.3)
@@ -730,7 +724,7 @@ DEPENDENCIES
   imgix-rails
   jbuilder
   jquery-rails
-  kaminari!
+  kaminari
   keen
   koala
   letter_opener_web
