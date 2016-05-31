@@ -155,12 +155,6 @@ Rails.application.routes.draw do
     root "home#index"
   end
 
-  resource :search, only: [:show]
-  resource :inbox, only: [:show]
-
-  resources :organizations, only: [:show]
-  resources :people, only: [:show]
-
   resources :settings, only: [:index]
   scope :settings do
     resource :account, only: [:show, :update]
@@ -191,8 +185,12 @@ Rails.application.routes.draw do
   end
 
   resource :confirmation, only: [:show]
+  resource :search, only: [:show]
   resources :friends, only: [:index]
   resources :notifications, only: [:index]
+  resources :organizations, only: [:show]
+  resources :people, only: [:show]
+  resources :programs, only: [:index]
 
   get "@:username", to: "users#show", username: /[A-Za-z0-9_]+/, as: :user
   get "@:username/:status_kind",
