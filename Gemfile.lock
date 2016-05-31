@@ -1,9 +1,9 @@
 GIT
   remote: git://github.com/amatsuda/kaminari.git
-  revision: 33a43d6e0488bbf933affbd335e6b736d785589a
+  revision: 8a14d33aa15161d7e1bee41970ced10f57e7f1e4
   branch: 0-17-stable
   specs:
-    kaminari (0.17.0.alpha)
+    kaminari (0.17.0)
       actionpack (>= 3.0.0)
       activesupport (>= 3.0.0)
 
@@ -373,7 +373,7 @@ GEM
       imgix (~> 1.1, >= 1.1.0)
     inflecto (0.0.2)
     ipaddress (0.8.3)
-    jbuilder (2.4.1)
+    jbuilder (2.5.0)
       activesupport (>= 3.0.0, < 5.1)
       multi_json (~> 1.2)
     jmespath (1.2.4)
