@@ -21,10 +21,3 @@ json.programs @programs do |program|
     json.image_url annict_image_url(program.work.item, :tombo_image, size: "70x70")
   end
 end
-
-json.user do
-  json.authorized_to_twitter current_user.authorized_to?(:twitter)
-  json.authorized_to_facebook current_user.authorized_to?(:facebook)
-  json.share_record_to_twitter current_user.setting.share_record_to_twitter?
-  json.share_record_to_facebook current_user.setting.share_record_to_facebook?
-end

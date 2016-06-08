@@ -23,9 +23,7 @@
 #
 
 class ProgramsController < ApplicationController
-  before_action :authenticate_user!
+  layout "v3/application"
 
-  def index
-    render :index, layout: "v1/application"
-  end
+  before_action :authenticate_user!
 end

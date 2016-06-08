@@ -31,4 +31,8 @@ class Program < ActiveRecord::Base
 
   scope :episode_published, -> { joins(:episode).merge(Episode.published) }
   scope :work_published, -> { joins(:work).merge(Work.published) }
+
+  def broadcasted?(time = Time.now.in_time_zone("Asia/Tokyo"))
+    time > started_at.in_time_zone("Asia/Tokyo")
+  end
 end

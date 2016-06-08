@@ -1,16 +1,14 @@
-- content_for :site_page_title, "#{t('words.site_name_kana')} - #{t('words.program')}"
+- title = "放送予定"
+- description = meta_description
+- keywords = meta_keywords
+- set_meta_tags title: title, description: description, keywords: keywords, reverse: true
 
 = render "application/v2/navbar"
 
-.content
-  .container
-    .programs ng-controller='ProgramsCtrl' ann-loading='loading' ng-style="{'display': 'block'}"
-      div infinite-scroll='addMorePrograms()' infinite-scroll-disabled='disabled' infinite-scroll-distance='2'
-        .program ng-repeat='program in programs' ng-show='0 < programs.length'
-          = render 'programs/program'
-          hr
-      .info.well ng-show='0 === programs.length'
-        .icon
-          i.fa.fa-info-circle
-        p = t('programs.no_program')
-        p = t('programs.please_set_channel_html', channels_link: link_to(t('programs.channel_list'), channels_path))
+.a-content.row.align-center
+  .card.column.small-6
+    ann-programs
+
+- content_for :parts do
+  = render "application/v3/components/programs"
+  = render "application/v2/components/record_rating"

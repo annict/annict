@@ -30,6 +30,7 @@ Rails.application.routes.draw do
       resources :organizations, only: [:index]
       resources :people, only: [:index]
       resources :receptions, only: [:create, :destroy]
+      resources :records, only: [:create]
 
       resources :comments, only: [] do
         delete :like, to: "likes#comment_destroy"
