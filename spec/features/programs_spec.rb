@@ -16,6 +16,6 @@ describe "放送予定ページ" do
   end
 
   it "登録しているチャンネルで放送されるエピソードが表示されること", js: true do
-    expect(find(".container .programs")).to have_content(episode.title)
+    expect(find(".a-content .a-programs")).to have_content(episode.title)
   end
 end
