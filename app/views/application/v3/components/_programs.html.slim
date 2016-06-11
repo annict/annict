@@ -41,8 +41,9 @@ script#ann-programs type="x-template"
                               input type="checkbox" v-model="user.share_record_to_facebook"
                               = icon "facebook"
                       .shrink.columns
-                        button.button type="button" @click="submit(program)"
-                          = icon "check"
+                        button.button type="button" @click="submit(program)" :class="{ disabled: program.record.isSaving || program.record.isRecorded }"
+                          i.fa.fa-check v-if="!program.record.isSaving"
+                          i.fa.fa-spinner.fa-spin v-if="program.record.isSaving"
               hr
     template v-if="!isLoading && programs.length === 0"
       .icon

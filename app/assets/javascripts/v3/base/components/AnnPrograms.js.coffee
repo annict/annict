@@ -23,6 +23,8 @@ module.exports = Vue.extend
           commentRows: 1
           comment: null
           isCommentEditing: false
+          isRecorded: false
+          isSaving: false
           rating: 0
 
     loadMore: ->
@@ -54,6 +56,10 @@ module.exports = Vue.extend
       program.record.commentRows += 1 if linesCount > 10
 
     submit: (program) ->
+      return if program.record.isSaving || program.record.isRecorded
+
+      program.record.isSaving = true
+
       $.ajax
         method: "POST"
         url: "/api/internal/records"
@@ -65,7 +71,12 @@ module.exports = Vue.extend
             shared_facebook: @user.share_record_to_facebook
             rating: program.record.rating
       .done (data) =>
-        console.log 'data: ', data
+        program.record.isSaving = false
+        program.record.isRecorded = true
+        @$dispatch("AnnFlash:show", "記録しました")
+      .fail (data) =>
+        program.record.isSaving = false
+        @$dispatch("AnnFlash:show", data.responseJSON.message, "danger")
 
   ready: ->
     $.ajax

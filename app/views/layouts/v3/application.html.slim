@@ -3,6 +3,7 @@ html lang="ja"
   head
     = render "application/v3/head"
   body#ann class="#{body_class} #{user_signed_in? ? 'user' : 'guest'}"
+    = render "application/v3/flash"
     = yield
     = yield :parts
 

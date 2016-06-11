@@ -1,0 +1,29 @@
+.ann-flash {
+  border-radius: 0;
+  border: none;
+  cursor: pointer;
+  height: 60px;
+  line-height: 60px;
+  padding: 0 1rem;
+  position: fixed;
+  top: 0;
+  width: 100%;
+  z-index: 1000;
+
+  &.ann-flash--expand-transition {
+    top: 0;
+    transition: all 0.8s linear;
+  }
+
+  &.ann-flash--expand-enter,
+  &.ann-flash--expand-leave {
+    top: -500px;
+  }
+
+  i {
+    font-size: 30px;
+    margin-right: 7px;
+    position: relative;
+    top: 5px;
+  }
+}

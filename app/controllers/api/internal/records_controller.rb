@@ -8,7 +8,6 @@ module Api
       before_action :authenticate_user!
 
       def create(record)
-        binding.pry
         episode = Episode.published.find(record[:episode_id])
         record = episode.checkins.new do |c|
           c.comment = record[:comment]
@@ -22,6 +21,7 @@ module Api
           render status: 201, nothing: true
         else
           @record = service.record
+          render status: 400, json: { message: @record.errors.full_messages.first }
         end
       end
     end

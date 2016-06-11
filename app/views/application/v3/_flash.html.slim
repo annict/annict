@@ -1,0 +1,7 @@
+ann-flash
+
+script#ann-flash type="x-template"
+  .ann-flash.callout v-on:click="close" v-show="show" transition="ann-flash--expand" :class="alertClass"
+    i.fa :class="alertIcon"
+    span
+      | {{{ message }}}
