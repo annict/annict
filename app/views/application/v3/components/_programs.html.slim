@@ -1,11 +1,11 @@
 script#ann-programs type="x-template"
   .a-content
     .row.align-center
-      .a-sort-selector.column.small-6.text-right
+      .a-sort-selector.column.small-12.medium-8.text-right
         select v-model="sort" @change="reload"
           option v-for="type in sortTypes" value="{{ type[1] }}" {{ type[0] }}
     .row.align-center
-      .card.column.small-6
+      .card.column.small-12.medium-8
         .a-programs
           template v-if="programs.length > 0"
             div v-infinite-scroll="loadMore()" infinite-scroll-disabled="isDisabled" infinite-scroll-distance="2"
@@ -21,18 +21,20 @@ script#ann-programs type="x-template"
                       span.a-channel-name
                         | {{ program.channel.name }}
                       span.a-rebroadcast v-if="program.rebroadcast" 再
-                    .a-body.row
-                      .a-work-image.columns.shrink
-                        a href="/works/{{ program.work.id }}"
-                          img :src="program.work.image_url" width="60" height="60" alt="{{ program.work.title }}"
-                      .columns
-                        .work-title
+                    .a-body
+                      .a-top.row
+                        .a-work-image.columns.shrink
                           a href="/works/{{ program.work.id }}"
-                            | {{ program.work.title }}
-                        .episode-title
-                          a href="/works/{{ program.work.id }}/episodes/{{ program.episode.id }}"
-                            | {{ program.episode.number }}
-                            span v-if="program.episode.title" 「{{ program.episode.title }}」
+                            img :src="program.work.image_url" width="48" height="48" alt="{{ program.work.title }}"
+                        .columns
+                          .a-work-title
+                            a href="/works/{{ program.work.id }}"
+                              | {{ program.work.title }}
+                          .a-episode-title
+                            a href="/works/{{ program.work.id }}/episodes/{{ program.episode.id }}"
+                              | {{ program.episode.number }}
+                              span v-if="program.episode.title" 「{{ program.episode.title }}」
+                      .a-bottom
                         form.a-record-form
                           .row
                             .a-record-comment.columns

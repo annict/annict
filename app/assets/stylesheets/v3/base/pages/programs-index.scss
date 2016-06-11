@@ -94,56 +94,62 @@ body.programs-index {
           }
 
           .a-body {
-            .a-work-image {
-              padding-right: 0;
-            }
-
-            .episode-title {
-              margin-top: 3px;
-            }
-
-            .a-record-form {
-              margin-top: 7px;
-
-              .a-record-comment {
+            .a-top {
+              .a-work-image {
                 padding-right: 0;
+              }
 
-                .ann-record-rating {
-                  margin-bottom: 7px;
+              .columns {
+                .a-episode-title {
+                  margin-top: 3px;
                 }
+              }
+            }
 
-                textarea {
-                  line-height: 1;
-                  margin: 0;
-                  min-height: 35px;
+            .a-bottom {
+              .a-record-form {
+                margin-top: 7px;
 
-                  &.has-new-line {
-                    line-height: 1.4;
+                .a-record-comment {
+                  padding-right: 0;
+
+                  .ann-record-rating {
+                    margin-bottom: 7px;
                   }
-                }
 
-                .a-share-buttons {
-                  .a-twitter {
-                    margin-right: 7px;
+                  textarea {
+                    line-height: 1;
+                    margin: 0;
+                    min-height: 35px;
 
-                    i {
-                      color: $color-twitter;
+                    &.has-new-line {
+                      line-height: 1.4;
                     }
                   }
 
-                  .a-facebook {
-                    i {
-                      color: $color-facebook;
+                  .a-share-buttons {
+                    .a-twitter {
+                      margin-right: 7px;
+
+                      i {
+                        color: $color-twitter;
+                      }
                     }
-                  }
 
-                  .a-twitter,
-                  .a-facebook {
-                    label {
-                      display: inline;
+                    .a-facebook {
+                      i {
+                        color: $color-facebook;
+                      }
+                    }
 
-                      input {
-                        margin-right: 5px;
+                    .a-twitter,
+                    .a-facebook {
+                      label {
+                        display: inline;
+
+                        input {
+                          margin-right: 5px;
+                        }
                       }
                     }
                   }
