@@ -3,7 +3,12 @@
   @include display(flex);
   @include justify-content(space-between);
   background-color: $color-mine-shaft;
+  box-shadow: 0 1px 1px rgba(0, 0, 0, 0.2);
   height: 48px;
+  position: fixed;
+  top: 0;
+  width: 100%;
+  z-index: 100;
 
   .a-left {
     @include display(flex);
@@ -66,7 +71,7 @@
       left: auto !important;
       margin-bottom: 0;
       padding: 0;
-      right: 0!important;
+      right: 0 !important;
       top: 48px !important;
       width: 175px;
 
