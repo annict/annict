@@ -26,4 +26,12 @@ class ProgramsController < ApplicationController
   layout "v3/application"
 
   before_action :authenticate_user!
+
+  def index
+    data = {
+      programsSortTypes: Setting.programs_sort_type.options,
+      currentProgramsSortType: current_user.setting.programs_sort_type
+    }
+    gon.push(data)
+  end
 end

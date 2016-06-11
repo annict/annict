@@ -2,6 +2,20 @@ body.programs-index {
   .a-content {
     margin-top: 60px;
 
+    .a-sort-selector {
+      margin: 14px 0;
+      padding-right: 0;
+
+      select {
+        color: $color-gunsmoke;
+        font-size: 12px;
+        height: 30px;
+        margin: 0;
+        padding: 5px;
+        width: 150px;
+      }
+    }
+
     .a-programs {
       .a-program-container {
         &:first-child {

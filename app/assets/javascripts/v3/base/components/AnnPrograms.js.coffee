@@ -10,11 +10,14 @@ module.exports = Vue.extend
     programs: []
     user: null
     page: 1
+    sort: gon.currentProgramsSortType
+    sortTypes: gon.programsSortTypes
 
   methods:
     requestData: ->
       data =
         page: @page
+        sort: @sort
       data
 
     initPrograms: (programs) ->
@@ -44,6 +47,10 @@ module.exports = Vue.extend
           @programs.push.apply(@programs, @initPrograms(data.programs))
         else
           @isDisabled = true
+
+    reload: ->
+      @_updateProgramsSortType ->
+        location.href = "/programs"
 
     expandOnClick: (program) ->
       return if program.record.commentRows != 1
@@ -78,12 +85,23 @@ module.exports = Vue.extend
         program.record.isSaving = false
         @$dispatch("AnnFlash:show", data.responseJSON.message, "danger")
 
+    _load: ->
+      $.ajax
+        method: "GET"
+        url: "/api/internal/user/programs"
+        data: @requestData()
+      .done (data) =>
+        @isLoading = false
+        @programs = @initPrograms(data.programs)
+        @user = data.user
+
+    _updateProgramsSortType: (callback) ->
+      $.ajax
+        method: "PATCH"
+        url: "/api/internal/programs_sort_type"
+        data:
+          programs_sort_type: @sort
+      .done callback
+
   ready: ->
-    $.ajax
-      method: "GET"
-      url: "/api/internal/user/programs"
-      data: @requestData()
-    .done (data) =>
-      @isLoading = false
-      @programs = @initPrograms(data.programs)
-      @user = data.user
+    @_load()

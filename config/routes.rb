@@ -25,6 +25,7 @@ Rails.application.routes.draw do
 
   namespace :api do
     namespace :internal do
+      resource :programs_sort_type, only: [:update]
       resource :search, only: [:show]
       resources :activities, only: [:index]
       resources :organizations, only: [:index]

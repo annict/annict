@@ -1,54 +1,61 @@
 script#ann-programs type="x-template"
-  .a-programs
-    template v-if="programs.length > 0"
-      div v-infinite-scroll="loadMore()" infinite-scroll-disabled="isDisabled" infinite-scroll-distance="2"
-        template v-for="program in programs"
-          .a-program-container.row :class="{ unbroadcasted: !program.broadcasted }"
-            .a-progress.columns.shrink
-              .a-line
-                .a-point
-            .a-program.columns
-              .a-header
-                span.a-started-at
-                  | {{ program.started_at }}
-                span.a-channel-name
-                  | {{ program.channel.name }}
-                span.a-rebroadcast v-if="program.rebroadcast" 再
-              .a-body.row
-                .a-work-image.columns.shrink
-                  a href="/works/{{ program.work.id }}"
-                    img :src="program.work.image_url" width="60" height="60" alt="{{ program.work.title }}"
-                .columns
-                  .work-title
-                    a href="/works/{{ program.work.id }}"
-                      | {{ program.work.title }}
-                  .episode-title
-                    a href="/works/{{ program.work.id }}/episodes/{{ program.episode.id }}"
-                      | {{ program.episode.number }}
-                      span v-if="program.episode.title" 「{{ program.episode.title }}」
-                  form.a-record-form
-                    .row
-                      .a-record-comment.columns
-                        ann-record-rating :rating.sync="program.record.rating" v-if="program.record.isCommentEditing"
-                        textarea rows="{{ program.record.commentRows }}" v-model="program.record.comment" @click="expandOnClick(program)" @keyup.enter="expandOnEnter(program)"
-                        .a-share-buttons v-if="program.record.isCommentEditing"
-                          span.a-twitter v-if="user.authorized_to_twitter"
-                            label
-                              input type="checkbox" v-model="user.share_record_to_twitter"
-                              = icon "twitter"
-                          span.a-facebook v-if="user.authorized_to_facebook"
-                            label
-                              input type="checkbox" v-model="user.share_record_to_facebook"
-                              = icon "facebook"
-                      .shrink.columns
-                        button.button type="button" @click="submit(program)" :class="{ disabled: program.record.isSaving || program.record.isRecorded }"
-                          i.fa.fa-check v-if="!program.record.isSaving"
-                          i.fa.fa-spinner.fa-spin v-if="program.record.isSaving"
-              hr
-    template v-if="!isLoading && programs.length === 0"
-      .icon
-        i.fa.fa-info-circle
-      p = t('programs.no_program')
-      p = t('programs.please_set_channel_html', channels_link: link_to(t('programs.channel_list'), channels_path))
-    .ann-loading v-show="isLoading"
-      .core Loading...
+  .a-content
+    .row.align-center
+      .a-sort-selector.column.small-6.text-right
+        select v-model="sort" @change="reload"
+          option v-for="type in sortTypes" value="{{ type[1] }}" {{ type[0] }}
+    .row.align-center
+      .card.column.small-6
+        .a-programs
+          template v-if="programs.length > 0"
+            div v-infinite-scroll="loadMore()" infinite-scroll-disabled="isDisabled" infinite-scroll-distance="2"
+              template v-for="program in programs"
+                .a-program-container.row :class="{ unbroadcasted: !program.broadcasted }"
+                  .a-progress.columns.shrink
+                    .a-line
+                      .a-point
+                  .a-program.columns
+                    .a-header
+                      span.a-started-at
+                        | {{ program.started_at }}
+                      span.a-channel-name
+                        | {{ program.channel.name }}
+                      span.a-rebroadcast v-if="program.rebroadcast" 再
+                    .a-body.row
+                      .a-work-image.columns.shrink
+                        a href="/works/{{ program.work.id }}"
+                          img :src="program.work.image_url" width="60" height="60" alt="{{ program.work.title }}"
+                      .columns
+                        .work-title
+                          a href="/works/{{ program.work.id }}"
+                            | {{ program.work.title }}
+                        .episode-title
+                          a href="/works/{{ program.work.id }}/episodes/{{ program.episode.id }}"
+                            | {{ program.episode.number }}
+                            span v-if="program.episode.title" 「{{ program.episode.title }}」
+                        form.a-record-form
+                          .row
+                            .a-record-comment.columns
+                              ann-record-rating :rating.sync="program.record.rating" v-if="program.record.isCommentEditing"
+                              textarea rows="{{ program.record.commentRows }}" v-model="program.record.comment" @click="expandOnClick(program)" @keyup.enter="expandOnEnter(program)"
+                              .a-share-buttons v-if="program.record.isCommentEditing"
+                                span.a-twitter v-if="user.authorized_to_twitter"
+                                  label
+                                    input type="checkbox" v-model="user.share_record_to_twitter"
+                                    = icon "twitter"
+                                span.a-facebook v-if="user.authorized_to_facebook"
+                                  label
+                                    input type="checkbox" v-model="user.share_record_to_facebook"
+                                    = icon "facebook"
+                            .shrink.columns
+                              button.button type="button" @click="submit(program)" :class="{ disabled: program.record.isSaving || program.record.isRecorded }"
+                                i.fa.fa-check v-if="!program.record.isSaving"
+                                i.fa.fa-spinner.fa-spin v-if="program.record.isSaving"
+                    hr
+          template v-if="!isLoading && programs.length === 0"
+            .icon
+              i.fa.fa-info-circle
+            p = t('programs.no_program')
+            p = t('programs.please_set_channel_html', channels_link: link_to(t('programs.channel_list'), channels_path))
+          .ann-loading v-show="isLoading"
+            .core Loading...
