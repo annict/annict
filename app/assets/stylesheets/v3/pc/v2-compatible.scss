@@ -35,3 +35,22 @@
     }
   }
 }
+
+.ann-search-form {
+  input {
+    border-radius: 0;
+    font-size: $global-font-size;
+    height: 32px;
+
+    &:focus {
+      background-color: rgba(0, 0, 0, 0.1);
+      border: 1px solid $color-alto;
+      border-color: rgba(255, 255, 255, 0.15);
+      border-right-width: 0;
+    }
+  }
+
+  button {
+    border-radius: 0;
+  }
+}

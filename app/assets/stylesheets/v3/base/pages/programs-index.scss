@@ -1,0 +1,164 @@
+body.programs-index {
+  .a-content {
+    margin-top: 60px;
+
+    .a-sort-selector {
+      margin: 14px 0;
+      padding-right: 0;
+
+      select {
+        color: $color-gunsmoke;
+        font-size: 12px;
+        height: 30px;
+        margin: 0;
+        padding: 5px;
+        width: 150px;
+      }
+    }
+
+    .a-programs {
+      .a-program-container {
+        &:first-child {
+          .a-progress {
+            .a-line {
+              .a-point {
+                top: 18px;
+              }
+            }
+          }
+
+          .a-program {
+            padding-top: 14px;
+          }
+        }
+
+        &.unbroadcasted {
+          .a-progress {
+            .a-line {
+              border-left: solid 1px lighten($color-pelorous, 35%);
+
+              .a-point {
+                background-color: lighten($color-pelorous, 35%);
+              }
+            }
+          }
+        }
+
+        .a-progress {
+          padding-left: 28px;
+          padding-right: 15px;
+          position: relative;
+
+          .a-line {
+            border-left: solid 1px $color-pelorous;
+            height: 100%;
+            position: absolute;
+            width: 1px;
+
+            .a-point {
+              background-color: $color-pelorous;
+              border-radius: 10px;
+              height: 10px;
+              left: -6px;
+              position: absolute;
+              top: 4px;
+              width: 10px;
+            }
+          }
+        }
+
+        .a-program {
+          padding-left: 14px;
+
+          .a-header {
+            font-size: 0.9rem;
+            margin-bottom: 7px;
+
+            .a-started-at {
+              color: $color-pelorous;
+              margin-right: 7px;
+            }
+
+            .a-channel-name,
+            .a-rebroadcast {
+              border: 1px solid lighten($color-gunsmoke, 20%);
+              border-radius: 2px;
+              color: $color-gunsmoke;
+              font-size: 0.7rem;
+              padding: 1px 3px;
+            }
+
+            .a-channel-name {
+              margin-right: 3px;
+            }
+          }
+
+          .a-body {
+            .a-top {
+              .a-work-image {
+                padding-right: 0;
+              }
+
+              .columns {
+                .a-episode-title {
+                  margin-top: 3px;
+                }
+              }
+            }
+
+            .a-bottom {
+              .a-record-form {
+                margin-top: 7px;
+
+                .a-record-comment {
+                  padding-right: 0;
+
+                  .ann-record-rating {
+                    margin-bottom: 7px;
+                  }
+
+                  textarea {
+                    line-height: 1;
+                    margin: 0;
+                    min-height: 35px;
+
+                    &.has-new-line {
+                      line-height: 1.4;
+                    }
+                  }
+
+                  .a-share-buttons {
+                    .a-twitter {
+                      margin-right: 7px;
+
+                      i {
+                        color: $color-twitter;
+                      }
+                    }
+
+                    .a-facebook {
+                      i {
+                        color: $color-facebook;
+                      }
+                    }
+
+                    .a-twitter,
+                    .a-facebook {
+                      label {
+                        display: inline;
+
+                        input {
+                          margin-right: 5px;
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
