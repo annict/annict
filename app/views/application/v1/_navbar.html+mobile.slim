@@ -6,9 +6,9 @@ nav.navbar.navbar-default.navbar-fixed-top
     .shortcuts
       - if user_signed_in?
         = link_to programs_path, class: "#{programs_page? ? 'active' : ''}", target: '_self' do
-          = icon 'calendar'
+          = icon "calendar"
           .caption
-            = t('titles.program')
+            | 放送予定
         = link_to user_works_path(current_user.username, :watching), class: "#{user_works_page? ? 'active' : ''}", target: '_self' do
           = icon 'play'
           .caption

@@ -25,11 +25,13 @@ Rails.application.routes.draw do
 
   namespace :api do
     namespace :internal do
+      resource :programs_sort_type, only: [:update]
       resource :search, only: [:show]
       resources :activities, only: [:index]
       resources :organizations, only: [:index]
       resources :people, only: [:index]
       resources :receptions, only: [:create, :destroy]
+      resources :records, only: [:create]
 
       resources :comments, only: [] do
         delete :like, to: "likes#comment_destroy"
@@ -155,11 +157,6 @@ Rails.application.routes.draw do
     root "home#index"
   end
 
-  resource :search, only: [:show]
-
-  resources :organizations, only: [:show]
-  resources :people, only: [:show]
-
   resources :settings, only: [:index]
   scope :settings do
     resource :account, only: [:show, :update]
@@ -190,8 +187,11 @@ Rails.application.routes.draw do
   end
 
   resource :confirmation, only: [:show]
+  resource :search, only: [:show]
   resources :friends, only: [:index]
   resources :notifications, only: [:index]
+  resources :organizations, only: [:show]
+  resources :people, only: [:show]
   resources :programs, only: [:index]
 
   get "@:username", to: "users#show", username: /[A-Za-z0-9_]+/, as: :user

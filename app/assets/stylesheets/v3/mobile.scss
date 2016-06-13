@@ -5,3 +5,9 @@
 @charset "utf-8";
 
 @import "base/base";
+
+@import "../v2/base/mixins/*";
+@import "../v2/base/components/ann-loading";
+@import "../v2/base/components/ann-record-rating";
+
+@import "mobile/components/**/*";

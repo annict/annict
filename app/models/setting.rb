@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 # == Schema Information
 #
 # Table name: settings
@@ -9,6 +10,7 @@
 #  updated_at               :datetime         not null
 #  share_record_to_twitter  :boolean          default(FALSE)
 #  share_record_to_facebook :boolean          default(FALSE)
+#  programs_sort            :string           default(""), not null
 #
 # Indexes
 #
@@ -16,5 +18,11 @@
 #
 
 class Setting < ActiveRecord::Base
+  extend Enumerize
+
   belongs_to :user
+
+  enumerize :programs_sort_type,
+    in: %i(started_at_asc started_at_desc),
+    default: :started_at_desc
 end
