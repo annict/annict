@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 describe "放送予定ページ" do
   let!(:status_tip) { create(:status_tip) }
   let(:user) { create(:registered_user) }
