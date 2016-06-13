@@ -1,4 +1,5 @@
-= content_for :site_page_title, "「#{@work.title}」のエピソード"
+- title = "「#{@work.title}」のエピソード"
+- set_meta_tags title: title, reverse: true
 
 = render "db/works/header", work: @work
 
