@@ -25,6 +25,6 @@ end
 json.user do
   json.authorized_to_twitter current_user.authorized_to?(:twitter)
   json.authorized_to_facebook current_user.authorized_to?(:facebook)
-  json.share_record_to_twitter current_user.setting.share_record_to_twitter?
-  json.share_record_to_facebook current_user.setting.share_record_to_facebook?
+  json.share_record_to_twitter current_user.setting&.share_record_to_twitter?
+  json.share_record_to_facebook current_user.setting&.share_record_to_facebook?
 end
