@@ -91,9 +91,8 @@ group :development, :test do
   gem "pry-coolline"
   gem "pry-rails"
   gem "rails-flog", require: "flog"
-  gem "rspec-mocks"
   gem "rspec-rails"
-  gem "rspec-support"
+  gem "rspec-mocks"
 end
 
 group :development do

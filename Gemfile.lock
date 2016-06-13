@@ -412,7 +412,7 @@ GEM
     mime-types-data (3.2016.0521)
     mimemagic (0.3.0)
     mini_magick (4.5.1)
-    mini_portile2 (2.1.0)
+    mini_portile2 (2.0.0)
     minitest (5.9.0)
     multi_json (1.12.1)
     multi_xml (0.5.5)
@@ -423,9 +423,8 @@ GEM
       execjs
       rails (>= 3.1)
     nio4r (1.2.1)
-    nokogiri (1.6.8)
-      mini_portile2 (~> 2.1.0)
-      pkg-config (~> 1.1.7)
+    nokogiri (1.6.7.2)
+      mini_portile2 (~> 2.0.0.rc2)
     oauth (0.5.1)
     oauth2 (1.1.0)
       faraday (>= 0.8, < 0.10)
@@ -461,7 +460,6 @@ GEM
     parser (2.3.1.1)
       ast (~> 2.2)
     pg (0.18.4)
-    pkg-config (1.1.7)
     poltergeist (1.9.0)
       capybara (~> 2.1)
       cliver (~> 0.3.1)
@@ -532,7 +530,7 @@ GEM
       rake (>= 0.8.7)
       thor (>= 0.18.1, < 2.0)
     rainbow (2.1.0)
-    rake (11.2.2)
+    rake (11.1.2)
     ransack (1.7.0)
       actionpack (>= 3.0)
       activerecord (>= 3.0)
@@ -582,7 +580,6 @@ GEM
       rspec-core (~> 2.99.0)
       rspec-expectations (~> 2.99.0)
       rspec-mocks (~> 2.99.0)
-    rspec-support (3.4.1)
     rubocop (0.40.0)
       parser (>= 2.3.1.0, < 3.0)
       powerpack (~> 0.1)
@@ -763,7 +760,6 @@ DEPENDENCIES
   rmagick
   rspec-mocks
   rspec-rails
-  rspec-support
   rubocop
   ruby_identicon
   sass-rails
