@@ -2,7 +2,7 @@
 
 describe "放送予定ページ" do
   let!(:status_tip) { create(:status_tip) }
-  let(:user) { create(:registered_user, :with_setting) }
+  let(:user) { create(:registered_user) }
   let(:work) { create(:work, :with_item) }
   let(:episode) { create(:episode, work: work) }
   let(:channel) { create(:channel) }
