@@ -50,7 +50,7 @@ gem "meta-tags"
 gem "mini_magick"
 gem "net-ssh" # fog を使用している asset_sync で使用
 gem "ngannotate-rails"
-gem "nokogiri"
+gem "nokogiri", ">= 1.6.8"
 gem "omniauth-facebook"
 # 1.4系だとFacebookのOAuth周りでおかしくなるので1.3系を使う
 # https://github.com/intridea/omniauth-oauth2/issues/81
