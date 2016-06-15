@@ -1,6 +1,10 @@
 .ann-navbar {
   .dropdown {
     line-height: 60px;
+
+    > .menu {
+      top: 38px;
+    }
   }
 }
 
