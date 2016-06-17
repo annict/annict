@@ -61,6 +61,7 @@ gem "paperclip"
 gem "pg"
 gem "puma"
 gem "pundit"
+gem "rack-cors", require: "rack/cors"
 gem "rack-rewrite"
 gem "rails_autolink"
 gem "rails-html-sanitizer"
@@ -72,7 +73,6 @@ gem "redis-rails", "~> 5.0.0.pre"
 # Rails 5で redis-rails を動かすために必要
 # https://github.com/redis-store/redis-rails/issues/30
 gem "redis-actionpack", "~> 5.0.0.pre"
-gem "rack-cors", require: "rack/cors"
 gem "rmagick"
 gem "sass-rails"
 gem "sinatra", require: nil
