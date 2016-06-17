@@ -43,7 +43,7 @@ class EpisodesController < ApplicationController
       @record.setup_shared_sns(current_user)
     end
 
-    render layout: "v1/application"
+    render layout: "v3/application"
   end
 
   private
