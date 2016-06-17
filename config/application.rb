@@ -73,7 +73,7 @@ module Annict
       EXPOSED_HEADERS = %w(ETag).freeze
       allow do
         origins "*"
-        resource "/v1/*", headers: :any, methods: ALLOWED_METHODS, expose: EXPOSED_HEADERS
+        resource "*", headers: :any, methods: ALLOWED_METHODS, expose: EXPOSED_HEADERS
       end
     end
 
