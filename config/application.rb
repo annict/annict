@@ -68,6 +68,15 @@ module Annict
       # rubocop:enable Metrics/LineLength
     end
 
+    config.middleware.insert_before(0, Rack::Cors) do
+      ALLOWED_METHODS = %i(get post patch delete options).freeze
+      EXPOSED_HEADERS = %w(ETag).freeze
+      allow do
+        origins "*"
+        resource "*", headers: :any, methods: ALLOWED_METHODS, expose: EXPOSED_HEADERS
+      end
+    end
+
     unless Rails.env.test?
       config.cache_store = :redis_store,
         "#{ENV.fetch('REDIS_URL')}/0/annict_cache",
