@@ -151,6 +151,7 @@ GEM
       coffee-script-source
       execjs
     coffee-script-source (1.10.0)
+    color (1.8)
     concurrent-ruby (1.0.2)
     coolline (0.5.0)
       unicode_utils (~> 1.4)
@@ -414,6 +415,11 @@ GEM
     mini_magick (4.5.1)
     mini_portile2 (2.1.0)
     minitest (5.9.0)
+    miro (0.4.0)
+      chunky_png
+      cocaine
+      color
+      oily_png
     multi_json (1.12.1)
     multi_xml (0.5.5)
     multipart-post (2.0.0)
@@ -433,6 +439,8 @@ GEM
       multi_json (~> 1.3)
       multi_xml (~> 0.5)
       rack (>= 1.2, < 3)
+    oily_png (1.2.0)
+      chunky_png (~> 1.3.1)
     omniauth (1.3.1)
       hashie (>= 1.2, < 4)
       rack (>= 1.0, < 3)
@@ -448,6 +456,7 @@ GEM
       json (~> 1.3)
       omniauth-oauth (~> 1.1)
     orm_adapter (0.5.0)
+    paleta (0.3.0)
     paper_trail (5.1.1)
       activerecord (>= 3.0, < 6.0)
       activesupport (>= 3.0, < 6.0)
@@ -734,12 +743,14 @@ DEPENDENCIES
   listen
   meta-tags
   mini_magick
+  miro
   net-ssh
   ngannotate-rails
   nokogiri (>= 1.6.8)
   omniauth-facebook
   omniauth-oauth2 (~> 1.3.1)
   omniauth-twitter
+  paleta
   paper_trail
   paperclip
   pg

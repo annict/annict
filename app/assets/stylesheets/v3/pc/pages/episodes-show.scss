@@ -1,5 +1,74 @@
 body.episodes-show {
   .a-content {
     margin-top: 60px;
+
+    .a-header {
+      padding-bottom: 1.07142857rem;
+      padding-top: 1.07142857rem;
+
+      h1 {
+        margin-bottom: 0;
+        margin-top: 90px;
+
+        &.a-is-single {
+          margin-top: 120px;
+
+          .a-work-title {
+            font-size: 1.6rem;
+
+            .a-wrapper {
+              a {
+                color: #fff;
+              }
+            }
+          }
+        }
+
+        .a-work-title {
+          font-size: 1.4rem;
+
+          .a-wrapper {
+            background-color: rgba(0, 0, 0, 0.7);
+            display: inline-block;
+            padding: 3px 5px;
+
+            a {
+              color: $color-gunsmoke;
+
+              &:hover {
+                text-decoration: underline;
+              }
+            }
+          }
+        }
+
+        .a-episode {
+          font-size: 1.6rem;
+
+          .a-wrapper {
+            background-color: rgba(0, 0, 0, 0.7);
+            color: #fff;
+            display: inline-block;
+            padding: 3px 5px;
+
+            .a-number {
+              margin-right: 7px;
+            }
+          }
+        }
+      }
+
+      .a-records-count {
+        background-color: rgba(0, 0, 0, 0.7);
+        color: #fff;
+        display: inline-block;
+        padding: 3px 5px;
+
+        i {
+          color: #64e86f;
+          margin-right: 5px;
+        }
+      }
+    }
   }
 }

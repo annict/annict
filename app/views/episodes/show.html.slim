@@ -9,23 +9,31 @@
 
 = render "application/v2/navbar"
 
-.a-content.row
-  .card.small-10.small-offset-1.column
+.a-content
+  .a-header style="background: -webkit-gradient(linear, left top, right bottom, from(#{@work.item.image_color_light}), to(#{@work.item.image_color_dark})); background: -moz-linear-gradient(left 45deg, #{@work.item.image_color_light}, #{@work.item.image_color_dark});"
     .row
-      .a-header
-        .a-info.medium-8.columns
-          .a-work-title
-            = link_to @work.title, work_path(@work)
-          - unless @episode.single?
-            .a-episode
-              span.a-number
-                = @episode.number
-              - if @episode.title.present?
-                span.a-title
-                  = @episode.title
-        .a-work-image.medium-4.columns
-          = link_to work_path(@work) do
-            = annict_image_tag @work.item, :tombo_image, size: "340x340", alt: @work.title
+      .small-10.small-offset-1.column
+        .row
+          .medium-8.columns
+            h1 class="#{@episode.single? ? 'a-is-single' : ''}"
+              .a-work-title
+                .a-wrapper
+                  = link_to @work.title, work_path(@work)
+              - unless @episode.single?
+                .a-episode
+                  .a-wrapper
+                    span.a-number
+                      = @episode.number
+                    - if @episode.title.present?
+                      span.a-title
+                        = @episode.title
+            - if user_signed_in? && current_user.checkedin?(@episode)
+              .a-records-count
+                = icon "check"
+                = "#{current_user.checkins_count_in(@episode)}回見ました"
+          .a-work-image.medium-4.columns
+            = link_to work_path(@work) do
+              = annict_image_tag @work.item, :tombo_image, size: "340x340", alt: @work.title
 
 / .content
 /   .wrapper
