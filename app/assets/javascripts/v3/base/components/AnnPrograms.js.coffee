@@ -23,7 +23,6 @@ module.exports = Vue.extend
     initPrograms: (programs) ->
       _.each programs, (program) ->
         program.record =
-          commentRows: 1
           comment: null
           isCommentEditing: false
           isRecorded: false
@@ -51,16 +50,6 @@ module.exports = Vue.extend
     reload: ->
       @_updateProgramsSortType ->
         location.href = "/programs"
-
-    expandOnClick: (program) ->
-      return if program.record.commentRows != 1
-      program.record.commentRows = 10
-      program.record.isCommentEditing = true
-
-    expandOnEnter: (program) ->
-      return unless program.record.comment
-      linesCount = program.record.comment.split("\n").length
-      program.record.commentRows += 1 if linesCount > 10
 
     submit: (program) ->
       return if program.record.isSaving || program.record.isRecorded

@@ -10,7 +10,7 @@
       = render('application/v1/welcome_to_annict')
 
     .container
-      = render 'checkins/checkin', record: @record
+      = render 'records/record', record: @record
 
     .container
       - if user_signed_in?

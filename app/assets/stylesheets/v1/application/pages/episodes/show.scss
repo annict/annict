@@ -1,9 +1,0 @@
-body.episodes-show,
-body.checkins-create {
-  padding-top: 60px;
-
-  .content {
-    @include content(narrow);
-    @include card;
-  }
-}

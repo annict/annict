@@ -1,29 +1,29 @@
-= form_for [work, episode, record], role: 'form', html: { class: 'checkin-form', :'ng-controller' => 'CheckinFormCtrl' } do |f|
+= form_for [work, episode, record] do |f|
   = render "application/v1/error_panel", resource: record
   
   ann-record-rating rating="#{record.rating.presence || 0}"
-  .form-group.checkin-form-comment
-    = f.text_area :comment, class: 'form-control', rows: 2, :'ng-click' => 'expand($event)', placeholder: t('checkins.input_a_comment')
-  .checkin-form-share
+  ann-record-comment-form :record="{}" placeholder="#{t('checkins.input_a_comment')}"
+  .ann-record-form-share-checkboxes
     - if current_user.authorized_to?(:twitter)
-      span.checkin-form-share-twitter
+      span.a-twitter
         label
-          = icon("twitter")
+          = icon "twitter"
           = f.check_box :shared_twitter
     - if current_user.authorized_to?(:facebook)
-      span.checkin-form-share-facebook
+      span.a-facebook
         label
-          = icon("facebook")
+          = icon "facebook"
           = f.check_box :shared_facebook
-  .checkin-button.text-center
+  .a-record-button.text-center
     - if record.new_record?
-      = f.button class: 'btn btn-primary' do
+      = f.button class: "button" do
         i.fa.fa-check
-        = t('checkins.save')
+        = t "checkins.save"
     - else
-      = f.button class: 'btn btn-primary' do
+      = f.button class: "button" do
         i.fa.fa-edit
-        = t('words.update')
+        = t "words.update"
 
 - content_for :parts do
   = render "application/v2/components/record_rating"
+  = render "application/v3/components/record_comment_form"

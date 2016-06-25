@@ -45,7 +45,7 @@
             - @user_records.each_with_index do |record, i|
               - if i != 0
                 hr
-              = render 'checkins/checkin', record: record
+              = render 'records/record', record: record
         hr
 
     - if @current_user_records.present?
@@ -55,7 +55,7 @@
           - @current_user_records.each_with_index do |record, i|
             - if i != 0
               hr
-            = render 'checkins/checkin', record: record
+            = render 'records/record', record: record
       hr
 
     .checkin-comments
@@ -65,7 +65,7 @@
           - @records.with_comment.each_with_index do |record, i|
             - if i != 0
               hr
-            = render 'checkins/checkin', record: record
+            = render 'records/record', record: record
         - else
           .info.well
             .icon

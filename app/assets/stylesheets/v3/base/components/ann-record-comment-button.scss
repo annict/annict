@@ -1,4 +1,4 @@
-.comment-button {
+.ann-record-comment-button {
   color: $color-gunsmoke;
   font-size: 15px;
   margin-left: 10px;
@@ -8,11 +8,11 @@
     text-decoration: none;
   }
 
-  > .icon {
+  > i {
     margin-right: 5px;
   }
 
-  > .count {
+  > .a-count {
     font-size: 12px;
   }
 }

@@ -39,7 +39,7 @@ script#ann-programs type="x-template"
                           .row
                             .a-record-comment.columns
                               ann-record-rating :rating.sync="program.record.rating" v-if="program.record.isCommentEditing"
-                              textarea :class="{ 'has-new-line': program.record.isCommentEditing }" rows="{{ program.record.commentRows }}" v-model="program.record.comment" @click="expandOnClick(program)" @keyup.enter="expandOnEnter(program)"
+                              ann-record-comment-form :record.sync="program.record"
                               .a-share-buttons v-if="program.record.isCommentEditing"
                                 span.a-twitter v-if="user.authorized_to_twitter"
                                   label

@@ -70,5 +70,35 @@ body.episodes-show {
         }
       }
     }
+
+    .a-body {
+      h2 {
+        font-family: "Noto Sans JP", sans-serif;
+        font-size: 14px;
+        font-weight: 300;
+        margin-bottom: 21px;
+        text-align: center;
+      }
+
+      .card {
+        padding: 14px 0;
+
+        .a-record-form {
+          .ann-record-rating {
+            margin-bottom: 7px;
+          }
+
+          textarea {
+            margin: 0;
+          }
+
+          .a-record-button {
+            i {
+              margin-right: 5px;
+            }
+          }
+        }
+      }
+    }
   }
 }
