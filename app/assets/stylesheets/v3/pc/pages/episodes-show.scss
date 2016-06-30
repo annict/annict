@@ -80,7 +80,7 @@ body.episodes-show {
         text-align: center;
       }
 
-      .card {
+      .a-body-main {
         padding: 14px 0;
 
         .a-record-form {
@@ -96,6 +96,25 @@ body.episodes-show {
             i {
               margin-right: 5px;
             }
+          }
+        }
+      }
+
+      .a-body-side {
+        padding-bottom: 14px;
+        padding-top: 14px;
+
+        .a-record-users {
+          margin-bottom: 14px;
+
+          a {
+            margin-right: 3px;
+          }
+
+          .a-records-count {
+            color: $color-gunsmoke;
+            font-size: 12px;
+            margin-left: 7px;
           }
         }
       }
