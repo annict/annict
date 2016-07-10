@@ -148,6 +148,34 @@ body.episodes-show {
             }
           }
         }
+
+        .a-work-info {
+          .a-main {
+            margin-bottom: 14px;
+
+            .a-image {
+              padding-right: 7px;
+            }
+
+            .a-title {
+              padding-left: 0;
+
+              .a-watchers {
+                margin-bottom: 3px;
+
+                .a-count {
+                  font-weight: bold;
+                  margin-right: 3px;
+                }
+
+                .a-text {
+                  color: $color-gunsmoke;
+                  font-size: 12px;
+                }
+              }
+            }
+          }
+        }
       }
     }
   }

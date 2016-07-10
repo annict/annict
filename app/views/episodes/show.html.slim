@@ -100,11 +100,21 @@
               ann-facebook-share-button url="#{URI.encode(canonical_url)}"
           .a-work-info
             h2 作品情報
-            = link_to work_path(@work) do
-              = annict_image_tag @work.item, :tombo_image, size: "70x70", alt: @work.title
-            = link_to @work.title, work_path(@work)
-            = "#{@work.watchers_count} Watchers"
-            ann-status-selector work-id="#{@work.id}" status-kind="no_select" is-prevented="true"
+            .a-main.row
+              .a-image.columns.shrink
+                = link_to work_path(@work) do
+                  = annict_image_tag @work.item, :tombo_image, size: "70x70", alt: @work.title
+              .a-title.columns
+                .a-watchers
+                  span.a-count
+                    = @work.watchers_count
+                  span.a-text
+                    | Watchers
+                = link_to @work.title, work_path(@work)
+            - if user_signed_in?
+              ann-status-selector work-id="#{@work.id}" status-kind="#{current_user.status_kind(@work)}"
+            - else
+              ann-status-selector work-id="#{@work.id}" status-kind="no_select" is-prevented="true"
 
 = render "application/v2/components/footer"
 
