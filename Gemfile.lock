@@ -89,9 +89,6 @@ GEM
       jmespath (~> 1.0)
     aws-sdk-resources (2.3.19)
       aws-sdk-core (= 2.3.19)
-    aws-sdk-v1 (1.66.0)
-      json (~> 1.4)
-      nokogiri (>= 1.4.4)
     axiom-types (0.1.1)
       descendants_tracker (~> 0.0.4)
       ice_nine (~> 0.11.0)
@@ -694,7 +691,6 @@ DEPENDENCIES
   asset_sync
   awesome_print
   aws-sdk
-  aws-sdk-v1
   better_errors
   binding_of_caller
   bootstrap-sass
@@ -780,5 +776,8 @@ DEPENDENCIES
   validate_url
   virtus
 
+RUBY VERSION
+   ruby 2.3.1p112
+
 BUNDLED WITH
-   1.11.2
+   1.12.5
