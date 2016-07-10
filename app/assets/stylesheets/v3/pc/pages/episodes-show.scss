@@ -12,6 +12,28 @@ body.episodes-show {
     .a-header {
       padding-bottom: 1.07142857rem;
       padding-top: 1.07142857rem;
+      position: relative;
+
+      .a-prev-episode,
+      .a-next-episode {
+        border-bottom: none;
+        cursor: pointer;
+        position: absolute;
+        top: 145px;
+
+        a {
+          color: $color-gallery;
+          font-size: 40px;
+        }
+      }
+
+      .a-prev-episode {
+        left: 190px;
+      }
+
+      .a-next-episode {
+        right: 190px;
+      }
 
       h1 {
         margin-bottom: 0;

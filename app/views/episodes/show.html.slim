@@ -14,6 +14,10 @@
 
 .a-content
   .a-header style="background: -webkit-gradient(linear, left top, right bottom, from(#{@work.item.image_color_light}), to(#{@work.item.image_color_dark})); background: -moz-linear-gradient(left 45deg, #{@work.item.image_color_light}, #{@work.item.image_color_dark});"
+    - if @episode.prev_episode.present?
+      .a-prev-episode.has-tip.top data-tooltip="" title="#{@episode.prev_episode.number}"
+        = link_to work_episode_path(@work, @episode.prev_episode) do
+          = icon "angle-left"
     .row
       .small-10.small-offset-1.column
         .row
@@ -37,6 +41,10 @@
           .a-work-image.small-4.columns
             = link_to work_path(@work) do
               = annict_image_tag @work.item, :tombo_image, size: "340x340", alt: @work.title
+    - if @episode.next_episode.present?
+      .a-next-episode.has-tip.top data-tooltip="" title="#{@episode.next_episode.number}"
+        = link_to work_episode_path(@work, @episode.next_episode) do
+          = icon "angle-right"
   .a-body.row
     .small-10.small-offset-1.column
       .row
