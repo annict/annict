@@ -2,6 +2,13 @@ body.episodes-show {
   .a-content {
     margin-top: 60px;
 
+    h2 {
+      font-family: "Noto Sans JP", sans-serif;
+      font-size: 14px;
+      font-weight: 300;
+      text-align: center;
+    }
+
     .a-header {
       padding-bottom: 1.07142857rem;
       padding-top: 1.07142857rem;
@@ -72,16 +79,12 @@ body.episodes-show {
     }
 
     .a-body {
-      h2 {
-        font-family: "Noto Sans JP", sans-serif;
-        font-size: 14px;
-        font-weight: 300;
-        margin-bottom: 21px;
-        text-align: center;
-      }
-
       .a-body-main {
         padding: 14px 0;
+
+        h2 {
+          margin-bottom: 21px;
+        }
 
         .a-record-form {
           .ann-record-rating {
@@ -104,17 +107,45 @@ body.episodes-show {
         padding-bottom: 14px;
         padding-top: 14px;
 
-        .a-record-users {
+        h2 {
           margin-bottom: 14px;
+        }
 
-          a {
-            margin-right: 3px;
+        .a-record-status {
+          margin-bottom: 21px;
+
+          .a-status {
+            text-align: center;
+
+            .a-count {
+              font-size: 16px;
+            }
+
+            .a-text {
+              color: $color-gunsmoke;
+              font-size: 12px;
+            }
           }
+        }
 
-          .a-records-count {
-            color: $color-gunsmoke;
-            font-size: 12px;
-            margin-left: 7px;
+        .a-share-buttons {
+          margin-bottom: 21px;
+
+          .a-buttons {
+            text-align: center;
+
+            .ann-twitter-share-button,
+            .ann-facebook-share-button {
+              display: inline-block;
+
+              .button {
+                width: 90px;
+              }
+            }
+
+            .ann-twitter-share-button {
+              margin-right: 7px;
+            }
           }
         }
       }

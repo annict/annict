@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160618140253) do
+ActiveRecord::Schema.define(version: 20160710025846) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -363,6 +363,7 @@ ActiveRecord::Schema.define(version: 20160618140253) do
     t.string   "aasm_state",                  default: "published", null: false
     t.boolean  "fetch_syobocal",              default: false,       null: false
     t.string   "raw_number"
+    t.float    "avg_rating"
     t.index ["aasm_state"], name: "index_episodes_on_aasm_state", using: :btree
     t.index ["prev_episode_id"], name: "index_episodes_on_prev_episode_id", using: :btree
     t.index ["work_id", "sc_count"], name: "episodes_work_id_sc_count_key", unique: true, using: :btree
@@ -397,8 +398,6 @@ ActiveRecord::Schema.define(version: 20160618140253) do
     t.string   "tombo_image_content_type"
     t.integer  "tombo_image_file_size"
     t.datetime "tombo_image_updated_at"
-    t.string   "image_color_1",                        default: "", null: false
-    t.string   "image_color_2",                        default: "", null: false
     t.string   "image_color_light",                    default: "", null: false
     t.string   "image_color_dark",                     default: "", null: false
     t.index ["work_id"], name: "index_items_on_work_id", unique: true, using: :btree

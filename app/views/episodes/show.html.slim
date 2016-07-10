@@ -1,11 +1,14 @@
 - title = "アニメ「#{@work.title}」#{@episode.decorate.meta_number(prefix: true)}#{@episode.decorate.meta_title}"
 - description = meta_description("「#{@work.title}」#{@episode.decorate.meta_number}の感想をチェック！")
 - keywords = meta_keywords([@work.title, @episode.decorate.meta_number, @episode.number, @episode.title])
-- canonical = url_for(only_path: false, overwrite_params: nil)
-- set_meta_tags(title: title, description: description, keywords: keywords, canonical: canonical, reverse: true)
+- canonical_url = url_for(only_path: false, overwrite_params: nil)
+- set_meta_tags(title: title, description: description, keywords: keywords, canonical: canonical_url, reverse: true)
 
 - content_for :head do
   = render "application/v2/twitter", title: title, description: description, image: annict_image_url(@work.item, :tombo_image, size: "640x640")
+
+- content_for :facebook do
+  = render "application/v3/facebook", title: title, url: canonical_url, description: description, image_url: annict_image_url(@work.item, :tombo_image, size: "600x315")
 
 = render "application/v2/navbar"
 
@@ -74,47 +77,41 @@
                   i.fa.fa-info-circle
                 p まだ感想は書き込まれていません
         .a-body-side.small-4.columns
-          .a-record-users
-            - @record_user_ids.take(5).each do |user_id|
-              - user = User.find(user_id)
-              = link_to user_path(user.username) do
-                = annict_image_tag user.profile, :tombo_avatar, size: "30x30", class: "ann-img-circle"
-            span.a-records-count
-              - if @record_user_ids.length > 5
-                = "+ #{@record_user_ids.length - 5}人が見ました"
-              - elsif @record_user_ids.length == 1
-                = 'が見ました'
-              - else
-                = "の#{@record_user_ids.length}人が見ました"
+          .a-record-status.row
+            .a-status.small-4.columns
+              .a-count
+                = @records.count
+              .a-text
+                | Records
+            .a-status.small-4.columns
+              .a-count
+                = @records.with_comment.count
+              .a-text
+                | Comments
+            .a-status.small-4.columns
+              .a-count
+                = @episode.avg_rating.presence || "-"
+              .a-text
+                | Stars
+          .a-share-buttons
+            h2 シェア
+            .a-buttons
+              ann-twitter-share-button text="#{title}" url="#{URI.encode(canonical_url)}"
+              ann-facebook-share-button url="#{URI.encode(canonical_url)}"
           .a-work-info
+            h2 作品情報
             = link_to work_path(@work) do
               = annict_image_tag @work.item, :tombo_image, size: "70x70", alt: @work.title
             = link_to @work.title, work_path(@work)
             = "#{@work.watchers_count} Watchers"
             ann-status-selector work-id="#{@work.id}" status-kind="no_select" is-prevented="true"
-            - if @work.casts.present?
-              .casts
-                .title キャスト
-                ul
-                  - @work.casts.order(:sort_number).limit(5).each do |cast|
-                    - cache cast do
-                      li
-                        = "#{cast.part}: "
-                        = cast.decorate.name_with_old_link
-            - if @work.staffs.present?
-              .staffs
-                .title スタッフ
-                ul
-                  - @work.staffs.major.order(:sort_number).limit(5).each do |staff|
-                    - cache staff do
-                      li
-                        = "#{staff.decorate.role_name}: "
-                        = staff.decorate.name_with_old_link
 
 = render "application/v2/components/footer"
 
 - content_for :parts do
   = render "application/v2/components/like_button"
   = render "application/v2/components/status_selector"
+  = render "application/v3/components/facebook_share_button"
+  = render "application/v3/components/twitter_share_button"
   - unless user_signed_in?
     = render "application/v2/components/prevent_change_status_modal"

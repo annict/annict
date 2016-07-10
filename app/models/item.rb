@@ -12,8 +12,6 @@
 #  tombo_image_content_type :string
 #  tombo_image_file_size    :integer
 #  tombo_image_updated_at   :datetime
-#  image_color_1            :string           default(""), not null
-#  image_color_2            :string           default(""), not null
 #  image_color_light        :string           default(""), not null
 #  image_color_dark         :string           default(""), not null
 #

@@ -16,6 +16,8 @@ AnnRecordRating = require "../v2/base/components/AnnRecordRating"
 AnnSearchForm = require "../v2/base/components/AnnSearchForm"
 AnnStatusSelector = require "../v2/base/components/AnnStatusSelector"
 AnnTimeAgo = require "../v2/base/components/AnnTimeAgo"
+AnnFacebookShareButton = require "../v3/base/components/AnnFacebookShareButton"
+AnnTwitterShareButton = require "../v3/base/components/AnnTwitterShareButton"
 
 annSimpleFormat = require("../v2/base/directives/annSimpleFormat")
 
@@ -35,6 +37,8 @@ $ ->
   Vue.component("ann-search-form", AnnSearchForm)
   Vue.component("ann-status-selector", AnnStatusSelector)
   Vue.component("ann-time-ago", AnnTimeAgo)
+  Vue.component("ann-facebook-share-button", AnnFacebookShareButton)
+  Vue.component("ann-twitter-share-button", AnnTwitterShareButton)
 
   Vue.directive("ann-simple-format", annSimpleFormat)
 
