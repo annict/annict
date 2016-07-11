@@ -17,7 +17,7 @@ gem "acts_as_list"
 gem "angular_rails_csrf"
 gem "annotate"
 gem "asset_sync"
-gem "aws-sdk-v1" # Paperclipで使用
+gem "aws-sdk"
 gem "bootstrap-sass"
 gem "bourbon"
 # 2系対応が面倒くさそうなので一旦1系を使い続ける
@@ -99,7 +99,6 @@ group :development, :test do
 end
 
 group :development do
-  gem "aws-sdk"
   gem "better_errors"
   gem "binding_of_caller" # better_errorsで使用
   gem "bullet"
