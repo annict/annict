@@ -53,7 +53,7 @@
             .a-record-form.columns
               = render "checkins/form", work: @work, episode: @episode, record: @record
           - else
-            = render "application/v1/welcome_to_annict"
+            = render "application/v3/components/welcome_to_annict"
           hr
           - if @user_records.present?
             - if (user_signed_in? && current_user != @record_user) || !user_signed_in?

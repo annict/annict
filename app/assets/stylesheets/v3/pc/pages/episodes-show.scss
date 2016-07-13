@@ -21,7 +21,7 @@ body.episodes-show {
           border-bottom: none;
           cursor: pointer;
           position: absolute;
-          top: 145px;
+          top: 125px;
 
           a {
             color: $color-gallery;
@@ -109,6 +109,11 @@ body.episodes-show {
 
         h2 {
           margin-bottom: 21px;
+        }
+
+        .ann-welcome-to-annict {
+          margin-bottom: -7px;
+          margin-top: 0;
         }
 
         .a-record-form {
