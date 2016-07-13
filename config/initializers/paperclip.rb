@@ -12,7 +12,8 @@ options = if Rails.env.production?
       bucket: ENV["S3_BUCKET_NAME"],
       access_key_id: ENV["S3_ACCESS_KEY_ID"],
       secret_access_key: ENV["S3_SECRET_ACCESS_KEY"]
-    }
+    },
+    s3_region: "ap-northeast-1"
   )
 elsif Rails.env.test?
   base_options.merge(
