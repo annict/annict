@@ -9,9 +9,6 @@ gem "rails", "~> 5.0.0"
 gem "aasm"
 gem "action_args"
 gem "active_link_to"
-# # DraperをRails 5で動かすために必要
-# # https://github.com/drapergem/draper/issues/697
-# gem "activemodel-serializers-xml"
 gem "activerecord-session_store"
 gem "acts_as_list"
 # 本家がRails 5対応するまでfork版を使う
