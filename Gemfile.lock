@@ -696,7 +696,7 @@ DEPENDENCIES
   database_rewinder
   delayed_job_active_record
   devise
-  doorkeeper (>= 4.0.0.rc3)
+  doorkeeper
   draper (>= 3.0.0.pre1)
   email_validator
   enumerize
