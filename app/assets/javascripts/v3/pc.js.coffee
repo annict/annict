@@ -6,9 +6,11 @@ Vue = require "vue"
 infiniteScroll =  require "vue-infinite-scroll"
 Mousetrap =  require "mousetrap"
 
+AnnActionBlocker = require "../v2/base/components/AnnActionBlocker"
 AnnCommentGuard = require "../v2/base/components/AnnCommentGuard"
 AnnFlash = require "./base/components/AnnFlash"
 AnnLikeButton = require "../v2/base/components/AnnLikeButton"
+AnnModal = require "../v2/base/components/AnnModal"
 AnnPrograms = require "./base/components/AnnPrograms"
 AnnRatingLabel = require "../v2/base/components/AnnRatingLabel"
 AnnRecordCommentForm = require "./base/components/AnnRecordCommentForm"
@@ -27,9 +29,11 @@ $ ->
   Vue.config.debug = true
   Vue.use(infiniteScroll)
 
+  Vue.component("ann-action-blocker", AnnActionBlocker)
   Vue.component("ann-comment-guard", AnnCommentGuard)
   Vue.component("ann-flash", AnnFlash)
   Vue.component("ann-like-button", AnnLikeButton)
+  Vue.component("ann-modal", AnnModal)
   Vue.component("ann-programs", AnnPrograms)
   Vue.component("ann-rating-label", AnnRatingLabel)
   Vue.component("ann-record-comment-form", AnnRecordCommentForm)
@@ -47,6 +51,8 @@ $ ->
     events:
       "AnnFlash:show": (message, type = "notice") ->
         @$broadcast "AnnFlash:show", message, type
+      "AnnModal:showModal": (templateId) ->
+        @$broadcast "AnnModal:showModal", templateId
 
   Mousetrap.bind "/", ->
     $(".ann-search-form input").focus()
