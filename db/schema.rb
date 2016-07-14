@@ -1,4 +1,3 @@
-# encoding: UTF-8
 # This file is auto-generated from the current state of the database. Instead
 # of editing this file, please use the migrations feature of Active Record to
 # incrementally modify your database, and then regenerate this schema definition.
@@ -337,8 +336,8 @@ ActiveRecord::Schema.define(version: 20160710025846) do
 
   create_table "edit_requests", force: :cascade do |t|
     t.integer  "user_id",                                null: false
-    t.integer  "draft_resource_id",                      null: false
     t.string   "draft_resource_type",                    null: false
+    t.integer  "draft_resource_id",                      null: false
     t.string   "title",                                  null: false
     t.text     "body"
     t.string   "aasm_state",          default: "opened", null: false
