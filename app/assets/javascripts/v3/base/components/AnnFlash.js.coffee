@@ -10,7 +10,7 @@ module.exports = Vue.extend
 
   data: ->
     type: gon.flash.type || "notice"
-    message: gon.flash.message || ""
+    message: gon.flash.body || ""
 
   computed:
     show: ->
