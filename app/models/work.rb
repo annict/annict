@@ -125,6 +125,10 @@ class Work < ActiveRecord::Base
     checkins.count
   end
 
+  def sync_with_syobocal?
+    sc_tid.present?
+  end
+
   def syobocal_url
     "http://cal.syoboi.jp/tid/#{sc_tid}"
   end

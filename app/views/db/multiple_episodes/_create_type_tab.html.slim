@@ -5,3 +5,13 @@ ul.nav.nav-tabs.nav-justified.edit-type-tabs
   - else
     li.disabled data-toggle="tooltip" title="編集者になると直接登録できるようになります"
       = link_to "直接登録", "#"
+
+- if work.sync_with_syobocal?
+  .alert.alert-success
+    strong
+      | この作品は
+      = link_to "しょぼいカレンダー", "http://cal.syoboi.jp/", target: "_blank"
+      | と同期しています。
+    | テレビで放送されるエピソードは基本的に自動登録されるので、Annict DBからの登録は不要です。
+    br
+    | もし放送後にもエピソードが登録されなかった場合は、編集リクエストの作成や、編集者の方は直接エピソードを登録して頂けるとありがたいです。
