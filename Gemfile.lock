@@ -468,6 +468,9 @@ GEM
       coderay (~> 1.1.0)
       method_source (~> 0.8.1)
       slop (~> 3.4)
+    pry-alias (0.0.1)
+      binding_of_caller
+      pry
     pry-byebug (3.4.0)
       byebug (~> 9.0)
       pry (~> 0.10)
@@ -730,6 +733,7 @@ DEPENDENCIES
   paperclip
   pg
   poltergeist
+  pry-alias
   pry-byebug
   pry-coolline
   pry-rails
