@@ -39,31 +39,36 @@
               = current_user.notifications_count
     #submenu.dropdown-pane data-dropdown=""
       ul.a-menu
-        li
-          = link_to notifications_path do
-            i.fa.fa-bell
-            = t "titles.notifications"
-            - if current_user.notifications_count > 0
-              span.a-notifications-count
-                span.a-count
-                  = current_user.notifications_count
-        li
-          = link_to friends_path do
-            = icon "smile-o"
-            | 友達を探す
-        li
-          = link_to channels_path do
-            = icon "tv"
-            = t "words.channel"
-        li
-          = link_to settings_path do
-            = icon "cog"
-            = t "titles.setting"
+        - if user_signed_in?
+          li
+            = link_to notifications_path do
+              i.fa.fa-bell
+              = t "titles.notifications"
+              - if current_user.notifications_count > 0
+                span.a-notifications-count
+                  span.a-count
+                    = current_user.notifications_count
+        - if user_signed_in?
+          li
+            = link_to friends_path do
+              = icon "smile-o"
+              | 友達を探す
+        - if user_signed_in?
+          li
+            = link_to channels_path do
+              = icon "tv"
+              = t "words.channel"
+        - if user_signed_in?
+          li
+            = link_to settings_path do
+              = icon "cog"
+              = t "titles.setting"
         li
           = link_to about_path do
             = icon "lightbulb-o"
             = t "titles.about"
-        li
-          = link_to destroy_user_session_path, method: "delete" do
-            = icon "power-off"
-            = t "words.signout"
+        - if user_signed_in?
+          li
+            = link_to destroy_user_session_path, method: "delete" do
+              = icon "power-off"
+              = t "words.signout"

@@ -81,10 +81,10 @@
                   hr
                 = render "records/record", record: record
             - else
-              .info.well
-                .icon
-                  i.fa.fa-info-circle
-                p まだ感想は書き込まれていません
+              .a-no-records.callout.secondary
+                p
+                  = icon "info-circle"
+                  | まだ感想は書き込まれていません
         .a-body-side.small-4.columns
           .a-record-status.row
             .a-status.small-4.columns

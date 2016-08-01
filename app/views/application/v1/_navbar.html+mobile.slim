@@ -38,7 +38,7 @@ nav.navbar.navbar-default.navbar-fixed-top
       .dropdown
         a.dropdown-toggle href='#' data-toggle='dropdown'
           = icon 'bars'
-          - if user_signed_in? && current_user.notifications_count > 0
+          - if current_user.notifications_count > 0
             span.notifications-count
               span.count
                 = current_user.notifications_count

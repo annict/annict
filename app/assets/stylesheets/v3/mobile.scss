@@ -7,8 +7,11 @@
 @import "base/base";
 
 @import "../v2/base/mixins/*";
+@import "../v2/base/components/ann-like-button";
 @import "../v2/base/components/ann-loading";
+@import "../v2/base/components/ann-rating-label";
 @import "../v2/base/components/ann-record-rating";
+@import "../v2/mobile/components/ann-footer";
 
 @import "mobile/components/**/*";
 @import "mobile/pages/**/*";
