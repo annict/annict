@@ -81,6 +81,7 @@ group :development, :test do
   gem "awesome_print"
   gem "hirb-unicode-steakknife"
   gem "hirb"
+  gem "pry-alias"
   gem "pry-byebug"
   gem "pry-coolline"
   gem "pry-rails"
