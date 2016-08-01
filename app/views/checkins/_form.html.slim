@@ -2,7 +2,7 @@
   = render "application/v1/error_panel", resource: record
   
   ann-record-rating rating="#{record.rating.presence || 0}"
-  ann-record-comment-form :record="{}" placeholder="#{t('checkins.input_a_comment')}"
+  ann-record-comment-form :record="{ comment: '#{record.comment.presence || ''}' }" placeholder="#{t('checkins.input_a_comment')}"
   .ann-record-form-share-checkboxes
     - if current_user.authorized_to?(:twitter)
       span.a-twitter
