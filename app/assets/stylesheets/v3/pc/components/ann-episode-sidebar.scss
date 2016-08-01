@@ -1,0 +1,74 @@
+.ann-episode-sidebar {
+  padding-bottom: 14px;
+  padding-top: 14px;
+
+  h2 {
+    margin-bottom: 14px;
+  }
+
+  .a-record-status {
+    margin-bottom: 21px;
+
+    .a-status {
+      text-align: center;
+
+      .a-count {
+        font-size: 16px;
+      }
+
+      .a-text {
+        color: $color-gunsmoke;
+        font-size: 12px;
+      }
+    }
+  }
+
+  .a-share-buttons {
+    margin-bottom: 21px;
+
+    .a-buttons {
+      text-align: center;
+
+      .ann-twitter-share-button,
+      .ann-facebook-share-button {
+        display: inline-block;
+
+        .button {
+          width: 90px;
+        }
+      }
+
+      .ann-twitter-share-button {
+        margin-right: 7px;
+      }
+    }
+  }
+
+  .a-work-info {
+    .a-main {
+      margin-bottom: 14px;
+
+      .a-image {
+        padding-right: 7px;
+      }
+
+      .a-title {
+        padding-left: 0;
+
+        .a-watchers {
+          margin-bottom: 3px;
+
+          .a-count {
+            font-weight: bold;
+            margin-right: 3px;
+          }
+
+          .a-text {
+            color: $color-gunsmoke;
+            font-size: 12px;
+          }
+        }
+      }
+    }
+  }
+}

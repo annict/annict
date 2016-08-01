@@ -13,39 +13,7 @@
 = render "application/v2/navbar"
 
 .a-content
-  .a-header
-    .a-header-image style="background-image: url(#{annict_image_url(@work.item, :tombo_image, size: '640x640', blur: 200)});"
-    .row
-      .a-header-content.small-10.small-offset-1.column
-        - if @episode.prev_episode.present?
-          .a-prev-episode.has-tip.top data-tooltip="" title="#{@episode.prev_episode.number}"
-            = link_to work_episode_path(@work, @episode.prev_episode) do
-              = icon "angle-left"
-        .row
-          .small-8.columns
-            h1 class="#{@episode.single? ? 'a-is-single' : ''}"
-              .a-work-title
-                .a-wrapper
-                  = link_to @work.title, work_path(@work)
-              - unless @episode.single?
-                .a-episode
-                  .a-wrapper
-                    span.a-number
-                      = @episode.number
-                    - if @episode.title.present?
-                      span.a-title
-                        = @episode.title
-            - if user_signed_in? && current_user.checkedin?(@episode)
-              .a-records-count
-                = icon "check"
-                = "#{current_user.checkins_count_in(@episode)}回見ました"
-          .a-work-image.small-4.columns
-            = link_to work_path(@work) do
-              = annict_image_tag @work.item, :tombo_image, size: "340x340", alt: @work.title
-        - if @episode.next_episode.present?
-          .a-next-episode.has-tip.top data-tooltip="" title="#{@episode.next_episode.number}"
-            = link_to work_episode_path(@work, @episode.next_episode) do
-              = icon "angle-right"
+  = render "episodes/episode_header", work: @work, episode: @episode
   .a-body.row
     .small-10.small-offset-1.column
       .row
@@ -85,45 +53,7 @@
                 p
                   = icon "info-circle"
                   | まだ感想は書き込まれていません
-        .a-body-side.small-4.columns
-          .a-record-status.row
-            .a-status.small-4.columns
-              .a-count
-                = @records.count
-              .a-text
-                | Records
-            .a-status.small-4.columns
-              .a-count
-                = @records.with_comment.count
-              .a-text
-                | Comments
-            .a-status.small-4.columns
-              .a-count
-                = @episode.avg_rating.presence || "-"
-              .a-text
-                | Stars
-          .a-share-buttons
-            h2 シェア
-            .a-buttons
-              ann-twitter-share-button text="#{title}" url="#{URI.encode(canonical_url)}"
-              ann-facebook-share-button url="#{URI.encode(canonical_url)}"
-          .a-work-info
-            h2 作品情報
-            .a-main.row
-              .a-image.columns.shrink
-                = link_to work_path(@work) do
-                  = annict_image_tag @work.item, :tombo_image, size: "70x70", alt: @work.title
-              .a-title.columns
-                .a-watchers
-                  span.a-count
-                    = @work.watchers_count
-                  span.a-text
-                    | Watchers
-                = link_to @work.title, work_path(@work)
-            - if user_signed_in?
-              ann-status-selector work-id="#{@work.id}" status-kind="#{current_user.status_kind(@work)}"
-            - else
-              ann-status-selector work-id="#{@work.id}" status-kind="no_select" is-prevented="true"
+        = render "episodes/episode_sidebar", work: @work, episode: @episode, records: @records, canonical_url: canonical_url
 
 = render "application/v2/components/footer"
 

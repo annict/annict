@@ -71,10 +71,11 @@ class CheckinsController < ApplicationController
   end
 
   def show
+    @records = @episode.checkins
     @comments = @record.comments.order(created_at: :desc)
     @comment = Comment.new
 
-    render layout: "v1/application"
+    render layout: "v3/application"
   end
 
   def edit
