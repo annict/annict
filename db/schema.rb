@@ -336,8 +336,8 @@ ActiveRecord::Schema.define(version: 20160710025846) do
 
   create_table "edit_requests", force: :cascade do |t|
     t.integer  "user_id",                                null: false
-    t.string   "draft_resource_type",                    null: false
     t.integer  "draft_resource_id",                      null: false
+    t.string   "draft_resource_type",                    null: false
     t.string   "title",                                  null: false
     t.text     "body"
     t.string   "aasm_state",          default: "opened", null: false
@@ -632,7 +632,7 @@ ActiveRecord::Schema.define(version: 20160710025846) do
     t.index ["user_id"], name: "index_settings_on_user_id", using: :btree
   end
 
-  create_table "staffs", id: :integer, default: -> { "nextval('staffs_id_seq1'::regclass)" }, force: :cascade do |t|
+  create_table "staffs", force: :cascade do |t|
     t.integer  "work_id",                             null: false
     t.string   "name",                                null: false
     t.string   "role",                                null: false
