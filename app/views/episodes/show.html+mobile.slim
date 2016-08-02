@@ -13,51 +13,9 @@
 = render "application/v3/menu"
 
 .a-content
-  .a-header.row style="background-image: url(#{annict_image_url(@work.item, :tombo_image, size: '400x400')});"
-    .a-header-content.small-12.column
-      .a-wrapper
-        h1 class="#{@episode.single? ? 'a-is-single' : ''}"
-          .a-work-title
-            = link_to @work.title, work_path(@work)
-          - unless @episode.single?
-            .a-episode
-              span.a-number
-                = @episode.number
-              - if @episode.title.present?
-                span.a-title
-                  = @episode.title
-        - if user_signed_in? && current_user.checkedin?(@episode)
-          .a-records-count
-            = icon "check"
-            = "#{current_user.checkins_count_in(@episode)}回見ました"
-    - if @episode.prev_episode.present?
-      .a-prev-episode
-        = link_to work_episode_path(@work, @episode.prev_episode) do
-          = icon "angle-left"
-          = @episode.prev_episode.number
-    - if @episode.next_episode.present?
-      .a-next-episode
-        = link_to work_episode_path(@work, @episode.next_episode) do
-          = @episode.next_episode.number
-          = icon "angle-right"
-  
+  = render "episodes/episode_header", work: @work, episode: @episode
   .card
-    .a-record-status.row
-      .a-status.small-4.columns
-        .a-count
-          = @records.count
-        .a-text
-          | Records
-      .a-status.small-4.columns
-        .a-count
-          = @records.with_comment.count
-        .a-text
-          | Comments
-      .a-status.small-4.columns
-        .a-count
-          = @episode.avg_rating.presence || "-"
-        .a-text
-          | Stars
+    = render "episodes/record_status", episode: @episode, records: @records
     hr style="margin-bottom: 7px; margin-top: 0;"
     - if user_signed_in?
       .row

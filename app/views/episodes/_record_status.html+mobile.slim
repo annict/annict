@@ -1,0 +1,16 @@
+.ann-record-status.row
+  .a-status.small-4.columns
+    .a-count
+      = records.count
+    .a-text
+      | Records
+  .a-status.small-4.columns
+    .a-count
+      = records.with_comment.count
+    .a-text
+      | Comments
+  .a-status.small-4.columns
+    .a-count
+      = episode.avg_rating.presence || "-"
+    .a-text
+      | Stars

@@ -13,7 +13,7 @@
               .a-wrapper
                 = link_to work.title, work_path(work)
             - unless episode.single?
-              .a-episode
+              = link_to work_episode_path(work, episode), class: "a-episode" do
                 .a-wrapper
                   span.a-number
                     = episode.number
