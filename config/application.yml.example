@@ -27,3 +27,4 @@ development:
 test:
   ANNICT_HOST: 'localhost:3000'
   ANNICT_TOMBO_URL: 'http://localhost:5000'
+  FACEBOOK_APP_ID: "1234567890"

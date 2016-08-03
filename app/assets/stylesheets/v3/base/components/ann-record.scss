@@ -1,0 +1,75 @@
+.ann-record {
+  .a-body {
+    padding-left: 0;
+
+    .a-top {
+      margin-bottom: 3px;
+
+      .float-right {
+        font-size: 12px;
+
+        .a-is-modified {
+          color: $color-gunsmoke;
+          margin-right: 5px;
+        }
+
+        .a-created-at {
+          color: $color-gunsmoke;
+        }
+      }
+    }
+
+    .a-middle {
+      .ann-rating-label {
+        margin-bottom: 3px;
+      }
+
+      .a-record-comment {
+        margin-bottom: 3px;
+      }
+    }
+
+    .a-bottom {
+      .a-head {
+        .float-left {
+          .a-twitter-counter,
+          .a-facebook-counter {
+            font-size: 10px;
+
+            i {
+              margin-right: 3px;
+            }
+          }
+
+          .a-twitter-counter {
+            color: $color-twitter;
+            margin-right: 7px;
+          }
+
+          .a-facebook-counter {
+            color: $color-facebook;
+          }
+        }
+
+        .float-right {
+          .ann-like-button {
+            display: inline-block;
+          }
+        }
+      }
+
+      .a-foot {
+        margin-top: 3px;
+
+        a {
+          font-size: 12px;
+          margin-left: 7px;
+
+          i {
+            margin-right: 3px;
+          }
+        }
+      }
+    }
+  }
+}

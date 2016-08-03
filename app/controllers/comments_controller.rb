@@ -34,8 +34,9 @@ class CommentsController < ApplicationController
       path = work_episode_checkin_path(@work, @episode, @record)
       redirect_to path, notice: t("comments.saved")
     else
+      @records = @episode.checkins
       @comments = @record.comments.order(created_at: :desc)
-      render template: "checkins/show"
+      render "/checkins/show", layout: "v3/application"
     end
   end
 end

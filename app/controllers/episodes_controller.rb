@@ -33,7 +33,6 @@ class EpisodesController < ApplicationController
   def show
     service = RecordsListService.new(@episode, current_user, @record_user)
 
-    @record_user_ids = service.record_user_ids
     @user_records = service.user_records
     @current_user_records = service.current_user_records
     @records = service.records
@@ -43,7 +42,7 @@ class EpisodesController < ApplicationController
       @record.setup_shared_sns(current_user)
     end
 
-    render layout: "v1/application"
+    render layout: "v3/application"
   end
 
   private

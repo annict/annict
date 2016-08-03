@@ -15,6 +15,7 @@
 #  aasm_state      :string           default("published"), not null
 #  fetch_syobocal  :boolean          default(FALSE), not null
 #  raw_number      :string
+#  avg_rating      :float
 #
 # Indexes
 #
@@ -46,6 +47,8 @@ class Episode < ActiveRecord::Base
   has_many :checkins,   dependent: :destroy
   has_many :draft_episodes, dependent: :destroy
   has_many :programs,   dependent: :destroy
+
+  scope :recorded, -> { where("checkins_count > 0") }
 
   after_create :update_prev_episode
   before_destroy :unset_prev_episode_id

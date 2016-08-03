@@ -1,0 +1,48 @@
+body.episodes-show,
+body.checkins-create {
+  .a-content {
+    margin-top: 48px;
+
+    > .card {
+      padding-bottom: 14px;
+
+      .ann-welcome-to-annict {
+        margin-top: 21px;
+      }
+
+      .a-record-form {
+        margin-bottom: 3px;
+
+        .ann-record-rating {
+          margin-bottom: 7px;
+        }
+
+        textarea {
+          margin-bottom: 3px;
+        }
+
+        .a-record-button {
+          i {
+            margin-right: 5px;
+          }
+        }
+      }
+
+      .a-user-records {
+        h2 {
+          font-family: "Noto Sans JP", sans-serif;
+          font-size: 14px;
+          font-weight: 300;
+          margin-bottom: 14px;
+          text-align: center;
+        }
+      }
+
+      .a-no-records {
+        i {
+          margin-right: 5px;
+        }
+      }
+    }
+  }
+}

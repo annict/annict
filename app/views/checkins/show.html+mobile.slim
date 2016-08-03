@@ -1,60 +1,48 @@
-= content_for :site_page_title, "#{t('checkins.page_title', username: @record.user.username)}"
+- title = "アニメ「#{@work.title}」#{@episode.decorate.meta_number(prefix: true)}#{@episode.decorate.meta_title}"
+- description = meta_description("「#{@work.title}」#{@episode.decorate.meta_number}の感想をチェック！")
+- keywords = meta_keywords([@work.title, @episode.decorate.meta_number, @episode.number, @episode.title])
+- canonical_url = url_for(only_path: false, overwrite_params: nil)
+- set_meta_tags(title: title, description: description, keywords: keywords, canonical: canonical_url, reverse: true)
 
-= render "application/v1/navbar"
+- content_for :head do
+  = render "application/v2/twitter", title: title, description: description, image: annict_image_url(@work.item, :tombo_image, size: "640x640")
 
-.content
-  .wrapper
-    = render 'works/work_profile_light', work: @work, episode: @episode
+- content_for :facebook do
+  = render "application/v3/facebook", title: title, url: canonical_url, description: description, image_url: annict_image_url(@work.item, :tombo_image, size: "600x315")
 
-    - unless user_signed_in?
-      = render('application/v1/welcome_to_annict')
+= render "application/v3/menu"
 
-    .container
-      = render 'checkins/checkin', record: @record
-
-    .container
-      - if user_signed_in?
-        .comment-form
-          = form_for [@work, @episode, @record, @comment], html: { role: 'form' } do |f|
-            = render "application/v1/error_panel", resource: @comment
-
-            .form-group
-              = f.text_area :body, class: 'form-control', rows: '5', placeholder: t('comments.comment_textarea_placeholder')
-            .pull-right
-              = f.submit t('comments.comment'), class: 'btn btn-primary'
-            .clearfix
-
-      h2.text-center
-        = t('words.comment')
+.a-content
+  = render "episodes/episode_header", work: @work, episode: @episode
+  .card
+    = render "episodes/record_status", episode: @episode, records: @records
+    hr style="margin-bottom: 14px; margin-top: 0;"
+    .column
+      h2 = "#{@record.user.profile.name}さんの記録"
+      = render "records/record", record: @record
+    hr
+    - if user_signed_in?
+      .a-record-comment-form.column
+        = form_for [@work, @episode, @record, @comment] do |f|
+          = render "application/v1/error_panel", resource: @comment
+          = f.text_area :body, rows: "5", placeholder: t("comments.comment_textarea_placeholder")
+          = f.button class: "button" do
+            = icon "check"
+            | コメントする
       hr
-      .comments
-        - if @comments.present?
-          - @comments.each do |comment|
-            - if comment.persisted?
-              .media
-                .media-left
-                  = link_to user_path(comment.user.username), class: 'pull-left' do
-                    = annict_image_tag(comment.user.profile, :tombo_avatar, msize: "50x50", size: "50x50", class: "img-circle")
-                .media-body
-                  .top
-                    .pull-left
-                      span.name
-                        = link_to comment.user.profile.name, user_path(comment.user.username)
-                    .pull-right
-                      span.created-at
-                        = custom_time_ago_in_words(comment.created_at)
-                    .clearfix
-                  .middle
-                    = comment.body
-                  .bottom
-                    .pull-right
-                      ann-like-button resource-name="comments" resource-id="#{comment.id}" likes-count="#{comment.likes_count}" is-liked="#{user_signed_in? && current_user.like_r?(comment)}"
-            hr
-        - else
-          .info.well
-            .icon
-              i.fa.fa-info-circle
-            p = t('checkins.no_comments')
+    .a-record-comments
+      h2 コメント
+      - if @comments.present?
+        - @comments.each do |comment|
+          - if comment.persisted?
+            = render "records/record_comment", comment: comment
+          hr
+      - else
+        .column
+          .a-no-record-comments.callout.secondary
+            p
+              = icon "info-circle"
+              = t "checkins.no_comments"
 
 = render "application/v2/components/footer"
 

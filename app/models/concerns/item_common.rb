@@ -1,7 +1,9 @@
+# frozen_string_literal: true
+
 module ItemCommon
   extend ActiveSupport::Concern
 
-  DIFF_FIELDS = %i(name url tombo_image)
+  DIFF_FIELDS = %i(name url tombo_image).freeze
   PUBLISH_FIELDS = DIFF_FIELDS + %i(work_id)
 
   included do
@@ -14,7 +16,7 @@ module ItemCommon
                             attachment_square: true
 
     def to_diffable_hash
-      data = self.class::DIFF_FIELDS.inject({}) do |hash, field|
+      data = self.class::DIFF_FIELDS.each_with_object({}) do |field, hash|
         hash[field] = case field
         when :tombo_image
           send(field).size

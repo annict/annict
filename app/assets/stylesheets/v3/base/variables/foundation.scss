@@ -58,7 +58,7 @@ $foundation-palette: (
 $light-gray: #e6e6e6;
 $medium-gray: #cacaca;
 $dark-gray: #8a8a8a;
-$black: #0a0a0a;
+$black: rgba(0, 0, 0, 0.8);
 $white: #fefefe;
 $body-background: $color-white-lilac;
 $body-font-color: $black;
@@ -262,7 +262,7 @@ $buttongroup-expand-max: 6;
 
 $callout-background: $white;
 $callout-background-fade: 85%;
-$callout-border: 1px solid rgba($black, 0.25);
+$callout-border: 1px solid rgba($black, 0.1);
 $callout-margin: 0 0 1rem 0;
 $callout-padding: 1rem;
 $callout-font-color: $body-font-color;

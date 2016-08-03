@@ -1,9 +1,0 @@
-body.episodes-show,
-body.checkins-create {
-  > .app__main {
-    > .content {
-      @include content(wide);
-      @include card;
-    }
-  }
-}

@@ -10,7 +10,7 @@
 #  updated_at               :datetime         not null
 #  share_record_to_twitter  :boolean          default(FALSE)
 #  share_record_to_facebook :boolean          default(FALSE)
-#  programs_sort            :string           default(""), not null
+#  programs_sort_type       :string           default(""), not null
 #
 # Indexes
 #

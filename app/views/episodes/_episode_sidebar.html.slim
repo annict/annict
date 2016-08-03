@@ -1,0 +1,39 @@
+.ann-episode-sidebar.small-4.columns
+  .a-record-status.row
+    .a-status.small-4.columns
+      .a-count
+        = records.count
+      .a-text
+        | Records
+    .a-status.small-4.columns
+      .a-count
+        = records.with_comment.count
+      .a-text
+        | Comments
+    .a-status.small-4.columns
+      .a-count
+        = episode.avg_rating.presence || "-"
+      .a-text
+        | Stars
+  .a-share-buttons
+    h2 シェア
+    .a-buttons
+      ann-twitter-share-button text="#{title}" url="#{URI.encode(canonical_url)}"
+      ann-facebook-share-button url="#{URI.encode(canonical_url)}"
+  .a-work-info
+    h2 作品情報
+    .a-main.row
+      .a-image.columns.shrink
+        = link_to work_path(work) do
+          = annict_image_tag work.item, :tombo_image, size: "70x70", alt: work.title
+      .a-title.columns
+        .a-watchers
+          span.a-count
+            = work.watchers_count
+          span.a-text
+            | Watchers
+        = link_to work.title, work_path(work)
+    - if user_signed_in?
+      ann-status-selector work-id="#{work.id}" status-kind="#{current_user.status_kind(work)}"
+    - else
+      ann-status-selector work-id="#{work.id}" status-kind="no_select" is-prevented="true"

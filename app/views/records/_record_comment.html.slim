@@ -1,0 +1,21 @@
+.ann-record-comment.column
+  .row
+    .a-avatar.columns.shrink
+      = link_to user_path(comment.user.username) do
+        = annict_image_tag comment.user.profile, :tombo_avatar, msize: "50x50", size: "50x50", class: "ann-img-circle"
+    .a-body.columns
+      .a-top.clearfix
+        .float-left
+          = link_to comment.user.profile.name, user_path(comment.user.username)
+        .float-right
+          / https://github.com/annict/annict/issues/344 で使う
+          / - if comment.modify_body?
+          /   = icon "pencil", class: "a-is-modified"
+          span.a-created-at title="#{comment.created_at.in_time_zone('Asia/Tokyo').strftime('%Y/%m/%d %H:%M')}"
+            = custom_time_ago_in_words(comment.created_at)
+      .a-middle
+        = comment.body
+      .a-bottom
+        .a-head.clearfix
+          .float-right
+            ann-like-button resource-name="comments" resource-id="#{comment.id}" likes-count="#{comment.likes_count}" is-liked="#{user_signed_in? && current_user.like_r?(comment)}"

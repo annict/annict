@@ -1,78 +1,66 @@
 - title = "アニメ「#{@work.title}」#{@episode.decorate.meta_number(prefix: true)}#{@episode.decorate.meta_title}"
 - description = meta_description("「#{@work.title}」#{@episode.decorate.meta_number}の感想をチェック！")
 - keywords = meta_keywords([@work.title, @episode.decorate.meta_number, @episode.number, @episode.title])
-- canonical = url_for(only_path: false, overwrite_params: nil)
-- set_meta_tags(title: title, description: description, keywords: keywords, canonical: canonical, reverse: true)
+- canonical_url = url_for(only_path: false, overwrite_params: nil)
+- set_meta_tags(title: title, description: description, keywords: keywords, canonical: canonical_url, reverse: true)
 
 - content_for :head do
   = render "application/v2/twitter", title: title, description: description, image: annict_image_url(@work.item, :tombo_image, size: "640x640")
 
+- content_for :facebook do
+  = render "application/v3/facebook", title: title, url: canonical_url, description: description, image_url: annict_image_url(@work.item, :tombo_image, size: "600x315")
+
 = render "application/v2/navbar"
 
-.content
-  .wrapper
-    = render 'works/work_profile_light', work: @work, episode: @episode
-
-    - if @record_user_ids.present?
-      .container
-        .checkin-users
-          - @record_user_ids.take(5).each do |user_id|
-            - user = User.find(user_id)
-            = link_to user_path(user.username), class: 'pull-left' do
-              = annict_image_tag(user.profile, :tombo_avatar, size: "30x30", class: "img-circle")
-          span.checkins-count
-            - if @record_user_ids.length > 5
-              = "+ #{@record_user_ids.length - 5}人が見ました"
-            - elsif @record_user_ids.length == 1
-              = 'が見ました'
+.a-content
+  = render "episodes/episode_header", work: @work, episode: @episode
+  .a-body.row
+    .small-10.small-offset-1.column
+      .row
+        .a-body-main.card.small-8
+          - if user_signed_in?
+            .a-record-form.columns
+              = render "checkins/form", work: @work, episode: @episode, record: @record
+          - else
+            = render "application/v3/components/welcome_to_annict"
+          hr
+          - if @user_records.present?
+            - if (user_signed_in? && current_user != @record_user) || !user_signed_in?
+              .a-user-records.columns
+                h2 = "#{@record_user.profile.name}さんの記録"
+                - @user_records.each_with_index do |record, i|
+                  - if i != 0
+                    hr
+                  = render "records/record", record: record
+              hr
+          - if @current_user_records.present?
+            .a-user-records.columns
+              h2 あなたの記録
+              - @current_user_records.each_with_index do |record, i|
+                - if i != 0
+                  hr
+                = render "records/record", record: record
+            hr
+          .a-record-comments.columns
+            h2 = "#{@user_records.present? || @current_user_records.present? ? 'その他皆さんの感想' : '感想'}"
+            - if @records.with_comment.present?
+              - @records.with_comment.each_with_index do |record, i|
+                - if i != 0
+                  hr
+                = render "records/record", record: record
             - else
-              = "の#{@record_user_ids.length}人が見ました"
-
-      hr.cu
-
-    - if user_signed_in?
-      .container
-        = render 'checkins/form', work: @work, episode: @episode, record: @record
-      hr
-    - else
-      = render("application/v1/welcome_to_annict")
-
-    - if @user_records.present?
-      - if (user_signed_in? && current_user != @record_user) || !user_signed_in?
-        .user-checkins
-          .container
-            h2 = "#{@record_user.profile.name}さんの記録"
-            - @user_records.each_with_index do |record, i|
-              - if i != 0
-                hr
-              = render 'checkins/checkin', record: record
-        hr
-
-    - if @current_user_records.present?
-      .user-checkins
-        .container
-          h2 あなたの記録
-          - @current_user_records.each_with_index do |record, i|
-            - if i != 0
-              hr
-            = render 'checkins/checkin', record: record
-      hr
-
-    .checkin-comments
-      .container
-        h2 = "#{@user_records.present? || @current_user_records.present? ? 'その他皆さんの感想' : '感想'}"
-        - if @records.with_comment.present?
-          - @records.with_comment.each_with_index do |record, i|
-            - if i != 0
-              hr
-            = render 'checkins/checkin', record: record
-        - else
-          .info.well
-            .icon
-              i.fa.fa-info-circle
-            p まだ感想は書き込まれていません
+              .a-no-records.callout.secondary
+                p
+                  = icon "info-circle"
+                  | まだ感想は書き込まれていません
+        = render "episodes/episode_sidebar", work: @work, episode: @episode, records: @records, canonical_url: canonical_url
 
 = render "application/v2/components/footer"
 
 - content_for :parts do
   = render "application/v2/components/like_button"
+  = render "application/v2/components/status_selector"
+  = render "application/v3/components/facebook_share_button"
+  = render "application/v3/components/twitter_share_button"
+  - unless user_signed_in?
+    = render "application/v2/components/prevent_change_status_modal"

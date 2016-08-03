@@ -46,8 +46,8 @@ class CheckinsController < ApplicationController
   before_action :redirect_to_top, only: [:edit, :update, :destroy]
 
   def create(checkin)
-    record = @episode.checkins.new(checkin)
-    service = NewRecordService.new(current_user, record, ga_client)
+    @record = @episode.checkins.new(checkin)
+    service = NewRecordService.new(current_user, @record, ga_client)
 
     if service.save
       redirect_to work_episode_path(@work, @episode), notice: t("checkins.saved")
@@ -59,9 +59,7 @@ class CheckinsController < ApplicationController
       @current_user_records = service.current_user_records
       @records = service.records
 
-      @record = record_service.record
-
-      render "/episodes/show", layout: "v1/application"
+      render "/episodes/show", layout: "v3/application"
     end
   end
 
@@ -73,10 +71,11 @@ class CheckinsController < ApplicationController
   end
 
   def show
+    @records = @episode.checkins
     @comments = @record.comments.order(created_at: :desc)
     @comment = Comment.new
 
-    render layout: "v1/application"
+    render layout: "v3/application"
   end
 
   def edit

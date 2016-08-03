@@ -1,0 +1,2 @@
+script#ann-record-comment-form type="x-template"
+  textarea name="checkin[comment]" :class="{ 'has-new-line': isCommentEditing }" :rows="commentRows" :placeholder="placeholder || ''" v-model="record.comment" @click="expandOnClick(this)" @keyup.enter="expandOnEnter(this)"

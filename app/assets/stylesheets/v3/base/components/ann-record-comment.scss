@@ -1,0 +1,16 @@
+.ann-record-comment {
+  .a-avatar {
+    padding-right: 0;
+  }
+
+  .a-body {
+    .a-top {
+      margin-bottom: 3px;
+
+      .a-created-at {
+        color: $color-gunsmoke;
+        font-size: 12px;
+      }
+    }
+  }
+}
