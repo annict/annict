@@ -79,7 +79,9 @@ class CheckinsController < ApplicationController
   end
 
   def edit
-    render layout: "v1/application"
+    @records = @episode.checkins
+    @comments = @record.comments.order(created_at: :desc)
+    render layout: "v3/application"
   end
 
   def update(checkin)
@@ -90,6 +92,8 @@ class CheckinsController < ApplicationController
       @record.share_to_sns
       redirect_to work_episode_checkin_path(@work, @episode, @record), notice: t('checkins.updated')
     else
+      @records = @episode.checkins
+      @comments = @record.comments.order(created_at: :desc)
       render :edit
     end
   end

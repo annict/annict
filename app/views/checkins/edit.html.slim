@@ -1,10 +1,30 @@
+- title = "アニメ「#{@work.title}」#{@episode.decorate.meta_number(prefix: true)}#{@episode.decorate.meta_title}"
+- description = meta_description("「#{@work.title}」#{@episode.decorate.meta_number}の感想をチェック！")
+- keywords = meta_keywords([@work.title, @episode.decorate.meta_number, @episode.number, @episode.title])
+- canonical_url = url_for(only_path: false, overwrite_params: nil)
+- set_meta_tags(title: title, description: description, keywords: keywords, canonical: canonical_url, reverse: true)
+
+- content_for :head do
+  = render "application/v2/twitter", title: title, description: description, image: annict_image_url(@work.item, :tombo_image, size: "640x640")
+
+- content_for :facebook do
+  = render "application/v3/facebook", title: title, url: canonical_url, description: description, image_url: annict_image_url(@work.item, :tombo_image, size: "600x315")
+
 = render "application/v2/navbar"
 
-.content
-  .wrapper
-    = render 'works/work_profile_light', work: @work, episode: @episode
-
-    .container
-      = render 'form', work: @work, episode: @episode, record: @record
+.a-content
+  = render "episodes/episode_header", work: @work, episode: @episode
+  .a-body.row
+    .small-10.small-offset-1.column
+      .row
+        .a-body-main.card.small-8
+          .a-record-form.columns
+            = render "checkins/form", work: @work, episode: @episode, record: @record
+        = render "episodes/episode_sidebar", work: @work, episode: @episode, records: @records, canonical_url: canonical_url
 
 = render "application/v2/components/footer"
+
+- content_for :parts do
+  = render "application/v2/components/status_selector"
+  = render "application/v3/components/facebook_share_button"
+  = render "application/v3/components/twitter_share_button"

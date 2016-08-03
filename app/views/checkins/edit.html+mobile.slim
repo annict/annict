@@ -1,10 +1,25 @@
-= render "application/v1/navbar"
+- title = "アニメ「#{@work.title}」#{@episode.decorate.meta_number(prefix: true)}#{@episode.decorate.meta_title}"
+- description = meta_description("「#{@work.title}」#{@episode.decorate.meta_number}の感想をチェック！")
+- keywords = meta_keywords([@work.title, @episode.decorate.meta_number, @episode.number, @episode.title])
+- canonical_url = url_for(only_path: false, overwrite_params: nil)
+- set_meta_tags(title: title, description: description, keywords: keywords, canonical: canonical_url, reverse: true)
 
-.content
-  .wrapper
-    = render 'works/work_profile_light', work: @work, episode: @episode
+- content_for :head do
+  = render "application/v2/twitter", title: title, description: description, image: annict_image_url(@work.item, :tombo_image, size: "640x640")
 
-    .container
-      = render 'form', work: @work, episode: @episode, record: @record
+- content_for :facebook do
+  = render "application/v3/facebook", title: title, url: canonical_url, description: description, image_url: annict_image_url(@work.item, :tombo_image, size: "600x315")
+
+= render "application/v3/menu"
+
+.a-content
+  = render "episodes/episode_header", work: @work, episode: @episode
+  .card
+    = render "episodes/record_status", episode: @episode, records: @records
+    hr style="margin-bottom: 7px; margin-top: 0;"
+    .row
+      .small-12.column
+        .a-record-form
+          = render "checkins/form", work: @work, episode: @episode, record: @record
 
 = render "application/v2/components/footer"
