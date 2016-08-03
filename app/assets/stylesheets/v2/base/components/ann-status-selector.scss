@@ -49,6 +49,10 @@
       &:hover {
         background-color: lighten($color-pelorous, 2%);
       }
+
+      option {
+        background-color: $color-mine-shaft;
+      }
     }
 
     i {
