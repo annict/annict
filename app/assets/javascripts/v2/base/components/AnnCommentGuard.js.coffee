@@ -12,11 +12,12 @@ module.exports = Vue.extend
 
   methods:
     $comment: ->
-      $(@$el).parent().find(".record-comment")
+      $(@$el).parent().find(".a-record-comment")
 
     remove: ->
       @$comment().removeClass("ann-comment-guard")
       @isSpoiler = false
 
   ready: ->
+    console.log '@isSpoiler: ', @isSpoiler
     @$comment().addClass("ann-comment-guard") if @isSpoiler
