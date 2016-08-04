@@ -12,7 +12,7 @@ module.exports = Vue.extend
 
   methods:
     $comment: ->
-      $(@$el).parent().find(".a-record-comment")
+      $(@$el).parent().find(".a-record-comment, .record-comment")
 
     remove: ->
       @$comment().removeClass("ann-comment-guard")
