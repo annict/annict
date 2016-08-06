@@ -19,9 +19,11 @@ AnnSearchForm = require "../v2/base/components/AnnSearchForm"
 AnnStatusSelector = require "../v2/base/components/AnnStatusSelector"
 AnnTimeAgo = require "../v2/base/components/AnnTimeAgo"
 AnnFacebookShareButton = require "../v3/base/components/AnnFacebookShareButton"
+AnnMuteUserButton = require "../v3/base/components/AnnMuteUserButton"
 AnnTwitterShareButton = require "../v3/base/components/AnnTwitterShareButton"
 
 annSimpleFormat = require("../v2/base/directives/annSimpleFormat")
+annRecordFilter = require("../v3/base/directives/annRecordFilter")
 
 $ ->
   $(document).foundation()
@@ -42,9 +44,11 @@ $ ->
   Vue.component("ann-status-selector", AnnStatusSelector)
   Vue.component("ann-time-ago", AnnTimeAgo)
   Vue.component("ann-facebook-share-button", AnnFacebookShareButton)
+  Vue.component("ann-mute-user-button", AnnMuteUserButton)
   Vue.component("ann-twitter-share-button", AnnTwitterShareButton)
 
   Vue.directive("ann-simple-format", annSimpleFormat)
+  Vue.directive("ann-record-filter", annRecordFilter)
 
   new Vue
     el: "#ann"
@@ -53,6 +57,9 @@ $ ->
         @$broadcast "AnnFlash:show", message, type
       "AnnModal:showModal": (templateId) ->
         @$broadcast "AnnModal:showModal", templateId
+      "AnnMuteUser:mute": (userId) ->
+        console.log 'root mute: ', userId
+        @$broadcast "AnnMuteUser:mute", userId
 
   Mousetrap.bind "/", ->
     $(".ann-search-form input").focus()

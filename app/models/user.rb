@@ -62,6 +62,7 @@ class User < ActiveRecord::Base
   has_many :channels,      through:   :receptions
   has_many :statuses,      dependent: :destroy
   has_many :multiple_records, dependent: :destroy
+  has_many :mute_users, dependent: :destroy
   has_many :oauth_applications, class_name: "Doorkeeper::Application", as: :owner
   has_many :oauth_access_grants,
     class_name: "Doorkeeper::AccessGrant",
@@ -177,6 +178,11 @@ class User < ActiveRecord::Base
 
   def ga_uid
     Digest::SHA256.hexdigest(id.to_s)
+  end
+
+  def mute(user)
+    mute_user = mute_users.first_or_initialize(ignored_user: user)
+    mute_user.save
   end
 
   private

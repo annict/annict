@@ -444,6 +444,7 @@ ActiveRecord::Schema.define(version: 20160804053023) do
     t.datetime "created_at",      null: false
     t.datetime "updated_at",      null: false
     t.index ["ignored_user_id"], name: "index_mute_users_on_ignored_user_id", using: :btree
+    t.index ["user_id", "ignored_user_id"], name: "index_mute_users_on_user_id_and_ignored_user_id", unique: true, using: :btree
     t.index ["user_id"], name: "index_mute_users_on_user_id", using: :btree
   end
 

@@ -12,5 +12,7 @@ class CreateMuteUsers < ActiveRecord::Migration[5.0]
     add_foreign_key :mute_users, :users
     add_index :mute_users, :ignored_user_id
     add_foreign_key :mute_users, :users, column: :ignored_user_id
+
+    add_index :mute_users, [:user_id, :ignored_user_id], unique: true
   end
 end
