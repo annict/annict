@@ -97,6 +97,10 @@
   }
 
   .right {
+    .ann-record-button {
+      display: inline-block;
+    }
+
     > ul {
       margin: 0;
 
@@ -138,8 +142,13 @@
             left: 20px;
           }
 
+          > a {
+            vertical-align: super;
+          }
+
           ul.menu {
             right: -35px;
+            margin-top: -4px;
 
             li.notification {
               position: relative;

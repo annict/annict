@@ -40,7 +40,7 @@ class LatestStatus < ActiveRecord::Base
   end
 
   def self.refresh_next_episode(user)
-    latest_statuses = user.latest_statuses.with_kind(:watching)
+    latest_statuses = user.latest_statuses.includes(:work).with_kind(:watching)
     latest_statuses.find_each do |s|
       s.update_column(:next_episode_id, s.fetch_next_episode&.id)
     end

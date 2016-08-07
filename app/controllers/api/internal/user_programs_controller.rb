@@ -12,7 +12,7 @@ module Api
           work_published.
           episode_published.
           where("started_at < ?", Date.tomorrow + 1.day + 5.hours).
-          includes(:channel, :work, episode: [:work]).
+          includes(:channel, work: [:item], episode: [:work]).
           order(started_at: sort_type(sort)).
           page(page)
       end
