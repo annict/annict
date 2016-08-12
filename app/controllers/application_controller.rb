@@ -23,10 +23,6 @@ class ApplicationController < ActionController::Base
 
   private
 
-  def keen_client
-    @keen_client ||= Annict::Keen::Client.new(request)
-  end
-
   def after_sign_in_path_for(resource)
     path = stored_location_for(resource)
     return path if path.present?

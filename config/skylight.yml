@@ -1,3 +1,0 @@
----
-production:
-  authentication: <%= ENV.fetch("SKYLIGHT_AUTHENTICATION") %>
