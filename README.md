@@ -12,7 +12,7 @@
   <br>
   <a href="https://circleci.com/gh/annict/annict/tree/master"><img src="https://circleci.com/gh/annict/annict/tree/master.svg?style=svg"></a>
   <a href="https://codeclimate.com/github/annict/annict"><img src="https://codeclimate.com/github/annict/annict/badges/gpa.svg"></a>
-  <a href="https://codeclimate.com/github/annict/annict"><img src="https://codeclimate.com/github/annict/annict/badges/coverage.svg"></a>
+  <a href='https://coveralls.io/github/annict/annict?branch=master'><img src='https://coveralls.io/repos/github/annict/annict/badge.svg?branch=master' alt='Coverage Status' /></a>
   <a href="https://gemnasium.com/annict/annict"><img src="https://gemnasium.com/annict/annict.svg"></a>
   <a href="http://slack.annict.com"><img src="http://slack.annict.com/badge.svg"></a>
 </p>
