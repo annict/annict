@@ -36,3 +36,9 @@ input[type="text"],
 button {
   outline: none;
 }
+
+.ann-navbar {
+  ul.menu {
+    margin-top: -5px !important;
+  }
+}
