@@ -19,5 +19,4 @@ module.exports = Vue.extend
       @isSpoiler = false
 
   ready: ->
-    console.log '@isSpoiler: ', @isSpoiler
     @$comment().addClass("ann-comment-guard") if @isSpoiler
