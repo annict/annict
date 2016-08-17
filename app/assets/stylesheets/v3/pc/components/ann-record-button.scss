@@ -1,17 +1,32 @@
 .ann-record-button {
+  bottom: 0;
+  margin: 30px;
+  position: fixed;
+  right: 0;
+  z-index: 100;
+
   &:hover {
     cursor: pointer;
   }
 
   > .a-button {
-    color: $color-alto;
-    font-size: 20px;
-    height: 60px;
-    line-height: 60px;
-    padding: 0 14px;
+    background-color: $color-mizuho;
+    border-radius: 50%;
+    box-shadow: 0 0 0 rgba(0, 0, 0, 0.5),0 2px 6px rgba(0, 0, 0, 0.20);
+    height: 50px;
+    width: 50px;
 
     &:hover {
+      cursor: pointer;
+    }
+
+    i {
       color: #fff;
+      display: block;
+      font-size: 20px;
+      line-height: 50px;
+      padding-left: 4px;
+      text-align: center;
     }
   }
 }
