@@ -46,7 +46,7 @@ class NewRecordService
 
   def update_latest_status
     latest_status = @user.latest_statuses.find_by(work: @record.work)
-    latest_status.delay.append_episode(@record.episode) if latest_status.present?
+    latest_status.append_episode(@record.episode) if latest_status.present?
   end
 
   def create_ga_event

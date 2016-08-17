@@ -27,6 +27,8 @@
             li = link_to "人気のアニメ", popular_works_path
     ann-search-form q="#{@search.q}"
   .right
+    - if user_signed_in?
+      ann-record-button
     ul
       - if user_signed_in?
         li.dropdown
@@ -60,6 +62,8 @@
 
 - content_for :parts do
   = render "application/v2/components/search_form"
-  - unless user_signed_in?
+  - if user_signed_in?
+    = render "application/v3/components/record_button"
+  - else
     = render "application/v2/components/signin_modal"
     = render "application/v2/components/signup_modal"
