@@ -52,10 +52,10 @@ module.exports = Vue.extend
         $.ajax
           method: "GET"
           url: "/api/internal/works/#{latestStatus.work.id}/latest_status"
-        .done (latestStatus) =>
-          @$dispatch("AnnFlash:show", "記録しました")
-          index = @_getLatestStatusIndex(latestStatus)
-          @latestStatuses.$set(index, @_initLatestStatus(latestStatus))
+        .done (newLatestStatus) =>
+          @$dispatch("AnnFlash:show", @_flashMessage(latestStatus))
+          index = @_getLatestStatusIndex(newLatestStatus)
+          @latestStatuses.$set(index, @_initLatestStatus(newLatestStatus))
       .fail (data) =>
         latestStatus.record.isSaving = false
         @$dispatch("AnnFlash:show", data.responseJSON.message, "danger")
@@ -74,3 +74,11 @@ module.exports = Vue.extend
     _getLatestStatusIndex: (latestStatus) ->
       _.findIndex @latestStatuses, (ls) ->
         ls.id == latestStatus.id
+
+    _flashMessage: (latestStatus) ->
+      episodeLink = """
+        <a href='/works/#{latestStatus.work.id}/episodes/#{latestStatus.next_episode.id}'>
+          記録を見る
+        </a>
+      """
+      "記録しました。#{episodeLink}"
