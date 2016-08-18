@@ -1,0 +1,23 @@
+language: ruby
+
+addons:
+  postgresql: "9.4"
+
+cache:
+  directories:
+    - vendor/bundle
+    - node_modules
+
+install:
+  - bundle install --deployment --jobs=3 --retry=3
+  - npm install
+
+before_script:
+  - bundle exec rake db:create
+  - bundle exec rake db:migrate
+
+script:
+  - bundle exec rspec
+
+notifications:
+  slack: annict:rn43dPpTg6KuZZajh4PK33r9

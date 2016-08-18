@@ -14,9 +14,9 @@ AnnictOld.angular.directive "annCheckinButton", ($rootScope) ->
 
       $("#js-checkin-button-modal").modal()
 
-      $http.get("/api/internal/latest_statuses").success (latestStatuses) ->
+      $http.get("/api/internal/latest_statuses").success (data) ->
         $scope.loading = false
-        $scope.latestStatuses = latestStatuses
+        $scope.latestStatuses = data.latest_statuses
       .error ->
         $("#js-checkin-button-modal").modal("hide")
         data =

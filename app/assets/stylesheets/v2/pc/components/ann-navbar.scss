@@ -138,8 +138,13 @@
             left: 20px;
           }
 
+          > a {
+            vertical-align: super;
+          }
+
           ul.menu {
             right: -35px;
+            margin-top: -4px;
 
             li.notification {
               position: relative;

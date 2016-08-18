@@ -72,6 +72,8 @@ Rails.application.routes.draw do
         resources :channels, only: [] do
           post :select, on: :collection
         end
+
+        resource :latest_status, only: [:show]
       end
     end
   end

@@ -41,7 +41,6 @@ gem "imgix-rails"
 gem "jbuilder"
 gem "jquery-rails"
 gem "kaminari"
-gem "keen"
 gem "koala"
 gem "meta-tags"
 gem "mini_magick"
@@ -104,12 +103,11 @@ end
 group :production do
   gem "bugsnag"
   gem "rails_12factor"
-  gem "skylight"
 end
 
 group :test do
   gem "capybara"
-  gem "codeclimate-test-reporter", require: nil
+  gem "coveralls", require: false
   gem "database_rewinder"
   gem "factory_girl_rails"
   gem "poltergeist"
