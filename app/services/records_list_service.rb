@@ -32,7 +32,10 @@ class RecordsListService
   end
 
   def records
-    base_records.where.not(id: record_ids).order(created_at: :desc)
+    base_records.
+      where.not(id: record_ids).
+      where.not(user_id: @current_user.mute_users.pluck(:muted_user_id)).
+      order(created_at: :desc)
   end
 
   private

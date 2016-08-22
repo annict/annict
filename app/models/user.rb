@@ -181,7 +181,7 @@ class User < ActiveRecord::Base
   end
 
   def mute(user)
-    mute_user = mute_users.first_or_initialize(ignored_user: user)
+    mute_user = mute_users.where(muted_user: user).first_or_initialize
     mute_user.save
   end
 

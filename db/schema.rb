@@ -440,11 +440,11 @@ ActiveRecord::Schema.define(version: 20160804053023) do
 
   create_table "mute_users", force: :cascade do |t|
     t.integer  "user_id",         null: false
-    t.integer  "ignored_user_id", null: false
+    t.integer  "muted_user_id", null: false
     t.datetime "created_at",      null: false
     t.datetime "updated_at",      null: false
-    t.index ["ignored_user_id"], name: "index_mute_users_on_ignored_user_id", using: :btree
-    t.index ["user_id", "ignored_user_id"], name: "index_mute_users_on_user_id_and_ignored_user_id", unique: true, using: :btree
+    t.index ["muted_user_id"], name: "index_mute_users_on_muted_user_id", using: :btree
+    t.index ["user_id", "muted_user_id"], name: "index_mute_users_on_user_id_and_muted_user_id", unique: true, using: :btree
     t.index ["user_id"], name: "index_mute_users_on_user_id", using: :btree
   end
 
@@ -834,7 +834,7 @@ ActiveRecord::Schema.define(version: 20160804053023) do
   add_foreign_key "multiple_records", "users"
   add_foreign_key "multiple_records", "works"
   add_foreign_key "mute_users", "users"
-  add_foreign_key "mute_users", "users", column: "ignored_user_id"
+  add_foreign_key "mute_users", "users", column: "muted_user_id"
   add_foreign_key "notifications", "users", column: "action_user_id", name: "notifications_action_user_id_fk", on_delete: :cascade
   add_foreign_key "notifications", "users", name: "notifications_user_id_fk", on_delete: :cascade
   add_foreign_key "oauth_access_grants", "oauth_applications", column: "application_id"

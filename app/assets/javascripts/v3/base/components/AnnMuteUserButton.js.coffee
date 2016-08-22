@@ -10,7 +10,7 @@ module.exports = Vue.extend
 
   methods:
     mute: ->
-      if confirm("ミュートするとその人の記録がエピソードページやアクティビティから見えなくなります。\nミュートしますか？")
+      if confirm("ミュートしますか？")
         $.ajax
           method: "POST"
           url: "/api/internal/mute_users"
@@ -18,4 +18,4 @@ module.exports = Vue.extend
             user_id: @userId
         .done =>
           @$dispatch "AnnMuteUser:mute", @userId
-          console.log "done"
+          @$dispatch "AnnFlash:show", "ミュートしました"

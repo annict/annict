@@ -34,11 +34,11 @@
               = icon "comment-o"
               span.a-count
                 = record.comments_count
-            span.a-options data-toggle="record-options-#{record.id}"
-              = icon "cog"
-            ul.dropdown-pane.left id="record-options-#{record.id}" data-dropdown=""
-              li
-                ann-mute-user-button user-id="#{record.user.id}"
+            span.ann-options-dropdown data-toggle="record-options-#{record.id}"
+              = icon "ellipsis-h"
+              ul.dropdown-pane.left id="record-options-#{record.id}" data-dropdown="" data-close-on-click="true"
+                li
+                  ann-mute-user-button user-id="#{record.user.id}"
         - if record.user == current_user
           .a-foot.clearfix
             .float-right
