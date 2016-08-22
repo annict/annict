@@ -60,7 +60,6 @@ $ ->
       "AnnModal:showModal": (templateId) ->
         @$broadcast "AnnModal:showModal", templateId
       "AnnMuteUser:mute": (userId) ->
-        console.log 'root mute: ', userId
         @$broadcast "AnnMuteUser:mute", userId
 
   Mousetrap.bind "/", ->
