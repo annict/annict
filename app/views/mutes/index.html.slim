@@ -1,0 +1,16 @@
+= render "application/v2/navbar"
+= render "application/v1/settings_tabs"
+
+.content
+  .container
+    h3 ミュートしている利用者
+    ul
+      - @mute_users.each do |mute_user|
+        li
+          = link_to user_path(mute_user.muted_user.username) do
+            = annict_image_tag(mute_user.muted_user.profile, :tombo_avatar, size: "50x50", class: "img-circle")
+          = link_to mute_user.muted_user.profile.name, user_path(mute_user.muted_user.username), class: "profile-name"
+          .pull-right
+            = link_to "ミュート解除", mute_user_path(mute_user), class: "btn btn-primary btn-sm", data: { method: :delete }
+
+= render "application/v2/components/footer"

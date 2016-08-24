@@ -165,6 +165,7 @@ Rails.application.routes.draw do
     resource :account, only: [:show, :update]
     resource :profile, only: [:show, :update]
     resource :sayonara, only: [:show], controller: :sayonara
+    resources :mutes, only: [:index]
     resources :options, only: [:index]
     resources :providers, only: [:index, :destroy]
     resources :apps, only: [:index] do
@@ -192,6 +193,7 @@ Rails.application.routes.draw do
   resource :confirmation, only: [:show]
   resource :search, only: [:show]
   resources :friends, only: [:index]
+  resources :mute_users, only: [:destroy]
   resources :notifications, only: [:index]
   resources :organizations, only: [:show]
   resources :people, only: [:show]
