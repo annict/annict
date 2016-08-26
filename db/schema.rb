@@ -198,8 +198,6 @@ ActiveRecord::Schema.define(version: 20160804053023) do
     t.datetime "tombo_image_updated_at",                   null: false
     t.datetime "created_at",                               null: false
     t.datetime "updated_at",                               null: false
-    t.string   "image_color_light",        default: "",    null: false
-    t.string   "image_color_dark",         default: "",    null: false
     t.index ["item_id"], name: "index_draft_items_on_item_id", using: :btree
     t.index ["work_id"], name: "index_draft_items_on_work_id", using: :btree
   end
@@ -389,16 +387,14 @@ ActiveRecord::Schema.define(version: 20160804053023) do
 
   create_table "items", force: :cascade do |t|
     t.integer  "work_id"
-    t.string   "name",                     limit: 510,              null: false
-    t.string   "url",                      limit: 510,              null: false
+    t.string   "name",                     limit: 510, null: false
+    t.string   "url",                      limit: 510, null: false
     t.datetime "created_at"
     t.datetime "updated_at"
     t.string   "tombo_image_file_name"
     t.string   "tombo_image_content_type"
     t.integer  "tombo_image_file_size"
     t.datetime "tombo_image_updated_at"
-    t.string   "image_color_light",                    default: "", null: false
-    t.string   "image_color_dark",                     default: "", null: false
     t.index ["work_id"], name: "index_items_on_work_id", unique: true, using: :btree
     t.index ["work_id"], name: "items_work_id_idx", using: :btree
   end
@@ -439,10 +435,10 @@ ActiveRecord::Schema.define(version: 20160804053023) do
   end
 
   create_table "mute_users", force: :cascade do |t|
-    t.integer  "user_id",         null: false
+    t.integer  "user_id",       null: false
     t.integer  "muted_user_id", null: false
-    t.datetime "created_at",      null: false
-    t.datetime "updated_at",      null: false
+    t.datetime "created_at",    null: false
+    t.datetime "updated_at",    null: false
     t.index ["muted_user_id"], name: "index_mute_users_on_muted_user_id", using: :btree
     t.index ["user_id", "muted_user_id"], name: "index_mute_users_on_user_id_and_muted_user_id", unique: true, using: :btree
     t.index ["user_id"], name: "index_mute_users_on_user_id", using: :btree
