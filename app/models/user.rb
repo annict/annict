@@ -124,7 +124,8 @@ class User < ActiveRecord::Base
   end
 
   def following_activities
-    following_ids = followings.pluck(:id)
+    mute_user_ids = mute_users.pluck(:muted_user_id)
+    following_ids = followings.where.not(id: mute_user_ids).pluck(:id)
     following_ids << self.id
 
     Activity.where(user_id: following_ids)
