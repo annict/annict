@@ -15,7 +15,7 @@
 .a-content
   = render "episodes/episode_header", work: @work, episode: @episode
   .card
-    = render "episodes/record_status", episode: @episode, records: @records
+    = render "episodes/record_status", episode: @episode, records: @records, current_user_records: @current_user_records
     hr style="margin-bottom: 7px; margin-top: 0;"
     - if user_signed_in?
       .row
