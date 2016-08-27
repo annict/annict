@@ -15,7 +15,7 @@
 .a-content
   = render "episodes/episode_header", work: @work, episode: @episode
   .card
-    = render "episodes/record_status", episode: @episode, records: @records
+    = render "episodes/record_status", episode: @episode, records: @records, current_user_records: Checkin.none
     hr style="margin-bottom: 7px; margin-top: 0;"
     .row
       .small-12.column

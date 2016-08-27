@@ -20,7 +20,7 @@
         .a-body-main.card.small-8
           .a-record-form.columns
             = render "checkins/form", work: @work, episode: @episode, record: @record
-        = render "episodes/episode_sidebar", work: @work, episode: @episode, records: @records, canonical_url: canonical_url
+        = render "episodes/episode_sidebar", work: @work, episode: @episode, records: @records, current_user_records: Checkin.none, canonical_url: canonical_url
 
 = render "application/v2/components/footer"
 
