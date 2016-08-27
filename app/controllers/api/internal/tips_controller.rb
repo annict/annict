@@ -7,7 +7,7 @@ module Api
 
       def finish(partial_name)
         UserTipsService.new(current_user).finish!(partial_name)
-        render status: 200, nothing: true
+        head 200
       end
     end
   end

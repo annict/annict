@@ -11,7 +11,7 @@ module Api
           status = StatusService.new(current_user, work, ga_client)
           status.app = doorkeeper_token.application
 
-          render(status: 204, nothing: true) if status.change(@params.kind)
+          head(204) if status.change(@params.kind)
         end
       end
     end

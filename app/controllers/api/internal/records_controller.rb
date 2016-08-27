@@ -18,7 +18,7 @@ module Api
         service = NewRecordService.new(current_user, record, ga_client)
 
         if service.save
-          render status: 201, nothing: true
+          head 201
         else
           @record = service.record
           render status: 400, json: { message: @record.errors.full_messages.first }

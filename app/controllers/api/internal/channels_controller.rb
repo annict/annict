@@ -11,13 +11,13 @@ module Api
 
         if channel_id == "no_select"
           channel_work.destroy if channel_work.present?
-          return render(status: 200, nothing: true)
+          return head(200)
         end
 
         channel = Channel.find(channel_id)
         channel_work.channel = channel
 
-        render status: 200, nothing: true if channel_work.save
+        head(200) if channel_work.save
       end
     end
   end

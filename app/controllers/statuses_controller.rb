@@ -25,6 +25,6 @@ class StatusesController < ApplicationController
 
   def select(status_kind)
     status = StatusService.new(current_user, @work, ga_client)
-    render(status: 200, nothing: true) if status.change(status_kind)
+    head(200) if status.change(status_kind)
   end
 end

@@ -60,7 +60,7 @@ module Api
         current_user.like_r(recipient)
         ga_client.events.create("likes", "create")
 
-        render status: 200, nothing: true
+        head 200
       end
 
       def destroy_like(recipient_model, recipient_id)
@@ -68,7 +68,7 @@ module Api
 
         current_user.unlike_r(recipient)
 
-        render status: 200, nothing: true
+        head 200
       end
     end
   end

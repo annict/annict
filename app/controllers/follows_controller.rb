@@ -24,13 +24,13 @@ class FollowsController < ApplicationController
     current_user.follow(@user)
     ga_client.events.create("follows", "create")
 
-    render status: 200, nothing: true
+    head 200
   end
 
   def destroy
     current_user.unfollow(@user)
 
-    render status: 200, nothing: true
+    head 200
   end
 
 

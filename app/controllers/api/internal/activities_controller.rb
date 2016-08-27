@@ -4,7 +4,7 @@ module Api
   module Internal
     class ActivitiesController < Api::Internal::ApplicationController
       def index(username: nil, page: nil)
-        return render(status: 404, nothing: true) if username.blank? && !user_signed_in?
+        return head(404) if username.blank? && !user_signed_in?
 
         activities = if username.blank?
           current_user.following_activities
