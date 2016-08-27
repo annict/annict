@@ -7,6 +7,7 @@ infiniteScroll =  require "vue-infinite-scroll"
 
 AnnCommentGuard = require "../v2/base/components/AnnCommentGuard"
 AnnFlash = require "./base/components/AnnFlash"
+AnnMuteUserButton = require "./base/components/AnnMuteUserButton"
 AnnLikeButton = require "../v2/base/components/AnnLikeButton"
 AnnModal = require "../v2/base/components/AnnModal"
 AnnPrograms = require "./base/components/AnnPrograms"
@@ -16,6 +17,7 @@ AnnRecordCommentForm = require "./base/components/AnnRecordCommentForm"
 AnnRecordRating = require "../v2/base/components/AnnRecordRating"
 
 annSimpleFormat = require("../v2/base/directives/annSimpleFormat")
+annRecordFilter = require("../v3/base/directives/annRecordFilter")
 
 $ ->
   $(document).foundation()
@@ -25,6 +27,7 @@ $ ->
 
   Vue.component("ann-comment-guard", AnnCommentGuard)
   Vue.component("ann-flash", AnnFlash)
+  Vue.component("ann-mute-user-button", AnnMuteUserButton)
   Vue.component("ann-like-button", AnnLikeButton)
   Vue.component("ann-modal", AnnModal)
   Vue.component("ann-programs", AnnPrograms)
@@ -34,9 +37,12 @@ $ ->
   Vue.component("ann-record-rating", AnnRecordRating)
 
   Vue.directive("ann-simple-format", annSimpleFormat)
+  Vue.directive("ann-record-filter", annRecordFilter)
 
   new Vue
     el: "#ann"
     events:
       "AnnFlash:show": (message, type = "notice") ->
         @$broadcast "AnnFlash:show", message, type
+      "AnnMuteUser:mute": (userId) ->
+        @$broadcast "AnnMuteUser:mute", userId

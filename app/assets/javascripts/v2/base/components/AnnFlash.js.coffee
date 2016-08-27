@@ -3,6 +3,11 @@ Vue = require "vue"
 module.exports = Vue.extend
   template: "#ann-flash"
 
+  events:
+    "AnnFlash:show": (message, type = "notice") ->
+      @body = message
+      @type = type
+
   data: ->
     type: gon.flash.type || "notice"
     body: gon.flash.body || ""

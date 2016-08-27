@@ -58,3 +58,5 @@
   = render "application/v2/components/create_multiple_records_activity"
   = render "application/v2/components/create_status_activity"
   = render "application/v2/components/like_button"
+  - if user_signed_in?
+    = render "application/v3/components/mute_user_button"

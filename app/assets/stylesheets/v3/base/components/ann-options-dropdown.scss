@@ -1,0 +1,21 @@
+.ann-options-dropdown {
+  color: $color-gunsmoke;
+  font-size: 14px;
+
+  &:hover {
+    cursor: pointer;
+  }
+
+  ul.dropdown-pane {
+    list-style-type: none;
+    padding: 0;
+
+    li {
+      padding: 14px 7px;
+
+      &:hover {
+        background-color: $color-alto;
+      }
+    }
+  }
+}
