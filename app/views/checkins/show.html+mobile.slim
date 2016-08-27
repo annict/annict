@@ -15,7 +15,7 @@
 .a-content
   = render "episodes/episode_header", work: @work, episode: @episode
   .card
-    = render "episodes/record_status", episode: @episode, records: @records
+    = render "episodes/record_status", episode: @episode, records: @records, current_user_records: []
     hr style="margin-bottom: 14px; margin-top: 0;"
     .column
       h2 = "#{@record.user.profile.name}さんの記録"

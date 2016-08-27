@@ -44,7 +44,7 @@
                   p
                     = icon "info-circle"
                     = t "checkins.no_comments"
-        = render "episodes/episode_sidebar", work: @work, episode: @episode, records: @records, canonical_url: canonical_url
+        = render "episodes/episode_sidebar", work: @work, episode: @episode, records: @records, current_user_records: [], canonical_url: canonical_url
 
 = render "application/v2/components/footer"
 
