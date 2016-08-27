@@ -21,7 +21,7 @@ class RegistrationsController < Devise::RegistrationsController
 
     if @user.save
       ga_client.events.create("users", "create")
-      sign_in(@user, bypass: true)
+      bypass_sign_in(@user)
 
       flash[:info] = t("registrations.create.confirmation_mail_has_sent")
       redirect_to after_sign_in_path_for(@user)

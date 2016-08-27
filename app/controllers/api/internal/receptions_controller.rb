@@ -8,12 +8,12 @@ module Api
 
       def create
         current_user.receive(@channel)
-        render status: 200, nothing: true
+        head 200
       end
 
       def destroy
         current_user.unreceive(@channel)
-        render status: 200, nothing: true
+        head 200
       end
 
       private

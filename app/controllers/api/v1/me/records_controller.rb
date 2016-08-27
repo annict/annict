@@ -48,7 +48,7 @@ module Api
         def destroy
           @record = current_user.checkins.find(@params.id)
           @record.destroy
-          render status: 204, nothing: true
+          head 204
         end
 
         private

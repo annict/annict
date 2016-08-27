@@ -9,7 +9,7 @@ module Api
         current_user.setting.update_column(
           :programs_sort_type, permitted[:programs_sort_type]
         )
-        render status: 204, nothing: true
+        head 204
       end
 
       private

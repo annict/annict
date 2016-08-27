@@ -2,7 +2,7 @@
 
 FactoryGirl.define do
   factory :checkin do
-    association :user
+    association :user, :with_profile
     comment "おもしろかった"
     twitter_url_hash "xxxxx"
     episode
