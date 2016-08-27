@@ -62,6 +62,7 @@ class User < ActiveRecord::Base
   has_many :channels,      through:   :receptions
   has_many :statuses,      dependent: :destroy
   has_many :multiple_records, dependent: :destroy
+  has_many :mute_users, dependent: :destroy
   has_many :oauth_applications, class_name: "Doorkeeper::Application", as: :owner
   has_many :oauth_access_grants,
     class_name: "Doorkeeper::AccessGrant",
@@ -123,7 +124,8 @@ class User < ActiveRecord::Base
   end
 
   def following_activities
-    following_ids = followings.pluck(:id)
+    mute_user_ids = mute_users.pluck(:muted_user_id)
+    following_ids = followings.where.not(id: mute_user_ids).pluck(:id)
     following_ids << self.id
 
     Activity.where(user_id: following_ids)
@@ -177,6 +179,11 @@ class User < ActiveRecord::Base
 
   def ga_uid
     Digest::SHA256.hexdigest(id.to_s)
+  end
+
+  def mute(user)
+    mute_user = mute_users.where(muted_user: user).first_or_initialize
+    mute_user.save
   end
 
   private

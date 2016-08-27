@@ -4,6 +4,7 @@
   background-image: none;
   border: none;
   box-shadow: 0 1px 1px rgba(0, 0, 0, 0.2);
+  height: 48px;
   min-height: 48px;
 
   .navbar-content {
@@ -22,7 +23,7 @@
       -webkit-padding-start: 0;
       float: left;
       margin-left: 4px;
-      padding-top: 7px;
+      padding-top: 3px;
 
       a {
         color: #ffffff;

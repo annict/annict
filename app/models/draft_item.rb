@@ -14,8 +14,6 @@
 #  tombo_image_updated_at   :datetime         not null
 #  created_at               :datetime         not null
 #  updated_at               :datetime         not null
-#  image_color_light        :string           default(""), not null
-#  image_color_dark         :string           default(""), not null
 #
 # Indexes
 #

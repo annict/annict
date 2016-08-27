@@ -24,6 +24,7 @@ AnnCommentGuard = require "../v2/base/components/AnnCommentGuard"
 AnnFlash = require "../v2/base/components/AnnFlash"
 AnnLikeButton = require "../v2/base/components/AnnLikeButton"
 AnnModal = require "../v2/base/components/AnnModal"
+AnnMuteUserButton = require "../v3/base/components/AnnMuteUserButton"
 AnnRatingLabel = require "../v2/base/components/AnnRatingLabel"
 AnnRecordRating = require "../v2/base/components/AnnRecordRating"
 AnnSeasonSelector = require "../v2/base/components/AnnSeasonSelector"
@@ -38,6 +39,7 @@ $ ->
   Vue.component("ann-activities", AnnActivities)
   Vue.component("ann-comment-guard", AnnCommentGuard)
   Vue.component("ann-flash", AnnFlash)
+  Vue.component("ann-mute-user-button", AnnMuteUserButton)
   Vue.component("ann-modal", AnnModal)
   Vue.component("ann-like-button", AnnLikeButton)
   Vue.component("ann-rating-label", AnnRatingLabel)
@@ -55,5 +57,9 @@ $ ->
   new Vue
     el: "#ann"
     events:
+      "AnnFlash:show": (message, type = "notice") ->
+        @$broadcast "AnnFlash:show", message, type
       "AnnModal:showModal": (templateId) ->
         @$broadcast "AnnModal:showModal", templateId
+      "AnnMuteUser:mute": (userId) ->
+        @$broadcast "AnnMuteUser:mute", userId

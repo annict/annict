@@ -45,15 +45,13 @@
             h2 = "#{@user_records.present? || @current_user_records.present? ? 'その他皆さんの感想' : '感想'}"
             - if @records.with_comment.present?
               - @records.with_comment.each_with_index do |record, i|
-                - if i != 0
-                  hr
                 = render "records/record", record: record
             - else
               .a-no-records.callout.secondary
                 p
                   = icon "info-circle"
                   | まだ感想は書き込まれていません
-        = render "episodes/episode_sidebar", work: @work, episode: @episode, records: @records, canonical_url: canonical_url
+        = render "episodes/episode_sidebar", work: @work, episode: @episode, records: @records, current_user_records: @current_user_records, canonical_url: canonical_url
 
 = render "application/v2/components/footer"
 
@@ -62,5 +60,6 @@
   = render "application/v2/components/status_selector"
   = render "application/v3/components/facebook_share_button"
   = render "application/v3/components/twitter_share_button"
+  = render "application/v3/components/mute_user_button"
   - unless user_signed_in?
     = render "application/v2/components/prevent_change_status_modal"

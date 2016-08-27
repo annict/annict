@@ -1,4 +1,4 @@
-.ann-record
+.ann-record v-ann-record-filter="" userId="#{record.user.id}"
   .row
     .a-avatar.columns.shrink
       = link_to user_path(record.user.username) do
@@ -34,6 +34,12 @@
               = icon "comment-o"
               span.a-count
                 = record.comments_count
+            - if user_signed_in? && current_user != record.user
+              span.ann-options-dropdown data-toggle="record-options-#{record.id}"
+                = icon "ellipsis-h"
+                ul.dropdown-pane.left id="record-options-#{record.id}" data-dropdown="" data-close-on-click="true"
+                  li
+                    ann-mute-user-button user-id="#{record.user.id}"
         - if record.user == current_user
           .a-foot.clearfix
             .float-right

@@ -1,0 +1,31 @@
+body.mutes-index {
+  padding-top: 60px;
+
+  .c-tabs {
+    @include tabs(independent);
+  }
+
+  .app__main {
+    > .content {
+      @include content(narrow);
+      @include card;
+
+      h3 {
+        text-align: center;
+      }
+
+      ul {
+        list-style-type: none;
+
+        li {
+          line-height: 50px;
+          margin-bottom: 14px;
+
+          .profile-name {
+            margin-left: 7px;
+          }
+        }
+      }
+    }
+  }
+}
