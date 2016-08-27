@@ -15,7 +15,7 @@
 .a-content
   = render "episodes/episode_header", work: @work, episode: @episode
   .card
-    = render "episodes/record_status", episode: @episode, records: @records, current_user_records: []
+    = render "episodes/record_status", episode: @episode, records: @records, current_user_records: Checkin.none
     hr style="margin-bottom: 14px; margin-top: 0;"
     .column
       h2 = "#{@record.user.profile.name}さんの記録"
@@ -48,3 +48,4 @@
 
 - content_for :parts do
   = render "application/v2/components/like_button"
+  = render "application/v3/components/mute_user_button"
