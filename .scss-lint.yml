@@ -1,3 +1,5 @@
+exclude:
+  - "vendor/assets/stylesheets/**"
 linters:
   SelectorFormat:
     convention: hyphenated_BEM
