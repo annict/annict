@@ -1,8 +1,11 @@
 coffeescript:
   enabled: false
 
+eslint:
+  enabled: true
+
 ruby:
   config_file: .rubocop.yml
 
 scss:
-  enabled: false
+  enabled: true

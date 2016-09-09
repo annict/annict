@@ -1,0 +1,5 @@
+linters:
+  SelectorFormat:
+    convention: hyphenated_BEM
+  StringQuotes:
+    style: double_quotes
