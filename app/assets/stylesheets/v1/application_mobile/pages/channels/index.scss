@@ -1,8 +1,0 @@
-body.channels-index {
-  > .app__main {
-    > .content {
-      @include content(wide);
-      @include card;
-    }
-  }
-}
