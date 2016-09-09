@@ -37,7 +37,7 @@ module Annict
     # The default locale is :en and all translations from
     # config/locales/*.rb,yml are auto loaded.
     # config.i18n.load_path += Dir[Rails.root.join('my', 'locales', '*.{rb,yml}').to_s]
-    config.i18n.default_locale = :ja
+    config.i18n.default_locale = :en
     config.i18n.available_locales = ["en-US", :ja]
 
     config.autoload_paths += %W(
@@ -82,8 +82,5 @@ module Annict
         "#{ENV.fetch('REDIS_URL')}/0/annict_cache",
         { expires_in: 90.minutes }
     end
-
-    commandline_options = "-t coffeeify --extension=\".js.coffee\""
-    config.browserify_rails.commandline_options = commandline_options
   end
 end

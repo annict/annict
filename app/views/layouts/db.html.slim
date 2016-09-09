@@ -1,41 +1,36 @@
 doctype html
-html lang="ja" ng-app="annict"
+html lang="#{I18n.locale}"
   head
     = display_meta_tags site: "Annict DB"
     link href="/images/favicon.png" rel="shortcut icon" type="image/png"
-    = stylesheet_link_tag "db/application", media: "all"
-    = include_gon
-    = javascript_include_tag "v1/application"
-    = javascript_include_tag "db/application"
+    = stylesheet_link_tag "db", media: "all"
+    = javascript_include_tag *webpack_asset_paths("pc")
     = csrf_meta_tags
-  body#ann class="#{page_project_class}"
-    nav.navbar.navbar-default.navbar-fixed-top role="navigation"
-      .container-fluid
-        .navbar-header
-          = link_to "Annict DB", db_root_path, class: "navbar-brand", target: "_self"
-        .collapse.navbar-collapse
-          ul.nav.navbar-nav
-            li
-              = link_to db_edit_requests_path, target: "_self" do
-                | 編集リクエスト 
-                - if @opened_edit_requests.present?
-                  span.badge = @opened_edit_requests.count
-            li
-              = link_to "アクティビティ", db_activities_path, target: "_self"
-            li
-              = link_to "作品", db_works_path, target: "_self"
-            li
-              = link_to "人物", db_people_path, target: "_self"
-            li
-              = link_to "団体", db_organizations_path, target: "_self"
-          = form_tag db_search_path, method: :get, class: "navbar-form navbar-left", role: "form" do
-            = text_field_tag :q, @search.q, class: "form-control", placeholder: "キーワードで検索..."
-          ul.nav.navbar-nav.navbar-right
-            li
-              = link_to root_path do
-                = image_tag "navbar/logo-120x120.png", size: "30x30"
+  body class="#{body_classes}"
+    .l-content
+      .l-sidebar
+        = link_to db_root_path, class: "c-lockup" do
+          span.c-lockup__logo Annict
+          span.c-lockup__brand DB
+        = form_tag db_search_path, method: :get, class: "l-sidebar__search" do
+          = text_field_tag :q, @search.q, placeholder: t("search_with_keyword"), class: "l-sidebar__search__input"
+        ul.nav.navbar-nav
+          li
+            = link_to db_edit_requests_path, target: "_self" do
+              | 編集リクエスト 
+              - if @opened_edit_requests.present?
+                span.badge = @opened_edit_requests.count
+          li
+            = link_to "アクティビティ", db_activities_path, target: "_self"
+          li
+            = link_to "作品", db_works_path, target: "_self"
+          li
+            = link_to "人物", db_people_path, target: "_self"
+          li
+            = link_to "団体", db_organizations_path, target: "_self"
+      .l-main
+        = render "application/flash"
+        = yield
 
-    .container
-      = render "application/v1/flash"
-      = yield
-    = render "application/v3/analytics"
+    = include_gon
+    = render "application/analytics"

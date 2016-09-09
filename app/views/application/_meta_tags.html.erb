@@ -1,0 +1,20 @@
+<%
+default_options = {
+  reverse: true,
+  site: "Annict",
+  og: {
+    title: page_title(page_title_symbol: :site_page_title, separator: " | "),
+    type: "website",
+    url: request.url,
+    description: t("meta.description"),
+    site_name: t("words.site_name"),
+    image: "#{ENV.fetch('ANNICT_URL')}/images/og_image.png",
+    locale: (I18n.locale == :ja ? "ja_JP" : "en_US")
+  },
+  fb: {
+    app_id: ENV.fetch("FACEBOOK_APP_ID")
+  }
+}
+%>
+
+<%= display_meta_tags default_options %>

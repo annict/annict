@@ -101,18 +101,17 @@ module ApplicationHelper
     params[:controller] == "organizations" && params[:action] == "show"
   end
 
-  def page_project_class(options = {})
-    extra_body_classes_symbol = options[:extra_body_classes_symbol] || :extra_body_classes
-    qualified_controller_name = controller.controller_path.tr("/", "-")
-    basic_body_class = [
-      "p-#{qualified_controller_name}",
-      "p-#{qualified_controller_name}--#{controller.action_name}"
+  def body_classes
+    controller_name = controller.controller_path.tr("/", "-")
+    basic_body_classes = [
+      "p-#{controller_name}",
+      "p-#{controller_name}-#{controller.action_name}"
     ].join(" ")
 
-    if content_for?(extra_body_classes_symbol)
-      [basic_body_class, content_for(extra_body_classes_symbol)].join(" ")
+    if content_for?(:extra_body_classes)
+      [basic_body_classes, content_for(:extra_body_classes)].join(" ")
     else
-      basic_body_class
+      basic_body_classes
     end
   end
 end

@@ -11,9 +11,6 @@ gem "action_args"
 gem "active_link_to"
 gem "activerecord-session_store"
 gem "acts_as_list"
-# 本家がRails 5対応するまでfork版を使う
-# https://github.com/jsanders/angular_rails_csrf/pull/18
-gem "angular_rails_csrf", github: "tpmullan/angular_rails_csrf"
 gem "annotate"
 gem "asset_sync"
 gem "aws-sdk"
@@ -21,7 +18,6 @@ gem "bootstrap-sass"
 gem "bourbon"
 # 2系対応が面倒くさそうなので一旦1系を使い続ける
 gem "browser", "~> 1.1.0"
-gem "browserify-rails"
 gem "by_star"
 gem "coffee-rails"
 gem "delayed_job_active_record"
@@ -33,7 +29,6 @@ gem "enumerize"
 gem "figaro"
 gem "flutie"
 gem "font-awesome-sass"
-gem "foundation-rails"
 gem "gon"
 gem "hashdiff"
 gem "httparty"
@@ -45,7 +40,6 @@ gem "koala"
 gem "meta-tags"
 gem "mini_magick"
 gem "net-ssh" # fog を使用している asset_sync で使用
-gem "ngannotate-rails"
 gem "nokogiri"
 gem "omniauth-facebook"
 # 1.4系だとFacebookのOAuth周りでおかしくなるので1.3系を使う
@@ -73,6 +67,7 @@ gem "twitter"
 gem "uglifier"
 gem "validate_url"
 gem "virtus"
+gem "webpack-rails"
 
 group :development, :test do
   gem "awesome_print"
@@ -95,6 +90,7 @@ group :development do
   gem "listen" # Rails 5から `rails s` するときに必要になった
   gem "rubocop"
   gem "ruby_identicon"
+  gem "scss_lint"
   gem "spring"
   gem "spring-commands-rspec", require: false
   gem "thin"
@@ -112,3 +108,5 @@ group :test do
   gem "factory_girl_rails"
   gem "poltergeist"
 end
+
+gem 'foreman'

@@ -1,10 +1,3 @@
-GIT
-  remote: git://github.com/tpmullan/angular_rails_csrf.git
-  revision: 3729c779237b64ddecd9054158abbfa362fa1add
-  specs:
-    angular_rails_csrf (1.0.4)
-      rails (>= 3, < 5.1)
-
 GEM
   remote: https://rubygems.org/
   specs:
@@ -88,10 +81,6 @@ GEM
       descendants_tracker (~> 0.0.4)
       ice_nine (~> 0.11.0)
       thread_safe (~> 0.3, >= 0.3.1)
-    babel-source (5.8.35)
-    babel-transpiler (0.7.0)
-      babel-source (>= 4.0, < 6)
-      execjs (~> 2.0)
     bcrypt (3.1.11)
     better_errors (2.1.1)
       coderay (>= 1.0.0)
@@ -106,9 +95,6 @@ GEM
       sass (~> 3.4)
       thor (~> 0.19)
     browser (1.1.0)
-    browserify-rails (3.1.0)
-      railties (>= 4.0.0, < 5.1)
-      sprockets (>= 3.5.2)
     buftok (0.2.0)
     bugsnag (5.0.0)
     builder (3.2.2)
@@ -328,11 +314,9 @@ GEM
       nokogiri (~> 1.5, >= 1.5.11)
     font-awesome-sass (4.6.2)
       sass (>= 3.2)
+    foreman (0.82.0)
+      thor (~> 0.19.1)
     formatador (0.2.5)
-    foundation-rails (6.2.3.0)
-      railties (>= 3.1.0)
-      sass (>= 3.3.0, < 3.5)
-      sprockets-es6 (>= 0.9.0)
     globalid (0.3.7)
       activesupport (>= 4.1.0)
     gon (6.1.0)
@@ -415,9 +399,6 @@ GEM
     multipart-post (2.0.0)
     naught (1.1.0)
     net-ssh (3.2.0)
-    ngannotate-rails (1.2.2)
-      execjs
-      rails (>= 3.1)
     nio4r (1.2.1)
     nokogiri (1.6.8)
       mini_portile2 (~> 2.1.0)
@@ -594,6 +575,9 @@ GEM
       sprockets (>= 2.8, < 4.0)
       sprockets-rails (>= 2.0, < 4.0)
       tilt (>= 1.1, < 3)
+    scss_lint (0.50.2)
+      rake (>= 0.9, < 12)
+      sass (~> 3.4.20)
     simple_oauth (0.3.1)
     simplecov (0.12.0)
       docile (~> 1.1.0)
@@ -612,10 +596,6 @@ GEM
     sprockets (3.7.0)
       concurrent-ruby (~> 1.0)
       rack (> 1, < 3)
-    sprockets-es6 (0.9.1)
-      babel-source (>= 5.8.11)
-      babel-transpiler
-      sprockets (>= 3.0.0)
     sprockets-rails (3.1.1)
       actionpack (>= 4.0)
       activesupport (>= 4.0)
@@ -665,6 +645,8 @@ GEM
       equalizer (~> 0.0, >= 0.0.9)
     warden (1.2.6)
       rack (>= 1.0)
+    webpack-rails (0.9.9)
+      rails (>= 3.2.0)
     websocket-driver (0.6.4)
       websocket-extensions (>= 0.1.0)
     websocket-extensions (0.1.2)
@@ -681,7 +663,6 @@ DEPENDENCIES
   active_link_to
   activerecord-session_store
   acts_as_list
-  angular_rails_csrf!
   annotate
   asset_sync
   awesome_print
@@ -691,7 +672,6 @@ DEPENDENCIES
   bootstrap-sass
   bourbon
   browser (~> 1.1.0)
-  browserify-rails
   bugsnag
   bullet
   by_star
@@ -709,7 +689,7 @@ DEPENDENCIES
   figaro
   flutie
   font-awesome-sass
-  foundation-rails
+  foreman
   gon
   hashdiff
   hirb
@@ -725,7 +705,6 @@ DEPENDENCIES
   meta-tags
   mini_magick
   net-ssh
-  ngannotate-rails
   nokogiri
   omniauth-facebook
   omniauth-oauth2 (~> 1.3.1)
@@ -756,6 +735,7 @@ DEPENDENCIES
   rubocop
   ruby_identicon
   sass-rails
+  scss_lint
   sitemap_generator
   slim
   spring
@@ -766,6 +746,10 @@ DEPENDENCIES
   uglifier
   validate_url
   virtus
+  webpack-rails
+
+RUBY VERSION
+   ruby 2.3.1p112
 
 BUNDLED WITH
    1.12.5
