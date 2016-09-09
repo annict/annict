@@ -1,0 +1,31 @@
+.l-sidebar {
+  background-color: $mine-shaft-black;
+  float: left;
+  height: 100%;
+  overflow-y: auto;
+  padding: .5rem;
+  position: fixed;
+  top: 0;
+  width: 14rem;
+
+  a {
+    color: $white;
+
+    &:hover {
+      color: $white;
+      text-decoration: none;
+    }
+  }
+}
+
+.l-sidebar__search {
+  text-align: center;
+
+  .l-sidebar__search__input {
+    width: 12rem;
+  }
+}
+
+.l-main {
+  margin-left: 14rem;
+}
