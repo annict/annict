@@ -1,6 +1,39 @@
 en:
   search_with_keyword: Search...
+  messages:
+    are_you_sure: Are you sure?
   meta:
     description: Annict is a platform that can track anime which you have watched.
+  resources:
+    seasons:
+      yearly:
+        winter: "Winter %{year}"
+        spring: "Spring %{year}"
+        summer: "Summer %{year}"
+        autumn: "Fall %{year}"
+    works:
+      aasm_state:
+        published: Published
+        hidden: Hidden
+      new: New work
+  titles:
+    no_episodes: No episodes
+    no_work_images: No work images
+    works_list: Works list
   words:
+    all: All
+    delete: Delete
+    edit: Edit
+    first: First
+    hide: Hide
+    last: Last
+    next: Next
+    previous: Prev
+    release_on: Release on
+    season: Season
     site_name: Annict
+    state: State
+    state_change: State change
+    syobocal: Syobocal
+    title: Title
+    work_image: Work image

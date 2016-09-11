@@ -1,7 +1,10 @@
 //= require_self
 
-@import "foundations/foundation";
-
+@import "common/foundations/foundation";
 @import "db/foundations/foundation";
-@import "db/layout";
+
+@import "common/uikit/**/*";
+@import "common/components/**/*";
+
 @import "db/components/**/*";
+@import "db/layouts/**/*";

@@ -1,0 +1,14 @@
+.l-content {
+  background-color: $haze-white;
+  padding: 1rem;
+}
+
+.uk-subnav {
+  height: 3rem;
+  line-height: 3rem;
+  margin: 0;
+
+  > * {
+    margin-top: 0;
+  }
+}

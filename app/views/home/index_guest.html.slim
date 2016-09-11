@@ -5,183 +5,185 @@
 
 = render "application/v2/navbar"
 
-.hero
-  .work-image style="background-image: url(#{annict_image_url(@cover_image_work.item, :tombo_image, size: '640x640', blur: 200)});"
-  .content
-    h1 見たアニメを記録して、共有しよう。
-    .description
-      p Annict (アニクト) は、アニメの視聴記録ができるWebサービスです。
-      p 人気ランキングや友達の視聴記録から好きなアニメを見つけて、管理することができます。
-    .signup-btn
-      ann-action-blocker modal-template-id="signup-modal" is-blocked="true"
-        = icon "rocket"
-        .text アカウント登録して記録する
+ann-test
 
-.content
-  .main
-    .section
-      h2 今期の人気アニメ
-      .wrapper
-        .top-work
-          .left
-            = link_to work_path(@season_top_work), class: "image" do
-              = annict_image_tag(@season_top_work.item, :tombo_image, size: "250x250", alt: @season_top_work.title)
-            ann-status-selector work-id="#{@season_top_work.id}" status-kind="no_select" is-prevented="true"
-          .right
-            .watchers-count
-              span.count = @season_top_work.watchers_count
-              span.text Watchers
-            h3 = link_to @season_top_work.title, work_path(@season_top_work)
-            - if @season_top_work.casts.present?
-              .casts
-                .title キャスト
-                ul
-                  - @season_top_work.casts.order(:sort_number).limit(10).each do |cast|
-                    - cache cast do
-                      li
-                        = "#{cast.part}: "
-                        = cast.decorate.name_with_old_link
-            - if @season_top_work.staffs.present?
-              .staffs
-                .title スタッフ
-                ul
-                  - @season_top_work.staffs.major.order(:sort_number).limit(10).each do |staff|
-                    - cache staff do
-                      li
-                        = "#{staff.decorate.role_name}: "
-                        = staff.decorate.name_with_old_link
-        .works
-          - @season_works.each_slice(4).each do |works|
-            .row
-              - works.each do |work|
-                .work
-                  = link_to work_path(work) do
-                    .image style="background-image: url(#{annict_image_url(work.item, :tombo_image, size: '178x178')});"
-                  .watchers-count
-                    span.count = work.watchers_count
-                    span.text Watchers
-                  = link_to work.title, work_path(work), class: "title"
-                  ann-status-selector work-id="#{work.id}" status-kind="no_select" is-prevented="true" is-transparent="true"
-        .more
-          = link_to season_works_path(slug: ENV["ANNICT_CURRENT_SEASON"]) do
-            | 今期のアニメを全て見る
-
-    .section
-      h2 人気アニメ
-      .wrapper
-        .top-work
-          .left
-            = link_to work_path(@top_work), class: "image" do
-              = annict_image_tag(@top_work.item, :tombo_image, size: "250x250", alt: @top_work.title)
-            .library-btn
-              ann-status-selector work-id="#{@season_top_work.id}" status-kind="no_select" is-prevented="true"
-          .right
-            .watchers-count
-              span.count = @top_work.watchers_count
-              span.text Watchers
-            h3 = link_to @top_work.title, work_path(@top_work)
-            - if @top_work.casts.present?
-              .casts
-                .title キャスト
-                ul
-                  - @top_work.casts.order(:sort_number).limit(10).each do |cast|
-                    - cache cast do
-                      li
-                        = "#{cast.part}: "
-                        = cast.decorate.name_with_old_link
-            - if @top_work.staffs.present?
-              .staffs
-                .title スタッフ
-                ul
-                  - @top_work.staffs.major.order(:sort_number).limit(10).each do |staff|
-                    - cache staff do
-                      li
-                        = "#{staff.decorate.role_name}: "
-                        = staff.decorate.name_with_old_link
-        .works
-          - @works.each_slice(4).each do |works|
-            .row
-              - works.each do |work|
-                .work
-                  = link_to work_path(work) do
-                    .image style="background-image: url(#{annict_image_url(work.item, :tombo_image, size: '178x178')});"
-                  .watchers-count
-                    span.count = work.watchers_count
-                    span.text Watchers
-                  = link_to work.title, work_path(work), class: "title"
-                  ann-status-selector work-id="#{@season_top_work.id}" status-kind="no_select" is-prevented="true" is-transparent="true"
-        .more
-          = link_to popular_works_path do
-            | 人気アニメを全て見る
-  
-  .side
-    h2 みんなの視聴記録
-    .activities
-      - @activities.each do |act|
-        .activity
-          .header
-            .time
-              = custom_time_ago_in_words(act.created_at)
-            .user
-              .avatar
-                = link_to user_path(username: act.user.username) do
-                  = annict_image_tag(act.user.profile, :tombo_avatar, size: "25x25")
-              .text
-                = link_to act.user.profile.name, user_path(username: act.user.username)
-                | が
-                - if act.action.create_record?
-                  | 記録しました
-                - elsif act.action.create_multiple_records?
-                  | 一括記録しました
-                - elsif act.action.create_status?
-                  | ステータスを変更しました
-          .body
-            - if act.action.create_record?
-              - if act.trackable.comment.present?
-                ann-comment-guard inline-template=""
-                  .record-comment v-on:click="remove"
-                    = act.trackable.comment
-              .work
-                .image
-                  = link_to work_path(act.trackable.work) do
-                    = annict_image_tag(act.trackable.work.item, :tombo_image, size: "30x30")
-                .info
-                  .title
-                    = link_to act.trackable.work.title, work_path(act.trackable.work)
-                  - unless act.trackable.work.single?
-                    .episode
-                      = link_to act.recipient.number, work_episode_path(act.trackable.work, act.recipient)
-            - elsif act.action.create_multiple_records?
-              .work
-                .image
-                  = link_to work_path(act.recipient) do
-                    = annict_image_tag(act.recipient.item, :tombo_image, size: "30x30")
-                .info
-                  .title
-                    = link_to act.recipient.title, work_path(act.recipient)
-                  .episodes
-                    - records = act.trackable.checkins.joins(:episode).order("episodes.sort_number ASC")
-                    - if records.count > 1
-                      = link_to records.first.episode.number, work_episode_path(act.recipient, records.first.episode)
-                      | から
-                      = link_to records.last.episode.number, work_episode_path(act.recipient, records.last.episode)
-                    - else
-                      - if records.first&.episode.present? && !act.recipient.single?
-                        = link_to records.first.episode.number, work_episode_path(act.recipient, records.first.episode)
-            - elsif act.action.create_status?
-              .work
-                .image
-                  = link_to work_path(act.trackable.work) do
-                    = annict_image_tag(act.trackable.work.item, :tombo_image, size: "30x30")
-                .info
-                  .title
-                    = link_to act.trackable.work.title, work_path(act.trackable.work)
-                  .status
-                    = act.trackable.kind_text
-
-= render "application/v2/components/footer"
-
-- content_for :parts do
-  = render "application/v2/components/status_selector"
-  - unless user_signed_in?
-    = render "application/v2/components/prevent_change_status_modal"
+/ .hero
+/   .work-image style="background-image: url(#{annict_image_url(@cover_image_work.item, :tombo_image, size: '640x640', blur: 200)});"
+/   .content
+/     h1 見たアニメを記録して、共有しよう。
+/     .description
+/       p Annict (アニクト) は、アニメの視聴記録ができるWebサービスです。
+/       p 人気ランキングや友達の視聴記録から好きなアニメを見つけて、管理することができます。
+/     .signup-btn
+/       ann-action-blocker modal-template-id="signup-modal" is-blocked="true"
+/         = icon "rocket"
+/         .text アカウント登録して記録する
+/ 
+/ .content
+/   .main
+/     .section
+/       h2 今期の人気アニメ
+/       .wrapper
+/         .top-work
+/           .left
+/             = link_to work_path(@season_top_work), class: "image" do
+/               = annict_image_tag(@season_top_work.item, :tombo_image, size: "250x250", alt: @season_top_work.title)
+/             ann-status-selector work-id="#{@season_top_work.id}" status-kind="no_select" is-prevented="true"
+/           .right
+/             .watchers-count
+/               span.count = @season_top_work.watchers_count
+/               span.text Watchers
+/             h3 = link_to @season_top_work.title, work_path(@season_top_work)
+/             - if @season_top_work.casts.present?
+/               .casts
+/                 .title キャスト
+/                 ul
+/                   - @season_top_work.casts.order(:sort_number).limit(10).each do |cast|
+/                     - cache cast do
+/                       li
+/                         = "#{cast.part}: "
+/                         = cast.decorate.name_with_old_link
+/             - if @season_top_work.staffs.present?
+/               .staffs
+/                 .title スタッフ
+/                 ul
+/                   - @season_top_work.staffs.major.order(:sort_number).limit(10).each do |staff|
+/                     - cache staff do
+/                       li
+/                         = "#{staff.decorate.role_name}: "
+/                         = staff.decorate.name_with_old_link
+/         .works
+/           - @season_works.each_slice(4).each do |works|
+/             .row
+/               - works.each do |work|
+/                 .work
+/                   = link_to work_path(work) do
+/                     .image style="background-image: url(#{annict_image_url(work.item, :tombo_image, size: '178x178')});"
+/                   .watchers-count
+/                     span.count = work.watchers_count
+/                     span.text Watchers
+/                   = link_to work.title, work_path(work), class: "title"
+/                   ann-status-selector work-id="#{work.id}" status-kind="no_select" is-prevented="true" is-transparent="true"
+/         .more
+/           = link_to season_works_path(slug: ENV["ANNICT_CURRENT_SEASON"]) do
+/             | 今期のアニメを全て見る
+/ 
+/     .section
+/       h2 人気アニメ
+/       .wrapper
+/         .top-work
+/           .left
+/             = link_to work_path(@top_work), class: "image" do
+/               = annict_image_tag(@top_work.item, :tombo_image, size: "250x250", alt: @top_work.title)
+/             .library-btn
+/               ann-status-selector work-id="#{@season_top_work.id}" status-kind="no_select" is-prevented="true"
+/           .right
+/             .watchers-count
+/               span.count = @top_work.watchers_count
+/               span.text Watchers
+/             h3 = link_to @top_work.title, work_path(@top_work)
+/             - if @top_work.casts.present?
+/               .casts
+/                 .title キャスト
+/                 ul
+/                   - @top_work.casts.order(:sort_number).limit(10).each do |cast|
+/                     - cache cast do
+/                       li
+/                         = "#{cast.part}: "
+/                         = cast.decorate.name_with_old_link
+/             - if @top_work.staffs.present?
+/               .staffs
+/                 .title スタッフ
+/                 ul
+/                   - @top_work.staffs.major.order(:sort_number).limit(10).each do |staff|
+/                     - cache staff do
+/                       li
+/                         = "#{staff.decorate.role_name}: "
+/                         = staff.decorate.name_with_old_link
+/         .works
+/           - @works.each_slice(4).each do |works|
+/             .row
+/               - works.each do |work|
+/                 .work
+/                   = link_to work_path(work) do
+/                     .image style="background-image: url(#{annict_image_url(work.item, :tombo_image, size: '178x178')});"
+/                   .watchers-count
+/                     span.count = work.watchers_count
+/                     span.text Watchers
+/                   = link_to work.title, work_path(work), class: "title"
+/                   ann-status-selector work-id="#{@season_top_work.id}" status-kind="no_select" is-prevented="true" is-transparent="true"
+/         .more
+/           = link_to popular_works_path do
+/             | 人気アニメを全て見る
+/   
+/   .side
+/     h2 みんなの視聴記録
+/     .activities
+/       - @activities.each do |act|
+/         .activity
+/           .header
+/             .time
+/               = custom_time_ago_in_words(act.created_at)
+/             .user
+/               .avatar
+/                 = link_to user_path(username: act.user.username) do
+/                   = annict_image_tag(act.user.profile, :tombo_avatar, size: "25x25")
+/               .text
+/                 = link_to act.user.profile.name, user_path(username: act.user.username)
+/                 | が
+/                 - if act.action.create_record?
+/                   | 記録しました
+/                 - elsif act.action.create_multiple_records?
+/                   | 一括記録しました
+/                 - elsif act.action.create_status?
+/                   | ステータスを変更しました
+/           .body
+/             - if act.action.create_record?
+/               - if act.trackable.comment.present?
+/                 ann-comment-guard inline-template=""
+/                   .record-comment v-on:click="remove"
+/                     = act.trackable.comment
+/               .work
+/                 .image
+/                   = link_to work_path(act.trackable.work) do
+/                     = annict_image_tag(act.trackable.work.item, :tombo_image, size: "30x30")
+/                 .info
+/                   .title
+/                     = link_to act.trackable.work.title, work_path(act.trackable.work)
+/                   - unless act.trackable.work.single?
+/                     .episode
+/                       = link_to act.recipient.number, work_episode_path(act.trackable.work, act.recipient)
+/             - elsif act.action.create_multiple_records?
+/               .work
+/                 .image
+/                   = link_to work_path(act.recipient) do
+/                     = annict_image_tag(act.recipient.item, :tombo_image, size: "30x30")
+/                 .info
+/                   .title
+/                     = link_to act.recipient.title, work_path(act.recipient)
+/                   .episodes
+/                     - records = act.trackable.checkins.joins(:episode).order("episodes.sort_number ASC")
+/                     - if records.count > 1
+/                       = link_to records.first.episode.number, work_episode_path(act.recipient, records.first.episode)
+/                       | から
+/                       = link_to records.last.episode.number, work_episode_path(act.recipient, records.last.episode)
+/                     - else
+/                       - if records.first&.episode.present? && !act.recipient.single?
+/                         = link_to records.first.episode.number, work_episode_path(act.recipient, records.first.episode)
+/             - elsif act.action.create_status?
+/               .work
+/                 .image
+/                   = link_to work_path(act.trackable.work) do
+/                     = annict_image_tag(act.trackable.work.item, :tombo_image, size: "30x30")
+/                 .info
+/                   .title
+/                     = link_to act.trackable.work.title, work_path(act.trackable.work)
+/                   .status
+/                     = act.trackable.kind_text
+/ 
+/ = render "application/v2/components/footer"
+/ 
+/ - content_for :parts do
+/   = render "application/v2/components/status_selector"
+/   - unless user_signed_in?
+/     = render "application/v2/components/prevent_change_status_modal"

@@ -14,6 +14,7 @@ var production = process.env.NODE_ENV === "production";
 var config = {
   entry: {
     // Sources are expected to live in $app_root/webpack
+    "db": "./webpack/javascripts/db.js",
     "pc": "./webpack/javascripts/pc.js",
     "mobile": "./webpack/javascripts/mobile.js"
   },

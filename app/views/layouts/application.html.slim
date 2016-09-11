@@ -3,10 +3,10 @@ html lang="ja"
   head
     = render "application/head"
   body class="#{body_classes} #{user_signed_in? ? 'user' : 'guest'}"
-    = render "application/v3/flash"
+    = render "application/flash"
     = yield
     = yield :parts
     ann-modal
 
     = include_gon
-    = render "application/v3/analytics"
+    = render "application/analytics"

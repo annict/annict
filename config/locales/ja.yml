@@ -1,6 +1,39 @@
 ja:
   search_with_keyword: キーワードで検索...
+  messages:
+    are_you_sure: 実行しますか？
   meta:
     description: Annict (アニクト) は、見たアニメを記録したり、見た感想を友達にシェアすることができるWebサービスです。「今どの作品を何話まで見ているんだっけ？」を解消します。
+  resources:
+    seasons:
+      yearly:
+        winter: "%{year}年冬"
+        spring: "%{year}年春"
+        summer: "%{year}年夏"
+        autumn: "%{year}年秋"
+    works:
+      aasm_state:
+        published: Published
+        hidden: Hidden
+      new: 新規登録
+  titles:
+    no_episodes: エピソード未登録
+    no_work_images: 作品画像未登録
+    works_list: アニメ作品一覧
   words:
+    all: 全て
+    delete: 削除
+    edit: 編集
+    first: 最初へ
+    hide: 非公開
+    last: 最後へ
+    next: 次へ
+    previous: 前へ
+    release_on: リリース時期
+    season: シーズン
     site_name: Annict (アニクト)
+    state: ステータス
+    state_change: ステータス変更
+    syobocal: しょぼかる
+    title: タイトル
+    work_image: 作品画像

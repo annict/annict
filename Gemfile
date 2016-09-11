@@ -90,7 +90,7 @@ group :development do
   gem "listen" # Rails 5から `rails s` するときに必要になった
   gem "rubocop"
   gem "ruby_identicon"
-  gem "scss_lint"
+  gem "scss_lint", require: false
   gem "spring"
   gem "spring-commands-rspec", require: false
   gem "thin"
@@ -108,5 +108,3 @@ group :test do
   gem "factory_girl_rails"
   gem "poltergeist"
 end
-
-gem 'foreman'
