@@ -75,7 +75,7 @@ GEM
       mime-types
       unf
     ast (2.3.0)
-    autoprefixer-rails (6.4.1)
+    autoprefixer-rails (6.4.1.1)
       execjs
     awesome_print (1.7.0)
     aws-sdk (2.5.11)
