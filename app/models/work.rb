@@ -3,24 +3,33 @@
 #
 # Table name: works
 #
-#  id                :integer          not null, primary key
-#  season_id         :integer
-#  sc_tid            :integer
-#  title             :string(510)      not null
-#  media             :integer          not null
-#  official_site_url :string(510)      default(""), not null
-#  wikipedia_url     :string(510)      default(""), not null
-#  episodes_count    :integer          default(0), not null
-#  watchers_count    :integer          default(0), not null
-#  released_at       :date
-#  created_at        :datetime
-#  updated_at        :datetime
-#  twitter_username  :string(510)
-#  twitter_hashtag   :string(510)
-#  released_at_about :string
-#  aasm_state        :string           default("published"), not null
-#  number_format_id  :integer
-#  title_kana        :string           default(""), not null
+#  id                   :integer          not null, primary key
+#  season_id            :integer
+#  sc_tid               :integer
+#  title                :string(510)      not null
+#  media                :integer          not null
+#  official_site_url    :string(510)      default(""), not null
+#  wikipedia_url        :string(510)      default(""), not null
+#  episodes_count       :integer          default(0), not null
+#  watchers_count       :integer          default(0), not null
+#  released_at          :date
+#  created_at           :datetime
+#  updated_at           :datetime
+#  twitter_username     :string(510)
+#  twitter_hashtag      :string(510)
+#  released_at_about    :string
+#  aasm_state           :string           default("published"), not null
+#  number_format_id     :integer
+#  title_kana           :string           default(""), not null
+#  title_ro             :string           default(""), not null
+#  title_en             :string           default(""), not null
+#  official_site_en_url :string           default(""), not null
+#  wikipedia_en_url     :string           default(""), not null
+#  synopsis             :text             default(""), not null
+#  synopsis_en          :text             default(""), not null
+#  synopsis_source      :string           default(""), not null
+#  synopsis_en_source   :string           default(""), not null
+#  mal_anime_id         :integer
 #
 # Indexes
 #
