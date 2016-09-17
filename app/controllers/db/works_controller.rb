@@ -54,7 +54,7 @@ module Db
 
       @work.attributes = work
       if @work.save_and_create_db_activity(current_user, "works.update")
-        redirect_to edit_db_work_path(@work), notice: "作品を更新しました"
+        redirect_to edit_db_work_path(@work), notice: t("resources.works.updated")
       else
         render :edit
       end

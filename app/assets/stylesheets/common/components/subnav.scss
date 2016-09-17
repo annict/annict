@@ -1,0 +1,22 @@
+.c-subnav {
+  background-color: $white;
+  box-shadow: 0 2px 2px -2px $cadet-gray;
+  height: 4.5rem;
+  line-height: 4.5rem;
+
+  &--divided {
+    border-top: solid .01rem $alto-gray;
+  }
+
+  ul {
+    @include display(flex);
+    @include justify-content(center);
+    margin: 0 auto;
+    max-width: 1200px;
+
+    li {
+      @include flex(1);
+      text-align: center;
+    }
+  }
+}

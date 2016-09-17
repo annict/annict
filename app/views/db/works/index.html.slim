@@ -5,7 +5,10 @@
     h1 = t("titles.works_list")
   .l-topbar__right
     - if user_signed_in? && current_user.committer?
-      = link_to t("resources.works.new"), new_db_work_path, class: "uk-button uk-button-primary"
+      = link_to new_db_work_path, class: "uk-button uk-button-primary" do
+        .uk-button__text
+          = t "resources.works.new"
+      
 
 .l-content
   ul.uk-subnav.uk-subnav-line.uk-flex-center

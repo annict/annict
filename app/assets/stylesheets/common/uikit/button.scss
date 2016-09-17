@@ -1,0 +1,19 @@
+.uk-button {
+  @include transition(background-color .2s ease, border-color .2s ease);
+  border-radius: 2px;
+
+  &--secondary-hollow {
+    background-color: transparent;
+    border: 1px solid $secondary-color;
+  }
+
+  &__text {
+    display: inline;
+    vertical-align: inherit;
+  }
+
+  i {
+    margin-right: .5rem;
+    vertical-align: inherit;
+  }
+}

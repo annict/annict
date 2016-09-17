@@ -1,0 +1,8 @@
+.c-subnav.c-subnav--divided
+  ul.uk-list
+    li = link_to t("words.work"), edit_db_work_path(work)
+    li = link_to t("words.episode"), db_work_episodes_path(work)
+    li = link_to t("words.program"), db_work_programs_path(work)
+    li = link_to t("words.cast"), db_work_casts_path(work)
+    li = link_to t("words.staff"), db_work_staffs_path(work)
+    li = link_to t("words.activity"), db_work_activities_path(work)

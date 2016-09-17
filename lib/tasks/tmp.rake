@@ -5,6 +5,7 @@ namespace :tmp do
     DbActivity.find_each do |a|
       case a.trackable_type
       when "Work", "Cast", "Person", "Staff", "Episode", "Organization"
+      end
     end
   end
 end

@@ -99,20 +99,7 @@ Rails.application.routes.draw do
 
   namespace :db do
     resources :activities, only: [:index]
-    resources :draft_organizations, only: [:new, :create, :edit, :update]
-    resources :draft_people, only: [:new, :create, :edit, :update]
-    resources :draft_works, only: [:new, :create, :edit, :update]
     resource :search, only: [:show]
-
-    resources :edit_requests, only: [:index, :show] do
-      member do
-        post :close
-        post :publish
-      end
-      resources :comments,
-        only: [:create, :edit, :update, :destroy],
-        controller: "edit_request_comments"
-    end
 
     resources :organizations, except: [:show] do
       patch :hide, on: :member
@@ -132,12 +119,7 @@ Rails.application.routes.draw do
         patch :hide
       end
 
-      resources :draft_casts, only: [:new, :create, :edit, :update]
-      resources :draft_episodes, only: [:new, :create, :edit, :update]
-      resources :draft_items, only: [:new, :create, :edit, :update]
-      resources :draft_multiple_episodes, only: [:new, :create, :edit, :update]
-      resources :draft_programs, only: [:new, :create, :edit, :update]
-      resources :draft_staffs, only: [:new, :create, :edit, :update]
+      resources :activities, only: [:index]
       resources :multiple_episodes, only: [:new, :create]
       resources :programs, except: [:show]
       resource :item, except: [:index]

@@ -1,5 +1,6 @@
 .l-topbar {
-  border-bottom: solid .01rem $alto-gray;
+  background-color: $white;
+  box-shadow: 0 2px 2px -2px $cadet-gray;
   height: 4.5rem;
   line-height: 4.5rem;
   padding: 0 1rem;
