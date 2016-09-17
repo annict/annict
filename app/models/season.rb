@@ -20,6 +20,7 @@
 class Season < ActiveRecord::Base
   has_many :works
 
+  delegate :humanize_name, to: :decorate
   delegate :yearly_season_ja, to: :decorate
 
   NAME_DATA = {

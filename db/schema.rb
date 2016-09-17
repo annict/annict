@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160911021552) do
+ActiveRecord::Schema.define(version: 20160913135207) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -135,8 +135,10 @@ ActiveRecord::Schema.define(version: 20160911021552) do
     t.json     "parameters"
     t.datetime "created_at",     null: false
     t.datetime "updated_at",     null: false
+    t.integer  "work_id"
     t.index ["recipient_id", "recipient_type"], name: "index_db_activities_on_recipient_id_and_recipient_type", using: :btree
     t.index ["trackable_id", "trackable_type"], name: "index_db_activities_on_trackable_id_and_trackable_type", using: :btree
+    t.index ["work_id"], name: "index_db_activities_on_work_id", using: :btree
   end
 
   create_table "delayed_jobs", force: :cascade do |t|
@@ -796,6 +798,7 @@ ActiveRecord::Schema.define(version: 20160911021552) do
   add_foreign_key "comments", "works"
   add_foreign_key "cover_images", "works", name: "cover_images_work_id_fk", on_delete: :cascade
   add_foreign_key "db_activities", "users"
+  add_foreign_key "db_activities", "works"
   add_foreign_key "draft_casts", "casts"
   add_foreign_key "draft_casts", "people"
   add_foreign_key "draft_casts", "works"

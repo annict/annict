@@ -1,9 +1,5 @@
 coffeescript:
-  enabled: false
-
-eslint:
-  enabled: true
-  config_file: .eslintrc
+  config_file: coffeelint.json
 
 ruby:
   config_file: .rubocop.yml

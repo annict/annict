@@ -30,8 +30,8 @@ class WorkDecorator < ApplicationDecorator
   end
 
   def release_season
-    return season.decorate.humanize_name if season.present?
-    released_at_about.presence || ""
+    return "" if season.blank?
+    season.decorate.humanize_name
   end
 
   def release_season_link

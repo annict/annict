@@ -94,7 +94,6 @@ ja:
         season_id: リリース時期
         media: メディア
         official_site_url: 公式サイト
-        released_at_about: リリース時期 (大体)
         sc_tid: しょぼかるID
         title: タイトル
         title_kana: 作品タイトル (かな)
@@ -142,7 +141,6 @@ ja:
         season_id: リリース時期
         media: メディア
         official_site_url: 公式サイト
-        released_at_about: リリース時期 (大体)
         sc_tid: しょぼかるID
         title: 作品タイトル
         title_kana: 作品タイトル (かな)

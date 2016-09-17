@@ -30,8 +30,6 @@ class Episode < ActiveRecord::Base
   include DbActivityMethods
   include EpisodeCommon
 
-  has_paper_trail only: DIFF_FIELDS
-
   aasm do
     state :published, initial: true
     state :hidden

@@ -1,7 +1,11 @@
-= render "create_type_tab", work: @work
+.l-topbar.uk-flex.uk-flex-space-between
+  .l-topbar__left
+    h1 = t("resources.works.new")
 
-.row
-  .col-sm-7
-    = render "form", work: @work
-  .col-sm-5
-    = render "sidebar"
+.l-content
+  .uk-grid
+    .uk-width-2-3
+      .c-card.c-card--padding
+        = render "form", work: @work
+    .uk-width-1-3
+      = render "sidebar"

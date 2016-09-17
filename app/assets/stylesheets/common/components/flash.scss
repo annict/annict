@@ -1,0 +1,25 @@
+.c-flash {
+  cursor: pointer;
+  height: 4.5rem;
+  line-height: 4.5rem;
+  padding: 0 1rem;
+  position: fixed;
+  width: 100%;
+
+  &--expand-transition {
+    top: 0;
+    transition: all .8s linear;
+  }
+
+  &--expand-enter,
+  &--expand-leave {
+    top: -500px;
+  }
+
+  i {
+    font-size: 2.2rem;
+    margin-right: .5rem;
+    position: relative;
+    top: .5rem;
+  }
+}

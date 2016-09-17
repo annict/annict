@@ -4,9 +4,9 @@ html lang="#{I18n.locale}"
     = display_meta_tags site: "Annict DB", reverse: true
     link href="/images/favicon.png" rel="shortcut icon" type="image/png"
     = stylesheet_link_tag "db", media: "all"
-    = javascript_include_tag *webpack_asset_paths("db")
+    = javascript_include_tag "pc"
     = csrf_meta_tags
-  body class="#{body_classes}"
+  body class="p-db #{body_classes}"
     .l-sidebar
       = link_to db_root_path, class: "c-lockup" do
         span.c-lockup__logo Annict
@@ -15,11 +15,6 @@ html lang="#{I18n.locale}"
         = text_field_tag :q, @search.q, placeholder: t("search_with_keyword"), class: "l-sidebar__search__input"
       ul.nav.navbar-nav
         li
-          = link_to db_edit_requests_path, target: "_self" do
-            | 編集リクエスト 
-            - if @opened_edit_requests.present?
-              span.badge = @opened_edit_requests.count
-        li
           = link_to "アクティビティ", db_activities_path
         li
           = link_to "作品", db_works_path
@@ -27,8 +22,9 @@ html lang="#{I18n.locale}"
           = link_to "人物", db_people_path
         li
           = link_to "団体", db_organizations_path
+      = link_to "Annict", root_path
     .l-main
-      / = render "application/flash"
+      = render "application/flash"
       = yield
 
     = include_gon

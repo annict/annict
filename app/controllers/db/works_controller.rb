@@ -2,9 +2,10 @@
 
 module Db
   class WorksController < Db::ApplicationController
-    permits :season_id, :sc_tid, :title, :title_kana, :media, :official_site_url,
-      :wikipedia_url, :twitter_username, :twitter_hashtag, :released_at_about,
-      :number_format_id
+    permits :title, :title_kana, :title_ro, :title_en, :media, :season_id,
+      :official_site_url, :official_site_en_url, :wikipedia_url, :wikipedia_en_url,
+      :twitter_username, :twitter_hashtag, :sc_tid, :mal_anime_id, :number_format_id,
+      :synopsis, :synopsis_source, :synopsis_en, :synopsis_en_source
 
     before_action :authenticate_user!, only: [:new, :create, :edit, :update, :destroy]
 
@@ -36,7 +37,7 @@ module Db
       authorize @work, :create?
 
       if @work.save_and_create_db_activity(current_user, "works.create")
-        redirect_to edit_db_work_path(@work), notice: "作品を登録しました"
+        redirect_to edit_db_work_path(@work), notice: t("resources.works.created")
       else
         render :new
       end

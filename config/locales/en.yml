@@ -1,4 +1,26 @@
 en:
+  activerecord:
+    attributes:
+      work:
+        mal_anime_id: MAL Anime ID
+        media: Media
+        number_format_id: Number format
+        official_site_en_url: Official site (En)
+        official_site_url: Offisial site (Ja)
+        sc_tid: Syobocal ID
+        season: Season
+        synopsis_en_source: Synopsis source (En)
+        synopsis_en: Synopsis (En)
+        synopsis_source: Synopsis source (Ja)
+        synopsis: Synopsis (Ja)
+        title_en: Title (En)
+        title_kana: Title (Kana)
+        title_ro: Title (Roman alphabet)
+        title: Title (Ja)
+        twitter_hashtag: Twitter hashtag
+        twitter_username: Twitter username
+        wikipedia_en_url: Wikipedia (En)
+        wikipedia_url: Wikipedia (Ja)
   search_with_keyword: Search...
   messages:
     are_you_sure: Are you sure?
@@ -15,7 +37,10 @@ en:
       aasm_state:
         published: Published
         hidden: Hidden
+      created: Work created
       new: New work
+      twitter_hashtag_placeholder: e.g. なのん
+      twitter_username_placeholder: e.g. nonnontv
   titles:
     no_episodes: No episodes
     no_work_images: No work images
@@ -24,6 +49,7 @@ en:
     all: All
     delete: Delete
     edit: Edit
+    error: Error
     first: First
     hide: Hide
     last: Last

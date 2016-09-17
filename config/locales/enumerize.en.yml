@@ -1,0 +1,9 @@
+en:
+  enumerize:
+    work:
+      media:
+        tv: TV
+        ova: OVA
+        movie: Movie
+        web: Web
+        other: Other

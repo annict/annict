@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module DbActivityMethods
   extend ActiveSupport::Concern
 
@@ -9,14 +11,28 @@ module DbActivityMethods
       when "multiple_episodes.create"
         ActiveRecord::Base.transaction do
           Episode.create_from_multiple_episodes(work, to_episode_hash)
-          create_db_activity(user, nil, to_episode_hash, action, trackable: work)
+          data = {
+            user: user,
+            root_resource: work,
+            old_attrs: nil,
+            new_attrs: to_episode_hash,
+            action: action
+          }
+          create_db_activity(data)
         end
       else
         ActiveRecord::Base.transaction do
-          old_attributes = to_attributes
+          old_attrs = to_attributes
           save(validate: false)
-          new_attributes = to_attributes
-          create_db_activity(user, old_attributes, new_attributes, action)
+          new_attrs = to_attributes
+          data = {
+            user: user,
+            root_resource: root_resource,
+            old_attrs: old_attrs,
+            new_attrs: new_attrs,
+            action: action
+          }
+          create_db_activity(data)
         end
       end
     end
@@ -24,16 +40,17 @@ module DbActivityMethods
 
   private
 
-  def create_db_activity(user, old_attributes, new_attributes, action, trackable: self)
-    if old_attributes != new_attributes
-      DbActivity.create do |dba|
-        dba.user = user
-        dba.trackable = trackable
-        dba.action = action
-        dba.parameters = if old_attributes.blank?
-          { new: new_attributes }
+  def create_db_activity(data)
+    if data[:old_attrs] != data[:new_attrs]
+      DbActivity.create do |a|
+        a.user = data[:user]
+        a.root_resource = data[:root_resource]
+        a.trackable = self
+        a.action = data[:action]
+        a.parameters = if data[:old_attrs].blank?
+          { new: data[:new_attrs] }
         else
-          { old: old_attributes, new: new_attributes }
+          { old: data[:old_attrs], new: data[:new_attrs] }
         end
       end
     end
@@ -43,5 +60,11 @@ module DbActivityMethods
     return nil if new_record?
 
     self.class.find(id).attributes
+  end
+
+  def root_resource
+    case self.class.name
+    when "Work" then self
+    end
   end
 end

@@ -18,6 +18,7 @@ gem "bootstrap-sass"
 gem "bourbon"
 # 2系対応が面倒くさそうなので一旦1系を使い続ける
 gem "browser", "~> 1.1.0"
+gem "browserify-rails"
 gem "by_star"
 gem "coffee-rails"
 gem "delayed_job_active_record"
@@ -46,7 +47,6 @@ gem "omniauth-facebook"
 # https://github.com/intridea/omniauth-oauth2/issues/81
 gem "omniauth-oauth2", "~> 1.3.1"
 gem "omniauth-twitter"
-gem "paper_trail"
 gem "paperclip"
 gem "pg"
 gem "puma"
@@ -67,7 +67,6 @@ gem "twitter"
 gem "uglifier"
 gem "validate_url"
 gem "virtus"
-gem "webpack-rails"
 
 group :development, :test do
   gem "awesome_print"

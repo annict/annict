@@ -10,6 +10,5 @@
 /node_modules
 /public/paperclip
 /public/sitemap*
-/public/webpack
 /spec/test_files/paperclip
 /tmp
