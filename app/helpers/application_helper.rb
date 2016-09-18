@@ -114,4 +114,8 @@ module ApplicationHelper
       basic_body_classes
     end
   end
+
+  def locale_ja?
+    locale == :ja || (user_signed_in? && current_user.role.admin?)
+  end
 end

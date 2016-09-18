@@ -1,0 +1,29 @@
+en:
+  activerecord:
+    attributes:
+      episode:
+        checkins_count: Records count
+        number: Number (ja)
+        raw_number: Raw number
+        sc_count: Syobocal number
+        sort_number: Sort number
+      work:
+        mal_anime_id: MAL Anime ID
+        media: Media
+        number_format_id: Number format
+        official_site_en_url: Official site (en)
+        official_site_url: Offisial site (ja)
+        sc_tid: Syobocal ID
+        season: Season
+        synopsis_en_source: Synopsis source (en)
+        synopsis_en: Synopsis (en)
+        synopsis_source: Synopsis source (ja)
+        synopsis: Synopsis (ja)
+        title_en: Title (en)
+        title_kana: Title (kana)
+        title_ro: Title (romanized)
+        title: Title (ja)
+        twitter_hashtag: Twitter hashtag
+        twitter_username: Twitter username
+        wikipedia_en_url: Wikipedia (en)
+        wikipedia_url: Wikipedia (ja)

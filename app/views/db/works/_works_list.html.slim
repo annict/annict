@@ -2,25 +2,33 @@ table.c-card.uk-table.uk-table-hover
   thead
     tr
       th ID
-      th = t("words.title")
-      - if locale == :ja
-        th = t("words.syobocal")
+      th = t "words.title"
+      - if locale_ja?
+        th = t "words.syobocal"
       th Watchers
-      th = t("words.release_on")
-      th = t("words.work_image")
-      th = t("words.state")
+      th = t "words.release_on"
+      th = t "words.work_image"
+      th = t "words.state"
       - if policy(works).edit?
-        th = t("words.edit")
+        th = t "words.edit"
       - if policy(works).hide?
-        th = t("words.state_change")
+        th = t "words.state_change"
       - if policy(works).destroy?
-        th = t("words.delete")
+        th = t "words.delete"
   tbody
     - works.each do |work|
       tr
         td = link_to work.id, work_path(work), target: "_blank"
         td
-          - if locale == :ja
+          - if current_user.role.admin?
+            = work.title
+            br
+            = work.title_kana.presence || "-"
+            br
+            = work.title_ro.presence || "-"
+            br
+            = work.title_en.presence || "-"
+          - elsif locale == :ja
             = work.title
             - if work.title_kana.present?
               br
@@ -33,7 +41,7 @@ table.c-card.uk-table.uk-table-hover
               = work.title_en
             - if work.title_ro.blank? && work.title_en.blank?
               = work.title
-        - if locale == :ja
+        - if locale_ja?
           td
             - if work.sc_tid.present?
               = work.decorate.syobocal_link

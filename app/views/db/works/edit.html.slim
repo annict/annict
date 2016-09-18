@@ -2,8 +2,7 @@
 
 .l-topbar.uk-flex.uk-flex-space-between
   .l-topbar__left
-    h1
-      = @work.title
+    h1 = @work.title
   .l-topbar__right
     = link_to work_path(@work), class: "uk-button uk-button--secondary-hollow", target: "_blank" do
       = icon "external-link"

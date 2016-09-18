@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class EpisodeDecorator < ApplicationDecorator
   include EpisodeDecoratorCommon
 
@@ -21,5 +23,11 @@ class EpisodeDecorator < ApplicationDecorator
   def meta_title
     return "" if title.blank? || title == work.title
     "「#{title}」"
+  end
+
+  def formatted_number
+    return number if I18n.locale == :ja
+    return "##{raw_number}" if raw_number.present?
+    number
   end
 end

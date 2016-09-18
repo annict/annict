@@ -1,28 +1,29 @@
-- title t("titles.works_list")
+- title t("resources.works.works_list")
 
 .l-topbar.uk-flex.uk-flex-space-between
   .l-topbar__left
-    h1 = t("titles.works_list")
-  .l-topbar__right
-    - if user_signed_in? && current_user.committer?
+    h1 = t "resources.works.works_list"
+  - if user_signed_in? && current_user.committer?
+    .l-topbar__right
       = link_to new_db_work_path, class: "uk-button uk-button-primary" do
+        = icon "plus"
         .uk-button__text
-          = t "resources.works.new"
-      
+          = t "resources.works.new_work"
+
 
 .l-content
   ul.uk-subnav.uk-subnav-line.uk-flex-center
     = active_link_to t("words.all"), db_works_path, wrap_tag: :li, class_active: "uk-active", active: params[:action] == "index"
     li.c-season-dropdown data-uk-dropdown="{ mode: 'click' }"
       a href=""
-        = t("words.season")
+        = t "words.season"
         = icon "caret-down"
       .uk-dropdown.uk-dropdown-small
         ul.uk-nav.uk-nav-dropdown
           - Season.order(sort_number: :desc).each do |season|
             li = link_to season.decorate.humanize_name, season_db_works_path(slug: season.slug)
-    = active_link_to t("titles.no_episodes"), resourceless_db_works_path(name: :episode), wrap_tag: :li, active: (params[:name] == "episode")
-    = active_link_to t("titles.no_work_images"), resourceless_db_works_path(name: :item), wrap_tag: :li, active: (params[:name] == "item")
+    = active_link_to t("resources.episodes.no_episodes"), resourceless_db_works_path(name: :episode), wrap_tag: :li, active: (params[:name] == "episode")
+    = active_link_to t("resources.works.no_images"), resourceless_db_works_path(name: :item), wrap_tag: :li, active: (params[:name] == "item")
 
   = render "works_list", works: @works
   = paginate @works
