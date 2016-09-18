@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160913135207) do
+ActiveRecord::Schema.define(version: 20160918071042) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -126,19 +126,28 @@ ActiveRecord::Schema.define(version: 20160913135207) do
   end
 
   create_table "db_activities", force: :cascade do |t|
-    t.integer  "user_id",        null: false
+    t.integer  "user_id",            null: false
     t.integer  "recipient_id"
     t.string   "recipient_type"
-    t.integer  "trackable_id",   null: false
-    t.string   "trackable_type", null: false
-    t.string   "action",         null: false
+    t.integer  "trackable_id",       null: false
+    t.string   "trackable_type",     null: false
+    t.string   "action",             null: false
     t.json     "parameters"
-    t.datetime "created_at",     null: false
-    t.datetime "updated_at",     null: false
+    t.datetime "created_at",         null: false
+    t.datetime "updated_at",         null: false
     t.integer  "work_id"
+    t.integer  "root_resource_id"
+    t.string   "root_resource_type"
     t.index ["recipient_id", "recipient_type"], name: "index_db_activities_on_recipient_id_and_recipient_type", using: :btree
+    t.index ["root_resource_id", "root_resource_type"], name: "index_db_activities_on_root_resource_id_and_root_resource_type", using: :btree
     t.index ["trackable_id", "trackable_type"], name: "index_db_activities_on_trackable_id_and_trackable_type", using: :btree
     t.index ["work_id"], name: "index_db_activities_on_work_id", using: :btree
+  end
+
+  create_table "db_comments", force: :cascade do |t|
+    t.text     "body",       null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
   end
 
   create_table "delayed_jobs", force: :cascade do |t|
@@ -363,6 +372,8 @@ ActiveRecord::Schema.define(version: 20160913135207) do
     t.boolean  "fetch_syobocal",              default: false,       null: false
     t.string   "raw_number"
     t.float    "avg_rating"
+    t.string   "title_ro",                    default: "",          null: false
+    t.string   "title_en",                    default: "",          null: false
     t.index ["aasm_state"], name: "index_episodes_on_aasm_state", using: :btree
     t.index ["prev_episode_id"], name: "index_episodes_on_prev_episode_id", using: :btree
     t.index ["work_id", "sc_count"], name: "episodes_work_id_sc_count_key", unique: true, using: :btree
