@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160914131922) do
+ActiveRecord::Schema.define(version: 20160918071042) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -372,6 +372,8 @@ ActiveRecord::Schema.define(version: 20160914131922) do
     t.boolean  "fetch_syobocal",              default: false,       null: false
     t.string   "raw_number"
     t.float    "avg_rating"
+    t.string   "title_ro",                    default: "",          null: false
+    t.string   "title_en",                    default: "",          null: false
     t.index ["aasm_state"], name: "index_episodes_on_aasm_state", using: :btree
     t.index ["prev_episode_id"], name: "index_episodes_on_prev_episode_id", using: :btree
     t.index ["work_id", "sc_count"], name: "episodes_work_id_sc_count_key", unique: true, using: :btree
