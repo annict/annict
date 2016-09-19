@@ -20,4 +20,5 @@ script:
   - bundle exec rspec
 
 notifications:
+  email: false
   slack: annict:rn43dPpTg6KuZZajh4PK33r9
