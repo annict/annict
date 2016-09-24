@@ -2,7 +2,7 @@
 
 .l-topbar.uk-flex.uk-flex-space-between
   .l-topbar__left
-    h1 = t "resources.works.works_list"
+    = render "db/application/topbar_title", parent: t("resources.works.works_list")
   - if user_signed_in? && current_user.committer?
     .l-topbar__right
       = link_to new_db_work_path, class: "uk-button uk-button-primary" do

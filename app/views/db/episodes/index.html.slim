@@ -2,13 +2,13 @@
 
 .l-topbar.uk-flex.uk-flex-space-between
   .l-topbar__left
-    h1 = t "resources.episodes.episodes_list"
+    = render "db/application/topbar_title", parent: @work, child: t("resources.episodes.episodes_list")
   - if user_signed_in? && current_user.committer?
     .l-topbar__right
-      = link_to new_db_work_multiple_episode_path(@work), class: "uk-button uk-button-primary" do
-        = icon "plus"
+      = link_to edit_db_work_episodes_path(@work), class: "uk-button uk-button-primary" do
+        = icon "pencil-square-o"
         .uk-button__text
-          = t "resources.episodes.new_episode"
+          = t "resources.episodes.edit_episodes"
 
 = render "db/works/subnav", work: @work
 
@@ -29,8 +29,6 @@
         th = t "activerecord.attributes.episode.sort_number"
         th = t "activerecord.attributes.episode.checkins_count"
         th = t "words.state"
-        - if policy(@episodes).edit?
-          th = t "words.edit"
         - if policy(@episodes).hide?
           th = t "words.state_change"
         - if policy(@episodes).destroy?
@@ -55,7 +53,7 @@
               = episode.title_en.presence || "-"
               br
               = "(#{episode.title_ro.presence || '-'})"
-          td = episode.prev_episode&.decorate&.formatted_number.presence || "-"
+          td = episode.prev_episode&.decorate&.local_number.presence || "-"
           - if locale_ja?
             td
               - if episode.fetch_syobocal?
@@ -69,8 +67,6 @@
           td
             div class="uk-badge #{episode.published? ? 'uk-badge-success' : 'uk-badge-warning'}"
               = t("resources.episodes.aasm_state.#{episode.aasm_state}")
-          - if policy(episode).edit?
-            td = link_to t("words.edit"), edit_db_work_episode_path(@work, episode), class: "uk-button uk-button-primary"
           - if policy(episode).hide?
             td
               - if episode.published?

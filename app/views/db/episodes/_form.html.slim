@@ -1,8 +1,13 @@
-= form_for [:db, work, episode], html: { class: "form-horizontal" } do |f|
-  = render "application/v1/error_panel", resource: f.object
+= form_for [:db, work, form], url: db_work_episodes_path(work), html: { class: "uk-form uk-form-horizontal" } do |f|
+  = render "application/error_panel", resource: f.object
 
-  = render "episode_fields", f: f, work: work
+  - f.object.episodes.each do |episode|
+    = f.fields_for :episodes, episode do |ef|
+      .uk-form-row
+        = ef.label :title, class: "uk-form-label c-label-required"
+        .uk-form-controls
+          = ef.text_field :title, class: "uk-form-width-large"
 
-  .form-group
-    .col-sm-offset-3.col-sm-9
-      = f.submit class: "btn btn-primary"
+  .uk-form-row
+    .col-sm-offset-3.uk-form-controls
+      = f.submit t("helpers.submit.update"), class: "uk-button uk-button-primary"

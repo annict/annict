@@ -16,7 +16,8 @@ module DbActivityMethods
             root_resource: work,
             old_attrs: nil,
             new_attrs: to_episode_hash,
-            action: action
+            action: action,
+            trackable: work
           }
           create_db_activity(data)
         end
@@ -45,7 +46,7 @@ module DbActivityMethods
       DbActivity.create do |a|
         a.user = data[:user]
         a.root_resource = data[:root_resource]
-        a.trackable = self
+        a.trackable = data[:trackable].presence || self
         a.action = data[:action]
         a.parameters = if data[:old_attrs].blank?
           { new: data[:new_attrs] }

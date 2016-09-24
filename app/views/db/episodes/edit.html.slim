@@ -1,10 +1,20 @@
-- if @work.present?
-  = render "db/works/header", work: @work
+- title @work.title
 
-= render "edit_type_tab", work: @work, episode: @episode
+.l-topbar.uk-flex.uk-flex-space-between
+  .l-topbar__left
+    = render "db/application/topbar_title", parent: @work, child: t("resources.episodes.edit_episodes")
+  .l-topbar__right
+    = link_to work_path(@work), class: "uk-button uk-button--secondary-hollow", target: "_blank" do
+      = icon "external-link"
+      .uk-button__text
+        = t "resources.works.go_to_work"
 
-.row
-  .col-sm-7
-    = render "form", work: @work, episode: @episode
-  .col-sm-5
-    = render "sidebar"
+= render "db/works/subnav", work: @work
+
+.l-content
+  .uk-grid
+    .uk-width-2-3
+      .c-card.c-card--padding
+        = render "form", work: @work, form: @form
+    .uk-width-1-3
+      = render "sidebar"

@@ -1,0 +1,9 @@
+h1.c-topbar-title
+  .c-topbar-title__parent
+    - if parent.instance_of?(Work)
+      = link_to parent.decorate.local_title, edit_db_work_path(parent)
+    - else
+      = parent
+  - if parent.instance_of?(Work)
+    .c-topbar-title__child
+      = child

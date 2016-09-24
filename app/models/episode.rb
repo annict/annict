@@ -31,7 +31,6 @@
 class Episode < ActiveRecord::Base
   include AASM
   include DbActivityMethods
-  include EpisodeCommon
 
   aasm do
     state :published, initial: true
@@ -47,7 +46,10 @@ class Episode < ActiveRecord::Base
   has_many :activities, dependent: :destroy, foreign_key: :recipient_id, foreign_type: :recipient
   has_many :checkins,   dependent: :destroy
   has_many :draft_episodes, dependent: :destroy
-  has_many :programs,   dependent: :destroy
+  has_many :programs, dependent: :destroy
+
+  validates :sort_number, presence: true, numericality: { only_integer: true }
+  validates :id, associated: true
 
   scope :recorded, -> { where("checkins_count > 0") }
 
@@ -77,6 +79,10 @@ class Episode < ActiveRecord::Base
   # 映画やOVAなどの実質エピソードを持たない作品かどうかを判定する
   def single?
     number.blank? && title.present?
+  end
+
+  def to_hash
+    JSON.parse(to_json)
   end
 
   private

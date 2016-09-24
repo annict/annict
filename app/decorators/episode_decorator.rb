@@ -25,7 +25,7 @@ class EpisodeDecorator < ApplicationDecorator
     "「#{title}」"
   end
 
-  def formatted_number
+  def local_number
     return number if I18n.locale == :ja
     return "##{raw_number}" if raw_number.present?
     number

@@ -120,7 +120,6 @@ Rails.application.routes.draw do
       end
 
       resources :activities, only: [:index]
-      resources :multiple_episodes, only: [:new, :create]
       resources :programs, except: [:show]
       resource :item, except: [:index]
 
@@ -128,7 +127,12 @@ Rails.application.routes.draw do
         patch :hide, on: :member
       end
 
-      resources :episodes, only: [:index, :edit, :update, :destroy] do
+      resources :episodes, only: [:index, :destroy] do
+        collection do
+          get :edit
+          post :update
+        end
+
         member do
           patch :hide
         end

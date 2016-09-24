@@ -1,8 +1,6 @@
-class EpisodePolicy < ApplicationPolicy
-  def update?
-    user.committer?
-  end
+# frozen_string_literal: true
 
+class EpisodePolicy < ApplicationPolicy
   def hide?
     user.role.admin?
   end
