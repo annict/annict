@@ -1,8 +1,8 @@
 .c-subnav.c-subnav--divided
-  ul.uk-list
-    li = link_to t("words.work"), edit_db_work_path(work)
-    li = link_to t("words.episode"), db_work_episodes_path(work)
-    li = link_to t("words.program"), db_work_programs_path(work)
-    li = link_to t("words.cast"), db_work_casts_path(work)
-    li = link_to t("words.staff"), db_work_staffs_path(work)
-    li = link_to t("words.activity"), db_work_activities_path(work)
+  ul.list-unstyled
+    li = active_link_to t("words.work"), edit_db_work_path(work), class_active: "c-subnav__link--active", active: params[:controller] == "db/works"
+    li = active_link_to t("words.episode"), db_work_episodes_path(work), class_active: "c-subnav__link--active", active: params[:controller] == "db/episodes"
+    li = active_link_to t("words.program"), db_work_programs_path(work), class_active: "c-subnav__link--active", active: params[:controller] == "db/programs"
+    li = active_link_to t("words.cast"), db_work_casts_path(work), class_active: "c-subnav__link--active", active: params[:controller] == "db/casts"
+    li = active_link_to t("words.staff"), db_work_staffs_path(work), class_active: "c-subnav__link--active", active: params[:controller] == "db/staffs"
+    li = active_link_to t("words.activity"), db_work_activities_path(work), class_active: "c-subnav__link--active", active: params[:controller] == "db/activities"

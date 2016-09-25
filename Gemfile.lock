@@ -1,5 +1,6 @@
 GEM
   remote: https://rubygems.org/
+  remote: https://rails-assets.org/
   specs:
     CFPropertyList (2.3.3)
     aasm (4.11.0)
@@ -88,9 +89,9 @@ GEM
       rack (>= 0.9.0)
     binding_of_caller (0.7.2)
       debug_inspector (>= 0.0.1)
-    bootstrap-sass (3.3.7)
-      autoprefixer-rails (>= 5.2.1)
-      sass (>= 3.3.4)
+    bootstrap (4.0.0.alpha4)
+      autoprefixer-rails (>= 6.0.3)
+      sass (>= 3.4.19)
     bourbon (4.2.7)
       sass (~> 3.4)
       thor (~> 0.19)
@@ -477,6 +478,7 @@ GEM
       bundler (>= 1.3.0, < 2.0)
       railties (= 5.0.0.1)
       sprockets-rails (>= 2.0.0)
+    rails-assets-tether (1.3.7)
     rails-dom-testing (2.0.1)
       activesupport (>= 4.2.0, < 6.0)
       nokogiri (~> 1.6.0)
@@ -572,6 +574,17 @@ GEM
       sprockets (>= 2.8, < 4.0)
       sprockets-rails (>= 2.0, < 4.0)
       tilt (>= 1.1, < 3)
+    sassc (1.10.0)
+      bundler
+      ffi (~> 1.9.6)
+      sass (>= 3.3.0)
+    sassc-rails (1.3.0)
+      railties (>= 4.0.0)
+      sass
+      sassc (~> 1.9)
+      sprockets (> 2.11)
+      sprockets-rails
+      tilt
     scss_lint (0.50.2)
       rake (>= 0.9, < 12)
       sass (~> 3.4.20)
@@ -664,7 +677,7 @@ DEPENDENCIES
   aws-sdk
   better_errors
   binding_of_caller
-  bootstrap-sass
+  bootstrap
   bourbon
   browser (~> 1.1.0)
   browserify-rails
@@ -716,6 +729,7 @@ DEPENDENCIES
   rack-cors
   rack-rewrite
   rails (~> 5.0.0)
+  rails-assets-tether!
   rails-flog
   rails-html-sanitizer
   rails-i18n
@@ -729,6 +743,7 @@ DEPENDENCIES
   rubocop
   ruby_identicon
   sass-rails
+  sassc-rails
   scss_lint
   sitemap_generator
   slim

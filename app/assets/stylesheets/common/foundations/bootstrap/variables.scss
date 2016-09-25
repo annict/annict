@@ -1,0 +1,43 @@
+// Colors
+
+$brand-primary: $color-mizuho;
+
+
+// Options
+
+$enable-flex: true;
+$enable-transitions: true;
+
+
+// Body
+
+$body-bg: $haze-white;
+$body-color: $river-black;
+
+
+// Links
+
+$link-hover-decoration: none;
+
+
+// Typography
+
+$font-size-h1: 2rem;
+$font-size-h2: 1.75rem;
+$font-size-h3: 1.5rem;
+$font-size-h4: 1.25rem;
+$font-size-h5: 1rem;
+$font-size-h6: .75rem;
+$headings-font-family: "Noto Sans JP", sans-serif;
+$headings-font-weight: 300;
+$line-height-base: 1.7;
+
+
+// Components
+
+$border-radius: .12rem;
+
+
+// Tables
+
+$table-bg-hover: rgba(0, 0, 0, .03);

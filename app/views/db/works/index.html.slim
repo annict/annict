@@ -1,29 +1,30 @@
 - title t("resources.works.works_list")
 
-.l-topbar.uk-flex.uk-flex-space-between
-  .l-topbar__left
-    = render "db/application/topbar_title", parent: t("resources.works.works_list")
-  - if user_signed_in? && current_user.committer?
-    .l-topbar__right
-      = link_to new_db_work_path, class: "uk-button uk-button-primary" do
-        = icon "plus"
-        .uk-button__text
-          = t "resources.works.new_work"
+.l-topbar.container-fluid.p-x-1
+  .row.flex-items-xs-between
+    .col-xs
+      = render "db/application/topbar_title", parent: t("resources.works.works_list")
+    - if user_signed_in? && current_user.committer?
+      .col-xs.text-xs-right
+        = link_to new_db_work_path, class: "btn btn-outline-primary" do
+          = icon "plus"
+          .btn__text
+            = t "resources.works.new_work"
 
-
-.l-content
-  ul.uk-subnav.uk-subnav-line.uk-flex-center
-    = active_link_to t("words.all"), db_works_path, wrap_tag: :li, class_active: "uk-active", active: params[:action] == "index"
-    li.c-season-dropdown data-uk-dropdown="{ mode: 'click' }"
-      a href=""
+.container-fluid.p-a-1
+  ul.nav.nav-inline.text-xs-center.m-b-1
+    li.nav-item.m-r-2
+      = active_link_to t("words.all"), db_works_path, class: "nav-link", active: params[:action] == "index"
+    li.c-season-dropdown.nav-item.dropdown.m-r-2
+      a.nav-link.dropdown-toggle href="#" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"
         = t "words.season"
-        = icon "caret-down"
-      .uk-dropdown.uk-dropdown-small
-        ul.uk-nav.uk-nav-dropdown
-          - Season.order(sort_number: :desc).each do |season|
-            li = link_to season.decorate.humanize_name, season_db_works_path(slug: season.slug)
-    = active_link_to t("resources.episodes.no_episodes"), resourceless_db_works_path(name: :episode), wrap_tag: :li, active: (params[:name] == "episode")
-    = active_link_to t("resources.works.no_images"), resourceless_db_works_path(name: :item), wrap_tag: :li, active: (params[:name] == "item")
+      .dropdown-menu.pre-scrollable
+        - Season.order(sort_number: :desc).each do |season|
+          = link_to season.decorate.humanize_name, season_db_works_path(slug: season.slug), class: "dropdown-item"
+    li.nav-item.m-r-2
+      = active_link_to t("resources.episodes.no_episodes"), resourceless_db_works_path(name: :episode), class: "nav-link", active: (params[:name] == "episode")
+    li.nav-item
+      = active_link_to t("resources.works.no_images"), resourceless_db_works_path(name: :item), class: "nav-link", active: (params[:name] == "item")
 
   = render "works_list", works: @works
   = paginate @works

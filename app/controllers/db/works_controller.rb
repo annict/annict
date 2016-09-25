@@ -10,18 +10,18 @@ module Db
     before_action :authenticate_user!, only: [:new, :create, :edit, :update, :destroy]
 
     def index(page: nil)
-      @works = Work.order(id: :desc).page(page)
+      @works = Work.includes(:season, :item).order(id: :desc).page(page)
     end
 
     def season(page: nil, slug: ENV["ANNICT_CURRENT_SEASON"])
-      @works = Work.by_season(slug).order(id: :desc).page(page)
+      @works = Work.includes(:season, :item).by_season(slug).order(id: :desc).page(page)
       render :index
     end
 
     def resourceless(page: nil, name: "episode")
       @works = case name
-      when "episode" then Work.where(episodes_count: 0)
-      when "item" then Work.itemless.includes(:item)
+      when "episode" then Work.includes(:season, :item).where(episodes_count: 0)
+      when "item" then Work.includes(:season, :item).itemless.includes(:item)
       end
       @works = @works.order(watchers_count: :desc).page(page)
       render :index

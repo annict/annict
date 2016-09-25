@@ -1,89 +1,90 @@
-= form_for [:db, work], html: { class: "uk-form uk-form-horizontal" } do |f|
-  = render "application/error_panel", resource: f.object
+.container
+  = form_for [:db, work] do |f|
+    = render "application/error_panel", resource: f.object
 
-  .uk-form-row
-    = f.label :title, class: "uk-form-label c-label-required"
-    .uk-form-controls
-      = f.text_field :title, class: "uk-form-width-large", autofocus: true, required: true
-  .uk-form-row
-    = f.label :title_kana, class: "uk-form-label"
-    .uk-form-controls
-      = f.text_field :title_kana, class: "uk-form-width-large"
-  .uk-form-row
-    = f.label :title_ro, class: "uk-form-label"
-    .uk-form-controls
-      = f.text_field :title_ro, class: "uk-form-width-large"
-  .uk-form-row
-    = f.label :title_en, class: "uk-form-label"
-    .uk-form-controls
-      = f.text_field :title_en, class: "uk-form-width-large"
-  .uk-form-row
-    = f.label :media, class: "uk-form-label c-label-required"
-    .uk-form-controls
-      .row
-        .col-sm-5
-          = f.select :media, options_for_select(Work.media.options, f.object.media), { include_blank: true }, { required: true }
-  .uk-form-row
-    = f.label :season_id, class: "uk-form-label"
-    .uk-form-controls
-      .row
-        .col-sm-5
-          = f.select :season_id, options_from_collection_for_select(Season.order(sort_number: :desc), :id, :humanize_name, f.object.season_id), { include_blank: true }
-  .uk-form-row
-    = f.label :official_site_url, class: "uk-form-label"
-    .uk-form-controls
-      = f.text_field :official_site_url, class: "uk-form-width-large"
-  .uk-form-row
-    = f.label :official_site_en_url, class: "uk-form-label"
-    .uk-form-controls
-      = f.text_field :official_site_en_url, class: "uk-form-width-large"
-  .uk-form-row
-    = f.label :wikipedia_url, class: "uk-form-label"
-    .uk-form-controls
-      = f.text_field :wikipedia_url, class: "uk-form-width-large"
-  .uk-form-row
-    = f.label :wikipedia_en_url, class: "uk-form-label"
-    .uk-form-controls
-      = f.text_field :wikipedia_en_url, class: "uk-form-width-large"
-  .uk-form-row
-    = f.label :twitter_username, class: "uk-form-label"
-    .uk-form-controls
-      = f.text_field :twitter_username, placeholder: t("resources.works.twitter_username_placeholder")
-  .uk-form-row
-    = f.label :twitter_hashtag, class: "uk-form-label"
-    .uk-form-controls
-      = f.text_field :twitter_hashtag, placeholder: t("resources.works.twitter_hashtag_placeholder")
-  .uk-form-row
-    = f.label :sc_tid, class: "uk-form-label"
-    .uk-form-controls
-      = f.text_field :sc_tid
-  .uk-form-row
-    = f.label :mal_anime_id, class: "uk-form-label"
-    .uk-form-controls
-      = f.text_field :mal_anime_id
-  .uk-form-row
-    = f.label :number_format_id, class: "uk-form-label"
-    .uk-form-controls
-      .row
-        .col-sm-5
-          = f.select :number_format_id, options_from_collection_for_select(NumberFormat.order(:sort_number), :id, :name, f.object.number_format_id), { include_blank: true }, { class: "form-control" }
-  .uk-form-row
-    = f.label :synopsis, class: "uk-form-label"
-    .uk-form-controls
-      = f.text_area :synopsis, class: "uk-form-width-large", rows: 10
-  .uk-form-row
-    = f.label :synopsis_source, class: "uk-form-label"
-    .uk-form-controls
-      = f.text_field :synopsis_source, class: "uk-form-width-large"
-  .uk-form-row
-    = f.label :synopsis_en, class: "uk-form-label"
-    .uk-form-controls
-      = f.text_area :synopsis_en, class: "uk-form-width-large", rows: 10
-  .uk-form-row
-    = f.label :synopsis_en_source, class: "uk-form-label"
-    .uk-form-controls
-      = f.text_field :synopsis_en_source, class: "uk-form-width-large"
+    .form-group.row
+      = f.label :title, class: "col-sm-3 col-form-label c-label-required"
+      .col-sm-9
+        = f.text_field :title, class: "form-control", autofocus: true, required: true
+    .form-group.row
+      = f.label :title_kana, class: "col-sm-3 col-form-label"
+      .col-sm-9
+        = f.text_field :title_kana, class: "form-control"
+    .form-group.row
+      = f.label :title_ro, class: "col-sm-3 col-form-label"
+      .col-sm-9
+        = f.text_field :title_ro, class: "form-control"
+    .form-group.row
+      = f.label :title_en, class: "col-sm-3 col-form-label"
+      .col-sm-9
+        = f.text_field :title_en, class: "form-control"
+    .form-group.row
+      = f.label :media, class: "col-sm-3 col-form-label c-label-required"
+      .col-sm-9
+        .row
+          .col-sm-5
+            = f.select :media, options_for_select(Work.media.options, f.object.media), { include_blank: true }, { class: "form-control", required: true }
+    .form-group.row
+      = f.label :season_id, class: "col-sm-3 col-form-label"
+      .col-sm-9
+        .row
+          .col-sm-5
+            = f.select :season_id, options_from_collection_for_select(Season.order(sort_number: :desc), :id, :humanize_name, f.object.season_id), { include_blank: true }, { class: "form-control" }
+    .form-group.row
+      = f.label :official_site_url, class: "col-sm-3 col-form-label"
+      .col-sm-9
+        = f.text_field :official_site_url, class: "form-control"
+    .form-group.row
+      = f.label :official_site_en_url, class: "col-sm-3 col-form-label"
+      .col-sm-9
+        = f.text_field :official_site_en_url, class: "form-control"
+    .form-group.row
+      = f.label :wikipedia_url, class: "col-sm-3 col-form-label"
+      .col-sm-9
+        = f.text_field :wikipedia_url, class: "form-control"
+    .form-group.row
+      = f.label :wikipedia_en_url, class: "col-sm-3 col-form-label"
+      .col-sm-9
+        = f.text_field :wikipedia_en_url, class: "form-control"
+    .form-group.row
+      = f.label :twitter_username, class: "col-sm-3 col-form-label"
+      .col-sm-9
+        = f.text_field :twitter_username, class: "form-control", placeholder: t("resources.works.twitter_username_placeholder")
+    .form-group.row
+      = f.label :twitter_hashtag, class: "col-sm-3 col-form-label"
+      .col-sm-9
+        = f.text_field :twitter_hashtag, class: "form-control", placeholder: t("resources.works.twitter_hashtag_placeholder")
+    .form-group.row
+      = f.label :sc_tid, class: "col-sm-3 col-form-label"
+      .col-sm-9
+        = f.text_field :sc_tid, class: "form-control"
+    .form-group.row
+      = f.label :mal_anime_id, class: "col-sm-3 col-form-label"
+      .col-sm-9
+        = f.text_field :mal_anime_id, class: "form-control"
+    .form-group.row
+      = f.label :number_format_id, class: "col-sm-3 col-form-label"
+      .col-sm-9
+        .row
+          .col-sm-5
+            = f.select :number_format_id, options_from_collection_for_select(NumberFormat.order(:sort_number), :id, :name, f.object.number_format_id), { include_blank: true }, { class: "form-control" }
+    .form-group.row
+      = f.label :synopsis, class: "col-sm-3 col-form-label"
+      .col-sm-9
+        = f.text_area :synopsis, class: "form-control", rows: 10
+    .form-group.row
+      = f.label :synopsis_source, class: "col-sm-3 col-form-label"
+      .col-sm-9
+        = f.text_field :synopsis_source, class: "form-control"
+    .form-group.row
+      = f.label :synopsis_en, class: "col-sm-3 col-form-label"
+      .col-sm-9
+        = f.text_area :synopsis_en, class: "form-control", rows: 10
+    .form-group.row
+      = f.label :synopsis_en_source, class: "col-sm-3 col-form-label"
+      .col-sm-9
+        = f.text_field :synopsis_en_source, class: "form-control"
 
-  .uk-form-row
-    .col-sm-offset-3.uk-form-controls
-      = f.submit class: "uk-button uk-button-primary"
+    .form-group.row
+      .offset-sm-3.col-sm-9
+        = f.submit class: "btn btn-primary"

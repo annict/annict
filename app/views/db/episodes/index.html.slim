@@ -1,81 +1,82 @@
 - title t("resources.episodes.episodes_list")
 
-.l-topbar.uk-flex.uk-flex-space-between
-  .l-topbar__left
-    = render "db/application/topbar_title", parent: @work, child: t("resources.episodes.episodes_list")
-  - if user_signed_in? && current_user.committer?
-    .l-topbar__right
-      = link_to edit_db_work_episodes_path(@work), class: "uk-button uk-button-primary" do
-        = icon "pencil-square-o"
-        .uk-button__text
-          = t "resources.episodes.edit_episodes"
+.l-topbar.container-fluid.p-x-1
+  .row.flex-items-xs-between
+    .col-xs
+      = render "db/application/topbar_title", parent: @work, child: t("resources.episodes.episodes_list")
+    - if user_signed_in? && current_user.committer?
+      .col-xs.text-xs-right
+        = link_to edit_db_work_episodes_path(@work), class: "btn btn-outline-primary" do
+          = icon "pencil-square-o"
+          .btn__text
+            = t "resources.episodes.edit_episodes"
 
 = render "db/works/subnav", work: @work
 
-- if @episodes.present?
-  table.c-card.uk-table.uk-table-hover
-    thead
-      tr
-        th ID
-        th = t "activerecord.attributes.episode.raw_number"
-        - if locale_ja?
-          th = t "activerecord.attributes.episode.number"
-        th = t "words.title"
-        th = t "resources.episodes.previous_episode"
-        - if locale_ja?
-          th = t "words.syobocal"
-        - if current_user.role.admin?
-          th = t "activerecord.attributes.episode.sc_count"
-        th = t "activerecord.attributes.episode.sort_number"
-        th = t "activerecord.attributes.episode.checkins_count"
-        th = t "words.state"
-        - if policy(@episodes).hide?
-          th = t "words.state_change"
-        - if policy(@episodes).destroy?
-          th = t "words.delete"
-    tbody
-      - @episodes.each do |episode|
-        tr
-          td = link_to episode.id, work_episode_path(@work, episode), target: "_blank"
-          td = episode.raw_number.presence || "-"
-          - if locale_ja?
-            td = episode.number.presence || "-"
-          td
+.container-fluid.p-a-1
+  - if @episodes.present?
+    .c-card
+      table.table.table-hover
+        thead
+          tr
+            th ID
+            th = t "activerecord.attributes.episode.raw_number"
+            - if locale_ja?
+              th = t "activerecord.attributes.episode.number"
+            th = t "words.title"
+            th = t "resources.episodes.previous_episode"
             - if current_user.role.admin?
-              = episode.title.presence || "-"
-              br
-              = episode.title_en.presence || "-"
-              br
-              = episode.title_ro.presence || "-"
-            - elsif locale == :ja
-              = episode.title.presence || "-"
-            - elsif locale == :en
-              = episode.title_en.presence || "-"
-              br
-              = "(#{episode.title_ro.presence || '-'})"
-          td = episode.prev_episode&.decorate&.local_number.presence || "-"
-          - if locale_ja?
-            td
-              - if episode.fetch_syobocal?
-                | 同期中
-              - else
-                | 同期停止中
-          - if current_user.role.admin?
-            td = episode.sc_count
-          td = episode.sort_number
-          td = episode.checkins.count
-          td
-            div class="uk-badge #{episode.published? ? 'uk-badge-success' : 'uk-badge-warning'}"
-              = t("resources.episodes.aasm_state.#{episode.aasm_state}")
-          - if policy(episode).hide?
-            td
-              - if episode.published?
-                = link_to t("words.hide"), hide_db_work_episode_path(@work, episode), class: "uk-button", data: { method: "patch", confirm: t("messages.are_you_sure") }
-          - if policy(episode).destroy?
-            td = link_to t("words.delete"), db_work_episode_path(@work, episode), class: "uk-button uk-button-danger", data: { method: "delete", confirm: t("messages.are_you_sure") }
+              th = t "activerecord.attributes.episode.sc_count"
+            th = t "activerecord.attributes.episode.sort_number"
+            th = t "activerecord.attributes.episode.checkins_count"
+            - if locale_ja?
+              th = t "words.syobocal"
+            th = t "words.state"
+            - if policy(@episodes).hide?
+              th = t "words.state_change"
+            - if policy(@episodes).destroy?
+              th = t "words.delete"
+        tbody
+          - @episodes.each do |episode|
+            tr
+              td = link_to episode.id, work_episode_path(@work, episode), target: "_blank"
+              td = episode.raw_number.presence || "-"
+              - if locale_ja?
+                td = episode.number.presence || "-"
+              td
+                - if current_user.role.admin?
+                  = episode.title.presence || "-"
+                  br
+                  = episode.title_en.presence || "-"
+                  br
+                  = episode.title_ro.presence || "-"
+                - elsif locale == :ja
+                  = episode.title.presence || "-"
+                - elsif locale == :en
+                  = episode.title_en.presence || "-"
+                  br
+                  = "(#{episode.title_ro.presence || '-'})"
+              td = episode.prev_episode&.decorate&.local_number.presence || "-"
+              - if current_user.role.admin?
+                td = episode.sc_count
+              td = episode.sort_number
+              td = episode.checkins.count
+              - if locale_ja?
+                td
+                  - if episode.fetch_syobocal?
+                    .tag.tag-success 同期中
+                  - else
+                    .tag.tag-warning 同期停止中
+              td
+                .tag class="#{episode.published? ? 'tag-success' : 'tag-warning'}"
+                  = t("resources.episodes.aasm_state.#{episode.aasm_state}")
+              - if policy(episode).hide?
+                td
+                  - if episode.published?
+                    = link_to t("words.hide"), hide_db_work_episode_path(@work, episode), class: "btn btn-warning btn-sm", data: { method: "patch", confirm: t("messages.are_you_sure") }
+              - if policy(episode).destroy?
+                td = link_to t("words.delete"), db_work_episode_path(@work, episode), class: "btn btn-danger btn-sm", data: { method: "delete", confirm: t("messages.are_you_sure") }
 
-  = paginate @episodes
-- else
-  .c-empty
-    = icon "exclamation-circle"
-    .c-empty__text = t "resources.episodes.there_are_no_episodes"
+      = paginate @episodes
+  - else
+    = render "application/components/empty", text: t("resources.episodes.there_are_no_episodes")

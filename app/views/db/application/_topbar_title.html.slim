@@ -1,9 +1,9 @@
-h1.c-topbar-title
-  .c-topbar-title__parent
-    - if parent.instance_of?(Work)
-      = link_to parent.decorate.local_title, edit_db_work_path(parent)
+h1.c-topbar-title.h2
+  .c-topbar-title__parent.d-inline-block
+    - if parent.is_a?(Work)
+      = link_to parent.decorate.local_title.truncate(30), edit_db_work_path(parent)
     - else
       = parent
-  - if parent.instance_of?(Work)
-    .c-topbar-title__child
+  - if parent.is_a?(Work)
+    .c-topbar-title__child.d-inline-block
       = child

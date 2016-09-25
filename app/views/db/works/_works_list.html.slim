@@ -1,64 +1,65 @@
-table.c-card.uk-table.uk-table-hover
-  thead
-    tr
-      th ID
-      th = t "words.title"
-      - if locale_ja?
-        th = t "words.syobocal"
-      th Watchers
-      th = t "words.release_on"
-      th = t "words.work_image"
-      th = t "words.state"
-      - if policy(works).edit?
-        th = t "words.edit"
-      - if policy(works).hide?
-        th = t "words.state_change"
-      - if policy(works).destroy?
-        th = t "words.delete"
-  tbody
-    - works.each do |work|
+.c-card
+  table.table.table-hover
+    thead
       tr
-        td = link_to work.id, work_path(work), target: "_blank"
-        td
-          - if current_user.role.admin?
-            = work.title
-            br
-            = work.title_kana.presence || "-"
-            br
-            = work.title_ro.presence || "-"
-            br
-            = work.title_en.presence || "-"
-          - elsif locale == :ja
-            = work.title
-            - if work.title_kana.present?
-              br
-              = "(#{work.title_kana})"
-          - elsif locale == :en
-            - if work.title_ro.present?
-              = work.title_ro
-              br
-            - if work.title_en.present?
-              = work.title_en
-            - if work.title_ro.blank? && work.title_en.blank?
-              = work.title
+        th ID
+        th = t "words.title"
         - if locale_ja?
+          th = t "words.syobocal"
+        th Watchers
+        th = t "words.release_on"
+        th = t "words.work_image"
+        th = t "words.state"
+        - if policy(works).edit?
+          th = t "words.edit"
+        - if policy(works).hide?
+          th = t "words.state_change"
+        - if policy(works).destroy?
+          th = t "words.delete"
+    tbody
+      - works.each do |work|
+        tr
+          td = link_to work.id, work_path(work), target: "_blank"
           td
-            - if work.sc_tid.present?
-              = work.decorate.syobocal_link
-            - else
-              | 未設定
-        td = work.watchers_count
-        td = work.decorate.release_season.presence || "-"
-        td = annict_image_tag(work.item, :tombo_image, size: "70x70")
-        td
-          div class="uk-badge #{work.published? ? 'uk-badge-success' : 'uk-badge-warning'}"
-            = t("resources.works.aasm_state.#{work.aasm_state}")
-        - if user_signed_in?
-          - if policy(works).edit?
-            td = link_to t("words.edit"), edit_db_work_path(work), class: "uk-button uk-button-primary"
-        - if policy(work).hide?
+            - if current_user.role.admin?
+              = work.title
+              br
+              = work.title_kana.presence || "-"
+              br
+              = work.title_ro.presence || "-"
+              br
+              = work.title_en.presence || "-"
+            - elsif locale == :ja
+              = work.title
+              - if work.title_kana.present?
+                br
+                = "(#{work.title_kana})"
+            - elsif locale == :en
+              - if work.title_ro.present?
+                = work.title_ro
+                br
+              - if work.title_en.present?
+                = work.title_en
+              - if work.title_ro.blank? && work.title_en.blank?
+                = work.title
+          - if locale_ja?
+            td
+              - if work.sc_tid.present?
+                = work.decorate.syobocal_link
+              - else
+                | 未設定
+          td = work.watchers_count
+          td = work.decorate.release_season.presence || "-"
+          td = annict_image_tag(work.item, :tombo_image, size: "70x70")
           td
-            - if work.published?
-              = link_to t("words.hide"), hide_db_work_path(work), class: "uk-button", data: { method: "patch", confirm: t("messages.are_you_sure") }
-        - if policy(work).destroy?
-          td = link_to t("words.delete"), db_work_path(work), class: "uk-button uk-button-danger", data: { method: "delete", confirm: t("messages.are_you_sure") }
+            .tag class="#{work.published? ? 'tag-success' : 'tag-default'}"
+              = t("resources.works.aasm_state.#{work.aasm_state}")
+          - if user_signed_in?
+            - if policy(works).edit?
+              td = link_to t("words.edit"), edit_db_work_path(work), class: "btn btn-primary btn-sm"
+          - if policy(work).hide?
+            td
+              - if work.published?
+                = link_to t("words.hide"), hide_db_work_path(work), class: "btn btn-warning btn-sm", data: { method: "patch", confirm: t("messages.are_you_sure") }
+          - if policy(work).destroy?
+            td = link_to t("words.delete"), db_work_path(work), class: "btn btn-danger btn-sm", data: { method: "delete", confirm: t("messages.are_you_sure") }

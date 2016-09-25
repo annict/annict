@@ -1,9 +1,4 @@
 .c-topbar-title {
-  &__parent,
-  &__child {
-    display: inline-block;
-  }
-
   &__child {
     &::before {
       content: ">";

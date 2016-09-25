@@ -14,7 +14,7 @@ gem "acts_as_list"
 gem "annotate"
 gem "asset_sync"
 gem "aws-sdk"
-gem "bootstrap-sass"
+gem "bootstrap"
 gem "bourbon"
 # 2系対応が面倒くさそうなので一旦1系を使い続ける
 gem "browser", "~> 1.1.0"
@@ -59,7 +59,10 @@ gem "rails-i18n"
 gem "ransack"
 gem "redis-rails"
 gem "rmagick"
-gem "sass-rails"
+# To use font-awesome-sass
+# https://github.com/sass/sassc-rails/issues/6
+gem "sass-rails", require: false
+gem "sassc-rails"
 gem "sitemap_generator"
 gem "slim"
 gem "traceroute"
@@ -106,4 +109,8 @@ group :test do
   gem "database_rewinder"
   gem "factory_girl_rails"
   gem "poltergeist"
+end
+
+source "https://rails-assets.org" do
+  gem "rails-assets-tether"
 end
