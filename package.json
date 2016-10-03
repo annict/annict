@@ -5,7 +5,7 @@
     "browserify-incremental": "^3.0.1",
     "coffeeify": "^2.0.1",
     "linkifyjs": "^2.0.0-beta.9",
-    "lodash": "^4.6.1",
+    "lodash": "^4.16.3",
     "moment": "^2.12.0",
     "mousetrap": "^1.5.3",
     "vue": "^1.0.16",
