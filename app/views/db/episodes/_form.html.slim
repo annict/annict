@@ -1,13 +1,19 @@
 = form_for [:db, work, form], url: db_work_episodes_path(work), html: { class: "uk-form uk-form-horizontal" } do |f|
   = render "application/error_panel", resource: f.object
 
-  - f.object.episodes.each do |episode|
-    = f.fields_for :episodes, episode do |ef|
-      .uk-form-row
-        = ef.label :title, class: "uk-form-label c-label-required"
-        .uk-form-controls
-          = ef.text_field :title, class: "uk-form-width-large"
+  .text-xs-right
+    c-new-resource-fields-button
 
-  .uk-form-row
-    .col-sm-offset-3.uk-form-controls
-      = f.submit t("helpers.submit.update"), class: "uk-button uk-button-primary"
+  .js-resource-fields-group
+    - f.object.episode_forms.each do |episode_form|
+      = render "episode_fields", work: work, episodes: @episodes, episode_form: episode_form
+
+  .form-group.row
+    .offset-sm-3.col-sm-9
+      = f.submit t("helpers.submit.update"), class: "btn btn-primary"
+
+.js-resource-fields.d-none
+  = render "episode_fields", work: work, episodes: @episodes, episode_form: DB::EpisodeForm.new
+
+- content_for :js_templates do
+  = render "application/js_templates/new_resource_fields_button"

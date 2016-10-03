@@ -24,8 +24,11 @@ html lang="#{I18n.locale}"
           = link_to "団体", db_organizations_path
       = link_to "Annict", root_path
     .l-main
-      = render "application/flash"
+      c-flash
       = yield
 
     = include_gon
     = render "application/analytics"
+
+    = render "application/js_templates/flash"
+    = yield :js_templates

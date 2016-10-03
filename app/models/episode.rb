@@ -49,7 +49,6 @@ class Episode < ActiveRecord::Base
   has_many :programs, dependent: :destroy
 
   validates :sort_number, presence: true, numericality: { only_integer: true }
-  validates :id, associated: true
 
   scope :recorded, -> { where("checkins_count > 0") }
 

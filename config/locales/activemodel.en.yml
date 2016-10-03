@@ -40,5 +40,14 @@ en:
         sort_id: sort_id
         sort_season: sort_season
         sort_watchers_count: sort_watchers_count
-      db/multiple_episodes_form:
-        episode_data: Episode data
+      db/episode_form:
+        fetch_syobocal: Fetch Syobocal
+        number: Number
+        prev_episode_id: Previous episode
+        raw_number: Number (Raw)
+        sc_count: Syobocal count
+        sort_number: Sort number
+        title: Title
+    words:
+      db/episode_form:
+        new: New episode

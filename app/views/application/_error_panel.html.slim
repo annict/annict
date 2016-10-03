@@ -1,6 +1,6 @@
 - if resource.errors.any?
-  .uk-alert.uk-alert-large.uk-alert-danger
-    .uk-h2
+  .alert.alert-danger
+    h4.alert-heading
       = t "words.error"
     ul
       - resource.errors.full_messages.each do |msg|

@@ -1,20 +1,21 @@
 - title @work.title
 
-.l-topbar.uk-flex.uk-flex-space-between
-  .l-topbar__left
-    = render "db/application/topbar_title", parent: @work, child: t("resources.episodes.edit_episodes")
-  .l-topbar__right
-    = link_to work_path(@work), class: "uk-button uk-button--secondary-hollow", target: "_blank" do
-      = icon "external-link"
-      .uk-button__text
-        = t "resources.works.go_to_work"
+.l-topbar.container-fluid.p-x-1
+  .row.flex-items-xs-between
+    .col-xs
+      = render "db/application/topbar_title", parent: @work, child: t("resources.episodes.edit_episodes")
+    .col-xs.text-xs-right
+      = link_to work_path(@work), class: "btn btn-outline-primary", target: "_blank" do
+        = icon "external-link"
+        .btn__text
+          = t "resources.works.go_to_work"
 
 = render "db/works/subnav", work: @work
 
-.l-content
-  .uk-grid
-    .uk-width-2-3
-      .c-card.c-card--padding
+.container-fluid.p-a-1
+  .row
+    .col-xs
+      .c-card.p-a-1
         = render "form", work: @work, form: @form
-    .uk-width-1-3
+    .col-xs
       = render "sidebar"

@@ -2,8 +2,6 @@
 
 module Db
   class EpisodesController < Db::ApplicationController
-    permits :episode_data
-
     before_action :authenticate_user!
     before_action :load_work, only: %i(index new create edit update hide destroy)
 
@@ -13,25 +11,21 @@ module Db
 
     def edit
       @form = DB::EpisodesForm.load(@work)
-      # @form = DB::EpisodeForm.new
-      # authorize @form, :edit?
+      @episodes = @work.episodes.published.order(:sort_number)
+      authorize @form, :edit?
     end
 
-    def update(db_multiple_episodes_form)
-      @form = DB::MultipleEpisodesForm.load(
-        current_user,
-        @work,
-        db_multiple_episodes_form
-      )
+    def update(db_episodes_form)
+      @form = DB::EpisodesForm.load(@work, db_episodes_form[:episodes])
       authorize @form, :update?
 
-      saving = @form.valid? &&
-        @form.save_and_create_db_activity(current_user, "multiple_episodes.create")
-      if saving
-        redirect_to db_work_episodes_path(@work), notice: t("resources.episodes.updated")
-      else
-        render :edit
+      unless @form.valid?
+        @episodes = @work.episodes.published.order(:sort_number)
+        return render :edit
       end
+
+      @form.save_and_create_activity!(current_user)
+      redirect_to db_work_episodes_path(@work), notice: t("resources.episodes.updated")
     end
 
     def hide(id)

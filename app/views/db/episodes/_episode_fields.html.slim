@@ -1,36 +1,35 @@
-.form-group
-  = f.label :number, class: "col-sm-3 control-label"
-  .col-sm-9
-    = f.text_field :number, class: "form-control", autofocus: true
-- if current_user.role.admin? && f.object.instance_of?(Episode)
-  .form-group
-    = f.label :raw_number, class: "col-sm-3 control-label"
+.p-resource-fields
+  hr
+
+  = hidden_field_tag "db_episodes_form[episodes][][id]", episode_form.id
+  .form-group.row
+    = label_tag "db_episodes_form[episodes][][number]", t("activemodel.attributes.db/episode_form.number"), class: "col-sm-3 col-form-label"
     .col-sm-9
-      = f.text_field :raw_number, class: "form-control"
-- else
-  = f.hidden_field :raw_number
-.form-group
-  = f.label :sort_number, class: "col-sm-3 control-label"
-  .col-sm-9
-    = f.text_field :sort_number, class: "form-control"
-- if current_user.role.admin? && f.object.instance_of?(Episode)
-  .form-group
-    = f.label :sc_count, class: "col-sm-3 control-label"
+      = text_field_tag "db_episodes_form[episodes][][number]", episode_form.number, class: "form-control", autofocus: true
+  .form-group.row
+    = label_tag "db_episodes_form[episodes][][raw_number]", t("activemodel.attributes.db/episode_form.raw_number"), class: "col-sm-3 col-form-label"
     .col-sm-9
-      = f.text_field :sc_count, class: "form-control"
-- else
-  = f.hidden_field :sc_count
-.form-group
-  = f.label :title, class: "col-sm-3 control-label"
-  .col-sm-9
-    = f.text_field :title, class: "form-control"
-.form-group
-  = f.label :prev_episode_id, class: "col-sm-3 control-label"
-  .col-sm-9
-    = f.select :prev_episode_id, options_for_select(work.episodes.order(:sort_number).map { |episode| ["#{episode.number} #{episode.title}", episode.id] }, f.object.prev_episode_id), { include_blank: true }, { class: "form-control" }
-.form-group
-  .col-sm-offset-3.col-sm-9
-    .checkbox
-      = f.label :fetch_syobocal do
-        = f.check_box :fetch_syobocal
-        | しょぼかると同期する
+      = text_field_tag "db_episodes_form[episodes][][raw_number]", episode_form.raw_number, class: "form-control"
+  .form-group.row
+    = label_tag "db_episodes_form[episodes][][sort_number]", t("activemodel.attributes.db/episode_form.sort_number"), class: "col-sm-3 col-form-label"
+    .col-sm-9
+      = text_field_tag "db_episodes_form[episodes][][sort_number]", episode_form.sort_number, class: "form-control"
+  .form-group.row
+    = label_tag "db_episodes_form[episodes][][sc_count]", t("activemodel.attributes.db/episode_form.sc_count"), class: "col-sm-3 col-form-label"
+    .col-sm-9
+      = text_field_tag "db_episodes_form[episodes][][sc_count]", episode_form.sc_count, class: "form-control"
+  .form-group.row
+    = label_tag "db_episodes_form[episodes][][title]", t("activemodel.attributes.db/episode_form.title"), class: "col-sm-3 col-form-label"
+    .col-sm-9
+      = text_field_tag "db_episodes_form[episodes][][title]", episode_form.title, class: "form-control"
+  .form-group.row
+    = label_tag "db_episodes_form[episodes][][prev_episode_id]", t("activemodel.attributes.db/episode_form.prev_episode_id"), class: "col-sm-3 col-form-label"
+    .col-sm-9
+      = select_tag "db_episodes_form[episodes][][prev_episode_id]", options_for_select(episodes.map { |episode| ["#{episode.number} #{episode.title}", episode.id] }, episode_form.prev_episode_id), { include_blank: true, class: "form-control" }
+  .form-group.row
+    label.col-sm-3
+    .col-sm-9
+      .form-check
+        = label_tag "db_episodes_form[episodes][][fetch_syobocal]", t("activemodel.attributes.db/episode_form.fetch_syobocal"), class: "form-check-label" do
+          = check_box_tag "db_episodes_form[episodes][][fetch_syobocal]", true, episode_form.fetch_syobocal, class: "form-check-input"
+          | しょぼかると同期する

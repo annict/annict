@@ -1,0 +1,5 @@
+script#t-flash type="x-template"
+  .c-flash.uk-alert @click="close" v-show="show" transition="c-flash--expand" :class="alertClass"
+    i.fa :class="alertIcon"
+    span
+      | {{{ message }}}
