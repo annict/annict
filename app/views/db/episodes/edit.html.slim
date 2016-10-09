@@ -16,6 +16,44 @@
   .row
     .col-xs
       .c-card.p-a-1
-        = render "form", work: @work, form: @form
+        .container
+          = form_for [:db, @work, @episode] do |f|
+            = render "application/error_panel", resource: f.object
+
+            .form-group.row
+              = f.label :number, class: "col-sm-3 col-form-label"
+              .col-sm-9
+                = f.text_field :number, class: "form-control", autofocus: true
+            .form-group.row
+              = f.label :raw_number, class: "col-sm-3 col-form-label"
+              .col-sm-9
+                = f.text_field :raw_number, class: "form-control"
+            .form-group.row
+              = f.label :sort_number, class: "col-sm-3 col-form-label c-label-required"
+              .col-sm-9
+                = f.text_field :sort_number, class: "form-control", required: true
+            .form-group.row
+              = f.label :sc_count, class: "col-sm-3 col-form-label"
+              .col-sm-9
+                = f.text_field :sc_count, class: "form-control"
+            .form-group.row
+              = f.label :title, class: "col-sm-3 col-form-label"
+              .col-sm-9
+                = f.text_field :title, class: "form-control"
+            .form-group.row
+              = f.label :prev_episode_id, class: "col-sm-3 col-form-label"
+              .col-sm-9
+                = f.select :prev_episode_id, options_for_select(@work.episodes.order(:sort_number).map { |episode| ["#{episode.number} #{episode.title}", f.object.id] }, f.object.prev_episode_id), { include_blank: true }, { class: "form-control" }
+            .form-group.row.row
+              label.col-sm-3
+              .col-sm-9
+                .form-check
+                  = f.label :fetch_syobocal, class: "form-check-label" do
+                    = f.check_box :fetch_syobocal, class: "form-check-input"
+                    = t "activerecord.attributes.episode.fetch_syobocal"
+
+            .form-group.row
+              .offset-sm-3.col-sm-9
+                = f.submit t("helpers.submit.update"), class: "btn btn-primary"
     .col-xs
       = render "sidebar"

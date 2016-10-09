@@ -2,6 +2,9 @@
 
 module Db
   class EpisodesController < Db::ApplicationController
+    permits :number, :raw_number, :sort_number, :sc_count, :title,
+      :prev_episode_id, :fetch_syobocal
+
     before_action :authenticate_user!
     before_action :load_work, only: %i(index new create edit update hide destroy)
 
@@ -23,25 +26,24 @@ module Db
       return render(:new) unless @form.valid?
       @form.save!
 
-      redirect_to db_work_episodes_path(@work)
+      redirect_to db_work_episodes_path(@work), notice: t("resources.episodes.created")
     end
 
-    def edit
-      @form = DB::EpisodesForm.load(@work)
-      @episodes = @work.episodes.published.order(:sort_number)
-      authorize @form, :edit?
+    def edit(id)
+      @episode = @work.episodes.find(id)
+      authorize @episode, :edit?
     end
 
-    def update(db_episodes_form)
-      @form = DB::EpisodesForm.load(@work, db_episodes_form[:episodes])
-      authorize @form, :update?
+    def update(id, episode)
+      @episode = @work.episodes.find(id)
+      authorize @episode, :update?
 
-      unless @form.valid?
-        @episodes = @work.episodes.published.order(:sort_number)
-        return render :edit
-      end
+      @episode.attributes = episode
+      @episode.user = current_user
 
-      @form.save_and_create_activity!(current_user)
+      return render(:edit) unless @episode.valid?
+      @episode.save_and_create_activity!
+
       redirect_to db_work_episodes_path(@work), notice: t("resources.episodes.updated")
     end
 

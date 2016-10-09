@@ -32,6 +32,8 @@
             - if locale_ja?
               th = t "words.syobocal"
             th = t "words.state"
+            - if policy(@episodes).edit?
+              th = t "words.edit"
             - if policy(@episodes).hide?
               th = t "words.state_change"
             - if policy(@episodes).destroy?
@@ -70,6 +72,9 @@
               td
                 .tag class="#{episode.published? ? 'tag-success' : 'tag-warning'}"
                   = t("resources.episodes.aasm_state.#{episode.aasm_state}")
+              - if policy(episode).edit?
+                td
+                  = link_to t("words.edit"), edit_db_work_episode_path(@work, episode), class: "btn btn-primary btn-sm"
               - if policy(episode).hide?
                 td
                   - if episode.published?
