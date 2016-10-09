@@ -52,6 +52,7 @@ class Episode < ActiveRecord::Base
 
   scope :recorded, -> { where("checkins_count > 0") }
 
+  before_create :set_sort_number
   after_create :update_prev_episode
   before_destroy :unset_prev_episode_id
 
@@ -102,5 +103,9 @@ class Episode < ActiveRecord::Base
   def update_prev_episode
     prev_episode = work.episodes.where.not(id: id).order(sort_number: :desc).first
     update_column(:prev_episode_id, prev_episode.id) if prev_episode.present?
+  end
+
+  def set_sort_number
+    self.sort_number = (work.episodes.count + 1) * 10
   end
 end

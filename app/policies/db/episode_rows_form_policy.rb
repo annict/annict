@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
 module DB
-  class EpisodesFormPolicy < ApplicationPolicy
-    def edit?
+  class EpisodeRowsFormPolicy < ApplicationPolicy
+    def create?
       user.committer?
     end
 

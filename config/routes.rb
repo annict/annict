@@ -127,12 +127,7 @@ Rails.application.routes.draw do
         patch :hide, on: :member
       end
 
-      resources :episodes, only: [:index, :destroy] do
-        collection do
-          get :edit
-          post :update
-        end
-
+      resources :episodes, except: %i(show) do
         member do
           patch :hide
         end

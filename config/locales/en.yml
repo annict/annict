@@ -8,6 +8,7 @@ en:
     episodes:
       edit_episodes: Edit episodes
       episodes_list: Episode list
+      new_episodes: New episodes
       no_episodes: No episodes
       previous_episode: Previous episode
       there_are_no_episodes: There are no episodes

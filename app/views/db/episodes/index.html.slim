@@ -6,10 +6,10 @@
       = render "db/application/topbar_title", parent: @work, child: t("resources.episodes.episodes_list")
     - if user_signed_in? && current_user.committer?
       .col-xs.text-xs-right
-        = link_to edit_db_work_episodes_path(@work), class: "btn btn-outline-primary" do
+        = link_to new_db_work_episode_path(@work), class: "btn btn-outline-primary" do
           = icon "pencil-square-o"
           .btn__text
-            = t "resources.episodes.edit_episodes"
+            = t "resources.episodes.new_episodes"
 
 = render "db/works/subnav", work: @work
 

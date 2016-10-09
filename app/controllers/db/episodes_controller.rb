@@ -9,6 +9,23 @@ module Db
       @episodes = @work.episodes.order(sort_number: :desc).page(page)
     end
 
+    def new
+      @form = DB::EpisodeRowsForm.new
+      authorize @form, :new?
+    end
+
+    def create(db_episode_rows_form)
+      @form = DB::EpisodeRowsForm.new(db_episode_rows_form.permit(:rows))
+      @form.user = current_user
+      @form.work = @work
+      authorize @form, :create?
+
+      return render(:new) unless @form.valid?
+      @form.save!
+
+      redirect_to db_work_episodes_path(@work)
+    end
+
     def edit
       @form = DB::EpisodesForm.load(@work)
       @episodes = @work.episodes.published.order(:sort_number)

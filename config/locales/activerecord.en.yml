@@ -3,10 +3,13 @@ en:
     attributes:
       episode:
         checkins_count: Records count
+        fetch_syobocal: Fetch Syobocal
         number: Number (ja)
-        raw_number: Raw number
+        prev_episode_id: Previous episode
+        raw_number: Number (Raw)
         sc_count: Syobocal number
         sort_number: Sort number
+        title: Title
       work:
         mal_anime_id: MAL Anime ID
         media: Media
