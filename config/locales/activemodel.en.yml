@@ -47,5 +47,5 @@ en:
     errors:
       forms:
         db/program_rows_form:
-          invalid: "is invalid: %{value} is not found"
-          invalid_start_time: "has invalid start time"
+          invalid: "are invalid: %{value} is not found"
+          invalid_start_time: "have invalid start time"

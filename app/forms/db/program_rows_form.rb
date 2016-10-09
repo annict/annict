@@ -59,15 +59,10 @@ module DB
 
     def valid_resource
       fetched_rows.each do |row_data|
-        channel_value = row_data[:channel][:value]
-        episode_value = row_data[:episode][:value]
-        values = [channel_value, episode_value]
-
-        next if values.all?(&:present?)
-
-        i18n_path = "activemodel.errors.forms.db/program_rows_form.invalid"
-        values.each do |value|
-          errors.add(:rows, I18n.t(i18n_path, value: value)) if value.blank?
+        row_data.slice(:channel, :episode).each do |_, data|
+          next if data[:id].present?
+          i18n_path = "activemodel.errors.forms.db/program_rows_form.invalid"
+          errors.add(:rows, I18n.t(i18n_path, value: data[:value]))
         end
       end
     end
