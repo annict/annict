@@ -40,7 +40,7 @@ module Db
       return render(:new) unless @work.valid?
       @work.save_and_create_activity!
 
-      redirect_to edit_db_work_path(@work), notice: t("resources.works.created")
+      redirect_to edit_db_work_path(@work), notice: t("resources.work.created")
     end
 
     def edit(id)
@@ -58,7 +58,7 @@ module Db
       return render(:edit) unless @work.valid?
       @work.save_and_create_activity!
 
-      redirect_to edit_db_work_path(@work), notice: t("resources.works.updated")
+      redirect_to edit_db_work_path(@work), notice: t("resources.work.updated")
     end
 
     def hide(id)

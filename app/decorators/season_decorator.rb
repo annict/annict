@@ -7,6 +7,6 @@ class SeasonDecorator < ApplicationDecorator
   end
 
   def humanize_name
-    I18n.t("resources.seasons.yearly.#{name}", year: year)
+    I18n.t("resources.season.yearly.#{name}", year: year)
   end
 end
