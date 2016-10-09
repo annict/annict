@@ -118,9 +118,4 @@ module ApplicationHelper
   def locale_ja?
     locale == :ja || (user_signed_in? && current_user.role.admin?)
   end
-
-  def display_time(time)
-    time_zone = current_user&.time_zone.presence || "UTC"
-    time&.in_time_zone(time_zone)&.strftime("%Y-%m-%d %H:%M %z")
-  end
 end

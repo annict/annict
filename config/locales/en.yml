@@ -18,6 +18,7 @@ en:
       created: Program created
       new_programs: New programs
       program_list: Program list
+      started_at_eg: e.g. 2015-04-01 23:00
       there_are_no_programs: There are no programs
       updated: Program updated
     season:

@@ -2,7 +2,7 @@
 
 module Db
   class ProgramsController < Db::ApplicationController
-    permits :channel_id, :episode_id, :started_at, :rebroadcast
+    permits :channel_id, :episode_id, :started_at, :rebroadcast, :time_zone
 
     before_action :authenticate_user!
     before_action :load_work, only: %i(index new create edit update destroy)
@@ -35,16 +35,15 @@ module Db
 
     def update(id, program)
       @program = @work.programs.find(id)
-      @program.attributes = program
       authorize @program, :update?
 
-      if @program.valid?
-        change_to_utc_datetime!
-        @program.save_and_create_db_activity(current_user, "programs.update")
-        redirect_to db_work_programs_path(@work), notice: "放送予定を更新しました"
-      else
-        render :edit
-      end
+      @program.attributes = program
+      @program.user = current_user
+
+      return render(:edit) unless @program.valid?
+      @program.save_and_create_activity!
+
+      redirect_to db_work_programs_path(@work), notice: t("resources.program.updated")
     end
 
     def destroy(id)
