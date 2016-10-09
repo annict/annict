@@ -3,12 +3,12 @@
 .l-topbar.container-fluid.p-x-1
   .row.flex-items-xs-between
     .col-xs
-      = render "db/application/topbar_title", parent: @work, child: t("resources.episodes.new_episodes")
+      = render "db/application/topbar_title", parent: @work, child: t("resources.episode.new_episodes")
     .col-xs.text-xs-right
       = link_to work_path(@work), class: "btn btn-outline-primary", target: "_blank" do
         = icon "external-link"
         .btn__text
-          = t "resources.works.go_to_work"
+          = t "resources.work.go_to_work"
 
 = render "db/works/subnav", work: @work
 

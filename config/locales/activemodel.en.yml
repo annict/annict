@@ -42,3 +42,10 @@ en:
         sort_watchers_count: sort_watchers_count
       db/episode_rows_form:
         rows: Episodes
+      db/program_rows_form:
+        rows: Programs
+    errors:
+      forms:
+        db/program_rows_form:
+          invalid: "is invalid: %{value} is not found"
+          invalid_start_time: "has invalid start time"

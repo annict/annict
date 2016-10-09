@@ -21,6 +21,7 @@
 #  notifications_count  :integer          default(0), not null
 #  created_at           :datetime
 #  updated_at           :datetime
+#  time_zone            :string           default(""), not null
 #
 # Indexes
 #

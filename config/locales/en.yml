@@ -5,7 +5,7 @@ en:
   meta:
     description: Annict is a platform that can track anime which you have watched.
   resources:
-    episodes:
+    episode:
       created: Episode created
       edit_episodes: Edit episodes
       episodes_list: Episode list
@@ -14,13 +14,19 @@ en:
       previous_episode: Previous episode
       there_are_no_episodes: There are no episodes
       updated: Episode updated
-    seasons:
+    program:
+      created: Program created
+      new_programs: New programs
+      program_list: Program list
+      there_are_no_programs: There are no programs
+      updated: Program updated
+    season:
       yearly:
         winter: "Winter %{year}"
         spring: "Spring %{year}"
         summer: "Summer %{year}"
         autumn: "Fall %{year}"
-    works:
+    work:
       aasm_state:
         published: Published
         hidden: Hidden
