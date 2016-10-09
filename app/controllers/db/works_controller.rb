@@ -34,13 +34,13 @@ module Db
 
     def create(work)
       @work = Work.new(work)
+      @work.user = current_user
       authorize @work, :create?
 
-      if @work.save_and_create_db_activity(current_user, "works.create")
-        redirect_to edit_db_work_path(@work), notice: t("resources.works.created")
-      else
-        render :new
-      end
+      return render(:new) unless @work.valid?
+      @work.save_and_create_activity!
+
+      redirect_to edit_db_work_path(@work), notice: t("resources.works.created")
     end
 
     def edit(id)
@@ -53,11 +53,12 @@ module Db
       authorize @work, :update?
 
       @work.attributes = work
-      if @work.save_and_create_db_activity(current_user, "works.update")
-        redirect_to edit_db_work_path(@work), notice: t("resources.works.updated")
-      else
-        render :edit
-      end
+      @work.user = current_user
+
+      return render(:edit) unless @work.valid?
+      @work.save_and_create_activity!
+
+      redirect_to edit_db_work_path(@work), notice: t("resources.works.updated")
     end
 
     def hide(id)
