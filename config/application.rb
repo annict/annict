@@ -66,6 +66,7 @@ module Annict
       # rubocop:disable Metrics/LineLength
       r301 %r{\A/users/([A-Za-z0-9_]+)/(following|followers|wanna_watch|watching|watched|on_hold|stop_watching)\z}, "/@$1/$2"
       # rubocop:enable Metrics/LineLength
+      r301 %r{\A/db/(.*)\z}, "#{ENV.fetch('ANNICT_DB_URL')}/$1"
     end
 
     config.middleware.insert_before(0, Rack::Cors) do

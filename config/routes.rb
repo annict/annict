@@ -79,7 +79,7 @@ Rails.application.routes.draw do
   end
 
   scope module: :api do
-    constraints Annict::Subdomain do
+    constraints(subdomain: "api") do
       namespace :v1 do
         resources :episodes, only: [:index]
         resources :records, only: [:index]
@@ -97,48 +97,50 @@ Rails.application.routes.draw do
     end
   end
 
-  namespace :db do
-    resources :activities, only: [:index]
-    resource :search, only: [:show]
-
-    resources :organizations, except: [:show] do
-      patch :hide, on: :member
-    end
-
-    resources :people, except: [:show] do
-      patch :hide, on: :member
-    end
-
-    resources :works, except: [:show] do
-      collection do
-        get :season
-        get :resourceless
-      end
-
-      member do
-        patch :hide
-      end
-
+  scope module: :db, as: :db do
+    constraints(subdomain: "db") do
       resources :activities, only: [:index]
-      resources :programs, except: [:show]
-      resource :item, except: [:index]
+      resource :search, only: [:show]
 
-      resources :casts, except: [:show] do
+      resources :organizations, except: [:show] do
         patch :hide, on: :member
       end
 
-      resources :episodes, except: %i(show) do
+      resources :people, except: [:show] do
+        patch :hide, on: :member
+      end
+
+      resources :works, except: [:show] do
+        collection do
+          get :season
+          get :resourceless
+        end
+
         member do
           patch :hide
         end
+
+        resources :activities, only: [:index]
+        resources :programs, except: [:show]
+        resource :item, except: [:index]
+
+        resources :casts, except: [:show] do
+          patch :hide, on: :member
+        end
+
+        resources :episodes, except: %i(show) do
+          member do
+            patch :hide
+          end
+        end
+
+        resources :staffs, except: [:show] do
+          patch :hide, on: :member
+        end
       end
 
-      resources :staffs, except: [:show] do
-        patch :hide, on: :member
-      end
+      root "home#index"
     end
-
-    root "home#index"
   end
 
   resources :settings, only: [:index]
