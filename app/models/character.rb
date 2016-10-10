@@ -37,6 +37,8 @@
 
 class Character < ApplicationRecord
   include AASM
+  include DbActivityMethods
+  include RootResourceCommon
 
   aasm do
     state :published, initial: true
@@ -46,4 +48,6 @@ class Character < ApplicationRecord
       transitions from: :published, to: :hidden
     end
   end
+
+  validates :name, presence: true, uniqueness: { scope: :kind }
 end

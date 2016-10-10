@@ -39,10 +39,11 @@
 #  works_season_id_idx              (season_id)
 #
 
-class Work < ActiveRecord::Base
+class Work < ApplicationRecord
   include AASM
   include DbActivityMethods
   include WorkCommon
+  include RootResourceCommon
 
   aasm do
     state :published, initial: true

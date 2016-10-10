@@ -162,6 +162,8 @@ Rails.application.routes.draw do
     patch "options", to: "options#update"
   end
 
+  resources :characters, only: %i(show)
+
   resource :channel, only: [] do
     resources :works, only: [:index], controller: "channel_works"
   end

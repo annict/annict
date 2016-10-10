@@ -5,6 +5,13 @@ en:
   meta:
     description: Annict is a platform that can track anime which you have watched.
   resources:
+    character:
+      created: Character created
+      edit: Edit character
+      new_characters: New characters
+      character_list: Character list
+      there_are_no_characters: There are no characters
+      updated: Character updated
     cast:
       created: Cast created
       new_casts: New casts
