@@ -10,6 +10,11 @@ en:
         sc_count: Syobocal number
         sort_number: Sort number
         title: Title
+      program:
+        channel_id: Channel
+        episode_id: Episode
+        rebroadcast: Rebroadcast
+        started_at: Started at
       work:
         mal_anime_id: MAL Anime ID
         media: Media

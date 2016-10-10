@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160918071042) do
+ActiveRecord::Schema.define(version: 20161009121326) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -135,13 +135,11 @@ ActiveRecord::Schema.define(version: 20160918071042) do
     t.json     "parameters"
     t.datetime "created_at",         null: false
     t.datetime "updated_at",         null: false
-    t.integer  "work_id"
     t.integer  "root_resource_id"
     t.string   "root_resource_type"
     t.index ["recipient_id", "recipient_type"], name: "index_db_activities_on_recipient_id_and_recipient_type", using: :btree
     t.index ["root_resource_id", "root_resource_type"], name: "index_db_activities_on_root_resource_id_and_root_resource_type", using: :btree
     t.index ["trackable_id", "trackable_type"], name: "index_db_activities_on_trackable_id_and_trackable_type", using: :btree
-    t.index ["work_id"], name: "index_db_activities_on_work_id", using: :btree
   end
 
   create_table "db_comments", force: :cascade do |t|
@@ -729,6 +727,7 @@ ActiveRecord::Schema.define(version: 20160918071042) do
     t.integer  "notifications_count",              default: 0,  null: false
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.string   "time_zone",                        default: "", null: false
     t.index ["confirmation_token"], name: "users_confirmation_token_key", unique: true, using: :btree
     t.index ["email"], name: "users_email_key", unique: true, using: :btree
     t.index ["username"], name: "users_username_key", unique: true, using: :btree
@@ -809,7 +808,6 @@ ActiveRecord::Schema.define(version: 20160918071042) do
   add_foreign_key "comments", "works"
   add_foreign_key "cover_images", "works", name: "cover_images_work_id_fk", on_delete: :cascade
   add_foreign_key "db_activities", "users"
-  add_foreign_key "db_activities", "works"
   add_foreign_key "draft_casts", "casts"
   add_foreign_key "draft_casts", "people"
   add_foreign_key "draft_casts", "works"

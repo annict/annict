@@ -26,7 +26,7 @@ module Db
       return render(:new) unless @form.valid?
       @form.save!
 
-      redirect_to db_work_episodes_path(@work), notice: t("resources.episodes.created")
+      redirect_to db_work_episodes_path(@work), notice: t("resources.episode.created")
     end
 
     def edit(id)
@@ -44,7 +44,7 @@ module Db
       return render(:edit) unless @episode.valid?
       @episode.save_and_create_activity!
 
-      redirect_to db_work_episodes_path(@work), notice: t("resources.episodes.updated")
+      redirect_to db_work_episodes_path(@work), notice: t("resources.episode.updated")
     end
 
     def hide(id)

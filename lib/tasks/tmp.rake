@@ -8,4 +8,11 @@ namespace :tmp do
       end
     end
   end
+
+  task add_time_zone_to_users: :environment do
+    User.find_each do |u|
+      puts "Updating user: #{u.id}"
+      u.update_column(:time_zone, "Tokyo")
+    end
+  end
 end
