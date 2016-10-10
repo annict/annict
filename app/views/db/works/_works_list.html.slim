@@ -21,7 +21,7 @@
         tr
           td = link_to work.id, work_path(work), target: "_blank"
           td
-            - if current_user.role.admin?
+            - if user_signed_in? && current_user.role.admin?
               = work.title
               br
               = work.title_kana.presence || "-"
