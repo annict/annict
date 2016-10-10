@@ -5,9 +5,7 @@ module Db
     permits :person_id, :name, :part, :sort_number
 
     before_action :authenticate_user!
-    before_action :load_work, only: [
-      :index, :new, :create, :edit, :update, :hide, :destroy
-    ]
+    before_action :load_work, only: %i(index new create edit update hide destroy)
 
     def index
       @casts = @work.casts.order(aasm_state: :desc, sort_number: :asc)

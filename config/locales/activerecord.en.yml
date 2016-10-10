@@ -1,6 +1,11 @@
 en:
   activerecord:
     attributes:
+      cast:
+        person_id: Person
+        name: Name
+        part: Part
+        sort_number: Sort number
       episode:
         checkins_count: Records count
         fetch_syobocal: Fetch Syobocal

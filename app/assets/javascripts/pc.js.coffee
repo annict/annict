@@ -13,12 +13,12 @@ $(document).on "turbolinks:load", ->
 
   Vue.config.debug = true
 
-  Vue.component("c-flash", flash)
+  # Vue.component("c-flash", flash)
 
-  new Vue
-    el: "body"
-    events:
-      "flash:show": (message, type = "notice") ->
-        @$broadcast "flash:show", message, type
+  # new Vue
+  #   el: "body"
+  #   events:
+  #     "flash:show": (message, type = "notice") ->
+  #       @$broadcast "flash:show", message, type
 
 Turbolinks.start()

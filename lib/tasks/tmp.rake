@@ -15,4 +15,11 @@ namespace :tmp do
       u.update_column(:time_zone, "Tokyo")
     end
   end
+
+  task create_characters: :environment do
+    Cast.find_each do |c|
+      puts "Creating character: #{c.part}"
+      Character.where(name: c.part).first_or_create!
+    end
+  end
 end

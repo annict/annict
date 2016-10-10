@@ -102,6 +102,10 @@ Rails.application.routes.draw do
       resources :activities, only: [:index]
       resource :search, only: [:show]
 
+      resources :characters, except: [:show] do
+        patch :hide, on: :member
+      end
+
       resources :organizations, except: [:show] do
         patch :hide, on: :member
       end
