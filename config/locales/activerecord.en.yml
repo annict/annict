@@ -1,6 +1,36 @@
 en:
   activerecord:
     attributes:
+      cast:
+        character_id: Character
+        person_id: Person
+        name: Name
+        name_en: Name (en)
+        sort_number: Sort number
+      character:
+        name: Name
+        name_kana: Name (kana)
+        name_en: Name (en)
+        kind: Kind
+        kind_en: Kind (en)
+        nickname: Nickname
+        nickname_en: Nickname (en)
+        birthday: Birthday
+        birthday_en: Birthday (en)
+        age: Age
+        age_en: Age (en)
+        blood_type: Blood type
+        blood_type_en: Blood type (en)
+        height: Height
+        height_en: Height (en)
+        weight: Weight
+        weight_en: Weight (en)
+        nationality: Nationality
+        nationality_en: Nationality (en)
+        occupation: Occupation
+        occupation_en: Occupation (en)
+        description: Description
+        description_en: Description (en)
       episode:
         checkins_count: Records count
         fetch_syobocal: Fetch Syobocal

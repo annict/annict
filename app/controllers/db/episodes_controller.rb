@@ -9,7 +9,10 @@ module Db
     before_action :load_work, only: %i(index new create edit update hide destroy)
 
     def index(page: nil)
-      @episodes = @work.episodes.order(sort_number: :desc).page(page)
+      @episodes = @work.episodes.
+        includes(:prev_episode).
+        order(sort_number: :desc).
+        page(page)
     end
 
     def new

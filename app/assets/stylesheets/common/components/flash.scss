@@ -5,15 +5,17 @@
   padding: 0 1rem;
   position: fixed;
   width: 100%;
-
-  &--expand-transition {
-    top: 0;
-    transition: all .8s linear;
-  }
+  z-index: 1;
 
   &--expand-enter,
-  &--expand-leave {
+  &--expand-leave-active {
     top: -500px;
+    transition: top .8s linear;
+  }
+
+  &--expand-enter-active,
+  &--expand-leave {
+    top: 0;
   }
 
   i {

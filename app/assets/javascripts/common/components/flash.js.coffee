@@ -1,4 +1,4 @@
-Vue = require "vue"
+Vue = require "vue/dist/vue"
 
 module.exports = Vue.extend
   template: "#t-flash"
@@ -17,8 +17,8 @@ module.exports = Vue.extend
       !!@message
     alertClass: ->
       switch @type
-        when "notice" then "uk-alert-success"
-        when "alert" then "uk-alert-danger"
+        when "notice" then "alert-success"
+        when "alert" then "alert-danger"
     alertIcon: ->
       switch @type
         when "notice" then "fa-check-circle"
@@ -28,7 +28,7 @@ module.exports = Vue.extend
     close: ->
       @message = ""
 
-  ready: ->
+  mounted: ->
     if @show
       setTimeout =>
         @close()
