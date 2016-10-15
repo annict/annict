@@ -5,8 +5,10 @@
 @import "bourbon";
 @import "font-awesome-sprockets";
 @import "font-awesome";
+@import "select2.min";
 
 @import "./bootstrap/**/*";
 @import "./turbolinks";
+@import "./select2";
 @import "./font";
 @import "./base";

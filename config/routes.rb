@@ -28,6 +28,7 @@ Rails.application.routes.draw do
       resource :programs_sort_type, only: [:update]
       resource :search, only: [:show]
       resources :activities, only: [:index]
+      resources :characters, only: [:index]
       resources :mute_users, only: [:create]
       resources :organizations, only: [:index]
       resources :people, only: [:index]
