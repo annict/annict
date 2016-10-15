@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20161014154225) do
+ActiveRecord::Schema.define(version: 20161015143314) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -38,6 +38,7 @@ ActiveRecord::Schema.define(version: 20161014154225) do
     t.datetime "created_at",                         null: false
     t.datetime "updated_at",                         null: false
     t.integer  "character_id"
+    t.string   "name_en",      default: "",          null: false
     t.index ["aasm_state"], name: "index_casts_on_aasm_state", using: :btree
     t.index ["character_id"], name: "index_casts_on_character_id", using: :btree
     t.index ["person_id"], name: "index_casts_on_person_id", using: :btree
@@ -554,22 +555,26 @@ ActiveRecord::Schema.define(version: 20161014154225) do
   end
 
   create_table "organizations", force: :cascade do |t|
-    t.string   "name",                                   null: false
+    t.string   "name",                                      null: false
     t.string   "url"
     t.string   "wikipedia_url"
     t.string   "twitter_username"
-    t.string   "aasm_state",       default: "published", null: false
-    t.datetime "created_at",                             null: false
-    t.datetime "updated_at",                             null: false
-    t.string   "name_kana",        default: "",          null: false
+    t.string   "aasm_state",          default: "published", null: false
+    t.datetime "created_at",                                null: false
+    t.datetime "updated_at",                                null: false
+    t.string   "name_kana",           default: "",          null: false
+    t.string   "name_en",             default: "",          null: false
+    t.string   "url_en",              default: "",          null: false
+    t.string   "wikipedia_url_en",    default: "",          null: false
+    t.string   "twitter_username_en", default: "",          null: false
     t.index ["aasm_state"], name: "index_organizations_on_aasm_state", using: :btree
     t.index ["name"], name: "index_organizations_on_name", unique: true, using: :btree
   end
 
   create_table "people", force: :cascade do |t|
     t.integer  "prefecture_id"
-    t.string   "name",                                   null: false
-    t.string   "name_kana",        default: "",          null: false
+    t.string   "name",                                      null: false
+    t.string   "name_kana",           default: "",          null: false
     t.string   "nickname"
     t.string   "gender"
     t.string   "url"
@@ -578,9 +583,16 @@ ActiveRecord::Schema.define(version: 20161014154225) do
     t.date     "birthday"
     t.string   "blood_type"
     t.integer  "height"
-    t.string   "aasm_state",       default: "published", null: false
-    t.datetime "created_at",                             null: false
-    t.datetime "updated_at",                             null: false
+    t.string   "aasm_state",          default: "published", null: false
+    t.datetime "created_at",                                null: false
+    t.datetime "updated_at",                                null: false
+    t.string   "name_en",             default: "",          null: false
+    t.string   "nickname_en",         default: "",          null: false
+    t.string   "gender_en",           default: "",          null: false
+    t.string   "url_en",              default: "",          null: false
+    t.string   "wikipedia_url_en",    default: "",          null: false
+    t.string   "twitter_username_en", default: "",          null: false
+    t.string   "blood_type_en",       default: "",          null: false
     t.index ["aasm_state"], name: "index_people_on_aasm_state", using: :btree
     t.index ["name"], name: "index_people_on_name", unique: true, using: :btree
     t.index ["prefecture_id"], name: "index_people_on_prefecture_id", using: :btree
@@ -811,12 +823,12 @@ ActiveRecord::Schema.define(version: 20161014154225) do
     t.string   "title_kana",                       default: "",          null: false
     t.string   "title_ro",                         default: "",          null: false
     t.string   "title_en",                         default: "",          null: false
-    t.string   "official_site_en_url",             default: "",          null: false
-    t.string   "wikipedia_en_url",                 default: "",          null: false
+    t.string   "official_site_url_en",             default: "",          null: false
+    t.string   "wikipedia_url_en",                 default: "",          null: false
     t.text     "synopsis",                         default: "",          null: false
     t.text     "synopsis_en",                      default: "",          null: false
     t.string   "synopsis_source",                  default: "",          null: false
-    t.string   "synopsis_en_source",               default: "",          null: false
+    t.string   "synopsis_source_en",               default: "",          null: false
     t.integer  "mal_anime_id"
     t.index ["aasm_state"], name: "index_works_on_aasm_state", using: :btree
     t.index ["number_format_id"], name: "index_works_on_number_format_id", using: :btree

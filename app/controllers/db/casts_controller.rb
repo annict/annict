@@ -2,13 +2,15 @@
 
 module Db
   class CastsController < Db::ApplicationController
-    permits :character_id, :person_id, :name, :sort_number
+    permits :character_id, :person_id, :name, :name_en, :sort_number
 
     before_action :authenticate_user!
     before_action :load_work, only: %i(index new create edit update hide destroy)
 
     def index
-      @casts = @work.casts.order(aasm_state: :desc, sort_number: :asc)
+      @casts = @work.casts.
+        includes(:person, :character).
+        order(aasm_state: :desc, sort_number: :asc)
     end
 
     def new
@@ -52,7 +54,8 @@ module Db
 
       @cast.hide!
 
-      redirect_to :back, notice: "非公開にしました"
+      flash[:notice] = t("resources.cast.unpublished")
+      redirect_back fallback_location: db_works_path
     end
 
     def destroy(id)
@@ -61,7 +64,8 @@ module Db
 
       @cast.destroy
 
-      redirect_to :back, notice: "削除しました"
+      flash[:notice] = t("resources.cast.deleted")
+      redirect_back fallback_location: db_works_path
     end
 
     private

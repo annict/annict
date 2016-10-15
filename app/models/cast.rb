@@ -13,6 +13,7 @@
 #  created_at   :datetime         not null
 #  updated_at   :datetime         not null
 #  character_id :integer
+#  name_en      :string           default(""), not null
 #
 # Indexes
 #
@@ -52,5 +53,6 @@ class Cast < ActiveRecord::Base
 
   def set_name
     self.name = person.name if name.blank? && person.present?
+    self.name_en = person.name_en if name_en.blank? && person&.name_en.present?
   end
 end

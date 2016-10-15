@@ -2,9 +2,10 @@ en:
   activerecord:
     attributes:
       cast:
+        character_id: Character
         person_id: Person
         name: Name
-        part: Part
+        name_en: Name (en)
         sort_number: Sort number
       character:
         name: Name

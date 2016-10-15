@@ -20,10 +20,11 @@
         thead
           tr
             th ID
+            th = t "activerecord.attributes.cast.character_id"
             th = t "activerecord.attributes.cast.person_id"
             th = t "activerecord.attributes.cast.name"
-            th = t "activerecord.attributes.cast.character_id"
             th = t "activerecord.attributes.cast.sort_number"
+            th = t "words.state"
             - if policy(@casts).edit?
               th = t "words.edit"
             - if policy(@casts).hide?
@@ -34,14 +35,25 @@
           - @casts.each do |cast|
             tr
               td = cast.id
-              td = link_to cast.person.name, edit_db_person_path(cast.person)
-              td = cast.name
               td
                 - if cast.character.present?
                   = link_to cast.character.name, edit_db_character_path(cast.character)
+                  br
+                  = cast.character.name_en.presence || "-"
                 - else
                   | -
+              td
+                = link_to cast.person.name, edit_db_person_path(cast.person)
+                br
+                = cast.person.name_en.presence || "-"
+              td
+                 = cast.name
+                 br
+                 = cast.name_en.presence || "-"
               td = cast.sort_number
+              td
+                .tag class="#{cast.published? ? 'tag-success' : 'tag-warning'}"
+                  = t("resources.cast.aasm_state.#{cast.aasm_state}")
               - if policy(cast).edit?
                 td = link_to t("words.edit"), edit_db_work_cast_path(@work, cast), class: "btn btn-primary btn-sm"
               - if policy(cast).hide?
