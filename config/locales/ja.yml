@@ -5,11 +5,11 @@ ja:
         mal_anime_id: MAL Anime ID
         media: メディア
         number_format_id: 話数フォーマット
-        official_site_en_url: 公式サイト (英)
+        official_site_url_en: 公式サイト (英)
         official_site_url: 公式サイト
         sc_tid: しょぼかるID
         season: リリース時期
-        synopsis_en_source: あらすじのソース (En)
+        synopsis_source_en: あらすじのソース (En)
         synopsis_en: あらすじ (英)
         synopsis_source: あらすじのソース
         synopsis: あらすじ
@@ -19,7 +19,7 @@ ja:
         title: タイトル
         twitter_hashtag: ハッシュタグ
         twitter_username: 公式Twitter
-        wikipedia_en_url: Wikipedia (英)
+        wikipedia_url_en: Wikipedia (英)
         wikipedia_url: Wikipedia
   search_with_keyword: キーワードで検索...
   messages:
