@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20161010060659) do
+ActiveRecord::Schema.define(version: 20161014154225) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -29,17 +29,20 @@ ActiveRecord::Schema.define(version: 20161010060659) do
   end
 
   create_table "casts", force: :cascade do |t|
-    t.integer  "person_id",                         null: false
-    t.integer  "work_id",                           null: false
-    t.string   "name",                              null: false
-    t.string   "part",                              null: false
-    t.string   "aasm_state",  default: "published", null: false
-    t.integer  "sort_number", default: 0,           null: false
-    t.datetime "created_at",                        null: false
-    t.datetime "updated_at",                        null: false
+    t.integer  "person_id",                          null: false
+    t.integer  "work_id",                            null: false
+    t.string   "name",                               null: false
+    t.string   "part",                               null: false
+    t.string   "aasm_state",   default: "published", null: false
+    t.integer  "sort_number",  default: 0,           null: false
+    t.datetime "created_at",                         null: false
+    t.datetime "updated_at",                         null: false
+    t.integer  "character_id"
     t.index ["aasm_state"], name: "index_casts_on_aasm_state", using: :btree
+    t.index ["character_id"], name: "index_casts_on_character_id", using: :btree
     t.index ["person_id"], name: "index_casts_on_person_id", using: :btree
     t.index ["sort_number"], name: "index_casts_on_sort_number", using: :btree
+    t.index ["work_id", "character_id"], name: "index_casts_on_work_id_and_character_id", unique: true, using: :btree
     t.index ["work_id"], name: "index_casts_on_work_id", using: :btree
   end
 
@@ -822,6 +825,7 @@ ActiveRecord::Schema.define(version: 20161010060659) do
   end
 
   add_foreign_key "activities", "users", name: "activities_user_id_fk", on_delete: :cascade
+  add_foreign_key "casts", "characters"
   add_foreign_key "casts", "people"
   add_foreign_key "casts", "works"
   add_foreign_key "channel_works", "channels", name: "channel_works_channel_id_fk", on_delete: :cascade

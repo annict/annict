@@ -12,23 +12,20 @@ module Db
     end
 
     def new
-      @cast = @work.casts.new
-      @cast.sort_number = (@work.casts.count * 10) + 10
-      authorize @cast, :new?
+      @form = DB::CastRowsForm.new
+      authorize @form, :new?
     end
 
-    def create(cast)
-      @cast = @work.casts.new(cast)
-      authorize @cast, :create?
-      @cast.name = @cast.person.name if @cast.name.blank? && @cast.person.present?
+    def create(db_cast_rows_form)
+      @form = DB::CastRowsForm.new(db_cast_rows_form.permit(:rows))
+      @form.user = current_user
+      @form.work = @work
+      authorize @form, :create?
 
-      if @cast.valid?
-        key = "casts.create"
-        @cast.save_and_create_db_activity(current_user, key)
-        redirect_to db_work_casts_path(@work), notice: "登録しました"
-      else
-        render :new
-      end
+      return render(:new) unless @form.valid?
+      @form.save!
+
+      redirect_to db_work_casts_path(@work), notice: t("resources.cast.created")
     end
 
     def edit(id)
