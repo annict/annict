@@ -40,12 +40,16 @@ en:
         sort_id: sort_id
         sort_season: sort_season
         sort_watchers_count: sort_watchers_count
+      db/cast_rows_form:
+        rows: Casts
       db/episode_rows_form:
         rows: Episodes
       db/program_rows_form:
         rows: Programs
     errors:
       forms:
+        db/cast_rows_form:
+          invalid: "are invalid: %{value} is not found"
         db/program_rows_form:
           invalid: "are invalid: %{value} is not found"
           invalid_start_time: "have invalid start time"

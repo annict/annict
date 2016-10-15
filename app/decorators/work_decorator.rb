@@ -2,6 +2,7 @@
 
 class WorkDecorator < ApplicationDecorator
   include WorkDecoratorCommon
+  include RootResourceDecoratorCommon
 
   def twitter_username_link
     url = "https://twitter.com/#{twitter_username}"
@@ -37,6 +38,10 @@ class WorkDecorator < ApplicationDecorator
   def release_season_link
     return release_season if season.blank?
     h.link_to release_season, h.season_works_path(season.slug)
+  end
+
+  def db_header_title
+    local_title
   end
 
   def local_title

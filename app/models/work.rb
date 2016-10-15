@@ -23,12 +23,12 @@
 #  title_kana           :string           default(""), not null
 #  title_ro             :string           default(""), not null
 #  title_en             :string           default(""), not null
-#  official_site_en_url :string           default(""), not null
-#  wikipedia_en_url     :string           default(""), not null
+#  official_site_url_en :string           default(""), not null
+#  wikipedia_url_en     :string           default(""), not null
 #  synopsis             :text             default(""), not null
 #  synopsis_en          :text             default(""), not null
 #  synopsis_source      :string           default(""), not null
-#  synopsis_en_source   :string           default(""), not null
+#  synopsis_source_en   :string           default(""), not null
 #  mal_anime_id         :integer
 #
 # Indexes
@@ -39,10 +39,11 @@
 #  works_season_id_idx              (season_id)
 #
 
-class Work < ActiveRecord::Base
+class Work < ApplicationRecord
   include AASM
   include DbActivityMethods
   include WorkCommon
+  include RootResourceCommon
 
   aasm do
     state :published, initial: true

@@ -28,6 +28,7 @@ Rails.application.routes.draw do
       resource :programs_sort_type, only: [:update]
       resource :search, only: [:show]
       resources :activities, only: [:index]
+      resources :characters, only: [:index]
       resources :mute_users, only: [:create]
       resources :organizations, only: [:index]
       resources :people, only: [:index]
@@ -102,6 +103,10 @@ Rails.application.routes.draw do
       resources :activities, only: [:index]
       resource :search, only: [:show]
 
+      resources :characters, except: [:show] do
+        patch :hide, on: :member
+      end
+
       resources :organizations, except: [:show] do
         patch :hide, on: :member
       end
@@ -157,6 +162,8 @@ Rails.application.routes.draw do
 
     patch "options", to: "options#update"
   end
+
+  resources :characters, only: %i(show)
 
   resource :channel, only: [] do
     resources :works, only: [:index], controller: "channel_works"

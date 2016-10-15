@@ -30,6 +30,7 @@ GEM
       rails-html-sanitizer (~> 1.0, >= 1.0.2)
     active_link_to (1.0.3)
       actionpack
+    active_record_query_trace (1.5.4)
     activejob (5.0.0.1)
       activesupport (= 5.0.0.1)
       globalid (>= 0.3.6)
@@ -669,6 +670,7 @@ DEPENDENCIES
   aasm
   action_args
   active_link_to
+  active_record_query_trace
   activerecord-session_store
   acts_as_list
   annotate

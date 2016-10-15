@@ -69,4 +69,7 @@ Rails.application.configure do
   # Inline Source Maps
   # https://github.com/sass/sassc-rails/tree/b76761dd7b3bda9df559cf35f332364878ec7ad8#inline-source-maps
   config.sass.inline_source_maps = true
+
+  # https://github.com/ruckus/active-record-query-trace
+  ActiveRecordQueryTrace.enabled = true
 end

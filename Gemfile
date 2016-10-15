@@ -85,6 +85,7 @@ group :development, :test do
 end
 
 group :development do
+  gem "active_record_query_trace"
   gem "better_errors"
   gem "binding_of_caller" # better_errorsで使用
   gem "bullet"

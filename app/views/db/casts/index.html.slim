@@ -1,52 +1,67 @@
-= render "db/works/header", work: @work
+- title t("resources.cast.cast_list")
 
-.pull-right
-  - if current_user.committer?
-    = link_to "新規登録", new_db_work_cast_path(@work), class: "btn btn-primary"
+.l-topbar.container-fluid.p-x-1
+  .row.flex-items-xs-between
+    .col-xs
+      = render "db/application/topbar_title", parent: @work, child: t("resources.cast.cast_list")
+    - if user_signed_in? && current_user.committer?
+      .col-xs.text-xs-right
+        = link_to new_db_work_cast_path(@work), class: "btn btn-outline-primary" do
+          = icon "pencil-square-o"
+          .btn__text
+            = t "resources.cast.new_casts"
+
+= render "db/works/subnav", work: @work
+
+.container-fluid.p-a-1
+  - if @casts.present?
+    .c-card
+      table.table.table-hover
+        thead
+          tr
+            th ID
+            th = t "activerecord.attributes.cast.character_id"
+            th = t "activerecord.attributes.cast.person_id"
+            th = t "activerecord.attributes.cast.name"
+            th = t "activerecord.attributes.cast.sort_number"
+            th = t "words.state"
+            - if policy(@casts).edit?
+              th = t "words.edit"
+            - if policy(@casts).hide?
+              th = t "words.hide"
+            - if policy(@casts).destroy?
+              th = t "words.delete"
+        tbody
+          - @casts.each do |cast|
+            tr
+              td = cast.id
+              td
+                - if cast.character.present?
+                  = link_to cast.character.name, edit_db_character_path(cast.character)
+                  br
+                  = cast.character.name_en.presence || "-"
+                - else
+                  | -
+              td
+                = link_to cast.person.name, edit_db_person_path(cast.person)
+                br
+                = cast.person.name_en.presence || "-"
+              td
+                 = cast.name
+                 br
+                 = cast.name_en.presence || "-"
+              td = cast.sort_number
+              td
+                .tag class="#{cast.published? ? 'tag-success' : 'tag-warning'}"
+                  = t("resources.cast.aasm_state.#{cast.aasm_state}")
+              - if policy(cast).edit?
+                td = link_to t("words.edit"), edit_db_work_cast_path(@work, cast), class: "btn btn-primary btn-sm"
+              - if policy(cast).hide?
+                td
+                  - if cast.published?
+                    = link_to t("words.hide"), hide_db_work_cast_path(@work, cast), class: "btn btn-warning btn-sm", data: { method: "patch", confirm: t("messages.are_you_sure") }
+              - if policy(cast).destroy?
+                td = link_to t("words.delete"), db_work_cast_path(@work, cast), class: "btn btn-danger btn-sm", data: { method: :delete, confirm: t("messages.are_you_sure") }
+
   - else
-    = link_to "新規登録", new_db_work_draft_cast_path(@work), class: "btn btn-primary"
-
-.clearfix
-
-table.table.table-striped
-  thead
-    tr
-      th ID
-      th 名前
-      th 名義
-      th 役名
-      th ソート番号
-      - if user_signed_in?
-        th 編集
-      - if policy(@casts).hide?
-        th 非公開
-      - if policy(@casts).destroy?
-        th 削除
-  tbody
-    - @casts.each do |cast|
-      tr
-        td
-          = cast.id
-          - if cast.published?
-            = icon("check-circle-o", class: "c-resource-list__status-published enabled", "data-toggle": "tooltip", title: "公開されています")
-          - else
-            = icon("check-circle-o", class: "c-resource-list__status-published disabled", "data-toggle": "tooltip", title: "非公開になっています")
-        td = cast.person.name
-        td = cast.name.presence || "-"
-        td = cast.part.presence || "-"
-        td = cast.sort_number
-        - if user_signed_in?
-          td
-            - if current_user.committer?
-              = link_to "編集", edit_db_work_cast_path(@work, cast), class: "btn btn-primary btn-sm"
-            - else
-              = link_to "編集", new_db_work_draft_cast_path(@work, cast_id: cast.id), class: "btn btn-primary btn-sm"
-        - if policy(cast).hide?
-          td
-            - if cast.published?
-              = link_to "非公開", hide_db_work_cast_path(@work, cast), class: "btn btn-warning btn-sm", data: { method: "patch", confirm: "非公開にしますか？" }
-        - if policy(cast).destroy?
-          td = link_to "削除", db_work_cast_path(@work, cast), class: "btn btn-danger btn-sm", data: { method: :delete, confirm: "削除しますか？" }
-
-- if @casts.blank?
-  .well 登録されているキャストはいません。
+    = render "application/components/empty", text: t("resources.cast.there_are_no_casts")

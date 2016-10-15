@@ -1,0 +1,118 @@
+- title @character.name
+
+.l-topbar.container-fluid.p-x-1
+  .row.flex-items-xs-between
+    .col-xs
+      = render "db/application/topbar_title", parent: @character, child: t("resources.character.edit")
+    .col-xs.text-xs-right
+      = link_to character_path(@character), class: "btn btn-outline-primary", target: "_blank" do
+        = icon "external-link"
+        .btn__text
+          = t "resources.character.go_to_character"
+
+.container-fluid.p-a-1
+  .row
+    .col-xs
+      .c-card.p-a-1
+        .container
+          = form_for [:db, @character] do |f|
+            = render "application/error_panel", resource: f.object
+
+            .form-group.row
+              = f.label :name, class: "col-sm-3 col-form-label c-label-required"
+              .col-sm-9
+                = f.text_field :name, class: "form-control", required: true, autofocus: true
+            .form-group.row
+              = f.label :name_kana, class: "col-sm-3 col-form-label"
+              .col-sm-9
+                = f.text_field :name_kana, class: "form-control"
+            .form-group.row
+              = f.label :name_en, class: "col-sm-3 col-form-label"
+              .col-sm-9
+                = f.text_field :name_en, class: "form-control"
+            .form-group.row
+              = f.label :kind, class: "col-sm-3 col-form-label"
+              .col-sm-9
+                = f.text_field :kind, class: "form-control"
+            .form-group.row
+              = f.label :kind_en, class: "col-sm-3 col-form-label"
+              .col-sm-9
+                = f.text_field :kind_en, class: "form-control"
+            .form-group.row
+              = f.label :nickname, class: "col-sm-3 col-form-label"
+              .col-sm-9
+                = f.text_field :nickname, class: "form-control"
+            .form-group.row
+              = f.label :nickname_en, class: "col-sm-3 col-form-label"
+              .col-sm-9
+                = f.text_field :nickname_en, class: "form-control"
+            .form-group.row
+              = f.label :birthday, class: "col-sm-3 col-form-label"
+              .col-sm-9
+                = f.text_field :birthday, class: "form-control"
+            .form-group.row
+              = f.label :birthday_en, class: "col-sm-3 col-form-label"
+              .col-sm-9
+                = f.text_field :birthday_en, class: "form-control"
+            .form-group.row
+              = f.label :age, class: "col-sm-3 col-form-label"
+              .col-sm-9
+                = f.text_field :age, class: "form-control"
+            .form-group.row
+              = f.label :age_en, class: "col-sm-3 col-form-label"
+              .col-sm-9
+                = f.text_field :age_en, class: "form-control"
+            .form-group.row
+              = f.label :blood_type, class: "col-sm-3 col-form-label"
+              .col-sm-9
+                = f.text_field :blood_type, class: "form-control"
+            .form-group.row
+              = f.label :blood_type_en, class: "col-sm-3 col-form-label"
+              .col-sm-9
+                = f.text_field :blood_type_en, class: "form-control"
+            .form-group.row
+              = f.label :height, class: "col-sm-3 col-form-label"
+              .col-sm-9
+                = f.text_field :height, class: "form-control"
+            .form-group.row
+              = f.label :height_en, class: "col-sm-3 col-form-label"
+              .col-sm-9
+                = f.text_field :height_en, class: "form-control"
+            .form-group.row
+              = f.label :weight, class: "col-sm-3 col-form-label"
+              .col-sm-9
+                = f.text_field :weight, class: "form-control"
+            .form-group.row
+              = f.label :weight_en, class: "col-sm-3 col-form-label"
+              .col-sm-9
+                = f.text_field :weight_en, class: "form-control"
+            .form-group.row
+              = f.label :nationality, class: "col-sm-3 col-form-label"
+              .col-sm-9
+                = f.text_field :nationality, class: "form-control"
+            .form-group.row
+              = f.label :nationality_en, class: "col-sm-3 col-form-label"
+              .col-sm-9
+                = f.text_field :nationality_en, class: "form-control"
+            .form-group.row
+              = f.label :occupation, class: "col-sm-3 col-form-label"
+              .col-sm-9
+                = f.text_field :occupation, class: "form-control"
+            .form-group.row
+              = f.label :occupation_en, class: "col-sm-3 col-form-label"
+              .col-sm-9
+                = f.text_field :occupation_en, class: "form-control"
+            .form-group.row
+              = f.label :description, class: "col-sm-3 col-form-label"
+              .col-sm-9
+                = f.text_area :description, class: "form-control", rows: 10
+            .form-group.row
+              = f.label :description_en, class: "col-sm-3 col-form-label"
+              .col-sm-9
+                = f.text_area :description_en, class: "form-control", rows: 10
+
+            .form-group.row
+              .offset-sm-3.col-sm-9
+                = f.submit t("helpers.submit.update"), class: "btn btn-primary"
+    .col-xs
+      = render "sidebar"
