@@ -17,7 +17,7 @@ module DB
     def attrs_list
       roles = %i(ja en).
         map { |l| I18n.t("enumerize.staff.role", locale: l).invert }.
-        reduce(&:merge)
+        inject(&:merge)
 
       @attrs_list ||= fetched_rows.map do |row_data|
         role = roles[row_data[:role]]
