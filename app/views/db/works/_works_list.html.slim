@@ -47,7 +47,7 @@
               - if work.sc_tid.present?
                 = work.decorate.syobocal_link
               - else
-                | 未設定
+                | -
           td = work.watchers_count
           td = work.decorate.release_season.presence || "-"
           td = annict_image_tag(work.item, :tombo_image, size: "70x70")
