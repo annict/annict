@@ -38,16 +38,14 @@ module Db
     def update(id, staff)
       @staff = @work.staffs.find(id)
       authorize @staff, :update?
-      @staff.attributes = staff
-      @staff.name = @staff.person.name if @staff.name.blank? && @staff.person.present?
 
-      if @staff.valid?
-        key = "staffs.update"
-        @staff.save_and_create_db_activity(current_user, key)
-        redirect_to db_work_staffs_path(@work), notice: "更新しました"
-      else
-        render :edit
-      end
+      @staff.attributes = staff
+      @staff.user = current_user
+
+      return render(:edit) unless @staff.valid?
+      @staff.save_and_create_activity!
+
+      redirect_to db_work_staffs_path(@work), notice: t("resources.staff.updated")
     end
 
     def hide(id)
@@ -56,7 +54,8 @@ module Db
 
       @staff.hide!
 
-      redirect_to :back, notice: "非公開にしました"
+      flash[:notice] = t("resources.staff.unpublished")
+      redirect_back fallback_location: db_works_path
     end
 
     def destroy(id)
@@ -65,7 +64,8 @@ module Db
 
       @staff.destroy
 
-      redirect_to :back, notice: "削除しました"
+      flash[:notice] = t("resources.staff.deleted")
+      redirect_back fallback_location: db_works_path
     end
 
     private

@@ -45,6 +45,13 @@ en:
         episode_id: Episode
         rebroadcast: Rebroadcast
         started_at: Started at
+      staff:
+        name: Name
+        name_en: Name (en)
+        role: Role
+        role_other: Role (other)
+        role_other_en: Role (other/en)
+        sort_number: Sort number
       work:
         mal_anime_id: MAL Anime ID
         media: Media
@@ -65,3 +72,10 @@ en:
         twitter_username: Twitter username
         wikipedia_url_en: Wikipedia (en)
         wikipedia_url: Wikipedia (ja)
+    models:
+      organization:
+        one: Organization
+        other: Organizations
+      person:
+        one: Person
+        other: People

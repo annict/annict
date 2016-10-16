@@ -14,9 +14,11 @@ en:
       updated: Character updated
     cast:
       created: Cast created
+      deleted: Cast deleted
       new_casts: New casts
       cast_list: Cast list
       there_are_no_casts: There are no casts
+      unpublished: Cast unpublished
       updated: Cast updated
     episode:
       created: Episode created
@@ -40,6 +42,14 @@ en:
         spring: "Spring %{year}"
         summer: "Summer %{year}"
         autumn: "Fall %{year}"
+    staff:
+      created: Staff created
+      deleted: Staff deleted
+      new_casts: New staffs
+      cast_list: Staff list
+      there_are_no_staffs: There are no staffs
+      unpublished: Staff unpublished
+      updated: Staff updated
     work:
       aasm_state:
         published: Published
