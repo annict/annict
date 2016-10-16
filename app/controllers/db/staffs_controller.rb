@@ -5,32 +5,29 @@ module Db
     permits :resource_id, :resource_type, :name, :role, :role_other, :sort_number
 
     before_action :authenticate_user!
-    before_action :load_work, only: [
-      :index, :new, :create, :edit, :update, :hide, :destroy
-    ]
+    before_action :load_work, only: %i(index new create edit update hide destroy)
 
     def index
-      @staffs = @work.staffs.order(aasm_state: :desc, sort_number: :asc)
+      @staffs = @work.staffs.
+        includes(:resource).
+        order(aasm_state: :desc, sort_number: :asc)
     end
 
     def new
-      @staff = @work.staffs.new
-      @staff.sort_number = (@work.staffs.count * 10) + 10
-      authorize @staff, :new?
+      @form = DB::StaffRowsForm.new
+      authorize @form, :new?
     end
 
-    def create(staff)
-      @staff = @work.staffs.new(staff)
-      authorize @staff, :create?
-      @staff.name = @staff.resource.name if @staff.name.blank? && @staff.resource.present?
+    def create(db_staff_rows_form)
+      @form = DB::StaffRowsForm.new(db_staff_rows_form.permit(:rows))
+      @form.user = current_user
+      @form.work = @work
+      authorize @form, :create?
 
-      if @staff.valid?
-        key = "staffs.create"
-        @staff.save_and_create_db_activity(current_user, key)
-        redirect_to db_work_staffs_path(@work), notice: "登録しました"
-      else
-        render :new
-      end
+      return render(:new) unless @form.valid?
+      @form.save!
+
+      redirect_to db_work_staffs_path(@work), notice: t("resources.staff.created")
     end
 
     def edit(id)
@@ -41,16 +38,14 @@ module Db
     def update(id, staff)
       @staff = @work.staffs.find(id)
       authorize @staff, :update?
-      @staff.attributes = staff
-      @staff.name = @staff.person.name if @staff.name.blank? && @staff.person.present?
 
-      if @staff.valid?
-        key = "staffs.update"
-        @staff.save_and_create_db_activity(current_user, key)
-        redirect_to db_work_staffs_path(@work), notice: "更新しました"
-      else
-        render :edit
-      end
+      @staff.attributes = staff
+      @staff.user = current_user
+
+      return render(:edit) unless @staff.valid?
+      @staff.save_and_create_activity!
+
+      redirect_to db_work_staffs_path(@work), notice: t("resources.staff.updated")
     end
 
     def hide(id)
@@ -59,7 +54,8 @@ module Db
 
       @staff.hide!
 
-      redirect_to :back, notice: "非公開にしました"
+      flash[:notice] = t("resources.staff.unpublished")
+      redirect_back fallback_location: db_works_path
     end
 
     def destroy(id)
@@ -68,7 +64,8 @@ module Db
 
       @staff.destroy
 
-      redirect_to :back, notice: "削除しました"
+      flash[:notice] = t("resources.staff.deleted")
+      redirect_back fallback_location: db_works_path
     end
 
     private
