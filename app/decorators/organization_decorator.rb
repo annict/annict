@@ -24,4 +24,10 @@ class OrganizationDecorator < ApplicationDecorator
   def url_link
     h.link_to URI.parse(url).host.downcase, url, target: "_blank"
   end
+
+  def local_name
+    return name if I18n.locale == :ja
+    return name_en if name_en.present?
+    name
+  end
 end

@@ -22,11 +22,11 @@ module StaffDecoratorCommon
     end
 
     def role_name
-      return i18n_role_other if role_value == "other"
+      return local_role_other if role_value == "other"
       role_text
     end
 
-    def i18n_role_other
+    def local_role_other
       return role_other_en if I18n.locale != :ja && role_other_en.present?
       role_other
     end

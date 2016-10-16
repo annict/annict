@@ -1,24 +1,28 @@
-h2 作品
+- title t("words.search")
 
-- if @works.present?
-  = render "db/works/works_list", works: @works
-- else
-  .well 作品は見つかりませんでした
+.l-topbar.container-fluid.p-x-1
+  .row.flex-items-xs-between
+    .col-xs
+      = render "db/application/topbar_title", parent: t("words.search")
 
-hr
+.container-fluid.p-a-1
+  .m-b-3
+    h2.text-xs-center.m-b-1 = Work.model_name.human(count: 2)
+    - if @works.present?
+      = render "db/works/works_list", works: @works
+    - else
+      = render "application/components/empty", text: t("resources.work.there_are_no_works")
 
-h2 人物
-
-- if @people.present?
-  = render "db/people/people_list", people: @people
-- else
-  .well 人物は見つかりませんでした
-  
-hr
-
-h2 団体
-
-- if @organizations.present?
-  = render "db/organizations/organizations_list", organizations: @organizations
-- else
-  .well 団体は見つかりませんでした
+  .m-b-3
+    h2.text-xs-center.m-b-1 = Person.model_name.human(count: 2)
+    - if @people.present?
+      = render "db/people/people_list", people: @people
+    - else
+      = render "application/components/empty", text: t("resources.person.there_are_no_people")
+    
+  .m-b-3
+    h2.text-xs-center.m-b-1 = Organization.model_name.human(count: 2)
+    - if @organizations.present?
+      = render "db/organizations/organizations_list", organizations: @organizations
+    - else
+      = render "application/components/empty", text: t("resources.organization.there_are_no_organizations")

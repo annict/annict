@@ -39,4 +39,10 @@ class PersonDecorator < ApplicationDecorator
       miyamori
     end
   end
+
+  def local_name
+    return name if I18n.locale == :ja
+    return name_en if name_en.present?
+    name
+  end
 end

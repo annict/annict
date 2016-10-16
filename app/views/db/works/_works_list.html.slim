@@ -47,16 +47,15 @@
               - if work.sc_tid.present?
                 = work.decorate.syobocal_link
               - else
-                | 未設定
+                | -
           td = work.watchers_count
           td = work.decorate.release_season.presence || "-"
           td = annict_image_tag(work.item, :tombo_image, size: "70x70")
           td
             .tag class="#{work.published? ? 'tag-success' : 'tag-default'}"
               = t("resources.work.aasm_state.#{work.aasm_state}")
-          - if user_signed_in?
-            - if policy(works).edit?
-              td = link_to t("words.edit"), edit_db_work_path(work), class: "btn btn-primary btn-sm"
+          - if policy(work).edit?
+            td = link_to t("words.edit"), edit_db_work_path(work), class: "btn btn-primary btn-sm"
           - if policy(work).hide?
             td
               - if work.published?

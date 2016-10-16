@@ -5,7 +5,7 @@
     .col-xs-8
       = render "db/application/topbar_title", parent: @work.decorate.local_title.truncate(70)
     .col-xs.text-xs-right
-      = link_to work_path(@work), class: "btn btn-outline-primary", target: "_blank" do
+      = link_to work_url(@work, subdomain: false), class: "btn btn-outline-primary", target: "_blank" do
         = icon "external-link"
         .btn__text
           = t "resources.work.go_to_work"
