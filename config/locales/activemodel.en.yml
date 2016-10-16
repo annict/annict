@@ -46,6 +46,8 @@ en:
         rows: Episodes
       db/program_rows_form:
         rows: Programs
+      db/staff_rows_form:
+        rows: Staffs
     errors:
       forms:
         db/cast_rows_form:
@@ -53,3 +55,5 @@ en:
         db/program_rows_form:
           invalid: "are invalid: %{value} is not found"
           invalid_start_time: "have invalid start time"
+        db/staff_rows_form:
+          invalid: "are invalid: %{value} is not found"

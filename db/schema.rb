@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20161015143314) do
+ActiveRecord::Schema.define(version: 20161015184145) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -705,6 +705,8 @@ ActiveRecord::Schema.define(version: 20161015143314) do
     t.datetime "updated_at",                          null: false
     t.integer  "resource_id",                         null: false
     t.string   "resource_type",                       null: false
+    t.string   "name_en",       default: "",          null: false
+    t.string   "role_other_en", default: "",          null: false
     t.index ["aasm_state"], name: "index_staffs_on_aasm_state", using: :btree
     t.index ["resource_id", "resource_type"], name: "index_staffs_on_resource_id_and_resource_type", using: :btree
     t.index ["sort_number"], name: "index_staffs_on_sort_number", using: :btree

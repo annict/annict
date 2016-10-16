@@ -1,5 +1,21 @@
 en:
   enumerize:
+    staff:
+      role:
+        animation_director: Animation Director
+        art_director: Art Director
+        character_design: Character Design
+        chief_animation_director: Chief Animation Director
+        chief_director: Chief Director
+        director: Director
+        music: Music
+        original_character_design: Original Character Design
+        original_creator: Original Creator
+        other: Other
+        script: Script
+        series_composition: Series Composition
+        sound_director: Sound Director
+        studio: Studio
     work:
       media:
         tv: TV

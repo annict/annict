@@ -14,6 +14,8 @@
 #  updated_at    :datetime         not null
 #  resource_id   :integer          not null
 #  resource_type :string           not null
+#  name_en       :string           default(""), not null
+#  role_other_en :string           default(""), not null
 #
 # Indexes
 #
@@ -24,9 +26,29 @@
 #
 
 class Staff < ActiveRecord::Base
+  extend Enumerize
   include AASM
   include DbActivityMethods
-  include StaffCommon
+
+  DIFF_FIELDS = %i(resource_id name role role_other sort_number).freeze
+  PUBLISH_FIELDS = (DIFF_FIELDS + %i(work_id resource_type)).freeze
+
+  enumerize :role, in: %w(
+    original_creator
+    chief_director
+    director
+    series_composition
+    script
+    original_character_design
+    character_design
+    chief_animation_director
+    animation_director
+    art_director
+    sound_director
+    music
+    studio
+    other
+  )
 
   aasm do
     state :published, initial: true
@@ -35,5 +57,39 @@ class Staff < ActiveRecord::Base
     event :hide do
       transitions from: :published, to: :hidden
     end
+  end
+
+  belongs_to :resource, polymorphic: true
+  belongs_to :work, touch: true
+
+  validates :resource, presence: true
+  validates :work_id, presence: true
+  validates :name, presence: true
+  validates :role, presence: true
+
+  scope :major, -> { where.not(role: "other") }
+
+  before_validation :set_name
+
+  def to_diffable_hash
+    data = self.class::DIFF_FIELDS.each_with_object({}) do |field, hash|
+      hash[field] = case field
+      when :role
+        send(field).to_s if send(field).present?
+      else
+        send(field)
+      end
+
+      hash
+    end
+
+    data.delete_if { |_, v| v.blank? }
+  end
+
+  private
+
+  def set_name
+    self.name = resource.name if name.blank? && resource.present?
+    self.name_en = resource.name_en if name_en.blank? && resource&.name_en.present?
   end
 end
