@@ -1,7 +1,12 @@
-= render "create_type_tab", person: @person
+.l-topbar.container-fluid.p-x-1
+  .row.flex-items-xs-between
+    .col-xs-8
+      = render "db/application/topbar_title", parent: t("resources.person.new_person")
 
-.row
-  .col-sm-7
-    = render "form", person: @person
-  .col-sm-5
-    = render "sidebar"
+.container-fluid.p-a-1
+  .row
+    .col-xs
+      .c-card.p-a-1
+        = render "form", person: @person
+    .col-xs
+      = render "sidebar"

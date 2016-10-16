@@ -2,9 +2,10 @@
 
 module Db
   class OrganizationsController < Db::ApplicationController
-    permits :name, :name_kana, :url, :wikipedia_url, :twitter_username
+    permits :name, :name_en, :name_kana, :url, :url_en, :wikipedia_url,
+      :wikipedia_url_en, :twitter_username, :twitter_username_en
 
-    before_action :authenticate_user!, only: [:new, :create, :edit, :update, :destroy]
+    before_action :authenticate_user!, only: %i(new create edit update destroy)
 
     def index(page: nil)
       @organizations = Organization.order(id: :desc).page(page)
@@ -17,13 +18,14 @@ module Db
 
     def create(organization)
       @organization = Organization.new(organization)
+      @organization.user = current_user
       authorize @organization, :create?
 
-      if @organization.save_and_create_db_activity(current_user, "organizations.create")
-        redirect_to edit_db_organization_path(@organization), notice: "登録しました"
-      else
-        render :new
-      end
+      return render(:new) unless @organization.valid?
+      @organization.save_and_create_activity!
+
+      flash[:notice] = t("resources.organization.created")
+      redirect_to edit_db_organization_path(@organization)
     end
 
     def edit(id)
@@ -36,11 +38,13 @@ module Db
       authorize @organization, :update?
 
       @organization.attributes = organization
-      if @organization.save_and_create_db_activity(current_user, "organizations.update")
-        redirect_to edit_db_organization_path(@organization), notice: "更新しました"
-      else
-        render :edit
-      end
+      @organization.user = current_user
+
+      return render(:edit) unless @organization.valid?
+      @organization.save_and_create_activity!
+
+      flash[:notice] = t("resources.organization.updated")
+      redirect_to edit_db_organization_path(@organization)
     end
 
     def hide(id)
@@ -49,7 +53,8 @@ module Db
 
       @organization.hide!
 
-      redirect_to :back, notice: "非公開にしました"
+      flash[:notice] = t("resources.organization.unpublished")
+      redirect_back fallback_location: db_people_path
     end
 
     def destroy(id)
@@ -58,7 +63,8 @@ module Db
 
       @organization.destroy
 
-      redirect_to :back, notice: "削除しました"
+      flash[:notice] = t("resources.organization.deleted")
+      redirect_back fallback_location: db_people_path
     end
   end
 end

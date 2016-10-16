@@ -26,9 +26,16 @@
 class Organization < ActiveRecord::Base
   include AASM
   include DbActivityMethods
-  include OrganizationCommon
+  include RootResourceCommon
 
-  validates :name, uniqueness: true
+  DIFF_FIELDS = %i(name name_kana url wikipedia_url twitter_username).freeze
+  PUBLISH_FIELDS = DIFF_FIELDS
+
+  validates :name, presence: true, uniqueness: true
+  validates :url, url: { allow_blank: true }
+  validates :url_en, url: { allow_blank: true }
+  validates :wikipedia_url, url: { allow_blank: true }
+  validates :wikipedia_url_en, url: { allow_blank: true }
 
   aasm do
     state :published, initial: true
@@ -43,6 +50,14 @@ class Organization < ActiveRecord::Base
     end
   end
 
-  has_many :draft_staffs, as: :resource, dependent: :destroy
   has_many :staffs, as: :resource, dependent: :destroy
+
+  def to_diffable_hash
+    data = self.class::DIFF_FIELDS.each_with_object({}) do |field, hash|
+      hash[field] = send(field)
+      hash
+    end
+
+    data.delete_if { |_, v| v.blank? }
+  end
 end

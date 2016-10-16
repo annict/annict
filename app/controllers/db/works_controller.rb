@@ -67,7 +67,8 @@ module Db
 
       @work.hide!
 
-      redirect_to :back, notice: "作品を非公開にしました"
+      flash[:notice] = t("resources.work.unpublished")
+      redirect_back fallback_location: db_works_path
     end
 
     def destroy(id)
@@ -76,7 +77,8 @@ module Db
 
       @work.destroy
 
-      redirect_to db_works_path, notice: "作品を削除しました"
+      flash[:notice] = t("resources.work.deleted")
+      redirect_back fallback_location: db_works_path
     end
   end
 end

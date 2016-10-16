@@ -37,9 +37,20 @@ class Person < ActiveRecord::Base
   extend Enumerize
   include AASM
   include DbActivityMethods
-  include PersonCommon
+  include RootResourceCommon
 
-  validates :name, uniqueness: true
+  DIFF_FIELDS = %i(prefecture_id name name_kana nickname gender url wikipedia_url
+                   twitter_username birthday blood_type height).freeze
+  PUBLISH_FIELDS = DIFF_FIELDS
+
+  enumerize :blood_type, in: %i(a b ab o)
+  enumerize :gender, in: %i(male female)
+
+  validates :name, presence: true, uniqueness: true
+  validates :url, url: { allow_blank: true }
+  validates :url_en, url: { allow_blank: true }
+  validates :wikipedia_url, url: { allow_blank: true }
+  validates :wikipedia_url_en, url: { allow_blank: true }
 
   aasm do
     state :published, initial: true
@@ -57,8 +68,6 @@ class Person < ActiveRecord::Base
 
   belongs_to :prefecture
   has_many :casts, dependent: :destroy
-  has_many :draft_casts, dependent: :destroy
-  has_many :draft_staffs, as: :resource, dependent: :destroy
   has_many :staffs, as: :resource, dependent: :destroy
 
   def voice_actor?
@@ -67,5 +76,19 @@ class Person < ActiveRecord::Base
 
   def staff?
     staffs.exists?
+  end
+
+  def attributes=(params)
+    super
+    self.birthday = Date.parse(params[:birthday]) if params[:birthday].present?
+  end
+
+  def to_diffable_hash
+    data = self.class::DIFF_FIELDS.each_with_object({}) do |field, hash|
+      hash[field] = send(field)
+      hash
+    end
+
+    data.delete_if { |_, v| v.blank? }
   end
 end

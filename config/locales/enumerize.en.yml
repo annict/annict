@@ -1,5 +1,14 @@
 en:
   enumerize:
+    person:
+      blood_type:
+        a: A
+        b: B
+        ab: AB
+        o: O
+      gender:
+        female: Female
+        male: Male
     staff:
       role:
         animation_director: Animation Director
