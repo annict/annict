@@ -115,4 +115,19 @@ module ApplicationHelper
       basic_body_class
     end
   end
+
+  def v1_display_meta_tags
+    display_meta_tags(
+      og: {
+        title: page_title(page_title_symbol: :site_page_title, separator: " | "),
+        type: "website",
+        url: request.url,
+        description: t("og.description"),
+        site_name: t("words.site_name"),
+        image: "#{ENV.fetch('ANNICT_URL')}/images/og_image.png",
+        app_id: "602271853188285",
+        locale: "ja_JP"
+      }
+    )
+  end
 end
