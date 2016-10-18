@@ -32,6 +32,11 @@ class Episode < ActiveRecord::Base
   include AASM
   include DbActivityMethods
 
+  DIFF_FIELDS = %i(
+    number sort_number sc_count title prev_episode_id fetch_syobocal raw_number
+    title_ro title_en
+  ).freeze
+
   aasm do
     state :published, initial: true
     state :hidden
@@ -83,6 +88,15 @@ class Episode < ActiveRecord::Base
 
   def to_hash
     JSON.parse(to_json)
+  end
+
+  def to_diffable_hash
+    data = self.class::DIFF_FIELDS.each_with_object({}) do |field, hash|
+      hash[field] = send(field) if send(field).present?
+      hash
+    end
+
+    data.delete_if { |_, v| v.blank? }
   end
 
   private

@@ -43,7 +43,7 @@
             .form-group.row
               = f.label :prev_episode_id, class: "col-sm-3 col-form-label"
               .col-sm-9
-                = f.select :prev_episode_id, options_for_select(@work.episodes.order(:sort_number).map { |episode| ["#{episode.number} #{episode.title}", f.object.id] }, f.object.prev_episode_id), { include_blank: true }, { class: "form-control" }
+                = f.select :prev_episode_id, options_for_select(@work.episodes.order(:sort_number).map { |episode| ["#{episode.number} #{episode.title}", episode.id] }, f.object.prev_episode_id), { include_blank: true }, { class: "form-control" }
             .form-group.row.row
               label.col-sm-3
               .col-sm-9

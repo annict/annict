@@ -1,0 +1,13 @@
+span.c-db-activity__profile-link
+  = activity.user.decorate.name_link
+
+- action = activity.action.split(".")[1]
+- if action == "create"
+  | created
+- elsif action == "update"
+  | updated
+
+= " the #{activity.trackable_type.downcase} in"
+
+span.c-db-activity__resource-title
+  = activity.root_resource.decorate.db_detail_link

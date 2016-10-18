@@ -1,0 +1,11 @@
+.c-db-activity
+  .c-db-activity__header.row.m-b-1
+    .col-xs
+      span.c-db-activity__avatar
+        = link_to user_path(activity.user.username) do
+          = annict_image_tag(activity.user.profile, :tombo_avatar, size: "35x35", class: "img-circle")
+      = render "db/activities/activity_works_action", activity: activity
+    .col-xs-3.text-xs-right
+      = local_time_ago_in_words(activity.created_at)
+  .db-activity-diff
+    = activity.decorate.resource_diff_table

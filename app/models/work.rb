@@ -40,10 +40,19 @@
 #
 
 class Work < ApplicationRecord
+  extend Enumerize
   include AASM
   include DbActivityMethods
-  include WorkCommon
   include RootResourceCommon
+
+  DIFF_FIELDS = %i(
+    season_id sc_tid title title_kana title_en title_ro media official_site_url
+    official_site_url_en wikipedia_url wikipedia_url_en twitter_username
+    twitter_hashtag number_format_id synopsis synopsis_en synopsis_source
+    synopsis_source_en mal_anime_id
+  ).freeze
+
+  enumerize :media, in: { tv: 1, ova: 2, movie: 3, web: 4, other: 0 }
 
   aasm do
     state :published, initial: true
@@ -58,47 +67,60 @@ class Work < ApplicationRecord
     end
   end
 
-  has_many :activities, foreign_key: :recipient_id, foreign_type: :recipient, dependent: :destroy
+  belongs_to :number_format
+  belongs_to :season
+  has_many :activities,
+    foreign_key: :recipient_id,
+    foreign_type: :recipient,
+    dependent: :destroy
   has_many :casts, dependent: :destroy
   has_many :checkins, dependent: :destroy
-  has_many :draft_episodes, dependent: :destroy
-  has_many :draft_casts, dependent: :destroy
-  has_many :draft_items, dependent: :destroy
-  has_many :draft_multiple_episodes, dependent: :destroy
-  has_many :draft_programs, dependent: :destroy
-  has_many :draft_staffs, dependent: :destroy
-  has_many :draft_works, dependent: :destroy
   has_many :episodes, dependent: :destroy
   has_many :latest_statuses, dependent: :destroy
-  has_many :organizations, through: :staffs, source: :resource, source_type: "Organization"
+  has_many :organizations,
+    through: :staffs,
+    source: :resource,
+    source_type: "Organization"
   has_many :programs, dependent: :destroy
   has_many :statuses, dependent: :destroy
   has_many :staffs, dependent: :destroy
   has_one :item, dependent: :destroy
 
-  validates :sc_tid, numericality: { only_integer: true }, allow_blank: true,
-                     uniqueness: true
+  validates :sc_tid,
+    numericality: { only_integer: true },
+    allow_blank: true,
+    uniqueness: true
   validates :title, presence: true, uniqueness: { conditions: -> { published } }
+  validates :media, presence: true
+  validates :official_site_url, url: { allow_blank: true }
+  validates :official_site_url_en, url: { allow_blank: true }
+  validates :wikipedia_url, url: { allow_blank: true }
+  validates :wikipedia_url_en, url: { allow_blank: true }
 
   scope :by_season, -> (season_slug) {
     return self if season_slug.blank?
 
     year, name = season_slug.split("-")
 
-    season_conds = (name == "all") ? { year: year } : { year: year, name: name }
+    season_conds = name == "all" ? { year: year } : { year: year, name: name }
     joins(:season).where(seasons: season_conds)
   }
 
   scope :program_registered, -> {
-    work_ids = joins(:programs).merge(Program.where(work_id: all.pluck(:id))).pluck(:id).uniq
+    work_ids = joins(:programs).
+      merge(Program.where(work_id: all.pluck(:id))).
+      pluck(:id).
+      uniq
     where(id: work_ids)
   }
 
   scope :checkedin_by, -> (user) {
     joins(
       "INNER JOIN (
-        SELECT DISTINCT work_id, MAX(id) AS checkin_id FROM checkins WHERE checkins.user_id = #{user.id} GROUP BY work_id
-      ) AS c2 ON works.id = c2.work_id")
+        SELECT DISTINCT work_id, MAX(id) AS checkin_id FROM checkins
+          WHERE checkins.user_id = #{user.id} GROUP BY work_id
+      ) AS c2 ON works.id = c2.work_id"
+    )
   }
 
   # 作品画像が設定されていない作品
@@ -128,7 +150,7 @@ class Work < ApplicationRecord
 
   def comments_count
     episode_ids = episodes.pluck(:id)
-    checkins = Checkin.where(episode_id: episode_ids).where('comment != ?', '')
+    checkins = Checkin.where(episode_id: episode_ids).where("comment != ?", "")
 
     checkins.count
   end
@@ -142,10 +164,10 @@ class Work < ApplicationRecord
   end
 
   def channels
-    if episodes.present?
-      programs = Program.where(episode_id: episodes.pluck(:id))
-      Channel.where(id: programs.pluck(:channel_id).uniq) if programs.present?
-    end
+    return nil if episodes.blank?
+
+    programs = Program.where(episode_id: episodes.pluck(:id))
+    Channel.where(id: programs.pluck(:channel_id).uniq) if programs.present?
   end
 
   def current_season?
@@ -161,5 +183,20 @@ class Work < ApplicationRecord
     episodes.count == 1 &&
       episodes.first.number.blank? &&
       episodes.first.title == title
+  end
+
+  def to_diffable_hash
+    data = self.class::DIFF_FIELDS.each_with_object({}) do |field, hash|
+      hash[field] = case field
+      when :media
+        send(field).to_s
+      else
+        send(field)
+      end
+
+      hash
+    end
+
+    data.delete_if { |_, v| v.blank? }
   end
 end

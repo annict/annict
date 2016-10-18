@@ -80,8 +80,9 @@ en:
       twitter_hashtag_placeholder: e.g. なのん
       twitter_username_placeholder: e.g. nonnontv
       updated: Work updated
-      works_list: Works list
+      work_list: Work List
   words:
+    ago: ago
     all: All
     delete: Delete
     edit: Edit

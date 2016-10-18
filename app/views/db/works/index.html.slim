@@ -1,9 +1,9 @@
-- title t("resources.work.works_list")
+- title t("resources.work.work_list")
 
 .l-topbar.container-fluid.p-x-1
   .row.flex-items-xs-between
     .col-xs
-      = render "db/application/topbar_title", parent: t("resources.work.works_list")
+      = render "db/application/topbar_title", parent: t("resources.work.work_list")
     - if user_signed_in? && current_user.committer?
       .col-xs.text-xs-right
         = link_to new_db_work_path, class: "btn btn-outline-primary" do

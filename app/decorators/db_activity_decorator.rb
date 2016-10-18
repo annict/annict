@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class DbActivityDecorator < ApplicationDecorator
   def resource_diff_table
     if action == "multiple_episodes.create"
