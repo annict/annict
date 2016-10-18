@@ -28,6 +28,10 @@ body.works-season {
           height: 32px;
           line-height: 32px;
           width: 120px;
+
+          select {
+            height: 100%;
+          }
         }
       }
     }
