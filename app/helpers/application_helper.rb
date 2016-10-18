@@ -118,6 +118,7 @@ module ApplicationHelper
 
   def v1_display_meta_tags
     display_meta_tags(
+      site: "Annict",
       og: {
         title: page_title(page_title_symbol: :site_page_title, separator: " | "),
         type: "website",
