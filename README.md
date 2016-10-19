@@ -4,8 +4,8 @@
 [![Code Climate](https://codeclimate.com/github/annict/annict/badges/gpa.svg)](https://codeclimate.com/github/annict/annict)
 [![Coveralls](https://coveralls.io/repos/github/annict/annict/badge.svg?branch=master)](https://coveralls.io/github/annict/annict?branch=master)
 [![Gemnasium](https://gemnasium.com/annict/annict.svg)](https://gemnasium.com/annict/annict)
-[![Waffle](https://badge.waffle.io/annict/annict.svg?label=TODO&title=TODO)](http://waffle.io/annict/annict)
 [![Slack](http://slack.annict.com/badge.svg)](http://slack.annict.com)
+[![Waffle](https://badge.waffle.io/annict/annict.svg?label=TODO&title=TODO)](http://waffle.io/annict/annict)
 
 
 ### 開発に参加する
@@ -71,11 +71,9 @@ GitHubからソースコードをcloneしてから以下のコマンドを実行
 ```
 $ cd annict
 $ cp config/application.yml{.example,}
-$ bundle install
-$ bundle exec rake db:create
-$ bundle exec rake db:migrate
-$ bundle exec rake db:seed
-$ bundle exec rails s -b 0.0.0.0
+$ bundle
+$ rake db:setup
+$ rails s -b 0.0.0.0
 ```
 
 [http://localhost:3000](http://localhost:3000) にアクセスすると、
@@ -94,28 +92,6 @@ Annictでは作品やアバターなど画像を表示するとき、
 AnnictでTomboを使用するときは `localhost:5000` でサーバを起動します。
 
 
-##### テストデータの読み込みについて
-
-作品情報などのテストデータは以下のコマンドで読み込むことができます。
-
-```
-$ bundle exec rake db:seed
-```
-
-処理に時間がかかるため、デフォルトでは50件だけ作品を保存しています。
-もし100件保存したい場合は、`limit` という引数を指定します。
-
-```
-$ bundle exec rake db:seed limit=100
-```
-
-全作品を保存したいときは `limit=0` を指定します。
-
-```
-bundle exec rake db:seed limit=0
-```
-
-
 ##### application.ymlを編集する
 
 AnnictのRailsアプリに必要な設定値は全て `config/application.yml` に記述しています。
@@ -131,7 +107,7 @@ TwitterでOAuth認証用のアプリを作成し、`config/application.yml` に�
 以下のコマンドでテストが実行できます。
 
 ```
-$ bundle exec rspec
+$ rspec
 ```
 
 
