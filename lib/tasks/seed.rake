@@ -54,10 +54,19 @@ namespace :seed do
       works += Work.
         joins(:season).
         where(seasons: { year: year, name: name }).
+        order(watchers_count: :desc).
         select(work_attrs).
-        sample(10)
+        limit(10).
+        to_a
     end
-    works += Work.select(work_attrs).sample(100)
+    works += Work.
+      # To avoid `ActiveRecord::InvalidForeignKey` error
+      # when run `rake db:seed`
+      where.not(id: [865, 4370, 4447, 4177, 1540, 4266]).
+      order(watchers_count: :desc).
+      select(work_attrs).
+      limit(100).
+      to_a
 
     CSV.open("#{Dir.pwd}/db/data/csv/works.csv", "wb") do |csv|
       csv << work_attrs
