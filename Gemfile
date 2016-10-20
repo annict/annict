@@ -100,15 +100,16 @@ group :development do
   gem "thin"
 end
 
-group :production do
-  gem "bugsnag"
-  gem "rails_12factor"
-end
-
 group :test do
   gem "capybara"
   gem "coveralls", require: false
   gem "database_rewinder"
   gem "factory_girl_rails"
   gem "poltergeist"
+end
+
+group :production do
+  gem "bugsnag"
+  gem "rails_12factor"
+  gem "scout_apm"
 end
