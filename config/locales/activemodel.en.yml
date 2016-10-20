@@ -40,6 +40,8 @@ en:
         sort_id: sort_id
         sort_season: sort_season
         sort_watchers_count: sort_watchers_count
+      db/character_rows_form:
+        rows: Characters
       db/cast_rows_form:
         rows: Casts
       db/episode_rows_form:

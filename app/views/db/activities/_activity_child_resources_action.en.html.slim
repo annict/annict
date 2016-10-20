@@ -7,7 +7,7 @@ span.c-db-activity__profile-link
 - elsif action == "update"
   | updated
 
-= " the #{activity.trackable_type.downcase} in"
+= " the #{activity.trackable_type.downcase} (##{activity.trackable.id}) in"
 
 span.c-db-activity__resource-title
   = activity.root_resource.decorate.db_detail_link

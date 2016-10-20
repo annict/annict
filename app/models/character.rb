@@ -41,6 +41,12 @@ class Character < ApplicationRecord
   include DbActivityMethods
   include RootResourceCommon
 
+  DIFF_FIELDS = %i(
+    name name_en kind kind_en nickname nickname_en birthday birthday_en age age_en
+    blood_type blood_type_en height height_en weight weight_en nationality nationality_en
+    occupation occupation_en description description_en name_kana
+  ).freeze
+
   aasm do
     state :published, initial: true
     state :hidden
@@ -51,4 +57,13 @@ class Character < ApplicationRecord
   end
 
   validates :name, presence: true, uniqueness: { scope: :kind }
+
+  def to_diffable_hash
+    data = self.class::DIFF_FIELDS.each_with_object({}) do |field, hash|
+      hash[field] = send(field)
+      hash
+    end
+
+    data.delete_if { |_, v| v.blank? }
+  end
 end

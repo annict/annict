@@ -28,8 +28,10 @@ class Organization < ActiveRecord::Base
   include DbActivityMethods
   include RootResourceCommon
 
-  DIFF_FIELDS = %i(name name_kana url wikipedia_url twitter_username).freeze
-  PUBLISH_FIELDS = DIFF_FIELDS
+  DIFF_FIELDS = %i(
+    name name_kana url wikipedia_url twitter_username name_kana name_en url_en
+    wikipedia_url_en twitter_username_en
+  ).freeze
 
   validates :name, presence: true, uniqueness: true
   validates :url, url: { allow_blank: true }

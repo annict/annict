@@ -37,6 +37,32 @@ class DbActivity < ActiveRecord::Base
     HashDiff.diff(old_resource.to_diffable_hash, new_resource.to_diffable_hash)
   end
 
+  def root_resource_action?
+    [
+      "characters.create",
+      "characters.update",
+      "organizations.create",
+      "organizations.update",
+      "people.create",
+      "people.update",
+      "works.create",
+      "works.update"
+    ].include?(action)
+  end
+
+  def child_resource_action?
+    [
+      "casts.create",
+      "casts.update",
+      "episodes.create",
+      "episodes.update",
+      "programs.create",
+      "programs.update",
+      "staffs.create",
+      "staffs.update"
+    ].include?(action)
+  end
+
   private
 
   def send_notification

@@ -10,36 +10,9 @@
     .c-card.col-xs-8.offset-xs-2.p-a-1
       - @activities.each do |activity|
         - if activity.trackable.present?
-          - case activity.action
-          - when "works.create", "works.update"
-            = render "activity_works", activity: activity
-          - when "episodes.create", "episodes.update"
-            = render "activity_episodes", activity: activity
-          - when "programs.create", "programs.update"
-            = render "activity_programs", activity: activity
-          / - when "items.create"
-          /   = render "activity_items_create", activity: activity
-          / - when "items.update"
-          /   = render "activity_items_update", activity: activity
-          / - when "people.create"
-          /   = render "activity_people_create", activity: activity
-          / - when "people.update"
-          /   = render "activity_people_update", activity: activity
-          / - when "casts.create"
-          /   = render "activity_casts_create", activity: activity
-          / - when "casts.update"
-          /   = render "activity_casts_update", activity: activity
-          / - when "staffs.create"
-          /   = render "activity_staffs_create", activity: activity
-          / - when "staffs.update"
-          /   = render "activity_staffs_update", activity: activity
-          / - when "organizations.create"
-          /   = render "activity_organizations_create", activity: activity
-          / - when "organizations.update"
-          /   = render "activity_organizations_update", activity: activity
-          / - when "characters.create"
-          /   = render "activity_organizations_create", activity: activity
-          / - when "characters.update"
-          /   = render "activity_organizations_update", activity: activity
+          - if activity.root_resource_action?
+            = render "activity_root_resources", activity: activity
+          - elsif activity.child_resource_action?
+            = render "activity_child_resources", activity: activity
 
 = paginate @activities

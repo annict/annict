@@ -18,6 +18,8 @@
         tr
           th ID
           th = t "activerecord.attributes.character.name"
+          th = t "activerecord.attributes.character.name_kana"
+          th = t "activerecord.attributes.character.name_en"
           - if policy(@characters).edit?
             th = t "words.edit"
           - if policy(@characters).hide?
@@ -28,23 +30,9 @@
         - @characters.each do |character|
           tr
             td = character.id
-            td
-              - if user_signed_in? && current_user.role.admin?
-                = character.name
-                br
-                = character.name_kana.presence || "-"
-                br
-                = character.name_en.presence || "-"
-              - elsif locale == :ja
-                = character.name
-                - if character.name_kana.present?
-                  br
-                  = "(#{character.name_kana})"
-              - elsif locale == :en
-                - if character.name_en.present?
-                  = character.name_en
-                - else
-                  = character.name
+            td = character.name
+            td = character.name_kana.presence || "-"
+            td = character.name_en.presence || "-"
             - if policy(character).edit?
               td = link_to t("words.edit"), edit_db_character_path(character), class: "btn btn-primary btn-sm"
             - if policy(character).hide?

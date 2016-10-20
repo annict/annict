@@ -25,6 +25,8 @@
 class Program < ActiveRecord::Base
   include DbActivityMethods
 
+  DIFF_FIELDS = %i(channel_id episode_id started_at rebroadcast).freeze
+
   attr_accessor :time_zone
 
   belongs_to :channel
@@ -48,5 +50,14 @@ class Program < ActiveRecord::Base
     started_at = ActiveSupport::TimeZone.new(time_zone).local_to_utc(self.started_at)
     self.started_at = started_at
     self.sc_last_update = Time.zone.now
+  end
+
+  def to_diffable_hash
+    data = self.class::DIFF_FIELDS.each_with_object({}) do |field, hash|
+      hash[field] = send(field)
+      hash
+    end
+
+    data.delete_if { |_, v| v.blank? }
   end
 end

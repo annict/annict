@@ -2,7 +2,8 @@
 
 module Db
   class StaffsController < Db::ApplicationController
-    permits :resource_id, :resource_type, :name, :role, :role_other, :sort_number
+    permits :resource_id, :resource_type, :name, :role, :role_other, :sort_number,
+      :name_en, :role_other_en
 
     before_action :authenticate_user!
     before_action :load_work, only: %i(index new create edit update hide destroy)

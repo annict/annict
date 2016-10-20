@@ -22,7 +22,7 @@ module DB
           channel_id: row_data[:channel][:id],
           episode_id: row_data[:episode][:id],
           started_at: row_data[:started_at][:value],
-          rebroadcast: row_data[:rebroadcast][:value],
+          rebroadcast: row_data[:rebroadcast][:value].presence || false,
           time_zone: @user.time_zone
         }
       end
