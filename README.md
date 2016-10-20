@@ -1,23 +1,12 @@
-<p align="center">
-  <a href="https://annict.com" target="_blank">
-    <img src="http://d3a8d1smk6xli.cloudfront.net/github/annict-logo2.png" alt="Annict" width="150" height="150">
-  </a>
-  <br>
-  <br>
-  <img src="http://d3a8d1smk6xli.cloudfront.net/github/annict-text-logo.png" alt="Annict" width="240" height="60">
-  <br>
-  見たアニメを記録して、共有しよう<br>
-  <a href="https://annict.com" target="_blank">https://annict.com</a>
-  <br>
-  <br>
-  <a href="https://travis-ci.org/annict/annict" target="_blank"><img src="https://travis-ci.org/annict/annict.svg?branch=master"></a>
-  <a href="https://codeclimate.com/github/annict/annict" target="_blank"><img src="https://codeclimate.com/github/annict/annict/badges/gpa.svg"></a>
-  <a href='https://coveralls.io/github/annict/annict?branch=master' target="_blank"><img src='https://coveralls.io/repos/github/annict/annict/badge.svg?branch=master' alt='Coverage Status' /></a>
-  <a href="https://gemnasium.com/annict/annict" target="_blank"><img src="https://gemnasium.com/annict/annict.svg"></a>
-  <a href="http://slack.annict.com" target="_blank"><img src="http://slack.annict.com/badge.svg"></a>
-</p>
+# Annict
 
----
+[![Travis CI](https://travis-ci.org/annict/annict.svg?branch=master)](https://travis-ci.org/annict/annict)
+[![Code Climate](https://codeclimate.com/github/annict/annict/badges/gpa.svg)](https://codeclimate.com/github/annict/annict)
+[![Coveralls](https://coveralls.io/repos/github/annict/annict/badge.svg?branch=master)](https://coveralls.io/github/annict/annict?branch=master)
+[![Gemnasium](https://gemnasium.com/annict/annict.svg)](https://gemnasium.com/annict/annict)
+[![Slack](http://slack.annict.com/badge.svg)](http://slack.annict.com)
+[![Waffle](https://badge.waffle.io/annict/annict.svg?label=TODO&title=TODO)](http://waffle.io/annict/annict)
+
 
 ### 開発に参加する
 
@@ -47,17 +36,17 @@ Twitterなど、第三者に公開されている場所に投稿しないでも�
 
 #### タスク管理について
 
-Annictでは開発に関係するタスク管理を[Trello](https://trello.com/b/cBvJjGA5/annict)で行っています。
+Annictでは開発に関係するタスク管理を[Waffle](https://waffle.io/annict/annict)で行っています。
 各タスクは以下のリストで管理しています。
 
 | リスト名 | 概要 |
 | ------- | ----------- |
-| Idea   | システム内に取り込むことが決定していない漠然としたタスク |
-| Ready   | システム内に取り込むことが決定したタスク |
-| Working | 現在取り組んでいるタスク |
+| Just An Idea | システム内に取り込むことが決定していない漠然としたタスク |
+| TODO   | システム内に取り込むことが決定したタスク |
+| In Progress | 現在取り組んでいるタスク |
 | Done    | 作業が完了したタスク |
 
-「Ready」リストの上から順に優先度が高いタスクとなっています。
+「TODO」リストの上から順に優先度が高いタスクとなっています。
 
 
 #### 開発環境を作る
@@ -82,11 +71,10 @@ GitHubからソースコードをcloneしてから以下のコマンドを実行
 ```
 $ cd annict
 $ cp config/application.yml{.example,}
-$ bundle install
-$ bundle exec rake db:create
-$ bundle exec rake db:migrate
-$ bundle exec rake db:seed
-$ bundle exec rails s -b 0.0.0.0
+$ bundle
+$ rake db:setup
+$ npm install
+$ rails s -b 0.0.0.0
 ```
 
 [http://localhost:3000](http://localhost:3000) にアクセスすると、
@@ -105,28 +93,6 @@ Annictでは作品やアバターなど画像を表示するとき、
 AnnictでTomboを使用するときは `localhost:5000` でサーバを起動します。
 
 
-##### テストデータの読み込みについて
-
-作品情報などのテストデータは以下のコマンドで読み込むことができます。
-
-```
-$ bundle exec rake db:seed
-```
-
-処理に時間がかかるため、デフォルトでは50件だけ作品を保存しています。
-もし100件保存したい場合は、`limit` という引数を指定します。
-
-```
-$ bundle exec rake db:seed limit=100
-```
-
-全作品を保存したいときは `limit=0` を指定します。
-
-```
-bundle exec rake db:seed limit=0
-```
-
-
 ##### application.ymlを編集する
 
 AnnictのRailsアプリに必要な設定値は全て `config/application.yml` に記述しています。
@@ -142,7 +108,7 @@ TwitterでOAuth認証用のアプリを作成し、`config/application.yml` に�
 以下のコマンドでテストが実行できます。
 
 ```
-$ bundle exec rspec
+$ rspec
 ```
 
 
