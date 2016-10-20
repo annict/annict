@@ -1,0 +1,48 @@
+body.works-season {
+  padding-top: 60px;
+
+  .c-tabs {
+    @include tabs(independent);
+  }
+
+  .content {
+    @include content(wide);
+
+    .header {
+      height: 32px;
+
+      h1 {
+        color: $color-gunsmoke;
+        float: left;
+        font-size: 18px;
+        line-height: 32px;
+        margin-bottom: 0;
+        margin-top: 0;
+      }
+
+      .season-selector-wrapper {
+        text-align: right;
+
+        .season-selector {
+          @include selector;
+          height: 32px;
+          line-height: 32px;
+          width: 120px;
+
+          select {
+            height: 100%;
+          }
+        }
+      }
+    }
+
+    .works {
+      margin-bottom: 20px;
+
+      .work {
+        @include card;
+        @include work(large);
+      }
+    }
+  }
+}

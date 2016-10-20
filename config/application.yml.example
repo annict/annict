@@ -1,6 +1,6 @@
-ANNICT_NEXT_SEASON: '2015-autumn'
-ANNICT_CURRENT_SEASON: '2015-summer'
-ANNICT_PREVIOUS_SEASON: '2015-spring'
+ANNICT_NEXT_SEASON: '2017-winter'
+ANNICT_CURRENT_SEASON: '2016-autumn'
+ANNICT_PREVIOUS_SEASON: '2016-summer'
 ANNICT_PAPERCLIP_PATH: ':rails_root/public/paperclip/:class/:id/:attachment/:style/:hash.:extension'
 ANNICT_PAPERCLIP_RANDOM_SECRET: 'abcdefghijklmnopqrstuvwxyz'
 
