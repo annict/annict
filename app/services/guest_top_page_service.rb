@@ -22,7 +22,11 @@ class GuestTopPageService
   end
 
   def self.works
-    Work.published.includes(:item).where.not(id: top_work.id).order(watchers_count: :desc).limit(8)
+    Work.published.
+      includes(:item).
+      where.not(id: top_work.id).
+      order(watchers_count: :desc).
+      limit(8)
   end
 
   def self.cover_image_work
