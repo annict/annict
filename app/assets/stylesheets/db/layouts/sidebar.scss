@@ -3,7 +3,6 @@
   float: left;
   height: 100%;
   overflow-y: auto;
-  padding: .5rem;
   position: fixed;
   top: 0;
   width: 14rem;
@@ -15,13 +14,25 @@
       color: $white;
       text-decoration: none;
     }
+
+    &.c-lockup {
+      height: 30px;
+      line-height: 30px;
+    }
   }
 }
 
-.l-sidebar__search {
-  text-align: center;
-
-  .l-sidebar__search__input {
-    width: 12rem;
+.l-sidebar__menu {
+  a {
+    padding: .5rem 0;
+    width: 100%;
   }
+}
+
+.l-sidebar__annict-link {
+  background-color: $color-mizuho;
+  bottom: 0;
+  padding: .3rem;
+  position: absolute;
+  width: 100%;
 }

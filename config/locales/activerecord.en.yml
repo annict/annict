@@ -40,6 +40,36 @@ en:
         sc_count: Syobocal number
         sort_number: Sort number
         title: Title
+      organization:
+        name_en: Name (en)
+        name_kana: Name (kana)
+        name: Name
+        twitter_username_en: Twitter (en)
+        twitter_username: Twitter
+        url_en: URL (en)
+        url: URL
+        wikipedia_url_en: Wikipedia (en)
+        wikipedia_url: Wikipedia
+      person:
+        aasm_state: State
+        birthday: Birthday
+        blood_type_en: Blood Type (en)
+        blood_type: Blood Type
+        gender_en: Gender (en)
+        gender: Gender
+        height: Height
+        name_en: Name (en)
+        name_kana: Name (kana)
+        name: Name
+        nickname_en: Nickname (en)
+        nickname: Nickname
+        prefecture_id: Prefecture
+        twitter_username_en: Twitter (en)
+        twitter_username: Twitter
+        url_en: URL (en)
+        url: URL
+        wikipedia_url_en: Wikipedia (en)
+        wikipedia_url: Wikipedia
       program:
         channel_id: Channel
         episode_id: Episode
@@ -73,9 +103,30 @@ en:
         wikipedia_url_en: Wikipedia (en)
         wikipedia_url: Wikipedia (ja)
     models:
+      character:
+        one: Character
+        other: Characters
+      cast:
+        one: Cast
+        other: Casts
+      db_activity:
+        one: Activity
+        other: Activities
+      episode:
+        one: Episode
+        other: Episodes
       organization:
         one: Organization
         other: Organizations
       person:
         one: Person
         other: People
+      program:
+        one: Program
+        other: Programs
+      staff:
+        one: Staff
+        other: Staffs
+      work:
+        one: Work
+        other: Works
