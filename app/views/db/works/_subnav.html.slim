@@ -5,4 +5,3 @@
     li = active_link_to Program.model_name.human(count: 2), db_work_programs_path(work), class_active: "c-subnav__link--active", active: params[:controller] == "db/programs"
     li = active_link_to Cast.model_name.human(count: 2), db_work_casts_path(work), class_active: "c-subnav__link--active", active: params[:controller] == "db/casts"
     li = active_link_to Staff.model_name.human(count: 2), db_work_staffs_path(work), class_active: "c-subnav__link--active", active: params[:controller] == "db/staffs"
-    li = active_link_to DbActivity.model_name.human(count: 2), db_work_activities_path(work), class_active: "c-subnav__link--active", active: params[:controller] == "db/activities"

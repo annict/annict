@@ -1,8 +1,8 @@
 - title @staff.name
 
-.l-topbar.container-fluid.p-x-1
+.l-topbar.container-fluid.px-1
   .row.flex-items-xs-between
-    .col-xs
+    .col-xs-8
       = render "db/application/topbar_title", parent: @work, child: t("resources.staff.edit_staff")
     .col-xs.text-xs-right
       = link_to work_path(@work), class: "btn btn-outline-primary", target: "_blank" do
@@ -12,10 +12,10 @@
 
 = render "db/works/subnav", work: @work
 
-.container-fluid.p-a-1
+.container-fluid.p-1
   .row
-    .col-xs
-      .c-card.p-a-1
+    .col-xs-6
+      .c-card.p-1
         .container
           = form_for [:db, @work, @staff] do |f|
             = render "application/error_panel", resource: f.object
@@ -63,5 +63,5 @@
               .offset-sm-3.col-sm-9
                 = f.submit t("helpers.submit.update"), class: "btn btn-primary"
         
-    .col-xs
+    .col-xs-6
       = render "sidebar"

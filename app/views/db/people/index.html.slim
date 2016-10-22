@@ -1,6 +1,6 @@
 - title t("resources.person.person_list")
 
-.l-topbar.container-fluid.p-x-1
+.l-topbar.container-fluid.px-1
   .row.flex-items-xs-between
     .col-xs
       = render "db/application/topbar_title", parent: t("resources.person.people_list")
@@ -11,6 +11,6 @@
           .btn__text
             = t "resources.person.new_person"
 
-.container-fluid.p-a-1
+.container-fluid.p-1
   = render "people_list", people: @people
   = paginate @people
