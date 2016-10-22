@@ -1,11 +1,12 @@
 # frozen_string_literal: true
 
 namespace :tmp do
-  task add_work_id_to_db_activities: :environment do
-    DbActivity.find_each do |a|
-      case a.trackable_type
-      when "Work", "Cast", "Person", "Staff", "Episode", "Organization"
-      end
+  task update_root_resource_on_db_activities: :environment do
+    DbActivity.where(trackable_type: %w(Cast Episode Staff Program)).find_each do |a|
+      next if a.trackable.blank?
+      puts "Activity: #{a.id}"
+      a.root_resource = a.trackable.work
+      a.save!
     end
   end
 
@@ -24,5 +25,9 @@ namespace :tmp do
         c.update_column(:character_id, character.id) if character.name != "-"
       end
     end
+  end
+
+  task delete_edit_request_records_from_db_activities: :environment do
+    DbActivity.where(trackable_type: %w(EditRequest EditRequestComment)).delete_all
   end
 end
