@@ -81,6 +81,7 @@ ActiveRecord::Schema.define(version: 20161020170609) do
 
   create_table "characters", force: :cascade do |t|
     t.string   "name",                                 null: false
+    t.string   "name_kana",      default: "",          null: false
     t.string   "name_en",        default: "",          null: false
     t.string   "kind",           default: "",          null: false
     t.string   "kind_en",        default: "",          null: false
@@ -102,10 +103,9 @@ ActiveRecord::Schema.define(version: 20161020170609) do
     t.string   "occupation_en",  default: "",          null: false
     t.text     "description",    default: "",          null: false
     t.text     "description_en", default: "",          null: false
+    t.string   "aasm_state",     default: "published", null: false
     t.datetime "created_at",                           null: false
     t.datetime "updated_at",                           null: false
-    t.string   "name_kana",      default: "",          null: false
-    t.string   "aasm_state",     default: "published", null: false
     t.index ["name", "kind"], name: "index_characters_on_name_and_kind", unique: true, using: :btree
   end
 
@@ -573,11 +573,9 @@ ActiveRecord::Schema.define(version: 20161020170609) do
     t.datetime "updated_at",                                null: false
     t.string   "name_en",             default: "",          null: false
     t.string   "nickname_en",         default: "",          null: false
-    t.string   "gender_en",           default: "",          null: false
     t.string   "url_en",              default: "",          null: false
     t.string   "wikipedia_url_en",    default: "",          null: false
     t.string   "twitter_username_en", default: "",          null: false
-    t.string   "blood_type_en",       default: "",          null: false
     t.index ["aasm_state"], name: "index_people_on_aasm_state", using: :btree
     t.index ["name"], name: "index_people_on_name", unique: true, using: :btree
     t.index ["prefecture_id"], name: "index_people_on_prefecture_id", using: :btree

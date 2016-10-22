@@ -20,11 +20,9 @@
 #  updated_at          :datetime         not null
 #  name_en             :string           default(""), not null
 #  nickname_en         :string           default(""), not null
-#  gender_en           :string           default(""), not null
 #  url_en              :string           default(""), not null
 #  wikipedia_url_en    :string           default(""), not null
 #  twitter_username_en :string           default(""), not null
-#  blood_type_en       :string           default(""), not null
 #
 # Indexes
 #
