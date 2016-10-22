@@ -119,13 +119,13 @@ Rails.application.routes.draw do
         collection do
           get :season
           get :resourceless
+          get :activities
         end
 
         member do
           patch :hide
         end
 
-        resources :activities, only: [:index]
         resources :programs, except: [:show]
         resource :item, except: [:index]
 
