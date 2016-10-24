@@ -5,8 +5,6 @@
 #
 #  id                 :integer          not null, primary key
 #  user_id            :integer          not null
-#  recipient_id       :integer
-#  recipient_type     :string
 #  trackable_id       :integer          not null
 #  trackable_type     :string           not null
 #  action             :string           not null
@@ -15,10 +13,12 @@
 #  updated_at         :datetime         not null
 #  root_resource_id   :integer
 #  root_resource_type :string
+#  object_id          :integer
+#  object_type        :string
 #
 # Indexes
 #
-#  index_db_activities_on_recipient_id_and_recipient_type          (recipient_id,recipient_type)
+#  index_db_activities_on_object_id_and_object_type                (object_id,object_type)
 #  index_db_activities_on_root_resource_id_and_root_resource_type  (root_resource_id,root_resource_type)
 #  index_db_activities_on_trackable_id_and_trackable_type          (trackable_id,trackable_type)
 #
@@ -26,8 +26,8 @@
 class DbActivity < ActiveRecord::Base
   extend Enumerize
 
+  belongs_to :object, polymorphic: true
   belongs_to :root_resource, polymorphic: true
-  belongs_to :recipient, polymorphic: true
   belongs_to :trackable, polymorphic: true
   belongs_to :user
 
@@ -61,6 +61,19 @@ class DbActivity < ActiveRecord::Base
       "staffs.create",
       "staffs.update"
     ].include?(action)
+  end
+
+  def action_table_name
+    action&.split(".")&.first
+  end
+
+  def action_verb
+    action&.split(".")&.last
+  end
+
+  def anchor
+    return "" if object_type != "DbComment"
+    object.anchor
   end
 
   private

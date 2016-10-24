@@ -107,6 +107,8 @@ Rails.application.routes.draw do
         patch :hide, on: :member
       end
 
+      resources :comments, only: %i(create destroy)
+
       resources :organizations, except: [:show] do
         patch :hide, on: :member
       end
@@ -119,10 +121,10 @@ Rails.application.routes.draw do
         collection do
           get :season
           get :resourceless
-          get :activities
         end
 
         member do
+          get :activities
           patch :hide
         end
 

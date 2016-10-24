@@ -75,6 +75,14 @@ class Work < ApplicationRecord
     dependent: :destroy
   has_many :casts, dependent: :destroy
   has_many :checkins, dependent: :destroy
+  has_many :db_activities,
+    foreign_key: :trackable_id,
+    foreign_type: :trackable_type,
+    dependent: :destroy
+  has_many :db_comments,
+    foreign_key: :resource_id,
+    foreign_type: :resource_type,
+    dependent: :destroy
   has_many :episodes, dependent: :destroy
   has_many :latest_statuses, dependent: :destroy
   has_many :organizations,

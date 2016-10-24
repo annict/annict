@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20161020170609) do
+ActiveRecord::Schema.define(version: 20161024131922) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -81,7 +81,6 @@ ActiveRecord::Schema.define(version: 20161020170609) do
 
   create_table "characters", force: :cascade do |t|
     t.string   "name",                                 null: false
-    t.string   "name_kana",      default: "",          null: false
     t.string   "name_en",        default: "",          null: false
     t.string   "kind",           default: "",          null: false
     t.string   "kind_en",        default: "",          null: false
@@ -103,9 +102,10 @@ ActiveRecord::Schema.define(version: 20161020170609) do
     t.string   "occupation_en",  default: "",          null: false
     t.text     "description",    default: "",          null: false
     t.text     "description_en", default: "",          null: false
-    t.string   "aasm_state",     default: "published", null: false
     t.datetime "created_at",                           null: false
     t.datetime "updated_at",                           null: false
+    t.string   "name_kana",      default: "",          null: false
+    t.string   "aasm_state",     default: "published", null: false
     t.index ["name", "kind"], name: "index_characters_on_name_and_kind", unique: true, using: :btree
   end
 
@@ -161,8 +161,6 @@ ActiveRecord::Schema.define(version: 20161020170609) do
 
   create_table "db_activities", force: :cascade do |t|
     t.integer  "user_id",            null: false
-    t.integer  "recipient_id"
-    t.string   "recipient_type"
     t.integer  "trackable_id",       null: false
     t.string   "trackable_type",     null: false
     t.string   "action",             null: false
@@ -171,15 +169,22 @@ ActiveRecord::Schema.define(version: 20161020170609) do
     t.datetime "updated_at",         null: false
     t.integer  "root_resource_id"
     t.string   "root_resource_type"
-    t.index ["recipient_id", "recipient_type"], name: "index_db_activities_on_recipient_id_and_recipient_type", using: :btree
+    t.integer  "object_id"
+    t.string   "object_type"
+    t.index ["object_id", "object_type"], name: "index_db_activities_on_object_id_and_object_type", using: :btree
     t.index ["root_resource_id", "root_resource_type"], name: "index_db_activities_on_root_resource_id_and_root_resource_type", using: :btree
     t.index ["trackable_id", "trackable_type"], name: "index_db_activities_on_trackable_id_and_trackable_type", using: :btree
   end
 
   create_table "db_comments", force: :cascade do |t|
-    t.text     "body",       null: false
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.integer  "user_id",       null: false
+    t.integer  "resource_id",   null: false
+    t.string   "resource_type", null: false
+    t.text     "body",          null: false
+    t.datetime "created_at",    null: false
+    t.datetime "updated_at",    null: false
+    t.index ["resource_id", "resource_type"], name: "index_db_comments_on_resource_id_and_resource_type", using: :btree
+    t.index ["user_id"], name: "index_db_comments_on_user_id", using: :btree
   end
 
   create_table "delayed_jobs", force: :cascade do |t|
@@ -573,9 +578,11 @@ ActiveRecord::Schema.define(version: 20161020170609) do
     t.datetime "updated_at",                                null: false
     t.string   "name_en",             default: "",          null: false
     t.string   "nickname_en",         default: "",          null: false
+    t.string   "gender_en",           default: "",          null: false
     t.string   "url_en",              default: "",          null: false
     t.string   "wikipedia_url_en",    default: "",          null: false
     t.string   "twitter_username_en", default: "",          null: false
+    t.string   "blood_type_en",       default: "",          null: false
     t.index ["aasm_state"], name: "index_people_on_aasm_state", using: :btree
     t.index ["name"], name: "index_people_on_name", unique: true, using: :btree
     t.index ["prefecture_id"], name: "index_people_on_prefecture_id", using: :btree

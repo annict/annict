@@ -20,6 +20,8 @@ en:
       there_are_no_casts: There are no casts
       unpublished: Cast unpublished
       updated: Cast updated
+    db_comment:
+      write_some_comments: Write some comments...
     episode:
       created: Episode created
       edit_episodes: Edit episodes

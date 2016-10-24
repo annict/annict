@@ -1,0 +1,4 @@
+en:
+  mention_mailer:
+    notify:
+      subject: "%{name} (@%{username}) mentioned you on Annict!"

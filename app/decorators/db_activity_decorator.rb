@@ -2,6 +2,8 @@
 
 class DbActivityDecorator < ApplicationDecorator
   def resource_diff_table
+    return if action_table_name == "comments"
+
     new_resource = trackable.class.new(parameters["new"])
     old_resource = trackable.class.new(parameters["old"])
     origin_values = if parameters["old"]
