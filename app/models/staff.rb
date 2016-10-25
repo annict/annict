@@ -30,8 +30,9 @@ class Staff < ActiveRecord::Base
   include AASM
   include DbActivityMethods
 
-  DIFF_FIELDS = %i(resource_id name role role_other sort_number).freeze
-  PUBLISH_FIELDS = (DIFF_FIELDS + %i(work_id resource_type)).freeze
+  DIFF_FIELDS = %i(
+    resource_id name role role_other sort_number name_en role_other_en
+  ).freeze
 
   enumerize :role, in: %w(
     original_creator
@@ -61,6 +62,8 @@ class Staff < ActiveRecord::Base
 
   belongs_to :resource, polymorphic: true
   belongs_to :work, touch: true
+  has_many :db_activities, as: :trackable, dependent: :destroy
+  has_many :db_comments, as: :resource, dependent: :destroy
 
   validates :resource, presence: true
   validates :work_id, presence: true

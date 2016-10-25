@@ -35,7 +35,7 @@ en:
         checkins_count: Records count
         fetch_syobocal: Fetch Syobocal
         number: Number (ja)
-        prev_episode_id: Previous episode
+        prev_episode_id: Previous Episode
         raw_number: Number (Raw)
         sc_count: Syobocal number
         sort_number: Sort number
@@ -112,6 +112,9 @@ en:
       db_activity:
         one: Activity
         other: Activities
+      db_comment:
+        one: Comment
+        other: Comments
       episode:
         one: Episode
         other: Episodes

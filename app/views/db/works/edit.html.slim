@@ -1,6 +1,6 @@
 - title @work.title
 
-.l-topbar.container-fluid.p-x-1
+.l-topbar.container-fluid.px-1
   .row.flex-items-xs-between
     .col-xs-8
       = render "db/application/topbar_title", parent: @work.decorate.local_title.truncate(70)
@@ -12,10 +12,10 @@
 
 = render "db/works/subnav", work: @work
 
-.container-fluid.p-a-1
+.container-fluid.p-1
   .row
-    .col-xs
-      .c-card.p-a-1
+    .col-xs-6
+      .c-card.p-1
         = render "form", work: @work
-    .col-xs
+    .col-xs-6
       = render "sidebar"

@@ -39,9 +39,11 @@ class Person < ActiveRecord::Base
   include DbActivityMethods
   include RootResourceCommon
 
-  DIFF_FIELDS = %i(prefecture_id name name_kana nickname gender url wikipedia_url
-                   twitter_username birthday blood_type height).freeze
-  PUBLISH_FIELDS = DIFF_FIELDS
+  DIFF_FIELDS = %i(
+    prefecture_id name name_kana nickname gender url wikipedia_url twitter_username
+    birthday blood_type height name_en nickname_en gender_en url_en wikipedia_url_en
+    twitter_username_en blood_type_en
+  ).freeze
 
   enumerize :blood_type, in: %i(a b ab o)
   enumerize :gender, in: %i(male female)
@@ -68,6 +70,8 @@ class Person < ActiveRecord::Base
 
   belongs_to :prefecture
   has_many :casts, dependent: :destroy
+  has_many :db_activities, as: :trackable, dependent: :destroy
+  has_many :db_comments, as: :resource, dependent: :destroy
   has_many :staffs, as: :resource, dependent: :destroy
 
   def voice_actor?

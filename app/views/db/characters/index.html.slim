@@ -1,6 +1,6 @@
 - title t("resources.character.character_list")
 
-.l-topbar.container-fluid.p-x-1
+.l-topbar.container-fluid.px-1
   .row.flex-items-xs-between
     .col-xs
       = render "db/application/topbar_title", parent: t("resources.character.character_list")
@@ -11,13 +11,16 @@
           .btn__text
             = t "resources.character.new_characters"
 
-.container-fluid.p-a-1
+.container-fluid.p-1
   .c-card
     table.table.table-hover
       thead
         tr
           th ID
           th = t "activerecord.attributes.character.name"
+          th = t "activerecord.attributes.character.name_kana"
+          th = t "activerecord.attributes.character.name_en"
+          th = t "words.activity"
           - if policy(@characters).edit?
             th = t "words.edit"
           - if policy(@characters).hide?
@@ -28,23 +31,10 @@
         - @characters.each do |character|
           tr
             td = character.id
-            td
-              - if user_signed_in? && current_user.role.admin?
-                = character.name
-                br
-                = character.name_kana.presence || "-"
-                br
-                = character.name_en.presence || "-"
-              - elsif locale == :ja
-                = character.name
-                - if character.name_kana.present?
-                  br
-                  = "(#{character.name_kana})"
-              - elsif locale == :en
-                - if character.name_en.present?
-                  = character.name_en
-                - else
-                  = character.name
+            td = character.name
+            td = character.name_kana.presence || "-"
+            td = character.name_en.presence || "-"
+            td = link_to t("words.activity"), activities_db_character_path(character)
             - if policy(character).edit?
               td = link_to t("words.edit"), edit_db_character_path(character), class: "btn btn-primary btn-sm"
             - if policy(character).hide?

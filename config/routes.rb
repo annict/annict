@@ -104,15 +104,53 @@ Rails.application.routes.draw do
       resource :search, only: [:show]
 
       resources :characters, except: [:show] do
-        patch :hide, on: :member
+        member do
+          get :activities
+          patch :hide
+        end
+      end
+
+      resources :casts, only: %i(edit update destroy) do
+        member do
+          get :activities
+          patch :hide
+        end
+      end
+
+      resources :comments, only: %i(create destroy)
+
+      resources :episodes, only: %i(edit update destroy) do
+        member do
+          get :activities
+          patch :hide
+        end
       end
 
       resources :organizations, except: [:show] do
-        patch :hide, on: :member
+        member do
+          get :activities
+          patch :hide
+        end
       end
 
       resources :people, except: [:show] do
-        patch :hide, on: :member
+        member do
+          get :activities
+          patch :hide
+        end
+      end
+
+      resources :programs, only: %i(edit update destroy) do
+        member do
+          get :activities
+        end
+      end
+
+      resources :staffs, only: %i(edit update destroy) do
+        member do
+          get :activities
+          patch :hide
+        end
       end
 
       resources :works, except: [:show] do
@@ -122,26 +160,15 @@ Rails.application.routes.draw do
         end
 
         member do
+          get :activities
           patch :hide
         end
 
-        resources :activities, only: [:index]
-        resources :programs, except: [:show]
         resource :item, except: [:index]
-
-        resources :casts, except: [:show] do
-          patch :hide, on: :member
-        end
-
-        resources :episodes, except: %i(show) do
-          member do
-            patch :hide
-          end
-        end
-
-        resources :staffs, except: [:show] do
-          patch :hide, on: :member
-        end
+        resources :casts, only: %i(index new create)
+        resources :episodes, only: %i(index new create)
+        resources :programs, only: %i(index new create)
+        resources :staffs, only: %i(index new create)
       end
 
       root "home#index"

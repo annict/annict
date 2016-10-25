@@ -8,7 +8,7 @@ module Db
       :occupation_en, :description, :description_en
 
     before_action :authenticate_user!
-    before_action :load_character, only: %i(edit update)
+    before_action :load_character, only: %i(edit update activities)
 
     def index(page: nil)
       @characters = Character.order(id: :desc).page(page)
@@ -44,6 +44,11 @@ module Db
       @character.save_and_create_activity!
 
       redirect_to db_characters_path, notice: t("resources.character.updated")
+    end
+
+    def activities
+      @activities = @character.db_activities.order(id: :desc)
+      @comment = @character.db_comments.new
     end
 
     private

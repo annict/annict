@@ -9,15 +9,15 @@ html lang="#{I18n.locale}"
   body class="p-db #{body_classes}"
     .p-vue
       .l-sidebar
-        = link_to db_root_path, class: "c-lockup m-y-1 p-x-1" do
+        = link_to db_root_path, class: "c-lockup my-1 px-1" do
           span.c-lockup__logo Annict
           span.c-lockup__brand DB
         
-        = form_tag db_search_path, method: :get, class: "p-x-1" do
+        = form_tag db_search_path, method: :get, class: "px-1" do
           .form-group
             = text_field_tag :q, @search.q, placeholder: t("search_with_keyword"), class: "form-control"
 
-        ul.l-sidebar__menu.nav.navbar-nav.p-x-1
+        ul.l-sidebar__menu.nav.navbar-nav.px-1
           li = link_to DbActivity.model_name.human(count: 2), db_activities_path, class: "d-inline-block"
           li = link_to Work.model_name.human(count: 2), db_works_path, class: "d-inline-block"
           li = link_to Person.model_name.human(count: 2), db_people_path, class: "d-inline-block"

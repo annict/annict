@@ -7,6 +7,7 @@
 Turbolinks = require "turbolinks"
 Vue = require "vue/dist/vue"
 
+body = require "./common/components/body"
 flash = require "./common/components/flash"
 
 resourceSelect = require "./common/directives/resourceSelect"
@@ -16,6 +17,7 @@ $(document).on "turbolinks:load", ->
 
   Vue.config.debug = true
 
+  Vue.component("c-body", body)
   Vue.component("c-flash", flash)
 
   Vue.directive("resource-select", resourceSelect)

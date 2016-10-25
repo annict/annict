@@ -1,0 +1,10 @@
+.c-resource-diff-table {
+  &__column {
+    width: 20%;
+  }
+
+  &__new,
+  &__old {
+    width: 40%;
+  }
+}

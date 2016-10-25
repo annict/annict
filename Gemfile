@@ -89,6 +89,7 @@ group :development do
   gem "better_errors"
   gem "binding_of_caller" # better_errorsで使用
   gem "bullet"
+  gem "derailed_benchmarks"
   gem "letter_opener_web"
   gem "listen" # Rails 5から `rails s` するときに必要になった
   gem "rubocop"
@@ -96,6 +97,7 @@ group :development do
   gem "scss_lint", require: false
   gem "spring"
   gem "spring-commands-rspec", require: false
+  gem "stackprof"
   gem "thin"
 end
 

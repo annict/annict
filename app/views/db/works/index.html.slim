@@ -1,9 +1,9 @@
-- title t("resources.work.works_list")
+- title t("resources.work.work_list")
 
-.l-topbar.container-fluid.p-x-1
+.l-topbar.container-fluid.px-1
   .row.flex-items-xs-between
     .col-xs
-      = render "db/application/topbar_title", parent: t("resources.work.works_list")
+      = render "db/application/topbar_title", parent: t("resources.work.work_list")
     - if user_signed_in? && current_user.committer?
       .col-xs.text-xs-right
         = link_to new_db_work_path, class: "btn btn-outline-primary" do
@@ -11,17 +11,17 @@
           .btn__text
             = t "resources.work.new_work"
 
-.container-fluid.p-a-1
-  ul.nav.nav-inline.text-xs-center.m-b-1
-    li.nav-item.m-r-2
+.container-fluid.p-1
+  ul.nav.nav-inline.text-xs-center.mb-1
+    li.nav-item
       = active_link_to t("words.all"), db_works_path, class: "nav-link", active: params[:action] == "index"
-    li.c-season-dropdown.nav-item.dropdown.m-r-2
+    li.c-season-dropdown.nav-item.dropdown
       a.nav-link.dropdown-toggle href="#" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"
         = t "words.season"
       .dropdown-menu.pre-scrollable
         - Season.order(sort_number: :desc).each do |season|
           = link_to season.decorate.humanize_name, season_db_works_path(slug: season.slug), class: "dropdown-item"
-    li.nav-item.m-r-2
+    li.nav-item
       = active_link_to t("resources.episode.no_episodes"), resourceless_db_works_path(name: :episode), class: "nav-link", active: (params[:name] == "episode")
     li.nav-item
       = active_link_to t("resources.work.no_images"), resourceless_db_works_path(name: :item), class: "nav-link", active: (params[:name] == "item")

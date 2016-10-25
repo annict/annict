@@ -1,12 +1,12 @@
-.l-topbar.container-fluid.p-x-1
+.l-topbar.container-fluid.px-1
   .row.flex-items-xs-between
     .col-xs-8
       = render "db/application/topbar_title", parent: t("resources.organization.new_organization")
 
-.container-fluid.p-a-1
+.container-fluid.p-1
   .row
-    .col-xs
-      .c-card.p-a-1
+    .col-xs-6
+      .c-card.p-1
         = render "form", organization: @organization
-    .col-xs
+    .col-xs-6
       = render "sidebar"

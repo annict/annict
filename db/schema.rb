@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20161015184145) do
+ActiveRecord::Schema.define(version: 20161024131922) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -161,8 +161,6 @@ ActiveRecord::Schema.define(version: 20161015184145) do
 
   create_table "db_activities", force: :cascade do |t|
     t.integer  "user_id",            null: false
-    t.integer  "recipient_id"
-    t.string   "recipient_type"
     t.integer  "trackable_id",       null: false
     t.string   "trackable_type",     null: false
     t.string   "action",             null: false
@@ -171,15 +169,22 @@ ActiveRecord::Schema.define(version: 20161015184145) do
     t.datetime "updated_at",         null: false
     t.integer  "root_resource_id"
     t.string   "root_resource_type"
-    t.index ["recipient_id", "recipient_type"], name: "index_db_activities_on_recipient_id_and_recipient_type", using: :btree
+    t.integer  "object_id"
+    t.string   "object_type"
+    t.index ["object_id", "object_type"], name: "index_db_activities_on_object_id_and_object_type", using: :btree
     t.index ["root_resource_id", "root_resource_type"], name: "index_db_activities_on_root_resource_id_and_root_resource_type", using: :btree
     t.index ["trackable_id", "trackable_type"], name: "index_db_activities_on_trackable_id_and_trackable_type", using: :btree
   end
 
   create_table "db_comments", force: :cascade do |t|
-    t.text     "body",       null: false
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.integer  "user_id",       null: false
+    t.integer  "resource_id",   null: false
+    t.string   "resource_type", null: false
+    t.text     "body",          null: false
+    t.datetime "created_at",    null: false
+    t.datetime "updated_at",    null: false
+    t.index ["resource_id", "resource_type"], name: "index_db_comments_on_resource_id_and_resource_type", using: :btree
+    t.index ["user_id"], name: "index_db_comments_on_user_id", using: :btree
   end
 
   create_table "delayed_jobs", force: :cascade do |t|
@@ -316,21 +321,6 @@ ActiveRecord::Schema.define(version: 20161015184145) do
     t.index ["sort_number"], name: "index_draft_staffs_on_sort_number", using: :btree
     t.index ["staff_id"], name: "index_draft_staffs_on_staff_id", using: :btree
     t.index ["work_id"], name: "index_draft_staffs_on_work_id", using: :btree
-  end
-
-  create_table "draft_work_organizations", force: :cascade do |t|
-    t.integer  "work_organization_id"
-    t.integer  "work_id",                          null: false
-    t.integer  "organization_id",                  null: false
-    t.string   "role",                             null: false
-    t.string   "role_other"
-    t.integer  "sort_number",          default: 0, null: false
-    t.datetime "created_at",                       null: false
-    t.datetime "updated_at",                       null: false
-    t.index ["organization_id"], name: "index_draft_work_organizations_on_organization_id", using: :btree
-    t.index ["sort_number"], name: "index_draft_work_organizations_on_sort_number", using: :btree
-    t.index ["work_id"], name: "index_draft_work_organizations_on_work_id", using: :btree
-    t.index ["work_organization_id"], name: "index_draft_work_organizations_on_work_organization_id", using: :btree
   end
 
   create_table "draft_works", force: :cascade do |t|
@@ -789,22 +779,6 @@ ActiveRecord::Schema.define(version: 20161015184145) do
     t.datetime "created_at"
   end
 
-  create_table "work_organizations", force: :cascade do |t|
-    t.integer  "work_id",                               null: false
-    t.integer  "organization_id",                       null: false
-    t.string   "role",                                  null: false
-    t.string   "role_other"
-    t.string   "aasm_state",      default: "published", null: false
-    t.integer  "sort_number",     default: 0,           null: false
-    t.datetime "created_at",                            null: false
-    t.datetime "updated_at",                            null: false
-    t.index ["aasm_state"], name: "index_work_organizations_on_aasm_state", using: :btree
-    t.index ["organization_id"], name: "index_work_organizations_on_organization_id", using: :btree
-    t.index ["sort_number"], name: "index_work_organizations_on_sort_number", using: :btree
-    t.index ["work_id", "organization_id"], name: "index_work_organizations_on_work_id_and_organization_id", unique: true, using: :btree
-    t.index ["work_id"], name: "index_work_organizations_on_work_id", using: :btree
-  end
-
   create_table "works", force: :cascade do |t|
     t.integer  "season_id"
     t.integer  "sc_tid"
@@ -874,9 +848,6 @@ ActiveRecord::Schema.define(version: 20161015184145) do
   add_foreign_key "draft_programs", "works"
   add_foreign_key "draft_staffs", "staffs"
   add_foreign_key "draft_staffs", "works"
-  add_foreign_key "draft_work_organizations", "organizations"
-  add_foreign_key "draft_work_organizations", "work_organizations"
-  add_foreign_key "draft_work_organizations", "works"
   add_foreign_key "draft_works", "number_formats"
   add_foreign_key "draft_works", "seasons"
   add_foreign_key "draft_works", "works"
@@ -920,8 +891,6 @@ ActiveRecord::Schema.define(version: 20161015184145) do
   add_foreign_key "statuses", "users", name: "statuses_user_id_fk", on_delete: :cascade
   add_foreign_key "statuses", "works", name: "statuses_work_id_fk", on_delete: :cascade
   add_foreign_key "syobocal_alerts", "works", name: "syobocal_alerts_work_id_fk", on_delete: :cascade
-  add_foreign_key "work_organizations", "organizations"
-  add_foreign_key "work_organizations", "works"
   add_foreign_key "works", "number_formats"
   add_foreign_key "works", "seasons", name: "works_season_id_fk", on_delete: :cascade
 end

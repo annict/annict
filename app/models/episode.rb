@@ -32,6 +32,11 @@ class Episode < ActiveRecord::Base
   include AASM
   include DbActivityMethods
 
+  DIFF_FIELDS = %i(
+    number sort_number sc_count title prev_episode_id fetch_syobocal raw_number
+    title_ro title_en
+  ).freeze
+
   aasm do
     state :published, initial: true
     state :hidden
@@ -45,6 +50,8 @@ class Episode < ActiveRecord::Base
   belongs_to :work, counter_cache: true
   has_many :activities, dependent: :destroy, foreign_key: :recipient_id, foreign_type: :recipient
   has_many :checkins,   dependent: :destroy
+  has_many :db_activities, as: :trackable, dependent: :destroy
+  has_many :db_comments, as: :resource, dependent: :destroy
   has_many :draft_episodes, dependent: :destroy
   has_many :programs, dependent: :destroy
 
@@ -85,19 +92,22 @@ class Episode < ActiveRecord::Base
     JSON.parse(to_json)
   end
 
-  private
-
-  # エピソードを削除するとき、次のエピソードの `prev_episode_id` や
-  # DraftEpisodeの `prev_episode_id` に削除対象のエピソードが設定されていたとき、
-  # その情報を削除する
-  def unset_prev_episode_id
-    # エピソードを削除するとき、次のエピソードの `prev_episode_id` に
-    # 削除対象のエピソードが設定されていたとき、その情報を削除する
-    if next_episode.present? && (self == next_episode.prev_episode)
-      next_episode.update_column(:prev_episode_id, nil)
+  def to_diffable_hash
+    data = self.class::DIFF_FIELDS.each_with_object({}) do |field, hash|
+      hash[field] = send(field) if send(field).present?
+      hash
     end
 
-    DraftEpisode.where(prev_episode_id: id).update_all(prev_episode_id: nil)
+    data.delete_if { |_, v| v.blank? }
+  end
+
+  private
+
+  def unset_prev_episode_id
+    return if next_episode.blank?
+    # エピソードを削除するとき、次のエピソードの `prev_episode_id` に
+    # 削除対象のエピソードが設定されていたとき、その情報を削除する
+    next_episode.update_column(:prev_episode_id, nil) if self == next_episode.prev_episode
   end
 
   def update_prev_episode

@@ -1,0 +1,22 @@
+- title t("words.activity")
+
+.l-topbar.container-fluid.px-1
+  .row.flex-items-xs-between
+    .col-xs
+      = render "db/application/topbar_title", parent: @cast.decorate.db_detail_link, child: t("words.activity")
+
+= render "db/works/subnav", work: @cast.work
+
+.container-fluid.p-1
+  .row.mb-1
+    .c-card.col-xs-8.offset-xs-2.p-1
+      = render "db/comments/form", comment: @comment, resource: @cast
+
+  .row
+    .c-card.col-xs-8.offset-xs-2.p-1
+      - @activities.each do |activity|
+        = render "db/activities/activity_root_resources", activity: activity
+
+- content_for :js_templates do
+  = render "application/js_templates/body"
+  

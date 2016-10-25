@@ -119,6 +119,11 @@ module ApplicationHelper
     locale == :ja || (user_signed_in? && current_user.role.admin?)
   end
 
+  def local_time_ago_in_words(from_time, options = {})
+    spacer = I18n.locale == :en ? " " : ""
+    "#{time_ago_in_words(from_time, options)}#{spacer}#{I18n.t('words.ago')}"
+  end
+
   def v1_display_meta_tags
     display_meta_tags(
       site: "Annict",

@@ -9,17 +9,12 @@ module Db
 
     rescue_from Pundit::NotAuthorizedError, with: :user_not_authorized
 
-    before_action :set_opened_edit_requests
     before_action :set_search_params
 
     private
 
     def set_search_params
       @search = SearchService.new(params[:q], scope: :all)
-    end
-
-    def set_opened_edit_requests
-      @opened_edit_requests = EditRequest.opened
     end
 
     def user_not_authorized

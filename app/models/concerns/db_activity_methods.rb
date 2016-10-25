@@ -18,6 +18,15 @@ module DbActivityMethods
     end
   end
 
+  def root_resource
+    case self.class.name
+    when "Work", "Person", "Organization", "Character"
+      self
+    when "Episode", "Program", "Cast", "Staff"
+      work
+    end
+  end
+
   private
 
   def create_activity!(action, old_attrs)
@@ -41,15 +50,6 @@ module DbActivityMethods
     return nil if new_record?
 
     self.class.find(id).attributes
-  end
-
-  def root_resource
-    case self.class.name
-    when "Work", "Person", "Organization", "Character"
-      self
-    when "Episode", "Program", "Cast", "Staff"
-      work
-    end
   end
 
   def format_action

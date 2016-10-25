@@ -1,8 +1,8 @@
 - title t("resources.staff.staff_list")
 
-.l-topbar.container-fluid.p-x-1
+.l-topbar.container-fluid.px-1
   .row.flex-items-xs-between
-    .col-xs
+    .col-xs-8
       = render "db/application/topbar_title", parent: @work, child: t("resources.staff.staff_list")
     - if user_signed_in? && current_user.committer?
       .col-xs.text-xs-right
@@ -13,7 +13,7 @@
 
 = render "db/works/subnav", work: @work
 
-.container-fluid.p-a-1
+.container-fluid.p-1
   - if @staffs.present?
     .c-card
       table.table.table-hover
@@ -25,6 +25,7 @@
             th = t "activerecord.attributes.staff.role"
             th = t "activerecord.attributes.staff.sort_number"
             th = t "words.state"
+            th = t "words.activity"
             - if policy(@staffs).edit?
               th = t "words.edit"
             - if policy(@staffs).hide?
@@ -48,14 +49,15 @@
               td
                 .tag class="#{staff.published? ? 'tag-success' : 'tag-warning'}"
                   = t("resources.staff.aasm_state.#{staff.aasm_state}")
+              td = link_to t("words.activity"), activities_db_staff_path(staff)
               - if policy(staff).edit?
-                td = link_to t("words.edit"), edit_db_work_staff_path(@work, staff), class: "btn btn-primary btn-sm"
+                td = link_to t("words.edit"), edit_db_staff_path(staff), class: "btn btn-primary btn-sm"
               - if policy(staff).hide?
                 td
                   - if staff.published?
-                    = link_to t("words.hide"), hide_db_work_staff_path(@work, staff), class: "btn btn-warning btn-sm", data: { method: "patch", confirm: t("messages.are_you_sure") }
+                    = link_to t("words.hide"), hide_db_staff_path(staff), class: "btn btn-warning btn-sm", data: { method: "patch", confirm: t("messages.are_you_sure") }
               - if policy(staff).destroy?
-                td = link_to t("words.delete"), db_work_staff_path(@work, staff), class: "btn btn-danger btn-sm", data: { method: :delete, confirm: t("messages.are_you_sure") }
+                td = link_to t("words.delete"), db_staff_path(staff), class: "btn btn-danger btn-sm", data: { method: :delete, confirm: t("messages.are_you_sure") }
 
   - else
     = render "application/components/empty", text: t("resources.staff.there_are_no_staffs")

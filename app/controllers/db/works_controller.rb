@@ -7,7 +7,8 @@ module Db
       :twitter_username, :twitter_hashtag, :sc_tid, :mal_anime_id, :number_format_id,
       :synopsis, :synopsis_source, :synopsis_en, :synopsis_source_en
 
-    before_action :authenticate_user!, only: [:new, :create, :edit, :update, :destroy]
+    before_action :authenticate_user!, only: %i(new create edit update destroy)
+    before_action :load_work, only: %i(edit update hide destroy activities)
 
     def index(page: nil)
       @works = Work.includes(:season, :item).order(id: :desc).page(page)
@@ -43,13 +44,11 @@ module Db
       redirect_to edit_db_work_path(@work), notice: t("resources.work.created")
     end
 
-    def edit(id)
-      @work = Work.find(id)
+    def edit
       authorize @work, :edit?
     end
 
-    def update(id, work)
-      @work = Work.find(id)
+    def update(work)
       authorize @work, :update?
 
       @work.attributes = work
@@ -61,8 +60,7 @@ module Db
       redirect_to edit_db_work_path(@work), notice: t("resources.work.updated")
     end
 
-    def hide(id)
-      @work = Work.find(id)
+    def hide
       authorize @work, :hide?
 
       @work.hide!
@@ -71,14 +69,24 @@ module Db
       redirect_back fallback_location: db_works_path
     end
 
-    def destroy(id)
-      @work = Work.find(id)
+    def destroy
       authorize @work, :destroy?
 
       @work.destroy
 
       flash[:notice] = t("resources.work.deleted")
       redirect_back fallback_location: db_works_path
+    end
+
+    def activities
+      @activities = @work.db_activities.order(id: :desc)
+      @comment = @work.db_comments.new
+    end
+
+    private
+
+    def load_work
+      @work = Work.find(params[:id])
     end
   end
 end

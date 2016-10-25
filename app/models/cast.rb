@@ -29,6 +29,8 @@ class Cast < ActiveRecord::Base
   include AASM
   include DbActivityMethods
 
+  DIFF_FIELDS = %i(person_id name part sort_number character_id name_en).freeze
+
   aasm do
     state :published, initial: true
     state :hidden
@@ -41,6 +43,8 @@ class Cast < ActiveRecord::Base
   belongs_to :character
   belongs_to :person
   belongs_to :work, touch: true
+  has_many :db_activities, as: :trackable, dependent: :destroy
+  has_many :db_comments, as: :resource, dependent: :destroy
 
   validates :character_id, presence: true
   validates :name, presence: true
@@ -48,6 +52,15 @@ class Cast < ActiveRecord::Base
   validates :work_id, presence: true
 
   before_validation :set_name
+
+  def to_diffable_hash
+    data = self.class::DIFF_FIELDS.each_with_object({}) do |field, hash|
+      hash[field] = send(field)
+      hash
+    end
+
+    data.delete_if { |_, v| v.blank? }
+  end
 
   private
 
