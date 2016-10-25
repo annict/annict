@@ -31,8 +31,6 @@ class DbActivity < ActiveRecord::Base
   belongs_to :trackable, polymorphic: true
   belongs_to :user
 
-  after_create :send_notification
-
   def diffs(new_resource, old_resource)
     HashDiff.diff(old_resource.to_diffable_hash, new_resource.to_diffable_hash)
   end
@@ -74,21 +72,5 @@ class DbActivity < ActiveRecord::Base
   def anchor
     return "" if object_type != "DbComment"
     object.anchor
-  end
-
-  private
-
-  def send_notification
-    method = case action
-      when "edit_request_comments.create" then :comment_notification
-      when "edit_requests.publish" then :publish_notification
-      when "edit_requests.close" then :close_notification
-      end
-
-    if method.present?
-      (recipient.presence || trackable).participants.where.not(user: user).each do |p|
-        EditRequestMailer.send(method, id, p.user.email).deliver_later
-      end
-    end
   end
 end

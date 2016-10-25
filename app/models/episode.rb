@@ -103,17 +103,11 @@ class Episode < ActiveRecord::Base
 
   private
 
-  # エピソードを削除するとき、次のエピソードの `prev_episode_id` や
-  # DraftEpisodeの `prev_episode_id` に削除対象のエピソードが設定されていたとき、
-  # その情報を削除する
   def unset_prev_episode_id
+    return if next_episode.blank?
     # エピソードを削除するとき、次のエピソードの `prev_episode_id` に
     # 削除対象のエピソードが設定されていたとき、その情報を削除する
-    if next_episode.present? && (self == next_episode.prev_episode)
-      next_episode.update_column(:prev_episode_id, nil)
-    end
-
-    DraftEpisode.where(prev_episode_id: id).update_all(prev_episode_id: nil)
+    next_episode.update_column(:prev_episode_id, nil) if self == next_episode.prev_episode
   end
 
   def update_prev_episode

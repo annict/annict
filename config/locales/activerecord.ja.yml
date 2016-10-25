@@ -148,11 +148,6 @@ ja:
         twitter_username: 公式Twitter
         wikipedia_url: Wikipedia
         number_format_id: 話数フォーマット
-      edit_request:
-        title: リクエストタイトル
-        body: コメント
-      edit_request_comment:
-        body: 本文
       work_organization:
         organization_id: 団体
         work_id: 作品
