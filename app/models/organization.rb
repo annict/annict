@@ -52,6 +52,8 @@ class Organization < ActiveRecord::Base
     end
   end
 
+  has_many :db_activities, as: :trackable, dependent: :destroy
+  has_many :db_comments, as: :resource, dependent: :destroy
   has_many :staffs, as: :resource, dependent: :destroy
 
   def to_diffable_hash

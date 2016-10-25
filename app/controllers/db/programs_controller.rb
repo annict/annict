@@ -5,7 +5,8 @@ module Db
     permits :channel_id, :episode_id, :started_at, :rebroadcast, :time_zone
 
     before_action :authenticate_user!
-    before_action :load_work, only: %i(index new create edit update destroy)
+    before_action :load_work, only: %i(index new create)
+    before_action :load_program, only: %i(edit update destroy activities)
 
     def index
       @programs = @work.programs.order(started_at: :desc).order(:channel_id)
@@ -28,14 +29,14 @@ module Db
       redirect_to db_work_programs_path(@work), notice: t("resources.program.created")
     end
 
-    def edit(id)
-      @program = @work.programs.find(id)
+    def edit
       authorize @program, :edit?
+      @work = @program.work
     end
 
-    def update(id, program)
-      @program = @work.programs.find(id)
+    def update(program)
       authorize @program, :update?
+      @work = @program.work
 
       @program.attributes = program
       @program.user = current_user
@@ -46,19 +47,28 @@ module Db
       redirect_to db_work_programs_path(@work), notice: t("resources.program.updated")
     end
 
-    def destroy(id)
-      @program = @work.programs.find(id)
+    def destroy
       authorize @program, :destroy?
 
       @program.destroy
 
-      redirect_to db_work_programs_path(@work), notice: "放送予定を削除しました"
+      flash[:notice] = t("resources.program.deleted")
+      redirect_back fallback_location: db_works_path
+    end
+
+    def activities
+      @activities = @program.db_activities.order(id: :desc)
+      @comment = @program.db_comments.new
     end
 
     private
 
     def load_work
       @work = Work.find(params[:work_id])
+    end
+
+    def load_program
+      @program = Program.find(params[:id])
     end
   end
 end

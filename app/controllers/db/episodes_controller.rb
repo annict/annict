@@ -6,7 +6,8 @@ module Db
       :prev_episode_id, :fetch_syobocal
 
     before_action :authenticate_user!
-    before_action :load_work, only: %i(index new create edit update hide destroy)
+    before_action :load_work, only: %i(index new create)
+    before_action :load_episode, only: %i(edit update hide destroy activities)
 
     def index(page: nil)
       @episodes = @work.episodes.
@@ -32,14 +33,14 @@ module Db
       redirect_to db_work_episodes_path(@work), notice: t("resources.episode.created")
     end
 
-    def edit(id)
-      @episode = @work.episodes.find(id)
+    def edit
       authorize @episode, :edit?
+      @work = @episode.work
     end
 
-    def update(id, episode)
-      @episode = @work.episodes.find(id)
+    def update(episode)
       authorize @episode, :update?
+      @work = @episode.work
 
       @episode.attributes = episode
       @episode.user = current_user
@@ -50,28 +51,37 @@ module Db
       redirect_to db_work_episodes_path(@work), notice: t("resources.episode.updated")
     end
 
-    def hide(id)
-      @episode = @work.episodes.find(id)
+    def hide
       authorize @episode, :hide?
 
       @episode.hide!
 
-      redirect_to :back, notice: "エピソードを非公開にしました"
+      flash[:notice] = t("resources.episode.unpublished")
+      redirect_back fallback_location: db_works_path
     end
 
-    def destroy(id)
-      @episode = @work.episodes.find(id)
+    def destroy
       authorize @episode, :destroy?
 
       @episode.destroy
 
-      redirect_to db_work_episodes_path(@work), notice: "エピソードを削除しました"
+      flash[:notice] = t("resources.episode.deleted")
+      redirect_back fallback_location: db_works_path
+    end
+
+    def activities
+      @activities = @episode.db_activities.order(id: :desc)
+      @comment = @episode.db_comments.new
     end
 
     private
 
     def load_work
       @work = Work.find(params[:work_id])
+    end
+
+    def load_episode
+      @episode = Episode.find(params[:id])
     end
   end
 end

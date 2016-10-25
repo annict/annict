@@ -25,6 +25,7 @@
             th = t "activerecord.attributes.cast.name"
             th = t "activerecord.attributes.cast.sort_number"
             th = t "words.state"
+            th = t "words.activity"
             - if policy(@casts).edit?
               th = t "words.edit"
             - if policy(@casts).hide?
@@ -54,14 +55,15 @@
               td
                 .tag class="#{cast.published? ? 'tag-success' : 'tag-warning'}"
                   = t("resources.cast.aasm_state.#{cast.aasm_state}")
+              td = link_to t("words.activity"), activities_db_cast_path(cast)
               - if policy(cast).edit?
-                td = link_to t("words.edit"), edit_db_work_cast_path(@work, cast), class: "btn btn-primary btn-sm"
+                td = link_to t("words.edit"), edit_db_cast_path(cast), class: "btn btn-primary btn-sm"
               - if policy(cast).hide?
                 td
                   - if cast.published?
-                    = link_to t("words.hide"), hide_db_work_cast_path(@work, cast), class: "btn btn-warning btn-sm", data: { method: "patch", confirm: t("messages.are_you_sure") }
+                    = link_to t("words.hide"), hide_db_cast_path(cast), class: "btn btn-warning btn-sm", data: { method: "patch", confirm: t("messages.are_you_sure") }
               - if policy(cast).destroy?
-                td = link_to t("words.delete"), db_work_cast_path(@work, cast), class: "btn btn-danger btn-sm", data: { method: :delete, confirm: t("messages.are_you_sure") }
+                td = link_to t("words.delete"), db_cast_path(cast), class: "btn btn-danger btn-sm", data: { method: :delete, confirm: t("messages.are_you_sure") }
 
   - else
     = render "application/components/empty", text: t("resources.cast.there_are_no_casts")

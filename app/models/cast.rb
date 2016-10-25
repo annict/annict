@@ -43,6 +43,8 @@ class Cast < ActiveRecord::Base
   belongs_to :character
   belongs_to :person
   belongs_to :work, touch: true
+  has_many :db_activities, as: :trackable, dependent: :destroy
+  has_many :db_comments, as: :resource, dependent: :destroy
 
   validates :character_id, presence: true
   validates :name, presence: true

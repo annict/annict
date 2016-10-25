@@ -32,6 +32,8 @@ class Program < ActiveRecord::Base
   belongs_to :channel
   belongs_to :episode
   belongs_to :work, touch: true
+  has_many :db_activities, as: :trackable, dependent: :destroy
+  has_many :db_comments, as: :resource, dependent: :destroy
 
   validates :channel_id, presence: true
   validates :episode_id, presence: true

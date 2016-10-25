@@ -3,7 +3,7 @@
 class EpisodeDecorator < ApplicationDecorator
   def db_detail_link(options = {})
     name = options.delete(:title).presence || title
-    h.link_to name, h.edit_db_work_episode_path(work, self), options
+    h.link_to name, h.edit_db_episode_path(self), options
   end
 
   def meta_number(prefix: false)

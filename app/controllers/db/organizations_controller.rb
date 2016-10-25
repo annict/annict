@@ -5,7 +5,8 @@ module Db
     permits :name, :name_en, :name_kana, :url, :url_en, :wikipedia_url,
       :wikipedia_url_en, :twitter_username, :twitter_username_en
 
-    before_action :authenticate_user!, only: %i(new create edit update destroy)
+    before_action :authenticate_user!
+    before_action :load_organization, only: %i(edit update hide destroy activities)
 
     def index(page: nil)
       @organizations = Organization.order(id: :desc).page(page)
@@ -28,13 +29,11 @@ module Db
       redirect_to edit_db_organization_path(@organization)
     end
 
-    def edit(id)
-      @organization = Organization.find(id)
+    def edit
       authorize @organization, :edit?
     end
 
-    def update(id, organization)
-      @organization = Organization.find(id)
+    def update(organization)
       authorize @organization, :update?
 
       @organization.attributes = organization
@@ -47,8 +46,7 @@ module Db
       redirect_to edit_db_organization_path(@organization)
     end
 
-    def hide(id)
-      @organization = Organization.find(id)
+    def hide
       authorize @organization, :hide?
 
       @organization.hide!
@@ -57,14 +55,24 @@ module Db
       redirect_back fallback_location: db_people_path
     end
 
-    def destroy(id)
-      @organization = Organization.find(id)
+    def destroy
       authorize @organization, :destroy?
 
       @organization.destroy
 
       flash[:notice] = t("resources.organization.deleted")
       redirect_back fallback_location: db_people_path
+    end
+
+    def activities
+      @activities = @organization.db_activities.order(id: :desc)
+      @comment = @organization.db_comments.new
+    end
+
+    private
+
+    def load_organization
+      @organization = Organization.find(params[:id])
     end
   end
 end

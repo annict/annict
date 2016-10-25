@@ -17,7 +17,7 @@
     .col-xs-6
       .c-card.p-1
         .container
-          = form_for [:db, @work, @episode] do |f|
+          = form_for [:db, @episode] do |f|
             = render "application/error_panel", resource: f.object
 
             .form-group.row

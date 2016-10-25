@@ -2,14 +2,8 @@
 
 class CastDecorator < ApplicationDecorator
   def db_detail_link(options = {})
-    name = options.delete(:name).presence || name
-    path = if h.user_signed_in? && h.current_user.committer?
-      h.edit_db_work_cast_path(work, self)
-    else
-      h.new_db_work_draft_cast_path(work, cast_id: id)
-    end
-
-    h.link_to name, path, options
+    name = options.delete(:name).presence || character&.name.presence || id
+    h.link_to name, h.edit_db_cast_path(self), options
   end
 
   def name_with_old

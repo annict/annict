@@ -24,6 +24,7 @@
             th = t "activerecord.attributes.program.episode_id"
             th = t "activerecord.attributes.program.started_at"
             th = t "activerecord.attributes.program.rebroadcast"
+            th = t "words.activity"
             - if policy(@programs).edit?
               th = t "words.edit"
             - if policy(@programs).destroy?
@@ -36,11 +37,12 @@
               td = program.episode.decorate.title_with_number
               td = display_time(program.started_at)&.presence || "-"
               td = program.rebroadcast? ? icon("check") : "-"
+              td = link_to t("words.activity"), activities_db_program_path(program)
               - if policy(program).edit?
                 td
-                  = link_to t("words.edit"), edit_db_work_program_path(@work, program), class: "btn btn-primary btn-sm"
+                  = link_to t("words.edit"), edit_db_program_path(program), class: "btn btn-primary btn-sm"
               - if policy(program).destroy?
-                td = link_to t("words.delete"), db_work_program_path(@work, program), class: "btn btn-danger btn-sm", data: { method: :delete, confirm: t("messages.are_you_sure") }
+                td = link_to t("words.delete"), db_program_path(program), class: "btn btn-danger btn-sm", data: { method: :delete, confirm: t("messages.are_you_sure") }
 
   - else
     = render "application/components/empty", text: t("resources.program.there_are_no_programs")

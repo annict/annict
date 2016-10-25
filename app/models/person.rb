@@ -70,6 +70,8 @@ class Person < ActiveRecord::Base
 
   belongs_to :prefecture
   has_many :casts, dependent: :destroy
+  has_many :db_activities, as: :trackable, dependent: :destroy
+  has_many :db_comments, as: :resource, dependent: :destroy
   has_many :staffs, as: :resource, dependent: :destroy
 
   def voice_actor?

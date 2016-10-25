@@ -56,6 +56,9 @@ class Character < ApplicationRecord
     end
   end
 
+  has_many :db_activities, as: :trackable, dependent: :destroy
+  has_many :db_comments, as: :resource, dependent: :destroy
+
   validates :name, presence: true, uniqueness: { scope: :kind }
 
   def to_diffable_hash

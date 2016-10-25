@@ -2,8 +2,8 @@
 
 class StaffDecorator < ApplicationDecorator
   def db_detail_link(options = {})
-    name = options.delete(:name).presence || name
-    path = h.edit_db_work_staff_path(work, self)
+    name = options.delete(:name).presence || resource&.name.presence || id
+    path = h.edit_db_staff_path(self)
     h.link_to name, path, options
   end
 

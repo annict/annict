@@ -32,6 +32,7 @@
             - if locale_ja?
               th = t "words.syobocal"
             th = t "words.state"
+            th = t "words.activity"
             - if policy(@episodes).edit?
               th = t "words.edit"
             - if policy(@episodes).hide?
@@ -72,15 +73,16 @@
               td
                 .tag class="#{episode.published? ? 'tag-success' : 'tag-warning'}"
                   = t("resources.episode.aasm_state.#{episode.aasm_state}")
+              td = link_to t("words.activity"), activities_db_episode_path(episode)
               - if policy(episode).edit?
                 td
-                  = link_to t("words.edit"), edit_db_work_episode_path(@work, episode), class: "btn btn-primary btn-sm"
+                  = link_to t("words.edit"), edit_db_episode_path(episode), class: "btn btn-primary btn-sm"
               - if policy(episode).hide?
                 td
                   - if episode.published?
-                    = link_to t("words.hide"), hide_db_work_episode_path(@work, episode), class: "btn btn-warning btn-sm", data: { method: "patch", confirm: t("messages.are_you_sure") }
+                    = link_to t("words.hide"), hide_db_episode_path(episode), class: "btn btn-warning btn-sm", data: { method: "patch", confirm: t("messages.are_you_sure") }
               - if policy(episode).destroy?
-                td = link_to t("words.delete"), db_work_episode_path(@work, episode), class: "btn btn-danger btn-sm", data: { method: "delete", confirm: t("messages.are_you_sure") }
+                td = link_to t("words.delete"), db_episode_path(episode), class: "btn btn-danger btn-sm", data: { method: "delete", confirm: t("messages.are_you_sure") }
 
       = paginate @episodes
   - else
