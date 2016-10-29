@@ -9,6 +9,9 @@ Vue = require "vue/dist/vue"
 
 body = require "./common/components/body"
 flash = require "./common/components/flash"
+statusSelector = require "./common/components/statusSelector"
+
+searchForm = require "./pc/components/searchForm"
 
 resourceSelect = require "./common/directives/resourceSelect"
 
@@ -19,6 +22,8 @@ $(document).on "turbolinks:load", ->
 
   Vue.component("c-body", body)
   Vue.component("c-flash", flash)
+  Vue.component("c-search-form", searchForm)
+  Vue.component("c-status-selector", statusSelector)
 
   Vue.directive("resource-select", resourceSelect)
 
@@ -27,5 +32,7 @@ $(document).on "turbolinks:load", ->
     events:
       "flash:show": (message, type = "notice") ->
         @$broadcast "flash:show", message, type
+      "modal:show": (templateId) ->
+        @$broadcast "AnnModal:showModal", templateId
 
 Turbolinks.start()

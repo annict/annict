@@ -1,10 +1,10 @@
-= render "application/meta_tags"
+= ann_display_meta_tags
 
 link href="/images/favicon.png" rel="shortcut icon" type="image/png"
 link type="text/plain" rel="author" href="#{ENV.fetch('ANNICT_URL')}/humans.txt"
 
 = stylesheet_link_tag "pc", media: "all"
-= javascript_include_tag *webpack_asset_paths("pc")
+= javascript_include_tag "pc"
 
 = csrf_meta_tags
 

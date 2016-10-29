@@ -1,0 +1,21 @@
+.p-top-other-works {
+  &__row {
+    line-height: 0;
+
+    &:not(:last-child) {
+      margin-bottom: 1rem;
+    }
+
+    h3 {
+      margin-bottom: .25rem;
+    }
+  }
+
+  &__image {
+    margin-bottom: .25rem;
+  }
+
+  .c-watchers-count {
+    font-size: .8rem;
+  }
+}

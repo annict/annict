@@ -1,0 +1,19 @@
+nav.navbar.navbar-light
+  = link_to root_path, class: "navbar-brand bg-#{transparent ? 'transparent' : ''}" do
+    = image_tag "logos/color-#{transparent ? 'white' : 'mizuho'}.png", size: "25x30", alt: "Annict"
+  ul.nav.navbar-nav
+    - if user_signed_in?
+    - else
+      li.nav-item
+        = link_to t("words.airing_anime"), season_works_path(slug: ENV.fetch("ANNICT_CURRENT_SEASON")), class: "nav-link"
+    li.nav-item
+      c-search-form q="#{@search.q}"
+  ul.nav.navbar-nav.float-xs-right
+    - if user_signed_in?
+    - else
+      li.nav-item
+        = link_to t("head.title.pages.about"), about_path, class: "nav-link"
+      li.nav-item
+        = link_to t("head.title.sessions.new"), new_user_session_path, class: "nav-link"
+      li.nav-item
+        = link_to t("head.title.registrations.new"), new_user_registration_path, class: "nav-link btn btn-outline-primary"

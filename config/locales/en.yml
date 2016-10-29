@@ -1,9 +1,30 @@
 en:
   search_with_keyword: Search...
   messages:
+    common:
+      see_more: See More
     are_you_sure: Are you sure?
-  meta:
-    description: Annict is a platform that can track anime which you have watched.
+    home:
+      index_guest:
+        hero_title: The platform for Anime Addicts.
+        sign_up: Start to Record
+    components:
+      status_selector:
+        select_status: Select Status
+  head:
+    meta:
+      _common:
+        description: Annict is the platform for Anime Addicts. Track your watching anime, follow friends, read their reviews, and much more!
+        keywords: annict, anime, review
+    title:
+      home:
+        index_guest: The platform for Anime Addicts.
+      pages:
+        about: About
+      registrations:
+        new: Sign Up
+      sessions:
+        new: Sign In
   resources:
     character:
       created: Character created
@@ -85,7 +106,9 @@ en:
       work_list: Work List
   words:
     ago: ago
+    airing_anime: Airing Anime
     all: All
+    annict_api: Annict API
     delete: Delete
     edit: Edit
     error: Error

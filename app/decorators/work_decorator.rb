@@ -31,7 +31,7 @@ class WorkDecorator < ApplicationDecorator
 
   def release_season
     return "" if season.blank?
-    season.decorate.humanize_name
+    season.decorate.local_name
   end
 
   def release_season_link
@@ -45,8 +45,8 @@ class WorkDecorator < ApplicationDecorator
 
   def local_title
     return title if I18n.locale == :ja
-    return title_en if title_en.present?
     return title_ro if title_ro.present?
+    return title_en if title_en.present?
     title
   end
 

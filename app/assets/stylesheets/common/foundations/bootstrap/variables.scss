@@ -1,6 +1,7 @@
 // Colors
 
 $brand-primary: $color-mizuho;
+$brand-info: $color-java;
 
 
 // Options
@@ -11,12 +12,14 @@ $enable-transitions: true;
 
 // Body
 
-$body-bg: $haze-white;
-$body-color: $river-black;
+$body-bg: $color-haze;
+$body-color: $color-river;
 
 
 // Links
 
+$link-color: $color-san-juan;
+$link-hover-color: $color-mizuho;
 $link-hover-decoration: none;
 
 
@@ -28,9 +31,15 @@ $font-size-h3: 1.25rem;
 $font-size-h4: 1rem;
 $font-size-h5: .75rem;
 $font-size-h6: .5rem;
+
+$display1-size: 3rem;
+
 $headings-font-family: "Noto Sans JP", sans-serif;
 $headings-font-weight: 300;
+
 $line-height-base: 1.7;
+
+$list-inline-padding: .5rem;
 
 
 // Components
@@ -41,3 +50,8 @@ $border-radius: .12rem;
 // Tables
 
 $table-bg-hover: rgba(0, 0, 0, .03);
+
+
+// Image thumbnails
+
+$thumbnail-padding: 0;
