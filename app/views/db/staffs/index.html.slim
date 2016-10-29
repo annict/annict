@@ -8,8 +8,7 @@
       .col-xs.text-xs-right
         = link_to new_db_work_staff_path(@work), class: "btn btn-outline-primary" do
           = icon "pencil-square-o"
-          .btn__text
-            = t "resources.staff.new_staffs"
+          = t "resources.staff.new_staffs"
 
 = render "db/works/subnav", work: @work
 

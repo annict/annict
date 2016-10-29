@@ -6,8 +6,10 @@ en:
     are_you_sure: Are you sure?
     home:
       index_guest:
+        hero_description_html: Explore the anime database, track anime you are watching<br>and see what friends are watching.
+        hero_description_mobile_html: Track anime you are watching<br>and see what friends are watching.
         hero_title: The platform for Anime Addicts.
-        sign_up: Start to Record
+        sign_up: Start tracking
     components:
       status_selector:
         select_status: Select Status
@@ -116,6 +118,7 @@ en:
     hide: Hide
     last: Last
     next: Next
+    popular_airing_anime: Popular Airing Anime
     previous: Prev
     release_on: Release on
     season: Season

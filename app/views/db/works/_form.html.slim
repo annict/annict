@@ -1,6 +1,6 @@
 .container
   = form_for [:db, work] do |f|
-    = render "application/error_panel", resource: f.object
+    = render "application/components/error_panel", resource: f.object
 
     .form-group.row
       = f.label :title, class: "col-sm-3 col-form-label c-label-required"

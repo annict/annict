@@ -1,16 +1,15 @@
 doctype html
-html lang="ja"
+html lang="#{I18n.locale}"
   head
-    = render "application/v3/head"
-  body#ann class="#{body_class} #{user_signed_in? ? 'user' : 'guest'}"
-    = render "application/v3/flash"
-    = yield
-    = yield :parts
-    ann-modal
-
-    - if user_signed_in?
-      ann-record-button
-      = render "application/v3/components/record_button"
+    = render "application/head"
+  body class="#{body_classes} #{user_signed_in? ? 'is-user' : 'is-guest'}"
+    .p-vue
+      c-flash
+      = yield
+      = render "application/components/tabbar"
 
     = include_gon
-    = render "application/v3/analytics"
+    = render "application/analytics"
+
+    = render "application/js_templates/flash"
+    = yield :js_templates

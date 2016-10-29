@@ -6,7 +6,7 @@ module ApplicationHelper
     path = path.sub(%r{\A.*paperclip/}, "paperclip/") unless Rails.env.production?
 
     msize = options[:msize]
-    size = (browser.mobile? && msize.present?) ? msize : options[:size]
+    size = browser.device.mobile? && msize.present? ? msize : options[:size]
     width, height = size.split("x").map { |s| s.to_i * 2 }
 
     blur = options[:blur].presence || 0
@@ -18,7 +18,7 @@ module ApplicationHelper
     url = annict_image_url(record, field, options)
 
     msize = options[:msize]
-    options[:size] = msize if browser.mobile? && msize.present?
+    options[:size] = msize if browser.device.mobile? && msize.present?
     options.delete(:msize) if options.key?(:msize)
 
     image_tag(url, options)

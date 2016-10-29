@@ -8,8 +8,7 @@
       .col-xs.text-xs-right
         = link_to new_db_organization_path, class: "btn btn-outline-primary" do
           = icon "plus"
-          .btn__text
-            = t "resources.organization.new_organization"
+          = t "resources.organization.new_organization"
 
 .container-fluid.p-1
   = render "organizations_list", organizations: @organizations

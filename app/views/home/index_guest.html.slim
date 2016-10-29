@@ -10,16 +10,14 @@
   .p-top-hero__content.text-xs-center
     h1.display-1.mb-1 = t("messages.home.index_guest.hero_title")
     p.lead.p-top-hero__description.mb-2
-      | Explore the anime database, record your watching anime
-      br
-      | and see what friends are watching.
+      = t "messages.home.index_guest.hero_description_html"
     = link_to new_user_registration_path, class: "btn btn-primary" do
       = icon "rocket"
       = t("messages.home.index_guest.sign_up")
     
 .container
   .p-top-airing-anime
-    h2.text-xs-center.my-3 = t("words.airing_anime")
+    h2.text-xs-center.my-3 = t("words.popular_airing_anime")
     .p-top-work.c-card.p-1.mb-1
       .p-top-work__left.mr-1
         = link_to work_path(@season_top_work), class: "d-inline-block" do
@@ -49,7 +47,7 @@
 
     .p-top-other-works.c-card.p-1
       - @season_works.each_slice(6).each do |works|
-        .p-top-other-works__row.row
+        .p-top-other-works__row.row.u-lh-0
           - works.each do |work|
             .col-xs-2
               = link_to work_path(work), class: "p-top-other-works__image d-inline-block" do
