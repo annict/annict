@@ -1,0 +1,30 @@
+.p-home-index.is-guest {
+  .navbar {
+    position: absolute;
+    top: 0;
+    width: 100%;
+    z-index: 1;
+
+    a {
+      color: $color-white;
+
+      &.btn-outline-primary {
+        border-color: $color-white;
+        color: $color-white;
+      }
+    }
+
+    a:hover {
+      color: darken($color-white, 10%);
+
+      &.btn-outline-primary {
+        border-color: $color-mizuho;
+        color: $color-white;
+      }
+    }
+
+    .navbar-brand {
+      line-height: 30px;
+    }
+  }
+}

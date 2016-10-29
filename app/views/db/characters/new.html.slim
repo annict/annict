@@ -10,7 +10,7 @@
     .col-xs-6
       .c-card.p-1
         = form_for [:db, @form], url: db_characters_path do |f|
-          = render "application/error_panel", resource: f.object
+          = render "application/components/error_panel", resource: f.object
 
           .form-group.row
             = f.label :rows, class: "col-sm-3 col-form-label c-label-required"

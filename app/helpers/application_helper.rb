@@ -1,10 +1,12 @@
+# frozen_string_literal: true
+
 module ApplicationHelper
   def annict_image_url(record, field, options = {})
     path = record.try!(:send, field).try!(:path, :master).presence || "no-image.jpg"
     path = path.sub(%r{\A.*paperclip/}, "paperclip/") unless Rails.env.production?
 
     msize = options[:msize]
-    size = (browser.mobile? && msize.present?) ? msize : options[:size]
+    size = browser.device.mobile? && msize.present? ? msize : options[:size]
     width, height = size.split("x").map { |s| s.to_i * 2 }
 
     blur = options[:blur].presence || 0
@@ -16,7 +18,7 @@ module ApplicationHelper
     url = annict_image_url(record, field, options)
 
     msize = options[:msize]
-    options[:size] = msize if browser.mobile? && msize.present?
+    options[:size] = msize if browser.device.mobile? && msize.present?
     options.delete(:msize) if options.key?(:msize)
 
     image_tag(url, options)
@@ -30,15 +32,6 @@ module ApplicationHelper
     else
       "#{time_ago_in_words(datetime)}#{t('words.ago')}"
     end
-  end
-
-  def meta_description(text = "")
-    text + t("meta.description")
-  end
-
-  def meta_keywords(*keywords)
-    default_keywords = t("meta.keywords").split(",")
-    (keywords + default_keywords).join(",")
   end
 
   # Google Analyticsのカスタムディメンション「ページカテゴリ」に送信する文字列
@@ -122,21 +115,5 @@ module ApplicationHelper
   def local_time_ago_in_words(from_time, options = {})
     spacer = I18n.locale == :en ? " " : ""
     "#{time_ago_in_words(from_time, options)}#{spacer}#{I18n.t('words.ago')}"
-  end
-
-  def v1_display_meta_tags
-    display_meta_tags(
-      site: "Annict",
-      og: {
-        title: page_title(page_title_symbol: :site_page_title, separator: " | "),
-        type: "website",
-        url: request.url,
-        description: t("og.description"),
-        site_name: t("words.site_name"),
-        image: "#{ENV.fetch('ANNICT_URL')}/images/og_image.png",
-        app_id: "602271853188285",
-        locale: "ja_JP"
-      }
-    )
   end
 end

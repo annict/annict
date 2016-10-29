@@ -7,8 +7,7 @@
     .col-xs.text-xs-right
       = link_to work_path(@work), class: "btn btn-outline-primary", target: "_blank" do
         = icon "external-link"
-        .btn__text
-          = t "resources.work.go_to_work"
+        = t "resources.work.go_to_work"
 
 = render "db/works/subnav", work: @work
 
@@ -18,7 +17,7 @@
       .c-card.p-1
         .container
           = form_for [:db, @cast] do |f|
-            = render "application/error_panel", resource: f.object
+            = render "application/components/error_panel", resource: f.object
 
             .form-group.row
               = f.label :character_id, class: "col-sm-3 col-form-label"

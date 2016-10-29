@@ -7,8 +7,7 @@
     .col-xs.text-xs-right
       = link_to character_path(@character), class: "btn btn-outline-primary", target: "_blank" do
         = icon "external-link"
-        .btn__text
-          = t "resources.character.go_to_character"
+        = t "resources.character.go_to_character"
 
 .container-fluid.p-1
   .row
@@ -16,7 +15,7 @@
       .c-card.p-1
         .container
           = form_for [:db, @character] do |f|
-            = render "application/error_panel", resource: f.object
+            = render "application/components/error_panel", resource: f.object
 
             .form-group.row
               = f.label :name, class: "col-sm-3 col-form-label c-label-required"

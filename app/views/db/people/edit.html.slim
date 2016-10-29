@@ -7,8 +7,7 @@
     .col-xs.text-xs-right
       = link_to person_url(@person, subdomain: false), class: "btn btn-outline-primary", target: "_blank" do
         = icon "external-link"
-        .btn__text
-          = t "resources.person.go_to_person"
+        = t "resources.person.go_to_person"
 
 .container-fluid.p-1
   .row

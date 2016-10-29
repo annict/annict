@@ -1,46 +1,68 @@
-- title = "アニクト - 見たアニメを記録して、共有しよう"
+- title = t("head.title.home.index_guest")
 - description = meta_description
 - keywords = meta_keywords
-- set_meta_tags(title: title, description: description, keywords: keywords)
+- set_meta_tags(title: title, description: description, keywords: keywords, reverse: false)
 
-.hero
-  .work-image style="background-image: url(#{annict_image_url(@cover_image_work.item, :tombo_image, size: '640x640', blur: 200)});"
-  .content
-    h1 Annict
-    .description
-      | 見たアニメを記録して、共有しよう。
-    .btns
-      = link_to "詳しく", about_path, class: "about-btn"
-      .signup-btn
-        ann-action-blocker v-cloak="" modal-template-id="signup-modal" is-blocked="true"
-          = icon "rocket"
-          .text アカウント登録
-    .signin
-      ann-action-blocker modal-template-id="signin-modal" is-blocked="true"
-        | ログイン
+.p-top-hero
+  .p-top-hero__bg-image style="background-image: url(#{annict_image_url(@cover_image_work.item, :tombo_image, size: '640x640', blur: 200)});"
+  .p-top-hero__content.text-xs-center.p-1
+    = image_tag "logos/color-white.png", size: "40x48", alt: "Annict"
+    h1.mb-1 = t("messages.home.index_guest.hero_title")
+    p.p-top-hero__description.mb-2
+      = t "messages.home.index_guest.hero_description_mobile_html"
+    = link_to new_user_registration_path, class: "btn btn-primary" do
+      = icon "rocket"
+      = t("messages.home.index_guest.sign_up")
 
-.content
-  .section
-    h2 今期の人気アニメ
-    .content
-      = render "works", top_work: @season_top_work, works: @season_works
-      .more
-        = link_to season_works_path(slug: ENV["ANNICT_CURRENT_SEASON"]) do
-          | 今期のアニメを全て見る
+.p-top-airing-anime
+  h2.h3.text-xs-center.my-1 = t("words.popular_airing_anime")
+  .p-top-work.c-card.p-1.mb-1
+    = link_to work_path(@season_top_work), class: "d-inline-block p-top-work__image" do
+      = image_tag(annict_image_url(@season_top_work.item, :tombo_image, size: "300x300"), alt: @season_top_work.decorate.local_title, class: "rounded img-thumbnail")
+    .c-watchers-count
+      span.c-watchers-count__number.font-weight-bold = @season_top_work.watchers_count
+      span.c-watchers-count__text.text-muted Watchers
+    h3.h2.font-weight-bold = link_to @season_top_work.decorate.local_title, work_path(@season_top_work)
+    .text-xs-center.my-1
+      c-status-selector work-id="#{@season_top_work.id}" current-status-kind="no_select" is-signed-in="false"
+    - if @season_top_work.casts.present?
+      .font-weight-bold = t "words.cast"
+      ul.list-inline
+        - @season_top_work.casts.order(:sort_number).limit(10).each do |cast|
+          - cache cast do
+            li.list-inline-item
+              = "#{cast.part}: "
+              = cast.decorate.name_with_old_link
+    - if @season_top_work.staffs.present?
+      .font-weight-bold = t "words.staff"
+      ul.list-inline
+        - @season_top_work.staffs.major.order(:sort_number).limit(10).each do |staff|
+          - cache staff do
+            li.list-inline-item
+              = "#{staff.decorate.role_name}: "
+              = staff.decorate.name_with_old_link
 
-  .section
-    h2 人気アニメ
-    .content
-      = render "works", top_work: @top_work, works: @works
-      .more
-        = link_to popular_works_path do
-          | 人気アニメを全て見る
+  .p-top-other-works.c-card.p-1
+    - @season_works.each_slice(2).each do |works|
+      .p-top-other-works__row.row.u-lh-0
+        - works.each do |work|
+          .col-xs-6
+            = link_to work_path(work), class: "p-top-other-works__image d-inline-block" do
+              = annict_image_tag(work.item, :tombo_image, size: "250x250", alt: work.decorate.local_title, class: "rounded img-fluid img-thumbnail")
+            .c-watchers-count
+              span.c-watchers-count__number.font-weight-bold = work.watchers_count
+              span.c-watchers-count__text.text-muted Watchers
+            h3.h4 = link_to work.decorate.local_title, work_path(work), class: "text-truncate w-100 d-inline-block"
+            c-status-selector work-id="#{work.id}" current-status-kind="no_select" is-signed-in="false" is-transparent="true"
 
-= render "application/v2/components/footer"
+    .text-xs-center.mt-2
+      = link_to t("messages.common.see_more"), season_works_path(slug: ENV["ANNICT_CURRENT_SEASON"]), class: "btn btn-primary"
 
-- content_for :parts do
-  = render "application/v2/components/status_selector"
-  - unless user_signed_in?
-    = render "application/v2/components/prevent_change_status_modal"
-    = render "application/v2/components/signin_modal"
-    = render "application/v2/components/signup_modal"
+hr.my-2
+
+= render "application/components/footer"
+
+= render "application/components/sign_up_modal"
+
+- content_for :js_templates
+  = render "application/js_templates/status_selector"

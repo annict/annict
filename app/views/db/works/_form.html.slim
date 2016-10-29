@@ -1,6 +1,6 @@
 .container
   = form_for [:db, work] do |f|
-    = render "application/error_panel", resource: f.object
+    = render "application/components/error_panel", resource: f.object
 
     .form-group.row
       = f.label :title, class: "col-sm-3 col-form-label c-label-required"
@@ -29,7 +29,7 @@
       .col-sm-9
         .row
           .col-sm-5
-            = f.select :season_id, options_from_collection_for_select(Season.order(sort_number: :desc), :id, :humanize_name, f.object.season_id), { include_blank: true }, { class: "form-control" }
+            = f.select :season_id, options_from_collection_for_select(Season.order(sort_number: :desc), :id, :local_name, f.object.season_id), { include_blank: true }, { class: "form-control" }
     .form-group.row
       = f.label :official_site_url, class: "col-sm-3 col-form-label"
       .col-sm-9

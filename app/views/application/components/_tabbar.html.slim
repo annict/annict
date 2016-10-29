@@ -1,0 +1,21 @@
+.c-tabbar.row.w-100.mx-0.u-lh-0
+  = link_to root_path, class: "col-xs text-xs-center" do
+    = icon "home", class: "d-block"
+    span.c-tabbar__text = t "words.home"
+  - if user_signed_in?
+  - else
+    = link_to season_works_path(slug: ENV.fetch("ANNICT_CURRENT_SEASON")), class: "col-xs text-xs-center" do
+      = icon "television", class: "d-block"
+      span.c-tabbar__text = t "words.airing"
+    = link_to new_user_registration_path, class: "col-xs text-xs-center" do
+      = icon "rocket", class: "d-block"
+      span.c-tabbar__text = t "head.title.registrations.new"
+    = link_to about_path, class: "col-xs text-xs-center" do
+      = icon "lightbulb-o", class: "d-block"
+      span.c-tabbar__text = t "head.title.pages.about"
+    .c-tabbar__more.col-xs.text-xs-center data-toggle="dropdown"
+      = icon "bars", class: "d-block"
+      span.c-tabbar__text = t "words.more"
+    .dropdown-menu
+      = link_to new_user_session_path, class: "dropdown-item p-1" do
+        = t "head.title.sessions.new"
