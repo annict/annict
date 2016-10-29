@@ -26,7 +26,7 @@
     .text-xs-center.my-1
       c-status-selector work-id="#{@season_top_work.id}" current-status-kind="no_select" is-signed-in="false"
     - if @season_top_work.casts.present?
-      .font-weight-bold キャスト
+      .font-weight-bold = t "words.cast"
       ul.list-inline
         - @season_top_work.casts.order(:sort_number).limit(10).each do |cast|
           - cache cast do
@@ -34,7 +34,7 @@
               = "#{cast.part}: "
               = cast.decorate.name_with_old_link
     - if @season_top_work.staffs.present?
-      .font-weight-bold スタッフ
+      .font-weight-bold = t "words.staff"
       ul.list-inline
         - @season_top_work.staffs.major.order(:sort_number).limit(10).each do |staff|
           - cache staff do
