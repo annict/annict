@@ -2,6 +2,7 @@ en:
   search_with_keyword: Search...
   messages:
     common:
+      join_annict: Join Annict
       see_more: See More
     are_you_sure: Are you sure?
     home:
@@ -13,6 +14,15 @@ en:
     components:
       status_selector:
         select_status: Select Status
+    oauth_users:
+      new:
+        sign_up_with_oauth: Sign Up with %{provider_name}
+    registrations:
+      new:
+        start_with_facebook: Start with Facebook
+        start_with_twitter: Start with Twitter
+        username_preview: "Your profile will be:"
+        username_preview_mobile: "Your profile:"
   head:
     meta:
       _common:
@@ -118,6 +128,7 @@ en:
     hide: Hide
     last: Last
     next: Next
+    or: OR
     popular_airing_anime: Popular Airing Anime
     previous: Prev
     release_on: Release on

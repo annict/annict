@@ -15,6 +15,7 @@ Rails.application.routes.draw do
     post "sign_in", to: "sessions#create", as: :user_session
     post "users", to: "registrations#create", as: :user_registration
     delete "sign_out", to: "sessions#destroy", as: :destroy_user_session
+    resources :oauth_users, only: %i(new create)
   end
 
   use_doorkeeper do

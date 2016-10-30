@@ -106,22 +106,27 @@ class User < ActiveRecord::Base
     @social_friends ||= UserSocialFriendsQuery.new(self)
   end
 
-  def build_relations(oauth)
-    self.providers.build do |p|
-      p.name             = oauth[:provider]
-      p.uid              = oauth[:uid]
-      p.token            = oauth[:credentials][:token]
-      p.token_expires_at = oauth[:credentials][:expires_at]
-      p.token_secret     = oauth[:credentials][:secret]
+  def build_relations(oauth = nil)
+    if oauth.present?
+      providers.build do |p|
+        p.name = oauth[:provider]
+        p.uid = oauth[:uid]
+        p.token = oauth[:credentials][:token]
+        p.token_expires_at = oauth[:credentials][:expires_at]
+        p.token_secret = oauth[:credentials][:secret]
+      end
+
+      build_profile do |p|
+        p.name = oauth[:info][:name].presence || oauth[:info][:nickname]
+        p.description = oauth[:info][:description]
+        image_url = get_large_avatar_image(oauth[:provider], oauth[:info][:image])
+        p.tombo_avatar = URI.parse(image_url)
+      end
+    else
+      build_profile(name: username)
     end
 
-    self.build_profile do |p|
-      p.name         = oauth[:info][:name].presence || oauth[:info][:nickname]
-      p.description  = oauth[:info][:description]
-      p.tombo_avatar = URI.parse(get_large_avatar_image(oauth[:provider], oauth[:info][:image]))
-    end
-
-    self.build_setting
+    build_setting
 
     self
   end
