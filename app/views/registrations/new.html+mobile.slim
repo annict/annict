@@ -1,30 +1,8 @@
-= render "application/v1/navbar"
-
-.content
-  .container
-    .alert.alert-info
-      = t('registrations.thank_you_for_signin_with_oauth_html', provider_name: @oauth[:provider].humanize)
-
-  .container
-    = form_for @user, url: user_registration_path, role: 'form' do |f|
-      = render 'application/v1/error_panel', resource: @user
-
-      .form-group
-        = f.label :username
-        = f.text_field :username, class: 'form-control', placeholder: t('activerecord.attributes.user.username')
-
-      .form-group
-        = f.label :email
-        = f.text_field :email, type: 'email', class: 'form-control', placeholder: t('activerecord.attributes.user.email')
-
-      .terms-privacy
-        - terms_link = link_to t('titles.terms'), terms_path, target: '_blank'
-        - privacy_link = link_to t('titles.privacy'), privacy_path, target: '_blank'
-        = "#{terms_link}と#{privacy_link}に同意の上、登録ボタンを押してください。".html_safe
-
-      .registration-button
-        = f.button class: 'btn btn-primary' do
-          = icon('rocket')
-          = t('registrations.new.button')
-
-= render "application/v2/components/footer"
+.container
+  .row.py-2
+    .col-xs
+      .text-xs-center.mb-3
+        = link_to root_path do
+          = image_tag "logos/color-mizuho.png", size: "50x61", alt: "Annict"
+      .c-card.px-1.py-2
+        = render "application/components/sign_up_form"

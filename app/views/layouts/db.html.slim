@@ -6,8 +6,8 @@ html lang="#{I18n.locale}"
     = stylesheet_link_tag "db", media: "all"
     = javascript_include_tag "pc"
     = csrf_meta_tags
-  body class="p-db #{body_classes}"
-    .p-vue
+  body class="p-db #{body_classes} h-100"
+    .p-vue.h-100
       .l-sidebar
         = link_to db_root_path, class: "c-lockup my-1 px-1" do
           span.c-lockup__logo Annict
@@ -26,7 +26,7 @@ html lang="#{I18n.locale}"
 
         = link_to root_url(subdomain: false), class: "l-sidebar__annict-link d-inline-block text-xs-center" do
           = image_tag "logos/color-white.png", size: "33x40"
-      .l-main
+      .l-main.h-100
         c-flash
         = yield
 

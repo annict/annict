@@ -10,6 +10,7 @@ Vue = require "vue/dist/vue"
 body = require "./common/components/body"
 flash = require "./common/components/flash"
 statusSelector = require "./common/components/statusSelector"
+usernamePreview = require "./common/components/usernamePreview"
 
 resourceSelect = require "./common/directives/resourceSelect"
 
@@ -21,6 +22,7 @@ $(document).on "turbolinks:load", ->
   Vue.component("c-body", body)
   Vue.component("c-flash", flash)
   Vue.component("c-status-selector", statusSelector)
+  Vue.component("c-username-preview", usernamePreview)
 
   Vue.directive("resource-select", resourceSelect)
 
