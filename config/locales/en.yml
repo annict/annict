@@ -14,6 +14,9 @@ en:
     components:
       status_selector:
         select_status: Select Status
+    oauth_users:
+      new:
+        sign_up_with_oauth: Sign Up with %{provider_name}
     registrations:
       new:
         start_with_facebook: Start with Facebook
