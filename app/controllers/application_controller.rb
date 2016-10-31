@@ -60,4 +60,12 @@ class ApplicationController < ActionController::Base
       gon.push(user_info)
     end
   end
+
+  def load_i18n_into_gon(keys)
+    gon.I18n = {}
+    keys.each do |k, v|
+      key = v.present? && browser.device.mobile? && v.key?(:mobile) ? v[:mobile] : k
+      gon.I18n[k] = I18n.t(key)
+    end
+  end
 end

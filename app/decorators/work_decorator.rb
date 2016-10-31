@@ -20,13 +20,7 @@ class WorkDecorator < ApplicationDecorator
 
   def db_detail_link(options = {})
     name = options.delete(:name).presence || title
-    path = if h.user_signed_in? && h.current_user.committer?
-      h.edit_db_work_path(self)
-    else
-      h.new_db_draft_work_path(work_id: id)
-    end
-
-    h.link_to name, path, options
+    h.link_to(name, h.edit_db_work_path(self), options)
   end
 
   def release_season
