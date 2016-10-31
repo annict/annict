@@ -43,10 +43,14 @@ class User < ActiveRecord::Base
 
   extend Enumerize
 
+  attr_accessor :email_username
+
   # Include default devise modules. Others available are:
-  # :confirmable, :lockable, :timeoutable, :recoverable, :rememberable
-  devise :database_authenticatable, :omniauthable, :registerable,
-         :trackable, omniauth_providers: [:facebook, :twitter]
+  # :confirmable, :lockable, :timeoutable
+  devise :database_authenticatable, :omniauthable, :registerable, :trackable,
+    :rememberable, :recoverable,
+    omniauth_providers: %i(facebook twitter),
+    authentication_keys: %i(email_username)
 
   enumerize :role, in: { user: 0, admin: 1, editor: 2 }, default: :user, scope: true
 
@@ -58,7 +62,7 @@ class User < ActiveRecord::Base
   has_many :follows,       dependent: :destroy
   has_many :followings,    through:   :follows
   has_many :latest_statuses, dependent: :destroy
-  has_many :r_likes,       dependent: :destroy, class_name: 'Like'
+  has_many :r_likes, dependent: :destroy, class_name: "Like"
   has_many :notifications, dependent: :destroy
   has_many :providers,     dependent: :destroy
   has_many :receptions,    dependent: :destroy
@@ -78,9 +82,31 @@ class User < ActiveRecord::Base
   has_one  :profile,       dependent: :destroy
   has_one  :setting,       dependent: :destroy
 
-  validates :email, presence: true, uniqueness: true, email: true
-  validates :username, presence: true, uniqueness: true, length: { maximum: 20 },
-                       format: { with: /\A[A-Za-z0-9_]+\z/ }
+  validates :email,
+    presence: true,
+    uniqueness: { case_sensitive: false },
+    email: true
+  validates :username,
+    presence: true,
+    uniqueness: { case_sensitive: false },
+    length: { maximum: 20 },
+    format: { with: /\A[A-Za-z0-9_]+\z/ }
+
+  # Override the Devise's `find_for_database_authentication`
+  # https://github.com/plataformatec/devise/wiki/How-To:-Allow-users-to-sign-in-using-their-username-or-email-address
+  def self.find_for_database_authentication(warden_conditions)
+    conditions = warden_conditions.dup
+    email_username = conditions.delete(:email_username)
+
+    if email_username.present?
+      where(conditions.to_h).where([
+        "LOWER(email) = :value OR LOWER(username) = :value",
+        value: email_username.downcase
+      ]).first
+    elsif conditions.key?(:email) || conditions.key?(:username)
+      where(conditions.to_h).first
+    end
+  end
 
   def checking_works
     @checking_works ||= CheckingWorks.new(read_attribute(:checking_works))

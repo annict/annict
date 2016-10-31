@@ -4,6 +4,7 @@ en:
     common:
       join_annict: Join Annict
       see_more: See More
+      welcome_back: Welcome back!
     are_you_sure: Are you sure?
     home:
       index_guest:
@@ -19,10 +20,17 @@ en:
         sign_up_with_oauth: Sign Up with %{provider_name}
     registrations:
       new:
+        sign_in_link_html: Already have an account? %{link}
         start_with_facebook: Start with Facebook
         start_with_twitter: Start with Twitter
         username_preview: "Your profile will be:"
         username_preview_mobile: "Your profile:"
+    sessions:
+      new:
+        forgot_password: Forgot password?
+        sign_in_with_facebook: Sign in with Facebook
+        sign_in_with_twitter: Sign in with Twitter
+        sign_up_link_html: Don't have an account? %{link}
   head:
     meta:
       _common:

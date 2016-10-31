@@ -1,0 +1,45 @@
+.container
+  .text-xs-center.mb-3
+    = link_to root_path do
+      = image_tag "logos/color-mizuho.png", size: "50x61", alt: "Annict"
+  .c-card.px-1.py-2.mb-1
+    .c-sign-up-form
+      h1.text-xs-center.mb-2 = t "messages.common.welcome_back"
+
+      .text-xs-center.mb-1
+        = link_to user_twitter_omniauth_authorize_path, class: "btn btn-twitter" do
+          = icon "twitter"
+          = t "messages.sessions.new.sign_in_with_twitter"
+      .text-xs-center
+        = link_to user_facebook_omniauth_authorize_path, class: "btn btn-facebook" do
+          = icon "facebook"
+          = t "messages.sessions.new.sign_in_with_facebook"
+
+      .text-muted.text-xs-center.mt-2.mb-1
+        = t "words.or"
+
+      = form_for resource, url: user_session_path do |f|
+        .form-group
+          = f.label :email_username
+          = f.text_field :email_username, class: "form-control", autofocus: true, required: true
+
+        .form-group
+          .row
+            .col-xs
+              = f.label :password
+            .col-xs.text-xs-right
+              = link_to t("messages.sessions.new.forgot_password"), new_user_password_path
+          = f.password_field :password, autocomplete: "off", class: "form-control", required: true
+
+        .form-check
+          = f.label :remember_me, class: "form-check-label" do
+            = f.check_box :remember_me, class: "form-check-input"
+            = t "messages.sessions.new.remember_me"
+
+        .text-xs-center
+          = f.button class: "btn btn-primary" do
+            = icon "rocket"
+            = t "words.sign_in"
+  
+  .text-xs-center
+    small = t "messages.sessions.new.sign_up_link_html", link: link_to(t("words.sign_up"), new_user_registration_path)
