@@ -23,7 +23,7 @@ module Annict
         body = {
           v: 1,
           tid: ENV.fetch("GA_TRACKING_ID"),
-          cid: @request.cookies["ann_ga_cid"],
+          cid: @request.cookies["ann_client_uuid"],
           t: "event",
           ec: ec,
           ea: ea,

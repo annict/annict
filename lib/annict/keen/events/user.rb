@@ -15,7 +15,7 @@ module Annict
             action: action,
             user_id: user.encoded_id,
             device: browser.device.mobile? ? "mobile" : "pc",
-            request_uuid: request.uuid,
+            client_uuid: @request.cookies["ann_client_uuid"],
             keen: { timestamp: user.updated_at }
           }
         end

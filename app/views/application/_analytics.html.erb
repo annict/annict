@@ -7,13 +7,13 @@
   <% if user_signed_in? %>
   ga("create", "<%= ENV.fetch('GA_TRACKING_ID') %>", {
     "storage": "none",
-    "clientId": "<%= cookies[:ann_ga_cid] %>",
+    "clientId": "<%= client_uuid %>",
     "userId": "<%= current_user.encoded_id %>"
   });
   <% else %>
   ga("create", "<%= ENV.fetch('GA_TRACKING_ID') %>", {
     "storage": "none",
-    "clientId": "<%= cookies[:ann_ga_cid] %>"
+    "clientId": "<%= client_uuid %>"
   });
   <% end %>
 

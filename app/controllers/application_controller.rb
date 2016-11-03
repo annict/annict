@@ -2,7 +2,6 @@
 
 class ApplicationController < ActionController::Base
   include PageCategoryHelper
-  include AnalyticsFilter
   include ViewSelector
   include FlashMessage
 
@@ -10,7 +9,7 @@ class ApplicationController < ActionController::Base
   # For APIs, you may want to use :null_session instead.
   protect_from_forgery with: :exception
 
-  helper_method :gon
+  helper_method :client_uuid, :gon
 
   before_action :load_data_into_gon
   before_action :set_search_params
@@ -55,7 +54,7 @@ class ApplicationController < ActionController::Base
     data = {
       user: {
         device: browser.device.mobile? ? "mobile" : "pc",
-        requestUUID: request.uuid,
+        clientUUID: client_uuid,
         userId: user_signed_in? ? current_user.encoded_id : nil
       },
       keen: {
@@ -84,7 +83,27 @@ class ApplicationController < ActionController::Base
     end
   end
 
+  def ga_client
+    @ga_client ||= Annict::Analytics::Client.new(request, current_user)
+  end
+
   def keen_client
     @keen_client ||= Annict::Keen::Client.new(request)
+  end
+
+  def store_client_uuid
+    return if cookies[:ann_client_uuid].present?
+
+    cookies[:ann_client_uuid] = {
+      value: request.uuid,
+      expires: 2.year.from_now,
+      domain: ".#{ENV.fetch('ANNICT_DOMAIN')}"
+    }
+
+    cookies[:ann_client_uuid]
+  end
+
+  def client_uuid
+    cookies[:ann_client_uuid].presence || store_client_uuid
   end
 end

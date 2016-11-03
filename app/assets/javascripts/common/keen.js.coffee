@@ -11,7 +11,7 @@ module.exports =
       action: action
       device: gon.user.device
       page_category: gon.basic.pageCategory
-      request_uuid: gon.user.requestUUID
+      client_uuid: gon.user.clientUUID
       user_id: gon.user.userId
 
     client.recordEvent(collectionName, _.merge(basicData, data))
