@@ -18,6 +18,9 @@ en:
     oauth_users:
       new:
         sign_up_with_oauth: Sign Up with %{provider_name}
+    passwords:
+      new:
+        forgot_your_password: Forgot your password?
     registrations:
       new:
         sign_in_link_html: Already have an account? %{link}
