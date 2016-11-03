@@ -15,8 +15,6 @@
 #
 
 class SessionsController < Devise::SessionsController
-  layout "v3/application"
-
   def new
     store_location_for(:user, params[:back]) if params[:back].present?
     super

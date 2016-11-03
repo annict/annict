@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20161024131922) do
+ActiveRecord::Schema.define(version: 20161102155615) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -746,25 +746,27 @@ ActiveRecord::Schema.define(version: 20161024131922) do
   end
 
   create_table "users", force: :cascade do |t|
-    t.string   "username",             limit: 510,              null: false
-    t.string   "email",                limit: 510,              null: false
-    t.integer  "role",                                          null: false
-    t.string   "encrypted_password",   limit: 510, default: "", null: false
+    t.string   "username",               limit: 510,              null: false
+    t.string   "email",                  limit: 510,              null: false
+    t.integer  "role",                                            null: false
+    t.string   "encrypted_password",     limit: 510, default: "", null: false
     t.datetime "remember_created_at"
-    t.integer  "sign_in_count",                    default: 0,  null: false
+    t.integer  "sign_in_count",                      default: 0,  null: false
     t.datetime "current_sign_in_at"
     t.datetime "last_sign_in_at"
-    t.string   "current_sign_in_ip",   limit: 510
-    t.string   "last_sign_in_ip",      limit: 510
-    t.string   "confirmation_token",   limit: 510
+    t.string   "current_sign_in_ip",     limit: 510
+    t.string   "last_sign_in_ip",        limit: 510
+    t.string   "confirmation_token",     limit: 510
     t.datetime "confirmed_at"
     t.datetime "confirmation_sent_at"
-    t.string   "unconfirmed_email",    limit: 510
-    t.integer  "checkins_count",                   default: 0,  null: false
-    t.integer  "notifications_count",              default: 0,  null: false
+    t.string   "unconfirmed_email",      limit: 510
+    t.integer  "checkins_count",                     default: 0,  null: false
+    t.integer  "notifications_count",                default: 0,  null: false
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.string   "time_zone",                        default: "", null: false
+    t.string   "time_zone",                          default: "", null: false
+    t.string   "reset_password_token",               default: "", null: false
+    t.datetime "reset_password_sent_at"
     t.index ["confirmation_token"], name: "users_confirmation_token_key", unique: true, using: :btree
     t.index ["email"], name: "users_email_key", unique: true, using: :btree
     t.index ["username"], name: "users_username_key", unique: true, using: :btree
