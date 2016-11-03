@@ -7,17 +7,17 @@
 Turbolinks = require "turbolinks"
 Vue = require "vue/dist/vue"
 
-body = require "./common/components/body"
-flash = require "./common/components/flash"
-statusSelector = require "./common/components/statusSelector"
-usernamePreview = require "./common/components/usernamePreview"
-
-searchForm = require "./pc/components/searchForm"
-
-resourceSelect = require "./common/directives/resourceSelect"
-
 $(document).on "turbolinks:load", ->
   console.log("turbolinks:load")
+
+  body = require "./common/components/body"
+  flash = require "./common/components/flash"
+  statusSelector = require "./common/components/statusSelector"
+  usernamePreview = require "./common/components/usernamePreview"
+
+  searchForm = require "./pc/components/searchForm"
+
+  resourceSelect = require "./common/directives/resourceSelect"
 
   Vue.config.debug = true
 

@@ -31,7 +31,7 @@ module Annict
           ua: @request.user_agent,
           ds: ds
         }
-        body[:uid] = @user.ga_uid if @user.present?
+        body[:uid] = @user.encoded_id if @user.present?
         body[:el] = el if el.present?
         body[:ev] = ev if ev.present?
 

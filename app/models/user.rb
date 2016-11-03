@@ -214,7 +214,7 @@ class User < ActiveRecord::Base
     latest_statuses.find_by(work: work)&.kind.presence || "no_select"
   end
 
-  def ga_uid
+  def encoded_id
     Digest::SHA256.hexdigest(id.to_s)
   end
 

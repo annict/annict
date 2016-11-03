@@ -12,10 +12,11 @@ class RegistrationsController < Devise::RegistrationsController
   def create(user)
     @user = User.new(user).build_relations
 
-    @user.save
     return render(:new) unless @user.valid?
 
-    ga_client.events.create("users", "create")
+    @user.save
+    keen_client.users.create(@user)
+
     bypass_sign_in(@user)
 
     flash[:info] = t("registrations.create.confirmation_mail_has_sent")

@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 class ApplicationController < ActionController::Base
+  include PageCategoryHelper
   include AnalyticsFilter
   include ViewSelector
   include FlashMessage
@@ -9,7 +10,9 @@ class ApplicationController < ActionController::Base
   # For APIs, you may want to use :null_session instead.
   protect_from_forgery with: :exception
 
-  before_action :store_user_info
+  helper_method :gon
+
+  before_action :load_data_into_gon
   before_action :set_search_params
 
   # テスト実行時にDragonflyでアップロードした画像を読み込むときに呼ばれるアクション
@@ -48,17 +51,29 @@ class ApplicationController < ActionController::Base
     @search = SearchService.new(params[:q])
   end
 
-  def store_user_info
+  def load_data_into_gon
+    data = {
+      user: {
+        device: browser.device.mobile? ? "mobile" : "pc",
+        requestUUID: request.uuid,
+        userId: user_signed_in? ? current_user.encoded_id : nil
+      },
+      keen: {
+        projectId: ENV.fetch("KEEN_PROJECT_ID"),
+        writeKey: ENV.fetch("KEEN_WRITE_KEY")
+      }
+    }
+
     if user_signed_in?
-      user_info = {
+      data[:user].merge!(
         shareRecordToTwitter: current_user.setting.share_record_to_twitter?,
         shareRecordToFacebook: current_user.setting.share_record_to_facebook?,
         sharableToTwitter: current_user.shareable_to?(:twitter),
         sharableToFacebook: current_user.shareable_to?(:facebook)
-      }
-
-      gon.push(user_info)
+      )
     end
+
+    gon.push(data)
   end
 
   def load_i18n_into_gon(keys)
@@ -67,5 +82,9 @@ class ApplicationController < ActionController::Base
       key = v.present? && browser.device.mobile? && v.key?(:mobile) ? v[:mobile] : k
       gon.I18n[k] = I18n.t(key)
     end
+  end
+
+  def keen_client
+    @keen_client ||= Annict::Keen::Client.new(request)
   end
 end

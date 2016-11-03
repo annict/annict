@@ -375,6 +375,8 @@ GEM
     kaminari (0.17.0)
       actionpack (>= 3.0.0)
       activesupport (>= 3.0.0)
+    keen (0.7.8)
+      multi_json (~> 1.0)
     koala (2.4.0)
       addressable
       faraday
@@ -723,6 +725,7 @@ DEPENDENCIES
   jb
   jquery-rails
   kaminari
+  keen
   koala
   letter_opener_web
   listen

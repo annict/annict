@@ -264,6 +264,10 @@ combine-source-map@~0.7.1:
     lodash.memoize "~3.0.3"
     source-map "~0.5.3"
 
+component-emitter@^1.2.0:
+  version "1.2.1"
+  resolved "https://registry.yarnpkg.com/component-emitter/-/component-emitter-1.2.1.tgz#137918d6d78283f7df7a6b7c5a63e140e69425e6"
+
 concat-map@0.0.1:
   version "0.0.1"
   resolved "https://registry.yarnpkg.com/concat-map/-/concat-map-0.0.1.tgz#d8a96bd77fd68df7793a73036a3ba0d5405d477b"
@@ -556,6 +560,10 @@ jquery@>=1.9.0:
   version "3.1.1"
   resolved "https://registry.yarnpkg.com/jquery/-/jquery-3.1.1.tgz#347c1c21c7e004115e0a4da32cece041fad3c8a3"
 
+js-cookie@2.1.0:
+  version "2.1.0"
+  resolved "https://registry.yarnpkg.com/js-cookie/-/js-cookie-2.1.0.tgz#479c20d0a0bb6cab81491f917788cd025d6452f0"
+
 js-tokens@^1.0.1:
   version "1.0.3"
   resolved "https://registry.yarnpkg.com/js-tokens/-/js-tokens-1.0.3.tgz#14e56eb68c8f1a92c43d59f5014ec29dc20f2ae1"
@@ -591,6 +599,20 @@ JSONStream@^1.0.3:
   dependencies:
     jsonparse "^1.2.0"
     through ">=2.2.7 <3"
+
+keen-core@0.0.3:
+  version "0.0.3"
+  resolved "https://registry.yarnpkg.com/keen-core/-/keen-core-0.0.3.tgz#83f14516147c1a4fe9b459b0c0adf392b3c8c336"
+  dependencies:
+    component-emitter "^1.2.0"
+
+keen-tracking:
+  version "1.0.5"
+  resolved "https://registry.yarnpkg.com/keen-tracking/-/keen-tracking-1.0.5.tgz#da2e13f9df077ed1bea6738b66df5651aadaeb74"
+  dependencies:
+    component-emitter "^1.2.0"
+    js-cookie "2.1.0"
+    keen-core "0.0.3"
 
 labeled-stream-splicer@^2.0.0:
   version "2.0.0"

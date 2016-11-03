@@ -8,7 +8,7 @@
   ga("create", "<%= ENV.fetch('GA_TRACKING_ID') %>", {
     "storage": "none",
     "clientId": "<%= cookies[:ann_ga_cid] %>",
-    "userId": "<%= current_user.ga_uid %>"
+    "userId": "<%= current_user.encoded_id %>"
   });
   <% else %>
   ga("create", "<%= ENV.fetch('GA_TRACKING_ID') %>", {
@@ -25,7 +25,7 @@
   <% end %>
 
   <%# カスタムディメンション「ページカテゴリ」 %>
-  var dimension2 = "<%= ga_page_category %>";
+  var dimension2 = "<%= page_category %>";
 
   ga("send", "pageview", {
     dimension1: dimension1,

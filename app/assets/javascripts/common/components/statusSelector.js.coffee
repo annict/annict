@@ -1,5 +1,7 @@
 Vue = require "vue/dist/vue"
 
+keen = require "../keen"
+
 module.exports = Vue.extend
   template: "#t-status-selector"
 
@@ -42,6 +44,7 @@ module.exports = Vue.extend
       unless @normalizedIsSignedIn
         $(".c-sign-up-modal").modal("show")
         @resetKind()
+        keen.trackEvent("sign_up_modals", "open")
         return
 
       if @statusKind != @prevStatusKind

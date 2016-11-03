@@ -34,66 +34,6 @@ module ApplicationHelper
     end
   end
 
-  # Google Analyticsのカスタムディメンション「ページカテゴリ」に送信する文字列
-  def ga_page_category
-    return "top" if top_page?
-    return "programs" if programs_page?
-    return "user_profile" if user_profile_page?
-    return "user_works" if user_works_page?
-    return "works_season" if works_season_page?
-    return "works_popular" if works_popular_page?
-    return "work_detail" if work_detail_page?
-    return "search" if search_page?
-    return "episode_detail" if episode_detail_page?
-    return "person_detail" if person_detail_page?
-    return "organization_detail" if organization_detail_page?
-    "other"
-  end
-
-  def programs_page?
-    params[:controller] == "programs" && params[:action] == "index"
-  end
-
-  def user_works_page?
-    params[:controller] == "users" && params[:action] == "works"
-  end
-
-  def works_season_page?
-    params[:controller] == "works" && params[:action] == "season"
-  end
-
-  def works_popular_page?
-    params[:controller] == "works" && params[:action] == "popular"
-  end
-
-  def work_detail_page?
-    params[:controller] == "works" && params[:action] == "show"
-  end
-
-  def search_page?
-    params[:controller] == "searches" && params[:action] == "show"
-  end
-
-  def episode_detail_page?
-    params[:controller] == "episodes" && params[:action] == "show"
-  end
-
-  def user_profile_page?
-    params[:controller] == "users" && params[:action] == "show"
-  end
-
-  def top_page?
-    params[:controller] == "home" && params[:action] == "index"
-  end
-
-  def person_detail_page?
-    params[:controller] == "people" && params[:action] == "show"
-  end
-
-  def organization_detail_page?
-    params[:controller] == "organizations" && params[:action] == "show"
-  end
-
   def body_classes
     controller_name = controller.controller_path.tr("/", "-")
     basic_body_classes = [
