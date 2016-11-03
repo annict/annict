@@ -82,6 +82,8 @@ en:
         role_other: Role (other)
         role_other_en: Role (other/en)
         sort_number: Sort number
+      user:
+        email_username: Email or Username
       work:
         mal_anime_id: MAL Anime ID
         media: Media

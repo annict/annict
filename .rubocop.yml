@@ -37,6 +37,9 @@ Style/Documentation:
 Style/DotPosition:
   EnforcedStyle: trailing
 
+Style/IndentArray:
+  EnforcedStyle: consistent
+
 Style/Lambda:
   Enabled: false
 

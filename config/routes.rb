@@ -7,7 +7,7 @@ Rails.application.routes.draw do
 
   devise_for :users,
     controllers: { omniauth_callbacks: :callbacks },
-    skip: [:registrations, :sessions]
+    skip: %i(passwords registrations sessions)
 
   devise_scope :user do
     get "sign_up", to: "registrations#new", as: :new_user_registration
@@ -15,6 +15,7 @@ Rails.application.routes.draw do
     post "sign_in", to: "sessions#create", as: :user_session
     post "users", to: "registrations#create", as: :user_registration
     delete "sign_out", to: "sessions#destroy", as: :destroy_user_session
+    resource :password, only: %i(new create edit update)
     resources :oauth_users, only: %i(new create)
   end
 
