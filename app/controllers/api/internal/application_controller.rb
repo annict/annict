@@ -3,7 +3,7 @@
 module Api
   module Internal
     class ApplicationController < ActionController::Base
-      include AnalyticsFilter
+      include ControllerCommon
 
       private
 

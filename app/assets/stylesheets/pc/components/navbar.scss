@@ -1,0 +1,61 @@
+.c-navbar {
+  &:not(.is-transparent) {
+    background-color: $color-white;
+    box-shadow: 0 0 1px $color-cadet;
+    height: 58px;
+    line-height: 58px;
+    padding: 0 1rem;
+
+    .navbar-nav {
+      &.float-xs-right {
+        .dropdown-menu {
+          left: auto;
+          right: -16px;
+        }
+      }
+    }
+
+    .navbar-brand,
+    .nav-link {
+      padding: 0;
+    }
+
+    .nav-item {
+      height: 58px;
+    }
+
+    .c-search-form {
+      line-height: 55px;
+      padding: 0;
+    }
+
+    .dropdown-menu {
+      border: 0;
+      box-shadow: 0 0 1px $color-cadet;
+      left: -15px;
+      margin: 0;
+
+      .dropdown-item {
+        color: $navbar-light-color;
+        padding: 3px 1rem;
+
+        @include hover-focus {
+          color: $navbar-light-hover-color;
+          text-decoration: none;
+        }
+      }
+    }
+
+    .dropdown-item {
+      line-height: $line-height-base;
+    }
+  }
+
+  .dropdown {
+    &:hover {
+      .dropdown-menu {
+        display: block;
+      }
+    }
+  }
+}

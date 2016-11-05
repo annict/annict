@@ -1,0 +1,10 @@
+.c-rating-label {
+  .fa {
+    color: $color-selective-yellow;
+  }
+
+  &__text {
+    font-size: .9rem;
+    margin-left: .25rem;
+  }
+}

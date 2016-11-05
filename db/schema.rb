@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20161102155615) do
+ActiveRecord::Schema.define(version: 20161104210958) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -729,13 +729,16 @@ ActiveRecord::Schema.define(version: 20161102155615) do
   end
 
   create_table "tips", force: :cascade do |t|
-    t.integer  "target",                   null: false
-    t.string   "partial_name", limit: 255, null: false
-    t.string   "title",        limit: 255, null: false
-    t.string   "icon_name",    limit: 255, null: false
-    t.datetime "created_at",               null: false
-    t.datetime "updated_at",               null: false
-    t.index ["partial_name"], name: "index_tips_on_partial_name", unique: true, using: :btree
+    t.integer  "target",                              null: false
+    t.string   "slug",       limit: 255,              null: false
+    t.string   "title",      limit: 255,              null: false
+    t.string   "icon_name",  limit: 255,              null: false
+    t.datetime "created_at",                          null: false
+    t.datetime "updated_at",                          null: false
+    t.string   "title_en",               default: "", null: false
+    t.text     "body",                   default: "", null: false
+    t.text     "body_en",                default: "", null: false
+    t.index ["slug"], name: "index_tips_on_slug", unique: true, using: :btree
   end
 
   create_table "twitter_bots", force: :cascade do |t|
@@ -765,7 +768,7 @@ ActiveRecord::Schema.define(version: 20161102155615) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.string   "time_zone",                          default: "", null: false
-    t.string   "reset_password_token",               default: "", null: false
+    t.string   "reset_password_token",               default: ""
     t.datetime "reset_password_sent_at"
     t.index ["confirmation_token"], name: "users_confirmation_token_key", unique: true, using: :btree
     t.index ["email"], name: "users_email_key", unique: true, using: :btree

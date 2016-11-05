@@ -5,8 +5,11 @@ en:
       join_annict: Join Annict
       see_more: See More
       welcome_back: Welcome back!
+      welcome_to_annict: Welcome to Annict!
     are_you_sure: Are you sure?
     home:
+      index:
+        there_are_no_activities: There are no activities
       index_guest:
         hero_description_html: Explore the anime database, track anime you are watching<br>and see what friends are watching.
         hero_description_mobile_html: Track anime you are watching<br>and see what friends are watching.
@@ -34,20 +37,6 @@ en:
         sign_in_with_facebook: Sign in with Facebook
         sign_in_with_twitter: Sign in with Twitter
         sign_up_link_html: Don't have an account? %{link}
-  head:
-    meta:
-      _common:
-        description: Annict is the platform for Anime Addicts. Track your watching anime, follow friends, read their reviews, and much more!
-        keywords: annict, anime, review
-    title:
-      home:
-        index_guest: The platform for Anime Addicts.
-      pages:
-        about: About
-      registrations:
-        new: Sign Up
-      sessions:
-        new: Sign In
   resources:
     character:
       created: Character created
@@ -132,6 +121,7 @@ en:
     airing_anime: Airing Anime
     all: All
     annict_api: Annict API
+    annict_db: Annict DB
     delete: Delete
     edit: Edit
     error: Error
@@ -144,6 +134,7 @@ en:
     previous: Prev
     release_on: Release on
     season: Season
+    sign_out: Sign Out
     site_name: Annict
     state: State
     state_change: State change

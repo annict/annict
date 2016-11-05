@@ -17,6 +17,13 @@ class EpisodeDecorator < ApplicationDecorator
     "「#{title}」"
   end
 
+  def local_title
+    return title if I18n.locale == :ja
+    return title_en if title_en.present?
+    return title_ro if title_ro.present?
+    title
+  end
+
   def local_number
     return number if I18n.locale == :ja
     return "##{raw_number}" if raw_number.present?

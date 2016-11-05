@@ -62,7 +62,7 @@ Rails.application.routes.draw do
       end
 
       resources :tips, only: [] do
-        post :finish, on: :collection
+        post :close, on: :collection
       end
 
       resource :user, only: [] do
