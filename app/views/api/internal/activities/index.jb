@@ -1,0 +1,9 @@
+# frozen_string_literal: true
+
+json = {}
+
+json[:activities] = @activities.map do |activity|
+  render "/api/internal/activities/activity", activity: activity
+end
+
+json

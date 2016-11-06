@@ -1,0 +1,14 @@
+script#t-activities type="x-template"
+  .c-activities.c-card.container
+    template v-for="activity in activities"
+      template v-if='activity.action === "create_record"'
+        c-create-record-activity :activity="activity"
+      template v-if='activity.action === "create_multiple_records"'
+        c-create-multiple-records-activity :activity="activity"
+      template v-if='activity.action === "create_status"'
+        c-create-status-activity :activity="activity"
+    template v-if="!isLoading && activities.length === 0"
+      = render "application/components/empty", text: t("messages.home.index.there_are_no_activities")
+    mugen-scroll :handler="loadMore" :should-handle="hasNext"
+      .c-loading v-show="isLoading"
+        .c-loading__core Loading...

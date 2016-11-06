@@ -1,0 +1,44 @@
+.c-activity {
+  &:not(:last-child) {
+    border-bottom: $hr-border-width solid $hr-border-color;
+  }
+
+  &__header {
+    font-size: .9rem;
+  }
+
+  &__work-info {
+    border: $hr-border-width solid $hr-border-color;
+
+    &.is-pc {
+      .work-info__image {
+        @include flex-basis(125px);
+      }
+    }
+
+    &.is-mobile {
+      .work-info__image {
+        @include flex-basis(90px);
+      }
+    }
+
+    .work-info__image {
+      @include flex-grow(0);
+
+      img {
+        border-right: $hr-border-width solid $hr-border-color;
+      }
+    }
+
+    .work-info__title,
+    .work-info__episode {
+      font-size: .9rem;
+    }
+  }
+
+  &__footer {
+    .c-time-ago {
+      font-size: .9rem;
+    }
+  }
+}

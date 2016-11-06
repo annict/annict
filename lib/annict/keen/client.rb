@@ -10,6 +10,14 @@ module Annict
       def users
         @users ||= ::Annict::Keen::Events::User.new(@request)
       end
+
+      def tips
+        @tips ||= ::Annict::Keen::Events::Tip.new(@request)
+      end
+
+      def likes
+        @likes ||= ::Annict::Keen::Events::Like.new(@request)
+      end
     end
   end
 end

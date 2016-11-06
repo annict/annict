@@ -1,6 +1,6 @@
 = content_for :site_page_title, "#{t('titles.privacy')}"
 
-- if browser.mobile?
+- if browser.device.mobile?
   = render "application/v1/navbar"
 - else
   = render "application/v2/navbar"

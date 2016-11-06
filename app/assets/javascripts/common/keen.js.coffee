@@ -9,9 +9,10 @@ module.exports =
   trackEvent: (collectionName, action, data) ->
     basicData =
       action: action
-      device: gon.user.device
-      page_category: gon.basic.pageCategory
       client_uuid: gon.user.clientUUID
+      device: gon.user.device
+      locale: gon.user.locale
+      page_category: gon.basic.pageCategory
       user_id: gon.user.userId
 
     client.recordEvent(collectionName, _.merge(basicData, data))

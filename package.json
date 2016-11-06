@@ -10,10 +10,11 @@
     "moment": "2.15.1",
     "mousetrap": "1.6.0",
     "turbolinks": "5.0.0",
-    "vue": "2.0.1"
+    "vue": "2.0.1",
+    "vue-mugen-scroll": "^0.2.1"
   },
   "engines": {
-    "node": "~> 4.5.0"
+    "node": "~> 6.9.1"
   },
   "devDependencies": {
     "coffeelint": "1.16.0"

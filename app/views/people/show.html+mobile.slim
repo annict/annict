@@ -64,7 +64,7 @@
             td = @person.decorate.wikipedia_url_link
     
     .edit-link
-      - if user_signed_in? && !browser.mobile?
+      - if user_signed_in? && !browser.device.mobile?
         - if current_user.committer?
           = link_to "編集する", edit_db_person_path(@person)
         - else

@@ -39,7 +39,7 @@
               | Comments
           .clearfix
 
-    - if user_signed_in? && !browser.mobile?
+    - if user_signed_in? && !browser.device.mobile?
       .annict-db-link
         - if current_user.role.admin?
           = link_to "作品を編集する", edit_db_work_path(@work)
@@ -53,7 +53,7 @@
       h2.text-center = t("works.checkin_chart")
       - if @work.checkins_count > 0
         ann-work-chart.wrapper data-labels="#{@work.chart_labels}" data-values="#{@work.chart_values}"
-          - if browser.mobile?
+          - if browser.device.mobile?
             canvas width="285" height="150"
           - else
             canvas width="460" height="200"
