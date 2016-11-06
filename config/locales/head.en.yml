@@ -12,6 +12,8 @@ en:
       home:
         index: Annict
         index_guest: The platform for Anime Addicts.
+      notifications:
+        index: Notifications
       pages:
         about: About
       programs:

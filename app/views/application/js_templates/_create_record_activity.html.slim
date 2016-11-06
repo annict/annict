@@ -28,11 +28,11 @@ script#t-create-record-activity type="x-template"
           c-rating-label :raw-rating="activity.record.rating || -1" :raw-is-spoiler="isSpoiler" v-show="!isSpoiler"
           c-body :text="activity.record.comment"
 
-      .c-activity__work-info.mb-zp5
+      .c-activity__work-info.mb-zp5 class="#{browser.device.mobile? ? 'is-mobile' : 'is-pc'}"
         .row.flex-items-xs-middle
           .col-xs.work-info__image.pr-0
             a :href='"/works/" + activity.work.id'
-              img :src="activity.item.image_url" width="125" height="125" :alt="activity.work.title"
+              img.img-fluid :src="activity.item.image_url" :alt="activity.work.title"
           .col-xs
             .work-info__title
               a.font-weight-bold :href='"/works/" + activity.work.id'

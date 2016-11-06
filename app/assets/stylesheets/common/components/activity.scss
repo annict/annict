@@ -10,8 +10,19 @@
   &__work-info {
     border: $hr-border-width solid $hr-border-color;
 
+    &.is-pc {
+      .work-info__image {
+        @include flex-basis(125px);
+      }
+    }
+
+    &.is-mobile {
+      .work-info__image {
+        @include flex-basis(90px);
+      }
+    }
+
     .work-info__image {
-      @include flex-basis(125px);
       @include flex-grow(0);
 
       img {
