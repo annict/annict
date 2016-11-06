@@ -23,7 +23,7 @@ module Annict
         body = {
           v: 1,
           tid: ENV.fetch("GA_TRACKING_ID"),
-          cid: @request.cookies["ann_ga_cid"],
+          cid: @request.cookies["ann_client_uuid"],
           t: "event",
           ec: ec,
           ea: ea,
@@ -31,7 +31,7 @@ module Annict
           ua: @request.user_agent,
           ds: ds
         }
-        body[:uid] = @user.ga_uid if @user.present?
+        body[:uid] = @user.encoded_id if @user.present?
         body[:el] = el if el.present?
         body[:ev] = ev if ev.present?
 

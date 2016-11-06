@@ -1,49 +1,64 @@
-table.table.table-striped.c-resource-list
-  thead
-    tr
-      th ID
-      th タイトル
-      th しょぼかる
-      th Watchers
-      th リリース時期
-      th 作品画像
-      - if user_signed_in?
-        th 編集
-      - if policy(works).hide?
-        th 非公開
-      - if policy(works).destroy?
-        th 削除
-  tbody
-    - works.each do |work|
+.c-card
+  table.table.table-hover
+    thead
       tr
-        td
-          = link_to work.id, work_path(work), target: "_blank"
-          - if work.published?
-            = icon("check-circle-o", class: "c-resource-list__status-published enabled", "data-toggle" => "tooltip", title: "この作品は公開されています")
-          - else
-            = icon("check-circle-o", class: "c-resource-list__status-published disabled", "data-toggle" => "tooltip", title: "この作品は非公開になっています")
-        td
-          = work.title
-          - if work.title_kana.present?
-            br
-            = "(#{work.title_kana})"
-        td
-          - if work.sc_tid.present?
-            = work.decorate.syobocal_link
-          - else
-            = "未設定"
-        td = "#{work.watchers_count}人"
-        td = work.decorate.release_season.presence || "-"
-        td = annict_image_tag(work.item, :tombo_image, size: "70x70")
-        - if user_signed_in?
+        th ID
+        th = t "words.title"
+        - if locale_ja?
+          th = t "words.syobocal"
+        th Watchers
+        th = t "words.release_on"
+        th = t "words.work_image"
+        th = t "words.state"
+        - if policy(works).edit?
+          th = t "words.edit"
+        - if policy(works).hide?
+          th = t "words.state_change"
+        - if policy(works).destroy?
+          th = t "words.delete"
+    tbody
+      - works.each do |work|
+        tr
+          td = link_to work.id, work_path(work), target: "_blank"
           td
-            - if current_user.committer?
-              = link_to "編集", edit_db_work_path(work), class: "btn btn-primary btn-sm"
-            - else
-              = link_to "編集", new_db_draft_work_path(work_id: work.id), class: "btn btn-primary btn-sm"
-        - if policy(work).hide?
+            - if user_signed_in? && current_user.role.admin?
+              = work.title
+              br
+              = work.title_kana.presence || "-"
+              br
+              = work.title_ro.presence || "-"
+              br
+              = work.title_en.presence || "-"
+            - elsif locale == :ja
+              = work.title
+              - if work.title_kana.present?
+                br
+                = "(#{work.title_kana})"
+            - elsif locale == :en
+              - if work.title_ro.present?
+                = work.title_ro
+                br
+              - if work.title_en.present?
+                = work.title_en
+              - if work.title_ro.blank? && work.title_en.blank?
+                = work.title
+          - if locale_ja?
+            td
+              - if work.sc_tid.present?
+                = work.decorate.syobocal_link
+              - else
+                | -
+          td = work.watchers_count
+          td = work.decorate.release_season.presence || "-"
+          td = annict_image_tag(work.item, :tombo_image, size: "70x70")
           td
-            - if work.published?
-              = link_to "非公開", hide_db_work_path(work), class: "btn btn-warning btn-sm", data: { method: "patch", confirm: "この作品を非公開にしますか？" }
-        - if policy(work).destroy?
-          td = link_to "削除", db_work_path(work), class: "btn btn-danger btn-sm", data: { method: "delete", confirm: "この作品を削除しますか？" }
+            .tag class="#{work.published? ? 'tag-success' : 'tag-default'}"
+              = t("resources.work.aasm_state.#{work.aasm_state}")
+          - if policy(work).edit?
+            td = link_to t("words.edit"), edit_db_work_path(work), class: "btn btn-primary btn-sm"
+          - if policy(work).hide?
+            td
+              - if work.published?
+                = link_to t("words.hide"), hide_db_work_path(work), class: "btn btn-warning btn-sm", data: { method: "patch", confirm: t("messages.are_you_sure") }
+          - if policy(work).destroy?
+            td = link_to t("words.delete"), db_work_path(work), class: "btn btn-danger btn-sm", data: { method: "delete", confirm: t("messages.are_you_sure") }

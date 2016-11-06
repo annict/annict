@@ -1,0 +1,92 @@
+// Colors
+
+$brand-primary: $color-mizuho;
+$brand-info: $color-java;
+$gray-dark: $color-outer-space;
+
+
+// Options
+
+$enable-flex: true;
+$enable-transitions: true;
+
+
+// Spacing
+
+$spacer: 1rem;
+$spacer-x: $spacer;
+$spacer-y: $spacer;
+$spacers: (
+  0: (
+    x: 0,
+    y: 0
+  ),
+  zp25: (
+    x: ($spacer-x * .25),
+    y: ($spacer-y * .25)
+  ),
+  zp5: (
+  x: ($spacer-x * .5),
+  y: ($spacer-y * .5)
+  ),
+  1: (
+    x: $spacer-x,
+    y: $spacer-y
+  ),
+  2: (
+    x: ($spacer-x * 1.5),
+    y: ($spacer-y * 1.5)
+  ),
+  3: (
+    x: ($spacer-x * 3),
+    y: ($spacer-y * 3)
+  )
+);
+
+
+// Body
+
+$body-bg: $color-haze;
+$body-color: $color-river;
+
+
+// Links
+
+$link-color: $color-san-juan;
+$link-hover-color: $color-mizuho;
+$link-hover-decoration: none;
+
+
+// Typography
+
+$font-size-h1: 1.75rem;
+$font-size-h2: 1.5rem;
+$font-size-h3: 1.25rem;
+$font-size-h4: 1rem;
+$font-size-h5: .75rem;
+$font-size-h6: .5rem;
+
+$display1-size: 3rem;
+$display2-size: 2.5rem;
+
+$headings-font-family: "Noto Sans JP", sans-serif;
+$headings-font-weight: 300;
+
+$line-height-base: 1.7;
+
+$list-inline-padding: .5rem;
+
+
+// Components
+
+$border-radius: .12rem;
+
+
+// Tables
+
+$table-bg-hover: rgba(0, 0, 0, .03);
+
+
+// Image thumbnails
+
+$thumbnail-padding: 0;

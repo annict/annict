@@ -1,8 +1,90 @@
-= form_for [:db, work], html: { class: "form-horizontal" } do |f|
-  = render "application/v1/error_panel", resource: f.object
+.container
+  = form_for [:db, work] do |f|
+    = render "application/components/error_panel", resource: f.object
 
-  = render "work_fields", f: f
+    .form-group.row
+      = f.label :title, class: "col-sm-3 col-form-label c-label-required"
+      .col-sm-9
+        = f.text_field :title, class: "form-control", autofocus: true, required: true
+    .form-group.row
+      = f.label :title_kana, class: "col-sm-3 col-form-label"
+      .col-sm-9
+        = f.text_field :title_kana, class: "form-control"
+    .form-group.row
+      = f.label :title_ro, class: "col-sm-3 col-form-label"
+      .col-sm-9
+        = f.text_field :title_ro, class: "form-control"
+    .form-group.row
+      = f.label :title_en, class: "col-sm-3 col-form-label"
+      .col-sm-9
+        = f.text_field :title_en, class: "form-control"
+    .form-group.row
+      = f.label :media, class: "col-sm-3 col-form-label c-label-required"
+      .col-sm-9
+        .row
+          .col-sm-5
+            = f.select :media, options_for_select(Work.media.options, f.object.media), { include_blank: true }, { class: "form-control", required: true }
+    .form-group.row
+      = f.label :season_id, class: "col-sm-3 col-form-label"
+      .col-sm-9
+        .row
+          .col-sm-5
+            = f.select :season_id, options_from_collection_for_select(Season.order(sort_number: :desc), :id, :local_name, f.object.season_id), { include_blank: true }, { class: "form-control" }
+    .form-group.row
+      = f.label :official_site_url, class: "col-sm-3 col-form-label"
+      .col-sm-9
+        = f.text_field :official_site_url, class: "form-control"
+    .form-group.row
+      = f.label :official_site_url_en, class: "col-sm-3 col-form-label"
+      .col-sm-9
+        = f.text_field :official_site_url_en, class: "form-control"
+    .form-group.row
+      = f.label :wikipedia_url, class: "col-sm-3 col-form-label"
+      .col-sm-9
+        = f.text_field :wikipedia_url, class: "form-control"
+    .form-group.row
+      = f.label :wikipedia_url_en, class: "col-sm-3 col-form-label"
+      .col-sm-9
+        = f.text_field :wikipedia_url_en, class: "form-control"
+    .form-group.row
+      = f.label :twitter_username, class: "col-sm-3 col-form-label"
+      .col-sm-9
+        = f.text_field :twitter_username, class: "form-control", placeholder: t("resources.work.twitter_username_placeholder")
+    .form-group.row
+      = f.label :twitter_hashtag, class: "col-sm-3 col-form-label"
+      .col-sm-9
+        = f.text_field :twitter_hashtag, class: "form-control", placeholder: t("resources.work.twitter_hashtag_placeholder")
+    .form-group.row
+      = f.label :sc_tid, class: "col-sm-3 col-form-label"
+      .col-sm-9
+        = f.text_field :sc_tid, class: "form-control"
+    .form-group.row
+      = f.label :mal_anime_id, class: "col-sm-3 col-form-label"
+      .col-sm-9
+        = f.text_field :mal_anime_id, class: "form-control"
+    .form-group.row
+      = f.label :number_format_id, class: "col-sm-3 col-form-label"
+      .col-sm-9
+        .row
+          .col-sm-5
+            = f.select :number_format_id, options_from_collection_for_select(NumberFormat.order(:sort_number), :id, :name, f.object.number_format_id), { include_blank: true }, { class: "form-control" }
+    .form-group.row
+      = f.label :synopsis, class: "col-sm-3 col-form-label"
+      .col-sm-9
+        = f.text_area :synopsis, class: "form-control", rows: 10
+    .form-group.row
+      = f.label :synopsis_source, class: "col-sm-3 col-form-label"
+      .col-sm-9
+        = f.text_field :synopsis_source, class: "form-control"
+    .form-group.row
+      = f.label :synopsis_en, class: "col-sm-3 col-form-label"
+      .col-sm-9
+        = f.text_area :synopsis_en, class: "form-control", rows: 10
+    .form-group.row
+      = f.label :synopsis_source_en, class: "col-sm-3 col-form-label"
+      .col-sm-9
+        = f.text_field :synopsis_source_en, class: "form-control"
 
-  .form-group
-    .col-sm-offset-3.col-sm-9
-      = f.submit class: "btn btn-primary"
+    .form-group.row
+      .offset-sm-3.col-sm-9
+        = f.submit class: "btn btn-primary"

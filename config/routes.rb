@@ -7,7 +7,7 @@ Rails.application.routes.draw do
 
   devise_for :users,
     controllers: { omniauth_callbacks: :callbacks },
-    skip: [:registrations, :sessions]
+    skip: %i(passwords registrations sessions)
 
   devise_scope :user do
     get "sign_up", to: "registrations#new", as: :new_user_registration
@@ -15,6 +15,8 @@ Rails.application.routes.draw do
     post "sign_in", to: "sessions#create", as: :user_session
     post "users", to: "registrations#create", as: :user_registration
     delete "sign_out", to: "sessions#destroy", as: :destroy_user_session
+    resource :password, only: %i(new create edit update)
+    resources :oauth_users, only: %i(new create)
   end
 
   use_doorkeeper do
@@ -28,6 +30,7 @@ Rails.application.routes.draw do
       resource :programs_sort_type, only: [:update]
       resource :search, only: [:show]
       resources :activities, only: [:index]
+      resources :characters, only: [:index]
       resources :mute_users, only: [:create]
       resources :organizations, only: [:index]
       resources :people, only: [:index]
@@ -59,7 +62,7 @@ Rails.application.routes.draw do
       end
 
       resources :tips, only: [] do
-        post :finish, on: :collection
+        post :close, on: :collection
       end
 
       resource :user, only: [] do
@@ -79,7 +82,7 @@ Rails.application.routes.draw do
   end
 
   scope module: :api do
-    constraints Annict::Subdomain do
+    constraints(subdomain: "api") do
       namespace :v1 do
         resources :episodes, only: [:index]
         resources :records, only: [:index]
@@ -97,67 +100,81 @@ Rails.application.routes.draw do
     end
   end
 
-  namespace :db do
-    resources :activities, only: [:index]
-    resources :draft_organizations, only: [:new, :create, :edit, :update]
-    resources :draft_people, only: [:new, :create, :edit, :update]
-    resources :draft_works, only: [:new, :create, :edit, :update]
-    resource :search, only: [:show]
+  scope module: :db, as: :db do
+    constraints(subdomain: "db") do
+      resources :activities, only: [:index]
+      resource :search, only: [:show]
 
-    resources :edit_requests, only: [:index, :show] do
-      member do
-        post :close
-        post :publish
-      end
-      resources :comments,
-        only: [:create, :edit, :update, :destroy],
-        controller: "edit_request_comments"
-    end
-
-    resources :organizations, except: [:show] do
-      patch :hide, on: :member
-    end
-
-    resources :people, except: [:show] do
-      patch :hide, on: :member
-    end
-
-    resources :works, except: [:show] do
-      collection do
-        get :season
-        get :resourceless
-      end
-
-      member do
-        patch :hide
-      end
-
-      resources :draft_casts, only: [:new, :create, :edit, :update]
-      resources :draft_episodes, only: [:new, :create, :edit, :update]
-      resources :draft_items, only: [:new, :create, :edit, :update]
-      resources :draft_multiple_episodes, only: [:new, :create, :edit, :update]
-      resources :draft_programs, only: [:new, :create, :edit, :update]
-      resources :draft_staffs, only: [:new, :create, :edit, :update]
-      resources :multiple_episodes, only: [:new, :create]
-      resources :programs, except: [:show]
-      resource :item, except: [:index]
-
-      resources :casts, except: [:show] do
-        patch :hide, on: :member
-      end
-
-      resources :episodes, only: [:index, :edit, :update, :destroy] do
+      resources :characters, except: [:show] do
         member do
+          get :activities
           patch :hide
         end
       end
 
-      resources :staffs, except: [:show] do
-        patch :hide, on: :member
+      resources :casts, only: %i(edit update destroy) do
+        member do
+          get :activities
+          patch :hide
+        end
       end
-    end
 
-    root "home#index"
+      resources :comments, only: %i(create destroy)
+
+      resources :episodes, only: %i(edit update destroy) do
+        member do
+          get :activities
+          patch :hide
+        end
+      end
+
+      resources :organizations, except: [:show] do
+        member do
+          get :activities
+          patch :hide
+        end
+      end
+
+      resources :people, except: [:show] do
+        member do
+          get :activities
+          patch :hide
+        end
+      end
+
+      resources :programs, only: %i(edit update destroy) do
+        member do
+          get :activities
+        end
+      end
+
+      resources :staffs, only: %i(edit update destroy) do
+        member do
+          get :activities
+          patch :hide
+        end
+      end
+
+      resources :works, except: [:show] do
+        collection do
+          get :season
+          get :resourceless
+        end
+
+        member do
+          get :activities
+          patch :hide
+        end
+
+        resource :item, except: [:index]
+        resources :casts, only: %i(index new create)
+        resources :episodes, only: %i(index new create)
+        resources :programs, only: %i(index new create)
+        resources :staffs, only: %i(index new create)
+      end
+
+      root "home#index"
+    end
   end
 
   resources :settings, only: [:index]
@@ -174,6 +191,8 @@ Rails.application.routes.draw do
 
     patch "options", to: "options#update"
   end
+
+  resources :characters, only: %i(show)
 
   resource :channel, only: [] do
     resources :works, only: [:index], controller: "channel_works"

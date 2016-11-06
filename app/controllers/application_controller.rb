@@ -1,7 +1,8 @@
 # frozen_string_literal: true
 
 class ApplicationController < ActionController::Base
-  include AnalyticsFilter
+  include ControllerCommon
+  include PageCategoryHelper
   include ViewSelector
   include FlashMessage
 
@@ -9,8 +10,9 @@ class ApplicationController < ActionController::Base
   # For APIs, you may want to use :null_session instead.
   protect_from_forgery with: :exception
 
-  before_action :set_paper_trail_whodunnit
-  before_action :store_user_info
+  helper_method :client_uuid, :gon
+
+  before_action :load_data_into_gon
   before_action :set_search_params
 
   # テスト実行時にDragonflyでアップロードした画像を読み込むときに呼ばれるアクション
@@ -47,18 +49,5 @@ class ApplicationController < ActionController::Base
 
   def set_search_params
     @search = SearchService.new(params[:q])
-  end
-
-  def store_user_info
-    if user_signed_in?
-      user_info = {
-        shareRecordToTwitter: current_user.setting.share_record_to_twitter?,
-        shareRecordToFacebook: current_user.setting.share_record_to_facebook?,
-        sharableToTwitter: current_user.shareable_to?(:twitter),
-        sharableToFacebook: current_user.shareable_to?(:facebook)
-      }
-
-      gon.push(user_info)
-    end
   end
 end

@@ -11,16 +11,12 @@ gem "action_args"
 gem "active_link_to"
 gem "activerecord-session_store"
 gem "acts_as_list"
-# 本家がRails 5対応するまでfork版を使う
-# https://github.com/jsanders/angular_rails_csrf/pull/18
-gem "angular_rails_csrf", github: "tpmullan/angular_rails_csrf"
 gem "annotate"
 gem "asset_sync"
 gem "aws-sdk"
-gem "bootstrap-sass"
+gem "bootstrap"
 gem "bourbon"
-# 2系対応が面倒くさそうなので一旦1系を使い続ける
-gem "browser", "~> 1.1.0"
+gem "browser"
 gem "browserify-rails"
 gem "by_star"
 gem "coffee-rails"
@@ -33,26 +29,24 @@ gem "enumerize"
 gem "figaro"
 gem "flutie"
 gem "font-awesome-sass"
-gem "foundation-rails"
 gem "gon"
 gem "hashdiff"
 gem "httparty"
 gem "imgix-rails"
-gem "jbuilder"
+gem "jb"
 gem "jquery-rails"
 gem "kaminari"
+gem "keen"
 gem "koala"
 gem "meta-tags"
 gem "mini_magick"
 gem "net-ssh" # fog を使用している asset_sync で使用
-gem "ngannotate-rails"
 gem "nokogiri"
 gem "omniauth-facebook"
 # 1.4系だとFacebookのOAuth周りでおかしくなるので1.3系を使う
 # https://github.com/intridea/omniauth-oauth2/issues/81
 gem "omniauth-oauth2", "~> 1.3.1"
 gem "omniauth-twitter"
-gem "paper_trail"
 gem "paperclip"
 gem "pg"
 gem "puma"
@@ -65,7 +59,10 @@ gem "rails-i18n"
 gem "ransack"
 gem "redis-rails"
 gem "rmagick"
-gem "sass-rails"
+# To use font-awesome-sass
+# https://github.com/sass/sassc-rails/issues/6
+gem "sass-rails", require: false
+gem "sassc-rails"
 gem "sitemap_generator"
 gem "slim"
 gem "traceroute"
@@ -88,15 +85,19 @@ group :development, :test do
 end
 
 group :development do
+  gem "active_record_query_trace"
   gem "better_errors"
   gem "binding_of_caller" # better_errorsで使用
   gem "bullet"
+  gem "derailed_benchmarks"
   gem "letter_opener_web"
   gem "listen" # Rails 5から `rails s` するときに必要になった
   gem "rubocop"
   gem "ruby_identicon"
+  gem "scss_lint", require: false
   gem "spring"
   gem "spring-commands-rspec", require: false
+  gem "stackprof"
   gem "thin"
 end
 
@@ -112,4 +113,8 @@ group :production do
   gem "bugsnag"
   gem "rails_12factor"
   gem "scout_apm"
+end
+
+source "https://rails-assets.org" do
+  gem "rails-assets-tether"
 end

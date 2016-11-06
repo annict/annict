@@ -3,15 +3,19 @@
 #
 # Table name: organizations
 #
-#  id               :integer          not null, primary key
-#  name             :string           not null
-#  url              :string
-#  wikipedia_url    :string
-#  twitter_username :string
-#  aasm_state       :string           default("published"), not null
-#  created_at       :datetime         not null
-#  updated_at       :datetime         not null
-#  name_kana        :string           default(""), not null
+#  id                  :integer          not null, primary key
+#  name                :string           not null
+#  url                 :string
+#  wikipedia_url       :string
+#  twitter_username    :string
+#  aasm_state          :string           default("published"), not null
+#  created_at          :datetime         not null
+#  updated_at          :datetime         not null
+#  name_kana           :string           default(""), not null
+#  name_en             :string           default(""), not null
+#  url_en              :string           default(""), not null
+#  wikipedia_url_en    :string           default(""), not null
+#  twitter_username_en :string           default(""), not null
 #
 # Indexes
 #
@@ -22,9 +26,18 @@
 class Organization < ActiveRecord::Base
   include AASM
   include DbActivityMethods
-  include OrganizationCommon
+  include RootResourceCommon
 
-  validates :name, uniqueness: true
+  DIFF_FIELDS = %i(
+    name name_kana url wikipedia_url twitter_username name_kana name_en url_en
+    wikipedia_url_en twitter_username_en
+  ).freeze
+
+  validates :name, presence: true, uniqueness: true
+  validates :url, url: { allow_blank: true }
+  validates :url_en, url: { allow_blank: true }
+  validates :wikipedia_url, url: { allow_blank: true }
+  validates :wikipedia_url_en, url: { allow_blank: true }
 
   aasm do
     state :published, initial: true
@@ -39,6 +52,16 @@ class Organization < ActiveRecord::Base
     end
   end
 
-  has_many :draft_staffs, as: :resource, dependent: :destroy
+  has_many :db_activities, as: :trackable, dependent: :destroy
+  has_many :db_comments, as: :resource, dependent: :destroy
   has_many :staffs, as: :resource, dependent: :destroy
+
+  def to_diffable_hash
+    data = self.class::DIFF_FIELDS.each_with_object({}) do |field, hash|
+      hash[field] = send(field)
+      hash
+    end
+
+    data.delete_if { |_, v| v.blank? }
+  end
 end

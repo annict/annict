@@ -3,10 +3,11 @@
 module Api
   module Internal
     class TipsController < Api::Internal::ApplicationController
-      before_action :authenticate_user!, only: [:finish]
+      before_action :authenticate_user!, only: %i(close)
 
-      def finish(partial_name)
-        UserTipsService.new(current_user).finish!(partial_name)
+      def close(slug)
+        UserTipsService.new(current_user).finish!(slug)
+        keen_client.tips.close(current_user, slug)
         head 200
       end
     end

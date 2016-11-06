@@ -1,26 +1,30 @@
+# frozen_string_literal: true
 # == Schema Information
 #
 # Table name: users
 #
-#  id                   :integer          not null, primary key
-#  username             :string(510)      not null
-#  email                :string(510)      not null
-#  role                 :integer          not null
-#  encrypted_password   :string(510)      default(""), not null
-#  remember_created_at  :datetime
-#  sign_in_count        :integer          default(0), not null
-#  current_sign_in_at   :datetime
-#  last_sign_in_at      :datetime
-#  current_sign_in_ip   :string(510)
-#  last_sign_in_ip      :string(510)
-#  confirmation_token   :string(510)
-#  confirmed_at         :datetime
-#  confirmation_sent_at :datetime
-#  unconfirmed_email    :string(510)
-#  checkins_count       :integer          default(0), not null
-#  notifications_count  :integer          default(0), not null
-#  created_at           :datetime
-#  updated_at           :datetime
+#  id                     :integer          not null, primary key
+#  username               :string(510)      not null
+#  email                  :string(510)      not null
+#  role                   :integer          not null
+#  encrypted_password     :string(510)      default(""), not null
+#  remember_created_at    :datetime
+#  sign_in_count          :integer          default(0), not null
+#  current_sign_in_at     :datetime
+#  last_sign_in_at        :datetime
+#  current_sign_in_ip     :string(510)
+#  last_sign_in_ip        :string(510)
+#  confirmation_token     :string(510)
+#  confirmed_at           :datetime
+#  confirmation_sent_at   :datetime
+#  unconfirmed_email      :string(510)
+#  checkins_count         :integer          default(0), not null
+#  notifications_count    :integer          default(0), not null
+#  created_at             :datetime
+#  updated_at             :datetime
+#  time_zone              :string           default(""), not null
+#  reset_password_token   :string           default("")
+#  reset_password_sent_at :datetime
 #
 # Indexes
 #
@@ -41,21 +45,26 @@ class User < ActiveRecord::Base
 
   extend Enumerize
 
+  attr_accessor :email_username
+
   # Include default devise modules. Others available are:
-  # :confirmable, :lockable, :timeoutable, :recoverable, :rememberable
-  devise :database_authenticatable, :omniauthable, :registerable,
-         :trackable, omniauth_providers: [:facebook, :twitter]
+  # :confirmable, :lockable, :timeoutable
+  devise :database_authenticatable, :omniauthable, :registerable, :trackable,
+    :rememberable, :recoverable,
+    omniauth_providers: %i(facebook twitter),
+    authentication_keys: %i(email_username)
 
   enumerize :role, in: { user: 0, admin: 1, editor: 2 }, default: :user, scope: true
 
   has_many :activities,    dependent: :destroy
   has_many :channel_works, dependent: :destroy
   has_many :checkins,      dependent: :destroy
+  has_many :db_comments, dependent: :destroy
   has_many :finished_tips, dependent: :destroy
   has_many :follows,       dependent: :destroy
   has_many :followings,    through:   :follows
   has_many :latest_statuses, dependent: :destroy
-  has_many :r_likes,       dependent: :destroy, class_name: 'Like'
+  has_many :r_likes, dependent: :destroy, class_name: "Like"
   has_many :notifications, dependent: :destroy
   has_many :providers,     dependent: :destroy
   has_many :receptions,    dependent: :destroy
@@ -75,9 +84,32 @@ class User < ActiveRecord::Base
   has_one  :profile,       dependent: :destroy
   has_one  :setting,       dependent: :destroy
 
-  validates :email, presence: true, uniqueness: true, email: true
-  validates :username, presence: true, uniqueness: true, length: { maximum: 20 },
-                       format: { with: /\A[A-Za-z0-9_]+\z/ }
+  validates :email,
+    presence: true,
+    uniqueness: { case_sensitive: false },
+    email: true
+  validates :password, length: { in: Devise.password_length }, allow_blank: true
+  validates :username,
+    presence: true,
+    uniqueness: { case_sensitive: false },
+    length: { maximum: 20 },
+    format: { with: /\A[A-Za-z0-9_]+\z/ }
+
+  # Override the Devise's `find_for_database_authentication`
+  # https://github.com/plataformatec/devise/wiki/How-To:-Allow-users-to-sign-in-using-their-username-or-email-address
+  def self.find_for_database_authentication(warden_conditions)
+    conditions = warden_conditions.dup
+    email_username = conditions.delete(:email_username)
+
+    if email_username.present?
+      where(conditions.to_h).where([
+        "LOWER(email) = :value OR LOWER(username) = :value",
+        value: email_username.downcase
+      ]).first
+    elsif conditions.key?(:email) || conditions.key?(:username)
+      where(conditions.to_h).first
+    end
+  end
 
   def checking_works
     @checking_works ||= CheckingWorks.new(read_attribute(:checking_works))
@@ -103,22 +135,27 @@ class User < ActiveRecord::Base
     @social_friends ||= UserSocialFriendsQuery.new(self)
   end
 
-  def build_relations(oauth)
-    self.providers.build do |p|
-      p.name             = oauth[:provider]
-      p.uid              = oauth[:uid]
-      p.token            = oauth[:credentials][:token]
-      p.token_expires_at = oauth[:credentials][:expires_at]
-      p.token_secret     = oauth[:credentials][:secret]
+  def build_relations(oauth = nil)
+    if oauth.present?
+      providers.build do |p|
+        p.name = oauth[:provider]
+        p.uid = oauth[:uid]
+        p.token = oauth[:credentials][:token]
+        p.token_expires_at = oauth[:credentials][:expires_at]
+        p.token_secret = oauth[:credentials][:secret]
+      end
+
+      build_profile do |p|
+        p.name = oauth[:info][:name].presence || oauth[:info][:nickname]
+        p.description = oauth[:info][:description]
+        image_url = get_large_avatar_image(oauth[:provider], oauth[:info][:image])
+        p.tombo_avatar = URI.parse(image_url)
+      end
+    else
+      build_profile(name: username)
     end
 
-    self.build_profile do |p|
-      p.name         = oauth[:info][:name].presence || oauth[:info][:nickname]
-      p.description  = oauth[:info][:description]
-      p.tombo_avatar = URI.parse(get_large_avatar_image(oauth[:provider], oauth[:info][:image]))
-    end
-
-    self.build_setting
+    build_setting
 
     self
   end
@@ -177,7 +214,7 @@ class User < ActiveRecord::Base
     latest_statuses.find_by(work: work)&.kind.presence || "no_select"
   end
 
-  def ga_uid
+  def encoded_id
     Digest::SHA256.hexdigest(id.to_s)
   end
 

@@ -1,0 +1,143 @@
+en:
+  search_with_keyword: Search...
+  messages:
+    common:
+      join_annict: Join Annict
+      see_more: See More
+      welcome_back: Welcome back!
+      welcome_to_annict: Welcome to Annict!
+    are_you_sure: Are you sure?
+    home:
+      index:
+        there_are_no_activities: There are no activities
+      index_guest:
+        hero_description_html: Explore the anime database, track anime you are watching<br>and see what friends are watching.
+        hero_description_mobile_html: Track anime you are watching<br>and see what friends are watching.
+        hero_title: The platform for Anime Addicts.
+        sign_up: Start tracking
+    components:
+      status_selector:
+        select_status: Select Status
+    oauth_users:
+      new:
+        sign_up_with_oauth: Sign Up with %{provider_name}
+    passwords:
+      new:
+        forgot_your_password: Forgot your password?
+    registrations:
+      new:
+        sign_in_link_html: Already have an account? %{link}
+        start_with_facebook: Start with Facebook
+        start_with_twitter: Start with Twitter
+        username_preview: "Your profile will be:"
+        username_preview_mobile: "Your profile:"
+    sessions:
+      new:
+        forgot_password: Forgot password?
+        sign_in_with_facebook: Sign in with Facebook
+        sign_in_with_twitter: Sign in with Twitter
+        sign_up_link_html: Don't have an account? %{link}
+  resources:
+    character:
+      created: Character created
+      edit: Edit character
+      new_characters: New characters
+      character_list: Character list
+      there_are_no_characters: There are no characters
+      updated: Character updated
+    cast:
+      created: Cast created
+      deleted: Cast deleted
+      new_casts: New casts
+      cast_list: Cast list
+      there_are_no_casts: There are no casts
+      unpublished: Cast unpublished
+      updated: Cast updated
+    db_comment:
+      write_some_comments: Write some comments...
+    episode:
+      created: Episode created
+      edit_episodes: Edit episodes
+      episodes_list: Episode list
+      new_episodes: New episodes
+      no_episodes: No episodes
+      previous_episode: Previous episode
+      there_are_no_episodes: There are no episodes
+      updated: Episode updated
+    organization:
+      created: Organization created
+      deleted: Organization deleted
+      go_to_organization: Go To Organization
+      new_organization: New Organization
+      twitter_hashtag_placeholder: e.g. paworks_info
+      twitter_hashtag_en_placeholder: e.g. paworks_eng
+      unpublished: Organization unpublished
+      updated: Organization updated
+      organization_list: Organization List
+    person:
+      created: Person created
+      deleted: Person deleted
+      go_to_person: Go To Person
+      new_person: New Person
+      twitter_hashtag_placeholder: e.g. nazukakaori
+      unpublished: Person unpublished
+      updated: Person updated
+      person_list: Person List
+    program:
+      created: Program created
+      new_programs: New programs
+      program_list: Program list
+      started_at_eg: e.g. 2015-04-01 23:00
+      there_are_no_programs: There are no programs
+      updated: Program updated
+    season:
+      yearly:
+        winter: "Winter %{year}"
+        spring: "Spring %{year}"
+        summer: "Summer %{year}"
+        autumn: "Fall %{year}"
+    staff:
+      created: Staff created
+      deleted: Staff deleted
+      new_casts: New staffs
+      cast_list: Staff list
+      there_are_no_staffs: There are no staffs
+      unpublished: Staff unpublished
+      updated: Staff updated
+    work:
+      aasm_state:
+        published: Published
+        hidden: Hidden
+      created: Work created
+      go_to_work: Go to work
+      new_work: New work
+      no_images: No work images
+      twitter_hashtag_placeholder: e.g. なのん
+      twitter_username_placeholder: e.g. nonnontv
+      updated: Work updated
+      work_list: Work List
+  words:
+    ago: ago
+    airing_anime: Airing Anime
+    all: All
+    annict_api: Annict API
+    annict_db: Annict DB
+    delete: Delete
+    edit: Edit
+    error: Error
+    first: First
+    hide: Hide
+    last: Last
+    next: Next
+    or: OR
+    popular_airing_anime: Popular Airing Anime
+    previous: Prev
+    release_on: Release on
+    season: Season
+    sign_out: Sign Out
+    site_name: Annict
+    state: State
+    state_change: State change
+    syobocal: Syobocal
+    title: Title
+    work_image: Work image

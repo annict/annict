@@ -38,7 +38,7 @@
       h2.text-center = t('stats.weekly_checkins')
       - if @user.checkins_count > 0
         .ann-user-checkin-chart.wrapper data-labels="#{@graph_labels}" data-values="#{@graph_values}"
-          - if browser.mobile?
+          - if browser.device.mobile?
             canvas width='285' height='150'
           - else
             canvas width='460' height='200'

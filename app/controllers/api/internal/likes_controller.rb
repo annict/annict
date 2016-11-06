@@ -58,7 +58,7 @@ module Api
         recipient = recipient_model.find(recipient_id)
 
         current_user.like_r(recipient)
-        ga_client.events.create("likes", "create")
+        keen_client.likes.create(current_user)
 
         head 200
       end

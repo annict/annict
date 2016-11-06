@@ -1,0 +1,46 @@
+.c-tabbar.row.w-100.mx-0.u-lh-0
+  = link_to root_path, class: "col-xs text-xs-center" do
+    = icon "home", class: "d-block"
+    span.c-tabbar__text = t "words.home"
+  - if user_signed_in?
+    = link_to programs_path, class: "col-xs text-xs-center" do
+      = icon "calendar-o", class: "d-block"
+      span.c-tabbar__text = t "head.title.programs.index"
+    = link_to user_works_path(current_user.username, :watching), class: "col-xs text-xs-center" do
+      = icon "play-circle-o", class: "d-block"
+      span.c-tabbar__text = t "words.watching"
+    = link_to season_works_path(slug: ENV.fetch("ANNICT_CURRENT_SEASON")), class: "col-xs text-xs-center" do
+      = icon "television", class: "d-block"
+      span.c-tabbar__text = t "words.airing"
+    .c-tabbar__more.col-xs.text-xs-center data-toggle="dropdown"
+      = icon "bars", class: "d-block"
+      span.c-tabbar__text = t "words.more"
+    .dropdown-menu
+      = link_to t("words.profile"), user_path(current_user.username), class: "dropdown-item p-1"
+      = link_to notifications_path, class: "dropdown-item p-1" do
+        = t "head.title.notifications.index"
+        - if current_user.notifications_count > 0
+          span.c-navbar__notifications-count--in-dropdown
+            = current_user.notifications_count
+      = link_to t("head.title.friends.index"), friends_path, class: "dropdown-item p-1"
+      = link_to t("head.title.channels.index"), channels_path, class: "dropdown-item p-1"
+      = link_to t("words.settings"), profile_path, class: "dropdown-item p-1"
+      = link_to t("words.annict_db"), db_root_path, class: "dropdown-item p-1"
+      = link_to t("words.annict_api"), "https://annict.wikihub.io/wiki/api", target: "_blank", class: "dropdown-item p-1"
+      = link_to t("head.title.pages.about"), about_path, class: "dropdown-item p-1"
+      = link_to t("words.sign_out"), destroy_user_session_path, method: "delete", class: "dropdown-item p-1"
+  - else
+    = link_to season_works_path(slug: ENV.fetch("ANNICT_CURRENT_SEASON")), class: "col-xs text-xs-center" do
+      = icon "television", class: "d-block"
+      span.c-tabbar__text = t "words.airing"
+    = link_to new_user_registration_path, class: "col-xs text-xs-center" do
+      = icon "rocket", class: "d-block"
+      span.c-tabbar__text = t "head.title.registrations.new"
+    = link_to about_path, class: "col-xs text-xs-center" do
+      = icon "lightbulb-o", class: "d-block"
+      span.c-tabbar__text = t "head.title.pages.about"
+    .c-tabbar__more.col-xs.text-xs-center data-toggle="dropdown"
+      = icon "bars", class: "d-block"
+      span.c-tabbar__text = t "words.more"
+    .dropdown-menu
+      = link_to t("head.title.sessions.new"), new_user_session_path, class: "dropdown-item p-1"

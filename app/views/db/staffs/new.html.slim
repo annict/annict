@@ -1,9 +1,30 @@
-= render "db/works/header", work: @work
+- title @work.title
 
-= render "create_type_tab", work: @work, staff: @staff
+.l-topbar.container-fluid.px-1
+  .row.flex-items-xs-between
+    .col-xs-8
+      = render "db/application/topbar_title", parent: @work, child: t("resources.staff.new_staffs")
+    .col-xs.text-xs-right
+      = link_to work_path(@work), class: "btn btn-outline-primary", target: "_blank" do
+        = icon "external-link"
+        = t "resources.work.go_to_work"
 
-.row
-  .col-sm-7
-    = render "form", work: @work, staff: @staff
-  .col-sm-5
-    = render "sidebar"
+= render "db/works/subnav", work: @work
+
+.container-fluid.p-1
+  .row
+    .col-xs-6
+      .c-card.p-1
+        = form_for [:db, @form], url: db_work_staffs_path(@work) do |f|
+          = render "application/components/error_panel", resource: f.object
+
+          .form-group.row
+            = f.label :rows, class: "col-sm-3 col-form-label c-label-required"
+            .col-sm-9
+              = f.text_area :rows, class: "form-control", autofocus: true, required: true, rows: 30
+
+          .form-group.row
+            .offset-sm-3.col-sm-9
+              = f.submit t("helpers.submit.create"), class: "btn btn-primary"
+    .col-xs-6
+      = render "sidebar"

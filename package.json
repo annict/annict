@@ -1,17 +1,22 @@
 {
   "name": "annict",
   "dependencies": {
-    "browserify": "^13.1.0",
-    "browserify-incremental": "^3.0.1",
-    "coffeeify": "^2.0.1",
-    "linkifyjs": "^2.0.0-beta.9",
-    "lodash": "^4.6.1",
-    "moment": "^2.12.0",
-    "mousetrap": "^1.5.3",
-    "vue": "^2.0.5",
-    "vue-infinite-scroll": "^2.0.0"
+    "browserify": "13.1.0",
+    "browserify-incremental": "3.1.1",
+    "coffeeify": "2.0.1",
+    "keen-tracking": "1.0.5",
+    "linkifyjs": "2.1.3",
+    "lodash": "4.16.4",
+    "moment": "2.15.1",
+    "mousetrap": "1.6.0",
+    "turbolinks": "5.0.0",
+    "vue": "2.0.5",
+    "vue-mugen-scroll": "0.2.1"
   },
   "engines": {
-    "node": "~> 4.3.1"
+    "node": "~> 6.9.1"
+  },
+  "devDependencies": {
+    "coffeelint": "1.16.0"
   }
 }

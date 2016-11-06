@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 # == Schema Information
 #
 # Table name: programs
@@ -23,16 +24,42 @@
 
 class Program < ActiveRecord::Base
   include DbActivityMethods
-  include ProgramCommon
 
-  has_paper_trail only: DIFF_FIELDS
+  DIFF_FIELDS = %i(channel_id episode_id started_at rebroadcast).freeze
 
-  has_many :draft_programs, dependent: :destroy
+  attr_accessor :time_zone
+
+  belongs_to :channel
+  belongs_to :episode
+  belongs_to :work, touch: true
+  has_many :db_activities, as: :trackable, dependent: :destroy
+  has_many :db_comments, as: :resource, dependent: :destroy
+
+  validates :channel_id, presence: true
+  validates :episode_id, presence: true
+  validates :started_at, presence: true
 
   scope :episode_published, -> { joins(:episode).merge(Episode.published) }
   scope :work_published, -> { joins(:work).merge(Work.published) }
 
+  before_save :calc_for_timezone
+
   def broadcasted?(time = Time.now.in_time_zone("Asia/Tokyo"))
     time > started_at.in_time_zone("Asia/Tokyo")
+  end
+
+  def calc_for_timezone
+    started_at = ActiveSupport::TimeZone.new(time_zone).local_to_utc(self.started_at)
+    self.started_at = started_at
+    self.sc_last_update = Time.zone.now
+  end
+
+  def to_diffable_hash
+    data = self.class::DIFF_FIELDS.each_with_object({}) do |field, hash|
+      hash[field] = send(field)
+      hash
+    end
+
+    data.delete_if { |_, v| v.blank? }
   end
 end

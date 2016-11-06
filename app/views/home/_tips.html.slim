@@ -1,8 +1,8 @@
-.content
-  .tips
-    .container
-      - if current_user.tips.unfinished.present?
-        h2 Annictにようこそ
-        p Annictでできることを簡単にまとめてみました。良かったらご覧ください。
-        - current_user.tips.unfinished.each do |t|
-          = render 'tip_modal', tip: t
+.p-tips.c-card.mb-1
+  .container.py-1
+    h2.text-xs-center.mb-0
+      - if current_user.tips.unfinished_for_new_user.present?
+        = t "messages.common.welcome_to_annict"
+      - else
+        = t "words.tips"
+    c-tips

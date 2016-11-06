@@ -1,1 +1,0 @@
-AnnictOld.angular.controller 'ApplicationCtrl', ($scope) ->

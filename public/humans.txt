@@ -5,7 +5,7 @@
 
 
 /* SITE */
-  Last update: 2014/08/02
-	Language: Japanese
+  Last update: 2016/10/26
+	Language: Japanese, English
 	Doctype: HTML5
-	Software: Ruby on Rails, Angular.js, RubyMine
+	Software: Ruby on Rails 5, Vue.js 2, PostgreSQL 9.5

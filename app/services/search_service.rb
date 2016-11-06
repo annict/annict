@@ -9,15 +9,19 @@ class SearchService
   end
 
   def works
-    collection(Work).search(title_or_title_kana_cont: @q).result
+    collection(Work).search(title_or_title_ro_or_title_en_or_title_kana_cont: @q).result
   end
 
   def people
-    collection(Person).search(name_or_name_kana_cont: @q).result
+    collection(Person).search(name_or_name_en_or_name_kana_cont: @q).result
   end
 
   def organizations
-    collection(Organization).search(name_or_name_kana_cont: @q).result
+    collection(Organization).search(name_or_name_en_or_name_kana_cont: @q).result
+  end
+
+  def characters
+    collection(Character).search(name_or_name_en_or_name_kana_cont: @q).result
   end
 
   private

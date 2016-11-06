@@ -1,8 +1,8 @@
 coffeescript:
-  enabled: false
+  config_file: coffeelint.json
 
 ruby:
   config_file: .rubocop.yml
 
 scss:
-  enabled: false
+  config_file: .scss-lint.yml

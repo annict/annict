@@ -1,0 +1,36 @@
+.c-tabbar {
+  background-color: $color-white;
+  bottom: 0;
+  box-shadow: 1px 0 2px $color-cadet;
+  height: 50px;
+  padding: 4px 0;
+  position: fixed;
+
+  a {
+    color: $body-color;
+  }
+
+  .col-xs {
+    padding: 0 .5rem;
+
+    i {
+      font-size: 1.5rem;
+      margin-bottom: .5rem;
+    }
+  }
+
+  &__text {
+    font-size: .8rem;
+  }
+
+  .dropdown-menu {
+    border: 0;
+    border-left: 1px solid $dropdown-border-color;
+    border-top: 1px solid $dropdown-border-color;
+    bottom: 51px;
+    left: initial;
+    right: 0;
+    top: auto;
+    width: 80%;
+  }
+}
