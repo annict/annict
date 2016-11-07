@@ -71,7 +71,7 @@ GEM
       mime-types
       unf
     ast (2.3.0)
-    autoprefixer-rails (6.5.1.1)
+    autoprefixer-rails (6.5.2)
       execjs
     awesome_print (1.7.0)
     aws-sdk (2.6.18)
@@ -400,7 +400,7 @@ GEM
       mime-types (>= 1.16, < 4)
     memoizable (0.4.2)
       thread_safe (~> 0.3, >= 0.3.1)
-    memory_profiler (0.9.6)
+    memory_profiler (0.9.7)
     meta-tags (2.3.1)
       actionpack (>= 3.2.0, <= 5.1.0)
     method_source (0.8.2)
@@ -471,7 +471,7 @@ GEM
       coolline (~> 0.5)
     pry-rails (0.3.4)
       pry (>= 0.9.10)
-    public_suffix (2.0.3)
+    public_suffix (2.0.4)
     puma (3.6.0)
     pundit (1.1.0)
       activesupport (>= 3.0.0)
