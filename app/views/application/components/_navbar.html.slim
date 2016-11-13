@@ -1,6 +1,9 @@
-nav.c-navbar.navbar.navbar-light class="#{transparent ? 'is-transparent' : 'navbar-fixed-top'}"
-  = link_to root_path, class: "navbar-brand bg-#{transparent ? 'transparent' : ''}" do
-    = image_tag "logos/color-#{transparent ? 'white' : 'mizuho'}.png", size: "25x30", alt: "Annict"
+- is_transparent = local_assigns.fetch(:is_transparent, false)
+- is_on_cover_image = local_assigns.fetch(:is_on_cover_image, false)
+
+nav.c-navbar.navbar class="#{is_transparent ? 'navbar-dark is-transparent' : 'navbar-light navbar-fixed-top'} #{is_on_cover_image ? 'is-on-cover-image' : ''}"
+  = link_to root_path, class: "navbar-brand" do
+    = image_tag "logos/color-#{is_transparent ? 'white' : 'mizuho'}.png", size: "25x30", alt: "Annict"
   ul.nav.navbar-nav
     - if user_signed_in?
       li.nav-item
@@ -27,7 +30,7 @@ nav.c-navbar.navbar.navbar-light class="#{transparent ? 'is-transparent' : 'navb
     - if user_signed_in?
       li.nav-item.dropdown
         = link_to user_path(current_user.username), class: "nav-link" do
-          = annict_image_tag(current_user.profile, :tombo_avatar, size: "30x30", alt: current_user.profile.name, class: "rounded-circle")
+          = ann_image_tag(current_user.profile, :tombo_avatar, size: "30x30", alt: current_user.profile.name, class: "rounded-circle")
         - if current_user.notifications_count > 0
             .c-navbar__notifications-count
               = current_user.notifications_count

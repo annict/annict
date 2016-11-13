@@ -5,9 +5,9 @@
 }
 
 .btn-twitter {
-  @include button-variant($color-white, $color-twitter, $color-twitter);
+  @include button-variant($ann-color-white, $ann-color-twitter, $ann-color-twitter);
 }
 
 .btn-facebook {
-  @include button-variant($color-white, $color-facebook, $color-facebook);
+  @include button-variant($ann-color-white, $ann-color-facebook, $ann-color-facebook);
 }

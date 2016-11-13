@@ -1,11 +1,11 @@
 .c-subnav {
-  background-color: $color-white;
-  box-shadow: 0 2px 2px -2px $color-cadet;
+  background-color: $ann-color-white;
   height: 4.5rem;
   line-height: 4.5rem;
 
   &--divided {
     border-top: solid .01rem $hr-border-color;
+    box-shadow: 0 2px 2px -2px $ann-color-cadet;
   }
 
   ul {
@@ -22,11 +22,11 @@
 
   a {
     display: inline-block;
-    height: 4.46rem;
+    height: 4.47rem;
     width: 100%;
   }
 
   &__link--active {
-    border-bottom: solid .15rem $color-mizuho;
+    border-bottom: solid .15rem $ann-color-mizuho;
   }
 }

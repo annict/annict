@@ -169,6 +169,9 @@ GEM
       responders
       warden (~> 1.2.3)
     diff-lcs (1.2.5)
+    dmmyix (0.1.0)
+      mini_magick (~> 4.5.0)
+      rails (~> 5.0.0, >= 5.0.0.1)
     docile (1.1.5)
     domain_name (0.5.20161021)
       unf (>= 0.0.5, < 1.0.0)
@@ -710,6 +713,7 @@ DEPENDENCIES
   delayed_job_active_record
   derailed_benchmarks
   devise
+  dmmyix
   doorkeeper (>= 4.2.0)
   draper (>= 3.0.0.pre1)
   email_validator

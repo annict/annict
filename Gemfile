@@ -73,6 +73,7 @@ gem "virtus"
 
 group :development, :test do
   gem "awesome_print"
+  gem "dmmyix"
   gem "hirb-unicode-steakknife"
   gem "hirb"
   gem "pry-alias"

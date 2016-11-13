@@ -1,7 +1,10 @@
 # frozen_string_literal: true
 
 Rails.application.routes.draw do
-  mount LetterOpenerWeb::Engine, at: "/low" if Rails.env.development?
+  if Rails.env.development?
+    mount LetterOpenerWeb::Engine, at: "/low"
+    mount Dmmyix::Engine, at: "/dmmyix"
+  end
 
   get "dummy_image", to: "application#dummy_image" if Rails.env.test?
 

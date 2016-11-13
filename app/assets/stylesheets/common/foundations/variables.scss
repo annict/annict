@@ -1,23 +1,30 @@
-$color-outer-space: #343434;
-$color-mine-shaft: #404040;
-$color-river: #5f697a;
+// Color
 
-$color-cadet: rgba(43, 59, 93, .29);
+$ann-color-outer-space: #343434;
+$ann-color-mine-shaft: #404040;
+$ann-color-river: #5f697a;
 
-$color-haze: #f9f9fb;
-$color-white: #fff;
+$ann-color-cadet: rgba(43, 59, 93, .29);
 
-$color-java: #3fc1c9;
-$color-san-juan: #466c95;
+$ann-color-haze: #f9f9fb;
+$ann-color-white: #fff;
 
-$color-selective-yellow: #ffb400;
+$ann-color-java: #3fc1c9;
+$ann-color-san-juan: #466c95;
 
-$color-mizuho: #f85b73;
-$color-kei: #c6baa2;
-$color-musani: #ec6303; // 武蔵野アニメーション
-$color-miyamori: #d8a57a;
-$color-zuka: #ae454c;
-$color-miyazuka: #c57965; // miyamori, zukaとの中間色
+$ann-color-selective-yellow: #ffb400;
 
-$color-facebook: #2e6499;
-$color-twitter: #24b1ec;
+$ann-color-mizuho: #f85b73;
+$ann-color-kei: #c6baa2;
+$ann-color-musani: #ec6303; // 武蔵野アニメーション
+$ann-color-miyamori: #d8a57a;
+$ann-color-zuka: #ae454c;
+$ann-color-miyazuka: #c57965; // miyamori, zukaとの中間色
+
+$ann-color-facebook: #2e6499;
+$ann-color-twitter: #24b1ec;
+
+
+// Navbar
+
+$ann-navbar-height: 54px;

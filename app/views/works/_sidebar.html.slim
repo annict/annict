@@ -1,0 +1,30 @@
+= image_tag ann_image_url(@work.work_image, :attachment, size: "280x373"), class: "img-fluid rounded"
+h2 = t "words.work_info"
+ul.list-unstyled
+  li
+    = icon "tv"
+    = @work.media.text
+  - if @work.decorate.release_season.present?
+    li
+      = icon "calendar-o"
+      = @work.decorate.release_season_link
+  - if @work.official_site_url.present?
+    li
+      = icon "home"
+      = link_to t("words.official_site"), @work.official_site_url, target: "_blank"
+  - if @work.wikipedia_url.present?
+    li
+      = icon "link"
+      = link_to t("words.wikipedia"), @work.wikipedia_url, target: "_blank"
+  - if @work.sc_tid.present?
+    li
+      = icon "link"
+      = @work.decorate.syobocal_link(t("words.syobocal"))
+  - if @work.twitter_username.present?
+    li
+      = icon "twitter"
+      = @work.decorate.twitter_username_link
+  - if @work.twitter_hashtag.present?
+    li
+      = icon "twitter"
+      = @work.decorate.twitter_hashtag_link

@@ -9,7 +9,7 @@ record = activity.trackable
     title: episode.work.decorate.local_title
   },
   item: {
-    image_url: annict_image_url(episode.work.item, :tombo_image, size: "125x125")
+    image_url: ann_image_url(episode.work.item, :tombo_image, size: "125x125")
   },
   episode: {
     id: episode.id,

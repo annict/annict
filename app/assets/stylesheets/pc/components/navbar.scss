@@ -1,9 +1,19 @@
 .c-navbar {
+  &.is-cover-image {
+    @include linear-gradient(to top, transparent, rgba(0, 0, 0, .15));
+
+    .navbar-nav {
+      .nav-link {
+        color: $ann-color-white;
+      }
+    }
+  }
+
   &:not(.is-transparent) {
-    background-color: $color-white;
-    box-shadow: 0 0 1px $color-cadet;
-    height: 58px;
-    line-height: 58px;
+    background-color: $ann-color-white;
+    box-shadow: 0 0 1px $ann-color-cadet;
+    height: $ann-navbar-height;
+    line-height: $ann-navbar-height;
     padding: 0 1rem;
 
     .navbar-nav {
@@ -21,7 +31,7 @@
     }
 
     .nav-item {
-      height: 58px;
+      height: $ann-navbar-height;
     }
 
     .c-search-form {
@@ -31,7 +41,7 @@
 
     .dropdown-menu {
       border: 0;
-      box-shadow: 0 0 1px $color-cadet;
+      box-shadow: 0 0 1px $ann-color-cadet;
       left: -15px;
       margin: 0;
 

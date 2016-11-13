@@ -4,14 +4,14 @@
 - set_meta_tags(title: title, description: description, keywords: keywords, reverse: true, prefix: false)
 
 - content_for :head do
-  = render "application/v2/twitter", title: title, description: description, image: annict_image_url(@work.item, :tombo_image, size: "640x640")
+  = render "application/v2/twitter", title: title, description: description, image: ann_image_url(@work.item, :tombo_image, size: "640x640")
 
 = render "application/v1/navbar"
 
 .content
   .wrapper
     .work-profile
-      .work-image style="background-image: url(#{annict_image_url(@work.item, :tombo_image, msize: '320x320', size: '640x640')});"
+      .work-image style="background-image: url(#{ann_image_url(@work.item, :tombo_image, msize: '320x320', size: '640x640')});"
       .wrapper
         .work-title
           h1

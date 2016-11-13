@@ -9,7 +9,7 @@ json = {
     title: work.title
   },
   item: {
-    image_url: annict_image_url(work.item, :tombo_image, size: "140x140")
+    image_url: ann_image_url(work.item, :tombo_image, size: "140x140")
   },
   multiple_record: {
     id: multiple_record.id,
