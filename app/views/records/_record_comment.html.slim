@@ -2,7 +2,7 @@
   .row
     .a-avatar.columns.shrink
       = link_to user_path(comment.user.username) do
-        = annict_image_tag comment.user.profile, :tombo_avatar, msize: "50x50", size: "50x50", class: "ann-img-circle"
+        = ann_image_tag comment.user.profile, :tombo_avatar, msize: "50x50", size: "50x50", class: "ann-img-circle"
     .a-body.columns
       .a-top.clearfix
         .float-left

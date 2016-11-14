@@ -17,7 +17,7 @@
             = link_to work_path(work) do
               .work.col-xs-4
                 .thumbnail
-                  = annict_image_tag(work.item, :tombo_image, msize: "80x80", size: "140x140", alt: work.title)
+                  = ann_image_tag(work.item, :tombo_image, msize: "80x80", size: "140x140", alt: work.title)
                   .caption
                     h3 = work.title
 

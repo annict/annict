@@ -26,7 +26,7 @@
               = "#{current_user.checkins_count_in(episode)}回見ました"
         .a-work-image.small-4.columns
           = link_to work_path(work) do
-            = annict_image_tag work.item, :tombo_image, size: "340x340", alt: work.title
+            = ann_image_tag work.item, :tombo_image, size: "340x340", alt: work.title
       - if episode.next_episode.present?
         .a-next-episode.has-tip.top data-tooltip="" title="#{episode.next_episode.number}"
           = link_to work_episode_path(work, episode.next_episode) do

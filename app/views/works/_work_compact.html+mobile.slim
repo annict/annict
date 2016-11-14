@@ -4,7 +4,7 @@
       .basic-info
         .left
           = link_to work_path(work) do
-            = annict_image_tag(work.item, :tombo_image, size: "60x60", alt: work.title)
+            = ann_image_tag(work.item, :tombo_image, size: "60x60", alt: work.title)
           .statistics
             span.watchers-count
               i.fa.fa-eye

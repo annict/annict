@@ -49,7 +49,7 @@
           li
             .left
               = link_to work_path(work) do
-                = annict_image_tag(work.item, :tombo_image, msize: "60x60", size: "140x140", alt: work.title)
+                = ann_image_tag(work.item, :tombo_image, msize: "60x60", size: "140x140", alt: work.title)
             .right
               = link_to work_path(work) do
                 .work-title = work.title

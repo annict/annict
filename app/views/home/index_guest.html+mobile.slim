@@ -49,7 +49,7 @@
         - works.each do |work|
           .col-xs-6
             = link_to work_path(work), class: "p-top-other-works__image d-inline-block" do
-              = annict_image_tag(work.item, :tombo_image, size: "250x250", alt: work.decorate.local_title, class: "rounded img-fluid img-thumbnail")
+              = ann_image_tag(work.item, :tombo_image, size: "250x250", alt: work.decorate.local_title, class: "rounded img-fluid img-thumbnail")
             .c-watchers-count
               span.c-watchers-count__number.font-weight-bold = work.watchers_count
               span.c-watchers-count__text.text-muted Watchers

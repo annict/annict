@@ -22,7 +22,7 @@
     .p-top-work.c-card.p-1.mb-1
       .p-top-work__left.mr-1
         = link_to work_path(@season_top_work), class: "d-inline-block" do
-          = annict_image_tag(@season_top_work.item, :tombo_image, size: "250x250", alt: @season_top_work.decorate.local_title, class: "rounded img-thumbnail")
+          = ann_image_tag(@season_top_work.item, :tombo_image, size: "250x250", alt: @season_top_work.decorate.local_title, class: "rounded img-thumbnail")
         c-status-selector work-id="#{@season_top_work.id}" current-status-kind="no_select" is-signed-in="false"
       .p-top-work__right
         .c-watchers-count
@@ -52,7 +52,7 @@
           - works.each do |work|
             .col-xs-2
               = link_to work_path(work), class: "p-top-other-works__image d-inline-block" do
-                = annict_image_tag(work.item, :tombo_image, size: "250x250", alt: work.decorate.local_title, class: "rounded img-fluid img-thumbnail")
+                = ann_image_tag(work.item, :tombo_image, size: "250x250", alt: work.decorate.local_title, class: "rounded img-fluid img-thumbnail")
               .c-watchers-count
                 span.c-watchers-count__number.font-weight-bold = work.watchers_count
                 span.c-watchers-count__text.text-muted Watchers

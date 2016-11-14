@@ -7,7 +7,7 @@
       - @mute_users.each do |mute_user|
         li
           = link_to user_path(mute_user.muted_user.username) do
-            = annict_image_tag(mute_user.muted_user.profile, :tombo_avatar, size: "50x50", class: "img-circle")
+            = ann_image_tag(mute_user.muted_user.profile, :tombo_avatar, size: "50x50", class: "img-circle")
           = link_to mute_user.muted_user.profile.name.truncate(12), user_path(mute_user.muted_user.username), class: "profile-name"
           .pull-right
             = link_to "ミュート解除", mute_user_path(mute_user), class: "btn btn-primary btn-sm", data: { method: :delete, confirm: "解除しますか？" }
