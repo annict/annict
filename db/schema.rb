@@ -802,12 +802,12 @@ ActiveRecord::Schema.define(version: 20161104210958) do
     t.string   "title_kana",                       default: "",          null: false
     t.string   "title_ro",                         default: "",          null: false
     t.string   "title_en",                         default: "",          null: false
-    t.string   "official_site_en_url",             default: "",          null: false
-    t.string   "wikipedia_en_url",                 default: "",          null: false
+    t.string   "official_site_url_en",             default: "",          null: false
+    t.string   "wikipedia_url_en",                 default: "",          null: false
     t.text     "synopsis",                         default: "",          null: false
     t.text     "synopsis_en",                      default: "",          null: false
     t.string   "synopsis_source",                  default: "",          null: false
-    t.string   "synopsis_en_source",               default: "",          null: false
+    t.string   "synopsis_source_en",               default: "",          null: false
     t.integer  "mal_anime_id"
     t.index ["aasm_state"], name: "index_works_on_aasm_state", using: :btree
     t.index ["number_format_id"], name: "index_works_on_number_format_id", using: :btree
