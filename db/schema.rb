@@ -94,6 +94,7 @@ ActiveRecord::Schema.define(version: 20161111160501) do
 
   create_table "characters", force: :cascade do |t|
     t.string   "name",                                     null: false
+    t.string   "name_kana",          default: "",          null: false
     t.string   "name_en",            default: "",          null: false
     t.string   "kind",               default: "",          null: false
     t.string   "kind_en",            default: "",          null: false
@@ -115,17 +116,12 @@ ActiveRecord::Schema.define(version: 20161111160501) do
     t.string   "occupation_en",      default: "",          null: false
     t.text     "description",        default: "",          null: false
     t.text     "description_en",     default: "",          null: false
+    t.string   "aasm_state",         default: "published", null: false
     t.datetime "created_at",                               null: false
     t.datetime "updated_at",                               null: false
-    t.string   "name_kana",          default: "",          null: false
-    t.string   "aasm_state",         default: "published", null: false
-    t.integer  "poster_image_id"
-    t.integer  "cover_image_id"
     t.integer  "character_image_id"
     t.index ["character_image_id"], name: "index_characters_on_character_image_id", using: :btree
-    t.index ["cover_image_id"], name: "index_characters_on_cover_image_id", using: :btree
     t.index ["name", "kind"], name: "index_characters_on_name_and_kind", unique: true, using: :btree
-    t.index ["poster_image_id"], name: "index_characters_on_poster_image_id", using: :btree
   end
 
   create_table "checkins", force: :cascade do |t|
@@ -169,19 +165,13 @@ ActiveRecord::Schema.define(version: 20161111160501) do
     t.index ["work_id"], name: "index_comments_on_work_id", using: :btree
   end
 
-  create_table "cover_images", id: :integer, default: -> { "nextval('cover_images_id_seq1'::regclass)" }, force: :cascade do |t|
-    t.integer  "user_id",                 null: false
-    t.string   "resource_type",           null: false
-    t.integer  "resource_id",             null: false
-    t.string   "attachment_file_name",    null: false
-    t.integer  "attachment_file_size",    null: false
-    t.string   "attachment_content_type", null: false
-    t.datetime "attachment_updated_at",   null: false
-    t.datetime "created_at",              null: false
-    t.datetime "updated_at",              null: false
-    t.index ["resource_id", "resource_type"], name: "index_cover_images_on_resource_id_and_resource_type", using: :btree
-    t.index ["resource_type", "resource_id"], name: "index_cover_images_on_resource_type_and_resource_id", using: :btree
-    t.index ["user_id"], name: "index_cover_images_on_user_id", using: :btree
+  create_table "cover_images", force: :cascade do |t|
+    t.integer  "work_id",                null: false
+    t.string   "file_name",  limit: 510, null: false
+    t.string   "location",   limit: 510, null: false
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.index ["work_id"], name: "cover_images_work_id_idx", using: :btree
   end
 
   create_table "db_activities", force: :cascade do |t|
@@ -603,29 +593,12 @@ ActiveRecord::Schema.define(version: 20161111160501) do
     t.datetime "updated_at",                                null: false
     t.string   "name_en",             default: "",          null: false
     t.string   "nickname_en",         default: "",          null: false
-    t.string   "gender_en",           default: "",          null: false
     t.string   "url_en",              default: "",          null: false
     t.string   "wikipedia_url_en",    default: "",          null: false
     t.string   "twitter_username_en", default: "",          null: false
-    t.string   "blood_type_en",       default: "",          null: false
     t.index ["aasm_state"], name: "index_people_on_aasm_state", using: :btree
     t.index ["name"], name: "index_people_on_name", unique: true, using: :btree
     t.index ["prefecture_id"], name: "index_people_on_prefecture_id", using: :btree
-  end
-
-  create_table "poster_images", force: :cascade do |t|
-    t.integer  "user_id",                 null: false
-    t.string   "resource_type",           null: false
-    t.integer  "resource_id",             null: false
-    t.string   "attachment_file_name",    null: false
-    t.integer  "attachment_file_size",    null: false
-    t.string   "attachment_content_type", null: false
-    t.datetime "attachment_updated_at",   null: false
-    t.datetime "created_at",              null: false
-    t.datetime "updated_at",              null: false
-    t.index ["resource_id", "resource_type"], name: "index_poster_images_on_resource_id_and_resource_type", using: :btree
-    t.index ["resource_type", "resource_id"], name: "index_poster_images_on_resource_type_and_resource_id", using: :btree
-    t.index ["user_id"], name: "index_poster_images_on_user_id", using: :btree
   end
 
   create_table "prefectures", force: :cascade do |t|
@@ -808,7 +781,7 @@ ActiveRecord::Schema.define(version: 20161111160501) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.string   "time_zone",                          default: "", null: false
-    t.string   "reset_password_token",               default: ""
+    t.string   "reset_password_token"
     t.datetime "reset_password_sent_at"
     t.index ["confirmation_token"], name: "users_confirmation_token_key", unique: true, using: :btree
     t.index ["email"], name: "users_email_key", unique: true, using: :btree
@@ -864,13 +837,9 @@ ActiveRecord::Schema.define(version: 20161111160501) do
     t.string   "synopsis_source",                  default: "",          null: false
     t.string   "synopsis_source_en",               default: "",          null: false
     t.integer  "mal_anime_id"
-    t.integer  "poster_image_id"
-    t.integer  "cover_image_id"
     t.integer  "work_image_id"
     t.index ["aasm_state"], name: "index_works_on_aasm_state", using: :btree
-    t.index ["cover_image_id"], name: "index_works_on_cover_image_id", using: :btree
     t.index ["number_format_id"], name: "index_works_on_number_format_id", using: :btree
-    t.index ["poster_image_id"], name: "index_works_on_poster_image_id", using: :btree
     t.index ["sc_tid"], name: "works_sc_tid_key", unique: true, using: :btree
     t.index ["season_id"], name: "works_season_id_idx", using: :btree
     t.index ["work_image_id"], name: "index_works_on_work_image_id", using: :btree
@@ -887,8 +856,6 @@ ActiveRecord::Schema.define(version: 20161111160501) do
   add_foreign_key "character_images", "characters"
   add_foreign_key "character_images", "users"
   add_foreign_key "characters", "character_images"
-  add_foreign_key "characters", "cover_images"
-  add_foreign_key "characters", "poster_images"
   add_foreign_key "checkins", "episodes", name: "checkins_episode_id_fk", on_delete: :cascade
   add_foreign_key "checkins", "multiple_records"
   add_foreign_key "checkins", "oauth_applications"
@@ -897,7 +864,7 @@ ActiveRecord::Schema.define(version: 20161111160501) do
   add_foreign_key "comments", "checkins", name: "comments_checkin_id_fk", on_delete: :cascade
   add_foreign_key "comments", "users", name: "comments_user_id_fk", on_delete: :cascade
   add_foreign_key "comments", "works"
-  add_foreign_key "cover_images", "users"
+  add_foreign_key "cover_images", "works", name: "cover_images_work_id_fk", on_delete: :cascade
   add_foreign_key "db_activities", "users"
   add_foreign_key "draft_casts", "casts"
   add_foreign_key "draft_casts", "people"
@@ -947,7 +914,6 @@ ActiveRecord::Schema.define(version: 20161111160501) do
   add_foreign_key "oauth_access_tokens", "oauth_applications", column: "application_id"
   add_foreign_key "oauth_access_tokens", "users", column: "resource_owner_id"
   add_foreign_key "people", "prefectures"
-  add_foreign_key "poster_images", "users"
   add_foreign_key "profiles", "users", name: "profiles_user_id_fk", on_delete: :cascade
   add_foreign_key "programs", "channels", name: "programs_channel_id_fk", on_delete: :cascade
   add_foreign_key "programs", "episodes", name: "programs_episode_id_fk", on_delete: :cascade
@@ -963,9 +929,7 @@ ActiveRecord::Schema.define(version: 20161111160501) do
   add_foreign_key "syobocal_alerts", "works", name: "syobocal_alerts_work_id_fk", on_delete: :cascade
   add_foreign_key "work_images", "users"
   add_foreign_key "work_images", "works"
-  add_foreign_key "works", "cover_images"
   add_foreign_key "works", "number_formats"
-  add_foreign_key "works", "poster_images"
   add_foreign_key "works", "seasons", name: "works_season_id_fk", on_delete: :cascade
   add_foreign_key "works", "work_images"
 end
