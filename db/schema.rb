@@ -81,6 +81,7 @@ ActiveRecord::Schema.define(version: 20161104210958) do
 
   create_table "characters", force: :cascade do |t|
     t.string   "name",                                 null: false
+    t.string   "name_kana",      default: "",          null: false
     t.string   "name_en",        default: "",          null: false
     t.string   "kind",           default: "",          null: false
     t.string   "kind_en",        default: "",          null: false
@@ -102,10 +103,9 @@ ActiveRecord::Schema.define(version: 20161104210958) do
     t.string   "occupation_en",  default: "",          null: false
     t.text     "description",    default: "",          null: false
     t.text     "description_en", default: "",          null: false
+    t.string   "aasm_state",     default: "published", null: false
     t.datetime "created_at",                           null: false
     t.datetime "updated_at",                           null: false
-    t.string   "name_kana",      default: "",          null: false
-    t.string   "aasm_state",     default: "published", null: false
     t.index ["name", "kind"], name: "index_characters_on_name_and_kind", unique: true, using: :btree
   end
 
@@ -578,11 +578,9 @@ ActiveRecord::Schema.define(version: 20161104210958) do
     t.datetime "updated_at",                                null: false
     t.string   "name_en",             default: "",          null: false
     t.string   "nickname_en",         default: "",          null: false
-    t.string   "gender_en",           default: "",          null: false
     t.string   "url_en",              default: "",          null: false
     t.string   "wikipedia_url_en",    default: "",          null: false
     t.string   "twitter_username_en", default: "",          null: false
-    t.string   "blood_type_en",       default: "",          null: false
     t.index ["aasm_state"], name: "index_people_on_aasm_state", using: :btree
     t.index ["name"], name: "index_people_on_name", unique: true, using: :btree
     t.index ["prefecture_id"], name: "index_people_on_prefecture_id", using: :btree
@@ -768,7 +766,7 @@ ActiveRecord::Schema.define(version: 20161104210958) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.string   "time_zone",                          default: "", null: false
-    t.string   "reset_password_token",               default: ""
+    t.string   "reset_password_token"
     t.datetime "reset_password_sent_at"
     t.index ["confirmation_token"], name: "users_confirmation_token_key", unique: true, using: :btree
     t.index ["email"], name: "users_email_key", unique: true, using: :btree
@@ -804,12 +802,12 @@ ActiveRecord::Schema.define(version: 20161104210958) do
     t.string   "title_kana",                       default: "",          null: false
     t.string   "title_ro",                         default: "",          null: false
     t.string   "title_en",                         default: "",          null: false
-    t.string   "official_site_url_en",             default: "",          null: false
-    t.string   "wikipedia_url_en",                 default: "",          null: false
+    t.string   "official_site_en_url",             default: "",          null: false
+    t.string   "wikipedia_en_url",                 default: "",          null: false
     t.text     "synopsis",                         default: "",          null: false
     t.text     "synopsis_en",                      default: "",          null: false
     t.string   "synopsis_source",                  default: "",          null: false
-    t.string   "synopsis_source_en",               default: "",          null: false
+    t.string   "synopsis_en_source",               default: "",          null: false
     t.integer  "mal_anime_id"
     t.index ["aasm_state"], name: "index_works_on_aasm_state", using: :btree
     t.index ["number_format_id"], name: "index_works_on_number_format_id", using: :btree
