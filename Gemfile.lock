@@ -145,7 +145,7 @@ GEM
       thor (~> 0.19.1)
       tins (>= 1.6.0, < 2)
     daemons (1.2.4)
-    database_rewinder (0.7.0)
+    database_rewinder (0.7.1)
     debug_inspector (0.0.2)
     delayed_job (4.1.2)
       activesupport (>= 3.0, < 5.1)
