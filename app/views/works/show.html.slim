@@ -79,5 +79,5 @@
             .staffs-row.row
               - staffs.each do |staff|
                 .col-xs-4
-                  = staff.decorate.name_with_old_link
+                  = staff.decorate.local_name_with_old_link
                   .small = staff.decorate.role_name

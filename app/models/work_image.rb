@@ -20,7 +20,18 @@
 #
 
 class WorkImage < ApplicationRecord
+  include AASM
+
   has_attached_file :attachment
+
+  aasm do
+    state :published, initial: true
+    state :hidden
+
+    event :hide do
+      transitions from: :published, to: :hidden
+    end
+  end
 
   validates :attachment,
     attachment_presence: true,

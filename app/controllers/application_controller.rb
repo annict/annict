@@ -35,7 +35,7 @@ class ApplicationController < ActionController::Base
     root_path
   end
 
-  def set_work
+  def load_work
     @work = Work.published.find(params[:work_id])
   end
 

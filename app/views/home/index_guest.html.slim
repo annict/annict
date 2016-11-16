@@ -4,7 +4,7 @@
 - set_meta_tags(title: title, description: description, keywords: keywords, reverse: false)
 - set_page_category "top"
 
-= render "application/components/navbar", transparent: true
+= render "application/components/navbar", is_transparent: true
 
 .p-top-hero
   .p-top-hero__bg-image style="background-image: url(#{ann_image_url(@cover_image_work.item, :tombo_image, size: '640x640', blur: 200)});"
@@ -36,7 +36,7 @@
               - cache cast do
                 li.list-inline-item
                   = "#{cast.part}: "
-                  = cast.decorate.name_with_old_link
+                  = cast.decorate.local_name_with_old_link
         - if @season_top_work.staffs.present?
           .font-weight-bold = t "words.staff"
           ul.list-inline
@@ -44,7 +44,7 @@
               - cache staff do
                 li.list-inline-item
                   = "#{staff.decorate.role_name}: "
-                  = staff.decorate.name_with_old_link
+                  = staff.decorate.local_name_with_old_link
 
     .p-top-other-works.c-card.p-1
       - @season_works.each_slice(6).each do |works|

@@ -270,6 +270,8 @@ Rails.application.routes.draw do
     resources :checkins, only: [] do
       post :create_all, on: :collection
     end
+
+    resources :images, controller: :work_images, only: %i(index new create)
   end
 
   get "about",   to: "pages#about"

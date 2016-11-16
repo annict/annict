@@ -1,0 +1,40 @@
+- title = t "head.title.work_images.index", title: @work.decorate.local_title
+- description = meta_description(t("head.meta.description.works.show", title: @work.decorate.local_title))
+- keywords = meta_keywords(@work.title)
+- image_url = ann_image_tag(@work.work_image, :attachment, size: "640x")
+- set_meta_tags(title: title, description: description, keywords: keywords, og: { title: title, description: description, image: image_url }, reverse: true, prefix: false)
+- set_page_category "work_images_index"
+
+= render "application/components/navbar"
+
+.l-content.container.py-1
+  .row
+    .col-xs-3.pr-0
+      .card.container.py-1
+        = render "works/sidebar", work: @work
+    .col-xs-9
+      .card
+        .container.py-1
+          h1
+            - if locale_ja?
+              = @work.title
+            - else
+              - if @work.title_en.present?
+                = @work.title_en
+                small.text-muted
+                  = @work.title
+              - else
+                = @work.title
+        = render "works/subnav", work: @work
+
+      .card.mt-1.py-1.container
+        .text-xs-right
+          = link_to new_work_image_path(@work), class: "btn btn-primary" do
+            = icon "plus"
+            = t "resources.work_image.new"
+        - if @work.work_images.published.present?
+          - @work.work_images.published.each_slice(3).each do |images|
+            .row
+              - images.each do |image|
+                .col-xs-4
+                  = image_tag ann_image_url(image, :attachment, size: "280x373"), class: "img-fluid rounded"

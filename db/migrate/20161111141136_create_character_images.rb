@@ -9,11 +9,13 @@ class CreateCharacterImages < ActiveRecord::Migration[5.0]
       t.integer :attachment_file_size, null: false
       t.string :attachment_content_type, null: false
       t.datetime :attachment_updated_at, null: false
+      t.string :aasm_state, null: false, default: "published"
       t.timestamps null: false
     end
 
     add_index :character_images, :character_id
     add_index :character_images, :user_id
+    add_index :character_images, :aasm_state
 
     add_foreign_key :character_images, :characters
     add_foreign_key :character_images, :users
