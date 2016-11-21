@@ -28,13 +28,23 @@
         = render "works/subnav", work: @work
 
       .card.mt-1.py-1.container
-        .text-xs-right
-          = link_to new_work_image_path(@work), class: "btn btn-primary" do
+        .text-xs-right.mb-1
+          button.btn.btn-primary data-toggle="modal" data-target=".c-image-upload-modal"
             = icon "plus"
             = t "resources.work_image.new"
+          c-image-upload-modal upload-url="/api/internal/works/#{@work.id}/images" success-url="/works/#{@work.id}/images"
         - if @work.work_images.published.present?
           - @work.work_images.published.each_slice(3).each do |images|
             .row
               - images.each do |image|
                 .col-xs-4
                   = image_tag ann_image_url(image, :attachment, size: "280x373"), class: "img-fluid rounded"
+                  - if current_user.id == image.user_id
+                    .mt-zp25.text-xs-center
+                      = link_to t("words.delete"), work_image_path(@work, image), class: "btn btn-danger", data: { method: :delete, confirm: t("messages._common.are_you_sure") }
+                  - else
+
+= render "application/components/footer"
+
+- content_for :js_templates do
+  = render "application/js_templates/image_upload_modal"

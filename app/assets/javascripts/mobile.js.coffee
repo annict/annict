@@ -2,7 +2,7 @@
 #= require jquery_ujs
 #= require tether
 #= require bootstrap-sprockets
-#= require select2.full.min
+#= require select2-4.0.3.full
 
 Turbolinks = require "turbolinks"
 Vue = require "vue/dist/vue"

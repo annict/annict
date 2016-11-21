@@ -1,0 +1,49 @@
+$b: rgba(map-get($ann-color-shirobako, rb), .5);
+$a: rgba(map-get($ann-color-shirobako, a), .5);
+$k: rgba(map-get($ann-color-shirobako, ik), .5);
+$o: rgba(map-get($ann-color-shirobako, ho), .5);
+
+.c-spinner {
+  border: 0;
+  cursor: default;
+  position: relative;
+  transition: all 0s linear;
+  z-index: 100;
+
+  &::before {
+    background: rgba(255,255,255,.8);
+    content: "";
+    height: 100%;
+    left: 0;
+    position: absolute;
+    top: 0;
+    width: 100%;
+    z-index: 100;
+  }
+
+  &::after {
+    @include animation(ann-spin .7s infinite linear);
+    border-color: $b $a $k $o;
+    border-radius: 50%;
+    border-style: solid;
+    border-width: .2rem;
+    content: "";
+    height: 2rem;
+    left: 50%;
+    margin: -1rem 0 0 -1rem;
+    position: absolute;
+    top: 50%;
+    width: 2rem;
+    z-index: 101;
+  }
+}
+
+@include keyframes(ann-spin) {
+  0% {
+    @include transform(rotate(0deg));
+  }
+
+  100% {
+    @include transform(rotate(360deg));
+  }
+}

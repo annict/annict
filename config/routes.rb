@@ -75,11 +75,12 @@ Rails.application.routes.draw do
       resources :works, only: [] do
         get :friends
 
+        resource :latest_status, only: [:show]
+        resources :images, controller: :work_images, only: %i(create)
+
         resources :channels, only: [] do
           post :select, on: :collection
         end
-
-        resource :latest_status, only: [:show]
       end
     end
   end
@@ -271,7 +272,7 @@ Rails.application.routes.draw do
       post :create_all, on: :collection
     end
 
-    resources :images, controller: :work_images, only: %i(index new create)
+    resources :images, controller: :work_images, only: %i(index destroy)
   end
 
   get "about",   to: "pages#about"

@@ -1,0 +1,13 @@
+script#t-image-upload-modal type="x-template"
+  .c-image-upload-modal.modal
+    .modal-dialog
+      .modal-content :class='{ "c-spinner": isLoading }'
+        .modal-body
+          .c-image-upload-modal__dropzone v-show="!imageUrl"
+          .c-image-upload-modal__dropzone-preview v-show="!!imageUrl"
+            img.img-fluid :src="imageUrl"
+        .modal-footer
+          button.btn.btn-secondary type="button"
+            = t "words.close"
+          button.btn.btn-primary type="button" @click.prevent="upload"
+            = t "words.upload"

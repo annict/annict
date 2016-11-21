@@ -12,6 +12,9 @@
 #  attachment_updated_at   :datetime         not null
 #  created_at              :datetime         not null
 #  updated_at              :datetime         not null
+#  aasm_state              :string           default("published"), not null
+#  likes_count             :integer          default(0), not null
+#  dislikes_count          :integer          default(0), not null
 #
 # Indexes
 #
@@ -39,4 +42,24 @@ class WorkImage < ApplicationRecord
 
   belongs_to :work
   belongs_to :user
+  has_many :dislikes,
+    dependent: :destroy,
+    foreign_key: :recipient_id,
+    foreign_type: :recipient
+  has_many :likes,
+    dependent: :destroy,
+    foreign_key: :recipient_id,
+    foreign_type: :recipient
+
+  scope :sort_by_popular, -> { order("(likes_count - dislikes_count) DESC") }
+
+  before_destroy :change_work_id
+
+  private
+
+  def change_work_id
+    return if work.work_image_id != id
+    work_image = work.work_images.where.not(id: id).sort_by_popular.first
+    work.update_column(:work_image_id, work_image&.id)
+  end
 end

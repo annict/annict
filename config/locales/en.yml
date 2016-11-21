@@ -1,12 +1,12 @@
 en:
   search_with_keyword: Search...
   messages:
-    common:
+    _common:
+      are_you_sure: Are you sure?
       join_annict: Join Annict
       see_more: See More
       welcome_back: Welcome back!
       welcome_to_annict: Welcome to Annict!
-    are_you_sure: Are you sure?
     home:
       index:
         there_are_no_activities: There are no activities

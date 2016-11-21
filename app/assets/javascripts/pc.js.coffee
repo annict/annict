@@ -2,7 +2,9 @@
 #= require jquery_ujs
 #= require tether
 #= require bootstrap-sprockets
-#= require select2.full.min
+#= require select2-4.0.3.full
+#= require dropzone-4.3.0
+#= require cropper-0.8.1
 
 Turbolinks = require "turbolinks"
 Vue = require "vue/dist/vue"
@@ -23,6 +25,7 @@ $(document).on "turbolinks:load", ->
   usernamePreview = require "./common/components/usernamePreview"
 
   searchForm = require "./pc/components/searchForm"
+  imageUploadModal = require "./pc/components/imageUploadModal"
 
   resourceSelect = require "./common/directives/resourceSelect"
 
@@ -34,6 +37,7 @@ $(document).on "turbolinks:load", ->
   Vue.component("c-body", body)
   Vue.component("c-comment-guard", commentGuard)
   Vue.component("c-flash", flash)
+  Vue.component("c-image-upload-modal", imageUploadModal)
   Vue.component("c-like-button", likeButton)
   Vue.component("c-rating-label", ratingLabel)
   Vue.component("c-search-form", searchForm)
