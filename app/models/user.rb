@@ -39,8 +39,9 @@ class User < ActiveRecord::Base
   include Devise::Models::Confirmable
 
   include UserCheckable
+  include UserDislikeable
   include UserFollowable
-  include UserLikable
+  include UserLikeable
   include UserReceivable
 
   extend Enumerize
@@ -60,11 +61,12 @@ class User < ActiveRecord::Base
   has_many :channel_works, dependent: :destroy
   has_many :checkins,      dependent: :destroy
   has_many :db_comments, dependent: :destroy
+  has_many :dislikes, dependent: :destroy
   has_many :finished_tips, dependent: :destroy
   has_many :follows,       dependent: :destroy
   has_many :followings,    through:   :follows
   has_many :latest_statuses, dependent: :destroy
-  has_many :r_likes, dependent: :destroy, class_name: "Like"
+  has_many :likes, dependent: :destroy
   has_many :notifications, dependent: :destroy
   has_many :providers,     dependent: :destroy
   has_many :receptions,    dependent: :destroy

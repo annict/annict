@@ -17,19 +17,19 @@
 
 module Api
   module Internal
-    class LikesController < Api::Internal::ApplicationController
+    class DislikesController < Api::Internal::ApplicationController
       before_action :authenticate_user!
 
       def create(recipient_type, recipient_id)
         recipient = recipient_type.constantize.find(recipient_id)
-        current_user.like(recipient)
-        keen_client.likes.create(current_user)
+        current_user.dislike(recipient)
+        keen_client.dislikes.create(current_user)
         head 200
       end
 
-      def unlike(recipient_type, recipient_id)
+      def undislike(recipient_type, recipient_id)
         recipient = recipient_type.constantize.find(recipient_id)
-        current_user.unlike(recipient)
+        current_user.undislike(recipient)
         head 200
       end
     end

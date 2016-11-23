@@ -19,3 +19,9 @@ html {
 body {
   letter-spacing: .02rem;
 }
+
+button,
+textarea,
+[type="text"] {
+  outline: none;
+}

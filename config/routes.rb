@@ -40,28 +40,16 @@ Rails.application.routes.draw do
       resources :receptions, only: [:create, :destroy]
       resources :records, only: [:create]
 
-      resources :comments, only: [] do
-        delete :like, to: "likes#comment_destroy"
-        post   :like, to: "likes#comment_create"
+      resources :dislikes, only: [:create] do
+        post :undislike, on: :collection
       end
 
       resources :latest_statuses, only: [:index] do
         patch :skip_episode
       end
 
-      resources :multiple_records, only: [] do
-        delete :like, to: "likes#multiple_record_destroy"
-        post   :like, to: "likes#multiple_record_create"
-      end
-
-      resources :records, only: [] do
-        delete :like, to: "likes#record_destroy"
-        post   :like, to: "likes#record_create"
-      end
-
-      resources :statuses, only: [] do
-        delete :like, to: "likes#status_destroy"
-        post   :like, to: "likes#status_create"
+      resources :likes, only: [:create] do
+        post :unlike, on: :collection
       end
 
       resources :tips, only: [] do

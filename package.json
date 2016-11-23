@@ -1,6 +1,7 @@
 {
   "name": "annict",
   "dependencies": {
+    "async": "^2.1.4",
     "browserify": "13.1.1",
     "browserify-incremental": "3.1.1",
     "coffeeify": "2.0.1",
