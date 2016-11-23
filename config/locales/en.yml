@@ -37,6 +37,9 @@ en:
         sign_in_with_facebook: Sign in with Facebook
         sign_in_with_twitter: Sign in with Twitter
         sign_up_link_html: Don't have an account? %{link}
+    work_images:
+      index:
+        dropzone-empty: Drop your image here or click to upload.
   resources:
     character:
       created: Character created

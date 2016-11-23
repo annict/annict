@@ -1,0 +1,16 @@
+.c-episode-row {
+  &__check {
+    color: $ann-color-keppel;
+  }
+
+  &__stars {
+    .fa-star,
+    .fa-star-half-o {
+      color: $ann-color-selective-yellow;
+    }
+
+    .fa-star-o {
+      color: $ann-color-botticelli;
+    }
+  }
+}

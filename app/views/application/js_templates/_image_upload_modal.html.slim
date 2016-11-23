@@ -3,11 +3,12 @@ script#t-image-upload-modal type="x-template"
     .modal-dialog
       .modal-content :class='{ "c-spinner": isLoading }'
         .modal-body
-          .c-image-upload-modal__dropzone v-show="!imageUrl"
+          .c-image-upload-modal__dropzone.p-3.text-xs-center v-show="!imageUrl"
+            p.lead.m-3.dz-message = t "messages.work_images.index.dropzone-empty"
           .c-image-upload-modal__dropzone-preview v-show="!!imageUrl"
             img.img-fluid :src="imageUrl"
         .modal-footer
-          button.btn.btn-secondary type="button"
+          button.btn.btn-secondary.mr-zp5 type="button" data-dismiss="modal"
             = t "words.close"
           button.btn.btn-primary type="button" @click.prevent="upload"
             = t "words.upload"

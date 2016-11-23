@@ -30,13 +30,18 @@ module.exports = Vue.extend
     dislikesCount: @rawDislikesCount
     isLiked: @rawIsLiked
     isDisliked: @rawIsDisliked
+    isSaving: false
 
   methods:
     toggleLike: ->
+      return if @isSaving
+      @isSaving = true
+
       if @isLiked
         @_unlike =>
           @likesCount += -1
           @isLiked = false
+          @isSaving = false
       else
         async.parallel [
           (next) =>
@@ -50,13 +55,18 @@ module.exports = Vue.extend
               @likesCount += 1
               @isLiked = true
               next()
-        ]
+        ], =>
+          @isSaving = false
 
     toggleDislike: ->
+      return if @isSaving
+      @isSaving = true
+
       if @isDisliked
         @_undislike =>
           @dislikesCount += -1
           @isDisliked = false
+          @isSaving = false
       else
         async.parallel [
           (next) =>
@@ -70,7 +80,8 @@ module.exports = Vue.extend
               @dislikesCount += 1
               @isDisliked = true
               next()
-        ]
+        ], =>
+          @isSaving = false
 
     _like: (callback) ->
       $.ajax

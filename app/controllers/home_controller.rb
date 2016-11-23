@@ -14,7 +14,6 @@ class HomeController < ApplicationController
     @top_work = GuestTopPageService.top_work
     @works = GuestTopPageService.works
     @cover_image_work = GuestTopPageService.cover_image_work
-    @user = User.new_with_session({}, session)
 
     render :index_guest
   end

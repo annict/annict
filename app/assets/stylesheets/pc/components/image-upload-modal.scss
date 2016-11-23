@@ -1,9 +1,7 @@
 .c-image-upload-modal {
-  .modal-dialog {
-    max-width: 80%;
-  }
-
   &__dropzone {
-    min-height: 300px;
+    border: 1px dashed $ann-color-river;
+    border-radius: $border-radius;
+    cursor: pointer;
   }
 }
