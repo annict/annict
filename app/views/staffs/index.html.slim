@@ -1,0 +1,31 @@
+- title = t "head.title.staffs.index", title: @work.decorate.local_title
+- description = meta_description(t("head.meta.description.staffs.index", title: @work.decorate.local_title))
+- keywords = meta_keywords(@work.title)
+- image_url = ann_image_tag(@work.work_image, :attachment, size: "640x")
+- set_meta_tags(title: title, description: description, keywords: keywords, og: { title: title, description: description, image: image_url }, reverse: true, prefix: false)
+- set_page_category "staffs_index"
+
+= render "application/components/navbar"
+
+.l-content.container.py-1
+  .row
+    .col-xs-3.pr-0
+      .card.container.py-1
+        = render "works/sidebar", work: @work
+    .col-xs-9
+      .card
+        .container.py-1
+          h1.mb-0 = @work.decorate.local_title
+        = render "works/subnav", work: @work
+
+      .container.card.mt-1.py-1
+        = render "staff_list", staffs: @staffs
+
+= render "application/components/footer"
+
+- unless user_signed_in?
+  = render "application/components/sign_up_modal", user: @new_user
+
+- content_for :js_templates do
+  = render "application/js_templates/search_form"
+  = render "application/js_templates/status_selector"

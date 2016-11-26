@@ -33,14 +33,8 @@
         = render "characters/character_list", casts: @work.casts.published.order(:sort_number).limit(9)
 
       h2.h4.text-xs-center.my-2.font-weight-bold = t "words.staffs"
-      .p-works-show__staffs.card.container.mt-1.py-1
-        - if @work.staffs.published.present?
-          - @work.staffs.published.order(:sort_number).limit(9).each_slice(3).each do |staffs|
-            .staffs-row.row
-              - staffs.each do |staff|
-                .col-xs-4
-                  = staff.decorate.local_name_with_old_link
-                  .small = staff.decorate.role_name
+      .card.container.mt-1.py-1
+        = render "staffs/staff_list", staffs: @work.staffs.published.order(:sort_number).limit(9)
 
 = render "application/components/footer"
 
