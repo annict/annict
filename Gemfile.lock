@@ -74,12 +74,14 @@ GEM
     autoprefixer-rails (6.5.3)
       execjs
     awesome_print (1.7.0)
-    aws-sdk (2.6.19)
-      aws-sdk-resources (= 2.6.19)
-    aws-sdk-core (2.6.19)
+    aws-sdk (2.6.20)
+      aws-sdk-resources (= 2.6.20)
+    aws-sdk-core (2.6.20)
+      aws-sigv4 (~> 1.0)
       jmespath (~> 1.0)
-    aws-sdk-resources (2.6.19)
-      aws-sdk-core (= 2.6.19)
+    aws-sdk-resources (2.6.20)
+      aws-sdk-core (= 2.6.20)
+    aws-sigv4 (1.0.0)
     axiom-types (0.1.1)
       descendants_tracker (~> 0.0.4)
       ice_nine (~> 0.11.0)
@@ -780,7 +782,7 @@ DEPENDENCIES
   virtus
 
 RUBY VERSION
-   ruby 2.3.1p112
+   ruby 2.3.2p217
 
 BUNDLED WITH
-   1.13.2
+   1.13.6
