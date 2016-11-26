@@ -15,48 +15,18 @@
     .col-xs-9
       .card
         .container.py-1
-          h1.mb-0
-            - if locale_ja?
-              = @work.title
-            - else
-              - if @work.title_ro.present?
-                = @work.title_ro
-                small.text-muted.ml-zp5
-                  = @work.title
-              - else
-                = @work.title
+          h1.mb-0 = @work.decorate.local_title
         = render "subnav", work: @work
 
       h2.h4.text-xs-center.my-2.font-weight-bold = t "words.episodes"
       .card.mt-1.py-1
         - if @work.episodes.published.present?
-          table.p-works-show__episodes.table.mb-0
+          .container.mb-zp5
+            = link_to t("words.bulk_tracking"), work_episodes_path(@work, tracking: "on"), class: "small"
+          table.p-episodes-table.table.mb-0
             tbody
               - @work.episodes.published.order(:sort_number).limit(10).each do |episode|
-                - if user_signed_in?
-                  - records = current_user.checkins.where(episode_id: episode.id)
-                tr
-                  - if episode.single?
-                    td
-                      = link_to work_episode_path(@work, episode) do
-                        = episode.title
-                  - else
-                    td
-                      = link_to work_episode_path(@work, episode) do
-                        = episode.number
-                    td
-                      - if episode.title.present?
-                        = link_to work_episode_path(@work, episode) do
-                          = episode.title
-                  - if user_signed_in?
-                    td
-                      .c-episode-row__stars
-                        = rating_stars(episode.avg_rating)
-                        small.ml-zp25 = episode.avg_rating
-                    td
-                      - if records.count > 0
-                        = icon "check-circle-o", class: "c-episode-row__check"
-                        small.ml-zp25 = records.count
+                = render "episodes/episode_row", work: @work, episode: episode
 
       h2.h4.text-xs-center.my-2.font-weight-bold = t "words.characters"
       .p-works-show__characters.card.container.mt-1.py-1

@@ -1,4 +1,10 @@
 .c-episode-row {
+  @each $size in 20 40 60 {
+    &__w#{$size} {
+      width: 0% + $size;
+    }
+  }
+
   &__check {
     color: $ann-color-keppel;
   }

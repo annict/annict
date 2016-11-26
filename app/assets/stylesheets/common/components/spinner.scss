@@ -11,7 +11,7 @@ $o: rgba(map-get($ann-color-shirobako, ho), .5);
   z-index: 100;
 
   &::before {
-    background: rgba(255,255,255,.8);
+    background: rgba(255, 255, 255, .8);
     content: "";
     height: 100%;
     left: 0;
@@ -28,13 +28,21 @@ $o: rgba(map-get($ann-color-shirobako, ho), .5);
     border-style: solid;
     border-width: .2rem;
     content: "";
-    height: 2rem;
+    height: 1rem;
     left: 50%;
-    margin: -1rem 0 0 -1rem;
+    margin: -.5rem 0 0 -.5rem;
     position: absolute;
     top: 50%;
-    width: 2rem;
+    width: 1rem;
     z-index: 101;
+  }
+
+  &--large {
+    &::after {
+      height: 2rem;
+      margin: -1rem 0 0 -1rem;
+      width: 2rem;
+    }
   }
 }
 

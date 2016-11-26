@@ -52,6 +52,8 @@ Rails.application.routes.draw do
         post :unlike, on: :collection
       end
 
+      resources :multiple_records, only: %i(create)
+
       resources :tips, only: [] do
         post :close, on: :collection
       end
@@ -246,7 +248,7 @@ Rails.application.routes.draw do
         as: :season
     end
 
-    resources :episodes, only: [:show] do
+    resources :episodes, only: %i(index show) do
       resources :checkins do
         resources :comments, only: [:create]
       end
@@ -254,10 +256,6 @@ Rails.application.routes.draw do
 
     resources :statuses, only: [] do
       post :select, on: :collection
-    end
-
-    resources :checkins, only: [] do
-      post :create_all, on: :collection
     end
 
     resources :images, controller: :work_images, only: %i(index destroy)

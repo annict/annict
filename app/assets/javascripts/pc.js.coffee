@@ -25,6 +25,7 @@ $(document).on "turbolinks:load", ->
   thumbsButtons = require "./common/components/thumbsButtons"
   usernamePreview = require "./common/components/usernamePreview"
 
+  episodeList = require "./pc/components/episodeList"
   searchForm = require "./pc/components/searchForm"
   imageUploadModal = require "./pc/components/imageUploadModal"
 
@@ -37,6 +38,7 @@ $(document).on "turbolinks:load", ->
   Vue.component("c-activities", activities)
   Vue.component("c-body", body)
   Vue.component("c-comment-guard", commentGuard)
+  Vue.component("c-episode-list", episodeList)
   Vue.component("c-flash", flash)
   Vue.component("c-image-upload-modal", imageUploadModal)
   Vue.component("c-like-button", likeButton)

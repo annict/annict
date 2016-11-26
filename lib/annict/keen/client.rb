@@ -22,6 +22,10 @@ module Annict
       def dislikes
         @dislikes ||= ::Annict::Keen::Events::Dislike.new(@request)
       end
+
+      def multiple_records
+        @multiple_records ||= ::Annict::Keen::Events::MultipleRecord.new(@request)
+      end
     end
   end
 end

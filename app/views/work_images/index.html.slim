@@ -15,16 +15,7 @@
     .col-xs-9
       .card
         .container.py-1
-          h1
-            - if locale_ja?
-              = @work.title
-            - else
-              - if @work.title_en.present?
-                = @work.title_en
-                small.text-muted
-                  = @work.title
-              - else
-                = @work.title
+          h1.mb-0 = @work.decorate.local_title
         = render "works/subnav", work: @work
 
       .card.mt-1.py-1.container

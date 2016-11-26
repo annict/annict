@@ -1,17 +1,4 @@
 .p-works-show {
-  &__episodes {
-    tr:last-child {
-      td {
-        padding: 0 1rem;
-      }
-    }
-
-    td {
-      border: 0;
-      padding: 0 1rem .8rem;
-    }
-  }
-
   &__characters {
     .characters-row:not(:last-child) {
       margin-bottom: 1rem;

@@ -18,6 +18,9 @@ en:
     components:
       status_selector:
         select_status: Select Status
+    multiple_records:
+      create:
+        saved: Records have been saved.
     oauth_users:
       new:
         sign_up_with_oauth: Sign Up with %{provider_name}
