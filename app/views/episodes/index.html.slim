@@ -28,7 +28,7 @@
                   = t "words.bulk_tracking"
                 small.fake-link.mr-zp5 v-show="isTrackingMode" @click="checkAll"
                   = t "words.check_all"
-                small.fake-link v-show="isTrackingMode" @click="uncheckAll"
+                small.fake-link v-show="isTrackingMode && !!episodeIds.length" @click="uncheckAll"
                   = t "words.uncheck_all"
               table.p-episodes-table.table.mb-1
                 tbody

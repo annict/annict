@@ -29,21 +29,8 @@
                 = render "episodes/episode_row", work: @work, episode: episode
 
       h2.h4.text-xs-center.my-2.font-weight-bold = t "words.characters"
-      .p-works-show__characters.card.container.mt-1.py-1
-        - if @work.casts.published.present?
-          - @work.casts.published.order(:sort_number).limit(9).each_slice(3).each do |casts|
-            .characters-row.row
-              - casts.each do |cast|
-                .col-xs-4
-                  .row
-                    .character-image.col-xs.pr-0
-                      = link_to character_path(cast.character) do
-                        = image_tag ann_image_url(cast.character.character_image, :attachment, size: "64x64"), class: "img-fluid rounded"
-                    .col-xs
-                      .character-name = link_to cast.character.decorate.local_name, character_path(cast.character)
-                      .character-cast-name.small
-                        span CV: 
-                        = link_to cast.decorate.local_name_with_old, person_path(cast.person)
+      .card.container.mt-1.py-1
+        = render "characters/character_list", casts: @work.casts.published.order(:sort_number).limit(9)
 
       h2.h4.text-xs-center.my-2.font-weight-bold = t "words.staffs"
       .p-works-show__staffs.card.container.mt-1.py-1

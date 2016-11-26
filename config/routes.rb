@@ -240,6 +240,8 @@ Rails.application.routes.draw do
   end
 
   resources :works, only: [:index, :show] do
+    resources :characters, only: %i(index)
+
     collection do
       get :popular
       get ":slug",

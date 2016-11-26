@@ -1,0 +1,10 @@
+.p-character-list {
+  &__row:not(:last-child) {
+    margin-bottom: 1rem;
+  }
+
+  &__character-image {
+    @include flex-basis(64px);
+    @include flex-grow(0);
+  }
+}
