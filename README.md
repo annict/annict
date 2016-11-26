@@ -5,7 +5,6 @@
 [![Coveralls](https://coveralls.io/repos/github/annict/annict/badge.svg?branch=master)](https://coveralls.io/github/annict/annict?branch=master)
 [![Gemnasium](https://gemnasium.com/annict/annict.svg)](https://gemnasium.com/annict/annict)
 [![Slack](http://slack.annict.com/badge.svg)](http://slack.annict.com)
-[![Waffle](https://badge.waffle.io/annict/annict.svg?label=TODO&title=TODO)](http://waffle.io/annict/annict)
 
 
 ### 開発に参加する
