@@ -4,7 +4,7 @@
 - set_meta_tags(title: title, description: description, keywords: keywords, site: false)
 - set_page_category "top"
 
-.l-main
+.l-content
   - if current_user.tips.unfinished.present?
     = render "tips"
 

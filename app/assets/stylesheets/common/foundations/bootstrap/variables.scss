@@ -1,8 +1,8 @@
 // Colors
 
-$brand-primary: $color-mizuho;
-$brand-info: $color-java;
-$gray-dark: $color-outer-space;
+$brand-primary: $ann-color-mizuho;
+$brand-info: $ann-color-java;
+$gray-dark: $ann-color-outer-space;
 
 
 // Options
@@ -46,14 +46,14 @@ $spacers: (
 
 // Body
 
-$body-bg: $color-haze;
-$body-color: $color-river;
+$body-bg: $ann-color-haze;
+$body-color: $ann-color-river;
 
 
 // Links
 
-$link-color: $color-san-juan;
-$link-hover-color: $color-mizuho;
+$link-color: $ann-color-san-juan;
+$link-hover-color: $ann-color-mizuho;
 $link-hover-decoration: none;
 
 
@@ -85,6 +85,11 @@ $border-radius: .12rem;
 // Tables
 
 $table-bg-hover: rgba(0, 0, 0, .03);
+
+
+// Navbar
+
+$navbar-padding-y: .3rem;
 
 
 // Image thumbnails

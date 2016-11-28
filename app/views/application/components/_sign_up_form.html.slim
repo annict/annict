@@ -13,7 +13,7 @@
   .text-muted.text-xs-center.mt-2.mb-1
     = t "words.or"
 
-  = form_for @user, url: user_registration_path do |f|
+  = form_for user, url: user_registration_path do |f|
     = render "application/components/error_panel", resource: @user
 
     .form-group

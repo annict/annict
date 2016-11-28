@@ -5,10 +5,10 @@
 - set_meta_tags(title: title, description: description, keywords: keywords, canonical: canonical_url, reverse: true)
 
 - content_for :head do
-  = render "application/v2/twitter", title: title, description: description, image: annict_image_url(@work.item, :tombo_image, size: "640x640")
+  = render "application/v2/twitter", title: title, description: description, image: ann_image_url(@work.item, :tombo_image, size: "640x640")
 
 - content_for :facebook do
-  = render "application/v3/facebook", title: title, url: canonical_url, description: description, image_url: annict_image_url(@work.item, :tombo_image, size: "600x315")
+  = render "application/v3/facebook", title: title, url: canonical_url, description: description, image_url: ann_image_url(@work.item, :tombo_image, size: "600x315")
 
 = render "application/v3/menu"
 

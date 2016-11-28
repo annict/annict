@@ -1,7 +1,10 @@
 # frozen_string_literal: true
 
 Rails.application.routes.draw do
-  mount LetterOpenerWeb::Engine, at: "/low" if Rails.env.development?
+  if Rails.env.development?
+    mount LetterOpenerWeb::Engine, at: "/low"
+    mount Dmmyix::Engine, at: "/dmmyix"
+  end
 
   get "dummy_image", to: "application#dummy_image" if Rails.env.test?
 
@@ -37,29 +40,19 @@ Rails.application.routes.draw do
       resources :receptions, only: [:create, :destroy]
       resources :records, only: [:create]
 
-      resources :comments, only: [] do
-        delete :like, to: "likes#comment_destroy"
-        post   :like, to: "likes#comment_create"
+      resources :dislikes, only: [:create] do
+        post :undislike, on: :collection
       end
 
       resources :latest_statuses, only: [:index] do
         patch :skip_episode
       end
 
-      resources :multiple_records, only: [] do
-        delete :like, to: "likes#multiple_record_destroy"
-        post   :like, to: "likes#multiple_record_create"
+      resources :likes, only: [:create] do
+        post :unlike, on: :collection
       end
 
-      resources :records, only: [] do
-        delete :like, to: "likes#record_destroy"
-        post   :like, to: "likes#record_create"
-      end
-
-      resources :statuses, only: [] do
-        delete :like, to: "likes#status_destroy"
-        post   :like, to: "likes#status_create"
-      end
+      resources :multiple_records, only: %i(create)
 
       resources :tips, only: [] do
         post :close, on: :collection
@@ -72,11 +65,12 @@ Rails.application.routes.draw do
       resources :works, only: [] do
         get :friends
 
+        resource :latest_status, only: [:show]
+        resources :images, controller: :work_images, only: %i(create)
+
         resources :channels, only: [] do
           post :select, on: :collection
         end
-
-        resource :latest_status, only: [:show]
       end
     end
   end
@@ -246,6 +240,9 @@ Rails.application.routes.draw do
   end
 
   resources :works, only: [:index, :show] do
+    resources :characters, only: %i(index)
+    resources :staffs, only: %i(index)
+
     collection do
       get :popular
       get ":slug",
@@ -254,7 +251,7 @@ Rails.application.routes.draw do
         as: :season
     end
 
-    resources :episodes, only: [:show] do
+    resources :episodes, only: %i(index show) do
       resources :checkins do
         resources :comments, only: [:create]
       end
@@ -264,9 +261,7 @@ Rails.application.routes.draw do
       post :select, on: :collection
     end
 
-    resources :checkins, only: [] do
-      post :create_all, on: :collection
-    end
+    resources :images, controller: :work_images, only: %i(index destroy)
   end
 
   get "about",   to: "pages#about"

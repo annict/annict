@@ -18,6 +18,14 @@ module Annict
       def likes
         @likes ||= ::Annict::Keen::Events::Like.new(@request)
       end
+
+      def dislikes
+        @dislikes ||= ::Annict::Keen::Events::Dislike.new(@request)
+      end
+
+      def multiple_records
+        @multiple_records ||= ::Annict::Keen::Events::MultipleRecord.new(@request)
+      end
     end
   end
 end

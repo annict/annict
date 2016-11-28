@@ -6,20 +6,20 @@
     z-index: 1;
 
     a {
-      color: $color-white;
+      color: $ann-color-white;
 
       &.btn-outline-primary {
-        border-color: $color-white;
-        color: $color-white;
+        border-color: $ann-color-white;
+        color: $ann-color-white;
       }
     }
 
     a:hover {
-      color: darken($color-white, 10%);
+      color: darken($ann-color-white, 10%);
 
       &.btn-outline-primary {
-        border-color: $color-mizuho;
-        color: $color-white;
+        border-color: $ann-color-mizuho;
+        color: $ann-color-white;
       }
     }
 

@@ -7,18 +7,24 @@ class StaffDecorator < ApplicationDecorator
     h.link_to name, path, options
   end
 
-  def name_with_old
-    return name if name == resource.name
-    "#{name} (#{resource.name})"
+  def local_name
+    return name if I18n.locale == :ja
+    return name_en if name_en.present?
+    name
   end
 
-  def name_with_old_link
+  def local_name_with_old
+    return local_name if local_name == resource.decorate.local_name
+    "#{local_name} (#{resource.decorate.local_name})"
+  end
+
+  def local_name_with_old_link
     path = case resource_type
     when "Person" then h.person_path(resource)
     when "Organization" then h.organization_path(resource)
     end
 
-    h.link_to name_with_old, path
+    h.link_to local_name_with_old, path
   end
 
   def to_values

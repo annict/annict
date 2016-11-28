@@ -8,7 +8,7 @@
       .work
         .image
           = link_to work_path(staff.work) do
-            = annict_image_tag(staff.work.item, :tombo_image, size: "50x50", alt: staff.work.title)
+            = ann_image_tag(staff.work.item, :tombo_image, size: "50x50", alt: staff.work.title)
         .info
           .title
             = link_to staff.work.title, work_path(staff.work)

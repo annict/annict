@@ -1,6 +1,6 @@
 .c-status-selector {
   border-radius: $border-radius;
-  color: $color-white;
+  color: $ann-color-white;
   display: inline-block;
   line-height: $line-height-base;
   overflow: hidden;
@@ -8,14 +8,14 @@
   width: 100%;
 
   &.is-transparent {
-    color: $color-java;
+    color: $ann-color-java;
 
     .c-status-selector__object {
-      border: solid 1px $color-java;
+      border: solid 1px $ann-color-java;
 
       select {
         background-color: rgba(255, 255, 255, 0);
-        color: $color-java;
+        color: $ann-color-java;
       }
     }
   }
@@ -39,10 +39,10 @@
 
     select {
       @include appearance(none);
-      background-color: $color-java;
+      background-color: $ann-color-java;
       border: 0;
       border-radius: 0;
-      color: $color-white;
+      color: $ann-color-white;
       cursor: pointer;
       height: 35px;
       outline: none;
@@ -50,11 +50,11 @@
       width: 130%;
 
       &:hover {
-        background-color: darken($color-java, 15%);
+        background-color: darken($ann-color-java, 15%);
       }
 
       option {
-        background-color: $color-mine-shaft;
+        background-color: $ann-color-mine-shaft;
       }
     }
 
@@ -85,7 +85,7 @@
     }
 
     > i {
-      color: $color-java;
+      color: $ann-color-java;
     }
   }
 }

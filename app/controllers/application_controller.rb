@@ -14,6 +14,7 @@ class ApplicationController < ActionController::Base
 
   before_action :load_data_into_gon
   before_action :set_search_params
+  before_action :load_new_user
 
   # テスト実行時にDragonflyでアップロードした画像を読み込むときに呼ばれるアクション
   # 画像サーバはこのRailsアプリから切り離しているので、CircleCI等でテストを実行するときは
@@ -35,7 +36,7 @@ class ApplicationController < ActionController::Base
     root_path
   end
 
-  def set_work
+  def load_work
     @work = Work.published.find(params[:work_id])
   end
 
@@ -49,5 +50,10 @@ class ApplicationController < ActionController::Base
 
   def set_search_params
     @search = SearchService.new(params[:q])
+  end
+
+  def load_new_user
+    return if user_signed_in?
+    @new_user = User.new_with_session({}, session)
   end
 end

@@ -50,7 +50,7 @@
                 | -
           td = work.watchers_count
           td = work.decorate.release_season.presence || "-"
-          td = annict_image_tag(work.item, :tombo_image, size: "70x70")
+          td = ann_image_tag(work.item, :tombo_image, size: "70x70")
           td
             .tag class="#{work.published? ? 'tag-success' : 'tag-default'}"
               = t("resources.work.aasm_state.#{work.aasm_state}")

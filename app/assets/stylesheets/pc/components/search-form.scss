@@ -5,13 +5,13 @@
     background-color: rgba(0, 0, 0, .1);
     border: 1px solid rgba(255, 255, 255, .15);
     border-color: rgba(255, 255, 255, .15);
-    color: $color-white;
+    color: $ann-color-white;
     width: 280px;
 
     &:focus {
       background-color: rgba(0, 0, 0, .1);
       border-color: rgba(255, 255, 255, .15);
-      color: $color-white;
+      color: $ann-color-white;
     }
   }
 }

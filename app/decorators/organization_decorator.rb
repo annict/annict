@@ -6,6 +6,12 @@ class OrganizationDecorator < ApplicationDecorator
     h.link_to name, h.edit_db_organization_path(self), options
   end
 
+  def local_name
+    return name if I18n.locale == :ja
+    return name_en if name_en.present?
+    name
+  end
+
   def name_link
     h.link_to name, h.organization_path(self)
   end

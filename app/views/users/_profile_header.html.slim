@@ -10,7 +10,7 @@
             li
               ann-mute-user-button user-id="#{user.id}"
       .avatar
-        = annict_image_tag(user.profile, :tombo_avatar, size: "100x100", class: "img-circle")
+        = ann_image_tag(user.profile, :tombo_avatar, size: "100x100", class: "img-circle")
       h1
         = user.profile.name
       .username

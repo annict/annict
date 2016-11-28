@@ -5,7 +5,7 @@
 - set_page_category "top"
 
 .p-top-hero
-  .p-top-hero__bg-image style="background-image: url(#{annict_image_url(@cover_image_work.item, :tombo_image, size: '640x640', blur: 200)});"
+  .p-top-hero__bg-image style="background-image: url(#{ann_image_url(@cover_image_work.item, :tombo_image, size: '640x640', blur: 200)});"
   .p-top-hero__content.text-xs-center.p-1
     = image_tag "logos/color-white.png", size: "40x48", alt: "Annict"
     h1.mb-1 = t("messages.home.index_guest.hero_title")
@@ -19,7 +19,7 @@
   h2.h3.text-xs-center.my-1 = t("words.popular_airing_anime")
   .p-top-work.c-card.p-1.mb-1
     = link_to work_path(@season_top_work), class: "d-inline-block p-top-work__image" do
-      = image_tag(annict_image_url(@season_top_work.item, :tombo_image, size: "300x300"), alt: @season_top_work.decorate.local_title, class: "rounded img-thumbnail")
+      = image_tag(ann_image_url(@season_top_work.item, :tombo_image, size: "300x300"), alt: @season_top_work.decorate.local_title, class: "rounded img-thumbnail")
     .c-watchers-count
       span.c-watchers-count__number.font-weight-bold = @season_top_work.watchers_count
       span.c-watchers-count__text.text-muted Watchers
@@ -49,7 +49,7 @@
         - works.each do |work|
           .col-xs-6
             = link_to work_path(work), class: "p-top-other-works__image d-inline-block" do
-              = annict_image_tag(work.item, :tombo_image, size: "250x250", alt: work.decorate.local_title, class: "rounded img-fluid img-thumbnail")
+              = ann_image_tag(work.item, :tombo_image, size: "250x250", alt: work.decorate.local_title, class: "rounded img-fluid img-thumbnail")
             .c-watchers-count
               span.c-watchers-count__number.font-weight-bold = work.watchers_count
               span.c-watchers-count__text.text-muted Watchers
