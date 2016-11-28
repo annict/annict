@@ -16,6 +16,7 @@ $(document).on "turbolinks:load", ->
   activities = require "./common/components/activities"
   body = require "./common/components/body"
   commentGuard = require "./common/components/commentGuard"
+  episodeList = require "./common/components/episodeList"
   flash = require "./common/components/flash"
   likeButton = require "./common/components/likeButton"
   ratingLabel = require "./common/components/ratingLabel"
@@ -25,7 +26,6 @@ $(document).on "turbolinks:load", ->
   thumbsButtons = require "./common/components/thumbsButtons"
   usernamePreview = require "./common/components/usernamePreview"
 
-  episodeList = require "./pc/components/episodeList"
   searchForm = require "./pc/components/searchForm"
   imageUploadModal = require "./pc/components/imageUploadModal"
 

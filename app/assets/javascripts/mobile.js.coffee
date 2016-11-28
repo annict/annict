@@ -14,6 +14,7 @@ $(document).on "turbolinks:load", ->
   activities = require "./common/components/activities"
   body = require "./common/components/body"
   commentGuard = require "./common/components/commentGuard"
+  episodeList = require "./common/components/episodeList"
   flash = require "./common/components/flash"
   likeButton = require "./common/components/likeButton"
   ratingLabel = require "./common/components/ratingLabel"
@@ -31,6 +32,7 @@ $(document).on "turbolinks:load", ->
   Vue.component("c-activities", activities)
   Vue.component("c-body", body)
   Vue.component("c-comment-guard", commentGuard)
+  Vue.component("c-episode-list", episodeList)
   Vue.component("c-flash", flash)
   Vue.component("c-like-button", likeButton)
   Vue.component("c-rating-label", ratingLabel)
