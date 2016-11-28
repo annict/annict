@@ -1,0 +1,17 @@
+.btn {
+  i {
+    margin-right: .5rem;
+  }
+
+  &:focus {
+    outline: none;
+  }
+}
+
+.btn-twitter {
+  @include button-variant($ann-color-white, $ann-color-twitter, $ann-color-twitter);
+}
+
+.btn-facebook {
+  @include button-variant($ann-color-white, $ann-color-facebook, $ann-color-facebook);
+}

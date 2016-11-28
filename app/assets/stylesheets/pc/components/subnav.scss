@@ -1,0 +1,32 @@
+.c-subnav {
+  background-color: $ann-color-white;
+  height: 4.5rem;
+  line-height: 4.5rem;
+
+  &--divided {
+    border-top: solid .01rem $hr-border-color;
+    box-shadow: 0 2px 2px -2px $ann-color-cadet;
+  }
+
+  ul {
+    @include display(flex);
+    @include justify-content(center);
+    margin: 0 auto;
+    max-width: 1200px;
+
+    li {
+      @include flex(1);
+      text-align: center;
+    }
+  }
+
+  a {
+    display: inline-block;
+    height: 4.47rem;
+    width: 100%;
+  }
+
+  &__link--active {
+    border-bottom: solid .15rem $ann-color-mizuho;
+  }
+}

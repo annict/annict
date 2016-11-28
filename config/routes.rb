@@ -1,13 +1,16 @@
 # frozen_string_literal: true
 
 Rails.application.routes.draw do
-  mount LetterOpenerWeb::Engine, at: "/low" if Rails.env.development?
+  if Rails.env.development?
+    mount LetterOpenerWeb::Engine, at: "/low"
+    mount Dmmyix::Engine, at: "/dmmyix"
+  end
 
   get "dummy_image", to: "application#dummy_image" if Rails.env.test?
 
   devise_for :users,
     controllers: { omniauth_callbacks: :callbacks },
-    skip: [:registrations, :sessions]
+    skip: %i(passwords registrations sessions)
 
   devise_scope :user do
     get "sign_up", to: "registrations#new", as: :new_user_registration
@@ -15,6 +18,8 @@ Rails.application.routes.draw do
     post "sign_in", to: "sessions#create", as: :user_session
     post "users", to: "registrations#create", as: :user_registration
     delete "sign_out", to: "sessions#destroy", as: :destroy_user_session
+    resource :password, only: %i(new create edit update)
+    resources :oauth_users, only: %i(new create)
   end
 
   use_doorkeeper do
@@ -28,38 +33,29 @@ Rails.application.routes.draw do
       resource :programs_sort_type, only: [:update]
       resource :search, only: [:show]
       resources :activities, only: [:index]
+      resources :characters, only: [:index]
       resources :mute_users, only: [:create]
       resources :organizations, only: [:index]
       resources :people, only: [:index]
       resources :receptions, only: [:create, :destroy]
       resources :records, only: [:create]
 
-      resources :comments, only: [] do
-        delete :like, to: "likes#comment_destroy"
-        post   :like, to: "likes#comment_create"
+      resources :dislikes, only: [:create] do
+        post :undislike, on: :collection
       end
 
       resources :latest_statuses, only: [:index] do
         patch :skip_episode
       end
 
-      resources :multiple_records, only: [] do
-        delete :like, to: "likes#multiple_record_destroy"
-        post   :like, to: "likes#multiple_record_create"
+      resources :likes, only: [:create] do
+        post :unlike, on: :collection
       end
 
-      resources :records, only: [] do
-        delete :like, to: "likes#record_destroy"
-        post   :like, to: "likes#record_create"
-      end
-
-      resources :statuses, only: [] do
-        delete :like, to: "likes#status_destroy"
-        post   :like, to: "likes#status_create"
-      end
+      resources :multiple_records, only: %i(create)
 
       resources :tips, only: [] do
-        post :finish, on: :collection
+        post :close, on: :collection
       end
 
       resource :user, only: [] do
@@ -69,17 +65,18 @@ Rails.application.routes.draw do
       resources :works, only: [] do
         get :friends
 
+        resource :latest_status, only: [:show]
+        resources :images, controller: :work_images, only: %i(create)
+
         resources :channels, only: [] do
           post :select, on: :collection
         end
-
-        resource :latest_status, only: [:show]
       end
     end
   end
 
   scope module: :api do
-    constraints Annict::Subdomain do
+    constraints(subdomain: "api") do
       namespace :v1 do
         resources :episodes, only: [:index]
         resources :records, only: [:index]
@@ -97,67 +94,81 @@ Rails.application.routes.draw do
     end
   end
 
-  namespace :db do
-    resources :activities, only: [:index]
-    resources :draft_organizations, only: [:new, :create, :edit, :update]
-    resources :draft_people, only: [:new, :create, :edit, :update]
-    resources :draft_works, only: [:new, :create, :edit, :update]
-    resource :search, only: [:show]
+  scope module: :db, as: :db do
+    constraints(subdomain: "db") do
+      resources :activities, only: [:index]
+      resource :search, only: [:show]
 
-    resources :edit_requests, only: [:index, :show] do
-      member do
-        post :close
-        post :publish
-      end
-      resources :comments,
-        only: [:create, :edit, :update, :destroy],
-        controller: "edit_request_comments"
-    end
-
-    resources :organizations, except: [:show] do
-      patch :hide, on: :member
-    end
-
-    resources :people, except: [:show] do
-      patch :hide, on: :member
-    end
-
-    resources :works, except: [:show] do
-      collection do
-        get :season
-        get :resourceless
-      end
-
-      member do
-        patch :hide
-      end
-
-      resources :draft_casts, only: [:new, :create, :edit, :update]
-      resources :draft_episodes, only: [:new, :create, :edit, :update]
-      resources :draft_items, only: [:new, :create, :edit, :update]
-      resources :draft_multiple_episodes, only: [:new, :create, :edit, :update]
-      resources :draft_programs, only: [:new, :create, :edit, :update]
-      resources :draft_staffs, only: [:new, :create, :edit, :update]
-      resources :multiple_episodes, only: [:new, :create]
-      resources :programs, except: [:show]
-      resource :item, except: [:index]
-
-      resources :casts, except: [:show] do
-        patch :hide, on: :member
-      end
-
-      resources :episodes, only: [:index, :edit, :update, :destroy] do
+      resources :characters, except: [:show] do
         member do
+          get :activities
           patch :hide
         end
       end
 
-      resources :staffs, except: [:show] do
-        patch :hide, on: :member
+      resources :casts, only: %i(edit update destroy) do
+        member do
+          get :activities
+          patch :hide
+        end
       end
-    end
 
-    root "home#index"
+      resources :comments, only: %i(create destroy)
+
+      resources :episodes, only: %i(edit update destroy) do
+        member do
+          get :activities
+          patch :hide
+        end
+      end
+
+      resources :organizations, except: [:show] do
+        member do
+          get :activities
+          patch :hide
+        end
+      end
+
+      resources :people, except: [:show] do
+        member do
+          get :activities
+          patch :hide
+        end
+      end
+
+      resources :programs, only: %i(edit update destroy) do
+        member do
+          get :activities
+        end
+      end
+
+      resources :staffs, only: %i(edit update destroy) do
+        member do
+          get :activities
+          patch :hide
+        end
+      end
+
+      resources :works, except: [:show] do
+        collection do
+          get :season
+          get :resourceless
+        end
+
+        member do
+          get :activities
+          patch :hide
+        end
+
+        resource :item, except: [:index]
+        resources :casts, only: %i(index new create)
+        resources :episodes, only: %i(index new create)
+        resources :programs, only: %i(index new create)
+        resources :staffs, only: %i(index new create)
+      end
+
+      root "home#index"
+    end
   end
 
   resources :settings, only: [:index]
@@ -174,6 +185,8 @@ Rails.application.routes.draw do
 
     patch "options", to: "options#update"
   end
+
+  resources :characters, only: %i(show)
 
   resource :channel, only: [] do
     resources :works, only: [:index], controller: "channel_works"
@@ -227,6 +240,9 @@ Rails.application.routes.draw do
   end
 
   resources :works, only: [:index, :show] do
+    resources :characters, only: %i(index)
+    resources :staffs, only: %i(index)
+
     collection do
       get :popular
       get ":slug",
@@ -235,7 +251,7 @@ Rails.application.routes.draw do
         as: :season
     end
 
-    resources :episodes, only: [:show] do
+    resources :episodes, only: %i(index show) do
       resources :checkins do
         resources :comments, only: [:create]
       end
@@ -245,9 +261,7 @@ Rails.application.routes.draw do
       post :select, on: :collection
     end
 
-    resources :checkins, only: [] do
-      post :create_all, on: :collection
-    end
+    resources :images, controller: :work_images, only: %i(index destroy)
   end
 
   get "about",   to: "pages#about"

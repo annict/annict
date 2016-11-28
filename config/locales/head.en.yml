@@ -1,0 +1,29 @@
+en:
+  head:
+    meta:
+      description:
+        _common: Annict is the platform for Anime Addicts. Track your watching anime, follow friends, read their reviews, and much more!
+        works:
+          show: Looking for information on %{title}? Find out more with Annict!
+      keywords:
+        _common: annict, anime, review
+    title:
+      channels:
+        index: Channel List
+      friends:
+        index: Find Friends
+      home:
+        index: Annict
+        index_guest: The platform for Anime Addicts.
+      notifications:
+        index: Notifications
+      pages:
+        about: About
+      programs:
+        index: Programs
+      registrations:
+        new: Sign Up
+      sessions:
+        new: Sign In
+      works:
+        show: Anime "%{title}"

@@ -1,0 +1,37 @@
+- title = t "head.title.episodes.index", title: @work.decorate.local_title
+- description = meta_description(t("head.meta.description.episodes.index", title: @work.decorate.local_title))
+- keywords = meta_keywords(@work.title)
+- image_url = ann_image_tag(@work.work_image, :attachment, size: "640x")
+- set_meta_tags(title: title, description: description, keywords: keywords, og: { title: title, description: description, image: image_url }, reverse: true, prefix: false)
+- set_page_category "episodes_index"
+
+= render "works/header", work: @work
+
+.c-card.container
+  - episodes = @work.episodes.published
+  - if episodes.present?
+    c-episode-list inline-template="" :is-signed-in="#{user_signed_in?}" :raw-is-tracking-mode="#{params.key?(:tracking)}" :all-episode-ids="#{episodes.pluck(:id)}" :work-id="#{@work.id}"
+      .c-episode-list
+        .py-zp5
+          small.fake-link v-show="!isTrackingMode" @click="enableTrackingMode"
+            = t "words.bulk_tracking"
+          small.fake-link.mr-zp5 v-show="isTrackingMode" @click="checkAll"
+            = t "words.check_all"
+          small.fake-link v-show="isTrackingMode && !!episodeIds.length" @click="uncheckAll"
+            = t "words.uncheck_all"
+        table.p-episodes-table.table.mb-1
+          tbody
+            - episodes.order(:sort_number).each do |episode|
+              = render "episodes/episode_row", work: @work, episode: episode
+        .text-xs-right.pb-1
+          button.btn.btn-secondary.mr-zp5 v-show="isTrackingMode" @click="disableTrackingMode"
+            = t "words.cancel"
+          button.btn.btn-primary :class="{ 'c-spinner': isTracking }" v-show="isTrackingMode" @click="track"
+            = icon "pencil-square-o"
+            = t "words.track"
+
+= render "application/components/footer"
+= render "application/components/tabbar"
+
+- content_for :js_templates do
+  = render "application/js_templates/status_selector"

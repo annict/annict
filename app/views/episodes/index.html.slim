@@ -1,0 +1,51 @@
+- title = t "head.title.episodes.index", title: @work.decorate.local_title
+- description = meta_description(t("head.meta.description.episodes.index", title: @work.decorate.local_title))
+- keywords = meta_keywords(@work.title)
+- image_url = ann_image_tag(@work.work_image, :attachment, size: "640x")
+- set_meta_tags(title: title, description: description, keywords: keywords, og: { title: title, description: description, image: image_url }, reverse: true, prefix: false)
+- set_page_category "episodes_index"
+
+= render "application/components/navbar"
+
+.l-content.container.py-1
+  .row
+    .col-xs-3.pr-0
+      .card.container.py-1
+        = render "works/sidebar", work: @work
+    .col-xs-9
+      .card
+        .container.py-1
+          h1.mb-0 = @work.decorate.local_title
+        = render "works/subnav", work: @work
+
+      .card.mt-1.py-1
+        - episodes = @work.episodes.published
+        - if episodes.present?
+          c-episode-list inline-template="" :is-signed-in="#{user_signed_in?}" :raw-is-tracking-mode="#{params.key?(:tracking)}" :all-episode-ids="#{episodes.pluck(:id)}" :work-id="#{@work.id}"
+            .c-episode-list
+              .container.mb-zp5
+                small.fake-link v-show="!isTrackingMode" @click="enableTrackingMode"
+                  = t "words.bulk_tracking"
+                small.fake-link.mr-zp5 v-show="isTrackingMode" @click="checkAll"
+                  = t "words.check_all"
+                small.fake-link v-show="isTrackingMode && !!episodeIds.length" @click="uncheckAll"
+                  = t "words.uncheck_all"
+              table.p-episodes-table.table.mb-1
+                tbody
+                  - episodes.order(:sort_number).each do |episode|
+                    = render "episodes/episode_row", work: @work, episode: episode
+              .container.text-xs-right
+                button.btn.btn-secondary.mr-zp5 v-show="isTrackingMode" @click="disableTrackingMode"
+                  = t "words.cancel"
+                button.btn.btn-primary :class="{ 'c-spinner': isTracking }" v-show="isTrackingMode" @click="track"
+                  = icon "pencil-square-o"
+                  = t "words.track"
+
+= render "application/components/footer"
+
+- unless user_signed_in?
+  = render "application/components/sign_up_modal", user: @new_user
+
+- content_for :js_templates do
+  = render "application/js_templates/search_form"
+  = render "application/js_templates/status_selector"

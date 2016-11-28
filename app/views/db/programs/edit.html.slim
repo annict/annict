@@ -1,9 +1,50 @@
-= render "db/works/header", work: @work
+- title @work.title
 
-= render "edit_type_tab", work: @work, program: @program
+.l-topbar.container-fluid.px-1
+  .row.flex-items-xs-between
+    .col-xs-8
+      = render "db/application/topbar_title", parent: @work, child: t("resources.program.edit_programs")
+    .col-xs.text-xs-right
+      = link_to work_path(@work), class: "btn btn-outline-primary", target: "_blank" do
+        = icon "external-link"
+        = t "resources.work.go_to_work"
 
-.row
-  .col-sm-7
-    = render "form", work: @work, program: @program
-  .col-sm-5
-    = render "sidebar"
+= render "db/works/subnav", work: @work
+
+.container-fluid.p-1
+  .row
+    .col-xs-6
+      .c-card.p-1
+        .container
+          = form_for [:db, @program] do |f|
+            = render "application/components/error_panel", resource: f.object
+
+            .form-group.row
+              = f.label :channel_id, class: "col-sm-3 col-form-label"
+              .col-sm-9
+                = f.select :channel_id, options_from_collection_for_select(Channel.published.order(:name), :id, :name, f.object.channel.try!(:id)), { include_blank: true }, { class: "form-control" }
+            .form-group.row
+              = f.label :episode_id, class: "col-sm-3 col-form-label"
+              .col-sm-9
+                = f.select :episode_id, options_for_select(@work.episodes.order(:sort_number).map { |episode| [episode.decorate.title_with_number, episode.id] }, f.object.episode.try!(:id)), { include_blank: true }, { class: "form-control" }
+            .form-group.row
+              = f.label :started_at, class: "col-sm-3 col-form-label"
+              .col-sm-9
+                = f.text_field :started_at, class: "form-control", value: f.object.started_at&.in_time_zone(current_user.time_zone)&.strftime("%Y-%m-%d %H:%M"), placeholder: t("resources.program.started_at_eg")
+            .form-group.row
+              = label_tag :time_zone, nil, class: "col-sm-3 col-form-label"
+              .col-sm-9
+                = select_tag "program[time_zone]", options_for_select(ActiveSupport::TimeZone.all.map { |time_zone| [decorated_tz_name(time_zone), time_zone.name] }, current_user.time_zone), { class: "form-control" }
+            .form-group.row.row
+              label.col-sm-3
+              .col-sm-9
+                .form-check
+                  = f.label :rebroadcast, class: "form-check-label" do
+                    = f.check_box :rebroadcast, class: "form-check-input"
+                    = t "activerecord.attributes.program.rebroadcast"
+
+            .form-group.row
+              .offset-sm-3.col-sm-9
+                = f.submit t("helpers.submit.update"), class: "btn btn-primary"
+    .col-xs-6
+      = render "sidebar"

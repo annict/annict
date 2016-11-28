@@ -1,7 +1,8 @@
 # frozen_string_literal: true
 
 class ApplicationController < ActionController::Base
-  include AnalyticsFilter
+  include ControllerCommon
+  include PageCategoryHelper
   include ViewSelector
   include FlashMessage
 
@@ -9,9 +10,11 @@ class ApplicationController < ActionController::Base
   # For APIs, you may want to use :null_session instead.
   protect_from_forgery with: :exception
 
-  before_action :set_paper_trail_whodunnit
-  before_action :store_user_info
+  helper_method :client_uuid, :gon
+
+  before_action :load_data_into_gon
   before_action :set_search_params
+  before_action :load_new_user
 
   # テスト実行時にDragonflyでアップロードした画像を読み込むときに呼ばれるアクション
   # 画像サーバはこのRailsアプリから切り離しているので、CircleCI等でテストを実行するときは
@@ -33,7 +36,7 @@ class ApplicationController < ActionController::Base
     root_path
   end
 
-  def set_work
+  def load_work
     @work = Work.published.find(params[:work_id])
   end
 
@@ -49,16 +52,8 @@ class ApplicationController < ActionController::Base
     @search = SearchService.new(params[:q])
   end
 
-  def store_user_info
-    if user_signed_in?
-      user_info = {
-        shareRecordToTwitter: current_user.setting.share_record_to_twitter?,
-        shareRecordToFacebook: current_user.setting.share_record_to_facebook?,
-        sharableToTwitter: current_user.shareable_to?(:twitter),
-        sharableToFacebook: current_user.shareable_to?(:facebook)
-      }
-
-      gon.push(user_info)
-    end
+  def load_new_user
+    return if user_signed_in?
+    @new_user = User.new_with_session({}, session)
   end
 end

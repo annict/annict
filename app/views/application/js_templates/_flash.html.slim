@@ -1,0 +1,5 @@
+script#t-flash type="x-template"
+  transition name="c-flash--expand"
+    .c-flash.alert @click="close" v-if="show" :class="alertClass"
+      i.fa :class="alertIcon"
+      span v-html="message"

@@ -1,39 +1,47 @@
-= render "db/works/header", work: @work
+- title t("resources.program.program_list")
 
-.pull-right
-  - if current_user.committer?
-    = link_to "新規登録", new_db_work_program_path(@work), class: "btn btn-primary"
+.l-topbar.container-fluid.px-1
+  .row.flex-items-xs-between
+    .col-xs-8
+      = render "db/application/topbar_title", parent: @work, child: t("resources.program.program_list")
+    - if user_signed_in? && current_user.committer?
+      .col-xs.text-xs-right
+        = link_to new_db_work_program_path(@work), class: "btn btn-outline-primary" do
+          = icon "pencil-square-o"
+          = t "resources.program.new_programs"
+
+= render "db/works/subnav", work: @work
+
+.container-fluid.p-1
+  - if @programs.present?
+    .c-card
+      table.table.table-hover
+        thead
+          tr
+            th ID
+            th = t "activerecord.attributes.program.channel_id"
+            th = t "activerecord.attributes.program.episode_id"
+            th = t "activerecord.attributes.program.started_at"
+            th = t "activerecord.attributes.program.rebroadcast"
+            th = t "words.activity"
+            - if policy(@programs).edit?
+              th = t "words.edit"
+            - if policy(@programs).destroy?
+              th = t "words.delete"
+        tbody
+          - @programs.each do |program|
+            tr
+              td = program.id
+              td = program.channel.name
+              td = program.episode.decorate.title_with_number
+              td = display_time(program.started_at)&.presence || "-"
+              td = program.rebroadcast? ? icon("check") : "-"
+              td = link_to t("words.activity"), activities_db_program_path(program)
+              - if policy(program).edit?
+                td
+                  = link_to t("words.edit"), edit_db_program_path(program), class: "btn btn-primary btn-sm"
+              - if policy(program).destroy?
+                td = link_to t("words.delete"), db_program_path(program), class: "btn btn-danger btn-sm", data: { method: :delete, confirm: t("messages.are_you_sure") }
+
   - else
-    = link_to "新規登録", new_db_work_draft_program_path(@work), class: "btn btn-primary"
-
-.clearfix
-
-table.table.table-striped
-  thead
-    tr
-      th ID
-      th チャンネル
-      th エピソード
-      th 放送日時
-      th 再放送
-      th 編集
-      - if policy(@programs).destroy?
-        th 削除
-  tbody
-    - @programs.each do |program|
-      tr
-        td = program.id
-        td = program.channel.name
-        td = program.episode.decorate.title_with_number
-        td = program.started_at&.in_time_zone("Asia/Tokyo")&.strftime("%Y-%m-%d %H:%M")
-        td = program.rebroadcast? ? icon("check") : "-"
-        td
-          - if current_user.committer?
-            = link_to "編集", edit_db_work_program_path(@work, program), class: "btn btn-primary btn-sm"
-          - else
-            = link_to "編集", new_db_work_draft_program_path(@work, id: program.id), class: "btn btn-primary btn-sm"
-        - if policy(program).destroy?
-          td = link_to "削除", db_work_program_path(@work, program), class: "btn btn-danger btn-sm", data: { method: :delete, confirm: "放送予定を削除しますか？" }
-
-- if @programs.blank?
-  .well 登録されている放送予定はありません。
+    = render "application/components/empty", text: t("resources.program.there_are_no_programs")

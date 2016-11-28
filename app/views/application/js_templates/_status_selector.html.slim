@@ -1,0 +1,9 @@
+script#t-status-selector type="x-template"
+  .c-status-selector :class='{ "is-mini": normalizedIsMini, "is-transparent": normalizedIsTransparent }'
+    .c-status-selector__object
+      select v-model="statusKind" @change="change"
+        - options = Status.kind.options.insert(0, [t("messages.components.status_selector.select_status"), "no_select"])
+        = options_for_select(options)
+      = icon "caret-down"
+    .loader v-show="isLoading" transition="loading"
+      = icon "circle-o-notch", class: "fa-spin"

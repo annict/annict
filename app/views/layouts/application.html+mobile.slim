@@ -1,0 +1,14 @@
+doctype html
+html lang="#{I18n.locale}"
+  head
+    = render "application/head"
+  body class="#{body_classes} #{user_signed_in? ? 'is-user' : 'is-guest'}"
+    .p-vue
+      c-flash
+      = yield
+
+    = include_gon
+    = render "application/analytics"
+
+    = render "application/js_templates/flash"
+    = yield :js_templates

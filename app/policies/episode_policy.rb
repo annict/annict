@@ -1,4 +1,10 @@
+# frozen_string_literal: true
+
 class EpisodePolicy < ApplicationPolicy
+  def create?
+    user.committer?
+  end
+
   def update?
     user.committer?
   end

@@ -1,0 +1,12 @@
+# frozen_string_literal: true
+
+resources = @characters.map do |character|
+  {
+    id: character.id,
+    text: character.name
+  }
+end
+
+{
+  resources: resources
+}

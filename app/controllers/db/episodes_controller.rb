@@ -1,54 +1,87 @@
 # frozen_string_literal: true
 
-class Db::EpisodesController < Db::ApplicationController
-  permits :number, :sort_number, :sc_count, :title, :prev_episode_id, :fetch_syobocal,
-    :raw_number
+module Db
+  class EpisodesController < Db::ApplicationController
+    permits :number, :raw_number, :sort_number, :sc_count, :title,
+      :prev_episode_id, :fetch_syobocal
 
-  before_action :authenticate_user!
-  before_action :load_work, only: [:index, :new, :create, :edit, :update, :hide, :destroy]
+    before_action :authenticate_user!
+    before_action :load_work, only: %i(index new create)
+    before_action :load_episode, only: %i(edit update hide destroy activities)
 
-  def index(page: nil)
-    @episodes = @work.episodes.order(sort_number: :desc).page(page)
-  end
-
-  def edit(id)
-    @episode = @work.episodes.find(id)
-    authorize @episode, :edit?
-  end
-
-  def update(id, episode)
-    @episode = @work.episodes.find(id)
-    authorize @episode, :update?
-
-    @episode.attributes = episode
-    if @episode.save_and_create_db_activity(current_user, "episodes.update")
-      redirect_to db_work_episodes_path(@work), notice: "エピソードを更新しました"
-    else
-      render :edit
+    def index(page: nil)
+      @episodes = @work.episodes.
+        includes(:prev_episode).
+        order(sort_number: :desc).
+        page(page)
     end
-  end
 
-  def hide(id)
-    @episode = @work.episodes.find(id)
-    authorize @episode, :hide?
+    def new
+      @form = DB::EpisodeRowsForm.new
+      authorize @form, :new?
+    end
 
-    @episode.hide!
+    def create(db_episode_rows_form)
+      @form = DB::EpisodeRowsForm.new(db_episode_rows_form.permit(:rows))
+      @form.user = current_user
+      @form.work = @work
+      authorize @form, :create?
 
-    redirect_to :back, notice: "エピソードを非公開にしました"
-  end
+      return render(:new) unless @form.valid?
+      @form.save!
 
-  def destroy(id)
-    @episode = @work.episodes.find(id)
-    authorize @episode, :destroy?
+      redirect_to db_work_episodes_path(@work), notice: t("resources.episode.created")
+    end
 
-    @episode.destroy
+    def edit
+      authorize @episode, :edit?
+      @work = @episode.work
+    end
 
-    redirect_to db_work_episodes_path(@work), notice: "エピソードを削除しました"
-  end
+    def update(episode)
+      authorize @episode, :update?
+      @work = @episode.work
 
-  private
+      @episode.attributes = episode
+      @episode.user = current_user
 
-  def load_work
-    @work = Work.find(params[:work_id])
+      return render(:edit) unless @episode.valid?
+      @episode.save_and_create_activity!
+
+      redirect_to db_work_episodes_path(@work), notice: t("resources.episode.updated")
+    end
+
+    def hide
+      authorize @episode, :hide?
+
+      @episode.hide!
+
+      flash[:notice] = t("resources.episode.unpublished")
+      redirect_back fallback_location: db_works_path
+    end
+
+    def destroy
+      authorize @episode, :destroy?
+
+      @episode.destroy
+
+      flash[:notice] = t("resources.episode.deleted")
+      redirect_back fallback_location: db_works_path
+    end
+
+    def activities
+      @activities = @episode.db_activities.order(id: :desc)
+      @comment = @episode.db_comments.new
+    end
+
+    private
+
+    def load_work
+      @work = Work.find(params[:work_id])
+    end
+
+    def load_episode
+      @episode = Episode.find(params[:id])
+    end
   end
 end

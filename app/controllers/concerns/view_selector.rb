@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module ViewSelector
   extend ActiveSupport::Concern
 
@@ -8,6 +10,6 @@ module ViewSelector
   private
 
   def register_mobile_variant
-    request.variant = :mobile if browser.mobile?
+    request.variant = :mobile if browser.device.mobile?
   end
 end

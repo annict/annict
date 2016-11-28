@@ -1,0 +1,34 @@
+<script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+  <% if user_signed_in? %>
+  ga("create", "<%= ENV.fetch('GA_TRACKING_ID') %>", {
+    "storage": "none",
+    "clientId": "<%= client_uuid %>",
+    "userId": "<%= current_user.encoded_id %>"
+  });
+  <% else %>
+  ga("create", "<%= ENV.fetch('GA_TRACKING_ID') %>", {
+    "storage": "none",
+    "clientId": "<%= client_uuid %>"
+  });
+  <% end %>
+
+  <%# カスタムディメンション「ログイン」 %>
+  <% if user_signed_in? %>
+  var dimension1 = "user";
+  <% else %>
+  var dimension1 = "guest";
+  <% end %>
+
+  <%# カスタムディメンション「ページカテゴリ」 %>
+  var dimension2 = "<%= page_category %>";
+
+  ga("send", "pageview", {
+    dimension1: dimension1,
+    dimension2: dimension2
+  });
+</script>

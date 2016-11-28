@@ -37,6 +37,6 @@ module ProfilesHelper
       return "#{ENV['ANNICT_FILE_STORAGE_URL']}/#{path}"
     end
 
-    annict_image_url(profile, field, options)
+    ann_image_url(profile, field, options)
   end
 end

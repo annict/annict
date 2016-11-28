@@ -1,7 +1,0 @@
-.activity
-  .pull-left
-    span.user-name = activity.user.decorate.name_link
-    | がクローズしました
-  .pull-right.text-muted
-    = "#{time_ago_in_words(activity.trackable.closed_at)}前"
-  .clearfix

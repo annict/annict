@@ -1,0 +1,13 @@
+span.c-db-activity__profile-link
+  = activity.user.decorate.name_link
+
+| が
+
+span.c-db-activity__resource-title
+  = activity.trackable.decorate.db_detail_link
+
+- action = activity.action.split(".")[1]
+- if action == "create"
+  | を登録しました
+- elsif action == "update"
+  | を更新しました

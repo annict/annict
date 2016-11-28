@@ -1,0 +1,7 @@
+.c-image-upload-modal {
+  &__dropzone {
+    border: 1px dashed $ann-color-river;
+    border-radius: $border-radius;
+    cursor: pointer;
+  }
+}

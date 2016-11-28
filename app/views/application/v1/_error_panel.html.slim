@@ -1,9 +1,0 @@
-- if resource.errors.any?
-  .error-explanation
-    .panel.panel-danger
-      .panel-heading
-        h3.panel-title
-          = t('words.error')
-      ul.panel-body
-        - resource.errors.full_messages.each do |msg|
-          li = msg

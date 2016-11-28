@@ -1,2 +1,0 @@
-class DraftMultipleEpisodePolicy < DraftResourcePolicy
-end
