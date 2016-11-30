@@ -16,6 +16,8 @@
 #  fetch_syobocal  :boolean          default(FALSE), not null
 #  raw_number      :string
 #  avg_rating      :float
+#  title_ro        :string           default(""), not null
+#  title_en        :string           default(""), not null
 #
 # Indexes
 #
