@@ -1,0 +1,91 @@
+.c-status-selector {
+  border-radius: $border-radius;
+  color: $ann-color-white;
+  display: inline-block;
+  line-height: $line-height-base;
+  overflow: hidden;
+  position: relative;
+  width: 100%;
+
+  &.is-transparent {
+    color: $ann-color-java;
+
+    .c-status-selector__object {
+      border: solid 1px $ann-color-java;
+
+      select {
+        background-color: rgba(255, 255, 255, 0);
+        color: $ann-color-java;
+      }
+    }
+  }
+
+  &.is-mini {
+    width: 150px;
+
+    .c-status-selector__object {
+      > select {
+        height: 30px;
+      }
+
+      > i {
+        top: 7px;
+      }
+    }
+  }
+
+  &__object {
+    position: relative;
+
+    select {
+      @include appearance(none);
+      background-color: $ann-color-java;
+      border: 0;
+      border-radius: 0;
+      color: $ann-color-white;
+      cursor: pointer;
+      height: 35px;
+      outline: none;
+      padding-left: 7px;
+      width: 130%;
+
+      &:hover {
+        background-color: darken($ann-color-java, 15%);
+      }
+
+      option {
+        background-color: $ann-color-mine-shaft;
+      }
+    }
+
+    i {
+      font-size: 15px;
+      position: absolute;
+      right: 7px;
+      top: 9px;
+    }
+  }
+
+  > .loader {
+    background-color: rgba(255, 255, 255, 0.85);
+    height: 100%;
+    position: absolute;
+    top: 0;
+    width: 100%;
+
+    &.loading-transition {
+      line-height: 35px;
+      text-align: center;
+      transition: all .1s ease-out;
+    }
+
+    &.loading-enter,
+    &.loading-leave {
+      opacity: 0;
+    }
+
+    > i {
+      color: $ann-color-java;
+    }
+  }
+}

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160918071042) do
+ActiveRecord::Schema.define(version: 20161120151456) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -29,17 +29,21 @@ ActiveRecord::Schema.define(version: 20160918071042) do
   end
 
   create_table "casts", force: :cascade do |t|
-    t.integer  "person_id",                         null: false
-    t.integer  "work_id",                           null: false
-    t.string   "name",                              null: false
-    t.string   "part",                              null: false
-    t.string   "aasm_state",  default: "published", null: false
-    t.integer  "sort_number", default: 0,           null: false
-    t.datetime "created_at",                        null: false
-    t.datetime "updated_at",                        null: false
+    t.integer  "person_id",                          null: false
+    t.integer  "work_id",                            null: false
+    t.string   "name",                               null: false
+    t.string   "part",                               null: false
+    t.string   "aasm_state",   default: "published", null: false
+    t.integer  "sort_number",  default: 0,           null: false
+    t.datetime "created_at",                         null: false
+    t.datetime "updated_at",                         null: false
+    t.integer  "character_id"
+    t.string   "name_en",      default: "",          null: false
     t.index ["aasm_state"], name: "index_casts_on_aasm_state", using: :btree
+    t.index ["character_id"], name: "index_casts_on_character_id", using: :btree
     t.index ["person_id"], name: "index_casts_on_person_id", using: :btree
     t.index ["sort_number"], name: "index_casts_on_sort_number", using: :btree
+    t.index ["work_id", "character_id"], name: "index_casts_on_work_id_and_character_id", unique: true, using: :btree
     t.index ["work_id"], name: "index_casts_on_work_id", using: :btree
   end
 
@@ -73,6 +77,58 @@ ActiveRecord::Schema.define(version: 20160918071042) do
     t.datetime "updated_at"
     t.index ["channel_group_id"], name: "channels_channel_group_id_idx", using: :btree
     t.index ["sc_chid"], name: "channels_sc_chid_key", unique: true, using: :btree
+  end
+
+  create_table "character_images", force: :cascade do |t|
+    t.integer  "character_id",                                  null: false
+    t.integer  "user_id",                                       null: false
+    t.string   "attachment_file_name",                          null: false
+    t.integer  "attachment_file_size",                          null: false
+    t.string   "attachment_content_type",                       null: false
+    t.datetime "attachment_updated_at",                         null: false
+    t.datetime "created_at",                                    null: false
+    t.datetime "updated_at",                                    null: false
+    t.string   "aasm_state",              default: "published", null: false
+    t.integer  "likes_count",             default: 0,           null: false
+    t.integer  "dislikes_count",          default: 0,           null: false
+    t.index ["character_id"], name: "index_character_images_on_character_id", using: :btree
+    t.index ["user_id"], name: "index_character_images_on_user_id", using: :btree
+  end
+
+  create_table "characters", force: :cascade do |t|
+    t.string   "name",                                     null: false
+    t.string   "name_en",            default: "",          null: false
+    t.string   "kind",               default: "",          null: false
+    t.string   "kind_en",            default: "",          null: false
+    t.string   "nickname",           default: "",          null: false
+    t.string   "nickname_en",        default: "",          null: false
+    t.string   "birthday",           default: "",          null: false
+    t.string   "birthday_en",        default: "",          null: false
+    t.string   "age",                default: "",          null: false
+    t.string   "age_en",             default: "",          null: false
+    t.string   "blood_type",         default: "",          null: false
+    t.string   "blood_type_en",      default: "",          null: false
+    t.string   "height",             default: "",          null: false
+    t.string   "height_en",          default: "",          null: false
+    t.string   "weight",             default: "",          null: false
+    t.string   "weight_en",          default: "",          null: false
+    t.string   "nationality",        default: "",          null: false
+    t.string   "nationality_en",     default: "",          null: false
+    t.string   "occupation",         default: "",          null: false
+    t.string   "occupation_en",      default: "",          null: false
+    t.text     "description",        default: "",          null: false
+    t.text     "description_en",     default: "",          null: false
+    t.datetime "created_at",                               null: false
+    t.datetime "updated_at",                               null: false
+    t.string   "name_kana",          default: "",          null: false
+    t.string   "aasm_state",         default: "published", null: false
+    t.integer  "poster_image_id"
+    t.integer  "cover_image_id"
+    t.integer  "character_image_id"
+    t.index ["character_image_id"], name: "index_characters_on_character_image_id", using: :btree
+    t.index ["cover_image_id"], name: "index_characters_on_cover_image_id", using: :btree
+    t.index ["name", "kind"], name: "index_characters_on_name_and_kind", unique: true, using: :btree
+    t.index ["poster_image_id"], name: "index_characters_on_poster_image_id", using: :btree
   end
 
   create_table "checkins", force: :cascade do |t|
@@ -116,38 +172,47 @@ ActiveRecord::Schema.define(version: 20160918071042) do
     t.index ["work_id"], name: "index_comments_on_work_id", using: :btree
   end
 
-  create_table "cover_images", force: :cascade do |t|
-    t.integer  "work_id",                null: false
-    t.string   "file_name",  limit: 510, null: false
-    t.string   "location",   limit: 510, null: false
-    t.datetime "created_at"
-    t.datetime "updated_at"
-    t.index ["work_id"], name: "cover_images_work_id_idx", using: :btree
+  create_table "cover_images", id: :integer, default: -> { "nextval('cover_images_id_seq1'::regclass)" }, force: :cascade do |t|
+    t.integer  "user_id",                 null: false
+    t.string   "resource_type",           null: false
+    t.integer  "resource_id",             null: false
+    t.string   "attachment_file_name",    null: false
+    t.integer  "attachment_file_size",    null: false
+    t.string   "attachment_content_type", null: false
+    t.datetime "attachment_updated_at",   null: false
+    t.datetime "created_at",              null: false
+    t.datetime "updated_at",              null: false
+    t.index ["resource_id", "resource_type"], name: "index_cover_images_on_resource_id_and_resource_type", using: :btree
+    t.index ["resource_type", "resource_id"], name: "index_cover_images_on_resource_type_and_resource_id", using: :btree
+    t.index ["user_id"], name: "index_cover_images_on_user_id", using: :btree
   end
 
   create_table "db_activities", force: :cascade do |t|
     t.integer  "user_id",            null: false
-    t.integer  "recipient_id"
-    t.string   "recipient_type"
     t.integer  "trackable_id",       null: false
     t.string   "trackable_type",     null: false
     t.string   "action",             null: false
     t.json     "parameters"
     t.datetime "created_at",         null: false
     t.datetime "updated_at",         null: false
-    t.integer  "work_id"
     t.integer  "root_resource_id"
     t.string   "root_resource_type"
-    t.index ["recipient_id", "recipient_type"], name: "index_db_activities_on_recipient_id_and_recipient_type", using: :btree
+    t.integer  "object_id"
+    t.string   "object_type"
+    t.index ["object_id", "object_type"], name: "index_db_activities_on_object_id_and_object_type", using: :btree
     t.index ["root_resource_id", "root_resource_type"], name: "index_db_activities_on_root_resource_id_and_root_resource_type", using: :btree
     t.index ["trackable_id", "trackable_type"], name: "index_db_activities_on_trackable_id_and_trackable_type", using: :btree
-    t.index ["work_id"], name: "index_db_activities_on_work_id", using: :btree
   end
 
   create_table "db_comments", force: :cascade do |t|
-    t.text     "body",       null: false
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.integer  "user_id",       null: false
+    t.integer  "resource_id",   null: false
+    t.string   "resource_type", null: false
+    t.text     "body",          null: false
+    t.datetime "created_at",    null: false
+    t.datetime "updated_at",    null: false
+    t.index ["resource_id", "resource_type"], name: "index_db_comments_on_resource_id_and_resource_type", using: :btree
+    t.index ["user_id"], name: "index_db_comments_on_user_id", using: :btree
   end
 
   create_table "delayed_jobs", force: :cascade do |t|
@@ -163,6 +228,17 @@ ActiveRecord::Schema.define(version: 20160918071042) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.index ["priority", "run_at"], name: "delayed_jobs_priority", using: :btree
+  end
+
+  create_table "dislikes", force: :cascade do |t|
+    t.integer  "user_id",        null: false
+    t.string   "recipient_type", null: false
+    t.integer  "recipient_id",   null: false
+    t.datetime "created_at",     null: false
+    t.datetime "updated_at",     null: false
+    t.index ["recipient_id", "recipient_type"], name: "index_dislikes_on_recipient_id_and_recipient_type", using: :btree
+    t.index ["recipient_type", "recipient_id"], name: "index_dislikes_on_recipient_type_and_recipient_id", using: :btree
+    t.index ["user_id"], name: "index_dislikes_on_user_id", using: :btree
   end
 
   create_table "draft_casts", force: :cascade do |t|
@@ -284,21 +360,6 @@ ActiveRecord::Schema.define(version: 20160918071042) do
     t.index ["sort_number"], name: "index_draft_staffs_on_sort_number", using: :btree
     t.index ["staff_id"], name: "index_draft_staffs_on_staff_id", using: :btree
     t.index ["work_id"], name: "index_draft_staffs_on_work_id", using: :btree
-  end
-
-  create_table "draft_work_organizations", force: :cascade do |t|
-    t.integer  "work_organization_id"
-    t.integer  "work_id",                          null: false
-    t.integer  "organization_id",                  null: false
-    t.string   "role",                             null: false
-    t.string   "role_other"
-    t.integer  "sort_number",          default: 0, null: false
-    t.datetime "created_at",                       null: false
-    t.datetime "updated_at",                       null: false
-    t.index ["organization_id"], name: "index_draft_work_organizations_on_organization_id", using: :btree
-    t.index ["sort_number"], name: "index_draft_work_organizations_on_sort_number", using: :btree
-    t.index ["work_id"], name: "index_draft_work_organizations_on_work_id", using: :btree
-    t.index ["work_organization_id"], name: "index_draft_work_organizations_on_work_organization_id", using: :btree
   end
 
   create_table "draft_works", force: :cascade do |t|
@@ -523,22 +584,26 @@ ActiveRecord::Schema.define(version: 20160918071042) do
   end
 
   create_table "organizations", force: :cascade do |t|
-    t.string   "name",                                   null: false
+    t.string   "name",                                      null: false
     t.string   "url"
     t.string   "wikipedia_url"
     t.string   "twitter_username"
-    t.string   "aasm_state",       default: "published", null: false
-    t.datetime "created_at",                             null: false
-    t.datetime "updated_at",                             null: false
-    t.string   "name_kana",        default: "",          null: false
+    t.string   "aasm_state",          default: "published", null: false
+    t.datetime "created_at",                                null: false
+    t.datetime "updated_at",                                null: false
+    t.string   "name_kana",           default: "",          null: false
+    t.string   "name_en",             default: "",          null: false
+    t.string   "url_en",              default: "",          null: false
+    t.string   "wikipedia_url_en",    default: "",          null: false
+    t.string   "twitter_username_en", default: "",          null: false
     t.index ["aasm_state"], name: "index_organizations_on_aasm_state", using: :btree
     t.index ["name"], name: "index_organizations_on_name", unique: true, using: :btree
   end
 
   create_table "people", force: :cascade do |t|
     t.integer  "prefecture_id"
-    t.string   "name",                                   null: false
-    t.string   "name_kana",        default: "",          null: false
+    t.string   "name",                                      null: false
+    t.string   "name_kana",           default: "",          null: false
     t.string   "nickname"
     t.string   "gender"
     t.string   "url"
@@ -547,12 +612,34 @@ ActiveRecord::Schema.define(version: 20160918071042) do
     t.date     "birthday"
     t.string   "blood_type"
     t.integer  "height"
-    t.string   "aasm_state",       default: "published", null: false
-    t.datetime "created_at",                             null: false
-    t.datetime "updated_at",                             null: false
+    t.string   "aasm_state",          default: "published", null: false
+    t.datetime "created_at",                                null: false
+    t.datetime "updated_at",                                null: false
+    t.string   "name_en",             default: "",          null: false
+    t.string   "nickname_en",         default: "",          null: false
+    t.string   "gender_en",           default: "",          null: false
+    t.string   "url_en",              default: "",          null: false
+    t.string   "wikipedia_url_en",    default: "",          null: false
+    t.string   "twitter_username_en", default: "",          null: false
+    t.string   "blood_type_en",       default: "",          null: false
     t.index ["aasm_state"], name: "index_people_on_aasm_state", using: :btree
     t.index ["name"], name: "index_people_on_name", unique: true, using: :btree
     t.index ["prefecture_id"], name: "index_people_on_prefecture_id", using: :btree
+  end
+
+  create_table "poster_images", force: :cascade do |t|
+    t.integer  "user_id",                 null: false
+    t.string   "resource_type",           null: false
+    t.integer  "resource_id",             null: false
+    t.string   "attachment_file_name",    null: false
+    t.integer  "attachment_file_size",    null: false
+    t.string   "attachment_content_type", null: false
+    t.datetime "attachment_updated_at",   null: false
+    t.datetime "created_at",              null: false
+    t.datetime "updated_at",              null: false
+    t.index ["resource_id", "resource_type"], name: "index_poster_images_on_resource_id_and_resource_type", using: :btree
+    t.index ["resource_type", "resource_id"], name: "index_poster_images_on_resource_type_and_resource_id", using: :btree
+    t.index ["user_id"], name: "index_poster_images_on_user_id", using: :btree
   end
 
   create_table "prefectures", force: :cascade do |t|
@@ -662,6 +749,8 @@ ActiveRecord::Schema.define(version: 20160918071042) do
     t.datetime "updated_at",                          null: false
     t.integer  "resource_id",                         null: false
     t.string   "resource_type",                       null: false
+    t.string   "name_en",       default: "",          null: false
+    t.string   "role_other_en", default: "",          null: false
     t.index ["aasm_state"], name: "index_staffs_on_aasm_state", using: :btree
     t.index ["resource_id", "resource_type"], name: "index_staffs_on_resource_id_and_resource_type", using: :btree
     t.index ["sort_number"], name: "index_staffs_on_sort_number", using: :btree
@@ -694,13 +783,16 @@ ActiveRecord::Schema.define(version: 20160918071042) do
   end
 
   create_table "tips", force: :cascade do |t|
-    t.integer  "target",                   null: false
-    t.string   "partial_name", limit: 255, null: false
-    t.string   "title",        limit: 255, null: false
-    t.string   "icon_name",    limit: 255, null: false
-    t.datetime "created_at",               null: false
-    t.datetime "updated_at",               null: false
-    t.index ["partial_name"], name: "index_tips_on_partial_name", unique: true, using: :btree
+    t.integer  "target",                              null: false
+    t.string   "slug",       limit: 255,              null: false
+    t.string   "title",      limit: 255,              null: false
+    t.string   "icon_name",  limit: 255,              null: false
+    t.datetime "created_at",                          null: false
+    t.datetime "updated_at",                          null: false
+    t.string   "title_en",               default: "", null: false
+    t.text     "body",                   default: "", null: false
+    t.text     "body_en",                default: "", null: false
+    t.index ["slug"], name: "index_tips_on_slug", unique: true, using: :btree
   end
 
   create_table "twitter_bots", force: :cascade do |t|
@@ -711,24 +803,27 @@ ActiveRecord::Schema.define(version: 20160918071042) do
   end
 
   create_table "users", force: :cascade do |t|
-    t.string   "username",             limit: 510,              null: false
-    t.string   "email",                limit: 510,              null: false
-    t.integer  "role",                                          null: false
-    t.string   "encrypted_password",   limit: 510, default: "", null: false
+    t.string   "username",               limit: 510,              null: false
+    t.string   "email",                  limit: 510,              null: false
+    t.integer  "role",                                            null: false
+    t.string   "encrypted_password",     limit: 510, default: "", null: false
     t.datetime "remember_created_at"
-    t.integer  "sign_in_count",                    default: 0,  null: false
+    t.integer  "sign_in_count",                      default: 0,  null: false
     t.datetime "current_sign_in_at"
     t.datetime "last_sign_in_at"
-    t.string   "current_sign_in_ip",   limit: 510
-    t.string   "last_sign_in_ip",      limit: 510
-    t.string   "confirmation_token",   limit: 510
+    t.string   "current_sign_in_ip",     limit: 510
+    t.string   "last_sign_in_ip",        limit: 510
+    t.string   "confirmation_token",     limit: 510
     t.datetime "confirmed_at"
     t.datetime "confirmation_sent_at"
-    t.string   "unconfirmed_email",    limit: 510
-    t.integer  "checkins_count",                   default: 0,  null: false
-    t.integer  "notifications_count",              default: 0,  null: false
+    t.string   "unconfirmed_email",      limit: 510
+    t.integer  "checkins_count",                     default: 0,  null: false
+    t.integer  "notifications_count",                default: 0,  null: false
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.string   "time_zone",                          default: "", null: false
+    t.string   "reset_password_token",               default: ""
+    t.datetime "reset_password_sent_at"
     t.index ["confirmation_token"], name: "users_confirmation_token_key", unique: true, using: :btree
     t.index ["email"], name: "users_email_key", unique: true, using: :btree
     t.index ["username"], name: "users_username_key", unique: true, using: :btree
@@ -743,20 +838,20 @@ ActiveRecord::Schema.define(version: 20160918071042) do
     t.datetime "created_at"
   end
 
-  create_table "work_organizations", force: :cascade do |t|
-    t.integer  "work_id",                               null: false
-    t.integer  "organization_id",                       null: false
-    t.string   "role",                                  null: false
-    t.string   "role_other"
-    t.string   "aasm_state",      default: "published", null: false
-    t.integer  "sort_number",     default: 0,           null: false
-    t.datetime "created_at",                            null: false
-    t.datetime "updated_at",                            null: false
-    t.index ["aasm_state"], name: "index_work_organizations_on_aasm_state", using: :btree
-    t.index ["organization_id"], name: "index_work_organizations_on_organization_id", using: :btree
-    t.index ["sort_number"], name: "index_work_organizations_on_sort_number", using: :btree
-    t.index ["work_id", "organization_id"], name: "index_work_organizations_on_work_id_and_organization_id", unique: true, using: :btree
-    t.index ["work_id"], name: "index_work_organizations_on_work_id", using: :btree
+  create_table "work_images", force: :cascade do |t|
+    t.integer  "work_id",                                       null: false
+    t.integer  "user_id",                                       null: false
+    t.string   "attachment_file_name",                          null: false
+    t.integer  "attachment_file_size",                          null: false
+    t.string   "attachment_content_type",                       null: false
+    t.datetime "attachment_updated_at",                         null: false
+    t.datetime "created_at",                                    null: false
+    t.datetime "updated_at",                                    null: false
+    t.string   "aasm_state",              default: "published", null: false
+    t.integer  "likes_count",             default: 0,           null: false
+    t.integer  "dislikes_count",          default: 0,           null: false
+    t.index ["user_id"], name: "index_work_images_on_user_id", using: :btree
+    t.index ["work_id"], name: "index_work_images_on_work_id", using: :btree
   end
 
   create_table "works", force: :cascade do |t|
@@ -779,26 +874,38 @@ ActiveRecord::Schema.define(version: 20160918071042) do
     t.string   "title_kana",                       default: "",          null: false
     t.string   "title_ro",                         default: "",          null: false
     t.string   "title_en",                         default: "",          null: false
-    t.string   "official_site_en_url",             default: "",          null: false
-    t.string   "wikipedia_en_url",                 default: "",          null: false
+    t.string   "official_site_url_en",             default: "",          null: false
+    t.string   "wikipedia_url_en",                 default: "",          null: false
     t.text     "synopsis",                         default: "",          null: false
     t.text     "synopsis_en",                      default: "",          null: false
     t.string   "synopsis_source",                  default: "",          null: false
-    t.string   "synopsis_en_source",               default: "",          null: false
+    t.string   "synopsis_source_en",               default: "",          null: false
     t.integer  "mal_anime_id"
+    t.integer  "poster_image_id"
+    t.integer  "cover_image_id"
+    t.integer  "work_image_id"
     t.index ["aasm_state"], name: "index_works_on_aasm_state", using: :btree
+    t.index ["cover_image_id"], name: "index_works_on_cover_image_id", using: :btree
     t.index ["number_format_id"], name: "index_works_on_number_format_id", using: :btree
+    t.index ["poster_image_id"], name: "index_works_on_poster_image_id", using: :btree
     t.index ["sc_tid"], name: "works_sc_tid_key", unique: true, using: :btree
     t.index ["season_id"], name: "works_season_id_idx", using: :btree
+    t.index ["work_image_id"], name: "index_works_on_work_image_id", using: :btree
   end
 
   add_foreign_key "activities", "users", name: "activities_user_id_fk", on_delete: :cascade
+  add_foreign_key "casts", "characters"
   add_foreign_key "casts", "people"
   add_foreign_key "casts", "works"
   add_foreign_key "channel_works", "channels", name: "channel_works_channel_id_fk", on_delete: :cascade
   add_foreign_key "channel_works", "users", name: "channel_works_user_id_fk", on_delete: :cascade
   add_foreign_key "channel_works", "works", name: "channel_works_work_id_fk", on_delete: :cascade
   add_foreign_key "channels", "channel_groups", name: "channels_channel_group_id_fk", on_delete: :cascade
+  add_foreign_key "character_images", "characters"
+  add_foreign_key "character_images", "users"
+  add_foreign_key "characters", "character_images"
+  add_foreign_key "characters", "cover_images"
+  add_foreign_key "characters", "poster_images"
   add_foreign_key "checkins", "episodes", name: "checkins_episode_id_fk", on_delete: :cascade
   add_foreign_key "checkins", "multiple_records"
   add_foreign_key "checkins", "oauth_applications"
@@ -807,9 +914,9 @@ ActiveRecord::Schema.define(version: 20160918071042) do
   add_foreign_key "comments", "checkins", name: "comments_checkin_id_fk", on_delete: :cascade
   add_foreign_key "comments", "users", name: "comments_user_id_fk", on_delete: :cascade
   add_foreign_key "comments", "works"
-  add_foreign_key "cover_images", "works", name: "cover_images_work_id_fk", on_delete: :cascade
+  add_foreign_key "cover_images", "users"
   add_foreign_key "db_activities", "users"
-  add_foreign_key "db_activities", "works"
+  add_foreign_key "dislikes", "users"
   add_foreign_key "draft_casts", "casts"
   add_foreign_key "draft_casts", "people"
   add_foreign_key "draft_casts", "works"
@@ -828,9 +935,6 @@ ActiveRecord::Schema.define(version: 20160918071042) do
   add_foreign_key "draft_programs", "works"
   add_foreign_key "draft_staffs", "staffs"
   add_foreign_key "draft_staffs", "works"
-  add_foreign_key "draft_work_organizations", "organizations"
-  add_foreign_key "draft_work_organizations", "work_organizations"
-  add_foreign_key "draft_work_organizations", "works"
   add_foreign_key "draft_works", "number_formats"
   add_foreign_key "draft_works", "seasons"
   add_foreign_key "draft_works", "works"
@@ -861,6 +965,7 @@ ActiveRecord::Schema.define(version: 20160918071042) do
   add_foreign_key "oauth_access_tokens", "oauth_applications", column: "application_id"
   add_foreign_key "oauth_access_tokens", "users", column: "resource_owner_id"
   add_foreign_key "people", "prefectures"
+  add_foreign_key "poster_images", "users"
   add_foreign_key "profiles", "users", name: "profiles_user_id_fk", on_delete: :cascade
   add_foreign_key "programs", "channels", name: "programs_channel_id_fk", on_delete: :cascade
   add_foreign_key "programs", "episodes", name: "programs_episode_id_fk", on_delete: :cascade
@@ -874,8 +979,11 @@ ActiveRecord::Schema.define(version: 20160918071042) do
   add_foreign_key "statuses", "users", name: "statuses_user_id_fk", on_delete: :cascade
   add_foreign_key "statuses", "works", name: "statuses_work_id_fk", on_delete: :cascade
   add_foreign_key "syobocal_alerts", "works", name: "syobocal_alerts_work_id_fk", on_delete: :cascade
-  add_foreign_key "work_organizations", "organizations"
-  add_foreign_key "work_organizations", "works"
+  add_foreign_key "work_images", "users"
+  add_foreign_key "work_images", "works"
+  add_foreign_key "works", "cover_images"
   add_foreign_key "works", "number_formats"
+  add_foreign_key "works", "poster_images"
   add_foreign_key "works", "seasons", name: "works_season_id_fk", on_delete: :cascade
+  add_foreign_key "works", "work_images"
 end

@@ -1,0 +1,8 @@
+.c-subnav.c-subnav--divided
+  ul.list-unstyled
+    li = active_link_to Work.model_name.human, edit_db_work_path(work), class_active: "c-subnav__link--active", active: params[:controller] == "db/works" && %w(edit update).include?(params[:action])
+    li = active_link_to Episode.model_name.human(count: 2), db_work_episodes_path(work), class_active: "c-subnav__link--active", active: params[:controller] == "db/episodes"
+    li = active_link_to Program.model_name.human(count: 2), db_work_programs_path(work), class_active: "c-subnav__link--active", active: params[:controller] == "db/programs"
+    li = active_link_to Cast.model_name.human(count: 2), db_work_casts_path(work), class_active: "c-subnav__link--active", active: params[:controller] == "db/casts"
+    li = active_link_to Staff.model_name.human(count: 2), db_work_staffs_path(work), class_active: "c-subnav__link--active", active: params[:controller] == "db/staffs"
+    li = active_link_to DbActivity.model_name.human(count: 2), activities_db_work_path(work), class_active: "c-subnav__link--active", active: params[:controller] == "db/works" && params[:action] == "activities"

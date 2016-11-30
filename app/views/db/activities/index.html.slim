@@ -1,40 +1,18 @@
-- title "アクティビティ"
+- title DbActivity.model_name.human(count: 2)
 
-.activities
-  - @activities.each do |activity|
-    - if activity.trackable.present?
-      - case activity.action
-      - when "works.create"
-        = render "activity_works_create", activity: activity
-      - when "works.update"
-        = render "activity_works_update", activity: activity
-      - when "multiple_episodes.create"
-        = render "activity_multiple_episodes_create", activity: activity
-      - when "episodes.update"
-        = render "activity_episodes_update", activity: activity
-      - when "programs.create"
-        = render "activity_programs_create", activity: activity
-      - when "programs.update"
-        = render "activity_programs_update", activity: activity
-      - when "items.create"
-        = render "activity_items_create", activity: activity
-      - when "items.update"
-        = render "activity_items_update", activity: activity
-      - when "people.create"
-        = render "activity_people_create", activity: activity
-      - when "people.update"
-        = render "activity_people_update", activity: activity
-      - when "casts.create"
-        = render "activity_casts_create", activity: activity
-      - when "casts.update"
-        = render "activity_casts_update", activity: activity
-      - when "staffs.create"
-        = render "activity_staffs_create", activity: activity
-      - when "staffs.update"
-        = render "activity_staffs_update", activity: activity
-      - when "organizations.create"
-        = render "activity_organizations_create", activity: activity
-      - when "organizations.update"
-        = render "activity_organizations_update", activity: activity
+.l-topbar.container-fluid.px-1
+  .row.flex-items-xs-between
+    .col-xs
+      = render "db/application/topbar_title", parent: DbActivity.model_name.human(count: 2)
+
+.container-fluid.p-1
+  .row
+    .c-card.col-xs-8.offset-xs-2.p-1
+      - @activities.each do |activity|
+        - if activity.trackable.present?
+          - if activity.root_resource_action?
+            = render "activity_root_resources", activity: activity
+          - elsif activity.child_resource_action?
+            = render "activity_child_resources", activity: activity
 
 = paginate @activities

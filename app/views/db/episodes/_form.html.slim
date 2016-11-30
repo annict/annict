@@ -1,8 +1,0 @@
-= form_for [:db, work, episode], html: { class: "form-horizontal" } do |f|
-  = render "application/v1/error_panel", resource: f.object
-
-  = render "episode_fields", f: f, work: work
-
-  .form-group
-    .col-sm-offset-3.col-sm-9
-      = f.submit class: "btn btn-primary"

@@ -1,54 +1,62 @@
-= render "db/works/header", work: @work
+- title t("resources.staff.staff_list")
 
-.pull-right.actions
-  - if current_user.committer?
-    = link_to "人物を新規登録", new_db_work_staff_path(@work, type: :person), class: "btn btn-primary"
-    = link_to "団体を新規登録", new_db_work_staff_path(@work, type: :organization), class: "btn btn-primary"
+.l-topbar.container-fluid.px-1
+  .row.flex-items-xs-between
+    .col-xs-8
+      = render "db/application/topbar_title", parent: @work, child: t("resources.staff.staff_list")
+    - if user_signed_in? && current_user.committer?
+      .col-xs.text-xs-right
+        = link_to new_db_work_staff_path(@work), class: "btn btn-outline-primary" do
+          = icon "pencil-square-o"
+          = t "resources.staff.new_staffs"
+
+= render "db/works/subnav", work: @work
+
+.container-fluid.p-1
+  - if @staffs.present?
+    .c-card
+      table.table.table-hover
+        thead
+          tr
+            th ID
+            th = t "activerecord.attributes.staff.resource"
+            th = t "activerecord.attributes.staff.name"
+            th = t "activerecord.attributes.staff.role"
+            th = t "activerecord.attributes.staff.sort_number"
+            th = t "words.state"
+            th = t "words.activity"
+            - if policy(@staffs).edit?
+              th = t "words.edit"
+            - if policy(@staffs).hide?
+              th = t "words.hide"
+            - if policy(@staffs).destroy?
+              th = t "words.delete"
+        tbody
+          - @staffs.each do |staff|
+            tr
+              td = staff.id
+              td
+                = staff.resource.decorate.db_detail_link
+                br
+                = staff.resource.name_en.presence || "-"
+              td
+                = staff.name.presence || "-"
+                br
+                = staff.name_en.presence || "-"
+              td = staff.decorate.role_name.presence || "-"
+              td = staff.sort_number
+              td
+                .tag class="#{staff.published? ? 'tag-success' : 'tag-warning'}"
+                  = t("resources.staff.aasm_state.#{staff.aasm_state}")
+              td = link_to t("words.activity"), activities_db_staff_path(staff)
+              - if policy(staff).edit?
+                td = link_to t("words.edit"), edit_db_staff_path(staff), class: "btn btn-primary btn-sm"
+              - if policy(staff).hide?
+                td
+                  - if staff.published?
+                    = link_to t("words.hide"), hide_db_staff_path(staff), class: "btn btn-warning btn-sm", data: { method: "patch", confirm: t("messages.are_you_sure") }
+              - if policy(staff).destroy?
+                td = link_to t("words.delete"), db_staff_path(staff), class: "btn btn-danger btn-sm", data: { method: :delete, confirm: t("messages.are_you_sure") }
+
   - else
-    = link_to "人物を新規登録", new_db_work_draft_staff_path(@work, type: :person), class: "btn btn-primary"
-    = link_to "団体を新規登録", new_db_work_draft_staff_path(@work, type: :organization), class: "btn btn-primary"
-
-.clearfix
-
-table.table.table-striped
-  thead
-    tr
-      th ID
-      th 名前
-      th 名義
-      th 担当
-      th ソート番号
-      - if user_signed_in?
-        th 編集
-      - if policy(@staffs).hide?
-        th 非公開
-      - if policy(@staffs).destroy?
-        th 削除
-  tbody
-    - @staffs.each do |staff|
-      tr
-        td
-          = staff.id
-          - if staff.published?
-            = icon("check-circle-o", class: "c-resource-list__status-published enabled", "data-toggle": "tooltip", title: "公開されています")
-          - else
-            = icon("check-circle-o", class: "c-resource-list__status-published disabled", "data-toggle": "tooltip", title: "非公開になっています")
-        td = staff.resource.name
-        td = staff.name.presence || "-"
-        td = staff.decorate.role_name
-        td = staff.sort_number
-        - if user_signed_in?
-          td
-            - if current_user.committer?
-              = link_to "編集", edit_db_work_staff_path(@work, staff), class: "btn btn-primary btn-sm"
-            - else
-              = link_to "編集", new_db_work_draft_staff_path(@work, staff_id: staff.id), class: "btn btn-primary btn-sm"
-        - if policy(staff).hide?
-          td
-            - if staff.published?
-              = link_to "非公開", hide_db_work_staff_path(@work, staff), class: "btn btn-warning btn-sm", data: { method: "patch", confirm: "非公開にしますか？" }
-        - if policy(staff).destroy?
-          td = link_to "削除", db_work_staff_path(@work, staff), class: "btn btn-danger btn-sm", data: { method: :delete, confirm: "削除しますか？" }
-
-- if @staffs.blank?
-  .well 登録されているスタッフはいません。
+    = render "application/components/empty", text: t("resources.staff.there_are_no_staffs")

@@ -18,7 +18,7 @@ json.programs @programs do |program|
   json.work do
     json.id program.work.id
     json.title program.episode.work.title
-    json.image_url annict_image_url(program.work.item, :tombo_image, size: "48x48")
+    json.image_url ann_image_url(program.work.item, :tombo_image, size: "48x48")
   end
 end
 

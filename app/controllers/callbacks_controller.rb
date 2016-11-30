@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class CallbacksController < Devise::OmniauthCallbacksController
   before_action :authorize, only: [:facebook, :twitter]
 
@@ -26,7 +28,7 @@ class CallbacksController < Devise::OmniauthCallbacksController
       redirect_to redirect_path, notice: "連携しました"
     else
       session["devise.oauth_data"] = auth
-      redirect_to new_user_registration_path
+      redirect_to new_oauth_user_path
     end
   end
 

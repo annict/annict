@@ -5,7 +5,7 @@
     .content
       .left
         .profile-image
-          = annict_image_tag(user.profile, :tombo_avatar, size: "70x70", class: "img-circle")
+          = ann_image_tag(user.profile, :tombo_avatar, size: "70x70", class: "img-circle")
         - if user_signed_in? && current_user != user
           = render "application/v1/follow_button", user: user
       .right

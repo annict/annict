@@ -26,9 +26,9 @@
 #
 
 class EpisodesController < ApplicationController
-  before_action :set_work, only: [:index, :show]
-  before_action :set_episode, only: [:show]
-  before_action :set_record_user, only: [:show]
+  before_action :load_work, only: %i(index show)
+  before_action :load_episode, only: %i(show)
+  before_action :load_record_user, only: %i(show)
 
   def show
     service = RecordsListService.new(@episode, current_user, @record_user)
@@ -47,11 +47,11 @@ class EpisodesController < ApplicationController
 
   private
 
-  def set_episode
+  def load_episode
     @episode = @work.episodes.published.find(params[:id])
   end
 
-  def set_record_user
+  def load_record_user
     @record_user = User.find_by(username: params[:username]) if params[:username].present?
   end
 end

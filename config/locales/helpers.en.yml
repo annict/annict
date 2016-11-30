@@ -1,0 +1,5 @@
+en:
+  helpers:
+    submit:
+      create: "Create"
+      update: "Update"

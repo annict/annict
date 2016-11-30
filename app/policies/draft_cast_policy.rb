@@ -1,2 +1,0 @@
-class DraftCastPolicy < DraftResourcePolicy
-end

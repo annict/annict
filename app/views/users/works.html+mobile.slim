@@ -9,7 +9,7 @@
 .user-works-content
   .ann-user-sub-header
     = link_to user_path(@user.username) do
-      = annict_image_tag(@user.profile, :tombo_avatar, msize: "50x50", size: "70x70", class: "img-circle")
+      = ann_image_tag(@user.profile, :tombo_avatar, msize: "50x50", size: "70x70", class: "img-circle")
     h1
       = link_to @user.profile.name, user_path(@user.username)
       = "が#{action}アニメ"

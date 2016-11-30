@@ -37,13 +37,11 @@
 class CheckinsController < ApplicationController
   permits :comment, :shared_twitter, :shared_facebook, :rating
 
-  before_action :authenticate_user!, only: [:create, :create_all, :edit,
-                                            :update, :destroy]
-  before_action :set_work, only: [:create, :create_all, :show, :edit,
-                                  :update, :destroy]
-  before_action :set_episode, only: [:create, :show, :edit, :update, :destroy]
-  before_action :load_record, only: [:show, :edit, :update, :destroy]
-  before_action :redirect_to_top, only: [:edit, :update, :destroy]
+  before_action :authenticate_user!, only: %i(create edit update destroy)
+  before_action :set_work, only: %i(create show edit update destroy)
+  before_action :set_episode, only: %i(create show edit update destroy)
+  before_action :load_record, only: %i(show edit update destroy)
+  before_action :redirect_to_top, only: %i(edit update destroy)
 
   def create(checkin)
     @record = @episode.checkins.new(checkin)
@@ -61,13 +59,6 @@ class CheckinsController < ApplicationController
 
       render "/episodes/show", layout: "v3/application"
     end
-  end
-
-  def create_all(episode_ids)
-    records = MultipleRecordsService.new(current_user)
-    records.delay.save!(episode_ids)
-    ga_client.events.create("multiple_records", "create")
-    redirect_to work_path(@work), notice: t("checkins.saved")
   end
 
   def show
