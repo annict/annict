@@ -14,7 +14,7 @@
   ul.nav.nav-inline.text-xs-center.mb-1
     li.nav-item
       = active_link_to t("words.all"), db_works_path, class: "nav-link", active: params[:action] == "index"
-    li.c-season-dropdown.nav-item.dropdown
+    li.nav-item.dropdown
       a.nav-link.dropdown-toggle href="#" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"
         = t "words.season"
       .dropdown-menu.pre-scrollable

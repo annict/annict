@@ -1,26 +1,31 @@
 .c-subnav {
-  overflow-y: hidden;
+  background-color: $ann-color-white;
+  height: $ann-navbar-height;
+  line-height: $ann-navbar-height;
 
-  .list-inline {
-    margin-bottom: 0;
-    overflow-x: auto;
-    white-space: nowrap;
+  &--divided {
+    border-top: solid .01rem $hr-border-color;
+    box-shadow: 0 2px 2px -2px $ann-color-cadet;
+  }
 
-    &::-webkit-scrollbar {
-      display: none;
-    }
+  ul {
+    @include display(flex);
+    @include justify-content(center);
+    margin: 0 auto;
 
-    .list-inline-item:not(:last-child) {
-      margin-right: 1rem;
+    li {
+      @include flex(1);
+      text-align: center;
     }
   }
 
-  &__link {
+  a {
     display: inline-block;
-    height: 37px;
+    height: $ann-navbar-height;
+    width: 100%;
+  }
 
-    &--active {
-      border-bottom: solid .15rem $ann-color-mizuho;
-    }
+  &__link--active {
+    border-bottom: solid .15rem $ann-color-mizuho;
   }
 }

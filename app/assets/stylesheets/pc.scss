@@ -1,10 +1,11 @@
 //= require_self
 
 @import "common/foundations/foundation";
+@import "pc/foundations/foundation";
+
 @import "common/components/**/*";
 @import "common/projects/**/*";
 @import "common/utilities/**/*";
 
-@import "pc/layouts/**/*";
 @import "pc/components/**/*";
 @import "pc/projects/**/*";

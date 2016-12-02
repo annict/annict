@@ -5,6 +5,7 @@
 #
 #  id                 :integer          not null, primary key
 #  name               :string           not null
+#  name_kana          :string           default(""), not null
 #  name_en            :string           default(""), not null
 #  kind               :string           default(""), not null
 #  kind_en            :string           default(""), not null
@@ -26,20 +27,15 @@
 #  occupation_en      :string           default(""), not null
 #  description        :text             default(""), not null
 #  description_en     :text             default(""), not null
+#  aasm_state         :string           default("published"), not null
 #  created_at         :datetime         not null
 #  updated_at         :datetime         not null
-#  name_kana          :string           default(""), not null
-#  aasm_state         :string           default("published"), not null
-#  poster_image_id    :integer
-#  cover_image_id     :integer
 #  character_image_id :integer
 #
 # Indexes
 #
 #  index_characters_on_character_image_id  (character_image_id)
-#  index_characters_on_cover_image_id      (cover_image_id)
 #  index_characters_on_name_and_kind       (name,kind) UNIQUE
-#  index_characters_on_poster_image_id     (poster_image_id)
 #
 
 class Character < ApplicationRecord

@@ -30,16 +30,12 @@
 #  synopsis_source      :string           default(""), not null
 #  synopsis_source_en   :string           default(""), not null
 #  mal_anime_id         :integer
-#  poster_image_id      :integer
-#  cover_image_id       :integer
 #  work_image_id        :integer
 #
 # Indexes
 #
 #  index_works_on_aasm_state        (aasm_state)
-#  index_works_on_cover_image_id    (cover_image_id)
 #  index_works_on_number_format_id  (number_format_id)
-#  index_works_on_poster_image_id   (poster_image_id)
 #  index_works_on_work_image_id     (work_image_id)
 #  works_sc_tid_key                 (sc_tid) UNIQUE
 #  works_season_id_idx              (season_id)

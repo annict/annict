@@ -11,7 +11,7 @@
 
   &:not(.is-transparent) {
     background-color: $ann-color-white;
-    box-shadow: 0 0 1px $ann-color-cadet;
+    box-shadow: 0 2px 2px -2px $ann-color-cadet;
     height: $ann-navbar-height;
     line-height: $ann-navbar-height;
     padding: 0 1rem;

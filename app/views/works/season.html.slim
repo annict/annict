@@ -1,22 +1,36 @@
-- yearly_season_ja = @season.decorate.yearly_season_ja
-- title = "#{yearly_season_ja}アニメ一覧"
-- description = meta_description("#{yearly_season_ja}アニメをチェック！")
-- keywords = meta_keywords(yearly_season_ja, "人気", "評判")
-- set_meta_tags(title: title, description: description, keywords: keywords, reverse: true)
+- title = t "head.title.works.season", title: @season.decorate.local_name
+- description = meta_description(t("head.meta.description.works.season", title: @season.decorate.local_name))
+- keywords = meta_keywords(@season.decorate.local_name)
+- set_meta_tags(title: title, description: description, keywords: keywords, og: { title: title, description: description }, reverse: true, prefix: false)
+- set_page_category "works_season"
 
-= render "application/v2/navbar"
-= render "nav"
+= render "application/components/navbar"
 
-.content
-  .header
-    h1 = title
-    .season-selector-wrapper
-      = render "season_selector", slug_options: Season.slug_options, current_slug: @season.slug
+= render "index_subnav"
 
-  = render "works", works: @works, user: current_user, compact: false
+.row.py-2
+  .col-xs
+  .col-xs.text-xs-center
+    .dropdown.d-inline-block
+      a.dropdown-toggle href="#" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"
+        = @season.decorate.local_name
+      .dropdown-menu.pre-scrollable.mr-1
+        - Season.order(sort_number: :desc).each do |season|
+          = link_to season.decorate.local_name, season_works_path(slug: season.slug), class: "dropdown-item"
+  .col-xs.text-xs-right
+    .px-1
+      = render "display_option_buttons"
 
-= render "application/v2/components/footer"
+- if user_signed_in?
+  = render "works/#{current_user.setting.display_option_work_list}", works: @works
+- else
+  = render "works/list", works: @works
 
-- content_for :parts do
-  = render "application/v2/components/work_friends"
-  = render "application/v2/components/status_selector"
+= render "application/components/footer"
+
+- unless user_signed_in?
+  = render "application/components/sign_up_modal", user: @new_user
+
+- content_for :js_templates do
+  = render "application/js_templates/search_form"
+  = render "application/js_templates/status_selector"

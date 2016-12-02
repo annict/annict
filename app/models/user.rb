@@ -23,7 +23,7 @@
 #  created_at             :datetime
 #  updated_at             :datetime
 #  time_zone              :string           default(""), not null
-#  reset_password_token   :string           default("")
+#  reset_password_token   :string
 #  reset_password_sent_at :datetime
 #
 # Indexes
