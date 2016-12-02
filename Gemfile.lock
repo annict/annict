@@ -478,6 +478,9 @@ GEM
       pry (>= 0.9.10)
     public_suffix (2.0.4)
     puma (3.6.2)
+    puma_worker_killer (0.0.7)
+      get_process_mem (~> 0.2)
+      puma (>= 2.7, < 4)
     pundit (1.1.0)
       activesupport (>= 3.0.0)
     rack (2.0.1)
@@ -752,6 +755,7 @@ DEPENDENCIES
   pry-coolline
   pry-rails
   puma
+  puma_worker_killer
   pundit
   rack-cors
   rack-rewrite
