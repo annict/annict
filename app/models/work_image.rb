@@ -10,16 +10,17 @@
 #  attachment_file_size    :integer          not null
 #  attachment_content_type :string           not null
 #  attachment_updated_at   :datetime         not null
-#  created_at              :datetime         not null
-#  updated_at              :datetime         not null
 #  aasm_state              :string           default("published"), not null
 #  likes_count             :integer          default(0), not null
 #  dislikes_count          :integer          default(0), not null
+#  created_at              :datetime         not null
+#  updated_at              :datetime         not null
 #
 # Indexes
 #
-#  index_work_images_on_user_id  (user_id)
-#  index_work_images_on_work_id  (work_id)
+#  index_work_images_on_aasm_state  (aasm_state)
+#  index_work_images_on_user_id     (user_id)
+#  index_work_images_on_work_id     (work_id)
 #
 
 class WorkImage < ApplicationRecord

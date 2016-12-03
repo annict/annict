@@ -249,6 +249,7 @@ Rails.application.routes.draw do
         action: :season,
         slug: /[0-9]{4}-(all|spring|summer|autumn|winter)/,
         as: :season
+      post :switch
     end
 
     resources :episodes, only: %i(index show) do

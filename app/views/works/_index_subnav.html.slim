@@ -1,0 +1,5 @@
+.c-subnav.c-subnav--divided
+  ul.list-unstyled
+    li = active_link_to t("words.season"), season_works_path(slug: ENV.fetch("ANNICT_CURRENT_SEASON")), class_active: "c-subnav__link--active", active: params[:controller] == "works" && params[:action].in?(%w(season))
+    li = active_link_to t("words.popular"), popular_works_path, class_active: "c-subnav__link--active", active: params[:controller] == "works" && params[:action].in?(%w(popular))
+    li = active_link_to t("words.search"), search_path, class_active: "c-subnav__link--active", active: params[:controller] == "searches" && params[:action].in?(%w(show))

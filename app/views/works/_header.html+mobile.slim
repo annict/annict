@@ -6,10 +6,10 @@
       h1.h3 = work.decorate.local_title
       c-status-selector work-id="#{work.id}" current-status-kind="#{user_signed_in? ? current_user.status_kind(work) : 'no_select'}" is-signed-in="#{user_signed_in?}"
 
-  .c-subnav
-    ul.c-subnav__list.list-inline
-      li.list-inline-item = active_link_to t("words.details"), work_path(work), class: "c-subnav__link", class_active: "c-subnav__link--active", active: params[:controller] == "works" && params[:action].in?(%w(show))
-      li.list-inline-item = active_link_to t("words.episodes"), work_episodes_path(work), class: "c-subnav__link", class_active: "c-subnav__link--active", active: params[:controller] == "episodes" && params[:action].in?(%w(index show))
-      li.list-inline-item = active_link_to t("words.characters"), work_characters_path(work), class: "c-subnav__link", class_active: "c-subnav__link--active", active: params[:controller] == "characters" && params[:action].in?(%w(index))
-      li.list-inline-item = active_link_to t("words.staffs"), work_staffs_path(work), class: "c-subnav__link", class_active: "c-subnav__link--active", active: params[:controller] == "staffs" && params[:action].in?(%w(index))
-      li.list-inline-item = active_link_to t("words.images"), work_images_path(work), class: "c-subnav__link", class_active: "c-subnav__link--active", active: params[:controller] == "work_images" && params[:action].in?(%w(index))
+  .c-slidable-subnav
+    ul.c-slidable-subnav__list.list-inline
+      li.list-inline-item = active_link_to t("words.details"), work_path(work), class: "c-slidable-subnav__link", class_active: "c-slidable-subnav__link--active", active: params[:controller] == "works" && params[:action].in?(%w(show))
+      li.list-inline-item = active_link_to t("words.episodes"), work_episodes_path(work), class: "c-slidable-subnav__link", class_active: "c-slidable-subnav__link--active", active: params[:controller] == "episodes" && params[:action].in?(%w(index show))
+      li.list-inline-item = active_link_to t("words.characters"), work_characters_path(work), class: "c-slidable-subnav__link", class_active: "c-slidable-subnav__link--active", active: params[:controller] == "characters" && params[:action].in?(%w(index))
+      li.list-inline-item = active_link_to t("words.staffs"), work_staffs_path(work), class: "c-slidable-subnav__link", class_active: "c-slidable-subnav__link--active", active: params[:controller] == "staffs" && params[:action].in?(%w(index))
+      li.list-inline-item = active_link_to t("words.images"), work_images_path(work), class: "c-slidable-subnav__link", class_active: "c-slidable-subnav__link--active", active: params[:controller] == "work_images" && params[:action].in?(%w(index))

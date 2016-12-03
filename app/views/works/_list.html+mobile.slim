@@ -1,0 +1,31 @@
+- works.each do |work|
+  .c-card.mb-1.py-1
+    .container
+      .row.mb-1
+        .col-xs-4.pr-0
+          = link_to work_path(work), class: "d-inline-block" do
+            = ann_image_tag(work.work_image, :attachment, size: "250x250", alt: work.decorate.local_title, class: "rounded img-thumbnail")
+        .col-xs-8
+          .c-watchers-count
+            span.c-watchers-count__number.font-weight-bold = work.watchers_count
+            span.c-watchers-count__text.text-muted Watchers
+          h3.font-weight-bold = link_to work.decorate.local_title, work_path(work)
+          c-status-selector work-id="#{work.id}" current-status-kind="no_select" is-signed-in="false"
+      - if work.casts.present?
+        .font-weight-bold = t "words.cast"
+        ul.list-inline
+          - work.casts.order(:sort_number).limit(10).each do |cast|
+            - cache cast do
+              li.list-inline-item
+                = "#{cast.part}: "
+                = cast.decorate.local_name_with_old_link
+      - if work.staffs.present?
+        .font-weight-bold = t "words.staff"
+        ul.list-inline
+          - work.staffs.major.order(:sort_number).limit(10).each do |staff|
+            - cache staff do
+              li.list-inline-item
+                = "#{staff.decorate.role_name}: "
+                = staff.decorate.local_name_with_old_link
+
+= paginate works
