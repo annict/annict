@@ -14,7 +14,7 @@
         ul.list-unstyled
           li
             = active_link_to search_path(q: @search.q, resource: "work"), class_active: "u-link--hovered", active: (@view == "work") do
-              = t "words.work"
+              = t "words.anime"
               span.tag.tag-pill.tag-default.ml-zp5 = @works.count
           li
             = active_link_to search_path(q: @search.q, resource: "character"), class_active: "u-link--hovered", active: (@view == "character") do
