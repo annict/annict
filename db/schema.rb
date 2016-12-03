@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20161130133758) do
+ActiveRecord::Schema.define(version: 20161203102005) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -43,7 +43,6 @@ ActiveRecord::Schema.define(version: 20161130133758) do
     t.index ["character_id"], name: "index_casts_on_character_id", using: :btree
     t.index ["person_id"], name: "index_casts_on_person_id", using: :btree
     t.index ["sort_number"], name: "index_casts_on_sort_number", using: :btree
-    t.index ["work_id", "character_id"], name: "index_casts_on_work_id_and_character_id", unique: true, using: :btree
     t.index ["work_id"], name: "index_casts_on_work_id", using: :btree
   end
 

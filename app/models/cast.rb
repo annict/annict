@@ -17,12 +17,11 @@
 #
 # Indexes
 #
-#  index_casts_on_aasm_state                (aasm_state)
-#  index_casts_on_character_id              (character_id)
-#  index_casts_on_person_id                 (person_id)
-#  index_casts_on_sort_number               (sort_number)
-#  index_casts_on_work_id                   (work_id)
-#  index_casts_on_work_id_and_character_id  (work_id,character_id) UNIQUE
+#  index_casts_on_aasm_state    (aasm_state)
+#  index_casts_on_character_id  (character_id)
+#  index_casts_on_person_id     (person_id)
+#  index_casts_on_sort_number   (sort_number)
+#  index_casts_on_work_id       (work_id)
 #
 
 class Cast < ActiveRecord::Base
