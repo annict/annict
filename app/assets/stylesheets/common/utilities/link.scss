@@ -1,14 +1,20 @@
-.u-fake-link {
-  color: $link-color;
-  text-decoration: $link-decoration;
-
-  @include hover-focus {
+.u-link {
+  &--hovered {
     color: $link-hover-color;
-    cursor: pointer;
-    text-decoration: $link-hover-decoration;
   }
 
-  &:focus {
-    @include tab-focus();
+  &--fake {
+    color: $link-color;
+    text-decoration: $link-decoration;
+
+    @include hover-focus {
+      color: $link-hover-color;
+      cursor: pointer;
+      text-decoration: $link-hover-decoration;
+    }
+
+    &:focus {
+      @include tab-focus();
+    }
   }
 }

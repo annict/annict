@@ -42,4 +42,4 @@ script#t-create-multiple-records-activity type="x-template"
         c-time-ago.text-muted :time="activity.created_at"
       .col-xs
         .actions.text-xs-right
-          c-like-button.u-fake-link resource-name="multiple_records" :raw-resource-id="activity.multiple_record.id" :raw-likes-count="activity.multiple_record.likes_count" :raw-is-liked="activity.meta.liked"
+          c-like-button.u-link--fake resource-name="multiple_records" :raw-resource-id="activity.multiple_record.id" :raw-likes-count="activity.multiple_record.likes_count" :raw-is-liked="activity.meta.liked"

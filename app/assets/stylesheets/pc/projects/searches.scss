@@ -1,0 +1,6 @@
+.p-searches {
+  &__sidebar {
+    @include flex-basis(250px);
+    @include flex-grow(0);
+  }
+}
