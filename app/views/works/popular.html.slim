@@ -5,7 +5,6 @@
 - set_page_category "works_popular"
 
 = render "application/components/navbar"
-= render "index_subnav"
 
 .row.py-2
   .col-xs
@@ -17,7 +16,8 @@
 - if user_signed_in?
   = render "works/#{current_user.setting.display_option_work_list}", works: @works
 - else
-  = render "works/list", works: @works
+  .container
+    = render "works/list", works: @works
 
 = render "application/components/footer"
 

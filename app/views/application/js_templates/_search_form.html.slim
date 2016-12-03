@@ -1,6 +1,6 @@
 script#t-search-form type="x-template"
   form.c-search-form.form-inline action="/search" accept-charset="UTF-8" method="get"
-    input.form-control type="text" name="q" placeholder="#{t('search_with_keyword')}" autocomplete="off"
+    input.form-control type="text" name="q" placeholder="#{t('messages._common.search_with_keywords')}" autocomplete="off"
     / input.form-control type="text" name="q" placeholder="#{t('search_with_keyword')}" v-model="q" @keyup="onKeyup | debounce 300" @keydown.down="next" @keydown.up="prev" @keydown.enter="select" @blur="hideResults" @keydown.esc="hideResults"
     / .results v-if="results.length"
     /   ul
