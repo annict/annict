@@ -7,19 +7,19 @@
 
 = render "application/components/navbar"
 
-.container
+.container.py-1
   .row
     .col-xs-3.pr-0
-      .card.container.py-1
+      .c-card.container.py-1
         = render "sidebar", work: @work
     .col-xs-9
-      .card
+      .c-card
         .container.py-1
           h1.mb-0 = @work.decorate.local_title
         = render "subnav", work: @work
 
       h2.h4.text-xs-center.my-2.font-weight-bold = t "words.episodes"
-      .card.mt-1.py-1
+      .c-card.mt-1.py-1
         - if @work.episodes.published.present?
           .container.mb-zp5
             = link_to t("words.bulk_tracking"), work_episodes_path(@work, tracking: "on"), class: "small"
@@ -29,11 +29,11 @@
                 = render "episodes/episode_row", work: @work, episode: episode
 
       h2.h4.text-xs-center.my-2.font-weight-bold = t "words.characters"
-      .card.container.mt-1.py-1
+      .c-card.container.mt-1.py-1
         = render "characters/character_list", casts: @work.casts.published.order(:sort_number).limit(9)
 
       h2.h4.text-xs-center.my-2.font-weight-bold = t "words.staffs"
-      .card.container.mt-1.py-1
+      .c-card.container.mt-1.py-1
         = render "staffs/staff_list", staffs: @work.staffs.published.order(:sort_number).limit(9)
 
 = render "application/components/footer"

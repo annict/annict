@@ -11,4 +11,4 @@
       = t('notifications.likes_create_status_html', action_name: action_name, work_title: work_title)
   .bottom
     span.created-at title="#{notification.created_at.in_time_zone("Asia/Tokyo").strftime('%Y/%m/%d %H:%M')}"
-      = custom_time_ago_in_words(notification.created_at)
+      = local_time_ago_in_words(notification.created_at)

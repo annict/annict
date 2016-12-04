@@ -16,8 +16,15 @@ en:
         hero_title: The platform for Anime Addicts.
         sign_up: Start tracking
     components:
+      mute_user_button:
+        the_user_has_been_muted: The user has been muted.
       status_selector:
         select_status: Select Status
+      welcome:
+        description: Annict is the platform for Anime Addicts. You can explore the anime database, track anime you are watching and see what friends are watching.
+        title: Welcome to Annict!
+    episodes:
+      watched_x_times: Watched %{records_count} times
     multiple_records:
       create:
         saved: Records have been saved.
@@ -27,6 +34,11 @@ en:
     passwords:
       new:
         forgot_your_password: Forgot your password?
+    records:
+      new:
+        write_your_comment: Write Your Comment!
+      show:
+        record_by_name: "%{name}'s Record"
     registrations:
       new:
         sign_in_link_html: Already have an account? %{link}
@@ -131,6 +143,7 @@ en:
     annict_db: Annict DB
     category: Category
     delete: Delete
+    detail: Detail
     edit: Edit
     error: Error
     first: First

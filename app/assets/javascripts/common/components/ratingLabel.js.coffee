@@ -1,22 +1,12 @@
 Vue = require "vue/dist/vue"
 
 module.exports = Vue.extend
-  template: "<div class='c-rating-label'></div>"
+  template: '<div class="c-rating-label"></div>'
 
   props:
-    rawRating:
+    rating:
       type: Number
       required: true
-    rawIsSpoiler:
-      type: Boolean
-      required: true
-
-  computed:
-    rating: ->
-      Number @rawRating
-
-    isSpoiler: ->
-      JSON.parse(@rawIsSpoiler)
 
   methods:
     starType: (position) ->

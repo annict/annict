@@ -1,12 +1,9 @@
 Vue = require "vue/dist/vue"
 
+eventHub = require "../../common/eventHub"
+
 module.exports = Vue.extend
   template: "#t-flash"
-
-  events:
-    "flash:show": (message, type = "notice") ->
-      @message = message
-      @type = type
 
   data: ->
     type: gon.flash.type || ""
@@ -27,6 +24,14 @@ module.exports = Vue.extend
   methods:
     close: ->
       @message = ""
+
+  created: ->
+    eventHub.$on "flash:show", (message, type = "notice") =>
+      @message = message
+      @type = type
+      setTimeout =>
+        @close()
+      , 6000
 
   mounted: ->
     if @show

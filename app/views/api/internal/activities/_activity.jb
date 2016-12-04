@@ -11,7 +11,7 @@ json = {
     name: activity.user.profile.name
   },
   meta: {
-    liked: user_signed_in? && current_user.like_r?(activity.trackable)
+    liked: user_signed_in? && current_user.like?(activity.trackable)
   }
 }
 

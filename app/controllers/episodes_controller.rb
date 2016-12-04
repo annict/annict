@@ -29,6 +29,7 @@ class EpisodesController < ApplicationController
   before_action :load_work, only: %i(index show)
   before_action :load_episode, only: %i(show)
   before_action :load_record_user, only: %i(show)
+  before_action :load_i18n, only: %i(show)
 
   def show
     service = RecordsListService.new(@episode, current_user, @record_user)
@@ -37,12 +38,10 @@ class EpisodesController < ApplicationController
     @current_user_records = service.current_user_records
     @records = service.records
 
-    if user_signed_in?
-      @record = @episode.checkins.new
-      @record.setup_shared_sns(current_user)
-    end
+    render unless user_signed_in?
 
-    render layout: "v3/application"
+    @record = @episode.checkins.new
+    @record.setup_shared_sns(current_user)
   end
 
   private
@@ -53,5 +52,14 @@ class EpisodesController < ApplicationController
 
   def load_record_user
     @record_user = User.find_by(username: params[:username]) if params[:username].present?
+  end
+
+  def load_i18n
+    keys = {
+      "messages._common.are_you_sure": nil,
+      "messages.components.mute_user_button.the_user_has_been_muted": nil
+    }
+
+    load_i18n_into_gon keys
   end
 end

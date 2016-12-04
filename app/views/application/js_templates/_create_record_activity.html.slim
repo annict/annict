@@ -50,8 +50,6 @@ script#t-create-record-activity type="x-template"
       .col-xs
         .actions.text-xs-right
           c-like-button.u-link--fake.mr-1 resource-name="records" :raw-resource-id="activity.record.id" :raw-likes-count="activity.record.likes_count" :raw-is-liked="activity.meta.liked"
-          .c-comment-button.d-inline-block
-            a :href='"/records/" + activity.record.id'
-              = icon "comment-o"
-              span.c-comment-button__count
-                | {{ activity.record.comments_count }}
+          a :href='"/records/" + activity.record.id'
+            = icon "comment-o", class: "mr-zp25"
+            | {{ activity.record.comments_count }}

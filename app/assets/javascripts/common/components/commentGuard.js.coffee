@@ -1,20 +1,19 @@
 Vue = require "vue/dist/vue"
 
 module.exports = Vue.extend
+  data: ->
+    isSpoiler: @initIsSpoiler
+
   props:
-    rawIsSpoiler:
+    initIsSpoiler:
       type: Boolean
       default: true
     activity:
       type: Object
 
-  computed:
-    isSpoiler: ->
-      JSON.parse(@rawIsSpoiler)
-
   methods:
     $comment: ->
-      $(@$el).parent().find(".c-record-comment")
+      $(@$el).parent().find(".c-body")
 
     remove: ->
       @$comment().removeClass("c-comment-guard")

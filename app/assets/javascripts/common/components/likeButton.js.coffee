@@ -26,15 +26,21 @@ module.exports = Vue.extend
     toggleLike: ->
       if @isLiked
         $.ajax
-          method: "DELETE"
-          url: "/api/internal/#{@resourceName}/#{@resourceId}/like"
+          method: "POST"
+          url: "/api/internal/likes/unlike"
+          data:
+            recipient_type: @resourceName
+            recipient_id: @resourceId
         .done =>
           @likesCount += -1
           @isLiked = false
       else
         $.ajax
           method: "POST"
-          url: "/api/internal/#{@resourceName}/#{@resourceId}/like"
+          url: "/api/internal/likes"
+          data:
+            recipient_type: @resourceName
+            recipient_id: @resourceId
         .done =>
           @likesCount += 1
           @isLiked = true
