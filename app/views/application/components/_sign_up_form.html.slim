@@ -14,7 +14,7 @@
     = t "words.or"
 
   = form_for user, url: user_registration_path do |f|
-    = render "application/components/error_panel", resource: @user
+    = render "application/components/error_panel", resource: user
 
     .form-group
       = f.label :username
