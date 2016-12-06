@@ -1,30 +1,31 @@
-ANNICT_NEXT_SEASON: '2017-winter'
-ANNICT_CURRENT_SEASON: '2016-autumn'
-ANNICT_PREVIOUS_SEASON: '2016-summer'
-ANNICT_PAPERCLIP_PATH: ':rails_root/public/paperclip/:class/:id/:attachment/:style/:hash.:extension'
-ANNICT_PAPERCLIP_RANDOM_SECRET: 'abcdefghijklmnopqrstuvwxyz'
+ANNICT_CURRENT_SEASON: "2016-autumn"
+ANNICT_NEXT_SEASON: "2017-winter"
+ANNICT_PAPERCLIP_RANDOM_SECRET: "abcdefghijklmnopqrstuvwxyz"
+ANNICT_PAPERCLIP_URL: "/paperclip/:class/:id/:attachment/:style/:hash.:extension"
+ANNICT_PREVIOUS_SEASON: "2016-summer"
 
-DEVISE_SECRET: 'abcdefghijklmnopqrstuvwxyz'
-RAILS_SECRET_KEY_BASE: 'abcdefghijklmnopqrstuvwxyz'
-
-REDIS_URL: 'redis:127.0.0.1:6379'
+DEVISE_SECRET: "abcdefghijklmnopqrstuvwxyz"
+RAILS_SECRET_KEY_BASE: "abcdefghijklmnopqrstuvwxyz"
 
 development:
-  FACEBOOK_APP_ID: '000000000000000'
-  FACEBOOK_SECRET_KEY: 'xxxxxxxxxxxxxxxxxxxxxxxx'
+  FACEBOOK_APP_ID: "000000000000000"
+  FACEBOOK_SECRET_KEY: "xxxxxxxxxxxxxxxxxxxxxxxx"
 
   GA_TRACKING_ID: UA-000000000-3
 
-  ANNICT_FILE_STORAGE_URL: 'http://localhost:3000'
-  ANNICT_HOST: 'localhost:3000'
-  ANNICT_TOMBO_URL: 'http://localhost:5000'
-  ANNICT_URL: 'http://localhost:3000'
-  ANNICT_SITEMAP_URL: ''
+  ANNICT_DB_URL: "http://db.annict.dev:3000"
+  ANNICT_DOMAIN: "annict.dev"
+  ANNICT_FILE_STORAGE_URL: "http://localhost:3000"
+  ANNICT_HOST: "annict.dev:3000"
+  ANNICT_HOST_SHORT: "annict.dev:3000"
+  ANNICT_PAPERCLIP_PATH: ":rails_root/public/paperclip/:class/:id/:attachment/:style/:hash.:extension"
+  ANNICT_URL: "http://annict.dev:3000"
+  ANNICT_SITEMAP_URL: ""
 
-  TWITTER_CONSUMER_KEY: 'xxxxxxxxxxxxxxxxxxxxx'
-  TWITTER_CONSUMER_SECRET: 'xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx'
+  TWITTER_CONSUMER_KEY: "xxxxxxxxxxxxxxxxxxxxx"
+  TWITTER_CONSUMER_SECRET: "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
 
 test:
-  ANNICT_HOST: 'localhost:3000'
-  ANNICT_TOMBO_URL: 'http://localhost:5000'
+  ANNICT_HOST: "localhost:3000"
+  ANNICT_TOMBO_URL: "http://localhost:5000"
   FACEBOOK_APP_ID: "1234567890"

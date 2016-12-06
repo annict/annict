@@ -140,7 +140,7 @@ namespace :seed do
   end
 
   task generate_tips_csv: :environment do
-    attrs = %w(id target partial_name title icon_name)
+    attrs = %w(id target slug title icon_name)
 
     CSV.open("#{Dir.pwd}/db/data/csv/tips.csv", "wb") do |csv|
       csv << attrs
