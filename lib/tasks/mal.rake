@@ -12,7 +12,7 @@ namespace :mal do
     base_uri "https://hbv3-mal-api.herokuapp.com/2.1"
 
     def import!
-      page = 34
+      page = 1
 
       loop do
         puts "Page: #{page}"
