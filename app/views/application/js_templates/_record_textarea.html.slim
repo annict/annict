@@ -1,0 +1,2 @@
+script#t-record-textarea type="x-template"
+  textarea.form-control name="checkin[comment]" :class='{ "has-new-line": isCommentEditing }' :rows="commentRows" :placeholder='placeholder || ""' v-model="record.comment" @click="expandOnClick" @keyup.enter="expandOnEnter"

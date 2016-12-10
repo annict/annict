@@ -10,15 +10,15 @@
 .container.py-1
   .row
     .col-xs-3.pr-0
-      .card.container.py-1
+      .c-card.container.py-1
         = render "works/sidebar", work: @work
     .col-xs-9
-      .card
+      .c-card
         .container.py-1
           h1.mb-0 = @work.decorate.local_title
         = render "works/subnav", work: @work
 
-      .container.card.mt-1.py-1
+      .c-card.container.mt-1.py-1
         = render "staff_list", staffs: @staffs
 
 = render "application/components/footer"

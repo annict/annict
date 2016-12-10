@@ -6,17 +6,6 @@ class EpisodeDecorator < ApplicationDecorator
     h.link_to name, h.edit_db_episode_path(self), options
   end
 
-  def meta_number(prefix: false)
-    result = raw_number.present? ? "第#{raw_number}話" : (number.presence || "")
-    return "- #{result}" if result.present? && prefix
-    result
-  end
-
-  def meta_title
-    return "" if title.blank? || title == work.title
-    "「#{title}」"
-  end
-
   def local_title
     return title if I18n.locale == :ja
     return title_en if title_en.present?

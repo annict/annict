@@ -36,6 +36,15 @@ $ann-color-facebook: #2e6499;
 $ann-color-twitter: #24b1ec;
 
 
+// Typography
+
+$ann-line-height-base: 1.7;
+$ann-line-height-sizes: (
+  0: 0,
+  xs: $ann-line-height-base / 1.2,
+  sm: $ann-line-height-base / 1.1,
+);
+
 // Navbar
 
 $ann-navbar-height: 3.8rem;

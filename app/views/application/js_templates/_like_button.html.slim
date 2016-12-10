@@ -1,5 +1,5 @@
 script#t-like-button type="x-template"
-  .c-like-button.d-inline-block :class='{ "is-liked": isLiked }' @click="toggleLike"
+  .c-like-button.d-inline-block.u-link--fake :class='{ "is-liked": isLiked }' @click="toggleLike"
     i.fa :class='{ "fa-heart-o": !isLiked, "fa-heart": isLiked }'
     span.count
       | {{ likesCount }}

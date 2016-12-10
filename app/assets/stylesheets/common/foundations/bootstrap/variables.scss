@@ -72,7 +72,7 @@ $display2-size: 2.5rem;
 $headings-font-family: "Noto Sans JP", sans-serif;
 $headings-font-weight: 300;
 
-$line-height-base: 1.7;
+$line-height-base: $ann-line-height-base;
 
 $list-inline-padding: .5rem;
 

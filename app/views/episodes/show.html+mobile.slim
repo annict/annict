@@ -1,65 +1,82 @@
-- title = "アニメ「#{@work.title}」#{@episode.decorate.meta_number(prefix: true)}#{@episode.decorate.meta_title}"
-- description = meta_description("「#{@work.title}」#{@episode.decorate.meta_number}の感想をチェック！")
-- keywords = meta_keywords([@work.title, @episode.decorate.meta_number, @episode.number, @episode.title])
-- canonical_url = url_for(only_path: false, overwrite_params: nil)
-- set_meta_tags(title: title, description: description, keywords: keywords, canonical: canonical_url, reverse: true)
+- title = t "head.title.episodes.show", work_title: @work.decorate.local_title, episode_title: @episode.decorate.local_title, episode_number: @episode.decorate.local_number
+- description = meta_description(t("head.meta.description.episodes.show", work_title: @work.decorate.local_title, episode_title: @episode.decorate.local_title, episode_number: @episode.decorate.local_number))
+- keywords = meta_keywords(@work.title)
+- image_url = ann_image_tag(@work.work_image, :attachment, size: "640x")
+- set_meta_tags(title: title, description: description, keywords: keywords, og: { title: title, description: description, image: image_url }, reverse: true, prefix: false)
+- set_page_category "episodes_show"
 
-- content_for :head do
-  = render "application/v2/twitter", title: title, description: description, image: ann_image_url(@work.item, :tombo_image, size: "640x640")
+= render "works/header", work: @work
 
-- content_for :facebook do
-  = render "application/v3/facebook", title: title, url: canonical_url, description: description, image_url: ann_image_url(@work.item, :tombo_image, size: "600x315")
+.c-card.mb-1.py-1
+  .p-episode-title-header
+    - if @episode.prev_episode.present?
+      = link_to work_episode_path(@work, @episode.prev_episode), class: "p-episode-title-header__prev h3 text-xs-center mb-0" do
+        = icon "angle-left"
+    .p-episode-title-header__main
+      h2.h4
+        - if @episode.decorate.local_number.present?
+          span.pr-zp5 = @episode.decorate.local_number
+        - if @episode.decorate.local_title.present?
+          = @episode.decorate.local_title
+      - if user_signed_in? && current_user.checkedin?(@episode)
+        .small
+          = icon "check", class: "mr-zp25"
+          = t "messages.episodes.watched_x_times", records_count: current_user.checkins_count_in(@episode)
+      .container.mt-zp5
+        .row
+          .col-xs.text-xs-center.u-lh-sm
+            = @records.count + @current_user_records.count
+            .small
+              | Records
+          .col-xs.text-xs-center.u-lh-sm
+            = @records.with_comment.count + @current_user_records.with_comment.count
+            .small
+              | Comments
+          .col-xs.text-xs-center.u-lh-sm
+            = @episode.avg_rating.presence || "-"
+            .small
+              | Stars
+    - if @episode.next_episode.present?
+      = link_to work_episode_path(@work, @episode.next_episode), class: "p-episode-title-header__next h3 text-xs-center mb-0" do
+        = icon "angle-right"
 
-= render "application/v3/menu"
-
-.a-content
-  = render "episodes/episode_header", work: @work, episode: @episode
-  .card
-    = render "episodes/record_status", episode: @episode, records: @records, current_user_records: @current_user_records
-    hr style="margin-bottom: 7px; margin-top: 0;"
+.c-card.py-1
+  .container
     - if user_signed_in?
-      .row
-        .small-12.column
-          .a-record-form
-            = render "checkins/form", work: @work, episode: @episode, record: @record
+      = render "checkins/form", work: @work, episode: @episode, record: @record
     - else
-      = render "application/v3/components/welcome_to_annict"
-    hr
+      = render "application/components/welcome"
+  hr
+  .container
     - if @user_records.present?
       - if (user_signed_in? && current_user != @record_user) || !user_signed_in?
-        .a-user-records
-          h2 = "#{@record_user.profile.name}さんの記録"
-          - @user_records.each_with_index do |record, i|
-            - if i != 0
-              hr
+        h2 = t "messages.records.show.record_by_name", name: @record_user.profile.name
+        .c-record-list
+          - @user_records.each do |record|
             = render "records/record", record: record
         hr
     - if @current_user_records.present?
-      .a-user-records
-        h2 あなたの記録
-        - @current_user_records.each_with_index do |record, i|
-          - if i != 0
-            hr
+      h2.h4.text-xs-center.font-weight-bold.my-1
+        = t "messages.episodes.show.your_records"
+      .c-record-list
+        - @current_user_records.each do |record|
           = render "records/record", record: record
       hr
-    .a-user-records
-      h2 = "#{@user_records.present? || @current_user_records.present? ? 'その他皆さんの感想' : '感想'}"
+      h2.h4.text-xs-center.font-weight-bold.my-1 = (@user_records.present? || @current_user_records.present?) ? t("messages.episodes.show.comments_by_others") : t("words.comments")
       - if @records.with_comment.present?
-        - @records.with_comment.each_with_index do |record, i|
-          - if i != 0
-            hr
-          = render "records/record", record: record
+        .c-record-list
+          - @records.with_comment.each do |record|
+            = render "records/record", record: record
       - else
-        .row
-          .small-12.column
-            .a-no-records.callout.secondary
-              p
-                = icon "info-circle"
-                | まだ感想は書き込まれていません
+        p
+          = icon "info-circle"
+          = t "messages.episodes.show.no_records"
 
-= render "application/v2/components/footer"
+= render "application/components/footer"
+= render "application/components/tabbar"
 
-- content_for :parts do
-  = render "application/v2/components/like_button"
-  - if user_signed_in?
-    = render "application/v3/components/mute_user_button"
+- content_for :js_templates do
+  = render "application/js_templates/like_button"
+  = render "application/js_templates/mute_user_button"
+  = render "application/js_templates/search_form"
+  = render "application/js_templates/status_selector"

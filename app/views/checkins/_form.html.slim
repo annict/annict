@@ -1,29 +1,29 @@
 = form_for [work, episode, record] do |f|
-  = render "application/v1/error_panel", resource: record
-  
-  ann-record-rating rating="#{record.rating.presence || 0}"
-  ann-record-comment-form :record="{ comment: '#{record.comment.presence || ''}' }" placeholder="#{t('checkins.input_a_comment')}"
-  .ann-record-form-share-checkboxes
-    - if current_user.authorized_to?(:twitter)
-      span.a-twitter
-        label
-          = icon "twitter"
-          = f.check_box :shared_twitter
-    - if current_user.authorized_to?(:facebook)
-      span.a-facebook
-        label
-          = icon "facebook"
-          = f.check_box :shared_facebook
-  .a-record-button.text-center
-    - if record.new_record?
-      = f.button class: "button" do
-        i.fa.fa-check
-        = t "checkins.save"
-    - else
-      = f.button class: "button" do
-        i.fa.fa-edit
-        = t "words.update"
+  = render "application/components/error_panel", resource: record
 
-- content_for :parts do
-  = render "application/v2/components/record_rating"
-  = render "application/v3/components/record_comment_form"
+  .mb-zp5
+    c-record-rating :init-rating="#{record.rating.presence || 0}"
+  .mb-zp5
+    c-record-textarea :record="{ comment: '#{record.comment.presence || ''}' }" placeholder="#{t('messages.records.new.write_your_comment')}"
+  .row
+    .col-xs
+      - if current_user.authorized_to?(:twitter)
+        label
+          = icon "twitter", class: "text-twitter mr-zp25"
+          = f.check_box :shared_twitter
+      - if current_user.authorized_to?(:facebook)
+        label.ml-zp5
+          = icon "facebook", class: "text-facebook mr-zp25"
+          = f.check_box :shared_facebook
+    .col-xs
+      .text-xs-right
+        = f.button class: "btn btn-primary" do
+          = icon "edit"
+          - if record.new_record?
+            = t "words.track"
+          - else
+            = t "words.update"
+
+- content_for :js_templates do
+  = render "application/js_templates/record_rating"
+  = render "application/js_templates/record_textarea"
