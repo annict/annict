@@ -1,3 +1,5 @@
-.u-lh-0 {
-  line-height: 0;
+@each $key, $size in $ann-line-height-sizes {
+  .u-lh-#{$key} {
+    line-height: $size;
+  }
 }

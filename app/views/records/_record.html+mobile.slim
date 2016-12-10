@@ -1,0 +1,54 @@
+c-record inline-template="" :user-id="#{record.user.id}"
+  .c-record
+    .row.mb-zp5
+      .c-record__avatar.col-xs.pr-0
+        = link_to user_path(record.user.username) do
+          = ann_image_tag record.user.profile, :tombo_avatar, size: "30x30", class: "rounded-circle"
+      .col-xs.pl-zp5
+        .row
+          .col-xs
+            = link_to record.user.profile.name, user_path(record.user.username)
+          .col-xs
+            .text-xs-right
+              - if record.modify_comment?
+                small.mr-zp25.text-muted
+                  = icon "pencil"
+              = link_to work_episode_checkin_path(record.episode.work, record.episode, record), class: "small text-muted", title: local_datetime(record.created_at) do
+                = local_time_ago_in_words(record.created_at)
+    c-comment-guard inline-template="" :init-is-spoiler="#{user_signed_in? && current_user.hide_checkin_comment?(record)}"
+      .c-record__content.mb-zp5
+        c-rating-label :rating="#{record.rating.presence || -1}" v-show="!isSpoiler"
+        .c-body @click="remove"
+          c-body inline-template=""
+            .c-body__content = record.comment
+    .row
+      .col-xs
+        - if record.shared_twitter? || record.twitter_url_hash.present?
+          small
+            = icon "twitter", class: "mr-zp25 text-twitter"
+            = record.twitter_click_count
+        - if record.shared_facebook? || record.facebook_url_hash.present?
+          small.ml-zp5
+            = icon "facebook", class: "mr-zp25 text-twitter"
+            = record.facebook_click_count
+      .col-xs
+        .text-xs-right
+          c-like-button resource-name="Checkin" :raw-resource-id="#{record.id}" :raw-likes-count="#{record.likes_count}" :raw-is-liked="#{user_signed_in? && current_user.like?(record)}"
+          = link_to work_episode_checkin_path(record.episode.work, record.episode, record), class: "d-inline-block ml-zp5" do
+            = icon "comment-o", class: "mr-zp25"
+            = record.comments_count
+          - if user_signed_in? && current_user != record.user
+            .c-options-dropdown.dropdown.ml-zp5.d-inline-block
+              .dropdown-toggle data-toggle="dropdown"
+                = icon "ellipsis-h"
+              .dropdown-menu
+                = link_to "#", class: "dropdown-item" do
+                  c-mute-user-button :user-id="#{record.user.id}"
+    .text-xs-right
+      - if record.user == current_user
+        = link_to edit_work_episode_checkin_path(record.episode.work, record.episode, record), class: "mr-zp5" do
+          = icon "edit", class: "mr-zp25"
+          = t "words.edit"
+        = link_to work_episode_checkin_path(record.episode.work, record.episode, record), method: :delete, data: { confirm: t("checkins.delete_confirm") } do
+          = icon "trash-o", class: "mr-zp25"
+          = t "words.delete"
