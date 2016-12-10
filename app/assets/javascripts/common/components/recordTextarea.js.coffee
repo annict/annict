@@ -1,16 +1,19 @@
 Vue = require "vue/dist/vue"
 
+eventHub = require "../../common/eventHub"
+
 module.exports = Vue.extend
   template: "#t-record-textarea"
 
   data: ->
     rawCommentRows: 1
+    recordComment: @initRecordComment
     linesCount: 1
     isCommentEditing: false
 
   props:
-    record:
-      type: Object
+    initRecordComment:
+      type: String
     placeholder:
       type: String
 
@@ -23,8 +26,12 @@ module.exports = Vue.extend
     expandOnClick: ->
       return if @commentRows != 1
       @rawCommentRows = 10
-      @isCommentEditing = @record.isCommentEditing = true
+      @isCommentEditing = true
 
     expandOnEnter: ->
-      return unless @record.comment
-      @linesCount = @record.comment.split("\n").length
+      return unless @recordComment
+      @linesCount = @recordComment.split("\n").length
+
+  watch:
+    recordComment: (comment)->
+      eventHub.$emit "wordCount:update", comment.length || 0

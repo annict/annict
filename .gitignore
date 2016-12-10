@@ -4,7 +4,7 @@
 /.idea
 /config/application.yml
 /coverage
-/heroku.dump
+/db/dump/*
 /lib/tasks/data.rake
 /log/*.log
 /node_modules

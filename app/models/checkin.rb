@@ -50,7 +50,7 @@ class Checkin < ActiveRecord::Base
     foreign_key: :recipient_id,
     foreign_type: :recipient
 
-  validates :comment, length: { maximum: 500 }
+  validates :comment, length: { maximum: 1000 }
   validates :rating,
     allow_blank: true,
     numericality: {
