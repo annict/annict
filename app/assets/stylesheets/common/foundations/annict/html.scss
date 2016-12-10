@@ -1,27 +1,6 @@
-*,
-*::before,
-*::after {
-  box-sizing: border-box;
-}
-
-*:focus {
-  outline: none;
-}
-
 html {
   font-family: "Avenir Next", Verdana, "ヒラギノ角ゴ Pro W3", "Hiragino Kaku Gothic Pro", "游ゴシック", "Yu Gothic", "メイリオ", Meiryo, Osaka, sans-serif;
   -moz-osx-font-smoothing: grayscale;
   -webkit-font-smoothing: antialiased;
-  height: 100%;
   text-rendering: optimizeLegibility;
-}
-
-body {
-  letter-spacing: .02rem;
-}
-
-button,
-textarea,
-[type="text"] {
-  outline: none;
 }
