@@ -20,6 +20,7 @@ $(document).on "turbolinks:load", ->
   record = require "./common/components/record"
   recordRating = require "./common/components/recordRating"
   recordTextarea = require "./common/components/recordTextarea"
+  recordWordCount = require "./common/components/recordWordCount"
   statusSelector = require "./common/components/statusSelector"
   timeAgo = require "./common/components/timeAgo"
   tips = require "./common/components/tips"
@@ -42,6 +43,7 @@ $(document).on "turbolinks:load", ->
   Vue.component("c-record", record)
   Vue.component("c-record-rating", recordRating)
   Vue.component("c-record-textarea", recordTextarea)
+  Vue.component("c-record-word-count", recordWordCount)
   Vue.component("c-status-selector", statusSelector)
   Vue.component("c-time-ago", timeAgo)
   Vue.component("c-tips", tips)
