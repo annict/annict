@@ -4,7 +4,7 @@
   .mb-zp5
     c-record-rating :init-rating="#{record.rating.presence || 0}"
   .mb-zp5
-    c-record-textarea :record="{ comment: '#{record.comment.presence || ''}' }" placeholder="#{t('messages.records.new.write_your_comment')}"
+    c-record-textarea :init-record-comment="'#{record.comment.presence || ''}'" placeholder="#{t('messages.records.new.write_your_comment')}"
   .row
     .col-xs
       - if current_user.authorized_to?(:twitter)
@@ -16,13 +16,17 @@
           = icon "facebook", class: "text-facebook mr-zp25"
           = f.check_box :shared_facebook
     .col-xs
-      .text-xs-right
+      .text-xs-center
         = f.button class: "btn btn-primary" do
           = icon "edit"
           - if record.new_record?
             = t "words.track"
           - else
             = t "words.update"
+    .col-xs
+      .text-xs-right
+        .small.text-mute
+          c-record-word-count
 
 - content_for :js_templates do
   = render "application/js_templates/record_rating"
