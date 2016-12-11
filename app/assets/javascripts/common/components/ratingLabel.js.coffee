@@ -4,28 +4,28 @@ module.exports = Vue.extend
   template: '<div class="c-rating-label"></div>'
 
   props:
-    rating:
+    initRating:
       type: Number
       required: true
 
   methods:
     starType: (position) ->
-      if @rating <= (position - 1)
+      if @initRating <= (position - 1)
         "fa-star-o"
       else
-        if (position - 1) < @rating && @rating < position
+        if (position - 1) < @initRating && @initRating < position
           "fa-star-half-o"
-        else if position <= @rating
+        else if position <= @initRating
           "fa-star"
         else
           ""
 
   mounted: ->
-    return if @rating == -1
+    return if @initRating == -1
 
     $(@$el).append("<i class='fa fa-star'>")
     $(@$el).append("<i class='fa #{@starType(2)}'>")
     $(@$el).append("<i class='fa #{@starType(3)}'>")
     $(@$el).append("<i class='fa #{@starType(4)}'>")
     $(@$el).append("<i class='fa #{@starType(5)}'>")
-    $(@$el).append("<span class='c-rating-label__text'>#{@rating.toFixed(1)}</span>")
+    $(@$el).append("<span class='c-rating-label__text'>#{@initRating.toFixed(1)}</span>")

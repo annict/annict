@@ -23,9 +23,8 @@
 #
 
 class ProgramsController < ApplicationController
-  layout "v3/application"
-
   before_action :authenticate_user!
+  before_action :load_i18n, only: %i(index)
 
   def index
     data = {
@@ -33,5 +32,15 @@ class ProgramsController < ApplicationController
       currentProgramsSortType: current_user.setting.programs_sort_type
     }
     gon.push(data)
+  end
+
+  private
+
+  def load_i18n
+    keys = {
+      "messages.components.program_list.tracked": nil
+    }
+
+    load_i18n_into_gon keys
   end
 end

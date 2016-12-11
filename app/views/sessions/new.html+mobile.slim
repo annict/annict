@@ -7,11 +7,11 @@
       h1.text-xs-center.mb-2 = t "messages.common.welcome_back"
 
       .text-xs-center.mb-1
-        = link_to user_twitter_omniauth_authorize_path, class: "btn btn-twitter" do
+        = link_to user_twitter_omniauth_authorize_path, class: "btn u-btn-twitter" do
           = icon "twitter"
           = t "messages.sessions.new.sign_in_with_twitter"
       .text-xs-center
-        = link_to user_facebook_omniauth_authorize_path, class: "btn btn-facebook" do
+        = link_to user_facebook_omniauth_authorize_path, class: "btn u-btn-facebook" do
           = icon "facebook"
           = t "messages.sessions.new.sign_in_with_facebook"
 

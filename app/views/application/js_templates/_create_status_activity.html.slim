@@ -36,4 +36,4 @@ script#t-create-status-activity type="x-template"
         c-time-ago.text-muted :time="activity.created_at"
       .col-xs
         .actions.text-xs-right
-          c-like-button.u-link--fake resource-name="statuses" :raw-resource-id="activity.status.id" :raw-likes-count="activity.status.likes_count" :raw-is-liked="activity.meta.liked"
+          c-like-button.u-fake-link resource-name="statuses" :raw-resource-id="activity.status.id" :raw-likes-count="activity.status.likes_count" :raw-is-liked="activity.meta.liked"

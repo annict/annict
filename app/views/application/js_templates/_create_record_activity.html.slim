@@ -23,10 +23,13 @@ script#t-create-record-activity type="x-template"
         | を見ました
     
     template v-if="activity.record.comment"
-      c-comment-guard inline-template="" :raw-is-spoiler="activity.record.hide_comment" :activity="activity"
+      c-comment-guard inline-template="" :init-is-spoiler="activity.record.hide_comment" :activity="activity"
         .c-activity__body.c-record-comment.mb-1 @click="remove"
-          c-rating-label :raw-rating="activity.record.rating || -1" :raw-is-spoiler="isSpoiler" v-show="!isSpoiler"
-          c-body :text="activity.record.comment"
+          c-rating-label :init-rating="activity.record.rating || -1" v-show="!isSpoiler"
+          .c-body @click="remove"
+            c-body inline-template=""
+              .c-body__content
+                | {{ $parent.activity.record.comment }}
 
       .c-activity__work-info.mb-zp5 class="#{browser.device.mobile? ? 'is-mobile' : 'is-pc'}"
         .row.flex-items-xs-middle
@@ -49,7 +52,7 @@ script#t-create-record-activity type="x-template"
         c-time-ago.text-muted :time="activity.created_at"
       .col-xs
         .actions.text-xs-right
-          c-like-button.u-link--fake.mr-1 resource-name="records" :raw-resource-id="activity.record.id" :raw-likes-count="activity.record.likes_count" :raw-is-liked="activity.meta.liked"
+          c-like-button.u-fake-link.mr-1 resource-name="records" :raw-resource-id="activity.record.id" :raw-likes-count="activity.record.likes_count" :raw-is-liked="activity.meta.liked"
           a :href='"/records/" + activity.record.id'
             = icon "comment-o", class: "mr-zp25"
             | {{ activity.record.comments_count }}

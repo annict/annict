@@ -2,18 +2,18 @@
   = render "application/components/error_panel", resource: record
 
   .mb-zp5
-    c-record-rating :init-rating="#{record.rating.presence || 0}"
+    c-record-rating :init-record="{ rating: #{record.rating.presence || 0} }"
   .mb-zp5
-    c-record-textarea :init-record-comment="'#{record.comment.presence || ''}'" placeholder="#{t('messages.records.new.write_your_comment')}"
+    c-record-textarea :init-record="{ uid: 1, comment: '#{record.comment.presence || ''}' }" placeholder="#{t('messages.records.new.write_your_comment')}"
   .row
     .col-xs
       - if current_user.authorized_to?(:twitter)
         label
-          = icon "twitter", class: "text-twitter mr-zp25"
+          = icon "twitter", class: "u-text-twitter mr-zp25"
           = f.check_box :shared_twitter
       - if current_user.authorized_to?(:facebook)
         label.ml-zp5
-          = icon "facebook", class: "text-facebook mr-zp25"
+          = icon "facebook", class: "u-text-facebook mr-zp25"
           = f.check_box :shared_facebook
     .col-xs
       .text-xs-center
@@ -26,8 +26,9 @@
     .col-xs
       .text-xs-right
         .small.text-mute
-          c-record-word-count
+          c-record-word-count :init-record="{ uid: 1, wordCount: 0 }"
 
 - content_for :js_templates do
   = render "application/js_templates/record_rating"
   = render "application/js_templates/record_textarea"
+  = render "application/js_templates/record_word_count"

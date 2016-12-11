@@ -13,11 +13,11 @@
     c-episode-list inline-template="" :is-signed-in="#{user_signed_in?}" :raw-is-tracking-mode="#{params.key?(:tracking)}" :all-episode-ids="#{episodes.pluck(:id)}" :work-id="#{@work.id}"
       .c-episode-list
         .py-zp5
-          small.fake-link v-show="!isTrackingMode" @click="enableTrackingMode"
+          small.u-fake-link v-show="!isTrackingMode" @click="enableTrackingMode"
             = t "words.bulk_tracking"
-          small.fake-link.mr-zp5 v-show="isTrackingMode" @click="checkAll"
+          small.u-fake-link.mr-zp5 v-show="isTrackingMode" @click="checkAll"
             = t "words.check_all"
-          small.fake-link v-show="isTrackingMode && !!episodeIds.length" @click="uncheckAll"
+          small.u-fake-link v-show="isTrackingMode && !!episodeIds.length" @click="uncheckAll"
             = t "words.uncheck_all"
         table.p-episodes-table.table.mb-1
           tbody

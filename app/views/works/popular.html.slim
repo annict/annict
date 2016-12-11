@@ -23,7 +23,3 @@
 
 - unless user_signed_in?
   = render "application/components/sign_up_modal", user: @new_user
-
-- content_for :js_templates do
-  = render "application/js_templates/search_form"
-  = render "application/js_templates/status_selector"
