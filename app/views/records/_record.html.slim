@@ -17,7 +17,7 @@
                 = local_time_ago_in_words(record.created_at)
         c-comment-guard inline-template="" :init-is-spoiler="#{user_signed_in? && current_user.hide_checkin_comment?(record)}"
           .c-record__content
-            c-rating-label :rating="#{record.rating.presence || -1}" v-show="!isSpoiler"
+            c-rating-label :init-rating="#{record.rating.presence || -1}" v-show="!isSpoiler"
             .c-body @click="remove"
               c-body inline-template=""
                 .c-body__content = record.comment
@@ -25,11 +25,11 @@
           .col-xs
             - if record.shared_twitter? || record.twitter_url_hash.present?
               small
-                = icon "twitter", class: "mr-zp25 text-twitter"
+                = icon "twitter", class: "mr-zp25 u-text-twitter"
                 = record.twitter_click_count
             - if record.shared_facebook? || record.facebook_url_hash.present?
               small.ml-zp5
-                = icon "facebook", class: "mr-zp25 text-twitter"
+                = icon "facebook", class: "mr-zp25 u-text-twitter"
                 = record.facebook_click_count
           .col-xs
             .text-xs-right

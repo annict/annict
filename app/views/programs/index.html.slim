@@ -1,13 +1,10 @@
-- title = "放送予定"
-- description = meta_description
-- keywords = meta_keywords
-- set_meta_tags title: title, description: description, keywords: keywords, reverse: true
+- title = t "head.title.programs.index"
+- set_meta_tags(title: title, og: { title: title }, reverse: true, prefix: false)
+- set_page_category "programs_index"
 
-= render "application/v2/navbar"
+= render "application/components/navbar"
 
-ann-programs
+c-program-list
 
-- content_for :parts do
-  = render "application/v3/components/programs"
-  = render "application/v2/components/record_rating"
-  = render "application/v3/components/record_comment_form"
+- content_for :js_templates do
+  = render "application/js_templates/program_list"

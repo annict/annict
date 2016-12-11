@@ -1,6 +1,3 @@
-@import "./variables";
-@import "./bootstrap/variables";
-
 @import "bootstrap";
 @import "bourbon";
 @import "font-awesome-sprockets";
@@ -11,5 +8,5 @@
 @import "./bootstrap/**/*";
 @import "./turbolinks";
 @import "./select2";
-@import "./font";
-@import "./base";
+
+@import "./annict/**/*";

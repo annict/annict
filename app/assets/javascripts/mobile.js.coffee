@@ -16,6 +16,7 @@ $(document).on "turbolinks:load", ->
   flash = require "./common/components/flash"
   likeButton = require "./common/components/likeButton"
   muteUserButton = require "./common/components/muteUserButton"
+  programList = require "./common/components/programList"
   ratingLabel = require "./common/components/ratingLabel"
   record = require "./common/components/record"
   recordRating = require "./common/components/recordRating"
@@ -39,6 +40,7 @@ $(document).on "turbolinks:load", ->
   Vue.component("c-flash", flash)
   Vue.component("c-like-button", likeButton)
   Vue.component("c-mute-user-button", muteUserButton)
+  Vue.component("c-program-list", programList)
   Vue.component("c-rating-label", ratingLabel)
   Vue.component("c-record", record)
   Vue.component("c-record-rating", recordRating)

@@ -6,7 +6,7 @@ script#t-tips type="x-template"
           a data-toggle="collapse" data-parent=".c-tips" :href='"#c-tips__" + tip.slug' @click="open(i)"
             span.c-tips__icon.fa :class="tip.icon_name"
             | {{ tip.title }}
-        .c-tips__close.u-link--fake.col-xs.text-xs-right @click="close(i)"
+        .c-tips__close.u-fake-link.col-xs.text-xs-right @click="close(i)"
           = icon :times
 
       .collapse :id='"c-tips__" + tip.slug'

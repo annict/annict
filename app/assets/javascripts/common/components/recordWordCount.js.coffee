@@ -6,8 +6,12 @@ module.exports = Vue.extend
   template: "#t-record-word-count"
 
   data: ->
-    wordCount: 0
+    record: @initRecord
+
+  props:
+    initRecord:
+      type: Object
 
   created: ->
-    eventHub.$on "wordCount:update", (count) =>
-      @wordCount = count
+    eventHub.$on "wordCount:update", (record, count) =>
+      @record.wordCount = count if @record.uid == record.uid

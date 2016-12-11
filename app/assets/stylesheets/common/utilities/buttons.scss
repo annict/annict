@@ -1,0 +1,5 @@
+@each $color-name, $color in $ann-btn-colors {
+  .u-btn-#{$color-name} {
+    @include button-variant($ann-color-white, $color, $color);
+  }
+}

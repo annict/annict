@@ -4,17 +4,17 @@ module.exports = Vue.extend
   template: "#t-record-rating"
 
   data: ->
-    rawRating: @initRating
+    record: @initRecord
 
   props:
-    initRating:
-      type: Number
+    initRecord:
+      type: Object
 
   computed:
     fixedRating: ->
-      return "-" if @rawRating < 1
-      Number(@rawRating).toFixed(1)
+      return "-" if @record.rating < 1
+      Number(@record.rating).toFixed(1)
 
   watch:
-    rawRating: (val) ->
-      @rawRating = 1 if 0 < val && val < 1
+    "record.rating": (val) ->
+      @record.rating = 1 if 0 < val && val < 1

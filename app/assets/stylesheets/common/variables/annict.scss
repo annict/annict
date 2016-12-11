@@ -38,12 +38,28 @@ $ann-color-twitter: #24b1ec;
 
 // Typography
 
-$ann-line-height-base: 1.7;
+$ann-line-height-base: 1.5;
 $ann-line-height-sizes: (
   0: 0,
   xs: $ann-line-height-base / 1.2,
   sm: $ann-line-height-base / 1.1,
 );
+
+$ann-text-colors: (
+  twitter: $ann-color-twitter,
+  facebook: $ann-color-facebook,
+  keppel: $ann-color-keppel
+);
+
+
+// Buttons
+
+$ann-btn-colors: (
+  twitter: $ann-color-twitter,
+  facebook: $ann-color-facebook,
+  keppel: $ann-color-keppel
+);
+
 
 // Navbar
 

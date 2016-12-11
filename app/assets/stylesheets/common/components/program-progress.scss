@@ -1,0 +1,32 @@
+.c-program-progress {
+  $root: &;
+
+  position: relative;
+
+  &.is-unbroadcasted {
+    #{$root}__line {
+      border-left: solid 1px rgba($ann-color-keppel, .2);
+    }
+
+    #{$root}__point {
+      background-color: rgba($ann-color-keppel, .2);
+    }
+  }
+
+  &__line {
+    border-left: solid 1px $ann-color-keppel;
+    height: 100%;
+    position: absolute;
+    width: 1px;
+  }
+
+  &__point {
+    background-color: $ann-color-keppel;
+    border-radius: 10px;
+    height: 10px;
+    left: -6px;
+    position: absolute;
+    top: 21px;
+    width: 10px;
+  }
+}
