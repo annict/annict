@@ -4,7 +4,7 @@
 [![Code Climate](https://codeclimate.com/github/annict/annict/badges/gpa.svg)](https://codeclimate.com/github/annict/annict)
 [![Coveralls](https://coveralls.io/repos/github/annict/annict/badge.svg?branch=master)](https://coveralls.io/github/annict/annict?branch=master)
 [![Gemnasium](https://gemnasium.com/annict/annict.svg)](https://gemnasium.com/annict/annict)
-[![Slack](http://slack.annict.com/badge.svg)](http://slack.annict.com)
+[![Slack](https://slack.annict.com/badge.svg)](https://slack.annict.com)
 
 
 **This branch is still under development for next version (V2).**
