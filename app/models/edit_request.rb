@@ -36,7 +36,7 @@ class EditRequest < ActiveRecord::Base
 
   after_create :create_participant
   after_create :create_db_activity
-  after_commit :notify_new_edit_request
+  after_create :notify_new_edit_request
 
   aasm do
     state :opened, initial: true
