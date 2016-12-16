@@ -31,8 +31,8 @@
 #
 
 class UsersController < ApplicationController
-  before_action :authenticate_user!, only: [:destroy, :share]
-  before_action :set_user, only: [:show, :works, :following, :followers]
+  before_action :authenticate_user!, only: %i(destroy share)
+  before_action :set_user, only: %i(show works following followers)
 
   def show
     @watching_works = @user.works.watching.published
@@ -41,8 +41,6 @@ class UsersController < ApplicationController
     @works = (checkedin_works + other_works).first(9)
     @graph_labels = Annict::Graphs::Checkins.labels
     @graph_values = Annict::Graphs::Checkins.values(@user)
-
-    render layout: "v1/application"
   end
 
   def works(status_kind, page: nil)

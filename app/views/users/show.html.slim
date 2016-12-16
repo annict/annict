@@ -1,63 +1,65 @@
-- title = "#{@user.profile.name} (#{@user.username})さんのプロフィール"
-- description = meta_description("#{@user.profile.description.presence || "#{@user.profile.name}さんのプロフィール。"} / ")
+- title = t "head.title.users.show", name: @user.profile.name, username: @user.username
+- description = meta_description(@user.profile.description.presence || t("head.meta.description.users.show", name: @user.profile.name))
 - keywords = meta_keywords(@user.profile.name, @user.username)
-- set_meta_tags(title: title, description: description, keywords: keywords, reverse: true)
+- image_url = ann_image_tag(@user.profile, :tombo_avatar, size: "640x")
+- set_meta_tags(title: title, description: description, keywords: keywords, og: { title: title, description: description, image: image_url }, reverse: true, prefix: false)
+- set_page_category "users_show"
 
-= render "application/v2/navbar"
+= render "application/components/navbar", transparent: true
 
-.content
-  = render 'profile_header', user: @user
-
-  .container
-    .watching-works
-      h2.text-center 見てるアニメ
-      - if @works.present?
-        .works.row
-          - @works.each do |work|
-            = link_to work_path(work) do
-              .work.col-xs-4
-                .thumbnail
-                  = ann_image_tag(work.item, :tombo_image, msize: "80x80", size: "140x140", alt: work.title)
-                  .caption
-                    h3 = work.title
-
-        - if @watching_works.count > 9
-          .more
-            = link_to user_works_path(@user.username, :watching) do
-              = "見てるアニメ全#{@watching_works.count}作品を見る"
-              = icon('angle-right')
-      - else
-        .info.well
-          .icon
-            i.fa.fa-info-circle
-          p 見てるアニメはありません
-
-  hr
-
-  .container
-    .graphs
-      h2.text-center = t('stats.weekly_checkins')
-      - if @user.checkins_count > 0
-        .ann-user-checkin-chart.wrapper data-labels="#{@graph_labels}" data-values="#{@graph_values}"
-          - if browser.device.mobile?
-            canvas width='285' height='150'
-          - else
-            canvas width='460' height='200'
-      - else
-        .info.well
-          .icon
-            i.fa.fa-info-circle
-          p = t('stats.no_checkins')
-
-  hr
-
-  ann-activities username="#{@user.username}"
-
-- content_for :parts do
-  = render "application/v2/components/like_button"
-  = render "application/v2/components/activities"
-  = render "application/v2/components/create_record_activity"
-  = render "application/v2/components/create_multiple_records_activity"
-  = render "application/v2/components/create_status_activity"
-  - if user_signed_in?
-    = render "application/v3/components/mute_user_button"
+/ .content
+/   = render 'profile_header', user: @user
+/ 
+/   .container
+/     .watching-works
+/       h2.text-center 見てるアニメ
+/       - if @works.present?
+/         .works.row
+/           - @works.each do |work|
+/             = link_to work_path(work) do
+/               .work.col-xs-4
+/                 .thumbnail
+/                   = ann_image_tag(work.item, :tombo_image, msize: "80x80", size: "140x140", alt: work.title)
+/                   .caption
+/                     h3 = work.title
+/ 
+/         - if @watching_works.count > 9
+/           .more
+/             = link_to user_works_path(@user.username, :watching) do
+/               = "見てるアニメ全#{@watching_works.count}作品を見る"
+/               = icon('angle-right')
+/       - else
+/         .info.well
+/           .icon
+/             i.fa.fa-info-circle
+/           p 見てるアニメはありません
+/ 
+/   hr
+/ 
+/   .container
+/     .graphs
+/       h2.text-center = t('stats.weekly_checkins')
+/       - if @user.checkins_count > 0
+/         .ann-user-checkin-chart.wrapper data-labels="#{@graph_labels}" data-values="#{@graph_values}"
+/           - if browser.device.mobile?
+/             canvas width='285' height='150'
+/           - else
+/             canvas width='460' height='200'
+/       - else
+/         .info.well
+/           .icon
+/             i.fa.fa-info-circle
+/           p = t('stats.no_checkins')
+/ 
+/   hr
+/ 
+/   ann-activities username="#{@user.username}"
+/ 
+/ - content_for :parts do
+/   = render "application/v2/components/like_button"
+/   = render "application/v2/components/activities"
+/   = render "application/v2/components/create_record_activity"
+/   = render "application/v2/components/create_multiple_records_activity"
+/   = render "application/v2/components/create_status_activity"
+/   - if user_signed_in?
+/     = render "application/v3/components/mute_user_button"
