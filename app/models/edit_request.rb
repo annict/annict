@@ -36,7 +36,7 @@ class EditRequest < ActiveRecord::Base
 
   after_create :create_participant
   after_create :create_db_activity
-  after_create :notify_new_edit_request
+  after_commit :notify_new_edit_request
 
   aasm do
     state :opened, initial: true
@@ -132,8 +132,12 @@ class EditRequest < ActiveRecord::Base
   end
 
   def notify_new_edit_request
-    User.where.not(id: user.id).with_role(:editor, :admin).each do |u|
-      EditRequestMailer.new_edit_request_notification(id, u.email).deliver_later
-    end
+    webhook_url = ENV.fetch("ANNICT_SLACK_WEBHOOK_URL_FOR_NOTIFICATIONS")
+    options = { channel: "#notifications", username: "Notifier", icon_emoji: ":annict:" }
+    host = ENV.fetch("ANNICT_URL")
+    url = Rails.application.routes.url_helpers.db_edit_request_url(self, host: host)
+    message = "<!channel> #{user.profile.name}さんが編集リクエストを作成しました。 #{url}"
+    notifier = Slack::Notifier.new(webhook_url, options)
+    notifier.ping(message)
   end
 end

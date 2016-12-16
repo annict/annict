@@ -37,14 +37,4 @@ class EditRequestMailer < ActionMailer::Base
 
     mail(to: email, subject: subject)
   end
-
-  def new_edit_request_notification(edit_request_id, email)
-    @edit_request = EditRequest.find(edit_request_id)
-    @user = @edit_request.user
-    @name = @user.profile.name
-
-    subject = "【Annict DB】#{@name}さんが編集リクエストを作成しました"
-
-    mail(to: email, subject: subject)
-  end
 end
