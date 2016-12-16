@@ -132,11 +132,14 @@ class EditRequest < ActiveRecord::Base
   end
 
   def notify_new_edit_request
+    return unless Rails.env.production?
+
     webhook_url = ENV.fetch("ANNICT_SLACK_WEBHOOK_URL_FOR_NOTIFICATIONS")
     options = { channel: "#notifications", username: "Notifier", icon_emoji: ":annict:" }
     host = ENV.fetch("ANNICT_URL")
     url = Rails.application.routes.url_helpers.db_edit_request_url(self, host: host)
     message = "<!channel> #{user.profile.name}さんが編集リクエストを作成しました。 #{url}"
+
     notifier = Slack::Notifier.new(webhook_url, options)
     notifier.ping(message)
   end
