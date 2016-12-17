@@ -2,6 +2,8 @@
   height: $ann-navbar-height;
   line-height: $ann-navbar-height;
   padding: 0 1rem;
+  position: relative;
+  z-index: 1;
 
   .navbar-nav {
     &.float-xs-right {
@@ -17,8 +19,16 @@
     padding: 0;
   }
 
+  .navbar-brand {
+    margin-top: -3px;
+  }
+
   .nav-item {
     height: $ann-navbar-height;
+
+    .c-navbar__avatar {
+      border: 1px solid $ann-color-white;
+    }
   }
 
   .c-search-form {
@@ -56,7 +66,7 @@
   }
 
   &.is-transparent {
-    @include linear-gradient(to top, transparent, rgba(0, 0, 0, .15));
+    @include linear-gradient(to top, transparent, rgba($ann-color-black, .25));
 
     .navbar-nav {
       .nav-link {

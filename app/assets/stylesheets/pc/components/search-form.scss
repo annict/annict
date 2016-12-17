@@ -14,4 +14,14 @@
       color: $ann-color-white;
     }
   }
+
+  &.is-transparent {
+    .form-control {
+      @include placeholder {
+        color: rgba($ann-color-white, .5);
+      }
+      border: 1px solid rgba($ann-color-white, .5);
+      border-color: rgba($ann-color-white, .5);
+    }
+  }
 }

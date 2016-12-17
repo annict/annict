@@ -1,0 +1,20 @@
+.p-users-show {
+  $root: &;
+
+  &__main {
+    margin-top: 390px;
+  }
+
+  &__count {
+    #{$root}__count-link {
+      color: $body-color;
+    }
+  }
+
+  &__sub-title {
+    border-bottom: 1px solid $hr-border-color;
+    font-size: 1.1rem;
+    padding-bottom: .75rem;
+    margin-bottom: .75rem;
+  }
+}

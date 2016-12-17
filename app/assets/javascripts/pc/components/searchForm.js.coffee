@@ -12,6 +12,7 @@ module.exports = Vue.extend
 
   props:
     q: String
+    isTransparent: Boolean
 
   computed:
     results: ->
