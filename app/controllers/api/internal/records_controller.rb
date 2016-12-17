@@ -24,6 +24,16 @@ module Api
           render status: 400, json: { message: @record.errors.full_messages.first }
         end
       end
+
+      def user_heatmap(username, start_date, end_date)
+        start_date = Time.parse(start_date)
+        end_date = Time.parse(end_date)
+        user = User.find_by(username: username)
+        @days = user.checkins.between_times(start_date, end_date).
+          group_by_day(:created_at).count.
+          map { |date, val| [date.to_time.to_i, val] }.
+          to_h
+      end
     end
   end
 end

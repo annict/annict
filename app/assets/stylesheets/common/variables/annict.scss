@@ -1,23 +1,42 @@
 // Color
+// l1: tranparent: 75%
+// l2: tranparent: 50%
+// l3: tranparent: 25%
+// l4: tranparent: 10%
+// l5: tranparent: 5%
 
-$ann-color-outer-space: #343434;
-$ann-color-mine-shaft: #404040;
-$ann-color-river: #5f697a;
-$ann-color-botticelli: #c9d6df;
+$ann-color-mizuho:    #f85b73;
+$ann-color-mizuho-l1: #fa8496;
+$ann-color-mizuho-l2: #fcadb9;
+$ann-color-mizuho-l3: #fdd6dc;
+$ann-color-mizuho-l4: #feeff1;
+$ann-color-mizuho-l5: #fff7f8;
 
-$ann-color-cadet: rgba(43, 59, 93, .29);
+$ann-color-green:    #00b8a9;
+$ann-color-green-l1: #40cabf;
+$ann-color-green-l2: #80dcd4;
+$ann-color-green-l3: #c0edea;
+$ann-color-green-l4: #e6f8f7;
+$ann-color-green-l4: #f3fcfb;
 
-$ann-color-haze: #f9f9fb;
+$ann-color-navy:    #364f6b;
+$ann-color-navy-l1: #687b90;
+$ann-color-navy-l2: #9ba7b5;
+$ann-color-navy-l3: #cdd4da;
+$ann-color-navy-l4: #ebeef0;
+$ann-color-navy-l5: #f6f7f8;
+
+$ann-color-black:    #343434;
+$ann-color-black-l1: #676767;
+$ann-color-black-l2: #9a9a9a;
+$ann-color-black-l3: #cdcdcd;
+$ann-color-black-l4: #ebebeb;
+$ann-color-black-l5: #f5f5f5;
+
 $ann-color-white: #fff;
+$ann-color-white-d1: #f9f9fb;
 
-$ann-color-java: #3fc1c9;
-$ann-color-keppel: #00B8A9;
-$ann-color-san-juan: #466c95;
-
-$ann-color-selective-yellow: #ffb400;
-
-$ann-color-mizuho: #f85b73;
-$ann-color-kei: #c6baa2;
+$ann-color-yellow: #ffb400;
 
 $ann-color-musani: #ec6303; // 武蔵野アニメーション
 $ann-color-miyamori: #d8a57a;
@@ -48,7 +67,7 @@ $ann-line-height-sizes: (
 $ann-text-colors: (
   twitter: $ann-color-twitter,
   facebook: $ann-color-facebook,
-  keppel: $ann-color-keppel
+  green: $ann-color-green
 );
 
 
@@ -57,7 +76,7 @@ $ann-text-colors: (
 $ann-btn-colors: (
   twitter: $ann-color-twitter,
   facebook: $ann-color-facebook,
-  keppel: $ann-color-keppel
+  green: $ann-color-green
 );
 
 

@@ -2,16 +2,27 @@
   padding: .08rem 0;
 
   .form-control {
-    background-color: rgba(0, 0, 0, .1);
-    border: 1px solid rgba(255, 255, 255, .15);
-    border-color: rgba(255, 255, 255, .15);
+    background-color: rgba($ann-color-white, .1);
+    border: 1px solid rgba($ann-color-black, .15);
+    border-color: rgba($ann-color-black, .15);
     color: $ann-color-white;
     width: 280px;
 
     &:focus {
-      background-color: rgba(0, 0, 0, .1);
-      border-color: rgba(255, 255, 255, .15);
+      background-color: rgba($ann-color-white, .1);
+      border-color: rgba($ann-color-black, .15);
       color: $ann-color-white;
+    }
+  }
+
+  &.is-transparent {
+    .form-control {
+      border: 1px solid rgba($ann-color-white, .5);
+      border-color: rgba($ann-color-white, .5);
+
+      @include placeholder {
+        color: rgba($ann-color-white, .5);
+      }
     }
   }
 }

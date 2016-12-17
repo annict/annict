@@ -343,6 +343,8 @@ GEM
       json
       multi_json
       request_store (>= 1.0)
+    groupdate (3.1.1)
+      activesupport (>= 3)
     hashdiff (0.3.1)
     hashie (3.4.6)
     heapy (0.1.2)
@@ -729,6 +731,7 @@ DEPENDENCIES
   flutie
   font-awesome-sass
   gon
+  groupdate
   hashdiff
   hirb
   hirb-unicode-steakknife

@@ -7,6 +7,10 @@ module Annict
         @request = request
       end
 
+      def follows
+        @follows ||= ::Annict::Keen::Events::Follow.new(@request)
+      end
+
       def users
         @users ||= ::Annict::Keen::Events::User.new(@request)
       end

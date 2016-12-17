@@ -1,0 +1,5 @@
+script#t-follow-button type="x-template"
+  .c-follow-button.btn :class='{ "btn-success": !isFollowing, "btn-info": isFollowing }' @click="toggle"
+    i.fa :class='{ "fa-plus": !isFollowing, "fa-check": isFollowing }'
+    span
+      | {{ buttonText }}

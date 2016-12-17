@@ -8,14 +8,14 @@
   width: 100%;
 
   &.is-transparent {
-    color: $ann-color-java;
+    color: $ann-color-green;
 
     .c-status-selector__object {
-      border: solid 1px $ann-color-java;
+      border: solid 1px $ann-color-green;
 
       select {
         background-color: rgba(255, 255, 255, 0);
-        color: $ann-color-java;
+        color: $ann-color-green;
       }
     }
   }
@@ -39,7 +39,7 @@
 
     select {
       @include appearance(none);
-      background-color: $ann-color-java;
+      background-color: $ann-color-green;
       border: 0;
       border-radius: 0;
       color: $ann-color-white;
@@ -50,11 +50,11 @@
       width: 130%;
 
       &:hover {
-        background-color: darken($ann-color-java, 15%);
+        background-color: darken($ann-color-green, 15%);
       }
 
       option {
-        background-color: $ann-color-mine-shaft;
+        background-color: $ann-color-black-l1;
       }
     }
 
@@ -85,7 +85,7 @@
     }
 
     > i {
-      color: $ann-color-java;
+      color: $ann-color-green;
     }
   }
 }

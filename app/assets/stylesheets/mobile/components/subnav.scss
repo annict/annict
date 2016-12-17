@@ -5,7 +5,7 @@
 
   &--divided {
     border-top: solid .01rem $hr-border-color;
-    box-shadow: 0 2px 2px -2px $ann-color-cadet;
+    box-shadow: 0 2px 2px -2px rgba($ann-color-navy-l2, .30);
   }
 
   ul {

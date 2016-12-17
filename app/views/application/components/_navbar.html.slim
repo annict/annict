@@ -1,9 +1,9 @@
-- is_transparent = local_assigns.fetch(:is_transparent, false)
+- transparent = local_assigns.fetch(:transparent, false)
 - is_on_cover_image = local_assigns.fetch(:is_on_cover_image, false)
 
-nav.c-navbar.navbar class="#{is_transparent ? 'navbar-dark is-transparent' : 'navbar-light'} #{is_on_cover_image ? 'is-on-cover-image' : ''}"
+nav.c-navbar.navbar class="#{transparent ? 'navbar-dark is-transparent' : 'navbar-light'}"
   = link_to root_path, class: "navbar-brand" do
-    = image_tag "logos/color-#{is_transparent ? 'white' : 'mizuho'}.png", size: "25x30", alt: "Annict"
+    = image_tag "logos/color-#{transparent ? 'white' : 'mizuho'}.png", size: "25x30", alt: "Annict"
   ul.nav.navbar-nav
     - if user_signed_in?
       li.nav-item
@@ -26,12 +26,12 @@ nav.c-navbar.navbar class="#{is_transparent ? 'navbar-dark is-transparent' : 'na
       li.nav-item
         = link_to t("words.airing_anime"), season_works_path(slug: ENV.fetch("ANNICT_CURRENT_SEASON")), class: "nav-link"
     li.nav-item
-      c-search-form q="#{@search.q}"
+      c-search-form q="#{@search.q}" :is-transparent="#{transparent}"
   ul.nav.navbar-nav.float-xs-right
     - if user_signed_in?
       li.nav-item.dropdown
         = link_to user_path(current_user.username), class: "nav-link" do
-          = ann_image_tag(current_user.profile, :tombo_avatar, size: "30x30", alt: current_user.profile.name, class: "rounded-circle")
+          = ann_image_tag(current_user.profile, :tombo_avatar, size: "30x30", alt: current_user.profile.name, class: "c-navbar__avatar rounded-circle")
         - if current_user.notifications_count > 0
             .c-navbar__notifications-count
               = current_user.notifications_count
@@ -55,3 +55,6 @@ nav.c-navbar.navbar class="#{is_transparent ? 'navbar-dark is-transparent' : 'na
         = link_to t("head.title.sessions.new"), new_user_session_path, class: "nav-link"
       li.nav-item
         = link_to t("head.title.registrations.new"), new_user_registration_path, class: "nav-link btn btn-outline-primary"
+
+- content_for :js_templates
+  = render "application/js_templates/search_form"

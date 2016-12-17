@@ -38,10 +38,13 @@ Rails.application.routes.draw do
       resources :organizations, only: [:index]
       resources :people, only: [:index]
       resources :receptions, only: [:create, :destroy]
-      resources :records, only: [:create]
 
       resources :dislikes, only: [:create] do
         post :undislike, on: :collection
+      end
+
+      resources :follows, only: %i(create) do
+        post :unfollow, on: :collection
       end
 
       resources :latest_statuses, only: [:index] do
@@ -56,6 +59,10 @@ Rails.application.routes.draw do
 
       resources :tips, only: [] do
         post :close, on: :collection
+      end
+
+      resources :records, only: %i(create) do
+        get :user_heatmap, on: :collection
       end
 
       resource :user, only: [] do
@@ -231,11 +238,6 @@ Rails.application.routes.draw do
   resources :users, only: [] do
     collection do
       delete :destroy
-    end
-
-    member do
-      delete :unfollow, controller: :follows, action: :destroy
-      post :follow, controller: :follows, action: :create
     end
   end
 

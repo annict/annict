@@ -29,4 +29,17 @@ module ImageHelper
 
     image_tag(url, options)
   end
+
+  def profile_background_image_url(profile, options)
+    background_image = profile.tombo_background_image
+    field = background_image.present? ? :tombo_background_image : :tombo_avatar
+    image = profile.send(field)
+
+    if background_image.present? && profile.background_image_animated?
+      path = image.path(:original).sub(%r{\A.*paperclip/}, "paperclip/")
+      return "#{ENV.fetch('ANNICT_FILE_STORAGE_URL')}/#{path}"
+    end
+
+    ann_image_url(profile, field, options)
+  end
 end

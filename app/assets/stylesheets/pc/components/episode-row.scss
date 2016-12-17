@@ -6,17 +6,17 @@
   }
 
   &__check {
-    color: $ann-color-keppel;
+    color: $ann-color-green;
   }
 
   &__stars {
     .fa-star,
     .fa-star-half-o {
-      color: $ann-color-selective-yellow;
+      color: $ann-color-yellow;
     }
 
     .fa-star-o {
-      color: $ann-color-botticelli;
+      color: $ann-color-navy-l3;
     }
   }
 }
