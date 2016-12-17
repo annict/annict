@@ -1,5 +1,5 @@
 script#t-activities type="x-template"
-  .c-activities.c-card.container
+  .c-activities
     template v-for="activity in activities"
       template v-if='activity.action === "create_record"'
         c-create-record-activity :activity="activity"
