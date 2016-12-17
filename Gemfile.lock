@@ -620,6 +620,7 @@ GEM
     simplecov-html (0.10.0)
     sitemap_generator (5.2.0)
       builder (~> 3.0)
+    slack-notifier (1.5.1)
     slim (3.0.7)
       temple (~> 0.7.6)
       tilt (>= 1.3.3, < 2.1)
@@ -778,6 +779,7 @@ DEPENDENCIES
   scout_apm
   scss_lint
   sitemap_generator
+  slack-notifier
   slim
   spring
   spring-commands-rspec

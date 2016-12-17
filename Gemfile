@@ -65,6 +65,7 @@ gem "rmagick"
 gem "sass-rails", require: false
 gem "sassc-rails"
 gem "sitemap_generator"
+gem "slack-notifier"
 gem "slim"
 gem "traceroute"
 gem "twitter"
