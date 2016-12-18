@@ -15,6 +15,7 @@
 
 - if user_signed_in?
   = render "works/#{current_user.setting.display_option_work_list}", works: @works
+  = paginate @works
 - else
   .container
     = render "works/list", works: @works

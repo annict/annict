@@ -1,24 +1,40 @@
 - action = t("enumerize.status.kind_action.#{params[:status_kind]}")
-
-- title = "#{@user.profile.name} (#{@user.username})さんが#{action}#{t('words.anime')}"
-- description = meta_description("#{@user.profile.name}さんが#{action}#{t('words.anime')}をチェック！")
+- title = t "head.title.users.works", name: @user.profile.name, username: @user.username, action: action
+- description = meta_description(t("head.meta.description.users.works", name: @user.profile.name, action: action))
 - keywords = meta_keywords(@user.profile.name, @user.username)
-- set_meta_tags(title: title, description: description, keywords: keywords, reverse: true)
+- image_url = ann_image_tag(@user.profile, :tombo_avatar, size: "640x")
+- set_meta_tags(title: title, description: description, keywords: keywords, og: { title: title, description: description, image: image_url }, reverse: true, prefix: false)
+- set_page_category "users_works"
 
-= render "application/v2/navbar"
+= render "application/components/navbar", transparent: true
 
-.content
-  .ann-user-sub-header
-    = link_to user_path(@user.username) do
-      = ann_image_tag(@user.profile, :tombo_avatar, msize: "50x50", size: "70x70", class: "img-circle")
-    h1
-      = link_to @user.profile.name, user_path(@user.username)
-      = "が#{action}アニメ"
+.p-profile-header.p-profile-header--low
+  .p-profile-header__cover-image style="background-image: url(#{profile_background_image_url(@user.profile, size: '500x325')});"
+  .p-profile-header__info
+    .container
+      .row
+        .col-xs.u-flex-grow-0
+          = link_to user_path(username: @user.username) do
+            = ann_image_tag(@user.profile, :tombo_avatar, size: "80x80", class: "p-profile-header__avatar rounded-circle")
+        .col-xs.pt-zp5.pl-0
+          h1
+            = link_to @user.profile.name, user_path(username: @user.username)
+          .mt-zp5
+            = link_to "@#{@user.username}", user_path(username: @user.username)
 
-  = render "works_nav", user: @user
+.p-users-works__subnav.c-subnav.c-subnav--divided
+  ul.list-unstyled
+    - %i(watching wanna_watch watched on_hold stop_watching).each do |status_kind|
+      li
+        = active_link_to user_works_path(@user.username, status_kind), class: "py-zp5", class_active: "c-subnav__link--active", active: (status_kind.to_s == params[:status_kind]) do
+          .mb-zp25
+            = @user.latest_statuses.count_on(status_kind)
+          .small
+            = t "enumerize.status.kind.#{status_kind}"
 
-= render "works/works", works: @works, user: @user, compact: true
-= render "application/v2/components/footer"
-
-- content_for :parts do
-  = render "application/v2/components/status_selector"
+- @seasons.each do |season|
+  .mt-1
+    h2.h4.font-weight-bold.mb-1.ml-1
+      = season.decorate.local_name
+    - works = season.works.merge(@works).order(watchers_count: :desc)
+    = render "works/grid_small", works: works
