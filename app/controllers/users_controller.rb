@@ -41,10 +41,9 @@ class UsersController < ApplicationController
     @works = (checkedin_works + other_works).first(9)
   end
 
-  def works(status_kind, page: nil)
-    @works = @user.works.on(status_kind).published.order_by_season(:desc).page(page)
-
-    render layout: "v1/application"
+  def works(status_kind)
+    @works = @user.works.on(status_kind).published
+    @seasons = Season.where(id: @works.pluck(:season_id)).order(sort_number: :desc)
   end
 
   def following

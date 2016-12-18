@@ -352,6 +352,21 @@ ActiveRecord::Schema.define(version: 20161203102005) do
     t.index ["work_id"], name: "index_draft_staffs_on_work_id", using: :btree
   end
 
+  create_table "draft_work_organizations", force: :cascade do |t|
+    t.integer  "work_organization_id"
+    t.integer  "work_id",                          null: false
+    t.integer  "organization_id",                  null: false
+    t.string   "role",                             null: false
+    t.string   "role_other"
+    t.integer  "sort_number",          default: 0, null: false
+    t.datetime "created_at",                       null: false
+    t.datetime "updated_at",                       null: false
+    t.index ["organization_id"], name: "index_draft_work_organizations_on_organization_id", using: :btree
+    t.index ["sort_number"], name: "index_draft_work_organizations_on_sort_number", using: :btree
+    t.index ["work_id"], name: "index_draft_work_organizations_on_work_id", using: :btree
+    t.index ["work_organization_id"], name: "index_draft_work_organizations_on_work_organization_id", using: :btree
+  end
+
   create_table "draft_works", force: :cascade do |t|
     t.integer  "work_id"
     t.integer  "season_id"
@@ -574,18 +589,14 @@ ActiveRecord::Schema.define(version: 20161203102005) do
   end
 
   create_table "organizations", force: :cascade do |t|
-    t.string   "name",                                      null: false
+    t.string   "name",                                   null: false
     t.string   "url"
     t.string   "wikipedia_url"
     t.string   "twitter_username"
-    t.string   "aasm_state",          default: "published", null: false
-    t.datetime "created_at",                                null: false
-    t.datetime "updated_at",                                null: false
-    t.string   "name_kana",           default: "",          null: false
-    t.string   "name_en",             default: "",          null: false
-    t.string   "url_en",              default: "",          null: false
-    t.string   "wikipedia_url_en",    default: "",          null: false
-    t.string   "twitter_username_en", default: "",          null: false
+    t.string   "aasm_state",       default: "published", null: false
+    t.datetime "created_at",                             null: false
+    t.datetime "updated_at",                             null: false
+    t.string   "name_kana",        default: "",          null: false
     t.index ["aasm_state"], name: "index_organizations_on_aasm_state", using: :btree
     t.index ["name"], name: "index_organizations_on_name", unique: true, using: :btree
   end
@@ -830,6 +841,22 @@ ActiveRecord::Schema.define(version: 20161203102005) do
     t.index ["work_id"], name: "index_work_images_on_work_id", using: :btree
   end
 
+  create_table "work_organizations", force: :cascade do |t|
+    t.integer  "work_id",                               null: false
+    t.integer  "organization_id",                       null: false
+    t.string   "role",                                  null: false
+    t.string   "role_other"
+    t.string   "aasm_state",      default: "published", null: false
+    t.integer  "sort_number",     default: 0,           null: false
+    t.datetime "created_at",                            null: false
+    t.datetime "updated_at",                            null: false
+    t.index ["aasm_state"], name: "index_work_organizations_on_aasm_state", using: :btree
+    t.index ["organization_id"], name: "index_work_organizations_on_organization_id", using: :btree
+    t.index ["sort_number"], name: "index_work_organizations_on_sort_number", using: :btree
+    t.index ["work_id", "organization_id"], name: "index_work_organizations_on_work_id_and_organization_id", unique: true, using: :btree
+    t.index ["work_id"], name: "index_work_organizations_on_work_id", using: :btree
+  end
+
   create_table "works", force: :cascade do |t|
     t.integer  "season_id"
     t.integer  "sc_tid"
@@ -905,6 +932,9 @@ ActiveRecord::Schema.define(version: 20161203102005) do
   add_foreign_key "draft_programs", "works"
   add_foreign_key "draft_staffs", "staffs"
   add_foreign_key "draft_staffs", "works"
+  add_foreign_key "draft_work_organizations", "organizations"
+  add_foreign_key "draft_work_organizations", "work_organizations"
+  add_foreign_key "draft_work_organizations", "works"
   add_foreign_key "draft_works", "number_formats"
   add_foreign_key "draft_works", "seasons"
   add_foreign_key "draft_works", "works"
@@ -950,6 +980,8 @@ ActiveRecord::Schema.define(version: 20161203102005) do
   add_foreign_key "syobocal_alerts", "works", name: "syobocal_alerts_work_id_fk", on_delete: :cascade
   add_foreign_key "work_images", "users"
   add_foreign_key "work_images", "works"
+  add_foreign_key "work_organizations", "organizations"
+  add_foreign_key "work_organizations", "works"
   add_foreign_key "works", "number_formats"
   add_foreign_key "works", "seasons", name: "works_season_id_fk", on_delete: :cascade
   add_foreign_key "works", "work_images"
