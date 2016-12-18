@@ -1,0 +1,13 @@
+.p-users-works {
+  .c-subnav {
+    li {
+      width: 70px;
+
+      .small {
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+    }
+  }
+}
