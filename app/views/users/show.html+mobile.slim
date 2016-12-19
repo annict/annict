@@ -6,26 +6,27 @@
 - set_page_category "users_show"
 
 .c-card
-  .p-users-show__header
-    .p-users-show__cover-image style="background-image: url(#{profile_background_image_url(@user.profile, size: '276x180')});"
-    = ann_image_tag(@user.profile, :tombo_avatar, size: "80x80", class: "p-users-show__avatar rounded-circle")
+  .p-profile-header
+    .p-profile-header__cover
+      .p-profile-header__cover-image style="background-image: url(#{profile_background_image_url(@user.profile, size: '276x180')});"
+      = ann_image_tag(@user.profile, :tombo_avatar, size: "80x80", class: "p-profile-header__avatar rounded-circle")
 
-  .p-users-show__profile.container.text-xs-center
-    h1.h2
-      = @user.profile.name
-    .mt-zp5
-      = "@#{@user.username}"
+    .p-profile-header__profile.container.text-xs-center
+      h1.h2
+        = @user.profile.name
+      .mt-zp5
+        = "@#{@user.username}"
 
-    - if @user.profile.description.present?
-      .small.text-muted.mt-zp5
-        = @user.profile.description
-    - if @user.profile.url.present?
-      .small
-        = link_to @user.profile.decorate.shorten_url, @user.profile.url, target: "_blank"
+      - if @user.profile.description.present?
+        .small.text-muted.mt-zp5
+          = @user.profile.description
+      - if @user.profile.url.present?
+        .small
+          = link_to @user.profile.decorate.shorten_url, @user.profile.url, target: "_blank"
 
     / - if user_signed_in? && current_user != @user
     - if user_signed_in?
-      .p-users-show__follow-button.text-align.mt-zp5
+      .p-users-show__follow-button.text-xs-center.mt-zp5
         c-follow-button username="#{@user.username}" :init-is-following="#{current_user.following?(@user)}"
         .c-user-options-dropdown.dropdown
           .dropdown-toggle data-toggle="dropdown"

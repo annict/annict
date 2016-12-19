@@ -7,15 +7,7 @@
 - set_page_category "users_works"
 
 .c-card
-  .p-users-show__header
-    .p-users-show__cover-image style="background-image: url(#{profile_background_image_url(@user.profile, size: '276x180')});"
-    = ann_image_tag(@user.profile, :tombo_avatar, size: "80x80", class: "p-users-show__avatar rounded-circle")
-
-  .p-users-show__profile.container.text-xs-center.pb-zp5
-    h1.h2
-      = @user.profile.name
-    .mt-zp5
-      = "@#{@user.username}"
+  = render "users/low_profile_header", user: @user
 
 .p-users-works__subnav.c-subnav.c-subnav--divided
   ul.list-unstyled

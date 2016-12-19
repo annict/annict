@@ -1,28 +1,16 @@
-- title = "#{@user.profile.name} (#{@user.username})さんをフォローしている人"
-- description = meta_description("#{@user.profile.name}さんをフォローしている人をチェック！")
+- title = t "head.title.users.followers", name: @user.profile.name, username: @user.username
+- description = meta_description(t("head.meta.description.users.followers", name: @user.profile.name, username: @user.username))
 - keywords = meta_keywords(@user.profile.name, @user.username)
-- set_meta_tags(title: title, description: description, keywords: keywords, reverse: true)
+- image_url = ann_image_tag(@user.profile, :tombo_avatar, size: "640x")
+- set_meta_tags(title: title, description: description, keywords: keywords, og: { title: title, description: description, image: image_url }, reverse: true, prefix: false)
+- set_page_category "users_followers"
 
-= render "application/v1/navbar"
+= render "users/low_profile_header", user: @user
+= render "users/follow_nav", user: @user
+= render "users/user_list", users: @users
 
-.header-wrapper
-  .ann-user-sub-header.container
-    = link_to user_path(@user.username) do
-      = ann_image_tag(@user.profile, :tombo_avatar, msize: "50x50", size: "70x70", class: "img-circle")
-    h1
-      = link_to @user.profile.name, user_path(@user.username)
-      = "をフォローしている人"
+= render "application/components/footer"
+= render "application/components/tabbar"
 
-  = render 'users/follow_nav', user: @user
-
-- if @users.present?
-  .user-list
-    - @users.each do |user|
-      = render 'users/user', user: user
-- else
-  .info.well
-    .icon
-      i.fa.fa-info-circle
-    p フォローされている人はいません。
-
-= render "application/v2/components/footer"
+- content_for :js_templates
+  = render "application/js_templates/follow_button"
