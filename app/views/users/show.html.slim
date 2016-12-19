@@ -22,8 +22,7 @@
                 .u-very-small.mt-zp5
                   = "@#{@user.username}"
         .col-xs-5.pt-2
-          / - if user_signed_in? && current_user != @user
-          - if user_signed_in?
+          - if user_signed_in? && current_user != @user
             .text-xs-right
               .c-user-options-dropdown.dropdown.d-inline-block.mr-1
                 .dropdown-toggle data-toggle="dropdown"

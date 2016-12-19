@@ -1,8 +1,14 @@
-.ann-tabs
-  = link_to following_user_path(user.username), class: "tab #{'active' if current_page?(action: :following)}" do
-    .count = user.followings.count
-    .text Following
-  = link_to followers_user_path(user.username), class: "tab #{'active' if current_page?(action: :followers)}" do
-    .count = user.followers.count
-    .text Followers
-  .clearfix
+.c-subnav.c-subnav--divided
+  ul.list-unstyled
+    li
+      = active_link_to following_user_path(user.username), class: "py-zp5", class_active: "c-subnav__link--active", active: current_page?(action: :following) do
+        .mb-zp25
+          = user.followings.count
+        .small
+          | Following
+    li
+      = active_link_to followers_user_path(user.username), class: "py-zp5", class_active: "c-subnav__link--active", active: current_page?(action: :followers) do
+        .mb-zp25
+          = user.followers.count
+        .small
+          | Followers

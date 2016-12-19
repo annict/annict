@@ -47,15 +47,11 @@ class UsersController < ApplicationController
   end
 
   def following
-    @users = @user.followings.order('follows.id DESC')
-
-    render layout: "v1/application"
+    @users = @user.followings.order("follows.id DESC")
   end
 
   def followers
-    @users = @user.followers.order('follows.id DESC')
-
-    render layout: "v1/application"
+    @users = @user.followers.order("follows.id DESC")
   end
 
   def destroy
