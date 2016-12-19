@@ -10,6 +10,9 @@ module.exports = Vue.extend
     initIsFollowing:
       type: Boolean
       required: true
+    isSmall:
+      type: Boolean
+      default: false
 
   data: ->
     isFollowing: @initIsFollowing

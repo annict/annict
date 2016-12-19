@@ -1,30 +1,6 @@
 .p-users-show {
   $root: &;
 
-  &__header {
-    height: 180px;
-    position: relative;
-
-    #{$root}__cover-image {
-      background-position: center;
-      background-repeat: no-repeat;
-      background-size: cover;
-      height: 100%;
-    }
-
-    #{$root}__avatar {
-      border: 3px solid $ann-color-white;
-      bottom: -40px;
-      left: 50%;
-      margin-left: -40px;
-      position: absolute;
-    }
-  }
-
-  &__profile {
-    margin-top: 40px;
-  }
-
   &__follow-button {
     position: relative;
 

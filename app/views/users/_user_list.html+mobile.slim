@@ -1,0 +1,17 @@
+.c-card.mt-1
+  - users.each do |user|
+    .px-1.u-underline
+      .row.py-1.flex-items-xs-middle
+        .col-xs.u-flex-grow-0
+          = link_to user_path(username: user.username) do
+            = ann_image_tag(user.profile, :tombo_avatar, size: "50x50", class: "rounded-circle")
+        .col-xs
+          .row.flex-items-xs-middle
+            .col-xs.px-0
+              .mb-zp25
+                = link_to user.profile.name, user_path(username: user.username)
+              .small
+                = link_to "@#{user.username}", user_path(username: user.username)
+            .col-xs.u-flex-grow-0
+              - if user_signed_in? && current_user != user
+                c-follow-button username="#{user.username}" :init-is-following="#{current_user.following?(user)}" :is-small="true"
