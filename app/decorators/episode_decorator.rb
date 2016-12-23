@@ -42,14 +42,14 @@ class EpisodeDecorator < ApplicationDecorator
   end
 
   def title_with_number
-    if number.present?
-      if title.present?
-        "#{number} #{title}"
+    if local_number.present?
+      if local_title.present?
+        "#{local_number} #{local_title}"
       else
-        number
+        local_number
       end
     else
-      title
+      local_title
     end
   end
 end

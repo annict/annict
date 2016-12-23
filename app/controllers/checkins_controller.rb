@@ -38,8 +38,8 @@ class CheckinsController < ApplicationController
   permits :comment, :shared_twitter, :shared_facebook, :rating
 
   before_action :authenticate_user!, only: %i(create edit update destroy)
-  before_action :set_work, only: %i(create show edit update destroy)
-  before_action :set_episode, only: %i(create show edit update destroy)
+  before_action :load_work, only: %i(create show edit update destroy)
+  before_action :load_episode, only: %i(create show edit update destroy)
   before_action :load_record, only: %i(show edit update destroy)
   before_action :redirect_to_top, only: %i(edit update destroy)
 
@@ -62,11 +62,7 @@ class CheckinsController < ApplicationController
   end
 
   def show
-    @records = @episode.checkins
-    @comments = @record.comments.order(created_at: :desc)
-    @comment = Comment.new
-
-    render layout: "v3/application"
+    redirect_to record_path(@record.user.username, @record), status: 301
   end
 
   def edit

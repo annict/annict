@@ -40,12 +40,8 @@ class ApplicationController < ActionController::Base
     @work = Work.published.find(params[:work_id])
   end
 
-  def set_episode
+  def load_episode
     @episode = @work.episodes.published.find(params[:episode_id])
-  end
-
-  def load_record
-    @record = @episode.checkins.find(params[:checkin_id])
   end
 
   def set_search_params
