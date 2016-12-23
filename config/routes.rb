@@ -219,30 +219,33 @@ Rails.application.routes.draw do
   resources :people, only: [:show]
   resources :programs, only: [:index]
 
-  get "@:username", to: "users#show", username: /[A-Za-z0-9_]+/, as: :user
-  get "@:username/:status_kind",
-    to: "users#works",
-    as: :user_works,
-    constraints: {
-      username: /[A-Za-z0-9_]+/,
-      status_kind: /wanna_watch|watching|watched|on_hold|stop_watching/
-    }
-  get "@:username/following",
-    to: "users#following",
-    username: /[A-Za-z0-9_]+/,
-    as: :following_user
-  get "@:username/followers",
-    to: "users#followers",
-    username: /[A-Za-z0-9_]+/,
-    as: :followers_user
   resources :users, only: [] do
     collection do
       delete :destroy
     end
   end
 
+  scope "@:username", username: /[A-Za-z0-9_]+/ do
+    get :following, to: "users#following", as: :following_user
+    get :followers, to: "users#followers", as: :followers_user
+
+    get ":status_kind",
+      to: "users#works",
+      as: :user_works,
+      constraints: {
+        status_kind: /wanna_watch|watching|watched|on_hold|stop_watching/
+      }
+
+    resources :records, only: %i(show edit destroy) do
+      resources :comments, only: %i(create)
+    end
+
+    root to: "users#show", as: :user
+  end
+
   resources :works, only: [:index, :show] do
     resources :characters, only: %i(index)
+    resources :episodes, only: %i(index show)
     resources :staffs, only: %i(index)
 
     collection do
@@ -252,12 +255,6 @@ Rails.application.routes.draw do
         slug: /[0-9]{4}-(all|spring|summer|autumn|winter)/,
         as: :season
       post :switch
-    end
-
-    resources :episodes, only: %i(index show) do
-      resources :checkins do
-        resources :comments, only: [:create]
-      end
     end
 
     resources :statuses, only: [] do

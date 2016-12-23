@@ -59,7 +59,7 @@ class User < ActiveRecord::Base
 
   has_many :activities,    dependent: :destroy
   has_many :channel_works, dependent: :destroy
-  has_many :checkins, dependent: :destroy
+  has_many :records, class_name: "Checkin", dependent: :destroy
   has_many :db_comments, dependent: :destroy
   has_many :dislikes, dependent: :destroy
   has_many :finished_tips, dependent: :destroy

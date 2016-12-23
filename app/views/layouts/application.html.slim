@@ -2,7 +2,7 @@ doctype html
 html lang="#{I18n.locale}"
   head
     = render "application/head"
-  body class="#{body_classes} #{user_signed_in? ? 'is-user' : 'is-guest'} h-100"
+  body class="#{body_classes} #{user_signed_in? ? 'is-user' : 'is-guest'}"
     .p-vue
       c-flash
       = yield
