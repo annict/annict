@@ -9,7 +9,9 @@ en:
       welcome_to_annict: Welcome to Annict!
     comments:
       comment_form_placeholder: Click here to add a new comment
+      deleted: Deleted
       saved: Comment have been saved.
+      updated: Updated
     home:
       index:
         there_are_no_activities: There are no activities

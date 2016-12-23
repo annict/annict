@@ -44,8 +44,8 @@
                   .dropdown-menu
                     = link_to "#", class: "dropdown-item" do
                       c-mute-user-button :user-id="#{record.user.id}"
-        .text-xs-right
-          - if record.user == current_user
+        - if policy(record).update?
+          .small.text-xs-right.mb-zp5
             = link_to edit_record_path(record.user.username, record), class: "mr-zp5" do
               = icon "edit", class: "mr-zp25"
               = t "words.edit"

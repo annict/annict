@@ -28,13 +28,7 @@
         .px-1
           - if user_signed_in?
             .p-records-show__comment-form
-              = form_for @comment, url: record_comments_path(@user.username, @record) do |f|
-                = render "application/components/error_panel", resource: @comment
-                = f.text_area :body, class: "form-control", rows: "5", placeholder: t("messages.comments.comment_form_placeholder")
-                .w-100.text-xs-center
-                  = f.button class: "btn btn-primary mt-zp5" do
-                    = icon "pencil"
-                    = t "messages.comments.submit"
+              = render "comments/form", record: @record, comment: @comment, user: @user
             hr
           - if @comments.present?
             - @comments.each do |comment|
@@ -52,6 +46,14 @@
                           = local_time_ago_in_words(comment.created_at)
                     c-body inline-template=""
                       .c-body__content = comment.body
+                - if policy(comment).update?
+                  .small.text-xs-right.mb-zp5
+                    = link_to edit_comment_path(@user.username, comment), class: "mr-zp5" do
+                      = icon "edit", class: "mr-zp25"
+                      = t "words.edit"
+                    = link_to comment_path(@user.username, comment), method: :delete, data: { confirm: t("messages._common.are_you_sure") } do
+                      = icon "trash-o", class: "mr-zp25"
+                      = t "words.delete"
           - else
             = render "application/components/empty", text: t("messages.comments.no_comments")
 

@@ -1,0 +1,15 @@
+- title = t "head.title.comments.edit"
+- description = meta_description t("head.meta.description.comments.edit")
+- keywords = meta_keywords
+- set_meta_tags(title: title, description: description, keywords: keywords, og: { title: title, description: description }, reverse: true, prefix: false)
+- set_page_category "comments_edit"
+
+= render "application/components/navbar"
+
+.container.my-1
+  .row
+    .col-xs-6.offset-xs-3
+      .c-card.p-1
+        = render "comments/form", record: @record, comment: @comment, user: @user
+
+= render "application/components/footer"

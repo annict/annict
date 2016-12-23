@@ -83,6 +83,7 @@ class User < ActiveRecord::Base
     class_name: "Doorkeeper::AccessToken",
     foreign_key: :resource_owner_id,
     dependent: :destroy
+  has_many :record_comments, class_name: "Comment", dependent: :destroy
   has_one  :profile,       dependent: :destroy
   has_one  :setting,       dependent: :destroy
 
