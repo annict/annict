@@ -6,9 +6,24 @@ class PersonDecorator < ApplicationDecorator
     h.link_to name, h.edit_db_person_path(self), options
   end
 
-  def name_with_kana
-    return name if name_kana.blank?
-    "#{name} (#{name_kana})"
+  def local_name
+    return name if I18n.locale == :ja
+    return name_en if name_en.present?
+    name
+  end
+
+  def local_other_name
+    if I18n.locale == :ja
+      name_kana.presence || ""
+    else
+      return name_kana if name_en.blank?
+      name
+    end
+  end
+
+  def name_with_other_name
+    return "#{local_name} (#{local_other_name})" if local_other_name.present?
+    local_name
   end
 
   def twitter_username_link
@@ -36,12 +51,6 @@ class PersonDecorator < ApplicationDecorator
     elsif staff?
       miyamori
     end
-  end
-
-  def local_name
-    return name if I18n.locale == :ja
-    return name_en if name_en.present?
-    name
   end
 
   def to_values

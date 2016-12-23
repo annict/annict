@@ -8,5 +8,5 @@
               .c-hover-image__image
                 = image_tag ann_image_url(work.work_image, :attachment, size: "280x373"), class: "img-fluid rounded"
               .c-hover-image__over
-          .p-zp5.text-truncate
+          .p-zp25.text-truncate
             = link_to work.decorate.local_title, work_path(work)
