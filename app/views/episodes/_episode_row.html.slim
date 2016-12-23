@@ -1,5 +1,5 @@
 - if user_signed_in?
-  - records = current_user.checkins.where(episode_id: episode.id)
+  - records = current_user.records.where(episode_id: episode.id)
 tr
   - if user_signed_in? && (params[:controller] == "episodes" && params[:action] == "index")
     td v-show="isTrackingMode"

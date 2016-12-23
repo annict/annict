@@ -1,106 +1,64 @@
-- title = @person.decorate.name_with_kana
-- description = meta_description("#{@person.voice_actor? ? "声優・" : ""}#{title}さんのプロフィール、参加作品をチェック！")
+- title = t "head.title.people.show", title: @person.decorate.name_with_other_name
+- description = meta_description(t("head.meta.description.people.show", title: title, voice_actor: (@person.voice_actor? ? "#{t('words.voice_actor')} " : "")))
 - keywords = meta_keywords(@person.name)
-- set_meta_tags(title: title, description: description, keywords: keywords, reverse: true)
+- set_meta_tags(title: title, description: description, keywords: keywords, og: { title: title, description: description }, reverse: true, prefix: false)
+- set_page_category "people_show"
 
-= render "application/v1/navbar"
-
-.content.header style="background-color: #{@person.decorate.background_color};"
+.c-card.py-1.mb-1
   .container
-    - if @person.voice_actor? || @person.staff?
-      .position
-        - if @person.voice_actor?
-          span.label 声優
-        - if @person.staff?
-          span.label スタッフ
-    h1
-      .name = @person.name
-      - if @person.name_kana.present?
-        .name-kana = @person.name_kana
+    .text-xs-center
+      h1.h2 = @person.decorate.local_name
+      - if @person.voice_actor?
+        span.tag.u-tag-voice-actor
+          = t "words.voice_actor"
+      - if @person.staff?
+        span.tag.u-tag-staff
+          = t "words.staff"
 
-.content.info
-  .container
-    h2.title 基本情報
-    table
-      tbody
-        tr
-          th 名前
-          td = @person.name
+    .mt-2
+      h2.h4.font-weight-bold.text-xs-center.mt-2.mb-1
+        = icon "sticky-note-o", class: "mr-zp25"
+        = t "words.information"
+      dl.row.mb-0
+        dt.col-xs-6.text-xs-right = t "words.name_kanji"
+        dd.col-xs-6 = @person.name
         - if @person.name_kana.present?
-          tr
-            th 名前 (かな)
-            td = @person.name_kana
+          dt.col-xs-6.text-xs-right = t "words.name_kana"
+          dd.col-xs-6 = @person.name_kana
+        - if @person.name_en.present?
+          dt.col-xs-6.text-xs-right = t "words.name_en"
+          dd.col-xs-6 = @person.name_en
         - if @person.nickname.present?
-          tr
-            th ニックネーム
-            td = @person.nickname
+          dt.col-xs-6.text-xs-right = t "words.nickname"
+          dd.col-xs-6 = @person.nickname
         - if @person.gender.present?
-          tr
-            th 性別
-            td = @person.gender_text
+          dt.col-xs-6.text-xs-right = t "words.gender"
+          dd.col-xs-6 = @person.gender_text
         - if @person.birthday.present?
-          tr
-            th 誕生日
-            td = @person.birthday.strftime("%Y年%m月%d日")
+          dt.col-xs-6.text-xs-right = t "words.birthday"
+          dd.col-xs-6 = @person.birthday.strftime("%Y年%m月%d日")
         - if @person.blood_type.present?
-          tr
-            th 血液型
-            td = @person.blood_type_text
+          dt.col-xs-6.text-xs-right = t "words.blood_type"
+          dd.col-xs-6 = @person.blood_type_text
         - if @person.height.present?
-          tr
-            th 身長
-            td = "#{@person.height}cm"
+          dt.col-xs-6.text-xs-right = t "words.height"
+          dd.col-xs-6 = "#{@person.height}cm"
         - if @person.url.present?
-          tr
-            th 公式サイト
-            td = @person.decorate.url_link
+          dt.col-xs-6.text-xs-right = t "words.official_site"
+          dd.col-xs-6 = link_with_domain @person.url
         - if @person.twitter_username.present?
-          tr
-            th Twitter
-            td = @person.decorate.twitter_username_link
+          dt.col-xs-6.text-xs-right = t "words.twitter"
+          dd.col-xs-6 = @person.decorate.twitter_username_link
         - if @person.wikipedia_url.present?
-          tr
-            th Wikipedia
-            td = @person.decorate.wikipedia_url_link
-    
-    .edit-link
-      - if user_signed_in? && !browser.device.mobile?
-        - if current_user.committer?
-          = link_to "編集する", edit_db_person_path(@person)
-        - else
-          = link_to "編集する", new_db_draft_person_path(person_id: @person.id)
+          dt.col-xs-6.text-xs-right = t "words.wikipedia"
+          dd.col-xs-6 = link_with_domain @person.wikipedia_url
 
-.content.works
-  .container
-    h2.title 参加作品
-    - if @person.voice_actor?
-      - @cast_years.each do |year|
-        h3.title-year = "#{year}年"
-        ul
-          - @casts_with_year[year].group_by(&:work_id).each do |_, casts|
-            - work = casts.first.work
-            li
-              .left
-                = link_to work_path(work) do
-                  = ann_image_tag(work.item, :tombo_image, msize: "60x60", size: "140x140", alt: work.title)
-              .right
-                = link_to work_path(work) do
-                  .work-title = work.title
-                .cast-part = casts.map { |cast| cast.decorate.part }.join("、")
+.container.py-1
+  - if @person.voice_actor?
+    = render "grid", resource_years: @cast_years, resources_with_year: @casts_with_year
 
-    - if @person.staff?
-      - @staff_years.each do |year|
-        h3.title-year = "#{year}年"
-        ul
-          - @staffs_with_year[year].group_by(&:work_id).each do |_, staffs|
-            - work = staffs.first.work
-            li
-              .left
-                = link_to work_path(work) do
-                  = ann_image_tag(work.item, :tombo_image, msize: "60x60", size: "140x140", alt: work.title)
-              .right
-                = link_to work_path(work) do
-                  .work-title = work.title
-                .staff-role = staffs.map { |staff| staff.decorate.role_name }.join("、")
+  - if @person.staff?
+    = render "grid", resource_years: @staff_years, resources_with_year: @staffs_with_year
 
-= render "application/v2/components/footer"
+= render "application/components/footer"
+= render "application/components/tabbar"

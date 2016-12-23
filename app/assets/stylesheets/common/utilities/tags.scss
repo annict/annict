@@ -1,0 +1,11 @@
+.u-tag-voice-actor {
+  @include tag-variant($ann-color-zuka);
+}
+
+.u-tag-staff {
+  @include tag-variant($ann-color-miyamori);
+}
+
+.u-tag-organization {
+  @include tag-variant($ann-color-musani);
+}

@@ -1,0 +1,17 @@
+- resource_years.each do |year|
+  h3.text-xs-center.mb-1 = year
+  .row.pl-1.mb-2
+    - resources_with_year[year].group_by(&:work_id).each do |_, resources|
+      - work = resources.first.work
+      .col-xs-2.p-0.pr-1.mb-1
+        .c-card
+          = link_to work_path(work) do
+            .c-hover-image
+              .c-hover-image__image
+                = image_tag ann_image_url(work.work_image, :attachment, size: "280x373"), class: "img-fluid rounded"
+              .c-hover-image__over
+          .p-zp25
+            .text-truncate
+              = link_to work.decorate.local_title, work_path(work)
+            .text-truncate.small
+              = resources.map { |resource| resource.decorate.part }.join(", ")
