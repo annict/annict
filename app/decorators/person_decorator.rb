@@ -1,56 +1,11 @@
 # frozen_string_literal: true
 
 class PersonDecorator < ApplicationDecorator
+  include PersonOrgDecoratorCommon
+
   def db_detail_link(options = {})
     name = options.delete(:name).presence || self.name
     h.link_to name, h.edit_db_person_path(self), options
-  end
-
-  def local_name
-    return name if I18n.locale == :ja
-    return name_en if name_en.present?
-    name
-  end
-
-  def local_other_name
-    if I18n.locale == :ja
-      name_kana.presence || ""
-    else
-      return name_kana if name_en.blank?
-      name
-    end
-  end
-
-  def name_with_other_name
-    return "#{local_name} (#{local_other_name})" if local_other_name.present?
-    local_name
-  end
-
-  def twitter_username_link
-    url = "https://twitter.com/#{twitter_username}"
-    h.link_to "@#{twitter_username}", url, target: "_blank"
-  end
-
-  def wikipedia_url_link
-    h.link_to "Wikipedia", wikipedia_url, target: "_blank"
-  end
-
-  def url_link
-    h.link_to URI.parse(url).host.downcase, url, target: "_blank"
-  end
-
-  def background_color
-    miyamori = "#d8a57a"
-    zuka = "#ae454c"
-    miyazuka = "#c57965" # miyamori, zukaとの中間色
-
-    if voice_actor? && staff?
-      miyazuka
-    elsif voice_actor?
-      zuka
-    elsif staff?
-      miyamori
-    end
   end
 
   def to_values
