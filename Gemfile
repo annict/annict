@@ -41,7 +41,6 @@ gem "keen"
 gem "koala"
 gem "meta-tags"
 gem "mini_magick"
-gem "net-ssh" # fog を使用している asset_sync で使用
 gem "nokogiri"
 gem "omniauth-facebook"
 # 1.4系だとFacebookのOAuth周りでおかしくなるので1.3系を使う
