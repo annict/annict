@@ -59,7 +59,7 @@
       .c-card.py-1
         .container
           - if user_signed_in?
-            = render "checkins/form", work: @work, episode: @episode, record: @record
+            = render "records/form", record: @record
           - else
             = render "application/components/welcome"
         hr

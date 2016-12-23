@@ -35,13 +35,10 @@
 #
 
 class CheckinsController < ApplicationController
-  permits :comment, :shared_twitter, :shared_facebook, :rating
-
-  before_action :authenticate_user!, only: %i(create edit update destroy)
-  before_action :load_work, only: %i(create show edit update destroy)
-  before_action :load_episode, only: %i(create show edit update destroy)
-  before_action :load_record, only: %i(show edit update destroy)
-  before_action :redirect_to_top, only: %i(edit update destroy)
+  before_action :authenticate_user!, only: %i(create)
+  before_action :load_work, only: %i(create show)
+  before_action :load_episode, only: %i(create show)
+  before_action :load_record, only: %i(show)
 
   def create(checkin)
     @record = @episode.checkins.new(checkin)
@@ -63,31 +60,6 @@ class CheckinsController < ApplicationController
 
   def show
     redirect_to record_path(@record.user.username, @record), status: 301
-  end
-
-  def edit
-    @records = @episode.checkins
-    @comments = @record.comments.order(created_at: :desc)
-    render layout: "v3/application"
-  end
-
-  def update(checkin)
-    @record.modify_comment = true
-
-    if @record.update_attributes(checkin)
-      @record.update_share_checkin_status
-      @record.share_to_sns
-      redirect_to work_episode_checkin_path(@work, @episode, @record), notice: t('checkins.updated')
-    else
-      @records = @episode.checkins
-      @comments = @record.comments.order(created_at: :desc)
-      render :edit
-    end
-  end
-
-  def destroy
-    @record.destroy
-    redirect_to work_episode_path(@work, @episode), notice: t("checkins.deleted")
   end
 
   def redirect(provider, url_hash)
@@ -115,10 +87,6 @@ class CheckinsController < ApplicationController
 
   def load_record
     @record = @episode.checkins.find(params[:id])
-  end
-
-  def redirect_to_top
-    return redirect_to root_path if @record.user != current_user
   end
 
   def redirect_to_episode(checkin)

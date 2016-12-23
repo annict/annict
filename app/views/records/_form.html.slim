@@ -1,10 +1,12 @@
-= form_for [work, episode, record] do |f|
+- url = record.new_record? ? records_path(current_user.username) : record_path(current_user.username, record)
+= form_for record, url: url do |f|
   = render "application/components/error_panel", resource: record
 
   .mb-zp5
     c-record-rating :init-record="{ rating: #{record.rating.presence || 0} }"
   .mb-zp5
-    c-record-textarea :init-record="{ uid: 1, comment: '#{record.comment.presence || ''}' }" placeholder="#{t('messages.records.new.write_your_comment')}"
+    - comment = record.comment&.gsub(/(?:\n\r?|\r\n?)/, "\\n").presence || ""
+    c-record-textarea :init-record="{ uid: 1, comment: '#{comment}' }" :init-comment-rows="#{record.new_record? ? 1 : 10}" placeholder="#{t('messages.records.new.write_your_comment')}"
   .row
     .col-xs
       - if current_user.authorized_to?(:twitter)
