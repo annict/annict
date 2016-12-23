@@ -236,7 +236,7 @@ Rails.application.routes.draw do
         status_kind: /wanna_watch|watching|watched|on_hold|stop_watching/
       }
 
-    resources :records, only: %i(show edit destroy) do
+    resources :records, except: %i(index) do
       resources :comments, only: %i(create)
     end
 

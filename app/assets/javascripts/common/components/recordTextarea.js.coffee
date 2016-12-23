@@ -6,31 +6,31 @@ module.exports = Vue.extend
   template: "#t-record-textarea"
 
   data: ->
-    rawCommentRows: 1
     record: @initRecord
-    linesCount: 1
+    commentRows: @initCommentRows
     isEditingComment: false
 
   props:
     initRecord:
       type: Object
+    initCommentRows:
+      type: Number
+      default: 1
     placeholder:
       type: String
-
-  computed:
-    commentRows: ->
-      return @rawCommentRows if @rawCommentRows > @linesCount
-      @linesCount
 
   methods:
     expandOnClick: ->
       return if @commentRows != 1
-      @rawCommentRows = 10
+      @commentRows = 10
       @isEditingComment = @record.isEditingComment = true
 
     expandOnEnter: ->
       return unless @record.comment
-      @linesCount = @record.comment.split("\n").length
+
+      lineCount = @record.comment.split("\n").length
+      if lineCount > @commentRows
+        @commentRows = lineCount
 
   watch:
     "record.comment": (comment) ->

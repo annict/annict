@@ -40,6 +40,8 @@ en:
       new:
         forgot_your_password: Forgot your password?
     records:
+      deleted: Deleted
+      updated: Updated
       new:
         write_your_comment: Write Your Comment!
       show:
