@@ -1,0 +1,51 @@
+- title = t "head.title.character_images.index", name: @character.decorate.local_name
+- description = meta_description(t("head.meta.description.character_images.index", title: title))
+- keywords = meta_keywords(@character.name)
+- set_meta_tags(title: title, description: description, keywords: keywords, og: { title: title, description: description }, reverse: true, prefix: false)
+- set_page_category "character_images_index"
+
+= render "application/components/navbar"
+
+.container.py-1
+  .row
+    .col-xs-3.pr-0
+      .container
+        = render "characters/sidebar", character: @character
+    .col-xs-9
+      .c-card
+        = render "characters/subnav", character: @character
+        .container.py-1
+          .text-xs-right.mb-1
+            = link_to new_character_image_path(@character), class: "btn btn-primary" do
+              = icon "plus"
+              = t "messages.character_images.new"
+          - if @character.character_images.published.present?
+            - @character.character_images.published.each_slice(3).each do |images|
+              .row
+                - images.each do |image|
+                  .col-xs-4
+                    = image_tag ann_image_url(image, :attachment, size: "280x373"), class: "img-fluid rounded"
+                    .mt-zp25.small.text-muted
+                      span.mr-zp25 = t "messages.character_images.source"
+                      = link_with_domain(image.source_url)
+                    .mt-zp5.text-xs-center
+                      .row
+                        .col-xs-8
+                          c-thumbs-buttons resource-type="#{image.class.name}" :resource-id="#{image.id}" :init-likes-count="#{image.likes_count}" :init-dislikes-count="#{image.dislikes_count}" :init-is-liked="#{current_user.like?(image)}" :init-is-disliked="#{current_user.dislike?(image)}" :signed-in="#{user_signed_in?}" :owned="#{user_signed_in? && image.user == current_user}"
+                        .col-xs-4.text-xs-right
+                          - if user_signed_in?
+                            - if current_user.id == image.user_id
+                              = link_to character_image_path(@character, image), class: "btn btn-danger", data: { method: :delete, confirm: t("messages._common.are_you_sure") } do
+                                = icon "trash", class: "mr-0"
+                            - else
+                              c-report-button inline-template=""
+                                = link_to character_image_reports_path(image), class: "btn btn-warning", title: t("messages.components.report_button.report_this_image"), data: { method: :post, confirm: t("messages._common.are_you_sure"), toggle: "tooltip" } do
+                                  = icon "exclamation-triangle", class: "mr-0"
+                          
+          - else
+            = render "application/components/empty", text: t("messages.character_images.no_images")
+
+= render "application/components/footer"
+
+- content_for :js_templates do
+  = render "application/js_templates/thumbs_buttons"

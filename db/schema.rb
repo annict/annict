@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20161203102005) do
+ActiveRecord::Schema.define(version: 20161225081929) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -90,6 +90,7 @@ ActiveRecord::Schema.define(version: 20161203102005) do
     t.integer  "dislikes_count",          default: 0,           null: false
     t.datetime "created_at",                                    null: false
     t.datetime "updated_at",                                    null: false
+    t.string   "source_url",                                    null: false
     t.index ["aasm_state"], name: "index_character_images_on_aasm_state", using: :btree
     t.index ["character_id"], name: "index_character_images_on_character_id", using: :btree
     t.index ["user_id"], name: "index_character_images_on_user_id", using: :btree
@@ -681,6 +682,19 @@ ActiveRecord::Schema.define(version: 20161203102005) do
     t.index ["user_id"], name: "receptions_user_id_idx", using: :btree
   end
 
+  create_table "reports", force: :cascade do |t|
+    t.integer  "user_id",            null: false
+    t.string   "root_resource_type", null: false
+    t.integer  "root_resource_id",   null: false
+    t.string   "resource_type"
+    t.integer  "resource_id"
+    t.datetime "created_at",         null: false
+    t.datetime "updated_at",         null: false
+    t.index ["resource_id", "resource_type"], name: "index_reports_on_resource_id_and_resource_type", using: :btree
+    t.index ["root_resource_id", "root_resource_type"], name: "index_reports_on_root_resource_id_and_root_resource_type", using: :btree
+    t.index ["user_id"], name: "index_reports_on_user_id", using: :btree
+  end
+
   create_table "seasons", force: :cascade do |t|
     t.string   "name",        limit: 510, null: false
     t.datetime "created_at"
@@ -942,6 +956,7 @@ ActiveRecord::Schema.define(version: 20161203102005) do
   add_foreign_key "providers", "users", name: "providers_user_id_fk", on_delete: :cascade
   add_foreign_key "receptions", "channels", name: "receptions_channel_id_fk", on_delete: :cascade
   add_foreign_key "receptions", "users", name: "receptions_user_id_fk", on_delete: :cascade
+  add_foreign_key "reports", "users"
   add_foreign_key "settings", "users"
   add_foreign_key "staffs", "works"
   add_foreign_key "statuses", "oauth_applications"

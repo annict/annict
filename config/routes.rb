@@ -193,7 +193,13 @@ Rails.application.routes.draw do
     patch "options", to: "options#update"
   end
 
-  resources :characters, only: %i(show)
+  resources :characters, only: %i(show) do
+    resources :images, only: %i(index new create destroy), controller: :character_images
+  end
+
+  resources :character_images, only: [] do
+    resources :reports, only: %i(create), controller: :character_image_reports
+  end
 
   resource :channel, only: [] do
     resources :works, only: [:index], controller: "channel_works"
@@ -247,6 +253,7 @@ Rails.application.routes.draw do
   resources :works, only: [:index, :show] do
     resources :characters, only: %i(index)
     resources :episodes, only: %i(index show)
+    resources :images, controller: :work_images, only: %i(index destroy)
     resources :staffs, only: %i(index)
 
     collection do
@@ -261,8 +268,6 @@ Rails.application.routes.draw do
     resources :statuses, only: [] do
       post :select, on: :collection
     end
-
-    resources :images, controller: :work_images, only: %i(index destroy)
   end
 
   get "about",   to: "pages#about"

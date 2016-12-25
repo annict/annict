@@ -42,6 +42,10 @@ class ApplicationController < ActionController::Base
     @work = Work.published.find(params[:work_id])
   end
 
+  def load_character
+    @character = Character.published.find(params[:character_id])
+  end
+
   def load_episode
     @episode = @work.episodes.published.find(params[:episode_id])
   end

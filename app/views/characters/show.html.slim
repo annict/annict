@@ -1,0 +1,20 @@
+- title = t "head.title.characters.show", title: @character.decorate.name_with_kind
+- description = meta_description(t("head.meta.description.characters.show", title: title))
+- keywords = meta_keywords(@character.name)
+- set_meta_tags(title: title, description: description, keywords: keywords, og: { title: title, description: description }, reverse: true, prefix: false)
+- set_page_category "characters_show"
+
+= render "application/components/navbar"
+
+.container.py-1
+  .row
+    .col-xs-3.pr-0
+      .container
+        = render "sidebar", character: @character
+    .col-xs-9
+      .c-card
+        = render "subnav", character: @character
+        .container.py-1
+          = render "people/grid", root_resource: @character, resource_years: @cast_years, resources_with_year: @casts_with_year
+
+= render "application/components/footer"

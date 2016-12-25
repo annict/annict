@@ -1,0 +1,4 @@
+.c-subnav.c-subnav--bordered
+  ul.list-unstyled
+    li = active_link_to t("words.works"), character_path(character), class_active: "c-subnav__link--active", active: params[:controller] == "characters" && params[:action].in?(%w(show))
+    li = active_link_to t("words.images"), character_images_path(character), class_active: "c-subnav__link--active", active: params[:controller] == "character_images" && params[:action].in?(%w(index new create))

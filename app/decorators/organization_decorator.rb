@@ -8,6 +8,10 @@ class OrganizationDecorator < ApplicationDecorator
     h.link_to name, h.edit_db_organization_path(self), options
   end
 
+  def grid_description(staff)
+    staff.decorate.role_name
+  end
+
   def to_values
     model.class::DIFF_FIELDS.each_with_object({}) do |field, hash|
       hash[field] = case field

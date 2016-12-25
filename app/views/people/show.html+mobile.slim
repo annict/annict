@@ -55,10 +55,10 @@
 
 .container.py-1
   - if @person.voice_actor?
-    = render "grid", resource_years: @cast_years, resources_with_year: @casts_with_year
+    = render "grid", root_resource: @person, resource_years: @cast_years, resources_with_year: @casts_with_year
 
   - if @person.staff?
-    = render "grid", resource_years: @staff_years, resources_with_year: @staffs_with_year
+    = render "grid", root_resource: @person, resource_years: @staff_years, resources_with_year: @staffs_with_year
 
 = render "application/components/footer"
 = render "application/components/tabbar"

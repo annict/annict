@@ -59,8 +59,5 @@ $(document).on "turbolinks:load", ->
 
   new Vue
     el: ".p-vue"
-    events:
-      "flash:show": (message, type = "notice") ->
-        @$broadcast "flash:show", message, type
 
 Turbolinks.start()

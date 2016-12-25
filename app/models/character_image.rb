@@ -15,6 +15,7 @@
 #  dislikes_count          :integer          default(0), not null
 #  created_at              :datetime         not null
 #  updated_at              :datetime         not null
+#  source_url              :string           not null
 #
 # Indexes
 #
@@ -24,11 +25,23 @@
 #
 
 class CharacterImage < ApplicationRecord
+  include AASM
+
   has_attached_file :attachment
+
+  aasm do
+    state :published, initial: true
+    state :hidden
+
+    event :hide do
+      transitions from: :published, to: :hidden
+    end
+  end
 
   validates :attachment,
     attachment_presence: true,
     attachment_content_type: { content_type: /\Aimage/ }
+  validates :source_url, presence: true, url: true
 
   belongs_to :character
   belongs_to :user

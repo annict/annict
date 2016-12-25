@@ -1,0 +1,44 @@
+= image_tag ann_image_url(character.character_image, :attachment, size: "280x373"), class: "img-fluid rounded mb-zp5"
+h1.h2 = character.decorate.local_name
+h2.h4.font-weight-bold.mt-2.mb-1
+  = icon "sticky-note-o", class: "mr-zp25"
+  = t "words.information"
+dl
+  dt.small = t "words.name"
+  dd = character.name
+  - if character.name_kana.present?
+    dt.small = t "words.name_kana"
+    dd = character.name_kana
+  - if character.name_en.present?
+    dt.small = t "words.name_en"
+    dd = character.name_en
+  - if character.nickname.present?
+    dt.small = t "words.nickname"
+    dd = character.nickname
+  - if character.kind.present?
+    dt.small = t "words.kind"
+    dd = character.kind
+  - if character.birthday.present?
+    dt.small = t "words.birthday"
+    dd = character.birthday.strftime("%Y年%m月%d日")
+  - if character.age.present?
+    dt.small = t "words.age"
+    dd = character.age
+  - if character.blood_type.present?
+    dt.small = t "words.blood_type"
+    dd = character.blood_type_text
+  - if character.height.present?
+    dt.small = t "words.height"
+    dd = "#{character.height}cm"
+  - if character.weight.present?
+    dt.small = t "words.weight"
+    dd = "#{character.weight}kg"
+  - if character.nationality.present?
+    dt.small = t "words.nationality"
+    dd = character.nationality
+  - if character.occupation.present?
+    dt.small = t "words.occupation"
+    dd = character.occupation
+  - if character.description.present?
+    dt.small = t "words.description"
+    dd = character.description
