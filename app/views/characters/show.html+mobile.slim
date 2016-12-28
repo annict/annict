@@ -1,0 +1,76 @@
+- title = t "head.title.characters.show", title: @character.decorate.name_with_kind
+- description = meta_description(t("head.meta.description.characters.show", title: title))
+- keywords = meta_keywords(@character.name)
+- set_meta_tags(title: title, description: description, keywords: keywords, og: { title: title, description: description }, reverse: true, prefix: false)
+- set_page_category "characters_show"
+
+= render "characters/header", character: @character
+
+.c-card
+  = render "subnav", character: @character
+  .container.mt-1.py-1
+    h2.h4.text-xs-center.font-weight-bold.mb-1
+      = t "words.information"
+    table.c-center-reflow-table.c-center-reflow-table--no-border.c-center-reflow-table--text-align-center.table.table-reflow.mb-0
+      thead
+        tr
+          th = t "words.name"
+          - if @character.name_kana.present?
+            th = t "words.name_kana"
+          - if @character.name_en.present?
+            th = t "words.name_en"
+          - if @character.nickname.present?
+            th = t "words.nickname"
+          - if @character.kind.present?
+            th = t "words.kind"
+          - if @character.birthday.present?
+            th = t "words.birthday"
+          - if @character.age.present?
+            th = t "words.age"
+          - if @character.blood_type.present?
+            th = t "words.blood_type"
+          - if @character.height.present?
+            th = t "words.height"
+          - if @character.weight.present?
+            th = t "words.weight"
+          - if @character.nationality.present?
+            th = t "words.nationality"
+          - if @character.occupation.present?
+            th = t "words.occupation"
+          - if @character.description.present?
+            th = t "words.description"
+      tbody
+        tr
+          td = @character.name
+          - if @character.name_kana.present?
+            td = @character.name_kana
+          - if @character.name_en.present?
+            td = @character.name_en
+          - if @character.nickname.present?
+            td = @character.nickname
+          - if @character.kind.present?
+            td = @character.kind
+          - if @character.birthday.present?
+            td = @character.birthday.strftime("%Y年%m月%d日")
+          - if @character.age.present?
+            td = @character.age
+          - if @character.blood_type.present?
+            td = @character.blood_type_text
+          - if @character.height.present?
+            td = "#{@character.height}cm"
+          - if @character.weight.present?
+            td = "#{@character.weight}kg"
+          - if @character.nationality.present?
+            td = t "words.nationality"
+          - if @character.occupation.present?
+            td = t "words.occupation"
+          - if @character.description.present?
+            td = t "words.description"
+  hr
+  .container.py-1
+    h2.h4.text-xs-center.font-weight-bold.mb-1
+      = t "words.works"
+    = render "people/grid", root_resource: @character, resource_years: @cast_years, resources_with_year: @casts_with_year
+
+= render "application/components/footer"
+= render "application/components/tabbar"

@@ -13,6 +13,21 @@ class CharacterDecorator < ApplicationDecorator
     name
   end
 
+  def local_kind
+    return kind if I18n.locale == :ja
+    return kind_en if kind_en.present?
+    name
+  end
+
+  def name_with_kind
+    return "#{local_name} (#{local_kind})" if local_kind.present?
+    local_name
+  end
+
+  def grid_description(cast)
+    "CV: #{cast.person.decorate.local_name}"
+  end
+
   def to_values
     model.class::DIFF_FIELDS.each_with_object({}) do |field, hash|
       hash[field] = send(field)

@@ -12,28 +12,36 @@ module.exports = Vue.extend
     resourceId:
       type: Number
       required: true
-    rawLikesCount:
+    initLikesCount:
       type: Number
       required: true
-    rawDislikesCount:
+    initDislikesCount:
       type: Number
       required: true
-    rawIsLiked:
+    initIsLiked:
       type: Boolean
       required: true
-    rawIsDisliked:
+    initIsDisliked:
+      type: Boolean
+      required: true
+    signedIn:
+      type: Boolean
+      required: true
+    owned:
       type: Boolean
       required: true
 
   data: ->
-    likesCount: @rawLikesCount
-    dislikesCount: @rawDislikesCount
-    isLiked: @rawIsLiked
-    isDisliked: @rawIsDisliked
+    likesCount: @initLikesCount
+    dislikesCount: @initDislikesCount
+    isLiked: @initIsLiked
+    isDisliked: @initIsDisliked
     isSaving: false
 
   methods:
     toggleLike: ->
+      return unless @signedIn
+      return if @owned
       return if @isSaving
       @isSaving = true
 
@@ -59,6 +67,8 @@ module.exports = Vue.extend
           @isSaving = false
 
     toggleDislike: ->
+      return unless @signedIn
+      return if @owned
       return if @isSaving
       @isSaving = true
 
@@ -82,6 +92,13 @@ module.exports = Vue.extend
               next()
         ], =>
           @isSaving = false
+
+    tooltipTitle: ->
+      unless @signedIn
+        return gon.I18n["messages.components.thumbs_buttons.require_sign_in"]
+      if @owned
+        return gon.I18n["messages.components.thumbs_buttons.can_not_vote_to_owned_image"]
+      ""
 
     _like: (callback) ->
       $.ajax
@@ -118,3 +135,6 @@ module.exports = Vue.extend
           recipient_id: @resourceId
         url: "/api/internal/dislikes/undislike"
       .done callback
+
+  mounted: ->
+    $('[data-toggle="tooltip"]').tooltip()

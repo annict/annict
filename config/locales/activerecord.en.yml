@@ -31,6 +31,9 @@ en:
         occupation_en: Occupation (en)
         description: Description
         description_en: Description (en)
+      character_image:
+        attachment: Image
+        source_url: Source URL
       episode:
         checkins_count: Records count
         fetch_syobocal: Fetch Syobocal

@@ -27,6 +27,7 @@ $(document).on "turbolinks:load", ->
   recordRating = require "./common/components/recordRating"
   recordTextarea = require "./common/components/recordTextarea"
   recordWordCount = require "./common/components/recordWordCount"
+  reportButton = require "./common/components/reportButton"
   statusSelector = require "./common/components/statusSelector"
   timeAgo = require "./common/components/timeAgo"
   tips = require "./common/components/tips"
@@ -35,7 +36,8 @@ $(document).on "turbolinks:load", ->
   usernamePreview = require "./common/components/usernamePreview"
 
   searchForm = require "./pc/components/searchForm"
-  imageUploadModal = require "./pc/components/imageUploadModal"
+  imageAttachForm = require "./pc/components/imageAttachForm"
+  imageAttachModal = require "./pc/components/imageAttachModal"
 
   resourceSelect = require "./common/directives/resourceSelect"
 
@@ -49,7 +51,8 @@ $(document).on "turbolinks:load", ->
   Vue.component("c-episode-list", episodeList)
   Vue.component("c-flash", flash)
   Vue.component("c-follow-button", followButton)
-  Vue.component("c-image-upload-modal", imageUploadModal)
+  Vue.component("c-image-attach-form", imageAttachForm)
+  Vue.component("c-image-attach-modal", imageAttachModal)
   Vue.component("c-like-button", likeButton)
   Vue.component("c-mute-user-button", muteUserButton)
   Vue.component("c-program-list", programList)
@@ -58,6 +61,7 @@ $(document).on "turbolinks:load", ->
   Vue.component("c-record-rating", recordRating)
   Vue.component("c-record-textarea", recordTextarea)
   Vue.component("c-record-word-count", recordWordCount)
+  Vue.component("c-report-button", reportButton)
   Vue.component("c-search-form", searchForm)
   Vue.component("c-status-selector", statusSelector)
   Vue.component("c-time-ago", timeAgo)

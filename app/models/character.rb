@@ -59,6 +59,7 @@ class Character < ApplicationRecord
   end
 
   belongs_to :character_image
+  has_many :casts, dependent: :destroy
   has_many :character_images, dependent: :destroy
   has_many :db_activities, as: :trackable, dependent: :destroy
   has_many :db_comments, as: :resource, dependent: :destroy

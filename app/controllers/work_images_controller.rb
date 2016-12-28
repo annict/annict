@@ -1,8 +1,6 @@
 # frozen_string_literal: true
 
 class WorkImagesController < ApplicationController
-  include Pundit
-
   before_action :authenticate_user!, only: %i(destroy)
   before_action :load_work, only: %i(index destroy)
 

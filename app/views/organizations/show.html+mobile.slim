@@ -35,7 +35,7 @@
           dd.col-xs-6 = link_with_domain @organization.wikipedia_url
 
 .container.py-1
-  = render "people/grid", resource_years: @staff_years, resources_with_year: @staffs_with_year
+  = render "people/grid", root_resource: @organization, resource_years: @staff_years, resources_with_year: @staffs_with_year
 
 = render "application/components/footer"
 = render "application/components/tabbar"

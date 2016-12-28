@@ -14,4 +14,4 @@
             .text-truncate
               = link_to work.decorate.local_title, work_path(work)
             .text-truncate.small
-              = resources.map { |resource| resource.instance_of?(Cast) ? resource.decorate.part : resource.decorate.role_name }.join(", ")
+              = resources.map { |resource| root_resource.decorate.grid_description(resource) }.join(", ")

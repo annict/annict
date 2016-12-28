@@ -1,0 +1,32 @@
+.c-center-reflow-table {
+  &--no-border {
+    th,
+    td {
+      border: 0 !important;
+    }
+  }
+
+  &--text-align-center {
+    th {
+      text-align: right;
+    }
+
+    td {
+      text-align: left;
+    }
+  }
+
+  thead {
+    width: 50%;
+
+    tr {
+      width: 100%;
+    }
+  }
+
+  tbody {
+    tr {
+      width: 50%;
+    }
+  }
+}
