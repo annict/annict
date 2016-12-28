@@ -26,6 +26,7 @@ $(document).on "turbolinks:load", ->
   statusSelector = require "./common/components/statusSelector"
   timeAgo = require "./common/components/timeAgo"
   tips = require "./common/components/tips"
+  thumbsButtons = require "./common/components/thumbsButtons"
   userHeatmap = require "./common/components/userHeatmap"
   usernamePreview = require "./common/components/usernamePreview"
 
@@ -52,6 +53,7 @@ $(document).on "turbolinks:load", ->
   Vue.component("c-status-selector", statusSelector)
   Vue.component("c-time-ago", timeAgo)
   Vue.component("c-tips", tips)
+  Vue.component("c-thumbs-buttons", thumbsButtons)
   Vue.component("c-user-heatmap", userHeatmap)
   Vue.component("c-username-preview", usernamePreview)
 

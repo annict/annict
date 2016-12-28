@@ -1,0 +1,6 @@
+.c-card.container.py-1.mb-1
+  .row
+    .col-xs-4.pr-0
+      = image_tag ann_image_url(character.character_image, :attachment, size: "280x373"), class: "img-fluid rounded"
+    .col-xs-8
+      h1.h3 = character.decorate.local_name

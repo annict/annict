@@ -2,9 +2,17 @@
   background-color: $ann-color-white;
   height: $ann-navbar-height;
 
+  &--single-line {
+    line-height: $ann-navbar-height;
+  }
+
   &--divided {
     border-top: solid .01rem $hr-border-color;
     box-shadow: 0 2px 2px -2px rgba($ann-color-navy-l2, .30);
+  }
+
+  &--bordered {
+    border-bottom: solid .15rem $hr-border-color;
   }
 
   ul {
