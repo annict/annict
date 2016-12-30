@@ -46,6 +46,8 @@
                           = local_time_ago_in_words(comment.created_at)
                     c-body inline-template=""
                       .c-body__content = comment.body
+                .text-xs-right
+                  c-like-button resource-name="Comment" :raw-resource-id="#{comment.id}" :raw-likes-count="#{comment.likes_count}" :raw-is-liked="#{user_signed_in? && current_user.like?(comment)}"
                 - if policy(comment).update?
                   .small.text-xs-right.mb-zp5
                     = link_to edit_comment_path(@user.username, comment), class: "mr-zp5" do

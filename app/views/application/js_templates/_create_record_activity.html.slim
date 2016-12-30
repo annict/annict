@@ -52,7 +52,7 @@ script#t-create-record-activity type="x-template"
         c-time-ago.text-muted :time="activity.created_at"
       .col-xs
         .actions.text-xs-right
-          c-like-button.u-fake-link.mr-1 resource-name="records" :raw-resource-id="activity.record.id" :raw-likes-count="activity.record.likes_count" :raw-is-liked="activity.meta.liked"
+          c-like-button.u-fake-link.mr-1 resource-name="Record" :raw-resource-id="activity.record.id" :raw-likes-count="activity.record.likes_count" :raw-is-liked="activity.meta.liked"
           a :href='"/@" + activity.user.username + "/records/" + activity.record.id'
             = icon "comment-o", class: "mr-zp25"
             | {{ activity.record.comments_count }}

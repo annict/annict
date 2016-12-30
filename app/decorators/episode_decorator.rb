@@ -1,6 +1,10 @@
 # frozen_string_literal: true
 
 class EpisodeDecorator < ApplicationDecorator
+  def number_link
+    h.link_to local_number, h.work_episode_path(work, self)
+  end
+
   def db_detail_link(options = {})
     name = options.delete(:title).presence || title
     h.link_to name, h.edit_db_episode_path(self), options

@@ -3,6 +3,10 @@
 class WorkDecorator < ApplicationDecorator
   include RootResourceDecoratorCommon
 
+  def title_link
+    h.link_to local_title, h.work_path(self)
+  end
+
   def twitter_username_link
     url = "https://twitter.com/#{twitter_username}"
     h.link_to "@#{twitter_username}", url, target: "_blank"
