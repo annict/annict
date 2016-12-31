@@ -33,7 +33,7 @@
           - cache cast do
             li.list-inline-item
               = "#{cast.part}: "
-              = cast.decorate.name_with_old_link
+              = cast.decorate.local_name_with_old_link
     - if @season_top_work.staffs.present?
       .font-weight-bold = t "words.staff"
       ul.list-inline
@@ -41,7 +41,7 @@
           - cache staff do
             li.list-inline-item
               = "#{staff.decorate.role_name}: "
-              = staff.decorate.name_with_old_link
+              = staff.decorate.local_name_with_old_link
 
   .p-top-other-works.c-card.p-1
     - @season_works.each_slice(2).each do |works|
@@ -64,7 +64,7 @@ hr.my-2
 = render "application/components/footer"
 = render "application/components/tabbar"
 
-= render "application/components/sign_up_modal"
+= render "application/components/sign_up_modal", user: @new_user
 
 - content_for :js_templates
   = render "application/js_templates/status_selector"

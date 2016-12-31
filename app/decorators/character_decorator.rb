@@ -3,6 +3,10 @@
 class CharacterDecorator < ApplicationDecorator
   include RootResourceDecoratorCommon
 
+  def name_link
+    h.link_to local_name, h.character_path(self)
+  end
+
   def db_header_title
     local_name
   end

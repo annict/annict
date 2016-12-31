@@ -1,22 +1,24 @@
-.notification
-  .media
-    = link_to user_path(notification.action_user.username), class: "profile-image pull-left" do
-      = ann_image_tag(notification.action_user.profile, :tombo_avatar, size: "50x50", class: "img-circle")
-    .media-body
-      - if "follows.create" == notification.action
+.u-underline.py-1
+  .row
+    .col-xs.u-flex-grow-0.pr-0
+      = link_to user_path(notification.action_user.username) do
+        = ann_image_tag(notification.action_user.profile, :tombo_avatar, size: "50x50", class: "rounded-circle")
+    .col-xs
+      - if notification.action == "follows.create"
         = render "notifications/follows_create", notification: notification
-
-      - elsif "likes.create" == notification.action
-        - if "Checkin" == notification.trackable.recipient.class.name
-          = render "notifications/likes_create_checkin", notification: notification
-        - elsif "MultipleRecord" == notification.trackable.recipient.class.name
+      - elsif notification.action == "likes.create"
+        - recipient = notification.trackable.recipient
+        - if recipient.class.name == "Checkin"
+          = render "notifications/likes_create_record", notification: notification
+        - elsif recipient.class.name == "MultipleRecord"
           = render "notifications/likes_create_multiple_records", notification: notification
-        - elsif "Comment" == notification.trackable.recipient.class.name
+        - elsif recipient.class.name == "Comment"
           = render "notifications/likes_create_comment", notification: notification
-        - elsif "Status" == notification.trackable.recipient.class.name
+        - elsif recipient.class.name == "Status"
           = render "notifications/likes_create_status", notification: notification
-
-      - elsif "comments.create" == notification.action
-        = render "notifications/comments_create_checkin", notification: notification
-
-hr
+        - elsif recipient.class.name == "WorkImage"
+          = render "notifications/likes_create_work_image", notification: notification
+        - elsif recipient.class.name == "CharacterImage"
+          = render "notifications/likes_create_character_image", notification: notification
+      - elsif notification.action == "comments.create"
+        = render "notifications/comments_create_record", notification: notification

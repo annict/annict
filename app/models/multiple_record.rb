@@ -19,7 +19,7 @@
 class MultipleRecord < ActiveRecord::Base
   belongs_to :user
   belongs_to :work
-  has_many :checkins, dependent: :destroy
+  has_many :records, class_name: "Checkin", dependent: :destroy
 
   validates :user_id, presence: true
 

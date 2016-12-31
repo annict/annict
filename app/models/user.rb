@@ -199,7 +199,7 @@ class User < ActiveRecord::Base
     checkin.user != self &&
     setting.hide_checkin_comment? &&
     works.desiring_to_watch.include?(checkin.episode.work) &&
-    !checkins.pluck(:episode_id).include?(checkin.episode_id)
+    !records.pluck(:episode_id).include?(checkin.episode_id)
   end
 
   def committer?

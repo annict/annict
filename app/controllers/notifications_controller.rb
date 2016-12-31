@@ -29,8 +29,6 @@ class NotificationsController < ApplicationController
       order(created_at: :desc).
       page(page)
 
-    current_user.read_notifications! if 0 < current_user.notifications_count
-
-    render layout: "v1/application"
+    current_user.read_notifications! if current_user.notifications_count.positive?
   end
 end

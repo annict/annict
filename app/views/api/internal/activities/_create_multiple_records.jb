@@ -17,7 +17,7 @@ json = {
   }
 }
 
-records = multiple_record.checkins.joins(:episode).order("episodes.sort_number ASC")
+records = multiple_record.records.joins(:episode).order("episodes.sort_number ASC")
 json[:episodes] = records.map do |record|
   {
     id: record.episode.id,
