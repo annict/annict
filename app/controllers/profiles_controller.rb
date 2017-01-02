@@ -31,15 +31,11 @@ class ProfilesController < ApplicationController
 
   before_action :authenticate_user!
 
-  def show
-    render layout: "v1/application"
-  end
-
   def update(profile)
     if current_user.profile.update_attributes(profile)
       redirect_to profile_path, notice: t("profiles.saved")
     else
-      render :show, layout: "v1/application"
+      render :show
     end
   end
 end
