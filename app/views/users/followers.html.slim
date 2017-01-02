@@ -8,8 +8,9 @@
 = render "application/components/navbar", transparent: true
 = render "users/low_profile_header", user: @user
 = render "users/follow_nav", user: @user
-= render "users/user_list", users: @users
-= render "application/components/footer"
 
-- content_for :js_templates
-  = render "application/js_templates/follow_button"
+.row.my-1
+  .c-card.col-xs-6.offset-xs-3
+    = render "users/user_list", users: @users
+
+= render "application/components/footer"

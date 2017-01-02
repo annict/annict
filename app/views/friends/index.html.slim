@@ -1,30 +1,32 @@
-= render "application/v2/navbar"
+- title = t "head.title.friends.index"
+- description = meta_description(t("head.meta.description.friends.index"))
+- set_meta_tags(title: title, description: description, og: { title: title, description: description }, reverse: true, prefix: false)
+- set_page_category "friends_index"
 
-- if @friends.present?
-  .friends
-    h2 SNSの友達
-    .user-list
-      - @friends.each do |friend|
-        = render 'users/user', user: friend
-- else
-  .friends.none
-    .container
-      .info.well
-        .icon
-          i.fa.fa-info-circle
-        p まだフォローしていないSNSの友達はいませんでした。
+= render "application/components/navbar"
 
-h2.other-users
-  = t('friends.other_users')
+h1.h4.text-xs-center.my-2.font-weight-bold = t "words.sns_friends"
 
-- if @users.present?
-  .user-list
-    - @users.each do |user|
-      = render 'users/user', user: user
-- else
-  .info.well
-    .icon
-      i.fa.fa-info-circle
-    p = t('friends.others_missing')
+.c-card.u-mw-600.mx-auto.px-1
+  - if @friends.present?
+    = render "users/user_list", users: @friends
+  - else
+    .friends.none
+      .container
+        .info.well
+          .icon
+            i.fa.fa-info-circle
+          p まだフォローしていないSNSの友達はいませんでした。
 
-= render "application/v2/components/footer"
+h1.h4.text-xs-center.my-2.font-weight-bold = t "words.other_users"
+
+.c-card.u-mw-600.mx-auto.px-1.mb-2
+  - if @users.present?
+    = render "users/user_list", users: @users
+  - else
+    .info.well
+      .icon
+        i.fa.fa-info-circle
+      p = t('friends.others_missing')
+
+= render "application/components/footer"

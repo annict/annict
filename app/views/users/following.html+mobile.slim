@@ -7,10 +7,9 @@
 
 = render "users/low_profile_header", user: @user
 = render "users/follow_nav", user: @user
-= render "users/user_list", users: @users
+
+.c-card.mt-1
+  = render "users/user_list", users: @users
 
 = render "application/components/footer"
 = render "application/components/tabbar"
-
-- content_for :js_templates
-  = render "application/js_templates/follow_button"
