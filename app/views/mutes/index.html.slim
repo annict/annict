@@ -1,24 +1,11 @@
-- title = t "head.title.profiles.show"
+- title = t "head.title.mutes.index"
 - set_meta_tags(title: title, og: { title: title }, reverse: true, prefix: false)
-- set_page_category "profiles_show"
+- set_page_category "mutes_index"
 
 = render "application/components/navbar"
 = render "settings/subnav"
 
 .c-card.u-mw-600.mx-auto.mt-1.mb-2.p-1
-  h2.h4.text-xs-center.mb-2.font-weight-bold = t "words.users"
-  - if @mute_users.present?
-    - @mute_users.each do |mute_user|
-      .u-underline.py-1
-        .row
-          .col-xs.u-flex-grow-0.pr-0
-            = link_to user_path(mute_user.muted_user.username) do
-              = ann_image_tag(mute_user.muted_user.profile, :tombo_avatar, size: "50x50", class: "rounded-circle")
-          .col-xs
-            = link_to mute_user.muted_user.profile.name, user_path(mute_user.muted_user.username), class: "profile-name"
-          .col-xs.u-flex-grow-0
-            = link_to t("words.unmute"), mute_user_path(mute_user), class: "btn btn-primary btn-sm", data: { method: :delete, confirm: t("messages._common.are_you_sure") }
-  - else
-    = render "application/components/empty", text: t("messages.mutes.no_muted_users_found")
+  = render "mutes/user_list", users: @mute_users
 
 = render "application/components/footer"

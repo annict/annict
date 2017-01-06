@@ -1,42 +1,11 @@
-- title = t "head.title.profiles.show"
+- title = t "head.title.providers.index"
 - set_meta_tags(title: title, og: { title: title }, reverse: true, prefix: false)
-- set_page_category "profiles_show"
+- set_page_category "providers_index"
 
 = render "application/components/navbar"
 = render "settings/subnav"
 
 .c-card.u-mw-600.mx-auto.mt-1.mb-2.py-1
-  .row
-    .col-xs-3
-      .px-1
-        | Twitter
-    .col-xs-9
-      .px-1.text-xs-right
-        - if current_user.shareable_to?(:twitter)
-          - if current_user.shareable_to?(:facebook)
-            = link_to t("words.disconnect"), provider_path(current_user.twitter), class: "btn btn-sm btn-link", data: { method: :delete, confirm: t("messages._common.are_you_sure") }
-          - else
-            span.cancel-disabled
-              = t "messages.providers.you_can_not_disconnect"
-        - else
-          = link_to user_twitter_omniauth_authorize_path(back: providers_path), class: "btn btn-sm u-btn-twitter" do
-            = icon "twitter"
-            = t "words.connect"
-  .row
-    .col-xs-3
-      .px-1
-        | Facebook
-    .col-xs-9
-      .px-1.text-xs-right
-        - if current_user.shareable_to?(:facebook)
-          - if current_user.shareable_to?(:twitter)
-            = link_to t("words.disconnect"), provider_path(current_user.facebook), class: "btn btn-sm btn-link", data: { method: :delete, confirm: t("messages._common.are_you_sure") }
-          - else
-            span.cancel-disabled
-              = t "messages.providers.you_can_not_disconnect"
-        - else
-          = link_to user_facebook_omniauth_authorize_path(back: providers_path), class: "btn btn-sm u-btn-facebook" do
-            = icon("facebook", class: "icon")
-            = t "words.connect"
+  = render "providers/provider_list"
 
 = render "application/components/footer"

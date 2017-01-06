@@ -1,0 +1,11 @@
+= form_for current_user.setting, url: options_path do |f|
+  = render "application/components/error_panel", resource: current_user.setting
+
+  .form-check
+    label.form-check-label
+      = f.check_box :hide_checkin_comment, class: "form-check-input"
+      = t "messages.options.prevent_spoiler_of_episode_you_have_not_watched"
+      .small.text-muted
+        = t "messages.options.prevent_spoiler_of_episode_you_have_not_watched_detail"
+  .text-xs-center
+    = f.submit class: "btn btn-primary"

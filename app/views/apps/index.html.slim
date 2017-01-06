@@ -1,19 +1,11 @@
-- title = t "head.title.profiles.show"
+- title = t "head.title.apps.index"
 - set_meta_tags(title: title, og: { title: title }, reverse: true, prefix: false)
-- set_page_category "profiles_show"
+- set_page_category "apps_index"
 
 = render "application/components/navbar"
 = render "settings/subnav"
 
 .c-card.u-mw-600.mx-auto.mt-1.mb-2.p-1
-  - if @access_tokens.present?
-    - @access_tokens.each do |access_token|
-      .row
-        .col-xs
-          = access_token.application.name
-        .col-xs.text-xs-right
-          = link_to t("words.revoke"), app_revoke_path(access_token.application), class: "btn btn-sm btn-link", data: { method: :patch, confirm: t("messages._common.are_you_sure") }
-  - else
-    = render "application/components/empty", text: t("messages.apps.no_applications")
+  = render "apps/app_list", access_tokens: @access_tokens
 
 = render "application/components/footer"
