@@ -168,6 +168,7 @@ en:
     annict_api: Annict API
     annict_db: Annict DB
     category: Category
+    channel: Channel
     delete: Delete
     detail: Detail
     edit: Edit
