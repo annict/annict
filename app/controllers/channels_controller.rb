@@ -22,7 +22,5 @@ class ChannelsController < ApplicationController
 
   def index
     @channel_groups = ChannelGroup.published.order(:sort_number)
-
-    render layout: "v1/application"
   end
 end

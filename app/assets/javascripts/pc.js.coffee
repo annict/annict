@@ -15,6 +15,7 @@ MugenScroll = require "vue-mugen-scroll"
 $(document).on "turbolinks:load", ->
   activities = require "./common/components/activities"
   body = require "./common/components/body"
+  channelReceiveButton = require "./common/components/channelReceiveButton"
   commentGuard = require "./common/components/commentGuard"
   episodeList = require "./common/components/episodeList"
   flash = require "./common/components/flash"
@@ -47,6 +48,7 @@ $(document).on "turbolinks:load", ->
 
   Vue.component("c-activities", activities)
   Vue.component("c-body", body)
+  Vue.component("c-channel-receive-button", channelReceiveButton)
   Vue.component("c-comment-guard", commentGuard)
   Vue.component("c-episode-list", episodeList)
   Vue.component("c-flash", flash)
