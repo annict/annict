@@ -146,6 +146,7 @@ Rails.application.routes.draw do
       resources :programs, only: %i(edit update destroy) do
         member do
           get :activities
+          patch :hide
         end
       end
 

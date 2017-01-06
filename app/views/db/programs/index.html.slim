@@ -26,6 +26,8 @@
             th = t "words.activity"
             - if policy(@programs).edit?
               th = t "words.edit"
+            - if policy(@programs).hide?
+              th = t "words.state_change"
             - if policy(@programs).destroy?
               th = t "words.delete"
         tbody
@@ -40,8 +42,12 @@
               - if policy(program).edit?
                 td
                   = link_to t("words.edit"), edit_db_program_path(program), class: "btn btn-primary btn-sm"
+              - if policy(program).hide?
+                td
+                  - if program.published?
+                    = link_to t("words.hide"), hide_db_program_path(program), class: "btn btn-warning btn-sm", data: { method: "patch", confirm: t("messages._common.are_you_sure") }
               - if policy(program).destroy?
-                td = link_to t("words.delete"), db_program_path(program), class: "btn btn-danger btn-sm", data: { method: :delete, confirm: t("messages.are_you_sure") }
+                td = link_to t("words.delete"), db_program_path(program), class: "btn btn-danger btn-sm", data: { method: :delete, confirm: t("messages._common.are_you_sure") }
 
   - else
     = render "application/components/empty", text: t("resources.program.there_are_no_programs")
