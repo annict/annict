@@ -7,6 +7,9 @@ en:
       see_more: See More
       welcome_back: Welcome back!
       welcome_to_annict: Welcome to Annict!
+    accounts:
+      email_sent_for_confirmation: An email has been sent to confirm your email address.
+      saved: Saved.
     comments:
       comment_form_placeholder: Click here to add a new comment
       deleted: Deleted
@@ -53,6 +56,8 @@ en:
     passwords:
       new:
         forgot_your_password: Forgot your password?
+    providers:
+      removed: Removed.
     records:
       deleted: Deleted
       updated: Updated

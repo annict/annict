@@ -7,7 +7,6 @@ class AccountsController < ApplicationController
 
   def show
     @user = current_user
-    render layout: "v1/application"
   end
 
   def update(user)
@@ -21,15 +20,15 @@ class AccountsController < ApplicationController
         if @user.email_changed?
           @user.update_column(:unconfirmed_email, user[:email])
           @user.resend_confirmation_instructions
-          message = "確認メールを送信しました"
+          message = t "messages.accounts.email_sent_for_confirmation"
         end
 
         @user.save(validate: false)
       end
 
-      redirect_to account_path, notice: (message.presence || "保存しました")
+      redirect_to account_path, notice: (message.presence || t("messages.accounts.saved"))
     else
-      render "/accounts/show", layout: "v1/application"
+      render "/accounts/show"
     end
   end
 end

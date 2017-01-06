@@ -1,34 +1,42 @@
-= render "application/v2/navbar"
-= render "application/v1/settings_tabs"
+- title = t "head.title.profiles.show"
+- set_meta_tags(title: title, og: { title: title }, reverse: true, prefix: false)
+- set_page_category "profiles_show"
 
-.content
-  .container
-    .wrapper
-      .twitter
-        .head
-          | Twitter
-        .body
-          - if current_user.shareable_to?(:twitter)
-            - if current_user.shareable_to?(:facebook)
-              = link_to "解除する", provider_path(current_user.twitter), class: "btn btn-sm btn-link", data: { method: :delete, confirm: "解除しますか？" }
-            - else
-              span.cancel-disabled 解除できません
-          - else
-            = link_to user_twitter_omniauth_authorize_path(back: providers_path), class: "btn btn-sm u-btn-twitter" do
-              = icon("twitter", class: "icon")
-              | 連携する
-      .facebook
-        .head
-          | Facebook
-        .body
+= render "application/components/navbar"
+= render "settings/subnav"
+
+.c-card.u-mw-600.mx-auto.mt-1.mb-2.py-1
+  .row
+    .col-xs-3
+      .px-1
+        | Twitter
+    .col-xs-9
+      .px-1.text-xs-right
+        - if current_user.shareable_to?(:twitter)
           - if current_user.shareable_to?(:facebook)
-            - if current_user.shareable_to?(:twitter)
-              = link_to "解除する", provider_path(current_user.facebook), class: "btn btn-sm btn-link", data: { method: :delete, confirm: "解除しますか？" }
-            - else
-              span.cancel-disabled 解除できません
+            = link_to t("words.disconnect"), provider_path(current_user.twitter), class: "btn btn-sm btn-link", data: { method: :delete, confirm: t("messages._common.are_you_sure") }
           - else
-            = link_to user_facebook_omniauth_authorize_path(back: providers_path), class: "btn btn-sm u-btn-facebook" do
-              = icon("facebook", class: "icon")
-              | 連携する
+            span.cancel-disabled
+              = t "messages.providers.you_can_not_disconnect"
+        - else
+          = link_to user_twitter_omniauth_authorize_path(back: providers_path), class: "btn btn-sm u-btn-twitter" do
+            = icon "twitter"
+            = t "words.connect"
+  .row
+    .col-xs-3
+      .px-1
+        | Facebook
+    .col-xs-9
+      .px-1.text-xs-right
+        - if current_user.shareable_to?(:facebook)
+          - if current_user.shareable_to?(:twitter)
+            = link_to t("words.disconnect"), provider_path(current_user.facebook), class: "btn btn-sm btn-link", data: { method: :delete, confirm: t("messages._common.are_you_sure") }
+          - else
+            span.cancel-disabled
+              = t "messages.providers.you_can_not_disconnect"
+        - else
+          = link_to user_facebook_omniauth_authorize_path(back: providers_path), class: "btn btn-sm u-btn-facebook" do
+            = icon("facebook", class: "icon")
+            = t "words.connect"
 
-= render "application/v2/components/footer"
+= render "application/components/footer"

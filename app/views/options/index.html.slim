@@ -1,18 +1,21 @@
-= render "application/v2/navbar"
-= render "application/v1/settings_tabs"
+- title = t "head.title.profiles.show"
+- set_meta_tags(title: title, og: { title: title }, reverse: true, prefix: false)
+- set_page_category "profiles_show"
 
-.content
-  .container
-    .wrapper
-      = form_for current_user.setting, url: options_path do |f|
-        = render "application/v1/error_panel", resource: current_user.setting
+= render "application/components/navbar"
+= render "settings/subnav"
 
-        .checkbox
-          label
-            = f.check_box :hide_checkin_comment
-            | 未記録エピソードのネタバレを防ぐ
-            .detail 見てる、見たい、または中断したアニメの中で、記録していないエピソードに投稿された他の利用者からの感想を表示しないようにします。
-        .form-submit
-          = f.submit class: "btn btn-primary"
+.c-card.u-mw-600.mx-auto.mt-1.mb-2.p-1
+  = form_for current_user.setting, url: options_path do |f|
+    = render "application/components/error_panel", resource: current_user.setting
 
-= render "application/v2/components/footer"
+    .form-check
+      label.form-check-label
+        = f.check_box :hide_checkin_comment, class: "form-check-input"
+        = t "messages.options.prevent_spoiler_of_episode_you_have_not_watched"
+        .small.text-muted
+          = t "messages.options.prevent_spoiler_of_episode_you_have_not_watched_detail"
+    .text-xs-center
+      = f.submit class: "btn btn-primary"
+
+= render "application/components/footer"

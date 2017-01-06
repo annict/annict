@@ -5,12 +5,11 @@ class AppsController < ApplicationController
 
   def index
     @access_tokens = current_user.oauth_access_tokens.where(revoked_at: nil)
-    render layout: "v1/application"
   end
 
   def revoke(app_id)
     access_tokens = current_user.oauth_access_tokens.where(application_id: app_id)
     access_tokens.each(&:revoke)
-    redirect_to :back, notice: "連携を解除しました"
+    redirect_to :back, notice: t("messages.apps.disconnected")
   end
 end
