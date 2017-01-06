@@ -1,14 +1,16 @@
-= render "application/v1/navbar"
+- title = t "head.title.accounts.show"
+- set_meta_tags(title: title, og: { title: title }, reverse: true, prefix: false)
+- set_page_category "accounts_show"
 
-.content
-  .container
-    = form_for current_user, url: account_path, method: :patch do |f|
-      = render "application/v1/error_panel", resource: current_user
+.c-card.container.py-1.mb-2
+  = form_for current_user, url: account_path, method: :patch do |f|
+    = render "application/components/error_panel", resource: current_user
 
-      .form-group
-        = f.label :email
-        = f.text_field :email, class: "form-control"
-      .form-submit
-        = f.submit class: "btn btn-primary"
+    .form-group
+      = f.label :email
+      = f.text_field :email, class: "form-control"
+    .form-submit.text-xs-center
+      = f.submit class: "btn btn-primary"
 
-= render "application/v2/components/footer"
+= render "application/components/footer"
+= render "application/components/tabbar"

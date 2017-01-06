@@ -1,0 +1,9 @@
+.c-subnav.c-subnav--single-line
+  ul.list-unstyled
+    li = active_link_to t("words.profile"), profile_path, class_active: "c-subnav__link--active", active: params[:controller] == "profiles"
+    li = active_link_to t("words.account"), account_path, class_active: "c-subnav__link--active", active: params[:controller] == "accounts"
+    li = active_link_to t("words.apps"), apps_path, class_active: "c-subnav__link--active", active: params[:controller] == "apps"
+    li = active_link_to t("words.connections"), providers_path, class_active: "c-subnav__link--active", active: "tab #{params[:controller] == 'providers' ? 'tab--active' : ''}"
+    li = active_link_to t("words.mute_filters"), mutes_path, class_active: "c-subnav__link--active", active: params[:controller] == "mutes"
+    li = active_link_to t("words.options"), options_path, class_active: "c-subnav__link--active", active: params[:controller] == "options"
+    li = active_link_to t("words.delete_account"), sayonara_path, class_active: "c-subnav__link--active", active: params[:controller] == "sayonara"
