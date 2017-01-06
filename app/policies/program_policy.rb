@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class ProgramPolicy < ApplicationPolicy
   def create?
     user.committer?
@@ -5,6 +7,10 @@ class ProgramPolicy < ApplicationPolicy
 
   def update?
     user.committer?
+  end
+
+  def hide?
+    user.role.admin?
   end
 
   def destroy?

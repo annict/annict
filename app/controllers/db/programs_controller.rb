@@ -6,7 +6,7 @@ module Db
 
     before_action :authenticate_user!
     before_action :load_work, only: %i(index new create)
-    before_action :load_program, only: %i(edit update destroy activities)
+    before_action :load_program, only: %i(edit update hide destroy activities)
 
     def index
       @programs = @work.programs.order(started_at: :desc).order(:channel_id)
@@ -45,6 +45,15 @@ module Db
       @program.save_and_create_activity!
 
       redirect_to db_work_programs_path(@work), notice: t("resources.program.updated")
+    end
+
+    def hide
+      authorize @program, :hide?
+
+      @program.hide!
+
+      flash[:notice] = t("resources.program.unpublished")
+      redirect_back fallback_location: db_works_path
     end
 
     def destroy

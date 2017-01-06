@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20161225081929) do
+ActiveRecord::Schema.define(version: 20170106055713) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -644,15 +644,17 @@ ActiveRecord::Schema.define(version: 20161225081929) do
   end
 
   create_table "programs", force: :cascade do |t|
-    t.integer  "channel_id",                     null: false
-    t.integer  "episode_id",                     null: false
-    t.integer  "work_id",                        null: false
-    t.datetime "started_at",                     null: false
+    t.integer  "channel_id",                           null: false
+    t.integer  "episode_id",                           null: false
+    t.integer  "work_id",                              null: false
+    t.datetime "started_at",                           null: false
     t.datetime "sc_last_update"
     t.datetime "created_at"
     t.datetime "updated_at"
     t.integer  "sc_pid"
-    t.boolean  "rebroadcast",    default: false, null: false
+    t.boolean  "rebroadcast",    default: false,       null: false
+    t.string   "aasm_state",     default: "published", null: false
+    t.index ["aasm_state"], name: "index_programs_on_aasm_state", using: :btree
     t.index ["channel_id"], name: "programs_channel_id_idx", using: :btree
     t.index ["episode_id"], name: "programs_episode_id_idx", using: :btree
     t.index ["sc_pid"], name: "index_programs_on_sc_pid", unique: true, using: :btree

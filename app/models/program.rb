@@ -13,19 +13,31 @@
 #  updated_at     :datetime
 #  sc_pid         :integer
 #  rebroadcast    :boolean          default(FALSE), not null
+#  aasm_state     :string           default("published"), not null
 #
 # Indexes
 #
-#  index_programs_on_sc_pid  (sc_pid) UNIQUE
-#  programs_channel_id_idx   (channel_id)
-#  programs_episode_id_idx   (episode_id)
-#  programs_work_id_idx      (work_id)
+#  index_programs_on_aasm_state  (aasm_state)
+#  index_programs_on_sc_pid      (sc_pid) UNIQUE
+#  programs_channel_id_idx       (channel_id)
+#  programs_episode_id_idx       (episode_id)
+#  programs_work_id_idx          (work_id)
 #
 
 class Program < ActiveRecord::Base
+  include AASM
   include DbActivityMethods
 
   DIFF_FIELDS = %i(channel_id episode_id started_at rebroadcast).freeze
+
+  aasm do
+    state :published, initial: true
+    state :hidden
+
+    event :hide do
+      transitions from: :published, to: :hidden
+    end
+  end
 
   attr_accessor :time_zone
 
@@ -49,6 +61,7 @@ class Program < ActiveRecord::Base
   end
 
   def calc_for_timezone
+    return if time_zone.blank?
     started_at = ActiveSupport::TimeZone.new(time_zone).local_to_utc(self.started_at)
     self.started_at = started_at
     self.sc_last_update = Time.zone.now
