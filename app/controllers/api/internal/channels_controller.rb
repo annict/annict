@@ -4,7 +4,7 @@ module Api
   module Internal
     class ChannelsController < Api::Internal::ApplicationController
       before_action :authenticate_user!
-      before_action :set_work
+      before_action :load_work
 
       def select(channel_id)
         channel_work = current_user.channel_works.where(work: @work).first_or_initialize
@@ -14,7 +14,7 @@ module Api
           return head(200)
         end
 
-        channel = Channel.find(channel_id)
+        channel = Channel.published.find(channel_id)
         channel_work.channel = channel
 
         head(200) if channel_work.save
