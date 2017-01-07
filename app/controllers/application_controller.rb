@@ -4,6 +4,8 @@ class ApplicationController < ActionController::Base
   include Pundit
 
   include ControllerCommon
+  include Analyzable
+  include Gonable
   include PageCategoryHelper
   include ViewSelector
   include FlashMessage
@@ -14,7 +16,6 @@ class ApplicationController < ActionController::Base
 
   helper_method :client_uuid, :gon
 
-  before_action :load_data_into_gon
   before_action :set_search_params
   before_action :load_new_user
 
