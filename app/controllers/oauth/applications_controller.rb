@@ -1,13 +1,8 @@
 # frozen_string_literal: true
 
 module Oauth
-  class ApplicationsController < Doorkeeper::ApplicationsController
-    include AnalyticsFilter
-    include ViewSelector
-
-    layout "v3/application"
-
-    before_action :set_search_params
+  class ApplicationsController < Oauth::ApplicationController
+    before_action :authenticate_admin!
 
     def index
       @applications = current_user.oauth_applications.available
@@ -35,10 +30,6 @@ module Oauth
 
     def set_application
       @application = current_user.oauth_applications.available.find(params[:id])
-    end
-
-    def set_search_params
-      @search = SearchService.new(params[:q])
     end
   end
 end

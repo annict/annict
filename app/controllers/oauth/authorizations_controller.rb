@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 
-class Oauth::AuthorizationsController < Doorkeeper::AuthorizationsController
-  include ViewSelector
-
-  layout "v3/application"
+module Oauth
+  class AuthorizationsController < Oauth::ApplicationController
+  end
 end
