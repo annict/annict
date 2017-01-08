@@ -34,7 +34,7 @@ $ann-color-black-l4: #ebebeb;
 $ann-color-black-l5: #f5f5f5;
 
 $ann-color-white: #fff;
-$ann-color-white-d1: #f9f9fb;
+$ann-color-white-d1: #fafafa;
 
 $ann-color-yellow: #ffb400;
 
@@ -54,12 +54,15 @@ $ann-color-shirobako: (
 $ann-color-facebook: #2e6499;
 $ann-color-twitter: #24b1ec;
 
+$ann-border-color: rgba(0, 0, 0, .08);
+
 
 // Typography
 
 $ann-line-height-base: 1.5;
 $ann-line-height-sizes: (
   0: 0,
+  1: 1,
   xs: $ann-line-height-base / 1.2,
   sm: $ann-line-height-base / 1.1,
 );

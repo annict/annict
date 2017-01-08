@@ -1,45 +1,45 @@
 script#t-create-multiple-records-activity type="x-template"
-  .c-create-multiple-records-activity.c-activity.py-1
-    .c-activity__header.mb-zp5
-      a.c-activity__avatar.mr-zp25 :href='"/@" + activity.user.username'
-        img.rounded-circle :src="activity.profile.avatar_url" width="25" height="25"
-      span v-if='locale === "en"'
-        a.c-activity__name.mr-zp25 :href='"/@" + activity.user.username'
-          | {{ activity.profile.name }}
-        span.c-activity__action.mr-zp25
-          | watched
-        a.c-activity__work-title.mr-zp25 :href='"/works/" + activity.work.id'
-          | {{ activity.work.title }}
-        template v-if=="activity.episodes.length > 1"
-          a.mr-zp25 :href='"/works/" + activity.work.id + "/episodes/" + activity.episodes[0].id'
-            | {{ activity.episodes[0].number }}
-          span.mr-zp25 ~
-          a.mr-zp25 :href='"/works/" + activity.work.id + "/episodes/" + activity.episodes.slice(-1)[0].id'
-            | {{ activity.episodes.slice(-1)[0].number }}
-        template v-else=""
-          a href='"/works/" + activity.work.id + "/episodes/" + activity.episodes[0].id'
-            | {{ activity.episodes[0].number }}
-      span v-else=""
-        a.name :href='"/@" + activity.user.username'
-          | {{ activity.profile.name }}
-        | が
-        a.work-title :href='"/works/" + activity.work.id'
-          | {{ activity.work.title }}
-        span.episodes
-          template v-if=="activity.episodes.length > 1"
-            a :href='"/works/" + activity.work.id + "/episodes/" + activity.episodes[0].id'
-              | {{ activity.episodes[0].number }}
-            | から
-            a :href='"/works/" + activity.work.id + "/episodes/" + activity.episodes.slice(-1)[0].id'
-              | {{ activity.episodes.slice(-1)[0].number }}
-          template v-else=""
-            a :href='"/works/" + activity.work.id + "/episodes/" + activity.episodes[0].id'
-              | {{ activity.episodes[0].number }}
-        | を見ました
-    
-    .c-activity__footer.row
-      .col-xs
-        c-time-ago.text-muted :time="activity.created_at"
-      .col-xs
-        .actions.text-xs-right
-          c-like-button.u-fake-link resource-name="MultipleRecord" :raw-resource-id="activity.multiple_record.id" :raw-likes-count="activity.multiple_record.likes_count" :raw-is-liked="activity.meta.liked"
+  .c-create-multiple-records-activity.c-card.p-1.mb-1
+    .mb-zp5
+      .row
+        .col.col-auto.pr-0
+          a :href='"/@" + activity.user.username'
+            img.rounded-circle :src="activity.profile.avatar_url" width="35" height="35"
+        .col.pl-zp5.u-lh-1
+          .mb-zp5 v-if='locale === "en"'
+            a.mr-zp25 :href='"/@" + activity.user.username'
+              | {{ activity.profile.name }}
+            span.mr-zp25
+              | watched
+            a.mr-zp25 :href='"/works/" + activity.work.id'
+              | {{ activity.work.title }}
+            template v-if=="activity.episodes.length > 1"
+              a.mr-zp25 :href='"/works/" + activity.work.id + "/episodes/" + activity.episodes[0].id'
+                | {{ activity.episodes[0].number }}
+              span.mr-zp25 ~
+              a.mr-zp25 :href='"/works/" + activity.work.id + "/episodes/" + activity.episodes.slice(-1)[0].id'
+                | {{ activity.episodes.slice(-1)[0].number }}
+            template v-else=""
+              a href='"/works/" + activity.work.id + "/episodes/" + activity.episodes[0].id'
+                | {{ activity.episodes[0].number }}
+          .mb-zp5 v-else=""
+            a.name :href='"/@" + activity.user.username'
+              | {{ activity.profile.name }}
+            | が
+            a :href='"/works/" + activity.work.id'
+              | {{ activity.work.title }}
+            template v-if=="activity.episodes.length > 1"
+              a :href='"/works/" + activity.work.id + "/episodes/" + activity.episodes[0].id'
+                | {{ activity.episodes[0].number }}
+              | から
+              a :href='"/works/" + activity.work.id + "/episodes/" + activity.episodes.slice(-1)[0].id'
+                | {{ activity.episodes.slice(-1)[0].number }}
+            template v-else=""
+              a :href='"/works/" + activity.work.id + "/episodes/" + activity.episodes[0].id'
+                | {{ activity.episodes[0].number }}
+            | を見ました
+          .small.text-muted
+            c-time-ago :time="activity.created_at"
+
+    .mt-zp5
+      c-like-button.u-fake-link resource-name="MultipleRecord" :raw-resource-id="activity.multiple_record.id" :raw-likes-count="activity.multiple_record.likes_count" :raw-is-liked="activity.meta.liked"

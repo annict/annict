@@ -1,11 +1,11 @@
-.u-tag-voice-actor {
-  @include tag-variant($ann-color-zuka);
+.u-badge-voice-actor {
+  @include badge-variant($ann-color-zuka);
 }
 
-.u-tag-staff {
-  @include tag-variant($ann-color-miyamori);
+.u-badge-staff {
+  @include badge-variant($ann-color-miyamori);
 }
 
-.u-tag-organization {
-  @include tag-variant($ann-color-musani);
+.u-badge-organization {
+  @include badge-variant($ann-color-musani);
 }

@@ -1,22 +1,14 @@
 - title = t "head.title.home.index"
-- description = meta_description
-- keywords = meta_keywords
-- set_meta_tags(title: title, description: description, keywords: keywords, site: false)
-- set_page_category "top"
+- set_meta_tags(title: title, site: false)
+- set_page_category "home_index"
 
-.l-content
-  - if current_user.tips.unfinished.present?
-    = render "tips"
+- if current_user.tips.unfinished.present?
+  = render "tips"
 
-  c-activities
+c-activities
 
 = render "application/components/tabbar"
 
 - content_for :js_templates
   = render "application/js_templates/activities"
-  = render "application/js_templates/body"
-  = render "application/js_templates/create_multiple_records_activity"
-  = render "application/js_templates/create_record_activity"
-  = render "application/js_templates/create_status_activity"
-  = render "application/js_templates/like_button"
   = render "application/js_templates/tips"

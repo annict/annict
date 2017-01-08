@@ -9,10 +9,10 @@
     .text-xs-center
       h1.h2 = @person.decorate.local_name
       - if @person.voice_actor?
-        span.tag.u-tag-voice-actor
+        span.tag.u-badge-voice-actor
           = t "words.voice_actor"
       - if @person.staff?
-        span.tag.u-tag-staff
+        span.tag.u-badge-staff
           = t "words.staff"
 
     .mt-2

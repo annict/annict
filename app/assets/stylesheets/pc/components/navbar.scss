@@ -1,67 +1,40 @@
 .c-navbar {
   height: $ann-navbar-height;
-  line-height: $ann-navbar-height;
-  padding: 0 1rem;
-  position: relative;
   z-index: 1;
 
   .navbar-nav {
-    &.float-xs-right {
+    &--left {
+      .nav-item {
+        padding: 10px 0;
+      }
+
+      .dropdown-menu {
+        left: -18px;
+      }
+    }
+
+    &--right {
+      .nav-item {
+        padding: 15px 0;
+      }
+
       .dropdown-menu {
         left: auto;
         right: -16px;
       }
     }
-  }
 
-  .navbar-brand,
-  .nav-link {
-    padding: 0;
-  }
-
-  .navbar-brand {
-    margin-top: -3px;
-  }
-
-  .nav-item {
-    height: $ann-navbar-height;
-
-    .c-navbar__avatar {
-      border: 1px solid $ann-color-white;
-    }
-  }
-
-  .c-search-form {
-    line-height: 55px;
-    padding: 0;
-  }
-
-  .dropdown {
-    &:hover {
-      .dropdown-menu {
-        display: block;
-      }
-    }
-
-    .dropdown-menu {
-      border: 0;
-      box-shadow: 0 0 1px rgba($ann-color-navy-l2, .30);
-      left: -15px;
-      margin: 0;
-
-      .dropdown-item {
-        color: $navbar-light-color;
-        padding: 3px 1rem;
-
-        @include hover-focus {
-          color: $navbar-light-hover-color;
-          text-decoration: none;
+    .dropdown {
+      &:hover {
+        .dropdown-menu {
+          display: block;
         }
       }
-    }
 
-    .dropdown-item {
-      line-height: $line-height-base;
+      .dropdown-menu {
+        border: 1px solid $ann-border-color;
+        margin: 0;
+      }
     }
   }
 
@@ -77,6 +50,6 @@
 
   &:not(.is-transparent) {
     background-color: $ann-color-white;
-    box-shadow: 0 2px 2px -2px rgba($ann-color-navy-l2, .30);
+    border-bottom: 1px solid $ann-border-color;
   }
 }
