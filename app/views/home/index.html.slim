@@ -1,21 +1,18 @@
 - title = t "head.title.home.index"
-- description = meta_description
-- keywords = meta_keywords
-- set_meta_tags(title: title, description: description, keywords: keywords, site: false)
-- set_page_category "top"
+- set_meta_tags(title: title, site: false)
+- set_page_category "home_index"
 
-= render "application/components/navbar", transparent: false
+= render "application/components/navbar"
 
-.u-mw-600.mx-auto.py-1
-  - if current_user.tips.unfinished.present?
-    = render "tips"
-
-  c-activities
+.container.mt-1
+  .row
+    .col-7
+      c-activities
+    .col-5
+      - if current_user.tips.unfinished.present?
+        = render "tips"
+      | TODO: Notification
 
 - content_for :js_templates
   = render "application/js_templates/activities"
-  = render "application/js_templates/create_multiple_records_activity"
-  = render "application/js_templates/create_record_activity"
-  = render "application/js_templates/create_status_activity"
-  = render "application/js_templates/like_button"
   = render "application/js_templates/tips"
