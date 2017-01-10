@@ -33,7 +33,7 @@ en:
       status_selector:
         select_status: Select Status
       thumbs_buttons:
-        can_not_vote_to_owned_image: "Can't vote on own image."
+        can_not_vote_to_owned_image: "Can't vote on your own image."
         require_sign_in: Sign in is required.
       welcome:
         description: Annict is the platform for Anime Addicts. You can explore the anime database, track anime you are watching and see what friends are watching.
