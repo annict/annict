@@ -1,0 +1,15 @@
+- title = t "head.title.forum.posts.show"
+- set_meta_tags(title: title, og: { title: title }, reverse: true, prefix: false)
+- set_page_category "forum_posts_show"
+
+= render "application/components/navbar"
+
+.container.mt-1.mb-2
+  .text-right.mb-1
+    = link_to edit_forum_post_path, class: "btn btn-primary" do
+      = icon "pencil"
+      = t "words.edit"
+  .c-card
+    = @post.title
+
+= render "application/components/footer"

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170106055713) do
+ActiveRecord::Schema.define(version: 20170108160231) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -448,6 +448,40 @@ ActiveRecord::Schema.define(version: 20170106055713) do
     t.index ["following_id"], name: "follows_following_id_idx", using: :btree
     t.index ["user_id", "following_id"], name: "follows_user_id_following_id_key", unique: true, using: :btree
     t.index ["user_id"], name: "follows_user_id_idx", using: :btree
+  end
+
+  create_table "forum_categories", force: :cascade do |t|
+    t.string   "slug",                          null: false
+    t.string   "name",                          null: false
+    t.integer  "forum_posts_count", default: 0, null: false
+    t.datetime "created_at",                    null: false
+    t.datetime "updated_at",                    null: false
+    t.string   "name_en",                       null: false
+    t.index ["slug"], name: "index_forum_categories_on_slug", unique: true, using: :btree
+  end
+
+  create_table "forum_comments", force: :cascade do |t|
+    t.integer  "user_id",       null: false
+    t.integer  "forum_post_id", null: false
+    t.text     "body",          null: false
+    t.datetime "edited_at",                  comment: "The datetime which user has changed body."
+    t.datetime "created_at",    null: false
+    t.datetime "updated_at",    null: false
+    t.index ["forum_post_id"], name: "index_forum_comments_on_forum_post_id", using: :btree
+    t.index ["user_id"], name: "index_forum_comments_on_user_id", using: :btree
+  end
+
+  create_table "forum_posts", force: :cascade do |t|
+    t.integer  "user_id",                           null: false
+    t.integer  "forum_category_id",                 null: false
+    t.string   "title",                             null: false
+    t.text     "body",                 default: "", null: false
+    t.integer  "forum_comments_count", default: 0,  null: false
+    t.datetime "edited_at",                                      comment: "The datetime which user has changed title, body and so on."
+    t.datetime "created_at",                        null: false
+    t.datetime "updated_at",                        null: false
+    t.index ["forum_category_id"], name: "index_forum_posts_on_forum_category_id", using: :btree
+    t.index ["user_id"], name: "index_forum_posts_on_user_id", using: :btree
   end
 
   create_table "items", force: :cascade do |t|
@@ -935,6 +969,10 @@ ActiveRecord::Schema.define(version: 20170106055713) do
   add_foreign_key "finished_tips", "users", name: "finished_tips_user_id_fk", on_delete: :cascade
   add_foreign_key "follows", "users", column: "following_id", name: "follows_following_id_fk", on_delete: :cascade
   add_foreign_key "follows", "users", name: "follows_user_id_fk", on_delete: :cascade
+  add_foreign_key "forum_comments", "forum_posts"
+  add_foreign_key "forum_comments", "users"
+  add_foreign_key "forum_posts", "forum_categories"
+  add_foreign_key "forum_posts", "users"
   add_foreign_key "items", "works", name: "items_work_id_fk", on_delete: :cascade
   add_foreign_key "latest_statuses", "episodes", column: "next_episode_id"
   add_foreign_key "latest_statuses", "users"

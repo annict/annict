@@ -20,7 +20,7 @@ module Db
     end
 
     def user_not_authorized
-      flash[:alert] = "アクセスが許可されていません"
+      flash[:alert] = t "messages._common.you_can_not_access_there"
       redirect_to(request.referrer || db_root_path)
     end
   end

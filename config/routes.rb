@@ -179,6 +179,18 @@ Rails.application.routes.draw do
     end
   end
 
+  scope module: :forum, as: :forum do
+    constraints(subdomain: "forum") do
+      resources :categories, only: %i(show)
+
+      resources :posts, except: %i(index) do
+        resources :comments, except: %i(index show)
+      end
+
+      root "home#index"
+    end
+  end
+
   resources :settings, only: [:index]
   scope :settings do
     resource :account, only: [:show, :update]
