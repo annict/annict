@@ -13,7 +13,7 @@ en:
     comments:
       comment_form_placeholder: Click here to add a new comment
       deleted: Deleted
-      saved: Comment have been saved.
+      saved: Comment has been saved.
       updated: Updated
     home:
       index:
@@ -33,13 +33,13 @@ en:
       status_selector:
         select_status: Select Status
       thumbs_buttons:
-        can_not_vote_to_owned_image: "Can't vote to own image."
-        require_sign_in: Require to sign in.
+        can_not_vote_to_owned_image: "Can't vote on own image."
+        require_sign_in: Sign in is required.
       welcome:
         description: Annict is the platform for Anime Addicts. You can explore the anime database, track anime you are watching and see what friends are watching.
         title: Welcome to Annict!
     character_images:
-      can_not_delete: This Image can't delete because has been used as main visual.
+      can_not_delete: This image can't be deleted as it's the main visual.
       deleted: Image has been deleted.
       source: "Source:"
       uploaded: Image has been uploaded.
@@ -145,7 +145,7 @@ en:
       deleted: Staff deleted
       new_casts: New staffs
       cast_list: Staff list
-      there_are_no_staffs: There are no staffs
+      there_are_no_staffs: There are no staff
       unpublished: Staff unpublished
       updated: Staff updated
     work:
