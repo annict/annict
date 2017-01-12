@@ -43,12 +43,10 @@ class Checkin < ActiveRecord::Base
   has_many :comments, dependent: :destroy
   has_many :activities,
     dependent: :destroy,
-    foreign_key: :trackable_id,
-    foreign_type: :trackable
+    as: :trackable
   has_many :likes,
     dependent: :destroy,
-    foreign_key: :recipient_id,
-    foreign_type: :recipient
+    as: :recipient
 
   validates :comment, length: { maximum: 500 }
   validates :rating,
