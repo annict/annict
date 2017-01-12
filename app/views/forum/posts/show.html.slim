@@ -5,11 +5,25 @@
 = render "application/components/navbar"
 
 .container.mt-1.mb-2
-  .text-right.mb-1
-    = link_to edit_forum_post_path, class: "btn btn-primary" do
-      = icon "pencil"
-      = t "words.edit"
-  .c-card
-    = @post.title
+  .row.align-items-center.mb-1
+    .col-8
+      h1.h2 = @post.title
+    .col-4.text-right
+      = link_to edit_forum_post_path, class: "btn btn-primary" do
+        = icon "pencil"
+        = t "words.edit"
+  .c-card.p-1
+    .row.mb-1
+      .col.col-auto.pr-0
+        = link_to user_path(@post.user.username) do
+          = ann_image_tag @post.user.profile, :tombo_avatar, size: "45x45", class: "rounded-circle"
+      .col.pl-zp5.u-lh-1
+        = link_to @post.user.profile.name, user_path(@post.user.username)
+        .mt-zp5
+          = link_to forum_post_path(@post), class: "small text-muted", title: local_datetime(@post.created_at) do
+            = local_time_ago_in_words(@post.created_at)
+
+    c-body inline-template=""
+      .c-body__content = @post.body
 
 = render "application/components/footer"
