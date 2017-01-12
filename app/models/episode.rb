@@ -48,7 +48,7 @@ class Episode < ActiveRecord::Base
 
   belongs_to :prev_episode, class_name: "Episode", foreign_key: :prev_episode_id
   belongs_to :work, counter_cache: true
-  has_many :activities, dependent: :destroy, foreign_key: :recipient_id, foreign_type: :recipient
+  has_many :activities, dependent: :destroy, as: :recipient
   has_many :checkins,   dependent: :destroy
   has_many :db_activities, as: :trackable, dependent: :destroy
   has_many :db_comments, as: :resource, dependent: :destroy
