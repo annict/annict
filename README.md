@@ -8,19 +8,19 @@
 [![Slack](https://slack.annict.com/badge.svg)](https://slack.annict.com)
 
 
-**This branch is still under development for next version (V2).**
+**This branch is still in development for the next version (V2).**
 
 ### Contributing
 
 #### Requirements
 
-To run Annict on local machine, you need to install some software below:
+To run Annict on a local machine, you need to have the following dependencies installed:
 
 * Ruby 2.3
 * PostgreSQL 9.5
 * ImageMagick
 * PhantomJS
-  * For test
+  * For tests
 
 #### Running the app
 
@@ -34,9 +34,9 @@ $ npm install
 $ rails s -b 0.0.0.0
 ```
 
-And you can access [http://localhost:3000](http://localhost:3000).
+You should then be able to open [http://localhost:3000](http://localhost:3000) in your browser.
 
-#### Running the test
+#### Running the tests
 
 ```
 $ rspec
