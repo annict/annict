@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170108160231) do
+ActiveRecord::Schema.define(version: 20170113204733) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -457,6 +457,10 @@ ActiveRecord::Schema.define(version: 20170108160231) do
     t.datetime "created_at",                    null: false
     t.datetime "updated_at",                    null: false
     t.string   "name_en",                       null: false
+    t.string   "description",                   null: false
+    t.string   "description_en",                null: false
+    t.string   "postable_role",                 null: false
+    t.integer  "sort_number",                   null: false
     t.index ["slug"], name: "index_forum_categories_on_slug", unique: true, using: :btree
   end
 
@@ -471,6 +475,16 @@ ActiveRecord::Schema.define(version: 20170108160231) do
     t.index ["user_id"], name: "index_forum_comments_on_user_id", using: :btree
   end
 
+  create_table "forum_post_participants", force: :cascade do |t|
+    t.integer  "forum_post_id", null: false
+    t.integer  "user_id",       null: false
+    t.datetime "created_at",    null: false
+    t.datetime "updated_at",    null: false
+    t.index ["forum_post_id", "user_id"], name: "index_forum_post_participants_on_forum_post_id_and_user_id", unique: true, using: :btree
+    t.index ["forum_post_id"], name: "index_forum_post_participants_on_forum_post_id", using: :btree
+    t.index ["user_id"], name: "index_forum_post_participants_on_user_id", using: :btree
+  end
+
   create_table "forum_posts", force: :cascade do |t|
     t.integer  "user_id",                           null: false
     t.integer  "forum_category_id",                 null: false
@@ -480,6 +494,7 @@ ActiveRecord::Schema.define(version: 20170108160231) do
     t.datetime "edited_at",                                      comment: "The datetime which user has changed title, body and so on."
     t.datetime "created_at",                        null: false
     t.datetime "updated_at",                        null: false
+    t.datetime "last_commented_at",                 null: false
     t.index ["forum_category_id"], name: "index_forum_posts_on_forum_category_id", using: :btree
     t.index ["user_id"], name: "index_forum_posts_on_user_id", using: :btree
   end
@@ -971,6 +986,8 @@ ActiveRecord::Schema.define(version: 20170108160231) do
   add_foreign_key "follows", "users", name: "follows_user_id_fk", on_delete: :cascade
   add_foreign_key "forum_comments", "forum_posts"
   add_foreign_key "forum_comments", "users"
+  add_foreign_key "forum_post_participants", "forum_posts"
+  add_foreign_key "forum_post_participants", "users"
   add_foreign_key "forum_posts", "forum_categories"
   add_foreign_key "forum_posts", "users"
   add_foreign_key "items", "works", name: "items_work_id_fk", on_delete: :cascade

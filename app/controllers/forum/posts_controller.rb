@@ -17,7 +17,11 @@ module Forum
       @post.last_commented_at = Time.now
 
       return render(:new) unless @post.valid?
-      @post.save!(validate: false)
+
+      ActiveRecord::Base.transaction do
+        @post.save!(validate: false)
+        @post.forum_post_participants.create!(user: current_user)
+      end
 
       redirect_to forum_post_path(@post), notice: t("resources.forum_post.created")
     end

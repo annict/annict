@@ -10,6 +10,10 @@
 #  created_at        :datetime         not null
 #  updated_at        :datetime         not null
 #  name_en           :string           not null
+#  description       :string           not null
+#  description_en    :string           not null
+#  postable_role     :string           not null
+#  sort_number       :integer          not null
 #
 # Indexes
 #

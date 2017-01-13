@@ -12,6 +12,7 @@
 #  edited_at            :datetime
 #  created_at           :datetime         not null
 #  updated_at           :datetime         not null
+#  last_commented_at    :datetime         not null
 #
 # Indexes
 #
@@ -23,6 +24,7 @@ class ForumPost < ApplicationRecord
   belongs_to :user
   belongs_to :forum_category
   has_many :forum_comments, dependent: :destroy
+  has_many :forum_post_participants, dependent: :destroy
 
   validates :body, presence: true, length: { maximum: 5000 }
   validates :forum_category, presence: true

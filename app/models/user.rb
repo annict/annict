@@ -65,6 +65,7 @@ class User < ActiveRecord::Base
   has_many :finished_tips, dependent: :destroy
   has_many :follows,       dependent: :destroy
   has_many :followings,    through:   :follows
+  has_many :forum_post_participants, dependent: :destroy
   has_many :latest_statuses, dependent: :destroy
   has_many :likes, dependent: :destroy
   has_many :notifications, dependent: :destroy

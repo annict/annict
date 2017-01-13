@@ -13,3 +13,5 @@
       = render "forum/posts/post_list", posts: @category.forum_posts
     - else
       = render "application/components/empty", text: t("messages.forum.posts.no_posts")
+
+= render "application/components/footer"
