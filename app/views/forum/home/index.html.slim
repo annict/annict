@@ -11,21 +11,6 @@
       = icon "plus"
       = t "words.new"
   .c-card
-    table.table
-      thead
-        tr
-          th = t "activerecord.attributes.forum_post.id"
-          th = t "activerecord.attributes.forum_post.title"
-          th = t "activerecord.attributes.forum_post.forum_category"
-          th = t "activerecord.attributes.forum_post.forum_comments_count"
-          th = t "activerecord.attributes.forum_post.last_commented_at"
-      tbody
-        - @posts.each do |post|
-          tr
-            td = post.id
-            td = link_to post.title, forum_post_path(post)
-            td = post.forum_category.decorate.local_name
-            td = post.forum_comments_count
-            td = display_time(post.last_commented_at)
+    = render "forum/posts/post_list", posts: @posts
 
 = render "application/components/footer"

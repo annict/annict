@@ -12,12 +12,17 @@ module Forum
       @comment = @post.forum_comments.new(forum_comment)
       @comment.user = current_user
 
-      if @comment.save
-        redirect_to forum_post_path(@post), notice: t("messages.forum.comments.created")
-      else
+      unless @comment.valid?
         @comments = @post.forum_comments.order(:created_at)
-        render "forum/posts/show"
+        return render "forum/posts/show"
       end
+
+      ActiveRecord::Base.transaction do
+        @comment.save!(validate: false)
+        @post.update_column(:last_commented_at, Time.now)
+      end
+
+      redirect_to forum_post_path(@post), notice: t("messages.forum.comments.created")
     end
 
     def edit

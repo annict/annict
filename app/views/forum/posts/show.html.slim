@@ -3,13 +3,14 @@
 - set_page_category "forum_posts_show"
 
 = render "application/components/navbar"
+= render "forum/application/subnav"
 
 .container.mt-1.mb-2
   .row.align-items-center.mb-1
     .col-8
       .row.align-items-center
         .col.col-auto.pr-0
-          = link_to @post.forum_category.decorate.local_name,  forum_category_path(@post.forum_category), class: "badge badge-default"
+          = link_to @post.forum_category.decorate.local_name,  forum_category_path(@post.forum_category.slug), class: "badge badge-default"
         .col
           h1.h2.mb-0 = @post.title
 
