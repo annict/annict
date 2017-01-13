@@ -1,0 +1,86 @@
+en:
+  messages:
+    _common:
+      are_you_sure: Are you sure?
+      join_annict: Join Annict
+      search_with_keywords: Search...
+      see_more: See More
+      welcome_back: Welcome back!
+      welcome_to_annict: Welcome to Annict!
+    accounts:
+      email_sent_for_confirmation: An email has been sent to confirm your email address.
+      saved: Saved.
+    comments:
+      comment_form_placeholder: Click here to add a new comment
+      deleted: Deleted
+      saved: Comment has been saved.
+      updated: Updated
+    forum:
+      comments:
+        leave_a_comment: Leave a comment
+    home:
+      index:
+        there_are_no_activities: There are no activities
+      index_guest:
+        hero_description_html: Explore the anime database, track anime you are watching<br>and see what friends are watching.
+        hero_description_mobile_html: Track anime you are watching<br>and see what friends are watching.
+        hero_title: The platform for Anime Addicts.
+        sign_up: Start tracking
+    components:
+      mute_user_button:
+        the_user_has_been_muted: The user has been muted.
+      program_list:
+        tracked: Tracked.
+      report_button:
+        report_this_image: Report this image as inappropriate
+      status_selector:
+        select_status: Select Status
+      thumbs_buttons:
+        can_not_vote_to_owned_image: "Can't vote on your own image."
+        require_sign_in: Sign in is required.
+      welcome:
+        description: Annict is the platform for Anime Addicts. You can explore the anime database, track anime you are watching and see what friends are watching.
+        title: Welcome to Annict!
+    character_images:
+      can_not_delete: This image can't be deleted as it's the main visual.
+      deleted: Image has been deleted.
+      source: "Source:"
+      uploaded: Image has been uploaded.
+    character_image_reports:
+      reported: Image reported as inappropriate.
+    episodes:
+      watched_x_times: Watched %{records_count} times
+    multiple_records:
+      create:
+        saved: Records have been saved.
+    oauth_users:
+      new:
+        sign_up_with_oauth: Sign Up with %{provider_name}
+    passwords:
+      new:
+        forgot_your_password: Forgot your password?
+    providers:
+      removed: Removed.
+    records:
+      deleted: Deleted
+      updated: Updated
+      new:
+        write_your_comment: Write Your Comment!
+      show:
+        record_by_name: "%{name}'s Record"
+    registrations:
+      new:
+        sign_in_link_html: Already have an account? %{link}
+        start_with_facebook: Start with Facebook
+        start_with_twitter: Start with Twitter
+        username_preview: "Your profile will be:"
+        username_preview_mobile: "Your profile:"
+    sessions:
+      new:
+        forgot_password: Forgot password?
+        sign_in_with_facebook: Sign in with Facebook
+        sign_in_with_twitter: Sign in with Twitter
+        sign_up_link_html: Don't have an account? %{link}
+    work_images:
+      index:
+        dropzone-empty: Drop your image here or click to upload.

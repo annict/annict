@@ -5,10 +5,10 @@ class UserDecorator < ApplicationDecorator
     h.link_to(profile.name, h.user_path(username), options)
   end
 
-  def role_label
+  def role_badge
     return "" unless committer?
 
-    h.content_tag(:span, class: "label label-default c-label--transparent") do
+    h.content_tag(:span, class: "u-badge-outline u-badge-outline-default") do
       role_text
     end
   end

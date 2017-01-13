@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 # == Schema Information
 #
 # Table name: forum_comments
@@ -17,4 +18,10 @@
 #
 
 class ForumComment < ApplicationRecord
+  belongs_to :forum_post, counter_cache: true
+  belongs_to :user
+
+  validates :body, presence: true, length: { maximum: 5000 }
+  validates :forum_post, presence: true
+  validates :user, presence: true
 end

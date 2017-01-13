@@ -4,7 +4,7 @@
   .form-group.row
     = f.label :forum_category_id, class: "col-2 col-form-label"
     .col-4
-      = f.select :forum_category_id, options_from_collection_for_select(ForumCategory.decorate, :id, :local_name), { include_blank: true }, class: "form-control"
+      = f.select :forum_category_id, options_from_collection_for_select(ForumCategory.decorate, :id, :local_name, post.forum_category_id), { include_blank: true }, class: "form-control"
 
   .form-group.row
     = f.label :title, class: "col-2 col-form-label"

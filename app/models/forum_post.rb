@@ -22,6 +22,7 @@
 class ForumPost < ApplicationRecord
   belongs_to :user
   belongs_to :forum_category
+  has_many :forum_comments, dependent: :destroy
 
   validates :body, presence: true, length: { maximum: 5000 }
   validates :forum_category, presence: true
