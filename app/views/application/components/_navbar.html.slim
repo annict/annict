@@ -42,6 +42,7 @@ nav.c-navbar.navbar.navbar-toggleable-md class="#{transparent ? 'navbar-dark is-
               - if current_user.notifications_count > 0
                 span.c-navbar__notifications-count--in-dropdown
                   = current_user.notifications_count
+            = link_to t("words.forum"), ENV.fetch("ANNICT_FORUM_URL"), class: "dropdown-item"
             = link_to t("head.title.friends.index"), friends_path, class: "dropdown-item"
             = link_to t("head.title.channels.index"), channels_path, class: "dropdown-item"
             = link_to t("words.settings"), profile_path, class: "dropdown-item"

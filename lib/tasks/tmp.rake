@@ -50,4 +50,47 @@ namespace :tmp do
       puts "Item #{i.id} converted to Work Image #{work_image.id}"
     end
   end
+
+  task set_forum_categories: :environment do
+    data = [
+      {
+        slug: "site_news",
+        name: "お知らせ",
+        name_en: "Site News",
+        description: "サイトに関するお知らせ。",
+        description_en: "Announcements about Annict.",
+        postable_role: "admin",
+        sort_number: 0
+      },
+      {
+        slug: "general",
+        name: "一般",
+        name_en: "General",
+        description: "カテゴリ分けできない一般的な話題。",
+        description_en: "General discussions which can't be categorize.",
+        postable_role: "user",
+        sort_number: 10
+      },
+      {
+        slug: "feedback",
+        name: "フィードバック",
+        name_en: "Feedback",
+        description: "Annictに改善要望等のフィードバックがありましたらこちらへどうぞ。",
+        description_en: "Have an idea or suggestion for the site? Share it here.",
+        postable_role: "user",
+        sort_number: 20
+      },
+      {
+        slug: "db_request",
+        name: "データ編集リクエスト",
+        name_en: "DB Modification Requests",
+        description: "Annictに登録されているデータに不備等がありましたら、こちらにお願いします。",
+        description_en: "Have a request for anime data? Share it here.",
+        postable_role: "user",
+        sort_number: 30
+      }
+    ]
+
+    data.each { |d| ForumCategory.create!(d) }
+  end
 end

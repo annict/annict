@@ -1,0 +1,16 @@
+.c-v-subnav {
+  $root: &;
+
+  &__item {
+    @include align-items(center);
+    @include display(flex);
+    height: 50px;
+    padding-left: 1rem;
+  }
+
+  &__link--active {
+    #{$root}__item {
+      border-left: solid .15rem $ann-color-mizuho;
+    }
+  }
+}
