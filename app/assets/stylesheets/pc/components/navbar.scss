@@ -41,6 +41,10 @@
       .nav-link {
         color: $ann-color-white;
       }
+
+      .c-track-button {
+        @include button-outline-variant($ann-color-white, $ann-color-mizuho);
+      }
     }
   }
 

@@ -26,13 +26,13 @@ nav.c-navbar.navbar.navbar-toggleable-md class="#{transparent ? 'navbar-dark is-
       - else
         li.nav-item
           = link_to t("words.airing_anime"), season_works_path(slug: ENV.fetch("ANNICT_CURRENT_SEASON")), class: "nav-link"
-      li.nav-item
+      li.nav-item.ml-1
         c-search-form q="#{@search.q}" :is-transparent="#{transparent}"
     ul.navbar-nav.navbar-nav--right.align-items-center
       - if user_signed_in?
         li.nav-item.mr-1
-          = link_to track_path, class: "btn btn-outline-primary" do
-            = icon "pencil-square-o"
+          = link_to track_path, class: "c-track-button btn btn-outline-primary btn-sm" do
+            = icon "pencil-square-o", class: "mr-zp25"
             = t "head.title.tracks.show"
         li.nav-item.dropdown
           = link_to user_path(current_user.username), class: "nav-link p-0" do

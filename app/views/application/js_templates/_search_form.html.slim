@@ -1,19 +1,20 @@
 script#t-search-form type="x-template"
-  form.c-search-form.form-inline action="/search" accept-charset="UTF-8" method="get" :class='{ "is-transparent": isTransparent }'
-    input.form-control type="text" name="q" placeholder="#{t('messages._common.search_with_keywords')}" autocomplete="off"
-    / input.form-control type="text" name="q" placeholder="#{t('search_with_keyword')}" v-model="q" @keyup="onKeyup | debounce 300" @keydown.down="next" @keydown.up="prev" @keydown.enter="select" @blur="hideResults" @keydown.esc="hideResults"
-    / .results v-if="results.length"
-    /   ul
-    /     li v-for="(i, result) in results" :class="{ active: i === index }" @mouseover="onMouseover(i)" @mousedown="select"
-    /       template v-if="result.resourceType === 'work'"
-    /         span.label.work 作品
-    /         span.name
-    /           | {{ result.title }}
-    /       template v-if="result.resourceType === 'person'"
-    /         span.label.person 人物
-    /         span.name
-    /           | {{ result.name }}
-    /       template v-if="result.resourceType === 'organization'"
-    /         span.label.organization 団体
-    /         span.name
-    /           | {{ result.name }}
+  .c-search-form :class='{ "is-transparent": isTransparent }'
+    form.form-inline action="/search" accept-charset="UTF-8" method="get"
+      input.form-control type="text" name="q" placeholder="#{t('messages._common.search_with_keywords')}" autocomplete="off"
+      / input.form-control type="text" name="q" placeholder="#{t('search_with_keyword')}" v-model="q" @keyup="onKeyup | debounce 300" @keydown.down="next" @keydown.up="prev" @keydown.enter="select" @blur="hideResults" @keydown.esc="hideResults"
+      / .results v-if="results.length"
+      /   ul
+      /     li v-for="(i, result) in results" :class="{ active: i === index }" @mouseover="onMouseover(i)" @mousedown="select"
+      /       template v-if="result.resourceType === 'work'"
+      /         span.label.work 作品
+      /         span.name
+      /           | {{ result.title }}
+      /       template v-if="result.resourceType === 'person'"
+      /         span.label.person 人物
+      /         span.name
+      /           | {{ result.name }}
+      /       template v-if="result.resourceType === 'organization'"
+      /         span.label.organization 団体
+      /         span.name
+      /           | {{ result.name }}

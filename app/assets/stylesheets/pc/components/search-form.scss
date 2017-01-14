@@ -1,24 +1,23 @@
 .c-search-form {
-  padding: .08rem 0;
-
   .form-control {
     background-color: rgba($ann-color-white, .1);
     border: 1px solid rgba($ann-color-black, .15);
     border-color: rgba($ann-color-black, .15);
-    color: $ann-color-white;
     width: 280px;
 
     &:focus {
-      background-color: rgba($ann-color-white, .1);
-      border-color: rgba($ann-color-black, .15);
-      color: $ann-color-white;
+      border: 1px solid rgba($ann-color-black, .25);
     }
   }
 
   &.is-transparent {
     .form-control {
-      border: 1px solid rgba($ann-color-white, .5);
-      border-color: rgba($ann-color-white, .5);
+      border-color: rgba($ann-color-black, .15);
+      color: $ann-color-white;
+
+      &:focus {
+        border: 1px solid rgba($ann-color-white, .5);
+      }
 
       @include placeholder {
         color: rgba($ann-color-white, .5);
