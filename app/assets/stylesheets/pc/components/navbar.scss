@@ -1,6 +1,6 @@
 .c-navbar {
   height: $ann-navbar-height;
-  z-index: 1;
+  z-index: 3;
 
   .navbar-nav {
     &--left {
@@ -40,6 +40,10 @@
     .navbar-nav {
       .nav-link {
         color: $ann-color-white;
+      }
+
+      .c-track-button {
+        @include button-outline-variant($ann-color-white, $ann-color-mizuho);
       }
     }
   }
