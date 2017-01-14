@@ -1,5 +1,4 @@
 _ = require "lodash"
-Vue = require "vue/dist/vue"
 
 eventHub = require "../../common/eventHub"
 
