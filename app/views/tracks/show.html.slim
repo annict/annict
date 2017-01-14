@@ -1,0 +1,10 @@
+- title = t "head.title.tracks.show"
+- set_meta_tags(title: title, og: { title: title }, reverse: true, prefix: false)
+- set_page_category "tracks_show"
+
+= render "application/components/navbar"
+
+c-untracked-episode-list
+
+- content_for :js_templates do
+  = render "application/js_templates/untracked_episode_list"

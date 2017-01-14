@@ -25,5 +25,7 @@ en:
         new: Sign Up
       sessions:
         new: Sign In
+      tracks:
+        show: Track
       works:
         show: Anime "%{title}"

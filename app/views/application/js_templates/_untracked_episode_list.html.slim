@@ -1,0 +1,55 @@
+script#t-untracked-episode-list type="x-template"
+  .c-untracked-episode-list
+    .c-card.container.mt-1.u-mw-600
+      template v-if="latestStatuses.length > 0"
+        template v-for="status in filterNoNextEpisode(latestStatuses)"
+          .pt-1
+            .row.align-items-center
+              .col
+                .row.mb-zp5
+                  .col.col-auto.pr-0
+                    a :href='"/works/" + status.work.id'
+                      img.rounded :src="status.work.image_url" width="48" height="48" :alt="status.work.title"
+                  .col
+                    a.d-block :href='"/works/" + status.work.id'
+                      | {{ status.work.title }}
+                    a.d-block :href='"/works/" + status.work.id + "/episodes/" + status.next_episode.id'
+                      | {{ status.next_episode.number }}
+                      span.ml-zp5 v-if="status.next_episode.title" {{ status.next_episode.title }}
+              .col.col-auto.text-right
+                .small.u-fake-link @click="skipEpisode(status)"
+                  = icon "forward", class: "mr-zp25"
+                  = t "words.skip"
+            form.row
+              .col
+                c-record-rating.mb-zp5 :init-record="status.record" v-if="status.record.isEditingComment"
+                .mb-zp5
+                  c-record-textarea :init-record="status.record"
+                .row
+                  .col
+                    .a-share-buttons v-if="status.record.isEditingComment"
+                      span v-if="user.authorized_to_twitter"
+                        label
+                          input type="checkbox" v-model="user.share_record_to_twitter"
+                          = icon "twitter", class: "u-text-twitter ml-zp25"
+                      span.ml-zp5 v-if="user.authorized_to_facebook"
+                        label
+                          input type="checkbox" v-model="user.share_record_to_facebook"
+                          = icon "facebook", class: "u-text-facebook ml-zp25"
+                  .col
+                    .text-right
+                      .small.text-mute
+                        c-record-word-count :init-record="status.record" v-if="status.record.isEditingComment"
+              .col.col-auto.pl-0
+                button.btn.btn-primary type="button" @click.stop="postRecord(status)" :class='{ "c-spinner": status.record.isSaving }'
+                  = icon "pencil-square-o", class: "mr-0"
+      template v-else=""
+        template v-if="!isLoading"
+          = render "application/components/empty", text: t("messages.tracks.no_trackable_episodes")
+      .c-loading v-show="isLoading"
+        .c-loading__core Loading...
+
+- content_for :js_templates do
+  = render "application/js_templates/record_rating"
+  = render "application/js_templates/record_textarea"
+  = render "application/js_templates/record_word_count"

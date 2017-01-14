@@ -22,6 +22,7 @@ module Api
       def skip_episode(latest_status_id)
         @latest_status = LatestStatus.find(latest_status_id)
         @latest_status.append_episode(@latest_status.next_episode)
+        render :show
       end
     end
   end

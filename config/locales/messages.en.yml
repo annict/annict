@@ -82,6 +82,10 @@ en:
         sign_in_with_facebook: Sign in with Facebook
         sign_in_with_twitter: Sign in with Twitter
         sign_up_link_html: Don't have an account? %{link}
+    tracks:
+      skip_episode_confirmation: Are you sure to skip this episode and show next episode?
+      see_records: See records
+      tracked: Your record has been tracked.
     work_images:
       index:
         dropzone-empty: Drop your image here or click to upload.

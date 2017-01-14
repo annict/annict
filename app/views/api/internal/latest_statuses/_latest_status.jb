@@ -1,0 +1,20 @@
+# frozen_string_literal: true
+
+json = {
+  id: latest_status.id,
+  work: {
+    id: latest_status.work.id,
+    title: latest_status.work.title,
+    image_url: ann_image_url(latest_status.work.work_image, :attachment, size: "125x125")
+  }
+}
+
+return json if latest_status.next_episode.blank?
+
+json[:next_episode] = {
+  id: latest_status.next_episode.id,
+  number: latest_status.next_episode.number,
+  title: latest_status.next_episode.title
+}
+
+json
