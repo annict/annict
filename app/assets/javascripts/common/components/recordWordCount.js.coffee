@@ -15,3 +15,7 @@ module.exports = Vue.extend
   created: ->
     eventHub.$on "wordCount:update", (record, count) =>
       @record.wordCount = count if @record.uid == record.uid
+
+  watch:
+    initRecord: (val) ->
+      @record = val

@@ -32,6 +32,7 @@ module.exports = Vue.extend
           isSaving: false
           rating: 0
           wordCount: 0
+          commentRows: 1
 
     loadMore: ->
       return if @isLoading

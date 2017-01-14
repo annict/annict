@@ -7,31 +7,30 @@ module.exports = Vue.extend
 
   data: ->
     record: @initRecord
-    commentRows: @initCommentRows
     isEditingComment: false
 
   props:
     initRecord:
       type: Object
-    initCommentRows:
-      type: Number
-      default: 1
     placeholder:
       type: String
 
   methods:
     expandOnClick: ->
-      return if @commentRows != 1
-      @commentRows = 10
+      return if @record.commentRows != 1
+      @record.commentRows = 10
       @isEditingComment = @record.isEditingComment = true
 
     expandOnEnter: ->
       return unless @record.comment
 
       lineCount = @record.comment.split("\n").length
-      if lineCount > @commentRows
-        @commentRows = lineCount
+      if lineCount > @record.commentRows
+        @record.commentRows = lineCount
 
   watch:
     "record.comment": (comment) ->
       eventHub.$emit "wordCount:update", @record, (comment.length || 0)
+
+    initRecord: (val) ->
+      @record = val

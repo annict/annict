@@ -18,3 +18,6 @@ module.exports = Vue.extend
   watch:
     "record.rating": (val) ->
       @record.rating = 1 if 0 < val && val < 1
+
+    initRecord: (val) ->
+      @record = val

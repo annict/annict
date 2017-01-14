@@ -41,7 +41,7 @@ class NewRecordService
   end
 
   def finish_tips
-    UserTipsService.new(@user).delay.finish!(:checkin) if @user.checkins.initial?(@record)
+    UserTipsService.new(@user).delay.finish!(:checkin) if @user.records.initial?(@record)
   end
 
   def update_latest_status

@@ -231,6 +231,7 @@ Rails.application.routes.draw do
 
   resource :confirmation, only: [:show]
   resource :search, only: [:show]
+  resource :track, only: %i(show)
   resources :friends, only: [:index]
   resources :mute_users, only: [:destroy]
   resources :notifications, only: [:index]
