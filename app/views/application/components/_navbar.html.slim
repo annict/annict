@@ -27,7 +27,7 @@ nav.c-navbar.navbar.navbar-toggleable-md class="#{transparent ? 'navbar-dark is-
         li.nav-item
           = link_to t("words.airing_anime"), season_works_path(slug: ENV.fetch("ANNICT_CURRENT_SEASON")), class: "nav-link"
       li.nav-item.ml-1
-        c-search-form q="#{@search.q}" :is-transparent="#{transparent}"
+        c-search-form :init-q='"#{@search.q}"' :is-transparent="#{transparent}"
     ul.navbar-nav.navbar-nav--right.align-items-center
       - if user_signed_in?
         li.nav-item.mr-1

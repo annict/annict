@@ -24,4 +24,20 @@
       }
     }
   }
+
+  .dropdown-menu {
+    left: 0 !important;
+    width: 400px;
+    z-index: 2;
+
+    .dropdown-item {
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+
+      &.active {
+        background-color: $dropdown-link-hover-bg;
+      }
+    }
+  }
 }

@@ -1,7 +1,6 @@
-Vue = require "vue/dist/vue"
 _ = require "lodash"
 
-module.exports = Vue.extend
+module.exports =
   template: "#t-search-form"
 
   data: ->
@@ -9,9 +8,10 @@ module.exports = Vue.extend
     people: []
     organizations: []
     index: -1
+    q: @initQ
 
   props:
-    q: String
+    initQ: String
     isTransparent: Boolean
 
   computed:
@@ -19,10 +19,12 @@ module.exports = Vue.extend
       _.each @works, (work) -> work.resourceType = "work"
       _.each @people, (person) -> person.resourceType = "person"
       _.each @organizations, (org) -> org.resourceType = "organization"
+      _.each @characters, (char) -> char.resourceType = "character"
       results = []
       results.push.apply(results, @works)
       results.push.apply(results, @people)
       results.push.apply(results, @organizations)
+      results.push.apply(results, @characters)
       results
 
   methods:
@@ -31,9 +33,10 @@ module.exports = Vue.extend
         when "work" then "works"
         when "person" then "people"
         when "organization" then "organizations"
+        when "character" then "characters"
       "/#{resourceName}/#{result.id}"
 
-    onKeyup: ->
+    onKeyup: _.debounce ->
       $.ajax
         method: "GET"
         url: "/api/internal/search"
@@ -43,6 +46,8 @@ module.exports = Vue.extend
         @works = data.works
         @people = data.people
         @organizations = data.organizations
+        @characters = data.characters
+    , 300
 
     next: ->
       if @results.length
@@ -68,5 +73,5 @@ module.exports = Vue.extend
       @index = index
 
     hideResults: ->
-      @works = @people = @organizations = []
+      @works = @people = @organizations = @characters = []
       $(@$el).find("input").blur()
