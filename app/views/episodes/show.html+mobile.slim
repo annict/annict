@@ -62,15 +62,13 @@
         - @current_user_records.each do |record|
           = render "records/record", record: record
       hr
+    - if @records.with_comment.present?
       h2.h4.text-center.font-weight-bold.my-1 = (@user_records.present? || @current_user_records.present?) ? t("messages.episodes.show.comments_by_others") : t("words.comments")
-      - if @records.with_comment.present?
-        .c-record-list
-          - @records.with_comment.each do |record|
-            = render "records/record", record: record
-      - else
-        p
-          = icon "info-circle"
-          = t "messages.episodes.show.no_records"
+      .c-record-list
+        - @records.with_comment.each do |record|
+          = render "records/record", record: record
+    - else
+      = render "application/components/empty", text: t("messages.episodes.show.no_records")
 
 = render "application/components/footer"
 = render "application/components/tabbar"

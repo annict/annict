@@ -7,7 +7,7 @@ module Gonable
     before_action :load_data_into_gon
 
     def load_i18n_into_gon(keys)
-      gon.I18n = {}
+      gon.I18n = gon.I18n.presence || {}
 
       keys.each do |k, v|
         key = v.present? && browser.device.mobile? && v.key?(:mobile) ? v[:mobile] : k
