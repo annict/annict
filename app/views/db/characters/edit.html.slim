@@ -2,16 +2,16 @@
 
 .l-topbar.container-fluid.px-1
   .row.flex-items-xs-between
-    .col-xs-8
+    .col-8
       = render "db/application/topbar_title", parent: @character, child: t("resources.character.edit")
-    .col-xs.text-xs-right
+    .col.text-xs-right
       = link_to character_path(@character), class: "btn btn-outline-primary", target: "_blank" do
         = icon "external-link"
         = t "resources.character.go_to_character"
 
 .container-fluid.p-1
   .row
-    .col-xs-6
+    .col-6
       .c-card.p-1
         .container
           = form_for [:db, @character] do |f|
@@ -113,5 +113,5 @@
             .form-group.row
               .offset-sm-3.col-sm-9
                 = f.submit t("helpers.submit.update"), class: "btn btn-primary"
-    .col-xs-6
+    .col-6
       = render "sidebar"

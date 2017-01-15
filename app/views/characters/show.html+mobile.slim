@@ -9,7 +9,7 @@
 .c-card
   = render "subnav", character: @character
   .container.mt-1.py-1
-    h2.h4.text-xs-center.font-weight-bold.mb-1
+    h2.h4.text-center.font-weight-bold.mb-1
       = t "words.information"
     table.c-center-reflow-table.c-center-reflow-table--no-border.c-center-reflow-table--text-align-center.table.table-reflow.mb-0
       thead
@@ -68,7 +68,7 @@
             td = t "words.description"
   hr
   .container.py-1
-    h2.h4.text-xs-center.font-weight-bold.mb-1
+    h2.h4.text-center.font-weight-bold.mb-1
       = t "words.works"
     = render "people/grid", root_resource: @character, resource_years: @cast_years, resources_with_year: @casts_with_year
 

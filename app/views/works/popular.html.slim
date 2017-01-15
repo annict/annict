@@ -7,9 +7,9 @@
 = render "application/components/navbar"
 
 .row.py-2
-  .col-xs
-  .col-xs
-  .col-xs.text-xs-right
+  .col
+  .col
+  .col.text-xs-right
     .px-1
       = render "display_option_buttons"
 
@@ -21,6 +21,3 @@
     = render "works/list", works: @works
 
 = render "application/components/footer"
-
-- unless user_signed_in?
-  = render "application/components/sign_up_modal", user: @new_user

@@ -1,21 +1,21 @@
 .c-footer.container
   .row
-    .col-xs-3
-    .col-xs-3
+    .col-3
+    .col-3
       h4.font-weight-bold = t "words.contents"
       ul.list-unstyled
         li = link_to t("head.title.pages.about"), about_path
         li = link_to t("words.annict_api"), "https://annict.wikihub.io/wiki/api", target: "_blank"
         li = link_to t("words.terms_of_use"), terms_path
         li = link_to t("words.privacy_policy"), privacy_path
-    .col-xs-3
+    .col-3
       h4.font-weight-bold = t "words.community"
       ul.list-unstyled
         li = link_to t("words.blog"), "http://blog.annict.com", target: "_blank"
         li = link_to "Twitter", "https://twitter.com/anannict", target: "_blank"
         li = link_to "GitHub", "https://github.com/annict", target: "_blank"
         li = link_to "Slack", "http://slack.annict.com", target: "_blank"
-    .col-xs-3
+    .col-3
       h4.font-weight-bold = t "words.seasonal_anime"
       - next_season_slug = ENV.fetch("ANNICT_NEXT_SEASON")
       - year, name = next_season_slug.split("-")

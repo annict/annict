@@ -38,7 +38,7 @@ class EpisodesController < ApplicationController
     @current_user_records = service.current_user_records
     @records = service.records
 
-    render unless user_signed_in?
+    return render unless user_signed_in?
 
     @record = @episode.checkins.new
     @record.setup_shared_sns(current_user)

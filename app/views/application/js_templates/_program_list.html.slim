@@ -1,7 +1,7 @@
 script#t-program-list type="x-template"
   .c-program-list.container.mt-1
     .row
-      .col-xs-8.offset-xs-2
+      .col-8.offset-xs-2
         .text-xs-right
           select.custom-select v-model="sort" @change="reload"
             option v-for="type in sortTypes" :value="type[1]" {{ type[0] }}
@@ -9,10 +9,10 @@ script#t-program-list type="x-template"
           template v-if="programs.length > 0"
             template v-for="program in programs"
               .row
-                .c-program-progress.col-xs.u-flex-grow-0.pl-2 :class='{ "is-unbroadcasted": !program.broadcasted }'
+                .c-program-progress.col.u-flex-grow-0.pl-2 :class='{ "is-unbroadcasted": !program.broadcasted }'
                   .c-program-progress__line
                     .c-program-progress__point
-                .c-program-list__content.col-xs.pt-1
+                .c-program-list__content.col.pt-1
                   .small.mb-zp5
                     span.u-text-green.mr-zp5
                       | {{ program.started_at }}
@@ -21,10 +21,10 @@ script#t-program-list type="x-template"
                     span.tag.tag-default v-if="program.rebroadcast"
                       = t "words.rebroadcast"
                   .row.mb-zp5
-                    .col-xs.pr-0.u-flex-grow-0
+                    .col.pr-0.u-flex-grow-0
                       a :href='"/works/" + program.work.id'
                         img.rounded :src="program.work.image_url" width="48" height="48" :alt="program.work.title"
-                    .col-xs
+                    .col
                       .text-xs-left
                         a :href='"/works/" + program.work.id'
                           | {{ program.work.title }}
@@ -33,12 +33,12 @@ script#t-program-list type="x-template"
                           | {{ program.episode.number }}
                           span.ml-zp5 v-if="program.episode.title" {{ program.episode.title }}
                   form.row
-                    .col-xs
+                    .col
                       c-record-rating.mb-zp5 :init-record="program.record" v-if="program.record.isEditingComment"
                       .mb-zp5
                         c-record-textarea :init-record="program.record"
                       .row
-                        .col-xs
+                        .col
                           .a-share-buttons v-if="program.record.isEditingComment"
                             span v-if="user.authorized_to_twitter"
                               label
@@ -48,11 +48,11 @@ script#t-program-list type="x-template"
                               label
                                 input type="checkbox" v-model="user.share_record_to_facebook"
                                 = icon "facebook", class: "u-text-facebook ml-zp25"
-                        .col-xs
+                        .col
                           .text-xs-right
                             .small.text-mute
                               c-record-word-count :init-record="program.record" v-if="program.record.isEditingComment"
-                    .col-xs.u-flex-grow-0.pl-0
+                    .col.u-flex-grow-0.pl-0
                       button.btn.btn-primary type="button" @click="submit(program)" :class='{ disabled: program.record.isRecorded, "c-spinner": program.record.isSaving }'
                         = icon "check", class: "mr-0"
           template v-else=""

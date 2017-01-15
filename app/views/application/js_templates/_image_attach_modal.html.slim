@@ -3,7 +3,7 @@ script#t-image-attach-modal type="x-template"
     .modal-dialog
       .modal-content
         .modal-body
-          .c-image-attach-modal__dropzone.px-1.py-3.text-xs-center @click="openFileDialog" @change="change" @dragover.prevent="dragover" @drop.prevent="drop" v-show="!imageUrl"
+          .c-image-attach-modal__dropzone.px-1.py-3.text-center @click="openFileDialog" @change="change" @dragover.prevent="dragover" @drop.prevent="drop" v-show="!imageUrl"
             input.c-image-attach-modal__input.u-d-none type="file" accept="image/*"
             p.lead.m-3
               = t "messages.work_images.index.dropzone-empty"

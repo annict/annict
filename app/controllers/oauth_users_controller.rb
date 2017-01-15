@@ -3,7 +3,6 @@
 class OauthUsersController < Devise::RegistrationsController
   permits :username, :email, model_name: "User"
 
-  before_action :load_i18n, only: %i(new create)
   before_action :set_oauth, only: %i(new create)
 
   def new
@@ -34,14 +33,5 @@ class OauthUsersController < Devise::RegistrationsController
 
   def set_oauth
     @oauth = session["devise.oauth_data"]
-  end
-
-  def load_i18n
-    keys = {
-      "messages.registrations.new.username_preview": {
-        mobile: "messages.registrations.new.username_preview_mobile"
-      }
-    }
-    load_i18n_into_gon keys
   end
 end

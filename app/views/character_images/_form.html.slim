@@ -2,7 +2,7 @@
   = render "application/components/error_panel", resource: image
   .form-group.row
     = f.label :attachment, class: "col-xs-2 col-form-label"
-    .col-xs-10
+    .col-10
       .btn.btn-secondary data-toggle="modal" data-target=".c-image-attach-modal"
         = icon "plus"
         = t "messages.character_images.attach_image"
@@ -10,10 +10,10 @@
       c-image-attach-form input-name="character_image[attachment]"
   .form-group.row
     = f.label :source_url, class: "col-xs-2 col-form-label"
-    .col-xs-10
+    .col-10
       = f.text_field :source_url, class: "form-control"
   .form-group.row
-    .col-xs-10.offset-xs-2
+    .col-10.offset-xs-2
       = f.button class: "btn btn-primary" do
         = icon "rocket"
         = t "words.upload"

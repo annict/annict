@@ -1,21 +1,21 @@
 .container
-  .text-xs-center.mb-3
+  .text-center.mb-3
     = link_to root_path do
       = image_tag "logos/color-mizuho.png", size: "50x61", alt: "Annict"
   .c-card.px-1.py-2.mb-1
     .c-sign-up-form
-      h1.text-xs-center.mb-2 = t "messages.common.welcome_back"
+      h1.text-center.mb-2 = t "messages.common.welcome_back"
 
-      .text-xs-center.mb-1
+      .text-center.mb-1
         = link_to user_twitter_omniauth_authorize_path, class: "btn u-btn-twitter" do
           = icon "twitter"
           = t "messages.sessions.new.sign_in_with_twitter"
-      .text-xs-center
+      .text-center
         = link_to user_facebook_omniauth_authorize_path, class: "btn u-btn-facebook" do
           = icon "facebook"
           = t "messages.sessions.new.sign_in_with_facebook"
 
-      .text-muted.text-xs-center.mt-2.mb-1
+      .text-muted.text-center.mt-2.mb-1
         = t "words.or"
 
       = form_for resource, url: user_session_path do |f|
@@ -25,9 +25,9 @@
 
         .form-group
           .row
-            .col-xs
+            .col
               = f.label :password
-            .col-xs.text-xs-right
+            .col.text-xs-right
               = link_to t("messages.sessions.new.forgot_password"), new_password_path
           = f.password_field :password, autocomplete: "off", class: "form-control", required: true
 
@@ -36,10 +36,10 @@
             = f.check_box :remember_me, class: "form-check-input"
             = t "messages.sessions.new.remember_me"
 
-        .text-xs-center
+        .text-center
           = f.button class: "btn btn-primary" do
             = icon "sign-in"
             = t "words.sign_in"
   
-  .text-xs-center
+  .text-center
     small = t "messages.sessions.new.sign_up_link_html", link: link_to(t("words.sign_up"), new_user_registration_path)

@@ -2,16 +2,16 @@
 
 .l-topbar.container-fluid.px-1
   .row.flex-items-xs-between
-    .col-xs
+    .col
       = render "db/application/topbar_title", parent: t("resources.work.work_list")
     - if user_signed_in? && current_user.committer?
-      .col-xs.text-xs-right
+      .col.text-xs-right
         = link_to new_db_work_path, class: "btn btn-outline-primary" do
           = icon "plus"
           = t "resources.work.new_work"
 
 .container-fluid.p-1
-  ul.nav.nav-inline.text-xs-center.mb-1
+  ul.nav.nav-inline.text-center.mb-1
     li.nav-item
       = active_link_to t("words.all"), db_works_path, class: "nav-link", active: params[:action] == "index"
     li.nav-item.dropdown

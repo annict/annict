@@ -8,10 +8,10 @@
 
 .container.py-1
   .row
-    .col-xs-3.pr-0
+    .col-3.pr-0
       .c-card.container.py-1
         = render "sidebar", person: @person
-    .col-xs-9
+    .col-9
       - if @person.voice_actor?
         = render "grid", root_resource: @person, resource_years: @cast_years, resources_with_year: @casts_with_year
 

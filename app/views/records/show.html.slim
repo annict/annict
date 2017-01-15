@@ -9,13 +9,13 @@
 
 .container.my-1
   .row
-    .col-xs-6.offset-xs-3
+    .col-6.offset-xs-3
       .c-card.py-1
         .p-records-show__work-info.px-1
           .row
-            .col-xs.u-flex-grow-0.p-records-show__work-image.pr-0
+            .col.u-flex-grow-0.p-records-show__work-image.pr-0
               = image_tag ann_image_url(@work.work_image, :attachment, size: "280x373"), class: "img-fluid rounded"
-            .col-xs
+            .col
               h1.h2
                 = link_to work_path(@work) do
                   = @work.decorate.local_title
@@ -34,20 +34,20 @@
             - @comments.each do |comment|
               .c-record-comment
                 .row
-                  .c-record-comment__avatar.col-xs.pr-0.u-flex-grow-0
+                  .c-record-comment__avatar.col.pr-0.u-flex-grow-0
                     = link_to user_path(comment.user.username) do
                       = ann_image_tag comment.user.profile, :tombo_avatar, size: "50x50", class: "rounded-circle"
-                  .col-xs
+                  .col
                     .row.mb-zp5
-                      .col-xs
+                      .col
                         = link_to comment.user.profile.name, user_path(comment.user.username)
-                      .col-xs
+                      .col
                         .small.text-xs-right
                           = local_time_ago_in_words(comment.created_at)
                     c-body inline-template=""
                       .c-body__content = comment.body
                 .text-xs-right
-                  c-like-button resource-name="Comment" :raw-resource-id="#{comment.id}" :raw-likes-count="#{comment.likes_count}" :raw-is-liked="#{user_signed_in? && current_user.like?(comment)}"
+                  c-like-button resource-name="Comment" :init-resource-id="#{comment.id}" :init-likes-count="#{comment.likes_count}" :init-is-liked="#{user_signed_in? && current_user.like?(comment)}" :is-signed-in="#{user_signed_in?}"
                 - if policy(comment).update?
                   .small.text-xs-right.mb-zp5
                     = link_to edit_comment_path(@user.username, comment), class: "mr-zp5" do

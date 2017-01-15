@@ -8,10 +8,10 @@
 
 .container.py-1
   .row
-    .col-xs-3.pr-0
+    .col-3.pr-0
       .c-card.container.py-1
         = render "sidebar", organization: @organization
-    .col-xs-9
+    .col-9
       = render "people/grid", root_resource: @organization, resource_years: @staff_years, resources_with_year: @staffs_with_year
 
 = render "application/components/footer"

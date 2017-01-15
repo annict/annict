@@ -24,7 +24,7 @@ html lang="#{I18n.locale}"
           li = link_to Organization.model_name.human(count: 2), db_organizations_path, class: "d-inline-block"
           li = link_to Character.model_name.human(count: 2), db_characters_path, class: "d-inline-block"
 
-        = link_to root_url(subdomain: false), class: "l-sidebar__annict-link d-inline-block text-xs-center" do
+        = link_to root_url(subdomain: false), class: "l-sidebar__annict-link d-inline-block text-center" do
           = image_tag "logos/color-white.png", size: "33x40"
       .l-main.h-100
         c-flash

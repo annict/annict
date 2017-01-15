@@ -9,10 +9,10 @@
 
 .container.py-1
   .row
-    .col-xs-3.pr-0
+    .col-3.pr-0
       .c-card.container.py-1
         = render "works/sidebar", work: @work
-    .col-xs-9
+    .col-9
       .c-card
         .container.py-1
           h1.mb-0 = @work.decorate.local_title
@@ -22,9 +22,3 @@
         = render "staff_list", staffs: @staffs
 
 = render "application/components/footer"
-
-- unless user_signed_in?
-  = render "application/components/sign_up_modal", user: @new_user
-
-- content_for :js_templates do
-  = render "application/js_templates/status_selector"

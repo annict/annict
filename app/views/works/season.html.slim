@@ -7,15 +7,15 @@
 = render "application/components/navbar"
 
 .row.py-2
-  .col-xs
-  .col-xs.text-xs-center
+  .col
+  .col.text-center
     .dropdown.d-inline-block
       a.dropdown-toggle href="#" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"
         = @season.decorate.local_name
       .dropdown-menu.pre-scrollable.mr-1
         - Season.order(sort_number: :desc).each do |season|
           = link_to season.decorate.local_name, season_works_path(slug: season.slug), class: "dropdown-item"
-  .col-xs.text-xs-right
+  .col.text-xs-right
     .px-1
       = render "display_option_buttons"
 
@@ -26,9 +26,6 @@
     = render "works/list", works: @works
 
 = render "application/components/footer"
-
-- unless user_signed_in?
-  = render "application/components/sign_up_modal", user: @new_user
 
 - content_for :js_templates do
   = render "application/js_templates/status_selector"

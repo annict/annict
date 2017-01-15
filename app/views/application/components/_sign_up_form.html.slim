@@ -1,16 +1,16 @@
 .c-sign-up-form
-  h1.text-xs-center.mb-2 = t "messages.common.join_annict"
+  h1.text-center.mb-2 = t "messages.common.join_annict"
 
-  .text-xs-center.mb-1
+  .text-center.mb-1
     = link_to user_twitter_omniauth_authorize_path, class: "btn u-btn-twitter" do
       = icon "twitter"
       = t "messages.registrations.new.start_with_twitter"
-  .text-xs-center
+  .text-center
     = link_to user_facebook_omniauth_authorize_path, class: "btn u-btn-facebook" do
       = icon "facebook"
       = t "messages.registrations.new.start_with_facebook"
 
-  .text-muted.text-xs-center.mt-2.mb-1
+  .text-muted.text-center.mt-2.mb-1
     = t "words.or"
 
   = form_for user, url: user_registration_path do |f|
@@ -29,7 +29,7 @@
       = f.label :password
       = f.password_field :password, autocomplete: "off", class: "form-control", required: true
 
-    .text-xs-center
+    .text-center
       = f.button class: "btn btn-primary" do
         = icon "rocket"
         = t "words.sign_up"

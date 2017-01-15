@@ -12,16 +12,16 @@
   .p-profile-header__info
     .container
       .row.py-1
-        .col-xs-7
+        .col-7
           .row
-            .col-xs.u-flex-grow-0
+            .col.u-flex-grow-0
               = ann_image_tag(@user.profile, :tombo_avatar, size: "80x80", class: "p-profile-header__avatar rounded-circle")
-            .col-xs.pt-zp5.pl-0
+            .col.pt-zp5.pl-0
               h1
                 = @user.profile.name
                 .u-very-small.mt-zp5
                   = "@#{@user.username}"
-        .col-xs-5.pt-2
+        .col-5.pt-2
           - if user_signed_in? && current_user != @user
             .text-xs-right
               .c-user-options-dropdown.dropdown.d-inline-block.mr-1
@@ -34,28 +34,28 @@
 
 .p-users-show__main.container.pt-1
   .row
-    .col-xs-7
+    .col-7
       c-activities username="#{@user.username}"
-    .col-xs-5
-      .row.text-xs-center.mb-2
-        .p-users-show__count.col-xs.px-0
+    .col-5
+      .row.text-center.mb-2
+        .p-users-show__count.col.px-0
           .h3
             = @user.checkins_count
           .p-profile-header__count-text
             | Records
-        .p-users-show__count.col-xs.px-0
+        .p-users-show__count.col.px-0
           = link_to user_works_path(@user.username, :watching), class: "p-users-show__count-link" do
             .h3
               = @user.latest_statuses.count_on(:watching)
             .p-profile-header__count-text
               | Watching
-        .p-users-show__count.col-xs.px-0
+        .p-users-show__count.col.px-0
           = link_to following_user_path(@user.username), class: "p-users-show__count-link" do
             .h3
               = @user.followings.count
             .p-profile-header__count-text
               | Following
-        .p-users-show__count.col-xs.px-0
+        .p-users-show__count.col.px-0
           = link_to followers_user_path(@user.username), class: "p-users-show__count-link" do
             .h3
               = @user.followers.count

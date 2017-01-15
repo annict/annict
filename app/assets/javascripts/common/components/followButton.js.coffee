@@ -1,6 +1,6 @@
-Vue = require "vue/dist/vue"
+keen = require "../keen"
 
-module.exports = Vue.extend
+module.exports =
   template: "#t-follow-button"
 
   props:
@@ -13,6 +13,9 @@ module.exports = Vue.extend
     isSmall:
       type: Boolean
       default: false
+    isSignedIn:
+      type: Boolean
+      default: false
 
   data: ->
     isFollowing: @initIsFollowing
@@ -23,6 +26,11 @@ module.exports = Vue.extend
 
   methods:
     toggle: ->
+      unless @isSignedIn
+        $(".c-sign-up-modal").modal("show")
+        keen.trackEvent("sign_up_modals", "open", via: "follow_button")
+        return
+
       if @isFollowing
         $.ajax
           method: "POST"

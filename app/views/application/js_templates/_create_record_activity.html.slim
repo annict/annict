@@ -52,7 +52,7 @@ script#t-create-record-activity type="x-template"
                   | {{ activity.episode.title }}
 
     .mt-zp5
-      c-like-button.u-fake-link.mr-1 resource-name="Checkin" :raw-resource-id="activity.record.id" :raw-likes-count="activity.record.likes_count" :raw-is-liked="activity.meta.liked"
+      c-like-button.u-fake-link.mr-1 resource-name="Checkin" :init-resource-id="activity.record.id" :init-likes-count="activity.record.likes_count" :init-is-liked="activity.meta.liked" :is-signed-in="#{user_signed_in?}"
       a :href='"/@" + activity.user.username + "/records/" + activity.record.id'
         = icon "comment-o", class: "mr-zp25"
         | {{ activity.record.comments_count }}

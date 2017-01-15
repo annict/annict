@@ -8,10 +8,10 @@ class RecordsListService
   end
 
   def record_user_ids
-    record_users = User.joins(:checkins).
-      where("checkins.episode_id": @episode.id).
-      where("checkins.user_id": base_records.pluck(:user_id).uniq).
-      order("checkins.id DESC")
+    record_users = User.joins(:records).
+      where("records.episode_id": @episode.id).
+      where("records.user_id": base_records.pluck(:user_id).uniq).
+      order("records.id DESC")
     record_users.pluck(:id).uniq
   end
 
@@ -45,7 +45,7 @@ class RecordsListService
   private
 
   def base_records
-    @episode.checkins.includes(user: :profile)
+    @episode.records.includes(user: :profile)
   end
 
   def record_ids

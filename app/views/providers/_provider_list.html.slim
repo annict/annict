@@ -1,8 +1,8 @@
 .row
-  .col-xs-3
+  .col-3
     .px-1
       | Twitter
-  .col-xs-9
+  .col-9
     .px-1.text-xs-right
       - if current_user.shareable_to?(:twitter)
         - if current_user.shareable_to?(:facebook)
@@ -15,10 +15,10 @@
           = icon "twitter"
           = t "words.connect"
 .row
-  .col-xs-3
+  .col-3
     .px-1
       | Facebook
-  .col-xs-9
+  .col-9
     .px-1.text-xs-right
       - if current_user.shareable_to?(:facebook)
         - if current_user.shareable_to?(:twitter)

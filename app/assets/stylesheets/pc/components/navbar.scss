@@ -42,7 +42,7 @@
         color: $ann-color-white;
       }
 
-      .c-track-button {
+      .btn-outline-primary {
         @include button-outline-variant($ann-color-white, $ann-color-mizuho);
       }
     }
@@ -51,5 +51,9 @@
   &:not(.is-transparent) {
     background-color: $ann-color-white;
     border-bottom: 1px solid $ann-border-color;
+
+    .btn-outline-primary {
+      @include button-outline-variant($ann-color-mizuho, $ann-color-white);
+    }
   }
 }
