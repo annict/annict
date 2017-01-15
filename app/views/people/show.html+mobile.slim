@@ -6,7 +6,7 @@
 
 .c-card.py-1.mb-1
   .container
-    .text-xs-center
+    .text-center
       h1.h2 = @person.decorate.local_name
       - if @person.voice_actor?
         span.badge.u-badge-people
@@ -16,42 +16,42 @@
           = t "words.staff"
 
     .mt-2
-      h2.h4.font-weight-bold.text-xs-center.mt-2.mb-1
+      h2.h4.font-weight-bold.text-center.mt-2.mb-1
         = icon "sticky-note-o", class: "mr-zp25"
         = t "words.information"
       dl.row.mb-0
-        dt.col-xs-6.text-xs-right = t "words.name_kanji"
-        dd.col-xs-6 = @person.name
+        dt.col-6.text-xs-right = t "words.name_kanji"
+        dd.col-6 = @person.name
         - if @person.name_kana.present?
-          dt.col-xs-6.text-xs-right = t "words.name_kana"
-          dd.col-xs-6 = @person.name_kana
+          dt.col-6.text-xs-right = t "words.name_kana"
+          dd.col-6 = @person.name_kana
         - if @person.name_en.present?
-          dt.col-xs-6.text-xs-right = t "words.name_en"
-          dd.col-xs-6 = @person.name_en
+          dt.col-6.text-xs-right = t "words.name_en"
+          dd.col-6 = @person.name_en
         - if @person.nickname.present?
-          dt.col-xs-6.text-xs-right = t "words.nickname"
-          dd.col-xs-6 = @person.nickname
+          dt.col-6.text-xs-right = t "words.nickname"
+          dd.col-6 = @person.nickname
         - if @person.gender.present?
-          dt.col-xs-6.text-xs-right = t "words.gender"
-          dd.col-xs-6 = @person.gender_text
+          dt.col-6.text-xs-right = t "words.gender"
+          dd.col-6 = @person.gender_text
         - if @person.birthday.present?
-          dt.col-xs-6.text-xs-right = t "words.birthday"
-          dd.col-xs-6 = @person.birthday.strftime("%Y年%m月%d日")
+          dt.col-6.text-xs-right = t "words.birthday"
+          dd.col-6 = @person.birthday.strftime("%Y年%m月%d日")
         - if @person.blood_type.present?
-          dt.col-xs-6.text-xs-right = t "words.blood_type"
-          dd.col-xs-6 = @person.blood_type_text
+          dt.col-6.text-xs-right = t "words.blood_type"
+          dd.col-6 = @person.blood_type_text
         - if @person.height.present?
-          dt.col-xs-6.text-xs-right = t "words.height"
-          dd.col-xs-6 = "#{@person.height}cm"
+          dt.col-6.text-xs-right = t "words.height"
+          dd.col-6 = "#{@person.height}cm"
         - if @person.url.present?
-          dt.col-xs-6.text-xs-right = t "words.official_site"
-          dd.col-xs-6 = link_with_domain @person.url
+          dt.col-6.text-xs-right = t "words.official_site"
+          dd.col-6 = link_with_domain @person.url
         - if @person.twitter_username.present?
-          dt.col-xs-6.text-xs-right = t "words.twitter"
-          dd.col-xs-6 = @person.decorate.twitter_username_link
+          dt.col-6.text-xs-right = t "words.twitter"
+          dd.col-6 = @person.decorate.twitter_username_link
         - if @person.wikipedia_url.present?
-          dt.col-xs-6.text-xs-right = t "words.wikipedia"
-          dd.col-xs-6 = link_with_domain @person.wikipedia_url
+          dt.col-6.text-xs-right = t "words.wikipedia"
+          dd.col-6 = link_with_domain @person.wikipedia_url
 
 .container.py-1
   - if @person.voice_actor?

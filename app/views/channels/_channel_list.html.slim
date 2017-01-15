@@ -7,9 +7,9 @@
         .card-block
           - cg.channels.published.each do |c|
             .row.mb-zp5
-              .col-xs
+              .col
                 = c.name
-              .col-xs.text-xs-right
+              .col.text-xs-right
                 c-channel-receive-button :channel-id="#{c.id}" :init-is-receiving="#{current_user.receiving?(c)}"
                 
 - content_for :js_templates do

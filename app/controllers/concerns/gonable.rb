@@ -8,6 +8,7 @@ module Gonable
 
     def load_i18n_into_gon(keys)
       gon.I18n = {}
+
       keys.each do |k, v|
         key = v.present? && browser.device.mobile? && v.key?(:mobile) ? v[:mobile] : k
         gon.I18n[k] = I18n.t(key)
@@ -28,7 +29,8 @@ module Gonable
       keen: {
         projectId: ENV.fetch("KEEN_PROJECT_ID"),
         writeKey: ENV.fetch("KEEN_WRITE_KEY")
-      }
+      },
+      I18n: default_i18n_data
     }
 
     if user_signed_in?
@@ -41,5 +43,17 @@ module Gonable
     end
 
     gon.push(data)
+  end
+
+  def default_i18n_data
+    username_preview_val = if browser.device.mobile?
+      I18n.t("messages.registrations.new.username_preview_mobile")
+    else
+      I18n.t("messages.registrations.new.username_preview")
+    end
+
+    {
+      "messages.registrations.new.username_preview": username_preview_val
+    }
   end
 end

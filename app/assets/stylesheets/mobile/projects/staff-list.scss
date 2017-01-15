@@ -1,10 +1,10 @@
 .p-staff-list {
   &__row {
-    .col-xs-6:first-child {
+    .col-6:first-child {
       padding-right: .5rem;
     }
 
-    .col-xs-6:last-child {
+    .col-6:last-child {
       padding-left: .5rem;
     }
   }

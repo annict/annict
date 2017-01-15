@@ -8,7 +8,7 @@
     - comment = record.comment&.gsub(/(?:\n\r?|\r\n?)/, "\\n").presence || ""
     c-record-textarea :init-record="{ uid: 1, comment: '#{comment}' }" :init-comment-rows="#{record.new_record? ? 1 : 10}" placeholder="#{t('messages.records.new.write_your_comment')}"
   .row
-    .col-xs
+    .col
       - if current_user.authorized_to?(:twitter)
         label
           = icon "twitter", class: "u-text-twitter mr-zp25"
@@ -17,15 +17,15 @@
         label.ml-zp5
           = icon "facebook", class: "u-text-facebook mr-zp25"
           = f.check_box :shared_facebook
-    .col-xs
-      .text-xs-center
+    .col
+      .text-center
         = f.button class: "btn btn-primary" do
           = icon "edit"
           - if record.new_record?
             = t "words.track"
           - else
             = t "words.update"
-    .col-xs
+    .col
       .text-xs-right
         .small.text-mute
           c-record-word-count :init-record="{ uid: 1, wordCount: 0 }"

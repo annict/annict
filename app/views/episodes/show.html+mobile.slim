@@ -10,7 +10,7 @@
 .c-card.mb-1.py-1
   .p-episode-title-header
     - if @episode.prev_episode.present?
-      = link_to work_episode_path(@work, @episode.prev_episode), class: "p-episode-title-header__prev h3 text-xs-center mb-0" do
+      = link_to work_episode_path(@work, @episode.prev_episode), class: "p-episode-title-header__prev h3 text-center mb-0" do
         = icon "angle-left"
     .p-episode-title-header__main
       h2.h4
@@ -24,20 +24,20 @@
           = t "messages.episodes.watched_x_times", records_count: current_user.checkins_count_in(@episode)
       .container.mt-zp5
         .row
-          .col-xs.text-xs-center.u-lh-sm
+          .col.text-center.u-lh-sm
             = @records.count + @current_user_records.count
             .small
               | Records
-          .col-xs.text-xs-center.u-lh-sm
+          .col.text-center.u-lh-sm
             = @records.with_comment.count + @current_user_records.with_comment.count
             .small
               | Comments
-          .col-xs.text-xs-center.u-lh-sm
+          .col.text-center.u-lh-sm
             = @episode.avg_rating.presence || "-"
             .small
               | Stars
     - if @episode.next_episode.present?
-      = link_to work_episode_path(@work, @episode.next_episode), class: "p-episode-title-header__next h3 text-xs-center mb-0" do
+      = link_to work_episode_path(@work, @episode.next_episode), class: "p-episode-title-header__next h3 text-center mb-0" do
         = icon "angle-right"
 
 .c-card.py-1
@@ -56,13 +56,13 @@
             = render "records/record", record: record
         hr
     - if @current_user_records.present?
-      h2.h4.text-xs-center.font-weight-bold.my-1
+      h2.h4.text-center.font-weight-bold.my-1
         = t "messages.episodes.show.your_records"
       .c-record-list
         - @current_user_records.each do |record|
           = render "records/record", record: record
       hr
-      h2.h4.text-xs-center.font-weight-bold.my-1 = (@user_records.present? || @current_user_records.present?) ? t("messages.episodes.show.comments_by_others") : t("words.comments")
+      h2.h4.text-center.font-weight-bold.my-1 = (@user_records.present? || @current_user_records.present?) ? t("messages.episodes.show.comments_by_others") : t("words.comments")
       - if @records.with_comment.present?
         .c-record-list
           - @records.with_comment.each do |record|

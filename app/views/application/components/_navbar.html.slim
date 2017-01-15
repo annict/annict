@@ -31,7 +31,7 @@ nav.c-navbar.navbar.navbar-toggleable-md class="#{transparent ? 'navbar-dark is-
     ul.navbar-nav.navbar-nav--right.align-items-center
       - if user_signed_in?
         li.nav-item.mr-1
-          = link_to track_path, class: "c-track-button btn btn-outline-primary btn-sm" do
+          = link_to track_path, class: "btn btn-outline-primary btn-sm" do
             = icon "pencil-square-o", class: "mr-zp25"
             = t "head.title.tracks.show"
         li.nav-item.dropdown
@@ -57,10 +57,12 @@ nav.c-navbar.navbar.navbar-toggleable-md class="#{transparent ? 'navbar-dark is-
       - else
         li.nav-item
           = link_to t("head.title.pages.about"), about_path, class: "nav-link"
-        li.nav-item
+        li.nav-item.mr-zp5
           = link_to t("head.title.sessions.new"), new_user_session_path, class: "nav-link"
         li.nav-item
-          = link_to t("head.title.registrations.new"), new_user_registration_path, class: "nav-link btn btn-outline-primary"
+          = link_to new_user_registration_path, class: "nav-link btn btn-outline-primary" do
+            = icon "rocket"
+            = t "head.title.registrations.new"
 
 - content_for :js_templates
   = render "application/js_templates/search_form"

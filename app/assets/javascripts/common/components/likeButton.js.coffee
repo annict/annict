@@ -1,29 +1,37 @@
-Vue = require "vue/dist/vue"
+keen = require "../keen"
 
-module.exports = Vue.extend
+module.exports =
   template: "#t-like-button"
 
   props:
     resourceName:
       type: String
       required: true
-    rawResourceId:
+    initResourceId:
       type: Number
       required: true
-    rawLikesCount:
+    initLikesCount:
       type: Number
       required: true
-    rawIsLiked:
+    initIsLiked:
       type: Boolean
       required: true
+    isSignedIn:
+      type: Boolean
+      default: false
 
   data: ->
-    resourceId: Number @rawResourceId
-    likesCount: Number @rawLikesCount
-    isLiked: JSON.parse(@rawIsLiked)
+    resourceId: Number @initResourceId
+    likesCount: Number @initLikesCount
+    isLiked: JSON.parse(@initIsLiked)
 
   methods:
     toggleLike: ->
+      unless @isSignedIn
+        $(".c-sign-up-modal").modal("show")
+        keen.trackEvent("sign_up_modals", "open", via: "like_button")
+        return
+
       if @isLiked
         $.ajax
           method: "POST"

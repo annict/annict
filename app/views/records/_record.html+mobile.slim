@@ -1,14 +1,14 @@
 c-record inline-template="" :user-id="#{record.user.id}"
   .c-record
     .row.mb-zp5
-      .c-record__avatar.col-xs.pr-0
+      .c-record__avatar.col.pr-0
         = link_to user_path(record.user.username) do
           = ann_image_tag record.user.profile, :tombo_avatar, size: "30x30", class: "rounded-circle"
-      .col-xs.pl-zp5
+      .col.pl-zp5
         .row
-          .col-xs
+          .col
             = link_to record.user.profile.name, user_path(record.user.username)
-          .col-xs
+          .col
             .text-xs-right
               - if record.modify_comment?
                 small.mr-zp25.text-muted
@@ -22,7 +22,7 @@ c-record inline-template="" :user-id="#{record.user.id}"
           c-body inline-template=""
             .c-body__content = record.comment
     .row
-      .col-xs
+      .col
         - if record.shared_twitter? || record.twitter_url_hash.present?
           small
             = icon "twitter", class: "mr-zp25 u-text-twitter"
@@ -31,9 +31,9 @@ c-record inline-template="" :user-id="#{record.user.id}"
           small.ml-zp5
             = icon "facebook", class: "mr-zp25 u-text-twitter"
             = record.facebook_click_count
-      .col-xs
+      .col
         .text-xs-right
-          c-like-button resource-name="Checkin" :raw-resource-id="#{record.id}" :raw-likes-count="#{record.likes_count}" :raw-is-liked="#{user_signed_in? && current_user.like?(record)}"
+          c-like-button resource-name="Checkin" :init-resource-id="#{record.id}" :init-likes-count="#{record.likes_count}" :init-is-liked="#{user_signed_in? && current_user.like?(record)}" :is-signed-in="#{user_signed_in?}"
           = link_to record_path(record.user.username, record), class: "d-inline-block ml-zp5" do
             = icon "comment-o", class: "mr-zp25"
             = record.comments_count

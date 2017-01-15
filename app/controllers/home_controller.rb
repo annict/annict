@@ -22,10 +22,7 @@ class HomeController < ApplicationController
 
   def load_i18n
     keys = {
-      "messages.registrations.new.username_preview": {
-        mobile: "messages.registrations.new.username_preview_mobile"
-      },
-      "messages.are_you_sure": nil
+      "messages._common.are_you_sure": nil
     }
 
     load_i18n_into_gon keys

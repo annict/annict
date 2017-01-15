@@ -2,9 +2,9 @@
 
 .l-topbar.container-fluid.px-1
   .row.flex-items-xs-between
-    .col-xs-8
+    .col-8
       = render "db/application/topbar_title", parent: @work.decorate.local_title.truncate(70)
-    .col-xs.text-xs-right
+    .col.text-xs-right
       = link_to work_url(@work, subdomain: false), class: "btn btn-outline-primary", target: "_blank" do
         = icon "external-link"
         = t "resources.work.go_to_work"
@@ -13,8 +13,8 @@
 
 .container-fluid.p-1
   .row
-    .col-xs-6
+    .col-6
       .c-card.p-1
         = render "form", work: @work
-    .col-xs-6
+    .col-6
       = render "sidebar"

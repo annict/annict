@@ -9,10 +9,10 @@ span.ml-zp25
   = work.decorate.title_link
 
 .small.text-muted.my-zp5.row
-  .col-xs.u-flex-grow-0
+  .col.u-flex-grow-0
     = link_to local_time_ago_in_words(work_image.created_at), work_images_path(work)
     | :
-  .col-xs
+  .col
     = link_to work_images_path(work) do
       = image_tag ann_image_url(work_image, :attachment, size: "140x187"), class: "img-fluid", width: "140"
 

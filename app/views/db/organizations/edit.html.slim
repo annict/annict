@@ -2,17 +2,17 @@
 
 .l-topbar.container-fluid.px-1
   .row.flex-items-xs-between
-    .col-xs-8
+    .col-8
       = render "db/application/topbar_title", parent: @organization.decorate.local_name.truncate(70)
-    .col-xs.text-xs-right
+    .col.text-xs-right
       = link_to organization_url(@organization, subdomain: false), class: "btn btn-outline-primary", target: "_blank" do
         = icon "external-link"
         = t "resources.organization.go_to_organization"
 
 .container-fluid.p-1
   .row
-    .col-xs-6
+    .col-6
       .c-card.p-1
         = render "form", organization: @organization
-    .col-xs-6
+    .col-6
       = render "sidebar"

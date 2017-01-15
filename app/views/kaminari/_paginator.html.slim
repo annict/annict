@@ -1,5 +1,5 @@
 = paginator.render do
-  nav.text-xs-center aria-label="Page navigation"
+  nav.text-center aria-label="Page navigation"
     ul.pagination
       == first_page_tag unless current_page.first?
       == prev_page_tag unless current_page.first?

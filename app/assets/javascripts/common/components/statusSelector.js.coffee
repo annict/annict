@@ -1,8 +1,6 @@
-Vue = require "vue/dist/vue"
-
 keen = require "../keen"
 
-module.exports = Vue.extend
+module.exports =
   template: "#t-status-selector"
 
   data: ->
@@ -18,33 +16,26 @@ module.exports = Vue.extend
       required: true
 
     isSignedIn:
+      type: Boolean
       default: false
 
     isMini:
+      type: Boolean
       default: false
 
     isTransparent:
+      type: Boolean
       default: false
-
-  computed:
-    normalizedIsSignedIn: ->
-      JSON.parse(@isSignedIn)
-
-    normalizedIsMini: ->
-      JSON.parse(@isMini)
-
-    normalizedIsTransparent: ->
-      JSON.parse(@isTransparent)
 
   methods:
     resetKind: ->
       @statusKind = "no_select"
 
     change: ->
-      unless @normalizedIsSignedIn
+      unless @isSignedIn
         $(".c-sign-up-modal").modal("show")
         @resetKind()
-        keen.trackEvent("sign_up_modals", "open")
+        keen.trackEvent("sign_up_modals", "open", via: "status_selector")
         return
 
       if @statusKind != @prevStatusKind

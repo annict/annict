@@ -6,6 +6,8 @@ html lang="#{I18n.locale}"
     .p-vue
       c-flash
       = yield
+      - unless user_signed_in?
+        = render "application/components/sign_up_modal", user: @new_user
 
     = include_gon
     = render "application/analytics"

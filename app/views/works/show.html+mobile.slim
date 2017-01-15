@@ -9,9 +9,9 @@
 
 .c-card.container
   .py-1
-    h2.h4.text-xs-center.font-weight-bold.mb-1 = t "words.information"
+    h2.h4.text-center.font-weight-bold.mb-1 = t "words.information"
     .row
-      .col-xs
+      .col
         ul.list-unstyled.mb-0
           li
             = icon "tv", class: "mr-zp5"
@@ -24,7 +24,7 @@
             li
               = icon "home", class: "mr-zp5"
               = link_to "公式サイト", @work.official_site_url, target: "_blank"
-      .col-xs
+      .col
         ul.list-unstyled.mb-0
           - if @work.wikipedia_url.present?
             li
@@ -44,7 +44,7 @@
               = @work.decorate.twitter_hashtag_link
 
   .py-1
-    h2.h4.text-xs-center.font-weight-bold.mb-1 = t "words.episodes"
+    h2.h4.text-center.font-weight-bold.mb-1 = t "words.episodes"
     - if @work.episodes.published.present?
       .mb-zp5
         = link_to t("words.bulk_tracking"), work_episodes_path(@work, tracking: "on"), class: "small"
@@ -53,10 +53,10 @@
           - @work.episodes.published.order(:sort_number).limit(10).each do |episode|
             = render "episodes/episode_row", work: @work, episode: episode
 
-    h2.h4.text-xs-center.font-weight-bold.mt-1.mb-2 = t "words.characters"
+    h2.h4.text-center.font-weight-bold.mt-1.mb-2 = t "words.characters"
     = render "characters/character_list", casts: @work.casts.published.order(:sort_number).limit(8)
 
-    h2.h4.text-xs-center.font-weight-bold.my-2 = t "words.staffs"
+    h2.h4.text-center.font-weight-bold.my-2 = t "words.staffs"
     = render "staffs/staff_list", staffs: @work.staffs.published.order(:sort_number).limit(8)
 
 = render "application/components/footer"

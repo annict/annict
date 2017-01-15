@@ -3,7 +3,7 @@
     .p-top-work__left.mr-1
       = link_to work_path(work), class: "d-inline-block" do
         = ann_image_tag(work.work_image, :attachment, size: "250x250", alt: work.decorate.local_title, class: "rounded img-thumbnail")
-      c-status-selector work-id="#{work.id}" current-status-kind="no_select" is-signed-in="false"
+      c-status-selector work-id="#{work.id}" current-status-kind="no_select" :is-signed-in="false"
     .p-top-work__right
       .c-watchers-count
         span.c-watchers-count__number.font-weight-bold = work.watchers_count

@@ -9,17 +9,17 @@
 
 .container.py-1
   .row
-    .col-xs-3.pr-0
+    .col-3.pr-0
       .c-card.container.py-1
         = render "works/sidebar", work: @work
-    .col-xs-9
+    .col-9
       .c-card.mb-1
         .container.py-1
           h1.mb-0 = @work.decorate.local_title
         = render "works/subnav", work: @work
       .c-card.container.py-1.mb-1
         .row
-          .col-xs-8
+          .col-8
             h2
               - if @episode.decorate.local_number.present?
                 span.pr-zp5 = @episode.decorate.local_number
@@ -29,28 +29,28 @@
               .small
                 = icon "check", class: "mr-zp25"
                 = t "messages.episodes.watched_x_times", records_count: current_user.checkins_count_in(@episode)
-          .col-xs-4
+          .col-4
             .row
-              .col-xs.text-xs-center
+              .col.text-center
                 = @records.count + @current_user_records.count
                 .small
                   | Records
-              .col-xs.text-xs-center
+              .col.text-center
                 = @records.with_comment.count + @current_user_records.with_comment.count
                 .small
                   | Comments
-              .col-xs.text-xs-center
+              .col.text-center
                 = @episode.avg_rating.presence || "-"
                 .small
                   | Stars
         - if @episode.prev_episode.present? || @episode.next_episode.present?
           .row.mt-1
-            .col-xs
+            .col
               - if @episode.prev_episode.present?
                 = link_to work_episode_path(@work, @episode.prev_episode) do
                   = icon "angle-left", class: "mr-zp25"
                   = @episode.prev_episode.decorate.local_number
-            .col-xs.text-xs-right
+            .col.text-xs-right
               - if @episode.next_episode.present?
                 = link_to work_episode_path(@work, @episode.next_episode) do
                   = @episode.next_episode.decorate.local_number
@@ -72,26 +72,22 @@
                   = render "records/record", record: record
               hr
           - if @current_user_records.present?
-            h2.h4.text-xs-center.font-weight-bold.my-1
+            h2.h4.text-center.font-weight-bold.my-1
               = t "messages.episodes.show.your_records"
             .c-record-list
               - @current_user_records.each do |record|
                 = render "records/record", record: record
             hr
-            h2.h4.text-xs-center.font-weight-bold.my-1 = (@user_records.present? || @current_user_records.present?) ? t("messages.episodes.show.comments_by_others") : t("words.comments")
-            - if @records.with_comment.present?
-              .c-record-list
-                - @records.with_comment.each do |record|
-                  = render "records/record", record: record
-            - else
-              p
-                = icon "info-circle"
-                = t "messages.episodes.show.no_records"
+          - if @records.with_comment.present?
+            h2.h4.text-center.font-weight-bold.my-1
+              = (@user_records.present? || @current_user_records.present?) ? t("messages.episodes.show.comments_by_others") : t("words.comments")
+            .c-record-list
+              - @records.with_comment.each do |record|
+                = render "records/record", record: record
+          - else
+            = render "application/components/empty", text: t("messages.episodes.show.no_records")
 
 = render "application/components/footer"
-
-- unless user_signed_in?
-  = render "application/components/sign_up_modal", user: @new_user
 
 - content_for :js_templates do
   = render "application/js_templates/like_button"

@@ -2,12 +2,12 @@
 
 .l-topbar.container-fluid.px-1
   .row.flex-items-xs-between
-    .col-xs
+    .col
       = render "db/application/topbar_title", parent: DbActivity.model_name.human(count: 2)
 
 .container-fluid.p-1
   .row
-    .c-card.col-xs-8.offset-xs-2.p-1
+    .c-card.col-8.offset-xs-2.p-1
       - @activities.each do |activity|
         - if activity.trackable.present?
           - if activity.root_resource_action?

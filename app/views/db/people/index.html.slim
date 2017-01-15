@@ -2,10 +2,10 @@
 
 .l-topbar.container-fluid.px-1
   .row.flex-items-xs-between
-    .col-xs
+    .col
       = render "db/application/topbar_title", parent: t("resources.person.people_list")
     - if user_signed_in? && current_user.committer?
-      .col-xs.text-xs-right
+      .col.text-xs-right
         = link_to new_db_person_path, class: "btn btn-outline-primary" do
           = icon "plus"
           = t "resources.person.new_person"

@@ -25,8 +25,8 @@ en:
       index_guest:
         hero_description_html: Explore the anime database, track anime you are watching<br>and see what friends are watching.
         hero_description_mobile_html: Track anime you are watching<br>and see what friends are watching.
-        hero_title: The platform for Anime Addicts.
-        sign_up: Start tracking
+        hero_title: The platform for Anime addicts.
+        start_tracking: Start Tracking
     components:
       mute_user_button:
         the_user_has_been_muted: The user has been muted.

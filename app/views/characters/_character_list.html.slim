@@ -3,12 +3,12 @@
     - casts.each_slice(3).each do |casts|
       .p-character-list__row.row
         - casts.each do |cast|
-          .col-xs-4
+          .col-4
             .row
-              .p-character-list__character-image.col-xs.pr-0
+              .p-character-list__character-image.col.pr-0
                 = link_to character_path(cast.character) do
                   = image_tag ann_image_url(cast.character.character_image, :attachment, size: "64x64"), class: "img-fluid rounded"
-              .col-xs
+              .col
                 .p-character-list__character-name = link_to cast.character.decorate.local_name, character_path(cast.character)
                 .p-character-list__cast-name.small
                   span CV: 

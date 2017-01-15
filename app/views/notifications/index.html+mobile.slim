@@ -8,7 +8,7 @@
     - @notifications.each do |notification|
       = render "notification", notification: notification
 
-    .text-xs-center.mt-1
+    .text-center.mt-1
       = paginate @notifications
   - else
     .info.well
