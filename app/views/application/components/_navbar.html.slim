@@ -5,7 +5,7 @@ nav.c-navbar.navbar.navbar-toggleable-md class="#{transparent ? 'navbar-dark is-
   = link_to root_path, class: "navbar-brand" do
     = image_tag "logos/color-#{transparent ? 'white' : 'mizuho'}.png", size: "25x30", alt: "Annict"
   .collapse.navbar-collapse.align-items-center
-    ul.navbar-nav.navbar-nav--left.mr-auto
+    ul.navbar-nav.navbar-nav--left.mr-auto.align-items-center
       - if user_signed_in?
         li.nav-item
           = link_to t("head.title.programs.index"), programs_path, class: "nav-link"

@@ -6,7 +6,7 @@ module HeadHelper
       reverse: true,
       site: "Annict",
       og: {
-        title: page_title(page_title_symbol: :site_page_title, separator: " | "),
+        title: meta_tags.full_title(site: "Annict"),
         type: "website",
         url: request.url,
         description: t("head.meta.description._common"),
@@ -20,7 +20,7 @@ module HeadHelper
       twitter: {
         card: "summary",
         site: "@anannict",
-        title: "Annict",
+        title: meta_tags.full_title(site: "Annict"),
         description: t("head.meta.description._common"),
         image: "#{ENV.fetch('ANNICT_URL')}/images/og_image.png"
       }
@@ -28,7 +28,10 @@ module HeadHelper
   end
 
   def meta_description(text = "")
-    "#{text} - #{t('head.meta.description._common')}"
+    ary = []
+    ary << "#{text} -" if text.present?
+    ary << t("head.meta.description._common")
+    ary.join(" ")
   end
 
   def meta_keywords(*keywords)
