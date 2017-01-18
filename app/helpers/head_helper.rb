@@ -5,6 +5,8 @@ module HeadHelper
     display_meta_tags(
       reverse: true,
       site: "Annict",
+      description: meta_description,
+      keywords: meta_keywords,
       og: {
         title: meta_tags.full_title(site: "Annict"),
         type: "website",
