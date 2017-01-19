@@ -14,11 +14,13 @@ class Db::DraftWorksController < Db::ApplicationController
     else
       DraftWork.new
     end
+    authorize @draft_work, :new?
     @draft_work.build_edit_request
   end
 
   def create(draft_work)
     @draft_work = DraftWork.new(draft_work)
+    authorize @draft_work, :create?
     @draft_work.edit_request.user = current_user
 
     if draft_work[:work_id].present?

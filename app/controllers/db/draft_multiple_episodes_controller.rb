@@ -6,11 +6,13 @@ class Db::DraftMultipleEpisodesController < Db::ApplicationController
 
   def new(work_id)
     @draft_multiple_episode = @work.draft_multiple_episodes.new
+    authorize @draft_multiple_episode, :new?
     @draft_multiple_episode.build_edit_request
   end
 
   def create(draft_multiple_episode)
     @draft_multiple_episode = @work.draft_multiple_episodes.new(draft_multiple_episode)
+    authorize @draft_multiple_episode, :create?
     @draft_multiple_episode.edit_request.user = current_user
 
     if @draft_multiple_episode.save

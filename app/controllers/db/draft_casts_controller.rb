@@ -13,12 +13,14 @@ module Db
       else
         @work.draft_casts.new
       end
+      authorize @draft_cast, :new?
       @draft_cast.sort_number = (@work.casts.count * 10) + 10
       @draft_cast.build_edit_request
     end
 
     def create(draft_cast)
       @draft_cast = @work.draft_casts.new(draft_cast)
+      authorize @draft_cast, :create?
       @draft_cast.edit_request.user = current_user
       if @draft_cast.name.blank? && @draft_cast.person.present?
         @draft_cast.name = @draft_cast.person.name

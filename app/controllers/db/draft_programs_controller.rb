@@ -13,11 +13,13 @@ class Db::DraftProgramsController < Db::ApplicationController
     else
       @work.draft_programs.new
     end
+    authorize @draft_program, :new?
     @draft_program.build_edit_request
   end
 
   def create(draft_program)
     @draft_program = @work.draft_programs.new(draft_program)
+    authorize @draft_program, :create?
     @draft_program.edit_request.user = current_user
 
     if draft_program[:program_id].present?

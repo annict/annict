@@ -10,6 +10,7 @@ class Db::DraftItemsController < Db::ApplicationController
       @item = @work.item
       attributes = @item.attributes.slice(*Item::DIFF_FIELDS.map(&:to_s))
       @draft_item = @work.draft_items.new(attributes)
+      authorize @draft_item, :new?
       @draft_item.origin = @item
     else
       @draft_item = @work.draft_items.new
@@ -20,6 +21,7 @@ class Db::DraftItemsController < Db::ApplicationController
 
   def create(draft_item)
     @draft_item = @work.draft_items.new(draft_item)
+    authorize @draft_item, :create?
     @draft_item.edit_request.user = current_user
 
     if draft_item[:item_id].present?

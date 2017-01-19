@@ -15,11 +15,13 @@ module Db
       else
         DraftOrganization.new
       end
+      authorize @draft_organization, :new?
       @draft_organization.build_edit_request
     end
 
     def create(draft_organization)
       @draft_organization = DraftOrganization.new(draft_organization)
+      authorize @draft_organization, :create?
       @draft_organization.edit_request.user = current_user
 
       if draft_organization[:organization_id].present?

@@ -9,11 +9,13 @@ class Db::DraftEpisodesController < Db::ApplicationController
     @episode = @work.episodes.find(id)
     attributes = @episode.attributes.slice(*Episode::DIFF_FIELDS.map(&:to_s))
     @draft_episode = @work.draft_episodes.new(attributes)
+    authorize @draft_episode, :new?
     @draft_episode.build_edit_request
   end
 
   def create(draft_episode)
     @draft_episode = @work.draft_episodes.new(draft_episode)
+    authorize @draft_episode, :create?
     @draft_episode.edit_request.user = current_user
     @episode = @work.episodes.find(draft_episode[:episode_id])
     @draft_episode.origin = @episode

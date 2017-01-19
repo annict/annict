@@ -15,6 +15,7 @@ module Db
       else
         @work.draft_staffs.new
       end
+      authorize @draft_staff, :new?
       @draft_staff.resource_type = (params[:type].presence || "").classify
       @draft_staff.sort_number = (@work.staffs.count * 10) + 10
       @draft_staff.build_edit_request
@@ -22,6 +23,7 @@ module Db
 
     def create(draft_staff)
       @draft_staff = @work.draft_staffs.new(draft_staff)
+      authorize @draft_staff, :create?
       @draft_staff.edit_request.user = current_user
       if @draft_staff.name.blank? && @draft_staff.resource.present?
         @draft_staff.name = @draft_staff.resource.name
