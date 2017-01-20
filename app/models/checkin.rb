@@ -101,6 +101,9 @@ class Checkin < ActiveRecord::Base
 
   def share_to_sns
     TwitterService.new(user).delay.share!(self) if shared_twitter?
-    FacebookService.new(user).delay.share!(self) if shared_facebook?
+    if shared_facebook?
+      source = work.item.decorate.image_url(:tombo_image, size: "600x315")
+      FacebookService.new(user).delay.share!(self, source)
+    end
   end
 end
