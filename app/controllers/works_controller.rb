@@ -55,6 +55,9 @@ class WorksController < ApplicationController
 
   def show
     @work = Work.published.find(params[:id])
+    @episodes = @work.episodes.published
+    @casts = @work.casts.published
+    @staffs = @work.staffs.published
     @status = current_user.latest_statuses.find_by(work: @work) if user_signed_in?
   end
 

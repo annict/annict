@@ -28,4 +28,4 @@ en:
       tracks:
         show: Track
       works:
-        show: Anime "%{title}"
+        show: "%{title} (Anime)"

@@ -89,3 +89,7 @@ en:
     work_images:
       index:
         dropzone-empty: Drop your image here or click to upload.
+    works:
+      view_all_n_characters: View all %{n} characters
+      view_all_n_episodes: View all %{n} episodes
+      view_all_n_staffs: View all %{n} staffs

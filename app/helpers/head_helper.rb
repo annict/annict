@@ -5,10 +5,11 @@ module HeadHelper
     display_meta_tags(
       reverse: true,
       site: "Annict",
+      separator: " |",
       description: meta_description,
       keywords: meta_keywords,
       og: {
-        title: meta_tags.full_title(site: "Annict"),
+        title: meta_tags.full_title(site: "Annict", separator: " |"),
         type: "website",
         url: request.url,
         description: t("head.meta.description._common"),
@@ -22,7 +23,7 @@ module HeadHelper
       twitter: {
         card: "summary",
         site: "@anannict",
-        title: meta_tags.full_title(site: "Annict"),
+        title: meta_tags.full_title(site: "Annict", separator: " |"),
         description: t("head.meta.description._common"),
         image: "#{ENV.fetch('ANNICT_URL')}/images/og_image.png"
       }

@@ -13,3 +13,5 @@
                 .p-character-list__cast-name.small
                   span CV: 
                   = link_to cast.decorate.local_name_with_old, person_path(cast.person)
+  - else
+    = render "application/components/empty", text: t("messages.works.no_characters")
