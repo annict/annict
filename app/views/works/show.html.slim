@@ -10,13 +10,9 @@
 .container.py-1
   .row
     .col-3.pr-0
-      .c-card.container.py-1
-        = render "sidebar", work: @work
+      = render "sidebar", work: @work
     .col-9
-      .c-card
-        .container.py-1
-          h1.mb-0 = @work.decorate.local_title
-        = render "subnav", work: @work
+      = render "subnav", work: @work
 
       h2.h4.text-center.my-2.font-weight-bold = t "words.episodes"
       .c-card.mt-1.py-1

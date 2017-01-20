@@ -1,4 +1,6 @@
 = image_tag ann_image_url(work.work_image, :attachment, size: "280x373"), class: "img-fluid rounded mb-zp5"
+h1.h2.font-weight-bold.mb-1
+  = @work.decorate.local_title
 c-status-selector work-id="#{work.id}" current-status-kind="#{user_signed_in? ? current_user.status_kind(work) : 'no_select'}" :is-signed-in="#{user_signed_in?}"
 h2.h4.text-center.font-weight-bold.my-1 = t "words.information"
 ul.list-unstyled
