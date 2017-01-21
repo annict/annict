@@ -8,6 +8,8 @@ en:
           show: Looking for character information on %{name}? Find out more with Annict!
         episodes:
           index: Looking for episode information on %{title}? Find out more with Annict!
+        people:
+          show: Looking for information on %{name}? Find out more with Annict!
         staffs:
           index: Looking for staff information on %{title}? Find out more with Annict!
         works:
@@ -31,6 +33,8 @@ en:
         index: Notifications
       pages:
         about: About
+      people:
+        show: "%{name}"
       programs:
         index: Programs
       registrations:
