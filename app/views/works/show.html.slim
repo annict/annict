@@ -7,7 +7,7 @@
 
 = render "application/components/navbar"
 
-.container.py-1
+.container.py-1.mb-2
   .row
     .col-3.pr-0
       = render "sidebar", work: @work
@@ -16,9 +16,10 @@
 
       h2.h4.text-center.my-2.font-weight-bold = t "words.episodes"
       .c-card.mt-1.py-1
-        - if @work.episodes.published.present?
-          .container.mb-zp5
-            = link_to t("words.bulk_tracking"), work_episodes_path(@work, tracking: "on"), class: "small"
+        - if @episodes.present?
+          - if user_signed_in?
+            .container.mb-zp5
+              = link_to t("words.bulk_tracking"), work_episodes_path(@work, tracking: "on"), class: "small"
           table.p-episodes-table.table.mb-0
             tbody
               - @episodes.order(:sort_number).limit(10).each do |episode|

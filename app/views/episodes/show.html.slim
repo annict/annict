@@ -7,11 +7,10 @@
 
 = render "application/components/navbar"
 
-.container.py-1
+.container.py-1.mb-2
   .row
     .col-3.pr-0
-      .c-card.container.py-1
-        = render "works/sidebar", work: @work
+      = render "works/sidebar", work: @work
     .col-9
       .c-card.mb-1
         .container.py-1

@@ -31,6 +31,10 @@ class EpisodesController < ApplicationController
   before_action :load_record_user, only: %i(show)
   before_action :load_i18n, only: %i(show)
 
+  def index
+    @episodes = @work.episodes.published
+  end
+
   def show
     service = RecordsListService.new(@episode, current_user, @record_user)
 

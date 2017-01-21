@@ -3,6 +3,8 @@ en:
     meta:
       description:
         _common: Annict is the platform for Anime addicts. Track your watching anime, follow friends, read their reviews, and much more!
+        episodes:
+          index: Looking for episode information on %{title}? Find out more with Annict!
         works:
           show: Looking for information on %{title}? Find out more with Annict!
       keywords:
@@ -10,6 +12,8 @@ en:
     title:
       channels:
         index: Channel List
+      episodes:
+        index: Episodes of %{title} (Anime)
       friends:
         index: Find Friends
       home:
