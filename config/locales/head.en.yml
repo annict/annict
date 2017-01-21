@@ -7,6 +7,8 @@ en:
           index: Looking for character information on %{title}? Find out more with Annict!
         episodes:
           index: Looking for episode information on %{title}? Find out more with Annict!
+        staffs:
+          index: Looking for staff information on %{title}? Find out more with Annict!
         works:
           show: Looking for information on %{title}? Find out more with Annict!
       keywords:
@@ -33,6 +35,8 @@ en:
         new: Sign Up
       sessions:
         new: Sign In
+      staffs:
+        index: Staffs of %{title} (Anime)
       tracks:
         show: Track
       works:
