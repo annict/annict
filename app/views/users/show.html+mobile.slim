@@ -14,11 +14,9 @@
 
     .p-profile-header__profile.container.text-center.pt-zp5
       h1.h2.mb-zp5
-        = link_to user_path(@user.username) do
-          = @user.profile.name
+        = link_to @user.profile.name, user_path(@user.username)
       .mt-zp5
-        = link_to user_path(@user.username) do
-          = "@#{@user.username}"
+        = link_to "@#{@user.username}", user_path(@user.username)
 
       - if @user.profile.description.present?
         .small.text-muted.mt-zp5

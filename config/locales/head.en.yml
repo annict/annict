@@ -19,6 +19,7 @@ en:
           index: Looking for staff information on %{title}? Find out more with Annict!
         users:
           show: Check out %{profile_name} (@%{username})'s profile!
+          works: Check out %{profile_name} (@%{username})'s profile!
         works:
           season: Looking for information on %{name} anime? Find out more with Annict!
           show: Looking for information on %{title}? Find out more with Annict!
@@ -60,6 +61,7 @@ en:
         show: Track
       users:
         show: "%{profile_name} (@%{username})"
+        works: "%{profile_name} (@%{username})'s \"%{action}\" anime"
       works:
         season: "%{name} Anime"
         show: "%{title} (Anime)"
