@@ -1,10 +1,16 @@
+- title = t "head.title.registrations.new"
+- description = meta_description t("head.meta.description.registrations.new")
+- keywords = meta_keywords
+- set_meta_tags(title: title, description: description, keywords: keywords, og: { description: description }, twitter: { description: description }, reverse: true, prefix: false)
+- set_page_category "registrations_new"
+
 .container
   .row.align-items-center
     .col-6.offset-3.py-3
       .text-center.mb-3
         = link_to root_path do
           = image_tag "logos/color-mizuho.png", size: "50x61", alt: "Annict"
-      .c-card.px-1.py-2.mb-1
+      .c-card.px-1.pt-1.pb-2.mb-1
         = render "application/components/sign_up_form", user: @new_user
       .text-center
         small = t "messages.registrations.new.sign_in_link_html", link: link_to(t("words.sign_in"), new_user_session_path)

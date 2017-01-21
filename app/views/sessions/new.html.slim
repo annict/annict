@@ -1,3 +1,9 @@
+- title = t "head.title.sessions.new"
+- description = meta_description t("head.meta.description.sessions.new")
+- keywords = meta_keywords
+- set_meta_tags(title: title, description: description, keywords: keywords, og: { description: description }, twitter: { description: description }, reverse: true, prefix: false)
+- set_page_category "sessions_new"
+
 .container
   .row.align-items-center
     .col-6.offset-3.py-3

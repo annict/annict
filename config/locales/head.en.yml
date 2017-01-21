@@ -15,6 +15,10 @@ en:
           show: Looking for information on %{name}? Find out more with Annict!
         records:
           show: Check out %{profile_name} (@%{username})'s records!
+        registrations:
+          new: Start using Annict!
+        sessions:
+          new: Welcome back!
         staffs:
           index: Looking for staff information on %{title}? Find out more with Annict!
         users:
