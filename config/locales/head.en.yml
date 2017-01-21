@@ -5,6 +5,7 @@ en:
         _common: Annict is the platform for Anime addicts. Track your watching anime, follow friends, read their reviews, and much more!
         characters:
           index: Looking for character information on %{title}? Find out more with Annict!
+          show: Looking for character information on %{name}? Find out more with Annict!
         episodes:
           index: Looking for episode information on %{title}? Find out more with Annict!
         staffs:
@@ -18,6 +19,7 @@ en:
         index: Channel List
       characters:
         index: Characters of %{title} (Anime)
+        show: "%{name}"
       episodes:
         index: Episodes of %{title} (Anime)
       friends:

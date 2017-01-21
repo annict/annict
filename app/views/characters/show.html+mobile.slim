@@ -1,71 +1,93 @@
-- title = t "head.title.characters.show", title: @character.decorate.name_with_kind
-- description = meta_description(t("head.meta.description.characters.show", title: title))
-- keywords = meta_keywords(@character.name)
-- set_meta_tags(title: title, description: description, keywords: keywords, og: { title: title, description: description }, reverse: true, prefix: false)
+- name = t "head.title.characters.show", name: @character.decorate.name_with_kind
+- description = meta_description t("head.meta.description.characters.show", name: name)
+- keywords = meta_keywords @character.name
+- image_url = ann_image_url(@character.character_images.first, :attachment, size: "640x")
+- set_meta_tags(title: name, description: description, keywords: keywords, og: { description: description, image: image_url }, twitter: { description: description, image: image_url }, reverse: true, prefix: false)
 - set_page_category "characters_show"
 
 = render "characters/header", character: @character
 
-.c-card
-  = render "subnav", character: @character
+.c-card.mb-2
   .container.mt-1.py-1
     h2.h4.text-center.font-weight-bold.mb-1
       = t "words.information"
-    table.c-center-reflow-table.c-center-reflow-table--no-border.c-center-reflow-table--text-align-center.table.table-reflow.mb-0
-      thead
-        tr
-          th = t "words.name"
-          - if @character.name_kana.present?
-            th = t "words.name_kana"
-          - if @character.name_en.present?
-            th = t "words.name_en"
-          - if @character.nickname.present?
-            th = t "words.nickname"
-          - if @character.kind.present?
-            th = t "words.kind"
-          - if @character.birthday.present?
-            th = t "words.birthday"
-          - if @character.age.present?
-            th = t "words.age"
-          - if @character.blood_type.present?
-            th = t "words.blood_type"
-          - if @character.height.present?
-            th = t "words.height"
-          - if @character.weight.present?
-            th = t "words.weight"
-          - if @character.nationality.present?
-            th = t "words.nationality"
-          - if @character.occupation.present?
-            th = t "words.occupation"
-          - if @character.description.present?
-            th = t "words.description"
-      tbody
-        tr
-          td = @character.name
-          - if @character.name_kana.present?
-            td = @character.name_kana
-          - if @character.name_en.present?
-            td = @character.name_en
-          - if @character.nickname.present?
-            td = @character.nickname
-          - if @character.kind.present?
-            td = @character.kind
-          - if @character.birthday.present?
-            td = @character.birthday.strftime("%Y年%m月%d日")
-          - if @character.age.present?
-            td = @character.age
-          - if @character.blood_type.present?
-            td = @character.blood_type_text
-          - if @character.height.present?
-            td = "#{@character.height}cm"
-          - if @character.weight.present?
-            td = "#{@character.weight}kg"
-          - if @character.nationality.present?
-            td = t "words.nationality"
-          - if @character.occupation.present?
-            td = t "words.occupation"
-          - if @character.description.present?
-            td = t "words.description"
+    .row
+      .col.text-right.font-weight-bold
+        = t "words.name"
+      .col
+        = @character.name
+    - if @character.name_kana.present?
+      .row
+        .col.text-right.font-weight-bold
+          = t "words.name_kana"
+        .col
+          = @character.name_kana
+    - if @character.name_en.present?
+      .row
+        .col.text-right.font-weight-bold
+          = t "words.name_en"
+        .col
+          = @character.name_en
+    - if @character.nickname.present?
+      .row
+        .col.text-right.font-weight-bold
+          = t "words.nickname"
+        .col
+          = @character.nickname
+    - if @character.kind.present?
+      .row
+        .col.text-right.font-weight-bold
+          = t "words.kind"
+        .col
+          = @character.kind
+    - if @character.birthday.present?
+      .row
+        .col.text-right.font-weight-bold
+          = t "words.birthday"
+        .col
+          = @character.birthday.strftime("%Y年%m月%d日")
+    - if @character.age.present?
+      .row
+        .col.text-right.font-weight-bold
+          = t "words.age"
+        .col
+          = @character.age
+    - if @character.blood_type.present?
+      .row
+        .col.text-right.font-weight-bold
+          = t "words.blood_type"
+        .col
+          = @character.blood_type_text
+    - if @character.height.present?
+      .row
+        .col.text-right.font-weight-bold
+          = t "words.height"
+        .col
+          = "#{@character.height}cm"
+    - if @character.weight.present?
+      .row
+        .col.text-right.font-weight-bold
+          = t "words.weight"
+        .col
+          = "#{@character.weight}kg"
+    - if @character.nationality.present?
+      .row
+        .col.text-right.font-weight-bold
+          = t "words.nationality"
+        .col
+          = @character.nationality
+    - if @character.occupation.present?
+      .row
+        .col.text-right.font-weight-bold
+          = t "words.occupation"
+        .col
+          = @character.occupation
+    - if @character.description.present?
+      .row
+        .col.text-right.font-weight-bold
+          = t "words.description"
+        .col
+          = @character.description
   hr
   .container.py-1
     h2.h4.text-center.font-weight-bold.mb-1

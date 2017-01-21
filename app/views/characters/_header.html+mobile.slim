@@ -1,6 +1,8 @@
 .c-card.container.py-1.mb-1
   .row
     .col-4.pr-0
-      = image_tag ann_image_url(character.character_image, :attachment, size: "280x373"), class: "img-fluid rounded"
+      = link_to character_path(character) do
+        = image_tag ann_image_url(character.character_image, :attachment, size: "280x373"), class: "img-fluid rounded"
     .col-8
-      h1.h3 = character.decorate.local_name
+      h1.h3
+        = link_to character.decorate.local_name, character_path(character)

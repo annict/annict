@@ -20,7 +20,6 @@ class CharacterDecorator < ApplicationDecorator
   def local_kind
     return kind if I18n.locale == :ja
     return kind_en if kind_en.present?
-    name
   end
 
   def name_with_kind

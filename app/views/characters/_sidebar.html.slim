@@ -1,5 +1,7 @@
-= image_tag ann_image_url(character.character_image, :attachment, size: "280x373"), class: "img-fluid rounded mb-zp5"
-h1.h2 = character.decorate.local_name
+= link_to character_path(character) do
+  = image_tag ann_image_url(character.character_image, :attachment, size: "280x373"), class: "img-fluid rounded mb-zp5"
+h1.h2
+  = link_to character.decorate.local_name, character_path(character)
 h2.h4.font-weight-bold.mt-2.mb-1
   = icon "sticky-note-o", class: "mr-zp25"
   = t "words.information"
