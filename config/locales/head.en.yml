@@ -9,6 +9,8 @@ en:
         episodes:
           index: Looking for episode information on %{title}? Find out more with Annict!
           show: Looking for reviews on %{work_title} %{episode_title_with_number}? Find out more with Annict!
+        organizations:
+          show: Looking for information on %{name}? Find out more with Annict!
         people:
           show: Looking for information on %{name}? Find out more with Annict!
         staffs:
@@ -34,6 +36,8 @@ en:
         index_guest: The platform for Anime addicts.
       notifications:
         index: Notifications
+      organizations:
+        show: "%{name}"
       pages:
         about: About
       people:
