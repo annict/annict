@@ -18,6 +18,8 @@ en:
         staffs:
           index: Looking for staff information on %{title}? Find out more with Annict!
         users:
+          followers: Check out %{profile_name} (@%{username})'s profile!
+          following: Check out %{profile_name} (@%{username})'s profile!
           show: Check out %{profile_name} (@%{username})'s profile!
           works: Check out %{profile_name} (@%{username})'s profile!
         works:
@@ -60,6 +62,8 @@ en:
       tracks:
         show: Track
       users:
+        followers: People following %{profile_name} (@%{username})
+        following: People followed by %{profile_name} (@%{username})
         show: "%{profile_name} (@%{username})"
         works: "%{profile_name} (@%{username})'s \"%{action}\" anime"
       works:

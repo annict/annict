@@ -6,8 +6,7 @@
 - set_meta_tags(title: title, description: description, keywords: keywords, og: { description: description }, twitter: { description: description }, reverse: true, prefix: false)
 - set_page_category "users_works"
 
-.c-card
-  = render "users/low_profile_header", user: @user
+= render "users/low_profile_header", user: @user
 
 .p-users-works__subnav.c-subnav
   - %i(watching wanna_watch watched on_hold stop_watching).each do |status_kind|

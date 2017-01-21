@@ -1,13 +1,14 @@
-.c-subnav.c-subnav--divided
-  ul.list-unstyled
-    li
-      = active_link_to following_user_path(user.username), class: "py-zp5", class_active: "c-subnav__link--active", active: current_page?(action: :following) do
+.c-subnav
+  = active_link_to following_user_path(user.username), class: "c-subnav__link", class_active: "c-subnav__link--active", active: current_page?(action: :following) do
+    .c-subnav__item
+      .text-center
         .mb-zp25
           = user.followings.count
         .small
           | Following
-    li
-      = active_link_to followers_user_path(user.username), class: "py-zp5", class_active: "c-subnav__link--active", active: current_page?(action: :followers) do
+  = active_link_to followers_user_path(user.username), class: "c-subnav__link", class_active: "c-subnav__link--active", active: current_page?(action: :followers) do
+    .c-subnav__item
+      .text-center
         .mb-zp25
           = user.followers.count
         .small
