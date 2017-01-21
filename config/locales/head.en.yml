@@ -23,6 +23,7 @@ en:
           show: Check out %{profile_name} (@%{username})'s profile!
           works: Check out %{profile_name} (@%{username})'s profile!
         works:
+          popular: Looking for popular anime? Find out more with Annict!
           season: Looking for information on %{name} anime? Find out more with Annict!
           show: Looking for information on %{title}? Find out more with Annict!
       keywords:
@@ -67,5 +68,6 @@ en:
         show: "%{profile_name} (@%{username})"
         works: "%{profile_name} (@%{username})'s \"%{action}\" anime"
       works:
+        popular: Popular anime
         season: "%{name} Anime"
         show: "%{title} (Anime)"

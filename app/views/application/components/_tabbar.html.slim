@@ -22,6 +22,7 @@
         - if current_user.notifications_count > 0
           span.c-navbar__notifications-count--in-dropdown
             = current_user.notifications_count
+      = link_to t("words.popular"), popular_works_path, class: "dropdown-item p-1"
       = link_to t("words.search"), search_path, class: "dropdown-item p-1"
       = link_to t("head.title.friends.index"), friends_path, class: "dropdown-item p-1"
       = link_to t("head.title.channels.index"), channels_path, class: "dropdown-item p-1"
@@ -44,4 +45,6 @@
       = icon "bars", class: "d-block"
       span.c-tabbar__text = t "words.more"
     .dropdown-menu
+      = link_to t("words.popular"), popular_works_path, class: "dropdown-item p-1"
+      = link_to t("words.search"), search_path, class: "dropdown-item p-1"
       = link_to t("head.title.sessions.new"), new_user_session_path, class: "dropdown-item p-1"

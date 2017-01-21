@@ -1,19 +1,20 @@
 - title = t "head.title.works.popular"
 - description = meta_description(t("head.meta.description.works.popular"))
 - keywords = meta_keywords
-- set_meta_tags(title: title, description: description, keywords: keywords, og: { title: title, description: description }, reverse: true, prefix: false)
+- set_meta_tags(title: title, description: description, keywords: keywords, og: { description: description }, twitter: { description: description }, reverse: true, prefix: false)
 - set_page_category "works_popular"
 
-.container
-  .row.py-1
-    .col
-    .col.text-right
-      = render "display_option_buttons"
-
 - if user_signed_in?
-  = render "works/#{current_user.setting.display_option_work_list}", works: @works
-- else
-  = render "works/list", works: @works
+  .text-center.my-1
+    = render "display_option_buttons"
+
+.mb-2
+  - if user_signed_in?
+    = render "works/#{current_user.setting.display_option_work_list}", works: @works
+  - else
+    = render "works/list", works: @works
+  .text-center
+    = paginate @works, window: 2
 
 = render "application/components/footer"
 = render "application/components/tabbar"
