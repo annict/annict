@@ -1,8 +1,8 @@
-- title = t "head.title.episodes.show", work_title: @work.decorate.local_title, episode_title: @episode.decorate.local_title, episode_number: @episode.decorate.local_number
-- description = meta_description(t("head.meta.description.episodes.show", work_title: @work.decorate.local_title, episode_title: @episode.decorate.local_title, episode_number: @episode.decorate.local_number))
-- keywords = meta_keywords(@work.title)
-- image_url = ann_image_tag(@work.work_image, :attachment, size: "640x")
-- set_meta_tags(title: title, description: description, keywords: keywords, og: { title: title, description: description, image: image_url }, reverse: true, prefix: false)
+- title = t "head.title.episodes.show", work_title: @work.decorate.local_title, episode_title_with_number: @episode.decorate.title_with_number
+- description = meta_description(t("head.meta.description.episodes.show", work_title: @work.decorate.local_title, episode_title_with_number: @episode.decorate.title_with_number))
+- keywords = meta_keywords(@work.decorate.local_title)
+- image_url = ann_image_url(@work.work_image, :attachment, size: "640x")
+- set_meta_tags(title: title, description: description, keywords: keywords, og: { description: description, image: image_url }, twitter: { description: description, image: image_url }, reverse: true, prefix: false)
 - set_page_category "episodes_show"
 
 = render "application/components/navbar"
@@ -12,12 +12,9 @@
     .col-3.pr-0
       = render "works/sidebar", work: @work
     .col-9
-      .c-card.mb-1
-        .container.py-1
-          h1.mb-0 = @work.decorate.local_title
-        = render "works/subnav", work: @work
-      .c-card.container.py-1.mb-1
-        .row
+      = render "works/subnav", work: @work
+      .c-card.container.py-1.my-1
+        .row.align-items-center
           .col-8
             h2
               - if @episode.decorate.local_number.present?
@@ -56,12 +53,10 @@
                   = icon "angle-right", class: "ml-zp25"
 
       .c-card.py-1
-        .container
-          - if user_signed_in?
+        - if user_signed_in?
+          .container
             = render "records/form", record: @record
-          - else
-            = render "application/components/welcome"
-        hr
+            hr
         .container
           - if @user_records.present?
             - if (user_signed_in? && current_user != @record_user) || !user_signed_in?

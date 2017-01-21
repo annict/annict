@@ -8,7 +8,7 @@ c-record inline-template="" :user-id="#{record.user.id}"
         .row
           .col
             = link_to record.user.profile.name, user_path(record.user.username)
-          .col
+          .col.col-auto.pl-0
             .text-right
               - if record.modify_comment?
                 small.mr-zp25.text-muted

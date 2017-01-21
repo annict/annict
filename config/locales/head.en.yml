@@ -8,6 +8,7 @@ en:
           show: Looking for character information on %{name}? Find out more with Annict!
         episodes:
           index: Looking for episode information on %{title}? Find out more with Annict!
+          show: Looking for reviews on %{work_title} %{episode_title_with_number}? Find out more with Annict!
         people:
           show: Looking for information on %{name}? Find out more with Annict!
         staffs:
@@ -24,6 +25,7 @@ en:
         show: "%{name}"
       episodes:
         index: Episodes of %{title} (Anime)
+        show: Anime "%{work_title}" - %{episode_title_with_number}
       friends:
         index: Find Friends
       home:

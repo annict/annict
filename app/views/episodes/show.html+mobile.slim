@@ -1,8 +1,8 @@
-- title = t "head.title.episodes.show", work_title: @work.decorate.local_title, episode_title: @episode.decorate.local_title, episode_number: @episode.decorate.local_number
-- description = meta_description(t("head.meta.description.episodes.show", work_title: @work.decorate.local_title, episode_title: @episode.decorate.local_title, episode_number: @episode.decorate.local_number))
-- keywords = meta_keywords(@work.title)
-- image_url = ann_image_tag(@work.work_image, :attachment, size: "640x")
-- set_meta_tags(title: title, description: description, keywords: keywords, og: { title: title, description: description, image: image_url }, reverse: true, prefix: false)
+- title = t "head.title.episodes.show", work_title: @work.decorate.local_title, episode_title_with_number: @episode.decorate.title_with_number
+- description = meta_description(t("head.meta.description.episodes.show", work_title: @work.decorate.local_title, episode_title_with_number: @episode.decorate.title_with_number))
+- keywords = meta_keywords(@work.decorate.local_title)
+- image_url = ann_image_url(@work.work_image, :attachment, size: "640x")
+- set_meta_tags(title: title, description: description, keywords: keywords, og: { description: description, image: image_url }, twitter: { description: description, image: image_url }, reverse: true, prefix: false)
 - set_page_category "episodes_show"
 
 = render "works/header", work: @work
@@ -13,7 +13,7 @@
       = link_to work_episode_path(@work, @episode.prev_episode), class: "p-episode-title-header__prev h3 text-center mb-0" do
         = icon "angle-left"
     .p-episode-title-header__main
-      h2.h4
+      h2.h4.text-center
         - if @episode.decorate.local_number.present?
           span.pr-zp5 = @episode.decorate.local_number
         - if @episode.decorate.local_title.present?
@@ -22,7 +22,7 @@
         .small
           = icon "check", class: "mr-zp25"
           = t "messages.episodes.watched_x_times", records_count: current_user.checkins_count_in(@episode)
-      .container.mt-zp5
+      .container.mt-1
         .row
           .col.text-center.u-lh-sm
             = @records.count + @current_user_records.count
@@ -40,13 +40,11 @@
       = link_to work_episode_path(@work, @episode.next_episode), class: "p-episode-title-header__next h3 text-center mb-0" do
         = icon "angle-right"
 
-.c-card.py-1
-  .container
-    - if user_signed_in?
+.c-card.mb-2.pb-1
+  - if user_signed_in?
+    .container
       = render "records/form", record: @record
-    - else
-      = render "application/components/welcome"
-  hr
+    hr
   .container
     - if @user_records.present?
       - if (user_signed_in? && current_user != @record_user) || !user_signed_in?
