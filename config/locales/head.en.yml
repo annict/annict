@@ -52,6 +52,9 @@ en:
         show: "%{name}"
       pages:
         about: About
+      passwords:
+        edit: Forgot your password?
+        new: Forgot your password?
       people:
         show: "%{name}"
       programs:

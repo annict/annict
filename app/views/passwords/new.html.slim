@@ -1,6 +1,12 @@
-.container.h-100
-  .row.align-items-center.h-100
-    .col-6.offset-3
+- title = t "head.title.passwords.new"
+- description = meta_description
+- keywords = meta_keywords
+- set_meta_tags(title: title, description: description, keywords: keywords, og: { description: description }, twitter: { description: description }, reverse: true, prefix: false)
+- set_page_category "passwords_new"
+
+.container
+  .row.align-items-center
+    .col-6.offset-3.py-3
       .text-center.mb-3
         = link_to root_path do
           = image_tag "logos/color-mizuho.png", size: "50x61", alt: "Annict"
