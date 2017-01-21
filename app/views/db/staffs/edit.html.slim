@@ -4,7 +4,7 @@
   .row.flex-items-xs-between
     .col-8
       = render "db/application/topbar_title", parent: @work, child: t("resources.staff.edit_staff")
-    .col.text-xs-right
+    .col.text-right
       = link_to work_path(@work), class: "btn btn-outline-primary", target: "_blank" do
         = icon "external-link"
         = t "resources.work.go_to_work"

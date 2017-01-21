@@ -49,7 +49,7 @@
                 = link_to work_episode_path(@work, @episode.prev_episode) do
                   = icon "angle-left", class: "mr-zp25"
                   = @episode.prev_episode.decorate.local_number
-            .col.text-xs-right
+            .col.text-right
               - if @episode.next_episode.present?
                 = link_to work_episode_path(@work, @episode.next_episode) do
                   = @episode.next_episode.decorate.local_number

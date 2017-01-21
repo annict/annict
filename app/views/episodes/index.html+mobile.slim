@@ -22,7 +22,7 @@
           tbody
             - @episodes.order(:sort_number).each do |episode|
               = render "episodes/episode_row", work: @work, episode: episode
-        .text-xs-right.pb-1
+        .text-right.pb-1
           button.btn.btn-secondary.mr-zp5 v-show="isTrackingMode" @click="disableTrackingMode"
             = t "words.cancel"
           button.btn.btn-primary :class="{ 'c-spinner': isTracking }" v-show="isTrackingMode" @click="track"

@@ -5,7 +5,7 @@
     .col
       = render "db/application/topbar_title", parent: t("resources.work.work_list")
     - if user_signed_in? && current_user.committer?
-      .col.text-xs-right
+      .col.text-right
         = link_to new_db_work_path, class: "btn btn-outline-primary" do
           = icon "plus"
           = t "resources.work.new_work"

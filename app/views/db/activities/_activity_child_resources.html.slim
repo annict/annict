@@ -5,7 +5,7 @@
         = link_to user_path(activity.user.username) do
           = ann_image_tag(activity.user.profile, :tombo_avatar, size: "35x35", class: "img-circle")
       = render "db/activities/activity_child_resources_action", activity: activity
-    .col-3.text-xs-right
+    .col-3.text-right
       = local_time_ago_in_words(activity.created_at)
   .db-activity-diff
     = activity.decorate.resource_diff_table

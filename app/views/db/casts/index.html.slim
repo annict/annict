@@ -5,7 +5,7 @@
     .col-8
       = render "db/application/topbar_title", parent: @work, child: t("resources.cast.cast_list")
     - if user_signed_in? && current_user.committer?
-      .col.text-xs-right
+      .col.text-right
         = link_to new_db_work_cast_path(@work), class: "btn btn-outline-primary" do
           = icon "pencil-square-o"
           = t "resources.cast.new_casts"

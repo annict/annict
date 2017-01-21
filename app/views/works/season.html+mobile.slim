@@ -13,7 +13,7 @@
         .dropdown-menu.pre-scrollable.mr-1
           - Season.order(sort_number: :desc).each do |season|
             = link_to season.decorate.local_name, season_works_path(slug: season.slug), class: "dropdown-item"
-    .col.text-xs-right
+    .col.text-right
       = render "display_option_buttons"
 
 - if user_signed_in?

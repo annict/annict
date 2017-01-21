@@ -9,7 +9,7 @@
             .row.mb-zp5
               .col
                 = c.name
-              .col.text-xs-right
+              .col.text-right
                 c-channel-receive-button :channel-id="#{c.id}" :init-is-receiving="#{current_user.receiving?(c)}"
                 
 - content_for :js_templates do

@@ -29,7 +29,7 @@
               .row
                 .col
                   = f.label :password
-                .col.text-xs-right
+                .col.text-right
                   = link_to t("messages.sessions.new.forgot_password"), new_password_path
               = f.password_field :password, autocomplete: "off", class: "form-control", required: true, tabindex: 2
 

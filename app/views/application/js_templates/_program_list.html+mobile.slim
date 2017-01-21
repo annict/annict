@@ -1,7 +1,7 @@
 script#t-program-list type="x-template"
   .c-program-list
     .container.mt-1
-      .text-xs-right
+      .text-right
         select.custom-select v-model="sort" @change="reload"
           option v-for="type in sortTypes" :value="type[1]" {{ type[0] }}
     .c-card.container.mt-1
@@ -48,7 +48,7 @@ script#t-program-list type="x-template"
                             input type="checkbox" v-model="user.share_record_to_facebook"
                             = icon "facebook", class: "u-text-facebook ml-zp25"
                     .col
-                      .text-xs-right
+                      .text-right
                         .small.text-mute
                           c-record-word-count :init-record="program.record" v-if="program.record.isEditingComment"
                 .col.u-flex-grow-0.pl-0

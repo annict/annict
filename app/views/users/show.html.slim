@@ -23,7 +23,7 @@
                   = "@#{@user.username}"
         .col-5.pt-2
           - if user_signed_in? && current_user != @user
-            .text-xs-right
+            .text-right
               .c-user-options-dropdown.dropdown.d-inline-block.mr-1
                 .dropdown-toggle data-toggle="dropdown"
                   = icon "cog"

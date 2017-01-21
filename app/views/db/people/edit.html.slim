@@ -4,7 +4,7 @@
   .row.flex-items-xs-between
     .col-8
       = render "db/application/topbar_title", parent: @person.decorate.local_name.truncate(70)
-    .col.text-xs-right
+    .col.text-right
       = link_to person_url(@person, subdomain: false), class: "btn btn-outline-primary", target: "_blank" do
         = icon "external-link"
         = t "resources.person.go_to_person"
