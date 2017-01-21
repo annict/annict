@@ -1,6 +1,6 @@
 = paginator.render do
-  nav.text-center aria-label="Page navigation"
-    ul.pagination
+  nav.text-center.d-inline-block aria-label="Page navigation"
+    ul.pagination.mb-0
       == first_page_tag unless current_page.first?
       == prev_page_tag unless current_page.first?
       - each_page do |page|

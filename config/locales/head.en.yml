@@ -14,6 +14,7 @@ en:
         staffs:
           index: Looking for staff information on %{title}? Find out more with Annict!
         works:
+          season: Looking for information on %{name} anime? Find out more with Annict!
           show: Looking for information on %{title}? Find out more with Annict!
       keywords:
         _common: annict, anime, review
@@ -48,4 +49,5 @@ en:
       tracks:
         show: Track
       works:
+        season: "%{name} Anime"
         show: "%{title} (Anime)"

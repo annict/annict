@@ -1,11 +1,11 @@
-- title = t "head.title.works.season", title: @season.decorate.local_name
-- description = meta_description(t("head.meta.description.works.season", title: @season.decorate.local_name))
+- title = t "head.title.works.season", name: @season.decorate.local_name
+- description = meta_description(t("head.meta.description.works.season", name: @season.decorate.local_name))
 - keywords = meta_keywords(@season.decorate.local_name)
-- set_meta_tags(title: title, description: description, keywords: keywords, og: { title: title, description: description }, reverse: true, prefix: false)
+- set_meta_tags(title: title, description: description, keywords: keywords, og: { description: description }, reverse: true, prefix: false)
 - set_page_category "works_season"
 
 .container
-  .row.py-1
+  .row.align-items-center.py-1
     .col
       .dropdown.d-inline-block
         a.dropdown-toggle href="#" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"
@@ -14,12 +14,16 @@
           - Season.order(sort_number: :desc).each do |season|
             = link_to season.decorate.local_name, season_works_path(slug: season.slug), class: "dropdown-item"
     .col.text-right
-      = render "display_option_buttons"
+      - if user_signed_in?
+        = render "display_option_buttons"
 
-- if user_signed_in?
-  = render "works/#{current_user.setting.display_option_work_list}", works: @works
-- else
-  = render "works/list", works: @works
+.mb-2
+  - if user_signed_in?
+    = render "works/#{current_user.setting.display_option_work_list}", works: @works
+  - else
+    = render "works/list", works: @works
+  .text-center
+    = paginate @works, window: 2
 
 = render "application/components/footer"
 = render "application/components/tabbar"

@@ -1,12 +1,12 @@
-- title = t "head.title.works.season", title: @season.decorate.local_name
-- description = meta_description(t("head.meta.description.works.season", title: @season.decorate.local_name))
+- title = t "head.title.works.season", name: @season.decorate.local_name
+- description = meta_description(t("head.meta.description.works.season", name: @season.decorate.local_name))
 - keywords = meta_keywords(@season.decorate.local_name)
-- set_meta_tags(title: title, description: description, keywords: keywords, og: { title: title, description: description }, reverse: true, prefix: false)
+- set_meta_tags(title: title, description: description, keywords: keywords, og: { description: description }, reverse: true, prefix: false)
 - set_page_category "works_season"
 
 = render "application/components/navbar"
 
-.row.py-2
+.row.align-items-center.py-2
   .col
   .col.text-center
     .dropdown.d-inline-block
@@ -16,14 +16,18 @@
         - Season.order(sort_number: :desc).each do |season|
           = link_to season.decorate.local_name, season_works_path(slug: season.slug), class: "dropdown-item"
   .col.text-right
-    .px-1
-      = render "display_option_buttons"
+    - if user_signed_in?
+      .px-1
+        = render "display_option_buttons"
 
-- if user_signed_in?
-  = render "works/#{current_user.setting.display_option_work_list}", works: @works
-- else
-  .container
-    = render "works/list", works: @works
+.mb-2
+  - if user_signed_in?
+    = render "works/#{current_user.setting.display_option_work_list}", works: @works
+  - else
+    .container
+      = render "works/list", works: @works
+  .mt-1.text-center
+    = paginate @works
 
 = render "application/components/footer"
 

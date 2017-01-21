@@ -17,10 +17,7 @@
         .row.align-items-center
           .col-8
             h2
-              - if @episode.decorate.local_number.present?
-                span.pr-zp5 = @episode.decorate.local_number
-              - if @episode.decorate.local_title.present?
-                = @episode.decorate.local_title
+              = link_to @episode.decorate.title_with_number, work_episode_path(@work, @episode)
             - if user_signed_in? && current_user.checkedin?(@episode)
               .small
                 = icon "check", class: "mr-zp25"
