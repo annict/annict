@@ -13,6 +13,8 @@ en:
           show: Looking for information on %{name}? Find out more with Annict!
         people:
           show: Looking for information on %{name}? Find out more with Annict!
+        records:
+          show: Check out %{profile_name} (@%{username})'s records!
         staffs:
           index: Looking for staff information on %{title}? Find out more with Annict!
         works:
@@ -44,6 +46,8 @@ en:
         show: "%{name}"
       programs:
         index: Programs
+      records:
+        show: "A Record by %{profile_name} (@%{username}) on %{work_title} - %{episode_title_with_number}"
       registrations:
         new: Sign Up
       sessions:
