@@ -1,7 +1,7 @@
 script#t-program-list type="x-template"
   .c-program-list.container.mt-1
     .row
-      .col-8.offset-xs-2
+      .col-8.offset-2
         .text-right
           select.custom-select v-model="sort" @change="reload"
             option v-for="type in sortTypes" :value="type[1]" {{ type[0] }}
