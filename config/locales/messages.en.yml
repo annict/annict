@@ -91,6 +91,8 @@ en:
       skip_episode_confirmation: Are you sure to skip this episode and show next episode?
       see_records: See records
       tracked: Your record has been tracked.
+    users:
+      no_works: No works
     work_images:
       index:
         dropzone-empty: Drop your image here or click to upload.

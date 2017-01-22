@@ -78,6 +78,10 @@ Rails.application.routes.draw do
         resources :channels, only: [] do
           post :select, on: :collection
         end
+
+        resources :statuses, only: [] do
+          post :select, on: :collection
+        end
       end
     end
   end
@@ -277,10 +281,6 @@ Rails.application.routes.draw do
         slug: /[0-9]{4}-(all|spring|summer|autumn|winter)/,
         as: :season
       post :switch
-    end
-
-    resources :statuses, only: [] do
-      post :select, on: :collection
     end
   end
 

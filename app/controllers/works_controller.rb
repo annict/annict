@@ -49,7 +49,7 @@ class WorksController < ApplicationController
       by_season(slug).
       order(watchers_count: :desc, id: :desc).
       page(page).
-      per(15)
+      per(display_works_count)
     @season = Season.find_or_new_by_slug(slug)
   end
 

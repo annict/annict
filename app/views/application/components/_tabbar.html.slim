@@ -5,7 +5,7 @@
   - if user_signed_in?
     = link_to programs_path, class: "col text-center" do
       = icon "calendar-o", class: "d-block"
-      span.c-tabbar__text = t "head.title.programs.index"
+      span.c-tabbar__text = t "words.programs"
     = link_to user_works_path(current_user.username, :watching), class: "col text-center" do
       = icon "play-circle-o", class: "d-block"
       span.c-tabbar__text = t "words.watching"

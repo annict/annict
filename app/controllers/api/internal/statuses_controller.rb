@@ -19,12 +19,16 @@
 #  statuses_work_id_idx                    (work_id)
 #
 
-class StatusesController < ApplicationController
-  before_action :authenticate_user!
-  before_action :set_work
+module Api
+  module Internal
+    class StatusesController < Api::Internal::ApplicationController
+      before_action :authenticate_user!
+      before_action :load_work
 
-  def select(status_kind)
-    status = StatusService.new(current_user, @work, ga_client)
-    head(200) if status.change(status_kind)
+      def select(status_kind)
+        status = StatusService.new(current_user, @work, keen_client)
+        head(200) if status.change(status_kind)
+      end
+    end
   end
 end

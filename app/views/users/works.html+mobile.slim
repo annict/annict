@@ -21,11 +21,14 @@
 h2.h4.text-center.mt-1
   = t "enumerize.status.kind.#{params[:status_kind]}"
 
-- @seasons.each do |season|
-  .mt-1
-    h3.h5.font-weight-bold.mb-1.ml-1
-      = season.decorate.local_name
-    - works = season.works.merge(@works).order(watchers_count: :desc)
-    = render "works/grid_small", works: works
+- if @seasons.present?
+  - @seasons.each do |season|
+    .mt-1
+      h3.h5.font-weight-bold.mb-1.ml-1
+        = season.decorate.local_name
+      - works = season.works.merge(@works).order(watchers_count: :desc)
+      = render "works/grid_small", works: works
+- else
+  = render "application/components/empty", text: t("messages.users.no_works")
 
 = render "application/components/tabbar"
