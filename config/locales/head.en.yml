@@ -63,6 +63,8 @@ en:
         show: "A Record by %{profile_name} (@%{username}) on %{work_title} - %{episode_title_with_number}"
       registrations:
         new: Sign Up
+      searches:
+        show: "%{q}Anime Search"
       sessions:
         new: Sign In
       staffs:
