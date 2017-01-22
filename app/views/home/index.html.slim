@@ -7,8 +7,7 @@
 .container.mt-1
   .row
     .col-7
-      .c-card.p-1
-        c-activities
+      c-activities
     .col-5
       - if current_user.tips.unfinished.present?
         = render "home/tips"

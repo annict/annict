@@ -8,7 +8,8 @@ script#t-activities type="x-template"
       template v-if='activity.action === "create_status"'
         c-create-status-activity :activity="activity"
     template v-if="!isLoading && activities.length === 0"
-      = render "application/components/empty", text: t("messages.home.index.there_are_no_activities")
+      .c-card.p-1
+        = render "application/components/empty", text: t("messages.home.index.there_are_no_activities")
     mugen-scroll :handler="loadMore" :should-handle="hasNext"
       .c-loading v-show="isLoading"
         .c-loading__core Loading...
