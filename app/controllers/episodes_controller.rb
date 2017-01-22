@@ -44,7 +44,7 @@ class EpisodesController < ApplicationController
 
     return render unless user_signed_in?
 
-    @record = @episode.checkins.new
+    @record = @episode.records.new
     @record.setup_shared_sns(current_user)
   end
 
