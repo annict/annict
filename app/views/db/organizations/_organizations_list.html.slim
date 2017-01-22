@@ -22,7 +22,7 @@
           td = organization.name_kana.presence || "-"
           td = organization.name_en.presence || "-"
           td
-            .tag class="#{organization.published? ? 'tag-success' : 'tag-default'}"
+            .badge class="#{organization.published? ? 'badge-success' : 'tag-default'}"
               = t("resources.organization.aasm_state.#{organization.aasm_state}")
           td = link_to t("words.activity"), activities_db_organization_path(organization)
           - if policy(organization).edit?

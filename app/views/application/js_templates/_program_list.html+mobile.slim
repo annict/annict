@@ -15,9 +15,9 @@ script#t-program-list type="x-template"
               .small.mb-zp5
                 span.u-text-green.mr-zp5
                   | {{ program.started_at }}
-                span.tag.tag-info.mr-zp5
+                span.badge.badge-info.mr-zp5
                   | {{ program.channel.name }}
-                span.tag.tag-default v-if="program.rebroadcast"
+                span.badge.badge-default v-if="program.rebroadcast"
                   = t "words.rebroadcast"
               .row.mb-zp5
                 .col.pr-0.u-flex-grow-0

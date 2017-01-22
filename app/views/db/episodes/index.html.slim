@@ -66,11 +66,11 @@
               - if locale_ja?
                 td
                   - if episode.fetch_syobocal?
-                    .tag.tag-success 同期中
+                    .badge.badge-success 同期中
                   - else
-                    .tag.tag-warning 同期停止中
+                    .badge.badge-warning 同期停止中
               td
-                .tag class="#{episode.published? ? 'tag-success' : 'tag-warning'}"
+                .badge class="#{episode.published? ? 'badge-success' : 'badge-warning'}"
                   = t("resources.episode.aasm_state.#{episode.aasm_state}")
               td = link_to t("words.activity"), activities_db_episode_path(episode)
               - if policy(episode).edit?

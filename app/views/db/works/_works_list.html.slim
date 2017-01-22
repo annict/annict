@@ -52,7 +52,7 @@
           td = work.decorate.release_season.presence || "-"
           td = ann_image_tag(work.item, :tombo_image, size: "70x70")
           td
-            .tag class="#{work.published? ? 'tag-success' : 'tag-default'}"
+            .badge class="#{work.published? ? 'badge-success' : 'tag-default'}"
               = t("resources.work.aasm_state.#{work.aasm_state}")
           - if policy(work).edit?
             td = link_to t("words.edit"), edit_db_work_path(work), class: "btn btn-primary btn-sm"
