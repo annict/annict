@@ -60,6 +60,9 @@ en:
     passwords:
       new:
         forgot_your_password: Forgot your password?
+    programs:
+      no_programs: No programs
+      please_set_channels_html: Please set channels on %{channels_link} page.
     providers:
       removed: Removed.
     records:

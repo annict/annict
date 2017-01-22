@@ -87,6 +87,7 @@ en:
     annict_db: Annict DB
     category: Category
     channel: Channel
+    channel_list: Channel List
     delete: Delete
     detail: Detail
     edit: Edit

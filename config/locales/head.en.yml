@@ -58,7 +58,7 @@ en:
       people:
         show: "%{name}"
       programs:
-        index: Programs
+        index: Program List
       records:
         show: "A Record by %{profile_name} (@%{username}) on %{work_title} - %{episode_title_with_number}"
       registrations:

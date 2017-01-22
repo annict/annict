@@ -57,10 +57,7 @@ script#t-program-list type="x-template"
                         = icon "check", class: "mr-0"
           template v-else=""
             template v-if="!isLoading"
-              .icon
-                i.fa.fa-info-circle
-              p = t('programs.no_program')
-              p = t('programs.please_set_channel_html', channels_link: link_to(t('programs.channel_list'), channels_path))
+              = render "application/components/empty", text: t('messages.programs.no_programs'), hint: t("messages.programs.please_set_channels_html", channels_link: link_to(t("words.channel_list"), channels_path))
           mugen-scroll :handler="loadMore" :should-handle="hasNext"
             .c-loading v-show="isLoading"
               .c-loading__core Loading...
