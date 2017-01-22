@@ -24,7 +24,7 @@
   - if user_signed_in?
     - if current_user.setting.display_option_work_list == "list"
       .container
-        = render "works/#{current_user.setting.display_option_work_list}", works: @works
+        = render "works/list", works: @works
     - else
       = render "works/#{current_user.setting.display_option_work_list}", works: @works
   - else

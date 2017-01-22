@@ -40,7 +40,11 @@ class WorksController < ApplicationController
   end
 
   def popular(page: nil)
-    @works = Work.published.order(watchers_count: :desc, id: :desc).page(page).per(15)
+    @works = Work.
+      published.
+      order(watchers_count: :desc, id: :desc).
+      page(page).
+      per(display_works_count)
   end
 
   def season(slug, page: nil)
