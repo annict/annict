@@ -54,6 +54,8 @@ en:
     multiple_records:
       create:
         saved: Records have been saved.
+    notifications:
+      no_notifications: No notifications
     oauth_users:
       new:
         sign_up_with_oauth: Sign Up with %{provider_name}

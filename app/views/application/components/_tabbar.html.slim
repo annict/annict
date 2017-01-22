@@ -15,12 +15,15 @@
     .c-tabbar__more.col.text-center data-toggle="dropdown"
       = icon "bars", class: "d-block"
       span.c-tabbar__text = t "words.more"
+      - if current_user.notifications_count > 0
+        .c-tabbar__notifications-count
+          = current_user.notifications_count
     .dropdown-menu
       = link_to t("words.profile"), user_path(current_user.username), class: "dropdown-item p-1"
       = link_to notifications_path, class: "dropdown-item p-1" do
         = t "head.title.notifications.index"
         - if current_user.notifications_count > 0
-          span.c-navbar__notifications-count--in-dropdown
+          span.badge.badge-pill.u-badge-mizuho.ml-zp5
             = current_user.notifications_count
       = link_to t("words.popular"), popular_works_path, class: "dropdown-item p-1"
       = link_to t("words.search"), search_path, class: "dropdown-item p-1"

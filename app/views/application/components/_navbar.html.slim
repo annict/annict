@@ -40,13 +40,13 @@ nav.c-navbar.navbar.navbar-toggleable-md class="#{transparent ? 'navbar-dark is-
           = link_to user_path(current_user.username), class: "nav-link p-0" do
             = ann_image_tag(current_user.profile, :tombo_avatar, size: "30x30", alt: current_user.profile.name, class: "rounded-circle")
           - if current_user.notifications_count > 0
-              .c-navbar__notifications-count
-                = current_user.notifications_count
+            .c-navbar__notifications-count
+              = current_user.notifications_count
           .dropdown-menu
             = link_to notifications_path, class: "dropdown-item" do
               = t "head.title.notifications.index"
               - if current_user.notifications_count > 0
-                span.c-navbar__notifications-count--in-dropdown
+                span.badge.badge-pill.u-badge-mizuho.ml-zp5
                   = current_user.notifications_count
             = link_to t("words.forum"), ENV.fetch("ANNICT_FORUM_URL"), class: "dropdown-item"
             = link_to t("head.title.friends.index"), friends_path, class: "dropdown-item"

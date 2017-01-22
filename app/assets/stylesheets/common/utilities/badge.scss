@@ -25,6 +25,10 @@ $ann-bootstrap-badge-colors: (
   }
 }
 
+.u-badge-mizuho {
+  @include badge-variant($ann-color-mizuho);
+}
+
 .u-badge-works {
   @include badge-variant(map-get($ann-color-shirobako, rb));
 }

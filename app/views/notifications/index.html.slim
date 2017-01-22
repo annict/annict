@@ -1,21 +1,17 @@
 - title = t "head.title.notifications.index"
-- description = meta_description(t("head.meta.description.notifications.index"))
-- set_meta_tags(title: title, description: description, og: { title: title, description: description }, reverse: true, prefix: false)
+- set_meta_tags(title: title, reverse: true, prefix: false)
 - set_page_category "notifications_index"
 
 = render "application/components/navbar"
 
-.c-card.u-mw-600.mx-auto.p-1
-  - if @notifications.present?
-    - @notifications.each do |notification|
-      = render "notification", notification: notification
-
-    .text-center.mt-1
-      = paginate @notifications
-  - else
-    .info.well
-      .icon
-        i.fa.fa-info-circle
-      p = t('notifications.no_notifications')
+.mb-2
+  .c-card.container.mt-1.u-mw-600
+    - if @notifications.present?
+      - @notifications.each do |notification|
+        = render "notification", notification: notification
+    - else
+      = render "application/components/empty", text: t("messages.notifications.no_notifications")
+  .text-center
+    = paginate @notifications
 
 = render "application/components/footer"
