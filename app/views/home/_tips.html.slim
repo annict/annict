@@ -1,8 +1,8 @@
-.p-tips.c-card.mb-1
+.p-tips
   .container.py-1
     h2.text-center.mb-0
       - if current_user.tips.unfinished_for_new_user.present?
-        = t "messages.common.welcome_to_annict"
+        = t "messages._common.welcome_to_annict"
       - else
         = t "words.tips"
     c-tips

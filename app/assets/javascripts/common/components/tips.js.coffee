@@ -15,7 +15,7 @@ module.exports = Vue.extend
       tip.isOpened = !tip.isOpened
 
     close: (index) ->
-      if confirm gon.I18n["messages.are_you_sure"]
+      if confirm gon.I18n["messages._common.are_you_sure"]
         $.ajax
           method: "POST"
           url: "/api/internal/tips/close"

@@ -7,10 +7,11 @@
 .container.mt-1
   .row
     .col-7
-      c-activities
+      .c-card.p-1
+        c-activities
     .col-5
       - if current_user.tips.unfinished.present?
-        = render "tips"
+        = render "home/tips"
       | TODO: Notification
 
 - content_for :js_templates

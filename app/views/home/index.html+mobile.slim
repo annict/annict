@@ -1,11 +1,13 @@
 - title = t "head.title.home.index"
-- set_meta_tags(title: title, reverse: false)
+- set_meta_tags(title: title, site: false)
 - set_page_category "home_index"
 
 - if current_user.tips.unfinished.present?
-  = render "tips"
+  .c-card.mb-1
+    = render "tips"
 
-c-activities
+.c-card.p-1
+  c-activities
 
 = render "application/components/tabbar"
 

@@ -76,6 +76,8 @@ en:
         start_with_twitter: Start with Twitter
         username_preview: "Your profile will be:"
         username_preview_mobile: "Your profile:"
+      create:
+        confirmation_mail_has_sent: Confirmation mail has sent.
     sessions:
       new:
         forgot_password: Forgot password?
