@@ -9,7 +9,7 @@ en:
       welcome_to_annict: Welcome to Annict!
     accounts:
       email_sent_for_confirmation: An email has been sent to confirm your email address.
-      saved: Saved.
+      saved: Account has been saved.
     channel_works:
       no_works: No works
     comments:
@@ -61,19 +61,27 @@ en:
     multiple_records:
       create:
         saved: Records have been saved.
+    mutes:
+      no_muted_users_found: No muted users found.
     notifications:
       no_notifications: No notifications
     oauth_users:
       new:
         sign_up_with_oauth: Sign Up with %{provider_name}
+    options:
+      prevent_spoiler_of_episode_you_have_not_watched: Prevent spoiler of episode which you have not watched
+      prevent_spoiler_of_episode_you_have_not_watched_detail: This option will hide comments on unwatched episodes when you've set status as "Watched", "Plan to Watch", or "On Hold".
     passwords:
       new:
         forgot_your_password: Forgot your password?
+    profiles:
+      saved: Profile has been saved.
     programs:
       no_programs: No programs
       please_set_channels_html: Please set channels on %{channels_link} page.
     providers:
       removed: Removed.
+      you_can_not_disconnect: You can not disconnect.
     records:
       deleted: Deleted
       updated: Updated
@@ -90,6 +98,9 @@ en:
         username_preview_mobile: "Your profile:"
       create:
         confirmation_mail_has_sent: Confirmation mail has sent.
+    sayonara:
+      are_you_sure_really: Are you sure? Really??
+      description: If you clicked "Delete Account" button, your data will be all deleted.
     sessions:
       new:
         forgot_password: Forgot password?

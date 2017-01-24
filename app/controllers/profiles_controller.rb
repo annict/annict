@@ -33,7 +33,7 @@ class ProfilesController < ApplicationController
 
   def update(profile)
     if current_user.profile.update_attributes(profile)
-      redirect_to profile_path, notice: t("profiles.saved")
+      redirect_to profile_path, notice: t("messages.profiles.saved")
     else
       render :show
     end

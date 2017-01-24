@@ -33,6 +33,10 @@ en:
       keywords:
         _common: annict, anime, review
     title:
+      accounts:
+        show: Account
+      apps:
+        index: Apps
       channel_works:
         index: Channel Works
       channels:
@@ -55,8 +59,12 @@ en:
       home:
         index: Annict
         index_guest: The platform for Anime addicts.
+      mutes:
+        index: Mute Filters
       notifications:
         index: Notifications
+      options:
+        index: Options
       organizations:
         show: "%{name}"
       pages:
@@ -66,12 +74,18 @@ en:
         new: Forgot your password?
       people:
         show: "%{name}"
+      profiles:
+        show: Profile
       programs:
         index: Program List
+      providers:
+        index: Connections
       records:
         show: "A Record by %{profile_name} (@%{username}) on %{work_title} - %{episode_title_with_number}"
       registrations:
         new: Sign Up
+      sayonara:
+        show: Delete Account
       searches:
         show: "%{q}Anime Search"
       sessions:

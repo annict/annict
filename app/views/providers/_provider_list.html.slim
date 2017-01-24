@@ -1,32 +1,32 @@
-.row
-  .col-3
+.row.mb-1
+  .col
     .px-1
       | Twitter
-  .col-9
+  .col
     .px-1.text-right
       - if current_user.shareable_to?(:twitter)
         - if current_user.shareable_to?(:facebook)
-          = link_to t("words.disconnect"), provider_path(current_user.twitter), class: "btn btn-sm btn-link", data: { method: :delete, confirm: t("messages._common.are_you_sure") }
+          = link_to t("words.disconnect"), provider_path(current_user.twitter), class: "btn btn-sm btn-link w-100", data: { method: :delete, confirm: t("messages._common.are_you_sure") }
         - else
           span.cancel-disabled
             = t "messages.providers.you_can_not_disconnect"
       - else
-        = link_to user_twitter_omniauth_authorize_path(back: providers_path), class: "btn btn-sm u-btn-twitter" do
+        = link_to user_twitter_omniauth_authorize_path(back: providers_path), class: "btn btn-sm u-btn-twitter w-100" do
           = icon "twitter"
           = t "words.connect"
 .row
-  .col-3
+  .col
     .px-1
       | Facebook
-  .col-9
+  .col
     .px-1.text-right
       - if current_user.shareable_to?(:facebook)
         - if current_user.shareable_to?(:twitter)
-          = link_to t("words.disconnect"), provider_path(current_user.facebook), class: "btn btn-sm btn-link", data: { method: :delete, confirm: t("messages._common.are_you_sure") }
+          = link_to t("words.disconnect"), provider_path(current_user.facebook), class: "btn btn-sm btn-link w-100", data: { method: :delete, confirm: t("messages._common.are_you_sure") }
         - else
           span.cancel-disabled
             = t "messages.providers.you_can_not_disconnect"
       - else
-        = link_to user_facebook_omniauth_authorize_path(back: providers_path), class: "btn btn-sm u-btn-facebook" do
+        = link_to user_facebook_omniauth_authorize_path(back: providers_path), class: "btn btn-sm u-btn-facebook w-100" do
           = icon("facebook", class: "icon")
           = t "words.connect"
