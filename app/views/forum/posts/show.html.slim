@@ -1,5 +1,5 @@
-- title = t "head.title.forum.posts.show"
-- set_meta_tags(title: title, og: { title: title }, reverse: true, prefix: false)
+- title = t "head.title.forum.posts.show", title: @post.title
+- set_meta_tags(title: title, reverse: true, prefix: false)
 - set_page_category "forum_posts_show"
 
 = render "application/components/navbar"

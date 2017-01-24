@@ -19,6 +19,8 @@ en:
       comments:
         leave_a_comment: Leave a comment
         comment_notification_subject: "[Annict Forum] %{name} (@%{username}) has commented in a post"
+      posts:
+        no_posts: No posts
     home:
       index:
         there_are_no_activities: There are no activities

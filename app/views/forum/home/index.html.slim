@@ -1,5 +1,5 @@
 - title = t "head.title.forum.home.index"
-- set_meta_tags(title: title, og: { title: title }, reverse: true, prefix: false)
+- set_meta_tags(title: title, reverse: true, prefix: false)
 - set_page_category "forum_home_index"
 
 = render "application/components/navbar"
@@ -11,6 +11,12 @@
       = icon "plus"
       = t "words.new"
   .c-card
-    = render "forum/posts/post_list", posts: @posts
+    - if @posts.present?
+      = render "forum/posts/post_list", posts: @posts
+    - else
+      = render "application/components/empty", text: t("messages.forum.posts.no_posts")
+  - if @posts.present?
+    .text-center.mt-1
+      = paginate @posts
 
 = render "application/components/footer"

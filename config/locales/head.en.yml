@@ -41,6 +41,13 @@ en:
       episodes:
         index: Episodes of %{title} (Anime)
         show: Anime "%{work_title}" - %{episode_title_with_number}
+      forum:
+        categories:
+          show: "%{name} - Forum"
+        home:
+          index: Forum
+        posts:
+          show: "%{title} - Forum"
       friends:
         index: Find Friends
       home:

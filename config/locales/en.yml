@@ -26,6 +26,11 @@ en:
       previous_episode: Previous episode
       there_are_no_episodes: There are no episodes
       updated: Episode updated
+    forum_category:
+      site_news: Site News
+      general: General
+      feedback: Feedback
+      db_request: DB Request
     organization:
       created: Organization created
       deleted: Organization deleted

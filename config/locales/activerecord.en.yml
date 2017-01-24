@@ -43,6 +43,11 @@ en:
         sc_count: Syobocal number
         sort_number: Sort number
         title: Title
+      forum_post:
+        title: Title
+        forum_category: Category
+        forum_comments_count: Comments
+        last_commented_at: Last Comment
       organization:
         name_en: Name (en)
         name_kana: Name (kana)
