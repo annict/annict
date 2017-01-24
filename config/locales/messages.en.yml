@@ -10,6 +10,8 @@ en:
     accounts:
       email_sent_for_confirmation: An email has been sent to confirm your email address.
       saved: Saved.
+    channel_works:
+      no_works: No works
     comments:
       comment_form_placeholder: Click here to add a new comment
       deleted: Deleted
@@ -23,7 +25,7 @@ en:
         no_posts: No posts
     friends:
       no_sns_friends: No SNS Friends
-      no_users: No Users
+      no_users: No users
     home:
       index:
         there_are_no_activities: There are no activities

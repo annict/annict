@@ -33,6 +33,8 @@ en:
       keywords:
         _common: annict, anime, review
     title:
+      channel_works:
+        index: Channel Works
       channels:
         index: Channel List
       characters:
