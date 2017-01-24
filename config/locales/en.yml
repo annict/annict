@@ -102,6 +102,7 @@ en:
     last: Last
     next: Next
     or: OR
+    other_users: Other Users
     popular_airing_anime: Popular Airing Anime
     previous: Prev
     programs: Programs
@@ -110,6 +111,7 @@ en:
     season: Season
     sign_out: Sign Out
     site_name: Annict
+    sns_friends: SNS Friends
     state: State
     state_change: State change
     syobocal: Syobocal

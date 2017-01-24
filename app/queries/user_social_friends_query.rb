@@ -6,8 +6,10 @@ class UserSocialFriendsQuery
   def all
     if @user.authorized_to?(:twitter) && @user.authorized_to?(:facebook)
       twitter_and_facebook_users
-    else
+    elsif @user.authorized_to?(:twitter) || @user.authorized_to?(:facebook)
       twitter_or_facebook_users
+    else
+      User.none
     end
   end
 

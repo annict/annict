@@ -21,6 +21,9 @@ en:
         comment_notification_subject: "[Annict Forum] %{name} (@%{username}) has commented in a post"
       posts:
         no_posts: No posts
+    friends:
+      no_sns_friends: No SNS Friends
+      no_users: No Users
     home:
       index:
         there_are_no_activities: There are no activities
