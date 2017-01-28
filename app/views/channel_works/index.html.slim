@@ -5,7 +5,8 @@
 = render "application/components/navbar"
 = render "channels/subnav"
 
-.c-card.u-mw-600.mx-auto.mt-1.mb-2.p-1
-  = render "channel_works/work_list", works: @works
+.p-application__content
+  .c-card.u-mw-600.mx-auto.mt-1.mb-2.p-1
+    = render "channel_works/work_list", works: @works
 
 = render "application/components/footer"

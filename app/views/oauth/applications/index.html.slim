@@ -4,28 +4,29 @@
 
 = render "application/components/navbar"
 
-.c-card.container.mt-1.mb-2.py-1
-  .text-right.mb-1
-    = link_to new_oauth_application_path, class: "btn btn-primary" do
-      = icon "plus"
-      = t "messages.oauth.applications.new"
+.p-application__content
+  .c-card.container.mt-1.mb-2.py-1
+    .text-right.mb-1
+      = link_to new_oauth_application_path, class: "btn btn-primary" do
+        = icon "plus"
+        = t "messages.oauth.applications.new"
 
-  - if @applications.present?
-    table.table
-      thead
-        tr
-          th = t "activerecord.attributes.oauth_application.name"
-          th = t "activerecord.attributes.oauth_application.redirect_uri"
-          th = t "words.edit"
-          th = t "words.delete"
-      tbody
-        - @applications.each do |application|
+    - if @applications.present?
+      table.table
+        thead
           tr
-            td = link_to application.name, oauth_application_path(application)
-            td = application.redirect_uri
-            td = link_to t("words.edit"), edit_oauth_application_path(application), class: "btn btn-secondary"
-            td = link_to t("words.delete"), oauth_application_path(application), class: "btn btn-danger", data: { method: :delete, confirm: t("messages._common.are_you_sure") }
-  - else
-    = render "application/components/empty", text: t("messages.oauth.applications.no_applications")
+            th = t "activerecord.attributes.oauth_application.name"
+            th = t "activerecord.attributes.oauth_application.redirect_uri"
+            th = t "words.edit"
+            th = t "words.delete"
+        tbody
+          - @applications.each do |application|
+            tr
+              td = link_to application.name, oauth_application_path(application)
+              td = application.redirect_uri
+              td = link_to t("words.edit"), edit_oauth_application_path(application), class: "btn btn-secondary"
+              td = link_to t("words.delete"), oauth_application_path(application), class: "btn btn-danger", data: { method: :delete, confirm: t("messages._common.are_you_sure") }
+    - else
+      = render "application/components/empty", text: t("messages.oauth.applications.no_applications")
 
 = render "application/components/footer"

@@ -6,32 +6,33 @@
 
 = render "application/components/navbar"
 
-.row.align-items-center.py-2
-  .col
-  .col.text-center
-    .dropdown.d-inline-block
-      a.dropdown-toggle href="#" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"
-        = @season.decorate.local_name
-      .dropdown-menu.pre-scrollable.mr-1
-        - Season.order(sort_number: :desc).each do |season|
-          = link_to season.decorate.local_name, season_works_path(slug: season.slug), class: "dropdown-item"
-  .col.text-right
-    - if user_signed_in?
-      .px-1
-        = render "display_option_buttons"
+.p-application__content
+  .row.align-items-center.py-2
+    .col
+    .col.text-center
+      .dropdown.d-inline-block
+        a.dropdown-toggle href="#" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"
+          = @season.decorate.local_name
+        .dropdown-menu.pre-scrollable.mr-1
+          - Season.order(sort_number: :desc).each do |season|
+            = link_to season.decorate.local_name, season_works_path(slug: season.slug), class: "dropdown-item"
+    .col.text-right
+      - if user_signed_in?
+        .px-1
+          = render "display_option_buttons"
 
-.mb-2
-  - if user_signed_in?
-    - if current_user.setting.display_option_work_list == "list"
+  .mb-2
+    - if user_signed_in?
+      - if current_user.setting.display_option_work_list == "list"
+        .container
+          = render "works/list", works: @works
+      - else
+        = render "works/#{current_user.setting.display_option_work_list}", works: @works
+    - else
       .container
         = render "works/list", works: @works
-    - else
-      = render "works/#{current_user.setting.display_option_work_list}", works: @works
-  - else
-    .container
-      = render "works/list", works: @works
-  .mt-1.text-center
-    = paginate @works
+    .mt-1.text-center
+      = paginate @works
 
 = render "application/components/footer"
 

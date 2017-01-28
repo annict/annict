@@ -7,34 +7,35 @@
 
 = render "application/components/navbar"
 
-.container.py-1.mb-2
-  .row
-    .col-3.pr-0
-      = render "works/sidebar", work: @work
-    .col-9
-      = render "works/subnav", work: @work
+.p-application__content
+  .container.py-1.mb-2
+    .row
+      .col-3.pr-0
+        = render "works/sidebar", work: @work
+      .col-9
+        = render "works/subnav", work: @work
 
-      .c-card.mt-1.py-1
-        - if @episodes.present?
-          c-episode-list inline-template="" :is-signed-in="#{user_signed_in?}" :init-is-tracking-mode="#{params.key?(:tracking)}" :all-episode-ids="#{@episodes.pluck(:id)}" :work-id="#{@work.id}"
-            .c-episode-list
-              .container.mb-zp5
-                small.u-fake-link v-show="!isTrackingMode" @click="enableTrackingMode"
-                  = t "words.bulk_tracking"
-                small.u-fake-link.mr-zp5 v-show="isTrackingMode" @click="checkAll"
-                  = t "words.check_all"
-                small.u-fake-link v-show="isTrackingMode && !!episodeIds.length" @click="uncheckAll"
-                  = t "words.uncheck_all"
-              table.p-episodes-table.table.mb-1
-                tbody
-                  - @episodes.order(:sort_number).each do |episode|
-                    = render "episodes/episode_row", work: @work, episode: episode
-              .container.text-right
-                button.btn.btn-secondary.mr-zp5 v-show="isTrackingMode" @click="disableTrackingMode"
-                  = t "words.cancel"
-                button.btn.btn-primary :class="{ 'c-spinner': isTracking }" v-show="isTrackingMode" @click="track"
-                  = icon "pencil-square-o"
-                  = t "words.track"
+        .c-card.mt-1.py-1
+          - if @episodes.present?
+            c-episode-list inline-template="" :is-signed-in="#{user_signed_in?}" :init-is-tracking-mode="#{params.key?(:tracking)}" :all-episode-ids="#{@episodes.pluck(:id)}" :work-id="#{@work.id}"
+              .c-episode-list
+                .container.mb-zp5
+                  small.u-fake-link v-show="!isTrackingMode" @click="enableTrackingMode"
+                    = t "words.bulk_tracking"
+                  small.u-fake-link.mr-zp5 v-show="isTrackingMode" @click="checkAll"
+                    = t "words.check_all"
+                  small.u-fake-link v-show="isTrackingMode && !!episodeIds.length" @click="uncheckAll"
+                    = t "words.uncheck_all"
+                table.p-episodes-table.table.mb-1
+                  tbody
+                    - @episodes.order(:sort_number).each do |episode|
+                      = render "episodes/episode_row", work: @work, episode: episode
+                .container.text-right
+                  button.btn.btn-secondary.mr-zp5 v-show="isTrackingMode" @click="disableTrackingMode"
+                    = t "words.cancel"
+                  button.btn.btn-primary :class="{ 'c-spinner': isTracking }" v-show="isTrackingMode" @click="track"
+                    = icon "pencil-square-o"
+                    = t "words.track"
 
 = render "application/components/footer"
 

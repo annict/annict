@@ -7,14 +7,15 @@
 
 = render "application/components/navbar"
 
-.container.py-1.mb-2
-  .row
-    .col-3.pr-0
-      = render "works/sidebar", work: @work
-    .col-9
-      = render "works/subnav", work: @work
-      .c-card.container.mt-1.pt-1
-        = render "staff_list", staffs: @staffs
+.p-application__content
+  .container.py-1.mb-2
+    .row
+      .col-3.pr-0
+        = render "works/sidebar", work: @work
+      .col-9
+        = render "works/subnav", work: @work
+        .c-card.container.mt-1.pt-1
+          = render "staff_list", staffs: @staffs
 
 = render "application/components/footer"
 

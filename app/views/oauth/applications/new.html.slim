@@ -4,7 +4,8 @@
 
 = render "application/components/navbar"
 
-.c-card.container.mt-1.mb-2.py-1
-  = render "oauth/applications/form", application: @application
+.p-application__content
+  .c-card.container.mt-1.mb-2.py-1
+    = render "oauth/applications/form", application: @application
 
 = render "application/components/footer"

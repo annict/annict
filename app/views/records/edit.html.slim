@@ -7,10 +7,11 @@
 
 = render "application/components/navbar"
 
-.container.my-1
-  .row
-    .col-6.offset-3
-      .c-card.p-1
-        = render "records/form", record: @record
+.p-application__content
+  .container.my-1
+    .row
+      .col-6.offset-3
+        .c-card.p-1
+          = render "records/form", record: @record
 
 = render "application/components/footer"

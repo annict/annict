@@ -79,6 +79,6 @@ $(document).on "turbolinks:load", ->
   Vue.directive("resource-select", resourceSelect)
 
   new Vue
-    el: ".p-vue"
+    el: ".p-application"
 
 Turbolinks.start()

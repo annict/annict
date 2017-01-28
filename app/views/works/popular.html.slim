@@ -6,26 +6,27 @@
 
 = render "application/components/navbar"
 
-- if user_signed_in?
-  .row.align-items-center.py-2
-    .col
-    .col
-    .col.text-right
-      .px-1
-        = render "display_option_buttons"
-
-.mb-2
+.p-application__content
   - if user_signed_in?
-    - if current_user.setting.display_option_work_list == "list"
-      .container
-        = render "works/list", works: @works
+    .row.align-items-center.py-2
+      .col
+      .col
+      .col.text-right
+        .px-1
+          = render "display_option_buttons"
+
+  .mb-2
+    - if user_signed_in?
+      - if current_user.setting.display_option_work_list == "list"
+        .container
+          = render "works/list", works: @works
+      - else
+        = render "works/#{current_user.setting.display_option_work_list}", works: @works
     - else
-      = render "works/#{current_user.setting.display_option_work_list}", works: @works
-  - else
-    .container.mt-1
-      = render "works/list", works: @works
-  .mt-1.text-center
-    = paginate @works
+      .container.mt-1
+        = render "works/list", works: @works
+    .mt-1.text-center
+      = paginate @works
 
 = render "application/components/footer"
 

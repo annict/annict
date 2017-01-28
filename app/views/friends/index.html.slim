@@ -4,22 +4,23 @@
 
 = render "application/components/navbar"
 
-h1.h4.text-center.my-2.font-weight-bold
-  = t "words.sns_friends"
+.p-application__content
+  h1.h4.text-center.my-2.font-weight-bold
+    = t "words.sns_friends"
 
-.c-card.u-mw-600.mx-auto.px-1
-  - if @friends.present?
-    = render "users/user_list", users: @friends
-  - else
-    = render "application/components/empty", text: t("messages.friends.no_sns_friends")
+  .c-card.u-mw-600.mx-auto.px-1
+    - if @friends.present?
+      = render "users/user_list", users: @friends
+    - else
+      = render "application/components/empty", text: t("messages.friends.no_sns_friends")
 
-h1.h4.text-center.my-2.font-weight-bold
-  = t "words.other_users"
+  h1.h4.text-center.my-2.font-weight-bold
+    = t "words.other_users"
 
-.c-card.u-mw-600.mx-auto.px-1.mb-2
-  - if @users.present?
-    = render "users/user_list", users: @users
-  - else
-    = render "application/components/empty", text: t("messages.friends.no_users")
+  .c-card.u-mw-600.mx-auto.px-1.mb-2
+    - if @users.present?
+      = render "users/user_list", users: @users
+    - else
+      = render "application/components/empty", text: t("messages.friends.no_users")
 
 = render "application/components/footer"

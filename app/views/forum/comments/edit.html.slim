@@ -5,7 +5,8 @@
 = render "application/components/navbar"
 = render "forum/application/subnav"
 
-.c-card.container.mt-1.mb-2.py-1
-  = render "forum/comments/form", comment: @comment
+.p-application__content
+  .c-card.container.mt-1.mb-2.py-1
+    = render "forum/comments/form", comment: @comment
 
 = render "application/components/footer"

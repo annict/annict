@@ -4,14 +4,15 @@
 
 = render "application/components/navbar"
 
-.mb-2
-  .c-card.container.mt-1.u-mw-600
-    - if @notifications.present?
-      - @notifications.each do |notification|
-        = render "notification", notification: notification
-    - else
-      = render "application/components/empty", text: t("messages.notifications.no_notifications")
-  .text-center
-    = paginate @notifications
+.p-application__content
+  .mb-2
+    .c-card.container.mt-1.u-mw-600
+      - if @notifications.present?
+        - @notifications.each do |notification|
+          = render "notification", notification: notification
+      - else
+        = render "application/components/empty", text: t("messages.notifications.no_notifications")
+    .text-center
+      = paginate @notifications
 
 = render "application/components/footer"

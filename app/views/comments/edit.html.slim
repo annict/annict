@@ -6,10 +6,11 @@
 
 = render "application/components/navbar"
 
-.container.my-1
-  .row
-    .col-6.offset-3
-      .c-card.p-1
-        = render "comments/form", record: @record, comment: @comment, user: @user
+.p-application__content
+  .container.my-1
+    .row
+      .col-6.offset-3
+        .c-card.p-1
+          = render "comments/form", record: @record, comment: @comment, user: @user
 
 = render "application/components/footer"

@@ -7,27 +7,27 @@
 - set_page_category "users_works"
 
 = render "application/components/navbar", transparent: true
-
 = render "users/low_profile_header", user: @user
 
-.p-users-works__subnav.c-subnav
-  - %i(watching wanna_watch watched on_hold stop_watching).each do |status_kind|
-    = active_link_to user_works_path(@user.username, status_kind), class: "c-subnav__link", class_active: "c-subnav__link--active", active: (status_kind.to_s == params[:status_kind]) do
-      .c-subnav__item
-        .text-center
-          .mb-zp25
-            = @user.latest_statuses.count_on(status_kind)
-          .small
-            = t "enumerize.status.kind.#{status_kind}"
+.p-application__content
+  .p-users-works__subnav.c-subnav
+    - %i(watching wanna_watch watched on_hold stop_watching).each do |status_kind|
+      = active_link_to user_works_path(@user.username, status_kind), class: "c-subnav__link", class_active: "c-subnav__link--active", active: (status_kind.to_s == params[:status_kind]) do
+        .c-subnav__item
+          .text-center
+            .mb-zp25
+              = @user.latest_statuses.count_on(status_kind)
+            .small
+              = t "enumerize.status.kind.#{status_kind}"
 
-- if @seasons.present?
-  - @seasons.each do |season|
-    .mt-1
-      h2.h4.font-weight-bold.mb-1.ml-1
-        = season.decorate.local_name
-      - works = season.works.merge(@works).order(watchers_count: :desc)
-      = render "works/grid_small", works: works
-- else
-  = render "application/components/empty", text: t("messages.users.no_works")
+  - if @seasons.present?
+    - @seasons.each do |season|
+      .mt-1
+        h2.h4.font-weight-bold.mb-1.ml-1
+          = season.decorate.local_name
+        - works = season.works.merge(@works).order(watchers_count: :desc)
+        = render "works/grid_small", works: works
+  - else
+    = render "application/components/empty", text: t("messages.users.no_works")
 
 = render "application/components/footer"

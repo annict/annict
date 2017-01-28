@@ -6,13 +6,14 @@
 
 = render "application/components/navbar"
 
-.container.py-1.mb-2
-  .row
-    .col-3.pr-0
-      = render "sidebar", organization: @organization
-    .col-9
-      .c-card
-        .container.py-1
-          = render "people/grid", root_resource: @organization, resource_years: @staff_years, resources_with_year: @staffs_with_year
+.p-application__content
+  .container.py-1.mb-2
+    .row
+      .col-3.pr-0
+        = render "sidebar", organization: @organization
+      .col-9
+        .c-card
+          .container.py-1
+            = render "people/grid", root_resource: @organization, resource_years: @staff_years, resources_with_year: @staffs_with_year
 
 = render "application/components/footer"

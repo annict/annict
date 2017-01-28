@@ -9,8 +9,9 @@
 = render "users/low_profile_header", user: @user
 = render "users/follow_nav", user: @user
 
-.row.my-1
-  .c-card.col-6.offset-3
-    = render "users/user_list", users: @users
+.p-application__content
+  .row.my-1
+    .c-card.col-6.offset-3
+      = render "users/user_list", users: @users
 
 = render "application/components/footer"

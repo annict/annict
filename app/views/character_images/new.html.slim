@@ -6,15 +6,16 @@
 
 = render "application/components/navbar"
 
-.container.py-1
-  .row
-    .col-3.pr-0
-      .container
-        = render "characters/sidebar", character: @character
-    .col-9
-      .c-card
-        = render "characters/subnav", character: @character
-        .container.py-1
-          = render "form", image: @image
+.p-application__content
+  .container.py-1
+    .row
+      .col-3.pr-0
+        .container
+          = render "characters/sidebar", character: @character
+      .col-9
+        .c-card
+          = render "characters/subnav", character: @character
+          .container.py-1
+            = render "form", image: @image
 
 = render "application/components/footer"
