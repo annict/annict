@@ -17,7 +17,7 @@
     tbody
       - people.each do |person|
         tr
-          td = link_to person.id, person_url(person, subdomain: false), target: "_blank"
+          td = link_to person.id, annict_url(:person_url, person), target: "_blank"
           td = person.name
           td = person.name_kana.presence || "-"
           td = person.name_en.presence || "-"

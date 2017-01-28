@@ -34,15 +34,17 @@ module DB
 
     def fetched_rows
       parsed_rows.map do |row_columns|
-        person = Person.where(id: row_columns[1]).
-          or(Person.where(name: row_columns[1])).first
-        organization = Organization.where(id: row_columns[2]).
-          or(Organization.where(name: row_columns[2])).first
+        person = Person.published.where(id: row_columns[1]).
+          or(Person.published.where(name: row_columns[1])).first
+        organization = Organization.published.where(id: row_columns[2]).
+          or(Organization.published.where(name: row_columns[2])).first
 
         resource, value = if person.present?
           [person, row_columns[1]]
+        elsif organization.present?
+          [organization, row_columns[2]]
         else
-          [organization, (row_columns[2].presence || row_columns[1])]
+          []
         end
 
         {

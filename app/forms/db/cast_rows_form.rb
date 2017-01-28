@@ -27,10 +27,10 @@ module DB
 
     def fetched_rows
       parsed_rows.map do |row_columns|
-        character = Character.where(id: row_columns[0]).
-          or(Character.where(name: row_columns[0])).first
-        person = Person.where(id: row_columns[1]).
-          or(Person.where(name: row_columns[1])).first
+        character = Character.published.where(id: row_columns[0]).
+          or(Character.published.where(name: row_columns[0])).first
+        person = Person.published.where(id: row_columns[1]).
+          or(Person.published.where(name: row_columns[1])).first
 
         {
           character: { id: character&.id, value: row_columns[0] },

@@ -5,6 +5,8 @@ module Db
     include Pundit
     include ControllerCommon
     include FlashMessage
+    include Analyzable
+    include Gonable
 
     layout "db"
 

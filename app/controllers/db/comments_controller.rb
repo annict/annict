@@ -13,7 +13,7 @@ module Db
       return render(:new) unless @comment.valid?
       @comment.save!
 
-      flash[:notice] = t "resources.db_comment.created"
+      flash[:notice] = t "messages.db.comments.created"
       redirect_to "/#{@comment.resource_type.tableize}/#{@comment.resource_id}/activities"
     end
 

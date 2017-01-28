@@ -1,9 +1,11 @@
-- title t("words.activity")
+- title = t "head.title.db.organizations.activities", name: @organization.decorate.local_name
+- set_meta_tags(title: title, reverse: true, prefix: false)
+- set_page_category "db_organizations_activities"
 
 .l-topbar.container-fluid.px-1
   .row.flex-items-xs-between
     .col
-      = render "db/application/topbar_title", parent: @organization.decorate.db_detail_link, child: t("words.activity")
+      = render "db/application/topbar_title", parent: @organization.decorate.db_detail_link, child: t("words.activities")
 
 .container-fluid.p-1
   .row.mb-1
@@ -14,7 +16,3 @@
     .c-card.col-8.offset-2.p-1
       - @activities.each do |activity|
         = render "db/activities/activity_root_resources", activity: activity
-
-- content_for :js_templates do
-  = render "application/js_templates/body"
-  

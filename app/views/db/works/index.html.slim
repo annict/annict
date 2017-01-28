@@ -1,17 +1,19 @@
-- title t("resources.work.work_list")
+- title = t "head.title.db.works.index"
+- set_meta_tags(title: title, reverse: true, prefix: false)
+- set_page_category "db_works_index"
 
 .l-topbar.container-fluid.px-1
   .row.flex-items-xs-between
     .col
-      = render "db/application/topbar_title", parent: t("resources.work.work_list")
+      = render "db/application/topbar_title", parent: t("head.title.db.works.index")
     - if user_signed_in? && current_user.committer?
       .col.text-right
         = link_to new_db_work_path, class: "btn btn-outline-primary" do
           = icon "plus"
           = t "resources.work.new_work"
 
-.container-fluid.p-1
-  ul.nav.nav-inline.text-center.mb-1
+.container-fluid.p-1.mb-2
+  ul.nav.nav-inline.justify-content-center.mb-1
     li.nav-item
       = active_link_to t("words.all"), db_works_path, class: "nav-link", active: params[:action] == "index"
     li.nav-item.dropdown
@@ -26,4 +28,5 @@
       = active_link_to t("resources.work.no_images"), resourceless_db_works_path(name: :item), class: "nav-link", active: (params[:name] == "item")
 
   = render "works_list", works: @works
-  = paginate @works
+  .text-center.mt-1
+    = paginate @works

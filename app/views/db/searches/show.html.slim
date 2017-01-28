@@ -1,9 +1,11 @@
-- title t("words.search")
+- title = t "head.title.db.searches.show"
+- set_meta_tags(title: title, reverse: true, prefix: false)
+- set_page_category "db_searches_show"
 
 .l-topbar.container-fluid.px-1
   .row.flex-items-xs-between
     .col
-      = render "db/application/topbar_title", parent: t("words.search")
+      = render "db/application/topbar_title", parent: title
 
 .container-fluid.p-1
   .mb-3
@@ -26,3 +28,10 @@
       = render "db/organizations/organizations_list", organizations: @organizations
     - else
       = render "application/components/empty", text: t("resources.organization.there_are_no_organizations")
+      
+  .mb-3
+    h2.text-center.mb-1 = Character.model_name.human(count: 2)
+    - if @characters.present?
+      = render "db/characters/character_list", characters: @characters
+    - else
+      = render "application/components/empty", text: t("messages.db.characters.there_are_no_characters")

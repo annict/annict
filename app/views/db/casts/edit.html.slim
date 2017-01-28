@@ -1,4 +1,6 @@
-- title @cast.name
+- title = t "head.title.db.casts.edit"
+- set_meta_tags(title: title, reverse: true, prefix: false)
+- set_page_category "db_casts_edit"
 
 .l-topbar.container-fluid.px-1
   .row.flex-items-xs-between
@@ -53,4 +55,4 @@
                 = f.submit t("helpers.submit.update"), class: "btn btn-primary"
     
     .col-6
-      = render "sidebar"
+      = render "sidebar_edit"

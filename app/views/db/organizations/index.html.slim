@@ -1,15 +1,18 @@
-- title t("resources.organization.organization_list")
+- title = t "head.title.db.organizations.index"
+- set_meta_tags(title: title, reverse: true, prefix: false)
+- set_page_category "db_organizations_index"
 
 .l-topbar.container-fluid.px-1
   .row.flex-items-xs-between
     .col
-      = render "db/application/topbar_title", parent: t("resources.organization.organizations_list")
+      = render "db/application/topbar_title", parent: t("head.title.db.organizations.index")
     - if user_signed_in? && current_user.committer?
       .col.text-right
         = link_to new_db_organization_path, class: "btn btn-outline-primary" do
           = icon "plus"
           = t "resources.organization.new_organization"
 
-.container-fluid.p-1
+.container-fluid.p-1.mb-2
   = render "organizations_list", organizations: @organizations
-  = paginate @organizations
+  .text-center.mt-1
+    = paginate @organizations

@@ -82,7 +82,6 @@ en:
       twitter_hashtag_placeholder: e.g. なのん
       twitter_username_placeholder: e.g. nonnontv
       updated: Work updated
-      work_list: Work List
   words:
     ago: ago
     airing: Airing
@@ -107,6 +106,7 @@ en:
     previous: Prev
     programs: Programs
     release_on: Release on
+    resource_activities: Resource Activities
     search: Search
     season: Season
     sign_out: Sign Out

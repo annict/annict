@@ -1,9 +1,11 @@
-- title DbActivity.model_name.human(count: 2)
+- title = t "head.title.db.works.activities"
+- set_meta_tags(title: title, reverse: true, prefix: false)
+- set_page_category "db_works_activities"
 
 .l-topbar.container-fluid.px-1
   .row.flex-items-xs-between
     .col
-      = render "db/application/topbar_title", parent: @work, child: DbActivity.model_name.human(count: 2)
+      = render "db/application/topbar_title", parent: @work, child: title
 
 = render "db/works/subnav", work: @work
 
@@ -16,7 +18,3 @@
     .c-card.col-8.offset-2.p-1
       - @activities.each do |activity|
         = render "db/activities/activity_root_resources", activity: activity
-
-- content_for :js_templates do
-  = render "application/js_templates/body"
-  

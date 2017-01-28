@@ -108,6 +108,7 @@ Rails.application.routes.draw do
   scope module: :db, as: :db do
     constraints(subdomain: "db") do
       resources :activities, only: [:index]
+      resources :channels, only: [:index]
       resource :search, only: [:show]
 
       resources :characters, except: [:show] do

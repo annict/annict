@@ -7,6 +7,7 @@ en:
       see_more: See More
       welcome_back: Welcome back!
       welcome_to_annict: Welcome to Annict!
+      you_can_not_access_there: You can not access there.
     accounts:
       email_sent_for_confirmation: An email has been sent to confirm your email address.
       saved: Account has been saved.
@@ -17,6 +18,9 @@ en:
       deleted: Deleted
       saved: Comment has been saved.
       updated: Updated
+    db:
+      comments:
+        created: Comment has been created.
     forum:
       comments:
         leave_a_comment: Leave a comment

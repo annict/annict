@@ -44,6 +44,44 @@ en:
       characters:
         index: Characters of %{title} (Anime)
         show: "%{name}"
+      db:
+        activities:
+          index: Activities
+        casts:
+          activities: Activities
+          edit: Edit Cast
+          index: Casts
+          new: Create Casts
+        channels:
+          index: Channels
+        characters:
+          activities: Resource Activities - %{name}
+          index: Characters
+        episodes:
+          activities: Activities
+          index: Episodes of %{work_title}
+        organizations:
+          activities: Resource Activities - %{name}
+          index: Organizations
+        people:
+          activities: Resource Activities - %{name}
+          index: People
+        programs:
+          activities: Activities
+          edit: Edit Program
+          index: Programs
+          new: New Programs
+        searches:
+          show: Search
+        staffs:
+          activities: Activities
+          edit: Edit Staff
+          index: Staffs
+          new: Create Staffs
+        works:
+          activities: Activities
+          edit: "%{title}"
+          index: Works
       episodes:
         index: Episodes of %{title} (Anime)
         show: Anime "%{work_title}" - %{episode_title_with_number}

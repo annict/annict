@@ -17,7 +17,7 @@
     tbody
       - organizations.each do |organization|
         tr
-          td = link_to organization.id, organization_url(organization, subdomain: false), target: "_blank"
+          td = link_to organization.id, annict_url(:organization_url, organization), target: "_blank"
           td = organization.name
           td = organization.name_kana.presence || "-"
           td = organization.name_en.presence || "-"

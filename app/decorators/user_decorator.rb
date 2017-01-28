@@ -2,7 +2,7 @@
 
 class UserDecorator < ApplicationDecorator
   def name_link(options = {})
-    h.link_to(profile.name, h.user_path(username), options)
+    h.link_to(profile.name, h.annict_url(:user_url, username), options)
   end
 
   def role_badge

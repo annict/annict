@@ -1,15 +1,15 @@
 # frozen_string_literal: true
 
 module HeadHelper
-  def ann_display_meta_tags
+  def ann_display_meta_tags(site = "Annict")
     display_meta_tags(
       reverse: true,
-      site: "Annict",
+      site: site,
       separator: " |",
       description: meta_description,
       keywords: meta_keywords,
       og: {
-        title: meta_tags.full_title(site: "Annict", separator: " |"),
+        title: meta_tags.full_title(site: site, separator: " |"),
         type: "website",
         url: request.url,
         description: t("head.meta.description._common"),
@@ -23,7 +23,7 @@ module HeadHelper
       twitter: {
         card: "summary",
         site: "@anannict",
-        title: meta_tags.full_title(site: "Annict", separator: " |"),
+        title: meta_tags.full_title(site: site, separator: " |"),
         description: t("head.meta.description._common"),
         image: "#{ENV.fetch('ANNICT_URL')}/images/og_image.png"
       }

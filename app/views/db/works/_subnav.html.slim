@@ -1,8 +1,19 @@
-.c-subnav.c-subnav--divided
-  ul.list-unstyled
-    li = active_link_to Work.model_name.human, edit_db_work_path(work), class_active: "c-subnav__link--active", active: params[:controller] == "db/works" && %w(edit update).include?(params[:action])
-    li = active_link_to Episode.model_name.human(count: 2), db_work_episodes_path(work), class_active: "c-subnav__link--active", active: params[:controller] == "db/episodes"
-    li = active_link_to Program.model_name.human(count: 2), db_work_programs_path(work), class_active: "c-subnav__link--active", active: params[:controller] == "db/programs"
-    li = active_link_to Cast.model_name.human(count: 2), db_work_casts_path(work), class_active: "c-subnav__link--active", active: params[:controller] == "db/casts"
-    li = active_link_to Staff.model_name.human(count: 2), db_work_staffs_path(work), class_active: "c-subnav__link--active", active: params[:controller] == "db/staffs"
-    li = active_link_to DbActivity.model_name.human(count: 2), activities_db_work_path(work), class_active: "c-subnav__link--active", active: params[:controller] == "db/works" && params[:action] == "activities"
+.c-subnav
+  = active_link_to edit_db_work_path(work), class: "c-subnav__link", class_active: "c-subnav__link--active", active: params[:controller]  == "db/works" && %w(edit update).include?(params[:action]) do
+    .c-subnav__item
+      = Work.model_name.human
+  = active_link_to db_work_episodes_path(work), class: "c-subnav__link", class_active: "c-subnav__link--active", active: params[:controller]  == "db/episodes" do
+    .c-subnav__item
+      = Episode.model_name.human(count: 2)
+  = active_link_to db_work_programs_path(work), class: "c-subnav__link", class_active: "c-subnav__link--active", active: params[:controller]  == "db/programs" do
+    .c-subnav__item
+      = Program.model_name.human(count: 2)
+  = active_link_to db_work_casts_path(work), class: "c-subnav__link", class_active: "c-subnav__link--active", active: params[:controller]  == "db/casts" do
+    .c-subnav__item
+      = Cast.model_name.human(count: 2)
+  = active_link_to db_work_staffs_path(work), class: "c-subnav__link", class_active: "c-subnav__link--active", active: params[:controller]  == "db/staffs" do
+    .c-subnav__item
+      = Staff.model_name.human(count: 2)
+  = active_link_to activities_db_work_path(work), class: "c-subnav__link", class_active: "c-subnav__link--active", active: params[:controller]  == "db/works" && params[:action]  == "activities" do
+    .c-subnav__item
+      = t "head.title.db.works.activities"
