@@ -10,7 +10,6 @@
 
 Turbolinks = require "turbolinks"
 Vue = require "vue/dist/vue"
-MugenScroll = require "vue-mugen-scroll"
 
 $(document).on "turbolinks:load", ->
   activities = require "./common/components/activities"
@@ -45,8 +44,6 @@ $(document).on "turbolinks:load", ->
   resourceSelect = require "./common/directives/resourceSelect"
 
   Vue.config.debug = true
-
-  Vue.component("mugen-scroll", MugenScroll)
 
   Vue.component("c-activities", activities)
   Vue.component("c-body", body)

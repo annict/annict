@@ -39,6 +39,8 @@ en:
         hero_title: The platform for Anime addicts.
         start_tracking: Start Tracking
     components:
+      load_more_button:
+        more: View more
       mute_user_button:
         the_user_has_been_muted: The user has been muted.
       program_list:

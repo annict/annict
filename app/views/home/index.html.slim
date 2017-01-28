@@ -4,16 +4,19 @@
 
 = render "application/components/navbar"
 
-.container.mt-1
-  .row
-    .col-7
-      c-activities
-    .col-5
-      - if current_user.tips.unfinished.present?
-        = render "home/tips"
-      | TODO: Notification
-      | TODO: Site News
-      | TODO: Friends
+.p-application__content.mt-1.mb-2
+  .container
+    .row
+      .col-7
+        c-activities
+      .col-5
+        - if current_user.tips.unfinished.present?
+          = render "home/tips"
+        | TODO: Notification
+        | TODO: Site News
+        | TODO: Friends
+
+= render "application/components/footer"
 
 - content_for :js_templates
   = render "application/js_templates/activities"
