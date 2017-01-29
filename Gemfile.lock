@@ -525,6 +525,7 @@ GEM
     thor (0.19.4)
     thread_safe (0.3.5)
     tilt (2.0.5)
+    timecop (0.8.1)
     tins (1.13.0)
     traceroute (0.5.0)
       rails (>= 3.0.0)
@@ -660,6 +661,7 @@ DEPENDENCIES
   spring-commands-rspec
   stackprof
   thin
+  timecop
   traceroute
   twitter
   uglifier

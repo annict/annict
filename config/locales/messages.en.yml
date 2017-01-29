@@ -71,6 +71,12 @@ en:
       no_muted_users_found: No muted users found.
     notifications:
       no_notifications: No notifications
+    oauth:
+      authorizations:
+        authorize: Authorize
+        authorize_account_html: Authorize <b>%{client_name}</b> to use your account?
+        cancel: Cancel
+        this_application_will_be_able_to: "This application will be able to:"
     oauth_users:
       new:
         sign_up_with_oauth: Sign Up with %{provider_name}

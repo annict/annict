@@ -1,14 +1,17 @@
-- title = "認証コード"
-- description = meta_description
-- keywords = meta_keywords
-- set_meta_tags(title: title, description: description, keywords: keywords, reverse: true)
+- title = t "head.title.oauth.authorizations.show"
+- set_meta_tags title: title, reverse: true, prefix: false
+- set_page_category "oauth_authorizations_show"
 
-.ann_container.row
-  .ann_wrapper.large-8.small-12.column.align-self-middle.large-offset-2
-    .ann_logo.text-center
-      = link_to root_path do
-        = image_tag "navbar/logo-120x120.png", size: "60x60", alt: "Annict"
-    .ann-card
-      h1.text-center 認証コード
-      .text-center
-        code = params[:code]
+.container
+  .row.align-items-center
+    .col-6.offset-3.py-3
+      .text-center.mb-3
+        = link_to root_path do
+          = image_tag "logos/color-mizuho.png", size: "50x61", alt: "Annict"
+      .c-card.px-1.py-2.mb-1
+        h1.text-center.mb-2
+          = t "head.title.oauth.authorizations.show"
+        
+        .c-authorization-code.text-center
+          code
+            = params[:code]

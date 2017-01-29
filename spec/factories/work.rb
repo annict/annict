@@ -6,8 +6,11 @@ FactoryGirl.define do
     sequence(:title_kana) { |n| "#{n}にんはぷりきゅあ" }
     media :tv
     official_site_url "http://example.com"
-    wikipedia_url "http://example.com"
+    wikipedia_url "http://wikipedia.org"
+    twitter_username "precure_official"
     twitter_hashtag "precure"
+    released_at Date.parse("2012-04-05")
+    released_at_about "2012年"
 
     trait :with_item do
       after :create do |work|

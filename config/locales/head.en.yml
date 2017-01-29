@@ -101,6 +101,10 @@ en:
         index: Mute Filters
       notifications:
         index: Notifications
+      oauth:
+        authorizations:
+          new: Authorize an application
+          show: Authorization code
       options:
         index: Options
       organizations:

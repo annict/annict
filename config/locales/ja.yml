@@ -27,12 +27,6 @@ ja:
   meta:
     description: Annict (アニクト) は、見たアニメを記録したり、見た感想を友達にシェアすることができるWebサービスです。「今どの作品を何話まで見ているんだっけ？」を解消します。
   resources:
-    seasons:
-      yearly:
-        winter: "%{year}年冬"
-        spring: "%{year}年春"
-        summer: "%{year}年夏"
-        autumn: "%{year}年秋"
     works:
       aasm_state:
         published: Published

@@ -8,7 +8,7 @@ FactoryGirl.define do
 
     before(:create) do
       attrs = attributes_for(:status_tip)
-      Tip.create_with(attrs).find_or_create_by(partial_name: "status")
+      Tip.create(attrs)
     end
   end
 end

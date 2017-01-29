@@ -53,7 +53,7 @@ nav.c-navbar.navbar.navbar-toggleable-md class="#{transparent ? 'navbar-dark is-
             = link_to t("head.title.channels.index"), annict_url(:channels_url), class: "dropdown-item"
             = link_to t("words.settings"), annict_url(:profile_url), class: "dropdown-item"
             = link_to t("words.annict_db"), ENV.fetch("ANNICT_DB_URL"), class: "dropdown-item"
-            = link_to t("words.annict_api"), "https://annict.wikihub.io/wiki/api", target: "_blank", class: "dropdown-item"
+            = link_to t("words.annict_api"), "https://docs.annict.com/ja/api/", target: "_blank", class: "dropdown-item"
             = link_to t("head.title.pages.about"), annict_url(:about_url), class: "dropdown-item"
             = link_to t("words.sign_out"), annict_url(:destroy_user_session_url), method: "delete", class: "dropdown-item"
       - else

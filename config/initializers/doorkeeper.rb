@@ -110,6 +110,8 @@ Doorkeeper.configure do
 
   # WWW-Authenticate Realm (default "Doorkeeper").
   # realm "Doorkeeper"
+
+  base_controller "Oauth::ApplicationController"
 end
 
 Doorkeeper::Application.class_eval do
