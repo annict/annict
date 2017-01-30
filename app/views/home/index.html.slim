@@ -6,15 +6,12 @@
 
 .p-application__content.mt-1.mb-2
   .container
-    .row
+    .row.justify-content-center
       .col-7
-        c-activities
-      .col-5
         - if current_user.tips.unfinished.present?
-          = render "home/tips"
-        | TODO: Notification
-        | TODO: Site News
-        | TODO: Friends
+          .mb-1
+            = render "home/tips"
+        c-activities
 
 = render "application/components/footer"
 
