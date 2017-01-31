@@ -16,7 +16,6 @@ class CreateWorkImages < ActiveRecord::Migration[5.0]
 
     add_index :work_images, :work_id
     add_index :work_images, :user_id
-    add_index :work_images, :aasm_state
 
     add_foreign_key :work_images, :works
     add_foreign_key :work_images, :users

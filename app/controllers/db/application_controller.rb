@@ -17,6 +17,10 @@ module Db
 
     private
 
+    def load_character
+      @character = Character.find(params[:character_id])
+    end
+
     def load_work
       @work = Work.find(params[:work_id])
     end

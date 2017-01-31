@@ -111,6 +111,7 @@ Rails.application.routes.draw do
           get :activities
           patch :hide
         end
+        resource :image, controller: :character_images, only: %i(show create update destroy)
       end
 
       resources :casts, only: %i(edit update destroy) do
@@ -209,10 +210,6 @@ Rails.application.routes.draw do
 
   resources :characters, only: %i(show) do
     resources :images, only: %i(index new create destroy), controller: :character_images
-  end
-
-  resources :character_images, only: [] do
-    resources :reports, only: %i(create), controller: :character_image_reports
   end
 
   resource :channel, only: [] do

@@ -91,6 +91,8 @@ ActiveRecord::Schema.define(version: 20170113204733) do
     t.datetime "created_at",                                    null: false
     t.datetime "updated_at",                                    null: false
     t.string   "source_url",                                    null: false
+    t.string   "asin",                    default: "",          null: false
+    t.string   "copyright",               default: "",          null: false
     t.index ["aasm_state"], name: "index_character_images_on_aasm_state", using: :btree
     t.index ["character_id"], name: "index_character_images_on_character_id", using: :btree
     t.index ["user_id"], name: "index_character_images_on_user_id", using: :btree

@@ -9,6 +9,8 @@ class CreateCharacterImages < ActiveRecord::Migration[5.0]
       t.integer :attachment_file_size, null: false
       t.string :attachment_content_type, null: false
       t.datetime :attachment_updated_at, null: false
+      t.string :copyright, null: false, default: ""
+      t.string :asin, null: false, default: ""
       t.timestamps null: false
     end
 

@@ -7,6 +7,8 @@
     .col
       = render "db/application/topbar_title", parent: @character.decorate.db_detail_link, child: t("words.activities")
 
+= render "db/characters/subnav", character: @character
+
 .container-fluid.p-1
   .row.mb-1
     .c-card.col-8.offset-2.p-1

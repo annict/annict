@@ -1,11 +1,13 @@
-- title = t "head.title.db.work_images.show", title: @work.decorate.local_title
+- title = t "head.title.db.character_images.show", name: @character.decorate.local_name
 - set_meta_tags(title: title, reverse: true, prefix: false)
-- set_page_category "db_work_images_show"
+- set_page_category "db_character_images_show"
 
 .l-topbar.container-fluid.px-1
   .row.flex-items-xs-between
     .col-8
-      = render "db/application/topbar_title", parent: @work, child: t("words.work_image")
+      = render "db/application/topbar_title", parent: @character, child: t("words.character_image")
+
+= render "db/characters/subnav", character: @character
 
 .container-fluid.p-1
   .row
@@ -13,7 +15,7 @@
       .c-card.p-1.mb-1
         = image_tag ann_image_url(@image, :attachment, size: "280x373"), width: "280", class: "img-fluid img-thumbnail rounded"
       .c-card.p-1
-        = form_for @image, url: db_work_image_path(@work) do |f|
+        = form_for @image, url: db_character_image_path(@character) do |f|
           = render "application/components/error_panel", resource: @image
           .form-group.row
             = f.label :attachment, class: "col-2 col-form-label"
@@ -22,7 +24,7 @@
                 = icon "plus"
                 = t "messages.character_images.attach_image"
               c-image-attach-modal
-              c-image-attach-form input-name="work_image[attachment]"
+              c-image-attach-form input-name="character_image[attachment]"
           .form-group.row
             = f.label :asin, class: "col-2 col-form-label"
             .col-10

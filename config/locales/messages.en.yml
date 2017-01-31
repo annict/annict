@@ -45,8 +45,6 @@ en:
         the_user_has_been_muted: The user has been muted.
       program_list:
         tracked: Tracked.
-      report_button:
-        report_this_image: Report this image as inappropriate
       status_selector:
         select_status: Select Status
       thumbs_buttons:
@@ -56,12 +54,8 @@ en:
         description: Annict is the platform for Anime Addicts. You can explore the anime database, track anime you are watching and see what friends are watching.
         title: Welcome to Annict!
     character_images:
-      can_not_delete: This image can't be deleted as it's the main visual.
-      deleted: Image has been deleted.
-      source: "Source:"
-      uploaded: Image has been uploaded.
-    character_image_reports:
-      reported: Image reported as inappropriate.
+      deleted: Character image has been deleted.
+      saved: Work image has been saved.
     episodes:
       watched_x_times: Watched %{records_count} times
     multiple_records:
@@ -127,7 +121,6 @@ en:
       no_works: No works
     work_images:
       deleted: Work image has been deleted.
-      no_images: No images
       saved: Work image has been saved.
       index:
         dropzone-empty: Drop your image here or click to upload.

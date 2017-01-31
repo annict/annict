@@ -6,7 +6,6 @@
 
 Turbolinks = require "turbolinks"
 Vue = require "vue/dist/vue"
-MugenScroll = require "vue-mugen-scroll"
 
 $(document).on "turbolinks:load", ->
   activities = require "./common/components/activities"
