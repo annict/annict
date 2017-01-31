@@ -39,7 +39,6 @@ class User < ActiveRecord::Base
   include Devise::Models::Confirmable
 
   include UserCheckable
-  include UserDislikeable
   include UserFollowable
   include UserLikeable
   include UserReceivable
@@ -61,7 +60,6 @@ class User < ActiveRecord::Base
   has_many :channel_works, dependent: :destroy
   has_many :records, class_name: "Checkin", dependent: :destroy
   has_many :db_comments, dependent: :destroy
-  has_many :dislikes, dependent: :destroy
   has_many :finished_tips, dependent: :destroy
   has_many :follows,       dependent: :destroy
   has_many :followings,    through:   :follows

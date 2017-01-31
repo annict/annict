@@ -12,7 +12,6 @@
 #  attachment_updated_at   :datetime         not null
 #  aasm_state              :string           default("published"), not null
 #  likes_count             :integer          default(0), not null
-#  dislikes_count          :integer          default(0), not null
 #  created_at              :datetime         not null
 #  updated_at              :datetime         not null
 #  source_url              :string           not null

@@ -7,10 +7,6 @@ module Annict
         @request = request
       end
 
-      def dislikes
-        @dislikes ||= ::Annict::Keen::Events::Dislike.new(@request)
-      end
-
       def follows
         @follows ||= ::Annict::Keen::Events::Follow.new(@request)
       end
