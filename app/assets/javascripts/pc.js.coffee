@@ -35,6 +35,7 @@ $(document).on "turbolinks:load", ->
   untrackedEpisodeList = require "./common/components/untrackedEpisodeList"
   userHeatmap = require "./common/components/userHeatmap"
   usernamePreview = require "./common/components/usernamePreview"
+  workFriends = require "./common/components/workFriends"
 
   searchForm = require "./pc/components/searchForm"
   imageAttachForm = require "./pc/components/imageAttachForm"
@@ -70,6 +71,7 @@ $(document).on "turbolinks:load", ->
   Vue.component("c-untracked-episode-list", untrackedEpisodeList)
   Vue.component("c-user-heatmap", userHeatmap)
   Vue.component("c-username-preview", usernamePreview)
+  Vue.component("c-work-friends", workFriends)
 
   Vue.directive("resource-select", resourceSelect)
 

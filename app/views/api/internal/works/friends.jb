@@ -1,0 +1,3 @@
+# frozen_string_literal: true
+
+render("application/components/work_friends", users: @users)
