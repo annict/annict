@@ -9,9 +9,8 @@ class CreateWorkImages < ActiveRecord::Migration[5.0]
       t.integer :attachment_file_size, null: false
       t.string :attachment_content_type, null: false
       t.datetime :attachment_updated_at, null: false
-      t.string :aasm_state, null: false, default: "published"
-      t.integer :likes_count, null: false, default: 0
-      t.integer :dislikes_count, null: false, default: 0
+      t.string :copyright, null: false, default: ""
+      t.string :asin, null: false, default: ""
       t.timestamps null: false
     end
 

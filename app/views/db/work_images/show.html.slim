@@ -1,0 +1,45 @@
+- title = t "head.title.db.work_images.show", title: @work.decorate.local_title
+- set_meta_tags(title: title, reverse: true, prefix: false)
+- set_page_category "db_work_images_show"
+
+.l-topbar.container-fluid.px-1
+  .row.flex-items-xs-between
+    .col-8
+      = render "db/application/topbar_title", parent: @work, child: t("words.work_image")
+
+.container-fluid.p-1
+  .row
+    .col-6
+      .c-card.p-1.mb-1
+        - if @image.present?
+          = image_tag ann_image_url(@image, :attachment, size: "280x373"), width: "280", class: "img-fluid rounded"
+        - else
+          = render "application/components/empty", text: t("messages.db.work_images.no_images")
+      .c-card.p-1
+        = form_for @image, url: db_work_image_path(@work) do |f|
+          = render "application/components/error_panel", resource: @image
+          .form-group.row
+            = f.label :attachment, class: "col-2 col-form-label"
+            .col-10
+              .btn.btn-secondary data-toggle="modal" data-target=".c-image-attach-modal"
+                = icon "plus"
+                = t "messages.character_images.attach_image"
+              c-image-attach-modal
+              c-image-attach-form input-name="work_image[attachment]"
+          .form-group.row
+            = f.label :asin, class: "col-2 col-form-label"
+            .col-10
+              = f.text_field :asin, class: "form-control"
+          .form-group.row
+            = f.label :copyright, class: "col-2 col-form-label"
+            .col-10
+              = f.text_field :copyright, class: "form-control"
+          .form-group.row
+            .col-10.offset-2
+              = f.button class: "btn btn-primary"
+    .col-6
+      = render "sidebar"
+
+- content_for :js_templates do
+  = render "application/js_templates/image_attach_form"
+  = render "application/js_templates/image_attach_modal"

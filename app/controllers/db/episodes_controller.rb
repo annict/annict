@@ -76,10 +76,6 @@ module Db
 
     private
 
-    def load_work
-      @work = Work.find(params[:work_id])
-    end
-
     def load_episode
       @episode = Episode.find(params[:id])
     end

@@ -17,6 +17,10 @@ module Db
 
     private
 
+    def load_work
+      @work = Work.find(params[:work_id])
+    end
+
     def set_search_params
       @search = SearchService.new(params[:q], scope: :all)
     end

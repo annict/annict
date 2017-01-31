@@ -126,6 +126,9 @@ en:
     users:
       no_works: No works
     work_images:
+      deleted: Work image has been deleted.
+      no_images: No images
+      saved: Work image has been saved.
       index:
         dropzone-empty: Drop your image here or click to upload.
     works:

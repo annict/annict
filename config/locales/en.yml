@@ -82,6 +82,9 @@ en:
       twitter_hashtag_placeholder: e.g. なのん
       twitter_username_placeholder: e.g. nonnontv
       updated: Work updated
+    work_image:
+      asin_or_copyright_required: required
+      invalid_asin: is invalid format
   words:
     ago: ago
     airing: Airing
@@ -116,4 +119,5 @@ en:
     state_change: State change
     syobocal: Syobocal
     title: Title
+    upload: Upload
     work_image: Work image

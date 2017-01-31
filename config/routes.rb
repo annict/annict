@@ -73,7 +73,6 @@ Rails.application.routes.draw do
         get :friends
 
         resource :latest_status, only: [:show]
-        resources :images, controller: :work_images, only: %i(create)
 
         resources :channels, only: [] do
           post :select, on: :collection
@@ -174,6 +173,7 @@ Rails.application.routes.draw do
         end
 
         resource :item, except: [:index]
+        resource :image, controller: :work_images, only: %i(show create update destroy)
         resources :casts, only: %i(index new create)
         resources :episodes, only: %i(index new create)
         resources :programs, only: %i(index new create)
@@ -272,7 +272,6 @@ Rails.application.routes.draw do
   resources :works, only: [:index, :show] do
     resources :characters, only: %i(index)
     resources :episodes, only: %i(index show)
-    resources :images, controller: :work_images, only: %i(index destroy)
     resources :staffs, only: %i(index)
 
     collection do

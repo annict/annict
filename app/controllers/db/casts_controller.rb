@@ -74,10 +74,6 @@ module Db
 
     private
 
-    def load_work
-      @work = Work.find(params[:work_id])
-    end
-
     def load_cast
       @cast = Cast.find(params[:id])
     end

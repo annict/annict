@@ -90,40 +90,39 @@ ActiveRecord::Schema.define(version: 20170113204733) do
     t.integer  "dislikes_count",          default: 0,           null: false
     t.datetime "created_at",                                    null: false
     t.datetime "updated_at",                                    null: false
+    t.string   "source_url",                                    null: false
     t.index ["aasm_state"], name: "index_character_images_on_aasm_state", using: :btree
     t.index ["character_id"], name: "index_character_images_on_character_id", using: :btree
     t.index ["user_id"], name: "index_character_images_on_user_id", using: :btree
   end
 
   create_table "characters", force: :cascade do |t|
-    t.string   "name",                                     null: false
-    t.string   "name_kana",          default: "",          null: false
-    t.string   "name_en",            default: "",          null: false
-    t.string   "kind",               default: "",          null: false
-    t.string   "kind_en",            default: "",          null: false
-    t.string   "nickname",           default: "",          null: false
-    t.string   "nickname_en",        default: "",          null: false
-    t.string   "birthday",           default: "",          null: false
-    t.string   "birthday_en",        default: "",          null: false
-    t.string   "age",                default: "",          null: false
-    t.string   "age_en",             default: "",          null: false
-    t.string   "blood_type",         default: "",          null: false
-    t.string   "blood_type_en",      default: "",          null: false
-    t.string   "height",             default: "",          null: false
-    t.string   "height_en",          default: "",          null: false
-    t.string   "weight",             default: "",          null: false
-    t.string   "weight_en",          default: "",          null: false
-    t.string   "nationality",        default: "",          null: false
-    t.string   "nationality_en",     default: "",          null: false
-    t.string   "occupation",         default: "",          null: false
-    t.string   "occupation_en",      default: "",          null: false
-    t.text     "description",        default: "",          null: false
-    t.text     "description_en",     default: "",          null: false
-    t.string   "aasm_state",         default: "published", null: false
-    t.datetime "created_at",                               null: false
-    t.datetime "updated_at",                               null: false
-    t.integer  "character_image_id"
-    t.index ["character_image_id"], name: "index_characters_on_character_image_id", using: :btree
+    t.string   "name",                                 null: false
+    t.string   "name_kana",      default: "",          null: false
+    t.string   "name_en",        default: "",          null: false
+    t.string   "kind",           default: "",          null: false
+    t.string   "kind_en",        default: "",          null: false
+    t.string   "nickname",       default: "",          null: false
+    t.string   "nickname_en",    default: "",          null: false
+    t.string   "birthday",       default: "",          null: false
+    t.string   "birthday_en",    default: "",          null: false
+    t.string   "age",            default: "",          null: false
+    t.string   "age_en",         default: "",          null: false
+    t.string   "blood_type",     default: "",          null: false
+    t.string   "blood_type_en",  default: "",          null: false
+    t.string   "height",         default: "",          null: false
+    t.string   "height_en",      default: "",          null: false
+    t.string   "weight",         default: "",          null: false
+    t.string   "weight_en",      default: "",          null: false
+    t.string   "nationality",    default: "",          null: false
+    t.string   "nationality_en", default: "",          null: false
+    t.string   "occupation",     default: "",          null: false
+    t.string   "occupation_en",  default: "",          null: false
+    t.text     "description",    default: "",          null: false
+    t.text     "description_en", default: "",          null: false
+    t.string   "aasm_state",     default: "published", null: false
+    t.datetime "created_at",                           null: false
+    t.datetime "updated_at",                           null: false
     t.index ["name", "kind"], name: "index_characters_on_name_and_kind", unique: true, using: :btree
   end
 
@@ -352,21 +351,6 @@ ActiveRecord::Schema.define(version: 20170113204733) do
     t.index ["work_id"], name: "index_draft_staffs_on_work_id", using: :btree
   end
 
-  create_table "draft_work_organizations", force: :cascade do |t|
-    t.integer  "work_organization_id"
-    t.integer  "work_id",                          null: false
-    t.integer  "organization_id",                  null: false
-    t.string   "role",                             null: false
-    t.string   "role_other"
-    t.integer  "sort_number",          default: 0, null: false
-    t.datetime "created_at",                       null: false
-    t.datetime "updated_at",                       null: false
-    t.index ["organization_id"], name: "index_draft_work_organizations_on_organization_id", using: :btree
-    t.index ["sort_number"], name: "index_draft_work_organizations_on_sort_number", using: :btree
-    t.index ["work_id"], name: "index_draft_work_organizations_on_work_id", using: :btree
-    t.index ["work_organization_id"], name: "index_draft_work_organizations_on_work_organization_id", using: :btree
-  end
-
   create_table "draft_works", force: :cascade do |t|
     t.integer  "work_id"
     t.integer  "season_id"
@@ -467,14 +451,14 @@ ActiveRecord::Schema.define(version: 20170113204733) do
   create_table "forum_categories", force: :cascade do |t|
     t.string   "slug",                          null: false
     t.string   "name",                          null: false
+    t.integer  "forum_posts_count", default: 0, null: false
+    t.datetime "created_at",                    null: false
+    t.datetime "updated_at",                    null: false
     t.string   "name_en",                       null: false
     t.string   "description",                   null: false
     t.string   "description_en",                null: false
     t.string   "postable_role",                 null: false
     t.integer  "sort_number",                   null: false
-    t.integer  "forum_posts_count", default: 0, null: false
-    t.datetime "created_at",                    null: false
-    t.datetime "updated_at",                    null: false
     t.index ["slug"], name: "index_forum_categories_on_slug", unique: true, using: :btree
   end
 
@@ -506,9 +490,9 @@ ActiveRecord::Schema.define(version: 20170113204733) do
     t.text     "body",                 default: "", null: false
     t.integer  "forum_comments_count", default: 0,  null: false
     t.datetime "edited_at",                                      comment: "The datetime which user has changed title, body and so on."
-    t.datetime "last_commented_at",                 null: false
     t.datetime "created_at",                        null: false
     t.datetime "updated_at",                        null: false
+    t.datetime "last_commented_at",                 null: false
     t.index ["forum_category_id"], name: "index_forum_posts_on_forum_category_id", using: :btree
     t.index ["user_id"], name: "index_forum_posts_on_user_id", using: :btree
   end
@@ -523,6 +507,7 @@ ActiveRecord::Schema.define(version: 20170113204733) do
     t.string   "tombo_image_content_type"
     t.integer  "tombo_image_file_size"
     t.datetime "tombo_image_updated_at"
+    t.index ["work_id"], name: "index_items_on_work_id", unique: true, using: :btree
     t.index ["work_id"], name: "items_work_id_idx", using: :btree
   end
 
@@ -701,6 +686,7 @@ ActiveRecord::Schema.define(version: 20170113204733) do
     t.integer  "tombo_background_image_file_size"
     t.datetime "tombo_background_image_updated_at"
     t.string   "url"
+    t.index ["user_id"], name: "profiles_user_id_idx", using: :btree
     t.index ["user_id"], name: "profiles_user_id_key", unique: true, using: :btree
   end
 
@@ -891,36 +877,18 @@ ActiveRecord::Schema.define(version: 20170113204733) do
   end
 
   create_table "work_images", force: :cascade do |t|
-    t.integer  "work_id",                                       null: false
-    t.integer  "user_id",                                       null: false
-    t.string   "attachment_file_name",                          null: false
-    t.integer  "attachment_file_size",                          null: false
-    t.string   "attachment_content_type",                       null: false
-    t.datetime "attachment_updated_at",                         null: false
-    t.string   "aasm_state",              default: "published", null: false
-    t.integer  "likes_count",             default: 0,           null: false
-    t.integer  "dislikes_count",          default: 0,           null: false
-    t.datetime "created_at",                                    null: false
-    t.datetime "updated_at",                                    null: false
-    t.index ["aasm_state"], name: "index_work_images_on_aasm_state", using: :btree
+    t.integer  "work_id",                              null: false
+    t.integer  "user_id",                              null: false
+    t.string   "attachment_file_name",                 null: false
+    t.integer  "attachment_file_size",                 null: false
+    t.string   "attachment_content_type",              null: false
+    t.datetime "attachment_updated_at",                null: false
+    t.datetime "created_at",                           null: false
+    t.datetime "updated_at",                           null: false
+    t.string   "copyright",               default: "", null: false
+    t.string   "asin",                    default: "", null: false
     t.index ["user_id"], name: "index_work_images_on_user_id", using: :btree
     t.index ["work_id"], name: "index_work_images_on_work_id", using: :btree
-  end
-
-  create_table "work_organizations", force: :cascade do |t|
-    t.integer  "work_id",                               null: false
-    t.integer  "organization_id",                       null: false
-    t.string   "role",                                  null: false
-    t.string   "role_other"
-    t.string   "aasm_state",      default: "published", null: false
-    t.integer  "sort_number",     default: 0,           null: false
-    t.datetime "created_at",                            null: false
-    t.datetime "updated_at",                            null: false
-    t.index ["aasm_state"], name: "index_work_organizations_on_aasm_state", using: :btree
-    t.index ["organization_id"], name: "index_work_organizations_on_organization_id", using: :btree
-    t.index ["sort_number"], name: "index_work_organizations_on_sort_number", using: :btree
-    t.index ["work_id", "organization_id"], name: "index_work_organizations_on_work_id_and_organization_id", unique: true, using: :btree
-    t.index ["work_id"], name: "index_work_organizations_on_work_id", using: :btree
   end
 
   create_table "works", force: :cascade do |t|
@@ -950,12 +918,10 @@ ActiveRecord::Schema.define(version: 20170113204733) do
     t.string   "synopsis_source",                  default: "",          null: false
     t.string   "synopsis_source_en",               default: "",          null: false
     t.integer  "mal_anime_id"
-    t.integer  "work_image_id"
     t.index ["aasm_state"], name: "index_works_on_aasm_state", using: :btree
     t.index ["number_format_id"], name: "index_works_on_number_format_id", using: :btree
     t.index ["sc_tid"], name: "works_sc_tid_key", unique: true, using: :btree
     t.index ["season_id"], name: "works_season_id_idx", using: :btree
-    t.index ["work_image_id"], name: "index_works_on_work_image_id", using: :btree
   end
 
   add_foreign_key "activities", "users", name: "activities_user_id_fk", on_delete: :cascade
@@ -968,7 +934,6 @@ ActiveRecord::Schema.define(version: 20170113204733) do
   add_foreign_key "channels", "channel_groups", name: "channels_channel_group_id_fk", on_delete: :cascade
   add_foreign_key "character_images", "characters"
   add_foreign_key "character_images", "users"
-  add_foreign_key "characters", "character_images"
   add_foreign_key "checkins", "episodes", name: "checkins_episode_id_fk", on_delete: :cascade
   add_foreign_key "checkins", "multiple_records"
   add_foreign_key "checkins", "oauth_applications"
@@ -998,7 +963,6 @@ ActiveRecord::Schema.define(version: 20170113204733) do
   add_foreign_key "draft_programs", "works"
   add_foreign_key "draft_staffs", "staffs"
   add_foreign_key "draft_staffs", "works"
-  add_foreign_key "draft_work_organizations", "work_organizations"
   add_foreign_key "draft_works", "number_formats"
   add_foreign_key "draft_works", "seasons"
   add_foreign_key "draft_works", "works"
@@ -1053,5 +1017,4 @@ ActiveRecord::Schema.define(version: 20170113204733) do
   add_foreign_key "work_images", "works"
   add_foreign_key "works", "number_formats"
   add_foreign_key "works", "seasons", name: "works_season_id_fk", on_delete: :cascade
-  add_foreign_key "works", "work_images"
 end

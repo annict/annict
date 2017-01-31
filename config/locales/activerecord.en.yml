@@ -115,6 +115,11 @@ en:
         twitter_username: Twitter username
         wikipedia_url_en: Wikipedia (en)
         wikipedia_url: Wikipedia (ja)
+      work_image:
+        attachment: Image
+        asin: ASIN
+        asin_or_copyright: ASIN or Copyright
+        copyright: Copyright
     models:
       character:
         one: Character

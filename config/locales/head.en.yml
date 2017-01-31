@@ -78,6 +78,8 @@ en:
           edit: Edit Staff
           index: Staffs
           new: Create Staffs
+        work_images:
+          show: Work Image - %{title}
         works:
           activities: Activities
           edit: "%{title}"
