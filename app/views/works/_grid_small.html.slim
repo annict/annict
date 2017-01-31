@@ -9,4 +9,4 @@
                 = image_tag ann_image_url(work.work_image, :attachment, size: "280x373"), class: "img-fluid rounded"
               .c-hover-image__over
           .p-zp5.text-truncate.small
-            = link_to work.decorate.local_title, work_path(work)
+            = link_to work.decorate.local_title, work_path(work), title: work.decorate.local_title

@@ -4,30 +4,31 @@
 
 = render "application/components/navbar"
 
-.c-card.container.mt-1.mb-2.py-1
-  .row.mb-1
-    .col
-      h1 = @application.name
-    .col.text-right
-      = link_to t("words.edit"), edit_oauth_application_path(@application), class: "btn btn-secondary mr-zp5"
-      = link_to t("words.delete"), oauth_application_path(@application), class: "btn btn-danger", data: { method: :delete, confirm: t("messages._common.are_you_sure") }
+.p-application__content
+  .c-card.container.mt-1.mb-2.py-1
+    .row.mb-1
+      .col
+        h1 = @application.name
+      .col.text-right
+        = link_to t("words.edit"), edit_oauth_application_path(@application), class: "btn btn-secondary mr-zp5"
+        = link_to t("words.delete"), oauth_application_path(@application), class: "btn btn-danger", data: { method: :delete, confirm: t("messages._common.are_you_sure") }
 
-  dl
-    dt = t "activerecord.attributes.oauth_application.uid"
-    dd = @application.uid
-    dt = t "activerecord.attributes.oauth_application.secret"
-    dd = @application.secret
-    dt = t "activerecord.attributes.oauth_application.scope"
-    dd = @application.scopes
-    dt = t "activerecord.attributes.oauth_application.redirect_uri"
-    dd
-      table.table
-        tbody
-          - @application.redirect_uri.split.each do |uri|
-            tr
-              td
-                = uri
-              td
-                = link_to t("messages.oauth.applications.authorize"), oauth_authorization_path(client_id: @application.uid, redirect_uri: uri, response_type: "code", scope: @application.scopes), class: "btn btn-primary", target: "_blank"
+    dl
+      dt = t "activerecord.attributes.oauth_application.uid"
+      dd = @application.uid
+      dt = t "activerecord.attributes.oauth_application.secret"
+      dd = @application.secret
+      dt = t "activerecord.attributes.oauth_application.scope"
+      dd = @application.scopes
+      dt = t "activerecord.attributes.oauth_application.redirect_uri"
+      dd
+        table.table
+          tbody
+            - @application.redirect_uri.split.each do |uri|
+              tr
+                td
+                  = uri
+                td
+                  = link_to t("messages.oauth.applications.authorize"), oauth_authorization_path(client_id: @application.uid, redirect_uri: uri, response_type: "code", scope: @application.scopes), class: "btn btn-primary", target: "_blank"
 
 = render "application/components/footer"

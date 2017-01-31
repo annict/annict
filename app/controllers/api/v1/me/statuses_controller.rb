@@ -8,7 +8,7 @@ module Api
 
         def create
           work = Work.published.find(@params.work_id)
-          status = StatusService.new(current_user, work, ga_client)
+          status = StatusService.new(current_user, work, keen_client)
           status.app = doorkeeper_token.application
 
           head(204) if status.change(@params.kind)

@@ -1,13 +1,13 @@
 doctype html
 html lang="#{I18n.locale}"
   head
-    = display_meta_tags site: "Annict DB", reverse: true
+    = ann_display_meta_tags "Annict DB"
     link href="/images/favicon.png" rel="shortcut icon" type="image/png"
     = stylesheet_link_tag "db", media: "all"
     = javascript_include_tag "pc"
     = csrf_meta_tags
-  body class="p-db #{body_classes} h-100"
-    .p-vue.h-100
+  body class="p-db #{body_classes}"
+    .p-application
       .l-sidebar
         = link_to db_root_path, class: "c-lockup my-1 px-1" do
           span.c-lockup__logo Annict
@@ -15,7 +15,7 @@ html lang="#{I18n.locale}"
         
         = form_tag db_search_path, method: :get, class: "px-1" do
           .form-group
-            = text_field_tag :q, @search.q, placeholder: t("search_with_keyword"), class: "form-control"
+            = text_field_tag :q, @search.q, placeholder: t("messages._common.search_with_keywords"), class: "form-control"
 
         ul.l-sidebar__menu.nav.navbar-nav.px-1
           li = link_to DbActivity.model_name.human(count: 2), db_activities_path, class: "d-inline-block"
@@ -23,6 +23,7 @@ html lang="#{I18n.locale}"
           li = link_to Person.model_name.human(count: 2), db_people_path, class: "d-inline-block"
           li = link_to Organization.model_name.human(count: 2), db_organizations_path, class: "d-inline-block"
           li = link_to Character.model_name.human(count: 2), db_characters_path, class: "d-inline-block"
+          li = link_to t("head.title.db.channels.index"), db_channels_path, class: "d-inline-block"
 
         = link_to root_url(subdomain: false), class: "l-sidebar__annict-link d-inline-block text-center" do
           = image_tag "logos/color-white.png", size: "33x40"

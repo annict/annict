@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module Db
-  class CharactersController < ApplicationController
+  class CharactersController < Db::ApplicationController
     permits :name, :name_kana, :name_en, :kind, :kind_en, :nickname, :nickname_en,
       :birthday, :birthday_en, :age, :age_en, :blood_type, :blood_type_en, :height,
       :height_en, :weight, :weight_en, :nationality, :nationality_en, :occupation,

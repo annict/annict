@@ -44,7 +44,8 @@ namespace :tmp do
       end
       work_image = i.work.work_images.create!(
         user: User.find(2),
-        attachment: URI.parse(image_url)
+        attachment: URI.parse(image_url),
+        asin: i.url
       )
       i.work.update_column(:work_image_id, work_image.id)
       puts "Item #{i.id} converted to Work Image #{work_image.id}"

@@ -1,4 +1,10 @@
-.container
+- title = t "head.title.sessions.new"
+- description = meta_description t("head.meta.description.sessions.new")
+- keywords = meta_keywords
+- set_meta_tags(title: title, description: description, keywords: keywords, og: { description: description }, twitter: { description: description }, reverse: true, prefix: false)
+- set_page_category "sessions_new"
+
+.container.py-3
   .text-center.mb-3
     = link_to root_path do
       = image_tag "logos/color-mizuho.png", size: "50x61", alt: "Annict"
@@ -25,9 +31,9 @@
 
         .form-group
           .row
-            .col
+            .col.col-auto
               = f.label :password
-            .col.text-xs-right
+            .col.text-right
               = link_to t("messages.sessions.new.forgot_password"), new_password_path
           = f.password_field :password, autocomplete: "off", class: "form-control", required: true
 

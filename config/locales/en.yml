@@ -26,6 +26,11 @@ en:
       previous_episode: Previous episode
       there_are_no_episodes: There are no episodes
       updated: Episode updated
+    forum_category:
+      site_news: Site News
+      general: General
+      feedback: Feedback
+      db_request: DB Request
     organization:
       created: Organization created
       deleted: Organization deleted
@@ -77,7 +82,9 @@ en:
       twitter_hashtag_placeholder: e.g. なのん
       twitter_username_placeholder: e.g. nonnontv
       updated: Work updated
-      work_list: Work List
+    work_image:
+      asin_or_copyright_required: required
+      invalid_asin: is invalid format
   words:
     ago: ago
     airing: Airing
@@ -87,24 +94,32 @@ en:
     annict_db: Annict DB
     category: Category
     channel: Channel
+    channel_list: Channel List
     delete: Delete
     detail: Detail
     edit: Edit
     error: Error
     first: First
+    friends_who_are_watching: Friends Who Are Watching
     hide: Hide
     last: Last
+    more: More
     next: Next
     or: OR
+    other_users: Other Users
     popular_airing_anime: Popular Airing Anime
     previous: Prev
+    programs: Programs
     release_on: Release on
+    resource_activities: Resource Activities
     search: Search
     season: Season
     sign_out: Sign Out
     site_name: Annict
+    sns_friends: SNS Friends
     state: State
     state_change: State change
     syobocal: Syobocal
     title: Title
+    upload: Upload
     work_image: Work image

@@ -1,11 +1,12 @@
 - title = t "head.title.sayonara.show"
-- set_meta_tags(title: title, og: { title: title }, reverse: true, prefix: false)
+- set_meta_tags(title: title, reverse: true, prefix: false)
 - set_page_category "sayonara_show"
 
 = render "application/components/navbar"
 = render "settings/subnav"
 
-.c-card.u-mw-600.mx-auto.mt-1.mb-2.p-1
-  = render "sayonara/content"
+.p-application__content
+  .c-card.u-mw-600.mx-auto.mt-1.mb-2.p-1
+    = render "sayonara/content"
 
 = render "application/components/footer"

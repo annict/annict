@@ -1,13 +1,15 @@
-- title DbActivity.model_name.human(count: 2)
+- title = t "head.title.db.activities.index"
+- set_meta_tags(title: title, reverse: true, prefix: false)
+- set_page_category "db_activities_index"
 
 .l-topbar.container-fluid.px-1
   .row.flex-items-xs-between
     .col
       = render "db/application/topbar_title", parent: DbActivity.model_name.human(count: 2)
 
-.container-fluid.p-1
-  .row
-    .c-card.col-8.offset-xs-2.p-1
+.container-fluid.p-1.mb-2
+  .row.mb-1
+    .c-card.col-8.offset-2.p-1
       - @activities.each do |activity|
         - if activity.trackable.present?
           - if activity.root_resource_action?
@@ -15,4 +17,5 @@
           - elsif activity.child_resource_action?
             = render "activity_child_resources", activity: activity
 
-= paginate @activities
+  .text-center
+    = paginate @activities

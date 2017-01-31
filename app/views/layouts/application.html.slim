@@ -3,7 +3,7 @@ html lang="#{I18n.locale}"
   head
     = render "application/head"
   body class="#{body_classes} #{user_signed_in? ? 'is-user' : 'is-guest'}"
-    .p-vue
+    .p-application.d-flex.flex-column
       c-flash
       = yield
       - unless user_signed_in?

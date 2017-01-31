@@ -9,14 +9,44 @@ describe "Api::V1::Episodes" do
       get api("/v1/episodes", access_token: access_token.token)
     end
 
-    context "パラメータを渡さないとき" do
-      it "200が返ること" do
+    context "when added no parameters" do
+      it "responses 200" do
         expect(response.status).to eq(200)
       end
 
-      it "作品情報が取得できること" do
-        expect(json["episodes"][0]["title"]).to eq(work.episodes.first.title)
+      it "gets episode info" do
+        episode = work.episodes.first
+        expected_hash = {
+          "id" => episode.id,
+          "number" => episode.raw_number,
+          "number_text" => episode.number,
+          "sort_number" => episode.sort_number,
+          "title" => episode.title,
+          "records_count" => 0,
+          "prev_episode" => nil,
+          "next_episode" => nil,
+          "work" => {
+            "id" => work.id,
+            "title" => work.title,
+            "title_kana" => work.title_kana,
+            "media" => "tv",
+            "media_text" => "TV",
+            "season_name" => "2016-autumn",
+            "season_name_text" => "2016年秋",
+            "released_on" => "2012-04-05",
+            "released_on_about" => "2012年",
+            "official_site_url" => "http://example.com",
+            "wikipedia_url" => "http://wikipedia.org",
+            "twitter_username" => "precure_official",
+            "twitter_hashtag" => "precure",
+            "episodes_count" => 1,
+            "watchers_count" => 0
+          }
+        }
+        expect(json["episodes"][0]).to include(expected_hash)
         expect(json["total_count"]).to eq(1)
+        expect(json["next_page"]).to eq(nil)
+        expect(json["prev_page"]).to eq(nil)
       end
     end
   end

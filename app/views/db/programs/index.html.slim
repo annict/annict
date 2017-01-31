@@ -1,11 +1,13 @@
-- title t("resources.program.program_list")
+- title = t "head.title.db.programs.index"
+- set_meta_tags(title: title, reverse: true, prefix: false)
+- set_page_category "db_programs_index"
 
 .l-topbar.container-fluid.px-1
   .row.flex-items-xs-between
     .col-8
-      = render "db/application/topbar_title", parent: @work, child: t("resources.program.program_list")
+      = render "db/application/topbar_title", parent: @work, child: title
     - if user_signed_in? && current_user.committer?
-      .col.text-xs-right
+      .col.text-right
         = link_to new_db_work_program_path(@work), class: "btn btn-outline-primary" do
           = icon "pencil-square-o"
           = t "resources.program.new_programs"
@@ -23,7 +25,7 @@
             th = t "activerecord.attributes.program.episode_id"
             th = t "activerecord.attributes.program.started_at"
             th = t "activerecord.attributes.program.rebroadcast"
-            th = t "words.activity"
+            th = t "head.title.db.programs.activities"
             - if policy(@programs).edit?
               th = t "words.edit"
             - if policy(@programs).hide?
@@ -38,7 +40,7 @@
               td = program.episode.decorate.title_with_number
               td = display_time(program.started_at)&.presence || "-"
               td = program.rebroadcast? ? icon("check") : "-"
-              td = link_to t("words.activity"), activities_db_program_path(program)
+              td = link_to t("head.title.db.programs.activities"), activities_db_program_path(program)
               - if policy(program).edit?
                 td
                   = link_to t("words.edit"), edit_db_program_path(program), class: "btn btn-primary btn-sm"

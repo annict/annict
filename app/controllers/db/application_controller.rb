@@ -5,6 +5,8 @@ module Db
     include Pundit
     include ControllerCommon
     include FlashMessage
+    include Analyzable
+    include Gonable
 
     layout "db"
 
@@ -14,6 +16,14 @@ module Db
     before_action :set_search_params
 
     private
+
+    def load_character
+      @character = Character.find(params[:character_id])
+    end
+
+    def load_work
+      @work = Work.find(params[:work_id])
+    end
 
     def set_search_params
       @search = SearchService.new(params[:q], scope: :all)

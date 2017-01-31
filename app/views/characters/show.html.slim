@@ -1,20 +1,20 @@
-- title = t "head.title.characters.show", title: @character.decorate.name_with_kind
-- description = meta_description(t("head.meta.description.characters.show", title: title))
-- keywords = meta_keywords(@character.name)
-- set_meta_tags(title: title, description: description, keywords: keywords, og: { title: title, description: description }, reverse: true, prefix: false)
+- name = t "head.title.characters.show", name: @character.decorate.name_with_kind
+- description = meta_description t("head.meta.description.characters.show", name: name)
+- keywords = meta_keywords @character.decorate.local_name
+- image_url = ann_image_url(@character.character_images.first, :attachment, size: "640x")
+- set_meta_tags(title: name, description: description, keywords: keywords, og: { description: description, image: image_url }, twitter: { description: description, image: image_url }, reverse: true, prefix: false)
 - set_page_category "characters_show"
 
 = render "application/components/navbar"
 
-.container.py-1
-  .row
-    .col-3.pr-0
-      .container
-        = render "sidebar", character: @character
-    .col-9
-      .c-card
-        = render "subnav", character: @character
-        .container.py-1
-          = render "people/grid", root_resource: @character, resource_years: @cast_years, resources_with_year: @casts_with_year
+.p-application__content
+  .container.py-1.mb-2
+    .row
+      .col-3.pr-0
+        = render "characters/sidebar", character: @character
+      .col-9
+        .c-card
+          .container.py-1
+            = render "people/grid", root_resource: @character, resource_years: @cast_years, resources_with_year: @casts_with_year
 
 = render "application/components/footer"

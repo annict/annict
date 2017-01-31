@@ -1,24 +1,23 @@
 - title = t "head.title.staffs.index", title: @work.decorate.local_title
 - description = meta_description(t("head.meta.description.staffs.index", title: @work.decorate.local_title))
 - keywords = meta_keywords(@work.title)
-- image_url = ann_image_tag(@work.work_image, :attachment, size: "640x")
-- set_meta_tags(title: title, description: description, keywords: keywords, og: { title: title, description: description, image: image_url }, reverse: true, prefix: false)
+- image_url = ann_image_url(@work.work_image, :attachment, size: "640x")
+- set_meta_tags(title: title, description: description, keywords: keywords, og: { description: description, image: image_url }, twitter: { description: description, image: image_url }, reverse: true, prefix: false)
 - set_page_category "staffs_index"
 
 = render "application/components/navbar"
 
-.container.py-1
-  .row
-    .col-3.pr-0
-      .c-card.container.py-1
+.p-application__content
+  .container.py-1.mb-2
+    .row
+      .col-3.pr-0
         = render "works/sidebar", work: @work
-    .col-9
-      .c-card
-        .container.py-1
-          h1.mb-0 = @work.decorate.local_title
+      .col-9
         = render "works/subnav", work: @work
-
-      .c-card.container.mt-1.py-1
-        = render "staff_list", staffs: @staffs
+        .c-card.container.mt-1.pt-1
+          = render "staff_list", staffs: @staffs
 
 = render "application/components/footer"
+
+- content_for :js_templates do
+  = render "application/js_templates/status_selector"

@@ -3,7 +3,7 @@
     .row
       .col
         = access_token.application.name
-      .col.text-xs-right
+      .col.text-right
         = link_to t("words.revoke"), app_revoke_path(access_token.application), class: "btn btn-sm btn-link", data: { method: :patch, confirm: t("messages._common.are_you_sure") }
 - else
   = render "application/components/empty", text: t("messages.apps.no_applications")

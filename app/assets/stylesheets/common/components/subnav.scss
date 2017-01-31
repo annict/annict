@@ -5,6 +5,10 @@
   background-color: $ann-color-white;
   height: $ann-navbar-height;
 
+  &.c-subnav--transparent {
+    background-color: transparent;
+  }
+
   &__item {
     @include align-items(center);
     @include display(flex);

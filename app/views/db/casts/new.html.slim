@@ -1,10 +1,12 @@
-- title @work.title
+- title = t "head.title.db.casts.new"
+- set_meta_tags(title: title, reverse: true, prefix: false)
+- set_page_category "db_casts_new"
 
 .l-topbar.container-fluid.px-1
   .row.flex-items-xs-between
     .col-8
-      = render "db/application/topbar_title", parent: @work, child: t("resources.cast.new_casts")
-    .col.text-xs-right
+      = render "db/application/topbar_title", parent: @work, child: title
+    .col.text-right
       = link_to work_path(@work), class: "btn btn-outline-primary", target: "_blank" do
         = icon "external-link"
         = t "resources.work.go_to_work"
@@ -27,4 +29,4 @@
             .offset-sm-3.col-sm-9
               = f.submit t("helpers.submit.create"), class: "btn btn-primary"
     .col-6
-      = render "sidebar"
+      = render "sidebar_new"

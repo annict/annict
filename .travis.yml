@@ -2,6 +2,11 @@ language: ruby
 
 addons:
   postgresql: "9.4"
+  hosts:
+    - annict.dev
+    - db.annict.dev
+    - forum.annict.dev
+    - api.annict.dev
 
 cache:
   directories:

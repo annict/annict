@@ -1,11 +1,12 @@
 - title = t "head.title.tracks.show"
-- set_meta_tags(title: title, og: { title: title }, reverse: true, prefix: false)
+- set_meta_tags(title: title, reverse: true, prefix: false)
 - set_page_category "tracks_show"
 
 = render "application/components/navbar"
 
-.c-card.container.mt-1.mb-2.u-mw-600
-  c-untracked-episode-list
+.p-application__content
+  .c-card.container.mt-1.mb-2.u-mw-600
+    c-untracked-episode-list
 
 = render "application/components/footer"
 

@@ -1,3 +1,8 @@
-.c-empty.p-2.h2.text-center
-  = icon "exclamation-circle", class: "mb-1"
-  .d-inline-block = text
+- hint_text = local_assigns.fetch(:hint, nil)
+
+.c-empty.p-2.text-center
+  = icon "exclamation-circle", class: "mb-1 h2"
+  .h2
+    = text
+  - if hint_text.present?
+    == hint_text

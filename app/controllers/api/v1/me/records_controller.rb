@@ -7,8 +7,8 @@ module Api
         before_action :prepare_params!, only: %i(create update destroy)
 
         def create
-          episode = Episode.find(@params.episode_id)
-          record = episode.checkins.new do |r|
+          episode = Episode.published.find(@params.episode_id)
+          record = episode.records.new do |r|
             r.rating = @params.rating
             r.comment = @params.comment
             r.shared_twitter = @params.share_twitter == "true"
@@ -26,7 +26,7 @@ module Api
         end
 
         def update
-          @record = current_user.checkins.find(@params.id)
+          @record = current_user.records.find(@params.id)
           @record.rating = @params.rating
           @record.comment = @params.comment
           @record.shared_twitter = @params.share_twitter == "true"
@@ -46,7 +46,7 @@ module Api
         end
 
         def destroy
-          @record = current_user.checkins.find(@params.id)
+          @record = current_user.records.find(@params.id)
           @record.destroy
           head 204
         end

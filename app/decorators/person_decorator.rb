@@ -9,10 +9,10 @@ class PersonDecorator < ApplicationDecorator
   end
 
   def grid_description(resource)
-    case resource.class
-    when Cast
+    case resource.class.name
+    when "Cast"
       resource.character.decorate.local_name
-    when Staff
+    when "Staff"
       resource.decorate.role_name
     end
   end

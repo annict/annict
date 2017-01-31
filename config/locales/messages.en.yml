@@ -7,18 +7,29 @@ en:
       see_more: See More
       welcome_back: Welcome back!
       welcome_to_annict: Welcome to Annict!
+      you_can_not_access_there: You can not access there.
     accounts:
       email_sent_for_confirmation: An email has been sent to confirm your email address.
-      saved: Saved.
+      saved: Account has been saved.
+    channel_works:
+      no_works: No works
     comments:
       comment_form_placeholder: Click here to add a new comment
       deleted: Deleted
       saved: Comment has been saved.
       updated: Updated
+    db:
+      comments:
+        created: Comment has been created.
     forum:
       comments:
         leave_a_comment: Leave a comment
         comment_notification_subject: "[Annict Forum] %{name} (@%{username}) has commented in a post"
+      posts:
+        no_posts: No posts
+    friends:
+      no_sns_friends: No SNS Friends
+      no_users: No users
     home:
       index:
         there_are_no_activities: There are no activities
@@ -28,12 +39,12 @@ en:
         hero_title: The platform for Anime addicts.
         start_tracking: Start Tracking
     components:
+      load_more_button:
+        more: View more
       mute_user_button:
         the_user_has_been_muted: The user has been muted.
       program_list:
         tracked: Tracked.
-      report_button:
-        report_this_image: Report this image as inappropriate
       status_selector:
         select_status: Select Status
       thumbs_buttons:
@@ -43,25 +54,40 @@ en:
         description: Annict is the platform for Anime Addicts. You can explore the anime database, track anime you are watching and see what friends are watching.
         title: Welcome to Annict!
     character_images:
-      can_not_delete: This image can't be deleted as it's the main visual.
-      deleted: Image has been deleted.
-      source: "Source:"
-      uploaded: Image has been uploaded.
-    character_image_reports:
-      reported: Image reported as inappropriate.
+      deleted: Character image has been deleted.
+      saved: Work image has been saved.
     episodes:
       watched_x_times: Watched %{records_count} times
     multiple_records:
       create:
         saved: Records have been saved.
+    mutes:
+      no_muted_users_found: No muted users found.
+    notifications:
+      no_notifications: No notifications
+    oauth:
+      authorizations:
+        authorize: Authorize
+        authorize_account_html: Authorize <b>%{client_name}</b> to use your account?
+        cancel: Cancel
+        this_application_will_be_able_to: "This application will be able to:"
     oauth_users:
       new:
         sign_up_with_oauth: Sign Up with %{provider_name}
+    options:
+      prevent_spoiler_of_episode_you_have_not_watched: Prevent spoiler of episode which you have not watched
+      prevent_spoiler_of_episode_you_have_not_watched_detail: This option will hide comments on unwatched episodes when you've set status as "Watched", "Plan to Watch", or "On Hold".
     passwords:
       new:
         forgot_your_password: Forgot your password?
+    profiles:
+      saved: Profile has been saved.
+    programs:
+      no_programs: No programs
+      please_set_channels_html: Please set channels on %{channels_link} page.
     providers:
       removed: Removed.
+      you_can_not_disconnect: You can not disconnect.
     records:
       deleted: Deleted
       updated: Updated
@@ -76,6 +102,11 @@ en:
         start_with_twitter: Start with Twitter
         username_preview: "Your profile will be:"
         username_preview_mobile: "Your profile:"
+      create:
+        confirmation_mail_has_sent: Confirmation mail has sent.
+    sayonara:
+      are_you_sure_really: Are you sure? Really??
+      description: If you clicked "Delete Account" button, your data will be all deleted.
     sessions:
       new:
         forgot_password: Forgot password?
@@ -86,6 +117,14 @@ en:
       skip_episode_confirmation: Are you sure to skip this episode and show next episode?
       see_records: See records
       tracked: Your record has been tracked.
+    users:
+      no_works: No works
     work_images:
+      deleted: Work image has been deleted.
+      saved: Work image has been saved.
       index:
         dropzone-empty: Drop your image here or click to upload.
+    works:
+      view_all_n_characters: View all %{n} characters
+      view_all_n_episodes: View all %{n} episodes
+      view_all_n_staffs: View all %{n} staffs

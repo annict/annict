@@ -17,12 +17,12 @@
     tbody
       - people.each do |person|
         tr
-          td = link_to person.id, person_url(person, subdomain: false), target: "_blank"
+          td = link_to person.id, annict_url(:person_url, person), target: "_blank"
           td = person.name
           td = person.name_kana.presence || "-"
           td = person.name_en.presence || "-"
           td
-            .tag class="#{person.published? ? 'tag-success' : 'tag-default'}"
+            .badge class="#{person.published? ? 'badge-success' : 'tag-default'}"
               = t("resources.person.aasm_state.#{person.aasm_state}")
           td = link_to t("words.activity"), activities_db_person_path(person)
           - if policy(person).edit?

@@ -1,0 +1,31 @@
+.c-card
+  table.table.table-hover
+    thead
+      tr
+        th ID
+        th = t "activerecord.attributes.character.name"
+        th = t "activerecord.attributes.character.name_kana"
+        th = t "activerecord.attributes.character.name_en"
+        th = t "words.activity"
+        - if policy(characters).edit?
+          th = t "words.edit"
+        - if policy(characters).hide?
+          th = t "words.hide"
+        - if policy(characters).destroy?
+          th = t "words.delete"
+    tbody
+      - characters.each do |character|
+        tr
+          td = link_to character.id, annict_url(:character_url, character.id), target: "_blank"
+          td = character.name
+          td = character.name_kana.presence || "-"
+          td = character.name_en.presence || "-"
+          td = link_to t("words.activity"), activities_db_character_path(character)
+          - if policy(character).edit?
+            td = link_to t("words.edit"), edit_db_character_path(character), class: "btn btn-primary btn-sm"
+          - if policy(character).hide?
+            td
+              - if character.published?
+                = link_to t("words.hide"), hide_db_character_path(character), class: "btn btn-warning btn-sm", data: { method: "patch", confirm: t("messages.are_you_sure") }
+          - if policy(character).destroy?
+            td = link_to t("words.delete"), db_character_path(character), class: "btn btn-danger btn-sm", data: { method: "delete", confirm: t("messages.are_you_sure") }

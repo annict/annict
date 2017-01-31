@@ -1,10 +1,13 @@
 # frozen_string_literal: true
 
 module Oauth
-  class ApplicationController < Doorkeeper::ApplicationController
+  class ApplicationController < ActionController::Base
+    include Doorkeeper::Helpers::Controller
+
     include Analyzable
     include Gonable
     include FlashMessage
+    include ViewSelector
 
     helper_method :client_uuid, :gon
 

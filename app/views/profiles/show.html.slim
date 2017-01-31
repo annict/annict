@@ -1,30 +1,31 @@
 - title = t "head.title.profiles.show"
-- set_meta_tags(title: title, og: { title: title }, reverse: true, prefix: false)
+- set_meta_tags title: title, reverse: true, prefix: false
 - set_page_category "profiles_show"
 
 = render "application/components/navbar"
 = render "settings/subnav"
 
-.c-card.u-mw-600.mx-auto.p-1.mt-1.mb-2
-  = form_for current_user.profile, url: profile_path, method: :patch do |f|
-    = render "application/components/error_panel", resource: current_user.profile
+.p-application__content
+  .c-card.u-mw-600.mx-auto.p-1.mt-1.mb-2
+    = form_for current_user.profile, url: profile_path, method: :patch do |f|
+      = render "application/components/error_panel", resource: current_user.profile
 
-    .form-group
-      = f.label :name
-      = f.text_field :name, class: "form-control"
-    .form-group
-      = f.label :description
-      = f.text_field :description, class: "form-control"
-    .form-group
-      = f.label :url
-      = f.text_field :url, class: "form-control"
-    .form-group
-      = f.label :avatar
-      = f.file_field :tombo_avatar, class: "form-control-file"
-    .form-group
-      = f.label :background_image
-      = f.file_field :tombo_background_image, class: "form-control-file"
-    .form-submit.text-center
-      = f.submit class: "btn btn-primary"
+      .form-group
+        = f.label :name
+        = f.text_field :name, class: "form-control"
+      .form-group
+        = f.label :description
+        = f.text_field :description, class: "form-control"
+      .form-group
+        = f.label :url
+        = f.text_field :url, class: "form-control"
+      .form-group
+        = f.label :avatar
+        = f.file_field :tombo_avatar, class: "form-control-file"
+      .form-group
+        = f.label :background_image
+        = f.file_field :tombo_background_image, class: "form-control-file"
+      .form-submit.text-center
+        = f.submit class: "btn btn-primary"
 
 = render "application/components/footer"

@@ -110,6 +110,7 @@ group :test do
   gem "database_rewinder"
   gem "factory_girl_rails"
   gem "poltergeist"
+  gem "timecop"
 end
 
 group :production do

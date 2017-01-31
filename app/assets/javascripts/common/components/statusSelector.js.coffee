@@ -4,7 +4,7 @@ module.exports =
   template: "#t-status-selector"
 
   data: ->
-    isLoading: false
+    isSaving: false
     statusKind: null
     prevStatusKind: null
 
@@ -39,15 +39,15 @@ module.exports =
         return
 
       if @statusKind != @prevStatusKind
-        @isLoading = true
+        @isSaving = true
 
         $.ajax
           method: "POST"
-          url: "/works/#{@workId}/statuses/select"
+          url: "/api/internal/works/#{@workId}/statuses/select"
           data:
             status_kind: @statusKind
         .done =>
-          @isLoading = false
+          @isSaving = false
 
   mounted: ->
     @prevStatusKind = @currentStatusKind

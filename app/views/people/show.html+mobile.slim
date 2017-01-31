@@ -1,13 +1,14 @@
-- title = t "head.title.people.show", title: @person.decorate.name_with_other_name
-- description = meta_description(t("head.meta.description.people.show", title: title, voice_actor: (@person.voice_actor? ? "#{t('words.voice_actor')} " : "")))
-- keywords = meta_keywords(@person.name)
-- set_meta_tags(title: title, description: description, keywords: keywords, og: { title: title, description: description }, reverse: true, prefix: false)
+- name = t "head.title.people.show", name: @person.decorate.name_with_other_name
+- description = meta_description t("head.meta.description.people.show", name: name)
+- keywords = meta_keywords @person.decorate.local_name
+- set_meta_tags(title: name, description: description, keywords: keywords, og: { description: description }, twitter: { description: description }, reverse: true, prefix: false)
 - set_page_category "people_show"
 
 .c-card.py-1.mb-1
   .container
     .text-center
-      h1.h2 = @person.decorate.local_name
+      h1.h2
+        = link_to @person.decorate.local_name, person_path(@person)
       - if @person.voice_actor?
         span.badge.u-badge-people
           = t "words.voice_actor"
@@ -20,40 +21,40 @@
         = icon "sticky-note-o", class: "mr-zp25"
         = t "words.information"
       dl.row.mb-0
-        dt.col-6.text-xs-right = t "words.name_kanji"
+        dt.col-6.text-right = t "activerecord.attributes.person.name"
         dd.col-6 = @person.name
         - if @person.name_kana.present?
-          dt.col-6.text-xs-right = t "words.name_kana"
+          dt.col-6.text-right = t "activerecord.attributes.person.name_kana"
           dd.col-6 = @person.name_kana
         - if @person.name_en.present?
-          dt.col-6.text-xs-right = t "words.name_en"
+          dt.col-6.text-right = t "activerecord.attributes.person.name_en"
           dd.col-6 = @person.name_en
         - if @person.nickname.present?
-          dt.col-6.text-xs-right = t "words.nickname"
+          dt.col-6.text-right = t "activerecord.attributes.person.nickname"
           dd.col-6 = @person.nickname
         - if @person.gender.present?
-          dt.col-6.text-xs-right = t "words.gender"
+          dt.col-6.text-right = t "activerecord.attributes.person.gender"
           dd.col-6 = @person.gender_text
         - if @person.birthday.present?
-          dt.col-6.text-xs-right = t "words.birthday"
+          dt.col-6.text-right = t "activerecord.attributes.person.birthday"
           dd.col-6 = @person.birthday.strftime("%Y年%m月%d日")
         - if @person.blood_type.present?
-          dt.col-6.text-xs-right = t "words.blood_type"
+          dt.col-6.text-right = t "activerecord.attributes.person.blood_type"
           dd.col-6 = @person.blood_type_text
         - if @person.height.present?
-          dt.col-6.text-xs-right = t "words.height"
+          dt.col-6.text-right = t "activerecord.attributes.person.height"
           dd.col-6 = "#{@person.height}cm"
         - if @person.url.present?
-          dt.col-6.text-xs-right = t "words.official_site"
+          dt.col-6.text-right = t "activerecord.attributes.person.official_site"
           dd.col-6 = link_with_domain @person.url
         - if @person.twitter_username.present?
-          dt.col-6.text-xs-right = t "words.twitter"
+          dt.col-6.text-right = t "activerecord.attributes.person.twitter"
           dd.col-6 = @person.decorate.twitter_username_link
         - if @person.wikipedia_url.present?
-          dt.col-6.text-xs-right = t "words.wikipedia"
+          dt.col-6.text-right = t "activerecord.attributes.person.wikipedia"
           dd.col-6 = link_with_domain @person.wikipedia_url
 
-.container.py-1
+.c-card.container.py-1.mb-2
   - if @person.voice_actor?
     = render "grid", root_resource: @person, resource_years: @cast_years, resources_with_year: @casts_with_year
 

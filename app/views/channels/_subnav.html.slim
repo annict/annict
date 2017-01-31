@@ -1,4 +1,7 @@
 .c-subnav
-  ul.list-unstyled
-    li = active_link_to t("words.channel"), channels_path, class_active: "c-subnav__link--active", active: params[:controller] == "channels" && params[:action].in?(%w(index))
-    li = active_link_to t("words.works"), channel_works_path, class_active: "c-subnav__link--active", active: params[:controller] == "channel_works" && params[:action].in?(%w(index))
+  = active_link_to channels_path, class: "c-subnav__link", class_active: "c-subnav__link--active", active: params[:controller] == "channels" && params[:action].in?(%w(index)) do
+    .c-subnav__item
+      = t "words.channel"
+  = active_link_to channel_works_path, class: "c-subnav__link", class_active: "c-subnav__link--active", active: params[:controller] == "channel_works" && params[:action].in?(%w(index)) do
+    .c-subnav__item
+      = t "words.works"

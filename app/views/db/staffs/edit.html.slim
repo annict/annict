@@ -1,10 +1,12 @@
-- title @staff.name
+- title = t "head.title.db.staffs.edit"
+- set_meta_tags(title: title, reverse: true, prefix: false)
+- set_page_category "db_staffs_edit"
 
 .l-topbar.container-fluid.px-1
   .row.flex-items-xs-between
     .col-8
-      = render "db/application/topbar_title", parent: @work, child: t("resources.staff.edit_staff")
-    .col.text-xs-right
+      = render "db/application/topbar_title", parent: @work, child: title
+    .col.text-right
       = link_to work_path(@work), class: "btn btn-outline-primary", target: "_blank" do
         = icon "external-link"
         = t "resources.work.go_to_work"
@@ -63,4 +65,4 @@
                 = f.submit t("helpers.submit.update"), class: "btn btn-primary"
         
     .col-6
-      = render "sidebar"
+      = render "sidebar_edit"

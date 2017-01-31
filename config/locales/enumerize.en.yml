@@ -25,6 +25,13 @@ en:
         series_composition: Series Composition
         sound_director: Sound Director
         studio: Studio
+    status:
+      kind:
+        wanna_watch: Plan to Watch
+        watching: Watching
+        watched: Completed
+        on_hold: On Hold
+        stop_watching: Dropped
     work:
       media:
         tv: TV

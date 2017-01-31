@@ -1,11 +1,13 @@
-- title t("resources.staff.staff_list")
+- title = t "head.title.db.staffs.index"
+- set_meta_tags(title: title, reverse: true, prefix: false)
+- set_page_category "db_staffs_index"
 
 .l-topbar.container-fluid.px-1
   .row.flex-items-xs-between
     .col-8
-      = render "db/application/topbar_title", parent: @work, child: t("resources.staff.staff_list")
+      = render "db/application/topbar_title", parent: @work, child: title
     - if user_signed_in? && current_user.committer?
-      .col.text-xs-right
+      .col.text-right
         = link_to new_db_work_staff_path(@work), class: "btn btn-outline-primary" do
           = icon "pencil-square-o"
           = t "resources.staff.new_staffs"
@@ -24,7 +26,7 @@
             th = t "activerecord.attributes.staff.role"
             th = t "activerecord.attributes.staff.sort_number"
             th = t "words.state"
-            th = t "words.activity"
+            th = t "head.title.db.staffs.activities"
             - if policy(@staffs).edit?
               th = t "words.edit"
             - if policy(@staffs).hide?
@@ -46,9 +48,9 @@
               td = staff.decorate.role_name.presence || "-"
               td = staff.sort_number
               td
-                .tag class="#{staff.published? ? 'tag-success' : 'tag-warning'}"
+                .badge class="#{staff.published? ? 'badge-success' : 'badge-warning'}"
                   = t("resources.staff.aasm_state.#{staff.aasm_state}")
-              td = link_to t("words.activity"), activities_db_staff_path(staff)
+              td = link_to t("head.title.db.staffs.activities"), activities_db_staff_path(staff)
               - if policy(staff).edit?
                 td = link_to t("words.edit"), edit_db_staff_path(staff), class: "btn btn-primary btn-sm"
               - if policy(staff).hide?

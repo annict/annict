@@ -22,7 +22,7 @@ module DB
           channel_id: row_data[:channel][:id],
           episode_id: row_data[:episode][:id],
           started_at: row_data[:started_at][:value],
-          rebroadcast: row_data[:rebroadcast][:value].presence || false,
+          rebroadcast: row_data[:rebroadcast][:value],
           time_zone: @user.time_zone
         }
       end
@@ -30,16 +30,17 @@ module DB
 
     def fetched_rows
       parsed_rows.map do |row_columns|
-        channel = Channel.where(id: row_columns[0]).
-          or(Channel.where(name: row_columns[0])).first
-        episode = @work.episodes.where(number: row_columns[1]).
-          or(@work.episodes.where(title: row_columns[1])).first
+        channel = Channel.published.where(id: row_columns[0]).
+          or(Channel.published.where(name: row_columns[0])).first
+        episode = @work.episodes.published.where(id: row_columns[1]).
+          or(@work.episodes.published.where(number: row_columns[1])).
+          or(@work.episodes.published.where(title: row_columns[1])).first
 
         {
           channel: { id: channel&.id, value: row_columns[0] },
           episode: { id: episode&.id, value: row_columns[1] },
           started_at: { value: row_columns[2] },
-          rebroadcast: { value: row_columns[3] }
+          rebroadcast: { value: row_columns[3] == "1" }
         }
       end
     end

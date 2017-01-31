@@ -1,15 +1,16 @@
-- title = t "head.title.records.show", user_name: @user.profile.name, work_title: @work.decorate.local_title, episode_title: @episode.decorate.title_with_number
-- description = meta_description(t("head.meta.description.records.show", user_name: @user.profile.name, work_title: @work.decorate.local_title, episode_title: @episode.decorate.local_title))
+- title = t "head.title.records.show", profile_name: @user.profile.name, username: @user.username, work_title: @work.decorate.local_title, episode_title_with_number: @episode.decorate.title_with_number
+- description = meta_description(t("head.meta.description.records.show", profile_name: @user.profile.name, username: @user.username, work_title: @work.decorate.local_title, episode_title_with_number: @episode.decorate.title_with_number))
 - keywords = meta_keywords(@work.decorate.local_title)
-- image_url = ann_image_tag(@work.work_image, :attachment, size: "640x")
-- set_meta_tags(title: title, description: description, keywords: keywords, og: { title: title, description: description, image: image_url }, reverse: true, prefix: false)
+- image_url = ann_image_url(@work.work_image, :attachment, size: "640x")
+- set_meta_tags(title: title, description: description, keywords: keywords, og: { description: description }, twitter: { description: description }, reverse: true, prefix: false)
 - set_page_category "records_show"
 
 .c-card.py-1.mb-2
   .p-records-show__work-info.px-1
     .row
       .col.u-flex-grow-0.p-records-show__work-image.pr-0
-        = image_tag ann_image_url(@work.work_image, :attachment, size: "280x373"), class: "img-fluid rounded"
+        = link_to work_path(@work) do
+          = image_tag ann_image_url(@work.work_image, :attachment, size: "280x373"), class: "img-fluid img-thumbnail rounded"
       .col
         h1.h2
           = link_to work_path(@work) do
@@ -43,12 +44,12 @@
                 .col
                   = link_to comment.user.profile.name, user_path(comment.user.username)
                 .col
-                  .small.text-xs-right
+                  .small.text-right
                     = local_time_ago_in_words(comment.created_at)
               c-body inline-template=""
                 .c-body__content = comment.body
           - if policy(comment).update?
-            .small.text-xs-right.mb-zp5
+            .small.text-right.mb-zp5
               = link_to edit_comment_path(@user.username, comment), class: "mr-zp5" do
                 = icon "edit", class: "mr-zp25"
                 = t "words.edit"

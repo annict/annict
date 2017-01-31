@@ -1,40 +1,44 @@
-- title = t "head.title.searches.show"
-- description = meta_description(t("head.meta.description.searchs.show"))
+- title = t "head.title.searches.show", q: @search.q.present? ? "#{@search.q} - " : ""
+- description = meta_description
 - keywords = meta_keywords
-- set_meta_tags(title: title, description: description, keywords: keywords, og: { title: title, description: description }, reverse: true, prefix: false)
-- set_page_category "searchs_show"
+- set_meta_tags(title: title, description: description, keywords: keywords, og: { description: description }, reverse: true, prefix: false)
+- set_page_category "searches_show"
 
 = render "application/components/navbar"
 
-.container.my-1
-  - if @search.q.present?
-    .row
-      .p-searches__sidebar.col.py-1
-        h2.h4.text-center.font-weight-bold = t "words.resource"
-        ul.list-unstyled
-          li
-            = active_link_to search_path(q: @search.q, resource: "work"), class_active: "u-link--hovered", active: (@view == "work") do
-              = t "words.anime"
-              span.tag.tag-pill.tag-default.ml-zp5 = @works.count
-          li
-            = active_link_to search_path(q: @search.q, resource: "character"), class_active: "u-link--hovered", active: (@view == "character") do
-              = t "words.character"
-              span.tag.tag-pill.tag-default.ml-zp5 = @characters.count
-          li
-            = active_link_to search_path(q: @search.q, resource: "person"), class_active: "u-link--hovered", active: (@view == "person") do
-              = t "words.person"
-              span.tag.tag-pill.tag-default.ml-zp5 = @people.count
-          li
-            = active_link_to search_path(q: @search.q, resource: "organization"), class_active: "u-link--hovered", active: (@view == "organization") do
-              = t "words.organization"
-              span.tag.tag-pill.tag-default.ml-zp5 = @organizations.count
-      .col
-        .c-card.p-1.mb-1
-          = render "form"
-        = render "#{@view.pluralize}/list", "#{@view.pluralize}": instance_variable_get("@#{@view.pluralize}").page(params[:page])
-  - else
-    .c-card.p-1
-      = render "form"
+.p-application__content
+  .container.my-1.mb-2
+    - if @search.q.present?
+      .row
+        .p-searches__sidebar.py-1
+          h2.h4.font-weight-bold.mb-1 = t "words.resource"
+          ul.list-unstyled
+            li.mb-zp5
+              = active_link_to search_path(q: @search.q, resource: "work"), class_active: "u-link--hovered", active: (@view == "work") do
+                = t "words.anime"
+                span.badge.badge-pill.badge-default.ml-zp5 = @works.count
+            li.mb-zp5
+              = active_link_to search_path(q: @search.q, resource: "character"), class_active: "u-link--hovered", active: (@view == "character") do
+                = t "words.character"
+                span.badge.badge-pill.badge-default.ml-zp5 = @characters.count
+            li.mb-zp5
+              = active_link_to search_path(q: @search.q, resource: "person"), class_active: "u-link--hovered", active: (@view == "person") do
+                = t "words.person"
+                span.badge.badge-pill.badge-default.ml-zp5 = @people.count
+            li
+              = active_link_to search_path(q: @search.q, resource: "organization"), class_active: "u-link--hovered", active: (@view == "organization") do
+                = t "words.organization"
+                span.badge.badge-pill.badge-default.ml-zp5 = @organizations.count
+        .col
+          .c-card.p-1.mb-1
+            = render "form"
+          - resources = instance_variable_get("@#{@view.pluralize}").page(params[:page])
+          = render "#{@view.pluralize}/list", "#{@view.pluralize}": resources
+          .text-center
+            = paginate resources
+    - else
+      .c-card.p-1
+        = render "form"
 
 = render "application/components/footer"
 

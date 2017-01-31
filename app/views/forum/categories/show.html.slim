@@ -1,17 +1,18 @@
-- title = t "head.title.forum.categories.show"
-- set_meta_tags(title: title, og: { title: title }, reverse: true, prefix: false)
+- title = t "head.title.forum.categories.show", name: @category.decorate.local_name
+- set_meta_tags(title: title, reverse: true, prefix: false)
 - set_page_category "forum_categories_show"
 
 = render "application/components/navbar"
 = render "forum/application/subnav"
 
-.container.mt-1.mb-2
-  h1.h2.mb-1 = @category.decorate.local_name
-  
-  .c-card
-    - if @category.forum_posts.present?
-      = render "forum/posts/post_list", posts: @category.forum_posts
-    - else
-      = render "application/components/empty", text: t("messages.forum.posts.no_posts")
+.p-application__content
+  .container.mt-1.mb-2
+    h1.h2.mb-1 = @category.decorate.local_name
+    
+    .c-card
+      - if @category.forum_posts.present?
+        = render "forum/posts/post_list", posts: @category.forum_posts
+      - else
+        = render "application/components/empty", text: t("messages.forum.posts.no_posts")
 
 = render "application/components/footer"

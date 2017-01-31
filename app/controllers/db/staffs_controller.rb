@@ -75,10 +75,6 @@ module Db
 
     private
 
-    def load_work
-      @work = Work.find(params[:work_id])
-    end
-
     def load_staff
       @staff = Staff.find(params[:id])
     end

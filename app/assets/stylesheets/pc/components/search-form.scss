@@ -12,7 +12,7 @@
 
   &.is-transparent {
     .form-control {
-      border-color: rgba($ann-color-black, .15);
+      border-color: transparent;
       color: $ann-color-white;
 
       &:focus {

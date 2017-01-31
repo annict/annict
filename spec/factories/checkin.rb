@@ -9,8 +9,7 @@ FactoryGirl.define do
     rating 3.0
 
     before(:create) do
-      Tip.create_with(attributes_for(:record_tip)).
-        find_or_create_by(partial_name: "checkin")
+      Tip.where(slug: "checkin").first_or_create(attributes_for(:record_tip))
     end
     before(:create) { |c| c.work = c.episode.work }
   end

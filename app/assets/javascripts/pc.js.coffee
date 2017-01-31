@@ -10,7 +10,6 @@
 
 Turbolinks = require "turbolinks"
 Vue = require "vue/dist/vue"
-MugenScroll = require "vue-mugen-scroll"
 
 $(document).on "turbolinks:load", ->
   activities = require "./common/components/activities"
@@ -29,7 +28,6 @@ $(document).on "turbolinks:load", ->
   recordRating = require "./common/components/recordRating"
   recordTextarea = require "./common/components/recordTextarea"
   recordWordCount = require "./common/components/recordWordCount"
-  reportButton = require "./common/components/reportButton"
   statusSelector = require "./common/components/statusSelector"
   timeAgo = require "./common/components/timeAgo"
   tips = require "./common/components/tips"
@@ -37,6 +35,7 @@ $(document).on "turbolinks:load", ->
   untrackedEpisodeList = require "./common/components/untrackedEpisodeList"
   userHeatmap = require "./common/components/userHeatmap"
   usernamePreview = require "./common/components/usernamePreview"
+  workFriends = require "./common/components/workFriends"
 
   searchForm = require "./pc/components/searchForm"
   imageAttachForm = require "./pc/components/imageAttachForm"
@@ -45,8 +44,6 @@ $(document).on "turbolinks:load", ->
   resourceSelect = require "./common/directives/resourceSelect"
 
   Vue.config.debug = true
-
-  Vue.component("mugen-scroll", MugenScroll)
 
   Vue.component("c-activities", activities)
   Vue.component("c-body", body)
@@ -66,7 +63,6 @@ $(document).on "turbolinks:load", ->
   Vue.component("c-record-rating", recordRating)
   Vue.component("c-record-textarea", recordTextarea)
   Vue.component("c-record-word-count", recordWordCount)
-  Vue.component("c-report-button", reportButton)
   Vue.component("c-search-form", searchForm)
   Vue.component("c-status-selector", statusSelector)
   Vue.component("c-time-ago", timeAgo)
@@ -75,10 +71,11 @@ $(document).on "turbolinks:load", ->
   Vue.component("c-untracked-episode-list", untrackedEpisodeList)
   Vue.component("c-user-heatmap", userHeatmap)
   Vue.component("c-username-preview", usernamePreview)
+  Vue.component("c-work-friends", workFriends)
 
   Vue.directive("resource-select", resourceSelect)
 
   new Vue
-    el: ".p-vue"
+    el: ".p-application"
 
 Turbolinks.start()

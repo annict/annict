@@ -1,0 +1,8 @@
+ja:
+  resources:
+    season:
+      yearly:
+        winter: "%{year}年冬"
+        spring: "%{year}年春"
+        summer: "%{year}年夏"
+        autumn: "%{year}年秋"

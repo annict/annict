@@ -1,7 +1,13 @@
-.c-subnav
-  ul.list-unstyled
-    li = active_link_to t("words.details"), work_path(work), class_active: "c-subnav__link--active", active: params[:controller] == "works" && params[:action].in?(%w(show))
-    li = active_link_to t("words.episodes"), work_episodes_path(work), class_active: "c-subnav__link--active", active: params[:controller] == "episodes" && params[:action].in?(%w(index show))
-    li = active_link_to t("words.characters"), work_characters_path(work), class_active: "c-subnav__link--active", active: params[:controller] == "characters" && params[:action].in?(%w(index))
-    li = active_link_to t("words.staffs"), work_staffs_path(work), class_active: "c-subnav__link--active", active: params[:controller] == "staffs" && params[:action].in?(%w(index))
-    li = active_link_to t("words.images"), work_images_path(work), class_active: "c-subnav__link--active", active: params[:controller] == "work_images" && params[:action].in?(%w(index))
+.c-subnav.c-subnav--transparent
+  = active_link_to work_path(work), class: "c-subnav__link", class_active: "c-subnav__link--active", active: params[:controller] == "works" && params[:action].in?(%w(show)) do
+    .c-subnav__item
+      = t "words.details"
+  = active_link_to work_episodes_path(work), class: "c-subnav__link", class_active: "c-subnav__link--active", active: params[:controller] == "episodes" && params[:action].in?(%w(index show)) do
+    .c-subnav__item
+      = t "words.episodes"
+  = active_link_to work_characters_path(work), class: "c-subnav__link", class_active: "c-subnav__link--active", active: params[:controller] == "characters" && params[:action].in?(%w(index))
+    .c-subnav__item
+      = t "words.characters"
+  = active_link_to work_staffs_path(work), class: "c-subnav__link", class_active: "c-subnav__link--active", active: params[:controller] == "staffs" && params[:action].in?(%w(index))
+    .c-subnav__item
+      = t "words.staffs"

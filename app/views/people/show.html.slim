@@ -1,21 +1,22 @@
-- title = t "head.title.people.show", title: @person.decorate.name_with_other_name
-- description = meta_description(t("head.meta.description.people.show", title: title, voice_actor: (@person.voice_actor? ? "#{t('words.voice_actor')} " : "")))
-- keywords = meta_keywords(@person.name)
-- set_meta_tags(title: title, description: description, keywords: keywords, og: { title: title, description: description }, reverse: true, prefix: false)
+- title = t "head.title.people.show", name: @person.decorate.name_with_other_name
+- description = meta_description t("head.meta.description.people.show", name: @person.decorate.name_with_other_name)
+- keywords = meta_keywords @person.decorate.local_name
+- set_meta_tags(title: title, description: description, keywords: keywords, og: { description: description }, twitter: { description: description }, reverse: true, prefix: false)
 - set_page_category "people_show"
 
 = render "application/components/navbar"
 
-.container.py-1
-  .row
-    .col-3.pr-0
-      .c-card.container.py-1
+.p-application__content
+  .container.py-1.mb-2
+    .row
+      .col-3.pr-0
         = render "sidebar", person: @person
-    .col-9
-      - if @person.voice_actor?
-        = render "grid", root_resource: @person, resource_years: @cast_years, resources_with_year: @casts_with_year
-
-      - if @person.staff?
-        = render "grid", root_resource: @person, resource_years: @staff_years, resources_with_year: @staffs_with_year
+      .col-9
+        .c-card
+          .container.py-1
+            - if @person.voice_actor?
+              = render "grid", root_resource: @person, resource_years: @cast_years, resources_with_year: @casts_with_year
+            - if @person.staff?
+              = render "grid", root_resource: @person, resource_years: @staff_years, resources_with_year: @staffs_with_year
 
 = render "application/components/footer"

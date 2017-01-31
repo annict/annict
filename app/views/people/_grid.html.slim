@@ -11,7 +11,8 @@
                 = image_tag ann_image_url(work.work_image, :attachment, size: "280x373"), class: "img-fluid rounded"
               .c-hover-image__over
           .p-zp25
-            .text-truncate
-              = link_to work.decorate.local_title, work_path(work)
             .text-truncate.small
-              = resources.map { |resource| root_resource.decorate.grid_description(resource) }.join(", ")
+              = link_to work.decorate.local_title, work_path(work)
+            - description = resources.map { |resource| root_resource.decorate.grid_description(resource) }.join(", ")
+            .text-truncate.small title="#{description}"
+              = description

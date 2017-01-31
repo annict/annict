@@ -1,70 +1,64 @@
 script#t-program-list type="x-template"
   .c-program-list
     .container.mt-1
-      .text-xs-right
+      .text-right
         select.custom-select v-model="sort" @change="reload"
           option v-for="type in sortTypes" :value="type[1]" {{ type[0] }}
     .c-card.container.mt-1
-      template v-if="programs.length > 0"
-        template v-for="program in programs"
-          .row
-            .c-program-progress.col.u-flex-grow-0.pl-1 :class='{ "is-unbroadcasted": !program.broadcasted }'
-              .c-program-progress__line
-                .c-program-progress__point
-            .c-program-list__content.col.pt-1.pl-0
-              .small.mb-zp5
-                span.u-text-green.mr-zp5
-                  | {{ program.started_at }}
-                span.tag.tag-info.mr-zp5
-                  | {{ program.channel.name }}
-                span.tag.tag-default v-if="program.rebroadcast"
-                  = t "words.rebroadcast"
-              .row.mb-zp5
-                .col.pr-0.u-flex-grow-0
+      template v-for="program in programs"
+        .row
+          .c-program-progress.col.u-flex-grow-0.pl-1 :class='{ "is-unbroadcasted": !program.broadcasted }'
+            .c-program-progress__line
+              .c-program-progress__point
+          .c-program-list__content.col.pt-1.pl-0
+            .small.mb-zp5
+              span.u-text-green.mr-zp5
+                | {{ program.started_at }}
+              span.badge.badge-info.mr-zp5
+                | {{ program.channel.name }}
+              span.badge.badge-default v-if="program.rebroadcast"
+                = t "words.rebroadcast"
+            .row.mb-zp5
+              .col.pr-0.u-flex-grow-0
+                a :href='"/works/" + program.work.id'
+                  img.rounded :src="program.work.image_url" width="48" height="48" :alt="program.work.title"
+              .col
+                .text-xs-left
                   a :href='"/works/" + program.work.id'
-                    img.rounded :src="program.work.image_url" width="48" height="48" :alt="program.work.title"
-                .col
-                  .text-xs-left
-                    a :href='"/works/" + program.work.id'
-                      | {{ program.work.title }}
-                  .text-xs-left
-                    a :href='"/works/" + program.work.id + "/episodes/" + program.episode.id'
-                      | {{ program.episode.number }}
-                      span.ml-zp5 v-if="program.episode.title" {{ program.episode.title }}
-              form.row
-                .col
-                  c-record-rating.mb-zp5 :init-record="program.record" v-if="program.record.isEditingComment"
-                  .mb-zp5
-                    c-record-textarea :init-record="program.record"
-                  .row
-                    .col
-                      .a-share-buttons v-if="program.record.isEditingComment"
-                        span v-if="user.authorized_to_twitter"
-                          label
-                            input type="checkbox" v-model="user.share_record_to_twitter"
-                            = icon "twitter", class: "u-text-twitter ml-zp25"
-                        span.ml-zp5 v-if="user.authorized_to_facebook"
-                          label
-                            input type="checkbox" v-model="user.share_record_to_facebook"
-                            = icon "facebook", class: "u-text-facebook ml-zp25"
-                    .col
-                      .text-xs-right
-                        .small.text-mute
-                          c-record-word-count :init-record="program.record" v-if="program.record.isEditingComment"
-                .col.u-flex-grow-0.pl-0
-                  button.btn.btn-primary type="button" @click="submit(program)" :class='{ disabled: program.record.isRecorded, "c-spinner": program.record.isSaving }'
-                    = icon "check", class: "mr-0"
-      template v-else=""
-        template v-if="!isLoading"
-          .icon
-            i.fa.fa-info-circle
-          p = t('programs.no_program')
-          p = t('programs.please_set_channel_html', channels_link: link_to(t('programs.channel_list'), channels_path))
-      mugen-scroll :handler="loadMore" :should-handle="hasNext"
-        .c-loading v-show="isLoading"
-          .c-loading__core Loading...
+                    | {{ program.work.title }}
+                .text-xs-left
+                  a :href='"/works/" + program.work.id + "/episodes/" + program.episode.id'
+                    | {{ program.episode.number }}
+                    span.ml-zp5 v-if="program.episode.title" {{ program.episode.title }}
+            form.row
+              .col
+                c-record-rating.mb-zp5 :init-record="program.record" v-if="program.record.isEditingComment"
+                .mb-zp5
+                  c-record-textarea :init-record="program.record"
+                .row
+                  .col
+                    .a-share-buttons v-if="program.record.isEditingComment"
+                      span v-if="user.authorized_to_twitter"
+                        label
+                          input type="checkbox" v-model="user.share_record_to_twitter"
+                          = icon "twitter", class: "u-text-twitter ml-zp25"
+                      span.ml-zp5 v-if="user.authorized_to_facebook"
+                        label
+                          input type="checkbox" v-model="user.share_record_to_facebook"
+                          = icon "facebook", class: "u-text-facebook ml-zp25"
+                  .col
+                    .text-right
+                      .small.text-mute
+                        c-record-word-count :init-record="program.record" v-if="program.record.isEditingComment"
+              .col.u-flex-grow-0.pl-0
+                button.btn.btn-primary type="button" @click="submit(program)" :class='{ disabled: program.record.isRecorded, "c-spinner": program.record.isSaving }'
+                  = icon "check", class: "mr-0"
+      template v-if="!isLoading && programs.length === 0"
+        = render "application/components/empty", text: t('messages.programs.no_programs'), hint: t("messages.programs.please_set_channels_html", channels_link: link_to(t("words.channel_list"), channels_path))
+      c-load-more-button.my-1 :handler="loadMore" :is-loading="isLoading" :has-next="hasNext"
 
 - content_for :js_templates do
   = render "application/js_templates/record_rating"
   = render "application/js_templates/record_textarea"
   = render "application/js_templates/record_word_count"
+  = render "application/js_templates/load_more_button"

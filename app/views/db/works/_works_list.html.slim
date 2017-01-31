@@ -19,29 +19,15 @@
     tbody
       - works.each do |work|
         tr
-          td = link_to work.id, work_path(work), target: "_blank"
+          td = link_to work.id, annict_url(:work_url, work), target: "_blank"
           td
-            - if user_signed_in? && current_user.role.admin?
-              = work.title
-              br
-              = work.title_kana.presence || "-"
-              br
-              = work.title_ro.presence || "-"
-              br
-              = work.title_en.presence || "-"
-            - elsif locale == :ja
-              = work.title
-              - if work.title_kana.present?
-                br
-                = "(#{work.title_kana})"
-            - elsif locale == :en
-              - if work.title_ro.present?
-                = work.title_ro
-                br
-              - if work.title_en.present?
-                = work.title_en
-              - if work.title_ro.blank? && work.title_en.blank?
-                = work.title
+            = work.title
+            br
+            = work.title_kana.presence || "-"
+            br
+            = work.title_ro.presence || "-"
+            br
+            = work.title_en.presence || "-"
           - if locale_ja?
             td
               - if work.sc_tid.present?
@@ -52,7 +38,7 @@
           td = work.decorate.release_season.presence || "-"
           td = ann_image_tag(work.item, :tombo_image, size: "70x70")
           td
-            .tag class="#{work.published? ? 'tag-success' : 'tag-default'}"
+            .badge class="#{work.published? ? 'badge-success' : 'tag-default'}"
               = t("resources.work.aasm_state.#{work.aasm_state}")
           - if policy(work).edit?
             td = link_to t("words.edit"), edit_db_work_path(work), class: "btn btn-primary btn-sm"

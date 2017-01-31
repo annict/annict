@@ -1,14 +1,15 @@
-- title = t "head.title.organizations.show", title: @organization.decorate.name_with_other_name
-- description = meta_description(t("head.meta.description.organizations.show", title: title))
-- keywords = meta_keywords(@organization.name)
-- set_meta_tags(title: title, description: description, keywords: keywords, og: { title: title, description: description }, reverse: true, prefix: false)
+- title = t "head.title.organizations.show", name: @organization.decorate.name_with_other_name
+- description = meta_description(t("head.meta.description.organizations.show", name: @organization.decorate.name_with_other_name))
+- keywords = meta_keywords(@organization.decorate.name_with_other_name)
+- set_meta_tags(title: title, description: description, keywords: keywords, og: { description: description }, twitter: { description: description }, reverse: true, prefix: false)
 - set_page_category "organizations_show"
 
 .c-card.py-1.mb-1
   .container
     .text-center
-      h1.h2 = @organization.decorate.local_name
-      span.tags.u-badge-organizations
+      h1.h2
+        = link_to @organization.decorate.local_name, organization_path(@organization)
+      span.badge.u-badge-organizations
         = t "words.organization"
 
     .mt-2
@@ -16,25 +17,25 @@
         = icon "sticky-note-o", class: "mr-zp25"
         = t "words.information"
       dl.row.mb-0
-        dt.col-6.text-xs-right = t "words.name_kanji"
+        dt.col-6.text-right = t "activerecord.attributes.organization.name"
         dd.col-6 = @organization.name
         - if @organization.name_kana.present?
-          dt.col-6.text-xs-right = t "words.name_kana"
+          dt.col-6.text-right = t "activerecord.attributes.organization.name_kana"
           dd.col-6 = @organization.name_kana
         - if @organization.name_en.present?
-          dt.col-6.text-xs-right = t "words.name_en"
+          dt.col-6.text-right = t "activerecord.attributes.organization.name_en"
           dd.col-6 = @organization.name_en
         - if @organization.url.present?
-          dt.col-6.text-xs-right = t "words.official_site"
+          dt.col-6.text-right = t "activerecord.attributes.organization.official_site"
           dd.col-6 = link_with_domain @organization.url
         - if @organization.twitter_username.present?
-          dt.col-6.text-xs-right = t "words.twitter"
+          dt.col-6.text-right = t "activerecord.attributes.organization.twitter"
           dd.col-6 = @organization.decorate.twitter_username_link
         - if @organization.wikipedia_url.present?
-          dt.col-6.text-xs-right = t "words.wikipedia"
+          dt.col-6.text-right = t "activerecord.attributes.organization.wikipedia"
           dd.col-6 = link_with_domain @organization.wikipedia_url
 
-.container.py-1
+.c-card.container.py-1.mb-2
   = render "people/grid", root_resource: @organization, resource_years: @staff_years, resources_with_year: @staffs_with_year
 
 = render "application/components/footer"

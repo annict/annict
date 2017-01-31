@@ -40,7 +40,11 @@ class WorksController < ApplicationController
   end
 
   def popular(page: nil)
-    @works = Work.published.order(watchers_count: :desc, id: :desc).page(page).per(15)
+    @works = Work.
+      published.
+      order(watchers_count: :desc, id: :desc).
+      page(page).
+      per(display_works_count)
   end
 
   def season(slug, page: nil)
@@ -49,12 +53,15 @@ class WorksController < ApplicationController
       by_season(slug).
       order(watchers_count: :desc, id: :desc).
       page(page).
-      per(15)
+      per(display_works_count)
     @season = Season.find_or_new_by_slug(slug)
   end
 
   def show
     @work = Work.published.find(params[:id])
+    @episodes = @work.episodes.published
+    @casts = @work.casts.published
+    @staffs = @work.staffs.published
     @status = current_user.latest_statuses.find_by(work: @work) if user_signed_in?
   end
 

@@ -1,31 +1,34 @@
-= image_tag ann_image_url(work.work_image, :attachment, size: "280x373"), class: "img-fluid rounded mb-zp5"
+= link_to work_path(work) do
+  = image_tag ann_image_url(work.work_image, :attachment, size: "280x373"), class: "img-fluid rounded mb-zp5"
+h1.h2.font-weight-bold.mb-1
+  = link_to @work.decorate.local_title, work_path(work)
 c-status-selector work-id="#{work.id}" current-status-kind="#{user_signed_in? ? current_user.status_kind(work) : 'no_select'}" :is-signed-in="#{user_signed_in?}"
 h2.h4.text-center.font-weight-bold.my-1 = t "words.information"
 ul.list-unstyled
-  li
-    = icon "tv", class: "mr-zp5"
+  li.mb-zp25
+    = icon "tv", class: "mr-zp5 text-muted"
     = @work.media.text
   - if @work.decorate.release_season.present?
-    li
-      = icon "calendar-o", class: "mr-zp5"
+    li.mb-zp25
+      = icon "calendar-o", class: "mr-zp5 text-muted"
       = @work.decorate.release_season_link
   - if @work.official_site_url.present?
-    li
-      = icon "home", class: "mr-zp5"
+    li.mb-zp25
+      = icon "home", class: "mr-zp5 text-muted"
       = link_to t("words.official_site"), @work.official_site_url, target: "_blank"
   - if @work.wikipedia_url.present?
-    li
-      = icon "link", class: "mr-zp5"
+    li.mb-zp25
+      = icon "link", class: "mr-zp5 text-muted"
       = link_to t("words.wikipedia"), @work.wikipedia_url, target: "_blank"
   - if @work.sc_tid.present?
-    li
-      = icon "link", class: "mr-zp5"
+    li.mb-zp25
+      = icon "link", class: "mr-zp5 text-muted"
       = @work.decorate.syobocal_link(t("words.syobocal"))
   - if @work.twitter_username.present?
-    li
-      = icon "twitter", class: "mr-zp5"
+    li.mb-zp25
+      = icon "twitter", class: "mr-zp5 text-muted"
       = @work.decorate.twitter_username_link
   - if @work.twitter_hashtag.present?
-    li
-      = icon "twitter", class: "mr-zp5"
+    li.mb-zp25
+      = icon "twitter", class: "mr-zp5 text-muted"
       = @work.decorate.twitter_hashtag_link

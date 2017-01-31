@@ -1,4 +1,5 @@
-h1.h2 = person.decorate.local_name
+h1.h2
+  = link_to person.decorate.local_name, person_path(person)
 - if person.voice_actor?
   span.badge.u-badge-people
     = t "words.voice_actor"
@@ -9,35 +10,35 @@ h2.h4.font-weight-bold.mt-2.mb-1
   = icon "sticky-note-o", class: "mr-zp25"
   = t "words.information"
 dl
-  dt.small = t "words.name_kanji"
+  dt.small = t "activerecord.attributes.person.name"
   dd = person.name
   - if person.name_kana.present?
-    dt.small = t "words.name_kana"
+    dt.small = t "activerecord.attributes.person.name_kana"
     dd = person.name_kana
   - if person.name_en.present?
-    dt.small = t "words.name_en"
+    dt.small = t "activerecord.attributes.person.name_en"
     dd = person.name_en
   - if person.nickname.present?
-    dt.small = t "words.nickname"
+    dt.small = t "activerecord.attributes.person.nickname"
     dd = person.nickname
   - if person.gender.present?
-    dt.small = t "words.gender"
+    dt.small = t "activerecord.attributes.person.gender"
     dd = person.gender_text
   - if person.birthday.present?
-    dt.small = t "words.birthday"
+    dt.small = t "activerecord.attributes.person.birthday"
     dd = person.birthday.strftime("%Y年%m月%d日")
   - if person.blood_type.present?
-    dt.small = t "words.blood_type"
+    dt.small = t "activerecord.attributes.person.blood_type"
     dd = person.blood_type_text
   - if person.height.present?
-    dt.small = t "words.height"
+    dt.small = t "activerecord.attributes.person.height"
     dd = "#{person.height}cm"
   - if person.url.present?
-    dt.small = t "words.official_site"
+    dt.small = t "activerecord.attributes.person.official_site"
     dd = link_with_domain person.url
   - if person.twitter_username.present?
-    dt.small = t "words.twitter"
+    dt.small = t "activerecord.attributes.person.twitter"
     dd = person.decorate.twitter_username_link
   - if person.wikipedia_url.present?
-    dt.small = t "words.wikipedia"
+    dt.small = t "activerecord.attributes.person.wikipedia"
     dd = link_with_domain person.wikipedia_url

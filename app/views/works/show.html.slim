@@ -1,40 +1,49 @@
 - title = t "head.title.works.show", title: @work.decorate.local_title
 - description = meta_description(t("head.meta.description.works.show", title: @work.decorate.local_title))
 - keywords = meta_keywords(@work.title)
-- image_url = ann_image_tag(@work.work_image, :attachment, size: "640x")
-- set_meta_tags(title: title, description: description, keywords: keywords, og: { title: title, description: description, image: image_url }, reverse: true, prefix: false)
+- image_url = ann_image_url(@work.work_image, :attachment, size: "640x")
+- set_meta_tags(title: title, description: description, keywords: keywords, og: { description: description, image: image_url }, twitter: { description: description, image: image_url }, reverse: true, prefix: false)
 - set_page_category "works_show"
 
 = render "application/components/navbar"
 
-.container.py-1
-  .row
-    .col-3.pr-0
-      .c-card.container.py-1
+.p-application__content
+  .container.py-1.mb-2
+    .row
+      .col-3.pr-0
         = render "sidebar", work: @work
-    .col-9
-      .c-card
-        .container.py-1
-          h1.mb-0 = @work.decorate.local_title
+      .col-9
         = render "subnav", work: @work
 
-      h2.h4.text-center.my-2.font-weight-bold = t "words.episodes"
-      .c-card.mt-1.py-1
-        - if @work.episodes.published.present?
-          .container.mb-zp5
-            = link_to t("words.bulk_tracking"), work_episodes_path(@work, tracking: "on"), class: "small"
-          table.p-episodes-table.table.mb-0
-            tbody
-              - @work.episodes.published.order(:sort_number).limit(10).each do |episode|
-                = render "episodes/episode_row", work: @work, episode: episode
+        h2.h4.text-center.my-2.font-weight-bold = t "words.episodes"
+        .c-card.mt-1.py-1
+          - if @episodes.present?
+            - if user_signed_in?
+              .container.mb-zp5
+                = link_to t("words.bulk_tracking"), work_episodes_path(@work, tracking: "on"), class: "small"
+            table.p-episodes-table.table.mb-0
+              tbody
+                - @episodes.order(:sort_number).limit(10).each do |episode|
+                  = render "episodes/episode_row", work: @work, episode: episode
+            - if @episodes.count > 10
+              .px-1.mt-1
+                = link_to t("messages.works.view_all_n_episodes", n: @episodes.count), work_episodes_path(@work), class: "btn btn-secondary w-100"
+          - else
+            = render "application/components/empty", text: t("messages.works.no_episodes")
 
-      h2.h4.text-center.my-2.font-weight-bold = t "words.characters"
-      .c-card.container.mt-1.py-1
-        = render "characters/character_list", casts: @work.casts.published.order(:sort_number).limit(9)
+        h2.h4.text-center.my-2.font-weight-bold = t "words.characters"
+        .c-card.container.mt-1.py-1
+          = render "characters/character_list", casts: @casts.order(:sort_number).limit(9)
+          - if @casts.count > 9
+            .mt-1
+              = link_to t("messages.works.view_all_n_characters", n: @casts.count), work_characters_path(@work), class: "btn btn-secondary w-100"
 
-      h2.h4.text-center.my-2.font-weight-bold = t "words.staffs"
-      .c-card.container.mt-1.py-1
-        = render "staffs/staff_list", staffs: @work.staffs.published.order(:sort_number).limit(9)
+        h2.h4.text-center.my-2.font-weight-bold = t "words.staffs"
+        .c-card.container.mt-1.py-1
+          = render "staffs/staff_list", staffs: @staffs.order(:sort_number).limit(9)
+          - if @staffs.count > 9
+            .mt-1
+              = link_to t("messages.works.view_all_n_staffs", n: @staffs.count), work_staffs_path(@work), class: "btn btn-secondary w-100"
 
 = render "application/components/footer"
 

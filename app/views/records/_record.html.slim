@@ -9,7 +9,7 @@
           .col
             = link_to record.user.profile.name, user_path(record.user.username)
           .col
-            .text-xs-right
+            .text-right
               - if record.modify_comment?
                 small.mr-zp25.text-muted
                   = icon "pencil"
@@ -32,7 +32,7 @@
                 = icon "facebook", class: "mr-zp25 u-text-twitter"
                 = record.facebook_click_count
           .col
-            .text-xs-right
+            .text-right
               c-like-button resource-name="Checkin" :init-resource-id="#{record.id}" :init-likes-count="#{record.likes_count}" :init-is-liked="#{user_signed_in? && current_user.like?(record)}" :is-signed-in="#{user_signed_in?}"
               = link_to record_path(record.user.username, record), class: "d-inline-block ml-zp5" do
                 = icon "comment-o", class: "mr-zp25"
@@ -45,7 +45,7 @@
                     = link_to "#", class: "dropdown-item" do
                       c-mute-user-button :user-id="#{record.user.id}"
         - if policy(record).update?
-          .small.text-xs-right.mb-zp5
+          .small.text-right.mb-zp5
             = link_to edit_record_path(record.user.username, record), class: "mr-zp5" do
               = icon "edit", class: "mr-zp25"
               = t "words.edit"

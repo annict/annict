@@ -1,12 +1,15 @@
 # frozen_string_literal: true
 
 module HeadHelper
-  def ann_display_meta_tags
+  def ann_display_meta_tags(site = "Annict")
     display_meta_tags(
       reverse: true,
-      site: "Annict",
+      site: site,
+      separator: " |",
+      description: meta_description,
+      keywords: meta_keywords,
       og: {
-        title: page_title(page_title_symbol: :site_page_title, separator: " | "),
+        title: meta_tags.full_title(site: site, separator: " |"),
         type: "website",
         url: request.url,
         description: t("head.meta.description._common"),
@@ -20,7 +23,7 @@ module HeadHelper
       twitter: {
         card: "summary",
         site: "@anannict",
-        title: "Annict",
+        title: meta_tags.full_title(site: site, separator: " |"),
         description: t("head.meta.description._common"),
         image: "#{ENV.fetch('ANNICT_URL')}/images/og_image.png"
       }
@@ -28,7 +31,10 @@ module HeadHelper
   end
 
   def meta_description(text = "")
-    "#{text} - #{t('head.meta.description._common')}"
+    ary = []
+    ary << "#{text} -" if text.present?
+    ary << t("head.meta.description._common")
+    ary.join(" ")
   end
 
   def meta_keywords(*keywords)

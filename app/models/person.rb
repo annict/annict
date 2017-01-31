@@ -39,8 +39,8 @@ class Person < ActiveRecord::Base
 
   DIFF_FIELDS = %i(
     prefecture_id name name_kana nickname gender url wikipedia_url twitter_username
-    birthday blood_type height name_en nickname_en gender_en url_en wikipedia_url_en
-    twitter_username_en blood_type_en
+    birthday blood_type height name_en nickname_en url_en wikipedia_url_en
+    twitter_username_en
   ).freeze
 
   enumerize :blood_type, in: %i(a b ab o)

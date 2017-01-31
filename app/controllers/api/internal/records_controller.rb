@@ -5,11 +5,11 @@ module Api
     class RecordsController < Api::Internal::ApplicationController
       permits :episode_id, :comment, :shared_twitter, :shared_facebook, :rating
 
-      before_action :authenticate_user!
+      before_action :authenticate_user!, only: %i(create)
 
       def create(record)
         episode = Episode.published.find(record[:episode_id])
-        record = episode.checkins.new do |c|
+        record = episode.records.new do |c|
           c.comment = record[:comment]
           c.shared_twitter = record[:shared_twitter]
           c.shared_facebook = record[:shared_facebook]

@@ -1,19 +1,22 @@
 _ = require "lodash"
-Vue = require "vue/dist/vue"
 
 eventHub = require "../../common/eventHub"
+loadMoreButton = require "./loadMoreButton"
 
-module.exports = Vue.extend
+module.exports =
   template: "#t-program-list"
 
   data: ->
-    isLoading: true
-    hasNext: false
+    isLoading: false
+    hasNext: true
     programs: []
     user: null
     page: 1
     sort: gon.currentProgramsSortType
     sortTypes: gon.programsSortTypes
+
+  components:
+    "c-load-more-button": loadMoreButton
 
   methods:
     requestData: ->
@@ -49,6 +52,8 @@ module.exports = Vue.extend
         if data.programs.length > 0
           @hasNext = true
           @programs.push.apply(@programs, @initPrograms(data.programs))
+        else
+          @hasNext = false
 
     reload: ->
       @updateProgramsSortType ->
@@ -79,6 +84,7 @@ module.exports = Vue.extend
         eventHub.$emit "flash:show", data.responseJSON.message, "danger"
 
     load: ->
+      @isLoading = true
       $.ajax
         method: "GET"
         url: "/api/internal/user/programs"
@@ -86,7 +92,7 @@ module.exports = Vue.extend
       .done (data) =>
         @isLoading = false
         @programs = @initPrograms(data.programs)
-        @hasNext = true if @programs.length > 0
+        @hasNext = @programs.length > 0
         @user = data.user
 
     updateProgramsSortType: (callback) ->

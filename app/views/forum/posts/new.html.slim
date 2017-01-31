@@ -5,7 +5,8 @@
 = render "application/components/navbar"
 = render "forum/application/subnav"
 
-.c-card.container.mt-1.mb-2.py-1
-  = render "forum/posts/form", post: @post
+.p-application__content
+  .c-card.container.mt-1.mb-2.py-1
+    = render "forum/posts/form", post: @post
 
 = render "application/components/footer"

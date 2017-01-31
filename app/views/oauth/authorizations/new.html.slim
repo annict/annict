@@ -1,37 +1,39 @@
-- title = "アクセス許可"
-- description = meta_description
-- keywords = meta_keywords
-- set_meta_tags(title: title, description: description, keywords: keywords, reverse: true)
+- title = t "head.title.oauth.authorizations.new"
+- set_meta_tags title: title, reverse: true, prefix: false
+- set_page_category "oauth_authorizations_new"
 
-.a-container.row
-  .a-wrapper.large-6.small-12.column.align-self-middle.large-offset-3
-    .a-logo.text-center
-      = link_to root_path do
-        = image_tag "navbar/logo-120x120.png", size: "60x60", alt: "Annict"
-    .card
-      h1.text-center アクセス許可
-      p = "「#{@pre_auth.client.name}」からのアクセスを許可しますか？"
+.container
+  .row.align-items-center
+    .col-6.offset-3.py-3
+      .text-center.mb-3
+        = link_to root_path do
+          = image_tag "logos/color-mizuho.png", size: "50x61", alt: "Annict"
+      .c-card.px-1.py-2.mb-1
+        h1.text-center.mb-2
+          = t "head.title.oauth.authorizations.new"
+        p = t "messages.oauth.authorizations.authorize_account_html", client_name: @pre_auth.client.name
+        
+        h2.h4
+          = t "messages.oauth.authorizations.this_application_will_be_able_to"
+        - if @pre_auth.scopes.present?
+          ul
+            - @pre_auth.scopes.each do |scope|
+              li = t scope, scope: [:doorkeeper, :scopes]
       
-      h2 アクセス範囲
-      - if @pre_auth.scopes.present?
-        ul
-          - @pre_auth.scopes.each do |scope|
-            li = t scope, scope: [:doorkeeper, :scopes]
-
-      .row
-        .small-6.columns.text-right
-          = form_tag oauth_authorization_path, method: :delete do
-            = hidden_field_tag :client_id, @pre_auth.client.uid
-            = hidden_field_tag :redirect_uri, @pre_auth.redirect_uri
-            = hidden_field_tag :state, @pre_auth.state
-            = hidden_field_tag :response_type, @pre_auth.response_type
-            = hidden_field_tag :scope, @pre_auth.scope
-            = submit_tag "拒否する", class: "button secondary hollow"
-        .small-6.columns.text-left
-          = form_tag oauth_authorization_path, method: :post do
-            = hidden_field_tag :client_id, @pre_auth.client.uid
-            = hidden_field_tag :redirect_uri, @pre_auth.redirect_uri
-            = hidden_field_tag :state, @pre_auth.state
-            = hidden_field_tag :response_type, @pre_auth.response_type
-            = hidden_field_tag :scope, @pre_auth.scope
-            = submit_tag "許可する", class: "button"
+        .row.align-items-center
+          .col-4.offset-4
+            = form_tag oauth_authorization_path, method: :post do
+              = hidden_field_tag :client_id, @pre_auth.client.uid
+              = hidden_field_tag :redirect_uri, @pre_auth.redirect_uri
+              = hidden_field_tag :state, @pre_auth.state
+              = hidden_field_tag :response_type, @pre_auth.response_type
+              = hidden_field_tag :scope, @pre_auth.scope
+              = submit_tag t("messages.oauth.authorizations.authorize"), class: "btn btn-primary w-100"
+          .col.pr-0
+            = form_tag oauth_authorization_path, method: :delete do
+              = hidden_field_tag :client_id, @pre_auth.client.uid
+              = hidden_field_tag :redirect_uri, @pre_auth.redirect_uri
+              = hidden_field_tag :state, @pre_auth.state
+              = hidden_field_tag :response_type, @pre_auth.response_type
+              = hidden_field_tag :scope, @pre_auth.scope
+              = submit_tag t("messages.oauth.authorizations.cancel"), class: "btn btn-link btn-sm"

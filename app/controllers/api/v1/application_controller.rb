@@ -3,7 +3,7 @@
 module Api
   module V1
     class ApplicationController < ActionController::Base
-      include AnalyticsFilter
+      include Analyzable
 
       rescue_from ActiveRecord::RecordNotFound, with: :not_found
 

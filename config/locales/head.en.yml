@@ -2,30 +2,150 @@ en:
   head:
     meta:
       description:
-        _common: Annict is the platform for Anime Addicts. Track your watching anime, follow friends, read their reviews, and much more!
+        _common: Annict is the platform for Anime addicts. Track your watching anime, follow friends, read their reviews, and much more!
+        characters:
+          index: Looking for character information on %{title}? Find out more with Annict!
+          show: Looking for character information on %{name}? Find out more with Annict!
+        episodes:
+          index: Looking for episode information on %{title}? Find out more with Annict!
+          show: Looking for reviews on %{work_title} %{episode_title_with_number}? Find out more with Annict!
+        organizations:
+          show: Looking for information on %{name}? Find out more with Annict!
+        people:
+          show: Looking for information on %{name}? Find out more with Annict!
+        records:
+          show: Check out %{profile_name} (@%{username})'s records!
+        registrations:
+          new: Start using Annict!
+        sessions:
+          new: Welcome back!
+        staffs:
+          index: Looking for staff information on %{title}? Find out more with Annict!
+        users:
+          followers: Check out %{profile_name} (@%{username})'s profile!
+          following: Check out %{profile_name} (@%{username})'s profile!
+          show: Check out %{profile_name} (@%{username})'s profile!
+          works: Check out %{profile_name} (@%{username})'s profile!
         works:
+          popular: Looking for popular anime? Find out more with Annict!
+          season: Looking for information on %{name} anime? Find out more with Annict!
           show: Looking for information on %{title}? Find out more with Annict!
       keywords:
         _common: annict, anime, review
     title:
+      accounts:
+        show: Account
+      apps:
+        index: Apps
+      channel_works:
+        index: Channel Works
       channels:
         index: Channel List
+      characters:
+        index: Characters of %{title} (Anime)
+        show: "%{name}"
+      db:
+        activities:
+          index: Activities
+        casts:
+          activities: Activities
+          edit: Edit Cast
+          index: Casts
+          new: Create Casts
+        channels:
+          index: Channels
+        characters:
+          activities: Resource Activities - %{name}
+          index: Characters
+        character_images:
+          show: Character Image - %{name}
+        episodes:
+          activities: Activities
+          index: Episodes of %{work_title}
+        organizations:
+          activities: Resource Activities - %{name}
+          index: Organizations
+        people:
+          activities: Resource Activities - %{name}
+          index: People
+        programs:
+          activities: Activities
+          edit: Edit Program
+          index: Programs
+          new: New Programs
+        searches:
+          show: Search
+        staffs:
+          activities: Activities
+          edit: Edit Staff
+          index: Staffs
+          new: Create Staffs
+        work_images:
+          show: Work Image - %{title}
+        works:
+          activities: Activities
+          edit: "%{title}"
+          index: Works
+      episodes:
+        index: Episodes of %{title} (Anime)
+        show: Anime "%{work_title}" - %{episode_title_with_number}
+      forum:
+        categories:
+          show: "%{name} - Forum"
+        home:
+          index: Forum
+        posts:
+          show: "%{title} - Forum"
       friends:
         index: Find Friends
       home:
         index: Annict
-        index_guest: The platform for Anime Addicts.
+        index_guest: The platform for Anime addicts.
+      mutes:
+        index: Mute Filters
       notifications:
         index: Notifications
+      oauth:
+        authorizations:
+          new: Authorize an application
+          show: Authorization code
+      options:
+        index: Options
+      organizations:
+        show: "%{name}"
       pages:
         about: About
+      passwords:
+        edit: Forgot your password?
+        new: Forgot your password?
+      people:
+        show: "%{name}"
+      profiles:
+        show: Profile
       programs:
-        index: Programs
+        index: Program List
+      providers:
+        index: Connections
+      records:
+        show: "A Record by %{profile_name} (@%{username}) on %{work_title} - %{episode_title_with_number}"
       registrations:
         new: Sign Up
+      sayonara:
+        show: Delete Account
+      searches:
+        show: "%{q}Anime Search"
       sessions:
         new: Sign In
+      staffs:
+        index: Staffs of %{title} (Anime)
       tracks:
         show: Track
+      users:
+        followers: People following %{profile_name} (@%{username})
+        following: People followed by %{profile_name} (@%{username})
+        show: "%{profile_name} (@%{username})"
+        works: "%{profile_name} (@%{username})'s \"%{action}\" anime"
       works:
-        show: Anime "%{title}"
+        popular: Popular anime
+        season: "%{name} Anime"
+        show: "%{title} (Anime)"

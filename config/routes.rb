@@ -39,10 +39,6 @@ Rails.application.routes.draw do
       resources :people, only: [:index]
       resources :receptions, only: [:create, :destroy]
 
-      resources :dislikes, only: [:create] do
-        post :undislike, on: :collection
-      end
-
       resources :follows, only: %i(create) do
         post :unfollow, on: :collection
       end
@@ -73,9 +69,12 @@ Rails.application.routes.draw do
         get :friends
 
         resource :latest_status, only: [:show]
-        resources :images, controller: :work_images, only: %i(create)
 
         resources :channels, only: [] do
+          post :select, on: :collection
+        end
+
+        resources :statuses, only: [] do
           post :select, on: :collection
         end
       end
@@ -104,6 +103,7 @@ Rails.application.routes.draw do
   scope module: :db, as: :db do
     constraints(subdomain: "db") do
       resources :activities, only: [:index]
+      resources :channels, only: [:index]
       resource :search, only: [:show]
 
       resources :characters, except: [:show] do
@@ -111,6 +111,7 @@ Rails.application.routes.draw do
           get :activities
           patch :hide
         end
+        resource :image, controller: :character_images, only: %i(show create update destroy)
       end
 
       resources :casts, only: %i(edit update destroy) do
@@ -169,6 +170,7 @@ Rails.application.routes.draw do
         end
 
         resource :item, except: [:index]
+        resource :image, controller: :work_images, only: %i(show create update destroy)
         resources :casts, only: %i(index new create)
         resources :episodes, only: %i(index new create)
         resources :programs, only: %i(index new create)
@@ -208,10 +210,6 @@ Rails.application.routes.draw do
 
   resources :characters, only: %i(show) do
     resources :images, only: %i(index new create destroy), controller: :character_images
-  end
-
-  resources :character_images, only: [] do
-    resources :reports, only: %i(create), controller: :character_image_reports
   end
 
   resource :channel, only: [] do
@@ -267,7 +265,6 @@ Rails.application.routes.draw do
   resources :works, only: [:index, :show] do
     resources :characters, only: %i(index)
     resources :episodes, only: %i(index show)
-    resources :images, controller: :work_images, only: %i(index destroy)
     resources :staffs, only: %i(index)
 
     collection do
@@ -277,10 +274,6 @@ Rails.application.routes.draw do
         slug: /[0-9]{4}-(all|spring|summer|autumn|winter)/,
         as: :season
       post :switch
-    end
-
-    resources :statuses, only: [] do
-      post :select, on: :collection
     end
   end
 

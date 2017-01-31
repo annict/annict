@@ -1,17 +1,19 @@
-- title = t "head.title.organizations.show", title: @organization.decorate.name_with_other_name
-- description = meta_description(t("head.meta.description.organizations.show", title: title))
-- keywords = meta_keywords(@organization.name)
-- set_meta_tags(title: title, description: description, keywords: keywords, og: { title: title, description: description }, reverse: true, prefix: false)
+- title = t "head.title.organizations.show", name: @organization.decorate.name_with_other_name
+- description = meta_description(t("head.meta.description.organizations.show", name: @organization.decorate.name_with_other_name))
+- keywords = meta_keywords(@organization.decorate.name_with_other_name)
+- set_meta_tags(title: title, description: description, keywords: keywords, og: { description: description }, twitter: { description: description }, reverse: true, prefix: false)
 - set_page_category "organizations_show"
 
 = render "application/components/navbar"
 
-.container.py-1
-  .row
-    .col-3.pr-0
-      .c-card.container.py-1
+.p-application__content
+  .container.py-1.mb-2
+    .row
+      .col-3.pr-0
         = render "sidebar", organization: @organization
-    .col-9
-      = render "people/grid", root_resource: @organization, resource_years: @staff_years, resources_with_year: @staffs_with_year
+      .col-9
+        .c-card
+          .container.py-1
+            = render "people/grid", root_resource: @organization, resource_years: @staff_years, resources_with_year: @staffs_with_year
 
 = render "application/components/footer"

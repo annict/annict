@@ -72,10 +72,6 @@ module Db
 
     private
 
-    def load_work
-      @work = Work.find(params[:work_id])
-    end
-
     def load_program
       @program = Program.find(params[:id])
     end

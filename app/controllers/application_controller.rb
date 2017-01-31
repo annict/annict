@@ -12,7 +12,7 @@ class ApplicationController < ActionController::Base
 
   # Prevent CSRF attacks by raising an exception.
   # For APIs, you may want to use :null_session instead.
-  protect_from_forgery with: :exception
+  protect_from_forgery with: :exception, prepend: true
 
   helper_method :client_uuid, :gon
 
@@ -58,5 +58,14 @@ class ApplicationController < ActionController::Base
   def load_new_user
     return if user_signed_in?
     @new_user = User.new_with_session({}, session)
+  end
+
+  def display_works_count
+    return 15 unless user_signed_in?
+    case current_user.setting.display_option_work_list
+    when "list" then 15
+    else
+      50
+    end
   end
 end

@@ -1,11 +1,13 @@
-- title t("resources.episode.episodes_list")
+- title = t "head.title.db.episodes.index", work_title: @work.decorate.local_title
+- set_meta_tags(title: title, reverse: true, prefix: false)
+- set_page_category "db_episodes_index"
 
 .l-topbar.container-fluid.px-1
   .row.flex-items-xs-between
     .col-8
-      = render "db/application/topbar_title", parent: @work, child: t("resources.episode.episodes_list")
+      = render "db/application/topbar_title", parent: @work, child: t("words.episodes")
     - if user_signed_in? && current_user.committer?
-      .col.text-xs-right
+      .col.text-right
         = link_to new_db_work_episode_path(@work), class: "btn btn-outline-primary" do
           = icon "pencil-square-o"
           = t "resources.episode.new_episodes"
@@ -31,7 +33,7 @@
             - if locale_ja?
               th = t "words.syobocal"
             th = t "words.state"
-            th = t "words.activity"
+            th = t "head.title.db.episodes.activities"
             - if policy(@episodes).edit?
               th = t "words.edit"
             - if policy(@episodes).hide?
@@ -62,17 +64,17 @@
               - if current_user.role.admin?
                 td = episode.sc_count
               td = episode.sort_number
-              td = episode.checkins.count
+              td = episode.records.count
               - if locale_ja?
                 td
                   - if episode.fetch_syobocal?
-                    .tag.tag-success 同期中
+                    .badge.badge-success 同期中
                   - else
-                    .tag.tag-warning 同期停止中
+                    .badge.badge-warning 同期停止中
               td
-                .tag class="#{episode.published? ? 'tag-success' : 'tag-warning'}"
+                .badge class="#{episode.published? ? 'badge-success' : 'badge-warning'}"
                   = t("resources.episode.aasm_state.#{episode.aasm_state}")
-              td = link_to t("words.activity"), activities_db_episode_path(episode)
+              td = link_to t("head.title.db.episodes.activities"), activities_db_episode_path(episode)
               - if policy(episode).edit?
                 td
                   = link_to t("words.edit"), edit_db_episode_path(episode), class: "btn btn-primary btn-sm"

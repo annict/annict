@@ -1,10 +1,14 @@
 - title = t "head.title.programs.index"
-- set_meta_tags(title: title, og: { title: title }, reverse: true, prefix: false)
+- set_meta_tags(title: title, reverse: true, prefix: false)
 - set_page_category "programs_index"
 
 = render "application/components/navbar"
 
-c-program-list
+.p-application__content.mt-1.mb-2
+  .container
+    c-program-list
+
+= render "application/components/footer"
 
 - content_for :js_templates do
   = render "application/js_templates/program_list"

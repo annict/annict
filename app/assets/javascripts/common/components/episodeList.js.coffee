@@ -1,6 +1,6 @@
-Vue = require "vue/dist/vue"
+keen = require "../keen"
 
-module.exports = Vue.extend
+module.exports =
   props:
     isSignedIn:
       type: Boolean
@@ -8,7 +8,7 @@ module.exports = Vue.extend
     workId:
       type: Number
       required: true
-    rawIsTrackingMode:
+    initIsTrackingMode:
       type: Boolean
       required: true
       default: false
@@ -18,12 +18,16 @@ module.exports = Vue.extend
       default: []
 
   data: ->
-    isTrackingMode: @rawIsTrackingMode
+    isTrackingMode: @initIsTrackingMode
     isTracking: false
     episodeIds: []
 
   methods:
     enableTrackingMode: ->
+      unless @isSignedIn
+        $(".c-sign-up-modal").modal("show")
+        keen.trackEvent("sign_up_modals", "open", via: "episode_tracking_button")
+        return
       @isTrackingMode = true
 
     disableTrackingMode: ->

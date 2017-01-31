@@ -1,0 +1,11 @@
+.c-card
+  table.table.table-hover
+    thead
+      tr
+        th ID
+        th = t "activerecord.attributes.channel.name"
+    tbody
+      - channels.each do |channel|
+        tr
+          td = channel.id
+          td = channel.name

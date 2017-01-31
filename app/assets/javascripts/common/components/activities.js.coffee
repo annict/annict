@@ -1,10 +1,9 @@
-Vue = require "vue/dist/vue"
+createRecordActivity = require "./createRecordActivity"
+createMultipleRecordsActivity = require "./createMultipleRecordsActivity"
+createStatusActivity = require "./createStatusActivity"
+loadMoreButton = require "./loadMoreButton"
 
-AnnCreateRecordActivity = require "./createRecordActivity"
-AnnCreateMultipleRecordsActivity = require "./createMultipleRecordsActivity"
-AnnCreateStatusActivity = require "./createStatusActivity"
-
-module.exports = Vue.extend
+module.exports =
   template: "#t-activities"
 
   props:
@@ -18,9 +17,10 @@ module.exports = Vue.extend
     page: 0
 
   components:
-    "c-create-record-activity": AnnCreateRecordActivity
-    "c-create-multiple-records-activity": AnnCreateMultipleRecordsActivity
-    "c-create-status-activity": AnnCreateStatusActivity
+    "c-create-record-activity": createRecordActivity
+    "c-create-multiple-records-activity": createMultipleRecordsActivity
+    "c-create-status-activity": createStatusActivity
+    "c-load-more-button": loadMoreButton
 
   methods:
     requestData: ->
@@ -31,6 +31,7 @@ module.exports = Vue.extend
 
     loadMore: ->
       @isLoading = true
+      @hasNext = false
       @page += 1
 
       $.ajax
@@ -40,6 +41,10 @@ module.exports = Vue.extend
       .done (data) =>
         @isLoading = false
         if data.activities.length > 0
+          @hasNext = true
           @activities.push(data.activities...)
         else
           @hasNext = false
+
+  mounted: ->
+    @loadMore()

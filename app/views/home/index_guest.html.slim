@@ -1,69 +1,40 @@
 - title = t "head.title.home.index_guest"
-- description = meta_description
-- keywords = meta_keywords
-- set_meta_tags(title: title, description: description, keywords: keywords, reverse: false)
-- set_page_category "top"
+- set_meta_tags(title: title, reverse: false)
+- set_page_category "home_index_guest"
 
 = render "application/components/navbar", transparent: true
 
-.p-top-hero
-  .p-top-hero__bg-image style="background-image: url(#{ann_image_url(@cover_image_work.item, :tombo_image, size: '640x640', blur: 200)});"
-  .p-top-hero__content.text-center
-    h1.display-1.mb-1 = t("messages.home.index_guest.hero_title")
-    p.lead.p-top-hero__description.mb-2
-      = t "messages.home.index_guest.hero_description_html"
-    = link_to new_user_registration_path, class: "btn btn-primary" do
-      = icon "rocket"
-      = t "messages.home.index_guest.start_tracking"
-    
-.container.p-home-index__main
-  .p-top-airing-anime
+.p-application__content
+  .p-top-hero
+    .p-top-hero__bg-image style="background-image: url(#{ann_image_url(@cover_image_work.item, :tombo_image, size: '640x640', blur: 200)});"
+    .p-top-hero__content.text-center
+      h1.display-1.mb-1 = t("messages.home.index_guest.hero_title")
+      p.lead.p-top-hero__description.mb-2
+        = t "messages.home.index_guest.hero_description_html"
+      = link_to new_user_registration_path, class: "btn btn-primary" do
+        = icon "rocket"
+        = t "messages.home.index_guest.start_tracking"
+      
+  .container.p-home-index__main
     h2.text-center.pt-3.mb-3
       = t "words.popular_airing_anime"
-    .p-top-work.c-card.p-1.mb-1
-      .p-top-work__left.mr-1
-        = link_to work_path(@season_top_work), class: "d-inline-block" do
-          = ann_image_tag(@season_top_work.item, :tombo_image, size: "250x250", alt: @season_top_work.decorate.local_title, class: "rounded img-thumbnail")
-        c-status-selector work-id="#{@season_top_work.id}" current-status-kind="no_select" :is-signed-in="false"
-      .p-top-work__right
-        .c-watchers-count
-          span.c-watchers-count__number.font-weight-bold = @season_top_work.watchers_count
-          span.c-watchers-count__text.text-muted Watchers
-        h3.h2.font-weight-bold = link_to @season_top_work.decorate.local_title, work_path(@season_top_work)
-        - if @season_top_work.casts.present?
-          .font-weight-bold = t "words.cast"
-          ul.list-inline
-            - @season_top_work.casts.order(:sort_number).limit(10).each do |cast|
-              - cache cast do
-                li.list-inline-item
-                  = "#{cast.part}: "
-                  = cast.decorate.local_name_with_old_link
-        - if @season_top_work.staffs.present?
-          .font-weight-bold = t "words.staff"
-          ul.list-inline
-            - @season_top_work.staffs.major.order(:sort_number).limit(10).each do |staff|
-              - cache staff do
-                li.list-inline-item
-                  = "#{staff.decorate.role_name}: "
-                  = staff.decorate.local_name_with_old_link
-
-    .p-top-other-works.c-card.p-1
-      - @season_works.each_slice(6).each do |works|
-        .p-top-other-works__row.row.u-lh-0
-          - works.each do |work|
-            .col-2
-              = link_to work_path(work), class: "p-top-other-works__image d-inline-block" do
-                = ann_image_tag(work.item, :tombo_image, size: "250x250", alt: work.decorate.local_title, class: "rounded img-fluid img-thumbnail")
-              .c-watchers-count
-                span.c-watchers-count__number.font-weight-bold = work.watchers_count
-                span.c-watchers-count__text.text-muted Watchers
-              h3.h4 = link_to work.decorate.local_title, work_path(work), class: "text-truncate w-100 d-inline-block"
-              c-status-selector work-id="#{work.id}" current-status-kind="no_select" :is-signed-in="false" :is-transparent="true"
-
+    .c-card.p-1.mb-1
+      = render "home/top_work", top_work: @season_top_work
+    .c-card.p-1
+      = render "home/other_works", other_works: @season_works
       .text-center.mt-2
         = link_to t("messages.common.see_more"), season_works_path(slug: ENV["ANNICT_CURRENT_SEASON"]), class: "btn btn-primary"
 
-hr.my-2
+    h2.text-center.pt-3.mb-3
+      = t "words.popular_anime"
+    .c-card.p-1.mb-1
+      = render "home/top_work", top_work: @top_work
+    .c-card.p-1
+      = render "home/other_works", other_works: @works
+      .text-center.mt-2
+        = link_to t("messages.common.see_more"), popular_works_path, class: "btn btn-primary"
+
+  hr.my-2
 
 = render "application/components/footer"
 
