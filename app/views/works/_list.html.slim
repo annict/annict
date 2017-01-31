@@ -5,10 +5,12 @@
         = ann_image_tag work.work_image, :attachment, size: "250x250", alt: work.decorate.local_title, class: "rounded img-thumbnail w-100"
       c-status-selector.mt-zp5 work-id="#{work.id}" current-status-kind="#{user_signed_in? ? current_user.status_kind(work) : 'no_select'}" :is-signed-in="#{user_signed_in?}"
     .col
-      .c-watchers-count
-        span.c-watchers-count__number.font-weight-bold = work.watchers_count
-        span.c-watchers-count__text.text-muted Watchers
-      h3.h2.font-weight-bold = link_to work.decorate.local_title, work_path(work)
+      .mb-zp25.u-lh-0
+        = work.decorate.media_label
+      h3.h2.font-weight-bold.mb-zp25 = link_to work.decorate.local_title, work_path(work)
+      .mb-zp5
+        span.font-weight-bold.mr-zp25 = work.watchers_count
+        span.text-muted.small Watchers
       - if work.casts.present?
         .font-weight-bold = t "words.cast"
         ul.list-inline

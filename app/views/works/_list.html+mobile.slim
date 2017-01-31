@@ -6,10 +6,12 @@
           = link_to work_path(work), class: "d-inline-block" do
             = ann_image_tag(work.work_image, :attachment, size: "250x250", alt: work.decorate.local_title, class: "rounded img-thumbnail")
         .col-8
-          .c-watchers-count
-            span.c-watchers-count__number.font-weight-bold = work.watchers_count
-            span.c-watchers-count__text.text-muted Watchers
-          h3.font-weight-bold = link_to work.decorate.local_title, work_path(work)
+          .mb-zp25.u-lh-0
+            = work.decorate.media_label
+          h3.font-weight-bold.mb-zp25 = link_to work.decorate.local_title, work_path(work)
+          .mb-zp5
+            span.font-weight-bold.mr-zp25 = work.watchers_count
+            span.text-muted.small Watchers
           c-status-selector work-id="#{work.id}" current-status-kind="#{user_signed_in? ? current_user.status_kind(work) : 'no_select'}" :is-signed-in="#{user_signed_in?}"
       - if work.casts.present?
         .font-weight-bold = t "words.cast"

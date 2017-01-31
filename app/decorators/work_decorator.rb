@@ -48,6 +48,12 @@ class WorkDecorator < ApplicationDecorator
     title
   end
 
+  def media_label
+    h.content_tag :span, class: "badge u-badge-works" do
+      media.text
+    end
+  end
+
   def to_values
     model.class::DIFF_FIELDS.each_with_object({}) do |field, hash|
       hash[field] = case field
