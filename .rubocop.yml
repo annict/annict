@@ -6,7 +6,7 @@ AllCops:
     - "db/schema.rb"
 
 Lint/EndAlignment:
-  AlignWith: variable
+  EnforcedStyleAlignWith: variable
 
 Metrics/LineLength:
   Max: 90
@@ -29,7 +29,7 @@ Style/AsciiComments:
   Enabled: false
 
 Style/CaseIndentation:
-  IndentWhenRelativeTo: end
+  EnforcedStyle: end
 
 Style/Documentation:
   Enabled: false
