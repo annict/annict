@@ -6,8 +6,10 @@ module Annict
       class Application
         attr_reader :request
 
-        def initialize(request)
+        def initialize(request, user, params)
           @request = request
+          @user = user
+          @params = params
         end
 
         def browser

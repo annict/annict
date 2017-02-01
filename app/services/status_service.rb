@@ -14,7 +14,8 @@ class StatusService
       status = @user.statuses.new(work: @work, kind: kind, oauth_application: @app)
 
       if status.save
-        @keen_client.statuses.create(@user, @app)
+        @keen_client.app = @app
+        @keen_client.statuses.create
         return true
       end
     elsif kind == "no_select"

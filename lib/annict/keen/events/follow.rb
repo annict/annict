@@ -4,21 +4,21 @@ module Annict
   module Keen
     module Events
       class Follow < Annict::Keen::Events::Application
-        def create(user)
-          props = properties(:create, user)
-          ::Keen.delay(priority: 10).publish(:follows, props)
+        def create
+          ::Keen.delay(priority: 10).publish(:follows, properties(:create))
         end
 
         private
 
-        def properties(action, user)
+        def properties(action)
           {
             action: action,
-            user_id: user.encoded_id,
+            user_id: @user&.encoded_id,
             device: browser.device.mobile? ? "mobile" : "pc",
             client_uuid: @request.cookies["ann_client_uuid"],
             locale: I18n.locale,
-            keen: { timestamp: user.updated_at }
+            page_category: @params[:page_category],
+            keen: { timestamp: @user&.updated_at }
           }
         end
       end

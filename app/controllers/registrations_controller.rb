@@ -13,7 +13,8 @@ class RegistrationsController < Devise::RegistrationsController
     return render(:new) unless @user.valid?
 
     @user.save
-    keen_client.users.create(@user)
+    keen_client.user = @user
+    keen_client.users.create
 
     bypass_sign_in(@user)
 

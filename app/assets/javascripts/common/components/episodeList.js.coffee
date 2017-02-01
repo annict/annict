@@ -50,5 +50,6 @@ module.exports =
         url: "/api/internal/multiple_records"
         data:
           episode_ids: @episodeIds
+          page_category: gon.basic.pageCategory
       .done =>
         location.href = "/works/#{@workId}/episodes"

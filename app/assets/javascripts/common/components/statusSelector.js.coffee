@@ -46,6 +46,7 @@ module.exports =
           url: "/api/internal/works/#{@workId}/statuses/select"
           data:
             status_kind: @statusKind
+            page_category: gon.basic.pageCategory
         .done =>
           @isSaving = false
 
