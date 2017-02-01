@@ -49,6 +49,7 @@ module.exports =
           data:
             recipient_type: @resourceName
             recipient_id: @resourceId
+            page_category: gon.basic.pageCategory
         .done =>
           @likesCount += 1
           @isLiked = true

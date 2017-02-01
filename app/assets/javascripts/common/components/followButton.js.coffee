@@ -45,5 +45,6 @@ module.exports =
           url: "/api/internal/follows"
           data:
             username: @username
+            page_category: gon.basic.pageCategory
         .done =>
           @isFollowing = true

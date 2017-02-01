@@ -22,9 +22,10 @@ module Api
       before_action :authenticate_user!
       before_action :load_user, only: %i(create unfollow)
 
-      def create
+      def create(page_category)
         current_user.follow(@user)
-        keen_client.follows.create(current_user)
+        keen_client.page_category = page_category
+        keen_client.follows.create
         head 201
       end
 

@@ -21,5 +21,6 @@ module.exports = Vue.extend
           url: "/api/internal/tips/close"
           data:
             slug: @tips[index].slug
+            page_category: gon.basic.pageCategory
         .done =>
           @tips.splice(index, 1)

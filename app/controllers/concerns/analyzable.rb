@@ -9,7 +9,7 @@ module Analyzable
     end
 
     def keen_client
-      @keen_client ||= Annict::Keen::Client.new(request)
+      @keen_client ||= Annict::Keen::Client.new(request, current_user)
     end
 
     def store_client_uuid

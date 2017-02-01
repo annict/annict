@@ -14,7 +14,7 @@ class MultipleRecordsService
       multiple_record = @user.multiple_records.create!(work: episodes.first.work)
 
       episodes.each do |episode|
-        episode.checkins.create! do |c|
+        episode.records.create! do |c|
           c.user = @user
           c.work = episode.work
           c.rating = 0

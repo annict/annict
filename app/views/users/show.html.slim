@@ -33,7 +33,7 @@
                 .dropdown-menu
                   = link_to "#", class: "dropdown-item" do
                     c-mute-user-button :user-id="#{@user.id}"
-              c-follow-button username="#{@user.username}" :init-is-following="#{current_user.following?(@user)}"
+              c-follow-button username="#{@user.username}" :init-is-following="#{current_user.following?(@user)}" :is-signed-in="true"
             - elsif !user_signed_in?
               c-follow-button username="#{@user.username}" :init-is-following="false" :is-signed-in="false"
 

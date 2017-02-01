@@ -4,19 +4,19 @@ module Annict
   module Keen
     module Events
       class User < Annict::Keen::Events::Application
-        def create(user)
-          ::Keen.delay(priority: 10).publish(:users, properties(:create, user))
+        def create
+          ::Keen.delay(priority: 10).publish(:users, properties(:create))
         end
 
         private
 
-        def properties(action, user)
+        def properties(action)
           {
             action: action,
-            user_id: user.encoded_id,
+            user_id: @user&.encoded_id,
             device: browser.device.mobile? ? "mobile" : "pc",
             client_uuid: @request.cookies["ann_client_uuid"],
-            keen: { timestamp: user.updated_at }
+            keen: { timestamp: @user&.updated_at }
           }
         end
       end

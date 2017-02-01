@@ -20,10 +20,11 @@ module Api
     class LikesController < Api::Internal::ApplicationController
       before_action :authenticate_user!
 
-      def create(recipient_type, recipient_id)
+      def create(recipient_type, recipient_id, page_category)
         recipient = recipient_type.constantize.find(recipient_id)
         current_user.like(recipient)
-        keen_client.likes.create(current_user)
+        keen_client.page_category = page_category
+        keen_client.likes.create(resource_type: recipient_type)
         head 200
       end
 

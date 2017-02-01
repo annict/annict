@@ -4,21 +4,22 @@ module Annict
   module Keen
     module Events
       class Like < Annict::Keen::Events::Application
-        def create(user)
-          props = properties(:create, user)
-          ::Keen.delay(priority: 10).publish(:likes, props)
+        def create(attrs)
+          ::Keen.delay(priority: 10).publish(:likes, properties(:create, attrs))
         end
 
         private
 
-        def properties(action, user)
+        def properties(action, attrs)
           {
             action: action,
-            user_id: user.encoded_id,
+            user_id: @user&.encoded_id,
             device: browser.device.mobile? ? "mobile" : "pc",
             client_uuid: @request.cookies["ann_client_uuid"],
             locale: I18n.locale,
-            keen: { timestamp: user.updated_at }
+            page_category: @params[:page_category],
+            resource_type: attrs[:resource_type],
+            keen: { timestamp: @user&.updated_at }
           }
         end
       end
