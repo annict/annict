@@ -2,7 +2,7 @@
   "name": "annict",
   "dependencies": {
     "async": "^2.1.4",
-    "browserify": "13.2.0",
+    "browserify": "14.0.0",
     "browserify-incremental": "3.1.1",
     "coffeeify": "2.1.0",
     "keen-tracking": "1.1.3",
