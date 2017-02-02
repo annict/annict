@@ -30,3 +30,8 @@ script:
 notifications:
   email: false
   slack: annict:rn43dPpTg6KuZZajh4PK33r9
+
+env:
+  - ANNICT_CURRENT_SEASON=2016-autumn
+  - ANNICT_PREVIOUS_SEASON=2016-summer
+  - ANNICT_NEXT_SEASON=2017-winter
