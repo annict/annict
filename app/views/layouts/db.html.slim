@@ -3,7 +3,7 @@ html lang="#{I18n.locale}"
   head
     = ann_display_meta_tags "Annict DB"
     link href="/images/favicon.png" rel="shortcut icon" type="image/png"
-    = render "hreflang"
+    = render "application/hreflang"
     = stylesheet_link_tag "db", media: "all"
     = javascript_include_tag "pc"
     = csrf_meta_tags
