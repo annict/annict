@@ -11,6 +11,7 @@ en:
     accounts:
       email_sent_for_confirmation: An email has been sent to confirm your email address.
       saved: Account has been saved.
+      updated: Account has been updated.
     apps:
       no_applications: No applications
     channel_works:

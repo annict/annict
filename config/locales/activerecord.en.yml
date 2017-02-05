@@ -121,10 +121,14 @@ en:
         sort_number: Sort number
         work_id: Work
       user:
+        current_password: Current password
         email_username: Email or Username
         email: Email
+        locale: Language
         password: Password
+        password_confirmation: Password (Confirmation)
         terms: Terms and Privacy
+        time_zone: Time zone
         username: Username
       work:
         mal_anime_id: MAL Anime ID

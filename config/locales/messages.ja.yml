@@ -11,6 +11,7 @@ ja:
     accounts:
       email_sent_for_confirmation: メールアドレス確認用メールを送信しました
       saved: アカウント登録されました
+      updated: 更新しました
     apps:
       no_applications: アプリはありません
     channel_works:

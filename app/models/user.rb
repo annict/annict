@@ -45,7 +45,7 @@ class User < ActiveRecord::Base
 
   extend Enumerize
 
-  attr_accessor :email_username
+  attr_accessor :email_username, :current_password
 
   # Include default devise modules. Others available are:
   # :confirmable, :lockable, :timeoutable
@@ -90,7 +90,14 @@ class User < ActiveRecord::Base
     presence: true,
     uniqueness: { case_sensitive: false },
     email: true
-  validates :password, length: { in: Devise.password_length }, allow_blank: true
+  validates :password,
+    length: { in: Devise.password_length },
+    allow_blank: true,
+    confirmation: { on: :password_update }
+  validates :password_confirmation,
+    presence: { on: :password_update }
+  validates :current_password,
+    valid_password: { on: :password_check }
   validates :username,
     presence: true,
     uniqueness: { case_sensitive: false },

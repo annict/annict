@@ -121,10 +121,14 @@ ja:
         sort_number: ソート番号
         work_id: 作品
       user:
+        current_password: 現在のパスワード
         email_username: メールアドレスまたはユーザ名
         email: メールアドレス
+        locale: 言語
         password: パスワード
+        password_confirmation: パスワード (確認)
         terms: 利用規約とプライバシーポリシー
+        time_zone: タイムゾーン
         username: ユーザ名
       work:
         mal_anime_id: MAL Anime ID

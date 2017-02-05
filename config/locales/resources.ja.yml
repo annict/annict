@@ -75,6 +75,8 @@ ja:
       there_are_no_staffs: スタッフは登録されていません
       unpublished: 非公開にしました
       updated: 更新しました
+    user:
+      is_wrong: が間違っています
     work:
       aasm_state:
         published: 公開

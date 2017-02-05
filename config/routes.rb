@@ -203,6 +203,9 @@ Rails.application.routes.draw do
 
     patch "options", to: "options#update"
   end
+  namespace :settings do
+    resource :password, only: %i(update)
+  end
 
   resources :characters, only: %i(show) do
     resources :images, only: %i(index new create destroy), controller: :character_images
