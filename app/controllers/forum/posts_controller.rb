@@ -23,7 +23,7 @@ module Forum
         @post.forum_post_participants.create!(user: current_user)
       end
 
-      redirect_to forum_post_path(@post), notice: t("resources.forum_post.created")
+      redirect_to forum_post_path(@post), notice: t("messages.forum.posts.created")
     end
 
     def show

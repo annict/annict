@@ -30,7 +30,7 @@
           .w-100.text-center
             = f.button class: "btn btn-primary mt-zp5" do
               = icon "pencil"
-              = t "messages.comments.submit"
+              = t "messages.comments.create"
       hr
     - if @comments.present?
       - @comments.each do |comment|
@@ -52,12 +52,12 @@
             .small.text-right.mb-zp5
               = link_to edit_comment_path(@user.username, comment), class: "mr-zp5" do
                 = icon "edit", class: "mr-zp25"
-                = t "words.edit"
+                = t "noun.edit"
               = link_to comment_path(@user.username, comment), method: :delete, data: { confirm: t("messages._common.are_you_sure") } do
                 = icon "trash-o", class: "mr-zp25"
-                = t "words.delete"
+                = t "noun.delete"
     - else
-      = render "application/components/empty", text: t("messages.comments.no_comments")
+      = render "application/components/empty", text: t("resources.comment.no_comments")
 
 = render "application/components/footer"
 = render "application/components/tabbar"

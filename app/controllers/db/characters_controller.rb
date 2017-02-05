@@ -7,7 +7,7 @@ module Db
       :height_en, :weight, :weight_en, :nationality, :nationality_en, :occupation,
       :occupation_en, :description, :description_en
 
-    before_action :authenticate_user!
+    before_action :authenticate_user!, only: %i(new create edit update)
     before_action :load_character, only: %i(edit update activities)
 
     def index(page: nil)

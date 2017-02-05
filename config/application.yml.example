@@ -13,7 +13,6 @@ development:
 
   GA_TRACKING_ID: UA-000000000-3
 
-  ANNICT_DB_URL: "http://db.annict.dev:3000"
   ANNICT_DOMAIN: "annict.dev"
   ANNICT_FILE_STORAGE_URL: "http://localhost:3000"
   ANNICT_HOST: "annict.dev:3000"

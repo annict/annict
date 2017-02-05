@@ -1,0 +1,24 @@
+ja:
+  verb:
+    attach: 選択する
+    check_all: 全て選択する
+    close: 閉じる
+    comment: コメントする
+    delete: 削除する
+    edit: 編集する
+    follow: フォローする
+    hide: 隠す
+    more: もっと見る
+    next: 次へ
+    post: 投稿する
+    previous: 前へ
+    search: 検索する
+    sign_out: ログアウト
+    skip: スキップする
+    state_change: 状態変更
+    track: 記録する
+    uncheck_all: 全て解除する
+    update: 更新する
+    upload: アップロード
+    view: 見る
+    view_more: もっと見る

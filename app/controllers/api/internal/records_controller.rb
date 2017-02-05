@@ -7,7 +7,7 @@ module Api
 
       before_action :authenticate_user!, only: %i(create)
 
-      def create(record)
+      def create(record, page_category)
         episode = Episode.published.find(record[:episode_id])
         record = episode.records.new do |c|
           c.comment = record[:comment]
@@ -15,7 +15,8 @@ module Api
           c.shared_facebook = record[:shared_facebook]
           c.rating = record[:rating]
         end
-        service = NewRecordService.new(current_user, record, ga_client)
+        keen_client.page_category = page_category
+        service = NewRecordService.new(current_user, record, keen_client)
 
         if service.save
           head 201

@@ -10,88 +10,88 @@
 .c-card.mb-2
   .container.mt-1.py-1
     h2.h4.text-center.font-weight-bold.mb-1
-      = t "words.information"
+      = t "noun.information"
     .row
       .col.text-right.font-weight-bold
-        = t "words.name"
+        = t "activerecord.attributes.character.name"
       .col
         = @character.name
     - if @character.name_kana.present?
       .row
         .col.text-right.font-weight-bold
-          = t "words.name_kana"
+          = t "activerecord.attributes.character.name_kana"
         .col
           = @character.name_kana
     - if @character.name_en.present?
       .row
         .col.text-right.font-weight-bold
-          = t "words.name_en"
+          = t "activerecord.attributes.character.name_en"
         .col
           = @character.name_en
     - if @character.nickname.present?
       .row
         .col.text-right.font-weight-bold
-          = t "words.nickname"
+          = t "activerecord.attributes.character.nickname"
         .col
           = @character.nickname
     - if @character.kind.present?
       .row
         .col.text-right.font-weight-bold
-          = t "words.kind"
+          = t "activerecord.attributes.character.kind"
         .col
           = @character.kind
     - if @character.birthday.present?
       .row
         .col.text-right.font-weight-bold
-          = t "words.birthday"
+          = t "activerecord.attributes.character.birthday"
         .col
           = @character.birthday.strftime("%Y年%m月%d日")
     - if @character.age.present?
       .row
         .col.text-right.font-weight-bold
-          = t "words.age"
+          = t "activerecord.attributes.character.age"
         .col
           = @character.age
     - if @character.blood_type.present?
       .row
         .col.text-right.font-weight-bold
-          = t "words.blood_type"
+          = t "activerecord.attributes.character.blood_type"
         .col
           = @character.blood_type_text
     - if @character.height.present?
       .row
         .col.text-right.font-weight-bold
-          = t "words.height"
+          = t "activerecord.attributes.character.height"
         .col
           = "#{@character.height}cm"
     - if @character.weight.present?
       .row
         .col.text-right.font-weight-bold
-          = t "words.weight"
+          = t "activerecord.attributes.character.weight"
         .col
           = "#{@character.weight}kg"
     - if @character.nationality.present?
       .row
         .col.text-right.font-weight-bold
-          = t "words.nationality"
+          = t "activerecord.attributes.character.nationality"
         .col
           = @character.nationality
     - if @character.occupation.present?
       .row
         .col.text-right.font-weight-bold
-          = t "words.occupation"
+          = t "activerecord.attributes.character.occupation"
         .col
           = @character.occupation
     - if @character.description.present?
       .row
         .col.text-right.font-weight-bold
-          = t "words.description"
+          = t "activerecord.attributes.character.description"
         .col
           = @character.description
   hr
   .container.py-1
     h2.h4.text-center.font-weight-bold.mb-1
-      = t "words.works"
+      = t "noun.works"
     = render "people/grid", root_resource: @character, resource_years: @cast_years, resources_with_year: @casts_with_year
 
 = render "application/components/footer"

@@ -25,14 +25,14 @@
             th = t "activerecord.attributes.cast.person_id"
             th = t "activerecord.attributes.cast.name"
             th = t "activerecord.attributes.cast.sort_number"
-            th = t "words.state"
+            th = t "noun.state"
             th = t "head.title.db.casts.activities"
             - if policy(@casts).edit?
-              th = t "words.edit"
+              th = t "noun.edit"
             - if policy(@casts).hide?
-              th = t "words.hide"
+              th = t "noun.hide"
             - if policy(@casts).destroy?
-              th = t "words.delete"
+              th = t "noun.delete"
         tbody
           - @casts.each do |cast|
             tr
@@ -58,13 +58,13 @@
                   = t("resources.cast.aasm_state.#{cast.aasm_state}")
               td = link_to t("head.title.db.casts.activities"), activities_db_cast_path(cast)
               - if policy(cast).edit?
-                td = link_to t("words.edit"), edit_db_cast_path(cast), class: "btn btn-primary btn-sm"
+                td = link_to t("noun.edit"), edit_db_cast_path(cast), class: "btn btn-primary btn-sm"
               - if policy(cast).hide?
                 td
                   - if cast.published?
-                    = link_to t("words.hide"), hide_db_cast_path(cast), class: "btn btn-warning btn-sm", data: { method: "patch", confirm: t("messages.are_you_sure") }
+                    = link_to t("noun.hide"), hide_db_cast_path(cast), class: "btn btn-warning btn-sm", data: { method: "patch", confirm: t("messages._common.are_you_sure") }
               - if policy(cast).destroy?
-                td = link_to t("words.delete"), db_cast_path(cast), class: "btn btn-danger btn-sm", data: { method: :delete, confirm: t("messages.are_you_sure") }
+                td = link_to t("noun.delete"), db_cast_path(cast), class: "btn btn-danger btn-sm", data: { method: :delete, confirm: t("messages._common.are_you_sure") }
 
   - else
     = render "application/components/empty", text: t("resources.cast.there_are_no_casts")

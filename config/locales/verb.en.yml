@@ -1,0 +1,24 @@
+en:
+  verb:
+    attach: Attach
+    check_all: Check All
+    close: Close
+    comment: Comment
+    delete: Delete
+    edit: Edit
+    follow: Follow
+    hide: Hide
+    more: More
+    next: Next
+    post: Post
+    previous: Prev
+    search: Search
+    sign_out: Sign Out
+    skip: Skip
+    state_change: Change state
+    track: Track
+    uncheck_all: Uncheck All
+    update: Update
+    upload: Upload
+    view: View
+    view_more: View More

@@ -17,15 +17,15 @@
           tr
             th = t "activerecord.attributes.oauth_application.name"
             th = t "activerecord.attributes.oauth_application.redirect_uri"
-            th = t "words.edit"
-            th = t "words.delete"
+            th = t "noun.edit"
+            th = t "noun.delete"
         tbody
           - @applications.each do |application|
             tr
               td = link_to application.name, oauth_application_path(application)
               td = application.redirect_uri
-              td = link_to t("words.edit"), edit_oauth_application_path(application), class: "btn btn-secondary"
-              td = link_to t("words.delete"), oauth_application_path(application), class: "btn btn-danger", data: { method: :delete, confirm: t("messages._common.are_you_sure") }
+              td = link_to t("noun.edit"), edit_oauth_application_path(application), class: "btn btn-secondary"
+              td = link_to t("noun.delete"), oauth_application_path(application), class: "btn btn-danger", data: { method: :delete, confirm: t("messages._common.are_you_sure") }
     - else
       = render "application/components/empty", text: t("messages.oauth.applications.no_applications")
 

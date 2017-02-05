@@ -14,5 +14,5 @@
             .text-truncate.small
               = link_to work.decorate.local_title, work_path(work)
             - description = resources.map { |resource| root_resource.decorate.grid_description(resource) }.join(", ")
-            .text-truncate.small title="#{description}"
-              = description
+            .text-truncate.small
+              = description.html_safe

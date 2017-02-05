@@ -59,7 +59,7 @@ class WorkDecorator < ApplicationDecorator
       hash[field] = case field
       when :season_id
         if send(:season_id).present?
-          Season.find(send(:season_id)).decorate.yearly_season_ja
+          Season.find(send(:season_id)).decorate.local_name
         end
       when :sc_tid
         sc_tid = send(:sc_tid)

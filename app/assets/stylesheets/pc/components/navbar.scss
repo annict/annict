@@ -35,7 +35,7 @@
       }
 
       .dropdown-menu {
-        border: 1px solid $ann-border-color;
+        border: 1px solid $ann-color-border;
         margin: 0;
       }
     }
@@ -57,7 +57,7 @@
 
   &:not(.is-transparent) {
     background-color: $ann-color-white;
-    border-bottom: 1px solid $ann-border-color;
+    border-bottom: 1px solid $ann-color-border;
 
     .btn-outline-primary {
       @include button-outline-variant($ann-color-mizuho, $ann-color-white);

@@ -2,7 +2,7 @@
 - set_meta_tags(title: title, reverse: true, prefix: false)
 - set_page_category "profiles_show"
 
-.c-card.container.py-1.mb-2
+.c-card.p-1.mb-2
   = form_for current_user.profile, url: profile_path, method: :patch do |f|
     = render "application/components/error_panel", resource: current_user.profile
 

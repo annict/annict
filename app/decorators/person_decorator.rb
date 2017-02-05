@@ -3,6 +3,10 @@
 class PersonDecorator < ApplicationDecorator
   include PersonOrgDecoratorCommon
 
+  def name_link
+    h.link_to local_name, h.person_path(self)
+  end
+
   def db_detail_link(options = {})
     name = options.delete(:name).presence || self.name
     h.link_to name, h.edit_db_person_path(self), options
@@ -11,7 +15,7 @@ class PersonDecorator < ApplicationDecorator
   def grid_description(resource)
     case resource.class.name
     when "Cast"
-      resource.character.decorate.local_name
+      resource.character.decorate.name_link
     when "Staff"
       resource.decorate.role_name
     end

@@ -48,6 +48,7 @@ module.exports =
             shared_twitter: @user.share_record_to_twitter
             shared_facebook: @user.share_record_to_facebook
             rating: latestStatus.record.rating
+          page_category: gon.basic.pageCategory
       .done (data) =>
         $.ajax
           method: "GET"

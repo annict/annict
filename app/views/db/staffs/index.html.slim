@@ -25,14 +25,14 @@
             th = t "activerecord.attributes.staff.name"
             th = t "activerecord.attributes.staff.role"
             th = t "activerecord.attributes.staff.sort_number"
-            th = t "words.state"
+            th = t "noun.state"
             th = t "head.title.db.staffs.activities"
             - if policy(@staffs).edit?
-              th = t "words.edit"
+              th = t "noun.edit"
             - if policy(@staffs).hide?
-              th = t "words.hide"
+              th = t "noun.hide"
             - if policy(@staffs).destroy?
-              th = t "words.delete"
+              th = t "noun.delete"
         tbody
           - @staffs.each do |staff|
             tr
@@ -52,13 +52,13 @@
                   = t("resources.staff.aasm_state.#{staff.aasm_state}")
               td = link_to t("head.title.db.staffs.activities"), activities_db_staff_path(staff)
               - if policy(staff).edit?
-                td = link_to t("words.edit"), edit_db_staff_path(staff), class: "btn btn-primary btn-sm"
+                td = link_to t("noun.edit"), edit_db_staff_path(staff), class: "btn btn-primary btn-sm"
               - if policy(staff).hide?
                 td
                   - if staff.published?
-                    = link_to t("words.hide"), hide_db_staff_path(staff), class: "btn btn-warning btn-sm", data: { method: "patch", confirm: t("messages.are_you_sure") }
+                    = link_to t("noun.hide"), hide_db_staff_path(staff), class: "btn btn-warning btn-sm", data: { method: "patch", confirm: t("messages._common.are_you_sure") }
               - if policy(staff).destroy?
-                td = link_to t("words.delete"), db_staff_path(staff), class: "btn btn-danger btn-sm", data: { method: :delete, confirm: t("messages.are_you_sure") }
+                td = link_to t("noun.delete"), db_staff_path(staff), class: "btn btn-danger btn-sm", data: { method: :delete, confirm: t("messages._common.are_you_sure") }
 
   - else
     = render "application/components/empty", text: t("resources.staff.there_are_no_staffs")

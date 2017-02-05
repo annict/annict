@@ -1,0 +1,156 @@
+ja:
+  head:
+    meta:
+      description:
+        _common: Annict (アニクト)は、見たアニメを記録したり、見た感想を友達にシェアすることができるWebサービスです。「今どの作品を何話まで見ているんだっけ？」を解消します。
+        characters:
+          index: アニメ「%{title}」のキャラクターをチェック！
+          show: Annictで%{name}をチェック！
+        episodes:
+          index: アニメ「%{title}」のエピソードをチェック！
+          show: アニメ「%{work_title}」%{episode_title_with_number}の感想をチェック!
+        organizations:
+          show: "%{name}の情報をチェック！"
+        people:
+          show: "%{name}の情報をチェック！"
+        records:
+          show: "%{profile_name} (@%{username})さんの感想をチェック！"
+        registrations:
+          new: Annictを始めよう！
+        sessions:
+          new: おかえりなさい！
+        staffs:
+          index: "アニメ「%{title}」のスタッフ情報をチェック！"
+        users:
+          followers: Check out %{profile_name} (@%{username})'s profile!
+          following: Check out %{profile_name} (@%{username})'s profile!
+          show: Check out %{profile_name} (@%{username})'s profile!
+          works: Check out %{profile_name} (@%{username})'s profile!
+        works:
+          popular: 人気アニメをチェック！
+          season: "%{name}アニメをチェック！"
+          show: アニメ「%{title}」の感想や情報をチェック！
+      keywords:
+        _common: annict, anime, review
+    title:
+      accounts:
+        show: アカウント
+      apps:
+        index: アプリ
+      channel_works:
+        index: 作品ごとのチャンネル
+      channels:
+        index: チャンネル一覧
+      characters:
+        index: "アニメ「%{title}」のキャラクター"
+        show: "%{name}"
+      comments:
+        edit: コメント編集
+      db:
+        activities:
+          index: アクティビティ
+        casts:
+          activities: アクティビティ
+          edit: キャスト編集
+          index: キャスト一覧
+          new: キャスト登録
+        channels:
+          index: チャンネル
+        characters:
+          activities: アクティビティ - %{name}
+          index: キャラクター
+        character_images:
+          show: キャラクター画像 - %{name}
+        episodes:
+          activities: アクティビティ
+          index: "%{work_title}のエピソード"
+        organizations:
+          activities: アクティビティ - %{name}
+          index: 団体
+        people:
+          activities: アクティビティ - %{name}
+          index: 人物
+        programs:
+          activities: アクティビティ
+          edit: 放送予定編集
+          index: 放送予定
+          new: 放送予定登録
+        searches:
+          show: 検索
+        staffs:
+          activities: アクティビティ
+          edit: スタッフ編集
+          index: スタッフ
+          new: スタッフ登録
+        work_images:
+          show: 作品画像 - %{title}
+        works:
+          activities: アクティビティ
+          edit: "%{title}"
+          index: 作品一覧
+      episodes:
+        index: アニメ「%{title}」のエピソード
+        show: アニメ「%{work_title}」%{episode_title_with_number}
+      forum:
+        categories:
+          show: "%{name} - Forum"
+        home:
+          index: Forum
+        posts:
+          show: "%{title} - Forum"
+      friends:
+        index: 友達を探す
+      home:
+        index: Annict
+        index_guest: 見たアニメを記録して、共有しよう
+      mutes:
+        index: ミュート
+      notifications:
+        index: 通知
+      oauth_users:
+        new: ユーザ登録
+      oauth:
+        authorizations:
+          new: アプリ認証
+          show: 認証コード
+      options:
+        index: オプション
+      organizations:
+        show: "%{name}"
+      pages:
+        about: Annictについて
+        about_shoten: About
+      passwords:
+        edit: パスワード忘れた？
+        new: パスワード忘れた？
+      people:
+        show: "%{name}"
+      profiles:
+        show: プロフィール
+      programs:
+        index: 放送予定
+      providers:
+        index: ソーシャル連携
+      records:
+        show: "%{profile_name} (@%{username})の%{work_title} %{episode_title_with_number}への感想"
+      registrations:
+        new: ユーザ登録
+      sayonara:
+        show: アカウント削除
+      searches:
+        show: "%{q}検索"
+      sessions:
+        new: ログイン
+      staffs:
+        index: アニメ「%{title}」のスタッフ一覧
+      tracks:
+        show: 記録する
+      users:
+        followers: "%{profile_name} (@%{username})をフォローしている人"
+        following: "%{profile_name} (@%{username})がフォローしている人"
+        show: "%{profile_name} (@%{username})"
+        works: "%{profile_name} (@%{username})が\"%{action}\"アニメ"
+      works:
+        popular: 人気アニメ
+        season: "%{name}アニメ"
+        show: "アニメ「%{title}」"

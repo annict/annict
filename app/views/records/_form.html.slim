@@ -1,12 +1,15 @@
 - url = record.new_record? ? records_path(current_user.username) : record_path(current_user.username, record)
 = form_for record, url: url do |f|
   = render "application/components/error_panel", resource: record
+  
+  = f.hidden_field :episode_id
+  = hidden_field_tag :page_category, page_category
 
   .mb-zp5
     c-record-rating :init-record="{ rating: #{record.rating.presence || 0} }"
   .mb-zp5
     - comment = record.comment&.gsub(/(?:\n\r?|\r\n?)/, "\\n").presence || ""
-    c-record-textarea :init-record="{ uid: 1, comment: '#{comment}' }" :init-comment-rows="#{record.new_record? ? 1 : 10}" placeholder="#{t('messages.records.new.write_your_comment')}"
+    c-record-textarea :init-record="{ uid: 1, comment: '#{comment}', commentRows: 2 }" placeholder="#{t('messages.records.new.write_your_comment')}"
   .row
     .col
       - if current_user.authorized_to?(:twitter)
@@ -22,9 +25,9 @@
         = f.button class: "btn btn-primary" do
           = icon "edit"
           - if record.new_record?
-            = t "words.track"
+            = t "verb.track"
           - else
-            = t "words.update"
+            = t "verb.update"
     .col
       .text-right
         .small.text-mute

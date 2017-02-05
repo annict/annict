@@ -10,4 +10,7 @@ script#t-tips type="x-template"
           = icon :times
 
       .collapse :id='"c-tips__" + tip.slug'
-        .c-tips__body.pb-1 v-html="tip.body"
+        .c-tips__body.pb-1
+          - Tip.all.each do |t|
+            template v-if=="tip.slug == '#{t.slug}'"
+              = render "tips/#{t.slug}"

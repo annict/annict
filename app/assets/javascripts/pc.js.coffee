@@ -10,6 +10,10 @@
 
 Turbolinks = require "turbolinks"
 Vue = require "vue/dist/vue"
+moment = require "moment-timezone"
+Cookies = require "js-cookie"
+
+require "moment/locale/ja"
 
 $(document).on "turbolinks:load", ->
   activities = require "./common/components/activities"
@@ -41,6 +45,9 @@ $(document).on "turbolinks:load", ->
   imageAttachModal = require "./pc/components/imageAttachModal"
 
   resourceSelect = require "./common/directives/resourceSelect"
+
+  moment.locale(gon.user.locale)
+  Cookies.set("ann_time_zone", moment.tz.guess(), domain: ".annict.com", secure: true)
 
   Vue.config.debug = true
 

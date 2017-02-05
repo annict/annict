@@ -10,7 +10,7 @@
     .text-right.mb-1
       = link_to new_forum_post_path, class: "btn btn-primary" do
         = icon "plus"
-        = t "words.new"
+        = t "resources.forum_post.new"
     .c-card
       - if @posts.present?
         = render "forum/posts/post_list", posts: @posts

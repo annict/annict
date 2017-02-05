@@ -6,10 +6,4 @@ class TipDecorator < ApplicationDecorator
     return title_en if title_en.present?
     title
   end
-
-  def local_body
-    return body if I18n.locale == :ja
-    return body_en if body_en.present?
-    body
-  end
 end

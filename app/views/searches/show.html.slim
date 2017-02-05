@@ -11,23 +11,23 @@
     - if @search.q.present?
       .row
         .p-searches__sidebar.py-1
-          h2.h4.font-weight-bold.mb-1 = t "words.resource"
+          h2.h4.font-weight-bold.mb-1 = t "noun.resources"
           ul.list-unstyled
             li.mb-zp5
               = active_link_to search_path(q: @search.q, resource: "work"), class_active: "u-link--hovered", active: (@view == "work") do
-                = t "words.anime"
+                = t "noun.works"
                 span.badge.badge-pill.badge-default.ml-zp5 = @works.count
             li.mb-zp5
               = active_link_to search_path(q: @search.q, resource: "character"), class_active: "u-link--hovered", active: (@view == "character") do
-                = t "words.character"
+                = t "noun.characters"
                 span.badge.badge-pill.badge-default.ml-zp5 = @characters.count
             li.mb-zp5
               = active_link_to search_path(q: @search.q, resource: "person"), class_active: "u-link--hovered", active: (@view == "person") do
-                = t "words.person"
+                = t "noun.people"
                 span.badge.badge-pill.badge-default.ml-zp5 = @people.count
             li
               = active_link_to search_path(q: @search.q, resource: "organization"), class_active: "u-link--hovered", active: (@view == "organization") do
-                = t "words.organization"
+                = t "noun.organizations"
                 span.badge.badge-pill.badge-default.ml-zp5 = @organizations.count
         .col
           .c-card.p-1.mb-1

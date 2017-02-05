@@ -31,6 +31,7 @@
 #
 
 class UsersController < ApplicationController
+  before_action :load_i18n, only: %i(show following followers)
   before_action :authenticate_user!, only: %i(destroy share)
   before_action :set_user, only: %i(show works following followers)
 
@@ -64,5 +65,14 @@ class UsersController < ApplicationController
 
   def set_user
     @user = User.find_by!(username: params[:username])
+  end
+
+  def load_i18n
+    keys = {
+      "verb.follow": nil,
+      "noun.following": nil
+    }
+
+    load_i18n_into_gon keys
   end
 end

@@ -1,14 +1,14 @@
 = link_to work_path(top_work) do
   = image_tag(ann_image_url(top_work.item, :tombo_image, size: "300x300"), alt: top_work.decorate.local_title, class: "rounded img-thumbnail")
-.c-watchers-count.mt-zp5
-  span.c-watchers-count__number.font-weight-bold = top_work.watchers_count
-  span.c-watchers-count__text.text-muted Watchers
+.mt-zp5
+  span.font-weight-bold.mr-zp25 = top_work.watchers_count
+  span.text-muted.small Watchers
 h3.h2.font-weight-bold.mb-zp5
   = link_to top_work.decorate.local_title, work_path(top_work)
 .text-center
   c-status-selector work-id="#{top_work.id}" current-status-kind="no_select" :is-signed-in="false"
 - if top_work.casts.present?
-  .font-weight-bold = t "words.cast"
+  .font-weight-bold = t "noun.casts"
   ul.list-inline
     - top_work.casts.order(:sort_number).limit(10).each do |cast|
       - cache cast do
@@ -16,7 +16,7 @@ h3.h2.font-weight-bold.mb-zp5
           = "#{cast.part}: "
           = cast.decorate.local_name_with_old_link
 - if top_work.staffs.present?
-  .font-weight-bold = t "words.staff"
+  .font-weight-bold = t "noun.staffs"
   ul.list-inline
     - top_work.staffs.major.order(:sort_number).limit(10).each do |staff|
       - cache staff do

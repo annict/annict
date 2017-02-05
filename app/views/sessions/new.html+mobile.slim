@@ -4,7 +4,7 @@
 - set_meta_tags(title: title, description: description, keywords: keywords, og: { description: description }, twitter: { description: description }, reverse: true, prefix: false)
 - set_page_category "sessions_new"
 
-.container.py-3
+.px-1.py-3
   .text-center.mb-3
     = link_to root_path do
       = image_tag "logos/color-mizuho.png", size: "50x61", alt: "Annict"
@@ -22,7 +22,7 @@
           = t "messages.sessions.new.sign_in_with_facebook"
 
       .text-muted.text-center.mt-2.mb-1
-        = t "words.or"
+        = t "noun.or"
 
       = form_for resource, url: user_session_path do |f|
         .form-group
@@ -45,7 +45,7 @@
         .text-center
           = f.button class: "btn btn-primary" do
             = icon "sign-in"
-            = t "words.sign_in"
+            = t "noun.sign_in"
   
   .text-center
-    small = t "messages.sessions.new.sign_up_link_html", link: link_to(t("words.sign_up"), new_user_registration_path)
+    small = t "messages.sessions.new.sign_up_link_html", link: link_to(t("noun.sign_up"), new_user_registration_path)

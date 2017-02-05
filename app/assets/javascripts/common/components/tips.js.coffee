@@ -1,8 +1,6 @@
-Vue = require "vue/dist/vue"
-
 keen = require "../keen"
 
-module.exports = Vue.extend
+module.exports =
   template: "#t-tips"
 
   data: ->

@@ -32,6 +32,7 @@ gem "font-awesome-sass"
 gem "gon"
 gem "groupdate"
 gem "hashdiff"
+gem "http_accept_language"
 gem "httparty"
 gem "imgix-rails"
 gem "jb"
@@ -93,6 +94,7 @@ group :development do
   gem "binding_of_caller" # better_errorsで使用
   gem "bullet"
   gem "derailed_benchmarks"
+  gem "i18n-tasks"
   gem "letter_opener_web"
   gem "listen" # Rails 5から `rails s` するときに必要になった
   gem "rubocop"

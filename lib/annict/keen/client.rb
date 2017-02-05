@@ -24,6 +24,10 @@ module Annict
         @multiple_records ||= ::Annict::Keen::Events::MultipleRecord.new(@request, @user, params)
       end
 
+      def records
+        @records ||= ::Annict::Keen::Events::Record.new(@request, @user, params)
+      end
+
       def statuses
         @statuses ||= ::Annict::Keen::Events::Status.new(@request, @user, params)
       end

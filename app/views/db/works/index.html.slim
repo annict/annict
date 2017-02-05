@@ -15,17 +15,17 @@
 .container-fluid.p-1.mb-2
   ul.nav.nav-inline.justify-content-center.mb-1
     li.nav-item
-      = active_link_to t("words.all"), db_works_path, class: "nav-link", active: params[:action] == "index"
+      = active_link_to t("noun.all"), db_works_path, class: "nav-link", active: params[:action] == "index"
     li.nav-item.dropdown
       a.nav-link.dropdown-toggle href="#" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"
-        = t "words.season"
+        = t "noun.season"
       .dropdown-menu.pre-scrollable
         - Season.order(sort_number: :desc).each do |season|
           = link_to season.decorate.local_name, season_db_works_path(slug: season.slug), class: "dropdown-item"
     li.nav-item
-      = active_link_to t("resources.episode.no_episodes"), resourceless_db_works_path(name: :episode), class: "nav-link", active: (params[:name] == "episode")
+      = active_link_to t("messages.db.works.no_episodes"), resourceless_db_works_path(name: :episode), class: "nav-link", active: (params[:name] == "episode")
     li.nav-item
-      = active_link_to t("resources.work.no_images"), resourceless_db_works_path(name: :item), class: "nav-link", active: (params[:name] == "item")
+      = active_link_to t("messages.db.works.no_image"), resourceless_db_works_path(name: :item), class: "nav-link", active: (params[:name] == "item")
 
   = render "works_list", works: @works
   .text-center.mt-1

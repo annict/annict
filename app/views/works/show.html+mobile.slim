@@ -7,9 +7,9 @@
 
 = render "works/header", work: @work
 
-.c-card.container.mb-2
-  .py-1
-    h2.h4.text-center.font-weight-bold.mb-1 = t "words.information"
+.mb-1
+  h2.h4.text-center.font-weight-bold.mb-1 = t "noun.information"
+  .c-card.p-1
     .row
       .col
         ul.list-unstyled.mb-0
@@ -29,11 +29,11 @@
           - if @work.wikipedia_url.present?
             li.mb-zp5
               = icon "link", class: "mr-zp5"
-              = link_to t("words.wikipedia"), @work.wikipedia_url, target: "_blank"
+              = link_to t("noun.wikipedia"), @work.wikipedia_url, target: "_blank"
           - if @work.sc_tid.present?
             li.mb-zp5
               = icon "link", class: "mr-zp5"
-              = @work.decorate.syobocal_link(t("words.syobocal"))
+              = @work.decorate.syobocal_link(t("noun.syobocal"))
           - if@work.twitter_username.present?
             li.mb-zp5
               = icon "twitter", class: "mr-zp5"
@@ -43,32 +43,36 @@
               = icon "twitter", class: "mr-zp5"
               = @work.decorate.twitter_hashtag_link
 
-  .py-1
-    h2.h4.text-center.font-weight-bold.mb-1 = t "words.episodes"
+.mb-1
+  h2.h4.text-center.font-weight-bold.mb-1 = t "noun.episodes"
+  .c-card.p-1
     - if @episodes.present?
       - if user_signed_in?
         .mb-zp5
-          = link_to t("words.bulk_tracking"), work_episodes_path(@work, tracking: "on"), class: "small"
+          = link_to t("noun.bulk_tracking"), work_episodes_path(@work, tracking: "on"), class: "small"
       table.p-episodes-table.table.mb-0
         tbody
           - @episodes.published.order(:sort_number).limit(10).each do |episode|
             = render "episodes/episode_row", work: @work, episode: episode
       - if @episodes.count > 10
-        .mt-1.mb-2
+        .mt-1
           = link_to t("messages.works.view_all_n_episodes", n: @episodes.count), work_episodes_path(@work), class: "btn btn-secondary w-100"
     - else
       = render "application/components/empty", text: t("messages.works.no_episodes")
 
-    h2.h4.text-center.font-weight-bold.mt-1.mb-2 = t "words.characters"
+.mb-1
+  h2.h4.text-center.font-weight-bold.mt-1.mb-2 = t "noun.characters"
+  .c-card.p-1
     = render "characters/character_list", casts: @casts.order(:sort_number).limit(8)
     - if @casts.count > 8
-      .mt-1.mb-2
-        = link_to t("messages.works.view_all_n_characters", n: @casts.count), work_characters_path(@work), class: "btn btn-secondary w-100"
+      = link_to t("messages.works.view_all_n_characters", n: @casts.count), work_characters_path(@work), class: "btn btn-secondary w-100"
 
-    h2.h4.text-center.font-weight-bold.my-2 = t "words.staffs"
+.mb-2
+  h2.h4.text-center.font-weight-bold.my-2 = t "noun.staffs"
+  .c-card.p-1
     = render "staffs/staff_list", staffs: @staffs.order(:sort_number).limit(8)
     - if @staffs.count > 8
-      .my-1
+      .mt-1
         = link_to t("messages.works.view_all_n_staffs", n: @staffs.count), work_staffs_path(@work), class: "btn btn-secondary w-100"
 
 = render "application/components/footer"

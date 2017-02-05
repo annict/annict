@@ -4,12 +4,12 @@
       = ann_image_tag(top_work.item, :tombo_image, size: "250x250", alt: top_work.decorate.local_title, class: "rounded img-fluid")
     c-status-selector.mt-zp5 work-id="#{top_work.id}" current-status-kind="no_select" :is-signed-in="false"
   .col.pl-0
-    .c-watchers-count
-      span.c-watchers-count__number.font-weight-bold = top_work.watchers_count
-      span.c-watchers-count__text.text-muted Watchers
+    .mb-zp25.u-lh-1
+      span.font-weight-bold.mr-zp25 = top_work.watchers_count
+      span.text-muted.small Watchers
     h3.h2.font-weight-bold = link_to top_work.decorate.local_title, work_path(top_work)
     - if top_work.casts.present?
-      .font-weight-bold = t "words.cast"
+      .font-weight-bold = t "noun.cast"
       ul.list-inline
         - top_work.casts.order(:sort_number).limit(10).each do |cast|
           - cache cast do
@@ -17,7 +17,7 @@
               = "#{cast.part}: "
               = cast.decorate.local_name_with_old_link
     - if top_work.staffs.present?
-      .font-weight-bold = t "words.staff"
+      .font-weight-bold = t "noun.staff"
       ul.list-inline
         - top_work.staffs.major.order(:sort_number).limit(10).each do |staff|
           - cache staff do

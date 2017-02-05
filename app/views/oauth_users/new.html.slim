@@ -1,6 +1,10 @@
-.container.h-100
-  .row.align-items-center.h-100
-    .col-6.offset-3
+- title = t "head.title.oauth_users.new"
+- set_meta_tags title: title, reverse: true, prefix: false
+- set_page_category "oauth_users_new"
+
+.container
+  .row.align-items-center
+    .col-6.offset-3.py-3
       .text-center.mb-3
         = link_to root_path do
           = image_tag "logos/color-mizuho.png", size: "50x61", alt: "Annict"
@@ -23,7 +27,7 @@
             .text-center
               = f.button class: "btn btn-primary" do
                 = icon "rocket"
-                = t "words.sign_up"
+                = t "noun.sign_up"
 
 - content_for :js_templates
   = render "application/js_templates/username_preview"

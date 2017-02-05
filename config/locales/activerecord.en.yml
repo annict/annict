@@ -3,10 +3,14 @@ en:
     attributes:
       cast:
         character_id: Character
-        person_id: Person
-        name: Name
         name_en: Name (en)
+        name: Name
+        part: Part
+        person_id: Person
         sort_number: Sort number
+        work_id: Work
+      channel:
+        name: Name
       character:
         name: Name
         name_kana: Name (kana)
@@ -33,7 +37,15 @@ en:
         description_en: Description (en)
       character_image:
         attachment: Image
-        source_url: Source URL
+      checkin:
+        comment: Comment
+        rating: Rating
+      comment:
+        body: Comment
+      doorkeeper/application:
+        name: Application Name
+        redirect_uri: Redirect URI
+        scopes: Scopes
       episode:
         checkins_count: Records count
         fetch_syobocal: Fetch Syobocal
@@ -44,14 +56,21 @@ en:
         sort_number: Sort number
         title: Title
       forum_post:
+        body: Body
         title: Title
         forum_category: Category
+        forum_category_id: Category
         forum_comments_count: Comments
         last_commented_at: Last Comment
+      item:
+        name: Name
+        url: URL
+        tombo_image: Image
       oauth_application:
         secret: Client Secret
         uid: Client ID
       organization:
+        aasm_state: State
         name_en: Name (en)
         name_kana: Name (kana)
         name: Name
@@ -81,20 +100,32 @@ en:
         url: URL
         wikipedia_url_en: Wikipedia (en)
         wikipedia_url: Wikipedia
+      profile:
+        avatar: Profile Image
+        background_image: Background Image
+        description: Comment
+        name: Name
+        url: URL
       program:
         channel_id: Channel
         episode_id: Episode
         rebroadcast: Rebroadcast
         started_at: Started at
       staff:
-        name: Name
         name_en: Name (en)
-        role: Role
-        role_other: Role (other)
+        name: Name
+        resource_id: Person or Organization
         role_other_en: Role (other/en)
+        role_other: Role (other)
+        role: Role
         sort_number: Sort number
+        work_id: Work
       user:
         email_username: Email or Username
+        email: Email
+        password: Password
+        terms: Terms and Privacy
+        username: Username
       work:
         mal_anime_id: MAL Anime ID
         media: Media
@@ -102,9 +133,10 @@ en:
         official_site_url_en: Official site (en)
         official_site_url: Offisial site (ja)
         sc_tid: Syobocal ID
+        season_id: Season
         season: Season
-        synopsis_source_en: Synopsis source (en)
         synopsis_en: Synopsis (en)
+        synopsis_source_en: Synopsis source (en)
         synopsis_source: Synopsis source (ja)
         synopsis: Synopsis (ja)
         title_en: Title (en)
@@ -120,6 +152,16 @@ en:
         asin: ASIN
         asin_or_copyright: ASIN or Copyright
         copyright: Copyright
+      work_organization:
+        organization_id: Organization
+        work_id: Work
+        role: Role
+        role_other: Role (Other)
+        sort_number: Sort Number
+    errors:
+      messages:
+        accepted: should be accepted.
+        url: need to input.
     models:
       character:
         one: Character
