@@ -1,5 +1,9 @@
-= link_to character_path(character) do
-  = image_tag ann_image_url(character.character_image, :attachment, size: "280x373"), class: "img-fluid rounded mb-zp5"
+.mb-zp5
+  = link_to character_path(character) do
+    = image_tag ann_image_url(character.character_image, :attachment, size: "280x373"), class: "img-fluid img-thumbnail rounded"
+  - if character.character_image.present?
+    .u-very-small.text-right
+      = character.character_image.decorate.asin_or_copyright_text
 h1.h2
   = link_to character.decorate.local_name, character_path(character)
 h2.h4.font-weight-bold.mt-2.mb-1
