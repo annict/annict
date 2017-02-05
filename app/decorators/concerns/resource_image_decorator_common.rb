@@ -8,7 +8,7 @@ module ResourceImageDecoratorCommon
       if copyright.present?
         messages = []
         messages << h.icon("copyright", class: "mr-zp25")
-        messages << copyright
+        messages << Rack::Utils.escape_html(copyright)
         h.content_tag(:span, messages.join.html_safe, class: "text-muted")
       elsif asin.present?
         h.link_to amazon_url, target: "_blank" do
