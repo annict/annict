@@ -15,12 +15,12 @@
       .col-9
         = render "subnav", work: @work
 
-        h2.h4.text-center.my-2.font-weight-bold = t "words.episodes"
+        h2.h4.text-center.my-2.font-weight-bold = t "noun.episodes"
         .c-card.mt-1.py-1
           - if @episodes.present?
             - if user_signed_in?
               .container.mb-zp5
-                = link_to t("words.bulk_tracking"), work_episodes_path(@work, tracking: "on"), class: "small"
+                = link_to t("noun.bulk_tracking"), work_episodes_path(@work, tracking: "on"), class: "small"
             table.p-episodes-table.table.mb-0
               tbody
                 - @episodes.order(:sort_number).limit(10).each do |episode|
@@ -29,16 +29,16 @@
               .px-1.mt-1
                 = link_to t("messages.works.view_all_n_episodes", n: @episodes.count), work_episodes_path(@work), class: "btn btn-secondary w-100"
           - else
-            = render "application/components/empty", text: t("messages.works.no_episodes")
+            = render "application/components/empty", text: t("resources.episode.no_episodes")
 
-        h2.h4.text-center.my-2.font-weight-bold = t "words.characters"
+        h2.h4.text-center.my-2.font-weight-bold = t "noun.characters"
         .c-card.container.mt-1.py-1
           = render "characters/character_list", casts: @casts.order(:sort_number).limit(9)
           - if @casts.count > 9
             .mt-1
               = link_to t("messages.works.view_all_n_characters", n: @casts.count), work_characters_path(@work), class: "btn btn-secondary w-100"
 
-        h2.h4.text-center.my-2.font-weight-bold = t "words.staffs"
+        h2.h4.text-center.my-2.font-weight-bold = t "noun.staffs"
         .c-card.container.mt-1.py-1
           = render "staffs/staff_list", staffs: @staffs.order(:sort_number).limit(9)
           - if @staffs.count > 9

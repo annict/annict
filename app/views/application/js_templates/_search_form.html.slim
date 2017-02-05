@@ -6,21 +6,21 @@ script#t-search-form type="x-template"
         a.dropdown-item.u-cursor-pointer.px-zp5 v-for="(result, i) in results" :class="{ active: i === index }" @mouseover="onMouseover(i)" @mousedown="select"
           template v-if='result.resourceType === "work"'
             span.badge.u-badge-works.mr-zp5
-              = t "words.works"
+              = t "noun.works"
             span.name
               | {{ result.title }}
           template v-if='result.resourceType === "character"'
             span.badge.u-badge-characters.mr-zp5
-              = t "words.characters"
+              = t "noun.characters"
             span.name
               | {{ result.name }}
           template v-if='result.resourceType === "person"'
             span.badge.u-badge-people.mr-zp5
-              = t "words.people"
+              = t "noun.people"
             span.name
               | {{ result.name }}
           template v-if='result.resourceType === "organization"'
             span.badge.u-badge-organizations.mr-zp5
-              = t "words.organizations"
+              = t "noun.organizations"
             span.name
               | {{ result.name }}

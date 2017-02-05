@@ -74,6 +74,7 @@ module.exports =
             shared_twitter: @user.share_record_to_twitter
             shared_facebook: @user.share_record_to_facebook
             rating: program.record.rating
+          page_category: gon.basic.pageCategory
       .done (data) ->
         program.record.isSaving = false
         program.record.isRecorded = true

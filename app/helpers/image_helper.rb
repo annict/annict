@@ -7,8 +7,7 @@ module ImageHelper
     msize = options[:msize]
     size = browser.device.mobile? && msize.present? ? msize : options[:size]
     width, height = size.split("x").map do |s|
-      return nil if s.blank?
-      s.to_i * 2
+      s.present? ? (s.to_i * 2) : nil
     end
 
     ix_options = {

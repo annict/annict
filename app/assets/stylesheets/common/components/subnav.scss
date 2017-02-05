@@ -23,7 +23,7 @@
 
   &__link:not(&__link--active) {
     #{$root}__item {
-      border-bottom: 1px solid $ann-border-color;
+      border-bottom: 1px solid $ann-color-border;
     }
   }
 

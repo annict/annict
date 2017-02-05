@@ -65,14 +65,14 @@
                 hr
             - if @current_user_records.present?
               h2.h4.text-center.font-weight-bold.my-1
-                = t "messages.episodes.show.your_records"
+                = t "messages.episodes.your_records"
               .c-record-list
                 - @current_user_records.each do |record|
                   = render "records/record", record: record
               hr
             - if @records.with_comment.present?
               h2.h4.text-center.font-weight-bold.my-1
-                = (@user_records.present? || @current_user_records.present?) ? t("messages.episodes.show.comments_by_others") : t("words.comments")
+                = (@user_records.present? || @current_user_records.present?) ? t("messages.episodes.comments_by_others") : t("messages.episodes.comments")
               .c-record-list
                 - @records.with_comment.each do |record|
                   = render "records/record", record: record

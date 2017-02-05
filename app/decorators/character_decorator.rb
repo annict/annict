@@ -28,7 +28,7 @@ class CharacterDecorator < ApplicationDecorator
   end
 
   def grid_description(cast)
-    "CV: #{cast.person.decorate.local_name}"
+    "CV: #{cast.person.decorate.name_link}"
   end
 
   def to_values

@@ -4,8 +4,8 @@
       .col-6
         = link_to work_path(work) do
           = ann_image_tag(work.item, :tombo_image, size: "250x250", alt: work.decorate.local_title, class: "rounded img-fluid")
-        .c-watchers-count.mt-zp5
-          span.c-watchers-count__number.font-weight-bold = work.watchers_count
-          span.c-watchers-count__text.text-muted Watchers
+        .my-zp5.u-lh-1
+          span.mr-zp25 = work.watchers_count
+          span.text-muted.small Watchers
         h3.h4 = link_to work.decorate.local_title, work_path(work), class: "text-truncate w-100 d-inline-block"
         c-status-selector work-id="#{work.id}" current-status-kind="no_select" :is-signed-in="false" :is-transparent="true"

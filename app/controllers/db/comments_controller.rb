@@ -14,7 +14,8 @@ module Db
       @comment.save!
 
       flash[:notice] = t "messages.db.comments.created"
-      redirect_to "/#{@comment.resource_type.tableize}/#{@comment.resource_id}/activities"
+      path = "db/#{@comment.resource_type.tableize}/#{@comment.resource_id}/activities"
+      redirect_to path
     end
 
     private

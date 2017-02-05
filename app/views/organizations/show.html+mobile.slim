@@ -10,12 +10,12 @@
       h1.h2
         = link_to @organization.decorate.local_name, organization_path(@organization)
       span.badge.u-badge-organizations
-        = t "words.organization"
+        = t "noun.organization"
 
     .mt-2
       h2.h4.font-weight-bold.text-center.mt-2.mb-1
         = icon "sticky-note-o", class: "mr-zp25"
-        = t "words.information"
+        = t "noun.information"
       dl.row.mb-0
         dt.col-6.text-right = t "activerecord.attributes.organization.name"
         dd.col-6 = @organization.name

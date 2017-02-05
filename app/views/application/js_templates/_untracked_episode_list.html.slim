@@ -18,7 +18,7 @@ script#t-untracked-episode-list type="x-template"
             .col.col-auto.text-right
               .small.u-fake-link @click="skipEpisode(status)"
                 = icon "forward", class: "mr-zp25"
-                = t "words.skip"
+                = t "noun.skip"
           form.row
             .col
               c-record-rating.mb-zp5 :init-record="status.record" v-if="status.record.isEditingComment"

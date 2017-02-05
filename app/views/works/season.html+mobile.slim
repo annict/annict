@@ -4,18 +4,26 @@
 - set_meta_tags(title: title, description: description, keywords: keywords, og: { description: description }, reverse: true, prefix: false)
 - set_page_category "works_season"
 
-.container
-  .row.align-items-center.py-1
-    .col
+.px-1
+  - if user_signed_in?
+    .row.align-items-center.py-1
+      .col-6
+        .dropdown.d-inline-block
+          a.dropdown-toggle href="#" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"
+            = @season.decorate.local_name
+          .dropdown-menu.pre-scrollable.mr-1
+            - Season.order(sort_number: :desc).each do |season|
+              = link_to season.decorate.local_name, season_works_path(slug: season.slug), class: "dropdown-item"
+      .col-6.text-right
+        = render "display_option_buttons"
+  - else
+    .text-center.py-1
       .dropdown.d-inline-block
         a.dropdown-toggle href="#" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"
           = @season.decorate.local_name
         .dropdown-menu.pre-scrollable.mr-1
           - Season.order(sort_number: :desc).each do |season|
             = link_to season.decorate.local_name, season_works_path(slug: season.slug), class: "dropdown-item"
-    .col.text-right
-      - if user_signed_in?
-        = render "display_option_buttons"
 
 .mb-2
   - if user_signed_in?

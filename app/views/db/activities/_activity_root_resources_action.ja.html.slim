@@ -6,8 +6,14 @@ span.c-db-activity__profile-link
 span.c-db-activity__resource-title
   = activity.trackable.decorate.db_detail_link
 
+- resource = activity.action.split(".")[0]
 - action = activity.action.split(".")[1]
-- if action == "create"
-  | を登録しました
-- elsif action == "update"
-  | を更新しました
+
+- if resource == "comments"
+  - if action == "create"
+    | のアクティビティにコメントしました
+- else
+  - if action == "create"
+    | を登録しました
+  - elsif action == "update"
+    | を更新しました

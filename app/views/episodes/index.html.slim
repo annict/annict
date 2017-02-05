@@ -21,21 +21,21 @@
               .c-episode-list
                 .container.mb-zp5
                   small.u-fake-link v-show="!isTrackingMode" @click="enableTrackingMode"
-                    = t "words.bulk_tracking"
+                    = t "noun.bulk_tracking"
                   small.u-fake-link.mr-zp5 v-show="isTrackingMode" @click="checkAll"
-                    = t "words.check_all"
+                    = t "verb.check_all"
                   small.u-fake-link v-show="isTrackingMode && !!episodeIds.length" @click="uncheckAll"
-                    = t "words.uncheck_all"
+                    = t "verb.uncheck_all"
                 table.p-episodes-table.table.mb-1
                   tbody
                     - @episodes.order(:sort_number).each do |episode|
                       = render "episodes/episode_row", work: @work, episode: episode
                 .container.text-right
                   button.btn.btn-secondary.mr-zp5 v-show="isTrackingMode" @click="disableTrackingMode"
-                    = t "words.cancel"
+                    = t "noun.cancel"
                   button.btn.btn-primary :class="{ 'c-spinner': isTracking }" v-show="isTrackingMode" @click="track"
                     = icon "pencil-square-o"
-                    = t "words.track"
+                    = t "verb.track"
 
 = render "application/components/footer"
 

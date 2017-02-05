@@ -4,7 +4,7 @@
 
 = render "application/components/navbar", transparent: true
 
-.p-application__content
+.p-application__content.mb-2
   .p-top-hero
     .p-top-hero__bg-image style="background-image: url(#{ann_image_url(@cover_image_work.item, :tombo_image, size: '640x640', blur: 200)});"
     .p-top-hero__content.text-center
@@ -17,24 +17,22 @@
       
   .container.p-home-index__main
     h2.text-center.pt-3.mb-3
-      = t "words.popular_airing_anime"
+      = t "noun.popular_airing_anime"
     .c-card.p-1.mb-1
       = render "home/top_work", top_work: @season_top_work
     .c-card.p-1
       = render "home/other_works", other_works: @season_works
       .text-center.mt-2
-        = link_to t("messages.common.see_more"), season_works_path(slug: ENV["ANNICT_CURRENT_SEASON"]), class: "btn btn-primary"
+        = link_to t("verb.view_more"), season_works_path(slug: ENV["ANNICT_CURRENT_SEASON"]), class: "btn btn-primary"
 
     h2.text-center.pt-3.mb-3
-      = t "words.popular_anime"
+      = t "noun.popular_anime"
     .c-card.p-1.mb-1
       = render "home/top_work", top_work: @top_work
     .c-card.p-1
       = render "home/other_works", other_works: @works
       .text-center.mt-2
-        = link_to t("messages.common.see_more"), popular_works_path, class: "btn btn-primary"
-
-  hr.my-2
+        = link_to t("verb.view_more"), popular_works_path, class: "btn btn-primary"
 
 = render "application/components/footer"
 

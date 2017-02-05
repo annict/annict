@@ -1,13 +1,13 @@
 .c-subnav.c-subnav--transparent
   = active_link_to work_path(work), class: "c-subnav__link", class_active: "c-subnav__link--active", active: params[:controller] == "works" && params[:action].in?(%w(show)) do
     .c-subnav__item
-      = t "words.details"
+      = t "noun.detail"
   = active_link_to work_episodes_path(work), class: "c-subnav__link", class_active: "c-subnav__link--active", active: params[:controller] == "episodes" && params[:action].in?(%w(index show)) do
     .c-subnav__item
-      = t "words.episodes"
+      = t "noun.episodes"
   = active_link_to work_characters_path(work), class: "c-subnav__link", class_active: "c-subnav__link--active", active: params[:controller] == "characters" && params[:action].in?(%w(index))
     .c-subnav__item
-      = t "words.characters"
+      = t "noun.characters"
   = active_link_to work_staffs_path(work), class: "c-subnav__link", class_active: "c-subnav__link--active", active: params[:controller] == "staffs" && params[:action].in?(%w(index))
     .c-subnav__item
-      = t "words.staffs"
+      = t "noun.staffs"

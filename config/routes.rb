@@ -100,97 +100,93 @@ Rails.application.routes.draw do
     end
   end
 
-  scope module: :db, as: :db do
-    constraints(subdomain: "db") do
-      resources :activities, only: [:index]
-      resources :channels, only: [:index]
-      resource :search, only: [:show]
+  namespace :db do
+    resources :activities, only: [:index]
+    resources :channels, only: [:index]
+    resource :search, only: [:show]
 
-      resources :characters, except: [:show] do
-        member do
-          get :activities
-          patch :hide
-        end
-        resource :image, controller: :character_images, only: %i(show create update destroy)
+    resources :characters, except: [:show] do
+      member do
+        get :activities
+        patch :hide
       end
-
-      resources :casts, only: %i(edit update destroy) do
-        member do
-          get :activities
-          patch :hide
-        end
-      end
-
-      resources :comments, only: %i(create destroy)
-
-      resources :episodes, only: %i(edit update destroy) do
-        member do
-          get :activities
-          patch :hide
-        end
-      end
-
-      resources :organizations, except: [:show] do
-        member do
-          get :activities
-          patch :hide
-        end
-      end
-
-      resources :people, except: [:show] do
-        member do
-          get :activities
-          patch :hide
-        end
-      end
-
-      resources :programs, only: %i(edit update destroy) do
-        member do
-          get :activities
-          patch :hide
-        end
-      end
-
-      resources :staffs, only: %i(edit update destroy) do
-        member do
-          get :activities
-          patch :hide
-        end
-      end
-
-      resources :works, except: [:show] do
-        collection do
-          get :season
-          get :resourceless
-        end
-
-        member do
-          get :activities
-          patch :hide
-        end
-
-        resource :item, except: [:index]
-        resource :image, controller: :work_images, only: %i(show create update destroy)
-        resources :casts, only: %i(index new create)
-        resources :episodes, only: %i(index new create)
-        resources :programs, only: %i(index new create)
-        resources :staffs, only: %i(index new create)
-      end
-
-      root "home#index"
+      resource :image, controller: :character_images, only: %i(show create update destroy)
     end
+
+    resources :casts, only: %i(edit update destroy) do
+      member do
+        get :activities
+        patch :hide
+      end
+    end
+
+    resources :comments, only: %i(create destroy)
+
+    resources :episodes, only: %i(edit update destroy) do
+      member do
+        get :activities
+        patch :hide
+      end
+    end
+
+    resources :organizations, except: [:show] do
+      member do
+        get :activities
+        patch :hide
+      end
+    end
+
+    resources :people, except: [:show] do
+      member do
+        get :activities
+        patch :hide
+      end
+    end
+
+    resources :programs, only: %i(edit update destroy) do
+      member do
+        get :activities
+        patch :hide
+      end
+    end
+
+    resources :staffs, only: %i(edit update destroy) do
+      member do
+        get :activities
+        patch :hide
+      end
+    end
+
+    resources :works, except: [:show] do
+      collection do
+        get :season
+        get :resourceless
+      end
+
+      member do
+        get :activities
+        patch :hide
+      end
+
+      resource :item, except: [:index]
+      resource :image, controller: :work_images, only: %i(show create update destroy)
+      resources :casts, only: %i(index new create)
+      resources :episodes, only: %i(index new create)
+      resources :programs, only: %i(index new create)
+      resources :staffs, only: %i(index new create)
+    end
+
+    root "home#index"
   end
 
-  scope module: :forum, as: :forum do
-    constraints(subdomain: "forum") do
-      resources :categories, only: %i(show)
+  namespace :forum do
+    resources :categories, only: %i(show)
 
-      resources :posts, only: %i(new create show edit update) do
-        resources :comments, only: %i(new create edit update)
-      end
-
-      root "home#index"
+    resources :posts, only: %i(new create show edit update) do
+      resources :comments, only: %i(new create edit update)
     end
+
+    root "home#index"
   end
 
   resources :settings, only: [:index]
@@ -255,7 +251,7 @@ Rails.application.routes.draw do
       }
 
     resources :comments, only: %i(edit update destroy)
-    resources :records, except: %i(index) do
+    resources :records, only: %i(create show edit update destroy) do
       resources :comments, only: %i(create)
     end
 

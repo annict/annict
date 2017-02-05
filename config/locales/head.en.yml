@@ -44,6 +44,8 @@ en:
       characters:
         index: Characters of %{title} (Anime)
         show: "%{name}"
+      comments:
+        edit: Edit Comment
       db:
         activities:
           index: Activities
@@ -109,12 +111,15 @@ en:
         authorizations:
           new: Authorize an application
           show: Authorization code
+      oauth_users:
+        new: Sign up
       options:
         index: Options
       organizations:
         show: "%{name}"
       pages:
         about: About
+        about_shoten: About
       passwords:
         edit: Forgot your password?
         new: Forgot your password?

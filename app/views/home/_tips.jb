@@ -4,7 +4,6 @@
   {
     slug: tip.slug,
     icon_name: tip.icon_name,
-    title: tip.decorate.local_title,
-    body: tip.decorate.local_body
+    title: tip.decorate.local_title
   }
 end

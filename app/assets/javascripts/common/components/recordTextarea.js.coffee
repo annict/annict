@@ -17,7 +17,7 @@ module.exports = Vue.extend
 
   methods:
     expandOnClick: ->
-      return if @record.commentRows != 1
+      return if @record.commentRows > 2
       @record.commentRows = 10
       @isEditingComment = @record.isEditingComment = true
 

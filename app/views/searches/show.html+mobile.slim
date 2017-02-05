@@ -14,19 +14,19 @@
         ul.c-slidable-subnav__list.list-inline
           li.list-inline-item
             = active_link_to search_path(q: @search.q, resource: "work"), class: "c-slidable-subnav__link", class_active: "c-slidable-subnav__link--active", active: (@view == "work") do
-              = t "words.anime"
+              = t "noun.works"
               span.badge.badge-pill.badge-default.ml-zp25 = @works.count
           li.list-inline-item
             = active_link_to search_path(q: @search.q, resource: "character"), class: "c-slidable-subnav__link", class_active: "c-slidable-subnav__link--active", active: (@view == "character") do
-              = t "words.character"
+              = t "noun.characters"
               span.badge.badge-pill.badge-default.ml-zp25 = @characters.count
           li.list-inline-item
             = active_link_to search_path(q: @search.q, resource: "person"), class: "c-slidable-subnav__link", class_active: "c-slidable-subnav__link--active", active: (@view == "person") do
-              = t "words.person"
+              = t "noun.people"
               span.badge.badge-pill.badge-default.ml-zp25 = @people.count
           li.list-inline-item
             = active_link_to search_path(q: @search.q, resource: "organization"), class: "c-slidable-subnav__link", class_active: "c-slidable-subnav__link--active", active: (@view == "organization") do
-              = t "words.organization"
+              = t "noun.organizations"
               span.badge.badge-pill.badge-default.ml-zp25 = @organizations.count
     - resources = instance_variable_get("@#{@view.pluralize}").page(params[:page])
     = render "#{@view.pluralize}/list", "#{@view.pluralize}": resources

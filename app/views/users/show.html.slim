@@ -7,81 +7,84 @@
 
 = render "application/components/navbar", transparent: true
 
-.p-profile-header
-  .p-profile-header__cover-image style="background-image: url(#{profile_background_image_url(@user.profile, size: '500x325')});"
-  .p-profile-header__info
-    .container
-      .row.py-1
-        .col-7
-          .row
-            .col.u-flex-grow-0
-              = link_to user_path(@user.username) do
-                = ann_image_tag(@user.profile, :tombo_avatar, size: "80x80", class: "p-profile-header__avatar rounded-circle")
-            .col.pt-zp5.pl-0
-              h1
+.p-application__content.mb-2
+  .p-profile-header
+    .p-profile-header__cover-image style="background-image: url(#{profile_background_image_url(@user.profile, size: '500x325')});"
+    .p-profile-header__info
+      .container
+        .row.py-1
+          .col-7
+            .row
+              .col.u-flex-grow-0
                 = link_to user_path(@user.username) do
-                  .font-weight-bold
-                    = @user.profile.name
-                  .u-very-small.mt-zp5
-                    = "@#{@user.username}"
-        .col-5.pt-2
-          .text-right
-            - if user_signed_in? && current_user != @user
-              .c-user-options-dropdown.dropdown.d-inline-block.mr-1
-                .dropdown-toggle data-toggle="dropdown"
-                  = icon "cog"
-                .dropdown-menu
-                  = link_to "#", class: "dropdown-item" do
-                    c-mute-user-button :user-id="#{@user.id}"
-              c-follow-button username="#{@user.username}" :init-is-following="#{current_user.following?(@user)}" :is-signed-in="true"
-            - elsif !user_signed_in?
-              c-follow-button username="#{@user.username}" :init-is-following="false" :is-signed-in="false"
+                  = ann_image_tag(@user.profile, :tombo_avatar, size: "80x80", class: "p-profile-header__avatar rounded-circle")
+              .col.pt-zp5.pl-0
+                h1
+                  = link_to user_path(@user.username) do
+                    .font-weight-bold
+                      = @user.profile.name
+                    .u-very-small.mt-zp5
+                      = "@#{@user.username}"
+          .col-5.pt-2
+            .text-right
+              - if user_signed_in? && current_user != @user
+                .c-user-options-dropdown.dropdown.d-inline-block.mr-1
+                  .dropdown-toggle data-toggle="dropdown"
+                    = icon "cog"
+                  .dropdown-menu
+                    = link_to "#", class: "dropdown-item" do
+                      c-mute-user-button :user-id="#{@user.id}"
+                c-follow-button username="#{@user.username}" :init-is-following="#{current_user.following?(@user)}" :is-signed-in="true"
+              - elsif !user_signed_in?
+                c-follow-button username="#{@user.username}" :init-is-following="false" :is-signed-in="false"
 
-.p-users-show__main.container.pt-1
-  .row
-    .col-7
-      c-activities username="#{@user.username}"
-    .col-5
-      .row.text-center.mb-2
-        .p-users-show__count.col.px-0
-          .h3
-            = @user.checkins_count
-          .p-profile-header__count-text
-            | Records
-        .p-users-show__count.col.px-0
-          = link_to user_works_path(@user.username, :watching), class: "p-users-show__count-link" do
+  .p-users-show__main.container.pt-1
+    .row
+      .col-7
+        c-activities username="#{@user.username}"
+      .col-5
+        .row.text-center.mb-2
+          .p-users-show__count.col.px-0
             .h3
-              = @user.latest_statuses.count_on(:watching)
+              = @user.checkins_count
             .p-profile-header__count-text
-              | Watching
-        .p-users-show__count.col.px-0
-          = link_to following_user_path(@user.username), class: "p-users-show__count-link" do
-            .h3
-              = @user.followings.count
-            .p-profile-header__count-text
-              | Following
-        .p-users-show__count.col.px-0
-          = link_to followers_user_path(@user.username), class: "p-users-show__count-link" do
-            .h3
-              = @user.followers.count
-            .p-profile-header__count-text
-              | Followers
-      - if @user.profile.description.present? || @user.profile.url.present?
+              | Records
+          .p-users-show__count.col.px-0
+            = link_to user_works_path(@user.username, :watching), class: "p-users-show__count-link" do
+              .h3
+                = @user.latest_statuses.count_on(:watching)
+              .p-profile-header__count-text
+                | Watching
+          .p-users-show__count.col.px-0
+            = link_to following_user_path(@user.username), class: "p-users-show__count-link" do
+              .h3
+                = @user.followings.count
+              .p-profile-header__count-text
+                | Following
+          .p-users-show__count.col.px-0
+            = link_to followers_user_path(@user.username), class: "p-users-show__count-link" do
+              .h3
+                = @user.followers.count
+              .p-profile-header__count-text
+                | Followers
+        - if @user.profile.description.present? || @user.profile.url.present?
+          .mb-2
+            h2.p-users-show__sub-title
+              = icon "comment-o", class: "mr-zp5"
+              = t "noun.bio"
+            - if @user.profile.description.present?
+              .description
+                = @user.profile.description
+            - if @user.profile.url.present?
+              .url
+                = link_to @user.profile.decorate.shorten_url, @user.profile.url, target: "_blank"
         .mb-2
           h2.p-users-show__sub-title
-            = icon "comment-o", class: "mr-zp5"
-            = t "words.bio"
-          - if @user.profile.description.present?
-            .description
-              = @user.profile.description
-          - if @user.profile.url.present?
-            .url
-              = link_to @user.profile.decorate.shorten_url, @user.profile.url, target: "_blank"
-      .mb-2
-        h2.p-users-show__sub-title
-          = icon "bar-chart", class: "mr-zp5"
-          = t "words.your_statistics"
-        c-user-heatmap :username='"#{@user.username}"'
+            = icon "bar-chart", class: "mr-zp5"
+            = t "noun.your_statistics"
+          c-user-heatmap :username='"#{@user.username}"'
+
+= render "application/components/footer"
 
 - content_for :js_templates
   = render "application/js_templates/activities"

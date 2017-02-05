@@ -18,7 +18,7 @@ script#t-program-list type="x-template"
                   span.badge.badge-info.mr-zp5
                     | {{ program.channel.name }}
                   span.badge.badge-default v-if="program.rebroadcast"
-                    = t "words.rebroadcast"
+                    = t "noun.rebroadcast"
                 .row.mb-zp5
                   .col.pr-0.u-flex-grow-0
                     a :href='"/works/" + program.work.id'
@@ -55,7 +55,7 @@ script#t-program-list type="x-template"
                     button.btn.btn-primary type="button" @click="submit(program)" :class='{ disabled: program.record.isRecorded, "c-spinner": program.record.isSaving }'
                       = icon "check", class: "mr-0"
           template v-if="!isLoading && programs.length === 0"
-            = render "application/components/empty", text: t('messages.programs.no_programs'), hint: t("messages.programs.please_set_channels_html", channels_link: link_to(t("words.channel_list"), channels_path))
+            = render "application/components/empty", text: t('messages.programs.no_programs'), hint: t("messages.programs.please_set_channels_html", channels_link: link_to(t("noun.channel_list"), channels_path))
           c-load-more-button.my-1 :handler="loadMore" :is-loading="isLoading" :has-next="hasNext"
 
 - content_for :js_templates do

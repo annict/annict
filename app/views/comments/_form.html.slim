@@ -5,4 +5,4 @@
   .w-100.text-center
     = f.button class: "btn btn-primary mt-zp5" do
       = icon "pencil"
-      = t "messages.comments.submit"
+      = comment.new_record? ? t("messages.comments.create") : t("messages.comments.update")

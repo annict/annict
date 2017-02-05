@@ -13,4 +13,4 @@
       .c-card.px-1.pt-1.pb-2.mb-1
         = render "application/components/sign_up_form", user: @new_user
       .text-center
-        small = t "messages.registrations.new.sign_in_link_html", link: link_to(t("words.sign_in"), new_user_session_path)
+        small = t "messages.registrations.new.sign_in_link_html", link: link_to(t("noun.sign_in"), new_user_session_path)

@@ -9,7 +9,7 @@
 = render "application/components/navbar", transparent: true
 = render "users/low_profile_header", user: @user
 
-.p-application__content
+.p-application__content.mb-2
   .p-users-works__subnav.c-subnav
     - %i(watching wanna_watch watched on_hold stop_watching).each do |status_kind|
       = active_link_to user_works_path(@user.username, status_kind), class: "c-subnav__link", class_active: "c-subnav__link--active", active: (status_kind.to_s == params[:status_kind]) do

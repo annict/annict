@@ -63,12 +63,6 @@
       .col-sm-9
         = f.text_field :mal_anime_id, class: "form-control"
     .form-group.row
-      = f.label :number_format_id, class: "col-sm-3 col-form-label"
-      .col-sm-9
-        .row
-          .col-sm-5
-            = f.select :number_format_id, options_from_collection_for_select(NumberFormat.order(:sort_number), :id, :name, f.object.number_format_id), { include_blank: true }, { class: "form-control" }
-    .form-group.row
       = f.label :synopsis, class: "col-sm-3 col-form-label"
       .col-sm-9
         = f.text_area :synopsis, class: "form-control", rows: 10
@@ -84,6 +78,12 @@
       = f.label :synopsis_source_en, class: "col-sm-3 col-form-label"
       .col-sm-9
         = f.text_field :synopsis_source_en, class: "form-control"
+    .form-group.row
+      = f.label :number_format_id, class: "col-sm-3 col-form-label"
+      .col-sm-9
+        .row
+          .col-sm-5
+            = f.select :number_format_id, options_from_collection_for_select(NumberFormat.order(:sort_number), :id, :name, f.object.number_format_id), { include_blank: true }, { class: "form-control" }
 
     .form-group.row
       .offset-sm-3.col-sm-9

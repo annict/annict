@@ -1,17 +1,18 @@
 # frozen_string_literal: true
 
 class NewRecordService
+  attr_writer :app
   attr_reader :record
 
-  def initialize(user, record, ga_client = nil)
+  def initialize(user, record, keen_client)
     @user = user
     @record = record
-    @ga_client = ga_client
+    @keen_client = keen_client
   end
 
   def save
     @record.user = @user
-    @record.work = @record.work
+    @record.work = @record.episode.work
 
     return false unless @record.valid?
 
@@ -22,7 +23,7 @@ class NewRecordService
       save_activity
       finish_tips
       update_latest_status
-      create_ga_event if @ga_client.present?
+      create_keen_event
     end
 
     true
@@ -49,8 +50,8 @@ class NewRecordService
     latest_status.append_episode(@record.episode) if latest_status.present?
   end
 
-  def create_ga_event
-    ds = @app.present? ? "app-#{@app.uid}" : "web"
-    @ga_client.events.create("records", "create", ds: ds)
+  def create_keen_event
+    @keen_client.app = @app
+    @keen_client.records.create
   end
 end

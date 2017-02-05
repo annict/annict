@@ -1,0 +1,145 @@
+ja:
+  messages:
+    _common:
+      are_you_sure: 実行しますか？
+      join_annict: Annictに参加する
+      search_with_keywords: キーワードで検索...
+      welcome_back: おかえりなさい！
+      welcome_to_annict: Annictにようこそ！
+      you_can_not_access_there: アクセスできません
+    accounts:
+      email_sent_for_confirmation: メールアドレス確認用メールを送信しました
+      saved: アカウント登録されました
+    apps:
+      no_applications: アプリはありません
+    channel_works:
+      no_works: 作品はありません
+    comments:
+      comment_form_placeholder: 記録にコメントしよう！
+      create: コメントする
+      deleted: 削除しました
+      saved: 投稿しました
+      update: 更新する
+      updated: 更新しました
+    db:
+      comments:
+        created: 投稿しました
+      works:
+        no_episodes: エピソード未登録
+        no_image: 画像未登録
+    episodes:
+      comments: 感想
+      comments_by_others: 皆さんの感想
+      watched_x_times: "%{records_count}回見ました"
+      your_records: あなたの記録
+    forum:
+      comments:
+        comment_notification_subject: "[Annict Forum] %{name} (@%{username})があなたの投稿にコメントしました"
+        created: 投稿しました
+        leave_a_comment: コメントを書く
+        updated: 更新しました
+      posts:
+        created: 投稿しました
+        no_comments: コメントはありません
+        no_posts: 投稿はありません
+        updated: 更新しました
+    friends:
+      no_sns_friends: 友達はいません
+      no_users: 利用者はいません
+    home:
+      index:
+        there_are_no_activities: アクティビティはありません
+      index_guest:
+        hero_description_html: Annict (アニクト) は、アニメの視聴記録ができるWebサービスです。<br>人気ランキングや友達の視聴記録から好きなアニメを見つけて、管理することができます。
+        hero_description_mobile_html: Annict (アニクト) は、アニメの視聴記録ができるWebサービスです。
+        hero_title: 見たアニメを記録して、共有しよう。
+        hero_title_mobile_html: 見たアニメを記録して、<br>共有しよう。
+        start_tracking: 視聴記録を始める
+    components:
+      load_more_button:
+        more: もっと見る
+      mute_user_button:
+        mute_this_user: この人をミュートする...
+        the_user_has_been_muted: ミュートしました
+      program_list:
+        tracked: 記録しました
+      status_selector:
+        select_status: ステータスを選択
+    character_images:
+      attach_image: 画像を選択...
+      deleted: 削除しました
+      saved: 保存しました
+    multiple_records:
+      create:
+        saved: 記録しました
+    mutes:
+      no_muted_users_found: ミュートした人はいません
+    notifications:
+      no_notifications: 通知はありません
+    oauth:
+      authorizations:
+        authorize: 承認
+        authorize_account_html: "<b>%{client_name}</b>からのアクセスをを承認しますか？"
+        cancel: キャンセル
+        this_application_will_be_able_to: "このアプリができること:"
+    oauth_users:
+      new:
+        sign_up_with_oauth: "%{provider_name}で始める"
+    options:
+      prevent_spoiler_of_episode_you_have_not_watched: 未記録エピソードのネタバレを防ぐ
+      prevent_spoiler_of_episode_you_have_not_watched_detail: 見てる、見たい、または中断したアニメの中で、記録していないエピソードに投稿された他の利用者からの感想を表示しないようにします。
+    passwords:
+      new:
+        forgot_your_password: パスワード忘れた？
+    profiles:
+      saved: 保存しました
+    programs:
+      no_programs: 放送予定はありません
+      please_set_channels_html: "%{channels_link}でチャンネルを設定して下さい"
+    providers:
+      removed: 接続解除しました
+      you_can_not_disconnect: 接続解除できません
+    records:
+      created: 記録しました
+      deleted: 削除しました
+      updated: 更新しました
+      new:
+        write_your_comment: 見た感想を残しませんか？
+      show:
+        record_by_name: "%{name}の記録"
+    registrations:
+      new:
+        sign_in_link_html: 登録済みですか？ %{link}
+        start_with_facebook: Facebookで始める
+        start_with_twitter: Twitterで始める
+        username_preview: "プロフィールURL:"
+        username_preview_mobile: "プロフィールURL:"
+      create:
+        confirmation_mail_has_sent: 確認メールを送信しました
+    sayonara:
+      are_you_sure_really: 後戻りできませんがよろしいですか？
+      delete_account: アカウントを削除する
+      description: 退会すると、アカウント情報や見たアニメの記録、ステータス変更等のデータが全て削除されます。
+    sessions:
+      new:
+        forgot_password: パスワード忘れた？
+        remember_me: 保存する
+        sign_in_with_facebook: Facebookでログイン
+        sign_in_with_twitter: Twitterでログイン
+        sign_up_link_html: アカウント持ってない？ %{link}
+    tracks:
+      no_trackable_episodes: 記録可能なエピソードはありません
+      skip_episode_confirmation: このエピソードをスキップして、次のエピソードを表示しますか？
+      see_records: 記録を見る
+      tracked: 記録しました
+    users:
+      no_works: 作品はありません
+    work_images:
+      deleted: 削除しました
+      saved: 保存しました
+      index:
+        dropzone-empty: 画像をドラッグアンドドロップ、またはクリックして選択できます
+    works:
+      view_all_n_characters: "%{n}人のキャラクター全てを見る"
+      view_all_n_episodes: "%{n}エピソード全てを見る"
+      view_all_n_staffs: "%{n}人のスタッフ全てを見る"

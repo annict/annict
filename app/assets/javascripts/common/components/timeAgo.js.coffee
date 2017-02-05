@@ -1,9 +1,6 @@
-Vue = require "vue/dist/vue"
 moment = require "moment"
 
-# require "moment/locale/ja"
-
-module.exports = Vue.extend
+module.exports =
   template: """
     <span class='c-time-ago' :title='timeAgoDetail'>
       {{ timeAgo }}

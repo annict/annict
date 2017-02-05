@@ -32,7 +32,7 @@
         .text-right.small
           = link_to edit_forum_post_path(@post) do
             = icon "pencil", class: "mr-zp25"
-            = t "words.edit"
+            = t "noun.edit"
 
     - if @comments.present?
       - @comments.each do |comment|
@@ -53,10 +53,10 @@
             .text-right.small
               = link_to edit_forum_post_comment_path(@post, comment) do
                 = icon "pencil", class: "mr-zp25"
-                = t "words.edit"
+                = t "noun.edit"
     - else
       .mb-1
-        = render "application/components/empty", text: t("messages.forum.comments.no_comments")
+        = render "application/components/empty", text: t("messages.forum.posts.no_comments")
 
     .c-card.p-1
       = render "forum/comments/form", comment: @comment

@@ -23,7 +23,7 @@ module ApplicationHelper
     days = (Time.zone.now.to_date - from_time.to_date).to_i
     return from_time.strftime("%Y/%m/%d") if days > 3
     spacer = I18n.locale == :en ? " " : ""
-    "#{time_ago_in_words(from_time, options)}#{spacer}#{I18n.t('words.ago')}"
+    "#{time_ago_in_words(from_time, options)}#{spacer}#{I18n.t('noun.ago')}"
   end
 
   def local_datetime(datetime)

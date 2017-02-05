@@ -5,7 +5,7 @@ module Db
     permits :name, :name_en, :name_kana, :url, :url_en, :wikipedia_url,
       :wikipedia_url_en, :twitter_username, :twitter_username_en
 
-    before_action :authenticate_user!
+    before_action :authenticate_user!, only: %i(new create edit update hide destroy)
     before_action :load_organization, only: %i(edit update hide destroy activities)
 
     def index(page: nil)

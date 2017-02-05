@@ -13,7 +13,7 @@ module HeadHelper
         type: "website",
         url: request.url,
         description: t("head.meta.description._common"),
-        site_name: t("words.site_name"),
+        site_name: t("noun.annict"),
         image: "#{ENV.fetch('ANNICT_URL')}/images/og_image.png",
         locale: (I18n.locale == :ja ? "ja_JP" : "en_US")
       },

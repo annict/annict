@@ -1,22 +1,22 @@
 .c-subnav
   = active_link_to profile_path, class: "c-subnav__link", class_active: "c-subnav__link--active", active: params[:controller] == "profiles" do
     .c-subnav__item
-      = t "words.profile"
+      = t "head.title.profiles.show"
   = active_link_to account_path, class: "c-subnav__link", class_active: "c-subnav__link--active", active: params[:controller] == "accounts"
     .c-subnav__item
-      = t "words.account"
+      = t "head.title.accounts.show"
   = active_link_to apps_path, class: "c-subnav__link", class_active: "c-subnav__link--active", active: params[:controller] == "apps"
     .c-subnav__item
-      = t "words.apps"
+      = t "head.title.apps.index"
   = active_link_to providers_path, class: "c-subnav__link", class_active: "c-subnav__link--active", active: "tab #{params[:controller] == 'providers' ? 'tab--active' : ''}"
     .c-subnav__item
-      = t "words.connections"
+      = t "head.title.providers.index"
   = active_link_to mutes_path, class: "c-subnav__link", class_active: "c-subnav__link--active", active: params[:controller] == "mutes"
     .c-subnav__item
-      = t "words.mute_filters"
+      = t "head.title.mutes.index"
   = active_link_to options_path, class: "c-subnav__link", class_active: "c-subnav__link--active", active: params[:controller] == "options"
     .c-subnav__item
-      = t "words.options"
+      = t "head.title.options.index"
   = active_link_to sayonara_path, class: "c-subnav__link", class_active: "c-subnav__link--active", active: params[:controller] == "sayonara"
     .c-subnav__item
-      = t "words.delete_account"
+      = t "head.title.sayonara.show"

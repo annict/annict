@@ -16,7 +16,8 @@ module Api
             r.oauth_application = doorkeeper_token.application
           end
 
-          service = NewRecordService.new(current_user, record, ga_client)
+          service = NewRecordService.new(current_user, record, keen_client)
+          service.app = doorkeeper_token.application
 
           if service.save
             @record = service.record

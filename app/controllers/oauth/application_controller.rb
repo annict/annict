@@ -14,6 +14,7 @@ module Oauth
     layout "application"
 
     before_action :set_search_params
+    before_action :load_data_into_gon
 
     private
 

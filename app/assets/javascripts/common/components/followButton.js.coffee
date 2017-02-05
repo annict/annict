@@ -22,7 +22,7 @@ module.exports =
 
   computed:
     buttonText: ->
-      if @isFollowing then "Following" else "Follow"
+      if @isFollowing then gon.I18n["noun.following"] else gon.I18n["verb.follow"]
 
   methods:
     toggle: ->

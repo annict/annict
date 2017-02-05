@@ -13,4 +13,4 @@ ja:
         failure: 認証に失敗しました。時間をおいて再度お願いします
     sessions:
       user:
-        signed_out: ''
+        signed_out: ログアウトしました。

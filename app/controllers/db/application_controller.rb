@@ -13,7 +13,11 @@ module Db
     rescue_from Pundit::NotAuthorizedError, with: :user_not_authorized
 
     helper_method :client_uuid, :gon
+
+    before_action :redirect_if_unexpected_subdomain
+    before_action :switch_languages
     before_action :set_search_params
+    before_action :load_data_into_gon
 
     private
 

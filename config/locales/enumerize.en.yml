@@ -9,6 +9,10 @@ en:
       gender:
         female: Female
         male: Male
+    setting:
+      programs_sort_type:
+        started_at_asc: Older
+        started_at_desc: Newer
     staff:
       role:
         animation_director: Animation Director
@@ -32,6 +36,16 @@ en:
         watched: Completed
         on_hold: On Hold
         stop_watching: Dropped
+      kind_action:
+        wanna_watch: Plan to Watch
+        watching: Watching
+        watched: Completed
+        on_hold: On Hold
+        stop_watching: Dropped
+    user:
+      role:
+        admin: Admin
+        editor: Editor
     work:
       media:
         tv: TV

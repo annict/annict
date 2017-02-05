@@ -4,8 +4,6 @@ module Gonable
   extend ActiveSupport::Concern
 
   included do
-    before_action :load_data_into_gon
-
     def load_i18n_into_gon(keys)
       gon.I18n = gon.I18n.presence || {}
 

@@ -3,7 +3,7 @@
 module TimeZoneHelper
   def display_time(time)
     time_zone = current_user&.time_zone.presence || "UTC"
-    time&.in_time_zone(time_zone)&.strftime("%Y-%m-%d %H:%M %z")
+    time&.in_time_zone(time_zone)&.strftime("%Y-%m-%d %H:%M")
   end
 
   def decorated_tz_name(time_zone)

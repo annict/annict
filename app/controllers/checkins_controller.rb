@@ -35,28 +35,9 @@
 #
 
 class CheckinsController < ApplicationController
-  before_action :authenticate_user!, only: %i(create)
-  before_action :load_work, only: %i(create show)
-  before_action :load_episode, only: %i(create show)
+  before_action :load_work, only: %i(show)
+  before_action :load_episode, only: %i(show)
   before_action :load_record, only: %i(show)
-
-  def create(checkin)
-    @record = @episode.checkins.new(checkin)
-    service = NewRecordService.new(current_user, @record, ga_client)
-
-    if service.save
-      redirect_to work_episode_path(@work, @episode), notice: t("checkins.saved")
-    else
-      service = RecordsListService.new(@episode, current_user, nil)
-
-      @record_user_ids = service.record_user_ids
-      @user_records = service.user_records
-      @current_user_records = service.current_user_records
-      @records = service.records
-
-      render "/episodes/show", layout: "v3/application"
-    end
-  end
 
   def show
     redirect_to record_path(@record.user.username, @record), status: 301

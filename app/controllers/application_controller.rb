@@ -16,8 +16,11 @@ class ApplicationController < ActionController::Base
 
   helper_method :client_uuid, :gon
 
+  before_action :redirect_if_unexpected_subdomain
+  before_action :switch_languages
   before_action :set_search_params
   before_action :load_new_user
+  before_action :load_data_into_gon
 
   # テスト実行時にDragonflyでアップロードした画像を読み込むときに呼ばれるアクション
   # 画像サーバはこのRailsアプリから切り離しているので、CircleCI等でテストを実行するときは
@@ -49,15 +52,6 @@ class ApplicationController < ActionController::Base
 
   def load_episode
     @episode = @work.episodes.published.find(params[:episode_id])
-  end
-
-  def set_search_params
-    @search = SearchService.new(params[:q])
-  end
-
-  def load_new_user
-    return if user_signed_in?
-    @new_user = User.new_with_session({}, session)
   end
 
   def display_works_count

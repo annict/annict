@@ -11,15 +11,15 @@
         = link_to @person.decorate.local_name, person_path(@person)
       - if @person.voice_actor?
         span.badge.u-badge-people
-          = t "words.voice_actor"
+          = t "noun.voice_actor"
       - if @person.staff?
         span.badge.u-badge-people
-          = t "words.staff"
+          = t "noun.staff"
 
     .mt-2
       h2.h4.font-weight-bold.text-center.mt-2.mb-1
         = icon "sticky-note-o", class: "mr-zp25"
-        = t "words.information"
+        = t "noun.information"
       dl.row.mb-0
         dt.col-6.text-right = t "activerecord.attributes.person.name"
         dd.col-6 = @person.name
@@ -45,7 +45,7 @@
           dt.col-6.text-right = t "activerecord.attributes.person.height"
           dd.col-6 = "#{@person.height}cm"
         - if @person.url.present?
-          dt.col-6.text-right = t "activerecord.attributes.person.official_site"
+          dt.col-6.text-right = t "activerecord.attributes.person.url"
           dd.col-6 = link_with_domain @person.url
         - if @person.twitter_username.present?
           dt.col-6.text-right = t "activerecord.attributes.person.twitter"

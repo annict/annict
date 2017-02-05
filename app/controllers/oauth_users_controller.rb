@@ -18,11 +18,15 @@ class OauthUsersController < Devise::RegistrationsController
 
   def create(user)
     @user = User.new(user).build_relations(@oauth)
+    @user.time_zone = cookies["ann_time_zone"].presence || "Asia/Tokyo"
+    @user.locale = locale
 
-    @user.save
     return render(:new) unless @user.valid?
 
-    ga_client.events.create("users", "create")
+    @user.save
+    keen_client.user = @user
+    keen_client.users.create
+
     bypass_sign_in(@user)
 
     flash[:notice] = t("messages.registrations.create.confirmation_mail_has_sent")

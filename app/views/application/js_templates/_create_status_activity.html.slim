@@ -21,7 +21,7 @@ script#t-create-status-activity type="x-template"
               | が
               a.mr-zp25 :href='"/works/" + activity.work.id'
                 | {{ activity.work.title }}
-              | のステータスを「{{ activity.status.kind }}」に変更しました
+              | のステータスを「{{ activity.status.kind_text }}」に変更しました
           .small.text-muted
             c-time-ago :time="activity.created_at"
 

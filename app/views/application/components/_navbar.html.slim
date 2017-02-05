@@ -2,7 +2,7 @@
 - is_on_cover_image = local_assigns.fetch(:is_on_cover_image, false)
 
 nav.c-navbar.navbar.navbar-toggleable-md class="#{transparent ? 'navbar-dark is-transparent' : 'navbar-light'}"
-  = link_to annict_url(:root_url), class: "navbar-brand" do
+  = link_to root_path, class: "navbar-brand" do
     = image_tag "logos/color-#{transparent ? 'white' : 'mizuho'}.png", size: "25x30", alt: "Annict"
   .collapse.navbar-collapse.align-items-center
     ul.navbar-nav.navbar-nav--left.mr-auto.align-items-center
@@ -10,24 +10,24 @@ nav.c-navbar.navbar.navbar-toggleable-md class="#{transparent ? 'navbar-dark is-
         li.nav-item
           = link_to t("head.title.programs.index"), annict_url(:programs_url), class: "nav-link"
         li.nav-item.dropdown
-          = link_to t("words.watching"), annict_url(:user_works_url, current_user.username, :watching), class: "nav-link"
+          = link_to t("noun.watching"), annict_url(:user_works_url, current_user.username, :watching), class: "nav-link"
           .dropdown-menu
-            = link_to t("words.plan_to_watch"), annict_url(:user_works_url, current_user.username, :wanna_watch), class: "dropdown-item"
-            = link_to t("words.completed"), annict_url(:user_works_url, current_user.username, :watched), class: "dropdown-item"
-            = link_to t("words.on_hold"), annict_url(:user_works_url, current_user.username, :on_hold), class: "dropdown-item"
-            = link_to t("words.dropped"), annict_url(:user_works_url, current_user.username, :stop_watching), class: "dropdown-item"
+            = link_to t("noun.plan_to_watch"), annict_url(:user_works_url, current_user.username, :wanna_watch), class: "dropdown-item"
+            = link_to t("noun.completed"), annict_url(:user_works_url, current_user.username, :watched), class: "dropdown-item"
+            = link_to t("noun.on_hold"), annict_url(:user_works_url, current_user.username, :on_hold), class: "dropdown-item"
+            = link_to t("noun.dropped"), annict_url(:user_works_url, current_user.username, :stop_watching), class: "dropdown-item"
         li.nav-item.dropdown
-          = link_to t("words.airing_anime"), annict_url(:season_works_url, slug: ENV.fetch("ANNICT_CURRENT_SEASON")), class: "nav-link"
+          = link_to t("noun.current_season"), annict_url(:season_works_url, slug: ENV.fetch("ANNICT_CURRENT_SEASON")), class: "nav-link"
           .dropdown-menu
-            = link_to t("words.next_season"), annict_url(:season_works_url, slug: ENV.fetch("ANNICT_NEXT_SEASON")), class: "dropdown-item"
-            = link_to t("words.previous_season"), annict_url(:season_works_url, slug: ENV.fetch("ANNICT_PREVIOUS_SEASON")), class: "dropdown-item"
-            = link_to t("words.popular"), annict_url(:popular_works_url), class: "dropdown-item"
-            = link_to t("words.search"), annict_url(:search_url), class: "dropdown-item"
+            = link_to t("noun.next_season"), annict_url(:season_works_url, slug: ENV.fetch("ANNICT_NEXT_SEASON")), class: "dropdown-item"
+            = link_to t("noun.previous_season"), annict_url(:season_works_url, slug: ENV.fetch("ANNICT_PREVIOUS_SEASON")), class: "dropdown-item"
+            = link_to t("noun.popular"), annict_url(:popular_works_url), class: "dropdown-item"
+            = link_to t("noun.search"), annict_url(:search_url), class: "dropdown-item"
       - else
         li.nav-item
-          = link_to t("words.airing_anime"), annict_url(:season_works_url, slug: ENV.fetch("ANNICT_CURRENT_SEASON")), class: "nav-link"
+          = link_to t("noun.airing_anime"), season_works_path(slug: ENV.fetch("ANNICT_CURRENT_SEASON")), class: "nav-link"
         li.nav-item
-          = link_to t("words.popular"), annict_url(:popular_works_url), class: "nav-link"
+          = link_to t("noun.popular"), popular_works_path, class: "nav-link"
       li.nav-item.ml-1
         c-search-form :init-q='"#{@search.q}"' :is-transparent="#{transparent}"
     ul.navbar-nav.navbar-nav--right.align-items-center
@@ -48,21 +48,21 @@ nav.c-navbar.navbar.navbar-toggleable-md class="#{transparent ? 'navbar-dark is-
               - if current_user.notifications_count > 0
                 span.badge.badge-pill.u-badge-mizuho.ml-zp5
                   = current_user.notifications_count
-            = link_to t("words.forum"), ENV.fetch("ANNICT_FORUM_URL"), class: "dropdown-item"
             = link_to t("head.title.friends.index"), annict_url(:friends_url), class: "dropdown-item"
             = link_to t("head.title.channels.index"), annict_url(:channels_url), class: "dropdown-item"
-            = link_to t("words.settings"), annict_url(:profile_url), class: "dropdown-item"
-            = link_to t("words.annict_db"), ENV.fetch("ANNICT_DB_URL"), class: "dropdown-item"
-            = link_to t("words.annict_api"), "https://docs.annict.com/ja/api/", target: "_blank", class: "dropdown-item"
+            = link_to t("noun.settings"), annict_url(:profile_url), class: "dropdown-item"
+            = link_to t("noun.annict_forum"), forum_root_path, class: "dropdown-item"
+            = link_to t("noun.annict_db"), db_root_path, class: "dropdown-item"
+            = link_to t("noun.annict_api"), "https://docs.annict.com/ja/api/", target: "_blank", class: "dropdown-item"
             = link_to t("head.title.pages.about"), annict_url(:about_url), class: "dropdown-item"
-            = link_to t("words.sign_out"), annict_url(:destroy_user_session_url), method: "delete", class: "dropdown-item"
+            = link_to t("verb.sign_out"), annict_url(:destroy_user_session_url), method: "delete", class: "dropdown-item"
       - else
         li.nav-item
-          = link_to t("head.title.pages.about"), annict_url(:about_url), class: "nav-link"
+          = link_to t("head.title.pages.about"), about_path, class: "nav-link"
         li.nav-item.mr-zp5
-          = link_to t("head.title.sessions.new"), annict_url(:new_user_session_url), class: "nav-link"
+          = link_to t("head.title.sessions.new"), new_user_session_path, class: "nav-link"
         li.nav-item
-          = link_to annict_url(:new_user_registration_url), class: "nav-link btn btn-outline-primary" do
+          = link_to new_user_registration_path, class: "nav-link btn btn-outline-primary" do
             = icon "rocket"
             = t "head.title.registrations.new"
 

@@ -1,10 +1,10 @@
 script#t-work-friends type="x-template"
   .c-work-friends
-    .font-weight-bold = t "words.friends_who_are_watching"
+    .font-weight-bold = t "noun.friends_who_are_watching"
     .row.align-items-center.px-1
       .col.col-auto.pl-0.pr-zp5 v-for="user in users"
         a :href='"/@" + user.username'
           img.rounded-circle :src="user.avatar_url" width="30" height="30" :alt="user.username"
       .col
         .u-fake-link v-if="!isAll" @click="more"
-          = t "words.more"
+          = t "noun.more"
