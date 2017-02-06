@@ -16,7 +16,8 @@ module Annict
             user_id: @user&.encoded_id,
             device: browser.device.mobile? ? "mobile" : "pc",
             client_uuid: @request.cookies["ann_client_uuid"],
-            locale: I18n.locale,
+            locale: @user&.locale,
+            time_zone: @user&.time_zone,
             page_category: @params[:page_category],
             resource_type: attrs[:resource_type],
             keen: { timestamp: @user&.updated_at }

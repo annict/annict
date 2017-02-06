@@ -4,12 +4,14 @@ ja:
       are_you_sure: 実行しますか？
       join_annict: Annictに参加する
       search_with_keywords: キーワードで検索...
+      view_amazon_product: Amazonで見る
       welcome_back: おかえりなさい！
       welcome_to_annict: Annictにようこそ！
       you_can_not_access_there: アクセスできません
     accounts:
       email_sent_for_confirmation: メールアドレス確認用メールを送信しました
       saved: アカウント登録されました
+      updated: 更新しました
     apps:
       no_applications: アプリはありません
     channel_works:
@@ -77,6 +79,14 @@ ja:
     notifications:
       no_notifications: 通知はありません
     oauth:
+      applications:
+        authorize: 承認する
+        created: 作成しました
+        new: 新規登録
+        please_input_uris_with_new_line: URIを一行ごと入力してください
+        read_only: 読み込み専用
+        read_write: 読み込み + 書き込み
+        you_can_use_the_uri_for_local_application: ローカルアプリ用に urn:ietf:wg:oauth:2.0:oob もご利用頂けます
       authorizations:
         authorize: 承認
         authorize_account_html: "<b>%{client_name}</b>からのアクセスをを承認しますか？"

@@ -1,5 +1,7 @@
 = form_for application, url: doorkeeper_submit_path(application) do |f|
   = render "application/components/error_panel", resource: application
+  
+  = hidden_field_tag :page_category, page_category
 
   .form-group.row
     = f.label :name, class: "col-2 col-form-label"

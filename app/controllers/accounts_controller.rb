@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class AccountsController < ApplicationController
-  permits :username, :email, model_name: "User"
+  permits :username, :email, :time_zone, :locale, model_name: "User"
 
   before_action :authenticate_user!
 
@@ -26,7 +26,8 @@ class AccountsController < ApplicationController
         @user.save(validate: false)
       end
 
-      redirect_to account_path, notice: (message.presence || t("messages.accounts.saved"))
+      I18n.locale = @user.locale
+      redirect_to account_path, notice: (message.presence || t("messages.accounts.updated"))
     else
       render "/accounts/show"
     end

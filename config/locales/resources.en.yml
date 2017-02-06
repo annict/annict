@@ -75,6 +75,8 @@ en:
       there_are_no_staffs: There are no staff
       unpublished: Staff unpublished
       updated: Staff updated
+    user:
+      is_wrong: is wrong
     work:
       aasm_state:
         published: Published

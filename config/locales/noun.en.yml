@@ -11,6 +11,7 @@ en:
     annict_db: Annict DB
     annict_forum: Annict Forum
     annict: Annict
+    basic_info: Basic Info
     before: Before
     bio: Bio
     bulk_tracking: Bulk Tracking
@@ -44,6 +45,7 @@ en:
     or: OR
     organizations: Organizations
     other_users: Other Users
+    password: Password
     people: People
     plan_to_watch: Plan to Watch
     popular: Popular

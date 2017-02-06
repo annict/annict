@@ -57,7 +57,8 @@
             li.list-inline-item = link_to t("noun.english"), "#{ENV.fetch('ANNICT_EN_URL')}#{request.path}"
         .col.text-center
           = link_to root_path do
-            = image_tag "logos/color-mizuho.png", width: "25", alt: "Annict", class: "img-fluid rounded"
+            = image_tag "logos/color-white.png", width: "25", alt: "Annict", class: "img-fluid rounded"
         .col.text-right
           .p-footer__copyright.small
-            | © 2014-2017 Annict
+            = icon "copyright", class: "mr-zp25"
+            | 2014-2017 Annict

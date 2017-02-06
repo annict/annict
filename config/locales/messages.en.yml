@@ -4,12 +4,14 @@ en:
       are_you_sure: Are you sure?
       join_annict: Join Annict
       search_with_keywords: Search...
+      view_amazon_product: View Amazon
       welcome_back: Welcome back!
       welcome_to_annict: Welcome to Annict!
       you_can_not_access_there: You can not access there.
     accounts:
       email_sent_for_confirmation: An email has been sent to confirm your email address.
       saved: Account has been saved.
+      updated: Account has been updated.
     apps:
       no_applications: No applications
     channel_works:
@@ -77,6 +79,14 @@ en:
     notifications:
       no_notifications: No notifications
     oauth:
+      applications:
+        authorize: Authorize
+        created: Created
+        new: New Application
+        please_input_uris_with_new_line: You can input URIs each lines.
+        read_only: Read Only
+        read_write: Read + Write
+        you_can_use_the_uri_for_local_application: You can use urn:ietf:wg:oauth:2.0:oob for local application.
       authorizations:
         authorize: Authorize
         authorize_account_html: Authorize <b>%{client_name}</b> to use your account?
