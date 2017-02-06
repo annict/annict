@@ -79,6 +79,14 @@ en:
     notifications:
       no_notifications: No notifications
     oauth:
+      applications:
+        authorize: Authorize
+        created: Created
+        new: New Application
+        please_input_uris_with_new_line: You can input URIs each lines.
+        read_only: Read Only
+        read_write: Read + Write
+        you_can_use_the_uri_for_local_application: You can use urn:ietf:wg:oauth:2.0:oob for local application.
       authorizations:
         authorize: Authorize
         authorize_account_html: Authorize <b>%{client_name}</b> to use your account?

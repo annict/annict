@@ -67,6 +67,8 @@ ja:
         url: URL
         tombo_image: 作品画像
       oauth_application:
+        redirect_uri: リダイレクトURI
+        scope: スコープ
         secret: クライアントシークレット
         uid: クライアントID
       organization:

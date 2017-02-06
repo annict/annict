@@ -1,4 +1,4 @@
-en:
+ja:
   activerecord:
     attributes:
       doorkeeper/application:
@@ -124,5 +124,5 @@ en:
         title: 'OAuth authorization required'
 
     scopes:
-      read: Read
-      write: Write
+      read: 読み込み
+      write: 書き込み

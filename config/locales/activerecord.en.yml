@@ -67,6 +67,8 @@ en:
         url: URL
         tombo_image: Image
       oauth_application:
+        redirect_uri: Redirect URI
+        scope: Scope
         secret: Client Secret
         uid: Client ID
       organization:

@@ -24,6 +24,10 @@ module Annict
         @multiple_records ||= ::Annict::Keen::Events::MultipleRecord.new(@request, @user, params)
       end
 
+      def oauth_applications
+        @oauth_applications ||= ::Annict::Keen::Events::OauthApplication.new(@request, @user, params)
+      end
+
       def records
         @records ||= ::Annict::Keen::Events::Record.new(@request, @user, params)
       end
