@@ -47,7 +47,6 @@ namespace :tmp do
         attachment: URI.parse(image_url),
         asin: i.url
       )
-      i.work.update_column(:work_image_id, work_image.id)
       puts "Item #{i.id} converted to Work Image #{work_image.id}"
     end
   end
