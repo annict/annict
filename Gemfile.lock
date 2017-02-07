@@ -145,6 +145,7 @@ GEM
       thor (~> 0.19.1)
       tins (~> 1.6)
     daemons (1.2.4)
+    dalli (2.7.6)
     database_rewinder (0.8.0)
     debug_inspector (0.0.2)
     delayed_job (4.1.2)
@@ -622,6 +623,7 @@ DEPENDENCIES
   capybara
   coffee-rails
   coveralls
+  dalli
   database_rewinder
   delayed_job_active_record
   derailed_benchmarks

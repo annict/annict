@@ -86,12 +86,6 @@ module Annict
       end
     end
 
-    unless Rails.env.test?
-      config.cache_store = :redis_store,
-        "#{ENV.fetch('REDIS_URL')}/0/annict_cache",
-        { expires_in: 90.minutes }
-    end
-
     commandline_options = "-t coffeeify --extension=\".js.coffee\""
     config.browserify_rails.commandline_options = commandline_options
   end
