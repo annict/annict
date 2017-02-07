@@ -27,8 +27,8 @@ class WorkImage < ApplicationRecord
   validates :attachment,
     attachment_presence: true,
     attachment_content_type: { content_type: /\Aimage/ }
-  validates :asin, asin: true
-  validates_with AsinOrCopyrightValidator
+  # validates :asin, asin: true
+  # validates_with AsinOrCopyrightValidator
 
   belongs_to :work
   belongs_to :user
