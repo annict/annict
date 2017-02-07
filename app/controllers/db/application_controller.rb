@@ -3,6 +3,7 @@
 module Db
   class ApplicationController < ActionController::Base
     include Pundit
+
     include ControllerCommon
     include FlashMessage
     include Analyzable

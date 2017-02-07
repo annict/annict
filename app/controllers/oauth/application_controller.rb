@@ -4,6 +4,7 @@ module Oauth
   class ApplicationController < ActionController::Base
     include Doorkeeper::Helpers::Controller
 
+    include ControllerCommon
     include Analyzable
     include Gonable
     include FlashMessage
