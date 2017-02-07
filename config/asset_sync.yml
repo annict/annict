@@ -22,10 +22,6 @@ test:
   <<: *defaults
   enabled: false
 
-staging:
-  <<: *defaults
-  fog_directory:         "<%= ENV['S3_BUCKET_NAME_STAGING'] %>"
-
 production:
   <<: *defaults
   fog_directory:         "<%= ENV['S3_BUCKET_NAME_PRODUCTION'] %>"
