@@ -28,6 +28,7 @@ gem "email_validator"
 gem "enumerize"
 gem "figaro"
 gem "flutie"
+gem "fog-aws" # used by asset_sync
 gem "font-awesome-sass"
 gem "gon"
 gem "groupdate"
