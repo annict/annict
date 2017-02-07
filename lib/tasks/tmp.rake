@@ -35,14 +35,14 @@ namespace :tmp do
 
   task convert_item_image_to_work_image: :environment do
     Item.find_each do |i|
-      next if i.work.work_images.present?
-      image_path = i.tombo_image.url(:original)
+      next if i.work.work_image.present?
+      image_path = i.tombo_image.path(:original)
       image_url = if Rails.env.production?
-        "https://d3a8d1smk6xli.cloudfront.net#{image_path}"
+        "https://d3a8d1smk6xli.cloudfront.net/#{image_path}"
       else
         "http://annict.dev:3000#{image_path}"
       end
-      work_image = i.work.work_images.create!(
+      work_image = i.work.create_work_image!(
         user: User.find(2),
         attachment: URI.parse(image_url),
         asin: i.url
