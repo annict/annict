@@ -25,6 +25,7 @@ class CallbacksController < Devise::OmniauthCallbacksController
       current_user.providers.create(provider_attributes(auth))
       omni_params = request.env["omniauth.params"]
       redirect_path = omni_params["back"].presence || root_path
+      bypass_sign_in(current_user)
       redirect_to redirect_path, notice: "連携しました"
     else
       session["devise.oauth_data"] = auth
