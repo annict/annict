@@ -34,6 +34,10 @@ notifications:
 
 env:
   global:
-    - ANNICT_CURRENT_SEASON=2016-autumn
-    - ANNICT_PREVIOUS_SEASON=2016-summer
-    - ANNICT_NEXT_SEASON=2017-winter
+    - ANNICT_CURRENT_SEASON=2017-winter
+    - ANNICT_EN_URL=http://en.annict.dev
+    - ANNICT_JA_URL=http://ja.annict.dev
+    - ANNICT_NEXT_SEASON=2017-spring
+    - ANNICT_PAPERCLIP_PATH="paperclip/:class/:id/:attachment/:style/:hash.:extension"
+    - ANNICT_PAPERCLIP_URL=:rails_root/public/paperclip/:class/:id/:attachment/:style/:hash.:extension"
+    - ANNICT_PREVIOUS_SEASON=2016-autumn
