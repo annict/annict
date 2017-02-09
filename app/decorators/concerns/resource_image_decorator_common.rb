@@ -20,6 +20,10 @@ module ResourceImageDecoratorCommon
       end
     end
 
+    def image_url(field, options = {})
+      h.ann_image_url(model, field, options)
+    end
+
     private
 
     def amazon_url

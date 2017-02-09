@@ -27,7 +27,7 @@ class FacebookService
     title += " #{episode_title}" if title != episode_title
     message = checkin.comment.squish if checkin.comment.present?
     link = if Rails.env.development?
-      "http://www.annict.com/r/fb/#{checkin.facebook_url_hash}"
+      "https://annict.com/r/fb/#{checkin.facebook_url_hash}"
     else
       "#{ENV['ANNICT_URL']}/r/fb/#{checkin.facebook_url_hash}"
     end

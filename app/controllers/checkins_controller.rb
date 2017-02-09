@@ -44,21 +44,30 @@ class CheckinsController < ApplicationController
   end
 
   def redirect(provider, url_hash)
-    if 'tw' == provider
+    case provider
+    when "tw"
       checkin = Checkin.find_by!(twitter_url_hash: url_hash)
 
-      logger.info("Twitterからのアクセス remote_host: #{request.remote_host}, remote_ip: #{request.remote_ip}, remote_user: #{request.remote_user}")
+      log_messages = [
+        "Twitterからのアクセス ",
+        "remote_host: #{request.remote_host}, ",
+        "remote_ip: #{request.remote_ip}, ",
+        "remote_user: #{request.remote_user}"
+      ]
+      logger.info(log_messages.join)
 
       bots = TwitterBot.pluck(:name)
-      no_bots = bots.map { |bot| request.user_agent.present? && !request.user_agent.include?(bot) }
+      no_bots = bots.map do |bot|
+        request.user_agent.present? && !request.user_agent.include?(bot)
+      end
       checkin.increment!(:twitter_click_count) if no_bots.all?
 
-      redirect_to_episode(checkin)
-    elsif 'fb' == provider
+      redirect_to_user_record(checkin)
+    when "fb"
       checkin = Checkin.find_by!(facebook_url_hash: url_hash)
       checkin.increment!(:facebook_click_count)
 
-      redirect_to_episode(checkin)
+      redirect_to_user_record(checkin)
     else
       redirect_to root_path
     end
@@ -70,10 +79,9 @@ class CheckinsController < ApplicationController
     @record = @episode.checkins.find(params[:id])
   end
 
-  def redirect_to_episode(checkin)
-    work = checkin.episode.work
+  def redirect_to_user_record(checkin)
     username = checkin.user.username
 
-    redirect_to work_episode_path(work, checkin.episode, username: username)
+    redirect_to record_path(username, checkin)
   end
 end
