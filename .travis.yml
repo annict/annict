@@ -34,6 +34,7 @@ notifications:
 
 env:
   global:
+    - ANNICT_BASIC_AUTH=off
     - ANNICT_CURRENT_SEASON=2017-winter
     - ANNICT_EN_URL=http://en.annict.dev
     - ANNICT_JA_URL=http://ja.annict.dev
