@@ -2,7 +2,12 @@
 
 module ImageHelper
   def ann_image_url(record, field, options = {})
-    path = record&.send(field)&.path(:master).presence || "/no-image.jpg"
+    path = if Rails.env.production?
+      record&.send(field)&.path(:master)
+    else
+      record&.send(field)&.url(:master)
+    end
+    path = path.presence || "/no-image.jpg"
 
     msize = options[:msize]
     size = browser.device.mobile? && msize.present? ? msize : options[:size]
