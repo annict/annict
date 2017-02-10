@@ -6,6 +6,8 @@ module Api
       include ControllerCommon
       include Analyzable
 
+      before_action :switch_languages
+
       private
 
       def load_work
