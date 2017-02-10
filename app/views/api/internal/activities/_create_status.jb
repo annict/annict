@@ -9,7 +9,7 @@ status = activity.trackable
     title: work.decorate.local_title
   },
   item: {
-    image_url: ann_image_url(work.work_image, :attachment, size: "125x125")
+    image_url: ann_image_url(work.item, :tombo_image, size: "125x125")
   },
   status: {
     id: status.id,

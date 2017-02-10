@@ -3,7 +3,7 @@
     - works.each do |work|
       .col-6
         = link_to work_path(work) do
-          = ann_image_tag(work.work_image, :attachment, size: "250x250", alt: work.decorate.local_title, class: "rounded img-fluid")
+          = ann_image_tag(work.item, :tombo_image, size: "250x250", alt: work.decorate.local_title, class: "rounded img-fluid")
         .my-zp5.u-lh-1
           span.mr-zp25 = work.watchers_count
           span.text-muted.small Watchers

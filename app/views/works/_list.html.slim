@@ -2,7 +2,7 @@
   .c-card.row.py-1.mb-1
     .col-3.pr-0
       = link_to work_path(work) do
-        = ann_image_tag work.work_image, :attachment, size: "250x250", alt: work.decorate.local_title, class: "rounded img-thumbnail w-100"
+        = ann_image_tag work.item, :tombo_image, size: "250x250", alt: work.decorate.local_title, class: "rounded img-thumbnail w-100"
       c-status-selector.mt-zp5 work-id="#{work.id}" current-status-kind="#{user_signed_in? ? current_user.status_kind(work) : 'no_select'}" :is-signed-in="#{user_signed_in?}"
     .col
       .mb-zp25.u-lh-0

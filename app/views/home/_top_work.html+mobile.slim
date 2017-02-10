@@ -1,5 +1,5 @@
 = link_to work_path(top_work) do
-  = image_tag(ann_image_url(top_work.work_image, :attachment, size: "300x300"), alt: top_work.decorate.local_title, class: "rounded img-thumbnail")
+  = image_tag(ann_image_url(top_work.item, :tombo_image, size: "300x300"), alt: top_work.decorate.local_title, class: "rounded img-thumbnail")
 .mt-zp5
   span.font-weight-bold.mr-zp25 = top_work.watchers_count
   span.text-muted.small Watchers

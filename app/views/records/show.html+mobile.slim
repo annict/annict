@@ -1,7 +1,7 @@
 - title = t "head.title.records.show", profile_name: @user.profile.name, username: @user.username, work_title: @work.decorate.local_title, episode_title_with_number: @episode.decorate.title_with_number
 - description = meta_description(t("head.meta.description.records.show", profile_name: @user.profile.name, username: @user.username, work_title: @work.decorate.local_title, episode_title_with_number: @episode.decorate.title_with_number))
 - keywords = meta_keywords(@work.decorate.local_title)
-- image_url = ann_image_url(@work.work_image, :attachment, size: "640x")
+- image_url = ann_image_url(@work.item, :tombo_image, size: "640x")
 - set_meta_tags(title: title, description: description, keywords: keywords, og: { description: description }, twitter: { description: description }, reverse: true, prefix: false)
 - set_page_category "records_show"
 
@@ -10,7 +10,7 @@
     .row
       .col.u-flex-grow-0.p-records-show__work-image.pr-0
         = link_to work_path(@work) do
-          = image_tag ann_image_url(@work.work_image, :attachment, size: "280x373"), class: "img-fluid img-thumbnail rounded"
+          = image_tag ann_image_url(@work.item, :tombo_image, size: "280x373"), class: "img-fluid img-thumbnail rounded"
       .col
         h1.h2
           = link_to work_path(@work) do
