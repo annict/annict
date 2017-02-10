@@ -498,7 +498,6 @@ GEM
       sprockets (> 2.11)
       sprockets-rails
       tilt
-    scout_apm (2.1.22)
     scss_lint (0.52.0)
       rake (>= 0.9, < 13)
       sass (~> 3.4.20)
@@ -670,7 +669,6 @@ DEPENDENCIES
   ruby_identicon
   sass-rails
   sassc-rails
-  scout_apm
   scss_lint
   sitemap_generator
   slack-notifier

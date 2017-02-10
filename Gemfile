@@ -119,7 +119,6 @@ end
 group :production do
   gem "bugsnag"
   gem "rails_12factor"
-  gem "scout_apm"
 end
 
 source "https://rails-assets.org" do
