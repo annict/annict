@@ -49,7 +49,12 @@ module ControllerCommon
         I18n.locale = request.subdomain
       else
         preferred_languages = http_accept_language.user_preferred_languages
-        I18n.locale = preferred_languages.include?("ja") ? :ja : :en
+        # Chrome returns "ja", but Safari would return "ja-JP", not "ja".
+        I18n.locale = if preferred_languages.any? { |lang| lang.match?(/ja/) }
+          :ja
+        else
+          :en
+        end
       end
     end
 
