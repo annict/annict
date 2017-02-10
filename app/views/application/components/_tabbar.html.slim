@@ -12,7 +12,7 @@
     = link_to season_works_path(slug: ENV.fetch("ANNICT_CURRENT_SEASON")), class: "col text-center" do
       = icon "television", class: "d-block"
       span.c-tabbar__text = t "noun.current_season_shorten"
-    .c-tabbar__more.col.text-center data-toggle="dropdown"
+    a.c-tabbar__more.col.text-center.dropdown-toggle href="#" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"
       = icon "bars", class: "d-block"
       span.c-tabbar__text = t "noun.more"
       - if current_user.notifications_count > 0
