@@ -1,13 +1,53 @@
-.ann-sign-in.row.align-center.align-middle
-  .small-12.columns
-    .ann-logo.text-center
-      = link_to root_path do
-        = image_tag "navbar/logo-120x120.png", size: "60x60", alt: "Annict"
-    .ann-button.text-center
-      = link_to user_twitter_omniauth_authorize_path, class: "button ann-twitter" do
-        = icon "twitter"
-        span.ann-text Twitterアカウントでログイン
-    .ann-button.text-center
-      = link_to user_facebook_omniauth_authorize_path, class: "button ann-facebook" do
-        = icon "facebook"
-        span.ann-text Facebookアカウントでログイン
+- title = t "head.title.sessions.new"
+- description = meta_description t("head.meta.description.sessions.new")
+- keywords = meta_keywords
+- set_meta_tags(title: title, description: description, keywords: keywords, og: { description: description }, twitter: { description: description }, reverse: true, prefix: false)
+- set_page_category "sessions_new"
+
+.container
+  .row.align-items-center
+    .col-6.offset-3.py-3
+      .text-center.mb-3
+        = link_to root_path do
+          = image_tag "logos/color-mizuho.png", size: "50x61", alt: "Annict"
+      .c-card.px-1.py-2.mb-1
+        .c-sign-up-form
+          h1.text-center.mb-2 = t "messages._common.welcome_back"
+
+          .text-center.mb-1
+            = link_to user_twitter_omniauth_authorize_path, class: "btn u-btn-twitter" do
+              = icon "twitter"
+              = t "messages.sessions.new.sign_in_with_twitter"
+          .text-center
+            = link_to user_facebook_omniauth_authorize_path, class: "btn u-btn-facebook" do
+              = icon "facebook"
+              = t "messages.sessions.new.sign_in_with_facebook"
+
+          .text-muted.text-center.mt-2.mb-1
+            = t "noun.or"
+
+          = form_for resource, url: user_session_path do |f|
+            .form-group
+              = f.label :email_username
+              = f.text_field :email_username, class: "form-control", autofocus: true, required: true, tabindex: 1
+
+            .form-group
+              .row
+                .col
+                  = f.label :password
+                .col.text-right
+                  = link_to t("messages.sessions.new.forgot_password"), new_password_path
+              = f.password_field :password, autocomplete: "off", class: "form-control", required: true, tabindex: 2
+
+            .form-check
+              = f.label :remember_me, class: "form-check-label" do
+                = f.check_box :remember_me, class: "form-check-input", tabindex: 3
+                = t "messages.sessions.new.remember_me"
+
+            .text-center
+              = f.button class: "btn btn-primary", tabindex: 4 do
+                = icon "sign-in"
+                = t "noun.sign_in"
+      
+      .text-center
+        small = t "messages.sessions.new.sign_up_link_html", link: link_to(t("noun.sign_up"), new_user_registration_path)

@@ -1,0 +1,155 @@
+en:
+  messages:
+    _common:
+      are_you_sure: Are you sure?
+      join_annict: Join Annict
+      search_with_keywords: Search...
+      view_amazon_product: View Amazon
+      welcome_back: Welcome back!
+      welcome_to_annict: Welcome to Annict!
+      you_can_not_access_there: You can not access there.
+    accounts:
+      email_sent_for_confirmation: An email has been sent to confirm your email address.
+      saved: Account has been saved.
+      updated: Account has been updated.
+    apps:
+      no_applications: No applications
+    channel_works:
+      no_works: No works
+    comments:
+      comment_form_placeholder: Click here to add a new comment
+      create: Create
+      deleted: Deleted
+      saved: Comment has been saved.
+      update: Update
+      updated: Updated
+    db:
+      comments:
+        created: Comment has been created.
+      works:
+        no_episodes: No Episodes
+        no_image: No Image
+    episodes:
+      comments: Comments
+      comments_by_others: Comments by Others
+      watched_x_times: Watched %{records_count} times
+      your_records: Your Records
+    forum:
+      comments:
+        comment_notification_subject: "[Annict Forum] %{name} (@%{username}) has commented in a post"
+        created: Created
+        leave_a_comment: Leave a comment
+        updated: Updated
+      posts:
+        created: Created
+        no_comments: No comments
+        no_posts: No posts
+        updated: Updated
+    friends:
+      no_sns_friends: No SNS Friends
+      no_users: No users
+    home:
+      index:
+        there_are_no_activities: There are no activities
+      index_guest:
+        hero_description_html: Explore the anime database, track anime you are watching<br>and see what friends are watching.
+        hero_description_mobile_html: Track anime you are watching<br>and see what friends are watching.
+        hero_title: The platform for Anime addicts.
+        hero_title_mobile_html: The platform for Anime addicts.
+        start_tracking: Start Tracking
+    components:
+      load_more_button:
+        more: View more
+      mute_user_button:
+        mute_this_user: Mute this user...
+        the_user_has_been_muted: The user has been muted.
+      program_list:
+        tracked: Tracked.
+      status_selector:
+        select_status: Select Status
+    character_images:
+      attach_image: Attach Image
+      deleted: Character image has been deleted.
+      saved: Character image has been saved.
+    multiple_records:
+      create:
+        saved: Records have been saved.
+    mutes:
+      no_muted_users_found: No muted users found.
+    notifications:
+      no_notifications: No notifications
+    oauth:
+      applications:
+        authorize: Authorize
+        created: Created
+        new: New Application
+        please_input_uris_with_new_line: You can input URIs each lines.
+        read_only: Read Only
+        read_write: Read + Write
+        you_can_use_the_uri_for_local_application: You can use urn:ietf:wg:oauth:2.0:oob for local application.
+      authorizations:
+        authorize: Authorize
+        authorize_account_html: Authorize <b>%{client_name}</b> to use your account?
+        cancel: Cancel
+        this_application_will_be_able_to: "This application will be able to:"
+    oauth_users:
+      new:
+        sign_up_with_oauth: Sign Up with %{provider_name}
+    options:
+      prevent_spoiler_of_episode_you_have_not_watched: Prevent spoiler of episode which you have not watched
+      prevent_spoiler_of_episode_you_have_not_watched_detail: This option will hide comments on unwatched episodes when you've set status as "Watched", "Plan to Watch", or "On Hold".
+    passwords:
+      new:
+        forgot_your_password: Forgot your password?
+    profiles:
+      saved: Profile has been saved.
+    programs:
+      no_programs: No programs
+      please_set_channels_html: Please set channels on %{channels_link} page.
+    providers:
+      removed: Removed.
+      you_can_not_disconnect: You can not disconnect.
+    records:
+      created: Created
+      deleted: Deleted
+      updated: Updated
+      new:
+        write_your_comment: Write Your Comment!
+      show:
+        record_by_name: "%{name}'s Record"
+    registrations:
+      new:
+        sign_in_link_html: Already have an account? %{link}
+        start_with_facebook: Start with Facebook
+        start_with_twitter: Start with Twitter
+        username_preview: "Your profile will be:"
+        username_preview_mobile: "Your profile:"
+      create:
+        confirmation_mail_has_sent: Confirmation mail has sent.
+    sayonara:
+      are_you_sure_really: Are you sure? Really??
+      delete_account: Delete Account
+      description: If you clicked "Delete Account" button, your data will be all deleted.
+    sessions:
+      new:
+        forgot_password: Forgot password?
+        remember_me: Remember me
+        sign_in_with_facebook: Sign in with Facebook
+        sign_in_with_twitter: Sign in with Twitter
+        sign_up_link_html: Don't have an account? %{link}
+    tracks:
+      no_trackable_episodes: No trackable episodes
+      skip_episode_confirmation: Are you sure to skip this episode and show next episode?
+      see_records: See records
+      tracked: Your record has been tracked.
+    users:
+      no_works: No works
+    work_images:
+      deleted: Work image has been deleted.
+      saved: Work image has been saved.
+      index:
+        dropzone-empty: Drop your image here or click to upload.
+    works:
+      view_all_n_characters: View all %{n} characters
+      view_all_n_episodes: View all %{n} episodes
+      view_all_n_staffs: View all %{n} staffs

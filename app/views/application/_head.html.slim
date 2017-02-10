@@ -1,0 +1,12 @@
+= ann_display_meta_tags
+
+link href="/images/favicon.png" rel="shortcut icon" type="image/png"
+link type="text/plain" rel="author" href="#{ENV.fetch('ANNICT_URL')}/humans.txt"
+= render "application/hreflang"
+
+= stylesheet_link_tag "pc", media: "all"
+= javascript_include_tag "pc"
+
+= csrf_meta_tags
+
+= yield :head

@@ -1,11 +1,9 @@
 - action_user = notification.action_user
+- action_name = link_to(action_user.profile.name, user_path(action_user.username))
 
-- action_name = link_to action_user.profile.name, user_path(action_user.username), class: 'username'
+span.mr-zp25
+  = action_user.decorate.name_link
+| followed you
 
-.notification-action.follows-create
-  .top
-    span.body
-      = t('notifications.follows_create_html', action_name: action_name)
-  .bottom
-    span.created-at title="#{notification.created_at.in_time_zone("Asia/Tokyo").strftime('%Y/%m/%d %H:%M')}"
-      = custom_time_ago_in_words(notification.created_at)
+.small.text-muted.mt-zp5
+  = local_time_ago_in_words(notification.created_at)

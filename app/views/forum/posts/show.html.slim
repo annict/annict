@@ -1,0 +1,64 @@
+- title = t "head.title.forum.posts.show", title: @post.title
+- set_meta_tags(title: title, reverse: true, prefix: false)
+- set_page_category "forum_posts_show"
+
+= render "application/components/navbar"
+= render "forum/application/subnav"
+
+.p-application__content
+  .container.mt-1.mb-2
+    .row.align-items-center.mb-1
+      .col-8
+        .row.align-items-center
+          .col.col-auto.pr-0
+            = link_to @post.forum_category.decorate.local_name,  forum_category_path(@post.forum_category.slug), class: "badge badge-default"
+          .col
+            h1.h2.mb-0 = @post.title
+
+    .c-card.p-1.mb-1
+      .row.mb-1
+        .col.col-auto.pr-0
+          = link_to user_path(@post.user.username) do
+            = ann_image_tag @post.user.profile, :tombo_avatar, size: "45x45", class: "rounded-circle"
+        .col.pl-zp5.u-lh-1
+          = link_to @post.user.profile.name, user_path(@post.user.username), class: "mr-zp25"
+          = @post.user.decorate.role_badge
+          .mt-zp25
+            = link_to forum_post_path(@post), class: "small text-muted", title: local_datetime(@post.created_at) do
+              = local_time_ago_in_words(@post.created_at)
+      c-body inline-template=""
+        .c-body__content = @post.body
+      - if policy(@post).edit?
+        .text-right.small
+          = link_to edit_forum_post_path(@post) do
+            = icon "pencil", class: "mr-zp25"
+            = t "noun.edit"
+
+    - if @comments.present?
+      - @comments.each do |comment|
+        .c-card.p-1.mb-1
+          .row.mb-1
+            .col.col-auto.pr-0
+              = link_to user_path(comment.user.username) do
+                = ann_image_tag comment.user.profile, :tombo_avatar, size: "45x45", class: "rounded-circle"
+            .col.pl-zp5.u-lh-1
+              = link_to comment.user.profile.name, user_path(comment.user.username), class: "mr-zp25"
+              = comment.user.decorate.role_badge
+              .mt-zp25
+                span.small.text-muted title="#{local_datetime(comment.created_at)}"
+                  = local_time_ago_in_words(comment.created_at)
+          c-body inline-template=""
+            .c-body__content = comment.body
+          - if policy(comment).edit?
+            .text-right.small
+              = link_to edit_forum_post_comment_path(@post, comment) do
+                = icon "pencil", class: "mr-zp25"
+                = t "noun.edit"
+    - else
+      .mb-1
+        = render "application/components/empty", text: t("messages.forum.posts.no_comments")
+
+    .c-card.p-1
+      = render "forum/comments/form", comment: @comment
+  
+= render "application/components/footer"

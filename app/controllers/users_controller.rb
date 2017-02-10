@@ -31,36 +31,28 @@
 #
 
 class UsersController < ApplicationController
-  before_action :authenticate_user!, only: [:destroy, :share]
-  before_action :set_user, only: [:show, :works, :following, :followers]
+  before_action :load_i18n, only: %i(show following followers)
+  before_action :authenticate_user!, only: %i(destroy share)
+  before_action :set_user, only: %i(show works following followers)
 
   def show
     @watching_works = @user.works.watching.published
     checkedin_works = @watching_works.checkedin_by(@user).order("c2.checkin_id DESC")
     other_works = @watching_works.where.not(id: checkedin_works.pluck(:id))
     @works = (checkedin_works + other_works).first(9)
-    @graph_labels = Annict::Graphs::Checkins.labels
-    @graph_values = Annict::Graphs::Checkins.values(@user)
-
-    render layout: "v1/application"
   end
 
-  def works(status_kind, page: nil)
-    @works = @user.works.on(status_kind).published.order_by_season(:desc).page(page)
-
-    render layout: "v1/application"
+  def works(status_kind)
+    @works = @user.works.on(status_kind).published
+    @seasons = Season.where(id: @works.pluck(:season_id)).order(sort_number: :desc)
   end
 
   def following
-    @users = @user.followings.order('follows.id DESC')
-
-    render layout: "v1/application"
+    @users = @user.followings.order("follows.id DESC")
   end
 
   def followers
-    @users = @user.followers.order('follows.id DESC')
-
-    render layout: "v1/application"
+    @users = @user.followers.order("follows.id DESC")
   end
 
   def destroy
@@ -73,5 +65,14 @@ class UsersController < ApplicationController
 
   def set_user
     @user = User.find_by!(username: params[:username])
+  end
+
+  def load_i18n
+    keys = {
+      "verb.follow": nil,
+      "noun.following": nil
+    }
+
+    load_i18n_into_gon keys
   end
 end

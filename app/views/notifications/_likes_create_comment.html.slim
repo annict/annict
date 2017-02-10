@@ -1,17 +1,16 @@
 - action_user = notification.action_user
-- trackable = notification.trackable
-- episode = trackable.recipient.checkin.episode
-- work = episode.work
+- comment = notification.trackable.recipient
+- record = comment.record
 
-- action_name = link_to action_user.profile.name, user_path(action_user.username), class: 'username'
-- work_title = link_to work.title, work_path(work), class: 'work-title'
-- episode_number = link_to "#{episode.number}", work_episode_path(work, episode), class: 'episode-number'
-- checkin = link_to t('words.checkin'), work_episode_checkin_path(work, episode, trackable.recipient.checkin), class: 'checkin'
+span.mr-zp25
+  = action_user.decorate.name_link
+| liked your comment
 
-.notification-action.likes-create
-  .top
-    span.body
-      = t('notifications.likes_create_comment_html', action_name: action_name, work_title: work_title, episode_number: episode_number, checkin: checkin)
-  .bottom
-    span.created-at title="#{notification.created_at.in_time_zone("Asia/Tokyo").strftime('%Y/%m/%d %H:%M')}"
-      = custom_time_ago_in_words(notification.created_at)
+.small.text-muted.my-zp5
+  = link_to local_time_ago_in_words(comment.created_at), record_path(current_user.username, record)
+  | :
+  span.ml-zp25
+    = comment.body
+
+.small.text-muted
+  = local_time_ago_in_words(notification.created_at)

@@ -1,0 +1,50 @@
+.mb-zp5
+  = link_to character_path(character) do
+    = image_tag ann_image_url(character.character_image, :attachment, size: "280x373"), class: "img-fluid img-thumbnail rounded"
+  - if character.character_image.present?
+    .u-very-small.text-right
+      = character.character_image.decorate.asin_or_copyright_text
+h1.h2
+  = link_to character.decorate.local_name, character_path(character)
+h2.h4.font-weight-bold.mt-2.mb-1
+  = icon "sticky-note-o", class: "mr-zp25"
+  = t "noun.information"
+dl
+  dt.small = t "activerecord.attributes.character.name"
+  dd = character.name
+  - if character.name_kana.present?
+    dt.small = t "activerecord.attributes.character.name_kana"
+    dd = character.name_kana
+  - if character.name_en.present?
+    dt.small = t "activerecord.attributes.character.name_en"
+    dd = character.name_en
+  - if character.nickname.present?
+    dt.small = t "activerecord.attributes.character.nickname"
+    dd = character.nickname
+  - if character.kind.present?
+    dt.small = t "activerecord.attributes.character.kind"
+    dd = character.kind
+  - if character.birthday.present?
+    dt.small = t "activerecord.attributes.character.birthday"
+    dd = character.birthday.strftime("%Y年%m月%d日")
+  - if character.age.present?
+    dt.small = t "activerecord.attributes.character.age"
+    dd = character.age
+  - if character.blood_type.present?
+    dt.small = t "activerecord.attributes.character.blood_type"
+    dd = character.blood_type_text
+  - if character.height.present?
+    dt.small = t "activerecord.attributes.character.height"
+    dd = "#{character.height}cm"
+  - if character.weight.present?
+    dt.small = t "activerecord.attributes.character.weight"
+    dd = "#{character.weight}kg"
+  - if character.nationality.present?
+    dt.small = t "activerecord.attributes.character.nationality"
+    dd = character.nationality
+  - if character.occupation.present?
+    dt.small = t "activerecord.attributes.character.occupation"
+    dd = character.occupation
+  - if character.description.present?
+    dt.small = t "activerecord.attributes.character.description"
+    dd = character.description

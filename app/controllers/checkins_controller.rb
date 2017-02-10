@@ -35,90 +35,39 @@
 #
 
 class CheckinsController < ApplicationController
-  permits :comment, :shared_twitter, :shared_facebook, :rating
-
-  before_action :authenticate_user!, only: [:create, :create_all, :edit,
-                                            :update, :destroy]
-  before_action :set_work, only: [:create, :create_all, :show, :edit,
-                                  :update, :destroy]
-  before_action :set_episode, only: [:create, :show, :edit, :update, :destroy]
-  before_action :load_record, only: [:show, :edit, :update, :destroy]
-  before_action :redirect_to_top, only: [:edit, :update, :destroy]
-
-  def create(checkin)
-    @record = @episode.checkins.new(checkin)
-    service = NewRecordService.new(current_user, @record, ga_client)
-
-    if service.save
-      redirect_to work_episode_path(@work, @episode), notice: t("checkins.saved")
-    else
-      service = RecordsListService.new(@episode, current_user, nil)
-
-      @record_user_ids = service.record_user_ids
-      @user_records = service.user_records
-      @current_user_records = service.current_user_records
-      @records = service.records
-
-      render "/episodes/show", layout: "v3/application"
-    end
-  end
-
-  def create_all(episode_ids)
-    records = MultipleRecordsService.new(current_user)
-    records.delay.save!(episode_ids)
-    ga_client.events.create("multiple_records", "create")
-    redirect_to work_path(@work), notice: t("checkins.saved")
-  end
+  before_action :load_work, only: %i(show)
+  before_action :load_episode, only: %i(show)
+  before_action :load_record, only: %i(show)
 
   def show
-    @records = @episode.checkins
-    @comments = @record.comments.order(created_at: :desc)
-    @comment = Comment.new
-
-    render layout: "v3/application"
-  end
-
-  def edit
-    @records = @episode.checkins
-    @comments = @record.comments.order(created_at: :desc)
-    render layout: "v3/application"
-  end
-
-  def update(checkin)
-    @record.modify_comment = true
-
-    if @record.update_attributes(checkin)
-      @record.update_share_checkin_status
-      @record.share_to_sns
-      redirect_to work_episode_checkin_path(@work, @episode, @record), notice: t('checkins.updated')
-    else
-      @records = @episode.checkins
-      @comments = @record.comments.order(created_at: :desc)
-      render :edit
-    end
-  end
-
-  def destroy
-    @record.destroy
-    redirect_to work_episode_path(@work, @episode), notice: t("checkins.deleted")
+    redirect_to record_path(@record.user.username, @record), status: 301
   end
 
   def redirect(provider, url_hash)
-    if 'tw' == provider
+    case provider
+    when "tw"
       checkin = Checkin.find_by!(twitter_url_hash: url_hash)
 
-      logger.info("Twitterからのアクセス remote_host: #{request.remote_host}, remote_ip: #{request.remote_ip}, remote_user: #{request.remote_user}")
+      log_messages = [
+        "Twitterからのアクセス ",
+        "remote_host: #{request.remote_host}, ",
+        "remote_ip: #{request.remote_ip}, ",
+        "remote_user: #{request.remote_user}"
+      ]
+      logger.info(log_messages.join)
 
       bots = TwitterBot.pluck(:name)
-      no_bots = bots.map { |bot| request.user_agent.present? && !request.user_agent.include?(bot) }
+      no_bots = bots.map do |bot|
+        request.user_agent.present? && !request.user_agent.include?(bot)
+      end
       checkin.increment!(:twitter_click_count) if no_bots.all?
 
-      redirect_to_episode(checkin)
-    elsif 'fb' == provider
+      redirect_to_user_record(checkin)
+    when "fb"
       checkin = Checkin.find_by!(facebook_url_hash: url_hash)
       checkin.increment!(:facebook_click_count)
 
-      redirect_to_episode(checkin)
+      redirect_to_user_record(checkin)
     else
       redirect_to root_path
     end
@@ -130,14 +79,9 @@ class CheckinsController < ApplicationController
     @record = @episode.checkins.find(params[:id])
   end
 
-  def redirect_to_top
-    return redirect_to root_path if @record.user != current_user
-  end
-
-  def redirect_to_episode(checkin)
-    work = checkin.episode.work
+  def redirect_to_user_record(checkin)
     username = checkin.user.username
 
-    redirect_to work_episode_path(work, checkin.episode, username: username)
+    redirect_to record_path(username, checkin)
   end
 end

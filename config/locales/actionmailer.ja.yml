@@ -1,0 +1,4 @@
+ja:
+  mention_mailer:
+    notify:
+      subject: "%{name} (@%{username})がAnnictであなたをメンションしました!"

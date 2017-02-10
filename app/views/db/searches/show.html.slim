@@ -1,24 +1,37 @@
-h2 作品
+- title = t "head.title.db.searches.show"
+- set_meta_tags(title: title, reverse: true, prefix: false)
+- set_page_category "db_searches_show"
 
-- if @works.present?
-  = render "db/works/works_list", works: @works
-- else
-  .well 作品は見つかりませんでした
+.l-topbar.container-fluid.px-1
+  .row.flex-items-xs-between
+    .col
+      = render "db/application/topbar_title", parent: title
 
-hr
+.container-fluid.p-1
+  .mb-3
+    h2.text-center.mb-1 = Work.model_name.human(count: 2)
+    - if @works.present?
+      = render "db/works/works_list", works: @works
+    - else
+      = render "application/components/empty", text: t("resources.work.there_are_no_works")
 
-h2 人物
-
-- if @people.present?
-  = render "db/people/people_list", people: @people
-- else
-  .well 人物は見つかりませんでした
-  
-hr
-
-h2 団体
-
-- if @organizations.present?
-  = render "db/organizations/organizations_list", organizations: @organizations
-- else
-  .well 団体は見つかりませんでした
+  .mb-3
+    h2.text-center.mb-1 = Person.model_name.human(count: 2)
+    - if @people.present?
+      = render "db/people/people_list", people: @people
+    - else
+      = render "application/components/empty", text: t("resources.person.there_are_no_people")
+    
+  .mb-3
+    h2.text-center.mb-1 = Organization.model_name.human(count: 2)
+    - if @organizations.present?
+      = render "db/organizations/organizations_list", organizations: @organizations
+    - else
+      = render "application/components/empty", text: t("resources.organization.there_are_no_organizations")
+      
+  .mb-3
+    h2.text-center.mb-1 = Character.model_name.human(count: 2)
+    - if @characters.present?
+      = render "db/characters/character_list", characters: @characters
+    - else
+      = render "application/components/empty", text: t("messages.db.characters.there_are_no_characters")

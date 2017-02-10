@@ -18,13 +18,13 @@ describe "Api::V1::Me::Records" do
       post api("/v1/me/records", data)
     end
 
-    it "200が返ること" do
+    it "responses 200" do
       expect(response.status).to eq(200)
     end
 
-    it "記録されること" do
-      expect(access_token.owner.checkins.count).to eq(1)
-      expect(access_token.owner.checkins.first.comment).to eq("Hello World")
+    it "creates a record" do
+      expect(access_token.owner.records.count).to eq(1)
+      expect(access_token.owner.records.first.comment).to eq("Hello World")
     end
   end
 
@@ -40,30 +40,30 @@ describe "Api::V1::Me::Records" do
       patch api("/v1/me/records/#{record.id}", data)
     end
 
-    it "200が返ること" do
+    it "responses 200" do
       expect(response.status).to eq(200)
     end
 
-    it "記録が更新されること" do
-      expect(access_token.owner.checkins.count).to eq(1)
-      expect(access_token.owner.checkins.first.comment).to eq(uniq_comment)
+    it "updates a record" do
+      expect(access_token.owner.records.count).to eq(1)
+      expect(access_token.owner.records.first.comment).to eq(uniq_comment)
     end
   end
 
   describe "DELETE /v1/me/records/:id" do
     let!(:record) { create(:checkin, work: work, episode: episode, user: user) }
 
-    it "204が返ること" do
+    it "responses 204" do
       delete api("/v1/me/records/#{record.id}", access_token: access_token.token)
       expect(response.status).to eq(204)
     end
 
-    it "記録が削除されること" do
-      expect(access_token.owner.checkins.count).to eq(1)
+    it "deletes a record" do
+      expect(access_token.owner.records.count).to eq(1)
 
       delete api("/v1/me/records/#{record.id}", access_token: access_token.token)
 
-      expect(access_token.owner.checkins.count).to eq(0)
+      expect(access_token.owner.records.count).to eq(0)
     end
   end
 end

@@ -1,18 +1,18 @@
-= render "application/v2/navbar"
+- title = t "head.title.notifications.index"
+- set_meta_tags(title: title, reverse: true, prefix: false)
+- set_page_category "notifications_index"
 
-.content
-  .container
-    .notifications
+= render "application/components/navbar"
+
+.p-application__content
+  .mb-2
+    .c-card.container.mt-1.u-mw-600
       - if @notifications.present?
         - @notifications.each do |notification|
-          = render 'notification', notification: notification
-
-        .text-center
-          = paginate @notifications
+          = render "notification", notification: notification
       - else
-        .info.well
-          .icon
-            i.fa.fa-info-circle
-          p = t('notifications.no_notifications')
+        = render "application/components/empty", text: t("messages.notifications.no_notifications")
+    .text-center
+      = paginate @notifications
 
-= render "application/v2/components/footer"
+= render "application/components/footer"

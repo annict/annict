@@ -1,67 +1,79 @@
-class Db::ProgramsController < Db::ApplicationController
-  permits :channel_id, :episode_id, :started_at, :rebroadcast
+# frozen_string_literal: true
 
-  before_action :authenticate_user!
-  before_action :load_work, only: [:index, :new, :create, :edit, :update, :destroy]
+module Db
+  class ProgramsController < Db::ApplicationController
+    permits :channel_id, :episode_id, :started_at, :rebroadcast, :time_zone
 
-  def index
-    @programs = @work.programs.order(started_at: :desc).order(:channel_id)
-  end
+    before_action :authenticate_user!
+    before_action :load_work, only: %i(index new create)
+    before_action :load_program, only: %i(edit update hide destroy activities)
 
-  def new
-    @program = @work.programs.new
-    authorize @program, :new?
-  end
-
-  def create(program)
-    @program = @work.programs.new(program)
-    authorize @program, :create?
-
-    if @program.valid?
-      change_to_utc_datetime!
-      @program.save_and_create_db_activity(current_user, "programs.create")
-      redirect_to db_work_programs_path(@work), notice: "放送予定を登録しました"
-    else
-      render :new
+    def index
+      @programs = @work.programs.order(started_at: :desc).order(:channel_id)
     end
-  end
 
-  def edit(id)
-    @program = @work.programs.find(id)
-    authorize @program, :edit?
-  end
-
-  def update(id, program)
-    @program = @work.programs.find(id)
-    @program.attributes = program
-    authorize @program, :update?
-
-    if @program.valid?
-      change_to_utc_datetime!
-      @program.save_and_create_db_activity(current_user, "programs.update")
-      redirect_to db_work_programs_path(@work), notice: "放送予定を更新しました"
-    else
-      render :edit
+    def new
+      @form = DB::ProgramRowsForm.new
+      authorize @form, :new?
     end
-  end
 
-  def destroy(id)
-    @program = @work.programs.find(id)
-    authorize @program, :destroy?
+    def create(db_program_rows_form)
+      @form = DB::ProgramRowsForm.new(db_program_rows_form.permit(:rows))
+      @form.user = current_user
+      @form.work = @work
+      authorize @form, :create?
 
-    @program.destroy
+      return render(:new) unless @form.valid?
+      @form.save!
 
-    redirect_to db_work_programs_path(@work), notice: "放送予定を削除しました"
-  end
+      redirect_to db_work_programs_path(@work), notice: t("resources.program.created")
+    end
 
-  private
+    def edit
+      authorize @program, :edit?
+      @work = @program.work
+    end
 
-  def load_work
-    @work = Work.find(params[:work_id])
-  end
+    def update(program)
+      authorize @program, :update?
+      @work = @program.work
 
-  def change_to_utc_datetime!
-    @program.started_at = @program.started_at.in_time_zone("Asia/Tokyo") - 9.hours
-    @program.sc_last_update = Time.now.in_time_zone("Asia/Tokyo")
+      @program.attributes = program
+      @program.user = current_user
+
+      return render(:edit) unless @program.valid?
+      @program.save_and_create_activity!
+
+      redirect_to db_work_programs_path(@work), notice: t("resources.program.updated")
+    end
+
+    def hide
+      authorize @program, :hide?
+
+      @program.hide!
+
+      flash[:notice] = t("resources.program.unpublished")
+      redirect_back fallback_location: db_works_path
+    end
+
+    def destroy
+      authorize @program, :destroy?
+
+      @program.destroy
+
+      flash[:notice] = t("resources.program.deleted")
+      redirect_back fallback_location: db_works_path
+    end
+
+    def activities
+      @activities = @program.db_activities.order(id: :desc)
+      @comment = @program.db_comments.new
+    end
+
+    private
+
+    def load_program
+      @program = Program.find(params[:id])
+    end
   end
 end

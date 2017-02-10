@@ -1,0 +1,23 @@
+- if user_signed_in?
+  - records = current_user.records.where(episode_id: episode.id)
+tr
+  - if user_signed_in? && (params[:controller] == "episodes" && params[:action] == "index")
+    td v-show="isTrackingMode"
+      input type="checkbox" v-model="episodeIds" value="#{episode.id}"
+  - if episode.single?
+    td.c-episode-row__w60
+      = link_to work_episode_path(work, episode) do
+        = episode.title
+  - else
+    td.c-episode-row__w20
+      = link_to work_episode_path(work, episode) do
+        = episode.number
+    td.c-episode-row__w40
+      - if episode.title.present?
+        = link_to work_episode_path(work, episode) do
+          = episode.title
+  - if user_signed_in?
+    td.c-episode-row__w20
+      - if records.count > 0
+        = icon "check-circle-o", class: "c-episode-row__check"
+        small.ml-zp25 = records.count

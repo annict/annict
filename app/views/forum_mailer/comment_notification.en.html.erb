@@ -1,0 +1,4 @@
+<%= @name %> (@<%= @username %>) has commented in a post.<br>
+<br>
+<%= simple_format(@comment.body) %><br>
+<%= link_to "Reply", forum_post_url(@comment.forum_post) %>

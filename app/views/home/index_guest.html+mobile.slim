@@ -1,46 +1,40 @@
-- title = "アニクト - 見たアニメを記録して、共有しよう"
-- description = meta_description
-- keywords = meta_keywords
-- set_meta_tags(title: title, description: description, keywords: keywords)
+- title = t "head.title.home.index_guest"
+- set_meta_tags(title: title, reverse: false)
+- set_page_category "home_index_guest"
 
-.hero
-  .work-image style="background-image: url(#{annict_image_url(@cover_image_work.item, :tombo_image, size: '640x640', blur: 200)});"
-  .content
-    h1 Annict
-    .description
-      | 見たアニメを記録して、共有しよう。
-    .btns
-      = link_to "詳しく", about_path, class: "about-btn"
-      .signup-btn
-        ann-action-blocker v-cloak="" modal-template-id="signup-modal" is-blocked="true"
-          = icon "rocket"
-          .text アカウント登録
-    .signin
-      ann-action-blocker modal-template-id="signin-modal" is-blocked="true"
-        | ログイン
+.p-top-hero
+  .p-top-hero__bg-image style="background-image: url(#{ann_image_url(@cover_image_work.work_image, :attachment, size: '640x640', blur: 200)});"
+  .p-top-hero__content.text-center.p-1
+    = image_tag "logos/color-white.png", size: "40x48", alt: "Annict"
+    h1.mb-1 = t("messages.home.index_guest.hero_title_mobile_html")
+    p.p-top-hero__description.mb-2
+      = t "messages.home.index_guest.hero_description_mobile_html"
+    = link_to new_user_registration_path, class: "btn btn-primary" do
+      = icon "rocket"
+      = t("noun.sign_up")
 
-.content
-  .section
-    h2 今期の人気アニメ
-    .content
-      = render "works", top_work: @season_top_work, works: @season_works
-      .more
-        = link_to season_works_path(slug: ENV["ANNICT_CURRENT_SEASON"]) do
-          | 今期のアニメを全て見る
+h2.h3.text-center.my-1 = t("noun.popular_airing_anime")
+.c-card.p-1.mb-1
+  = render "home/top_work", top_work: @season_top_work
 
-  .section
-    h2 人気アニメ
-    .content
-      = render "works", top_work: @top_work, works: @works
-      .more
-        = link_to popular_works_path do
-          | 人気アニメを全て見る
+.c-card.p-1
+  = render "home/other_works", other_works: @season_works
+  .text-center.mt-2
+    = link_to t("verb.view_more"), season_works_path(slug: ENV["ANNICT_CURRENT_SEASON"]), class: "btn btn-primary"
 
-= render "application/v2/components/footer"
+h2.text-center.my-1
+  = t "noun.popular_anime"
+.c-card.p-1.mb-1
+  = render "home/top_work", top_work: @top_work
+.c-card.p-1
+  = render "home/other_works", other_works: @works
+  .text-center.mt-2
+    = link_to t("verb.view_more"), popular_works_path, class: "btn btn-primary"
 
-- content_for :parts do
-  = render "application/v2/components/status_selector"
-  - unless user_signed_in?
-    = render "application/v2/components/prevent_change_status_modal"
-    = render "application/v2/components/signin_modal"
-    = render "application/v2/components/signup_modal"
+hr.my-2
+
+= render "application/components/footer"
+= render "application/components/tabbar"
+
+- content_for :js_templates
+  = render "application/js_templates/status_selector"

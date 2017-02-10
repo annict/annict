@@ -1,0 +1,201 @@
+en:
+  activerecord:
+    attributes:
+      cast:
+        character_id: Character
+        name_en: Name (en)
+        name: Name
+        part: Part
+        person_id: Person
+        sort_number: Sort number
+        work_id: Work
+      channel:
+        name: Name
+      character:
+        name: Name
+        name_kana: Name (kana)
+        name_en: Name (en)
+        kind: Kind
+        kind_en: Kind (en)
+        nickname: Nickname
+        nickname_en: Nickname (en)
+        birthday: Birthday
+        birthday_en: Birthday (en)
+        age: Age
+        age_en: Age (en)
+        blood_type: Blood type
+        blood_type_en: Blood type (en)
+        height: Height
+        height_en: Height (en)
+        weight: Weight
+        weight_en: Weight (en)
+        nationality: Nationality
+        nationality_en: Nationality (en)
+        occupation: Occupation
+        occupation_en: Occupation (en)
+        description: Description
+        description_en: Description (en)
+      character_image:
+        attachment: Image
+      checkin:
+        comment: Comment
+        rating: Rating
+      comment:
+        body: Comment
+      doorkeeper/application:
+        name: Application Name
+        redirect_uri: Redirect URI
+        scopes: Scopes
+      episode:
+        checkins_count: Records count
+        fetch_syobocal: Fetch Syobocal
+        number: Number (ja)
+        prev_episode_id: Previous Episode
+        raw_number: Number (Raw)
+        sc_count: Syobocal number
+        sort_number: Sort number
+        title: Title
+      forum_post:
+        body: Body
+        title: Title
+        forum_category: Category
+        forum_category_id: Category
+        forum_comments_count: Comments
+        last_commented_at: Last Comment
+      item:
+        name: Name
+        url: URL
+        tombo_image: Image
+      oauth_application:
+        redirect_uri: Redirect URI
+        scope: Scope
+        secret: Client Secret
+        uid: Client ID
+      organization:
+        aasm_state: State
+        name_en: Name (en)
+        name_kana: Name (kana)
+        name: Name
+        twitter_username_en: Twitter (en)
+        twitter_username: Twitter
+        url_en: URL (en)
+        url: URL
+        wikipedia_url_en: Wikipedia (en)
+        wikipedia_url: Wikipedia
+      person:
+        aasm_state: State
+        birthday: Birthday
+        blood_type_en: Blood Type (en)
+        blood_type: Blood Type
+        gender_en: Gender (en)
+        gender: Gender
+        height: Height
+        name_en: Name (en)
+        name_kana: Name (kana)
+        name: Name
+        nickname_en: Nickname (en)
+        nickname: Nickname
+        prefecture_id: Prefecture
+        twitter_username_en: Twitter (en)
+        twitter_username: Twitter
+        url_en: URL (en)
+        url: URL
+        wikipedia_url_en: Wikipedia (en)
+        wikipedia_url: Wikipedia
+      profile:
+        avatar: Profile Image
+        background_image: Background Image
+        description: Comment
+        name: Name
+        url: URL
+      program:
+        channel_id: Channel
+        episode_id: Episode
+        rebroadcast: Rebroadcast
+        started_at: Started at
+      staff:
+        name_en: Name (en)
+        name: Name
+        resource_id: Person or Organization
+        role_other_en: Role (other/en)
+        role_other: Role (other)
+        role: Role
+        sort_number: Sort number
+        work_id: Work
+      user:
+        current_password: Current password
+        email_username: Email or Username
+        email: Email
+        locale: Language
+        password: Password
+        password_confirmation: Password (Confirmation)
+        terms: Terms and Privacy
+        time_zone: Time zone
+        username: Username
+      work:
+        mal_anime_id: MAL Anime ID
+        media: Media
+        number_format_id: Number format
+        official_site_url_en: Official site (en)
+        official_site_url: Offisial site (ja)
+        sc_tid: Syobocal ID
+        season_id: Season
+        season: Season
+        synopsis_en: Synopsis (en)
+        synopsis_source_en: Synopsis source (en)
+        synopsis_source: Synopsis source (ja)
+        synopsis: Synopsis (ja)
+        title_en: Title (en)
+        title_kana: Title (kana)
+        title_ro: Title (romanized)
+        title: Title (ja)
+        twitter_hashtag: Twitter hashtag
+        twitter_username: Twitter username
+        wikipedia_url_en: Wikipedia (en)
+        wikipedia_url: Wikipedia (ja)
+      work_image:
+        attachment: Image
+        asin: ASIN
+        asin_or_copyright: ASIN or Copyright
+        copyright: Copyright
+      work_organization:
+        organization_id: Organization
+        work_id: Work
+        role: Role
+        role_other: Role (Other)
+        sort_number: Sort Number
+    errors:
+      messages:
+        accepted: should be accepted.
+        url: need to input.
+    models:
+      character:
+        one: Character
+        other: Characters
+      cast:
+        one: Cast
+        other: Casts
+      db_activity:
+        one: Activity
+        other: Activities
+      db_comment:
+        one: Comment
+        other: Comments
+      episode:
+        one: Episode
+        other: Episodes
+      organization:
+        one: Organization
+        other: Organizations
+      person:
+        one: Person
+        other: People
+      program:
+        one: Program
+        other: Programs
+      staff:
+        one: Staff
+        other: Staffs
+      work:
+        one: Work
+        other: Works

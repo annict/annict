@@ -1,31 +1,39 @@
+# frozen_string_literal: true
+
 class OrganizationDecorator < ApplicationDecorator
-  include OrganizationDecoratorCommon
+  include PersonOrgDecoratorCommon
 
   def db_detail_link(options = {})
     name = options.delete(:name).presence || self.name
-    path = if h.user_signed_in? && h.current_user.committer?
-      h.edit_db_organization_path(self)
-    else
-      h.new_db_draft_organization_path(organization_id: id)
+    h.link_to name, h.edit_db_organization_path(self), options
+  end
+
+  def grid_description(staff)
+    staff.decorate.role_name
+  end
+
+  def to_values
+    model.class::DIFF_FIELDS.each_with_object({}) do |field, hash|
+      hash[field] = case field
+      when :url
+        url = send(:url)
+        h.link_to(url, url, target: "_blank") if url.present?
+      when :wikipedia_url
+        wikipedia_url = send(field)
+        if wikipedia_url.present?
+          h.link_to(URI.decode(wikipedia_url), wikipedia_url, target: "_blank")
+        end
+      when :twitter_username
+        username = send(:twitter_username)
+        if username.present?
+          url = "https://twitter.com/#{username}"
+          h.link_to("@#{username}", url, target: "_blank")
+        end
+      else
+        send(field)
+      end
+
+      hash
     end
-
-    h.link_to name, path, options
-  end
-
-  def name_link
-    h.link_to name, h.organization_path(self)
-  end
-
-  def twitter_username_link
-    url = "https://twitter.com/#{twitter_username}"
-    h.link_to "@#{twitter_username}", url, target: "_blank"
-  end
-
-  def wikipedia_url_link
-    h.link_to "Wikipedia", wikipedia_url, target: "_blank"
-  end
-
-  def url_link
-    h.link_to URI.parse(url).host.downcase, url, target: "_blank"
   end
 end

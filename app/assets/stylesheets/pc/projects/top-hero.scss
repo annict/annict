@@ -1,0 +1,30 @@
+.p-top-hero {
+  height: 400px;
+  position: absolute;
+  top: 0;
+  width: 100%;
+
+  &__bg-image {
+    @include filter(brightness(50%));
+    background-position: center;
+    background-size: cover;
+    height: 100%;
+  }
+
+  &__content {
+    height: 100%;
+    left: 0;
+    position: absolute;
+    top: 0;
+    width: 100%;
+
+    h1 {
+      color: $ann-color-white;
+      margin-top: 8rem;
+    }
+  }
+
+  &__description {
+    color: $ann-color-white;
+  }
+}

@@ -1,0 +1,16 @@
+# frozen_string_literal: true
+
+json = {}
+
+json[:latest_statuses] = @latest_statuses.map do |latest_status|
+  render "api/internal/latest_statuses/latest_status", latest_status: latest_status
+end
+
+json[:user] = {
+  authorized_to_twitter: current_user.authorized_to?(:twitter),
+  authorized_to_facebook: current_user.authorized_to?(:facebook),
+  share_record_to_twitter: current_user.setting&.share_record_to_twitter?,
+  share_record_to_facebook: current_user.setting&.share_record_to_facebook?,
+}
+
+json

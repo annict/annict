@@ -1,22 +1,29 @@
 = form_for application, url: doorkeeper_submit_path(application) do |f|
-  = render "application/v3/error_panel", resource: @application
+  = render "application/components/error_panel", resource: application
+  
+  = hidden_field_tag :page_category, page_category
 
-  = f.label :name do
-    | アプリケーション名
-    = f.text_field :name
+  .form-group.row
+    = f.label :name, class: "col-2 col-form-label"
+    .col-10
+      = f.text_field :name, class: "form-control"
 
-  = f.label :redirect_uri
-    | リダイレクトURI
-    = f.text_area :redirect_uri, rows: 5
-    p.help-text
-      | URIを一行ごと入力してください
-    - if Doorkeeper.configuration.native_redirect_uri
-      p.help-text
-        = "ローカルアプリ用に #{Doorkeeper.configuration.native_redirect_uri} もご利用頂けます"
+  .form-group.row
+    = f.label :redirect_uri, class: "col-2 col-form-label"
+    .col-10
+      = f.text_area :redirect_uri, rows: 5, class: "form-control"
+      small.form-text.text-muted
+        = t "messages.oauth.applications.please_input_uris_with_new_line"
+      - if Doorkeeper.configuration.native_redirect_uri
+        small.form-text.text-muted
+          = t "messages.oauth.applications.you_can_use_the_uri_for_local_application", uri: Doorkeeper.configuration.native_redirect_uri
 
-  = f.label :scopes
-    | スコープ
-    = select_tag "doorkeeper_application[scopes]", options_for_select([["読み込み専用", "read"], ["読み込み + 書き込み", "read write"]])
-    = doorkeeper_errors_for application, :scopes
+  .form-group.row
+    = f.label :scopes, class: "col-2 col-form-label"
+    .col-10
+      = select_tag "doorkeeper_application[scopes]", options_for_select([[t("messages.oauth.applications.read_only"), "read"], [t("messages.oauth.applications.read_write"), "read write"]]), class: "form-control"
+      = doorkeeper_errors_for application, :scopes
 
-  = f.submit "登録する", class: "button"
+  .form-group.row.mb-0
+    .col-10.offset-2
+      = f.submit class: "btn btn-primary"

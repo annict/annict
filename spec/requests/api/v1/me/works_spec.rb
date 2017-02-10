@@ -15,12 +15,32 @@ describe "Api::V1::Me::Records" do
       get api("/v1/me/works", data)
     end
 
-    it "200が返ること" do
+    it "responses 200" do
       expect(response.status).to eq(200)
     end
 
-    it "ステータスを更新している作品が取得できること" do
-      expect(json["works"][0]["title"]).to eq(work.title)
+    it "gets works which user has updated their statuses" do
+      expected_hash = {
+        "id" => work.id,
+        "title" => work.title,
+        "title_kana" => work.title_kana,
+        "media" => "tv",
+        "media_text" => "TV",
+        "season_name" => "2017-winter",
+        "season_name_text" => "2017年冬",
+        "released_on" => "2012-04-05",
+        "released_on_about" => "2012年",
+        "official_site_url" => "http://example.com",
+        "wikipedia_url" => "http://wikipedia.org",
+        "twitter_username" => "precure_official",
+        "twitter_hashtag" => "precure",
+        "episodes_count" => 0,
+        "watchers_count" => 1
+      }
+      expect(json["works"][0].stringify_keys).to include(expected_hash)
+      expect(json["total_count"]).to eq(1)
+      expect(json["next_page"]).to eq(nil)
+      expect(json["prev_page"]).to eq(nil)
     end
   end
 end

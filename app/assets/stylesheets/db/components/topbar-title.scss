@@ -1,0 +1,8 @@
+.c-topbar-title {
+  &__child {
+    &::before {
+      content: ">";
+      padding: 0 .5rem;
+    }
+  }
+}

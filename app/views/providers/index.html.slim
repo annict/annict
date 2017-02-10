@@ -1,34 +1,12 @@
-= render "application/v2/navbar"
-= render "application/v1/settings_tabs"
+- title = t "head.title.providers.index"
+- set_meta_tags(title: title, reverse: true, prefix: false)
+- set_page_category "providers_index"
 
-.content
-  .container
-    .wrapper
-      .twitter
-        .head
-          | Twitter
-        .body
-          - if current_user.shareable_to?(:twitter)
-            - if current_user.shareable_to?(:facebook)
-              = link_to "解除する", provider_path(current_user.twitter), class: "btn btn-sm btn-link", data: { method: :delete, confirm: "解除しますか？" }
-            - else
-              span.cancel-disabled 解除できません
-          - else
-            = link_to user_twitter_omniauth_authorize_path(back: providers_path), class: "btn btn-sm btn-twitter" do
-              = icon("twitter", class: "icon")
-              | 連携する
-      .facebook
-        .head
-          | Facebook
-        .body
-          - if current_user.shareable_to?(:facebook)
-            - if current_user.shareable_to?(:twitter)
-              = link_to "解除する", provider_path(current_user.facebook), class: "btn btn-sm btn-link", data: { method: :delete, confirm: "解除しますか？" }
-            - else
-              span.cancel-disabled 解除できません
-          - else
-            = link_to user_facebook_omniauth_authorize_path(back: providers_path), class: "btn btn-sm btn-facebook" do
-              = icon("facebook", class: "icon")
-              | 連携する
+= render "application/components/navbar"
+= render "settings/subnav"
 
-= render "application/v2/components/footer"
+.p-application__content
+  .c-card.u-mw-600.mx-auto.mt-1.mb-2.py-1
+    = render "providers/provider_list"
+
+= render "application/components/footer"

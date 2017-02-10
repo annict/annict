@@ -1,0 +1,9 @@
+- if access_tokens.present?
+  - access_tokens.each do |access_token|
+    .row
+      .col
+        = access_token.application.name
+      .col.text-right
+        = link_to t("noun.revoke"), app_revoke_path(access_token.application), class: "btn btn-sm btn-link", data: { method: :patch, confirm: t("messages._common.are_you_sure") }
+- else
+  = render "application/components/empty", text: t("messages.apps.no_applications")

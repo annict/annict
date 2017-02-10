@@ -3,6 +3,7 @@ ja:
     failure:
       already_authenticated: 'すでに認証されています'
       user:
+        invalid: ログインできません
         unauthenticated: ログインしてください
         unconfirmed: メールアドレスの確認が完了していないため、ログインできませんでした
     mailer:
@@ -13,4 +14,5 @@ ja:
         failure: 認証に失敗しました。時間をおいて再度お願いします
     sessions:
       user:
-        signed_out: ''
+        signed_in: ログインしました
+        signed_out: ログアウトしました

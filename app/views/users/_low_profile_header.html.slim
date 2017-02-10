@@ -1,0 +1,13 @@
+.p-profile-header.p-profile-header--low
+  .p-profile-header__cover-image style="background-image: url(#{profile_background_image_url(user.profile, size: '500x325')});"
+  .p-profile-header__info
+    .container
+      .row
+        .col.u-flex-grow-0
+          = link_to user_path(username: user.username) do
+            = ann_image_tag(user.profile, :tombo_avatar, size: "80x80", class: "p-profile-header__avatar rounded-circle")
+        .col.pt-zp5.pl-0
+          h1
+            = link_to user.profile.name, user_path(username: user.username), class: "font-weight-bold"
+          .mt-zp5
+            = link_to "@#{user.username}", user_path(username: user.username)

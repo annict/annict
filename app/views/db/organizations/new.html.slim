@@ -1,7 +1,12 @@
-= render "create_type_tab", organization: @organization
+.l-topbar.container-fluid.px-1
+  .row.flex-items-xs-between
+    .col-8
+      = render "db/application/topbar_title", parent: t("resources.organization.new_organization")
 
-.row
-  .col-sm-7
-    = render "form", organization: @organization
-  .col-sm-5
-    = render "sidebar"
+.container-fluid.p-1
+  .row
+    .col-6
+      .c-card.p-1
+        = render "form", organization: @organization
+    .col-6
+      = render "sidebar"

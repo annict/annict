@@ -1,225 +1,51 @@
-- title = "アニメ「#{@work.title}」"
-- description = meta_description("#{@work.title}を見たらAnnictに記録しよう！")
+- title = t "head.title.works.show", title: @work.decorate.local_title
+- description = meta_description(t("head.meta.description.works.show", title: @work.decorate.local_title))
 - keywords = meta_keywords(@work.title)
-- image_url = annict_image_url(@work.item, :tombo_image, size: "640x640")
-- set_meta_tags(title: title, description: description, keywords: keywords, og: { title: title, description: description, image: image_url }, reverse: true, prefix: false)
+- image_url = ann_image_url(@work.work_image, :attachment, size: "640x")
+- set_meta_tags(title: title, description: description, keywords: keywords, og: { description: description, image: image_url }, twitter: { description: description, image: image_url }, reverse: true, prefix: false)
+- set_page_category "works_show"
 
-- content_for :head do
-  = render "application/v2/twitter", title: title, description: description, image: image_url
+= render "application/components/navbar"
 
-= render "application/v2/navbar"
+.p-application__content
+  .container.py-1.mb-2
+    .row
+      .col-3.pr-0
+        = render "sidebar", work: @work
+      .col-9
+        = render "subnav", work: @work
 
-.content
-  .wrapper
-    .work-profile
-      .work-image style="background-image: url(#{annict_image_url(@work.item, :tombo_image, msize: '320x320', size: '640x640')});"
-      .wrapper
-        .work-title
-          h1
-            = @work.title
-        - if user_signed_in?
-          ann-status-selector work-id="#{@work.id}" status-kind="#{current_user.status_kind(@work)}"
-        - else
-          ann-status-selector work-id="#{@work.id}" status-kind="no_select" is-prevented="true"
-
-        .work-statistics
-          .status
-            .count
-              = @work.checkins_count
-            .text
-              | Records
-          .status
-            .count
-              = @work.watchers_count
-            .text
-              | Watchers
-          .status
-            .count
-              = @work.comments_count
-            .text
-              | Comments
-          .clearfix
-
-    - if user_signed_in? && !browser.mobile?
-      .annict-db-link
-        - if current_user.role.admin?
-          = link_to "作品を編集する", edit_db_work_path(@work)
-        - else
-          = link_to "作品を編集する", new_db_draft_work_path(work_id: @work.id)
-
-    - unless user_signed_in?
-      = render("application/v1/welcome_to_annict")
-
-    .work-chart.container
-      h2.text-center = t("works.checkin_chart")
-      - if @work.checkins_count > 0
-        ann-work-chart.wrapper data-labels="#{@work.chart_labels}" data-values="#{@work.chart_values}"
-          - if browser.mobile?
-            canvas width="285" height="150"
+        h2.h4.text-center.my-2.font-weight-bold = t "noun.episodes"
+        .c-card.mt-1.py-1
+          - if @episodes.present?
+            - if user_signed_in?
+              .container.mb-zp5
+                = link_to t("noun.bulk_tracking"), work_episodes_path(@work, tracking: "on"), class: "small"
+            table.p-episodes-table.table.mb-0
+              tbody
+                - @episodes.order(:sort_number).limit(10).each do |episode|
+                  = render "episodes/episode_row", work: @work, episode: episode
+            - if @episodes.count > 10
+              .px-1.mt-1
+                = link_to t("messages.works.view_all_n_episodes", n: @episodes.count), work_episodes_path(@work), class: "btn btn-secondary w-100"
           - else
-            canvas width="460" height="200"
-      - else
-        .info.well
-          .icon
-            i.fa.fa-info-circle
-          p = t("episodes.no_checkins")
+            = render "application/components/empty", text: t("resources.episode.no_episodes")
 
-    .work-info.container
-      h2.text-center
-        = t("works.work_info")
-      ul.list-unstyled
-        li
-          = icon("tv")
-          = @work.media.text
-        - if @work.decorate.release_season.present?
-          li
-            = icon("calendar-o")
-            = @work.decorate.release_season_link
-        - if @work.official_site_url.present?
-          li
-            = icon("home")
-            = link_to "公式サイト", @work.official_site_url, target: "_blank"
-        - if @work.wikipedia_url.present?
-          li
-            = icon("link")
-            = link_to t("words.wikipedia"), @work.wikipedia_url, target: "_blank"
-        - if @work.sc_tid.present?
-          li
-            = icon("link")
-            = @work.decorate.syobocal_link("しょぼかる")
-        - if @work.twitter_username.present?
-          li
-            = icon("twitter")
-            = @work.decorate.twitter_username_link
-        - if @work.twitter_hashtag.present?
-          li
-            = icon("twitter")
-            = @work.decorate.twitter_hashtag_link
+        h2.h4.text-center.my-2.font-weight-bold = t "noun.characters"
+        .c-card.container.mt-1.py-1
+          = render "characters/character_list", casts: @casts.order(:sort_number).limit(9)
+          - if @casts.count > 9
+            .mt-1
+              = link_to t("messages.works.view_all_n_characters", n: @casts.count), work_characters_path(@work), class: "btn btn-secondary w-100"
 
-    hr
+        h2.h4.text-center.my-2.font-weight-bold = t "noun.staffs"
+        .c-card.container.mt-1.py-1
+          = render "staffs/staff_list", staffs: @staffs.order(:sort_number).limit(9)
+          - if @staffs.count > 9
+            .mt-1
+              = link_to t("messages.works.view_all_n_staffs", n: @staffs.count), work_staffs_path(@work), class: "btn btn-secondary w-100"
 
-    .work-episodes.container ng-controller="WorkEpisodesCtrl"
-      h2.text-center
-        = t("words.episode")
+= render "application/components/footer"
 
-      - if @work.episodes.published.present?
-        - if user_signed_in?
-          .multiple-checkin
-            .fake-link.fake-link-small ng-click="showCheckinCheckbox()" ng-hide="showingCheckinCheckbox"
-              = t("words.multiple_checkin")
-            span.fake-link.fake-link-small ng-click="checkAll(#{@work.episodes.published.pluck(:id)})" ng-show="!allChecking && showingCheckinCheckbox"
-              = t("works.check_all")
-            span.fake-link.fake-link-small ng-click="uncheckAll()" ng-show="allChecking"
-              = t("works.uncheck_all")
-        table.table.table-striped
-          tbody
-            - @work.episodes.published.order(:sort_number).each do |episode|
-              tr
-                - if user_signed_in?
-                  td.checkbox-column ng-show="showingCheckinCheckbox"
-                    input ng-click="check($event, #{episode.id})" ng-checked="allChecking" type="checkbox"
-                - if episode.single?
-                  td.title
-                    = link_to work_episode_path(@work, episode) do
-                      = episode.title
-                - else
-                  td.number
-                    = link_to work_episode_path(@work, episode) do
-                      = episode.number
-                  td.title
-                    - if episode.title.present?
-                      = link_to work_episode_path(@work, episode) do
-                        = episode.title
-                - if user_signed_in?
-                  td.checkins
-                    - checkins = current_user.checkins.where(episode_id: episode.id)
-                    - if checkins.count > 0
-                      i.fa.fa-check
-                      - if checkins.count > 1
-                        span.badge
-                          = checkins.count
-        - if user_signed_in?
-          = form_tag create_all_work_checkins_path(@work) do
-            = hidden_field_tag :episode_ids, "{{episodeIds}}"
-            .submit-menu
-              span.fake-link.fake-link-small ng-click="showingCheckinCheckbox = false" ng-show="showingCheckinCheckbox"
-                = t("words.cancel")
-              button.btn-submitting.btn.btn-primary.btn-sm type="submit" ng-show="showingCheckinCheckbox" ng-disabled="episodeIds.length === 0"
-                i.fa.fa-check
-                = t("episodes.checkin")
-            .clearfix ng-show="showingCheckinCheckbox"
-
-          p.multiple-records-hint ng-show="showingCheckinCheckbox"
-            | ※一括記録は「記録する」ボタンを押してもすぐには反映されません。
-            | ボタンを押したあと、このページをリロードしてみて下さい。
-            | しばらく経つと全て記録されます。
-
-        - if user_signed_in?
-          .update-request
-            | 最新のエピソードが登録されていない場合は
-            = link_to "編集リクエストを作成", db_work_episodes_path(@work)
-            | することで自分でエピソードを登録することができます。-
-            = link_to "編集リクエストとは？", db_root_path
-      - else
-        .info.well
-          .icon
-            i.fa.fa-info-circle
-          p エピソードが登録されていません
-          - if user_signed_in?
-            .new-edit-request-btn
-              = link_to db_work_episodes_path(@work), class: "btn btn-primary" do
-                = icon('pencil')
-                | 編集リクエストを作る
-            .edit-request-description-btn
-              = link_to "編集リクエストとは？", db_root_path
-
-    - if @work.casts.present?
-      hr
-      .casts.container
-        h2.text-center キャスト
-        table
-          tbody
-            - @work.casts.published.order(:sort_number).each do |cast|
-              - cache cast do
-                tr
-                  th = cast.part
-                  td = cast.decorate.name_with_old_link
-
-    - if @work.staffs.present?
-      hr
-      .staffs.container
-        h2.text-center スタッフ
-        table
-          tbody
-            - @work.staffs.published.order(:sort_number).each do |staff|
-              - cache staff do
-                tr
-                  th = staff.decorate.role_name
-                  td = staff.decorate.name_with_old_link
-
-    - if @work.item.present?
-      hr
-
-      #about-works-image
-        .container
-          h2.text-center 作品画像について
-          .media
-            = link_to @work.item.url, class: "pull-left" do
-              = annict_image_tag(@work.item, :tombo_image, size: "80x80", alt: @work.item.name)
-            .media-body
-              .description
-                - link = link_to @work.item.name, @work.item.url, target: "_blank"
-                = t("works.about_amazon_item_1_html", link: link)
-                .detail
-                  = t("works.about_amazon_item_2")
-              .amazon-btn
-                = link_to @work.item.url, class: "btn btn-primary", target: "_blank" do
-                  = icon("amazon")
-                  | Amazonで見てみる
-
-= render "application/v2/components/footer"
-
-- content_for :parts do
-  = render "application/v2/components/status_selector"
-  - unless user_signed_in?
-    = render "application/v2/components/prevent_change_status_modal"
+- content_for :js_templates do
+  = render "application/js_templates/status_selector"

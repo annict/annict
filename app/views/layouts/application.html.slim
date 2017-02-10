@@ -1,0 +1,16 @@
+doctype html
+html lang="#{I18n.locale}"
+  head
+    = render "application/head"
+  body class="#{body_classes} #{user_signed_in? ? 'is-user' : 'is-guest'}"
+    .p-application.d-flex.flex-column
+      c-flash
+      = yield
+      - unless user_signed_in?
+        = render "application/components/sign_up_modal", user: @new_user
+
+    = include_gon
+    = render "application/analytics"
+
+    = render "application/js_templates/flash"
+    = yield :js_templates

@@ -9,11 +9,11 @@ class UserProgramsQuery
 
   # 記録していないエピソードと紐づく番組情報を返す
   def unwatched
-    Program.where(id: program_ids(channel_works, scope: :unwatched))
+    Program.published.where(id: program_ids(channel_works, scope: :unwatched))
   end
 
   def all
-    Program.where(id: program_ids(channel_works, scope: :all))
+    Program.published.where(id: program_ids(channel_works, scope: :all))
   end
 
   private
@@ -49,7 +49,7 @@ class UserProgramsQuery
         SELECT id FROM ranked_programs WHERE
           episode_rank = (SELECT max(episode_rank) FROM ranked_programs);
       SQL
-      program_ids << Program.find_by_sql(sql).map(&:id)
+      program_ids << Program.published.find_by_sql(sql).map(&:id)
     end
 
     program_ids.flatten

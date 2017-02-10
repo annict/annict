@@ -1,0 +1,35 @@
+.c-subnav {
+  $root: &;
+
+  @include display(flex);
+  background-color: $ann-color-white;
+  height: $ann-navbar-height;
+
+  &.c-subnav--transparent {
+    background-color: transparent;
+  }
+
+  &__item {
+    @include align-items(center);
+    @include display(flex);
+    @include justify-content(center);
+    height: 100%;
+  }
+
+  &__link {
+    display: inline-block;
+    width: 100%;
+  }
+
+  &__link:not(&__link--active) {
+    #{$root}__item {
+      border-bottom: 1px solid $ann-color-border;
+    }
+  }
+
+  &__link--active {
+    #{$root}__item {
+      border-bottom: solid .15rem $ann-color-mizuho;
+    }
+  }
+}

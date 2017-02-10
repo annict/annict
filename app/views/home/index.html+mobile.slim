@@ -1,19 +1,17 @@
-- title = "Annict"
-- description = meta_description
-- keywords = meta_keywords
-- set_meta_tags(title: title, description: description, keywords: keywords, site: false)
-
-= render "application/v1/navbar"
+- title = t "head.title.home.index"
+- set_meta_tags(title: title, site: false)
+- set_page_category "home_index"
 
 - if current_user.tips.unfinished.present?
-  = render "tips"
+  .c-card.mb-1
+    = render "tips"
 
-.content
-  ann-activities
+.mb-2
+  c-activities
 
-- content_for :parts do
-  = render "application/v2/components/activities"
-  = render "application/v2/components/create_record_activity"
-  = render "application/v2/components/create_multiple_records_activity"
-  = render "application/v2/components/create_status_activity"
-  = render "application/v2/components/like_button"
+= render "application/components/footer"
+= render "application/components/tabbar"
+
+- content_for :js_templates
+  = render "application/js_templates/activities"
+  = render "application/js_templates/tips"

@@ -1,0 +1,66 @@
+- title = t "head.title.records.show", profile_name: @user.profile.name, username: @user.username, work_title: @work.decorate.local_title, episode_title_with_number: @episode.decorate.title_with_number
+- description = meta_description(t("head.meta.description.records.show", profile_name: @user.profile.name, username: @user.username, work_title: @work.decorate.local_title, episode_title_with_number: @episode.decorate.title_with_number))
+- keywords = meta_keywords(@work.decorate.local_title)
+- image_url = ann_image_url(@work.work_image, :attachment, size: "640x")
+- set_meta_tags(title: title, description: description, keywords: keywords, og: { description: description }, twitter: { description: description }, reverse: true, prefix: false)
+- set_page_category "records_show"
+
+.c-card.py-1.mb-2
+  .p-records-show__work-info.px-1
+    .row
+      .col.u-flex-grow-0.p-records-show__work-image.pr-0
+        = link_to work_path(@work) do
+          = image_tag ann_image_url(@work.work_image, :attachment, size: "280x373"), class: "img-fluid img-thumbnail rounded"
+      .col
+        h1.h2
+          = link_to work_path(@work) do
+            = @work.decorate.local_title
+        = link_to work_episode_path(@work, @episode) do
+          = @episode.decorate.title_with_number
+  hr
+  .p-records-show__record.px-1
+    = render "records/record", record: @record
+  hr
+  .px-1
+    - if user_signed_in?
+      .p-records-show__comment-form
+        = form_for @comment, url: record_comments_path(@user.username, @record) do |f|
+          = render "application/components/error_panel", resource: @comment
+          = f.text_area :body, class: "form-control", rows: "5", placeholder: t("messages.comments.comment_form_placeholder")
+          .w-100.text-center
+            = f.button class: "btn btn-primary mt-zp5" do
+              = icon "pencil"
+              = t "messages.comments.create"
+      hr
+    - if @comments.present?
+      - @comments.each do |comment|
+        .c-record-comment
+          .row
+            .c-record-comment__avatar.col.pr-0.u-flex-grow-0
+              = link_to user_path(comment.user.username) do
+                = ann_image_tag comment.user.profile, :tombo_avatar, size: "50x50", class: "rounded-circle"
+            .col
+              .row.mb-zp5
+                .col
+                  = link_to comment.user.profile.name, user_path(comment.user.username)
+                .col
+                  .small.text-right
+                    = local_time_ago_in_words(comment.created_at)
+              c-body inline-template=""
+                .c-body__content = comment.body
+          - if policy(comment).update?
+            .small.text-right.mb-zp5
+              = link_to edit_comment_path(@user.username, comment), class: "mr-zp5" do
+                = icon "edit", class: "mr-zp25"
+                = t "noun.edit"
+              = link_to comment_path(@user.username, comment), method: :delete, data: { confirm: t("messages._common.are_you_sure") } do
+                = icon "trash-o", class: "mr-zp25"
+                = t "noun.delete"
+    - else
+      = render "application/components/empty", text: t("resources.comment.no_comments")
+
+= render "application/components/footer"
+= render "application/components/tabbar"
+
+- content_for :js_templates do
+  = render "application/js_templates/like_button"

@@ -5,7 +5,7 @@ describe "Api::V1::Me::Statuses" do
   let(:work) { create(:work, :with_current_season) }
   let!(:tip) { create(:status_tip) }
 
-  describe "POST /v1/me/statuses" do
+  describe "POST /v1/me/statuses", debug: true do
     before do
       data = {
         work_id: work.id,
@@ -15,11 +15,11 @@ describe "Api::V1::Me::Statuses" do
       post api("/v1/me/statuses", data)
     end
 
-    it "204が返ること" do
+    it "responses 204" do
       expect(response.status).to eq(204)
     end
 
-    it "ステータス情報が保存されること" do
+    it "saves status info" do
       expect(access_token.owner.statuses.count).to eq(1)
       expect(access_token.owner.statuses.first.kind).to eq("watching")
     end

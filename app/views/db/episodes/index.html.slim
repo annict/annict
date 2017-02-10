@@ -1,73 +1,90 @@
-- title = "「#{@work.title}」のエピソード"
-- set_meta_tags title: title, reverse: true
+- title = t "head.title.db.episodes.index", work_title: @work.decorate.local_title
+- set_meta_tags(title: title, reverse: true, prefix: false)
+- set_page_category "db_episodes_index"
 
-= render "db/works/header", work: @work
+.l-topbar.container-fluid.px-1
+  .row.flex-items-xs-between
+    .col-8
+      = render "db/application/topbar_title", parent: @work, child: t("noun.episodes")
+    - if user_signed_in? && current_user.committer?
+      .col.text-right
+        = link_to new_db_work_episode_path(@work), class: "btn btn-outline-primary" do
+          = icon "pencil-square-o"
+          = t "resources.episode.new_episodes"
 
-.pull-right
-  - if current_user.committer?
-    = link_to "新規登録", new_db_work_multiple_episode_path(@work), class: "btn btn-primary"
+= render "db/works/subnav", work: @work
+
+.container-fluid.p-1
+  - if @episodes.present?
+    .c-card
+      table.table.table-hover
+        thead
+          tr
+            th ID
+            th = t "activerecord.attributes.episode.raw_number"
+            - if locale_ja?
+              th = t "activerecord.attributes.episode.number"
+            th = t "noun.title"
+            th = t "resources.episode.previous_episode"
+            - if current_user.role.admin?
+              th = t "activerecord.attributes.episode.sc_count"
+            th = t "activerecord.attributes.episode.sort_number"
+            th = t "activerecord.attributes.episode.checkins_count"
+            - if locale_ja?
+              th = t "noun.syobocal"
+            th = t "noun.state"
+            th = t "head.title.db.episodes.activities"
+            - if policy(@episodes).edit?
+              th = t "noun.edit"
+            - if policy(@episodes).hide?
+              th = t "noun.state_change"
+            - if policy(@episodes).destroy?
+              th = t "noun.delete"
+        tbody
+          - @episodes.each do |episode|
+            tr
+              td = link_to episode.id, work_episode_path(@work, episode), target: "_blank"
+              td = episode.raw_number.presence || "-"
+              - if locale_ja?
+                td = episode.number.presence || "-"
+              td
+                - if current_user.role.admin?
+                  = episode.title.presence || "-"
+                  br
+                  = episode.title_en.presence || "-"
+                  br
+                  = episode.title_ro.presence || "-"
+                - elsif locale == :ja
+                  = episode.title.presence || "-"
+                - elsif locale == :en
+                  = episode.title_en.presence || "-"
+                  br
+                  = "(#{episode.title_ro.presence || '-'})"
+              td = episode.prev_episode&.decorate&.local_number.presence || "-"
+              - if current_user.role.admin?
+                td = episode.sc_count
+              td = episode.sort_number
+              td = episode.records.count
+              - if locale_ja?
+                td
+                  - if episode.fetch_syobocal?
+                    .badge.badge-success 同期中
+                  - else
+                    .badge.badge-warning 同期停止中
+              td
+                .badge class="#{episode.published? ? 'badge-success' : 'badge-warning'}"
+                  = t("resources.episode.aasm_state.#{episode.aasm_state}")
+              td = link_to t("head.title.db.episodes.activities"), activities_db_episode_path(episode)
+              - if policy(episode).edit?
+                td
+                  = link_to t("noun.edit"), edit_db_episode_path(episode), class: "btn btn-primary btn-sm"
+              - if policy(episode).hide?
+                td
+                  - if episode.published?
+                    = link_to t("noun.hide"), hide_db_episode_path(episode), class: "btn btn-warning btn-sm", data: { method: "patch", confirm: t("messages._common.are_you_sure") }
+              - if policy(episode).destroy?
+                td = link_to t("noun.delete"), db_episode_path(episode), class: "btn btn-danger btn-sm", data: { method: "delete", confirm: t("messages._common.are_you_sure") }
+
+      = paginate @episodes
   - else
-    = link_to "新規登録", new_db_work_draft_multiple_episode_path(@work), class: "btn btn-primary"
-
-.clearfix
-
-table.table.table-striped.c-resource-list
-  thead
-    tr
-      th ID
-      th 話数
-      - if current_user.role.admin?
-        th 話数 (raw)
-      th サブタイトル
-      th 前のエピソード
-      th しょぼかる
-      th ソート番号
-      - if current_user.role.admin?
-        th しょぼかる番号
-      th 記録数
-      th 編集
-      - if policy(@episodes).hide?
-        th 非公開
-      - if policy(@episodes).destroy?
-        th 削除
-  tbody
-    - @episodes.each do |episode|
-      tr
-        td
-          = link_to episode.id, work_episode_path(@work, episode), target: "_blank"
-          - if episode.published?
-            = icon("check-circle-o", class: "c-resource-list__status-published enabled", "data-toggle" => "tooltip", title: "このエピソードは公開されています")
-          - else
-            = icon("check-circle-o", class: "c-resource-list__status-published disabled", "data-toggle" => "tooltip", title: "このエピソードは非公開になっています")
-        td = episode.number.presence || "-"
-        - if current_user.role.admin?
-          td = episode.raw_number.presence || "-"
-        td = episode.title.presence || "-"
-        td = episode.prev_episode&.number.presence || "-"
-        td
-          - if episode.fetch_syobocal?
-            | 同期中
-          - else
-            | 同期停止中
-        td = episode.sort_number
-        - if current_user.role.admin?
-          td = episode.sc_count
-        td = episode.checkins.count
-        td
-          - if current_user.committer?
-            = link_to "編集", edit_db_work_episode_path(@work, episode), class: "btn btn-primary btn-sm"
-          - else
-            = link_to "編集", new_db_work_draft_episode_path(@work, id: episode), class: "btn btn-primary btn-sm"
-        - if policy(episode).hide?
-          td
-            - if episode.published?
-              = link_to "非公開", hide_db_work_episode_path(@work, episode), class: "btn btn-warning btn-sm", data: { method: "patch", confirm: "このエピソードを非公開にしますか？" }
-        - if policy(episode).destroy?
-          td = link_to "削除", db_work_episode_path(@work, episode), class: "btn btn-danger btn-sm", data: { method: :delete, confirm: "このエピソードを削除しますか？" }
-
-
-- if @episodes.blank?
-  .well 登録されているエピソードはありません。
-- else
-  .text-center
-    = paginate @episodes
+    = render "application/components/empty", text: t("resources.episode.no_episodes")

@@ -1,0 +1,17 @@
+- if works.present?
+  - works.each do |work|
+    .row.mb-1
+      .col.u-flex-grow-0.pr-0
+        = link_to work_path(work) do
+          = image_tag ann_image_url(work.work_image, :attachment, size: "50x67"), class: "rounded"
+      .col
+        .mb-zp5
+          = link_to work.decorate.local_title, work_path(work)
+        - current_channel_id = current_user.channel_works.current_channel(work)&.id.presence || "no_select"
+        - options = work.channels.pluck(:name, :id).insert(0, [t("noun.channel"), "no_select"])
+        c-channel-selector :work-id="#{work.id}" :init-channel-id="'#{current_channel_id}'" :options="#{options}"
+- else
+  = render "application/components/empty", text: t("messages.channel_works.no_works")
+
+- content_for :js_templates do
+  = render "application/js_templates/channel_selector"

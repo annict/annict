@@ -1,0 +1,58 @@
+.p-footer
+  .p-footer__main.py-1
+    .container.mb-1
+      h2.mb-0
+        = link_to "Annict", ENV.fetch("ANNICT_URL")
+      .p-footer__description.small
+        | The platform for anime addicts.
+      .p-footer__social-links
+        h4
+        .row
+          .col.col-auto
+            = link_to "https://twitter.com/anannict", target: "_blank", class: "h2" do
+              = icon "twitter"
+          .col.col-auto
+            = link_to "https://github.com/annict", target: "_blank", class: "h2" do
+              = icon "github"
+          .col.col-auto
+            = link_to "https://slack.annict.com", target: "_blank", class: "h2" do
+              = icon "slack"
+    .container.mb-1
+      h4.font-weight-bold = t "noun.services"
+      ul.list-inline
+        li.list-inline-item = link_to t("noun.annict_forum"), forum_root_path
+        li.list-inline-item = link_to t("noun.annict_db"), db_root_path
+        li.list-inline-item = link_to t("noun.annict_api"), "https://docs.annict.com/ja/api/", target: "_blank"
+    .container.mb-1
+      h4.font-weight-bold = t "noun.contents"
+      ul.p-footer__list.list-inline
+        li.list-inline-item = link_to t("head.title.pages.about"), about_path
+        li.list-inline-item = link_to t("noun.terms_of_use"), terms_path
+        li.list-inline-item = link_to t("noun.privacy_policy"), privacy_path
+    .container
+      h4.font-weight-bold = t "noun.seasonal_anime"
+      - next_season_slug = ENV.fetch("ANNICT_NEXT_SEASON")
+      - year, name = next_season_slug.split("-")
+      - years = year.to_i.downto(2000).to_a
+      - name_data = Season::NAME_DATA
+      - names = name_data.keys.map(&:to_s).reverse
+      - slugs = years.map { |y| names.map { |sn| "#{y}-#{sn}" } }.flatten
+      - index = slugs.index(next_season_slug)
+      - slugs = slugs[index..index + 4]
+      ul.list-inline.mb-0
+        - slugs.each do |slug|
+          li.list-inline-item
+            - year, name = slug.split("-")
+            = link_to season_local_name(year, name), season_works_path(slug: slug)
+  .p-footer__auxiliary
+    .container.py-zp5
+      .row.align-items-center
+        .col
+          h4.font-weight-bold.d-inline-block.mr-zp5.mb-0
+            = "#{t('noun.language')}: "
+          ul.list-inline.d-inline-block.mb-0
+            li.list-inline-item = link_to t("noun.japanese"), "#{ENV.fetch('ANNICT_JA_URL')}#{request.path}"
+            li.list-inline-item = link_to t("noun.english"), "#{ENV.fetch('ANNICT_EN_URL')}#{request.path}"
+        .col.text-right
+          .p-footer__copyright.small
+            | © 2014-2017 Annict

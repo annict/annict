@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 # == Schema Information
 #
 # Table name: comments
@@ -22,21 +23,61 @@ class CommentsController < ApplicationController
   permits :body
 
   before_action :authenticate_user!
-  before_action :set_work,    only: [:create]
-  before_action :set_episode, only: [:create]
-  before_action :load_record, only: [:create]
+  before_action :load_user, only: %i(create edit update destroy)
+  before_action :load_record, only: %i(create)
+  before_action :load_comment, only: %i(edit update destroy)
 
   def create(comment)
+    @user = @record.user
     @comment = @record.comments.new(comment)
     @comment.user = current_user
 
     if @comment.save
-      path = work_episode_checkin_path(@work, @episode, @record)
-      redirect_to path, notice: t("comments.saved")
+      redirect_to record_path(@user.username, @record),
+        notice: t("messages.comments.saved")
     else
-      @records = @episode.checkins
+      @work = @record.work
+      @episode = @record.episode
       @comments = @record.comments.order(created_at: :desc)
-      render "/checkins/show", layout: "v3/application"
+      render "/records/show"
     end
+  end
+
+  def edit
+    authorize @comment, :edit?
+  end
+
+  def update(comment)
+    authorize @comment, :update?
+
+    if @comment.update_attributes(comment)
+      path = record_path(@user.username, @comment.record)
+      redirect_to path, notice: t("messages.comments.updated")
+    else
+      render :edit
+    end
+  end
+
+  def destroy
+    authorize @comment, :destroy?
+
+    @comment.destroy
+
+    path = record_path(@user.username, @comment.record)
+    redirect_to path, notice: t("messages.comments.deleted")
+  end
+
+  private
+
+  def load_user
+    @user = User.find_by(username: params[:username])
+  end
+
+  def load_record
+    @record = @user.records.find(params[:record_id])
+  end
+
+  def load_comment
+    @comment = @user.record_comments.find(params[:id])
   end
 end

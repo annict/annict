@@ -1,0 +1,20 @@
+# frozen_string_literal: true
+
+work = activity.recipient
+status = activity.trackable
+
+{
+  work: {
+    id: work.id,
+    title: work.decorate.local_title
+  },
+  item: {
+    image_url: ann_image_url(work.work_image, :attachment, size: "125x125")
+  },
+  status: {
+    id: status.id,
+    likes_count: status.likes_count,
+    kind: activity.trackable.kind,
+    kind_text: activity.trackable.kind.text
+  }
+}

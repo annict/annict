@@ -2,21 +2,40 @@
 
 describe "Api::V1::Works" do
   let(:access_token) { create(:oauth_access_token) }
-  let!(:work) { create(:work, :with_current_season) }
+  let!(:work) { create(:work, :with_current_season, :with_episode) }
 
   describe "GET /v1/works" do
     before do
       get api("/v1/works", access_token: access_token.token)
     end
 
-    context "パラメータを渡さないとき" do
-      it "200が返ること" do
+    context "when added no parameters" do
+      it "responses 200" do
         expect(response.status).to eq(200)
       end
 
-      it "作品情報が取得できること" do
-        expect(json["works"][0]["title"]).to eq(work.title)
+      it "gets work info" do
+        expected_hash = {
+          "id" => work.id,
+          "title" => work.title,
+          "title_kana" => work.title_kana,
+          "media" => "tv",
+          "media_text" => "TV",
+          "season_name" => "2017-winter",
+          "season_name_text" => "2017年冬",
+          "released_on" => "2012-04-05",
+          "released_on_about" => "2012年",
+          "official_site_url" => "http://example.com",
+          "wikipedia_url" => "http://wikipedia.org",
+          "twitter_username" => "precure_official",
+          "twitter_hashtag" => "precure",
+          "episodes_count" => 1,
+          "watchers_count" => 0
+        }
+        expect(json["works"][0].stringify_keys).to include(expected_hash)
         expect(json["total_count"]).to eq(1)
+        expect(json["next_page"]).to eq(nil)
+        expect(json["prev_page"]).to eq(nil)
       end
     end
   end

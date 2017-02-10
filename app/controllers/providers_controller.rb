@@ -22,10 +22,6 @@
 class ProvidersController < ApplicationController
   before_action :authenticate_user!
 
-  def index
-    render layout: "v1/application"
-  end
-
   def destroy(id)
     provider = current_user.providers.find(id)
 
@@ -40,6 +36,6 @@ class ProvidersController < ApplicationController
       provider.destroy
     end
 
-    redirect_to :back, notice: "連携を解除しました"
+    redirect_to :back, notice: t("messages.providers.removed")
   end
 end

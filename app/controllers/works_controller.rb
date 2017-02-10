@@ -33,14 +33,18 @@
 class WorksController < ApplicationController
   include ApplicationHelper
 
+  before_action :authenticate_user!, only: %i(switch)
+
   def index
     redirect_to season_works_path(ENV["ANNICT_CURRENT_SEASON"])
   end
 
   def popular(page: nil)
-    @works = Work.published.order(watchers_count: :desc, id: :desc).page(page).per(15)
-
-    render layout: "v1/application"
+    @works = Work.
+      published.
+      order(watchers_count: :desc, id: :desc).
+      page(page).
+      per(display_works_count)
   end
 
   def season(slug, page: nil)
@@ -49,16 +53,24 @@ class WorksController < ApplicationController
       by_season(slug).
       order(watchers_count: :desc, id: :desc).
       page(page).
-      per(15)
+      per(display_works_count)
     @season = Season.find_or_new_by_slug(slug)
-
-    render layout: "v1/application"
   end
 
   def show
     @work = Work.published.find(params[:id])
+    @episodes = @work.episodes.published
+    @casts = @work.casts.published
+    @staffs = @work.staffs.published
     @status = current_user.latest_statuses.find_by(work: @work) if user_signed_in?
+  end
 
-    render layout: "v1/application"
+  def switch(to)
+    redirect = redirect_back fallback_location: works_path
+
+    return redirect unless to.in?(Setting.display_option_work_list.values)
+
+    current_user.setting.update_column(:display_option_work_list, to)
+    redirect
   end
 end

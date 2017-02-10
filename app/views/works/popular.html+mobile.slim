@@ -1,15 +1,23 @@
-- title = "人気アニメ一覧"
-- description = meta_description("Annictユーザに人気のアニメをチェック！")
-- keywords = meta_keywords("人気", "評判", "ランキング")
-- set_meta_tags(title: title, description: description, keywords: keywords, reverse: true)
+- title = t "head.title.works.popular"
+- description = meta_description(t("head.meta.description.works.popular"))
+- keywords = meta_keywords
+- set_meta_tags(title: title, description: description, keywords: keywords, og: { description: description }, twitter: { description: description }, reverse: true, prefix: false)
+- set_page_category "works_popular"
 
-= render "application/v1/navbar"
-= render "nav"
+- if user_signed_in?
+  .text-center.my-1
+    = render "display_option_buttons"
 
-= render "works", works: @works, user: current_user, compact: false
+.mb-2
+  - if user_signed_in?
+    = render "works/#{current_user.setting.display_option_work_list}", works: @works
+  - else
+    = render "works/list", works: @works
+  .text-center
+    = paginate @works, window: 2
 
-= render "application/v2/components/footer"
+= render "application/components/footer"
+= render "application/components/tabbar"
 
-- content_for :parts do
-  = render "application/v2/components/work_friends"
-  = render "application/v2/components/status_selector"
+- content_for :js_templates do
+  = render "application/js_templates/status_selector"

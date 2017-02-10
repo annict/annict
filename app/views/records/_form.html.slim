@@ -1,0 +1,39 @@
+- url = record.new_record? ? records_path(current_user.username) : record_path(current_user.username, record)
+= form_for record, url: url do |f|
+  = render "application/components/error_panel", resource: record
+  
+  = f.hidden_field :episode_id
+  = hidden_field_tag :page_category, page_category
+
+  .mb-zp5
+    c-record-rating :init-record="{ rating: #{record.rating.presence || 0} }"
+  .mb-zp5
+    - comment = record.comment&.gsub(/(?:\n\r?|\r\n?)/, "\\n").presence || ""
+    c-record-textarea :init-record="{ uid: 1, comment: '#{comment}', commentRows: 2 }" placeholder="#{t('messages.records.new.write_your_comment')}"
+  .row
+    .col
+      - if current_user.authorized_to?(:twitter)
+        label
+          = icon "twitter", class: "u-text-twitter mr-zp25"
+          = f.check_box :shared_twitter
+      - if current_user.authorized_to?(:facebook)
+        label.ml-zp5
+          = icon "facebook", class: "u-text-facebook mr-zp25"
+          = f.check_box :shared_facebook
+    .col
+      .text-center
+        = f.button class: "btn btn-primary" do
+          = icon "edit"
+          - if record.new_record?
+            = t "verb.track"
+          - else
+            = t "verb.update"
+    .col
+      .text-right
+        .small.text-mute
+          c-record-word-count :init-record="{ uid: 1, wordCount: 0 }"
+
+- content_for :js_templates do
+  = render "application/js_templates/record_rating"
+  = render "application/js_templates/record_textarea"
+  = render "application/js_templates/record_word_count"

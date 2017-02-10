@@ -1,0 +1,22 @@
+- action_user = notification.action_user
+- record = notification.trackable.recipient
+- episode = record.episode
+- work = episode.work
+
+span.mr-zp25
+  = action_user.decorate.name_link
+| liked your record on
+span.ml-zp25
+  = work.decorate.title_link
+span.mx-zp25
+  = episode.decorate.number_link
+
+.small.text-muted.my-zp5
+  = link_to local_time_ago_in_words(record.created_at), record_path(current_user.username, record)
+  - if record.comment.present?
+    | :
+    span.ml-zp25
+    = record.comment
+
+.small.text-muted
+  = local_time_ago_in_words(notification.created_at)

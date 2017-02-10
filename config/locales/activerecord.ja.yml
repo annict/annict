@@ -1,15 +1,42 @@
 ja:
   activerecord:
     attributes:
-      appeal:
-        body: 備考
-        category: カテゴリ
       cast:
-        person_id: キャスト
-        work_id: 作品
+        character_id: キャラクター
+        name_en: 名義 (英語)
         name: 名義
         part: 役名
+        person_id: キャスト
         sort_number: ソート番号
+        work_id: 作品
+      channel:
+        name: 名前
+      character:
+        name: 名前
+        name_kana: 名前 (かな)
+        name_en: 名前 (英語)
+        kind: 種類
+        kind_en: 種類 (英語)
+        nickname: ニックネーム
+        nickname_en: ニックネーム (英語)
+        birthday: 誕生日
+        birthday_en: 誕生日 (英語)
+        age: 年齢
+        age_en: 年齢 (英語)
+        blood_type: 血液型
+        blood_type_en: 血液型 (英語)
+        height: 身長
+        height_en: 身長 (英語)
+        weight: 体重
+        weight_en: 体重 (英語)
+        nationality: 国籍
+        nationality_en: 国籍 (en)
+        occupation: 肩書き
+        occupation_en: 肩書き (英語)
+        description: キャラ紹介
+        description_en: キャラ紹介 (英語)
+      character_image:
+        attachment: キャラクター画像
       checkin:
         comment: 感想
         rating: レーティング
@@ -19,55 +46,62 @@ ja:
         name: アプリケーション名
         redirect_uri: リダイレクトURI
         scopes: スコープ
-      draft_organization:
-        name: 名前
-        name_kana: 名前 (かな)
-        url: URL
-        wikipedia_url: Wikipedia
-        twitter_username: Twitter
-      draft_staff:
-        resource_id: 人物または団体
-        work_id: 作品
-        name: 名義
-        role: 担当
-        role_other: 担当 (その他)
-        sort_number: ソート番号
-      draft_work_organization:
-        organization_id: 団体
-        work_id: 作品
-        role: 担当
-        role_other: 担当 (その他)
-        sort_number: ソート番号
       episode:
+        checkins_count: 記録数
+        fetch_syobocal: しょぼかると同期する
         number: 話数
-        raw_number: 話数 (raw)
         prev_episode_id: 前のエピソード
+        raw_number: 話数 (raw)
         sc_count: しょぼかる番号
         sort_number: ソート番号
         title: タイトル
-        fetch_syobocal: しょぼかると同期する
+      forum_post:
+        body: 本文
+        title: タイトル
+        forum_category: カテゴリー
+        forum_category_id: カテゴリー
+        forum_comments_count: コメント数
+        last_commented_at: 最新コメント日
       item:
         name: 商品名
         url: URL
         tombo_image: 作品画像
+      oauth_application:
+        redirect_uri: リダイレクトURI
+        scope: スコープ
+        secret: クライアントシークレット
+        uid: クライアントID
       organization:
-        name: 名前
+        aasm_state: 状態
+        name_en: 名前 (英語)
         name_kana: 名前 (かな)
-        url: URL
-        wikipedia_url: Wikipedia
+        name: 名前
+        twitter_username_en: Twitter (英語)
         twitter_username: Twitter
+        url_en: URL (英語)
+        url: URL
+        wikipedia_url_en: Wikipedia (英語)
+        wikipedia_url: Wikipedia
       person:
-        name: 名前
-        name_kana: 名前 (かな)
-        nickname: ニックネーム
-        gender: 性別
-        blood_type: 血液型
-        prefecture_id: 出身地
+        aasm_state: 状態
         birthday: 誕生日
+        blood_type_en: 血液型 (英語)
+        blood_type: 血液型
+        gender_en: 性別 (英語)
+        gender: 性別
         height: 身長
-        url: URL
-        wikipedia_url: Wikipedia
+        name_en: 名前 (英語)
+        name_kana: 名前 (かな)
+        name: 名前
+        nickname_en: ニックネーム (英語)
+        nickname: ニックネーム
+        prefecture_id: 出身地
+        twitter_username_en: Twitter (英語)
         twitter_username: Twitter
+        url_en: URL (英語)
+        url: URL
+        wikipedia_url_en: Wikipedia (英語)
+        wikipedia_url: Wikipedia
       profile:
         avatar: プロフィール画像
         background_image: 背景画像
@@ -77,84 +111,53 @@ ja:
       program:
         channel_id: チャンネル
         episode_id: エピソード
-        started_at: 放送日時
         rebroadcast: 再放送
+        started_at: 放送日時
       staff:
-        resource_id: 人物または団体
-        work_id: 作品
+        name_en: 名義 (英語)
         name: 名義
-        role: 担当
+        resource_id: 人物または団体
+        role_other_en: 担当 (その他/英語)
         role_other: 担当 (その他)
+        role: 担当
         sort_number: ソート番号
+        work_id: 作品
       user:
+        current_password: 現在のパスワード
+        email_username: メールアドレスまたはユーザ名
         email: メールアドレス
+        locale: 言語
+        password: パスワード
+        password_confirmation: パスワード (確認)
         terms: 利用規約とプライバシーポリシー
+        time_zone: タイムゾーン
         username: ユーザ名
       work:
-        season_id: リリース時期
+        mal_anime_id: MAL Anime ID
         media: メディア
+        number_format_id: 話数フォーマット
+        official_site_url_en: 公式サイト (英)
         official_site_url: 公式サイト
-        released_at_about: リリース時期 (大体)
         sc_tid: しょぼかるID
+        season_id: リリース時期
+        season: リリース時期
+        synopsis_en: あらすじ (英)
+        synopsis_source_en: あらすじのソース (英)
+        synopsis_source: あらすじのソース
+        synopsis: あらすじ
+        title_en: タイトル (英)
+        title_kana: タイトル (かな)
+        title_ro: タイトル (ローマ字)
         title: タイトル
-        title_kana: 作品タイトル (かな)
         twitter_hashtag: ハッシュタグ
         twitter_username: 公式Twitter
+        wikipedia_url_en: Wikipedia (英)
         wikipedia_url: Wikipedia
-        number_format_id: 話数フォーマット
-      draft_cast:
-        person_id: キャスト
-        work_id: 作品
-        name: 名義
-        part: 役名
-        sort_number: ソート番号
-      draft_episode:
-        prev_episode_id: 前のエピソード
-        number: 話数
-        sort_number: ソート番号
-        title: タイトル
-        fetch_syobocal: しょぼかると同期する
-      draft_item:
-        name: 商品名
-        url: URL
-        tombo_image: 作品画像
-      draft_multiple_episode:
-        body: エピソード
-      draft_person:
-        name: 名前
-        name_kana: 名前 (かな)
-        nickname: ニックネーム
-        gender: 性別
-        blood_type: 血液型
-        prefecture_id: 出身地
-        birthday: 誕生日
-        height: 身長
-        url: URL
-        wikipedia_url: Wikipedia
-        twitter_username: Twitter
-      draft_program:
-        channel_id: チャンネル
-        episode_id: エピソード
-        work_id: 作品名
-        started_at: 放送日時
-        rebroadcast: 再放送
-      draft_work:
-        season_id: リリース時期
-        media: メディア
-        official_site_url: 公式サイト
-        released_at_about: リリース時期 (大体)
-        sc_tid: しょぼかるID
-        title: 作品タイトル
-        title_kana: 作品タイトル (かな)
-        twitter_hashtag: ハッシュタグ
-        twitter_username: 公式Twitter
-        wikipedia_url: Wikipedia
-        number_format_id: 話数フォーマット
-      edit_request:
-        title: リクエストタイトル
-        body: コメント
-      edit_request_comment:
-        body: 本文
+      work_image:
+        attachment: 作品画像
+        asin: ASIN
+        asin_or_copyright: ASINまたは著作者情報
+        copyright: 著作者情報
       work_organization:
         organization_id: 団体
         work_id: 作品
@@ -165,3 +168,34 @@ ja:
       messages:
         accepted: に同意してください。
         url: にはURLを入力してください。
+    models:
+      character:
+        one: キャラクター
+        other: キャラクター
+      cast:
+        one: キャスト
+        other: キャスト
+      db_activity:
+        one: アクティビティ
+        other: アクティビティ
+      db_comment:
+        one: コメント
+        other: コメント
+      episode:
+        one: エピソード
+        other: エピソード
+      organization:
+        one: 団体
+        other: 団体
+      person:
+        one: 人物
+        other: 人物
+      program:
+        one: 放送予定
+        other: 放送予定
+      staff:
+        one: スタッフ
+        other: スタッフ
+      work:
+        one: 作品
+        other: 作品

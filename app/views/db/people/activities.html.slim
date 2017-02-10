@@ -1,0 +1,18 @@
+- title = t "head.title.db.people.activities", name: @person.decorate.local_name
+- set_meta_tags(title: title, reverse: true, prefix: false)
+- set_page_category "db_people_activities"
+
+.l-topbar.container-fluid.px-1
+  .row.flex-items-xs-between
+    .col
+      = render "db/application/topbar_title", parent: @person.decorate.db_detail_link, child: t("noun.activities")
+
+.container-fluid.p-1
+  .row.mb-1
+    .c-card.col-8.offset-2.p-1
+      = render "db/comments/form", comment: @comment, resource: @person
+
+  .row
+    .c-card.col-8.offset-2.p-1
+      - @activities.each do |activity|
+        = render "db/activities/activity_root_resources", activity: activity

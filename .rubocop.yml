@@ -1,12 +1,12 @@
 AllCops:
-  TargetRubyVersion: 2.3
+  TargetRubyVersion: 2.4
   Exclude:
     - "**/*.slim"
     - "vendor/**/*"
     - "db/schema.rb"
 
 Lint/EndAlignment:
-  AlignWith: variable
+  EnforcedStyleAlignWith: variable
 
 Metrics/LineLength:
   Max: 90
@@ -29,13 +29,16 @@ Style/AsciiComments:
   Enabled: false
 
 Style/CaseIndentation:
-  IndentWhenRelativeTo: end
+  EnforcedStyle: end
 
 Style/Documentation:
   Enabled: false
 
 Style/DotPosition:
   EnforcedStyle: trailing
+
+Style/IndentArray:
+  EnforcedStyle: consistent
 
 Style/Lambda:
   Enabled: false

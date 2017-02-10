@@ -48,7 +48,7 @@ class Checkin < ActiveRecord::Base
     dependent: :destroy,
     as: :recipient
 
-  validates :comment, length: { maximum: 500 }
+  validates :comment, length: { maximum: 1000 }
   validates :rating,
     allow_blank: true,
     numericality: {
@@ -102,8 +102,8 @@ class Checkin < ActiveRecord::Base
   def share_to_sns
     TwitterService.new(user).delay.share!(self) if shared_twitter?
     if shared_facebook?
-      source = if work.item.present?
-        work.item.decorate.image_url(:tombo_image, size: "600x315")
+      source = if work.work_image.present? && Rails.env.production?
+        work.work_image.decorate.image_url(:attachment, size: "600x315")
       else
         "https://annict.com/images/og_image.png"
       end

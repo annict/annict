@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 # == Schema Information
 #
 # Table name: comments
@@ -19,27 +20,32 @@
 #
 
 class Comment < ActiveRecord::Base
-  belongs_to :checkin, counter_cache: true
+  belongs_to :record, foreign_key: :checkin_id, class_name: "Checkin", counter_cache: true
   belongs_to :user
   belongs_to :work
-  has_many   :likes, foreign_key: :recipient_id, foreign_type: :recipient, dependent: :destroy
-  has_many   :notifications, foreign_key: :trackable_id, foreign_type: :trackable, dependent: :destroy
+  has_many :likes,
+    foreign_key: :recipient_id,
+    foreign_type: :recipient,
+    dependent: :destroy
+  has_many :notifications,
+    foreign_key: :trackable_id,
+    foreign_type: :trackable,
+    dependent: :destroy
 
   validates :body, presence: true, length: { maximum: 500 }
 
-  after_create  :save_notification
-
+  after_create :save_notification
 
   private
 
   def save_notification
-    if checkin.user != user
-      Notification.create do |n|
-        n.user        = checkin.user
-        n.action_user = user
-        n.trackable   = self
-        n.action      = 'comments.create'
-      end
+    return if record.user == user
+
+    Notification.create do |n|
+      n.user = record.user
+      n.action_user = user
+      n.trackable = self
+      n.action = "comments.create"
     end
   end
 end

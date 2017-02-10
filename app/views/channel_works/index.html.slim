@@ -1,8 +1,12 @@
-= render "application/v2/navbar"
+- title = t "head.title.channel_works.index"
+- set_meta_tags(title: title, reverse: true, prefix: false)
+- set_page_category "channel_works_index"
 
-.content
-  = render "channels/nav"
+= render "application/components/navbar"
+= render "channels/subnav"
 
-  = render "works/works", works: @works, user: current_user, compact: true
+.p-application__content
+  .c-card.u-mw-600.mx-auto.mt-1.mb-2.p-1
+    = render "channel_works/work_list", works: @works
 
-= render "application/v2/components/footer"
+= render "application/components/footer"

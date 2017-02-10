@@ -1,0 +1,25 @@
+h1.h2
+  = link_to organization.decorate.local_name, organization_path(organization)
+span.badge.u-badge-organizations
+  = t "noun.organization"
+h2.h4.font-weight-bold.mt-2.mb-1
+  = icon "sticky-note-o", class: "mr-zp25"
+  = t "noun.information"
+dl
+  dt.small = t "noun.name_kanji"
+  dd = organization.name
+  - if organization.name_kana.present?
+    dt.small = t "noun.name_kana"
+    dd = organization.name_kana
+  - if organization.name_en.present?
+    dt.small = t "noun.name_en"
+    dd = organization.name_en
+  - if organization.url.present?
+    dt.small = t "noun.official_site"
+    dd = link_with_domain organization.url
+  - if organization.twitter_username.present?
+    dt.small = t "noun.twitter"
+    dd = organization.decorate.twitter_username_link
+  - if organization.wikipedia_url.present?
+    dt.small = t "noun.wikipedia"
+    dd = link_with_domain organization.wikipedia_url

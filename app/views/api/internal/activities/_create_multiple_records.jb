@@ -1,0 +1,29 @@
+# frozen_string_literal: true
+
+work = activity.recipient
+multiple_record = activity.trackable
+
+json = {
+  work: {
+    id: work.id,
+    title: work.title
+  },
+  item: {
+    image_url: ann_image_url(work.work_image, :attachment, size: "125x125")
+  },
+  multiple_record: {
+    id: multiple_record.id,
+    likes_count: multiple_record.likes_count
+  }
+}
+
+records = multiple_record.records.joins(:episode).order("episodes.sort_number ASC")
+json[:episodes] = records.map do |record|
+  {
+    id: record.episode.id,
+    number: record.episode.number,
+    title: record.episode.title
+  }
+end
+
+json

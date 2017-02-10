@@ -1,16 +1,12 @@
-= render "application/v2/navbar"
-= render "application/v1/settings_tabs"
+- title = t "head.title.mutes.index"
+- set_meta_tags(title: title, reverse: true, prefix: false)
+- set_page_category "mutes_index"
 
-.content
-  .container
-    h3 ミュートしている利用者
-    ul
-      - @mute_users.each do |mute_user|
-        li
-          = link_to user_path(mute_user.muted_user.username) do
-            = annict_image_tag(mute_user.muted_user.profile, :tombo_avatar, size: "50x50", class: "img-circle")
-          = link_to mute_user.muted_user.profile.name, user_path(mute_user.muted_user.username), class: "profile-name"
-          .pull-right
-            = link_to "ミュート解除", mute_user_path(mute_user), class: "btn btn-primary btn-sm", data: { method: :delete, confirm: "解除しますか？" }
+= render "application/components/navbar"
+= render "settings/subnav"
 
-= render "application/v2/components/footer"
+.p-application__content
+  .c-card.u-mw-600.mx-auto.mt-1.mb-2.p-1
+    = render "mutes/user_list", users: @mute_users
+
+= render "application/components/footer"

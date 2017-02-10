@@ -1,6 +1,14 @@
 # frozen_string_literal: true
 
 describe "Api::V1::Records" do
+  before do
+    Timecop.freeze(Time.parse("2017-01-29 08:39:04"))
+  end
+
+  after do
+    Timecop.return
+  end
+
   let(:access_token) { create(:oauth_access_token) }
   let(:user) { create(:user, :with_profile) }
   let(:work) { create(:work, :with_current_season) }
@@ -12,14 +20,59 @@ describe "Api::V1::Records" do
       get api("/v1/records", access_token: access_token.token)
     end
 
-    context "パラメータを渡さないとき" do
-      it "200が返ること" do
+    context "when added no parameters" do
+      it "responses 200" do
         expect(response.status).to eq(200)
       end
 
-      it "作品情報が取得できること" do
-        expect(json["records"][0]["id"]).to eq(record.id)
+      it "gets record info" do
+        expected_hash = {
+          "id" => record.id,
+          "comment" => "おもしろかった",
+          "rating" => 3.0,
+          "is_modified" => false,
+          "likes_count" => 0,
+          "comments_count" => 0,
+          "created_at" => "2017-01-28T23:39:04.000Z",
+          "user" => {
+            "id" => user.id,
+            "username" => user.username,
+            "name" => user.profile.name,
+            "description" => "悟空を倒すために生まれました。よろしくお願いします。",
+            "url" => "http://example.com",
+            "records_count" => 1,
+            "created_at" => "2017-01-28T23:39:04.000Z"
+          },
+          "work" => {
+            "id" => work.id,
+            "title" => work.title,
+            "title_kana" => work.title_kana,
+            "media" => "tv",
+            "media_text" => "TV",
+            "season_name" => "2017-winter",
+            "season_name_text" => "2017年冬",
+            "released_on" => "2012-04-05",
+            "released_on_about" => "2012年",
+            "official_site_url" => "http://example.com",
+            "wikipedia_url" => "http://wikipedia.org",
+            "twitter_username" => "precure_official",
+            "twitter_hashtag" => "precure",
+            "episodes_count" => 1,
+            "watchers_count" => 0
+          },
+          "episode" => {
+            "id" => episode.id,
+            "number" => episode.raw_number,
+            "number_text" => episode.number,
+            "sort_number" => episode.sort_number,
+            "title" => episode.title,
+            "records_count" => 1
+          }
+        }
+        expect(json["records"][0]).to include(expected_hash)
         expect(json["total_count"]).to eq(1)
+        expect(json["next_page"]).to eq(nil)
+        expect(json["prev_page"]).to eq(nil)
       end
     end
   end

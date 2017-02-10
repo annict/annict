@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 # == Schema Information
 #
 # Table name: episodes
@@ -16,6 +17,8 @@
 #  fetch_syobocal  :boolean          default(FALSE), not null
 #  raw_number      :string
 #  avg_rating      :float
+#  title_ro        :string           default(""), not null
+#  title_en        :string           default(""), not null
 #
 # Indexes
 #
@@ -28,9 +31,11 @@
 class Episode < ActiveRecord::Base
   include AASM
   include DbActivityMethods
-  include EpisodeCommon
 
-  has_paper_trail only: DIFF_FIELDS
+  DIFF_FIELDS = %i(
+    number sort_number sc_count title prev_episode_id fetch_syobocal raw_number
+    title_ro title_en
+  ).freeze
 
   aasm do
     state :published, initial: true
@@ -44,12 +49,17 @@ class Episode < ActiveRecord::Base
   belongs_to :prev_episode, class_name: "Episode", foreign_key: :prev_episode_id
   belongs_to :work, counter_cache: true
   has_many :activities, dependent: :destroy, as: :recipient
-  has_many :checkins,   dependent: :destroy
+  has_many :records, dependent: :destroy, class_name: "Checkin"
+  has_many :db_activities, as: :trackable, dependent: :destroy
+  has_many :db_comments, as: :resource, dependent: :destroy
   has_many :draft_episodes, dependent: :destroy
-  has_many :programs,   dependent: :destroy
+  has_many :programs, dependent: :destroy
+
+  validates :sort_number, presence: true, numericality: { only_integer: true }
 
   scope :recorded, -> { where("checkins_count > 0") }
 
+  before_create :set_sort_number
   after_create :update_prev_episode
   before_destroy :unset_prev_episode_id
 
@@ -78,23 +88,34 @@ class Episode < ActiveRecord::Base
     number.blank? && title.present?
   end
 
-  private
+  def to_hash
+    JSON.parse(to_json)
+  end
 
-  # エピソードを削除するとき、次のエピソードの `prev_episode_id` や
-  # DraftEpisodeの `prev_episode_id` に削除対象のエピソードが設定されていたとき、
-  # その情報を削除する
-  def unset_prev_episode_id
-    # エピソードを削除するとき、次のエピソードの `prev_episode_id` に
-    # 削除対象のエピソードが設定されていたとき、その情報を削除する
-    if next_episode.present? && (self == next_episode.prev_episode)
-      next_episode.update_column(:prev_episode_id, nil)
+  def to_diffable_hash
+    data = self.class::DIFF_FIELDS.each_with_object({}) do |field, hash|
+      hash[field] = send(field) if send(field).present?
+      hash
     end
 
-    DraftEpisode.where(prev_episode_id: id).update_all(prev_episode_id: nil)
+    data.delete_if { |_, v| v.blank? }
+  end
+
+  private
+
+  def unset_prev_episode_id
+    return if next_episode.blank?
+    # エピソードを削除するとき、次のエピソードの `prev_episode_id` に
+    # 削除対象のエピソードが設定されていたとき、その情報を削除する
+    next_episode.update_column(:prev_episode_id, nil) if self == next_episode.prev_episode
   end
 
   def update_prev_episode
     prev_episode = work.episodes.where.not(id: id).order(sort_number: :desc).first
     update_column(:prev_episode_id, prev_episode.id) if prev_episode.present?
+  end
+
+  def set_sort_number
+    self.sort_number = (work.episodes.count + 1) * 10
   end
 end

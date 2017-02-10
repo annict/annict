@@ -14,7 +14,7 @@ class GuestTopPageService
       by_season(ENV.fetch("ANNICT_CURRENT_SEASON")).
       where.not(id: season_top_work.id).
       order(watchers_count: :desc).
-      limit(8)
+      limit(12)
   end
 
   def self.top_work
@@ -26,18 +26,11 @@ class GuestTopPageService
       includes(:item).
       where.not(id: top_work.id).
       order(watchers_count: :desc).
-      limit(8)
+      limit(12)
   end
 
   def self.cover_image_work
     cover_image_work_ids = [season_top_work.id, season_works.pluck(:id)].flatten
     Work.includes(:item).find(cover_image_work_ids.sample)
-  end
-
-  def self.activities
-    Activity.where(action: %w(create_status create_record create_multiple_records)).
-      order(id: :desc).
-      includes(:recipient, trackable: :user, user: :profile).
-      limit(20)
   end
 end

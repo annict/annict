@@ -1,0 +1,17 @@
+- title = t "head.title.staffs.index", title: @work.decorate.local_title
+- description = meta_description(t("head.meta.description.staffs.index", title: @work.decorate.local_title))
+- keywords = meta_keywords(@work.title)
+- image_url = ann_image_url(@work.work_image, :attachment, size: "640x")
+- set_meta_tags(title: title, description: description, keywords: keywords, og: { description: description, image: image_url }, twitter: { description: description, image: image_url }, reverse: true, prefix: false)
+- set_page_category "staffs_index"
+
+= render "works/header", work: @work
+
+.c-card.container.pt-1.mb-2
+  = render "staffs/staff_list", staffs: @staffs
+
+= render "application/components/footer"
+= render "application/components/tabbar"
+
+- content_for :js_templates do
+  = render "application/js_templates/status_selector"

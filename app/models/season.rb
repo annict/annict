@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 # == Schema Information
 #
 # Table name: seasons
@@ -19,7 +20,7 @@
 class Season < ActiveRecord::Base
   has_many :works
 
-  delegate :yearly_season_ja, to: :decorate
+  delegate :local_name, to: :decorate
 
   NAME_DATA = {
     winter: "冬",

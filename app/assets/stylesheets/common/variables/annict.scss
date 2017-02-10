@@ -1,0 +1,85 @@
+// Color
+// l1: tranparent: 75%
+// l2: tranparent: 50%
+// l3: tranparent: 25%
+// l4: tranparent: 10%
+// l5: tranparent: 5%
+
+$ann-color-mizuho:    #f85b73;
+$ann-color-mizuho-l1: #fa8496;
+$ann-color-mizuho-l2: #fcadb9;
+$ann-color-mizuho-l3: #fdd6dc;
+$ann-color-mizuho-l4: #feeff1;
+$ann-color-mizuho-l5: #fff7f8;
+
+$ann-color-green:    #00b8a9;
+$ann-color-green-l1: #40cabf;
+$ann-color-green-l2: #80dcd4;
+$ann-color-green-l3: #c0edea;
+$ann-color-green-l4: #e6f8f7;
+$ann-color-green-l4: #f3fcfb;
+
+$ann-color-navy:    #364f6b;
+$ann-color-navy-l1: #687b90;
+$ann-color-navy-l2: #9ba7b5;
+$ann-color-navy-l3: #cdd4da;
+$ann-color-navy-l4: #ebeef0;
+$ann-color-navy-l5: #f6f7f8;
+
+$ann-color-black:    #343434;
+$ann-color-black-l1: #676767;
+$ann-color-black-l2: #9a9a9a;
+$ann-color-black-l3: #cdcdcd;
+$ann-color-black-l4: #ebebeb;
+$ann-color-black-l5: #f5f5f5;
+
+$ann-color-white: #fff;
+$ann-color-white-d1: #fafafa;
+
+$ann-color-yellow: #ffb400;
+
+$ann-color-shirobako: (
+  s: #d5ab1c,
+  ho: #d24488,
+  ik: #7c608c,
+  rb: #2985be,
+  o: #a3bc5c,
+  a: #d74f13
+);
+
+$ann-color-facebook: #2e6499;
+$ann-color-twitter: #24b1ec;
+
+$ann-color-border: rgba(0, 0, 0, .08);
+$ann-color-footer-bg: #334854;
+
+
+// Typography
+
+$ann-line-height-base: 1.5;
+$ann-line-height-sizes: (
+  0: 0,
+  1: 1,
+  xs: $ann-line-height-base / 1.2,
+  sm: $ann-line-height-base / 1.1,
+);
+
+$ann-text-colors: (
+  twitter: $ann-color-twitter,
+  facebook: $ann-color-facebook,
+  green: $ann-color-green
+);
+
+
+// Buttons
+
+$ann-btn-colors: (
+  twitter: $ann-color-twitter,
+  facebook: $ann-color-facebook,
+  green: $ann-color-green
+);
+
+
+// Navbar
+
+$ann-navbar-height: 3.8rem;

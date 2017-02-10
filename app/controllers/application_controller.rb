@@ -1,17 +1,26 @@
 # frozen_string_literal: true
 
 class ApplicationController < ActionController::Base
-  include AnalyticsFilter
+  include Pundit
+
+  include ControllerCommon
+  include Analyzable
+  include Gonable
+  include PageCategoryHelper
   include ViewSelector
   include FlashMessage
 
   # Prevent CSRF attacks by raising an exception.
   # For APIs, you may want to use :null_session instead.
-  protect_from_forgery with: :exception
+  protect_from_forgery with: :exception, prepend: true
 
-  before_action :set_paper_trail_whodunnit
-  before_action :store_user_info
+  helper_method :client_uuid, :gon
+
+  before_action :redirect_if_unexpected_subdomain
+  before_action :switch_languages
   before_action :set_search_params
+  before_action :load_new_user
+  before_action :load_data_into_gon
 
   # テスト実行時にDragonflyでアップロードした画像を読み込むときに呼ばれるアクション
   # 画像サーバはこのRailsアプリから切り離しているので、CircleCI等でテストを実行するときは
@@ -33,32 +42,24 @@ class ApplicationController < ActionController::Base
     root_path
   end
 
-  def set_work
+  def load_work
     @work = Work.published.find(params[:work_id])
   end
 
-  def set_episode
+  def load_character
+    @character = Character.published.find(params[:character_id])
+  end
+
+  def load_episode
     @episode = @work.episodes.published.find(params[:episode_id])
   end
 
-  def load_record
-    @record = @episode.checkins.find(params[:checkin_id])
-  end
-
-  def set_search_params
-    @search = SearchService.new(params[:q])
-  end
-
-  def store_user_info
-    if user_signed_in?
-      user_info = {
-        shareRecordToTwitter: current_user.setting.share_record_to_twitter?,
-        shareRecordToFacebook: current_user.setting.share_record_to_facebook?,
-        sharableToTwitter: current_user.shareable_to?(:twitter),
-        sharableToFacebook: current_user.shareable_to?(:facebook)
-      }
-
-      gon.push(user_info)
+  def display_works_count
+    return 15 unless user_signed_in?
+    case current_user.setting.display_option_work_list
+    when "list" then 15
+    else
+      50
     end
   end
 end

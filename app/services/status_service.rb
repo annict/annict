@@ -3,10 +3,10 @@
 class StatusService
   attr_writer :app
 
-  def initialize(user, work, ga_client)
+  def initialize(user, work, keen_client)
     @user = user
     @work = work
-    @ga_client = ga_client
+    @keen_client = keen_client
   end
 
   def change(kind)
@@ -14,7 +14,8 @@ class StatusService
       status = @user.statuses.new(work: @work, kind: kind, oauth_application: @app)
 
       if status.save
-        create_ga_event
+        @keen_client.app = @app
+        @keen_client.statuses.create
         return true
       end
     elsif kind == "no_select"
@@ -24,12 +25,5 @@ class StatusService
     end
 
     false
-  end
-
-  private
-
-  def create_ga_event
-    ds = @app.present? ? "app-#{@app.uid}" : "web"
-    @ga_client.events.create("statuses", "create", ds: ds)
   end
 end

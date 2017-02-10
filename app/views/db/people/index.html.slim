@@ -1,12 +1,18 @@
-- title "人物一覧"
+- title = t "head.title.db.people.index"
+- set_meta_tags(title: title, reverse: true, prefix: false)
+- set_page_category "db_people_index"
 
-- if user_signed_in?
-  .pull-right
-    - if current_user.committer?
-      = link_to "新規登録", new_db_person_path, class: "btn btn-primary"
-    - else
-      = link_to "新規登録", new_db_draft_person_path, class: "btn btn-primary"
-  .clearfix
+.l-topbar.container-fluid.px-1
+  .row.flex-items-xs-between
+    .col
+      = render "db/application/topbar_title", parent: t("head.title.db.people.index")
+    - if user_signed_in? && current_user.committer?
+      .col.text-right
+        = link_to new_db_person_path, class: "btn btn-outline-primary" do
+          = icon "plus"
+          = t "resources.person.new_person"
 
-= render "people_list", people: @people
-= paginate @people
+.container-fluid.p-1.mb-2
+  = render "people_list", people: @people
+  .text-center.mt-1
+    = paginate @people

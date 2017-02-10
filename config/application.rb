@@ -38,7 +38,7 @@ module Annict
     # config/locales/*.rb,yml are auto loaded.
     # config.i18n.load_path += Dir[Rails.root.join('my', 'locales', '*.{rb,yml}').to_s]
     config.i18n.default_locale = :ja
-    config.i18n.available_locales = ["en-US", :ja]
+    config.i18n.available_locales = %i(ja en)
 
     config.autoload_paths += %W(
       #{config.root}/lib
@@ -66,6 +66,15 @@ module Annict
       # rubocop:disable Metrics/LineLength
       r301 %r{\A/users/([A-Za-z0-9_]+)/(following|followers|wanna_watch|watching|watched|on_hold|stop_watching)\z}, "/@$1/$2"
       # rubocop:enable Metrics/LineLength
+
+      maintenance_file = File.join(Rails.root, "public", "maintenance.html")
+      send_file /(.*)$(?<!maintenance|favicons)/, maintenance_file, if: proc { |rack_env|
+        ip_address = rack_env["HTTP_X_FORWARDED_FOR"]&.split(",")&.last&.strip
+
+        File.exist?(maintenance_file) &&
+          ENV["ANNICT_MAINTENANCE_MODE"] == "on" &&
+          ip_address != ENV["ANNICT_ADMIN_IP"]
+      }
     end
 
     config.middleware.insert_before(0, Rack::Cors) do
@@ -75,12 +84,6 @@ module Annict
         origins "*"
         resource "*", headers: :any, methods: ALLOWED_METHODS, expose: EXPOSED_HEADERS
       end
-    end
-
-    unless Rails.env.test?
-      config.cache_store = :redis_store,
-        "#{ENV.fetch('REDIS_URL')}/0/annict_cache",
-        { expires_in: 90.minutes }
     end
 
     commandline_options = "-t coffeeify --extension=\".js.coffee\""

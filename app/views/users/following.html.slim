@@ -1,29 +1,17 @@
-- title = "#{@user.profile.name} (#{@user.username})さんがフォローしている人"
-- description = meta_description("#{@user.profile.name}さんがフォローしている人をチェック！")
+- title = t "head.title.users.following", profile_name: @user.profile.name, username: @user.username
+- description = meta_description(t("head.meta.description.users.following", profile_name: @user.profile.name, username: @user.username))
 - keywords = meta_keywords(@user.profile.name, @user.username)
-- set_meta_tags(title: title, description: description, keywords: keywords, reverse: true)
+- image_url = ann_image_url(@user.profile, :tombo_avatar, size: "640x")
+- set_meta_tags(title: title, description: description, keywords: keywords, og: { description: description }, twitter: { description: description }, reverse: true, prefix: false)
+- set_page_category "users_following"
 
-= render "application/v2/navbar"
+= render "application/components/navbar", transparent: true
+= render "users/low_profile_header", user: @user
+= render "users/follow_nav", user: @user
 
-.header-wrapper
-  .ann-user-sub-header.container
-    = link_to user_path(@user.username) do
-      = annict_image_tag(@user.profile, :tombo_avatar, msize: "50x50", size: "70x70", class: "img-circle")
-    h1
-      = link_to @user.profile.name, user_path(@user.username)
-      = "がフォローしている人"
+.p-application__content.mb-2
+  .row.my-1
+    .c-card.col-6.offset-3
+      = render "users/user_list", users: @users
 
-  = render 'users/follow_nav', user: @user
-
-- if @users.present?
-  .user-list
-    - @users.each do |user|
-      = render 'users/user', user: user
-- else
-  .wrapper
-    .info.well
-      .icon
-        i.fa.fa-info-circle
-      p フォローしている人はいません。
-
-= render "application/v2/components/footer"
+= render "application/components/footer"

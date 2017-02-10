@@ -1,0 +1,6 @@
+<p>見た記録を残したり感想を書いたりすることができます。</p>
+<p>「<%= link_to "見てる作品", user_works_path(current_user.username, :watching) %>」ページから作品を選んで、見たエピソードを記録してみましょう。</p>
+
+<div class="text-center">
+  <%= link_to "「見てる作品」ページへ", user_works_path(current_user.username, :watching), class: "btn btn-primary" %>
+</div>

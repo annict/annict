@@ -1,26 +1,32 @@
-- title "アニメ作品一覧"
+- title = t "head.title.db.works.index"
+- set_meta_tags(title: title, reverse: true, prefix: false)
+- set_page_category "db_works_index"
 
-- if user_signed_in?
-  .pull-right
-    - if current_user.committer?
-      = link_to "新規登録", new_db_work_path, class: "btn btn-primary"
-    - else
-      = link_to "新規登録", new_db_draft_work_path, class: "btn btn-primary"
-  .clearfix
+.l-topbar.container-fluid.px-1
+  .row.flex-items-xs-between
+    .col
+      = render "db/application/topbar_title", parent: t("head.title.db.works.index")
+    - if user_signed_in? && current_user.committer?
+      .col.text-right
+        = link_to new_db_work_path, class: "btn btn-outline-primary" do
+          = icon "plus"
+          = t "resources.work.new_work"
 
-ul.nav.nav-tabs
-  = active_link_to db_works_path, wrap_tag: :li, active: params[:action] == "index", target: "_self" do
-    | 全て
-  = active_link_to season_db_works_path(slug: ENV["ANNICT_CURRENT_SEASON"]), wrap_tag: :li, active: (params[:slug] == ENV["ANNICT_CURRENT_SEASON"]), target: "_self" do
-    | 今期
-  = active_link_to season_db_works_path(slug: ENV["ANNICT_NEXT_SEASON"]), wrap_tag: :li, active: (params[:slug] == ENV["ANNICT_NEXT_SEASON"]), target: "_self" do
-    | 来期
-  = active_link_to season_db_works_path(slug: ENV["ANNICT_PREVIOUS_SEASON"]), wrap_tag: :li, active: (params[:slug] == ENV["ANNICT_PREVIOUS_SEASON"]), target: "_self" do
-    | 前期
-  = active_link_to resourceless_db_works_path(name: :episode), wrap_tag: :li, active: (params[:name] == "episode"), target: "_self" do
-    | エピソード未登録
-  = active_link_to resourceless_db_works_path(name: :item), wrap_tag: :li, active: (params[:name] == "item"), target: "_self" do
-    | 作品画像未登録
+.container-fluid.p-1.mb-2
+  ul.nav.nav-inline.justify-content-center.mb-1
+    li.nav-item
+      = active_link_to t("noun.all"), db_works_path, class: "nav-link", active: params[:action] == "index"
+    li.nav-item.dropdown
+      a.nav-link.dropdown-toggle href="#" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"
+        = t "noun.season"
+      .dropdown-menu.pre-scrollable
+        - Season.order(sort_number: :desc).each do |season|
+          = link_to season.decorate.local_name, season_db_works_path(slug: season.slug), class: "dropdown-item"
+    li.nav-item
+      = active_link_to t("messages.db.works.no_episodes"), resourceless_db_works_path(name: :episode), class: "nav-link", active: (params[:name] == "episode")
+    li.nav-item
+      = active_link_to t("messages.db.works.no_image"), resourceless_db_works_path(name: :item), class: "nav-link", active: (params[:name] == "item")
 
-= render "works_list", works: @works
-= paginate @works
+  = render "works_list", works: @works
+  .text-center.mt-1
+    = paginate @works

@@ -1,0 +1,16 @@
+# frozen_string_literal: true
+
+json = {}
+
+json[:records] = @records.map do |record|
+  record_json = {}
+  record_json.merge!(render("api/v1/records/record", record: record, params: @params, field_prefix: ""))
+  record_json[:user] = render("api/v1/users/user", user: record.user, params: @params, field_prefix: "user.", show_all: false)
+  record_json[:work] = render("api/v1/works/work", work: record.work, params: @params, field_prefix: "work.")
+  record_json[:episode] = render("api/v1/episodes/episode", episode: record.episode, params: @params, field_prefix: "episode.")
+  record_json
+end
+
+json.merge!(render("api/v1/application/pagination", collection: @records, params: @params))
+
+json

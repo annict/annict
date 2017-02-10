@@ -2,11 +2,20 @@ language: ruby
 
 addons:
   postgresql: "9.4"
+  hosts:
+    - annict.dev
+    - db.annict.dev
+    - forum.annict.dev
+    - api.annict.dev
 
 cache:
   directories:
     - vendor/bundle
     - node_modules
+
+before_install:
+  - export TZ=Asia/Tokyo
+  - gem update --system
 
 install:
   - bundle install --deployment --jobs=3 --retry=3
@@ -22,3 +31,14 @@ script:
 notifications:
   email: false
   slack: annict:rn43dPpTg6KuZZajh4PK33r9
+
+env:
+  global:
+    - ANNICT_BASIC_AUTH=off
+    - ANNICT_CURRENT_SEASON=2017-winter
+    - ANNICT_EN_URL=http://en.annict.dev
+    - ANNICT_JA_URL=http://ja.annict.dev
+    - ANNICT_NEXT_SEASON=2017-spring
+    - ANNICT_PAPERCLIP_PATH="paperclip/:class/:id/:attachment/:style/:hash.:extension"
+    - ANNICT_PAPERCLIP_URL=:rails_root/public/paperclip/:class/:id/:attachment/:style/:hash.:extension"
+    - ANNICT_PREVIOUS_SEASON=2016-autumn
