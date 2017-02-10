@@ -14,7 +14,7 @@ span.ml-zp25
     | :
   .col
     = link_to work_images_path(work) do
-      = image_tag ann_image_url(item, :tombo_image, size: "140x187"), class: "img-fluid", width: "140"
+      = image_tag ann_image_url(work_image, :attachment, size: "140x187"), class: "img-fluid", width: "140"
 
 .small.text-muted
   = local_time_ago_in_words(notification.created_at)

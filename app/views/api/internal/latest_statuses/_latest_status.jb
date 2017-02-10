@@ -5,7 +5,7 @@ json = {
   work: {
     id: latest_status.work.id,
     title: latest_status.work.title,
-    image_url: ann_image_url(latest_status.work.item, :tombo_image, size: "125x125")
+    image_url: ann_image_url(latest_status.work.work_image, :attachment, size: "125x125")
   }
 }
 

@@ -3,7 +3,7 @@
     .row.mb-1
       .col.u-flex-grow-0.pr-0
         = link_to work_path(work) do
-          = image_tag ann_image_url(work.item, :tombo_image, size: "50x67"), class: "rounded"
+          = image_tag ann_image_url(work.work_image, :attachment, size: "50x67"), class: "rounded"
       .col
         .mb-zp5
           = link_to work.decorate.local_title, work_path(work)
