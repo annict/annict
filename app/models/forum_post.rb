@@ -31,4 +31,19 @@ class ForumPost < ApplicationRecord
   validates :last_commented_at, presence: true
   validates :title, presence: true, length: { maximum: 100 }
   validates :user, presence: true
+
+  def notify_slack
+    webhook_url = ENV.fetch("ANNICT_SLACK_WEBHOOK_URL_FOR_NOTIFICATIONS")
+    options = {
+      channel: "#forum-#{forum_category.slug.tr('_', '-')}",
+      username: "Notifier",
+      icon_emoji: ":annict:"
+    }
+    host = ENV.fetch("ANNICT_URL")
+    url = Rails.application.routes.url_helpers.forum_post_url(self, host: host)
+    message = "<!channel> #{user.profile.name} created the post #{title} #{url}"
+
+    notifier = Slack::Notifier.new(webhook_url, options)
+    notifier.ping(message)
+  end
 end
