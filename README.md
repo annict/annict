@@ -8,8 +8,6 @@
 [![Slack](https://slack.annict.com/badge.svg)](https://slack.annict.com)
 
 
-**This branch is still in development for the next version (V2).**
-
 ### Contributing
 
 #### Requirements
