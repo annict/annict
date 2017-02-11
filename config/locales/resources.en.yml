@@ -3,6 +3,7 @@ en:
     character:
       created: Character created
       edit: Edit character
+      go_to_character: Go to Character
       new_characters: New characters
       character_list: Character list
       there_are_no_characters: There are no characters
@@ -38,7 +39,7 @@ en:
     organization:
       created: Organization created
       deleted: Organization deleted
-      go_to_organization: Go To Organization
+      go_to_organization: Go to Organization
       new_organization: New Organization
       twitter_hashtag_placeholder: e.g. paworks_info
       twitter_hashtag_en_placeholder: e.g. paworks_eng
@@ -48,7 +49,7 @@ en:
     person:
       created: Person created
       deleted: Person deleted
-      go_to_person: Go To Person
+      go_to_person: Go to Person
       new_person: New Person
       twitter_hashtag_placeholder: e.g. nazukakaori
       unpublished: Person unpublished
@@ -82,7 +83,7 @@ en:
         published: Published
         hidden: Hidden
       created: Work created
-      go_to_work: Go to work
+      go_to_work: Go to Work
       new_work: New work
       no_images: No work images
       twitter_hashtag_placeholder: e.g. なのん

@@ -3,6 +3,7 @@ ja:
     character:
       created: 登録しました
       edit: キャラクター編集
+      go_to_character: キャラクター詳細
       new_characters: キャラクター登録
       character_list: キャラクター一覧
       there_are_no_characters: キャラクターは登録されていません
@@ -38,7 +39,7 @@ ja:
     organization:
       created: 登録しました
       deleted: 削除しました
-      go_to_organization: 団体詳細ページ
+      go_to_organization: 団体詳細
       new_organization: 団体登録
       twitter_hashtag_placeholder: e.g. paworks_info
       twitter_hashtag_en_placeholder: e.g. paworks_eng
@@ -48,7 +49,7 @@ ja:
     person:
       created: 登録しました
       deleted: 削除しました
-      go_to_person: 人物詳細ページ
+      go_to_person: 人物詳細
       new_person: 人物登録
       twitter_hashtag_placeholder: e.g. nazukakaori
       unpublished: 非公開にしました

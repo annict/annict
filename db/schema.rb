@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170211110911) do
+ActiveRecord::Schema.define(version: 20170211135244) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -94,32 +94,34 @@ ActiveRecord::Schema.define(version: 20170211110911) do
   end
 
   create_table "characters", force: :cascade do |t|
-    t.string   "name",                                 null: false
-    t.string   "name_kana",      default: "",          null: false
-    t.string   "name_en",        default: "",          null: false
-    t.string   "kind",           default: "",          null: false
-    t.string   "kind_en",        default: "",          null: false
-    t.string   "nickname",       default: "",          null: false
-    t.string   "nickname_en",    default: "",          null: false
-    t.string   "birthday",       default: "",          null: false
-    t.string   "birthday_en",    default: "",          null: false
-    t.string   "age",            default: "",          null: false
-    t.string   "age_en",         default: "",          null: false
-    t.string   "blood_type",     default: "",          null: false
-    t.string   "blood_type_en",  default: "",          null: false
-    t.string   "height",         default: "",          null: false
-    t.string   "height_en",      default: "",          null: false
-    t.string   "weight",         default: "",          null: false
-    t.string   "weight_en",      default: "",          null: false
-    t.string   "nationality",    default: "",          null: false
-    t.string   "nationality_en", default: "",          null: false
-    t.string   "occupation",     default: "",          null: false
-    t.string   "occupation_en",  default: "",          null: false
-    t.text     "description",    default: "",          null: false
-    t.text     "description_en", default: "",          null: false
-    t.string   "aasm_state",     default: "published", null: false
-    t.datetime "created_at",                           null: false
-    t.datetime "updated_at",                           null: false
+    t.string   "name",                                        null: false
+    t.string   "name_kana",             default: "",          null: false
+    t.string   "name_en",               default: "",          null: false
+    t.string   "kind",                  default: "",          null: false
+    t.string   "kind_en",               default: "",          null: false
+    t.string   "nickname",              default: "",          null: false
+    t.string   "nickname_en",           default: "",          null: false
+    t.string   "birthday",              default: "",          null: false
+    t.string   "birthday_en",           default: "",          null: false
+    t.string   "age",                   default: "",          null: false
+    t.string   "age_en",                default: "",          null: false
+    t.string   "blood_type",            default: "",          null: false
+    t.string   "blood_type_en",         default: "",          null: false
+    t.string   "height",                default: "",          null: false
+    t.string   "height_en",             default: "",          null: false
+    t.string   "weight",                default: "",          null: false
+    t.string   "weight_en",             default: "",          null: false
+    t.string   "nationality",           default: "",          null: false
+    t.string   "nationality_en",        default: "",          null: false
+    t.string   "occupation",            default: "",          null: false
+    t.string   "occupation_en",         default: "",          null: false
+    t.text     "description",           default: "",          null: false
+    t.text     "description_en",        default: "",          null: false
+    t.string   "aasm_state",            default: "published", null: false
+    t.datetime "created_at",                                  null: false
+    t.datetime "updated_at",                                  null: false
+    t.string   "description_source",    default: "",          null: false
+    t.string   "description_source_en", default: "",          null: false
     t.index ["name", "kind"], name: "index_characters_on_name_and_kind", unique: true, using: :btree
   end
 

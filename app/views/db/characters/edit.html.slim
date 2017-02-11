@@ -5,7 +5,7 @@
     .col-8
       = render "db/application/topbar_title", parent: @character, child: t("resources.character.edit")
     .col.text-right
-      = link_to character_path(@character), class: "btn btn-outline-primary", target: "_blank" do
+      = link_to character_path(@character), class: "btn btn-outline-primary" do
         = icon "external-link"
         = t "resources.character.go_to_character"
 
@@ -108,9 +108,17 @@
               .col-sm-9
                 = f.text_area :description, class: "form-control", rows: 10
             .form-group.row
+              = f.label :description_source, class: "col-sm-3 col-form-label"
+              .col-sm-9
+                = f.text_field :description_source, class: "form-control"
+            .form-group.row
               = f.label :description_en, class: "col-sm-3 col-form-label"
               .col-sm-9
                 = f.text_area :description_en, class: "form-control", rows: 10
+            .form-group.row
+              = f.label :description_source_en, class: "col-sm-3 col-form-label"
+              .col-sm-9
+                = f.text_field :description_source_en, class: "form-control"
 
             .form-group.row
               .offset-sm-3.col-sm-9

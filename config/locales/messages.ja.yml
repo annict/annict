@@ -9,6 +9,8 @@ ja:
       welcome_back: おかえりなさい！
       welcome_to_annict: Annictにようこそ！
       you_can_not_access_there: アクセスできません
+    _validators:
+      and_other_are_required: と%{column_name}は両方入力してください
     accounts:
       email_sent_for_confirmation: メールアドレス確認用メールを送信しました
       saved: アカウント登録されました
