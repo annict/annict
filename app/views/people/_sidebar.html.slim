@@ -26,7 +26,7 @@ dl
     dd = person.gender_text
   - if person.birthday.present?
     dt.small = t "activerecord.attributes.person.birthday"
-    dd = person.birthday.strftime("%Y年%m月%d日")
+    dd = person.birthday.strftime("%Y/%m/%d")
   - if person.blood_type.present?
     dt.small = t "activerecord.attributes.person.blood_type"
     dd = person.blood_type_text
