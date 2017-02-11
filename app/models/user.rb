@@ -22,7 +22,8 @@
 #  notifications_count    :integer          default(0), not null
 #  created_at             :datetime
 #  updated_at             :datetime
-#  time_zone              :string           default(""), not null
+#  time_zone              :string           not null
+#  locale                 :string           not null
 #  reset_password_token   :string
 #  reset_password_sent_at :datetime
 #

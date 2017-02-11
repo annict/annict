@@ -11,8 +11,6 @@
 #  created_at :datetime         not null
 #  updated_at :datetime         not null
 #  title_en   :string           default(""), not null
-#  body       :text             default(""), not null
-#  body_en    :text             default(""), not null
 #
 # Indexes
 #

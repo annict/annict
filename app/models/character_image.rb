@@ -10,18 +10,13 @@
 #  attachment_file_size    :integer          not null
 #  attachment_content_type :string           not null
 #  attachment_updated_at   :datetime         not null
-#  aasm_state              :string           default("published"), not null
-#  likes_count             :integer          default(0), not null
-#  dislikes_count          :integer          default(0), not null
+#  copyright               :string           default(""), not null
+#  asin                    :string           default(""), not null
 #  created_at              :datetime         not null
 #  updated_at              :datetime         not null
-#  source_url              :string           not null
-#  asin                    :string           default(""), not null
-#  copyright               :string           default(""), not null
 #
 # Indexes
 #
-#  index_character_images_on_aasm_state    (aasm_state)
 #  index_character_images_on_character_id  (character_id)
 #  index_character_images_on_user_id       (user_id)
 #

@@ -12,7 +12,7 @@
 #  sort_number  :integer          default(0), not null
 #  created_at   :datetime         not null
 #  updated_at   :datetime         not null
-#  character_id :integer
+#  character_id :integer          not null
 #  name_en      :string           default(""), not null
 #
 # Indexes

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170113204733) do
+ActiveRecord::Schema.define(version: 20170211110911) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -37,7 +37,7 @@ ActiveRecord::Schema.define(version: 20170113204733) do
     t.integer  "sort_number",  default: 0,           null: false
     t.datetime "created_at",                         null: false
     t.datetime "updated_at",                         null: false
-    t.integer  "character_id"
+    t.integer  "character_id",                       null: false
     t.string   "name_en",      default: "",          null: false
     t.index ["aasm_state"], name: "index_casts_on_aasm_state", using: :btree
     t.index ["character_id"], name: "index_casts_on_character_id", using: :btree
@@ -79,21 +79,16 @@ ActiveRecord::Schema.define(version: 20170113204733) do
   end
 
   create_table "character_images", force: :cascade do |t|
-    t.integer  "character_id",                                  null: false
-    t.integer  "user_id",                                       null: false
-    t.string   "attachment_file_name",                          null: false
-    t.integer  "attachment_file_size",                          null: false
-    t.string   "attachment_content_type",                       null: false
-    t.datetime "attachment_updated_at",                         null: false
-    t.string   "aasm_state",              default: "published", null: false
-    t.integer  "likes_count",             default: 0,           null: false
-    t.integer  "dislikes_count",          default: 0,           null: false
-    t.datetime "created_at",                                    null: false
-    t.datetime "updated_at",                                    null: false
-    t.string   "source_url",                                    null: false
-    t.string   "asin",                    default: "",          null: false
-    t.string   "copyright",               default: "",          null: false
-    t.index ["aasm_state"], name: "index_character_images_on_aasm_state", using: :btree
+    t.integer  "character_id",                         null: false
+    t.integer  "user_id",                              null: false
+    t.string   "attachment_file_name",                 null: false
+    t.integer  "attachment_file_size",                 null: false
+    t.string   "attachment_content_type",              null: false
+    t.datetime "attachment_updated_at",                null: false
+    t.string   "copyright",               default: "", null: false
+    t.string   "asin",                    default: "", null: false
+    t.datetime "created_at",                           null: false
+    t.datetime "updated_at",                           null: false
     t.index ["character_id"], name: "index_character_images_on_character_id", using: :btree
     t.index ["user_id"], name: "index_character_images_on_user_id", using: :btree
   end
@@ -219,17 +214,6 @@ ActiveRecord::Schema.define(version: 20170113204733) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.index ["priority", "run_at"], name: "delayed_jobs_priority", using: :btree
-  end
-
-  create_table "dislikes", force: :cascade do |t|
-    t.integer  "user_id",        null: false
-    t.string   "recipient_type", null: false
-    t.integer  "recipient_id",   null: false
-    t.datetime "created_at",     null: false
-    t.datetime "updated_at",     null: false
-    t.index ["recipient_id", "recipient_type"], name: "index_dislikes_on_recipient_id_and_recipient_type", using: :btree
-    t.index ["recipient_type", "recipient_id"], name: "index_dislikes_on_recipient_type_and_recipient_id", using: :btree
-    t.index ["user_id"], name: "index_dislikes_on_user_id", using: :btree
   end
 
   create_table "draft_casts", force: :cascade do |t|
@@ -453,14 +437,14 @@ ActiveRecord::Schema.define(version: 20170113204733) do
   create_table "forum_categories", force: :cascade do |t|
     t.string   "slug",                          null: false
     t.string   "name",                          null: false
-    t.integer  "forum_posts_count", default: 0, null: false
-    t.datetime "created_at",                    null: false
-    t.datetime "updated_at",                    null: false
     t.string   "name_en",                       null: false
     t.string   "description",                   null: false
     t.string   "description_en",                null: false
     t.string   "postable_role",                 null: false
     t.integer  "sort_number",                   null: false
+    t.integer  "forum_posts_count", default: 0, null: false
+    t.datetime "created_at",                    null: false
+    t.datetime "updated_at",                    null: false
     t.index ["slug"], name: "index_forum_categories_on_slug", unique: true, using: :btree
   end
 
@@ -492,9 +476,9 @@ ActiveRecord::Schema.define(version: 20170113204733) do
     t.text     "body",                 default: "", null: false
     t.integer  "forum_comments_count", default: 0,  null: false
     t.datetime "edited_at",                                      comment: "The datetime which user has changed title, body and so on."
+    t.datetime "last_commented_at",                 null: false
     t.datetime "created_at",                        null: false
     t.datetime "updated_at",                        null: false
-    t.datetime "last_commented_at",                 null: false
     t.index ["forum_category_id"], name: "index_forum_posts_on_forum_category_id", using: :btree
     t.index ["user_id"], name: "index_forum_posts_on_user_id", using: :btree
   end
@@ -733,19 +717,6 @@ ActiveRecord::Schema.define(version: 20170113204733) do
     t.index ["user_id"], name: "receptions_user_id_idx", using: :btree
   end
 
-  create_table "reports", force: :cascade do |t|
-    t.integer  "user_id",            null: false
-    t.string   "root_resource_type", null: false
-    t.integer  "root_resource_id",   null: false
-    t.string   "resource_type"
-    t.integer  "resource_id"
-    t.datetime "created_at",         null: false
-    t.datetime "updated_at",         null: false
-    t.index ["resource_id", "resource_type"], name: "index_reports_on_resource_id_and_resource_type", using: :btree
-    t.index ["root_resource_id", "root_resource_type"], name: "index_reports_on_root_resource_id_and_root_resource_type", using: :btree
-    t.index ["user_id"], name: "index_reports_on_user_id", using: :btree
-  end
-
   create_table "seasons", force: :cascade do |t|
     t.string   "name",        limit: 510, null: false
     t.datetime "created_at"
@@ -830,8 +801,6 @@ ActiveRecord::Schema.define(version: 20170113204733) do
     t.datetime "created_at",                          null: false
     t.datetime "updated_at",                          null: false
     t.string   "title_en",               default: "", null: false
-    t.text     "body",                   default: "", null: false
-    t.text     "body_en",                default: "", null: false
     t.index ["slug"], name: "index_tips_on_slug", unique: true, using: :btree
   end
 
@@ -861,7 +830,8 @@ ActiveRecord::Schema.define(version: 20170113204733) do
     t.integer  "notifications_count",                default: 0,  null: false
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.string   "time_zone",                          default: "", null: false
+    t.string   "time_zone",                                       null: false
+    t.string   "locale",                                          null: false
     t.string   "reset_password_token"
     t.datetime "reset_password_sent_at"
     t.index ["confirmation_token"], name: "users_confirmation_token_key", unique: true, using: :btree
@@ -885,10 +855,10 @@ ActiveRecord::Schema.define(version: 20170113204733) do
     t.integer  "attachment_file_size",                 null: false
     t.string   "attachment_content_type",              null: false
     t.datetime "attachment_updated_at",                null: false
-    t.datetime "created_at",                           null: false
-    t.datetime "updated_at",                           null: false
     t.string   "copyright",               default: "", null: false
     t.string   "asin",                    default: "", null: false
+    t.datetime "created_at",                           null: false
+    t.datetime "updated_at",                           null: false
     t.index ["user_id"], name: "index_work_images_on_user_id", using: :btree
     t.index ["work_id"], name: "index_work_images_on_work_id", using: :btree
   end
@@ -946,7 +916,7 @@ ActiveRecord::Schema.define(version: 20170113204733) do
   add_foreign_key "comments", "works"
   add_foreign_key "cover_images", "works", name: "cover_images_work_id_fk", on_delete: :cascade
   add_foreign_key "db_activities", "users"
-  add_foreign_key "dislikes", "users"
+  add_foreign_key "db_comments", "users"
   add_foreign_key "draft_casts", "casts"
   add_foreign_key "draft_casts", "people"
   add_foreign_key "draft_casts", "works"
@@ -1008,7 +978,6 @@ ActiveRecord::Schema.define(version: 20170113204733) do
   add_foreign_key "providers", "users", name: "providers_user_id_fk", on_delete: :cascade
   add_foreign_key "receptions", "channels", name: "receptions_channel_id_fk", on_delete: :cascade
   add_foreign_key "receptions", "users", name: "receptions_user_id_fk", on_delete: :cascade
-  add_foreign_key "reports", "users"
   add_foreign_key "settings", "users"
   add_foreign_key "staffs", "works"
   add_foreign_key "statuses", "oauth_applications"
