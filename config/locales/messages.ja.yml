@@ -36,7 +36,6 @@ ja:
       your_records: あなたの記録
     forum:
       comments:
-        comment_notification_subject: "[Annict Forum] %{name} (@%{username})があなたの投稿にコメントしました"
         created: 投稿しました
         leave_a_comment: コメントを書く
         updated: 更新しました

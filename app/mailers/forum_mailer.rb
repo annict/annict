@@ -3,14 +3,21 @@
 class ForumMailer < ActionMailer::Base
   default from: "Annict <no-reply@annict.com>"
 
-  def comment_notification(comment_id, email)
+  def comment_notification(user_id, comment_id)
+    @receiver = User.find(user_id)
     @comment = ForumComment.find(comment_id)
-    @username = @comment.user.username
-    @name = @comment.user.profile.name
+    @sender = @comment.user
+    @post_title = @comment.forum_post.title
+    @username = @sender.username
+    @name = @sender.profile.name
 
-    subject = t "messages.forum.comments.comment_notification_subject",
+    I18n.locale = @receiver.locale
+
+    subject = default_i18n_subject(
       name: @name,
-      username: @username
-    mail(to: email, subject: subject)
+      username: @username,
+      post_title: @post_title
+    )
+    mail(to: @receiver.email, subject: subject)
   end
 end

@@ -27,7 +27,7 @@ class ForumComment < ApplicationRecord
 
   def send_notification
     forum_post.forum_post_participants.where.not(user: user).each do |p|
-      ForumMailer.comment_notification(id, p.user.email).deliver_later
+      ForumMailer.comment_notification(p.user.id, id).deliver_now
     end
   end
 end
