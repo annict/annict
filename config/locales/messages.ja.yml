@@ -2,6 +2,7 @@ ja:
   messages:
     _common:
       are_you_sure: 実行しますか？
+      edit_on_annict_db: Annict DBで編集する
       join_annict: Annictに参加する
       search_with_keywords: キーワードで検索...
       view_amazon_product: Amazonで見る
