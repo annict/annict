@@ -128,8 +128,7 @@ Doorkeeper::Application.class_eval do
 
   scope :available, -> { published.where.not(owner: nil) }
   scope :unavailable, -> {
-    conditions = unscoped.where(aasm_state: ["hidden"]).where(owner: nil).where_values
-    where(conditions.reduce(:or))
+    unscoped.where(aasm_state: ["hidden"]).or(where(owner: nil))
   }
 end
 
