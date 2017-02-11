@@ -8,8 +8,8 @@ module.exports = Vue.extend
   methods:
     filter: (text) ->
       text = escape text
-      text = newLine text
       text = linkify text
+      text = newLine text
       text
 
   mounted: ->
