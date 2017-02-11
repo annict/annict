@@ -35,14 +35,6 @@
 #
 
 class CheckinsController < ApplicationController
-  before_action :load_work, only: %i(show)
-  before_action :load_episode, only: %i(show)
-  before_action :load_record, only: %i(show)
-
-  def show
-    redirect_to record_path(@record.user.username, @record), status: 301
-  end
-
   def redirect(provider, url_hash)
     case provider
     when "tw"
@@ -74,10 +66,6 @@ class CheckinsController < ApplicationController
   end
 
   private
-
-  def load_record
-    @record = @episode.checkins.find(params[:id])
-  end
 
   def redirect_to_user_record(checkin)
     username = checkin.user.username

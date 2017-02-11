@@ -50,7 +50,7 @@ SitemapGenerator::Sitemap.create do
     add work_path(w.id), priority: 1.0, lastmod: w.updated_at
 
     w.episodes.published.find_each do |e|
-      if e.checkins.present?
+      if e.records.present?
         add work_episode_path(w.id, e.id), priority: 1.0
       end
     end

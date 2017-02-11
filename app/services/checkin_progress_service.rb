@@ -5,7 +5,7 @@ class CheckinProgressService
     @user = user
     @work = work
     @episode_ids = work.episodes.published.pluck(:id)
-    @checked_episode_ids = user.checkins.where(work: work).pluck(:episode_id)
+    @checked_episode_ids = user.records.where(work: work).pluck(:episode_id)
     @all_checkins_count = get_all_checkins_count(checked_episode_ids)
   end
 
