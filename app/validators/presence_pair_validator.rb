@@ -5,6 +5,7 @@ class PresencePairValidator < ActiveModel::EachValidator
     pair_column_name = options[:with]
     pair_value = record.send(pair_column_name)
 
+    return if value.blank? && pair_value.blank?
     return if value.present? && pair_value.present?
 
     i18n_message_key = "messages._validators.and_other_are_required"

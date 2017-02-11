@@ -1,9 +1,12 @@
 # frozen_string_literal: true
 
 resources = @characters.map do |character|
+  text_list = [character.decorate.local_name]
+  text_list << " (#{character.decorate.local_kind})" if character.decorate.local_kind.present?
+
   {
     id: character.id,
-    text: character.name
+    text: text_list.join
   }
 end
 
