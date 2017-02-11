@@ -11,17 +11,6 @@ class CharacterDecorator < ApplicationDecorator
     local_name
   end
 
-  def local_name
-    return name if I18n.locale == :ja
-    return name_en if name_en.present?
-    name
-  end
-
-  def local_kind
-    return kind if I18n.locale == :ja
-    return kind_en if kind_en.present?
-  end
-
   def name_with_kind
     return "#{local_name} (#{local_kind})" if local_kind.present?
     local_name
@@ -42,5 +31,27 @@ class CharacterDecorator < ApplicationDecorator
     name = options.delete(:name).presence || self.name
     path = h.edit_db_character_path(self)
     h.link_to name, path, options
+  end
+
+  def method_missing(method_name, *arguments, &block)
+    return super if method_name.blank?
+    return super unless method_name.to_s.start_with?("local_")
+    _local_property(method_name.to_s.sub("local_", ""))
+  end
+
+  def respond_to_missing?(method_name, include_private = false)
+    method_name.to_s.start_with?("local_") || super
+  end
+
+  private
+
+  def _local_property(property_name)
+    property_ja = send(property_name.to_sym)
+    property_en = send("#{property_name}_en".to_sym)
+
+    return property_ja if I18n.locale == :ja
+    return property_en if property_en.present?
+
+    property_ja
   end
 end
