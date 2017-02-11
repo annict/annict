@@ -7,7 +7,7 @@
     .col-8
       = render "db/application/topbar_title", parent: @work, child: t("resources.cast.edit_cast")
     .col.text-right
-      = link_to work_path(@work), class: "btn btn-outline-primary", target: "_blank" do
+      = link_to work_path(@work), class: "btn btn-outline-primary" do
         = icon "external-link"
         = t "resources.work.go_to_work"
 

@@ -5,7 +5,7 @@
     .col-8
       = render "db/application/topbar_title", parent: @organization.decorate.local_name.truncate(70)
     .col.text-right
-      = link_to organization_url(@organization, subdomain: false), class: "btn btn-outline-primary", target: "_blank" do
+      = link_to organization_url(@organization, subdomain: false), class: "btn btn-outline-primary" do
         = icon "external-link"
         = t "resources.organization.go_to_organization"
 

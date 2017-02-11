@@ -35,6 +35,8 @@ en:
         occupation_en: Occupation (en)
         description: Description
         description_en: Description (en)
+        description_source: Description source
+        description_source_en: Description source (en)
       character_image:
         attachment: Image
       checkin:

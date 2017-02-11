@@ -20,6 +20,7 @@ ja:
     category: カテゴリ
     channel_list: チャンネル一覧
     channel: チャンネル
+    character_image: キャラクター画像
     characters: キャラクター
     contents: コンテンツ
     column: 項目
@@ -69,6 +70,7 @@ ja:
     sign_up: ユーザ登録
     skip: スキップ
     sns_friends: SNSの友達
+    source: 引用元
     staffs: スタッフ
     state: 状態
     syobocal: しょぼかる

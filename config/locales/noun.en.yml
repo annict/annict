@@ -20,6 +20,7 @@ en:
     category: Category
     channel_list: Channel List
     channel: Channel
+    character_image: Character Image
     characters: Characters
     contents: Contents
     column: Column
@@ -69,6 +70,7 @@ en:
     sign_up: Sign up
     skip: Skip
     sns_friends: SNS Friends
+    source: Source
     staffs: Staffs
     state: State
     syobocal: Syobocal

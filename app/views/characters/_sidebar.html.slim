@@ -47,6 +47,11 @@ dl
     dd = character.decorate.local_occupation
   - if character.decorate.local_description.present?
     dt.small = t "activerecord.attributes.character.description"
-    dd = character.decorate.local_description
+    dd
+      = character.decorate.local_description
+      .small
+        span.mr-zp25
+          = "#{t('noun.source')}:".html_safe
+        = character.decorate.local_description_source
 - if user_signed_in? && current_user.committer?
   = link_to t("messages._common.edit_on_annict_db"), edit_db_character_path(character), class: "btn btn-secondary w-100 mt-zp5"

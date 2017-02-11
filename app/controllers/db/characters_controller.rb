@@ -5,7 +5,8 @@ module Db
     permits :name, :name_kana, :name_en, :kind, :kind_en, :nickname, :nickname_en,
       :birthday, :birthday_en, :age, :age_en, :blood_type, :blood_type_en, :height,
       :height_en, :weight, :weight_en, :nationality, :nationality_en, :occupation,
-      :occupation_en, :description, :description_en
+      :occupation_en, :description, :description_en, :description_source,
+      :description_source_en
 
     before_action :authenticate_user!, only: %i(new create edit update)
     before_action :load_character, only: %i(edit update activities)
@@ -43,7 +44,8 @@ module Db
       return render(:edit) unless @character.valid?
       @character.save_and_create_activity!
 
-      redirect_to db_characters_path, notice: t("resources.character.updated")
+      message = t("resources.character.updated")
+      redirect_to edit_db_character_path(@character), notice: message
     end
 
     def activities

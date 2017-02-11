@@ -99,6 +99,8 @@ class Work < ApplicationRecord
   validates :official_site_url_en, url: { allow_blank: true }
   validates :wikipedia_url, url: { allow_blank: true }
   validates :wikipedia_url_en, url: { allow_blank: true }
+  validates :synopsis, presence_pair: :synopsis_source
+  validates :synopsis_en, presence_pair: :synopsis_source_en
 
   scope :by_season, -> (season_slug) {
     return self if season_slug.blank?

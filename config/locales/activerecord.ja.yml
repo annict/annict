@@ -35,6 +35,8 @@ ja:
         occupation_en: 肩書き (英語)
         description: キャラ紹介
         description_en: キャラ紹介 (英語)
+        description_source: キャラ紹介の引用元
+        description_source_en: キャラ紹介の引用元 (英語)
       character_image:
         attachment: キャラクター画像
       checkin:
@@ -142,8 +144,8 @@ ja:
         season_id: リリース時期
         season: リリース時期
         synopsis_en: あらすじ (英)
-        synopsis_source_en: あらすじのソース (英)
-        synopsis_source: あらすじのソース
+        synopsis_source_en: あらすじの引用元 (英)
+        synopsis_source: あらすじの引用元
         synopsis: あらすじ
         title_en: タイトル (英)
         title_kana: タイトル (かな)
