@@ -26,7 +26,7 @@ script#t-create-multiple-records-activity type="x-template"
             a.name :href='"/@" + activity.user.username'
               | {{ activity.profile.name }}
             | が
-            a :href='"/works/" + activity.work.id'
+            a.mr-zp25 :href='"/works/" + activity.work.id'
               | {{ activity.work.title }}
             template v-if=="activity.episodes.length > 1"
               a :href='"/works/" + activity.work.id + "/episodes/" + activity.episodes[0].id'

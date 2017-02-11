@@ -23,3 +23,5 @@ dl
   - if organization.wikipedia_url.present?
     dt.small = t "noun.wikipedia"
     dd = link_with_domain organization.wikipedia_url
+- if user_signed_in? && current_user.committer?
+  = link_to t("messages._common.edit_on_annict_db"), edit_db_organization_path(organization), class: "btn btn-secondary w-100 mt-zp5"

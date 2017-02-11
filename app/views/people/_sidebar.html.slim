@@ -42,3 +42,5 @@ dl
   - if person.wikipedia_url.present?
     dt.small = t "activerecord.attributes.person.wikipedia"
     dd = link_with_domain person.wikipedia_url
+- if user_signed_in? && current_user.committer?
+  = link_to t("messages._common.edit_on_annict_db"), edit_db_person_path(person), class: "btn btn-secondary w-100 mt-zp5"

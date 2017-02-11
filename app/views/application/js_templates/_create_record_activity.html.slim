@@ -11,9 +11,9 @@ script#t-create-record-activity type="x-template"
               | {{ activity.profile.name }}
             span.mr-zp25
               | watched
-            a.mr-zp25 :href='"/works/" + activity.work.id'
+            a :href='"/works/" + activity.work.id'
               | {{ activity.work.title }}
-            a.mr-zp25 :href='"/works/" + activity.work.id + "/episodes/" + activity.episode.id'
+            a.ml-zp25 :href='"/works/" + activity.work.id + "/episodes/" + activity.episode.id' v-if="!activity.work.is_single"
               | {{ activity.episode.number }}
           .mb-zp5 v-else=""
             a :href='"/@" + activity.user.username'
@@ -21,7 +21,7 @@ script#t-create-record-activity type="x-template"
             | が
             a :href='"/works/" + activity.work.id'
               | {{ activity.work.title }}
-            a :href='"/works/" + activity.work.id + "/episodes/" + activity.episode.id'
+            a.ml-zp25 :href='"/works/" + activity.work.id + "/episodes/" + activity.episode.id' v-if="!activity.work.is_single"
               | {{ activity.episode.number }}
             | を見ました
           .small.text-muted

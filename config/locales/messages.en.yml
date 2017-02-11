@@ -2,6 +2,7 @@ en:
   messages:
     _common:
       are_you_sure: Are you sure?
+      edit_on_annict_db: Edit on Annict DB
       join_annict: Join Annict
       search_with_keywords: Search...
       view_amazon_product: View Amazon
