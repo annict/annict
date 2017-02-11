@@ -43,7 +43,7 @@
     = link_to about_path, class: "col text-center" do
       = icon "lightbulb-o", class: "d-block"
       span.c-tabbar__text = t "head.title.pages.about_shoten"
-    .c-tabbar__more.col.text-center data-toggle="dropdown"
+    a.c-tabbar__more.col.text-center.dropdown-toggle href="#" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"
       = icon "bars", class: "d-block"
       span.c-tabbar__text = t "noun.more"
     .dropdown-menu
