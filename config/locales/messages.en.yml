@@ -141,6 +141,13 @@ en:
       apps:
         disconnected: Application has been disconnected
         no_applications: No applications
+      tokens:
+        created: Token has been created.
+        deleted: Token has been deleted.
+        updated: Token has been updated.
+        make_sure_to_copy: Make sure to copy your new personal access token now. You won’t be able to see it again.
+        new: Generate new token
+        no_tokens: No tokens
     tracks:
       no_trackable_episodes: No trackable episodes
       skip_episode_confirmation: Are you sure to skip this episode and show next episode?

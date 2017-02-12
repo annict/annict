@@ -5,6 +5,9 @@ ja:
         name: 'Name'
         redirect_uri: 'Redirect URI'
         scopes: Scopes
+      doorkeeper/access_token:
+        description: トークンの説明
+        scopes: スコープ
     errors:
       models:
         doorkeeper/application:

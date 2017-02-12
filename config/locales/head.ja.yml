@@ -142,6 +142,9 @@ ja:
       settings:
         apps:
           index: アプリケーション
+        tokens:
+          edit: 個人用トークン編集
+          new: 個人用トークン作成
       staffs:
         index: アニメ「%{title}」のスタッフ一覧
       tracks:

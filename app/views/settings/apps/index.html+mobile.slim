@@ -3,8 +3,16 @@
 - set_page_category "settings_apps_index"
 
 h2.h4.text-center.my-2.font-weight-bold = t "noun.applications"
-.c-card.p-1.mb-2
+.c-card.p-1
   = render "settings/apps/app_list", apps: @apps
+
+h2.h4.text-center.mt-2.mb-1.font-weight-bold = t "noun.personal_access_tokens"
+.text-right.mb-1.px-1
+  = link_to new_settings_token_path, class: "btn btn-primary btn-sm" do
+    = icon "plus"
+    = t "messages.settings.tokens.new"
+.c-card.p-1.mb-2
+  = render "settings/tokens/token_list", tokens: @tokens
 
 = render "application/components/footer"
 = render "application/components/tabbar"

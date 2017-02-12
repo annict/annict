@@ -142,6 +142,9 @@ en:
       settings:
         apps:
           index: Applications
+        tokens:
+          edit: Edit token
+          new: Generate new token
       staffs:
         index: Staffs of %{title} (Anime)
       tracks:

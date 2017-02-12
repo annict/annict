@@ -1,0 +1,10 @@
+- title = t "head.title.settings.tokens.new"
+- set_meta_tags(title: title, reverse: true, prefix: false)
+- set_page_category "settings_tokens_new"
+
+h2.h4.text-center.my-2.font-weight-bold = title
+.c-card.p-1.mb-2
+  = render "settings/tokens/form", token: @token
+
+= render "application/components/footer"
+= render "application/components/tabbar"
