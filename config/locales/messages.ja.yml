@@ -15,8 +15,6 @@ ja:
       email_sent_for_confirmation: メールアドレス確認用メールを送信しました
       saved: アカウント登録されました
       updated: 更新しました
-    apps:
-      no_applications: アプリはありません
     channel_works:
       no_works: 作品はありません
     comments:
@@ -139,6 +137,17 @@ ja:
         sign_in_with_facebook: Facebookでログイン
         sign_in_with_twitter: Twitterでログイン
         sign_up_link_html: アカウント持ってない？ %{link}
+    settings:
+      apps:
+        disconnected: 接続解除しました
+        no_applications: アプリはありません
+      tokens:
+        created: 作成しました
+        deleted: 削除しました
+        updated: 更新しました
+        make_sure_to_copy: 作成した個人用トークンをコピーしてください。この文字列は再表示できません。
+        new: 新規作成
+        no_tokens: 作成されていません
     tracks:
       no_trackable_episodes: 記録可能なエピソードはありません
       skip_episode_confirmation: このエピソードをスキップして、次のエピソードを表示しますか？

@@ -15,8 +15,6 @@ en:
       email_sent_for_confirmation: An email has been sent to confirm your email address.
       saved: Account has been saved.
       updated: Account has been updated.
-    apps:
-      no_applications: No applications
     channel_works:
       no_works: No works
     comments:
@@ -139,6 +137,17 @@ en:
         sign_in_with_facebook: Sign in with Facebook
         sign_in_with_twitter: Sign in with Twitter
         sign_up_link_html: Don't have an account? %{link}
+    settings:
+      apps:
+        disconnected: Application has been disconnected
+        no_applications: No applications
+      tokens:
+        created: Token has been created.
+        deleted: Token has been deleted.
+        updated: Token has been updated.
+        make_sure_to_copy: Make sure to copy your new personal access token now. You won’t be able to see it again.
+        new: Generate new token
+        no_tokens: No tokens
     tracks:
       no_trackable_episodes: No trackable episodes
       skip_episode_confirmation: Are you sure to skip this episode and show next episode?

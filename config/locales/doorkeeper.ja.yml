@@ -2,9 +2,12 @@ ja:
   activerecord:
     attributes:
       doorkeeper/application:
-        name: 'Name'
-        redirect_uri: 'Redirect URI'
-        scopes: Scopes
+        name: "アプリケーション名"
+        redirect_uri: "リダイレクトURI"
+        scopes: "スコープ"
+      doorkeeper/access_token:
+        description: トークンの説明
+        scopes: スコープ
     errors:
       models:
         doorkeeper/application:

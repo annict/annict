@@ -35,8 +35,6 @@ en:
     title:
       accounts:
         show: Account
-      apps:
-        index: Apps
       channel_works:
         index: Channel Works
       channels:
@@ -108,6 +106,8 @@ en:
       notifications:
         index: Notifications
       oauth:
+        applications:
+          new: New application
         authorizations:
           new: Authorize an application
           show: Authorization code
@@ -141,6 +141,12 @@ en:
         show: "%{q}Anime Search"
       sessions:
         new: Sign In
+      settings:
+        apps:
+          index: Applications
+        tokens:
+          edit: Edit token
+          new: Generate new token
       staffs:
         index: Staffs of %{title} (Anime)
       tracks:

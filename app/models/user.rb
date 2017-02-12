@@ -59,6 +59,10 @@ class User < ActiveRecord::Base
 
   has_many :activities,    dependent: :destroy
   has_many :channel_works, dependent: :destroy
+  has_many :connected_applications, -> { distinct },
+    class_name: "Doorkeeper::Application",
+    through: :oauth_access_tokens,
+    source: :application
   has_many :records, class_name: "Checkin", dependent: :destroy
   has_many :db_comments, dependent: :destroy
   has_many :finished_tips, dependent: :destroy

@@ -4,6 +4,7 @@ ja:
     check_all: 全て選択する
     close: 閉じる
     comment: コメントする
+    create: 作成する
     delete: 削除する
     edit: 編集する
     follow: フォロー
@@ -12,6 +13,7 @@ ja:
     next: 次へ
     post: 投稿する
     previous: 前へ
+    revoke: 接続解除する
     search: 検索する
     sign_out: ログアウト
     skip: スキップする

@@ -11,6 +11,7 @@ ja:
     annict_db: Annict DB
     annict_forum: Annict Forum
     annict: Annict
+    applications: アプリケーション
     basic_info: 基本情報
     before: Before
     bio: プロフィール
@@ -51,6 +52,7 @@ ja:
     other_users: その他利用者さん
     password: パスワード
     people: 人物
+    personal_access_tokens: 個人用アクセストークン
     plan_to_watch: 見たいアニメ
     popular: 人気アニメ
     popular_airing_anime: 人気の放送中アニメ

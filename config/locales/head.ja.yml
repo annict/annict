@@ -35,8 +35,6 @@ ja:
     title:
       accounts:
         show: アカウント
-      apps:
-        index: アプリ
       channel_works:
         index: 作品ごとのチャンネル
       channels:
@@ -110,8 +108,10 @@ ja:
       oauth_users:
         new: ユーザ登録
       oauth:
+        applications:
+          new: アプリケーション登録
         authorizations:
-          new: アプリ認証
+          new: アプリケーション認証
           show: 認証コード
       options:
         index: オプション
@@ -141,6 +141,12 @@ ja:
         show: "%{q}検索"
       sessions:
         new: ログイン
+      settings:
+        apps:
+          index: アプリケーション
+        tokens:
+          edit: 個人用アクセストークン編集
+          new: 個人用アクセストークン作成
       staffs:
         index: アニメ「%{title}」のスタッフ一覧
       tracks:

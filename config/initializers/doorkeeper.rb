@@ -130,8 +130,16 @@ Doorkeeper::Application.class_eval do
   scope :unavailable, -> {
     unscoped.where(aasm_state: ["hidden"]).or(where(owner: nil))
   }
+  scope :authorized, -> { where(oauth_access_tokens: { revoked_at: nil }) }
 end
 
 Doorkeeper::AccessToken.class_eval do
   belongs_to :owner, class_name: "User", foreign_key: :resource_owner_id
+
+  scope :available, -> { where(revoked_at: nil) }
+  scope :personal, -> { where(application_id: nil) }
+
+  validates :description, presence: { on: :personal }
+
+  before_validation :generate_token, on: %i(create personal)
 end

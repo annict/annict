@@ -5,6 +5,9 @@ en:
         name: 'Name'
         redirect_uri: 'Redirect URI'
         scopes: Scopes
+      doorkeeper/access_token:
+        description: Token description
+        scopes: Scopes
     errors:
       models:
         doorkeeper/application:

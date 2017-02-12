@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170211135244) do
+ActiveRecord::Schema.define(version: 20170212044410) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -581,7 +581,7 @@ ActiveRecord::Schema.define(version: 20170211135244) do
 
   create_table "oauth_access_tokens", force: :cascade do |t|
     t.integer  "resource_owner_id",                   null: false
-    t.integer  "application_id",                      null: false
+    t.integer  "application_id"
     t.string   "token",                               null: false
     t.string   "refresh_token"
     t.integer  "expires_in"
@@ -589,6 +589,7 @@ ActiveRecord::Schema.define(version: 20170211135244) do
     t.datetime "created_at",                          null: false
     t.string   "scopes"
     t.string   "previous_refresh_token", default: "", null: false
+    t.string   "description",            default: "", null: false
     t.index ["refresh_token"], name: "index_oauth_access_tokens_on_refresh_token", unique: true, using: :btree
     t.index ["resource_owner_id"], name: "index_oauth_access_tokens_on_resource_owner_id", using: :btree
     t.index ["token"], name: "index_oauth_access_tokens_on_token", unique: true, using: :btree

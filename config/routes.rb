@@ -197,14 +197,15 @@ Rails.application.routes.draw do
     resources :mutes, only: [:index]
     resources :options, only: [:index]
     resources :providers, only: [:index, :destroy]
-    resources :apps, only: [:index] do
-      patch :revoke
-    end
 
     patch "options", to: "options#update"
   end
   namespace :settings do
     resource :password, only: %i(update)
+    resources :apps, only: %i(index) do
+      patch :revoke
+    end
+    resources :tokens, only: %i(new create edit update destroy)
   end
 
   resources :characters, only: %i(show) do

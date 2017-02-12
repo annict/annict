@@ -5,9 +5,9 @@
   = active_link_to account_path, class: "c-subnav__link", class_active: "c-subnav__link--active", active: params[:controller] == "accounts"
     .c-subnav__item
       = t "head.title.accounts.show"
-  = active_link_to apps_path, class: "c-subnav__link", class_active: "c-subnav__link--active", active: params[:controller] == "apps"
+  = active_link_to settings_apps_path, class: "c-subnav__link", class_active: "c-subnav__link--active", active: params[:controller] == "apps"
     .c-subnav__item
-      = t "head.title.apps.index"
+      = t "head.title.settings.apps.index"
   = active_link_to providers_path, class: "c-subnav__link", class_active: "c-subnav__link--active", active: "tab #{params[:controller] == 'providers' ? 'tab--active' : ''}"
     .c-subnav__item
       = t "head.title.providers.index"
