@@ -108,8 +108,10 @@ ja:
       oauth_users:
         new: ユーザ登録
       oauth:
+        applications:
+          new: アプリケーション登録
         authorizations:
-          new: アプリ認証
+          new: アプリケーション認証
           show: 認証コード
       options:
         index: オプション

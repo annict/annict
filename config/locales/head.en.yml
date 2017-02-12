@@ -106,6 +106,8 @@ en:
       notifications:
         index: Notifications
       oauth:
+        applications:
+          new: New application
         authorizations:
           new: Authorize an application
           show: Authorization code
