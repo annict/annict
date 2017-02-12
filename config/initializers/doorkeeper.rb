@@ -130,6 +130,7 @@ Doorkeeper::Application.class_eval do
   scope :unavailable, -> {
     unscoped.where(aasm_state: ["hidden"]).or(where(owner: nil))
   }
+  scope :authorized, -> { where(oauth_access_tokens: { revoked_at: nil }) }
 end
 
 Doorkeeper::AccessToken.class_eval do

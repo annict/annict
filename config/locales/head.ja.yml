@@ -35,8 +35,6 @@ ja:
     title:
       accounts:
         show: アカウント
-      apps:
-        index: アプリ
       channel_works:
         index: 作品ごとのチャンネル
       channels:
@@ -141,6 +139,9 @@ ja:
         show: "%{q}検索"
       sessions:
         new: ログイン
+      settings:
+        apps:
+          index: アプリケーション
       staffs:
         index: アニメ「%{title}」のスタッフ一覧
       tracks:

@@ -1,0 +1,10 @@
+- title = t "head.title.settings.apps.index"
+- set_meta_tags(title: title, reverse: true, prefix: false)
+- set_page_category "settings_apps_index"
+
+h2.h4.text-center.my-2.font-weight-bold = t "noun.applications"
+.c-card.p-1.mb-2
+  = render "settings/apps/app_list", apps: @apps
+
+= render "application/components/footer"
+= render "application/components/tabbar"

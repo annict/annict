@@ -1,0 +1,9 @@
+- if apps.present?
+  - apps.each do |app|
+    .row
+      .col
+        = app.name
+      .col.text-right
+        = link_to t("verb.revoke"), settings_app_revoke_path(app), class: "btn btn-sm btn-link", data: { method: :patch, confirm: t("messages._common.are_you_sure") }
+- else
+  = render "application/components/empty", text: t("messages.settings.apps.no_applications")

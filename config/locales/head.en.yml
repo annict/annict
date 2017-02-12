@@ -35,8 +35,6 @@ en:
     title:
       accounts:
         show: Account
-      apps:
-        index: Apps
       channel_works:
         index: Channel Works
       channels:
@@ -141,6 +139,9 @@ en:
         show: "%{q}Anime Search"
       sessions:
         new: Sign In
+      settings:
+        apps:
+          index: Applications
       staffs:
         index: Staffs of %{title} (Anime)
       tracks:
