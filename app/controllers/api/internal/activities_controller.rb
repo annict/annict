@@ -9,7 +9,7 @@ module Api
         activities = if username.blank?
           current_user.following_activities
         else
-          User.find_by(username: username).activities
+          User.where(username: username).first&.activities.presence || Activity.none
         end
 
         @activities = activities.
