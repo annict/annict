@@ -50,7 +50,7 @@
         .col.text-right.font-weight-bold
           = t "activerecord.attributes.character.birthday"
         .col
-          = @character.birthday.strftime("%Y年%m月%d日")
+          = @character.decorate.local_birthday
     - if @character.age.present?
       .row
         .col.text-right.font-weight-bold
