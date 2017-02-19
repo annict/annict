@@ -22,6 +22,10 @@ module.exports =
     isTracking: false
     episodeIds: []
 
+  computed:
+    isTrackable: ->
+      !!@episodeIds.length
+
   methods:
     enableTrackingMode: ->
       unless @isSignedIn

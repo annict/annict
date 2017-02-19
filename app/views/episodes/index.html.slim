@@ -33,7 +33,7 @@
                 .container.text-right
                   button.btn.btn-secondary.mr-zp5 v-show="isTrackingMode" @click="disableTrackingMode"
                     = t "noun.cancel"
-                  button.btn.btn-primary :class="{ 'c-spinner': isTracking }" v-show="isTrackingMode" @click="track"
+                  button.btn.btn-primary :class="{ 'c-spinner': isTracking }" v-bind="{ disabled: !isTrackable }" v-show="isTrackingMode" @click="track"
                     = icon "pencil-square-o"
                     = t "verb.track"
 

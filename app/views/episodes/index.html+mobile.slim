@@ -22,10 +22,10 @@
           tbody
             - @episodes.order(:sort_number).each do |episode|
               = render "episodes/episode_row", work: @work, episode: episode
-        .text-right.pb-1 v-show="isTrackingMode"
+        .text-right.pt-1 v-show="isTrackingMode"
           button.btn.btn-secondary.mr-zp5 @click="disableTrackingMode"
             = t "noun.cancel"
-          button.btn.btn-primary :class="{ 'c-spinner': isTracking }" v-show="isTrackingMode" @click="track"
+          button.btn.btn-primary :class="{ 'c-spinner': isTracking }" v-bind="{ disabled: !isTrackable }" v-show="isTrackingMode" @click="track"
             = icon "pencil-square-o"
             = t "verb.track"
 
