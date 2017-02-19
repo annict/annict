@@ -42,9 +42,13 @@ class UsersController < ApplicationController
     @works = (checkedin_works + other_works).first(9)
   end
 
-  def works(status_kind)
+  def works(status_kind, page: nil)
     @works = @user.works.on(status_kind).published
-    @seasons = Season.where(id: @works.pluck(:season_id)).order(sort_number: :desc)
+    @seasons = Season.
+      where(id: @works.pluck(:season_id)).
+      order(sort_number: :desc).
+      page(page).
+      per(10)
   end
 
   def following
