@@ -74,7 +74,9 @@ class UsersController < ApplicationController
   def load_i18n
     keys = {
       "verb.follow": nil,
-      "noun.following": nil
+      "noun.following": nil,
+      "messages._common.are_you_sure": nil,
+      "messages.components.mute_user_button.the_user_has_been_muted": nil
     }
 
     load_i18n_into_gon keys
