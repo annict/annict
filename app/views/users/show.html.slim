@@ -12,7 +12,7 @@
     .p-profile-header__cover-image style="background-image: url(#{profile_background_image_url(@user.profile, size: '500x325')});"
     .p-profile-header__info
       .container
-        .row.py-1
+        .row.py-1.align-items-center
           .col-7
             .row
               .col.u-flex-grow-0
@@ -25,8 +25,8 @@
                       = @user.profile.name
                     .u-very-small.mt-zp5
                       = "@#{@user.username}"
-          .col-5.pt-2
-            .text-right
+          .col-5
+            .d-flex.justify-content-end.align-items-center
               - if user_signed_in? && current_user != @user
                 .c-user-options-dropdown.dropdown.d-inline-block.mr-1
                   .dropdown-toggle data-toggle="dropdown"
