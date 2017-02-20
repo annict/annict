@@ -52,10 +52,10 @@
                     c-like-button resource-name="Comment" :init-resource-id="#{comment.id}" :init-likes-count="#{comment.likes_count}" :init-is-liked="#{user_signed_in? && current_user.like?(comment)}" :is-signed-in="#{user_signed_in?}"
                   - if policy(comment).update?
                     .small.text-right.mb-zp5
-                      = link_to edit_comment_path(@user.username, comment), class: "mr-zp5" do
+                      = link_to edit_comment_path(comment), class: "mr-zp5" do
                         = icon "edit", class: "mr-zp25"
                         = t "noun.edit"
-                      = link_to comment_path(@user.username, comment), method: :delete, data: { confirm: t("messages._common.are_you_sure") } do
+                      = link_to comment_path(comment), method: :delete, data: { confirm: t("messages._common.are_you_sure") } do
                         = icon "trash-o", class: "mr-zp25"
                         = t "noun.delete"
             - else
