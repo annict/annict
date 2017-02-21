@@ -6,10 +6,11 @@
 span.mr-zp25
   = action_user.decorate.name_link
 | が
-span.ml-zp25
-  = work.decorate.title_link
 span.mx-zp25
-  = episode.decorate.number_link
+  = work.decorate.title_link
+- unless work.single?
+  span.mr-zp25
+    = episode.decorate.number_link
 | への記録に「いいね！」しました
 
 .small.text-muted.my-zp5

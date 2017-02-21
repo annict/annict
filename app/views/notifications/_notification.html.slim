@@ -16,9 +16,5 @@
           = render "notifications/likes_create_comment", notification: notification
         - elsif recipient.class.name == "Status"
           = render "notifications/likes_create_status", notification: notification
-        - elsif recipient.class.name == "WorkImage"
-          = render "notifications/likes_create_work_image", notification: notification
-        - elsif recipient.class.name == "CharacterImage"
-          = render "notifications/likes_create_character_image", notification: notification
       - elsif notification.action == "comments.create"
         = render "notifications/comments_create_record", notification: notification
