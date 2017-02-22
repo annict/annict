@@ -9,7 +9,7 @@ describe "Top page" do
     end
 
     it "displays the hero words", js: true do
-      expect(page).to have_content("The platform for Anime addicts.")
+      expect(page).to have_content("The platform for anime addicts.")
     end
   end
 end

@@ -4,6 +4,8 @@ FactoryGirl.define do
   factory :user do
     sequence(:username) { |n| "user_#{n}" }
     sequence(:email)    { |n| "user_#{n}@example.com" }
+    time_zone "Asia/Tokyo"
+    locale "ja"
 
     trait :with_profile do
       after(:create) do |user|

@@ -3,6 +3,7 @@ namespace :counter_cache do
     %w(
       refresh_watchers_count
       refresh_notifications_count
+      refresh_record_comments_count
     ).each do |task_name|
       puts "============== #{task_name} =============="
       Rake::Task["counter_cache:#{task_name}"].invoke
@@ -25,6 +26,18 @@ namespace :counter_cache do
     User.find_each do |user|
       user.update_column(:notifications_count, user.notifications.unread.count)
       puts "User ID: #{user.id} の notifications_count を更新しました。"
+    end
+  end
+
+  task refresh_record_comments_count: :environment do
+    Episode.find_each do |episode|
+      record_comments_count = episode.records.where.not(comment: [nil, ""]).count
+      if record_comments_count != episode.record_comments_count
+        episode.update_column(:record_comments_count, record_comments_count)
+        puts "Episode ID: #{episode.id} - #{record_comments_count}"
+      else
+        puts "Episode ID: #{episode.id} - skipped."
+      end
     end
   end
 end

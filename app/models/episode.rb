@@ -3,22 +3,23 @@
 #
 # Table name: episodes
 #
-#  id              :integer          not null, primary key
-#  work_id         :integer          not null
-#  number          :string(510)
-#  sort_number     :integer          default(0), not null
-#  sc_count        :integer
-#  title           :string(510)
-#  checkins_count  :integer          default(0), not null
-#  created_at      :datetime
-#  updated_at      :datetime
-#  prev_episode_id :integer
-#  aasm_state      :string           default("published"), not null
-#  fetch_syobocal  :boolean          default(FALSE), not null
-#  raw_number      :string
-#  avg_rating      :float
-#  title_ro        :string           default(""), not null
-#  title_en        :string           default(""), not null
+#  id                    :integer          not null, primary key
+#  work_id               :integer          not null
+#  number                :string(510)
+#  sort_number           :integer          default(0), not null
+#  sc_count              :integer
+#  title                 :string(510)
+#  checkins_count        :integer          default(0), not null
+#  created_at            :datetime
+#  updated_at            :datetime
+#  prev_episode_id       :integer
+#  aasm_state            :string           default("published"), not null
+#  fetch_syobocal        :boolean          default(FALSE), not null
+#  raw_number            :string
+#  avg_rating            :float
+#  title_ro              :string           default(""), not null
+#  title_en              :string           default(""), not null
+#  record_comments_count :integer          default(0), not null
 #
 # Indexes
 #
