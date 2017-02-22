@@ -1,0 +1,4 @@
+<%= @sender.profile.name %> (@<%= @sender.username %>) があなたをメンションしました。<br>
+<br>
+<%= simple_format(@body) %><br>
+<%= link_to "返信する", "#{ENV.fetch('ANNICT_URL')}#{@reply_path}" %>
