@@ -27,6 +27,8 @@ ja:
         sort_watchers_count: sort_watchers_count
       api/v1/records_create_params:
         episode_id: episode_id
+      api/v1/records_index_params:
+        filter_has_record_comment: filter_has_record_comment
       api/v1/statuses_create_params:
         kind: kind
         work_id: work_id
