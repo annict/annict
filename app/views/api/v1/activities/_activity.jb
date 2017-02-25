@@ -1,0 +1,26 @@
+# frozen_string_literal: true
+
+json = {}
+
+json[:id] = activity.id if params.fields_contain?("#{field_prefix}id")
+json[:user] = render("api/v1/users/user", user: activity.user, show_all: false, params: params, field_prefix: "user.")
+json[:action] = activity.action if params.fields_contain?("#{field_prefix}action")
+json[:created_at] = activity.created_at if params.fields_contain?("#{field_prefix}created_at")
+
+case activity.recipient_type
+when "Work"
+  json[:work] = render("api/v1/works/work", work: activity.recipient, params: params, field_prefix: "work.")
+when "Episode"
+  json[:episode] = render("api/v1/episodes/episode", episode: activity.recipient, params: params, field_prefix: "episode.")
+end
+
+case activity.trackable_type
+when "Status"
+  json[:status] = render("api/v1/statuses/status", status: activity.trackable, params: params, field_prefix: "status.")
+when "Checkin"
+  json[:record] = render("api/v1/records/record", record: activity.trackable, params: params, field_prefix: "record.")
+when "MultipleRecord"
+  json[:multiple_record] = render("api/v1/multiple_records/multiple_record", multiple_record: activity.trackable, params: params, field_prefix: "multiple_record.")
+end
+
+json
