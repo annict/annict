@@ -84,6 +84,7 @@ Rails.application.routes.draw do
   scope module: :api do
     constraints(subdomain: "api") do
       namespace :v1 do
+        resources :activities, only: %i(index)
         resources :episodes, only: [:index]
         resources :followers, only: %i(index)
         resources :following, only: %i(index)
