@@ -93,6 +93,8 @@ Rails.application.routes.draw do
           resources :records, only: [:create, :update, :destroy]
           resources :statuses, only: [:create]
           resources :works, only: [:index]
+
+          root "index#show"
         end
 
         match "*path", to: "application#not_found", via: :all
