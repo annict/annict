@@ -84,15 +84,22 @@ Rails.application.routes.draw do
   scope module: :api do
     constraints(subdomain: "api") do
       namespace :v1 do
+        resources :activities, only: %i(index)
         resources :episodes, only: [:index]
+        resources :followers, only: %i(index)
+        resources :following, only: %i(index)
         resources :records, only: [:index]
+        resources :users, only: %i(index)
         resources :works, only: [:index]
 
         namespace :me do
+          resources :following_activities, only: %i(index)
           resources :programs, only: [:index]
           resources :records, only: [:create, :update, :destroy]
           resources :statuses, only: [:create]
           resources :works, only: [:index]
+
+          root "index#show"
         end
 
         match "*path", to: "application#not_found", via: :all
