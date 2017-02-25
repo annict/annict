@@ -46,6 +46,21 @@ describe "Api::V1::Me::FollowingActivities" do
           },
           "action" => activity.action.to_s,
           "created_at" => "2017-01-28T23:39:04.000Z",
+          "work" => {
+            "id" => record.work.id,
+            "title" => record.work.title,
+            "title_kana" => record.work.title_kana,
+            "media" => "tv",
+            "media_text" => "TV",
+            "released_on" => "2012-04-05",
+            "released_on_about" => "2012年",
+            "official_site_url" => "http://example.com",
+            "wikipedia_url" => "http://wikipedia.org",
+            "twitter_username" => "precure_official",
+            "twitter_hashtag" => "precure",
+            "episodes_count" => 1,
+            "watchers_count" => 0
+          },
           "episode" => {
             "id" => record.episode.id,
             "number" => record.episode.raw_number,
