@@ -6,7 +6,7 @@ module Api
       before_action :prepare_params!, only: %i(index)
 
       def index
-        follows = Follow.includes(:following)
+        follows = Follow.includes(following: :profile)
         @follows = Api::V1::FollowingIndexService.new(follows, @params).result
       end
     end
