@@ -86,6 +86,7 @@ Rails.application.routes.draw do
       namespace :v1 do
         resources :episodes, only: [:index]
         resources :records, only: [:index]
+        resources :users, only: %i(index)
         resources :works, only: [:index]
 
         namespace :me do

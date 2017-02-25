@@ -12,6 +12,7 @@ en:
     _validators:
       and_other_are_required: and %{column_name} are required
       is_required_true_or_false: is required `true` or `false`
+      is_invalid: is invalid
     accounts:
       email_sent_for_confirmation: An email has been sent to confirm your email address.
       saved: Account has been saved.
