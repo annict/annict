@@ -35,9 +35,13 @@ describe "Api::V1::Me::Records" do
         "twitter_username" => "precure_official",
         "twitter_hashtag" => "precure",
         "episodes_count" => 0,
-        "watchers_count" => 1
+        "watchers_count" => 1,
+        "status" => {
+          "kind" => "watching"
+        }
       }
       expect(json["works"][0].stringify_keys).to include(expected_hash)
+      expect(expected_hash).to include(json["works"][0].stringify_keys)
       expect(json["total_count"]).to eq(1)
       expect(json["next_page"]).to eq(nil)
       expect(json["prev_page"]).to eq(nil)
