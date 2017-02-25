@@ -30,8 +30,12 @@ describe "Api::V1::Users" do
           "records_count" => 0,
           "created_at" => "2017-01-28T23:39:04.000Z"
         }
-        expect(json["users"][0].stringify_keys).to include(expected_hash)
-        expect(expected_hash).to include(json["users"][0].stringify_keys)
+        actual_hash = json["users"][0].stringify_keys.except(
+          "avatar_url",
+          "background_image_url"
+        )
+        expect(actual_hash).to include(expected_hash)
+        expect(expected_hash).to include(actual_hash)
         expect(json["total_count"]).to eq(1)
         expect(json["next_page"]).to eq(nil)
         expect(json["prev_page"]).to eq(nil)

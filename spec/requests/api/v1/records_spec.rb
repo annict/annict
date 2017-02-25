@@ -70,7 +70,12 @@ describe "Api::V1::Records" do
             "record_comments_count" => 0
           }
         }
-        expect(json["records"][0]).to include(expected_hash)
+        actual_hash = json["records"][0]
+        actual_hash["user"].delete("avatar_url")
+        actual_hash["user"].delete("background_image_url")
+
+        expect(actual_hash).to include(expected_hash)
+        expect(expected_hash).to include(actual_hash)
         expect(json["total_count"]).to eq(1)
         expect(json["next_page"]).to eq(nil)
         expect(json["prev_page"]).to eq(nil)

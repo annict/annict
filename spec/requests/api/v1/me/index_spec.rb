@@ -34,8 +34,13 @@ describe "Api::V1::Me::Index" do
         "email" => "#{user.username}@example.com",
         "notifications_count" => 0
       }
-      expect(json.stringify_keys).to include(expected_hash)
-      expect(expected_hash).to include(json.stringify_keys)
+      actual_hash = json.stringify_keys.except(
+        "avatar_url",
+        "background_image_url"
+      )
+
+      expect(actual_hash).to include(expected_hash)
+      expect(expected_hash).to include(actual_hash)
     end
   end
 end
