@@ -1,0 +1,12 @@
+<mjml>
+  <mj-body>
+    <mj-container background-color="#f5f5f5">
+      <mj-section>
+        <mj-column>
+          <mj-image src="<%= image_url("email/logos/color-mizuho.png") %>" align="center" width="32" href="<%= ENV.fetch('ANNICT_URL') %>"></mj-image>
+        </mj-column>
+      </mj-section>
+      <%= yield %>
+    </mj-container>
+  </mj-body>
+</mjml>

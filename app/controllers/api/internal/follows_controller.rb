@@ -26,6 +26,7 @@ module Api
         current_user.follow(@user)
         keen_client.page_category = page_category
         keen_client.follows.create
+        EmailNotificationMailer.followed_user(current_user, @user).deliver_later
         head 201
       end
 

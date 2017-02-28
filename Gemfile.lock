@@ -329,6 +329,7 @@ GEM
     mini_magick (4.5.1)
     mini_portile2 (2.1.0)
     minitest (5.10.1)
+    mjml-rails (2.4.1)
     multi_json (1.12.1)
     multi_xml (0.6.0)
     multipart-post (2.0.0)
@@ -639,6 +640,7 @@ DEPENDENCIES
   listen
   meta-tags
   mini_magick
+  mjml-rails
   newrelic_rpm
   nokogiri
   omniauth-facebook
