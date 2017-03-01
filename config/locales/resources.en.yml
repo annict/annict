@@ -71,7 +71,7 @@ en:
     staff:
       created: Staff created
       deleted: Staff deleted
-      new_casts: New staffs
+      new_casts: New staff
       cast_list: Staff list
       there_are_no_staffs: There are no staff
       unpublished: Staff unpublished
