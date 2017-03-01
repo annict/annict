@@ -79,7 +79,7 @@ en:
           activities: Activities
           edit: Edit Staff
           index: Staff
-          new: Add Staff
+          new: Create Staff
         work_images:
           show: Work Image - %{title}
         works:
