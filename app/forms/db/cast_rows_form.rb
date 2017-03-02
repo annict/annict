@@ -15,12 +15,14 @@ module DB
     private
 
     def attrs_list
-      @attrs_list ||= fetched_rows.map do |row_data|
+      casts_count = @work.casts.count
+      @attrs_list ||= fetched_rows.map.with_index do |row_data, i|
         {
           work_id: @work.id,
           person_id: row_data[:person][:id],
           character_id: row_data[:character][:id],
-          part: ""
+          part: "",
+          sort_number: (i + casts_count) * 10
         }
       end
     end
