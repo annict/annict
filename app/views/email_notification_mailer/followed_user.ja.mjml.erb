@@ -1,7 +1,6 @@
 <mj-section background-color="#fff">
   <mj-column>
-    <mj-text><%= @user.profile.name %>さん</mj-text>
-    <mj-text><%= "#{@following_user.profile.name} (@#{@following_user.username})" %>さんにフォローされました。</mj-text>
+    <mj-text padding-top="0px"><%= "#{@following_user.profile.name} (@#{@following_user.username})" %>さんにフォローされました。</mj-text>
     <mj-image src="<%= ann_email_image_url(@following_user.profile, :tombo_avatar, size: "140x140") %>" align="center" width="70" border-radius="50%" href="<%= user_url(@following_user.username) %>"></mj-image>
     <mj-text align="center" font-size="24px" font-weight="600" padding-bottom="7px"><%= "#{@following_user.profile.name}" %></mj-text>
     <mj-text align="center" padding-top="0px"><%= "@#{@following_user.username}" %></mj-text>

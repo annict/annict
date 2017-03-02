@@ -7,6 +7,13 @@
         </mj-column>
       </mj-section>
       <%= yield %>
+      <mj-section>
+        <mj-column>
+          <mj-text align="center" color="#9a9a9a" font-size="8px" padding-top="0px">
+            <a href="">購読解除</a>
+          </mj-text>
+        </mj-column>
+      </mj-section>
     </mj-container>
   </mj-body>
 </mjml>
