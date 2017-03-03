@@ -9,10 +9,7 @@ module DB
     attribute :rows, String
 
     validates :rows, presence: true
-
-    def valid?
-      super && new_characters.all?(&:valid?)
-    end
+    validate :valid_character
 
     def save!
       new_characters_with_user.each(&:save_and_create_activity!)
@@ -36,6 +33,16 @@ module DB
       @new_characters_with_user ||= new_characters.map do |character|
         character.user = @user
         character
+      end
+    end
+
+    def valid_character
+      return if new_characters.all?(&:valid?)
+
+      new_characters.each do |c|
+        next if c.valid?
+        message = "\"#{c.name}\"#{c.errors.messages[:name].first}"
+        errors.add(:rows, message)
       end
     end
   end
