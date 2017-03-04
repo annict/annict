@@ -1,7 +1,7 @@
 Vue = require "vue/dist/vue"
 moment = require "moment"
 
-module.exports = Vue.extend
+module.exports =
   template: "<div class='c-user-heatmap'></div>"
 
   props:

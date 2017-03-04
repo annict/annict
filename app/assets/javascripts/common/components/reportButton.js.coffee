@@ -1,5 +1,5 @@
 Vue = require "vue/dist/vue"
 
-module.exports = Vue.extend
+module.exports =
   mounted: ->
     $('[data-toggle="tooltip"]').tooltip()
