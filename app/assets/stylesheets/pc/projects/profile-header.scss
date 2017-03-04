@@ -20,7 +20,7 @@
   }
 
   &__info {
-    @include linear-gradient(to bottom, transparent, rgba($ann-color-black, .35));
+    background: linear-gradient(to bottom, transparent, rgba($ann-color-black, .35));
     height: 112px;
     position: relative;
     top: -112px;

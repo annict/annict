@@ -19,7 +19,7 @@
         border: 1px solid rgba($ann-color-white, .5);
       }
 
-      @include placeholder {
+      &::placeholder {
         color: rgba($ann-color-white, .5);
       }
     }

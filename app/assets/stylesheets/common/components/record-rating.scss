@@ -1,10 +1,10 @@
 .c-record-rating {
-  @include display(flex);
-  @include justify-content(space-between);
+  display: flex;
+  justify-content: space-between;
 
   &__stars-wrapper {
-    @include flex-basis(110px);
-    @include flex-grow(0);
+    flex-basis: 110px;
+    flex-grow: 0;
   }
 
   &__stars {
@@ -12,7 +12,7 @@
   }
 
   &__range {
-    @include flex-grow(1);
+    flex-grow: 1;
     width: initial;
   }
 }
