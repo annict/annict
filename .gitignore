@@ -11,4 +11,5 @@
 /public/paperclip
 /public/sitemap*
 /spec/test_files/paperclip
+/tags
 /tmp

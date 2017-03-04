@@ -6,7 +6,7 @@
 
 .p-application__content
   .mb-2
-    .c-card.container.mt-1.u-mw-600
+    .c-card.container.my-1.u-mw-600
       - if @notifications.present?
         - @notifications.each do |notification|
           = render "notification", notification: notification

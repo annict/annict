@@ -42,9 +42,13 @@ class UsersController < ApplicationController
     @works = (checkedin_works + other_works).first(9)
   end
 
-  def works(status_kind)
+  def works(status_kind, page: nil)
     @works = @user.works.on(status_kind).published
-    @seasons = Season.where(id: @works.pluck(:season_id)).order(sort_number: :desc)
+    @seasons = Season.
+      where(id: @works.pluck(:season_id)).
+      order(sort_number: :desc).
+      page(page).
+      per(10)
   end
 
   def following
@@ -70,7 +74,9 @@ class UsersController < ApplicationController
   def load_i18n
     keys = {
       "verb.follow": nil,
-      "noun.following": nil
+      "noun.following": nil,
+      "messages._common.are_you_sure": nil,
+      "messages.components.mute_user_button.the_user_has_been_muted": nil
     }
 
     load_i18n_into_gon keys

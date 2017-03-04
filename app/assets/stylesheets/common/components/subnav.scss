@@ -1,8 +1,8 @@
 .c-subnav {
   $root: &;
 
-  @include display(flex);
   background-color: $ann-color-white;
+  display: flex;
   height: $ann-navbar-height;
 
   &.c-subnav--transparent {
@@ -10,10 +10,10 @@
   }
 
   &__item {
-    @include align-items(center);
-    @include display(flex);
-    @include justify-content(center);
+    align-items: center;
+    display: flex;
     height: 100%;
+    justify-content: center;
   }
 
   &__link {

@@ -12,7 +12,7 @@ module Api
 
       def filter_ids
         return @collection if @params.filter_ids.blank?
-        @collection.where(id: @params.filter_ids)
+        @collection.where(id: @params.filter_ids.split(","))
       end
 
       def filter_work_id

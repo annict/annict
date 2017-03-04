@@ -1,17 +1,19 @@
 language: ruby
 
+node_js:
+  - "6"
+
 addons:
   postgresql: "9.4"
   hosts:
     - annict.dev
-    - db.annict.dev
-    - forum.annict.dev
     - api.annict.dev
 
 cache:
   directories:
     - vendor/bundle
     - node_modules
+  yarn: true
 
 before_install:
   - export TZ=Asia/Tokyo

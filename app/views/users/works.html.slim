@@ -27,6 +27,8 @@
           = season.decorate.local_name
         - works = season.works.merge(@works).order(watchers_count: :desc)
         = render "works/grid_small", works: works
+    .mt-1.text-center
+      = paginate @seasons
   - else
     = render "application/components/empty", text: t("messages.users.no_works")
 

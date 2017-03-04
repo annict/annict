@@ -2,7 +2,7 @@
   "name": "annict",
   "dependencies": {
     "async": "^2.1.5",
-    "browserify": "14.0.0",
+    "browserify": "14.1.0",
     "browserify-incremental": "3.1.1",
     "coffeeify": "2.1.0",
     "js-cookie": "2.1.3",

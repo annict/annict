@@ -38,7 +38,7 @@
     position: relative;
 
     select {
-      @include appearance(none);
+      appearance: none;
       background-color: $ann-color-green;
       border: 0;
       border-radius: 0;

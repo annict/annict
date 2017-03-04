@@ -23,7 +23,7 @@ class CommentsController < ApplicationController
   permits :body
 
   before_action :authenticate_user!
-  before_action :load_user, only: %i(create edit update destroy)
+  before_action :load_user, only: %i(create)
   before_action :load_record, only: %i(create)
   before_action :load_comment, only: %i(edit update destroy)
 
@@ -51,7 +51,7 @@ class CommentsController < ApplicationController
     authorize @comment, :update?
 
     if @comment.update_attributes(comment)
-      path = record_path(@user.username, @comment.record)
+      path = record_path(@comment.record.user.username, @comment.record)
       redirect_to path, notice: t("messages.comments.updated")
     else
       render :edit
@@ -63,7 +63,7 @@ class CommentsController < ApplicationController
 
     @comment.destroy
 
-    path = record_path(@user.username, @comment.record)
+    path = record_path(@comment.record.user.username, @comment.record)
     redirect_to path, notice: t("messages.comments.deleted")
   end
 
@@ -78,6 +78,6 @@ class CommentsController < ApplicationController
   end
 
   def load_comment
-    @comment = @user.record_comments.find(params[:id])
+    @comment = current_user.record_comments.find(params[:id])
   end
 end

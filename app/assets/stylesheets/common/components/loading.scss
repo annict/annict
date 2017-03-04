@@ -3,7 +3,7 @@
 $color-loading-background-0: #ebe2e4;
 $color-loading-background-10: #e9889f;
 
-@include keyframes(throbber) {
+@keyframes throbber {
   0% {
     background: $color-loading-background-0;
   }
@@ -18,14 +18,14 @@ $color-loading-background-10: #e9889f;
 }
 
 .c-loading {
-  @include align-items(center);
-  @include justify-content(center);
-  @include display(flex);
+  align-items: center;
+  display: flex;
   height: 100px;
+  justify-content: center;
 
   // :not(:required) hides these rules from IE9 and below
   &__core:not(:required) {
-    @include animation(throbber 2000ms 300ms infinite ease-out);
+    animation: throbber 2000ms 300ms infinite ease-out;
 
     background: $color-loading-background-0;
     display: inline-block;
@@ -48,13 +48,13 @@ $color-loading-background-10: #e9889f;
   }
 
   &__core:not(:required)::before {
-    @include animation(throbber 2000ms 150ms infinite ease-out);
+    animation: throbber 2000ms 150ms infinite ease-out;
 
     left: -1.6em;
   }
 
   &__core:not(:required)::after {
-    @include animation(throbber 2000ms 450ms infinite ease-out);
+    animation: throbber 2000ms 450ms infinite ease-out;
 
     right: -1.6em;
   }
