@@ -2,6 +2,8 @@ ja:
   email_notification_mailer:
     followed_user:
       subject: "%{name} (@%{username})がAnnictであなたをフォローしました！"
+    liked_record:
+      subject: "%{name} (@%{username})が %{title} への記録に「いいね！」しました"
   mention_mailer:
     notify:
       subject: "%{name} (@%{username})がAnnictであなたにメンションしました！"

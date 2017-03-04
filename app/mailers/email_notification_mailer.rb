@@ -16,4 +16,21 @@ class EmailNotificationMailer < ActionMailer::Base
     )
     mail(to: @following_user.email, subject: subject, &:mjml)
   end
+
+  def liked_record(user_id, record_id)
+    @user = User.find(user_id)
+    @record = Checkin.find(record_id)
+    @liked_user = @record.user
+    @work = @record.work
+    @episode = @record.episode
+
+    I18n.locale = @liked_user.locale
+
+    subject = default_i18n_subject(
+      name: @user.profile.name,
+      username: @user.username,
+      title: @episode.decorate.number_with_work_title
+    )
+    mail(to: @liked_user.email, subject: subject, &:mjml)
+  end
 end
