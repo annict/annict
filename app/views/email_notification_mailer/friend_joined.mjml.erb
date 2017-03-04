@@ -1,0 +1,10 @@
+<mj-section background-color="#fff">
+  <mj-column>
+    <mj-text align="center" padding-top="0px"><%= I18n.t("email_notification_mailer.friend_joined.joined", name: @friend_user.profile.name, username: @friend_user.username) %></mj-text>
+    <mj-image src="<%= ann_email_image_url(@friend_user.profile, :tombo_avatar, size: "140x140") %>" align="center" width="70" border-radius="50%" href="<%= user_url(@friend_user.username) %>"></mj-image>
+    <mj-text align="center" font-size="24px" font-weight="600" padding-bottom="7px"><%= "#{@friend_user.profile.name}" %></mj-text>
+    <mj-text align="center" padding-top="0px"><%= "@#{@friend_user.username}" %></mj-text>
+    <mj-text align="center"><%= "#{@friend_user.profile.description}" %></mj-text>
+    <mj-button href="<%= user_url(@friend_user.username, utm_source: 'email_notification', utm_campaign: 'friend_joined', utm_medium: 'email') %>" background-color="#f85b73"><%= I18n.t("email_notification_mailer.friend_joined.view_profile") %></mj-button>
+  </mj-column>
+</mj-section>

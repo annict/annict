@@ -33,4 +33,17 @@ class EmailNotificationMailer < ActionMailer::Base
     )
     mail(to: @liked_user.email, subject: subject, &:mjml)
   end
+
+  def friend_joined(user_id, friend_user_id)
+    @user = User.find(user_id)
+    @friend_user = User.find(friend_user_id)
+
+    I18n.locale = @user.locale
+
+    subject = default_i18n_subject(
+      name: @friend_user.profile.name,
+      username: @friend_user.username
+    )
+    mail(to: @user.email, subject: subject, &:mjml)
+  end
 end
