@@ -78,8 +78,8 @@ en:
         staffs:
           activities: Activities
           edit: Edit Staff
-          index: Staffs
-          new: Create Staffs
+          index: Staff
+          new: Create Staff
         work_images:
           show: Work Image - %{title}
         works:
@@ -148,7 +148,7 @@ en:
           edit: Edit token
           new: Generate new token
       staffs:
-        index: Staffs of %{title} (Anime)
+        index: Staff of %{title} (Anime)
       tracks:
         show: Track
       users:

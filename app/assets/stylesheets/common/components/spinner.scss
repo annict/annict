@@ -22,7 +22,7 @@ $o: rgba(map-get($ann-color-shirobako, ho), .5);
   }
 
   &::after {
-    @include animation(ann-spin .7s infinite linear);
+    animation: ann-spin .7s infinite linear;
     border-color: $b $a $k $o;
     border-radius: 50%;
     border-style: solid;
@@ -46,12 +46,12 @@ $o: rgba(map-get($ann-color-shirobako, ho), .5);
   }
 }
 
-@include keyframes(ann-spin) {
+@keyframes ann-spin {
   0% {
-    @include transform(rotate(0deg));
+    transform: rotate(0deg);
   }
 
   100% {
-    @include transform(rotate(360deg));
+    transform: rotate(360deg);
   }
 }

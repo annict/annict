@@ -1,13 +1,11 @@
 = ann_display_meta_tags
 meta name="viewport" content="width=device-width, initial-scale=1.0 user-scalable=no"
 
-link href="/images/favicon.png" rel="shortcut icon" type="image/png"
+= render "application/head_links"
 link href="/images/apple-touch-icon-144x144.png" rel="apple-touch-icon-precomposed" sizes="144x144"
 link href="/images/apple-touch-icon-114x114.png" rel="apple-touch-icon-precomposed" sizes="114x114"
 link href="/images/apple-touch-icon-72x72.png" rel="apple-touch-icon-precomposed" sizes="72x72"
 link href="/images/apple-touch-icon-57x57.png" rel="apple-touch-icon-precomposed" sizes="57x57"
-link type="text/plain" rel="author" href="#{ENV.fetch('ANNICT_URL')}/humans.txt"
-= render "application/hreflang"
 
 = stylesheet_link_tag "mobile", media: "all"
 = javascript_include_tag "mobile"

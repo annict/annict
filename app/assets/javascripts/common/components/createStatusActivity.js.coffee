@@ -1,7 +1,7 @@
 _ = require "lodash"
 Vue = require "vue/dist/vue"
 
-module.exports = Vue.extend
+module.exports =
   template: "#t-create-status-activity"
 
   props:

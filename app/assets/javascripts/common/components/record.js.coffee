@@ -2,7 +2,7 @@ Vue = require "vue/dist/vue"
 
 eventHub = require "../../common/eventHub"
 
-module.exports = Vue.extend
+module.exports =
   props:
     userId:
       type: Number
