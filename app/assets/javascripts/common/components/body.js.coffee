@@ -4,7 +4,7 @@ escape = require "../filters/escape"
 linkify = require "../filters/linkify"
 newLine = require "../filters/newLine"
 
-module.exports = Vue.extend
+module.exports =
   methods:
     filter: (text) ->
       text = escape text

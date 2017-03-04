@@ -1,6 +1,6 @@
 Vue = require "vue/dist/vue"
 
-module.exports = Vue.extend
+module.exports =
   template: '<div class="c-rating-label"></div>'
 
   props:

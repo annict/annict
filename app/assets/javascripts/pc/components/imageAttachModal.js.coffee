@@ -2,7 +2,7 @@ Vue = require "vue/dist/vue"
 
 eventHub = require "../../common/eventHub"
 
-module.exports = Vue.extend
+module.exports =
   template: "#t-image-attach-modal"
 
   data: ->
