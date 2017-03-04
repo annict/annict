@@ -8,8 +8,12 @@ class EmailNotificationMailer < ActionMailer::Base
     @user = User.find(user_id)
     @following_user = User.find(following_user_id)
 
-    mail(to: @following_user.email, subject: "Hello") do |format|
-      format.mjml
-    end
+    I18n.locale = @following_user.locale
+
+    subject = default_i18n_subject(
+      name: @user.profile.name,
+      username: @user.username
+    )
+    mail(to: @following_user.email, subject: subject, &:mjml)
   end
 end

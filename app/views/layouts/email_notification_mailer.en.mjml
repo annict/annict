@@ -10,8 +10,8 @@
       <mj-section>
         <mj-column>
           <mj-text align="center" color="#9a9a9a" font-size="8px" padding-top="0px">
-            不要なメールでしたか？
-            <a href="" style="color: #364f6b; padding-left: 3px; text-decoration: none;">購読解除</a>
+            You're receiving this email because you are a user of Annict.
+            <a href="" style="color: #364f6b; padding-left: 3px; text-decoration: none;">Unsubscribe</a>
           </mj-text>
         </mj-column>
       </mj-section>

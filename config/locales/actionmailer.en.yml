@@ -1,4 +1,7 @@
 en:
+  email_notification_mailer:
+    followed_user:
+      subject: "%{name} (@%{username}) is now following you on Annict!"
   mention_mailer:
     notify:
       subject: "%{name} (@%{username}) mentioned you on Annict!"
