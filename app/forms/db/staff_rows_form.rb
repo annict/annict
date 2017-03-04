@@ -19,7 +19,8 @@ module DB
         map { |l| I18n.t("enumerize.staff.role", locale: l).invert }.
         inject(&:merge)
 
-      @attrs_list ||= fetched_rows.map do |row_data|
+      staffs_count = @work.staffs.count
+      @attrs_list ||= fetched_rows.map.with_index do |row_data, i|
         role = roles[row_data[:role]]
 
         {
@@ -27,7 +28,8 @@ module DB
           resource_id: row_data[:resource][:id],
           resource_type: row_data[:resource][:type],
           role: (role.presence || :other),
-          role_other: role.blank? ? row_data[:role] : nil
+          role_other: role.blank? ? row_data[:role] : nil,
+          sort_number: (i + staffs_count) * 10
         }
       end
     end

@@ -2,8 +2,8 @@
   $root: &;
 
   &__item {
-    @include align-items(center);
-    @include display(flex);
+    align-items: center;
+    display: flex;
     height: 50px;
     padding-left: 1rem;
   }

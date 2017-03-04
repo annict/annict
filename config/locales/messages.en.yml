@@ -131,7 +131,7 @@ en:
     sayonara:
       are_you_sure_really: Are you sure? Really??
       delete_account: Delete Account
-      description: If you clicked "Delete Account" button, your data will be all deleted.
+      description: Clicking "Delete Account" will delete all your data.
     sessions:
       new:
         forgot_password: Forgot password?

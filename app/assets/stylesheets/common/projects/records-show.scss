@@ -1,5 +1,5 @@
 .p-records-show {
   &__work-image {
-    @include flex-basis(100px);
+    flex-basis: 100px;
   }
 }

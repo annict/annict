@@ -53,9 +53,9 @@ module ImageHelper
     else
       record&.send(field)&.url(:master)
     end
-    path = path.presence || "/no-image.jpg"
+    path = path.presence || "no-image.jpg"
 
-    "#{ENV.fetch('ANNICT_API_ASSETS_URL')}#{path}"
+    "#{ENV.fetch('ANNICT_API_ASSETS_URL')}/#{path}"
   end
 
   def ann_api_assets_background_image_url(record, field)

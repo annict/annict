@@ -139,7 +139,7 @@ en:
         media: Media
         number_format_id: Number format
         official_site_url_en: Official site (en)
-        official_site_url: Offisial site (ja)
+        official_site_url: Official site (ja)
         sc_tid: Syobocal ID
         season_id: Season
         season: Season
@@ -176,7 +176,7 @@ en:
         other: Characters
       cast:
         one: Cast
-        other: Casts
+        other: Cast
       db_activity:
         one: Activity
         other: Activities
@@ -197,7 +197,7 @@ en:
         other: Programs
       staff:
         one: Staff
-        other: Staffs
+        other: Staff
       work:
         one: Work
         other: Works

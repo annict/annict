@@ -13,7 +13,8 @@ h3.h2.font-weight-bold.mb-zp5
     - top_work.casts.order(:sort_number).limit(10).each do |cast|
       - cache cast do
         li.list-inline-item
-          = "#{cast.part}: "
+          = cast.character.decorate.name_link
+          | : 
           = cast.decorate.local_name_with_old_link
 - if top_work.staffs.present?
   .font-weight-bold = t "noun.staffs"

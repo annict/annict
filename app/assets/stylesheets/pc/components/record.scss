@@ -1,6 +1,6 @@
 .c-record {
   &__avatar {
-    @include flex-basis(50px);
-    @include flex-grow(0);
+    flex-basis: 50px;
+    flex-grow: 0;
   }
 }
