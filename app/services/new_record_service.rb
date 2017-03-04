@@ -21,6 +21,7 @@ class NewRecordService
       @record.update_share_checkin_status
       @record.share_to_sns
       save_activity
+      update_record_comments_count
       finish_tips
       update_latest_status
       create_keen_event
@@ -53,5 +54,9 @@ class NewRecordService
   def create_keen_event
     @keen_client.app = @app
     @keen_client.records.create
+  end
+
+  def update_record_comments_count
+    @record.episode.increment!(:record_comments_count) if @record.comment.present?
   end
 end

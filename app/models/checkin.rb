@@ -56,7 +56,8 @@ class Checkin < ActiveRecord::Base
       less_than_or_equal_to: 5
     }
 
-  scope :with_comment, -> { where.not(comment: "") }
+  scope :with_comment, -> { where.not(comment: ["", nil]) }
+  scope :with_no_comment, -> { where(comment: ["", nil]) }
 
   def self.initial?(checkin)
     count == 1 && first.id == checkin.id

@@ -44,6 +44,7 @@ gem "keen"
 gem "koala"
 gem "meta-tags"
 gem "mini_magick"
+gem "newrelic_rpm"
 gem "nokogiri"
 gem "omniauth-facebook"
 # 1.4系だとFacebookのOAuth周りでおかしくなるので1.3系を使う

@@ -58,7 +58,8 @@ describe "Api::V1::Me::Programs" do
           "number_text" => episode.number,
           "sort_number" => episode.sort_number,
           "title" => episode.title,
-          "records_count" => 0
+          "records_count" => 0,
+          "record_comments_count" => 0
         }
       }
       expect(json["programs"][0]).to include(expected_hash)
