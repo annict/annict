@@ -592,6 +592,7 @@ DEPENDENCIES
   acts_as_list
   annotate
   asset_sync
+  autoprefixer-rails
   awesome_print
   aws-sdk
   better_errors
