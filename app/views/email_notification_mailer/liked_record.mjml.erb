@@ -1,6 +1,6 @@
 <mj-section background-color="#fff">
   <mj-column>
-    <mj-text align="center"><%= "#{@user.profile.name} (@#{@user.username})" %> liked your records.</mj-text>
+    <mj-text align="center"><%= I18n.t("email_notification_mailer.liked_record.liked_your_records", name: @user.profile.name, username: @user.username) %></mj-text>
 
     <mj-section border="1px solid rgba(0, 0, 0, .08)" padding="20px">
       <mj-section padding="0">
@@ -21,7 +21,7 @@
 
       <mj-section padding="0">
         <mj-column>
-          <mj-button href="<%= record_url(username: @liked_user.username, id: @record.id, utm_source: 'email_notification', utm_campaign: 'liked_record', utm_medium: 'email') %>" background-color="#f85b73">View Record</mj-button>
+          <mj-button href="<%= record_url(username: @liked_user.username, id: @record.id, utm_source: 'email_notification', utm_campaign: 'liked_record', utm_medium: 'email') %>" background-color="#f85b73"><%= I18n.t("email_notification_mailer.liked_record.view_record") %></mj-button>
         </mj-column>
       </mj-section>
     </mj-section>
@@ -32,7 +32,7 @@
         <mj-text align="center" font-size="24px" font-weight="600" padding-bottom="7px"><%= "#{@user.profile.name}" %></mj-text>
         <mj-text align="center" padding-top="0px"><%= "@#{@user.username}" %></mj-text>
         <mj-text align="center"><%= "#{@user.profile.description}" %></mj-text>
-        <mj-button href="<%= user_url(@user.username, utm_source: 'email_notification', utm_campaign: 'liked_record', utm_medium: 'email') %>" background-color="#f85b73">View Profile</mj-button>
+        <mj-button href="<%= user_url(@user.username, utm_source: 'email_notification', utm_campaign: 'liked_record', utm_medium: 'email') %>" background-color="#f85b73"><%= I18n.t("email_notification_mailer.liked_record.view_profile") %></mj-button>
       </mj-column>
     </mj-section>
   </mj-column>

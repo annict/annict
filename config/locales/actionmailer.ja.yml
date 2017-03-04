@@ -1,9 +1,14 @@
 ja:
   email_notification_mailer:
     followed_user:
+      followed_you: "%{name} (@%{username})にフォローされました。"
       subject: "%{name} (@%{username})がAnnictであなたをフォローしました！"
+      view_profile: プロフィールを見る
     liked_record:
+      liked_your_records: "%{name} (@%{username})が、あなたの記録に「いいね！」しました。"
       subject: "%{name} (@%{username})が %{title} への記録に「いいね！」しました"
+      view_profile: プロフィールを見る
+      view_record: 記録を見る
   mention_mailer:
     notify:
       subject: "%{name} (@%{username})がAnnictであなたにメンションしました！"
