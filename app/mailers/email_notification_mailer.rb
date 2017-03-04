@@ -3,6 +3,7 @@
 class EmailNotificationMailer < ActionMailer::Base
   default from: "Annict <no-reply@annict.com>"
   add_template_helper ImageHelper
+  add_template_helper SeasonsHelper
 
   def followed_user(user_id, following_user_id)
     @user = User.find(user_id)
@@ -44,6 +45,17 @@ class EmailNotificationMailer < ActionMailer::Base
       name: @friend_user.profile.name,
       username: @friend_user.username
     )
+    mail(to: @user.email, subject: subject, &:mjml)
+  end
+
+  def next_season_came(user_id, season_id)
+    @user = User.find(user_id)
+    @season = Season.find(season_id)
+    @works = @season.works.order(watchers_count: :desc).limit(10)
+
+    I18n.locale = @user.locale
+
+    subject = default_i18n_subject(name: @season.decorate.local_name)
     mail(to: @user.email, subject: subject, &:mjml)
   end
 end
