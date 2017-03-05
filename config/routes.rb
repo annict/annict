@@ -214,7 +214,7 @@ Rails.application.routes.draw do
       patch :revoke
     end
 
-    resources :email_notifications, only: %i(index) do
+    resource :email_notification, only: %i(show update) do
       get :unsubscribe, on: :collection
     end
 

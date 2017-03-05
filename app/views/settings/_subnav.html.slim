@@ -11,6 +11,9 @@
   = active_link_to providers_path, class: "c-subnav__link", class_active: "c-subnav__link--active", active: "tab #{params[:controller] == 'providers' ? 'tab--active' : ''}"
     .c-subnav__item
       = t "head.title.providers.index"
+  = active_link_to settings_email_notification_path, class: "c-subnav__link", class_active: "c-subnav__link--active", active: params[:controller] == "email_notifications"
+    .c-subnav__item
+      = t "head.title.settings.email_notifications.show"
   = active_link_to mutes_path, class: "c-subnav__link", class_active: "c-subnav__link--active", active: params[:controller] == "mutes"
     .c-subnav__item
       = t "head.title.mutes.index"

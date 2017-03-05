@@ -144,6 +144,7 @@ en:
         disconnected: Application has been disconnected
         no_applications: No applications
       email_notifications:
+        updated: Updated
         unsubscribed: Unsubscribe successful
       tokens:
         created: Token has been created.
