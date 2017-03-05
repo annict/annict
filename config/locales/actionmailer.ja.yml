@@ -1,5 +1,8 @@
 ja:
   email_notification_mailer:
+    _layout:
+      unsubscribe: "購読解除"
+      unsubscribe_message: "不要なメールでしたか？"
     followed_user:
       followed_you: "%{name} (@%{username})にフォローされました。"
       subject: "%{name} (@%{username})がAnnictであなたをフォローしました！"

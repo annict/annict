@@ -7,6 +7,7 @@ class EmailNotificationMailer < ActionMailer::Base
 
   def followed_user(followed_user_id, user_id)
     @followed_user = User.find(followed_user_id)
+    @unsubscription_key = @followed_user.email_notification.unsubscription_key
     @user = User.find(user_id)
 
     I18n.locale = @followed_user.locale
@@ -20,6 +21,7 @@ class EmailNotificationMailer < ActionMailer::Base
 
   def liked_record(liked_user_id, user_id, record_id)
     @liked_user = User.find(liked_user_id)
+    @unsubscription_key = @liked_user.email_notification.unsubscription_key
     @user = User.find(user_id)
     @record = @liked_user.records.find(record_id)
     @work = @record.work
@@ -37,6 +39,7 @@ class EmailNotificationMailer < ActionMailer::Base
 
   def friends_joined(user_id, provider_name, friend_user_ids)
     @user = User.find(user_id)
+    @unsubscription_key = @user.email_notification.unsubscription_key
     @provider_name = provider_name
     @friend_users = User.where(id: friend_user_ids)
 
@@ -48,6 +51,7 @@ class EmailNotificationMailer < ActionMailer::Base
 
   def next_season_came(user_id, season_id)
     @user = User.find(user_id)
+    @unsubscription_key = @user.email_notification.unsubscription_key
     @season = Season.find(season_id)
     @works = @season.works.order(watchers_count: :desc).limit(10)
 

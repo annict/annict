@@ -1,5 +1,8 @@
 en:
   email_notification_mailer:
+    _layout:
+      unsubscribe: "Unsubscribe"
+      unsubscribe_message: "You're receiving this email because you are a user of Annict."
     followed_user:
       followed_you: "%{name} (@%{username}) followed you."
       subject: "%{name} (@%{username}) is now following you on Annict!"
