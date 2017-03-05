@@ -35,6 +35,12 @@
 #
 
 class CheckinsController < ApplicationController
+  # Old record page
+  def show(id)
+    record = Checkin.find(id)
+    redirect_to record_path(record.user.username, record), status: 301
+  end
+
   def redirect(provider, url_hash)
     case provider
     when "tw"

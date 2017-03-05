@@ -46,7 +46,7 @@ module DB
         elsif organization.present?
           [organization, row_columns[2]]
         else
-          []
+          [nil, row_columns[1].presence || row_columns[2]]
         end
 
         {

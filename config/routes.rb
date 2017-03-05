@@ -277,8 +277,11 @@ Rails.application.routes.draw do
 
   resources :works, only: [:index, :show] do
     resources :characters, only: %i(index)
-    resources :episodes, only: %i(index show)
     resources :staffs, only: %i(index)
+
+    resources :episodes, only: %i(index show) do
+      resources :checkins, only: %i(show)
+    end
 
     collection do
       get :popular
