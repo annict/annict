@@ -25,6 +25,16 @@ module Api
         current_user.like(recipient)
         keen_client.page_category = page_category
         keen_client.likes.create(resource_type: recipient_type)
+
+        if recipient_type == "Checkin"
+          EmailNotificationService.send_email(
+            "liked_record",
+            recipient.user,
+            current_user.id,
+            recipient_id
+          )
+        end
+
         head 200
       end
 

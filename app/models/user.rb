@@ -171,7 +171,8 @@ class User < ActiveRecord::Base
     end
 
     build_setting
-    build_email_notification(unsubscription_key: SecureRandom.uuid)
+    unsubscription_key = "#{SecureRandom.uuid}-#{SecureRandom.uuid}"
+    build_email_notification(unsubscription_key: unsubscription_key)
 
     self
   end

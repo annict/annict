@@ -7,11 +7,7 @@ class CreateEmailNotifications < ActiveRecord::Migration[5.0]
       t.string :unsubscription_key, null: false
       t.boolean :event_followed_user, null: false, default: true
       t.boolean :event_liked_record, null: false, default: true
-      t.boolean :event_liked_multiple_record, null: false, default: true
-      t.boolean :event_liked_comment, null: false, default: true
-      t.boolean :event_liked_status, null: false, default: true
-      t.boolean :event_commented, null: false, default: true
-      t.boolean :event_friend_joined, null: false, default: true
+      t.boolean :event_friends_joined, null: false, default: true
       t.boolean :event_next_season_came, null: false, default: true
       t.timestamps null: false
     end

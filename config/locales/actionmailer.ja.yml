@@ -4,9 +4,11 @@ ja:
       followed_you: "%{name} (@%{username})にフォローされました。"
       subject: "%{name} (@%{username})がAnnictであなたをフォローしました！"
       view_profile: プロフィールを見る
-    friend_joined:
-      joined: "%{name} (@%{username})がAnnictを使い始めました。"
-      subject: "あなたの友達の%{name} (@%{username})がAnnictを使い始めました！"
+    friends_joined:
+      joined_facebook: "Facebookの友達がAnnictを使い始めました。"
+      joined_twitter: "Twitterでフォローしている友達がAnnictを使い始めました。"
+      subject_facebook: "Facebookの友達がAnnictを使い始めました！"
+      subject_twitter: "Twitterでフォローしている友達がAnnictを使い始めました！"
       view_profile: "プロフィールを見る"
     liked_record:
       liked_your_records: "%{name} (@%{username})が、あなたの記録に「いいね！」しました。"

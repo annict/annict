@@ -4,9 +4,11 @@ en:
       followed_you: "%{name} (@%{username}) followed you."
       subject: "%{name} (@%{username}) is now following you on Annict!"
       view_profile: "View Profile"
-    friend_joined:
-      joined: "%{name} (@%{username}) has joined Annict."
-      subject: "Your friend %{name} (@%{username}) joined Annict!"
+    friends_joined:
+      joined_facebook: "Your Facebook friends have joined Annict."
+      joined_twitter: "Your Twitter friends have joined Annict."
+      subject_facebook: "Your Facebook friends have joined Annict!"
+      subject_twitter: "Your Twitter friends have joined Annict!"
       view_profile: "View Profile"
     liked_record:
       liked_your_records: "%{name} (@%{username}) liked your records."

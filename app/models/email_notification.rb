@@ -23,13 +23,5 @@
 #  index_email_notifications_on_user_id             (user_id) UNIQUE
 #
 
-
 class EmailNotification < ApplicationRecord
-  EVENTS = %w(
-    followed
-    liked
-    commented
-    friend_joined
-    next_season_came
-  ).freeze
 end

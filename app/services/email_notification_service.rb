@@ -1,16 +1,12 @@
 # frozen_string_literal: true
 
 class EmailNotificationService
-  def self.send_on_follow(user, following_user)
-    new(user).send_following(following_user)
+  def self.send_email(action, user, *args)
+    return unless user.email_notification.send("event_#{action}?")
+    new.send_email(action, user.id, *args)
   end
 
-  def initialize(user)
-    @user = user
-  end
-
-  def send_on_follow(following_user)
-    if @user.email_receivable?(:follow)
-    end
+  def send_email(action, user_id, *args)
+    EmailNotificationMailer.send(action.to_s, user_id, *args).deliver_later(priority: 20)
   end
 end

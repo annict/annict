@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class UserSocialFriendsQuery
   def initialize(user)
     @user = user
@@ -7,10 +9,19 @@ class UserSocialFriendsQuery
     if @user.authorized_to?(:twitter) && @user.authorized_to?(:facebook)
       twitter_and_facebook_users
     elsif @user.authorized_to?(:twitter) || @user.authorized_to?(:facebook)
-      twitter_or_facebook_users
+      users_via(@user.providers.first.name)
     else
       User.none
     end
+  end
+
+  def users_via(provider_name)
+    uids = case provider_name.to_s
+    when "twitter" then TwitterService.new(@user).uids
+    when "facebook" then FacebookService.new(@user).uids
+    end
+
+    User.joins(:providers).where(providers: { name: provider_name, uid: uids })
   end
 
   private
@@ -23,15 +34,5 @@ class UserSocialFriendsQuery
     twitter_conds = t[:name].eq("twitter").and(t[:uid].in(twitter_uids))
     facebook_conds = t[:name].eq("facebook").and(t[:uid].in(facebook_uids))
     User.joins(:providers).where(twitter_conds.or(facebook_conds))
-  end
-
-  def twitter_or_facebook_users
-    provider = @user.providers.first
-    uids = case provider.name
-      when "twitter" then TwitterService.new(@user).uids
-      when "facebook" then FacebookService.new(@user).uids
-    end
-
-    User.joins(:providers).where(providers: { name: provider.name, uid: uids })
   end
 end

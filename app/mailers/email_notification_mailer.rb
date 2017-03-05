@@ -5,23 +5,23 @@ class EmailNotificationMailer < ActionMailer::Base
   add_template_helper ImageHelper
   add_template_helper SeasonsHelper
 
-  def followed_user(user_id, following_user_id)
+  def followed_user(followed_user_id, user_id)
+    @followed_user = User.find(followed_user_id)
     @user = User.find(user_id)
-    @following_user = User.find(following_user_id)
 
-    I18n.locale = @following_user.locale
+    I18n.locale = @followed_user.locale
 
     subject = default_i18n_subject(
       name: @user.profile.name,
       username: @user.username
     )
-    mail(to: @following_user.email, subject: subject, &:mjml)
+    mail(to: @followed_user.email, subject: subject, &:mjml)
   end
 
-  def liked_record(user_id, record_id)
+  def liked_record(liked_user_id, user_id, record_id)
+    @liked_user = User.find(liked_user_id)
     @user = User.find(user_id)
-    @record = Checkin.find(record_id)
-    @liked_user = @record.user
+    @record = @liked_user.records.find(record_id)
     @work = @record.work
     @episode = @record.episode
 
@@ -35,16 +35,14 @@ class EmailNotificationMailer < ActionMailer::Base
     mail(to: @liked_user.email, subject: subject, &:mjml)
   end
 
-  def friend_joined(user_id, friend_user_id)
+  def friends_joined(user_id, provider_name, friend_user_ids)
     @user = User.find(user_id)
-    @friend_user = User.find(friend_user_id)
+    @provider_name = provider_name
+    @friend_users = User.where(id: friend_user_ids)
 
     I18n.locale = @user.locale
 
-    subject = default_i18n_subject(
-      name: @friend_user.profile.name,
-      username: @friend_user.username
-    )
+    subject = I18n.t("email_notification_mailer.friends_joined.subject_#{provider_name}")
     mail(to: @user.email, subject: subject, &:mjml)
   end
 
