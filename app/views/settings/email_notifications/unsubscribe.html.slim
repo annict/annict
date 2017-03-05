@@ -1,12 +1,19 @@
 - title = t "head.title.settings.email_notifications.unsubscribe"
-- set_meta_tags(title: title, reverse: false)
+- set_meta_tags(title: title, reverse: true, prefix: false)
 - set_page_category "settings_email_notifications_unsubscribe"
+
+- content_for :head do
+  meta name="robots" content="noindex, nofollow"
 
 = render "application/components/navbar"
 
 .p-application__content.mt-1.mb-2
   .container
     .row.justify-content-center
-      .col-7
+      .col-7.c-card
+        .c-unsubscribe-message.p-3.text-center
+          = icon "check-circle-o", class: "mb-zp5"
+          .c-unsubscribe-message__message
+            = t "messages.settings.email_notifications.unsubscribed"
 
 = render "application/components/footer"

@@ -143,6 +143,8 @@ en:
       apps:
         disconnected: Application has been disconnected
         no_applications: No applications
+      email_notifications:
+        unsubscribed: Unsubscribe successful
       tokens:
         created: Token has been created.
         deleted: Token has been deleted.

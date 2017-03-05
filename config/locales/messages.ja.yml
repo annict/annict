@@ -143,6 +143,8 @@ ja:
       apps:
         disconnected: 接続解除しました
         no_applications: アプリはありません
+      email_notifications:
+        unsubscribed: 購読を解除しました
       tokens:
         created: 作成しました
         deleted: 削除しました
