@@ -34,6 +34,14 @@ module ControllerCommon
 
     def redirect_if_unexpected_subdomain
       return unless %w(api).include?(request.subdomain)
+
+      white_list = [
+        "/sign_in",
+        "/users/auth/facebook/callback",
+        "/users/auth/twitter/callback"
+      ]
+      return if request.path.in?(white_list)
+
       redirect_to_root_domain(status: 301)
     end
 
