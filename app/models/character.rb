@@ -32,6 +32,7 @@
 #  updated_at            :datetime         not null
 #  description_source    :string           default(""), not null
 #  description_source_en :string           default(""), not null
+#  favorites_count       :integer          default(0), not null
 #
 # Indexes
 #

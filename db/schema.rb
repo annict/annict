@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170226112004) do
+ActiveRecord::Schema.define(version: 20170307135652) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -122,6 +122,7 @@ ActiveRecord::Schema.define(version: 20170226112004) do
     t.datetime "updated_at",                                  null: false
     t.string   "description_source",    default: "",          null: false
     t.string   "description_source_en", default: "",          null: false
+    t.integer  "favorites_count",       default: 0,           null: false
     t.index ["name", "kind"], name: "index_characters_on_name_and_kind", unique: true, using: :btree
   end
 
@@ -405,7 +406,7 @@ ActiveRecord::Schema.define(version: 20170226112004) do
     t.boolean  "event_liked_comment",         default: true, null: false
     t.boolean  "event_liked_status",          default: true, null: false
     t.boolean  "event_commented",             default: true, null: false
-    t.boolean  "event_friend_joined",         default: true, null: false
+    t.boolean  "event_friends_joined",        default: true, null: false
     t.boolean  "event_next_season_came",      default: true, null: false
     t.datetime "created_at",                                 null: false
     t.datetime "updated_at",                                 null: false
@@ -434,6 +435,16 @@ ActiveRecord::Schema.define(version: 20170226112004) do
     t.index ["prev_episode_id"], name: "index_episodes_on_prev_episode_id", using: :btree
     t.index ["work_id", "sc_count"], name: "episodes_work_id_sc_count_key", unique: true, using: :btree
     t.index ["work_id"], name: "episodes_work_id_idx", using: :btree
+  end
+
+  create_table "favorites", force: :cascade do |t|
+    t.integer  "user_id",       null: false
+    t.string   "resource_type", null: false
+    t.integer  "resource_id",   null: false
+    t.datetime "created_at",    null: false
+    t.datetime "updated_at",    null: false
+    t.index ["user_id", "resource_type", "resource_id"], name: "index_favorites_on_user_id_and_resource_type_and_resource_id", unique: true, using: :btree
+    t.index ["user_id"], name: "index_favorites_on_user_id", using: :btree
   end
 
   create_table "finished_tips", force: :cascade do |t|
@@ -641,6 +652,7 @@ ActiveRecord::Schema.define(version: 20170226112004) do
     t.string   "url_en",              default: "",          null: false
     t.string   "wikipedia_url_en",    default: "",          null: false
     t.string   "twitter_username_en", default: "",          null: false
+    t.integer  "favorites_count",     default: 0,           null: false
     t.index ["aasm_state"], name: "index_organizations_on_aasm_state", using: :btree
     t.index ["name"], name: "index_organizations_on_name", unique: true, using: :btree
   end
@@ -665,6 +677,7 @@ ActiveRecord::Schema.define(version: 20170226112004) do
     t.string   "url_en",              default: "",          null: false
     t.string   "wikipedia_url_en",    default: "",          null: false
     t.string   "twitter_username_en", default: "",          null: false
+    t.integer  "favorites_count",     default: 0,           null: false
     t.index ["aasm_state"], name: "index_people_on_aasm_state", using: :btree
     t.index ["name"], name: "index_people_on_name", unique: true, using: :btree
     t.index ["prefecture_id"], name: "index_people_on_prefecture_id", using: :btree
@@ -967,6 +980,7 @@ ActiveRecord::Schema.define(version: 20170226112004) do
   add_foreign_key "email_notifications", "users"
   add_foreign_key "episodes", "episodes", column: "prev_episode_id"
   add_foreign_key "episodes", "works", name: "episodes_work_id_fk", on_delete: :cascade
+  add_foreign_key "favorites", "users"
   add_foreign_key "finished_tips", "tips", name: "finished_tips_tip_id_fk", on_delete: :cascade
   add_foreign_key "finished_tips", "users", name: "finished_tips_user_id_fk", on_delete: :cascade
   add_foreign_key "follows", "users", column: "following_id", name: "follows_following_id_fk", on_delete: :cascade

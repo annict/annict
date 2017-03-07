@@ -23,6 +23,7 @@
 #  url_en              :string           default(""), not null
 #  wikipedia_url_en    :string           default(""), not null
 #  twitter_username_en :string           default(""), not null
+#  favorites_count     :integer          default(0), not null
 #
 # Indexes
 #
