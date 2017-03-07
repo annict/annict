@@ -3,7 +3,7 @@ GEM
   remote: https://rails-assets.org/
   specs:
     aasm (4.11.1)
-    action_args (2.1.0)
+    action_args (2.2.0)
     actioncable (5.0.2)
       actionpack (= 5.0.2)
       nio4r (>= 1.2, < 3.0)
@@ -73,13 +73,13 @@ GEM
     autoprefixer-rails (6.7.6)
       execjs
     awesome_print (1.7.0)
-    aws-sdk (2.8.0)
-      aws-sdk-resources (= 2.8.0)
-    aws-sdk-core (2.8.0)
+    aws-sdk (2.8.1)
+      aws-sdk-resources (= 2.8.1)
+    aws-sdk-core (2.8.1)
       aws-sigv4 (~> 1.0)
       jmespath (~> 1.0)
-    aws-sdk-resources (2.8.0)
-      aws-sdk-core (= 2.8.0)
+    aws-sdk-resources (2.8.1)
+      aws-sdk-core (= 2.8.1)
     aws-sigv4 (1.0.0)
     axiom-types (0.1.1)
       descendants_tracker (~> 0.0.4)
