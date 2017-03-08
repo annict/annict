@@ -16,6 +16,9 @@
         span.badge.u-badge-people
           = t "noun.staff"
 
+    .mt-1.text-center
+      c-favorite-button resource-type="Person" :resource-id="#{@person.id}" :init-is-favorited="#{user_signed_in? && current_user.favorite?(@person)}" :is-signed-in="#{user_signed_in?}"
+
     .mt-2
       h2.h4.font-weight-bold.text-center.mt-2.mb-1
         = icon "sticky-note-o", class: "mr-zp25"
@@ -63,3 +66,6 @@
 
 = render "application/components/footer"
 = render "application/components/tabbar"
+
+- content_for :js_templates
+  = render "application/js_templates/favorite_button"

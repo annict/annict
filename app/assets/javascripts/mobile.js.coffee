@@ -18,6 +18,7 @@ $(document).on "turbolinks:load", ->
   channelSelector = require "./common/components/channelSelector"
   commentGuard = require "./common/components/commentGuard"
   episodeList = require "./common/components/episodeList"
+  favoriteButton = require "./common/components/favoriteButton"
   flash = require "./common/components/flash"
   followButton = require "./common/components/followButton"
   likeButton = require "./common/components/likeButton"
@@ -49,6 +50,7 @@ $(document).on "turbolinks:load", ->
   Vue.component("c-channel-selector", channelSelector)
   Vue.component("c-comment-guard", commentGuard)
   Vue.component("c-episode-list", episodeList)
+  Vue.component("c-favorite-button", favoriteButton)
   Vue.component("c-flash", flash)
   Vue.component("c-follow-button", followButton)
   Vue.component("c-like-button", likeButton)

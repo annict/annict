@@ -3,20 +3,21 @@
 #
 # Table name: organizations
 #
-#  id                  :integer          not null, primary key
-#  name                :string           not null
-#  url                 :string
-#  wikipedia_url       :string
-#  twitter_username    :string
-#  aasm_state          :string           default("published"), not null
-#  created_at          :datetime         not null
-#  updated_at          :datetime         not null
-#  name_kana           :string           default(""), not null
-#  name_en             :string           default(""), not null
-#  url_en              :string           default(""), not null
-#  wikipedia_url_en    :string           default(""), not null
-#  twitter_username_en :string           default(""), not null
-#  favorites_count     :integer          default(0), not null
+#  id                           :integer          not null, primary key
+#  name                         :string           not null
+#  url                          :string
+#  wikipedia_url                :string
+#  twitter_username             :string
+#  aasm_state                   :string           default("published"), not null
+#  created_at                   :datetime         not null
+#  updated_at                   :datetime         not null
+#  name_kana                    :string           default(""), not null
+#  name_en                      :string           default(""), not null
+#  url_en                       :string           default(""), not null
+#  wikipedia_url_en             :string           default(""), not null
+#  twitter_username_en          :string           default(""), not null
+#  favorites_count              :integer          default(0), not null
+#  favorite_organizations_count :integer          default(0), not null
 #
 # Indexes
 #
@@ -55,7 +56,13 @@ class Organization < ActiveRecord::Base
 
   has_many :db_activities, as: :trackable, dependent: :destroy
   has_many :db_comments, as: :resource, dependent: :destroy
+  has_many :favorite_organizations, dependent: :destroy
   has_many :staffs, as: :resource, dependent: :destroy
+  has_many :users, through: :favorite_organizations
+
+  def favorites
+    favorite_organizations
+  end
 
   def to_diffable_hash
     data = self.class::DIFF_FIELDS.each_with_object({}) do |field, hash|

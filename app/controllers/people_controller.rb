@@ -27,6 +27,8 @@
 #
 
 class PeopleController < ApplicationController
+  before_action :load_i18n, only: %i(show)
+
   def show(id)
     @person = Person.published.find(id)
 
@@ -47,5 +49,16 @@ class PeopleController < ApplicationController
         group_by { |staff| staff.work.season&.year.presence || 0 }
       @staff_years = @staffs_with_year.keys.sort.reverse
     end
+  end
+
+  private
+
+  def load_i18n
+    keys = {
+      "messages.components.favorite_button.add_to_favorites": nil,
+      "messages.components.favorite_button.added_to_favorites": nil,
+    }
+
+    load_i18n_into_gon keys
   end
 end

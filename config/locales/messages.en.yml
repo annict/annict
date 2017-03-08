@@ -60,6 +60,9 @@ en:
         hero_title_mobile_html: The platform for Anime addicts.
         start_tracking: Start Tracking
     components:
+      favorite_button:
+        add_to_favorites: Add to Favorites
+        added_to_favorites: Added to Favorites
       load_more_button:
         more: View more
       mute_user_button:

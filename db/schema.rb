@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170307135652) do
+ActiveRecord::Schema.define(version: 20170307135654) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -94,35 +94,36 @@ ActiveRecord::Schema.define(version: 20170307135652) do
   end
 
   create_table "characters", force: :cascade do |t|
-    t.string   "name",                                        null: false
-    t.string   "name_kana",             default: "",          null: false
-    t.string   "name_en",               default: "",          null: false
-    t.string   "kind",                  default: "",          null: false
-    t.string   "kind_en",               default: "",          null: false
-    t.string   "nickname",              default: "",          null: false
-    t.string   "nickname_en",           default: "",          null: false
-    t.string   "birthday",              default: "",          null: false
-    t.string   "birthday_en",           default: "",          null: false
-    t.string   "age",                   default: "",          null: false
-    t.string   "age_en",                default: "",          null: false
-    t.string   "blood_type",            default: "",          null: false
-    t.string   "blood_type_en",         default: "",          null: false
-    t.string   "height",                default: "",          null: false
-    t.string   "height_en",             default: "",          null: false
-    t.string   "weight",                default: "",          null: false
-    t.string   "weight_en",             default: "",          null: false
-    t.string   "nationality",           default: "",          null: false
-    t.string   "nationality_en",        default: "",          null: false
-    t.string   "occupation",            default: "",          null: false
-    t.string   "occupation_en",         default: "",          null: false
-    t.text     "description",           default: "",          null: false
-    t.text     "description_en",        default: "",          null: false
-    t.string   "aasm_state",            default: "published", null: false
-    t.datetime "created_at",                                  null: false
-    t.datetime "updated_at",                                  null: false
-    t.string   "description_source",    default: "",          null: false
-    t.string   "description_source_en", default: "",          null: false
-    t.integer  "favorites_count",       default: 0,           null: false
+    t.string   "name",                                            null: false
+    t.string   "name_kana",                 default: "",          null: false
+    t.string   "name_en",                   default: "",          null: false
+    t.string   "kind",                      default: "",          null: false
+    t.string   "kind_en",                   default: "",          null: false
+    t.string   "nickname",                  default: "",          null: false
+    t.string   "nickname_en",               default: "",          null: false
+    t.string   "birthday",                  default: "",          null: false
+    t.string   "birthday_en",               default: "",          null: false
+    t.string   "age",                       default: "",          null: false
+    t.string   "age_en",                    default: "",          null: false
+    t.string   "blood_type",                default: "",          null: false
+    t.string   "blood_type_en",             default: "",          null: false
+    t.string   "height",                    default: "",          null: false
+    t.string   "height_en",                 default: "",          null: false
+    t.string   "weight",                    default: "",          null: false
+    t.string   "weight_en",                 default: "",          null: false
+    t.string   "nationality",               default: "",          null: false
+    t.string   "nationality_en",            default: "",          null: false
+    t.string   "occupation",                default: "",          null: false
+    t.string   "occupation_en",             default: "",          null: false
+    t.text     "description",               default: "",          null: false
+    t.text     "description_en",            default: "",          null: false
+    t.string   "aasm_state",                default: "published", null: false
+    t.datetime "created_at",                                      null: false
+    t.datetime "updated_at",                                      null: false
+    t.string   "description_source",        default: "",          null: false
+    t.string   "description_source_en",     default: "",          null: false
+    t.integer  "favorites_count",           default: 0,           null: false
+    t.integer  "favorite_characters_count", default: 0,           null: false
     t.index ["name", "kind"], name: "index_characters_on_name_and_kind", unique: true, using: :btree
   end
 
@@ -437,14 +438,34 @@ ActiveRecord::Schema.define(version: 20170307135652) do
     t.index ["work_id"], name: "episodes_work_id_idx", using: :btree
   end
 
-  create_table "favorites", force: :cascade do |t|
-    t.integer  "user_id",       null: false
-    t.string   "resource_type", null: false
-    t.integer  "resource_id",   null: false
-    t.datetime "created_at",    null: false
-    t.datetime "updated_at",    null: false
-    t.index ["user_id", "resource_type", "resource_id"], name: "index_favorites_on_user_id_and_resource_type_and_resource_id", unique: true, using: :btree
-    t.index ["user_id"], name: "index_favorites_on_user_id", using: :btree
+  create_table "favorite_characters", force: :cascade do |t|
+    t.integer  "user_id",      null: false
+    t.integer  "character_id", null: false
+    t.datetime "created_at",   null: false
+    t.datetime "updated_at",   null: false
+    t.index ["character_id"], name: "index_favorite_characters_on_character_id", using: :btree
+    t.index ["user_id", "character_id"], name: "index_favorite_characters_on_user_id_and_character_id", unique: true, using: :btree
+    t.index ["user_id"], name: "index_favorite_characters_on_user_id", using: :btree
+  end
+
+  create_table "favorite_organizations", force: :cascade do |t|
+    t.integer  "user_id",         null: false
+    t.integer  "organization_id", null: false
+    t.datetime "created_at",      null: false
+    t.datetime "updated_at",      null: false
+    t.index ["organization_id"], name: "index_favorite_organizations_on_organization_id", using: :btree
+    t.index ["user_id", "organization_id"], name: "index_favorite_organizations_on_user_id_and_organization_id", unique: true, using: :btree
+    t.index ["user_id"], name: "index_favorite_organizations_on_user_id", using: :btree
+  end
+
+  create_table "favorite_people", force: :cascade do |t|
+    t.integer  "user_id",    null: false
+    t.integer  "person_id",  null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["person_id"], name: "index_favorite_people_on_person_id", using: :btree
+    t.index ["user_id", "person_id"], name: "index_favorite_people_on_user_id_and_person_id", unique: true, using: :btree
+    t.index ["user_id"], name: "index_favorite_people_on_user_id", using: :btree
   end
 
   create_table "finished_tips", force: :cascade do |t|
@@ -640,27 +661,28 @@ ActiveRecord::Schema.define(version: 20170307135652) do
   end
 
   create_table "organizations", force: :cascade do |t|
-    t.string   "name",                                      null: false
+    t.string   "name",                                               null: false
     t.string   "url"
     t.string   "wikipedia_url"
     t.string   "twitter_username"
-    t.string   "aasm_state",          default: "published", null: false
-    t.datetime "created_at",                                null: false
-    t.datetime "updated_at",                                null: false
-    t.string   "name_kana",           default: "",          null: false
-    t.string   "name_en",             default: "",          null: false
-    t.string   "url_en",              default: "",          null: false
-    t.string   "wikipedia_url_en",    default: "",          null: false
-    t.string   "twitter_username_en", default: "",          null: false
-    t.integer  "favorites_count",     default: 0,           null: false
+    t.string   "aasm_state",                   default: "published", null: false
+    t.datetime "created_at",                                         null: false
+    t.datetime "updated_at",                                         null: false
+    t.string   "name_kana",                    default: "",          null: false
+    t.string   "name_en",                      default: "",          null: false
+    t.string   "url_en",                       default: "",          null: false
+    t.string   "wikipedia_url_en",             default: "",          null: false
+    t.string   "twitter_username_en",          default: "",          null: false
+    t.integer  "favorites_count",              default: 0,           null: false
+    t.integer  "favorite_organizations_count", default: 0,           null: false
     t.index ["aasm_state"], name: "index_organizations_on_aasm_state", using: :btree
     t.index ["name"], name: "index_organizations_on_name", unique: true, using: :btree
   end
 
   create_table "people", force: :cascade do |t|
     t.integer  "prefecture_id"
-    t.string   "name",                                      null: false
-    t.string   "name_kana",           default: "",          null: false
+    t.string   "name",                                        null: false
+    t.string   "name_kana",             default: "",          null: false
     t.string   "nickname"
     t.string   "gender"
     t.string   "url"
@@ -669,15 +691,16 @@ ActiveRecord::Schema.define(version: 20170307135652) do
     t.date     "birthday"
     t.string   "blood_type"
     t.integer  "height"
-    t.string   "aasm_state",          default: "published", null: false
-    t.datetime "created_at",                                null: false
-    t.datetime "updated_at",                                null: false
-    t.string   "name_en",             default: "",          null: false
-    t.string   "nickname_en",         default: "",          null: false
-    t.string   "url_en",              default: "",          null: false
-    t.string   "wikipedia_url_en",    default: "",          null: false
-    t.string   "twitter_username_en", default: "",          null: false
-    t.integer  "favorites_count",     default: 0,           null: false
+    t.string   "aasm_state",            default: "published", null: false
+    t.datetime "created_at",                                  null: false
+    t.datetime "updated_at",                                  null: false
+    t.string   "name_en",               default: "",          null: false
+    t.string   "nickname_en",           default: "",          null: false
+    t.string   "url_en",                default: "",          null: false
+    t.string   "wikipedia_url_en",      default: "",          null: false
+    t.string   "twitter_username_en",   default: "",          null: false
+    t.integer  "favorites_count",       default: 0,           null: false
+    t.integer  "favorite_people_count", default: 0,           null: false
     t.index ["aasm_state"], name: "index_people_on_aasm_state", using: :btree
     t.index ["name"], name: "index_people_on_name", unique: true, using: :btree
     t.index ["prefecture_id"], name: "index_people_on_prefecture_id", using: :btree
@@ -980,7 +1003,12 @@ ActiveRecord::Schema.define(version: 20170307135652) do
   add_foreign_key "email_notifications", "users"
   add_foreign_key "episodes", "episodes", column: "prev_episode_id"
   add_foreign_key "episodes", "works", name: "episodes_work_id_fk", on_delete: :cascade
-  add_foreign_key "favorites", "users"
+  add_foreign_key "favorite_characters", "characters"
+  add_foreign_key "favorite_characters", "users"
+  add_foreign_key "favorite_organizations", "organizations"
+  add_foreign_key "favorite_organizations", "users"
+  add_foreign_key "favorite_people", "people"
+  add_foreign_key "favorite_people", "users"
   add_foreign_key "finished_tips", "tips", name: "finished_tips_tip_id_fk", on_delete: :cascade
   add_foreign_key "finished_tips", "users", name: "finished_tips_user_id_fk", on_delete: :cascade
   add_foreign_key "follows", "users", column: "following_id", name: "follows_following_id_fk", on_delete: :cascade

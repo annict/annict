@@ -7,92 +7,96 @@
 
 .c-card.py-1.mb-1
   .container
-    .text-center.mb-2
+    .text-center
       h1.h2
         = link_to @character.decorate.local_name, character_path(@character)
       span.badge.u-badge-characters
         = t "noun.character"
+
+    .mt-1.text-center
+      c-favorite-button resource-type="Character" :resource-id="#{@character.id}" :init-is-favorited="#{user_signed_in? && current_user.favorite?(@character)}" :is-signed-in="#{user_signed_in?}"
     
-    h2.h4.font-weight-bold.text-center.mb-1
-      = icon "sticky-note-o", class: "mr-zp25"
-      = t "noun.information"
-    .row
-      .col.text-right.font-weight-bold
-        = t "activerecord.attributes.character.name"
-      .col
-        = @character.name
-    - if @character.name_kana.present?
+    .mt-2
+      h2.h4.font-weight-bold.text-center.mb-1
+        = icon "sticky-note-o", class: "mr-zp25"
+        = t "noun.information"
       .row
         .col.text-right.font-weight-bold
-          = t "activerecord.attributes.character.name_kana"
+          = t "activerecord.attributes.character.name"
         .col
-          = @character.name_kana
-    - if @character.name_en.present?
-      .row
-        .col.text-right.font-weight-bold
-          = t "activerecord.attributes.character.name_en"
-        .col
-          = @character.name_en
-    - if @character.nickname.present?
-      .row
-        .col.text-right.font-weight-bold
-          = t "activerecord.attributes.character.nickname"
-        .col
-          = @character.nickname
-    - if @character.kind.present?
-      .row
-        .col.text-right.font-weight-bold
-          = t "activerecord.attributes.character.kind"
-        .col
-          = @character.kind
-    - if @character.birthday.present?
-      .row
-        .col.text-right.font-weight-bold
-          = t "activerecord.attributes.character.birthday"
-        .col
-          = @character.decorate.local_birthday
-    - if @character.age.present?
-      .row
-        .col.text-right.font-weight-bold
-          = t "activerecord.attributes.character.age"
-        .col
-          = @character.age
-    - if @character.blood_type.present?
-      .row
-        .col.text-right.font-weight-bold
-          = t "activerecord.attributes.character.blood_type"
-        .col
-          = @character.blood_type_text
-    - if @character.height.present?
-      .row
-        .col.text-right.font-weight-bold
-          = t "activerecord.attributes.character.height"
-        .col
-          = "#{@character.height}cm"
-    - if @character.weight.present?
-      .row
-        .col.text-right.font-weight-bold
-          = t "activerecord.attributes.character.weight"
-        .col
-          = "#{@character.weight}kg"
-    - if @character.nationality.present?
-      .row
-        .col.text-right.font-weight-bold
-          = t "activerecord.attributes.character.nationality"
-        .col
-          = @character.nationality
-    - if @character.occupation.present?
-      .row
-        .col.text-right.font-weight-bold
-          = t "activerecord.attributes.character.occupation"
-        .col
-          = @character.occupation
-    - if @character.description.present?
-      .row
-        .col.text-right.font-weight-bold
-          = t "activerecord.attributes.character.description"
-        .col
-          = @character.description
+          = @character.name
+      - if @character.name_kana.present?
+        .row
+          .col.text-right.font-weight-bold
+            = t "activerecord.attributes.character.name_kana"
+          .col
+            = @character.name_kana
+      - if @character.name_en.present?
+        .row
+          .col.text-right.font-weight-bold
+            = t "activerecord.attributes.character.name_en"
+          .col
+            = @character.name_en
+      - if @character.nickname.present?
+        .row
+          .col.text-right.font-weight-bold
+            = t "activerecord.attributes.character.nickname"
+          .col
+            = @character.nickname
+      - if @character.kind.present?
+        .row
+          .col.text-right.font-weight-bold
+            = t "activerecord.attributes.character.kind"
+          .col
+            = @character.kind
+      - if @character.birthday.present?
+        .row
+          .col.text-right.font-weight-bold
+            = t "activerecord.attributes.character.birthday"
+          .col
+            = @character.decorate.local_birthday
+      - if @character.age.present?
+        .row
+          .col.text-right.font-weight-bold
+            = t "activerecord.attributes.character.age"
+          .col
+            = @character.age
+      - if @character.blood_type.present?
+        .row
+          .col.text-right.font-weight-bold
+            = t "activerecord.attributes.character.blood_type"
+          .col
+            = @character.blood_type_text
+      - if @character.height.present?
+        .row
+          .col.text-right.font-weight-bold
+            = t "activerecord.attributes.character.height"
+          .col
+            = "#{@character.height}cm"
+      - if @character.weight.present?
+        .row
+          .col.text-right.font-weight-bold
+            = t "activerecord.attributes.character.weight"
+          .col
+            = "#{@character.weight}kg"
+      - if @character.nationality.present?
+        .row
+          .col.text-right.font-weight-bold
+            = t "activerecord.attributes.character.nationality"
+          .col
+            = @character.nationality
+      - if @character.occupation.present?
+        .row
+          .col.text-right.font-weight-bold
+            = t "activerecord.attributes.character.occupation"
+          .col
+            = @character.occupation
+      - if @character.description.present?
+        .row
+          .col.text-right.font-weight-bold
+            = t "activerecord.attributes.character.description"
+          .col
+            = @character.description
 
 .c-card.container.py-1.mb-2
   h2.h4.text-center.font-weight-bold.mb-1
@@ -101,3 +105,6 @@
 
 = render "application/components/footer"
 = render "application/components/tabbar"
+
+- content_for :js_templates
+  = render "application/js_templates/favorite_button"

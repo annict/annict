@@ -60,6 +60,9 @@ ja:
         hero_title_mobile_html: 見たアニメを記録して、<br>共有しよう。
         start_tracking: 視聴記録を始める
     components:
+      favorite_button:
+        add_to_favorites: お気に入りに追加
+        added_to_favorites: お気に入り追加済
       load_more_button:
         more: もっと見る
       mute_user_button:

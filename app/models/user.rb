@@ -40,6 +40,7 @@ class User < ActiveRecord::Base
   include Devise::Models::Confirmable
 
   include UserCheckable
+  include UserFavoritable
   include UserFollowable
   include UserLikeable
   include UserReceivable

@@ -20,6 +20,8 @@
 #
 
 class OrganizationsController < ApplicationController
+  before_action :load_i18n, only: %i(show)
+
   def show(id)
     @organization = Organization.published.find(id)
     @staffs_with_year = @organization.
@@ -28,5 +30,16 @@ class OrganizationsController < ApplicationController
       includes(work: %i(season work_image)).
       group_by { |s| s.work.season&.year.presence || 0 }
     @staff_years = @staffs_with_year.keys.sort.reverse
+  end
+
+  private
+
+  def load_i18n
+    keys = {
+      "messages.components.favorite_button.add_to_favorites": nil,
+      "messages.components.favorite_button.added_to_favorites": nil,
+    }
+
+    load_i18n_into_gon keys
   end
 end

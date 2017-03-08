@@ -1,0 +1,4 @@
+script#t-favorite-button type="x-template"
+  .c-favorite-button.btn :class='{ "btn-success": !isFavorited, "btn-info": isFavorited, "c-spinner": isSaving }' @click="toggleFavorite"
+    i.fa :class='{ "fa-star-o": !isFavorited, "fa-star": isFavorited }'
+    | {{ buttonText }}

@@ -39,6 +39,10 @@ Rails.application.routes.draw do
       resources :people, only: [:index]
       resources :receptions, only: [:create, :destroy]
 
+      resources :favorites, only: %i(create) do
+        post :unfavorite, on: :collection
+      end
+
       resources :follows, only: %i(create) do
         post :unfollow, on: :collection
       end

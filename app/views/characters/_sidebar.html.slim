@@ -1,7 +1,12 @@
 h1.h2
   = link_to character.decorate.local_name, character_path(character)
+
 span.badge.u-badge-characters
   = t "noun.character"
+
+.my-1
+  c-favorite-button.w-100 resource-type="Character" :resource-id="#{character.id}" :init-is-favorited="#{user_signed_in? && current_user.favorite?(character)}" :is-signed-in="#{user_signed_in?}"
+
 h2.h4.font-weight-bold.mt-2.mb-1
   = icon "sticky-note-o", class: "mr-zp25"
   = t "noun.information"
@@ -51,3 +56,6 @@ dl
         = character.decorate.local_description_source
 - if user_signed_in? && current_user.committer?
   = link_to t("messages._common.edit_on_annict_db"), edit_db_character_path(character), class: "btn btn-secondary w-100 mt-zp5"
+
+- content_for :js_templates
+  = render "application/js_templates/favorite_button"
