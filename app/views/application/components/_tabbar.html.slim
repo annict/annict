@@ -20,12 +20,12 @@
           = current_user.notifications_count
     .dropdown-menu
       = link_to t("noun.profile"), user_path(current_user.username), class: "dropdown-item px-1 py-zp5"
-      = link_to t("noun.watching"), user_works_path(current_user.username, :watching), class: "dropdown-item px-1 py-zp5"
       = link_to notifications_path, class: "dropdown-item px-1 py-zp5" do
         = t "head.title.notifications.index"
         - if current_user.notifications_count > 0
           span.badge.badge-pill.u-badge-mizuho.ml-zp5
             = current_user.notifications_count
+      = link_to t("noun.watching"), user_works_path(current_user.username, :watching), class: "dropdown-item px-1 py-zp5"
       = link_to t("noun.popular"), popular_works_path, class: "dropdown-item px-1 py-zp5"
       = link_to t("noun.search"), search_path, class: "dropdown-item px-1 py-zp5"
       = link_to t("head.title.friends.index"), friends_path, class: "dropdown-item px-1 py-zp5"
