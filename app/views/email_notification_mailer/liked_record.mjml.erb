@@ -28,7 +28,7 @@
 
     <mj-section border="1px solid rgba(0, 0, 0, .08)" padding="20px">
       <mj-column>
-        <mj-image src="<%= ann_email_image_url(@user.profile, :tombo_avatar, size: "140x140") %>" align="center" width="70" border-radius="50%" href="<%= user_url(@user.username) %>"></mj-image>
+        <mj-image src="<%= ann_email_image_url(@user.profile, :tombo_avatar, size: "140x140") %>" align="center" width="70" border-radius="50%" href="<%= user_url(@user.username, utm_source: 'email_notification', utm_campaign: 'liked_record', utm_medium: 'email') %>"></mj-image>
         <mj-text align="center" font-size="24px" font-weight="600" padding-bottom="7px"><%= "#{@user.profile.name}" %></mj-text>
         <mj-text align="center" padding-top="0px"><%= "@#{@user.username}" %></mj-text>
         <mj-text align="center"><%= "#{@user.profile.description}" %></mj-text>
