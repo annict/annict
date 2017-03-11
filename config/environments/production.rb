@@ -153,4 +153,6 @@ Rails.application.configure do
     use_https: true,
     source: ENV.fetch("IMGIX_SOURCE")
   }
+
+  config.lograge.enabled = true
 end
