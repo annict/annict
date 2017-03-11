@@ -121,7 +121,6 @@ end
 
 group :production do
   gem "bugsnag"
-  gem "lograge"
 end
 
 source "https://rails-assets.org" do
