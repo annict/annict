@@ -1,7 +1,11 @@
 # frozen_string_literal: true
 
 class EmailNotificationMailer < ActionMailer::Base
-  default from: "Annict <no-reply@annict.com>"
+  default(
+    from: "Annict <no-reply@annict.com>",
+    bcc: "admin+email-notification@annict.com"
+  )
+
   add_template_helper ImageHelper
   add_template_helper SeasonsHelper
 
