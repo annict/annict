@@ -29,7 +29,10 @@ Rails.application.configure do
 
   # Disable serving static files from the `/public` folder by default since
   # Apache or NGINX already handles this.
-  config.public_file_server.enabled = false
+  # Heroku will set `RAILS_SERVE_STATIC_FILES` when you deploy a Ruby app via
+  # the Heroku Ruby Buildpack for Rails 4.2+ apps.
+  # https://blog.heroku.com/container_ready_rails_5#serving-files-by-default
+  config.public_file_server.enabled = ENV["RAILS_SERVE_STATIC_FILES"].present?
 
   # Enable Rack::Cache to put a simple HTTP cache in front of your application
   # Add `rack-cache` to your Gemfile before enabling this.
@@ -63,7 +66,7 @@ Rails.application.configure do
 
   # Force all access to the app over SSL, use Strict-Transport-Security,
   # and use secure cookies.
-  config.force_ssl = ENV["ANNICT_FORCE_SSL"] == "true"
+  config.force_ssl = ENV["ANNICT_FORCE_SSL"].present?
 
   # Use the lowest log level to ensure availability of diagnostic information
   # when problems arise.
@@ -112,8 +115,9 @@ Rails.application.configure do
   # require 'syslog/logger'
   # config.logger = ActiveSupport::TaggedLogging.new(Syslog::Logger.new 'app-name')
 
-  # Herokuで動かす場合、環境変数 `RAILS_LOG_TO_STDOUT` は勝手に設定してくれる
-  # https://blog.heroku.com/archives/2016/5/2/container_ready_rails_5#stdout-logging
+  # Heroku will set `RAILS_LOG_TO_STDOUT` when you deploy a Ruby app via
+  # the Heroku Ruby Buildpack for Rails 4.2+ apps.
+  # https://blog.heroku.com/container_ready_rails_5#stdout-logging
   if ENV["RAILS_LOG_TO_STDOUT"].present?
     logger = ActiveSupport::Logger.new(STDOUT)
     logger.formatter = config.log_formatter

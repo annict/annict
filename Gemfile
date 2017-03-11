@@ -122,7 +122,6 @@ end
 group :production do
   gem "bugsnag"
   gem "lograge"
-  gem "rails_12factor"
 end
 
 source "https://rails-assets.org" do
