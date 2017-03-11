@@ -2,18 +2,26 @@
 
 module ImageHelper
   def ann_image_url(record, field, options = {})
-    path = if Rails.env.production?
-      record&.send(field)&.path(:master)
-    else
-      record&.send(field)&.url(:master)
-    end
-    path = path.presence || "/no-image.jpg"
+    path = image_path(record, field)
 
     msize = options[:msize]
     size = browser.device.mobile? && msize.present? ? msize : options[:size]
     width, height = size.split("x").map do |s|
       s.present? ? (s.to_i * 2) : nil
     end
+
+    ix_options = {
+      auto: "format"
+    }
+    ix_options[:w] = width if width.present?
+    ix_options[:h] = height if height.present?
+
+    ix_image_url(path, ix_options)
+  end
+
+  def ann_email_image_url(record, field, options = {})
+    path = image_path(record, field)
+    width, height = options[:size]&.split("x")
 
     ix_options = {
       auto: "format"
@@ -48,13 +56,7 @@ module ImageHelper
   end
 
   def ann_api_assets_url(record, field)
-    path = if Rails.env.production?
-      record&.send(field)&.path(:master)
-    else
-      record&.send(field)&.url(:master)
-    end
-    path = path.presence || "no-image.jpg"
-
+    path = image_path(record, field)
     "#{ENV.fetch('ANNICT_API_ASSETS_URL')}/#{path}"
   end
 
@@ -69,5 +71,17 @@ module ImageHelper
     end
 
     ann_api_assets_url(record, field)
+  end
+
+  private
+
+  def image_path(record, field)
+    path = if Rails.env.production?
+      record&.send(field)&.path(:master)
+    else
+      record&.send(field)&.url(:master)
+    end
+
+    path.presence || "no-image.jpg"
   end
 end

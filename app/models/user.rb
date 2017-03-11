@@ -88,8 +88,9 @@ class User < ActiveRecord::Base
     foreign_key: :resource_owner_id,
     dependent: :destroy
   has_many :record_comments, class_name: "Comment", dependent: :destroy
-  has_one  :profile,       dependent: :destroy
-  has_one  :setting,       dependent: :destroy
+  has_one :email_notification, dependent: :destroy
+  has_one :profile, dependent: :destroy
+  has_one :setting, dependent: :destroy
 
   validates :email,
     presence: true,
@@ -170,6 +171,8 @@ class User < ActiveRecord::Base
     end
 
     build_setting
+    unsubscription_key = "#{SecureRandom.uuid}-#{SecureRandom.uuid}"
+    build_email_notification(unsubscription_key: unsubscription_key)
 
     self
   end

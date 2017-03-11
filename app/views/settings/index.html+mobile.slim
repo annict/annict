@@ -21,6 +21,10 @@
         = icon "share-alt", class: "mr-zp5 text-muted"
         = t "head.title.providers.index"
     li.mb-zp5
+      = link_to settings_email_notification_path do
+        = icon "envelope-o", class: "mr-zp5 text-muted"
+        = t "head.title.settings.email_notifications.show"
+    li.mb-zp5
       = link_to mutes_path do
         = icon "user-times", class: "mr-zp5 text-muted"
         = t "head.title.mutes.index"

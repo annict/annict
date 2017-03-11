@@ -63,7 +63,7 @@ Rails.application.configure do
 
   # Force all access to the app over SSL, use Strict-Transport-Security,
   # and use secure cookies.
-  config.force_ssl = true
+  config.force_ssl = ENV["ANNICT_FORCE_SSL"] == "true"
 
   # Use the lowest log level to ensure availability of diagnostic information
   # when problems arise.
@@ -90,6 +90,8 @@ Rails.application.configure do
       ENV.fetch("ANNICT_FILE_STORAGE_URL")
     end
   end
+
+  config.action_mailer.asset_host = config.action_controller.asset_host
 
   # Ignore bad email addresses and do not raise email delivery errors.
   # Set this to true and configure the email server for immediate delivery

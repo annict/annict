@@ -144,6 +144,9 @@ ja:
       settings:
         apps:
           index: アプリケーション
+        email_notifications:
+          show: メール通知
+          unsubscribe: メール購読解除
         tokens:
           edit: 個人用アクセストークン編集
           new: 個人用アクセストークン作成

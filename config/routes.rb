@@ -209,9 +209,15 @@ Rails.application.routes.draw do
   end
   namespace :settings do
     resource :password, only: %i(update)
+
     resources :apps, only: %i(index) do
       patch :revoke
     end
+
+    resource :email_notification, only: %i(show update) do
+      get :unsubscribe, on: :collection
+    end
+
     resources :tokens, only: %i(new create edit update destroy)
   end
 

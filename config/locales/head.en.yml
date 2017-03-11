@@ -144,6 +144,9 @@ en:
       settings:
         apps:
           index: Applications
+        email_notifications:
+          show: Notifications
+          unsubscribe: Unsubscribe email
         tokens:
           edit: Edit token
           new: Generate new token

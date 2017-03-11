@@ -1,0 +1,36 @@
+# frozen_string_literal: true
+
+module Settings
+  class EmailNotificationsController < ApplicationController
+    permits :event_followed_user, :event_liked_record, :event_friends_joined,
+      :event_next_season_came
+
+    before_action :authenticate_user!, only: %i(show update)
+
+    def show
+      @email_notification = current_user.email_notification
+    end
+
+    def update(email_notification)
+      @email_notification = current_user.email_notification
+
+      if @email_notification.update_attributes(email_notification)
+        flash[:notice] = t("messages.settings.email_notifications.updated")
+        redirect_to settings_email_notification_path
+      else
+        render :show
+      end
+    end
+
+    def unsubscribe(key, action_name)
+      column = "event_#{action_name}"
+      notification = EmailNotification.find_by!(unsubscription_key: key)
+
+      unless notification.has_attribute?(column)
+        raise ActionController::RoutingError.new("Not Found")
+      end
+
+      notification.update_column(column, false)
+    end
+  end
+end
