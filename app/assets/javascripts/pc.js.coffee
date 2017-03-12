@@ -46,6 +46,8 @@ $(document).on "turbolinks:load", ->
 
   resourceSelect = require "./common/directives/resourceSelect"
 
+  eventHub = require "./common/eventHub"
+
   moment.locale(gon.user.locale)
   Cookies.set("ann_time_zone", moment.tz.guess(), domain: ".annict.com", secure: true)
 
@@ -82,5 +84,9 @@ $(document).on "turbolinks:load", ->
 
   new Vue
     el: ".p-application"
+    data:
+      pageObject: if gon.pageObject then JSON.parse(gon.pageObject) else {}
+    mounted: ->
+      eventHub.$emit "vueRoot:mounted"
 
 Turbolinks.start()

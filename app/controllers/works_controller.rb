@@ -51,10 +51,19 @@ class WorksController < ApplicationController
     @works = Work.
       published.
       by_season(slug).
+      includes(:work_image, :staffs, casts: %i(person character)).
       order(watchers_count: :desc, id: :desc).
       page(page).
       per(display_works_count)
+    @seasons = Season.all_cached(:desc)
     @season = Season.find_or_new_by_slug(slug)
+
+    return unless user_signed_in?
+
+    # gon.workIds = Rails.cache.fetch(@works) { @works.pluck(:id).uniq }
+    gon.pageObject = render_jb "works/_list",
+      user: current_user,
+      works: @works
   end
 
   def show
