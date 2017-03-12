@@ -45,6 +45,12 @@ class WorksController < ApplicationController
       order(watchers_count: :desc, id: :desc).
       page(page).
       per(display_works_count)
+
+    return unless user_signed_in?
+
+    gon.pageObject = render_jb "works/_list",
+      user: current_user,
+      works: @works
   end
 
   def season(slug, page: nil)

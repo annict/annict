@@ -8,4 +8,4 @@
           span.mr-zp25 = work.watchers_count
           span.text-muted.small Watchers
         h3.h4 = link_to work.decorate.local_title, work_path(work), class: "text-truncate w-100 d-inline-block"
-        c-status-selector work-id="#{work.id}" current-status-kind="no_select" :is-signed-in="false" :is-transparent="true"
+        c-status-selector :work-id="#{work.id}" :is-transparent="true"

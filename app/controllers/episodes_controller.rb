@@ -33,6 +33,12 @@ class EpisodesController < ApplicationController
 
   def index
     @episodes = @work.episodes.published
+
+    return unless user_signed_in?
+
+    gon.pageObject = render_jb "works/_detail",
+      user: current_user,
+      work: @work
   end
 
   def show
@@ -42,10 +48,14 @@ class EpisodesController < ApplicationController
     @current_user_records = service.current_user_records
     @records = service.records
 
-    return render unless user_signed_in?
+    return unless user_signed_in?
 
     @record = @episode.records.new
     @record.setup_shared_sns(current_user)
+
+    gon.pageObject = render_jb "works/_detail",
+      user: current_user,
+      work: @work
   end
 
   private
