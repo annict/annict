@@ -14,9 +14,9 @@
         a.dropdown-toggle href="#" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"
           = @season.decorate.local_name
         .dropdown-menu.pre-scrollable.mr-1
-          - cache [locale, @seasons] do
+          - cache [I18n.locale, @seasons] do
             - @seasons.each do |season|
-              - cache [locale, season] do
+              - cache [I18n.locale, season] do
                 = link_to season.decorate.local_name, season_works_path(slug: season.slug), class: "dropdown-item"
     .col.text-right
       - if user_signed_in?

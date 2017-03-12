@@ -60,7 +60,6 @@ class WorksController < ApplicationController
 
     return unless user_signed_in?
 
-    # gon.workIds = Rails.cache.fetch(@works) { @works.pluck(:id).uniq }
     gon.pageObject = render_jb "works/_list",
       user: current_user,
       works: @works

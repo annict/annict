@@ -14,6 +14,7 @@ module.exports =
     statusKind: null
     prevStatusKind: null
     works: []
+    pageObject: if gon.pageObject then JSON.parse(gon.pageObject) else {}
 
   props:
     workId:
@@ -62,9 +63,6 @@ module.exports =
       @statusKind = @prevStatusKind = NO_SELECT
       return
 
-    @isLoading = true
-    eventHub.$on "vueRoot:mounted", =>
-      @works = @$parent.pageObject.works
-      @prevStatusKind = @currentStatusKind()
-      @statusKind = @currentStatusKind()
-      @isLoading = false
+    @works = @pageObject.works
+    @prevStatusKind = @currentStatusKind()
+    @statusKind = @currentStatusKind()

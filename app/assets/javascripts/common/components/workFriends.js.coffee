@@ -9,9 +9,9 @@ module.exports =
 
   data: ->
     isSignedIn: gon.user.isSignedIn
-    isLoading: false
     showAll: false
     works: []
+    pageObject: if gon.pageObject then JSON.parse(gon.pageObject) else {}
 
   props:
     workId:
@@ -38,8 +38,4 @@ module.exports =
 
   mounted: ->
     return unless @isSignedIn
-
-    @isLoading = true
-    eventHub.$on "vueRoot:mounted", =>
-      @works = @$parent.pageObject.works
-      @isLoading = false
+    @works = @pageObject.works
