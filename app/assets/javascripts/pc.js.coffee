@@ -10,6 +10,7 @@
 
 Turbolinks = require "turbolinks"
 Vue = require "vue/dist/vue"
+VueLazyload = require "vue-lazyload"
 moment = require "moment-timezone"
 Cookies = require "js-cookie"
 
@@ -50,6 +51,8 @@ $(document).on "turbolinks:load", ->
   Cookies.set("ann_time_zone", moment.tz.guess(), domain: ".annict.com", secure: true)
 
   Vue.config.debug = true
+
+  Vue.use(VueLazyload)
 
   Vue.component("c-activities", activities)
   Vue.component("c-body", body)
