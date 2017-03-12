@@ -9,7 +9,7 @@
     .col-8
       h1.h3
         = link_to work.decorate.local_title, work_path(work)
-      c-status-selector work-id="#{work.id}" current-status-kind="#{user_signed_in? ? current_user.status_kind(work) : 'no_select'}" :is-signed-in="#{user_signed_in?}"
+      c-status-selector :work-id="#{work.id}"
   .c-slidable-subnav
     ul.c-slidable-subnav__list.list-inline
       li.list-inline-item = active_link_to t("noun.detail"), work_path(work), class: "c-slidable-subnav__link", class_active: "c-slidable-subnav__link--active", active: params[:controller] == "works" && params[:action].in?(%w(show))

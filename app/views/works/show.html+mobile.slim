@@ -23,7 +23,7 @@
           - if @work.official_site_url.present?
             li.mb-zp5
               = icon "home", class: "mr-zp5"
-              = link_to "公式サイト", @work.official_site_url, target: "_blank"
+              = link_to t("activerecord.attributes.work.official_site_url"), @work.official_site_url, target: "_blank"
       .col
         ul.list-unstyled.mb-0
           - if @work.wikipedia_url.present?
@@ -52,28 +52,30 @@
           = link_to t("noun.bulk_tracking"), work_episodes_path(@work, tracking: "on"), class: "small"
       table.p-episodes-table.table.mb-0
         tbody
-          - @episodes.published.order(:sort_number).limit(10).each do |episode|
+          - @episodes.published.order(:sort_number).first(10).each do |episode|
             = render "episodes/episode_row", work: @work, episode: episode
-      - if @episodes.count > 10
+      - if @episodes.length > 10
         .mt-1
-          = link_to t("messages.works.view_all_n_episodes", n: @episodes.count), work_episodes_path(@work), class: "btn btn-secondary w-100"
+          = link_to t("messages.works.view_all_n_episodes", n: @episodes.length), work_episodes_path(@work), class: "btn btn-secondary w-100"
     - else
       = render "application/components/empty", text: t("messages.works.no_episodes")
 
 .mb-1
   h2.h4.text-center.font-weight-bold.mt-1.mb-2 = t "noun.characters"
   .c-card.p-1
-    = render "characters/character_list", casts: @casts.order(:sort_number).limit(8)
-    - if @casts.count > 8
-      = link_to t("messages.works.view_all_n_characters", n: @casts.count), work_characters_path(@work), class: "btn btn-secondary w-100"
+    - cache [I18n.locale, @casts] do
+      = render "characters/character_list", casts: @casts.order(:sort_number).first(8)
+      - if @casts.length > 8
+        = link_to t("messages.works.view_all_n_characters", n: @casts.length), work_characters_path(@work), class: "btn btn-secondary w-100"
 
 .mb-2
   h2.h4.text-center.font-weight-bold.my-2 = t "noun.staffs"
   .c-card.p-1
-    = render "staffs/staff_list", staffs: @staffs.order(:sort_number).limit(8)
-    - if @staffs.count > 8
-      .mt-1
-        = link_to t("messages.works.view_all_n_staffs", n: @staffs.count), work_staffs_path(@work), class: "btn btn-secondary w-100"
+    - cache [I18n.locale, @staffs] do
+      = render "staffs/staff_list", staffs: @staffs.order(:sort_number).first(8)
+      - if @staffs.length > 8
+        .mt-1
+          = link_to t("messages.works.view_all_n_staffs", n: @staffs.length), work_staffs_path(@work), class: "btn btn-secondary w-100"
 
 = render "application/components/footer"
 = render "application/components/tabbar"
