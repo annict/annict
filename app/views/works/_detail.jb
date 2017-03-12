@@ -1,0 +1,18 @@
+# frozen_string_literal: true
+
+json = {}
+
+json[:works] = Rails.cache.fetch([@user, @work.id]) do
+  [@work].map do |work|
+    {
+      id: work.id,
+      statusSelector: {
+        currentStatusKind: @user.status_kind(work)
+      }
+    }
+  end
+end
+
+json[:works] = JSON.parse(json[:works]) if json[:works].is_a?(String)
+
+json

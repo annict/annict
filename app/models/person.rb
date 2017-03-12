@@ -72,6 +72,9 @@ class Person < ActiveRecord::Base
   has_many :db_comments, as: :resource, dependent: :destroy
   has_many :staffs, as: :resource, dependent: :destroy
 
+  after_save :touch_children
+  after_destroy :touch_children
+
   def voice_actor?
     casts.exists?
   end
@@ -92,5 +95,12 @@ class Person < ActiveRecord::Base
     end
 
     data.delete_if { |_, v| v.blank? }
+  end
+
+  private
+
+  def touch_children
+    casts.each(&:touch)
+    staffs.each(&:touch)
   end
 end

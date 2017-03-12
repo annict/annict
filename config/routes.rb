@@ -66,8 +66,6 @@ Rails.application.routes.draw do
       end
 
       resources :works, only: [] do
-        get :friends
-
         resource :latest_status, only: [:show]
 
         resources :channels, only: [] do

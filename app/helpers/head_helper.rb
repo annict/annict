@@ -26,7 +26,8 @@ module HeadHelper
         title: meta_tags.full_title(site: site, separator: " |"),
         description: t("head.meta.description._common"),
         image: "#{ENV.fetch('ANNICT_URL')}/images/og_image.png"
-      }
+      },
+      "turbolinks-cache-control": "no-cache"
     )
   end
 

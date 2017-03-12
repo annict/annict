@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 # == Schema Information
 #
 # Table name: statuses
@@ -22,6 +23,7 @@ class Status < ActiveRecord::Base
   include StatusCommon
 
   belongs_to :oauth_application, class_name: "Doorkeeper::Application"
+  belongs_to :user, touch: true
 
   after_create :save_activity
   after_create :refresh_watchers_count

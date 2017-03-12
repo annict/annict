@@ -6,7 +6,7 @@
       = work.work_image.decorate.asin_or_copyright_text
 h1.h2.font-weight-bold.mb-1
   = link_to work.decorate.local_title, work_path(work)
-c-status-selector work-id="#{work.id}" current-status-kind="#{user_signed_in? ? current_user.status_kind(work) : 'no_select'}" :is-signed-in="#{user_signed_in?}"
+c-status-selector :work-id="#{work.id}"
 h2.h4.text-center.font-weight-bold.my-1 = t "noun.information"
 ul.list-unstyled
   li.mb-zp25

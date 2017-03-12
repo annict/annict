@@ -1,5 +1,5 @@
 script#t-status-selector type="x-template"
-  .c-status-selector :class='{ "is-mini": isMini, "is-transparent": isTransparent, "c-spinner": isSaving }'
+  .c-status-selector :class='{ "is-mini": isMini, "is-transparent": isTransparent, "c-spinner": isLoading }'
     .c-status-selector__object
       select v-model="statusKind" @change="change"
         - options = Status.kind.options.insert(0, [t("messages.components.status_selector.select_status"), "no_select"])

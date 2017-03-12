@@ -22,6 +22,9 @@ class Season < ActiveRecord::Base
 
   delegate :local_name, to: :decorate
 
+  after_save :expire_cache
+  after_destroy :expire_cache
+
   NAME_DATA = {
     winter: "冬",
     spring: "春",
@@ -55,7 +58,20 @@ class Season < ActiveRecord::Base
     pluck(:year).uniq.sort { |a, b| b <=> a }
   end
 
+  def self.all_cached(sort)
+    Rails.cache.fetch "Season/all/#{sort}" do
+      Season.order(sort_number: sort)
+    end
+  end
+
   def slug
     "#{year}-#{name}"
+  end
+
+  private
+
+  def expire_cache
+    Rails.cache.delete("Season/all/asc")
+    Rails.cache.delete("Season/all/desc")
   end
 end
