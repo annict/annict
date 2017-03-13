@@ -8,12 +8,22 @@ class UserProgramsQuery
   end
 
   # 記録していないエピソードと紐づく番組情報を返す
-  def unwatched
+  def unwatched_all
     Program.published.where(id: program_ids(channel_works, scope: :unwatched))
   end
 
   def all
     Program.published.where(id: program_ids(channel_works, scope: :all))
+  end
+
+  def unwatched(page, sort)
+    unwatched_all.
+      work_published.
+      episode_published.
+      where("started_at < ?", Date.tomorrow + 1.day + 5.hours).
+      includes(:channel, work: [:item], episode: [:work]).
+      order(started_at: sort_type(sort)).
+      page(page)
   end
 
   private
@@ -53,5 +63,11 @@ class UserProgramsQuery
     end
 
     program_ids.flatten
+  end
+
+  def sort_type(sort)
+    return :asc if sort == "started_at_asc"
+    return :desc if sort == "started_at_desc"
+    :desc
   end
 end
