@@ -1,6 +1,7 @@
 _ = require "lodash"
 
 eventHub = require "../../common/eventHub"
+vueLazyload = require "../../common/vueLazyload"
 
 module.exports =
   template: "#t-untracked-episode-list"
@@ -19,6 +20,8 @@ module.exports =
         @isLoading = false
         @latestStatuses = _.each(data.latest_statuses, @_initLatestStatus)
         @user = data.user
+        @$nextTick ->
+          vueLazyload.refresh()
 
     filterNoNextEpisode: (latestStatuses) ->
       latestStatuses.filter (latestStatus) ->
