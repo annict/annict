@@ -1,4 +1,4 @@
-vueLazyload = require "../../common/vueLazyload"
+vueLazyLoad = require "../../common/vueLazyLoad"
 
 createRecordActivity = require "./createRecordActivity"
 createMultipleRecordsActivity = require "./createMultipleRecordsActivity"
@@ -50,7 +50,7 @@ module.exports =
           @hasNext = false
 
         @$nextTick ->
-          vueLazyload.refresh()
+          vueLazyLoad.refresh()
 
   mounted: ->
     @loadMore()

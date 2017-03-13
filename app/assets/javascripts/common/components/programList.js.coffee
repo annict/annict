@@ -1,7 +1,7 @@
 _ = require "lodash"
 
 eventHub = require "../../common/eventHub"
-vueLazyload = require "../../common/vueLazyload"
+vueLazyLoad = require "../../common/vueLazyLoad"
 loadMoreButton = require "./loadMoreButton"
 
 module.exports =
@@ -97,7 +97,7 @@ module.exports =
         @hasNext = @programs.length > 0
         @user = data.user
         @$nextTick ->
-          vueLazyload.refresh()
+          vueLazyLoad.refresh()
 
     updateProgramsSortType: (callback) ->
       $.ajax

@@ -17,7 +17,7 @@ Cookies = require "js-cookie"
 require "moment/locale/ja"
 
 $(document).on "turbolinks:load", ->
-  vueLazyload = require "./common/vueLazyload"
+  vueLazyLoad = require "./common/vueLazyLoad"
 
   activities = require "./common/components/activities"
   body = require "./common/components/body"
@@ -86,7 +86,7 @@ $(document).on "turbolinks:load", ->
   Vue.directive("resource-select", resourceSelect)
 
   Vue.nextTick ->
-    vueLazyload.refresh()
+    vueLazyLoad.refresh()
 
   new Vue
     el: ".p-application"
