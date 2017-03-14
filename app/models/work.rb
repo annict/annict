@@ -74,7 +74,6 @@ class Work < ApplicationRecord
     foreign_type: :recipient,
     dependent: :destroy
   has_many :casts, dependent: :destroy
-  has_many :channel_works, dependent: :destroy
   has_many :checkins, dependent: :destroy
   has_many :db_activities, as: :trackable, dependent: :destroy
   has_many :db_comments, as: :resource, dependent: :destroy

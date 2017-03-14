@@ -27,17 +27,9 @@ class ProgramsController < ApplicationController
   before_action :load_i18n, only: %i(index)
 
   def index
-    sort = current_user.setting.programs_sort_type.presence || "started_at_desc"
-    @programs = current_user.programs.unwatched(1, sort)
-
-    page_object = render_jb "api/internal/user_programs/index",
-      user: current_user,
-      programs: @programs
-
     data = {
       programsSortTypes: Setting.programs_sort_type.options,
-      currentProgramsSortType: current_user.setting.programs_sort_type,
-      pageObject: page_object
+      currentProgramsSortType: current_user.setting.programs_sort_type
     }
     gon.push(data)
   end
