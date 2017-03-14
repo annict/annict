@@ -25,7 +25,7 @@ module Api
         def filter_unwatched
           unwatched = @params.filter_unwatched
           return @collection if unwatched.blank? || unwatched == "false"
-          @user.programs.unwatched_all.work_published.episode_published
+          @user.programs.unwatched.work_published.episode_published
         end
 
         def filter_channel_ids
