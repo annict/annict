@@ -1,34 +1,37 @@
 # frozen_string_literal: true
 
-programs = @programs.map do |program|
-  {
-    rebroadcast: program.rebroadcast,
-    started_at: program.started_at.in_time_zone("Asia/Tokyo").strftime("%m/%d %H:%M"),
-    broadcasted: program.broadcasted?,
-    channel: {
-      name: program.channel.name
-    },
-    episode: {
-      id: program.episode.id,
-      number: program.episode.number,
-      title: program.episode.title
-    },
-    work: {
-      id: program.work.id,
-      title: program.episode.work.title,
-      image_url: ann_image_url(program.work.work_image, :attachment, size: "48x48")
-    }
-  }
+json = {}
+
+json[:programs] = Rails.cache.fetch [I18n.locale, @programs] do
+  @programs.map do |program|
+    Rails.cache.fetch program do
+      {
+        rebroadcast: program.rebroadcast,
+        started_at: program.started_at.in_time_zone("Asia/Tokyo").strftime("%m/%d %H:%M"),
+        broadcasted: program.broadcasted?,
+        channel: {
+          name: program.channel.name
+        },
+        episode: {
+          id: program.episode.id,
+          number: program.episode.number,
+          title: program.episode.title
+        },
+        work: {
+          id: program.work.id,
+          title: program.episode.work.title,
+          image_url: ann_image_url(program.work.work_image, :attachment, size: "48x48")
+        }
+      }
+    end
+  end
 end
 
-user = {
+json[:user] = {
   authorized_to_twitter: @user.authorized_to?(:twitter),
   authorized_to_facebook: @user.authorized_to?(:facebook),
   share_record_to_twitter: @user.setting&.share_record_to_twitter?,
   share_record_to_facebook: @user.setting&.share_record_to_facebook?
 }
 
-{
-  programs: programs,
-  user: user
-}
+json
