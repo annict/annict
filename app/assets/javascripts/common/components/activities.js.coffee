@@ -1,3 +1,5 @@
+vueLazyLoad = require "../../common/vueLazyLoad"
+
 createRecordActivity = require "./createRecordActivity"
 createMultipleRecordsActivity = require "./createMultipleRecordsActivity"
 createStatusActivity = require "./createStatusActivity"
@@ -40,11 +42,15 @@ module.exports =
         data: @requestData()
       .done (data) =>
         @isLoading = false
+
         if data.activities.length > 0
           @hasNext = true
           @activities.push(data.activities...)
         else
           @hasNext = false
+
+        @$nextTick ->
+          vueLazyLoad.refresh()
 
   mounted: ->
     @loadMore()
