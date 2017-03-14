@@ -87,9 +87,11 @@ module.exports =
         eventHub.$emit "flash:show", data.responseJSON.message, "danger"
 
     load: ->
+      @isLoading = true
       @programs = @initPrograms(@pageObject.programs)
       @hasNext = @programs.length > 0
       @user = @pageObject.user
+      @isLoading = false
       @$nextTick ->
         vueLazyLoad.refresh()
 
