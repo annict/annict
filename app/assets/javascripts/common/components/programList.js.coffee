@@ -10,6 +10,7 @@ module.exports =
   data: ->
     isLoading: false
     hasNext: true
+    pageObject: if gon.pageObject then JSON.parse(gon.pageObject) else {}
     programs: []
     user: null
     page: 1
@@ -86,18 +87,11 @@ module.exports =
         eventHub.$emit "flash:show", data.responseJSON.message, "danger"
 
     load: ->
-      @isLoading = true
-      $.ajax
-        method: "GET"
-        url: "/api/internal/user/programs"
-        data: @requestData()
-      .done (data) =>
-        @isLoading = false
-        @programs = @initPrograms(data.programs)
-        @hasNext = @programs.length > 0
-        @user = data.user
-        @$nextTick ->
-          vueLazyLoad.refresh()
+      @programs = @initPrograms(@pageObject.programs)
+      @hasNext = @programs.length > 0
+      @user = @pageObject.user
+      @$nextTick ->
+        vueLazyLoad.refresh()
 
     updateProgramsSortType: (callback) ->
       $.ajax
