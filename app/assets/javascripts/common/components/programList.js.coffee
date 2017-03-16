@@ -10,7 +10,6 @@ module.exports =
   data: ->
     isLoading: false
     hasNext: true
-    pageObject: if gon.pageObject then JSON.parse(gon.pageObject) else {}
     programs: []
     user: null
     page: 1
@@ -87,9 +86,9 @@ module.exports =
         eventHub.$emit "flash:show", data.responseJSON.message, "danger"
 
     load: ->
-      @programs = @initPrograms(@pageObject.programs)
+      @programs = @initPrograms(@_pageObject().programs)
       @hasNext = @programs.length > 0
-      @user = @pageObject.user
+      @user = @_pageObject().user
       @$nextTick ->
         vueLazyLoad.refresh()
 
@@ -100,6 +99,10 @@ module.exports =
         data:
           programs_sort_type: @sort
       .done callback
+
+    _pageObject: ->
+      return {} unless gon.pageObject
+      JSON.parse(gon.pageObject)
 
   mounted: ->
     @load()
