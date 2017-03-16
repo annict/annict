@@ -2,8 +2,12 @@
 
 json = {}
 
-json[:activities] = @activities.map do |activity|
-  render "/api/internal/activities/activity", activity: activity
+json[:activities] = Rails.cache.fetch [I18n.locale, @user&.id, @activities] do
+  @activities.map do |activity|
+    Rails.cache.fetch [I18n.locale, @user&.id, activity] do
+      render "/api/internal/activities/activity", activity: activity, user: @user
+    end
+  end
 end
 
 json

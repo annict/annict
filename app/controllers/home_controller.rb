@@ -4,10 +4,7 @@ class HomeController < ApplicationController
   before_action :load_i18n, only: %i(index)
 
   def index
-    if user_signed_in?
-      gon.tips = render_jb("home/_tips", tips: current_user.tips.unfinished.limit(3))
-      return render :index
-    end
+    return index_member if user_signed_in?
 
     @season_top_work = GuestTopPageService.season_top_work
     @season_works = GuestTopPageService.season_works
@@ -19,6 +16,22 @@ class HomeController < ApplicationController
   end
 
   private
+
+  def index_member
+    tips = render_jb("home/_tips", tips: current_user.tips.unfinished.limit(3))
+    activities = current_user.
+      following_activities.
+      order(id: :desc).
+      includes(:recipient, trackable: :user, user: :profile).
+      page(1)
+    page_object = render_jb("api/internal/activities/index",
+      user: current_user,
+      activities: activities)
+
+    gon.push(tips: tips, pageObject: page_object)
+
+    render :index
+  end
 
   def load_i18n
     keys = {

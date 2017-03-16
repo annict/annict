@@ -23,6 +23,6 @@ record = activity.trackable
     comments_count: record.comments_count,
     likes_count: record.likes_count,
     rating: record.rating,
-    hide_comment: user_signed_in? && current_user.hide_checkin_comment?(record)
+    hide_comment: user.present? && user.hide_checkin_comment?(record)
   }
 }
