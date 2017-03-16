@@ -10,7 +10,7 @@ script#t-activities type="x-template"
     template v-if="!isLoading && activities.length === 0"
       .c-card.p-1
         = render "application/components/empty", text: t("messages.home.index.there_are_no_activities")
-    c-load-more-button :handler="loadMore" :is-loading="isLoading" :has-next="hasNext"
+    c-load-more-button.mx-1 :handler="loadMore" :is-loading="isLoading" :has-next="hasNext"
 
 - content_for :js_templates
   = render "application/js_templates/create_multiple_records_activity"
