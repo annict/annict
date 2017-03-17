@@ -3,7 +3,7 @@
 [![CircleCI](https://img.shields.io/circleci/project/github/annict/annict.svg)](https://circleci.com/gh/annict/annict)
 [![Code Climate](https://codeclimate.com/github/annict/annict/badges/gpa.svg)](https://codeclimate.com/github/annict/annict)
 [![Hound](https://camo.githubusercontent.com/23ee7a697b291798079e258bbc25434c4fac4f8b/68747470733a2f2f696d672e736869656c64732e696f2f62616467652f50726f7465637465645f62792d486f756e642d6138373364312e737667)](https://houndci.com)
-[![Slack](https://slack.annict.com/badge.svg?201703180143)](https://slack.annict.com)
+[![Slack](https://slack.annict.com/badge.svg)](https://slack.annict.com)
 
 
 ### Contributing
