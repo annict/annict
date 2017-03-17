@@ -15,6 +15,7 @@ machine:
     ANNICT_NEXT_SEASON: "2017-spring"
     ANNICT_PAPERCLIP_PATH: "paperclip/:class/:id/:attachment/:style/:hash.:extension"
     ANNICT_PAPERCLIP_RANDOM_SECRET: "secretsecretsecretsecretsecretsecret"
+    ANNICT_PAPERCLIP_URL: ":rails_root/public/paperclip/:class/:id/:attachment/:style/:hash.:extension"
     ANNICT_PREVIOUS_SEASON: "2016-autumn"
     ANNICT_URL: "http://annict.dev:3000"
     DEVISE_SECRET: "secretsecretsecretsecretsecretsecret"
