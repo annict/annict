@@ -23,6 +23,8 @@ machine:
     GA_TRACKING_ID: "UA-00000000-0"
     PATH: "${PATH}:${HOME}/${CIRCLE_PROJECT_REPONAME}/node_modules/.bin"
     RAILS_SECRET_KEY_BASE: "secretsecretsecretsecretsecretsecret"
+    TWITTER_CONSUMER_KEY: "twtwtwtwtwtwtwtwtwtwtw"
+    TWITTER_CONSUMER_SECRET: "secretsecretsecretsecretsecretsecret"
   hosts:
     annict.dev: 127.0.0.1
     api.annict.dev: 127.0.0.1
