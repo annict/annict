@@ -6,6 +6,7 @@ dependencies:
     - bundle install --deployment --jobs=3 --retry=3
 machine:
   environment:
+    ANNICT_API_ASSETS_URL: "https://api-assets.annict.com"
     ANNICT_BASIC_AUTH: "off"
     ANNICT_CURRENT_SEASON: "2017-winter"
     ANNICT_DOMAIN: "annict.dev"
@@ -22,6 +23,8 @@ machine:
     FACEBOOK_APP_ID: "1234567890"
     FACEBOOK_SECRET_KEY: "secretsecretsecretsecretsecretsecret"
     GA_TRACKING_ID: "UA-00000000-0"
+    KEEN_PROJECT_ID: "keen"
+    KEEN_WRITE_KEY: "keen_write"
     PATH: "${PATH}:${HOME}/${CIRCLE_PROJECT_REPONAME}/node_modules/.bin"
     RAILS_SECRET_KEY_BASE: "secretsecretsecretsecretsecretsecret"
     TWITTER_CONSUMER_KEY: "twtwtwtwtwtwtwtwtwtwtw"
