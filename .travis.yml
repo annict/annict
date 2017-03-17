@@ -20,8 +20,8 @@ before_install:
   - gem update --system
 
 install:
-  - bundle install --deployment --jobs=3 --retry=3
   - npm install
+  - bundle install --deployment --jobs=3 --retry=3
 
 before_script:
   - bundle exec rake db:create
