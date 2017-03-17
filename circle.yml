@@ -1,7 +1,7 @@
+dependencies:
+  override:
+    - yarn
 machine:
-  dependencies:
-    override:
-      - yarn
   environment:
     ANNICT_BASIC_AUTH: "off"
     ANNICT_CURRENT_SEASON: "2017-winter"
