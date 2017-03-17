@@ -22,7 +22,8 @@ module Gonable
         clientUUID: client_uuid,
         device: browser.device.mobile? ? "mobile" : "pc",
         locale: locale,
-        userId: user_signed_in? ? current_user.encoded_id : nil
+        userId: user_signed_in? ? current_user.encoded_id : nil,
+        isSignedIn: user_signed_in?
       },
       keen: {
         projectId: ENV.fetch("KEEN_PROJECT_ID"),

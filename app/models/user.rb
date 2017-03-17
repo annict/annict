@@ -229,7 +229,9 @@ class User < ActiveRecord::Base
   end
 
   def status_kind(work)
-    latest_statuses.find_by(work: work)&.kind.presence || "no_select"
+    Rails.cache.fetch([id, latest_statuses, work.id]) do
+      latest_statuses.find_by(work: work)&.kind.presence || "no_select"
+    end
   end
 
   def encoded_id

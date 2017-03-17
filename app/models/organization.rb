@@ -64,6 +64,9 @@ class Organization < ActiveRecord::Base
     favorite_organizations
   end
 
+  after_save :touch_children
+  after_destroy :touch_children
+
   def to_diffable_hash
     data = self.class::DIFF_FIELDS.each_with_object({}) do |field, hash|
       hash[field] = send(field)
@@ -71,5 +74,11 @@ class Organization < ActiveRecord::Base
     end
 
     data.delete_if { |_, v| v.blank? }
+  end
+
+  private
+
+  def touch_children
+    staffs.each(&:touch)
   end
 end

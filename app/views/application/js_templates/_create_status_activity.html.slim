@@ -4,7 +4,7 @@ script#t-create-status-activity type="x-template"
       .row
         .col.col-auto.pr-0
           a :href='"/@" + activity.user.username'
-            img.rounded-circle :src="activity.profile.avatar_url" width="35" height="35"
+            img.c-vue-lazyload.rounded-circle v-lazy="activity.profile.avatar_url" width="35" height="35"
         .col.pl-zp5.u-lh-1
           .mb-zp5 v-if='locale === "en"'
             span.description
@@ -30,7 +30,7 @@ script#t-create-status-activity type="x-template"
         .row.align-items-center.mx-0.u-border-1.rounded
           .col-2.p-0
             a :href='"/works/" + activity.work.id'
-              img.img-fluid.rounded-left :src="activity.item.image_url" width="125" height="125" :alt="activity.work.title"
+              img.c-vue-lazyload.img-fluid.rounded-left v-lazy="activity.item.image_url" width="125" height="125" :alt="activity.work.title"
           .col-10
             a.font-weight-bold :href='"/works/" + activity.work.id'
               | {{ activity.work.title }}

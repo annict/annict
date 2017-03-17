@@ -1,52 +1,53 @@
-.c-tabbar.row.w-100.mx-0.u-lh-0
-  = link_to root_path, class: "col text-center" do
+.c-tabbar.row.w-100.mx-0
+  = link_to root_path, class: "col text-center u-lh-0" do
     = icon "home", class: "d-block"
     span.c-tabbar__text = t "noun.home"
   - if user_signed_in?
-    = link_to programs_path, class: "col text-center" do
+    = link_to programs_path, class: "col text-center u-lh-0" do
       = icon "calendar-o", class: "d-block"
       span.c-tabbar__text = t "noun.programs"
-    = link_to track_path, class: "col text-center" do
+    = link_to track_path, class: "col text-center u-lh-0" do
       = icon "pencil-square-o", class: "d-block"
       span.c-tabbar__text = t "verb.track"
-    = link_to season_works_path(slug: ENV.fetch("ANNICT_CURRENT_SEASON")), class: "col text-center" do
+    = link_to season_works_path(slug: ENV.fetch("ANNICT_CURRENT_SEASON")), class: "col text-center u-lh-0" do
       = icon "television", class: "d-block"
       span.c-tabbar__text = t "noun.current_season_shorten"
-    a.c-tabbar__more.col.text-center.dropdown-toggle href="#" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"
+    a.c-tabbar__more.col.text-center.dropdown-toggle.u-lh-0 href="#" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"
       = icon "bars", class: "d-block"
       span.c-tabbar__text = t "noun.more"
       - if current_user.notifications_count > 0
         .c-tabbar__notifications-count
           = current_user.notifications_count
     .dropdown-menu
-      = link_to t("noun.profile"), user_path(current_user.username), class: "dropdown-item p-1"
-      = link_to notifications_path, class: "dropdown-item p-1" do
+      = link_to t("noun.profile"), user_path(current_user.username), class: "dropdown-item px-1 py-zp5"
+      = link_to notifications_path, class: "dropdown-item px-1 py-zp5" do
         = t "head.title.notifications.index"
         - if current_user.notifications_count > 0
           span.badge.badge-pill.u-badge-mizuho.ml-zp5
             = current_user.notifications_count
-      = link_to t("noun.popular"), popular_works_path, class: "dropdown-item p-1"
-      = link_to t("noun.search"), search_path, class: "dropdown-item p-1"
-      = link_to t("head.title.friends.index"), friends_path, class: "dropdown-item p-1"
-      = link_to t("head.title.channels.index"), channels_path, class: "dropdown-item p-1"
-      = link_to t("noun.settings"), settings_path, class: "dropdown-item p-1"
-      = link_to t("noun.annict_api"), "https://docs.annict.com/ja/api/", target: "_blank", class: "dropdown-item p-1"
-      = link_to t("head.title.pages.about"), about_path, class: "dropdown-item p-1"
-      = link_to t("verb.sign_out"), destroy_user_session_path, method: "delete", class: "dropdown-item p-1"
+      = link_to t("noun.watching"), user_works_path(current_user.username, :watching), class: "dropdown-item px-1 py-zp5"
+      = link_to t("noun.popular"), popular_works_path, class: "dropdown-item px-1 py-zp5"
+      = link_to t("noun.search"), search_path, class: "dropdown-item px-1 py-zp5"
+      = link_to t("head.title.friends.index"), friends_path, class: "dropdown-item px-1 py-zp5"
+      = link_to t("head.title.channels.index"), channels_path, class: "dropdown-item px-1 py-zp5"
+      = link_to t("noun.settings"), settings_path, class: "dropdown-item px-1 py-zp5"
+      = link_to t("noun.annict_api"), "https://docs.annict.com/ja/api/", target: "_blank", class: "dropdown-item px-1 py-zp5"
+      = link_to t("head.title.pages.about"), about_path, class: "dropdown-item px-1 py-zp5"
+      = link_to t("verb.sign_out"), destroy_user_session_path, method: "delete", class: "dropdown-item px-1 py-zp5"
   - else
-    = link_to season_works_path(slug: ENV.fetch("ANNICT_CURRENT_SEASON")), class: "col text-center" do
+    = link_to season_works_path(slug: ENV.fetch("ANNICT_CURRENT_SEASON")), class: "col text-center u-lh-0" do
       = icon "television", class: "d-block"
       span.c-tabbar__text = t "noun.airing"
-    = link_to new_user_registration_path, class: "col text-center" do
+    = link_to new_user_registration_path, class: "col text-center u-lh-0" do
       = icon "rocket", class: "d-block"
       span.c-tabbar__text = t "head.title.registrations.new"
-    = link_to about_path, class: "col text-center" do
+    = link_to about_path, class: "col text-center u-lh-0" do
       = icon "lightbulb-o", class: "d-block"
       span.c-tabbar__text = t "head.title.pages.about_shoten"
-    a.c-tabbar__more.col.text-center.dropdown-toggle href="#" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"
+    a.c-tabbar__more.col.text-center.dropdown-toggle.u-lh-0 href="#" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"
       = icon "bars", class: "d-block"
       span.c-tabbar__text = t "noun.more"
     .dropdown-menu
-      = link_to t("noun.popular"), popular_works_path, class: "dropdown-item p-1"
-      = link_to t("noun.search"), search_path, class: "dropdown-item p-1"
-      = link_to t("head.title.sessions.new"), new_user_session_path, class: "dropdown-item p-1"
+      = link_to t("noun.popular"), popular_works_path, class: "dropdown-item px-1 py-zp5"
+      = link_to t("noun.search"), search_path, class: "dropdown-item px-1 py-zp5"
+      = link_to t("head.title.sessions.new"), new_user_session_path, class: "dropdown-item px-1 py-zp5"

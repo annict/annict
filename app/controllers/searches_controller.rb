@@ -13,6 +13,12 @@ class SearchesController < ApplicationController
       [Work.none, Character.none, Person.none, Organization.none]
     end
     @view = select_view resource
+
+    return unless user_signed_in?
+
+    gon.pageObject = render_jb "works/_list",
+      user: current_user,
+      works: @works
   end
 
   private

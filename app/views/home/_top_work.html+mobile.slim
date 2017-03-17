@@ -6,7 +6,7 @@
 h3.h2.font-weight-bold.mb-zp5
   = link_to top_work.decorate.local_title, work_path(top_work)
 .text-center
-  c-status-selector work-id="#{top_work.id}" current-status-kind="no_select" :is-signed-in="false"
+  c-status-selector :work-id="#{top_work.id}"
 - if top_work.casts.present?
   .font-weight-bold = t "noun.casts"
   ul.list-inline

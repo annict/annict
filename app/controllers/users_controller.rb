@@ -40,6 +40,16 @@ class UsersController < ApplicationController
     checkedin_works = @watching_works.checkedin_by(@user).order("c2.checkin_id DESC")
     other_works = @watching_works.where.not(id: checkedin_works.pluck(:id))
     @works = (checkedin_works + other_works).first(9)
+
+    activities = @user.
+      activities.
+      order(id: :desc).
+      includes(:recipient, trackable: :user, user: :profile).
+      page(1)
+    page_object = render_jb("api/internal/activities/index",
+      user: user_signed_in? ? current_user : nil,
+      activities: activities)
+    gon.push(pageObject: page_object)
   end
 
   def works(status_kind, page: nil)

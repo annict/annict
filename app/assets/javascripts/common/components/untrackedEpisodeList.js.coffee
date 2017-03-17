@@ -1,6 +1,7 @@
 _ = require "lodash"
 
 eventHub = require "../../common/eventHub"
+vueLazyLoad = require "../../common/vueLazyLoad"
 
 module.exports =
   template: "#t-untracked-episode-list"
@@ -12,13 +13,11 @@ module.exports =
 
   methods:
     load: ->
-      $.ajax
-        method: "GET"
-        url: "/api/internal/latest_statuses"
-      .done (data) =>
-        @isLoading = false
-        @latestStatuses = _.each(data.latest_statuses, @_initLatestStatus)
-        @user = data.user
+      @latestStatuses = _.each(@_pageObject().latest_statuses, @_initLatestStatus)
+      @user = @_pageObject().user
+      @isLoading = false
+      @$nextTick ->
+        vueLazyLoad.refresh()
 
     filterNoNextEpisode: (latestStatuses) ->
       latestStatuses.filter (latestStatus) ->
@@ -84,6 +83,10 @@ module.exports =
         </a>
       """
       "#{gon.I18n["messages.tracks.tracked"]} #{episodeLink}"
+
+    _pageObject: ->
+      return {} unless gon.pageObject
+      JSON.parse(gon.pageObject)
 
   mounted: ->
     @load()

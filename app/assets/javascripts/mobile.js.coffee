@@ -6,12 +6,15 @@
 
 Turbolinks = require "turbolinks"
 Vue = require "vue/dist/vue"
+VueLazyload = require "vue-lazyload"
 moment = require "moment-timezone"
 Cookies = require "js-cookie"
 
 require "moment/locale/ja"
 
 $(document).on "turbolinks:load", ->
+  vueLazyLoad = require "./common/vueLazyLoad"
+
   activities = require "./common/components/activities"
   body = require "./common/components/body"
   channelReceiveButton = require "./common/components/channelReceiveButton"
@@ -44,6 +47,8 @@ $(document).on "turbolinks:load", ->
 
   Vue.config.debug = true
 
+  Vue.use(VueLazyload)
+
   Vue.component("c-activities", activities)
   Vue.component("c-body", body)
   Vue.component("c-channel-receive-button", channelReceiveButton)
@@ -70,6 +75,9 @@ $(document).on "turbolinks:load", ->
   Vue.component("c-work-friends", workFriends)
 
   Vue.directive("resource-select", resourceSelect)
+
+  Vue.nextTick ->
+    vueLazyLoad.refresh()
 
   new Vue
     el: ".p-application"

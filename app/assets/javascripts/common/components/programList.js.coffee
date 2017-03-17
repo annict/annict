@@ -1,6 +1,7 @@
 _ = require "lodash"
 
 eventHub = require "../../common/eventHub"
+vueLazyLoad = require "../../common/vueLazyLoad"
 loadMoreButton = require "./loadMoreButton"
 
 module.exports =
@@ -85,16 +86,11 @@ module.exports =
         eventHub.$emit "flash:show", data.responseJSON.message, "danger"
 
     load: ->
-      @isLoading = true
-      $.ajax
-        method: "GET"
-        url: "/api/internal/user/programs"
-        data: @requestData()
-      .done (data) =>
-        @isLoading = false
-        @programs = @initPrograms(data.programs)
-        @hasNext = @programs.length > 0
-        @user = data.user
+      @programs = @initPrograms(@_pageObject().programs)
+      @hasNext = @programs.length > 0
+      @user = @_pageObject().user
+      @$nextTick ->
+        vueLazyLoad.refresh()
 
     updateProgramsSortType: (callback) ->
       $.ajax
@@ -103,6 +99,10 @@ module.exports =
         data:
           programs_sort_type: @sort
       .done callback
+
+    _pageObject: ->
+      return {} unless gon.pageObject
+      JSON.parse(gon.pageObject)
 
   mounted: ->
     @load()

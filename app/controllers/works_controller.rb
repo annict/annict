@@ -45,24 +45,49 @@ class WorksController < ApplicationController
       order(watchers_count: :desc, id: :desc).
       page(page).
       per(display_works_count)
+
+    return unless user_signed_in?
+
+    gon.pageObject = render_jb "works/_list",
+      user: current_user,
+      works: @works
   end
 
   def season(slug, page: nil)
     @works = Work.
       published.
       by_season(slug).
+      includes(:work_image, :staffs, casts: %i(person character)).
       order(watchers_count: :desc, id: :desc).
       page(page).
       per(display_works_count)
+    @seasons = Season.all_cached(:desc)
     @season = Season.find_or_new_by_slug(slug)
+
+    return unless user_signed_in?
+
+    gon.pageObject = render_jb "works/_list",
+      user: current_user,
+      works: @works
   end
 
   def show
     @work = Work.published.find(params[:id])
-    @episodes = @work.episodes.published
-    @casts = @work.casts.published
-    @staffs = @work.staffs.published
-    @status = current_user.latest_statuses.find_by(work: @work) if user_signed_in?
+    @episodes = @work.episodes.published.order(:sort_number)
+    @casts = @work.
+      casts.
+      published.
+      order(:sort_number)
+    @staffs = @work.
+      staffs.
+      published.
+      order(:sort_number)
+
+    return unless user_signed_in?
+
+    gon.pageObject = render_jb "works/_detail",
+      user: current_user,
+      work: @work
   end
 
   def switch(to)

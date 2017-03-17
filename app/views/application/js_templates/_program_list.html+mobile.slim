@@ -21,7 +21,7 @@ script#t-program-list type="x-template"
             .row.mb-zp5
               .col.pr-0.u-flex-grow-0
                 a :href='"/works/" + program.work.id'
-                  img.rounded :src="program.work.image_url" width="48" :alt="program.work.title"
+                  img.c-vue-lazyload.rounded v-lazy="program.work.image_url" width="48" :alt="program.work.title"
               .col
                 .text-xs-left
                   a :href='"/works/" + program.work.id'
@@ -52,7 +52,7 @@ script#t-program-list type="x-template"
                         c-record-word-count :init-record="program.record" v-if="program.record.isEditingComment"
               .col.u-flex-grow-0.pl-0
                 button.btn.btn-primary type="button" @click="submit(program)" :class='{ disabled: program.record.isRecorded, "c-spinner": program.record.isSaving }'
-                  = icon "check", class: "mr-0"
+                  = icon "pencil-square-o", class: "mr-0"
       template v-if="!isLoading && programs.length === 0"
         = render "application/components/empty", text: t('messages.programs.no_programs'), hint: t("messages.programs.please_set_channels_html", channels_link: link_to(t("noun.channel_list"), channels_path))
       c-load-more-button.my-1 :handler="loadMore" :is-loading="isLoading" :has-next="hasNext"

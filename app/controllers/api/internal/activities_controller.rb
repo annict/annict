@@ -12,6 +12,7 @@ module Api
           User.where(username: username).first&.activities.presence || Activity.none
         end
 
+        @user = current_user
         @activities = activities.
           order(id: :desc).
           includes(:recipient, trackable: :user, user: :profile).

@@ -1,0 +1,8 @@
+img.c-vue-lazyload {
+  opacity: 0;
+}
+
+img[lazy=loaded] {
+  opacity: 1;
+  transition: opacity .1s linear;
+}

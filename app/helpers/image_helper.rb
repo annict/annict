@@ -39,7 +39,14 @@ module ImageHelper
     options[:size] = msize if browser.device.mobile? && msize.present?
     options.delete(:msize) if options.key?(:msize)
 
-    image_tag(url, options)
+    options["v-lazy"] = "'#{url}'"
+    options[:class] = if options[:class].present?
+      options[:class].split(" ").push("c-vue-lazyload").join(" ")
+    else
+      "c-vue-lazyload"
+    end
+
+    image_tag("", options)
   end
 
   def profile_background_image_url(profile, options)

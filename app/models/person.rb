@@ -80,6 +80,9 @@ class Person < ActiveRecord::Base
     favorite_people
   end
 
+  after_save :touch_children
+  after_destroy :touch_children
+
   def voice_actor?
     casts.exists?
   end
@@ -100,5 +103,12 @@ class Person < ActiveRecord::Base
     end
 
     data.delete_if { |_, v| v.blank? }
+  end
+
+  private
+
+  def touch_children
+    casts.each(&:touch)
+    staffs.each(&:touch)
   end
 end

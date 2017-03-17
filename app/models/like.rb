@@ -24,6 +24,8 @@ class Like < ActiveRecord::Base
     dependent: :destroy
 
   after_create :save_notification
+  after_save :expire_cache
+  after_destroy :expire_cache
 
   private
 
@@ -34,5 +36,10 @@ class Like < ActiveRecord::Base
       n.trackable   = self
       n.action      = "likes.create"
     end
+  end
+
+  def expire_cache
+    return unless recipient_type.in?(%w(Checkin MultipleRecord Status))
+    recipient.activities.update_all(updated_at: Time.now)
   end
 end

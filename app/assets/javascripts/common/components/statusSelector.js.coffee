@@ -1,23 +1,25 @@
+_ = require "lodash"
+
+eventHub = require "../eventHub"
 keen = require "../keen"
+
+NO_SELECT = "no_select"
 
 module.exports =
   template: "#t-status-selector"
 
   data: ->
-    isSaving: false
+    isLoading: false
+    isSignedIn: gon.user.isSignedIn
     statusKind: null
     prevStatusKind: null
+    works: []
+    pageObject: if gon.pageObject then JSON.parse(gon.pageObject) else {}
 
   props:
     workId:
+      type: Number
       required: true
-
-    currentStatusKind:
-      required: true
-
-    isSignedIn:
-      type: Boolean
-      default: false
 
     isMini:
       type: Boolean
@@ -28,8 +30,14 @@ module.exports =
       default: false
 
   methods:
+    currentStatusKind: ->
+      return "no_select" unless @works.length
+      data = _.find @works, (work) =>
+        work.id == @workId
+      data.statusSelector.currentStatusKind
+
     resetKind: ->
-      @statusKind = "no_select"
+      @statusKind = NO_SELECT
 
     change: ->
       unless @isSignedIn
@@ -39,7 +47,7 @@ module.exports =
         return
 
       if @statusKind != @prevStatusKind
-        @isSaving = true
+        @isLoading = true
 
         $.ajax
           method: "POST"
@@ -48,8 +56,13 @@ module.exports =
             status_kind: @statusKind
             page_category: gon.basic.pageCategory
         .done =>
-          @isSaving = false
+          @isLoading = false
 
   mounted: ->
-    @prevStatusKind = @currentStatusKind
-    @statusKind = @currentStatusKind
+    unless @isSignedIn
+      @statusKind = @prevStatusKind = NO_SELECT
+      return
+
+    @works = @pageObject.works
+    @prevStatusKind = @currentStatusKind()
+    @statusKind = @currentStatusKind()

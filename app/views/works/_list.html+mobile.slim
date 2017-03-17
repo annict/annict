@@ -1,42 +1,41 @@
-- works.each do |work|
-  .c-card.mb-1.py-1
-    .container
-      .row.mb-1
-        .col-4.pr-0
-          = link_to work_path(work), class: "d-inline-block" do
-            = ann_image_tag(work.work_image, :attachment, size: "250x250", alt: work.decorate.local_title, class: "rounded img-thumbnail")
-        .col-8
-          .mb-zp25.u-lh-0
-            = work.decorate.media_label
-          h3.font-weight-bold.mb-zp25 = link_to work.decorate.local_title, work_path(work)
-          .mb-zp5
-            span.font-weight-bold.mr-zp25 = work.watchers_count
-            span.text-muted.small Watchers
-          c-status-selector work-id="#{work.id}" current-status-kind="#{user_signed_in? ? current_user.status_kind(work) : 'no_select'}" :is-signed-in="#{user_signed_in?}"
-      - if work.casts.present?
-        .font-weight-bold = t "noun.casts"
-        ul.list-inline.mb-0
-          - work.casts.order(:sort_number).limit(10).each do |cast|
-            - cache cast do
-              li.list-inline-item
-                = cast.character.decorate.name_link
-                | : 
-                = cast.decorate.local_name_with_old_link
-      - if work.staffs.present?
-        .mt-1
-          .font-weight-bold = t "noun.staffs"
-          ul.list-inline.mb-0
-            - work.staffs.major.order(:sort_number).limit(10).each do |staff|
-              - cache staff do
-                li.list-inline-item
-                  = "#{staff.decorate.role_name}: "
-                  = staff.decorate.local_name_with_old_link
-      - if user_signed_in?
-        - users = current_user.friends_interested_in(work).includes(:profile).order("latest_statuses.id DESC")
-        - if users.present?
-          - users_json = render_jb("application/components/_work_friends", users: users.limit(12))
-          .mt-1
-            c-work-friends :init-users="#{users_json}" :init-is-all="#{users.count <= 12}" :work-id="#{work.id}"
+- cache [I18n.locale, works] do
+  - works.each do |work|
+    - cache [I18n.locale, work] do
+      .c-card.mb-1.py-1
+        .container
+          .row.mb-1
+            .col-4.pr-0
+              = link_to work_path(work), class: "d-inline-block" do
+                = ann_image_tag(work.work_image, :attachment, size: "250x250", alt: work.decorate.local_title, class: "rounded img-thumbnail")
+            .col-8
+              .mb-zp25.u-lh-0
+                = work.decorate.media_label
+              h3.font-weight-bold.mb-zp25 = link_to work.decorate.local_title, work_path(work)
+              .mb-zp5
+                span.font-weight-bold.mr-zp25 = work.watchers_count
+                span.text-muted.small Watchers
+              c-status-selector :work-id="#{work.id}"
+          - cache [I18n.locale, work.casts] do
+            - if work.casts.present?
+              .font-weight-bold = t "noun.casts"
+              ul.list-inline.mb-0
+                - work.casts.order(:sort_number).first(10).each do |cast|
+                  - cache [I18n.locale, cast] do
+                    li.list-inline-item
+                      = cast.character.decorate.name_link
+                      | : 
+                      = cast.decorate.local_name_with_old_link
+          - cache [I18n.locale, work.staffs] do
+            - if work.staffs.present?
+              .mt-1
+                .font-weight-bold = t "noun.staffs"
+                ul.list-inline.mb-0
+                  - work.staffs.major.order(:sort_number).limit(10).each do |staff|
+                    - cache [I18n.locale, staff] do
+                      li.list-inline-item
+                        = "#{staff.decorate.role_name}: "
+                        = staff.decorate.local_name_with_old_link
+          c-work-friends :work-id="#{work.id}"
 
 - content_for :js_templates do
   = render "application/js_templates/work_friends"
