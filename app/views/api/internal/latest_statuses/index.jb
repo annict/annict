@@ -7,10 +7,10 @@ json[:latest_statuses] = @latest_statuses.map do |latest_status|
 end
 
 json[:user] = {
-  authorized_to_twitter: current_user.authorized_to?(:twitter),
-  authorized_to_facebook: current_user.authorized_to?(:facebook),
-  share_record_to_twitter: current_user.setting&.share_record_to_twitter?,
-  share_record_to_facebook: current_user.setting&.share_record_to_facebook?,
+  authorized_to_twitter: @user.authorized_to?(:twitter),
+  authorized_to_facebook: @user.authorized_to?(:facebook),
+  share_record_to_twitter: @user.setting&.share_record_to_twitter?,
+  share_record_to_facebook: @user.setting&.share_record_to_facebook?
 }
 
 json

@@ -24,6 +24,9 @@ class Status < ActiveRecord::Base
 
   belongs_to :oauth_application, class_name: "Doorkeeper::Application"
   belongs_to :user, touch: true
+  has_many :activities,
+    dependent: :destroy,
+    as: :trackable
 
   after_create :save_activity
   after_create :refresh_watchers_count

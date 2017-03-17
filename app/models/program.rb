@@ -43,7 +43,7 @@ class Program < ActiveRecord::Base
 
   belongs_to :channel
   belongs_to :episode
-  belongs_to :work, touch: true
+  belongs_to :work
   has_many :db_activities, as: :trackable, dependent: :destroy
   has_many :db_comments, as: :resource, dependent: :destroy
 
@@ -55,6 +55,8 @@ class Program < ActiveRecord::Base
   scope :work_published, -> { joins(:work).merge(Work.published) }
 
   before_save :calc_for_timezone
+  after_save :expire_cache
+  after_destroy :expire_cache
 
   def broadcasted?(time = Time.now.in_time_zone("Asia/Tokyo"))
     time > started_at.in_time_zone("Asia/Tokyo")
@@ -74,5 +76,11 @@ class Program < ActiveRecord::Base
     end
 
     data.delete_if { |_, v| v.blank? }
+  end
+
+  private
+
+  def expire_cache
+    work.channel_works.update_all(updated_at: Time.now)
   end
 end

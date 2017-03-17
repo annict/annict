@@ -43,7 +43,7 @@ Rails.application.routes.draw do
         post :unfollow, on: :collection
       end
 
-      resources :latest_statuses, only: [:index] do
+      resources :latest_statuses, only: [] do
         patch :skip_episode
       end
 
