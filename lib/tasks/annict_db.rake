@@ -15,4 +15,22 @@ namespace :annict_db do
 
     person.hide!
   end
+
+  task :copy_casts, %i(base_work_id work_id) => :environment do |_, args|
+    base_work = Work.find(args[:base_work_id])
+    work = Work.find(args[:work_id])
+
+    base_work.casts.order(:sort_number).each do |cast|
+      work.casts.create(cast.attributes.except("id", "created_at", "updated_at"))
+    end
+  end
+
+  task :copy_staffs, %i(base_work_id work_id) => :environment do |_, args|
+    base_work = Work.find(args[:base_work_id])
+    work = Work.find(args[:work_id])
+
+    base_work.staffs.order(:sort_number).each do |staff|
+      work.staffs.create(staff.attributes.except("id", "created_at", "updated_at"))
+    end
+  end
 end
