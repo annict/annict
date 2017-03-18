@@ -27,8 +27,9 @@ GEM
       erubis (~> 2.7.0)
       rails-dom-testing (~> 2.0)
       rails-html-sanitizer (~> 1.0, >= 1.0.3)
-    active_link_to (1.0.3)
+    active_link_to (1.0.4)
       actionpack
+      addressable
     active_record_query_trace (1.5.4)
     activejob (5.0.2)
       activesupport (= 5.0.2)
@@ -296,9 +297,10 @@ GEM
     kaminari-core (1.0.1)
     keen (0.7.8)
       multi_json (~> 1.0)
-    koala (2.5.0)
+    koala (3.0.0)
       addressable
       faraday
+      json (>= 1.8)
     launchy (2.4.3)
       addressable (~> 2.3)
     letter_opener (1.4.1)
@@ -551,7 +553,7 @@ GEM
       simple_oauth (~> 0.3.1)
     tzinfo (1.2.2)
       thread_safe (~> 0.1)
-    uglifier (3.1.7)
+    uglifier (3.1.8)
       execjs (>= 0.3.0, < 3)
     unf (0.1.4)
       unf_ext
