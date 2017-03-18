@@ -59,6 +59,9 @@ class Checkin < ActiveRecord::Base
   scope :with_comment, -> { where.not(comment: ["", nil]) }
   scope :with_no_comment, -> { where(comment: ["", nil]) }
 
+  after_destroy :expire_cache
+  after_save :expire_cache
+
   def self.initial?(checkin)
     count == 1 && first.id == checkin.id
   end
@@ -110,5 +113,12 @@ class Checkin < ActiveRecord::Base
       end
       FacebookService.new(user).delay.share!(self, source)
     end
+  end
+
+  private
+
+  def expire_cache
+    user.channel_works.find_by(work: work)&.touch
+    user.touch(:record_cache_expired_at)
   end
 end

@@ -3,19 +3,21 @@
 #
 # Table name: organizations
 #
-#  id                  :integer          not null, primary key
-#  name                :string           not null
-#  url                 :string
-#  wikipedia_url       :string
-#  twitter_username    :string
-#  aasm_state          :string           default("published"), not null
-#  created_at          :datetime         not null
-#  updated_at          :datetime         not null
-#  name_kana           :string           default(""), not null
-#  name_en             :string           default(""), not null
-#  url_en              :string           default(""), not null
-#  wikipedia_url_en    :string           default(""), not null
-#  twitter_username_en :string           default(""), not null
+#  id                           :integer          not null, primary key
+#  name                         :string           not null
+#  url                          :string
+#  wikipedia_url                :string
+#  twitter_username             :string
+#  aasm_state                   :string           default("published"), not null
+#  created_at                   :datetime         not null
+#  updated_at                   :datetime         not null
+#  name_kana                    :string           default(""), not null
+#  name_en                      :string           default(""), not null
+#  url_en                       :string           default(""), not null
+#  wikipedia_url_en             :string           default(""), not null
+#  twitter_username_en          :string           default(""), not null
+#  favorites_count              :integer          default(0), not null
+#  favorite_organizations_count :integer          default(0), not null
 #
 # Indexes
 #

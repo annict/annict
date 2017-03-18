@@ -12,7 +12,7 @@
 #  event_liked_comment         :boolean          default(TRUE), not null
 #  event_liked_status          :boolean          default(TRUE), not null
 #  event_commented             :boolean          default(TRUE), not null
-#  event_friend_joined         :boolean          default(TRUE), not null
+#  event_friends_joined        :boolean          default(TRUE), not null
 #  event_next_season_came      :boolean          default(TRUE), not null
 #  created_at                  :datetime         not null
 #  updated_at                  :datetime         not null

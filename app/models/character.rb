@@ -3,35 +3,37 @@
 #
 # Table name: characters
 #
-#  id                    :integer          not null, primary key
-#  name                  :string           not null
-#  name_kana             :string           default(""), not null
-#  name_en               :string           default(""), not null
-#  kind                  :string           default(""), not null
-#  kind_en               :string           default(""), not null
-#  nickname              :string           default(""), not null
-#  nickname_en           :string           default(""), not null
-#  birthday              :string           default(""), not null
-#  birthday_en           :string           default(""), not null
-#  age                   :string           default(""), not null
-#  age_en                :string           default(""), not null
-#  blood_type            :string           default(""), not null
-#  blood_type_en         :string           default(""), not null
-#  height                :string           default(""), not null
-#  height_en             :string           default(""), not null
-#  weight                :string           default(""), not null
-#  weight_en             :string           default(""), not null
-#  nationality           :string           default(""), not null
-#  nationality_en        :string           default(""), not null
-#  occupation            :string           default(""), not null
-#  occupation_en         :string           default(""), not null
-#  description           :text             default(""), not null
-#  description_en        :text             default(""), not null
-#  aasm_state            :string           default("published"), not null
-#  created_at            :datetime         not null
-#  updated_at            :datetime         not null
-#  description_source    :string           default(""), not null
-#  description_source_en :string           default(""), not null
+#  id                        :integer          not null, primary key
+#  name                      :string           not null
+#  name_kana                 :string           default(""), not null
+#  name_en                   :string           default(""), not null
+#  kind                      :string           default(""), not null
+#  kind_en                   :string           default(""), not null
+#  nickname                  :string           default(""), not null
+#  nickname_en               :string           default(""), not null
+#  birthday                  :string           default(""), not null
+#  birthday_en               :string           default(""), not null
+#  age                       :string           default(""), not null
+#  age_en                    :string           default(""), not null
+#  blood_type                :string           default(""), not null
+#  blood_type_en             :string           default(""), not null
+#  height                    :string           default(""), not null
+#  height_en                 :string           default(""), not null
+#  weight                    :string           default(""), not null
+#  weight_en                 :string           default(""), not null
+#  nationality               :string           default(""), not null
+#  nationality_en            :string           default(""), not null
+#  occupation                :string           default(""), not null
+#  occupation_en             :string           default(""), not null
+#  description               :text             default(""), not null
+#  description_en            :text             default(""), not null
+#  aasm_state                :string           default("published"), not null
+#  created_at                :datetime         not null
+#  updated_at                :datetime         not null
+#  description_source        :string           default(""), not null
+#  description_source_en     :string           default(""), not null
+#  favorites_count           :integer          default(0), not null
+#  favorite_characters_count :integer          default(0), not null
 #
 # Indexes
 #
