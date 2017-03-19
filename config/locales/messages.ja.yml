@@ -39,6 +39,10 @@ ja:
       comments_by_others: 皆さんの感想
       watched_x_times: "%{records_count}回見ました"
       your_records: あなたの記録
+    favorite_characters:
+      no_characters: キャラクターはいません
+    favorite_people:
+      no_people: 人物はいません
     forum:
       comments:
         created: 投稿しました

@@ -17,12 +17,14 @@
 #  wikipedia_url_en             :string           default(""), not null
 #  twitter_username_en          :string           default(""), not null
 #  favorite_organizations_count :integer          default(0), not null
+#  staffs_count                 :integer          default(0), not null
 #
 # Indexes
 #
 #  index_organizations_on_aasm_state                    (aasm_state)
 #  index_organizations_on_favorite_organizations_count  (favorite_organizations_count)
 #  index_organizations_on_name                          (name) UNIQUE
+#  index_organizations_on_staffs_count                  (staffs_count)
 #
 
 class Organization < ActiveRecord::Base
@@ -58,6 +60,7 @@ class Organization < ActiveRecord::Base
   has_many :db_comments, as: :resource, dependent: :destroy
   has_many :favorite_organizations, dependent: :destroy
   has_many :staffs, as: :resource, dependent: :destroy
+  has_many :staff_works, through: :staffs, source: :work
   has_many :users, through: :favorite_organizations
 
   def favorites

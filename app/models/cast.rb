@@ -40,7 +40,7 @@ class Cast < ActiveRecord::Base
   end
 
   belongs_to :character, touch: true
-  belongs_to :person, touch: true
+  belongs_to :person, touch: true, counter_cache: true
   belongs_to :work, touch: true
   has_many :db_activities, as: :trackable, dependent: :destroy
   has_many :db_comments, as: :resource, dependent: :destroy

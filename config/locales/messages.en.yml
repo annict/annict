@@ -39,6 +39,10 @@ en:
       comments_by_others: Comments by Others
       watched_x_times: Watched %{records_count} times
       your_records: Your Records
+    favorite_characters:
+      no_characters: No Characters
+    favorite_people:
+      no_people: No Poeple
     forum:
       comments:
         created: Created

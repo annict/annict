@@ -67,6 +67,7 @@
                 = @user.followers.count
               .p-profile-header__count-text
                 | Followers
+
         - if @user.profile.description.present? || @user.profile.url.present?
           .mb-2
             h2.p-users-show__sub-title
@@ -78,6 +79,91 @@
             - if @user.profile.url.present?
               .url
                 = link_to @user.profile.decorate.shorten_url, @user.profile.url, target: "_blank"
+
+        - if @favorite_characters.exists?
+          .mb-2
+            h2.p-users-show__sub-title
+              .row.align-items-center
+                .col
+                  = icon "star-o", class: "mr-zp5"
+                  = t "noun.favorite_characters"
+                - if @favorite_characters.length > 6
+                  .col.col-auto
+                    = link_to favorite_characters_path(@user.username), class: "small" do
+                      = icon "angle-right", class: "mr-zp25"
+                      = t "verb.view_all"
+
+            - @favorite_characters.first(6).each_slice(2).each do |list|
+              .row.mb-zp5
+                - list.each do |favorite_character|
+                  - character = favorite_character.character
+                  .col-6
+                    = link_to character.decorate.local_name, character_path(character)
+                    - if character.oldest_work.present?
+                    = link_to work_path(character.oldest_work) do
+                      .text-muted.u-very-small
+                        = character.oldest_work.decorate.local_title
+
+        - if @favorite_casts.exists? || @favorite_staffs.exists?
+          .mb-2
+            h2.p-users-show__sub-title
+              .row
+                .col
+                  = icon "star-o", class: "mr-zp5"
+                  = t "noun.favorite_people"
+                - if @favorite_casts.length > 6 || @favorite_staffs.length > 6
+                  .col.col-auto
+                    = link_to favorite_people_path(@user.username), class: "small" do
+                      = icon "angle-right", class: "mr-zp25"
+                      = t "verb.view_all"
+            
+            - if @favorite_casts.exists?
+              h3.h5.font-weight-bold = t "noun.voice_actors"
+              - @favorite_casts.first(6).each_slice(2).each do |list|
+                .row.mb-zp5
+                  - list.each do |favorite_person|
+                    - person = favorite_person.person
+                    .col-6
+                      = link_to person.decorate.local_name, person_path(person)
+                      .text-muted.u-very-small
+                        = t "noun.n_works_watched", count: favorite_person.watched_works_count
+
+            - if @favorite_casts.exists? && @favorite_staffs.exists?
+              hr
+
+            - if @favorite_staffs.exists?
+              h3.h5.font-weight-bold = t "noun.staffs"
+              - @favorite_staffs.first(6).each_slice(2).each do |list|
+                .row.mb-zp5
+                  - list.each do |favorite_person|
+                    - person = favorite_person.person
+                    .col-6
+                      = link_to person.decorate.local_name, person_path(person)
+                      .text-muted.u-very-small
+                        = t "noun.n_works_watched", count: favorite_person.watched_works_count
+
+        - if @favorite_organizations.exists?
+          .mb-2
+            h2.p-users-show__sub-title
+              .row
+                .col
+                  = icon "star-o", class: "mr-zp5"
+                  = t "noun.favorite_organizations"
+                - if @favorite_organizations.length > 6
+                  .col.col-auto
+                    = link_to favorite_organizations_path(@user.username), class: "small" do
+                      = icon "angle-right", class: "mr-zp25"
+                      = t "verb.view_all"
+
+            - @favorite_organizations.first(6).each_slice(2).each do |list|
+              .row.mb-zp5
+                - list.each do |favorite_org|
+                  - organization = favorite_org.organization
+                  .col-6
+                    = link_to organization.decorate.local_name, organization_path(organization)
+                    .text-muted.u-very-small
+                      = t "noun.n_works_watched", count: favorite_org.watched_works_count
+
         .mb-2
           h2.p-users-show__sub-title
             = icon "bar-chart", class: "mr-zp5"

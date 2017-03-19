@@ -60,7 +60,7 @@ class Staff < ActiveRecord::Base
     end
   end
 
-  belongs_to :resource, polymorphic: true
+  belongs_to :resource, polymorphic: true, counter_cache: true
   belongs_to :work, touch: true
   has_many :db_activities, as: :trackable, dependent: :destroy
   has_many :db_comments, as: :resource, dependent: :destroy

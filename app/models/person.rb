@@ -24,13 +24,17 @@
 #  wikipedia_url_en      :string           default(""), not null
 #  twitter_username_en   :string           default(""), not null
 #  favorite_people_count :integer          default(0), not null
+#  casts_count           :integer          default(0), not null
+#  staffs_count          :integer          default(0), not null
 #
 # Indexes
 #
 #  index_people_on_aasm_state             (aasm_state)
+#  index_people_on_casts_count            (casts_count)
 #  index_people_on_favorite_people_count  (favorite_people_count)
 #  index_people_on_name                   (name) UNIQUE
 #  index_people_on_prefecture_id          (prefecture_id)
+#  index_people_on_staffs_count           (staffs_count)
 #
 
 class Person < ActiveRecord::Base
@@ -70,10 +74,12 @@ class Person < ActiveRecord::Base
 
   belongs_to :prefecture
   has_many :casts, dependent: :destroy
+  has_many :cast_works, through: :casts, source: :work
   has_many :db_activities, as: :trackable, dependent: :destroy
   has_many :db_comments, as: :resource, dependent: :destroy
   has_many :favorite_people, dependent: :destroy
   has_many :staffs, as: :resource, dependent: :destroy
+  has_many :staff_works, through: :staffs, source: :work
   has_many :users, through: :favorite_people
 
   def favorites

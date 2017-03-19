@@ -276,6 +276,9 @@ Rails.application.routes.draw do
         status_kind: /wanna_watch|watching|watched|on_hold|stop_watching/
       }
 
+    resources :favorite_characters, only: %i(index)
+    resources :favorite_organizations, only: %i(index)
+    resources :favorite_people, only: %i(index)
     resources :records, only: %i(create show edit update destroy) do
       resources :comments, only: %i(create)
     end

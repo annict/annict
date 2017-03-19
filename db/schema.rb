@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170318171853) do
+ActiveRecord::Schema.define(version: 20170319153219) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -449,23 +449,27 @@ ActiveRecord::Schema.define(version: 20170318171853) do
   end
 
   create_table "favorite_organizations", force: :cascade do |t|
-    t.integer  "user_id",         null: false
-    t.integer  "organization_id", null: false
-    t.datetime "created_at",      null: false
-    t.datetime "updated_at",      null: false
+    t.integer  "user_id",                         null: false
+    t.integer  "organization_id",                 null: false
+    t.datetime "created_at",                      null: false
+    t.datetime "updated_at",                      null: false
+    t.integer  "watched_works_count", default: 0, null: false
     t.index ["organization_id"], name: "index_favorite_organizations_on_organization_id", using: :btree
     t.index ["user_id", "organization_id"], name: "index_favorite_organizations_on_user_id_and_organization_id", unique: true, using: :btree
     t.index ["user_id"], name: "index_favorite_organizations_on_user_id", using: :btree
+    t.index ["watched_works_count"], name: "index_favorite_organizations_on_watched_works_count", using: :btree
   end
 
   create_table "favorite_people", force: :cascade do |t|
-    t.integer  "user_id",    null: false
-    t.integer  "person_id",  null: false
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.integer  "user_id",                         null: false
+    t.integer  "person_id",                       null: false
+    t.datetime "created_at",                      null: false
+    t.datetime "updated_at",                      null: false
+    t.integer  "watched_works_count", default: 0, null: false
     t.index ["person_id"], name: "index_favorite_people_on_person_id", using: :btree
     t.index ["user_id", "person_id"], name: "index_favorite_people_on_user_id_and_person_id", unique: true, using: :btree
     t.index ["user_id"], name: "index_favorite_people_on_user_id", using: :btree
+    t.index ["watched_works_count"], name: "index_favorite_people_on_watched_works_count", using: :btree
   end
 
   create_table "finished_tips", force: :cascade do |t|
@@ -674,9 +678,11 @@ ActiveRecord::Schema.define(version: 20170318171853) do
     t.string   "wikipedia_url_en",             default: "",          null: false
     t.string   "twitter_username_en",          default: "",          null: false
     t.integer  "favorite_organizations_count", default: 0,           null: false
+    t.integer  "staffs_count",                 default: 0,           null: false
     t.index ["aasm_state"], name: "index_organizations_on_aasm_state", using: :btree
     t.index ["favorite_organizations_count"], name: "index_organizations_on_favorite_organizations_count", using: :btree
     t.index ["name"], name: "index_organizations_on_name", unique: true, using: :btree
+    t.index ["staffs_count"], name: "index_organizations_on_staffs_count", using: :btree
   end
 
   create_table "people", force: :cascade do |t|
@@ -700,10 +706,14 @@ ActiveRecord::Schema.define(version: 20170318171853) do
     t.string   "wikipedia_url_en",      default: "",          null: false
     t.string   "twitter_username_en",   default: "",          null: false
     t.integer  "favorite_people_count", default: 0,           null: false
+    t.integer  "casts_count",           default: 0,           null: false
+    t.integer  "staffs_count",          default: 0,           null: false
     t.index ["aasm_state"], name: "index_people_on_aasm_state", using: :btree
+    t.index ["casts_count"], name: "index_people_on_casts_count", using: :btree
     t.index ["favorite_people_count"], name: "index_people_on_favorite_people_count", using: :btree
     t.index ["name"], name: "index_people_on_name", unique: true, using: :btree
     t.index ["prefecture_id"], name: "index_people_on_prefecture_id", using: :btree
+    t.index ["staffs_count"], name: "index_people_on_staffs_count", using: :btree
   end
 
   create_table "prefectures", force: :cascade do |t|

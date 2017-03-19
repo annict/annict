@@ -1,12 +1,16 @@
 # frozen_string_literal: true
 
 namespace :tmp do
-  task create_email_notifications: :environment do
-    User.find_each do |u|
-      next if u.email_notification.present?
-      puts "user: #{u.id}"
-      unsubscription_key = "#{SecureRandom.uuid}-#{SecureRandom.uuid}"
-      u.create_email_notification!(unsubscription_key: unsubscription_key)
+  task set_counter: :environment do
+    Person.find_each do |p|
+      puts "person: #{p.id}"
+      Person.reset_counters(p.id, :casts_count)
+      Person.reset_counters(p.id, :staffs_count)
+    end
+
+    Organization.find_each do |o|
+      puts "organization: #{o.id}"
+      Organization.reset_counters(o.id, :staffs_count)
     end
   end
 end

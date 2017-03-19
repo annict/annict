@@ -67,6 +67,7 @@ class Character < ApplicationRecord
   has_many :db_comments, as: :resource, dependent: :destroy
   has_many :favorite_characters, dependent: :destroy
   has_many :users, through: :favorite_characters
+  has_many :works, through: :casts
   has_one :character_image
 
   validates :name, presence: true, uniqueness: { scope: :kind }
@@ -75,6 +76,10 @@ class Character < ApplicationRecord
 
   def favorites
     favorite_characters
+  end
+
+  def oldest_work
+    works.joins(:season).order("seasons.sort_number ASC").first
   end
 
   def to_diffable_hash
