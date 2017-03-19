@@ -40,7 +40,7 @@
   hr
 
   .container.text-center.pb-1
-    .row
+    .row.mb-1
       .p-users-show__count.col.px-0
         .h3.mb-zp25
           = @user.checkins_count
@@ -64,6 +64,26 @@
             = @user.followers.count
           .small
             | Followers
+
+    .row
+      .p-users-show__count.col.px-0
+        = link_to favorite_characters_path(@user.username), class: "p-users-show__count-link" do
+          .h3.mb-zp25
+            = @favorite_characters.length
+          .small
+            = t "noun.favorite_characters_shorten"
+      .p-users-show__count.col.px-0
+        = link_to favorite_people_path(@user.username), class: "p-users-show__count-link" do
+          .h3.mb-zp25
+            = @favorite_casts.length + @favorite_staffs.length
+          .small
+            = t "noun.favorite_people_shorten"
+      .p-users-show__count.col.px-0
+        = link_to favorite_organizations_path(@user.username), class: "p-users-show__count-link" do
+          .h3.mb-zp25
+            = @favorite_organizations.length
+          .small
+            = t "noun.favorite_organizations_shorten"
 
 .mt-1.mb-2
   c-activities username="#{@user.username}"

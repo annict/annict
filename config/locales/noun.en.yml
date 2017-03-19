@@ -37,8 +37,11 @@ en:
     episodes: Episodes
     error: Error
     fans: Fans
+    favorite_characters_shorten: Characters
     favorite_characters: Favorite Characters
+    favorite_organizations_shorten: Organizations
     favorite_organizations: Favorite Organizations
+    favorite_people_shorten: People
     favorite_people: Favorite People
     first: First
     following: Following
