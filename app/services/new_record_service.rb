@@ -24,7 +24,6 @@ class NewRecordService
       update_record_comments_count
       finish_tips
       update_latest_status
-      expire_cache
       create_keen_event
     end
 
@@ -59,11 +58,5 @@ class NewRecordService
 
   def update_record_comments_count
     @record.episode.increment!(:record_comments_count) if @record.comment.present?
-  end
-
-  def expire_cache
-    channel_work = @user.channel_works.find_by(work: @record.work)
-    return if channel_work.blank?
-    channel_work.touch
   end
 end

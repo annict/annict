@@ -1,4 +1,5 @@
 _ = require "lodash"
+moment = require "moment"
 
 eventHub = require "../../common/eventHub"
 vueLazyLoad = require "../../common/vueLazyLoad"
@@ -28,6 +29,7 @@ module.exports =
 
     initPrograms: (programs) ->
       _.each programs, (program) ->
+        program.isBroadcasted = moment().isAfter(program.started_at)
         program.record =
           uid: _.uniqueId()
           comment: ""

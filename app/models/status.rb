@@ -23,16 +23,18 @@ class Status < ActiveRecord::Base
   include StatusCommon
 
   belongs_to :oauth_application, class_name: "Doorkeeper::Application"
-  belongs_to :user, touch: true
+  belongs_to :user
   has_many :activities,
     dependent: :destroy,
     as: :trackable
 
-  after_create :save_activity
-  after_create :refresh_watchers_count
-  after_create :update_channel_work
   after_create :finish_tips
+  after_create :refresh_watchers_count
+  after_create :save_activity
   after_create :save_latest_status
+  after_create :update_channel_work
+  after_destroy :expire_cache
+  after_save :expire_cache
 
   def self.initial
     order(:id).first
@@ -63,7 +65,7 @@ class Status < ActiveRecord::Base
 
   # ステータスを何から何に変えたかを返す
   def become_to
-    watches  = [:wanna_watch, :watching, :watched]
+    watches = %i(wanna_watch watching watched)
 
     if last_2_statuses.length == 2
       return :watch if !watches.include?(prev_status) && watches.include?(new_status)
@@ -88,19 +90,15 @@ class Status < ActiveRecord::Base
 
   def update_channel_work
     case kind
-    when 'wanna_watch', 'watching'
+    when "wanna_watch", "watching"
       ChannelWorkService.new(user).create(work)
     else
       ChannelWorkService.new(user).delete(work)
     end
   end
 
-  private
-
   def finish_tips
-    if user.statuses.initial?(self)
-      UserTipsService.new(user).finish!(:status)
-    end
+    UserTipsService.new(user).finish!(:status) if user.statuses.initial?(self)
   end
 
   def save_latest_status
@@ -108,5 +106,9 @@ class Status < ActiveRecord::Base
     latest_status.kind = kind
     latest_status.watched_episode_ids = [] if %w(watched stop_watching).include?(kind)
     latest_status.save!
+  end
+
+  def expire_cache
+    user.touch(:status_cache_expired_at)
   end
 end

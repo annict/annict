@@ -7,8 +7,7 @@ json[:programs] = Rails.cache.fetch [I18n.locale, @programs] do
     Rails.cache.fetch [I18n.locale, program] do
       {
         rebroadcast: program.rebroadcast,
-        started_at: program.started_at.in_time_zone("Asia/Tokyo").strftime("%m/%d %H:%M"),
-        broadcasted: program.broadcasted?,
+        started_at: program.started_at.in_time_zone("Asia/Tokyo").strftime("%Y-%m-%d %H:%M"),
         channel: {
           name: program.channel.name
         },

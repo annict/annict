@@ -1,19 +1,27 @@
 # frozen_string_literal: true
 
-json = {
-  action: activity.action,
-  created_at: activity.created_at,
-  user: {
-    username: activity.user.username
-  },
-  profile: {
-    avatar_url: ann_image_url(activity.user.profile, :tombo_avatar, size: "25x25"),
-    name: activity.user.profile.name
-  },
-  meta: {
-    liked: user.present? && user.like?(activity.trackable)
+cache_keys = [
+  I18n.locale,
+  user&.id,
+  activity
+]
+
+json = Rails.cache.fetch(cache_keys) do
+  {
+    action: activity.action,
+    created_at: activity.created_at,
+    user: {
+      username: activity.user.username
+    },
+    profile: {
+      avatar_url: ann_image_url(activity.user.profile, :tombo_avatar, size: "25x25"),
+      name: activity.user.profile.name
+    },
+    meta: {
+      liked: user.present? && user.like?(activity.trackable)
+    }
   }
-}
+end
 
 json.merge! render("api/internal/activities/#{activity.action}", activity: activity, user: user)
 
