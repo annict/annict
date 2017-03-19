@@ -1,0 +1,24 @@
+- title = t "head.title.organization_fans.index", organization_name: @organization.decorate.name_with_other_name
+- description = meta_description t("head.meta.description.organization_fans.index", organization_name: @organization.decorate.name_with_other_name)
+- keywords = meta_keywords @organization.decorate.local_name
+- set_meta_tags(title: title, description: description, keywords: keywords, og: { description: description }, twitter: { description: description }, reverse: true, prefix: false)
+- set_page_category "organization_fans_index"
+
+= render "application/components/navbar"
+
+.p-application__content
+  .container.py-1.mb-2
+    .row
+      .col-3.pr-0
+        = render "organizations/sidebar", organization: @organization
+      .col-9
+        = render "organizations/subnav", organization: @organization
+
+        .c-card
+          .container
+            - if @fan_users.present?
+              = render "users/user_list", users: @fan_users
+            - else
+              = render "application/components/empty", text: t("messages.organization_fans.no_users")
+
+= render "application/components/footer"

@@ -30,6 +30,8 @@ class OrganizationsController < ApplicationController
       includes(work: %i(season work_image)).
       group_by { |s| s.work.season&.year.presence || 0 }
     @staff_years = @staffs_with_year.keys.sort.reverse
+
+    @fan_users = @organization.users.order("favorite_organizations.id DESC")
   end
 
   private

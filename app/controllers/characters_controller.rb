@@ -21,6 +21,8 @@ class CharactersController < ApplicationController
       published.
       group_by { |cast| cast.work.season&.year.presence || 0 }
     @cast_years = @casts_with_year.keys.sort.reverse
+
+    @fan_users = @character.users.order("favorite_characters.id DESC")
   end
 
   private

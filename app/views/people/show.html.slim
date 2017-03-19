@@ -12,6 +12,8 @@
       .col-3.pr-0
         = render "sidebar", person: @person
       .col-9
+        = render "people/subnav", person: @person
+
         .c-card
           .container.py-1
             - if @person.voice_actor?

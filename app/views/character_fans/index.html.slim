@@ -1,0 +1,24 @@
+- title = t "head.title.character_fans.index", character_name: @character.decorate.name_with_kind
+- description = meta_description t("head.meta.description.character_fans.index", character_name: @character.decorate.name_with_kind)
+- keywords = meta_keywords @character.decorate.local_name
+- set_meta_tags(title: title, description: description, keywords: keywords, og: { description: description }, twitter: { description: description }, reverse: true, prefix: false)
+- set_page_category "character_fans_index"
+
+= render "application/components/navbar"
+
+.p-application__content
+  .container.py-1.mb-2
+    .row
+      .col-3.pr-0
+        = render "characters/sidebar", character: @character
+      .col-9
+        = render "characters/subnav", character: @character
+
+        .c-card
+          .container
+            - if @fan_users.present?
+              = render "users/user_list", users: @fan_users
+            - else
+              = render "application/components/empty", text: t("messages.character_fans.no_users")
+
+= render "application/components/footer"

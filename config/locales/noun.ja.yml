@@ -36,12 +36,14 @@ ja:
     english: 英語
     episodes: エピソード
     error: エラー
+    fans: ファン
     first: First
     following: フォロー中
     friends_who_are_watching: 見てる友達
     home: ホーム
     information: 基本情報
     japanese: 日本語
+    joined_works: 参加作品
     language: 言語
     last: Last
     more: その他
@@ -49,6 +51,7 @@ ja:
     official_site: 公式サイト
     on_hold: 中断してるアニメ
     or: OR
+    organization: 団体
     organizations: 団体
     other_users: その他利用者さん
     password: パスワード
@@ -79,6 +82,7 @@ ja:
     syobocal: しょぼかる
     terms_of_use: 利用規約
     title: タイトル
+    users_count: "%{count}人"
     voice_actor: 声優
     watching: 見てるアニメ
     watching_shorten: 見てる作品

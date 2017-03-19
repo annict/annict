@@ -19,6 +19,8 @@ ja:
       updated: 更新しました
     channel_works:
       no_works: 作品はありません
+    character_fans:
+      no_users: ファンはいません
     comments:
       comment_form_placeholder: 記録にコメントしよう！
       create: コメントする
@@ -103,9 +105,13 @@ ja:
     options:
       prevent_spoiler_of_episode_you_have_not_watched: 未記録エピソードのネタバレを防ぐ
       prevent_spoiler_of_episode_you_have_not_watched_detail: 見てる、見たい、または中断したアニメの中で、記録していないエピソードに投稿された他の利用者からの感想を表示しないようにします。
+    organization_fans:
+      no_users: ファンはいません
     passwords:
       new:
         forgot_your_password: パスワード忘れた？
+    person_fans:
+      no_users: ファンはいません
     profiles:
       saved: 保存しました
     programs:

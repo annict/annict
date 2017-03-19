@@ -36,12 +36,14 @@ en:
     english: English
     episodes: Episodes
     error: Error
+    fans: Fans
     first: First
     following: Following
     friends_who_are_watching: Friends Who Are Watching
     home: Home
     information: Information
     japanese: Japanese
+    joined_works: Works
     language: Language
     last: Last
     more: More
@@ -49,6 +51,7 @@ en:
     official_site: Official Site
     on_hold: On Hold
     or: OR
+    organization: Organization
     organizations: Organizations
     other_users: Other Users
     password: Password
@@ -79,6 +82,7 @@ en:
     syobocal: Syobocal
     terms_of_use: Terms of Use
     title: Title
+    users_count: "%{count} people"
     voice_actor: Voice Actor
     watching: Watching
     watching_shorten: Watching

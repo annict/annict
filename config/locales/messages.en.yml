@@ -19,6 +19,8 @@ en:
       updated: Account has been updated.
     channel_works:
       no_works: No works
+    character_fans:
+      no_users: No users
     comments:
       comment_form_placeholder: Click here to add a new comment
       create: Create
@@ -103,9 +105,13 @@ en:
     options:
       prevent_spoiler_of_episode_you_have_not_watched: Prevent spoiler of episode which you have not watched
       prevent_spoiler_of_episode_you_have_not_watched_detail: This option will hide comments on unwatched episodes when you've set status as "Watched", "Plan to Watch", or "On Hold".
+    organization_fans:
+      no_users: No users
     passwords:
       new:
         forgot_your_password: Forgot your password?
+    person_fans:
+      no_users: No users
     profiles:
       saved: Profile has been saved.
     programs:
