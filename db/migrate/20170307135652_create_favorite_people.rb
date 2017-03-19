@@ -16,5 +16,6 @@ class CreateFavoritePeople < ActiveRecord::Migration[5.0]
     add_foreign_key :favorite_people, :people
 
     add_column :people, :favorite_people_count, :integer, null: false, default: 0
+    add_index :people, :favorite_people_count
   end
 end

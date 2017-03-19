@@ -16,5 +16,6 @@ class CreateFavoriteCharacters < ActiveRecord::Migration[5.0]
     add_foreign_key :favorite_characters, :characters
 
     add_column :characters, :favorite_characters_count, :integer, null: false, default: 0
+    add_index :characters, :favorite_characters_count
   end
 end

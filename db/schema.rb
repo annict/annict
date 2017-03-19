@@ -122,8 +122,8 @@ ActiveRecord::Schema.define(version: 20170318171853) do
     t.datetime "updated_at",                                      null: false
     t.string   "description_source",        default: "",          null: false
     t.string   "description_source_en",     default: "",          null: false
-    t.integer  "favorites_count",           default: 0,           null: false
     t.integer  "favorite_characters_count", default: 0,           null: false
+    t.index ["favorite_characters_count"], name: "index_characters_on_favorite_characters_count", using: :btree
     t.index ["name", "kind"], name: "index_characters_on_name_and_kind", unique: true, using: :btree
   end
 
@@ -673,9 +673,9 @@ ActiveRecord::Schema.define(version: 20170318171853) do
     t.string   "url_en",                       default: "",          null: false
     t.string   "wikipedia_url_en",             default: "",          null: false
     t.string   "twitter_username_en",          default: "",          null: false
-    t.integer  "favorites_count",              default: 0,           null: false
     t.integer  "favorite_organizations_count", default: 0,           null: false
     t.index ["aasm_state"], name: "index_organizations_on_aasm_state", using: :btree
+    t.index ["favorite_organizations_count"], name: "index_organizations_on_favorite_organizations_count", using: :btree
     t.index ["name"], name: "index_organizations_on_name", unique: true, using: :btree
   end
 
@@ -699,9 +699,9 @@ ActiveRecord::Schema.define(version: 20170318171853) do
     t.string   "url_en",                default: "",          null: false
     t.string   "wikipedia_url_en",      default: "",          null: false
     t.string   "twitter_username_en",   default: "",          null: false
-    t.integer  "favorites_count",       default: 0,           null: false
     t.integer  "favorite_people_count", default: 0,           null: false
     t.index ["aasm_state"], name: "index_people_on_aasm_state", using: :btree
+    t.index ["favorite_people_count"], name: "index_people_on_favorite_people_count", using: :btree
     t.index ["name"], name: "index_people_on_name", unique: true, using: :btree
     t.index ["prefecture_id"], name: "index_people_on_prefecture_id", using: :btree
   end

@@ -32,12 +32,12 @@
 #  updated_at                :datetime         not null
 #  description_source        :string           default(""), not null
 #  description_source_en     :string           default(""), not null
-#  favorites_count           :integer          default(0), not null
 #  favorite_characters_count :integer          default(0), not null
 #
 # Indexes
 #
-#  index_characters_on_name_and_kind  (name,kind) UNIQUE
+#  index_characters_on_favorite_characters_count  (favorite_characters_count)
+#  index_characters_on_name_and_kind              (name,kind) UNIQUE
 #
 
 class Character < ApplicationRecord

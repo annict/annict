@@ -16,5 +16,6 @@ class CreateFavoriteOrganizations < ActiveRecord::Migration[5.0]
     add_foreign_key :favorite_organizations, :organizations
 
     add_column :organizations, :favorite_organizations_count, :integer, null: false, default: 0
+    add_index :organizations, :favorite_organizations_count
   end
 end

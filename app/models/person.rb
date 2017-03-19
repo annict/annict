@@ -23,14 +23,14 @@
 #  url_en                :string           default(""), not null
 #  wikipedia_url_en      :string           default(""), not null
 #  twitter_username_en   :string           default(""), not null
-#  favorites_count       :integer          default(0), not null
 #  favorite_people_count :integer          default(0), not null
 #
 # Indexes
 #
-#  index_people_on_aasm_state     (aasm_state)
-#  index_people_on_name           (name) UNIQUE
-#  index_people_on_prefecture_id  (prefecture_id)
+#  index_people_on_aasm_state             (aasm_state)
+#  index_people_on_favorite_people_count  (favorite_people_count)
+#  index_people_on_name                   (name) UNIQUE
+#  index_people_on_prefecture_id          (prefecture_id)
 #
 
 class Person < ActiveRecord::Base
