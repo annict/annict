@@ -14,6 +14,7 @@ class StatusService
       status = @user.statuses.new(work: @work, kind: kind, oauth_application: @app)
 
       if status.save
+        @user.delay.update_watched_works_count
         @keen_client.app = @app
         @keen_client.statuses.create
         return true

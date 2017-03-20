@@ -21,4 +21,12 @@
 class FavoriteOrganization < ApplicationRecord
   belongs_to :organization, counter_cache: true
   belongs_to :user
+
+  def update_watched_works_count(user)
+    staff_work_ids = organization.staff_works.pluck(:id)
+    statuses = user.statuses.work_published.with_kind(:watched)
+    count = statuses.where(work_id: staff_work_ids).count
+
+    update_column(:watched_works_count, count)
+  end
 end
