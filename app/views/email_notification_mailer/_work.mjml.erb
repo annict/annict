@@ -6,13 +6,17 @@
     </mj-button>
   </mj-column>
   <mj-column width="75%">
-    <% if work.season.present? %>
-      <mj-text padding="10px 25px 0 25px">
+    <mj-text padding="10px 25px 0 25px">
+      <% if work.season.present? %>
         <span style="color: #fff; background-color: <%= work.season.color %>; padding: 3px;">
           <%= work.season.decorate.local_name %>
         </span>
-      </mj-text>
-    <% end %>
+      <% else %>
+        <span style="color: #fff; background-color: #bdbdbd; padding: 3px;">
+          <%= I18n.t("noun.unknown_season") %>
+        </span>
+      <% end %>
+    </mj-text>
 
     <mj-text font-size="14px" padding-bottom="3px" padding-top="0"><%= "#{work.watchers_count} Watchers" %></mj-text>
     <mj-text font-size="18px" font-weight="400" padding-top="0" padding-bottom="7px">

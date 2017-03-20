@@ -71,7 +71,15 @@ namespace :work do
   end
 
   task send_favorite_works_added_email: :environment do
-    Work.yesterday.find_each do |work|
+    cast_work_ids = Cast.yesterday.pluck(:work_id)
+    staff_work_ids = Staff.yesterday.pluck(:work_id)
+    year, name = ENV.fetch("ANNICT_CURRENT_SEASON").split("-")
+    current_season = Season.find_by!(year: year, name: name)
+    seasons = Season.where("sort_number > ?", current_season.sort_number)
+    works = Work.where(id: (cast_work_ids | staff_work_ids))
+    works = works.where(season_id: seasons).or(works.where(season_id: nil))
+
+    works.find_each do |work|
       favorite_character_user_ids = FavoriteCharacter.
         joins(:character).
         merge(work.characters).
