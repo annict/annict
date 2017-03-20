@@ -64,4 +64,28 @@ class EmailNotificationMailer < ActionMailer::Base
     subject = default_i18n_subject(name: @season.decorate.local_name)
     mail(to: @user.email, subject: subject, &:mjml)
   end
+
+  def favorite_works_added(user_id, work_id)
+    @user = User.find(user_id)
+    @unsubscription_key = @user.email_notification.unsubscription_key
+    @work = Work.find(work_id)
+    @characters = @work.
+      characters.
+      joins(:favorite_characters).
+      merge(@user.favorite_characters)
+    @people = @work.people.joins(:favorite_people).merge(@user.favorite_people)
+    @orgs = @work.
+      organizations.
+      joins(:favorite_organizations).
+      merge(@user.favorite_organizations)
+    @resources = @characters | @people | @orgs
+
+    I18n.locale = @user.locale
+
+    subject = default_i18n_subject(
+      work_title: @work.decorate.local_title,
+      resource_name: @resources.first.decorate.local_name
+    )
+    mail(to: @user.email, subject: subject, &:mjml)
+  end
 end
