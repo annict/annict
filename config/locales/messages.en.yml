@@ -41,6 +41,8 @@ en:
       your_records: Your Records
     favorite_characters:
       no_characters: No Characters
+    favorite_organizations:
+      no_organizations: No Organizations
     favorite_people:
       no_people: No Poeple
     forum:

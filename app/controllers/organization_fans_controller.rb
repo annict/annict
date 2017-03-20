@@ -5,13 +5,17 @@ class OrganizationFansController < ApplicationController
 
   def index(organization_id)
     @organization = Organization.published.find(organization_id)
-    @fan_users = @organization.users.order("favorite_organizations.id DESC")
+    @favorite_orgs = @organization.
+      favorite_organizations.
+      order(watched_works_count: :desc)
   end
 
   private
 
   def load_i18n
     keys = {
+      "verb.follow": nil,
+      "noun.following": nil,
       "messages.components.favorite_button.add_to_favorites": nil,
       "messages.components.favorite_button.added_to_favorites": nil,
     }

@@ -41,6 +41,8 @@ ja:
       your_records: あなたの記録
     favorite_characters:
       no_characters: キャラクターはいません
+    favorite_organizations:
+      no_organizations: 団体はありません
     favorite_people:
       no_people: 人物はいません
     forum:

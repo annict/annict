@@ -50,21 +50,21 @@ h1.h2.font-weight-bold
       dt.small = t "activerecord.attributes.person.wikipedia"
       dd = link_with_domain person.wikipedia_url
 
-- if @fan_users.present?
+- if @favorite_people.present?
   .mb-2
     h2.h4.font-weight-bold.mb-1
       = icon "users", class: "mr-zp25"
       = t "noun.fans"
       span.pl-zp25
-        = "(#{t('noun.users_count', count: @fan_users.length)})"
+        = "(#{t('noun.users_count', count: @favorite_people.length)})"
 
     .row.px-1
-      - @fan_users.each do |user|
+      - @favorite_people.each do |favorite_person|
         .col.col-auto.pl-0.pr-zp5.pb-zp5
-          = link_to user_path(user.username) do
-            = ann_image_tag(user.profile, :tombo_avatar, size: "30x30", class: "rounded-circle", alt: user.decorate.name_with_username, title: user.decorate.name_with_username)
+          = link_to user_path(favorite_person.user.username) do
+            = ann_image_tag(favorite_person.user.profile, :tombo_avatar, size: "30x30", class: "rounded-circle", alt: favorite_person.user.decorate.name_with_username, title: favorite_person.user.decorate.name_with_username)
     
-    - if @fan_users.length > 30
+    - if @favorite_people.length > 30
       .text-right
         = link_to t("verb.view_all"), person_fans_path(person)
 

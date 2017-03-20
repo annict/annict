@@ -9,4 +9,4 @@
     c-favorite-button resource-type="Organization" :resource-id="#{@organization.id}" :init-is-favorited="#{user_signed_in? && current_user.favorite?(@organization)}" :is-signed-in="#{user_signed_in?}"
 
 .container
-  = render "organizations/subnav", organization: organization, fan_users: fan_users
+  = render "organizations/subnav", organization: organization, favorite_resources: favorite_resources

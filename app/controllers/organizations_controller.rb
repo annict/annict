@@ -31,7 +31,9 @@ class OrganizationsController < ApplicationController
       group_by { |s| s.work.season&.year.presence || 0 }
     @staff_years = @staffs_with_year.keys.sort.reverse
 
-    @fan_users = @organization.users.order("favorite_organizations.id DESC")
+    @favorite_orgs = @organization.
+      favorite_organizations.
+      order(id: :desc)
   end
 
   private

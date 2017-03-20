@@ -7,8 +7,9 @@
 
 = render "works/header", work: @work
 
-.c-card.container.pt-1.mb-2
-  = render "characters/character_list", casts: @casts
+.c-card.pt-1.mb-2
+  .container
+    = render "characters/character_list", casts: @casts
 
 = render "application/components/footer"
 = render "application/components/tabbar"

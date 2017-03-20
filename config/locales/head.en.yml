@@ -3,18 +3,30 @@ en:
     meta:
       description:
         _common: Annict is the platform for Anime addicts. Track your watching anime, follow friends, read their reviews, and much more!
+        character_fans:
+          index: Check out fans of %{character_name}!
         characters:
           index: Looking for character information on %{title}? Find out more with Annict!
           show: Looking for character information on %{name}? Find out more with Annict!
         episodes:
           index: Looking for episode information on %{title}? Find out more with Annict!
           show: Looking for reviews on %{work_title} %{episode_title_with_number}? Find out more with Annict!
+        favorite_characters:
+          index: Check out %{profile_name} (%{username})'s favorite characters!
+        favorite_organizations:
+          index: Check out %{profile_name} (%{username})'s favorite organizations!
+        favorite_people:
+          index: Check out %{profile_name} (%{username})'s favorite people!
+        organization_fans:
+          index: Check out fans of %{organization_name}!
         organizations:
           show: Looking for information on %{name}? Find out more with Annict!
         people:
           show: Looking for information on %{name}? Find out more with Annict!
+        person_fans:
+          index: Check out fans of %{person_name}!
         records:
-          show: Check out %{profile_name} (@%{username})'s records!
+          show: Check out %{profile_name} (%{username})'s records!
         registrations:
           new: Start using Annict!
         sessions:
@@ -22,10 +34,10 @@ en:
         staffs:
           index: Looking for staff information on %{title}? Find out more with Annict!
         users:
-          followers: Check out %{profile_name} (@%{username})'s profile!
-          following: Check out %{profile_name} (@%{username})'s profile!
-          show: Check out %{profile_name} (@%{username})'s profile!
-          works: Check out %{profile_name} (@%{username})'s profile!
+          followers: Check out %{profile_name} (%{username})'s profile!
+          following: Check out %{profile_name} (%{username})'s profile!
+          show: Check out %{profile_name} (%{username})'s profile!
+          works: Check out %{profile_name} (%{username})'s profile!
         works:
           popular: Looking for popular anime? Find out more with Annict!
           season: Looking for information on %{name} anime? Find out more with Annict!
@@ -39,6 +51,8 @@ en:
         index: Channel Works
       channels:
         index: Channel List
+      character_fans:
+        index: Fans of %{character_name} (Anime)
       characters:
         index: Characters of %{title} (Anime)
         show: "%{name}"
@@ -68,6 +82,8 @@ en:
         people:
           activities: Resource Activities - %{name}
           index: People
+        person_fans:
+          index: Fans of %{person_name}
         programs:
           activities: Activities
           edit: Edit Program
@@ -89,6 +105,12 @@ en:
       episodes:
         index: Episodes of %{title} (Anime)
         show: Anime "%{work_title}" - %{episode_title_with_number}
+      favorite_characters:
+        index: "%{profile_name} (%{username})'s favorite characters"
+      favorite_organizations:
+        index: "%{profile_name} (%{username})'s favorite organizations"
+      favorite_people:
+        index: "%{profile_name} (%{username})'s favorite people"
       forum:
         categories:
           show: "%{name} - Forum"
@@ -115,6 +137,8 @@ en:
         new: Sign up
       options:
         index: Options
+      organization_fans:
+        index: Fans of %{organization_name}
       organizations:
         show: "%{name}"
       pages:
@@ -132,7 +156,7 @@ en:
       providers:
         index: Connections
       records:
-        show: "A Record by %{profile_name} (@%{username}) on %{work_title} - %{episode_title_with_number}"
+        show: "A Record by %{profile_name} (%{username}) on %{work_title} - %{episode_title_with_number}"
       registrations:
         new: Sign Up
       sayonara:
@@ -155,10 +179,10 @@ en:
       tracks:
         show: Track
       users:
-        followers: People following %{profile_name} (@%{username})
-        following: People followed by %{profile_name} (@%{username})
-        show: "%{profile_name} (@%{username})"
-        works: "%{profile_name} (@%{username})'s \"%{action}\" anime"
+        followers: People following %{profile_name} (%{username})
+        following: People followed by %{profile_name} (%{username})
+        show: "%{profile_name} (%{username})"
+        works: "%{profile_name} (%{username})'s \"%{action}\" anime"
       works:
         popular: Popular anime
         season: "%{name} Anime"

@@ -5,11 +5,11 @@
 - set_page_category "person_fans_index"
 
 .c-card.mb-1
-  = render "people/header", person: @person, fan_users: @fan_users
+  = render "people/header", person: @person, favorite_resources: @favorite_people
 
 .c-card.mb-2
-  - if @fan_users.present?
-    = render "users/user_list", users: @fan_users
+  - if @favorite_people.present?
+    = render "users/fan_user_list", favorite_resources: @favorite_people
   - else
     = render "application/components/empty", text: t("messages.person_fans.no_users")
 

@@ -5,11 +5,11 @@
 - set_page_category "organization_fans_index"
 
 .c-card.mb-1
-  = render "organizations/header", organization: @organization, fan_users: @fan_users
+  = render "organizations/header", organization: @organization, favorite_resources: @favorite_orgs
 
 .c-card.mb-2
-  - if @fan_users.present?
-    = render "users/user_list", users: @fan_users
+  - if @favorite_orgs.present?
+    = render "users/fan_user_list", favorite_resources: @favorite_orgs
   - else
     = render "application/components/empty", text: t("messages.organization_fans.no_users")
 

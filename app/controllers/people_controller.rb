@@ -50,7 +50,9 @@ class PeopleController < ApplicationController
       @staff_years = @staffs_with_year.keys.sort.reverse
     end
 
-    @fan_users = @person.users.order("favorite_people.id DESC")
+    @favorite_people = @person.
+      favorite_people.
+      order(id: :desc)
   end
 
   private

@@ -22,7 +22,9 @@ class CharactersController < ApplicationController
       group_by { |cast| cast.work.season&.year.presence || 0 }
     @cast_years = @casts_with_year.keys.sort.reverse
 
-    @fan_users = @character.users.order("favorite_characters.id DESC")
+    @favorite_characters = @character.
+      favorite_characters.
+      order(id: :desc)
   end
 
   private

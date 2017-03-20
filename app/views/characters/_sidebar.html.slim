@@ -57,21 +57,21 @@ h1.h2.font-weight-bold
             = "#{t('noun.source')}:".html_safe
           = character.decorate.local_description_source
 
-- if @fan_users.present?
+- if @favorite_characters.present?
   .mb-2
     h2.h4.font-weight-bold.mb-1
       = icon "users", class: "mr-zp25"
       = t "noun.fans"
       span.pl-zp25
-        = "(#{t('noun.users_count', count: @fan_users.length)})"
+        = "(#{t('noun.users_count', count: @favorite_characters.length)})"
 
     .row.px-1
-      - @fan_users.each do |user|
+      - @favorite_characters.each do |favorite_character|
         .col.col-auto.pl-0.pr-zp5.pb-zp5
-          = link_to user_path(user.username) do
-            = ann_image_tag(user.profile, :tombo_avatar, size: "30x30", class: "rounded-circle", alt: user.decorate.name_with_username, title: user.decorate.name_with_username)
+          = link_to user_path(favorite_character.user.username) do
+            = ann_image_tag(favorite_character.user.profile, :tombo_avatar, size: "30x30", class: "rounded-circle", alt: favorite_character.user.decorate.name_with_username, title: favorite_character.user.decorate.name_with_username)
     
-    - if @fan_users.length > 30
+    - if @favorite_characters.length > 30
       .text-right
         = link_to t("verb.view_all"), character_fans_path(character)
 

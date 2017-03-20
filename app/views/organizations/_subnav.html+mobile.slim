@@ -6,4 +6,4 @@
       = active_link_to organization_fans_path(organization), class: "c-slidable-subnav__link", class_active: "c-slidable-subnav__link--active", active: params[:controller] == "organization_fans" && params[:action].in?(%w(index)) do
         = t "noun.fans"
         span.pl-zp25
-          = "(#{t('noun.users_count', count: fan_users.length)})"
+          = "(#{t('noun.users_count', count: favorite_resources.length)})"

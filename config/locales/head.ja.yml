@@ -3,18 +3,30 @@ ja:
     meta:
       description:
         _common: Annict (アニクト)は、見たアニメを記録したり、見た感想を友達にシェアすることができるWebサービスです。「今どの作品を何話まで見ているんだっけ？」を解消します。
+        character_fans:
+          index: "%{character_name}のファンをチェック！"
         characters:
           index: アニメ「%{title}」のキャラクターをチェック！
           show: Annictで%{name}をチェック！
         episodes:
           index: アニメ「%{title}」のエピソードをチェック！
           show: アニメ「%{work_title}」%{episode_title_with_number}の感想をチェック!
+        favorite_characters:
+          index: "%{profile_name} (%{username})のお気に入りのキャラをチェック！"
+        favorite_organizations:
+          index: "%{profile_name} (%{username})のお気に入りの団体をチェック！"
+        favorite_people:
+          index: "%{profile_name} (%{username})のお気に入りの人物をチェック！"
+        organization_fans:
+          index: "%{organization_name}のファンをチェック！"
         organizations:
           show: "%{name}の情報をチェック！"
         people:
           show: "%{name}の情報をチェック！"
+        person_fans:
+          index: "%{person_name}のファンをチェック！"
         records:
-          show: "%{profile_name} (@%{username})さんの感想をチェック！"
+          show: "%{profile_name} (%{username})さんの感想をチェック！"
         registrations:
           new: Annictを始めよう！
         sessions:
@@ -22,10 +34,10 @@ ja:
         staffs:
           index: "アニメ「%{title}」のスタッフ情報をチェック！"
         users:
-          followers: Check out %{profile_name} (@%{username})'s profile!
-          following: Check out %{profile_name} (@%{username})'s profile!
-          show: Check out %{profile_name} (@%{username})'s profile!
-          works: Check out %{profile_name} (@%{username})'s profile!
+          followers: Check out %{profile_name} (%{username})'s profile!
+          following: Check out %{profile_name} (%{username})'s profile!
+          show: Check out %{profile_name} (%{username})'s profile!
+          works: Check out %{profile_name} (%{username})'s profile!
         works:
           popular: 人気アニメをチェック！
           season: "%{name}アニメをチェック！"
@@ -42,6 +54,8 @@ ja:
       characters:
         index: "アニメ「%{title}」のキャラクター"
         show: "%{name}"
+      character_fans:
+        index: "%{character_name}のファン一覧"
       comments:
         edit: コメント編集
       db:
@@ -89,6 +103,12 @@ ja:
       episodes:
         index: アニメ「%{title}」のエピソード
         show: アニメ「%{work_title}」%{episode_title_with_number}
+      favorite_characters:
+        index: "%{profile_name} (%{username})のお気に入りのキャラ"
+      favorite_organizations:
+        index: "%{profile_name} (%{username})のお気に入りの団体"
+      favorite_people:
+        index: "%{profile_name} (%{username})のお気に入りの人物"
       forum:
         categories:
           show: "%{name} - Forum"
@@ -115,6 +135,8 @@ ja:
           show: 認証コード
       options:
         index: オプション
+      organization_fans:
+        index: "%{organization_name}のファン一覧"
       organizations:
         show: "%{name}"
       pages:
@@ -123,6 +145,8 @@ ja:
       passwords:
         edit: パスワード忘れた？
         new: パスワード忘れた？
+      person_fans:
+        index: "%{person_name}のファン一覧"
       people:
         show: "%{name}"
       profiles:
@@ -132,7 +156,7 @@ ja:
       providers:
         index: ソーシャル連携
       records:
-        show: "%{profile_name} (@%{username})の%{work_title} %{episode_title_with_number}への感想"
+        show: "%{profile_name} (%{username})の%{work_title} %{episode_title_with_number}への感想"
       registrations:
         new: ユーザ登録
       sayonara:
@@ -155,10 +179,10 @@ ja:
       tracks:
         show: 記録する
       users:
-        followers: "%{profile_name} (@%{username})をフォローしている人"
-        following: "%{profile_name} (@%{username})がフォローしている人"
-        show: "%{profile_name} (@%{username})"
-        works: "%{profile_name} (@%{username})が\"%{action}\"アニメ"
+        followers: "%{profile_name} (%{username})をフォローしている人"
+        following: "%{profile_name} (%{username})がフォローしている人"
+        show: "%{profile_name} (%{username})"
+        works: "%{profile_name} (%{username})が\"%{action}\"アニメ"
       works:
         popular: 人気アニメ
         season: "%{name}アニメ"

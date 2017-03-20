@@ -13,4 +13,4 @@
     c-favorite-button resource-type="Person" :resource-id="#{person.id}" :init-is-favorited="#{user_signed_in? && current_user.favorite?(person)}" :is-signed-in="#{user_signed_in?}"
 
 .container
-  = render "people/subnav", person: person, fan_users: fan_users
+  = render "people/subnav", person: person, favorite_resources: favorite_resources
