@@ -39,6 +39,10 @@ Rails.application.routes.draw do
       resources :people, only: [:index]
       resources :receptions, only: [:create, :destroy]
 
+      resources :favorites, only: %i(create) do
+        post :unfavorite, on: :collection
+      end
+
       resources :follows, only: %i(create) do
         post :unfollow, on: :collection
       end
@@ -194,6 +198,15 @@ Rails.application.routes.draw do
     root "home#index"
   end
 
+  resource :confirmation, only: [:show]
+  resource :search, only: [:show]
+  resource :track, only: %i(show)
+  resources :comments, only: %i(edit update destroy)
+  resources :friends, only: [:index]
+  resources :mute_users, only: [:destroy]
+  resources :notifications, only: [:index]
+  resources :programs, only: [:index]
+
   resources :settings, only: [:index]
   scope :settings do
     resource :account, only: [:show, :update]
@@ -220,7 +233,7 @@ Rails.application.routes.draw do
   end
 
   resources :characters, only: %i(show) do
-    resources :images, only: %i(index new create destroy), controller: :character_images
+    resources :fans, only: %i(index), controller: "character_fans"
   end
 
   resource :channel, only: [] do
@@ -238,16 +251,13 @@ Rails.application.routes.draw do
       url_hash: /[0-9a-zA-Z_-]{10}/
   end
 
-  resource :confirmation, only: [:show]
-  resource :search, only: [:show]
-  resource :track, only: %i(show)
-  resources :comments, only: %i(edit update destroy)
-  resources :friends, only: [:index]
-  resources :mute_users, only: [:destroy]
-  resources :notifications, only: [:index]
-  resources :organizations, only: [:show]
-  resources :people, only: [:show]
-  resources :programs, only: [:index]
+  resources :organizations, only: %i(show) do
+    resources :fans, only: %i(index), controller: "organization_fans"
+  end
+
+  resources :people, only: %i(show) do
+    resources :fans, only: %i(index), controller: "person_fans"
+  end
 
   resources :users, only: [] do
     collection do
@@ -266,6 +276,9 @@ Rails.application.routes.draw do
         status_kind: /wanna_watch|watching|watched|on_hold|stop_watching/
       }
 
+    resources :favorite_characters, only: %i(index)
+    resources :favorite_organizations, only: %i(index)
+    resources :favorite_people, only: %i(index)
     resources :records, only: %i(create show edit update destroy) do
       resources :comments, only: %i(create)
     end

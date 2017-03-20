@@ -1,0 +1,17 @@
+- title = t "head.title.favorite_organizations.index", profile_name: @user.profile.name, username: @user.username
+- description = meta_description(t("head.meta.description.favorite_organizations.index", profile_name: @user.profile.name, username: @user.username))
+- set_meta_tags(title: title, description: description, og: { description: description }, twitter: { description: description }, reverse: true, prefix: false)
+- set_page_category "favorite_organizations_index"
+
+= render "users/low_profile_header", user: @user
+= render "users/favorite_nav", user: @user
+
+.c-card.mt-1.mb-2
+  .container.py-zp5
+    = render "favorite_organizations/organization_list", favorite_organizations: @favorite_organizations
+
+= render "application/components/footer"
+= render "application/components/tabbar"
+
+- content_for :js_templates do
+  = render "application/js_templates/favorite_button"

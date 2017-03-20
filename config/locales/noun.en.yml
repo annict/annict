@@ -36,19 +36,29 @@ en:
     english: English
     episodes: Episodes
     error: Error
+    fans: Fans
+    favorite_characters_shorten: Characters
+    favorite_characters: Favorite Characters
+    favorite_organizations_shorten: Organizations
+    favorite_organizations: Favorite Organizations
+    favorite_people_shorten: People
+    favorite_people: Favorite People
     first: First
     following: Following
     friends_who_are_watching: Friends Who Are Watching
     home: Home
     information: Information
     japanese: Japanese
+    joined_works: Works
     language: Language
     last: Last
     more: More
+    n_works_watched: "%{count} Works Watched"
     next_season: Next Season
     official_site: Official Site
     on_hold: On Hold
     or: OR
+    organization: Organization
     organizations: Organizations
     other_users: Other Users
     password: Password
@@ -74,12 +84,15 @@ en:
     skip: Skip
     sns_friends: SNS Friends
     source: Source
-    staffs: Staff
+    staff: Staff
+    staffs: Staffs
     state: State
     syobocal: Syobocal
     terms_of_use: Terms of Use
     title: Title
+    users_count: "%{count} people"
     voice_actor: Voice Actor
+    voice_actors: Voice Actors
     watching: Watching
     watching_shorten: Watching
     work_image: Work image

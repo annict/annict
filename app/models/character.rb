@@ -32,12 +32,12 @@
 #  updated_at                :datetime         not null
 #  description_source        :string           default(""), not null
 #  description_source_en     :string           default(""), not null
-#  favorites_count           :integer          default(0), not null
 #  favorite_characters_count :integer          default(0), not null
 #
 # Indexes
 #
-#  index_characters_on_name_and_kind  (name,kind) UNIQUE
+#  index_characters_on_favorite_characters_count  (favorite_characters_count)
+#  index_characters_on_name_and_kind              (name,kind) UNIQUE
 #
 
 class Character < ApplicationRecord
@@ -65,11 +65,22 @@ class Character < ApplicationRecord
   has_many :character_images, dependent: :destroy
   has_many :db_activities, as: :trackable, dependent: :destroy
   has_many :db_comments, as: :resource, dependent: :destroy
+  has_many :favorite_characters, dependent: :destroy
+  has_many :users, through: :favorite_characters
+  has_many :works, through: :casts
   has_one :character_image
 
   validates :name, presence: true, uniqueness: { scope: :kind }
   validates :description, presence_pair: :description_source
   validates :description_en, presence_pair: :description_source_en
+
+  def favorites
+    favorite_characters
+  end
+
+  def oldest_work
+    works.joins(:season).order("seasons.sort_number ASC").first
+  end
 
   def to_diffable_hash
     data = self.class::DIFF_FIELDS.each_with_object({}) do |field, hash|

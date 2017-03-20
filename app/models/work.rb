@@ -73,8 +73,10 @@ class Work < ApplicationRecord
     foreign_key: :recipient_id,
     foreign_type: :recipient,
     dependent: :destroy
+  has_many :cast_people, through: :casts, source: :person
   has_many :casts, dependent: :destroy
   has_many :channel_works, dependent: :destroy
+  has_many :characters, through: :casts
   has_many :checkins, dependent: :destroy
   has_many :db_activities, as: :trackable, dependent: :destroy
   has_many :db_comments, as: :resource, dependent: :destroy
@@ -86,6 +88,7 @@ class Work < ApplicationRecord
     source_type: "Organization"
   has_many :programs, dependent: :destroy
   has_many :statuses, dependent: :destroy
+  has_many :staff_people, through: :staffs, source: :resource, source_type: "Person"
   has_many :staffs, dependent: :destroy
   has_one :work_image, dependent: :destroy
   has_one :item, dependent: :destroy
@@ -139,6 +142,10 @@ class Work < ApplicationRecord
     joins('LEFT OUTER JOIN "seasons" ON "seasons"."id" = "works"."season_id"').
       order("seasons.sort_number #{type} NULLS LAST, works.id #{type}")
   }
+
+  def people
+    Person.where(id: (cast_people.pluck(:id) | staff_people.pluck(:id)))
+  end
 
   # 作品のエピソード数分の空白文字列が入った配列を返す
   # Chart.jsのx軸のラベルを消すにはこれしか方法がなかったんだ…! たぶん…。

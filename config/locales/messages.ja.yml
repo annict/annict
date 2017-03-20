@@ -19,6 +19,8 @@ ja:
       updated: 更新しました
     channel_works:
       no_works: 作品はありません
+    character_fans:
+      no_users: ファンはいません
     comments:
       comment_form_placeholder: 記録にコメントしよう！
       create: コメントする
@@ -37,6 +39,12 @@ ja:
       comments_by_others: 皆さんの感想
       watched_x_times: "%{records_count}回見ました"
       your_records: あなたの記録
+    favorite_characters:
+      no_characters: キャラクターはいません
+    favorite_organizations:
+      no_organizations: 団体はありません
+    favorite_people:
+      no_people: 人物はいません
     forum:
       comments:
         created: 投稿しました
@@ -60,6 +68,9 @@ ja:
         hero_title_mobile_html: 見たアニメを記録して、<br>共有しよう。
         start_tracking: 視聴記録を始める
     components:
+      favorite_button:
+        add_to_favorites: お気に入りに追加
+        added_to_favorites: お気に入り追加済
       load_more_button:
         more: もっと見る
       mute_user_button:
@@ -100,9 +111,13 @@ ja:
     options:
       prevent_spoiler_of_episode_you_have_not_watched: 未記録エピソードのネタバレを防ぐ
       prevent_spoiler_of_episode_you_have_not_watched_detail: 見てる、見たい、または中断したアニメの中で、記録していないエピソードに投稿された他の利用者からの感想を表示しないようにします。
+    organization_fans:
+      no_users: ファンはいません
     passwords:
       new:
         forgot_your_password: パスワード忘れた？
+    person_fans:
+      no_users: ファンはいません
     profiles:
       saved: 保存しました
     programs:

@@ -1,0 +1,12 @@
+.container.py-1.mb-1
+  .text-center
+    h1.h2
+      = link_to @organization.decorate.local_name, organization_path(@organization)
+    span.badge.u-badge-organizations
+      = t "noun.organization"
+
+  .mt-1.text-center
+    c-favorite-button resource-type="Organization" :resource-id="#{@organization.id}" :init-is-favorited="#{user_signed_in? && current_user.favorite?(@organization)}" :is-signed-in="#{user_signed_in?}"
+
+.container
+  = render "organizations/subnav", organization: organization, favorite_resources: favorite_resources

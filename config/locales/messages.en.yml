@@ -19,6 +19,8 @@ en:
       updated: Account has been updated.
     channel_works:
       no_works: No works
+    character_fans:
+      no_users: No users
     comments:
       comment_form_placeholder: Click here to add a new comment
       create: Create
@@ -37,6 +39,12 @@ en:
       comments_by_others: Comments by Others
       watched_x_times: Watched %{records_count} times
       your_records: Your Records
+    favorite_characters:
+      no_characters: No Characters
+    favorite_organizations:
+      no_organizations: No Organizations
+    favorite_people:
+      no_people: No Poeple
     forum:
       comments:
         created: Created
@@ -60,6 +68,9 @@ en:
         hero_title_mobile_html: The platform for Anime addicts.
         start_tracking: Start Tracking
     components:
+      favorite_button:
+        add_to_favorites: Add to Favorites
+        added_to_favorites: Added to Favorites
       load_more_button:
         more: View more
       mute_user_button:
@@ -100,9 +111,13 @@ en:
     options:
       prevent_spoiler_of_episode_you_have_not_watched: Prevent spoiler of episode which you have not watched
       prevent_spoiler_of_episode_you_have_not_watched_detail: This option will hide comments on unwatched episodes when you've set status as "Watched", "Plan to Watch", or "On Hold".
+    organization_fans:
+      no_users: No users
     passwords:
       new:
         forgot_your_password: Forgot your password?
+    person_fans:
+      no_users: No users
     profiles:
       saved: Profile has been saved.
     programs:

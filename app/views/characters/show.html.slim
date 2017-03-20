@@ -13,6 +13,8 @@
       .col-3.pr-0
         = render "characters/sidebar", character: @character
       .col-9
+        = render "characters/subnav", character: @character
+
         .c-card
           .container.py-1
             = render "people/grid", root_resource: @character, resource_years: @cast_years, resources_with_year: @casts_with_year

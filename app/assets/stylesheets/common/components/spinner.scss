@@ -1,8 +1,3 @@
-$b: rgba(map-get($ann-color-shirobako, rb), .5);
-$a: rgba(map-get($ann-color-shirobako, a), .5);
-$k: rgba(map-get($ann-color-shirobako, ik), .5);
-$o: rgba(map-get($ann-color-shirobako, ho), .5);
-
 .c-spinner {
   border: 0;
   cursor: default;
@@ -23,7 +18,7 @@ $o: rgba(map-get($ann-color-shirobako, ho), .5);
 
   &::after {
     animation: ann-spin .7s infinite linear;
-    border-color: $b $a $k $o;
+    border-color: $ann-color-mizuho $ann-color-green;
     border-radius: 50%;
     border-style: solid;
     border-width: .2rem;

@@ -3,16 +3,7 @@
     <mj-text align="center" padding-bottom="20px"><%= I18n.t("email_notification_mailer.next_season_came.description_html", name: @season.decorate.local_name) %></mj-text>
 
     <% @works.each do |work| %>
-      <mj-section padding="0">
-        <mj-column width="20%">
-          <mj-image src="<%= ann_email_image_url(work.work_image, :attachment, size: "140x140") %>" align="center" width="70" href="<%= work_url(work, utm_source: 'email_notification', utm_campaign: 'next_season_came', utm_medium: 'email') %>" padding-right="0px"></mj-image>
-        </mj-column>
-        <mj-column width="80%">
-          <mj-text font-size="14px" padding-bottom="3px"><%= "#{work.watchers_count} Watchers" %></mj-text>
-          <mj-text font-size="18px" font-weight="400" padding-top="0" padding-bottom="7px"><%= "#{work.decorate.local_title}" %></mj-text>
-          <mj-button align="left" href="<%= work_url(id: work.id, utm_source: 'email_notification', utm_campaign: 'next_season_came', utm_medium: 'email') %>" background-color="#fff" border="1px solid #f85b73" color="#f85b73" padding-top="0"><%= I18n.t("email_notification_mailer.next_season_came.view_detail") %></mj-button>
-        </mj-column>
-      </mj-section>
+      <%= render "email_notification_mailer/work", work: work %>
     <% end %>
 
     <mj-section padding-top="20px" padding-bottom="10px">

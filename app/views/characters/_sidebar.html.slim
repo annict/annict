@@ -1,53 +1,82 @@
-h1.h2
+h1.h2.font-weight-bold
   = link_to character.decorate.local_name, character_path(character)
-span.badge.u-badge-characters
-  = t "noun.character"
-h2.h4.font-weight-bold.mt-2.mb-1
-  = icon "sticky-note-o", class: "mr-zp25"
-  = t "noun.information"
-dl
-  dt.small = t "activerecord.attributes.character.name"
-  dd = character.name
-  - if character.name_kana.present?
-    dt.small = t "activerecord.attributes.character.name_kana"
-    dd = character.name_kana
-  - if character.name_en.present?
-    dt.small = t "activerecord.attributes.character.name_en"
-    dd = character.name_en
-  - if character.decorate.local_nickname.present?
-    dt.small = t "activerecord.attributes.character.nickname"
-    dd = character.decorate.local_nickname
-  - if character.decorate.local_kind.present?
-    dt.small = t "activerecord.attributes.character.kind"
-    dd = character.decorate.local_kind
-  - if character.decorate.local_birthday.present?
-    dt.small = t "activerecord.attributes.character.birthday"
-    dd = character.decorate.local_birthday
-  - if character.decorate.local_age.present?
-    dt.small = t "activerecord.attributes.character.age"
-    dd = character.decorate.local_age
-  - if character.decorate.local_blood_type.present?
-    dt.small = t "activerecord.attributes.character.blood_type"
-    dd = character.decorate.local_blood_type
-  - if character.decorate.local_height.present?
-    dt.small = t "activerecord.attributes.character.height"
-    dd = character.decorate.local_height
-  - if character.decorate.local_weight.present?
-    dt.small = t "activerecord.attributes.character.weight"
-    dd = character.decorate.local_weight
-  - if character.decorate.local_nationality.present?
-    dt.small = t "activerecord.attributes.character.nationality"
-    dd = character.decorate.local_nationality
-  - if character.decorate.local_occupation.present?
-    dt.small = t "activerecord.attributes.character.occupation"
-    dd = character.decorate.local_occupation
-  - if character.decorate.local_description.present?
-    dt.small = t "activerecord.attributes.character.description"
-    dd
-      = character.decorate.local_description
-      .small
-        span.mr-zp25
-          = "#{t('noun.source')}:".html_safe
-        = character.decorate.local_description_source
+
+.mb-1
+  span.badge.u-badge-characters
+    = t "noun.character"
+
+.mb-2
+  c-favorite-button.w-100 resource-type="Character" :resource-id="#{character.id}" :init-is-favorited="#{user_signed_in? && current_user.favorite?(character)}" :is-signed-in="#{user_signed_in?}"
+
+.mb-2
+  h2.h4.font-weight-bold.mt-2.mb-1
+    = icon "sticky-note-o", class: "mr-zp25"
+    = t "noun.information"
+  dl
+    dt.small = t "activerecord.attributes.character.name"
+    dd = character.name
+    - if character.name_kana.present?
+      dt.small = t "activerecord.attributes.character.name_kana"
+      dd = character.name_kana
+    - if character.name_en.present?
+      dt.small = t "activerecord.attributes.character.name_en"
+      dd = character.name_en
+    - if character.decorate.local_nickname.present?
+      dt.small = t "activerecord.attributes.character.nickname"
+      dd = character.decorate.local_nickname
+    - if character.decorate.local_kind.present?
+      dt.small = t "activerecord.attributes.character.kind"
+      dd = character.decorate.local_kind
+    - if character.decorate.local_birthday.present?
+      dt.small = t "activerecord.attributes.character.birthday"
+      dd = character.decorate.local_birthday
+    - if character.decorate.local_age.present?
+      dt.small = t "activerecord.attributes.character.age"
+      dd = character.decorate.local_age
+    - if character.decorate.local_blood_type.present?
+      dt.small = t "activerecord.attributes.character.blood_type"
+      dd = character.decorate.local_blood_type
+    - if character.decorate.local_height.present?
+      dt.small = t "activerecord.attributes.character.height"
+      dd = character.decorate.local_height
+    - if character.decorate.local_weight.present?
+      dt.small = t "activerecord.attributes.character.weight"
+      dd = character.decorate.local_weight
+    - if character.decorate.local_nationality.present?
+      dt.small = t "activerecord.attributes.character.nationality"
+      dd = character.decorate.local_nationality
+    - if character.decorate.local_occupation.present?
+      dt.small = t "activerecord.attributes.character.occupation"
+      dd = character.decorate.local_occupation
+    - if character.decorate.local_description.present?
+      dt.small = t "activerecord.attributes.character.description"
+      dd
+        = character.decorate.local_description
+        .small
+          span.mr-zp25
+            = "#{t('noun.source')}:".html_safe
+          = character.decorate.local_description_source
+
+- if @favorite_characters.present?
+  .mb-2
+    h2.h4.font-weight-bold.mb-1
+      = icon "users", class: "mr-zp25"
+      = t "noun.fans"
+      span.pl-zp25
+        = "(#{t('noun.users_count', count: @favorite_characters.length)})"
+
+    .row.px-1
+      - @favorite_characters.each do |favorite_character|
+        .col.col-auto.pl-0.pr-zp5.pb-zp5
+          = link_to user_path(favorite_character.user.username) do
+            = ann_image_tag(favorite_character.user.profile, :tombo_avatar, size: "30x30", class: "rounded-circle", alt: favorite_character.user.decorate.name_with_username, title: favorite_character.user.decorate.name_with_username)
+    
+    - if @favorite_characters.length > 30
+      .text-right
+        = link_to t("verb.view_all"), character_fans_path(character)
+
 - if user_signed_in? && current_user.committer?
   = link_to t("messages._common.edit_on_annict_db"), edit_db_character_path(character), class: "btn btn-secondary w-100 mt-zp5"
+
+- content_for :js_templates
+  = render "application/js_templates/favorite_button"

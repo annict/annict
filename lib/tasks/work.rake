@@ -69,4 +69,33 @@ namespace :work do
 
     Rails.logger.info "work:send_next_season_came_email >> task processed"
   end
+
+  task send_favorite_works_added_email: :environment do
+    Work.yesterday.find_each do |work|
+      favorite_character_user_ids = FavoriteCharacter.
+        joins(:character).
+        merge(work.characters).
+        pluck(:user_id)
+      favorite_people_user_ids = FavoritePerson.
+        joins(:person).
+        merge(work.people).
+        pluck(:user_id)
+      favorite_org_user_ids = FavoriteOrganization.
+        joins(:organization).
+        merge(work.organizations).
+        pluck(:user_id)
+      user_ids = favorite_character_user_ids |
+        favorite_people_user_ids |
+        favorite_org_user_ids
+      users = User.
+        joins(:email_notification).
+        where(id: user_ids).
+        where(email_notifications: { event_favorite_works_added: true })
+
+      users.find_each do |user|
+        next if user.statuses.where(work: work).exists?
+        EmailNotificationService.send_email("favorite_works_added", user, work.id)
+      end
+    end
+  end
 end

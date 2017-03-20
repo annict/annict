@@ -1,0 +1,16 @@
+.container.py-1.mb-1
+  .text-center
+    h1.h2
+      = link_to person.decorate.local_name, person_path(person)
+    - if person.voice_actor?
+      span.badge.u-badge-people
+        = t "noun.voice_actor"
+    - if person.staff?
+      span.badge.u-badge-people
+        = t "noun.staff"
+
+  .mt-1.text-center
+    c-favorite-button resource-type="Person" :resource-id="#{person.id}" :init-is-favorited="#{user_signed_in? && current_user.favorite?(person)}" :is-signed-in="#{user_signed_in?}"
+
+.container
+  = render "people/subnav", person: person, favorite_resources: favorite_resources

@@ -4,39 +4,38 @@
 - set_meta_tags(title: title, description: description, keywords: keywords, og: { description: description }, twitter: { description: description }, reverse: true, prefix: false)
 - set_page_category "organizations_show"
 
+.c-card.mb-1
+  = render "organizations/header", organization: @organization, favorite_resources: @favorite_orgs
+
 .c-card.py-1.mb-1
   .container
-    .text-center
-      h1.h2
-        = link_to @organization.decorate.local_name, organization_path(@organization)
-      span.badge.u-badge-organizations
-        = t "noun.organization"
-
-    .mt-2
-      h2.h4.font-weight-bold.text-center.mt-2.mb-1
-        = icon "sticky-note-o", class: "mr-zp25"
-        = t "noun.information"
-      dl.row.mb-0
-        dt.col-6.text-right = t "activerecord.attributes.organization.name"
-        dd.col-6 = @organization.name
-        - if @organization.name_kana.present?
-          dt.col-6.text-right = t "activerecord.attributes.organization.name_kana"
-          dd.col-6 = @organization.name_kana
-        - if @organization.name_en.present?
-          dt.col-6.text-right = t "activerecord.attributes.organization.name_en"
-          dd.col-6 = @organization.name_en
-        - if @organization.url.present?
-          dt.col-6.text-right = t "activerecord.attributes.organization.official_site"
-          dd.col-6 = link_with_domain @organization.url
-        - if @organization.twitter_username.present?
-          dt.col-6.text-right = t "activerecord.attributes.organization.twitter"
-          dd.col-6 = @organization.decorate.twitter_username_link
-        - if @organization.wikipedia_url.present?
-          dt.col-6.text-right = t "activerecord.attributes.organization.wikipedia"
-          dd.col-6 = link_with_domain @organization.wikipedia_url
+    h2.h4.font-weight-bold.text-center.mb-1
+      = icon "sticky-note-o", class: "mr-zp25"
+      = t "noun.information"
+    dl.row.mb-0
+      dt.col-6.text-right = t "activerecord.attributes.organization.name"
+      dd.col-6 = @organization.name
+      - if @organization.name_kana.present?
+        dt.col-6.text-right = t "activerecord.attributes.organization.name_kana"
+        dd.col-6 = @organization.name_kana
+      - if @organization.name_en.present?
+        dt.col-6.text-right = t "activerecord.attributes.organization.name_en"
+        dd.col-6 = @organization.name_en
+      - if @organization.url.present?
+        dt.col-6.text-right = t "noun.official_site"
+        dd.col-6 = link_with_domain @organization.url
+      - if @organization.twitter_username.present?
+        dt.col-6.text-right = t "noun.twitter"
+        dd.col-6 = @organization.decorate.twitter_username_link
+      - if @organization.wikipedia_url.present?
+        dt.col-6.text-right = t "noun.wikipedia"
+        dd.col-6 = link_with_domain @organization.wikipedia_url
 
 .c-card.container.py-1.mb-2
   = render "people/grid", root_resource: @organization, resource_years: @staff_years, resources_with_year: @staffs_with_year
 
 = render "application/components/footer"
 = render "application/components/tabbar"
+
+- content_for :js_templates
+  = render "application/js_templates/favorite_button"

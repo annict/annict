@@ -12,4 +12,8 @@ class UserDecorator < ApplicationDecorator
       role_text
     end
   end
+
+  def name_with_username
+    "#{profile.name} (@#{username})"
+  end
 end

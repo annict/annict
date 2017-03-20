@@ -12,6 +12,10 @@ module Annict
         @user = user
       end
 
+      def favorites
+        @favorites ||= ::Annict::Keen::Events::Favorite.new(@request, @user, params)
+      end
+
       def follows
         @follows ||= ::Annict::Keen::Events::Follow.new(@request, @user, params)
       end

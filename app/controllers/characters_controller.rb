@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 class CharactersController < ApplicationController
+  before_action :load_i18n, only: %i(show)
   before_action :load_work, only: %i(index)
 
   def index
@@ -20,5 +21,20 @@ class CharactersController < ApplicationController
       published.
       group_by { |cast| cast.work.season&.year.presence || 0 }
     @cast_years = @casts_with_year.keys.sort.reverse
+
+    @favorite_characters = @character.
+      favorite_characters.
+      order(id: :desc)
+  end
+
+  private
+
+  def load_i18n
+    keys = {
+      "messages.components.favorite_button.add_to_favorites": nil,
+      "messages.components.favorite_button.added_to_favorites": nil,
+    }
+
+    load_i18n_into_gon keys
   end
 end

@@ -40,6 +40,10 @@ class UsersController < ApplicationController
     checkedin_works = @watching_works.checkedin_by(@user).order("c2.checkin_id DESC")
     other_works = @watching_works.where.not(id: checkedin_works.pluck(:id))
     @works = (checkedin_works + other_works).first(9)
+    @favorite_characters = @user.favorite_characters.order(id: :desc)
+    @favorite_casts = @user.favorite_people.with_cast.order(id: :desc)
+    @favorite_staffs = @user.favorite_people.with_staff.order(id: :desc)
+    @favorite_organizations = @user.favorite_organizations.order(id: :desc)
 
     activities = @user.
       activities.
