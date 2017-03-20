@@ -6,7 +6,15 @@
     </mj-button>
   </mj-column>
   <mj-column width="75%">
-    <mj-text font-size="14px" padding-bottom="3px"><%= "#{work.watchers_count} Watchers" %></mj-text>
+    <% if work.season.present? %>
+      <mj-text padding="10px 25px 0 25px">
+        <span style="color: #fff; background-color: <%= work.season.color %>; padding: 3px;">
+          <%= work.season.decorate.local_name %>
+        </span>
+      </mj-text>
+    <% end %>
+
+    <mj-text font-size="14px" padding-bottom="3px" padding-top="0"><%= "#{work.watchers_count} Watchers" %></mj-text>
     <mj-text font-size="18px" font-weight="400" padding-top="0" padding-bottom="7px">
       <%= link_to "#{work.decorate.local_title}", work_url(id: work.id, utm_source: 'email_notification', utm_campaign: 'favorite_works_added', utm_medium: 'email'), style: "color: #364f6b; text-decoration: none;" %>
     </mj-text>

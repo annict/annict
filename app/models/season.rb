@@ -68,6 +68,15 @@ class Season < ActiveRecord::Base
     "#{year}-#{name}"
   end
 
+  def color
+    case name
+    when "winter" then "#78909c"
+    when "spring" then "#ec407a"
+    when "summer" then "#42a5f5"
+    when "autumn" then "#ff7043"
+    end
+  end
+
   private
 
   def expire_cache
