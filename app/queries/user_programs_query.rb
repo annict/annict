@@ -34,7 +34,7 @@ class UserProgramsQuery
   end
 
   def program_ids(channel_works, scope: :all)
-    Rails.cache.fetch channel_works do
+    Rails.cache.fetch [@user.id, channel_works] do
       program_ids = []
 
       channel_works.each do |cw|
