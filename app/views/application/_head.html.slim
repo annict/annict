@@ -2,8 +2,8 @@
 
 = render "application/head_links"
 
-= stylesheet_link_tag "pc", media: "all"
-= javascript_include_tag "pc"
+= stylesheet_link_tag "pc", media: "all", "data-turbolinks-track": "reload"
+= javascript_include_tag "pc", "data-turbolinks-track": "reload"
 
 = csrf_meta_tags
 
