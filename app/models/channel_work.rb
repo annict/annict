@@ -17,7 +17,7 @@
 #  channel_works_work_id_idx                     (work_id)
 #
 
-class ChannelWork < ActiveRecord::Base
+class ChannelWork < ApplicationRecord
   belongs_to :channel
   belongs_to :user
   belongs_to :work, touch: true

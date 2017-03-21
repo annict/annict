@@ -17,7 +17,7 @@
 #  index_syobocal_alerts_on_sc_prog_item_id  (sc_prog_item_id)
 #
 
-class Syobocal::Alert < ActiveRecord::Base
+class Syobocal::Alert < ApplicationRecord
   extend Enumerize
 
   enumerize :kind, in: { special_program: 0 }, scope: true

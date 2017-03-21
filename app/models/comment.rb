@@ -19,7 +19,7 @@
 #  index_comments_on_work_id  (work_id)
 #
 
-class Comment < ActiveRecord::Base
+class Comment < ApplicationRecord
   belongs_to :record, foreign_key: :checkin_id, class_name: "Checkin", counter_cache: true
   belongs_to :user
   belongs_to :work

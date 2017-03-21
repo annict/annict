@@ -15,7 +15,7 @@
 #  likes_user_id_idx  (user_id)
 #
 
-class Like < ActiveRecord::Base
+class Like < ApplicationRecord
   belongs_to :recipient, polymorphic: true, counter_cache: true
   belongs_to :user
   has_many :notifications,

@@ -18,7 +18,7 @@
 #  activities_user_id_idx  (user_id)
 #
 
-class Activity < ActiveRecord::Base
+class Activity < ApplicationRecord
   extend Enumerize
 
   enumerize :action, in: %w(

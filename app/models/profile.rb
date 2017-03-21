@@ -26,7 +26,7 @@
 #  profiles_user_id_key  (user_id) UNIQUE
 #
 
-class Profile < ActiveRecord::Base
+class Profile < ApplicationRecord
   has_attached_file :tombo_avatar
   has_attached_file :tombo_background_image
 

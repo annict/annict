@@ -16,7 +16,7 @@
 #  index_multiple_records_on_work_id  (work_id)
 #
 
-class MultipleRecord < ActiveRecord::Base
+class MultipleRecord < ApplicationRecord
   belongs_to :user
   belongs_to :work
   has_many :activities,

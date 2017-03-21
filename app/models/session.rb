@@ -13,5 +13,5 @@
 #  sessions_session_id_key  (session_id) UNIQUE
 #
 
-class Session < ActiveRecord::Base
+class Session < ApplicationRecord
 end

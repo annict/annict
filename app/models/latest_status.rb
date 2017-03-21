@@ -21,7 +21,7 @@
 #  index_latest_statuses_on_work_id               (work_id)
 #
 
-class LatestStatus < ActiveRecord::Base
+class LatestStatus < ApplicationRecord
   include StatusCommon
 
   acts_as_list scope: :user
