@@ -55,10 +55,6 @@ module Annict
       g.factory_girl false
     end
 
-    # `after_rollback`/`after_commit` 内でエラーが発生したときロールバックする
-    # Rails 4.2より後のバージョンでこの挙動がデフォルトになる
-    config.active_record.raise_in_transactional_callbacks = true
-
     config.active_job.queue_adapter = :delayed_job
 
     config.middleware.insert_before(Rack::Runtime, Rack::Rewrite) do
