@@ -34,11 +34,11 @@ class UserProgramsQuery
   end
 
   def program_ids(channel_works, scope: :all)
-    Rails.cache.fetch [@user.id, channel_works] do
+    Rails.cache.fetch [scope, channel_works] do
       program_ids = []
 
       channel_works.each do |cw|
-        program_ids << Rails.cache.fetch([@user.id, cw]) do
+        program_ids << Rails.cache.fetch(cw) do
           episode_ids = case scope
           when :all then cw.work.episodes.published.pluck(:id)
           when :unwatched then user.episodes.unwatched(cw.work).pluck(:id)
