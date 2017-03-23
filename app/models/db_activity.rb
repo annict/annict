@@ -26,8 +26,8 @@
 class DbActivity < ApplicationRecord
   extend Enumerize
 
-  belongs_to :object, polymorphic: true
-  belongs_to :root_resource, polymorphic: true
+  belongs_to :object, polymorphic: true, optional: true
+  belongs_to :root_resource, polymorphic: true, optional: true
   belongs_to :trackable, polymorphic: true
   belongs_to :user
 

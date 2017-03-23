@@ -22,7 +22,7 @@ module Db
     end
 
     def create(db_episode_rows_form)
-      @form = DB::EpisodeRowsForm.new(db_episode_rows_form.permit(:rows))
+      @form = DB::EpisodeRowsForm.new(db_episode_rows_form.permit(:rows).to_h)
       @form.user = current_user
       @form.work = @work
       authorize @form, :create?

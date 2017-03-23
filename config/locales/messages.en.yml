@@ -37,6 +37,7 @@ en:
     episodes:
       comments: Comments
       comments_by_others: Comments by Others
+      no_comments: No Comments
       watched_x_times: Watched %{records_count} times
       your_records: Your Records
     favorite_characters:
