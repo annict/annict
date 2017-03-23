@@ -21,7 +21,7 @@ module Db
     end
 
     def create(db_character_rows_form)
-      @form = DB::CharacterRowsForm.new(db_character_rows_form.permit(:rows))
+      @form = DB::CharacterRowsForm.new(db_character_rows_form.permit(:rows).to_h)
       @form.user = current_user
       authorize @form, :create?
 

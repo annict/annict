@@ -18,7 +18,7 @@ module Db
     end
 
     def create(db_program_rows_form)
-      @form = DB::ProgramRowsForm.new(db_program_rows_form.permit(:rows))
+      @form = DB::ProgramRowsForm.new(db_program_rows_form.permit(:rows).to_h)
       @form.user = current_user
       @form.work = @work
       authorize @form, :create?
