@@ -46,13 +46,13 @@ $spacers: (
 // Body
 
 $body-bg: $ann-color-white-d1;
-$body-color: $ann-color-black-l1;
+$body-color: $ann-color-body;
 
 
 // Links
 
-$link-color: $ann-color-navy;
-$link-hover-color: $ann-color-mizuho;
+$link-color: $ann-color-link;
+$link-hover-color: darken($link-color, 15%);
 $link-hover-decoration: none;
 
 
