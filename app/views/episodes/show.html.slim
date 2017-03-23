@@ -77,7 +77,7 @@
                 - @records.with_comment.each do |record|
                   = render "records/record", record: record
             - else
-              = render "application/components/empty", text: t("messages.episodes.show.no_records")
+              = render "application/components/empty", text: t("messages.episodes.no_comments")
 
 = render "application/components/footer"
 
