@@ -90,6 +90,7 @@ class Work < ApplicationRecord
   has_many :statuses, dependent: :destroy
   has_many :staff_people, through: :staffs, source: :resource, source_type: "Person"
   has_many :staffs, dependent: :destroy
+  has_many :streaming_links, dependent: :destroy
   has_one :work_image, dependent: :destroy
   has_one :item, dependent: :destroy
 

@@ -1,0 +1,41 @@
+- title = t "head.title.db.streaming_links.edit"
+- set_meta_tags(title: title, reverse: true, prefix: false)
+- set_page_category "db_streaming_links_edit"
+
+.l-topbar.container-fluid.px-1
+  .row.flex-items-xs-between
+    .col-8
+      = render "db/application/topbar_title", parent: @work, child: title
+    .col.text-right
+      = link_to work_path(@work), class: "btn btn-outline-primary" do
+        = icon "external-link"
+        = t "resources.work.go_to_work"
+
+= render "db/works/subnav", work: @work
+
+.container-fluid.p-1
+  .row
+    .col-6
+      .c-card.p-1
+        .container
+          = form_for [:db, @streaming_link] do |f|
+            = render "application/components/error_panel", resource: f.object
+
+            .form-group.row
+              = f.label :channel_id, class: "col-sm-3 col-form-label"
+              .col-sm-9
+                = f.select :channel_id, options_from_collection_for_select(Channel.published.with_streaming_service.order(:id), :id, :name, f.object.channel.try!(:id)), { include_blank: true }, { class: "form-control" }
+            .form-group.row
+              = f.label :unique_id, class: "col-sm-3 col-form-label"
+              .col-sm-9
+                = f.text_field :unique_id, class: "form-control"
+            .form-group.row
+              = f.label :locale, class: "col-sm-3 col-form-label"
+              .col-sm-9
+                - options = options_for_select([[t("noun.japanese"), "ja"], [t("noun.english"), "en"]], f.object.locale)
+                = f.select :locale, options, {}, { class: "form-control" }
+            .form-group.row
+              .offset-sm-3.col-sm-9
+                = f.submit t("helpers.submit.update"), class: "btn btn-primary"
+    .col-6
+      = render "sidebar_edit"

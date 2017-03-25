@@ -131,6 +131,10 @@ ja:
         role: 担当
         sort_number: ソート番号
         work_id: 作品
+      streaming_link:
+        channel_id: チャンネル
+        locale: 言語
+        unique_id: ユニークID
       user:
         current_password: 現在のパスワード
         email_username: メールアドレスまたはユーザ名

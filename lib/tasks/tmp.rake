@@ -1,16 +1,23 @@
 # frozen_string_literal: true
 
 namespace :tmp do
-  task set_counter: :environment do
-    Person.find_each do |p|
-      puts "person: #{p.id}"
-      Person.reset_counters(p.id, :casts_count)
-      Person.reset_counters(p.id, :staffs_count)
+  task update_channels: :environment do
+    [
+      "Amazonビデオ",
+      "Crunchyroll",
+      "DAISUKI",
+      "Funimation",
+      "Hulu",
+      "Netflix",
+      "U-NEXT"
+    ].each do |name|
+      puts name
+      Channel.where(name: name).first_or_create!(streaming_service: true)
     end
 
-    Organization.find_each do |o|
-      puts "organization: #{o.id}"
-      Organization.reset_counters(o.id, :staffs_count)
-    end
+    sc_chids = [234, 107, 165]
+    Channel.where(sc_chid: sc_chids).update_all(streaming_service: true)
+
+    Channel.find_by(sc_chid: 132).update(aasm_state: :hidden)
   end
 end

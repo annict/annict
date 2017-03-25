@@ -56,6 +56,8 @@ en:
         rows: Programs
       db/staff_rows_form:
         rows: Staffs
+      db/streaming_link_rows_form:
+        rows: Streaming Links
     errors:
       forms:
         db/cast_rows_form:

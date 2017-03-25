@@ -131,6 +131,10 @@ en:
         role: Role
         sort_number: Sort number
         work_id: Work
+      streaming_link:
+        channel_id: Channel
+        locale: Locale
+        unique_id: Unique ID
       user:
         current_password: Current password
         email_username: Email or Username

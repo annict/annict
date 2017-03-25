@@ -56,6 +56,8 @@ ja:
         rows: 放送予定
       db/staff_rows_form:
         rows: スタッフ
+      db/streaming_link_rows_form:
+        rows: ストリーミングリンク
     errors:
       forms:
         db/cast_rows_form:

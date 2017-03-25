@@ -94,6 +94,11 @@ ja:
           edit: スタッフ編集
           index: スタッフ
           new: スタッフ登録
+        streaming_links:
+          activities: アクティビティ
+          edit: ストリーミングリンク編集
+          index: ストリーミング
+          new: ストリーミングリンク登録
         work_images:
           show: 作品画像 - %{title}
         works:

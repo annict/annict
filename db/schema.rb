@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170320070746) do
+ActiveRecord::Schema.define(version: 20170325175440) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -68,14 +68,16 @@ ActiveRecord::Schema.define(version: 20170320070746) do
   end
 
   create_table "channels", force: :cascade do |t|
-    t.integer  "channel_group_id",                null: false
-    t.integer  "sc_chid",                         null: false
-    t.string   "name",                            null: false, collation: "C"
-    t.boolean  "published",        default: true, null: false
+    t.integer  "channel_group_id"
+    t.integer  "sc_chid"
+    t.string   "name",                                    null: false, collation: "C"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.boolean  "streaming_service", default: false
+    t.string   "aasm_state",        default: "published", null: false
     t.index ["channel_group_id"], name: "channels_channel_group_id_idx", using: :btree
     t.index ["sc_chid"], name: "channels_sc_chid_key", unique: true, using: :btree
+    t.index ["streaming_service"], name: "index_channels_on_streaming_service", using: :btree
   end
 
   create_table "character_images", force: :cascade do |t|
@@ -845,6 +847,20 @@ ActiveRecord::Schema.define(version: 20170320070746) do
     t.index ["work_id"], name: "statuses_work_id_idx", using: :btree
   end
 
+  create_table "streaming_links", force: :cascade do |t|
+    t.integer  "channel_id",                       null: false
+    t.integer  "work_id",                          null: false
+    t.string   "locale",                           null: false
+    t.string   "unique_id",                        null: false
+    t.string   "aasm_state", default: "published", null: false
+    t.datetime "created_at",                       null: false
+    t.datetime "updated_at",                       null: false
+    t.index ["channel_id", "locale", "unique_id"], name: "index_streaming_links_on_channel_id_and_locale_and_unique_id", unique: true, using: :btree
+    t.index ["channel_id", "work_id", "locale"], name: "index_streaming_links_on_channel_id_and_work_id_and_locale", unique: true, using: :btree
+    t.index ["channel_id"], name: "index_streaming_links_on_channel_id", using: :btree
+    t.index ["work_id"], name: "index_streaming_links_on_work_id", using: :btree
+  end
+
   create_table "syobocal_alerts", force: :cascade do |t|
     t.integer  "work_id"
     t.integer  "kind",                        null: false
@@ -1056,6 +1072,8 @@ ActiveRecord::Schema.define(version: 20170320070746) do
   add_foreign_key "statuses", "oauth_applications"
   add_foreign_key "statuses", "users", name: "statuses_user_id_fk", on_delete: :cascade
   add_foreign_key "statuses", "works", name: "statuses_work_id_fk", on_delete: :cascade
+  add_foreign_key "streaming_links", "channels", name: "streaming_links_channel_id_fk", on_delete: :cascade
+  add_foreign_key "streaming_links", "works", name: "streaming_links_work_id_fk", on_delete: :cascade
   add_foreign_key "syobocal_alerts", "works", name: "syobocal_alerts_work_id_fk", on_delete: :cascade
   add_foreign_key "work_images", "users"
   add_foreign_key "work_images", "works"

@@ -42,6 +42,10 @@ en:
         watched: Completed
         on_hold: On Hold
         stop_watching: Dropped
+    streaming_link:
+      locale:
+        en: English
+        ja: Japanese
     user:
       role:
         admin: Admin
