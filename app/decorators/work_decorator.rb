@@ -48,6 +48,28 @@ class WorkDecorator < ApplicationDecorator
     title
   end
 
+  def local_synopsis
+    text = case I18n.locale
+    when :ja then synopsis
+    when :en then synopsis_en
+    end
+
+    return if text.blank?
+
+    h.simple_format(text)
+  end
+
+  def local_synopsis_source
+    source = case I18n.locale
+    when :ja then synopsis_source
+    when :en then synopsis_source_en
+    end
+
+    return if source.blank?
+
+    h.auto_link(source)
+  end
+
   def media_label
     h.content_tag :span, class: "badge u-badge-works" do
       media.text

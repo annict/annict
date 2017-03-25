@@ -159,8 +159,6 @@ ja:
         show: "%{profile_name} (%{username})の%{work_title} %{episode_title_with_number}への感想"
       registrations:
         new: ユーザ登録
-      sayonara:
-        show: アカウント削除
       searches:
         show: "%{q}検索"
       sessions:

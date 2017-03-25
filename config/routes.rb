@@ -211,7 +211,6 @@ Rails.application.routes.draw do
   scope :settings do
     resource :account, only: [:show, :update]
     resource :profile, only: [:show, :update]
-    resource :sayonara, only: [:show], controller: :sayonara
     resources :mutes, only: [:index]
     resources :options, only: [:index]
     resources :providers, only: [:index, :destroy]

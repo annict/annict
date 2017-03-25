@@ -1,5 +1,6 @@
 ja:
   noun:
+    account_deletion: アカウント削除
     activities: アクティビティ
     after: After
     ago: 前
@@ -73,6 +74,7 @@ ja:
     profile: プロフィール
     programs: 放送予定
     release_on: リリース日
+    release_season: リリース時期
     resources: 種類
     search: 検索
     season: シーズン

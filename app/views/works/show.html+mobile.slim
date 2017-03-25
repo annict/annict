@@ -52,9 +52,9 @@
           = link_to t("noun.bulk_tracking"), work_episodes_path(@work, tracking: "on"), class: "small"
       table.p-episodes-table.table.mb-0
         tbody
-          - @episodes.published.order(:sort_number).first(10).each do |episode|
+          - @episodes.published.order(:sort_number).first(5).each do |episode|
             = render "episodes/episode_row", work: @work, episode: episode
-      - if @episodes.length > 10
+      - if @episodes.length > 5
         .mt-1
           = link_to t("messages.works.view_all_n_episodes", n: @episodes.length), work_episodes_path(@work), class: "btn btn-secondary w-100"
     - else

@@ -4,7 +4,7 @@ module UserCheckable
   extend ActiveSupport::Concern
 
   included do
-    def checkedin?(episode)
+    def tracked?(episode)
       records.exists?(episode_id: episode.id)
     end
 

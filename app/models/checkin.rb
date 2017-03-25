@@ -66,6 +66,12 @@ class Checkin < ActiveRecord::Base
     count == 1 && first.id == checkin.id
   end
 
+  def self.avg_rating
+    ratings = pluck(:rating).select(&:present?)
+    return if ratings.blank?
+    (ratings.inject { |sum, rating| sum + rating } / ratings.count).round(1)
+  end
+
   def rating=(value)
     return super if value.to_f.between?(1, 5)
     write_attribute :rating, nil

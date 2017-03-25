@@ -4,37 +4,52 @@
   - if work.work_image.present?
     .u-very-small.text-right
       = work.work_image.decorate.asin_or_copyright_text
+
 h1.h2.font-weight-bold.mb-1
-  = link_to work.decorate.local_title, work_path(work)
+  = link_to work.decorate.local_title, work_path(work), class: "u-text-body"
+
 c-status-selector :work-id="#{work.id}"
-h2.h4.text-center.font-weight-bold.my-1 = t "noun.information"
-ul.list-unstyled
-  li.mb-zp25
-    = icon "tv", class: "mr-zp5 text-muted"
-    = work.media.text
+
+h2.h4.font-weight-bold.mt-2.mb-1
+  = icon "sticky-note-o", class: "mr-zp25"
+  = t "noun.information"
+
+dl
+  - if locale_ja? && work.title_kana.present?
+    dt.small = t "activerecord.attributes.work.title_kana"
+    dd = work.title_kana
+  - if locale_en? && work.title_ro.present?
+    dt.small = t "activerecord.attributes.work.title_ro"
+    dd = work.title_ro
+  - if locale_en? && work.title_en.present?
+    dt.small = t "activerecord.attributes.work.title_en"
+    dd = work.title_en
+  dt.small = t "activerecord.attributes.work.media"
+  dd = work.media.text
   - if work.decorate.release_season.present?
-    li.mb-zp25
-      = icon "calendar-o", class: "mr-zp5 text-muted"
-      = work.decorate.release_season_link
+    dt.small = t "noun.release_season"
+    dd = work.decorate.release_season_link
   - if work.official_site_url.present?
-    li.mb-zp25
-      = icon "home", class: "mr-zp5 text-muted"
-      = link_to t("noun.official_site"), work.official_site_url, target: "_blank"
+    dt.small = t "activerecord.attributes.work.official_site_url"
+    dd = link_with_domain work.official_site_url
+  - if locale_en? && work.official_site_url_en.present?
+    dt.small = t "activerecord.attributes.work.official_site_url_en"
+    dd = link_with_domain work.official_site_url_en
   - if work.wikipedia_url.present?
-    li.mb-zp25
-      = icon "link", class: "mr-zp5 text-muted"
-      = link_to t("noun.wikipedia"), work.wikipedia_url, target: "_blank"
-  - if work.sc_tid.present?
-    li.mb-zp25
-      = icon "link", class: "mr-zp5 text-muted"
-      = work.decorate.syobocal_link(t("noun.syobocal"))
+    dt.small = t "activerecord.attributes.work.wikipedia_url"
+    dd = link_with_domain work.wikipedia_url
+  - if locale_en? && work.wikipedia_url_en.present?
+    dt.small = t "activerecord.attributes.work.wikipedia_url_en"
+    dd = link_with_domain work.wikipedia_url_en
+  - if locale_ja? && work.sc_tid.present?
+    dt.small = t "activerecord.attributes.work.sc_tid"
+    dd = work.decorate.syobocal_link(work.sc_tid)
   - if work.twitter_username.present?
-    li.mb-zp25
-      = icon "twitter", class: "mr-zp5 text-muted"
-      = work.decorate.twitter_username_link
+    dt.small = t "activerecord.attributes.work.twitter_username"
+    dd = work.decorate.twitter_username_link
   - if work.twitter_hashtag.present?
-    li.mb-zp25
-      = icon "twitter", class: "mr-zp5 text-muted"
-      = work.decorate.twitter_hashtag_link
+    dt.small = t "activerecord.attributes.work.twitter_hashtag"
+    dd = work.decorate.twitter_hashtag_link
+
 - if user_signed_in? && current_user.committer?
   = link_to t("messages._common.edit_on_annict_db"), edit_db_work_path(work), class: "btn btn-secondary w-100 mt-zp5"

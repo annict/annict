@@ -1,5 +1,6 @@
 en:
   noun:
+    account_deletion: Delete Account
     activities: Activities
     after: After
     ago: ago
@@ -73,6 +74,7 @@ en:
     profile: Profile
     programs: Programs
     release_on: Release on
+    release_season: Release Season
     resources: Resources
     search: Search
     season: Season

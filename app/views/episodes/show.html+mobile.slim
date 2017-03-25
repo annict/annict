@@ -15,7 +15,7 @@
     .p-episode-title-header__main
       h2.h4.text-center
         = link_to @episode.decorate.title_with_number, work_episode_path(@work, @episode)
-      - if user_signed_in? && current_user.checkedin?(@episode)
+      - if user_signed_in? && current_user.tracked?(@episode)
         .small
           = icon "check", class: "mr-zp25"
           = t "messages.episodes.watched_x_times", records_count: current_user.checkins_count_in(@episode)
