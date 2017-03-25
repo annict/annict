@@ -6,6 +6,7 @@
         th = t "activerecord.attributes.character.name"
         th = t "activerecord.attributes.character.name_kana"
         th = t "activerecord.attributes.character.name_en"
+        th = t("activerecord.attributes.character.aasm_state")
         th = t "noun.activities"
         - if policy(characters).edit?
           th = t "noun.edit"
@@ -20,6 +21,9 @@
           td = character.name
           td = character.name_kana.presence || "-"
           td = character.name_en.presence || "-"
+          td
+            .badge class="#{character.published? ? 'badge-success' : 'tag-default'}"
+              = t("resources.character.aasm_state.#{character.aasm_state}")
           td = link_to t("verb.view"), activities_db_character_path(character)
           - if policy(character).edit?
             td = link_to t("noun.edit"), edit_db_character_path(character), class: "btn btn-primary btn-sm"

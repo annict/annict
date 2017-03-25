@@ -7,6 +7,8 @@
     .col-8
       = render "db/application/topbar_title", parent: @work, child: t("noun.work_image")
 
+= render "db/works/subnav", work: @work
+
 .container-fluid.p-1
   .row
     .col-6

@@ -1,5 +1,6 @@
 en:
   noun:
+    account_deletion: Delete Account
     activities: Activities
     after: After
     ago: ago
@@ -28,7 +29,6 @@ en:
     column: Column
     completed: Completed
     current_season: Current Season
-    current_season_shorten: Airing
     delete: Delete
     detail: Detail
     dropped: Dropped
@@ -73,6 +73,7 @@ en:
     profile: Profile
     programs: Programs
     release_on: Release on
+    release_season: Release Season
     resources: Resources
     search: Search
     season: Season

@@ -32,7 +32,7 @@ script#t-create-status-activity type="x-template"
             a :href='"/works/" + activity.work.id'
               img.c-vue-lazyload.img-fluid.rounded-left v-lazy="activity.item.image_url" width="125" height="125" :alt="activity.work.title"
           .col-10
-            a.font-weight-bold :href='"/works/" + activity.work.id'
+            a :href='"/works/" + activity.work.id'
               | {{ activity.work.title }}
     
     .mt-zp5

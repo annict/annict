@@ -1,6 +1,9 @@
 en:
   resources:
     character:
+      aasm_state:
+        published: Published
+        hidden: Hidden
       created: Character created
       edit: Edit character
       go_to_character: Go to Character
@@ -26,7 +29,6 @@ en:
       edit_episodes: Edit episodes
       episodes_list: Episode list
       new_episodes: New episodes
-      no_episodes: No episodes
       previous_episode: Previous episode
       updated: Episode updated
     forum_category:
@@ -37,6 +39,9 @@ en:
     forum_post:
       new: New Post
     organization:
+      aasm_state:
+        published: Published
+        hidden: Hidden
       created: Organization created
       deleted: Organization deleted
       go_to_organization: Go to Organization
@@ -47,6 +52,9 @@ en:
       updated: Organization updated
       organization_list: Organization List
     person:
+      aasm_state:
+        published: Published
+        hidden: Hidden
       created: Person created
       deleted: Person deleted
       go_to_person: Go to Person

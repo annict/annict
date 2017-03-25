@@ -7,44 +7,106 @@
 
 = render "works/header", work: @work
 
-.mb-1
-  h2.h4.text-center.font-weight-bold.mb-1 = t "noun.information"
-  .c-card.p-1
-    .row
-      .col
-        ul.list-unstyled.mb-0
-          li.mb-zp5
-            = icon "tv", class: "mr-zp5"
-            = @work.media.text
-          - if @work.decorate.release_season.present?
-            li.mb-zp5
-              = icon "calendar-o", class: "mr-zp5"
-              = @work.decorate.release_season_link
-          - if @work.official_site_url.present?
-            li.mb-zp5
-              = icon "home", class: "mr-zp5"
-              = link_to t("activerecord.attributes.work.official_site_url"), @work.official_site_url, target: "_blank"
-      .col
-        ul.list-unstyled.mb-0
-          - if @work.wikipedia_url.present?
-            li.mb-zp5
-              = icon "link", class: "mr-zp5"
-              = link_to t("noun.wikipedia"), @work.wikipedia_url, target: "_blank"
-          - if @work.sc_tid.present?
-            li.mb-zp5
-              = icon "link", class: "mr-zp5"
-              = @work.decorate.syobocal_link(t("noun.syobocal"))
-          - if@work.twitter_username.present?
-            li.mb-zp5
-              = icon "twitter", class: "mr-zp5"
-              = @work.decorate.twitter_username_link
-          - if@work.twitter_hashtag.present?
-            li.mb-zp5
-              = icon "twitter", class: "mr-zp5"
-              = @work.decorate.twitter_hashtag_link
+h2.h4.font-weight-bold.text-center.mt-1.mb-2
+  = t "noun.information"
+.c-card.py-1.mb-1
+  .container
+    dl.row.mb-0
+      - if locale_ja? && @work.title_kana.present?
+        dt.col-6.text-right
+          = t "activerecord.attributes.work.title_kana"
+        dd.col-6
+          = @work.title_kana
+      - if locale_en? && @work.title_ro.present?
+        dt.col-6.text-right
+          = t "activerecord.attributes.work.title_ro"
+        dd.col-6
+          = @work.title_ro
+      - if locale_en? && @work.title_en.present?
+        dt.col-6.text-right
+          = t "activerecord.attributes.work.title_en"
+        dd.col-6
+          = @work.title_en
+      dt.col-6.text-right
+        = t "activerecord.attributes.work.media"
+      dd.col-6
+        = @work.media.text
+      - if @work.decorate.release_season.present?
+        dt.col-6.text-right
+          = t "noun.release_season"
+        dd.col-6
+          = @work.decorate.release_season_link
+      - if @work.official_site_url.present?
+        dt.col-6.text-right
+          = t "activerecord.attributes.work.official_site_url"
+        dd.col-6
+          = link_with_domain @work.official_site_url
+      - if locale_en? && @work.official_site_url_en.present?
+        dt.col-6.text-right
+          = t "activerecord.attributes.work.official_site_url_en"
+        dd.col-6
+          = link_with_domain @work.official_site_url_en
+      - if @work.wikipedia_url.present?
+        dt.col-6.text-right
+          = t "activerecord.attributes.work.wikipedia_url"
+        dd.col-6
+          = link_with_domain @work.wikipedia_url
+      - if locale_en? && @work.wikipedia_url_en.present?
+        dt.col-6.text-right
+          = t "activerecord.attributes.work.wikipedia_url_en"
+        dd.col-6
+          = link_with_domain @work.wikipedia_url_en
+      - if locale_ja? && @work.sc_tid.present?
+        dt.col-6.text-right
+          = t "activerecord.attributes.work.sc_tid"
+        dd.col-6
+          = @work.decorate.syobocal_link(@work.sc_tid)
+      - if @work.twitter_username.present?
+        dt.col-6.text-right
+          = t "activerecord.attributes.work.twitter_username"
+        dd.col-6
+          = @work.decorate.twitter_username_link
+      - if @work.twitter_hashtag.present?
+        dt.col-6.text-right
+          = t "activerecord.attributes.work.twitter_hashtag"
+        dd.col-6
+          = @work.decorate.twitter_hashtag_link
+
+- if @work.decorate.local_synopsis.present?
+  .mb-1
+    h2.h4.font-weight-bold.text-center.mt-1.mb-2
+      = t "activerecord.attributes.work.synopsis"
+    .c-card.py-1
+      .container
+        = @work.decorate.local_synopsis
+        .text-right.u-very-small
+          span.mr-zp25
+            = t("noun.source")
+            | :
+          = @work.decorate.local_synopsis_source
 
 .mb-1
-  h2.h4.text-center.font-weight-bold.mb-1 = t "noun.episodes"
+  h2.h4.text-center.font-weight-bold.mt-1.mb-2
+    = t "noun.characters"
+  .c-card.p-1
+    - cache [I18n.locale, @casts] do
+      = render "characters/character_list", casts: @casts.order(:sort_number).first(8)
+      - if @casts.length > 8
+        = link_to t("messages.works.view_all_n_characters", n: @casts.length), work_characters_path(@work), class: "btn btn-secondary w-100"
+
+.mb-1
+  h2.h4.text-center.font-weight-bold.mt-1.mb-2
+    = t "noun.staffs"
+  .c-card.p-1
+    - cache [I18n.locale, @staffs] do
+      = render "staffs/staff_list", staffs: @staffs.order(:sort_number).first(8)
+      - if @staffs.length > 8
+        .mt-1
+          = link_to t("messages.works.view_all_n_staffs", n: @staffs.length), work_staffs_path(@work), class: "btn btn-secondary w-100"
+
+.mb-2
+  h2.h4.text-center.font-weight-bold.mt-1.mb-2
+    = t "noun.episodes"
   .c-card.p-1
     - if @episodes.present?
       - if user_signed_in?
@@ -52,30 +114,13 @@
           = link_to t("noun.bulk_tracking"), work_episodes_path(@work, tracking: "on"), class: "small"
       table.p-episodes-table.table.mb-0
         tbody
-          - @episodes.published.order(:sort_number).first(10).each do |episode|
+          - @episodes.published.order(:sort_number).first(5).each do |episode|
             = render "episodes/episode_row", work: @work, episode: episode
-      - if @episodes.length > 10
+      - if @episodes.length > 5
         .mt-1
           = link_to t("messages.works.view_all_n_episodes", n: @episodes.length), work_episodes_path(@work), class: "btn btn-secondary w-100"
     - else
       = render "application/components/empty", text: t("messages.works.no_episodes")
-
-.mb-1
-  h2.h4.text-center.font-weight-bold.mt-1.mb-2 = t "noun.characters"
-  .c-card.p-1
-    - cache [I18n.locale, @casts] do
-      = render "characters/character_list", casts: @casts.order(:sort_number).first(8)
-      - if @casts.length > 8
-        = link_to t("messages.works.view_all_n_characters", n: @casts.length), work_characters_path(@work), class: "btn btn-secondary w-100"
-
-.mb-2
-  h2.h4.text-center.font-weight-bold.my-2 = t "noun.staffs"
-  .c-card.p-1
-    - cache [I18n.locale, @staffs] do
-      = render "staffs/staff_list", staffs: @staffs.order(:sort_number).first(8)
-      - if @staffs.length > 8
-        .mt-1
-          = link_to t("messages.works.view_all_n_staffs", n: @staffs.length), work_staffs_path(@work), class: "btn btn-secondary w-100"
 
 = render "application/components/footer"
 = render "application/components/tabbar"

@@ -9,6 +9,10 @@ en:
       welcome_back: Welcome back!
       welcome_to_annict: Welcome to Annict!
       you_can_not_access_there: You can not access there.
+    _empty:
+      no_characters: No Characters
+      no_episodes: No Episodes
+      no_staffs: No Staffs
     _validators:
       and_other_are_required: and %{column_name} are required
       is_required_true_or_false: is required `true` or `false`
@@ -37,6 +41,7 @@ en:
     episodes:
       comments: Comments
       comments_by_others: Comments by Others
+      no_comments: No Comments
       watched_x_times: Watched %{records_count} times
       your_records: Your Records
     favorite_characters:

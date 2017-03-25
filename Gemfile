@@ -87,7 +87,6 @@ group :development, :test do
   gem "pry-byebug"
   gem "pry-coolline"
   gem "pry-rails"
-  gem "rails-flog", require: "flog"
   gem "rspec-mocks"
   gem "rspec-rails"
 end

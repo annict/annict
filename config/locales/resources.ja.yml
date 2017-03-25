@@ -1,6 +1,9 @@
 ja:
   resources:
     character:
+      aasm_state:
+        published: 公開
+        hidden: 非公開
       created: 登録しました
       edit: キャラクター編集
       go_to_character: キャラクター詳細
@@ -26,7 +29,6 @@ ja:
       edit_episodes: エピソード編集
       episodes_list: エピソード一覧
       new_episodes: エピソード登録
-      no_episodes: エピソードは登録されていません
       previous_episode: 前のエピソード
       updated: 更新しました
     forum_category:
@@ -37,6 +39,9 @@ ja:
     forum_post:
       new: 新規作成
     organization:
+      aasm_state:
+        published: 公開
+        hidden: 非公開
       created: 登録しました
       deleted: 削除しました
       go_to_organization: 団体詳細
@@ -47,6 +52,9 @@ ja:
       updated: 更新しました
       organization_list: 団体一覧
     person:
+      aasm_state:
+        published: 公開
+        hidden: 非公開
       created: 登録しました
       deleted: 削除しました
       go_to_person: 人物詳細

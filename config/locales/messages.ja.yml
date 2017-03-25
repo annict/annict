@@ -9,6 +9,10 @@ ja:
       welcome_back: おかえりなさい！
       welcome_to_annict: Annictにようこそ！
       you_can_not_access_there: アクセスできません
+    _empty:
+      no_characters: キャラクターはいません
+      no_episodes: エピソードはありません
+      no_staffs: スタッフはいません
     _validators:
       and_other_are_required: と%{column_name}は両方入力してください
       is_required_true_or_false: には `true` または `false` を指定してください
@@ -37,6 +41,7 @@ ja:
     episodes:
       comments: 感想
       comments_by_others: 皆さんの感想
+      no_comments: 感想はありません
       watched_x_times: "%{records_count}回見ました"
       your_records: あなたの記録
     favorite_characters:

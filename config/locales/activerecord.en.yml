@@ -12,6 +12,7 @@ en:
       channel:
         name: Name
       character:
+        aasm_state: State
         name: Name
         name_kana: Name (kana)
         name_en: Name (en)

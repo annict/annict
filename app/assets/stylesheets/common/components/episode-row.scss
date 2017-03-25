@@ -5,10 +5,6 @@
     }
   }
 
-  &__check {
-    color: $ann-color-green;
-  }
-
   &__stars {
     .fa-star,
     .fa-star-half-o {
@@ -18,5 +14,11 @@
     .fa-star-o {
       color: $ann-color-navy-l3;
     }
+  }
+
+  &__avatar,
+  &__icon {
+    text-align: center;
+    width: 20px;
   }
 }

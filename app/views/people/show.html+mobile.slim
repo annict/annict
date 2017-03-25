@@ -7,11 +7,10 @@
 .c-card.mb-1
   = render "people/header", person: @person, favorite_resources: @favorite_people
 
+h2.h4.font-weight-bold.text-center.mt-1.mb-2
+  = t "noun.information"
 .c-card.py-1.mb-1
   .container
-    h2.h4.font-weight-bold.text-center.mb-1
-      = icon "sticky-note-o", class: "mr-zp25"
-      = t "noun.information"
     dl.row.mb-0
       dt.col-6.text-right = t "activerecord.attributes.person.name"
       dd.col-6 = @person.name
@@ -46,6 +45,8 @@
         dt.col-6.text-right = t "activerecord.attributes.person.wikipedia"
         dd.col-6 = link_with_domain @person.wikipedia_url
 
+h2.h4.text-center.font-weight-bold.mt-1.mb-2
+  = t "noun.works"
 .c-card.container.py-1.mb-2
   - if @person.voice_actor?
     = render "grid", root_resource: @person, resource_years: @cast_years, resources_with_year: @casts_with_year

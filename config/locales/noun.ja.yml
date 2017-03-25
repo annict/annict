@@ -1,5 +1,6 @@
 ja:
   noun:
+    account_deletion: アカウント削除
     activities: アクティビティ
     after: After
     ago: 前
@@ -28,7 +29,6 @@ ja:
     column: 項目
     completed: 見たアニメ
     current_season: 今期のアニメ
-    current_season_shorten: 今期アニメ
     delete: 削除
     detail: 詳細
     dropped: 中止したアニメ
@@ -73,6 +73,7 @@ ja:
     profile: プロフィール
     programs: 放送予定
     release_on: リリース日
+    release_season: リリース時期
     resources: 種類
     search: 検索
     season: シーズン
@@ -95,7 +96,7 @@ ja:
     voice_actor: 声優
     voice_actors: 声優
     watching: 見てるアニメ
-    watching_shorten: 見てる作品
+    watching_shorten: 見てる
     work_image: 作品画像
     works: 作品
     your_statistics: 視聴状況
