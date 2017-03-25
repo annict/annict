@@ -19,6 +19,7 @@ module.exports =
 
   data: ->
     isFollowing: @initIsFollowing
+    isSaving: false
 
   computed:
     buttonText: ->
@@ -31,6 +32,8 @@ module.exports =
         keen.trackEvent("sign_up_modals", "open", via: "follow_button")
         return
 
+      @isSaving = true
+
       if @isFollowing
         $.ajax
           method: "POST"
@@ -39,6 +42,7 @@ module.exports =
             username: @username
         .done =>
           @isFollowing = false
+          @isSaving = false
       else
         $.ajax
           method: "POST"
@@ -48,3 +52,4 @@ module.exports =
             page_category: gon.basic.pageCategory
         .done =>
           @isFollowing = true
+          @isSaving = false

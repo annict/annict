@@ -12,6 +12,7 @@ ja:
       channel:
         name: 名前
       character:
+        aasm_state: 状態
         name: 名前
         name_kana: 名前 (かな)
         name_en: 名前 (英語)

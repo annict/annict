@@ -399,19 +399,15 @@ ActiveRecord::Schema.define(version: 20170320070746) do
   end
 
   create_table "email_notifications", force: :cascade do |t|
-    t.integer  "user_id",                                    null: false
-    t.string   "unsubscription_key",                         null: false
-    t.boolean  "event_followed_user",         default: true, null: false
-    t.boolean  "event_liked_record",          default: true, null: false
-    t.boolean  "event_liked_multiple_record", default: true, null: false
-    t.boolean  "event_liked_comment",         default: true, null: false
-    t.boolean  "event_liked_status",          default: true, null: false
-    t.boolean  "event_commented",             default: true, null: false
-    t.boolean  "event_friends_joined",        default: true, null: false
-    t.boolean  "event_next_season_came",      default: true, null: false
-    t.datetime "created_at",                                 null: false
-    t.datetime "updated_at",                                 null: false
-    t.boolean  "event_favorite_works_added",  default: true, null: false
+    t.integer  "user_id",                                   null: false
+    t.string   "unsubscription_key",                        null: false
+    t.boolean  "event_followed_user",        default: true, null: false
+    t.boolean  "event_liked_record",         default: true, null: false
+    t.boolean  "event_friends_joined",       default: true, null: false
+    t.boolean  "event_next_season_came",     default: true, null: false
+    t.datetime "created_at",                                null: false
+    t.datetime "updated_at",                                null: false
+    t.boolean  "event_favorite_works_added", default: true, null: false
     t.index ["unsubscription_key"], name: "index_email_notifications_on_unsubscription_key", unique: true, using: :btree
     t.index ["user_id"], name: "index_email_notifications_on_user_id", unique: true, using: :btree
   end

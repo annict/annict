@@ -6,7 +6,8 @@
 = render "settings/subnav"
 
 .p-application__content
-  h2.h4.text-center.my-2.font-weight-bold = t "noun.basic_info"
+  h2.h4.text-center.my-2.font-weight-bold
+    = t "noun.basic_info"
   .c-card.u-mw-600.mx-auto.p-1.mt-1.mb-2
     = form_for @user, url: account_path, method: :patch do |f|
       - if params[:controller] == "accounts"
@@ -29,7 +30,8 @@
       .form-submit.text-center
         = f.submit class: "btn btn-primary"
 
-  h2.h4.text-center.my-2.font-weight-bold = t "noun.password"
+  h2.h4.text-center.my-2.font-weight-bold
+    = t "noun.password"
   .c-card.u-mw-600.mx-auto.p-1.mt-1.mb-2
     = form_for @user, url: settings_password_path, method: :patch do |f|
       - if params[:controller] == "settings/passwords"
@@ -47,7 +49,8 @@
       .form-submit.text-center
         = f.submit class: "btn btn-primary"
 
-  h2.h4.text-center.my-2.font-weight-bold = t "noun.account_deletion"
+  h2.h4.text-center.my-2.font-weight-bold
+    = t "noun.account_deletion"
   .c-card.u-mw-600.mx-auto.p-1.mt-1.mb-2
     = render "sayonara/content"
 

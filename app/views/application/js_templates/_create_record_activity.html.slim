@@ -42,7 +42,7 @@ script#t-create-record-activity type="x-template"
             a :href='"/works/" + activity.work.id'
               img.c-vue-lazyload.img-fluid.rounded-left v-lazy="activity.item.image_url" :alt="activity.work.title"
           .col-10
-            a.font-weight-bold :href='"/works/" + activity.work.id'
+            a :href='"/works/" + activity.work.id'
               | {{ activity.work.title }}
             .d-block
               a :href='"/works/" + activity.work.id + "/episodes/" + activity.episode.id' v-if="activity.episode"

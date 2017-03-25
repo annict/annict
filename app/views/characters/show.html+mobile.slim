@@ -8,92 +8,79 @@
 .c-card.mb-1
   = render "characters/header", character: @character, favorite_resources: @favorite_characters
 
+h2.h4.font-weight-bold.text-center.mt-1.mb-2
+  = t "noun.information"
 .c-card.py-1.mb-1
   .container
-    h2.h4.font-weight-bold.text-center.mb-1
-      = icon "sticky-note-o", class: "mr-zp25"
-      = t "noun.information"
-    .row
-      .col.text-right.font-weight-bold
+    dl.row.mb-0
+      dt.col-6.text-right
         = t "activerecord.attributes.character.name"
-      .col
+      dd.col-6
         = @character.name
-    - if @character.name_kana.present?
-      .row
-        .col.text-right.font-weight-bold
+      - if @character.name_kana.present?
+        dt.col-6.text-right
           = t "activerecord.attributes.character.name_kana"
-        .col
+        dd.col-6
           = @character.name_kana
-    - if @character.name_en.present?
-      .row
-        .col.text-right.font-weight-bold
+      - if @character.name_en.present?
+        dt.col-6.text-right
           = t "activerecord.attributes.character.name_en"
-        .col
+        dd.col-6
           = @character.name_en
-    - if @character.nickname.present?
-      .row
-        .col.text-right.font-weight-bold
+      - if @character.nickname.present?
+        dt.col-6.text-right
           = t "activerecord.attributes.character.nickname"
-        .col
+        dd.col-6
           = @character.nickname
-    - if @character.kind.present?
-      .row
-        .col.text-right.font-weight-bold
+      - if @character.kind.present?
+        dt.col-6.text-right
           = t "activerecord.attributes.character.kind"
-        .col
+        dd.col-6
           = @character.kind
-    - if @character.birthday.present?
-      .row
-        .col.text-right.font-weight-bold
+      - if @character.birthday.present?
+        dt.col-6.text-right
           = t "activerecord.attributes.character.birthday"
-        .col
+        dd.col-6
           = @character.decorate.local_birthday
-    - if @character.age.present?
-      .row
-        .col.text-right.font-weight-bold
+      - if @character.age.present?
+        dt.col-6.text-right
           = t "activerecord.attributes.character.age"
-        .col
+        dd.col-6
           = @character.age
-    - if @character.blood_type.present?
-      .row
-        .col.text-right.font-weight-bold
+      - if @character.blood_type.present?
+        dt.col-6.text-right
           = t "activerecord.attributes.character.blood_type"
-        .col
+        dd.col-6
           = @character.blood_type_text
-    - if @character.height.present?
-      .row
-        .col.text-right.font-weight-bold
+      - if @character.height.present?
+        dt.col-6.text-right
           = t "activerecord.attributes.character.height"
-        .col
+        dd.col-6
           = "#{@character.height}cm"
-    - if @character.weight.present?
-      .row
-        .col.text-right.font-weight-bold
+      - if @character.weight.present?
+        dt.col-6.text-right
           = t "activerecord.attributes.character.weight"
-        .col
+        dd.col-6
           = "#{@character.weight}kg"
-    - if @character.nationality.present?
-      .row
-        .col.text-right.font-weight-bold
+      - if @character.nationality.present?
+        dt.col-6.text-right
           = t "activerecord.attributes.character.nationality"
-        .col
+        dd.col-6
           = @character.nationality
-    - if @character.occupation.present?
-      .row
-        .col.text-right.font-weight-bold
+      - if @character.occupation.present?
+        dt.col-6.text-right
           = t "activerecord.attributes.character.occupation"
-        .col
+        dd.col-6
           = @character.occupation
-    - if @character.description.present?
-      .row
-        .col.text-right.font-weight-bold
+      - if @character.description.present?
+        dt.col-6.text-right
           = t "activerecord.attributes.character.description"
-        .col
+        dd.col-6
           = @character.description
 
+h2.h4.text-center.font-weight-bold.mt-1.mb-2
+  = t "noun.works"
 .c-card.container.py-1.mb-2
-  h2.h4.text-center.font-weight-bold.mb-1
-    = t "noun.works"
   = render "people/grid", root_resource: @character, resource_years: @cast_years, resources_with_year: @casts_with_year
 
 = render "application/components/footer"
