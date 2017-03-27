@@ -13,7 +13,7 @@
     "moment-timezone": "0.5.11",
     "mousetrap": "1.6.0",
     "turbolinks": "5.0.0",
-    "vue": "^2.2.1",
+    "vue": "^2.2.6",
     "vue-lazyload": "^1.0.0-rc12"
   },
   "engines": {
