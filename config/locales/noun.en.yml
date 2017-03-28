@@ -34,6 +34,7 @@ en:
     dropped: Dropped
     edit: Edit
     english: English
+    episode_number: Number
     episodes: Episodes
     error: Error
     fans: Fans
@@ -72,6 +73,8 @@ en:
     privacy_policy: Privacy Policy
     profile: Profile
     programs: Programs
+    rating: Rating
+    records_count: Records Count
     release_on: Release on
     release_season: Release Season
     resources: Resources

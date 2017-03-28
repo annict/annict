@@ -1,10 +1,4 @@
 .c-episode-row {
-  @each $size in 20 40 60 {
-    &__w#{$size} {
-      width: 0% + $size;
-    }
-  }
-
   &__stars {
     .fa-star,
     .fa-star-half-o {
@@ -19,6 +13,12 @@
   &__avatar,
   &__icon {
     text-align: center;
+    width: 20px;
+  }
+
+  &__tracking-checkbox {
+    line-height: 0;
+    padding: .5rem 0 .5rem 1rem !important;
     width: 20px;
   }
 }

@@ -7,11 +7,11 @@
 
 = render "works/header", work: @work
 
-.c-card.p-1.mb-2
+.c-card.py-1.mb-2
   - if @episodes.present?
     c-episode-list inline-template="" :is-signed-in="#{user_signed_in?}" :init-is-tracking-mode="#{params.key?(:tracking)}" :all-episode-ids="#{@episodes.pluck(:id)}" :work-id="#{@work.id}"
       .c-episode-list
-        .mb-zp5
+        .mb-zp5.px-1
           small.u-fake-link v-show="!isTrackingMode" @click="enableTrackingMode"
             = t "noun.bulk_tracking"
           small.u-fake-link.mr-zp5 v-show="isTrackingMode" @click="checkAll"

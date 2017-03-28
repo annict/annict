@@ -34,6 +34,7 @@ ja:
     dropped: 中止したアニメ
     edit: 編集
     english: 英語
+    episode_number: 話数
     episodes: エピソード
     error: エラー
     fans: ファン
@@ -72,6 +73,8 @@ ja:
     privacy_policy: プライバシーポリシー
     profile: プロフィール
     programs: 放送予定
+    rating: 評価
+    records_count: 記録数
     release_on: リリース日
     release_season: リリース時期
     resources: 種類

@@ -1,45 +1,18 @@
-- if user_signed_in?
-  - records = current_user.records.where(episode_id: episode.id)
 tr
   - if user_signed_in? && (params[:controller] == "episodes" && params[:action] == "index")
-    td v-show="isTrackingMode"
+    td.c-episode-row__tracking-checkbox v-show="isTrackingMode"
       input type="checkbox" v-model="episodeIds" value="#{episode.id}"
   - if episode.single?
-    td.c-episode-row__w60
+    td
       = link_to work_episode_path(work, episode) do
         = episode.title
+    = render "episodes/episode_statistics", episode: episode
   - else
-    td.c-episode-row__w20
+    td
       = link_to work_episode_path(work, episode) do
         = episode.number
-    td.c-episode-row__w40
+    td
       - if episode.title.present?
         = link_to work_episode_path(work, episode) do
           = episode.title
-    td.c-episode-row__w20
-      - if user_signed_in? && current_user.tracked?(episode)
-        .c-episode-row__stars
-          - user_avg_rating = current_user.records.where(episode: episode).avg_rating
-          = ann_image_tag current_user.profile, :tombo_avatar, size: "20x20", class: "c-episode-row__avatar rounded-circle mr-zp5"
-          - if user_avg_rating.present?
-            = rating_stars(user_avg_rating)
-            small.ml-zp25 = user_avg_rating
-          - else
-            | -
-      .c-episode-row__stars
-        span.small.mr-zp5.text-muted
-          = icon "users", class: "c-episode-row__icon"
-        - if episode.avg_rating.present?
-          = rating_stars(episode.avg_rating)
-          small.ml-zp25 = episode.avg_rating
-        - else
-          | -
-    td.c-episode-row__w20
-      - if user_signed_in? && records.length > 0
-        .c-episode-row__records-count
-          = ann_image_tag current_user.profile, :tombo_avatar, size: "20x20", class: "c-episode-row__avatar rounded-circle mr-zp5"
-          small.ml-zp25 = records.length
-      .c-episode-row__records-count
-        span.small.mr-zp5.text-muted
-          = icon "users", class: "c-episode-row__icon"
-        small.ml-zp25 = episode.records.length
+    = render "episodes/episode_statistics", episode: episode

@@ -48,6 +48,13 @@
               .container.mb-zp5
                 = link_to t("noun.bulk_tracking"), work_episodes_path(@work, tracking: "on"), class: "small"
             table.p-episodes-table.table.mb-0
+              thead.small
+                tr
+                  - unless @work.single?
+                    th = t "noun.episode_number"
+                  th = t "noun.title"
+                  th = t "noun.rating"
+                  th = t "noun.records_count"
               tbody
                 - @episodes.first(5).each do |episode|
                   = render "episodes/episode_row", work: @work, episode: episode

@@ -1,16 +1,20 @@
 tr
   - if user_signed_in? && (params[:controller] == "episodes" && params[:action] == "index")
-    td v-show="isTrackingMode"
+    td.c-episode-row__tracking-checkbox v-show="isTrackingMode"
       input type="checkbox" v-model="episodeIds" value="#{episode.id}"
   - if episode.single?
-    td.c-episode-row__w60
+    td
       = link_to work_episode_path(work, episode) do
         = episode.title
+      = render "episodes/episode_statistics", episode: episode
   - else
-    td.c-episode-row__w20
+    td
       = link_to work_episode_path(work, episode) do
         = episode.number
-    td.c-episode-row__w40
+    td
       - if episode.title.present?
         = link_to work_episode_path(work, episode) do
           = episode.title
+      - else
+        | -
+      = render "episodes/episode_statistics", episode: episode
