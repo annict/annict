@@ -7,9 +7,10 @@ module Annict
 
       base_uri "https://ssl.google-analytics.com"
 
-      def initialize(request, user)
+      def initialize(request, user, params)
         @request = request
         @user = user
+        @params = params
       end
 
       # イベントを送る
@@ -19,21 +20,23 @@ module Annict
       # el: Event label.
       # ev: Event value.
       # ds: Data source.
-      def create(ec, ea, el: "", ev: "", ds: "web")
+      def create(ec, ea, el: "", ev: "", ds: :web)
         body = {
           v: 1,
           tid: ENV.fetch("GA_TRACKING_ID"),
           cid: @request.cookies["ann_client_uuid"],
           t: "event",
-          ec: ec,
-          ea: ea,
+          ec: ec.to_s,
+          ea: ea.to_s,
           uip: @request.ip,
           ua: @request.user_agent,
-          ds: ds
+          ds: ds.to_s
         }
         body[:uid] = @user.encoded_id if @user.present?
-        body[:el] = el if el.present?
-        body[:ev] = ev if ev.present?
+        body[:el] = el.to_s if el.present?
+        body[:ev] = ev.to_s if ev.present?
+        body[:cd1] = @user.present? ? "user" : "guest"
+        body[:cd2] = @params[:page_category].to_s if @params[:page_category].present?
 
         self.class.delay(priority: 10).post("/collect", body: body)
       end

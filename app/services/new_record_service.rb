@@ -4,10 +4,11 @@ class NewRecordService
   attr_writer :app
   attr_reader :record
 
-  def initialize(user, record, keen_client)
+  def initialize(user, record, keen_client, ga_client)
     @user = user
     @record = record
     @keen_client = keen_client
+    @ga_client = ga_client
   end
 
   def save
@@ -25,6 +26,7 @@ class NewRecordService
       finish_tips
       update_latest_status
       create_keen_event
+      create_ga_event
     end
 
     true
@@ -54,6 +56,11 @@ class NewRecordService
   def create_keen_event
     @keen_client.app = @app
     @keen_client.records.create
+  end
+
+  def create_ga_event
+    data_source = @app.present? ? :api : :web
+    @ga_client.events.create(:records, :create, ds: data_source)
   end
 
   def update_record_comments_count

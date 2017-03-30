@@ -20,7 +20,8 @@ class RecordsController < ApplicationController
     @work = @episode.work
     @record = @episode.records.new(checkin)
     keen_client.page_category = params[:page_category]
-    service = NewRecordService.new(current_user, @record, keen_client)
+    ga_client.page_category = params[:page_category]
+    service = NewRecordService.new(current_user, @record, keen_client, ga_client)
 
     if service.save
       flash[:notice] = t("messages.records.created")

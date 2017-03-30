@@ -17,6 +17,8 @@ class RegistrationsController < Devise::RegistrationsController
     @user.save
     keen_client.user = @user
     keen_client.users.create
+    ga_client.user = @user
+    ga_client.events.create(:users, :create)
 
     bypass_sign_in(@user)
 

@@ -12,6 +12,8 @@ module Api
         records.delay.save!(episode_ids)
         keen_client.page_category = page_category
         keen_client.multiple_records.create
+        ga_client.page_category = page_category
+        ga_client.events.create(:multiple_records, :create)
         flash[:notice] = t "messages.multiple_records.create.saved"
         head 201
       end
