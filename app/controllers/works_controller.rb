@@ -82,6 +82,7 @@ class WorksController < ApplicationController
       staffs.
       published.
       order(:sort_number)
+    @series_list = @work.series_list.published.where("series_works_count > ?", 1)
 
     return unless user_signed_in?
 

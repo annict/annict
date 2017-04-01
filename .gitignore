@@ -14,3 +14,4 @@
 /spec/test_files/paperclip
 /tags
 /tmp
+/vendor/bundler

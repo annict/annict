@@ -1,0 +1,15 @@
+.row
+  - series.series_works.where.not(work: work.id).sort_season.each do |series_work|
+    - work = series_work.work
+    .col-2.p-0.pr-1.mb-1
+      .c-card
+        = link_to work_path(work) do
+          .c-hover-image
+            .c-hover-image__image
+              = ann_image_tag(work.work_image, :attachment, size: "280x373", class: "img-fluid rounded")
+            .c-hover-image__over
+        .p-zp25
+          .text-truncate.u-very-small
+            = link_to work.decorate.local_title, work_path(work)
+          .text-truncate.u-very-small
+            = series_work.decorate.local_summary

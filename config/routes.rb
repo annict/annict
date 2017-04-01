@@ -38,6 +38,8 @@ Rails.application.routes.draw do
       resources :organizations, only: [:index]
       resources :people, only: [:index]
       resources :receptions, only: [:create, :destroy]
+      resources :series_list, only: %i(index)
+      resources :works, only: %i(index)
 
       resources :favorites, only: %i(create) do
         post :unfavorite, on: :collection
@@ -153,6 +155,22 @@ Rails.application.routes.draw do
     end
 
     resources :programs, only: %i(edit update destroy) do
+      member do
+        get :activities
+        patch :hide
+      end
+    end
+
+    resources :series, only: %i(index new create edit update destroy) do
+      member do
+        get :activities
+        patch :hide
+      end
+
+      resources :series_works, only: %i(index new create)
+    end
+
+    resources :series_works, only: %i(edit update destroy) do
       member do
         get :activities
         patch :hide

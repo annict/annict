@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170320070746) do
+ActiveRecord::Schema.define(version: 20170401042901) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -98,7 +98,6 @@ ActiveRecord::Schema.define(version: 20170320070746) do
     t.string   "name_kana",                 default: "",          null: false
     t.string   "name_en",                   default: "",          null: false
     t.string   "kind",                      default: "",          null: false
-    t.string   "kind_en",                   default: "",          null: false
     t.string   "nickname",                  default: "",          null: false
     t.string   "nickname_en",               default: "",          null: false
     t.string   "birthday",                  default: "",          null: false
@@ -123,8 +122,10 @@ ActiveRecord::Schema.define(version: 20170320070746) do
     t.string   "description_source",        default: "",          null: false
     t.string   "description_source_en",     default: "",          null: false
     t.integer  "favorite_characters_count", default: 0,           null: false
+    t.integer  "series_id"
     t.index ["favorite_characters_count"], name: "index_characters_on_favorite_characters_count", using: :btree
-    t.index ["name", "kind"], name: "index_characters_on_name_and_kind", unique: true, using: :btree
+    t.index ["name", "series_id"], name: "index_characters_on_name_and_series_id", unique: true, using: :btree
+    t.index ["series_id"], name: "index_characters_on_series_id", using: :btree
   end
 
   create_table "checkins", force: :cascade do |t|
@@ -792,6 +793,29 @@ ActiveRecord::Schema.define(version: 20170320070746) do
     t.index ["year"], name: "index_seasons_on_year", using: :btree
   end
 
+  create_table "series", force: :cascade do |t|
+    t.string   "name",                                     null: false
+    t.string   "name_ro",            default: "",          null: false
+    t.string   "name_en",            default: "",          null: false
+    t.string   "aasm_state",         default: "published", null: false
+    t.datetime "created_at",                               null: false
+    t.datetime "updated_at",                               null: false
+    t.integer  "series_works_count", default: 0,           null: false
+  end
+
+  create_table "series_works", force: :cascade do |t|
+    t.integer  "series_id",                        null: false
+    t.integer  "work_id",                          null: false
+    t.string   "aasm_state", default: "published", null: false
+    t.datetime "created_at",                       null: false
+    t.datetime "updated_at",                       null: false
+    t.string   "summary",    default: "",          null: false
+    t.string   "summary_en", default: "",          null: false
+    t.index ["series_id", "work_id"], name: "index_series_works_on_series_id_and_work_id", unique: true, using: :btree
+    t.index ["series_id"], name: "index_series_works_on_series_id", using: :btree
+    t.index ["work_id"], name: "index_series_works_on_work_id", using: :btree
+  end
+
   create_table "sessions", force: :cascade do |t|
     t.string   "session_id", limit: 510, null: false
     t.text     "data"
@@ -972,6 +996,7 @@ ActiveRecord::Schema.define(version: 20170320070746) do
   add_foreign_key "channels", "channel_groups", name: "channels_channel_group_id_fk", on_delete: :cascade
   add_foreign_key "character_images", "characters"
   add_foreign_key "character_images", "users"
+  add_foreign_key "characters", "series", name: "characters_series_id_fk", on_delete: :nullify
   add_foreign_key "checkins", "episodes", name: "checkins_episode_id_fk", on_delete: :cascade
   add_foreign_key "checkins", "multiple_records"
   add_foreign_key "checkins", "oauth_applications"
@@ -1051,6 +1076,8 @@ ActiveRecord::Schema.define(version: 20170320070746) do
   add_foreign_key "providers", "users", name: "providers_user_id_fk", on_delete: :cascade
   add_foreign_key "receptions", "channels", name: "receptions_channel_id_fk", on_delete: :cascade
   add_foreign_key "receptions", "users", name: "receptions_user_id_fk", on_delete: :cascade
+  add_foreign_key "series_works", "series", name: "series_works_series_id_fk", on_delete: :cascade
+  add_foreign_key "series_works", "works", name: "series_works_work_id_fk", on_delete: :cascade
   add_foreign_key "settings", "users"
   add_foreign_key "staffs", "works"
   add_foreign_key "statuses", "oauth_applications"

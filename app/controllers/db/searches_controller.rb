@@ -3,6 +3,7 @@
 module Db
   class SearchesController < Db::ApplicationController
     def show
+      @series_list = @search.series_list.order(id: :desc)
       @works = @search.works.
         includes(:season, :item).
         order(id: :desc)

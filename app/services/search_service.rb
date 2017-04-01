@@ -8,6 +8,10 @@ class SearchService
     @scope = scope
   end
 
+  def series_list
+    collection(Series).search(name_or_name_ro_or_name_en_cont: @q).result
+  end
+
   def works
     collection(Work).search(title_or_title_ro_or_title_en_or_title_kana_cont: @q).result
   end

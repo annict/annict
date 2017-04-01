@@ -76,6 +76,13 @@ ja:
         spring: "%{year}年春"
         summer: "%{year}年夏"
         autumn: "%{year}年秋"
+    series:
+      aasm_state:
+        published: 公開
+        hidden: 非公開
+      new_series: シリーズ登録
+    series_work:
+      new_series_works: シリーズ作品登録
     staff:
       created: 登録しました
       deleted: 削除しました

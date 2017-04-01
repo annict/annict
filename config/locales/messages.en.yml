@@ -2,9 +2,13 @@ en:
   messages:
     _common:
       are_you_sure: Are you sure?
+      created: Created
+      deleted: Deleted
       edit_on_annict_db: Edit on Annict DB
       join_annict: Join Annict
       search_with_keywords: Search...
+      unpublished: Unpublished
+      updated: Updated
       view_amazon_product: View Amazon
       welcome_back: Welcome back!
       welcome_to_annict: Welcome to Annict!
@@ -12,7 +16,9 @@ en:
     _empty:
       no_characters: No Characters
       no_episodes: No Episodes
+      no_series: No Series
       no_staffs: No Staffs
+      no_series_works: No Series Works
     _validators:
       and_other_are_required: and %{column_name} are required
       is_required_true_or_false: is required `true` or `false`

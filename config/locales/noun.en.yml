@@ -75,12 +75,15 @@ en:
     programs: Programs
     rating: Rating
     records_count: Records Count
+    related_works: Related Works
     release_on: Release on
     release_season: Release Season
     resources: Resources
     search: Search
     season: Season
     seasonal_anime: Seasonal Anime
+    series: Series
+    series_with_name: "%{series_name} Series"
     services: Services
     settings: Settings
     sign_in: Sign in

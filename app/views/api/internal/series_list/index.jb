@@ -1,0 +1,12 @@
+# frozen_string_literal: true
+
+resources = @series_list.map do |series|
+  {
+    id: series.id,
+    text: series.decorate.local_name
+  }
+end
+
+{
+  resources: resources
+}

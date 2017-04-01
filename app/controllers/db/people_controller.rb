@@ -26,7 +26,7 @@ module Db
       return render(:new) unless @person.valid?
       @person.save_and_create_activity!
 
-      redirect_to edit_db_person_path(@person), notice: t("resources.person.created")
+      redirect_to db_people_path, notice: t("resources.person.created")
     end
 
     def edit

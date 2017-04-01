@@ -104,7 +104,7 @@ h2.h4.font-weight-bold.text-center.mt-1.mb-2
         .mt-1
           = link_to t("messages.works.view_all_n_staffs", n: @staffs.length), work_staffs_path(@work), class: "btn btn-secondary w-100"
 
-.mb-2
+.mb-1
   h2.h4.text-center.font-weight-bold.mt-1.mb-2
     = t "noun.episodes"
   .c-card.py-1
@@ -121,6 +121,16 @@ h2.h4.font-weight-bold.text-center.mt-1.mb-2
           = link_to t("messages.works.view_all_n_episodes", n: @episodes.length), work_episodes_path(@work), class: "btn btn-secondary w-100"
     - else
       = render "application/components/empty", text: t("messages.works.no_episodes")
+
+- if @series_list.present?
+  .mb-2
+    h2.h4.text-center.font-weight-bold.mt-1.mb-2
+      = t "noun.related_works"
+    .c-card.p-1
+      - @series_list.each do |series|
+        h3.text-center.mb-1
+          = t("noun.series_with_name", series_name: series.decorate.local_name)
+        = render "series/work_list", series: series, work: @work
 
 = render "application/components/footer"
 = render "application/components/tabbar"

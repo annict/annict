@@ -1,0 +1,12 @@
+.l-topbar.container-fluid.px-1
+  .row.flex-items-xs-between
+    .col-8
+      = render "db/application/topbar_title", parent: t("resources.series.new_series")
+
+.container-fluid.p-1
+  .row
+    .col-6
+      .c-card.p-1
+        = render "form", series: @series
+    .col-6
+      = render "sidebar"

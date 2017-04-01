@@ -1,0 +1,16 @@
+# frozen_string_literal: true
+
+class SeriesDecorator < ApplicationDecorator
+  include RootResourceDecoratorCommon
+
+  def local_name
+    return name if I18n.locale == :ja
+    return name_ro if name_ro.present?
+    return name_en if name_en.present?
+    name
+  end
+
+  def db_header_title
+    local_name
+  end
+end

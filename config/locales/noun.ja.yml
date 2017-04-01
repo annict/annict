@@ -75,12 +75,15 @@ ja:
     programs: 放送予定
     rating: 評価
     records_count: 記録数
+    related_works: 関連作品
     release_on: リリース日
     release_season: リリース時期
     resources: 種類
     search: 検索
     season: シーズン
     seasonal_anime: シーズン別アニメ
+    series: シリーズ
+    series_with_name: "%{series_name}シリーズ"
     services: サービス
     settings: 設定
     sign_in: ログイン

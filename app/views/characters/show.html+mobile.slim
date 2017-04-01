@@ -1,4 +1,4 @@
-- name = t "head.title.characters.show", name: @character.decorate.name_with_kind
+- name = t "head.title.characters.show", name: @character.decorate.name_with_series
 - description = meta_description t("head.meta.description.characters.show", name: name)
 - keywords = meta_keywords @character.decorate.local_name
 - image_url = ann_image_url(@character.character_images.first, :attachment, size: "640x")
@@ -32,11 +32,11 @@ h2.h4.font-weight-bold.text-center.mt-1.mb-2
           = t "activerecord.attributes.character.nickname"
         dd.col-6
           = @character.nickname
-      - if @character.kind.present?
+      - if @character.series.present?
         dt.col-6.text-right
-          = t "activerecord.attributes.character.kind"
+          = t "activerecord.attributes.character.series"
         dd.col-6
-          = @character.kind
+          = @character.series.decorate.local_name
       - if @character.birthday.present?
         dt.col-6.text-right
           = t "activerecord.attributes.character.birthday"
