@@ -1,0 +1,53 @@
+- title = t "head.title.db.streaming_links.index"
+- set_meta_tags(title: title, reverse: true, prefix: false)
+- set_page_category "db_streaming_links_index"
+
+.l-topbar.container-fluid.px-1
+  .row.flex-items-xs-between
+    .col-8
+      = render "db/application/topbar_title", parent: @work, child: title
+    - if user_signed_in? && current_user.committer?
+      .col.text-right
+        = link_to new_db_work_streaming_link_path(@work), class: "btn btn-outline-primary" do
+          = icon "pencil-square-o"
+          = t "resources.streaming_link.new_streaming_links"
+
+= render "db/works/subnav", work: @work
+
+.container-fluid.p-1
+  - if @streaming_links.present?
+    .c-card
+      table.table.table-hover
+        thead
+          tr
+            th ID
+            th = t "activerecord.attributes.streaming_link.channel_id"
+            th = t "activerecord.attributes.streaming_link.unique_id"
+            th = t "activerecord.attributes.streaming_link.locale"
+            th = t "head.title.db.streaming_links.activities"
+            - if policy(@streaming_links).edit?
+              th = t "noun.edit"
+            - if policy(@streaming_links).hide?
+              th = t "noun.state_change"
+            - if policy(@streaming_links).destroy?
+              th = t "noun.delete"
+        tbody
+          - @streaming_links.each do |streaming_link|
+            tr
+              td = streaming_link.id
+              td = streaming_link.channel.name
+              td = link_to streaming_link.unique_id, streaming_link.url, target: "_blank"
+              td = streaming_link.locale_text
+              td = link_to t("head.title.db.streaming_links.activities"), activities_db_streaming_link_path(streaming_link)
+              - if policy(streaming_link).edit?
+                td
+                  = link_to t("noun.edit"), edit_db_streaming_link_path(streaming_link), class: "btn btn-primary btn-sm"
+              - if policy(streaming_link).hide?
+                td
+                  - if streaming_link.published?
+                    = link_to t("noun.hide"), hide_db_streaming_link_path(streaming_link), class: "btn btn-warning btn-sm", data: { method: "patch", confirm: t("messages._common.are_you_sure") }
+              - if policy(streaming_link).destroy?
+                td = link_to t("noun.delete"), db_streaming_link_path(streaming_link), class: "btn btn-danger btn-sm", data: { method: :delete, confirm: t("messages._common.are_you_sure") }
+
+  - else
+    = render "application/components/empty", text: t("messages.streaming_links.no_streaming_links")

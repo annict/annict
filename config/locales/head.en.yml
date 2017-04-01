@@ -96,6 +96,11 @@ en:
           edit: Edit Staff
           index: Staff
           new: Create Staff
+        streaming_links:
+          activities: Activities
+          edit: Edit Streaming Link
+          index: Streaming
+          new: New Streaming Link
         work_images:
           show: Work Image - %{title}
         works:

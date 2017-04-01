@@ -7,38 +7,24 @@
 = render "application/components/navbar"
 
 .p-application__content
-  .container.my-1.mb-2
-    - if @search.q.present?
-      .row
-        .p-searches__sidebar.py-1
-          h2.h4.font-weight-bold.mb-1 = t "noun.resources"
-          ul.list-unstyled
-            li.mb-zp5
-              = active_link_to search_path(q: @search.q, resource: "work"), class_active: "u-link--hovered", active: (@view == "work") do
-                = t "noun.works"
-                span.badge.badge-pill.badge-default.ml-zp5 = @works.count
-            li.mb-zp5
-              = active_link_to search_path(q: @search.q, resource: "character"), class_active: "u-link--hovered", active: (@view == "character") do
-                = t "noun.characters"
-                span.badge.badge-pill.badge-default.ml-zp5 = @characters.count
-            li.mb-zp5
-              = active_link_to search_path(q: @search.q, resource: "person"), class_active: "u-link--hovered", active: (@view == "person") do
-                = t "noun.people"
-                span.badge.badge-pill.badge-default.ml-zp5 = @people.count
-            li
-              = active_link_to search_path(q: @search.q, resource: "organization"), class_active: "u-link--hovered", active: (@view == "organization") do
-                = t "noun.organizations"
-                span.badge.badge-pill.badge-default.ml-zp5 = @organizations.count
-        .col
-          .c-card.p-1.mb-1
-            = render "form"
+  .container-fluid.mb-2
+    .row
+      .col-3.py-1
+        = form_tag search_path, method: :get do
+          .input-group
+            = text_field_tag :q, @search.q, placeholder: t("messages._common.search_with_keywords"), class: "form-control"
+          - Channel.published.with_streaming_service.each do |c|
+            .form-check
+              label.form-check-label
+                = check_box_tag "streaming_#{c.id}", 1, false, class: "form-check-input"
+                span = c.name
+      .col-9.my-1
+        = render "subnav", view: @view
+        .px-1
           - resources = instance_variable_get("@#{@view.pluralize}").page(params[:page])
           = render "#{@view.pluralize}/list", "#{@view.pluralize}": resources
           .text-center
             = paginate resources
-    - else
-      .c-card.p-1
-        = render "form"
 
 = render "application/components/footer"
 

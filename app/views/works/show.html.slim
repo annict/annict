@@ -41,6 +41,20 @@
               .mt-1
                 = link_to t("messages.works.view_all_n_staffs", n: @staffs.length), work_staffs_path(@work), class: "btn btn-secondary w-100"
 
+        h2.h4.text-center.my-2.font-weight-bold = t "noun.video_services"
+        .c-card.mt-1.pt-1
+          .container
+            - Channel.published.with_streaming_service.each_slice(3).each do |channels|
+              .row.mb-1
+                - channels.each do |channel|
+                  - streaming_link = channel.streaming_links.published.find_by(work: @work)
+                  .col-4
+                    - if streaming_link.present?
+                      = link_to channel.name, streaming_link.url, class: "btn btn-info w-100", target: "_blank"
+                    - else
+                      button.btn.btn-outline-info.w-100 type="button" disabled=""
+                        = channel.name
+
         h2.h4.text-center.my-2.font-weight-bold = t "noun.episodes"
         .c-card.mt-1.py-1
           - if @episodes.present?

@@ -51,5 +51,12 @@ dl
     dt.small = t "activerecord.attributes.work.twitter_hashtag"
     dd = work.decorate.twitter_hashtag_link
 
+h2.h4.font-weight-bold.mt-2.mb-1
+  = icon "video-camera", class: "mr-zp25"
+  = t "noun.video_services"
+ul.list-unstyled
+  - work.streaming_links.published.each do |link|
+    li = link_to link.channel.name, link.url, target: "_blank"
+
 - if user_signed_in? && current_user.committer?
-  = link_to t("messages._common.edit_on_annict_db"), edit_db_work_path(work), class: "btn btn-secondary w-100 mt-zp5"
+  = link_to t("messages._common.edit_on_annict_db"), edit_db_work_path(work), class: "btn btn-secondary w-100 mt-1"

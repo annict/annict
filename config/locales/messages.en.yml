@@ -2,9 +2,11 @@ en:
   messages:
     _common:
       are_you_sure: Are you sure?
+      created: Created
       edit_on_annict_db: Edit on Annict DB
       join_annict: Join Annict
       search_with_keywords: Search...
+      updated: Updated
       view_amazon_product: View Amazon
       welcome_back: Welcome back!
       welcome_to_annict: Welcome to Annict!
@@ -173,6 +175,8 @@ en:
         make_sure_to_copy: Make sure to copy your new personal access token now. You won’t be able to see it again.
         new: Generate new token
         no_tokens: No tokens
+    streaming_links:
+      no_streaming_links: No Data
     tracks:
       no_trackable_episodes: No trackable episodes
       skip_episode_confirmation: Are you sure to skip this episode and show next episode?
