@@ -20,10 +20,12 @@ module DbActivityMethods
 
   def root_resource
     case self.class.name
-    when "Work", "Person", "Organization", "Character"
+    when "Work", "Person", "Organization", "Character", "Series"
       self
     when "Episode", "Program", "Cast", "Staff"
       work
+    when "SeriesWork"
+      series
     end
   end
 

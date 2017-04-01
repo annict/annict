@@ -26,7 +26,7 @@ module Db
       @organization.save_and_create_activity!
 
       flash[:notice] = t("resources.organization.created")
-      redirect_to edit_db_organization_path(@organization)
+      redirect_to db_organizations_path
     end
 
     def edit

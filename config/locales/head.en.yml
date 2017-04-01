@@ -91,6 +91,13 @@ en:
           new: New Programs
         searches:
           show: Search
+        series:
+          index: Series
+        series_works:
+          activities: Activities
+          edit: Edit Series Work
+          index: Series Works
+          new: Create Series Works
         staffs:
           activities: Activities
           edit: Edit Staff

@@ -89,6 +89,13 @@ ja:
           new: 放送予定登録
         searches:
           show: 検索
+        series:
+          index: シリーズ一覧
+        series_works:
+          activities: アクティビティ
+          edit: シリーズ作品編集
+          index: シリーズ作品一覧
+          new: シリーズ作品登録
         staffs:
           activities: アクティビティ
           edit: スタッフ編集

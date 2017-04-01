@@ -9,6 +9,13 @@
 
 .container-fluid.p-1
   .mb-3
+    h2.text-center.mb-1 = Series.model_name.human(count: 2)
+    - if @series_list.present?
+      = render "db/series/series_list", series_list: @series_list
+    - else
+      = render "application/components/empty", text: t("messages._empty.no_series")
+
+  .mb-3
     h2.text-center.mb-1 = Work.model_name.human(count: 2)
     - if @works.present?
       = render "db/works/works_list", works: @works

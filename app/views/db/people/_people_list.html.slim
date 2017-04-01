@@ -22,7 +22,7 @@
           td = person.name_kana.presence || "-"
           td = person.name_en.presence || "-"
           td
-            .badge class="#{person.published? ? 'badge-success' : 'tag-default'}"
+            .badge class="#{person.published? ? 'badge-success' : 'badge-warning'}"
               = t("resources.person.aasm_state.#{person.aasm_state}")
           td = link_to t("verb.view"), activities_db_person_path(person)
           - if policy(person).edit?

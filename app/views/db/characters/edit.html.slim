@@ -40,13 +40,13 @@
               .col-sm-9
                 = f.text_field :nickname_en, class: "form-control"
             .form-group.row
-              = f.label :kind, class: "col-sm-3 col-form-label"
+              = f.label :series_id, class: "col-sm-3 col-form-label"
               .col-sm-9
-                = f.text_field :kind, class: "form-control"
-            .form-group.row
-              = f.label :kind_en, class: "col-sm-3 col-form-label"
-              .col-sm-9
-                = f.text_field :kind_en, class: "form-control"
+                = f.select :series_id, nil, { include_blank: true }, { class: "form-control", "v-resource-select": "{ model: 'Series' }" }
+                  - if f.object.series&.id.present?
+                    option value="#{f.object.series.id}" selected="" = f.object.series.decorate.local_name
+                  - else
+                    option value="" selected=""
             .form-group.row
               = f.label :birthday, class: "col-sm-3 col-form-label"
               .col-sm-9

@@ -2,9 +2,13 @@ ja:
   messages:
     _common:
       are_you_sure: 実行しますか？
+      created: 登録しました
+      deleted: 削除しました
       edit_on_annict_db: Annict DBで編集する
       join_annict: Annictに参加する
       search_with_keywords: キーワードで検索...
+      unpublished: 非公開にしました
+      updated: 更新しました
       view_amazon_product: Amazonで見る
       welcome_back: おかえりなさい！
       welcome_to_annict: Annictにようこそ！
@@ -13,6 +17,8 @@ ja:
       no_characters: キャラクターはいません
       no_episodes: エピソードはありません
       no_staffs: スタッフはいません
+      no_series: シリーズはありません
+      no_series_works: シリーズ作品はありません
     _validators:
       and_other_are_required: と%{column_name}は両方入力してください
       is_required_true_or_false: には `true` または `false` を指定してください

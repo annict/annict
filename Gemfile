@@ -64,6 +64,7 @@ gem "rails-html-sanitizer"
 gem "rails-i18n"
 gem "rails_autolink"
 gem "ransack"
+# gem "rein"
 gem "rmagick"
 # To use font-awesome-sass
 # https://github.com/sass/sassc-rails/issues/6

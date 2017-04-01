@@ -63,6 +63,15 @@
                 = link_to t("messages.works.view_all_n_episodes", n: @episodes.length), work_episodes_path(@work), class: "btn btn-secondary w-100"
           - else
             = render "application/components/empty", text: t("messages._empty.no_episodes")
+        
+        - if @series_list.present?
+          h2.h4.text-center.my-2.font-weight-bold = t "noun.related_works"
+          .c-card.container.mt-1.py-1
+            - @series_list.each do |series|
+              h3.text-center.mb-1
+                = t("noun.series_with_name", series_name: series.decorate.local_name)
+              .px-1
+                = render "series/work_list", series: series, work: @work
 
 = render "application/components/footer"
 

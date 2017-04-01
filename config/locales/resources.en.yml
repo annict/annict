@@ -76,6 +76,13 @@ en:
         spring: "Spring %{year}"
         summer: "Summer %{year}"
         autumn: "Fall %{year}"
+    series:
+      aasm_state:
+        published: Published
+        hidden: Hidden
+      new_series: New series
+    series_work:
+      new_series_works: New series works
     staff:
       created: Staff created
       deleted: Staff deleted

@@ -24,9 +24,9 @@ h1.h2.font-weight-bold
     - if character.decorate.local_nickname.present?
       dt.small = t "activerecord.attributes.character.nickname"
       dd = character.decorate.local_nickname
-    - if character.decorate.local_kind.present?
-      dt.small = t "activerecord.attributes.character.kind"
-      dd = character.decorate.local_kind
+    - if character.series.present?
+      dt.small = t "activerecord.attributes.character.series"
+      dd = character.series.decorate.local_name
     - if character.decorate.local_birthday.present?
       dt.small = t "activerecord.attributes.character.birthday"
       dd = character.decorate.local_birthday
