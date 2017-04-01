@@ -72,7 +72,7 @@ class Character < ApplicationRecord
   has_many :works, through: :casts
   has_one :character_image
 
-  validates :name, presence: true, uniqueness: { scope: :kind }
+  validates :name, presence: true, uniqueness: { scope: :series_id }
   validates :description, presence_pair: :description_source
   validates :description_en, presence_pair: :description_source_en
 
