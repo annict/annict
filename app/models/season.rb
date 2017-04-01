@@ -4,7 +4,7 @@
 # Table name: seasons
 #
 #  id          :integer          not null, primary key
-#  name        :string(510)      not null
+#  name        :string           not null
 #  created_at  :datetime
 #  updated_at  :datetime
 #  sort_number :integer          not null

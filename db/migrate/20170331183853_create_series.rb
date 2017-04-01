@@ -11,8 +11,6 @@ class CreateSeries < ActiveRecord::Migration[5.0]
       t.timestamps null: false
     end
 
-    add_presence_constraint :series, :name
-
-    add_inclusion_constraint :series, :aasm_state, in: %w(published hidden)
+    add_index :series, :name, unique: true
   end
 end

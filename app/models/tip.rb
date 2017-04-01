@@ -5,9 +5,9 @@
 #
 #  id         :integer          not null, primary key
 #  target     :integer          not null
-#  slug       :string(255)      not null
-#  title      :string(255)      not null
-#  icon_name  :string(255)      not null
+#  slug       :string           not null
+#  title      :string           not null
+#  icon_name  :string           not null
 #  created_at :datetime         not null
 #  updated_at :datetime         not null
 #  title_en   :string           default(""), not null

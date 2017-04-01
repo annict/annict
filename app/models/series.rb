@@ -8,9 +8,13 @@
 #  name_ro            :string           default(""), not null
 #  name_en            :string           default(""), not null
 #  aasm_state         :string           default("published"), not null
+#  series_works_count :integer          default(0), not null
 #  created_at         :datetime         not null
 #  updated_at         :datetime         not null
-#  series_works_count :integer          default(0), not null
+#
+# Indexes
+#
+#  index_series_on_name  (name) UNIQUE
 #
 
 class Series < ApplicationRecord

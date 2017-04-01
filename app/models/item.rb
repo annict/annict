@@ -4,8 +4,8 @@
 #
 #  id                       :integer          not null, primary key
 #  work_id                  :integer
-#  name                     :string(510)      not null
-#  url                      :string(510)      not null
+#  name                     :string           not null
+#  url                      :string           not null
 #  created_at               :datetime
 #  updated_at               :datetime
 #  tombo_image_file_name    :string
@@ -16,7 +16,6 @@
 # Indexes
 #
 #  index_items_on_work_id  (work_id) UNIQUE
-#  items_work_id_idx       (work_id)
 #
 
 class Item < ActiveRecord::Base
