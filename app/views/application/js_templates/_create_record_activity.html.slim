@@ -14,7 +14,10 @@ script#t-create-record-activity type="x-template"
             a :href='"/works/" + activity.work.id'
               | {{ activity.work.title }}
             a.ml-zp25 :href='"/works/" + activity.work.id + "/episodes/" + activity.episode.id' v-if="!activity.work.is_single"
-              | {{ activity.episode.number }}
+              template v-if="activity.episode.number"
+                | {{ activity.episode.number }}
+              template v-else=""
+                | {{ activity.episode.title }}
           .mb-zp5 v-else=""
             a :href='"/@" + activity.user.username'
               | {{ activity.profile.name }}
@@ -22,7 +25,10 @@ script#t-create-record-activity type="x-template"
             a :href='"/works/" + activity.work.id'
               | {{ activity.work.title }}
             a.ml-zp25 :href='"/works/" + activity.work.id + "/episodes/" + activity.episode.id' v-if="!activity.work.is_single"
-              | {{ activity.episode.number }}
+              template v-if="activity.episode.number"
+                | {{ activity.episode.number }}
+              template v-else=""
+                | {{ activity.episode.title }}
             | を見ました
           .small.text-muted
             c-time-ago :time="activity.created_at"

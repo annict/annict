@@ -86,7 +86,7 @@ class Episode < ActiveRecord::Base
 
   # 映画やOVAなどの実質エピソードを持たない作品かどうかを判定する
   def single?
-    number.blank? && title.present?
+    number.blank? && title.present? && title == work.title
   end
 
   def to_hash
