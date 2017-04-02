@@ -47,7 +47,7 @@ namespace :work do
     end
   end
 
-  task :send_next_season_came_email, %i(season_year season_name) => :environment do |t, args|
+  task :send_next_season_came_email, %i(season_year season_name all) => :environment do |t, args|
     Rails.logger = Logger.new(STDOUT) if Rails.env.development?
     Rails.logger.info "work:send_next_season_came_email >> task started"
 
@@ -58,9 +58,13 @@ namespace :work do
     end
     Rails.logger.info "work:send_next_season_came_email >> season: #{season.slug}"
 
-    users = User.
-      joins(:email_notification).
-      where(email_notifications: { event_next_season_came: true })
+    users = if args[:all] == "true"
+      User.
+        joins(:email_notification).
+        where(email_notifications: { event_next_season_came: true })
+    else
+      User.where(username: "shimbaco")
+    end
 
     users.find_each do |user|
       Rails.logger.info "work:send_next_season_came_email >> user: #{user.id}"
