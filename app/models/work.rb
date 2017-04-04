@@ -4,19 +4,19 @@
 # Table name: works
 #
 #  id                   :integer          not null, primary key
-#  title                :string           not null
+#  season_id            :integer
+#  sc_tid               :integer
+#  title                :string(510)      not null
 #  media                :integer          not null
-#  official_site_url    :string           default(""), not null
-#  wikipedia_url        :string           default(""), not null
+#  official_site_url    :string(510)      default(""), not null
+#  wikipedia_url        :string(510)      default(""), not null
+#  episodes_count       :integer          default(0), not null
+#  watchers_count       :integer          default(0), not null
 #  released_at          :date
 #  created_at           :datetime
 #  updated_at           :datetime
-#  episodes_count       :integer          default(0), not null
-#  season_id            :integer
-#  twitter_username     :string
-#  twitter_hashtag      :string
-#  watchers_count       :integer          default(0), not null
-#  sc_tid               :integer
+#  twitter_username     :string(510)
+#  twitter_hashtag      :string(510)
 #  released_at_about    :string
 #  aasm_state           :string           default("published"), not null
 #  number_format_id     :integer
@@ -30,16 +30,17 @@
 #  synopsis_source      :string           default(""), not null
 #  synopsis_source_en   :string           default(""), not null
 #  mal_anime_id         :integer
+#  season_year          :integer
+#  season_name          :integer
 #
 # Indexes
 #
-#  index_works_on_aasm_state        (aasm_state)
-#  index_works_on_episodes_count    (episodes_count)
-#  index_works_on_media             (media)
-#  index_works_on_number_format_id  (number_format_id)
-#  index_works_on_released_at       (released_at)
-#  index_works_on_sc_tid            (sc_tid) UNIQUE
-#  index_works_on_watchers_count    (watchers_count)
+#  index_works_on_aasm_state                   (aasm_state)
+#  index_works_on_number_format_id             (number_format_id)
+#  index_works_on_season_year                  (season_year)
+#  index_works_on_season_year_and_season_name  (season_year,season_name)
+#  works_sc_tid_key                            (sc_tid) UNIQUE
+#  works_season_id_idx                         (season_id)
 #
 
 class Work < ApplicationRecord
@@ -56,6 +57,7 @@ class Work < ApplicationRecord
   ).freeze
 
   enumerize :media, in: { tv: 1, ova: 2, movie: 3, web: 4, other: 0 }
+  enumerize :season_name, in: Season::NAME_HASH
 
   aasm do
     state :published, initial: true
@@ -71,7 +73,7 @@ class Work < ApplicationRecord
   end
 
   belongs_to :number_format
-  belongs_to :season
+  belongs_to :season_model, class_name: "SeasonModel", foreign_key: :season_id
   has_many :activities,
     foreign_key: :recipient_id,
     foreign_type: :recipient,
@@ -111,13 +113,10 @@ class Work < ApplicationRecord
   validates :synopsis, presence_pair: :synopsis_source
   validates :synopsis_en, presence_pair: :synopsis_source_en
 
-  scope :by_season, -> (season_slug) {
+  scope :by_season, ->(season_slug) {
     return self if season_slug.blank?
 
-    year, name = season_slug.split("-")
-
-    season_conds = name == "all" ? { year: year } : { year: year, name: name }
-    joins(:season).where(seasons: season_conds)
+    where(Season.new(*season_slug.split("-")).work_conditions)
   }
 
   scope :program_registered, -> {

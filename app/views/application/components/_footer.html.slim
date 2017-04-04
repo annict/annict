@@ -33,16 +33,8 @@
             li = link_to t("noun.privacy_policy"), privacy_path
         .col-3
           h4.font-weight-bold = t "noun.seasonal_anime"
-          - next_season_slug = ENV.fetch("ANNICT_NEXT_SEASON")
-          - year, name = next_season_slug.split("-")
-          - years = year.to_i.downto(2000).to_a
-          - name_data = Season::NAME_DATA
-          - names = name_data.keys.map(&:to_s).reverse
-          - slugs = years.map { |y| names.map { |sn| "#{y}-#{sn}" } }.flatten
-          - index = slugs.index(next_season_slug)
-          - slugs = slugs[index..index + 4]
           ul.list-unstyled
-            - slugs.each do |slug|
+            - Season.latest_slugs.each do |slug|
               li
                 - year, name = slug.split("-")
                 = link_to season_local_name(year, name), season_works_path(slug: slug)

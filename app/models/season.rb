@@ -1,86 +1,48 @@
 # frozen_string_literal: true
-# == Schema Information
-#
-# Table name: seasons
-#
-#  id          :integer          not null, primary key
-#  name        :string           not null
-#  created_at  :datetime
-#  updated_at  :datetime
-#  sort_number :integer          not null
-#  year        :integer          not null
-#
-# Indexes
-#
-#  index_seasons_on_sort_number    (sort_number) UNIQUE
-#  index_seasons_on_year           (year)
-#  index_seasons_on_year_and_name  (year,name) UNIQUE
-#
 
-class Season < ActiveRecord::Base
-  has_many :works
+class Season
+  extend Enumerize
 
-  delegate :local_name, to: :decorate
+  YEAR_LIST = 1900..(Time.now.year + 2)
+  NAME_HASH = { winter: 1, spring: 2, summer: 3, autumn: 4 }.freeze
 
-  after_save :expire_cache
-  after_destroy :expire_cache
+  enumerize :name, in: NAME_HASH
 
-  NAME_DATA = {
-    winter: "冬",
-    spring: "春",
-    summer: "夏",
-    autumn: "秋"
-  }.freeze
-
-  def self.find_or_new_by_slug(slug)
-    year, name = slug.split("-")
-    attrs = { year: year, name: name }
-
-    # seasonsテーブルには name: "all" なレコードを保存していないため、newする
-    return new(attrs) if name == "all"
-
-    find_by(attrs)
+  def self.latest_slugs
+    next_season_slug = ENV.fetch("ANNICT_NEXT_SEASON")
+    year = next_season_slug.split("-").first
+    years = year.to_i.downto(2000).to_a
+    names = Season::NAME_HASH.keys.map(&:to_s).reverse
+    slugs = years.map { |y| names.map { |sn| "#{y}-#{sn}" } }.flatten
+    index = slugs.index(next_season_slug)
+    slugs[index..index + 4]
   end
 
-  def self.slug_options
-    options = []
-    years.each do |year|
-      options << ["#{year}年", "#{year}-all"]
-      NAME_DATA.reverse_each do |key, val|
-        options << ["#{year}年#{val}", "#{year}-#{key}"]
-      end
-    end
-    options
+  def initialize(year, name)
+    @year = year
+    @name = name
   end
 
-  def self.years
-    # 降順で取得する
-    pluck(:year).uniq.sort { |a, b| b <=> a }
+  def work_conditions
+    conds = { season_year: @year }
+    conds[:season_name] = name.value unless all?
+    conds
   end
 
-  def self.all_cached(sort)
-    Rails.cache.fetch "Season/all/#{sort}" do
-      Season.order(sort_number: sort)
-    end
+  def all?
+    @name == "all"
   end
 
   def slug
-    "#{year}-#{name}"
+    "#{@year}-#{@name}"
   end
 
   def color
-    case name
+    case @name
     when "winter" then "#78909c"
     when "spring" then "#ec407a"
     when "summer" then "#42a5f5"
     when "autumn" then "#ff7043"
     end
-  end
-
-  private
-
-  def expire_cache
-    Rails.cache.delete("Season/all/asc")
-    Rails.cache.delete("Season/all/desc")
   end
 end
