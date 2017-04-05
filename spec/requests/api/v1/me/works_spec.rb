@@ -34,6 +34,19 @@ describe "Api::V1::Me::Works" do
         "wikipedia_url" => "http://wikipedia.org",
         "twitter_username" => "precure_official",
         "twitter_hashtag" => "precure",
+        "images" => {
+          "recommended_url" => "",
+          "facebook" => {
+            "og_image_url" => ""
+          },
+          "twitter" => {
+            "mini_avatar_url" => "https://twitter.com/precure_official/profile_image?size=mini",
+            "normal_avatar_url" => "https://twitter.com/precure_official/profile_image?size=normal",
+            "bigger_avatar_url" => "https://twitter.com/precure_official/profile_image?size=bigger",
+            "original_avatar_url" => "https://twitter.com/precure_official/profile_image?size=original",
+            "image_url" => ""
+          }
+        },
         "episodes_count" => 0,
         "watchers_count" => 1,
         "status" => {
