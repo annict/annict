@@ -33,7 +33,7 @@
 #  season_year           :integer
 #  season_name           :integer
 #  facebook_og_image_url :string           default(""), not null
-#  twitter_avatar_url    :string           default(""), not null
+#  recommended_image_url :string           default(""), not null
 #  twitter_image_url     :string           default(""), not null
 #
 # Indexes
