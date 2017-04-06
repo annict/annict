@@ -37,6 +37,11 @@ class Season
     "#{@year}-#{@name}"
   end
 
+  def local_name(locale = nil)
+    I18n.locale = locale if locale.present?
+    I18n.t("resources.season.yearly.#{@name}", year: @year)
+  end
+
   def color
     case @name
     when "winter" then "#78909c"

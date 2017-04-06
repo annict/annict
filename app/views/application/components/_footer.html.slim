@@ -37,7 +37,7 @@
             - Season.latest_slugs.each do |slug|
               li
                 - year, name = slug.split("-")
-                = link_to season_local_name(year, name), season_works_path(slug: slug)
+                = link_to Season.new(year, name).local_name, season_works_path(slug: slug)
   .p-footer__auxiliary
     .container.py-zp5
       .row.align-items-center

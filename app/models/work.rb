@@ -154,6 +154,11 @@ class Work < ApplicationRecord
     Person.where(id: (cast_people.pluck(:id) | staff_people.pluck(:id)))
   end
 
+  def season
+    return if season_year.blank?
+    @season ||= Season.new(season_year, season_name)
+  end
+
   # 作品のエピソード数分の空白文字列が入った配列を返す
   # Chart.jsのx軸のラベルを消すにはこれしか方法がなかったんだ…! たぶん…。
   def chart_labels

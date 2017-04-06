@@ -29,7 +29,7 @@ class WorkDecorator < ApplicationDecorator
 
   def release_season
     return "" if season.blank?
-    season.decorate.local_name
+    season.local_name
   end
 
   def release_season_link
