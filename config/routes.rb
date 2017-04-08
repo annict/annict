@@ -217,7 +217,7 @@ Rails.application.routes.draw do
   end
 
   namespace :userland do
-    resources :projects
+    resources :projects, except: %i(index)
 
     root "home#index"
   end

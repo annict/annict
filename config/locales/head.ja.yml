@@ -183,6 +183,10 @@ ja:
         index: アニメ「%{title}」のスタッフ一覧
       tracks:
         show: 記録する
+      userland:
+        projects:
+          new: 新規プロジェクト - Userland
+          show: "%{name} - Userland"
       users:
         followers: "%{profile_name} (%{username})をフォローしている人"
         following: "%{profile_name} (%{username})がフォローしている人"

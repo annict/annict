@@ -183,6 +183,10 @@ en:
         index: Staff of %{title} (Anime)
       tracks:
         show: Track
+      userland:
+        projects:
+          new: New Project - Userland
+          show: "%{name} - Userland"
       users:
         followers: People following %{profile_name} (%{username})
         following: People followed by %{profile_name} (%{username})

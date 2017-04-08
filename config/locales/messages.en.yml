@@ -16,6 +16,7 @@ en:
     _empty:
       no_characters: No Characters
       no_episodes: No Episodes
+      no_projects: No Projects
       no_series: No Series
       no_staffs: No Staffs
       no_series_works: No Series Works
@@ -184,6 +185,13 @@ en:
       skip_episode_confirmation: Are you sure to skip this episode and show next episode?
       see_records: See records
       tracked: Your record has been tracked.
+    userland:
+      description: Userland is the place to discover 3rd party applications which uses Annict API.
+      description_mobile: Userland is the place to discover 3rd party applications which uses Annict API.
+      projects:
+        about_available: Please check this when the project is published and users can use it.
+        markdown_support: You can write in Markdown.
+      welcome: Welcome to Userland!
     users:
       no_works: No works
     work_images:

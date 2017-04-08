@@ -93,6 +93,10 @@ ja:
       updated: 更新しました
     user:
       is_wrong: が間違っています
+    userland_project:
+      delete: プロジェクト削除
+      edit: プロジェクト編集
+      new: 新規プロジェクト
     work:
       aasm_state:
         published: 公開
