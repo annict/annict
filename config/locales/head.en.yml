@@ -184,7 +184,10 @@ en:
       tracks:
         show: Track
       userland:
+        home:
+          index: Userland
         projects:
+          edit: Edit Project - Userland
           new: New Project - Userland
           show: "%{name} - Userland"
       users:

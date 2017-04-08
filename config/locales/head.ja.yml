@@ -184,7 +184,10 @@ ja:
       tracks:
         show: 記録する
       userland:
+        home:
+          index: Userland
         projects:
+          edit: プロジェクト編集 - Userland
           new: 新規プロジェクト - Userland
           show: "%{name} - Userland"
       users:
