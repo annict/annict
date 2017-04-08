@@ -2,10 +2,10 @@
 
 class UserlandProjectPolicy < ApplicationPolicy
   def update?
-     record.users.exists?(user)
+    user.userland_project_member?(record)
   end
 
   def destroy?
-    record.users.exists?(user)
+    user.userland_project_member?(record)
   end
 end
