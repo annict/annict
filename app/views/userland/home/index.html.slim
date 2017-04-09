@@ -13,10 +13,10 @@
         - @categories.each do |category|
           h2.h4.text-center.my-2.font-weight-bold
             = category.decorate.local_name
-          .c-card.p-1
+          .c-card.px-1
             - if category.userland_projects.exists?
               - category.userland_projects.order(:available, created_at: :desc).each do |project|
-                .container.u-underline
+                .container.u-underline.py-1
                   .row.align-items-center
                     .col-auto
                       = link_to userland_project_path(project) do
