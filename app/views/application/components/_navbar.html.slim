@@ -51,6 +51,7 @@ nav.c-navbar.navbar.navbar-toggleable-xl class="#{transparent ? 'navbar-dark is-
             = link_to t("head.title.friends.index"), annict_url(:friends_url), class: "dropdown-item"
             = link_to t("head.title.channels.index"), annict_url(:channels_url), class: "dropdown-item"
             = link_to t("noun.settings"), annict_url(:profile_url), class: "dropdown-item"
+            = link_to t("noun.annict_userland"), userland_root_path, class: "dropdown-item"
             = link_to t("noun.annict_forum"), forum_root_path, class: "dropdown-item"
             = link_to t("noun.annict_db"), db_root_path, class: "dropdown-item"
             = link_to t("noun.annict_api"), "https://docs.annict.com/ja/api/", target: "_blank", class: "dropdown-item"

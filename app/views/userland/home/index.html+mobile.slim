@@ -1,0 +1,34 @@
+- title = t "head.title.userland.home.index"
+- set_meta_tags(title: title, reverse: true, prefix: false)
+- set_page_category "userland_home_index"
+- breadcrumb :userland_root
+
+.mb-1
+  .container.mt-1
+    .alert.alert-info
+      h2.h3.alert-heading
+        = t "messages.userland.welcome"
+      p.mb-0
+        = t "messages.userland.description_mobile"
+  - @categories.each do |category|
+    h2.h4.text-center.my-2.font-weight-bold
+      = category.decorate.local_name
+    .c-card.p-1
+      - if category.userland_projects.exists?
+        - category.userland_projects.order(:available, created_at: :desc).each do |project|
+          .container.u-underline
+            .row.align-items-center
+              .col-auto
+                = link_to userland_project_path(project) do
+                  = ann_image_tag project, :icon, size: "60x60", class: "img-fluid img-thumbnail rounded"
+              .col
+                .mb-zp5
+                  = link_to project.name, userland_project_path(project)
+                .small.text-muted
+                  = project.summary
+      - else
+        = render "application/components/empty", text: t("messages._empty.no_projects")
+
+= render "application/components/breadcrumb"
+= render "application/components/footer"
+= render "application/components/tabbar"
