@@ -42,6 +42,7 @@ module Userland
     end
 
     def destroy
+      authorize @project, :destroy?
       @project.destroy
       redirect_to userland_root_path, notice: t("messages._common.deleted")
     end
