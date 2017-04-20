@@ -3,19 +3,19 @@
 #
 # Table name: userland_projects
 #
-#  id                     :integer          not null, primary key
-#  userland_category_id   :integer          not null
-#  name                   :string           not null
-#  summary                :string           not null
-#  description            :text             not null
-#  url                    :string           not null
-#  icon_file_name    :string
-#  icon_content_type :string
-#  icon_file_size    :integer
-#  icon_updated_at   :datetime
-#  available              :boolean          default(FALSE), not null
-#  created_at             :datetime         not null
-#  updated_at             :datetime         not null
+#  id                   :integer          not null, primary key
+#  userland_category_id :integer          not null
+#  name                 :string           not null
+#  summary              :string           not null
+#  description          :text             not null
+#  url                  :string           not null
+#  icon_file_name       :string
+#  icon_content_type    :string
+#  icon_file_size       :integer
+#  icon_updated_at      :datetime
+#  available            :boolean          default(FALSE), not null
+#  created_at           :datetime         not null
+#  updated_at           :datetime         not null
 #
 # Indexes
 #
