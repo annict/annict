@@ -139,6 +139,14 @@ ja:
         role: 担当
         sort_number: ソート番号
         work_id: 作品
+      userland_project:
+        available: 利用可能？
+        description: 概要
+        icon: アイコン
+        name: 名前
+        summary: 要約
+        url: URL
+        userland_category_id: カテゴリ
       user:
         current_password: 現在のパスワード
         email_username: メールアドレスまたはユーザ名

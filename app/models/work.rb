@@ -3,43 +3,43 @@
 #
 # Table name: works
 #
-#  id                   :integer          not null, primary key
-#  title                :string           not null
-#  media                :integer          not null
-#  official_site_url    :string           default(""), not null
-#  wikipedia_url        :string           default(""), not null
-#  released_at          :date
-#  created_at           :datetime
-#  updated_at           :datetime
-#  episodes_count       :integer          default(0), not null
-#  season_id            :integer
-#  twitter_username     :string
-#  twitter_hashtag      :string
-#  watchers_count       :integer          default(0), not null
-#  sc_tid               :integer
-#  released_at_about    :string
-#  aasm_state           :string           default("published"), not null
-#  number_format_id     :integer
-#  title_kana           :string           default(""), not null
-#  title_ro             :string           default(""), not null
-#  title_en             :string           default(""), not null
-#  official_site_url_en :string           default(""), not null
-#  wikipedia_url_en     :string           default(""), not null
-#  synopsis             :text             default(""), not null
-#  synopsis_en          :text             default(""), not null
-#  synopsis_source      :string           default(""), not null
-#  synopsis_source_en   :string           default(""), not null
-#  mal_anime_id         :integer
+#  id                    :integer          not null, primary key
+#  season_id             :integer
+#  sc_tid                :integer
+#  title                 :string(510)      not null
+#  media                 :integer          not null
+#  official_site_url     :string(510)      default(""), not null
+#  wikipedia_url         :string(510)      default(""), not null
+#  episodes_count        :integer          default(0), not null
+#  watchers_count        :integer          default(0), not null
+#  released_at           :date
+#  created_at            :datetime
+#  updated_at            :datetime
+#  twitter_username      :string(510)
+#  twitter_hashtag       :string(510)
+#  released_at_about     :string
+#  aasm_state            :string           default("published"), not null
+#  number_format_id      :integer
+#  title_kana            :string           default(""), not null
+#  title_ro              :string           default(""), not null
+#  title_en              :string           default(""), not null
+#  official_site_url_en  :string           default(""), not null
+#  wikipedia_url_en      :string           default(""), not null
+#  synopsis              :text             default(""), not null
+#  synopsis_en           :text             default(""), not null
+#  synopsis_source       :string           default(""), not null
+#  synopsis_source_en    :string           default(""), not null
+#  mal_anime_id          :integer
+#  facebook_og_image_url :string           default(""), not null
+#  twitter_image_url     :string           default(""), not null
+#  recommended_image_url :string           default(""), not null
 #
 # Indexes
 #
 #  index_works_on_aasm_state        (aasm_state)
-#  index_works_on_episodes_count    (episodes_count)
-#  index_works_on_media             (media)
 #  index_works_on_number_format_id  (number_format_id)
-#  index_works_on_released_at       (released_at)
-#  index_works_on_sc_tid            (sc_tid) UNIQUE
-#  index_works_on_watchers_count    (watchers_count)
+#  works_sc_tid_key                 (sc_tid) UNIQUE
+#  works_season_id_idx              (season_id)
 #
 
 class Work < ApplicationRecord
@@ -122,7 +122,7 @@ class Work < ApplicationRecord
 
   scope :program_registered, -> {
     work_ids = joins(:programs).
-      merge(Program.where(work_id: all.pluck(:id))).
+      merge(Program.published.where(work_id: all.pluck(:id))).
       pluck(:id).
       uniq
     where(id: work_ids)
@@ -181,11 +181,16 @@ class Work < ApplicationRecord
     "http://cal.syoboi.jp/tid/#{sc_tid}"
   end
 
+  def twitter_avatar_url(size = :original)
+    return "" if twitter_username.blank?
+    "https://twitter.com/#{twitter_username}/profile_image?size=#{size}"
+  end
+
   def channels
     return nil if episodes.blank?
 
-    programs = Program.where(episode_id: episodes.pluck(:id))
-    Channel.where(id: programs.pluck(:channel_id).uniq) if programs.present?
+    programs = Program.published.where(episode_id: episodes.pluck(:id))
+    Channel.published.where(id: programs.pluck(:channel_id).uniq) if programs.present?
   end
 
   def current_season?
