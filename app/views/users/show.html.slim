@@ -68,6 +68,26 @@
               .p-profile-header__count-text
                 | Followers
 
+        .row.text-center.mb-2
+          .p-users-show__count.col.px-0
+            = link_to favorite_characters_path(@user.username), class: "p-users-show__count-link" do
+              .h3
+                = @favorite_characters.length
+              .p-profile-header__count-text
+                = t "noun.favorite_characters_shorten"
+          .p-users-show__count.col.px-0
+            = link_to favorite_people_path(@user.username), class: "p-users-show__count-link" do
+              .h3
+                = @favorite_casts.length + @favorite_staffs.length
+              .p-profile-header__count-text
+                = t "noun.favorite_people_shorten"
+          .p-users-show__count.col.px-0
+            = link_to favorite_organizations_path(@user.username), class: "p-users-show__count-link" do
+              .h3
+                = @favorite_organizations.length
+              .p-profile-header__count-text
+                = t "noun.favorite_organizations_shorten"
+
         - if @user.profile.description.present? || @user.profile.url.present?
           .mb-2
             h2.p-users-show__sub-title
