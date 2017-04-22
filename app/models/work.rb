@@ -122,7 +122,7 @@ class Work < ApplicationRecord
 
   scope :program_registered, -> {
     work_ids = joins(:programs).
-      merge(Program.where(work_id: all.pluck(:id))).
+      merge(Program.published.where(work_id: all.pluck(:id))).
       pluck(:id).
       uniq
     where(id: work_ids)
@@ -189,8 +189,8 @@ class Work < ApplicationRecord
   def channels
     return nil if episodes.blank?
 
-    programs = Program.where(episode_id: episodes.pluck(:id))
-    Channel.where(id: programs.pluck(:channel_id).uniq) if programs.present?
+    programs = Program.published.where(episode_id: episodes.pluck(:id))
+    Channel.published.where(id: programs.pluck(:channel_id).uniq) if programs.present?
   end
 
   def current_season?

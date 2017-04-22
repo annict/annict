@@ -63,6 +63,8 @@ class Episode < ActiveRecord::Base
   before_create :set_sort_number
   after_create :update_prev_episode
   before_destroy :unset_prev_episode_id
+  after_save :expire_cache
+  after_destroy :expire_cache
 
   def self.create_from_multiple_episodes(work, multiple_episodes)
     episodes_count = work.episodes.count
@@ -118,5 +120,9 @@ class Episode < ActiveRecord::Base
 
   def set_sort_number
     self.sort_number = (work.episodes.count + 1) * 10
+  end
+
+  def expire_cache
+    programs.update_all(updated_at: Time.now)
   end
 end

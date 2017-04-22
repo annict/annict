@@ -920,18 +920,18 @@ ActiveRecord::Schema.define(version: 20170408033245) do
   end
 
   create_table "userland_projects", force: :cascade do |t|
-    t.integer  "userland_category_id",                   null: false
-    t.string   "name",                                   null: false
-    t.string   "summary",                                null: false
-    t.text     "description",                            null: false
-    t.string   "url",                                    null: false
-    t.string   "thumbnail_file_name"
-    t.string   "thumbnail_content_type"
-    t.integer  "thumbnail_file_size"
-    t.datetime "thumbnail_updated_at"
-    t.boolean  "available",              default: false, null: false
-    t.datetime "created_at",                             null: false
-    t.datetime "updated_at",                             null: false
+    t.integer  "userland_category_id",                 null: false
+    t.string   "name",                                 null: false
+    t.string   "summary",                              null: false
+    t.text     "description",                          null: false
+    t.string   "url",                                  null: false
+    t.string   "icon_file_name"
+    t.string   "icon_content_type"
+    t.integer  "icon_file_size"
+    t.datetime "icon_updated_at"
+    t.boolean  "available",            default: false, null: false
+    t.datetime "created_at",                           null: false
+    t.datetime "updated_at",                           null: false
     t.index ["userland_category_id"], name: "index_userland_projects_on_userland_category_id", using: :btree
   end
 
