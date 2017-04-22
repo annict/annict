@@ -10,7 +10,7 @@
     "linkifyjs": "2.1.4",
     "lodash": "4.17.4",
     "mjml": "^3.2.2",
-    "moment-timezone": "0.5.11",
+    "moment-timezone": "0.5.12",
     "mousetrap": "1.6.1",
     "turbolinks": "5.0.0",
     "vue": "^2.2.1",
