@@ -17,7 +17,7 @@
 #  index_seasons_on_year_and_name  (year,name) UNIQUE
 #
 
-class Season < ActiveRecord::Base
+class Season < ApplicationRecord
   has_many :works
 
   delegate :local_name, to: :decorate

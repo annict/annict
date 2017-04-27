@@ -14,7 +14,7 @@
 #  channel_groups_sc_chgid_key  (sc_chgid) UNIQUE
 #
 
-class ChannelGroup < ActiveRecord::Base
+class ChannelGroup < ApplicationRecord
   has_many :channels
 
   scope :published, -> { where.not(sort_number: nil) }

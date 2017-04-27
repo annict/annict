@@ -16,6 +16,11 @@ Rails.application.configure do
   config.consider_all_requests_local       = false
   config.action_controller.perform_caching = true
 
+  # Attempt to read encrypted secrets from `config/secrets.yml.enc`.
+  # Requires an encryption key in `ENV["RAILS_MASTER_KEY"]` or
+  # `config/secrets.yml.key`.
+  config.read_encrypted_secrets = true
+
   config.cache_store = :dalli_store,
     (ENV["MEMCACHIER_SERVERS"] || "").split(","),
     {
@@ -42,7 +47,9 @@ Rails.application.configure do
   # config.action_dispatch.rack_cache = true
 
   # Compress JavaScripts and CSS.
-  config.assets.js_compressor = :uglifier
+  # Prevents to break some of JavaScript (ex: Angular.js) code due to renaming
+  # https://shellycloud.com/blog/2013/10/how-to-integrate-angularjs-with-rails-4
+  config.assets.js_compressor = Uglifier.new(mangle: false)
   # config.assets.css_compressor = :sass
 
   # Do not fallback to assets pipeline if a precompiled asset is missed.
@@ -124,10 +131,6 @@ Rails.application.configure do
     logger.formatter = config.log_formatter
     config.logger = ActiveSupport::TaggedLogging.new(logger)
   end
-
-  # Prevents to break some of JavaScript (ex: Angular.js) code due to renaming
-  # https://shellycloud.com/blog/2013/10/how-to-integrate-angularjs-with-rails-4
-  config.assets.js_compressor = Uglifier.new(mangle: false)
 
   config.action_mailer.default_url_options = {
     protocol: "https://",

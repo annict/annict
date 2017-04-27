@@ -17,7 +17,7 @@
 #  index_tips_on_slug  (slug) UNIQUE
 #
 
-class Tip < ActiveRecord::Base
+class Tip < ApplicationRecord
   extend Enumerize
 
   enumerize :target, in: { new_user: 0, user: 1 }, scope: true

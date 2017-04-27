@@ -18,7 +18,7 @@
 #  providers_user_id_idx   (user_id)
 #
 
-class Provider < ActiveRecord::Base
+class Provider < ApplicationRecord
   belongs_to :user
 
 

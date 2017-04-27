@@ -36,7 +36,7 @@
 #  users_username_key            (username) UNIQUE
 #
 
-class User < ActiveRecord::Base
+class User < ApplicationRecord
   # registrations#createが実行されたあとメールアドレスの確認を挟まず
   # ログインできるようにするため、Confirmableモジュールを直接includeする
   include Devise::Models::Confirmable

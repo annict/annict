@@ -24,7 +24,7 @@
 #  index_casts_on_work_id       (work_id)
 #
 
-class Cast < ActiveRecord::Base
+class Cast < ApplicationRecord
   include AASM
   include DbActivityMethods
 

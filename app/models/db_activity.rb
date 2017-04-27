@@ -23,7 +23,7 @@
 #  index_db_activities_on_trackable_id_and_trackable_type          (trackable_id,trackable_type)
 #
 
-class DbActivity < ActiveRecord::Base
+class DbActivity < ApplicationRecord
   extend Enumerize
 
   belongs_to :object, polymorphic: true

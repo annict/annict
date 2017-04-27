@@ -29,7 +29,7 @@
 #  index_episodes_on_prev_episode_id  (prev_episode_id)
 #
 
-class Episode < ActiveRecord::Base
+class Episode < ApplicationRecord
   include AASM
   include DbActivityMethods
 

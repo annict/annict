@@ -34,7 +34,7 @@
 #  index_checkins_on_work_id               (work_id)
 #
 
-class Checkin < ActiveRecord::Base
+class Checkin < ApplicationRecord
   belongs_to :oauth_application, class_name: "Doorkeeper::Application"
   belongs_to :work
   belongs_to :episode, counter_cache: true

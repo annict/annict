@@ -19,7 +19,7 @@
 #  index_settings_on_user_id  (user_id)
 #
 
-class Setting < ActiveRecord::Base
+class Setting < ApplicationRecord
   extend Enumerize
 
   belongs_to :user

@@ -13,6 +13,6 @@
 #  index_finished_tips_on_user_id_and_tip_id  (user_id,tip_id) UNIQUE
 #
 
-class FinishedTip < ActiveRecord::Base
+class FinishedTip < ApplicationRecord
   belongs_to :tip
 end

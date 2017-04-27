@@ -19,7 +19,7 @@
 #  statuses_work_id_idx                    (work_id)
 #
 
-class Status < ActiveRecord::Base
+class Status < ApplicationRecord
   include StatusCommon
 
   belongs_to :oauth_application, class_name: "Doorkeeper::Application"

@@ -22,7 +22,7 @@ Rails.application.configure do
   if is_cache_enabled
     config.cache_store = :memory_store
     config.public_file_server.headers = {
-      "Cache-Control" => "public, max-age=172800"
+      "Cache-Control" => "public, max-age=#{2.days.seconds.to_i}"
     }
   else
     config.cache_store = :null_store

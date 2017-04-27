@@ -15,7 +15,7 @@
 #  follows_user_id_idx               (user_id)
 #
 
-class Follow < ActiveRecord::Base
+class Follow < ApplicationRecord
   belongs_to :following, class_name: 'User'
   belongs_to :user
 

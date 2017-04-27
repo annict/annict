@@ -12,6 +12,6 @@
 #  index_prefectures_on_name  (name) UNIQUE
 #
 
-class Prefecture < ActiveRecord::Base
+class Prefecture < ApplicationRecord
   validates :name, presence: true
 end

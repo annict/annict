@@ -24,7 +24,7 @@
 #  programs_work_id_idx          (work_id)
 #
 
-class Program < ActiveRecord::Base
+class Program < ApplicationRecord
   include AASM
   include DbActivityMethods
 

@@ -37,7 +37,7 @@
 #  index_people_on_staffs_count           (staffs_count)
 #
 
-class Person < ActiveRecord::Base
+class Person < ApplicationRecord
   extend Enumerize
   include AASM
   include DbActivityMethods
