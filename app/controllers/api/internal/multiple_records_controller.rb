@@ -9,7 +9,7 @@ module Api
 
       def create(episode_ids, page_category)
         records = MultipleRecordsService.new(current_user)
-        records.delay.save!(episode_ids)
+        records.save!(episode_ids)
         keen_client.page_category = page_category
         keen_client.multiple_records.create
         ga_client.page_category = page_category

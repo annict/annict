@@ -1,7 +1,7 @@
 namespace :work do
   task notify_untouched_works: :environment do
     works = Work.where(episodes_count: 0).order(watchers_count: :desc).limit(3)
-    WorkMailer.delay.untouched_works_notification(works.pluck(:id))
+    WorkMailer.untouched_works_notification(works.pluck(:id)).deliver_later
   end
 
   # 指定したWorkを削除する

@@ -38,7 +38,7 @@ module Annict
         body[:cd1] = @user.present? ? "user" : "guest"
         body[:cd2] = @params[:page_category].to_s if @params[:page_category].present?
 
-        self.class.delay(priority: 10).post("/collect", body: body)
+        SendAnalyticsEventJob.perform_later(body)
       end
     end
   end

@@ -35,17 +35,12 @@ class NewRecordService
   private
 
   def save_activity
-    if @record.multiple_record.blank?
-      Activity.delay.create(
-        user: @user,
-        recipient: @record.episode,
-        trackable: @record,
-        action: "create_record")
-    end
+    return if @record.multiple_record.present?
+    CreateRecordActivityJob.perform_later(@user.id, @record.id)
   end
 
   def finish_tips
-    UserTipsService.new(@user).delay.finish!(:checkin) if @user.records.initial?(@record)
+    FinishUserTipsJob.perform_later(@user, "checkin") if @user.records.initial?(@record)
   end
 
   def update_latest_status
