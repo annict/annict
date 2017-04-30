@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 # == Schema Information
 #
 # Table name: works
@@ -31,16 +32,19 @@
 #  synopsis_source_en    :string           default(""), not null
 #  mal_anime_id          :integer
 #  facebook_og_image_url :string           default(""), not null
-#  recommended_image_url :string           default(""), not null
 #  twitter_image_url     :string           default(""), not null
 #  recommended_image_url :string           default(""), not null
+#  season_year           :integer
+#  season_name           :integer
 #
 # Indexes
 #
-#  index_works_on_aasm_state        (aasm_state)
-#  index_works_on_number_format_id  (number_format_id)
-#  works_sc_tid_key                 (sc_tid) UNIQUE
-#  works_season_id_idx              (season_id)
+#  index_works_on_aasm_state                   (aasm_state)
+#  index_works_on_number_format_id             (number_format_id)
+#  index_works_on_season_year                  (season_year)
+#  index_works_on_season_year_and_season_name  (season_year,season_name)
+#  works_sc_tid_key                            (sc_tid) UNIQUE
+#  works_season_id_idx                         (season_id)
 #
 
 class Work < ApplicationRecord

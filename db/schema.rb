@@ -1019,10 +1019,14 @@ ActiveRecord::Schema.define(version: 20170408033245) do
     t.string   "facebook_og_image_url",             default: "",          null: false
     t.string   "twitter_image_url",                 default: "",          null: false
     t.string   "recommended_image_url",             default: "",          null: false
+    t.integer  "season_year"
+    t.integer  "season_name"
     t.index ["aasm_state"], name: "index_works_on_aasm_state", using: :btree
     t.index ["number_format_id"], name: "index_works_on_number_format_id", using: :btree
     t.index ["sc_tid"], name: "works_sc_tid_key", unique: true, using: :btree
     t.index ["season_id"], name: "works_season_id_idx", using: :btree
+    t.index ["season_year", "season_name"], name: "index_works_on_season_year_and_season_name", using: :btree
+    t.index ["season_year"], name: "index_works_on_season_year", using: :btree
   end
 
   add_foreign_key "activities", "users", name: "activities_user_id_fk", on_delete: :cascade
