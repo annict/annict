@@ -216,6 +216,12 @@ Rails.application.routes.draw do
     root "home#index"
   end
 
+  namespace :userland do
+    resources :projects, except: %i(index)
+
+    root "home#index"
+  end
+
   resource :confirmation, only: [:show]
   resource :search, only: [:show]
   resource :track, only: %i(show)

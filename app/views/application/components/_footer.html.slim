@@ -22,6 +22,7 @@
         .col-3
           h4.font-weight-bold = t "noun.services"
           ul.list-unstyled
+            li = link_to t("noun.annict_userland"), userland_root_path
             li = link_to t("noun.annict_forum"), forum_root_path
             li = link_to t("noun.annict_db"), db_root_path
             li = link_to t("noun.annict_api"), "https://docs.annict.com/ja/api/", target: "_blank"

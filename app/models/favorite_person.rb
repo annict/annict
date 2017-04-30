@@ -28,8 +28,8 @@ class FavoritePerson < ApplicationRecord
   def update_watched_works_count(user)
     cast_work_ids = person.cast_works.pluck(:id)
     staff_work_ids = person.staff_works.pluck(:id)
-    statuses = user.statuses.work_published.with_kind(:watched)
-    count = statuses.where(work_id: (cast_work_ids | staff_work_ids)).count
+    latest_statuses = user.latest_statuses.work_published.with_kind(:watched)
+    count = latest_statuses.where(work_id: (cast_work_ids | staff_work_ids)).count
 
     update_column(:watched_works_count, count)
   end

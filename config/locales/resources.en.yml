@@ -93,6 +93,10 @@ en:
       updated: Staff updated
     user:
       is_wrong: is wrong
+    userland_project:
+      delete: Delete Project
+      edit: Edit Project
+      new: New Project
     work:
       aasm_state:
         published: Published

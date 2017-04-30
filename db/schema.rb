@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170404121800) do
+ActiveRecord::Schema.define(version: 20170408033245) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -900,6 +900,41 @@ ActiveRecord::Schema.define(version: 20170404121800) do
     t.index ["name"], name: "twitter_bots_name_key", unique: true, using: :btree
   end
 
+  create_table "userland_categories", force: :cascade do |t|
+    t.string   "name",                                null: false
+    t.string   "name_en",                             null: false
+    t.integer  "sort_number",             default: 0, null: false
+    t.integer  "userland_projects_count", default: 0, null: false
+    t.datetime "created_at",                          null: false
+    t.datetime "updated_at",                          null: false
+  end
+
+  create_table "userland_project_members", force: :cascade do |t|
+    t.integer  "user_id",             null: false
+    t.integer  "userland_project_id", null: false
+    t.datetime "created_at",          null: false
+    t.datetime "updated_at",          null: false
+    t.index ["user_id", "userland_project_id"], name: "index_userland_pm_on_uid_and_userland_pid", unique: true, using: :btree
+    t.index ["user_id"], name: "index_userland_project_members_on_user_id", using: :btree
+    t.index ["userland_project_id"], name: "index_userland_project_members_on_userland_project_id", using: :btree
+  end
+
+  create_table "userland_projects", force: :cascade do |t|
+    t.integer  "userland_category_id",                 null: false
+    t.string   "name",                                 null: false
+    t.string   "summary",                              null: false
+    t.text     "description",                          null: false
+    t.string   "url",                                  null: false
+    t.string   "icon_file_name"
+    t.string   "icon_content_type"
+    t.integer  "icon_file_size"
+    t.datetime "icon_updated_at"
+    t.boolean  "available",            default: false, null: false
+    t.datetime "created_at",                           null: false
+    t.datetime "updated_at",                           null: false
+    t.index ["userland_category_id"], name: "index_userland_projects_on_userland_category_id", using: :btree
+  end
+
   create_table "users", force: :cascade do |t|
     t.string   "username",                limit: 510,              null: false
     t.string   "email",                   limit: 510,              null: false
@@ -981,17 +1016,13 @@ ActiveRecord::Schema.define(version: 20170404121800) do
     t.string   "synopsis_source",                   default: "",          null: false
     t.string   "synopsis_source_en",                default: "",          null: false
     t.integer  "mal_anime_id"
-    t.integer  "season_year"
-    t.integer  "season_name"
     t.string   "facebook_og_image_url",             default: "",          null: false
-    t.string   "recommended_image_url",             default: "",          null: false
     t.string   "twitter_image_url",                 default: "",          null: false
+    t.string   "recommended_image_url",             default: "",          null: false
     t.index ["aasm_state"], name: "index_works_on_aasm_state", using: :btree
     t.index ["number_format_id"], name: "index_works_on_number_format_id", using: :btree
     t.index ["sc_tid"], name: "works_sc_tid_key", unique: true, using: :btree
     t.index ["season_id"], name: "works_season_id_idx", using: :btree
-    t.index ["season_year", "season_name"], name: "index_works_on_season_year_and_season_name", using: :btree
-    t.index ["season_year"], name: "index_works_on_season_year", using: :btree
   end
 
   add_foreign_key "activities", "users", name: "activities_user_id_fk", on_delete: :cascade
@@ -1092,6 +1123,9 @@ ActiveRecord::Schema.define(version: 20170404121800) do
   add_foreign_key "statuses", "users", name: "statuses_user_id_fk", on_delete: :cascade
   add_foreign_key "statuses", "works", name: "statuses_work_id_fk", on_delete: :cascade
   add_foreign_key "syobocal_alerts", "works", name: "syobocal_alerts_work_id_fk", on_delete: :cascade
+  add_foreign_key "userland_project_members", "userland_projects"
+  add_foreign_key "userland_project_members", "users"
+  add_foreign_key "userland_projects", "userland_categories"
   add_foreign_key "work_images", "users"
   add_foreign_key "work_images", "works"
   add_foreign_key "works", "number_formats"

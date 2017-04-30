@@ -15,7 +15,7 @@ module UserFavoritable
 
       return if favorite_resource.instance_of?(FavoriteCharacter)
 
-      favorite_resource.delay.update_watched_works_count(self)
+      FavoritableWatchedWorksCountJob.perform_later(favorite_resource, self)
     end
 
     def unfavorite(resource)

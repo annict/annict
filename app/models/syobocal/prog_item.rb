@@ -92,7 +92,7 @@ module Syobocal
           a.sc_prog_comment = @prog_comment
         end
 
-        SyobocalMailer.delay.special_program_notification(alert.id)
+        SyobocalMailer.special_program_notification(alert.id).deliver_later
       end
     end
 
@@ -120,7 +120,7 @@ module Syobocal
 
       episode.save!
 
-      SyobocalMailer.delay.episode_created_notification(episode.id)
+      SyobocalMailer.episode_created_notification(episode.id).deliver_later
 
       episode
     end

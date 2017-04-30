@@ -140,6 +140,14 @@ en:
         role: Role
         sort_number: Sort number
         work_id: Work
+      userland_project:
+        available: Available?
+        description: Description
+        icon: Icon
+        name: Name
+        summary: Summary
+        url: URL
+        userland_category_id: Category
       user:
         current_password: Current password
         email_username: Email or Username
