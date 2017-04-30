@@ -79,10 +79,6 @@ class WorkDecorator < ApplicationDecorator
   def to_values
     model.class::DIFF_FIELDS.each_with_object({}) do |field, hash|
       hash[field] = case field
-      when :season_id
-        if send(:season_id).present?
-          Season.find(send(:season_id)).decorate.local_name
-        end
       when :sc_tid
         sc_tid = send(:sc_tid)
         if sc_tid.present?
@@ -114,6 +110,10 @@ class WorkDecorator < ApplicationDecorator
         end
       when :number_format_id
         send(:number_format).name if send(:number_format_id).present?
+      when :season_year
+        send(:season_year).to_s
+      when :season_name
+        send(:season_name)&.text
       else
         send(field)
       end

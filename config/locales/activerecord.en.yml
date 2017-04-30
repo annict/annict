@@ -167,6 +167,8 @@ en:
         sc_tid: Syobocal ID
         season_id: Season
         season: Season
+        season_name: Season
+        season_year: Year
         synopsis_en: Synopsis (en)
         synopsis_source_en: Synopsis source (en)
         synopsis_source: Synopsis source (ja)

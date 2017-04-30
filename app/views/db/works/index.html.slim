@@ -20,8 +20,8 @@
       a.nav-link.dropdown-toggle href="#" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"
         = t "noun.season"
       .dropdown-menu.pre-scrollable
-        - Season.order(sort_number: :desc).each do |season|
-          = link_to season.decorate.local_name, season_db_works_path(slug: season.slug), class: "dropdown-item"
+        - Season.list(sort: :desc).each do |season|
+          = link_to season.local_name, season_db_works_path(slug: season.slug), class: "dropdown-item"
     li.nav-item
       = active_link_to t("messages.db.works.no_episodes"), resourceless_db_works_path(name: :episode), class: "nav-link", active: (params[:name] == "episode")
     li.nav-item

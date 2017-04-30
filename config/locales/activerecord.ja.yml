@@ -166,6 +166,8 @@ ja:
         sc_tid: しょぼかるID
         season_id: リリース時期
         season: リリース時期
+        season_name: リリース時期
+        season_year: リリース年
         synopsis_en: あらすじ (英)
         synopsis_source_en: あらすじの引用元 (英)
         synopsis_source: あらすじの引用元

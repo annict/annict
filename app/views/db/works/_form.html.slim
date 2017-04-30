@@ -25,11 +25,17 @@
           .col-sm-5
             = f.select :media, options_for_select(Work.media.options, f.object.media), { include_blank: true }, { class: "form-control", required: true }
     .form-group.row
-      = f.label :season_id, class: "col-sm-3 col-form-label"
+      = f.label :season_year, class: "col-sm-3 col-form-label"
       .col-sm-9
         .row
           .col-sm-5
-            = f.select :season_id, options_from_collection_for_select(Season.order(sort_number: :desc), :id, :local_name, f.object.season_id), { include_blank: true }, { class: "form-control" }
+            = f.select :season_year, options_for_select(Season::YEAR_LIST.to_a.reverse, f.object.season_year), { include_blank: true }, { class: "form-control" }
+    .form-group.row
+      = f.label :season_name, class: "col-sm-3 col-form-label"
+      .col-sm-9
+        .row
+          .col-sm-5
+            = f.select :season_name, options_for_select(Season::NAME_HASH.map { |h| [t("noun.#{h[0]}"), h[1]] }, f.object.season_name&.value), { include_blank: true }, { class: "form-control" }
     .form-group.row
       = f.label :official_site_url, class: "col-sm-3 col-form-label"
       .col-sm-9
