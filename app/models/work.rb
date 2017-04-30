@@ -157,7 +157,7 @@ class Work < ApplicationRecord
 
   def season
     return if season_year.blank?
-    @season ||= Season.new(season_year, season_name)
+    @season ||= Season.new(season_year, season_name.presence || "all")
   end
 
   # 作品のエピソード数分の空白文字列が入った配列を返す

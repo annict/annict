@@ -6,6 +6,8 @@ class Season
   YEAR_LIST = 1900..(Time.now.year + 2)
   NAME_HASH = { winter: 1, spring: 2, summer: 3, autumn: 4 }.freeze
 
+  attr_reader :year, :name
+
   enumerize :name, in: NAME_HASH
 
   def self.latest_slugs
@@ -51,7 +53,7 @@ class Season
 
   def work_conditions
     conds = { season_year: @year }
-    conds[:season_name] = name.value unless all?
+    conds[:season_name] = name_value unless all?
     conds
   end
 
@@ -61,6 +63,10 @@ class Season
 
   def slug
     "#{@year}-#{@name}"
+  end
+
+  def name_value
+    NAME_HASH[@name.to_sym].presence || 0
   end
 
   def local_name(locale = nil)
