@@ -81,7 +81,7 @@ class Character < ApplicationRecord
   end
 
   def oldest_work
-    works.joins(:season).order("seasons.sort_number ASC").first
+    works.order("season_year ASC, season_name ASC").first
   end
 
   def to_diffable_hash

@@ -27,8 +27,8 @@ class OrganizationsController < ApplicationController
     @staffs_with_year = @organization.
       staffs.
       published.
-      includes(work: %i(season work_image)).
-      group_by { |s| s.work.season&.year.presence || 0 }
+      includes(work: :work_image).
+      group_by { |s| s.work.season_year.presence || 0 }
     @staff_years = @staffs_with_year.keys.sort.reverse
 
     @favorite_orgs = @organization.

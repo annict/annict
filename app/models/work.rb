@@ -120,7 +120,7 @@ class Work < ApplicationRecord
   scope :by_season, ->(season_slug) {
     return self if season_slug.blank?
 
-    where(Season.new(*season_slug.split("-")).work_conditions)
+    where(Season.find_by_slug(season_slug).work_conditions)
   }
 
   scope :program_registered, -> {
