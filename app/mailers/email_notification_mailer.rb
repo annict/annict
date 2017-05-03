@@ -7,7 +7,6 @@ class EmailNotificationMailer < ActionMailer::Base
   )
 
   add_template_helper ImageHelper
-  add_template_helper SeasonsHelper
 
   def followed_user(followed_user_id, user_id)
     @followed_user = User.find(followed_user_id)
@@ -53,15 +52,16 @@ class EmailNotificationMailer < ActionMailer::Base
     mail(to: @user.email, subject: subject, &:mjml)
   end
 
-  def next_season_came(user_id, season_id)
+  def next_season_came(user_id, season_year, season_name)
     @user = User.find(user_id)
     @unsubscription_key = @user.email_notification.unsubscription_key
-    @season = Season.find(season_id)
-    @works = @season.works.order(watchers_count: :desc).limit(10)
+    season_slug = "#{season_year}-#{season_name}"
+    @season = Season.find_by_slug(season_slug)
+    @works = Work.by_season(season_slug).order(watchers_count: :desc).limit(10)
 
     I18n.locale = @user.locale
 
-    subject = default_i18n_subject(name: @season.decorate.local_name)
+    subject = default_i18n_subject(name: @season.local_name)
     mail(to: @user.email, subject: subject, &:mjml)
   end
 

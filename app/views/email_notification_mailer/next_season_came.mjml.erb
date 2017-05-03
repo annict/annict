@@ -1,13 +1,13 @@
 <mj-section background-color="#fff">
   <mj-column>
-    <mj-text align="center" padding-bottom="20px"><%= I18n.t("email_notification_mailer.next_season_came.description_html", name: @season.decorate.local_name) %></mj-text>
+    <mj-text align="center" padding-bottom="20px"><%= I18n.t("email_notification_mailer.next_season_came.description_html", name: @season.local_name) %></mj-text>
 
     <% @works.each do |work| %>
       <%= render "email_notification_mailer/work", work: work, utm_campaign: "next_season_came" %>
     <% end %>
 
     <mj-section padding-top="20px" padding-bottom="10px">
-      <mj-button href="<%= season_works_url(slug: @season.slug, utm_source: 'email_notification', utm_campaign: 'next_season_came', utm_medium: 'email') %>" background-color="#f85b73"><%= I18n.t("email_notification_mailer.next_season_came.view_more", name: @season.decorate.local_name) %></mj-button>
+      <mj-button href="<%= season_works_url(slug: @season.slug, utm_source: 'email_notification', utm_campaign: 'next_season_came', utm_medium: 'email') %>" background-color="#f85b73"><%= I18n.t("email_notification_mailer.next_season_came.view_more", name: @season.local_name) %></mj-button>
     </mj-section>
   </mj-column>
 </mj-section>
