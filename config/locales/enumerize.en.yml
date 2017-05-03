@@ -53,3 +53,8 @@ en:
         movie: Movie
         web: Web
         other: Other
+      season_name:
+        winter: Winter
+        spring: Spring
+        summer: Summer
+        autumn: Fall

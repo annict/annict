@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 # == Schema Information
 #
 # Table name: works
@@ -33,13 +34,17 @@
 #  facebook_og_image_url :string           default(""), not null
 #  twitter_image_url     :string           default(""), not null
 #  recommended_image_url :string           default(""), not null
+#  season_year           :integer
+#  season_name           :integer
 #
 # Indexes
 #
-#  index_works_on_aasm_state        (aasm_state)
-#  index_works_on_number_format_id  (number_format_id)
-#  works_sc_tid_key                 (sc_tid) UNIQUE
-#  works_season_id_idx              (season_id)
+#  index_works_on_aasm_state                   (aasm_state)
+#  index_works_on_number_format_id             (number_format_id)
+#  index_works_on_season_year                  (season_year)
+#  index_works_on_season_year_and_season_name  (season_year,season_name)
+#  works_sc_tid_key                            (sc_tid) UNIQUE
+#  works_season_id_idx                         (season_id)
 #
 
 class Work < ApplicationRecord
@@ -49,13 +54,14 @@ class Work < ApplicationRecord
   include RootResourceCommon
 
   DIFF_FIELDS = %i(
-    season_id sc_tid title title_kana title_en title_ro media official_site_url
+    sc_tid title title_kana title_en title_ro media official_site_url
     official_site_url_en wikipedia_url wikipedia_url_en twitter_username
     twitter_hashtag number_format_id synopsis synopsis_en synopsis_source
-    synopsis_source_en mal_anime_id
+    synopsis_source_en mal_anime_id season_year season_name
   ).freeze
 
   enumerize :media, in: { tv: 1, ova: 2, movie: 3, web: 4, other: 0 }
+  enumerize :season_name, in: Season::NAME_HASH
 
   aasm do
     state :published, initial: true
@@ -71,7 +77,7 @@ class Work < ApplicationRecord
   end
 
   belongs_to :number_format
-  belongs_to :season
+  belongs_to :season_model, class_name: "SeasonModel", foreign_key: :season_id
   has_many :activities,
     foreign_key: :recipient_id,
     foreign_type: :recipient,
@@ -111,13 +117,10 @@ class Work < ApplicationRecord
   validates :synopsis, presence_pair: :synopsis_source
   validates :synopsis_en, presence_pair: :synopsis_source_en
 
-  scope :by_season, -> (season_slug) {
+  scope :by_season, ->(season_slug) {
     return self if season_slug.blank?
 
-    year, name = season_slug.split("-")
-
-    season_conds = name == "all" ? { year: year } : { year: year, name: name }
-    joins(:season).where(seasons: season_conds)
+    where(Season.find_by_slug(season_slug).work_conditions)
   }
 
   scope :program_registered, -> {
@@ -150,6 +153,11 @@ class Work < ApplicationRecord
 
   def people
     Person.where(id: (cast_people.pluck(:id) | staff_people.pluck(:id)))
+  end
+
+  def season
+    return if season_year.blank?
+    @season ||= Season.new(season_year, season_name.presence || "all")
   end
 
   # 作品のエピソード数分の空白文字列が入った配列を返す

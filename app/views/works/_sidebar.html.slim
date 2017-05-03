@@ -26,7 +26,7 @@ dl
     dd = work.title_en
   dt.small = t "activerecord.attributes.work.media"
   dd = work.media.text
-  - if work.decorate.release_season.present?
+  - if work.season.present?
     dt.small = t "noun.release_season"
     dd = work.decorate.release_season_link
   - if work.official_site_url.present?

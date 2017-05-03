@@ -24,8 +24,10 @@
     - @seasons.each do |season|
       .mt-1
         h2.h4.font-weight-bold.mb-1.ml-1
-          = season.decorate.local_name
-        - works = season.works.merge(@works).order(watchers_count: :desc)
+          = season.local_name
+        - works = @works.by_season(season.slug).order(watchers_count: :desc)
+        - if season.name == "all"
+          - works = works.where(season_name: nil)
         = render "works/grid_small", works: works
     .mt-1.text-center
       = paginate @seasons

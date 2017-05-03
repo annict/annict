@@ -72,6 +72,7 @@ ja:
       updated: 更新しました
     season:
       yearly:
+        all: "%{year}年"
         winter: "%{year}年冬"
         spring: "%{year}年春"
         summer: "%{year}年夏"

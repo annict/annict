@@ -51,13 +51,6 @@ namespace :work do
     Rails.logger = Logger.new(STDOUT) if Rails.env.development?
     Rails.logger.info "work:send_next_season_came_email >> task started"
 
-    season = Season.where(year: args[:season_year], name: args[:season_name]).first
-    if season.blank?
-      Rails.logger.info "work:send_next_season_came_email >> no season found"
-      next
-    end
-    Rails.logger.info "work:send_next_season_came_email >> season: #{season.slug}"
-
     users = if args[:all] == "true"
       User.
         joins(:email_notification).
@@ -68,7 +61,9 @@ namespace :work do
 
     users.find_each do |user|
       Rails.logger.info "work:send_next_season_came_email >> user: #{user.id}"
-      EmailNotificationService.send_email("next_season_came", user, season.id)
+      EmailNotificationService.send_email(
+        "next_season_came", user, args[:season_year], args[:season_name]
+      )
     end
 
     Rails.logger.info "work:send_next_season_came_email >> task processed"

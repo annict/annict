@@ -30,7 +30,7 @@ json[:watchers_count] = work.watchers_count if params.fields_contain?("#{field_p
 
 if work.season.present?
   json[:season_name] = work.season.slug if params.fields_contain?("#{field_prefix}season_name")
-  json[:season_name_text] = season_local_name(work.season.year, work.season.name, :ja) if params.fields_contain?("#{field_prefix}season_name_text")
+  json[:season_name_text] = work.season.local_name(:ja) if params.fields_contain?("#{field_prefix}season_name_text")
 end
 
 json

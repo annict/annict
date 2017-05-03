@@ -4,6 +4,7 @@
   box-shadow: 1px 0 2px rgba($ann-color-navy-l2, .30);
   height: 50px;
   position: fixed;
+  z-index: 2;
 
   a {
     color: $body-color;

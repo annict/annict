@@ -1,6 +1,6 @@
-- title = t "head.title.works.season", name: @season.decorate.local_name
-- description = meta_description(t("head.meta.description.works.season", name: @season.decorate.local_name))
-- keywords = meta_keywords(@season.decorate.local_name)
+- title = t "head.title.works.season", name: @season.local_name
+- description = meta_description(t("head.meta.description.works.season", name: @season.local_name))
+- keywords = meta_keywords(@season.local_name)
 - set_meta_tags(title: title, description: description, keywords: keywords, og: { description: description }, reverse: true, prefix: false)
 - set_page_category "works_season"
 
@@ -10,14 +10,20 @@
   .row.align-items-center.py-2
     .col
     .col.text-center
+      - if @prev_season.present?
+        = link_to season_works_path(slug: @prev_season.slug), class: "mr-2" do
+          = icon "angle-left", class: "mr-zp5"
+          = @prev_season.local_name
       .dropdown.d-inline-block
         a.dropdown-toggle href="#" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"
-          = @season.decorate.local_name
+          = @season.local_name
         .dropdown-menu.pre-scrollable.mr-1
-          - cache [I18n.locale, @seasons] do
-            - @seasons.each do |season|
-              - cache [I18n.locale, season] do
-                = link_to season.decorate.local_name, season_works_path(slug: season.slug), class: "dropdown-item"
+          - @seasons.each do |season|
+            = link_to season.local_name, season_works_path(slug: season.slug), class: "dropdown-item"
+      - if @next_season.present?
+        = link_to season_works_path(slug: @next_season.slug), class: "ml-2" do
+          = @next_season.local_name
+          = icon "angle-right", class: "ml-zp5"
     .col.text-right
       - if user_signed_in?
         .px-1

@@ -53,3 +53,8 @@ ja:
         movie: 映画
         web: Web
         other: その他
+      season_name:
+        winter: 冬
+        spring: 春
+        summer: 夏
+        autumn: 秋

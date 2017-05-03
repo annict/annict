@@ -14,6 +14,7 @@ en:
     annict_userland: Annict Userland
     annict: Annict
     applications: Applications
+    autumn: Fall
     basic_info: Basic Info
     before: Before
     bio: Bio
@@ -93,9 +94,11 @@ en:
     skip: Skip
     sns_friends: SNS Friends
     source: Source
+    spring: Spring
     staff: Staff
     staffs: Staffs
     state: State
+    summer: Summer
     syobocal: Syobocal
     terms_of_use: Terms of Use
     title: Title
@@ -105,6 +108,7 @@ en:
     voice_actors: Voice Actors
     watching: Watching
     watching_shorten: Watching
+    winter: Winter
     work_image: Work image
     works: Works
     your_statistics: Your Statistics

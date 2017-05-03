@@ -40,7 +40,9 @@ class SeriesWork < ApplicationRecord
   has_many :db_comments, as: :resource, dependent: :destroy
 
   def self.sort_season(sort_type: "ASC")
-    joins(work: :season).order("seasons.sort_number #{sort_type}")
+    joins(:work).
+      order("works.season_year #{sort_type}").
+      order("works.season_name #{sort_type}")
   end
 
   def to_diffable_hash
