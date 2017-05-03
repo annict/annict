@@ -120,7 +120,7 @@ h2.h4.font-weight-bold.text-center.mt-1.mb-2
         .mt-1.mx-1
           = link_to t("messages.works.view_all_n_episodes", n: @episodes.length), work_episodes_path(@work), class: "btn btn-secondary w-100"
     - else
-      = render "application/components/empty", text: t("messages.works.no_episodes")
+      = render "application/components/empty", text: t("messages._empty.no_episodes")
 
 - if @series_list.present?
   .mb-2
