@@ -5,7 +5,7 @@
     <mj-section border="1px solid rgba(0, 0, 0, .08)" padding="20px">
       <mj-section padding="0">
         <mj-column width="20%">
-          <mj-image src="<%= ann_email_image_url(@work.work_image, :attachment, size: "140x140") %>" align="center" width="70" href="<%= work_url(@work) %>" padding-right="0px"></mj-image>
+          <mj-image src="<%= ann_email_image_url(@work.work_image, :attachment, size: "140x140") %>" align="center" href="<%= work_url(@work) %>"></mj-image>
         </mj-column>
         <mj-column width="80%">
           <mj-text font-size="24px" font-weight="600" padding-bottom="7px"><%= "#{@work.decorate.local_title}" %></mj-text>

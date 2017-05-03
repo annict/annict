@@ -5,14 +5,14 @@ module Annict
     module Events
       class Favorite < Annict::Keen::Events::Application
         def create(attrs)
-          ::Keen.delay(priority: 10).publish(:favorites, properties(:create, attrs))
+          SendKeenEventJob.perform_later("favorites", properties(:create, attrs))
         end
 
         private
 
         def properties(action, attrs)
           {
-            action: action,
+            action: action.to_s,
             user_id: @user&.encoded_id,
             device: browser.device.mobile? ? "mobile" : "pc",
             client_uuid: @request.cookies["ann_client_uuid"],
@@ -20,7 +20,7 @@ module Annict
             time_zone: @user&.time_zone,
             page_category: @params[:page_category],
             resource_type: attrs[:resource_type],
-            keen: { timestamp: @user&.updated_at }
+            keen: { timestamp: @user&.updated_at&.to_s }
           }
         end
       end

@@ -94,6 +94,8 @@ class User < ApplicationRecord
     foreign_key: :resource_owner_id,
     dependent: :destroy
   has_many :record_comments, class_name: "Comment", dependent: :destroy
+  has_many :userland_project_members, dependent: :destroy
+  has_many :userland_projects, through: :userland_project_members
   has_one :email_notification, dependent: :destroy
   has_one :profile, dependent: :destroy
   has_one :setting, dependent: :destroy
@@ -246,6 +248,10 @@ class User < ApplicationRecord
   def mute(user)
     mute_user = mute_users.where(muted_user: user).first_or_initialize
     mute_user.save
+  end
+
+  def userland_project_member?(project)
+    userland_projects.exists?(project)
   end
 
   private

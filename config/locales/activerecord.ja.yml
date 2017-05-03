@@ -12,31 +12,32 @@ ja:
       channel:
         name: 名前
       character:
-        name: 名前
-        name_kana: 名前 (かな)
-        name_en: 名前 (英語)
-        kind: 種類
-        kind_en: 種類 (英語)
-        nickname: ニックネーム
-        nickname_en: ニックネーム (英語)
-        birthday: 誕生日
-        birthday_en: 誕生日 (英語)
-        age: 年齢
+        aasm_state: 状態
         age_en: 年齢 (英語)
-        blood_type: 血液型
+        age: 年齢
+        birthday_en: 誕生日 (英語)
+        birthday: 誕生日
         blood_type_en: 血液型 (英語)
-        height: 身長
-        height_en: 身長 (英語)
-        weight: 体重
-        weight_en: 体重 (英語)
-        nationality: 国籍
-        nationality_en: 国籍 (英語)
-        occupation: 肩書き
-        occupation_en: 肩書き (英語)
-        description: キャラ紹介
+        blood_type: 血液型
         description_en: キャラ紹介 (英語)
-        description_source: キャラ紹介の引用元
         description_source_en: キャラ紹介の引用元 (英語)
+        description_source: キャラ紹介の引用元
+        description: キャラ紹介
+        height_en: 身長 (英語)
+        height: 身長
+        name_en: 名前 (英語)
+        name_kana: 名前 (かな)
+        name: 名前
+        nationality_en: 国籍 (英語)
+        nationality: 国籍
+        nickname_en: ニックネーム (英語)
+        nickname: ニックネーム
+        occupation_en: 肩書き (英語)
+        occupation: 肩書き
+        series: シリーズ
+        series_id: シリーズ
+        weight_en: 体重 (英語)
+        weight: 体重
       character_image:
         attachment: キャラクター画像
       checkin:
@@ -121,6 +122,14 @@ ja:
         episode_id: エピソード
         rebroadcast: 再放送
         started_at: 放送日時
+      series:
+        name_en: 名前 (英語)
+        name_ro: 名前 (ローマ字)
+        name: 名前
+      series_work:
+        summary: 関係性
+        summary_en: 関係性 (英語)
+        work_id: 作品
       staff:
         name_en: 名義 (英語)
         name: 名義
@@ -130,6 +139,14 @@ ja:
         role: 担当
         sort_number: ソート番号
         work_id: 作品
+      userland_project:
+        available: 利用可能？
+        description: 概要
+        icon: アイコン
+        name: 名前
+        summary: 要約
+        url: URL
+        userland_category_id: カテゴリ
       user:
         current_password: 現在のパスワード
         email_username: メールアドレスまたはユーザ名
@@ -149,6 +166,8 @@ ja:
         sc_tid: しょぼかるID
         season_id: リリース時期
         season: リリース時期
+        season_name: リリース時期
+        season_year: リリース年
         synopsis_en: あらすじ (英)
         synopsis_source_en: あらすじの引用元 (英)
         synopsis_source: あらすじの引用元
@@ -201,6 +220,12 @@ ja:
       program:
         one: 放送予定
         other: 放送予定
+      series:
+        one: シリーズ
+        other: シリーズ
+      series_work:
+        one: シリーズ作品
+        other: シリーズ作品
       staff:
         one: スタッフ
         other: スタッフ

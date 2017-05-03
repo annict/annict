@@ -6,6 +6,8 @@ module DB
     include Virtus.model
     include ResourceRows
 
+    row_model Character
+
     attribute :rows, String
 
     validates :rows, presence: true
@@ -18,21 +20,23 @@ module DB
     private
 
     def attrs_list
-      @attrs_list ||= parsed_rows.map do |row_columns|
+      @attrs_list ||= fetched_rows.map do |row_data|
         {
-          name: row_columns[0]
+          name: row_data[:name][:value],
+          series_id: row_data[:series][:id]
         }
       end
     end
 
-    def new_resources
-      @new_resources ||= attrs_list.map { |attrs| Character.new(attrs) }
-    end
+    def fetched_rows
+      parsed_rows.map do |row_columns|
+        series = Series.published.where(id: row_columns[1]).
+          or(Series.published.where(name: row_columns[1])).first
 
-    def new_resources_with_user
-      @new_resources_with_user ||= new_resources.map do |character|
-        character.user = @user
-        character
+        {
+          name: { value: row_columns[0] },
+          series: { id: series&.id, value: row_columns[1] }
+        }
       end
     end
 
@@ -43,6 +47,16 @@ module DB
         next if c.valid?
         message = "\"#{c.name}\"#{c.errors.messages[:name].first}"
         errors.add(:rows, message)
+      end
+    end
+
+    def valid_resource
+      fetched_rows.each do |row_data|
+        row_data.slice(:series).each do |_, data|
+          next if data[:id].present?
+          i18n_path = "activemodel.errors.forms.db/character_rows_form.invalid"
+          errors.add(:rows, I18n.t(i18n_path, value: data[:value]))
+        end
       end
     end
   end

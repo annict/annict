@@ -89,6 +89,13 @@ ja:
           new: 放送予定登録
         searches:
           show: 検索
+        series:
+          index: シリーズ一覧
+        series_works:
+          activities: アクティビティ
+          edit: シリーズ作品編集
+          index: シリーズ作品一覧
+          new: シリーズ作品登録
         staffs:
           activities: アクティビティ
           edit: スタッフ編集
@@ -159,8 +166,6 @@ ja:
         show: "%{profile_name} (%{username})の%{work_title} %{episode_title_with_number}への感想"
       registrations:
         new: ユーザ登録
-      sayonara:
-        show: アカウント削除
       searches:
         show: "%{q}検索"
       sessions:
@@ -178,6 +183,13 @@ ja:
         index: アニメ「%{title}」のスタッフ一覧
       tracks:
         show: 記録する
+      userland:
+        home:
+          index: Userland
+        projects:
+          edit: プロジェクト編集 - Userland
+          new: 新規プロジェクト - Userland
+          show: "%{name} - Userland"
       users:
         followers: "%{profile_name} (%{username})をフォローしている人"
         following: "%{profile_name} (%{username})がフォローしている人"

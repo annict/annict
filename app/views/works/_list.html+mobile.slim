@@ -10,7 +10,8 @@
             .col-8
               .mb-zp25.u-lh-0
                 = work.decorate.media_label
-              h3.font-weight-bold.mb-zp25 = link_to work.decorate.local_title, work_path(work)
+              h3.font-weight-bold.mb-zp25
+                = link_to work.decorate.local_title, work_path(work), class: "u-text-body"
               .mb-zp5
                 span.font-weight-bold.mr-zp25 = work.watchers_count
                 span.text-muted.small Watchers

@@ -1,0 +1,23 @@
+- if user_signed_in?
+  - user_records = current_user.records.where(episode: episode)
+td
+  .c-episode-row__stars
+    - if user_signed_in?
+      - if user_records.avg_rating.present?
+        = rating_stars(user_records.avg_rating)
+        small.ml-zp25 = user_records.avg_rating
+      - else
+        | -
+    - else
+      - if episode.avg_rating.present?
+        = rating_stars(episode.avg_rating)
+        small.ml-zp25 = episode.avg_rating
+      - else
+        | -
+td
+  .c-episode-row__records-count
+    small
+      - if user_signed_in?
+        = user_records.length
+      - else
+        = episode.records.length

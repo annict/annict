@@ -13,10 +13,10 @@
         = ann_image_tag(@user.profile, :tombo_avatar, size: "80x80", class: "p-profile-header__avatar rounded-circle")
 
     .p-profile-header__profile.container.text-center.pt-zp5
-      h1.h2.mb-zp5
-        = link_to @user.profile.name, user_path(@user.username)
+      h1.h2.font-weight-bold.mb-zp5
+        = link_to @user.profile.name, user_path(@user.username), class: "u-text-body"
       .mt-zp5
-        = link_to "@#{@user.username}", user_path(@user.username)
+        = link_to "@#{@user.username}", user_path(@user.username), class: "u-text-body"
 
       - if @user.profile.description.present?
         .small.text-muted.mt-zp5
@@ -27,7 +27,7 @@
 
     .p-users-show__follow-button.text-center.mt-zp5
       - if user_signed_in? && current_user != @user
-        c-follow-button username="#{@user.username}" :init-is-following="#{current_user.following?(@user)}"
+        c-follow-button username="#{@user.username}" :init-is-following="#{current_user.following?(@user)}" :is-signed-in="true"
         .c-user-options-dropdown.dropdown
           .dropdown-toggle data-toggle="dropdown"
             = icon "cog"

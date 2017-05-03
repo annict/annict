@@ -50,8 +50,10 @@ $ann-color-shirobako: (
 $ann-color-facebook: #2e6499;
 $ann-color-twitter: #24b1ec;
 
+$ann-color-body: $ann-color-black-l1;
 $ann-color-border: rgba(0, 0, 0, .08);
 $ann-color-footer-bg: #334854;
+$ann-color-link: #0366d6;
 
 
 // Typography
@@ -65,9 +67,11 @@ $ann-line-height-sizes: (
 );
 
 $ann-text-colors: (
-  twitter: $ann-color-twitter,
+  body: $ann-color-body,
   facebook: $ann-color-facebook,
-  green: $ann-color-green
+  green: $ann-color-green,
+  star: $ann-color-yellow,
+  twitter: $ann-color-twitter
 );
 
 

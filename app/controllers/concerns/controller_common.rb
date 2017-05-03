@@ -4,7 +4,7 @@ module ControllerCommon
   extend ActiveSupport::Concern
 
   included do
-    helper_method :render_jb
+    helper_method :render_jb, :locale_ja?, :locale_en?
 
     if ENV.fetch("ANNICT_BASIC_AUTH") == "on"
       name = ENV.fetch("ANNICT_BASIC_AUTH_NAME")
@@ -14,6 +14,14 @@ module ControllerCommon
 
     def render_jb(path, assigns)
       ApplicationController.render("#{path}.jb", assigns: assigns)
+    end
+
+    def locale_ja?
+      locale == :ja
+    end
+
+    def locale_en?
+      locale == :en
     end
 
     private

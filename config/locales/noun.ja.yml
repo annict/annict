@@ -1,5 +1,6 @@
 ja:
   noun:
+    account_deletion: アカウント削除
     activities: アクティビティ
     after: After
     ago: 前
@@ -10,8 +11,10 @@ ja:
     annict_api: Annict API
     annict_db: Annict DB
     annict_forum: Annict Forum
+    annict_userland: Annict Userland
     annict: Annict
     applications: アプリケーション
+    autumn: 秋
     basic_info: 基本情報
     before: Before
     bio: プロフィール
@@ -28,12 +31,13 @@ ja:
     column: 項目
     completed: 見たアニメ
     current_season: 今期のアニメ
-    current_season_shorten: 今期アニメ
     delete: 削除
     detail: 詳細
+    development_members: 開発メンバー
     dropped: 中止したアニメ
     edit: 編集
     english: 英語
+    episode_number: 話数
     episodes: エピソード
     error: エラー
     fans: ファン
@@ -72,11 +76,17 @@ ja:
     privacy_policy: プライバシーポリシー
     profile: プロフィール
     programs: 放送予定
+    rating: 評価
+    records_count: 記録数
+    related_works: 関連作品
     release_on: リリース日
+    release_season: リリース時期
     resources: 種類
     search: 検索
     season: シーズン
     seasonal_anime: シーズン別アニメ
+    series: シリーズ
+    series_with_name: "%{series_name}シリーズ"
     services: サービス
     settings: 設定
     sign_in: ログイン
@@ -84,9 +94,11 @@ ja:
     skip: スキップ
     sns_friends: SNSの友達
     source: 引用元
+    spring: 春
     staff: スタッフ
     staffs: スタッフ
     state: 状態
+    summer: 夏
     syobocal: しょぼかる
     terms_of_use: 利用規約
     title: タイトル
@@ -95,7 +107,8 @@ ja:
     voice_actor: 声優
     voice_actors: 声優
     watching: 見てるアニメ
-    watching_shorten: 見てる作品
+    watching_shorten: 見てる
+    winter: 冬
     work_image: 作品画像
     works: 作品
     your_statistics: 視聴状況

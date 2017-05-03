@@ -2,20 +2,20 @@
 
 module Db
   class WorksController < Db::ApplicationController
-    permits :title, :title_kana, :title_ro, :title_en, :media, :season_id,
-      :official_site_url, :official_site_url_en, :wikipedia_url, :wikipedia_url_en,
-      :twitter_username, :twitter_hashtag, :sc_tid, :mal_anime_id, :number_format_id,
-      :synopsis, :synopsis_source, :synopsis_en, :synopsis_source_en
+    permits :title, :title_kana, :title_ro, :title_en, :media, :official_site_url,
+      :official_site_url_en, :wikipedia_url, :wikipedia_url_en, :twitter_username,
+      :twitter_hashtag, :sc_tid, :mal_anime_id, :number_format_id, :synopsis,
+      :synopsis_source, :synopsis_en, :synopsis_source_en, :season_year, :season_name
 
     before_action :authenticate_user!, only: %i(new create edit update destroy)
     before_action :load_work, only: %i(edit update hide destroy activities)
 
     def index(page: nil)
-      @works = Work.includes(:season, :item).order(id: :desc).page(page)
+      @works = Work.order(id: :desc).page(page)
     end
 
     def season(page: nil, slug: ENV["ANNICT_CURRENT_SEASON"])
-      @works = Work.includes(:season, :item).by_season(slug).order(id: :desc).page(page)
+      @works = Work.by_season(slug).order(id: :desc).page(page)
       render :index
     end
 

@@ -7,11 +7,10 @@
 .c-card.mb-1
   = render "organizations/header", organization: @organization, favorite_resources: @favorite_orgs
 
+h2.h4.font-weight-bold.text-center.mt-1.mb-2
+  = t "noun.information"
 .c-card.py-1.mb-1
   .container
-    h2.h4.font-weight-bold.text-center.mb-1
-      = icon "sticky-note-o", class: "mr-zp25"
-      = t "noun.information"
     dl.row.mb-0
       dt.col-6.text-right = t "activerecord.attributes.organization.name"
       dd.col-6 = @organization.name
@@ -31,6 +30,8 @@
         dt.col-6.text-right = t "noun.wikipedia"
         dd.col-6 = link_with_domain @organization.wikipedia_url
 
+h2.h4.text-center.font-weight-bold.mt-1.mb-2
+  = t "noun.works"
 .c-card.container.py-1.mb-2
   = render "people/grid", root_resource: @organization, resource_years: @staff_years, resources_with_year: @staffs_with_year
 

@@ -1,10 +1,10 @@
+# frozen_string_literal: true
+
 namespace :episode do
   task update_avg_rating: :environment do
     Episode.published.recorded.find_each do |episode|
-      ratings = episode.records.pluck(:rating).select(&:present?)
-      next if ratings.blank?
-
-      avg_rating = (ratings.inject { |sum, rating| sum + rating } / ratings.count).round(1)
+      avg_rating = episode.records.avg_rating
+      next if avg_rating.blank?
       episode.update_column(:avg_rating, avg_rating)
       puts "episode #{episode.id}"
     end

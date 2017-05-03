@@ -66,6 +66,8 @@ class Episode < ApplicationRecord
   before_create :set_sort_number
   after_create :update_prev_episode
   before_destroy :unset_prev_episode_id
+  after_save :expire_cache
+  after_destroy :expire_cache
 
   def self.create_from_multiple_episodes(work, multiple_episodes)
     episodes_count = work.episodes.count
@@ -89,7 +91,7 @@ class Episode < ApplicationRecord
 
   # 映画やOVAなどの実質エピソードを持たない作品かどうかを判定する
   def single?
-    number.blank? && title.present?
+    number.blank? && title.present? && title == work.title
   end
 
   def to_hash
@@ -121,5 +123,9 @@ class Episode < ApplicationRecord
 
   def set_sort_number
     self.sort_number = (work.episodes.count + 1) * 10
+  end
+
+  def expire_cache
+    programs.update_all(updated_at: Time.now)
   end
 end

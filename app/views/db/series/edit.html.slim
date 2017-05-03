@@ -1,0 +1,18 @@
+- title = t "head.title.db.series.edit", title: @series.decorate.local_name
+- set_meta_tags(title: title, reverse: true, prefix: false)
+- set_page_category "db_series_edit"
+
+.l-topbar.container-fluid.px-1
+  .row.flex-items-xs-between
+    .col-8
+      = render "db/application/topbar_title", parent: @series.decorate.local_name.truncate(70)
+
+= render "db/series/subnav", series: @series
+
+.container-fluid.p-1
+  .row
+    .col-6
+      .c-card.p-1
+        = render "form", series: @series
+    .col-6
+      = render "sidebar"

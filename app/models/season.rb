@@ -1,86 +1,115 @@
 # frozen_string_literal: true
-# == Schema Information
-#
-# Table name: seasons
-#
-#  id          :integer          not null, primary key
-#  name        :string(510)      not null
-#  created_at  :datetime
-#  updated_at  :datetime
-#  sort_number :integer          not null
-#  year        :integer          not null
-#
-# Indexes
-#
-#  index_seasons_on_sort_number    (sort_number) UNIQUE
-#  index_seasons_on_year           (year)
-#  index_seasons_on_year_and_name  (year,name) UNIQUE
-#
 
-class Season < ApplicationRecord
-  has_many :works
+class Season
+  extend Enumerize
 
-  delegate :local_name, to: :decorate
+  YEAR_LIST = 1900..(Time.now.year + 2)
+  NAME_HASH = { winter: 1, spring: 2, summer: 3, autumn: 4 }.freeze
 
-  after_save :expire_cache
-  after_destroy :expire_cache
+  attr_reader :year, :name
 
-  NAME_DATA = {
-    winter: "冬",
-    spring: "春",
-    summer: "夏",
-    autumn: "秋"
-  }.freeze
+  enumerize :name, in: NAME_HASH
 
-  def self.find_or_new_by_slug(slug)
-    year, name = slug.split("-")
-    attrs = { year: year, name: name }
-
-    # seasonsテーブルには name: "all" なレコードを保存していないため、newする
-    return new(attrs) if name == "all"
-
-    find_by(attrs)
+  def self.latest_slugs
+    next_season_slug = ENV.fetch("ANNICT_NEXT_SEASON")
+    year = next_season_slug.split("-").first
+    years = year.to_i.downto(2000).to_a
+    names = Season::NAME_HASH.keys.map(&:to_s).reverse
+    slugs = years.map { |y| names.map { |sn| "#{y}-#{sn}" } }.flatten
+    index = slugs.index(next_season_slug)
+    slugs[index..index + 4]
   end
 
-  def self.slug_options
-    options = []
-    years.each do |year|
-      options << ["#{year}年", "#{year}-all"]
-      NAME_DATA.reverse_each do |key, val|
-        options << ["#{year}年#{val}", "#{year}-#{key}"]
+  def self.list(sort: :asc, include_all: false)
+    years = YEAR_LIST.sort
+    years = years.reverse if sort == :desc
+    name_hash = NAME_HASH
+    name_hash = name_hash.merge(all: 0) if include_all
+    names = Hash[name_hash.sort_by { |_, v| sort == :desc ? -v : v }].keys
+
+    years.map do |year|
+      names.map do |name|
+        new(year, name)
       end
-    end
-    options
+    end.flatten
   end
 
-  def self.years
-    # 降順で取得する
-    pluck(:year).uniq.sort { |a, b| b <=> a }
+  def self.find_by_slug(slug)
+    year, name = slug&.to_s&.split("-")
+    year_exists = year.present? && year.to_i.in?(YEAR_LIST)
+    name_exists = name.present? && (name == "all" || name.to_sym.in?(NAME_HASH.keys))
+
+    if !year_exists || !name_exists
+      raise ActionController::RoutingError.new("Not Found")
+    end
+
+    new(year, name)
   end
 
-  def self.all_cached(sort)
-    Rails.cache.fetch "Season/all/#{sort}" do
-      Season.order(sort_number: sort)
-    end
+  def initialize(year, name)
+    @year = year
+    @name = name
+  end
+
+  def work_conditions
+    conds = { season_year: @year }
+    conds[:season_name] = name_value unless all?
+    conds
+  end
+
+  def all?
+    @name == "all"
   end
 
   def slug
-    "#{year}-#{name}"
+    "#{@year}-#{@name}"
+  end
+
+  def name_value
+    NAME_HASH[@name.to_sym].presence || 0
+  end
+
+  def local_name(locale = nil)
+    I18n.locale = locale if locale.present?
+    I18n.t("resources.season.yearly.#{@name}", year: @year)
+  end
+
+  def sibling_season(position)
+    if all?
+      sibling_year = case position
+      when :prev then @year.to_i - 1
+      when :next then @year.to_i + 1
+      else
+        @year.to_i
+      end
+
+      return unless sibling_year.in?(YEAR_LIST)
+
+      Season.new(sibling_year, "all")
+    else
+      slugs = Season.list.map(&:slug)
+      current_index = slugs.index(slug)
+
+      sibling_index = case position
+      when :prev then current_index - 1
+      when :next then current_index + 1
+      else
+        current_index
+      end
+      sibling_slug = slugs[sibling_index]
+
+      return if sibling_slug.blank?
+
+      Season.find_by_slug(sibling_slug)
+    end
   end
 
   def color
-    case name
+    case @name
     when "winter" then "#78909c"
     when "spring" then "#ec407a"
     when "summer" then "#42a5f5"
     when "autumn" then "#ff7043"
     end
-  end
-
-  private
-
-  def expire_cache
-    Rails.cache.delete("Season/all/asc")
-    Rails.cache.delete("Season/all/desc")
   end
 end

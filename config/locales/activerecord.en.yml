@@ -12,31 +12,33 @@ en:
       channel:
         name: Name
       character:
-        name: Name
-        name_kana: Name (kana)
-        name_en: Name (en)
-        kind: Kind
-        kind_en: Kind (en)
-        nickname: Nickname
-        nickname_en: Nickname (en)
-        birthday: Birthday
-        birthday_en: Birthday (en)
-        age: Age
+        aasm_state: State
         age_en: Age (en)
-        blood_type: Blood type
+        age: Age
+        birthday_en: Birthday (en)
+        birthday: Birthday
         blood_type_en: Blood type (en)
-        height: Height
-        height_en: Height (en)
-        weight: Weight
-        weight_en: Weight (en)
-        nationality: Nationality
-        nationality_en: Nationality (en)
-        occupation: Occupation
-        occupation_en: Occupation (en)
-        description: Description
+        blood_type: Blood type
         description_en: Description (en)
-        description_source: Description source
         description_source_en: Description source (en)
+        description_source: Description source
+        description: Description
+        height_en: Height (en)
+        height: Height
+        kind: Kind
+        name_en: Name (en)
+        name_kana: Name (kana)
+        name: Name
+        nationality_en: Nationality (en)
+        nationality: Nationality
+        nickname_en: Nickname (en)
+        nickname: Nickname
+        occupation_en: Occupation (en)
+        occupation: Occupation
+        series: Series
+        series_id: Series
+        weight_en: Weight (en)
+        weight: Weight
       character_image:
         attachment: Image
       checkin:
@@ -121,6 +123,14 @@ en:
         episode_id: Episode
         rebroadcast: Rebroadcast
         started_at: Started at
+      series:
+        name_en: Name (en)
+        name_ro: Name (ro)
+        name: Name
+      series_work:
+        summary: Summary
+        summary_en: Summary (en)
+        work_id: Work
       staff:
         name_en: Name (en)
         name: Name
@@ -130,6 +140,14 @@ en:
         role: Role
         sort_number: Sort number
         work_id: Work
+      userland_project:
+        available: Available?
+        description: Description
+        icon: Icon
+        name: Name
+        summary: Summary
+        url: URL
+        userland_category_id: Category
       user:
         current_password: Current password
         email_username: Email or Username
@@ -149,6 +167,8 @@ en:
         sc_tid: Syobocal ID
         season_id: Season
         season: Season
+        season_name: Season
+        season_year: Year
         synopsis_en: Synopsis (en)
         synopsis_source_en: Synopsis source (en)
         synopsis_source: Synopsis source (ja)
@@ -201,6 +221,12 @@ en:
       program:
         one: Program
         other: Programs
+      series:
+        one: Series
+        other: Series
+      series_work:
+        one: Series Work
+        other: Series Works
       staff:
         one: Staff
         other: Staff

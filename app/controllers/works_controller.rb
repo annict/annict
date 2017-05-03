@@ -61,8 +61,10 @@ class WorksController < ApplicationController
       order(watchers_count: :desc, id: :desc).
       page(page).
       per(display_works_count)
-    @seasons = Season.all_cached(:desc)
-    @season = Season.find_or_new_by_slug(slug)
+    @seasons = Season.list(sort: :desc, include_all: true)
+    @season = Season.find_by_slug(slug)
+    @prev_season = @season.sibling_season(:prev)
+    @next_season = @season.sibling_season(:next)
 
     return unless user_signed_in?
 
@@ -82,6 +84,7 @@ class WorksController < ApplicationController
       staffs.
       published.
       order(:sort_number)
+    @series_list = @work.series_list.published.where("series_works_count > ?", 1)
 
     return unless user_signed_in?
 

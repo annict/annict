@@ -36,8 +36,8 @@ class PeopleController < ApplicationController
       @casts_with_year = @person.
         casts.
         published.
-        includes(work: [:season, :item]).
-        group_by { |cast| cast.work.season&.year.presence || 0 }
+        includes(:character, work: :work_image).
+        group_by { |cast| cast.work.season_year.presence || 0 }
       @cast_years = @casts_with_year.keys.sort.reverse
     end
 
@@ -45,13 +45,14 @@ class PeopleController < ApplicationController
       @staffs_with_year = @person.
         staffs.
         published.
-        includes(work: [:season, :item]).
-        group_by { |staff| staff.work.season&.year.presence || 0 }
+        includes(work: :work_image).
+        group_by { |staff| staff.work.season_year.presence || 0 }
       @staff_years = @staffs_with_year.keys.sort.reverse
     end
 
     @favorite_people = @person.
       favorite_people.
+      includes(user: :profile).
       order(id: :desc)
   end
 
@@ -60,7 +61,7 @@ class PeopleController < ApplicationController
   def load_i18n
     keys = {
       "messages.components.favorite_button.add_to_favorites": nil,
-      "messages.components.favorite_button.added_to_favorites": nil,
+      "messages.components.favorite_button.added_to_favorites": nil
     }
 
     load_i18n_into_gon keys

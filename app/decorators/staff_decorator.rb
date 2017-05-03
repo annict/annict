@@ -7,12 +7,6 @@ class StaffDecorator < ApplicationDecorator
     h.link_to name, path, options
   end
 
-  def local_name
-    return name if I18n.locale == :ja
-    return name_en if name_en.present?
-    name
-  end
-
   def local_name_with_old
     return local_name if local_name == resource.decorate.local_name
     "#{local_name} (#{resource.decorate.local_name})"

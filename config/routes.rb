@@ -38,6 +38,8 @@ Rails.application.routes.draw do
       resources :organizations, only: [:index]
       resources :people, only: [:index]
       resources :receptions, only: [:create, :destroy]
+      resources :series_list, only: %i(index)
+      resources :works, only: %i(index)
 
       resources :favorites, only: %i(create) do
         post :unfavorite, on: :collection
@@ -159,6 +161,22 @@ Rails.application.routes.draw do
       end
     end
 
+    resources :series, only: %i(index new create edit update destroy) do
+      member do
+        get :activities
+        patch :hide
+      end
+
+      resources :series_works, only: %i(index new create)
+    end
+
+    resources :series_works, only: %i(edit update destroy) do
+      member do
+        get :activities
+        patch :hide
+      end
+    end
+
     resources :staffs, only: %i(edit update destroy) do
       member do
         get :activities
@@ -198,6 +216,12 @@ Rails.application.routes.draw do
     root "home#index"
   end
 
+  namespace :userland do
+    resources :projects, except: %i(index)
+
+    root "home#index"
+  end
+
   resource :confirmation, only: [:show]
   resource :search, only: [:show]
   resource :track, only: %i(show)
@@ -211,7 +235,6 @@ Rails.application.routes.draw do
   scope :settings do
     resource :account, only: [:show, :update]
     resource :profile, only: [:show, :update]
-    resource :sayonara, only: [:show], controller: :sayonara
     resources :mutes, only: [:index]
     resources :options, only: [:index]
     resources :providers, only: [:index, :destroy]

@@ -6,12 +6,6 @@ class CastDecorator < ApplicationDecorator
     h.link_to name, h.edit_db_cast_path(self), options
   end
 
-  def local_name
-    return name if I18n.locale == :ja
-    return name_en if name_en.present?
-    name
-  end
-
   def local_name_with_old
     return local_name if local_name == person.decorate.local_name
     "#{local_name} (#{person.decorate.local_name})"

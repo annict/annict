@@ -8,7 +8,6 @@
 #  name_kana                 :string           default(""), not null
 #  name_en                   :string           default(""), not null
 #  kind                      :string           default(""), not null
-#  kind_en                   :string           default(""), not null
 #  nickname                  :string           default(""), not null
 #  nickname_en               :string           default(""), not null
 #  birthday                  :string           default(""), not null
@@ -33,11 +32,13 @@
 #  description_source        :string           default(""), not null
 #  description_source_en     :string           default(""), not null
 #  favorite_characters_count :integer          default(0), not null
+#  series_id                 :integer
 #
 # Indexes
 #
 #  index_characters_on_favorite_characters_count  (favorite_characters_count)
-#  index_characters_on_name_and_kind              (name,kind) UNIQUE
+#  index_characters_on_name_and_series_id         (name,series_id) UNIQUE
+#  index_characters_on_series_id                  (series_id)
 #
 
 class Character < ApplicationRecord
@@ -46,7 +47,7 @@ class Character < ApplicationRecord
   include RootResourceCommon
 
   DIFF_FIELDS = %i(
-    name name_en kind kind_en nickname nickname_en birthday birthday_en age age_en
+    name name_en series_id nickname nickname_en birthday birthday_en age age_en
     blood_type blood_type_en height height_en weight weight_en nationality nationality_en
     occupation occupation_en description description_en name_kana description_source
     description_source_en
@@ -61,6 +62,7 @@ class Character < ApplicationRecord
     end
   end
 
+  belongs_to :series
   has_many :casts, dependent: :destroy
   has_many :character_images, dependent: :destroy
   has_many :db_activities, as: :trackable, dependent: :destroy
@@ -70,7 +72,7 @@ class Character < ApplicationRecord
   has_many :works, through: :casts
   has_one :character_image
 
-  validates :name, presence: true, uniqueness: { scope: :kind }
+  validates :name, presence: true, uniqueness: { scope: :series_id }
   validates :description, presence_pair: :description_source
   validates :description_en, presence_pair: :description_source_en
 
@@ -79,7 +81,7 @@ class Character < ApplicationRecord
   end
 
   def oldest_work
-    works.joins(:season).order("seasons.sort_number ASC").first
+    works.order("season_year ASC, season_name ASC").first
   end
 
   def to_diffable_hash

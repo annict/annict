@@ -1,0 +1,12 @@
+# frozen_string_literal: true
+
+resources = @works.map do |work|
+  {
+    id: work.id,
+    text: work.decorate.local_title
+  }
+end
+
+{
+  resources: resources
+}

@@ -8,6 +8,7 @@ module RootResourceDecoratorCommon
       case model.class.name
       when "Work" then h.edit_db_work_path(model)
       when "Character" then h.edit_db_character_path(model)
+      when "Series" then h.edit_db_series_path(model)
       end
     end
   end

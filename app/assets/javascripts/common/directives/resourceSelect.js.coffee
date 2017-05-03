@@ -18,5 +18,7 @@ _requestUrl = (model) ->
     "Character": "/api/internal/characters"
     "Organization": "/api/internal/organizations"
     "Person": "/api/internal/people"
+    "Series": "/api/internal/series_list"
+    "Work": "/api/internal/works"
 
   urls[model]

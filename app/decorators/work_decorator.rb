@@ -29,7 +29,7 @@ class WorkDecorator < ApplicationDecorator
 
   def release_season
     return "" if season.blank?
-    season.decorate.local_name
+    season.local_name
   end
 
   def release_season_link
@@ -48,6 +48,28 @@ class WorkDecorator < ApplicationDecorator
     title
   end
 
+  def local_synopsis
+    text = case I18n.locale
+    when :ja then synopsis
+    when :en then synopsis_en
+    end
+
+    return if text.blank?
+
+    h.simple_format(text)
+  end
+
+  def local_synopsis_source
+    source = case I18n.locale
+    when :ja then synopsis_source
+    when :en then synopsis_source_en
+    end
+
+    return if source.blank?
+
+    h.auto_link(source)
+  end
+
   def media_label
     h.content_tag :span, class: "badge u-badge-works" do
       media.text
@@ -57,10 +79,6 @@ class WorkDecorator < ApplicationDecorator
   def to_values
     model.class::DIFF_FIELDS.each_with_object({}) do |field, hash|
       hash[field] = case field
-      when :season_id
-        if send(:season_id).present?
-          Season.find(send(:season_id)).decorate.local_name
-        end
       when :sc_tid
         sc_tid = send(:sc_tid)
         if sc_tid.present?
@@ -92,6 +110,10 @@ class WorkDecorator < ApplicationDecorator
         end
       when :number_format_id
         send(:number_format).name if send(:number_format_id).present?
+      when :season_year
+        send(:season_year).to_s
+      when :season_name
+        send(:season_name)&.text
       else
         send(field)
       end

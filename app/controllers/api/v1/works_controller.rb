@@ -6,7 +6,7 @@ module Api
       before_action :prepare_params!, only: [:index]
 
       def index
-        @works = Work.published.includes(:season)
+        @works = Work.published
         @works = Api::V1::WorkIndexService.new(@works, @params).result
       end
     end

@@ -25,6 +25,8 @@ module Api
         current_user.like(recipient)
         keen_client.page_category = page_category
         keen_client.likes.create(resource_type: recipient_type)
+        ga_client.page_category = page_category
+        ga_client.events.create(:likes, :create)
 
         if recipient_type == "Checkin"
           EmailNotificationService.send_email(

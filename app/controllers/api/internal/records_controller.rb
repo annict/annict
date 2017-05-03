@@ -16,7 +16,8 @@ module Api
           c.rating = record[:rating]
         end
         keen_client.page_category = page_category
-        service = NewRecordService.new(current_user, record, keen_client)
+        ga_client.page_category = page_category
+        service = NewRecordService.new(current_user, record, keen_client, ga_client)
 
         if service.save
           head 201

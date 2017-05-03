@@ -15,10 +15,6 @@ module ApplicationHelper
     end
   end
 
-  def locale_ja?
-    locale == :ja
-  end
-
   def local_time_ago_in_words(from_time, options = {})
     days = (Time.zone.now.to_date - from_time.to_date).to_i
     return from_time.strftime("%Y/%m/%d") if days > 3

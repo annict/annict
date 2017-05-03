@@ -1,42 +1,50 @@
 # frozen_string_literal: true
+
 # == Schema Information
 #
 # Table name: works
 #
-#  id                   :integer          not null, primary key
-#  season_id            :integer
-#  sc_tid               :integer
-#  title                :string(510)      not null
-#  media                :integer          not null
-#  official_site_url    :string(510)      default(""), not null
-#  wikipedia_url        :string(510)      default(""), not null
-#  episodes_count       :integer          default(0), not null
-#  watchers_count       :integer          default(0), not null
-#  released_at          :date
-#  created_at           :datetime
-#  updated_at           :datetime
-#  twitter_username     :string(510)
-#  twitter_hashtag      :string(510)
-#  released_at_about    :string
-#  aasm_state           :string           default("published"), not null
-#  number_format_id     :integer
-#  title_kana           :string           default(""), not null
-#  title_ro             :string           default(""), not null
-#  title_en             :string           default(""), not null
-#  official_site_url_en :string           default(""), not null
-#  wikipedia_url_en     :string           default(""), not null
-#  synopsis             :text             default(""), not null
-#  synopsis_en          :text             default(""), not null
-#  synopsis_source      :string           default(""), not null
-#  synopsis_source_en   :string           default(""), not null
-#  mal_anime_id         :integer
+#  id                    :integer          not null, primary key
+#  season_id             :integer
+#  sc_tid                :integer
+#  title                 :string(510)      not null
+#  media                 :integer          not null
+#  official_site_url     :string(510)      default(""), not null
+#  wikipedia_url         :string(510)      default(""), not null
+#  episodes_count        :integer          default(0), not null
+#  watchers_count        :integer          default(0), not null
+#  released_at           :date
+#  created_at            :datetime
+#  updated_at            :datetime
+#  twitter_username      :string(510)
+#  twitter_hashtag       :string(510)
+#  released_at_about     :string
+#  aasm_state            :string           default("published"), not null
+#  number_format_id      :integer
+#  title_kana            :string           default(""), not null
+#  title_ro              :string           default(""), not null
+#  title_en              :string           default(""), not null
+#  official_site_url_en  :string           default(""), not null
+#  wikipedia_url_en      :string           default(""), not null
+#  synopsis              :text             default(""), not null
+#  synopsis_en           :text             default(""), not null
+#  synopsis_source       :string           default(""), not null
+#  synopsis_source_en    :string           default(""), not null
+#  mal_anime_id          :integer
+#  facebook_og_image_url :string           default(""), not null
+#  twitter_image_url     :string           default(""), not null
+#  recommended_image_url :string           default(""), not null
+#  season_year           :integer
+#  season_name           :integer
 #
 # Indexes
 #
-#  index_works_on_aasm_state        (aasm_state)
-#  index_works_on_number_format_id  (number_format_id)
-#  works_sc_tid_key                 (sc_tid) UNIQUE
-#  works_season_id_idx              (season_id)
+#  index_works_on_aasm_state                   (aasm_state)
+#  index_works_on_number_format_id             (number_format_id)
+#  index_works_on_season_year                  (season_year)
+#  index_works_on_season_year_and_season_name  (season_year,season_name)
+#  works_sc_tid_key                            (sc_tid) UNIQUE
+#  works_season_id_idx                         (season_id)
 #
 
 class Work < ApplicationRecord
@@ -46,13 +54,14 @@ class Work < ApplicationRecord
   include RootResourceCommon
 
   DIFF_FIELDS = %i(
-    season_id sc_tid title title_kana title_en title_ro media official_site_url
+    sc_tid title title_kana title_en title_ro media official_site_url
     official_site_url_en wikipedia_url wikipedia_url_en twitter_username
     twitter_hashtag number_format_id synopsis synopsis_en synopsis_source
-    synopsis_source_en mal_anime_id
+    synopsis_source_en mal_anime_id season_year season_name
   ).freeze
 
   enumerize :media, in: { tv: 1, ova: 2, movie: 3, web: 4, other: 0 }
+  enumerize :season_name, in: Season::NAME_HASH
 
   aasm do
     state :published, initial: true
@@ -68,7 +77,7 @@ class Work < ApplicationRecord
   end
 
   belongs_to :number_format
-  belongs_to :season
+  belongs_to :season_model, class_name: "SeasonModel", foreign_key: :season_id
   has_many :activities,
     foreign_key: :recipient_id,
     foreign_type: :recipient,
@@ -87,6 +96,8 @@ class Work < ApplicationRecord
     source: :resource,
     source_type: "Organization"
   has_many :programs, dependent: :destroy
+  has_many :series_list, through: :series_works, source: :series
+  has_many :series_works, dependent: :destroy
   has_many :statuses, dependent: :destroy
   has_many :staff_people, through: :staffs, source: :resource, source_type: "Person"
   has_many :staffs, dependent: :destroy
@@ -106,18 +117,15 @@ class Work < ApplicationRecord
   validates :synopsis, presence_pair: :synopsis_source
   validates :synopsis_en, presence_pair: :synopsis_source_en
 
-  scope :by_season, -> (season_slug) {
+  scope :by_season, ->(season_slug) {
     return self if season_slug.blank?
 
-    year, name = season_slug.split("-")
-
-    season_conds = name == "all" ? { year: year } : { year: year, name: name }
-    joins(:season).where(seasons: season_conds)
+    where(Season.find_by_slug(season_slug).work_conditions)
   }
 
   scope :program_registered, -> {
     work_ids = joins(:programs).
-      merge(Program.where(work_id: all.pluck(:id))).
+      merge(Program.published.where(work_id: all.pluck(:id))).
       pluck(:id).
       uniq
     where(id: work_ids)
@@ -145,6 +153,11 @@ class Work < ApplicationRecord
 
   def people
     Person.where(id: (cast_people.pluck(:id) | staff_people.pluck(:id)))
+  end
+
+  def season
+    return if season_year.blank?
+    @season ||= Season.new(season_year, season_name.presence || "all")
   end
 
   # 作品のエピソード数分の空白文字列が入った配列を返す
@@ -176,11 +189,16 @@ class Work < ApplicationRecord
     "http://cal.syoboi.jp/tid/#{sc_tid}"
   end
 
+  def twitter_avatar_url(size = :original)
+    return "" if twitter_username.blank?
+    "https://twitter.com/#{twitter_username}/profile_image?size=#{size}"
+  end
+
   def channels
     return nil if episodes.blank?
 
-    programs = Program.where(episode_id: episodes.pluck(:id))
-    Channel.where(id: programs.pluck(:channel_id).uniq) if programs.present?
+    programs = Program.published.where(episode_id: episodes.pluck(:id))
+    Channel.published.where(id: programs.pluck(:channel_id).uniq) if programs.present?
   end
 
   def current_season?

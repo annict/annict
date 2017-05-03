@@ -18,8 +18,8 @@
           .row.align-items-center
             .col-8
               h2
-                = link_to @episode.decorate.title_with_number, work_episode_path(@work, @episode)
-              - if user_signed_in? && current_user.checkedin?(@episode)
+                = link_to @episode.decorate.title_with_number, work_episode_path(@work, @episode), class: "u-text-body"
+              - if user_signed_in? && current_user.tracked?(@episode)
                 .small
                   = icon "check", class: "mr-zp25"
                   = t "messages.episodes.watched_x_times", records_count: current_user.checkins_count_in(@episode)

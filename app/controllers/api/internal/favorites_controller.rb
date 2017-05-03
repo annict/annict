@@ -25,6 +25,8 @@ module Api
         current_user.favorite(resource)
         keen_client.page_category = page_category
         keen_client.favorites.create(resource_type: resource_type)
+        ga_client.page_category = page_category
+        ga_client.events.create(:favorites, :create)
         head 200
       end
 

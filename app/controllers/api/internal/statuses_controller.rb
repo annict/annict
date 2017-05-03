@@ -27,7 +27,8 @@ module Api
 
       def select(status_kind, page_category)
         keen_client.page_category = page_category
-        status = StatusService.new(current_user, @work, keen_client)
+        ga_client.page_category = page_category
+        status = StatusService.new(current_user, @work, keen_client, ga_client)
         head(200) if status.change(status_kind)
       end
     end

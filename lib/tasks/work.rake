@@ -1,7 +1,7 @@
 namespace :work do
   task notify_untouched_works: :environment do
     works = Work.where(episodes_count: 0).order(watchers_count: :desc).limit(3)
-    WorkMailer.delay.untouched_works_notification(works.pluck(:id))
+    WorkMailer.untouched_works_notification(works.pluck(:id)).deliver_later
   end
 
   # 指定したWorkを削除する
@@ -47,24 +47,23 @@ namespace :work do
     end
   end
 
-  task :send_next_season_came_email, %i(season_year season_name) => :environment do |t, args|
+  task :send_next_season_came_email, %i(season_year season_name all) => :environment do |t, args|
     Rails.logger = Logger.new(STDOUT) if Rails.env.development?
     Rails.logger.info "work:send_next_season_came_email >> task started"
 
-    season = Season.where(year: args[:season_year], name: args[:season_name]).first
-    if season.blank?
-      Rails.logger.info "work:send_next_season_came_email >> no season found"
-      next
+    users = if args[:all] == "true"
+      User.
+        joins(:email_notification).
+        where(email_notifications: { event_next_season_came: true })
+    else
+      User.where(username: "shimbaco")
     end
-    Rails.logger.info "work:send_next_season_came_email >> season: #{season.slug}"
-
-    users = User.
-      joins(:email_notification).
-      where(email_notifications: { event_next_season_came: true })
 
     users.find_each do |user|
       Rails.logger.info "work:send_next_season_came_email >> user: #{user.id}"
-      EmailNotificationService.send_email("next_season_came", user, season.id)
+      EmailNotificationService.send_email(
+        "next_season_came", user, args[:season_year], args[:season_name]
+      )
     end
 
     Rails.logger.info "work:send_next_season_came_email >> task processed"

@@ -4,10 +4,11 @@ class NewRecordService
   attr_writer :app
   attr_reader :record
 
-  def initialize(user, record, keen_client)
+  def initialize(user, record, keen_client, ga_client)
     @user = user
     @record = record
     @keen_client = keen_client
+    @ga_client = ga_client
   end
 
   def save
@@ -25,6 +26,7 @@ class NewRecordService
       finish_tips
       update_latest_status
       create_keen_event
+      create_ga_event
     end
 
     true
@@ -33,17 +35,12 @@ class NewRecordService
   private
 
   def save_activity
-    if @record.multiple_record.blank?
-      Activity.delay.create(
-        user: @user,
-        recipient: @record.episode,
-        trackable: @record,
-        action: "create_record")
-    end
+    return if @record.multiple_record.present?
+    CreateRecordActivityJob.perform_later(@user.id, @record.id)
   end
 
   def finish_tips
-    UserTipsService.new(@user).delay.finish!(:checkin) if @user.records.initial?(@record)
+    FinishUserTipsJob.perform_later(@user, "checkin") if @user.records.initial?(@record)
   end
 
   def update_latest_status
@@ -54,6 +51,11 @@ class NewRecordService
   def create_keen_event
     @keen_client.app = @app
     @keen_client.records.create
+  end
+
+  def create_ga_event
+    data_source = @app.present? ? :api : :web
+    @ga_client.events.create(:records, :create, ds: data_source)
   end
 
   def update_record_comments_count

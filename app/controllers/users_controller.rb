@@ -56,13 +56,14 @@ class UsersController < ApplicationController
     gon.push(pageObject: page_object)
   end
 
-  def works(status_kind, page: nil)
+  def works(status_kind, page: 1)
     @works = @user.works.on(status_kind).published
-    @seasons = Season.
-      where(id: @works.pluck(:season_id)).
-      order(sort_number: :desc).
-      page(page).
-      per(10)
+    season_slugs = @works.map(&:season).select(&:present?).map(&:slug).uniq
+    @seasons = season_slugs.
+      map { |slug| Season.find_by_slug(slug) }.
+      sort_by { |s| "#{s.year}#{s.name_value}".to_i }.
+      reverse
+    @seasons = Kaminari.paginate_array(@seasons).page(page).per(10)
   end
 
   def following

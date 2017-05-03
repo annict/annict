@@ -8,8 +8,10 @@
 /lib/tasks/data.rake
 /log/*.log
 /node_modules
+/public/dmmyix
 /public/paperclip
 /public/sitemap*
 /spec/test_files/paperclip
 /tags
 /tmp
+/vendor/bundler
