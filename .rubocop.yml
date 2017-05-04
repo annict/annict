@@ -61,5 +61,17 @@ Style/MultilineOperationIndentation:
 Style/MultilineMethodCallIndentation:
   EnforcedStyle: indented
 
+Style/PercentLiteralDelimiters:
+  PreferredDelimiters:
+    "%":  ()
+    "%i": ()
+    "%q": ()
+    "%Q": ()
+    "%r": "{}"
+    "%s": ()
+    "%w": ()
+    "%W": ()
+    "%x": ()
+
 Style/StringLiterals:
   EnforcedStyle: double_quotes
