@@ -37,7 +37,7 @@ Rails.application.routes.draw do
       resources :mute_users, only: [:create]
       resources :organizations, only: [:index]
       resources :people, only: [:index]
-      resources :receptions, only: [:create, :destroy]
+      resources :receptions, only: %i(create destroy)
       resources :series_list, only: %i(index)
       resources :works, only: %i(index)
 
@@ -99,7 +99,7 @@ Rails.application.routes.draw do
         namespace :me do
           resources :following_activities, only: %i(index)
           resources :programs, only: [:index]
-          resources :records, only: [:create, :update, :destroy]
+          resources :records, only: %i(create update destroy)
           resources :statuses, only: [:create]
           resources :works, only: [:index]
 
@@ -233,11 +233,11 @@ Rails.application.routes.draw do
 
   resources :settings, only: [:index]
   scope :settings do
-    resource :account, only: [:show, :update]
-    resource :profile, only: [:show, :update]
+    resource :account, only: %i(show update)
+    resource :profile, only: %i(show update)
     resources :mutes, only: [:index]
     resources :options, only: [:index]
-    resources :providers, only: [:index, :destroy]
+    resources :providers, only: %i(index destroy)
 
     patch "options", to: "options#update"
   end
@@ -309,7 +309,7 @@ Rails.application.routes.draw do
     root to: "users#show", as: :user
   end
 
-  resources :works, only: [:index, :show] do
+  resources :works, only: %i(index show) do
     resources :characters, only: %i(index)
     resources :staffs, only: %i(index)
 
