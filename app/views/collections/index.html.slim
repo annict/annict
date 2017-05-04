@@ -1,0 +1,13 @@
+- title = t "head.title.collections.index"
+- set_meta_tags(title: title, reverse: true, prefix: false)
+- set_page_category "collections_index"
+
+= render "application/components/navbar"
+
+.p-application__content
+  .container.py-1.mb-2
+    = link_to new_collection_path, class: "btn btn-primary" do
+      = icon "plus", class: "mr-zp5"
+      = t "messages.collections.new"
+
+= render "application/components/footer"

@@ -32,6 +32,8 @@ en:
       no_works: No works
     character_fans:
       no_users: No users
+    collections:
+      new: New Collection
     comments:
       comment_form_placeholder: Click here to add a new comment
       create: Create
