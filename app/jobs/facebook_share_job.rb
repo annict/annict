@@ -5,7 +5,7 @@ class FacebookShareJob < ApplicationJob
 
   def perform(user_id, record_id)
     user = User.find(user_id)
-    record = Checkin.find(record_id)
+    record = user.records.find(record_id)
     work_image = record.work.work_image
 
     source = if work_image.present? && Rails.env.production?
