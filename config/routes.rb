@@ -318,6 +318,7 @@ Rails.application.routes.draw do
     end
 
     collection do
+      get :newest
       get :popular
       get ":slug",
         action: :season,
