@@ -5,7 +5,6 @@
   Channel,
   NumberFormat,
   Prefecture,
-  Season,
   Tip,
   Work,
   Episode
