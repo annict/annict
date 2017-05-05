@@ -125,7 +125,3 @@ end
 group :production do
   gem "bugsnag"
 end
-
-source "https://rails-assets.org" do
-  gem "rails-assets-tether"
-end
