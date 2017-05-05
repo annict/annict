@@ -141,8 +141,9 @@ class Work < ApplicationRecord
   }
 
   # 作品画像が設定されていない作品
-  scope :itemless, -> {
-    joins("LEFT OUTER JOIN items ON items.work_id = works.id").where("items.id IS NULL")
+  scope :image_not_attached, -> {
+    joins("LEFT OUTER JOIN work_images ON work_images.work_id = works.id").
+      where("work_images.id IS NULL")
   }
 
   # リリース時期順に並べる
