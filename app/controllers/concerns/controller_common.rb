@@ -8,6 +8,7 @@ module ControllerCommon
 
     rescue_from ActionView::MissingTemplate do
       raise ActionController::RoutingError, "Not Found" if Rails.env.production?
+      raise
     end
 
     if ENV.fetch("ANNICT_BASIC_AUTH") == "on"
