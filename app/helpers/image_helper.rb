@@ -5,7 +5,8 @@ module ImageHelper
     path = image_path(record, field)
 
     msize = options[:msize]
-    size = browser.device.mobile? && msize.present? ? msize : options[:size]
+    is_mobile = defined?(browser) && browser.device.mobile? && msize.present?
+    size = is_mobile ? msize : options[:size]
     width, height = size.split("x").map do |s|
       s.present? ? (s.to_i * 2) : nil
     end
