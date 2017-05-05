@@ -6,7 +6,7 @@ Rails.application.config.assets.version = "1.0"
 %w(fonts).each do |dir_name|
   Rails.application.config.assets.paths << "#{Rails.root}/app/assets/#{dir_name}"
 end
-Rails.application.config.assets.paths << Rails.root.join('node_modules')
+Rails.application.config.assets.paths << Rails.root.join("node_modules")
 
 Rails.application.config.assets.precompile += %w(
   db.scss
