@@ -62,10 +62,6 @@ class User < ApplicationRecord
 
   has_many :activities,    dependent: :destroy
   has_many :channel_works, dependent: :destroy
-  has_many :connected_applications, -> { distinct },
-    class_name: "Doorkeeper::Application",
-    through: :oauth_access_tokens,
-    source: :application
   has_many :records, class_name: "Checkin", dependent: :destroy
   has_many :db_comments, dependent: :destroy
   has_many :favorite_characters, dependent: :destroy
@@ -93,6 +89,10 @@ class User < ApplicationRecord
     class_name: "Doorkeeper::AccessToken",
     foreign_key: :resource_owner_id,
     dependent: :destroy
+  has_many :connected_applications, -> { distinct },
+    class_name: "Doorkeeper::Application",
+    through: :oauth_access_tokens,
+    source: :application
   has_many :record_comments, class_name: "Comment", dependent: :destroy
   has_many :userland_project_members, dependent: :destroy
   has_many :userland_projects, through: :userland_project_members
