@@ -24,6 +24,7 @@ To run Annict on a local machine, you need to have the following dependencies in
 $ git clone git@github.com:annict/annict.git
 $ cd annict
 $ cp config/application.yml{.example,}
+$ cp .env.sample .env
 $ bundle
 $ rake db:setup
 $ yarn
