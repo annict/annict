@@ -58,6 +58,9 @@ module Annict
       g.factory_girl false
     end
 
+    # Don't generate system test files.
+    config.generators.system_tests = nil
+
     config.active_job.queue_adapter = :delayed_job
 
     config.middleware.insert_before(Rack::Runtime, Rack::Rewrite) do
