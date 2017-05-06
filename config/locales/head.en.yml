@@ -196,6 +196,7 @@ en:
         show: "%{profile_name} (%{username})"
         works: "%{profile_name} (%{username})'s \"%{action}\" anime"
       works:
-        popular: Popular anime
+        newest: Just Added Anime
+        popular: Popular Anime
         season: "%{name} Anime"
         show: "%{title} (Anime)"

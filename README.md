@@ -26,7 +26,7 @@ $ cd annict
 $ cp config/application.yml{.example,}
 $ bundle
 $ rake db:setup
-$ npm install
+$ yarn
 $ rails s -b 0.0.0.0
 ```
 

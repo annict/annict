@@ -110,6 +110,8 @@ class Season
     when "spring" then "#ec407a"
     when "summer" then "#42a5f5"
     when "autumn" then "#ff7043"
+    else
+      "#66bb6a"
     end
   end
 end

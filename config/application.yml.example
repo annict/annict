@@ -1,8 +1,8 @@
-ANNICT_CURRENT_SEASON: "2016-autumn"
-ANNICT_NEXT_SEASON: "2017-winter"
+ANNICT_CURRENT_SEASON: "2017-spring"
+ANNICT_NEXT_SEASON: "2017-summer"
 ANNICT_PAPERCLIP_RANDOM_SECRET: "abcdefghijklmnopqrstuvwxyz"
 ANNICT_PAPERCLIP_URL: "/paperclip/:class/:id/:attachment/:style/:hash.:extension"
-ANNICT_PREVIOUS_SEASON: "2016-summer"
+ANNICT_PREVIOUS_SEASON: "2017-winter"
 
 DEVISE_SECRET: "abcdefghijklmnopqrstuvwxyz"
 RAILS_SECRET_KEY_BASE: "abcdefghijklmnopqrstuvwxyz"
@@ -13,13 +13,21 @@ development:
 
   GA_TRACKING_ID: UA-000000000-3
 
+  ANNICT_BASIC_AUTH_NAME: "el-psy"
+  ANNICT_BASIC_AUTH_PASSWORD: "congroo"
+  ANNICT_BASIC_AUTH: "off"
   ANNICT_DOMAIN: "annict.dev"
+  ANNICT_EN_URL: "http://en.annict.dev:3000"
   ANNICT_FILE_STORAGE_URL: "http://localhost:3000"
-  ANNICT_HOST: "annict.dev:3000"
   ANNICT_HOST_SHORT: "annict.dev:3000"
+  ANNICT_HOST: "annict.dev:3000"
+  ANNICT_JA_URL: "http://ja.annict.dev:3000"
   ANNICT_PAPERCLIP_PATH: ":rails_root/public/paperclip/:class/:id/:attachment/:style/:hash.:extension"
-  ANNICT_URL: "http://annict.dev:3000"
   ANNICT_SITEMAP_URL: ""
+  ANNICT_URL: "http://annict.dev:3000"
+
+  KEEN_PROJECT_ID: "xxxxxxxxxxxxxxx"
+  KEEN_WRITE_KEY: "xxxxxxxxxxxxxxxx"
 
   TWITTER_CONSUMER_KEY: "xxxxxxxxxxxxxxxxxxxxx"
   TWITTER_CONSUMER_SECRET: "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"

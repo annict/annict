@@ -8,6 +8,7 @@ Rails.application.config.assets.version = "1.0"
 %w(fonts).each do |dir_name|
   Rails.application.config.assets.paths << "#{Rails.root}/app/assets/#{dir_name}"
 end
+
 # Add Yarn node_modules folder to the asset load path.
 Rails.application.config.assets.paths << Rails.root.join("node_modules")
 

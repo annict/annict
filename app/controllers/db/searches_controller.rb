@@ -5,7 +5,6 @@ module Db
     def show
       @series_list = @search.series_list.order(id: :desc)
       @works = @search.works.
-        includes(:season, :item).
         order(id: :desc)
       @people = @search.people.order(id: :desc)
       @organizations = @search.organizations.order(id: :desc)

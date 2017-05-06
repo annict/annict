@@ -6,6 +6,11 @@ module ControllerCommon
   included do
     helper_method :render_jb, :locale_ja?, :locale_en?
 
+    rescue_from ActionView::MissingTemplate do
+      raise ActionController::RoutingError, "Not Found" if Rails.env.production?
+      raise
+    end
+
     if ENV.fetch("ANNICT_BASIC_AUTH") == "on"
       name = ENV.fetch("ANNICT_BASIC_AUTH_NAME")
       password = ENV.fetch("ANNICT_BASIC_AUTH_PASSWORD")
