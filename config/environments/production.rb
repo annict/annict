@@ -154,7 +154,7 @@ Rails.application.configure do
       rack_env["SERVER_NAME"] == "www.annict.com"
     }
     # https://annict.com/sitemap.xml.gz でS3にアップロードされてるサイトマップを取得する
-    r301 %r{/sitemap.xml.gz}, ENV.fetch("ANNICT_SITEMAP_URL")
+    r301 %r{\A/(sitemaps*)}, "#{ENV.fetch('ANNICT_SITEMAP_URL')}/$1"
   end
 
   config.imgix = {

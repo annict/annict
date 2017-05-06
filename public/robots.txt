@@ -1,4 +1,4 @@
 User-Agent: *
 Disallow: /db/
 
-Sitemap: https://annict.com/sitemap.xml.gz
+Sitemap: https://annict.com/sitemaps/sitemap.xml.gz
