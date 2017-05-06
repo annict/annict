@@ -1,7 +1,7 @@
 {
   "name": "annict",
   "dependencies": {
-    "async": "2.1.5",
+    "async": "2.4.0",
     "browserify": "14.3.0",
     "browserify-incremental": "3.1.1",
     "coffeeify": "2.1.0",
@@ -12,8 +12,9 @@
     "mjml": "3.3.2",
     "moment-timezone": "0.5.13",
     "mousetrap": "1.6.1",
+    "tether": "1.4.0",
     "turbolinks": "5.0.3",
-    "vue": "2.3.0",
+    "vue": "2.3.2",
     "vue-lazyload": "^1.0.0-rc12"
   },
   "engines": {

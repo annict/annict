@@ -7,7 +7,6 @@ namespace :seed do
     Rake::Task["seed:generate_works_csv"].invoke
     Rake::Task["seed:generate_number_formats_csv"].invoke
     Rake::Task["seed:generate_prefectures_csv"].invoke
-    Rake::Task["seed:generate_seasons_csv"].invoke
     Rake::Task["seed:generate_tips_csv"].invoke
   end
 
@@ -39,10 +38,13 @@ namespace :seed do
 
   task generate_works_csv: :environment do
     work_attrs = %w(
-      id season_id sc_tid title media official_site_url wikipedia_url released_at
+      id sc_tid title media official_site_url wikipedia_url released_at
       twitter_username twitter_hashtag released_at_about aasm_state number_format_id
-      title_kana
+      title_kana season_year season_name
     )
+    # To avoid `ActiveRecord::InvalidForeignKey` error
+    # when run `rake db:seed`
+    ignored_work_ids = [865, 4370, 4447, 4177, 1540, 4266, 4725]
 
     works = []
     %w(
@@ -52,17 +54,15 @@ namespace :seed do
     ).each do |const|
       year, name = ENV.fetch(const).split("-")
       works += Work.
-        joins(:season).
-        where(seasons: { year: year, name: name }).
+        where.not(id: ignored_work_ids).
+        where(season_year: year, season_name: name).
         order(watchers_count: :desc).
         select(work_attrs).
         limit(10).
         to_a
     end
     works += Work.
-      # To avoid `ActiveRecord::InvalidForeignKey` error
-      # when run `rake db:seed`
-      where.not(id: [865, 4370, 4447, 4177, 1540, 4266]).
+      where.not(id: ignored_work_ids).
       order(watchers_count: :desc).
       select(work_attrs).
       limit(100).
@@ -121,19 +121,6 @@ namespace :seed do
 
       Prefecture.select(attrs).find_each do |record|
         puts "Prefecture: #{record.id}"
-        csv << attrs.map { |attr| record.send(attr) }
-      end
-    end
-  end
-
-  task generate_seasons_csv: :environment do
-    attrs = %w(id name sort_number year)
-
-    CSV.open("#{Dir.pwd}/db/data/csv/seasons.csv", "wb") do |csv|
-      csv << attrs
-
-      Season.select(attrs).find_each do |record|
-        puts "Season: #{record.id}"
         csv << attrs.map { |attr| record.send(attr) }
       end
     end

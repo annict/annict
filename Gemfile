@@ -2,14 +2,14 @@
 
 source "https://rubygems.org"
 
-ruby "2.4.0"
+ruby "2.4.1"
 
 gem "rails", "~> 5.0.0"
 
 gem "aasm"
 gem "action_args"
-gem "activerecord-session_store"
 gem "active_link_to"
+gem "activerecord-session_store"
 gem "acts_as_list"
 gem "annotate"
 gem "asset_sync"
@@ -38,8 +38,8 @@ gem "gon"
 gem "gretel"
 gem "groupdate"
 gem "hashdiff"
-gem "httparty"
 gem "http_accept_language"
+gem "httparty"
 gem "imgix-rails"
 gem "jb"
 gem "jquery-rails"
@@ -124,8 +124,4 @@ end
 
 group :production do
   gem "bugsnag"
-end
-
-source "https://rails-assets.org" do
-  gem "rails-assets-tether"
 end

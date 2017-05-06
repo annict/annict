@@ -22,6 +22,7 @@ nav.c-navbar.navbar.navbar-toggleable-xl class="#{transparent ? 'navbar-dark is-
             = link_to t("noun.next_season"), annict_url(:season_works_url, slug: ENV.fetch("ANNICT_NEXT_SEASON")), class: "dropdown-item"
             = link_to t("noun.previous_season"), annict_url(:season_works_url, slug: ENV.fetch("ANNICT_PREVIOUS_SEASON")), class: "dropdown-item"
             = link_to t("noun.popular"), annict_url(:popular_works_url), class: "dropdown-item"
+            = link_to t("head.title.works.newest"), annict_url(:newest_works_url), class: "dropdown-item"
             = link_to t("noun.search"), annict_url(:search_url), class: "dropdown-item"
       - else
         li.nav-item

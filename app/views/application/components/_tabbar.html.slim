@@ -27,6 +27,7 @@
             = current_user.notifications_count
       = link_to t("noun.current_season"), season_works_path(slug: ENV.fetch("ANNICT_CURRENT_SEASON")), class: "dropdown-item px-1 py-zp25"
       = link_to t("noun.popular"), popular_works_path, class: "dropdown-item px-1 py-zp25"
+      = link_to t("head.title.works.newest"), newest_works_path, class: "dropdown-item px-1 py-zp25"
       = link_to t("noun.search"), search_path, class: "dropdown-item px-1 py-zp25"
       = link_to t("head.title.friends.index"), friends_path, class: "dropdown-item px-1 py-zp25"
       = link_to t("head.title.channels.index"), channels_path, class: "dropdown-item px-1 py-zp25"

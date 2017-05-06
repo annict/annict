@@ -196,6 +196,7 @@ ja:
         show: "%{profile_name} (%{username})"
         works: "%{profile_name} (%{username})が\"%{action}\"アニメ"
       works:
+        newest: 新規登録アニメ
         popular: 人気アニメ
-        season: "%{name}アニメ"
+        season: "%{name}のアニメ"
         show: "アニメ「%{title}」"
