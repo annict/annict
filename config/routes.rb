@@ -225,6 +225,7 @@ Rails.application.routes.draw do
   resource :confirmation, only: [:show]
   resource :search, only: [:show]
   resource :track, only: %i(show)
+  resources :collections, except: %i(create)
   resources :comments, only: %i(edit update destroy)
   resources :friends, only: [:index]
   resources :mute_users, only: [:destroy]

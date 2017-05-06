@@ -62,6 +62,7 @@ class User < ApplicationRecord
 
   has_many :activities,    dependent: :destroy
   has_many :channel_works, dependent: :destroy
+  has_many :collections, dependent: :destroy
   has_many :connected_applications, -> { distinct },
     class_name: "Doorkeeper::Application",
     through: :oauth_access_tokens,

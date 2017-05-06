@@ -32,6 +32,8 @@ ja:
       no_works: 作品はありません
     character_fans:
       no_users: ファンはいません
+    collections:
+      new: コレクションを作る
     comments:
       comment_form_placeholder: 記録にコメントしよう！
       create: コメントする

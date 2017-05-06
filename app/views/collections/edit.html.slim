@@ -1,0 +1,25 @@
+- title = t "head.title.collections.edit"
+- set_meta_tags(title: title, reverse: true, prefix: false)
+- set_page_category "collections_edit"
+
+= render "application/components/navbar"
+
+.p-application__content
+  .container.py-1.mb-2
+    = form_for @collection do |f|
+      = render "application/components/error_panel", resource: f.object
+      
+      .form-group.row
+        = f.label :title, class: "col-sm-3 col-form-label c-label-required"
+        .col-sm-9
+          = f.text_field :title, class: "form-control", autofocus: true, required: true
+      .form-group.row
+        = f.label :description, class: "col-sm-3 col-form-label"
+        .col-sm-9
+          = f.text_field :description, class: "form-control"
+
+      .form-group.row
+        .offset-sm-3.col-sm-9
+          = f.submit class: "btn btn-primary"
+
+= render "application/components/footer"
