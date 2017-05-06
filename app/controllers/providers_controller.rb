@@ -36,6 +36,7 @@ class ProvidersController < ApplicationController
       provider.destroy
     end
 
-    redirect_to :back, notice: t("messages.providers.removed")
+    flash[:notice] = t("messages.providers.removed")
+    redirect_back fallback_location: providers_path
   end
 end
