@@ -5,7 +5,7 @@ module UserFavoritable
 
   included do
     def favorite?(resource)
-      resource.users.exists?(self)
+      resource.users.exists?(id)
     end
 
     def favorite(resource)

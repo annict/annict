@@ -251,7 +251,7 @@ class User < ApplicationRecord
   end
 
   def userland_project_member?(project)
-    userland_projects.exists?(project)
+    userland_projects.exists?(project.id)
   end
 
   private
