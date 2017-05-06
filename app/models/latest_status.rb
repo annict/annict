@@ -21,12 +21,12 @@
 #  index_latest_statuses_on_work_id               (work_id)
 #
 
-class LatestStatus < ActiveRecord::Base
+class LatestStatus < ApplicationRecord
   include StatusCommon
 
   acts_as_list scope: :user
 
-  belongs_to :next_episode, class_name: "Episode"
+  belongs_to :next_episode, class_name: "Episode", optional: true
 
   scope :desiring_to_watch, -> { with_kind(:wanna_watch, :watching, :on_hold) }
   scope :on_hold, -> { with_kind(:on_hold) }

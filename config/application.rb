@@ -22,6 +22,9 @@ Bundler.require(*Rails.groups)
 
 module Annict
   class Application < Rails::Application
+    # Initialize configuration defaults for originally generated Rails version.
+    config.load_defaults 5.1
+
     # Settings in config/environments/* take precedence over those specified here.
     # Application configuration should go into files in config/initializers
     # -- all .rb files in that directory are automatically loaded.
@@ -55,9 +58,8 @@ module Annict
       g.factory_girl false
     end
 
-    # `after_rollback`/`after_commit` 内でエラーが発生したときロールバックする
-    # Rails 4.2より後のバージョンでこの挙動がデフォルトになる
-    config.active_record.raise_in_transactional_callbacks = true
+    # Don't generate system test files.
+    config.generators.system_tests = nil
 
     config.active_job.queue_adapter = :delayed_job
 

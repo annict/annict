@@ -15,7 +15,7 @@
 #  receptions_user_id_idx             (user_id)
 #
 
-class Reception < ActiveRecord::Base
+class Reception < ApplicationRecord
   belongs_to :channel
   belongs_to :user
 

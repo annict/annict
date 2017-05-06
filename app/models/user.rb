@@ -36,7 +36,7 @@
 #  users_username_key            (username) UNIQUE
 #
 
-class User < ActiveRecord::Base
+class User < ApplicationRecord
   # registrations#createが実行されたあとメールアドレスの確認を挟まず
   # ログインできるようにするため、Confirmableモジュールを直接includeする
   include Devise::Models::Confirmable
@@ -251,7 +251,7 @@ class User < ActiveRecord::Base
   end
 
   def userland_project_member?(project)
-    userland_projects.exists?(project)
+    userland_projects.exists?(project.id)
   end
 
   private

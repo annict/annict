@@ -12,5 +12,5 @@
 #  twitter_bots_name_key  (name) UNIQUE
 #
 
-class TwitterBot < ActiveRecord::Base
+class TwitterBot < ApplicationRecord
 end

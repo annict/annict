@@ -16,7 +16,7 @@
 #  channels_sc_chid_key           (sc_chid) UNIQUE
 #
 
-class Channel < ActiveRecord::Base
+class Channel < ApplicationRecord
   belongs_to :channel_group
   has_many :programs
 

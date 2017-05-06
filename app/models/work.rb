@@ -76,8 +76,11 @@ class Work < ApplicationRecord
     end
   end
 
-  belongs_to :number_format
-  belongs_to :season_model, class_name: "SeasonModel", foreign_key: :season_id
+  belongs_to :number_format, optional: true
+  belongs_to :season_model,
+    class_name: "SeasonModel",
+    foreign_key: :season_id,
+    optional: true
   has_many :activities,
     foreign_key: :recipient_id,
     foreign_type: :recipient,
@@ -96,8 +99,8 @@ class Work < ApplicationRecord
     source: :resource,
     source_type: "Organization"
   has_many :programs, dependent: :destroy
-  has_many :series_list, through: :series_works, source: :series
   has_many :series_works, dependent: :destroy
+  has_many :series_list, through: :series_works, source: :series
   has_many :statuses, dependent: :destroy
   has_many :staff_people, through: :staffs, source: :resource, source_type: "Person"
   has_many :staffs, dependent: :destroy

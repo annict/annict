@@ -18,7 +18,7 @@
 #  notifications_user_id_idx         (user_id)
 #
 
-class Notification < ActiveRecord::Base
+class Notification < ApplicationRecord
   belongs_to :action_user, class_name: 'User'
   belongs_to :trackable,   polymorphic: true
   belongs_to :user

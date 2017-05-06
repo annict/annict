@@ -15,5 +15,5 @@
 #  index_number_formats_on_name  (name) UNIQUE
 #
 
-class NumberFormat < ActiveRecord::Base
+class NumberFormat < ApplicationRecord
 end

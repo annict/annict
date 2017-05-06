@@ -25,7 +25,7 @@
 #  index_staffs_on_work_id                        (work_id)
 #
 
-class Staff < ActiveRecord::Base
+class Staff < ApplicationRecord
   extend Enumerize
   include AASM
   include DbActivityMethods

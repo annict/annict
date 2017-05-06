@@ -19,7 +19,7 @@
 #  items_work_id_idx       (work_id)
 #
 
-class Item < ActiveRecord::Base
+class Item < ApplicationRecord
   include DbActivityMethods
   include ItemCommon
 

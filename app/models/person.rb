@@ -37,7 +37,7 @@
 #  index_people_on_staffs_count           (staffs_count)
 #
 
-class Person < ActiveRecord::Base
+class Person < ApplicationRecord
   extend Enumerize
   include AASM
   include DbActivityMethods
@@ -72,7 +72,7 @@ class Person < ActiveRecord::Base
     end
   end
 
-  belongs_to :prefecture
+  belongs_to :prefecture, optional: true
   has_many :casts, dependent: :destroy
   has_many :cast_works, through: :casts, source: :work
   has_many :db_activities, as: :trackable, dependent: :destroy

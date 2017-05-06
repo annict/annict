@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 # == Schema Information
 #
 # Table name: statuses
@@ -19,10 +20,10 @@
 #  statuses_work_id_idx                    (work_id)
 #
 
-class Status < ActiveRecord::Base
+class Status < ApplicationRecord
   include StatusCommon
 
-  belongs_to :oauth_application, class_name: "Doorkeeper::Application"
+  belongs_to :oauth_application, class_name: "Doorkeeper::Application", optional: true
   belongs_to :user
   has_many :activities,
     dependent: :destroy,

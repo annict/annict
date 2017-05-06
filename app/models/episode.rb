@@ -29,7 +29,7 @@
 #  index_episodes_on_prev_episode_id  (prev_episode_id)
 #
 
-class Episode < ActiveRecord::Base
+class Episode < ApplicationRecord
   include AASM
   include DbActivityMethods
 
@@ -47,7 +47,10 @@ class Episode < ActiveRecord::Base
     end
   end
 
-  belongs_to :prev_episode, class_name: "Episode", foreign_key: :prev_episode_id
+  belongs_to :prev_episode,
+    class_name: "Episode",
+    foreign_key: :prev_episode_id,
+    optional: true
   belongs_to :work, counter_cache: true
   has_many :activities, dependent: :destroy, as: :recipient
   has_many :records, dependent: :destroy, class_name: "Checkin"

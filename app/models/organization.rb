@@ -27,7 +27,7 @@
 #  index_organizations_on_staffs_count                  (staffs_count)
 #
 
-class Organization < ActiveRecord::Base
+class Organization < ApplicationRecord
   include AASM
   include DbActivityMethods
   include RootResourceCommon

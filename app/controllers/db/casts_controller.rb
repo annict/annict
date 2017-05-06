@@ -20,7 +20,7 @@ module Db
     end
 
     def create(db_cast_rows_form)
-      @form = DB::CastRowsForm.new(db_cast_rows_form.permit(:rows))
+      @form = DB::CastRowsForm.new(db_cast_rows_form.permit(:rows).to_h)
       @form.user = current_user
       @form.work = @work
       authorize @form, :create?

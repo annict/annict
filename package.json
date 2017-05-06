@@ -1,5 +1,6 @@
 {
   "name": "annict",
+  "private": true,
   "dependencies": {
     "async": "2.4.0",
     "browserify": "14.3.0",
