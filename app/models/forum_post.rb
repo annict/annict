@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 # == Schema Information
 #
 # Table name: forum_posts
@@ -33,6 +34,8 @@ class ForumPost < ApplicationRecord
   validates :user, presence: true
 
   def notify_slack
+    return unless Rails.env.production?
+
     webhook_url = ENV.fetch("ANNICT_SLACK_WEBHOOK_URL_FOR_NOTIFICATIONS")
     options = {
       channel: "#forum-#{forum_category.slug.tr('_', '-')}",
