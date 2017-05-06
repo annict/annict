@@ -76,8 +76,11 @@ class Work < ApplicationRecord
     end
   end
 
-  belongs_to :number_format
-  belongs_to :season_model, class_name: "SeasonModel", foreign_key: :season_id
+  belongs_to :number_format, optional: true
+  belongs_to :season_model,
+    class_name: "SeasonModel",
+    foreign_key: :season_id,
+    optional: true
   has_many :activities,
     foreign_key: :recipient_id,
     foreign_type: :recipient,

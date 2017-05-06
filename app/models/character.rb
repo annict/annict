@@ -62,7 +62,7 @@ class Character < ApplicationRecord
     end
   end
 
-  belongs_to :series
+  belongs_to :series, optional: true
   has_many :casts, dependent: :destroy
   has_many :character_images, dependent: :destroy
   has_many :db_activities, as: :trackable, dependent: :destroy
