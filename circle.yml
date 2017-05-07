@@ -6,29 +6,7 @@ dependencies:
     - bundle install --deployment --jobs=3 --retry=3
 machine:
   environment:
-    ANNICT_API_ASSETS_URL: "https://api-assets.annict.com"
-    ANNICT_BASIC_AUTH: "off"
-    ANNICT_CURRENT_SEASON: "2017-winter"
-    ANNICT_DOMAIN: "annict.dev"
-    ANNICT_EN_URL: "http://en.annict.dev:3000"
-    ANNICT_HOST: "annict.dev:3000"
-    ANNICT_JA_URL: "http://ja.annict.dev:3000"
-    ANNICT_NEXT_SEASON: "2017-spring"
-    ANNICT_PAPERCLIP_PATH: "paperclip/:class/:id/:attachment/:style/:hash.:extension"
-    ANNICT_PAPERCLIP_RANDOM_SECRET: "secretsecretsecretsecretsecretsecret"
-    ANNICT_PAPERCLIP_URL: ":rails_root/public/paperclip/:class/:id/:attachment/:style/:hash.:extension"
-    ANNICT_PREVIOUS_SEASON: "2016-autumn"
-    ANNICT_URL: "http://annict.dev:3000"
-    DEVISE_SECRET: "secretsecretsecretsecretsecretsecret"
-    FACEBOOK_APP_ID: "1234567890"
-    FACEBOOK_SECRET_KEY: "secretsecretsecretsecretsecretsecret"
-    GA_TRACKING_ID: "UA-00000000-0"
-    KEEN_PROJECT_ID: "keen"
-    KEEN_WRITE_KEY: "keen_write"
     PATH: "${PATH}:${HOME}/${CIRCLE_PROJECT_REPONAME}/node_modules/.bin"
-    RAILS_SECRET_KEY_BASE: "secretsecretsecretsecretsecretsecret"
-    TWITTER_CONSUMER_KEY: "twtwtwtwtwtwtwtwtwtwtw"
-    TWITTER_CONSUMER_SECRET: "secretsecretsecretsecretsecretsecret"
   hosts:
     annict.dev: 127.0.0.1
     api.annict.dev: 127.0.0.1

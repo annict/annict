@@ -7,7 +7,16 @@ ANNICT_PREVIOUS_SEASON: "2017-winter"
 DEVISE_SECRET: "abcdefghijklmnopqrstuvwxyz"
 RAILS_SECRET_KEY_BASE: "abcdefghijklmnopqrstuvwxyz"
 
+local_default: &local_default
+  ANNICT_BASIC_AUTH: "off"
+  ANNICT_DOMAIN: "annict.dev"
+  ANNICT_EN_URL: "http://en.annict.dev:3000"
+  ANNICT_JA_URL: "http://ja.annict.dev:3000"
+  ANNICT_PAPERCLIP_PATH: ":rails_root/public/paperclip/:class/:id/:attachment/:style/:hash.:extension"
+  ANNICT_URL: "http://annict.dev:3000"
+
 development:
+  <<: *local_default
   FACEBOOK_APP_ID: "000000000000000"
   FACEBOOK_SECRET_KEY: "xxxxxxxxxxxxxxxxxxxxxxxx"
 
@@ -15,16 +24,10 @@ development:
 
   ANNICT_BASIC_AUTH_NAME: "el-psy"
   ANNICT_BASIC_AUTH_PASSWORD: "congroo"
-  ANNICT_BASIC_AUTH: "off"
-  ANNICT_DOMAIN: "annict.dev"
-  ANNICT_EN_URL: "http://en.annict.dev:3000"
   ANNICT_FILE_STORAGE_URL: "http://localhost:3000"
   ANNICT_HOST_SHORT: "annict.dev:3000"
   ANNICT_HOST: "annict.dev:3000"
-  ANNICT_JA_URL: "http://ja.annict.dev:3000"
-  ANNICT_PAPERCLIP_PATH: ":rails_root/public/paperclip/:class/:id/:attachment/:style/:hash.:extension"
   ANNICT_SITEMAP_URL: ""
-  ANNICT_URL: "http://annict.dev:3000"
 
   KEEN_PROJECT_ID: "xxxxxxxxxxxxxxx"
   KEEN_WRITE_KEY: "xxxxxxxxxxxxxxxx"
@@ -33,6 +36,17 @@ development:
   TWITTER_CONSUMER_SECRET: "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
 
 test:
+  <<: *local_default
+  ANNICT_API_ASSETS_URL: "https://api-assets.annict.com"
+  ANNICT_CURRENT_SEASON: "2017-winter"
   ANNICT_HOST: "localhost:3000"
+  ANNICT_NEXT_SEASON: "2017-spring"
+  ANNICT_PREVIOUS_SEASON: "2016-autumn"
   ANNICT_TOMBO_URL: "http://localhost:5000"
   FACEBOOK_APP_ID: "1234567890"
+  FACEBOOK_SECRET_KEY: "secretsecretsecretsecretsecretsecret"
+  GA_TRACKING_ID: "UA-00000000-0"
+  KEEN_PROJECT_ID: "keen"
+  KEEN_WRITE_KEY: "keen_write"
+  TWITTER_CONSUMER_KEY: "twtwtwtwtwtwtwtwtwtwtw"
+  TWITTER_CONSUMER_SECRET: "secretsecretsecretsecretsecretsecret"
