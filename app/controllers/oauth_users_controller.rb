@@ -39,5 +39,6 @@ class OauthUsersController < Devise::RegistrationsController
 
   def set_oauth
     @oauth = session["devise.oauth_data"]
+    redirect_to new_user_registration_path if @oauth.blank?
   end
 end
