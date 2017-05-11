@@ -85,8 +85,8 @@ class Work < ApplicationRecord
     foreign_key: :recipient_id,
     foreign_type: :recipient,
     dependent: :destroy
-  has_many :cast_people, through: :casts, source: :person
   has_many :casts, dependent: :destroy
+  has_many :cast_people, through: :casts, source: :person
   has_many :channel_works, dependent: :destroy
   has_many :characters, through: :casts
   has_many :checkins, dependent: :destroy
@@ -102,8 +102,8 @@ class Work < ApplicationRecord
   has_many :series_works, dependent: :destroy
   has_many :series_list, through: :series_works, source: :series
   has_many :statuses, dependent: :destroy
-  has_many :staff_people, through: :staffs, source: :resource, source_type: "Person"
   has_many :staffs, dependent: :destroy
+  has_many :staff_people, through: :staffs, source: :resource, source_type: "Person"
   has_one :work_image, dependent: :destroy
   has_one :item, dependent: :destroy
 
