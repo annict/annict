@@ -16,3 +16,6 @@ machine:
     version: 6.10.0
   timezone:
     Asia/Tokyo
+checkout:
+  post:
+    - cp config/application.yml{.example,}
