@@ -78,7 +78,6 @@ gem "rmagick"
 # https://github.com/sass/sassc-rails/issues/6
 gem "sass-rails", require: false
 gem "sassc-rails"
-gem "scout_apm"
 gem "sitemap_generator"
 gem "slack-notifier"
 gem "slim"
