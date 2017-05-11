@@ -362,7 +362,6 @@ GEM
     multi_xml (0.6.0)
     multipart-post (2.0.0)
     naught (1.1.0)
-    newrelic_rpm (4.1.0.333)
     nio4r (2.0.0)
     nokogiri (1.7.2)
       mini_portile2 (~> 2.1.0)
@@ -522,6 +521,7 @@ GEM
       sprockets (> 2.11)
       sprockets-rails
       tilt
+    scout_apm (2.1.24)
     scss_lint (0.53.0)
       rake (>= 0.9, < 13)
       sass (~> 3.4.20)
@@ -668,7 +668,6 @@ DEPENDENCIES
   meta-tags
   mini_magick
   mjml-rails
-  newrelic_rpm
   nokogiri
   omniauth-facebook
   omniauth-oauth2 (~> 1.3.1)
@@ -697,6 +696,7 @@ DEPENDENCIES
   ruby_identicon
   sass-rails
   sassc-rails
+  scout_apm
   scss_lint
   sitemap_generator
   slack-notifier

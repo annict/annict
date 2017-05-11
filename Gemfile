@@ -55,7 +55,6 @@ gem "koala"
 gem "meta-tags"
 gem "mini_magick"
 gem "mjml-rails"
-gem "newrelic_rpm"
 gem "nokogiri"
 gem "omniauth-facebook"
 # 1.4系だとFacebookのOAuth周りでおかしくなるので1.3系を使う
@@ -79,6 +78,7 @@ gem "rmagick"
 # https://github.com/sass/sassc-rails/issues/6
 gem "sass-rails", require: false
 gem "sassc-rails"
+gem "scout_apm"
 gem "sitemap_generator"
 gem "slack-notifier"
 gem "slim"
