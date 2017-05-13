@@ -14,15 +14,17 @@ namespace :work do
     # オリジナルのWork
     original_work = Work.find(args[:original_work_id])
 
-    [{ resource_class: Activity, column: :recipient }].each do |hash|
-      update_or_delete_pol_resource(hash[:resource_class], hash[:column], target_work, original_work)
-    end
+    ActiveRecord::Base.transaction do
+      [{ resource_class: Activity, column: :recipient }].each do |hash|
+        update_or_delete_pol_resource(hash[:resource_class], hash[:column], target_work, original_work)
+      end
 
-    [ChannelWork, Checkin, Comment, Status].each do |resource_class|
-      update_or_delete_resource(resource_class, target_work, original_work)
-    end
+      [ChannelWork, Checkin, Comment, Status].each do |resource_class|
+        update_or_delete_resource(resource_class, target_work, original_work)
+      end
 
-    target_work.destroy
+      target_work.destroy
+    end
   end
 
   def update_or_delete_pol_resource(resource_class, column, target_work, original_work)
