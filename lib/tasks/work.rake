@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 namespace :work do
   task notify_untouched_works: :environment do
     works = Work.where(episodes_count: 0).order(watchers_count: :desc).limit(3)
@@ -16,7 +18,7 @@ namespace :work do
       update_or_delete_pol_resource(hash[:resource_class], hash[:column], target_work, original_work)
     end
 
-    [ChannelWork, Checkin, Check, Comment, Status].each do |resource_class|
+    [ChannelWork, Checkin, Comment, Status].each do |resource_class|
       update_or_delete_resource(resource_class, target_work, original_work)
     end
 
