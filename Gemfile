@@ -41,6 +41,7 @@ gem "fog-aws" # used by asset_sync
 gem "font-awesome-sass"
 gem "github-markup"
 gem "gon"
+gem "graphql"
 gem "gretel"
 gem "groupdate"
 gem "hashdiff"
@@ -106,6 +107,7 @@ group :development do
   gem "binding_of_caller" # better_errorsで使用
   gem "bullet"
   gem "derailed_benchmarks"
+  gem "graphiql-rails"
   gem "i18n-tasks"
   gem "letter_opener_web"
   gem "listen" # Rails 5から `rails s` するときに必要になった

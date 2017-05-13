@@ -260,6 +260,9 @@ GEM
       json
       multi_json
       request_store (>= 1.0)
+    graphiql-rails (1.4.1)
+      rails
+    graphql (1.5.13)
     gretel (3.0.9)
       rails (>= 3.1.0)
     groupdate (3.2.0)
@@ -648,6 +651,8 @@ DEPENDENCIES
   font-awesome-sass
   github-markup
   gon
+  graphiql-rails
+  graphql
   gretel
   groupdate
   hashdiff
