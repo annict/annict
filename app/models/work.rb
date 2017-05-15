@@ -94,6 +94,7 @@ class Work < ApplicationRecord
   has_many :db_comments, as: :resource, dependent: :destroy
   has_many :episodes, dependent: :destroy
   has_many :latest_statuses, dependent: :destroy
+  has_many :staffs, dependent: :destroy
   has_many :organizations,
     through: :staffs,
     source: :resource,
@@ -102,7 +103,6 @@ class Work < ApplicationRecord
   has_many :series_works, dependent: :destroy
   has_many :series_list, through: :series_works, source: :series
   has_many :statuses, dependent: :destroy
-  has_many :staffs, dependent: :destroy
   has_many :staff_people, through: :staffs, source: :resource, source_type: "Person"
   has_one :work_image, dependent: :destroy
   has_one :item, dependent: :destroy
