@@ -3,6 +3,8 @@
 AnnictSchema = GraphQL::Schema.define do
   query Types::QueryType
 
+  use GraphQL::Batch
+
   id_from_object ->(object, type_definition, _query_ctx) {
     GraphQL::Schema::UniqueWithinType.encode(type_definition.name, object.id)
   }

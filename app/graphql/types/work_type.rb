@@ -8,7 +8,11 @@ Types::WorkType = GraphQL::ObjectType.define do
 
   global_id_field :id
 
-  connection :episodes, Types::EpisodeType.connection_type
+  connection :episodes, Types::EpisodeType.connection_type do
+    resolve ->(obj, _args, _ctx) {
+      ForeignKeyLoader.for(Episode, :work_id).load([obj.id])
+    }
+  end
 
   field :annictId, !types.Int do
     resolve ->(obj, _args, _ctx) {
@@ -43,7 +47,7 @@ Types::WorkType = GraphQL::ObjectType.define do
 
   field :image, Types::WorkImageType do
     resolve ->(obj, _args, _ctx) {
-      obj.work_image
+      ForeignKeyLoader.for(WorkImage, :work_id).load([obj.id])
     }
   end
 
