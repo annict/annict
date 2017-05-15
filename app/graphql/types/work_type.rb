@@ -46,4 +46,7 @@ Types::WorkType = GraphQL::ObjectType.define do
       obj.work_image
     }
   end
+
+  field :episodes_count, types.Int
+  field :watchers_count, types.Int
 end
