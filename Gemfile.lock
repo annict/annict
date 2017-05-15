@@ -16,26 +16,11 @@ GIT
       delayed_job (>= 3.0, < 5)
 
 GIT
-  remote: https://github.com/plataformatec/devise.git
-  revision: a62faa2c8258ba1c35fe84e147f42c35eccccb8a
+  remote: https://github.com/kpumuk/meta-tags.git
+  revision: 3e1165637a9f7b2a0a3327c4bc347bfa90f6a576
   specs:
-    devise (4.2.1)
-      bcrypt (~> 3.0)
-      orm_adapter (~> 0.1)
-      railties (>= 4.1.0, < 5.2)
-      responders
-      warden (~> 1.2.3)
-
-GIT
-  remote: https://github.com/rails/activerecord-session_store.git
-  revision: 42861d5288a6609c7ad6f6f9bbae32829cfda67c
-  specs:
-    activerecord-session_store (1.0.0)
-      actionpack (>= 4.0, < 5.2)
-      activerecord (>= 4.0, < 5.2)
-      multi_json (~> 1.11, >= 1.11.2)
-      rack (>= 1.5.2, < 3)
-      railties (>= 4.0, < 5.2)
+    meta-tags (2.4.0)
+      actionpack (>= 3.2.0, < 5.2)
 
 GEM
   remote: https://rubygems.org/
@@ -43,25 +28,25 @@ GEM
     aasm (4.12.0)
       concurrent-ruby (~> 1.0)
     action_args (2.2.1)
-    actioncable (5.1.0)
-      actionpack (= 5.1.0)
+    actioncable (5.1.1)
+      actionpack (= 5.1.1)
       nio4r (~> 2.0)
       websocket-driver (~> 0.6.1)
-    actionmailer (5.1.0)
-      actionpack (= 5.1.0)
-      actionview (= 5.1.0)
-      activejob (= 5.1.0)
+    actionmailer (5.1.1)
+      actionpack (= 5.1.1)
+      actionview (= 5.1.1)
+      activejob (= 5.1.1)
       mail (~> 2.5, >= 2.5.4)
       rails-dom-testing (~> 2.0)
-    actionpack (5.1.0)
-      actionview (= 5.1.0)
-      activesupport (= 5.1.0)
+    actionpack (5.1.1)
+      actionview (= 5.1.1)
+      activesupport (= 5.1.1)
       rack (~> 2.0)
       rack-test (~> 0.6.3)
       rails-dom-testing (~> 2.0)
       rails-html-sanitizer (~> 1.0, >= 1.0.2)
-    actionview (5.1.0)
-      activesupport (= 5.1.0)
+    actionview (5.1.1)
+      activesupport (= 5.1.1)
       builder (~> 3.1)
       erubi (~> 1.4)
       rails-dom-testing (~> 2.0)
@@ -70,21 +55,27 @@ GEM
       actionpack
       addressable
     active_record_query_trace (1.5.4)
-    activejob (5.1.0)
-      activesupport (= 5.1.0)
+    activejob (5.1.1)
+      activesupport (= 5.1.1)
       globalid (>= 0.3.6)
-    activemodel (5.1.0)
-      activesupport (= 5.1.0)
+    activemodel (5.1.1)
+      activesupport (= 5.1.1)
     activemodel-serializers-xml (1.0.1)
       activemodel (> 5.x)
       activerecord (> 5.x)
       activesupport (> 5.x)
       builder (~> 3.1)
-    activerecord (5.1.0)
-      activemodel (= 5.1.0)
-      activesupport (= 5.1.0)
+    activerecord (5.1.1)
+      activemodel (= 5.1.1)
+      activesupport (= 5.1.1)
       arel (~> 8.0)
-    activesupport (5.1.0)
+    activerecord-session_store (1.1.0)
+      actionpack (>= 4.0, < 5.2)
+      activerecord (>= 4.0, < 5.2)
+      multi_json (~> 1.11, >= 1.11.2)
+      rack (>= 1.5.2, < 3)
+      railties (>= 4.0, < 5.2)
+    activesupport (5.1.1)
       concurrent-ruby (~> 1.0, >= 1.0.2)
       i18n (~> 0.7)
       minitest (~> 5.1)
@@ -193,6 +184,12 @@ GEM
       thor (~> 0.19)
     descendants_tracker (0.0.4)
       thread_safe (~> 0.3, >= 0.3.1)
+    devise (4.3.0)
+      bcrypt (~> 3.0)
+      orm_adapter (~> 0.1)
+      railties (>= 4.1.0, < 5.2)
+      responders
+      warden (~> 1.2.3)
     diff-lcs (1.3)
     dmmyix (0.2.0)
       mini_magick (~> 4.5.0)
@@ -347,8 +344,6 @@ GEM
     memoizable (0.4.2)
       thread_safe (~> 0.3, >= 0.3.1)
     memory_profiler (0.9.8)
-    meta-tags (2.4.0)
-      actionpack (>= 3.2.0, <= 5.1.0)
     method_source (0.8.2)
     mime-types (3.1)
       mime-types-data (~> 3.2015)
@@ -429,17 +424,17 @@ GEM
     rack-rewrite (1.5.1)
     rack-test (0.6.3)
       rack (>= 1.0)
-    rails (5.1.0)
-      actioncable (= 5.1.0)
-      actionmailer (= 5.1.0)
-      actionpack (= 5.1.0)
-      actionview (= 5.1.0)
-      activejob (= 5.1.0)
-      activemodel (= 5.1.0)
-      activerecord (= 5.1.0)
-      activesupport (= 5.1.0)
+    rails (5.1.1)
+      actioncable (= 5.1.1)
+      actionmailer (= 5.1.1)
+      actionpack (= 5.1.1)
+      actionview (= 5.1.1)
+      activejob (= 5.1.1)
+      activemodel (= 5.1.1)
+      activerecord (= 5.1.1)
+      activesupport (= 5.1.1)
       bundler (>= 1.3.0, < 2.0)
-      railties (= 5.1.0)
+      railties (= 5.1.1)
       sprockets-rails (>= 2.0.0)
     rails-dom-testing (2.0.3)
       activesupport (>= 4.2.0)
@@ -451,9 +446,9 @@ GEM
       railties (~> 5.0)
     rails_autolink (1.1.6)
       rails (> 3.1)
-    railties (5.1.0)
-      actionpack (= 5.1.0)
-      activesupport (= 5.1.0)
+    railties (5.1.1)
+      actionpack (= 5.1.1)
+      activesupport (= 5.1.1)
       method_source
       rake (>= 0.8.7)
       thor (>= 0.18.1, < 2.0)
@@ -610,7 +605,7 @@ DEPENDENCIES
   action_args
   active_link_to
   active_record_query_trace
-  activerecord-session_store!
+  activerecord-session_store
   acts_as_list
   annotate
   asset_sync
@@ -635,9 +630,9 @@ DEPENDENCIES
   delayed_job!
   delayed_job_active_record!
   derailed_benchmarks
-  devise!
+  devise
   dmmyix
-  doorkeeper (>= 4.2.0)
+  doorkeeper
   draper
   email_validator
   enumerize
@@ -664,7 +659,7 @@ DEPENDENCIES
   koala
   letter_opener_web
   listen
-  meta-tags
+  meta-tags!
   mini_magick
   mjml-rails
   nokogiri
@@ -683,7 +678,7 @@ DEPENDENCIES
   pundit
   rack-cors
   rack-rewrite
-  rails (= 5.1.0)
+  rails (= 5.1.1)
   rails-html-sanitizer
   rails-i18n
   rails_autolink
