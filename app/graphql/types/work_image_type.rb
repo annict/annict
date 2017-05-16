@@ -7,6 +7,12 @@ Types::WorkImageType = GraphQL::ObjectType.define do
 
   global_id_field :id
 
+  field :work, !Types::WorkType do
+    resolve ->(obj, _args, _ctx) {
+      RecordLoader.for(Work).load(obj.work_id)
+    }
+  end
+
   field :internal_url, types.String do
     argument :size, !types.String
 

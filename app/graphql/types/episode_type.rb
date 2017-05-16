@@ -8,6 +8,12 @@ Types::EpisodeType = GraphQL::ObjectType.define do
 
   global_id_field :id
 
+  connection :records, Types::RecordType.connection_type do
+    resolve ->(obj, _args, _ctx) {
+      ForeignKeyLoader.for(Checkin, :episode_id).load([obj.id])
+    }
+  end
+
   field :number, !types.String
   field :sort_number, !types.Int
 

@@ -6,7 +6,7 @@ Types::QueryType = GraphQL::ObjectType.define do
   field :node, GraphQL::Relay::Node.field
   field :nodes, GraphQL::Relay::Node.plural_field
 
-  connection :findWorks, Types::WorkType.connection_type do
+  connection :searchWorks, Types::WorkType.connection_type do
     argument :annictIds, types[!types.Int]
     argument :seasons, types[!types.String]
     argument :titles, types[!types.String]
