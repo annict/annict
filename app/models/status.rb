@@ -24,7 +24,6 @@ class Status < ApplicationRecord
   include StatusCommon
 
   belongs_to :oauth_application, class_name: "Doorkeeper::Application", optional: true
-  belongs_to :user
   has_many :activities,
     dependent: :destroy,
     as: :trackable

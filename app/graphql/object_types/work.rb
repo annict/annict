@@ -8,15 +8,15 @@ ObjectTypes::Work = GraphQL::ObjectType.define do
 
   global_id_field :id
 
-  connection :episodes, ObjectTypes::Episode.connection_type do
-    resolve ->(obj, _args, _ctx) {
-      ForeignKeyLoader.for(Episode, :work_id).load([obj.id])
-    }
-  end
-
   field :annictId, !types.Int do
     resolve ->(obj, _args, _ctx) {
       obj.id
+    }
+  end
+
+  connection :episodes, ObjectTypes::Episode.connection_type do
+    resolve ->(obj, _args, _ctx) {
+      ForeignKeyLoader.for(Episode, :work_id).load([obj.id])
     }
   end
 

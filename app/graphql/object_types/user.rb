@@ -7,6 +7,26 @@ ObjectTypes::User = GraphQL::ObjectType.define do
 
   global_id_field :id
 
+  field :annictId, !types.Int do
+    resolve ->(obj, _args, _ctx) {
+      obj.id
+    }
+  end
+
+  connection :activities, Connections::ActivityConnection do
+    resolve ->(obj, _args, _ctx) {
+      ForeignKeyLoader.for(Activity, :user_id).load([obj.id])
+    }
+  end
+
+  connection :followingActivities, Connections::ActivityConnection do
+    resolve ->(obj, _args, _ctx) {
+      following_ids = obj.followings.pluck(:id)
+      following_ids << obj.id
+      ForeignKeyLoader.for(Activity, :user_id).load(following_ids)
+    }
+  end
+
   connection :followers, ObjectTypes::User.connection_type do
     resolve ->(obj, _args, _ctx) {
       ForeignKeyLoader.for(User, :id).load(obj.followers.pluck(:id))

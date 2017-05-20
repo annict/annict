@@ -16,8 +16,18 @@ AnnictSchema = GraphQL::Schema.define do
 
   resolve_type ->(obj, _ctx) {
     case obj
+    when Activity
+      UnionTypes::Activity
+    when Checkin
+      ObjectTypes::Record
     when Episode
       ObjectTypes::Episode
+    when MultipleRecord
+      ObjectTypes::MultipleRecord
+    when Status
+      ObjectTypes::Status
+    when User
+      ObjectTypes::User
     when Work
       ObjectTypes::Work
     when WorkImage

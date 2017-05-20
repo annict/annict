@@ -7,6 +7,12 @@ ObjectTypes::WorkImage = GraphQL::ObjectType.define do
 
   global_id_field :id
 
+  field :annictId, !types.Int do
+    resolve ->(obj, _args, _ctx) {
+      obj.id
+    }
+  end
+
   field :work, !ObjectTypes::Work do
     resolve ->(obj, _args, _ctx) {
       RecordLoader.for(Work).load(obj.work_id)

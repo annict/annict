@@ -8,6 +8,12 @@ ObjectTypes::Episode = GraphQL::ObjectType.define do
 
   global_id_field :id
 
+  field :annictId, !types.Int do
+    resolve ->(obj, _args, _ctx) {
+      obj.id
+    }
+  end
+
   connection :records, ObjectTypes::Record.connection_type do
     resolve ->(obj, _args, _ctx) {
       ForeignKeyLoader.for(Checkin, :episode_id).load([obj.id])
