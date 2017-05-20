@@ -17,11 +17,15 @@ module Api
         end
         keen_client.page_category = page_category
         ga_client.page_category = page_category
-        service = NewRecordService.new(current_user, record, keen_client, ga_client)
 
-        if service.save
+        service = NewRecordService.new(current_user, record)
+        service.keen_client = keen_client
+        service.ga_client = ga_client
+
+        begin
+          service.save!
           head 201
-        else
+        rescue
           @record = service.record
           render status: 400, json: { message: @record.errors.full_messages.first }
         end

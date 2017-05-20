@@ -16,13 +16,16 @@ module Api
             r.oauth_application = doorkeeper_token.application
           end
 
-          service = NewRecordService.new(current_user, record, keen_client, ga_client)
+          service = NewRecordService.new(current_user, record)
+          service.keen_client = keen_client
+          service.ga_client = ga_client
           service.app = doorkeeper_token.application
 
-          if service.save
+          begin
+            service.save!
             @record = service.record
-          else
-            render_validation_errors(service.record)
+          rescue
+            render_validation_errors service.record
           end
         end
 

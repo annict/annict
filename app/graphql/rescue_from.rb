@@ -1,0 +1,20 @@
+# frozen_string_literal: true
+
+class RescueFrom
+  def initialize(resolve_func)
+    @resolve_func = resolve_func
+  end
+
+  def call(obj, args, ctx)
+    @resolve_func.call(obj, args, ctx)
+  rescue => err
+    message = case err
+    when ActiveRecord::RecordNotFound
+      "Couldn't find #{err.model} with #{err.id}"
+    else
+      err.message
+    end
+
+    GraphQL::ExecutionError.new(message)
+  end
+end

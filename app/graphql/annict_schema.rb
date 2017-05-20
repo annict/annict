@@ -2,6 +2,7 @@
 
 AnnictSchema = GraphQL::Schema.define do
   query ObjectTypes::Query
+  mutation ObjectTypes::Mutation
 
   use GraphQL::Batch
 
