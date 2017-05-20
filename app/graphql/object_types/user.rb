@@ -54,6 +54,18 @@ ObjectTypes::User = GraphQL::ObjectType.define do
     }
   end
 
+  connection :programs, ObjectTypes::Program.connection_type do
+    argument :unwatched, types.Boolean
+
+    resolve ->(obj, args, _ctx) {
+      programs = obj.programs
+      programs = args[:unwatched].present? ? programs.unwatched_all : programs.all
+      programs = programs.work_published.episode_published
+
+      ForeignKeyLoader.for(Program, :id).load(programs.pluck(:id))
+    }
+  end
+
   field :username, !types.String
   field :name, !types.String
   field :description, !types.String
