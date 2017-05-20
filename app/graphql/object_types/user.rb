@@ -39,6 +39,21 @@ ObjectTypes::User = GraphQL::ObjectType.define do
     }
   end
 
+  connection :works, ObjectTypes::Work.connection_type do
+    argument :state, EnumTypes::StatusState
+
+    resolve ->(obj, args, _ctx) {
+      works = obj.works.all.published
+
+      if args[:state].present?
+        state = args[:state].downcase
+        works = works.merge(obj.latest_statuses.with_kind(state))
+      end
+
+      ForeignKeyLoader.for(Work, :id).load(works.pluck(:id))
+    }
+  end
+
   field :username, !types.String
   field :name, !types.String
   field :description, !types.String
