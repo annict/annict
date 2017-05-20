@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-Types::SeasonNameEnum = GraphQL::EnumType.define do
+EnumTypes::SeasonName = GraphQL::EnumType.define do
   name "SeasonName"
   description "Season name"
 

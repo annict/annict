@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-Types::MediaEnum = GraphQL::EnumType.define do
+EnumTypes::Media = GraphQL::EnumType.define do
   name "Media"
   description "Media of anime"
 

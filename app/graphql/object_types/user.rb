@@ -1,19 +1,19 @@
 # frozen_string_literal: true
 
-Types::UserType = GraphQL::ObjectType.define do
+ObjectTypes::User = GraphQL::ObjectType.define do
   name "User"
 
   implements GraphQL::Relay::Node.interface
 
   global_id_field :id
 
-  connection :followers, Types::UserType.connection_type do
+  connection :followers, ObjectTypes::User.connection_type do
     resolve ->(obj, _args, _ctx) {
       ForeignKeyLoader.for(User, :id).load(obj.followers.pluck(:id))
     }
   end
 
-  connection :following, Types::UserType.connection_type do
+  connection :following, ObjectTypes::User.connection_type do
     resolve ->(obj, _args, _ctx) {
       ForeignKeyLoader.for(User, :id).load(obj.followings.pluck(:id))
     }
@@ -36,7 +36,7 @@ Types::UserType = GraphQL::ObjectType.define do
     }
   end
 
-  field :createdAt, !Types::DateTimeType do
+  field :createdAt, !ScalarTypes::DateTime do
     resolve ->(obj, _args, _ctx) {
       obj.created_at
     }

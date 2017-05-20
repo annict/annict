@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-Types::RatingStateEnum = GraphQL::EnumType.define do
+EnumTypes::RatingState = GraphQL::EnumType.define do
   name "RatingState"
 
   value "GOOD", ""

@@ -1,13 +1,13 @@
 # frozen_string_literal: true
 
-Types::WorkImageType = GraphQL::ObjectType.define do
+ObjectTypes::WorkImage = GraphQL::ObjectType.define do
   name "WorkImage"
 
   implements GraphQL::Relay::Node.interface
 
   global_id_field :id
 
-  field :work, !Types::WorkType do
+  field :work, !ObjectTypes::Work do
     resolve ->(obj, _args, _ctx) {
       RecordLoader.for(Work).load(obj.work_id)
     }

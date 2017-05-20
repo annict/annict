@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-Types::WorkType = GraphQL::ObjectType.define do
+ObjectTypes::Work = GraphQL::ObjectType.define do
   name "Work"
   description "An anime title"
 
@@ -8,7 +8,7 @@ Types::WorkType = GraphQL::ObjectType.define do
 
   global_id_field :id
 
-  connection :episodes, Types::EpisodeType.connection_type do
+  connection :episodes, ObjectTypes::Episode.connection_type do
     resolve ->(obj, _args, _ctx) {
       ForeignKeyLoader.for(Episode, :work_id).load([obj.id])
     }
@@ -25,14 +25,14 @@ Types::WorkType = GraphQL::ObjectType.define do
   field :title_ro, types.String
   field :title_en, types.String
 
-  field :media, !Types::MediaEnum do
+  field :media, !EnumTypes::Media do
     resolve ->(obj, _args, _ctx) {
       obj.media.upcase
     }
   end
 
   field :season_year, types.Int
-  field :season_name, Types::SeasonNameEnum do
+  field :season_name, EnumTypes::SeasonName do
     resolve ->(obj, _args, _ctx) {
       obj.season_name&.upcase
     }
@@ -45,7 +45,7 @@ Types::WorkType = GraphQL::ObjectType.define do
   field :twitter_username, types.String
   field :twitter_hashtag, types.String
 
-  field :image, Types::WorkImageType do
+  field :image, ObjectTypes::WorkImage do
     resolve ->(obj, _args, _ctx) {
       ForeignKeyLoader.for(WorkImage, :work_id).load([obj.id])
     }

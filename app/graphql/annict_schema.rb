@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 AnnictSchema = GraphQL::Schema.define do
-  query Types::QueryType
+  query ObjectTypes::Query
 
   use GraphQL::Batch
 
@@ -17,11 +17,11 @@ AnnictSchema = GraphQL::Schema.define do
   resolve_type ->(obj, _ctx) {
     case obj
     when Episode
-      Types::EpisodeType
+      ObjectTypes::Episode
     when Work
-      Types::WorkType
+      ObjectTypes::Work
     when WorkImage
-      Types::WorkImageType
+      ObjectTypes::WorkImage
     else
       raise "Unexpected object: #{obj}"
     end

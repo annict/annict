@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-Types::EpisodeType = GraphQL::ObjectType.define do
+ObjectTypes::Episode = GraphQL::ObjectType.define do
   name "Episode"
   description "An episode of a work"
 
@@ -8,7 +8,7 @@ Types::EpisodeType = GraphQL::ObjectType.define do
 
   global_id_field :id
 
-  connection :records, Types::RecordType.connection_type do
+  connection :records, ObjectTypes::Record.connection_type do
     resolve ->(obj, _args, _ctx) {
       ForeignKeyLoader.for(Checkin, :episode_id).load([obj.id])
     }
@@ -27,19 +27,19 @@ Types::EpisodeType = GraphQL::ObjectType.define do
 
   field :record_comments_count, !types.Int
 
-  field :work, !Types::WorkType do
+  field :work, !ObjectTypes::Work do
     resolve ->(obj, _args, _ctx) {
       RecordLoader.for(Work).load(obj.work_id)
     }
   end
 
-  field :prev_episode, Types::EpisodeType do
+  field :prev_episode, ObjectTypes::Episode do
     resolve ->(obj, _args, _ctx) {
       RecordLoader.for(Episode).load(obj.prev_episode_id)
     }
   end
 
-  field :next_episode, Types::EpisodeType do
+  field :next_episode, ObjectTypes::Episode do
     resolve ->(obj, _args, _ctx) {
       RecordLoader.for(Episode).load(obj.next_episode_id)
     }
