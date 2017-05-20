@@ -59,7 +59,7 @@ module.exports =
       .fail (data) ->
         latestStatus.record.isSaving = false
         msg = data.responseJSON?.message || "Error"
-        eventHub.$emit("flash:show", msg, "danger")
+        eventHub.$emit("flash:show", msg, "alert")
 
     _initLatestStatus: (latestStatus) ->
       latestStatus.record =
