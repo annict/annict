@@ -6,7 +6,9 @@ class RescueFrom
   end
 
   def call(obj, args, ctx)
-    @resolve_func.call(obj, args, ctx)
+    ActiveRecord::Base.transaction do
+      @resolve_func.call(obj, args, ctx)
+    end
   rescue => err
     message = case err
     when ActiveRecord::RecordNotFound

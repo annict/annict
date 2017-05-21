@@ -53,4 +53,11 @@ ObjectTypes::Work = GraphQL::ObjectType.define do
 
   field :episodes_count, types.Int
   field :watchers_count, types.Int
+
+  field :viewerState, EnumTypes::StatusState do
+    resolve ->(obj, _args, ctx) {
+      state = ctx[:viewer].status_kind(obj)
+      state == "no_select" ? "NO_STATE" : state.upcase
+    }
+  end
 end

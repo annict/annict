@@ -8,4 +8,5 @@ EnumTypes::StatusState = GraphQL::EnumType.define do
   value "WATCHED", ""
   value "ON_HOLD", ""
   value "STOP_WATCHING", ""
+  value "NO_STATE", ""
 end

@@ -12,6 +12,8 @@ Mutations::CreateRecord = GraphQL::Relay::Mutation.define do
   return_field :record, ObjectTypes::Record
 
   resolve RescueFrom.new ->(_obj, inputs, ctx) {
+    raise Annict::Errors::InvalidAPITokenScopeError unless ctx[:doorkeeper_token].writable?
+
     episode = Episode.published.find_by_graphql_id(inputs[:episodeId])
     rating = case inputs[:rating]
     when "GOOD" then 4.0

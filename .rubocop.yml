@@ -9,7 +9,7 @@ Lint/EndAlignment:
   EnforcedStyleAlignWith: variable
 
 Metrics/LineLength:
-  Max: 90
+  Max: 120
   Exclude:
     - "**/*.jbuilder"
   # Ignore lines with comments
