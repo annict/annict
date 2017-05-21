@@ -5,6 +5,9 @@ AllCops:
     - "vendor/**/*"
     - "db/schema.rb"
 
+Layout/CaseIndentation:
+  EnforcedStyle: end
+
 Lint/EndAlignment:
   EnforcedStyleAlignWith: variable
 
@@ -39,9 +42,6 @@ Style/AlignParameters:
 
 Style/AsciiComments:
   Enabled: false
-
-Style/CaseIndentation:
-  EnforcedStyle: end
 
 Style/Documentation:
   Enabled: false
