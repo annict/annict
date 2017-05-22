@@ -15,23 +15,31 @@ ObjectTypes::Episode = GraphQL::ObjectType.define do
   end
 
   connection :records, ObjectTypes::Record.connection_type do
+    argument :orderBy, InputObjectTypes::RecordOrder
+
+    resolve Resolvers::Records.new
+  end
+
+  field :number, types.String
+  field :sortNumber, !types.Int do
     resolve ->(obj, _args, _ctx) {
-      ForeignKeyLoader.for(Checkin, :episode_id).load([obj.id])
+      obj.sort_number
     }
   end
 
-  field :number, !types.String
-  field :sort_number, !types.Int
+  field :title, types.String
 
-  field :title, !types.String
-
-  field :records_count, !types.Int do
+  field :recordsCount, !types.Int do
     resolve ->(obj, _args, _ctx) {
       obj.checkins_count
     }
   end
 
-  field :record_comments_count, !types.Int
+  field :recordCommentsCount, !types.Int do
+    resolve ->(obj, _args, _ctx) {
+      obj.record_comments_count
+    }
+  end
 
   field :work, !ObjectTypes::Work do
     resolve ->(obj, _args, _ctx) {
@@ -39,15 +47,27 @@ ObjectTypes::Episode = GraphQL::ObjectType.define do
     }
   end
 
-  field :prev_episode, ObjectTypes::Episode do
+  field :prevEpisode, ObjectTypes::Episode do
     resolve ->(obj, _args, _ctx) {
       RecordLoader.for(Episode).load(obj.prev_episode_id)
     }
   end
 
-  field :next_episode, ObjectTypes::Episode do
+  field :nextEpisode, ObjectTypes::Episode do
     resolve ->(obj, _args, _ctx) {
       RecordLoader.for(Episode).load(obj.next_episode_id)
+    }
+  end
+
+  field :viewerDidTrack, !types.Boolean do
+    resolve ->(obj, _args, ctx) {
+      ctx[:viewer].tracked?(obj)
+    }
+  end
+
+  field :viewerRecordsCount, !types.Int do
+    resolve ->(obj, _args, ctx) {
+      ctx[:viewer].checkins_count_in(obj)
     }
   end
 end

@@ -14,9 +14,9 @@ ObjectTypes::User = GraphQL::ObjectType.define do
   end
 
   connection :activities, Connections::ActivityConnection do
-    resolve ->(obj, _args, _ctx) {
-      ForeignKeyLoader.for(Activity, :user_id).load([obj.id])
-    }
+    argument :orderBy, InputObjectTypes::ActivityOrder
+
+    resolve Resolvers::Activities.new
   end
 
   connection :followingActivities, Connections::ActivityConnection do
@@ -40,30 +40,20 @@ ObjectTypes::User = GraphQL::ObjectType.define do
   end
 
   connection :works, ObjectTypes::Work.connection_type do
+    argument :annictIds, types[!types.Int]
+    argument :seasons, types[!types.String]
+    argument :titles, types[!types.String]
     argument :state, EnumTypes::StatusState
+    argument :orderBy, InputObjectTypes::WorkOrder
 
-    resolve ->(obj, args, _ctx) {
-      works = obj.works.all.published
-
-      if args[:state].present?
-        state = args[:state].downcase
-        works = works.merge(obj.latest_statuses.with_kind(state))
-      end
-
-      ForeignKeyLoader.for(Work, :id).load(works.pluck(:id))
-    }
+    resolve Resolvers::Works.new
   end
 
   connection :programs, ObjectTypes::Program.connection_type do
     argument :unwatched, types.Boolean
+    argument :orderBy, InputObjectTypes::ProgramOrder
 
-    resolve ->(obj, args, _ctx) {
-      programs = obj.programs
-      programs = args[:unwatched].present? ? programs.unwatched_all : programs.all
-      programs = programs.work_published.episode_published
-
-      ForeignKeyLoader.for(Program, :id).load(programs.pluck(:id))
-    }
+    resolve Resolvers::Programs.new
   end
 
   field :username, !types.String
@@ -77,7 +67,7 @@ ObjectTypes::User = GraphQL::ObjectType.define do
     }
   end
 
-  field :records_count, !types.Int do
+  field :recordsCount, !types.Int do
     resolve ->(obj, _args, _ctx) {
       obj.checkins_count
     }
@@ -110,7 +100,7 @@ ObjectTypes::User = GraphQL::ObjectType.define do
     }
   end
 
-  field :notifications_count, types.Int do
+  field :notificationsCount, types.Int do
     resolve ->(obj, _args, ctx) {
       return nil if ctx[:doorkeeper_token].owner != obj
       obj.notifications_count

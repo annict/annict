@@ -15,15 +15,27 @@ ObjectTypes::Work = GraphQL::ObjectType.define do
   end
 
   connection :episodes, ObjectTypes::Episode.connection_type do
-    resolve ->(obj, _args, _ctx) {
-      ForeignKeyLoader.for(Episode, :work_id).load([obj.id])
-    }
+    argument :orderBy, InputObjectTypes::EpisodeOrder
+
+    resolve Resolvers::Episodes.new
   end
 
   field :title, !types.String
-  field :title_kana, types.String
-  field :title_ro, types.String
-  field :title_en, types.String
+  field :titleKana, types.String do
+    resolve ->(obj, _args, _ctx) {
+      obj.title_kana
+    }
+  end
+  field :titleRo, types.String do
+    resolve ->(obj, _args, _ctx) {
+      obj.title_ro
+    }
+  end
+  field :titleEn, types.String do
+    resolve ->(obj, _args, _ctx) {
+      obj.title_en
+    }
+  end
 
   field :media, !EnumTypes::Media do
     resolve ->(obj, _args, _ctx) {
@@ -31,19 +43,49 @@ ObjectTypes::Work = GraphQL::ObjectType.define do
     }
   end
 
-  field :season_year, types.Int
-  field :season_name, EnumTypes::SeasonName do
+  field :seasonYear, types.Int do
+    resolve ->(obj, _args, _ctx) {
+      obj.season_year
+    }
+  end
+  field :seasonName, EnumTypes::SeasonName do
     resolve ->(obj, _args, _ctx) {
       obj.season_name&.upcase
     }
   end
 
-  field :official_site_url, types.String
-  field :official_site_url_en, types.String
-  field :wikipedia_url, types.String
-  field :wikipedia_url_en, types.String
-  field :twitter_username, types.String
-  field :twitter_hashtag, types.String
+  field :officialSiteUrl, types.String do
+    resolve ->(obj, _args, _ctx) {
+      obj.official_site_url
+    }
+  end
+  field :officialSiteUrlEn, types.String do
+    resolve ->(obj, _args, _ctx) {
+      obj.official_site_url_en
+    }
+  end
+
+  field :wikipediaUrl, types.String do
+    resolve ->(obj, _args, _ctx) {
+      obj.wikipedia_url
+    }
+  end
+  field :wikipediaUrlEn, types.String do
+    resolve ->(obj, _args, _ctx) {
+      obj.wikipedia_url_en
+    }
+  end
+
+  field :twitterUsername, types.String do
+    resolve ->(obj, _args, _ctx) {
+      obj.twitter_username
+    }
+  end
+  field :twitterHashtag, types.String do
+    resolve ->(obj, _args, _ctx) {
+      obj.twitter_hashtag
+    }
+  end
 
   field :image, ObjectTypes::WorkImage do
     resolve ->(obj, _args, _ctx) {
@@ -51,10 +93,18 @@ ObjectTypes::Work = GraphQL::ObjectType.define do
     }
   end
 
-  field :episodes_count, types.Int
-  field :watchers_count, types.Int
+  field :episodesCount, types.Int do
+    resolve ->(obj, _args, _ctx) {
+      obj.episodes_count
+    }
+  end
+  field :watchersCount, types.Int do
+    resolve ->(obj, _args, _ctx) {
+      obj.watchers_count
+    }
+  end
 
-  field :viewerState, EnumTypes::StatusState do
+  field :viewerStatusState, EnumTypes::StatusState do
     resolve ->(obj, _args, ctx) {
       state = ctx[:viewer].status_kind(obj)
       state == "no_select" ? "NO_STATE" : state.upcase
