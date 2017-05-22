@@ -31,7 +31,11 @@ ObjectTypes::Status = GraphQL::ObjectType.define do
     }
   end
 
-  field :likes_count, !types.Int
+  field :likesCount, !types.Int do
+    resolve ->(obj, _args, _ctx) {
+      obj.likes_count
+    }
+  end
 
   field :createdAt, !ScalarTypes::DateTime do
     resolve ->(obj, _args, _ctx) {

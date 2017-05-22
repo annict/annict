@@ -46,10 +46,27 @@ ObjectTypes::Record = GraphQL::ObjectType.define do
     }
   end
 
-  field :likes_count, !types.Int
-  field :comments_count, !types.Int
-  field :twitter_click_count, !types.Int
-  field :facebook_click_count, !types.Int
+  field :likesCount, !types.Int do
+    resolve ->(obj, _args, _ctx) {
+      obj.likes_count
+    }
+  end
+  field :commentsCount, !types.Int do
+    resolve ->(obj, _args, _ctx) {
+      obj.comments_count
+    }
+  end
+
+  field :twitterClickCount, !types.Int do
+    resolve ->(obj, _args, _ctx) {
+      obj.twitter_click_count
+    }
+  end
+  field :facebookClickCount, !types.Int do
+    resolve ->(obj, _args, _ctx) {
+      obj.facebook_click_count
+    }
+  end
 
   field :createdAt, !ScalarTypes::DateTime do
     resolve ->(obj, _args, _ctx) {
