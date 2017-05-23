@@ -57,9 +57,24 @@ ObjectTypes::User = GraphQL::ObjectType.define do
   end
 
   field :username, !types.String
-  field :name, !types.String
-  field :description, !types.String
-  field :url, types.String
+
+  field :name, !types.String do
+    resolve ->(obj, _args, _ctx) {
+      obj.profile.name
+    }
+  end
+
+  field :description, !types.String do
+    resolve ->(obj, _args, _ctx) {
+      obj.profile.description
+    }
+  end
+
+  field :url, types.String do
+    resolve ->(obj, _args, _ctx) {
+      obj.profile.url
+    }
+  end
 
   field :avatarUrl, types.String do
     resolve ->(obj, _args, _ctx) {
