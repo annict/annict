@@ -1,24 +1,20 @@
 # frozen_string_literal: true
 
 class NewRecordService
-  attr_writer :app
+  attr_writer :app, :keen_client, :ga_client
   attr_reader :record
 
-  def initialize(user, record, keen_client, ga_client)
+  def initialize(user, record)
     @user = user
     @record = record
-    @keen_client = keen_client
-    @ga_client = ga_client
   end
 
-  def save
+  def save!
     @record.user = @user
     @record.work = @record.episode.work
 
-    return false unless @record.valid?
-
     ActiveRecord::Base.transaction do
-      @record.save(validate: false)
+      @record.save!
       @record.update_share_checkin_status
       @record.share_to_sns
       save_activity
@@ -49,11 +45,13 @@ class NewRecordService
   end
 
   def create_keen_event
+    return if @keen_client.blank?
     @keen_client.app = @app
     @keen_client.records.create
   end
 
   def create_ga_event
+    return if @ga_client.blank?
     data_source = @app.present? ? :api : :web
     @ga_client.events.create(:records, :create, ds: data_source)
   end

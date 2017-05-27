@@ -21,12 +21,16 @@ class RecordsController < ApplicationController
     @record = @episode.records.new(checkin)
     keen_client.page_category = params[:page_category]
     ga_client.page_category = params[:page_category]
-    service = NewRecordService.new(current_user, @record, keen_client, ga_client)
 
-    if service.save
+    service = NewRecordService.new(current_user, @record)
+    service.keen_client = keen_client
+    service.ga_client = ga_client
+
+    begin
+      service.save!
       flash[:notice] = t("messages.records.created")
       redirect_to work_episode_path(@work, @episode)
-    else
+    rescue
       service = RecordsListService.new(@episode, current_user, nil)
 
       @user_records = service.user_records

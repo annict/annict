@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # == Schema Information
 #
 # Table name: channels
@@ -20,7 +22,7 @@ class Channel < ApplicationRecord
   belongs_to :channel_group
   has_many :programs
 
-  scope :published, -> { where(published: true) }
+  scope(:published, -> { where(published: true) })
 
   def self.fastest(work)
     receivable_channel_ids = pluck(:id)

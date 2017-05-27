@@ -142,4 +142,8 @@ Doorkeeper::AccessToken.class_eval do
   validates :description, presence: { on: :personal }
 
   before_validation :generate_token, on: %i(create personal)
+
+  def writable?
+    scopes.include?("write")
+  end
 end

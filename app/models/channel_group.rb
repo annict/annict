@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # == Schema Information
 #
 # Table name: channel_groups
@@ -17,5 +19,5 @@
 class ChannelGroup < ApplicationRecord
   has_many :channels
 
-  scope :published, -> { where.not(sort_number: nil) }
+  scope(:published, -> { where.not(sort_number: nil) })
 end

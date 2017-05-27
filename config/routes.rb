@@ -4,6 +4,7 @@ Rails.application.routes.draw do
   if Rails.env.development?
     mount LetterOpenerWeb::Engine, at: "/low"
     mount Dmmyix::Engine, at: "/dmmyix"
+    mount GraphiQL::Rails::Engine, at: "/graphiql", graphql_path: "/graphql"
   end
 
   get "dummy_image", to: "application#dummy_image" if Rails.env.test?
@@ -337,6 +338,8 @@ Rails.application.routes.draw do
     to: "checkins#redirect",
     provider: /fb|tw/,
     url_hash: /[0-9a-zA-Z_-]{10}/
+
+  post "/graphql", to: "graphql#execute"
 
   root "home#index"
 end
