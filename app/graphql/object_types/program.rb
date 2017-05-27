@@ -31,7 +31,7 @@ ObjectTypes::Program = GraphQL::ObjectType.define do
     }
   end
 
-  field :startedAt, ScalarTypes::DateTime do
+  field :startedAt, !ScalarTypes::DateTime do
     resolve ->(obj, _args, _ctx) {
       obj.started_at
     }

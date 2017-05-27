@@ -93,12 +93,12 @@ ObjectTypes::Work = GraphQL::ObjectType.define do
     }
   end
 
-  field :episodesCount, types.Int do
+  field :episodesCount, !types.Int do
     resolve ->(obj, _args, _ctx) {
       obj.episodes_count
     }
   end
-  field :watchersCount, types.Int do
+  field :watchersCount, !types.Int do
     resolve ->(obj, _args, _ctx) {
       obj.watchers_count
     }
