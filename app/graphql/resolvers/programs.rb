@@ -12,11 +12,10 @@ module Resolvers
     private
 
     def from_arguments
-      %i(
-        unwatched
-      ).each do |arg_name|
-        next if @args[arg_name].blank?
-        @collection = send(arg_name.to_s.underscore)
+      @collection = if @args[:unwatched].present?
+        @collection.unwatched_all
+      else
+        @collection.all
       end
 
       @collection = @collection.work_published.episode_published
@@ -31,10 +30,6 @@ module Resolvers
       end
 
       @collection
-    end
-
-    def unwatched
-      @args[:unwatched].present? ? @collection.unwatched_all : @collection.all
     end
   end
 end
