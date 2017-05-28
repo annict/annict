@@ -30,7 +30,8 @@ json = Rails.cache.fetch(cache_keys) do
       comment: record.comment,
       comments_count: record.comments_count,
       likes_count: record.likes_count,
-      rating: record.rating
+      rating: record.rating,
+      rating_state: record.rating_state
     }
   }
 end

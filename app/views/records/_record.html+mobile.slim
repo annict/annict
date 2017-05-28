@@ -17,7 +17,10 @@ c-record inline-template="" :user-id="#{record.user.id}"
                 = local_time_ago_in_words(record.created_at)
     c-comment-guard inline-template="" :init-is-spoiler="#{user_signed_in? && current_user.hide_checkin_comment?(record)}"
       .c-record__content.mb-zp5
-        c-rating-label :init-rating="#{record.rating.presence || -1}" v-show="!isSpoiler"
+        - if record.rating.present?
+          c-rating-label :init-rating="#{record.rating}" v-show="!isSpoiler"
+        - elsif record.rating_state.present?
+          c-rating-state-label :init-rating-state=="'#{record.rating_state}'" v-show="!isSpoiler"
         .c-body @click="remove"
           c-body inline-template=""
             .c-body__content = record.comment

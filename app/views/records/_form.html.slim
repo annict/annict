@@ -6,7 +6,7 @@
   = hidden_field_tag :page_category, page_category
 
   .mb-zp5
-    c-record-rating :init-record="{ rating: #{record.rating.presence || 0} }"
+    c-record-rating :init-record=="{ ratingState: '#{record.rating_state}' }"
   .mb-zp5
     - comment = record.comment&.gsub(/(?:\n\r?|\r\n?)/, "\\n").presence || ""
     c-record-textarea :init-record="{ uid: 1, comment: '#{comment}', commentRows: 2 }" placeholder="#{t('messages.records.new.write_your_comment')}"

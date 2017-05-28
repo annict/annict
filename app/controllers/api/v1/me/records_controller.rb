@@ -10,6 +10,7 @@ module Api
           episode = Episode.published.find(@params.episode_id)
           record = episode.records.new do |r|
             r.rating = @params.rating
+            r.rating_state = @params.rating_state
             r.comment = @params.comment
             r.shared_twitter = @params.share_twitter == "true"
             r.shared_facebook = @params.share_facebook == "true"
@@ -32,6 +33,7 @@ module Api
         def update
           @record = current_user.records.find(@params.id)
           @record.rating = @params.rating
+          @record.rating_state = @params.rating_state
           @record.comment = @params.comment
           @record.shared_twitter = @params.share_twitter == "true"
           @record.shared_facebook = @params.share_facebook == "true"

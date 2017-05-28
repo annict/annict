@@ -36,7 +36,7 @@ module.exports =
           isEditingComment: false
           isRecorded: false
           isSaving: false
-          rating: 0
+          ratingState: null
           wordCount: 0
           commentRows: 1
 
@@ -76,7 +76,7 @@ module.exports =
             comment: program.record.comment
             shared_twitter: @user.share_record_to_twitter
             shared_facebook: @user.share_record_to_facebook
-            rating: program.record.rating
+            rating_state: program.record.ratingState
           page_category: gon.basic.pageCategory
       .done (data) ->
         program.record.isSaving = false

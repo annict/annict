@@ -37,6 +37,10 @@
 #
 
 class Checkin < ApplicationRecord
+  extend Enumerize
+
+  enumerize :rating_state, in: %i(bad good great)
+
   belongs_to :oauth_application, class_name: "Doorkeeper::Application", optional: true
   belongs_to :work
   belongs_to :episode, counter_cache: true

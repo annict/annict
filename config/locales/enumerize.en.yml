@@ -1,5 +1,10 @@
 en:
   enumerize:
+    checkin:
+      rating_state:
+        bad: Bad
+        good: Good
+        great: Great
     person:
       blood_type:
         a: A

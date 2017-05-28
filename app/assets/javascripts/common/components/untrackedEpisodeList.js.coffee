@@ -46,7 +46,7 @@ module.exports =
             comment: latestStatus.record.comment
             shared_twitter: @user.share_record_to_twitter
             shared_facebook: @user.share_record_to_facebook
-            rating: latestStatus.record.rating
+            rating_state: latestStatus.record.ratingState
           page_category: gon.basic.pageCategory
       .done (data) =>
         $.ajax
@@ -65,7 +65,7 @@ module.exports =
       latestStatus.record =
         comment: ""
         isSaving: false
-        rating: 0
+        ratingState: null
         isEditingComment: false
         uid: _.uniqueId()
         wordCount: 0

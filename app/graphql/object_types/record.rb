@@ -39,6 +39,12 @@ ObjectTypes::Record = GraphQL::ObjectType.define do
     }
   end
 
+  field :ratingState, EnumTypes::RatingState do
+    resolve ->(obj, _args, _ctx) {
+      obj.rating_state&.upcase
+    }
+  end
+
   field :modified, !types.Boolean do
     resolve ->(obj, _args, _ctx) {
       obj.modify_comment?
