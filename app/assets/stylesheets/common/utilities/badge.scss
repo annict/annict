@@ -7,6 +7,20 @@ $ann-bootstrap-badge-colors: (
   danger: $badge-danger-bg
 );
 
+$ann-badge-colors: (
+  mizuho: $ann-color-mizuho,
+  bad: $ann-color-bad,
+  good: $ann-color-good,
+  great: $ann-color-great
+);
+
+
+@each $color-name, $color in $ann-badge-colors {
+  .u-badge-#{$color-name} {
+    @include badge-variant($color);
+  }
+}
+
 .u-badge-outline {
   @include border-radius();
   display: inline-block;
@@ -23,10 +37,6 @@ $ann-bootstrap-badge-colors: (
   .u-badge-outline-#{$color-name} {
     border: 1px solid $color;
   }
-}
-
-.u-badge-mizuho {
-  @include badge-variant($ann-color-mizuho);
 }
 
 .u-badge-works {

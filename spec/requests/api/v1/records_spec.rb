@@ -30,6 +30,7 @@ describe "Api::V1::Records" do
           "id" => record.id,
           "comment" => "おもしろかった",
           "rating" => 3.0,
+          "rating_state" => nil,
           "is_modified" => false,
           "likes_count" => 0,
           "comments_count" => 0,

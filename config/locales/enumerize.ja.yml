@@ -1,5 +1,10 @@
 ja:
   enumerize:
+    checkin:
+      rating_state:
+        bad: 良くなかった
+        good: 良かった
+        great: とても良かった
     person:
       blood_type:
         a: A型

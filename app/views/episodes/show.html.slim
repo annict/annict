@@ -33,10 +33,6 @@
                   = @records.with_comment.count + @current_user_records.with_comment.count
                   .small
                     | Comments
-                .col.text-center
-                  = @episode.avg_rating.presence || "-"
-                  .small
-                    | Stars
           - if @episode.prev_episode.present? || @episode.next_episode.present?
             .row.mt-1
               .col
@@ -85,3 +81,4 @@
   = render "application/js_templates/like_button"
   = render "application/js_templates/mute_user_button"
   = render "application/js_templates/status_selector"
+  = render "application/js_templates/rating_state_label"

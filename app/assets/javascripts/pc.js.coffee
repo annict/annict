@@ -32,6 +32,7 @@ $(document).on "turbolinks:load", ->
   muteUserButton = require "./common/components/muteUserButton"
   programList = require "./common/components/programList"
   ratingLabel = require "./common/components/ratingLabel"
+  ratingStateLabel = require "./common/components/ratingStateLabel"
   record = require "./common/components/record"
   recordRating = require "./common/components/recordRating"
   recordTextarea = require "./common/components/recordTextarea"
@@ -72,6 +73,7 @@ $(document).on "turbolinks:load", ->
   Vue.component("c-mute-user-button", muteUserButton)
   Vue.component("c-program-list", programList)
   Vue.component("c-rating-label", ratingLabel)
+  Vue.component("c-rating-state-label", ratingStateLabel)
   Vue.component("c-record", record)
   Vue.component("c-record-rating", recordRating)
   Vue.component("c-record-textarea", recordTextarea)

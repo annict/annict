@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class RecordsController < ApplicationController
-  permits :episode_id, :comment, :shared_twitter, :shared_facebook, :rating,
+  permits :episode_id, :comment, :shared_twitter, :shared_facebook, :rating_state,
     model_name: "Checkin"
 
   before_action :authenticate_user!, only: %i(create edit update destroy)

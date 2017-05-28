@@ -1,5 +1,4 @@
 # frozen_string_literal: true
-
 # == Schema Information
 #
 # Table name: checkins
@@ -23,6 +22,7 @@
 #  rating               :float
 #  multiple_record_id   :integer
 #  oauth_application_id :integer
+#  rating_state         :string
 #
 # Indexes
 #
@@ -32,10 +32,15 @@
 #  checkins_user_id_idx                    (user_id)
 #  index_checkins_on_multiple_record_id    (multiple_record_id)
 #  index_checkins_on_oauth_application_id  (oauth_application_id)
+#  index_checkins_on_rating_state          (rating_state)
 #  index_checkins_on_work_id               (work_id)
 #
 
 class Checkin < ApplicationRecord
+  extend Enumerize
+
+  enumerize :rating_state, in: %i(bad good great)
+
   belongs_to :oauth_application, class_name: "Doorkeeper::Application", optional: true
   belongs_to :work
   belongs_to :episode, counter_cache: true

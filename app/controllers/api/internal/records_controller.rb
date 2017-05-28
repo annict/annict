@@ -3,7 +3,7 @@
 module Api
   module Internal
     class RecordsController < Api::Internal::ApplicationController
-      permits :episode_id, :comment, :shared_twitter, :shared_facebook, :rating
+      permits :episode_id, :comment, :shared_twitter, :shared_facebook, :rating_state
 
       before_action :authenticate_user!, only: %i(create)
 
@@ -13,7 +13,7 @@ module Api
           c.comment = record[:comment]
           c.shared_twitter = record[:shared_twitter]
           c.shared_facebook = record[:shared_facebook]
-          c.rating = record[:rating]
+          c.rating_state = record[:rating_state]
         end
         keen_client.page_category = page_category
         ga_client.page_category = page_category
