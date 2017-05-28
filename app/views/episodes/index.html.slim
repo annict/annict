@@ -33,7 +33,6 @@
                       - unless @work.single?
                         th = t "noun.episode_number"
                       th = t "noun.title"
-                      th = t "noun.rating"
                       th = t "noun.records_count"
                   tbody
                     - @episodes.order(:sort_number).each do |episode|

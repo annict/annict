@@ -1,18 +1,6 @@
 .m-0
   - if user_signed_in?
     - user_records = current_user.records.where(episode: episode)
-  span.small.mr-1
-    = icon "star", class: "u-text-star mr-zp25"
-    - if user_signed_in?
-      - if user_records.avg_rating.present?
-        = user_records.avg_rating
-      - else
-        | -
-    - else
-      - if episode.avg_rating.present?
-        = episode.avg_rating
-      - else
-        | -
   span.small
     = icon "pencil-square-o", class: "mr-zp25"
     - if user_signed_in?
