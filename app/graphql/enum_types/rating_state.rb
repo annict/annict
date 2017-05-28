@@ -5,5 +5,6 @@ EnumTypes::RatingState = GraphQL::EnumType.define do
 
   value "GREAT", ""
   value "GOOD", ""
+  value "AVERAGE", ""
   value "BAD", ""
 end

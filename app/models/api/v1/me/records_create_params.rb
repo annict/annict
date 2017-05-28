@@ -6,7 +6,7 @@ module Api
       class RecordsCreateParams
         include ActiveParameter
 
-        STATES = /\A(bad|good|great)\z/
+        STATES = /\A(bad|average|good|great)\z/
 
         param :episode_id
         param :comment

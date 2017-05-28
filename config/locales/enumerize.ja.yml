@@ -2,9 +2,10 @@ ja:
   enumerize:
     checkin:
       rating_state:
-        bad: 良くなかった
-        good: 良かった
-        great: とても良かった
+        average: 普通
+        bad: 良くない
+        good: 良い
+        great: とても良い
     person:
       blood_type:
         a: A型

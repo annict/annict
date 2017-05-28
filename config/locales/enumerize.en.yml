@@ -2,6 +2,7 @@ en:
   enumerize:
     checkin:
       rating_state:
+        average: Average
         bad: Bad
         good: Good
         great: Great

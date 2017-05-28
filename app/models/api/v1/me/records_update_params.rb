@@ -6,7 +6,7 @@ module Api
       class RecordsUpdateParams
         include ActiveParameter
 
-        STATES = /\A(bad|good|great)\z/
+        STATES = /\A(bad|average|good|great)\z/
 
         param :id
         param :comment

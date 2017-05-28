@@ -55,7 +55,8 @@ $ann-color-border: rgba(0, 0, 0, .08);
 $ann-color-footer-bg: #334854;
 $ann-color-link: #0366d6;
 
-$ann-color-bad: #ff1744;
+$ann-color-bad: #757575;
+$ann-color-average: #ff9100;
 $ann-color-good: #00c853;
 $ann-color-great: #00b0ff;
 
@@ -86,6 +87,7 @@ $ann-btn-colors: (
   facebook: $ann-color-facebook,
   green: $ann-color-green,
   bad: $ann-color-bad,
+  average: $ann-color-average,
   good: $ann-color-good,
   great: $ann-color-great,
 );

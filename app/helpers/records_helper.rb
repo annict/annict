@@ -5,6 +5,8 @@ module RecordsHelper
     case state
     when "bad"
       icon "thumbs-o-down", options
+    when "average"
+      icon "meh-o", options
     when "good"
       icon "thumbs-o-up", options
     when "great"
