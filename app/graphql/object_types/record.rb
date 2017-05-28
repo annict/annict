@@ -33,10 +33,9 @@ ObjectTypes::Record = GraphQL::ObjectType.define do
 
   field :comment, types.String
 
-  field :rating, EnumTypes::RatingState do
+  field :rating, types.Float do
     resolve ->(obj, _args, _ctx) {
-      return nil if obj.rating.blank?
-      obj.rating > 3 ? "GOOD" : "BAD"
+      obj.rating
     }
   end
 
