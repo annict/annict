@@ -30,7 +30,7 @@ module Settings
       @token = current_user.oauth_access_tokens.available.personal.find(id)
       @token.attributes = doorkeeper_access_token
 
-      if @token.save(context: :personal)
+      if @token.save
         flash[:notice] = t("messages.settings.tokens.updated")
         redirect_to settings_apps_path
       else
