@@ -162,6 +162,13 @@ Rails.application.routes.draw do
       end
     end
 
+    resources :pvs, only: %i(edit update destroy) do
+      member do
+        get :activities
+        patch :hide
+      end
+    end
+
     resources :series, only: %i(index new create edit update destroy) do
       member do
         get :activities
@@ -201,6 +208,7 @@ Rails.application.routes.draw do
       resources :casts, only: %i(index new create)
       resources :episodes, only: %i(index new create)
       resources :programs, only: %i(index new create)
+      resources :pvs, only: %i(index new create)
       resources :staffs, only: %i(index new create)
     end
 

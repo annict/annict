@@ -87,6 +87,11 @@ ja:
           edit: 放送予定編集
           index: 放送予定
           new: 放送予定登録
+        pvs:
+          activities: アクティビティ
+          edit: PVの編集
+          index: PV
+          new: PVの登録
         searches:
           show: 検索
         series:
