@@ -20,6 +20,7 @@
 #  title_ro              :string           default(""), not null
 #  title_en              :string           default(""), not null
 #  record_comments_count :integer          default(0), not null
+#  score                 :float            default(50.0), not null
 #
 # Indexes
 #
@@ -27,6 +28,7 @@
 #  episodes_work_id_sc_count_key      (work_id,sc_count) UNIQUE
 #  index_episodes_on_aasm_state       (aasm_state)
 #  index_episodes_on_prev_episode_id  (prev_episode_id)
+#  index_episodes_on_score            (score)
 #
 
 class Episode < ApplicationRecord
@@ -105,6 +107,34 @@ class Episode < ApplicationRecord
     end
 
     data.delete_if { |_, v| v.blank? }
+  end
+
+  def records_chart_dataset
+    current_month = Date.today.beginning_of_month
+    count = 0
+    [
+      current_month.months_ago(5),
+      current_month.months_ago(4),
+      current_month.months_ago(3),
+      current_month.months_ago(2),
+      current_month.months_ago(1),
+      current_month
+    ].map do |date|
+      count += records.by_month(date).count
+      {
+        date: date.strftime("%d-%b-%Y"),
+        value: count
+      }
+    end.to_json
+  end
+
+  def rating_state_chart_dataset
+    Checkin.rating_state.values.map do |state|
+      {
+        name: state.text,
+        value: records.with_rating_state(state).count
+      }
+    end.to_json
   end
 
   private

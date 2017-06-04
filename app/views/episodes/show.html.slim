@@ -15,24 +15,37 @@
       .col-9
         = render "works/subnav", work: @work
         .c-card.container.py-1.my-1
-          .row.align-items-center
+          .row.align-items-center.mb-1
             .col-8
               h2
                 = link_to @episode.decorate.title_with_number, work_episode_path(@work, @episode), class: "u-text-body"
               - if user_signed_in? && current_user.tracked?(@episode)
                 .small
-                  = icon "check", class: "mr-zp25"
+                  = icon "check-circle", class: "mr-zp25 u-text-green"
                   = t "messages.episodes.watched_x_times", records_count: current_user.checkins_count_in(@episode)
             .col-4
               .row
                 .col.text-center
+                  = @episode.score.round(1)
+                  .small.text-muted
+                    | Score
+                .col.text-center
                   = @records.count + @current_user_records.count
-                  .small
+                  .small.text-muted
                     | Records
                 .col.text-center
                   = @records.with_comment.count + @current_user_records.with_comment.count
-                  .small
+                  .small.text-muted
                     | Comments
+          .row.align-items-center
+            .col-6
+              .text-center.small.font-weight-bold.mb-zp5
+                = t "noun.records_count"
+              c-episode-records-chart init-dataset="#{@episode.records_chart_dataset}"
+            .col-6
+              .text-center.small.font-weight-bold.mb-zp5
+                = t "noun.rating"
+              c-episode-rating-state-chart init-dataset="#{@episode.rating_state_chart_dataset}"
           - if @episode.prev_episode.present? || @episode.next_episode.present?
             .row.mt-1
               .col
