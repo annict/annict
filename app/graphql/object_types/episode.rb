@@ -20,7 +20,18 @@ ObjectTypes::Episode = GraphQL::ObjectType.define do
     resolve Resolvers::Records.new
   end
 
-  field :number, types.String
+  field :number, types.Int do
+    resolve ->(obj, _args, _ctx) {
+      obj.raw_number
+    }
+  end
+
+  field :numberText, types.String do
+    resolve ->(obj, _args, _ctx) {
+      obj.number
+    }
+  end
+
   field :sortNumber, !types.Int do
     resolve ->(obj, _args, _ctx) {
       obj.sort_number
