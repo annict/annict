@@ -113,8 +113,6 @@ class Episode < ApplicationRecord
     current_month = Date.today.beginning_of_month
     count = 0
     [
-      current_month.months_ago(5),
-      current_month.months_ago(4),
       current_month.months_ago(3),
       current_month.months_ago(2),
       current_month.months_ago(1),
@@ -129,10 +127,13 @@ class Episode < ApplicationRecord
   end
 
   def rating_state_chart_dataset
+    all_records_count = records.where.not(rating_state: nil).count
     Checkin.rating_state.values.map do |state|
+      state_records_count = records.with_rating_state(state).count
       {
         name: state.text,
-        value: records.with_rating_state(state).count
+        quantity: state_records_count,
+        percentage: ((state_records_count / all_records_count.to_f) * 100).round
       }
     end.to_json
   end

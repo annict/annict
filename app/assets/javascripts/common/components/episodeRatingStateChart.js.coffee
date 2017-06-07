@@ -1,5 +1,5 @@
 d3Selection = require "d3-selection"
-BarChart = require "britecharts/dist/umd/bar.min"
+DonutChart = require "britecharts/dist/umd/donut.min"
 
 module.exports =
   template: '<div class="c-episode-rating-state-chart"></div>'
@@ -19,18 +19,14 @@ module.exports =
     else
       false
 
-    barChart = new BarChart()
+    donutChart = new DonutChart()
 
     if containerWidth
-      barChart
-        .margin
-          left: 80
-          right: 14
-          top: 0
-          bottom: 7
-        .horizontal(true)
-        .colorSchema(["#40C4FF", "#69F0AE", "#FFAB40", "#bdbdbd"])
+      donutChart
         .width(containerWidth)
-        .height(200)
+        .height(containerWidth - 35)
+        .externalRadius(containerWidth / 2.5)
+        .internalRadius(containerWidth / 5)
+        .colorSchema(["#bdbdbd", "#FFAB40", "#69F0AE", "#40C4FF"])
 
-      container.datum(@dataset).call(barChart)
+      container.datum(@dataset).call(donutChart)

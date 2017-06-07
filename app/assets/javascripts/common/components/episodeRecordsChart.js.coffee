@@ -19,7 +19,7 @@ module.exports =
     else
       false
     lineMargin =
-      top: 60
+      top: 7
       bottom: 50
       left: 60
       right: 30
