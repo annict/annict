@@ -4,7 +4,7 @@ class RecordsController < ApplicationController
   permits :episode_id, :comment, :shared_twitter, :shared_facebook, :rating_state,
     model_name: "Checkin"
 
-  before_action :authenticate_user!, only: %i(create edit update destroy)
+  before_action :authenticate_user!, only: %i(create edit update destroy switch)
   before_action :load_user, only: %i(create show edit update destroy)
   before_action :load_record, only: %i(show edit update destroy)
 
@@ -69,6 +69,16 @@ class RecordsController < ApplicationController
 
     path = work_episode_path(@record.work, @record.episode)
     redirect_to path, notice: t("messages.records.deleted")
+  end
+
+  def switch(episode_id, to)
+    episode = Episode.find(episode_id)
+    redirect = redirect_back fallback_location: work_episode_path(episode.work, episode)
+
+    return redirect unless to.in?(Setting.display_option_record_list.values)
+
+    current_user.setting.update_column(:display_option_record_list, to)
+    redirect
   end
 
   private

@@ -1,5 +1,4 @@
 # frozen_string_literal: true
-
 # == Schema Information
 #
 # Table name: pvs
@@ -15,6 +14,7 @@
 #  created_at             :datetime         not null
 #  updated_at             :datetime         not null
 #  sort_number            :integer          default(0), not null
+#  aasm_state             :string           default("published"), not null
 #
 # Indexes
 #

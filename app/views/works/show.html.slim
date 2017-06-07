@@ -8,11 +8,13 @@
 = render "application/components/navbar"
 
 .p-application__content
-  .container.py-1.mb-2
+  .p-work-header
+    .p-work-header__image style="background-image: url(#{'http://i.ytimg.com/vi/jMk9xXikz6E/maxresdefault.jpg'});"
+  .container.mb-2
     .row
-      .col-3.pr-0
+      .col-2.pr-0
         = render "sidebar", work: @work
-      .col-9
+      .col-10
         = render "subnav", work: @work
 
         - if @work.decorate.local_synopsis.present?

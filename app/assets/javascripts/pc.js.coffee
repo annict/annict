@@ -37,6 +37,7 @@ $(document).on "turbolinks:load", ->
   ratingStateLabel = require "./common/components/ratingStateLabel"
   record = require "./common/components/record"
   recordRating = require "./common/components/recordRating"
+  recordSorter = require "./common/components/recordSorter"
   recordTextarea = require "./common/components/recordTextarea"
   recordWordCount = require "./common/components/recordWordCount"
   statusSelector = require "./common/components/statusSelector"
@@ -80,6 +81,7 @@ $(document).on "turbolinks:load", ->
   Vue.component("c-rating-state-label", ratingStateLabel)
   Vue.component("c-record", record)
   Vue.component("c-record-rating", recordRating)
+  Vue.component("c-record-sorter", recordSorter)
   Vue.component("c-record-textarea", recordTextarea)
   Vue.component("c-record-word-count", recordWordCount)
   Vue.component("c-search-form", searchForm)

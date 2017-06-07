@@ -79,6 +79,18 @@ class Checkin < ApplicationRecord
     (ratings.inject { |sum, rating| sum + rating } / ratings.count).round(1)
   end
 
+  def self.rating_state_order(direction = :asc)
+    direction = direction.in?(%i(asc desc)) ? direction : :asc
+    order <<-SQL
+    CASE
+      WHEN rating_state = 'bad' THEN '-1'
+      WHEN rating_state = 'average' THEN '0'
+      WHEN rating_state = 'good' THEN '1'
+      WHEN rating_state = 'great' THEN '2'
+    END #{direction.upcase} NULLS LAST
+    SQL
+  end
+
   def rating=(value)
     return super if value.to_f.between?(1, 5)
     write_attribute :rating, nil

@@ -29,7 +29,6 @@
 class EpisodesController < ApplicationController
   before_action :load_work, only: %i(index show)
   before_action :load_episode, only: %i(show)
-  before_action :load_record_user, only: %i(show)
   before_action :load_i18n, only: %i(show)
 
   def index
@@ -43,11 +42,19 @@ class EpisodesController < ApplicationController
   end
 
   def show
-    service = RecordsListService.new(@episode, current_user, @record_user)
+    service = RecordsListService.new(current_user, @episode, params)
 
-    @user_records = service.user_records
-    @current_user_records = service.current_user_records
-    @records = service.records
+    @all_records = service.all_records
+    @all_comment_records = service.all_comment_records
+    @friend_comment_records = service.friend_comment_records
+    @my_comment_records = service.my_comment_records
+    @selected_comment_records = service.selected_comment_records
+
+    data = {
+      recordsSortTypes: Setting.records_sort_type.options,
+      currentRecordsSortType: current_user&.setting&.records_sort_type.presence || "created_at_desc"
+    }
+    gon.push(data)
 
     return unless user_signed_in?
 
@@ -63,10 +70,6 @@ class EpisodesController < ApplicationController
 
   def load_episode
     @episode = @work.episodes.published.find(params[:id])
-  end
-
-  def load_record_user
-    @record_user = User.find_by(username: params[:username]) if params[:username].present?
   end
 
   def load_i18n

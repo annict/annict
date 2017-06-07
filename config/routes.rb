@@ -32,6 +32,7 @@ Rails.application.routes.draw do
   namespace :api do
     namespace :internal do
       resource :programs_sort_type, only: [:update]
+      resource :records_sort_type, only: %i(update)
       resource :search, only: [:show]
       resources :activities, only: [:index]
       resources :characters, only: [:index]
@@ -281,6 +282,12 @@ Rails.application.routes.draw do
       to: "checkins#redirect",
       provider: /fb|tw/,
       url_hash: /[0-9a-zA-Z_-]{10}/
+  end
+
+  resources :episodes, only: [] do
+    resources :records, only: [] do
+      post :switch, on: :collection
+    end
   end
 
   resources :organizations, only: %i(show) do
