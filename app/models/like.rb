@@ -41,5 +41,6 @@ class Like < ApplicationRecord
   def expire_cache
     return unless recipient_type.in?(%w(Checkin MultipleRecord Status))
     recipient.activities.update_all(updated_at: Time.now)
+    recipient.touch
   end
 end
