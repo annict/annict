@@ -57,9 +57,8 @@
                   .text-right.mb-1
                     c-record-sorter current-url="#{request.url}"
                   .c-record-list
-                    - cache [I18n.locale, current_user&.id, @selected_comment_records] do
-                      - @selected_comment_records.each do |record|
-                        = render "records/record", record: record
+                    - @selected_comment_records.each do |record|
+                      = render "records/record", record: record, is_spoiler: @is_spoiler
                   - if @selected_comment_records.total_pages > 1
                     .mt-2.text-center
                       = paginate @selected_comment_records

@@ -130,10 +130,11 @@ class Episode < ApplicationRecord
     all_records_count = records.where.not(rating_state: nil).count
     Checkin.rating_state.values.map do |state|
       state_records_count = records.with_rating_state(state).count
+      ratio = state_records_count / all_records_count.to_f
       {
         name: state.text,
         quantity: state_records_count,
-        percentage: ((state_records_count / all_records_count.to_f) * 100).round
+        percentage: ratio.nan? ? 0 : (ratio * 100).round
       }
     end.to_json
   end

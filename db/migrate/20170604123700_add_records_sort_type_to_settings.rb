@@ -2,7 +2,7 @@
 
 class AddRecordsSortTypeToSettings < ActiveRecord::Migration[5.1]
   def change
-    add_column :settings, :records_sort_type, :string, null: false, default: ""
-    add_column :settings, :display_option_record_list, null: false, default: "all_comments"
+    add_column :settings, :records_sort_type, :string, null: false, default: "created_at_desc"
+    add_column :settings, :display_option_record_list, :string, null: false, default: "all_comments"
   end
 end

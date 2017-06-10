@@ -778,16 +778,16 @@ ActiveRecord::Schema.define(version: 20170604123700) do
 
   create_table "pvs", force: :cascade do |t|
     t.integer "work_id", null: false
-    t.string "title", null: false
     t.string "url", null: false
+    t.string "title", null: false
     t.string "thumbnail_file_name"
     t.string "thumbnail_content_type"
     t.integer "thumbnail_file_size"
     t.datetime "thumbnail_updated_at"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
     t.integer "sort_number", default: 0, null: false
     t.string "aasm_state", default: "published", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
     t.index ["work_id"], name: "index_pvs_on_work_id"
   end
 
@@ -855,6 +855,7 @@ ActiveRecord::Schema.define(version: 20170604123700) do
     t.string "display_option_work_list", default: "list", null: false
     t.string "display_option_user_work_list", default: "list", null: false
     t.string "records_sort_type", default: "", null: false
+    t.string "display_option_record_list", default: "all_comments", null: false
     t.index ["user_id"], name: "index_settings_on_user_id"
   end
 

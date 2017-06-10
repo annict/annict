@@ -62,7 +62,7 @@
         c-record-sorter current-url="#{request.url}"
       .c-record-list
         - @selected_comment_records.each do |record|
-          = render "records/record", record: record
+          = render "records/record", record: record, is_spoiler: @is_spoiler
       - if @selected_comment_records.total_pages > 1
         .mt-2.text-center
           = paginate @selected_comment_records
