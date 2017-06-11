@@ -31,11 +31,22 @@ class RecordsController < ApplicationController
       flash[:notice] = t("messages.records.created")
       redirect_to work_episode_path(@work, @episode)
     rescue
-      service = RecordsListService.new(@episode, current_user, nil)
+      service = RecordsListService.new(current_user, @episode, params)
 
-      @user_records = service.user_records
-      @current_user_records = service.current_user_records
-      @records = service.records
+      @all_records = service.all_records
+      @all_comment_records = service.all_comment_records
+      @friend_comment_records = service.friend_comment_records
+      @my_comment_records = service.my_comment_records
+      @selected_comment_records = service.selected_comment_records
+
+      data = {
+        recordsSortTypes: Setting.records_sort_type.options,
+        currentRecordsSortType: current_user&.setting&.records_sort_type.presence || "created_at_desc",
+        pageObject: render_jb("works/_detail", user: current_user, work: @work)
+      }
+      gon.push(data)
+
+      @is_spoiler = current_user.hide_checkin_comment?(@episode)
 
       render "/episodes/show"
     end
