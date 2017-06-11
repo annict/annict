@@ -53,11 +53,11 @@
           = active_link_to switch_episode_records_path(@episode, to: :friend_comments), class: "btn", class_active: "btn-primary", class_inactive: "btn-secondary", active: (user_signed_in? ? current_user.setting.display_option_record_list.friend_comments? : false ), data: { method: :post } do
             .u-very-small
               = t "noun.friend_comments"
-              span.ml-zp25 = "(#{@friend_comment_records.total_count})"
+              span.ml-zp25 = "(#{@friend_comment_records.blank? ? 0 : @friend_comment_records.total_count})"
           = active_link_to switch_episode_records_path(@episode, to: :my_comments), class: "btn", class_active: "btn-primary", class_inactive: "btn-secondary", active: (user_signed_in? ? current_user.setting.display_option_record_list.my_comments? : false ), data: { method: :post } do
             .u-very-small
               = t "noun.my_comments"
-              span.ml-zp25 = "(#{@my_comment_records.total_count})"
+              span.ml-zp25 = "(#{@my_comment_records.blank? ? 0 : @my_comment_records.total_count})"
       .text-right.mb-1
         c-record-sorter current-url="#{request.url}"
       .c-record-list
