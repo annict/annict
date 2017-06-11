@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 # == Schema Information
 #
 # Table name: checkins
@@ -39,7 +40,7 @@
 class Checkin < ApplicationRecord
   extend Enumerize
 
-  enumerize :rating_state, in: %i(bad average good great)
+  enumerize :rating_state, in: %i(bad average good great), scope: true
 
   belongs_to :oauth_application, class_name: "Doorkeeper::Application", optional: true
   belongs_to :work
@@ -78,9 +79,30 @@ class Checkin < ApplicationRecord
     (ratings.inject { |sum, rating| sum + rating } / ratings.count).round(1)
   end
 
+  def self.rating_state_order(direction = :asc)
+    direction = direction.in?(%i(asc desc)) ? direction : :asc
+    order <<-SQL
+    CASE
+      WHEN rating_state = 'bad' THEN '-1'
+      WHEN rating_state = 'average' THEN '0'
+      WHEN rating_state = 'good' THEN '1'
+      WHEN rating_state = 'great' THEN '2'
+    END #{direction.upcase} NULLS LAST
+    SQL
+  end
+
   def rating=(value)
     return super if value.to_f.between?(1, 5)
     write_attribute :rating, nil
+  end
+
+  def rating_to_rating_state
+    case rating
+    when 1.0..2.9 then :bad
+    when 3.0..3.9 then :average
+    when 4.0..4.5 then :good
+    when 4.6..5.0 then :great
+    end
   end
 
   def initial

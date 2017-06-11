@@ -89,6 +89,11 @@ en:
           edit: Edit Program
           index: Programs
           new: New Programs
+        pvs:
+          activities: Activities
+          edit: Edit PV
+          index: PVs
+          new: New PVs
         searches:
           show: Search
         series:

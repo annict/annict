@@ -1,54 +1,72 @@
 # frozen_string_literal: true
 
 class RecordsListService
-  def initialize(episode, current_user, record_user)
+  def initialize(user, episode, params)
+    @user = user
     @episode = episode
-    @current_user = current_user
-    @record_user = record_user
+    @params = params
   end
 
-  def record_user_ids
-    record_users = User.joins(:records).
-      where("records.episode_id": @episode.id).
-      where("records.user_id": base_records.pluck(:user_id).uniq).
-      order("records.id DESC")
-    record_users.pluck(:id).uniq
+  def all_comment_records
+    results = all_records
+    results = results.with_comment
+    results = results.page(@params[:page])
+    results = sort(results)
+    results
   end
 
-  def user_records
-    if @record_user.present?
-      base_records.where(user: @record_user)
-    else
-      base_records.none
+  def friend_comment_records
+    return Checkin.none if @user.blank?
+
+    results = all_records
+    results = results.with_comment
+    results = results.joins(:user).merge(@user.followings)
+    results = results.page(@params[:page])
+    results = sort(results)
+    results
+  end
+
+  def my_comment_records
+    return Checkin.none if @user.blank?
+
+    results = all_records
+    results = results.with_comment
+    results = results.where(user: @user)
+    results = results.page(@params[:page])
+    results = sort(results)
+    results
+  end
+
+  def selected_comment_records
+    return all_comment_records if @user.blank?
+
+    case @user.setting.display_option_record_list
+    when "all_comments" then all_comment_records
+    when "friend_comments" then friend_comment_records
+    when "my_comments" then my_comment_records
     end
   end
 
-  def current_user_records
-    if @current_user.present?
-      base_records.where(user: @current_user).order(created_at: :desc)
-    else
-      base_records.none
-    end
-  end
-
-  def records
-    results = base_records.where.not(id: record_ids)
-
-    if @current_user.present?
-      mute_user_ids = @current_user.mute_users.pluck(:muted_user_id)
-      results = results.where.not(user_id: mute_user_ids)
-    end
-
-    results.order(created_at: :desc)
+  def all_records
+    @episode.records.includes(user: :profile)
   end
 
   private
 
-  def base_records
-    @episode.records.includes(user: :profile)
-  end
+  def sort(results)
+    return results if @user.blank?
 
-  def record_ids
-    user_records.pluck(:id) | current_user_records.pluck(:id)
+    case @user.setting.records_sort_type
+    when "likes_count_desc"
+      results.order(likes_count: :desc)
+    when "rating_state_desc"
+      results.rating_state_order(:desc)
+    when "rating_state_asc"
+      results.rating_state_order(:asc)
+    when "created_at_desc"
+      results.order(created_at: :desc)
+    when "created_at_asc"
+      results.order(created_at: :asc)
+    end
   end
 end

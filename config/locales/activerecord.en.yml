@@ -123,6 +123,11 @@ en:
         episode_id: Episode
         rebroadcast: Rebroadcast
         started_at: Started at
+      pv:
+        sort_number: Sort Number
+        title: Title
+        thumbnail: Thumbnail
+        url: URL
       series:
         name_en: Name (en)
         name_ro: Name (ro)
@@ -221,6 +226,9 @@ en:
       program:
         one: Program
         other: Programs
+      pv:
+        one: PV
+        other: PVs
       series:
         one: Series
         other: Series

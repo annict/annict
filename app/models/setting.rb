@@ -13,6 +13,8 @@
 #  programs_sort_type            :string           default(NULL), not null
 #  display_option_work_list      :string           default("list"), not null
 #  display_option_user_work_list :string           default("list"), not null
+#  records_sort_type             :string           default(NULL), not null
+#  display_option_record_list    :string           default("all_comments"), not null
 #
 # Indexes
 #
@@ -28,6 +30,16 @@ class Setting < ApplicationRecord
     in: %i(started_at_asc started_at_desc),
     default: :started_at_desc
 
+  enumerize :records_sort_type,
+    in: %i(
+      likes_count_desc
+      rating_state_desc
+      rating_state_asc
+      created_at_desc
+      created_at_asc
+    ),
+    default: :created_at_desc
+
   enumerize :display_option_work_list,
     in: %i(list grid grid_small),
     default: :list
@@ -35,4 +47,12 @@ class Setting < ApplicationRecord
   enumerize :display_option_user_work_list,
     in: %i(list grid grid_small),
     default: :list
+
+  enumerize :display_option_record_list,
+    in: %i(
+      all_comments
+      friend_comments
+      my_comments
+    ),
+    default: :all_comments
 end

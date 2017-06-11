@@ -1,5 +1,5 @@
 script#t-rating-state-label type="x-template"
-  .c-rating-state-label.d-inline-block
+  span.c-rating-state-label
     span.badge :class="[stateClass]"
       template v-if='ratingState == "bad"'
         = icon "thumbs-o-down", class: "mr-zp25"
