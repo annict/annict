@@ -47,6 +47,7 @@ $(document).on "turbolinks:load", ->
   userHeatmap = require "./common/components/userHeatmap"
   usernamePreview = require "./common/components/usernamePreview"
   workFriends = require "./common/components/workFriends"
+  youtubeModalPlayer = require "./common/components/youtubeModalPlayer"
 
   searchForm = require "./pc/components/searchForm"
   imageAttachForm = require "./pc/components/imageAttachForm"
@@ -92,6 +93,7 @@ $(document).on "turbolinks:load", ->
   Vue.component("c-user-heatmap", userHeatmap)
   Vue.component("c-username-preview", usernamePreview)
   Vue.component("c-work-friends", workFriends)
+  Vue.component("c-youtube-modal-player", youtubeModalPlayer)
 
   Vue.directive("resource-select", resourceSelect)
 

@@ -14,6 +14,7 @@ module Db
 
     def new
       @pv = @work.pvs.new
+      @pv.sort_number = @work.pvs.count * 10
       authorize @pv, :new?
     end
 
@@ -42,7 +43,7 @@ module Db
       return render(:edit) unless @pv.valid?
       @pv.save_and_create_activity!
 
-      redirect_to edit_db_pv_path(@pv), notice: t("messages._common.updated")
+      redirect_to db_work_pvs_path(@pv.work), notice: t("messages._common.updated")
     end
 
     def hide
@@ -51,14 +52,14 @@ module Db
       @pv.hide!
 
       flash[:notice] = t("resources.pv.unpublished")
-      redirect_back fallback_location: db_pvs_path
+      redirect_back fallback_location: db_work_pvs_path(@pv.work)
     end
 
     def destroy
       @pv.destroy
 
       flash[:notice] = t("resources.pv.deleted")
-      redirect_back fallback_location: db_pvs_path
+      redirect_back fallback_location: db_work_pvs_path(@pv.work)
     end
 
     def activities

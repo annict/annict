@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 # == Schema Information
 #
 # Table name: pvs
@@ -57,13 +58,34 @@ class Pv < ApplicationRecord
     data.delete_if { |_, v| v.blank? }
   end
 
+  def youtube?
+    url.match?(%r{\A(https?\:\/\/)?(www\.youtube\.com|youtu\.?be)\/.+\z})
+  end
+
+  def youtube_video_id
+    return unless youtube?
+    params = Rack::Utils.parse_query(URI(url).query)
+    params["v"]
+  end
+
   private
 
   def attach_thumbnail
-    return unless url.match?(%r{\A(https?\:\/\/)?(www\.youtube\.com|youtu\.?be)\/.+\z})
+    return unless youtube?
 
-    params = Rack::Utils.parse_query(URI(url).query)
-    image_url = "http://i.ytimg.com/vi/#{params['v']}/maxresdefault.jpg"
+    image_url = ""
+
+    %w(
+      maxresdefault
+      sddefault
+      hqdefault
+      mqdefault
+      default
+    ).each do |size|
+      image_url = "http://i.ytimg.com/vi/#{youtube_video_id}/#{size}.jpg"
+      res = HTTParty.get(image_url)
+      break if res.code == 200
+    end
 
     self.thumbnail = URI.parse(image_url)
   end
