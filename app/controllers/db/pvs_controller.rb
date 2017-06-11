@@ -13,18 +13,18 @@ module Db
     end
 
     def new
-      @pv = @work.pvs.new
-      @pv.sort_number = @work.pvs.count * 10
-      authorize @pv, :new?
+      @form = DB::PvRowsForm.new
+      authorize @form, :new?
     end
 
-    def create(pv)
-      @pv = @work.pvs.new(pv)
-      @pv.user = current_user
-      authorize @pv, :create?
+    def create(db_pv_rows_form)
+      @form = DB::PvRowsForm.new(db_pv_rows_form.permit(:rows).to_h)
+      @form.user = current_user
+      @form.work = @work
+      authorize @form, :create?
 
-      return render(:new) unless @pv.valid?
-      @pv.save_and_create_activity!
+      return render(:new) unless @form.valid?
+      @form.save!
 
       redirect_to db_work_pvs_path(@work), notice: t("messages._common.created")
     end

@@ -17,6 +17,16 @@
   .row
     .col-6
       .c-card.p-1
-        = render "form", work: @work, pv: @pv
+        = form_for [:db, @form], url: db_work_pvs_path(@work) do |f|
+          = render "application/components/error_panel", resource: f.object
+
+          .form-group.row
+            = f.label :rows, class: "col-sm-3 col-form-label c-label-required"
+            .col-sm-9
+              = f.text_area :rows, class: "form-control", autofocus: true, required: true, rows: 30
+
+          .form-group.row
+            .offset-sm-3.col-sm-9
+              = f.submit t("helpers.submit.create"), class: "btn btn-primary"
     .col-6
-      = render "sidebar"
+      = render "sidebar_new"
