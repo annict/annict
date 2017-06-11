@@ -47,7 +47,7 @@ class EpisodesController < ApplicationController
     @all_records = service.all_records
     @all_comment_records = service.all_comment_records
     @friend_comment_records = service.friend_comment_records
-    @my_comment_records = service.my_comment_records
+    @my_records = service.my_records
     @selected_comment_records = service.selected_comment_records
 
     data = {

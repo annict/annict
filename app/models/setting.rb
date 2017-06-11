@@ -52,7 +52,7 @@ class Setting < ApplicationRecord
     in: %i(
       all_comments
       friend_comments
-      my_comments
+      my_records
     ),
     default: :all_comments
 end

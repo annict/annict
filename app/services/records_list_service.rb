@@ -26,11 +26,10 @@ class RecordsListService
     results
   end
 
-  def my_comment_records
+  def my_records
     return Checkin.none if @user.blank?
 
     results = all_records
-    results = results.with_comment
     results = results.where(user: @user)
     results = results.page(@params[:page])
     results = sort(results)
@@ -43,7 +42,7 @@ class RecordsListService
     case @user.setting.display_option_record_list
     when "all_comments" then all_comment_records
     when "friend_comments" then friend_comment_records
-    when "my_comments" then my_comment_records
+    when "my_records" then my_records
     end
   end
 
