@@ -13,6 +13,7 @@ class RecordsController < ApplicationController
     @episode = @record.episode
     @comments = @record.comments.order(created_at: :desc)
     @comment = Comment.new
+    @is_spoiler = user_signed_in? && current_user.hide_checkin_comment?(@episode)
   end
 
   def create(checkin)
