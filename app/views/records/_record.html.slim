@@ -15,7 +15,7 @@
                   = icon "pencil"
               = link_to record_path(record.user.username, record), class: "small text-muted", title: local_datetime(record.created_at) do
                 = local_time_ago_in_words(record.created_at)
-        c-comment-guard inline-template="" :init-is-spoiler="#{is_spoiler}"
+        c-comment-guard inline-template="" :init-is-spoiler="#{is_spoiler == true}"
           .c-record__content
             - if record.rating.present?
               c-rating-label :init-rating="#{record.rating}" v-show="!isSpoiler"
