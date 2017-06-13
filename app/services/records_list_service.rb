@@ -47,7 +47,9 @@ class RecordsListService
   end
 
   def all_records
-    @episode.records.includes(user: :profile)
+    records = @episode.records.includes(user: :profile)
+    records = records.where.not(user_id: @user.mute_users.pluck(:muted_user_id)) if @user.present?
+    records
   end
 
   private
