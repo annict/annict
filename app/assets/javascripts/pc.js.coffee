@@ -16,10 +16,11 @@ Cookies = require "js-cookie"
 
 require "moment/locale/ja"
 
-$(document).on "turbolinks:load", ->
+document.addEventListener "turbolinks:load", (event) ->
   vueLazyLoad = require "./common/vueLazyLoad"
 
   activities = require "./common/components/activities"
+  analytics = require "./common/components/analytics"
   body = require "./common/components/body"
   channelReceiveButton = require "./common/components/channelReceiveButton"
   channelSelector = require "./common/components/channelSelector"
@@ -63,6 +64,7 @@ $(document).on "turbolinks:load", ->
   Vue.use(VueLazyload)
 
   Vue.component("c-activities", activities)
+  Vue.component("c-analytics", analytics(event))
   Vue.component("c-body", body)
   Vue.component("c-channel-receive-button", channelReceiveButton)
   Vue.component("c-channel-selector", channelSelector)
