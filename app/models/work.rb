@@ -244,6 +244,10 @@ class Work < ApplicationRecord
       episodes.first.title == title
   end
 
+  def duration
+    30
+  end
+
   def to_diffable_hash
     data = self.class::DIFF_FIELDS.each_with_object({}) do |field, hash|
       hash[field] = case field

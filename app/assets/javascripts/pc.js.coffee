@@ -26,6 +26,7 @@ document.addEventListener "turbolinks:load", (event) ->
   channelSelector = require "./common/components/channelSelector"
   commentGuard = require "./common/components/commentGuard"
   episodeList = require "./common/components/episodeList"
+  episodeProgress = require "./common/components/episodeProgress"
   episodeRatingStateChart = require "./common/components/episodeRatingStateChart"
   episodeRecordsChart = require "./common/components/episodeRecordsChart"
   favoriteButton = require "./common/components/favoriteButton"
@@ -71,6 +72,7 @@ document.addEventListener "turbolinks:load", (event) ->
   Vue.component("c-channel-selector", channelSelector)
   Vue.component("c-comment-guard", commentGuard)
   Vue.component("c-episode-list", episodeList)
+  Vue.component("c-episode-progress", episodeProgress)
   Vue.component("c-episode-rating-state-chart", episodeRatingStateChart)
   Vue.component("c-episode-records-chart", episodeRecordsChart)
   Vue.component("c-favorite-button", favoriteButton)

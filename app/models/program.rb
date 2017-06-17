@@ -79,6 +79,19 @@ class Program < ApplicationRecord
     data.delete_if { |_, v| v.blank? }
   end
 
+  def state
+    now = Time.now.in_time_zone("Asia/Tokyo")
+    start = started_at.in_time_zone("Asia/Tokyo")
+
+    if now > start
+      return :broadcasting if now.between?(start, start + work.duration.minutes)
+      return :broadcasted
+    else
+      return :tonight if start.between?(now, now.beginning_of_day + 1.day + 5.hours)
+      return :unbroadcast
+    end
+  end
+
   private
 
   def expire_cache

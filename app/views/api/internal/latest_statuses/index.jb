@@ -3,7 +3,7 @@
 json = {}
 
 json[:latest_statuses] = @latest_statuses.map do |latest_status|
-  render "api/internal/latest_statuses/latest_status", latest_status: latest_status
+  render "api/internal/latest_statuses/latest_status", latest_status: latest_status, user: @user
 end
 
 json[:user] = {

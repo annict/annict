@@ -19,6 +19,8 @@ ja:
     basic_info: 基本情報
     before: Before
     bio: プロフィール
+    broadcasting: 放送中
+    broadcasted: 放送終了
     bulk_tracking: 一括記録...
     cancel: キャンセル
     casts: キャスト
@@ -81,6 +83,7 @@ ja:
     programs: 放送予定
     pv: PV
     rating: 評価
+    rebroadcast: 再放送
     records_count: 記録数
     related_works: 関連作品
     release_on: リリース日
@@ -107,6 +110,8 @@ ja:
     syobocal: しょぼかる
     terms_of_use: 利用規約
     title: タイトル
+    tonight: 今夜
+    unbroadcast: 未放送
     unknown_season: 公開日不明
     users_count: "%{count}人"
     voice_actor: 声優

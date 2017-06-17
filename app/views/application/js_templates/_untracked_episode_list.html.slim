@@ -12,9 +12,19 @@ script#t-untracked-episode-list type="x-template"
                 .col
                   a.small :href='"/works/" + status.work.id'
                     | {{ status.work.title }}
-                  a.d-block :href='"/works/" + status.work.id + "/episodes/" + status.next_episode.id'
+                  a.d-block.mb-zp25 :href='"/works/" + status.work.id + "/episodes/" + status.next_episode.id'
                     | {{ status.next_episode.number }}
                     span.ml-zp5 v-if="status.next_episode.title" {{ status.next_episode.title }}
+                  .small.mb-zp25 v-if="status.program"
+                    span.badge.badge-info.mr-zp25
+                      | {{ status.program.channel.name }}
+                    span.badge.badge-success :class='{ "mr-zp5": !status.program.rebroadcast, "mr-zp25": status.program.rebroadcast }'
+                      | {{ status.program.state_text }}
+                    span.badge.badge-default.mr-zp5 v-if="status.program.rebroadcast"
+                      = t "noun.rebroadcast"
+                    span.mr-zp5
+                      | {{ status.program.started_at }}
+                  c-episode-progress :episodes-count="status.work.episodes_count" :watched-episodes-count="status.work.watched_episodes_count"
             .col.col-auto.text-right
               .small.u-fake-link @click="skipEpisode(status)"
                 = icon "forward", class: "mr-zp25"
@@ -49,6 +59,7 @@ script#t-untracked-episode-list type="x-template"
       .c-loading__core Loading...
 
 - content_for :js_templates do
+  = render "application/js_templates/episode_progress"
   = render "application/js_templates/record_rating"
   = render "application/js_templates/record_textarea"
   = render "application/js_templates/record_word_count"

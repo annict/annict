@@ -1,20 +1,38 @@
 # frozen_string_literal: true
 
+work = latest_status.work
+episodes_count = work.episodes.published.count
+episode = latest_status.next_episode
+program = user.episodes.program(episode)
+
 json = {
   id: latest_status.id,
   work: {
-    id: latest_status.work.id,
-    title: latest_status.work.title,
-    image_url: ann_image_url(latest_status.work.work_image, :attachment, size: "125x125")
+    id: work.id,
+    title: work.title,
+    image_url: ann_image_url(work.work_image, :attachment, size: "125x125"),
+    episodes_count: episodes_count,
+    watched_episodes_count: episodes_count - user.episodes.unwatched(work).count
   }
 }
 
-return json if latest_status.next_episode.blank?
+return json if episode.blank?
 
 json[:next_episode] = {
-  id: latest_status.next_episode.id,
-  number: latest_status.next_episode.number,
-  title: latest_status.next_episode.title
+  id: episode.id,
+  number: episode.number,
+  title: episode.title
 }
+
+if program.present?
+  json[:program] = {
+    rebroadcast: program.rebroadcast,
+    started_at: program.started_at.in_time_zone("Asia/Tokyo").strftime("%Y-%m-%d %H:%M"),
+    channel: {
+      name: program.channel.name
+    },
+    state_text: program.decorate.state_text
+  }
+end
 
 json
