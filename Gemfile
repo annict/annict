@@ -57,6 +57,7 @@ gem "koala"
 gem "meta-tags"
 gem "mini_magick"
 gem "mjml-rails"
+gem "moji"
 gem "nokogiri"
 gem "omniauth-facebook"
 # 1.4系だとFacebookのOAuth周りでおかしくなるので1.3系を使う
