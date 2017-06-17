@@ -7,7 +7,11 @@ if Rails.env.development?
         # https://github.com/imgix/imgix-rails が提供する `ix_image_url` メソッドを上書きする
         # 開発環境ではDmmyixを利用して画像のリサイズを行う
         def ix_image_url(source, options = {})
-          "/dmmyix#{source}?#{options.to_query}"
+          if ::Rails.root.join("tmp/caching-dev.txt").exist?
+            "http://via.placeholder.com/350x150"
+          else
+            "/dmmyix#{source}?#{options.to_query}"
+          end
         end
       end
     end
