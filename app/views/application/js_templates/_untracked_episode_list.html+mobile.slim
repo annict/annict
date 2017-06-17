@@ -10,9 +10,16 @@ script#t-untracked-episode-list type="x-template"
             .col
               a.small :href='"/works/" + status.work.id'
                 | {{ status.work.title }}
-              a.d-block :href='"/works/" + status.work.id + "/episodes/" + status.next_episode.id'
+              a.d-block.mb-zp25 :href='"/works/" + status.work.id + "/episodes/" + status.next_episode.id'
                 | {{ status.next_episode.number }}
                 span.ml-zp5 v-if="status.next_episode.title" {{ status.next_episode.title }}
+              .small.mb-zp25 v-if="status.program"
+                span.badge.badge-info.mr-zp5
+                  | {{ status.program.channel.name }}
+                span.mr-zp5
+                  | {{ status.program.started_at }}
+                span.badge.badge-default v-if="status.program.rebroadcast"
+                  = t "noun.rebroadcast"
               .text-right.small.u-fake-link @click="skipEpisode(status)"
                 = icon "forward", class: "mr-zp25"
                 = t "noun.skip"
