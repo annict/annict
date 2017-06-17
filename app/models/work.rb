@@ -36,10 +36,12 @@
 #  recommended_image_url :string           default(""), not null
 #  season_year           :integer
 #  season_name           :integer
+#  key_pv_id             :integer
 #
 # Indexes
 #
 #  index_works_on_aasm_state                   (aasm_state)
+#  index_works_on_key_pv_id                    (key_pv_id)
 #  index_works_on_number_format_id             (number_format_id)
 #  index_works_on_season_year                  (season_year)
 #  index_works_on_season_year_and_season_name  (season_year,season_name)
@@ -100,6 +102,7 @@ class Work < ApplicationRecord
     source: :resource,
     source_type: "Organization"
   has_many :programs, dependent: :destroy
+  has_many :pvs, dependent: :destroy
   has_many :series_works, dependent: :destroy
   has_many :series_list, through: :series_works, source: :series
   has_many :statuses, dependent: :destroy

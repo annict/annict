@@ -5,7 +5,8 @@ base_options = {
   hash_secret: ENV.fetch("ANNICT_PAPERCLIP_RANDOM_SECRET"),
   path: ENV.fetch("ANNICT_PAPERCLIP_PATH"),
   styles: { master: ["1000x1000\>", :jpg] },
-  url: ENV.fetch("ANNICT_PAPERCLIP_URL")
+  url: ENV.fetch("ANNICT_PAPERCLIP_URL"),
+  default_url: "/paperclip/default/:style/no-image.jpg"
 }
 
 options = if Rails.env.production?

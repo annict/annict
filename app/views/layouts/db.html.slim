@@ -31,9 +31,9 @@ html lang="#{I18n.locale}"
       .l-main.h-100
         c-flash
         = yield
+      = render "application/analytics"
 
     = include_gon
-    = render "application/analytics"
 
     = render "application/js_templates/flash"
     = yield :js_templates

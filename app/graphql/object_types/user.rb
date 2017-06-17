@@ -82,6 +82,12 @@ ObjectTypes::User = GraphQL::ObjectType.define do
     }
   end
 
+  field :backgroundImageUrl, types.String do
+    resolve ->(obj, _args, _ctx) {
+      ann_api_assets_background_image_url(obj.profile, :tombo_background_image)
+    }
+  end
+
   field :recordsCount, !types.Int do
     resolve ->(obj, _args, _ctx) {
       obj.checkins_count

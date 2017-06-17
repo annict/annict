@@ -17,49 +17,59 @@
         = link_to @episode.decorate.title_with_number, work_episode_path(@work, @episode), class: "u-text-body"
       - if user_signed_in? && current_user.tracked?(@episode)
         .text-center.small
-          = icon "check", class: "mr-zp25"
+          = icon "check-circle", class: "mr-zp25 u-text-green"
           = t "messages.episodes.watched_x_times", records_count: current_user.checkins_count_in(@episode)
       .container.mt-1
         .row
           .col.text-center.u-lh-sm
-            = @records.count + @current_user_records.count
+            = @episode.score.round(1)
+            .small
+              | Score
+          .col.text-center.u-lh-sm
+            = @all_records.count
             .small
               | Records
           .col.text-center.u-lh-sm
-            = @records.with_comment.count + @current_user_records.with_comment.count
+            = @all_records.with_comment.count
             .small
               | Comments
     - if @episode.next_episode.present?
       = link_to work_episode_path(@work, @episode.next_episode), class: "p-episode-title-header__next h3 text-center mb-0" do
         = icon "angle-right"
 
-.c-card.mb-2.pb-1
+.c-card.mb-2.py-1
   - if user_signed_in?
-    .container.pt-zp5
+    .container
       = render "records/form", record: @record
     hr
   .container
-    - if @user_records.present?
-      - if (user_signed_in? && current_user != @record_user) || !user_signed_in?
-        h2 = t "messages.records.show.record_by_name", name: @record_user.profile.name
-        .c-record-list
-          - @user_records.each do |record|
-            = render "records/record", record: record
-        hr
-    - if @current_user_records.present?
-      h2.h4.text-center.font-weight-bold.my-1
-        = t "messages.episodes.your_records"
+    - if user_signed_in?
+      .text-center.mb-1
+        .btn-group.btn-group-sm
+          = active_link_to switch_episode_records_path(@episode, to: :all_comments), class: "btn", class_active: "btn-primary", class_inactive: "btn-secondary", active: (user_signed_in? ? current_user.setting.display_option_record_list.all_comments? : false ), data: { method: :post } do
+            .u-very-small
+              = t "noun.all_comments"
+              span.ml-zp25 = "(#{@all_comment_records.total_count})"
+          = active_link_to switch_episode_records_path(@episode, to: :friend_comments), class: "btn", class_active: "btn-primary", class_inactive: "btn-secondary", active: (user_signed_in? ? current_user.setting.display_option_record_list.friend_comments? : false ), data: { method: :post } do
+            .u-very-small
+              = t "noun.friend_comments"
+              span.ml-zp25 = "(#{@friend_comment_records.blank? ? 0 : @friend_comment_records.total_count})"
+          = active_link_to switch_episode_records_path(@episode, to: :my_records), class: "btn", class_active: "btn-primary", class_inactive: "btn-secondary", active: (user_signed_in? ? current_user.setting.display_option_record_list.my_records? : false ), data: { method: :post } do
+            .u-very-small
+              = t "noun.my_records"
+              span.ml-zp25 = "(#{@my_records.blank? ? 0 : @my_records.total_count})"
+    - if @selected_comment_records.present?
+      - if user_signed_in?
+        .text-right.mb-1
+          c-record-sorter current-url="#{request.url}"
       .c-record-list
-        - @current_user_records.each do |record|
-          = render "records/record", record: record
-      hr
-    - if @records.with_comment.present?
-      h2.h4.text-center.font-weight-bold.my-1 = (@user_records.present? || @current_user_records.present?) ? t("messages.episodes.comments_by_others") : t("messages.episodes.comments")
-      .c-record-list
-        - @records.with_comment.each do |record|
-          = render "records/record", record: record
+        - @selected_comment_records.each do |record|
+          = render "records/record", record: record, is_spoiler: @is_spoiler
+      - if @selected_comment_records.total_pages > 1
+        .mt-2.text-center
+          = paginate @selected_comment_records
     - else
-      = render "application/components/empty", text: t("messages.episodes.show.no_records")
+      = render "application/components/empty", text: t("messages.episodes.no_comments")
 
 = render "application/components/footer"
 = render "application/components/tabbar"
@@ -69,3 +79,4 @@
   = render "application/js_templates/mute_user_button"
   = render "application/js_templates/status_selector"
   = render "application/js_templates/rating_state_label"
+  = render "application/js_templates/record_sorter"

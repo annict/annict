@@ -15,24 +15,13 @@
       .col-9
         = render "works/subnav", work: @work
         .c-card.container.py-1.my-1
-          .row.align-items-center
-            .col-8
-              h2
-                = link_to @episode.decorate.title_with_number, work_episode_path(@work, @episode), class: "u-text-body"
-              - if user_signed_in? && current_user.tracked?(@episode)
-                .small
-                  = icon "check", class: "mr-zp25"
-                  = t "messages.episodes.watched_x_times", records_count: current_user.checkins_count_in(@episode)
-            .col-4
-              .row
-                .col.text-center
-                  = @records.count + @current_user_records.count
-                  .small
-                    | Records
-                .col.text-center
-                  = @records.with_comment.count + @current_user_records.with_comment.count
-                  .small
-                    | Comments
+          .mb-1
+            h2
+              = link_to @episode.decorate.title_with_number, work_episode_path(@work, @episode), class: "u-text-body"
+            - if user_signed_in? && current_user.tracked?(@episode)
+              .small
+                = icon "check-circle", class: "mr-zp25 u-text-green"
+                = t "messages.episodes.watched_x_times", records_count: current_user.checkins_count_in(@episode)
           - if @episode.prev_episode.present? || @episode.next_episode.present?
             .row.mt-1
               .col
@@ -45,40 +34,74 @@
                   = link_to work_episode_path(@work, @episode.next_episode) do
                     = @episode.next_episode.decorate.local_number
                     = icon "angle-right", class: "ml-zp25"
-
-        .c-card.py-1
-          - if user_signed_in?
-            .container
-              = render "records/form", record: @record
-              hr
-          .container
-            - if @user_records.present?
-              - if (user_signed_in? && current_user != @record_user) || !user_signed_in?
-                h2 = t "messages.records.show.record_by_name", name: @record_user.profile.name
-                .c-record-list
-                  - @user_records.each do |record|
-                    = render "records/record", record: record
-                hr
-            - if @current_user_records.present?
-              h2.h4.text-center.font-weight-bold.my-1
-                = t "messages.episodes.your_records"
-              .c-record-list
-                - @current_user_records.each do |record|
-                  = render "records/record", record: record
-              hr
-            - if @records.with_comment.present?
-              h2.h4.text-center.font-weight-bold.my-1
-                = (@user_records.present? || @current_user_records.present?) ? t("messages.episodes.comments_by_others") : t("messages.episodes.comments")
-              .c-record-list
-                - @records.with_comment.each do |record|
-                  = render "records/record", record: record
-            - else
-              = render "application/components/empty", text: t("messages.episodes.no_comments")
+        .row
+          .col-9.pr-0
+            .c-card.py-1
+              - if user_signed_in?
+                .container
+                  = render "records/form", record: @record
+                  hr
+              .container
+                - if user_signed_in?
+                  .text-center.mb-1
+                    .btn-group.btn-group-sm
+                      = active_link_to switch_episode_records_path(@episode, to: :all_comments), class: "btn", class_active: "btn-primary", class_inactive: "btn-secondary", active: (user_signed_in? ? current_user.setting.display_option_record_list.all_comments? : false ), data: { method: :post } do
+                        = t "noun.all_comments"
+                        span.ml-zp25 = "(#{@all_comment_records.total_count})"
+                      = active_link_to switch_episode_records_path(@episode, to: :friend_comments), class: "btn", class_active: "btn-primary", class_inactive: "btn-secondary", active: (user_signed_in? ? current_user.setting.display_option_record_list.friend_comments? : false ), data: { method: :post } do
+                        = t "noun.friend_comments"
+                        span.ml-zp25 = "(#{@friend_comment_records.blank? ? 0 : @friend_comment_records.total_count})"
+                      = active_link_to switch_episode_records_path(@episode, to: :my_records), class: "btn", class_active: "btn-primary", class_inactive: "btn-secondary", active: (user_signed_in? ? current_user.setting.display_option_record_list.my_records? : false ), data: { method: :post } do
+                        = t "noun.my_records"
+                        span.ml-zp25 = "(#{@my_records.blank? ? 0 : @my_records.total_count})"
+                - if @selected_comment_records.present?
+                  - if user_signed_in?
+                    .text-right.mb-1
+                      c-record-sorter current-url="#{request.url}"
+                  .c-record-list
+                    - @selected_comment_records.each do |record|
+                      = render "records/record", record: record, is_spoiler: @is_spoiler
+                  - if @selected_comment_records.total_pages > 1
+                    .mt-2.text-center
+                      = paginate @selected_comment_records
+                - else
+                  = render "application/components/empty", text: t("messages.episodes.no_comments")
+          .col-3.pl-0
+            .mb-2
+              .small.font-weight-bold.mb-zp5.text-center
+                = t "noun.stats"
+              .row.align-items-center
+                .col.text-right
+                  .small.text-muted
+                    | Score
+                .col
+                  .h3 = @episode.score.round(1)
+              .row.align-items-center
+                .col.text-right
+                  .small.text-muted
+                    | Records
+                .col
+                  .h3 = @all_records.count
+              .row.align-items-center
+                .col.text-right
+                  .small.text-muted
+                    | Comments
+                .col
+                  .h3 = @all_records.with_comment.count
+            .mb-1.text-center
+              .small.font-weight-bold
+                = t "noun.rating"
+              c-episode-rating-state-chart init-dataset="#{@episode.rating_state_chart_dataset}"
+            .text-center
+              .small.font-weight-bold
+                = t "noun.records_count"
+              c-episode-records-chart init-dataset="#{@episode.records_chart_dataset}"
 
 = render "application/components/footer"
 
 - content_for :js_templates do
   = render "application/js_templates/like_button"
   = render "application/js_templates/mute_user_button"
-  = render "application/js_templates/status_selector"
   = render "application/js_templates/rating_state_label"
+  = render "application/js_templates/record_sorter"
+  = render "application/js_templates/status_selector"

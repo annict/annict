@@ -7,16 +7,18 @@ ObjectTypes::WorkImage = GraphQL::ObjectType.define do
 
   global_id_field :id
 
-  field :annictId, !types.Int do
+  field :annictId, types.Int do
     resolve ->(objs, _args, _ctx) {
       obj = objs.first
+      return nil if obj.blank?
       obj.id
     }
   end
 
-  field :work, !ObjectTypes::Work do
+  field :work, ObjectTypes::Work do
     resolve ->(objs, _args, _ctx) {
       obj = objs.first
+      return nil if obj.blank?
       RecordLoader.for(Work).load(obj.work_id)
     }
   end
@@ -27,6 +29,7 @@ ObjectTypes::WorkImage = GraphQL::ObjectType.define do
     resolve ->(objs, args, ctx) {
       return nil unless ctx[:doorkeeper_token].owner.role.admin?
       obj = objs.first
+      return "" if obj.blank?
       ann_image_url obj, :attachment, size: args[:size]
     }
   end
@@ -34,6 +37,7 @@ ObjectTypes::WorkImage = GraphQL::ObjectType.define do
   field :facebookOgImageUrl, types.String do
     resolve ->(objs, _args, _ctx) {
       obj = objs.first
+      return "" if obj.blank?
       obj.work.facebook_og_image_url
     }
   end
@@ -41,6 +45,7 @@ ObjectTypes::WorkImage = GraphQL::ObjectType.define do
   field :twitterAvatarUrl, types.String do
     resolve ->(objs, _args, _ctx) {
       obj = objs.first
+      return "" if obj.blank?
       obj.work.twitter_avatar_url
     }
   end
@@ -48,6 +53,7 @@ ObjectTypes::WorkImage = GraphQL::ObjectType.define do
     field "twitter#{size.capitalize}AvatarUrl".to_sym, types.String do
       resolve ->(objs, _args, _ctx) {
         obj = objs.first
+        return "" if obj.blank?
         obj.work.twitter_avatar_url(size)
       }
     end
@@ -56,6 +62,7 @@ ObjectTypes::WorkImage = GraphQL::ObjectType.define do
   field :recommendedImageUrl, types.String do
     resolve ->(objs, _args, _ctx) {
       obj = objs.first
+      return "" if obj.blank?
       obj.work.recommended_image_url
     }
   end
