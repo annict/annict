@@ -75,6 +75,19 @@ h2.h4.font-weight-bold.text-center.mt-1.mb-2
         dd.col-6
           = @work.decorate.twitter_hashtag_link
 
+- if @work.decorate.local_synopsis.present?
+  .mb-1
+    h2.h4.font-weight-bold.text-center.mt-1.mb-2
+      = t "activerecord.attributes.work.synopsis"
+    .c-card.py-1
+      .container
+        = @work.decorate.local_synopsis
+        .text-right.u-very-small
+          span.mr-zp25
+            = t("noun.source")
+            | :
+          = @work.decorate.local_synopsis_source
+
 - if @work.pvs.published.present?
   .mb-1
     h2.h4.font-weight-bold.text-center.mt-1.mb-2
@@ -93,19 +106,6 @@ h2.h4.font-weight-bold.text-center.mt-1.mb-2
                     = icon "play-circle-o"
                   .small
                     = pv.title
-
-- if @work.decorate.local_synopsis.present?
-  .mb-1
-    h2.h4.font-weight-bold.text-center.mt-1.mb-2
-      = t "activerecord.attributes.work.synopsis"
-    .c-card.py-1
-      .container
-        = @work.decorate.local_synopsis
-        .text-right.u-very-small
-          span.mr-zp25
-            = t("noun.source")
-            | :
-          = @work.decorate.local_synopsis_source
 
 .mb-1
   h2.h4.text-center.font-weight-bold.mt-1.mb-2

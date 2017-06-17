@@ -37,7 +37,7 @@
             - if work.pvs.published.present?
               .font-weight-bold.mb-zp25
                 = t "noun.pv"
-              .row.mb-1
+              .row
                 - work.pvs.published.order(:sort_number).each do |pv|
                   .col-4.text-center.mb-1
                     - if pv.youtube?
