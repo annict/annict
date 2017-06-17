@@ -3,7 +3,6 @@
 work = latest_status.work
 episodes_count = work.episodes.published.count
 episode = latest_status.next_episode
-program = user.episodes.program(episode)
 
 json = {
   id: latest_status.id,
@@ -23,6 +22,8 @@ json[:next_episode] = {
   number: episode.number,
   title: episode.title
 }
+
+program = user.episodes.program(episode)
 
 if program.present?
   json[:program] = {
