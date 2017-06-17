@@ -17,7 +17,7 @@
     "mousetrap": "1.6.1",
     "tether": "1.4.0",
     "turbolinks": "5.0.3",
-    "vue": "2.3.2",
+    "vue": "2.3.4",
     "vue-lazyload": "^1.0.0-rc12"
   },
   "engines": {
