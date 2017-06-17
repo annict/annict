@@ -18,6 +18,16 @@
       .col-9
         = render "subnav", work: @work
 
+        - if @work.decorate.local_synopsis.present?
+          h2.h4.text-center.my-2.font-weight-bold = t "activerecord.attributes.work.synopsis"
+          .c-card.mt-1.p-1
+            = @work.decorate.local_synopsis
+            .text-right.small
+              span.mr-zp25
+                = t("noun.source")
+                | :
+              = @work.decorate.local_synopsis_source
+
         - if @work.pvs.published.present?
           h2.h4.text-center.my-2.font-weight-bold
             = t "noun.pv"
@@ -34,16 +44,6 @@
                         = icon "play-circle-o"
                       .small
                         = pv.title
-
-        - if @work.decorate.local_synopsis.present?
-          h2.h4.text-center.my-2.font-weight-bold = t "activerecord.attributes.work.synopsis"
-          .c-card.mt-1.p-1
-            = @work.decorate.local_synopsis
-            .text-right.small
-              span.mr-zp25
-                = t("noun.source")
-                | :
-              = @work.decorate.local_synopsis_source
 
         h2.h4.text-center.my-2.font-weight-bold = t "noun.characters"
         .c-card.container.mt-1.py-1

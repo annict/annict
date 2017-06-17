@@ -26,6 +26,7 @@ document.addEventListener "turbolinks:load", (event) ->
   flash = require "./common/components/flash"
   followButton = require "./common/components/followButton"
   likeButton = require "./common/components/likeButton"
+  omittedSynopsis = require "./common/components/omittedSynopsis"
   muteUserButton = require "./common/components/muteUserButton"
   programList = require "./common/components/programList"
   ratingLabel = require "./common/components/ratingLabel"
@@ -64,6 +65,7 @@ document.addEventListener "turbolinks:load", (event) ->
   Vue.component("c-flash", flash)
   Vue.component("c-follow-button", followButton)
   Vue.component("c-like-button", likeButton)
+  Vue.component("c-omitted-synopsis", omittedSynopsis)
   Vue.component("c-mute-user-button", muteUserButton)
   Vue.component("c-program-list", programList)
   Vue.component("c-rating-label", ratingLabel)

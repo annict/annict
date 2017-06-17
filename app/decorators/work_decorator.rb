@@ -48,7 +48,7 @@ class WorkDecorator < ApplicationDecorator
     title
   end
 
-  def local_synopsis
+  def local_synopsis(raw: false)
     text = case I18n.locale
     when :ja then synopsis
     when :en then synopsis_en
@@ -56,7 +56,7 @@ class WorkDecorator < ApplicationDecorator
 
     return if text.blank?
 
-    h.simple_format(text)
+    raw ? text : h.simple_format(text)
   end
 
   def local_synopsis_source
