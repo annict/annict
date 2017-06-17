@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170604123700) do
+ActiveRecord::Schema.define(version: 20170617163408) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -854,7 +854,7 @@ ActiveRecord::Schema.define(version: 20170604123700) do
     t.string "programs_sort_type", default: "", null: false
     t.string "display_option_work_list", default: "list", null: false
     t.string "display_option_user_work_list", default: "list", null: false
-    t.string "records_sort_type", default: "", null: false
+    t.string "records_sort_type", default: "created_at_desc", null: false
     t.string "display_option_record_list", default: "all_comments", null: false
     t.index ["user_id"], name: "index_settings_on_user_id"
   end
@@ -1017,7 +1017,7 @@ ActiveRecord::Schema.define(version: 20170604123700) do
     t.integer "media", null: false
     t.string "official_site_url", limit: 510, default: "", null: false
     t.string "wikipedia_url", limit: 510, default: "", null: false
-    t.integer "episodes_count", default: 0, null: false
+    t.integer "auto_episodes_count", default: 0, null: false
     t.integer "watchers_count", default: 0, null: false
     t.date "released_at"
     t.datetime "created_at"
@@ -1043,6 +1043,7 @@ ActiveRecord::Schema.define(version: 20170604123700) do
     t.integer "season_year"
     t.integer "season_name"
     t.integer "key_pv_id"
+    t.integer "manual_episodes_count"
     t.index ["aasm_state"], name: "index_works_on_aasm_state"
     t.index ["key_pv_id"], name: "index_works_on_key_pv_id"
     t.index ["number_format_id"], name: "index_works_on_number_format_id"

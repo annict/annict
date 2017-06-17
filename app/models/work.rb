@@ -1,5 +1,4 @@
 # frozen_string_literal: true
-
 # == Schema Information
 #
 # Table name: works
@@ -11,7 +10,7 @@
 #  media                 :integer          not null
 #  official_site_url     :string(510)      default(""), not null
 #  wikipedia_url         :string(510)      default(""), not null
-#  episodes_count        :integer          default(0), not null
+#  auto_episodes_count   :integer          default(0), not null
 #  watchers_count        :integer          default(0), not null
 #  released_at           :date
 #  created_at            :datetime
@@ -37,6 +36,7 @@
 #  season_year           :integer
 #  season_name           :integer
 #  key_pv_id             :integer
+#  manual_episodes_count :integer
 #
 # Indexes
 #
@@ -59,7 +59,7 @@ class Work < ApplicationRecord
     sc_tid title title_kana title_en title_ro media official_site_url
     official_site_url_en wikipedia_url wikipedia_url_en twitter_username
     twitter_hashtag number_format_id synopsis synopsis_en synopsis_source
-    synopsis_source_en mal_anime_id season_year season_name
+    synopsis_source_en mal_anime_id season_year season_name manual_episodes_count
   ).freeze
 
   enumerize :media, in: { tv: 1, ova: 2, movie: 3, web: 4, other: 0 }
@@ -246,6 +246,10 @@ class Work < ApplicationRecord
 
   def duration
     30
+  end
+
+  def episodes_count
+    manual_episodes_count.presence || auto_episodes_count
   end
 
   def to_diffable_hash

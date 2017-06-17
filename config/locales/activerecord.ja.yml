@@ -164,6 +164,7 @@ ja:
         username: ユーザ名
       work:
         mal_anime_id: MAL Anime ID
+        manual_episodes_count: 話数
         media: メディア
         number_format_id: 話数フォーマット
         official_site_url_en: 公式サイト (英)

@@ -21,7 +21,7 @@ module Db
 
     def resourceless(page: nil, name: "episode")
       @works = case name
-      when "episode" then Work.where(episodes_count: 0)
+      when "episode" then Work.where(auto_episodes_count: 0)
       when "item" then Work.image_not_attached
       end
       @works = @works.order(watchers_count: :desc).page(page)

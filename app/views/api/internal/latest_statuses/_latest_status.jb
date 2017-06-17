@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 
 work = latest_status.work
-episodes_count = work.episodes.published.count
 episode = latest_status.next_episode
 
 json = {
@@ -10,8 +9,8 @@ json = {
     id: work.id,
     title: work.title,
     image_url: ann_image_url(work.work_image, :attachment, size: "125x125"),
-    episodes_count: episodes_count,
-    watched_episodes_count: episodes_count - user.episodes.unwatched(work).count
+    episodes_count: work.episodes_count,
+    watched_episodes_count: user.episodes.watched(work).count
   }
 }
 

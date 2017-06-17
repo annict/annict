@@ -49,11 +49,13 @@ class Episode < ApplicationRecord
     end
   end
 
+  counter_culture :work, column_name: proc { |model| model.published? ? "auto_episodes_count" : nil }
+
   belongs_to :prev_episode,
     class_name: "Episode",
     foreign_key: :prev_episode_id,
     optional: true
-  belongs_to :work, counter_cache: true
+  belongs_to :work
   has_many :activities, dependent: :destroy, as: :recipient
   has_many :records, dependent: :destroy, class_name: "Checkin"
   has_many :db_activities, as: :trackable, dependent: :destroy
@@ -70,18 +72,6 @@ class Episode < ApplicationRecord
   before_destroy :unset_prev_episode_id
   after_save :expire_cache
   after_destroy :expire_cache
-
-  def self.create_from_multiple_episodes(work, multiple_episodes)
-    episodes_count = work.episodes.count
-    multiple_episodes.each do |episode|
-      episodes_count += 1
-      work.episodes.create do |e|
-        e.number = episode[:number]
-        e.sort_number = episodes_count * 10
-        e.title = episode[:title]
-      end
-    end
-  end
 
   def next_episode
     work.episodes.find_by(prev_episode: self)

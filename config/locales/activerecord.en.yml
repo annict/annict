@@ -165,6 +165,7 @@ en:
         username: Username
       work:
         mal_anime_id: MAL Anime ID
+        manual_episodes_count: Episodes
         media: Media
         number_format_id: Number format
         official_site_url_en: Official site (en)
