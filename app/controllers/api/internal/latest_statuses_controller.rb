@@ -7,6 +7,7 @@ module Api
 
       def show(work_id)
         @latest_status = current_user.latest_statuses.find_by(work_id: work_id)
+        @user = current_user
       end
 
       def skip_episode(latest_status_id)
