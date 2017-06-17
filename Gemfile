@@ -131,4 +131,5 @@ end
 
 group :production do
   gem "bugsnag"
+  gem "heroku-deflater"
 end
