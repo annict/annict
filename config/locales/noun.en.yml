@@ -19,6 +19,8 @@ en:
     basic_info: Basic Info
     before: Before
     bio: Bio
+    broadcasting: Broadcasting
+    broadcasted: Broadcasted
     bulk_tracking: Bulk Tracking...
     cancel: Cancel
     casts: Casts
@@ -108,6 +110,8 @@ en:
     syobocal: Syobocal
     terms_of_use: Terms of Use
     title: Title
+    tonight: Tonight
+    unbroadcast: Unbroadcast
     unknown_season: Season unknown
     users_count: "%{count} people"
     voice_actor: Voice Actor

@@ -6,6 +6,10 @@ class ProgramDecorator < ApplicationDecorator
     h.link_to(name, h.edit_db_program_path(self), options)
   end
 
+  def state_text
+    I18n.t("noun.#{state}")
+  end
+
   def to_values
     model.class::DIFF_FIELDS.each_with_object({}) do |field, hash|
       hash[field] = case field
