@@ -8,9 +8,9 @@ html lang="#{I18n.locale}"
       = yield
       - unless user_signed_in?
         = render "application/components/sign_up_modal", user: @new_user
+      = render "application/analytics"
 
     = include_gon
-    = render "application/analytics"
 
     = render "application/js_templates/flash"
     = yield :js_templates

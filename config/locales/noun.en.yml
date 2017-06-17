@@ -7,6 +7,7 @@ en:
     airing_anime: Airing Anime
     airing: Airing
     all: All
+    all_comments: All Comments
     anime: Anime
     annict_api: Annict API
     annict_db: Annict DB
@@ -49,6 +50,7 @@ en:
     favorite_people: Favorite People
     first: First
     following: Following
+    friend_comments: Friend's Comments
     friends_who_are_watching: Friends Who Are Watching
     home: Home
     information: Information
@@ -57,6 +59,7 @@ en:
     language: Language
     last: Last
     more: More
+    my_records: My Records
     n_works_watched: "%{count} Works Watched"
     next_season: Next Season
     official_site: Official Site
@@ -76,6 +79,7 @@ en:
     privacy_policy: Privacy Policy
     profile: Profile
     programs: Programs
+    pv: PV
     rating: Rating
     records_count: Records Count
     related_works: Related Works
@@ -98,6 +102,7 @@ en:
     staff: Staff
     staffs: Staffs
     state: State
+    stats: Stats
     summer: Summer
     syobocal: Syobocal
     terms_of_use: Terms of Use

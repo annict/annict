@@ -10,14 +10,16 @@ module.exports =
     initRecord:
       type: Object
 
-  computed:
-    fixedRating: ->
-      return "-" if @record.rating < 1
-      Number(@record.rating).toFixed(1)
-
   watch:
-    "record.rating": (val) ->
-      @record.rating = 1 if 0 < val && val < 1
+    "record.ratingState": (val) ->
+      @record.ratingState = val
 
     initRecord: (val) ->
       @record = val
+
+  methods:
+    changeState: (state) ->
+      if @record.ratingState == state
+        @record.ratingState = null
+      else
+        @record.ratingState = state

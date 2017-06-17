@@ -5,11 +5,14 @@ AllCops:
     - "vendor/**/*"
     - "db/schema.rb"
 
+Layout/CaseIndentation:
+  EnforcedStyle: end
+
 Lint/EndAlignment:
   EnforcedStyleAlignWith: variable
 
 Metrics/LineLength:
-  Max: 90
+  Max: 120
   Exclude:
     - "**/*.jbuilder"
   # Ignore lines with comments
@@ -39,9 +42,6 @@ Style/AlignParameters:
 
 Style/AsciiComments:
   Enabled: false
-
-Style/CaseIndentation:
-  EnforcedStyle: end
 
 Style/Documentation:
   Enabled: false

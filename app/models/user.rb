@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 # == Schema Information
 #
 # Table name: users
@@ -216,12 +217,10 @@ class User < ApplicationRecord
     providers.where(name: "facebook").first
   end
 
-  def hide_checkin_comment?(checkin)
-    checkin.comment.present? &&
-    checkin.user != self &&
+  def hide_checkin_comment?(episode)
     setting.hide_checkin_comment? &&
-    works.desiring_to_watch.include?(checkin.episode.work) &&
-    !records.pluck(:episode_id).include?(checkin.episode_id)
+    works.desiring_to_watch.include?(episode.work) &&
+    !records.pluck(:episode_id).include?(episode.id)
   end
 
   def committer?

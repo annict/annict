@@ -7,6 +7,7 @@ ja:
     airing_anime: 放送中アニメ
     airing: 放送中
     all: 全て
+    all_comments: 全ての感想
     anime: アニメ
     annict_api: Annict API
     annict_db: Annict DB
@@ -49,6 +50,7 @@ ja:
     favorite_people: お気に入りの人物
     first: First
     following: フォロー中
+    friend_comments: 友達の感想
     friends_who_are_watching: 見てる友達
     home: ホーム
     information: 基本情報
@@ -57,6 +59,7 @@ ja:
     language: 言語
     last: Last
     more: その他
+    my_records: 自分の記録
     n_works_watched: "%{count}作品見た"
     next_season: 来期のアニメ
     official_site: 公式サイト
@@ -76,6 +79,7 @@ ja:
     privacy_policy: プライバシーポリシー
     profile: プロフィール
     programs: 放送予定
+    pv: PV
     rating: 評価
     records_count: 記録数
     related_works: 関連作品
@@ -98,6 +102,7 @@ ja:
     staff: スタッフ
     staffs: スタッフ
     state: 状態
+    stats: 統計
     summer: 夏
     syobocal: しょぼかる
     terms_of_use: 利用規約

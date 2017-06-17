@@ -30,7 +30,8 @@ json = Rails.cache.fetch(cache_keys) do
       comment: record.comment,
       comments_count: record.comments_count,
       likes_count: record.likes_count,
-      rating: record.rating
+      rating: record.rating,
+      rating_state: record.rating_state
     }
   }
 end
@@ -46,7 +47,7 @@ cache_keys = [
 
 json[:record][:hide_comment] = Rails.cache.fetch(cache_keys) do
   record = activity.trackable
-  user.present? && user.hide_checkin_comment?(record)
+  user.present? && user.hide_checkin_comment?(record.episode)
 end
 
 json

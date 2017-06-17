@@ -19,7 +19,7 @@
           = @episode.decorate.title_with_number
   hr
   .p-records-show__record.px-1
-    = render "records/record", record: @record
+    = render "records/record", record: @record, is_spoiler: @is_spoiler
   hr
   .px-1
     - if user_signed_in?
@@ -64,3 +64,4 @@
 
 - content_for :js_templates do
   = render "application/js_templates/like_button"
+  = render "application/js_templates/rating_state_label"

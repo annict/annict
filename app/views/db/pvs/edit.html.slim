@@ -1,0 +1,22 @@
+- title = t "head.title.db.pvs.edit"
+- set_meta_tags(title: title, reverse: true, prefix: false)
+- set_page_category "db_pvs_edit"
+
+.l-topbar.container-fluid.px-1
+  .row.flex-items-xs-between
+    .col-8
+      = render "db/application/topbar_title", parent: @work, child: title
+    .col.text-right
+      = link_to work_path(@work), class: "btn btn-outline-primary" do
+        = icon "external-link"
+        = t "resources.work.go_to_work"
+
+= render "db/works/subnav", work: @work
+
+.container-fluid.p-1
+  .row
+    .col-6
+      .c-card.p-1
+        = render "form", pv: @pv
+    .col-6
+      = render "sidebar_edit"

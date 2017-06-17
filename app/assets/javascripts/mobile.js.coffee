@@ -12,10 +12,11 @@ Cookies = require "js-cookie"
 
 require "moment/locale/ja"
 
-$(document).on "turbolinks:load", ->
+document.addEventListener "turbolinks:load", (event) ->
   vueLazyLoad = require "./common/vueLazyLoad"
 
   activities = require "./common/components/activities"
+  analytics = require "./common/components/analytics"
   body = require "./common/components/body"
   channelReceiveButton = require "./common/components/channelReceiveButton"
   channelSelector = require "./common/components/channelSelector"
@@ -25,11 +26,14 @@ $(document).on "turbolinks:load", ->
   flash = require "./common/components/flash"
   followButton = require "./common/components/followButton"
   likeButton = require "./common/components/likeButton"
+  omittedSynopsis = require "./common/components/omittedSynopsis"
   muteUserButton = require "./common/components/muteUserButton"
   programList = require "./common/components/programList"
   ratingLabel = require "./common/components/ratingLabel"
+  ratingStateLabel = require "./common/components/ratingStateLabel"
   record = require "./common/components/record"
   recordRating = require "./common/components/recordRating"
+  recordSorter = require "./common/components/recordSorter"
   recordTextarea = require "./common/components/recordTextarea"
   recordWordCount = require "./common/components/recordWordCount"
   statusSelector = require "./common/components/statusSelector"
@@ -39,6 +43,7 @@ $(document).on "turbolinks:load", ->
   userHeatmap = require "./common/components/userHeatmap"
   usernamePreview = require "./common/components/usernamePreview"
   workFriends = require "./common/components/workFriends"
+  youtubeModalPlayer = require "./common/components/youtubeModalPlayer"
 
   resourceSelect = require "./common/directives/resourceSelect"
 
@@ -50,6 +55,7 @@ $(document).on "turbolinks:load", ->
   Vue.use(VueLazyload)
 
   Vue.component("c-activities", activities)
+  Vue.component("c-analytics", analytics(event))
   Vue.component("c-body", body)
   Vue.component("c-channel-receive-button", channelReceiveButton)
   Vue.component("c-channel-selector", channelSelector)
@@ -59,11 +65,14 @@ $(document).on "turbolinks:load", ->
   Vue.component("c-flash", flash)
   Vue.component("c-follow-button", followButton)
   Vue.component("c-like-button", likeButton)
+  Vue.component("c-omitted-synopsis", omittedSynopsis)
   Vue.component("c-mute-user-button", muteUserButton)
   Vue.component("c-program-list", programList)
   Vue.component("c-rating-label", ratingLabel)
+  Vue.component("c-rating-state-label", ratingStateLabel)
   Vue.component("c-record", record)
   Vue.component("c-record-rating", recordRating)
+  Vue.component("c-record-sorter", recordSorter)
   Vue.component("c-record-textarea", recordTextarea)
   Vue.component("c-record-word-count", recordWordCount)
   Vue.component("c-status-selector", statusSelector)
@@ -73,6 +82,7 @@ $(document).on "turbolinks:load", ->
   Vue.component("c-user-heatmap", userHeatmap)
   Vue.component("c-username-preview", usernamePreview)
   Vue.component("c-work-friends", workFriends)
+  Vue.component("c-youtube-modal-player", youtubeModalPlayer)
 
   Vue.directive("resource-select", resourceSelect)
 

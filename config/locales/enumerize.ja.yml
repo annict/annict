@@ -1,5 +1,11 @@
 ja:
   enumerize:
+    checkin:
+      rating_state:
+        average: 普通
+        bad: 良くない
+        good: 良い
+        great: とても良い
     person:
       blood_type:
         a: A型
@@ -13,6 +19,12 @@ ja:
       programs_sort_type:
         started_at_asc: 放送日が古い順
         started_at_desc: 放送日が新しい順
+      records_sort_type:
+        likes_count_desc: いいねが多い順
+        rating_state_desc: 評価が高い順
+        rating_state_asc: 評価が低い順
+        created_at_desc: 投稿日が新しい順
+        created_at_asc: 投稿日が古い順
     staff:
       role:
         animation_director: 作画監督

@@ -6,9 +6,12 @@ module Api
       class RecordsUpdateParams
         include ActiveParameter
 
+        STATES = /\A(bad|average|good|great)\z/
+
         param :id
         param :comment
         param :rating
+        param :rating_state
         param :share_twitter, default: "false"
         param :share_facebook, default: "false"
 
@@ -24,6 +27,10 @@ module Api
         validates :share_facebook,
           allow_blank: true,
           format: { with: /\A(true|false)\z/, message: "の値が不正です。" }
+        validates :rating_state,
+          presence: true,
+          format: { with: STATES, message: "の値が不正です。" },
+          allow_blank: true
       end
     end
   end
