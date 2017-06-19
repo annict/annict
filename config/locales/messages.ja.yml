@@ -181,6 +181,7 @@ ja:
         new: 新規作成
         no_tokens: 作成されていません
     tracks:
+      episodes_you_have_watched: 放送済みエピソードの視聴本数
       no_trackable_episodes: 記録可能なエピソードはありません
       skip_episode_confirmation: このエピソードをスキップして、次のエピソードを表示しますか？
       see_records: 記録を見る

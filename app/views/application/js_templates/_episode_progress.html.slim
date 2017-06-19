@@ -1,6 +1,6 @@
 script#t-episode-progress type="x-template"
   .c-episode-progress
     .text-muted.u-very-small
-      = "{{ watchedEpisodesCount }} / {{ episodesCount }} #{t("verb.episodes_watched")}"
+      = "#{t("messages.tracks.episodes_you_have_watched")}: {{ watchedEpisodesCount }} / {{ episodesCount }}"
     .progress
       .progress-bar.bg-info :style='{ width: ratio + "%", height: "7px" }' :aria-valuenow="ratio" role="progressbar" aria-valuemin="0" aria-valuemax="100"

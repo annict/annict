@@ -181,6 +181,7 @@ en:
         new: Generate new token
         no_tokens: No tokens
     tracks:
+      episodes_you_have_watched: "You've watched"
       no_trackable_episodes: No trackable episodes
       skip_episode_confirmation: Are you sure to skip this episode and show next episode?
       see_records: See records
