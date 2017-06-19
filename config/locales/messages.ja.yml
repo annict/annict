@@ -155,6 +155,8 @@ ja:
         username_preview_mobile: "プロフィールURL:"
       create:
         confirmation_mail_has_sent: 確認メールを送信しました
+    reviews:
+      n_people_changed_status_to_wanna_watch: "%{count}人がこのレビューを見てこの作品のステータスを「見たい」にしました"
     sayonara:
       are_you_sure_really: 後戻りできませんがよろしいですか？
       delete_account: アカウントを削除する

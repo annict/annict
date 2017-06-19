@@ -261,10 +261,6 @@ GEM
     heroku-deflater (0.6.3)
       rack (>= 1.4.5)
     highline (1.7.8)
-    hirb (0.7.3)
-    hirb-unicode-steakknife (0.0.8)
-      hirb (~> 0.5)
-      unicode-display_width (~> 1.1)
     http (2.2.2)
       addressable (~> 2.3)
       http-cookie (~> 1.0)
@@ -293,6 +289,8 @@ GEM
       addressable
     imgix-rails (2.1.4)
       imgix (~> 1.1, >= 1.1.0)
+    impressionist (1.6.0)
+      nokogiri (~> 1)
     ipaddress (0.8.3)
     jb (0.4.1)
       multi_json
@@ -654,12 +652,11 @@ DEPENDENCIES
   groupdate
   hashdiff
   heroku-deflater
-  hirb
-  hirb-unicode-steakknife
   http_accept_language
   httparty
   i18n-tasks
   imgix-rails
+  impressionist
   jb
   jquery-rails
   kaminari

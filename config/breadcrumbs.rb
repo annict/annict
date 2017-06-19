@@ -23,3 +23,20 @@ crumb :userland_edit_project do |project|
   link t("resources.userland_project.edit"), edit_userland_project_path(project)
   parent :userland_project_detail, project
 end
+
+crumb :user_detail do |user|
+  link user.profile.name, user_path(user.username)
+  parent :root
+end
+
+crumb :review_list do |user|
+  link t("noun.reviews"), reviews_path(user.username)
+  parent :user_detail, user
+end
+
+crumb :review_detail do |review|
+  user = review.user
+  work = review.work
+  link work.decorate.local_title, review_path(user.username, review)
+  parent :review_list, user
+end

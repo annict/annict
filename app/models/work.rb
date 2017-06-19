@@ -37,6 +37,7 @@
 #  season_name           :integer
 #  key_pv_id             :integer
 #  manual_episodes_count :integer
+#  no_episodes           :boolean          default(FALSE), not null
 #
 # Indexes
 #

@@ -3,6 +3,8 @@ script#t-activities type="x-template"
     template v-for="activity in activities"
       template v-if='activity.action === "create_record"'
         c-create-record-activity :activity="activity"
+      template v-if='activity.action === "create_review"'
+        c-create-review-activity :activity="activity"
       template v-else-if='activity.action === "create_multiple_records"'
         c-create-multiple-records-activity :activity="activity"
       template v-else-if='activity.action === "create_status"'
@@ -15,6 +17,7 @@ script#t-activities type="x-template"
 - content_for :js_templates
   = render "application/js_templates/create_multiple_records_activity"
   = render "application/js_templates/create_record_activity"
+  = render "application/js_templates/create_review_activity"
   = render "application/js_templates/create_status_activity"
   = render "application/js_templates/like_button"
   = render "application/js_templates/load_more_button"

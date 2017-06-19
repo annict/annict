@@ -25,6 +25,7 @@ class Activity < ApplicationRecord
   enumerize :action, in: %w(
     create_status
     create_record
+    create_review
     create_multiple_records
   )
 

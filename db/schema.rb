@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170617163408) do
+ActiveRecord::Schema.define(version: 20170618120330) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -148,11 +148,14 @@ ActiveRecord::Schema.define(version: 20170617163408) do
     t.integer "multiple_record_id"
     t.integer "oauth_application_id"
     t.string "rating_state"
+    t.integer "review_id"
+    t.string "aasm_state", default: "published", null: false
     t.index ["episode_id"], name: "checkins_episode_id_idx"
     t.index ["facebook_url_hash"], name: "checkins_facebook_url_hash_key", unique: true
     t.index ["multiple_record_id"], name: "index_checkins_on_multiple_record_id"
     t.index ["oauth_application_id"], name: "index_checkins_on_oauth_application_id"
     t.index ["rating_state"], name: "index_checkins_on_rating_state"
+    t.index ["review_id"], name: "index_checkins_on_review_id"
     t.index ["twitter_url_hash"], name: "checkins_twitter_url_hash_key", unique: true
     t.index ["user_id"], name: "checkins_user_id_idx"
     t.index ["work_id"], name: "index_checkins_on_work_id"
@@ -541,6 +544,32 @@ ActiveRecord::Schema.define(version: 20170617163408) do
     t.index ["user_id"], name: "index_forum_posts_on_user_id"
   end
 
+  create_table "impressions", force: :cascade do |t|
+    t.string "impressionable_type"
+    t.integer "impressionable_id"
+    t.integer "user_id"
+    t.string "controller_name"
+    t.string "action_name"
+    t.string "view_name"
+    t.string "request_hash"
+    t.string "ip_address"
+    t.string "session_hash"
+    t.text "message"
+    t.text "referrer"
+    t.text "params"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["controller_name", "action_name", "ip_address"], name: "controlleraction_ip_index"
+    t.index ["controller_name", "action_name", "request_hash"], name: "controlleraction_request_index"
+    t.index ["controller_name", "action_name", "session_hash"], name: "controlleraction_session_index"
+    t.index ["impressionable_type", "impressionable_id", "ip_address"], name: "poly_ip_index"
+    t.index ["impressionable_type", "impressionable_id", "params"], name: "poly_params_request_index"
+    t.index ["impressionable_type", "impressionable_id", "request_hash"], name: "poly_request_index"
+    t.index ["impressionable_type", "impressionable_id", "session_hash"], name: "poly_session_index"
+    t.index ["impressionable_type", "message", "impressionable_id"], name: "impressionable_type_message_index"
+    t.index ["user_id"], name: "index_impressions_on_user_id"
+  end
+
   create_table "items", id: :serial, force: :cascade do |t|
     t.integer "work_id"
     t.string "name", limit: 510, null: false
@@ -801,6 +830,38 @@ ActiveRecord::Schema.define(version: 20170617163408) do
     t.index ["user_id"], name: "receptions_user_id_idx"
   end
 
+  create_table "review_comments", force: :cascade do |t|
+    t.integer "user_id", null: false
+    t.integer "review_id", null: false
+    t.integer "work_id", null: false
+    t.text "body", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["review_id"], name: "index_review_comments_on_review_id"
+    t.index ["user_id"], name: "index_review_comments_on_user_id"
+    t.index ["work_id"], name: "index_review_comments_on_work_id"
+  end
+
+  create_table "reviews", force: :cascade do |t|
+    t.integer "user_id", null: false
+    t.integer "work_id", null: false
+    t.string "title", null: false
+    t.text "body", null: false
+    t.string "rating_animation_state"
+    t.string "rating_music_state"
+    t.string "rating_story_state"
+    t.string "rating_character_state"
+    t.string "rating_overall_state"
+    t.integer "likes_count", default: 0, null: false
+    t.integer "status_changed_users_count", default: 0, null: false
+    t.integer "impressions_count", default: 0, null: false
+    t.integer "review_comments_count", default: 0, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["user_id"], name: "index_reviews_on_user_id"
+    t.index ["work_id"], name: "index_reviews_on_work_id"
+  end
+
   create_table "seasons", id: :serial, force: :cascade do |t|
     t.string "name", limit: 510, null: false
     t.datetime "created_at"
@@ -1044,6 +1105,7 @@ ActiveRecord::Schema.define(version: 20170617163408) do
     t.integer "season_name"
     t.integer "key_pv_id"
     t.integer "manual_episodes_count"
+    t.boolean "no_episodes", default: false, null: false
     t.index ["aasm_state"], name: "index_works_on_aasm_state"
     t.index ["key_pv_id"], name: "index_works_on_key_pv_id"
     t.index ["number_format_id"], name: "index_works_on_number_format_id"
@@ -1067,6 +1129,7 @@ ActiveRecord::Schema.define(version: 20170617163408) do
   add_foreign_key "checkins", "episodes", name: "checkins_episode_id_fk", on_delete: :cascade
   add_foreign_key "checkins", "multiple_records"
   add_foreign_key "checkins", "oauth_applications"
+  add_foreign_key "checkins", "reviews"
   add_foreign_key "checkins", "users", name: "checkins_user_id_fk", on_delete: :cascade
   add_foreign_key "checkins", "works", name: "checkins_work_id_fk"
   add_foreign_key "comments", "checkins", name: "comments_checkin_id_fk", on_delete: :cascade
@@ -1120,6 +1183,7 @@ ActiveRecord::Schema.define(version: 20170617163408) do
   add_foreign_key "forum_post_participants", "users"
   add_foreign_key "forum_posts", "forum_categories"
   add_foreign_key "forum_posts", "users"
+  add_foreign_key "impressions", "users"
   add_foreign_key "items", "works", name: "items_work_id_fk", on_delete: :cascade
   add_foreign_key "latest_statuses", "episodes", column: "next_episode_id"
   add_foreign_key "latest_statuses", "users"
@@ -1144,6 +1208,11 @@ ActiveRecord::Schema.define(version: 20170617163408) do
   add_foreign_key "pvs", "works"
   add_foreign_key "receptions", "channels", name: "receptions_channel_id_fk", on_delete: :cascade
   add_foreign_key "receptions", "users", name: "receptions_user_id_fk", on_delete: :cascade
+  add_foreign_key "review_comments", "reviews"
+  add_foreign_key "review_comments", "users"
+  add_foreign_key "review_comments", "works"
+  add_foreign_key "reviews", "users"
+  add_foreign_key "reviews", "works"
   add_foreign_key "series_works", "series"
   add_foreign_key "series_works", "works"
   add_foreign_key "settings", "users"

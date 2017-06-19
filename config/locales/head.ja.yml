@@ -171,6 +171,9 @@ ja:
         show: "%{profile_name} (%{username})の%{work_title} %{episode_title_with_number}への感想"
       registrations:
         new: ユーザ登録
+      reviews:
+        index: "%{profile_name} (%{username})のレビュー一覧"
+        show: "%{profile_name} (%{username})による「%{work_title}」のレビュー"
       searches:
         show: "%{q}検索"
       sessions:

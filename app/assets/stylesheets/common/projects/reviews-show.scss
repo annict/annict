@@ -1,0 +1,12 @@
+.p-reviews-show {
+  &__content {
+    .float-right {
+      background-color: $ann-color-navy-l5;
+      width: 235px;
+
+      th {
+        width: 110px;
+      }
+    }
+  }
+}

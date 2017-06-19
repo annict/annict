@@ -240,6 +240,7 @@ Rails.application.routes.draw do
   resources :mute_users, only: [:destroy]
   resources :notifications, only: [:index]
   resources :programs, only: [:index]
+  resources :review_comments, only: %i(edit update destroy)
 
   resources :settings, only: [:index]
   scope :settings do
@@ -318,8 +319,13 @@ Rails.application.routes.draw do
     resources :favorite_characters, only: %i(index)
     resources :favorite_organizations, only: %i(index)
     resources :favorite_people, only: %i(index)
+
     resources :records, only: %i(create show edit update destroy) do
       resources :comments, only: %i(create)
+    end
+
+    resources :reviews, only: %i(index show edit update destroy) do
+      resources :review_comments, only: %i(create)
     end
 
     root to: "users#show", as: :user
@@ -328,6 +334,7 @@ Rails.application.routes.draw do
   resources :works, only: %i(index show) do
     resources :characters, only: %i(index)
     resources :staffs, only: %i(index)
+    resources :reviews, only: %i(new create)
 
     resources :episodes, only: %i(index show) do
       resources :checkins, only: %i(show)

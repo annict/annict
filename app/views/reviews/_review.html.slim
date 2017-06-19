@@ -1,0 +1,84 @@
+.row
+  .col-auto.pl-1
+    = link_to user_path(review.user.username) do
+      = ann_image_tag review.user.profile, :tombo_avatar, size: "50x50", class: "rounded-circle"
+  .col
+    .mb-1
+      .text-left
+        = link_to review.user.profile.name, user_path(review.user.username)
+      .text-left
+        = link_to review_path(review.user.username, review), class: "small text-muted", title: local_datetime(review.created_at) do
+          = local_time_ago_in_words(review.created_at)
+        - if review.modified_at.present?
+          small.ml-zp5.text-muted
+            = icon "pencil"
+        span.small.ml-zp5.text-muted
+          = "#{review.impressions_count} views"
+    
+    c-comment-guard inline-template="" :init-is-spoiler="#{is_spoiler == true}"
+      .p-reviews-show__content.clearfix
+        - if [review.rating_animation_state, review.rating_music_state, review.rating_story_state, review.rating_character_state, review.rating_overall_state].any?(&:present?)
+          .float-right.ml-2.mb-2.p-1
+            .small.font-weight-bold.text-center.mb-zp5
+              = t "noun.rating"
+            table
+              tbody
+                - if review.rating_animation_state.present?
+                  tr
+                    th.font-weight-normal
+                      = t "noun.animation"
+                    td
+                      c-rating-state-label :init-rating-state=="'#{review.rating_animation_state}'" v-show="!isSpoiler"
+                - if review.rating_music_state.present?
+                  tr
+                    th.font-weight-normal
+                      = t "noun.music"
+                    td
+                      c-rating-state-label :init-rating-state=="'#{review.rating_music_state}'" v-show="!isSpoiler"
+                - if review.rating_story_state.present?
+                  tr
+                    th.font-weight-normal
+                      = t "noun.story"
+                    td
+                      c-rating-state-label :init-rating-state=="'#{review.rating_story_state}'" v-show="!isSpoiler"
+                - if review.rating_character_state.present?
+                  tr
+                    th.font-weight-normal
+                      = t "noun.character"
+                    td
+                      c-rating-state-label :init-rating-state=="'#{review.rating_character_state}'" v-show="!isSpoiler"
+                - if review.rating_overall_state.present?
+                  tr
+                    th.font-weight-normal
+                      = t "noun.overall"
+                    td
+                      c-rating-state-label :init-rating-state=="'#{review.rating_overall_state}'" v-show="!isSpoiler"
+        .c-body @click="remove"
+          c-body inline-template=""
+            .c-body__content = review.body
+    
+    .row
+      / .col
+      /   - if review.shared_twitter? || review.twitter_url_hash.present?
+      /     small
+      /       = icon "twitter", class: "mr-zp25 u-text-twitter"
+      /       = review.twitter_click_count
+      /   - if review.shared_facebook? || review.facebook_url_hash.present?
+      /     small.ml-zp5
+      /       = icon "facebook", class: "mr-zp25 u-text-facebook"
+      /       = review.facebook_click_count
+      .col
+        .text-right
+          c-like-button resource-name="Review" :init-resource-id="#{review.id}" :init-likes-count="#{review.likes_count}" :init-is-liked="#{user_signed_in? && current_user.like?(review)}" :is-signed-in="#{user_signed_in?}"
+          = link_to review_path(review.user.username, review), class: "d-inline-block ml-zp5" do
+            = icon "comment-o", class: "mr-zp25"
+            = review.review_comments_count
+
+    - if policy(review).update?
+      .small.text-right
+        = link_to edit_review_path(review.user.username, review), class: "mr-zp5" do
+          = icon "edit", class: "mr-zp25"
+          = t "noun.edit"
+        = link_to review_path(review.user.username, review), method: :delete, data: { confirm: t("messages._common.are_you_sure") } do
+          = icon "trash-o", class: "mr-zp25"
+          = t "noun.delete"

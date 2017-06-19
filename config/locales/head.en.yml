@@ -171,6 +171,9 @@ en:
         show: "A Record by %{profile_name} (%{username}) on %{work_title} - %{episode_title_with_number}"
       registrations:
         new: Sign Up
+      reviews:
+        index: "%{profile_name} (%{username})'s Reviews"
+        show: "%{work_title} - %{profile_name} (%{username})'s Review"
       searches:
         show: "%{q}Anime Search"
       sessions:
