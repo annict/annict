@@ -17,45 +17,43 @@
     
     c-comment-guard inline-template="" :init-is-spoiler="#{is_spoiler == true}"
       .p-reviews-show__content.clearfix
-        - if [review.rating_animation_state, review.rating_music_state, review.rating_story_state, review.rating_character_state, review.rating_overall_state].any?(&:present?)
+        - if review.rating_overall_state.present?
           .float-right.ml-2.mb-2.p-1
             .small.font-weight-bold.text-center.mb-zp5
               = t "noun.rating"
             table
               tbody
-                - if review.rating_animation_state.present?
-                  tr
-                    th.font-weight-normal
-                      = t "noun.animation"
-                    td
-                      c-rating-state-label :init-rating-state=="'#{review.rating_animation_state}'" v-show="!isSpoiler"
-                - if review.rating_music_state.present?
-                  tr
-                    th.font-weight-normal
-                      = t "noun.music"
-                    td
-                      c-rating-state-label :init-rating-state=="'#{review.rating_music_state}'" v-show="!isSpoiler"
-                - if review.rating_story_state.present?
-                  tr
-                    th.font-weight-normal
-                      = t "noun.story"
-                    td
-                      c-rating-state-label :init-rating-state=="'#{review.rating_story_state}'" v-show="!isSpoiler"
-                - if review.rating_character_state.present?
-                  tr
-                    th.font-weight-normal
-                      = t "noun.character"
-                    td
-                      c-rating-state-label :init-rating-state=="'#{review.rating_character_state}'" v-show="!isSpoiler"
-                - if review.rating_overall_state.present?
-                  tr
-                    th.font-weight-normal
-                      = t "noun.overall"
-                    td
-                      c-rating-state-label :init-rating-state=="'#{review.rating_overall_state}'" v-show="!isSpoiler"
+                tr
+                  th.font-weight-normal
+                    = t "noun.animation"
+                  td
+                    c-rating-state-label :init-rating-state=="'#{review.rating_animation_state}'" v-show="!isSpoiler"
+                tr
+                  th.font-weight-normal
+                    = t "noun.music"
+                  td
+                    c-rating-state-label :init-rating-state=="'#{review.rating_music_state}'" v-show="!isSpoiler"
+                tr
+                  th.font-weight-normal
+                    = t "noun.story"
+                  td
+                    c-rating-state-label :init-rating-state=="'#{review.rating_story_state}'" v-show="!isSpoiler"
+                tr
+                  th.font-weight-normal
+                    = t "noun.character"
+                  td
+                    c-rating-state-label :init-rating-state=="'#{review.rating_character_state}'" v-show="!isSpoiler"
+                tr
+                  th.font-weight-normal
+                    = t "noun.overall"
+                  td
+                    c-rating-state-label :init-rating-state=="'#{review.rating_overall_state}'" v-show="!isSpoiler"
+        h1.h4.u-text-green.mb-1
+          = "\"#{review.title}\""
         .c-body @click="remove"
           c-body inline-template=""
-            .c-body__content = review.body
+            .c-body__content
+              = review.body
     
     .row
       / .col

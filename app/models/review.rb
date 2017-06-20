@@ -47,6 +47,11 @@ class Review < ApplicationRecord
   belongs_to :work
   has_many :review_comments, dependent: :destroy
 
-  validates :title, presence: true, length: { maximum: 100 }
   validates :body, presence: true
+  validates :rating_animation_state, presence: true
+  validates :rating_character_state, presence: true
+  validates :rating_music_state, presence: true
+  validates :rating_overall_state, presence: true
+  validates :rating_story_state, presence: true
+  validates :title, presence: true, length: { maximum: 100 }
 end
