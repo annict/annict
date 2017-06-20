@@ -7,6 +7,7 @@ class CreateReviewComments < ActiveRecord::Migration[5.1]
       t.integer :review_id, null: false
       t.integer :work_id, null: false
       t.text :body, null: false
+      t.string :aasm_state, null: false, default: "published"
       t.timestamps null: false
     end
 

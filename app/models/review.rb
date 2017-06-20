@@ -29,6 +29,7 @@
 
 class Review < ApplicationRecord
   extend Enumerize
+  include AASM
 
   is_impressionable counter_cache: true, unique: true
 
@@ -41,6 +42,15 @@ class Review < ApplicationRecord
     rating_average_state
   ).each do |state|
     enumerize state, in: %i(bad average good great)
+  end
+
+  aasm do
+    state :published, initial: true
+    state :hidden
+
+    event :hide do
+      transitions from: :published, to: :hidden
+    end
   end
 
   belongs_to :user

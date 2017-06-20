@@ -7,8 +7,17 @@ class ReviewsController < ApplicationController
   impressionist actions: %i(show)
 
   before_action :authenticate_user!, only: %i(create edit update destroy)
-  before_action :load_user, only: %i(create show edit update destroy)
+  before_action :load_user, only: %i(index create show edit update destroy)
   before_action :load_review, only: %i(show edit update destroy)
+
+  def index(page: nil)
+    @reviews = @user.
+      reviews.
+      includes(work: :work_image).
+      published.
+      order(created_at: :desc).
+      page(page)
+  end
 
   def show
     @work = @review.work

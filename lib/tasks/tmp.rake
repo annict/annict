@@ -24,9 +24,11 @@ namespace :tmp do
           review = Review.create(
             user_id: r.user_id,
             work_id: r.work_id,
-            title: r.comment.truncate(50).gsub(/[\r\n]/, ""),
+            title: r.comment.truncate(30).gsub(/[\r\n]/, ""),
             body: r.comment,
-            rating_overall_state: r.rating_state
+            rating_overall_state: r.rating_state,
+            created_at: r.created_at,
+            updated_at: r.updated_at
           )
 
           r.update_attributes(review: review)
