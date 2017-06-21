@@ -1,0 +1,36 @@
+- title = t "head.title.work_reviews.index", title: @work.decorate.local_title
+- description = meta_description t("head.meta.description.work_reviews.index", title: @work.decorate.local_title)
+- keywords = meta_keywords(@work.title)
+- image_url = ann_image_url(@work.work_image, :attachment, size: "640x")
+- set_meta_tags(title: title, description: description, keywords: keywords, og: { description: description, image: image_url }, twitter: { description: description, image: image_url }, reverse: true, prefix: false)
+- set_page_category "work_reviews_index"
+- breadcrumb :work_review_list, @work
+
+= render "application/components/navbar"
+= render "application/components/breadcrumb"
+
+.p-application__content
+  .container.py-1.mb-2
+    .row
+      .col-3.pr-0
+        = render "works/sidebar", work: @work
+      .col-9
+        = render "works/subnav", work: @work
+        .c-card.container.mt-1
+          - if @reviews.present?
+            div
+              - @reviews.each do |review|
+                .py-1.u-underline
+                  = render "reviews/review", review: review, is_spoiler: @is_spoiler
+            - if @reviews.total_pages > 1
+              .mb-1.text-center
+                = paginate @reviews
+          - else
+            = render "application/components/empty", text: t("messages._empty.no_reviews")
+
+= render "application/components/footer"
+
+- content_for :js_templates do
+  = render "application/js_templates/like_button"
+  = render "application/js_templates/rating_state_label"
+  = render "application/js_templates/status_selector"

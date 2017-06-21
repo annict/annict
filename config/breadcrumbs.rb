@@ -29,14 +29,24 @@ crumb :user_detail do |user|
   parent :root
 end
 
-crumb :review_list do |user|
+crumb :work_detail do |work|
+  link work.decorate.local_title, work_path(work)
+  parent :root
+end
+
+crumb :user_review_list do |user|
   link t("noun.reviews"), reviews_path(user.username)
   parent :user_detail, user
+end
+
+crumb :work_review_list do |work|
+  link t("noun.reviews"), work_reviews_path(work)
+  parent :work_detail, work
 end
 
 crumb :review_detail do |review|
   user = review.user
   work = review.work
   link work.decorate.local_title, review_path(user.username, review)
-  parent :review_list, user
+  parent :user_review_list, user
 end

@@ -23,26 +23,30 @@
               = t "noun.rating"
             table
               tbody
-                tr
-                  th.font-weight-normal
-                    = t "noun.animation"
-                  td
-                    c-rating-state-label :init-rating-state=="'#{review.rating_animation_state}'" v-show="!isSpoiler"
-                tr
-                  th.font-weight-normal
-                    = t "noun.music"
-                  td
-                    c-rating-state-label :init-rating-state=="'#{review.rating_music_state}'" v-show="!isSpoiler"
-                tr
-                  th.font-weight-normal
-                    = t "noun.story"
-                  td
-                    c-rating-state-label :init-rating-state=="'#{review.rating_story_state}'" v-show="!isSpoiler"
-                tr
-                  th.font-weight-normal
-                    = t "noun.character"
-                  td
-                    c-rating-state-label :init-rating-state=="'#{review.rating_character_state}'" v-show="!isSpoiler"
+                - if review.rating_animation_state.present?
+                  tr
+                    th.font-weight-normal
+                      = t "noun.animation"
+                    td
+                      c-rating-state-label :init-rating-state=="'#{review.rating_animation_state}'" v-show="!isSpoiler"
+                - if review.rating_music_state.present?
+                  tr
+                    th.font-weight-normal
+                      = t "noun.music"
+                    td
+                      c-rating-state-label :init-rating-state=="'#{review.rating_music_state}'" v-show="!isSpoiler"
+                - if review.rating_story_state.present?
+                  tr
+                    th.font-weight-normal
+                      = t "noun.story"
+                    td
+                      c-rating-state-label :init-rating-state=="'#{review.rating_story_state}'" v-show="!isSpoiler"
+                - if review.rating_character_state.present?
+                  tr
+                    th.font-weight-normal
+                      = t "noun.character"
+                    td
+                      c-rating-state-label :init-rating-state=="'#{review.rating_character_state}'" v-show="!isSpoiler"
                 tr
                   th.font-weight-normal
                     = t "noun.overall"

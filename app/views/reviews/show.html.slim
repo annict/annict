@@ -62,7 +62,7 @@
         .mb-zp5
           = link_to work_path(@work), class: "btn btn-primary w-100" do
             = icon "angle-right"
-            = t "noun.work_detail_page"
+            = t "verb.view_work_detail"
         c-status-selector :work-id="#{@work.id}"
         
         - if @review.status_changed_users_count > 0

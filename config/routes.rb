@@ -335,6 +335,7 @@ Rails.application.routes.draw do
     resources :characters, only: %i(index)
     resources :staffs, only: %i(index)
     resources :reviews, only: %i(new create)
+    resources :reviews, only: %i(index), controller: :work_reviews
 
     resources :episodes, only: %i(index show) do
       resources :checkins, only: %i(show)

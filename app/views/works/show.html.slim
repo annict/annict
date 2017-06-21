@@ -4,11 +4,13 @@
 - image_url = ann_image_url(@work.work_image, :attachment, size: "640x")
 - set_meta_tags(title: title, description: description, keywords: keywords, og: { description: description, image: image_url }, twitter: { description: description, image: image_url }, reverse: true, prefix: false)
 - set_page_category "works_show"
+- breadcrumb :work_detail, @work
 
 - content_for :head do
   script src="https://www.youtube.com/player_api"
 
 = render "application/components/navbar"
+= render "application/components/breadcrumb"
 
 .p-application__content
   .container.py-1.mb-2
@@ -51,7 +53,9 @@
             = render "characters/character_list", casts: @casts.first(9)
             - if @casts.length > 9
               .mt-1
-                = link_to t("messages.works.view_all_n_characters", n: @casts.length), work_characters_path(@work), class: "btn btn-secondary w-100"
+                = link_to work_characters_path(@work), class: "btn btn-secondary w-100" do
+                  = icon "angle-right"
+                  = t "messages.works.view_all_n_characters", n: @casts.length
 
         h2.h4.text-center.my-2.font-weight-bold = t "noun.staffs"
         .c-card.container.mt-1.py-1
@@ -59,7 +63,9 @@
             = render "staffs/staff_list", staffs: @staffs.first(9)
             - if @staffs.length > 9
               .mt-1
-                = link_to t("messages.works.view_all_n_staffs", n: @staffs.length), work_staffs_path(@work), class: "btn btn-secondary w-100"
+                = link_to work_staffs_path(@work), class: "btn btn-secondary w-100" do
+                  = icon "angle-right"
+                  = t "messages.works.view_all_n_staffs", n: @staffs.length
 
         h2.h4.text-center.my-2.font-weight-bold = t "noun.episodes"
         .c-card.mt-1.py-1
@@ -79,10 +85,39 @@
                   = render "episodes/episode_row", work: @work, episode: episode
             - if @episodes.length > 5
               .px-1.mt-1
-                = link_to t("messages.works.view_all_n_episodes", n: @episodes.length), work_episodes_path(@work), class: "btn btn-secondary w-100"
+                = link_to work_episodes_path(@work), class: "btn btn-secondary w-100" do
+                  = icon "angle-right"
+                  = t "messages.works.view_all_n_episodes", n: @episodes.length
           - else
             = render "application/components/empty", text: t("messages._empty.no_episodes")
         
+        h2.h4.text-center.my-2.font-weight-bold = t "noun.reviews"
+        .c-card.container.mt-1
+          - if @reviews.present?
+            .px-1
+              - @reviews.first(5).each do |review|
+                .row.py-1.u-underline
+                  .col-auto
+                    = link_to user_path(review.user.username) do
+                      = ann_image_tag review.user.profile, :tombo_avatar, size: "50x50", class: "rounded-circle"
+                  .col
+                    .mb-zp5
+                      = link_to review.title, review_path(review.user.username, review)
+                    .small
+                      span.mr-zp25
+                        | by
+                      = link_to review.user.profile.name, user_path(review.user.username), class: "u-text-body"
+                    .small
+                      = link_to review_path(review.user.username, review), title: local_datetime(review.created_at), class: "u-text-body" do
+                        = local_time_ago_in_words(review.created_at)
+            - if @reviews.length > 5
+              .mb-1
+                = link_to work_reviews_path(@work), class: "btn btn-secondary w-100" do
+                  = icon "angle-right"
+                  = t "messages.works.view_all_n_reviews", n: @reviews.length
+          - else
+            = render "application/components/empty", text: t("messages._empty.no_reviews")
+
         - if @series_list.present?
           h2.h4.text-center.my-2.font-weight-bold = t "noun.related_works"
           .c-card.container.mt-1.py-1
