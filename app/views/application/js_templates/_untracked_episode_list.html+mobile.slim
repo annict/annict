@@ -23,7 +23,7 @@ script#t-untracked-episode-list type="x-template"
                     = t "noun.rebroadcast"
                 .text-left
                   | {{ status.program.started_at }}
-              .text-right.small.u-fake-link @click="skipEpisode(status)"
+              .text-right.small.u-fake-link.mb-zp5 @click="skipEpisode(status)"
                 = icon "forward", class: "mr-zp25"
                 = t "noun.skip"
               c-episode-progress.mb-zp5 :episodes-count="status.work.episodes_count" :watched-episodes-count="status.work.watched_episodes_count"
