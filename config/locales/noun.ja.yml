@@ -93,6 +93,7 @@ ja:
     release_season: リリース時期
     resources: 種類
     reviews: レビュー
+    review_of_the_work: "「%{work_title}」のレビュー"
     search: 検索
     season: シーズン
     seasonal_anime: シーズン別アニメ

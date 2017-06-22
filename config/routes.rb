@@ -324,7 +324,7 @@ Rails.application.routes.draw do
       resources :comments, only: %i(create)
     end
 
-    resources :reviews, only: %i(index show edit update destroy) do
+    resources :reviews, only: %i(index show) do
       resources :review_comments, only: %i(create)
     end
 
@@ -334,7 +334,7 @@ Rails.application.routes.draw do
   resources :works, only: %i(index show) do
     resources :characters, only: %i(index)
     resources :staffs, only: %i(index)
-    resources :reviews, only: %i(new create)
+    resources :reviews, only: %i(new create edit update destroy)
     resources :reviews, only: %i(index), controller: :work_reviews
 
     resources :episodes, only: %i(index show) do

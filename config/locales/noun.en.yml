@@ -93,6 +93,7 @@ en:
     release_season: Release Season
     resources: Resources
     reviews: Reviews
+    review_of_the_work: 'Review of "%{work_title}"'
     search: Search
     season: Season
     seasonal_anime: Seasonal Anime

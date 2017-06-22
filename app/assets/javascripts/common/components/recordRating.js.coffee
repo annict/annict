@@ -9,6 +9,9 @@ module.exports =
   props:
     initRecord:
       type: Object
+    inputName:
+      type: String
+      default: "checkin[rating_state]"
 
   watch:
     "record.ratingState": (val) ->

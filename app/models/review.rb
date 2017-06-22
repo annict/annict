@@ -31,17 +31,19 @@ class Review < ApplicationRecord
   extend Enumerize
   include AASM
 
-  is_impressionable counter_cache: true, unique: true
-
-  %i(
+  STATES = %i(
     rating_animation_state
     rating_music_state
     rating_story_state
     rating_character_state
     rating_overall_state
-    rating_average_state
-  ).each do |state|
+  ).freeze
+
+  is_impressionable counter_cache: true, unique: true
+
+  STATES.each do |state|
     enumerize state, in: %i(bad average good great)
+    validates state, presence: true
   end
 
   aasm do
@@ -57,11 +59,6 @@ class Review < ApplicationRecord
   belongs_to :work
   has_many :review_comments, dependent: :destroy
 
-  validates :body, presence: true
-  validates :rating_animation_state, presence: true
-  validates :rating_character_state, presence: true
-  validates :rating_music_state, presence: true
-  validates :rating_overall_state, presence: true
-  validates :rating_story_state, presence: true
+  validates :body, presence: true, length: { maximum: 10_000 }
   validates :title, presence: true, length: { maximum: 100 }
 end

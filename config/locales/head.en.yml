@@ -172,7 +172,9 @@ en:
       registrations:
         new: Sign Up
       reviews:
+        edit: "Edit Review"
         index: "%{profile_name} (%{username})'s Reviews"
+        new: "New Review"
         show: "%{work_title} - %{profile_name} (%{username})'s Review"
       searches:
         show: "%{q}Anime Search"

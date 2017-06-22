@@ -127,6 +127,14 @@ ja:
         title: タイトル
         thumbnail: サムネイル
         url: URL
+      review:
+        title: タイトル
+        body: 本文
+        rating_animation_state: 映像
+        rating_music_state: 音楽
+        rating_story_state: ストーリー
+        rating_character_state: キャラクター
+        rating_overall_state: 全体
       series:
         name_en: 名前 (英語)
         name_ro: 名前 (ローマ字)

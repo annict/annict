@@ -1,0 +1,32 @@
+- url = review.new_record? ? work_reviews_path(review.work) : work_review_path(review.work)
+= form_with model: review, url: url, local: true do |f|
+  = render "application/components/error_panel", resource: review
+
+  = hidden_field_tag :page_category, page_category
+
+  .form-group
+    = f.label :title, class: "c-label-required"
+    = f.text_field :title, class: "form-control"
+    .text-right.text-muted.small
+      c-input-words-count :max-words-count="100" input-name="review[title]"
+
+  .form-group
+    = f.label :body, class: "c-label-required"
+    = f.text_area :body, rows: 30, class: "form-control"
+    .text-right.text-muted.small
+      c-input-words-count :max-words-count="10000" input-name="review[body]"
+
+  - Review::STATES.each do |state|
+    .form-group
+      = f.label state, class: "c-label-required"
+      c-record-rating :init-record=="{ ratingState: '#{review.send(state)}' }" input-name="review[#{state}]"
+
+  .form-group.text-center.mt-2
+    = f.button class: "btn btn-primary" do
+      = icon "paper-plane", class: "mr-zp5"
+      = t "verb.post"
+
+- content_for :js_templates do
+  = render "application/js_templates/record_rating"
+  = render "application/js_templates/record_textarea"
+  = render "application/js_templates/input_words_count"

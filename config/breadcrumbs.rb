@@ -44,9 +44,20 @@ crumb :work_review_list do |work|
   parent :work_detail, work
 end
 
+crumb :new_review do |work|
+  link t("head.title.reviews.new"), new_work_review_path(work)
+  parent :work_review_list, work
+end
+
+crumb :edit_review do |review|
+  link t("head.title.reviews.edit"), edit_work_review_path(review.work, review)
+  parent :review_detail, review
+end
+
 crumb :review_detail do |review|
   user = review.user
   work = review.work
-  link work.decorate.local_title, review_path(user.username, review)
+  link_title = t("noun.review_of_the_work", work_title: work.decorate.local_title)
+  link link_title, review_path(user.username, review)
   parent :user_review_list, user
 end
