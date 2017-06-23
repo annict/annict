@@ -13,9 +13,7 @@ class CreateReviews < ActiveRecord::Migration[5.1]
       t.string :rating_character_state
       t.string :rating_overall_state
       t.integer :likes_count, null: false, default: 0
-      t.integer :status_changed_users_count, null: false, default: 0
       t.integer :impressions_count, null: false, default: 0
-      t.integer :review_comments_count, null: false, default: 0
       t.string :aasm_state, null: false, default: "published"
       t.datetime :modified_at
       t.timestamps null: false

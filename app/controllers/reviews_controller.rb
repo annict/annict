@@ -22,8 +22,6 @@ class ReviewsController < ApplicationController
 
   def show
     @work = @review.work
-    @review_comments = @review.review_comments.order(created_at: :desc)
-    @review_comment = ReviewComment.new
     @is_spoiler = user_signed_in? && current_user.hide_review?(@review)
     set_page_object
   end

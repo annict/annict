@@ -60,21 +60,9 @@
               = review.body
     
     .row
-      / .col
-      /   - if review.shared_twitter? || review.twitter_url_hash.present?
-      /     small
-      /       = icon "twitter", class: "mr-zp25 u-text-twitter"
-      /       = review.twitter_click_count
-      /   - if review.shared_facebook? || review.facebook_url_hash.present?
-      /     small.ml-zp5
-      /       = icon "facebook", class: "mr-zp25 u-text-facebook"
-      /       = review.facebook_click_count
       .col
         .text-right
           c-like-button resource-name="Review" :init-resource-id="#{review.id}" :init-likes-count="#{review.likes_count}" :init-is-liked="#{user_signed_in? && current_user.like?(review)}" :is-signed-in="#{user_signed_in?}"
-          = link_to review_path(review.user.username, review), class: "d-inline-block ml-zp5" do
-            = icon "comment-o", class: "mr-zp25"
-            = review.review_comments_count
 
     - if policy(review).update?
       .small.text-right
