@@ -9,34 +9,35 @@
 = render "application/components/navbar", transparent: true
 = render "users/low_profile_header", user: @user
 
-.p-application__content.mb-2
-  = render "application/components/breadcrumb"
-  .c-card.container.mt-1
-    .px-1
-      - if @reviews.present?
-        - @reviews.each do |review|
-          .row.py-1.u-underline
-            .col-auto
-              = link_to work_path(review.work) do
-                = ann_image_tag review.work.work_image, :attachment, size: "70x93", class: "img-fluid img-thumbnail rounded"
-            .col
-              .text-muted.mb-zp25
-                = link_to review.work.decorate.local_title, work_path(review.work), class: "u-text-body"
-              h2.h4.font-weight-bold.mb-1
-                = link_to review.title, review_path(@user.username, review)
-              .small.text-muted
-                = link_to review_path(review.user.username, review), title: local_datetime(review.created_at) do
-                  = local_time_ago_in_words(review.created_at)
-                - if review.modified_at.present?
-                  .ml-zp5
-                    = icon "pencil"
-                span.ml-zp5
-                  = "#{review.impressions_count} views"
-                
-        - if @reviews.total_pages > 1
-          .mt-1.text-center
-            = paginate @reviews
-      - else
-        = render "application/components/empty", text: t("messages._empty.no_reviews")
+.p-application__content
+  .container.py-1.mb-1
+    = render "application/components/breadcrumb"
+    .c-card.px-1
+      .container
+        - if @reviews.present?
+          - @reviews.each do |review|
+            .row.py-1.u-underline
+              .col-auto
+                = link_to work_path(review.work) do
+                  = ann_image_tag review.work.work_image, :attachment, size: "70x93", class: "img-fluid img-thumbnail rounded"
+              .col
+                .text-muted.mb-zp25
+                  = link_to review.work.decorate.local_title, work_path(review.work), class: "u-text-body"
+                h2.h4.font-weight-bold.mb-1
+                  = link_to review.title, review_path(@user.username, review)
+                .small.text-muted
+                  = link_to review_path(review.user.username, review), title: local_datetime(review.created_at) do
+                    = local_time_ago_in_words(review.created_at)
+                  - if review.modified_at.present?
+                    .ml-zp5
+                      = icon "pencil"
+                  span.ml-zp5
+                    = "#{review.impressions_count} views"
+                  
+          - if @reviews.total_pages > 1
+            .mt-1.text-center
+              = paginate @reviews
+        - else
+          = render "application/components/empty", text: t("messages._empty.no_reviews")
 
 = render "application/components/footer"

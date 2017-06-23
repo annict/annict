@@ -92,6 +92,7 @@ en:
     release_on: Release on
     release_season: Release Season
     resources: Resources
+    review_list: Review List
     reviews: Reviews
     review_of_the_work: 'Review of "%{work_title}"'
     search: Search

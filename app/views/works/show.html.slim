@@ -116,7 +116,10 @@
                   = icon "angle-right"
                   = t "messages.works.view_all_n_reviews", n: @reviews.length
           - else
-            = render "application/components/empty", text: t("messages._empty.no_reviews")
+            = render "application/components/empty", text: t("messages._empty.no_reviews") do
+              = link_to new_work_review_path(@work), class: "btn btn-primary mt-zp5" do
+                = icon "pencil-square-o", class: "mr-zp25"
+                = t "verb.write_review"
 
         - if @series_list.present?
           h2.h4.text-center.my-2.font-weight-bold = t "noun.related_works"

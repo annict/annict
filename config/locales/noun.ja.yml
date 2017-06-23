@@ -92,6 +92,7 @@ ja:
     release_on: リリース日
     release_season: リリース時期
     resources: 種類
+    review_list: レビュー一覧
     reviews: レビュー
     review_of_the_work: "「%{work_title}」のレビュー"
     search: 検索

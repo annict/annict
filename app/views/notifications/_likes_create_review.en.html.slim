@@ -1,0 +1,14 @@
+- action_user = notification.action_user
+- like = notification.trackable
+- review = like.recipient
+
+span.mr-zp25
+  = action_user.decorate.name_link
+| liked your review "
+= review.decorate.detail_link
+| " on
+span.mx-zp25
+  = review.work.decorate.title_link
+
+.small.text-muted
+  = local_time_ago_in_words(notification.created_at)

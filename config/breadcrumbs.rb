@@ -35,7 +35,7 @@ crumb :work_detail do |work|
 end
 
 crumb :user_review_list do |user|
-  link t("noun.reviews"), reviews_path(user.username)
+  link t("noun.review_list"), reviews_path(user.username)
   parent :user_detail, user
 end
 
