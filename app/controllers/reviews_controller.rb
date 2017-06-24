@@ -21,6 +21,7 @@ class ReviewsController < ApplicationController
   end
 
   def show
+    @reviews = @user.reviews.published.includes(work: :work_image).order(id: :desc)
     @work = @review.work
     @is_spoiler = user_signed_in? && current_user.hide_review?(@review)
     set_page_object

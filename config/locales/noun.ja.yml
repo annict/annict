@@ -71,6 +71,7 @@ ja:
     or: OR
     organization: 団体
     organizations: 団体
+    other_reviews_of: "%{profile_name}が書いた他のレビュー"
     other_users: その他利用者さん
     overall: 全体
     password: パスワード

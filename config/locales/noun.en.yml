@@ -71,6 +71,7 @@ en:
     or: OR
     organization: Organization
     organizations: Organizations
+    other_reviews_of: "Reviews of %{profile_name}"
     other_users: Other Users
     overall: Overall
     password: Password
