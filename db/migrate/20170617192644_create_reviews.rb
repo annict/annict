@@ -5,7 +5,7 @@ class CreateReviews < ActiveRecord::Migration[5.1]
     create_table :reviews do |t|
       t.integer :user_id, null: false
       t.integer :work_id, null: false
-      t.string :title, null: false
+      t.string :title, null: false, default: ""
       t.text :body, null: false
       t.string :rating_animation_state
       t.string :rating_music_state

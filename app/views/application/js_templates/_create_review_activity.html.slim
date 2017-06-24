@@ -9,12 +9,20 @@ script#t-create-review-activity type="x-template"
           .mb-zp5 v-if='locale === "en"'
             a.mr-zp25 :href='"/@" + activity.user.username'
               | {{ activity.profile.name }}
-            span
-              | wrote a review "
-            a :href='"/@" + activity.user.username + "/reviews/" + activity.review.id'
-              | {{ activity.review.title }}
-            span.mr-zp25
-              | " on
+            template v-if="activity.review.title"
+              span
+                | wrote a review "
+              a :href='"/@" + activity.user.username + "/reviews/" + activity.review.id'
+                | {{ activity.review.title }}
+              span.mr-zp25
+                | " on
+            template v-else=""
+              span.mr-zp25
+                | wrote
+              a.mr-zp25 :href='"/@" + activity.user.username + "/reviews/" + activity.review.id'
+                | a review
+              span.mr-zp25
+                | on
             a :href='"/works/" + activity.work.id'
               | {{ activity.work.title }}
           .mb-zp5 v-else=""
@@ -23,10 +31,16 @@ script#t-create-review-activity type="x-template"
             | が
             a :href='"/works/" + activity.work.id'
               | {{ activity.work.title }}
-            | のレビュー「
-            a :href='"/@" + activity.user.username + "/reviews/" + activity.review.id'
-              | {{ activity.review.title }}
-            | 」を書きました
+            template v-if="activity.review.title"
+              | のレビュー「
+              a :href='"/@" + activity.user.username + "/reviews/" + activity.review.id'
+                | {{ activity.review.title }}
+              | 」を書きました
+            template v-else=""
+              | の
+              a :href='"/@" + activity.user.username + "/reviews/" + activity.review.id'
+                | レビュー
+              | を書きました
           .small.text-muted
             c-time-ago :time="activity.created_at"
     

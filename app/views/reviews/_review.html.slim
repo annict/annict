@@ -52,8 +52,9 @@
                     = t "noun.overall"
                   td
                     c-rating-state-label :init-rating-state=="'#{review.rating_overall_state}'" v-show="!isSpoiler"
-        h1.h4.u-text-green.mb-1
-          = "\"#{review.title}\""
+        - if review.title.present?
+          h1.h4.u-text-green.mb-1
+            = "\"#{review.title}\""
         .c-body
           c-body inline-template=""
             .c-body__content

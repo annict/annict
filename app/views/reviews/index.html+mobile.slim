@@ -24,7 +24,8 @@ h2.h4.font-weight-bold.text-center.my-2
               .small.text-muted.mb-zp25
                 = link_to review.work.decorate.local_title, work_path(review.work), class: "u-text-body"
               h2.h4.mb-1
-                = link_to review.title, review_path(@user.username, review)
+                - title = review.title.presence || t("noun.review_of_the_work", work_title: review.work.decorate.local_title)
+                = link_to title, review_path(@user.username, review)
               .small.text-muted
                 = link_to review_path(review.user.username, review), title: local_datetime(review.created_at) do
                   = local_time_ago_in_words(review.created_at)

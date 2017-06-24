@@ -128,7 +128,8 @@
                   .col
                     .small.text-muted.mb-zp25
                       = link_to review.work.decorate.local_title, work_path(review.work), class: "u-text-body"
-                    = link_to review.title, review_path(@user.username, review)
+                    - title = review.title.presence || t("noun.review_of_the_work", work_title: review.work.decorate.local_title)
+                    = link_to title, review_path(@user.username, review)
 
         - if @favorite_characters.exists?
           .mb-2

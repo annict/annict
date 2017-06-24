@@ -7,7 +7,8 @@
             = ann_image_tag review.user.profile, :tombo_avatar, size: "50x50", class: "rounded-circle"
         .col
           .mb-zp5
-            = link_to review.title, review_path(review.user.username, review)
+            - title = review.title.presence || t("noun.review_of_the_work", work_title: review.work.decorate.local_title)
+            = link_to title, review_path(review.user.username, review)
           .small
             span.mr-zp25
               | by
