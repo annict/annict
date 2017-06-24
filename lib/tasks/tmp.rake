@@ -21,7 +21,7 @@ namespace :tmp do
 
           puts "- record: #{r.id}"
 
-          review = Review.create(
+          review = Review.new(
             user_id: r.user_id,
             work_id: r.work_id,
             body: r.comment,
@@ -29,6 +29,7 @@ namespace :tmp do
             created_at: r.created_at,
             updated_at: r.updated_at
           )
+          review.save!(validate: false)
 
           r.update_attributes(review: review)
 
