@@ -74,12 +74,24 @@ class ReviewsController < ApplicationController
     @review = current_user.reviews.published.find(id)
     authorize @review, :update?
 
+    @review.attributes = review
     @review.modified_at = Time.now
+    current_user.setting.attributes = setting_params
 
-    if @review.update_attributes(review)
+    begin
+      ActiveRecord::Base.transaction do
+        @review.save!
+        current_user.setting.save!
+      end
+      if current_user.setting.share_review_to_twitter?
+        ShareReviewToTwitterJob.perform_later(current_user.id, @review.id)
+      end
+      if current_user.setting.share_review_to_facebook?
+        ShareReviewToFacebookJob.perform_later(current_user.id, @review.id)
+      end
       flash[:notice] = t("messages._common.updated")
       redirect_to review_path(@review.user.username, @review)
-    else
+    rescue
       set_page_object
       render :edit
     end
