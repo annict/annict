@@ -5,5 +5,6 @@
       li.list-inline-item = active_link_to t("noun.detail"), work_path(work), class: "c-slidable-subnav__link", class_active: "c-slidable-subnav__link--active", active: params[:controller] == "works" && params[:action].in?(%w(show))
       li.list-inline-item = active_link_to t("noun.characters"), work_characters_path(work), class: "c-slidable-subnav__link", class_active: "c-slidable-subnav__link--active", active: params[:controller] == "characters" && params[:action].in?(%w(index))
       li.list-inline-item = active_link_to t("noun.staffs"), work_staffs_path(work), class: "c-slidable-subnav__link", class_active: "c-slidable-subnav__link--active", active: params[:controller] == "staffs" && params[:action].in?(%w(index))
-      li.list-inline-item = active_link_to t("noun.episodes"), work_episodes_path(work), class: "c-slidable-subnav__link", class_active: "c-slidable-subnav__link--active", active: params[:controller] == "episodes" && params[:action].in?(%w(index show))
+      - unless work.no_episodes?
+        li.list-inline-item = active_link_to t("noun.episodes"), work_episodes_path(work), class: "c-slidable-subnav__link", class_active: "c-slidable-subnav__link--active", active: params[:controller] == "episodes" && params[:action].in?(%w(index show))
       li.list-inline-item = active_link_to t("noun.reviews"), work_reviews_path(work), class: "c-slidable-subnav__link", class_active: "c-slidable-subnav__link--active", active: params[:controller].in?(%w(work_reviews reviews)) && params[:action].in?(%w(index new create edit update))

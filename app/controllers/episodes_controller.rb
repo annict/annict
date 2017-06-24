@@ -32,6 +32,8 @@ class EpisodesController < ApplicationController
   before_action :load_i18n, only: %i(show)
 
   def index
+    raise ActionController::RoutingError, "Not Found" if @work.no_episodes?
+
     @episodes = @work.episodes.published
 
     return unless user_signed_in?

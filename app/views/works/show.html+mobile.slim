@@ -126,23 +126,24 @@ h2.h4.font-weight-bold.text-center.mt-1.mb-2
         .mt-1
           = link_to t("messages.works.view_all_n_staffs", n: @staffs.length), work_staffs_path(@work), class: "btn btn-secondary w-100"
 
-.mb-1
-  h2.h4.text-center.font-weight-bold.mt-1.mb-2
-    = t "noun.episodes"
-  .c-card.py-1
-    - if @episodes.present?
-      - if user_signed_in?
-        .mb-zp5.mx-1
-          = link_to t("noun.bulk_tracking"), work_episodes_path(@work, tracking: "on"), class: "small"
-      table.p-episodes-table.table.mb-0
-        tbody
-          - @episodes.published.order(:sort_number).first(5).each do |episode|
-            = render "episodes/episode_row", work: @work, episode: episode
-      - if @episodes.length > 5
-        .mt-1.mx-1
-          = link_to t("messages.works.view_all_n_episodes", n: @episodes.length), work_episodes_path(@work), class: "btn btn-secondary w-100"
-    - else
-      = render "application/components/empty", text: t("messages._empty.no_episodes")
+- unless @work.no_episodes?
+  .mb-1
+    h2.h4.text-center.font-weight-bold.mt-1.mb-2
+      = t "noun.episodes"
+    .c-card.py-1
+      - if @episodes.present?
+        - if user_signed_in?
+          .mb-zp5.mx-1
+            = link_to t("noun.bulk_tracking"), work_episodes_path(@work, tracking: "on"), class: "small"
+        table.p-episodes-table.table.mb-0
+          tbody
+            - @episodes.published.order(:sort_number).first(5).each do |episode|
+              = render "episodes/episode_row", work: @work, episode: episode
+        - if @episodes.length > 5
+          .mt-1.mx-1
+            = link_to t("messages.works.view_all_n_episodes", n: @episodes.length), work_episodes_path(@work), class: "btn btn-secondary w-100"
+      - else
+        = render "application/components/empty", text: t("messages._empty.no_episodes")
 
 .mb-1
   h2.h4.text-center.font-weight-bold.mt-1.mb-2
