@@ -9,8 +9,12 @@ script#t-create-review-activity type="x-template"
           .mb-zp5 v-if='locale === "en"'
             a.mr-zp25 :href='"/@" + activity.user.username'
               | {{ activity.profile.name }}
+            span
+              | wrote a review "
+            a :href='"/@" + activity.user.username + "/reviews/" + activity.review.id'
+              | {{ activity.review.title }}
             span.mr-zp25
-              | reviewed
+              | " on
             a :href='"/works/" + activity.work.id'
               | {{ activity.work.title }}
           .mb-zp5 v-else=""
@@ -19,7 +23,10 @@ script#t-create-review-activity type="x-template"
             | が
             a :href='"/works/" + activity.work.id'
               | {{ activity.work.title }}
-            | のレビューを書きました
+            | のレビュー「
+            a :href='"/@" + activity.user.username + "/reviews/" + activity.review.id'
+              | {{ activity.review.title }}
+            | 」を書きました
           .small.text-muted
             c-time-ago :time="activity.created_at"
     
@@ -43,6 +50,3 @@ script#t-create-review-activity type="x-template"
 
     .mt-zp5
       c-like-button.u-fake-link.mr-1 resource-name="Review" :init-resource-id="activity.review.id" :init-likes-count="activity.review.likes_count" :init-is-liked="activity.meta.liked" :is-signed-in="#{user_signed_in?}"
-      a :href='"/@" + activity.user.username + "/reviews/" + activity.review.id'
-        = icon "comment-o", class: "mr-zp25"
-        | {{ activity.review.review_comments_count }}
