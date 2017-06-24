@@ -37,6 +37,7 @@ class ReviewsController < ApplicationController
 
     begin
       @review.save!
+      CreateReviewActivityJob.perform_later(current_user.id, @review.id)
       ga_client.page_category = params[:page_category]
       ga_client.events.create(:reviews, :create)
       flash[:notice] = t("messages._common.post")
