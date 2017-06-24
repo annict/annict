@@ -17,10 +17,10 @@
           .container
             = render "reviews/review", review: @review, is_spoiler: @is_spoiler
         
-        h2.h4.text-center.my-2.font-weight-bold
-          = t "noun.other_reviews_by", profile_name: @user.profile.name
-        .c-card.container.mt-1.mb-1
-          - if @reviews.present?
+        - if @reviews.length > 1
+          h2.h4.text-center.my-2.font-weight-bold
+            = t "noun.other_reviews_by", profile_name: @user.profile.name
+          .c-card.container.mt-1.mb-1
             .px-1
               - @reviews.first(5).each do |review|
                 .row.py-1.u-underline
