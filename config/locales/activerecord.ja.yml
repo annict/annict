@@ -127,6 +127,14 @@ ja:
         title: タイトル
         thumbnail: サムネイル
         url: URL
+      review:
+        title: タイトル
+        body: 本文
+        rating_animation_state: 映像
+        rating_music_state: 音楽
+        rating_story_state: ストーリー
+        rating_character_state: キャラクター
+        rating_overall_state: 全体
       series:
         name_en: 名前 (英語)
         name_ro: 名前 (ローマ字)
@@ -166,6 +174,7 @@ ja:
         mal_anime_id: MAL Anime ID
         manual_episodes_count: 話数
         media: メディア
+        no_episodes: エピソード無し
         number_format_id: 話数フォーマット
         official_site_url_en: 公式サイト (英)
         official_site_url: 公式サイト

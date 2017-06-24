@@ -6,7 +6,10 @@ en:
       deleted: Deleted
       edit_on_annict_db: Edit on Annict DB
       join_annict: Join Annict
+      post: Finished to post
       search_with_keywords: Search...
+      share_to_facebook: Share to Facebook
+      share_to_twitter: Share to Twitter
       unpublished: Unpublished
       updated: Updated
       view_amazon_product: View Amazon
@@ -17,6 +20,7 @@ en:
       no_characters: No Characters
       no_episodes: No Episodes
       no_projects: No Projects
+      no_reviews: No Reviews
       no_series: No Series
       no_staffs: No Staffs
       no_series_works: No Series Works
@@ -155,6 +159,8 @@ en:
         username_preview_mobile: "Your profile:"
       create:
         confirmation_mail_has_sent: Confirmation mail has sent.
+    reviews:
+      n_people_changed_status_to_wanna_watch: "%{count} people changed their status to 'Plan to Watch'."
     sayonara:
       are_you_sure_really: Are you sure? Really??
       delete_account: Delete Account
@@ -201,6 +207,7 @@ en:
       index:
         dropzone-empty: Drop your image here or click to upload.
     works:
-      view_all_n_characters: View all %{n} characters
-      view_all_n_episodes: View all %{n} episodes
-      view_all_n_staffs: View all %{n} staffs
+      view_all_n_characters: View All %{n} Characters
+      view_all_n_episodes: View All %{n} Episodes
+      view_all_n_reviews: View All %{n} Reviews
+      view_all_n_staffs: View All %{n} Staffs

@@ -1,0 +1,66 @@
+script#t-create-review-activity type="x-template"
+  .c-create-review-activity.c-card.p-1.mb-1
+    .mb-zp5
+      .row
+        .col.col-auto.pr-0
+          a :href='"/@" + activity.user.username'
+            img.c-vue-lazyload.rounded-circle v-lazy="activity.profile.avatar_url" width="35" height="35"
+        .col.pl-zp5.u-lh-1
+          .mb-zp5 v-if='locale === "en"'
+            a.mr-zp25 :href='"/@" + activity.user.username'
+              | {{ activity.profile.name }}
+            template v-if="activity.review.title"
+              span
+                | wrote a review "
+              a :href='"/@" + activity.user.username + "/reviews/" + activity.review.id'
+                | {{ activity.review.title }}
+              span.mr-zp25
+                | " on
+            template v-else=""
+              span.mr-zp25
+                | wrote
+              a.mr-zp25 :href='"/@" + activity.user.username + "/reviews/" + activity.review.id'
+                | a review
+              span.mr-zp25
+                | on
+            a :href='"/works/" + activity.work.id'
+              | {{ activity.work.title }}
+          .mb-zp5 v-else=""
+            a :href='"/@" + activity.user.username'
+              | {{ activity.profile.name }}
+            | が
+            a :href='"/works/" + activity.work.id'
+              | {{ activity.work.title }}
+            template v-if="activity.review.title"
+              | のレビュー「
+              a :href='"/@" + activity.user.username + "/reviews/" + activity.review.id'
+                | {{ activity.review.title }}
+              | 」を書きました
+            template v-else=""
+              | の
+              a :href='"/@" + activity.user.username + "/reviews/" + activity.review.id'
+                | レビュー
+              | を書きました
+          .small.text-muted
+            c-time-ago :time="activity.created_at"
+    
+    c-comment-guard inline-template="" :init-is-spoiler="activity.review.hide_review" :activity="activity"
+      .mb-1 @click="remove"
+        template v-if="activity.review.rating_overall_state"
+          c-rating-state-label :init-rating-state="activity.review.rating_overall_state" v-show="!isSpoiler"
+        .c-body @click="remove"
+          c-body inline-template=""
+            .c-body__content
+              | {{ $parent.activity.review.body }}
+
+    .mb-zp5
+      .row.align-items-center.mx-0.u-border-1.rounded
+        .col-2.p-0
+          a :href='"/works/" + activity.work.id'
+            img.c-vue-lazyload.img-fluid.rounded-left v-lazy="activity.item.image_url" :alt="activity.work.title"
+        .col-10
+          a :href='"/works/" + activity.work.id'
+            | {{ activity.work.title }}
+
+    .mt-zp5
+      c-like-button.u-fake-link.mr-1 resource-name="Review" :init-resource-id="activity.review.id" :init-likes-count="activity.review.likes_count" :init-is-liked="activity.meta.liked" :is-signed-in="#{user_signed_in?}"

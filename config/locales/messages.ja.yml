@@ -6,7 +6,10 @@ ja:
       deleted: 削除しました
       edit_on_annict_db: Annict DBで編集する
       join_annict: Annictに参加する
+      post: 投稿しました
       search_with_keywords: キーワードで検索...
+      share_to_facebook: Facebookにシェアする
+      share_to_twitter: Twitterにシェアする
       unpublished: 非公開にしました
       updated: 更新しました
       view_amazon_product: Amazonで見る
@@ -17,6 +20,7 @@ ja:
       no_characters: キャラクターはいません
       no_episodes: エピソードはありません
       no_projects: プロジェクトはありません
+      no_reviews: レビューはありません
       no_staffs: スタッフはいません
       no_series: シリーズはありません
       no_series_works: シリーズ作品はありません
@@ -155,6 +159,8 @@ ja:
         username_preview_mobile: "プロフィールURL:"
       create:
         confirmation_mail_has_sent: 確認メールを送信しました
+    reviews:
+      n_people_changed_status_to_wanna_watch: "%{count}人がこのレビューを見て視聴ステータスを「見たい」にしました"
     sayonara:
       are_you_sure_really: 後戻りできませんがよろしいですか？
       delete_account: アカウントを削除する
@@ -201,6 +207,7 @@ ja:
       index:
         dropzone-empty: 画像をドラッグアンドドロップ、またはクリックして選択できます
     works:
-      view_all_n_characters: "%{n}人のキャラクター全てを見る"
-      view_all_n_episodes: "%{n}エピソード全てを見る"
-      view_all_n_staffs: "%{n}人のスタッフ全てを見る"
+      view_all_n_characters: "%{n}人のキャラクターを全て見る"
+      view_all_n_episodes: "%{n}エピソードを全て見る"
+      view_all_n_reviews: "%{n}件のレビューを全て見る"
+      view_all_n_staffs: "%{n}人のスタッフを全て見る"

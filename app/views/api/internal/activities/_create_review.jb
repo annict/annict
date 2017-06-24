@@ -1,0 +1,46 @@
+# frozen_string_literal: true
+
+work = activity.recipient
+review = activity.trackable
+
+cache_keys = [
+  I18n.locale,
+  user&.id,
+  activity,
+  activity.action
+]
+
+json = Rails.cache.fetch(cache_keys) do
+  {
+    work: {
+      id: work.id,
+      title: work.decorate.local_title
+    },
+    item: {
+      image_url: ann_image_url(work.work_image, :attachment, size: "125x125")
+    },
+    review: {
+      id: review.id,
+      title: review.title,
+      body: review.body,
+      rating_overall_state: review.rating_overall_state,
+      likes_count: review.likes_count,
+      review_comments_count: review.review_comments_count
+    }
+  }
+end
+
+cache_keys = [
+  I18n.locale,
+  user&.id,
+  user&.record_cache_expired_at,
+  user&.status_cache_expired_at,
+  activity,
+  activity.action
+]
+
+json[:review][:hide_review] = Rails.cache.fetch(cache_keys) do
+  user.present? && user.hide_review?(review)
+end
+
+json

@@ -1,19 +1,21 @@
+# frozen_string_literal: true
+
 class TwitterService
   def initialize(user)
     @user = user
   end
 
   def provider
-    @provider ||= @user.providers.find_by(name: 'twitter')
+    @provider ||= @user.providers.find_by(name: "twitter")
   end
 
   def client
     return nil if provider.blank?
 
     @client ||= Twitter::REST::Client.new do |config|
-      config.consumer_key        = ENV['TWITTER_CONSUMER_KEY']
-      config.consumer_secret     = ENV['TWITTER_CONSUMER_SECRET']
-      config.access_token        = provider.token
+      config.consumer_key = ENV.fetch("TWITTER_CONSUMER_KEY")
+      config.consumer_secret = ENV.fetch("TWITTER_CONSUMER_SECRET")
+      config.access_token = provider.token
       config.access_token_secret = provider.token_secret
     end
   end
@@ -30,6 +32,10 @@ class TwitterService
     end
 
     client.update(tweet_body(checkin))
+  end
+
+  def share_review!(review)
+    client.update(review.decorate.tweet_body)
   end
 
   private

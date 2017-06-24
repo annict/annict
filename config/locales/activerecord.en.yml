@@ -128,6 +128,14 @@ en:
         title: Title
         thumbnail: Thumbnail
         url: URL
+      review:
+        title: Title
+        body: Body
+        rating_animation_state: Animation
+        rating_music_state: Music
+        rating_story_state: Story
+        rating_character_state: Character
+        rating_overall_state: Overall
       series:
         name_en: Name (en)
         name_ro: Name (ro)
@@ -167,6 +175,7 @@ en:
         mal_anime_id: MAL Anime ID
         manual_episodes_count: Episodes
         media: Media
+        no_episodes: No Episodes
         number_format_id: Number format
         official_site_url_en: Official site (en)
         official_site_url: Official site (ja)

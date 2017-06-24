@@ -1,5 +1,4 @@
 # frozen_string_literal: true
-
 # == Schema Information
 #
 # Table name: checkins
@@ -24,6 +23,8 @@
 #  multiple_record_id   :integer
 #  oauth_application_id :integer
 #  rating_state         :string
+#  review_id            :integer
+#  aasm_state           :string           default("published"), not null
 #
 # Indexes
 #
@@ -34,15 +35,27 @@
 #  index_checkins_on_multiple_record_id    (multiple_record_id)
 #  index_checkins_on_oauth_application_id  (oauth_application_id)
 #  index_checkins_on_rating_state          (rating_state)
+#  index_checkins_on_review_id             (review_id)
 #  index_checkins_on_work_id               (work_id)
 #
 
 class Checkin < ApplicationRecord
   extend Enumerize
+  include AASM
 
   enumerize :rating_state, in: %i(bad average good great), scope: true
 
+  aasm do
+    state :published, initial: true
+    state :hidden
+
+    event :hide do
+      transitions from: :published, to: :hidden
+    end
+  end
+
   belongs_to :oauth_application, class_name: "Doorkeeper::Application", optional: true
+  belongs_to :review, optional: true
   belongs_to :work
   belongs_to :episode, counter_cache: true
   belongs_to :multiple_record, optional: true

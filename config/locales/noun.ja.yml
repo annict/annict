@@ -8,6 +8,7 @@ ja:
     airing: 放送中
     all: 全て
     all_comments: 全ての感想
+    animation: 映像
     anime: アニメ
     annict_api: Annict API
     annict_db: Annict DB
@@ -61,6 +62,7 @@ ja:
     language: 言語
     last: Last
     more: その他
+    music: 音楽
     my_records: 自分の記録
     n_works_watched: "%{count}作品見た"
     next_season: 来期のアニメ
@@ -69,7 +71,9 @@ ja:
     or: OR
     organization: 団体
     organizations: 団体
+    other_reviews_by: "%{profile_name}が書いた他のレビュー"
     other_users: その他利用者さん
+    overall: 全体
     password: パスワード
     people: 人物
     personal_access_tokens: 個人用アクセストークン
@@ -89,6 +93,10 @@ ja:
     release_on: リリース日
     release_season: リリース時期
     resources: 種類
+    review_list: レビュー一覧
+    reviews: レビュー
+    review_of_the_work: "「%{work_title}」のレビュー"
+    reviews_by: "%{profile_name}が書いたレビュー"
     search: 検索
     season: シーズン
     seasonal_anime: シーズン別アニメ
@@ -96,6 +104,7 @@ ja:
     series_with_name: "%{series_name}シリーズ"
     services: サービス
     settings: 設定
+    share: シェア
     sign_in: ログイン
     sign_up: ユーザ登録
     skip: スキップ
@@ -106,6 +115,7 @@ ja:
     staffs: スタッフ
     state: 状態
     stats: 統計
+    story: ストーリー
     summer: 夏
     syobocal: しょぼかる
     terms_of_use: 利用規約
@@ -119,6 +129,7 @@ ja:
     watching: 見てるアニメ
     watching_shorten: 見てる
     winter: 冬
+    work_detail_page: 作品ページ
     work_image: 作品画像
     works: 作品
     your_statistics: 視聴状況

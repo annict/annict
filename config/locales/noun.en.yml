@@ -8,6 +8,7 @@ en:
     airing: Airing
     all: All
     all_comments: All Comments
+    animation: Animation
     anime: Anime
     annict_api: Annict API
     annict_db: Annict DB
@@ -61,6 +62,7 @@ en:
     language: Language
     last: Last
     more: More
+    music: Music
     my_records: My Records
     n_works_watched: "%{count} Works Watched"
     next_season: Next Season
@@ -69,7 +71,9 @@ en:
     or: OR
     organization: Organization
     organizations: Organizations
+    other_reviews_by: "Reviews by %{profile_name}"
     other_users: Other Users
+    overall: Overall
     password: Password
     people: People
     personal_access_tokens: Personal Access Tokens
@@ -89,6 +93,10 @@ en:
     release_on: Release on
     release_season: Release Season
     resources: Resources
+    review_list: Review List
+    reviews: Reviews
+    review_of_the_work: 'Review of "%{work_title}"'
+    reviews_by: "Reviews by %{profile_name}"
     search: Search
     season: Season
     seasonal_anime: Seasonal Anime
@@ -96,6 +104,7 @@ en:
     series_with_name: "%{series_name} Series"
     services: Services
     settings: Settings
+    share: Share
     sign_in: Sign in
     sign_up: Sign up
     skip: Skip
@@ -106,6 +115,7 @@ en:
     staffs: Staffs
     state: State
     stats: Stats
+    story: Story
     summer: Summer
     syobocal: Syobocal
     terms_of_use: Terms of Use
@@ -119,6 +129,7 @@ en:
     watching: Watching
     watching_shorten: Watching
     winter: Winter
+    work_detail_page: Work Detail
     work_image: Work image
     works: Works
     your_statistics: Your Statistics

@@ -61,7 +61,7 @@ class User < ApplicationRecord
 
   enumerize :role, in: { user: 0, admin: 1, editor: 2 }, default: :user, scope: true
 
-  has_many :activities,    dependent: :destroy
+  has_many :activities, dependent: :destroy
   has_many :channel_works, dependent: :destroy
   has_many :records, class_name: "Checkin", dependent: :destroy
   has_many :db_comments, dependent: :destroy
@@ -69,16 +69,17 @@ class User < ApplicationRecord
   has_many :favorite_organizations, dependent: :destroy
   has_many :favorite_people, dependent: :destroy
   has_many :finished_tips, dependent: :destroy
-  has_many :follows,       dependent: :destroy
-  has_many :followings,    through:   :follows
+  has_many :follows, dependent: :destroy
+  has_many :followings, through: :follows
   has_many :forum_post_participants, dependent: :destroy
   has_many :latest_statuses, dependent: :destroy
   has_many :likes, dependent: :destroy
   has_many :notifications, dependent: :destroy
-  has_many :providers,     dependent: :destroy
-  has_many :receptions,    dependent: :destroy
-  has_many :channels,      through:   :receptions
-  has_many :statuses,      dependent: :destroy
+  has_many :providers, dependent: :destroy
+  has_many :receptions, dependent: :destroy
+  has_many :reviews, dependent: :destroy
+  has_many :channels, through:   :receptions
+  has_many :statuses, dependent: :destroy
   has_many :multiple_records, dependent: :destroy
   has_many :mute_users, dependent: :destroy
   has_many :oauth_applications, class_name: "Doorkeeper::Application", as: :owner
@@ -219,8 +220,14 @@ class User < ApplicationRecord
 
   def hide_checkin_comment?(episode)
     setting.hide_checkin_comment? &&
-    works.desiring_to_watch.include?(episode.work) &&
-    !records.pluck(:episode_id).include?(episode.id)
+      works.desiring_to_watch.include?(episode.work) &&
+      !records.pluck(:episode_id).include?(episode.id)
+  end
+
+  def hide_review?(review)
+    setting.hide_checkin_comment? &&
+      works.desiring_to_watch.include?(review.work) &&
+      !reviews.pluck(:work_id).include?(review.work_id)
   end
 
   def committer?

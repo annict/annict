@@ -12,12 +12,9 @@ module.exports =
       type: Object
 
   methods:
-    $comment: ->
-      $(@$el).parent().find(".c-body")
-
     remove: ->
-      @$comment().removeClass("c-comment-guard")
+      $(@$el).children().removeClass("c-comment-guard")
       @isSpoiler = false
 
   mounted: ->
-    @$comment().addClass("c-comment-guard") if @isSpoiler
+    $(@$el).children().addClass("c-comment-guard") if @isSpoiler

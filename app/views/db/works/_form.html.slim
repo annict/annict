@@ -94,6 +94,13 @@
         .row
           .col-sm-5
             = f.select :number_format_id, options_from_collection_for_select(NumberFormat.order(:sort_number), :id, :name, f.object.number_format_id), { include_blank: true }, { class: "form-control" }
+    .form-group.row
+      label.col-sm-3
+      .col-sm-9
+        .form-check
+          = f.label :no_episodes, class: "form-check-label" do
+            = f.check_box :no_episodes, class: "form-check-input"
+            = t "activerecord.attributes.work.no_episodes"
 
     .form-group.row
       .offset-sm-3.col-sm-9

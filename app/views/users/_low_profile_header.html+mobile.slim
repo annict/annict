@@ -5,6 +5,6 @@
       = ann_image_tag(user.profile, :tombo_avatar, size: "80x80", class: "p-profile-header__avatar rounded-circle")
   .p-profile-header__profile.container.text-center.pt-zp5
     h1.h2.mb-zp5
-      = link_to @user.profile.name, user_path(@user.username)
+      = link_to @user.profile.name, user_path(@user.username), class: "u-text-body"
     .mt-zp5
       = link_to "@#{@user.username}", user_path(@user.username)
