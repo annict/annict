@@ -24,8 +24,7 @@ json = Rails.cache.fetch(cache_keys) do
       title: review.title,
       body: review.body,
       rating_overall_state: review.rating_overall_state,
-      likes_count: review.likes_count,
-      review_comments_count: review.review_comments_count
+      likes_count: review.likes_count
     }
   }
 end
