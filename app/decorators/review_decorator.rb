@@ -8,12 +8,12 @@ class ReviewDecorator < ApplicationDecorator
   end
 
   def detail_url
-    h.review_url(user.username, self)
+    "#{ENV.fetch('ANNICT_URL')}#{h.review_path(user.username, self)}"
   end
 
   def tweet_body
     work_title = work.title
-    share_url = h.review_url(user.username, self)
+    share_url = detail_url
     share_hashtag = review.work.hashtag_with_hash
     review_title = title
 
