@@ -40,4 +40,13 @@ class FacebookService
       caption: caption,
       source: source)
   end
+
+  def share_review!(review, image_url)
+    client.put_connections("me", "feed",
+      name: review.work.title,
+      message: review.body,
+      link: review.decorate.detail_url,
+      caption: "Annict | アニクト - 見たアニメを記録して、共有しよう",
+      source: image_url)
+  end
 end

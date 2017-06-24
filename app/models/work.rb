@@ -254,6 +254,11 @@ class Work < ApplicationRecord
     manual_episodes_count.presence || auto_episodes_count
   end
 
+  def hashtag_with_hash
+    return "" if twitter_hashtag.blank?
+    "##{twitter_hashtag}"
+  end
+
   def to_diffable_hash
     data = self.class::DIFF_FIELDS.each_with_object({}) do |field, hash|
       hash[field] = case field

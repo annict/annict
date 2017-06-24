@@ -32,5 +32,8 @@ class CreateReviews < ActiveRecord::Migration[5.1]
     add_column :checkins, :aasm_state, :string, null: false, default: "published"
 
     add_column :works, :no_episodes, :boolean, null: false, default: false
+
+    add_column :settings, :share_review_to_twitter, :boolean, null: false, default: false
+    add_column :settings, :share_review_to_facebook, :boolean, null: false, default: false
   end
 end

@@ -34,10 +34,20 @@ class ReviewsController < ApplicationController
   def create(review)
     @review = @work.reviews.new(review)
     @review.user = current_user
+    current_user.setting.attributes = setting_params
 
     begin
-      @review.save!
+      ActiveRecord::Base.transaction do
+        @review.save!
+        current_user.setting.save!
+      end
       CreateReviewActivityJob.perform_later(current_user.id, @review.id)
+      if current_user.setting.share_review_to_twitter?
+        ShareReviewToTwitterJob.perform_later(current_user.id, @review.id)
+      end
+      if current_user.setting.share_review_to_facebook?
+        ShareReviewToFacebookJob.perform_later(current_user.id, @review.id)
+      end
       ga_client.page_category = params[:page_category]
       ga_client.events.create(:reviews, :create)
       flash[:notice] = t("messages._common.post")
@@ -95,5 +105,9 @@ class ReviewsController < ApplicationController
     gon.pageObject = render_jb "works/_detail",
       user: current_user,
       work: @work
+  end
+
+  def setting_params
+    params.require(:setting).permit(:share_review_to_twitter, :share_review_to_facebook)
   end
 end
