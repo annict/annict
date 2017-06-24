@@ -41,21 +41,13 @@ class ReviewsController < ApplicationController
     @review = @work.reviews.new(review)
     @review.user = current_user
     current_user.setting.attributes = setting_params
+    ga_client.page_category = params[:page_category]
+
+    service = NewReviewService.new(current_user, @review, current_user.setting)
+    service.ga_client = ga_client
 
     begin
-      ActiveRecord::Base.transaction do
-        @review.save!
-        current_user.setting.save!
-      end
-      CreateReviewActivityJob.perform_later(current_user.id, @review.id)
-      if current_user.setting.share_review_to_twitter?
-        ShareReviewToTwitterJob.perform_later(current_user.id, @review.id)
-      end
-      if current_user.setting.share_review_to_facebook?
-        ShareReviewToFacebookJob.perform_later(current_user.id, @review.id)
-      end
-      ga_client.page_category = params[:page_category]
-      ga_client.events.create(:reviews, :create)
+      service.save!
       flash[:notice] = t("messages._common.post")
       redirect_to review_path(current_user.username, @review)
     rescue

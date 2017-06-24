@@ -38,6 +38,7 @@
 #  key_pv_id             :integer
 #  manual_episodes_count :integer
 #  no_episodes           :boolean          default(FALSE), not null
+#  reviews_count         :integer          default(0), not null
 #
 # Indexes
 #

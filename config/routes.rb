@@ -102,6 +102,7 @@ Rails.application.routes.draw do
           resources :following_activities, only: %i(index)
           resources :programs, only: [:index]
           resources :records, only: %i(create update destroy)
+          resources :reviews, only: %i(create update destroy)
           resources :statuses, only: [:create]
           resources :works, only: [:index]
 

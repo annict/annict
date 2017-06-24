@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170618013307) do
+ActiveRecord::Schema.define(version: 20170624180724) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -846,6 +846,8 @@ ActiveRecord::Schema.define(version: 20170618013307) do
     t.datetime "modified_at"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.integer "oauth_application_id"
+    t.index ["oauth_application_id"], name: "index_reviews_on_oauth_application_id"
     t.index ["user_id"], name: "index_reviews_on_user_id"
     t.index ["work_id"], name: "index_reviews_on_work_id"
   end
@@ -1096,6 +1098,7 @@ ActiveRecord::Schema.define(version: 20170618013307) do
     t.integer "key_pv_id"
     t.integer "manual_episodes_count"
     t.boolean "no_episodes", default: false, null: false
+    t.integer "reviews_count", default: 0, null: false
     t.index ["aasm_state"], name: "index_works_on_aasm_state"
     t.index ["key_pv_id"], name: "index_works_on_key_pv_id"
     t.index ["number_format_id"], name: "index_works_on_number_format_id"
@@ -1198,6 +1201,7 @@ ActiveRecord::Schema.define(version: 20170618013307) do
   add_foreign_key "pvs", "works"
   add_foreign_key "receptions", "channels", name: "receptions_channel_id_fk", on_delete: :cascade
   add_foreign_key "receptions", "users", name: "receptions_user_id_fk", on_delete: :cascade
+  add_foreign_key "reviews", "oauth_applications"
   add_foreign_key "reviews", "users"
   add_foreign_key "reviews", "works"
   add_foreign_key "series_works", "series"

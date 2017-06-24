@@ -1,0 +1,10 @@
+# frozen_string_literal: true
+
+json = {}
+
+json.merge! render("api/v1/reviews/review", review: @review, params: @params, field_prefix: "")
+
+json[:user] = render("api/v1/users/user", user: @review.user, params: @params, field_prefix: "user.", show_all: false)
+json[:work] = render("/api/v1/works/work", work: @review.work, params: @params, field_prefix: "work.")
+
+json

@@ -19,11 +19,13 @@
 #  modified_at            :datetime
 #  created_at             :datetime         not null
 #  updated_at             :datetime         not null
+#  oauth_application_id   :integer
 #
 # Indexes
 #
-#  index_reviews_on_user_id  (user_id)
-#  index_reviews_on_work_id  (work_id)
+#  index_reviews_on_oauth_application_id  (oauth_application_id)
+#  index_reviews_on_user_id               (user_id)
+#  index_reviews_on_work_id               (work_id)
 #
 
 class Review < ApplicationRecord
@@ -54,9 +56,17 @@ class Review < ApplicationRecord
     end
   end
 
+  counter_culture :work, column_name: proc { |model| model.published? ? "reviews_count" : nil }
+
+  belongs_to :oauth_application, class_name: "Doorkeeper::Application", optional: true
   belongs_to :user
   belongs_to :work
 
   validates :body, presence: true, length: { maximum: 10_000 }
   validates :title, presence: true, length: { maximum: 100 }
+
+  def share_to_sns
+    ShareReviewToTwitterJob.perform_later(user.id, id) if user.setting.share_review_to_twitter?
+    ShareReviewToFacebookJob.perform_later(user.id, id) if user.setting.share_review_to_facebook?
+  end
 end
