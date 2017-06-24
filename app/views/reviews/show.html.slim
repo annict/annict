@@ -18,7 +18,7 @@
             = render "reviews/review", review: @review, is_spoiler: @is_spoiler
         
         h2.h4.text-center.my-2.font-weight-bold
-          = t "noun.other_reviews_of", profile_name: @user.profile.name
+          = t "noun.other_reviews_by", profile_name: @user.profile.name
         .c-card.container.mt-1.mb-1
           - if @reviews.present?
             .px-1

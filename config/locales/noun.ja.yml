@@ -71,7 +71,7 @@ ja:
     or: OR
     organization: 団体
     organizations: 団体
-    other_reviews_of: "%{profile_name}が書いた他のレビュー"
+    other_reviews_by: "%{profile_name}が書いた他のレビュー"
     other_users: その他利用者さん
     overall: 全体
     password: パスワード
@@ -96,6 +96,7 @@ ja:
     review_list: レビュー一覧
     reviews: レビュー
     review_of_the_work: "「%{work_title}」のレビュー"
+    reviews_by: "%{profile_name}が書いたレビュー"
     search: 検索
     season: シーズン
     seasonal_anime: シーズン別アニメ

@@ -144,6 +144,12 @@ h2.h4.font-weight-bold.text-center.mt-1.mb-2
     - else
       = render "application/components/empty", text: t("messages._empty.no_episodes")
 
+.mb-1
+  h2.h4.text-center.font-weight-bold.mt-1.mb-2
+    = t "noun.reviews"
+  .c-card.container.mt-1
+    = render "works/review_list", reviews: @reviews
+
 - if @series_list.present?
   .mb-2
     h2.h4.text-center.font-weight-bold.mt-1.mb-2

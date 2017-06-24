@@ -71,7 +71,7 @@ en:
     or: OR
     organization: Organization
     organizations: Organizations
-    other_reviews_of: "Reviews of %{profile_name}"
+    other_reviews_by: "Reviews by %{profile_name}"
     other_users: Other Users
     overall: Overall
     password: Password
@@ -96,6 +96,7 @@ en:
     review_list: Review List
     reviews: Reviews
     review_of_the_work: 'Review of "%{work_title}"'
+    reviews_by: "Reviews by %{profile_name}"
     search: Search
     season: Season
     seasonal_anime: Seasonal Anime

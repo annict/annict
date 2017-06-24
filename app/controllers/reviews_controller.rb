@@ -21,9 +21,14 @@ class ReviewsController < ApplicationController
   end
 
   def show
-    @reviews = @user.reviews.published.includes(work: :work_image).order(id: :desc)
     @work = @review.work
     @is_spoiler = user_signed_in? && current_user.hide_review?(@review)
+    @reviews = @user.
+      reviews.
+      published.
+      where.not(id: @review.id).
+      includes(work: :work_image).
+      order(id: :desc)
     set_page_object
   end
 
@@ -60,13 +65,13 @@ class ReviewsController < ApplicationController
   end
 
   def edit(id)
-    @review = @work.reviews.published.find(id)
+    @review = current_user.reviews.published.find(id)
     authorize @review, :edit?
     set_page_object
   end
 
   def update(id, review)
-    @review = @work.reviews.published.find(id)
+    @review = current_user.reviews.published.find(id)
     authorize @review, :update?
 
     @review.modified_at = Time.now
@@ -81,7 +86,7 @@ class ReviewsController < ApplicationController
   end
 
   def destroy(id)
-    @review = @work.reviews.published.find(id)
+    @review = current_user.reviews.published.find(id)
     authorize @review, :destroy?
 
     @review.destroy

@@ -8,13 +8,13 @@
     = f.label :title, class: "c-label-required"
     = f.text_field :title, class: "form-control"
     .text-right.text-muted.small
-      c-input-words-count :max-words-count="100" input-name="review[title]"
+      c-input-words-count :max-words-count="100" :init-words-count="#{f.object.title&.length.presence || 0}" input-name="review[title]"
 
   .form-group
     = f.label :body, class: "c-label-required"
     = f.text_area :body, rows: 30, class: "form-control"
     .text-right.text-muted.small
-      c-input-words-count :max-words-count="10000" input-name="review[body]"
+      c-input-words-count :max-words-count="10000" :init-words-count="#{f.object.body&.length.presence || 0}" input-name="review[body]"
 
   - Review::STATES.each do |state|
     .form-group

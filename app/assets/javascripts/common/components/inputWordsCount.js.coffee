@@ -4,10 +4,14 @@ module.exports =
   template: "#t-input-words-count"
 
   data: ->
-    wordsCount: 0
+    wordsCount: @initWordsCount
 
   props:
     maxWordsCount:
+      type: Number
+      required: true
+
+    initWordsCount:
       type: Number
       required: true
 

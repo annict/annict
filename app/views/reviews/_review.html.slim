@@ -16,7 +16,7 @@
           = "#{review.impressions_count} views"
     
     c-comment-guard inline-template="" :init-is-spoiler="#{is_spoiler == true}"
-      .p-reviews-show__content.clearfix
+      .p-reviews-show__content.clearfix @click="remove"
         - if review.rating_overall_state.present?
           .float-right.ml-2.mb-2.p-1
             .small.font-weight-bold.text-center.mb-zp5
@@ -54,7 +54,7 @@
                     c-rating-state-label :init-rating-state=="'#{review.rating_overall_state}'" v-show="!isSpoiler"
         h1.h4.u-text-green.mb-1
           = "\"#{review.title}\""
-        .c-body @click="remove"
+        .c-body
           c-body inline-template=""
             .c-body__content
               = review.body
