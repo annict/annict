@@ -70,6 +70,12 @@
 
         .row.text-center.mb-2
           .p-users-show__count.col.px-0
+            = link_to reviews_path(@user.username), class: "p-users-show__count-link" do
+              .h3
+                = @reviews.length
+              .p-profile-header__count-text
+                | Reviews
+          .p-users-show__count.col.px-0
             = link_to favorite_characters_path(@user.username), class: "p-users-show__count-link" do
               .h3
                 = @favorite_characters.length
@@ -99,6 +105,30 @@
             - if @user.profile.url.present?
               .url
                 = link_to @user.profile.decorate.shorten_url, @user.profile.url, target: "_blank"
+
+        - if @reviews.exists?
+          .mb-2
+            h2.p-users-show__sub-title
+              .row.align-items-center
+                .col
+                  = icon "pencil-square-o", class: "mr-zp5"
+                  = t "noun.reviews"
+                - if @reviews.length > 5
+                  .col.col-auto
+                    = link_to reviews_path(@user.username), class: "small" do
+                      = icon "angle-right", class: "mr-zp25"
+                      = t "verb.view_all"
+            
+            .container
+              - @reviews.first(5).each do |review|
+                .row.pb-1
+                  .col-auto
+                    = link_to work_path(review.work) do
+                      = ann_image_tag review.work.work_image, :attachment, size: "70x93", class: "img-fluid img-thumbnail rounded"
+                  .col
+                    .small.text-muted.mb-zp25
+                      = link_to review.work.decorate.local_title, work_path(review.work), class: "u-text-body"
+                    = link_to review.title, review_path(@user.username, review)
 
         - if @favorite_characters.exists?
           .mb-2
