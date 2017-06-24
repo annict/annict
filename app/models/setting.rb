@@ -1,5 +1,4 @@
 # frozen_string_literal: true
-
 # == Schema Information
 #
 # Table name: settings
@@ -16,6 +15,8 @@
 #  display_option_user_work_list :string           default("list"), not null
 #  records_sort_type             :string           default("created_at_desc"), not null
 #  display_option_record_list    :string           default("all_comments"), not null
+#  share_review_to_twitter       :boolean          default(FALSE), not null
+#  share_review_to_facebook      :boolean          default(FALSE), not null
 #
 # Indexes
 #

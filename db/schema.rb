@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170618120330) do
+ActiveRecord::Schema.define(version: 20170618013307) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -830,22 +830,10 @@ ActiveRecord::Schema.define(version: 20170618120330) do
     t.index ["user_id"], name: "receptions_user_id_idx"
   end
 
-  create_table "review_comments", force: :cascade do |t|
-    t.integer "user_id", null: false
-    t.integer "review_id", null: false
-    t.integer "work_id", null: false
-    t.text "body", null: false
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.index ["review_id"], name: "index_review_comments_on_review_id"
-    t.index ["user_id"], name: "index_review_comments_on_user_id"
-    t.index ["work_id"], name: "index_review_comments_on_work_id"
-  end
-
   create_table "reviews", force: :cascade do |t|
     t.integer "user_id", null: false
     t.integer "work_id", null: false
-    t.string "title", null: false
+    t.string "title", default: "", null: false
     t.text "body", null: false
     t.string "rating_animation_state"
     t.string "rating_music_state"
@@ -853,9 +841,9 @@ ActiveRecord::Schema.define(version: 20170618120330) do
     t.string "rating_character_state"
     t.string "rating_overall_state"
     t.integer "likes_count", default: 0, null: false
-    t.integer "status_changed_users_count", default: 0, null: false
     t.integer "impressions_count", default: 0, null: false
-    t.integer "review_comments_count", default: 0, null: false
+    t.string "aasm_state", default: "published", null: false
+    t.datetime "modified_at"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["user_id"], name: "index_reviews_on_user_id"
@@ -917,6 +905,8 @@ ActiveRecord::Schema.define(version: 20170618120330) do
     t.string "display_option_user_work_list", default: "list", null: false
     t.string "records_sort_type", default: "created_at_desc", null: false
     t.string "display_option_record_list", default: "all_comments", null: false
+    t.boolean "share_review_to_twitter", default: false, null: false
+    t.boolean "share_review_to_facebook", default: false, null: false
     t.index ["user_id"], name: "index_settings_on_user_id"
   end
 
@@ -1208,9 +1198,6 @@ ActiveRecord::Schema.define(version: 20170618120330) do
   add_foreign_key "pvs", "works"
   add_foreign_key "receptions", "channels", name: "receptions_channel_id_fk", on_delete: :cascade
   add_foreign_key "receptions", "users", name: "receptions_user_id_fk", on_delete: :cascade
-  add_foreign_key "review_comments", "reviews"
-  add_foreign_key "review_comments", "users"
-  add_foreign_key "review_comments", "works"
   add_foreign_key "reviews", "users"
   add_foreign_key "reviews", "works"
   add_foreign_key "series_works", "series"

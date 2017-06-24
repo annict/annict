@@ -1,25 +1,24 @@
 # frozen_string_literal: true
-
 # == Schema Information
 #
 # Table name: reviews
 #
-#  id                         :integer          not null, primary key
-#  user_id                    :integer          not null
-#  work_id                    :integer          not null
-#  title                      :string           not null
-#  body                       :text             not null
-#  rating_animation_state     :string
-#  rating_music_state         :string
-#  rating_story_state         :string
-#  rating_character_state     :string
-#  rating_overall_state       :string
-#  likes_count                :integer          default(0), not null
-#  status_changed_users_count :integer          default(0), not null
-#  impressions_count          :integer          default(0), not null
-#  review_comments_count      :integer          default(0), not null
-#  created_at                 :datetime         not null
-#  updated_at                 :datetime         not null
+#  id                     :integer          not null, primary key
+#  user_id                :integer          not null
+#  work_id                :integer          not null
+#  title                  :string           default(""), not null
+#  body                   :text             not null
+#  rating_animation_state :string
+#  rating_music_state     :string
+#  rating_story_state     :string
+#  rating_character_state :string
+#  rating_overall_state   :string
+#  likes_count            :integer          default(0), not null
+#  impressions_count      :integer          default(0), not null
+#  aasm_state             :string           default("published"), not null
+#  modified_at            :datetime
+#  created_at             :datetime         not null
+#  updated_at             :datetime         not null
 #
 # Indexes
 #
