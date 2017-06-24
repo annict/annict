@@ -216,4 +216,4 @@ en:
         season: "%{name} Anime"
         show: "%{title} (Anime)"
       work_reviews:
-        index: Reviews of %{title} (Anime)
+        index: Reviews of %{work_title} (Anime)
