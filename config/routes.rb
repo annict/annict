@@ -95,6 +95,7 @@ Rails.application.routes.draw do
         resources :followers, only: %i(index)
         resources :following, only: %i(index)
         resources :records, only: [:index]
+        resources :reviews, only: %i(index)
         resources :users, only: %i(index)
         resources :works, only: [:index]
 
