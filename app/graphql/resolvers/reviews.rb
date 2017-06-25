@@ -1,11 +1,11 @@
 # frozen_string_literal: true
 
 module Resolvers
-  class Records
+  class Reviews
     def call(obj, args, _ctx)
       @obj = obj
       @args = args
-      @collection = obj.records.published.all
+      @collection = obj.reviews.published.all
       from_arguments
     end
 

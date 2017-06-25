@@ -61,6 +61,12 @@ class Review < ApplicationRecord
   belongs_to :oauth_application, class_name: "Doorkeeper::Application", optional: true
   belongs_to :user
   belongs_to :work
+  has_many :activities,
+    dependent: :destroy,
+    as: :trackable
+  has_many :likes,
+    dependent: :destroy,
+    as: :recipient
 
   validates :body, presence: true, length: { maximum: 10_000 }
   validates :title, presence: true, length: { maximum: 100 }

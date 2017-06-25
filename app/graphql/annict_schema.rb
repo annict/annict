@@ -25,6 +25,8 @@ AnnictSchema = GraphQL::Schema.define do
       ObjectTypes::Episode
     when MultipleRecord
       ObjectTypes::MultipleRecord
+    when Review
+      ObjectTypes::Review
     when Status
       ObjectTypes::Status
     when User

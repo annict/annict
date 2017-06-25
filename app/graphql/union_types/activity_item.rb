@@ -6,6 +6,7 @@ UnionTypes::ActivityItem = GraphQL::UnionType.define do
   possible_types [
     ObjectTypes::Status,
     ObjectTypes::Record,
+    ObjectTypes::Review,
     ObjectTypes::MultipleRecord
   ]
 end

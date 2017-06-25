@@ -24,6 +24,7 @@ Edges::ActivityEdge = ObjectTypes::Activity.define_edge do
       case activity.action
       when "create_status" then "CREATE"
       when "create_record" then "CREATE"
+      when "create_review" then "CREATE"
       when "create_multiple_records" then "CREATE"
       end
     }
@@ -38,6 +39,8 @@ Edges::ActivityEdge = ObjectTypes::Activity.define_edge do
         RecordLoader.for(Status).load(activity.trackable_id)
       when "Checkin"
         RecordLoader.for(Checkin).load(activity.trackable_id)
+      when "Review"
+        RecordLoader.for(Review).load(activity.trackable_id)
       when "MultipleRecord"
         RecordLoader.for(MultipleRecord).load(activity.trackable_id)
       end

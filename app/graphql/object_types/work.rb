@@ -20,6 +20,12 @@ ObjectTypes::Work = GraphQL::ObjectType.define do
     resolve Resolvers::Episodes.new
   end
 
+  connection :reviews, ObjectTypes::Review.connection_type do
+    argument :orderBy, InputObjectTypes::ReviewOrder
+
+    resolve Resolvers::Reviews.new
+  end
+
   field :title, !types.String
   field :titleKana, types.String do
     resolve ->(obj, _args, _ctx) {
@@ -101,6 +107,17 @@ ObjectTypes::Work = GraphQL::ObjectType.define do
   field :watchersCount, !types.Int do
     resolve ->(obj, _args, _ctx) {
       obj.watchers_count
+    }
+  end
+  field :reviewsCount, !types.Int do
+    resolve ->(obj, _args, _ctx) {
+      obj.reviews_count
+    }
+  end
+
+  field :noEpisodes, !types.Boolean do
+    resolve ->(obj, _args, _ctx) {
+      obj.no_episodes?
     }
   end
 
