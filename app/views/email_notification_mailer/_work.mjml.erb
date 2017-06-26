@@ -1,11 +1,14 @@
 <mj-section>
-  <mj-column width="30%">
-    <mj-image src="<%= ann_email_image_url(work.work_image, :attachment, size: "140x140") %>" align="center" href="<%= work_url(work, utm_source: 'email_notification', utm_campaign: utm_campaign, utm_medium: 'email') %>"></mj-image>
+  <mj-column width="180">
+    <mj-image width="180"
+              src="<%= ann_email_image_url(work.work_image, :attachment, size: "240x240") %>"
+              align="center"
+              href="<%= work_url(work, utm_source: 'email_notification', utm_campaign: utm_campaign, utm_medium: 'email') %>"></mj-image>
     <mj-button href="<%= work_url(id: work.id, utm_source: 'email_notification', utm_campaign: utm_campaign, utm_medium: 'email') %>" background-color="#fff" border="1px solid #f85b73" color="#f85b73" padding-top="0">
       <%= I18n.t("email_notification_mailer.favorite_works_added.view_detail") %>
     </mj-button>
   </mj-column>
-  <mj-column width="70%">
+  <mj-column width="420">
     <mj-text padding="10px 25px 0 25px">
       <% if work.season.present? %>
         <span style="color: #fff; background-color: <%= work.season.color %>; padding: 3px;">
@@ -20,22 +23,45 @@
 
     <mj-text font-size="14px" padding-bottom="3px" padding-top="0"><%= "#{work.watchers_count} Watchers" %></mj-text>
     <mj-text font-size="18px" font-weight="400" padding-top="0" padding-bottom="7px">
-      <%= link_to "#{work.decorate.local_title}", work_url(id: work.id, utm_source: 'email_notification', utm_campaign: utm_campaign, utm_medium: 'email'), style: "color: #364f6b; text-decoration: none;" %>
+      <%= link_to "#{work.decorate.local_title}", work_url(id: work.id, utm_source: 'email_notification', utm_campaign: utm_campaign, utm_medium: 'email'), style: "color: #0366d6; text-decoration: none;" %>
     </mj-text>
 
-    <% if work.casts.exists? %>
+    <% if work.decorate.local_synopsis.present? %>
+      <mj-text font-weight="800" padding="10px 25px 0 25px"><%= I18n.t("activerecord.attributes.work.synopsis") %></mj-text>
+      <mj-text padding-top="0">
+        <%= work.decorate.local_synopsis(raw: true) %>
+      </mj-text>
+    <% end %>
+
+    <% if work.pvs.published.exists? %>
+      <mj-text font-weight="800" padding="10px 25px 0 25px"><%= I18n.t("noun.pv") %></mj-text>
+      <mj-section padding="0">
+        <% work.pvs.published.order(:sort_number).each do |pv| %>
+          <mj-column width="420" padding="0">
+            <mj-image src="<%= ann_email_image_url(pv, :thumbnail, size: "640x640") %>" align="center" href="<%= pv.url %>"></mj-image>
+            <mj-text padding-top="0"
+                     align="center"
+                     color="#0366d6">
+              <%= link_to pv.title, pv.url, style: "text-decoration: none;" %>
+            </mj-text>
+          </mj-column>
+        <% end %>
+      </mj-section>
+    <% end %>
+
+    <% if work.casts.published.exists? %>
       <mj-text font-weight="800" padding="10px 25px 0 25px"><%= I18n.t("noun.casts") %></mj-text>
       <mj-text padding-top="0">
-        <% work.casts.order(:sort_number).limit(10).each do |cast| %>
+        <% work.casts.published.order(:sort_number).limit(10).each do |cast| %>
           <%= cast.character.decorate.local_name %>: <%= cast.person.decorate.local_name %>
         <% end %>
       </mj-text>
     <% end %>
 
-    <% if work.staffs.exists? %>
+    <% if work.staffs.published.exists? %>
       <mj-text font-weight="800" padding="10px 25px 0 25px"><%= I18n.t("noun.staffs") %></mj-text>
       <mj-text padding-top="0">
-        <% work.staffs.major.order(:sort_number).first(10).each do |staff| %>
+        <% work.staffs.published.major.order(:sort_number).each do |staff| %>
           <%= staff.decorate.role_name %>: <%= staff.decorate.local_name %>
         <% end %>
       </mj-text>
