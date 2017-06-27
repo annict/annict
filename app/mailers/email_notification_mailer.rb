@@ -57,7 +57,7 @@ class EmailNotificationMailer < ActionMailer::Base
     @unsubscription_key = @user.email_notification.unsubscription_key
     season_slug = "#{season_year}-#{season_name}"
     @season = Season.find_by_slug(season_slug)
-    @works = Work.by_season(season_slug).order(watchers_count: :desc).limit(10)
+    @works = Work.by_season(season_slug).order(watchers_count: :desc).limit(5)
 
     I18n.locale = @user.locale
 
