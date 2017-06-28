@@ -63,6 +63,9 @@ GEM
     after_commit_action (1.0.1)
       activerecord (>= 3.0.0)
       activesupport (>= 3.0.0)
+    amazon-ecs (2.5.0)
+      nokogiri (~> 1.4)
+      ruby-hmac (~> 0.3)
     annotate (2.7.2)
       activerecord (>= 3.2, < 6.0)
       rake (>= 10.4, < 13.0)
@@ -495,6 +498,7 @@ GEM
       unicode-display_width (~> 1.0, >= 1.0.1)
     ruby-enum (0.7.1)
       i18n
+    ruby-hmac (0.4.0)
     ruby-progressbar (1.8.1)
     ruby_dep (1.5.0)
     ruby_identicon (0.0.5)
@@ -608,6 +612,7 @@ DEPENDENCIES
   active_record_query_trace
   activerecord-session_store
   acts_as_list
+  amazon-ecs
   annotate
   asset_sync
   autoprefixer-rails
@@ -710,7 +715,6 @@ DEPENDENCIES
   uglifier
   validate_url
   virtus
-
 
 RUBY VERSION
    ruby 2.4.1p111
