@@ -55,6 +55,7 @@ module.exports =
           resource_type: @resourceType
           resource_id: @resourceId
           asin: item.asin
+          page_category: gon.basic.pageCategory
       .done ->
         item.isLoading = false
         item.added_to_resource = true

@@ -82,7 +82,17 @@ crumb :new_work_item do |work|
   parent :work_item_list, work
 end
 
+crumb :new_episode_item do |episode|
+  link t("head.title.episode_items.new"), new_episode_item_path(episode)
+  parent :episode_detail, episode
+end
+
 crumb :work_item_list do |work|
   link t("noun.related_items"), work_items_path(work)
   parent :work_detail, work
+end
+
+crumb :episode_detail do |episode|
+  link episode.decorate.title_with_number, work_episode_path(episode.work, episode)
+  parent :work_detail, episode.work
 end

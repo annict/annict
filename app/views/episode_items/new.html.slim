@@ -1,7 +1,7 @@
-- title = t "head.title.work_items.new"
+- title = t "head.title.episode_items.new"
 - set_meta_tags(title: title, reverse: true, prefix: false)
-- set_page_category "work_items_new"
-- breadcrumb :new_work_item, @work
+- set_page_category "episode_items_new"
+- breadcrumb :new_episode_item, @episode
 
 = render "application/components/navbar"
 
@@ -13,8 +13,10 @@
         = render "works/sidebar", work: @work
       .col-9
         = render "works/subnav", work: @work
+        .c-card.container.py-1.my-1
+          = render "episodes/nav", work: @work, episode: @episode
         .c-card.container.mt-1.py-1
-          c-amazon-item-attacher resource-type="Work" resource-id="#{@work.id}"
+          c-amazon-item-attacher resource-type="Episode" resource-id="#{@episode.id}"
 
 = render "application/components/footer"
 

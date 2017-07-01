@@ -117,6 +117,8 @@ ja:
           activities: アクティビティ
           edit: "%{title}"
           index: 作品一覧
+      episode_items:
+        new: 商品登録
       episodes:
         index: アニメ「%{title}」のエピソード
         show: アニメ「%{work_title}」%{episode_title_with_number}

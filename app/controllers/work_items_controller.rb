@@ -1,8 +1,9 @@
 # frozen_string_literal: true
 
 class WorkItemsController < ApplicationController
-  before_action :load_work, only: %i(index new create destroy)
-  before_action :set_page_object, only: %i(index new create destroy)
+  before_action :authenticate_user!, only: %i(new)
+  before_action :load_work, only: %i(index new)
+  before_action :set_page_object, only: %i(index new)
 
   def index(page: nil)
     @items = @work.

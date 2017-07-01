@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 # == Schema Information
 #
 # Table name: episode_items
@@ -21,4 +22,8 @@
 #
 
 class EpisodeItem < ApplicationRecord
+  belongs_to :episode
+  belongs_to :item
+  belongs_to :user
+  belongs_to :work
 end

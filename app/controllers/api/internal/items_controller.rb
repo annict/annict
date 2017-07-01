@@ -5,7 +5,7 @@ module Api
     class ItemsController < Api::Internal::ApplicationController
       before_action :authenticate_user!, only: %i(create)
 
-      def create(resource_type, resource_id, asin)
+      def create(resource_type, resource_id, asin, page_category)
         CreateItemJob.perform_later(current_user.id, resource_type, resource_id, asin)
         ga_client.page_category = page_category
         ga_client.events.create(:items, :create)

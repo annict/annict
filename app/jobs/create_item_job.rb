@@ -29,6 +29,10 @@ class CreateItemJob < ApplicationJob
       resource = resource_type.constantize.find(resource_id)
       resource.resource_items.where(item: item).first_or_create! do |ri|
         ri.user = user
+        case resource
+        when Episode
+          ri.work = resource.work
+        end
       end
     end
   end
