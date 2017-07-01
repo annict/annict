@@ -210,6 +210,8 @@ ja:
         following: "%{profile_name} (%{username})がフォローしている人"
         show: "%{profile_name} (%{username})"
         works: "%{profile_name} (%{username})が\"%{action}\"アニメ"
+      work_items:
+        new: 商品登録
       works:
         newest: 新規登録アニメ
         popular: 人気アニメ

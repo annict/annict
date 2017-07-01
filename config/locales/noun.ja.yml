@@ -65,6 +65,7 @@ ja:
     music: 音楽
     my_records: 自分の記録
     n_works_watched: "%{count}作品見た"
+    next_page: 次のページ
     next_season: 来期のアニメ
     official_site: 公式サイト
     on_hold: 中断してるアニメ
@@ -81,6 +82,7 @@ ja:
     popular: 人気アニメ
     popular_airing_anime: 人気の放送中アニメ
     popular_anime: 人気アニメ
+    prev_page: 前のページ
     previous_season: 前期のアニメ
     privacy_policy: プライバシーポリシー
     profile: プロフィール
@@ -89,6 +91,7 @@ ja:
     rating: 評価
     rebroadcast: 再放送
     records_count: 記録数
+    related_items: 関連商品
     related_works: 関連作品
     release_on: リリース日
     release_season: リリース時期

@@ -65,6 +65,7 @@ en:
     music: Music
     my_records: My Records
     n_works_watched: "%{count} Works Watched"
+    next_page: Next Page
     next_season: Next Season
     official_site: Official Site
     on_hold: On Hold
@@ -81,6 +82,7 @@ en:
     popular: Popular
     popular_airing_anime: Popular Airing Anime
     popular_anime: Popular Anime
+    prev_page: Prev Page
     previous_season: Previous Season
     privacy_policy: Privacy Policy
     profile: Profile
@@ -89,6 +91,7 @@ en:
     rating: Rating
     rebroadcast: Rebroadcast
     records_count: Records Count
+    related_items: Items
     related_works: Related Works
     release_on: Release on
     release_season: Release Season

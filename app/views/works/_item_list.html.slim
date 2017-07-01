@@ -1,0 +1,15 @@
+- if items.present?
+  .row
+    - items.first(6).each do |item|
+      .col-6.my-zp5
+        = render "items/item", item: item
+  - if items.length > 6
+    .mb-1
+      = link_to work_items_path(work), class: "btn btn-secondary w-100" do
+        = icon "angle-right"
+        = t "messages.works.view_all_n_items", n: items.length
+- else
+  = render "application/components/empty", text: t("messages._empty.no_items") do
+    = link_to new_work_item_path(work), class: "btn btn-primary mt-zp5" do
+      = icon "plus", class: "mr-zp25"
+      = t "verb.regist_item"

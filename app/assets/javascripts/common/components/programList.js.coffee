@@ -85,7 +85,7 @@ module.exports =
         eventHub.$emit "flash:show", msg
       .fail (data) ->
         program.record.isSaving = false
-        eventHub.$emit "flash:show", data.responseJSON.message, "danger"
+        eventHub.$emit "flash:show", data.responseJSON.message, "alert"
 
     load: ->
       @programs = @initPrograms(@_pageObject().programs)

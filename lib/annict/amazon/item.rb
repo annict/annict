@@ -3,53 +3,68 @@
 module Annict
   module Amazon
     class Item
-      def initialize(asin, country: "jp")
-        @asin = asin
-        @country = country
-        @ecs ||= ::Amazon::Ecs.configure do |options|
-          options[:AWS_access_key_id] = ENV.fetch("AWS_PAA_ACCESS_KEY_ID")
-          options[:AWS_secret_key] = ENV.fetch("AWS_PAA_SECRET_KEY")
-          options[:associate_tag] = ENV.fetch("AMAZON_ASSOCIATE_TAG")
-        end
-        @res ||= ::Amazon::Ecs.item_lookup(@asin,
-          country: @country,
-          response_group: "Medium")
+      extend Enumerize
+
+      enumerize :category, in: %w(
+        All
+        Music
+        DVD
+        VideoGames
+        PCHardware
+        Electronics
+        Books
+        Hobbies
+        Apparel
+      )
+
+      def initialize(item)
+        @item = item
       end
 
       def manufacturer
-        @res.doc.css("Items Item ItemAttributes Manufacturer").text
+        @item.css("ItemAttributes Manufacturer").text
       end
 
       def title
-        @res.doc.css("Items Item ItemAttributes Title").text
+        @item.css("ItemAttributes Title").text
       end
 
       def detail_page_url
-        @res.doc.css("Items Item DetailPageURL").text
+        @item.css("DetailPageURL").text
+      end
+
+      def asin
+        @item.css("ASIN").text
+      end
+
+      def ean
+        @item.css("ItemAttributes EAN").text
       end
 
       def amount
-        @res.doc.css("Items Item ItemAttributes ListPrice Amount").text.to_i
+        amount = @item.css("ItemAttributes ListPrice Amount").text
+        amount.present? ? amount.to_i : nil
       end
 
       def currency_code
-        @res.doc.css("Items Item ItemAttributes ListPrice CurrencyCode").text
+        @item.css("ItemAttributes ListPrice CurrencyCode").text
       end
 
       def offer_amount
-        @res.doc.css("Items Item OfferSummary LowestNewPrice Amount").text.to_i
+        amount = @item.css("OfferSummary LowestNewPrice Amount").text
+        amount.present? ? amount.to_i : nil
       end
 
       def offer_currency_code
-        @res.doc.css("Items Item OfferSummary LowestNewPrice Amount").text
+        @item.css("OfferSummary LowestNewPrice CurrencyCode").text
       end
 
       def release_date
-        @res.doc.css("Items Item ItemAttributes ReleaseDate").text
+        @item.css("ItemAttributes ReleaseDate").text
       end
 
       def images
-        image_set_list = @res.doc.css("Items Item ImageSets ImageSet")
+        image_set_list = @item.css("ImageSets ImageSet")
         image_set_list.map do |image_set|
           image = image_set.css("HiResImage").presence ||
             image_set.css("LargeImage").presence ||

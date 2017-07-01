@@ -210,6 +210,8 @@ en:
         following: People followed by %{profile_name} (%{username})
         show: "%{profile_name} (%{username})"
         works: "%{profile_name} (%{username})'s \"%{action}\" anime"
+      work_items:
+        new: New Item
       works:
         newest: Just Added Anime
         popular: Popular Anime

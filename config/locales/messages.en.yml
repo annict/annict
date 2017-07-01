@@ -16,10 +16,15 @@ en:
       welcome_back: Welcome back!
       welcome_to_annict: Welcome to Annict!
       you_can_not_access_there: You can not access there.
+    _components:
+      amazon_item_attacher:
+        registed: Added
+        you_can_search_by_keyword_or_asin_or_isbn_code: You can search by keyword or ASIN / ISBN code
     _empty:
       no_characters: No Characters
       no_episodes: No Episodes
       no_projects: No Projects
+      no_items: No Items
       no_reviews: No Reviews
       no_series: No Series
       no_staffs: No Staffs
@@ -209,5 +214,6 @@ en:
     works:
       view_all_n_characters: View All %{n} Characters
       view_all_n_episodes: View All %{n} Episodes
+      view_all_n_items: View All %{n} Items
       view_all_n_reviews: View All %{n} Reviews
       view_all_n_staffs: View All %{n} Staffs

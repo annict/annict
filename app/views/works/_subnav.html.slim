@@ -15,3 +15,6 @@
   = active_link_to work_reviews_path(work), class: "c-subnav__link", class_active: "c-subnav__link--active", active: params[:controller].in?(%w(work_reviews reviews)) && params[:action].in?(%w(index new create edit update)) do
     .c-subnav__item
       = t "noun.reviews"
+  = active_link_to work_items_path(work), class: "c-subnav__link", class_active: "c-subnav__link--active", active: params[:controller].in?(%w(work_items)) && params[:action].in?(%w(index new create)) do
+    .c-subnav__item
+      = t "noun.related_items"

@@ -31,11 +31,15 @@ Rails.application.routes.draw do
 
   namespace :api do
     namespace :internal do
+      resource :amazon, only: [], controller: :amazon do
+        get :search
+      end
       resource :programs_sort_type, only: [:update]
       resource :records_sort_type, only: %i(update)
       resource :search, only: [:show]
       resources :activities, only: [:index]
       resources :characters, only: [:index]
+      resources :items, only: %i(create)
       resources :mute_users, only: [:create]
       resources :organizations, only: [:index]
       resources :people, only: [:index]
@@ -206,7 +210,6 @@ Rails.application.routes.draw do
         patch :hide
       end
 
-      resource :item, except: [:index]
       resource :image, controller: :work_images, only: %i(show create update destroy)
       resources :casts, only: %i(index new create)
       resources :episodes, only: %i(index new create)
@@ -288,6 +291,7 @@ Rails.application.routes.draw do
   end
 
   resources :episodes, only: [] do
+    resources :items, only: %i(new create destroy), controller: :episode_items
     resources :records, only: [] do
       post :switch, on: :collection
     end
@@ -335,6 +339,7 @@ Rails.application.routes.draw do
 
   resources :works, only: %i(index show) do
     resources :characters, only: %i(index)
+    resources :items, only: %i(index new create destroy), controller: :work_items
     resources :staffs, only: %i(index)
     resources :reviews, only: %i(new create edit update destroy)
     resources :reviews, only: %i(index), controller: :work_reviews
