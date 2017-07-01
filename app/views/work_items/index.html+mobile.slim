@@ -1,0 +1,34 @@
+- title = t "head.title.work_items.index", work_title: @work.decorate.local_title
+- description = meta_description t("head.meta.description.work_items.index", work_title: @work.decorate.local_title)
+- keywords = meta_keywords(@work.title)
+- image_url = ann_image_url(@work.work_image, :attachment, size: "640x")
+- set_meta_tags(title: title, description: description, keywords: keywords, og: { description: description, image: image_url }, twitter: { description: description, image: image_url }, reverse: true, prefix: false)
+- set_page_category "work_items_index"
+- breadcrumb :work_item_list, @work
+
+= render "works/header", work: @work
+
+.c-card.pt-1.mb-1
+  .text-center.mb-1
+    = link_to new_work_item_path(@work), class: "btn btn-primary" do
+      = icon "plus", class: "mr-zp25"
+      = t "verb.regist_item"
+  hr.mb-0
+  .container
+    - if @items.present?
+      .mt-1
+        - @items.each do |item|
+          .mb-1
+            = render "items/item", item: item
+        - if @items.total_pages > 1
+          .mb-1.text-center
+            = paginate @items
+    - else
+      = render "application/components/empty", text: t("messages._empty.no_items")
+
+= render "application/components/breadcrumb"
+= render "application/components/footer"
+= render "application/components/tabbar"
+
+- content_for :js_templates do
+  = render "application/js_templates/status_selector"

@@ -51,7 +51,8 @@
                 - else
                   = render "application/components/empty", text: t("messages.episodes.no_comments")
             
-            h2.h4.text-center.my-2.font-weight-bold = t "noun.related_items"
+            h2.h4.text-center.my-2.font-weight-bold
+              = t "noun.related_items"
             .c-card.container.my-1.py-zp5
               = render "episodes/item_list", episode: @episode, items: @items
           .col-3.pl-0

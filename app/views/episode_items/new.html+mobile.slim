@@ -1,0 +1,21 @@
+- title = t "head.title.episode_items.new"
+- set_meta_tags(title: title, reverse: true, prefix: false)
+- set_page_category "episode_items_new"
+- breadcrumb :new_episode_item, @episode
+
+= render "works/header", work: @work
+
+.c-card.mb-1.py-1
+  = render "episodes/nav", work: @work, episode: @episode, all_records: @all_records
+
+.c-card.mb-1
+  .container.py-1
+    c-amazon-item-attacher resource-type="Episode" resource-id="#{@episode.id}"
+
+= render "application/components/breadcrumb"
+= render "application/components/footer"
+= render "application/components/tabbar"
+
+- content_for :js_templates do
+  = render "application/js_templates/amazon_item_attacher"
+  = render "application/js_templates/status_selector"

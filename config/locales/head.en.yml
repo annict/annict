@@ -213,6 +213,7 @@ en:
         show: "%{profile_name} (%{username})"
         works: "%{profile_name} (%{username})'s \"%{action}\" anime"
       work_items:
+        index: Items of %{work_title} (Anime)
         new: New Item
       works:
         newest: Just Added Anime

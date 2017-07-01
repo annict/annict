@@ -7,7 +7,11 @@ class EpisodeItemsController < ApplicationController
 
   def new
     @work = @episode.work
-    @item = @episode.items.new
+
+    return unless browser.device.mobile?
+
+    service = RecordsListService.new(current_user, @episode, params)
+    @all_records = service.all_records
   end
 
   private

@@ -213,6 +213,7 @@ ja:
         show: "%{profile_name} (%{username})"
         works: "%{profile_name} (%{username})が\"%{action}\"アニメ"
       work_items:
+        index: アニメ「%{work_title}」の関連商品
         new: 商品登録
       works:
         newest: 新規登録アニメ

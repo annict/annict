@@ -4,40 +4,14 @@
 - image_url = ann_image_url(@work.work_image, :attachment, size: "640x")
 - set_meta_tags(title: title, description: description, keywords: keywords, og: { description: description, image: image_url }, twitter: { description: description, image: image_url }, reverse: true, prefix: false)
 - set_page_category "episodes_show"
+- breadcrumb :episode_detail, @episode
 
 = render "works/header", work: @work
 
 .c-card.mb-1.py-1
-  .p-episode-title-header
-    - if @episode.prev_episode.present?
-      = link_to work_episode_path(@work, @episode.prev_episode), class: "p-episode-title-header__prev h3 text-center mb-0" do
-        = icon "angle-left"
-    .p-episode-title-header__main
-      h2.h4.font-weight-bold.text-center
-        = link_to @episode.decorate.title_with_number, work_episode_path(@work, @episode), class: "u-text-body"
-      - if user_signed_in? && current_user.tracked?(@episode)
-        .text-center.small
-          = icon "check-circle", class: "mr-zp25 u-text-green"
-          = t "messages.episodes.watched_x_times", records_count: current_user.checkins_count_in(@episode)
-      .container.mt-1
-        .row
-          .col.text-center.u-lh-sm
-            = @episode.score.round(1)
-            .small
-              | Score
-          .col.text-center.u-lh-sm
-            = @all_records.count
-            .small
-              | Records
-          .col.text-center.u-lh-sm
-            = @all_records.with_comment.count
-            .small
-              | Comments
-    - if @episode.next_episode.present?
-      = link_to work_episode_path(@work, @episode.next_episode), class: "p-episode-title-header__next h3 text-center mb-0" do
-        = icon "angle-right"
+  = render "episodes/nav", work: @work, episode: @episode, all_records: @all_records
 
-.c-card.mb-2.py-1
+.c-card.mb-1.py-1
   - if user_signed_in?
     .container
       = render "records/form", record: @record
@@ -71,6 +45,12 @@
     - else
       = render "application/components/empty", text: t("messages.episodes.no_comments")
 
+h2.h4.font-weight-bold.text-center.mt-1.mb-2
+  = t "noun.related_items"
+.c-card.container.mb-1.py-zp5
+  = render "episodes/item_list", episode: @episode, items: @items
+
+= render "application/components/breadcrumb"
 = render "application/components/footer"
 = render "application/components/tabbar"
 
