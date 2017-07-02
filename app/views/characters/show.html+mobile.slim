@@ -47,11 +47,11 @@ h2.h4.font-weight-bold.text-center.mt-1.mb-2
           = t "activerecord.attributes.character.age"
         dd.col-6
           = @character.age
-      - if @character.blood_type.present?
+      - if @character.decorate.local_blood_type.present?
         dt.col-6.text-right
           = t "activerecord.attributes.character.blood_type"
         dd.col-6
-          = @character.blood_type_text
+          = @character.decorate.local_blood_type
       - if @character.height.present?
         dt.col-6.text-right
           = t "activerecord.attributes.character.height"
