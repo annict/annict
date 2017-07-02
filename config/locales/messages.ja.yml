@@ -18,6 +18,7 @@ ja:
       you_can_not_access_there: アクセスできません
     _components:
       amazon_item_attacher:
+        error: 通信エラー。時間を置いて再度お試しください
         registed: 登録済み
         you_can_search_by_keyword_or_asin_or_isbn_code: キーワードやASIN / ISBNコードで検索できます
     _empty:

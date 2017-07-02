@@ -3,6 +3,7 @@
 class EpisodeItemsController < ApplicationController
   before_action :authenticate_user!, only: %i(new destroy)
   before_action :load_episode, only: %i(new destroy)
+  before_action :load_i18n, only: %i(new)
   before_action :set_page_object, only: %i(new)
 
   def new
@@ -36,5 +37,13 @@ class EpisodeItemsController < ApplicationController
     gon.pageObject = render_jb "works/_detail",
       user: current_user,
       work: @episode.work
+  end
+
+  def load_i18n
+    keys = {
+      "messages._components.amazon_item_attacher.error": nil
+    }
+
+    load_i18n_into_gon keys
   end
 end

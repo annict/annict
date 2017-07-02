@@ -3,6 +3,7 @@
 class WorkItemsController < ApplicationController
   before_action :authenticate_user!, only: %i(new destroy)
   before_action :load_work, only: %i(index new destroy)
+  before_action :load_i18n, only: %i(new)
   before_action :set_page_object, only: %i(index new)
 
   def index(page: nil)
@@ -35,5 +36,13 @@ class WorkItemsController < ApplicationController
     gon.pageObject = render_jb "works/_detail",
       user: current_user,
       work: @work
+  end
+
+  def load_i18n
+    keys = {
+      "messages._components.amazon_item_attacher.error": nil
+    }
+
+    load_i18n_into_gon keys
   end
 end

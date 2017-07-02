@@ -39,7 +39,8 @@ module.exports =
         @page = page
         @totalPages = data.total_pages
       .fail ->
-        eventHub.$emit "flash:show", "Error", "alert"
+        message = gon.I18n["messages._components.amazon_item_attacher.error"]
+        eventHub.$emit "flash:show", message, "alert"
       .always =>
         @isLoading = false
 
