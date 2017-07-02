@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170629144332) do
+ActiveRecord::Schema.define(version: 20170702164228) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -174,15 +174,6 @@ ActiveRecord::Schema.define(version: 20170629144332) do
     t.index ["work_id"], name: "index_comments_on_work_id"
   end
 
-  create_table "cover_images", id: :serial, force: :cascade do |t|
-    t.integer "work_id", null: false
-    t.string "file_name", limit: 510, null: false
-    t.string "location", limit: 510, null: false
-    t.datetime "created_at"
-    t.datetime "updated_at"
-    t.index ["work_id"], name: "cover_images_work_id_idx"
-  end
-
   create_table "db_activities", id: :serial, force: :cascade do |t|
     t.integer "user_id", null: false
     t.integer "trackable_id", null: false
@@ -224,168 +215,6 @@ ActiveRecord::Schema.define(version: 20170629144332) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.index ["priority", "run_at"], name: "delayed_jobs_priority"
-  end
-
-  create_table "draft_casts", id: :serial, force: :cascade do |t|
-    t.integer "cast_id"
-    t.integer "person_id", null: false
-    t.integer "work_id", null: false
-    t.string "name", null: false
-    t.string "part", null: false
-    t.integer "sort_number", default: 0, null: false
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.index ["cast_id"], name: "index_draft_casts_on_cast_id"
-    t.index ["person_id"], name: "index_draft_casts_on_person_id"
-    t.index ["sort_number"], name: "index_draft_casts_on_sort_number"
-    t.index ["work_id"], name: "index_draft_casts_on_work_id"
-  end
-
-  create_table "draft_episodes", id: :serial, force: :cascade do |t|
-    t.integer "episode_id", null: false
-    t.integer "work_id", null: false
-    t.string "number"
-    t.integer "sort_number", default: 0, null: false
-    t.string "title"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.integer "prev_episode_id"
-    t.boolean "fetch_syobocal", default: false, null: false
-    t.string "raw_number"
-    t.integer "sc_count"
-    t.index ["episode_id"], name: "index_draft_episodes_on_episode_id"
-    t.index ["prev_episode_id"], name: "index_draft_episodes_on_prev_episode_id"
-    t.index ["work_id"], name: "index_draft_episodes_on_work_id"
-  end
-
-  create_table "draft_multiple_episodes", id: :serial, force: :cascade do |t|
-    t.integer "work_id", null: false
-    t.text "body", null: false
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.index ["work_id"], name: "index_draft_multiple_episodes_on_work_id"
-  end
-
-  create_table "draft_organizations", id: :serial, force: :cascade do |t|
-    t.integer "organization_id"
-    t.string "name", null: false
-    t.string "url"
-    t.string "wikipedia_url"
-    t.string "twitter_username"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.string "name_kana", default: "", null: false
-    t.index ["name"], name: "index_draft_organizations_on_name"
-    t.index ["organization_id"], name: "index_draft_organizations_on_organization_id"
-  end
-
-  create_table "draft_people", id: :serial, force: :cascade do |t|
-    t.integer "person_id"
-    t.integer "prefecture_id"
-    t.string "name", null: false
-    t.string "name_kana"
-    t.string "nickname"
-    t.string "gender"
-    t.string "url"
-    t.string "wikipedia_url"
-    t.string "twitter_username"
-    t.date "birthday"
-    t.string "blood_type"
-    t.integer "height"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.index ["name"], name: "index_draft_people_on_name"
-    t.index ["person_id"], name: "index_draft_people_on_person_id"
-    t.index ["prefecture_id"], name: "index_draft_people_on_prefecture_id"
-  end
-
-  create_table "draft_programs", id: :serial, force: :cascade do |t|
-    t.integer "program_id"
-    t.integer "channel_id", null: false
-    t.integer "episode_id", null: false
-    t.integer "work_id", null: false
-    t.datetime "started_at", null: false
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.boolean "rebroadcast", default: false, null: false
-    t.index ["channel_id"], name: "index_draft_programs_on_channel_id"
-    t.index ["episode_id"], name: "index_draft_programs_on_episode_id"
-    t.index ["program_id"], name: "index_draft_programs_on_program_id"
-    t.index ["work_id"], name: "index_draft_programs_on_work_id"
-  end
-
-  create_table "draft_staffs", id: :serial, force: :cascade do |t|
-    t.integer "staff_id"
-    t.integer "work_id", null: false
-    t.string "name", null: false
-    t.string "role", null: false
-    t.string "role_other"
-    t.integer "sort_number", default: 0, null: false
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.integer "resource_id"
-    t.string "resource_type"
-    t.index ["resource_id", "resource_type"], name: "index_draft_staffs_on_resource_id_and_resource_type"
-    t.index ["sort_number"], name: "index_draft_staffs_on_sort_number"
-    t.index ["staff_id"], name: "index_draft_staffs_on_staff_id"
-    t.index ["work_id"], name: "index_draft_staffs_on_work_id"
-  end
-
-  create_table "draft_works", id: :serial, force: :cascade do |t|
-    t.integer "work_id"
-    t.integer "season_id"
-    t.integer "sc_tid"
-    t.string "title", null: false
-    t.integer "media", null: false
-    t.string "official_site_url", default: "", null: false
-    t.string "wikipedia_url", default: "", null: false
-    t.date "released_at"
-    t.string "twitter_username"
-    t.string "twitter_hashtag"
-    t.string "released_at_about"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.integer "number_format_id"
-    t.string "title_kana", default: "", null: false
-    t.index ["number_format_id"], name: "index_draft_works_on_number_format_id"
-    t.index ["sc_tid"], name: "index_draft_works_on_sc_tid"
-    t.index ["season_id"], name: "index_draft_works_on_season_id"
-    t.index ["work_id"], name: "index_draft_works_on_work_id"
-  end
-
-  create_table "edit_request_comments", id: :serial, force: :cascade do |t|
-    t.integer "edit_request_id", null: false
-    t.integer "user_id", null: false
-    t.text "body", null: false
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.index ["edit_request_id"], name: "index_edit_request_comments_on_edit_request_id"
-    t.index ["user_id"], name: "index_edit_request_comments_on_user_id"
-  end
-
-  create_table "edit_request_participants", id: :serial, force: :cascade do |t|
-    t.integer "edit_request_id", null: false
-    t.integer "user_id", null: false
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.index ["edit_request_id", "user_id"], name: "index_edit_request_participants_on_edit_request_id_and_user_id", unique: true
-    t.index ["edit_request_id"], name: "index_edit_request_participants_on_edit_request_id"
-    t.index ["user_id"], name: "index_edit_request_participants_on_user_id"
-  end
-
-  create_table "edit_requests", id: :serial, force: :cascade do |t|
-    t.integer "user_id", null: false
-    t.integer "draft_resource_id", null: false
-    t.string "draft_resource_type", null: false
-    t.string "title", null: false
-    t.text "body"
-    t.string "aasm_state", default: "opened", null: false
-    t.datetime "published_at"
-    t.datetime "closed_at"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.index ["draft_resource_id", "draft_resource_type"], name: "index_er_on_drid_and_drtype"
-    t.index ["user_id"], name: "index_edit_requests_on_user_id"
   end
 
   create_table "email_notifications", id: :serial, force: :cascade do |t|
@@ -1147,33 +976,8 @@ ActiveRecord::Schema.define(version: 20170629144332) do
   add_foreign_key "comments", "checkins", name: "comments_checkin_id_fk", on_delete: :cascade
   add_foreign_key "comments", "users", name: "comments_user_id_fk", on_delete: :cascade
   add_foreign_key "comments", "works"
-  add_foreign_key "cover_images", "works", name: "cover_images_work_id_fk", on_delete: :cascade
   add_foreign_key "db_activities", "users"
   add_foreign_key "db_comments", "users"
-  add_foreign_key "draft_casts", "casts"
-  add_foreign_key "draft_casts", "people"
-  add_foreign_key "draft_casts", "works"
-  add_foreign_key "draft_episodes", "episodes"
-  add_foreign_key "draft_episodes", "episodes", column: "prev_episode_id"
-  add_foreign_key "draft_episodes", "works"
-  add_foreign_key "draft_multiple_episodes", "works"
-  add_foreign_key "draft_organizations", "organizations"
-  add_foreign_key "draft_people", "people"
-  add_foreign_key "draft_people", "prefectures"
-  add_foreign_key "draft_programs", "channels"
-  add_foreign_key "draft_programs", "episodes"
-  add_foreign_key "draft_programs", "programs"
-  add_foreign_key "draft_programs", "works"
-  add_foreign_key "draft_staffs", "staffs"
-  add_foreign_key "draft_staffs", "works"
-  add_foreign_key "draft_works", "number_formats"
-  add_foreign_key "draft_works", "seasons"
-  add_foreign_key "draft_works", "works"
-  add_foreign_key "edit_request_comments", "edit_requests", on_delete: :cascade
-  add_foreign_key "edit_request_comments", "users", on_delete: :cascade
-  add_foreign_key "edit_request_participants", "edit_requests"
-  add_foreign_key "edit_request_participants", "users"
-  add_foreign_key "edit_requests", "users", on_delete: :cascade
   add_foreign_key "email_notifications", "users"
   add_foreign_key "episode_items", "episodes"
   add_foreign_key "episode_items", "items"
