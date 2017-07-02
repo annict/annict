@@ -25,7 +25,7 @@
             .row.pt-1
               - @items.each do |item|
                 .col-6.mb-1
-                  = render "items/item", item: item
+                  = render "items/item", resource: @work, item: item
             - if @items.total_pages > 1
               .mb-1.text-center
                 = paginate @items

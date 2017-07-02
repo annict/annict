@@ -7,6 +7,6 @@
   .row
     - items.each do |item|
       .col-6.my-zp5
-        = render "items/item", item: item
+        = render "items/item", resource: episode, item: item
 - else
   = render "application/components/empty", text: t("messages._empty.no_items")

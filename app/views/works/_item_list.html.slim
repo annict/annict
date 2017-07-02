@@ -2,7 +2,7 @@
   .row
     - items.first(6).each do |item|
       .col-6.my-zp5
-        = render "items/item", item: item
+        = render "items/item", resource: work, item: item
   - if items.length > 6
     .mb-1
       = link_to work_items_path(work), class: "btn btn-secondary w-100" do

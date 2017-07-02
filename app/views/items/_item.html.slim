@@ -16,3 +16,5 @@
             = "¥#{item.offer_amount.to_s(:delimited)}"
         - else
           = "¥#{item.amount.to_s(:delimited)}"
+    - if user_signed_in? && policy(item).destroy?(resource)
+      = link_to t("verb.delete"), resource.decorate.delete_item_path(item), class: "small text-danger", data: { method: :delete, confirm: t("messages._common.are_you_sure") }

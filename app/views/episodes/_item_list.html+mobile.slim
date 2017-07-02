@@ -6,6 +6,6 @@
 - if items.present?
   - items.each do |item|
     .py-zp5
-      = render "items/item", item: item
+      = render "items/item", resource: episode, item: item
 - else
   = render "application/components/empty", text: t("messages._empty.no_items")

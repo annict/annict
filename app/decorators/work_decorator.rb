@@ -76,6 +76,10 @@ class WorkDecorator < ApplicationDecorator
     end
   end
 
+  def delete_item_path(item)
+    h.work_item_path(self, item)
+  end
+
   def to_values
     model.class::DIFF_FIELDS.each_with_object({}) do |field, hash|
       hash[field] = case field

@@ -291,7 +291,7 @@ Rails.application.routes.draw do
   end
 
   resources :episodes, only: [] do
-    resources :items, only: %i(new create destroy), controller: :episode_items
+    resources :items, only: %i(new destroy), controller: :episode_items
     resources :records, only: [] do
       post :switch, on: :collection
     end
@@ -339,7 +339,7 @@ Rails.application.routes.draw do
 
   resources :works, only: %i(index show) do
     resources :characters, only: %i(index)
-    resources :items, only: %i(index new create destroy), controller: :work_items
+    resources :items, only: %i(index new destroy), controller: :work_items
     resources :staffs, only: %i(index)
     resources :reviews, only: %i(new create edit update destroy)
     resources :reviews, only: %i(index), controller: :work_reviews
