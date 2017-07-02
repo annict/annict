@@ -1,0 +1,12 @@
+.text-right.my-zp5
+  = link_to new_episode_item_path(episode), class: "btn btn-primary" do
+    = icon "plus", class: "mr-zp25"
+    = t "verb.regist_item"
+
+- if items.present?
+  .row
+    - items.each do |item|
+      .col-6.my-zp5
+        = render "items/item", resource: episode, item: item
+- else
+  = render "application/components/empty", text: t("messages._empty.no_items")

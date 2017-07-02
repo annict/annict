@@ -1,0 +1,18 @@
+- title = t "head.title.work_items.new"
+- set_meta_tags(title: title, reverse: true, prefix: false)
+- set_page_category "work_items_new"
+- breadcrumb :new_work_item, @work
+
+= render "works/header", work: @work
+
+.c-card.mb-1
+  .container.py-1
+    c-amazon-item-attacher resource-type="Work" resource-id="#{@work.id}"
+
+= render "application/components/breadcrumb"
+= render "application/components/footer"
+= render "application/components/tabbar"
+
+- content_for :js_templates do
+  = render "application/js_templates/amazon_item_attacher"
+  = render "application/js_templates/status_selector"

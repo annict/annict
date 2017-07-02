@@ -51,7 +51,9 @@ describe "Api::V1::Me::Works" do
         "watchers_count" => 1,
         "status" => {
           "kind" => "watching"
-        }
+        },
+        "reviews_count" => 0,
+        "no_episodes" => false
       }
       expect(json["works"][0].stringify_keys).to include(expected_hash)
       expect(expected_hash).to include(json["works"][0].stringify_keys)

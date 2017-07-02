@@ -8,6 +8,9 @@ AllCops:
 Layout/CaseIndentation:
   EnforcedStyle: end
 
+Layout/EmptyLineAfterMagicComment:
+  Enabled: false
+
 Lint/EndAlignment:
   EnforcedStyleAlignWith: variable
 

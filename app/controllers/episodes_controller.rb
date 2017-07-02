@@ -51,6 +51,7 @@ class EpisodesController < ApplicationController
     @friend_comment_records = service.friend_comment_records
     @my_records = service.my_records
     @selected_comment_records = service.selected_comment_records
+    @items = @episode.items.published.order(created_at: :desc)
 
     data = {
       recordsSortTypes: Setting.records_sort_type.options,

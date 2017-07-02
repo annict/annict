@@ -119,6 +119,8 @@ en:
           activities: Activities
           edit: "%{title}"
           index: Works
+      episode_items:
+        new: New Item
       episodes:
         index: Episodes of %{title} (Anime)
         show: Anime "%{work_title}" - %{episode_title_with_number}
@@ -210,6 +212,9 @@ en:
         following: People followed by %{profile_name} (%{username})
         show: "%{profile_name} (%{username})"
         works: "%{profile_name} (%{username})'s \"%{action}\" anime"
+      work_items:
+        index: Items of %{work_title} (Anime)
+        new: New Item
       works:
         newest: Just Added Anime
         popular: Popular Anime

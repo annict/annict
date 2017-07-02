@@ -9,9 +9,12 @@
     .c-subnav__item
       = t "noun.staffs"
   - unless work.no_episodes?
-    = active_link_to work_episodes_path(work), class: "c-subnav__link", class_active: "c-subnav__link--active", active: params[:controller] == "episodes" && params[:action].in?(%w(index show)) do
+    = active_link_to work_episodes_path(work), class: "c-subnav__link", class_active: "c-subnav__link--active", active: params[:controller].in?(%w(episodes episode_items)) && params[:action].in?(%w(index show new)) do
       .c-subnav__item
         = t "noun.episodes"
   = active_link_to work_reviews_path(work), class: "c-subnav__link", class_active: "c-subnav__link--active", active: params[:controller].in?(%w(work_reviews reviews)) && params[:action].in?(%w(index new create edit update)) do
     .c-subnav__item
       = t "noun.reviews"
+  = active_link_to work_items_path(work), class: "c-subnav__link", class_active: "c-subnav__link--active", active: params[:controller].in?(%w(work_items)) && params[:action].in?(%w(index new)) do
+    .c-subnav__item
+      = t "noun.related_items"

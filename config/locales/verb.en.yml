@@ -13,6 +13,8 @@ en:
     next: Next
     post: Post
     previous: Prev
+    regist: Add
+    regist_item: Add Item
     revoke: Revoke
     search: Search
     sign_out: Sign Out

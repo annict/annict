@@ -9,13 +9,14 @@ git_source(:github) do |repo_name|
   "https://github.com/#{repo_name}.git"
 end
 
-gem "rails", "5.1.1"
+gem "rails", "5.1.2"
 
 gem "aasm"
 gem "action_args"
 gem "active_link_to"
 gem "activerecord-session_store"
 gem "acts_as_list"
+gem "amazon-ecs"
 gem "annotate"
 gem "asset_sync"
 gem "autoprefixer-rails"
@@ -104,8 +105,9 @@ end
 
 group :development do
   gem "active_record_query_trace"
-  gem "better_errors"
-  gem "binding_of_caller" # better_errorsで使用
+  # Wating to be fixed: https://github.com/charliesome/better_errors/issues/341
+  # gem "better_errors"
+  # gem "binding_of_caller" # better_errorsで使用
   gem "bullet"
   gem "derailed_benchmarks"
   gem "graphiql-rails"

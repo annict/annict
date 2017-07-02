@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170624180724) do
+ActiveRecord::Schema.define(version: 20170629144332) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -258,22 +258,6 @@ ActiveRecord::Schema.define(version: 20170624180724) do
     t.index ["work_id"], name: "index_draft_episodes_on_work_id"
   end
 
-  create_table "draft_items", id: :serial, force: :cascade do |t|
-    t.integer "item_id"
-    t.integer "work_id", null: false
-    t.string "name", null: false
-    t.string "url", null: false
-    t.boolean "main", default: false, null: false
-    t.string "tombo_image_file_name", null: false
-    t.string "tombo_image_content_type", null: false
-    t.integer "tombo_image_file_size", null: false
-    t.datetime "tombo_image_updated_at", null: false
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.index ["item_id"], name: "index_draft_items_on_item_id"
-    t.index ["work_id"], name: "index_draft_items_on_work_id"
-  end
-
   create_table "draft_multiple_episodes", id: :serial, force: :cascade do |t|
     t.integer "work_id", null: false
     t.text "body", null: false
@@ -416,6 +400,21 @@ ActiveRecord::Schema.define(version: 20170624180724) do
     t.boolean "event_favorite_works_added", default: true, null: false
     t.index ["unsubscription_key"], name: "index_email_notifications_on_unsubscription_key", unique: true
     t.index ["user_id"], name: "index_email_notifications_on_user_id", unique: true
+  end
+
+  create_table "episode_items", force: :cascade do |t|
+    t.integer "episode_id", null: false
+    t.integer "item_id", null: false
+    t.integer "user_id", null: false
+    t.integer "work_id", null: false
+    t.string "aasm_state", default: "published", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["episode_id", "item_id"], name: "index_episode_items_on_episode_id_and_item_id", unique: true
+    t.index ["episode_id"], name: "index_episode_items_on_episode_id"
+    t.index ["item_id"], name: "index_episode_items_on_item_id"
+    t.index ["user_id"], name: "index_episode_items_on_user_id"
+    t.index ["work_id"], name: "index_episode_items_on_work_id"
   end
 
   create_table "episodes", id: :serial, force: :cascade do |t|
@@ -570,18 +569,25 @@ ActiveRecord::Schema.define(version: 20170624180724) do
     t.index ["user_id"], name: "index_impressions_on_user_id"
   end
 
-  create_table "items", id: :serial, force: :cascade do |t|
-    t.integer "work_id"
-    t.string "name", limit: 510, null: false
-    t.string "url", limit: 510, null: false
-    t.datetime "created_at"
-    t.datetime "updated_at"
-    t.string "tombo_image_file_name"
-    t.string "tombo_image_content_type"
-    t.integer "tombo_image_file_size"
-    t.datetime "tombo_image_updated_at"
-    t.index ["work_id"], name: "index_items_on_work_id", unique: true
-    t.index ["work_id"], name: "items_work_id_idx"
+  create_table "items", force: :cascade do |t|
+    t.string "title", null: false
+    t.string "detail_page_url", null: false
+    t.string "asin", null: false
+    t.string "ean"
+    t.integer "amount"
+    t.string "currency_code", default: "", null: false
+    t.integer "offer_amount"
+    t.string "offer_currency_code", default: "", null: false
+    t.datetime "release_on"
+    t.string "manufacturer", default: "", null: false
+    t.string "thumbnail_file_name"
+    t.string "thumbnail_content_type"
+    t.integer "thumbnail_file_size"
+    t.datetime "thumbnail_updated_at"
+    t.string "aasm_state", default: "published", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["asin"], name: "index_items_on_asin", unique: true
   end
 
   create_table "latest_statuses", id: :serial, force: :cascade do |t|
@@ -1063,6 +1069,19 @@ ActiveRecord::Schema.define(version: 20170624180724) do
     t.index ["work_id"], name: "index_work_images_on_work_id"
   end
 
+  create_table "work_items", force: :cascade do |t|
+    t.integer "work_id", null: false
+    t.integer "item_id", null: false
+    t.integer "user_id", null: false
+    t.string "aasm_state", default: "published", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["item_id"], name: "index_work_items_on_item_id"
+    t.index ["user_id"], name: "index_work_items_on_user_id"
+    t.index ["work_id", "item_id"], name: "index_work_items_on_work_id_and_item_id", unique: true
+    t.index ["work_id"], name: "index_work_items_on_work_id"
+  end
+
   create_table "works", id: :serial, force: :cascade do |t|
     t.integer "season_id"
     t.integer "sc_tid"
@@ -1137,8 +1156,6 @@ ActiveRecord::Schema.define(version: 20170624180724) do
   add_foreign_key "draft_episodes", "episodes"
   add_foreign_key "draft_episodes", "episodes", column: "prev_episode_id"
   add_foreign_key "draft_episodes", "works"
-  add_foreign_key "draft_items", "items"
-  add_foreign_key "draft_items", "works"
   add_foreign_key "draft_multiple_episodes", "works"
   add_foreign_key "draft_organizations", "organizations"
   add_foreign_key "draft_people", "people"
@@ -1158,6 +1175,10 @@ ActiveRecord::Schema.define(version: 20170624180724) do
   add_foreign_key "edit_request_participants", "users"
   add_foreign_key "edit_requests", "users", on_delete: :cascade
   add_foreign_key "email_notifications", "users"
+  add_foreign_key "episode_items", "episodes"
+  add_foreign_key "episode_items", "items"
+  add_foreign_key "episode_items", "users"
+  add_foreign_key "episode_items", "works"
   add_foreign_key "episodes", "episodes", column: "prev_episode_id"
   add_foreign_key "episodes", "works", name: "episodes_work_id_fk", on_delete: :cascade
   add_foreign_key "favorite_characters", "characters"
@@ -1177,7 +1198,6 @@ ActiveRecord::Schema.define(version: 20170624180724) do
   add_foreign_key "forum_posts", "forum_categories"
   add_foreign_key "forum_posts", "users"
   add_foreign_key "impressions", "users"
-  add_foreign_key "items", "works", name: "items_work_id_fk", on_delete: :cascade
   add_foreign_key "latest_statuses", "episodes", column: "next_episode_id"
   add_foreign_key "latest_statuses", "users"
   add_foreign_key "latest_statuses", "works"
@@ -1217,6 +1237,9 @@ ActiveRecord::Schema.define(version: 20170624180724) do
   add_foreign_key "userland_projects", "userland_categories"
   add_foreign_key "work_images", "users"
   add_foreign_key "work_images", "works"
+  add_foreign_key "work_items", "items"
+  add_foreign_key "work_items", "users"
+  add_foreign_key "work_items", "works"
   add_foreign_key "works", "number_formats"
   add_foreign_key "works", "pvs", column: "key_pv_id"
   add_foreign_key "works", "seasons", name: "works_season_id_fk", on_delete: :cascade

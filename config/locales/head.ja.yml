@@ -117,6 +117,8 @@ ja:
           activities: アクティビティ
           edit: "%{title}"
           index: 作品一覧
+      episode_items:
+        new: 商品登録
       episodes:
         index: アニメ「%{title}」のエピソード
         show: アニメ「%{work_title}」%{episode_title_with_number}
@@ -210,6 +212,9 @@ ja:
         following: "%{profile_name} (%{username})がフォローしている人"
         show: "%{profile_name} (%{username})"
         works: "%{profile_name} (%{username})が\"%{action}\"アニメ"
+      work_items:
+        index: アニメ「%{work_title}」の関連商品
+        new: 商品登録
       works:
         newest: 新規登録アニメ
         popular: 人気アニメ

@@ -65,4 +65,8 @@ class EpisodeDecorator < ApplicationDecorator
 
     "#{work_title} #{local_number}"
   end
+
+  def delete_item_path(item)
+    h.episode_item_path(self, item)
+  end
 end

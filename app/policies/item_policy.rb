@@ -1,13 +1,7 @@
+# frozen_string_literal: true
+
 class ItemPolicy < ApplicationPolicy
-  def create?
-    user.committer?
-  end
-
-  def update?
-    user.committer?
-  end
-
-  def destroy?
-    user.role.admin?
+  def destroy?(resource)
+    resource.resource_items.where(user: user, item: record).present?
   end
 end

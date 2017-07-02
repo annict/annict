@@ -92,9 +92,15 @@
             - else
               = render "application/components/empty", text: t("messages._empty.no_episodes")
         
-        h2.h4.text-center.my-2.font-weight-bold = t "noun.reviews"
+        h2.h4.text-center.my-2.font-weight-bold
+          = t "noun.reviews"
         .c-card.container.mt-1
           = render "works/review_list", reviews: @reviews
+
+        h2.h4.text-center.my-2.font-weight-bold
+          = t "noun.related_items"
+        .c-card.container.mt-1.py-zp5
+          = render "works/item_list", work: @work, items: @items
 
         - if @series_list.present?
           h2.h4.text-center.my-2.font-weight-bold = t "noun.related_works"

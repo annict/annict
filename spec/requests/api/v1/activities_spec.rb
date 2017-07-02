@@ -70,7 +70,9 @@ describe "Api::V1::Activities" do
               }
             },
             "episodes_count" => 1,
-            "watchers_count" => 0
+            "watchers_count" => 0,
+            "reviews_count" => 0,
+            "no_episodes" => false
           },
           "episode" => {
             "id" => record.episode.id,

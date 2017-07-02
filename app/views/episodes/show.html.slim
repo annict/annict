@@ -4,36 +4,20 @@
 - image_url = ann_image_url(@work.work_image, :attachment, size: "640x")
 - set_meta_tags(title: title, description: description, keywords: keywords, og: { description: description, image: image_url }, twitter: { description: description, image: image_url }, reverse: true, prefix: false)
 - set_page_category "episodes_show"
+- breadcrumb :episode_detail, @episode
 
 = render "application/components/navbar"
 
 .p-application__content
   .container.py-1.mb-2
+    = render "application/components/breadcrumb"
     .row
       .col-3.pr-0
         = render "works/sidebar", work: @work
       .col-9
         = render "works/subnav", work: @work
         .c-card.container.py-1.my-1
-          .mb-1
-            h2
-              = link_to @episode.decorate.title_with_number, work_episode_path(@work, @episode), class: "u-text-body"
-            - if user_signed_in? && current_user.tracked?(@episode)
-              .small
-                = icon "check-circle", class: "mr-zp25 u-text-green"
-                = t "messages.episodes.watched_x_times", records_count: current_user.checkins_count_in(@episode)
-          - if @episode.prev_episode.present? || @episode.next_episode.present?
-            .row.mt-1
-              .col
-                - if @episode.prev_episode.present?
-                  = link_to work_episode_path(@work, @episode.prev_episode) do
-                    = icon "angle-left", class: "mr-zp25"
-                    = @episode.prev_episode.decorate.local_number
-              .col.text-right
-                - if @episode.next_episode.present?
-                  = link_to work_episode_path(@work, @episode.next_episode) do
-                    = @episode.next_episode.decorate.local_number
-                    = icon "angle-right", class: "ml-zp25"
+          = render "episodes/nav", work: @work, episode: @episode
         .row
           .col-9.pr-0
             .c-card.py-1
@@ -66,6 +50,11 @@
                       = paginate @selected_comment_records
                 - else
                   = render "application/components/empty", text: t("messages.episodes.no_comments")
+            
+            h2.h4.text-center.my-2.font-weight-bold
+              = t "noun.related_items"
+            .c-card.container.my-1.py-zp5
+              = render "episodes/item_list", episode: @episode, items: @items
           .col-3.pl-0
             .mb-2
               .small.font-weight-bold.mb-zp5.text-center
