@@ -9,7 +9,7 @@
 #  asin                   :string           not null
 #  ean                    :string
 #  amount                 :integer
-#  currency_code          :string
+#  currency_code          :string           default(""), not null
 #  offer_amount           :integer
 #  offer_currency_code    :string           default(""), not null
 #  release_on             :datetime

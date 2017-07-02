@@ -569,13 +569,13 @@ ActiveRecord::Schema.define(version: 20170629144332) do
     t.index ["user_id"], name: "index_impressions_on_user_id"
   end
 
-  create_table "items", id: :bigint, default: -> { "nextval('items_id_seq1'::regclass)" }, force: :cascade do |t|
+  create_table "items", force: :cascade do |t|
     t.string "title", null: false
     t.string "detail_page_url", null: false
     t.string "asin", null: false
     t.string "ean"
     t.integer "amount"
-    t.string "currency_code"
+    t.string "currency_code", default: "", null: false
     t.integer "offer_amount"
     t.string "offer_currency_code", default: "", null: false
     t.datetime "release_on"

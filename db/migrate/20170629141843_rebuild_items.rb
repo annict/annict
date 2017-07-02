@@ -4,8 +4,9 @@ class RebuildItems < ActiveRecord::Migration[5.1]
   def change
     drop_table :draft_items, force: true
     drop_table :items, force: true
+    execute "DROP SEQUENCE items_id_seq"
 
-    create_table :items, force: true do |t|
+    create_table :items do |t|
       t.string :title, null: false
       t.string :detail_page_url, null: false
       t.string :asin, null: false
