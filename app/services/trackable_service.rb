@@ -10,7 +10,7 @@ class TrackableService
 
     @user.
       latest_statuses.
-      includes(:next_episode, work: :item).
+      includes(:next_episode, :work).
       watching.
       has_next_episode.
       order(:position)
