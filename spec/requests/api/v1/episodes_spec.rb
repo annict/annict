@@ -53,7 +53,9 @@ describe "Api::V1::Episodes" do
               }
             },
             "episodes_count" => 1,
-            "watchers_count" => 0
+            "watchers_count" => 0,
+            "reviews_count" => 0,
+            "no_episodes" => false
           }
         }
         expect(json["episodes"][0]).to include(expected_hash)

@@ -43,7 +43,9 @@ describe "Api::V1::Works" do
             }
           },
           "episodes_count" => 1,
-          "watchers_count" => 0
+          "watchers_count" => 0,
+          "reviews_count" => 0,
+          "no_episodes" => false
         }
         expect(json["works"][0].stringify_keys).to include(expected_hash)
         expect(expected_hash).to include(json["works"][0].stringify_keys)

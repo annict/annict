@@ -12,12 +12,6 @@ FactoryGirl.define do
     released_at Date.parse("2012-04-05")
     released_at_about "2012年"
 
-    trait :with_item do
-      after :create do |work|
-        create(:item, work: work)
-      end
-    end
-
     trait :with_current_season do
       year, name = ENV["ANNICT_CURRENT_SEASON"].split("-")
       season_year year

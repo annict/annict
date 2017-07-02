@@ -63,7 +63,9 @@ describe "Api::V1::Me::Programs" do
             }
           },
           "episodes_count" => 1,
-          "watchers_count" => 1
+          "watchers_count" => 1,
+          "reviews_count" => 0,
+          "no_episodes" => false
         },
         "episode" => {
           "id" => episode.id,

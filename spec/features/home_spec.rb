@@ -2,7 +2,7 @@
 
 describe "Top page" do
   context "when a user is not signed in" do
-    let!(:work) { create(:work, :with_item, :with_current_season) }
+    let!(:work) { create(:work, :with_current_season) }
 
     before do
       visit "/"
