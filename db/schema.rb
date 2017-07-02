@@ -574,8 +574,8 @@ ActiveRecord::Schema.define(version: 20170629144332) do
     t.string "detail_page_url", null: false
     t.string "asin", null: false
     t.string "ean"
-    t.integer "amount", null: false
-    t.string "currency_code", null: false
+    t.integer "amount"
+    t.string "currency_code"
     t.integer "offer_amount"
     t.string "offer_currency_code", default: "", null: false
     t.datetime "release_on"

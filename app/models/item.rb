@@ -8,8 +8,8 @@
 #  detail_page_url        :string           not null
 #  asin                   :string           not null
 #  ean                    :string
-#  amount                 :integer          not null
-#  currency_code          :string           not null
+#  amount                 :integer
+#  currency_code          :string
 #  offer_amount           :integer
 #  offer_currency_code    :string           default(""), not null
 #  release_on             :datetime
