@@ -64,6 +64,7 @@ class User < ApplicationRecord
   has_many :activities, dependent: :destroy
   has_many :channel_works, dependent: :destroy
   has_many :records, class_name: "Checkin", dependent: :destroy
+  has_many :db_activities, dependent: :destroy
   has_many :db_comments, dependent: :destroy
   has_many :favorite_characters, dependent: :destroy
   has_many :favorite_organizations, dependent: :destroy
@@ -82,6 +83,7 @@ class User < ApplicationRecord
   has_many :statuses, dependent: :destroy
   has_many :multiple_records, dependent: :destroy
   has_many :mute_users, dependent: :destroy
+  has_many :muted_users, dependent: :destroy, foreign_key: :muted_user_id, class_name: "MuteUser"
   has_many :oauth_applications, class_name: "Doorkeeper::Application", as: :owner
   has_many :oauth_access_grants,
     class_name: "Doorkeeper::AccessGrant",

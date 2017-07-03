@@ -76,9 +76,9 @@ class UsersController < ApplicationController
   end
 
   def destroy
-    sayonara = SayonaraService.new(current_user)
-    sayonara.bye_bye!
-    redirect_to root_path, notice: "退会しました。(´・ω;:.."
+    ByeByeJob.perform_later(current_user.id)
+    sign_out current_user
+    redirect_to root_path, notice: t("messages.users.bye_bye")
   end
 
   private

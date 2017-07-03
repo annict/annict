@@ -206,6 +206,7 @@ en:
         markdown_support: You can write in Markdown.
       welcome: Welcome to Userland!
     users:
+      bye_bye: "Bye Bye... (´・ω;:.."
       no_works: No works
     work_images:
       deleted: Work image has been deleted.

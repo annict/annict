@@ -206,6 +206,7 @@ ja:
         markdown_support: Markdownで書くことができます。
       welcome: Userlandにようこそ！
     users:
+      bye_bye: "退会しました。(´・ω;:.."
       no_works: 作品はありません
     work_images:
       deleted: 削除しました
