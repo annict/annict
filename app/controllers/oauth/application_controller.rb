@@ -6,11 +6,12 @@ module Oauth
 
     include ControllerCommon
     include Analyzable
+    include LogrageSetting
     include Gonable
     include FlashMessage
     include ViewSelector
 
-    helper_method :client_uuid, :gon
+    helper_method :gon
 
     layout "application"
 

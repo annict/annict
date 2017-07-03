@@ -7,13 +7,14 @@ module Db
     include ControllerCommon
     include FlashMessage
     include Analyzable
+    include LogrageSetting
     include Gonable
 
     layout "db"
 
     rescue_from Pundit::NotAuthorizedError, with: :user_not_authorized
 
-    helper_method :client_uuid, :gon
+    helper_method :gon
 
     before_action :redirect_if_unexpected_subdomain
     before_action :switch_languages

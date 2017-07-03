@@ -6,6 +6,7 @@ module Userland
 
     include ControllerCommon
     include Analyzable
+    include LogrageSetting
     include Gonable
     include FlashMessage
     include PageCategoryHelper
@@ -13,7 +14,7 @@ module Userland
 
     layout "application"
 
-    helper_method :client_uuid, :gon
+    helper_method :gon
 
     before_action :redirect_if_unexpected_subdomain
     before_action :switch_languages

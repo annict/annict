@@ -5,6 +5,7 @@ module Api
     class ApplicationController < ActionController::Base
       include ControllerCommon
       include Analyzable
+      include LogrageSetting
 
       before_action :switch_languages
 

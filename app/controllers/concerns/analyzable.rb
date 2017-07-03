@@ -4,6 +4,8 @@ module Analyzable
   extend ActiveSupport::Concern
 
   included do
+    helper_method :client_uuid
+
     def ga_client
       @ga_client ||= Annict::Analytics::Client.new(request, current_user)
     end

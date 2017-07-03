@@ -2,6 +2,7 @@
 
 class GraphqlController < ActionController::Base
   include Analyzable
+  include LogrageSetting
 
   before_action :doorkeeper_authorize!
 
