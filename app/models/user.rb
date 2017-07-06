@@ -60,6 +60,7 @@ class User < ApplicationRecord
     authentication_keys: %i(email_username)
 
   enumerize :role, in: { user: 0, admin: 1, editor: 2 }, default: :user, scope: true
+  enumerize :locale, in: %i(ja en)
 
   has_many :activities, dependent: :destroy
   has_many :channel_works, dependent: :destroy
