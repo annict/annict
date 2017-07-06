@@ -60,8 +60,8 @@ class PeopleController < ApplicationController
 
   def load_i18n
     keys = {
-      "messages.components.favorite_button.add_to_favorites": nil,
-      "messages.components.favorite_button.added_to_favorites": nil
+      "messages._components.favorite_button.add_to_favorites": nil,
+      "messages._components.favorite_button.added_to_favorites": nil
     }
 
     load_i18n_into_gon keys

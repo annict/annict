@@ -24,9 +24,9 @@ module.exports =
   computed:
     buttonText: ->
       if @isFavorited
-        gon.I18n["messages.components.favorite_button.added_to_favorites"]
+        gon.I18n["messages._components.favorite_button.added_to_favorites"]
       else
-        gon.I18n["messages.components.favorite_button.add_to_favorites"]
+        gon.I18n["messages._components.favorite_button.add_to_favorites"]
 
   methods:
     toggleFavorite: ->

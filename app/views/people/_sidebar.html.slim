@@ -11,6 +11,9 @@ h1.h2.font-weight-bold
 
 .mb-2
   c-favorite-button.w-100 resource-type="Person" :resource-id="#{person.id}" :init-is-favorited="#{user_signed_in? && current_user.favorite?(person)}" :is-signed-in="#{user_signed_in?}"
+  .small.text-muted.mt-zp5
+    = icon "info-circle", class: "mr-zp25"
+    = t "messages._components.favorite_button.hint", resource_type: t("noun.person").downcase
 
 .mb-2
   h2.h4.font-weight-bold.mb-1
