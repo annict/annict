@@ -21,6 +21,10 @@ ja:
         error: 通信エラー。時間を置いて再度お試しください
         registed: 登録済み
         you_can_search_by_keyword_or_asin_or_isbn_code: キーワードやASIN / ISBNコードで検索できます
+      favorite_button:
+        add_to_favorites: お気に入りに登録
+        added_to_favorites: 登録済み
+        hint: "お気に入りに登録すると、この%{resource_type}が関係する新作アニメがAnnictに登録されたとき通知します"
     _empty:
       no_characters: キャラクターはいません
       no_episodes: エピソードはありません
@@ -90,9 +94,6 @@ ja:
         hero_title_mobile_html: 見たアニメを記録して、<br>共有しよう。
         start_tracking: 視聴記録を始める
     components:
-      favorite_button:
-        add_to_favorites: お気に入りに追加
-        added_to_favorites: お気に入り追加済
       load_more_button:
         more: もっと見る
       mute_user_button:
