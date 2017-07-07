@@ -10,8 +10,7 @@ machine:
   hosts:
     annict.dev: 127.0.0.1
     api.annict.dev: 127.0.0.1
-    en.annict.dev: 127.0.0.1
-    ja.annict.dev: 127.0.0.1
+    annict.dev-jp: 127.0.0.1
   node:
     version: 6.10.0
   timezone:

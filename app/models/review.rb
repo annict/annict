@@ -44,7 +44,6 @@ class Review < ApplicationRecord
 
   STATES.each do |state|
     enumerize state, in: %i(bad average good great)
-    validates state, presence: true
   end
 
   aasm do
@@ -70,6 +69,7 @@ class Review < ApplicationRecord
 
   validates :body, presence: true, length: { maximum: 10_000 }
   validates :title, presence: true, length: { maximum: 100 }
+  validates :rating_overall_state, presence: true
 
   def share_to_sns
     ShareReviewToTwitterJob.perform_later(user.id, id) if user.setting.share_review_to_twitter?

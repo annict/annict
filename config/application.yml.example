@@ -10,8 +10,9 @@ RAILS_SECRET_KEY_BASE: "abcdefghijklmnopqrstuvwxyz"
 local_default: &local_default
   ANNICT_BASIC_AUTH: "off"
   ANNICT_DOMAIN: "annict.dev"
-  ANNICT_EN_URL: "http://en.annict.dev:3000"
-  ANNICT_JA_URL: "http://ja.annict.dev:3000"
+  ANNICT_JP_DOMAIN: "annict.dev-jp"
+  ANNICT_JP_HOST: "annict.jp"
+  ANNICT_JP_URL: "http://annict.dev-jp:3000"
   ANNICT_PAPERCLIP_PATH: ":rails_root/public/paperclip/:class/:id/:attachment/:style/:hash.:extension"
   ANNICT_URL: "http://annict.dev:3000"
 
@@ -21,6 +22,8 @@ development:
   FACEBOOK_SECRET_KEY: "xxxxxxxxxxxxxxxxxxxxxxxx"
 
   GA_TRACKING_ID: UA-000000000-3
+  GA_TRACKING_ID_JP: UA-000000000-4
+  GA_TRACKING_ID_API: UA-000000000-5
 
   ANNICT_BASIC_AUTH_NAME: "el-psy"
   ANNICT_BASIC_AUTH_PASSWORD: "congroo"
@@ -46,6 +49,8 @@ test:
   FACEBOOK_APP_ID: "1234567890"
   FACEBOOK_SECRET_KEY: "secretsecretsecretsecretsecretsecret"
   GA_TRACKING_ID: "UA-00000000-0"
+  GA_TRACKING_ID_JP: "UA-00000000-1"
+  GA_TRACKING_ID_API: "UA-00000000-2"
   KEEN_PROJECT_ID: "keen"
   KEEN_WRITE_KEY: "keen_write"
   TWITTER_CONSUMER_KEY: "twtwtwtwtwtwtwtwtwtwtw"

@@ -60,6 +60,7 @@ class User < ApplicationRecord
     authentication_keys: %i(email_username)
 
   enumerize :role, in: { user: 0, admin: 1, editor: 2 }, default: :user, scope: true
+  enumerize :locale, in: %i(ja en)
 
   has_many :activities, dependent: :destroy
   has_many :channel_works, dependent: :destroy
@@ -260,6 +261,22 @@ class User < ApplicationRecord
 
   def userland_project_member?(project)
     userland_projects.exists?(project.id)
+  end
+
+  def annict_host
+    case locale
+    when "ja" then ENV.fetch("ANNICT_JP_HOST")
+    else
+      ENV.fetch("ANNICT_HOST")
+    end
+  end
+
+  def annict_url
+    case locale
+    when "ja" then ENV.fetch("ANNICT_JP_URL")
+    else
+      ENV.fetch("ANNICT_URL")
+    end
   end
 
   private

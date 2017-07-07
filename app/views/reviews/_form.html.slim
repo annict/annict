@@ -18,7 +18,7 @@
 
   - Review::STATES.each do |state|
     .form-group
-      = f.label state, class: "c-label-required"
+      = f.label state, class: "#{state == :rating_overall_state ? 'c-label-required' : ''}"
       c-record-rating :init-record=="{ ratingState: '#{review.send(state)}' }" input-name="review[#{state}]"
 
   - if current_user.authorized_to?(:twitter) || current_user.authorized_to?(:facebook)

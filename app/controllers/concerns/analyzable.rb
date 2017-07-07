@@ -20,7 +20,7 @@ module Analyzable
       cookies[:ann_client_uuid] = {
         value: request.uuid,
         expires: 2.year.from_now,
-        domain: ".#{ENV.fetch('ANNICT_DOMAIN')}"
+        domain: ".#{request.domain}"
       }
 
       cookies[:ann_client_uuid]

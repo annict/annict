@@ -45,6 +45,19 @@ module ControllerCommon
       redirect_to "#{url}#{request.path}", options
     end
 
+    def redirect_to_locale_domain(options = {})
+      return if request.domain == ENV.fetch("ANNICT_DOMAIN") && I18n.locale.to_s == "en"
+
+      url = case I18n.locale.to_s
+      when "ja"
+        ENV.fetch("ANNICT_JP_URL")
+      else
+        ENV.fetch("ANNICT_URL")
+      end
+
+      redirect_to "#{url}#{request.path}", options
+    end
+
     def redirect_if_unexpected_subdomain
       return unless %w(api).include?(request.subdomain)
 
@@ -59,28 +72,37 @@ module ControllerCommon
     end
 
     def switch_languages
-      if user_signed_in? && locale_subdomain?
-        locale = request.subdomain
-        return redirect_to_root_domain if current_user.locale == locale
-        current_user.update_column(:locale, locale)
-        redirect_to_root_domain
-      elsif user_signed_in? && !locale_subdomain?
-        I18n.locale = current_user.locale
-      elsif !user_signed_in? && locale_subdomain?
-        I18n.locale = request.subdomain
-      else
-        preferred_languages = http_accept_language.user_preferred_languages
-        # Chrome returns "ja", but Safari would return "ja-JP", not "ja".
-        I18n.locale = if preferred_languages.any? { |lang| lang.match?(/ja/) }
-          :ja
+      case request.domain
+      when ENV.fetch("ANNICT_DOMAIN")
+        if user_signed_in? && current_user.locale.en?
+          I18n.locale = :en
+          return
+        end
+
+        I18n.locale = if params[:locale].in?(User.locale.values)
+          params[:locale]
         else
-          :en
+          user_signed_in? ? current_user.locale : preferred_locale
+        end
+
+        if user_signed_in? && current_user.locale != I18n.locale.to_s
+          current_user.update_column(:locale, I18n.locale)
+        end
+
+        redirect_to_locale_domain
+      when ENV.fetch("ANNICT_JP_DOMAIN")
+        I18n.locale = :ja
+
+        if user_signed_in? && !current_user.locale.ja?
+          current_user.update_column(:locale, I18n.locale)
         end
       end
     end
 
-    def locale_subdomain?
-      I18n.available_locales.include?(request.subdomain&.to_sym)
+    def preferred_locale
+      preferred_languages = http_accept_language.user_preferred_languages
+      # Chrome returns "ja", but Safari would return "ja-JP", not "ja".
+      preferred_languages.any? { |lang| lang.match?(/ja/) } ? :ja : :en
     end
   end
 end
