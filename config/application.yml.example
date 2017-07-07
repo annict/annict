@@ -48,6 +48,8 @@ test:
   FACEBOOK_APP_ID: "1234567890"
   FACEBOOK_SECRET_KEY: "secretsecretsecretsecretsecretsecret"
   GA_TRACKING_ID: "UA-00000000-0"
+  GA_TRACKING_ID_JP: "UA-00000000-1"
+  GA_TRACKING_ID_API: "UA-00000000-2"
   KEEN_PROJECT_ID: "keen"
   KEEN_WRITE_KEY: "keen_write"
   TWITTER_CONSUMER_KEY: "twtwtwtwtwtwtwtwtwtwtw"
