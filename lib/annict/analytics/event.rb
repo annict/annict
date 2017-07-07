@@ -4,6 +4,7 @@ module Annict
   module Analytics
     class Event
       include HTTParty
+      include GaHelper
 
       base_uri "https://ssl.google-analytics.com"
 
@@ -23,7 +24,7 @@ module Annict
       def create(ec, ea, el: "", ev: "", ds: :web)
         body = {
           v: 1,
-          tid: ENV.fetch("GA_TRACKING_ID"),
+          tid: ga_tracking_id(@request),
           cid: @request.cookies["ann_client_uuid"],
           t: "event",
           ec: ec.to_s,

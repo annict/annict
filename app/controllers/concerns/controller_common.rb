@@ -4,7 +4,7 @@ module ControllerCommon
   extend ActiveSupport::Concern
 
   included do
-    helper_method :render_jb, :locale_ja?, :locale_en?, :ga_tracking_id
+    helper_method :render_jb, :locale_ja?, :locale_en?
 
     rescue_from ActionView::MissingTemplate do
       raise ActionController::RoutingError, "Not Found" if Rails.env.production?
@@ -74,7 +74,10 @@ module ControllerCommon
     def switch_languages
       case request.domain
       when ENV.fetch("ANNICT_DOMAIN")
-        return if user_signed_in? && current_user.locale.en?
+        if user_signed_in? && current_user.locale.en?
+          I18n.locale = :en
+          return
+        end
 
         I18n.locale = if params[:locale].in?(User.locale.values)
           params[:locale]
@@ -100,15 +103,6 @@ module ControllerCommon
       preferred_languages = http_accept_language.user_preferred_languages
       # Chrome returns "ja", but Safari would return "ja-JP", not "ja".
       preferred_languages.any? { |lang| lang.match?(/ja/) } ? :ja : :en
-    end
-
-    def ga_tracking_id
-      case request.domain
-      when ENV.fetch("ANNICT_JP_DOMAIN")
-        ENV.fetch("GA_TRACKING_ID_JP")
-      else
-        ENV.fetch("GA_TRACKING_ID")
-      end
     end
   end
 end
