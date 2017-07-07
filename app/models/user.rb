@@ -263,6 +263,22 @@ class User < ApplicationRecord
     userland_projects.exists?(project.id)
   end
 
+  def annict_host
+    case locale
+    when "ja" then ENV.fetch("ANNICT_JP_HOST")
+    else
+      ENV.fetch("ANNICT_HOST")
+    end
+  end
+
+  def annict_url
+    case locale
+    when "ja" then ENV.fetch("ANNICT_JP_URL")
+    else
+      ENV.fetch("ANNICT_URL")
+    end
+  end
+
   private
 
   def get_large_avatar_image(provider, image_url)

@@ -11,6 +11,7 @@ local_default: &local_default
   ANNICT_BASIC_AUTH: "off"
   ANNICT_DOMAIN: "annict.dev"
   ANNICT_JP_DOMAIN: "annict.dev-jp"
+  ANNICT_JP_HOST: "annict.jp"
   ANNICT_JP_URL: "http://annict.dev-jp:3000"
   ANNICT_PAPERCLIP_PATH: ":rails_root/public/paperclip/:class/:id/:attachment/:style/:hash.:extension"
   ANNICT_URL: "http://annict.dev:3000"

@@ -10,7 +10,7 @@ class ReviewDecorator < ApplicationDecorator
   # Do not use helper methods via Draper when the method is used in ActiveJob
   # https://github.com/drapergem/draper/issues/655
   def detail_url
-    "#{ENV.fetch('ANNICT_URL')}/@#{user.username}/reviews/#{id}"
+    "#{user.annict_url}/@#{user.username}/reviews/#{id}"
   end
 
   def tweet_body

@@ -29,7 +29,7 @@ class FacebookService
     link = if Rails.env.development?
       "https://annict.com/r/fb/#{checkin.facebook_url_hash}"
     else
-      "#{ENV['ANNICT_URL']}/r/fb/#{checkin.facebook_url_hash}"
+      "#{checkin.user.annict_url}/r/fb/#{checkin.facebook_url_hash}"
     end
     caption = "Annict | アニクト - 見たアニメを記録して、共有しよう"
 
