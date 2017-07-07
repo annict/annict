@@ -151,7 +151,11 @@ Rails.application.configure do
   config.middleware.insert_before(Rack::Runtime, Rack::Rewrite) do
     # http://www.annict.com へのリクエストを https://annict.com にリダイレクトする
     r301 /.*/, "https://annict.com$&", if: proc { |rack_env|
-      rack_env["SERVER_NAME"] == "www.annict.com"
+      rack_env["SERVER_NAME"].in?(["www.annict.com", "en.annict.com"])
+    }
+    # http://ja.annict.com へのリクエストを https://annict.jp にリダイレクトする
+    r301 /.*/, "https://annict.jp$&", if: proc { |rack_env|
+      rack_env["SERVER_NAME"] == "ja.annict.com"
     }
     # https://annict.com/sitemap.xml.gz でS3にアップロードされてるサイトマップを取得する
     r301 %r{\A/(sitemaps.*)}, "#{ENV.fetch('ANNICT_SITEMAP_URL')}/$1"
