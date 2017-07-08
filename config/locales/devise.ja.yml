@@ -12,6 +12,10 @@ ja:
     omniauth_callbacks:
       user:
         failure: 認証に失敗しました。時間をおいて再度お願いします
+    passwords:
+      user:
+        send_instructions: パスワード変更メールを送信しました
+        updated: パスワードを更新しました
     sessions:
       user:
         signed_in: ログインしました

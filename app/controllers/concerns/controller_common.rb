@@ -54,8 +54,9 @@ module ControllerCommon
       else
         ENV.fetch("ANNICT_URL")
       end
+      url = ["#{url}#{request.path}", request.query_string].select(&:present?).join("?")
 
-      redirect_to "#{url}#{request.path}", options
+      redirect_to url, options
     end
 
     def redirect_if_unexpected_subdomain
