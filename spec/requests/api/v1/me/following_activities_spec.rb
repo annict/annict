@@ -42,6 +42,13 @@ describe "Api::V1::Me::FollowingActivities" do
             "description" => "悟空を倒すために生まれました。よろしくお願いします。",
             "url" => "http://example.com",
             "records_count" => 1,
+            "followings_count" => 0,
+            "followers_count" => 1,
+            "wanna_watch_count" => 0,
+            "watching_count" => 0,
+            "watched_count" => 0,
+            "on_hold_count" => 0,
+            "stop_watching_count" => 0,
             "created_at" => "2017-01-28T23:39:04.000Z"
           },
           "action" => activity.action.to_s,
