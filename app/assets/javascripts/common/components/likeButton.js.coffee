@@ -1,5 +1,3 @@
-keen = require "../keen"
-
 module.exports =
   template: "#t-like-button"
 
@@ -29,7 +27,6 @@ module.exports =
     toggleLike: ->
       unless @isSignedIn
         $(".c-sign-up-modal").modal("show")
-        keen.trackEvent("sign_up_modals", "open", via: "like_button")
         return
 
       if @isLiked

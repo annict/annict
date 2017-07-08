@@ -24,8 +24,6 @@ class OauthUsersController < Devise::RegistrationsController
     return render(:new) unless @user.valid?
 
     @user.save
-    keen_client.user = @user
-    keen_client.users.create
     ga_client.user = @user
     ga_client.events.create(:users, :create)
 

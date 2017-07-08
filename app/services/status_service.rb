@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class StatusService
-  attr_writer :app, :keen_client, :ga_client
+  attr_writer :app, :ga_client
 
   def initialize(user, work)
     @user = user
@@ -14,8 +14,6 @@ class StatusService
 
       if status.save!
         UserWatchedWorksCountJob.perform_later(@user)
-        @keen_client.app = @app
-        @keen_client.statuses.create
         data_source = @app.present? ? :api : :web
         @ga_client.events.create(:statuses, :create, ds: data_source)
       end

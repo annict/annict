@@ -1,5 +1,3 @@
-keen = require "../keen"
-
 module.exports =
   template: "#t-favorite-button"
 
@@ -32,7 +30,6 @@ module.exports =
     toggleFavorite: ->
       unless @isSignedIn
         $(".c-sign-up-modal").modal("show")
-        keen.trackEvent("sign_up_modals", "open", via: "favorite_button")
         return
 
       @isSaving = true

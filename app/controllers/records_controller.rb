@@ -20,11 +20,9 @@ class RecordsController < ApplicationController
     @episode = Episode.published.find(checkin[:episode_id])
     @work = @episode.work
     @record = @episode.records.new(checkin)
-    keen_client.page_category = params[:page_category]
     ga_client.page_category = params[:page_category]
 
     service = NewRecordService.new(current_user, @record)
-    service.keen_client = keen_client
     service.ga_client = ga_client
 
     begin

@@ -27,10 +27,8 @@ module Api
       before_action :load_work
 
       def select(status_kind, page_category)
-        keen_client.page_category = page_category
         ga_client.page_category = page_category
         status = StatusService.new(current_user, @work)
-        status.keen_client = keen_client
         status.ga_client = ga_client
         status.change!(status_kind)
         head(200)

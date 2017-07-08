@@ -24,8 +24,6 @@ module Api
 
       def create(page_category)
         current_user.follow(@user)
-        keen_client.page_category = page_category
-        keen_client.follows.create
         ga_client.page_category = page_category
         ga_client.events.create(:follows, :create)
         EmailNotificationService.send_email("followed_user", @user, current_user.id)

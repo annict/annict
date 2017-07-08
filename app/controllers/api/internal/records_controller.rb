@@ -15,11 +15,9 @@ module Api
           c.shared_facebook = record[:shared_facebook]
           c.rating_state = record[:rating_state]
         end
-        keen_client.page_category = page_category
         ga_client.page_category = page_category
 
         service = NewRecordService.new(current_user, record)
-        service.keen_client = keen_client
         service.ga_client = ga_client
 
         begin

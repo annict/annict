@@ -23,8 +23,6 @@ module Api
       def create(resource_type, resource_id, page_category)
         resource = resource_type.constantize.find(resource_id)
         current_user.favorite(resource)
-        keen_client.page_category = page_category
-        keen_client.favorites.create(resource_type: resource_type)
         ga_client.page_category = page_category
         ga_client.events.create(:favorites, :create)
         head 200

@@ -1,5 +1,3 @@
-keen = require "../keen"
-
 module.exports =
   template: "#t-follow-button"
 
@@ -29,7 +27,6 @@ module.exports =
     toggle: ->
       unless @isSignedIn
         $(".c-sign-up-modal").modal("show")
-        keen.trackEvent("sign_up_modals", "open", via: "follow_button")
         return
 
       @isSaving = true

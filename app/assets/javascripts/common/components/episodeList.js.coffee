@@ -1,5 +1,3 @@
-keen = require "../keen"
-
 module.exports =
   props:
     isSignedIn:
@@ -30,7 +28,6 @@ module.exports =
     enableTrackingMode: ->
       unless @isSignedIn
         $(".c-sign-up-modal").modal("show")
-        keen.trackEvent("sign_up_modals", "open", via: "episode_tracking_button")
         return
       @isTrackingMode = true
 

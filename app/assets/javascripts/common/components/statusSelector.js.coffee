@@ -1,7 +1,6 @@
 _ = require "lodash"
 
 eventHub = require "../eventHub"
-keen = require "../keen"
 
 NO_SELECT = "no_select"
 
@@ -43,7 +42,6 @@ module.exports =
       unless @isSignedIn
         $(".c-sign-up-modal").modal("show")
         @resetKind()
-        keen.trackEvent("sign_up_modals", "open", via: "status_selector")
         return
 
       if @statusKind != @prevStatusKind

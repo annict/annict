@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class NewRecordService
-  attr_writer :app, :keen_client, :ga_client
+  attr_writer :app, :ga_client
   attr_reader :record
 
   def initialize(user, record)
@@ -21,7 +21,6 @@ class NewRecordService
       update_record_comments_count
       finish_tips
       update_latest_status
-      create_keen_event
       create_ga_event
     end
 
@@ -42,12 +41,6 @@ class NewRecordService
   def update_latest_status
     latest_status = @user.latest_statuses.find_by(work: @record.work)
     latest_status.append_episode(@record.episode) if latest_status.present?
-  end
-
-  def create_keen_event
-    return if @keen_client.blank?
-    @keen_client.app = @app
-    @keen_client.records.create
   end
 
   def create_ga_event

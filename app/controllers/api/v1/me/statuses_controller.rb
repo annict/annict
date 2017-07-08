@@ -10,7 +10,6 @@ module Api
           work = Work.published.find(@params.work_id)
           status = StatusService.new(current_user, work)
           status.app = doorkeeper_token.application
-          status.keen_client = keen_client
           status.ga_client = ga_client
 
           status.change!(@params.kind)

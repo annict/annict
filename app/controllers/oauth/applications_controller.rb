@@ -18,8 +18,6 @@ module Oauth
       @application.owner = current_user
 
       if @application.save
-        keen_client.page_category = params[:page_category]
-        keen_client.oauth_applications.create
         ga_client.page_category = params[:page_category]
         ga_client.events.create(:oauth_applications, :create)
         flash[:notice] = t "messages.oauth.applications.created"

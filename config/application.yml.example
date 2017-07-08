@@ -32,9 +32,6 @@ development:
   ANNICT_HOST: "annict.dev:3000"
   ANNICT_SITEMAP_URL: ""
 
-  KEEN_PROJECT_ID: "xxxxxxxxxxxxxxx"
-  KEEN_WRITE_KEY: "xxxxxxxxxxxxxxxx"
-
   TWITTER_CONSUMER_KEY: "xxxxxxxxxxxxxxxxxxxxx"
   TWITTER_CONSUMER_SECRET: "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
 
@@ -51,7 +48,5 @@ test:
   GA_TRACKING_ID: "UA-00000000-0"
   GA_TRACKING_ID_JP: "UA-00000000-1"
   GA_TRACKING_ID_API: "UA-00000000-2"
-  KEEN_PROJECT_ID: "keen"
-  KEEN_WRITE_KEY: "keen_write"
   TWITTER_CONSUMER_KEY: "twtwtwtwtwtwtwtwtwtwtw"
   TWITTER_CONSUMER_SECRET: "secretsecretsecretsecretsecretsecret"

@@ -25,10 +25,6 @@ module Gonable
         userId: user_signed_in? ? current_user.encoded_id : nil,
         isSignedIn: user_signed_in?
       },
-      keen: {
-        projectId: ENV.fetch("KEEN_PROJECT_ID"),
-        writeKey: ENV.fetch("KEEN_WRITE_KEY")
-      },
       I18n: default_i18n_data
     }
 

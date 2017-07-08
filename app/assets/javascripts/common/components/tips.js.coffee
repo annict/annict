@@ -1,5 +1,3 @@
-keen = require "../keen"
-
 module.exports =
   template: "#t-tips"
 
@@ -9,7 +7,6 @@ module.exports =
   methods:
     open: (index) ->
       tip = @tips[index]
-      keen.trackEvent("tips", "open", slug: tip.slug) unless tip.isOpened
       tip.isOpened = !tip.isOpened
 
     close: (index) ->

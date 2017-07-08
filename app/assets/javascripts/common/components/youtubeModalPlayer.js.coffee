@@ -1,5 +1,3 @@
-keen = require "../keen"
-
 module.exports =
   template: "#t-youtube-modal-player"
 
