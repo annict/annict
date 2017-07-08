@@ -94,6 +94,26 @@ ObjectTypes::User = GraphQL::ObjectType.define do
     }
   end
 
+  field :followingsCount, !types.Int do
+    resolve ->(obj, _args, _ctx) {
+      obj.followings.count
+    }
+  end
+
+  field :followersCount, !types.Int do
+    resolve ->(obj, _args, _ctx) {
+      obj.followers.count
+    }
+  end
+
+  LatestStatus.kind.values.each do |kind|
+    field "#{kind.to_s.camelcase(:lower)}Count", !types.Int do
+      resolve ->(obj, _args, _ctx) {
+        obj.latest_statuses.count_on(kind.to_sym)
+      }
+    end
+  end
+
   field :createdAt, !ScalarTypes::DateTime do
     resolve ->(obj, _args, _ctx) {
       obj.created_at
