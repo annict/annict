@@ -31,11 +31,17 @@ class TwitterService
       checkin.update_column(:twitter_url_hash, checkin.generate_url_hash)
     end
 
-    client.update(tweet_body(checkin))
+    begin
+      client.update(tweet_body(checkin))
+    rescue Twitter::Error::Unauthorized
+      checkin.user.expire_twitter_token
+    end
   end
 
   def share_review!(review)
     client.update(review.decorate.tweet_body)
+  rescue Twitter::Error::Unauthorized
+    review.user.expire_twitter_token
   end
 
   private

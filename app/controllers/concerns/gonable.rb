@@ -32,8 +32,8 @@ module Gonable
       data[:user].merge!(
         shareRecordToTwitter: current_user.setting.share_record_to_twitter?,
         shareRecordToFacebook: current_user.setting.share_record_to_facebook?,
-        sharableToTwitter: current_user.shareable_to?(:twitter),
-        sharableToFacebook: current_user.shareable_to?(:facebook)
+        sharableToTwitter: current_user.authorized_to?(:twitter, shareable: true),
+        sharableToFacebook: current_user.authorized_to?(:facebook, shareable: true)
       )
     end
 

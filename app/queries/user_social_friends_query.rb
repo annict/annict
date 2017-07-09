@@ -6,9 +6,9 @@ class UserSocialFriendsQuery
   end
 
   def all
-    if @user.authorized_to?(:twitter) && @user.authorized_to?(:facebook)
+    if @user.authorized_to?(:twitter, shareable: true) && @user.authorized_to?(:facebook, shareable: true)
       twitter_and_facebook_users
-    elsif @user.authorized_to?(:twitter) || @user.authorized_to?(:facebook)
+    elsif @user.authorized_to?(:twitter, shareable: true) || @user.authorized_to?(:facebook, shareable: true)
       users_via(@user.providers.first.name)
     else
       User.none

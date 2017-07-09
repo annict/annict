@@ -131,8 +131,14 @@ class Checkin < ApplicationRecord
   end
 
   def setup_shared_sns(user)
-    self.shared_twitter = user.setting.share_record_to_twitter?
-    self.shared_facebook = user.setting.share_record_to_facebook?
+    self.shared_twitter =
+      user.twitter.present? &&
+      user.authorized_to?(:twitter, shareable: true) &&
+      user.setting.share_record_to_twitter?
+    self.shared_facebook =
+      user.facebook.present? &&
+      user.authorized_to?(:facebook, shareable: true) &&
+      user.setting.share_record_to_facebook?
   end
 
   def shared_sns?

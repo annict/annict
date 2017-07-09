@@ -198,10 +198,6 @@ class User < ApplicationRecord
     Activity.where(user_id: following_ids)
   end
 
-  def authorized_to?(provider)
-    providers.pluck(:name).include?(provider.to_s)
-  end
-
   def read_notifications!
     transaction do
       unread_count = notifications.unread.update_all(read: true)
@@ -209,8 +205,10 @@ class User < ApplicationRecord
     end
   end
 
-  def shareable_to?(provider_name)
-    providers.pluck(:name).include?(provider_name.to_s)
+  def authorized_to?(provider_name, shareable: false)
+    records = providers
+    records = records.token_available if shareable
+    records.pluck(:name).include?(provider_name.to_s)
   end
 
   def twitter
@@ -219,6 +217,11 @@ class User < ApplicationRecord
 
   def facebook
     providers.where(name: "facebook").first
+  end
+
+  def expire_twitter_token
+    return if twitter.blank?
+    twitter.update_column(:token_expires_at, Time.now.to_i)
   end
 
   def hide_checkin_comment?(episode)

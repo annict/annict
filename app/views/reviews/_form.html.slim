@@ -21,15 +21,15 @@
       = f.label state, class: "#{state == :rating_overall_state ? 'c-label-required' : ''}"
       c-record-rating :init-record=="{ ratingState: '#{review.send(state)}' }" input-name="review[#{state}]"
 
-  - if current_user.authorized_to?(:twitter) || current_user.authorized_to?(:facebook)
+  - if current_user.authorized_to?(:twitter, shareable: true) || current_user.authorized_to?(:facebook, shareable: true)
     .mt-2
-      - if current_user.authorized_to?(:twitter)
+      - if current_user.authorized_to?(:twitter, shareable: true)
         = fields_for :setting, current_user.setting do |sf|
           .form-check
             label.form-check-label
               = sf.check_box :share_review_to_twitter, class: "form-check-input"
               = t "messages._common.share_to_twitter"
-      - if current_user.authorized_to?(:facebook)
+      - if current_user.authorized_to?(:facebook, shareable: true)
         = fields_for :setting, current_user.setting do |sf|
           .form-check
             label.form-check-label
