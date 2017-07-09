@@ -45,6 +45,8 @@ document.addEventListener "turbolinks:load", (event) ->
   recordSorter = require "./common/components/recordSorter"
   recordTextarea = require "./common/components/recordTextarea"
   recordWordCount = require "./common/components/recordWordCount"
+  shareButtonFacebook = require "./common/components/shareButtonFacebook"
+  shareButtonTwitter = require "./common/components/shareButtonTwitter"
   statusSelector = require "./common/components/statusSelector"
   timeAgo = require "./common/components/timeAgo"
   tips = require "./common/components/tips"
@@ -96,6 +98,8 @@ document.addEventListener "turbolinks:load", (event) ->
   Vue.component("c-record-textarea", recordTextarea)
   Vue.component("c-record-word-count", recordWordCount)
   Vue.component("c-search-form", searchForm)
+  Vue.component("c-share-button-facebook", shareButtonFacebook)
+  Vue.component("c-share-button-twitter", shareButtonTwitter)
   Vue.component("c-status-selector", statusSelector)
   Vue.component("c-time-ago", timeAgo)
   Vue.component("c-tips", tips)

@@ -25,7 +25,10 @@ module Gonable
         userId: user_signed_in? ? current_user.encoded_id : nil,
         isSignedIn: user_signed_in?
       },
-      I18n: default_i18n_data
+      I18n: default_i18n_data,
+      facebook: {
+        appId: ENV.fetch("FACEBOOK_APP_ID")
+      }
     }
 
     if user_signed_in?
