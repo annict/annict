@@ -22,12 +22,14 @@ module Settings
       end
     end
 
-    def unsubscribe(key, action_name)
+    def unsubscribe(key: nil, action_name: nil)
+      return redirect_to root_path if key.blank? || action_name.blank?
+
       column = "event_#{action_name}"
       notification = EmailNotification.find_by!(unsubscription_key: key)
 
       unless notification.has_attribute?(column)
-        raise ActionController::RoutingError.new("Not Found")
+        raise ActionController::RoutingError, "Not Found"
       end
 
       notification.update_column(column, false)
