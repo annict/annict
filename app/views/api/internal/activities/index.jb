@@ -21,9 +21,11 @@ json[:activities] = Rails.cache.fetch cache_keys do
     ]
 
     Rails.cache.fetch cache_keys do
-      render "/api/internal/activities/activity", activity: activity, user: @user
+      if activity.recipient.present? && activity.trackable.present?
+        render "/api/internal/activities/activity", activity: activity, user: @user
+      end
     end
   end
-end
+end.select(&:present?)
 
 json
