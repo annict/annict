@@ -38,7 +38,7 @@
         c-follow-button username="#{@user.username}" :init-is-following="false" :is-signed-in="false"
 
     .text-center.mt-1
-      c-share-button-twitter.mr-zp5 text="#{title} | Annict" url="#{local_url}#{user_path(@user.username)}"
+      c-share-button-twitter.mr-zp5 text="#{title}" url="#{local_url}#{user_path(@user.username)}"
       c-share-button-facebook url="#{local_url}#{user_path(@user.username)}"
 
   hr

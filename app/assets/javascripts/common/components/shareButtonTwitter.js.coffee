@@ -19,7 +19,7 @@ module.exports =
   computed:
     tweetUrl: ->
       params = $.param
-        text: @text
+        text: "#{@text} | Annict"
         url: @url
         hashtags: @hashtags
       "#{@baseTweetUrl}?#{params}"
