@@ -24,6 +24,9 @@
         = link_to season_works_path(slug: @next_season.slug), class: "ml-2" do
           = @next_season.local_name
           = icon "angle-right", class: "ml-zp5"
+      .mt-1
+        c-share-button-twitter.mr-zp5 text="#{title}" url="#{local_url}#{season_works_path(slug: @season.slug)}"
+        c-share-button-facebook url="#{local_url}#{season_works_path(slug: @season.slug)}"
     .col.text-right
       - if user_signed_in?
         .px-1
@@ -45,4 +48,6 @@
 = render "application/components/footer"
 
 - content_for :js_templates do
+  = render "application/js_templates/share_button_facebook"
+  = render "application/js_templates/share_button_twitter"
   = render "application/js_templates/status_selector"
