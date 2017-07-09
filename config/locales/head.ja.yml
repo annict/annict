@@ -211,7 +211,7 @@ ja:
         followers: "%{profile_name} (%{username})をフォローしている人"
         following: "%{profile_name} (%{username})がフォローしている人"
         show: "%{profile_name} (%{username})"
-        works: "%{profile_name} (%{username})が\"%{action}\"アニメ"
+        works: "%{profile_name} (%{username})が%{action}アニメ"
       work_items:
         index: アニメ「%{work_title}」の関連商品
         new: 商品登録
