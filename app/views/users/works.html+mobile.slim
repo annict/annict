@@ -18,14 +18,14 @@
           .small
             = t("enumerize.status.kind.#{status_kind}").truncate(8)
 
-h2.h4.text-center.mt-1
-  = t "enumerize.status.kind.#{params[:status_kind]}"
-
 - if @seasons.present?
+  .text-center.px-1.mt-1
+    c-share-button-twitter.mr-zp5 text="#{title}" url="#{local_url}#{user_works_path(@user.username, params[:status_kind])}"
+    c-share-button-facebook url="#{local_url}#{user_works_path(@user.username, params[:status_kind])}"
   .mb-2
     - @seasons.each do |season|
       .mt-1
-        h3.h5.font-weight-bold.mb-1.ml-1
+        h3.h4.font-weight-bold.mb-1.ml-1
           = season.local_name
         - works = @works.by_season(season.slug).order(watchers_count: :desc)
         - if season.name == "all"
@@ -37,3 +37,7 @@ h2.h4.text-center.mt-1
   = render "application/components/empty", text: t("messages.users.no_works")
 
 = render "application/components/tabbar"
+
+- content_for :js_templates
+  = render "application/js_templates/share_button_facebook"
+  = render "application/js_templates/share_button_twitter"
