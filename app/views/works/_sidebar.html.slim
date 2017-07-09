@@ -50,6 +50,14 @@ dl
   - if work.twitter_hashtag.present?
     dt.small = t "activerecord.attributes.work.twitter_hashtag"
     dd = work.decorate.twitter_hashtag_link
+    
+h2.h4.font-weight-bold.mt-2.mb-1
+  = icon "share", class: "mr-zp25"
+  = t "noun.share"
+
+c-share-button-twitter.mr-zp5 text="#{work.decorate.local_title}" url="#{local_url}#{work_path(work)}" hashtags="#{work.twitter_hashtag.presence || ''}"
+c-share-button-facebook url="#{local_url}#{work_path(work)}"
 
 - if user_signed_in? && current_user.committer?
-  = link_to t("messages._common.edit_on_annict_db"), edit_db_work_path(work), class: "btn btn-secondary w-100 mt-zp5"
+  .mt-2
+    = link_to t("messages._common.edit_on_annict_db"), edit_db_work_path(work), class: "btn btn-secondary w-100 mt-zp5"

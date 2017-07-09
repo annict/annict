@@ -9,7 +9,9 @@
     h1.h3.font-weight-bold
       = link_to work.decorate.local_title, work_path(work), class: "u-text-body"
     c-status-selector :work-id="#{work.id}" :is-mini="true"
-    div
+    .mb-zp5
       = link_to work_path(work), class: "small" do
         = icon "angle-right", class: "mr-zp5"
         = t "verb.view_work_detail"
+    c-share-button-twitter.mr-zp5 text="#{work.decorate.local_title}" url="#{local_url}#{work_path(work)}" hashtags="#{work.twitter_hashtag.presence || ''}"
+    c-share-button-facebook url="#{local_url}#{work_path(work)}"

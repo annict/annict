@@ -21,6 +21,9 @@
               = t "enumerize.status.kind.#{status_kind}"
 
   - if @seasons.present?
+    .px-1.my-1
+      c-share-button-twitter.mr-zp5 text="#{title}" url="#{local_url}#{user_works_path(@user.username, params[:status_kind])}"
+      c-share-button-facebook url="#{local_url}#{user_works_path(@user.username, params[:status_kind])}"
     - @seasons.each do |season|
       .mt-1
         h2.h4.font-weight-bold.mb-1.ml-1
@@ -35,3 +38,7 @@
     = render "application/components/empty", text: t("messages.users.no_works")
 
 = render "application/components/footer"
+
+- content_for :js_templates
+  = render "application/js_templates/share_button_facebook"
+  = render "application/js_templates/share_button_twitter"

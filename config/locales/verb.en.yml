@@ -22,6 +22,7 @@ en:
     state_change: Change state
     submit: Submit
     track: Track
+    tweet: Tweet
     uncheck_all: Uncheck All
     update: Update
     upload: Upload

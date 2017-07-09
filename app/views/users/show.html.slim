@@ -43,6 +43,9 @@
       .col-7
         c-activities username="#{@user.username}"
       .col-5
+        .text-center.mb-2
+          c-share-button-twitter.mr-zp5 text="#{title} | Annict" url="#{local_url}#{user_path(@user.username)}"
+          c-share-button-facebook url="#{local_url}#{user_path(@user.username)}"
         .row.text-center.mb-2
           .p-users-show__count.col.px-0
             .h3
@@ -231,3 +234,5 @@
   = render "application/js_templates/follow_button"
   = render "application/js_templates/like_button"
   = render "application/js_templates/mute_user_button"
+  = render "application/js_templates/share_button_facebook"
+  = render "application/js_templates/share_button_twitter"
