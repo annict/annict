@@ -7,31 +7,29 @@
 = render "application/components/navbar"
 
 .p-application__content
-  .row.align-items-center.py-2
-    .col
-    .col.text-center
-      - if @prev_season.present?
-        = link_to season_works_path(slug: @prev_season.slug), class: "mr-2" do
-          = icon "angle-left", class: "mr-zp5"
-          = @prev_season.local_name
-      .dropdown.d-inline-block
-        a.dropdown-toggle href="#" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"
-          = @season.local_name
-        .dropdown-menu.pre-scrollable.mr-1
-          - @seasons.each do |season|
-            = link_to season.local_name, season_works_path(slug: season.slug), class: "dropdown-item"
-      - if @next_season.present?
-        = link_to season_works_path(slug: @next_season.slug), class: "ml-2" do
-          = @next_season.local_name
-          = icon "angle-right", class: "ml-zp5"
-      .mt-1
+  .container
+    .row.align-items-center.py-2
+      .col.pl-0
         c-share-button-twitter.mr-zp5 text="#{title}" url="#{local_url}#{season_works_path(slug: @season.slug)}"
         c-share-button-facebook url="#{local_url}#{season_works_path(slug: @season.slug)}"
-    .col.text-right
-      - if user_signed_in?
-        .px-1
+      .col.text-center
+        - if @prev_season.present?
+          = link_to season_works_path(slug: @prev_season.slug), class: "mr-2" do
+            = icon "angle-left", class: "mr-zp5"
+            = @prev_season.local_name
+        .dropdown.d-inline-block
+          a.dropdown-toggle href="#" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"
+            = @season.local_name
+          .dropdown-menu.pre-scrollable.mr-1
+            - @seasons.each do |season|
+              = link_to season.local_name, season_works_path(slug: season.slug), class: "dropdown-item"
+        - if @next_season.present?
+          = link_to season_works_path(slug: @next_season.slug), class: "ml-2" do
+            = @next_season.local_name
+            = icon "angle-right", class: "ml-zp5"
+      .col.pr-0.text-right
+        - if user_signed_in?
           = render "display_option_buttons"
-
   .mb-2
     - if user_signed_in?
       - if current_user.setting.display_option_work_list == "list"
