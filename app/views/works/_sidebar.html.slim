@@ -59,4 +59,5 @@ c-share-button-twitter.mr-zp5 text="#{work.decorate.local_title}" url="#{local_u
 c-share-button-facebook url="#{local_url}#{work_path(work)}"
 
 - if user_signed_in? && current_user.committer?
-  = link_to t("messages._common.edit_on_annict_db"), edit_db_work_path(work), class: "btn btn-secondary w-100 mt-zp5"
+  .mt-2
+    = link_to t("messages._common.edit_on_annict_db"), edit_db_work_path(work), class: "btn btn-secondary w-100 mt-zp5"
