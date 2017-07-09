@@ -95,7 +95,7 @@ ObjectTypes::Work = GraphQL::ObjectType.define do
 
   field :image, ObjectTypes::WorkImage do
     resolve ->(obj, _args, _ctx) {
-      ForeignKeyLoader.for(WorkImage, :work_id).load([obj.id])
+      RecordLoader.for(WorkImage).load(obj.work_image&.id)
     }
   end
 
