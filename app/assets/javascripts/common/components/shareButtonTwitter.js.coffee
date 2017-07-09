@@ -12,7 +12,6 @@ module.exports =
       required: true
     hashtags:
       type: String
-      required: true
 
   data: ->
     baseTweetUrl: "https://twitter.com/intent/tweet"

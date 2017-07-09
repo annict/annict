@@ -37,6 +37,10 @@
       - elsif !user_signed_in?
         c-follow-button username="#{@user.username}" :init-is-following="false" :is-signed-in="false"
 
+    .text-center.mt-1
+      c-share-button-twitter.mr-zp5 text="#{title} | Annict" url="#{local_url}#{user_path(@user.username)}"
+      c-share-button-facebook url="#{local_url}#{user_path(@user.username)}"
+
   hr
 
   .container.text-center.pb-1
@@ -105,3 +109,5 @@
   = render "application/js_templates/follow_button"
   = render "application/js_templates/like_button"
   = render "application/js_templates/mute_user_button"
+  = render "application/js_templates/share_button_facebook"
+  = render "application/js_templates/share_button_twitter"
