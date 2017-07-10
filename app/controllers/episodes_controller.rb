@@ -51,7 +51,18 @@ class EpisodesController < ApplicationController
     @friend_comment_records = service.friend_comment_records
     @my_records = service.my_records
     @selected_comment_records = service.selected_comment_records
-    @items = @episode.items.published.order(created_at: :desc)
+
+    episode_items = @episode.resource_items.published
+    work_items = @episode.
+      work.
+      resource_items.
+      published.
+      where.not(item_id: episode_items.pluck(:item_id))
+    @items = Item.
+      published.
+      where(id: episode_items.pluck(:item_id) + work_items.pluck(:item_id)).
+      order(created_at: :desc).
+      limit(20)
 
     data = {
       recordsSortTypes: Setting.records_sort_type.options,

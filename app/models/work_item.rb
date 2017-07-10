@@ -20,6 +20,17 @@
 #
 
 class WorkItem < ApplicationRecord
+  include AASM
+
+  aasm do
+    state :published, initial: true
+    state :hidden
+
+    event :hide do
+      transitions from: :published, to: :hidden
+    end
+  end
+
   belongs_to :item
   belongs_to :user
   belongs_to :work

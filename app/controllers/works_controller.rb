@@ -100,7 +100,7 @@ class WorksController < ApplicationController
       order(:sort_number)
     @series_list = @work.series_list.published.where("series_works_count > ?", 1)
     @reviews = @work.reviews.published.order(created_at: :desc)
-    @items = @work.items.published.order(created_at: :desc)
+    @items = @work.items.published.order(created_at: :desc).limit(10)
 
     return unless user_signed_in?
 
