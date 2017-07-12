@@ -10,7 +10,7 @@ template v-for="item in items"
       .small.text-muted v-if="item.manufacturer"
         | {{ item.manufacturer }}
       template v-if="item.amount"
-        .small v-if="item.offer_amount"
+        .small v-if="item.offer_amount && item.offer_amount < item.amount"
           s.mr-zp25
             | ¥{{ item.amount.toLocaleString() }}
           span.text-danger
