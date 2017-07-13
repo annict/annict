@@ -20,7 +20,7 @@
     "vue-lazyload": "^1.0.0-rc12"
   },
   "engines": {
-    "node": "~> 6.9.1"
+    "node": "~> 8.1.4"
   },
   "devDependencies": {
     "coffeelint": "1.16.0"
