@@ -64,6 +64,7 @@ class User < ApplicationRecord
 
   has_many :activities, dependent: :destroy
   has_many :channel_works, dependent: :destroy
+  has_many :collections, dependent: :destroy
   has_many :records, class_name: "Checkin", dependent: :destroy
   has_many :db_activities, dependent: :destroy
   has_many :db_comments, dependent: :destroy

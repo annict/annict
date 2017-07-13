@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170702164228) do
+ActiveRecord::Schema.define(version: 20170712145119) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -159,6 +159,33 @@ ActiveRecord::Schema.define(version: 20170702164228) do
     t.index ["twitter_url_hash"], name: "checkins_twitter_url_hash_key", unique: true
     t.index ["user_id"], name: "checkins_user_id_idx"
     t.index ["work_id"], name: "index_checkins_on_work_id"
+  end
+
+  create_table "collection_items", force: :cascade do |t|
+    t.integer "user_id", null: false
+    t.integer "collection_id", null: false
+    t.integer "work_id", null: false
+    t.string "title", null: false
+    t.text "comment"
+    t.string "aasm_state", default: "published", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["collection_id", "work_id"], name: "index_collection_items_on_collection_id_and_work_id", unique: true
+    t.index ["collection_id"], name: "index_collection_items_on_collection_id"
+    t.index ["user_id"], name: "index_collection_items_on_user_id"
+    t.index ["work_id"], name: "index_collection_items_on_work_id"
+  end
+
+  create_table "collections", force: :cascade do |t|
+    t.integer "user_id", null: false
+    t.string "name", null: false
+    t.string "description"
+    t.string "aasm_state", default: "published", null: false
+    t.integer "likes_count", default: 0, null: false
+    t.integer "impressions_count", default: 0, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["user_id"], name: "index_collections_on_user_id"
   end
 
   create_table "comments", id: :serial, force: :cascade do |t|
@@ -973,6 +1000,10 @@ ActiveRecord::Schema.define(version: 20170702164228) do
   add_foreign_key "checkins", "reviews"
   add_foreign_key "checkins", "users", name: "checkins_user_id_fk", on_delete: :cascade
   add_foreign_key "checkins", "works", name: "checkins_work_id_fk"
+  add_foreign_key "collection_items", "collections"
+  add_foreign_key "collection_items", "users"
+  add_foreign_key "collection_items", "works"
+  add_foreign_key "collections", "users"
   add_foreign_key "comments", "checkins", name: "comments_checkin_id_fk", on_delete: :cascade
   add_foreign_key "comments", "users", name: "comments_user_id_fk", on_delete: :cascade
   add_foreign_key "comments", "works"
