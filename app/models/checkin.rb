@@ -96,10 +96,10 @@ class Checkin < ApplicationRecord
     direction = direction.in?(%i(asc desc)) ? direction : :asc
     order <<-SQL
     CASE
-      WHEN rating_state = 'bad' THEN '-1'
-      WHEN rating_state = 'average' THEN '0'
-      WHEN rating_state = 'good' THEN '1'
-      WHEN rating_state = 'great' THEN '2'
+      WHEN rating_state = 'bad' THEN '0'
+      WHEN rating_state = 'average' THEN '1'
+      WHEN rating_state = 'good' THEN '2'
+      WHEN rating_state = 'great' THEN '3'
     END #{direction.upcase} NULLS LAST
     SQL
   end
