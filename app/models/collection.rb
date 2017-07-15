@@ -5,7 +5,7 @@
 #
 #  id                :integer          not null, primary key
 #  user_id           :integer          not null
-#  name              :string           not null
+#  title             :string           not null
 #  description       :string
 #  aasm_state        :string           default("published"), not null
 #  likes_count       :integer          default(0), not null
@@ -37,4 +37,8 @@ class Collection < ApplicationRecord
 
   validates :title, presence: true, length: { maximum: 50 }
   validates :description, length: { maximum: 500 }
+
+  def contain?(work)
+    collection_items.where(work: work).exists?
+  end
 end

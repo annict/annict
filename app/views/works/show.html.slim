@@ -114,6 +114,8 @@
 = render "application/components/footer"
 
 - content_for :js_templates do
+  = render "application/js_templates/collect_button"
+  = render "application/js_templates/collect_button_modal"
   = render "application/js_templates/share_button_facebook"
   = render "application/js_templates/share_button_twitter"
   = render "application/js_templates/status_selector"

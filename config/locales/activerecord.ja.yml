@@ -43,6 +43,12 @@ ja:
       checkin:
         comment: 感想
         rating: レーティング
+      collection:
+        description: 概要
+        title: タイトル
+      collection_item:
+        comment: コメント
+        title: タイトル
       comment:
         body: コメント
       doorkeeper/application:

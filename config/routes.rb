@@ -31,9 +31,6 @@ Rails.application.routes.draw do
 
   namespace :api do
     namespace :internal do
-      resource :amazon, only: [], controller: :amazon do
-        get :search
-      end
       resource :programs_sort_type, only: [:update]
       resource :records_sort_type, only: %i(update)
       resource :search, only: [:show]
@@ -46,6 +43,14 @@ Rails.application.routes.draw do
       resources :receptions, only: %i(create destroy)
       resources :series_list, only: %i(index)
       resources :works, only: %i(index)
+
+      resource :amazon, only: [], controller: :amazon do
+        get :search
+      end
+
+      resources :collections, only: %i(index create) do
+        resources :collection_items, only: %i(create)
+      end
 
       resources :favorites, only: %i(create) do
         post :unfavorite, on: :collection

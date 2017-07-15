@@ -21,12 +21,19 @@ ja:
         error: 通信エラー。時間を置いて再度お試しください
         registed: 登録済み
         you_can_search_by_keyword_or_asin_or_isbn_code: キーワードやASIN / ISBNコードで検索できます
+      collect_button:
+        add_to_collections: コレクションに追加
+      collect_button_modal:
+        added: 追加しました。
+        new_collection: コレクションを作る
+        view_collection: コレクションを見る
       favorite_button:
         add_to_favorites: お気に入りに登録
         added_to_favorites: 登録済み
         hint: "お気に入りに登録すると、この%{resource_type}が関係する新作アニメがAnnictに登録されたとき通知します"
     _empty:
       no_characters: キャラクターはいません
+      no_collections: コレクションはありません
       no_episodes: エピソードはありません
       no_projects: プロジェクトはありません
       no_items: 商品はありません

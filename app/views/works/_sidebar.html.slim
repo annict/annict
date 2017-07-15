@@ -9,6 +9,8 @@ h1.h2.font-weight-bold.mb-1
   = link_to work.decorate.local_title, work_path(work), class: "u-text-body"
 
 c-status-selector :work-id="#{work.id}"
+c-collect-button :work-id="#{work.id}"
+c-collect-button-modal
 
 h2.h4.font-weight-bold.mt-2.mb-1
   = icon "sticky-note-o", class: "mr-zp25"

@@ -1,0 +1,50 @@
+script#t-collect-button-modal type="x-template"
+  .c-collect-button-modal.modal
+    .modal-dialog.modal-lg
+      .modal-content
+        .modal-body
+          template v-if="isLoadingCollections"
+            .c-spinner.p-3
+          template v-else=""
+            .row
+              .col
+                .text-center.mb-1
+                  a :href='"/works/" + workId'
+                    img.img-fluid.img-thumbnail.rounded width="250" :src="workImageUrl" :alt="itemTitle"
+                form
+                  .form-group
+                    label for="itemTitle"
+                      = t "activerecord.attributes.collection_item.title"
+                    input#itemTitle.form-control type="text" v-model="itemTitle"
+                  .form-group
+                    label for="itemComment"
+                      = t "activerecord.attributes.collection_item.comment"
+                    textarea#itemComment.form-control rows="3" v-model="itemComment"
+              .col
+                template v-if='mode === "listCollection"'
+                  template v-if="collections.length"
+                    ul.list-group.mb-zp5
+                      li.list-group-item.justify-content-between v-for="collection in collections" @click="addToCollection(collection)" :disabled="collection.is_contained" :class='{ "u-cursor-pointer": !collection.is_contained }'
+                        | {{ collection.title }}
+                        button.btn.btn-outline-primary :disabled="collection.is_contained"
+                          i.fa.mr-0 :class='{ "fa-plus": !collection.is_contained, "fa-check": collection.is_contained }'
+                    .btn.btn-primary @click="newCollection"
+                      = t "messages._components.collect_button_modal.new_collection"
+                  template v-else=""
+                    = render "application/components/empty", text: t("messages._empty.no_collections") do
+                      .btn.btn-primary @click="newCollection"
+                        = t "messages._components.collect_button_modal.new_collection"
+                template v-else-if='mode === "newCollection"'
+                  form @submit.prevent="createCollection"
+                    .form-group
+                      label for="collectionTitle"
+                        = t "activerecord.attributes.collection.title"
+                      input#collectionTitle.form-control type="text" v-model="collectionTitle"
+                    .form-group
+                      label for="collectionDescription"
+                        = t "activerecord.attributes.collection.description"
+                      textarea#collectionDescription.form-control rows="3" v-model="collectionDescription"
+                    button.btn.btn-primary :disabled="!collectionTitle.length || isSavingCollection" :class='{ "c-spinner": isSavingCollection }'
+                      = t "verb.create"
+                    span.small.u-fake-link.ml-zp5 @click="cancelForm"
+                      = t "noun.cancel"

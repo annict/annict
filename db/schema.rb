@@ -178,7 +178,7 @@ ActiveRecord::Schema.define(version: 20170712145119) do
 
   create_table "collections", force: :cascade do |t|
     t.integer "user_id", null: false
-    t.string "name", null: false
+    t.string "title", null: false
     t.string "description"
     t.string "aasm_state", default: "published", null: false
     t.integer "likes_count", default: 0, null: false

@@ -21,6 +21,8 @@ document.addEventListener "turbolinks:load", (event) ->
   body = require "./common/components/body"
   channelReceiveButton = require "./common/components/channelReceiveButton"
   channelSelector = require "./common/components/channelSelector"
+  collectButton = require "./common/components/collectButton"
+  collectButtonModal = require "./common/components/collectButtonModal"
   commentGuard = require "./common/components/commentGuard"
   episodeList = require "./common/components/episodeList"
   episodeProgress = require "./common/components/episodeProgress"
@@ -65,6 +67,8 @@ document.addEventListener "turbolinks:load", (event) ->
   Vue.component("c-body", body)
   Vue.component("c-channel-receive-button", channelReceiveButton)
   Vue.component("c-channel-selector", channelSelector)
+  Vue.component("c-collect-button", collectButton)
+  Vue.component("c-collect-button-modal", collectButtonModal)
   Vue.component("c-comment-guard", commentGuard)
   Vue.component("c-episode-list", episodeList)
   Vue.component("c-episode-progress", episodeProgress)
