@@ -95,6 +95,8 @@ GEM
     benchmark-ips (2.7.2)
     binding_of_caller (0.7.2)
       debug_inspector (>= 0.0.1)
+    bootsnap (1.1.2)
+      msgpack (~> 1.0)
     bootstrap (4.0.0.alpha6)
       autoprefixer-rails (>= 6.0.3)
       sass (>= 3.4.19)
@@ -351,6 +353,7 @@ GEM
     minitest (5.10.2)
     mjml-rails (2.4.2)
     moji (1.6)
+    msgpack (1.1.0)
     multi_json (1.12.1)
     multi_xml (0.6.0)
     multipart-post (2.0.0)
@@ -615,6 +618,7 @@ DEPENDENCIES
   autoprefixer-rails
   awesome_print
   aws-sdk
+  bootsnap
   bootstrap
   bourbon
   browser
