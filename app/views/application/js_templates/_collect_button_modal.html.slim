@@ -28,11 +28,14 @@ script#t-collect-button-modal type="x-template"
                         | {{ collection.title }}
                         button.btn :disabled="collection.is_contained" :class='{ "btn-outline-primary": !collection.is_contained, "btn-primary": collection.is_contained }'
                           i.fa.mr-0 :class='{ "fa-plus": !collection.is_contained, "fa-check": collection.is_contained }'
-                    .btn.btn-primary @click="newCollection"
-                      = t "messages._components.collect_button_modal.new_collection"
+                    .text-right
+                      .btn.btn-primary.btn-sm @click="newCollection"
+                        = icon "plus", class: "mr-zp25"
+                        = t "messages._components.collect_button_modal.new_collection"
                   template v-else=""
                     = render "application/components/empty", text: t("messages._empty.no_collections") do
-                      .btn.btn-primary @click="newCollection"
+                      .btn.btn-primary.mt-1 @click="newCollection"
+                        = icon "plus", class: "mr-zp25"
                         = t "messages._components.collect_button_modal.new_collection"
                 template v-else-if='mode === "newCollection"'
                   form @submit.prevent="createCollection"
