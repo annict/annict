@@ -14,6 +14,7 @@ module Api
         collection = current_user.collections.new(title: title, description: description)
 
         if collection.save
+          CreateCollectionActivityJob.perform_later(current_user.id, collection.id)
           @collections = current_user.collections.published.published.order(updated_at: :desc)
           @work = Work.published.find(work_id)
         else
