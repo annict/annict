@@ -53,6 +53,9 @@ en:
       saved: Comment has been saved.
       update: Update
       updated: Updated
+    confirmations:
+      confirmed: Email address has been confirmed.
+      failure: Email address confirmation failed.
     db:
       comments:
         created: Comment has been created.

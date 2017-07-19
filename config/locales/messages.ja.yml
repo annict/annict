@@ -53,6 +53,9 @@ ja:
       saved: 投稿しました
       update: 更新する
       updated: 更新しました
+    confirmations:
+      confirmed: メールアドレスを確認しました
+      failure: メールアドレスの確認に失敗しました
     db:
       comments:
         created: 投稿しました
