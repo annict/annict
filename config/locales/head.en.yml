@@ -61,6 +61,8 @@ en:
       characters:
         index: Characters of %{title} (Anime)
         show: "%{name}"
+      collections:
+        show: "%{collection_title} by %{profile_name} (%{username})"
       comments:
         edit: Edit Comment
       db:

@@ -49,6 +49,7 @@ en:
         title: Title
       collection_item:
         comment: Comment
+        position: Position
         title: Title
       comment:
         body: Comment

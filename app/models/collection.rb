@@ -34,11 +34,20 @@ class Collection < ApplicationRecord
 
   belongs_to :user
   has_many :collection_items, dependent: :destroy
+  has_many :works, through: :collection_items
 
   validates :title, presence: true, length: { maximum: 50 }
   validates :description, length: { maximum: 500 }
 
   def contain?(work)
     collection_items.where(work: work).exists?
+  end
+
+  def positions_for_select
+    collection_items.published.order(:position).map do |item|
+      key = item.position.to_s
+      key += " (#{I18n.t('messages.collections.position_of_x', item_title: item.title)})"
+      [key, item.position]
+    end
   end
 end

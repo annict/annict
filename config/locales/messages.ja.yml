@@ -31,6 +31,10 @@ ja:
         add_to_favorites: お気に入りに登録
         added_to_favorites: 登録済み
         hint: "お気に入りに登録すると、この%{resource_type}が関係する新作アニメがAnnictに登録されたとき通知します"
+      reaction_button:
+        kind:
+          thumbs_up:
+            exactly: わかる
     _empty:
       no_characters: キャラクターはいません
       no_collections: コレクションはありません
@@ -100,6 +104,8 @@ ja:
         hero_title: 見たアニメを記録して、共有しよう。
         hero_title_mobile_html: 見たアニメを記録して、<br>共有しよう。
         start_tracking: 視聴記録を始める
+    collections:
+      position_of_x: "「%{item_title}」の位置"
     components:
       load_more_button:
         more: もっと見る

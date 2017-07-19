@@ -31,6 +31,7 @@ ja:
     character_image: キャラクター画像
     character: キャラクター
     characters: キャラクター
+    collection_list: コレクション一覧
     contents: コンテンツ
     column: 項目
     completed: 見たアニメ
@@ -72,7 +73,8 @@ ja:
     or: OR
     organization: 団体
     organizations: 団体
-    other_reviews_by: "%{profile_name}が書いた他のレビュー"
+    other_collections_by: "%{profile_name}のコレクション"
+    other_reviews_by: "%{profile_name}が書いたレビュー"
     other_users: その他利用者さん
     overall: 全体
     password: パスワード

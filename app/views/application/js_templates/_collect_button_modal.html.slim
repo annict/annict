@@ -26,7 +26,7 @@ script#t-collect-button-modal type="x-template"
                     ul.list-group.mb-zp5
                       li.list-group-item.justify-content-between v-for="collection in collections" @click="addToCollection(collection)" :disabled="collection.is_contained" :class='{ "u-cursor-pointer": !collection.is_contained }'
                         | {{ collection.title }}
-                        button.btn.btn-outline-primary :disabled="collection.is_contained"
+                        button.btn :disabled="collection.is_contained" :class='{ "btn-outline-primary": !collection.is_contained, "btn-primary": collection.is_contained }'
                           i.fa.mr-0 :class='{ "fa-plus": !collection.is_contained, "fa-check": collection.is_contained }'
                     .btn.btn-primary @click="newCollection"
                       = t "messages._components.collect_button_modal.new_collection"

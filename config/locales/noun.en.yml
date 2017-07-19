@@ -31,6 +31,7 @@ en:
     character_image: Character Image
     character: Character
     characters: Characters
+    collection_list: Collection List
     contents: Contents
     column: Column
     completed: Completed
@@ -72,6 +73,7 @@ en:
     or: OR
     organization: Organization
     organizations: Organizations
+    other_collections_by: "Collections by %{profile_name}"
     other_reviews_by: "Reviews by %{profile_name}"
     other_users: Other Users
     overall: Overall

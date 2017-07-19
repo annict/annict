@@ -42,6 +42,7 @@ document.addEventListener "turbolinks:load", (event) ->
   programList = require "./common/components/programList"
   ratingLabel = require "./common/components/ratingLabel"
   ratingStateLabel = require "./common/components/ratingStateLabel"
+  reactionButton = require "./common/components/reactionButton"
   record = require "./common/components/record"
   recordRating = require "./common/components/recordRating"
   recordSorter = require "./common/components/recordSorter"
@@ -96,6 +97,7 @@ document.addEventListener "turbolinks:load", (event) ->
   Vue.component("c-program-list", programList)
   Vue.component("c-rating-label", ratingLabel)
   Vue.component("c-rating-state-label", ratingStateLabel)
+  Vue.component("c-reaction-button", reactionButton)
   Vue.component("c-record", record)
   Vue.component("c-record-rating", recordRating)
   Vue.component("c-record-sorter", recordSorter)

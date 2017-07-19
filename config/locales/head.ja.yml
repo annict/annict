@@ -61,6 +61,8 @@ ja:
         show: "%{name}"
       character_fans:
         index: "%{character_name}のファン一覧"
+      collections:
+        show: "%{collection_title} by %{profile_name} (%{username})"
       comments:
         edit: コメント編集
       db:

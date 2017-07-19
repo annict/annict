@@ -9,6 +9,8 @@ class CreateCollectionItems < ActiveRecord::Migration[5.1]
       t.string :title, null: false
       t.text :comment
       t.string :aasm_state, null: false, default: "published"
+      t.integer :reactions_count, null: false, default: 0
+      t.integer :position, default: 0, null: false
       t.timestamps null: false
     end
 

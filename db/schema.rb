@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170712145119) do
+ActiveRecord::Schema.define(version: 20170716104237) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -682,6 +682,18 @@ ActiveRecord::Schema.define(version: 20170712145119) do
     t.index ["work_id"], name: "index_pvs_on_work_id"
   end
 
+  create_table "reactions", force: :cascade do |t|
+    t.integer "user_id", null: false
+    t.integer "target_user_id", null: false
+    t.string "kind", null: false
+    t.integer "collection_item_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["collection_item_id"], name: "index_reactions_on_collection_item_id"
+    t.index ["target_user_id"], name: "index_reactions_on_target_user_id"
+    t.index ["user_id"], name: "index_reactions_on_user_id"
+  end
+
   create_table "receptions", id: :serial, force: :cascade do |t|
     t.integer "user_id", null: false
     t.integer "channel_id", null: false
@@ -1054,6 +1066,9 @@ ActiveRecord::Schema.define(version: 20170712145119) do
   add_foreign_key "programs", "works", name: "programs_work_id_fk", on_delete: :cascade
   add_foreign_key "providers", "users", name: "providers_user_id_fk", on_delete: :cascade
   add_foreign_key "pvs", "works"
+  add_foreign_key "reactions", "collection_items"
+  add_foreign_key "reactions", "users"
+  add_foreign_key "reactions", "users", column: "target_user_id"
   add_foreign_key "receptions", "channels", name: "receptions_channel_id_fk", on_delete: :cascade
   add_foreign_key "receptions", "users", name: "receptions_user_id_fk", on_delete: :cascade
   add_foreign_key "reviews", "oauth_applications"

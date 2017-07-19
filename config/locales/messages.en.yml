@@ -31,6 +31,10 @@ en:
         add_to_favorites: Add to Favorites
         added_to_favorites: Added to Favorites
         hint: If you add this %{resource_type} into your favorites, you'll get a notification when upcoming animes which is related to this %{resource_type} will be added to Annict.
+      reaction_button:
+        kind:
+          thumbs_up:
+            exactly: Exactly
     _empty:
       no_characters: No Characters
       no_collections: No Collections
@@ -53,6 +57,8 @@ en:
       no_works: No works
     character_fans:
       no_users: No users
+    collections:
+      position_of_x: "Position of \"%{item_title}\""
     comments:
       comment_form_placeholder: Click here to add a new comment
       create: Create
