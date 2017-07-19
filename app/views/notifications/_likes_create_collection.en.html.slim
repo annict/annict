@@ -1,0 +1,12 @@
+- action_user = notification.action_user
+- like = notification.trackable
+- collection = like.recipient
+
+span.mr-zp25
+  = action_user.decorate.name_link
+| liked your collection "
+= link_to collection.title, user_collection_path(collection.user.username, collection)
+| "
+
+.small.text-muted
+  = local_time_ago_in_words(notification.created_at)

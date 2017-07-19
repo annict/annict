@@ -8,6 +8,8 @@ ja:
         characters:
           index: アニメ「%{title}」のキャラクターをチェック！
           show: Annictで%{name}をチェック！
+        collections:
+          show: "%{collection_description}"
         episodes:
           index: アニメ「%{title}」のエピソードをチェック！
           show: アニメ「%{work_title}」%{episode_title_with_number}の感想をチェック!
