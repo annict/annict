@@ -1,0 +1,39 @@
+- title = t "head.title.collections.index", profile_name: @user.profile.name, username: @user.username
+- description = meta_description t("head.meta.description.collections.index", profile_name: @user.profile.name, username: @user.username)
+- image_url = ann_image_url(@user.profile, :tombo_avatar, size: "640x")
+- set_meta_tags(title: title, description: description, og: { description: description, image: image_url }, twitter: { description: description, image: image_url }, reverse: true, prefix: false)
+- set_page_category "collections_index"
+- breadcrumb :user_collection_list, @user
+
+= render "users/low_profile_header", user: @user
+.u-underline
+
+h2.h4.font-weight-bold.text-center.my-2
+  = t "noun.collections"
+
+.c-card.mb-1
+  .container
+    - if @collections.present?
+      - @collections.each do |collection|
+        .row.py-1.u-underline
+          .col.col-3.pr-0
+            = link_to user_collection_path(@user.username, collection) do
+              = image_tag "", "v-lazy": "'#{collection.decorate.image_url(size: '70x93')}'", size: "70x93", class: "img-fluid img-thumbnail rounded c-vue-lazyload"
+          .col.col-9
+            h2.h4.mb-1
+              = link_to collection.title, user_collection_path(@user.username, collection)
+            .small.text-muted
+              = link_to user_collection_path(collection.user.username, collection), title: local_datetime(collection.created_at) do
+                = local_time_ago_in_words(collection.created_at)
+              span.ml-zp5
+                = "#{collection.impressions_count} views"
+
+      - if @collections.total_pages > 1
+        .mb-1.text-center
+          = paginate @collections
+    - else
+      = render "application/components/empty", text: t("messages._empty.no_collections")
+
+= render "application/components/breadcrumb"
+= render "application/components/footer"
+= render "application/components/tabbar"
