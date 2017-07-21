@@ -34,7 +34,7 @@ class WorksController < ApplicationController
   include ApplicationHelper
 
   before_action :authenticate_user!, only: %i(switch)
-  before_action :load_i18n, only: %i(show)
+  before_action :load_i18n, only: %i(show popular newest season)
 
   def index
     redirect_to season_works_path(ENV["ANNICT_CURRENT_SEASON"])

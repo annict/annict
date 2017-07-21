@@ -12,6 +12,7 @@
             .u-very-small.text-right
               = work.work_image.decorate.asin_or_copyright_text
           c-status-selector.mt-zp5 :work-id="#{work.id}"
+          c-collect-button :work-id="#{work.id}"
 
         .col
           .mb-zp25.u-lh-0
@@ -72,7 +73,11 @@
                       = staff.decorate.local_name_with_old_link
           c-work-friends :work-id="#{work.id}"
 
+c-collect-button-modal
+
 - content_for :js_templates do
+  = render "application/js_templates/collect_button"
+  = render "application/js_templates/collect_button_modal"
   = render "application/js_templates/omitted_synopsis"
   = render "application/js_templates/work_friends"
   = render "application/js_templates/youtube_modal_player"
