@@ -7,7 +7,7 @@ script#t-collect-button-modal type="x-template"
             .c-spinner.p-3
           template v-else=""
             .row
-              .col
+              .col-sm
                 .text-center.mb-1
                   a :href='"/works/" + workId'
                     img.img-fluid.img-thumbnail.rounded width="250" :src="workImageUrl" :alt="itemTitle"
@@ -20,14 +20,17 @@ script#t-collect-button-modal type="x-template"
                     label for="itemComment"
                       = t "activerecord.attributes.collection_item.comment"
                     textarea#itemComment.form-control rows="3" v-model="itemComment"
-              .col
+                hr.hidden-sm-up
+              .col-sm
                 template v-if='mode === "listCollection"'
                   template v-if="collections.length"
                     ul.list-group.mb-zp5
                       li.list-group-item.justify-content-between v-for="collection in collections" @click="addToCollection(collection)" :disabled="collection.is_contained" :class='{ "u-cursor-pointer": !collection.is_contained }'
-                        | {{ collection.title }}
-                        button.btn :disabled="collection.is_contained" :class='{ "btn-outline-primary": !collection.is_contained, "btn-primary": collection.is_contained }'
-                          i.fa.mr-0 :class='{ "fa-plus": !collection.is_contained, "fa-check": collection.is_contained }'
+                        .col-10.pl-0
+                          | {{ collection.title }}
+                        .col-2.pl-0
+                          button.btn :disabled="collection.is_contained" :class='{ "btn-outline-primary": !collection.is_contained, "btn-primary": collection.is_contained }'
+                            i.fa.mr-0 :class='{ "fa-plus": !collection.is_contained, "fa-check": collection.is_contained }'
                     .text-right
                       .btn.btn-primary.btn-sm @click="newCollection"
                         = icon "plus", class: "mr-zp25"
