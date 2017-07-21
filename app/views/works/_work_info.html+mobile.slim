@@ -6,12 +6,15 @@
       .u-very-small.mt-zp25
         = work.work_image.decorate.asin_or_copyright_text
   .col-8
-    h1.h3.font-weight-bold
-      = link_to work.decorate.local_title, work_path(work), class: "u-text-body"
-    c-status-selector :work-id="#{work.id}" :is-mini="true"
-    .mb-zp5
-      = link_to work_path(work), class: "small" do
-        = icon "angle-right", class: "mr-zp5"
-        = t "verb.view_work_detail"
+    h1.h3.font-weight-bold.mb-zp5
+      = link_to work.decorate.local_title, work_path(work)
+    c-status-selector :work-id="#{work.id}"
+    .mb-1
+      c-collect-button :work-id="#{work.id}"
+      c-collect-button-modal
     c-share-button-twitter.mr-zp5 text="#{work.decorate.local_title}" url="#{local_url}#{work_path(work)}" hashtags="#{work.twitter_hashtag.presence || ''}"
     c-share-button-facebook url="#{local_url}#{work_path(work)}"
+
+- content_for :js_templates do
+  = render "application/js_templates/collect_button"
+  = render "application/js_templates/collect_button_modal"
