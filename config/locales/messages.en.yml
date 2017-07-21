@@ -59,6 +59,7 @@ en:
       no_users: No users
     collections:
       position_of_x: "Position of \"%{item_title}\""
+      view_all_n_collections: "View All %{n} Collections"
     comments:
       comment_form_placeholder: Click here to add a new comment
       create: Create

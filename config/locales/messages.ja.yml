@@ -57,6 +57,9 @@ ja:
       no_works: 作品はありません
     character_fans:
       no_users: ファンはいません
+    collections:
+      position_of_x: "「%{item_title}」の位置"
+      view_all_n_collections: "%{n}個全てのコレクションを見る"
     comments:
       comment_form_placeholder: 記録にコメントしよう！
       create: コメントする
@@ -104,8 +107,6 @@ ja:
         hero_title: 見たアニメを記録して、共有しよう。
         hero_title_mobile_html: 見たアニメを記録して、<br>共有しよう。
         start_tracking: 視聴記録を始める
-    collections:
-      position_of_x: "「%{item_title}」の位置"
     components:
       load_more_button:
         more: もっと見る

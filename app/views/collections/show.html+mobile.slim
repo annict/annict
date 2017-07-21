@@ -65,25 +65,26 @@
 - if @collections.length > 1
   h2.h4.text-center.my-2.font-weight-bold
     = t "noun.other_collections_by", profile_name: @user.profile.name
-  .c-card.container.mt-1.mb-1
-    - @collections.first(5).each do |collection|
-      .row.py-1.u-underline
-        .col.col-auto
-          = link_to user_collection_path(@user.username, collection) do
-            = image_tag "", "v-lazy": "'#{collection.decorate.image_url(size: '70x93')}'", size: "70x93", class: "img-fluid img-thumbnail rounded c-vue-lazyload"
-        .col.pl-0
-          h2.h4.mb-1
-            = link_to collection.title, user_collection_path(@user.username, collection)
-          .small.text-muted
-            = link_to user_collection_path(collection.user.username, collection), title: local_datetime(collection.created_at) do
-              = local_time_ago_in_words(collection.created_at)
-            span.ml-zp5
-              = "#{collection.impressions_count} views"
+  .c-card.mt-1.mb-1
+    .container
+      - @collections.first(5).each do |collection|
+        .row.py-1.u-underline
+          .col.col-auto
+            = link_to user_collection_path(@user.username, collection) do
+              = image_tag "", "v-lazy": "'#{collection.decorate.image_url(size: '70x93')}'", size: "70x93", class: "img-fluid img-thumbnail rounded c-vue-lazyload"
+          .col.pl-0
+            h2.h4.mb-zp5
+              = link_to collection.title, user_collection_path(@user.username, collection)
+            .small.text-muted
+              = link_to user_collection_path(collection.user.username, collection), title: local_datetime(collection.created_at) do
+                = local_time_ago_in_words(collection.created_at)
+              span.ml-zp5
+                = "#{collection.impressions_count} views"
     - if @collections.length > 5
-      .mb-1
+      .container.mb-1
         = link_to user_collections_path(@user.username), class: "btn btn-secondary w-100" do
           = icon "angle-right"
-          = t "messages.works.view_all_n_collections", n: @collections.length
+          = t "messages.collections.view_all_n_collections", n: @collections.length
 
 = render "application/components/breadcrumb"
 = render "application/components/footer"
