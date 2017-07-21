@@ -38,7 +38,7 @@
                     c-status-selector :work-id="#{item.work.id}"
                   .col.col-8.pl-0
                     h2.h3.font-weight-bold
-                      = item.title
+                      = link_to item.title, work_path(item.work), class: "u-text-body"
                     - if item.comment.present?
                       = item.comment
                     .mt-1
@@ -74,7 +74,7 @@
                   span.ml-zp25
                     | views
         - if @collections.length > 1
-          h2.h4.text-center.mb-2.font-weight-bold
+          h2.h4.text-center.my-2.font-weight-bold
             = t "noun.other_collections_by", profile_name: @user.profile.name
           .c-card.container.mt-1.mb-1
             - @collections.first(5).each do |collection|
