@@ -60,6 +60,8 @@ ja:
     collections:
       position_of_x: "「%{item_title}」の位置"
       view_all_n_collections: "%{n}個全てのコレクションを見る"
+      view_current_seasonal_anime: 今期の作品一覧を見る
+      you_can_create_collections_on_work_detail_pages: "コレクションは、作品一覧ページなどにある「コレクションに追加」ボタンから作成できます。"
     comments:
       comment_form_placeholder: 記録にコメントしよう！
       create: コメントする

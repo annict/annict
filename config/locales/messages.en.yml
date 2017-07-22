@@ -60,6 +60,8 @@ en:
     collections:
       position_of_x: "Position of \"%{item_title}\""
       view_all_n_collections: "View All %{n} Collections"
+      view_current_seasonal_anime: "View Current Seasonal Anime"
+      you_can_create_collections_on_work_detail_pages: "You can collections via \"Add to Collections\" button on work list pages."
     comments:
       comment_form_placeholder: Click here to add a new comment
       create: Create
