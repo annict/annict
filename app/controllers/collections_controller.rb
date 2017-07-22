@@ -7,7 +7,7 @@ class CollectionsController < ApplicationController
 
   def index(page: nil)
     @popular_collections = Collection.published.order(impressions_count: :desc).page(page)
-    @newest_collections = Collection.published.order(created_at: :desc).page(page)
+    @newest_collections = Collection.published.order(created_at: :desc).limit(20)
     @user_collections = if user_signed_in?
       current_user.
         collections.
