@@ -47,18 +47,19 @@ h2.h4.text-center.my-2.font-weight-bold
   .c-card.mb-1
     .container
       - @user_collections.first(5).each do |c|
-        .row.py-1.u-underline
-          .col.col-auto
-            = link_to user_collection_path(c.user.username, c) do
-              = image_tag "", "v-lazy": "'#{c.decorate.image_url(size: '70x93')}'", size: "70x93", class: "img-fluid img-thumbnail rounded c-vue-lazyload"
-          .col.pl-0
-            h2.h4.mb-zp5
-              = link_to c.title, user_collection_path(c.user.username, c)
-            .small.text-muted
-              = link_to user_collection_path(c.user.username, c), title: local_datetime(c.created_at) do
-                = local_time_ago_in_words(c.created_at)
-              span.ml-zp5
-                = "#{c.impressions_count} views"
+        .py-1.u-underline
+          .row
+            .col.col-auto
+              = link_to user_collection_path(c.user.username, c) do
+                = image_tag "", "v-lazy": "'#{c.decorate.image_url(size: '70x93')}'", size: "70x93", class: "img-fluid img-thumbnail rounded c-vue-lazyload"
+            .col.pl-0
+              h2.h4.mb-zp5
+                = link_to c.title, user_collection_path(c.user.username, c)
+              .small.text-muted
+                = link_to user_collection_path(c.user.username, c), title: local_datetime(c.created_at) do
+                  = local_time_ago_in_words(c.created_at)
+                span.ml-zp5
+                  = "#{c.impressions_count} views"
     - if @user_collections.length > 5
       .container.mb-1
         = link_to user_collections_path(current_user.username), class: "btn btn-secondary w-100" do

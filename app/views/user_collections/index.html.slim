@@ -13,20 +13,21 @@
     = render "application/components/breadcrumb"
     .c-card.px-1
       - if @collections.present?
-        .container
+        div
           - @collections.each do |collection|
-            .row.py-1.u-underline
-              .col.col-auto
-                = link_to user_collection_path(@user.username, collection) do
-                  = image_tag "", "v-lazy": "'#{collection.decorate.image_url(size: '70x93')}'", size: "70x93", class: "img-fluid img-thumbnail rounded c-vue-lazyload"
-              .col
-                h2.h4.mb-1
-                  = link_to collection.title, user_collection_path(@user.username, collection)
-                .small.text-muted
-                  = link_to user_collection_path(collection.user.username, collection), title: local_datetime(collection.created_at) do
-                    = local_time_ago_in_words(collection.created_at)
-                  span.ml-zp5
-                    = "#{collection.impressions_count} views"
+            .py-1.u-underline
+              .row
+                .col.col-auto
+                  = link_to user_collection_path(@user.username, collection) do
+                    = image_tag "", "v-lazy": "'#{collection.decorate.image_url(size: '70x93')}'", size: "70x93", class: "img-fluid img-thumbnail rounded c-vue-lazyload"
+                .col
+                  h2.h4.mb-1
+                    = link_to collection.title, user_collection_path(@user.username, collection)
+                  .small.text-muted
+                    = link_to user_collection_path(collection.user.username, collection), title: local_datetime(collection.created_at) do
+                      = local_time_ago_in_words(collection.created_at)
+                    span.ml-zp5
+                      = "#{collection.impressions_count} views"
 
         - if @collections.total_pages > 1
           .mb-1.text-center

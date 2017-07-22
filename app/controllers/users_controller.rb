@@ -44,7 +44,8 @@ class UsersController < ApplicationController
     @favorite_casts = @user.favorite_people.with_cast.includes(:person).order(id: :desc)
     @favorite_staffs = @user.favorite_people.with_staff.includes(:person).order(id: :desc)
     @favorite_organizations = @user.favorite_organizations.includes(:organization).order(id: :desc)
-    @reviews = @user.reviews.published.order(id: :desc)
+    @reviews = @user.reviews.includes(:work).published.order(id: :desc)
+    @collections = @user.collections.includes(collection_items: :work).published.order(updated_at: :desc)
 
     activities = @user.
       activities.
