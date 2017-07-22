@@ -10,10 +10,12 @@ module Api
         @work = Work.published.find(work_id)
       end
 
-      def create(title, description, work_id)
+      def create(title, description, work_id, page_category)
         collection = current_user.collections.new(title: title, description: description)
 
         if collection.save
+          ga_client.page_category = page_category
+          ga_client.events.create(:collections, :create)
           CreateCollectionActivityJob.perform_later(current_user.id, collection.id)
           @collections = current_user.collections.published.published.order(updated_at: :desc)
           @work = Work.published.find(work_id)

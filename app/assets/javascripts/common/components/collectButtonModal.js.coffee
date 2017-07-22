@@ -77,6 +77,7 @@ module.exports =
           title: @collectionTitle
           description: @collectionDescription
           work_id: @workId
+          page_category: gon.basic.pageCategory
       .done (data) =>
         @collections = data.collections
         @mode = MODAL_MODE.LIST_COLLECTION
