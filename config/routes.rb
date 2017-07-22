@@ -31,9 +31,6 @@ Rails.application.routes.draw do
 
   namespace :api do
     namespace :internal do
-      resource :amazon, only: [], controller: :amazon do
-        get :search
-      end
       resource :programs_sort_type, only: [:update]
       resource :records_sort_type, only: %i(update)
       resource :search, only: [:show]
@@ -45,7 +42,15 @@ Rails.application.routes.draw do
       resources :people, only: [:index]
       resources :receptions, only: %i(create destroy)
       resources :series_list, only: %i(index)
-      resources :works, only: %i(index)
+      resources :works, only: %i(index show)
+
+      resource :amazon, only: [], controller: :amazon do
+        get :search
+      end
+
+      resources :collections, only: %i(index create) do
+        resources :collection_items, only: %i(create)
+      end
 
       resources :favorites, only: %i(create) do
         post :unfavorite, on: :collection
@@ -67,6 +72,11 @@ Rails.application.routes.draw do
 
       resources :tips, only: [] do
         post :close, on: :collection
+      end
+
+      resources :reactions, only: [] do
+        post :add, on: :collection
+        post :remove, on: :collection
       end
 
       resources :records, only: %i(create) do
@@ -290,6 +300,10 @@ Rails.application.routes.draw do
       url_hash: /[0-9a-zA-Z_-]{10}/
   end
 
+  resources :collections, only: %i(index edit update destroy) do
+    resources :collection_items, only: %i(edit update destroy)
+  end
+
   resources :episodes, only: [] do
     resources :items, only: %i(new destroy), controller: :episode_items
     resources :records, only: [] do
@@ -322,6 +336,7 @@ Rails.application.routes.draw do
         status_kind: /wanna_watch|watching|watched|on_hold|stop_watching/
       }
 
+    resources :collections, only: %i(index show), as: :user_collections, controller: :user_collections
     resources :favorite_characters, only: %i(index)
     resources :favorite_organizations, only: %i(index)
     resources :favorite_people, only: %i(index)

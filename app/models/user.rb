@@ -64,6 +64,8 @@ class User < ApplicationRecord
 
   has_many :activities, dependent: :destroy
   has_many :channel_works, dependent: :destroy
+  has_many :collection_items, dependent: :destroy
+  has_many :collections, dependent: :destroy
   has_many :records, class_name: "Checkin", dependent: :destroy
   has_many :db_activities, dependent: :destroy
   has_many :db_comments, dependent: :destroy
@@ -98,6 +100,7 @@ class User < ApplicationRecord
     class_name: "Doorkeeper::Application",
     through: :oauth_access_tokens,
     source: :application
+  has_many :reactions, dependent: :destroy
   has_many :record_comments, class_name: "Comment", dependent: :destroy
   has_many :userland_project_members, dependent: :destroy
   has_many :userland_projects, through: :userland_project_members
@@ -279,6 +282,37 @@ class User < ApplicationRecord
     when "ja" then ENV.fetch("ANNICT_JP_URL")
     else
       ENV.fetch("ANNICT_URL")
+    end
+  end
+
+  def thumbs_up?(resource)
+    case resource
+    when CollectionItem
+      reactions.where(collection_item: resource, kind: "thumbs_up").exists?
+    else
+      false
+    end
+  end
+
+  def add_reaction!(resource, kind)
+    reaction = reactions.new(kind: kind)
+
+    case resource
+    when CollectionItem
+      reaction.target_user = resource.user
+      reaction.collection_item = resource
+    end
+
+    reaction.save!
+  end
+
+  def remove_reaction!(resource, kind)
+    reactions = self.reactions.where(kind: kind)
+
+    case resource
+    when CollectionItem
+      reactions = reactions.where(collection_item: resource)
+      reactions.destroy_all
     end
   end
 

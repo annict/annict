@@ -1,0 +1,98 @@
+- title = t "head.title.user_collections.show", profile_name: @user.profile.name, username: @user.username, collection_title: @collection.title
+- description = meta_description t("head.meta.description.user_collections.show", collection_description: @collection.description.presence || @collection.title)
+- image_url = @collection.decorate.image_url(size: "640x")
+- set_meta_tags(title: title, description: description, og: { description: description, image: image_url }, twitter: { description: description, image: image_url }, reverse: true, prefix: false)
+- set_page_category "user_collections_show"
+- breadcrumb :user_collection_detail, @collection
+
+.c-card.mb-1
+  .container.py-1
+    .row.align-items-center
+      .col.col-auto
+        = link_to user_path(username: @user.username) do
+          = ann_image_tag(@user.profile, :tombo_avatar, size: "65x65", class: "img-thumbnail rounded-circle")
+      .col.pl-0
+        .text-left
+          = link_to @user.profile.name, user_path(username: @user.username), class: "mr-zp25"
+          | (
+          = link_to "@#{@user.username}", user_path(username: @user.username)
+          | )
+        .small.text-muted
+          = link_to user_collection_path(@collection.user.username, @collection), title: local_datetime(@collection.created_at), class: "u-text-body" do
+            = local_time_ago_in_words(@collection.created_at)
+          span.ml-zp5
+            = @collection.impressions_count
+            span.ml-zp25
+              | views
+.c-card.mb-1
+  .container.py-1
+    h1
+      = link_to @collection.title, user_collection_path(@user.username, @collection), class: "u-text-body"
+    - if @collection.description.present?
+      = @collection.description
+    - if policy(@collection).edit?
+      .mt-1.text-right
+        = link_to t("noun.edit"), edit_collection_path(@collection), class: "mr-zp5"
+        = link_to t("noun.delete"), collection_path(@collection), data: { method: :delete, confirm: t("messages._common.are_you_sure") }
+    hr.mb-0
+    - @collection.collection_items.published.order(:position).each do |item|
+      .py-1.u-underline
+        h2.h3.font-weight-bold.mb-1
+          = link_to item.title, work_path(item.work), class: "u-text-body"
+        = link_to work_path(item.work) do
+          = ann_image_tag item.work.work_image, :attachment, size: "300x300", class: "img-fluid img-thumbnail rounded"
+        - if item.work.work_image.present?
+          .u-very-small.text-muted
+            = item.work.work_image.decorate.asin_or_copyright_text
+        h3.h4.font-weight-bold.my-zp5
+          = link_to item.work.decorate.local_title, work_path(item.work)
+        c-status-selector :work-id="#{item.work.id}"
+        - if item.comment.present?
+          .mt-1
+            = item.comment
+        c-reaction-button.btn-sm.mt-1 resource-type="#{item.class.name}" :resource-id="#{item.id}" :init-is-reacted="#{user_signed_in? && current_user.thumbs_up?(item)}" :init-reactions-count="#{item.reactions_count}"
+        - if policy(item).edit?
+          .text-right
+            = link_to t("noun.edit"), edit_collection_collection_item_path(item.collection, item), class: "mr-zp5"
+            = link_to t("noun.delete"), collection_collection_item_path(item.collection, item), data: { method: :delete, confirm: t("messages._common.are_you_sure") }
+    .row.mt-1
+      .col
+        .text-right
+          c-share-button-twitter.mr-zp5 text="#{t("head.title.user_collections.show", profile_name: @collection.user.profile.name, username: @collection.user.username, collection_title: @collection.title)}" url="#{local_url}#{user_collection_path(@collection.user.username, @collection)}"
+          c-share-button-facebook.mr-zp5 url="#{local_url}#{user_collection_path(@collection.user.username, @collection)}"
+          c-like-button resource-name="Collection" :init-resource-id="#{@collection.id}" :init-likes-count="#{@collection.likes_count}" :init-is-liked="#{user_signed_in? && current_user.like?(@collection)}" :is-signed-in="#{user_signed_in?}"
+        
+- if @collections.length > 1
+  h2.h4.text-center.my-2.font-weight-bold
+    = t "noun.other_collections_by", profile_name: @user.profile.name
+  .c-card.mt-1.mb-1
+    .container
+      - @collections.first(5).each do |collection|
+        .row.py-1.u-underline
+          .col.col-auto
+            = link_to user_collection_path(@user.username, collection) do
+              = image_tag "", "v-lazy": "'#{collection.decorate.image_url(size: '70x93')}'", size: "70x93", class: "img-fluid img-thumbnail rounded c-vue-lazyload"
+          .col.pl-0
+            h2.h4.mb-zp5
+              = link_to collection.title, user_collection_path(@user.username, collection)
+            .small.text-muted
+              = link_to user_collection_path(collection.user.username, collection), title: local_datetime(collection.created_at) do
+                = local_time_ago_in_words(collection.created_at)
+              span.ml-zp5
+                = "#{collection.impressions_count} views"
+    - if @collections.length > 5
+      .container.mb-1
+        = link_to user_collections_path(@user.username), class: "btn btn-secondary w-100" do
+          = icon "angle-right"
+          = t "messages.collections.view_all_n_collections", n: @collections.length
+
+= render "application/components/breadcrumb"
+= render "application/components/footer"
+= render "application/components/tabbar"
+
+- content_for :js_templates do
+  = render "application/js_templates/like_button"
+  = render "application/js_templates/reaction_button"
+  = render "application/js_templates/share_button_facebook"
+  = render "application/js_templates/share_button_twitter"
+  = render "application/js_templates/status_selector"

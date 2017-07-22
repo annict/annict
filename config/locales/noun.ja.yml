@@ -31,6 +31,8 @@ ja:
     character_image: キャラクター画像
     character: キャラクター
     characters: キャラクター
+    collection_list: コレクション一覧
+    collections: コレクション
     contents: コンテンツ
     column: 項目
     completed: 見たアニメ
@@ -65,6 +67,7 @@ ja:
     music: 音楽
     my_records: 自分の記録
     n_works_watched: "%{count}作品見た"
+    newest_collections: 最近作られたコレクション
     next_page: 次のページ
     next_season: 来期のアニメ
     official_site: 公式サイト
@@ -72,7 +75,8 @@ ja:
     or: OR
     organization: 団体
     organizations: 団体
-    other_reviews_by: "%{profile_name}が書いた他のレビュー"
+    other_collections_by: "%{profile_name}のコレクション"
+    other_reviews_by: "%{profile_name}が書いたレビュー"
     other_users: その他利用者さん
     overall: 全体
     password: パスワード
@@ -83,6 +87,7 @@ ja:
     popular: 人気アニメ
     popular_airing_anime: 人気の放送中アニメ
     popular_anime: 人気アニメ
+    popular_collections: 人気のコレクション
     prev_page: 前のページ
     previous_season: 前期のアニメ
     privacy_policy: プライバシーポリシー
@@ -111,6 +116,7 @@ ja:
     share: シェア
     sign_in: ログイン
     sign_up: ユーザ登録
+    sign_up_shorten: 登録
     skip: スキップ
     sns_friends: SNSの友達
     source: 引用元
@@ -137,4 +143,5 @@ ja:
     work_detail_page: 作品ページ
     work_image: 作品画像
     works: 作品
+    your_collections: あなたのコレクション
     your_statistics: 視聴状況

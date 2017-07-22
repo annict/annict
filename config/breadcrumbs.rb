@@ -4,6 +4,11 @@ crumb :root do
   link t("noun.home"), root_path
 end
 
+crumb :collection_list do
+  link t("noun.collections"), collections_path
+  parent :root
+end
+
 crumb :userland_root do
   link "Userland", userland_root_path
   parent :root
@@ -95,4 +100,25 @@ end
 crumb :episode_detail do |episode|
   link episode.decorate.title_with_number, work_episode_path(episode.work, episode)
   parent :work_detail, episode.work
+end
+
+crumb :user_collection_list do |user|
+  link t("noun.collection_list"), user_collections_path(user.username)
+  parent :user_detail, user
+end
+
+crumb :user_collection_detail do |collection|
+  user = collection.user
+  link collection.title, user_collection_path(user.username, collection)
+  parent :user_collection_list, user
+end
+
+crumb :edit_collection_item do |collection_item|
+  link collection_item.title, edit_collection_collection_item_path(collection_item.collection, collection_item)
+  parent :user_collection_detail, collection_item.collection
+end
+
+crumb :edit_collection do |collection|
+  link collection.title, edit_collection_path(collection)
+  parent :user_collection_detail, collection
 end

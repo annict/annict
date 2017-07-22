@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 class SearchesController < ApplicationController
+  before_action :load_i18n, only: %i(show)
+
   def show(q: nil, resource: nil)
     @works, @characters, @people, @organizations = if q.present?
       [
@@ -33,5 +35,14 @@ class SearchesController < ApplicationController
       first
     return collection.model.name.downcase if collection.present?
     "work"
+  end
+
+  def load_i18n
+    keys = {
+      "messages._components.collect_button_modal.added": nil,
+      "messages._components.collect_button_modal.view_collection": nil
+    }
+
+    load_i18n_into_gon keys
   end
 end

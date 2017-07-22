@@ -23,6 +23,7 @@ class Activity < ApplicationRecord
   extend Enumerize
 
   enumerize :action, in: %w(
+    create_collection
     create_status
     create_record
     create_review

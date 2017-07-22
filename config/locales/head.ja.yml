@@ -36,6 +36,9 @@ ja:
           new: おかえりなさい！
         staffs:
           index: "アニメ「%{title}」のスタッフ情報をチェック！"
+        user_collections:
+          index: "%{profile_name} (%{username})さんのコレクションをチェック！"
+          show: "%{collection_description}"
         users:
           followers: Check out %{profile_name} (%{username})'s profile!
           following: Check out %{profile_name} (%{username})'s profile!
@@ -200,6 +203,8 @@ ja:
         index: アニメ「%{title}」のスタッフ一覧
       tracks:
         show: 記録する
+      user_collections:
+        show: "%{collection_title} by %{profile_name} (%{username})"
       userland:
         home:
           index: Userland

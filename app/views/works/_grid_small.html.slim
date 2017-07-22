@@ -1,4 +1,4 @@
-.container-fluid
+.c-grid-work.c-grid-work--small.container-fluid
   .row.pl-1
     - works.each do |work|
       .col-1.p-0.pr-1.mb-1
@@ -6,7 +6,11 @@
           = link_to work_path(work) do
             .c-hover-image
               .c-hover-image__image
-                = ann_image_tag work.work_image, :attachment, size: "120x160", class: "img-fluid rounded"
+                = ann_image_tag work.work_image, :attachment, size: "140x140", class: "img-fluid rounded"
               .c-hover-image__over
-          .p-zp5.text-truncate.small
-            = link_to work.decorate.local_title, work_path(work), title: work.decorate.local_title
+          .p-zp5.small
+            .row
+              .col.text-truncate
+                = link_to work.decorate.local_title, work_path(work), title: work.decorate.local_title
+              .col.col-auto.pl-0
+                c-work-detail-button :work-id="#{work.id}"

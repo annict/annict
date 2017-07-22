@@ -21,6 +21,7 @@ gem "annotate"
 gem "asset_sync"
 gem "autoprefixer-rails"
 gem "aws-sdk"
+gem "bootsnap", require: false
 gem "bootstrap"
 gem "bourbon"
 gem "browser"

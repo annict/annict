@@ -36,6 +36,9 @@ en:
           new: Welcome back!
         staffs:
           index: Looking for staff information on %{title}? Find out more with Annict!
+        user_collections:
+          index: Check out %{profile_name} (%{username})'s collections!
+          show: "%{collection_description}"
         users:
           followers: Check out %{profile_name} (%{username})'s profile!
           following: Check out %{profile_name} (%{username})'s profile!
@@ -200,6 +203,8 @@ en:
         index: Staff of %{title} (Anime)
       tracks:
         show: Track
+      user_collections:
+        show: "%{collection_title} by %{profile_name} (%{username})"
       userland:
         home:
           index: Userland

@@ -28,6 +28,9 @@ module.exports =
       type: Boolean
       default: false
 
+    initStatusKind:
+      type: String
+
   methods:
     currentStatusKind: ->
       return "no_select" unless @works.length
@@ -61,6 +64,10 @@ module.exports =
       @statusKind = @prevStatusKind = NO_SELECT
       return
 
-    @works = @pageObject.works
-    @prevStatusKind = @currentStatusKind()
-    @statusKind = @currentStatusKind()
+    if @initStatusKind
+      @prevStatusKind = @initStatusKind
+      @statusKind = @initStatusKind
+    else
+      @works = @pageObject.works
+      @prevStatusKind = @currentStatusKind()
+      @statusKind = @currentStatusKind()

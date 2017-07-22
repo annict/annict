@@ -21,6 +21,8 @@ document.addEventListener "turbolinks:load", (event) ->
   body = require "./common/components/body"
   channelReceiveButton = require "./common/components/channelReceiveButton"
   channelSelector = require "./common/components/channelSelector"
+  collectButton = require "./common/components/collectButton"
+  collectButtonModal = require "./common/components/collectButtonModal"
   commentGuard = require "./common/components/commentGuard"
   episodeList = require "./common/components/episodeList"
   episodeProgress = require "./common/components/episodeProgress"
@@ -34,6 +36,7 @@ document.addEventListener "turbolinks:load", (event) ->
   programList = require "./common/components/programList"
   ratingLabel = require "./common/components/ratingLabel"
   ratingStateLabel = require "./common/components/ratingStateLabel"
+  reactionButton = require "./common/components/reactionButton"
   record = require "./common/components/record"
   recordRating = require "./common/components/recordRating"
   recordSorter = require "./common/components/recordSorter"
@@ -47,6 +50,8 @@ document.addEventListener "turbolinks:load", (event) ->
   untrackedEpisodeList = require "./common/components/untrackedEpisodeList"
   userHeatmap = require "./common/components/userHeatmap"
   usernamePreview = require "./common/components/usernamePreview"
+  workDetailButton = require "./common/components/workDetailButton"
+  workDetailButtonModal = require "./common/components/workDetailButtonModal"
   workFriends = require "./common/components/workFriends"
   youtubeModalPlayer = require "./common/components/youtubeModalPlayer"
 
@@ -65,6 +70,8 @@ document.addEventListener "turbolinks:load", (event) ->
   Vue.component("c-body", body)
   Vue.component("c-channel-receive-button", channelReceiveButton)
   Vue.component("c-channel-selector", channelSelector)
+  Vue.component("c-collect-button", collectButton)
+  Vue.component("c-collect-button-modal", collectButtonModal)
   Vue.component("c-comment-guard", commentGuard)
   Vue.component("c-episode-list", episodeList)
   Vue.component("c-episode-progress", episodeProgress)
@@ -78,6 +85,7 @@ document.addEventListener "turbolinks:load", (event) ->
   Vue.component("c-program-list", programList)
   Vue.component("c-rating-label", ratingLabel)
   Vue.component("c-rating-state-label", ratingStateLabel)
+  Vue.component("c-reaction-button", reactionButton)
   Vue.component("c-record", record)
   Vue.component("c-record-rating", recordRating)
   Vue.component("c-record-sorter", recordSorter)
@@ -91,6 +99,8 @@ document.addEventListener "turbolinks:load", (event) ->
   Vue.component("c-untracked-episode-list", untrackedEpisodeList)
   Vue.component("c-user-heatmap", userHeatmap)
   Vue.component("c-username-preview", usernamePreview)
+  Vue.component("c-work-detail-button", workDetailButton)
+  Vue.component("c-work-detail-button-modal", workDetailButtonModal)
   Vue.component("c-work-friends", workFriends)
   Vue.component("c-youtube-modal-player", youtubeModalPlayer)
 

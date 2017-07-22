@@ -1,0 +1,78 @@
+- title = t "head.title.collections.index"
+- description = meta_description t("head.meta.description.collections.show")
+- set_meta_tags(title: title, description: description, og: { description: description }, twitter: { description: description }, reverse: true, prefix: false)
+- set_page_category "collections_index"
+- breadcrumb :collection_list
+
+h2.h4.text-center.my-2.font-weight-bold
+  = t "noun.popular_collections"
+
+.c-card.mb-1
+  .container
+    - if @popular_collections.present?
+      div
+        - @popular_collections.each do |c|
+          = render "collection", collection: c
+      - if @popular_collections.total_pages > 1
+        .mb-1.text-center
+          = paginate @popular_collections
+    - else
+      = render "application/components/empty", text: t("messages._empty.no_collections") do
+        .text-muted.mb-1
+          = t "messages.collections.you_can_create_collections_on_work_detail_pages"
+        = link_to season_works_path(slug: ENV.fetch("ANNICT_CURRENT_SEASON")) do
+          = icon "angle-right", class: "mr-zp25"
+          = t "messages.collections.view_current_seasonal_anime"
+
+h2.h4.text-center.my-2.font-weight-bold
+  = t "noun.newest_collections"
+
+.c-card
+  .container
+    - if @newest_collections.present?
+      div
+        - @newest_collections.each do |c|
+          = render "collection", collection: c
+    - else
+      = render "application/components/empty", text: t("messages._empty.no_collections") do
+        .text-muted.mb-1
+          = t "messages.collections.you_can_create_collections_on_work_detail_pages"
+        = link_to season_works_path(slug: ENV.fetch("ANNICT_CURRENT_SEASON")) do
+          = icon "angle-right", class: "mr-zp25"
+          = t "messages.collections.view_current_seasonal_anime"
+
+- if @user_collections.present?
+  h2.h4.text-center.my-2.font-weight-bold
+    = t "noun.your_collections"
+  .c-card.mb-1
+    .container
+      - @user_collections.first(5).each do |c|
+        .py-1.u-underline
+          .row
+            .col.col-auto
+              = link_to user_collection_path(c.user.username, c) do
+                = image_tag "", "v-lazy": "'#{c.decorate.image_url(size: '70x93')}'", size: "70x93", class: "img-fluid img-thumbnail rounded c-vue-lazyload"
+            .col.pl-0
+              h2.h4.mb-zp5
+                = link_to c.title, user_collection_path(c.user.username, c)
+              .small.text-muted
+                = link_to user_collection_path(c.user.username, c), title: local_datetime(c.created_at) do
+                  = local_time_ago_in_words(c.created_at)
+                span.ml-zp5
+                  = "#{c.impressions_count} views"
+    - if @user_collections.length > 5
+      .container.mb-1
+        = link_to user_collections_path(current_user.username), class: "btn btn-secondary w-100" do
+          = icon "angle-right"
+          = t "messages.collections.view_all_n_collections", n: @user_collections.length
+
+= render "application/components/breadcrumb"
+= render "application/components/footer"
+= render "application/components/tabbar"
+
+- content_for :js_templates do
+  = render "application/js_templates/like_button"
+  = render "application/js_templates/reaction_button"
+  = render "application/js_templates/share_button_facebook"
+  = render "application/js_templates/share_button_twitter"
+  = render "application/js_templates/status_selector"

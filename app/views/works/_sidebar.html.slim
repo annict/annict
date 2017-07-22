@@ -9,6 +9,8 @@ h1.h2.font-weight-bold.mb-1
   = link_to work.decorate.local_title, work_path(work), class: "u-text-body"
 
 c-status-selector :work-id="#{work.id}"
+c-collect-button :work-id="#{work.id}"
+c-collect-button-modal
 
 h2.h4.font-weight-bold.mt-2.mb-1
   = icon "sticky-note-o", class: "mr-zp25"
@@ -61,3 +63,7 @@ c-share-button-facebook url="#{local_url}#{work_path(work)}"
 - if user_signed_in? && current_user.committer?
   .mt-2
     = link_to t("messages._common.edit_on_annict_db"), edit_db_work_path(work), class: "btn btn-secondary w-100 mt-zp5"
+
+- content_for :js_templates do
+  = render "application/js_templates/collect_button"
+  = render "application/js_templates/collect_button_modal"

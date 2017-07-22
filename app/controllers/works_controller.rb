@@ -34,6 +34,7 @@ class WorksController < ApplicationController
   include ApplicationHelper
 
   before_action :authenticate_user!, only: %i(switch)
+  before_action :load_i18n, only: %i(show popular newest season)
 
   def index
     redirect_to season_works_path(ENV["ANNICT_CURRENT_SEASON"])
@@ -116,5 +117,16 @@ class WorksController < ApplicationController
 
     current_user.setting.update_column(:display_option_work_list, to)
     redirect
+  end
+
+  private
+
+  def load_i18n
+    keys = {
+      "messages._components.collect_button_modal.added": nil,
+      "messages._components.collect_button_modal.view_collection": nil
+    }
+
+    load_i18n_into_gon keys
   end
 end

@@ -69,7 +69,7 @@
           .small
             | Followers
 
-    .row
+    .row.mb-1
       .p-users-show__count.col.px-0
         = link_to reviews_path(@user.username), class: "p-users-show__count-link" do
           .h3.mb-zp25
@@ -94,6 +94,14 @@
             = @favorite_organizations.length
           .small
             = t "noun.favorite_organizations_shorten"
+
+    .row
+      .p-users-show__count.col.px-0
+        = link_to user_collections_path(@user.username), class: "p-users-show__count-link" do
+          .h3.mb-zp25
+            = @collections.length
+          .small
+            | Collections
 
 .mt-1.mb-2
   c-activities username="#{@user.username}"

@@ -31,6 +31,8 @@ en:
     character_image: Character Image
     character: Character
     characters: Characters
+    collection_list: Collection List
+    collections: Collections
     contents: Contents
     column: Column
     completed: Completed
@@ -65,6 +67,7 @@ en:
     music: Music
     my_records: My Records
     n_works_watched: "%{count} Works Watched"
+    newest_collections: Newest Collections
     next_page: Next Page
     next_season: Next Season
     official_site: Official Site
@@ -72,6 +75,7 @@ en:
     or: OR
     organization: Organization
     organizations: Organizations
+    other_collections_by: "Collections by %{profile_name}"
     other_reviews_by: "Reviews by %{profile_name}"
     other_users: Other Users
     overall: Overall
@@ -83,6 +87,7 @@ en:
     popular: Popular
     popular_airing_anime: Popular Airing Anime
     popular_anime: Popular Anime
+    popular_collections: Popular Collections
     prev_page: Prev Page
     previous_season: Previous Season
     privacy_policy: Privacy Policy
@@ -111,6 +116,7 @@ en:
     share: Share
     sign_in: Sign in
     sign_up: Sign up
+    sign_up_shorten: Sign up
     skip: Skip
     sns_friends: SNS Friends
     source: Source
@@ -137,4 +143,5 @@ en:
     work_detail_page: Work Detail
     work_image: Work image
     works: Works
+    your_collections: Your Collections
     your_statistics: Your Statistics

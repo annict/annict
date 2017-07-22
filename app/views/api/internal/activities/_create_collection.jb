@@ -1,0 +1,22 @@
+# frozen_string_literal: true
+
+collection = activity.trackable
+
+cache_keys = [
+  I18n.locale,
+  user&.id,
+  activity,
+  activity.action
+]
+
+json = Rails.cache.fetch(cache_keys) do
+  {
+    collection: {
+      id: collection.id,
+      title: collection.title,
+      likes_count: collection.likes_count
+    }
+  }
+end
+
+json
