@@ -8,6 +8,8 @@ en:
         characters:
           index: Looking for character information on %{title}? Find out more with Annict!
           show: Looking for character information on %{name}? Find out more with Annict!
+        collections:
+          index: Check out all collections!
         episodes:
           index: Looking for episode information on %{title}? Find out more with Annict!
           show: Looking for reviews on %{work_title} %{episode_title_with_number}? Find out more with Annict!
@@ -64,6 +66,8 @@ en:
       characters:
         index: Characters of %{title} (Anime)
         show: "%{name}"
+      collections:
+        index: Collections
       comments:
         edit: Edit Comment
       db:
@@ -204,6 +208,7 @@ en:
       tracks:
         show: Track
       user_collections:
+        index: "%{profile_name} (%{username})'s Collections"
         show: "%{collection_title} by %{profile_name} (%{username})"
       userland:
         home:

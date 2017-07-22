@@ -8,6 +8,8 @@ ja:
         characters:
           index: アニメ「%{title}」のキャラクターをチェック！
           show: Annictで%{name}をチェック！
+        collections:
+          index: みんなが作ったコレクションをチェック！
         episodes:
           index: アニメ「%{title}」のエピソードをチェック！
           show: アニメ「%{work_title}」%{episode_title_with_number}の感想をチェック!
@@ -64,6 +66,8 @@ ja:
         show: "%{name}"
       character_fans:
         index: "%{character_name}のファン一覧"
+      collections:
+        index: みんなのコレクション
       comments:
         edit: コメント編集
       db:
@@ -204,6 +208,7 @@ ja:
       tracks:
         show: 記録する
       user_collections:
+        index: "%{profile_name} (%{username})さんのコレクション"
         show: "%{collection_title} by %{profile_name} (%{username})"
       userland:
         home:
