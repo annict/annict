@@ -10,6 +10,10 @@ module Api
           Work.none
         end
       end
+
+      def show(id)
+        @work = Work.published.find(id)
+      end
     end
   end
 end

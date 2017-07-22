@@ -50,6 +50,8 @@ document.addEventListener "turbolinks:load", (event) ->
   untrackedEpisodeList = require "./common/components/untrackedEpisodeList"
   userHeatmap = require "./common/components/userHeatmap"
   usernamePreview = require "./common/components/usernamePreview"
+  workDetailButton = require "./common/components/workDetailButton"
+  workDetailButtonModal = require "./common/components/workDetailButtonModal"
   workFriends = require "./common/components/workFriends"
   youtubeModalPlayer = require "./common/components/youtubeModalPlayer"
 
@@ -97,6 +99,8 @@ document.addEventListener "turbolinks:load", (event) ->
   Vue.component("c-untracked-episode-list", untrackedEpisodeList)
   Vue.component("c-user-heatmap", userHeatmap)
   Vue.component("c-username-preview", usernamePreview)
+  Vue.component("c-work-detail-button", workDetailButton)
+  Vue.component("c-work-detail-button-modal", workDetailButtonModal)
   Vue.component("c-work-friends", workFriends)
   Vue.component("c-youtube-modal-player", youtubeModalPlayer)
 

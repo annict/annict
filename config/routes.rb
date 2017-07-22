@@ -42,7 +42,7 @@ Rails.application.routes.draw do
       resources :people, only: [:index]
       resources :receptions, only: %i(create destroy)
       resources :series_list, only: %i(index)
-      resources :works, only: %i(index)
+      resources :works, only: %i(index show)
 
       resource :amazon, only: [], controller: :amazon do
         get :search

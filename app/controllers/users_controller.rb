@@ -31,7 +31,7 @@
 #
 
 class UsersController < ApplicationController
-  before_action :load_i18n, only: %i(show following followers)
+  before_action :load_i18n, only: %i(show following followers works)
   before_action :authenticate_user!, only: %i(destroy share)
   before_action :set_user, only: %i(show works following followers)
 
@@ -92,6 +92,8 @@ class UsersController < ApplicationController
       "verb.follow": nil,
       "noun.following": nil,
       "messages._common.are_you_sure": nil,
+      "messages._components.collect_button_modal.added": nil,
+      "messages._components.collect_button_modal.view_collection": nil,
       "messages.components.mute_user_button.the_user_has_been_muted": nil
     }
 

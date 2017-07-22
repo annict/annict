@@ -39,7 +39,17 @@
 = render "application/components/footer"
 = render "application/components/tabbar"
 
+c-collect-button-modal
+c-work-detail-button-modal
+
 - content_for :js_templates do
+  = render "application/js_templates/collect_button_modal"
+  = render "application/js_templates/collect_button"
+  = render "application/js_templates/omitted_synopsis"
   = render "application/js_templates/share_button_facebook"
   = render "application/js_templates/share_button_twitter"
   = render "application/js_templates/status_selector"
+  = render "application/js_templates/work_detail_button_modal"
+  = render "application/js_templates/work_detail_button"
+  = render "application/js_templates/work_friends"
+  = render "application/js_templates/youtube_modal_player"

@@ -6,7 +6,11 @@
           = link_to work_path(work) do
             .c-hover-image
               .c-hover-image__image
-                = ann_image_tag work.work_image, :attachment, size: "280x373", class: "img-fluid rounded img-thumbnail"
+                = ann_image_tag work.work_image, :attachment, size: "280x373", class: "img-fluid rounded"
               .c-hover-image__over
-          .p-zp25.text-truncate
-            = link_to work.decorate.local_title, work_path(work)
+          .p-zp25
+            .row
+              .col.text-truncate
+                = link_to work.decorate.local_title, work_path(work), title: work.decorate.local_title
+              .col.col-auto.pl-0
+                c-work-detail-button :work-id="#{work.id}"
