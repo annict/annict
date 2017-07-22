@@ -7,15 +7,17 @@ namespace :work do
   end
 
   # 指定したWorkを削除する
-  # コマンド実行例: rake work:delete_overlapped_work[4458,4485]
-  task :delete_overlapped_work, [:target_work_id, :original_work_id] => :environment do |t, args|
+  # コマンド実行例: rake work:hide_overlapped_work[4458,4485]
+  task :hide_overlapped_work, %i(target_work_id original_work_id) => :environment do |_, args|
     # 削除対象のWork
     target_work = Work.find(args[:target_work_id])
     # オリジナルのWork
     original_work = Work.find(args[:original_work_id])
 
     ActiveRecord::Base.transaction do
-      [{ resource_class: Activity, column: :recipient }].each do |hash|
+      [
+        { resource_class: Activity, column: :recipient }
+      ].each do |hash|
         update_or_delete_pol_resource(hash[:resource_class], hash[:column], target_work, original_work)
       end
 
@@ -23,7 +25,7 @@ namespace :work do
         update_or_delete_resource(resource_class, target_work, original_work)
       end
 
-      target_work.destroy
+      target_work.hide!
     end
   end
 
