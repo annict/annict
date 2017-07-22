@@ -17,6 +17,17 @@ nav.c-navbar.navbar.navbar-toggleable-xl class="#{transparent ? 'navbar-dark is-
             = link_to t("noun.on_hold"), annict_url(:user_works_url, current_user.username, :on_hold), class: "dropdown-item"
             = link_to t("noun.dropped"), annict_url(:user_works_url, current_user.username, :stop_watching), class: "dropdown-item"
         li.nav-item.dropdown
+          = link_to t("noun.collections"), annict_url(:user_collections_url, current_user.username), class: "nav-link"
+          - collections = current_user.collections.published
+          - if collections.present?
+            .dropdown-menu
+              - collections.order(updated_at: :desc).limit(10).each do |c|
+                = link_to c.title.truncate(30), annict_url(:user_collection_url, current_user.username, c), class: "dropdown-item"
+              - if collections.length > 10
+                = link_to user_collections_path(current_user.username), class: "dropdown-item" do
+                  = icon "angle-right", class: "mr-zp25"
+                  = t "messages.collections.view_all_n_collections", n: collections.length
+        li.nav-item.dropdown
           = link_to t("noun.current_season"), annict_url(:season_works_url, slug: ENV.fetch("ANNICT_CURRENT_SEASON")), class: "nav-link"
           .dropdown-menu
             = link_to t("noun.next_season"), annict_url(:season_works_url, slug: ENV.fetch("ANNICT_NEXT_SEASON")), class: "dropdown-item"

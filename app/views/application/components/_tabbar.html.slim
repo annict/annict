@@ -20,6 +20,7 @@
           = current_user.notifications_count
     .dropdown-menu
       = link_to t("noun.profile"), user_path(current_user.username), class: "dropdown-item px-1 py-zp25"
+      = link_to t("noun.collections"), annict_url(:user_collections_url, current_user.username), class: "dropdown-item px-1 py-zp25"
       = link_to notifications_path, class: "dropdown-item px-1 py-zp25" do
         = t "head.title.notifications.index"
         - if current_user.notifications_count > 0
