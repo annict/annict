@@ -1,8 +1,8 @@
-- title = t "head.title.collections.index", profile_name: @user.profile.name, username: @user.username
-- description = meta_description t("head.meta.description.collections.index", profile_name: @user.profile.name, username: @user.username)
+- title = t "head.title.user_collections.index", profile_name: @user.profile.name, username: @user.username
+- description = meta_description t("head.meta.description.user_collections.index", profile_name: @user.profile.name, username: @user.username)
 - image_url = ann_image_url(@user.profile, :tombo_avatar, size: "640x")
 - set_meta_tags(title: title, description: description, og: { description: description, image: image_url }, twitter: { description: description, image: image_url }, reverse: true, prefix: false)
-- set_page_category "collections_index"
+- set_page_category "user_collections_index"
 - breadcrumb :user_collection_list, @user
 
 = render "users/low_profile_header", user: @user

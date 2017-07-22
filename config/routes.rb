@@ -300,7 +300,7 @@ Rails.application.routes.draw do
       url_hash: /[0-9a-zA-Z_-]{10}/
   end
 
-  resources :collections, only: %i(edit update destroy) do
+  resources :collections, only: %i(index edit update destroy) do
     resources :collection_items, only: %i(edit update destroy)
   end
 
@@ -336,7 +336,7 @@ Rails.application.routes.draw do
         status_kind: /wanna_watch|watching|watched|on_hold|stop_watching/
       }
 
-    resources :collections, only: %i(index show), as: :user_collections
+    resources :collections, only: %i(index show), as: :user_collections, controller: :user_collections
     resources :favorite_characters, only: %i(index)
     resources :favorite_organizations, only: %i(index)
     resources :favorite_people, only: %i(index)

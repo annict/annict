@@ -168,6 +168,8 @@ ActiveRecord::Schema.define(version: 20170716104237) do
     t.string "title", null: false
     t.text "comment"
     t.string "aasm_state", default: "published", null: false
+    t.integer "reactions_count", default: 0, null: false
+    t.integer "position", default: 0, null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["collection_id", "work_id"], name: "index_collection_items_on_collection_id_and_work_id", unique: true

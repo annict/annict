@@ -3,15 +3,17 @@
 #
 # Table name: collection_items
 #
-#  id            :integer          not null, primary key
-#  user_id       :integer          not null
-#  collection_id :integer          not null
-#  work_id       :integer          not null
-#  title         :string           not null
-#  comment       :text
-#  aasm_state    :string           default("published"), not null
-#  created_at    :datetime         not null
-#  updated_at    :datetime         not null
+#  id              :integer          not null, primary key
+#  user_id         :integer          not null
+#  collection_id   :integer          not null
+#  work_id         :integer          not null
+#  title           :string           not null
+#  comment         :text
+#  aasm_state      :string           default("published"), not null
+#  reactions_count :integer          default(0), not null
+#  position        :integer          default(0), not null
+#  created_at      :datetime         not null
+#  updated_at      :datetime         not null
 #
 # Indexes
 #

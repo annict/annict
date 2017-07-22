@@ -1,0 +1,42 @@
+- title = t "head.title.user_collections.index", profile_name: @user.profile.name, username: @user.username
+- description = meta_description t("head.meta.description.user_collections.index", profile_name: @user.profile.name, username: @user.username)
+- image_url = ann_image_url(@user.profile, :tombo_avatar, size: "640x")
+- set_meta_tags(title: title, description: description, og: { description: description, image: image_url }, twitter: { description: description, image: image_url }, reverse: true, prefix: false)
+- set_page_category "user_collections_index"
+- breadcrumb :user_collection_list, @user
+
+= render "application/components/navbar", transparent: true
+= render "users/low_profile_header", user: @user
+
+.p-application__content
+  .container.py-1.mb-1
+    = render "application/components/breadcrumb"
+    .c-card.px-1
+      - if @collections.present?
+        .container
+          - @collections.each do |collection|
+            .row.py-1.u-underline
+              .col.col-auto
+                = link_to user_collection_path(@user.username, collection) do
+                  = image_tag "", "v-lazy": "'#{collection.decorate.image_url(size: '70x93')}'", size: "70x93", class: "img-fluid img-thumbnail rounded c-vue-lazyload"
+              .col
+                h2.h4.mb-1
+                  = link_to collection.title, user_collection_path(@user.username, collection)
+                .small.text-muted
+                  = link_to user_collection_path(collection.user.username, collection), title: local_datetime(collection.created_at) do
+                    = local_time_ago_in_words(collection.created_at)
+                  span.ml-zp5
+                    = "#{collection.impressions_count} views"
+
+        - if @collections.total_pages > 1
+          .mb-1.text-center
+            = paginate @collections
+      - else
+        = render "application/components/empty", text: t("messages._empty.no_collections") do
+          .text-muted.mb-1
+            = t "messages.collections.you_can_create_collections_on_work_detail_pages"
+          = link_to season_works_path(slug: ENV.fetch("ANNICT_CURRENT_SEASON")) do
+            = icon "angle-right", class: "mr-zp25"
+            = t "messages.collections.view_current_seasonal_anime"
+
+= render "application/components/footer"

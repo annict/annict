@@ -8,8 +8,6 @@ ja:
         characters:
           index: アニメ「%{title}」のキャラクターをチェック！
           show: Annictで%{name}をチェック！
-        collections:
-          show: "%{collection_description}"
         episodes:
           index: アニメ「%{title}」のエピソードをチェック！
           show: アニメ「%{work_title}」%{episode_title_with_number}の感想をチェック!
@@ -38,6 +36,9 @@ ja:
           new: おかえりなさい！
         staffs:
           index: "アニメ「%{title}」のスタッフ情報をチェック！"
+        user_collections:
+          index: "%{profile_name} (%{username})さんのコレクションをチェック！"
+          show: "%{collection_description}"
         users:
           followers: Check out %{profile_name} (%{username})'s profile!
           following: Check out %{profile_name} (%{username})'s profile!
@@ -63,8 +64,6 @@ ja:
         show: "%{name}"
       character_fans:
         index: "%{character_name}のファン一覧"
-      collections:
-        show: "%{collection_title} by %{profile_name} (%{username})"
       comments:
         edit: コメント編集
       db:
@@ -204,6 +203,8 @@ ja:
         index: アニメ「%{title}」のスタッフ一覧
       tracks:
         show: 記録する
+      user_collections:
+        show: "%{collection_title} by %{profile_name} (%{username})"
       userland:
         home:
           index: Userland
