@@ -62,6 +62,8 @@ en:
       view_all_n_collections: "View All %{n} Collections"
       view_current_seasonal_anime: "View Current Seasonal Anime"
       you_can_create_collections_on_work_detail_pages: "You can collections via \"Add to Collections\" button on work list pages."
+      create_your_collections: Create Your Collections!
+      you_can_create_collections_html: "You can collections to share your favorite anime with friends. <a href='http://blog.annict.com/post/163299226383/collections' target='_blank'><i class='fa fa-angle-right mr-zp25'></i>Learn More</a>"
     comments:
       comment_form_placeholder: Click here to add a new comment
       create: Create

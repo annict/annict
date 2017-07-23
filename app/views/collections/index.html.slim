@@ -10,7 +10,7 @@
   .container.py-1
     = render "application/components/breadcrumb"
     .row
-      div class="#{@user_collections.present? ? 'col-8 pr-0' : 'col-12'}"
+      .col-8.pr-0
         h2.h4.text-center.mb-2.font-weight-bold
           = t "noun.popular_collections"
         .c-card
@@ -46,8 +46,14 @@
                   = icon "angle-right", class: "mr-zp25"
                   = t "messages.collections.view_current_seasonal_anime"
 
-      - if @user_collections.present?
-        .col-4
+      .col-4
+        - if @user_collections.blank?
+          .alert.alert-info
+            h3.alert-heading
+              = t "messages.collections.create_your_collections"
+            p.mb-0
+              = t "messages.collections.you_can_create_collections_html"
+        - else
           h2.h4.text-center.mb-2.font-weight-bold
             = t "noun.your_collections"
           .c-card.mt-1.mb-1
