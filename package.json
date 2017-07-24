@@ -23,6 +23,6 @@
     "node": "~> 8.1.4"
   },
   "devDependencies": {
-    "coffeelint": "1.16.0"
+    "coffeelint": "1.16.1"
   }
 }
