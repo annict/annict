@@ -2,7 +2,7 @@
   "name": "annict",
   "private": true,
   "dependencies": {
-    "async": "2.4.1",
+    "async": "2.5.0",
     "britecharts": "^1.5.3",
     "browserify": "14.3.0",
     "browserify-incremental": "3.1.1",
@@ -16,13 +16,13 @@
     "mousetrap": "1.6.1",
     "tether": "1.4.0",
     "turbolinks": "5.0.3",
-    "vue": "2.3.4",
+    "vue": "2.4.2",
     "vue-lazyload": "^1.0.0-rc12"
   },
   "engines": {
     "node": "~> 8.1.4"
   },
   "devDependencies": {
-    "coffeelint": "1.16.0"
+    "coffeelint": "1.16.1"
   }
 }
