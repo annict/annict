@@ -2,7 +2,7 @@
   "name": "annict",
   "private": true,
   "dependencies": {
-    "async": "2.4.1",
+    "async": "2.5.0",
     "britecharts": "^1.5.3",
     "browserify": "14.3.0",
     "browserify-incremental": "3.1.1",
