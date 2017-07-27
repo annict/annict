@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170716104237) do
+ActiveRecord::Schema.define(version: 20170724170350) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -298,6 +298,29 @@ ActiveRecord::Schema.define(version: 20170716104237) do
     t.index ["score"], name: "index_episodes_on_score"
     t.index ["work_id", "sc_count"], name: "episodes_work_id_sc_count_key", unique: true
     t.index ["work_id"], name: "episodes_work_id_idx"
+  end
+
+  create_table "faq_categories", force: :cascade do |t|
+    t.string "name", null: false
+    t.string "locale", null: false
+    t.integer "sort_number", default: 0, null: false
+    t.string "aasm_state", default: "published", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["locale"], name: "index_faq_categories_on_locale"
+  end
+
+  create_table "faq_contents", force: :cascade do |t|
+    t.integer "faq_category_id", null: false
+    t.string "question", null: false
+    t.text "answer", null: false
+    t.string "locale", null: false
+    t.integer "sort_number", default: 0, null: false
+    t.string "aasm_state", default: "published", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["faq_category_id"], name: "index_faq_contents_on_faq_category_id"
+    t.index ["locale"], name: "index_faq_contents_on_locale"
   end
 
   create_table "favorite_characters", id: :serial, force: :cascade do |t|
@@ -1030,6 +1053,7 @@ ActiveRecord::Schema.define(version: 20170716104237) do
   add_foreign_key "episode_items", "works"
   add_foreign_key "episodes", "episodes", column: "prev_episode_id"
   add_foreign_key "episodes", "works", name: "episodes_work_id_fk", on_delete: :cascade
+  add_foreign_key "faq_contents", "faq_categories"
   add_foreign_key "favorite_characters", "characters"
   add_foreign_key "favorite_characters", "users"
   add_foreign_key "favorite_organizations", "organizations"

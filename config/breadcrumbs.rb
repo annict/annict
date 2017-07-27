@@ -9,6 +9,11 @@ crumb :collection_list do
   parent :root
 end
 
+crumb :faq_list do
+  link t("noun.faqs"), faqs_path
+  parent :root
+end
+
 crumb :userland_root do
   link "Userland", userland_root_path
   parent :root

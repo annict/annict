@@ -1,0 +1,11 @@
+- title = t "head.title.channels.index"
+- set_meta_tags(title: title, reverse: true, prefix: false)
+- set_page_category "channels_index"
+
+= render "channels/subnav"
+
+.c-card.p-1.mt-1.mb-2
+  = render "channels/channel_list", channel_groups: @channel_groups
+
+= render "application/components/footer"
+= render "application/components/tabbar"
