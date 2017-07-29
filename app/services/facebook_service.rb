@@ -17,7 +17,7 @@ class FacebookService
     client.get_connections(:me, :friends).map { |friend| friend["id"] }
   end
 
-  def share!(checkin, source)
+  def share!(checkin)
     if checkin.facebook_url_hash.blank?
       checkin.update_column(:facebook_url_hash, checkin.generate_url_hash)
     end
@@ -32,6 +32,12 @@ class FacebookService
       "#{checkin.user.annict_url}/r/fb/#{checkin.facebook_url_hash}"
     end
     caption = "Annict | アニクト - 見たアニメを記録して、共有しよう"
+
+    work_image = checkin.work.work_image
+    source = if work_image.present? && Rails.env.production?
+      work_image.decorate&.image_url(:attachment, size: "600x315")
+    end
+    source = "https://annict.com/images/og_image.png" if source.blank?
 
     client.put_connections("me", "feed",
       name: title,
