@@ -35,7 +35,8 @@ class FacebookService
 
     work_image = checkin.work.work_image
     source = if work_image.present? && Rails.env.production?
-      work_image.decorate&.image_url(:attachment, size: "600x315")
+      # Using `rescue` to avoid occurring error `undefined method `ann_image_url'`
+      work_image.decorate.image_url(:attachment, size: "600x315") rescue nil # rubocop:disable Style/RescueModifier
     end
     source = "https://annict.com/images/og_image.png" if source.blank?
 
