@@ -126,6 +126,8 @@ en:
           activities: Activities
           edit: "%{title}"
           index: Works
+      faqs:
+        index: FAQ
       episode_items:
         new: New Item
       episodes:

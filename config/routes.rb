@@ -251,6 +251,7 @@ Rails.application.routes.draw do
   resource :search, only: [:show]
   resource :track, only: %i(show)
   resources :comments, only: %i(edit update destroy)
+  resources :faqs, only: %i(index)
   resources :friends, only: [:index]
   resources :mute_users, only: [:destroy]
   resources :notifications, only: [:index]
