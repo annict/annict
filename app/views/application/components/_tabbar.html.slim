@@ -35,6 +35,7 @@
       = link_to t("noun.settings"), settings_path, class: "dropdown-item px-1 py-zp25"
       = link_to t("noun.annict_userland"), userland_root_path, class: "dropdown-item px-1 py-zp25"
       = link_to t("noun.annict_api"), "https://docs.annict.com/ja/", target: "_blank", class: "dropdown-item px-1 py-zp25"
+      = link_to t("head.title.faqs.index"), faqs_path, class: "dropdown-item px-1 py-zp25"
       = link_to t("head.title.pages.about"), about_path, class: "dropdown-item px-1 py-zp25"
       = link_to t("verb.sign_out"), destroy_user_session_path, method: "delete", class: "dropdown-item px-1 py-zp25"
   - else
