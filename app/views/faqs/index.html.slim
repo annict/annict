@@ -13,7 +13,7 @@
       h2.h4.text-center.my-2.font-weight-bold
         = category.name
 
-      .c-card.u-mw-600.mx-auto.mt-1.mb-2.p-1
+      .c-card.u-mw-600.mx-auto.p-1
         #accordion
           - category.faq_contents.published.order(:sort_number).each do |content|
             .card
