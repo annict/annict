@@ -33,11 +33,11 @@ class Review < ApplicationRecord
   include AASM
 
   STATES = %i(
+    rating_overall_state
     rating_animation_state
     rating_music_state
     rating_story_state
     rating_character_state
-    rating_overall_state
   ).freeze
 
   is_impressionable counter_cache: true, unique: true
