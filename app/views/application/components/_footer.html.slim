@@ -29,6 +29,7 @@
         .col-3
           h4.font-weight-bold = t "noun.contents"
           ul.p-footer__list.list-unstyled
+            li = link_to t("head.title.faqs.index"), faqs_path
             li = link_to t("head.title.pages.about"), about_path
             li = link_to t("noun.terms_of_use"), terms_path
             li = link_to t("noun.privacy_policy"), privacy_path
