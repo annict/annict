@@ -65,7 +65,13 @@ class UsersController < ApplicationController
       map { |slug| Season.find_by_slug(slug) }.
       sort_by { |s| "#{s.year}#{s.name_value}".to_i }.
       reverse
-    @seasons = Kaminari.paginate_array(@seasons).page(page).per(10)
+    @seasons = Kaminari.paginate_array(@seasons).page(page).per(5)
+
+    return unless user_signed_in?
+
+    gon.pageObject = render_jb "works/_list",
+      user: current_user,
+      works: @seasons.flat_map { |s| @works.by_season(s.slug) }
   end
 
   def following

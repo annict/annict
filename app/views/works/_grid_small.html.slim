@@ -3,14 +3,11 @@
     - works.each do |work|
       .col-1.p-0.pr-1.mb-1
         .c-card
-          = link_to work_path(work) do
-            .c-hover-image
-              .c-hover-image__image
+          .row.align-items-center
+            .col-5.pr-0
+              = link_to work_path(work) do
                 = ann_image_tag work.work_image, :attachment, size: "140x140", class: "img-fluid rounded"
-              .c-hover-image__over
-          .p-zp5.small
-            .row
-              .col.text-truncate
-                = link_to work.decorate.local_title, work_path(work), title: work.decorate.local_title
-              .col.col-auto.pl-0
-                c-work-detail-button :work-id="#{work.id}"
+            .col-7.pl-0
+              .container
+                = link_to work.decorate.local_title, work_path(work), title: work.decorate.local_title, class: "d-inline-block mb-zp5"
+                c-status-selector :work-id="#{work.id}"

@@ -102,6 +102,8 @@ class User < ApplicationRecord
     source: :application
   has_many :reactions, dependent: :destroy
   has_many :record_comments, class_name: "Comment", dependent: :destroy
+  has_many :user_work_tags, dependent: :destroy
+  has_many :work_tags, through: :user_work_tags
   has_many :userland_project_members, dependent: :destroy
   has_many :userland_projects, through: :userland_project_members
   has_one :email_notification, dependent: :destroy
@@ -314,6 +316,12 @@ class User < ApplicationRecord
       reactions = reactions.where(collection_item: resource)
       reactions.destroy_all
     end
+  end
+
+  def add_work_tag(work, tag_name)
+    work_tag_group = WorkTagGroup.where(name: tag_name).first_or_create
+    work_tag = WorkTag.where(name: tag_name).first_or_create(work_tag_group: work_tag_group)
+    user_work_tags.create(work: work, work_tag: work_tag)
   end
 
   private

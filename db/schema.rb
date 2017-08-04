@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170724170350) do
+ActiveRecord::Schema.define(version: 20170803132636) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -873,6 +873,29 @@ ActiveRecord::Schema.define(version: 20170724170350) do
     t.index ["name"], name: "twitter_bots_name_key", unique: true
   end
 
+  create_table "user_work_comments", force: :cascade do |t|
+    t.integer "user_id", null: false
+    t.integer "work_id", null: false
+    t.string "body", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["user_id", "work_id"], name: "index_user_work_comments_on_user_id_and_work_id", unique: true
+    t.index ["user_id"], name: "index_user_work_comments_on_user_id"
+    t.index ["work_id"], name: "index_user_work_comments_on_work_id"
+  end
+
+  create_table "user_work_tags", force: :cascade do |t|
+    t.integer "user_id", null: false
+    t.integer "work_id", null: false
+    t.integer "work_tag_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["user_id", "work_id", "work_tag_id"], name: "index_user_work_tags_on_user_id_and_work_id_and_work_tag_id", unique: true
+    t.index ["user_id"], name: "index_user_work_tags_on_user_id"
+    t.index ["work_id"], name: "index_user_work_tags_on_work_id"
+    t.index ["work_tag_id"], name: "index_user_work_tags_on_work_tag_id"
+  end
+
   create_table "userland_categories", id: :serial, force: :cascade do |t|
     t.string "name", null: false
     t.string "name_en", null: false
@@ -973,6 +996,23 @@ ActiveRecord::Schema.define(version: 20170724170350) do
     t.index ["user_id"], name: "index_work_items_on_user_id"
     t.index ["work_id", "item_id"], name: "index_work_items_on_work_id_and_item_id", unique: true
     t.index ["work_id"], name: "index_work_items_on_work_id"
+  end
+
+  create_table "work_tag_groups", force: :cascade do |t|
+    t.string "name", null: false
+    t.string "aasm_state", default: "published", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  create_table "work_tags", force: :cascade do |t|
+    t.integer "work_tag_group_id", null: false
+    t.string "name", null: false
+    t.string "aasm_state", default: "published", null: false
+    t.integer "user_work_tags_count", default: 0, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["work_tag_group_id"], name: "index_work_tags_on_work_tag_group_id"
   end
 
   create_table "works", id: :serial, force: :cascade do |t|
@@ -1108,6 +1148,11 @@ ActiveRecord::Schema.define(version: 20170724170350) do
   add_foreign_key "statuses", "users", name: "statuses_user_id_fk", on_delete: :cascade
   add_foreign_key "statuses", "works", name: "statuses_work_id_fk", on_delete: :cascade
   add_foreign_key "syobocal_alerts", "works", name: "syobocal_alerts_work_id_fk", on_delete: :cascade
+  add_foreign_key "user_work_comments", "users"
+  add_foreign_key "user_work_comments", "works"
+  add_foreign_key "user_work_tags", "users"
+  add_foreign_key "user_work_tags", "work_tags"
+  add_foreign_key "user_work_tags", "works"
   add_foreign_key "userland_project_members", "userland_projects"
   add_foreign_key "userland_project_members", "users"
   add_foreign_key "userland_projects", "userland_categories"
@@ -1116,6 +1161,7 @@ ActiveRecord::Schema.define(version: 20170724170350) do
   add_foreign_key "work_items", "items"
   add_foreign_key "work_items", "users"
   add_foreign_key "work_items", "works"
+  add_foreign_key "work_tags", "work_tag_groups"
   add_foreign_key "works", "number_formats"
   add_foreign_key "works", "pvs", column: "key_pv_id"
   add_foreign_key "works", "seasons", name: "works_season_id_fk", on_delete: :cascade
