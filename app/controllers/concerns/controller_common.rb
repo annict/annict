@@ -68,7 +68,8 @@ module ControllerCommon
       white_list = [
         "/sign_in",
         "/users/auth/facebook/callback",
-        "/users/auth/twitter/callback"
+        "/users/auth/twitter/callback",
+        "/oauth/authorize"
       ]
       return if request.path.in?(white_list)
 
