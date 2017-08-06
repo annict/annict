@@ -1,12 +1,16 @@
 eventHub = require "../../common/eventHub"
 
 module.exports =
-  template: "#t-collect-button"
+  template: "#t-impression-button"
 
   props:
     workId:
       type: Number
       required: true
+    size:
+      type: String
+      required: true
+      default: "default"
 
   data: ->
     isSignedIn: gon.user.isSignedIn
@@ -17,4 +21,4 @@ module.exports =
         $(".c-sign-up-modal").modal("show")
         return
 
-      eventHub.$emit "collectButtonModal:show", @workId
+      eventHub.$emit "impressionButtonModal:show", @workId

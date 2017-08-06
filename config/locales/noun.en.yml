@@ -33,6 +33,7 @@ en:
     characters: Characters
     collection_list: Collection List
     collections: Collections
+    comment: コメント
     contents: Contents
     column: Column
     completed: Completed
@@ -129,6 +130,7 @@ en:
     story: Story
     summer: Summer
     syobocal: Syobocal
+    tags: Tags
     terms_of_use: Terms of Use
     title: Title
     tonight: Tonight

@@ -25,8 +25,6 @@ document.addEventListener "turbolinks:load", (event) ->
   body = require "./common/components/body"
   channelReceiveButton = require "./common/components/channelReceiveButton"
   channelSelector = require "./common/components/channelSelector"
-  collectButton = require "./common/components/collectButton"
-  collectButtonModal = require "./common/components/collectButtonModal"
   commentGuard = require "./common/components/commentGuard"
   episodeList = require "./common/components/episodeList"
   episodeProgress = require "./common/components/episodeProgress"
@@ -35,6 +33,8 @@ document.addEventListener "turbolinks:load", (event) ->
   favoriteButton = require "./common/components/favoriteButton"
   flash = require "./common/components/flash"
   followButton = require "./common/components/followButton"
+  impressionButton = require "./common/components/impressionButton"
+  impressionButtonModal = require "./common/components/impressionButtonModal"
   inputWordsCount = require "./common/components/inputWordsCount"
   likeButton = require "./common/components/likeButton"
   omittedSynopsis = require "./common/components/omittedSynopsis"
@@ -80,8 +80,6 @@ document.addEventListener "turbolinks:load", (event) ->
   Vue.component("c-body", body)
   Vue.component("c-channel-receive-button", channelReceiveButton)
   Vue.component("c-channel-selector", channelSelector)
-  Vue.component("c-collect-button", collectButton)
-  Vue.component("c-collect-button-modal", collectButtonModal)
   Vue.component("c-comment-guard", commentGuard)
   Vue.component("c-episode-list", episodeList)
   Vue.component("c-episode-progress", episodeProgress)
@@ -92,6 +90,8 @@ document.addEventListener "turbolinks:load", (event) ->
   Vue.component("c-follow-button", followButton)
   Vue.component("c-image-attach-form", imageAttachForm)
   Vue.component("c-image-attach-modal", imageAttachModal)
+  Vue.component("c-impression-button", impressionButton)
+  Vue.component("c-impression-button-modal", impressionButtonModal)
   Vue.component("c-input-words-count", inputWordsCount)
   Vue.component("c-like-button", likeButton)
   Vue.component("c-omitted-synopsis", omittedSynopsis)

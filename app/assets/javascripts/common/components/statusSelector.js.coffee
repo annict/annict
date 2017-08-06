@@ -20,9 +20,10 @@ module.exports =
       type: Number
       required: true
 
-    isMini:
-      type: Boolean
-      default: false
+    size:
+      type: String
+      required: true
+      default: "default"
 
     isTransparent:
       type: Boolean

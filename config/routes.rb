@@ -31,6 +31,7 @@ Rails.application.routes.draw do
 
   namespace :api do
     namespace :internal do
+      resource :impression, only: %i(show update)
       resource :programs_sort_type, only: [:update]
       resource :records_sort_type, only: %i(update)
       resource :search, only: [:show]
@@ -46,10 +47,6 @@ Rails.application.routes.draw do
 
       resource :amazon, only: [], controller: :amazon do
         get :search
-      end
-
-      resources :collections, only: %i(index create) do
-        resources :collection_items, only: %i(create)
       end
 
       resources :favorites, only: %i(create) do

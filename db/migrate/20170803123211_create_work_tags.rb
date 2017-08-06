@@ -10,6 +10,8 @@ class CreateWorkTags < ActiveRecord::Migration[5.1]
       t.timestamps null: false
     end
 
+    add_index :work_tags, :name, unique: true
+
     add_index :work_tags, :work_tag_group_id
     add_foreign_key :work_tags, :work_tag_groups
   end

@@ -6,7 +6,7 @@ namespace :tmp do
       Collection.find_each do |c|
         puts "collection: #{c.id}"
         c.collection_items.each do |ci|
-          c.user.add_work_tag(ci.work, c.title)
+          c.user.add_work_tag!(ci.work, c.title)
         end
       end
     end

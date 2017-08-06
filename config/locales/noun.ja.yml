@@ -33,6 +33,7 @@ ja:
     characters: キャラクター
     collection_list: コレクション一覧
     collections: コレクション
+    comment: コメント
     contents: コンテンツ
     column: 項目
     completed: 見たアニメ
@@ -129,6 +130,7 @@ ja:
     story: ストーリー
     summer: 夏
     syobocal: しょぼかる
+    tags: タグ
     terms_of_use: 利用規約
     title: タイトル
     tonight: 今夜

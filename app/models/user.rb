@@ -104,6 +104,7 @@ class User < ApplicationRecord
   has_many :record_comments, class_name: "Comment", dependent: :destroy
   has_many :user_work_tags, dependent: :destroy
   has_many :work_tags, through: :user_work_tags
+  has_many :user_work_comments, dependent: :destroy
   has_many :userland_project_members, dependent: :destroy
   has_many :userland_projects, through: :userland_project_members
   has_one :email_notification, dependent: :destroy
@@ -318,10 +319,33 @@ class User < ApplicationRecord
     end
   end
 
-  def add_work_tag(work, tag_name)
-    work_tag_group = WorkTagGroup.where(name: tag_name).first_or_create
-    work_tag = WorkTag.where(name: tag_name).first_or_create(work_tag_group: work_tag_group)
-    user_work_tags.create(work: work, work_tag: work_tag)
+  def add_work_tag!(work, tag_name)
+    work_tag_group = WorkTagGroup.where(name: tag_name).first_or_create!
+    work_tag = WorkTag.where(name: tag_name, work_tag_group: work_tag_group).first_or_create!
+    user_work_tags.where(work: work, work_tag: work_tag).first_or_create!
+  end
+
+  def update_work_tag!(work, tag_names)
+    tags = tags_by_work(work)
+    removed_tag_names = tags.pluck(:name) - tag_names
+    added_tag_names = tag_names - tags.pluck(:name)
+
+    ActiveRecord::Base.transaction do
+      user_work_tags.
+        where(work: work, work_tag: WorkTag.where(name: removed_tag_names)).
+        destroy_all
+      added_tag_names.each do |tag_name|
+        add_work_tag!(work, tag_name)
+      end
+    end
+  end
+
+  def tags_by_work(work)
+    work_tags.published.merge(user_work_tags.where(work: work))
+  end
+
+  def comment_by_work(work)
+    user_work_comments.find_by(work: work)
   end
 
   private

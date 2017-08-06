@@ -1,0 +1,7 @@
+- size = local_assigns.fetch(:size, "default")
+
+.c-work-action.row
+  .col.pr-0
+    c-status-selector :work-id="#{work_id}" size="#{size}"
+  .col.col-auto.pl-zp25
+    c-impression-button :work-id="#{work_id}" size="#{size}"

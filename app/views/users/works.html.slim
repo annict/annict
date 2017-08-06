@@ -26,12 +26,13 @@
       c-share-button-facebook url="#{local_url}#{user_works_path(@user.username, params[:status_kind])}"
     - @seasons.each do |season|
       .mt-1
-        h2.h4.font-weight-bold.mb-1.ml-1
+        h2.h4.text-center.my-2.font-weight-bold
           = season.local_name
         - works = @works.by_season(season.slug).order(watchers_count: :desc)
         - if season.name == "all"
           - works = works.where(season_name: nil)
-        = render "works/grid_small", works: works
+        .c-card.pt-1.mx-1
+          = render "works/grid_small", works: works, user: current_user
     .mt-1.text-center
       = paginate @seasons
   - else
@@ -39,7 +40,11 @@
 
 = render "application/components/footer"
 
+c-impression-button-modal
+
 - content_for :js_templates do
+  = render "application/js_templates/impression_button_modal"
+  = render "application/js_templates/impression_button"
   = render "application/js_templates/share_button_facebook"
   = render "application/js_templates/share_button_twitter"
   = render "application/js_templates/status_selector"

@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 # == Schema Information
 #
 # Table name: user_work_comments
@@ -17,4 +18,8 @@
 #
 
 class UserWorkComment < ApplicationRecord
+  belongs_to :user
+  belongs_to :work
+
+  # validates :body, presence: true, length: { maximum: 150 }
 end

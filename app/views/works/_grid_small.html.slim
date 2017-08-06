@@ -1,13 +1,23 @@
+- user = local_assigns.fetch(:user, nil)
+
 .c-grid-work.c-grid-work--small.container-fluid
   .row.pl-1
     - works.each do |work|
       .col-1.p-0.pr-1.mb-1
-        .c-card
-          .row.align-items-center
-            .col-5.pr-0
-              = link_to work_path(work) do
-                = ann_image_tag work.work_image, :attachment, size: "140x140", class: "img-fluid rounded"
-            .col-7.pl-0
-              .container
-                = link_to work.decorate.local_title, work_path(work), title: work.decorate.local_title, class: "d-inline-block mb-zp5"
-                c-status-selector :work-id="#{work.id}"
+        .row
+          .col-5
+            = link_to work_path(work) do
+              = ann_image_tag work.work_image, :attachment, size: "140x140", class: "img-fluid rounded"
+          .col-7.pl-0
+            = link_to work.decorate.local_title, work_path(work), title: work.decorate.local_title, class: "d-inline-block mb-zp5"
+            = render "application/components/work_action", work_id: work.id, size: "small"
+            - if user.present?
+              - user.tags_by_work(work).each do |tag|
+                span.badge.badge-default.mr-zp25
+                  = tag.name
+        - if user.present?
+          - work_comment = user.comment_by_work(work)
+          - if work_comment.present?
+            .alert.alert-info.p-zp5.mt-zp5.mb-0
+              = icon "comment-o", class: "mr-zp25"
+              = work_comment.body

@@ -1,0 +1,7 @@
+# frozen_string_literal: true
+
+{
+  tags: @tags.pluck(:name),
+  all_tags: @all_tags.pluck(:name),
+  comment: @comment&.body
+}
