@@ -1,3 +1,5 @@
+_ = require "lodash"
+
 eventHub = require "../../common/eventHub"
 
 module.exports =
@@ -5,9 +7,9 @@ module.exports =
 
   data: ->
     workId: null
-    tags: []
-    allTags: []
-    draftTags: []
+    tagNames: []
+    allTagNames: []
+    draftTagNames: []
     comment: ""
     isLoading: false
     isSaving: false
@@ -22,16 +24,18 @@ module.exports =
         data:
           work_id: @workId
       .done (data) =>
-        {@tags, @comment} = data
-        @allTags = data.all_tags
+        @tagNames = @draftTagNames = data.tag_names
+        @allTagNames = data.all_tag_names
+        @comment = data.comment
+
         setTimeout =>
           $tagsInput = $(".js-impression-tags")
           $tagsInput.select2
             tags: true
           $tagsInput.on "select2:select", (event) =>
-            @draftTags = $(event.currentTarget).val()
+            @draftTagNames = $(event.currentTarget).val()
           $tagsInput.on "select2:unselect", (event) =>
-            @draftTags = $(event.currentTarget).val()
+            @draftTagNames = $(event.currentTarget).val()
       .fail ->
         message = gon.I18n["messages._components.impression_button.error"]
         eventHub.$emit "flash:show", message, "alert"
@@ -40,16 +44,20 @@ module.exports =
 
     save: ->
       @isSaving = true
+      @tagNames = @draftTagNames
 
       $.ajax
         method: "PATCH"
         url: "/api/internal/impression"
         data:
           work_id: @workId
-          tags: @draftTags
+          tags: @draftTagNames
           comment: @comment
-      .done (data) ->
-        location.reload()
+      .done (data) =>
+        $(".c-impression-button-modal").modal("hide")
+        eventHub.$emit "workTags:saved", @workId, data.tags
+        eventHub.$emit "workComment:saved", @workId, data.comment
+        eventHub.$emit "flash:show", gon.I18n["messages._common.updated"]
       .fail ->
         message = gon.I18n["messages._components.impression_button.error"]
         eventHub.$emit "flash:show", message, "alert"

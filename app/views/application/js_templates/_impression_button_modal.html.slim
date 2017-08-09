@@ -11,9 +11,9 @@ script#t-impression-button-modal type="x-template"
                 label for="tags"
                   = t "noun.tags"
                 .d-block
-                  select#tags.js-impression-tags v-model="tags" multiple="" style="width: 100%;"
-                    option v-for="tag in allTags"
-                      | {{ tag }}
+                  select#tags.js-impression-tags v-model="tagNames" multiple="" style="width: 100%;"
+                    option v-for="tagName in allTagNames"
+                      | {{ tagName }}
               .form-group
                 label for="comment"
                   = t "noun.comment"

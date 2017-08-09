@@ -12,23 +12,23 @@ module Api
         @comment = current_user.comment_by_work(work)
       end
 
-      def update(tags, comment, work_id)
+      def update(work_id, tags: [], comment: "")
         work = Work.find(work_id)
 
         ActiveRecord::Base.transaction do
-          current_user.update_work_tag!(work, tags)
+          current_user.update_work_tags!(work, tags)
 
-          if comment.present?
-            work_comment = current_user.user_work_comments.find_by(work: work)
-            work_comment = current_user.user_work_comments.new(work: work) if work_comment.blank?
-            work_comment.body = comment
+          work_comment = current_user.work_comments.find_by(work: work)
+          work_comment = current_user.work_comments.new(work: work) if work_comment.blank?
+
+          if comment.blank? || comment != work_comment.body
+            work_comment.body = comment.presence || ""
             work_comment.save!
           end
         end
 
-        flash[:notice] = t("messages._common.updated")
-
-        head 201
+        @tags = current_user.tags_by_work(work)
+        @comment = current_user.comment_by_work(work)
       end
     end
   end

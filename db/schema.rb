@@ -873,29 +873,6 @@ ActiveRecord::Schema.define(version: 20170803132636) do
     t.index ["name"], name: "twitter_bots_name_key", unique: true
   end
 
-  create_table "user_work_comments", force: :cascade do |t|
-    t.integer "user_id", null: false
-    t.integer "work_id", null: false
-    t.string "body", null: false
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.index ["user_id", "work_id"], name: "index_user_work_comments_on_user_id_and_work_id", unique: true
-    t.index ["user_id"], name: "index_user_work_comments_on_user_id"
-    t.index ["work_id"], name: "index_user_work_comments_on_work_id"
-  end
-
-  create_table "user_work_tags", force: :cascade do |t|
-    t.integer "user_id", null: false
-    t.integer "work_id", null: false
-    t.integer "work_tag_id", null: false
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.index ["user_id", "work_id", "work_tag_id"], name: "index_user_work_tags_on_user_id_and_work_id_and_work_tag_id", unique: true
-    t.index ["user_id"], name: "index_user_work_tags_on_user_id"
-    t.index ["work_id"], name: "index_user_work_tags_on_work_id"
-    t.index ["work_tag_id"], name: "index_user_work_tags_on_work_tag_id"
-  end
-
   create_table "userland_categories", id: :serial, force: :cascade do |t|
     t.string "name", null: false
     t.string "name_en", null: false
@@ -970,6 +947,17 @@ ActiveRecord::Schema.define(version: 20170803132636) do
     t.datetime "created_at"
   end
 
+  create_table "work_comments", force: :cascade do |t|
+    t.integer "user_id", null: false
+    t.integer "work_id", null: false
+    t.string "body", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["user_id", "work_id"], name: "index_work_comments_on_user_id_and_work_id", unique: true
+    t.index ["user_id"], name: "index_work_comments_on_user_id"
+    t.index ["work_id"], name: "index_work_comments_on_work_id"
+  end
+
   create_table "work_images", id: :serial, force: :cascade do |t|
     t.integer "work_id", null: false
     t.integer "user_id", null: false
@@ -1005,13 +993,29 @@ ActiveRecord::Schema.define(version: 20170803132636) do
     t.datetime "updated_at", null: false
   end
 
-  create_table "work_tags", force: :cascade do |t|
-    t.integer "work_tag_group_id", null: false
-    t.string "name", null: false
-    t.string "aasm_state", default: "published", null: false
-    t.integer "user_work_tags_count", default: 0, null: false
+  create_table "work_taggings", force: :cascade do |t|
+    t.integer "user_id", null: false
+    t.integer "work_id", null: false
+    t.integer "work_tag_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.index ["user_id", "work_id", "work_tag_id"], name: "index_work_taggings_on_user_id_and_work_id_and_work_tag_id", unique: true
+    t.index ["user_id"], name: "index_work_taggings_on_user_id"
+    t.index ["work_id"], name: "index_work_taggings_on_work_id"
+    t.index ["work_tag_id"], name: "index_work_taggings_on_work_tag_id"
+  end
+
+  create_table "work_tags", force: :cascade do |t|
+    t.integer "work_tag_group_id", null: false
+    t.integer "user_id", null: false
+    t.string "name", null: false
+    t.string "description"
+    t.string "aasm_state", default: "published", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["name"], name: "index_work_tags_on_name"
+    t.index ["user_id", "name"], name: "index_work_tags_on_user_id_and_name", unique: true
+    t.index ["user_id"], name: "index_work_tags_on_user_id"
     t.index ["work_tag_group_id"], name: "index_work_tags_on_work_tag_group_id"
   end
 
@@ -1148,19 +1152,20 @@ ActiveRecord::Schema.define(version: 20170803132636) do
   add_foreign_key "statuses", "users", name: "statuses_user_id_fk", on_delete: :cascade
   add_foreign_key "statuses", "works", name: "statuses_work_id_fk", on_delete: :cascade
   add_foreign_key "syobocal_alerts", "works", name: "syobocal_alerts_work_id_fk", on_delete: :cascade
-  add_foreign_key "user_work_comments", "users"
-  add_foreign_key "user_work_comments", "works"
-  add_foreign_key "user_work_tags", "users"
-  add_foreign_key "user_work_tags", "work_tags"
-  add_foreign_key "user_work_tags", "works"
   add_foreign_key "userland_project_members", "userland_projects"
   add_foreign_key "userland_project_members", "users"
   add_foreign_key "userland_projects", "userland_categories"
+  add_foreign_key "work_comments", "users"
+  add_foreign_key "work_comments", "works"
   add_foreign_key "work_images", "users"
   add_foreign_key "work_images", "works"
   add_foreign_key "work_items", "items"
   add_foreign_key "work_items", "users"
   add_foreign_key "work_items", "works"
+  add_foreign_key "work_taggings", "users"
+  add_foreign_key "work_taggings", "work_tags"
+  add_foreign_key "work_taggings", "works"
+  add_foreign_key "work_tags", "users"
   add_foreign_key "work_tags", "work_tag_groups"
   add_foreign_key "works", "number_formats"
   add_foreign_key "works", "pvs", column: "key_pv_id"
