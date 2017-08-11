@@ -1,6 +1,5 @@
 vueLazyLoad = require "../../common/vueLazyLoad"
 
-createCollectionActivity = require "./createCollectionActivity"
 createRecordActivity = require "./createRecordActivity"
 createReviewActivity = require "./createReviewActivity"
 createMultipleRecordsActivity = require "./createMultipleRecordsActivity"
@@ -21,7 +20,6 @@ module.exports =
     page: 1
 
   components:
-    "c-create-collection-activity": createCollectionActivity
     "c-create-record-activity": createRecordActivity
     "c-create-review-activity": createReviewActivity
     "c-create-multiple-records-activity": createMultipleRecordsActivity

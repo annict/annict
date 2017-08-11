@@ -25,7 +25,7 @@
       add user_path(u.username), priority: 0.9, lastmod: u.updated_at
 
       Status.kind.values.each do |k|
-        add user_works_path(u.username, k), priority: 0.8
+        add library_path(u.username, k), priority: 0.8
       end
 
       u.records.find_each do |r|

@@ -64,8 +64,6 @@ class User < ApplicationRecord
 
   has_many :activities, dependent: :destroy
   has_many :channel_works, dependent: :destroy
-  has_many :collection_items, dependent: :destroy
-  has_many :collections, dependent: :destroy
   has_many :records, class_name: "Checkin", dependent: :destroy
   has_many :db_activities, dependent: :destroy
   has_many :db_comments, dependent: :destroy
@@ -338,10 +336,6 @@ class User < ApplicationRecord
     ActiveRecord::Base.transaction do
       work_tags = WorkTag.where(name: removed_tag_names)
       work_taggings.where(work: work, work_tag: work_tags).destroy_all
-
-      work_tags.each do |wt|
-        wt.destroy if wt.work_taggings.blank?
-      end
 
       added_tag_names.map do |tag_name|
         add_work_tag!(work, tag_name)

@@ -22,7 +22,6 @@
                 span.font-weight-bold.mr-zp25 = work.watchers_count
                 span.text-muted.small Watchers
               c-status-selector :work-id="#{work.id}"
-              c-collect-button :work-id="#{work.id}"
 
           - if work.decorate.local_synopsis.present?
             .font-weight-bold.mb-zp25

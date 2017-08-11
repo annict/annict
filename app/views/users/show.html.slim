@@ -53,7 +53,7 @@
             .p-profile-header__count-text
               | Records
           .p-users-show__count.col.px-0
-            = link_to user_works_path(@user.username, :watching), class: "p-users-show__count-link" do
+            = link_to library_path(@user.username, :watching), class: "p-users-show__count-link" do
               .h3
                 = @user.latest_statuses.count_on(:watching)
               .p-profile-header__count-text
@@ -97,14 +97,6 @@
               .p-profile-header__count-text
                 = t "noun.favorite_organizations_shorten"
 
-        .row.text-center.mb-2
-          .p-users-show__count.col.px-0
-            = link_to user_collections_path(@user.username), class: "p-users-show__count-link" do
-              .h3
-                = @collections.length
-              .p-profile-header__count-text
-                | Collections
-
         - if @user.profile.description.present? || @user.profile.url.present?
           .mb-2
             h2.p-users-show__sub-title
@@ -116,34 +108,6 @@
             - if @user.profile.url.present?
               .url
                 = link_to @user.profile.decorate.shorten_url, @user.profile.url, target: "_blank"
-
-        - if @collections.exists?
-          .mb-2
-            h2.p-users-show__sub-title
-              .row.align-items-center
-                .col
-                  = icon "folder-o", class: "mr-zp5"
-                  = t "noun.collections"
-                - if @collections.length > 5
-                  .col.col-auto
-                    = link_to user_collections_path(@user.username), class: "small" do
-                      = icon "angle-right", class: "mr-zp25"
-                      = t "verb.view_all"
-            
-            .container
-              - @collections.first(5).each do |collection|
-                .row.py-1.u-underline
-                  .col.col-auto.pl-0
-                    = link_to user_collection_path(collection.user.username, collection) do
-                      = image_tag "", "v-lazy": "'#{collection.decorate.image_url(size: '70x93')}'", size: "70x93", class: "img-fluid img-thumbnail rounded c-vue-lazyload"
-                  .col.pl-0
-                    h2.h4.mb-zp5
-                      = link_to collection.title, user_collection_path(collection.user.username, collection)
-                    .small.text-muted
-                      = link_to user_collection_path(collection.user.username, collection), title: local_datetime(collection.created_at) do
-                        = local_time_ago_in_words(collection.created_at)
-                      span.ml-zp5
-                        = "#{collection.impressions_count} views"
 
         - if @reviews.exists?
           .mb-2

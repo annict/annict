@@ -1,18 +1,16 @@
-- user = local_assigns.fetch(:user, nil)
-
 .c-grid-work.c-grid-work--small.container-fluid
   .row.pl-1
     - works.each do |work|
-      .col-3.p-0.pr-1.mb-1
-        .c-card.p-1
-          .row
-            .col-5
-              = link_to work_path(work) do
+      .col-1.p-0.pr-1.mb-1
+        .c-card
+          = link_to work_path(work) do
+            .c-hover-image
+              .c-hover-image__image
                 = ann_image_tag work.work_image, :attachment, size: "140x140", class: "img-fluid rounded"
-            .col-7.pl-0
-              = link_to work.decorate.local_title, work_path(work), title: work.decorate.local_title, class: "d-inline-block mb-zp5"
-              = render "application/components/work_action", work_id: work.id, size: "small"
-              - if user.present?
-                c-work-tags :work-id="#{work.id}" :init-tags="#{build_work_tags_json(user, work)}"
-          - if user.present?
-            c-work-comment.p-zp5.mt-zp5.mb-0 :work-id="#{work.id}" init-comment="#{user.comment_by_work(work)&.body.presence || ''}"
+              .c-hover-image__over
+          .p-zp5.small
+            .row
+              .col.text-truncate
+                = link_to work.decorate.local_title, work_path(work), title: work.decorate.local_title
+              .col.col-auto.pl-0
+                c-work-detail-button :work-id="#{work.id}"

@@ -10,12 +10,12 @@ nav.c-navbar.navbar.navbar-toggleable-xl class="#{transparent ? 'navbar-dark is-
         li.nav-item
           = link_to t("head.title.programs.index"), annict_url(:programs_url), class: "nav-link"
         li.nav-item.dropdown
-          = link_to t("noun.watching"), annict_url(:user_works_url, current_user.username, :watching), class: "nav-link"
+          = link_to t("noun.watching"), annict_url(:library_url, current_user.username, :watching), class: "nav-link"
           .dropdown-menu
-            = link_to t("noun.plan_to_watch"), annict_url(:user_works_url, current_user.username, :wanna_watch), class: "dropdown-item"
-            = link_to t("noun.completed"), annict_url(:user_works_url, current_user.username, :watched), class: "dropdown-item"
-            = link_to t("noun.on_hold"), annict_url(:user_works_url, current_user.username, :on_hold), class: "dropdown-item"
-            = link_to t("noun.dropped"), annict_url(:user_works_url, current_user.username, :stop_watching), class: "dropdown-item"
+            = link_to t("noun.plan_to_watch"), annict_url(:library_url, current_user.username, :wanna_watch), class: "dropdown-item"
+            = link_to t("noun.completed"), annict_url(:library_url, current_user.username, :watched), class: "dropdown-item"
+            = link_to t("noun.on_hold"), annict_url(:library_url, current_user.username, :on_hold), class: "dropdown-item"
+            = link_to t("noun.dropped"), annict_url(:library_url, current_user.username, :stop_watching), class: "dropdown-item"
         li.nav-item.dropdown
           = link_to t("noun.current_season"), annict_url(:season_works_url, slug: ENV.fetch("ANNICT_CURRENT_SEASON")), class: "nav-link"
           .dropdown-menu

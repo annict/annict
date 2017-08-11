@@ -12,8 +12,6 @@
           = render "notifications/likes_create_record", notification: notification
         - elsif recipient.class.name == "MultipleRecord"
           = render "notifications/likes_create_multiple_records", notification: notification
-        - elsif recipient.class.name == "Collection"
-          = render "notifications/likes_create_collection", notification: notification
         - elsif recipient.class.name == "Comment"
           = render "notifications/likes_create_comment", notification: notification
         - elsif recipient.class.name == "Status"

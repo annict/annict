@@ -36,7 +36,7 @@ module.exports =
           $tagsInput.on "select2:select", (event) =>
             @tagNames = $(event.currentTarget).val()
           $tagsInput.on "select2:unselect", (event) =>
-            @tagNames = $(event.currentTarget).val()
+            @tagNames = $(event.currentTarget).val() || []
       .fail ->
         message = gon.I18n["messages._components.impression_button.error"]
         eventHub.$emit "flash:show", message, "alert"

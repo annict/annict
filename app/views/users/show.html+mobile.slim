@@ -51,7 +51,7 @@
         .small
           | Records
       .p-users-show__count.col.px-0
-        = link_to user_works_path(@user.username, :watching), class: "p-users-show__count-link" do
+        = link_to library_path(@user.username, :watching), class: "p-users-show__count-link" do
           .h3.mb-zp25
             = @user.latest_statuses.count_on(:watching)
           .small
@@ -94,14 +94,6 @@
             = @favorite_organizations.length
           .small
             = t "noun.favorite_organizations_shorten"
-
-    .row
-      .p-users-show__count.col.px-0
-        = link_to user_collections_path(@user.username), class: "p-users-show__count-link" do
-          .h3.mb-zp25
-            = @collections.length
-          .small
-            | Collections
 
 .mt-1.mb-2
   c-activities username="#{@user.username}"

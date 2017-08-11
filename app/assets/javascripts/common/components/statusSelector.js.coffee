@@ -22,7 +22,6 @@ module.exports =
 
     size:
       type: String
-      required: true
       default: "default"
 
     isTransparent:
