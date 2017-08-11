@@ -9,7 +9,7 @@ module.exports =
     workId: null
     tagNames: []
     allTagNames: []
-    draftTagNames: []
+    popularTagNames: []
     comment: ""
     isLoading: false
     isSaving: false
@@ -24,8 +24,9 @@ module.exports =
         data:
           work_id: @workId
       .done (data) =>
-        @tagNames = @draftTagNames = data.tag_names
+        @tagNames = data.tag_names
         @allTagNames = data.all_tag_names
+        @popularTagNames = data.popular_tag_names
         @comment = data.comment
 
         setTimeout =>
@@ -33,25 +34,35 @@ module.exports =
           $tagsInput.select2
             tags: true
           $tagsInput.on "select2:select", (event) =>
-            @draftTagNames = $(event.currentTarget).val()
+            @tagNames = $(event.currentTarget).val()
           $tagsInput.on "select2:unselect", (event) =>
-            @draftTagNames = $(event.currentTarget).val()
+            @tagNames = $(event.currentTarget).val()
       .fail ->
         message = gon.I18n["messages._components.impression_button.error"]
         eventHub.$emit "flash:show", message, "alert"
       .always =>
         @isLoading = false
 
+    add: (tagName) ->
+      $tagsInput = $(".js-impression-tags")
+
+      @allTagNames.push(tagName)
+      @allTagNames = _.uniq(@allTagNames)
+      @tagNames.push(tagName)
+      @tagNames = _.uniq(@tagNames)
+
+      $tagsInput.val(@tagNames)
+      $tagsInput.trigger("change")
+
     save: ->
       @isSaving = true
-      @tagNames = @draftTagNames
 
       $.ajax
         method: "PATCH"
         url: "/api/internal/impression"
         data:
           work_id: @workId
-          tags: @draftTagNames
+          tags: @tagNames
           comment: @comment
       .done (data) =>
         $(".c-impression-button-modal").modal("hide")

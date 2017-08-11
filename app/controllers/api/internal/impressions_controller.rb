@@ -9,6 +9,7 @@ module Api
         work = Work.find(work_id)
         @tags = current_user.tags_by_work(work)
         @all_tags = current_user.work_tags.published
+        @popular_tags = WorkTag.published.popular_tags(work).limit(10)
         @comment = current_user.comment_by_work(work)
       end
 

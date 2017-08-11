@@ -35,4 +35,12 @@ class WorkTag < ApplicationRecord
   belongs_to :work_tag_group
   belongs_to :user
   has_many :work_taggings, dependent: :destroy
+
+  scope :popular_tags, ->(work) {
+    where(work_taggings: { work: work }).
+      left_joins(:work_taggings).
+      group(:id).
+      select("work_tags.*, COUNT(work_taggings.id) work_taggings_count").
+      order("work_taggings_count DESC")
+  }
 end

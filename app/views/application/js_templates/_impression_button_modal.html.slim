@@ -14,10 +14,21 @@ script#t-impression-button-modal type="x-template"
                   select#tags.js-impression-tags v-model="tagNames" multiple="" style="width: 100%;"
                     option v-for="tagName in allTagNames"
                       | {{ tagName }}
-              .form-group
+                template v-if="popularTagNames.length > 0"
+                  .small.mt-zp5
+                    = t "noun.popular_tags"
+                  span.u-cursor-pointer.mr-zp25.badge.badge-default v-for="tagName in popularTagNames" @click="add(tagName)"
+                    = icon "plus", class: "mr-zp25"
+                    | {{ tagName }}
+              .form-group.mt-2
                 label for="comment"
                   = t "noun.comment"
-                input#comment.form-control type="text" v-model="comment"
+                input#comment.form-control type="text" v-model="comment" name="comment"
+                .text-right.text-muted.small
+                  c-input-words-count :max-words-count="150" :init-words-count="comment ? comment.length : 0" input-name="comment"
               .text-center
                 button.btn.btn-primary :class='{ "c-spinner": isSaving }'
                   = t "verb.update"
+
+- content_for :js_templates do
+  = render "application/js_templates/input_words_count"
