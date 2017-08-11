@@ -3,21 +3,17 @@
 #
 # Table name: work_tags
 #
-#  id                :integer          not null, primary key
-#  work_tag_group_id :integer          not null
-#  user_id           :integer          not null
-#  name              :string           not null
-#  description       :string
-#  aasm_state        :string           default("published"), not null
-#  created_at        :datetime         not null
-#  updated_at        :datetime         not null
+#  id                  :integer          not null, primary key
+#  name                :string           not null
+#  aasm_state          :string           default("published"), not null
+#  work_taggings_count :integer          default(0), not null
+#  created_at          :datetime         not null
+#  updated_at          :datetime         not null
 #
 # Indexes
 #
-#  index_work_tags_on_name               (name)
-#  index_work_tags_on_user_id            (user_id)
-#  index_work_tags_on_user_id_and_name   (user_id,name) UNIQUE
-#  index_work_tags_on_work_tag_group_id  (work_tag_group_id)
+#  index_work_tags_on_name                 (name) UNIQUE
+#  index_work_tags_on_work_taggings_count  (work_taggings_count)
 #
 
 class WorkTag < ApplicationRecord
@@ -32,8 +28,6 @@ class WorkTag < ApplicationRecord
     end
   end
 
-  belongs_to :work_tag_group
-  belongs_to :user
   has_many :work_taggings, dependent: :destroy
 
   scope :popular_tags, ->(work) {
@@ -41,6 +35,6 @@ class WorkTag < ApplicationRecord
       left_joins(:work_taggings).
       group(:id).
       select("work_tags.*, COUNT(work_taggings.id) work_taggings_count").
-      order("work_taggings_count DESC")
+      order("work_tags.work_taggings_count DESC")
   }
 end

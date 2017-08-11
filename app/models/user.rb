@@ -103,8 +103,7 @@ class User < ApplicationRecord
   has_many :reactions, dependent: :destroy
   has_many :record_comments, class_name: "Comment", dependent: :destroy
   has_many :work_taggings, dependent: :destroy
-  has_many :tagged_works, through: :work_taggings
-  has_many :work_tags, dependent: :destroy
+  has_many :work_tags, -> { distinct }, through: :work_taggings
   has_many :work_comments, dependent: :destroy
   has_many :userland_project_members, dependent: :destroy
   has_many :userland_projects, through: :userland_project_members
@@ -324,8 +323,7 @@ class User < ApplicationRecord
     work_tag = nil
 
     ActiveRecord::Base.transaction do
-      work_tag_group = WorkTagGroup.where(name: tag_name).first_or_create!
-      work_tag = work_tags.where(name: tag_name, work_tag_group: work_tag_group).first_or_create!
+      work_tag = WorkTag.where(name: tag_name).first_or_create!
       work_taggings.where(work: work, work_tag: work_tag).first_or_create!
     end
 

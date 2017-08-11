@@ -3,6 +3,6 @@
 {
   tag_names: @tags.pluck(:name),
   all_tag_names: @all_tags.pluck(:name),
-  popular_tag_names: @popular_tags.map(&:name) - @tags.pluck(:name),
+  popular_tag_names: @popular_tags.pluck(:name) - @tags.pluck(:name),
   comment: @comment&.body
 }

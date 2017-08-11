@@ -6,8 +6,7 @@ namespace :tmp do
       Collection.find_each do |c|
         puts "collection: #{c.id}"
 
-        work_tag_group = WorkTagGroup.where(name: c.title).first_or_create!
-        work_tag = c.user.work_tags.where(name: c.title, work_tag_group: work_tag_group).first_or_create!(description: c.description)
+        work_tag = WorkTag.where(name: c.title).first_or_create!
 
         c.collection_items.each do |ci|
           c.user.work_taggings.where(work: ci.work, work_tag: work_tag).first_or_create!

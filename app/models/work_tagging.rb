@@ -21,5 +21,5 @@
 class WorkTagging < ApplicationRecord
   belongs_to :user
   belongs_to :work
-  belongs_to :work_tag
+  belongs_to :work_tag, counter_cache: true
 end
