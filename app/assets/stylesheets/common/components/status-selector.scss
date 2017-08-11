@@ -23,6 +23,7 @@
   &.is-small {
     .c-status-selector__object {
       > select {
+        font-size: .85rem;
         height: 27px;
       }
 
