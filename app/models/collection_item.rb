@@ -40,7 +40,7 @@ class CollectionItem < ApplicationRecord
   belongs_to :user
   belongs_to :collection, touch: true
   belongs_to :work
-  has_many :reactions
+  has_many :reactions, dependent: :destroy
 
   validates :title, presence: true, length: { maximum: 50 }
   validates :comment, length: { maximum: 1000 }
