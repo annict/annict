@@ -23,7 +23,7 @@ script#t-impression-button-modal type="x-template"
               .form-group.mt-2
                 label for="comment"
                   = t "noun.comment"
-                input#comment.form-control type="text" v-model="comment" name="comment"
+                textarea#comment.form-control type="text" rows="3" v-model="comment" name="comment"
                 .text-right.text-muted.small
                   c-input-words-count :max-words-count="150" :init-words-count="comment ? comment.length : 0" input-name="comment"
               .text-center
