@@ -1,34 +1,34 @@
 # frozen_string_literal: true
-
 # == Schema Information
 #
 # Table name: users
 #
-#  id                      :integer          not null, primary key
-#  username                :string(510)      not null
-#  email                   :string(510)      not null
-#  role                    :integer          not null
-#  encrypted_password      :string(510)      default(""), not null
-#  remember_created_at     :datetime
-#  sign_in_count           :integer          default(0), not null
-#  current_sign_in_at      :datetime
-#  last_sign_in_at         :datetime
-#  current_sign_in_ip      :string(510)
-#  last_sign_in_ip         :string(510)
-#  confirmation_token      :string(510)
-#  confirmed_at            :datetime
-#  confirmation_sent_at    :datetime
-#  unconfirmed_email       :string(510)
-#  checkins_count          :integer          default(0), not null
-#  notifications_count     :integer          default(0), not null
-#  created_at              :datetime
-#  updated_at              :datetime
-#  time_zone               :string           not null
-#  locale                  :string           not null
-#  reset_password_token    :string
-#  reset_password_sent_at  :datetime
-#  record_cache_expired_at :datetime
-#  status_cache_expired_at :datetime
+#  id                        :integer          not null, primary key
+#  username                  :string(510)      not null
+#  email                     :string(510)      not null
+#  role                      :integer          not null
+#  encrypted_password        :string(510)      default(""), not null
+#  remember_created_at       :datetime
+#  sign_in_count             :integer          default(0), not null
+#  current_sign_in_at        :datetime
+#  last_sign_in_at           :datetime
+#  current_sign_in_ip        :string(510)
+#  last_sign_in_ip           :string(510)
+#  confirmation_token        :string(510)
+#  confirmed_at              :datetime
+#  confirmation_sent_at      :datetime
+#  unconfirmed_email         :string(510)
+#  checkins_count            :integer          default(0), not null
+#  notifications_count       :integer          default(0), not null
+#  created_at                :datetime
+#  updated_at                :datetime
+#  time_zone                 :string           not null
+#  locale                    :string           not null
+#  reset_password_token      :string
+#  reset_password_sent_at    :datetime
+#  record_cache_expired_at   :datetime
+#  status_cache_expired_at   :datetime
+#  work_tag_cache_expired_at :datetime
 #
 # Indexes
 #
@@ -323,6 +323,7 @@ class User < ApplicationRecord
     ActiveRecord::Base.transaction do
       work_tag = WorkTag.where(name: tag_name).first_or_create!
       work_taggings.where(work: work, work_tag: work_tag).first_or_create!
+      touch(:work_tag_cache_expired_at)
     end
 
     work_tag
@@ -344,11 +345,15 @@ class User < ApplicationRecord
   end
 
   def tags_by_work(work)
-    work_tags.published.joins(:work_taggings).merge(work_taggings.where(work: work))
+    Rails.cache.fetch([id, work_tag_cache_expired_at, work.id]) do
+      work_tags.published.joins(:work_taggings).merge(work_taggings.where(work: work))
+    end
   end
 
   def comment_by_work(work)
-    work_comments.find_by(work: work)
+    Rails.cache.fetch([id, work_comment_cache_expired_at, work.id]) do
+      work_comments.find_by(work: work)
+    end
   end
 
   private

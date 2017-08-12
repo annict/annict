@@ -25,6 +25,7 @@ module Api
           if comment.blank? || comment != work_comment.body
             work_comment.body = comment.presence || ""
             work_comment.save!
+            current_user.touch(:work_comment_cache_expired_at)
           end
         end
 
