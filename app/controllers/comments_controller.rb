@@ -31,6 +31,7 @@ class CommentsController < ApplicationController
     @user = @record.user
     @comment = @record.comments.new(comment)
     @comment.user = current_user
+    @comment.work = @record.work
 
     if @comment.save
       redirect_to record_path(@user.username, @record),
