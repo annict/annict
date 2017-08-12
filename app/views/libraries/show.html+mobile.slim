@@ -1,10 +1,10 @@
 - action = t("enumerize.status.kind_action.#{params[:status_kind]}")
-- title = t "head.title.users.works", profile_name: @user.profile.name, username: @user.username, action: action
-- description = meta_description(t("head.meta.description.users.works", profile_name: @user.profile.name, username: @user.username, action: action))
+- title = t "head.title.libraries.show", profile_name: @user.profile.name, username: @user.username, action: action
+- description = meta_description(t("head.meta.description.libraries.show", profile_name: @user.profile.name, username: @user.username, action: action))
 - keywords = meta_keywords(@user.profile.name, @user.username)
 - image_url = ann_image_url(@user.profile, :tombo_avatar, size: "640x")
 - set_meta_tags(title: title, description: description, keywords: keywords, og: { description: description }, twitter: { description: description }, reverse: true, prefix: false)
-- set_page_category "users_works"
+- set_page_category "libraries_show"
 
 = render "users/low_profile_header", user: @user
 
@@ -24,25 +24,30 @@
     c-share-button-facebook url="#{local_url}#{library_path(@user.username, params[:status_kind])}"
   .mb-2
     - @seasons.each do |season|
-      .mt-1
-        h3.h4.font-weight-bold.mb-1.ml-1
+      .mt-2
+        h3.h4.font-weight-bold.mb-2.ml-1.text-center
           = season.local_name
         - works = @works.by_season(season.slug).order(watchers_count: :desc)
         - if season.name == "all"
           - works = works.where(season_name: nil)
-        = render "works/grid_small", works: works
+        = render "libraries/work", works: works, user: @user
     .text-center.mt-1
       = paginate @seasons, window: 2
 - else
   = render "application/components/empty", text: t("messages.users.no_works")
 
+= render "application/components/footer"
 = render "application/components/tabbar"
 
-c-work-detail-button-modal
+c-impression-button-modal
 
 - content_for :js_templates do
+  = render "application/js_templates/impression_button_modal"
+  = render "application/js_templates/impression_button"
   = render "application/js_templates/share_button_facebook"
   = render "application/js_templates/share_button_twitter"
   = render "application/js_templates/status_selector"
+  = render "application/js_templates/work_comment"
   = render "application/js_templates/work_detail_button_modal"
   = render "application/js_templates/work_detail_button"
+  = render "application/js_templates/work_tags"
