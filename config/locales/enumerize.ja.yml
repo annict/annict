@@ -54,6 +54,10 @@ ja:
         watched: 見た
         on_hold: 中断した
         stop_watching: 中止した
+    streaming_link:
+      locale:
+        en: 英語
+        ja: 日本語
     user:
       role:
         admin: 管理者

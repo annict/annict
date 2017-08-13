@@ -38,6 +38,7 @@ ja:
       no_staffs: スタッフはいません
       no_series: シリーズはありません
       no_series_works: シリーズ作品はありません
+      no_streaming_links: 登録されていません
     _validators:
       and_other_are_required: と%{column_name}は両方入力してください
       is_required_true_or_false: には `true` または `false` を指定してください

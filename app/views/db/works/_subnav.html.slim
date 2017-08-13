@@ -9,6 +9,9 @@
     = active_link_to db_work_programs_path(work), class: "c-subnav__link", class_active: "c-subnav__link--active", active: params[:controller]  == "db/programs" do
       .c-subnav__item
         = Program.model_name.human(count: 2)
+  = active_link_to db_work_streaming_links_path(work), class: "c-subnav__link", class_active: "c-subnav__link--active", active: params[:controller]  == "db/streaming_links" do
+      .c-subnav__item
+        = t "head.title.db.streaming_links.index"
   = active_link_to db_work_casts_path(work), class: "c-subnav__link", class_active: "c-subnav__link--active", active: params[:controller]  == "db/casts" do
     .c-subnav__item
       = Cast.model_name.human(count: 2)

@@ -58,7 +58,7 @@ en:
         rows: PVs
       db/series_work_rows_form:
         rows: Series Works
-      db/staff_rows_form:
+      db/ws_form:
         rows: Staffs
     errors:
       forms:
@@ -71,5 +71,7 @@ en:
           invalid_start_time: "have invalid start time"
         db/staff_rows_form:
           invalid: "are invalid: %{value} is not found"
+        db/streaming_link_rows_form:
+          rows: Streaming Links
         db/series_work_rows_form:
           invalid: "are invalid: %{value} is not found"

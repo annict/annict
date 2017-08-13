@@ -92,6 +92,8 @@ en:
       there_are_no_staffs: There are no staff
       unpublished: Staff unpublished
       updated: Staff updated
+    streaming_link:
+      new_streaming_links: New Link
     user:
       is_wrong: is wrong
     userland_project:
