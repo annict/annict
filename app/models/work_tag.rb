@@ -28,6 +28,7 @@ class WorkTag < ApplicationRecord
     end
   end
 
+  has_many :work_taggables, dependent: :destroy
   has_many :work_taggings, dependent: :destroy
 
   scope :popular_tags, ->(work) {

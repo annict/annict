@@ -7,6 +7,7 @@ namespace :tmp do
         puts "collection: #{c.id}"
 
         work_tag = WorkTag.where(name: c.title).first_or_create!
+        c.user.work_taggables.where(work_tag: work_tag, description: c.description).first_or_create!
 
         c.collection_items.each do |ci|
           c.user.work_taggings.where(work: ci.work, work_tag: work_tag).first_or_create!

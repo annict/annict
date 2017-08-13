@@ -12,6 +12,9 @@ module.exports =
     initTags:
       type: Array
       required: true
+    path:
+      type: String
+      required: true
 
   data: ->
     tags: @initTags

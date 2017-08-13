@@ -333,6 +333,7 @@ Rails.application.routes.draw do
     resources :favorite_characters, only: %i(index)
     resources :favorite_organizations, only: %i(index)
     resources :favorite_people, only: %i(index)
+    resources :tags, only: %i(show), controller: :user_work_tags, as: :user_work_tag
 
     resources :records, only: %i(create show edit update destroy) do
       resources :comments, only: %i(create)

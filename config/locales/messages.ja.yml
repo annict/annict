@@ -206,6 +206,8 @@ ja:
       skip_episode_confirmation: このエピソードをスキップして、次のエピソードを表示しますか？
       see_records: 記録を見る
       tracked: 記録しました
+    user_work_tags:
+      anime_list_tagged: "「%{tag_name}」タグを付けたアニメ"
     userland:
       description: Userlandは、Annictを便利に使うために有志によって作られたアプリケーションなどが探せる場です。Annict APIを使用して何か作った方は、「新規プロジェクト」から登録頂けるとありがたいです。
       description_mobile: Userlandは、Annictを便利に使うために有志によって作られたアプリケーションなどが探せる場です。

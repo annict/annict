@@ -1,5 +1,5 @@
 script#t-work-tags type="x-template"
   .c-work-tags
     template v-for="tag in tags"
-      span.badge.badge-default.mr-zp25
+      a.badge.badge-default.mr-zp25 :href='path + "/" + tag.name'
         | {{ tag.name }}

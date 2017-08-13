@@ -205,6 +205,8 @@ ja:
         index: アニメ「%{title}」のスタッフ一覧
       tracks:
         show: 記録する
+      user_work_tags:
+        show: "%{profile_name} (%{username})が「%{tag_name}」タグを付けた作品"
       userland:
         home:
           index: Userland

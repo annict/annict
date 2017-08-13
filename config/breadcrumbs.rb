@@ -101,3 +101,13 @@ crumb :episode_detail do |episode|
   link episode.decorate.title_with_number, work_episode_path(episode.work, episode)
   parent :work_detail, episode.work
 end
+
+crumb :user_work_tag_list do |user|
+  link t("noun.tags")
+  parent :user_detail, user
+end
+
+crumb :user_work_tag_detail do |user, tag|
+  link tag.name, user_work_tag_path(user.username, tag.name)
+  parent :user_work_tag_list, user
+end

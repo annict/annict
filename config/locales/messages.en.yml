@@ -206,6 +206,8 @@ en:
       skip_episode_confirmation: Are you sure to skip this episode and show next episode?
       see_records: See records
       tracked: Your record has been tracked.
+    user_work_tags:
+      anime_list_tagged: "Anime list tagged '%{tag_name}'"
     userland:
       description: Userland is the place to discover 3rd party applications which uses Annict API.
       description_mobile: Userland is the place to discover 3rd party applications which uses Annict API.

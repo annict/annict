@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170812162147) do
+ActiveRecord::Schema.define(version: 20170813054530) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -934,6 +934,7 @@ ActiveRecord::Schema.define(version: 20170812162147) do
     t.datetime "record_cache_expired_at"
     t.datetime "status_cache_expired_at"
     t.datetime "work_tag_cache_expired_at"
+    t.datetime "work_comment_cache_expired_at"
     t.index ["confirmation_token"], name: "users_confirmation_token_key", unique: true
     t.index ["email"], name: "users_email_key", unique: true
     t.index ["username"], name: "users_username_key", unique: true
@@ -985,6 +986,17 @@ ActiveRecord::Schema.define(version: 20170812162147) do
     t.index ["user_id"], name: "index_work_items_on_user_id"
     t.index ["work_id", "item_id"], name: "index_work_items_on_work_id_and_item_id", unique: true
     t.index ["work_id"], name: "index_work_items_on_work_id"
+  end
+
+  create_table "work_taggables", force: :cascade do |t|
+    t.integer "user_id", null: false
+    t.integer "work_tag_id", null: false
+    t.string "description"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["user_id", "work_tag_id"], name: "index_work_taggables_on_user_id_and_work_tag_id", unique: true
+    t.index ["user_id"], name: "index_work_taggables_on_user_id"
+    t.index ["work_tag_id"], name: "index_work_taggables_on_work_tag_id"
   end
 
   create_table "work_taggings", force: :cascade do |t|
@@ -1152,6 +1164,8 @@ ActiveRecord::Schema.define(version: 20170812162147) do
   add_foreign_key "work_items", "items"
   add_foreign_key "work_items", "users"
   add_foreign_key "work_items", "works"
+  add_foreign_key "work_taggables", "users"
+  add_foreign_key "work_taggables", "work_tags"
   add_foreign_key "work_taggings", "users"
   add_foreign_key "work_taggings", "work_tags"
   add_foreign_key "work_taggings", "works"
