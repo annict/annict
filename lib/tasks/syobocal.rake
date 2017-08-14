@@ -29,25 +29,17 @@ namespace :syobocal do
   end
 
   task save_channels: :environment do
-    doc = Nokogiri::XML(open('http://cal.syoboi.jp/db.php?Command=ChLookup'))
-    doc.css('ChItem').each do |item|
-      sc_chgid = item.xpath('ChGID').text
+    doc = Nokogiri::XML(open("http://cal.syoboi.jp/db.php?Command=ChLookup"))
+    doc.css("ChItem").each do |item|
+      sc_chgid = item.xpath("ChGID").text
       channel_group = ChannelGroup.find_by(sc_chgid: sc_chgid)
 
-      if channel_group.present?
-        conditions = {
-          sc_chid: item.xpath('ChID').text,
-          name:    item.xpath('ChName').text
-        }
+      next if channel_group.blank?
 
-        if channel_group.channels.where(conditions).blank?
-          channel = channel_group.channels.create(conditions)
+      sc_chid = item.xpath("ChID").text
+      name = item.xpath("ChName").text
 
-          puts "channelを作成しました。name: #{channel.name}"
-        end
-      else
-        puts 'new!!'
-      end
+      channel_group.channels.where(sc_chid: sc_chid).first_or_create(name: name)
     end
   end
 

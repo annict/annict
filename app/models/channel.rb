@@ -19,10 +19,26 @@
 #
 
 class Channel < ApplicationRecord
-  belongs_to :channel_group
-  has_many :programs
+  include AASM
 
-  scope(:published, -> { where(published: true) })
+  aasm do
+    state :published, initial: true
+    state :hidden
+
+    event :hide do
+      after do
+        program_details.published.each(&:hide!)
+      end
+
+      transitions from: :published, to: :hidden
+    end
+  end
+
+  belongs_to :channel_group
+  has_many :program_details, dependent: :destroy
+  has_many :programs, dependent: :destroy
+
+  scope :with_streaming_service, -> { where(streaming_service: true) }
 
   def self.fastest(work)
     receivable_channel_ids = pluck(:id)
