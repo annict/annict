@@ -341,6 +341,13 @@ class User < ApplicationRecord
       work_tags = WorkTag.where(name: removed_tag_names)
       work_taggings.where(work: work, work_tag: work_tags).destroy_all
 
+      work_tags.each do |work_tag|
+        unless work_taggings.where(work_tag: work_tag).exists?
+          taggable = work_taggables.find_by(work_tag: work_tag)
+          taggable.destroy if taggable.present?
+        end
+      end
+
       added_tag_names.map do |tag_name|
         add_work_tag!(work, tag_name)
       end
