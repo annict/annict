@@ -1,0 +1,14 @@
+- works.each do |work|
+  .c-card.p-1.mb-1
+    .row
+      .col-5
+        = link_to work_path(work) do
+          = ann_image_tag work.work_image, :attachment, size: "140x140", class: "img-fluid rounded"
+      .col-7.pl-0
+        = link_to work.decorate.local_title, work_path(work), title: work.decorate.local_title, class: "d-inline-block"
+        - if !user_signed_in? || current_user.id == user.id
+          .mt-zp5
+            = render "application/components/work_action", work_id: work.id, size: "small"
+        c-work-tags :work-id="#{work.id}" :init-tags="#{build_work_tags_json(user, work)}" path="/@#{user.username}/tags"
+    - comment = user.comment_by_work(work)
+    c-work-comment.p-zp5.mt-zp5.mb-0 :work-id="#{work.id}" init-comment="#{comment.present? ? comment.body : ''}"

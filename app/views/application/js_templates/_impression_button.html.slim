@@ -1,0 +1,4 @@
+script#t-impression-button type="x-template"
+  .c-impression-button
+    .btn.u-btn-outline-green @click="openModal" :class='{ "btn-sm": size === "small" }'
+      = icon "ellipsis-h", class: "mr-0"

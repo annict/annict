@@ -8,8 +8,6 @@ ja:
         characters:
           index: アニメ「%{title}」のキャラクターをチェック！
           show: Annictで%{name}をチェック！
-        collections:
-          index: みんなが作ったコレクションをチェック！
         episodes:
           index: アニメ「%{title}」のエピソードをチェック！
           show: アニメ「%{work_title}」%{episode_title_with_number}の感想をチェック!
@@ -19,6 +17,8 @@ ja:
           index: "%{profile_name} (%{username})のお気に入りの団体をチェック！"
         favorite_people:
           index: "%{profile_name} (%{username})のお気に入りの人物をチェック！"
+        libraries:
+          show: "%{profile_name} (%{username})の%{action}アニメをチェック！"
         organization_fans:
           index: "%{organization_name}のファンをチェック！"
         organizations:
@@ -38,14 +38,10 @@ ja:
           new: おかえりなさい！
         staffs:
           index: "アニメ「%{title}」のスタッフ情報をチェック！"
-        user_collections:
-          index: "%{profile_name} (%{username})さんのコレクションをチェック！"
-          show: "%{collection_description}"
         users:
           followers: Check out %{profile_name} (%{username})'s profile!
           following: Check out %{profile_name} (%{username})'s profile!
           show: Check out %{profile_name} (%{username})'s profile!
-          works: Check out %{profile_name} (%{username})'s profile!
         works:
           popular: 人気アニメをチェック！
           season: "%{name}アニメをチェック！"
@@ -66,8 +62,6 @@ ja:
         show: "%{name}"
       character_fans:
         index: "%{character_name}のファン一覧"
-      collections:
-        index: みんなのコレクション
       comments:
         edit: コメント編集
       db:
@@ -149,6 +143,8 @@ ja:
       home:
         index: Annict
         index_guest: 見たアニメを記録して、共有しよう
+      libraries:
+        show: "%{profile_name} (%{username})が%{action}アニメ"
       mutes:
         index: ミュート
       notifications:
@@ -209,9 +205,8 @@ ja:
         index: アニメ「%{title}」のスタッフ一覧
       tracks:
         show: 記録する
-      user_collections:
-        index: "%{profile_name} (%{username})さんのコレクション"
-        show: "%{collection_title} by %{profile_name} (%{username})"
+      user_work_tags:
+        show: "%{profile_name} (%{username})が「%{tag_name}」タグを付けた作品"
       userland:
         home:
           index: Userland
@@ -223,7 +218,6 @@ ja:
         followers: "%{profile_name} (%{username})をフォローしている人"
         following: "%{profile_name} (%{username})がフォローしている人"
         show: "%{profile_name} (%{username})"
-        works: "%{profile_name} (%{username})が%{action}アニメ"
       work_items:
         index: アニメ「%{work_title}」の関連商品
         new: 商品登録

@@ -51,7 +51,8 @@ module Gonable
     end
 
     {
-      "messages.registrations.new.username_preview": username_preview_val
+      "messages.registrations.new.username_preview": username_preview_val,
+      "messages._common.updated": I18n.t("messages._common.updated")
     }
   end
 end

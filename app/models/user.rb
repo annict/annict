@@ -1,34 +1,35 @@
 # frozen_string_literal: true
-
 # == Schema Information
 #
 # Table name: users
 #
-#  id                      :integer          not null, primary key
-#  username                :string(510)      not null
-#  email                   :string(510)      not null
-#  role                    :integer          not null
-#  encrypted_password      :string(510)      default(""), not null
-#  remember_created_at     :datetime
-#  sign_in_count           :integer          default(0), not null
-#  current_sign_in_at      :datetime
-#  last_sign_in_at         :datetime
-#  current_sign_in_ip      :string(510)
-#  last_sign_in_ip         :string(510)
-#  confirmation_token      :string(510)
-#  confirmed_at            :datetime
-#  confirmation_sent_at    :datetime
-#  unconfirmed_email       :string(510)
-#  checkins_count          :integer          default(0), not null
-#  notifications_count     :integer          default(0), not null
-#  created_at              :datetime
-#  updated_at              :datetime
-#  time_zone               :string           not null
-#  locale                  :string           not null
-#  reset_password_token    :string
-#  reset_password_sent_at  :datetime
-#  record_cache_expired_at :datetime
-#  status_cache_expired_at :datetime
+#  id                            :integer          not null, primary key
+#  username                      :string(510)      not null
+#  email                         :string(510)      not null
+#  role                          :integer          not null
+#  encrypted_password            :string(510)      default(""), not null
+#  remember_created_at           :datetime
+#  sign_in_count                 :integer          default(0), not null
+#  current_sign_in_at            :datetime
+#  last_sign_in_at               :datetime
+#  current_sign_in_ip            :string(510)
+#  last_sign_in_ip               :string(510)
+#  confirmation_token            :string(510)
+#  confirmed_at                  :datetime
+#  confirmation_sent_at          :datetime
+#  unconfirmed_email             :string(510)
+#  checkins_count                :integer          default(0), not null
+#  notifications_count           :integer          default(0), not null
+#  created_at                    :datetime
+#  updated_at                    :datetime
+#  time_zone                     :string           not null
+#  locale                        :string           not null
+#  reset_password_token          :string
+#  reset_password_sent_at        :datetime
+#  record_cache_expired_at       :datetime
+#  status_cache_expired_at       :datetime
+#  work_tag_cache_expired_at     :datetime
+#  work_comment_cache_expired_at :datetime
 #
 # Indexes
 #
@@ -64,8 +65,6 @@ class User < ApplicationRecord
 
   has_many :activities, dependent: :destroy
   has_many :channel_works, dependent: :destroy
-  has_many :collection_items, dependent: :destroy
-  has_many :collections, dependent: :destroy
   has_many :records, class_name: "Checkin", dependent: :destroy
   has_many :db_activities, dependent: :destroy
   has_many :db_comments, dependent: :destroy
@@ -102,6 +101,10 @@ class User < ApplicationRecord
     source: :application
   has_many :reactions, dependent: :destroy
   has_many :record_comments, class_name: "Comment", dependent: :destroy
+  has_many :work_taggables, dependent: :destroy
+  has_many :work_taggings, dependent: :destroy
+  has_many :work_tags, through: :work_taggables
+  has_many :work_comments, dependent: :destroy
   has_many :userland_project_members, dependent: :destroy
   has_many :userland_projects, through: :userland_project_members
   has_one :email_notification, dependent: :destroy
@@ -313,6 +316,53 @@ class User < ApplicationRecord
     when CollectionItem
       reactions = reactions.where(collection_item: resource)
       reactions.destroy_all
+    end
+  end
+
+  def add_work_tag!(work, tag_name)
+    work_tag = nil
+
+    ActiveRecord::Base.transaction do
+      work_tag = WorkTag.where(name: tag_name).first_or_create!
+      work_taggables.where(work_tag: work_tag).first_or_create!
+      work_taggings.where(work: work, work_tag: work_tag).first_or_create!
+      touch(:work_tag_cache_expired_at)
+    end
+
+    work_tag
+  end
+
+  def update_work_tags!(work, tag_names)
+    tags = tags_by_work(work)
+    removed_tag_names = tags.pluck(:name) - tag_names
+    added_tag_names = tag_names - tags.pluck(:name)
+
+    ActiveRecord::Base.transaction do
+      work_tags = WorkTag.where(name: removed_tag_names)
+      work_taggings.where(work: work, work_tag: work_tags).destroy_all
+
+      work_tags.each do |work_tag|
+        unless work_taggings.where(work_tag: work_tag).exists?
+          taggable = work_taggables.find_by(work_tag: work_tag)
+          taggable.destroy if taggable.present?
+        end
+      end
+
+      added_tag_names.map do |tag_name|
+        add_work_tag!(work, tag_name)
+      end
+    end
+  end
+
+  def tags_by_work(work)
+    Rails.cache.fetch([id, work_tag_cache_expired_at, work.id, :tags]) do
+      work_tags.published.joins(:work_taggings).merge(work_taggings.where(work: work))
+    end
+  end
+
+  def comment_by_work(work)
+    Rails.cache.fetch([id, work_comment_cache_expired_at, work.id, :comment]) do
+      work_comments.find_by(work: work)
     end
   end
 

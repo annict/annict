@@ -25,8 +25,6 @@ document.addEventListener "turbolinks:load", (event) ->
   body = require "./common/components/body"
   channelReceiveButton = require "./common/components/channelReceiveButton"
   channelSelector = require "./common/components/channelSelector"
-  collectButton = require "./common/components/collectButton"
-  collectButtonModal = require "./common/components/collectButtonModal"
   commentGuard = require "./common/components/commentGuard"
   episodeList = require "./common/components/episodeList"
   episodeProgress = require "./common/components/episodeProgress"
@@ -35,6 +33,8 @@ document.addEventListener "turbolinks:load", (event) ->
   favoriteButton = require "./common/components/favoriteButton"
   flash = require "./common/components/flash"
   followButton = require "./common/components/followButton"
+  impressionButton = require "./common/components/impressionButton"
+  impressionButtonModal = require "./common/components/impressionButtonModal"
   inputWordsCount = require "./common/components/inputWordsCount"
   likeButton = require "./common/components/likeButton"
   omittedSynopsis = require "./common/components/omittedSynopsis"
@@ -56,9 +56,11 @@ document.addEventListener "turbolinks:load", (event) ->
   untrackedEpisodeList = require "./common/components/untrackedEpisodeList"
   userHeatmap = require "./common/components/userHeatmap"
   usernamePreview = require "./common/components/usernamePreview"
+  workComment = require "./common/components/workComment"
   workDetailButton = require "./common/components/workDetailButton"
   workDetailButtonModal = require "./common/components/workDetailButtonModal"
   workFriends = require "./common/components/workFriends"
+  workTags = require "./common/components/workTags"
   youtubeModalPlayer = require "./common/components/youtubeModalPlayer"
 
   searchForm = require "./pc/components/searchForm"
@@ -80,8 +82,6 @@ document.addEventListener "turbolinks:load", (event) ->
   Vue.component("c-body", body)
   Vue.component("c-channel-receive-button", channelReceiveButton)
   Vue.component("c-channel-selector", channelSelector)
-  Vue.component("c-collect-button", collectButton)
-  Vue.component("c-collect-button-modal", collectButtonModal)
   Vue.component("c-comment-guard", commentGuard)
   Vue.component("c-episode-list", episodeList)
   Vue.component("c-episode-progress", episodeProgress)
@@ -92,6 +92,8 @@ document.addEventListener "turbolinks:load", (event) ->
   Vue.component("c-follow-button", followButton)
   Vue.component("c-image-attach-form", imageAttachForm)
   Vue.component("c-image-attach-modal", imageAttachModal)
+  Vue.component("c-impression-button", impressionButton)
+  Vue.component("c-impression-button-modal", impressionButtonModal)
   Vue.component("c-input-words-count", inputWordsCount)
   Vue.component("c-like-button", likeButton)
   Vue.component("c-omitted-synopsis", omittedSynopsis)
@@ -114,9 +116,11 @@ document.addEventListener "turbolinks:load", (event) ->
   Vue.component("c-untracked-episode-list", untrackedEpisodeList)
   Vue.component("c-user-heatmap", userHeatmap)
   Vue.component("c-username-preview", usernamePreview)
+  Vue.component("c-work-comment", workComment)
   Vue.component("c-work-detail-button", workDetailButton)
   Vue.component("c-work-detail-button-modal", workDetailButtonModal)
   Vue.component("c-work-friends", workFriends)
+  Vue.component("c-work-tags", workTags)
   Vue.component("c-youtube-modal-player", youtubeModalPlayer)
 
   Vue.directive("resource-select", resourceSelect)

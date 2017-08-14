@@ -31,9 +31,9 @@
 #
 
 class UsersController < ApplicationController
-  before_action :load_i18n, only: %i(show following followers works)
+  before_action :load_i18n, only: %i(show following followers)
   before_action :authenticate_user!, only: %i(destroy share)
-  before_action :set_user, only: %i(show works following followers)
+  before_action :set_user, only: %i(show following followers)
 
   def show
     @watching_works = @user.works.watching.published
@@ -45,7 +45,6 @@ class UsersController < ApplicationController
     @favorite_staffs = @user.favorite_people.with_staff.includes(:person).order(id: :desc)
     @favorite_organizations = @user.favorite_organizations.includes(:organization).order(id: :desc)
     @reviews = @user.reviews.includes(:work).published.order(id: :desc)
-    @collections = @user.collections.includes(collection_items: :work).published.order(updated_at: :desc)
 
     activities = @user.
       activities.
@@ -56,16 +55,6 @@ class UsersController < ApplicationController
       user: user_signed_in? ? current_user : nil,
       activities: activities)
     gon.push(pageObject: page_object)
-  end
-
-  def works(status_kind, page: 1)
-    @works = @user.works.on(status_kind).published
-    season_slugs = @works.map(&:season).select(&:present?).map(&:slug).uniq
-    @seasons = season_slugs.
-      map { |slug| Season.find_by_slug(slug) }.
-      sort_by { |s| "#{s.year}#{s.name_value}".to_i }.
-      reverse
-    @seasons = Kaminari.paginate_array(@seasons).page(page).per(10)
   end
 
   def following
@@ -93,8 +82,6 @@ class UsersController < ApplicationController
       "verb.follow": nil,
       "noun.following": nil,
       "messages._common.are_you_sure": nil,
-      "messages._components.collect_button_modal.added": nil,
-      "messages._components.collect_button_modal.view_collection": nil,
       "messages.components.mute_user_button.the_user_has_been_muted": nil
     }
 

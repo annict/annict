@@ -31,8 +31,7 @@ ja:
     character_image: キャラクター画像
     character: キャラクター
     characters: キャラクター
-    collection_list: コレクション一覧
-    collections: コレクション
+    comment: コメント
     contents: コンテンツ
     column: 項目
     completed: 見たアニメ
@@ -68,7 +67,6 @@ ja:
     music: 音楽
     my_records: 自分の記録
     n_works_watched: "%{count}作品見た"
-    newest_collections: 最近作られたコレクション
     next_page: 次のページ
     next_season: 来期のアニメ
     official_site: 公式サイト
@@ -76,7 +74,6 @@ ja:
     or: OR
     organization: 団体
     organizations: 団体
-    other_collections_by: "%{profile_name}のコレクション"
     other_reviews_by: "%{profile_name}が書いたレビュー"
     other_users: その他利用者さん
     overall: 全体
@@ -88,7 +85,7 @@ ja:
     popular: 人気アニメ
     popular_airing_anime: 人気の放送中アニメ
     popular_anime: 人気アニメ
-    popular_collections: 人気のコレクション
+    popular_tags: 人気のタグ
     prev_page: 前のページ
     previous_season: 前期のアニメ
     privacy_policy: プライバシーポリシー
@@ -129,6 +126,7 @@ ja:
     story: ストーリー
     summer: 夏
     syobocal: しょぼかる
+    tags: タグ
     terms_of_use: 利用規約
     title: タイトル
     tonight: 今夜
@@ -144,5 +142,4 @@ ja:
     work_detail_page: 作品ページ
     work_image: 作品画像
     works: 作品
-    your_collections: あなたのコレクション
     your_statistics: 視聴状況

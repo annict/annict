@@ -8,8 +8,6 @@ en:
         characters:
           index: Looking for character information on %{title}? Find out more with Annict!
           show: Looking for character information on %{name}? Find out more with Annict!
-        collections:
-          index: Check out all collections!
         episodes:
           index: Looking for episode information on %{title}? Find out more with Annict!
           show: Looking for reviews on %{work_title} %{episode_title_with_number}? Find out more with Annict!
@@ -19,6 +17,8 @@ en:
           index: Check out %{profile_name} (%{username})'s favorite organizations!
         favorite_people:
           index: Check out %{profile_name} (%{username})'s favorite people!
+        libraries:
+          show: Check out %{profile_name} (%{username})'s profile!
         organization_fans:
           index: Check out fans of %{organization_name}!
         organizations:
@@ -38,14 +38,10 @@ en:
           new: Welcome back!
         staffs:
           index: Looking for staff information on %{title}? Find out more with Annict!
-        user_collections:
-          index: Check out %{profile_name} (%{username})'s collections!
-          show: "%{collection_description}"
         users:
           followers: Check out %{profile_name} (%{username})'s profile!
           following: Check out %{profile_name} (%{username})'s profile!
           show: Check out %{profile_name} (%{username})'s profile!
-          works: Check out %{profile_name} (%{username})'s profile!
         works:
           popular: Looking for popular anime? Find out more with Annict!
           season: Looking for information on %{name} anime? Find out more with Annict!
@@ -66,8 +62,6 @@ en:
       characters:
         index: Characters of %{title} (Anime)
         show: "%{name}"
-      collections:
-        index: Collections
       comments:
         edit: Edit Comment
       db:
@@ -151,6 +145,8 @@ en:
       home:
         index: Annict
         index_guest: The platform for anime addicts.
+      libraries:
+        show: "%{profile_name} (%{username})'s \"%{action}\" anime"
       mutes:
         index: Mute Filters
       notifications:
@@ -209,9 +205,8 @@ en:
         index: Staff of %{title} (Anime)
       tracks:
         show: Track
-      user_collections:
-        index: "%{profile_name} (%{username})'s Collections"
-        show: "%{collection_title} by %{profile_name} (%{username})"
+      user_work_tags:
+        show: "Anime list for %{profile_name} (%{username}) tagged '%{tag_name}'"
       userland:
         home:
           index: Userland
@@ -223,7 +218,6 @@ en:
         followers: People following %{profile_name} (%{username})
         following: People followed by %{profile_name} (%{username})
         show: "%{profile_name} (%{username})"
-        works: "%{profile_name} (%{username})'s \"%{action}\" anime"
       work_items:
         index: Items of %{work_title} (Anime)
         new: New Item

@@ -10,11 +10,5 @@
       = link_to work.decorate.local_title, work_path(work)
     c-status-selector :work-id="#{work.id}"
     .mb-1
-      c-collect-button :work-id="#{work.id}"
-      c-collect-button-modal
     c-share-button-twitter.mr-zp5 text="#{work.decorate.local_title}" url="#{local_url}#{work_path(work)}" hashtags="#{work.twitter_hashtag.presence || ''}"
     c-share-button-facebook url="#{local_url}#{work_path(work)}"
-
-- content_for :js_templates do
-  = render "application/js_templates/collect_button"
-  = render "application/js_templates/collect_button_modal"

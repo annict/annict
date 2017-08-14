@@ -21,12 +21,6 @@ ja:
         error: 通信エラー。時間を置いて再度お試しください
         registed: 登録済み
         you_can_search_by_keyword_or_asin_or_isbn_code: キーワードやASIN / ISBNコードで検索できます
-      collect_button:
-        add_to_collections: コレクションに追加
-      collect_button_modal:
-        added: 追加しました。
-        new_collection: コレクションを作る
-        view_collection: コレクションを見る
       favorite_button:
         add_to_favorites: お気に入りに登録
         added_to_favorites: 登録済み
@@ -37,7 +31,6 @@ ja:
             exactly: わかる
     _empty:
       no_characters: キャラクターはいません
-      no_collections: コレクションはありません
       no_episodes: エピソードはありません
       no_projects: プロジェクトはありません
       no_items: 商品はありません
@@ -57,13 +50,6 @@ ja:
       no_works: 作品はありません
     character_fans:
       no_users: ファンはいません
-    collections:
-      position_of_x: "「%{item_title}」の位置"
-      view_all_n_collections: "%{n}個全てのコレクションを見る"
-      view_current_seasonal_anime: 今期の作品一覧を見る
-      you_can_create_collections_on_work_detail_pages: "コレクションは、作品一覧ページなどにある「コレクションに追加」ボタンから作成できます。"
-      create_your_collections: あなたのコレクションを作ろう！
-      you_can_create_collections_html: "コレクション機能を使うと、お題に沿ってあなたがオススメするアニメを共有することができます。<a href='http://blog.annict.com/post/163299226383/collections' target='_blank'><i class='fa fa-angle-right mr-zp25'></i>もっと詳しく</a>"
     comments:
       comment_form_placeholder: 記録にコメントしよう！
       create: コメントする
@@ -220,6 +206,8 @@ ja:
       skip_episode_confirmation: このエピソードをスキップして、次のエピソードを表示しますか？
       see_records: 記録を見る
       tracked: 記録しました
+    user_work_tags:
+      anime_list_tagged: "「%{tag_name}」タグを付けたアニメ"
     userland:
       description: Userlandは、Annictを便利に使うために有志によって作られたアプリケーションなどが探せる場です。Annict APIを使用して何か作った方は、「新規プロジェクト」から登録頂けるとありがたいです。
       description_mobile: Userlandは、Annictを便利に使うために有志によって作られたアプリケーションなどが探せる場です。
