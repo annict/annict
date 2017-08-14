@@ -16,12 +16,7 @@ class CreateStreamingLinks < ActiveRecord::Migration[5.1]
     add_index :streaming_links, %i(channel_id work_id locale), unique: true
     add_index :streaming_links, %i(channel_id locale unique_id), unique: true
 
-    add_presence_constraint :streaming_links, :unique_id
-
-    add_inclusion_constraint :streaming_links, :locale, in: %w(ja en)
-    add_inclusion_constraint :streaming_links, :aasm_state, in: %w(published hidden)
-
-    add_foreign_key_constraint :streaming_links, :channels, on_delete: :cascade
-    add_foreign_key_constraint :streaming_links, :works, on_delete: :cascade
+    add_foreign_key :streaming_links, :channels
+    add_foreign_key :streaming_links, :works
   end
 end

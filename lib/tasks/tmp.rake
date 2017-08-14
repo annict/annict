@@ -37,7 +37,7 @@ namespace :tmp do
   task update_channels: :environment do
     [
       "Amazonビデオ",
-      "Netflix (JP)"
+      "Netflix"
     ].each do |name|
       puts name
       Channel.where(name: name).first_or_create!(streaming_service: true, channel_group_id: 14)

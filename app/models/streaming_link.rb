@@ -54,12 +54,7 @@ class StreamingLink < ApplicationRecord
     when 165 then "http://ch.nicovideo.jp/#{unique_id}"
     when 241 then "https://anime.dmkt-sp.jp/animestore/ci_pc?workId=#{unique_id}"
     when 243 then "https://www.amazon.co.jp/dp/#{unique_id}/"
-    when 244 then "http://www.crunchyroll.com/#{unique_id}"
-    when 245 then "http://www.daisuki.net/jp/en/anime/detail.#{unique_id}.html"
-    when 246 then "https://www.funimation.com/#{unique_id}"
-    when 247 then "http://www.hulu.jp/#{unique_id}"
     when 248 then "https://www.netflix.com/title/#{unique_id}"
-    when 249 then "http://video.unext.jp/title/#{unique_id}"
     end
   end
 
