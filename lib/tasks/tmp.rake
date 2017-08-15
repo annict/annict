@@ -67,7 +67,10 @@ class BandaiChannel
   end
 
   def scrape
-    html = self.class.get("/ttl/jpchar_list.php")
+    puts "--- BandaiChannel"
+    path = "/ttl/jpchar_list.php"
+    puts "Accessing to: #{path}"
+    html = self.class.get(path)
     result = Nokogiri::HTML(html)
     links = result.css(".search-list .ttl-list li a")
     links.map do |link|
@@ -89,10 +92,13 @@ class NicoNicoCh
   end
 
   def scrape
+    puts "--- NicoNicoCh"
     data = []
 
     1.step do |i|
-      html = self.class.get("/portal/anime/list?page=#{i}")
+      path = "/portal/anime/list?page=#{i}"
+      puts "Accessing to: #{path}"
+      html = self.class.get(path)
       result = Nokogiri::HTML(html)
       links = result.css(".channel_info a.channel_name")
       break if links.blank?
@@ -119,6 +125,7 @@ class DAnimeStore
   end
 
   def scrape
+    puts "--- DAnimeStore"
     data = []
 
     1.step(10) do |collection_key|
@@ -131,8 +138,9 @@ class DAnimeStore
             "initialCollectionKey=#{collection_key}",
             "consonantKey=#{consonant_key}"
           ].join("&")
-          puts "query: #{query}"
-          response = self.class.get("/animestore/rest/WS000108?#{query}")
+          path = "/animestore/rest/WS000108?#{query}"
+          puts "Accessing to: #{path}"
+          response = self.class.get(path)
           json = JSON.parse(response.body)
           works = json.dig("data", "workList")
           break if works.blank?
@@ -161,6 +169,7 @@ class AmazonVideo
   end
 
   def scrape
+    puts "--- AmazonVideo"
     data = []
 
     1.step do |page|
@@ -168,9 +177,10 @@ class AmazonVideo
         "rh=n%3A2351649051%2Cn%3A%212351650051%2Cn%3A2478407051%2Cp_n_entity_type%3A4174099051%2Cp_n_ways_to_watch%3A3746328051",
         "page=#{page}"
       ].join("&")
-      puts "page: #{page}"
+      path = "/s/ref=sr_pg_2?#{query}"
+      puts "Accessing to: #{path}"
       headers = { "User-Agent": "Mozilla/5.0" }
-      response = self.class.get("/s/ref=sr_pg_2?#{query}", headers: headers)
+      response = self.class.get(path, headers: headers)
       result = Nokogiri::HTML(response)
       item_list = result.css(".s-result-item")
       break if item_list.blank?
