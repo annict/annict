@@ -7,7 +7,6 @@ class CreateProgramDetails < ActiveRecord::Migration[5.1]
       t.integer :work_id, null: false
       t.string :url
       t.datetime :started_at
-      t.string :repeat_on
       t.string :aasm_state, null: false, default: "published"
       t.timestamps null: false
     end

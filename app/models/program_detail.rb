@@ -1,11 +1,32 @@
 # frozen_string_literal: true
+# == Schema Information
+#
+# Table name: program_details
+#
+#  id                :integer          not null, primary key
+#  channel_id        :integer          not null
+#  work_id           :integer          not null
+#  latest_program_id :integer
+#  url               :string
+#  started_at        :datetime
+#  repeat_on         :string
+#  aasm_state        :string           default("published"), not null
+#  created_at        :datetime         not null
+#  updated_at        :datetime         not null
+#
+# Indexes
+#
+#  index_program_details_on_channel_id              (channel_id)
+#  index_program_details_on_channel_id_and_work_id  (channel_id,work_id) UNIQUE
+#  index_program_details_on_latest_program_id       (latest_program_id)
+#  index_program_details_on_work_id                 (work_id)
+#
 
 class ProgramDetail < ApplicationRecord
-  extend Enumerize
   include AASM
   include DbActivityMethods
 
-  DIFF_FIELDS = %i(channel_id work_id url started_at repeat_on).freeze
+  DIFF_FIELDS = %i(channel_id work_id url started_at).freeze
 
   aasm do
     state :published, initial: true
@@ -15,8 +36,6 @@ class ProgramDetail < ApplicationRecord
       transitions from: :published, to: :hidden
     end
   end
-
-  enumerize :repeat_on, in: %w(weekly daily)
 
   validates :url, url: { allow_blank: true }
 
