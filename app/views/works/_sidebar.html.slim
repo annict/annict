@@ -55,7 +55,7 @@ h2.h4.font-weight-bold.mt-2.mb-1
   = icon "video-camera", class: "mr-zp25"
   = t "noun.video_services"
 ul.list-unstyled
-  - work.streaming_links.published.each do |link|
+  - work.program_details.published.each do |link|
     li = link_to link.channel.name, link.url, target: "_blank"
     
 h2.h4.font-weight-bold.mt-2.mb-1

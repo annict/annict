@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class StreamingLinkPolicy < ApplicationPolicy
+class ProgramDetailPolicy < ApplicationPolicy
   def create?
     user.committer?
   end

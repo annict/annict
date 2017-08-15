@@ -38,7 +38,7 @@ en:
       no_series: No Series
       no_staffs: No Staffs
       no_series_works: No Series Works
-      no_streaming_links: No Streaming Links
+      no_program_details: No Streaming Links
     _validators:
       and_other_are_required: and %{column_name} are required
       is_required_true_or_false: is required `true` or `false`

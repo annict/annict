@@ -92,8 +92,8 @@ ja:
       there_are_no_staffs: スタッフは登録されていません
       unpublished: 非公開にしました
       updated: 更新しました
-    streaming_link:
-      new_streaming_links: 新規登録
+    program_detail:
+      new_program_details: 新規登録
     user:
       is_wrong: が間違っています
     userland_project:

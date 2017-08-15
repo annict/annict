@@ -161,7 +161,7 @@ en:
         summary: Summary
         url: URL
         userland_category_id: Category
-      streaming_link:
+      program_detail:
         channel_id: Channel
         locale: Locale
         unique_id: Unique ID

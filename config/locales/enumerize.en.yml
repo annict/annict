@@ -54,7 +54,7 @@ en:
         watched: Completed
         on_hold: On Hold
         stop_watching: Dropped
-    streaming_link:
+    program_detail:
       locale:
         en: English
         ja: Japanese

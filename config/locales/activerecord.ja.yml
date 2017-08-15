@@ -160,7 +160,7 @@ ja:
         summary: 要約
         url: URL
         userland_category_id: カテゴリ
-      streaming_link:
+      program_detail:
         channel_id: チャンネル
         locale: 言語
         unique_id: ユニークID

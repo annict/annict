@@ -60,7 +60,7 @@ ja:
         rows: シリーズ作品
       db/staff_rows_form:
         rows: スタッフ
-      db/streaming_link_rows_form:
+      db/program_detail_rows_form:
         rows: ストリーミングリンク
     errors:
       forms:

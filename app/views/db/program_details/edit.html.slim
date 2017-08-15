@@ -1,6 +1,6 @@
-- title = t "head.title.db.streaming_links.edit"
+- title = t "head.title.db.program_details.edit"
 - set_meta_tags(title: title, reverse: true, prefix: false)
-- set_page_category "db_streaming_links_edit"
+- set_page_category "db_program_details_edit"
 
 .l-topbar.container-fluid.px-1
   .row.flex-items-xs-between
@@ -18,13 +18,13 @@
     .col-6
       .c-card.p-1
         .container
-          = form_for [:db, @streaming_link] do |f|
+          = form_for [:db, @program_detail] do |f|
             = render "application/components/error_panel", resource: f.object
 
             .form-group.row
               = f.label :channel_id, class: "col-sm-3 col-form-label"
               .col-sm-9
-                = f.select :channel_id, options_from_collection_for_select(Channel.published.with_streaming_service.order(:id), :id, :name, f.object.channel.try!(:id)), { include_blank: true }, { class: "form-control" }
+                = f.select :channel_id, options_from_collection_for_select(Channel.published.with_video_service.order(:id), :id, :name, f.object.channel.try!(:id)), { include_blank: true }, { class: "form-control" }
             .form-group.row
               = f.label :unique_id, class: "col-sm-3 col-form-label"
               .col-sm-9

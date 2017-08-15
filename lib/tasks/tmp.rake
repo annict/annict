@@ -1,81 +1,56 @@
 # frozen_string_literal: true
 
 namespace :tmp do
-  task move_from_collection_to_tag: :environment do
-    ActiveRecord::Base.transaction do
-      Collection.find_each do |c|
-        puts "collection: #{c.id}"
-
-        work_tag = WorkTag.where(name: c.title).first_or_create!
-        c.user.work_taggables.where(work_tag: work_tag, description: c.description).first_or_create!
-
-        c.collection_items.each do |ci|
-          c.user.work_taggings.where(work: ci.work, work_tag: work_tag).first_or_create!
-        end
-      end
-    end
-  end
-
-  task move_from_collection_item_to_work_comment: :environment do
-    ActiveRecord::Base.transaction do
-      CollectionItem.find_each do |ci|
-        puts "collection item: #{ci.id}"
-
-        work_comment = WorkComment.where(user: ci.user, work: ci.work).first_or_initialize
-
-        if work_comment.body.present? && !work_comment.body.include?(ci.comment)
-          work_comment.body += "\n#{ci.comment}"
-        else
-          work_comment.body = ci.comment
-        end
-
-        work_comment.save! if work_comment.body.present?
-      end
-    end
-  end
-
   task update_channels: :environment do
-    [
-      "Amazonビデオ",
-      "Netflix"
-    ].each do |name|
-      puts name
-      Channel.where(name: name).first_or_create!(streaming_service: true, channel_group_id: 14)
+    ActiveRecord::Base.transaction do
+      [
+        "Amazonビデオ",
+        "Netflix (JP)"
+      ].each do |name|
+        puts name
+        Channel.where(name: name).first_or_create!(streaming_service: true, channel_group_id: 14)
+      end
+
+      sc_chids = [234, 107, 165]
+      Channel.where(sc_chid: sc_chids).update_all(streaming_service: true)
+
+      Channel.find_by(sc_chid: 132).update(aasm_state: :hidden)
     end
-
-    sc_chids = [234, 107, 165]
-    Channel.where(sc_chid: sc_chids).update_all(streaming_service: true)
-
-    Channel.find_by(sc_chid: 132).update(aasm_state: :hidden)
   end
 
   task set_streaming_links: :environment do
-    [
-      {
-        channel_id: 107,
-        scraping_class: BandaiChannel
-      },
-      {
-        channel_id: 165,
-        scraping_class: NicoNicoCh
-      },
-      {
-        channel_id: 241,
-        scraping_class: DAnimeStore
-      },
-      {
-        channel_id: 243,
-        scraping_class: AmazonVideo
-      }
-    ].each do |data|
-      channel = Channel.published.with_streaming_service.find(data[:channel_id])
-      results = data[:scraping_class].scrape
-      results.each do |result|
-        work = Work.published.find_by(title: result[:title])
-        next if work.blank?
-        puts "#{channel.name}: #{work.title}"
-        channel.streaming_links.where(work: work, locale: "ja").first_or_create! do |sl|
-          sl.unique_id = result[:unique_id]
+    ActiveRecord::Base.transaction do
+      [
+        {
+          channel_id: 107,
+          scraping_class: BandaiChannel,
+          url: "http://www.b-ch.com/ttl/index.php?ttl_c="
+        },
+        {
+          channel_id: 165,
+          scraping_class: NicoNicoCh,
+          url: "http://ch.nicovideo.jp/"
+        },
+        {
+          channel_id: 241,
+          scraping_class: DAnimeStore,
+          url: "https://anime.dmkt-sp.jp/animestore/ci_pc?workId="
+        },
+        {
+          channel_id: 243,
+          scraping_class: AmazonVideo,
+          url: "https://www.amazon.co.jp/dp/"
+        }
+      ].each do |data|
+        channel = Channel.published.with_streaming_service.find(data[:channel_id])
+        results = data[:scraping_class].scrape
+        results.each do |result|
+          work = Work.published.find_by(title: result[:title])
+          next if work.blank?
+          puts "#{channel.name}: #{work.title}"
+          channel.program_details.where(work: work).first_or_create! do |sl|
+            sl.url = "#{data[:url]}#{result[:unique_id]}"
+          end
         end
       end
     end
@@ -92,7 +67,10 @@ class BandaiChannel
   end
 
   def scrape
-    html = self.class.get("/ttl/jpchar_list.php")
+    puts "--- BandaiChannel"
+    path = "/ttl/jpchar_list.php"
+    puts "Accessing to: #{path}"
+    html = self.class.get(path)
     result = Nokogiri::HTML(html)
     links = result.css(".search-list .ttl-list li a")
     links.map do |link|
@@ -114,10 +92,13 @@ class NicoNicoCh
   end
 
   def scrape
+    puts "--- NicoNicoCh"
     data = []
 
     1.step do |i|
-      html = self.class.get("/portal/anime/list?page=#{i}")
+      path = "/portal/anime/list?page=#{i}"
+      puts "Accessing to: #{path}"
+      html = self.class.get(path)
       result = Nokogiri::HTML(html)
       links = result.css(".channel_info a.channel_name")
       break if links.blank?
@@ -144,6 +125,7 @@ class DAnimeStore
   end
 
   def scrape
+    puts "--- DAnimeStore"
     data = []
 
     1.step(10) do |collection_key|
@@ -156,8 +138,9 @@ class DAnimeStore
             "initialCollectionKey=#{collection_key}",
             "consonantKey=#{consonant_key}"
           ].join("&")
-          puts "query: #{query}"
-          response = self.class.get("/animestore/rest/WS000108?#{query}")
+          path = "/animestore/rest/WS000108?#{query}"
+          puts "Accessing to: #{path}"
+          response = self.class.get(path)
           json = JSON.parse(response.body)
           works = json.dig("data", "workList")
           break if works.blank?
@@ -186,6 +169,7 @@ class AmazonVideo
   end
 
   def scrape
+    puts "--- AmazonVideo"
     data = []
 
     1.step do |page|
@@ -193,9 +177,10 @@ class AmazonVideo
         "rh=n%3A2351649051%2Cn%3A%212351650051%2Cn%3A2478407051%2Cp_n_entity_type%3A4174099051%2Cp_n_ways_to_watch%3A3746328051",
         "page=#{page}"
       ].join("&")
-      puts "page: #{page}"
+      path = "/s/ref=sr_pg_2?#{query}"
+      puts "Accessing to: #{path}"
       headers = { "User-Agent": "Mozilla/5.0" }
-      response = self.class.get("/s/ref=sr_pg_2?#{query}", headers: headers)
+      response = self.class.get(path, headers: headers)
       result = Nokogiri::HTML(response)
       item_list = result.css(".s-result-item")
       break if item_list.blank?

@@ -114,7 +114,7 @@ en:
           edit: Edit Staff
           index: Staff
           new: Create Staff
-        streaming_links:
+        program_details:
           activities: Activities
           edit: Edit Streaming Link
           index: Streaming

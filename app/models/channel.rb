@@ -27,7 +27,7 @@ class Channel < ApplicationRecord
 
     event :hide do
       after do
-        streaming_links.published.each(&:hide!)
+        program_details.published.each(&:hide!)
       end
 
       transitions from: :published, to: :hidden
@@ -35,10 +35,10 @@ class Channel < ApplicationRecord
   end
 
   belongs_to :channel_group
+  has_many :program_details, dependent: :destroy
   has_many :programs, dependent: :destroy
-  has_many :streaming_links, dependent: :destroy
 
-  scope :with_streaming_service, -> { where(streaming_service: true) }
+  scope :with_video_service, -> { where(video_service: true) }
 
   def self.fastest(work)
     receivable_channel_ids = pluck(:id)

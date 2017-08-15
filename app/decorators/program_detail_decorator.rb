@@ -1,9 +1,9 @@
 # frozen_string_literal: true
 
-class StreamingLinkDecorator < ApplicationDecorator
+class ProgramDetailDecorator < ApplicationDecorator
   def db_detail_link(options = {})
     name = options.delete(:name).presence || id
-    h.link_to(name, h.edit_db_streaming_link_path(self), options)
+    h.link_to(name, h.edit_db_program_detail_path(self), options)
   end
 
   def to_values

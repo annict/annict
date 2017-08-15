@@ -13,7 +13,7 @@
         = form_tag search_path, method: :get do
           .input-group
             = text_field_tag :q, @search.q, placeholder: t("messages._common.search_with_keywords"), class: "form-control"
-          - Channel.published.with_streaming_service.each do |c|
+          - Channel.published.with_video_service.each do |c|
             .form-check
               label.form-check-label
                 = check_box_tag "streaming_#{c.id}", 1, false, class: "form-check-input"

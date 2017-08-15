@@ -54,7 +54,7 @@ ja:
         watched: 見た
         on_hold: 中断した
         stop_watching: 中止した
-    streaming_link:
+    program_detail:
       locale:
         en: 英語
         ja: 日本語

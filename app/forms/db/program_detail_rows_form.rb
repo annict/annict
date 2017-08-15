@@ -1,12 +1,12 @@
 # frozen_string_literal: true
 
 module DB
-  class StreamingLinkRowsForm
+  class ProgramDetailRowsForm
     include ActiveModel::Model
     include Virtus.model
     include ResourceRows
 
-    row_model StreamingLink
+    row_model ProgramDetail
 
     attr_accessor :work
 

@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module DB
-  class StreamingLinkRowsFormPolicy < ApplicationPolicy
+  class ProgramDetailRowsFormPolicy < ApplicationPolicy
     def create?
       user.committer?
     end
