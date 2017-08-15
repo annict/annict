@@ -61,7 +61,7 @@ ja:
       db/staff_rows_form:
         rows: スタッフ
       db/program_detail_rows_form:
-        rows: ストリーミングリンク
+        rows: 放送情報
     errors:
       forms:
         db/cast_rows_form:
