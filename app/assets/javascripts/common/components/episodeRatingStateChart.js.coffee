@@ -11,7 +11,7 @@ module.exports =
       required: true
 
   data: ->
-    dataset: JSON.parse(@initDataset)
+    dataset: _.sortBy JSON.parse(@initDataset), (data) -> data.name_key
 
   mounted: ->
     container = d3Selection.select(".c-episode-rating-state-chart")
@@ -23,7 +23,7 @@ module.exports =
     donutChart = new DonutChart()
 
     if containerWidth
-      colors = ["#bdbdbd", "#FFAB40", "#69F0AE", "#40C4FF"]
+      colors = ["#FFAB40", "#bdbdbd", "#69F0AE", "#40C4FF"]
 
       # Remove colors which corresponded to status if its quantity is zero.
       _.forEach @dataset, (data, i) ->
