@@ -8,11 +8,11 @@ namespace :tmp do
         "Netflix (JP)"
       ].each do |name|
         puts name
-        Channel.where(name: name).first_or_create!(streaming_service: true, channel_group_id: 14)
+        Channel.where(name: name).first_or_create!(video_service: true, channel_group_id: 14)
       end
 
       sc_chids = [234, 107, 165]
-      Channel.where(sc_chid: sc_chids).update_all(streaming_service: true)
+      Channel.where(sc_chid: sc_chids).update_all(video_service: true)
 
       Channel.find_by(sc_chid: 132).update(aasm_state: :hidden)
     end
@@ -42,7 +42,7 @@ namespace :tmp do
           url: "https://www.amazon.co.jp/dp/"
         }
       ].each do |data|
-        channel = Channel.published.with_streaming_service.find(data[:channel_id])
+        channel = Channel.published.with_video_service.find(data[:channel_id])
         results = data[:scraping_class].scrape
         results.each do |result|
           work = Work.published.find_by(title: result[:title])

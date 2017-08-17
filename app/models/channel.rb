@@ -9,14 +9,14 @@
 #  name              :string           not null
 #  created_at        :datetime
 #  updated_at        :datetime
-#  streaming_service :boolean          default(FALSE)
+#  video_service :boolean          default(FALSE)
 #  aasm_state        :string           default("published"), not null
 #
 # Indexes
 #
 #  channels_channel_group_id_idx        (channel_group_id)
 #  channels_sc_chid_key                 (sc_chid) UNIQUE
-#  index_channels_on_streaming_service  (streaming_service)
+#  index_channels_on_video_service  (video_service)
 #
 
 class Channel < ApplicationRecord

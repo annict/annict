@@ -18,10 +18,10 @@ class CreateProgramDetails < ActiveRecord::Migration[5.1]
     add_foreign_key :program_details, :channels
     add_foreign_key :program_details, :works
 
-    add_column :channels, :streaming_service, :boolean, default: false
+    add_column :channels, :video_service, :boolean, default: false
     add_column :channels, :aasm_state, :string, null: false, default: "published"
 
-    add_index :channels, :streaming_service
+    add_index :channels, :video_service
 
     change_column_null :channels, :sc_chid, true
 
