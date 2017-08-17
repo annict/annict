@@ -163,8 +163,8 @@ en:
         userland_category_id: Category
       program_detail:
         channel_id: Channel
-        locale: Locale
-        unique_id: Unique ID
+        url: URL
+        started_at: Started At
       user:
         current_password: Current password
         email_username: Email or Username

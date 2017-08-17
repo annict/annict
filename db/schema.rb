@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170813054530) do
+ActiveRecord::Schema.define(version: 20170814131925) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -69,13 +69,15 @@ ActiveRecord::Schema.define(version: 20170813054530) do
 
   create_table "channels", id: :serial, force: :cascade do |t|
     t.integer "channel_group_id", null: false
-    t.integer "sc_chid", null: false
+    t.integer "sc_chid"
     t.string "name", null: false, collation: "C"
-    t.boolean "published", default: true, null: false
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.boolean "streaming_service", default: false
+    t.string "aasm_state", default: "published", null: false
     t.index ["channel_group_id"], name: "channels_channel_group_id_idx"
     t.index ["sc_chid"], name: "channels_sc_chid_key", unique: true
+    t.index ["streaming_service"], name: "index_channels_on_streaming_service"
   end
 
   create_table "character_images", id: :serial, force: :cascade do |t|
@@ -661,6 +663,19 @@ ActiveRecord::Schema.define(version: 20170813054530) do
     t.index ["user_id"], name: "profiles_user_id_key", unique: true
   end
 
+  create_table "program_details", force: :cascade do |t|
+    t.integer "channel_id", null: false
+    t.integer "work_id", null: false
+    t.string "url"
+    t.datetime "started_at"
+    t.string "aasm_state", default: "published", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["channel_id", "work_id"], name: "index_program_details_on_channel_id_and_work_id", unique: true
+    t.index ["channel_id"], name: "index_program_details_on_channel_id"
+    t.index ["work_id"], name: "index_program_details_on_work_id"
+  end
+
   create_table "programs", id: :serial, force: :cascade do |t|
     t.integer "channel_id", null: false
     t.integer "episode_id", null: false
@@ -1133,6 +1148,8 @@ ActiveRecord::Schema.define(version: 20170813054530) do
   add_foreign_key "oauth_access_tokens", "users", column: "resource_owner_id"
   add_foreign_key "people", "prefectures"
   add_foreign_key "profiles", "users", name: "profiles_user_id_fk", on_delete: :cascade
+  add_foreign_key "program_details", "channels"
+  add_foreign_key "program_details", "works"
   add_foreign_key "programs", "channels", name: "programs_channel_id_fk", on_delete: :cascade
   add_foreign_key "programs", "episodes", name: "programs_episode_id_fk", on_delete: :cascade
   add_foreign_key "programs", "works", name: "programs_work_id_fk", on_delete: :cascade

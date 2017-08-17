@@ -2,19 +2,25 @@ h3 放送情報を登録する
 p 放送情報はCSV形式で登録することができます。
 
 ul
-  li チャンネルIDまたはチャンネル名
-  li ユニークID
-  li 言語
+  li [必須] チャンネルIDまたはチャンネル名
+  li [任意] 放送開始日時
+  li [任意] URL
 
 p 上記の項目を以下のようにカンマ (,) で区切って入力します。
 
 blockquote.blockquote
   p.mb-0.small
     | // チャンネルをIDで入力した場合
-  p.mb-0.small 241, 21326, ja
+  p.mb-0.small 244, 2017-07-19 12:00, https://www.netflix.com/title/80193315
   br
   p.mb-0.small
     | // チャンネルを名前で入力した場合
-  p.mb-0.small dアニメストア, 21326, ja
+  p.mb-0.small Netflix (JP), 2017-07-19 12:00, https://www.netflix.com/title/80193315
 
-p 左から順に、チャンネルID (名前)、ユニークID、言語を入力して下さい。
+p 左から順に、チャンネルID (名前)、放送開始日時、URLを入力して下さい。
+
+p 動画配信サービス等で配信される時間が不明な場合は、日付さえ合っていれば問題ありません。適当に午後12時などとしてください。
+
+p
+  | 「URL」には動画配信サービス等の作品詳細ページのURLを保存します。
+  | 例えば「メイドインアビス」のAmazonビデオでの詳細ページは <a href="https://www.amazon.co.jp/gp/video/detail/B073S242ZJ/" target="_blank">https://www.amazon.co.jp/gp/video/detail/B073S242ZJ/</a> になります。

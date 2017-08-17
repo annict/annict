@@ -30,7 +30,7 @@
             - if policy(@staffs).edit?
               th = t "noun.edit"
             - if policy(@staffs).hide?
-              th = t "noun.hide"
+              th = t "noun.unpublish"
             - if policy(@staffs).destroy?
               th = t "noun.delete"
         tbody
@@ -56,7 +56,7 @@
               - if policy(staff).hide?
                 td
                   - if staff.published?
-                    = link_to t("noun.hide"), hide_db_staff_path(staff), class: "btn btn-warning btn-sm", data: { method: "patch", confirm: t("messages._common.are_you_sure") }
+                    = link_to t("noun.unpublish"), hide_db_staff_path(staff), class: "btn btn-warning btn-sm", data: { method: "patch", confirm: t("messages._common.are_you_sure") }
               - if policy(staff).destroy?
                 td = link_to t("noun.delete"), db_staff_path(staff), class: "btn btn-danger btn-sm", data: { method: :delete, confirm: t("messages._common.are_you_sure") }
 

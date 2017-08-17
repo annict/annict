@@ -115,7 +115,7 @@ ja:
         program_details:
           activities: アクティビティ
           edit: 放送情報編集
-          index: ストリーミング
+          index: 放送情報
           new: 放送情報登録
         work_images:
           show: 作品画像 - %{title}

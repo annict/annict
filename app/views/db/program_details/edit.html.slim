@@ -22,18 +22,17 @@
             = render "application/components/error_panel", resource: f.object
 
             .form-group.row
-              = f.label :channel_id, class: "col-sm-3 col-form-label"
+              = f.label :channel_id, class: "col-sm-3 col-form-label c-label-required"
               .col-sm-9
-                = f.select :channel_id, options_from_collection_for_select(Channel.published.with_video_service.order(:id), :id, :name, f.object.channel.try!(:id)), { include_blank: true }, { class: "form-control" }
+                = f.select :channel_id, options_from_collection_for_select(Channel.published.order(:id), :id, :name, f.object.channel.try!(:id)), { include_blank: true }, { class: "form-control", required: true }
             .form-group.row
-              = f.label :unique_id, class: "col-sm-3 col-form-label"
+              = f.label :started_at, class: "col-sm-3 col-form-label"
               .col-sm-9
-                = f.text_field :unique_id, class: "form-control"
+                = f.text_field :started_at, class: "form-control", value: f.object.started_at&.in_time_zone(current_user.time_zone)&.strftime("%Y-%m-%d %H:%M"), placeholder: t("resources.program.started_at_eg")
             .form-group.row
-              = f.label :locale, class: "col-sm-3 col-form-label"
+              = f.label :url, class: "col-sm-3 col-form-label"
               .col-sm-9
-                - options = options_for_select([[t("noun.japanese"), "ja"], [t("noun.english"), "en"]], f.object.locale)
-                = f.select :locale, options, {}, { class: "form-control" }
+                = f.text_field :url, class: "form-control"
             .form-group.row
               .offset-sm-3.col-sm-9
                 = f.submit t("helpers.submit.update"), class: "btn btn-primary"

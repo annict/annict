@@ -47,7 +47,7 @@
               - if policy(pv).hide?
                 td
                   - if pv.published?
-                    = link_to t("noun.hide"), hide_db_pv_path(pv), class: "btn btn-warning btn-sm", data: { method: "patch", confirm: t("messages._common.are_you_sure") }
+                    = link_to t("noun.unpublish"), hide_db_pv_path(pv), class: "btn btn-warning btn-sm", data: { method: "patch", confirm: t("messages._common.are_you_sure") }
               - if policy(pv).destroy?
                 td = link_to t("noun.delete"), db_pv_path(pv), class: "btn btn-danger btn-sm", data: { method: :delete, confirm: t("messages._common.are_you_sure") }
 

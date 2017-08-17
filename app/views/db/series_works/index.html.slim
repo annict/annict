@@ -47,7 +47,7 @@
               - if policy(series_work).hide?
                 td
                   - if series_work.published?
-                    = link_to t("noun.hide"), hide_db_series_work_path(series_work), class: "btn btn-warning btn-sm", data: { method: "patch", confirm: t("messages._common.are_you_sure") }
+                    = link_to t("noun.unpublish"), hide_db_series_work_path(series_work), class: "btn btn-warning btn-sm", data: { method: "patch", confirm: t("messages._common.are_you_sure") }
               - if policy(series_work).destroy?
                 td = link_to t("noun.delete"), db_series_work_path(series_work), class: "btn btn-danger btn-sm", data: { method: :delete, confirm: t("messages._common.are_you_sure") }
 

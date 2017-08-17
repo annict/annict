@@ -116,9 +116,9 @@ en:
           new: Create Staff
         program_details:
           activities: Activities
-          edit: Edit Streaming Link
-          index: Streaming
-          new: New Streaming Link
+          edit: Edit Program Detail
+          index: Program Details
+          new: New Program Detail
         work_images:
           show: Work Image - %{title}
         works:

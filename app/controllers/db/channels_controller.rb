@@ -3,7 +3,7 @@
 module Db
   class ChannelsController < Db::ApplicationController
     def index
-      @channels = Channel.order(id: :desc)
+      @channels = Channel.published.order(id: :desc)
     end
   end
 end

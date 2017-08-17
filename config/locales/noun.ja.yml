@@ -122,6 +122,7 @@ ja:
     staff: スタッフ
     staffs: スタッフ
     state: 状態
+    state_change: 状態変更
     stats: 統計
     story: ストーリー
     summer: 夏
@@ -133,6 +134,7 @@ ja:
     tweet: ツイート
     unbroadcast: 未放送
     unknown_season: 公開日不明
+    unpublish: 非公開
     users_count: "%{count}人"
     video_services: 動画サービス
     voice_actor: 声優

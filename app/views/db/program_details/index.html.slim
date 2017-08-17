@@ -22,8 +22,8 @@
           tr
             th ID
             th = t "activerecord.attributes.program_detail.channel_id"
-            th = t "activerecord.attributes.program_detail.unique_id"
-            th = t "activerecord.attributes.program_detail.locale"
+            th = t "activerecord.attributes.program_detail.started_at"
+            th = t "activerecord.attributes.program_detail.url"
             th = t "head.title.db.program_details.activities"
             - if policy(@program_details).edit?
               th = t "noun.edit"
@@ -36,8 +36,12 @@
             tr
               td = program_detail.id
               td = program_detail.channel.name
-              td = link_to program_detail.unique_id, program_detail.url, target: "_blank"
-              td = program_detail.locale_text
+              td = display_time(program_detail.started_at)&.presence || "-"
+              td
+                - if program_detail.url.present?
+                  = link_to program_detail.url, program_detail.url, target: "_blank"
+                - else
+                  | -
               td = link_to t("head.title.db.program_details.activities"), activities_db_program_detail_path(program_detail)
               - if policy(program_detail).edit?
                 td
@@ -45,7 +49,7 @@
               - if policy(program_detail).hide?
                 td
                   - if program_detail.published?
-                    = link_to t("noun.hide"), hide_db_program_detail_path(program_detail), class: "btn btn-warning btn-sm", data: { method: "patch", confirm: t("messages._common.are_you_sure") }
+                    = link_to t("noun.unpublish"), hide_db_program_detail_path(program_detail), class: "btn btn-warning btn-sm", data: { method: "patch", confirm: t("messages._common.are_you_sure") }
               - if policy(program_detail).destroy?
                 td = link_to t("noun.delete"), db_program_detail_path(program_detail), class: "btn btn-danger btn-sm", data: { method: :delete, confirm: t("messages._common.are_you_sure") }
 

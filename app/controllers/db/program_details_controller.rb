@@ -2,7 +2,7 @@
 
 module Db
   class ProgramDetailsController < Db::ApplicationController
-    permits :channel_id, :locale, :unique_id
+    permits :channel_id, :started_at, :url
 
     before_action :authenticate_user!
     before_action :load_work, only: %i(index new create)

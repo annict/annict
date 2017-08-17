@@ -10,6 +10,8 @@ module DB
 
     attr_accessor :work
 
+    validate :valid_time
+
     private
 
     def attrs_list
@@ -17,9 +19,23 @@ module DB
         {
           channel_id: row_data[:channel][:id],
           work_id: @work.id,
-          unique_id: row_data[:unique_id][:value],
-          locale: row_data[:locale][:value]
+          started_at: row_data[:started_at][:value],
+          url: row_data[:url][:value],
+          time_zone: @user.time_zone
         }
+      end
+    end
+
+    def valid_time
+      fetched_rows.each do |row_data|
+        started_at = row_data[:started_at][:value]
+
+        begin
+          Time.parse(started_at)
+        rescue
+          i18n_path = "activemodel.errors.forms.db/program_rows_form.invalid_start_time"
+          errors.add(:rows, I18n.t(i18n_path))
+        end
       end
     end
 
@@ -30,8 +46,8 @@ module DB
 
         {
           channel: { id: channel&.id, value: row_columns[0] },
-          unique_id: { value: row_columns[1] },
-          locale: { value: row_columns[2] }
+          started_at: { value: row_columns[1] },
+          url: { value: row_columns[2] }
         }
       end
     end
