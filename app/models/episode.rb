@@ -126,6 +126,7 @@ class Episode < ApplicationRecord
       ratio = state_records_count / all_records_count.to_f
       {
         name: state.text,
+        name_key: state,
         quantity: state_records_count,
         percentage: ratio.nan? ? 0 : (ratio * 100).round
       }

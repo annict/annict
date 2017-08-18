@@ -50,7 +50,8 @@ class WorksController < ApplicationController
 
     gon.pageObject = render_jb "works/_list",
       user: current_user,
-      works: @works
+      works: @works,
+      with_friends: true
   end
 
   def newest(page: nil)
@@ -64,7 +65,8 @@ class WorksController < ApplicationController
 
     gon.pageObject = render_jb "works/_list",
       user: current_user,
-      works: @works
+      works: @works,
+      with_friends: true
   end
 
   def season(slug, page: nil)
@@ -84,7 +86,8 @@ class WorksController < ApplicationController
 
     gon.pageObject = render_jb "works/_list",
       user: current_user,
-      works: @works
+      works: @works,
+      with_friends: true
   end
 
   def show

@@ -21,5 +21,5 @@ class WorkComment < ApplicationRecord
   belongs_to :user
   belongs_to :work
 
-  # validates :body, presence: true, length: { maximum: 150 }
+  validates :body, presence: true, length: { maximum: 150 }
 end

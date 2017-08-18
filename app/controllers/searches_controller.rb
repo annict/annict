@@ -18,7 +18,8 @@ class SearchesController < ApplicationController
 
     gon.pageObject = render_jb "works/_list",
       user: current_user,
-      works: @works
+      works: @works,
+      with_friends: true
   end
 
   private

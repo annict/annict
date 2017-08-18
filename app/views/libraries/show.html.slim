@@ -38,7 +38,7 @@
         - if season.name == "all"
           - works = works.where(season_name: nil)
         .pt-1.mx-1
-          = render "libraries/work", works: works, user: @user
+          = render "libraries/work", works: works, work_tags_data: @work_tags_data, work_comment_data: @work_comment_data, user: @user
     .mt-1.text-center
       = paginate @seasons
   - else
