@@ -186,6 +186,47 @@ class Work < ApplicationRecord
       order("seasons.sort_number #{type} NULLS LAST, works.id #{type}")
   }
 
+  def self.status_kinds(works, user)
+    work_ids = works.pluck(:id)
+    latest_statuses = LatestStatus.where(user: user, work_id: work_ids)
+
+    work_ids.map do |work_id|
+      {
+        work_id: work_id,
+        kind: latest_statuses.select { |ls| ls.work_id == work_id }.first&.kind.presence || "no_select"
+      }
+    end
+  end
+
+  def self.work_tags_data(works, user)
+    work_ids = works.pluck(:id)
+    work_taggings = WorkTagging.where(user: user, work_id: work_ids)
+    work_tags = WorkTag.where(id: work_taggings.pluck(:work_tag_id))
+
+    work_ids.map do |work_id|
+      work_tag_ids = work_taggings.
+        select { |wt| wt.work_id == work_id }.
+        map(&:work_tag_id)
+
+      {
+        work_id: work_id,
+        work_tags: work_tags.select { |wt| wt.id.in?(work_tag_ids) }
+      }
+    end
+  end
+
+  def self.work_comment_data(works, user)
+    work_ids = works.pluck(:id)
+    work_comments = WorkComment.where(user: user, work_id: work_ids)
+
+    work_ids.map do |work_id|
+      {
+        work_id: work_id,
+        work_comment: work_comments.select { |c| c.work_id == work_id }.first
+      }
+    end
+  end
+
   def people
     Person.where(id: (cast_people.pluck(:id) | staff_people.pluck(:id)))
   end
