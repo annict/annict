@@ -24,16 +24,17 @@ module.exports =
 
     if containerWidth
       colors = ["#FFAB40", "#bdbdbd", "#69F0AE", "#40C4FF"]
+      removedColors = []
 
       # Remove colors which corresponded to status if its quantity is zero.
       _.forEach @dataset, (data, i) ->
-        colors.splice(i, 1) if data.quantity == 0
+        removedColors.push(colors[i]) if data.quantity == 0
 
       donutChart
         .width(containerWidth)
         .height(containerWidth - 35)
         .externalRadius(containerWidth / 2.5)
         .internalRadius(containerWidth / 5)
-        .colorSchema(colors)
+        .colorSchema(_.difference(colors, removedColors))
 
       container.datum(@dataset).call(donutChart)
