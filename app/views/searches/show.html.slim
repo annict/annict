@@ -14,13 +14,14 @@
           .input-group
             = text_field_tag :q, @search.q, placeholder: t("messages._common.search_with_keywords"), class: "form-control"
 
-      = render "subnav", view: @view
+      - if @search.q.present?
+        = render "subnav", view: @view
 
-      .container.my-1
-        - resources = instance_variable_get("@#{@view.pluralize}").page(params[:page])
-        = render "#{@view}_list", view: @view, "#{@view.pluralize}": resources
-        .text-center
-          = paginate resources
+        .container.my-1
+          - resources = instance_variable_get("@#{@view.pluralize}").page(params[:page])
+          = render "#{@view}_list", view: @view, "#{@view.pluralize}": resources
+          .text-center
+            = paginate resources
 
 = render "application/components/footer"
 

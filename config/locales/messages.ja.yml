@@ -32,13 +32,16 @@ ja:
     _empty:
       no_characters: キャラクターはいません
       no_episodes: エピソードはありません
-      no_projects: プロジェクトはありません
       no_items: 商品はありません
-      no_reviews: レビューはありません
-      no_staffs: スタッフはいません
-      no_series: シリーズはありません
-      no_series_works: シリーズ作品はありません
+      no_organizations: 団体はありません
+      no_people: 人物はいません
       no_program_details: 登録されていません
+      no_projects: プロジェクトはありません
+      no_reviews: レビューはありません
+      no_series_works: シリーズ作品はありません
+      no_series: シリーズはありません
+      no_staffs: スタッフはいません
+      no_works: 作品はありません
     _validators:
       and_other_are_required: と%{column_name}は両方入力してください
       is_required_true_or_false: には `true` または `false` を指定してください

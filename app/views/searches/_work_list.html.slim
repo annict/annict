@@ -1,21 +1,24 @@
-.c-card.px-1
-  - cache [I18n.locale, works] do
-    - works.each do |work|
-      - cache [I18n.locale, work] do
-        .u-underline.py-1
-          .row
-            .col-2.pr-0
-              = link_to work_path(work) do
-                = ann_image_tag work.work_image, :attachment, size: "200x200", alt: work.decorate.local_title, class: "img-fluid img-thumbnail rounded"
-              - if work.work_image.present?
-                .u-very-small.text-right
-                  = work.work_image.decorate.asin_or_copyright_text
-            .col
-              .mb-zp25.u-lh-0
-                = work.decorate.media_label
-              h3.h3.font-weight-bold.mb-zp25
-                = link_to work.decorate.local_title, work_path(work), class: "u-text-body"
-              .mb-zp5
-                span.font-weight-bold.mr-zp25 = work.watchers_count
-                span.text-muted.small Watchers
-              c-status-selector :work-id="#{work.id}" style="width: 200px;" size="small"
+- if works.present?
+  .c-card.px-1
+    - cache [I18n.locale, works] do
+      - works.each do |work|
+        - cache [I18n.locale, work] do
+          .u-underline.py-1
+            .row
+              .col-2.pr-0
+                = link_to work_path(work) do
+                  = ann_image_tag work.work_image, :attachment, size: "200x200", alt: work.decorate.local_title, class: "img-fluid img-thumbnail rounded"
+                - if work.work_image.present?
+                  .u-very-small.text-right
+                    = work.work_image.decorate.asin_or_copyright_text
+              .col
+                .mb-zp25.u-lh-0
+                  = work.decorate.media_label
+                h3.h3.font-weight-bold.mb-zp25
+                  = link_to work.decorate.local_title, work_path(work), class: "u-text-body"
+                .mb-zp5
+                  span.font-weight-bold.mr-zp25 = work.watchers_count
+                  span.text-muted.small Watchers
+                c-status-selector :work-id="#{work.id}" style="width: 200px;" size="small"
+- else
+  = render "application/components/empty", text: t("messages._empty.no_works")
