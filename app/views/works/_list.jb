@@ -1,15 +1,18 @@
 # frozen_string_literal: true
 
 kinds = Work.status_kinds(@works, @user)
+users_data = Work.watching_friends_data(@works, @user)
 
 json = {}
 
 json[:works] = Rails.cache.fetch([@user, *@works.pluck(:id).uniq.sort]) do
   @works.map do |work|
-    users = @user.
-      friends_interested_in(work).
-      includes(:profile).
-      order("latest_statuses.id DESC")
+    users = users_data.
+      select { |ud| ud[:work_id] == work.id }.
+      first[:users_data].
+      sort_by { |ud| ud[:latest_status_id] }.
+      reverse.
+      map { |ud| ud[:user] }
 
     data = {
       id: work.id,

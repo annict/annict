@@ -34,11 +34,12 @@
                 = work.decorate.local_synopsis_source
 
           - cache [I18n.locale, work.pvs.published] do
-            - if work.pvs.published.present?
+            - pvs = @pvs_data.select { |pd| pd[:work_id] == work.id }.first[:pvs].sort_by { |p| p.sort_number }
+            - if pvs.present?
               .font-weight-bold.mb-zp25
                 = t "noun.pv"
               .row
-                - work.pvs.published.order(:sort_number).each do |pv|
+                - pvs.each do |pv|
                   .col-4.text-center.mb-1
                     - if pv.youtube?
                       c-youtube-modal-player thumbnail-url="#{ann_image_url(pv, :thumbnail, size: "200x113")}" video-id="#{pv.youtube_video_id}" video-title="#{pv.title}" annict-url="#{ENV.fetch('ANNICT_URL')}"
@@ -51,10 +52,11 @@
                           = pv.title
 
           - cache [I18n.locale, work.casts.published] do
-            - if work.casts.published.present?
+            - casts = @casts_data.select { |cd| cd[:work_id] == work.id }.first[:casts].sort_by { |c| c.sort_number }
+            - if casts.present?
               .font-weight-bold.mb-zp25 = t "noun.casts"
               ul.list-inline
-                - work.casts.published.order(:sort_number).first(10).each do |cast|
+                - casts.first(10).each do |cast|
                   - cache [I18n.locale, cast] do
                     li.list-inline-item
                       = cast.character.decorate.name_link
@@ -62,12 +64,14 @@
                       = cast.decorate.local_name_with_old_link
 
           - cache [I18n.locale, work.staffs.published] do
-            - if work.staffs.published.present?
+            - staffs = @staffs_data.select { |sd| sd[:work_id] == work.id }.first[:staffs].sort_by { |s| s.sort_number }
+            - if staffs.present?
               .font-weight-bold.mb-zp25 = t "noun.staffs"
               ul.list-inline
-                - work.staffs.published.major.order(:sort_number).each do |staff|
+                - staffs.each do |staff|
                   - cache [I18n.locale, staff] do
                     li.list-inline-item
                       = "#{staff.decorate.role_name}: "
                       = staff.decorate.local_name_with_old_link
+          
           c-work-friends :work-id="#{work.id}"

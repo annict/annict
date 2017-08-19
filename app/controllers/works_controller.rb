@@ -42,9 +42,13 @@ class WorksController < ApplicationController
   def popular(page: nil)
     @works = Work.
       published.
+      includes(:work_image).
       order(watchers_count: :desc, id: :desc).
       page(page).
       per(display_works_count)
+    @pvs_data = Work.pvs_data(@works)
+    @casts_data = Work.casts_data(@works)
+    @staffs_data = Work.staffs_data(@works, major: true)
 
     return unless user_signed_in?
 
@@ -57,9 +61,13 @@ class WorksController < ApplicationController
   def newest(page: nil)
     @works = Work.
       published.
+      includes(:work_image).
       order(id: :desc).
       page(page).
       per(display_works_count)
+    @pvs_data = Work.pvs_data(@works)
+    @casts_data = Work.casts_data(@works)
+    @staffs_data = Work.staffs_data(@works, major: true)
 
     return unless user_signed_in?
 
@@ -73,10 +81,13 @@ class WorksController < ApplicationController
     @works = Work.
       published.
       by_season(slug).
-      includes(:work_image, :staffs, casts: %i(person character)).
+      includes(:work_image).
       order(watchers_count: :desc, id: :desc).
       page(page).
       per(display_works_count)
+    @pvs_data = Work.pvs_data(@works)
+    @casts_data = Work.casts_data(@works)
+    @staffs_data = Work.staffs_data(@works, major: true)
     @seasons = Season.list(sort: :desc, include_all: true)
     @season = Season.find_by_slug(slug)
     @prev_season = @season.sibling_season(:prev)
