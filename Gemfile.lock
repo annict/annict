@@ -79,13 +79,13 @@ GEM
     autoprefixer-rails (7.1.2.3)
       execjs
     awesome_print (1.8.0)
-    aws-sdk (2.10.15)
-      aws-sdk-resources (= 2.10.15)
-    aws-sdk-core (2.10.15)
+    aws-sdk (2.10.17)
+      aws-sdk-resources (= 2.10.17)
+    aws-sdk-core (2.10.17)
       aws-sigv4 (~> 1.0)
       jmespath (~> 1.0)
-    aws-sdk-resources (2.10.15)
-      aws-sdk-core (= 2.10.15)
+    aws-sdk-resources (2.10.17)
+      aws-sdk-core (= 2.10.17)
     aws-sigv4 (1.0.1)
     axiom-types (0.1.1)
       descendants_tracker (~> 0.0.4)
@@ -238,7 +238,7 @@ GEM
       sass (>= 3.2)
     formatador (0.2.5)
     get_process_mem (0.2.1)
-    github-markup (1.6.0)
+    github-markup (1.6.1)
     globalid (0.4.0)
       activesupport (>= 4.2.0)
     gon (6.1.0)
@@ -389,7 +389,7 @@ GEM
       cocaine (~> 0.5.5)
       mime-types
       mimemagic (~> 0.3.0)
-    parallel (1.11.2)
+    parallel (1.12.0)
     parser (2.4.0.0)
       ast (~> 2.2)
     pg (0.21.0)
@@ -714,6 +714,7 @@ DEPENDENCIES
   uglifier
   validate_url
   virtus
+
 
 RUBY VERSION
    ruby 2.4.1p111
