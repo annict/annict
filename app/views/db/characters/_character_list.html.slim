@@ -10,7 +10,7 @@
         - if policy(characters).edit?
           th = t "noun.edit"
         - if policy(characters).hide?
-          th = t "noun.hide"
+          th = t "noun.unpublish"
         - if policy(characters).destroy?
           th = t "noun.delete"
     tbody
@@ -33,6 +33,6 @@
           - if policy(character).hide?
             td
               - if character.published?
-                = link_to t("noun.hide"), hide_db_character_path(character), class: "btn btn-warning btn-sm", data: { method: "patch", confirm: t("messages._common.are_you_sure") }
+                = link_to t("noun.unpublish"), hide_db_character_path(character), class: "btn btn-warning btn-sm", data: { method: "patch", confirm: t("messages._common.are_you_sure") }
           - if policy(character).destroy?
             td = link_to t("noun.delete"), db_character_path(character), class: "btn btn-danger btn-sm", data: { method: "delete", confirm: t("messages._common.are_you_sure") }

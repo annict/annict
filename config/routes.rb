@@ -206,6 +206,13 @@ Rails.application.routes.draw do
       end
     end
 
+    resources :program_details, only: %i(edit update destroy) do
+      member do
+        get :activities
+        patch :hide
+      end
+    end
+
     resources :works, except: [:show] do
       collection do
         get :season
@@ -223,6 +230,7 @@ Rails.application.routes.draw do
       resources :programs, only: %i(index new create)
       resources :pvs, only: %i(index new create)
       resources :staffs, only: %i(index new create)
+      resources :program_details, only: %i(index new create)
     end
 
     root "home#index"

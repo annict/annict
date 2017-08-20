@@ -122,6 +122,7 @@ en:
     staff: Staff
     staffs: Staffs
     state: State
+    state_change: State Change
     stats: Stats
     story: Story
     summer: Summer
@@ -133,7 +134,9 @@ en:
     tweet: Tweet
     unbroadcast: Unbroadcast
     unknown_season: Season unknown
+    unpublish: Unpublish
     users_count: "%{count} people"
+    video_services: Video Services
     voice_actor: Voice Actor
     voice_actors: Voice Actors
     watching: Watching

@@ -81,7 +81,7 @@
               - if policy(episode).hide?
                 td
                   - if episode.published?
-                    = link_to t("noun.hide"), hide_db_episode_path(episode), class: "btn btn-warning btn-sm", data: { method: "patch", confirm: t("messages._common.are_you_sure") }
+                    = link_to t("noun.unpublish"), hide_db_episode_path(episode), class: "btn btn-warning btn-sm", data: { method: "patch", confirm: t("messages._common.are_you_sure") }
               - if policy(episode).destroy?
                 td = link_to t("noun.delete"), db_episode_path(episode), class: "btn btn-danger btn-sm", data: { method: "delete", confirm: t("messages._common.are_you_sure") }
 

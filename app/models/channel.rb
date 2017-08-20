@@ -1,28 +1,45 @@
 # frozen_string_literal: true
-
 # == Schema Information
 #
 # Table name: channels
 #
-#  id               :integer          not null, primary key
-#  channel_group_id :integer          not null
-#  sc_chid          :integer          not null
-#  name             :string           not null
-#  published        :boolean          default(TRUE), not null
-#  created_at       :datetime
-#  updated_at       :datetime
+#  id                :integer          not null, primary key
+#  channel_group_id  :integer          not null
+#  sc_chid           :integer
+#  name              :string           not null
+#  created_at        :datetime
+#  updated_at        :datetime
+#  video_service :boolean          default(FALSE)
+#  aasm_state        :string           default("published"), not null
 #
 # Indexes
 #
-#  channels_channel_group_id_idx  (channel_group_id)
-#  channels_sc_chid_key           (sc_chid) UNIQUE
+#  channels_channel_group_id_idx        (channel_group_id)
+#  channels_sc_chid_key                 (sc_chid) UNIQUE
+#  index_channels_on_video_service  (video_service)
 #
 
 class Channel < ApplicationRecord
-  belongs_to :channel_group
-  has_many :programs
+  include AASM
 
-  scope(:published, -> { where(published: true) })
+  aasm do
+    state :published, initial: true
+    state :hidden
+
+    event :hide do
+      after do
+        program_details.published.each(&:hide!)
+      end
+
+      transitions from: :published, to: :hidden
+    end
+  end
+
+  belongs_to :channel_group
+  has_many :program_details, dependent: :destroy
+  has_many :programs, dependent: :destroy
+
+  scope :with_video_service, -> { where(video_service: true) }
 
   def self.fastest(work)
     receivable_channel_ids = pluck(:id)

@@ -30,7 +30,7 @@
             - if policy(@casts).edit?
               th = t "noun.edit"
             - if policy(@casts).hide?
-              th = t "noun.hide"
+              th = t "noun.unpublish"
             - if policy(@casts).destroy?
               th = t "noun.delete"
         tbody
@@ -62,7 +62,7 @@
               - if policy(cast).hide?
                 td
                   - if cast.published?
-                    = link_to t("noun.hide"), hide_db_cast_path(cast), class: "btn btn-warning btn-sm", data: { method: "patch", confirm: t("messages._common.are_you_sure") }
+                    = link_to t("noun.unpublish"), hide_db_cast_path(cast), class: "btn btn-warning btn-sm", data: { method: "patch", confirm: t("messages._common.are_you_sure") }
               - if policy(cast).destroy?
                 td = link_to t("noun.delete"), db_cast_path(cast), class: "btn btn-danger btn-sm", data: { method: :delete, confirm: t("messages._common.are_you_sure") }
 

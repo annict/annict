@@ -32,12 +32,16 @@ en:
     _empty:
       no_characters: No Characters
       no_episodes: No Episodes
-      no_projects: No Projects
       no_items: No Items
+      no_organizations: No Organizations
+      no_people: No People
+      no_program_details: No Streaming Links
+      no_projects: No Projects
       no_reviews: No Reviews
+      no_series_works: No Series Works
       no_series: No Series
       no_staffs: No Staffs
-      no_series_works: No Series Works
+      no_works: No Works
     _validators:
       and_other_are_required: and %{column_name} are required
       is_required_true_or_false: is required `true` or `false`

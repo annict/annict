@@ -30,6 +30,6 @@
           - if policy(organization).hide?
             td
               - if organization.published?
-                = link_to t("noun.hide"), hide_db_organization_path(organization), class: "btn btn-warning btn-sm", data: { method: "patch", confirm: t("messages._common.are_you_sure") }
+                = link_to t("noun.unpublish"), hide_db_organization_path(organization), class: "btn btn-warning btn-sm", data: { method: "patch", confirm: t("messages._common.are_you_sure") }
           - if policy(organization).destroy?
             td = link_to t("noun.delete"), db_organization_path(organization), class: "btn btn-danger btn-sm", data: { method: "delete", confirm: t("messages._common.are_you_sure") }

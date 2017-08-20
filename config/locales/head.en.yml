@@ -114,6 +114,11 @@ en:
           edit: Edit Staff
           index: Staff
           new: Create Staff
+        program_details:
+          activities: Activities
+          edit: Edit Program Detail
+          index: Program Details
+          new: New Program Detail
         work_images:
           show: Work Image - %{title}
         works:

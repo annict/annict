@@ -161,6 +161,10 @@ en:
         summary: Summary
         url: URL
         userland_category_id: Category
+      program_detail:
+        channel_id: Channel
+        url: URL
+        started_at: Started At
       user:
         current_password: Current password
         email_username: Email or Username

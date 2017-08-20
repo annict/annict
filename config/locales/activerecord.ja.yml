@@ -160,6 +160,10 @@ ja:
         summary: 要約
         url: URL
         userland_category_id: カテゴリ
+      program_detail:
+        channel_id: チャンネル
+        url: URL
+        started_at: 放送開始日時
       user:
         current_password: 現在のパスワード
         email_username: メールアドレスまたはユーザ名

@@ -113,6 +113,7 @@ class Work < ApplicationRecord
   has_many :series_list, through: :series_works, source: :series
   has_many :statuses, dependent: :destroy
   has_many :staff_people, through: :staffs, source: :resource, source_type: "Person"
+  has_many :program_details, dependent: :destroy
   has_many :work_taggings, dependent: :destroy
   has_many :work_tags, through: :work_taggings
   has_one :work_image, dependent: :destroy
@@ -187,7 +188,7 @@ class Work < ApplicationRecord
   }
 
   def self.status_kinds(works, user)
-    work_ids = works.pluck(:id)
+    work_ids = works.pluck(:id).uniq
     latest_statuses = LatestStatus.where(user: user, work_id: work_ids)
 
     work_ids.map do |work_id|
@@ -223,6 +224,90 @@ class Work < ApplicationRecord
       {
         work_id: work_id,
         work_comment: work_comments.select { |c| c.work_id == work_id }.first
+      }
+    end
+  end
+
+  def self.watching_friends_data(works, user)
+    work_ids = works.pluck(:id).uniq
+    status_kinds = %w(wanna_watch watching watched)
+    users = user.followings.includes(:profile)
+    user_ids = users.pluck(:id)
+    latest_statuses = LatestStatus.
+      where(work: work_ids, user: user_ids).
+      with_kind(*status_kinds)
+
+    work_ids.map do |work_id|
+      latest_statuses_ = latest_statuses.select { |ls| ls.work_id == work_id }
+      users_ = users.select { |u| u.id.in?(latest_statuses_.map(&:user_id)) }
+      users_data = users_.map do |u|
+        latest_status = latest_statuses_.select do |ls|
+          ls.user_id == u.id && ls.work_id == work_id
+        end.first
+
+        {
+          user: u,
+          latest_status_id: latest_status.id
+        }
+      end
+
+      {
+        work_id: work_id,
+        users_data: users_data
+      }
+    end
+  end
+
+  def self.pvs_data(works)
+    work_ids = works.pluck(:id)
+    pvs = Pv.published.where(work_id: work_ids)
+
+    work_ids.map do |work_id|
+      {
+        work_id: work_id,
+        pvs: pvs.select { |p| p.work_id == work_id }
+      }
+    end
+  end
+
+  def self.casts_data(works)
+    work_ids = works.pluck(:id)
+    casts = Cast.published.where(work_id: work_ids).includes(:person, :character)
+
+    work_ids.map do |work_id|
+      {
+        work_id: work_id,
+        casts: casts.select { |c| c.work_id == work_id }
+      }
+    end
+  end
+
+  def self.staffs_data(works, major: false)
+    work_ids = works.pluck(:id)
+    staffs = Staff.published.where(work_id: work_ids).includes(:resource)
+    staffs = staffs.major if major
+
+    work_ids.map do |work_id|
+      {
+        work_id: work_id,
+        staffs: staffs.select { |s| s.work_id == work_id }
+      }
+    end
+  end
+
+  def self.program_details_data(works, only_video_service: false)
+    work_ids = works.pluck(:id)
+    program_details = ProgramDetail.published.where(work_id: work_ids).includes(:channel)
+    if only_video_service
+      program_details = program_details.
+        joins(:channel).
+        where(channels: { video_service: true })
+    end
+
+    work_ids.map do |work_id|
+      {
+        work_id: work_id,
+        program_details: program_details.select { |pd| pd.work_id == work_id }
       }
     end
   end
