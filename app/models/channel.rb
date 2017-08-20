@@ -3,19 +3,19 @@
 #
 # Table name: channels
 #
-#  id                :integer          not null, primary key
-#  channel_group_id  :integer          not null
-#  sc_chid           :integer
-#  name              :string           not null
-#  created_at        :datetime
-#  updated_at        :datetime
-#  video_service :boolean          default(FALSE)
-#  aasm_state        :string           default("published"), not null
+#  id               :integer          not null, primary key
+#  channel_group_id :integer          not null
+#  sc_chid          :integer
+#  name             :string           not null
+#  created_at       :datetime
+#  updated_at       :datetime
+#  video_service    :boolean          default(FALSE)
+#  aasm_state       :string           default("published"), not null
 #
 # Indexes
 #
-#  channels_channel_group_id_idx        (channel_group_id)
-#  channels_sc_chid_key                 (sc_chid) UNIQUE
+#  channels_channel_group_id_idx    (channel_group_id)
+#  channels_sc_chid_key             (sc_chid) UNIQUE
 #  index_channels_on_video_service  (video_service)
 #
 
