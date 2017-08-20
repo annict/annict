@@ -30,6 +30,8 @@ module DB
       fetched_rows.each do |row_data|
         started_at = row_data[:started_at][:value]
 
+        return true if started_at.blank?
+
         begin
           Time.parse(started_at)
         rescue
