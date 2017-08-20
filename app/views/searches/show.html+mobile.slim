@@ -29,7 +29,7 @@
               = t "noun.organizations"
               span.badge.badge-pill.badge-default.ml-zp25 = @organizations.count
     - resources = instance_variable_get("@#{@view.pluralize}").page(params[:page])
-    = render "#{@view.pluralize}/list", "#{@view.pluralize}": resources
+    = render "#{@view}_list", view: @view, "#{@view.pluralize}": resources
     .text-center
       = paginate resources
 
