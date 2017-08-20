@@ -77,9 +77,9 @@
                   - program_detail = channel.program_details.published.find_by(work: @work)
                   .col-4
                     - if program_detail.present?
-                      = link_to channel.name, program_detail.url, class: "btn btn-info w-100", target: "_blank"
+                      = link_to channel.name, program_detail.url, class: "btn btn-primary w-100", target: "_blank"
                     - else
-                      button.btn.btn-outline-info.w-100 type="button" disabled=""
+                      button.btn.btn-primary.w-100 type="button" disabled=""
                         = channel.name
 
         - unless @work.no_episodes?

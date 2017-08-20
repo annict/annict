@@ -295,6 +295,23 @@ class Work < ApplicationRecord
     end
   end
 
+  def self.program_details_data(works, only_video_service: false)
+    work_ids = works.pluck(:id)
+    program_details = ProgramDetail.published.where(work_id: work_ids).includes(:channel)
+    if only_video_service
+      program_details = program_details.
+        joins(:channel).
+        where(channels: { video_service: true })
+    end
+
+    work_ids.map do |work_id|
+      {
+        work_id: work_id,
+        program_details: program_details.select { |pd| pd.work_id == work_id }
+      }
+    end
+  end
+
   def people
     Person.where(id: (cast_people.pluck(:id) | staff_people.pluck(:id)))
   end
