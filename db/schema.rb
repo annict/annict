@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170814131925) do
+ActiveRecord::Schema.define(version: 20170822141842) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -888,6 +888,31 @@ ActiveRecord::Schema.define(version: 20170814131925) do
     t.index ["name"], name: "twitter_bots_name_key", unique: true
   end
 
+  create_table "twitter_tweets", force: :cascade do |t|
+    t.integer "twitter_user_id", null: false
+    t.string "user_screen_name", null: false
+    t.string "user_name", null: false
+    t.string "tweet_id", null: false
+    t.text "text", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["tweet_id"], name: "index_twitter_tweets_on_tweet_id", unique: true
+    t.index ["twitter_user_id"], name: "index_twitter_tweets_on_twitter_user_id"
+  end
+
+  create_table "twitter_users", force: :cascade do |t|
+    t.integer "work_id"
+    t.string "screen_name", null: false
+    t.string "user_id"
+    t.string "aasm_state", default: "published", null: false
+    t.datetime "followed_at"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["screen_name"], name: "index_twitter_users_on_screen_name", unique: true
+    t.index ["user_id"], name: "index_twitter_users_on_user_id", unique: true
+    t.index ["work_id"], name: "index_twitter_users_on_work_id"
+  end
+
   create_table "userland_categories", id: :serial, force: :cascade do |t|
     t.string "name", null: false
     t.string "name_en", null: false
@@ -1171,6 +1196,8 @@ ActiveRecord::Schema.define(version: 20170814131925) do
   add_foreign_key "statuses", "users", name: "statuses_user_id_fk", on_delete: :cascade
   add_foreign_key "statuses", "works", name: "statuses_work_id_fk", on_delete: :cascade
   add_foreign_key "syobocal_alerts", "works", name: "syobocal_alerts_work_id_fk", on_delete: :cascade
+  add_foreign_key "twitter_tweets", "twitter_users"
+  add_foreign_key "twitter_users", "works"
   add_foreign_key "userland_project_members", "userland_projects"
   add_foreign_key "userland_project_members", "users"
   add_foreign_key "userland_projects", "userland_categories"
