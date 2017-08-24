@@ -68,6 +68,7 @@ namespace :twitter do
 
       Rails.logger.info "twitter:post_tweets_to_slack >> Posting to Slack: #{tweet.id}"
       tweet.notify_slack
+      sleep 3 # To load tweets on Slack
     end
   end
 end
