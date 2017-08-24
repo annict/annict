@@ -33,12 +33,15 @@ class TwitterTweet < ApplicationRecord
 
     messages = [
       "#{user_name} [at]#{user_screen_name}",
-      text,
-      "Twitter: #{url}"
+      text
     ]
+
+    link = "<https://annict.jp/db/works/#{url}/edit|Twitter>"
     if twitter_user.work.present?
-      messages << "Annict DB: https://annict.jp/db/works/#{twitter_user.work.id}/edit"
+      link += " / <https://annict.jp/db/works/#{twitter_user.work.id}/edit|Annict DB>"
     end
+
+    messages << link
     messages << "\n---\n\n"
 
     notifier = Slack::Notifier.new(webhook_url, options)
