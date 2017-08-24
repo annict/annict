@@ -26,7 +26,7 @@ class TwitterTweet < ApplicationRecord
 
     webhook_url = ENV.fetch("ANNICT_SLACK_WEBHOOK_URL_FOR_NOTIFICATIONS")
     options = {
-      channel: "#official_twitter",
+      channel: "#official-twitter",
       username: "Notifier",
       icon_emoji: ":annict:"
     }
