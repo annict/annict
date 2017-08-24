@@ -31,13 +31,18 @@ class TwitterTweet < ApplicationRecord
       icon_emoji: ":annict:"
     }
 
-    messages = ["\n\n---\n"]
+    messages = [
+      "#{user_name} [at]#{user_screen_name}",
+      text
+    ]
 
+    link = "<#{url}|Twitter>"
     if twitter_user.work.present?
-      messages << "<https://annict.jp/db/works/#{twitter_user.work.id}/edit|Annict DB>"
+      link += " / <https://annict.jp/db/works/#{twitter_user.work.id}/edit|Annict DB>"
     end
+    messages << link
 
-    messages << url
+    messages << "\n---\n\n"
 
     notifier = Slack::Notifier.new(webhook_url, options)
     notifier.ping(messages.join("\n"))
