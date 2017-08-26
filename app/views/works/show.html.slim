@@ -128,7 +128,8 @@
           = render "works/item_list", work: @work, items: @items
 
         - if @series_list.present?
-          h2.h4.text-center.my-2.font-weight-bold = t "noun.related_works"
+          h2.h4.text-center.my-2.font-weight-bold
+            = t "noun.related_works"
           .c-card.container.mt-1.py-1
             - @series_list.each do |series|
               h3.text-center.mb-1
