@@ -43,6 +43,8 @@ class ProgramDetail < ApplicationRecord
   has_many :db_activities, as: :trackable, dependent: :destroy
   has_many :db_comments, as: :resource, dependent: :destroy
 
+  scope :in_video_service, -> { joins(:channel).where(channels: { video_service: true }) }
+
   before_save :calc_for_timezone
 
   def to_diffable_hash
