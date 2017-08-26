@@ -20,6 +20,7 @@ class RedirectUriValidator < ActiveModel::EachValidator
         # This line is commented out to use a hash fragment in callback URL.
         # We don't use the Implicit Grant flow so it should be fine.
         # https://github.com/doorkeeper-gem/doorkeeper/issues/631
+        # https://annict.slack.com/archives/C02FDKYES/p1503716710000062
         # record.errors.add(attribute, :fragment_present) unless uri.fragment.nil?
         record.errors.add(attribute, :relative_uri) if uri.scheme.nil? || uri.host.nil?
         record.errors.add(attribute, :secured_uri) if invalid_ssl_uri?(uri)
