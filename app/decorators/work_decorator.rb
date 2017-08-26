@@ -67,7 +67,7 @@ class WorkDecorator < ApplicationDecorator
 
     return if source.blank?
 
-    h.auto_link(source)
+    h.auto_link(source, html: { target: "_blank" })
   end
 
   def media_label
