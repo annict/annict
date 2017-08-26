@@ -166,5 +166,6 @@ class Checkin < ApplicationRecord
   def expire_cache
     user.channel_works.find_by(work: work)&.touch
     user.touch(:record_cache_expired_at)
+    activities.update_all(updated_at: Time.now)
   end
 end
