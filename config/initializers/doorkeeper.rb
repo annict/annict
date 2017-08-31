@@ -147,3 +147,20 @@ Doorkeeper::AccessToken.class_eval do
     scopes.include?("write")
   end
 end
+
+# Copy from lib/doorkeeper/oauth/helpers/uri_checker.rb to allow a fragment URI
+# https://github.com/doorkeeper-gem/doorkeeper/blob/c846335ad75f2f9c7108e577cb84eaf8ab66b86f/lib/doorkeeper/oauth/helpers/uri_checker.rb
+module Doorkeeper
+  module OAuth
+    module Helpers
+      module URIChecker
+        def self.valid?(url)
+          uri = as_uri(url)
+          !uri.host.nil? && !uri.scheme.nil?
+        rescue URI::InvalidURIError
+          false
+        end
+      end
+    end
+  end
+end
