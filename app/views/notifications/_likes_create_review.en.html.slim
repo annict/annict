@@ -4,9 +4,10 @@
 
 span.mr-zp25
   = action_user.decorate.name_link
-| liked your review "
-= review.decorate.detail_link
-| " on
+| liked
+span.mx-zp25
+  = link_to "your review", review_path(review.user.username, review)
+| on
 span.mx-zp25
   = review.work.decorate.title_link
 

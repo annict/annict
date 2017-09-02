@@ -34,9 +34,19 @@ crumb :user_detail do |user|
   parent :root
 end
 
+crumb :seasonal_works do |season_slug, season_name|
+  link t("head.title.works.season", name: season_name), season_works_path(slug: season_slug)
+  parent :root
+end
+
 crumb :work_detail do |work|
   link work.decorate.local_title, work_path(work)
-  parent :root
+
+  if work.season.present?
+    parent :seasonal_works, work.season.slug, work.season.local_name
+  else
+    parent :root
+  end
 end
 
 crumb :user_review_list do |user|

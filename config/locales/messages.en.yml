@@ -179,6 +179,7 @@ en:
         confirmation_mail_has_sent: Confirmation mail has sent.
     reviews:
       n_people_changed_status_to_wanna_watch: "%{count} people changed their status to 'Plan to Watch'."
+      view_review_with_words_count: View Review
     sayonara:
       are_you_sure_really: Are you sure? Really??
       delete_account: Delete Account

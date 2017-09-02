@@ -7,9 +7,9 @@ span.mr-zp25
 | が
 span.mx-zp25
   = review.work.decorate.title_link
-| へのレビュー「
-= review.decorate.detail_link
-| 」に「いいね！」しました
+| への
+= link_to "レビュー", review_path(review.user.username, review)
+| に「いいね！」しました
 
 .small.text-muted
   = local_time_ago_in_words(notification.created_at)

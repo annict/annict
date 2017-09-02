@@ -10,7 +10,7 @@
               .c-hover-image__over
           .p-zp5.small
             .row
-              .col.text-truncate
-                = link_to work.decorate.local_title, work_path(work), title: work.decorate.local_title
+              .col
+                = link_to work.decorate.local_title, work_path(work), title: work.decorate.local_title, class: "u-very-small"
               .col.col-auto.pl-0
                 c-work-detail-button :work-id="#{work.id}"

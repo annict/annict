@@ -14,7 +14,7 @@
             = icon "pencil"
         span.small.ml-zp5.text-muted
           = "#{review.impressions_count} views"
-    
+
     c-comment-guard inline-template="" :init-is-spoiler="#{is_spoiler == true}"
       .p-reviews-show__content.clearfix @click="remove"
         - if review.rating_overall_state.present?
@@ -52,14 +52,11 @@
                     = t "noun.overall"
                   td
                     c-rating-state-label :init-rating-state=="'#{review.rating_overall_state}'" v-show="!isSpoiler"
-        - if review.title.present?
-          h1.h4.u-text-green.mb-1
-            = "\"#{review.title}\""
         .c-body
           c-body inline-template=""
             .c-body__content
               = review.body
-    
+
     .row
       .col
         .text-right
