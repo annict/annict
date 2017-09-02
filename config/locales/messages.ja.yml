@@ -179,6 +179,7 @@ ja:
         confirmation_mail_has_sent: 確認メールを送信しました
     reviews:
       n_people_changed_status_to_wanna_watch: "%{count}人がこのレビューを見て視聴ステータスを「見たい」にしました"
+      view_review_with_words_count: "レビューを見る"
     sayonara:
       are_you_sure_really: 後戻りできませんがよろしいですか？
       delete_account: アカウントを削除する

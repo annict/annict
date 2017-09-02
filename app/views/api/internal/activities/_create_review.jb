@@ -21,7 +21,6 @@ json = Rails.cache.fetch(cache_keys) do
     },
     review: {
       id: review.id,
-      title: review.title,
       body: review.body,
       rating_overall_state: review.rating_overall_state,
       likes_count: review.likes_count

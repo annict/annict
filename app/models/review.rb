@@ -6,7 +6,7 @@
 #  id                     :integer          not null, primary key
 #  user_id                :integer          not null
 #  work_id                :integer          not null
-#  title                  :string           default(""), not null
+#  title                  :string           default("")
 #  body                   :text             not null
 #  rating_animation_state :string
 #  rating_music_state     :string
@@ -67,9 +67,7 @@ class Review < ApplicationRecord
     dependent: :destroy,
     as: :recipient
 
-  validates :body, presence: true, length: { maximum: 10_000 }
-  validates :title, presence: true, length: { maximum: 100 }
-  validates :rating_overall_state, presence: true
+  validates :body, presence: true, length: { maximum: 1_500 }
 
   def share_to_sns
     ShareReviewToTwitterJob.perform_later(user.id, id) if user.setting.share_review_to_twitter?

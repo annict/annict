@@ -17,13 +17,12 @@ class ReviewDecorator < ApplicationDecorator
     work_title = work.title
     share_url = detail_url
     share_hashtag = review.work.hashtag_with_hash
-    review_title = title
 
-    body = "#{work_title}のレビュー「#{review_title}」を書きました #{share_url} #{share_hashtag}"
+    body = "#{work_title}のレビューを書きました #{share_url} #{share_hashtag}"
     return body if body.length <= 140
 
-    review_title = review_title.truncate(review_title.length - (body.length - 140))
+    work_title = work_title.truncate(work_title.length - (body.length - 140))
 
-    "#{work_title}のレビュー「#{review_title}」を書きました #{share_url} #{share_hashtag}"
+    "#{work_title}のレビューを書きました #{share_url} #{share_hashtag}"
   end
 end

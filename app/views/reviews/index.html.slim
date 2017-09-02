@@ -24,7 +24,7 @@
                 .small.text-muted.mb-zp25
                   = link_to review.work.decorate.local_title, work_path(review.work), class: "u-text-body"
                 h2.h4.mb-1
-                  - title = review.title.presence || t("noun.review_of_the_work", work_title: review.work.decorate.local_title)
+                  - title = t("messages.reviews.view_review_with_words_count", count: review.body.length)
                   = link_to title, review_path(@user.username, review)
                 .small.text-muted
                   = link_to review_path(review.user.username, review), title: local_datetime(review.created_at) do
@@ -34,7 +34,7 @@
                       = icon "pencil"
                   span.ml-zp5
                     = "#{review.impressions_count} views"
-                  
+
         - if @reviews.total_pages > 1
           .mb-1.text-center
             = paginate @reviews
