@@ -1,4 +1,4 @@
-<% if request.domain == ENV.fetch("ANNICT_JP_DOMAIN") %>
+<% if Rails.env.production? && request.domain == ENV.fetch("ANNICT_JP_DOMAIN") %>
   <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
   <script>
     (adsbygoogle = window.adsbygoogle || []).push({

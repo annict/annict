@@ -7,8 +7,11 @@
 = render "application/components/navbar"
 
 .p-application__content
-  - if user_signed_in?
-    .row.align-items-center.py-2
+  .my-1.text-center
+    = render "application/components/adsense", slot: ENV.fetch("GOOGLE_AD_728x90_13"), size: "728x90"
+
+  - if !user_signed_in?
+    .row.align-items-center
       .col
       .col
       .col.text-right
@@ -25,8 +28,11 @@
     - else
       .container.mt-1
         = render "works/list", works: @works
-    .mt-1.text-center
+    .mt-2.text-center
       = paginate @works
+
+  .mb-2.text-center
+    = render "application/components/adsense", slot: ENV.fetch("GOOGLE_AD_728x90_14"), size: "728x90"
 
 = render "application/components/footer"
 

@@ -6,6 +6,8 @@
 - set_page_category "episodes_show"
 - breadcrumb :episode_detail, @episode
 
+= render "application/components/adsense", slot: ENV.fetch("GOOGLE_AD_320x50_10"), size: "320x50"
+
 = render "works/header", work: @work
 
 .c-card.mb-1.py-1

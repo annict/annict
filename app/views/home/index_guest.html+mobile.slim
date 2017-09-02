@@ -13,7 +13,11 @@
       = icon "rocket"
       = t("noun.sign_up")
 
-h2.h3.text-center.my-1 = t("noun.popular_airing_anime")
+.py-1.text-center
+  = render "application/components/adsense", slot: ENV.fetch("GOOGLE_AD_320x50_1"), size: "320x50"
+
+h2.h3.mb-1.text-center
+  = t("noun.popular_airing_anime")
 .c-card.p-1.mb-1
   = render "home/top_work", top_work: @season_top_work
 
@@ -22,7 +26,10 @@ h2.h3.text-center.my-1 = t("noun.popular_airing_anime")
   .text-center.mt-2
     = link_to t("verb.view_more"), season_works_path(slug: ENV["ANNICT_CURRENT_SEASON"]), class: "btn btn-primary"
 
-h2.text-center.my-1
+.py-1.text-center
+  = render "application/components/adsense", slot: ENV.fetch("GOOGLE_AD_320x50_2"), size: "320x50"
+
+h2.h3.text-center.mb-1
   = t "noun.popular_anime"
 .c-card.p-1.mb-1
   = render "home/top_work", top_work: @top_work
@@ -31,7 +38,8 @@ h2.text-center.my-1
   .text-center.mt-2
     = link_to t("verb.view_more"), popular_works_path, class: "btn btn-primary"
 
-hr.my-2
+.py-1.text-center
+  = render "application/components/adsense", slot: ENV.fetch("GOOGLE_AD_320x50_3"), size: "320x50"
 
 = render "application/components/footer"
 = render "application/components/tabbar"

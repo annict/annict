@@ -9,8 +9,8 @@
 
 .p-application__content
   .container.my-1.mb-2
-    .row
-      .col-6.offset-3
+    .row.justify-content-center
+      .col-7
         .c-card.py-1
           .p-records-show__work-info.px-1
             .row
@@ -60,6 +60,9 @@
                         = t "noun.delete"
             - else
               = render "application/components/empty", text: t("resources.comment.no_comments")
+      .col-3
+        .text-center
+          = render "application/components/adsense", slot: ENV.fetch("GOOGLE_AD_250x250_3"), size: "250x250"
 
 = render "application/components/footer"
 

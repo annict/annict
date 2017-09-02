@@ -8,6 +8,9 @@
 
 .p-application__content
   .container
+    .pt-1.text-center
+      = render "application/components/adsense", slot: ENV.fetch("GOOGLE_AD_728x90_5"), size: "728x90"
+
     .row.align-items-center.py-2
       .col.pl-0
         c-share-button-twitter.mr-zp5 text="#{title}" url="#{local_url}#{season_works_path(slug: @season.slug)}"
@@ -40,8 +43,11 @@
     - else
       .container
         = render "works/list", works: @works
-    .mt-1.text-center
+    .mt-2.text-center
       = paginate @works
+
+    .pt-2.text-center
+      = render "application/components/adsense", slot: ENV.fetch("GOOGLE_AD_728x90_6"), size: "728x90"
 
 = render "application/components/footer"
 

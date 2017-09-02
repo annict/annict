@@ -39,6 +39,8 @@
                 c-follow-button username="#{@user.username}" :init-is-following="false" :is-signed-in="false"
 
   .p-users-show__main.container.pt-1
+    .mb-1.text-center
+      = render "application/components/adsense", slot: ENV.fetch("GOOGLE_AD_728x90_4"), size: "728x90"
     .row
       .col-7
         c-activities username="#{@user.username}"
@@ -121,7 +123,7 @@
                     = link_to reviews_path(@user.username), class: "small" do
                       = icon "angle-right", class: "mr-zp25"
                       = t "verb.view_all"
-            
+
             .container
               - @reviews.first(5).each do |review|
                 .row.pb-1
@@ -170,7 +172,7 @@
                     = link_to favorite_people_path(@user.username), class: "small" do
                       = icon "angle-right", class: "mr-zp25"
                       = t "verb.view_all"
-            
+
             - if @favorite_casts.exists?
               h3.h5.font-weight-bold = t "noun.voice_actors"
               - @favorite_casts.first(6).each_slice(2).each do |list|
@@ -223,6 +225,9 @@
             = icon "bar-chart", class: "mr-zp5"
             = t "noun.your_statistics"
           c-user-heatmap :username='"#{@user.username}"'
+
+        .mb-2
+          = render "application/components/adsense", slot: ENV.fetch("GOOGLE_AD_336x280_1"), size: "336x280"
 
 = render "application/components/footer"
 

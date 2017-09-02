@@ -47,13 +47,16 @@ h1.h2.font-weight-bold
         .col.col-auto.pl-0.pr-zp5.pb-zp5
           = link_to user_path(favorite_org.user.username) do
             = ann_image_tag(favorite_org.user.profile, :tombo_avatar, size: "30x30", class: "rounded-circle", alt: favorite_org.user.decorate.name_with_username, title: favorite_org.user.decorate.name_with_username)
-    
+
     - if @favorite_orgs.length > 30
       .text-right
         = link_to t("verb.view_all"), organization_fans_path(organization)
 
 - if user_signed_in? && current_user.committer?
   = link_to t("messages._common.edit_on_annict_db"), edit_db_organization_path(organization), class: "btn btn-secondary w-100 mt-zp5"
+
+.mt-2
+  = render "application/components/adsense", slot: ENV.fetch("GOOGLE_AD_200x200_4"), size: "200x200"
 
 - content_for :js_templates
   = render "application/js_templates/favorite_button"
