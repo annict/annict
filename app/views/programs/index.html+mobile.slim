@@ -2,6 +2,8 @@
 - set_meta_tags(title: title, og: { title: title }, reverse: true, prefix: false)
 - set_page_category "programs_index"
 
+= render "application/components/adsense", slot: ENV["GOOGLE_AD_320x50_14"], size: "320x50"
+
 .mb-2
   c-program-list
     .c-loading

@@ -4,6 +4,8 @@
 - set_meta_tags(title: name, description: description, keywords: keywords, og: { description: description }, twitter: { description: description }, reverse: true, prefix: false)
 - set_page_category "people_show"
 
+= render "application/components/adsense", slot: ENV["GOOGLE_AD_320x50_7"], size: "320x50"
+
 .c-card.mb-1
   = render "people/header", person: @person, favorite_resources: @favorite_people
 

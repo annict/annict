@@ -10,7 +10,7 @@
 = render "users/low_profile_header", user: @user
 
 .p-application__content.mb-2
-  .p-libraries-show__subnav.c-subnav.mb-2
+  .p-libraries-show__subnav.c-subnav.mb-1
     - %i(watching wanna_watch watched on_hold stop_watching).each do |status_kind|
       = active_link_to library_path(@user.username, status_kind), class: "c-subnav__link", class_active: "c-subnav__link--active", active: (status_kind.to_s == params[:status_kind]) do
         .c-subnav__item
@@ -19,6 +19,9 @@
               = @user.latest_statuses.count_on(status_kind)
             .small
               = t "enumerize.status.kind.#{status_kind}"
+
+  .mb-2.text-center
+    = render "application/components/adsense", slot: ENV["GOOGLE_AD_728x90_15"], size: "728x90"
 
   - if @seasons.present?
     - @seasons.each_with_index do |season, i|
@@ -43,6 +46,9 @@
       = paginate @seasons
   - else
     = render "application/components/empty", text: t("messages.users.no_works")
+
+  .mt-2.text-center
+    = render "application/components/adsense", slot: ENV["GOOGLE_AD_728x90_16"], size: "728x90"
 
 = render "application/components/footer"
 

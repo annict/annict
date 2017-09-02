@@ -1,11 +1,11 @@
 .row.mb-1
-  .col-4.pr-0
+  .col-3.pr-0
     = link_to work_path(work) do
       = ann_image_tag work.work_image, :attachment, size: "110x147", class: "img-fluid img-thumbnail rounded"
     - if work.work_image.present?
       .u-very-small.mt-zp25
         = work.work_image.decorate.asin_or_copyright_text
-  .col-8
+  .col-9
     h1.h3.font-weight-bold.mb-zp5
       = link_to work.decorate.local_title, work_path(work)
     c-status-selector :work-id="#{work.id}"

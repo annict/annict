@@ -1,8 +1,8 @@
-<% if request.domain == ENV.fetch("ANNICT_JP_DOMAIN") %>
+<% if Rails.env.production? %>
   <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
   <script>
     (adsbygoogle = window.adsbygoogle || []).push({
-      google_ad_client: "<%= ENV.fetch('GOOGLE_AD_CLIENT_JP') %>",
+      google_ad_client: "<%= ENV.fetch('GOOGLE_AD_CLIENT') %>",
       enable_page_level_ads: true
     });
   </script>

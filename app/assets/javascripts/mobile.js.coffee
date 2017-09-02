@@ -16,6 +16,7 @@ document.addEventListener "turbolinks:load", (event) ->
   vueLazyLoad = require "./common/vueLazyLoad"
 
   activities = require "./common/components/activities"
+  adsense = require "./common/components/adsense"
   amazonItemAttacher = require "./common/components/amazonItemAttacher"
   analytics = require "./common/components/analytics"
   body = require "./common/components/body"
@@ -67,6 +68,7 @@ document.addEventListener "turbolinks:load", (event) ->
   Vue.use(VueLazyload)
 
   Vue.component("c-activities", activities)
+  Vue.component("c-adsense", adsense)
   Vue.component("c-amazon-item-attacher", amazonItemAttacher)
   Vue.component("c-analytics", analytics(event))
   Vue.component("c-body", body)

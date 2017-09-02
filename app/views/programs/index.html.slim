@@ -6,9 +6,14 @@
 
 .p-application__content.mt-1.mb-2
   .container
-    c-program-list
-      .c-loading
-        .c-loading__core Loading...
+    .row.justify-content-center
+      .col-7
+        c-program-list
+          .c-loading
+            .c-loading__core Loading...
+      .col-3
+        .text-center
+          = render "application/components/adsense", slot: ENV["GOOGLE_AD_250x250_2"], size: "250x250"
 
 = render "application/components/footer"
 

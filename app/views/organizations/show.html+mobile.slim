@@ -4,6 +4,8 @@
 - set_meta_tags(title: title, description: description, keywords: keywords, og: { description: description }, twitter: { description: description }, reverse: true, prefix: false)
 - set_page_category "organizations_show"
 
+= render "application/components/adsense", slot: ENV["GOOGLE_AD_320x50_8"], size: "320x50"
+
 .c-card.mb-1
   = render "organizations/header", organization: @organization, favorite_resources: @favorite_orgs
 

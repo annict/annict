@@ -14,8 +14,11 @@
       = link_to new_user_registration_path, class: "btn btn-primary" do
         = icon "rocket"
         = t "messages.home.index_guest.start_tracking"
-      
+
   .container.p-home-index__main
+    .pt-3.text-center
+      = render "application/components/adsense", slot: ENV["GOOGLE_AD_728x90_1"], size: "728x90"
+
     h2.text-center.pt-3.mb-3
       = t "noun.popular_airing_anime"
     .c-card.p-1.mb-1
@@ -25,6 +28,9 @@
       .text-center.mt-2
         = link_to t("verb.view_more"), season_works_path(slug: ENV["ANNICT_CURRENT_SEASON"]), class: "btn btn-primary"
 
+    .pt-3.text-center
+      = render "application/components/adsense", slot: ENV["GOOGLE_AD_728x90_2"], size: "728x90"
+
     h2.text-center.pt-3.mb-3
       = t "noun.popular_anime"
     .c-card.p-1.mb-1
@@ -33,6 +39,9 @@
       = render "home/other_works", other_works: @works
       .text-center.mt-2
         = link_to t("verb.view_more"), popular_works_path, class: "btn btn-primary"
+
+    .pt-3.mb-1.text-center
+      = render "application/components/adsense", slot: ENV["GOOGLE_AD_728x90_3"], size: "728x90"
 
 = render "application/components/footer"
 

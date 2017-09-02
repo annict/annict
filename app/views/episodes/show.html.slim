@@ -9,7 +9,7 @@
 = render "application/components/navbar"
 
 .p-application__content
-  .container.py-1.mb-2
+  .container.py-1.mb-1
     = render "application/components/breadcrumb"
     .row
       .col-3.pr-0
@@ -18,6 +18,8 @@
         = render "works/subnav", work: @work
         .c-card.container.py-1.my-1
           = render "episodes/nav", work: @work, episode: @episode
+        .text-center.mb-1
+          = render "application/components/adsense", slot: ENV["GOOGLE_AD_728x90_9"], size: "728x90"
         .row
           .col-9.pr-0
             .c-card.py-1
@@ -50,11 +52,13 @@
                       = paginate @selected_comment_records
                 - else
                   = render "application/components/empty", text: t("messages.episodes.no_comments")
-            
+
             h2.h4.text-center.my-2.font-weight-bold
               = t "noun.related_items"
             .c-card.container.my-1.py-zp5
               = render "episodes/item_list", episode: @episode, items: @items
+            .text-center.pt-1
+              = render "application/components/adsense", slot: ENV["GOOGLE_AD_320x100_1"], size: "320x100"
           .col-3.pl-0
             .mb-2
               .small.font-weight-bold.mb-zp5.text-center

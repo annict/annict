@@ -9,6 +9,7 @@
 - content_for :head do
   script src="https://www.youtube.com/player_api"
 
+= render "application/components/adsense", slot: ENV["GOOGLE_AD_320x50_5"], size: "320x50"
 = render "works/header", work: @work
 
 h2.h4.font-weight-bold.text-center.mt-1.mb-2
