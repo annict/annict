@@ -3,11 +3,14 @@
 - keywords = meta_keywords(@season.local_name)
 - set_meta_tags(title: title, description: description, keywords: keywords, og: { description: description }, reverse: true, prefix: false)
 - set_page_category "works_season"
+- breadcrumb :seasonal_works, @season.slug, @season.local_name
 
 = render "application/components/navbar"
 
 .p-application__content
   .container
+    .mt-1
+      = render "application/components/breadcrumb"
     .pt-1.text-center
       = render "application/components/adsense", slot: ENV["GOOGLE_AD_728x90_5"], size: "728x90"
 

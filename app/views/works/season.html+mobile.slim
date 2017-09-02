@@ -3,6 +3,7 @@
 - keywords = meta_keywords(@season.local_name)
 - set_meta_tags(title: title, description: description, keywords: keywords, og: { description: description }, reverse: true, prefix: false)
 - set_page_category "works_season"
+- breadcrumb :seasonal_works, @season.slug, @season.local_name
 
 = render "application/components/adsense", slot: ENV["GOOGLE_AD_320x50_4"], size: "320x50"
 .px-1
@@ -37,6 +38,7 @@
   .text-center
     = paginate @works, window: 2
 
+= render "application/components/breadcrumb"
 = render "application/components/footer"
 = render "application/components/tabbar"
 
