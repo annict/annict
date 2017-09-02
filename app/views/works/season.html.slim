@@ -9,7 +9,7 @@
 .p-application__content
   .container
     .pt-1.text-center
-      = render "application/components/adsense", slot: ENV.fetch("GOOGLE_AD_728x90_5"), size: "728x90"
+      = render "application/components/adsense", slot: ENV["GOOGLE_AD_728x90_5"], size: "728x90"
 
     .row.align-items-center.py-2
       .col.pl-0
@@ -47,7 +47,7 @@
       = paginate @works
 
     .pt-2.text-center
-      = render "application/components/adsense", slot: ENV.fetch("GOOGLE_AD_728x90_6"), size: "728x90"
+      = render "application/components/adsense", slot: ENV["GOOGLE_AD_728x90_6"], size: "728x90"
 
 = render "application/components/footer"
 

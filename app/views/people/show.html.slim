@@ -15,7 +15,7 @@
         = render "people/subnav", person: @person
 
         .text-center.mb-1
-          = render "application/components/adsense", slot: ENV.fetch("GOOGLE_AD_728x90_11"), size: "728x90"
+          = render "application/components/adsense", slot: ENV["GOOGLE_AD_728x90_11"], size: "728x90"
 
         .c-card
           .container.py-1

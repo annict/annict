@@ -6,7 +6,7 @@
 - set_meta_tags(title: title, description: description, keywords: keywords, og: { description: description }, twitter: { description: description }, reverse: true, prefix: false)
 - set_page_category "libraries_show"
 
-= render "application/components/adsense", slot: ENV.fetch("GOOGLE_AD_320x50_15"), size: "320x50"
+= render "application/components/adsense", slot: ENV["GOOGLE_AD_320x50_15"], size: "320x50"
 
 = render "users/low_profile_header", user: @user
 

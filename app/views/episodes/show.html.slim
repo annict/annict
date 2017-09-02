@@ -19,7 +19,7 @@
         .c-card.container.py-1.my-1
           = render "episodes/nav", work: @work, episode: @episode
         .text-center.mb-1
-          = render "application/components/adsense", slot: ENV.fetch("GOOGLE_AD_728x90_9"), size: "728x90"
+          = render "application/components/adsense", slot: ENV["GOOGLE_AD_728x90_9"], size: "728x90"
         .row
           .col-9.pr-0
             .c-card.py-1
@@ -58,7 +58,7 @@
             .c-card.container.my-1.py-zp5
               = render "episodes/item_list", episode: @episode, items: @items
             .text-center.pt-1
-              = render "application/components/adsense", slot: ENV.fetch("GOOGLE_AD_320x100_1"), size: "320x100"
+              = render "application/components/adsense", slot: ENV["GOOGLE_AD_320x100_1"], size: "320x100"
           .col-3.pl-0
             .mb-2
               .small.font-weight-bold.mb-zp5.text-center

@@ -72,4 +72,4 @@ c-share-button-facebook url="#{local_url}#{work_path(work)}"
     = link_to t("messages._common.edit_on_annict_db"), edit_db_work_path(work), class: "btn btn-secondary w-100 mt-zp5"
 
 .mt-2
-  = render "application/components/adsense", slot: ENV.fetch("GOOGLE_AD_200x200_1"), size: "200x200"
+  = render "application/components/adsense", slot: ENV["GOOGLE_AD_200x200_1"], size: "200x200"

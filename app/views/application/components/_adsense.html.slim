@@ -1,1 +1,1 @@
-c-adsense ad-client="#{ENV.fetch('GOOGLE_AD_CLIENT')}" ad-slot="#{slot}" ad-size="#{size}"
+c-adsense ad-client="#{ENV.fetch('GOOGLE_AD_CLIENT')}" ad-slot="#{slot.presence || ''}" ad-size="#{size}"

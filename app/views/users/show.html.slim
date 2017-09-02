@@ -40,7 +40,7 @@
 
   .p-users-show__main.container.pt-1
     .mb-1.text-center
-      = render "application/components/adsense", slot: ENV.fetch("GOOGLE_AD_728x90_4"), size: "728x90"
+      = render "application/components/adsense", slot: ENV["GOOGLE_AD_728x90_4"], size: "728x90"
     .row
       .col-7
         c-activities username="#{@user.username}"
@@ -227,7 +227,7 @@
           c-user-heatmap :username='"#{@user.username}"'
 
         .mb-2
-          = render "application/components/adsense", slot: ENV.fetch("GOOGLE_AD_336x280_1"), size: "336x280"
+          = render "application/components/adsense", slot: ENV["GOOGLE_AD_336x280_1"], size: "336x280"
 
 = render "application/components/footer"
 

@@ -14,7 +14,7 @@
       = t("noun.sign_up")
 
 .py-1.text-center
-  = render "application/components/adsense", slot: ENV.fetch("GOOGLE_AD_320x50_1"), size: "320x50"
+  = render "application/components/adsense", slot: ENV["GOOGLE_AD_320x50_1"], size: "320x50"
 
 h2.h3.mb-1.text-center
   = t("noun.popular_airing_anime")
@@ -27,7 +27,7 @@ h2.h3.mb-1.text-center
     = link_to t("verb.view_more"), season_works_path(slug: ENV["ANNICT_CURRENT_SEASON"]), class: "btn btn-primary"
 
 .py-1.text-center
-  = render "application/components/adsense", slot: ENV.fetch("GOOGLE_AD_320x50_2"), size: "320x50"
+  = render "application/components/adsense", slot: ENV["GOOGLE_AD_320x50_2"], size: "320x50"
 
 h2.h3.text-center.mb-1
   = t "noun.popular_anime"
@@ -39,7 +39,7 @@ h2.h3.text-center.mb-1
     = link_to t("verb.view_more"), popular_works_path, class: "btn btn-primary"
 
 .py-1.text-center
-  = render "application/components/adsense", slot: ENV.fetch("GOOGLE_AD_320x50_3"), size: "320x50"
+  = render "application/components/adsense", slot: ENV["GOOGLE_AD_320x50_3"], size: "320x50"
 
 = render "application/components/footer"
 = render "application/components/tabbar"

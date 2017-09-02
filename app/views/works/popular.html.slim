@@ -8,7 +8,7 @@
 
 .p-application__content
   .my-1.text-center
-    = render "application/components/adsense", slot: ENV.fetch("GOOGLE_AD_728x90_13"), size: "728x90"
+    = render "application/components/adsense", slot: ENV["GOOGLE_AD_728x90_13"], size: "728x90"
 
   - if !user_signed_in?
     .row.align-items-center
@@ -32,7 +32,7 @@
       = paginate @works
 
   .mb-2.text-center
-    = render "application/components/adsense", slot: ENV.fetch("GOOGLE_AD_728x90_14"), size: "728x90"
+    = render "application/components/adsense", slot: ENV["GOOGLE_AD_728x90_14"], size: "728x90"
 
 = render "application/components/footer"
 

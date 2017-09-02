@@ -21,7 +21,7 @@
               = t "enumerize.status.kind.#{status_kind}"
 
   .mb-2.text-center
-    = render "application/components/adsense", slot: ENV.fetch("GOOGLE_AD_728x90_15"), size: "728x90"
+    = render "application/components/adsense", slot: ENV["GOOGLE_AD_728x90_15"], size: "728x90"
 
   - if @seasons.present?
     - @seasons.each_with_index do |season, i|
@@ -48,7 +48,7 @@
     = render "application/components/empty", text: t("messages.users.no_works")
 
   .mt-2.text-center
-    = render "application/components/adsense", slot: ENV.fetch("GOOGLE_AD_728x90_16"), size: "728x90"
+    = render "application/components/adsense", slot: ENV["GOOGLE_AD_728x90_16"], size: "728x90"
 
 = render "application/components/footer"
 

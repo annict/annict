@@ -6,7 +6,7 @@
 
 .p-application__content
   .pt-1.text-center
-    = render "application/components/adsense", slot: ENV.fetch("GOOGLE_AD_468x60_1"), size: "468x60"
+    = render "application/components/adsense", slot: ENV["GOOGLE_AD_468x60_1"], size: "468x60"
   .c-card.container.mt-1.mb-2.u-mw-600
     c-untracked-episode-list
       .c-loading
