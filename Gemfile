@@ -25,7 +25,6 @@ gem "bootsnap", require: false
 gem "bootstrap"
 gem "bourbon"
 gem "browser"
-gem "browserify-rails"
 gem "by_star"
 gem "commonmarker"
 gem "counter_culture"
