@@ -9,6 +9,8 @@
 /log/*.log
 /node_modules
 /public/dmmyix
+/public/packs
+/public/packs-test
 /public/paperclip
 /public/sitemap*
 /spec/test_files/paperclip

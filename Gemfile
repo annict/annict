@@ -91,6 +91,7 @@ gem "twitter"
 gem "uglifier"
 gem "validate_url"
 gem "virtus"
+gem "webpacker"
 
 group :development, :test do
   gem "awesome_print"
