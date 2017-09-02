@@ -16,6 +16,8 @@ local_default: &local_default
   ANNICT_PAPERCLIP_PATH: ":rails_root/public/paperclip/:class/:id/:attachment/:style/:hash.:extension"
   ANNICT_URL: "http://annict.dev:3000"
 
+  GOOGLE_AD_CLIENT: ""
+
 development:
   <<: *local_default
   FACEBOOK_APP_ID: "000000000000000"
