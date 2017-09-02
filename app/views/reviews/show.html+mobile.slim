@@ -6,6 +6,8 @@
 - set_page_category "reviews_show"
 - breadcrumb :review_detail, @review
 
+= render "application/components/adsense", slot: ENV["GOOGLE_AD_320x50_17"], size: "320x50"
+
 .c-card.container.pt-1.mb-1
   = render "works/work_info", work: @work
 
