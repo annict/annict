@@ -4,7 +4,7 @@
 - breadcrumb :forum_post_detail, @post
 
 = render "application/components/navbar"
-= render "forum/application/subnav"
+= render "forum/application/subnav", post: @post
 
 .p-application__content
   .container.py-1.mb-1
