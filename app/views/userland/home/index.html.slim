@@ -4,10 +4,10 @@
 - breadcrumb :userland_root
 
 = render "application/components/navbar"
-= render "application/components/breadcrumb"
 
 .p-application__content
-  .container.mb-2
+  .container.py-1.mb-1
+    = render "application/components/breadcrumb"
     .row
       .col-8
         - @categories.each do |category|
