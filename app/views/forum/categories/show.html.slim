@@ -9,8 +9,15 @@
 .p-application__content
   .container.py-1.mb-1
     = render "application/components/breadcrumb"
-    h1.h2.mb-1 = @category.decorate.local_name
-
+    .row
+      .col
+        h1.h2.mb-1
+          = @category.decorate.local_name
+      .col
+        .text-right.mb-1
+          = link_to new_forum_post_path(category: @category.slug), class: "btn btn-primary" do
+            = icon "plus"
+            = t "resources.forum_post.new"
     .c-card
       - if @category.forum_posts.present?
         = render "forum/posts/post_list", posts: @category.forum_posts.order(last_commented_at: :desc)
