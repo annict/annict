@@ -132,6 +132,16 @@ crumb :forum_category_detail do |category|
   parent :forum_root
 end
 
+crumb :forum_new_post do |post|
+  link t("head.title.forum.posts.new")
+
+  if post.forum_category.present?
+    parent :forum_category_detail, post.forum_category
+  else
+    parent :forum_root
+  end
+end
+
 crumb :forum_post_detail do |post|
   link post.title, forum_post_path(post)
   parent :forum_category_detail, post.forum_category
