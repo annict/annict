@@ -135,4 +135,3 @@ document.addEventListener('turbolinks:load', event => {
 });
 
 Turbolinks.start();
-console.log('＼(^o^)／＼(^o^)／');
