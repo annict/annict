@@ -98,7 +98,7 @@ Rails.application.configure do
     if source =~ %r{/assets/no-image}
       nil
     else
-      ENV.fetch("ANNICT_FILE_STORAGE_URL")
+      ENV.fetch("ANNICT_ASSET_URL")
     end
   end
 

@@ -2,27 +2,40 @@
   "name": "annict",
   "private": true,
   "dependencies": {
+    "@rails/webpacker": "^3.0.1",
     "async": "2.5.0",
+    "bootstrap": "4.0.0-alpha.6",
     "britecharts": "^2.0.0",
     "browserify": "14.3.0",
     "browserify-incremental": "3.1.1",
-    "coffeeify": "2.1.0",
+    "cal-heatmap": "3.6.2",
+    "cropperjs": "0.8.1",
+    "d3": "3.5.17",
     "d3-selection": "^1.1.0",
+    "dropzone": "4.3.0",
+    "jquery": "^3.2.1",
+    "jquery-ujs": "^1.2.2",
     "js-cookie": "2.1.4",
     "linkifyjs": "2.1.4",
     "lodash": "4.17.4",
     "mjml": "3.3.3",
     "moment-timezone": "0.5.13",
     "mousetrap": "1.6.1",
-    "tether": "1.4.0",
+    "select2": "^4.0.3",
+    "tether": "^1.4.0",
     "turbolinks": "5.0.3",
-    "vue": "2.4.2",
-    "vue-lazyload": "^1.0.0-rc12"
+    "vue": "^2.4.2",
+    "vue-lazyload": "^1.0.0-rc12",
+    "vue-loader": "^13.0.4",
+    "vue-template-compiler": "^2.4.2"
   },
   "engines": {
     "node": "~> 8.1.4"
   },
   "devDependencies": {
-    "coffeelint": "1.16.0"
+    "eslint": "^4.6.0",
+    "prettier": "^1.6.1",
+    "webpack-dev-server": "^2.7.1",
+    "webpack-merge": "^4.1.0"
   }
 }

@@ -15,7 +15,5 @@ Rails.application.config.assets.paths << Rails.root.join("node_modules")
 Rails.application.config.assets.precompile += %w(
   db.scss
   mobile.scss
-  mobile.js.coffee
   pc.scss
-  pc.js.coffee
 )

@@ -4,7 +4,7 @@ html lang="#{I18n.locale}"
     = ann_display_meta_tags "Annict DB"
     = render "application/head_links"
     = stylesheet_link_tag "db", media: "all"
-    = javascript_include_tag "pc"
+    = javascript_pack_tag "pc"
     = csrf_meta_tags
   body class="p-db #{body_classes}"
     .p-application
@@ -12,7 +12,7 @@ html lang="#{I18n.locale}"
         = link_to db_root_path, class: "c-lockup my-1 px-1" do
           span.c-lockup__logo Annict
           span.c-lockup__brand DB
-        
+
         = form_tag db_search_path, method: :get, class: "px-1" do
           .form-group
             = text_field_tag :q, @search.q, placeholder: t("messages._common.search_with_keywords"), class: "form-control"

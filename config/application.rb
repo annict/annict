@@ -87,8 +87,5 @@ module Annict
         resource "*", headers: :any, methods: ALLOWED_METHODS, expose: EXPOSED_HEADERS
       end
     end
-
-    commandline_options = "-t coffeeify --extension=\".js.coffee\""
-    config.browserify_rails.commandline_options = commandline_options
   end
 end

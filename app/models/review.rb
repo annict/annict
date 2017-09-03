@@ -69,8 +69,18 @@ class Review < ApplicationRecord
 
   validates :body, presence: true, length: { maximum: 1_500 }
 
+  before_save :append_title_to_body
+
   def share_to_sns
     ShareReviewToTwitterJob.perform_later(user.id, id) if user.setting.share_review_to_twitter?
     ShareReviewToFacebookJob.perform_later(user.id, id) if user.setting.share_review_to_facebook?
+  end
+
+  private
+
+  # For backward compatible on API
+  def append_title_to_body
+    self.body = "#{title}\n\n#{body}" if title.present?
+    self.title = ""
   end
 end

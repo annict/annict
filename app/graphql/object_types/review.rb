@@ -25,7 +25,7 @@ ObjectTypes::Review = GraphQL::ObjectType.define do
     }
   end
 
-  field :title, !types.String do
+  field :title, types.String do
     resolve ->(obj, _args, _ctx) {
       obj.title.presence || I18n.t("noun.review_of_the_work", work_title: obj.work.decorate.local_title)
     }
