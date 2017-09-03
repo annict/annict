@@ -138,11 +138,12 @@ ja:
         index: "%{profile_name} (%{username})のお気に入りの人物"
       forum:
         categories:
-          show: "%{name} - Forum"
+          show: "%{name}"
         home:
           index: Forum
         posts:
-          show: "%{title} - Forum"
+          new: "新規投稿"
+          show: "%{title}"
       friends:
         index: 友達を探す
       home:
