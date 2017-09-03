@@ -16,16 +16,8 @@ export default function(str) {
 var _getTag = function(link) {
   switch (link.type) {
     case 'url':
-      return `\
-<a href='${link.href}' target='_blank'>
-  ${link.value}
-</a>\
-`;
+      return `<a href='${link.href}' target='_blank'>${link.value}</a>`;
     case 'mention':
-      return `\
-<a href='https://annict.com/${link.value}'>
-  ${link.value}
-</a>\
-`;
+      return `<a href='${gon.annictUrl}/${link.value}'>${link.value}</a>`;
   }
 };
