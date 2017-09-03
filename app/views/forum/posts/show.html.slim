@@ -15,7 +15,8 @@
           .col.col-auto.pr-0
             = link_to @post.forum_category.decorate.local_name,  forum_category_path(@post.forum_category.slug), class: "badge badge-default"
           .col
-            h1.h2.mb-0 = @post.title
+            h1.h2.mb-0
+              = @post.title
 
     .c-card.p-1.mb-1
       .row.mb-1
@@ -28,8 +29,9 @@
           .mt-zp25
             = link_to forum_post_path(@post), class: "small text-muted", title: local_datetime(@post.created_at) do
               = local_time_ago_in_words(@post.created_at)
-      c-body inline-template=""
-        .c-body__content = @post.body
+      c-body :markdown="true" inline-template=""
+        .c-body__content
+          = @post.body
       - if policy(@post).edit?
         .text-right.small
           = link_to edit_forum_post_path(@post) do
@@ -49,8 +51,9 @@
               .mt-zp25
                 span.small.text-muted title="#{local_datetime(comment.created_at)}"
                   = local_time_ago_in_words(comment.created_at)
-          c-body inline-template=""
-            .c-body__content = comment.body
+          c-body :markdown="true" inline-template=""
+            .c-body__content
+              = comment.body
           - if policy(comment).edit?
             .text-right.small
               = link_to edit_forum_post_comment_path(@post, comment) do
