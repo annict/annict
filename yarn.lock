@@ -1303,8 +1303,8 @@ classnames@^2.2.5:
   resolved "https://registry.yarnpkg.com/classnames/-/classnames-2.2.5.tgz#fb3801d453467649ef3603c7d61a02bd129bde6d"
 
 clean-css@4.1.x:
-  version "4.1.7"
-  resolved "https://registry.yarnpkg.com/clean-css/-/clean-css-4.1.7.tgz#b9aea4f85679889cf3eae8b40349ec4ebdfdd032"
+  version "4.1.8"
+  resolved "https://registry.yarnpkg.com/clean-css/-/clean-css-4.1.8.tgz#061455b2494a750ac98f46d8d5ebb17c679ea9d1"
   dependencies:
     source-map "0.5.x"
 
@@ -1821,17 +1821,9 @@ d3-drag@1, d3-drag@1.1.1:
     d3-dispatch "1"
     d3-selection "1"
 
-d3-dsv@1:
+d3-dsv@1, d3-dsv@1.0.7:
   version "1.0.7"
   resolved "https://registry.yarnpkg.com/d3-dsv/-/d3-dsv-1.0.7.tgz#137076663f398428fc3d031ae65370522492b78f"
-  dependencies:
-    commander "2"
-    iconv-lite "0.4"
-    rw "1"
-
-d3-dsv@1.0.5:
-  version "1.0.5"
-  resolved "https://registry.yarnpkg.com/d3-dsv/-/d3-dsv-1.0.5.tgz#419f7db47f628789fc3fdb636e678449d0821136"
   dependencies:
     commander "2"
     iconv-lite "0.4"
@@ -1890,9 +1882,9 @@ d3-random@1.1.0:
   version "1.1.0"
   resolved "https://registry.yarnpkg.com/d3-random/-/d3-random-1.1.0.tgz#6642e506c6fa3a648595d2b2469788a8d12529d3"
 
-d3-request@1.0.5:
-  version "1.0.5"
-  resolved "https://registry.yarnpkg.com/d3-request/-/d3-request-1.0.5.tgz#4daae946d1dd0d57dfe01f022956354958d51f23"
+d3-request@1.0.6:
+  version "1.0.6"
+  resolved "https://registry.yarnpkg.com/d3-request/-/d3-request-1.0.6.tgz#a1044a9ef4ec28c824171c9379fae6d79474b19f"
   dependencies:
     d3-collection "1"
     d3-dispatch "1"
@@ -1965,8 +1957,8 @@ d3@3.5.17, d3@^3.0.6:
   resolved "https://registry.yarnpkg.com/d3/-/d3-3.5.17.tgz#bc46748004378b21a360c9fc7cf5231790762fb8"
 
 d3@^4.10.0:
-  version "4.10.0"
-  resolved "https://registry.yarnpkg.com/d3/-/d3-4.10.0.tgz#0bcca3a3b614e2fd45b1b5bd0b9164d57352a862"
+  version "4.10.1"
+  resolved "https://registry.yarnpkg.com/d3/-/d3-4.10.1.tgz#94799b044073a8d0b752bb8fbfdb92b9bda2dce3"
   dependencies:
     d3-array "1.2.0"
     d3-axis "1.0.8"
@@ -1976,7 +1968,7 @@ d3@^4.10.0:
     d3-color "1.0.3"
     d3-dispatch "1.0.3"
     d3-drag "1.1.1"
-    d3-dsv "1.0.5"
+    d3-dsv "1.0.7"
     d3-ease "1.0.3"
     d3-force "1.0.6"
     d3-format "1.2.0"
@@ -1988,7 +1980,7 @@ d3@^4.10.0:
     d3-quadtree "1.0.3"
     d3-queue "3.0.7"
     d3-random "1.1.0"
-    d3-request "1.0.5"
+    d3-request "1.0.6"
     d3-scale "1.0.6"
     d3-selection "1.1.0"
     d3-shape "1.2.0"
