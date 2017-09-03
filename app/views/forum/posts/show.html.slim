@@ -1,12 +1,14 @@
 - title = t "head.title.forum.posts.show", title: @post.title
 - set_meta_tags(title: title, reverse: true, prefix: false)
 - set_page_category "forum_posts_show"
+- breadcrumb :forum_post_detail, @post
 
 = render "application/components/navbar"
 = render "forum/application/subnav"
 
 .p-application__content
-  .container.mt-1.mb-2
+  .container.py-1.mb-1
+    = render "application/components/breadcrumb"
     .row.align-items-center.mb-1
       .col-8
         .row.align-items-center
@@ -60,5 +62,5 @@
 
     .c-card.p-1
       = render "forum/comments/form", comment: @comment
-  
+
 = render "application/components/footer"

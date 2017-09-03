@@ -1,14 +1,16 @@
 - title = t "head.title.forum.categories.show", name: @category.decorate.local_name
 - set_meta_tags(title: title, reverse: true, prefix: false)
 - set_page_category "forum_categories_show"
+- breadcrumb :forum_category_detail, @category
 
 = render "application/components/navbar"
 = render "forum/application/subnav"
 
 .p-application__content
-  .container.mt-1.mb-2
+  .container.py-1.mb-1
+    = render "application/components/breadcrumb"
     h1.h2.mb-1 = @category.decorate.local_name
-    
+
     .c-card
       - if @category.forum_posts.present?
         = render "forum/posts/post_list", posts: @category.forum_posts.order(last_commented_at: :desc)

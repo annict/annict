@@ -121,3 +121,18 @@ crumb :user_work_tag_detail do |user, tag|
   link tag.name, user_work_tag_path(user.username, tag.name)
   parent :user_work_tag_list, user
 end
+
+crumb :forum_root do
+  link "Forum", forum_root_path
+  parent :root
+end
+
+crumb :forum_category_detail do |category|
+  link category.decorate.local_name, forum_category_path(category.slug)
+  parent :forum_root
+end
+
+crumb :forum_post_detail do |post|
+  link post.title, forum_post_path(post)
+  parent :forum_category_detail, post.forum_category
+end
