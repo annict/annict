@@ -1,12 +1,15 @@
 - title = t "head.title.forum.posts.edit"
 - set_meta_tags(title: title, og: { title: title }, reverse: true, prefix: false)
 - set_page_category "forum_posts_edit"
+- breadcrumb :forum_edit_post, @post
 
 = render "application/components/navbar"
 = render "forum/application/subnav", post: @post
 
 .p-application__content
-  .c-card.container.mt-1.mb-2.py-1
-    = render "forum/posts/form", post: @post
+  .container.py-1.mb-1
+    = render "application/components/breadcrumb"
+    .c-card.p-1
+      = render "forum/posts/form", post: @post
 
 = render "application/components/footer"

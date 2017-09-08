@@ -3,7 +3,7 @@
   = render "application/components/error_panel", resource: comment
 
   .form-group
-    = f.text_area :body, rows: 15, class: "form-control", placeholder: t("messages.forum.comments.leave_a_comment")
+    = f.text_area :body, rows: 10, class: "form-control", placeholder: t("messages.forum.comments.leave_a_comment")
 
   .text-center
     = f.submit t("verb.comment"), class: "btn btn-primary"

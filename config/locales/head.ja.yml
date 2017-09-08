@@ -139,9 +139,12 @@ ja:
       forum:
         categories:
           show: "%{name}"
+        comments:
+          edit: "コメント編集"
         home:
           index: Forum
         posts:
+          edit: "投稿編集"
           new: "新規投稿"
           show: "%{title}"
       friends:

@@ -32,6 +32,7 @@ export default {
         text = escape(text);
         text = mention(text);
         text = marked(text);
+        text = text.replace(/<img/g, '<img class="img-fluid img-thumbnail rounded"');
       } else {
         text = escape(text);
         text = linkify(text);

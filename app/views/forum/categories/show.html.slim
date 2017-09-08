@@ -19,9 +19,12 @@
             = icon "plus"
             = t "resources.forum_post.new"
     .c-card
-      - if @category.forum_posts.present?
-        = render "forum/posts/post_list", posts: @category.forum_posts.order(last_commented_at: :desc)
+      - if @posts.present?
+        = render "forum/posts/post_list", posts: @posts
       - else
         = render "application/components/empty", text: t("messages.forum.posts.no_posts")
+    - if @posts.total_pages > 1
+      .text-center.mt-1
+        = paginate @posts
 
 = render "application/components/footer"

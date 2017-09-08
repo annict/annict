@@ -146,3 +146,13 @@ crumb :forum_post_detail do |post|
   link post.title, forum_post_path(post)
   parent :forum_category_detail, post.forum_category
 end
+
+crumb :forum_edit_post do |post|
+  link t("head.title.forum.posts.edit"), edit_forum_post_path(post)
+  parent :forum_post_detail, post
+end
+
+crumb :forum_edit_comment do |comment|
+  link t("head.title.forum.comments.edit"), edit_forum_post_comment_path(comment.forum_post, comment)
+  parent :forum_post_detail, comment.forum_post
+end

@@ -64,6 +64,8 @@ ja:
         sc_count: しょぼかる番号
         sort_number: ソート番号
         title: タイトル
+      forum_comment:
+        body: 本文
       forum_post:
         body: 本文
         title: タイトル

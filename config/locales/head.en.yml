@@ -141,9 +141,12 @@ en:
       forum:
         categories:
           show: "%{name}"
+        comments:
+          edit: "Edit Comment"
         home:
           index: Forum
         posts:
+          edit: "Edit Post"
           new: "New Post"
           show: "%{title}"
       friends:

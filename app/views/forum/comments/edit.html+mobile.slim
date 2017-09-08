@@ -3,13 +3,10 @@
 - set_page_category "forum_comments_edit"
 - breadcrumb :forum_edit_comment, @comment
 
-= render "application/components/navbar"
-= render "forum/application/subnav"
+.c-card.mb-1
+  .container.py-1
+    = render "forum/comments/form", comment: @comment
 
-.p-application__content
-  .container.py-1.mb-1
-    = render "application/components/breadcrumb"
-    .c-card.p-1
-      = render "forum/comments/form", comment: @comment
-
+= render "application/components/breadcrumb"
 = render "application/components/footer"
+= render "application/components/tabbar"
