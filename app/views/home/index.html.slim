@@ -6,8 +6,6 @@
 
 .p-application__content.mt-1.mb-2
   .container
-    .text-center.mb-1
-      = render "application/components/adsense", slot: ENV["GOOGLE_AD_728x90_18"], size: "728x90"
     .row.justify-content-center
       .col-7
         - if current_user.tips.unfinished.present?

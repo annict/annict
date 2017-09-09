@@ -55,7 +55,9 @@ import workComment from './common/components/workComment';
 import workDetailButton from './common/components/workDetailButton';
 import workDetailButtonModal from './common/components/workDetailButtonModal';
 import workFriends from './common/components/workFriends';
+import workStatusChart from './common/components/workStatusChart';
 import workTags from './common/components/workTags';
+import workWatchersChart from './common/components/workWatchersChart';
 import youtubeModalPlayer from './common/components/youtubeModalPlayer';
 
 import searchForm from './pc/components/searchForm';
@@ -120,7 +122,9 @@ document.addEventListener('turbolinks:load', event => {
   Vue.component('c-work-detail-button', workDetailButton);
   Vue.component('c-work-detail-button-modal', workDetailButtonModal);
   Vue.component('c-work-friends', workFriends);
+  Vue.component('c-work-status-chart', workStatusChart);
   Vue.component('c-work-tags', workTags);
+  Vue.component('c-work-watchers-chart', workWatchersChart);
   Vue.component('c-youtube-modal-player', youtubeModalPlayer);
 
   Vue.directive('resource-select', resourceSelect);

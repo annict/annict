@@ -143,7 +143,7 @@ crumb :forum_new_post do |post|
 end
 
 crumb :forum_post_detail do |post|
-  link post.title, forum_post_path(post)
+  link post.title.truncate(10), forum_post_path(post)
   parent :forum_category_detail, post.forum_category
 end
 
