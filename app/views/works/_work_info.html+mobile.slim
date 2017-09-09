@@ -6,8 +6,11 @@
       .u-very-small.mt-zp25
         = work.work_image.decorate.asin_or_copyright_text
   .col-9
-    h1.h3.font-weight-bold.mb-zp5
+    h1.h3.font-weight-bold.mb-zp25
       = link_to work.decorate.local_title, work_path(work)
+    .mb-zp5
+      span.font-weight-bold.mr-zp25 = work.watchers_count
+      span.text-muted.small Watchers
     c-status-selector :work-id="#{work.id}"
     .mb-1
     c-share-button-twitter.mr-zp5 text="#{work.decorate.local_title}" url="#{local_url}#{work_path(work)}" hashtags="#{work.twitter_hashtag.presence || ''}"
