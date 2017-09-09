@@ -14,52 +14,63 @@
       h1.h2.mb-0
         = @post.title
 
-    .c-card.p-1.mb-1
-      .row.mb-1
-        .col.col-auto.pr-0
-          = link_to user_path(@post.user.username) do
-            = ann_image_tag @post.user.profile, :tombo_avatar, size: "45x45", class: "rounded-circle"
-        .col.pl-zp5.u-lh-1
-          = link_to @post.user.profile.name, user_path(@post.user.username), class: "mr-zp25"
-          = @post.user.decorate.role_badge
-          .mt-zp25
-            = link_to forum_post_path(@post), class: "small text-muted", title: local_datetime(@post.created_at) do
-              = local_time_ago_in_words(@post.created_at)
-      c-body :markdown="true" inline-template=""
-        .c-body__content
-          = @post.body
-      - if policy(@post).edit?
-        .text-right.small
-          = link_to edit_forum_post_path(@post) do
-            = icon "pencil", class: "mr-zp25"
-            = t "noun.edit"
-
-    - if @comments.present?
-      - @comments.each do |comment|
+    .row
+      .col-8
         .c-card.p-1.mb-1
           .row.mb-1
             .col.col-auto.pr-0
-              = link_to user_path(comment.user.username) do
-                = ann_image_tag comment.user.profile, :tombo_avatar, size: "45x45", class: "rounded-circle"
+              = link_to user_path(@post.user.username) do
+                = ann_image_tag @post.user.profile, :tombo_avatar, size: "45x45", class: "rounded-circle"
             .col.pl-zp5.u-lh-1
-              = link_to comment.user.profile.name, user_path(comment.user.username), class: "mr-zp25"
-              = comment.user.decorate.role_badge
+              = link_to @post.user.profile.name, user_path(@post.user.username), class: "mr-zp25"
+              = @post.user.decorate.role_badge
               .mt-zp25
-                span.small.text-muted title="#{local_datetime(comment.created_at)}"
-                  = local_time_ago_in_words(comment.created_at)
+                = link_to forum_post_path(@post), class: "small text-muted", title: local_datetime(@post.created_at) do
+                  = local_time_ago_in_words(@post.created_at)
           c-body :markdown="true" inline-template=""
             .c-body__content
-              = comment.body
-          - if policy(comment).edit?
+              = @post.body
+          - if policy(@post).edit?
             .text-right.small
-              = link_to edit_forum_post_comment_path(@post, comment) do
+              = link_to edit_forum_post_path(@post) do
                 = icon "pencil", class: "mr-zp25"
                 = t "noun.edit"
-    - else
-      .mb-1
-        = render "application/components/empty", text: t("messages.forum.posts.no_comments")
 
-    .c-card.p-1
-      = render "forum/comments/form", comment: @comment
+        - if @comments.present?
+          - @comments.each do |comment|
+            .c-card.p-1.mb-1
+              .row.mb-1
+                .col.col-auto.pr-0
+                  = link_to user_path(comment.user.username) do
+                    = ann_image_tag comment.user.profile, :tombo_avatar, size: "45x45", class: "rounded-circle"
+                .col.pl-zp5.u-lh-1
+                  = link_to comment.user.profile.name, user_path(comment.user.username), class: "mr-zp25"
+                  = comment.user.decorate.role_badge
+                  .mt-zp25
+                    span.small.text-muted title="#{local_datetime(comment.created_at)}"
+                      = local_time_ago_in_words(comment.created_at)
+              c-body :markdown="true" inline-template=""
+                .c-body__content
+                  = comment.body
+              - if policy(comment).edit?
+                .text-right.small
+                  = link_to edit_forum_post_comment_path(@post, comment) do
+                    = icon "pencil", class: "mr-zp25"
+                    = t "noun.edit"
+        - else
+          .mb-1
+            = render "application/components/empty", text: t("messages.forum.posts.no_comments")
+
+        .c-card.p-1.mb-2
+          = render "forum/comments/form", comment: @comment
+
+        .row
+          .col.text-center
+            = render "application/components/adsense", slot: ENV["GOOGLE_AD_336x280_5"], size: "336x280"
+          .col.text-center.pl-0
+            = render "application/components/adsense", slot: ENV["GOOGLE_AD_336x280_6"], size: "336x280"
+      .col-4
+        .text-center.mb-1
+          = render "application/components/adsense", slot: ENV["GOOGLE_AD_336x280_4"], size: "336x280"
 
 = render "application/components/footer"
