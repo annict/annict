@@ -9,6 +9,7 @@ module Forum
     include LogrageSetting
     include Gonable
     include FlashMessage
+    include ViewSelector
 
     layout "application"
 

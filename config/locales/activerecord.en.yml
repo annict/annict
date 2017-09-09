@@ -65,6 +65,8 @@ en:
         sc_count: Syobocal number
         sort_number: Sort number
         title: Title
+      forum_comment:
+        body: Body
       forum_post:
         body: Body
         title: Title

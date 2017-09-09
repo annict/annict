@@ -30,6 +30,12 @@ class HomeController < ApplicationController
 
     gon.push(tips: tips, pageObject: page_object)
 
+    @forum_posts = ForumPost.
+      joins(:forum_category).
+      merge(ForumCategory.with_slug(:site_news)).
+      order(created_at: :desc).
+      limit(5)
+
     render :index
   end
 

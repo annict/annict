@@ -140,11 +140,15 @@ en:
         index: "%{profile_name} (%{username})'s favorite people"
       forum:
         categories:
-          show: "%{name} - Forum"
+          show: "%{name}"
+        comments:
+          edit: "Edit Comment"
         home:
           index: Forum
         posts:
-          show: "%{title} - Forum"
+          edit: "Edit Post"
+          new: "New Post"
+          show: "%{title}"
       friends:
         index: Find Friends
       home:

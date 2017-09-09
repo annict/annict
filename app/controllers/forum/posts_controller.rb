@@ -7,8 +7,9 @@ module Forum
     before_action :authenticate_user!, only: %i(new create edit update)
     before_action :load_post, only: %i(show edit update)
 
-    def new
+    def new(category: nil)
       @post = ForumPost.new
+      @post.forum_category = ForumCategory.find_by(slug: category) if category.present?
     end
 
     def create(forum_post)

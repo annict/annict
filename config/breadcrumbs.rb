@@ -121,3 +121,38 @@ crumb :user_work_tag_detail do |user, tag|
   link tag.name, user_work_tag_path(user.username, tag.name)
   parent :user_work_tag_list, user
 end
+
+crumb :forum_root do
+  link "Forum", forum_root_path
+  parent :root
+end
+
+crumb :forum_category_detail do |category|
+  link category.decorate.local_name, forum_category_path(category.slug)
+  parent :forum_root
+end
+
+crumb :forum_new_post do |post|
+  link t("head.title.forum.posts.new")
+
+  if post.forum_category.present?
+    parent :forum_category_detail, post.forum_category
+  else
+    parent :forum_root
+  end
+end
+
+crumb :forum_post_detail do |post|
+  link post.title, forum_post_path(post)
+  parent :forum_category_detail, post.forum_category
+end
+
+crumb :forum_edit_post do |post|
+  link t("head.title.forum.posts.edit"), edit_forum_post_path(post)
+  parent :forum_post_detail, post
+end
+
+crumb :forum_edit_comment do |comment|
+  link t("head.title.forum.comments.edit"), edit_forum_post_comment_path(comment.forum_post, comment)
+  parent :forum_post_detail, comment.forum_post
+end

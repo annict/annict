@@ -1,0 +1,22 @@
+- title = t "head.title.forum.home.index"
+- set_meta_tags(title: title, reverse: true, prefix: false)
+- set_page_category "forum_home_index"
+- breadcrumb :forum_root
+
+.text-right.m-1
+  = link_to new_forum_post_path, class: "btn btn-primary" do
+    = icon "plus"
+    = t "resources.forum_post.new"
+.c-card.mb-1
+  .container
+    - if @posts.present?
+      = render "forum/posts/post_list", posts: @posts
+    - else
+      = render "application/components/empty", text: t("messages.forum.posts.no_posts")
+- if @posts.present?
+  .text-center.mb-1
+    = paginate @posts
+
+= render "application/components/breadcrumb"
+= render "application/components/footer"
+= render "application/components/tabbar"
