@@ -404,4 +404,24 @@ class Work < ApplicationRecord
 
     data.delete_if { |_, v| v.blank? }
   end
+
+  def watchers_chart_dataset
+    (3.months.ago.to_date..Date.today).map do |date|
+      count = latest_statuses.with_kind(:wanna_watch, :watching, :watched).before(date).count
+      {
+        date: date.strftime("%d-%b-%Y"),
+        value: count
+      }
+    end.to_json
+  end
+
+  def status_chart_dataset
+    LatestStatus.kind.values.map do |kind|
+      kind_count = latest_statuses.with_kind(kind).count
+      {
+        name: kind.text,
+        value: kind_count
+      }
+    end.to_json
+  end
 end
