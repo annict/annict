@@ -44,7 +44,7 @@ export default {
       lineChart
         .height(200)
         .margin(lineMargin)
-        .grid("vertical")
+        .grid("horizontal")
         .width(containerWidth)
         .topicLabel(100);
 

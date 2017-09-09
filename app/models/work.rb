@@ -409,7 +409,7 @@ class Work < ApplicationRecord
     (3.months.ago.to_date..Date.today).map do |date|
       count = latest_statuses.with_kind(:wanna_watch, :watching, :watched).before(date).count
       {
-        date: date.strftime("%d-%b-%Y"),
+        date: date.to_time.to_datetime.strftime("%Y/%m/%d"),
         value: count
       }
     end.to_json

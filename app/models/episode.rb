@@ -113,7 +113,7 @@ class Episode < ApplicationRecord
     ].map do |date|
       count += records.by_month(date).count
       {
-        date: date.strftime("%d-%b-%Y"),
+        date: date.to_time.to_datetime.strftime("%Y/%m/%d"),
         value: count
       }
     end.to_json
