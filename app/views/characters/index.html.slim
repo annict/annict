@@ -16,6 +16,8 @@
         = render "works/sidebar", work: @work
       .col-9
         = render "works/subnav", work: @work
+        .pt-1.text-center
+          = render "application/components/adsense", slot: ENV["GOOGLE_AD_728x90_19"], size: "728x90"
         .c-card.container.mt-1.pt-1
           = render "character_list", casts: @casts
 

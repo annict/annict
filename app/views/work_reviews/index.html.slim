@@ -16,6 +16,8 @@
         = render "works/sidebar", work: @work
       .col-9
         = render "works/subnav", work: @work
+        .pt-1.text-center
+          = render "application/components/adsense", slot: ENV["GOOGLE_AD_728x90_22"], size: "728x90"
         .text-right.my-1
           = link_to new_work_review_path(@work), class: "btn btn-primary" do
             = icon "pencil-square-o", class: "mr-zp25"

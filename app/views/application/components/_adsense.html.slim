@@ -1,1 +1,3 @@
-c-adsense ad-client="#{ENV.fetch('GOOGLE_AD_CLIENT')}" ad-slot="#{slot.presence || ''}" ad-size="#{size}"
+- format = local_assigns.fetch(:format, "auto")
+
+c-adsense ad-client="#{ENV.fetch('GOOGLE_AD_CLIENT')}" ad-slot="#{slot.presence || ''}" ad-size="#{size}" ad-format="#{format}"

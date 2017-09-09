@@ -20,7 +20,7 @@
       .col-9
         = render "subnav", work: @work
 
-        .pt-2.text-center
+        .pt-1.text-center
           = render "application/components/adsense", slot: ENV["GOOGLE_AD_728x90_7"], size: "728x90"
 
         - if @work.pvs.published.present?
@@ -62,6 +62,12 @@
                 = t("noun.source")
                 | :
               = @work.decorate.local_synopsis_source
+
+        .row.my-2
+          .col.text-center
+            = render "application/components/adsense", slot: ENV["GOOGLE_AD_300x250_5"], size: "300x250"
+          .col.text-center
+            = render "application/components/adsense", slot: ENV["GOOGLE_AD_300x250_6"], size: "300x250"
 
         h2.h4.text-center.my-2.font-weight-bold = t "noun.characters"
         .c-card.container.mt-1.py-1

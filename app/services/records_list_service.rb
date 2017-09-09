@@ -12,7 +12,7 @@ class RecordsListService
     results = results.with_comment
     results = results.page(@params[:page])
     results = sort(results)
-    results
+    results.per(20)
   end
 
   def friend_comment_records
@@ -23,7 +23,7 @@ class RecordsListService
     results = results.joins(:user).merge(@user.followings)
     results = results.page(@params[:page])
     results = sort(results)
-    results
+    results.per(20)
   end
 
   def my_records
@@ -33,7 +33,7 @@ class RecordsListService
     results = results.where(user: @user)
     results = results.page(@params[:page])
     results = sort(results)
-    results
+    results.per(20)
   end
 
   def selected_comment_records

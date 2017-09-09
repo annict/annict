@@ -17,6 +17,9 @@
       .col-9
         = render "works/subnav", work: @work
 
+        .pt-1.text-center
+          = render "application/components/adsense", slot: ENV["GOOGLE_AD_728x90_21"], size: "728x90"
+
         .c-card.mt-1.py-1
           - if @episodes.present?
             c-episode-list inline-template="" :is-signed-in="#{user_signed_in?}" :init-is-tracking-mode="#{params.key?(:tracking)}" :all-episode-ids="#{@episodes.pluck(:id)}" :work-id="#{@work.id}"
