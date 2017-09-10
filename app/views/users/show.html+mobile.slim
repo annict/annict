@@ -5,9 +5,7 @@
 - set_meta_tags(title: title, description: description, keywords: keywords, og: { description: description }, twitter: { description: description }, reverse: true, prefix: false)
 - set_page_category "users_show"
 
-= render "application/components/adsense", slot: ENV["GOOGLE_AD_320x50_16"], size: "320x50"
-
-.c-card
+.c-card.mb-1
   .p-profile-header
     .p-profile-header__cover
       .p-profile-header__cover-image style="background-image: url(#{profile_background_image_url(@user.profile, size: '276x180')});"
@@ -71,7 +69,7 @@
           .small
             | Followers
 
-    .row.mb-1
+    .row
       .p-users-show__count.col.px-0
         = link_to reviews_path(@user.username), class: "p-users-show__count-link" do
           .h3.mb-zp25
@@ -96,6 +94,8 @@
             = @favorite_organizations.length
           .small
             = t "noun.favorite_organizations_shorten"
+
+= render "application/components/adsense", slot: ENV["GOOGLE_AD_320x100_14"], size: "320x100"
 
 .mt-1.mb-2
   c-activities username="#{@user.username}"

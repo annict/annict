@@ -8,6 +8,9 @@
 
 = render "works/header", work: @work
 
+.mb-1
+  = render "application/components/adsense", slot: ENV["GOOGLE_AD_320x100_7"], size: "320x100"
+
 .c-card.pt-1.mb-1
   .text-center.mb-1
     = link_to new_work_item_path(@work), class: "btn btn-primary" do

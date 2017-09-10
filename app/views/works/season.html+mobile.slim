@@ -5,7 +5,8 @@
 - set_page_category "works_season"
 - breadcrumb :seasonal_works, @season.slug, @season.local_name
 
-= render "application/components/adsense", slot: ENV["GOOGLE_AD_320x50_4"], size: "320x50"
+= render "application/components/adsense", slot: ENV["GOOGLE_AD_320x100_16"], size: "320x100"
+
 .px-1
   .text-center.py-1
     - if @prev_season.present?
@@ -30,13 +31,16 @@
       - if user_signed_in?
         = render "display_option_buttons"
 
-.mb-2
+.mb-1
   - if user_signed_in?
     = render "works/#{current_user.setting.display_option_work_list}", works: @works
   - else
     = render "works/list", works: @works
   .text-center
     = paginate @works, window: 2
+
+.mb-1
+  = render "application/components/adsense", slot: ENV["GOOGLE_AD_320x100_17"], size: "320x100"
 
 = render "application/components/breadcrumb"
 = render "application/components/footer"

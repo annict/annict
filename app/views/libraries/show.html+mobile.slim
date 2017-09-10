@@ -6,11 +6,9 @@
 - set_meta_tags(title: title, description: description, keywords: keywords, og: { description: description }, twitter: { description: description }, reverse: true, prefix: false)
 - set_page_category "libraries_show"
 
-= render "application/components/adsense", slot: ENV["GOOGLE_AD_320x50_15"], size: "320x50"
-
 = render "users/low_profile_header", user: @user
 
-.p-users-works__subnav.c-subnav
+.p-users-works__subnav.c-subnav.mb-1
   - %i(watching wanna_watch watched on_hold stop_watching).each do |status_kind|
     = active_link_to library_path(@user.username, status_kind), class: "c-subnav__link", class_active: "c-subnav__link--active", active: (status_kind.to_s == params[:status_kind]) do
       .c-subnav__item
@@ -19,6 +17,8 @@
             = @user.latest_statuses.count_on(status_kind)
           .small
             = t("enumerize.status.kind.#{status_kind}").truncate(8)
+
+= render "application/components/adsense", slot: ENV["GOOGLE_AD_320x100_15"], size: "320x100"
 
 - if @seasons.present?
   .mb-2

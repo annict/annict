@@ -6,9 +6,10 @@
 - set_page_category "episodes_show"
 - breadcrumb :episode_detail, @episode
 
-= render "application/components/adsense", slot: ENV["GOOGLE_AD_320x50_10"], size: "320x50"
-
 = render "works/header", work: @work
+
+.mb-1
+  = render "application/components/adsense", slot: ENV["GOOGLE_AD_320x100_9"], size: "320x100"
 
 .c-card.mb-1.py-1
   = render "episodes/nav", work: @work, episode: @episode, all_records: @all_records
@@ -51,6 +52,9 @@ h2.h4.font-weight-bold.text-center.mt-1.mb-2
   = t "noun.related_items"
 .c-card.container.mb-1.py-zp5
   = render "episodes/item_list", episode: @episode, items: @items
+
+.mb-1
+  = render "application/components/adsense", slot: ENV["GOOGLE_AD_320x100_10"], size: "320x100"
 
 = render "application/components/breadcrumb"
 = render "application/components/footer"

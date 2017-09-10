@@ -7,6 +7,9 @@
 
 = render "works/header", work: @work
 
+.mb-1
+  = render "application/components/adsense", slot: ENV["GOOGLE_AD_320x100_4"], size: "320x100"
+
 .c-card.pt-1.mb-2
   .container
     = render "staffs/staff_list", staffs: @staffs

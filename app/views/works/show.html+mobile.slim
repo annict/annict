@@ -9,8 +9,10 @@
 - content_for :head do
   script src="https://www.youtube.com/player_api"
 
-= render "application/components/adsense", slot: ENV["GOOGLE_AD_320x50_5"], size: "320x50"
 = render "works/header", work: @work
+
+.mb-1
+  = render "application/components/adsense", slot: ENV["GOOGLE_AD_320x100_8"], size: "320x100"
 
 h2.h4.font-weight-bold.text-center.mt-1.mb-2
   = t "noun.information"
@@ -77,19 +79,6 @@ h2.h4.font-weight-bold.text-center.mt-1.mb-2
         dd.col-6
           = @work.decorate.twitter_hashtag_link
 
-- if @work.decorate.local_synopsis.present?
-  .mb-1
-    h2.h4.font-weight-bold.text-center.mt-1.mb-2
-      = t "activerecord.attributes.work.synopsis"
-    .c-card.py-1
-      .container
-        = @work.decorate.local_synopsis
-        .text-right.u-very-small
-          span.mr-zp25
-            = t("noun.source")
-            | :
-          = @work.decorate.local_synopsis_source
-
 - if @work.pvs.published.present?
   .mb-1
     h2.h4.font-weight-bold.text-center.mt-1.mb-2
@@ -108,6 +97,22 @@ h2.h4.font-weight-bold.text-center.mt-1.mb-2
                     = icon "play-circle-o"
                   .small
                     = pv.title
+
+- if @work.decorate.local_synopsis.present?
+  .mb-1
+    h2.h4.font-weight-bold.text-center.mt-1.mb-2
+      = t "activerecord.attributes.work.synopsis"
+    .c-card.py-1
+      .container
+        = @work.decorate.local_synopsis
+        .text-right.u-very-small
+          span.mr-zp25
+            = t("noun.source")
+            | :
+          = @work.decorate.local_synopsis_source
+
+.my-1
+  = render "application/components/adsense", slot: ENV["GOOGLE_AD_320x100_1"], size: "320x100"
 
 .mb-1
   h2.h4.text-center.font-weight-bold.mt-1.mb-2
@@ -193,6 +198,9 @@ h2.h4.font-weight-bold.text-center.mt-1.mb-2
         h3.text-center.mb-1
           = t("noun.series_with_name", series_name: series.decorate.local_name)
         = render "series/work_list", series: series, work: @work
+
+.mb-1
+  = render "application/components/adsense", slot: ENV["GOOGLE_AD_320x100_2"], size: "320x100"
 
 = render "application/components/breadcrumb"
 = render "application/components/footer"
