@@ -9,7 +9,7 @@
               = ann_image_tag work.work_image, :attachment, size: "200x266", class: "img-fluid rounded img-thumbnail"
             .c-hover-image__over
         .p-zp25
-          .text-truncate.u-very-small
-            = link_to work.decorate.local_title.truncate(10), work_path(work)
-          .text-truncate.u-very-small
+          .u-very-small
+            = link_to work.decorate.local_title, work_path(work)
+          .u-very-small
             = series_work.decorate.local_summary
