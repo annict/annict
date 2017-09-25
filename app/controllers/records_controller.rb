@@ -83,12 +83,11 @@ class RecordsController < ApplicationController
 
   def switch(episode_id, to)
     episode = Episode.find(episode_id)
-    redirect = redirect_back fallback_location: work_episode_path(episode.work, episode)
 
-    return redirect unless to.in?(Setting.display_option_record_list.values)
+    return redirect_to work_episode_path(episode.work, episode) unless to.in?(Setting.display_option_record_list.values)
 
     current_user.setting.update_column(:display_option_record_list, to)
-    redirect
+    redirect_to work_episode_path(episode.work, episode)
   end
 
   private
