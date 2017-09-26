@@ -34,7 +34,7 @@ export default {
     }
   },
 
-  data() {
+  data: function() {
     return {
       modalId: `youtube-modal-${this.videoId}`,
       playerId: `youtube-player-${this.videoId}`,
@@ -48,30 +48,27 @@ export default {
 
       window.YTConfig = { host: 'https://www.youtube.com' };
 
-      return (this.player = new YT.Player(this.playerId, {
-        height: this.height,
-        width: this.width,
-        videoId: this.videoId,
-        playerVars: {
-          origin: this.annictUrl
-        },
-        events: {
-          onReady: event => {
-            if (this.isAutoPlay) {
-              return event.target.playVideo();
-            }
-          }
-        }
-      }));
+      this.$nextTick(() => {
+        this.player = this.player || new YT.Player(this.playerId, {
+          height: this.height,
+          width: this.width,
+          videoId: this.videoId,
+          playerVars: {
+            origin: this.annictUrl,
+            autoplay: this.isAutoPlay
+          },
+        });
+      })
     }
   },
 
   mounted() {
-    return $(`#${this.modalId}`).on('hide.bs.modal', () => {
+    $(`#${this.modalId}`).on('hide.bs.modal', () => {
       if (!this.player) {
         return;
       }
-      return this.player.stopVideo();
+
+      this.player.stopVideo();
     });
   }
 };
