@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170902100856) do
+ActiveRecord::Schema.define(version: 20170926175406) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -450,6 +450,16 @@ ActiveRecord::Schema.define(version: 20170902100856) do
     t.index ["impressionable_type", "impressionable_id", "session_hash"], name: "poly_session_index"
     t.index ["impressionable_type", "message", "impressionable_id"], name: "impressionable_type_message_index"
     t.index ["user_id"], name: "index_impressions_on_user_id"
+  end
+
+  create_table "internal_statistics", force: :cascade do |t|
+    t.string "key", null: false
+    t.float "value", null: false
+    t.date "date", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["key", "date"], name: "index_internal_statistics_on_key_and_date", unique: true
+    t.index ["key"], name: "index_internal_statistics_on_key"
   end
 
   create_table "items", force: :cascade do |t|

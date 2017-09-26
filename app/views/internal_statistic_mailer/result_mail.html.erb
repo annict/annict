@@ -1,0 +1,19 @@
+登録ユーザ数 (全期間):<br>
+<%= @users_count_registered_in_all %><br>
+<br>
+登録ユーザ数 (過去1週間):<br>
+<%= @users_count_registered_in_new %><br>
+<br>
+過去1週間のアクティブユーザ数 (対象ユーザ: 全てのユーザ):<br>
+<%= @users_count_active_in_all_users_past_week %><br>
+<br>
+過去1週間のアクティブユーザ数 (対象ユーザ: 過去1週間に登録されたユーザ):<br>
+<%= @users_count_active_in_new_users_past_week %><br>
+<br>
+<br>
+アクティブ率 (対象ユーザ: 全てのユーザ):<br>
+<%= (@users_count_active_in_all_users_past_week.to_f / @users_count_registered_in_all ) * 100 %><br>
+<br>
+アクティブ率 (対象ユーザ: 対象ユーザ: 過去1週間に登録されたユーザ):<br>
+<%= (@users_count_active_in_new_users_past_week.to_f / @users_count_registered_in_new ) * 100 %><br>
+<br>
