@@ -12,7 +12,7 @@
     "cropperjs": "0.8.1",
     "d3": "3.5.17",
     "d3-selection": "^1.1.0",
-    "dropzone": "4.3.0",
+    "dropzone": "5.2.0",
     "jquery": "^3.2.1",
     "jquery-ujs": "^1.2.2",
     "js-cookie": "2.1.4",
