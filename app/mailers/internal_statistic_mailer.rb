@@ -7,6 +7,8 @@ class InternalStatisticMailer < ActionMailer::Base
     statistcs = InternalStatistic.where(date: Date.parse(date_str))
     @users_count_registered_in_all = statistcs.
       find_by(key: :users_count_registered_in_all)&.value.presence || 0
+    @users_count_registered_in_yesterday = statistcs.
+      find_by(key: :users_count_registered_in_yesterday)&.value.presence || 0
     @users_count_registered_in_past_week = statistcs.
       find_by(key: :users_count_registered_in_past_week)&.value.presence || 0
     @users_count_active_in_all_users_past_week = statistcs.

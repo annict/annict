@@ -4,9 +4,14 @@ namespace :internal_statistic do
   task calc: :environment do
     today = Date.today
     users_past_week = User.past_week
+    users_yesterday = User.yesterday
 
     InternalStatistic.where(key: :users_count_registered_in_all, date: today).first_or_create! do |is|
       is.value = User.count
+    end
+
+    InternalStatistic.where(key: :users_count_registered_in_yesterday, date: today).first_or_create! do |is|
+      is.value = users_yesterday.count
     end
 
     InternalStatistic.where(key: :users_count_registered_in_past_week, date: today).first_or_create! do |is|
