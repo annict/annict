@@ -9,7 +9,7 @@ namespace :internal_statistic do
       is.value = User.count
     end
 
-    InternalStatistic.where(key: :users_count_registered_in_new, date: today).first_or_create! do |is|
+    InternalStatistic.where(key: :users_count_registered_in_past_week, date: today).first_or_create! do |is|
       is.value = users_past_week.count
     end
 
