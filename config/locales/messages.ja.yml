@@ -52,6 +52,8 @@ ja:
       updated: 更新しました
     channel_works:
       no_works: 作品はありません
+    channels:
+      supported_video_service: (Annictがサポートしている) 動画サービス
     character_fans:
       no_users: ファンはいません
     comments:

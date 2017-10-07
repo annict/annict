@@ -52,6 +52,8 @@ en:
       updated: Account has been updated.
     channel_works:
       no_works: No works
+    channels:
+      supported_video_service: Video Service
     character_fans:
       no_users: No users
     comments:
