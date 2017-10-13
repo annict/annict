@@ -18,12 +18,12 @@
               .col.u-flex-grow-0
                 = link_to user_path(@user.username) do
                   = ann_image_tag(@user.profile, :tombo_avatar, size: "80x80", class: "p-profile-header__avatar rounded-circle")
-              .col.pt-2.pl-0
+              .col.pt-zp5.pl-0
                 h1
                   = link_to user_path(@user.username) do
                     .font-weight-bold
                       = @user.profile.name
-                    .u-very-small.mt-2
+                    .u-very-small.mt-zp5
                       = "@#{@user.username}"
           .col-5
             .d-flex.justify-content-end.align-items-center
@@ -46,7 +46,7 @@
         c-activities username="#{@user.username}"
       .col-5
         .text-center.mb-2
-          c-share-button-twitter.mr-2 text="#{title}" url="#{local_url}#{user_path(@user.username)}"
+          c-share-button-twitter.mr-zp5 text="#{title}" url="#{local_url}#{user_path(@user.username)}"
           c-share-button-facebook url="#{local_url}#{user_path(@user.username)}"
         .row.text-center.mb-2
           .p-users-show__count.col.px-0
@@ -102,7 +102,7 @@
         - if @user.profile.description.present? || @user.profile.url.present?
           .mb-2
             h2.p-users-show__sub-title
-              = icon "comment-o", class: "mr-2"
+              = icon "comment-o", class: "mr-zp5"
               = t "noun.bio"
             - if @user.profile.description.present?
               .description
@@ -116,7 +116,7 @@
             h2.p-users-show__sub-title
               .row.align-items-center
                 .col
-                  = icon "pencil-square-o", class: "mr-2"
+                  = icon "pencil-square-o", class: "mr-zp5"
                   = t "noun.reviews"
                 - if @reviews.length > 5
                   .col.col-auto
@@ -141,7 +141,7 @@
             h2.p-users-show__sub-title
               .row.align-items-center
                 .col
-                  = icon "star-o", class: "mr-2"
+                  = icon "star-o", class: "mr-zp5"
                   = t "noun.favorite_characters"
                 - if @favorite_characters.length > 6
                   .col.col-auto
@@ -150,7 +150,7 @@
                       = t "verb.view_all"
 
             - @favorite_characters.first(6).each_slice(2).each do |list|
-              .row.mb-2
+              .row.mb-zp5
                 - list.each do |favorite_character|
                   - character = favorite_character.character
                   .col-6
@@ -165,7 +165,7 @@
             h2.p-users-show__sub-title
               .row
                 .col
-                  = icon "star-o", class: "mr-2"
+                  = icon "star-o", class: "mr-zp5"
                   = t "noun.favorite_people"
                 - if @favorite_casts.length > 6 || @favorite_staffs.length > 6
                   .col.col-auto
@@ -176,7 +176,7 @@
             - if @favorite_casts.exists?
               h3.h5.font-weight-bold = t "noun.voice_actors"
               - @favorite_casts.first(6).each_slice(2).each do |list|
-                .row.mb-2
+                .row.mb-zp5
                   - list.each do |favorite_person|
                     - person = favorite_person.person
                     .col-6
@@ -190,7 +190,7 @@
             - if @favorite_staffs.exists?
               h3.h5.font-weight-bold = t "noun.staffs"
               - @favorite_staffs.first(6).each_slice(2).each do |list|
-                .row.mb-2
+                .row.mb-zp5
                   - list.each do |favorite_person|
                     - person = favorite_person.person
                     .col-6
@@ -203,7 +203,7 @@
             h2.p-users-show__sub-title
               .row
                 .col
-                  = icon "star-o", class: "mr-2"
+                  = icon "star-o", class: "mr-zp5"
                   = t "noun.favorite_organizations"
                 - if @favorite_organizations.length > 6
                   .col.col-auto
@@ -212,7 +212,7 @@
                       = t "verb.view_all"
 
             - @favorite_organizations.first(6).each_slice(2).each do |list|
-              .row.mb-2
+              .row.mb-zp5
                 - list.each do |favorite_org|
                   - organization = favorite_org.organization
                   .col-6
@@ -222,7 +222,7 @@
 
         .mb-2
           h2.p-users-show__sub-title
-            = icon "bar-chart", class: "mr-2"
+            = icon "bar-chart", class: "mr-zp5"
             = t "noun.your_statistics"
           c-user-heatmap :username='"#{@user.username}"'
 

@@ -30,9 +30,9 @@ h2.h4.font-weight-bold.text-center.my-2
                 = link_to review_path(review.user.username, review), title: local_datetime(review.created_at) do
                   = local_time_ago_in_words(review.created_at)
                 - if review.modified_at.present?
-                  .ml-2
+                  .ml-zp5
                     = icon "pencil"
-                span.ml-2
+                span.ml-zp5
                   = "#{review.impressions_count} views"
 
       - if @reviews.total_pages > 1

@@ -1,10 +1,10 @@
 script#t-work-friends type="x-template"
   .c-work-friends v-if="isSignedIn && users.length"
     .font-weight-bold = t "noun.friends_who_are_watching"
-    .row.align-items-center.px-1.pt-2
-      .col.col-auto.pl-0.pr-2.pb-2 v-for="user in users"
+    .row.align-items-center.px-1.pt-zp5
+      .col.col-auto.pl-0.pr-zp5.pb-zp5 v-for="user in users"
         a :href='"/@" + user.username'
           img.c-vue-lazyload.rounded-circle v-lazy="user.avatar_url" width="30" height="30" :alt="user.username"
-      .col.pl-2.pb-2
+      .col.pl-zp5.pb-zp5
         .u-fake-link v-if="isMoreUsers" @click="more"
           = t "verb.view_all"

@@ -1,10 +1,10 @@
 - if @favorite_casts.exists? || @favorite_staffs.exists?
   - if @favorite_casts.exists?
-    h2.h4.font-weight-bold.mt-2.text-center
+    h2.h4.font-weight-bold.mt-zp5.text-center
       = t "noun.voice_actors"
     - @favorite_casts.each do |favorite_person|
       - person = favorite_person.person
-      .row.align-items-center.mb-2.pt-2
+      .row.align-items-center.mb-zp5.pt-zp5
         .col
           = link_to person.decorate.local_name, person_path(person)
           .text-muted.u-very-small
@@ -17,7 +17,7 @@
         = t "noun.staffs"
       - @favorite_staffs.each do |favorite_person|
         - person = favorite_person.person
-        .row.align-items-center.mb-2.pt-2
+        .row.align-items-center.mb-zp5.pt-zp5
           .col
             = link_to person.decorate.local_name, person_path(person)
             .text-muted.u-very-small

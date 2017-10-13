@@ -6,7 +6,7 @@
           = link_to user_path(review.user.username) do
             = ann_image_tag review.user.profile, :tombo_avatar, size: "50x50", class: "rounded-circle"
         .col
-          .mb-2
+          .mb-zp5
             - title = t("messages.reviews.view_review_with_words_count", count: review.body.length)
             = link_to title, review_path(review.user.username, review)
           .small
@@ -23,6 +23,6 @@
         = t "messages.works.view_all_n_reviews", n: @reviews.length
 - else
   = render "application/components/empty", text: t("messages._empty.no_reviews") do
-    = link_to new_work_review_path(@work), class: "btn btn-primary mt-2" do
+    = link_to new_work_review_path(@work), class: "btn btn-primary mt-zp5" do
       = icon "pencil-square-o", class: "mr-1"
       = t "verb.write_review"

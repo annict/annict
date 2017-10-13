@@ -15,7 +15,7 @@ script#t-impression-button-modal type="x-template"
                     option v-for="tagName in allTagNames"
                       | {{ tagName }}
                 template v-if="popularTagNames.length > 0"
-                  .small.mt-2
+                  .small.mt-zp5
                     = t "noun.popular_tags"
                   span.u-cursor-pointer.mr-1.badge.badge-default v-for="tagName in popularTagNames" @click="add(tagName)"
                     = icon "plus", class: "mr-1"

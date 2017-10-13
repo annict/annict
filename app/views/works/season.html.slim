@@ -16,12 +16,12 @@
 
     .row.align-items-center.py-2
       .col.pl-0
-        c-share-button-twitter.mr-2 text="#{title}" url="#{local_url}#{season_works_path(slug: @season.slug)}"
+        c-share-button-twitter.mr-zp5 text="#{title}" url="#{local_url}#{season_works_path(slug: @season.slug)}"
         c-share-button-facebook url="#{local_url}#{season_works_path(slug: @season.slug)}"
       .col.text-center
         - if @prev_season.present?
           = link_to season_works_path(slug: @prev_season.slug), class: "mr-2" do
-            = icon "angle-left", class: "mr-2"
+            = icon "angle-left", class: "mr-zp5"
             = @prev_season.local_name
         .dropdown.d-inline-block
           a.dropdown-toggle href="#" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"
@@ -32,7 +32,7 @@
         - if @next_season.present?
           = link_to season_works_path(slug: @next_season.slug), class: "ml-2" do
             = @next_season.local_name
-            = icon "angle-right", class: "ml-2"
+            = icon "angle-right", class: "ml-zp5"
       .col.pr-0.text-right
         - if user_signed_in?
           = render "display_option_buttons"

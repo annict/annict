@@ -12,7 +12,7 @@ span.ml-1
   span.ml-1
     = episode.decorate.number_link
 
-.small.text-muted.my-2
+.small.text-muted.my-zp5
   = link_to local_time_ago_in_words(record.created_at), record_path(current_user.username, record)
   - if record.comment.present?
     | :

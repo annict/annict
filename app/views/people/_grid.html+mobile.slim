@@ -1,9 +1,9 @@
 - resource_years.each do |year|
   h3.text-center.mb-1 = year
-  .row.mb-2.px-2
+  .row.mb-2.px-zp5
     - resources_with_year[year].group_by(&:work_id).each do |_, resources|
       - work = resources.first.work
-      .col-4.px-2.mb-1
+      .col-4.px-zp5.mb-1
         .c-card
           = link_to work_path(work) do
             .c-hover-image

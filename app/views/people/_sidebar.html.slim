@@ -11,7 +11,7 @@ h1.h2.font-weight-bold
 
 .mb-2
   c-favorite-button.w-100 resource-type="Person" :resource-id="#{person.id}" :init-is-favorited="#{user_signed_in? && current_user.favorite?(person)}" :is-signed-in="#{user_signed_in?}"
-  .small.text-muted.mt-2
+  .small.text-muted.mt-zp5
     = icon "info-circle", class: "mr-1"
     = t "messages._components.favorite_button.hint", resource_type: t("noun.person").downcase
 
@@ -63,7 +63,7 @@ h1.h2.font-weight-bold
 
     .row.px-1
       - @favorite_people.each do |favorite_person|
-        .col.col-auto.pl-0.pr-2.pb-2
+        .col.col-auto.pl-0.pr-zp5.pb-zp5
           = link_to user_path(favorite_person.user.username) do
             = ann_image_tag(favorite_person.user.profile, :tombo_avatar, size: "30x30", class: "rounded-circle", alt: favorite_person.user.decorate.name_with_username, title: favorite_person.user.decorate.name_with_username)
 
@@ -72,7 +72,7 @@ h1.h2.font-weight-bold
         = link_to t("verb.view_all"), person_fans_path(person)
 
 - if user_signed_in? && current_user.committer?
-  = link_to t("messages._common.edit_on_annict_db"), edit_db_person_path(person), class: "btn btn-secondary w-100 mt-2"
+  = link_to t("messages._common.edit_on_annict_db"), edit_db_person_path(person), class: "btn btn-secondary w-100 mt-zp5"
 
 .mt-2
   = render "application/components/adsense", slot: ENV["GOOGLE_AD_200x200_3"], size: "200x200"

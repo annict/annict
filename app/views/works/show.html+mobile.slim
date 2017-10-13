@@ -155,7 +155,7 @@ h2.h4.font-weight-bold.text-center.mt-1.mb-2
     .c-card.py-1
       - if @episodes.present?
         - if user_signed_in?
-          .mb-2.mx-1
+          .mb-zp5.mx-1
             = link_to t("noun.bulk_tracking"), work_episodes_path(@work, tracking: "on"), class: "small"
         table.p-episodes-table.table.mb-0
           tbody

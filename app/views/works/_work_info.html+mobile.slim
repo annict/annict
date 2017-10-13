@@ -8,10 +8,10 @@
   .col-9
     h1.h3.font-weight-bold.mb-1
       = link_to work.decorate.local_title, work_path(work)
-    .mb-2
+    .mb-zp5
       span.font-weight-bold.mr-1 = work.watchers_count
       span.text-muted.small Watchers
     c-status-selector :work-id="#{work.id}"
     .mb-1
-    c-share-button-twitter.mr-2 text="#{work.decorate.local_title}" url="#{local_url}#{work_path(work)}" hashtags="#{work.twitter_hashtag.presence || ''}"
+    c-share-button-twitter.mr-zp5 text="#{work.decorate.local_title}" url="#{local_url}#{work_path(work)}" hashtags="#{work.twitter_hashtag.presence || ''}"
     c-share-button-facebook url="#{local_url}#{work_path(work)}"

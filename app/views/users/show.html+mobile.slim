@@ -12,20 +12,20 @@
       = link_to user_path(@user.username) do
         = ann_image_tag(@user.profile, :tombo_avatar, size: "80x80", class: "p-profile-header__avatar rounded-circle")
 
-    .p-profile-header__profile.container.text-center.pt-2
-      h1.h2.font-weight-bold.mb-2
+    .p-profile-header__profile.container.text-center.pt-zp5
+      h1.h2.font-weight-bold.mb-zp5
         = link_to @user.profile.name, user_path(@user.username), class: "u-text-body"
-      .mt-2
+      .mt-zp5
         = link_to "@#{@user.username}", user_path(@user.username), class: "u-text-body"
 
       - if @user.profile.description.present?
-        .small.text-muted.mt-2
+        .small.text-muted.mt-zp5
           = @user.profile.description
       - if @user.profile.url.present?
         .small
           = link_to @user.profile.decorate.shorten_url, @user.profile.url, target: "_blank"
 
-    .p-users-show__follow-button.text-center.mt-2
+    .p-users-show__follow-button.text-center.mt-zp5
       - if user_signed_in? && current_user != @user
         c-follow-button username="#{@user.username}" :init-is-following="#{current_user.following?(@user)}" :is-signed-in="true"
         .c-user-options-dropdown.dropdown
@@ -38,7 +38,7 @@
         c-follow-button username="#{@user.username}" :init-is-following="false" :is-signed-in="false"
 
     .text-center.mt-1
-      c-share-button-twitter.mr-2 text="#{title}" url="#{local_url}#{user_path(@user.username)}"
+      c-share-button-twitter.mr-zp5 text="#{title}" url="#{local_url}#{user_path(@user.username)}"
       c-share-button-facebook url="#{local_url}#{user_path(@user.username)}"
 
   hr

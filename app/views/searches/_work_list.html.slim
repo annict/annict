@@ -16,7 +16,7 @@
                   = work.decorate.media_label
                 h3.h3.font-weight-bold.mb-1
                   = link_to work.decorate.local_title, work_path(work), class: "u-text-body"
-                .mb-2
+                .mb-zp5
                   span.font-weight-bold.mr-1 = work.watchers_count
                   span.text-muted.small Watchers
                 c-status-selector :work-id="#{work.id}" style="width: 200px;" size="small"

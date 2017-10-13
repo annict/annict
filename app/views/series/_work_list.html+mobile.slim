@@ -1,7 +1,7 @@
-.row.px-2
+.row.px-zp5
   - series.series_works.where.not(work: work.id).sort_season.each do |series_work|
     - work = series_work.work
-    .col-4.px-2.mb-1
+    .col-4.px-zp5.mb-1
       .c-card
         = link_to work_path(work) do
           .c-hover-image
