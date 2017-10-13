@@ -6,14 +6,14 @@
 = render "application/components/navbar"
 
 .p-application__content
-  .container.py-1.mb-1
+  .container.py-3.mb-3
     = render "application/components/breadcrumb"
     .row
       .col-3.pr-0
         = render "works/sidebar", work: @work
       .col-9
         = render "works/subnav", work: @work
-        .c-card.container.mt-1.pt-1
+        .c-card.container.mt-3.pt-3
           = render "reviews/form", review: @review
 
 = render "application/components/footer"

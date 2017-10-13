@@ -2,17 +2,17 @@
 - set_meta_tags(title: title, reverse: true, prefix: false)
 - set_page_category "db_series_works_edit"
 
-.l-topbar.container-fluid.px-1
+.l-topbar.container-fluid.px-3
   .row.flex-items-xs-between
     .col-8
       = render "db/application/topbar_title", parent: @series, child: title
 
 = render "db/series/subnav", series: @series
 
-.container-fluid.p-1
+.container-fluid.p-3
   .row
     .col-6
-      .c-card.p-1
+      .c-card.p-3
         .container
           = form_for [:db, @series_work] do |f|
             = render "application/components/error_panel", resource: f.object

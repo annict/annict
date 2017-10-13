@@ -1,9 +1,9 @@
 = link_to work_path(top_work) do
   = image_tag(ann_image_url(top_work.work_image, :attachment, size: "300x300"), alt: top_work.decorate.local_title, class: "rounded img-thumbnail")
-.mt-zp5
-  span.font-weight-bold.mr-zp25 = top_work.watchers_count
+.mt-2
+  span.font-weight-bold.mr-1 = top_work.watchers_count
   span.text-muted.small Watchers
-h3.h2.font-weight-bold.mb-zp5
+h3.h2.font-weight-bold.mb-2
   = link_to top_work.decorate.local_title, work_path(top_work)
 .text-center
   c-status-selector :work-id="#{top_work.id}"

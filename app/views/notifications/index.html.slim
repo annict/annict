@@ -5,8 +5,8 @@
 = render "application/components/navbar"
 
 .p-application__content
-  .mb-2
-    .c-card.container.my-1.u-mw-600
+  .mb-4
+    .c-card.container.my-3.u-mw-600
       - if @notifications.present?
         - @notifications.each do |notification|
           = render "notification", notification: notification

@@ -1,5 +1,5 @@
 script#t-tips type="x-template"
-  .c-tips.pt-1
+  .c-tips.pt-3
     template v-for="(tip, i) in tips"
       .c-tips__tip.row :class='{ "is-last": i === tips.length - 1 }'
         .col
@@ -10,7 +10,7 @@ script#t-tips type="x-template"
           = icon :times
 
       .collapse :id='"c-tips__" + tip.slug'
-        .c-tips__body.pb-1
+        .c-tips__body.pb-3
           - Tip.all.each do |t|
             template v-if=="tip.slug == '#{t.slug}'"
               = render "tips/#{t.slug}"

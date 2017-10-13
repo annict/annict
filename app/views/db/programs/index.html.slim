@@ -2,7 +2,7 @@
 - set_meta_tags(title: title, reverse: true, prefix: false)
 - set_page_category "db_programs_index"
 
-.l-topbar.container-fluid.px-1
+.l-topbar.container-fluid.px-3
   .row.flex-items-xs-between
     .col-8
       = render "db/application/topbar_title", parent: @work, child: title
@@ -14,7 +14,7 @@
 
 = render "db/works/subnav", work: @work
 
-.container-fluid.p-1
+.container-fluid.p-3
   - if @programs.present?
     .c-card
       table.table.table-hover

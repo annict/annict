@@ -9,27 +9,27 @@
 = render "application/components/navbar"
 
 .p-application__content
-  .container.py-1.mb-1
+  .container.py-3.mb-3
     = render "application/components/breadcrumb"
     .row
       .col-3.pr-0
         = render "works/sidebar", work: @work
       .col-9
         = render "works/subnav", work: @work
-        .pt-1.text-center
+        .pt-3.text-center
           = render "application/components/adsense", slot: ENV["GOOGLE_AD_728x90_22"], size: "728x90"
-        .text-right.my-1
+        .text-right.my-3
           = link_to new_work_review_path(@work), class: "btn btn-primary" do
-            = icon "pencil-square-o", class: "mr-zp25"
+            = icon "pencil-square-o", class: "mr-1"
             = t "verb.write_review"
-        .c-card.container.mt-1
+        .c-card.container.mt-3
           - if @reviews.present?
             div
               - @reviews.each do |review|
-                .py-1.u-underline
+                .py-3.u-underline
                   = render "reviews/review", review: review, is_spoiler: @is_spoiler
             - if @reviews.total_pages > 1
-              .mb-1.text-center
+              .mb-3.text-center
                 = paginate @reviews
           - else
             = render "application/components/empty", text: t("messages._empty.no_reviews")

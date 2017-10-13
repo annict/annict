@@ -5,27 +5,27 @@
 - set_meta_tags(title: title, description: description, keywords: keywords, og: { description: description }, twitter: { description: description }, reverse: true, prefix: false)
 - set_page_category "users_show"
 
-.c-card.mb-1
+.c-card.mb-3
   .p-profile-header
     .p-profile-header__cover
       .p-profile-header__cover-image style="background-image: url(#{profile_background_image_url(@user.profile, size: '276x180')});"
       = link_to user_path(@user.username) do
         = ann_image_tag(@user.profile, :tombo_avatar, size: "80x80", class: "p-profile-header__avatar rounded-circle")
 
-    .p-profile-header__profile.container.text-center.pt-zp5
-      h1.h2.font-weight-bold.mb-zp5
+    .p-profile-header__profile.container.text-center.pt-2
+      h1.h2.font-weight-bold.mb-2
         = link_to @user.profile.name, user_path(@user.username), class: "u-text-body"
-      .mt-zp5
+      .mt-2
         = link_to "@#{@user.username}", user_path(@user.username), class: "u-text-body"
 
       - if @user.profile.description.present?
-        .small.text-muted.mt-zp5
+        .small.text-muted.mt-2
           = @user.profile.description
       - if @user.profile.url.present?
         .small
           = link_to @user.profile.decorate.shorten_url, @user.profile.url, target: "_blank"
 
-    .p-users-show__follow-button.text-center.mt-zp5
+    .p-users-show__follow-button.text-center.mt-2
       - if user_signed_in? && current_user != @user
         c-follow-button username="#{@user.username}" :init-is-following="#{current_user.following?(@user)}" :is-signed-in="true"
         .c-user-options-dropdown.dropdown
@@ -37,34 +37,34 @@
       - elsif !user_signed_in?
         c-follow-button username="#{@user.username}" :init-is-following="false" :is-signed-in="false"
 
-    .text-center.mt-1
-      c-share-button-twitter.mr-zp5 text="#{title}" url="#{local_url}#{user_path(@user.username)}"
+    .text-center.mt-3
+      c-share-button-twitter.mr-2 text="#{title}" url="#{local_url}#{user_path(@user.username)}"
       c-share-button-facebook url="#{local_url}#{user_path(@user.username)}"
 
   hr
 
-  .container.text-center.pb-1
-    .row.mb-1
+  .container.text-center.pb-3
+    .row.mb-3
       .p-users-show__count.col.px-0
-        .h3.mb-zp25
+        .h3.mb-1
           = @user.checkins_count
         .small
           | Records
       .p-users-show__count.col.px-0
         = link_to library_path(@user.username, :watching), class: "p-users-show__count-link" do
-          .h3.mb-zp25
+          .h3.mb-1
             = @user.latest_statuses.count_on(:watching)
           .small
             | Watching
       .p-users-show__count.col.px-0
         = link_to following_user_path(@user.username), class: "p-users-show__count-link" do
-          .h3.mb-zp25
+          .h3.mb-1
             = @user.followings.count
           .small
             | Following
       .p-users-show__count.col.px-0
         = link_to followers_user_path(@user.username), class: "p-users-show__count-link" do
-          .h3.mb-zp25
+          .h3.mb-1
             = @user.followers.count
           .small
             | Followers
@@ -72,32 +72,32 @@
     .row
       .p-users-show__count.col.px-0
         = link_to reviews_path(@user.username), class: "p-users-show__count-link" do
-          .h3.mb-zp25
+          .h3.mb-1
             = @reviews.length
           .small
             | Reviews
       .p-users-show__count.col.px-0
         = link_to favorite_characters_path(@user.username), class: "p-users-show__count-link" do
-          .h3.mb-zp25
+          .h3.mb-1
             = @favorite_characters.length
           .small
             = t "noun.favorite_characters_shorten"
       .p-users-show__count.col.px-0
         = link_to favorite_people_path(@user.username), class: "p-users-show__count-link" do
-          .h3.mb-zp25
+          .h3.mb-1
             = @favorite_casts.length + @favorite_staffs.length
           .small
             = t "noun.favorite_people_shorten"
       .p-users-show__count.col.px-0
         = link_to favorite_organizations_path(@user.username), class: "p-users-show__count-link" do
-          .h3.mb-zp25
+          .h3.mb-1
             = @favorite_organizations.length
           .small
             = t "noun.favorite_organizations_shorten"
 
 = render "application/components/adsense", slot: ENV["GOOGLE_AD_320x100_14"], size: "320x100"
 
-.mt-1.mb-2
+.mt-3.mb-4
   c-activities username="#{@user.username}"
 
 = render "application/components/footer"

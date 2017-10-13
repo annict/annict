@@ -7,17 +7,17 @@
 = render "forum/application/subnav"
 
 .p-application__content
-  .container.py-1.mb-1
+  .container.py-3.mb-3
     = render "application/components/breadcrumb"
-    .text-center.mb-1
+    .text-center.mb-3
       = render "application/components/adsense", slot: ENV["GOOGLE_AD_728x90_24"], size: "728x90"
     .row
       .col
-        h1.h2.mb-1
+        h1.h2.mb-3
           = @category.decorate.local_name
       .col
         - if !@category.slug.site_news? || (@category.slug.site_news? && user_signed_in? && current_user.role.admin?)
-          .text-right.mb-1
+          .text-right.mb-3
             = link_to new_forum_post_path(category: @category.slug), class: "btn btn-primary" do
               = icon "plus"
               = t "resources.forum_post.new"
@@ -27,7 +27,7 @@
       - else
         = render "application/components/empty", text: t("messages.forum.posts.no_posts")
     - if @posts.total_pages > 1
-      .text-center.mt-1
+      .text-center.mt-3
         = paginate @posts
 
 = render "application/components/footer"

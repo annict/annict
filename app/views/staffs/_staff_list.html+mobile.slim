@@ -1,6 +1,6 @@
 - if staffs.present?
   - staffs.each_slice(2).each do |staffs|
-    .row.mb-1
+    .row.mb-3
       - staffs.each do |staff|
         - cache [I18n.locale, staff] do
           .col-6

@@ -2,7 +2,7 @@
   - if user_signed_in?
     - user_records = current_user.records.where(episode: episode)
   span.small
-    = icon "pencil-square-o", class: "mr-zp25"
+    = icon "pencil-square-o", class: "mr-1"
     - if user_signed_in?
       = user_records.length
     - else

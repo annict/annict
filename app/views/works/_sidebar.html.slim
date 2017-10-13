@@ -1,21 +1,21 @@
-.mb-zp5
+.mb-2
   = link_to work_path(work) do
     = ann_image_tag work.work_image, :attachment, size: "280x373", class: "img-fluid img-thumbnail rounded"
   - if work.work_image.present?
     .u-very-small.text-right
       = work.work_image.decorate.asin_or_copyright_text
 
-h1.h2.font-weight-bold.mb-zp25
+h1.h2.font-weight-bold.mb-1
   = link_to work.decorate.local_title, work_path(work), class: "u-text-body"
 
-.mb-1
-  span.font-weight-bold.mr-zp25 = work.watchers_count
+.mb-3
+  span.font-weight-bold.mr-1 = work.watchers_count
   span.text-muted.small Watchers
 
 c-status-selector :work-id="#{work.id}"
 
-h2.h4.font-weight-bold.mt-2.mb-1
-  = icon "sticky-note-o", class: "mr-zp25"
+h2.h4.font-weight-bold.mt-4.mb-3
+  = icon "sticky-note-o", class: "mr-1"
   = t "noun.information"
 
 dl
@@ -57,25 +57,25 @@ dl
 
 - program_details = work.program_details.published.in_video_service
 - if program_details.present?
-  h2.h4.font-weight-bold.mt-2.mb-1
-    = icon "video-camera", class: "mr-zp25"
+  h2.h4.font-weight-bold.mt-4.mb-3
+    = icon "video-camera", class: "mr-1"
     = t "noun.video_services"
   ul.list-unstyled
     - program_details.each do |detail|
       li = link_to detail.channel.name, detail.url, target: "_blank"
 
-h2.h4.font-weight-bold.mt-2.mb-1
-  = icon "share", class: "mr-zp25"
+h2.h4.font-weight-bold.mt-4.mb-3
+  = icon "share", class: "mr-1"
   = t "noun.share"
 
-c-share-button-twitter.mr-zp5 text="#{work.decorate.local_title}" url="#{local_url}#{work_path(work)}" hashtags="#{work.twitter_hashtag.presence || ''}"
+c-share-button-twitter.mr-2 text="#{work.decorate.local_title}" url="#{local_url}#{work_path(work)}" hashtags="#{work.twitter_hashtag.presence || ''}"
 c-share-button-facebook url="#{local_url}#{work_path(work)}"
 
 - if user_signed_in? && current_user.committer?
-  .mt-2
-    = link_to t("messages._common.edit_on_annict_db"), edit_db_work_path(work), class: "btn btn-secondary w-100 mt-zp5"
+  .mt-4
+    = link_to t("messages._common.edit_on_annict_db"), edit_db_work_path(work), class: "btn btn-secondary w-100 mt-2"
 
-.mt-2
+.mt-4
   = render "application/components/adsense", slot: ENV["GOOGLE_AD_RESP_1"], size: "200x200", format: "rectangle"
 
 - content_for :js_templates do

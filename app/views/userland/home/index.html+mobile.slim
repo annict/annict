@@ -3,26 +3,26 @@
 - set_page_category "userland_home_index"
 - breadcrumb :userland_root
 
-.mb-1
-  .container.mt-1
+.mb-3
+  .container.mt-3
     .alert.alert-info
       h2.h3.alert-heading
         = t "messages.userland.welcome"
       p.mb-0
         = t "messages.userland.description_mobile"
   - @categories.each do |category|
-    h2.h4.text-center.my-2.font-weight-bold
+    h2.h4.text-center.my-4.font-weight-bold
       = category.decorate.local_name
-    .c-card.px-1
+    .c-card.px-3
       - if category.userland_projects.exists?
         - category.userland_projects.order(:available, created_at: :desc).each do |project|
-          .container.u-underline.py-1
+          .container.u-underline.py-3
             .row.align-items-center
               .col-auto
                 = link_to userland_project_path(project) do
                   = ann_image_tag project, :icon, size: "60x60", class: "img-fluid img-thumbnail rounded"
               .col
-                .mb-zp5
+                .mb-2
                   = link_to project.name, userland_project_path(project)
                 .small.text-muted
                   = project.summary

@@ -1,17 +1,17 @@
-.row.mb-1
+.row.mb-3
   .col-3.pr-0
     = link_to work_path(work) do
       = ann_image_tag work.work_image, :attachment, size: "110x147", class: "img-fluid img-thumbnail rounded"
     - if work.work_image.present?
-      .u-very-small.mt-zp25
+      .u-very-small.mt-1
         = work.work_image.decorate.asin_or_copyright_text
   .col-9
-    h1.h3.font-weight-bold.mb-zp25
+    h1.h3.font-weight-bold.mb-1
       = link_to work.decorate.local_title, work_path(work)
-    .mb-zp5
-      span.font-weight-bold.mr-zp25 = work.watchers_count
+    .mb-2
+      span.font-weight-bold.mr-1 = work.watchers_count
       span.text-muted.small Watchers
     c-status-selector :work-id="#{work.id}"
-    .mb-1
-    c-share-button-twitter.mr-zp5 text="#{work.decorate.local_title}" url="#{local_url}#{work_path(work)}" hashtags="#{work.twitter_hashtag.presence || ''}"
+    .mb-3
+    c-share-button-twitter.mr-2 text="#{work.decorate.local_title}" url="#{local_url}#{work_path(work)}" hashtags="#{work.twitter_hashtag.presence || ''}"
     c-share-button-facebook url="#{local_url}#{work_path(work)}"

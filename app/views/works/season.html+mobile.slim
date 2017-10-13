@@ -7,31 +7,31 @@
 
 = render "application/components/adsense", slot: ENV["GOOGLE_AD_320x100_16"], size: "320x100"
 
-.px-1
-  .text-center.py-1
+.px-3
+  .text-center.py-3
     - if @prev_season.present?
       = link_to season_works_path(slug: @prev_season.slug), class: "mr-2" do
-        = icon "angle-left", class: "mr-zp5"
+        = icon "angle-left", class: "mr-2"
         = @prev_season.local_name
     .dropdown.d-inline-block
       a.dropdown-toggle href="#" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"
         = @season.local_name
-      .dropdown-menu.pre-scrollable.mr-1
+      .dropdown-menu.pre-scrollable.mr-3
         - @seasons.each do |season|
           = link_to season.local_name, season_works_path(slug: season.slug), class: "dropdown-item"
     - if @next_season.present?
       = link_to season_works_path(slug: @next_season.slug), class: "ml-2" do
         = @next_season.local_name
-        = icon "angle-right", class: "ml-zp5"
-  .row.align-items-center.mb-1
+        = icon "angle-right", class: "ml-2"
+  .row.align-items-center.mb-3
     .col.pr-0
-      c-share-button-twitter.mr-zp5 text="#{title}" url="#{local_url}#{season_works_path(slug: @season.slug)}"
+      c-share-button-twitter.mr-2 text="#{title}" url="#{local_url}#{season_works_path(slug: @season.slug)}"
       c-share-button-facebook url="#{local_url}#{season_works_path(slug: @season.slug)}"
     .col
       - if user_signed_in?
         = render "display_option_buttons"
 
-.mb-1
+.mb-3
   - if user_signed_in?
     = render "works/#{current_user.setting.display_option_work_list}", works: @works
   - else
@@ -39,7 +39,7 @@
   .text-center
     = paginate @works, window: 2
 
-.mb-1
+.mb-3
   = render "application/components/adsense", slot: ENV["GOOGLE_AD_320x100_17"], size: "320x100"
 
 = render "application/components/breadcrumb"

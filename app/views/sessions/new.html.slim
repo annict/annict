@@ -7,14 +7,14 @@
 .container
   .row.align-items-center
     .col-6.offset-3.py-3
-      .text-center.mb-3
+      .text-center.mb-5
         = link_to root_path do
           = image_tag "logos/color-mizuho.png", size: "50x61", alt: "Annict"
-      .c-card.px-1.py-2.mb-1
+      .c-card.px-3.py-4.mb-3
         .c-sign-up-form
-          h1.text-center.mb-2 = t "messages._common.welcome_back"
+          h1.text-center.mb-4 = t "messages._common.welcome_back"
 
-          .text-center.mb-1
+          .text-center.mb-3
             = link_to user_twitter_omniauth_authorize_path, class: "btn u-btn-twitter" do
               = icon "twitter"
               = t "messages.sessions.new.sign_in_with_twitter"
@@ -23,7 +23,7 @@
               = icon "facebook"
               = t "messages.sessions.new.sign_in_with_facebook"
 
-          .text-muted.text-center.mt-2.mb-1
+          .text-muted.text-center.mt-4.mb-3
             = t "noun.or"
 
           = form_for resource, url: user_session_path do |f|

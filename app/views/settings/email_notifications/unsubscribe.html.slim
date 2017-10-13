@@ -7,12 +7,12 @@
 
 = render "application/components/navbar"
 
-.p-application__content.mt-1.mb-2
+.p-application__content.mt-3.mb-4
   .container
     .row.justify-content-center
       .col-7.c-card
         .c-unsubscribe-message.p-5.text-center
-          = icon "check-circle-o", class: "mb-zp5"
+          = icon "check-circle-o", class: "mb-2"
           .c-unsubscribe-message__message
             = t "messages.settings.email_notifications.unsubscribed"
 

@@ -4,10 +4,10 @@
 - set_meta_tags(title: title, description: description, keywords: keywords, og: { description: description }, twitter: { description: description }, reverse: true, prefix: false)
 - set_page_category "character_fans_index"
 
-.c-card.mb-1
+.c-card.mb-3
   = render "characters/header", character: @character, favorite_resources: @favorite_characters
 
-.c-card.mb-2
+.c-card.mb-4
   - if @favorite_characters.present?
     = render "users/fan_user_list", favorite_resources: @favorite_characters
   - else
