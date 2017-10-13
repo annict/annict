@@ -4,7 +4,7 @@ script#t-work-detail-button-modal type="x-template"
       .modal-content
         .modal-body
           template v-if="isLoadingWorkDetail"
-            .c-spinner.p-3
+            .c-spinner.p-5
           template v-else-if="work"
             .mb-1
               a.d-inline-block.mb-zp5 :href='"/works/" + workId'
@@ -12,7 +12,7 @@ script#t-work-detail-button-modal type="x-template"
               h1.h2.font-weight-bold.mb-1
                 a :href='"/works/" + workId'
                   | {{ work.title }}
-            
+
             template v-if="status"
               c-status-selector :work-id="work.id" :init-status-kind="status.kind"
             template v-else=""

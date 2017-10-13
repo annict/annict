@@ -4,7 +4,7 @@ script#t-impression-button-modal type="x-template"
       .modal-content
         .modal-body
           template v-if="isLoading"
-            .c-spinner.p-3
+            .c-spinner.p-5
           template v-else=""
             form @submit.prevent="save"
               .form-group
