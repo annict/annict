@@ -40,7 +40,7 @@ nav.c-navbar.navbar.navbar-toggleable-xl class="#{transparent ? 'navbar-dark is-
       - if user_signed_in?
         li.nav-item.mr-1
           = link_to annict_url(:track_url), class: "btn btn-outline-primary btn-sm" do
-            = icon "pencil-square-o", class: "mr-zp25"
+            = icon "pencil-square-o", class: "mr-1"
             = t "head.title.tracks.show"
         li.nav-item.dropdown
           = link_to annict_url(:user_url, current_user.username), class: "nav-link p-0" do

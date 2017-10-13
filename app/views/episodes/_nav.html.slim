@@ -2,17 +2,17 @@ h2
   = link_to episode.decorate.title_with_number, work_episode_path(work, episode), class: "u-text-body"
 - if user_signed_in? && current_user.tracked?(episode)
   .small
-    = icon "check-circle", class: "mr-zp25 u-text-green"
+    = icon "check-circle", class: "mr-1 u-text-green"
     = t "messages.episodes.watched_x_times", records_count: current_user.checkins_count_in(episode)
 - if episode.prev_episode.present? || episode.next_episode.present?
   .row.mt-1
     .col
       - if episode.prev_episode.present?
         = link_to work_episode_path(work, episode.prev_episode) do
-          = icon "angle-left", class: "mr-zp25"
+          = icon "angle-left", class: "mr-1"
           = episode.prev_episode.decorate.local_number
     .col.text-right
       - if episode.next_episode.present?
         = link_to work_episode_path(work, episode.next_episode) do
           = episode.next_episode.decorate.local_number
-          = icon "angle-right", class: "ml-zp25"
+          = icon "angle-right", class: "ml-1"

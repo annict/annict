@@ -15,7 +15,7 @@
       = active_link_to library_path(@user.username, status_kind), class: "c-subnav__link", class_active: "c-subnav__link--active", active: (status_kind.to_s == params[:status_kind]) do
         .c-subnav__item
           .text-center
-            .mb-zp25
+            .mb-1
               = @user.latest_statuses.count_on(status_kind)
             .small
               = t "enumerize.status.kind.#{status_kind}"

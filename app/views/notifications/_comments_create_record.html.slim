@@ -4,19 +4,19 @@
 - work = record.work
 - episode = record.episode
 
-span.mr-zp25
+span.mr-1
   = action_user.decorate.name_link
 | commented your record on
-span.ml-zp25
+span.ml-1
   = work.decorate.title_link
-span.ml-zp25
+span.ml-1
   = episode.decorate.number_link
 
 .small.text-muted.my-zp5
   = link_to local_time_ago_in_words(comment.created_at), record_path(current_user.username, record)
   - if record.comment.present?
     | :
-    span.ml-zp25
+    span.ml-1
     = record.comment
 
 .small.text-muted

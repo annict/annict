@@ -7,7 +7,7 @@
       = link_to episode.decorate.title_with_number, work_episode_path(work, episode), class: "u-text-body"
     - if user_signed_in? && current_user.tracked?(episode)
       .text-center.small
-        = icon "check-circle", class: "mr-zp25 u-text-green"
+        = icon "check-circle", class: "mr-1 u-text-green"
         = t "messages.episodes.watched_x_times", records_count: current_user.checkins_count_in(episode)
     .container.mt-1
       .row

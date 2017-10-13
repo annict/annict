@@ -11,7 +11,7 @@
           .col
             .text-right
               - if record.modify_comment?
-                small.mr-zp25.text-muted
+                small.mr-1.text-muted
                   = icon "pencil"
               = link_to record_path(record.user.username, record), class: "small text-muted", title: local_datetime(record.created_at) do
                 = local_time_ago_in_words(record.created_at)
@@ -28,17 +28,17 @@
           .col
             - if record.shared_twitter? || record.twitter_url_hash.present?
               small
-                = icon "twitter", class: "mr-zp25 u-text-twitter"
+                = icon "twitter", class: "mr-1 u-text-twitter"
                 = record.twitter_click_count
             - if record.shared_facebook? || record.facebook_url_hash.present?
               small.ml-zp5
-                = icon "facebook", class: "mr-zp25 u-text-facebook"
+                = icon "facebook", class: "mr-1 u-text-facebook"
                 = record.facebook_click_count
           .col
             .text-right
               c-like-button resource-name="Checkin" :init-resource-id="#{record.id}" :init-likes-count="#{record.likes_count}" :init-is-liked="#{user_signed_in? && current_user.like?(record)}" :is-signed-in="#{user_signed_in?}"
               = link_to record_path(record.user.username, record), class: "d-inline-block ml-zp5" do
-                = icon "comment-o", class: "mr-zp25"
+                = icon "comment-o", class: "mr-1"
                 = record.comments_count
               - if user_signed_in? && current_user != record.user
                 .c-options-dropdown.dropdown.ml-zp5.d-inline-block
@@ -50,8 +50,8 @@
         - if policy(record).update?
           .small.text-right.mb-zp5
             = link_to edit_record_path(record.user.username, record), class: "mr-zp5" do
-              = icon "edit", class: "mr-zp25"
+              = icon "edit", class: "mr-1"
               = t "noun.edit"
             = link_to record_path(record.user.username, record), method: :delete, data: { confirm: t("messages._common.are_you_sure") } do
-              = icon "trash-o", class: "mr-zp25"
+              = icon "trash-o", class: "mr-1"
               = t "noun.delete"

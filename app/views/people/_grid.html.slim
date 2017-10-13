@@ -10,7 +10,7 @@
               .c-hover-image__image
                 = ann_image_tag(work.work_image, :attachment, size: "280x373", class: "img-fluid rounded")
               .c-hover-image__over
-          .p-zp25
+          .p-1
             .text-truncate.small
               = link_to work.decorate.local_title, work_path(work)
             - description = resources.map { |resource| root_resource.decorate.grid_description(resource) }.join(", ")

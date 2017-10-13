@@ -106,7 +106,7 @@ h2.h4.font-weight-bold.text-center.mt-1.mb-2
       .container
         = @work.decorate.local_synopsis
         .text-right.u-very-small
-          span.mr-zp25
+          span.mr-1
             = t("noun.source")
             | :
           = @work.decorate.local_synopsis_source
@@ -174,7 +174,7 @@ h2.h4.font-weight-bold.text-center.mt-1.mb-2
     - if @reviews.present?
       .text-right.pt-1
         = link_to new_work_review_path(@work), class: "btn btn-primary btn-sm" do
-          = icon "pencil-square-o", class: "mr-zp25"
+          = icon "pencil-square-o", class: "mr-1"
           = t "verb.write_review"
     = render "works/review_list", reviews: @reviews
 
@@ -185,7 +185,7 @@ h2.h4.font-weight-bold.text-center.mt-1.mb-2
     - if @items.present?
       .text-right.mb-1
         = link_to new_work_item_path(@work), class: "btn btn-primary btn-sm" do
-          = icon "plus", class: "mr-zp25"
+          = icon "plus", class: "mr-1"
           = t "verb.regist_item"
     = render "works/item_list", work: @work, items: @items
 

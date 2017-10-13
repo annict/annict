@@ -8,12 +8,12 @@ h1.h2.font-weight-bold
 .mb-2
   c-favorite-button.w-100 resource-type="Character" :resource-id="#{character.id}" :init-is-favorited="#{user_signed_in? && current_user.favorite?(character)}" :is-signed-in="#{user_signed_in?}"
   .small.text-muted.mt-zp5
-    = icon "info-circle", class: "mr-zp25"
+    = icon "info-circle", class: "mr-1"
     = t "messages._components.favorite_button.hint", resource_type: t("noun.character").downcase
 
 .mb-2
   h2.h4.font-weight-bold.mt-2.mb-1
-    = icon "sticky-note-o", class: "mr-zp25"
+    = icon "sticky-note-o", class: "mr-1"
     = t "noun.information"
   dl
     dt.small = t "activerecord.attributes.character.name"
@@ -56,16 +56,16 @@ h1.h2.font-weight-bold
       dd
         = character.decorate.local_description
         .small
-          span.mr-zp25
+          span.mr-1
             = "#{t('noun.source')}:".html_safe
           = character.decorate.local_description_source
 
 - if @favorite_characters.present?
   .mb-2
     h2.h4.font-weight-bold.mb-1
-      = icon "users", class: "mr-zp25"
+      = icon "users", class: "mr-1"
       = t "noun.fans"
-      span.pl-zp25
+      span.pl-1
         = "(#{t('noun.users_count', count: @favorite_characters.length)})"
 
     .row.px-1

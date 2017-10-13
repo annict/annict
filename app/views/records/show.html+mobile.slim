@@ -53,10 +53,10 @@
           - if policy(comment).update?
             .small.text-right.mb-zp5
               = link_to edit_comment_path(comment), class: "mr-zp5" do
-                = icon "edit", class: "mr-zp25"
+                = icon "edit", class: "mr-1"
                 = t "noun.edit"
               = link_to comment_path(comment), method: :delete, data: { confirm: t("messages._common.are_you_sure") } do
-                = icon "trash-o", class: "mr-zp25"
+                = icon "trash-o", class: "mr-1"
                 = t "noun.delete"
     - else
       = render "application/components/empty", text: t("resources.comment.no_comments")

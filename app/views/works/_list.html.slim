@@ -14,21 +14,21 @@
           c-status-selector.mt-zp5 :work-id="#{work.id}"
 
         .col
-          .mb-zp25.u-lh-0
+          .mb-1.u-lh-0
             = work.decorate.media_label
-          h3.h2.font-weight-bold.mb-zp25
+          h3.h2.font-weight-bold.mb-1
             = link_to work.decorate.local_title, work_path(work), class: "u-text-body"
           .mb-zp5
-            span.font-weight-bold.mr-zp25 = work.watchers_count
+            span.font-weight-bold.mr-1 = work.watchers_count
             span.text-muted.small Watchers
 
           - if work.decorate.local_synopsis.present?
-            .font-weight-bold.mb-zp25
+            .font-weight-bold.mb-1
               = t "activerecord.attributes.work.synopsis"
             .mb-1
               c-omitted-synopsis text="#{work.decorate.local_synopsis(raw: true)}"
               .small.mt-zp5.text-right
-                span.mr-zp25
+                span.mr-1
                   = t "noun.source"
                   | :
                 = work.decorate.local_synopsis_source
@@ -36,7 +36,7 @@
           - cache [I18n.locale, work.pvs.published] do
             - pvs = @pvs_data.select { |pd| pd[:work_id] == work.id }.first[:pvs].sort_by { |p| p.sort_number }
             - if pvs.present?
-              .font-weight-bold.mb-zp25
+              .font-weight-bold.mb-1
                 = t "noun.pv"
               .row
                 - pvs.each do |pv|
@@ -54,7 +54,7 @@
           - cache [I18n.locale, work.casts.published] do
             - casts = @casts_data.select { |cd| cd[:work_id] == work.id }.first[:casts].sort_by { |c| c.sort_number }
             - if casts.present?
-              .font-weight-bold.mb-zp25 = t "noun.casts"
+              .font-weight-bold.mb-1 = t "noun.casts"
               ul.list-inline
                 - casts.first(10).each do |cast|
                   - cache [I18n.locale, cast] do
@@ -66,7 +66,7 @@
           - cache [I18n.locale, work.staffs.published] do
             - staffs = @staffs_data.select { |sd| sd[:work_id] == work.id }.first[:staffs].sort_by { |s| s.sort_number }
             - if staffs.present?
-              .font-weight-bold.mb-zp25 = t "noun.staffs"
+              .font-weight-bold.mb-1 = t "noun.staffs"
               ul.list-inline
                 - staffs.each do |staff|
                   - cache [I18n.locale, staff] do
@@ -77,7 +77,7 @@
           - cache [I18n.locale, work.program_details.published] do
             - program_details = @program_details_data.select { |pdd| pdd[:work_id] == work.id }.first[:program_details].sort_by { |s| s.channel_id }
             - if program_details.present?
-              .font-weight-bold.mb-zp25 = t "noun.video_services"
+              .font-weight-bold.mb-1 = t "noun.video_services"
               ul.list-inline
                 - program_details.each do |program_detail|
                   - cache [I18n.locale, program_detail] do

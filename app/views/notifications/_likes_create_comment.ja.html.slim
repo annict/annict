@@ -2,14 +2,14 @@
 - comment = notification.trackable.recipient
 - record = comment.record
 
-span.mr-zp25
+span.mr-1
   = action_user.decorate.name_link
 | があなたのコメントに「いいね！」しました
 
 .small.text-muted.my-zp5
   = link_to local_time_ago_in_words(comment.created_at), record_path(current_user.username, record)
   | :
-  span.ml-zp25
+  span.ml-1
     = comment.body
 
 .small.text-muted

@@ -27,7 +27,7 @@
               = link_to work_path(review.work) do
                 = ann_image_tag review.work.work_image, :attachment, size: "70x93", class: "img-fluid img-thumbnail rounded"
             .col
-              .small.text-muted.mb-zp25
+              .small.text-muted.mb-1
                 = link_to review.work.decorate.local_title, work_path(review.work), class: "u-text-body"
               .mb-zp5
                 - title = t("messages.reviews.view_review_with_words_count", count: review.body.length)

@@ -8,12 +8,12 @@ h1.h2.font-weight-bold
 .mb-2
   c-favorite-button.w-100 resource-type="Organization" :resource-id="#{organization.id}" :init-is-favorited="#{user_signed_in? && current_user.favorite?(organization)}" :is-signed-in="#{user_signed_in?}"
   .small.text-muted.mt-zp5
-    = icon "info-circle", class: "mr-zp25"
+    = icon "info-circle", class: "mr-1"
     = t "messages._components.favorite_button.hint", resource_type: t("noun.organization").downcase
 
 .mb-2
   h2.h4.font-weight-bold.mt-2.mb-1
-    = icon "sticky-note-o", class: "mr-zp25"
+    = icon "sticky-note-o", class: "mr-1"
     = t "noun.information"
   dl
     dt.small = t "activerecord.attributes.organization.name"
@@ -37,9 +37,9 @@ h1.h2.font-weight-bold
 - if @favorite_orgs.present?
   .mb-2
     h2.h4.font-weight-bold.mb-1
-      = icon "users", class: "mr-zp25"
+      = icon "users", class: "mr-1"
       = t "noun.fans"
-      span.pl-zp25
+      span.pl-1
         = "(#{t('noun.users_count', count: @favorite_orgs.length)})"
 
     .row.px-1

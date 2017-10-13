@@ -40,11 +40,11 @@ script#t-program-list type="x-template"
                       span v-if="user.authorized_to_twitter"
                         label
                           input type="checkbox" v-model="user.share_record_to_twitter"
-                          = icon "twitter", class: "u-text-twitter ml-zp25"
+                          = icon "twitter", class: "u-text-twitter ml-1"
                       span.ml-zp5 v-if="user.authorized_to_facebook"
                         label
                           input type="checkbox" v-model="user.share_record_to_facebook"
-                          = icon "facebook", class: "u-text-facebook ml-zp25"
+                          = icon "facebook", class: "u-text-facebook ml-1"
                   .col
                     .text-right
                       .small.text-mute
