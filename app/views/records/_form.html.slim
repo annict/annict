@@ -14,11 +14,11 @@
     .col
       - if current_user.authorized_to?(:twitter, shareable: true)
         label
-          = icon "twitter", class: "u-text-twitter mr-1"
+          = icon "twitter", class: "u-text-twitter mr-zp25"
           = f.check_box :shared_twitter
       - if current_user.authorized_to?(:facebook, shareable: true)
         label.ml-zp5
-          = icon "facebook", class: "u-text-facebook mr-1"
+          = icon "facebook", class: "u-text-facebook mr-zp25"
           = f.check_box :shared_facebook
     .col
       .text-center

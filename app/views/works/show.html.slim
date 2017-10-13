@@ -58,7 +58,7 @@
           .c-card.mt-1.p-1
             = @work.decorate.local_synopsis
             .text-right.small
-              span.mr-1
+              span.mr-zp25
                 = t("noun.source")
                 | :
               = @work.decorate.local_synopsis_source
@@ -129,7 +129,7 @@
           - if @reviews.present?
             .text-right.pt-1
               = link_to new_work_review_path(@work), class: "btn btn-primary btn-sm" do
-                = icon "pencil-square-o", class: "mr-1"
+                = icon "pencil-square-o", class: "mr-zp25"
                 = t "verb.write_review"
           = render "works/review_list", reviews: @reviews
 
@@ -139,7 +139,7 @@
           - if @items.present?
             .text-right.py-zp5
               = link_to new_work_item_path(@work), class: "btn btn-primary btn-sm" do
-                = icon "plus", class: "mr-1"
+                = icon "plus", class: "mr-zp25"
                 = t "verb.regist_item"
           = render "works/item_list", work: @work, items: @items
 

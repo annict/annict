@@ -46,25 +46,25 @@
   .container.text-center.pb-1
     .row.mb-1
       .p-users-show__count.col.px-0
-        .h3.mb-1
+        .h3.mb-zp25
           = @user.checkins_count
         .small
           | Records
       .p-users-show__count.col.px-0
         = link_to library_path(@user.username, :watching), class: "p-users-show__count-link" do
-          .h3.mb-1
+          .h3.mb-zp25
             = @user.latest_statuses.count_on(:watching)
           .small
             | Watching
       .p-users-show__count.col.px-0
         = link_to following_user_path(@user.username), class: "p-users-show__count-link" do
-          .h3.mb-1
+          .h3.mb-zp25
             = @user.followings.count
           .small
             | Following
       .p-users-show__count.col.px-0
         = link_to followers_user_path(@user.username), class: "p-users-show__count-link" do
-          .h3.mb-1
+          .h3.mb-zp25
             = @user.followers.count
           .small
             | Followers
@@ -72,25 +72,25 @@
     .row
       .p-users-show__count.col.px-0
         = link_to reviews_path(@user.username), class: "p-users-show__count-link" do
-          .h3.mb-1
+          .h3.mb-zp25
             = @reviews.length
           .small
             | Reviews
       .p-users-show__count.col.px-0
         = link_to favorite_characters_path(@user.username), class: "p-users-show__count-link" do
-          .h3.mb-1
+          .h3.mb-zp25
             = @favorite_characters.length
           .small
             = t "noun.favorite_characters_shorten"
       .p-users-show__count.col.px-0
         = link_to favorite_people_path(@user.username), class: "p-users-show__count-link" do
-          .h3.mb-1
+          .h3.mb-zp25
             = @favorite_casts.length + @favorite_staffs.length
           .small
             = t "noun.favorite_people_shorten"
       .p-users-show__count.col.px-0
         = link_to favorite_organizations_path(@user.username), class: "p-users-show__count-link" do
-          .h3.mb-1
+          .h3.mb-zp25
             = @favorite_organizations.length
           .small
             = t "noun.favorite_organizations_shorten"

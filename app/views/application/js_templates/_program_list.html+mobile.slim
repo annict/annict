@@ -41,11 +41,11 @@ script#t-program-list type="x-template"
                       span v-if="user.authorized_to_twitter"
                         label
                           input type="checkbox" v-model="user.share_record_to_twitter"
-                          = icon "twitter", class: "u-text-twitter ml-1"
+                          = icon "twitter", class: "u-text-twitter ml-zp25"
                       span.ml-zp5 v-if="user.authorized_to_facebook"
                         label
                           input type="checkbox" v-model="user.share_record_to_facebook"
-                          = icon "facebook", class: "u-text-facebook ml-1"
+                          = icon "facebook", class: "u-text-facebook ml-zp25"
                   .col
                     .text-right
                       .small.text-mute
@@ -53,7 +53,7 @@ script#t-program-list type="x-template"
               template v-if="program.record.isEditingComment"
                 .col.pl-0.text-center
                   button.btn.btn-primary type="button" @click="submit(program)" :class='{ disabled: program.record.isRecorded, "c-spinner": program.record.isSaving }'
-                    = icon "pencil-square-o", class: "mr-1"
+                    = icon "pencil-square-o", class: "mr-zp25"
                     = t "verb.track"
               template v-else=""
                 .col.u-flex-grow-0.pl-0

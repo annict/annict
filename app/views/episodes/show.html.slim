@@ -33,13 +33,13 @@
                     .btn-group.btn-group-sm
                       = active_link_to switch_episode_records_path(@episode, to: :all_comments), class: "btn", class_active: "btn-primary", class_inactive: "btn-secondary", active: (user_signed_in? ? current_user.setting.display_option_record_list.all_comments? : false ), data: { method: :post } do
                         = t "noun.all_comments"
-                        span.ml-1 = "(#{@all_comment_records.total_count})"
+                        span.ml-zp25 = "(#{@all_comment_records.total_count})"
                       = active_link_to switch_episode_records_path(@episode, to: :friend_comments), class: "btn", class_active: "btn-primary", class_inactive: "btn-secondary", active: (user_signed_in? ? current_user.setting.display_option_record_list.friend_comments? : false ), data: { method: :post } do
                         = t "noun.friend_comments"
-                        span.ml-1 = "(#{@friend_comment_records.total_count})"
+                        span.ml-zp25 = "(#{@friend_comment_records.total_count})"
                       = active_link_to switch_episode_records_path(@episode, to: :my_records), class: "btn", class_active: "btn-primary", class_inactive: "btn-secondary", active: (user_signed_in? ? current_user.setting.display_option_record_list.my_records? : false ), data: { method: :post } do
                         = t "noun.my_records"
-                        span.ml-1 = "(#{@my_records.total_count})"
+                        span.ml-zp25 = "(#{@my_records.total_count})"
                 - if @selected_comment_records.present?
                   - if user_signed_in?
                     .text-right.mb-1

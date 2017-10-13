@@ -12,12 +12,12 @@
                   .u-very-small.text-right
                     = work.work_image.decorate.asin_or_copyright_text
               .col
-                .mb-1.u-lh-0
+                .mb-zp25.u-lh-0
                   = work.decorate.media_label
-                h3.h3.font-weight-bold.mb-1
+                h3.h3.font-weight-bold.mb-zp25
                   = link_to work.decorate.local_title, work_path(work), class: "u-text-body"
                 .mb-zp5
-                  span.font-weight-bold.mr-1 = work.watchers_count
+                  span.font-weight-bold.mr-zp25 = work.watchers_count
                   span.text-muted.small Watchers
                 c-status-selector :work-id="#{work.id}" style="width: 200px;" size="small"
 - else

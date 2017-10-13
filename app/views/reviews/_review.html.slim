@@ -67,8 +67,8 @@
     - if policy(review).update?
       .small.text-right
         = link_to edit_work_review_path(review.work, review), class: "mr-zp5" do
-          = icon "edit", class: "mr-1"
+          = icon "edit", class: "mr-zp25"
           = t "noun.edit"
         = link_to work_review_path(review.work, review), method: :delete, data: { confirm: t("messages._common.are_you_sure") } do
-          = icon "trash-o", class: "mr-1"
+          = icon "trash-o", class: "mr-zp25"
           = t "noun.delete"

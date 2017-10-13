@@ -3,20 +3,20 @@
 - episode = record.episode
 - work = episode.work
 
-span.mr-1
+span.mr-zp25
   = action_user.decorate.name_link
 | liked your record on
-span.ml-1
+span.ml-zp25
   = work.decorate.title_link
 - unless work.single?
-  span.ml-1
+  span.ml-zp25
     = episode.decorate.number_link
 
 .small.text-muted.my-zp5
   = link_to local_time_ago_in_words(record.created_at), record_path(current_user.username, record)
   - if record.comment.present?
     | :
-    span.ml-1
+    span.ml-zp25
     = record.comment
 
 .small.text-muted

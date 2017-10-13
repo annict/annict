@@ -5,17 +5,17 @@
     .u-very-small.text-right
       = work.work_image.decorate.asin_or_copyright_text
 
-h1.h2.font-weight-bold.mb-1
+h1.h2.font-weight-bold.mb-zp25
   = link_to work.decorate.local_title, work_path(work), class: "u-text-body"
 
 .mb-1
-  span.font-weight-bold.mr-1 = work.watchers_count
+  span.font-weight-bold.mr-zp25 = work.watchers_count
   span.text-muted.small Watchers
 
 c-status-selector :work-id="#{work.id}"
 
 h2.h4.font-weight-bold.mt-2.mb-1
-  = icon "sticky-note-o", class: "mr-1"
+  = icon "sticky-note-o", class: "mr-zp25"
   = t "noun.information"
 
 dl
@@ -58,14 +58,14 @@ dl
 - program_details = work.program_details.published.in_video_service
 - if program_details.present?
   h2.h4.font-weight-bold.mt-2.mb-1
-    = icon "video-camera", class: "mr-1"
+    = icon "video-camera", class: "mr-zp25"
     = t "noun.video_services"
   ul.list-unstyled
     - program_details.each do |detail|
       li = link_to detail.channel.name, detail.url, target: "_blank"
 
 h2.h4.font-weight-bold.mt-2.mb-1
-  = icon "share", class: "mr-1"
+  = icon "share", class: "mr-zp25"
   = t "noun.share"
 
 c-share-button-twitter.mr-zp5 text="#{work.decorate.local_title}" url="#{local_url}#{work_path(work)}" hashtags="#{work.twitter_hashtag.presence || ''}"

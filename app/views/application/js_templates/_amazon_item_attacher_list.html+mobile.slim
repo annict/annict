@@ -11,7 +11,7 @@ template v-for="item in items"
         | {{ item.manufacturer }}
       template v-if="item.amount"
         .small v-if="item.offer_amount && item.offer_amount < item.amount"
-          s.mr-1
+          s.mr-zp25
             | ¥{{ item.amount.toLocaleString() }}
           span.text-danger
             | ¥{{ item.offer_amount.toLocaleString() }}
@@ -21,7 +21,7 @@ template v-for="item in items"
         template v-if="item.added_to_resource"
           = t "messages._components.amazon_item_attacher.registed"
         template v-else=""
-          = icon "plus", class: "mr-1"
+          = icon "plus", class: "mr-zp25"
           = t "verb.regist"
 template v-if="page < totalPages || page > 1"
   .text-center

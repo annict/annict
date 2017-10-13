@@ -8,18 +8,18 @@ script#t-create-status-activity type="x-template"
         .col.pl-zp5.u-lh-1
           .mb-zp5 v-if='locale === "en"'
             span.description
-              a.mr-1 :href='"/@" + activity.user.username'
+              a.mr-zp25 :href='"/@" + activity.user.username'
                 | {{ activity.profile.name }}
-              span.mr-1 has changed
-              a.mr-1 :href='"/works/" + activity.work.id'
+              span.mr-zp25 has changed
+              a.mr-zp25 :href='"/works/" + activity.work.id'
                 | {{ activity.work.title }}
               | status to {{ activity.status.kind_text }}
           .mb-zp5 v-else=""
             span.description
-              a.mr-1 :href='"/@" + activity.user.username'
+              a.mr-zp25 :href='"/@" + activity.user.username'
                 | {{ activity.profile.name }}
               | が
-              a.mr-1 :href='"/works/" + activity.work.id'
+              a.mr-zp25 :href='"/works/" + activity.work.id'
                 | {{ activity.work.title }}
               | のステータスを「{{ activity.status.kind_text }}」に変更しました
           .small.text-muted

@@ -2,13 +2,13 @@
 - like = notification.trackable
 - review = like.recipient
 
-span.mr-1
+span.mr-zp25
   = action_user.decorate.name_link
 | liked
-span.mx-1
+span.mx-zp25
   = link_to "your review", review_path(review.user.username, review)
 | on
-span.mx-1
+span.mx-zp25
   = review.work.decorate.title_link
 
 .small.text-muted

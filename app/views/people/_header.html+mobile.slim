@@ -12,7 +12,7 @@
   .mt-1.text-center
     c-favorite-button resource-type="Person" :resource-id="#{person.id}" :init-is-favorited="#{user_signed_in? && current_user.favorite?(person)}" :is-signed-in="#{user_signed_in?}"
     .u-very-small.text-muted.mt-zp5.text-center
-      = icon "info-circle", class: "mr-1"
+      = icon "info-circle", class: "mr-zp25"
       = t "messages._components.favorite_button.hint", resource_type: t("noun.person").downcase
 
 .container
