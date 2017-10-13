@@ -10,16 +10,16 @@
         = link_to review_path(review.user.username, review), class: "small text-muted", title: local_datetime(review.created_at) do
           = local_time_ago_in_words(review.created_at)
         - if review.modified_at.present?
-          small.ml-zp5.text-muted
+          small.ml-2.text-muted
             = icon "pencil"
-        span.small.ml-zp5.text-muted
+        span.small.ml-2.text-muted
           = "#{review.impressions_count} views"
 
     c-comment-guard inline-template="" :init-is-spoiler="#{is_spoiler == true}"
       .p-reviews-show__content.clearfix @click="remove"
         - if review.rating_overall_state.present?
           .float-right.ml-2.mb-2.p-1
-            .small.font-weight-bold.text-center.mb-zp5
+            .small.font-weight-bold.text-center.mb-2
               = t "noun.rating"
             table
               tbody
@@ -60,13 +60,13 @@
     .row
       .col
         .text-right
-          c-share-button-twitter.mr-zp5 text="#{t("head.title.reviews.show", profile_name: review.user.profile.name, username: review.user.username, work_title: review.work.decorate.local_title)}" url="#{local_url}#{review_path(review.user.username, review)}" hashtags="#{review.work.twitter_hashtag.presence || ''}"
-          c-share-button-facebook.mr-zp5 url="#{local_url}#{review_path(review.user.username, review)}"
+          c-share-button-twitter.mr-2 text="#{t("head.title.reviews.show", profile_name: review.user.profile.name, username: review.user.username, work_title: review.work.decorate.local_title)}" url="#{local_url}#{review_path(review.user.username, review)}" hashtags="#{review.work.twitter_hashtag.presence || ''}"
+          c-share-button-facebook.mr-2 url="#{local_url}#{review_path(review.user.username, review)}"
           c-like-button resource-name="Review" :init-resource-id="#{review.id}" :init-likes-count="#{review.likes_count}" :init-is-liked="#{user_signed_in? && current_user.like?(review)}" :is-signed-in="#{user_signed_in?}"
 
     - if policy(review).update?
       .small.text-right
-        = link_to edit_work_review_path(review.work, review), class: "mr-zp5" do
+        = link_to edit_work_review_path(review.work, review), class: "mr-2" do
           = icon "edit", class: "mr-1"
           = t "noun.edit"
         = link_to work_review_path(review.work, review), method: :delete, data: { confirm: t("messages._common.are_you_sure") } do

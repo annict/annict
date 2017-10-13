@@ -39,10 +39,10 @@
             - year, name = slug.split("-")
             = link_to Season.new(year, name).local_name, season_works_path(slug: slug)
   .p-footer__auxiliary
-    .container.py-zp5
+    .container.py-2
       .row.align-items-center
         .col
-          h4.font-weight-bold.d-inline-block.mr-zp5.mb-0
+          h4.font-weight-bold.d-inline-block.mr-2.mb-0
             = "#{t('noun.language')}: "
           ul.list-inline.d-inline-block.mb-0
             li.list-inline-item = link_to "日本語", "#{ENV.fetch('ANNICT_JP_URL')}#{request.path}"

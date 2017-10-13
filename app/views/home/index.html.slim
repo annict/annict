@@ -19,7 +19,7 @@
           = t "resources.forum_category.site_news"
         ul.list-unstyled
           - @forum_posts.each do |p|
-            li.mb-zp5
+            li.mb-2
               .small.text-muted
                 = display_time p.created_at
               = link_to p.title, forum_post_path(p)

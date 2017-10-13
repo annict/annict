@@ -55,7 +55,7 @@
 
             h2.h4.text-center.my-2.font-weight-bold
               = t "noun.related_items"
-            .c-card.container.my-1.py-zp5
+            .c-card.container.my-1.py-2
               = render "episodes/item_list", episode: @episode, items: @items
             .row.mt-2
               .col
@@ -64,7 +64,7 @@
                 = render "application/components/adsense", slot: ENV["GOOGLE_AD_300x250_4"], size: "300x250"
           .col-3.pl-0
             .mb-2
-              .small.font-weight-bold.mb-zp5.text-center
+              .small.font-weight-bold.mb-2.text-center
                 = t "noun.stats"
               .row.align-items-center
                 .col.text-right

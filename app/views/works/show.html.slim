@@ -103,7 +103,7 @@
           .c-card.mt-1.py-1
             - if @episodes.present?
               - if user_signed_in?
-                .container.mb-zp5
+                .container.mb-2
                   = link_to t("noun.bulk_tracking"), work_episodes_path(@work, tracking: "on"), class: "small"
               table.p-episodes-table.table.mb-0
                 thead.small
@@ -135,9 +135,9 @@
 
         h2.h4.text-center.my-2.font-weight-bold
           = t "noun.related_items"
-        .c-card.container.mt-1.py-zp5
+        .c-card.container.mt-1.py-2
           - if @items.present?
-            .text-right.py-zp5
+            .text-right.py-2
               = link_to new_work_item_path(@work), class: "btn btn-primary btn-sm" do
                 = icon "plus", class: "mr-1"
                 = t "verb.regist_item"

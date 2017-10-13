@@ -31,7 +31,7 @@
                 = season.local_name
             .col-8.text-right
               - if i == 0
-                c-share-button-twitter.mr-zp5 text="#{title}" url="#{local_url}#{library_path(@user.username, params[:status_kind])}"
+                c-share-button-twitter.mr-2 text="#{title}" url="#{local_url}#{library_path(@user.username, params[:status_kind])}"
                 c-share-button-facebook url="#{local_url}#{library_path(@user.username, params[:status_kind])}"
         - works = @works.by_season(season.slug).order(watchers_count: :desc).includes(:work_image)
         - if season.name == "all"

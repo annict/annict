@@ -52,7 +52,7 @@ nav.c-navbar.navbar.navbar-toggleable-xl class="#{transparent ? 'navbar-dark is-
             = link_to annict_url(:notifications_url), class: "dropdown-item" do
               = t "head.title.notifications.index"
               - if current_user.notifications_count > 0
-                span.badge.badge-pill.u-badge-mizuho.ml-zp5
+                span.badge.badge-pill.u-badge-mizuho.ml-2
                   = current_user.notifications_count
             = link_to t("head.title.friends.index"), annict_url(:friends_url), class: "dropdown-item"
             = link_to t("head.title.channels.index"), annict_url(:channels_url), class: "dropdown-item"
@@ -67,7 +67,7 @@ nav.c-navbar.navbar.navbar-toggleable-xl class="#{transparent ? 'navbar-dark is-
       - else
         li.nav-item
           = link_to t("head.title.pages.about"), about_path, class: "nav-link"
-        li.nav-item.mr-zp5
+        li.nav-item.mr-2
           = link_to t("head.title.sessions.new"), new_user_session_path, class: "nav-link"
         li.nav-item
           = link_to new_user_registration_path, class: "nav-link btn btn-outline-primary" do

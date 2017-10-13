@@ -11,14 +11,14 @@ script#t-program-list type="x-template"
             .c-program-progress__line
               .c-program-progress__point
           .c-program-list__content.col.pt-1.pl-0
-            .small.mb-zp5
-              span.u-text-green.mr-zp5
+            .small.mb-2
+              span.u-text-green.mr-2
                 | {{ program.started_at }}
-              span.badge.badge-info.mr-zp5
+              span.badge.badge-info.mr-2
                 | {{ program.channel.name }}
               span.badge.badge-default v-if="program.rebroadcast"
                 = t "noun.rebroadcast"
-            .row.mb-zp5
+            .row.mb-2
               .col.pr-0.u-flex-grow-0
                 a :href='"/works/" + program.work.id'
                   img.c-vue-lazyload.rounded v-lazy="program.work.image_url" width="48" :alt="program.work.title"
@@ -29,11 +29,11 @@ script#t-program-list type="x-template"
                 .text-xs-left
                   a :href='"/works/" + program.work.id + "/episodes/" + program.episode.id'
                     | {{ program.episode.number }}
-                    span.ml-zp5 v-if="program.episode.title" {{ program.episode.title }}
+                    span.ml-2 v-if="program.episode.title" {{ program.episode.title }}
             form.row
               .col
-                c-record-rating.mb-zp5 :init-record="program.record" v-if="program.record.isEditingComment"
-                .mb-zp5
+                c-record-rating.mb-2 :init-record="program.record" v-if="program.record.isEditingComment"
+                .mb-2
                   c-record-textarea :init-record="program.record"
                 .row
                   .col
@@ -42,7 +42,7 @@ script#t-program-list type="x-template"
                         label
                           input type="checkbox" v-model="user.share_record_to_twitter"
                           = icon "twitter", class: "u-text-twitter ml-1"
-                      span.ml-zp5 v-if="user.authorized_to_facebook"
+                      span.ml-2 v-if="user.authorized_to_facebook"
                         label
                           input type="checkbox" v-model="user.share_record_to_facebook"
                           = icon "facebook", class: "u-text-facebook ml-1"

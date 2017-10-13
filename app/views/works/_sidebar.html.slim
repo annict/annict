@@ -1,4 +1,4 @@
-.mb-zp5
+.mb-2
   = link_to work_path(work) do
     = ann_image_tag work.work_image, :attachment, size: "280x373", class: "img-fluid img-thumbnail rounded"
   - if work.work_image.present?
@@ -68,12 +68,12 @@ h2.h4.font-weight-bold.mt-2.mb-1
   = icon "share", class: "mr-1"
   = t "noun.share"
 
-c-share-button-twitter.mr-zp5 text="#{work.decorate.local_title}" url="#{local_url}#{work_path(work)}" hashtags="#{work.twitter_hashtag.presence || ''}"
+c-share-button-twitter.mr-2 text="#{work.decorate.local_title}" url="#{local_url}#{work_path(work)}" hashtags="#{work.twitter_hashtag.presence || ''}"
 c-share-button-facebook url="#{local_url}#{work_path(work)}"
 
 - if user_signed_in? && current_user.committer?
   .mt-2
-    = link_to t("messages._common.edit_on_annict_db"), edit_db_work_path(work), class: "btn btn-secondary w-100 mt-zp5"
+    = link_to t("messages._common.edit_on_annict_db"), edit_db_work_path(work), class: "btn btn-secondary w-100 mt-2"
 
 .mt-2
   = render "application/components/adsense", slot: ENV["GOOGLE_AD_RESP_1"], size: "200x200", format: "rectangle"

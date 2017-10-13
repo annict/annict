@@ -1,12 +1,12 @@
 script#t-create-record-activity type="x-template"
   .c-create-record-activity.c-card.p-1.mb-1
-    .mb-zp5
+    .mb-2
       .row
         .col.col-auto.pr-0
           a :href='"/@" + activity.user.username'
             img.c-vue-lazyload.rounded-circle v-lazy="activity.profile.avatar_url" width="35" height="35"
-        .col.pl-zp5.u-lh-1
-          .mb-zp5 v-if='locale === "en"'
+        .col.pl-2.u-lh-1
+          .mb-2 v-if='locale === "en"'
             a.mr-1 :href='"/@" + activity.user.username'
               | {{ activity.profile.name }}
             span.mr-1
@@ -18,7 +18,7 @@ script#t-create-record-activity type="x-template"
                 | {{ activity.episode.number }}
               template v-else=""
                 | {{ activity.episode.title }}
-          .mb-zp5 v-else=""
+          .mb-2 v-else=""
             a :href='"/@" + activity.user.username'
               | {{ activity.profile.name }}
             | が
@@ -45,7 +45,7 @@ script#t-create-record-activity type="x-template"
               .c-body__content
                 | {{ $parent.activity.record.comment }}
 
-      .mb-zp5
+      .mb-2
         .row.align-items-center.mx-0.u-border-1.rounded
           .col-2.p-0
             a :href='"/works/" + activity.work.id'
@@ -57,10 +57,10 @@ script#t-create-record-activity type="x-template"
               a :href='"/works/" + activity.work.id + "/episodes/" + activity.episode.id' v-if="activity.episode"
                 span v-if="activity.episode.number"
                   | {{ activity.episode.number }}
-                span.episode__title.ml-zp5 v-if="activity.work.title && activity.episode.number && activity.work.title !== activity.episode.title"
+                span.episode__title.ml-2 v-if="activity.work.title && activity.episode.number && activity.work.title !== activity.episode.title"
                   | {{ activity.episode.title }}
 
-    .mt-zp5
+    .mt-2
       c-like-button.u-fake-link.mr-1 resource-name="Checkin" :init-resource-id="activity.record.id" :init-likes-count="activity.record.likes_count" :init-is-liked="activity.meta.liked" :is-signed-in="#{user_signed_in?}"
       a :href='"/@" + activity.user.username + "/records/" + activity.record.id'
         = icon "comment-o", class: "mr-1"

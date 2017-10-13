@@ -2,7 +2,7 @@
   .col.col-3
     = link_to work_path(top_work) do
       = ann_image_tag(top_work.work_image, :attachment, size: "250x250", alt: top_work.decorate.local_title, class: "rounded img-fluid")
-    c-status-selector.mt-zp5 :work-id="#{top_work.id}"
+    c-status-selector.mt-2 :work-id="#{top_work.id}"
   .col.pl-0
     .mb-1.u-lh-1
       span.font-weight-bold.mr-1 = top_work.watchers_count

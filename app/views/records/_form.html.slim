@@ -5,9 +5,9 @@
   = f.hidden_field :episode_id
   = hidden_field_tag :page_category, page_category
 
-  .mb-zp5
+  .mb-2
     c-record-rating :init-record=="{ ratingState: '#{record.rating_state}' }"
-  .mb-zp5
+  .mb-2
     - comment = record.comment&.gsub(/(?:\n\r?|\r\n?)/, "\\n").presence || ""
     c-record-textarea :init-record="{ uid: 1, comment: '#{comment}', commentRows: 2 }" placeholder="#{t('messages.records.new.write_your_comment')}"
   .row
@@ -17,7 +17,7 @@
           = icon "twitter", class: "u-text-twitter mr-1"
           = f.check_box :shared_twitter
       - if current_user.authorized_to?(:facebook, shareable: true)
-        label.ml-zp5
+        label.ml-2
           = icon "facebook", class: "u-text-facebook mr-1"
           = f.check_box :shared_facebook
     .col

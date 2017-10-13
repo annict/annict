@@ -29,7 +29,7 @@
             .col
               .small.text-muted.mb-1
                 = link_to review.work.decorate.local_title, work_path(review.work), class: "u-text-body"
-              .mb-zp5
+              .mb-2
                 - title = t("messages.reviews.view_review_with_words_count", count: review.body.length)
                 = link_to title, review_path(review.user.username, review)
               .small
