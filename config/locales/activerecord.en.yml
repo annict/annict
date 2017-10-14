@@ -178,6 +178,7 @@ en:
         time_zone: Time zone
         username: Username
       work:
+        ended_on: Ended On
         mal_anime_id: MAL Anime ID
         manual_episodes_count: Episodes
         media: Media
@@ -190,6 +191,7 @@ en:
         season: Season
         season_name: Season
         season_year: Year
+        started_on: Started On
         synopsis_en: Synopsis (en)
         synopsis_source_en: Synopsis source (en)
         synopsis_source: Synopsis source (ja)

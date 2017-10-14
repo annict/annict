@@ -118,6 +118,10 @@ class WorkDecorator < ApplicationDecorator
         send(:season_year).to_s
       when :season_name
         send(:season_name)&.text
+      when :started_on
+        send(:started_on).to_s
+      when :ended_on
+        send(:ended_on).to_s
       else
         send(field)
       end
