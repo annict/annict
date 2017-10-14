@@ -6,12 +6,12 @@
 - user_name = link_to action_user.profile.name, user_path(action_user.username), class: "username"
 - work_title = link_to work.title, work_path(work), class: "work-title"
 
-span.mr-zp25
+span.mr-1
   = action_user.decorate.name_link
 | liked your records on
-span.ml-zp25
+span.ml-1
   = work.decorate.title_link
-span.mx-zp25
+span.mx-1
   = "#{records.first.episode.decorate.local_number} ~ #{records.last.episode.decorate.local_number}"
 
 .small.text-muted

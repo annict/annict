@@ -2,11 +2,11 @@
 - set_meta_tags title: title, reverse: true, prefix: false
 - set_page_category "oauth_authorizations_new"
 
-.text-center.my-3
+.text-center.my-5
   = link_to root_path do
     = image_tag "logos/color-mizuho.png", size: "50x61", alt: "Annict"
-.c-card.px-1.py-2.mb-1
-  h1.text-center.mb-2
+.c-card.px-3.py-4.mb-3
+  h1.text-center.mb-4
     = t "head.title.oauth.authorizations.new"
   p = t "messages.oauth.authorizations.authorize_account_html", client_name: @pre_auth.client.name
   

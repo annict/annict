@@ -1,6 +1,6 @@
 .c-label-required {
   &::after {
-    color: $brand-danger;
+    color: theme-color("danger");
     content: " *";
   }
 }

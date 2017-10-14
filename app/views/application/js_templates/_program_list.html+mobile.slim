@@ -1,24 +1,24 @@
 script#t-program-list type="x-template"
   .c-program-list
-    .container.mt-1
+    .container.mt-3
       .text-right
         select.custom-select v-model="sort" @change="reload"
           option v-for="type in sortTypes" :value="type[1]" {{ type[0] }}
-    .c-card.container.mt-1
+    .c-card.container.mt-3
       template v-for="program in programs"
         .row
-          .c-program-progress.col.u-flex-grow-0.pl-1 :class='{ "is-unbroadcasted": !program.isBroadcasted }'
+          .c-program-progress.col.u-flex-grow-0.pl-3 :class='{ "is-unbroadcasted": !program.isBroadcasted }'
             .c-program-progress__line
               .c-program-progress__point
-          .c-program-list__content.col.pt-1.pl-0
-            .small.mb-zp5
-              span.u-text-green.mr-zp5
+          .c-program-list__content.col.pt-3.pl-0
+            .small.mb-2
+              span.u-text-green.mr-2
                 | {{ program.started_at }}
-              span.badge.badge-info.mr-zp5
+              span.badge.badge-info.mr-2
                 | {{ program.channel.name }}
-              span.badge.badge-default v-if="program.rebroadcast"
+              span.badge.badge-secondary v-if="program.rebroadcast"
                 = t "noun.rebroadcast"
-            .row.mb-zp5
+            .row.mb-2
               .col.pr-0.u-flex-grow-0
                 a :href='"/works/" + program.work.id'
                   img.c-vue-lazyload.rounded v-lazy="program.work.image_url" width="48" :alt="program.work.title"
@@ -29,11 +29,11 @@ script#t-program-list type="x-template"
                 .text-xs-left
                   a :href='"/works/" + program.work.id + "/episodes/" + program.episode.id'
                     | {{ program.episode.number }}
-                    span.ml-zp5 v-if="program.episode.title" {{ program.episode.title }}
+                    span.ml-2 v-if="program.episode.title" {{ program.episode.title }}
             form.row
               .col
-                c-record-rating.mb-zp5 :init-record="program.record" v-if="program.record.isEditingComment"
-                .mb-zp5
+                c-record-rating.mb-2 :init-record="program.record" v-if="program.record.isEditingComment"
+                .mb-2
                   c-record-textarea :init-record="program.record"
                 .row
                   .col
@@ -41,11 +41,11 @@ script#t-program-list type="x-template"
                       span v-if="user.authorized_to_twitter"
                         label
                           input type="checkbox" v-model="user.share_record_to_twitter"
-                          = icon "twitter", class: "u-text-twitter ml-zp25"
-                      span.ml-zp5 v-if="user.authorized_to_facebook"
+                          = icon "twitter", class: "u-text-twitter ml-1"
+                      span.ml-2 v-if="user.authorized_to_facebook"
                         label
                           input type="checkbox" v-model="user.share_record_to_facebook"
-                          = icon "facebook", class: "u-text-facebook ml-zp25"
+                          = icon "facebook", class: "u-text-facebook ml-1"
                   .col
                     .text-right
                       .small.text-mute
@@ -53,7 +53,7 @@ script#t-program-list type="x-template"
               template v-if="program.record.isEditingComment"
                 .col.pl-0.text-center
                   button.btn.btn-primary type="button" @click="submit(program)" :class='{ disabled: program.record.isRecorded, "c-spinner": program.record.isSaving }'
-                    = icon "pencil-square-o", class: "mr-zp25"
+                    = icon "pencil-square-o", class: "mr-1"
                     = t "verb.track"
               template v-else=""
                 .col.u-flex-grow-0.pl-0
@@ -62,7 +62,7 @@ script#t-program-list type="x-template"
       template v-if="!isLoading && programs.length === 0"
         = render "application/components/empty", text: t('messages.programs.no_programs') do
           = t "messages.programs.please_set_channels_html", channels_link: link_to(t("noun.channel_list"), channels_path)
-      c-load-more-button.my-1 :handler="loadMore" :is-loading="isLoading" :has-next="hasNext"
+      c-load-more-button.my-3 :handler="loadMore" :is-loading="isLoading" :has-next="hasNext"
 
 - content_for :js_templates do
   = render "application/js_templates/record_rating"

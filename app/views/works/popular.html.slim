@@ -7,7 +7,7 @@
 = render "application/components/navbar"
 
 .p-application__content
-  .my-1.text-center
+  .my-3.text-center
     = render "application/components/adsense", slot: ENV["GOOGLE_AD_728x90_13"], size: "728x90"
 
   - if !user_signed_in?
@@ -15,10 +15,10 @@
       .col
       .col
       .col.text-right
-        .px-1
+        .px-3
           = render "display_option_buttons"
 
-  .mb-2
+  .mb-4
     - if user_signed_in?
       - if current_user.setting.display_option_work_list == "list"
         .container
@@ -26,12 +26,12 @@
       - else
         = render "works/#{current_user.setting.display_option_work_list}", works: @works
     - else
-      .container.mt-1
+      .container.mt-3
         = render "works/list", works: @works
-    .mt-2.text-center
+    .mt-4.text-center
       = paginate @works
 
-  .mb-2.text-center
+  .mb-4.text-center
     = render "application/components/adsense", slot: ENV["GOOGLE_AD_728x90_14"], size: "728x90"
 
 = render "application/components/footer"

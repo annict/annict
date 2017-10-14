@@ -3,10 +3,10 @@
 - set_page_category "userland_projects_show"
 - breadcrumb :userland_project_detail, @project
 
-.c-card.mb-1
-  .container.py-1
+.c-card.mb-3
+  .container.py-3
     .text-center
-      .mb-1
+      .mb-3
         = link_to userland_project_path(@project) do
           = ann_image_tag @project, :icon, size: "100x100", class: "img-fluid img-thumbnail rounded"
       h1.h2.font-weight-bold
@@ -14,9 +14,9 @@
       .text-muted
         = @project.summary
 
-h2.h4.font-weight-bold.text-center.mt-1.mb-2
+h2.h4.font-weight-bold.text-center.mt-3.mb-4
   = t "noun.information"
-.c-card.py-1.mb-1
+.c-card.py-3.mb-3
   .container
     dl.row.mb-0
       dt.col-6.text-right = t "noun.category"
@@ -24,14 +24,14 @@ h2.h4.font-weight-bold.text-center.mt-1.mb-2
       dt.col-6.text-right = t "activerecord.attributes.userland_project.url"
       dd.col-6 = link_with_domain @project.url
 
-h2.h4.font-weight-bold.text-center.mt-1.mb-2
+h2.h4.font-weight-bold.text-center.mt-3.mb-4
   = t "activerecord.attributes.userland_project.description"
-.c-card.p-1.mb-1
+.c-card.p-3.mb-3
   == render_markdown @project.description
 
-h2.h4.font-weight-bold.text-center.mt-1.mb-2
+h2.h4.font-weight-bold.text-center.mt-3.mb-4
   = t "noun.development_members"
-.c-card.mb-1
+.c-card.mb-3
   = render "users/user_list", users: @project.users
   
 = render "application/components/breadcrumb"

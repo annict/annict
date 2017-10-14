@@ -1,7 +1,7 @@
 .c-sign-up-form
-  h1.text-center.mt-1.mb-2 = t "messages._common.join_annict"
+  h1.text-center.mt-3.mb-4 = t "messages._common.join_annict"
 
-  .text-center.mb-1
+  .text-center.mb-3
     = link_to user_twitter_omniauth_authorize_path, class: "btn u-btn-twitter" do
       = icon "twitter"
       = t "messages.registrations.new.start_with_twitter"
@@ -10,7 +10,7 @@
       = icon "facebook"
       = t "messages.registrations.new.start_with_facebook"
 
-  .text-muted.text-center.mt-2.mb-1
+  .text-muted.text-center.mt-4.mb-3
     = t "noun.or"
 
   = form_for user, url: user_registration_path do |f|

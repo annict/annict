@@ -1,19 +1,19 @@
 h1.h2.font-weight-bold
   = link_to organization.decorate.local_name, organization_path(organization), class: "u-text-body"
 
-.mb-1
+.mb-3
   span.badge.u-badge-organizations
     = t "noun.organization"
 
-.mb-2
+.mb-4
   c-favorite-button.w-100 resource-type="Organization" :resource-id="#{organization.id}" :init-is-favorited="#{user_signed_in? && current_user.favorite?(organization)}" :is-signed-in="#{user_signed_in?}"
-  .small.text-muted.mt-zp5
-    = icon "info-circle", class: "mr-zp25"
+  .small.text-muted.mt-2
+    = icon "info-circle", class: "mr-1"
     = t "messages._components.favorite_button.hint", resource_type: t("noun.organization").downcase
 
-.mb-2
-  h2.h4.font-weight-bold.mt-2.mb-1
-    = icon "sticky-note-o", class: "mr-zp25"
+.mb-4
+  h2.h4.font-weight-bold.mt-4.mb-3
+    = icon "sticky-note-o", class: "mr-1"
     = t "noun.information"
   dl
     dt.small = t "activerecord.attributes.organization.name"
@@ -35,16 +35,16 @@ h1.h2.font-weight-bold
       dd = link_with_domain organization.wikipedia_url
 
 - if @favorite_orgs.present?
-  .mb-2
-    h2.h4.font-weight-bold.mb-1
-      = icon "users", class: "mr-zp25"
+  .mb-4
+    h2.h4.font-weight-bold.mb-3
+      = icon "users", class: "mr-1"
       = t "noun.fans"
-      span.pl-zp25
+      span.pl-1
         = "(#{t('noun.users_count', count: @favorite_orgs.length)})"
 
-    .row.px-1
+    .row.px-3
       - @favorite_orgs.each do |favorite_org|
-        .col.col-auto.pl-0.pr-zp5.pb-zp5
+        .col.col-auto.pl-0.pr-2.pb-2
           = link_to user_path(favorite_org.user.username) do
             = ann_image_tag(favorite_org.user.profile, :tombo_avatar, size: "30x30", class: "rounded-circle", alt: favorite_org.user.decorate.name_with_username, title: favorite_org.user.decorate.name_with_username)
 
@@ -53,9 +53,9 @@ h1.h2.font-weight-bold
         = link_to t("verb.view_all"), organization_fans_path(organization)
 
 - if user_signed_in? && current_user.committer?
-  = link_to t("messages._common.edit_on_annict_db"), edit_db_organization_path(organization), class: "btn btn-secondary w-100 mt-zp5"
+  = link_to t("messages._common.edit_on_annict_db"), edit_db_organization_path(organization), class: "btn btn-secondary w-100 mt-2"
 
-.mt-2
+.mt-4
   = render "application/components/adsense", slot: ENV["GOOGLE_AD_200x200_4"], size: "200x200"
 
 - content_for :js_templates

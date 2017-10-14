@@ -2,7 +2,7 @@ script#t-untracked-episode-list type="x-template"
   .c-untracked-episode-list
     template v-if="latestStatuses.length > 0"
       template v-for="status in filterNoNextEpisode(latestStatuses)"
-        .py-1
+        .py-3
           .row
             .col.col-auto.pr-0
               a :href='"/works/" + status.work.id'
@@ -10,27 +10,27 @@ script#t-untracked-episode-list type="x-template"
             .col
               a.small :href='"/works/" + status.work.id'
                 | {{ status.work.title }}
-              a.d-block.mb-zp25 :href='"/works/" + status.work.id + "/episodes/" + status.next_episode.id'
+              a.d-block.mb-1 :href='"/works/" + status.work.id + "/episodes/" + status.next_episode.id'
                 | {{ status.next_episode.number }}
-                span.ml-zp5 v-if="status.next_episode.title" {{ status.next_episode.title }}
+                span.ml-2 v-if="status.next_episode.title" {{ status.next_episode.title }}
               .small v-if="status.program"
                 .text-left
-                  span.badge.badge-info.mr-zp25
+                  span.badge.badge-info.mr-1
                     | {{ status.program.channel.name }}
-                  span.badge.badge-success :class='{ "mr-zp5": !status.program.rebroadcast, "mr-zp25": status.program.rebroadcast }'
+                  span.badge.badge-success :class='{ "mr-2": !status.program.rebroadcast, "mr-1": status.program.rebroadcast }'
                     | {{ status.program.state_text }}
-                  span.badge.badge-default.mr-zp5 v-if="status.program.rebroadcast"
+                  span.badge.badge-secondary.mr-2 v-if="status.program.rebroadcast"
                     = t "noun.rebroadcast"
                 .text-left
                   | {{ status.program.started_at }}
-              .text-right.small.u-fake-link.mb-zp5 @click="skipEpisode(status)"
-                = icon "forward", class: "mr-zp25"
+              .text-right.small.u-fake-link.mb-2 @click="skipEpisode(status)"
+                = icon "forward", class: "mr-1"
                 = t "noun.skip"
-              c-episode-progress.mb-zp5 :episodes-count="status.work.episodes_count" :watched-episodes-count="status.work.watched_episodes_count"
+              c-episode-progress.mb-2 :episodes-count="status.work.episodes_count" :watched-episodes-count="status.work.watched_episodes_count"
           form.row
-            .col.pr-zp5
-              c-record-rating.mb-zp5 :init-record="status.record" v-if="status.record.isEditingComment"
-              template :class='{ "mb-zp5": user.authorized_to_twitter || user.authorized_to_facebook }'
+            .col.pr-2
+              c-record-rating.mb-2 :init-record="status.record" v-if="status.record.isEditingComment"
+              template :class='{ "mb-2": user.authorized_to_twitter || user.authorized_to_facebook }'
                 c-record-textarea :init-record="status.record"
               .row
                 .col
@@ -38,11 +38,11 @@ script#t-untracked-episode-list type="x-template"
                     span v-if="user.authorized_to_twitter"
                       label
                         input type="checkbox" v-model="user.share_record_to_twitter"
-                        = icon "twitter", class: "u-text-twitter ml-zp25"
-                    span.ml-zp5 v-if="user.authorized_to_facebook"
+                        = icon "twitter", class: "u-text-twitter ml-1"
+                    span.ml-2 v-if="user.authorized_to_facebook"
                       label
                         input type="checkbox" v-model="user.share_record_to_facebook"
-                        = icon "facebook", class: "u-text-facebook ml-zp25"
+                        = icon "facebook", class: "u-text-facebook ml-1"
                 .col
                   .text-right
                     .small.text-muted
@@ -50,7 +50,7 @@ script#t-untracked-episode-list type="x-template"
             template v-if="status.record.isEditingComment"
               .col.pl-0.text-center
                 button.btn.btn-primary type="button" @click.stop="postRecord(status)" :class='{ "c-spinner": status.record.isSaving }'
-                  = icon "pencil-square-o", class: "mr-zp25"
+                  = icon "pencil-square-o", class: "mr-1"
                   = t "verb.track"
             template v-else=""
               .col.col-auto.pl-0

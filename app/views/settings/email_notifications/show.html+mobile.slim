@@ -2,7 +2,7 @@
 - set_meta_tags(title: title, reverse: true, prefix: false)
 - set_page_category "settings_email_notifications_show"
 
-.c-card.p-1.mb-2
+.c-card.p-3.mb-4
   = form_for [:settings, @email_notification], method: :patch do |f|
     = render "application/components/error_panel", resource: @email_notification
 
@@ -26,7 +26,7 @@
       = f.label :event_favorite_works_added, class: "form-check-label" do
         = f.check_box :event_favorite_works_added, class: "form-check-input"
         = t "activerecord.attributes.email_notification.event_favorite_works_added"
-    .form-submit.text-center.mt-1
+    .form-submit.text-center.mt-3
       = f.submit class: "btn btn-primary"
 
 = render "application/components/footer"

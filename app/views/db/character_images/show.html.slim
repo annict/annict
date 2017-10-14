@@ -2,19 +2,19 @@
 - set_meta_tags(title: title, reverse: true, prefix: false)
 - set_page_category "db_character_images_show"
 
-.l-topbar.container-fluid.px-1
+.l-topbar.container-fluid.px-3
   .row.flex-items-xs-between
     .col-8
       = render "db/application/topbar_title", parent: @character, child: t("noun.character_image")
 
 = render "db/characters/subnav", character: @character
 
-.container-fluid.p-1
+.container-fluid.p-3
   .row
     .col-6
-      .c-card.p-1.mb-1
+      .c-card.p-3.mb-3
         = image_tag ann_image_url(@image, :attachment, size: "280x373"), width: "280", class: "img-fluid img-thumbnail rounded"
-      .c-card.p-1
+      .c-card.p-3
         = form_for @image, url: db_character_image_path(@character) do |f|
           = render "application/components/error_panel", resource: @image
           .form-group.row
@@ -34,7 +34,7 @@
             .col-10
               = f.text_field :copyright, class: "form-control"
           .form-group.row
-            .col-10.offset-2
+            .col-10.ml-auto
               = f.button class: "btn btn-primary"
     .col-6
       = render "sidebar"

@@ -5,10 +5,10 @@
 - set_page_category "works_newest"
 
 - if user_signed_in?
-  .text-center.my-1
+  .text-center.my-3
     = render "display_option_buttons"
 
-.mb-2
+.mb-4
   - if user_signed_in?
     = render "works/#{current_user.setting.display_option_work_list}", works: @works
   - else

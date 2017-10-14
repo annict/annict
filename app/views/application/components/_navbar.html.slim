@@ -1,7 +1,7 @@
 - transparent = local_assigns.fetch(:transparent, false)
 - is_on_cover_image = local_assigns.fetch(:is_on_cover_image, false)
 
-nav.c-navbar.navbar.navbar-toggleable-xl class="#{transparent ? 'navbar-dark is-transparent' : 'navbar-light'}"
+nav.c-navbar.navbar.navbar-expand-lg class="#{transparent ? 'navbar-dark is-transparent' : 'navbar-light'}"
   = link_to root_path, class: "navbar-brand" do
     = image_tag "logos/color-#{transparent ? 'white' : 'mizuho'}.png", size: "25x30", alt: "Annict"
   .collapse.navbar-collapse.align-items-center
@@ -34,13 +34,13 @@ nav.c-navbar.navbar.navbar-toggleable-xl class="#{transparent ? 'navbar-dark is-
             = link_to t("noun.search"), annict_url(:search_url), class: "dropdown-item"
         li.nav-item
           = link_to t("noun.popular"), popular_works_path, class: "nav-link"
-      li.nav-item.ml-1
+      li.nav-item.ml-3
         c-search-form :init-q='"#{@search.q}"' :is-transparent="#{transparent}"
     ul.navbar-nav.navbar-nav--right.align-items-center
       - if user_signed_in?
-        li.nav-item.mr-1
+        li.nav-item.mr-3
           = link_to annict_url(:track_url), class: "btn btn-outline-primary btn-sm" do
-            = icon "pencil-square-o", class: "mr-zp25"
+            = icon "pencil-square-o", class: "mr-1"
             = t "head.title.tracks.show"
         li.nav-item.dropdown
           = link_to annict_url(:user_url, current_user.username), class: "nav-link p-0" do
@@ -52,7 +52,7 @@ nav.c-navbar.navbar.navbar-toggleable-xl class="#{transparent ? 'navbar-dark is-
             = link_to annict_url(:notifications_url), class: "dropdown-item" do
               = t "head.title.notifications.index"
               - if current_user.notifications_count > 0
-                span.badge.badge-pill.u-badge-mizuho.ml-zp5
+                span.badge.badge-pill.u-badge-mizuho.ml-2
                   = current_user.notifications_count
             = link_to t("head.title.friends.index"), annict_url(:friends_url), class: "dropdown-item"
             = link_to t("head.title.channels.index"), annict_url(:channels_url), class: "dropdown-item"
@@ -67,7 +67,7 @@ nav.c-navbar.navbar.navbar-toggleable-xl class="#{transparent ? 'navbar-dark is-
       - else
         li.nav-item
           = link_to t("head.title.pages.about"), about_path, class: "nav-link"
-        li.nav-item.mr-zp5
+        li.nav-item.mr-2
           = link_to t("head.title.sessions.new"), new_user_session_path, class: "nav-link"
         li.nav-item
           = link_to new_user_registration_path, class: "nav-link btn btn-outline-primary" do

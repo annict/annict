@@ -8,52 +8,52 @@
 
 = render "works/header", work: @work
 
-.mb-1
+.mb-3
   = render "application/components/adsense", slot: ENV["GOOGLE_AD_320x100_9"], size: "320x100"
 
-.c-card.mb-1.py-1
+.c-card.mb-3.py-3
   = render "episodes/nav", work: @work, episode: @episode, all_records: @all_records
 
-.c-card.mb-1.py-1
+.c-card.mb-3.py-3
   - if user_signed_in?
     .container
       = render "records/form", record: @record
     hr
   .container
     - if user_signed_in?
-      .text-center.mb-1
+      .text-center.mb-3
         .btn-group.btn-group-sm
           = active_link_to switch_episode_records_path(@episode, to: :all_comments), class: "btn", class_active: "btn-primary", class_inactive: "btn-secondary", active: (user_signed_in? ? current_user.setting.display_option_record_list.all_comments? : false ), data: { method: :post } do
             .u-very-small
               = t "noun.all_comments"
-              span.ml-zp25 = "(#{@all_comment_records.total_count})"
+              span.ml-1 = "(#{@all_comment_records.total_count})"
           = active_link_to switch_episode_records_path(@episode, to: :friend_comments), class: "btn", class_active: "btn-primary", class_inactive: "btn-secondary", active: (user_signed_in? ? current_user.setting.display_option_record_list.friend_comments? : false ), data: { method: :post } do
             .u-very-small
               = t "noun.friend_comments"
-              span.ml-zp25 = "(#{@friend_comment_records.total_count})"
+              span.ml-1 = "(#{@friend_comment_records.total_count})"
           = active_link_to switch_episode_records_path(@episode, to: :my_records), class: "btn", class_active: "btn-primary", class_inactive: "btn-secondary", active: (user_signed_in? ? current_user.setting.display_option_record_list.my_records? : false ), data: { method: :post } do
             .u-very-small
               = t "noun.my_records"
-              span.ml-zp25 = "(#{@my_records.total_count})"
+              span.ml-1 = "(#{@my_records.total_count})"
     - if @selected_comment_records.present?
       - if user_signed_in?
-        .text-right.mb-1
+        .text-right.mb-3
           c-record-sorter current-url="#{request.url}"
       .c-record-list
         - @selected_comment_records.each do |record|
           = render "records/record", record: record, is_spoiler: @is_spoiler
       - if @selected_comment_records.total_pages > 1
-        .mt-2.text-center
+        .mt-4.text-center
           = paginate @selected_comment_records
     - else
       = render "application/components/empty", text: t("messages.episodes.no_comments")
 
-h2.h4.font-weight-bold.text-center.mt-1.mb-2
+h2.h4.font-weight-bold.text-center.mt-3.mb-4
   = t "noun.related_items"
-.c-card.container.mb-1.py-zp5
+.c-card.container.mb-3.py-2
   = render "episodes/item_list", episode: @episode, items: @items
 
-.mb-1
+.mb-3
   = render "application/components/adsense", slot: ENV["GOOGLE_AD_320x100_10"], size: "320x100"
 
 = render "application/components/breadcrumb"
