@@ -187,7 +187,7 @@ ja:
       programs:
         index: 放送予定
       providers:
-        index: ソーシャル連携
+        index: サービス連携
       records:
         show: "%{profile_name} (%{username})の%{work_title} %{episode_title_with_number}への感想"
       registrations:
