@@ -330,6 +330,7 @@ Rails.application.routes.draw do
   scope "@:username", username: /[A-Za-z0-9_]+/ do
     get :following, to: "users#following", as: :following_user
     get :followers, to: "users#followers", as: :followers_user
+    get :calendar, to: "calendars#show", as: :user_calendar
 
     get ":status_kind",
       to: "libraries#show",

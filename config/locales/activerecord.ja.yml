@@ -177,6 +177,7 @@ ja:
         time_zone: タイムゾーン
         username: ユーザ名
       work:
+        ended_on: 終了日
         mal_anime_id: MAL Anime ID
         manual_episodes_count: 話数
         media: メディア
@@ -189,6 +190,7 @@ ja:
         season: リリース時期
         season_name: リリース時期
         season_year: リリース年
+        started_on: 開始日
         synopsis_en: あらすじ (英)
         synopsis_source_en: あらすじの引用元 (英)
         synopsis_source: あらすじの引用元

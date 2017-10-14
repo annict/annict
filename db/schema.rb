@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170926175406) do
+ActiveRecord::Schema.define(version: 20171014094051) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -1107,6 +1107,8 @@ ActiveRecord::Schema.define(version: 20170926175406) do
     t.integer "manual_episodes_count"
     t.boolean "no_episodes", default: false, null: false
     t.integer "reviews_count", default: 0, null: false
+    t.date "started_on"
+    t.date "ended_on"
     t.index ["aasm_state"], name: "index_works_on_aasm_state"
     t.index ["key_pv_id"], name: "index_works_on_key_pv_id"
     t.index ["number_format_id"], name: "index_works_on_number_format_id"

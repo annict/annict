@@ -37,6 +37,14 @@
           .col-sm-5
             = f.select :season_name, options_for_select(Season::NAME_HASH.map { |h| [t("noun.#{h[0]}"), h[1]] }, f.object.season_name&.value), { include_blank: true }, { class: "form-control" }
     .form-group.row
+      = f.label :started_on, class: "col-sm-3 col-form-label"
+      .col-sm-9
+        = f.text_field :started_on, class: "form-control", value: f.object.started_on&.in_time_zone(current_user.time_zone)&.strftime("%Y-%m-%d"), placeholder: t("resources.work.started_on_eg")
+    .form-group.row
+      = f.label :ended_on, class: "col-sm-3 col-form-label"
+      .col-sm-9
+        = f.text_field :ended_on, class: "form-control", value: f.object.ended_on&.in_time_zone(current_user.time_zone)&.strftime("%Y-%m-%d"), placeholder: t("resources.work.started_on_eg")
+    .form-group.row
       = f.label :official_site_url, class: "col-sm-3 col-form-label"
       .col-sm-9
         = f.text_field :official_site_url, class: "form-control"

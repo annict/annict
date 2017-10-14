@@ -94,6 +94,8 @@ gem "webpacker"
 group :development, :test do
   gem "awesome_print"
   gem "dmmyix"
+  # Fix version until releasing https://github.com/pry/pry/issues/1660
+  gem "pry", "0.10.4"
   gem "pry-alias"
   gem "pry-byebug"
   gem "pry-coolline"
