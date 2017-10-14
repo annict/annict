@@ -39,6 +39,8 @@
 #  manual_episodes_count :integer
 #  no_episodes           :boolean          default(FALSE), not null
 #  reviews_count         :integer          default(0), not null
+#  started_on            :date
+#  ended_on              :date
 #
 # Indexes
 #
