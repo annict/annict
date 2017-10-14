@@ -19,7 +19,9 @@ gem "acts_as_list"
 gem "amazon-ecs"
 gem "annotate"
 gem "autoprefixer-rails"
-gem "aws-sdk"
+# Use aws-sdk 2.x for Paperclip
+# https://github.com/thoughtbot/paperclip/issues/2484
+gem "aws-sdk", "< 3.0"
 gem "bootsnap", require: false
 gem "bootstrap"
 gem "bourbon"
