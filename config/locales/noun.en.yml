@@ -122,6 +122,10 @@ en:
     spring: Spring
     staff: Staff
     staffs: Staffs
+    start_to_broadcast_movie_date: 公開日
+    start_to_broadcast_tv_date: 放送開始日
+    start_to_publish_date: 公開日
+    start_to_sell_date: 発売開始日
     state: State
     state_change: State Change
     stats: Stats

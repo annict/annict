@@ -43,6 +43,11 @@ h2.h4.font-weight-bold.text-center.mt-3.mb-4
           = t "noun.release_season"
         dd.col-6
           = @work.decorate.release_season_link
+      - if @work.started_on.present?
+        dt.col-6.text-right
+          = @work.decorate.started_on_label
+        dd.col-6
+          = @work.started_on
       - if @work.official_site_url.present?
         dt.col-6.text-right
           = t "activerecord.attributes.work.official_site_url"

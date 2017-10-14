@@ -33,6 +33,9 @@ dl
   - if work.season.present?
     dt.small = t "noun.release_season"
     dd = work.decorate.release_season_link
+  - if work.started_on.present?
+    dt.small = work.decorate.started_on_label
+    dd = work.started_on
   - if work.official_site_url.present?
     dt.small = t "activerecord.attributes.work.official_site_url"
     dd = link_with_domain work.official_site_url

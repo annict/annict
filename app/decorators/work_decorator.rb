@@ -80,6 +80,18 @@ class WorkDecorator < ApplicationDecorator
     h.work_item_path(self, item)
   end
 
+  def started_on_label
+    if media.tv?
+      I18n.t("noun.start_to_broadcast_tv_date")
+    elsif media.ova?
+      I18n.t("noun.start_to_sell_date")
+    elsif media.movie?
+      I18n.t("noun.start_to_broadcast_movie_date")
+    else
+      I18n.t("noun.start_to_publish_date")
+    end
+  end
+
   def to_values
     model.class::DIFF_FIELDS.each_with_object({}) do |field, hash|
       hash[field] = case field
