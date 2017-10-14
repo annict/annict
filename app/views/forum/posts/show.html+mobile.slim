@@ -4,7 +4,7 @@
 - breadcrumb :forum_post_detail, @post
 
 .container.my-3
-  = link_to @post.forum_category.decorate.local_name,  forum_category_path(@post.forum_category.slug), class: "badge badge-default"
+  = link_to @post.forum_category.decorate.local_name,  forum_category_path(@post.forum_category.slug), class: "badge badge-secondary"
   h1.h2.mb-0
     = @post.title
 

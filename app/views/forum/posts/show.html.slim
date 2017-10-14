@@ -10,7 +10,7 @@
   .container.py-3.mb-3
     = render "application/components/breadcrumb"
     .mb-3
-      = link_to @post.forum_category.decorate.local_name,  forum_category_path(@post.forum_category.slug), class: "badge badge-default"
+      = link_to @post.forum_category.decorate.local_name,  forum_category_path(@post.forum_category.slug), class: "badge badge-secondary"
       h1.h2.mb-0
         = @post.title
 

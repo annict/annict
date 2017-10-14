@@ -16,7 +16,7 @@ script#t-program-list type="x-template"
                 | {{ program.started_at }}
               span.badge.badge-info.mr-2
                 | {{ program.channel.name }}
-              span.badge.badge-default v-if="program.rebroadcast"
+              span.badge.badge-secondary v-if="program.rebroadcast"
                 = t "noun.rebroadcast"
             .row.mb-2
               .col.pr-0.u-flex-grow-0

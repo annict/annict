@@ -20,7 +20,7 @@ script#t-untracked-episode-list type="x-template"
                       | {{ status.program.channel.name }}
                     span.badge.badge-success :class='{ "mr-2": !status.program.rebroadcast, "mr-1": status.program.rebroadcast }'
                       | {{ status.program.state_text }}
-                    span.badge.badge-default.mr-2 v-if="status.program.rebroadcast"
+                    span.badge.badge-secondary.mr-2 v-if="status.program.rebroadcast"
                       = t "noun.rebroadcast"
                     span.mr-2
                       | {{ status.program.started_at }}
