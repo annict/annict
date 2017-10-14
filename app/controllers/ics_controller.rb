@@ -15,9 +15,7 @@ class IcsController < ApplicationController
     @works = @user.
       works.
       wanna_watch_and_watching.
-      where.not(started_on: nil).
-      where("started_on >= ?", Date.today.beginning_of_day).
-      where("started_on <= ?", 7.days.since.end_of_day)
+      where.not(started_on: nil)
 
     render layout: false
   end
