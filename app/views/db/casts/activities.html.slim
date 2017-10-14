@@ -11,10 +11,10 @@
 
 .container-fluid.p-3
   .row.mb-3
-    .c-card.col-8.offset-2.p-3
+    .c-card.col-8.ml-auto.p-3
       = render "db/comments/form", comment: @comment, resource: @cast
 
   .row
-    .c-card.col-8.offset-2.p-3
+    .c-card.col-8.ml-auto.p-3
       - @activities.each do |activity|
         = render "db/activities/activity_root_resources", activity: activity

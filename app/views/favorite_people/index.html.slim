@@ -8,8 +8,8 @@
 = render "users/favorite_nav", user: @user
 
 .p-application__content.mb-4
-  .row.my-3
-    .c-card.col-6.offset-3.py-2
+  .row.justify-content-center.my-3
+    .c-card.col-6.py-2
       = render "favorite_people/person_list", favorite_people: @favorite_people
 
 = render "application/components/footer"

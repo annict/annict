@@ -8,8 +8,8 @@
 
 .p-application__content
   .container.my-3
-    .row
-      .col-6.offset-3
+    .row.justify-content-center
+      .col-6
         .c-card.p-3
           = render "comments/form", record: @record, comment: @comment, user: @user
 

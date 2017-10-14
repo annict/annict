@@ -8,8 +8,8 @@
       = render "db/application/topbar_title", parent: DbActivity.model_name.human(count: 2)
 
 .container-fluid.p-3.mb-4
-  .row.mb-3
-    .c-card.col-8.offset-2.p-3
+  .row.justify-content-center.mb-3
+    .c-card.col-8.p-3
       - @activities.each do |activity|
         - if activity.trackable.present?
           - if activity.root_resource_action?

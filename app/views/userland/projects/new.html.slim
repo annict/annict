@@ -4,10 +4,12 @@
 - breadcrumb :userland_new_project
 
 = render "application/components/navbar"
-= render "application/components/breadcrumb"
 
 .p-application__content
-  .c-card.container.mt-3.mb-4.py-3
+  .container.py-3
+    = render "application/components/breadcrumb"
+
+  .c-card.container.mb-4.py-3
     = render "userland/projects/form", project: @project
 
 = render "application/components/footer"

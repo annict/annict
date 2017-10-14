@@ -10,8 +10,8 @@
 = render "users/follow_nav", user: @user
 
 .p-application__content.mb-4
-  .row.my-3
-    .c-card.col-6.offset-3
+  .row.justify-content-center.my-3
+    .c-card.col-6
       = render "users/user_list", users: @users
 
 = render "application/components/footer"

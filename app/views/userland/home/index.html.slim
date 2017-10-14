@@ -13,7 +13,7 @@
         - @categories.each do |category|
           h2.h4.text-center.my-4.font-weight-bold
             = category.decorate.local_name
-          .c-card.px-3
+          .c-card
             - if category.userland_projects.exists?
               - category.userland_projects.order(:available, created_at: :desc).each do |project|
                 .container.u-underline.py-3

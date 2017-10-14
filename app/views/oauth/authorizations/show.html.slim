@@ -3,15 +3,15 @@
 - set_page_category "oauth_authorizations_show"
 
 .container
-  .row.align-items-center
-    .col-6.offset-3.py-3
+  .row.justify-content-center
+    .col-6.py-5
       .text-center.mb-5
         = link_to root_path do
           = image_tag "logos/color-mizuho.png", size: "50x61", alt: "Annict"
       .c-card.px-3.py-4.mb-3
         h1.text-center.mb-4
           = t "head.title.oauth.authorizations.show"
-        
+
         .c-authorization-code
           code
             = params[:code]

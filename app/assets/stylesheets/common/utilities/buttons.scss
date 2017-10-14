@@ -1,11 +1,11 @@
 @each $color-name, $color in $ann-btn-colors {
   .u-btn-#{$color-name} {
-    @include button-variant($ann-color-white, $color, $color);
+    @include button-variant($color, $color);
   }
 }
 
 @each $color-name, $color in $ann-btn-colors {
   .u-btn-outline-#{$color-name} {
-    @include button-variant($color, $ann-color-white, $color);
+    @include button-variant($ann-color-white, $color);
   }
 }

@@ -8,11 +8,11 @@
       = render "db/application/topbar_title", parent: @person.decorate.db_detail_link, child: t("noun.activities")
 
 .container-fluid.p-3
-  .row.mb-3
-    .c-card.col-8.offset-2.p-3
+  .row.justify-content-center.mb-3
+    .c-card.col-8.p-3
       = render "db/comments/form", comment: @comment, resource: @person
 
-  .row
-    .c-card.col-8.offset-2.p-3
+  .row.justify-content-center
+    .c-card.col-8.p-3
       - @activities.each do |activity|
         = render "db/activities/activity_root_resources", activity: activity
