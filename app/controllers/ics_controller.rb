@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class CalendarsController < ApplicationController
+class IcsController < ApplicationController
   def show(username)
     @user = User.find_by!(username: username)
     I18n.locale = @user.locale
@@ -19,8 +19,6 @@ class CalendarsController < ApplicationController
       where("started_on >= ?", Date.today.beginning_of_day).
       where("started_on <= ?", 7.days.since.end_of_day)
 
-    respond_to do |format|
-      format.ics
-    end
+    render layout: false
   end
 end
