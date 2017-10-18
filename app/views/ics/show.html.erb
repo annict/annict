@@ -18,7 +18,7 @@ CREATED:<%= p.created_at.strftime("%Y%m%d\T%H%M%S\Z") %>
 DESCRIPTION:<%= p.work.decorate.local_title %> <%= p.episode.decorate.title_with_number %> <%= work_episode_url(p.work, p.episode) %>
 LAST-MODIFIED:<%= p.updated_at.strftime("%Y%m%d\T%H%M%S\Z") %>
 SEQUENCE:0
-SUMMARY:<%= p.work.decorate.local_title %> <%= p.episode.decorate.title_with_number %>
+SUMMARY:<%= p.work.decorate.local_title %> <%= p.episode.decorate.title_with_number %> (<%= p.channel.name %>)
 END:VEVENT
 <% end %>
 <% @works.each do |w| %>
