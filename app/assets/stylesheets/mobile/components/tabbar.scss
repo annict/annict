@@ -6,12 +6,6 @@
   position: fixed;
   z-index: 2;
 
-  &.show {
-    .dropdown-menu {
-      display: block;
-    }
-  }
-
   a {
     color: $body-color;
   }
