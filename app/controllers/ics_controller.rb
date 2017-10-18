@@ -10,6 +10,7 @@ class IcsController < ApplicationController
       unwatched_all.
       work_published.
       episode_published.
+      includes(:work, :episode, :channel).
       where("started_at >= ?", Date.today.beginning_of_day).
       where("started_at <= ?", 7.days.since.end_of_day)
     @works = @user.
