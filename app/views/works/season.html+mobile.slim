@@ -10,7 +10,7 @@
 .px-3
   .text-center.py-3
     - if @prev_season.present?
-      = link_to season_works_path(slug: @prev_season.slug), class: "mr-2" do
+      = link_to season_works_path(slug: @prev_season.slug), class: "mr-3" do
         = icon "angle-left", class: "mr-2"
         = @prev_season.local_name
     .dropdown.d-inline-block
@@ -20,14 +20,14 @@
         - @seasons.each do |season|
           = link_to season.local_name, season_works_path(slug: season.slug), class: "dropdown-item"
     - if @next_season.present?
-      = link_to season_works_path(slug: @next_season.slug), class: "ml-2" do
+      = link_to season_works_path(slug: @next_season.slug), class: "ml-3" do
         = @next_season.local_name
         = icon "angle-right", class: "ml-2"
   .row.align-items-center.mb-3
     .col.pr-0
       c-share-button-twitter.mr-2 text="#{title}" url="#{local_url}#{season_works_path(slug: @season.slug)}"
       c-share-button-facebook url="#{local_url}#{season_works_path(slug: @season.slug)}"
-    .col
+    .col.text-right
       - if user_signed_in?
         = render "display_option_buttons"
 
