@@ -48,4 +48,15 @@ namespace :data_care do
       work.staffs.create(staff.attributes.except("id", "created_at", "updated_at"))
     end
   end
+
+  task :set_sc_count_and_raw_number_to_works, %i(work_id) => :environment do |_, args|
+    ActiveRecord::Base.transaction do
+      work = Work.find(args[:work_id])
+      work.episodes.order(:sort_number).each_with_index do |e, i|
+        number = i + 1
+        puts "#{e.number}: #{number}"
+        e.update_columns(sc_count: number, raw_number: number)
+      end
+    end
+  end
 end
