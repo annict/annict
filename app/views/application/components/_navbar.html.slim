@@ -1,7 +1,7 @@
 - transparent = local_assigns.fetch(:transparent, false)
 - is_on_cover_image = local_assigns.fetch(:is_on_cover_image, false)
 
-nav.c-navbar.navbar.navbar-expand-lg class="#{transparent ? 'navbar-dark is-transparent' : 'navbar-light'}"
+nav.c-navbar.navbar.navbar-expand-sm class="#{transparent ? 'navbar-dark is-transparent' : 'navbar-light'}"
   = link_to root_path, class: "navbar-brand" do
     = image_tag "logos/color-#{transparent ? 'white' : 'mizuho'}.png", size: "25x30", alt: "Annict"
   .collapse.navbar-collapse.align-items-center
