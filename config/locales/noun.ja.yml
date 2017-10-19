@@ -28,6 +28,7 @@ ja:
     category: カテゴリ
     channel_list: チャンネル一覧
     channel: チャンネル
+    channels: チャンネル
     character_image: キャラクター画像
     character: キャラクター
     characters: キャラクター
@@ -64,12 +65,14 @@ ja:
     joined_works: 参加作品
     language: 言語
     last: Last
+    menu: メニュー
     more: その他
     music: 音楽
     my_records: 自分の記録
     n_works_watched: "%{count}作品見た"
     next_page: 次のページ
     next_season: 来期のアニメ
+    notification: 通知
     official_site: 公式サイト
     on_hold: 中断してるアニメ
     or: OR

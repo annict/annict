@@ -253,6 +253,7 @@ Rails.application.routes.draw do
   end
 
   resource :confirmation, only: [:show]
+  resource :menu, only: %i(show)
   resource :search, only: [:show]
   resource :track, only: %i(show)
   resources :comments, only: %i(edit update destroy)
