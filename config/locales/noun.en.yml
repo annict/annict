@@ -28,6 +28,7 @@ en:
     category: Category
     channel_list: Channel List
     channel: Channel
+    channels: Channels
     character_image: Character Image
     character: Character
     characters: Characters
@@ -64,12 +65,14 @@ en:
     joined_works: Works
     language: Language
     last: Last
+    menu: Menu
     more: More
     music: Music
     my_records: My Records
     n_works_watched: "%{count} Works Watched"
     next_page: Next Page
     next_season: Next Season
+    notification: Notification
     official_site: Official Site
     on_hold: On Hold
     or: OR
