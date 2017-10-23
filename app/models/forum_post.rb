@@ -37,7 +37,7 @@ class ForumPost < ApplicationRecord
     return unless Rails.env.production?
 
     options = {
-      url: ENV.fetch("ANNICT_DISCORD_WEBHOOK_URL_FOR_FORUM-#{forum_category.slug.tr('_', '-').upcase}")
+      url: ENV.fetch("ANNICT_DISCORD_WEBHOOK_URL_FOR_FORUM_#{forum_category.slug.upcase}")
     }
     host = ENV.fetch("ANNICT_URL")
     url = Rails.application.routes.url_helpers.forum_post_url(self, host: host)
