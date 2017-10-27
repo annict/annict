@@ -4,7 +4,7 @@ script#t-impression-button-modal type="x-template"
       .modal-content
         .modal-body
           template v-if="isLoading"
-            .c-spinner.p-3
+            .c-spinner.p-5
           template v-else=""
             form @submit.prevent="save"
               .form-group
@@ -15,12 +15,12 @@ script#t-impression-button-modal type="x-template"
                     option v-for="tagName in allTagNames"
                       | {{ tagName }}
                 template v-if="popularTagNames.length > 0"
-                  .small.mt-zp5
+                  .small.mt-2
                     = t "noun.popular_tags"
-                  span.u-cursor-pointer.mr-zp25.badge.badge-default v-for="tagName in popularTagNames" @click="add(tagName)"
-                    = icon "plus", class: "mr-zp25"
+                  span.u-cursor-pointer.mr-1.badge.badge-secondary v-for="tagName in popularTagNames" @click="add(tagName)"
+                    = icon "plus", class: "mr-1"
                     | {{ tagName }}
-              .form-group.mt-2
+              .form-group.mt-4
                 label for="comment"
                   = t "noun.comment"
                 textarea#comment.form-control type="text" rows="3" v-model="comment" name="comment"

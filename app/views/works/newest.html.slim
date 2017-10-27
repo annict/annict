@@ -8,14 +8,14 @@
 
 .p-application__content
   - if user_signed_in?
-    .row.align-items-center.py-2
+    .row.align-items-center.py-4
       .col
       .col
       .col.text-right
-        .px-1
+        .px-3
           = render "display_option_buttons"
 
-  .mb-2
+  .mb-4
     - if user_signed_in?
       - if current_user.setting.display_option_work_list == "list"
         .container
@@ -23,9 +23,9 @@
       - else
         = render "works/#{current_user.setting.display_option_work_list}", works: @works
     - else
-      .container.mt-1
+      .container.mt-3
         = render "works/list", works: @works
-    .mt-1.text-center
+    .mt-3.text-center
       = paginate @works
 
 = render "application/components/footer"

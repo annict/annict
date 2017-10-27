@@ -14,4 +14,6 @@
     = f.text_area :body, rows: 15, class: "form-control"
 
   .form-group.text-center.mb-0
-    = f.submit class: "btn btn-primary"
+    = f.button class: "btn btn-primary" do
+      = icon "paper-plane-o"
+      = t "verb.post"

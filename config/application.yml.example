@@ -1,4 +1,6 @@
 ANNICT_CURRENT_SEASON: "2017-spring"
+ANNICT_DISCORD_INVITE_URL_EN: "https://discord.gg/xdtBkdJ"
+ANNICT_DISCORD_INVITE_URL_JA: "https://discord.gg/Uqbeq8t"
 ANNICT_NEXT_SEASON: "2017-summer"
 ANNICT_PAPERCLIP_RANDOM_SECRET: "abcdefghijklmnopqrstuvwxyz"
 ANNICT_PAPERCLIP_URL: "/paperclip/:class/:id/:attachment/:style/:hash.:extension"

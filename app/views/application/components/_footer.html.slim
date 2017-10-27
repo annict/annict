@@ -1,5 +1,5 @@
 .p-footer
-  .p-footer__main.py-2
+  .p-footer__main.py-4
     .container
       .row
         .col-3
@@ -17,8 +17,8 @@
                 = link_to "https://github.com/annict", target: "_blank", class: "h2" do
                   = icon "github"
               .col.col-auto
-                = link_to "https://slack.annict.com", target: "_blank", class: "h2" do
-                  = icon "slack"
+                = link_to discord_invite_url, target: "_blank", class: "h2" do
+                  = icon "comments-o"
         .col-3
           h4.font-weight-bold = t "noun.services"
           ul.list-unstyled
@@ -41,10 +41,10 @@
                 - year, name = slug.split("-")
                 = link_to Season.new(year, name).local_name, season_works_path(slug: slug)
   .p-footer__auxiliary
-    .container.py-zp5
+    .container.py-2
       .row.align-items-center
         .col
-          h4.font-weight-bold.d-inline-block.mr-zp5.mb-0
+          h4.font-weight-bold.d-inline-block.mr-2.mb-0
             = "#{t('noun.language')}: "
           ul.list-inline.d-inline-block.mb-0
             li.list-inline-item = link_to "日本語", "#{ENV.fetch('ANNICT_JP_URL')}#{request.path}"
@@ -54,5 +54,5 @@
             = image_tag "logos/color-white.png", width: "25", alt: "Annict", class: "img-fluid rounded"
         .col.text-right
           .p-footer__copyright.small
-            = icon "copyright", class: "mr-zp25"
+            = icon "copyright", class: "mr-1"
             | 2014-2017 Annict

@@ -5,8 +5,8 @@
 = render "application/components/navbar"
 
 .p-application__content
-  .c-card.container.mt-1.mb-2.py-1
-    .text-right.mb-1
+  .c-card.container.mt-3.mb-4.py-3
+    .text-right.mb-3
       = link_to new_oauth_application_path, class: "btn btn-primary" do
         = icon "plus"
         = t "messages.oauth.applications.new"

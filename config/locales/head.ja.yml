@@ -154,6 +154,8 @@ ja:
         index_guest: 見たアニメを記録して、共有しよう
       libraries:
         show: "%{profile_name} (%{username})が%{action}アニメ"
+      menus:
+        show: メニュー
       mutes:
         index: ミュート
       notifications:
@@ -187,7 +189,7 @@ ja:
       programs:
         index: 放送予定
       providers:
-        index: ソーシャル連携
+        index: サービス連携
       records:
         show: "%{profile_name} (%{username})の%{work_title} %{episode_title_with_number}への感想"
       registrations:

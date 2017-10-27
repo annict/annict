@@ -16,7 +16,7 @@
       c-record-rating :init-record=="{ ratingState: '#{review.send(state)}' }" input-name="review[#{state}]"
 
   - if current_user.authorized_to?(:twitter, shareable: true) || current_user.authorized_to?(:facebook, shareable: true)
-    .mt-2
+    .mt-4
       - if current_user.authorized_to?(:twitter, shareable: true)
         = fields_for :setting, current_user.setting do |sf|
           .form-check
@@ -30,9 +30,9 @@
               = sf.check_box :share_review_to_facebook, class: "form-check-input"
               = t "messages._common.share_to_facebook"
 
-  .form-group.text-center.mt-2
+  .form-group.text-center.mt-4
     = f.button class: "btn btn-primary" do
-      = icon "paper-plane", class: "mr-zp5"
+      = icon "paper-plane", class: "mr-2"
       = t "verb.post"
 
 - content_for :js_templates do

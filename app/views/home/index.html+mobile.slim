@@ -2,14 +2,14 @@
 - set_meta_tags(title: title, site: false)
 - set_page_category "home_index"
 
-.mb-1
+.mb-3
   = render "application/components/adsense", slot: ENV["GOOGLE_AD_320x100_11"], size: "320x100"
 
 - if current_user.tips.unfinished.present?
-  .c-card.mb-1
+  .c-card.mb-3
     = render "tips"
 
-.mb-2
+.mb-4
   c-activities
     .c-loading
       .c-loading__core Loading...

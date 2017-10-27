@@ -9,7 +9,7 @@ module Db
       :description_source_en
 
     before_action :authenticate_user!, only: %i(new create edit update)
-    before_action :load_character, only: %i(edit update activities)
+    before_action :load_character, only: %i(edit update activities hide destroy)
 
     def index(page: nil)
       @characters = Character.order(id: :desc).page(page)
@@ -46,6 +46,24 @@ module Db
 
       message = t("resources.character.updated")
       redirect_to edit_db_character_path(@character), notice: message
+    end
+
+    def hide
+      authorize @character, :hide?
+
+      @character.hide!
+
+      flash[:notice] = t("messages._common.updated")
+      redirect_back fallback_location: db_characters_path
+    end
+
+    def destroy
+      authorize @character, :destroy?
+
+      @character.destroy
+
+      flash[:notice] = t("messages._common.deleted")
+      redirect_back fallback_location: db_characters_path
     end
 
     def activities

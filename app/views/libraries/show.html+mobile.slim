@@ -8,12 +8,12 @@
 
 = render "users/low_profile_header", user: @user
 
-.p-users-works__subnav.c-subnav.mb-1
+.p-users-works__subnav.c-subnav.mb-3
   - %i(watching wanna_watch watched on_hold stop_watching).each do |status_kind|
     = active_link_to library_path(@user.username, status_kind), class: "c-subnav__link", class_active: "c-subnav__link--active", active: (status_kind.to_s == params[:status_kind]) do
       .c-subnav__item
         .text-center
-          .mb-zp25
+          .mb-1
             = @user.latest_statuses.count_on(status_kind)
           .small
             = t("enumerize.status.kind.#{status_kind}").truncate(8)
@@ -21,23 +21,23 @@
 = render "application/components/adsense", slot: ENV["GOOGLE_AD_320x100_15"], size: "320x100"
 
 - if @seasons.present?
-  .mb-2
+  .mb-4
     - @seasons.each_with_index do |season, i|
-      .mt-2
-        .container.mb-2
+      .mt-4
+        .container.mb-4
           .row.align-items-center
             .col-4
               h3.h4.font-weight-bold.mb-0
                 = season.local_name
             .col-8.text-right
               - if i == 0
-                c-share-button-twitter.mr-zp5 text="#{title}" url="#{local_url}#{library_path(@user.username, params[:status_kind])}"
+                c-share-button-twitter.mr-2 text="#{title}" url="#{local_url}#{library_path(@user.username, params[:status_kind])}"
                 c-share-button-facebook url="#{local_url}#{library_path(@user.username, params[:status_kind])}"
         - works = @works.by_season(season.slug).order(watchers_count: :desc).includes(:work_image)
         - if season.name == "all"
           - works = works.where(season_name: nil)
         = render "libraries/work", works: works, work_tags_data: @work_tags_data, work_comment_data: @work_comment_data, user: @user
-    .text-center.mt-1
+    .text-center.mt-3
       = paginate @seasons, window: 2
 - else
   = render "application/components/empty", text: t("messages.users.no_works")

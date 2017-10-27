@@ -1,32 +1,32 @@
 script#t-create-multiple-records-activity type="x-template"
-  .c-create-multiple-records-activity.c-card.p-1.mb-1 v-if="activity.episodes.length > 0"
-    .mb-zp5
+  .c-create-multiple-records-activity.c-card.p-3.mb-3 v-if="activity.episodes.length > 0"
+    .mb-2
       .row
         .col.col-auto.pr-0
           a :href='"/@" + activity.user.username'
             img.c-vue-lazyload.rounded-circle v-lazy="activity.profile.avatar_url" width="35" height="35"
-        .col.pl-zp5.u-lh-1
-          .mb-zp5 v-if='locale === "en"'
-            a.mr-zp25 :href='"/@" + activity.user.username'
+        .col.pl-2.u-lh-1
+          .mb-2 v-if='locale === "en"'
+            a.mr-1 :href='"/@" + activity.user.username'
               | {{ activity.profile.name }}
-            span.mr-zp25
+            span.mr-1
               | watched
-            a.mr-zp25 :href='"/works/" + activity.work.id'
+            a.mr-1 :href='"/works/" + activity.work.id'
               | {{ activity.work.title }}
             template v-if=="activity.episodes.length > 1"
-              a.mr-zp25 :href='"/works/" + activity.work.id + "/episodes/" + activity.episodes[0].id'
+              a.mr-1 :href='"/works/" + activity.work.id + "/episodes/" + activity.episodes[0].id'
                 | {{ activity.episodes[0].number }}
-              span.mr-zp25 ~
-              a.mr-zp25 :href='"/works/" + activity.work.id + "/episodes/" + activity.episodes.slice(-1)[0].id'
+              span.mr-1 ~
+              a.mr-1 :href='"/works/" + activity.work.id + "/episodes/" + activity.episodes.slice(-1)[0].id'
                 | {{ activity.episodes.slice(-1)[0].number }}
             template v-else=""
               a href='"/works/" + activity.work.id + "/episodes/" + activity.episodes[0].id'
                 | {{ activity.episodes[0].number }}
-          .mb-zp5 v-else=""
+          .mb-2 v-else=""
             a.name :href='"/@" + activity.user.username'
               | {{ activity.profile.name }}
             | が
-            a.mr-zp25 :href='"/works/" + activity.work.id'
+            a.mr-1 :href='"/works/" + activity.work.id'
               | {{ activity.work.title }}
             template v-if=="activity.episodes.length > 1"
               a :href='"/works/" + activity.work.id + "/episodes/" + activity.episodes[0].id'
@@ -41,5 +41,5 @@ script#t-create-multiple-records-activity type="x-template"
           .small.text-muted
             c-time-ago :time="activity.created_at"
 
-    .mt-zp5
+    .mt-2
       c-like-button.u-fake-link resource-name="MultipleRecord" :init-resource-id="activity.multiple_record.id" :init-likes-count="activity.multiple_record.likes_count" :init-is-liked="activity.meta.liked" :is-signed-in="#{user_signed_in?}"

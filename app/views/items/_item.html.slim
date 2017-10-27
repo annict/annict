@@ -10,7 +10,7 @@
     - if item.amount.present?
       .small
         - if item.offer_amount.present? && item.offer_amount < item.amount
-          s.mr-zp25
+          s.mr-1
             = "¥#{item.amount.to_s(:delimited)}"
           span.text-danger
             = "¥#{item.offer_amount.to_s(:delimited)}"

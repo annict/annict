@@ -2,7 +2,7 @@
 - set_meta_tags(title: title, reverse: true, prefix: false)
 - set_page_category "db_characters_index"
 
-.l-topbar.container-fluid.px-1
+.l-topbar.container-fluid.px-3
   .row.flex-items-xs-between
     .col
       = render "db/application/topbar_title", parent: t("head.title.db.characters.index")
@@ -12,7 +12,7 @@
           = icon "plus"
           = t "resources.character.new_characters"
 
-.container-fluid.p-1.mb-2
+.container-fluid.p-3.mb-4
   = render "character_list", characters: @characters
-  .text-center.mt-1
+  .text-center.mt-3
     = paginate @characters

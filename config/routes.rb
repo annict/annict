@@ -126,6 +126,12 @@ Rails.application.routes.draw do
     end
   end
 
+  scope module: :chat do
+    constraints(subdomain: "chat") do
+      root "home#index"
+    end
+  end
+
   namespace :db do
     resources :activities, only: [:index]
     resources :channels, only: [:index]
@@ -253,6 +259,7 @@ Rails.application.routes.draw do
   end
 
   resource :confirmation, only: [:show]
+  resource :menu, only: %i(show)
   resource :search, only: [:show]
   resource :track, only: %i(show)
   resources :comments, only: %i(edit update destroy)
@@ -330,6 +337,7 @@ Rails.application.routes.draw do
   scope "@:username", username: /[A-Za-z0-9_]+/ do
     get :following, to: "users#following", as: :following_user
     get :followers, to: "users#followers", as: :followers_user
+    get :ics, to: "ics#show", as: :user_ics
 
     get ":status_kind",
       to: "libraries#show",

@@ -2,10 +2,10 @@
 - set_meta_tags(title: title, reverse: true, prefix: false)
 - set_page_category "accounts_show"
 
-.mb-1
-  h2.h4.font-weight-bold.text-center.my-2
+.mb-3
+  h2.h4.font-weight-bold.text-center.my-4
     = t "noun.basic_info"
-  .c-card.p-1
+  .c-card.p-3
     = form_for @user, url: account_path, method: :patch do |f|
       - if params[:controller] == "accounts"
         = render "application/components/error_panel", resource: @user
@@ -27,10 +27,10 @@
       .form-submit.text-center
         = f.submit class: "btn btn-primary"
 
-.mb-1
-  h2.h4.font-weight-bold.text-center.mt-1.mb-2
+.mb-3
+  h2.h4.font-weight-bold.text-center.mt-3.mb-4
     = t "noun.password"
-  .c-card.p-1
+  .c-card.p-3
     = form_for @user, url: settings_password_path, method: :patch do |f|
       - if params[:controller] == "settings/passwords"
         = render "application/components/error_panel", resource: @user
@@ -47,10 +47,10 @@
       .form-submit.text-center
         = f.submit class: "btn btn-primary"
 
-.mb-2
-  h2.h4.font-weight-bold.text-center.mt-1.mb-2
+.mb-4
+  h2.h4.font-weight-bold.text-center.mt-3.mb-4
     = t "noun.account_deletion"
-  .c-card.p-1
+  .c-card.p-3
     = render "sayonara/content"
 
 = render "application/components/footer"

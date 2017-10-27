@@ -12,6 +12,7 @@ module.exports = {
       $: 'jquery',
       jQuery: 'jquery',
       'window.jQuery': 'jquery',
+      Popper: ['popper.js', 'default'],
       Tether: 'tether',
       // In case you imported plugins individually, you must also require them here:
       Util: 'exports-loader?Util!bootstrap/js/dist/util',

@@ -52,6 +52,8 @@ ja:
       updated: 更新しました
     channel_works:
       no_works: 作品はありません
+    channels:
+      supported_video_service: (Annictがサポートしている) 動画サービス
     character_fans:
       no_users: ファンはいません
     comments:
@@ -106,6 +108,8 @@ ja:
         hero_title: 見たアニメを記録して、共有しよう。
         hero_title_mobile_html: 見たアニメを記録して、<br>共有しよう。
         start_tracking: 視聴記録を始める
+    ics:
+      you_can_see: Google Calendarに以下のURLを登録すると、「見てる」「見たい」にしている作品の放送情報などがカレンダーに表示されます。
     components:
       load_more_button:
         more: もっと見る

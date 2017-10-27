@@ -3,18 +3,18 @@
 - set_page_category "forum_home_index"
 - breadcrumb :forum_root
 
-.text-right.m-1
+.text-right.m-3
   = link_to new_forum_post_path, class: "btn btn-primary" do
     = icon "plus"
     = t "resources.forum_post.new"
-.c-card.mb-1
+.c-card.mb-3
   .container
     - if @posts.present?
       = render "forum/posts/post_list", posts: @posts
     - else
       = render "application/components/empty", text: t("messages.forum.posts.no_posts")
 - if @posts.present?
-  .text-center.mb-1
+  .text-center.mb-3
     = paginate @posts
 
 = render "application/components/breadcrumb"

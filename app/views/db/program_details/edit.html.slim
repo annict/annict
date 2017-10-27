@@ -2,7 +2,7 @@
 - set_meta_tags(title: title, reverse: true, prefix: false)
 - set_page_category "db_program_details_edit"
 
-.l-topbar.container-fluid.px-1
+.l-topbar.container-fluid.px-3
   .row.flex-items-xs-between
     .col-8
       = render "db/application/topbar_title", parent: @work, child: title
@@ -13,10 +13,10 @@
 
 = render "db/works/subnav", work: @work
 
-.container-fluid.p-1
+.container-fluid.p-3
   .row
     .col-6
-      .c-card.p-1
+      .c-card.p-3
         .container
           = form_for [:db, @program_detail] do |f|
             = render "application/components/error_panel", resource: f.object
@@ -34,7 +34,7 @@
               .col-sm-9
                 = f.text_field :url, class: "form-control"
             .form-group.row
-              .offset-sm-3.col-sm-9
+              .ml-auto.col-sm-9
                 = f.submit t("helpers.submit.update"), class: "btn btn-primary"
     .col-6
       = render "sidebar_edit"

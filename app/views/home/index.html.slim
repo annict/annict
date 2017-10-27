@@ -4,28 +4,28 @@
 
 = render "application/components/navbar"
 
-.p-application__content.mt-1.mb-2
+.p-application__content.mt-3.mb-4
   .container
     .row.justify-content-center
       .col-7
         - if current_user.tips.unfinished.present?
-          .mb-1
+          .mb-3
             = render "home/tips"
         c-activities
           .c-loading
             .c-loading__core Loading...
       .col-4
-        h2.h4.font-weight-bold.mb-1.text-center
+        h2.h4.font-weight-bold.mb-3.text-center
           = t "resources.forum_category.site_news"
         ul.list-unstyled
           - @forum_posts.each do |p|
-            li.mb-zp5
+            li.mb-2
               .small.text-muted
                 = display_time p.created_at
               = link_to p.title, forum_post_path(p)
-        .small.text-right.mb-2
+        .small.text-right.mb-4
           = link_to forum_category_path(:site_news) do
-            = icon "angle-right", class: "mr-zp25"
+            = icon "angle-right", class: "mr-1"
             = t "messages.forum._common.view_all_site_news"
         .text-center
           = render "application/components/adsense", slot: ENV["GOOGLE_AD_300x250_2"], size: "300x250"

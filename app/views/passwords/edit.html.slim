@@ -5,14 +5,14 @@
 - set_page_category "passwords_edit"
 
 .container
-  .row.align-items-center
-    .col-6.offset-3.py-3
-      .text-center.mb-3
+  .row.justify-content-center
+    .col-6.py-5
+      .text-center.mb-5
         = link_to root_path do
           = image_tag "logos/color-mizuho.png", size: "50x61", alt: "Annict"
-      .c-card.px-1.py-2.mb-1
+      .c-card.px-3.py-4.mb-3
         .c-sign-up-form
-          h1.text-center.mb-2 = t "messages.passwords.new.forgot_your_password"
+          h1.text-center.mb-4 = t "messages.passwords.new.forgot_your_password"
 
           = form_for resource, url: password_path, html: { method: :patch } do |f|
             = render "application/components/error_panel", resource: resource

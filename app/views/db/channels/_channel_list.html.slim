@@ -4,8 +4,10 @@
       tr
         th ID
         th = t "activerecord.attributes.channel.name"
+        th = t "messages.channels.supported_video_service"
     tbody
       - channels.each do |channel|
         tr
           td = channel.id
           td = channel.name
+          td = channel.video_service? ? icon("check") : "-"

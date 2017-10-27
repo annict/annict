@@ -1,10 +1,10 @@
 .select2-container {
   .select2-selection--single {
     height: auto;
-    padding: $input-padding-y;
+    padding: $input-btn-padding-y;
 
     .select2-selection__rendered {
-      color: $gray;
+      color: $text-muted;
       height: auto;
       line-height: normal;
       padding-left: 0;

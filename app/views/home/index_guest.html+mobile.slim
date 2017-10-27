@@ -4,41 +4,41 @@
 
 .p-top-hero
   .p-top-hero__bg-image style="background-image: url(#{ann_image_url(@cover_image_work.work_image, :attachment, size: '640x640', blur: 200)});"
-  .p-top-hero__content.text-center.p-1
+  .p-top-hero__content.text-center.p-3
     = image_tag "logos/color-white.png", size: "40x48", alt: "Annict"
-    h1.mb-1 = t("messages.home.index_guest.hero_title_mobile_html")
-    p.p-top-hero__description.mb-2
+    h1.mb-3 = t("messages.home.index_guest.hero_title_mobile_html")
+    p.p-top-hero__description.mb-4
       = t "messages.home.index_guest.hero_description_mobile_html"
     = link_to new_user_registration_path, class: "btn btn-primary" do
       = icon "rocket"
       = t("noun.sign_up")
 
-.py-1.text-center
+.py-3.text-center
   = render "application/components/adsense", slot: ENV["GOOGLE_AD_320x50_1"], size: "320x50"
 
-h2.h3.mb-1.text-center
+h2.h3.mb-3.text-center
   = t("noun.popular_airing_anime")
-.c-card.p-1.mb-1
+.c-card.p-3.mb-3
   = render "home/top_work", top_work: @season_top_work
 
-.c-card.p-1
+.c-card.p-3
   = render "home/other_works", other_works: @season_works
-  .text-center.mt-2
+  .text-center.mt-4
     = link_to t("verb.view_more"), season_works_path(slug: ENV["ANNICT_CURRENT_SEASON"]), class: "btn btn-primary"
 
-.py-1.text-center
+.py-3.text-center
   = render "application/components/adsense", slot: ENV["GOOGLE_AD_320x50_2"], size: "320x50"
 
-h2.h3.text-center.mb-1
+h2.h3.text-center.mb-3
   = t "noun.popular_anime"
-.c-card.p-1.mb-1
+.c-card.p-3.mb-3
   = render "home/top_work", top_work: @top_work
-.c-card.p-1
+.c-card.p-3
   = render "home/other_works", other_works: @works
-  .text-center.mt-2
+  .text-center.mt-4
     = link_to t("verb.view_more"), popular_works_path, class: "btn btn-primary"
 
-.py-1.text-center
+.py-3.text-center
   = render "application/components/adsense", slot: ENV["GOOGLE_AD_320x50_3"], size: "320x50"
 
 = render "application/components/footer"

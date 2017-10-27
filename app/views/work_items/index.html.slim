@@ -9,27 +9,27 @@
 = render "application/components/navbar"
 
 .p-application__content
-  .container.py-1.mb-1
+  .container.py-3.mb-3
     = render "application/components/breadcrumb"
     .row
       .col-3.pr-0
         = render "works/sidebar", work: @work
       .col-9
         = render "works/subnav", work: @work
-        .pt-1.text-center
+        .pt-3.text-center
           = render "application/components/adsense", slot: ENV["GOOGLE_AD_728x90_23"], size: "728x90"
-        .text-right.my-1
+        .text-right.my-3
           = link_to new_work_item_path(@work), class: "btn btn-primary" do
-            = icon "plus", class: "mr-zp25"
+            = icon "plus", class: "mr-1"
             = t "verb.regist_item"
-        .c-card.container.mt-1
+        .c-card.container.mt-3
           - if @items.present?
-            .row.pt-1
+            .row.pt-3
               - @items.each do |item|
-                .col-6.mb-1
+                .col-6.mb-3
                   = render "items/item", resource: @work, item: item
             - if @items.total_pages > 1
-              .mb-1.text-center
+              .mb-3.text-center
                 = paginate @items
           - else
             = render "application/components/empty", text: t("messages._empty.no_items")

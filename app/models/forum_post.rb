@@ -33,20 +33,16 @@ class ForumPost < ApplicationRecord
   validates :title, presence: true, length: { maximum: 100 }
   validates :user, presence: true
 
-  def notify_slack
+  def notify_discord
     return unless Rails.env.production?
 
-    webhook_url = ENV.fetch("ANNICT_SLACK_WEBHOOK_URL_FOR_NOTIFICATIONS")
     options = {
-      channel: "#forum-#{forum_category.slug.tr('_', '-')}",
-      username: "Notifier",
-      icon_emoji: ":annict:"
+      url: ENV.fetch("ANNICT_DISCORD_WEBHOOK_URL_FOR_FORUM_#{forum_category.slug.upcase}")
     }
     host = ENV.fetch("ANNICT_URL")
     url = Rails.application.routes.url_helpers.forum_post_url(self, host: host)
-    message = "<!channel> #{user.profile.name} created the post #{title} #{url}"
+    message = "@everyone #{user.profile.name} created the post #{title} #{url}"
 
-    notifier = Slack::Notifier.new(webhook_url, options)
-    notifier.ping(message)
+    Discord::Notifier.message(message, options)
   end
 end

@@ -4,7 +4,6 @@ import 'd3';
 import 'dropzone';
 import {} from 'jquery-ujs';
 import Cookies from 'js-cookie';
-import Cropper from 'cropperjs';
 import moment from 'moment-timezone';
 import 'moment/locale/ja';
 import Turbolinks from 'turbolinks';

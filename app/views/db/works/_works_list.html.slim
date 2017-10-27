@@ -21,6 +21,8 @@
         tr
           td = link_to work.id, annict_url(:work_url, work), target: "_blank"
           td
+            = work.decorate.media_label
+            br
             = work.title
             br
             = work.title_kana.presence || "-"

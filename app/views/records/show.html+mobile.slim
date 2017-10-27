@@ -7,8 +7,8 @@
 
 = render "application/components/adsense", slot: ENV["GOOGLE_AD_320x50_11"], size: "320x50"
 
-.c-card.py-1.mb-2
-  .p-records-show__work-info.px-1
+.c-card.py-3.mb-4
+  .p-records-show__work-info.px-3
     .row
       .col.u-flex-grow-0.p-records-show__work-image.pr-0
         = link_to work_path(@work) do
@@ -20,17 +20,17 @@
         = link_to work_episode_path(@work, @episode) do
           = @episode.decorate.title_with_number
   hr
-  .p-records-show__record.px-1
+  .p-records-show__record.px-3
     = render "records/record", record: @record, is_spoiler: @is_spoiler
   hr
-  .px-1
+  .px-3
     - if user_signed_in?
       .p-records-show__comment-form
         = form_for @comment, url: record_comments_path(@user.username, @record) do |f|
           = render "application/components/error_panel", resource: @comment
           = f.text_area :body, class: "form-control", rows: "5", placeholder: t("messages.comments.comment_form_placeholder")
           .w-100.text-center
-            = f.button class: "btn btn-primary mt-zp5" do
+            = f.button class: "btn btn-primary mt-2" do
               = icon "pencil"
               = t "messages.comments.create"
       hr
@@ -42,7 +42,7 @@
               = link_to user_path(comment.user.username) do
                 = ann_image_tag comment.user.profile, :tombo_avatar, size: "50x50", class: "rounded-circle"
             .col
-              .row.mb-zp5
+              .row.mb-2
                 .col
                   = link_to comment.user.profile.name, user_path(comment.user.username)
                 .col
@@ -51,12 +51,12 @@
               c-body inline-template=""
                 .c-body__content = comment.body
           - if policy(comment).update?
-            .small.text-right.mb-zp5
-              = link_to edit_comment_path(comment), class: "mr-zp5" do
-                = icon "edit", class: "mr-zp25"
+            .small.text-right.mb-2
+              = link_to edit_comment_path(comment), class: "mr-2" do
+                = icon "edit", class: "mr-1"
                 = t "noun.edit"
               = link_to comment_path(comment), method: :delete, data: { confirm: t("messages._common.are_you_sure") } do
-                = icon "trash-o", class: "mr-zp25"
+                = icon "trash-o", class: "mr-1"
                 = t "noun.delete"
     - else
       = render "application/components/empty", text: t("resources.comment.no_comments")

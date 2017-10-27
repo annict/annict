@@ -22,7 +22,7 @@ module Forum
       ActiveRecord::Base.transaction do
         @post.save!(validate: false)
         @post.forum_post_participants.create!(user: current_user)
-        @post.notify_slack
+        @post.notify_discord
       end
 
       redirect_to forum_post_path(@post), notice: t("messages.forum.posts.created")
