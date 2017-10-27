@@ -6,7 +6,7 @@
     "async": "2.5.0",
     "bootstrap": "4.0.0-beta",
     "britecharts": "^2.0.0",
-    "browserify": "14.3.0",
+    "browserify": "14.5.0",
     "browserify-incremental": "3.1.1",
     "cal-heatmap": "3.6.2",
     "cropperjs": "1.1.3",
