@@ -118,7 +118,9 @@ group :development do
   gem "listen" # Rails 5から `rails s` するときに必要になった
   gem "rubocop"
   gem "ruby_identicon"
-  gem "scss_lint", require: false
+  # Disable until to support Sass 3.5 which is used by Bootstrap 4.
+  # https://github.com/brigade/scss-lint/issues/877
+  # gem "scss_lint", require: false
   gem "spring"
   gem "spring-commands-rspec", require: false
   gem "stackprof"
