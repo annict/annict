@@ -6,6 +6,24 @@ namespace :internal_statistic do
     users_past_week = User.past_week
     users_yesterday = User.yesterday
 
+    [
+      { key_name: "episode_records", model: Checkin },
+      { key_name: "statuses", model: Status },
+      { key_name: "work_records", model: Review }
+    ].each do |h|
+      InternalStatistic.where(key: "users_count_created_#{h[:key_name]}_in_all", date: today).first_or_create! do |is|
+        is.value = h[:model].select("user_id").group(:user_id).length
+      end
+
+      InternalStatistic.where(key: "users_count_created_#{h[:key_name]}_in_past_week", date: today).first_or_create! do |is|
+        is.value = h[:model].select("user_id, MAX(created_at)").group(:user_id).past_week.length
+      end
+
+      InternalStatistic.where(key: "users_count_created_#{h[:key_name]}_in_yesterday", date: today).first_or_create! do |is|
+        is.value = h[:model].select("user_id, MAX(created_at)").group(:user_id).yesterday.length
+      end
+    end
+
     InternalStatistic.where(key: :users_count_registered_in_all, date: today).first_or_create! do |is|
       is.value = User.count
     end
