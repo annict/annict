@@ -126,6 +126,12 @@ Rails.application.routes.draw do
     end
   end
 
+  scope module: :chat do
+    constraints(subdomain: "chat") do
+      root "home#index"
+    end
+  end
+
   namespace :db do
     resources :activities, only: [:index]
     resources :channels, only: [:index]

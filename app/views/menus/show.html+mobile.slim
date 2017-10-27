@@ -177,4 +177,14 @@
           .small.u-text-body
             = t "head.title.faqs.index"
 
+    .row.mt-5
+      .col-4.text-center
+        = link_to new_user_session_path do
+          .h1.mb-1.text-primary
+            = icon "sign-in"
+          .small.u-text-body
+            = t "verb.sign_in"
+      .col-4.text-center
+      .col-4.text-center
+
 = render "application/components/tabbar"

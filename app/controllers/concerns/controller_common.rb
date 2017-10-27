@@ -4,7 +4,7 @@ module ControllerCommon
   extend ActiveSupport::Concern
 
   included do
-    helper_method :render_jb, :locale_ja?, :locale_en?, :local_url
+    helper_method :render_jb, :locale_ja?, :locale_en?, :local_url, :discord_invite_url
 
     rescue_from ActionView::MissingTemplate do
       raise ActionController::RoutingError, "Not Found" if Rails.env.production?
@@ -108,6 +108,11 @@ module ControllerCommon
       preferred_languages = http_accept_language.user_preferred_languages
       # Chrome returns "ja", but Safari would return "ja-JP", not "ja".
       preferred_languages.any? { |lang| lang.match?(/ja/) } ? :ja : :en
+    end
+
+    def discord_invite_url
+      locale = locale_ja? ? "JA" : "EN"
+      ENV.fetch("ANNICT_DISCORD_INVITE_URL_#{locale}")
     end
   end
 end
