@@ -1,7 +1,7 @@
 - if @favorite_characters.exists?
   - @favorite_characters.each do |favorite_character|
     - character = favorite_character.character
-    .row.align-items-center.mb-zp5.pt-zp5
+    .row.align-items-center.mb-2.pt-2
       .col
         = link_to character.decorate.local_name, character_path(character)
         - if character.oldest_work.present?

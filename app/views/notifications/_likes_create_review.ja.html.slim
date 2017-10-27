@@ -2,10 +2,10 @@
 - like = notification.trackable
 - review = like.recipient
 
-span.mr-zp25
+span.mr-1
   = action_user.decorate.name_link
 | が
-span.mx-zp25
+span.mx-1
   = review.work.decorate.title_link
 | への
 = link_to "レビュー", review_path(review.user.username, review)

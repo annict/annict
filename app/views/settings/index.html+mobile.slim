@@ -2,35 +2,35 @@
 - set_meta_tags(title: title, og: { title: title }, reverse: true, prefix: false)
 - set_page_category "settings_index"
 
-.c-card.p-1.mb-2
+.c-card.p-3.mb-4
   ul.list-unstyled.mb-0
-    li.mb-zp5
+    li.mb-2
       = link_to profile_path do
-        = icon "smile-o", class: "mr-zp5 text-muted"
+        = icon "smile-o", class: "mr-2 text-muted"
         = t "head.title.profiles.show"
-    li.mb-zp5
+    li.mb-2
       = link_to account_path do
-        = icon "user", class: "mr-zp5 text-muted"
+        = icon "user", class: "mr-2 text-muted"
         = t "head.title.accounts.show"
-    li.mb-zp5
+    li.mb-2
       = link_to settings_apps_path do
-        = icon "plug", class: "mr-zp5 text-muted"
+        = icon "plug", class: "mr-2 text-muted"
         = t "head.title.settings.apps.index"
-    li.mb-zp5
+    li.mb-2
       = link_to providers_path do
-        = icon "share-alt", class: "mr-zp5 text-muted"
+        = icon "share-alt", class: "mr-2 text-muted"
         = t "head.title.providers.index"
-    li.mb-zp5
+    li.mb-2
       = link_to settings_email_notification_path do
-        = icon "envelope-o", class: "mr-zp5 text-muted"
+        = icon "envelope-o", class: "mr-2 text-muted"
         = t "head.title.settings.email_notifications.show"
-    li.mb-zp5
+    li.mb-2
       = link_to mutes_path do
-        = icon "user-times", class: "mr-zp5 text-muted"
+        = icon "user-times", class: "mr-2 text-muted"
         = t "head.title.mutes.index"
-    li.mb-zp5
+    li.mb-2
       = link_to options_path do
-        = icon "cog", class: "mr-zp5 text-muted"
+        = icon "cog", class: "mr-2 text-muted"
         = t "head.title.options.index"
 
 = render "application/components/footer"

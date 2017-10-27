@@ -6,30 +6,30 @@
 = render "application/components/navbar"
 
 .p-application__content
-  .container.py-1.mb-1
+  .container.py-3.mb-3
     = render "application/components/breadcrumb"
     .row
       .col-8
         - @categories.each do |category|
-          h2.h4.text-center.my-2.font-weight-bold
+          h2.h4.text-center.my-4.font-weight-bold
             = category.decorate.local_name
-          .c-card.px-1
+          .c-card
             - if category.userland_projects.exists?
               - category.userland_projects.order(:available, created_at: :desc).each do |project|
-                .container.u-underline.py-1
+                .container.u-underline.py-3
                   .row.align-items-center
                     .col-auto
                       = link_to userland_project_path(project) do
                         = ann_image_tag project, :icon, size: "80x80", class: "img-fluid img-thumbnail rounded"
                     .col
-                      .mb-zp5
+                      .mb-2
                         = link_to project.name, userland_project_path(project)
                       .small.text-muted
                         = project.summary
             - else
               = render "application/components/empty", text: t("messages._empty.no_projects")
-      .col-4.mt-1
-        .text-right.mb-1
+      .col-4.mt-3
+        .text-right.mb-3
           = link_to new_userland_project_path, class: "btn btn-primary" do
             = icon "plus"
             = t "resources.userland_project.new"

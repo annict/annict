@@ -2,7 +2,7 @@
 - set_meta_tags(title: title, reverse: true, prefix: false)
 - set_page_category "friends_index"
 
-h1.h4.text-center.my-2.font-weight-bold
+h1.h4.text-center.my-4.font-weight-bold
   = t "noun.sns_friends"
 
 .c-card
@@ -11,10 +11,10 @@ h1.h4.text-center.my-2.font-weight-bold
   - else
     = render "application/components/empty", text: t("messages.friends.no_sns_friends")
 
-h1.h4.text-center.my-2.font-weight-bold
+h1.h4.text-center.my-4.font-weight-bold
   = t "noun.other_users"
 
-.c-card.mb-2
+.c-card.mb-4
   - if @users.present?
     = render "users/user_list", users: @users
   - else

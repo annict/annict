@@ -10,33 +10,33 @@
 = render "users/low_profile_header", user: @user
 
 .p-application__content
-  .container.py-1.mb-1
+  .container.py-3.mb-3
     = render "application/components/breadcrumb"
-    .c-card.px-1
+    .c-card.px-3
       - if @reviews.present?
         .container
           - @reviews.each do |review|
-            .row.py-1.u-underline
+            .row.py-3.u-underline
               .col-auto
                 = link_to work_path(review.work) do
                   = ann_image_tag review.work.work_image, :attachment, size: "70x93", class: "img-fluid img-thumbnail rounded"
               .col
-                .small.text-muted.mb-zp25
+                .small.text-muted.mb-1
                   = link_to review.work.decorate.local_title, work_path(review.work), class: "u-text-body"
-                h2.h4.mb-1
+                h2.h4.mb-3
                   - title = t("messages.reviews.view_review_with_words_count", count: review.body.length)
                   = link_to title, review_path(@user.username, review)
                 .small.text-muted
                   = link_to review_path(review.user.username, review), title: local_datetime(review.created_at) do
                     = local_time_ago_in_words(review.created_at)
                   - if review.modified_at.present?
-                    .ml-zp5
+                    .ml-2
                       = icon "pencil"
-                  span.ml-zp5
+                  span.ml-2
                     = "#{review.impressions_count} views"
 
         - if @reviews.total_pages > 1
-          .mb-1.text-center
+          .mb-3.text-center
             = paginate @reviews
       - else
         = render "application/components/empty", text: t("messages._empty.no_reviews")

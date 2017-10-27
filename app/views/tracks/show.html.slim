@@ -5,9 +5,9 @@
 = render "application/components/navbar"
 
 .p-application__content
-  .pt-1.text-center
+  .pt-3.text-center
     = render "application/components/adsense", slot: ENV["GOOGLE_AD_468x60_1"], size: "468x60"
-  .c-card.container.mt-1.mb-2.u-mw-600
+  .c-card.container.mt-3.mb-4.u-mw-600
     c-untracked-episode-list
       .c-loading
         .c-loading__core Loading...

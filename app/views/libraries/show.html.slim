@@ -9,29 +9,29 @@
 = render "application/components/navbar", transparent: true
 = render "users/low_profile_header", user: @user
 
-.p-application__content.mb-2
-  .p-libraries-show__subnav.c-subnav.mb-1
+.p-application__content.mb-4
+  .p-libraries-show__subnav.c-subnav.mb-3
     - %i(watching wanna_watch watched on_hold stop_watching).each do |status_kind|
       = active_link_to library_path(@user.username, status_kind), class: "c-subnav__link", class_active: "c-subnav__link--active", active: (status_kind.to_s == params[:status_kind]) do
         .c-subnav__item
           .text-center
-            .mb-zp25
+            .mb-1
               = @user.latest_statuses.count_on(status_kind)
             .small
               = t "enumerize.status.kind.#{status_kind}"
 
-  .mb-2.text-center
+  .mb-4.text-center
     = render "application/components/adsense", slot: ENV["GOOGLE_AD_728x90_15"], size: "728x90"
 
   - if @seasons.present?
     - @seasons.each_with_index do |season, i|
-      .mt-1
-        .container-fluid.my-1
+      .mt-3
+        .container-fluid.my-3
           .row.align-items-center
             .col-4
               - if i == 0
-                .pl-1
-                  c-share-button-twitter.mr-zp5 text="#{title}" url="#{local_url}#{library_path(@user.username, params[:status_kind])}"
+                .pl-3
+                  c-share-button-twitter.mr-2 text="#{title}" url="#{local_url}#{library_path(@user.username, params[:status_kind])}"
                   c-share-button-facebook url="#{local_url}#{library_path(@user.username, params[:status_kind])}"
             .col-4.text-center
               h2.h4.font-weight-bold.mb-0
@@ -40,14 +40,14 @@
         - works = @works.by_season(season.slug).order(watchers_count: :desc).includes(:work_image)
         - if season.name == "all"
           - works = works.where(season_name: nil)
-        .pt-1.mx-1
+        .pt-3.mx-3
           = render "libraries/work", works: works, work_tags_data: @work_tags_data, work_comment_data: @work_comment_data, user: @user
-    .mt-1.text-center
+    .mt-3.text-center
       = paginate @seasons
   - else
     = render "application/components/empty", text: t("messages.users.no_works")
 
-  .mt-2.text-center
+  .mt-4.text-center
     = render "application/components/adsense", slot: ENV["GOOGLE_AD_728x90_16"], size: "728x90"
 
 = render "application/components/footer"

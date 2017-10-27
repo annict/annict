@@ -2,17 +2,17 @@
 - set_meta_tags(title: title, reverse: true, prefix: false)
 - set_page_category "db_series_edit"
 
-.l-topbar.container-fluid.px-1
+.l-topbar.container-fluid.px-3
   .row.flex-items-xs-between
     .col-8
       = render "db/application/topbar_title", parent: @series.decorate.local_name.truncate(70)
 
 = render "db/series/subnav", series: @series
 
-.container-fluid.p-1
+.container-fluid.p-3
   .row
     .col-6
-      .c-card.p-1
+      .c-card.p-3
         = render "form", series: @series
     .col-6
       = render "sidebar"

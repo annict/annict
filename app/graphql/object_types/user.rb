@@ -20,11 +20,9 @@ ObjectTypes::User = GraphQL::ObjectType.define do
   end
 
   connection :followingActivities, Connections::ActivityConnection do
-    resolve ->(obj, _args, _ctx) {
-      following_ids = obj.followings.pluck(:id)
-      following_ids << obj.id
-      ForeignKeyLoader.for(Activity, :user_id).load(following_ids)
-    }
+    argument :orderBy, InputObjectTypes::ActivityOrder
+
+    resolve Resolvers::FollowingActivities.new
   end
 
   connection :followers, ObjectTypes::User.connection_type do

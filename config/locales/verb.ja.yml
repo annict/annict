@@ -17,6 +17,7 @@ ja:
     regist_item: 商品を登録する
     revoke: 接続解除する
     search: 検索する
+    sign_in: ログイン
     sign_out: ログアウト
     skip: スキップする
     state_change: 状態変更

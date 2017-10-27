@@ -5,11 +5,11 @@
 
 = render "works/header", work: @work
 
-.c-card.mb-1.py-1
+.c-card.mb-3.py-3
   = render "episodes/nav", work: @work, episode: @episode, all_records: @all_records
 
-.c-card.mb-1
-  .container.py-1
+.c-card.mb-3
+  .container.py-3
     c-amazon-item-attacher resource-type="Episode" resource-id="#{@episode.id}"
 
 = render "application/components/breadcrumb"

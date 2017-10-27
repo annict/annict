@@ -7,10 +7,10 @@
 = render "application/components/adsense", slot: ENV["GOOGLE_AD_320x100_24"], size: "320x100"
 
 - if user_signed_in?
-  .text-center.my-1
+  .text-center.my-3
     = render "display_option_buttons"
 
-.mb-1
+.mb-3
   - if user_signed_in?
     = render "works/#{current_user.setting.display_option_work_list}", works: @works
   - else
@@ -18,7 +18,7 @@
   .text-center
     = paginate @works, window: 2
 
-.mb-1
+.mb-3
   = render "application/components/adsense", slot: ENV["GOOGLE_AD_320x100_25"], size: "320x100"
 
 = render "application/components/footer"

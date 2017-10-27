@@ -1,4 +1,5 @@
 import $ from 'jquery';
+import Cropper from 'cropperjs';
 import Vue from 'vue';
 
 import eventHub from '../../common/eventHub';

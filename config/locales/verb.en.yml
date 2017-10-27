@@ -17,6 +17,7 @@ en:
     regist_item: Add Item
     revoke: Revoke
     search: Search
+    sign_in: Sign In
     sign_out: Sign Out
     skip: Skip
     state_change: Change state

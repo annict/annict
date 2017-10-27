@@ -1,14 +1,14 @@
 .c-grid-work.c-grid-work--small.container-fluid
-  .row.pl-1
+  .row.pl-3
     - works.each do |work|
-      .col-1.p-0.pr-1.mb-1
+      .col-1.p-0.pr-3.mb-3
         .c-card
           = link_to work_path(work) do
             .c-hover-image
               .c-hover-image__image
                 = ann_image_tag work.work_image, :attachment, size: "140x140", class: "img-fluid rounded"
               .c-hover-image__over
-          .p-zp5.small
+          .p-2.small
             .row
               .col
                 = link_to work.decorate.local_title, work_path(work), title: work.decorate.local_title, class: "u-very-small"

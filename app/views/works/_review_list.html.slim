@@ -1,28 +1,28 @@
 - if @reviews.present?
-  .px-1
+  .px-3
     - @reviews.first(5).each do |review|
-      .row.py-1.u-underline
+      .row.py-3.u-underline
         .col-auto
           = link_to user_path(review.user.username) do
             = ann_image_tag review.user.profile, :tombo_avatar, size: "50x50", class: "rounded-circle"
         .col
-          .mb-zp5
+          .mb-2
             - title = t("messages.reviews.view_review_with_words_count", count: review.body.length)
             = link_to title, review_path(review.user.username, review)
           .small
-            span.mr-zp25
+            span.mr-1
               | by
             = link_to review.user.profile.name, user_path(review.user.username), class: "u-text-body"
           .small
             = link_to review_path(review.user.username, review), title: local_datetime(review.created_at), class: "u-text-body" do
               = local_time_ago_in_words(review.created_at)
   - if @reviews.length > 5
-    .mb-1
+    .mb-3
       = link_to work_reviews_path(@work), class: "btn btn-secondary w-100" do
         = icon "angle-right"
         = t "messages.works.view_all_n_reviews", n: @reviews.length
 - else
   = render "application/components/empty", text: t("messages._empty.no_reviews") do
-    = link_to new_work_review_path(@work), class: "btn btn-primary mt-zp5" do
-      = icon "pencil-square-o", class: "mr-zp25"
+    = link_to new_work_review_path(@work), class: "btn btn-primary mt-2" do
+      = icon "pencil-square-o", class: "mr-1"
       = t "verb.write_review"

@@ -15,4 +15,48 @@ namespace :data_care do
       end
     end
   end
+
+  task :move_org_from_people_to_orgs, [:person_id] => :environment do |_, args|
+    person = Person.find(args[:person_id])
+    org = Organization.where(name: person.name).first_or_create!
+
+    person.staffs.find_each do |staff|
+      puts "staff: #{staff.id}"
+      org.staffs.where(work: staff.work, role: staff.role, role_other: staff.role_other).first_or_create! do |s|
+        s.name = staff.name
+        s.sort_number = staff.sort_number
+      end
+    end
+
+    person.hide!
+  end
+
+  task :copy_casts, %i(base_work_id work_id) => :environment do |_, args|
+    base_work = Work.find(args[:base_work_id])
+    work = Work.find(args[:work_id])
+
+    base_work.casts.order(:sort_number).each do |cast|
+      work.casts.create(cast.attributes.except("id", "created_at", "updated_at"))
+    end
+  end
+
+  task :copy_staffs, %i(base_work_id work_id) => :environment do |_, args|
+    base_work = Work.find(args[:base_work_id])
+    work = Work.find(args[:work_id])
+
+    base_work.staffs.order(:sort_number).each do |staff|
+      work.staffs.create(staff.attributes.except("id", "created_at", "updated_at"))
+    end
+  end
+
+  task :set_sc_count_and_raw_number_to_works, %i(work_id) => :environment do |_, args|
+    ActiveRecord::Base.transaction do
+      work = Work.find(args[:work_id])
+      work.episodes.order(:sort_number).each_with_index do |e, i|
+        number = i + 1
+        puts "#{e.number}: #{number}"
+        e.update_columns(sc_count: number, raw_number: number)
+      end
+    end
+  end
 end

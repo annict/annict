@@ -4,7 +4,7 @@
 - set_meta_tags(title: title, description: description, keywords: keywords, og: { title: title, description: description }, reverse: true, prefix: false)
 - set_page_category "comments_edit"
 
-.c-card.p-1.mb-2
+.c-card.p-3.mb-4
   = render "comments/form", record: @record, comment: @comment, user: @user
 
 = render "application/components/footer"

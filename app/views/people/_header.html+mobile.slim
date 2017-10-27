@@ -1,4 +1,4 @@
-.container.py-1.mb-1
+.container.py-3.mb-3
   .text-center
     h1.h2.font-weight-bold
       = link_to person.decorate.local_name, person_path(person), class: "u-text-body"
@@ -9,10 +9,10 @@
       span.badge.u-badge-people
         = t "noun.staff"
 
-  .mt-1.text-center
+  .mt-3.text-center
     c-favorite-button resource-type="Person" :resource-id="#{person.id}" :init-is-favorited="#{user_signed_in? && current_user.favorite?(person)}" :is-signed-in="#{user_signed_in?}"
-    .u-very-small.text-muted.mt-zp5.text-center
-      = icon "info-circle", class: "mr-zp25"
+    .u-very-small.text-muted.mt-2.text-center
+      = icon "info-circle", class: "mr-1"
       = t "messages._components.favorite_button.hint", resource_type: t("noun.person").downcase
 
 .container

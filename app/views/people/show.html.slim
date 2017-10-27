@@ -7,18 +7,18 @@
 = render "application/components/navbar"
 
 .p-application__content
-  .container.py-1.mb-2
+  .container.py-3.mb-4
     .row
       .col-3.pr-0
         = render "people/sidebar", person: @person
       .col-9
         = render "people/subnav", person: @person
 
-        .text-center.mb-1
+        .text-center.mb-3
           = render "application/components/adsense", slot: ENV["GOOGLE_AD_728x90_11"], size: "728x90"
 
         .c-card
-          .container.py-1
+          .container.py-3
             - if @person.voice_actor?
               = render "grid", root_resource: @person, resource_years: @cast_years, resources_with_year: @casts_with_year
             - if @person.staff?

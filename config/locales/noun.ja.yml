@@ -28,6 +28,7 @@ ja:
     category: カテゴリ
     channel_list: チャンネル一覧
     channel: チャンネル
+    channels: チャンネル
     character_image: キャラクター画像
     character: キャラクター
     characters: キャラクター
@@ -57,18 +58,21 @@ ja:
     following: フォロー中
     friend_comments: 友達の感想
     friends_who_are_watching: 見てる友達
+    google_calendar: Googleカレンダー
     home: ホーム
     information: 基本情報
     japanese: 日本語
     joined_works: 参加作品
     language: 言語
     last: Last
+    menu: メニュー
     more: その他
     music: 音楽
     my_records: 自分の記録
     n_works_watched: "%{count}作品見た"
     next_page: 次のページ
     next_season: 来期のアニメ
+    notification: 通知
     official_site: 公式サイト
     on_hold: 中断してるアニメ
     or: OR
@@ -121,6 +125,10 @@ ja:
     spring: 春
     staff: スタッフ
     staffs: スタッフ
+    start_to_broadcast_movie_date: 公開日
+    start_to_broadcast_tv_date: 放送開始日
+    start_to_publish_date: 公開日
+    start_to_sell_date: 発売開始日
     state: 状態
     state_change: 状態変更
     stats: 統計

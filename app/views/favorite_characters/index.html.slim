@@ -7,9 +7,9 @@
 = render "users/low_profile_header", user: @user
 = render "users/favorite_nav", user: @user
 
-.p-application__content.mb-2
-  .row.my-1
-    .c-card.col-6.offset-3.py-zp5
+.p-application__content.mb-4
+  .row.justify-content-center.my-3
+    .c-card.col-6.py-2
       = render "favorite_characters/character_list", favorite_characters: @favorite_characters
 
 = render "application/components/footer"

@@ -39,6 +39,8 @@
 #  manual_episodes_count :integer
 #  no_episodes           :boolean          default(FALSE), not null
 #  reviews_count         :integer          default(0), not null
+#  started_on            :date
+#  ended_on              :date
 #
 # Indexes
 #
@@ -63,6 +65,7 @@ class Work < ApplicationRecord
     official_site_url_en wikipedia_url wikipedia_url_en twitter_username
     twitter_hashtag number_format_id synopsis synopsis_en synopsis_source
     synopsis_source_en mal_anime_id season_year season_name manual_episodes_count
+    started_on ended_on
   ).freeze
 
   enumerize :media, in: { tv: 1, ova: 2, movie: 3, web: 4, other: 0 }

@@ -2,14 +2,14 @@
 
 source "https://rubygems.org"
 
-ruby "2.4.1"
+ruby "2.4.2"
 
 git_source(:github) do |repo_name|
   repo_name = "#{repo_name}/#{repo_name}" unless repo_name.include?("/")
   "https://github.com/#{repo_name}.git"
 end
 
-gem "rails", "5.1.2"
+gem "rails", "5.1.4"
 
 gem "aasm"
 gem "action_args"
@@ -19,7 +19,9 @@ gem "acts_as_list"
 gem "amazon-ecs"
 gem "annotate"
 gem "autoprefixer-rails"
-gem "aws-sdk"
+# Use aws-sdk 2.x for Paperclip
+# https://github.com/thoughtbot/paperclip/issues/2484
+gem "aws-sdk", "< 3.0"
 gem "bootsnap", require: false
 gem "bootstrap"
 gem "bourbon"
@@ -31,6 +33,7 @@ gem "dalli"
 gem "delayed_job"
 gem "delayed_job_active_record"
 gem "devise"
+gem "discord-notifier"
 gem "doorkeeper"
 gem "draper"
 gem "email_validator"
@@ -92,6 +95,8 @@ gem "webpacker"
 group :development, :test do
   gem "awesome_print"
   gem "dmmyix"
+  # Fix version until releasing https://github.com/pry/pry/issues/1660
+  gem "pry", "0.10.4"
   gem "pry-alias"
   gem "pry-byebug"
   gem "pry-coolline"
