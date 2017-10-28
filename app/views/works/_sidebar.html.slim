@@ -58,7 +58,7 @@ dl
     dt.small = t "activerecord.attributes.work.twitter_hashtag"
     dd = work.decorate.twitter_hashtag_link
 
-- program_details = work.program_details.published.in_video_service
+- program_details = work.program_details.includes(:channel).published.in_video_service
 - if program_details.present?
   h2.h4.font-weight-bold.mt-4.mb-3
     = icon "video-camera", class: "mr-1"

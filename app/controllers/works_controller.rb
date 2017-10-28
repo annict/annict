@@ -106,17 +106,22 @@ class WorksController < ApplicationController
 
   def show
     @work = Work.published.find(params[:id])
-    @episodes = @work.episodes.published.order(:sort_number)
     @casts = @work.
       casts.
+      includes(:character, :person).
       published.
       order(:sort_number)
     @staffs = @work.
       staffs.
+      includes(:resource).
       published.
       order(:sort_number)
     @series_list = @work.series_list.published.where("series_works_count > ?", 1)
-    @reviews = @work.reviews.published.order(created_at: :desc)
+    @reviews = @work.
+      reviews.
+      includes(:user).
+      published.
+      order(created_at: :desc)
     @items = @work.items.published.order(created_at: :desc).limit(10)
 
     return unless user_signed_in?
