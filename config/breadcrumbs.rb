@@ -77,11 +77,6 @@ crumb :review_detail do |review|
   parent :user_review_list, user
 end
 
-crumb :work_character_list do |work|
-  link t("noun.characters"), work_characters_path(work)
-  parent :work_detail, work
-end
-
 crumb :work_staff_list do |work|
   link t("noun.staffs"), work_staffs_path(work)
   parent :work_detail, work

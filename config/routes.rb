@@ -363,7 +363,6 @@ Rails.application.routes.draw do
   end
 
   resources :works, only: %i(index show) do
-    resources :characters, only: %i(index)
     resources :items, only: %i(index new destroy), controller: :work_items
     resources :staffs, only: %i(index)
     resources :reviews, only: %i(new create edit update destroy)
