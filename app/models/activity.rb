@@ -27,9 +27,11 @@ class Activity < ApplicationRecord
     create_record
     create_review
     create_multiple_records
-  )
+  ), scope: true
 
   belongs_to :recipient, polymorphic: true
   belongs_to :trackable, polymorphic: true
   belongs_to :user
+
+  scope :records_and_reviews, -> { with_action(:create_record, :create_review, :create_multiple_records) }
 end
