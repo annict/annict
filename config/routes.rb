@@ -42,6 +42,7 @@ Rails.application.routes.draw do
       resources :organizations, only: [:index]
       resources :people, only: [:index]
       resources :receptions, only: %i(create destroy)
+      resources :records, only: %i(create)
       resources :series_list, only: %i(index)
       resources :works, only: %i(index show)
 
@@ -76,7 +77,7 @@ Rails.application.routes.draw do
         post :remove, on: :collection
       end
 
-      resources :records, only: %i(create) do
+      resources :statistics, only: [] do
         get :user_heatmap, on: :collection
       end
 
@@ -363,9 +364,7 @@ Rails.application.routes.draw do
   end
 
   resources :works, only: %i(index show) do
-    resources :characters, only: %i(index)
     resources :items, only: %i(index new destroy), controller: :work_items
-    resources :staffs, only: %i(index)
     resources :reviews, only: %i(new create edit update destroy)
     resources :reviews, only: %i(index), controller: :work_reviews
 

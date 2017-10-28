@@ -2,17 +2,6 @@
 
 class CharactersController < ApplicationController
   before_action :load_i18n, only: %i(show)
-  before_action :load_work, only: %i(index)
-
-  def index
-    @casts = @work.casts.published.order(:sort_number)
-
-    return unless user_signed_in?
-
-    gon.pageObject = render_jb "works/_detail",
-      user: current_user,
-      work: @work
-  end
 
   def show(id)
     @character = Character.published.find(id)

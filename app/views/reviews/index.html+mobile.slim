@@ -14,33 +14,33 @@ h2.h4.font-weight-bold.text-center.my-4
 .c-card.mb-3
   .container
     - if @reviews.present?
-      .px-3
-        - @reviews.each do |review|
-          .row.py-3.u-underline
-            .col-auto
-              = link_to work_path(review.work) do
-                = ann_image_tag review.work.work_image, :attachment, size: "70x93", class: "img-fluid img-thumbnail rounded"
-            .col
-              .small.text-muted.mb-1
-                = link_to review.work.decorate.local_title, work_path(review.work), class: "u-text-body"
-              h2.h4.mb-3
-                - title = t("messages.reviews.view_review_with_words_count", count: review.body.length)
-                = link_to title, review_path(@user.username, review)
-              .small.text-muted
-                = link_to review_path(review.user.username, review), title: local_datetime(review.created_at) do
-                  = local_time_ago_in_words(review.created_at)
-                - if review.modified_at.present?
-                  .ml-2
-                    = icon "pencil"
-                span.ml-2
-                  = "#{review.impressions_count} views"
+      - @reviews.each do |review|
+        .py-3.u-underline
+          = render "reviews/review", review: review, is_spoiler: user_signed_in? && current_user.hide_review?(review)
+          .alert.alert-secondary.mt-3.mb-0
+            .row
+              .col.col-auto.pr-0
+                = link_to work_path(review.work) do
+                  = ann_image_tag review.work.work_image, :attachment, size: "70x93", class: "img-fluid img-thumbnail rounded"
+              .col
+                .h4
+                  = link_to review.work.decorate.local_title, work_path(review.work), class: "u-text-body"
+                c-status-selector :work-id="#{review.work.id}"
 
-      - if @reviews.total_pages > 1
-        .mb-3.text-center
-          = paginate @reviews
     - else
       = render "application/components/empty", text: t("messages._empty.no_reviews")
+
+- if @reviews.present? && @reviews.total_pages > 1
+  .mb-3.text-center
+    = paginate @reviews
 
 = render "application/components/breadcrumb"
 = render "application/components/footer"
 = render "application/components/tabbar"
+
+- content_for :js_templates do
+  = render "application/js_templates/like_button"
+  = render "application/js_templates/rating_state_label"
+  = render "application/js_templates/share_button_facebook"
+  = render "application/js_templates/share_button_twitter"
+  = render "application/js_templates/status_selector"

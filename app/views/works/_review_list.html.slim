@@ -1,28 +1,19 @@
-- if @reviews.present?
+- if reviews.present?
   .px-3
-    - @reviews.first(5).each do |review|
-      .row.py-3.u-underline
-        .col-auto
-          = link_to user_path(review.user.username) do
-            = ann_image_tag review.user.profile, :tombo_avatar, size: "50x50", class: "rounded-circle"
-        .col
-          .mb-2
-            - title = t("messages.reviews.view_review_with_words_count", count: review.body.length)
-            = link_to title, review_path(review.user.username, review)
-          .small
-            span.mr-1
-              | by
-            = link_to review.user.profile.name, user_path(review.user.username), class: "u-text-body"
-          .small
-            = link_to review_path(review.user.username, review), title: local_datetime(review.created_at), class: "u-text-body" do
-              = local_time_ago_in_words(review.created_at)
-  - if @reviews.length > 5
-    .mb-3
-      = link_to work_reviews_path(@work), class: "btn btn-secondary w-100" do
+    - reviews.first(10).each do |review|
+      .py-3.u-underline
+        = render "reviews/review", review: review, is_spoiler: user_signed_in? && current_user.hide_review?(review)
+  - if reviews.length > 10
+    .container.mb-3
+      = link_to work_reviews_path(work), class: "btn btn-secondary w-100" do
         = icon "angle-right"
-        = t "messages.works.view_all_n_reviews", n: @reviews.length
+        = t "messages.works.view_all_n_reviews", n: reviews.length
 - else
   = render "application/components/empty", text: t("messages._empty.no_reviews") do
-    = link_to new_work_review_path(@work), class: "btn btn-primary mt-2" do
+    = link_to new_work_review_path(work), class: "btn btn-primary mt-2" do
       = icon "pencil-square-o", class: "mr-1"
       = t "verb.write_review"
+
+- content_for :js_templates do
+  = render "application/js_templates/like_button"
+  = render "application/js_templates/rating_state_label"

@@ -127,7 +127,7 @@
             .container
               - @reviews.first(5).each do |review|
                 .row.pb-3
-                  .col-auto
+                  .col-auto.px-0
                     = link_to work_path(review.work) do
                       = ann_image_tag review.work.work_image, :attachment, size: "70x93", class: "img-fluid img-thumbnail rounded"
                   .col

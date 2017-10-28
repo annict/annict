@@ -15,7 +15,7 @@ export default {
   mounted() {
     const cal = new CalHeatMap();
     const requestPath = [
-      '/api/internal/records/user_heatmap',
+      '/api/internal/statistics/user_heatmap',
       `?username=${this.username}`,
       '&start_date={{d:start}}',
       '&end_date={{d:end}}'

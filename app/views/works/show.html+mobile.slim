@@ -124,19 +124,14 @@ h2.h4.font-weight-bold.text-center.mt-3.mb-4
     = t "noun.characters"
   .c-card.p-3
     - cache [I18n.locale, @casts] do
-      = render "characters/character_list", casts: @casts.order(:sort_number).first(8)
-      - if @casts.length > 8
-        = link_to t("messages.works.view_all_n_characters", n: @casts.length), work_characters_path(@work), class: "btn btn-secondary w-100"
+      = render "characters/character_list", casts: @casts.order(:sort_number)
 
 .mb-3
   h2.h4.text-center.font-weight-bold.mt-3.mb-4
     = t "noun.staffs"
   .c-card.p-3
     - cache [I18n.locale, @staffs] do
-      = render "staffs/staff_list", staffs: @staffs.order(:sort_number).first(8)
-      - if @staffs.length > 8
-        .mt-3
-          = link_to t("messages.works.view_all_n_staffs", n: @staffs.length), work_staffs_path(@work), class: "btn btn-secondary w-100"
+      = render "staffs/staff_list", staffs: @staffs.order(:sort_number)
 
 .mb-3
   h2.h4.text-center.font-weight-bold.mt-3.mb-4
@@ -153,45 +148,32 @@ h2.h4.font-weight-bold.text-center.mt-3.mb-4
               button.btn.btn-primary.btn-sm.w-100 type="button" disabled=""
                 = channel.name
 
-- unless @work.no_episodes?
-  .mb-3
-    h2.h4.text-center.font-weight-bold.mt-3.mb-4
-      = t "noun.episodes"
-    .c-card.py-3
-      - if @episodes.present?
-        - if user_signed_in?
-          .mb-2.mx-3
-            = link_to t("noun.bulk_tracking"), work_episodes_path(@work, tracking: "on"), class: "small"
-        table.p-episodes-table.table.mb-0
-          tbody
-            - @episodes.published.order(:sort_number).first(5).each do |episode|
-              = render "episodes/episode_row", work: @work, episode: episode
-        - if @episodes.length > 5
-          .mt-3.mx-3
-            = link_to t("messages.works.view_all_n_episodes", n: @episodes.length), work_episodes_path(@work), class: "btn btn-secondary w-100"
-      - else
-        = render "application/components/empty", text: t("messages._empty.no_episodes")
-
 .mb-3
-  h2.h4.text-center.font-weight-bold.mt-3.mb-4
-    = t "noun.reviews"
-  .c-card.container.mt-3
-    - if @reviews.present?
-      .text-right.pt-3
+  .container
+    .row.align-items-center
+      .col
+      .col
+        h2.h4.text-center.font-weight-bold.my-3
+          = t "noun.reviews"
+      .col.text-right
         = link_to new_work_review_path(@work), class: "btn btn-primary btn-sm" do
           = icon "pencil-square-o", class: "mr-1"
           = t "verb.write_review"
-    = render "works/review_list", reviews: @reviews
+  .c-card.mt-3
+    = render "works/review_list", work: @work, reviews: @reviews
 
 .mb-3
-  h2.h4.text-center.font-weight-bold.mt-3.mb-4
-    = t "noun.related_items"
-  .c-card.container.mt-3.pt-3
-    - if @items.present?
-      .text-right.mb-3
+  .container
+    .row.align-items-center
+      .col
+      .col
+        h2.h4.text-center.font-weight-bold.my-3
+          = t "noun.related_items"
+      .col.text-right
         = link_to new_work_item_path(@work), class: "btn btn-primary btn-sm" do
           = icon "plus", class: "mr-1"
           = t "verb.regist_item"
+  .c-card.container.mt-3.pt-3
     = render "works/item_list", work: @work, items: @items
 
 - if @series_list.present?
