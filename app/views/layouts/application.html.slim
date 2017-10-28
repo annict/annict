@@ -4,14 +4,14 @@ html lang="#{I18n.locale}"
     = render "application/head"
     = render "application/adsense"
   body class="#{body_classes} #{user_signed_in? ? 'is-user' : 'is-guest'}"
+    = include_gon
+
     .p-application.d-flex.flex-column
       c-flash
       = yield
       - unless user_signed_in?
         = render "application/components/sign_up_modal", user: @new_user
       = render "application/analytics"
-
-    = include_gon
 
     = render "application/js_templates/adsense"
     = render "application/js_templates/flash"
