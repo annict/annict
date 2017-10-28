@@ -2,9 +2,6 @@
   = active_link_to work_path(work), class: "c-subnav__link", class_active: "c-subnav__link--active", active: params[:controller] == "works" && params[:action].in?(%w(show)) do
     .c-subnav__item
       = t "noun.detail"
-  = active_link_to work_staffs_path(work), class: "c-subnav__link", class_active: "c-subnav__link--active", active: params[:controller] == "staffs" && params[:action].in?(%w(index))
-    .c-subnav__item
-      = t "noun.staffs"
   - unless work.no_episodes?
     = active_link_to work_episodes_path(work), class: "c-subnav__link", class_active: "c-subnav__link--active", active: params[:controller].in?(%w(episodes episode_items)) && params[:action].in?(%w(index show new)) do
       .c-subnav__item
