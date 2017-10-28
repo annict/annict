@@ -18,6 +18,15 @@ class ReviewsController < ApplicationController
       published.
       order(created_at: :desc).
       page(page)
+
+    return unless user_signed_in?
+
+    @works = Work.where(id: @reviews.pluck(:work_id))
+
+    gon.pageObject = render_jb "works/_list",
+      user: current_user,
+      works: @works,
+      with_friends: true
   end
 
   def show

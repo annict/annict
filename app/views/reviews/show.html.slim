@@ -52,11 +52,11 @@
               = @work.work_image.decorate.asin_or_copyright_text
         h2.font-weight-bold.mb-3
           = link_to @work.decorate.local_title, work_path(@work), class: "u-text-body"
-        .mb-2
+        c-status-selector :work-id="#{@work.id}"
+        .mb-3
           = link_to work_path(@work), class: "btn btn-primary w-100" do
             = icon "angle-right"
             = t "verb.view_work_detail"
-        c-status-selector :work-id="#{@work.id}"
         .mt-3.text-center
           = render "application/components/adsense", slot: ENV["GOOGLE_AD_200x200_5"], size: "200x200"
 

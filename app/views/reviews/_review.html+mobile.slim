@@ -1,5 +1,5 @@
 .row
-  .col-auto.pl-3
+  .col-auto.pl-3.pr-0
     = link_to user_path(review.user.username) do
       = ann_image_tag review.user.profile, :tombo_avatar, size: "50x50", class: "rounded-circle"
   .col
@@ -52,7 +52,7 @@ c-comment-guard inline-template="" :init-is-spoiler="#{is_spoiler == true}"
                 = t "noun.overall"
               td
                 c-rating-state-label :init-rating-state=="'#{review.rating_overall_state}'" v-show="!isSpoiler"
-    .c-body @click="remove"
+    .c-body.mb-3 @click="remove"
       c-body inline-template=""
         .c-body__content
           = review.body
@@ -62,10 +62,10 @@ c-comment-guard inline-template="" :init-is-spoiler="#{is_spoiler == true}"
     .text-right
       c-share-button-twitter.mr-2 text="#{t("head.title.reviews.show", profile_name: review.user.profile.name, username: review.user.username, work_title: review.work.decorate.local_title)}" url="#{local_url}#{review_path(review.user.username, review)}" hashtags="#{review.work.twitter_hashtag.presence || ''}"
       c-share-button-facebook.mr-2 url="#{local_url}#{review_path(review.user.username, review)}"
-      c-like-button resource-name="Review" :init-resource-id="#{review.id}" :init-likes-count="#{review.likes_count}" :init-is-liked="#{user_signed_in? && current_user.like?(review)}" :is-signed-in="#{user_signed_in?}"
+      c-like-button.ml-2 resource-name="Review" :init-resource-id="#{review.id}" :init-likes-count="#{review.likes_count}" :init-is-liked="#{user_signed_in? && current_user.like?(review)}" :is-signed-in="#{user_signed_in?}"
 
 - if policy(review).update?
-  .small.text-right
+  .small.text-right.mt-2
     = link_to edit_work_review_path(review.work, review), class: "mr-2" do
       = icon "edit", class: "mr-1"
       = t "noun.edit"

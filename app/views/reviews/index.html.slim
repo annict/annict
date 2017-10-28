@@ -12,33 +12,35 @@
 .p-application__content
   .container.py-3.mb-3
     = render "application/components/breadcrumb"
-    .c-card.px-3
+    .c-card.container
       - if @reviews.present?
-        .container
-          - @reviews.each do |review|
-            .row.py-3.u-underline
-              .col-auto
+        - @reviews.each do |review|
+          .row.py-3.u-underline
+            .col-10.pr-0
+              = render "reviews/review", review: review, is_spoiler: user_signed_in? && current_user.hide_review?(review)
+            .col-2
+              .mb-2
                 = link_to work_path(review.work) do
-                  = ann_image_tag review.work.work_image, :attachment, size: "70x93", class: "img-fluid img-thumbnail rounded"
-              .col
-                .small.text-muted.mb-1
-                  = link_to review.work.decorate.local_title, work_path(review.work), class: "u-text-body"
-                h2.h4.mb-3
-                  - title = t("messages.reviews.view_review_with_words_count", count: review.body.length)
-                  = link_to title, review_path(@user.username, review)
-                .small.text-muted
-                  = link_to review_path(review.user.username, review), title: local_datetime(review.created_at) do
-                    = local_time_ago_in_words(review.created_at)
-                  - if review.modified_at.present?
-                    .ml-2
-                      = icon "pencil"
-                  span.ml-2
-                    = "#{review.impressions_count} views"
+                  = ann_image_tag review.work.work_image, :attachment, size: "200x266", class: "img-fluid img-thumbnail rounded"
+                - if review.work.work_image.present?
+                  .u-very-small.text-right
+                    = review.work.work_image.decorate.asin_or_copyright_text
+              h2.h4.font-weight-bold.mb-3
+                = link_to review.work.decorate.local_title, work_path(review.work), class: "u-text-body"
+              c-status-selector :work-id="#{review.work.id}"
 
-        - if @reviews.total_pages > 1
-          .mb-3.text-center
-            = paginate @reviews
       - else
         = render "application/components/empty", text: t("messages._empty.no_reviews")
 
+    - if @reviews.present? && @reviews.total_pages > 1
+      .mt-3.text-center
+        = paginate @reviews
+
 = render "application/components/footer"
+
+- content_for :js_templates do
+  = render "application/js_templates/like_button"
+  = render "application/js_templates/rating_state_label"
+  = render "application/js_templates/share_button_facebook"
+  = render "application/js_templates/share_button_twitter"
+  = render "application/js_templates/status_selector"
