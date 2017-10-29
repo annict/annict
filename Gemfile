@@ -108,9 +108,8 @@ end
 
 group :development do
   gem "active_record_query_trace"
-  # Wating to be fixed: https://github.com/charliesome/better_errors/issues/341
-  # gem "better_errors"
-  # gem "binding_of_caller" # better_errorsで使用
+  gem "better_errors"
+  gem "binding_of_caller" # Using better_errors
   gem "bullet"
   gem "derailed_benchmarks"
   gem "graphiql-rails"
