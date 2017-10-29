@@ -150,7 +150,7 @@ ja:
         sign_up_with_oauth: "%{provider_name}で始める"
     options:
       prevent_spoiler_of_episode_you_have_not_watched: 未記録エピソードのネタバレを防ぐ
-      prevent_spoiler_of_episode_you_have_not_watched_detail: 見てる、見たい、または中断したアニメの中で、記録していないエピソードに投稿された他の利用者からの感想を表示しないようにします。
+      prevent_spoiler_of_episode_you_have_not_watched_detail: 見てる、見たい、または一時中断したアニメの中で、記録していないエピソードに投稿された他の利用者からの感想を表示しないようにします。
     organization_fans:
       no_users: ファンはいません
     passwords:

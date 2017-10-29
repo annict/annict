@@ -40,7 +40,7 @@ ja:
     delete: 削除
     detail: 詳細
     development_members: 開発メンバー
-    dropped: 中止したアニメ
+    dropped: 視聴中止したアニメ
     edit: 編集
     english: 英語
     episode_number: 話数
@@ -74,7 +74,7 @@ ja:
     next_season: 来期のアニメ
     notification: 通知
     official_site: 公式サイト
-    on_hold: 中断してるアニメ
+    on_hold: 一時中断してるアニメ
     or: OR
     organization: 団体
     organizations: 団体

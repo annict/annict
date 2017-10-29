@@ -11,8 +11,8 @@ ja:
         wanna_watch: 見たい
         watching: 見てる
         watched: 見た
-        on_hold: 中断
-        stop_watching: 中止
+        on_hold: 一時中断
+        stop_watching: 視聴中止
     person:
       blood_type:
         a: A型
@@ -53,14 +53,14 @@ ja:
         wanna_watch: 見たい
         watching: 見てる
         watched: 見た
-        on_hold: 中断
-        stop_watching: 中止
+        on_hold: 一時中断
+        stop_watching: 視聴中止
       kind_action:
         wanna_watch: 見たい
         watching: 見てる
         watched: 見た
-        on_hold: 中断した
-        stop_watching: 中止した
+        on_hold: 一時中断した
+        stop_watching: 視聴中止した
     program_detail:
       locale:
         en: 英語
