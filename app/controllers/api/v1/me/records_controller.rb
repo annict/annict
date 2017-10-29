@@ -19,7 +19,9 @@ module Api
 
           service = NewRecordService.new(current_user, record)
           service.ga_client = ga_client
+          service.keen_client = keen_client
           service.app = doorkeeper_token.application
+          service.via = "rest_api"
 
           begin
             service.save!

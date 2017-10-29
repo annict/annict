@@ -285,6 +285,9 @@ GEM
       activerecord
       kaminari-core (= 1.1.0)
     kaminari-core (1.1.0)
+    keen (1.1.1)
+      addressable (~> 2.5)
+      multi_json (~> 1.12)
     koala (3.0.0)
       addressable
       faraday
@@ -645,6 +648,7 @@ DEPENDENCIES
   jb
   jquery-rails
   kaminari
+  keen
   koala
   letter_opener_web
   listen

@@ -18,7 +18,10 @@ module Api
         ga_client.page_category = page_category
 
         service = NewRecordService.new(current_user, record)
+        service.page_category = page_category
         service.ga_client = ga_client
+        service.keen_client = keen_client
+        service.via = "internal_api"
 
         begin
           service.save!

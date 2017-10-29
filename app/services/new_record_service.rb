@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class NewRecordService
-  attr_writer :app, :ga_client
+  attr_writer :app, :via, :ga_client, :keen_client, :page_category
   attr_reader :record
 
   def initialize(user, record)
@@ -22,6 +22,7 @@ class NewRecordService
       finish_tips
       update_latest_status
       create_ga_event
+      create_keen_event
     end
 
     true
@@ -47,6 +48,24 @@ class NewRecordService
     return if @ga_client.blank?
     data_source = @app.present? ? :api : :web
     @ga_client.events.create(:records, :create, ds: data_source)
+  end
+
+  def create_keen_event
+    return if @keen_client.blank?
+
+    @keen_client.publish(
+      "create_records",
+      user: @user,
+      page_category: @page_category,
+      work_id: @record.work_id,
+      episode_id: @record.episode_id,
+      has_comment: @record.comment.present?,
+      shared_twitter: @record.shared_twitter?,
+      shared_facebook: @record.shared_facebook?,
+      is_first_record: @user.records.initial?(@record),
+      via: @via,
+      oauth_application_id: @app&.id
+    )
   end
 
   def update_record_comments_count
