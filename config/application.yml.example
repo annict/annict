@@ -19,6 +19,7 @@ local_default: &local_default
   ANNICT_URL: "http://annict.dev:3000"
 
   GOOGLE_AD_CLIENT: ""
+  KEEN_PROJECT_ID: ""
 
 development:
   <<: *local_default
