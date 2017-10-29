@@ -35,8 +35,10 @@ Mutations::CreateReview = GraphQL::Relay::Mutation.define do
     }
 
     service = NewReviewService.new(ctx[:viewer], review, ctx[:viewer].setting)
-    service.ga_client = ctx[:ga_client]
+    service.via = "graphql_api"
     service.app = ctx[:doorkeeper_token].application
+    service.ga_client = ctx[:ga_client]
+    service.keen_client = ctx[:keen_client]
 
     service.save!
 

@@ -54,6 +54,9 @@ class ReviewsController < ApplicationController
 
     service = NewReviewService.new(current_user, @review, current_user.setting)
     service.ga_client = ga_client
+    service.keen_client = keen_client
+    service.page_category = params[:page_category]
+    service.via = "web"
 
     begin
       service.save!

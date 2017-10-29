@@ -29,6 +29,10 @@ module Gonable
       annictUrl: locale == :ja ? ENV.fetch("ANNICT_JP_URL") : ENV.fetch("ANNICT_URL"),
       facebook: {
         appId: ENV.fetch("FACEBOOK_APP_ID")
+      },
+      keen: {
+        projectId: ENV.fetch("KEEN_PROJECT_ID"),
+        writeKey: ENV.fetch("KEEN_WRITE_KEY")
       }
     }
 

@@ -28,6 +28,8 @@ module Api
           service = NewReviewService.new(current_user, review, current_user.setting)
           service.ga_client = ga_client
           service.app = doorkeeper_token.application
+          service.keen_client = keen_client
+          service.via = "rest_api"
 
           begin
             service.save!

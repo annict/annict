@@ -14,9 +14,17 @@ class RegistrationsController < Devise::RegistrationsController
 
     return render(:new) unless @user.valid?
 
-    @user.save
-    ga_client.user = @user
-    ga_client.events.create(:users, :create)
+    ActiveRecord::Base.transaction do
+      @user.save!
+      ga_client.user = @user
+      ga_client.events.create(:users, :create)
+      keen_client.publish(
+        "create_users",
+        user: @user,
+        via: "web",
+        via_oauth: false
+      )
+    end
 
     bypass_sign_in(@user)
 
