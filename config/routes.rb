@@ -352,6 +352,10 @@ Rails.application.routes.draw do
     resources :favorite_people, only: %i(index)
     resources :tags, only: %i(show), controller: :user_work_tags, as: :user_work_tag
 
+    resource :library, only: [] do
+      post :switch, on: :collection
+    end
+
     resources :records, only: %i(create show edit update destroy) do
       resources :comments, only: %i(create)
     end
