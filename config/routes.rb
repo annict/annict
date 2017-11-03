@@ -129,7 +129,7 @@ Rails.application.routes.draw do
 
   scope module: :chat do
     constraints(subdomain: "chat") do
-      root "home#index"
+      root "home#index", as: :chat_root
     end
   end
 
