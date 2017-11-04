@@ -54,13 +54,4 @@ class ApplicationController < ActionController::Base
   def load_episode
     @episode = @work.episodes.published.find(params[:episode_id])
   end
-
-  def display_works_count
-    return 15 unless user_signed_in?
-    case current_user.setting.display_option_work_list
-    when "list" then 15
-    else
-      50
-    end
-  end
 end

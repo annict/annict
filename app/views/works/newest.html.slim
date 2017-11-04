@@ -3,33 +3,40 @@
 - keywords = meta_keywords
 - set_meta_tags(title: title, description: description, keywords: keywords, og: { description: description }, twitter: { description: description }, reverse: true, prefix: false)
 - set_page_category "works_newest"
+- breadcrumb :newest_works
 
 = render "application/components/navbar"
 
 .p-application__content
-  - if user_signed_in?
-    .row.align-items-center.py-4
+  .my-3 class="#{@display_option == "list_detailed" ? 'container' : 'px-3'}"
+    = render "application/components/breadcrumb"
+  .mb-3.text-center
+    = render "application/components/adsense", slot: ENV["GOOGLE_AD_728x90_8"], size: "728x90"
+
+  h1.text-center.mb-0.mt-3
+    = title
+
+  .mb-3 class="#{@display_option == "list_detailed" ? 'container pr-0' : 'px-3'}"
+    .row.align-items-center
       .col
       .col
       .col.text-right
-        .px-3
-          = render "display_option_buttons"
+        = render "display_option_buttons", switch_path: :newest_works_path, display_option: @display_option
 
-  .mb-4
-    - if user_signed_in?
-      - if current_user.setting.display_option_work_list == "list"
-        .container
-          = render "works/list", works: @works
-      - else
-        = render "works/#{current_user.setting.display_option_work_list}", works: @works
-    - else
-      .container.mt-3
-        = render "works/list", works: @works
-    .mt-3.text-center
+  - if @display_option == "list_detailed"
+    .container
+      = render "works/display_options/list_detailed", works: @works
+  - else
+    = render "works/display_options/#{@display_option}", works: @works
+
+  - if @works.present? && @works.total_pages > 1
+    .mb-3.text-center
       = paginate @works
 
-= render "application/components/footer"
+  .mb-3.text-center
+    = render "application/components/adsense", slot: ENV["GOOGLE_AD_728x90_19"], size: "728x90"
 
+= render "application/components/footer"
 
 - content_for :js_templates do
   = render "application/js_templates/omitted_synopsis"

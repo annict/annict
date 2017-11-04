@@ -1,8 +1,38 @@
 .c-grid-work {
+  &--default {
+    .c-hover-image {
+      &__over {
+        height: 42px;
+      }
+    }
+  }
+
   &--small {
     .col-1 {
       flex: 0 0 10%;
       max-width: 10%;
+    }
+
+    .c-hover-image {
+      &__over {
+        height: 37px;
+      }
+    }
+  }
+
+  &__work-title {
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+    display: -webkit-box;
+    overflow: hidden;
+  }
+
+  .c-hover-image {
+    position: relative;
+
+    &__over {
+      bottom: 0;
+      position: absolute;
     }
   }
 }

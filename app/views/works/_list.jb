@@ -1,19 +1,15 @@
 # frozen_string_literal: true
 
 kinds = Work.status_kinds(@works, @user)
-users_data = Work.watching_friends_data(@works, @user)
+
+if @display_option == "list_detailed"
+  users_data = Work.watching_friends_data(@works, @user)
+end
 
 json = {}
 
 json[:works] = Rails.cache.fetch([@user, *@works.pluck(:id).uniq.sort]) do
   @works.map do |work|
-    users = users_data.
-      select { |ud| ud[:work_id] == work.id }.
-      first[:users_data].
-      sort_by { |ud| ud[:latest_status_id] }.
-      reverse.
-      map { |ud| ud[:user] }
-
     data = {
       id: work.id,
       statusSelector: {
@@ -21,7 +17,13 @@ json[:works] = Rails.cache.fetch([@user, *@works.pluck(:id).uniq.sort]) do
       }
     }
 
-    if @with_friends
+    if @display_option == "list_detailed"
+      users = users_data.
+        select { |ud| ud[:work_id] == work.id }.
+        first[:users_data].
+        sort_by { |ud| ud[:latest_status_id] }.
+        reverse.
+        map { |ud| ud[:user] }
       data[:users] = render("application/components/work_friends", users: users)
     end
 
