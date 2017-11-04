@@ -1,7 +1,7 @@
 .btn-group
-  = active_link_to switch_works_path(to: :list), class: "btn", class_active: "btn-primary", class_inactive: "btn-secondary", active: (user_signed_in? ? current_user.setting.display_option_work_list.list? : false ), data: { method: :post } do
+  = active_link_to send(switch_path, display: :list_detailed, page: params[:page]), class: "btn", class_active: "btn-primary", class_inactive: "btn-secondary", active: (display_option == "list_detailed") do
     = icon "th-list", class: "mr-0"
-  = active_link_to switch_works_path(to: :grid), class: "btn", class_active: "btn-primary", class_inactive: "btn-secondary", active: (user_signed_in? ? current_user.setting.display_option_work_list.grid? : false ), data: { method: :post } do
+  = active_link_to send(switch_path, display: :grid, page: params[:page]), class: "btn", class_active: "btn-primary", class_inactive: "btn-secondary", active: (display_option == "grid") do
     = icon "th-large", class: "mr-0"
-  = active_link_to switch_works_path(to: :grid_small), class: "btn", class_active: "btn-primary", class_inactive: "btn-secondary", active: (user_signed_in? ? current_user.setting.display_option_work_list.grid_small? : false ), data: { method: :post } do
+  = active_link_to send(switch_path, display: :grid_small, page: params[:page]), class: "btn", class_active: "btn-primary", class_inactive: "btn-secondary", active: (display_option == "grid_small") do
     = icon "th", class: "mr-0"

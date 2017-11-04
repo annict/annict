@@ -34,6 +34,7 @@ class WorksController < ApplicationController
   include ApplicationHelper
 
   before_action :authenticate_user!, only: %i(switch)
+  before_action :set_display_option, only: %i(popular newest season)
 
   def index
     redirect_to season_works_path(ENV["ANNICT_CURRENT_SEASON"])
@@ -46,17 +47,8 @@ class WorksController < ApplicationController
       order(watchers_count: :desc, id: :desc).
       page(page).
       per(display_works_count)
-    @pvs_data = Work.pvs_data(@works)
-    @casts_data = Work.casts_data(@works)
-    @staffs_data = Work.staffs_data(@works, major: true)
-    @program_details_data = Work.program_details_data(@works, only_video_service: true)
 
-    return unless user_signed_in?
-
-    gon.pageObject = render_jb "works/_list",
-      user: current_user,
-      works: @works,
-      with_friends: true
+    render_list
   end
 
   def newest(page: nil)
@@ -66,17 +58,8 @@ class WorksController < ApplicationController
       order(id: :desc).
       page(page).
       per(display_works_count)
-    @pvs_data = Work.pvs_data(@works)
-    @casts_data = Work.casts_data(@works)
-    @staffs_data = Work.staffs_data(@works, major: true)
-    @program_details_data = Work.program_details_data(@works, only_video_service: true)
 
-    return unless user_signed_in?
-
-    gon.pageObject = render_jb "works/_list",
-      user: current_user,
-      works: @works,
-      with_friends: true
+    render_list
   end
 
   def season(slug, page: nil)
@@ -87,21 +70,13 @@ class WorksController < ApplicationController
       order(watchers_count: :desc, id: :desc).
       page(page).
       per(display_works_count)
-    @pvs_data = Work.pvs_data(@works)
-    @casts_data = Work.casts_data(@works)
-    @staffs_data = Work.staffs_data(@works, major: true)
-    @program_details_data = Work.program_details_data(@works, only_video_service: true)
+
     @seasons = Season.list(sort: :desc, include_all: true)
     @season = Season.find_by_slug(slug)
     @prev_season = @season.sibling_season(:prev)
     @next_season = @season.sibling_season(:next)
 
-    return unless user_signed_in?
-
-    gon.pageObject = render_jb "works/_list",
-      user: current_user,
-      works: @works,
-      with_friends: true
+    render_list
   end
 
   def show
@@ -131,12 +106,45 @@ class WorksController < ApplicationController
       work: @work
   end
 
-  def switch(to)
-    redirect = redirect_back fallback_location: works_path
+  private
 
-    return redirect unless to.in?(Setting.display_option_work_list.values)
+  def set_display_option
+    display_options = Setting.display_option_work_list.values
+    display = params[:display].in?(display_options) ? params[:display] : nil
 
-    current_user.setting.update_column(:display_option_work_list, to)
-    redirect
+    @display_option = if user_signed_in?
+      display.presence || current_user.setting.display_option_work_list
+    else
+      display.presence || "list_detailed"
+    end
+  end
+
+  def display_works_count
+    case @display_option
+    when "list_detailed" then 15
+    else
+      120 # grid: 6 rows, grid_small: 10 rows
+    end
+  end
+
+  def render_list
+    if @display_option == "list_detailed"
+      @pvs_data = Work.pvs_data(@works)
+      @casts_data = Work.casts_data(@works)
+      @staffs_data = Work.staffs_data(@works, major: true)
+      @program_details_data = Work.program_details_data(@works, only_video_service: true)
+    end
+
+    return unless user_signed_in?
+
+    if @display_option.in?(Setting.display_option_work_list.values) &&
+        current_user.setting.display_option_work_list != @display_option
+      current_user.setting.update_column(:display_option_work_list, @display_option)
+    end
+
+    gon.pageObject = render_jb "works/_list",
+      user: current_user,
+      works: @works,
+      display_option: @display_option
   end
 end

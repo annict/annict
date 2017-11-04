@@ -11,8 +11,8 @@
 #  share_record_to_twitter       :boolean          default(FALSE)
 #  share_record_to_facebook      :boolean          default(FALSE)
 #  programs_sort_type            :string           default(NULL), not null
-#  display_option_work_list      :string           default("list"), not null
-#  display_option_user_work_list :string           default("list"), not null
+#  display_option_work_list      :string           default(NULL), not null
+#  display_option_user_work_list :string           default(NULL), not null
 #  records_sort_type             :string           default("created_at_desc"), not null
 #  display_option_record_list    :string           default("all_comments"), not null
 #  share_review_to_twitter       :boolean          default(FALSE), not null
@@ -43,12 +43,20 @@ class Setting < ApplicationRecord
     default: :created_at_desc
 
   enumerize :display_option_work_list,
-    in: %i(list grid grid_small),
-    default: :list
+    in: %i(
+      grid
+      grid_small
+      list_detailed
+    ),
+    default: :list_detailed
 
   enumerize :display_option_user_work_list,
-    in: %i(list grid grid_small),
-    default: :list
+    in: %i(
+      grid
+      grid_detailed
+      grid_small
+    ),
+    default: :grid_detailed
 
   enumerize :display_option_record_list,
     in: %i(

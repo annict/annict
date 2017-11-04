@@ -39,6 +39,16 @@ crumb :seasonal_works do |season_slug, season_name|
   parent :root
 end
 
+crumb :popular_works do
+  link t("head.title.works.popular")
+  parent :root
+end
+
+crumb :newest_works do
+  link t("head.title.works.newest")
+  parent :root
+end
+
 crumb :work_detail do |work|
   link work.decorate.local_title, work_path(work)
 

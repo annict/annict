@@ -67,6 +67,7 @@ $ann-line-height-base: 1.5;
 $ann-line-height-sizes: (
   0: 0,
   1: 1,
+  base: $ann-line-height-base,
   xs: $ann-line-height-base / 1.2,
   sm: $ann-line-height-base / 1.1,
 );

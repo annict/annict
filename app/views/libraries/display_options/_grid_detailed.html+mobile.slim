@@ -9,7 +9,7 @@
           = ann_image_tag work.work_image, :attachment, size: "140x140", class: "img-fluid rounded"
       .col-7.pl-0
         = link_to work.decorate.local_title, work_path(work), title: work.decorate.local_title, class: "d-inline-block"
-        - if !user_signed_in? || current_user.id == user.id
+        - if user_signed_in? && current_user.id == user.id
           .mt-2
             = render "application/components/work_action", work_id: work.id, size: "small"
         c-work-tags :work-id="#{work.id}" :init-tags="#{work_tag_names.to_json}" path="/@#{user.username}/tags"

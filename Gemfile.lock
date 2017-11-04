@@ -127,6 +127,7 @@ GEM
     coderay (1.1.2)
     coercible (1.0.0)
       descendants_tracker (~> 0.0.1)
+    color (1.8)
     commonmarker (0.17.4)
       ruby-enum (~> 0.5)
     concurrent-ruby (1.0.5)
@@ -328,6 +329,11 @@ GEM
     mini_mime (0.1.4)
     mini_portile2 (2.3.0)
     minitest (5.10.3)
+    miro (0.4.0)
+      chunky_png
+      cocaine
+      color
+      oily_png
     mjml-rails (2.4.3)
     moji (1.6)
     msgpack (1.1.0)
@@ -345,6 +351,8 @@ GEM
       multi_json (~> 1.3)
       multi_xml (~> 0.5)
       rack (>= 1.2, < 3)
+    oily_png (1.2.1)
+      chunky_png (~> 1.3.7)
     omniauth (1.7.1)
       hashie (>= 3.4.6, < 3.6.0)
       rack (>= 1.6.2, < 3)
@@ -655,6 +663,7 @@ DEPENDENCIES
   lograge
   meta-tags
   mini_magick
+  miro
   mjml-rails
   moji
   nokogiri

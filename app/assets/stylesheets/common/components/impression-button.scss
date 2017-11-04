@@ -1,0 +1,19 @@
+.c-impression-button {
+  line-height: 0;
+
+  &.is-default {
+    height: 38px;
+
+    i {
+      line-height: 38px;
+    }
+  }
+
+  &.is-small {
+    height: 25px;
+
+    i {
+      line-height: 25px;
+    }
+  }
+}
