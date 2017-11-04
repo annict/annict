@@ -34,9 +34,9 @@ class WorkImage < ApplicationRecord
   belongs_to :work
   belongs_to :user
 
-  before_save :set_color_rgb
+  after_save :set_color_rgb
 
-  def attachment_path(convert_type = "master")
+  def attachment_relative_path(convert_type = "master")
     if Rails.env.production?
       "/#{attachment.path(convert_type)}"
     else
@@ -44,8 +44,16 @@ class WorkImage < ApplicationRecord
     end
   end
 
+  def attachment_absolute_path(convert_type = "master")
+    if Rails.env.production?
+      attachment_url(convert_type)
+    else
+      attachment.path(convert_type)
+    end
+  end
+
   def attachment_url(convert_type = "master")
-    "#{ENV.fetch('ANNICT_FILE_STORAGE_URL')}#{attachment_path(convert_type)}"
+    "#{ENV.fetch('ANNICT_FILE_STORAGE_URL')}#{attachment_relative_path(convert_type)}"
   end
 
   def colors
@@ -65,6 +73,8 @@ class WorkImage < ApplicationRecord
   private
 
   def set_color_rgb
-    binding.pry
+    colors = Miro::DominantColors.new(attachment_absolute_path)
+    color_rgb = colors.to_rgb.map { |c| c.join(",") }.first
+    update_column(:color_rgb, color_rgb)
   end
 end
