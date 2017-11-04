@@ -51,8 +51,6 @@ import untrackedEpisodeList from './common/components/untrackedEpisodeList';
 import userHeatmap from './common/components/userHeatmap';
 import usernamePreview from './common/components/usernamePreview';
 import workComment from './common/components/workComment';
-import workDetailButton from './common/components/workDetailButton';
-import workDetailButtonModal from './common/components/workDetailButtonModal';
 import workFriends from './common/components/workFriends';
 import workStatusChart from './common/components/workStatusChart';
 import workTags from './common/components/workTags';
@@ -118,8 +116,6 @@ document.addEventListener('turbolinks:load', event => {
   Vue.component('c-user-heatmap', userHeatmap);
   Vue.component('c-username-preview', usernamePreview);
   Vue.component('c-work-comment', workComment);
-  Vue.component('c-work-detail-button', workDetailButton);
-  Vue.component('c-work-detail-button-modal', workDetailButtonModal);
   Vue.component('c-work-friends', workFriends);
   Vue.component('c-work-status-chart', workStatusChart);
   Vue.component('c-work-tags', workTags);
