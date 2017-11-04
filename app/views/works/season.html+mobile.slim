@@ -7,10 +7,13 @@
 
 = render "application/components/adsense", slot: ENV["GOOGLE_AD_320x100_16"], size: "320x100"
 
+h1.h2.text-center.my-3
+  = title
+
 .px-3
-  .text-center.py-3
+  .text-center.mb-3
     - if @prev_season.present?
-      = link_to season_works_path(slug: @prev_season.slug), class: "mr-3" do
+      = link_to season_works_path(slug: @prev_season.slug, display: params[:display]), class: "mr-3" do
         = icon "angle-left", class: "mr-2"
         = @prev_season.local_name
     .dropdown.d-inline-block
@@ -18,9 +21,9 @@
         = @season.local_name
       .dropdown-menu.pre-scrollable.mr-3
         - @seasons.each do |season|
-          = link_to season.local_name, season_works_path(slug: season.slug), class: "dropdown-item"
+          = link_to season.local_name, season_works_path(slug: season.slug, display: params[:display]), class: "dropdown-item"
     - if @next_season.present?
-      = link_to season_works_path(slug: @next_season.slug), class: "ml-3" do
+      = link_to season_works_path(slug: @next_season.slug, display: params[:display]), class: "ml-3" do
         = @next_season.local_name
         = icon "angle-right", class: "ml-2"
   .row.align-items-center.mb-3
@@ -28,15 +31,11 @@
       c-share-button-twitter.mr-2 text="#{title}" url="#{local_url}#{season_works_path(slug: @season.slug)}"
       c-share-button-facebook url="#{local_url}#{season_works_path(slug: @season.slug)}"
     .col.text-right
-      - if user_signed_in?
-        = render "display_option_buttons"
+      = render "display_option_buttons", switch_path: :season_works_path, display_option: @display_option
 
-.mb-3
-  - if user_signed_in?
-    = render "works/#{current_user.setting.display_option_work_list}", works: @works
-  - else
-    = render "works/list", works: @works
-  .text-center
+= render "works/display_options/#{@display_option}", works: @works
+- if @works.present? && @works.total_pages > 1
+  .mb-3.text-center
     = paginate @works, window: 2
 
 .mb-3

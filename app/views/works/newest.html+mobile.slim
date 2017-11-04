@@ -3,19 +3,25 @@
 - keywords = meta_keywords
 - set_meta_tags(title: title, description: description, keywords: keywords, og: { description: description }, twitter: { description: description }, reverse: true, prefix: false)
 - set_page_category "works_newest"
+- breadcrumb :newest_works
 
-- if user_signed_in?
-  .text-center.my-3
-    = render "display_option_buttons"
+h1.h2.text-center.my-3
+  = title
 
-.mb-4
-  - if user_signed_in?
-    = render "works/#{current_user.setting.display_option_work_list}", works: @works
-  - else
-    = render "works/list", works: @works
-  .text-center
+.px-3
+  .row.align-items-center.mb-3
+    .col.pr-0
+      c-share-button-twitter.mr-2 text="#{title}" url="#{local_url}#{newest_works_path}"
+      c-share-button-facebook url="#{local_url}#{newest_works_path}"
+    .col.text-right
+      = render "display_option_buttons", switch_path: :newest_works_path, display_option: @display_option
+
+= render "works/display_options/#{@display_option}", works: @works
+- if @works.present? && @works.total_pages > 1
+  .mb-3.text-center
     = paginate @works, window: 2
 
+= render "application/components/breadcrumb"
 = render "application/components/footer"
 = render "application/components/tabbar"
 
