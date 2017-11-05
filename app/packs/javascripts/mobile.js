@@ -54,10 +54,12 @@ import youtubeModalPlayer from './common/components/youtubeModalPlayer';
 import resourceSelect from './common/directives/resourceSelect';
 
 document.addEventListener('turbolinks:load', event => {
+  const gon = window.gon;
+
   moment.locale(gon.user.locale);
   Cookies.set('ann_time_zone', moment.tz.guess(), {
-    domain: '.annict.com',
-    secure: true
+    domain: `.${gon.annict.domain}`,
+    secure: gon.rails.env === 'production'
   });
 
   Vue.config.debug = gon.rails.env !== 'production';
