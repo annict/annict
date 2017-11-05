@@ -8,7 +8,7 @@ export default val => {
 
   if (matches) {
     matches.forEach(match => {
-      const url = `<a href="${gon.annictUrl}/${match}">${match}</a>`;
+      const url = `<a href="${gon.annict.url}/${match}">${match}</a>`;
       val = val.replace(match, url);
     });
   }

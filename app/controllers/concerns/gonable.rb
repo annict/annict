@@ -26,7 +26,9 @@ module Gonable
         isSignedIn: user_signed_in?
       },
       I18n: default_i18n_data,
-      annictUrl: locale == :ja ? ENV.fetch("ANNICT_JP_URL") : ENV.fetch("ANNICT_URL"),
+      annict: {
+        url: locale == :ja ? ENV.fetch("ANNICT_JP_URL") : ENV.fetch("ANNICT_URL")
+      },
       facebook: {
         appId: ENV.fetch("FACEBOOK_APP_ID")
       },

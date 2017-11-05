@@ -18,6 +18,6 @@ var _getTag = function(link) {
     case 'url':
       return `<a href='${link.href}'>${link.value}</a>`;
     case 'mention':
-      return `<a href='${gon.annictUrl}/${link.value}'>${link.value}</a>`;
+      return `<a href='${gon.annict.url}/${link.value}'>${link.value}</a>`;
   }
 };
