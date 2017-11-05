@@ -1,4 +1,4 @@
-FactoryGirl.define do
+FactoryBot.define do
   factory :channel do
     association :channel_group
     sequence(:sc_chid)

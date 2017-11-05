@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-FactoryGirl.define do
+FactoryBot.define do
   factory :profile do
     sequence(:name) { |n| "人造人間#{n}号" }
     description "悟空を倒すために生まれました。よろしくお願いします。"

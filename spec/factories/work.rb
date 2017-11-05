@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-FactoryGirl.define do
+FactoryBot.define do
   factory :work do
     sequence(:title) { |n| "#{n}人はプリキュア" }
     sequence(:title_kana) { |n| "#{n}にんはぷりきゅあ" }

@@ -1,4 +1,4 @@
-FactoryGirl.define do
+FactoryBot.define do
   factory :channel_group do
     sequence(:sc_chgid)
     name 'テレビ 関東'

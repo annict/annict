@@ -1,4 +1,4 @@
-FactoryGirl.define do
+FactoryBot.define do
   factory :provider do
     name         'twitter'
     uid          { SecureRandom.hex }

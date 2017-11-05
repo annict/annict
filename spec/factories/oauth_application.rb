@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-FactoryGirl.define do
+FactoryBot.define do
   factory :oauth_application, class: "Doorkeeper::Application" do
     sequence(:name) { |n| "App name #{n}" }
     sequence(:uid) { |n| "uid#{n}" }
