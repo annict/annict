@@ -21,7 +21,7 @@
     "lodash": "4.17.4",
     "marked": "^0.3.6",
     "mjml": "3.3.5",
-    "moment-timezone": "0.5.13",
+    "moment-timezone": "0.5.14",
     "mousetrap": "1.6.1",
     "popper.js": "^1.12.5",
     "select2": "^4.0.3",
