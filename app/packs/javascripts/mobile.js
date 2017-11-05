@@ -60,7 +60,7 @@ document.addEventListener('turbolinks:load', event => {
     secure: true
   });
 
-  Vue.config.debug = true;
+  Vue.config.debug = gon.rails.env !== 'production';
 
   Vue.use(VueLazyload);
 
