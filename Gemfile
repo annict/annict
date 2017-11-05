@@ -97,8 +97,7 @@ gem "webpacker"
 group :development, :test do
   gem "awesome_print"
   gem "dmmyix"
-  # Fix version until releasing https://github.com/pry/pry/issues/1660
-  gem "pry", "0.10.4"
+  gem "pry"
   gem "pry-alias"
   gem "pry-byebug"
   gem "pry-coolline"
@@ -119,9 +118,7 @@ group :development do
   gem "listen" # Rails 5から `rails s` するときに必要になった
   gem "rubocop"
   gem "ruby_identicon"
-  # Disable until to support Sass 3.5 which is used by Bootstrap 4.
-  # https://github.com/brigade/scss-lint/issues/877
-  # gem "scss_lint", require: false
+  gem "scss_lint", require: false
   gem "spring"
   gem "spring-commands-rspec", require: false
   gem "stackprof"
