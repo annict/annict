@@ -827,8 +827,8 @@ ActiveRecord::Schema.define(version: 20171103133759) do
     t.boolean "share_record_to_twitter", default: false
     t.boolean "share_record_to_facebook", default: false
     t.string "programs_sort_type", default: "", null: false
-    t.string "display_option_work_list", default: "list", null: false
-    t.string "display_option_user_work_list", default: "detailed_grid", null: false
+    t.string "display_option_work_list", default: "list_detailed", null: false
+    t.string "display_option_user_work_list", default: "grid_detailed", null: false
     t.string "records_sort_type", default: "created_at_desc", null: false
     t.string "display_option_record_list", default: "all_comments", null: false
     t.boolean "share_review_to_twitter", default: false, null: false
@@ -1021,7 +1021,7 @@ ActiveRecord::Schema.define(version: 20171103133759) do
     t.string "asin", default: "", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.string "main_color_hex", default: "ffffff", null: false
+    t.string "color_rgb", default: "255,255,255", null: false
     t.index ["user_id"], name: "index_work_images_on_user_id"
     t.index ["work_id"], name: "index_work_images_on_work_id"
   end
