@@ -73,13 +73,13 @@ GEM
     autoprefixer-rails (7.1.6)
       execjs
     awesome_print (1.8.0)
-    aws-sdk (2.10.78)
-      aws-sdk-resources (= 2.10.78)
-    aws-sdk-core (2.10.78)
+    aws-sdk (2.10.79)
+      aws-sdk-resources (= 2.10.79)
+    aws-sdk-core (2.10.79)
       aws-sigv4 (~> 1.0)
       jmespath (~> 1.0)
-    aws-sdk-resources (2.10.78)
-      aws-sdk-core (= 2.10.78)
+    aws-sdk-resources (2.10.79)
+      aws-sdk-core (= 2.10.79)
     aws-sigv4 (1.0.2)
     axiom-types (0.1.1)
       descendants_tracker (~> 0.0.4)
@@ -711,6 +711,7 @@ DEPENDENCIES
   validate_url
   virtus
   webpacker
+
 
 RUBY VERSION
    ruby 2.4.2p198
