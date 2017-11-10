@@ -45,7 +45,7 @@ export default {
 
     load() {
       this.isLoading = true;
-      const { activities } = this._pageObject();
+      const { activities } = this._activityData();
 
       if (activities.length > 0) {
         this.hasNext = true;
@@ -81,11 +81,11 @@ export default {
       });
     },
 
-    _pageObject() {
-      if (!gon.pageObject) {
+    _activityData() {
+      if (!gon.activityData) {
         return {};
       }
-      return JSON.parse(gon.pageObject);
+      return JSON.parse(gon.activityData);
     }
   },
 
