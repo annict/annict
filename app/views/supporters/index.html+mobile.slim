@@ -1,0 +1,9 @@
+- title = t "head.title.supporters.index"
+- set_meta_tags(title: title, reverse: true, prefix: false)
+- set_page_category "supporters_index"
+
+.c-card.container.mb-4
+  = render "index_body"
+
+= render "application/components/footer"
+= render "application/components/tabbar"
