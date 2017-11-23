@@ -27,8 +27,9 @@
           = link_to forum_category_path(:site_news) do
             = icon "angle-right", class: "mr-1"
             = t "messages.forum._common.view_all_site_news"
-        .text-center
-          = render "application/components/adsense", slot: ENV["GOOGLE_AD_300x250_2"], size: "300x250"
+        - unless current_user&.supporter?
+          .text-center
+            = render "application/components/adsense", slots: [ENV["GOOGLE_AD_300x250_2"]], size: "300x250"
 
 = render "application/components/footer"
 

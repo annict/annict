@@ -11,8 +11,9 @@
 
 = render "works/header", work: @work
 
-.mb-3
-  = render "application/components/adsense", slot: ENV["GOOGLE_AD_320x100_8"], size: "320x100"
+- unless current_user&.supporter?
+  .mb-3
+    = render "application/components/adsense", slots: [ENV["GOOGLE_AD_320x100_8"]], size: "320x100"
 
 h2.h4.font-weight-bold.text-center.mt-3.mb-4
   = t "noun.information"
@@ -116,8 +117,9 @@ h2.h4.font-weight-bold.text-center.mt-3.mb-4
             | :
           = @work.decorate.local_synopsis_source
 
-.my-3
-  = render "application/components/adsense", slot: ENV["GOOGLE_AD_320x100_1"], size: "320x100"
+- unless current_user&.supporter?
+  .my-3
+    = render "application/components/adsense", slots: [ENV["GOOGLE_AD_320x100_1"]], size: "320x100"
 
 .mb-3
   h2.h4.text-center.font-weight-bold.mt-3.mb-4
@@ -184,8 +186,9 @@ h2.h4.font-weight-bold.text-center.mt-3.mb-4
           = t("noun.series_with_name", series_name: series.decorate.local_name)
         = render "series/work_list", series: series, work: @work
 
-.mb-3
-  = render "application/components/adsense", slot: ENV["GOOGLE_AD_320x100_2"], size: "320x100"
+- unless current_user&.supporter?
+  .mb-3
+    = render "application/components/adsense", slots: [ENV["GOOGLE_AD_320x100_2"]], size: "320x100"
 
 = render "application/components/breadcrumb"
 = render "application/components/footer"

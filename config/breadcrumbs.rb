@@ -9,6 +9,11 @@ crumb :faq_list do
   parent :root
 end
 
+crumb :friends_index do
+  link t("head.title.friends.index")
+  parent :root
+end
+
 crumb :userland_root do
   link "Userland", userland_root_path
   parent :root
@@ -44,8 +49,18 @@ crumb :supporters_index do
   parent :root
 end
 
+crumb :notifications_index do
+  link t("head.title.notifications.index")
+  parent :root
+end
+
 crumb :popular_works do
   link t("head.title.works.popular")
+  parent :root
+end
+
+crumb :programs_index do
+  link t("head.title.programs.index")
   parent :root
 end
 

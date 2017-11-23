@@ -25,7 +25,7 @@ ja:
       favorite_button:
         add_to_favorites: お気に入りに登録
         added_to_favorites: 登録済み
-        hint: "お気に入りに登録すると、この%{resource_type}が関係する新作アニメがAnnictに登録されたとき通知します"
+        hint: "お気に入りに登録すると、この%{resource_type}が関係する新作アニメがAnnictに登録されたとき通知します (通知をオフにすることもできます)"
       reaction_button:
         kind:
           thumbs_up:

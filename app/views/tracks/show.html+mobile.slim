@@ -2,7 +2,8 @@
 - set_meta_tags(title: title, reverse: true, prefix: false)
 - set_page_category "tracks_show"
 
-= render "application/components/adsense", slot: ENV["GOOGLE_AD_320x100_13"], size: "320x100"
+- unless current_user&.supporter?
+  = render "application/components/adsense", slots: [ENV["GOOGLE_AD_320x100_13"]], size: "320x100"
 
 .c-card.px-3.mb-4
   c-untracked-episode-list

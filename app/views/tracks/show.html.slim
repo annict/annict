@@ -5,8 +5,10 @@
 = render "application/components/navbar"
 
 .p-application__content
-  .pt-3.text-center
-    = render "application/components/adsense", slot: ENV["GOOGLE_AD_468x60_1"], size: "468x60"
+  - unless current_user&.supporter?
+    .pt-3.text-center
+      = render "application/components/adsense", slots: [ENV["GOOGLE_AD_468x60_1"]], size: "468x60"
+
   .c-card.container.mt-3.mb-4.u-mw-600
     c-untracked-episode-list
       .c-loading

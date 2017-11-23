@@ -9,8 +9,11 @@
 .p-application__content
   .container.py-3.mb-3
     = render "application/components/breadcrumb"
-    .text-center.mb-3
-      = render "application/components/adsense", slot: ENV["GOOGLE_AD_728x90_24"], size: "728x90"
+
+    - unless current_user&.supporter?
+      .text-center.mb-3
+        = render "application/components/adsense", slots: [ENV["GOOGLE_AD_728x90_24"]], size: "728x90"
+
     .row
       .col
         h1.h2.mb-3

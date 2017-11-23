@@ -1,10 +1,18 @@
 - title = t "head.title.friends.index"
 - set_meta_tags(title: title, reverse: true, prefix: false)
 - set_page_category "friends_index"
+- breadcrumb :friends_index
 
 = render "application/components/navbar"
 
-.p-application__content
+.p-application__content.my-3
+  .container
+    = render "application/components/breadcrumb"
+
+    - unless current_user&.supporter?
+      .text-center
+        = render "application/components/adsense", slots: [ENV["GOOGLE_AD_728x90_26"]], size: "728x90"
+
   h1.h4.text-center.my-4.font-weight-bold
     = t "noun.sns_friends"
 
@@ -17,7 +25,7 @@
   h1.h4.text-center.my-4.font-weight-bold
     = t "noun.other_users"
 
-  .c-card.u-mw-600.mx-auto.px-3.mb-4
+  .c-card.u-mw-600.mx-auto.px-3
     - if @users.present?
       = render "users/user_list", users: @users
     - else
