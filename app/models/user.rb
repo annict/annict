@@ -30,12 +30,14 @@
 #  status_cache_expired_at       :datetime
 #  work_tag_cache_expired_at     :datetime
 #  work_comment_cache_expired_at :datetime
+#  gumroad_subscriber_id         :integer
 #
 # Indexes
 #
-#  users_confirmation_token_key  (confirmation_token) UNIQUE
-#  users_email_key               (email) UNIQUE
-#  users_username_key            (username) UNIQUE
+#  index_users_on_gumroad_subscriber_id  (gumroad_subscriber_id)
+#  users_confirmation_token_key          (confirmation_token) UNIQUE
+#  users_email_key                       (email) UNIQUE
+#  users_username_key                    (username) UNIQUE
 #
 
 class User < ApplicationRecord
@@ -63,6 +65,7 @@ class User < ApplicationRecord
   enumerize :role, in: { user: 0, admin: 1, editor: 2 }, default: :user, scope: true
   enumerize :locale, in: %i(ja en)
 
+  belongs_to :gumroad_subscriber
   has_many :activities, dependent: :destroy
   has_many :channel_works, dependent: :destroy
   has_many :records, class_name: "Checkin", dependent: :destroy

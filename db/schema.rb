@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20171103133759) do
+ActiveRecord::Schema.define(version: 20171121111423) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -426,6 +426,25 @@ ActiveRecord::Schema.define(version: 20171103133759) do
     t.index ["user_id"], name: "index_forum_posts_on_user_id"
   end
 
+  create_table "gumroad_subscribers", force: :cascade do |t|
+    t.string "gumroad_id", null: false
+    t.string "gumroad_product_id", null: false
+    t.string "gumroad_product_name", null: false
+    t.string "gumroad_user_id", null: false
+    t.string "gumroad_user_email", null: false
+    t.string "gumroad_purchase_ids", null: false, array: true
+    t.datetime "gumroad_created_at", null: false
+    t.datetime "gumroad_cancelled_at"
+    t.datetime "gumroad_user_requested_cancellation_at"
+    t.datetime "gumroad_charge_occurrence_count"
+    t.datetime "gumroad_ended_at"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["gumroad_id"], name: "index_gumroad_subscribers_on_gumroad_id", unique: true
+    t.index ["gumroad_product_id"], name: "index_gumroad_subscribers_on_gumroad_product_id"
+    t.index ["gumroad_user_id"], name: "index_gumroad_subscribers_on_gumroad_user_id"
+  end
+
   create_table "impressions", force: :cascade do |t|
     t.string "impressionable_type"
     t.integer "impressionable_id"
@@ -827,8 +846,8 @@ ActiveRecord::Schema.define(version: 20171103133759) do
     t.boolean "share_record_to_twitter", default: false
     t.boolean "share_record_to_facebook", default: false
     t.string "programs_sort_type", default: "", null: false
-    t.string "display_option_work_list", default: "list_detailed", null: false
-    t.string "display_option_user_work_list", default: "grid_detailed", null: false
+    t.string "display_option_work_list", default: "list", null: false
+    t.string "display_option_user_work_list", default: "detailed_grid", null: false
     t.string "records_sort_type", default: "created_at_desc", null: false
     t.string "display_option_record_list", default: "all_comments", null: false
     t.boolean "share_review_to_twitter", default: false, null: false
@@ -985,8 +1004,10 @@ ActiveRecord::Schema.define(version: 20171103133759) do
     t.datetime "status_cache_expired_at"
     t.datetime "work_tag_cache_expired_at"
     t.datetime "work_comment_cache_expired_at"
+    t.integer "gumroad_subscriber_id"
     t.index ["confirmation_token"], name: "users_confirmation_token_key", unique: true
     t.index ["email"], name: "users_email_key", unique: true
+    t.index ["gumroad_subscriber_id"], name: "index_users_on_gumroad_subscriber_id"
     t.index ["username"], name: "users_username_key", unique: true
   end
 
@@ -1214,6 +1235,7 @@ ActiveRecord::Schema.define(version: 20171103133759) do
   add_foreign_key "userland_project_members", "userland_projects"
   add_foreign_key "userland_project_members", "users"
   add_foreign_key "userland_projects", "userland_categories"
+  add_foreign_key "users", "gumroad_subscribers"
   add_foreign_key "work_comments", "users"
   add_foreign_key "work_comments", "works"
   add_foreign_key "work_images", "users"
