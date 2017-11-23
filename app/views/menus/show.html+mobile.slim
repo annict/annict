@@ -108,13 +108,18 @@
             = t "head.title.pages.about"
 
     .row.mt-5
+      / .col-4.text-center
+      /   = link_to supporters_path do
+      /     .h1.mb-1.text-primary
+      /       = icon "diamond"
+      /     .small.u-text-body
+      /       = t "head.title.supporters.index"
       .col-4.text-center
         = link_to destroy_user_session_path, method: "delete" do
           .h1.mb-1.text-primary
             = icon "sign-out"
           .small.u-text-body
             = t "verb.sign_out"
-      .col-4.text-center
       .col-4.text-center
   - else
     .row
