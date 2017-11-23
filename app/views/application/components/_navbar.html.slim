@@ -61,6 +61,7 @@ nav.c-navbar.navbar.navbar-expand-sm class="#{transparent ? 'navbar-dark is-tran
             = link_to t("noun.annict_forum"), forum_root_path, class: "dropdown-item"
             = link_to t("noun.annict_db"), db_root_path, class: "dropdown-item"
             = link_to t("noun.annict_api"), "https://docs.annict.com/ja/", target: "_blank", class: "dropdown-item"
+            / = link_to t("head.title.supporters.index"), annict_url(:supporters_url), class: "dropdown-item"
             = link_to t("head.title.faqs.index"), annict_url(:faqs_url), class: "dropdown-item"
             = link_to t("head.title.pages.about"), annict_url(:about_url), class: "dropdown-item"
             = link_to t("verb.sign_out"), annict_url(:destroy_user_session_url), method: "delete", class: "dropdown-item"

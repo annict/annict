@@ -8,11 +8,12 @@ $ann-bootstrap-badge-colors: (
 );
 
 $ann-badge-colors: (
-  mizuho: $ann-color-mizuho,
-  bad: $ann-color-bad,
   average: $ann-color-average,
+  bad: $ann-color-bad,
   good: $ann-color-good,
-  great: $ann-color-great
+  great: $ann-color-great,
+  mizuho: $ann-color-mizuho,
+  supporter: $ann-color-supporter
 );
 
 

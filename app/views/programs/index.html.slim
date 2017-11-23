@@ -1,19 +1,23 @@
 - title = t "head.title.programs.index"
 - set_meta_tags(title: title, reverse: true, prefix: false)
 - set_page_category "programs_index"
+- breadcrumb :programs_index
 
 = render "application/components/navbar"
 
-.p-application__content.mt-3.mb-4
+.p-application__content.my-3
   .container
+    = render "application/components/breadcrumb"
+
     .row.justify-content-center
       .col-7
         c-program-list
           .c-loading
             .c-loading__core Loading...
       .col-3
-        .text-center
-          = render "application/components/adsense", slot: ENV["GOOGLE_AD_250x250_2"], size: "250x250"
+        - unless current_user&.supporter?
+          .text-center
+            = render "application/components/adsense", slots: [ENV["GOOGLE_AD_250x250_2"]], size: "250x250"
 
 = render "application/components/footer"
 

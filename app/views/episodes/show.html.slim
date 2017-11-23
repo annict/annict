@@ -16,8 +16,11 @@
         = render "works/sidebar", work: @work
       .col-9
         = render "works/subnav", work: @work
-        .text-center.my-3
-          = render "application/components/adsense", slot: ENV["GOOGLE_AD_728x90_9"], size: "728x90"
+
+        - unless current_user&.supporter?
+          .text-center.my-3
+            = render "application/components/adsense", slots: [ENV["GOOGLE_AD_728x90_9"]], size: "728x90"
+
         .c-card.container.py-3.my-3
           = render "episodes/nav", work: @work, episode: @episode
         .row
@@ -57,11 +60,11 @@
               = t "noun.related_items"
             .c-card.container.my-3.py-2
               = render "episodes/item_list", episode: @episode, items: @items
-            .row.mt-4
-              .col
-                = render "application/components/adsense", slot: ENV["GOOGLE_AD_300x250_3"], size: "300x250"
-              .col.pl-0
-                = render "application/components/adsense", slot: ENV["GOOGLE_AD_300x250_4"], size: "300x250"
+
+            - unless current_user&.supporter?
+              .mt-4.text-center
+                = render "application/components/adsense", slots: [ENV["GOOGLE_AD_300x250_3"], ENV["GOOGLE_AD_300x250_4"]], size: "300x250"
+
           .col-3.pl-0
             .mb-4
               .small.font-weight-bold.mb-2.text-center

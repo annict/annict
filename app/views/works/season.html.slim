@@ -10,8 +10,9 @@
 .p-application__content
   .my-3 class="#{@display_option == "list_detailed" ? 'container' : 'px-3'}"
     = render "application/components/breadcrumb"
-  .mb-3.text-center
-    = render "application/components/adsense", slot: ENV["GOOGLE_AD_728x90_5"], size: "728x90"
+  - unless current_user&.supporter?
+    .mb-3.text-center
+      = render "application/components/adsense", slots: [ENV["GOOGLE_AD_728x90_5"]], size: "728x90"
 
   h1.text-center.mb-3
     = title
@@ -49,8 +50,9 @@
     .mb-3.text-center
       = paginate @works
 
-  .mb-3.text-center
-    = render "application/components/adsense", slot: ENV["GOOGLE_AD_728x90_6"], size: "728x90"
+  - unless current_user&.supporter?
+    .mb-3.text-center
+      = render "application/components/adsense", slots: [ENV["GOOGLE_AD_728x90_6"]], size: "728x90"
 
 = render "application/components/footer"
 

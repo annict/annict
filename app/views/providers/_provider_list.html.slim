@@ -1,4 +1,4 @@
-.row.mb-3
+.row.align-items-center.mb-3
   .col
     .px-3
       | Twitter
@@ -14,7 +14,7 @@
         = link_to user_twitter_omniauth_authorize_path(back: providers_path), class: "btn btn-sm u-btn-twitter w-100" do
           = icon "twitter"
           = t "noun.connect"
-.row
+.row.align-items-center
   .col
     .px-3
       | Facebook

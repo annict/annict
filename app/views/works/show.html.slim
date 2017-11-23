@@ -20,8 +20,9 @@
       .col-9
         = render "subnav", work: @work
 
-        .pt-3.text-center
-          = render "application/components/adsense", slot: ENV["GOOGLE_AD_728x90_7"], size: "728x90"
+        - unless current_user&.supporter?
+          .pt-3.text-center
+            = render "application/components/adsense", slots: [ENV["GOOGLE_AD_728x90_7"]], size: "728x90"
 
         - if @work.pvs.published.present?
           h2.h4.text-center.my-4.font-weight-bold
@@ -122,11 +123,9 @@
               .px-3
                 = render "series/work_list", series: series, work: @work
 
-        .row.mt-4
-          .col.text-center
-            = render "application/components/adsense", slot: ENV["GOOGLE_AD_336x280_2"], size: "336x280"
-          .col.text-center
-            = render "application/components/adsense", slot: ENV["GOOGLE_AD_336x280_3"], size: "336x280"
+        - unless current_user&.supporter?
+          .mt-4.text-center
+            = render "application/components/adsense", slots: [ENV["GOOGLE_AD_336x280_2"], ENV["GOOGLE_AD_336x280_3"]], size: "336x280"
 
 = render "application/components/footer"
 

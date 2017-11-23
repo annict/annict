@@ -14,16 +14,19 @@
       .container
         .row.py-3.align-items-center
           .col-7
-            .row
+            .row.align-items-center
               .col.u-flex-grow-0
                 = link_to user_path(@user.username) do
                   = ann_image_tag(@user.profile, :tombo_avatar, size: "80x80", class: "p-profile-header__avatar rounded-circle")
-              .col.pt-2.pl-0
+              .col.col-auto.pl-0
+                / - if @user.supporter? && !@user.setting.hide_supporter_label?
+                /   .badge.u-badge-supporter.mb-1
+                /     = t "noun.supporter"
                 h1
                   = link_to user_path(@user.username) do
                     .font-weight-bold
                       = @user.profile.name
-                    .u-very-small.mt-2
+                    .u-very-small.mt-1
                       = "@#{@user.username}"
           .col-5
             .d-flex.justify-content-end.align-items-center
@@ -39,8 +42,9 @@
                 c-follow-button username="#{@user.username}" :init-is-following="false" :is-signed-in="false"
 
   .p-users-show__main.container.pt-3
-    .mb-3.text-center
-      = render "application/components/adsense", slot: ENV["GOOGLE_AD_728x90_4"], size: "728x90"
+    - unless current_user&.supporter?
+      .mb-3.text-center
+        = render "application/components/adsense", slots: [ENV["GOOGLE_AD_728x90_4"]], size: "728x90"
     .row
       .col-7
         c-activities username="#{@user.username}"
@@ -226,8 +230,9 @@
             = t "noun.your_statistics"
           c-user-heatmap :username='"#{@user.username}"'
 
-        .mb-4
-          = render "application/components/adsense", slot: ENV["GOOGLE_AD_336x280_1"], size: "336x280"
+        - unless current_user&.supporter?
+          .mb-4
+            = render "application/components/adsense", slots: [ENV["GOOGLE_AD_336x280_1"]], size: "336x280"
 
 = render "application/components/footer"
 

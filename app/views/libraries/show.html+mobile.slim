@@ -18,7 +18,8 @@
           .small
             = t("enumerize.status.kind.#{status_kind}").truncate(8)
 
-= render "application/components/adsense", slot: ENV["GOOGLE_AD_320x100_15"], size: "320x100"
+- unless current_user&.supporter?
+  = render "application/components/adsense", slots: [ENV["GOOGLE_AD_320x100_15"]], size: "320x100"
 
 - if @seasons.present?
   .mb-3
