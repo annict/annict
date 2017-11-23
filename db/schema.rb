@@ -846,8 +846,8 @@ ActiveRecord::Schema.define(version: 20171123083841) do
     t.boolean "share_record_to_twitter", default: false
     t.boolean "share_record_to_facebook", default: false
     t.string "programs_sort_type", default: "", null: false
-    t.string "display_option_work_list", default: "list", null: false
-    t.string "display_option_user_work_list", default: "detailed_grid", null: false
+    t.string "display_option_work_list", default: "list_detailed", null: false
+    t.string "display_option_user_work_list", default: "grid_detailed", null: false
     t.string "records_sort_type", default: "created_at_desc", null: false
     t.string "display_option_record_list", default: "all_comments", null: false
     t.boolean "share_review_to_twitter", default: false, null: false

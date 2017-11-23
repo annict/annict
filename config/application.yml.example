@@ -19,6 +19,9 @@ local_default: &local_default
   ANNICT_URL: "http://annict.dev:3000"
 
   GOOGLE_AD_CLIENT: ""
+  GUMROAD_APPLICATION_ID: ""
+  GUMROAD_APP_SECRET: ""
+  GUMROAD_ACCESS_TOKEN: ""
   KEEN_PROJECT_ID: ""
   KEEN_WRITE_KEY: ""
 

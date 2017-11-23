@@ -65,7 +65,7 @@ class User < ApplicationRecord
   enumerize :role, in: { user: 0, admin: 1, editor: 2 }, default: :user, scope: true
   enumerize :locale, in: %i(ja en)
 
-  belongs_to :gumroad_subscriber
+  belongs_to :gumroad_subscriber, optional: true
   has_many :activities, dependent: :destroy
   has_many :channel_works, dependent: :destroy
   has_many :records, class_name: "Checkin", dependent: :destroy
