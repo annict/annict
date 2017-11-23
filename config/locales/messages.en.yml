@@ -2,6 +2,7 @@ en:
   messages:
     _common:
       are_you_sure: Are you sure?
+      connected: Connected
       created: Created
       deleted: Deleted
       edit_on_annict_db: Edit on Annict DB

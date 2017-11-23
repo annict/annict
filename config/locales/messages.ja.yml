@@ -2,6 +2,7 @@ ja:
   messages:
     _common:
       are_you_sure: 実行しますか？
+      connected: 連携しました
       created: 登録しました
       deleted: 削除しました
       edit_on_annict_db: Annict DBで編集する

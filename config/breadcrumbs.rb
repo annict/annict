@@ -39,6 +39,11 @@ crumb :seasonal_works do |season_slug, season_name|
   parent :root
 end
 
+crumb :supporters_index do
+  link t("head.title.supporters.index"), supporters_path
+  parent :root
+end
+
 crumb :popular_works do
   link t("head.title.works.popular")
   parent :root
