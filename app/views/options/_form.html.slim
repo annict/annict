@@ -7,5 +7,12 @@
       = t "messages.options.prevent_spoiler_of_episode_you_have_not_watched"
       .small.text-muted
         = t "messages.options.prevent_spoiler_of_episode_you_have_not_watched_detail"
+  - if current_user.supporter?
+    .form-check
+      label.form-check-label
+        = f.check_box :hide_supporter_label, class: "form-check-input"
+        = t "messages.options.hide_supporter_label"
+        .small.text-muted
+          = t "messages.options.hide_supporter_label_detail"
   .text-center
     = f.submit class: "btn btn-primary"

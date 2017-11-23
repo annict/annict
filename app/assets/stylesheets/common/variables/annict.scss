@@ -55,6 +55,7 @@ $ann-color-body: $ann-color-black-l1;
 $ann-color-border: rgba(0, 0, 0, .08);
 $ann-color-footer-bg: #334854;
 $ann-color-link: #0366d6;
+$ann-color-supporter: #00bcd4;
 
 $ann-color-bad: #757575;
 $ann-color-average: #ff6d00;
@@ -94,6 +95,7 @@ $ann-btn-colors: (
   green: $ann-color-green,
   gumroad: $ann-color-gumroad,
   input-border: $input-border-color,
+  supporter: $ann-color-supporter,
   twitter: $ann-color-twitter
 );
 
