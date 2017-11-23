@@ -212,6 +212,8 @@ en:
         make_sure_to_copy: Make sure to copy your new personal access token now. You won’t be able to see it again.
         new: Generate new token
         no_tokens: No tokens
+    supporters:
+      hide_ads_html: 'Hide ads by becoming <a href="/supporters">Annict Supporter</a>'
     tracks:
       episodes_you_have_watched: "You've watched"
       no_trackable_episodes: No trackable episodes
