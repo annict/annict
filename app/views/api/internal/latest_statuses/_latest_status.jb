@@ -22,7 +22,7 @@ json[:next_episode] = {
   title: episode.title
 }
 
-program = program_data.select { |pd| pd[:episode_id] == episode.id }.first
+program = program_data.select { |pd| pd.present? && pd[:episode_id] == episode.id }.first
 
 if program.present?
   json[:program] = {
