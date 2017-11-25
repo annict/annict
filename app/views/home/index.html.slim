@@ -6,6 +6,10 @@
 
 .p-application__content
   .container.my-3
+    - unless current_user&.supporter?
+      .text-center.mb-3
+        = render "application/components/adsense", slots: [ENV["GOOGLE_AD_728x90_20"]], size: "728x90"
+
     .row
       .col-7
         h2.h4.font-weight-bold.mb-3.text-center
