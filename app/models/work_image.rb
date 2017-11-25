@@ -14,7 +14,7 @@
 #  asin                    :string           default(""), not null
 #  created_at              :datetime         not null
 #  updated_at              :datetime         not null
-#  main_color_hex          :string           default("ffffff"), not null
+#  color_rgb               :string           default("255,255,255"), not null
 #
 # Indexes
 #

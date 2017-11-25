@@ -88,5 +88,9 @@ module Annict
         resource "*", headers: :any, methods: ALLOWED_METHODS, expose: EXPOSED_HEADERS
       end
     end
+
+    # Gzip all the things
+    # https://schneems.com/2017/11/08/80-smaller-rails-footprint-with-rack-deflate/
+    config.middleware.insert_after ActionDispatch::Static, Rack::Deflater
   end
 end

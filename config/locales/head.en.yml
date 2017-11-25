@@ -214,6 +214,8 @@ en:
           new: Generate new token
       staffs:
         index: Staff of %{title} (Anime)
+      supporters:
+        index: Annict Supporter
       tracks:
         show: Track
       user_work_tags:

@@ -269,6 +269,7 @@ Rails.application.routes.draw do
   resources :notifications, only: [:index]
   resources :programs, only: [:index]
   resources :review_comments, only: %i(edit update destroy)
+  resources :supporters, only: %i(index)
 
   resources :settings, only: [:index]
   scope :settings do

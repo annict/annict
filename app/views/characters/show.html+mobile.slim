@@ -8,8 +8,9 @@
 .c-card.mb-3
   = render "characters/header", character: @character, favorite_resources: @favorite_characters
 
-.mb-3
-  = render "application/components/adsense", slot: ENV["GOOGLE_AD_320x100_20"], size: "320x100"
+- unless current_user&.supporter?
+  .mb-3
+    = render "application/components/adsense", slots: [ENV["GOOGLE_AD_320x100_20"]], size: "320x100"
 
 h2.h4.font-weight-bold.text-center.mt-3.mb-4
   = t "noun.information"
@@ -87,8 +88,9 @@ h2.h4.text-center.font-weight-bold.mt-3.mb-4
   .container
     = render "people/grid", root_resource: @character, resource_years: @cast_years, resources_with_year: @casts_with_year
 
-.mb-3
-  = render "application/components/adsense", slot: ENV["GOOGLE_AD_320x100_21"], size: "320x100"
+- unless current_user&.supporter?
+  .mb-3
+    = render "application/components/adsense", slots: [ENV["GOOGLE_AD_320x100_21"]], size: "320x100"
 
 = render "application/components/footer"
 = render "application/components/tabbar"

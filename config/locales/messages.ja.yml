@@ -2,6 +2,7 @@ ja:
   messages:
     _common:
       are_you_sure: 実行しますか？
+      connected: 連携しました
       created: 登録しました
       deleted: 削除しました
       edit_on_annict_db: Annict DBで編集する
@@ -24,7 +25,7 @@ ja:
       favorite_button:
         add_to_favorites: お気に入りに登録
         added_to_favorites: 登録済み
-        hint: "お気に入りに登録すると、この%{resource_type}が関係する新作アニメがAnnictに登録されたとき通知します"
+        hint: "お気に入りに登録すると、この%{resource_type}が関係する新作アニメがAnnictに登録されたとき通知します (通知をオフにすることもできます)"
       reaction_button:
         kind:
           thumbs_up:
@@ -149,6 +150,8 @@ ja:
       new:
         sign_up_with_oauth: "%{provider_name}で始める"
     options:
+      hide_supporter_label: Annictサポーターのラベルを非表示にする
+      hide_supporter_label_detail: プロフィールページなどに表示されるAnnictサポーターを示すラベルを非表示にします
       prevent_spoiler_of_episode_you_have_not_watched: 未記録エピソードのネタバレを防ぐ
       prevent_spoiler_of_episode_you_have_not_watched_detail: 見てる、見たい、または一時中断したアニメの中で、記録していないエピソードに投稿された他の利用者からの感想を表示しないようにします。
     organization_fans:
@@ -211,6 +214,8 @@ ja:
         make_sure_to_copy: 作成した個人用トークンをコピーしてください。この文字列は再表示できません。
         new: 新規作成
         no_tokens: 作成されていません
+    supporters:
+      hide_ads_html: <a href="/supporters">Annictサポーター</a>になると広告を非表示にできます
     tracks:
       episodes_you_have_watched: 放送済みエピソードの視聴数
       no_trackable_episodes: 記録可能なエピソードはありません

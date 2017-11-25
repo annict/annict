@@ -61,8 +61,9 @@
             - else
               = render "application/components/empty", text: t("resources.comment.no_comments")
       .col-3
-        .text-center
-          = render "application/components/adsense", slot: ENV["GOOGLE_AD_250x250_3"], size: "250x250"
+        - unless current_user&.supporter?
+          .text-center
+            = render "application/components/adsense", slots: [ENV["GOOGLE_AD_250x250_3"]], size: "250x250"
 
 = render "application/components/footer"
 

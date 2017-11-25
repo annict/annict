@@ -9,6 +9,7 @@
 .p-application__content
   .container.py-3.mb-3
     = render "application/components/breadcrumb"
+
     .mb-3
       = link_to @post.forum_category.decorate.local_name,  forum_category_path(@post.forum_category.slug), class: "badge badge-secondary"
       h1.h2.mb-0
@@ -61,16 +62,14 @@
           .mb-3
             = render "application/components/empty", text: t("messages.forum.posts.no_comments")
 
-        .c-card.p-3.mb-4
+        .c-card.p-3.mb-3
           = render "forum/comments/form", comment: @comment
 
-        .row
-          .col.text-center
-            = render "application/components/adsense", slot: ENV["GOOGLE_AD_336x280_5"], size: "336x280"
-          .col.text-center.pl-0
-            = render "application/components/adsense", slot: ENV["GOOGLE_AD_336x280_6"], size: "336x280"
+        - unless current_user&.supporter?
+          = render "application/components/adsense", slots: [ENV["GOOGLE_AD_336x280_5"], ENV["GOOGLE_AD_336x280_6"]], size: "336x280"
       .col-4
-        .text-center.mb-3
-          = render "application/components/adsense", slot: ENV["GOOGLE_AD_336x280_4"], size: "336x280"
+        - unless current_user&.supporter?
+          .text-center.mb-3
+            = render "application/components/adsense", slots: [ENV["GOOGLE_AD_336x280_4"]], size: "336x280"
 
 = render "application/components/footer"

@@ -15,8 +15,9 @@
       .col-9
         = render "characters/subnav", character: @character
 
-        .text-center.mb-3
-          = render "application/components/adsense", slot: ENV["GOOGLE_AD_728x90_10"], size: "728x90"
+        - unless current_user&.supporter?
+          .text-center.mb-3
+            = render "application/components/adsense", slots: [ENV["GOOGLE_AD_728x90_10"]], size: "728x90"
 
         .c-card
           .container.py-3

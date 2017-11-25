@@ -30,12 +30,14 @@
 #  status_cache_expired_at       :datetime
 #  work_tag_cache_expired_at     :datetime
 #  work_comment_cache_expired_at :datetime
+#  gumroad_subscriber_id         :integer
 #
 # Indexes
 #
-#  users_confirmation_token_key  (confirmation_token) UNIQUE
-#  users_email_key               (email) UNIQUE
-#  users_username_key            (username) UNIQUE
+#  index_users_on_gumroad_subscriber_id  (gumroad_subscriber_id)
+#  users_confirmation_token_key          (confirmation_token) UNIQUE
+#  users_email_key                       (email) UNIQUE
+#  users_username_key                    (username) UNIQUE
 #
 
 class User < ApplicationRecord
@@ -57,12 +59,13 @@ class User < ApplicationRecord
   # :confirmable, :lockable, :timeoutable
   devise :database_authenticatable, :omniauthable, :registerable, :trackable,
     :rememberable, :recoverable,
-    omniauth_providers: %i(facebook twitter),
+    omniauth_providers: %i(facebook gumroad twitter),
     authentication_keys: %i(email_username)
 
   enumerize :role, in: { user: 0, admin: 1, editor: 2 }, default: :user, scope: true
   enumerize :locale, in: %i(ja en)
 
+  belongs_to :gumroad_subscriber, optional: true
   has_many :activities, dependent: :destroy
   has_many :channel_works, dependent: :destroy
   has_many :records, class_name: "Checkin", dependent: :destroy
@@ -225,6 +228,10 @@ class User < ApplicationRecord
     providers.where(name: "facebook").first
   end
 
+  def gumroad
+    providers.where(name: "gumroad").first
+  end
+
   def expire_twitter_token
     return if twitter.blank?
     twitter.update_column(:token_expires_at, Time.now.to_i)
@@ -364,6 +371,11 @@ class User < ApplicationRecord
     Rails.cache.fetch([id, work_comment_cache_expired_at, work.id, :comment]) do
       work_comments.find_by(work: work)
     end
+  end
+
+  def supporter?
+    gumroad_subscriber.present? &&
+      (gumroad_subscriber.gumroad_ended_at.nil? || gumroad_subscriber.gumroad_ended_at > Time.zone.now)
   end
 
   private

@@ -214,6 +214,8 @@ ja:
           new: 個人用アクセストークン作成
       staffs:
         index: アニメ「%{title}」のスタッフ一覧
+      supporters:
+        index: Annictサポーター
       tracks:
         show: 記録する
       user_work_tags:

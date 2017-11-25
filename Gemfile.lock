@@ -358,6 +358,9 @@ GEM
       rack (>= 1.6.2, < 3)
     omniauth-facebook (4.0.0)
       omniauth-oauth2 (~> 1.2)
+    omniauth-gumroad (1.0.1)
+      omniauth (~> 1.0)
+      omniauth-oauth2 (~> 1.1)
     omniauth-oauth (1.1.0)
       oauth
       omniauth (~> 1.0)
@@ -669,6 +672,7 @@ DEPENDENCIES
   moji
   nokogiri
   omniauth-facebook
+  omniauth-gumroad
   omniauth-oauth2 (~> 1.3.1)
   omniauth-twitter
   paperclip
