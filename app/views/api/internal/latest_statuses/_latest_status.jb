@@ -8,9 +8,7 @@ json = {
   work: {
     id: work.id,
     title: work.title,
-    image_url: ann_image_url(work.work_image, :attachment, size: "125x125"),
-    episodes_count: work.auto_episodes_count,
-    watched_episodes_count: user.episodes.watched(work).count
+    image_url: ann_image_url(work.work_image, :attachment, size: "125x125")
   }
 }
 
@@ -22,7 +20,7 @@ json[:next_episode] = {
   title: episode.title
 }
 
-program = user.episodes.program(episode)
+program = program_data.select { |pd| pd[:episode_id] == episode.id }.first
 
 if program.present?
   json[:program] = {

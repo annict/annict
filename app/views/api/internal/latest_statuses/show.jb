@@ -1,3 +1,5 @@
 # frozen_string_literal: true
 
-render "api/internal/latest_statuses/latest_status", latest_status: @latest_status, user: @user
+program_data = @user.episodes.program_data([@latest_status])
+
+render "api/internal/latest_statuses/latest_status", latest_status: @latest_status, user: @user, program_data: program_data
