@@ -7,7 +7,7 @@ script#t-untracked-episode-list type="x-template"
             .col.col-auto.pr-0
               a :href='"/works/" + status.work.id'
                 img.c-vue-lazyload.rounded v-lazy="status.work.image_url" width="48" :alt="status.work.title"
-            .col.pr-0
+            .col
               a.small :href='"/works/" + status.work.id'
                 | {{ status.work.title }}
               a.d-block.mb-1 :href='"/works/" + status.work.id + "/episodes/" + status.next_episode.id'
@@ -23,11 +23,12 @@ script#t-untracked-episode-list type="x-template"
                     = t "noun.rebroadcast"
                 .text-left
                   | {{ status.program.started_at }}
-              .text-right.small.u-fake-link.mb-2 @click="skipEpisode(status)"
-                = icon "forward", class: "mr-1"
-                = t "noun.skip"
+              c-episode-progress :episodes-count="status.work.episodes_count" :watched-episodes-count="status.work.watched_episodes_count"
+              .u-very-small.u-fake-link.text-right.mb-1 @click="skipEpisode(status)"
+                = icon "angle-right", class: "mr-1"
+                = t "noun.next_episode"
           form.row
-            .col.pr-2
+            .col :class='{ "pr-0": !status.record.isEditingComment }'
               c-record-rating.mb-2 :init-record="status.record" v-if="status.record.isEditingComment"
               template :class='{ "mb-2": user.authorized_to_twitter || user.authorized_to_facebook }'
                 c-record-textarea :init-record="status.record"
@@ -47,12 +48,12 @@ script#t-untracked-episode-list type="x-template"
                     .small.text-muted
                       c-record-word-count :init-record="status.record" v-if="status.record.isEditingComment"
             template v-if="status.record.isEditingComment"
-              .col.pl-0.text-center
+              .col.text-center
                 button.btn.btn-primary type="button" @click.stop="postRecord(status)" :class='{ "c-spinner": status.record.isSaving }'
                   = icon "pencil-square-o", class: "mr-1"
                   = t "verb.track"
             template v-else=""
-              .col.col-auto.pl-0
+              .col.col-auto
                 button.btn.btn-primary type="button" @click.stop="postRecord(status)" :class='{ "c-spinner": status.record.isSaving }'
                   = icon "pencil-square-o", class: "mr-0"
     template v-else=""
@@ -62,6 +63,7 @@ script#t-untracked-episode-list type="x-template"
       .c-loading__core Loading...
 
 - content_for :js_templates do
+  = render "application/js_templates/episode_progress"
   = render "application/js_templates/record_rating"
   = render "application/js_templates/record_textarea"
   = render "application/js_templates/record_word_count"
