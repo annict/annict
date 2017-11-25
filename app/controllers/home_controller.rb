@@ -19,29 +19,40 @@ class HomeController < ApplicationController
 
   def index_member
     tips = render_jb("home/_tips", tips: current_user.tips.unfinished.limit(3))
-    activities = current_user.
-      following_activities.
-      order(id: :desc).
-      includes(:recipient, trackable: :user, user: :profile).
-      page(1)
-    page_object = render_jb("api/internal/activities/index",
+
+    latest_statuses = TrackableService.new(current_user).latest_statuses
+    latest_status_data = render_jb "api/internal/latest_statuses/index",
       user: current_user,
-      activities: activities)
+      latest_statuses: latest_statuses
 
-    gon.push(tips: tips, pageObject: page_object)
+    unless browser.device.mobile?
+      @forum_posts = ForumPost.
+        joins(:forum_category).
+        merge(ForumCategory.with_slug(:site_news)).
+        order(created_at: :desc).
+        limit(5)
 
-    @forum_posts = ForumPost.
-      joins(:forum_category).
-      merge(ForumCategory.with_slug(:site_news)).
-      order(created_at: :desc).
-      limit(5)
+      activities = current_user.
+        following_activities.
+        order(id: :desc).
+        includes(:recipient, trackable: :user, user: :profile).
+        page(1)
+      activity_data = render_jb("api/internal/activities/index",
+        user: current_user,
+        activities: activities)
+    end
+
+    gon.push(tips: tips, latestStatusData: latest_status_data, activityData: activity_data)
 
     render :index
   end
 
   def load_i18n
     keys = {
-      "messages._common.are_you_sure": nil
+      "messages._common.are_you_sure": nil,
+      "messages.tracks.see_records": nil,
+      "messages.tracks.skip_episode_confirmation": nil,
+      "messages.tracks.tracked": nil
     }
 
     load_i18n_into_gon keys

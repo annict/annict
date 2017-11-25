@@ -217,7 +217,7 @@ ja:
     supporters:
       hide_ads_html: <a href="/supporters">Annictサポーター</a>になると広告を非表示にできます
     tracks:
-      episodes_you_have_watched: 放送済みエピソードの視聴数
+      episodes_you_have_watched: 視聴エピソード
       no_trackable_episodes: 記録可能なエピソードはありません
       skip_episode_confirmation: このエピソードをスキップして、次のエピソードを表示しますか？
       see_records: 記録を見る

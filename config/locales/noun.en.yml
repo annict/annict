@@ -70,6 +70,7 @@ en:
     music: Music
     my_records: My Records
     n_works_watched: "%{count} Works Watched"
+    next_episode: Next Episode
     next_page: Next Page
     next_season: Next Season
     notification: Notification
@@ -145,6 +146,7 @@ en:
     unbroadcast: Unbroadcast
     unknown_season: Season unknown
     unpublish: Unpublish
+    untracked_episodes: Untracked Episodes
     users_count: "%{count} people"
     video_services: Video Services
     voice_actor: Voice Actor

@@ -51,10 +51,10 @@ class UsersController < ApplicationController
       order(id: :desc).
       includes(:recipient, trackable: :user, user: :profile).
       page(1)
-    page_object = render_jb("api/internal/activities/index",
+    activity_data = render_jb("api/internal/activities/index",
       user: user_signed_in? ? current_user : nil,
       activities: activities)
-    gon.push(pageObject: page_object)
+    gon.push(activityData: activity_data)
   end
 
   def following

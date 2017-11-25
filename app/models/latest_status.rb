@@ -45,8 +45,46 @@ class LatestStatus < ApplicationRecord
 
   def self.refresh_next_episode(user)
     latest_statuses = user.latest_statuses.includes(:work).with_kind(:watching)
-    latest_statuses.find_each do |s|
-      s.update_column(:next_episode_id, s.fetch_next_episode&.id)
+    next_episode_data = latest_statuses.fetch_next_episode_data
+
+    latest_statuses.find_each do |ls|
+      next_episode = next_episode_data.select { |ne| ne[:work_id] == ls.work_id }.first
+      ls.update_column(:next_episode_id, next_episode[:next_episode_id])
+    end
+  end
+
+  def self.fetch_next_episode_data
+    work_ids = pluck(:work_id)
+
+    return [] if work_ids.empty?
+
+    watched_episode_ids = pluck(:watched_episode_ids).flatten
+
+    episode_condition = watched_episode_ids.empty? ? "" : "id NOT IN (#{watched_episode_ids.join(',')}) AND"
+    sql = <<~SQL
+      WITH ranked_episodes AS (
+        SELECT
+          id,
+          work_id,
+          dense_rank() OVER (
+            PARTITION BY work_id ORDER BY sort_number ASC
+          ) AS episode_rank
+        FROM episodes
+        WHERE
+          #{episode_condition}
+          work_id IN (#{work_ids.join(',')}) AND
+          aasm_state = 'published'
+      )
+      SELECT work_id, id FROM ranked_episodes WHERE episode_rank = 1;
+    SQL
+    next_episodes = Episode.find_by_sql(sql)
+
+    work_ids.map do |work_id|
+      next_episode = next_episodes.select { |e| e.work_id == work_id }.first
+      {
+        work_id: work_id,
+        next_episode_id: next_episode&.id
+      }
     end
   end
 

@@ -31,4 +31,24 @@ class UserEpisodesQuery
       order(started_at: :desc).
       first
   end
+
+  def program_data(latest_statuses)
+    channel_works = @user.channel_works.where(work_id: latest_statuses.pluck(:work_id))
+    channel_ids = channel_works.pluck(:channel_id)
+    episode_ids = latest_statuses.pluck(:next_episode_id)
+    programs = Program.
+      includes(:channel, work: :work_image).
+      where(channel_id: channel_ids, episode_id: episode_ids).
+      published
+
+    channel_works.map do |cw|
+      program = programs.
+        select { |p| p.work_id == cw.work_id && p.channel_id == cw.channel_id }.
+        sort(&:started_at).
+        reverse.
+        first
+
+      program
+    end
+  end
 end

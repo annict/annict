@@ -217,7 +217,7 @@ en:
     supporters:
       hide_ads_html: 'Hide ads by becoming <a href="/supporters">Annict Supporter</a>'
     tracks:
-      episodes_you_have_watched: "You've watched"
+      episodes_you_have_watched: "Watched"
       no_trackable_episodes: No trackable episodes
       skip_episode_confirmation: Are you sure to skip this episode and show next episode?
       see_records: See records

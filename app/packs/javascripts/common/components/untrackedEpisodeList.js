@@ -11,17 +11,18 @@ export default {
     return {
       isLoading: true,
       latestStatuses: [],
-      user: null
+      user: null,
+      gon: {}
     };
   },
 
   methods: {
     load() {
       this.latestStatuses = _.each(
-        this._pageObject().latest_statuses,
+        this._latestStatusData().latest_statuses,
         this._initLatestStatus
       );
-      this.user = this._pageObject().user;
+      this.user = this._latestStatusData().user;
       this.isLoading = false;
       return this.$nextTick(() => vueLazyLoad.refresh());
     },
@@ -31,7 +32,7 @@ export default {
     },
 
     skipEpisode(latestStatus) {
-      if (confirm(gon.I18n['messages.tracks.skip_episode_confirmation'])) {
+      if (confirm(this.gon.I18n['messages.tracks.skip_episode_confirmation'])) {
         return $.ajax({
           method: 'PATCH',
           url: `/api/internal/latest_statuses/${latestStatus.id}/skip_episode`
@@ -64,10 +65,10 @@ export default {
             shared_facebook: this.user.share_record_to_facebook,
             rating_state: latestStatus.record.ratingState
           },
-          page_category: gon.basic.pageCategory
+          page_category: this.gon.basic.pageCategory
         }
       })
-        .done(data => {
+        .done(() => {
           return $.ajax({
             method: 'GET',
             url: `/api/internal/works/${latestStatus.work.id}/latest_status`
@@ -115,21 +116,25 @@ export default {
       const episodeLink = `\
 <a href='/works/${latestStatus.work.id}/episodes/${latestStatus.next_episode
         .id}'>
-  ${gon.I18n['messages.tracks.see_records']}
+  ${this.gon.I18n['messages.tracks.see_records']}
 </a>\
 `;
-      return `${gon.I18n['messages.tracks.tracked']} ${episodeLink}`;
+      return `${this.gon.I18n['messages.tracks.tracked']} ${episodeLink}`;
     },
 
-    _pageObject() {
-      if (!gon.pageObject) {
+    _latestStatusData() {
+      if (!this.gon.latestStatusData) {
         return {};
       }
-      return JSON.parse(gon.pageObject);
+      return JSON.parse(this.gon.latestStatusData);
     }
   },
 
   mounted() {
+    this.gon = window.gon;
+    if (this.gon.user.device === 'pc') {
+      $(this.$el).css({ maxHeight: window.innerHeight * 0.7 });
+    }
     return this.load();
   }
 };

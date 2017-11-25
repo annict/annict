@@ -38,10 +38,6 @@ nav.c-navbar.navbar.navbar-expand-sm class="#{transparent ? 'navbar-dark is-tran
         c-search-form :init-q='"#{@search.q}"' :is-transparent="#{transparent}"
     ul.navbar-nav.navbar-nav--right.align-items-center
       - if user_signed_in?
-        li.nav-item.mr-3
-          = link_to annict_url(:track_url), class: "btn btn-outline-primary btn-sm" do
-            = icon "pencil-square-o", class: "mr-1"
-            = t "head.title.tracks.show"
         li.nav-item.dropdown
           = link_to annict_url(:user_url, current_user.username), class: "nav-link p-0" do
             = ann_image_tag(current_user.profile, :tombo_avatar, size: "30x30", alt: current_user.profile.name, class: "rounded-circle")

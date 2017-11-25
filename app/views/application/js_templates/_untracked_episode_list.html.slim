@@ -3,13 +3,13 @@ script#t-untracked-episode-list type="x-template"
     template v-if="latestStatuses.length > 0"
       template v-for="status in filterNoNextEpisode(latestStatuses)"
         .py-3
-          .row.align-items-center
-            .col
+          .row
+            .col-10
               .row.mb-2
                 .col.col-auto.pr-0
                   a :href='"/works/" + status.work.id'
                     img.c-vue-lazyload.rounded v-lazy="status.work.image_url" width="48" :alt="status.work.title"
-                .col
+                .col.pr-0
                   a.small :href='"/works/" + status.work.id'
                     | {{ status.work.title }}
                   a.d-block.mb-1 :href='"/works/" + status.work.id + "/episodes/" + status.next_episode.id'
@@ -25,12 +25,11 @@ script#t-untracked-episode-list type="x-template"
                     span.mr-2
                       | {{ status.program.started_at }}
                   c-episode-progress :episodes-count="status.work.episodes_count" :watched-episodes-count="status.work.watched_episodes_count"
-            .col.col-auto.text-right
-              .small.u-fake-link @click="skipEpisode(status)"
-                = icon "forward", class: "mr-1"
-                = t "noun.skip"
+                  .u-very-small.u-fake-link.text-right @click="skipEpisode(status)"
+                    = icon "angle-right", class: "mr-1"
+                    = t "noun.next_episode"
           form.row
-            .col
+            .col-10.pr-0
               c-record-rating.mb-2 :init-record="status.record" v-if="status.record.isEditingComment"
               template :class='{ "mb-2": user.authorized_to_twitter || user.authorized_to_facebook }'
                 c-record-textarea :init-record="status.record"
@@ -49,7 +48,7 @@ script#t-untracked-episode-list type="x-template"
                   .text-right
                     .small.text-muted
                       c-record-word-count :init-record="status.record" v-if="status.record.isEditingComment"
-            .col.col-auto.pl-0
+            .col.col-auto
               button.btn.btn-primary type="button" @click.stop="postRecord(status)" :class='{ "c-spinner": status.record.isSaving }'
                 = icon "pencil-square-o", class: "mr-0"
     template v-else=""

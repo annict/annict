@@ -3,4 +3,4 @@ script#t-episode-progress type="x-template"
     .text-muted.u-very-small
       = "#{t("messages.tracks.episodes_you_have_watched")}: {{ watchedEpisodesCount }} / {{ episodesCount }}"
     .progress
-      .progress-bar.bg-info :style='{ width: ratio + "%", height: "7px" }' :aria-valuenow="ratio" role="progressbar" aria-valuemin="0" aria-valuemax="100"
+      .progress-bar.bg-info :style='{ width: ratio + "%" }' :aria-valuenow="ratio" role="progressbar" aria-valuemin="0" aria-valuemax="100"
