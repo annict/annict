@@ -55,8 +55,12 @@ class LatestStatus < ApplicationRecord
 
   def self.fetch_next_episode_data
     work_ids = pluck(:work_id)
+
+    return [] if work_ids.empty?
+
     watched_episode_ids = pluck(:watched_episode_ids).flatten
 
+    episode_condition = watched_episode_ids.empty? ? "" : "id NOT IN (#{watched_episode_ids.join(',')}) AND"
     sql = <<~SQL
       WITH ranked_episodes AS (
         SELECT
@@ -67,7 +71,7 @@ class LatestStatus < ApplicationRecord
           ) AS episode_rank
         FROM episodes
         WHERE
-          id NOT IN (#{watched_episode_ids.join(',')}) AND
+          #{episode_condition}
           work_id IN (#{work_ids.join(',')}) AND
           aasm_state = 'published'
       )
