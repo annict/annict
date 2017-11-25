@@ -262,6 +262,7 @@ Rails.application.routes.draw do
   resource :confirmation, only: [:show]
   resource :menu, only: %i(show)
   resource :search, only: [:show]
+  resources :activities, only: %i(index)
   resources :comments, only: %i(edit update destroy)
   resources :faqs, only: %i(index)
   resources :friends, only: [:index]

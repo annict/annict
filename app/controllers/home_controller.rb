@@ -18,12 +18,6 @@ class HomeController < ApplicationController
   private
 
   def index_member
-    @forum_posts = ForumPost.
-      joins(:forum_category).
-      merge(ForumCategory.with_slug(:site_news)).
-      order(created_at: :desc).
-      limit(5)
-
     tips = render_jb("home/_tips", tips: current_user.tips.unfinished.limit(3))
 
     latest_statuses = TrackableService.new(current_user).latest_statuses
@@ -31,14 +25,22 @@ class HomeController < ApplicationController
       user: current_user,
       latest_statuses: latest_statuses
 
-    activities = current_user.
-      following_activities.
-      order(id: :desc).
-      includes(:recipient, trackable: :user, user: :profile).
-      page(1)
-    activity_data = render_jb("api/internal/activities/index",
-      user: current_user,
-      activities: activities)
+    unless browser.device.mobile?
+      @forum_posts = ForumPost.
+        joins(:forum_category).
+        merge(ForumCategory.with_slug(:site_news)).
+        order(created_at: :desc).
+        limit(5)
+
+      activities = current_user.
+        following_activities.
+        order(id: :desc).
+        includes(:recipient, trackable: :user, user: :profile).
+        page(1)
+      activity_data = render_jb("api/internal/activities/index",
+        user: current_user,
+        activities: activities)
+    end
 
     gon.push(tips: tips, latestStatusData: latest_status_data, activityData: activity_data)
 

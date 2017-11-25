@@ -132,7 +132,9 @@ export default {
 
   mounted() {
     this.gon = window.gon;
-    $(this.$el).css({ height: window.innerHeight * 0.8 });
+    if (this.gon.user.device === 'pc') {
+      $(this.$el).css({ height: window.innerHeight * 0.7 });
+    }
     return this.load();
   }
 };

@@ -9,6 +9,9 @@
     = link_to library_path(current_user.username, :watching), class: "col text-center" do
       = icon "play", class: "d-block"
       span.c-tabbar__text = t "noun.watching_shorten"
+    = link_to season_works_path(slug: ENV.fetch("ANNICT_CURRENT_SEASON")), class: "col text-center" do
+      = icon "television", class: "d-block"
+      span.c-tabbar__text = t "noun.airing"
     = link_to menu_path, class: "col text-center" do
       = icon "th", class: "d-block"
       span.c-tabbar__text = t "noun.menu"
