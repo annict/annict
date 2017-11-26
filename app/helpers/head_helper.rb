@@ -22,7 +22,7 @@ module HeadHelper
       },
       twitter: {
         card: "summary",
-        site: "@anannict",
+        site: twitter_username,
         title: meta_tags.full_title(site: site, separator: " |"),
         description: t("head.meta.description._common"),
         image: "#{ENV.fetch('ANNICT_URL')}/images/og_image.png"

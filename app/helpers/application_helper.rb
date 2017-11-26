@@ -28,4 +28,8 @@ module ApplicationHelper
     end
     datetime&.strftime("%Y-%m-%d %H:%M %:z")
   end
+
+  def twitter_username
+    I18n.locale == :ja ? "@AnnictJP" : "@anannict"
+  end
 end

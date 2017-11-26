@@ -10,8 +10,7 @@ class GumroadSubscribersSyncService
   def execute
     [
       ENV.fetch("GUMROAD_PRODUCT_ID"),
-      ENV.fetch("GUMROAD_PRODUCT_ID_JP"),
-      ENV.fetch("GUMROAD_PRODUCT_ID_JP_YEN")
+      ENV.fetch("GUMROAD_PRODUCT_ID_JP")
     ].each do |product_id|
       path = "/v2/products/#{product_id}/subscribers"
       fetch_and_save(path)
