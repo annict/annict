@@ -89,6 +89,12 @@
 
     .row.mt-5
       .col-4.text-center
+        = link_to forum_root_path do
+          .h1.mb-1.text-primary
+            = icon "comments-o"
+          .small.u-text-body
+            = t "noun.annict_forum"
+      .col-4.text-center
         = link_to userland_root_path do
           .h1.mb-1.text-primary
             = icon "folder"
@@ -100,12 +106,6 @@
             = icon "globe"
           .small.u-text-body
             = t "noun.annict_api"
-      .col-4.text-center
-        = link_to about_path do
-          .h1.mb-1.text-primary
-            = icon "info"
-          .small.u-text-body
-            = t "head.title.pages.about"
 
     .row.mt-5
       / .col-4.text-center
@@ -115,12 +115,17 @@
       /     .small.u-text-body
       /       = t "head.title.supporters.index"
       .col-4.text-center
+        = link_to about_path do
+          .h1.mb-1.text-primary
+            = icon "info"
+          .small.u-text-body
+            = t "head.title.pages.about"
+      .col-4.text-center
         = link_to destroy_user_session_path, method: "delete" do
           .h1.mb-1.text-primary
             = icon "sign-out"
           .small.u-text-body
             = t "verb.sign_out"
-      .col-4.text-center
   - else
     .row
       .col-4.text-center
@@ -164,6 +169,12 @@
 
     .row.mt-5
       .col-4.text-center
+        = link_to forum_root_path do
+          .h1.mb-1.text-primary
+            = icon "comments-o"
+          .small.u-text-body
+            = t "noun.annict_forum"
+      .col-4.text-center
         = link_to userland_root_path do
           .h1.mb-1.text-primary
             = icon "folder"
@@ -175,21 +186,20 @@
             = icon "globe"
           .small.u-text-body
             = t "noun.annict_api"
+
+    .row.mt-5
       .col-4.text-center
         = link_to faqs_path do
           .h1.mb-1.text-primary
             = icon "question"
           .small.u-text-body
             = t "head.title.faqs.index"
-
-    .row.mt-5
       .col-4.text-center
         = link_to new_user_session_path do
           .h1.mb-1.text-primary
             = icon "sign-in"
           .small.u-text-body
             = t "verb.sign_in"
-      .col-4.text-center
       .col-4.text-center
 
 = render "application/components/tabbar"
