@@ -25,7 +25,7 @@ class LibrariesController < ApplicationController
       current_user.setting.update_column(:display_option_user_work_list, @display_option)
     end
 
-    gon.pageObject = render_jb "works/_list",
+    gon.workListData = render_jb "works/_list",
       user: current_user,
       works: @seasons.flat_map { |s| @works.by_season(s.slug) },
       with_friends: false

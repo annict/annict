@@ -44,7 +44,7 @@ class RecordsController < ApplicationController
       data = {
         recordsSortTypes: Setting.records_sort_type.options,
         currentRecordsSortType: current_user&.setting&.records_sort_type.presence || "created_at_desc",
-        pageObject: render_jb("works/_detail", user: current_user, work: @work)
+        workListData: render_jb("works/_detail", user: current_user, work: @work)
       }
       gon.push(data)
 

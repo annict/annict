@@ -101,7 +101,7 @@ class WorksController < ApplicationController
 
     return unless user_signed_in?
 
-    gon.pageObject = render_jb "works/_detail",
+    gon.workListData = render_jb "works/_detail",
       user: current_user,
       work: @work
   end
@@ -142,7 +142,7 @@ class WorksController < ApplicationController
       current_user.setting.update_column(:display_option_work_list, @display_option)
     end
 
-    gon.pageObject = render_jb "works/_list",
+    gon.workListData = render_jb "works/_list",
       user: current_user,
       works: @works,
       display_option: @display_option
