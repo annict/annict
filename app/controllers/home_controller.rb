@@ -40,9 +40,19 @@ class HomeController < ApplicationController
       activity_data = render_jb("api/internal/activities/index",
         user: current_user,
         activities: activities)
+
+      works = Work.where(id: activities.pluck(:recipient_id))
+      work_list_data = render_jb "works/_list",
+        user: current_user,
+        works: works
     end
 
-    gon.push(tips: tips, latestStatusData: latest_status_data, activityData: activity_data)
+    gon.push(
+      tips: tips,
+      latestStatusData: latest_status_data,
+      activityData: activity_data,
+      workListData: work_list_data
+    )
 
     render :index
   end

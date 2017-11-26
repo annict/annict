@@ -11,11 +11,11 @@ export default {
   data() {
     return {
       isLoading: false,
-      isSignedIn: gon.user.isSignedIn,
+      isSignedIn: window.gon.user.isSignedIn,
       statusKind: null,
       prevStatusKind: null,
       works: [],
-      pageObject: gon.pageObject ? JSON.parse(gon.pageObject) : {}
+      workListData: window.gon.workListData ? JSON.parse(window.gon.workListData) : {}
     };
   },
 
@@ -70,7 +70,7 @@ export default {
           url: `/api/internal/works/${this.workId}/statuses/select`,
           data: {
             status_kind: this.statusKind,
-            page_category: gon.basic.pageCategory
+            page_category: window.gon.basic.pageCategory
           }
         }).done(() => {
           return (this.isLoading = false);
@@ -89,7 +89,7 @@ export default {
       this.prevStatusKind = this.initStatusKind;
       return (this.statusKind = this.initStatusKind);
     } else {
-      this.works = this.pageObject.works;
+      this.works = this.workListData.works;
       this.prevStatusKind = this.currentStatusKind();
       return (this.statusKind = this.currentStatusKind());
     }
