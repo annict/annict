@@ -42,6 +42,7 @@ class Activity < ApplicationRecord
   belongs_to :multiple_record, optional: true
   belongs_to :recipient, polymorphic: true
   belongs_to :record, class_name: "Checkin", optional: true
+  belongs_to :review
   belongs_to :status, optional: true
   belongs_to :trackable, polymorphic: true
   belongs_to :user
