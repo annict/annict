@@ -12,6 +12,9 @@ class CreateRecordActivityJob < ApplicationJob
       a.recipient = record.episode
       a.trackable = record
       a.action = "create_record"
+      a.work = record.episode.work
+      a.episode = record.episode
+      a.record = record
     end
   end
 end

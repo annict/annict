@@ -32,10 +32,12 @@ class MultipleRecord < ApplicationRecord
 
   def save_activity
     Activity.create! do |a|
-      a.user      = user
+      a.user = user
       a.recipient = work
       a.trackable = self
-      a.action    = "create_multiple_records"
+      a.action = "create_multiple_records"
+      a.work = work
+      a.multiple_record = self
     end
   end
 end

@@ -48,10 +48,12 @@ class Status < ApplicationRecord
 
   def save_activity
     Activity.create do |a|
-      a.user      = user
+      a.user = user
       a.recipient = work
       a.trackable = self
-      a.action    = "create_status"
+      a.action = "create_status"
+      a.work = work
+      a.status = self
     end
   end
 

@@ -11,8 +11,8 @@
 #  share_record_to_twitter       :boolean          default(FALSE)
 #  share_record_to_facebook      :boolean          default(FALSE)
 #  programs_sort_type            :string           default(NULL), not null
-#  display_option_work_list      :string           default(NULL), not null
-#  display_option_user_work_list :string           default(NULL), not null
+#  display_option_work_list      :string           default("list_detailed"), not null
+#  display_option_user_work_list :string           default("grid_detailed"), not null
 #  records_sort_type             :string           default("created_at_desc"), not null
 #  display_option_record_list    :string           default("all_comments"), not null
 #  share_review_to_twitter       :boolean          default(FALSE), not null
