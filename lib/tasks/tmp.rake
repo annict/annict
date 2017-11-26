@@ -1,22 +1,26 @@
 # frozen_string_literal: true
 
 namespace :tmp do
-  task update_display_option_user_work_list: :environment do
-    ActiveRecord::Base.transaction do
-      Setting.
-        where(display_option_user_work_list: :list).
-        update_all(display_option_user_work_list: :grid_detailed)
-      Setting.
-        where(display_option_work_list: :list).
-        update_all(display_option_work_list: :list_detailed)
-    end
-  end
+  task :update_foreign_keys_on_activities, %i(from) => :environment do |_, args|
+    activity_id = args[:from]
 
-  task set_color_rgb_to_work_image: :environment do
-    ActiveRecord::Base.transaction do
-      WorkImage.find_each do |wi|
-        puts "work_image: #{wi.id}"
-        wi.update_column(:color_rgb, wi.colors(wi.attachment_url).first) if wi.colors.first.present?
+    Activity.where("id >= ?", activity_id).find_each do |a|
+      puts "activity: #{a.id}"
+
+      begin
+        case a.action
+        when "create_status"
+          a.update_columns(work_id: a.recipient.id, status_id: a.trackable.id)
+        when "create_record"
+          a.update_columns(work_id: a.recipient.work.id, episode_id: a.recipient.id, record_id: a.trackable.id)
+        when "create_review"
+          a.update_columns(work_id: a.recipient.id, review_id: a.trackable.id)
+        when "create_multiple_records"
+          a.update_columns(work_id: a.recipient.id, multiple_record_id: a.trackable.id)
+        end
+      rescue => ex
+        puts ex
+        a.destroy
       end
     end
   end

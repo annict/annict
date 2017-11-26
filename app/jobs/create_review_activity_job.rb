@@ -12,6 +12,8 @@ class CreateReviewActivityJob < ApplicationJob
       a.recipient = review.work
       a.trackable = review
       a.action = "create_review"
+      a.work = review.work
+      a.review = review
     end
   end
 end

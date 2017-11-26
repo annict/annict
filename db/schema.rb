@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20171123083841) do
+ActiveRecord::Schema.define(version: 20171126032600) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -25,7 +25,17 @@ ActiveRecord::Schema.define(version: 20171123083841) do
     t.string "action", limit: 510, null: false
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.integer "work_id"
+    t.integer "episode_id"
+    t.integer "status_id"
+    t.integer "record_id"
+    t.integer "multiple_record_id"
+    t.index ["episode_id"], name: "index_activities_on_episode_id"
+    t.index ["multiple_record_id"], name: "index_activities_on_multiple_record_id"
+    t.index ["record_id"], name: "index_activities_on_record_id"
+    t.index ["status_id"], name: "index_activities_on_status_id"
     t.index ["user_id"], name: "activities_user_id_idx"
+    t.index ["work_id"], name: "index_activities_on_work_id"
   end
 
   create_table "casts", id: :serial, force: :cascade do |t|
@@ -1141,7 +1151,12 @@ ActiveRecord::Schema.define(version: 20171123083841) do
     t.index ["season_year"], name: "index_works_on_season_year"
   end
 
+  add_foreign_key "activities", "checkins", column: "record_id"
+  add_foreign_key "activities", "episodes"
+  add_foreign_key "activities", "multiple_records"
+  add_foreign_key "activities", "statuses"
   add_foreign_key "activities", "users", name: "activities_user_id_fk", on_delete: :cascade
+  add_foreign_key "activities", "works"
   add_foreign_key "casts", "characters"
   add_foreign_key "casts", "people"
   add_foreign_key "casts", "works"
