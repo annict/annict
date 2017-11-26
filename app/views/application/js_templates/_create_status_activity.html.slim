@@ -34,6 +34,8 @@ script#t-create-status-activity type="x-template"
           .col-10
             a :href='"/works/" + activity.work.id'
               | {{ activity.work.title }}
-    
+            .mt-2
+              c-status-selector :work-id="activity.work.id" style="width: 150px;"
+
     .mt-2
       c-like-button.u-fake-link resource-name="Status" :init-resource-id="activity.status.id" :init-likes-count="activity.status.likes_count" :init-is-liked="activity.meta.liked" :is-signed-in="#{user_signed_in?}"

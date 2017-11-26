@@ -59,7 +59,8 @@ script#t-create-record-activity type="x-template"
                   | {{ activity.episode.number }}
                 span.episode__title.ml-2 v-if="activity.work.title && activity.episode.number && activity.work.title !== activity.episode.title"
                   | {{ activity.episode.title }}
-            c-status-selector :work-id="activity.work.id"
+            .mt-2
+              c-status-selector :work-id="activity.work.id" style="width: 150px;"
 
     .mt-2
       c-like-button.u-fake-link.mr-3 resource-name="Checkin" :init-resource-id="activity.record.id" :init-likes-count="activity.record.likes_count" :init-is-liked="activity.meta.liked" :is-signed-in="#{user_signed_in?}"
