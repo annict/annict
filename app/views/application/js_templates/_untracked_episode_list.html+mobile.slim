@@ -28,11 +28,11 @@ script#t-untracked-episode-list type="x-template"
                 = icon "angle-right", class: "mr-1"
                 = t "noun.next_episode"
           form.row
-            .col :class='{ "pr-0": !status.record.isEditingComment }'
+            div :class='{ "col-12": status.record.isEditingComment, "col pr-0": !status.record.isEditingComment }'
               c-record-rating.mb-2 :init-record="status.record" v-if="status.record.isEditingComment"
               template :class='{ "mb-2": user.authorized_to_twitter || user.authorized_to_facebook }'
                 c-record-textarea :init-record="status.record"
-              .row
+              .row.mt-2
                 .col
                   .a-share-buttons v-if="status.record.isEditingComment"
                     span v-if="user.authorized_to_twitter"
@@ -48,10 +48,11 @@ script#t-untracked-episode-list type="x-template"
                     .small.text-muted
                       c-record-word-count :init-record="status.record" v-if="status.record.isEditingComment"
             template v-if="status.record.isEditingComment"
-              .col.text-center
-                button.btn.btn-primary type="button" @click.stop="postRecord(status)" :class='{ "c-spinner": status.record.isSaving }'
-                  = icon "pencil-square-o", class: "mr-1"
-                  = t "verb.track"
+              .w-100
+                .text-center
+                  button.btn.btn-primary type="button" @click.stop="postRecord(status)" :class='{ "c-spinner": status.record.isSaving }'
+                    = icon "pencil-square-o", class: "mr-1"
+                    = t "verb.track"
             template v-else=""
               .col.col-auto
                 button.btn.btn-primary type="button" @click.stop="postRecord(status)" :class='{ "c-spinner": status.record.isSaving }'
