@@ -6,30 +6,4 @@
       margin-top: 340px;
     }
   }
-
-  &.is-user {
-    &.is-firefox {
-      #{$root}__main_columns {
-        .col-5 {
-          .c-card {
-            // Hide scrollbar
-            // https://stackoverflow.com/questions/20997183/how-to-hide-scrollbar-in-firefox
-            overflow: hidden;
-          }
-
-          .c-untracked-episode-list {
-            // Hide scrollbar
-            // https://stackoverflow.com/questions/20997183/how-to-hide-scrollbar-in-firefox
-            margin-right: -16px;
-          }
-        }
-      }
-    }
-
-    &.is-webkit {
-      .c-untracked-episode-list::-webkit-scrollbar {
-        display: none;
-      }
-    }
-  }
 }
