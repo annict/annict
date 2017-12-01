@@ -9,21 +9,15 @@ class ActivitiesController < ApplicationController
     activities = current_user.
       following_activities.
       order(id: :desc).
-      includes(user: :profile).
+      includes(:work, user: :profile).
       page(1)
+    works = Work.where(id: activities.pluck(:work_id))
 
     activity_data = render_jb("api/internal/activities/index",
       user: current_user,
-      activities: activities)
+      activities: activities,
+      works: works)
 
-    works = Work.where(id: activities.pluck(:work_id))
-    work_list_data = render_jb "works/_list",
-      user: current_user,
-      works: works
-
-    gon.push(
-      activityData: activity_data,
-      workListData: work_list_data
-    )
+    gon.push(activityData: activity_data)
   end
 end

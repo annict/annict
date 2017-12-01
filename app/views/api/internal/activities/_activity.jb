@@ -17,6 +17,11 @@ json = Rails.cache.fetch(cache_keys) do
       avatar_url: ann_image_url(activity.user.profile, :tombo_avatar, size: "25x25"),
       name: activity.user.profile.name
     },
+    viewer: {
+      status: {
+        kind: kinds.select { |k| k[:work_id] == activity.work.id }.first[:kind]
+      }
+    },
     meta: {
       liked: user.present? && user.like?(activity.trackable)
     }

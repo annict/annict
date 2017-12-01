@@ -49,17 +49,16 @@ class UsersController < ApplicationController
     activities = @user.
       activities.
       order(id: :desc).
+      includes(:work).
       page(1)
+    works = Work.where(id: activities.pluck(:work_id))
+
     activity_data = render_jb("api/internal/activities/index",
       user: user_signed_in? ? current_user : nil,
-      activities: activities)
+      activities: activities,
+      works: works)
 
-    works = Work.where(id: activities.pluck(:work_id))
-    work_list_data = render_jb "works/_list",
-      user: user_signed_in? ? current_user : nil,
-      works: works
-
-    gon.push(activityData: activity_data, workListData: work_list_data)
+    gon.push(activityData: activity_data)
   end
 
   def following

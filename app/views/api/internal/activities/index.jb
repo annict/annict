@@ -2,6 +2,8 @@
 
 json = {}
 
+kinds = Work.status_kinds(@works, @user)
+
 cache_keys = [
   I18n.locale,
   @user&.id,
@@ -22,7 +24,7 @@ json[:activities] = Rails.cache.fetch cache_keys do
 
     Rails.cache.fetch cache_keys do
       if activity.recipient.present? && activity.trackable.present?
-        render "/api/internal/activities/activity", activity: activity, user: @user
+        render "/api/internal/activities/activity", activity: activity, user: @user, kinds: kinds
       end
     end
   end

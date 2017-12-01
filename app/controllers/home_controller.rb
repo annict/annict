@@ -35,23 +35,20 @@ class HomeController < ApplicationController
       activities = current_user.
         following_activities.
         order(id: :desc).
-        includes(user: :profile).
+        includes(:work, user: :profile).
         page(1)
+      works = Work.where(id: activities.pluck(:work_id))
+
       activity_data = render_jb("api/internal/activities/index",
         user: current_user,
-        activities: activities)
-
-      works = Work.where(id: activities.pluck(:work_id))
-      work_list_data = render_jb "works/_list",
-        user: current_user,
-        works: works
+        activities: activities,
+        works: works)
     end
 
     gon.push(
       tips: tips,
       latestStatusData: latest_status_data,
-      activityData: activity_data,
-      workListData: work_list_data
+      activityData: activity_data
     )
 
     render :index

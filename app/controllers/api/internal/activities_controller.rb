@@ -15,8 +15,10 @@ module Api
         @user = current_user
         @activities = activities.
           order(id: :desc).
-          includes(:recipient, trackable: :user, user: :profile).
+          includes(:work, user: :profile).
           page(page)
+
+        @works = Work.where(id: @activities.pluck(:work_id))
       end
     end
   end
