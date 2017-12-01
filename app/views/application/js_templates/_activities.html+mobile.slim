@@ -1,18 +1,18 @@
 script#t-activities type="x-template"
-  .c-activities.c-card.px-3
+  .c-activities
     template v-for="activity in activities"
       template v-if='activity.action === "create_record"'
-        c-create-record-activity.u-underline :activity="activity"
+        c-create-record-activity.c-card.px-3.mb-3 :activity="activity"
       template v-if='activity.action === "create_review"'
-        c-create-review-activity.u-underline :activity="activity"
+        c-create-review-activity.c-card.px-3.mb-3 :activity="activity"
       template v-else-if='activity.action === "create_multiple_records"'
-        c-create-multiple-records-activity.u-underline :activity="activity"
+        c-create-multiple-records-activity.c-card.px-3.mb-3 :activity="activity"
       template v-else-if='activity.action === "create_status"'
-        c-create-status-activity.u-underline :activity="activity"
+        c-create-status-activity.c-card.px-3.mb-3 :activity="activity"
     template v-if="!isLoading && activities.length === 0"
       .c-card.p-3
         = render "application/components/empty", text: t("messages.home.index.there_are_no_activities")
-    c-load-more-button.mx-3.mt-3 :handler="loadMore" :is-loading="isLoading" :has-next="hasNext"
+    c-load-more-button.mx-3 :handler="loadMore" :is-loading="isLoading" :has-next="hasNext"
 
 - content_for :js_templates
   = render "application/js_templates/create_multiple_records_activity"

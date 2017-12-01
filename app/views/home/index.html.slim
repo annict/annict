@@ -10,14 +10,15 @@
       .text-center.mb-3
         = render "application/components/adsense", slots: [ENV["GOOGLE_AD_728x90_20"]], size: "728x90"
 
-    .row.p-home-index__main_columns
+    .row
       .col-7
         h2.h4.font-weight-bold.mb-3.text-center
-          = t "noun.activities"
+          = t "noun.untracked_episodes"
 
-        c-activities
-          .c-loading
-            .c-loading__core Loading...
+        .c-card.px-3
+          c-untracked-episode-list
+            .c-loading
+              .c-loading__core Loading...
 
       .col-5.pl-0
         - if current_user.tips.unfinished.present?
@@ -25,10 +26,10 @@
             = render "home/tips"
 
         h2.h4.font-weight-bold.mb-3.text-center
-          = t "noun.untracked_episodes"
+          = t "noun.activities"
 
-        .c-card.mb-3
-          c-untracked-episode-list.px-3
+        .mb-3
+          c-activities.pb-3
             .c-loading
               .c-loading__core Loading...
 

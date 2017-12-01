@@ -132,9 +132,6 @@ export default {
 
   mounted() {
     this.gon = window.gon;
-    if (this.gon.user.device === 'pc') {
-      $(this.$el).css({ maxHeight: window.innerHeight * 0.7 });
-    }
     return this.load();
   }
 };

@@ -82,14 +82,20 @@ export default {
     },
 
     _activityData() {
-      if (!gon.activityData) {
+      if (!this.gon.activityData) {
         return {};
       }
-      return JSON.parse(gon.activityData);
+      return JSON.parse(this.gon.activityData);
     }
   },
 
   mounted() {
+    this.gon = window.gon;
+
+    if (this.gon.user.device === 'pc') {
+      $(this.$el).css({ maxHeight: window.innerHeight * 0.7 });
+    }
+
     return this.load();
   }
 };
