@@ -6,4 +6,11 @@
       margin-top: 340px;
     }
   }
+
+  &.is-user {
+    .c-activities {
+      overflow-x: hidden;
+      overflow-y: scroll;
+    }
+  }
 }
