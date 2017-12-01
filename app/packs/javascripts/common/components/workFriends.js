@@ -9,10 +9,10 @@ export default {
 
   data() {
     return {
-      isSignedIn: gon.user.isSignedIn,
+      isSignedIn: window.gon.user.isSignedIn,
       showAll: false,
       works: [],
-      pageObject: gon.pageObject ? JSON.parse(gon.pageObject) : {}
+      workListData: window.gon.workListData ? JSON.parse(window.gon.workListData) : {}
     };
   },
 
@@ -56,6 +56,6 @@ export default {
     if (!this.isSignedIn) {
       return;
     }
-    return (this.works = this.pageObject.works);
+    return (this.works = this.workListData.works);
   }
 };

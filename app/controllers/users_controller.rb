@@ -54,7 +54,13 @@ class UsersController < ApplicationController
     activity_data = render_jb("api/internal/activities/index",
       user: user_signed_in? ? current_user : nil,
       activities: activities)
-    gon.push(activityData: activity_data)
+
+    works = Work.where(id: activities.pluck(:work_id))
+    work_list_data = render_jb "works/_list",
+      user: user_signed_in? ? current_user : nil,
+      works: works
+
+    gon.push(activityData: activity_data, workListData: work_list_data)
   end
 
   def following

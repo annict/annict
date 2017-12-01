@@ -38,7 +38,7 @@ class EpisodesController < ApplicationController
 
     return unless user_signed_in?
 
-    gon.pageObject = render_jb "works/_detail",
+    gon.workListData = render_jb "works/_detail",
       user: current_user,
       work: @work
   end
@@ -76,7 +76,7 @@ class EpisodesController < ApplicationController
     @record = @episode.records.new
     @record.setup_shared_sns(current_user)
 
-    gon.pageObject = render_jb "works/_detail",
+    gon.workListData = render_jb "works/_detail",
       user: current_user,
       work: @work
   end

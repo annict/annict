@@ -23,7 +23,7 @@ class ReviewsController < ApplicationController
 
     @works = Work.where(id: @reviews.pluck(:work_id))
 
-    gon.pageObject = render_jb "works/_list",
+    gon.workListData = render_jb "works/_list",
       user: current_user,
       works: @works,
       with_friends: true
@@ -124,7 +124,7 @@ class ReviewsController < ApplicationController
   def set_page_object
     return unless user_signed_in?
 
-    gon.pageObject = render_jb "works/_detail",
+    gon.workListData = render_jb "works/_detail",
       user: current_user,
       work: @work
   end
