@@ -35,7 +35,7 @@ class HomeController < ApplicationController
       activities = current_user.
         following_activities.
         order(id: :desc).
-        includes(:recipient, trackable: :user, user: :profile).
+        includes(user: :profile).
         page(1)
       activity_data = render_jb("api/internal/activities/index",
         user: current_user,

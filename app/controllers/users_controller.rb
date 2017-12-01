@@ -44,12 +44,11 @@ class UsersController < ApplicationController
     @favorite_casts = @user.favorite_people.with_cast.includes(:person).order(id: :desc)
     @favorite_staffs = @user.favorite_people.with_staff.includes(:person).order(id: :desc)
     @favorite_organizations = @user.favorite_organizations.includes(:organization).order(id: :desc)
-    @reviews = @user.reviews.includes(:work).published.order(id: :desc)
+    @reviews = @user.reviews.includes(work: :work_image).published.order(id: :desc)
 
     activities = @user.
       activities.
       order(id: :desc).
-      includes(:recipient, trackable: :user, user: :profile).
       page(1)
     activity_data = render_jb("api/internal/activities/index",
       user: user_signed_in? ? current_user : nil,
