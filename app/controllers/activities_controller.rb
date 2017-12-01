@@ -16,6 +16,14 @@ class ActivitiesController < ApplicationController
       user: current_user,
       activities: activities)
 
-    gon.push(activityData: activity_data)
+    works = Work.where(id: activities.pluck(:work_id))
+    work_list_data = render_jb "works/_list",
+      user: current_user,
+      works: works
+
+    gon.push(
+      activityData: activity_data,
+      workListData: work_list_data
+    )
   end
 end
