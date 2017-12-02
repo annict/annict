@@ -46,6 +46,7 @@ module Annict
           {
             device: browser.device.mobile? ? "mobile" : "pc",
             keen: { timestamp: timestamp },
+            is_supporter: user&.supporter? == true,
             locale: locale,
             page_category: page_category,
             time_zone: time_zone,
