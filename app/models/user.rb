@@ -378,6 +378,11 @@ class User < ApplicationRecord
       (gumroad_subscriber.gumroad_ended_at.nil? || gumroad_subscriber.gumroad_ended_at > Time.zone.now)
   end
 
+  def weeks
+    days = (Time.zone.now.to_date - created_at.to_date).to_f
+    (days / 7).floor
+  end
+
   private
 
   def get_large_avatar_image(provider, image_url)

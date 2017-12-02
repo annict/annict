@@ -51,6 +51,7 @@ module Annict
             time_zone: time_zone,
             user_agent: request.user_agent,
             user_id: user&.encoded_id,
+            user_weeks: user&.weeks,
             uuid: request.cookies["ann_client_uuid"],
             via: via
           }
