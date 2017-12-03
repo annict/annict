@@ -113,16 +113,20 @@ group :development do
   gem "binding_of_caller" # Using better_errors
   gem "bullet"
   gem "derailed_benchmarks"
+  gem "fast_stack" # Using rack-mini-profiler
+  gem "flamegraph" # Using rack-mini-profiler
   gem "graphiql-rails"
   gem "i18n-tasks"
   gem "letter_opener_web"
   gem "listen" # Rails 5から `rails s` するときに必要になった
+  gem "memory_profiler" # Using rack-mini-profiler
+  gem "rack-mini-profiler", require: false
   gem "rubocop"
   gem "ruby_identicon"
   gem "scss_lint", require: false
-  gem "spring"
   gem "spring-commands-rspec", require: false
-  gem "stackprof"
+  gem "spring"
+  gem "stackprof" # Using rack-mini-profiler
   gem "thin"
 end
 
