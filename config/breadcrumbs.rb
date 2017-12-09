@@ -176,3 +176,8 @@ crumb :forum_edit_comment do |comment|
   link t("head.title.forum.comments.edit"), edit_forum_post_comment_path(comment.forum_post, comment)
   parent :forum_post_detail, comment.forum_post
 end
+
+crumb :pages_legal do
+  link t("head.title.pages.legal")
+  parent :root
+end

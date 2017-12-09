@@ -1,0 +1,14 @@
+- title = t "head.title.pages.legal"
+- set_meta_tags(title: title, reverse: true, prefix: false)
+- set_page_category "pages_legal"
+- breadcrumb :pages_legal
+
+- content_for :head do
+  meta name="robots" content="noindex,nofollow,noarchive"
+
+.c-card.container.mb-3.py-3
+  = render "legal_body"
+
+= render "application/components/breadcrumb"
+= render "application/components/footer"
+= render "application/components/tabbar"

@@ -31,6 +31,8 @@
         li.list-inline-item = link_to t("head.title.pages.about"), about_path
         li.list-inline-item = link_to t("noun.terms_of_use"), terms_path
         li.list-inline-item = link_to t("noun.privacy_policy"), privacy_path
+        - if locale_ja?
+          li.list-inline-item = link_to t("head.title.pages.legal"), legal_path
     .container
       h4.font-weight-bold = t "noun.seasonal_anime"
       ul.list-inline.mb-0
