@@ -8,9 +8,9 @@ c-record inline-template="" :user-id="#{record.user.id}"
         .row
           .col
             = link_to record.user.profile.name, user_path(record.user.username)
-            / - if record.user.supporter? && !record.user.setting.hide_supporter_label?
-            /   span.badge.u-badge-supporter.ml-1
-            /     = t "noun.supporter"
+            - if record.user.supporter? && !record.user.setting.hide_supporter_badge?
+              span.badge.u-badge-supporter.ml-1
+                = t "noun.supporter"
           .col.col-auto.pl-0
             .text-right
               - if record.modify_comment?

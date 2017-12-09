@@ -33,6 +33,8 @@
             li = link_to t("head.title.pages.about"), about_path
             li = link_to t("noun.terms_of_use"), terms_path
             li = link_to t("noun.privacy_policy"), privacy_path
+            - if locale_ja?
+              li = link_to t("head.title.pages.legal"), legal_path
         .col-3
           h4.font-weight-bold = t "noun.seasonal_anime"
           ul.list-unstyled

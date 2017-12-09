@@ -150,8 +150,8 @@ ja:
       new:
         sign_up_with_oauth: "%{provider_name}で始める"
     options:
-      hide_supporter_label: Annictサポーターのラベルを非表示にする
-      hide_supporter_label_detail: プロフィールページなどに表示されるAnnictサポーターを示すラベルを非表示にします
+      hide_supporter_badge: Annictサポーターのバッジを非表示にする
+      hide_supporter_badge_detail: プロフィールページなどに表示されるAnnictサポーターを示すバッジを非表示にします
       prevent_spoiler_of_episode_you_have_not_watched: 未記録エピソードのネタバレを防ぐ
       prevent_spoiler_of_episode_you_have_not_watched_detail: 見てる、見たい、または一時中断したアニメの中で、記録していないエピソードに投稿された他の利用者からの感想を表示しないようにします。
     organization_fans:

@@ -152,9 +152,10 @@ resources :works, only: %i(index show) do
   end
 end
 
-get "about",   to: "pages#about"
+get "about", to: "pages#about"
+get "legal", to: "pages#legal"
 get "privacy", to: "pages#privacy"
-get "terms",   to: "pages#terms"
+get "terms", to: "pages#terms"
 
 # 新リダイレクト用URL
 get "r/:provider/:url_hash",
