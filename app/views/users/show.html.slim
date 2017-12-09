@@ -19,9 +19,9 @@
                 = link_to user_path(@user.username) do
                   = ann_image_tag(@user.profile, :tombo_avatar, size: "80x80", class: "p-profile-header__avatar rounded-circle")
               .col.col-auto.pl-0
-                / - if @user.supporter? && !@user.setting.hide_supporter_label?
-                /   .badge.u-badge-supporter.mb-1
-                /     = t "noun.supporter"
+                - if @user.supporter? && !@user.setting.hide_supporter_badge?
+                  .badge.u-badge-supporter.mb-1
+                    = t "noun.supporter"
                 h1
                   = link_to user_path(@user.username) do
                     .font-weight-bold

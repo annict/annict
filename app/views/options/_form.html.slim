@@ -10,9 +10,9 @@
   - if current_user.supporter?
     .form-check
       label.form-check-label
-        = f.check_box :hide_supporter_label, class: "form-check-input"
-        = t "messages.options.hide_supporter_label"
+        = f.check_box :hide_supporter_badge, class: "form-check-input"
+        = t "messages.options.hide_supporter_badge"
         .small.text-muted
-          = t "messages.options.hide_supporter_label_detail"
+          = t "messages.options.hide_supporter_badge_detail"
   .text-center
     = f.submit class: "btn btn-primary"

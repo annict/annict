@@ -150,8 +150,8 @@ en:
       new:
         sign_up_with_oauth: Sign Up with %{provider_name}
     options:
-      hide_supporter_label: Hide Annict Supporter labels
-      hide_supporter_label_detail: Hide the labels on profiles page and so on.
+      hide_supporter_badge: Hide Annict Supporter labels
+      hide_supporter_badge_detail: Hide the labels on profiles page and so on.
       prevent_spoiler_of_episode_you_have_not_watched: Prevent spoiler of episode which you have not watched
       prevent_spoiler_of_episode_you_have_not_watched_detail: This option will hide comments on unwatched episodes when you've set status as "Watched", "Plan to Watch", or "On Hold".
     organization_fans:
