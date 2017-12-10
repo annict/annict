@@ -49,8 +49,8 @@
           h4.font-weight-bold.d-inline-block.mr-2.mb-0
             = "#{t('noun.language')}: "
           ul.list-inline.d-inline-block.mb-0
-            li.list-inline-item = link_to "日本語", "#{ENV.fetch('ANNICT_JP_URL')}#{request.path}"
-            li.list-inline-item = link_to "English", "#{ENV.fetch('ANNICT_URL')}#{request.path}?locale=en"
+            li.list-inline-item = link_to "日本語", local_url_with_path(locale: :ja)
+            li.list-inline-item = link_to "English", local_url_with_path(locale: :en)
         .col.text-center
           = link_to root_path do
             = image_tag "logos/color-white.png", width: "25", alt: "Annict", class: "img-fluid rounded"

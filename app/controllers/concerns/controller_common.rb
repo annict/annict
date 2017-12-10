@@ -4,7 +4,7 @@ module ControllerCommon
   extend ActiveSupport::Concern
 
   included do
-    helper_method :render_jb, :locale_ja?, :locale_en?, :local_url, :discord_invite_url
+    helper_method :render_jb, :locale_ja?, :locale_en?, :local_url, :discord_invite_url, :local_url_with_path
 
     rescue_from ActionView::MissingTemplate do
       raise ActionController::RoutingError, "Not Found" if Rails.env.production?
@@ -45,22 +45,17 @@ module ControllerCommon
       redirect_to "#{url}#{request.path}", options
     end
 
-    def redirect_to_locale_domain(options = {})
-      return if request.domain == ENV.fetch("ANNICT_DOMAIN") && locale_en?
-      return if request.domain == ENV.fetch("ANNICT_JP_DOMAIN") && locale_ja?
-
-      url = ["#{local_url}#{request.path}", request.query_string].select(&:present?).join("?")
-
-      redirect_to url, options
-    end
-
-    def local_url
-      case I18n.locale.to_s
+    def local_url(locale: I18n.locale)
+      case locale.to_s
       when "ja"
         ENV.fetch("ANNICT_JP_URL")
       else
         ENV.fetch("ANNICT_URL")
       end
+    end
+
+    def local_url_with_path(locale: I18n.locale)
+      ["#{local_url(locale: locale)}#{request.path}", request.query_string].select(&:present?).join("?")
     end
 
     def redirect_if_unexpected_subdomain
