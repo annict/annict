@@ -1,9 +1,9 @@
 .p-footer
   .p-footer__main.py-3
     .container.mb-3
-      h2.mb-0
+      h2.mb-1
         = link_to "Annict", ENV.fetch("ANNICT_URL")
-      .p-footer__description.small
+      .p-footer__description.mb-2
         | The platform for anime addicts.
       .p-footer__social-links
         h4
@@ -19,7 +19,7 @@
               = icon "comments-o"
     .container.mb-3
       h4.font-weight-bold = t "noun.services"
-      ul.list-inline
+      ul.p-footer__list.list-inline
         li.list-inline-item = link_to t("noun.annict_userland"), userland_root_path
         li.list-inline-item = link_to t("noun.annict_forum"), forum_root_path
         li.list-inline-item = link_to t("noun.annict_db"), db_root_path
@@ -35,7 +35,7 @@
           li.list-inline-item = link_to t("head.title.pages.legal"), legal_path
     .container
       h4.font-weight-bold = t "noun.seasonal_anime"
-      ul.list-inline.mb-0
+      ul.p-footer__list.list-inline.mb-0
         - Season.latest_slugs.each do |slug|
           li.list-inline-item
             - year, name = slug.split("-")
@@ -44,7 +44,7 @@
     .container.py-2
       .row.align-items-center
         .col
-          h4.font-weight-bold.d-inline-block.mr-2.mb-0
+          h4.font-weight-bold.d-inline-block.mr-2.mb-1
             = "#{t('noun.language')}: "
           ul.list-inline.d-inline-block.mb-0
             li.list-inline-item = link_to "日本語", "#{ENV.fetch('ANNICT_JP_URL')}#{request.path}"

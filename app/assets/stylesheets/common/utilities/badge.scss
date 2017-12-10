@@ -28,7 +28,7 @@ $ann-badge-colors: (
   display: inline-block;
   font-size: $badge-font-size;
   font-weight: $badge-font-weight;
-  line-height: 1;
+  line-height: map-get($ann-line-height-sizes, 1);
   padding: $badge-padding-y $badge-padding-x;
   text-align: center;
   vertical-align: baseline;

@@ -4,24 +4,27 @@
       = ann_image_tag(top_work.work_image, :attachment, size: "250x250", alt: top_work.decorate.local_title, class: "rounded img-fluid")
     c-status-selector.mt-2 :work-id="#{top_work.id}"
   .col.pl-0
-    .mb-1.u-lh-1
+    .mb-1
       span.font-weight-bold.mr-1 = top_work.watchers_count
       span.text-muted.small Watchers
-    h3.h2.font-weight-bold = link_to top_work.decorate.local_title, work_path(top_work)
+    h3.h2.font-weight-bold.mb-3
+      = link_to top_work.decorate.local_title, work_path(top_work), class: "u-text-body"
     - if top_work.casts.present?
-      .font-weight-bold = t "noun.cast"
+      .font-weight-bold.mb-2
+        = t "noun.casts"
       ul.list-inline
         - top_work.casts.order(:sort_number).limit(10).each do |cast|
           - cache cast do
-            li.list-inline-item
+            li.list-inline-item.u-lh-3
               = cast.character.decorate.name_link
-              | : 
+              | :
               = cast.decorate.local_name_with_old_link
     - if top_work.staffs.present?
-      .font-weight-bold = t "noun.staff"
+      .font-weight-bold.mb-2
+        = t "noun.staffs"
       ul.list-inline
         - top_work.staffs.major.order(:sort_number).limit(10).each do |staff|
           - cache staff do
-            li.list-inline-item
+            li.list-inline-item.u-lh-3
               = "#{staff.decorate.role_name}: "
               = staff.decorate.local_name_with_old_link

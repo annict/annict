@@ -11,17 +11,17 @@
         = t "messages.episodes.watched_x_times", records_count: current_user.checkins_count_in(episode)
     .container.mt-3
       .row
-        .col.text-center.u-lh-sm
+        .col.text-center
           = episode.score.round(1)
-          .small
+          .small.mt-2
             | Score
-        .col.text-center.u-lh-sm
+        .col.text-center
           = all_records.count
-          .small
+          .small.mt-2
             | Records
-        .col.text-center.u-lh-sm
+        .col.text-center
           = all_records.with_comment.count
-          .small
+          .small.mt-2
             | Comments
   - if episode.next_episode.present?
     = link_to work_episode_path(work, episode.next_episode), class: "p-episode-title-header__next h3 text-center mb-0" do

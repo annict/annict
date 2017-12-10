@@ -21,7 +21,7 @@
                   = icon "comments-o"
         .col-3
           h4.font-weight-bold = t "noun.services"
-          ul.list-unstyled
+          ul.p-footer__list.list-unstyled
             li = link_to t("noun.annict_userland"), userland_root_path
             li = link_to t("noun.annict_forum"), forum_root_path
             li = link_to t("noun.annict_db"), db_root_path
@@ -37,7 +37,7 @@
               li = link_to t("head.title.pages.legal"), legal_path
         .col-3
           h4.font-weight-bold = t "noun.seasonal_anime"
-          ul.list-unstyled
+          ul.p-footer__list.list-unstyled
             - Season.latest_slugs.each do |slug|
               li
                 - year, name = slug.split("-")

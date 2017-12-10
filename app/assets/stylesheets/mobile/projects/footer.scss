@@ -30,6 +30,12 @@
       }
     }
 
+    #{$root}__list {
+      li {
+        line-height: map-get($ann-line-height-sizes, 3);
+      }
+    }
+
     #{$root}__description {
       color: $ann-color-white;
     }

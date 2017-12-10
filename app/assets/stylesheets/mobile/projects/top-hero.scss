@@ -1,5 +1,5 @@
 .p-top-hero {
-  height: 300px;
+  height: 260px;
   position: relative;
 
   &__bg-image {
@@ -24,5 +24,6 @@
 
   &__description {
     color: $ann-color-white;
+    line-height: map-get($ann-line-height-sizes, 3);
   }
 }

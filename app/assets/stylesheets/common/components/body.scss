@@ -1,0 +1,5 @@
+.c-body {
+  &__content {
+    line-height: map-get($ann-line-height-sizes, 4);
+  }
+}
