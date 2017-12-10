@@ -106,8 +106,8 @@ en:
       index_guest:
         hero_description_html: Explore the anime database, track anime you are watching<br>and see what friends are watching.
         hero_description_mobile_html: Track anime you are watching<br>and see what friends are watching.
-        hero_title: The platform for Anime addicts.
-        hero_title_mobile_html: The platform for Anime addicts.
+        hero_title: The platform for anime addicts.
+        hero_title_mobile_html: The platform for anime addicts.
         start_tracking: Start Tracking
     ics:
       you_can_see: You can see programs of works which you set "Watching", "Plan to Watch" when you add the following URL to Google Calendar.
@@ -215,7 +215,7 @@ en:
         new: Generate new token
         no_tokens: No tokens
     supporters:
-      hide_ads_html: 'Hide ads by becoming <a href="/supporters">Annict Supporter</a>'
+      hide_ads_html: 'You can hide ads by becoming <a href="/supporters">Annict Supporter</a>'
     tracks:
       episodes_you_have_watched: "Watched"
       no_trackable_episodes: No trackable episodes
