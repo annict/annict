@@ -22,11 +22,11 @@ module ControllerCommon
     end
 
     def locale_ja?
-      locale == :ja
+      locale.to_s == "ja"
     end
 
     def locale_en?
-      locale == :en
+      locale.to_s == "en"
     end
 
     private
@@ -46,7 +46,8 @@ module ControllerCommon
     end
 
     def redirect_to_locale_domain(options = {})
-      return if request.domain == ENV.fetch("ANNICT_DOMAIN") && I18n.locale.to_s == "en"
+      return if request.domain == ENV.fetch("ANNICT_DOMAIN") && locale_en?
+      return if request.domain == ENV.fetch("ANNICT_JP_DOMAIN") && locale_ja?
 
       url = ["#{local_url}#{request.path}", request.query_string].select(&:present?).join("?")
 
@@ -76,31 +77,12 @@ module ControllerCommon
       redirect_to_root_domain(status: 301)
     end
 
-    def switch_languages
+    def switch_locale
       case request.domain
       when ENV.fetch("ANNICT_DOMAIN")
-        if user_signed_in? && current_user.locale.en?
-          I18n.locale = :en
-          return
-        end
-
-        I18n.locale = if params[:locale].in?(User.locale.values)
-          params[:locale]
-        else
-          user_signed_in? ? current_user.locale : preferred_locale
-        end
-
-        if user_signed_in? && current_user.locale != I18n.locale.to_s
-          current_user.update_column(:locale, I18n.locale)
-        end
-
-        redirect_to_locale_domain
+        I18n.locale = :en
       when ENV.fetch("ANNICT_JP_DOMAIN")
         I18n.locale = :ja
-
-        if user_signed_in? && !current_user.locale.ja?
-          current_user.update_column(:locale, I18n.locale)
-        end
       end
     end
 
