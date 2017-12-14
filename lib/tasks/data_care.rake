@@ -7,6 +7,12 @@ namespace :data_care do
     merge_episode.run!
   end
 
+  task :move_episode, %i(episode_id work_id) => :environment do |_, args|
+    episode_id, work_id = args.values_at(:episode_id, :work_id)
+    move_episode = Annict::DataCare::MoveEpisode.new(episode_id, work_id)
+    move_episode.run!
+  end
+
   task delete_abandoned_records: :environment do
     Activity.find_each do |a|
       if a.recipient.blank? || a.trackable.blank?
