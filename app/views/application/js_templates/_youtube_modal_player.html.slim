@@ -3,7 +3,7 @@ script#t-youtube-modal-player type="x-template"
     .c-video-thumbnail @click="openModal"
       img.img-fluid.img-thumbnail.rounded :src="thumbnailUrl"
       = icon "play-circle-o"
-    .small
+    .small v-if="videoTitle"
       | {{ videoTitle }}
 
     .modal :id="modalId"

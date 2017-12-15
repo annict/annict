@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20171209032152) do
+ActiveRecord::Schema.define(version: 20171214133413) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -760,6 +760,7 @@ ActiveRecord::Schema.define(version: 20171209032152) do
     t.string "aasm_state", default: "published", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string "title_en", default: "", null: false
     t.index ["work_id"], name: "index_pvs_on_work_id"
   end
 
