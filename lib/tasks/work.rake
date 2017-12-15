@@ -76,10 +76,10 @@ namespace :work do
   end
 
   task send_favorite_works_added_email: :environment do
-    cast_work_ids = Cast.yesterday.pluck(:work_id)
-    staff_work_ids = Staff.yesterday.pluck(:work_id)
+    cast_work_ids = Cast.published.yesterday.pluck(:work_id)
+    staff_work_ids = Staff.published.yesterday.pluck(:work_id)
     season = Season.find_by_slug(ENV.fetch("ANNICT_CURRENT_SEASON"))
-    works = Work.where(id: (cast_work_ids | staff_work_ids))
+    works = Work.published.where(id: (cast_work_ids | staff_work_ids))
     works = works.
       where("season_year >= ? AND season_name > ?", season.year, season.name_value).
       or(works.where("season_year > ?", season.year)).
