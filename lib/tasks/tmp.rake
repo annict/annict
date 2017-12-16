@@ -1,26 +1,24 @@
 # frozen_string_literal: true
 
 namespace :tmp do
-  task :update_foreign_keys_on_activities, %i(from) => :environment do |_, args|
-    activity_id = args[:from]
-
-    Activity.where("id >= ?", activity_id).find_each do |a|
-      puts "activity: #{a.id}"
-
-      begin
-        case a.action
-        when "create_status"
-          a.update_columns(work_id: a.recipient.id, status_id: a.trackable.id)
-        when "create_record"
-          a.update_columns(work_id: a.recipient.work.id, episode_id: a.recipient.id, record_id: a.trackable.id)
-        when "create_review"
-          a.update_columns(work_id: a.recipient.id, review_id: a.trackable.id)
-        when "create_multiple_records"
-          a.update_columns(work_id: a.recipient.id, multiple_record_id: a.trackable.id)
-        end
-      rescue => ex
-        puts ex
-        a.destroy
+  task set_locale: :environment do
+    [
+      { model: Checkin, column: :comment },
+      { model: Comment, column: :body },
+      { model: DbComment, column: :body },
+      { model: ForumComment, column: :body },
+      { model: ForumPost, column: :body },
+      { model: Item, column: :title },
+      { model: Review, column: :body },
+      { model: UserlandProject, column: :description },
+      { model: WorkComment, column: :body },
+      { model: WorkTag, column: :name },
+      { model: WorkTaggable, column: :description }
+    ].each do |h|
+      h[:model].where.not(h[:column] => [nil, ""]).find_each do |record|
+        puts "#{record.class.name}: #{record.id}"
+        record.detect_locale!(h[:column])
+        record.save!
       end
     end
   end

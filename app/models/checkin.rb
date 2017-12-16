@@ -44,6 +44,7 @@
 class Checkin < ApplicationRecord
   extend Enumerize
   include AASM
+  include LocaleDetectable
 
   enumerize :rating_state, in: %i(bad average good great), scope: true
 
