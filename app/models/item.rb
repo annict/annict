@@ -21,10 +21,12 @@
 #  aasm_state             :string           default("published"), not null
 #  created_at             :datetime         not null
 #  updated_at             :datetime         not null
+#  locale                 :string           default("other"), not null
 #
 # Indexes
 #
-#  index_items_on_asin  (asin) UNIQUE
+#  index_items_on_asin    (asin) UNIQUE
+#  index_items_on_locale  (locale)
 #
 
 class Item < ApplicationRecord

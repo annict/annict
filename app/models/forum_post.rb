@@ -1,5 +1,4 @@
 # frozen_string_literal: true
-
 # == Schema Information
 #
 # Table name: forum_posts
@@ -11,13 +10,15 @@
 #  body                 :text             default(""), not null
 #  forum_comments_count :integer          default(0), not null
 #  edited_at            :datetime
+#  last_commented_at    :datetime         not null
 #  created_at           :datetime         not null
 #  updated_at           :datetime         not null
-#  last_commented_at    :datetime         not null
+#  locale               :string           default("other"), not null
 #
 # Indexes
 #
 #  index_forum_posts_on_forum_category_id  (forum_category_id)
+#  index_forum_posts_on_locale             (locale)
 #  index_forum_posts_on_user_id            (user_id)
 #
 

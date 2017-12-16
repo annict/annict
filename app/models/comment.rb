@@ -1,5 +1,4 @@
 # frozen_string_literal: true
-
 # == Schema Information
 #
 # Table name: comments
@@ -12,11 +11,13 @@
 #  created_at  :datetime
 #  updated_at  :datetime
 #  work_id     :integer
+#  locale      :string           default("other"), not null
 #
 # Indexes
 #
 #  comments_checkin_id_idx    (checkin_id)
 #  comments_user_id_idx       (user_id)
+#  index_comments_on_locale   (locale)
 #  index_comments_on_work_id  (work_id)
 #
 

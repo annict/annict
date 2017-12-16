@@ -9,9 +9,11 @@
 #  description :string
 #  created_at  :datetime         not null
 #  updated_at  :datetime         not null
+#  locale      :string           default("other"), not null
 #
 # Indexes
 #
+#  index_work_taggables_on_locale                   (locale)
 #  index_work_taggables_on_user_id                  (user_id)
 #  index_work_taggables_on_user_id_and_work_tag_id  (user_id,work_tag_id) UNIQUE
 #  index_work_taggables_on_work_tag_id              (work_tag_id)

@@ -9,9 +9,11 @@
 #  work_taggings_count :integer          default(0), not null
 #  created_at          :datetime         not null
 #  updated_at          :datetime         not null
+#  locale              :string           default("other"), not null
 #
 # Indexes
 #
+#  index_work_tags_on_locale               (locale)
 #  index_work_tags_on_name                 (name) UNIQUE
 #  index_work_tags_on_work_taggings_count  (work_taggings_count)
 #

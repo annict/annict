@@ -16,9 +16,11 @@
 #  available            :boolean          default(FALSE), not null
 #  created_at           :datetime         not null
 #  updated_at           :datetime         not null
+#  locale               :string           default("other"), not null
 #
 # Indexes
 #
+#  index_userland_projects_on_locale                (locale)
 #  index_userland_projects_on_userland_category_id  (userland_category_id)
 #
 
