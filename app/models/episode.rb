@@ -16,11 +16,10 @@
 #  aasm_state            :string           default("published"), not null
 #  fetch_syobocal        :boolean          default(FALSE), not null
 #  raw_number            :string
-#  avg_rating            :float
 #  title_ro              :string           default(""), not null
 #  title_en              :string           default(""), not null
 #  record_comments_count :integer          default(0), not null
-#  score          :float
+#  score                 :float
 #
 # Indexes
 #
@@ -28,7 +27,7 @@
 #  episodes_work_id_sc_count_key      (work_id,sc_count) UNIQUE
 #  index_episodes_on_aasm_state       (aasm_state)
 #  index_episodes_on_prev_episode_id  (prev_episode_id)
-#  index_episodes_on_score     (score)
+#  index_episodes_on_score            (score)
 #
 
 class Episode < ApplicationRecord
