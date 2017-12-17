@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20171209032152) do
+ActiveRecord::Schema.define(version: 20171216120948) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -306,10 +306,10 @@ ActiveRecord::Schema.define(version: 20171209032152) do
     t.string "title_ro", default: "", null: false
     t.string "title_en", default: "", null: false
     t.integer "record_comments_count", default: 0, null: false
-    t.float "score", default: 50.0, null: false
+    t.float "satisfaction_score"
     t.index ["aasm_state"], name: "index_episodes_on_aasm_state"
     t.index ["prev_episode_id"], name: "index_episodes_on_prev_episode_id"
-    t.index ["score"], name: "index_episodes_on_score"
+    t.index ["satisfaction_score"], name: "index_episodes_on_satisfaction_score"
     t.index ["work_id", "sc_count"], name: "episodes_work_id_sc_count_key", unique: true
     t.index ["work_id"], name: "episodes_work_id_idx"
   end
@@ -1144,9 +1144,11 @@ ActiveRecord::Schema.define(version: 20171209032152) do
     t.integer "reviews_count", default: 0, null: false
     t.date "started_on"
     t.date "ended_on"
+    t.float "satisfaction_score"
     t.index ["aasm_state"], name: "index_works_on_aasm_state"
     t.index ["key_pv_id"], name: "index_works_on_key_pv_id"
     t.index ["number_format_id"], name: "index_works_on_number_format_id"
+    t.index ["satisfaction_score"], name: "index_works_on_satisfaction_score"
     t.index ["sc_tid"], name: "works_sc_tid_key", unique: true
     t.index ["season_id"], name: "works_season_id_idx"
     t.index ["season_year", "season_name"], name: "index_works_on_season_year_and_season_name"

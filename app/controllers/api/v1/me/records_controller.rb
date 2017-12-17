@@ -16,6 +16,7 @@ module Api
             r.shared_facebook = @params.share_facebook == "true"
             r.oauth_application = doorkeeper_token.application
           end
+          record.rating_state = record.rating_to_rating_state if record.rating.present?
 
           service = NewRecordService.new(current_user, record)
           service.ga_client = ga_client

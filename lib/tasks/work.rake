@@ -113,4 +113,34 @@ namespace :work do
       end
     end
   end
+
+  task update_score: :environment do
+    results = {}
+
+    Work.published.find_each do |w|
+      satisfaction_scores = w.episodes.published.pluck(:satisfaction_score)
+
+      if satisfaction_scores.all?(&:nil?)
+        w.update_column(:satisfaction_score, nil)
+        next
+      end
+
+      satisfaction_scores = satisfaction_scores.compact
+      satisfaction_score_avg = (satisfaction_scores.reduce(&:+) / satisfaction_scores.length).round(1)
+
+      puts "Work: #{w.id} => #{satisfaction_score_avg}"
+
+      results[w.id] = satisfaction_score_avg
+    end
+
+    satisfaction_score_max = results.values.max
+
+    results.each do |work_id, satisfaction_score_avg|
+      satisfaction_score = (satisfaction_score_avg / satisfaction_score_max * 100).round(1)
+
+      puts "Work: #{work_id} => satisfaction_score: #{satisfaction_score}"
+
+      Work.update(work_id, satisfaction_score: satisfaction_score)
+    end
+  end
 end
