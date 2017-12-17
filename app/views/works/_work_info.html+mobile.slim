@@ -6,12 +6,33 @@
       .u-very-small.mt-1
         = work.work_image.decorate.asin_or_copyright_text
   .col-9
-    h1.h3.font-weight-bold.mb-1
-      = link_to work.decorate.local_title, work_path(work)
-    .mb-2
-      span.font-weight-bold.mr-1 = work.watchers_count
-      span.text-muted.small Watchers
-    c-status-selector :work-id="#{work.id}"
+    h1.h2.font-weight-bold.mb-3
+      = link_to work.decorate.local_title, work_path(work), class: "u-text-body"
+
+    .row.mb-3
+      .col.text-center
+        .h4.font-weight-bold.mb-1
+          = work.watchers_count
+        .text-muted.small
+          = t "noun.watchers_count"
+      .col.text-center
+        .h4.font-weight-bold.mb-1
+          - if work.no_episodes?
+            = work.reviews_count
+          - else
+            = work.records_count
+        .text-muted.small
+          = t "noun.records_count"
+      .col.text-center
+        .h4.font-weight-bold.mb-1
+          = work.score.presence || "-"
+          span.u-very-small.ml-1
+            | / 10
+        .text-muted.small
+          = t "noun.satisfaction"
+
     .mb-3
+      c-status-selector :work-id="#{work.id}"
+
     c-share-button-twitter.mr-2 text="#{work.decorate.local_title}" url="#{local_url}#{work_path(work)}" hashtags="#{work.twitter_hashtag.presence || ''}"
     c-share-button-facebook url="#{local_url}#{work_path(work)}"

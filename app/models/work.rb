@@ -336,7 +336,7 @@ class Work < ApplicationRecord
     episodes.published.order(:sort_number).pluck(:checkins_count)
   end
 
-  def checkins_count
+  def records_count
     chart_values.reduce(&:+).presence || 0
   end
 
