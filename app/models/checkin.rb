@@ -105,10 +105,10 @@ class Checkin < ApplicationRecord
 
   def rating_to_rating_state
     case rating
-    when 1.0..2.9 then :bad
-    when 3.0..3.4 then :average
-    when 3.5..4.5 then :good
-    when 4.6..5.0 then :great
+    when 1.0...3.0 then :bad
+    when 3.0...3.5 then :average
+    when 3.5...4.5 then :good
+    when 4.5..5.0 then :great
     end
   end
 
