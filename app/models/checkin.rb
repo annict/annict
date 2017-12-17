@@ -86,12 +86,6 @@ class Checkin < ApplicationRecord
     count == 1 && first.id == checkin.id
   end
 
-  def self.avg_rating
-    ratings = pluck(:rating).select(&:present?)
-    return if ratings.blank?
-    (ratings.inject { |sum, rating| sum + rating } / ratings.count).round(1)
-  end
-
   def self.rating_state_order(direction = :asc)
     direction = direction.in?(%i(asc desc)) ? direction : :asc
     order <<-SQL
@@ -111,10 +105,10 @@ class Checkin < ApplicationRecord
 
   def rating_to_rating_state
     case rating
-    when 1.0..2.9 then :bad
-    when 3.0..3.9 then :average
-    when 4.0..4.5 then :good
-    when 4.6..5.0 then :great
+    when 1.0...3.0 then :bad
+    when 3.0...3.5 then :average
+    when 3.5...4.5 then :good
+    when 4.5..5.0 then :great
     end
   end
 

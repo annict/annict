@@ -113,4 +113,37 @@ namespace :work do
       end
     end
   end
+
+  task update_score: :environment do
+    results = {}
+    episode_score_max = 10
+
+    Work.published.find_each do |w|
+      scores = w.episodes.published.pluck(:score)
+
+      if scores.all?(&:nil?)
+        w.update_column(:score, nil)
+        next
+      end
+
+      scores = scores.map { |s| s.nil? ? 0 : s + 1 }
+      score_avg = (scores.inject(&:+) / scores.length) + 1
+      score_range = 1..(episode_score_max + 2)
+      wilson_score = WilsonScore.rating_lower_bound(score_avg, w.watchers_count, score_range)
+
+      puts "Work: #{w.id} => #{wilson_score}"
+
+      results[w.id] = wilson_score
+    end
+
+    wilson_score_max = results.values.max
+
+    results.each do |work_id, wilson_score|
+      score = (wilson_score / wilson_score_max * 10).round(2)
+
+      puts "Work: #{work_id} => score: #{score}"
+
+      Work.update(work_id, score: score)
+    end
+  end
 end

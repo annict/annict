@@ -41,12 +41,14 @@
 #  reviews_count         :integer          default(0), not null
 #  started_on            :date
 #  ended_on              :date
+#  score                 :float
 #
 # Indexes
 #
 #  index_works_on_aasm_state                   (aasm_state)
 #  index_works_on_key_pv_id                    (key_pv_id)
 #  index_works_on_number_format_id             (number_format_id)
+#  index_works_on_score                        (score)
 #  index_works_on_season_year                  (season_year)
 #  index_works_on_season_year_and_season_name  (season_year,season_name)
 #  works_sc_tid_key                            (sc_tid) UNIQUE
@@ -334,7 +336,7 @@ class Work < ApplicationRecord
     episodes.published.order(:sort_number).pluck(:checkins_count)
   end
 
-  def checkins_count
+  def records_count
     chart_values.reduce(&:+).presence || 0
   end
 

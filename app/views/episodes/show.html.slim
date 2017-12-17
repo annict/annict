@@ -72,21 +72,26 @@
               .row.align-items-center
                 .col.text-right
                   .small.text-muted
-                    | Score
-                .col
-                  .h3 = @episode.score.round(1)
+                    = t "noun.satisfaction"
+                .col.pl-0
+                  .h3
+                    = @episode.score.presence || "-"
+                    span.u-very-small.ml-1
+                      | / 10
               .row.align-items-center
                 .col.text-right
                   .small.text-muted
-                    | Records
-                .col
-                  .h3 = @all_records.count
+                    = t "noun.records_count"
+                .col.pl-0
+                  .h3
+                    = @all_records.count
               .row.align-items-center
                 .col.text-right
                   .small.text-muted
-                    | Comments
-                .col
-                  .h3 = @all_records.with_comment.count
+                    = t "noun.comments_count"
+                .col.pl-0
+                  .h3
+                    = @all_records.with_comment.count
             .mb-3.text-center
               .small.font-weight-bold
                 = t "noun.rating"
