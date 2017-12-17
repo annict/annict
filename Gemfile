@@ -94,6 +94,7 @@ gem "uglifier"
 gem "validate_url"
 gem "virtus"
 gem "webpacker"
+gem "wilson_score"
 
 group :development, :test do
   gem "awesome_print"
