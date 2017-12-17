@@ -20,7 +20,7 @@
 #  title_ro              :string           default(""), not null
 #  title_en              :string           default(""), not null
 #  record_comments_count :integer          default(0), not null
-#  satisfaction_score          :float
+#  score          :float
 #
 # Indexes
 #
@@ -28,7 +28,7 @@
 #  episodes_work_id_sc_count_key      (work_id,sc_count) UNIQUE
 #  index_episodes_on_aasm_state       (aasm_state)
 #  index_episodes_on_prev_episode_id  (prev_episode_id)
-#  index_episodes_on_satisfaction_score     (satisfaction_score)
+#  index_episodes_on_score     (score)
 #
 
 class Episode < ApplicationRecord

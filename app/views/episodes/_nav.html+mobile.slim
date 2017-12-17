@@ -12,7 +12,7 @@
     .container.mt-3
       .row
         .col.text-center.u-lh-sm
-          = episode.satisfaction_score&.round(1).presence || "-"
+          = episode.score&.round(1).presence || "-"
           span.u-very-small.ml-1
             | / 100
           .small

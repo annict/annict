@@ -118,29 +118,29 @@ namespace :work do
     results = {}
 
     Work.published.find_each do |w|
-      satisfaction_scores = w.episodes.published.pluck(:satisfaction_score)
+      scores = w.episodes.published.pluck(:score)
 
-      if satisfaction_scores.all?(&:nil?)
-        w.update_column(:satisfaction_score, nil)
+      if scores.all?(&:nil?)
+        w.update_column(:score, nil)
         next
       end
 
-      satisfaction_scores = satisfaction_scores.compact
-      satisfaction_score_avg = (satisfaction_scores.reduce(&:+) / satisfaction_scores.length).round(1)
+      scores = scores.compact
+      score_avg = (scores.reduce(&:+) / scores.length).round(1)
 
-      puts "Work: #{w.id} => #{satisfaction_score_avg}"
+      puts "Work: #{w.id} => #{score_avg}"
 
-      results[w.id] = satisfaction_score_avg
+      results[w.id] = score_avg
     end
 
-    satisfaction_score_max = results.values.max
+    score_max = results.values.max
 
-    results.each do |work_id, satisfaction_score_avg|
-      satisfaction_score = (satisfaction_score_avg / satisfaction_score_max * 100).round(1)
+    results.each do |work_id, score_avg|
+      score = (score_avg / score_max * 100).round(1)
 
-      puts "Work: #{work_id} => satisfaction_score: #{satisfaction_score}"
+      puts "Work: #{work_id} => score: #{score}"
 
-      Work.update(work_id, satisfaction_score: satisfaction_score)
+      Work.update(work_id, score: score)
     end
   end
 end

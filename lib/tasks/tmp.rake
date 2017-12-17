@@ -10,7 +10,7 @@ namespace :tmp do
     end
   end
 
-  task reset_rating_avg_and_satisfaction_score: :environment do
-    Episode.update_all(rating_avg: nil, satisfaction_score: nil)
+  task reset_rating_avg_and_score: :environment do
+    Episode.update_all(rating_avg: nil, score: nil)
   end
 end

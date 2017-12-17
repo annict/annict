@@ -8,7 +8,7 @@ namespace :episode do
       rating_states = episode.records.where.not(rating_state: nil).pluck(:rating_state)
 
       if rating_states.length < 3
-        episode.update_columns(rating_avg: nil, satisfaction_score: nil)
+        episode.update_columns(rating_avg: nil, score: nil)
         next
       end
 
@@ -32,9 +32,9 @@ namespace :episode do
     rating_max = results.values.max
 
     results.each do |episode_id, rating_avg|
-      satisfaction_score = (rating_avg / rating_max * 100).round(1)
-      puts "Episode: #{episode_id} => satisfaction_score: #{satisfaction_score}"
-      Episode.update(episode_id, rating_avg: rating_avg, satisfaction_score: satisfaction_score)
+      score = (rating_avg / rating_max * 100).round(1)
+      puts "Episode: #{episode_id} => score: #{score}"
+      Episode.update(episode_id, rating_avg: rating_avg, score: score)
     end
   end
 end

@@ -75,7 +75,7 @@
                     | Score
                 .col.pl-0
                   .h3
-                    = @episode.satisfaction_score&.round(1).presence || "-"
+                    = @episode.score&.round(1).presence || "-"
                     span.u-very-small.ml-1
                       | / 100
               .row.align-items-center
