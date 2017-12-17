@@ -116,6 +116,7 @@ namespace :work do
 
   task update_score: :environment do
     results = {}
+    episode_score_max = 10
 
     Work.published.find_each do |w|
       scores = w.episodes.published.pluck(:score)
@@ -125,18 +126,20 @@ namespace :work do
         next
       end
 
-      scores = scores.compact
-      score_avg = (scores.reduce(&:+) / scores.length).round(1)
+      scores = scores.map { |s| s.nil? ? 0 : s + 1 }
+      score_avg = (scores.inject(&:+) / scores.length) + 1
+      score_range = 1..(episode_score_max + 2)
+      wilson_score = WilsonScore.rating_lower_bound(score_avg, w.watchers_count, score_range)
 
-      puts "Work: #{w.id} => #{score_avg}"
+      puts "Work: #{w.id} => #{wilson_score}"
 
-      results[w.id] = score_avg
+      results[w.id] = wilson_score
     end
 
-    score_max = results.values.max
+    wilson_score_max = results.values.max
 
-    results.each do |work_id, score_avg|
-      score = (score_avg / score_max * 100).round(1)
+    results.each do |work_id, wilson_score|
+      score = (wilson_score / wilson_score_max * 10).round(2)
 
       puts "Work: #{work_id} => score: #{score}"
 

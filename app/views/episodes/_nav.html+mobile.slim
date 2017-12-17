@@ -12,9 +12,9 @@
     .container.mt-3
       .row
         .col.text-center.u-lh-sm
-          = episode.score&.round(1).presence || "-"
+          = episode.score.presence || "-"
           span.u-very-small.ml-1
-            | / 100
+            | / 10
           .small
             | Score
         .col.text-center.u-lh-sm
