@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20171216120948) do
+ActiveRecord::Schema.define(version: 20171216120950) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -164,8 +164,10 @@ ActiveRecord::Schema.define(version: 20171216120948) do
     t.string "rating_state"
     t.integer "review_id"
     t.string "aasm_state", default: "published", null: false
+    t.string "locale", default: "other", null: false
     t.index ["episode_id"], name: "checkins_episode_id_idx"
     t.index ["facebook_url_hash"], name: "checkins_facebook_url_hash_key", unique: true
+    t.index ["locale"], name: "index_checkins_on_locale"
     t.index ["multiple_record_id"], name: "index_checkins_on_multiple_record_id"
     t.index ["oauth_application_id"], name: "index_checkins_on_oauth_application_id"
     t.index ["rating_state"], name: "index_checkins_on_rating_state"
@@ -212,7 +214,9 @@ ActiveRecord::Schema.define(version: 20171216120948) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.integer "work_id"
+    t.string "locale", default: "other", null: false
     t.index ["checkin_id"], name: "comments_checkin_id_idx"
+    t.index ["locale"], name: "index_comments_on_locale"
     t.index ["user_id"], name: "comments_user_id_idx"
     t.index ["work_id"], name: "index_comments_on_work_id"
   end
@@ -241,6 +245,8 @@ ActiveRecord::Schema.define(version: 20171216120948) do
     t.text "body", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string "locale", default: "other", null: false
+    t.index ["locale"], name: "index_db_comments_on_locale"
     t.index ["resource_id", "resource_type"], name: "index_db_comments_on_resource_id_and_resource_type"
     t.index ["user_id"], name: "index_db_comments_on_user_id"
   end
@@ -409,7 +415,9 @@ ActiveRecord::Schema.define(version: 20171216120948) do
     t.datetime "edited_at", comment: "The datetime which user has changed body."
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string "locale", default: "other", null: false
     t.index ["forum_post_id"], name: "index_forum_comments_on_forum_post_id"
+    t.index ["locale"], name: "index_forum_comments_on_locale"
     t.index ["user_id"], name: "index_forum_comments_on_user_id"
   end
 
@@ -433,7 +441,9 @@ ActiveRecord::Schema.define(version: 20171216120948) do
     t.datetime "last_commented_at", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string "locale", default: "other", null: false
     t.index ["forum_category_id"], name: "index_forum_posts_on_forum_category_id"
+    t.index ["locale"], name: "index_forum_posts_on_locale"
     t.index ["user_id"], name: "index_forum_posts_on_user_id"
   end
 
@@ -510,7 +520,9 @@ ActiveRecord::Schema.define(version: 20171216120948) do
     t.string "aasm_state", default: "published", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string "locale", default: "other", null: false
     t.index ["asin"], name: "index_items_on_asin", unique: true
+    t.index ["locale"], name: "index_items_on_locale"
   end
 
   create_table "latest_statuses", id: :serial, force: :cascade do |t|
@@ -759,6 +771,7 @@ ActiveRecord::Schema.define(version: 20171216120948) do
     t.string "aasm_state", default: "published", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string "title_en", default: "", null: false
     t.index ["work_id"], name: "index_pvs_on_work_id"
   end
 
@@ -801,6 +814,8 @@ ActiveRecord::Schema.define(version: 20171216120948) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.integer "oauth_application_id"
+    t.string "locale", default: "other", null: false
+    t.index ["locale"], name: "index_reviews_on_locale"
     t.index ["oauth_application_id"], name: "index_reviews_on_oauth_application_id"
     t.index ["user_id"], name: "index_reviews_on_user_id"
     t.index ["work_id"], name: "index_reviews_on_work_id"
@@ -986,6 +1001,8 @@ ActiveRecord::Schema.define(version: 20171216120948) do
     t.boolean "available", default: false, null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string "locale", default: "other", null: false
+    t.index ["locale"], name: "index_userland_projects_on_locale"
     t.index ["userland_category_id"], name: "index_userland_projects_on_userland_category_id"
   end
 
@@ -1038,6 +1055,8 @@ ActiveRecord::Schema.define(version: 20171216120948) do
     t.string "body", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string "locale", default: "other", null: false
+    t.index ["locale"], name: "index_work_comments_on_locale"
     t.index ["user_id", "work_id"], name: "index_work_comments_on_user_id_and_work_id", unique: true
     t.index ["user_id"], name: "index_work_comments_on_user_id"
     t.index ["work_id"], name: "index_work_comments_on_work_id"
@@ -1078,6 +1097,8 @@ ActiveRecord::Schema.define(version: 20171216120948) do
     t.string "description"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string "locale", default: "other", null: false
+    t.index ["locale"], name: "index_work_taggables_on_locale"
     t.index ["user_id", "work_tag_id"], name: "index_work_taggables_on_user_id_and_work_tag_id", unique: true
     t.index ["user_id"], name: "index_work_taggables_on_user_id"
     t.index ["work_tag_id"], name: "index_work_taggables_on_work_tag_id"
@@ -1101,6 +1122,8 @@ ActiveRecord::Schema.define(version: 20171216120948) do
     t.integer "work_taggings_count", default: 0, null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string "locale", default: "other", null: false
+    t.index ["locale"], name: "index_work_tags_on_locale"
     t.index ["name"], name: "index_work_tags_on_name", unique: true
     t.index ["work_taggings_count"], name: "index_work_tags_on_work_taggings_count"
   end
