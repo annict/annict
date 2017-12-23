@@ -31,6 +31,7 @@
 
 class Item < ApplicationRecord
   include AASM
+  include LocaleDetectable
 
   has_attached_file :thumbnail
 

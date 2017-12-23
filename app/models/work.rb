@@ -355,6 +355,10 @@ class Work < ApplicationRecord
     "http://cal.syoboi.jp/tid/#{sc_tid}"
   end
 
+  def mal_anime_url
+    "https://myanimelist.net/anime/#{mal_anime_id}"
+  end
+
   def twitter_avatar_url(size = :original)
     return "" if twitter_username.blank?
     "https://twitter.com/#{twitter_username}/profile_image?size=#{size}"

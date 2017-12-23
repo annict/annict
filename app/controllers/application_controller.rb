@@ -39,8 +39,20 @@ class ApplicationController < ActionController::Base
     root_path
   end
 
-  def after_sign_out_path_for(resource_or_scope)
+  def after_sign_out_path_for(_resource_or_scope)
     root_path
+  end
+
+  def localable_resources(resources)
+    if user_signed_in?
+      resources.with_locale(current_user.allowed_locales)
+    elsif !user_signed_in? && locale_en?
+      resources.with_locale(:en)
+    elsif !user_signed_in? && locale_ja?
+      resources.with_locale(:ja)
+    else
+      resources
+    end
   end
 
   def load_work

@@ -22,4 +22,8 @@ namespace :tmp do
       end
     end
   end
+
+  task set_allowed_locales: :environment do
+    User.update_all(allowed_locales: ApplicationRecord::LOCALES)
+  end
 end

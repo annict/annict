@@ -11,5 +11,8 @@
         .p-1
           .u-very-small
             = link_to work.decorate.local_title, work_path(work)
-          .u-very-small
-            = series_work.decorate.local_summary
+
+          - summary = series_work.decorate.local_summary(fallback: false)
+          - if summary.present?
+            .u-very-small
+              = summary

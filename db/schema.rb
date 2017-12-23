@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20171216120950) do
+ActiveRecord::Schema.define(version: 20171223071225) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -1034,6 +1034,8 @@ ActiveRecord::Schema.define(version: 20171216120950) do
     t.datetime "work_tag_cache_expired_at"
     t.datetime "work_comment_cache_expired_at"
     t.integer "gumroad_subscriber_id"
+    t.string "allowed_locales", array: true
+    t.index ["allowed_locales"], name: "index_users_on_allowed_locales", using: :gin
     t.index ["confirmation_token"], name: "users_confirmation_token_key", unique: true
     t.index ["email"], name: "users_email_key", unique: true
     t.index ["gumroad_subscriber_id"], name: "index_users_on_gumroad_subscriber_id"

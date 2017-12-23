@@ -15,8 +15,9 @@
   .mb-3
     = render "application/components/adsense", slots: [ENV["GOOGLE_AD_320x100_8"]], size: "320x100"
 
-h2.h4.font-weight-bold.text-center.mt-3.mb-4
-  = t "noun.information"
+.container
+  h2.h4.font-weight-bold.mt-3.mb-4
+    = t "noun.information"
 .c-card.py-3.mb-3
   .container
     dl.row.mb-0
@@ -25,11 +26,6 @@ h2.h4.font-weight-bold.text-center.mt-3.mb-4
           = t "activerecord.attributes.work.title_kana"
         dd.col-6
           = @work.title_kana
-      - if locale_en? && @work.title_ro.present?
-        dt.col-6.text-right
-          = t "activerecord.attributes.work.title_ro"
-        dd.col-6
-          = @work.title_ro
       - if locale_en? && @work.title_en.present?
         dt.col-6.text-right
           = t "activerecord.attributes.work.title_en"
@@ -48,7 +44,7 @@ h2.h4.font-weight-bold.text-center.mt-3.mb-4
         dt.col-6.text-right
           = @work.decorate.started_on_label
         dd.col-6
-          = @work.started_on
+          = display_date(@work.started_on)
       - if @work.official_site_url.present?
         dt.col-6.text-right
           = t "activerecord.attributes.work.official_site_url"
@@ -59,6 +55,16 @@ h2.h4.font-weight-bold.text-center.mt-3.mb-4
           = t "activerecord.attributes.work.official_site_url_en"
         dd.col-6
           = link_with_domain @work.official_site_url_en
+      - if @work.twitter_username.present?
+        dt.col-6.text-right
+          = t "activerecord.attributes.work.twitter_username"
+        dd.col-6
+          = @work.decorate.twitter_username_link
+      - if @work.twitter_hashtag.present?
+        dt.col-6.text-right
+          = t "activerecord.attributes.work.twitter_hashtag"
+        dd.col-6
+          = @work.decorate.twitter_hashtag_link
       - if @work.wikipedia_url.present?
         dt.col-6.text-right
           = t "activerecord.attributes.work.wikipedia_url"
@@ -74,21 +80,17 @@ h2.h4.font-weight-bold.text-center.mt-3.mb-4
           = t "activerecord.attributes.work.sc_tid"
         dd.col-6
           = @work.decorate.syobocal_link(@work.sc_tid)
-      - if @work.twitter_username.present?
+      - if @work.mal_anime_id.present?
         dt.col-6.text-right
-          = t "activerecord.attributes.work.twitter_username"
+          = t "noun.my_anime_list"
         dd.col-6
-          = @work.decorate.twitter_username_link
-      - if @work.twitter_hashtag.present?
-        dt.col-6.text-right
-          = t "activerecord.attributes.work.twitter_hashtag"
-        dd.col-6
-          = @work.decorate.twitter_hashtag_link
+          = @work.decorate.mal_anime_link
 
 - if @work.pvs.published.present?
   .mb-3
-    h2.h4.font-weight-bold.text-center.mt-3.mb-4
-      = t "noun.pv"
+    .container
+      h2.h4.font-weight-bold.mt-3.mb-4
+        = t "noun.pv"
     .c-card.px-3.pt-3
       .container
         .row
@@ -106,8 +108,9 @@ h2.h4.font-weight-bold.text-center.mt-3.mb-4
 
 - if @work.decorate.local_synopsis.present?
   .mb-3
-    h2.h4.font-weight-bold.text-center.mt-3.mb-4
-      = t "activerecord.attributes.work.synopsis"
+    .container
+      h2.h4.font-weight-bold.mt-3.mb-4
+        = t "activerecord.attributes.work.synopsis"
     .c-card.py-3
       .container
         = @work.decorate.local_synopsis
@@ -122,33 +125,39 @@ h2.h4.font-weight-bold.text-center.mt-3.mb-4
     = render "application/components/adsense", slots: [ENV["GOOGLE_AD_320x100_1"]], size: "320x100"
 
 .mb-3
-  h2.h4.text-center.font-weight-bold.mt-3.mb-4
-    = t "noun.characters"
+  .container
+    h2.h4.font-weight-bold.mt-3.mb-4
+      = t "noun.characters"
   .c-card.p-3
     - cache [I18n.locale, @casts] do
-      = render "characters/character_list", casts: @casts.order(:sort_number)
+      - casts = @casts.select { |c| locale_ja? ? true : c.support_en? }
+      = render "characters/character_list", casts: casts
 
 .mb-3
-  h2.h4.text-center.font-weight-bold.mt-3.mb-4
-    = t "noun.staffs"
+  .container
+    h2.h4.font-weight-bold.mt-3.mb-4
+      = t "noun.staffs"
   .c-card.p-3
     - cache [I18n.locale, @staffs] do
-      = render "staffs/staff_list", staffs: @staffs.order(:sort_number)
+      - staffs = @staffs.select { |s| locale_ja? ? true : s.support_en? }
+      = render "staffs/staff_list", staffs: staffs
 
-.mb-3
-  h2.h4.text-center.font-weight-bold.mt-3.mb-4
-    = t "noun.video_services"
-  .c-card.px-3.pt-3
-    - Channel.published.with_video_service.each_slice(2).each do |channels|
-      .row.mb-3
-        - channels.each do |channel|
-          - program_detail = channel.program_details.published.find_by(work: @work)
-          .col-6
-            - if program_detail.present?
-              = link_to channel.name, program_detail.url, class: "btn btn-primary btn-sm w-100", target: "_blank"
-            - else
-              button.btn.btn-primary.btn-sm.w-100 type="button" disabled=""
-                = channel.name
+- if locale_ja?
+  .mb-3
+    .container
+      h2.h4.font-weight-bold.mt-3.mb-4
+        = t "noun.video_services"
+    .c-card.px-3.pt-3
+      - Channel.published.with_video_service.each_slice(2).each do |channels|
+        .row.mb-3
+          - channels.each do |channel|
+            - program_detail = channel.program_details.published.find_by(work: @work)
+            .col-6
+              - if program_detail.present?
+                = link_to channel.name, program_detail.url, class: "btn btn-primary btn-sm w-100", target: "_blank"
+              - else
+                button.btn.btn-primary.btn-sm.w-100 type="button" disabled=""
+                  = channel.name
 
 .mb-3
   .container
@@ -178,11 +187,12 @@ h2.h4.font-weight-bold.text-center.mt-3.mb-4
 
 - if @series_list.present?
   .mb-3
-    h2.h4.text-center.font-weight-bold.mt-3.mb-4
-      = t "noun.related_works"
+    .container
+      h2.h4.font-weight-bold.mt-3.mb-4
+        = t "noun.related_works"
     .c-card.p-3
       - @series_list.each do |series|
-        h3.text-center.mb-3
+        h3.mb-3.text-center
           = t("noun.series_with_name", series_name: series.decorate.local_name)
         = render "series/work_list", series: series, work: @work
 

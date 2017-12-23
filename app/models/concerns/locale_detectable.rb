@@ -4,7 +4,9 @@ module LocaleDetectable
   extend ActiveSupport::Concern
 
   included do
-    enumerize :locale, in: ApplicationRecord::LOCALES, default: :other
+    extend Enumerize
+
+    enumerize :locale, in: ApplicationRecord::LOCALES, default: :other, scope: true
 
     def detect_locale!(column)
       result = CLD.detect_language(send(column))

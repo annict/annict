@@ -33,6 +33,7 @@
 class Review < ApplicationRecord
   extend Enumerize
   include AASM
+  include LocaleDetectable
 
   STATES = %i(
     rating_overall_state
