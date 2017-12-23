@@ -1,4 +1,4 @@
-class CreateShots < ActiveRecord::Migration
+class CreateShots < ActiveRecord::Migration[4.2]
   def change
     create_table :shots do |t|
       t.integer :user_id, null: false

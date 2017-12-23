@@ -1,4 +1,4 @@
-class CreateChannelWorks < ActiveRecord::Migration
+class CreateChannelWorks < ActiveRecord::Migration[4.2]
   def change
     create_table :channel_works do |t|
       t.integer :user_id,    null: false

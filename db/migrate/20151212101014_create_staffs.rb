@@ -1,4 +1,4 @@
-class CreateStaffs < ActiveRecord::Migration
+class CreateStaffs < ActiveRecord::Migration[4.2]
   def change
     create_table :staffs do |t|
       t.integer :person_id, null: false

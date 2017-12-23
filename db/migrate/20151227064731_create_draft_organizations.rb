@@ -1,4 +1,4 @@
-class CreateDraftOrganizations < ActiveRecord::Migration
+class CreateDraftOrganizations < ActiveRecord::Migration[4.2]
   def change
     create_table :draft_organizations do |t|
       t.integer :organization_id

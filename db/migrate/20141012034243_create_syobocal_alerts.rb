@@ -1,4 +1,4 @@
-class CreateSyobocalAlerts < ActiveRecord::Migration
+class CreateSyobocalAlerts < ActiveRecord::Migration[4.2]
   def change
     create_table :syobocal_alerts do |t|
       t.integer :work_id

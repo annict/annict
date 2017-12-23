@@ -1,4 +1,4 @@
-class CreateCasts < ActiveRecord::Migration
+class CreateCasts < ActiveRecord::Migration[4.2]
   def change
     create_table :casts do |t|
       t.integer :person_id, null: false

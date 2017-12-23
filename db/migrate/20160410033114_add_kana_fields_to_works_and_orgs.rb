@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class AddKanaFieldsToWorksAndOrgs < ActiveRecord::Migration
+class AddKanaFieldsToWorksAndOrgs < ActiveRecord::Migration[4.2]
   def change
     add_column :works, :title_kana, :string, null: false, default: ""
     add_column :draft_works, :title_kana, :string, null: false, default: ""

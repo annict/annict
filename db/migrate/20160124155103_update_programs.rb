@@ -1,4 +1,4 @@
-class UpdatePrograms < ActiveRecord::Migration
+class UpdatePrograms < ActiveRecord::Migration[4.2]
   def change
     add_column :programs, :sc_pid, :integer
     add_column :programs, :rebroadcast, :boolean, null: false, default: false

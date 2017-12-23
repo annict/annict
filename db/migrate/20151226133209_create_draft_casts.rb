@@ -1,4 +1,4 @@
-class CreateDraftCasts < ActiveRecord::Migration
+class CreateDraftCasts < ActiveRecord::Migration[4.2]
   def change
     create_table :draft_casts do |t|
       t.integer :cast_id

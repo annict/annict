@@ -1,4 +1,4 @@
-class CreateWorkOrganizations < ActiveRecord::Migration
+class CreateWorkOrganizations < ActiveRecord::Migration[4.2]
   def change
     create_table :work_organizations do |t|
       t.integer :work_id, null: false

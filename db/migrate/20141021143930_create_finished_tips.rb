@@ -1,4 +1,4 @@
-class CreateFinishedTips < ActiveRecord::Migration
+class CreateFinishedTips < ActiveRecord::Migration[4.2]
   def change
     create_table :finished_tips do |t|
       t.integer :user_id, null: false

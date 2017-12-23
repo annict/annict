@@ -1,4 +1,4 @@
-class AddSomeFieldsToWorksAndEpisode < ActiveRecord::Migration
+class AddSomeFieldsToWorksAndEpisode < ActiveRecord::Migration[4.2]
   def change
     create_table :number_formats do |t|
       t.string :name, null: false

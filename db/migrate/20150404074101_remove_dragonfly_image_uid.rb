@@ -1,4 +1,4 @@
-class RemoveDragonflyImageUid < ActiveRecord::Migration
+class RemoveDragonflyImageUid < ActiveRecord::Migration[4.2]
   def change
     remove_column :items, :image_uid
     remove_column :profiles, :avatar_uid

@@ -1,4 +1,4 @@
-class AddAasmStateToWorksAndEpisodes < ActiveRecord::Migration
+class AddAasmStateToWorksAndEpisodes < ActiveRecord::Migration[4.2]
   def change
     add_column :works, :aasm_state, :string, null: false, default: "published"
     add_column :episodes, :aasm_state, :string, null: false, default: "published"

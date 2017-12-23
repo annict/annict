@@ -1,4 +1,4 @@
-class CreateChannelGroups < ActiveRecord::Migration
+class CreateChannelGroups < ActiveRecord::Migration[4.2]
   def change
     create_table :channel_groups do |t|
       t.string  :sc_chgid,    null: false

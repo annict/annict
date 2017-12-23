@@ -1,4 +1,4 @@
-class CreateEpisodes < ActiveRecord::Migration
+class CreateEpisodes < ActiveRecord::Migration[4.2]
   def change
     create_table :episodes do |t|
       t.integer     :work_id,     null: false

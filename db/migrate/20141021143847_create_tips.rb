@@ -1,4 +1,4 @@
-class CreateTips < ActiveRecord::Migration
+class CreateTips < ActiveRecord::Migration[4.2]
   def change
     create_table :tips do |t|
       t.integer :target, null: false

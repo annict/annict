@@ -1,4 +1,4 @@
-class CreatePrograms < ActiveRecord::Migration
+class CreatePrograms < ActiveRecord::Migration[4.2]
   def change
     create_table :programs do |t|
       t.integer  :channel_id, null: false

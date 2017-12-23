@@ -1,4 +1,4 @@
-class CreateDraftPeople < ActiveRecord::Migration
+class CreateDraftPeople < ActiveRecord::Migration[4.2]
   def change
     create_table :draft_people do |t|
       t.integer :person_id

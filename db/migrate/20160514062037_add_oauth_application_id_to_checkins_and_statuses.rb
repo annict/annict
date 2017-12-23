@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class AddOauthApplicationIdToCheckinsAndStatuses < ActiveRecord::Migration
+class AddOauthApplicationIdToCheckinsAndStatuses < ActiveRecord::Migration[4.2]
   def change
     add_column :checkins, :oauth_application_id, :integer
     add_index :checkins, :oauth_application_id

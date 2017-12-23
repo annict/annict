@@ -1,4 +1,4 @@
-class CreateDraftMultipleEpisodes < ActiveRecord::Migration
+class CreateDraftMultipleEpisodes < ActiveRecord::Migration[4.2]
   def change
     create_table :draft_multiple_episodes do |t|
       t.integer :work_id, null: false

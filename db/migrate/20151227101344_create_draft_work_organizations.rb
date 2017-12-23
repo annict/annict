@@ -1,4 +1,4 @@
-class CreateDraftWorkOrganizations < ActiveRecord::Migration
+class CreateDraftWorkOrganizations < ActiveRecord::Migration[4.2]
   def change
     create_table :draft_work_organizations do |t|
       t.integer :work_organization_id

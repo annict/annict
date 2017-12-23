@@ -1,4 +1,4 @@
-class CreateDraftItems < ActiveRecord::Migration
+class CreateDraftItems < ActiveRecord::Migration[4.2]
   def change
     create_table :draft_items do |t|
       t.integer :item_id

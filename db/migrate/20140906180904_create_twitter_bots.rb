@@ -1,4 +1,4 @@
-class CreateTwitterBots < ActiveRecord::Migration
+class CreateTwitterBots < ActiveRecord::Migration[4.2]
   def change
     create_table :twitter_bots do |t|
       t.string :name, null: false

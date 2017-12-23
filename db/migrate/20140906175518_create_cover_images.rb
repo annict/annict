@@ -1,4 +1,4 @@
-class CreateCoverImages < ActiveRecord::Migration
+class CreateCoverImages < ActiveRecord::Migration[4.2]
   def change
     create_table :cover_images do |t|
       t.integer :work_id, null: false

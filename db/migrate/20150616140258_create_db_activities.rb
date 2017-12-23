@@ -1,4 +1,4 @@
-class CreateDbActivities < ActiveRecord::Migration
+class CreateDbActivities < ActiveRecord::Migration[4.2]
   def change
     create_table :db_activities do |t|
       t.integer :user_id, null: false

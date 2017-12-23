@@ -1,4 +1,4 @@
-class CreateProviders < ActiveRecord::Migration
+class CreateProviders < ActiveRecord::Migration[4.2]
   def change
     create_table :providers do |t|
       t.integer     :user_id,         null: false

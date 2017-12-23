@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class CreateMultipleRecords < ActiveRecord::Migration
+class CreateMultipleRecords < ActiveRecord::Migration[4.2]
   def change
     create_table :multiple_records do |t|
       t.integer :user_id, null: false

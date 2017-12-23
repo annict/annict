@@ -1,4 +1,4 @@
-class CreateChecks < ActiveRecord::Migration
+class CreateChecks < ActiveRecord::Migration[4.2]
   def change
     create_table :checks do |t|
       t.integer :user_id,    null: false

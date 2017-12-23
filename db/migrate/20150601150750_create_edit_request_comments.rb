@@ -1,4 +1,4 @@
-class CreateEditRequestComments < ActiveRecord::Migration
+class CreateEditRequestComments < ActiveRecord::Migration[4.2]
   def change
     create_table :edit_request_comments do |t|
       t.integer :edit_request_id, null: false

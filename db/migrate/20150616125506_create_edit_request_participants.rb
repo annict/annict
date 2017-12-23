@@ -1,4 +1,4 @@
-class CreateEditRequestParticipants < ActiveRecord::Migration
+class CreateEditRequestParticipants < ActiveRecord::Migration[4.2]
   def change
     create_table :edit_request_participants do |t|
       t.integer :edit_request_id, null: false

@@ -1,4 +1,4 @@
-class CreateDraftEpisodes < ActiveRecord::Migration
+class CreateDraftEpisodes < ActiveRecord::Migration[4.2]
   def change
     create_table :draft_episodes do |t|
       t.integer :episode_id, null: false

@@ -1,4 +1,4 @@
-class AddPrevEpisodeIdToEpisodes < ActiveRecord::Migration
+class AddPrevEpisodeIdToEpisodes < ActiveRecord::Migration[4.2]
   def change
     add_column :episodes, :prev_episode_id, :integer
     add_index :episodes, :prev_episode_id

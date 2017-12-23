@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class AddResourceIdToStaffs < ActiveRecord::Migration
+class AddResourceIdToStaffs < ActiveRecord::Migration[4.2]
   def change
     add_column :staffs, :resource_id, :integer
     add_column :staffs, :resource_type, :string

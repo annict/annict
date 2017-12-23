@@ -1,4 +1,4 @@
-class CreateLatestStatuses < ActiveRecord::Migration
+class CreateLatestStatuses < ActiveRecord::Migration[4.2]
   def change
     create_table :latest_statuses do |t|
       t.integer :user_id, null: false

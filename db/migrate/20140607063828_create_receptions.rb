@@ -1,4 +1,4 @@
-class CreateReceptions < ActiveRecord::Migration
+class CreateReceptions < ActiveRecord::Migration[4.2]
   def change
     create_table :receptions do |t|
       t.integer :user_id,    null: false
