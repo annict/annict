@@ -547,6 +547,7 @@ GEM
       actionpack (>= 4.0)
       activesupport (>= 4.0)
       sprockets (>= 3.0.0)
+    squasher (0.6.0)
     stackprof (0.2.11)
     temple (0.8.0)
     term-ansicolor (1.6.0)
@@ -719,6 +720,7 @@ DEPENDENCIES
   slim
   spring
   spring-commands-rspec
+  squasher
   stackprof
   thin
   timecop

@@ -128,6 +128,7 @@ group :development do
   gem "scss_lint", require: false
   gem "spring-commands-rspec", require: false
   gem "spring"
+  gem "squasher"
   gem "stackprof" # Using rack-mini-profiler
   gem "thin"
 end
