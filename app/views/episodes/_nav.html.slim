@@ -1,5 +1,5 @@
 h2
-  = link_to episode.decorate.title_with_number, work_episode_path(work, episode), class: "u-text-body"
+  = link_to episode.decorate.title_with_number(fallback: false), work_episode_path(work, episode), class: "u-text-body"
 - if user_signed_in? && current_user.tracked?(episode)
   .small
     = icon "check-circle", class: "mr-1 u-text-green"

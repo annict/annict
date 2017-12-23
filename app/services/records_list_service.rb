@@ -10,6 +10,7 @@ class RecordsListService
   def all_comment_records
     results = all_records
     results = results.with_comment
+    results = localable_records(results)
     results = results.page(@params[:page])
     results = sort(results)
     results.per(20)
@@ -21,6 +22,7 @@ class RecordsListService
     results = all_records
     results = results.with_comment
     results = results.joins(:user).merge(@user.followings)
+    results = localable_records(results)
     results = results.page(@params[:page])
     results = sort(results)
     results.per(20)
@@ -31,6 +33,7 @@ class RecordsListService
 
     results = all_records
     results = results.where(user: @user)
+    results = localable_records(results)
     results = results.page(@params[:page])
     results = sort(results)
     results.per(20)
@@ -68,6 +71,18 @@ class RecordsListService
       results.order(created_at: :desc)
     when "created_at_asc"
       results.order(created_at: :asc)
+    end
+  end
+
+  def localable_records(records)
+    if @user.present?
+      records.with_locale(@user.allowed_locales)
+    elsif @user.blank? && @params[:locale_en]
+      records.with_locale(:en)
+    elsif @user.blank? && @params[:locale_ja]
+      records.with_locale(:ja)
+    else
+      records
     end
   end
 end

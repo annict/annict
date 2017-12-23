@@ -12,7 +12,7 @@
 = render "works/header", work: @work
 
 - unless current_user&.supporter?
-  .mb-3
+  .mb-3.text-center
     = render "application/components/adsense", slots: [ENV["GOOGLE_AD_320x100_8"]], size: "320x100"
 
 .container
@@ -121,7 +121,7 @@
           = @work.decorate.local_synopsis_source
 
 - unless current_user&.supporter?
-  .my-3
+  .my-3.text-center
     = render "application/components/adsense", slots: [ENV["GOOGLE_AD_320x100_1"]], size: "320x100"
 
 .mb-3
@@ -197,7 +197,7 @@
         = render "series/work_list", series: series, work: @work
 
 - unless current_user&.supporter?
-  .mb-3
+  .mb-3.text-center
     = render "application/components/adsense", slots: [ENV["GOOGLE_AD_320x100_2"]], size: "320x100"
 
 = render "application/components/breadcrumb"

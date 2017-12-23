@@ -4,7 +4,7 @@
       = icon "angle-left"
   .p-episode-title-header__main
     h2.h4.font-weight-bold.text-center
-      = link_to episode.decorate.title_with_number, work_episode_path(work, episode), class: "u-text-body"
+      = link_to episode.decorate.title_with_number(fallback: false), work_episode_path(work, episode), class: "u-text-body"
     - if user_signed_in? && current_user.tracked?(episode)
       .text-center.small
         = icon "check-circle", class: "mr-1 u-text-green"
@@ -20,7 +20,10 @@
         .col.text-center
           = all_records.count
           .small
-            = t "noun.records_count"
+            - if locale_ja?
+              = t "noun.records_count"
+            - else
+              = t "noun.records"
         .col.text-center
           = all_records.with_comment.count
           .small

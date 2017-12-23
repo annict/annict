@@ -11,6 +11,8 @@ class EpisodeItemsController < ApplicationController
 
     return unless browser.device.mobile?
 
+    params[:locale_en] = locale_en?
+    params[:locale_ja] = locale_ja?
     service = RecordsListService.new(current_user, @episode, params)
     @all_records = service.all_records
   end
