@@ -9,11 +9,11 @@
 = render "works/header", work: @work
 
 - unless current_user&.supporter?
-  .mb-3
+  .mb-3.text-center
     = render "application/components/adsense", slots: [ENV["GOOGLE_AD_320x100_6"]], size: "320x100"
 
 .c-card.pt-3.mb-3
-  .text-center.mb-3
+  .container.mb-3.text-right
     = link_to new_work_review_path(@work), class: "btn btn-primary" do
       = icon "pencil-square-o", class: "mr-1"
       = t "verb.write_review"

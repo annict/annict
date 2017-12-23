@@ -7,9 +7,9 @@ class WorkReviewsController < ApplicationController
     @reviews = @work.
       reviews.
       published.
-      includes(user: :profile).
-      order(created_at: :desc).
-      page(page)
+      includes(user: :profile)
+    @reviews = localable_resources(@reviews)
+    @reviews = @reviews.order(created_at: :desc).page(page)
     @is_spoiler = user_signed_in? && @reviews.present? && current_user.hide_review?(@reviews.first)
 
     return unless user_signed_in?

@@ -15,9 +15,9 @@ class ReviewsController < ApplicationController
     @reviews = @user.
       reviews.
       includes(work: :work_image).
-      published.
-      order(created_at: :desc).
-      page(page)
+      published
+    @reviews = localable_resources(@reviews)
+    @reviews = @reviews.order(created_at: :desc).page(page)
 
     return unless user_signed_in?
 
