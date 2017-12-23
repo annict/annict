@@ -34,6 +34,7 @@ en:
     character: Character
     characters: Characters
     comment: コメント
+    comments_count: Comments
     contents: Contents
     column: Column
     completed: Completed
@@ -111,6 +112,7 @@ en:
     reviews: Reviews
     review_of_the_work: 'Review of "%{work_title}"'
     reviews_by: "Reviews by %{profile_name}"
+    satisfaction: Score
     search: Search
     season: Season
     seasonal_anime: Seasonal Anime
@@ -152,6 +154,7 @@ en:
     video_services: Video Services
     voice_actor: Voice Actor
     voice_actors: Voice Actors
+    watchers_count: Watchers
     watching: Watching
     watching_shorten: Watching
     winter: Winter

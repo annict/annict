@@ -12,17 +12,19 @@
     .container.mt-3
       .row
         .col.text-center
-          = episode.score.round(1)
-          .small.mt-2
-            | Score
+          = episode.score.presence || "-"
+          span.u-very-small.ml-1
+            | / 10
+          .small
+            = t "noun.satisfaction"
         .col.text-center
           = all_records.count
-          .small.mt-2
-            | Records
+          .small
+            = t "noun.records_count"
         .col.text-center
           = all_records.with_comment.count
-          .small.mt-2
-            | Comments
+          .small
+            = t "noun.comments_count"
   - if episode.next_episode.present?
     = link_to work_episode_path(work, episode.next_episode), class: "p-episode-title-header__next h3 text-center mb-0" do
       = icon "angle-right"

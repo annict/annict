@@ -2,47 +2,55 @@
 
 namespace :episode do
   task update_score: :environment do
-    hash = {}
+    RATING_MAX = 3
 
-    Episode.published.recorded.find_each do |episode|
-      puts "episode: #{episode.id}"
-      rating_states = episode.records.where.not(rating_state: nil).pluck(:rating_state)
-      ratings = rating_states.map do |state|
-        case state
-        when "bad" then -1
-        when "average" then 0
-        when "good" then 1
-        when "great" then 2
+    works = Work.published
+    watchers_count_max = works.pluck(:watchers_count).max
+
+    works.find_each do |work|
+      watchers_count = work.watchers_count
+      watchers_rate = 1 + watchers_count.to_f / watchers_count_max
+
+      episodes = work.episodes.published.recorded
+      next if episodes.blank?
+
+      episodes.find_each do |episode|
+        rating_states = episode.records.where.not(rating_state: nil).pluck(:rating_state)
+
+        if rating_states.length.zero?
+          episode.update_columns(score: nil)
+          next
         end
+
+        ratings = rating_states.map do |state|
+          case state.to_s
+          when "bad" then 0
+          when "average" then 1
+          when "good" then 2
+          when "great" then RATING_MAX
+          end
+        end
+
+        ratings_count = ratings.length
+        ratings_sum = ratings.inject(:+)
+        ratings_avg = (ratings_sum.to_f / ratings_count).round(1)
+        total = ratings_count * watchers_rate
+        rating_range = 0..RATING_MAX
+        wilson_score = WilsonScore.rating_lower_bound(ratings_avg, total, rating_range)
+        score = (wilson_score / RATING_MAX * 10).round(2)
+
+        outputs = [
+          "ratings_count: #{ratings_count}",
+          "rating_sum: #{ratings_sum}",
+          "rating_avg: #{ratings_avg}",
+          "total: #{total}",
+          "wilson_score: #{wilson_score}",
+          "score: #{score}"
+        ]
+        puts "Work: #{work.id}, Episode: #{episode.id} => #{outputs.join(', ')}"
+
+        episode.update_column(:score, score)
       end
-
-      rating_sum = ratings.reduce(:+)
-
-      if rating_sum.present?
-        hash[episode.id] = {
-          sum: rating_sum
-        }
-      end
-    end
-
-    average = hash.map { |_, v| v[:sum] }.reduce(:+) / hash.length
-
-    hash.each do |key, val|
-      # 平均との差
-      hash[key][:abs] = (val[:sum] - average).abs
-      # 平方数
-      hash[key][:square] = hash[key][:abs] * hash[key][:abs]
-    end
-
-    # 分散
-    variance = hash.map { |_, v| v[:square] }.reduce(:+) / hash.length
-    # 標準偏差
-    sqrt = Math.sqrt(variance)
-
-    hash.each do |key, val|
-      # 偏差値
-      score = ((hash[key][:sum] - average) / sqrt) * 10 + 50
-      Episode.update(key, score: score)
     end
   end
 end
