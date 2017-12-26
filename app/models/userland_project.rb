@@ -25,6 +25,8 @@
 #
 
 class UserlandProject < ApplicationRecord
+  include LocaleDetectable
+
   has_attached_file :icon
 
   belongs_to :userland_category, counter_cache: true

@@ -225,8 +225,8 @@ en:
     user_work_tags:
       anime_list_tagged: "Anime list tagged '%{tag_name}'"
     userland:
-      description: Userland is the place to discover 3rd party applications which uses Annict API.
-      description_mobile: Userland is the place to discover 3rd party applications which uses Annict API.
+      description_html: "Userland is the place to discover 3rd party applications which uses Annict API."
+      description_mobile_html: "Userland is the place to discover 3rd party applications which uses Annict API."
       projects:
         about_available: Please check this when the project is published and users can use it.
         markdown_support: You can write in Markdown.

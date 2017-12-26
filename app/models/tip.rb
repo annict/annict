@@ -10,11 +10,11 @@
 #  icon_name  :string(255)      not null
 #  created_at :datetime         not null
 #  updated_at :datetime         not null
-#  title_en   :string           default(""), not null
+#  locale     :string(255)      default("other"), not null
 #
 # Indexes
 #
-#  index_tips_on_slug  (slug) UNIQUE
+#  index_tips_on_slug_and_locale  (slug,locale) UNIQUE
 #
 
 class Tip < ApplicationRecord

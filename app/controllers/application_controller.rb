@@ -43,18 +43,6 @@ class ApplicationController < ActionController::Base
     root_path
   end
 
-  def localable_resources(resources)
-    if user_signed_in?
-      resources.with_locale(current_user.allowed_locales)
-    elsif !user_signed_in? && locale_en?
-      resources.with_locale(:en)
-    elsif !user_signed_in? && locale_ja?
-      resources.with_locale(:ja)
-    else
-      resources
-    end
-  end
-
   def load_work
     @work = Work.published.find(params[:work_id])
   end

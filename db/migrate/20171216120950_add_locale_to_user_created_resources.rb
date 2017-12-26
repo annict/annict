@@ -10,6 +10,7 @@ class AddLocaleToUserCreatedResources < ActiveRecord::Migration[5.1]
       forum_posts
       items
       reviews
+      tips
       userland_projects
       work_comments
       work_taggables

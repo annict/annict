@@ -17,7 +17,7 @@ module ApplicationHelper
 
   def local_time_ago_in_words(from_time, options = {})
     days = (Time.zone.now.to_date - from_time.to_date).to_i
-    return from_time.strftime("%Y/%m/%d") if days > 3
+    return display_time(from_time) if days > 3
     spacer = I18n.locale == :en ? " " : ""
     "#{time_ago_in_words(from_time, options)}#{spacer}#{I18n.t('noun.ago')}"
   end

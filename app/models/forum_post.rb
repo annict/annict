@@ -23,6 +23,8 @@
 #
 
 class ForumPost < ApplicationRecord
+  include LocaleDetectable
+
   belongs_to :user
   belongs_to :forum_category
   has_many :forum_comments, dependent: :destroy

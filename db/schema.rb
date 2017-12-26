@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20171223071225) do
+ActiveRecord::Schema.define(version: 20171225125419) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -933,8 +933,8 @@ ActiveRecord::Schema.define(version: 20171223071225) do
     t.string "icon_name", limit: 255, null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.string "title_en", default: "", null: false
-    t.index ["slug"], name: "index_tips_on_slug", unique: true
+    t.string "locale", limit: 255, default: "other", null: false
+    t.index ["slug", "locale"], name: "index_tips_on_slug_and_locale", unique: true
   end
 
   create_table "twitter_bots", id: :serial, force: :cascade do |t|

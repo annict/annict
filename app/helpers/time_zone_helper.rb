@@ -2,7 +2,9 @@
 
 module TimeZoneHelper
   def display_time(time)
-    time&.in_time_zone(local_time_zone)&.strftime("%Y-%m-%d %H:%M")
+    time = time&.in_time_zone(local_time_zone)
+    return time&.strftime("%Y-%m-%d %H:%M") if locale_ja?
+    time&.strftime("%b %-d, %Y %H:%M")
   end
 
   def display_date(date)

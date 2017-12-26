@@ -4,7 +4,8 @@ module ControllerCommon
   extend ActiveSupport::Concern
 
   included do
-    helper_method :render_jb, :locale_ja?, :locale_en?, :local_url, :discord_invite_url, :local_url_with_path
+    helper_method :render_jb, :locale_ja?, :locale_en?, :local_url, :discord_invite_url, :local_url_with_path,
+      :localable_resources
 
     rescue_from ActionView::MissingTemplate do
       raise ActionController::RoutingError, "Not Found" if Rails.env.production?
@@ -27,6 +28,18 @@ module ControllerCommon
 
     def locale_en?
       locale.to_s == "en"
+    end
+
+    def localable_resources(resources)
+      if user_signed_in?
+        resources.with_locale(current_user.allowed_locales)
+      elsif !user_signed_in? && locale_en?
+        resources.with_locale(:en)
+      elsif !user_signed_in? && locale_ja?
+        resources.with_locale(:ja)
+      else
+        resources
+      end
     end
 
     private

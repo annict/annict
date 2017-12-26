@@ -64,7 +64,7 @@ class User < ApplicationRecord
     omniauth_providers: %i(facebook gumroad twitter),
     authentication_keys: %i(email_username)
 
-  enumerize :allowed_locales, in: ApplicationRecord::LOCALES, multiple: true
+  enumerize :allowed_locales, in: ApplicationRecord::LOCALES, multiple: true, default: ApplicationRecord::LOCALES
   enumerize :locale, in: %i(ja en)
   enumerize :role, in: { user: 0, admin: 1, editor: 2 }, default: :user, scope: true
 

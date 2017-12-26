@@ -1,10 +1,11 @@
 $ann-bootstrap-badge-colors: (
-  default: theme-colors("light"),
-  primary: theme-colors("primary"),
-  success: theme-colors("success"),
-  info: theme-colors("info"),
-  warning: theme-colors("warning"),
-  danger: theme-colors("danger")
+  danger: map-get($theme-colors, "danger"),
+  dark: map-get($theme-colors, "dark"),
+  default: map-get($theme-colors, "light"),
+  info: map-get($theme-colors, "info"),
+  primary: map-get($theme-colors, "primary"),
+  success: map-get($theme-colors, "success"),
+  warning: map-get($theme-colors, "warning")
 );
 
 $ann-badge-colors: (
