@@ -8,9 +8,9 @@ machine:
   environment:
     PATH: "${PATH}:${HOME}/${CIRCLE_PROJECT_REPONAME}/node_modules/.bin"
   hosts:
-    annict.comd: 127.0.0.1
-    api.annict.comd: 127.0.0.1
-    annict.jpd: 127.0.0.1
+    annict.test: 127.0.0.1
+    api.annict.test: 127.0.0.1
+    jp.annict.test: 127.0.0.1
   node:
     version: 8.9.0
   timezone:
