@@ -1,6 +1,25 @@
 # frozen_string_literal: true
 
 namespace :tmp do
+  task set_locale_to_ja: :environment do
+    [
+      Checkin,
+      Comment,
+      DbComment,
+      ForumComment,
+      ForumPost,
+      Item,
+      Review,
+      UserlandProject,
+      WorkComment,
+      WorkTag,
+      WorkTaggable
+    ].each do |model|
+      puts "Updating #{model.name}"
+      model.update_all(locale: :ja)
+    end
+  end
+
   task set_locale: :environment do
     [
       { model: Checkin, column: :comment },
