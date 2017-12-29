@@ -32,7 +32,7 @@ module ControllerCommon
 
     def localable_resources(resources)
       if user_signed_in?
-        resources.with_locale(current_user.allowed_locales)
+        resources.with_locale(*current_user.allowed_locales)
       elsif !user_signed_in? && locale_en?
         resources.with_locale(:en)
       elsif !user_signed_in? && locale_ja?
@@ -86,10 +86,12 @@ module ControllerCommon
     end
 
     def switch_locale
-      case request.domain
+      case [request.subdomain, request.domain].select(&:present?).join(".")
       when ENV.fetch("ANNICT_DOMAIN")
+        return redirect_to local_url_with_path(locale: :ja) if user_signed_in? && current_user.locale == "ja"
         I18n.locale = :en
       when ENV.fetch("ANNICT_JP_DOMAIN")
+        return redirect_to local_url_with_path(locale: :ja) if user_signed_in? && current_user.locale == "en"
         I18n.locale = :ja
       end
     end
