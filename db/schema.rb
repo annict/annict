@@ -933,7 +933,8 @@ ActiveRecord::Schema.define(version: 20171225125419) do
     t.string "icon_name", limit: 255, null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.string "locale", limit: 255, default: "other", null: false
+    t.string "locale", default: "other", null: false
+    t.index ["locale"], name: "index_tips_on_locale"
     t.index ["slug", "locale"], name: "index_tips_on_slug_and_locale", unique: true
   end
 
