@@ -10,15 +10,18 @@
 #  icon_name  :string(255)      not null
 #  created_at :datetime         not null
 #  updated_at :datetime         not null
-#  locale     :string(255)      default("other"), not null
+#  locale     :string           default("other"), not null
 #
 # Indexes
 #
+#  index_tips_on_locale           (locale)
 #  index_tips_on_slug_and_locale  (slug,locale) UNIQUE
 #
 
 class Tip < ApplicationRecord
   extend Enumerize
+
+  include LocaleDetectable
 
   enumerize :target, in: { new_user: 0, user: 1 }, scope: true
 end

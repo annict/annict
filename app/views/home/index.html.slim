@@ -21,7 +21,7 @@
               .c-loading__core Loading...
 
       .col-5.pl-0
-        - if current_user.tips.unfinished.present?
+        - if @tips.present?
           .mb-3
             = render "home/tips"
 

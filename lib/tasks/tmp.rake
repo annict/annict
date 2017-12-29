@@ -29,15 +29,15 @@ namespace :tmp do
 
   task update_tips: :environment do
     tip1 = Tip.find_by(slug: "status")
-    tip1.update_columns(locale: :ja)
+    tip1.update_columns(locale: :ja, icon_name: "fa-info-circle")
 
     tip2 = Tip.find_by(slug: "channel")
-    tip2.update_columns(locale: :ja)
+    tip2.update_columns(locale: :ja, icon_name: "fa-info-circle")
 
     tip3 = Tip.find_by(slug: "checkin")
-    tip3.update_columns(slug: "record", locale: :ja)
+    tip3.update_columns(slug: "record", locale: :ja, icon_name: "fa-info-circle")
 
-    Tip.create(slug: "status", title: "Change Statuses of Works", locale: :en)
-    Tip.create(slug: "record", title: "Track What You Watched", locale: :en)
+    Tip.create(target: 0, slug: "status", title: "Change Statuses of Works", icon_name: "fa-info-circle", locale: :en)
+    Tip.create(target: 0, slug: "record", title: "Track What Episodes You Watched", icon_name: "fa-info-circle", locale: :en)
   end
 end
