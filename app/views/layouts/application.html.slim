@@ -8,9 +8,12 @@ html lang="#{I18n.locale}"
 
     .p-application.d-flex.flex-column
       c-flash
+
       = yield
-      - unless user_signed_in?
+
+      - if !user_signed_in? && !page_category.in?(%w(sessions_new registrations_new))
         = render "application/components/sign_up_modal", user: @new_user
+
       = render "application/analytics"
 
     = render "application/js_templates/adsense"
