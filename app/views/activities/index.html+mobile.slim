@@ -2,12 +2,13 @@
 - set_meta_tags(title: title, site: false)
 - set_page_category "activities_index"
 
-- unless current_user&.supporter?
-  .mb-3.text-center
-    = render "application/components/adsense", slots: [ENV["GOOGLE_AD_320x100_3"]], size: "320x100"
+.mt-3
+  - unless current_user&.supporter?
+    .mb-3.text-center
+      = render "application/components/adsense", slots: [ENV["GOOGLE_AD_320x100_3"]], size: "320x100"
 
-.container.mb-3
-  = render "home/subnav"
+  .container.mb-3
+    = render "home/subnav"
 
 .mb-3
   c-activities
