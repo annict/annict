@@ -167,6 +167,7 @@ ja:
         url: URL
         started_at: 放送開始日時
       user:
+        allowed_locales: 表示する言語
         current_password: 現在のパスワード
         email_username: メールアドレスまたはユーザ名
         email: メールアドレス

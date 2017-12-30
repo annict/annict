@@ -232,6 +232,7 @@ ja:
         markdown_support: Markdownで書くことができます。
       welcome: Userlandにようこそ！
     users:
+      allowed_locales_description: "サイト内に投稿された文書 (感想やレビューなど) の中で、どの言語の文書を表示するかを設定することができます"
       bye_bye: "退会しました。(´・ω;:.."
       no_works: 作品はありません
     work_images:

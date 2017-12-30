@@ -117,7 +117,7 @@ en:
       profile:
         avatar: Profile Image
         background_image: Background Image
-        description: Comment
+        description: Bio
         name: Name
         url: URL
       program:
@@ -168,6 +168,7 @@ en:
         url: URL
         started_at: Started At
       user:
+        allowed_locales: Allowed Languages
         current_password: Current password
         email_username: Email or Username
         email: Email
