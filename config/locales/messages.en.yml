@@ -174,7 +174,7 @@ en:
       deleted: Deleted
       updated: Updated
       new:
-        write_your_comment: Write Your Comment!
+        write_your_comment: Write Your Comment! (optional)
       show:
         record_by_name: "%{name}'s Record"
     registrations:
