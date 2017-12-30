@@ -76,7 +76,7 @@ class RecordsListService
 
   def localable_records(records)
     if @user.present?
-      records.with_locale(@user.allowed_locales)
+      records.where(user: @user).or(records.with_locale(*@user.allowed_locales))
     elsif @user.blank? && @params[:locale_en]
       records.with_locale(:en)
     elsif @user.blank? && @params[:locale_ja]

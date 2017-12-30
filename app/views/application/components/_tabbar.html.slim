@@ -3,9 +3,14 @@
     = icon "home"
     span.c-tabbar__text = t "noun.home"
   - if user_signed_in?
-    = link_to programs_path, class: "col text-center" do
-      = icon "calendar-o"
-      span.c-tabbar__text = t "noun.programs"
+    - if locale_ja?
+      = link_to programs_path, class: "col text-center" do
+        = icon "calendar-o"
+        span.c-tabbar__text = t "noun.programs"
+    - else
+      = link_to search_path, class: "col text-center" do
+        = icon "search"
+        span.c-tabbar__text = t "noun.search"
     = link_to library_path(current_user.username, :watching), class: "col text-center" do
       = icon "play"
       span.c-tabbar__text = t "noun.watching_shorten"

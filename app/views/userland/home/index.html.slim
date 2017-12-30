@@ -16,7 +16,7 @@
           .c-card
             - projects = localable_resources(category.userland_projects)
             - if projects.exists?
-              - category.userland_projects.order(:available, created_at: :desc).each do |project|
+              - projects.order(:available, created_at: :desc).each do |project|
                 .container.u-underline.py-3
                   .row.align-items-center
                     .col-auto

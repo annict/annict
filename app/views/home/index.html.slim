@@ -33,18 +33,19 @@
             .c-loading
               .c-loading__core Loading...
 
-        h2.h4.font-weight-bold.mb-3.text-center
-          = t "resources.forum_category.site_news"
-        ul.list-unstyled
-          - @forum_posts.each do |p|
-            li.mb-2
-              .small.text-muted
-                = display_time p.created_at
-              = link_to p.title, forum_post_path(p)
-        .small.text-right.mb-4
-          = link_to forum_category_path(:site_news) do
-            = icon "angle-right", class: "mr-1"
-            = t "messages.forum._common.view_all_site_news"
+        - if @forum_posts.present?
+          h2.h4.font-weight-bold.mb-3.text-center
+            = t "resources.forum_category.site_news"
+          ul.list-unstyled
+            - @forum_posts.each do |p|
+              li.mb-2
+                .small.text-muted
+                  = display_time p.created_at
+                = link_to p.title, forum_post_path(p)
+          .small.text-right.mb-3
+            = link_to forum_category_path(:site_news) do
+              = icon "angle-right", class: "mr-1"
+              = t "messages.forum._common.view_all_site_news"
 
         - unless current_user&.supporter?
           .text-center

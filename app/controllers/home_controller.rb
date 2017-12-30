@@ -29,9 +29,8 @@ class HomeController < ApplicationController
     unless browser.device.mobile?
       @forum_posts = ForumPost.
         joins(:forum_category).
-        merge(ForumCategory.with_slug(:site_news)).
-        order(created_at: :desc).
-        limit(5)
+        merge(ForumCategory.with_slug(:site_news))
+      @forum_posts = localable_resources(@forum_posts).order(created_at: :desc).limit(5)
 
       activities = current_user.
         following_activities.

@@ -32,13 +32,26 @@ module ControllerCommon
 
     def localable_resources(resources)
       if user_signed_in?
-        resources.with_locale(*current_user.allowed_locales)
+        localable_resources_with_own(resources)
       elsif !user_signed_in? && locale_en?
         resources.with_locale(:en)
       elsif !user_signed_in? && locale_ja?
         resources.with_locale(:ja)
       else
         resources
+      end
+    end
+
+    def localable_resources_with_own(resources)
+      collection = resources.with_locale(*current_user.allowed_locales)
+
+      return resources.where(user: current_user).or(collection) if resources.column_names.include?("user_id")
+
+      case resources.first.class.name
+      when "UserlandProject"
+        UserlandProject.where(id: collection.pluck(:id) + resources.merge(current_user.userland_projects).pluck(:id))
+      else
+        collection
       end
     end
 
