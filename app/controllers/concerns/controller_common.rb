@@ -104,7 +104,7 @@ module ControllerCommon
         return redirect_to local_url_with_path(locale: :ja) if user_signed_in? && current_user.locale == "ja"
         I18n.locale = :en
       when ENV.fetch("ANNICT_JP_DOMAIN")
-        return redirect_to local_url_with_path(locale: :ja) if user_signed_in? && current_user.locale == "en"
+        return redirect_to local_url_with_path(locale: :en) if user_signed_in? && current_user.locale == "en"
         I18n.locale = :ja
       end
     end
