@@ -65,6 +65,7 @@ class RecordsController < ApplicationController
     authorize @record, :update?
 
     @record.modify_comment = true
+    @record.detect_locale!(:comment)
 
     if @record.update_attributes(checkin)
       @record.update_share_checkin_status

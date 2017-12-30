@@ -22,6 +22,8 @@
 #
 
 class Comment < ApplicationRecord
+  include LocaleDetectable
+
   belongs_to :record, foreign_key: :checkin_id, class_name: "Checkin", counter_cache: true
   belongs_to :user
   belongs_to :work

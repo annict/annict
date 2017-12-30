@@ -79,6 +79,7 @@ class ReviewsController < ApplicationController
     authorize @review, :update?
 
     @review.attributes = review
+    @review.detect_locale!(:body)
     @review.modified_at = Time.now
     current_user.setting.attributes = setting_params
 

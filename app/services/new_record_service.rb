@@ -12,6 +12,7 @@ class NewRecordService
   def save!
     @record.user = @user
     @record.work = @record.episode.work
+    @record.detect_locale!(:comment)
 
     ActiveRecord::Base.transaction do
       @record.save!

@@ -20,6 +20,8 @@
 #
 
 class ForumComment < ApplicationRecord
+  include LocaleDetectable
+
   belongs_to :forum_post, counter_cache: true
   belongs_to :user
 
