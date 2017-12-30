@@ -23,7 +23,7 @@ json = Rails.cache.fetch(cache_keys) do
     episode: {
       id: episode.id,
       number: episode.decorate.local_number,
-      title: episode.decorate.local_title
+      title: episode.decorate.local_title(fallback: false)
     },
     record: {
       id: record.id,
