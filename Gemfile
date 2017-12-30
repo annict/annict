@@ -30,9 +30,7 @@ gem "by_star"
 gem "commonmarker"
 gem "counter_culture"
 gem "dalli"
-# Use master branch to support Ruby 2.5
-# https://github.com/collectiveidea/delayed_job/pull/996
-gem "delayed_job", github: "collectiveidea/delayed_job"
+gem "delayed_job"
 gem "delayed_job_active_record"
 gem "devise"
 gem "discord-notifier"
