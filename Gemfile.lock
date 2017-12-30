@@ -95,7 +95,7 @@ GEM
       debug_inspector (>= 0.0.1)
     bootsnap (1.1.7)
       msgpack (~> 1.0)
-    bootstrap (4.0.0.beta2.1)
+    bootstrap (4.0.0.beta3)
       autoprefixer-rails (>= 6.0.3)
       popper_js (>= 1.12.3, < 2)
       sass (>= 3.5.2)
