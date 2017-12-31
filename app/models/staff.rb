@@ -89,6 +89,10 @@ class Staff < ApplicationRecord
     data.delete_if { |_, v| v.blank? }
   end
 
+  def support_en?
+    name_en.present? && resource.name_en.present?
+  end
+
   private
 
   def set_name

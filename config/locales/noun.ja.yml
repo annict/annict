@@ -24,6 +24,7 @@ ja:
     broadcasted: 放送終了
     bulk_tracking: 一括記録...
     cancel: キャンセル
+    cast: キャスト
     casts: キャスト
     category: カテゴリ
     channel_list: チャンネル一覧
@@ -69,6 +70,7 @@ ja:
     menu: メニュー
     more: その他
     music: 音楽
+    my_anime_list: MyAnimeList
     my_records: 自分の記録
     n_works_watched: "%{count}作品見た"
     next_episode: 次のエピソード

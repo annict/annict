@@ -216,7 +216,7 @@ ja:
       staffs:
         index: アニメ「%{title}」のスタッフ一覧
       supporters:
-        index: Annictサポーター
+        index: Annict Supporter
       tracks:
         show: 記録する
       user_work_tags:

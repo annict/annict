@@ -22,7 +22,10 @@
           - else
             = work.records_count
         .text-muted.small
-          = t "noun.records_count"
+          - if locale_ja?
+            = t "noun.records_count"
+          - else
+            = t "noun.records"
       .col.text-center
         .h4.font-weight-bold.mb-1
           = work.score.presence || "-"

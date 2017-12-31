@@ -10,11 +10,11 @@ class EpisodeDecorator < ApplicationDecorator
     h.link_to name, h.edit_db_episode_path(self), options
   end
 
-  def local_title
+  def local_title(fallback: true)
     return title if I18n.locale == :ja
     return title_en if title_en.present?
     return title_ro if title_ro.present?
-    title
+    title if fallback
   end
 
   def local_number
@@ -45,16 +45,14 @@ class EpisodeDecorator < ApplicationDecorator
     end
   end
 
-  def title_with_number
-    if local_number.present?
-      if local_title.present?
-        "#{local_number} #{local_title}"
-      else
-        local_number
-      end
-    else
-      local_title
-    end
+  def title_with_number(fallback: true)
+    l_number = local_number
+    l_title = local_title(fallback: fallback)
+
+    return l_title if l_number.blank?
+    return "#{l_number} #{l_title}" if l_title.present?
+
+    l_number
   end
 
   def number_with_work_title

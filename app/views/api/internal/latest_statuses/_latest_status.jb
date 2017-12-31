@@ -7,7 +7,7 @@ json = {
   id: latest_status.id,
   work: {
     id: work.id,
-    title: work.title,
+    title: work.decorate.local_title,
     image_url: ann_image_url(work.work_image, :attachment, size: "125x125"),
     episodes_count: work.auto_episodes_count,
     watched_episodes_count: latest_status.watched_episode_ids.length
@@ -18,8 +18,8 @@ return json if episode.blank?
 
 json[:next_episode] = {
   id: episode.id,
-  number: episode.number,
-  title: episode.title
+  number: episode.decorate.local_number,
+  title: episode.decorate.local_title(fallback: false)
 }
 
 program = program_data.select { |pd| pd.present? && pd[:episode_id] == episode.id }.first

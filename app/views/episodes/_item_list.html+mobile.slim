@@ -1,8 +1,3 @@
-.text-right.my-2
-  = link_to new_episode_item_path(episode), class: "btn btn-primary" do
-    = icon "plus", class: "mr-1"
-    = t "verb.regist_item"
-
 - if items.present?
   - items.each do |item|
     .py-2

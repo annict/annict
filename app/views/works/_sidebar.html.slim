@@ -21,7 +21,10 @@ h1.h2.font-weight-bold.mb-3
       - else
         = work.records_count
     .text-muted.small
-      = t "noun.records_count"
+      - if locale_ja?
+        = t "noun.records_count"
+      - else
+        = t "noun.records"
   .col.text-center
     .h4.font-weight-bold.mb-1
       = work.score.presence || "-"
@@ -41,9 +44,6 @@ dl
   - if locale_ja? && work.title_kana.present?
     dt.small = t "activerecord.attributes.work.title_kana"
     dd = work.title_kana
-  - if locale_en? && work.title_ro.present?
-    dt.small = t "activerecord.attributes.work.title_ro"
-    dd = work.title_ro
   - if locale_en? && work.title_en.present?
     dt.small = t "activerecord.attributes.work.title_en"
     dd = work.title_en
@@ -54,13 +54,19 @@ dl
     dd = work.decorate.release_season_link
   - if work.started_on.present?
     dt.small = work.decorate.started_on_label
-    dd = work.started_on
+    dd = display_date(work.started_on)
   - if work.official_site_url.present?
     dt.small = t "activerecord.attributes.work.official_site_url"
     dd = link_with_domain work.official_site_url
   - if locale_en? && work.official_site_url_en.present?
     dt.small = t "activerecord.attributes.work.official_site_url_en"
     dd = link_with_domain work.official_site_url_en
+  - if work.twitter_username.present?
+    dt.small = t "activerecord.attributes.work.twitter_username"
+    dd = work.decorate.twitter_username_link
+  - if work.twitter_hashtag.present?
+    dt.small = t "activerecord.attributes.work.twitter_hashtag"
+    dd = work.decorate.twitter_hashtag_link
   - if work.wikipedia_url.present?
     dt.small = t "activerecord.attributes.work.wikipedia_url"
     dd = link_with_domain work.wikipedia_url
@@ -70,14 +76,12 @@ dl
   - if locale_ja? && work.sc_tid.present?
     dt.small = t "activerecord.attributes.work.sc_tid"
     dd = work.decorate.syobocal_link(work.sc_tid)
-  - if work.twitter_username.present?
-    dt.small = t "activerecord.attributes.work.twitter_username"
-    dd = work.decorate.twitter_username_link
-  - if work.twitter_hashtag.present?
-    dt.small = t "activerecord.attributes.work.twitter_hashtag"
-    dd = work.decorate.twitter_hashtag_link
+  - if work.mal_anime_id.present?
+    dt.small = t "noun.my_anime_list"
+    dd = work.decorate.mal_anime_link
 
 - program_details = work.program_details.includes(:channel).published.in_video_service
+- program_details = program_details.select { |pd| locale_ja? ? true : pd.support_en? }
 - if program_details.present?
   h2.h4.font-weight-bold.mt-4.mb-3
     = icon "video-camera", class: "mr-1"

@@ -7,8 +7,9 @@ nav.c-navbar.navbar.navbar-expand-sm class="#{transparent ? 'navbar-dark is-tran
   .collapse.navbar-collapse.align-items-center
     ul.navbar-nav.navbar-nav--left.mr-auto.align-items-center
       - if user_signed_in?
-        li.nav-item
-          = link_to t("head.title.programs.index"), annict_url(:programs_url), class: "nav-link"
+        - if locale_ja?
+          li.nav-item
+            = link_to t("head.title.programs.index"), annict_url(:programs_url), class: "nav-link"
         li.nav-item.dropdown
           = link_to t("noun.watching"), annict_url(:library_url, current_user.username, :watching), class: "nav-link"
           .dropdown-menu
@@ -51,14 +52,17 @@ nav.c-navbar.navbar.navbar-expand-sm class="#{transparent ? 'navbar-dark is-tran
                 span.badge.badge-pill.u-badge-mizuho.ml-2
                   = current_user.notifications_count
             = link_to t("head.title.friends.index"), annict_url(:friends_url), class: "dropdown-item"
-            = link_to t("head.title.channels.index"), annict_url(:channels_url), class: "dropdown-item"
+            - if locale_ja?
+              = link_to t("head.title.channels.index"), annict_url(:channels_url), class: "dropdown-item"
             = link_to t("noun.settings"), annict_url(:profile_url), class: "dropdown-item"
             = link_to t("noun.annict_userland"), userland_root_path, class: "dropdown-item"
             = link_to t("noun.annict_forum"), forum_root_path, class: "dropdown-item"
             = link_to t("noun.annict_db"), db_root_path, class: "dropdown-item"
-            = link_to t("noun.annict_api"), "https://docs.annict.com/ja/", target: "_blank", class: "dropdown-item"
+            - if locale_ja?
+              = link_to t("noun.annict_api"), "https://docs.annict.com/ja/", target: "_blank", class: "dropdown-item"
             = link_to t("head.title.supporters.index"), annict_url(:supporters_url), class: "dropdown-item"
-            = link_to t("head.title.faqs.index"), annict_url(:faqs_url), class: "dropdown-item"
+            - if locale_ja?
+              = link_to t("head.title.faqs.index"), annict_url(:faqs_url), class: "dropdown-item"
             = link_to t("head.title.pages.about"), annict_url(:about_url), class: "dropdown-item"
             = link_to t("verb.sign_out"), annict_url(:destroy_user_session_url), method: "delete", class: "dropdown-item"
       - else

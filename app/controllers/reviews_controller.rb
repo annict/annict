@@ -15,9 +15,9 @@ class ReviewsController < ApplicationController
     @reviews = @user.
       reviews.
       includes(work: :work_image).
-      published.
-      order(created_at: :desc).
-      page(page)
+      published
+    @reviews = localable_resources(@reviews)
+    @reviews = @reviews.order(created_at: :desc).page(page)
 
     return unless user_signed_in?
 
@@ -79,6 +79,7 @@ class ReviewsController < ApplicationController
     authorize @review, :update?
 
     @review.attributes = review
+    @review.detect_locale!(:body)
     @review.modified_at = Time.now
     current_user.setting.attributes = setting_params
 

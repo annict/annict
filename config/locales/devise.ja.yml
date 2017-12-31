@@ -8,7 +8,7 @@ ja:
         unconfirmed: メールアドレスの確認が完了していないため、ログインできませんでした
     mailer:
       confirmation_instructions:
-        subject: メールアドレスの確認
+        subject: メールアドレスの確認 - Annict
     omniauth_callbacks:
       user:
         failure: 認証に失敗しました。時間をおいて再度お願いします

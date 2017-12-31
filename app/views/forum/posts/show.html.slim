@@ -11,7 +11,8 @@
     = render "application/components/breadcrumb"
 
     .mb-3
-      = link_to @post.forum_category.decorate.local_name,  forum_category_path(@post.forum_category.slug), class: "badge badge-secondary"
+      .mb-1
+        = link_to @post.forum_category.decorate.local_name,  forum_category_path(@post.forum_category.slug), class: "badge badge-secondary"
       h1.h2.mb-0
         = @post.title
 
@@ -22,8 +23,8 @@
             .col.col-auto.pr-0
               = link_to user_path(@post.user.username) do
                 = ann_image_tag @post.user.profile, :tombo_avatar, size: "45x45", class: "rounded-circle"
-            .col.pl-2.u-lh-1
-              = link_to @post.user.profile.name, user_path(@post.user.username), class: "mr-1"
+            .col.pl-2
+              = link_to @post.user.profile.name, user_path(@post.user.username), class: "mr-2"
               = @post.user.decorate.role_badge
               .mt-1
                 = link_to forum_post_path(@post), class: "small text-muted", title: local_datetime(@post.created_at) do
@@ -44,8 +45,8 @@
                 .col.col-auto.pr-0
                   = link_to user_path(comment.user.username) do
                     = ann_image_tag comment.user.profile, :tombo_avatar, size: "45x45", class: "rounded-circle"
-                .col.pl-2.u-lh-1
-                  = link_to comment.user.profile.name, user_path(comment.user.username), class: "mr-1"
+                .col.pl-2
+                  = link_to comment.user.profile.name, user_path(comment.user.username), class: "mr-2"
                   = comment.user.decorate.role_badge
                   .mt-1
                     span.small.text-muted title="#{local_datetime(comment.created_at)}"

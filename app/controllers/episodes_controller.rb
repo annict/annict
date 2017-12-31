@@ -44,6 +44,8 @@ class EpisodesController < ApplicationController
   end
 
   def show
+    params[:locale_en] = locale_en?
+    params[:locale_ja] = locale_ja?
     service = RecordsListService.new(current_user, @episode, params)
 
     @all_records = service.all_records
@@ -60,9 +62,9 @@ class EpisodesController < ApplicationController
       where.not(item_id: episode_items.pluck(:item_id))
     @items = Item.
       published.
-      where(id: episode_items.pluck(:item_id) + work_items.pluck(:item_id)).
-      order(created_at: :desc).
-      limit(20)
+      where(id: episode_items.pluck(:item_id) + work_items.pluck(:item_id))
+    @items = localable_resources(@items)
+    @items = @items.order(created_at: :desc).limit(20)
 
     data = {
       recordsSortTypes: Setting.records_sort_type.options,

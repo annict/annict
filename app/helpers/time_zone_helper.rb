@@ -2,8 +2,14 @@
 
 module TimeZoneHelper
   def display_time(time)
-    time_zone = current_user&.time_zone.presence || "UTC"
-    time&.in_time_zone(time_zone)&.strftime("%Y-%m-%d %H:%M")
+    time = time&.in_time_zone(local_time_zone)
+    return time&.strftime("%Y-%m-%d %H:%M") if locale_ja?
+    time&.strftime("%b %-d, %Y %H:%M")
+  end
+
+  def display_date(date)
+    return date.strftime("%Y-%m-%d") if locale_ja?
+    date.strftime("%b %-d, %Y")
   end
 
   def decorated_tz_name(time_zone)

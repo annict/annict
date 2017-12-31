@@ -32,7 +32,7 @@
               - @work.pvs.published.order(:sort_number).each do |pv|
                 .col-4.text-center.mb-3
                   - if pv.youtube?
-                    c-youtube-modal-player thumbnail-url="#{ann_image_url(pv, :thumbnail, size: "300x169")}" video-id="#{pv.youtube_video_id}" video-title="#{pv.title}" annict-url="#{ENV.fetch('ANNICT_URL')}"
+                    c-youtube-modal-player thumbnail-url="#{ann_image_url(pv, :thumbnail, size: "300x169")}" video-id="#{pv.youtube_video_id}" video-title="#{pv.decorate.local_title(fallback: false)}" annict-url="#{ENV.fetch('ANNICT_URL')}"
                   - else
                     = link_to pv.url, target: "_blank" do
                       .c-video-thumbnail
@@ -54,27 +54,30 @@
         h2.h4.text-center.my-4.font-weight-bold = t "noun.characters"
         .c-card.container.mt-3.py-3
           - cache [I18n.locale, @casts] do
-            = render "characters/character_list", casts: @casts
+            - casts = @casts.select { |c| locale_ja? ? true : c.support_en? }
+            = render "characters/character_list", casts: casts
 
         h2.h4.text-center.my-4.font-weight-bold = t "noun.staffs"
         .c-card.container.mt-3.py-3
           - cache [I18n.locale, @staffs] do
-            = render "staffs/staff_list", staffs: @staffs
+            - staffs = @staffs.select { |s| locale_ja? ? true : s.support_en? }
+            = render "staffs/staff_list", staffs: staffs
 
-        h2.h4.text-center.my-4.font-weight-bold
-          = t "noun.video_services"
-        .c-card.mt-3.pt-3
-          .container
-            - Channel.published.with_video_service.each_slice(3).each do |channels|
-              .row.mb-3
-                - channels.each do |channel|
-                  - program_detail = channel.program_details.includes(:channel).published.find_by(work: @work)
-                  .col-4
-                    - if program_detail.present?
-                      = link_to channel.name, program_detail.url, class: "btn btn-primary w-100", target: "_blank"
-                    - else
-                      button.btn.btn-primary.w-100 type="button" disabled=""
-                        = channel.name
+        - if locale_ja?
+          h2.h4.text-center.my-4.font-weight-bold
+            = t "noun.video_services"
+          .c-card.mt-3.pt-3
+            .container
+              - Channel.published.with_video_service.each_slice(3).each do |channels|
+                .row.mb-3
+                  - channels.each do |channel|
+                    - program_detail = channel.program_details.includes(:channel).published.find_by(work: @work)
+                    .col-4
+                      - if program_detail.present?
+                        = link_to channel.name, program_detail.url, class: "btn btn-primary w-100", target: "_blank"
+                      - else
+                        button.btn.btn-primary.w-100 type="button" disabled=""
+                          = channel.name
 
         .row.align-items-center
           .col

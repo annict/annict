@@ -12,6 +12,7 @@ class NewRecordService
   def save!
     @record.user = @user
     @record.work = @record.episode.work
+    @record.detect_locale!(:comment)
 
     ActiveRecord::Base.transaction do
       @record.save!
@@ -36,7 +37,7 @@ class NewRecordService
   end
 
   def finish_tips
-    FinishUserTipsJob.perform_later(@user, "checkin") if @user.records.initial?(@record)
+    FinishUserTipsJob.perform_later(@user, "record") if @user.records.initial?(@record)
   end
 
   def update_latest_status

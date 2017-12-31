@@ -26,7 +26,7 @@ $ann-color-navy-l3: #cdd4da;
 $ann-color-navy-l4: #ebeef0;
 $ann-color-navy-l5: #f6f7f8;
 
-$ann-color-black:    #343434;
+$ann-color-black:    #444;
 $ann-color-black-l1: #676767;
 $ann-color-black-l2: #9a9a9a;
 $ann-color-black-l3: #cdcdcd;
@@ -51,7 +51,7 @@ $ann-color-facebook: #2e6499;
 $ann-color-gumroad: #3cabba;
 $ann-color-twitter: #24b1ec;
 
-$ann-color-body: $ann-color-black-l1;
+$ann-color-body: $ann-color-black;
 $ann-color-border: rgba(0, 0, 0, .08);
 $ann-color-footer-bg: #334854;
 $ann-color-link: #0366d6;
@@ -65,13 +65,13 @@ $ann-color-great: #00b0ff;
 
 // Typography
 
-$ann-line-height-base: 1.5;
 $ann-line-height-sizes: (
   0: 0,
   1: 1,
-  base: $ann-line-height-base,
-  xs: $ann-line-height-base / 1.2,
-  sm: $ann-line-height-base / 1.1,
+  2: 1.3,
+  3: 1.5,
+  4: 1.7,
+  5: 1.9
 );
 
 $ann-text-colors: (

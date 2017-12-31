@@ -70,6 +70,8 @@ module Annict
       # rubocop:enable Metrics/LineLength
       r301 %r{\A/track}, "/"
 
+      r301 /\A(.*)\z/, "#{ENV['ANNICT_JP_URL']}$1", host: Rails.env.development? ? "annict.jpd" : "annict.jp"
+
       maintenance_file = File.join(Rails.root, "public", "maintenance.html")
       send_file /(.*)$(?<!maintenance|favicons)/, maintenance_file, if: proc { |rack_env|
         ip_address = rack_env["HTTP_X_FORWARDED_FOR"]&.split(",")&.last&.strip

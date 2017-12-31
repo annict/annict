@@ -56,6 +56,10 @@ class ProgramDetail < ApplicationRecord
     data.delete_if { |_, v| v.blank? }
   end
 
+  def support_en?
+    false
+  end
+
   private
 
   def calc_for_timezone

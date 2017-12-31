@@ -14,15 +14,22 @@ class ReviewDecorator < ApplicationDecorator
   end
 
   def tweet_body
-    work_title = work.title
+    user = review.user
+    work_title = work.decorate.local_title
     share_url = detail_url
     share_hashtag = review.work.hashtag_with_hash
 
-    body = "#{work_title}のレビューを書きました #{share_url} #{share_hashtag}"
+    base_body = if user.locale == "ja"
+      "%sのレビューを書きました #{share_url} #{share_hashtag}"
+    else
+      "Reviewed: %s #{share_url} #{share_hashtag}"
+    end
+    body = base_body % work_title
+
     return body if body.length <= 140
 
     work_title = work_title.truncate(work_title.length - (body.length - 140))
 
-    "#{work_title}のレビューを書きました #{share_url} #{share_hashtag}"
+    base_body % work_title
   end
 end

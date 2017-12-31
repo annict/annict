@@ -9,9 +9,9 @@ class WorkItemsController < ApplicationController
   def index(page: nil)
     @items = @work.
       items.
-      published.
-      order(created_at: :desc).
-      page(page)
+      published
+    @items = localable_resources(@items)
+    @items = @items.order(created_at: :desc).page(page)
   end
 
   def new

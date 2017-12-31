@@ -25,7 +25,7 @@
           - if @episodes.present?
             c-episode-list inline-template="" :is-signed-in="#{user_signed_in?}" :init-is-tracking-mode="#{params.key?(:tracking)}" :all-episode-ids="#{@episodes.pluck(:id)}" :work-id="#{@work.id}"
               .c-episode-list
-                .container.mb-2
+                .container.mb-2 v-if="isSignedIn"
                   small.u-fake-link v-show="!isTrackingMode" @click="enableTrackingMode"
                     = t "noun.bulk_tracking"
                   small.u-fake-link.mr-2 v-show="isTrackingMode" @click="checkAll"
@@ -39,7 +39,11 @@
                       - unless @work.single?
                         th = t "noun.episode_number"
                       th = t "noun.title"
-                      th = t "noun.records_count"
+                      th
+                        - if locale_ja?
+                          = t "noun.records_count"
+                        - else
+                          = t "noun.records"
                   tbody
                     - @episodes.order(:sort_number).each do |episode|
                       = render "episodes/episode_row", work: @work, episode: episode
