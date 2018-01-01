@@ -55,6 +55,10 @@ class User < ApplicationRecord
 
   extend Enumerize
 
+  # There are also usernames which is expressed in uppercase letters... orz (e.g. annict.com/@a, annict.com/@A)
+  # In order to be able to update their user data, it needs to enable the `case_sensitive` option.
+  DUPLICATED_USERNAMES = %w(a d k).freeze
+
   attr_accessor :email_username, :current_password
 
   # Include default devise modules. Others available are:
@@ -131,9 +135,14 @@ class User < ApplicationRecord
     valid_password: { on: :password_check }
   validates :username,
     presence: true,
-    uniqueness: { case_sensitive: false },
     length: { maximum: 20 },
     format: { with: /\A[A-Za-z0-9_]+\z/ }
+  validates :username,
+    uniqueness: { case_sensitive: false },
+    if: proc { |u| !u.username.downcase.in?(DUPLICATED_USERNAMES) }
+  validates :username,
+    uniqueness: { case_sensitive: true },
+    if: proc { |u| u.username.downcase.in?(DUPLICATED_USERNAMES) }
 
   # Override the Devise's `find_for_database_authentication`
   # https://github.com/plataformatec/devise/wiki/How-To:-Allow-users-to-sign-in-using-their-username-or-email-address
