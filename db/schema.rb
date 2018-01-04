@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20171225125419) do
+ActiveRecord::Schema.define(version: 20180104131620) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -85,11 +85,11 @@ ActiveRecord::Schema.define(version: 20171225125419) do
     t.string "name", null: false, collation: "C"
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.boolean "video_service", default: false
+    t.boolean "vod", default: false
     t.string "aasm_state", default: "published", null: false
     t.index ["channel_group_id"], name: "channels_channel_group_id_idx"
     t.index ["sc_chid"], name: "channels_sc_chid_key", unique: true
-    t.index ["video_service"], name: "index_channels_on_video_service"
+    t.index ["vod"], name: "index_channels_on_vod"
   end
 
   create_table "character_images", id: :serial, force: :cascade do |t|

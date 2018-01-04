@@ -65,10 +65,10 @@
 
         - if locale_ja?
           h2.h4.text-center.my-4.font-weight-bold
-            = t "noun.video_services"
+            = t "noun.vods"
           .c-card.mt-3.pt-3
             .container
-              - Channel.published.with_video_service.each_slice(3).each do |channels|
+              - Channel.published.with_vod.each_slice(3).each do |channels|
                 .row.mb-3
                   - channels.each do |channel|
                     - program_detail = channel.program_details.includes(:channel).published.find_by(work: @work)

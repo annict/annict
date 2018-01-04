@@ -137,7 +137,7 @@ class WorksController < ApplicationController
       @pvs_data = Work.pvs_data(@works)
       @casts_data = Work.casts_data(@works)
       @staffs_data = Work.staffs_data(@works, major: true)
-      @program_details_data = Work.program_details_data(@works, only_video_service: true)
+      @program_details_data = Work.program_details_data(@works, only_vod: true)
     end
 
     return unless user_signed_in?

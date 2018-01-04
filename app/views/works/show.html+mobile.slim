@@ -146,9 +146,9 @@
   .mb-3
     .container
       h2.h4.font-weight-bold.mt-3.mb-4
-        = t "noun.video_services"
+        = t "noun.vods"
     .c-card.px-3.pt-3
-      - Channel.published.with_video_service.each_slice(2).each do |channels|
+      - Channel.published.with_vod.each_slice(2).each do |channels|
         .row.mb-3
           - channels.each do |channel|
             - program_detail = channel.program_details.published.find_by(work: @work)
