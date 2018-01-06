@@ -99,6 +99,11 @@ module ControllerCommon
     end
 
     def switch_locale
+      white_list = [
+        "/users/auth/gumroad/callback"
+      ]
+      return if request.path.in?(white_list)
+
       case [request.subdomain, request.domain].select(&:present?).join(".")
       when ENV.fetch("ANNICT_DOMAIN")
         return redirect_to local_url_with_path(locale: :ja) if user_signed_in? && current_user.locale == "ja"
