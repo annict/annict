@@ -12,13 +12,13 @@
 #  created_at     :datetime         not null
 #  updated_at     :datetime         not null
 #  vod_title_code :string           default(""), not null
+#  vod_title_name :string           default(""), not null
 #
 # Indexes
 #
-#  index_program_details_on_channel_id              (channel_id)
-#  index_program_details_on_channel_id_and_work_id  (channel_id,work_id) UNIQUE
-#  index_program_details_on_vod_title_code          (vod_title_code)
-#  index_program_details_on_work_id                 (work_id)
+#  index_program_details_on_channel_id      (channel_id)
+#  index_program_details_on_vod_title_code  (vod_title_code)
+#  index_program_details_on_work_id         (work_id)
 #
 
 class ProgramDetail < ApplicationRecord

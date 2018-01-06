@@ -1,62 +1,33 @@
 # frozen_string_literal: true
 
 namespace :tmp do
-  task set_locale_to_ja: :environment do
-    [
-      Checkin,
-      Comment,
-      DbComment,
-      ForumComment,
-      ForumPost,
-      Item,
-      Review,
-      UserlandProject,
-      WorkComment,
-      WorkTag,
-      WorkTaggable
-    ].each do |model|
-      puts "Updating #{model.name}"
-      model.update_all(locale: :ja)
-    end
-  end
+  task set_vod_title_code: :environment do
+    ProgramDetail.where.not(url: nil).find_each do |pd|
+      print "ProductDetail: #{pd.id} -> "
 
-  task set_locale: :environment do
-    [
-      { model: Checkin, column: :comment },
-      { model: Comment, column: :body },
-      { model: DbComment, column: :body },
-      { model: ForumComment, column: :body },
-      { model: ForumPost, column: :body },
-      { model: Item, column: :title },
-      { model: Review, column: :body },
-      { model: UserlandProject, column: :description },
-      { model: WorkComment, column: :body },
-      { model: WorkTag, column: :name },
-      { model: WorkTaggable, column: :description }
-    ].each do |h|
-      h[:model].where.not(h[:column] => [nil, ""]).find_each do |record|
-        puts "#{record.class.name}: #{record.id}"
-        record.detect_locale!(h[:column])
-        record.save!
+      code = case pd.url
+      when /netflix\.com/
+        pd.url.scan(%r{https://www.netflix.com/title/([0-9]+)})&.last&.first
+      when /b-ch\.com/
+        pd.url.scan(%r{http://www.b-ch.com/ttl/index.php\?ttl_c=([0-9]+)})&.last&.first.presence ||
+          pd.url.scan(%r{http://www.b-ch.com/ttl/index_html5.php\?ttl_c=([0-9]+)})&.last&.first.presence
+      when /ch\.nicovideo\.jp/
+        pd.url.scan(%r{http://ch.nicovideo.jp/(ch[0-9]+)})&.last&.first.presence ||
+          pd.url.scan(%r{http://ch.nicovideo.jp/([0-9a-zA-Z_-]+)})&.last&.first
+      when /anime\.dmkt-sp\.jp/
+        pd.url.scan(%r{https://anime.dmkt-sp.jp/animestore/ci_pc\?workId=([0-9]+)})&.last&.first
+      when /www\.amazon\.co\.jp/
+        pd.url.scan(%r{https://www.amazon.co.jp/dp/([0-9a-zA-Z]+)})&.last&.first.presence ||
+          pd.url.scan(%r{https://www.amazon.co.jp/gp/video/detail/([0-9a-zA-Z]+)})&.last&.first
       end
+
+      if code.nil?
+        puts "nil"
+        next
+      end
+
+      puts "code: #{code}"
+      pd.update_columns(url: nil, vod_title_code: code, vod_title_name: pd.work.title)
     end
-  end
-
-  task set_allowed_locales: :environment do
-    User.update_all(allowed_locales: ApplicationRecord::LOCALES)
-  end
-
-  task update_tips: :environment do
-    tip1 = Tip.find_by(slug: "status")
-    tip1.update_columns(locale: :ja, icon_name: "fa-info-circle")
-
-    tip2 = Tip.find_by(slug: "channel")
-    tip2.update_columns(locale: :ja, icon_name: "fa-info-circle")
-
-    tip3 = Tip.find_by(slug: "checkin")
-    tip3.update_columns(slug: "record", locale: :ja, icon_name: "fa-info-circle")
-
-    Tip.create(target: 0, slug: "status", title: "Change Statuses of Works", icon_name: "fa-info-circle", locale: :en)
-    Tip.create(target: 0, slug: "record", title: "Track What Episodes You Watched", icon_name: "fa-info-circle", locale: :en)
   end
 end

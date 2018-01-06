@@ -724,7 +724,7 @@ ActiveRecord::Schema.define(version: 20180104134415) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.string "vod_title_code", default: "", null: false
-    t.index ["channel_id", "work_id"], name: "index_program_details_on_channel_id_and_work_id", unique: true
+    t.string "vod_title_name", default: "", null: false
     t.index ["channel_id"], name: "index_program_details_on_channel_id"
     t.index ["vod_title_code"], name: "index_program_details_on_vod_title_code"
     t.index ["work_id"], name: "index_program_details_on_work_id"
@@ -1059,9 +1059,12 @@ ActiveRecord::Schema.define(version: 20180104134415) do
     t.bigint "work_id"
     t.string "code", null: false
     t.string "name", null: false
+    t.string "aasm_state", default: "published", null: false
+    t.datetime "mail_sent_at"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["channel_id"], name: "index_vod_titles_on_channel_id"
+    t.index ["mail_sent_at"], name: "index_vod_titles_on_mail_sent_at"
     t.index ["work_id"], name: "index_vod_titles_on_work_id"
   end
 
