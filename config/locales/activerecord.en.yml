@@ -167,6 +167,8 @@ en:
         channel_id: Channel
         url: URL
         started_at: Started At
+        vod_title_code: VOD Title Code
+        vod_title_name: VOD Title Name
       user:
         allowed_locales: Allowed Languages
         current_password: Current password

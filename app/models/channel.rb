@@ -26,6 +26,7 @@ class Channel < ApplicationRecord
   BANDAI_CHANNEL_ID = 107
   D_ANIME_STORE_ID = 241
   NICONICO_CHANNEL_ID = 165
+  NETFLIX_ID = 244
 
   aasm do
     state :published, initial: true

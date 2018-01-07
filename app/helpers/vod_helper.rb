@@ -11,6 +11,8 @@ module VodHelper
       "https://anime.dmkt-sp.jp/animestore/ci_pc?workId=#{code}"
     when Channel::NICONICO_CHANNEL_ID
       "http://ch.nicovideo.jp/#{code}"
+    when Channel::NETFLIX_ID
+      "https://www.netflix.com/title/#{code}"
     end
   end
 end
