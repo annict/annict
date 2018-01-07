@@ -68,16 +68,7 @@
             = t "noun.vods"
           .c-card.mt-3.pt-3
             .container
-              - Channel.published.with_vod.each_slice(3).each do |channels|
-                .row.mb-3
-                  - channels.each do |channel|
-                    - program_detail = channel.program_details.includes(:channel).published.find_by(work: @work)
-                    .col-4
-                      - if program_detail.present?
-                        = link_to channel.name, program_detail.url, class: "btn btn-primary w-100", target: "_blank"
-                      - else
-                        button.btn.btn-primary.w-100 type="button" disabled=""
-                          = channel.name
+              = render "works/vod_list", channels: @channels, slice: 3, work: @work
 
         .row.align-items-center
           .col

@@ -82,12 +82,6 @@
             - program_details = program_details.select { |pd| locale_ja? ? true : pd.support_en? }
             - if program_details.present?
               .font-weight-bold.mb-1 = t "noun.vods"
-              ul.list-inline
-                - program_details.each do |program_detail|
-                  - cache [I18n.locale, program_detail] do
-                    li.list-inline-item
-                      = link_to program_detail.url, target: "_blank" do
-                        span.badge.badge-secondary
-                          = program_detail.channel.name
+              = render "works/vod_list", channels: @channels, slice: 3, program_details: program_details
 
           c-work-friends :work-id="#{work.id}"
