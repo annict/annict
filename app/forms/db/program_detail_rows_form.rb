@@ -50,8 +50,8 @@ module DB
         {
           channel: { id: channel&.id, value: row_columns[0] },
           started_at: { value: row_columns[1] },
-          vod_title_code: { value: row_columns[2] },
-          vod_title_name: { value: row_columns[3] }
+          vod_title_code: { value: row_columns[2].presence || "" },
+          vod_title_name: { value: row_columns[3].presence || "" }
         }
       end
     end
