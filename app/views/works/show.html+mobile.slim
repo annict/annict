@@ -146,18 +146,9 @@
   .mb-3
     .container
       h2.h4.font-weight-bold.mt-3.mb-4
-        = t "noun.video_services"
+        = t "noun.vods"
     .c-card.px-3.pt-3
-      - Channel.published.with_video_service.each_slice(2).each do |channels|
-        .row.mb-3
-          - channels.each do |channel|
-            - program_detail = channel.program_details.published.find_by(work: @work)
-            .col-6
-              - if program_detail.present?
-                = link_to channel.name, program_detail.url, class: "btn btn-primary btn-sm w-100", target: "_blank"
-              - else
-                button.btn.btn-primary.btn-sm.w-100 type="button" disabled=""
-                  = channel.name
+      = render "works/vod_list", channels: @channels, slice: 2, work: @work
 
 .mb-3
   .container

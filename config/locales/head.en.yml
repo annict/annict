@@ -119,6 +119,8 @@ en:
           edit: Edit Program Detail
           index: Program Details
           new: New Program Detail
+        vod_titles:
+          index: VOD Titles
         work_images:
           show: Work Image - %{title}
         works:

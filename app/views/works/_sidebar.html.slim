@@ -80,12 +80,12 @@ dl
     dt.small = t "noun.my_anime_list"
     dd = work.decorate.mal_anime_link
 
-- program_details = work.program_details.includes(:channel).published.in_video_service
+- program_details = work.program_details.includes(:channel).published.in_vod
 - program_details = program_details.select { |pd| locale_ja? ? true : pd.support_en? }
 - if program_details.present?
   h2.h4.font-weight-bold.mt-4.mb-3
     = icon "video-camera", class: "mr-1"
-    = t "noun.video_services"
+    = t "noun.vods"
   ul.list-unstyled
     - program_details.each do |detail|
       li = link_to detail.channel.name, detail.url, target: "_blank"

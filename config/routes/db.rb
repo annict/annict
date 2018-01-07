@@ -87,6 +87,12 @@ namespace :db do
     end
   end
 
+  resources :vod_titles, only: %i(index) do
+    member do
+      patch :hide
+    end
+  end
+
   resources :works, except: [:show] do
     collection do
       get :season

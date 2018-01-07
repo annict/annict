@@ -9,18 +9,24 @@
 #  name             :string           not null
 #  created_at       :datetime
 #  updated_at       :datetime
-#  video_service    :boolean          default(FALSE)
+#  vod              :boolean          default(FALSE)
 #  aasm_state       :string           default("published"), not null
 #
 # Indexes
 #
-#  channels_channel_group_id_idx    (channel_group_id)
-#  channels_sc_chid_key             (sc_chid) UNIQUE
-#  index_channels_on_video_service  (video_service)
+#  channels_channel_group_id_idx  (channel_group_id)
+#  channels_sc_chid_key           (sc_chid) UNIQUE
+#  index_channels_on_vod          (vod)
 #
 
 class Channel < ApplicationRecord
   include AASM
+
+  AMAZON_VIDEO_ID = 243
+  BANDAI_CHANNEL_ID = 107
+  D_ANIME_STORE_ID = 241
+  NICONICO_CHANNEL_ID = 165
+  NETFLIX_ID = 244
 
   aasm do
     state :published, initial: true
@@ -39,7 +45,7 @@ class Channel < ApplicationRecord
   has_many :program_details, dependent: :destroy
   has_many :programs, dependent: :destroy
 
-  scope :with_video_service, -> { where(video_service: true) }
+  scope :with_vod, -> { where(vod: true) }
 
   def self.fastest(work)
     receivable_channel_ids = pluck(:id)

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20171225125419) do
+ActiveRecord::Schema.define(version: 20180104134415) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -85,11 +85,11 @@ ActiveRecord::Schema.define(version: 20171225125419) do
     t.string "name", null: false, collation: "C"
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.boolean "video_service", default: false
+    t.boolean "vod", default: false
     t.string "aasm_state", default: "published", null: false
     t.index ["channel_group_id"], name: "channels_channel_group_id_idx"
     t.index ["sc_chid"], name: "channels_sc_chid_key", unique: true
-    t.index ["video_service"], name: "index_channels_on_video_service"
+    t.index ["vod"], name: "index_channels_on_vod"
   end
 
   create_table "character_images", id: :serial, force: :cascade do |t|
@@ -723,8 +723,10 @@ ActiveRecord::Schema.define(version: 20171225125419) do
     t.string "aasm_state", default: "published", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.index ["channel_id", "work_id"], name: "index_program_details_on_channel_id_and_work_id", unique: true
+    t.string "vod_title_code", default: "", null: false
+    t.string "vod_title_name", default: "", null: false
     t.index ["channel_id"], name: "index_program_details_on_channel_id"
+    t.index ["vod_title_code"], name: "index_program_details_on_vod_title_code"
     t.index ["work_id"], name: "index_program_details_on_work_id"
   end
 
@@ -1052,6 +1054,20 @@ ActiveRecord::Schema.define(version: 20171225125419) do
     t.datetime "created_at"
   end
 
+  create_table "vod_titles", force: :cascade do |t|
+    t.bigint "channel_id", null: false
+    t.bigint "work_id"
+    t.string "code", null: false
+    t.string "name", null: false
+    t.string "aasm_state", default: "published", null: false
+    t.datetime "mail_sent_at"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["channel_id"], name: "index_vod_titles_on_channel_id"
+    t.index ["mail_sent_at"], name: "index_vod_titles_on_mail_sent_at"
+    t.index ["work_id"], name: "index_vod_titles_on_work_id"
+  end
+
   create_table "work_comments", force: :cascade do |t|
     t.integer "user_id", null: false
     t.integer "work_id", null: false
@@ -1282,6 +1298,8 @@ ActiveRecord::Schema.define(version: 20171225125419) do
   add_foreign_key "userland_project_members", "users"
   add_foreign_key "userland_projects", "userland_categories"
   add_foreign_key "users", "gumroad_subscribers"
+  add_foreign_key "vod_titles", "channels"
+  add_foreign_key "vod_titles", "works"
   add_foreign_key "work_comments", "users"
   add_foreign_key "work_comments", "works"
   add_foreign_key "work_images", "users"
