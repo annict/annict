@@ -29,7 +29,7 @@ module Annict
 
         return if attrs.blank?
 
-        channel = Channel.find(107)
+        channel = Channel.find(Channel::BANDAI_CHANNEL_ID)
         create_vod_title!(channel, attrs)
       end
     end

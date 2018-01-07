@@ -14,7 +14,7 @@ module Annict
       def import
         puts "--- NicoNicoChannel"
         attrs = []
-        channel = Channel.find(165)
+        channel = Channel.find(Channel::NICONICO_CHANNEL_ID)
 
         1.step do |i|
           path = "/portal/anime/list?page=#{i}"

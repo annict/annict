@@ -177,6 +177,9 @@ ja:
         terms: 利用規約とプライバシーポリシー
         time_zone: タイムゾーン
         username: ユーザ名
+      vod_title:
+        code: 作品コード
+        name: 作品名
       work:
         ended_on: 終了日
         mal_anime_id: MAL Anime ID

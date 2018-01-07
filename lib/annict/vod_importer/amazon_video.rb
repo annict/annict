@@ -14,7 +14,7 @@ module Annict
       def import
         puts "--- AmazonVideo"
         attrs = []
-        channel = Channel.find(243)
+        channel = Channel.find(Channel::AMAZON_VIDEO_ID)
 
         1.step do |page|
           query = [

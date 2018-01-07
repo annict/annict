@@ -34,4 +34,13 @@ class VodTitle < ApplicationRecord
 
   belongs_to :channel
   belongs_to :work, optional: true
+
+  def import_csv
+    [
+      channel_id,
+      nil,
+      code,
+      name
+    ].join(",")
+  end
 end

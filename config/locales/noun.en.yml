@@ -28,6 +28,7 @@ en:
     casts: Casts
     category: Category
     channel_list: Channel List
+    channel_name: Channel Name
     channel: Channel
     channels: Channels
     character_image: Character Image

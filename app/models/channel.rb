@@ -22,6 +22,11 @@
 class Channel < ApplicationRecord
   include AASM
 
+  AMAZON_VIDEO_ID = 243
+  BANDAI_CHANNEL_ID = 107
+  D_ANIME_STORE_ID = 241
+  NICONICO_CHANNEL_ID = 165
+
   aasm do
     state :published, initial: true
     state :hidden

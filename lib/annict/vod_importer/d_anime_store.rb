@@ -45,7 +45,7 @@ module Annict
           end
         end
 
-        channel = Channel.find(241)
+        channel = Channel.find(Channel::D_ANIME_STORE_ID)
         create_vod_title!(channel, attrs.flatten)
       end
     end

@@ -178,6 +178,9 @@ en:
         terms: Terms and Privacy
         time_zone: Time zone
         username: Username
+      vod_title:
+        code: Code
+        name: Name
       work:
         ended_on: Ended On
         mal_anime_id: MAL Anime ID
