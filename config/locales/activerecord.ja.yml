@@ -181,6 +181,7 @@ ja:
         username: ユーザ名
       vod_title:
         code: 作品コード
+        created_at: 作成日
         name: 作品名
       work:
         ended_on: 終了日

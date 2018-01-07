@@ -182,6 +182,7 @@ en:
         username: Username
       vod_title:
         code: Code
+        created_at: Created At
         name: Name
       work:
         ended_on: Ended On
