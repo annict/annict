@@ -30,9 +30,13 @@
               .col-sm-9
                 = f.text_field :started_at, class: "form-control", value: f.object.started_at&.in_time_zone(current_user.time_zone)&.strftime("%Y-%m-%d %H:%M"), placeholder: t("resources.program.started_at_eg")
             .form-group.row
-              = f.label :url, class: "col-sm-3 col-form-label"
+              = f.label :vod_title_code, class: "col-sm-3 col-form-label"
               .col-sm-9
-                = f.text_field :url, class: "form-control"
+                = f.text_field :vod_title_code, class: "form-control"
+            .form-group.row
+              = f.label :vod_title_name, class: "col-sm-3 col-form-label"
+              .col-sm-9
+                = f.text_field :vod_title_name, class: "form-control"
             .form-group.row
               .ml-auto.col-sm-9
                 = f.submit t("helpers.submit.update"), class: "btn btn-primary"

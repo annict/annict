@@ -117,6 +117,8 @@ ja:
           edit: 放送情報編集
           index: 放送情報
           new: 放送情報登録
+        vod_titles:
+          index: VOD作品
         work_images:
           show: 作品画像 - %{title}
         works:

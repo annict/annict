@@ -167,6 +167,8 @@ en:
         channel_id: Channel
         url: URL
         started_at: Started At
+        vod_title_code: VOD Title Code
+        vod_title_name: VOD Title Name
       user:
         allowed_locales: Allowed Languages
         current_password: Current password
@@ -178,6 +180,10 @@ en:
         terms: Terms and Privacy
         time_zone: Time zone
         username: Username
+      vod_title:
+        code: Code
+        created_at: Created At
+        name: Name
       work:
         ended_on: Ended On
         mal_anime_id: MAL Anime ID

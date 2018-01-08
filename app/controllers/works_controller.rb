@@ -94,6 +94,7 @@ class WorksController < ApplicationController
       published.
       order(:sort_number)
 
+    @channels = Channel.published.with_vod
     @series_list = @work.series_list.published.where("series_works_count > ?", 1)
 
     @reviews = @work.reviews.includes(:user).published
@@ -137,7 +138,8 @@ class WorksController < ApplicationController
       @pvs_data = Work.pvs_data(@works)
       @casts_data = Work.casts_data(@works)
       @staffs_data = Work.staffs_data(@works, major: true)
-      @program_details_data = Work.program_details_data(@works, only_video_service: true)
+      @program_details_data = Work.program_details_data(@works, only_vod: true)
+      @channels = Channel.published.with_vod
     end
 
     return unless user_signed_in?
