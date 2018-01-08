@@ -2,14 +2,14 @@
 
 namespace :episode do
   task update_score: :environment do
-    RATING_MAX = 3
+    RATING_MAX = 2
 
     works = Work.published
     watchers_count_max = works.pluck(:watchers_count).max
 
     works.find_each do |work|
       watchers_count = work.watchers_count
-      watchers_rate = 1 + watchers_count.to_f / watchers_count_max
+      watchers_rate = 1 + (watchers_count.to_f / watchers_count_max) * 10
 
       episodes = work.episodes.published.recorded
       next if episodes.blank?
@@ -27,9 +27,9 @@ namespace :episode do
           when "bad" then 0
           when "average" then 1
           when "good" then 2
-          when "great" then RATING_MAX
+          when "great" then [2, 2]
           end
-        end
+        end.flatten
 
         ratings_count = ratings.length
         ratings_sum = ratings.inject(:+)

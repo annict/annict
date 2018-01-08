@@ -115,7 +115,7 @@ namespace :work do
   end
 
   task update_score: :environment do
-    SCORE_MAX = 12
+    SCORE_MAX = 10
 
     Work.published.find_each do |w|
       scores = w.episodes.published.where.not(score: nil).pluck(:score)
@@ -125,9 +125,8 @@ namespace :work do
         next
       end
 
-      scores = scores.map { |s| s + 1 }
-      score_avg = (scores.inject(&:+) / scores.length) + 1
-      score_range = 1..SCORE_MAX
+      score_avg = scores.inject(&:+) / scores.length
+      score_range = 0..SCORE_MAX
       wilson_score = WilsonScore.rating_lower_bound(score_avg, w.watchers_count, score_range)
       score = (wilson_score / SCORE_MAX * 10).round(2)
 
