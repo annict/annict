@@ -10,7 +10,7 @@
     "browserify-incremental": "3.1.1",
     "cal-heatmap": "3.6.2",
     "cropperjs": "1.2.2",
-    "d3": "4.12.0",
+    "d3": "4.12.2",
     "d3-selection": "^1.1.0",
     "dropzone": "5.2.0",
     "jquery": "^3.2.1",
