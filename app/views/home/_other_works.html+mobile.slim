@@ -1,11 +1,13 @@
 - other_works.each_slice(2).each do |works|
-  .row.u-lh-0.mb-3
+  .row.mb-3
     - works.each do |work|
       .col-6
-        = link_to work_path(work) do
+        = link_to work_path(work), class: "d-inline-block mb-1" do
           = ann_image_tag(work.work_image, :attachment, size: "250x250", alt: work.decorate.local_title, class: "rounded img-fluid")
-        .my-2.u-lh-1
-          span.mr-1 = work.watchers_count
+        .mb-1
+          span.mr-1
+            = work.watchers_count
           span.text-muted.small Watchers
-        h3.h4 = link_to work.decorate.local_title, work_path(work), class: "text-truncate w-100 d-inline-block"
-        c-status-selector :work-id="#{work.id}" :is-transparent="true"
+        h3.h4.mb-1
+          = link_to work.decorate.local_title, work_path(work), class: "text-truncate w-100 d-inline-block"
+        c-status-selector :work-id="#{work.id}" :is-transparent="true" size="small"

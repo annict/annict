@@ -1,4 +1,4 @@
-- title = t "head.title.episodes.show", work_title: @work.decorate.local_title, episode_title_with_number: @episode.decorate.title_with_number
+- title = t "head.title.episodes.show", work_title: @work.decorate.local_title, episode_title_with_number: @episode.decorate.title_with_number(fallback: false)
 - description = meta_description(t("head.meta.description.episodes.show", work_title: @work.decorate.local_title, episode_title_with_number: @episode.decorate.title_with_number))
 - keywords = meta_keywords(@work.decorate.local_title)
 - image_url = ann_image_url(@work.work_image, :attachment, size: "640x")
@@ -9,7 +9,7 @@
 = render "works/header", work: @work
 
 - unless current_user&.supporter?
-  .mb-3
+  .mb-3.text-center
     = render "application/components/adsense", slots: [ENV["GOOGLE_AD_320x100_9"]], size: "320x100"
 
 .c-card.mb-3.py-3
@@ -49,13 +49,20 @@
     - else
       = render "application/components/empty", text: t("messages.episodes.no_comments")
 
-h2.h4.font-weight-bold.text-center.mt-3.mb-4
-  = t "noun.related_items"
+.container.mb-3
+  .row.align-items-center
+    .col
+      h2.h4.font-weight-bold.mb-0
+        = t "noun.related_items"
+    .col.text-right
+      = link_to new_episode_item_path(@episode), class: "btn btn-primary btn-sm" do
+        = icon "plus", class: "mr-1"
+        = t "verb.regist_item"
 .c-card.container.mb-3.py-2
   = render "episodes/item_list", episode: @episode, items: @items
 
 - unless current_user&.supporter?
-  .mb-3
+  .mb-3.text-center
     = render "application/components/adsense", slots: [ENV["GOOGLE_AD_320x100_10"]], size: "320x100"
 
 = render "application/components/breadcrumb"

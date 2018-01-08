@@ -62,6 +62,10 @@ class Cast < ApplicationRecord
     data.delete_if { |_, v| v.blank? }
   end
 
+  def support_en?
+    name_en.present? && character.name_en.present? && person.name_en.present?
+  end
+
   private
 
   def set_name

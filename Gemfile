@@ -2,7 +2,7 @@
 
 source "https://rubygems.org"
 
-ruby "2.4.2"
+ruby "2.5.0"
 
 git_source(:github) do |repo_name|
   repo_name = "#{repo_name}/#{repo_name}" unless repo_name.include?("/")
@@ -27,6 +27,7 @@ gem "bootstrap"
 gem "bourbon"
 gem "browser"
 gem "by_star"
+gem "cld"
 gem "commonmarker"
 gem "counter_culture"
 gem "dalli"
@@ -127,6 +128,7 @@ group :development do
   gem "scss_lint", require: false
   gem "spring-commands-rspec", require: false
   gem "spring"
+  gem "squasher"
   gem "stackprof" # Using rack-mini-profiler
   gem "thin"
 end

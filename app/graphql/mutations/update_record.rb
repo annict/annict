@@ -22,6 +22,7 @@ Mutations::UpdateRecord = GraphQL::Relay::Mutation.define do
     record.shared_twitter = inputs[:shareTwitter] == true
     record.shared_facebook = inputs[:shareFacebook] == true
     record.oauth_application = ctx[:doorkeeper_token].application
+    record.detect_locale!(:comment)
 
     record.save!
     record.update_share_checkin_status

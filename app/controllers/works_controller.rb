@@ -81,23 +81,29 @@ class WorksController < ApplicationController
 
   def show
     @work = Work.published.find(params[:id])
+
     @casts = @work.
       casts.
       includes(:character, :person).
       published.
       order(:sort_number)
+
     @staffs = @work.
       staffs.
       includes(:resource).
       published.
       order(:sort_number)
+
+    @channels = Channel.published.with_vod
     @series_list = @work.series_list.published.where("series_works_count > ?", 1)
-    @reviews = @work.
-      reviews.
-      includes(:user).
-      published.
-      order(created_at: :desc)
-    @items = @work.items.published.order(created_at: :desc).limit(10)
+
+    @reviews = @work.reviews.includes(:user).published
+    @reviews = localable_resources(@reviews)
+    @reviews = @reviews.order(created_at: :desc)
+
+    @items = @work.items.published
+    @items = localable_resources(@items)
+    @items = @items.order(created_at: :desc).limit(10)
 
     return unless user_signed_in?
 
@@ -132,7 +138,8 @@ class WorksController < ApplicationController
       @pvs_data = Work.pvs_data(@works)
       @casts_data = Work.casts_data(@works)
       @staffs_data = Work.staffs_data(@works, major: true)
-      @program_details_data = Work.program_details_data(@works, only_video_service: true)
+      @program_details_data = Work.program_details_data(@works, only_vod: true)
+      @channels = Channel.published.with_vod
     end
 
     return unless user_signed_in?

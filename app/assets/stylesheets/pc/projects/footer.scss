@@ -32,7 +32,7 @@
 
     #{$root}__list {
       li {
-        line-height: 1.7;
+        line-height: map-get($ann-line-height-sizes, 4);
       }
     }
 

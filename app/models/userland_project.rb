@@ -16,13 +16,17 @@
 #  available            :boolean          default(FALSE), not null
 #  created_at           :datetime         not null
 #  updated_at           :datetime         not null
+#  locale               :string           default("other"), not null
 #
 # Indexes
 #
+#  index_userland_projects_on_locale                (locale)
 #  index_userland_projects_on_userland_category_id  (userland_category_id)
 #
 
 class UserlandProject < ApplicationRecord
+  include LocaleDetectable
+
   has_attached_file :icon
 
   belongs_to :userland_category, counter_cache: true

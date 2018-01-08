@@ -12,9 +12,12 @@ class NewReviewService
 
   def save!
     ActiveRecord::Base.transaction do
+      @review.detect_locale!(:body)
+
       @review.save!
       @setting.save!
       @review.share_to_sns
+
       save_activity
       create_ga_event
       create_keen_event

@@ -10,14 +10,18 @@
 #  edited_at     :datetime
 #  created_at    :datetime         not null
 #  updated_at    :datetime         not null
+#  locale        :string           default("other"), not null
 #
 # Indexes
 #
 #  index_forum_comments_on_forum_post_id  (forum_post_id)
+#  index_forum_comments_on_locale         (locale)
 #  index_forum_comments_on_user_id        (user_id)
 #
 
 class ForumComment < ApplicationRecord
+  include LocaleDetectable
+
   belongs_to :forum_post, counter_cache: true
   belongs_to :user
 

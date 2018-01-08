@@ -33,6 +33,8 @@ class RecordsController < ApplicationController
       flash[:notice] = t("messages.records.created")
       redirect_to work_episode_path(@work, @episode)
     rescue
+      params[:locale_en] = locale_en?
+      params[:locale_ja] = locale_ja?
       service = RecordsListService.new(current_user, @episode, params)
 
       @all_records = service.all_records
@@ -63,6 +65,7 @@ class RecordsController < ApplicationController
     authorize @record, :update?
 
     @record.modify_comment = true
+    @record.detect_locale!(:comment)
 
     if @record.update_attributes(checkin)
       @record.update_share_checkin_status

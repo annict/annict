@@ -41,6 +41,7 @@ module Api
           @record.shared_facebook = @params.share_facebook == "true"
           @record.modify_comment = true
           @record.oauth_application = doorkeeper_token.application
+          @record.detect_locale!(:comment)
 
           if @record.valid?
             ActiveRecord::Base.transaction do

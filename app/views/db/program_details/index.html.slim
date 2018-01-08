@@ -23,7 +23,8 @@
             th ID
             th = t "activerecord.attributes.program_detail.channel_id"
             th = t "activerecord.attributes.program_detail.started_at"
-            th = t "activerecord.attributes.program_detail.url"
+            th = t "activerecord.attributes.program_detail.vod_title_code"
+            th = t "activerecord.attributes.program_detail.vod_title_name"
             th = t "head.title.db.program_details.activities"
             - if policy(@program_details).edit?
               th = t "noun.edit"
@@ -38,8 +39,13 @@
               td = program_detail.channel.name
               td = display_time(program_detail.started_at)&.presence || "-"
               td
-                - if program_detail.url.present?
-                  = link_to program_detail.url, program_detail.url, target: "_blank"
+                - if program_detail.vod_title_code.present?
+                  = link_to program_detail.vod_title_code, vod_title_url(program_detail.channel_id, program_detail.vod_title_code), target: "_blank"
+                - else
+                  | -
+              td
+                - if program_detail.vod_title_name.present?
+                  = program_detail.vod_title_name
                 - else
                   | -
               td = link_to t("head.title.db.program_details.activities"), activities_db_program_detail_path(program_detail)

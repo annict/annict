@@ -21,23 +21,26 @@
                   = icon "comments-o"
         .col-3
           h4.font-weight-bold = t "noun.services"
-          ul.list-unstyled
+          ul.p-footer__list.list-unstyled
             li = link_to t("noun.annict_userland"), userland_root_path
             li = link_to t("noun.annict_forum"), forum_root_path
             li = link_to t("noun.annict_db"), db_root_path
-            li = link_to t("noun.annict_api"), "https://docs.annict.com/ja/", target: "_blank"
+            - if locale_ja?
+              li = link_to t("noun.annict_api"), "https://docs.annict.com/ja/", target: "_blank"
+            li = link_to t("head.title.supporters.index"), supporters_path
         .col-3
           h4.font-weight-bold = t "noun.contents"
           ul.p-footer__list.list-unstyled
-            li = link_to t("head.title.faqs.index"), faqs_path
-            li = link_to t("head.title.pages.about"), about_path
-            li = link_to t("noun.terms_of_use"), terms_path
-            li = link_to t("noun.privacy_policy"), privacy_path
             - if locale_ja?
+              li = link_to t("head.title.faqs.index"), faqs_path
+            li = link_to t("head.title.pages.about"), about_path
+            - if locale_ja?
+              li = link_to t("noun.terms_of_use"), terms_path
+              li = link_to t("noun.privacy_policy"), privacy_path
               li = link_to t("head.title.pages.legal"), legal_path
         .col-3
           h4.font-weight-bold = t "noun.seasonal_anime"
-          ul.list-unstyled
+          ul.p-footer__list.list-unstyled
             - Season.latest_slugs.each do |slug|
               li
                 - year, name = slug.split("-")
@@ -49,12 +52,12 @@
           h4.font-weight-bold.d-inline-block.mr-2.mb-0
             = "#{t('noun.language')}: "
           ul.list-inline.d-inline-block.mb-0
-            li.list-inline-item = link_to "日本語", "#{ENV.fetch('ANNICT_JP_URL')}#{request.path}"
-            li.list-inline-item = link_to "English", "#{ENV.fetch('ANNICT_URL')}#{request.path}?locale=en"
+            li.list-inline-item = link_to "日本語", local_url_with_path(locale: :ja)
+            li.list-inline-item = link_to "English", local_url_with_path(locale: :en)
         .col.text-center
           = link_to root_path do
             = image_tag "logos/color-white.png", width: "25", alt: "Annict", class: "img-fluid rounded"
         .col.text-right
           .p-footer__copyright.small
             = icon "copyright", class: "mr-1"
-            | 2014-2017 Annict
+            | 2014-2018 Annict

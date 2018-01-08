@@ -7,7 +7,7 @@ module Api
       include Analyzable
       include LogrageSetting
 
-      before_action :switch_languages
+      before_action :switch_locale
 
       private
 

@@ -11,6 +11,7 @@ module Forum
     def create(forum_comment)
       @comment = @post.forum_comments.new(forum_comment)
       @comment.user = current_user
+      @comment.detect_locale!(:body)
 
       unless @comment.valid?
         @comments = @post.forum_comments.order(:created_at)
@@ -35,7 +36,10 @@ module Forum
     def update(forum_comment)
       authorize @comment, :update?
 
-      if @comment.update_attributes(forum_comment)
+      @comment.attributes = forum_comment
+      @comment.detect_locale!(:body)
+
+      if @comment.save
         redirect_to forum_post_path(@post), notice: t("messages.forum.comments.updated")
       else
         render :edit

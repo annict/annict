@@ -56,9 +56,16 @@
                 - else
                   = render "application/components/empty", text: t("messages.episodes.no_comments")
 
-            h2.h4.text-center.my-4.font-weight-bold
-              = t "noun.related_items"
-            .c-card.container.my-3.py-2
+            .row.align-items-center
+              .col
+              .col
+                h2.h4.text-center.my-4.font-weight-bold
+                  = t "noun.related_items"
+              .col.text-right
+                = link_to new_episode_item_path(@episode), class: "btn btn-primary btn-sm" do
+                  = icon "plus", class: "mr-1"
+                  = t "verb.regist_item"
+            .c-card.container.mb-3.py-2
               = render "episodes/item_list", episode: @episode, items: @items
 
             - unless current_user&.supporter?
@@ -81,7 +88,10 @@
               .row.align-items-center
                 .col.text-right
                   .small.text-muted
-                    = t "noun.records_count"
+                    - if locale_ja?
+                      = t "noun.records_count"
+                    - else
+                      = t "noun.records"
                 .col.pl-0
                   .h3
                     = @all_records.count
@@ -98,7 +108,10 @@
               c-episode-rating-state-chart init-dataset="#{@episode.rating_state_chart_dataset}"
             .text-center
               .small.font-weight-bold
-                = t "noun.records_count"
+                - if locale_ja?
+                  = t "noun.records_count"
+                - else
+                  = t "noun.records"
               c-episode-records-chart init-dataset="#{@episode.records_chart_dataset}"
 
 = render "application/components/footer"

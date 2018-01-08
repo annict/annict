@@ -7,31 +7,32 @@ nav.c-navbar.navbar.navbar-expand-sm class="#{transparent ? 'navbar-dark is-tran
   .collapse.navbar-collapse.align-items-center
     ul.navbar-nav.navbar-nav--left.mr-auto.align-items-center
       - if user_signed_in?
-        li.nav-item
-          = link_to t("head.title.programs.index"), annict_url(:programs_url), class: "nav-link"
+        - if locale_ja?
+          li.nav-item
+            = link_to t("head.title.programs.index"), programs_path, class: "nav-link"
         li.nav-item.dropdown
-          = link_to t("noun.watching"), annict_url(:library_url, current_user.username, :watching), class: "nav-link"
+          = link_to t("noun.watching"), library_path(current_user.username, :watching), class: "nav-link"
           .dropdown-menu
-            = link_to t("noun.plan_to_watch"), annict_url(:library_url, current_user.username, :wanna_watch), class: "dropdown-item"
-            = link_to t("noun.completed"), annict_url(:library_url, current_user.username, :watched), class: "dropdown-item"
-            = link_to t("noun.on_hold"), annict_url(:library_url, current_user.username, :on_hold), class: "dropdown-item"
-            = link_to t("noun.dropped"), annict_url(:library_url, current_user.username, :stop_watching), class: "dropdown-item"
+            = link_to t("noun.plan_to_watch"), library_path(current_user.username, :wanna_watch), class: "dropdown-item"
+            = link_to t("noun.completed"), library_path(current_user.username, :watched), class: "dropdown-item"
+            = link_to t("noun.on_hold"), library_path(current_user.username, :on_hold), class: "dropdown-item"
+            = link_to t("noun.dropped"), library_path(current_user.username, :stop_watching), class: "dropdown-item"
         li.nav-item.dropdown
-          = link_to t("noun.current_season"), annict_url(:season_works_url, slug: ENV.fetch("ANNICT_CURRENT_SEASON")), class: "nav-link"
+          = link_to t("noun.current_season"), season_works_path(slug: ENV.fetch("ANNICT_CURRENT_SEASON")), class: "nav-link"
           .dropdown-menu
-            = link_to t("noun.next_season"), annict_url(:season_works_url, slug: ENV.fetch("ANNICT_NEXT_SEASON")), class: "dropdown-item"
-            = link_to t("noun.previous_season"), annict_url(:season_works_url, slug: ENV.fetch("ANNICT_PREVIOUS_SEASON")), class: "dropdown-item"
-            = link_to t("noun.popular"), annict_url(:popular_works_url), class: "dropdown-item"
-            = link_to t("head.title.works.newest"), annict_url(:newest_works_url), class: "dropdown-item"
-            = link_to t("noun.search"), annict_url(:search_url), class: "dropdown-item"
+            = link_to t("noun.next_season"), season_works_path(slug: ENV.fetch("ANNICT_NEXT_SEASON")), class: "dropdown-item"
+            = link_to t("noun.previous_season"), season_works_path(slug: ENV.fetch("ANNICT_PREVIOUS_SEASON")), class: "dropdown-item"
+            = link_to t("noun.popular"), popular_works_path, class: "dropdown-item"
+            = link_to t("head.title.works.newest"), newest_works_path, class: "dropdown-item"
+            = link_to t("noun.search"), search_path, class: "dropdown-item"
       - else
         li.nav-item.dropdown
-          = link_to t("noun.current_season"), annict_url(:season_works_url, slug: ENV.fetch("ANNICT_CURRENT_SEASON")), class: "nav-link"
+          = link_to t("noun.current_season"), season_works_path(slug: ENV.fetch("ANNICT_CURRENT_SEASON")), class: "nav-link"
           .dropdown-menu
-            = link_to t("noun.next_season"), annict_url(:season_works_url, slug: ENV.fetch("ANNICT_NEXT_SEASON")), class: "dropdown-item"
-            = link_to t("noun.previous_season"), annict_url(:season_works_url, slug: ENV.fetch("ANNICT_PREVIOUS_SEASON")), class: "dropdown-item"
-            = link_to t("head.title.works.newest"), annict_url(:newest_works_url), class: "dropdown-item"
-            = link_to t("noun.search"), annict_url(:search_url), class: "dropdown-item"
+            = link_to t("noun.next_season"), season_works_path(slug: ENV.fetch("ANNICT_NEXT_SEASON")), class: "dropdown-item"
+            = link_to t("noun.previous_season"), season_works_path(slug: ENV.fetch("ANNICT_PREVIOUS_SEASON")), class: "dropdown-item"
+            = link_to t("head.title.works.newest"), newest_works_url, class: "dropdown-item"
+            = link_to t("noun.search"), search_url, class: "dropdown-item"
         li.nav-item
           = link_to t("noun.popular"), popular_works_path, class: "nav-link"
       li.nav-item.ml-3
@@ -39,28 +40,31 @@ nav.c-navbar.navbar.navbar-expand-sm class="#{transparent ? 'navbar-dark is-tran
     ul.navbar-nav.navbar-nav--right.align-items-center
       - if user_signed_in?
         li.nav-item.dropdown
-          = link_to annict_url(:user_url, current_user.username), class: "nav-link p-0" do
+          = link_to user_path(current_user.username), class: "nav-link p-0" do
             = ann_image_tag(current_user.profile, :tombo_avatar, size: "30x30", alt: current_user.profile.name, class: "rounded-circle")
           - if current_user.notifications_count > 0
             .c-navbar__notifications-count
               = current_user.notifications_count
           .dropdown-menu
-            = link_to annict_url(:notifications_url), class: "dropdown-item" do
+            = link_to notifications_path, class: "dropdown-item" do
               = t "head.title.notifications.index"
               - if current_user.notifications_count > 0
                 span.badge.badge-pill.u-badge-mizuho.ml-2
                   = current_user.notifications_count
-            = link_to t("head.title.friends.index"), annict_url(:friends_url), class: "dropdown-item"
-            = link_to t("head.title.channels.index"), annict_url(:channels_url), class: "dropdown-item"
-            = link_to t("noun.settings"), annict_url(:profile_url), class: "dropdown-item"
+            = link_to t("head.title.friends.index"), friends_path, class: "dropdown-item"
+            - if locale_ja?
+              = link_to t("head.title.channels.index"), channels_path, class: "dropdown-item"
+            = link_to t("noun.settings"), profile_path, class: "dropdown-item"
             = link_to t("noun.annict_userland"), userland_root_path, class: "dropdown-item"
             = link_to t("noun.annict_forum"), forum_root_path, class: "dropdown-item"
             = link_to t("noun.annict_db"), db_root_path, class: "dropdown-item"
-            = link_to t("noun.annict_api"), "https://docs.annict.com/ja/", target: "_blank", class: "dropdown-item"
-            = link_to t("head.title.supporters.index"), annict_url(:supporters_url), class: "dropdown-item"
-            = link_to t("head.title.faqs.index"), annict_url(:faqs_url), class: "dropdown-item"
-            = link_to t("head.title.pages.about"), annict_url(:about_url), class: "dropdown-item"
-            = link_to t("verb.sign_out"), annict_url(:destroy_user_session_url), method: "delete", class: "dropdown-item"
+            - if locale_ja?
+              = link_to t("noun.annict_api"), "https://docs.annict.com/ja/", target: "_blank", class: "dropdown-item"
+            = link_to t("head.title.supporters.index"), supporters_path, class: "dropdown-item"
+            - if locale_ja?
+              = link_to t("head.title.faqs.index"), faqs_path, class: "dropdown-item"
+            = link_to t("head.title.pages.about"), about_path, class: "dropdown-item"
+            = link_to t("verb.sign_out"), destroy_user_session_path, method: "delete", class: "dropdown-item"
       - else
         li.nav-item
           = link_to t("head.title.pages.about"), about_path, class: "nav-link"

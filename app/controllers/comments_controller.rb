@@ -32,6 +32,7 @@ class CommentsController < ApplicationController
     @comment = @record.comments.new(comment)
     @comment.user = current_user
     @comment.work = @record.work
+    @comment.detect_locale!(:body)
 
     if @comment.save
       redirect_to record_path(@user.username, @record),
@@ -51,7 +52,10 @@ class CommentsController < ApplicationController
   def update(comment)
     authorize @comment, :update?
 
-    if @comment.update_attributes(comment)
+    @comment.attributes = comment
+    @comment.detect_locale!(:body)
+
+    if @comment.save
       path = record_path(@comment.record.user.username, @comment.record)
       redirect_to path, notice: t("messages.comments.updated")
     else

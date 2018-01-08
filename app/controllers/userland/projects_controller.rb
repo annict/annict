@@ -15,6 +15,7 @@ module Userland
     def create(userland_project)
       @project = UserlandProject.new(userland_project)
       @project.userland_project_members.build(user: current_user)
+      @project.detect_locale!(:summary)
 
       return render(:new) unless @project.valid?
 
@@ -33,7 +34,10 @@ module Userland
     def update(userland_project)
       authorize @project, :update?
 
-      if @project.update_attributes(userland_project)
+      @project.attributes = userland_project
+      @project.detect_locale!(:summary)
+
+      if @project.save
         flash[:notice] = t("messages._common.updated")
         redirect_to userland_project_path(@project)
       else

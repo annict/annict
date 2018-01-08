@@ -1,4 +1,7 @@
-p.my-5.text-center
+h1.text-center.mt-4.mb-3
+  | Annictにようこそ！
+
+p.lead.mb-5.text-center
   | Annict (アニクト) は、見たアニメを記録したり、
   br
   | 人気のアニメやオススメのアニメを見つけることができる、アニメ視聴記録サービスです。
@@ -49,25 +52,24 @@ p.my-5.text-center
     = image_tag "features/feature-5.jpg", class: "img-fluid img-thumbnail rounded"
 
 .row.justify-content-center
-  .col-6.text-center
-    .mb-5
-      h2.font-weight-bold 管理者について
-      p
-        | <a href="https://annict.com/@shimbaco">@shimbaco</a> が個人で開発、運営しています。
+  .col-4
+    h2.font-weight-bold.text-center
+      | 管理者について
+    p
+      | <a href="/@shimbaco">@shimbaco</a> が個人で運営しています。
 
-    .mb-5
-      h2.font-weight-bold アニメデータについて
-      p
-        | このサービスに登録されているアニメのデータは
-        br
-        | <a href="http://cal.syoboi.jp/" target="_blank">しょぼいカレンダー</a>と
-        | <a href="http://lain.gr.jp/" target="_blank">.lain</a>を参考にさせて頂いています。
-        br
-        | ありがとうございます。
+  .col-4
+    h2.font-weight-bold.text-center
+      | アニメデータについて
+    p
+      | このサービスに登録されているアニメのデータは
+      | 「<a href="http://cal.syoboi.jp/" target="_blank">しょぼいカレンダー</a>」と
+      | 「<a href="http://lain.gr.jp/" target="_blank">.lain</a>」を参考にさせて頂いています。
+      | ありがとうございます。
 
-    .mb-5
-      h2.font-weight-bold お問い合わせ
-      p
-        | 何かありましたら、Annictの<a href="https://twitter.com/AnnictJP" target="_blank">Twitterアカウント</a>
-        br
-        | または<a href="mailto:hello@annict.com">hello@annict.com</a>までお願いします。
+  .col-4
+    h2.font-weight-bold.text-center
+      | お問い合わせ
+    p
+      | 何かありましたら、Annictの<a href="https://twitter.com/AnnictJP" target="_blank">Twitterアカウント</a>
+      | または <a href="mailto:hello@annict.com">hello@annict.com</a> までお願いします。

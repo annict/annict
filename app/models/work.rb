@@ -300,13 +300,13 @@ class Work < ApplicationRecord
     end
   end
 
-  def self.program_details_data(works, only_video_service: false)
+  def self.program_details_data(works, only_vod: false)
     work_ids = works.pluck(:id)
     program_details = ProgramDetail.published.where(work_id: work_ids).includes(:channel)
-    if only_video_service
+    if only_vod
       program_details = program_details.
         joins(:channel).
-        where(channels: { video_service: true })
+        where(channels: { vod: true })
     end
 
     work_ids.map do |work_id|
@@ -353,6 +353,10 @@ class Work < ApplicationRecord
 
   def syobocal_url
     "http://cal.syoboi.jp/tid/#{sc_tid}"
+  end
+
+  def mal_anime_url
+    "https://myanimelist.net/anime/#{mal_anime_id}"
   end
 
   def twitter_avatar_url(size = :original)

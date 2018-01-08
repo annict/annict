@@ -20,9 +20,11 @@
 #  created_at             :datetime         not null
 #  updated_at             :datetime         not null
 #  oauth_application_id   :integer
+#  locale                 :string           default("other"), not null
 #
 # Indexes
 #
+#  index_reviews_on_locale                (locale)
 #  index_reviews_on_oauth_application_id  (oauth_application_id)
 #  index_reviews_on_user_id               (user_id)
 #  index_reviews_on_work_id               (work_id)
@@ -31,6 +33,7 @@
 class Review < ApplicationRecord
   extend Enumerize
   include AASM
+  include LocaleDetectable
 
   STATES = %i(
     rating_overall_state
