@@ -38,11 +38,6 @@ ObjectTypes::Work = GraphQL::ObjectType.define do
       obj.title_kana
     }
   end
-  field :titleRo, types.String do
-    resolve ->(obj, _args, _ctx) {
-      obj.title_ro
-    }
-  end
   field :titleEn, types.String do
     resolve ->(obj, _args, _ctx) {
       obj.title_en

@@ -13,7 +13,7 @@ class SearchService
   end
 
   def works
-    collection(Work).search(title_or_title_ro_or_title_en_or_title_kana_cont_any: keywords).result
+    collection(Work).search(title_or_title_en_or_title_kana_cont_any: keywords).result
   end
 
   def people
