@@ -187,8 +187,7 @@ GEM
       activemodel-serializers-xml (~> 1.0)
       activesupport (~> 5.0)
       request_store (~> 1.0)
-    easy_translate (0.5.0)
-      json
+    easy_translate (0.5.1)
       thread
       thread_safe
     email_validator (1.6.0)
@@ -252,10 +251,10 @@ GEM
       multi_xml (>= 0.5.2)
     i18n (0.9.1)
       concurrent-ruby (~> 1.0)
-    i18n-tasks (0.9.19)
+    i18n-tasks (0.9.20)
       activesupport (>= 4.0.2)
       ast (>= 2.1.0)
-      easy_translate (>= 0.5.0)
+      easy_translate (>= 0.5.1)
       erubi
       highline (>= 1.7.3)
       i18n
