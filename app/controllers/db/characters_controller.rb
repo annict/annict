@@ -45,7 +45,7 @@ module Db
       @character.save_and_create_activity!
 
       message = t("resources.character.updated")
-      redirect_to edit_db_character_path(@character), notice: message
+      redirect_to db_characters_path, notice: message
     end
 
     def hide
