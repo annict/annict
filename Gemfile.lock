@@ -686,7 +686,6 @@ DEPENDENCIES
   nokogiri
   omniauth-facebook
   omniauth-gumroad
-  omniauth-oauth2 (~> 1.5.0)
   omniauth-twitter
   paperclip
   pg
