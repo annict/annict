@@ -45,7 +45,13 @@
                 = staff.name.presence || "-"
                 br
                 = staff.name_en.presence || "-"
-              td = staff.decorate.role_name.presence || "-"
+              td
+                = staff.decorate.role_name
+                br
+                - if staff.role_value == "other"
+                  = staff.role_other_en.presence || "-"
+                - else
+                  = t "enumerize.staff.role.#{staff.role_value}", locale: :en
               td = staff.sort_number
               td
                 .badge class="#{staff.published? ? 'badge-success' : 'badge-warning'}"

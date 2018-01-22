@@ -19,7 +19,7 @@
     "keen-tracking": "^1.4.0",
     "linkifyjs": "2.1.5",
     "lodash": "4.17.4",
-    "marked": "^0.3.6",
+    "marked": "^0.3.12",
     "mjml": "3.3.5",
     "moment-timezone": "0.5.14",
     "mousetrap": "1.6.1",
