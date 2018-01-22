@@ -2,7 +2,7 @@
   "name": "annict",
   "private": true,
   "dependencies": {
-    "@rails/webpacker": "^3.0.1",
+    "@rails/webpacker": "^3.2.0",
     "async": "2.6.0",
     "bootstrap": "4.0.0",
     "britecharts": "^2.0.0",
@@ -19,7 +19,7 @@
     "keen-tracking": "^1.4.0",
     "linkifyjs": "2.1.5",
     "lodash": "4.17.4",
-    "marked": "^0.3.6",
+    "marked": "^0.3.12",
     "mjml": "3.3.5",
     "moment-timezone": "0.5.14",
     "mousetrap": "1.6.1",
@@ -27,10 +27,10 @@
     "select2": "^4.0.3",
     "tether": "^1.4.0",
     "turbolinks": "5.0.3",
-    "vue": "2.5.10",
+    "vue": "^2.5.13",
     "vue-lazyload": "1.1.4",
-    "vue-loader": "13.6.2",
-    "vue-template-compiler": "2.5.10"
+    "vue-loader": "^13.7.0",
+    "vue-template-compiler": "^2.5.13"
   },
   "engines": {
     "node": "~> 8.9.0"
