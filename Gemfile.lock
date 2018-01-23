@@ -205,11 +205,11 @@ GEM
       railties (>= 3.0.0)
     faraday (0.12.2)
       multipart-post (>= 1.2, < 3)
-    fastly (1.13.1)
+    fast_stack (0.2.0)
+    fastly (1.13.2)
     fastly-rails (0.8.0)
       fastly (~> 1.6)
       railties (> 2, < 6)
-    fast_stack (0.2.0)
     ffi (1.9.18)
     figaro (1.1.1)
       thor (~> 0.14)
@@ -253,7 +253,7 @@ GEM
     http_parser.rb (0.6.0)
     httparty (0.15.6)
       multi_xml (>= 0.5.2)
-    i18n (0.9.1)
+    i18n (0.9.3)
       concurrent-ruby (~> 1.0)
     i18n-tasks (0.9.20)
       activesupport (>= 4.0.2)
@@ -654,11 +654,8 @@ DEPENDENCIES
   email_validator
   enumerize
   factory_bot_rails
-<<<<<<< HEAD
-  fastly-rails
-=======
   fast_stack
->>>>>>> master
+  fastly-rails
   figaro
   flamegraph
   flutie
@@ -737,10 +734,7 @@ DEPENDENCIES
   validate_url
   virtus
   webpacker
-<<<<<<< HEAD
-=======
   wilson_score
->>>>>>> master
 
 RUBY VERSION
    ruby 2.5.0p0
