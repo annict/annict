@@ -23,7 +23,7 @@
     "mjml": "3.3.5",
     "moment-timezone": "0.5.14",
     "mousetrap": "1.6.1",
-    "popper.js": "^1.12.5",
+    "popper.js": "^1.12.9",
     "select2": "^4.0.3",
     "tether": "^1.4.3",
     "turbolinks": "5.0.3",
