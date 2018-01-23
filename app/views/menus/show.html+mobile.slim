@@ -5,13 +5,13 @@
 .container.py-3
   - if user_signed_in?
     .row
-      .col-4.text-center
+      .col-4.text-center.mb-5
         = link_to user_path(current_user.username) do
           .h1.mb-1.text-primary
             = icon "user"
           .small.u-text-body
             = t "noun.profile"
-      .col-4.text-center
+      .col-4.text-center.mb-5
         = link_to notifications_path do
           .h1.mb-1.text-primary
             = icon "bullhorn"
@@ -20,107 +20,100 @@
             - if current_user.notifications_count > 0
              span.badge.badge-pill.u-badge-mizuho.ml-2
                = current_user.notifications_count
-      .col-4.text-center
+      .col-4.text-center.mb-5
         = link_to friends_path do
           .h1.mb-1.text-primary
             = icon "search"
           .small.u-text-body
             = t "head.title.friends.index"
-
-    .row.mt-5
-      .col-4.text-center
+      .col-4.text-center.mb-5
         = link_to season_works_path(slug: ENV.fetch("ANNICT_PREVIOUS_SEASON")) do
           .h1.mb-1.text-primary
             = icon "television"
           .small.u-text-body
             = t "noun.previous_season"
-      .col-4.text-center
+      .col-4.text-center.mb-5
         = link_to season_works_path(slug: ENV.fetch("ANNICT_CURRENT_SEASON")) do
           .h1.mb-1.text-primary
             = icon "television"
           .small.u-text-body
             = t "noun.current_season"
-      .col-4.text-center
+      .col-4.text-center.mb-5
         = link_to season_works_path(slug: ENV.fetch("ANNICT_NEXT_SEASON")) do
           .h1.mb-1.text-primary
             = icon "television"
           .small.u-text-body
             = t "noun.next_season"
-
-    .row.mt-5
-      .col-4.text-center
+      .col-4.text-center.mb-5
         = link_to popular_works_path do
           .h1.mb-1.text-primary
             = icon "television"
           .small.u-text-body
             = t "noun.popular_anime"
-      .col-4.text-center
+      .col-4.text-center.mb-5
         = link_to newest_works_path do
           .h1.mb-1.text-primary
             = icon "television"
           .small.u-text-body
             = t "head.title.works.newest"
-      .col-4.text-center
+      .col-4.text-center.mb-5
         = link_to search_path do
           .h1.mb-1.text-primary
             = icon "search"
           .small.u-text-body
             = t "noun.search"
-
-    .row.mt-5
-      .col-4.text-center
-        = link_to channels_path do
-          .h1.mb-1.text-primary
-            = icon "bars"
-          .small.u-text-body
-            = t "noun.channels"
-      .col-4.text-center
+      - if locale_ja?
+        .col-4.text-center.mb-5
+          = link_to channels_path do
+            .h1.mb-1.text-primary
+              = icon "bars"
+            .small.u-text-body
+              = t "noun.channels"
+      .col-4.text-center.mb-5
         = link_to settings_path do
           .h1.mb-1.text-primary
             = icon "cog"
           .small.u-text-body
             = t "noun.settings"
-      .col-4.text-center
-        = link_to faqs_path do
-          .h1.mb-1.text-primary
-            = icon "question"
-          .small.u-text-body
-            = t "head.title.faqs.index"
-
-    .row.mt-5
-      .col-4.text-center
+      - if locale_ja?
+        .col-4.text-center.mb-5
+          = link_to faqs_path do
+            .h1.mb-1.text-primary
+              = icon "question"
+            .small.u-text-body
+              = t "head.title.faqs.index"
+      .col-4.text-center.mb-5
         = link_to forum_root_path do
           .h1.mb-1.text-primary
             = icon "comments-o"
           .small.u-text-body
             = t "noun.annict_forum"
-      .col-4.text-center
+      .col-4.text-center.mb-5
         = link_to userland_root_path do
           .h1.mb-1.text-primary
             = icon "folder"
           .small.u-text-body
             = t "noun.annict_userland"
-      .col-4.text-center
-        = link_to "https://docs.annict.com/ja/", target: "_blank" do
+      - if locale_ja?
+        .col-4.text-center.mb-5
+          = link_to "https://docs.annict.com/ja/", target: "_blank" do
+            .h1.mb-1.text-primary
+              = icon "globe"
+            .small.u-text-body
+              = t "noun.annict_api"
+      .col-4.text-center.mb-5
+        = link_to supporters_path do
           .h1.mb-1.text-primary
-            = icon "globe"
+            = icon "diamond"
           .small.u-text-body
-            = t "noun.annict_api"
-
-    .row.mt-5
-      / .col-4.text-center
-      /   = link_to supporters_path do
-      /     .h1.mb-1.text-primary
-      /       = icon "diamond"
-      /     .small.u-text-body
-      /       = t "head.title.supporters.index"
-      .col-4.text-center
+            = t "head.title.supporters.index"
+      .col-4.text-center.mb-5
         = link_to about_path do
           .h1.mb-1.text-primary
             = icon "info"
           .small.u-text-body
             = t "head.title.pages.about"
-      .col-4.text-center
+      .col-4.text-center.mb-5
         = link_to destroy_user_session_path, method: "delete" do
           .h1.mb-1.text-primary
             = icon "sign-out"
@@ -128,73 +121,68 @@
             = t "verb.sign_out"
   - else
     .row
-      .col-4.text-center
+      .col-4.text-center.mb-5
         = link_to season_works_path(slug: ENV.fetch("ANNICT_PREVIOUS_SEASON")) do
           .h1.mb-1.text-primary
             = icon "television"
           .small.u-text-body
             = t "noun.previous_season"
-      .col-4.text-center
+      .col-4.text-center.mb-5
         = link_to season_works_path(slug: ENV.fetch("ANNICT_CURRENT_SEASON")) do
           .h1.mb-1.text-primary
             = icon "television"
           .small.u-text-body
             = t "noun.current_season"
-      .col-4.text-center
+      .col-4.text-center.mb-5
         = link_to season_works_path(slug: ENV.fetch("ANNICT_NEXT_SEASON")) do
           .h1.mb-1.text-primary
             = icon "television"
           .small.u-text-body
             = t "noun.next_season"
-
-    .row.mt-5
-      .col-4.text-center
+      .col-4.text-center.mb-5
         = link_to popular_works_path do
           .h1.mb-1.text-primary
             = icon "television"
           .small.u-text-body
             = t "noun.popular_anime"
-      .col-4.text-center
+      .col-4.text-center.mb-5
         = link_to newest_works_path do
           .h1.mb-1.text-primary
             = icon "television"
           .small.u-text-body
             = t "head.title.works.newest"
-      .col-4.text-center
+      .col-4.text-center.mb-5
         = link_to search_path do
           .h1.mb-1.text-primary
             = icon "search"
           .small.u-text-body
             = t "noun.search"
-
-    .row.mt-5
-      .col-4.text-center
+      .col-4.text-center.mb-5
         = link_to forum_root_path do
           .h1.mb-1.text-primary
             = icon "comments-o"
           .small.u-text-body
             = t "noun.annict_forum"
-      .col-4.text-center
+      .col-4.text-center.mb-5
         = link_to userland_root_path do
           .h1.mb-1.text-primary
             = icon "folder"
           .small.u-text-body
             = t "noun.annict_userland"
-      .col-4.text-center
-        = link_to "https://docs.annict.com/ja/", target: "_blank" do
-          .h1.mb-1.text-primary
-            = icon "globe"
-          .small.u-text-body
-            = t "noun.annict_api"
-
-    .row.mt-5
-      .col-4.text-center
-        = link_to faqs_path do
-          .h1.mb-1.text-primary
-            = icon "question"
-          .small.u-text-body
-            = t "head.title.faqs.index"
-      .col-4.text-center
+      - if locale_ja?
+        .col-4.text-center.mb-5
+          = link_to "https://docs.annict.com/ja/", target: "_blank" do
+            .h1.mb-1.text-primary
+              = icon "globe"
+            .small.u-text-body
+              = t "noun.annict_api"
+        .col-4.text-center.mb-5
+          = link_to faqs_path do
+            .h1.mb-1.text-primary
+              = icon "question"
+            .small.u-text-body
+              = t "head.title.faqs.index"
+      .col-4.text-center.mb-5
         = link_to new_user_session_path do
           .h1.mb-1.text-primary
             = icon "sign-in"

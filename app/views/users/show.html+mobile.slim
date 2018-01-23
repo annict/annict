@@ -13,9 +13,9 @@
         = ann_image_tag(@user.profile, :tombo_avatar, size: "80x80", class: "p-profile-header__avatar rounded-circle")
 
     .p-profile-header__profile.container.text-center.pt-2
-      / - if @user.supporter? && !@user.setting.hide_supporter_label?
-      /   .badge.u-badge-supporter.mb-1
-      /     = t "noun.supporter"
+      - if @user.supporter? && !@user.setting.hide_supporter_badge?
+        .badge.u-badge-supporter.mb-1
+          = t "noun.supporter"
       h1.h2.font-weight-bold.mb-0
         = link_to @user.profile.name, user_path(@user.username), class: "u-text-body"
       = link_to "@#{@user.username}", user_path(@user.username), class: "u-text-body"
@@ -98,7 +98,8 @@
             = t "noun.favorite_organizations_shorten"
 
 - unless current_user&.supporter?
-  = render "application/components/adsense", slots: [ENV["GOOGLE_AD_320x100_14"]], size: "320x100"
+  .text-center
+    = render "application/components/adsense", slots: [ENV["GOOGLE_AD_320x100_14"]], size: "320x100"
 
 .mt-3.mb-4
   c-activities username="#{@user.username}"

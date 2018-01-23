@@ -76,10 +76,10 @@ namespace :work do
   end
 
   task send_favorite_works_added_email: :environment do
-    cast_work_ids = Cast.yesterday.pluck(:work_id)
-    staff_work_ids = Staff.yesterday.pluck(:work_id)
+    cast_work_ids = Cast.published.yesterday.pluck(:work_id)
+    staff_work_ids = Staff.published.yesterday.pluck(:work_id)
     season = Season.find_by_slug(ENV.fetch("ANNICT_CURRENT_SEASON"))
-    works = Work.where(id: (cast_work_ids | staff_work_ids))
+    works = Work.published.where(id: (cast_work_ids | staff_work_ids))
     works = works.
       where("season_year >= ? AND season_name > ?", season.year, season.name_value).
       or(works.where("season_year > ?", season.year)).
@@ -111,6 +111,28 @@ namespace :work do
         next if user.statuses.where(work: work).exists?
         EmailNotificationService.send_email("favorite_works_added", user, work.id)
       end
+    end
+  end
+
+  task update_score: :environment do
+    SCORE_MAX = 10
+
+    Work.published.find_each do |w|
+      scores = w.episodes.published.where.not(score: nil).pluck(:score)
+
+      if scores.all?(&:nil?)
+        w.update_column(:score, nil)
+        next
+      end
+
+      score_avg = scores.inject(&:+) / scores.length
+      score_range = 0..SCORE_MAX
+      wilson_score = WilsonScore.rating_lower_bound(score_avg, w.watchers_count, score_range)
+      score = (wilson_score / SCORE_MAX * 10).round(2)
+
+      puts "Work: #{w.id} => #{score}"
+
+      w.update_column(:score, score)
     end
   end
 end

@@ -17,7 +17,7 @@
   }
 
   &__tracking-checkbox {
-    line-height: 0;
+    line-height: map-get($ann-line-height-sizes, 0);
     padding: .5rem 0 .5rem 1rem !important;
     width: 20px;
   }

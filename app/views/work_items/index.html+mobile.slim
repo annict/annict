@@ -9,11 +9,11 @@
 = render "works/header", work: @work
 
 - unless current_user&.supporter?
-  .mb-3
+  .mb-3.text-center
     = render "application/components/adsense", slots: [ENV["GOOGLE_AD_320x100_7"]], size: "320x100"
 
 .c-card.pt-3.mb-3
-  .text-center.mb-3
+  .container.text-right.mb-3
     = link_to new_work_item_path(@work), class: "btn btn-primary" do
       = icon "plus", class: "mr-1"
       = t "verb.regist_item"

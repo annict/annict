@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20171126032600) do
+ActiveRecord::Schema.define(version: 20180104134415) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -30,9 +30,11 @@ ActiveRecord::Schema.define(version: 20171126032600) do
     t.integer "status_id"
     t.integer "record_id"
     t.integer "multiple_record_id"
+    t.integer "review_id"
     t.index ["episode_id"], name: "index_activities_on_episode_id"
     t.index ["multiple_record_id"], name: "index_activities_on_multiple_record_id"
     t.index ["record_id"], name: "index_activities_on_record_id"
+    t.index ["review_id"], name: "index_activities_on_review_id"
     t.index ["status_id"], name: "index_activities_on_status_id"
     t.index ["user_id"], name: "activities_user_id_idx"
     t.index ["work_id"], name: "index_activities_on_work_id"
@@ -83,11 +85,11 @@ ActiveRecord::Schema.define(version: 20171126032600) do
     t.string "name", null: false, collation: "C"
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.boolean "video_service", default: false
+    t.boolean "vod", default: false
     t.string "aasm_state", default: "published", null: false
     t.index ["channel_group_id"], name: "channels_channel_group_id_idx"
     t.index ["sc_chid"], name: "channels_sc_chid_key", unique: true
-    t.index ["video_service"], name: "index_channels_on_video_service"
+    t.index ["vod"], name: "index_channels_on_vod"
   end
 
   create_table "character_images", id: :serial, force: :cascade do |t|
@@ -162,8 +164,10 @@ ActiveRecord::Schema.define(version: 20171126032600) do
     t.string "rating_state"
     t.integer "review_id"
     t.string "aasm_state", default: "published", null: false
+    t.string "locale", default: "other", null: false
     t.index ["episode_id"], name: "checkins_episode_id_idx"
     t.index ["facebook_url_hash"], name: "checkins_facebook_url_hash_key", unique: true
+    t.index ["locale"], name: "index_checkins_on_locale"
     t.index ["multiple_record_id"], name: "index_checkins_on_multiple_record_id"
     t.index ["oauth_application_id"], name: "index_checkins_on_oauth_application_id"
     t.index ["rating_state"], name: "index_checkins_on_rating_state"
@@ -210,7 +214,9 @@ ActiveRecord::Schema.define(version: 20171126032600) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.integer "work_id"
+    t.string "locale", default: "other", null: false
     t.index ["checkin_id"], name: "comments_checkin_id_idx"
+    t.index ["locale"], name: "index_comments_on_locale"
     t.index ["user_id"], name: "comments_user_id_idx"
     t.index ["work_id"], name: "index_comments_on_work_id"
   end
@@ -239,6 +245,8 @@ ActiveRecord::Schema.define(version: 20171126032600) do
     t.text "body", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string "locale", default: "other", null: false
+    t.index ["locale"], name: "index_db_comments_on_locale"
     t.index ["resource_id", "resource_type"], name: "index_db_comments_on_resource_id_and_resource_type"
     t.index ["user_id"], name: "index_db_comments_on_user_id"
   end
@@ -300,11 +308,10 @@ ActiveRecord::Schema.define(version: 20171126032600) do
     t.string "aasm_state", default: "published", null: false
     t.boolean "fetch_syobocal", default: false, null: false
     t.string "raw_number"
-    t.float "avg_rating"
     t.string "title_ro", default: "", null: false
     t.string "title_en", default: "", null: false
     t.integer "record_comments_count", default: 0, null: false
-    t.float "score", default: 50.0, null: false
+    t.float "score"
     t.index ["aasm_state"], name: "index_episodes_on_aasm_state"
     t.index ["prev_episode_id"], name: "index_episodes_on_prev_episode_id"
     t.index ["score"], name: "index_episodes_on_score"
@@ -408,7 +415,9 @@ ActiveRecord::Schema.define(version: 20171126032600) do
     t.datetime "edited_at", comment: "The datetime which user has changed body."
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string "locale", default: "other", null: false
     t.index ["forum_post_id"], name: "index_forum_comments_on_forum_post_id"
+    t.index ["locale"], name: "index_forum_comments_on_locale"
     t.index ["user_id"], name: "index_forum_comments_on_user_id"
   end
 
@@ -432,7 +441,9 @@ ActiveRecord::Schema.define(version: 20171126032600) do
     t.datetime "last_commented_at", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string "locale", default: "other", null: false
     t.index ["forum_category_id"], name: "index_forum_posts_on_forum_category_id"
+    t.index ["locale"], name: "index_forum_posts_on_locale"
     t.index ["user_id"], name: "index_forum_posts_on_user_id"
   end
 
@@ -509,7 +520,9 @@ ActiveRecord::Schema.define(version: 20171126032600) do
     t.string "aasm_state", default: "published", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string "locale", default: "other", null: false
     t.index ["asin"], name: "index_items_on_asin", unique: true
+    t.index ["locale"], name: "index_items_on_locale"
   end
 
   create_table "latest_statuses", id: :serial, force: :cascade do |t|
@@ -710,8 +723,10 @@ ActiveRecord::Schema.define(version: 20171126032600) do
     t.string "aasm_state", default: "published", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.index ["channel_id", "work_id"], name: "index_program_details_on_channel_id_and_work_id", unique: true
+    t.string "vod_title_code", default: "", null: false
+    t.string "vod_title_name", default: "", null: false
     t.index ["channel_id"], name: "index_program_details_on_channel_id"
+    t.index ["vod_title_code"], name: "index_program_details_on_vod_title_code"
     t.index ["work_id"], name: "index_program_details_on_work_id"
   end
 
@@ -758,6 +773,7 @@ ActiveRecord::Schema.define(version: 20171126032600) do
     t.string "aasm_state", default: "published", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string "title_en", default: "", null: false
     t.index ["work_id"], name: "index_pvs_on_work_id"
   end
 
@@ -800,6 +816,8 @@ ActiveRecord::Schema.define(version: 20171126032600) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.integer "oauth_application_id"
+    t.string "locale", default: "other", null: false
+    t.index ["locale"], name: "index_reviews_on_locale"
     t.index ["oauth_application_id"], name: "index_reviews_on_oauth_application_id"
     t.index ["user_id"], name: "index_reviews_on_user_id"
     t.index ["work_id"], name: "index_reviews_on_work_id"
@@ -862,7 +880,7 @@ ActiveRecord::Schema.define(version: 20171126032600) do
     t.string "display_option_record_list", default: "all_comments", null: false
     t.boolean "share_review_to_twitter", default: false, null: false
     t.boolean "share_review_to_facebook", default: false, null: false
-    t.boolean "hide_supporter_label", default: false, null: false
+    t.boolean "hide_supporter_badge", default: false, null: false
     t.index ["user_id"], name: "index_settings_on_user_id"
   end
 
@@ -917,8 +935,9 @@ ActiveRecord::Schema.define(version: 20171126032600) do
     t.string "icon_name", limit: 255, null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.string "title_en", default: "", null: false
-    t.index ["slug"], name: "index_tips_on_slug", unique: true
+    t.string "locale", default: "other", null: false
+    t.index ["locale"], name: "index_tips_on_locale"
+    t.index ["slug", "locale"], name: "index_tips_on_slug_and_locale", unique: true
   end
 
   create_table "twitter_bots", id: :serial, force: :cascade do |t|
@@ -985,6 +1004,8 @@ ActiveRecord::Schema.define(version: 20171126032600) do
     t.boolean "available", default: false, null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string "locale", default: "other", null: false
+    t.index ["locale"], name: "index_userland_projects_on_locale"
     t.index ["userland_category_id"], name: "index_userland_projects_on_userland_category_id"
   end
 
@@ -1016,6 +1037,8 @@ ActiveRecord::Schema.define(version: 20171126032600) do
     t.datetime "work_tag_cache_expired_at"
     t.datetime "work_comment_cache_expired_at"
     t.integer "gumroad_subscriber_id"
+    t.string "allowed_locales", array: true
+    t.index ["allowed_locales"], name: "index_users_on_allowed_locales", using: :gin
     t.index ["confirmation_token"], name: "users_confirmation_token_key", unique: true
     t.index ["email"], name: "users_email_key", unique: true
     t.index ["gumroad_subscriber_id"], name: "index_users_on_gumroad_subscriber_id"
@@ -1031,12 +1054,28 @@ ActiveRecord::Schema.define(version: 20171126032600) do
     t.datetime "created_at"
   end
 
+  create_table "vod_titles", force: :cascade do |t|
+    t.bigint "channel_id", null: false
+    t.bigint "work_id"
+    t.string "code", null: false
+    t.string "name", null: false
+    t.string "aasm_state", default: "published", null: false
+    t.datetime "mail_sent_at"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["channel_id"], name: "index_vod_titles_on_channel_id"
+    t.index ["mail_sent_at"], name: "index_vod_titles_on_mail_sent_at"
+    t.index ["work_id"], name: "index_vod_titles_on_work_id"
+  end
+
   create_table "work_comments", force: :cascade do |t|
     t.integer "user_id", null: false
     t.integer "work_id", null: false
     t.string "body", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string "locale", default: "other", null: false
+    t.index ["locale"], name: "index_work_comments_on_locale"
     t.index ["user_id", "work_id"], name: "index_work_comments_on_user_id_and_work_id", unique: true
     t.index ["user_id"], name: "index_work_comments_on_user_id"
     t.index ["work_id"], name: "index_work_comments_on_work_id"
@@ -1077,6 +1116,8 @@ ActiveRecord::Schema.define(version: 20171126032600) do
     t.string "description"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string "locale", default: "other", null: false
+    t.index ["locale"], name: "index_work_taggables_on_locale"
     t.index ["user_id", "work_tag_id"], name: "index_work_taggables_on_user_id_and_work_tag_id", unique: true
     t.index ["user_id"], name: "index_work_taggables_on_user_id"
     t.index ["work_tag_id"], name: "index_work_taggables_on_work_tag_id"
@@ -1100,6 +1141,8 @@ ActiveRecord::Schema.define(version: 20171126032600) do
     t.integer "work_taggings_count", default: 0, null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string "locale", default: "other", null: false
+    t.index ["locale"], name: "index_work_tags_on_locale"
     t.index ["name"], name: "index_work_tags_on_name", unique: true
     t.index ["work_taggings_count"], name: "index_work_tags_on_work_taggings_count"
   end
@@ -1142,10 +1185,12 @@ ActiveRecord::Schema.define(version: 20171126032600) do
     t.integer "reviews_count", default: 0, null: false
     t.date "started_on"
     t.date "ended_on"
+    t.float "score"
     t.index ["aasm_state"], name: "index_works_on_aasm_state"
     t.index ["key_pv_id"], name: "index_works_on_key_pv_id"
     t.index ["number_format_id"], name: "index_works_on_number_format_id"
     t.index ["sc_tid"], name: "works_sc_tid_key", unique: true
+    t.index ["score"], name: "index_works_on_score"
     t.index ["season_id"], name: "works_season_id_idx"
     t.index ["season_year", "season_name"], name: "index_works_on_season_year_and_season_name"
     t.index ["season_year"], name: "index_works_on_season_year"
@@ -1154,6 +1199,7 @@ ActiveRecord::Schema.define(version: 20171126032600) do
   add_foreign_key "activities", "checkins", column: "record_id"
   add_foreign_key "activities", "episodes"
   add_foreign_key "activities", "multiple_records"
+  add_foreign_key "activities", "reviews"
   add_foreign_key "activities", "statuses"
   add_foreign_key "activities", "users", name: "activities_user_id_fk", on_delete: :cascade
   add_foreign_key "activities", "works"
@@ -1252,6 +1298,8 @@ ActiveRecord::Schema.define(version: 20171126032600) do
   add_foreign_key "userland_project_members", "users"
   add_foreign_key "userland_projects", "userland_categories"
   add_foreign_key "users", "gumroad_subscribers"
+  add_foreign_key "vod_titles", "channels"
+  add_foreign_key "vod_titles", "works"
   add_foreign_key "work_comments", "users"
   add_foreign_key "work_comments", "works"
   add_foreign_key "work_images", "users"

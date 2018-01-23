@@ -31,9 +31,11 @@
 #  work_tag_cache_expired_at     :datetime
 #  work_comment_cache_expired_at :datetime
 #  gumroad_subscriber_id         :integer
+#  allowed_locales               :string           is an Array
 #
 # Indexes
 #
+#  index_users_on_allowed_locales        (allowed_locales)
 #  index_users_on_gumroad_subscriber_id  (gumroad_subscriber_id)
 #  users_confirmation_token_key          (confirmation_token) UNIQUE
 #  users_email_key                       (email) UNIQUE
@@ -53,6 +55,10 @@ class User < ApplicationRecord
 
   extend Enumerize
 
+  # There are also usernames which is expressed in uppercase letters... orz (e.g. annict.com/@a, annict.com/@A)
+  # In order to be able to update their user data, it needs to enable the `case_sensitive` option.
+  DUPLICATED_USERNAMES = %w(a d k).freeze
+
   attr_accessor :email_username, :current_password
 
   # Include default devise modules. Others available are:
@@ -62,8 +68,9 @@ class User < ApplicationRecord
     omniauth_providers: %i(facebook gumroad twitter),
     authentication_keys: %i(email_username)
 
-  enumerize :role, in: { user: 0, admin: 1, editor: 2 }, default: :user, scope: true
+  enumerize :allowed_locales, in: ApplicationRecord::LOCALES, multiple: true, default: ApplicationRecord::LOCALES
   enumerize :locale, in: %i(ja en)
+  enumerize :role, in: { user: 0, admin: 1, editor: 2 }, default: :user, scope: true
 
   belongs_to :gumroad_subscriber, optional: true
   has_many :activities, dependent: :destroy
@@ -128,9 +135,14 @@ class User < ApplicationRecord
     valid_password: { on: :password_check }
   validates :username,
     presence: true,
-    uniqueness: { case_sensitive: false },
     length: { maximum: 20 },
     format: { with: /\A[A-Za-z0-9_]+\z/ }
+  validates :username,
+    uniqueness: { case_sensitive: false },
+    if: proc { |u| !u.username.downcase.in?(DUPLICATED_USERNAMES) }
+  validates :username,
+    uniqueness: { case_sensitive: true },
+    if: proc { |u| u.username.downcase.in?(DUPLICATED_USERNAMES) }
 
   # Override the Devise's `find_for_database_authentication`
   # https://github.com/plataformatec/devise/wiki/How-To:-Allow-users-to-sign-in-using-their-username-or-email-address

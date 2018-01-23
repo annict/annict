@@ -12,7 +12,7 @@
 
 To run Annict on a local machine, you need to have the following dependencies installed:
 
-* Ruby 2.4
+* Ruby 2.5
 * PostgreSQL 9.5
 * ImageMagick
 * PhantomJS
@@ -40,7 +40,7 @@ $ rspec
 
 ### License
 
-Copyright 2014-2017 Annict
+Copyright 2014-2018 Annict
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.

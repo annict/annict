@@ -2,7 +2,7 @@ en:
   head:
     meta:
       description:
-        _common: Annict is the platform for Anime addicts. Track your watching anime, follow friends, read their reviews, and much more!
+        _common: Annict is the platform for anime addicts. Track your watching anime, follow friends, read their reviews, and much more!
         character_fans:
           index: Check out fans of %{character_name}!
         characters:
@@ -119,6 +119,8 @@ en:
           edit: Edit Program Detail
           index: Program Details
           new: New Program Detail
+        vod_titles:
+          index: VOD Titles
         work_images:
           show: Work Image - %{title}
         works:
@@ -179,6 +181,7 @@ en:
       pages:
         about: About
         about_shoten: About
+        legal: Legal
       passwords:
         edit: Forgot your password?
         new: Forgot your password?

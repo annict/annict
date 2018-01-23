@@ -22,6 +22,11 @@ class WorkDecorator < ApplicationDecorator
     h.link_to title, syobocal_url, target: "_blank"
   end
 
+  def mal_anime_link(title = nil)
+    title = title.presence || mal_anime_id
+    h.link_to title, mal_anime_url, target: "_blank"
+  end
+
   def db_detail_link(options = {})
     name = options.delete(:name).presence || title
     h.link_to(name, h.edit_db_work_path(self), options)

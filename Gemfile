@@ -2,7 +2,7 @@
 
 source "https://rubygems.org"
 
-ruby "2.4.2"
+ruby "2.5.0"
 
 git_source(:github) do |repo_name|
   repo_name = "#{repo_name}/#{repo_name}" unless repo_name.include?("/")
@@ -27,6 +27,7 @@ gem "bootstrap"
 gem "bourbon"
 gem "browser"
 gem "by_star"
+gem "cld"
 gem "commonmarker"
 gem "counter_culture"
 gem "dalli"
@@ -66,9 +67,6 @@ gem "moji"
 gem "nokogiri"
 gem "omniauth-facebook"
 gem "omniauth-gumroad"
-# 1.4系だとFacebookのOAuth周りでおかしくなるので1.3系を使う
-# https://github.com/intridea/omniauth-oauth2/issues/81
-gem "omniauth-oauth2", "~> 1.3.1"
 gem "omniauth-twitter"
 gem "paperclip"
 gem "pg"
@@ -95,6 +93,7 @@ gem "uglifier"
 gem "validate_url"
 gem "virtus"
 gem "webpacker"
+gem "wilson_score"
 
 group :development, :test do
   gem "awesome_print"
@@ -114,16 +113,21 @@ group :development do
   gem "binding_of_caller" # Using better_errors
   gem "bullet"
   gem "derailed_benchmarks"
+  gem "fast_stack" # Using rack-mini-profiler
+  gem "flamegraph" # Using rack-mini-profiler
   gem "graphiql-rails"
   gem "i18n-tasks"
   gem "letter_opener_web"
   gem "listen" # Rails 5から `rails s` するときに必要になった
+  gem "memory_profiler" # Using rack-mini-profiler
+  gem "rack-mini-profiler", require: false
   gem "rubocop"
   gem "ruby_identicon"
   gem "scss_lint", require: false
-  gem "spring"
   gem "spring-commands-rspec", require: false
-  gem "stackprof"
+  gem "spring"
+  gem "squasher"
+  gem "stackprof" # Using rack-mini-profiler
   gem "thin"
 end
 

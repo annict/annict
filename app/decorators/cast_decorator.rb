@@ -26,7 +26,6 @@ class CastDecorator < ApplicationDecorator
       when :character_id
         character_id = send(:character_id)
         Character.find(character_id).name if character_id.present?
-      when :sort_number
       else
         send(field)
       end

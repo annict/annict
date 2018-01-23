@@ -16,6 +16,7 @@ module Api
             r.shared_facebook = @params.share_facebook == "true"
             r.oauth_application = doorkeeper_token.application
           end
+          record.rating_state = record.rating_to_rating_state if record.rating.present?
 
           service = NewRecordService.new(current_user, record)
           service.ga_client = ga_client
@@ -40,6 +41,7 @@ module Api
           @record.shared_facebook = @params.share_facebook == "true"
           @record.modify_comment = true
           @record.oauth_application = doorkeeper_token.application
+          @record.detect_locale!(:comment)
 
           if @record.valid?
             ActiveRecord::Base.transaction do

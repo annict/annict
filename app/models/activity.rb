@@ -17,6 +17,7 @@
 #  status_id          :integer
 #  record_id          :integer
 #  multiple_record_id :integer
+#  review_id          :integer
 #
 # Indexes
 #
@@ -24,6 +25,7 @@
 #  index_activities_on_episode_id          (episode_id)
 #  index_activities_on_multiple_record_id  (multiple_record_id)
 #  index_activities_on_record_id           (record_id)
+#  index_activities_on_review_id           (review_id)
 #  index_activities_on_status_id           (status_id)
 #  index_activities_on_work_id             (work_id)
 #

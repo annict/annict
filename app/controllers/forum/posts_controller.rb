@@ -16,6 +16,7 @@ module Forum
       @post = ForumPost.new(forum_post)
       @post.user = current_user
       @post.last_commented_at = Time.now
+      @post.detect_locale!(:body)
 
       return render(:new) unless @post.valid?
 
@@ -40,7 +41,10 @@ module Forum
     def update(forum_post)
       authorize @post, :update?
 
-      if @post.update_attributes(forum_post)
+      @post.attributes = forum_post
+      @post.detect_locale!(:body)
+
+      if @post.save
         redirect_to forum_post_path(@post), notice: t("messages.forum.posts.updated")
       else
         render :edit

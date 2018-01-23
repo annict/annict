@@ -26,6 +26,7 @@ Mutations::UpdateReview = GraphQL::Relay::Mutation.define do
     end
     review.modified_at = Time.now
     review.oauth_application = ctx[:doorkeeper_token].application
+    review.detect_locale!(:body)
 
     ctx[:viewer].setting.attributes = {
       share_review_to_twitter: inputs[:shareTwitter] == true,

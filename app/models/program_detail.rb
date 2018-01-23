@@ -3,20 +3,22 @@
 #
 # Table name: program_details
 #
-#  id         :integer          not null, primary key
-#  channel_id :integer          not null
-#  work_id    :integer          not null
-#  url        :string
-#  started_at :datetime
-#  aasm_state :string           default("published"), not null
-#  created_at :datetime         not null
-#  updated_at :datetime         not null
+#  id             :integer          not null, primary key
+#  channel_id     :integer          not null
+#  work_id        :integer          not null
+#  url            :string
+#  started_at     :datetime
+#  aasm_state     :string           default("published"), not null
+#  created_at     :datetime         not null
+#  updated_at     :datetime         not null
+#  vod_title_code :string           default(""), not null
+#  vod_title_name :string           default(""), not null
 #
 # Indexes
 #
-#  index_program_details_on_channel_id              (channel_id)
-#  index_program_details_on_channel_id_and_work_id  (channel_id,work_id) UNIQUE
-#  index_program_details_on_work_id                 (work_id)
+#  index_program_details_on_channel_id      (channel_id)
+#  index_program_details_on_vod_title_code  (vod_title_code)
+#  index_program_details_on_work_id         (work_id)
 #
 
 class ProgramDetail < ApplicationRecord
@@ -43,7 +45,7 @@ class ProgramDetail < ApplicationRecord
   has_many :db_activities, as: :trackable, dependent: :destroy
   has_many :db_comments, as: :resource, dependent: :destroy
 
-  scope :in_video_service, -> { joins(:channel).where(channels: { video_service: true }) }
+  scope :in_vod, -> { joins(:channel).where(channels: { vod: true }) }
 
   before_save :calc_for_timezone
 
@@ -54,6 +56,10 @@ class ProgramDetail < ApplicationRecord
     end
 
     data.delete_if { |_, v| v.blank? }
+  end
+
+  def support_en?
+    false
   end
 
   private

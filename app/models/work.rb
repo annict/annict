@@ -41,12 +41,14 @@
 #  reviews_count         :integer          default(0), not null
 #  started_on            :date
 #  ended_on              :date
+#  score                 :float
 #
 # Indexes
 #
 #  index_works_on_aasm_state                   (aasm_state)
 #  index_works_on_key_pv_id                    (key_pv_id)
 #  index_works_on_number_format_id             (number_format_id)
+#  index_works_on_score                        (score)
 #  index_works_on_season_year                  (season_year)
 #  index_works_on_season_year_and_season_name  (season_year,season_name)
 #  works_sc_tid_key                            (sc_tid) UNIQUE
@@ -298,13 +300,13 @@ class Work < ApplicationRecord
     end
   end
 
-  def self.program_details_data(works, only_video_service: false)
+  def self.program_details_data(works, only_vod: false)
     work_ids = works.pluck(:id)
     program_details = ProgramDetail.published.where(work_id: work_ids).includes(:channel)
-    if only_video_service
+    if only_vod
       program_details = program_details.
         joins(:channel).
-        where(channels: { video_service: true })
+        where(channels: { vod: true })
     end
 
     work_ids.map do |work_id|
@@ -334,7 +336,7 @@ class Work < ApplicationRecord
     episodes.published.order(:sort_number).pluck(:checkins_count)
   end
 
-  def checkins_count
+  def records_count
     chart_values.reduce(&:+).presence || 0
   end
 
@@ -351,6 +353,10 @@ class Work < ApplicationRecord
 
   def syobocal_url
     "http://cal.syoboi.jp/tid/#{sc_tid}"
+  end
+
+  def mal_anime_url
+    "https://myanimelist.net/anime/#{mal_anime_id}"
   end
 
   def twitter_avatar_url(size = :original)

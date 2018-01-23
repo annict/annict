@@ -128,7 +128,7 @@ crumb :work_item_list do |work|
 end
 
 crumb :episode_detail do |episode|
-  link episode.decorate.title_with_number, work_episode_path(episode.work, episode)
+  link episode.decorate.title_with_number(fallback: false), work_episode_path(episode.work, episode)
   parent :work_detail, episode.work
 end
 
@@ -175,4 +175,9 @@ end
 crumb :forum_edit_comment do |comment|
   link t("head.title.forum.comments.edit"), edit_forum_post_comment_path(comment.forum_post, comment)
   parent :forum_post_detail, comment.forum_post
+end
+
+crumb :pages_legal do
+  link t("head.title.pages.legal")
+  parent :root
 end

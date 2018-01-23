@@ -44,7 +44,7 @@ class UserEpisodesQuery
     channel_works.map do |cw|
       program = programs.
         select { |p| p.work_id == cw.work_id && p.channel_id == cw.channel_id }.
-        sort(&:started_at).
+        sort_by(&:started_at).
         reverse.
         first
 

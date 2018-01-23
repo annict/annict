@@ -5,7 +5,7 @@ script#t-create-multiple-records-activity type="x-template"
         .col.col-auto.pr-0
           a :href='"/@" + activity.user.username'
             img.c-vue-lazyload.rounded-circle v-lazy="activity.profile.avatar_url" width="35" height="35"
-        .col.pl-2.u-lh-1
+        .col.pl-2
           .mb-2 v-if='locale === "en"'
             a.mr-1 :href='"/@" + activity.user.username'
               | {{ activity.profile.name }}

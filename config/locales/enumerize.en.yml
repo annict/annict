@@ -66,6 +66,10 @@ en:
         en: English
         ja: Japanese
     user:
+      allowed_locales:
+        en: English
+        ja: Japanese
+        other: Other
       role:
         admin: Admin
         editor: Editor

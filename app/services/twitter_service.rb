@@ -30,15 +30,15 @@ class TwitterService
     end
   end
 
-  def share!(checkin)
-    if checkin.twitter_url_hash.blank?
-      checkin.update_column(:twitter_url_hash, checkin.generate_url_hash)
-    end
+  def share!(record, data)
+    record.update_column(:twitter_url_hash, record.generate_url_hash) if record.twitter_url_hash.blank?
+
+    data[:share_url] = "#{record.user.annict_host}/r/tw/#{record.twitter_url_hash}"
 
     begin
-      client.update(tweet_body(checkin))
+      client.update(tweet_body(data))
     rescue Twitter::Error::Unauthorized
-      checkin.user.expire_twitter_token
+      record.user.expire_twitter_token
     end
   end
 
@@ -50,48 +50,21 @@ class TwitterService
 
   private
 
-  def tweet_body(checkin)
-    data = {
-      work_title: checkin.work.title,
-      episode_number: get_episode_number(checkin),
-      episode_title: get_episode_title(checkin),
-      share_url: "#{checkin.user.annict_host}/r/tw/#{checkin.twitter_url_hash}",
-      share_hashtag: get_share_hashtag(checkin),
-      comment: checkin.comment
-    }
-
+  def tweet_body(data)
     body = generate_tweet_body(data)
     data = adjust_tweet_body(body, data)
     generate_tweet_body(data)
   end
 
-  def get_episode_number(checkin)
-    checkin.episode.single? ? "" : checkin.episode.number
-  end
-
-  def get_episode_title(checkin)
-    if checkin.episode.single?
-      ""
-    else
-      checkin.episode.title.presence || ""
-    end
-  end
-
-  def get_share_hashtag(checkin)
-    return "" if checkin.work.twitter_hashtag.blank?
-
-    " ##{checkin.work.twitter_hashtag}"
-  end
-
   def generate_tweet_body(data)
-    if data[:comment].present?
-      "#{data[:comment]}／#{data[:work_title]} #{data[:episode_number]}" +
-        "を見ました #{data[:share_url]}#{data[:share_hashtag]}"
+    if data[:locale] == "ja"
+      base_body = "#{data[:work_title]} #{data[:episode_number]}を見ました #{data[:share_url]}#{data[:share_hashtag]}"
+      return base_body if data[:comment].blank?
+      "#{data[:comment]}／#{base_body}"
     else
-      episode_title = data[:episode_title].present? ? "「#{data[:episode_title]}」" : ""
-
-      "#{data[:work_title]} #{data[:episode_number]}#{episode_title}" +
-        "を見ました #{data[:share_url]}#{data[:share_hashtag]}"
+      base_body = "Watched: #{data[:work_title]} #{data[:episode_number]} #{data[:share_url]}#{data[:share_hashtag]}"
+      return base_body if data[:comment].blank?
+      "#{data[:comment]} / #{base_body}"
     end
   end
 
@@ -101,16 +74,9 @@ class TwitterService
     data[:episode_number] += " " if data[:episode_number]&.include?("#")
 
     if body.length > 140
-      if data[:comment].present?
-        data[:comment] = truncate_text(data[:comment], body)
-      else
-        data[:episode_title] = truncate_text(data[:episode_title], body)
-        body = generate_tweet_body(data)
-
-        if body.length > 140
-          data[:work_title] = truncate_text(data[:work_title], body)
-        end
-      end
+      data[:comment] = truncate_text(data[:comment], body) if data[:comment].present?
+      body = generate_tweet_body(data)
+      data[:work_title] = truncate_text(data[:work_title], body) if body.length > 140
     end
 
     data

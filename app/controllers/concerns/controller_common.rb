@@ -4,7 +4,8 @@ module ControllerCommon
   extend ActiveSupport::Concern
 
   included do
-    helper_method :render_jb, :locale_ja?, :locale_en?, :local_url, :discord_invite_url
+    helper_method :render_jb, :locale_ja?, :locale_en?, :local_url, :discord_invite_url, :local_url_with_path,
+      :localable_resources
 
     rescue_from ActionView::MissingTemplate do
       raise ActionController::RoutingError, "Not Found" if Rails.env.production?
@@ -22,11 +23,36 @@ module ControllerCommon
     end
 
     def locale_ja?
-      locale == :ja
+      locale.to_s == "ja"
     end
 
     def locale_en?
-      locale == :en
+      locale.to_s == "en"
+    end
+
+    def localable_resources(resources)
+      if user_signed_in?
+        localable_resources_with_own(resources)
+      elsif !user_signed_in? && locale_en?
+        resources.with_locale(:en)
+      elsif !user_signed_in? && locale_ja?
+        resources.with_locale(:ja)
+      else
+        resources
+      end
+    end
+
+    def localable_resources_with_own(resources)
+      collection = resources.with_locale(*current_user.allowed_locales)
+
+      return resources.where(user: current_user).or(collection) if resources.column_names.include?("user_id")
+
+      case resources.first.class.name
+      when "UserlandProject"
+        UserlandProject.where(id: collection.pluck(:id) + resources.merge(current_user.userland_projects).pluck(:id))
+      else
+        collection
+      end
     end
 
     private
@@ -45,21 +71,17 @@ module ControllerCommon
       redirect_to "#{url}#{request.path}", options
     end
 
-    def redirect_to_locale_domain(options = {})
-      return if request.domain == ENV.fetch("ANNICT_DOMAIN") && I18n.locale.to_s == "en"
-
-      url = ["#{local_url}#{request.path}", request.query_string].select(&:present?).join("?")
-
-      redirect_to url, options
-    end
-
-    def local_url
-      case I18n.locale.to_s
+    def local_url(locale: I18n.locale)
+      case locale.to_s
       when "ja"
         ENV.fetch("ANNICT_JP_URL")
       else
         ENV.fetch("ANNICT_URL")
       end
+    end
+
+    def local_url_with_path(locale: I18n.locale)
+      ["#{local_url(locale: locale)}#{request.path}", request.query_string].select(&:present?).join("?")
     end
 
     def redirect_if_unexpected_subdomain
@@ -76,31 +98,19 @@ module ControllerCommon
       redirect_to_root_domain(status: 301)
     end
 
-    def switch_languages
-      case request.domain
+    def switch_locale
+      white_list = [
+        "/users/auth/gumroad/callback"
+      ]
+      return if request.path.in?(white_list)
+
+      case [request.subdomain, request.domain].select(&:present?).join(".")
       when ENV.fetch("ANNICT_DOMAIN")
-        if user_signed_in? && current_user.locale.en?
-          I18n.locale = :en
-          return
-        end
-
-        I18n.locale = if params[:locale].in?(User.locale.values)
-          params[:locale]
-        else
-          user_signed_in? ? current_user.locale : preferred_locale
-        end
-
-        if user_signed_in? && current_user.locale != I18n.locale.to_s
-          current_user.update_column(:locale, I18n.locale)
-        end
-
-        redirect_to_locale_domain
+        return redirect_to local_url_with_path(locale: :ja) if user_signed_in? && current_user.locale == "ja"
+        I18n.locale = :en
       when ENV.fetch("ANNICT_JP_DOMAIN")
+        return redirect_to local_url_with_path(locale: :en) if user_signed_in? && current_user.locale == "en"
         I18n.locale = :ja
-
-        if user_signed_in? && !current_user.locale.ja?
-          current_user.update_column(:locale, I18n.locale)
-        end
       end
     end
 

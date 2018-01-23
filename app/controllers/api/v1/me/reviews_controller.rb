@@ -50,6 +50,7 @@ module Api
           @review.rating_overall_state = @params.rating_overall_state
           @review.modified_at = Time.now
           @review.oauth_application = doorkeeper_token.application
+          @review.detect_locale!(:body)
           current_user.setting.attributes = {
             share_review_to_twitter: @params.share_twitter == "true",
             share_review_to_facebook: @params.share_facebook == "true"

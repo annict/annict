@@ -7,8 +7,8 @@
             .c-hover-image
               .c-hover-image__image
                 = ann_image_tag work.work_image, :attachment, size: "140x140", class: "img-fluid rounded"
-              .c-hover-image__over.p-1.u-lh-sm.w-100 style="background-color: rgba(#{work.image_color_rgb},0.7);"
-                .c-grid-work__work-title.u-very-small.font-weight-bold style="color: rgba(#{work.image_text_color_rgb}, 0.85);"
+              .c-hover-image__over.p-1.u-lh-3.w-100
+                .c-grid-work__work-title.u-very-small.font-weight-bold
                   = work.decorate.local_title
         - if page_category.in?(%w(works_season works_popular works_newest))
           c-status-selector :work-id="#{work.id}" size="small"

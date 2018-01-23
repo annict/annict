@@ -16,11 +16,10 @@
 #  aasm_state            :string           default("published"), not null
 #  fetch_syobocal        :boolean          default(FALSE), not null
 #  raw_number            :string
-#  avg_rating            :float
 #  title_ro              :string           default(""), not null
 #  title_en              :string           default(""), not null
 #  record_comments_count :integer          default(0), not null
-#  score                 :float            default(50.0), not null
+#  score                 :float
 #
 # Indexes
 #

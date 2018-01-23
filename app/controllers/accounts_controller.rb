@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class AccountsController < ApplicationController
-  permits :username, :email, :time_zone, :locale, model_name: "User"
+  permits :username, :email, :time_zone, :locale, allowed_locales: [], model_name: "User"
 
   before_action :authenticate_user!
 

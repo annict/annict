@@ -6,7 +6,8 @@
 - breadcrumb :seasonal_works, @season.slug, @season.local_name
 
 - unless current_user&.supporter?
-  = render "application/components/adsense", slots: [ENV["GOOGLE_AD_320x100_16"]], size: "320x100"
+  .text-center
+    = render "application/components/adsense", slots: [ENV["GOOGLE_AD_320x100_16"]], size: "320x100"
 
 h1.h2.text-center.my-3
   = title
@@ -40,7 +41,7 @@ h1.h2.text-center.my-3
     = paginate @works, window: 2
 
 - unless current_user&.supporter?
-  .mb-3
+  .mb-3.text-center
     = render "application/components/adsense", slots: [ENV["GOOGLE_AD_320x100_17"]], size: "320x100"
 
 = render "application/components/breadcrumb"

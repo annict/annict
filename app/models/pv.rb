@@ -1,21 +1,21 @@
 # frozen_string_literal: true
-
 # == Schema Information
 #
 # Table name: pvs
 #
 #  id                     :integer          not null, primary key
 #  work_id                :integer          not null
-#  title                  :string           not null
 #  url                    :string           not null
+#  title                  :string           not null
 #  thumbnail_file_name    :string
 #  thumbnail_content_type :string
 #  thumbnail_file_size    :integer
 #  thumbnail_updated_at   :datetime
-#  created_at             :datetime         not null
-#  updated_at             :datetime         not null
 #  sort_number            :integer          default(0), not null
 #  aasm_state             :string           default("published"), not null
+#  created_at             :datetime         not null
+#  updated_at             :datetime         not null
+#  title_en               :string           default(""), not null
 #
 # Indexes
 #

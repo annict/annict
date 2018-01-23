@@ -26,6 +26,12 @@ ObjectTypes::Work = GraphQL::ObjectType.define do
     resolve Resolvers::Reviews.new
   end
 
+  connection :programs, ObjectTypes::Program.connection_type do
+    argument :orderBy, InputObjectTypes::ProgramOrder
+
+    resolve Resolvers::Programs.new
+  end
+
   field :title, !types.String
   field :titleKana, types.String do
     resolve ->(obj, _args, _ctx) {

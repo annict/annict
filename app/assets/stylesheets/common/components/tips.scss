@@ -1,12 +1,4 @@
 .c-tips {
-  &__tip:not(.is-last) {
-    margin-bottom: .5rem;
-  }
-
-  &__icon {
-    margin-right: .25rem;
-  }
-
   &__close {
     flex-grow: 0;
   }

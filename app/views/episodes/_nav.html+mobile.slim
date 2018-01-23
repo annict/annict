@@ -4,25 +4,30 @@
       = icon "angle-left"
   .p-episode-title-header__main
     h2.h4.font-weight-bold.text-center
-      = link_to episode.decorate.title_with_number, work_episode_path(work, episode), class: "u-text-body"
+      = link_to episode.decorate.title_with_number(fallback: false), work_episode_path(work, episode), class: "u-text-body"
     - if user_signed_in? && current_user.tracked?(episode)
       .text-center.small
         = icon "check-circle", class: "mr-1 u-text-green"
         = t "messages.episodes.watched_x_times", records_count: current_user.checkins_count_in(episode)
     .container.mt-3
       .row
-        .col.text-center.u-lh-sm
-          = episode.score.round(1)
+        .col.text-center
+          = episode.score.presence || "-"
+          span.u-very-small.ml-1
+            | / 10
           .small
-            | Score
-        .col.text-center.u-lh-sm
+            = t "noun.satisfaction"
+        .col.text-center
           = all_records.count
           .small
-            | Records
-        .col.text-center.u-lh-sm
+            - if locale_ja?
+              = t "noun.records_count"
+            - else
+              = t "noun.records"
+        .col.text-center
           = all_records.with_comment.count
           .small
-            | Comments
+            = t "noun.comments_count"
   - if episode.next_episode.present?
     = link_to work_episode_path(work, episode.next_episode), class: "p-episode-title-header__next h3 text-center mb-0" do
       = icon "angle-right"

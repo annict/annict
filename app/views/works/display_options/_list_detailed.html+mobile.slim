@@ -43,7 +43,7 @@
                 - pvs.each do |pv|
                   .col-6.text-center.mb-3
                     - if pv.youtube?
-                      c-youtube-modal-player thumbnail-url="#{ann_image_url(pv, :thumbnail, size: "300x169")}" video-id="#{pv.youtube_video_id}" video-title="#{pv.title}" annict-url="#{ENV.fetch('ANNICT_URL')}" :width="320" :height="180" :is-auto-play="false"
+                      c-youtube-modal-player thumbnail-url="#{ann_image_url(pv, :thumbnail, size: "300x169")}" video-id="#{pv.youtube_video_id}" video-title="#{locale_ja? ? pv.title : pv.title_en}" annict-url="#{ENV.fetch('ANNICT_URL')}" :width="320" :height="180" :is-auto-play="false"
                     - else
                       = link_to pv.url, target: "_blank" do
                         .c-video-thumbnail
@@ -51,9 +51,10 @@
                           = icon "play-circle-o"
                         .small
                           = pv.title
-          
+
           - cache [I18n.locale, work.casts.published] do
             - casts = @casts_data.select { |cd| cd[:work_id] == work.id }.first[:casts].sort_by { |c| c.sort_number }
+            - casts = casts.select { |c| locale_ja? ? true : c.support_en? }
             - if casts.present?
               .font-weight-bold.mb-1
                 = t "noun.casts"
@@ -62,11 +63,12 @@
                   - cache [I18n.locale, cast] do
                     li.list-inline-item
                       = cast.character.decorate.name_link
-                      | : 
+                      | :
                       = cast.decorate.local_name_with_old_link
-          
+
           - cache [I18n.locale, work.staffs.published] do
             - staffs = @staffs_data.select { |sd| sd[:work_id] == work.id }.first[:staffs].sort_by { |s| s.sort_number }
+            - staffs = staffs.select { |s| locale_ja? ? true : s.support_en? }
             - if staffs.present?
               .mt-3
                 .font-weight-bold.mb-1
@@ -80,16 +82,11 @@
 
           - cache [I18n.locale, work.program_details.published] do
             - program_details = @program_details_data.select { |pdd| pdd[:work_id] == work.id }.first[:program_details].sort_by { |s| s.channel_id }
+            - program_details = program_details.select { |pd| locale_ja? ? true : pd.support_en? }
             - if program_details.present?
               .mt-3
                 .font-weight-bold.mb-1
-                  = t "noun.video_services"
-              ul.list-inline.mb-3
-                - program_details.each do |program_detail|
-                  - cache [I18n.locale, program_detail] do
-                    li.list-inline-item
-                      = link_to program_detail.url, target: "_blank" do
-                        span.badge.badge-secondary
-                          = program_detail.channel.name
+                  = t "noun.vods"
+              = render "works/vod_list", channels: @channels, slice: 2, program_details: program_details
 
           c-work-friends :work-id="#{work.id}"
