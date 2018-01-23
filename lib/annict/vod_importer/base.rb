@@ -11,7 +11,12 @@ module Annict
 
           print "name: #{attr[:name]} -> "
 
-          vod_title = VodTitle.find_by(channel: channel, code: attr[:code])
+          conditions = if channel.amazon_video?
+            { channel: channel, name: attr[:name] }
+          else
+            { channel: channel, code: attr[:code] }
+          end
+          vod_title = VodTitle.find_by(conditions)
           if vod_title.present?
             puts "exists. id: #{vod_title.id}"
             vod_title_ids << nil

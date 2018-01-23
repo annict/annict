@@ -57,4 +57,8 @@ class Channel < ApplicationRecord
       fastest_program.present? ? fastest_program.channel : nil
     end
   end
+
+  def amazon_video?
+    id == AMAZON_VIDEO_ID
+  end
 end
