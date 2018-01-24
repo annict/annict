@@ -249,7 +249,7 @@ GEM
     http_parser.rb (0.6.0)
     httparty (0.15.6)
       multi_xml (>= 0.5.2)
-    i18n (0.9.1)
+    i18n (0.9.3)
       concurrent-ruby (~> 1.0)
     i18n-tasks (0.9.20)
       activesupport (>= 4.0.2)
@@ -374,7 +374,7 @@ GEM
       omniauth-oauth (~> 1.1)
       rack
     orm_adapter (0.5.0)
-    paperclip (5.1.0)
+    paperclip (5.2.0)
       activemodel (>= 4.2.0)
       activesupport (>= 4.2.0)
       cocaine (~> 0.5.5)

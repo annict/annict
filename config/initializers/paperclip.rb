@@ -28,3 +28,7 @@ else
 end
 
 Paperclip::Attachment.default_options.update(options)
+
+# Load DataUriAdapter to accept a Base64-encoded data string (which has been used on Annict DB)
+# https://github.com/thoughtbot/paperclip/commit/80847b44f1965d20a2ed6e98a3fa4bf4c1194515
+Paperclip::DataUriAdapter.register
