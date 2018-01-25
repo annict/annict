@@ -99,7 +99,7 @@ GEM
       autoprefixer-rails (>= 6.0.3)
       popper_js (>= 1.12.9, < 2)
       sass (>= 3.5.2)
-    bourbon (4.3.4)
+    bourbon (5.0.0)
       sass (~> 3.4)
       thor (~> 0.19)
     browser (2.5.2)
