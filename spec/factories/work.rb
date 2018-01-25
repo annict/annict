@@ -9,6 +9,7 @@ FactoryBot.define do
     wikipedia_url "http://wikipedia.org"
     twitter_username "precure_official"
     twitter_hashtag "precure"
+    mal_anime_id 12345
     released_at Date.parse("2012-04-05")
     released_at_about "2012年"
 
