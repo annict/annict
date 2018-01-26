@@ -99,6 +99,12 @@ ObjectTypes::Work = GraphQL::ObjectType.define do
     }
   end
 
+  field :malAnimeId, types.String do
+    resolve ->(obj, _args, _ctx) {
+      obj.mal_anime_id
+    }
+  end
+
   field :image, ObjectTypes::WorkImage do
     resolve ->(obj, _args, _ctx) {
       RecordLoader.for(WorkImage).load(obj.work_image&.id)

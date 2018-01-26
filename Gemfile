@@ -66,9 +66,6 @@ gem "moji"
 gem "nokogiri"
 gem "omniauth-facebook"
 gem "omniauth-gumroad"
-# 1.4系だとFacebookのOAuth周りでおかしくなるので1.3系を使う
-# https://github.com/intridea/omniauth-oauth2/issues/81
-gem "omniauth-oauth2", "~> 1.3.1"
 gem "omniauth-twitter"
 gem "paperclip"
 gem "pg"
