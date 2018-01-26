@@ -49,10 +49,8 @@ namespace :mal do
     end
 
     def import_work!(work, mal_anime)
-      english_titles = mal_anime.dig("other_titles", "english").presence || []
       attrs = {
-        title_ro: mal_anime["title"],
-        title_en: english_titles[0].presence || "",
+        title_en: mal_anime["title"],
         mal_anime_id: mal_anime["id"]
       }
       work.update_columns(attrs)
