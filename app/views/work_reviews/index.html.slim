@@ -23,7 +23,7 @@
 
         .text-right.my-3
           = link_to new_work_review_path(@work), class: "btn btn-primary" do
-            = icon "pencil-square-o", class: "mr-1"
+            = icon "edit", class: "mr-1"
             = t "verb.write_review"
         .c-card.container.mt-3
           - if @reviews.present?

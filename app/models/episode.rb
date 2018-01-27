@@ -20,14 +20,19 @@
 #  title_en              :string           default(""), not null
 #  record_comments_count :integer          default(0), not null
 #  score                 :float
+#  ratings_count         :integer          default(0), not null
+#  satisfaction_rate     :float
 #
 # Indexes
 #
-#  episodes_work_id_idx               (work_id)
-#  episodes_work_id_sc_count_key      (work_id,sc_count) UNIQUE
-#  index_episodes_on_aasm_state       (aasm_state)
-#  index_episodes_on_prev_episode_id  (prev_episode_id)
-#  index_episodes_on_score            (score)
+#  episodes_work_id_idx                                   (work_id)
+#  episodes_work_id_sc_count_key                          (work_id,sc_count) UNIQUE
+#  index_episodes_on_aasm_state                           (aasm_state)
+#  index_episodes_on_prev_episode_id                      (prev_episode_id)
+#  index_episodes_on_ratings_count                        (ratings_count)
+#  index_episodes_on_satisfaction_rate                    (satisfaction_rate)
+#  index_episodes_on_satisfaction_rate_and_ratings_count  (satisfaction_rate,ratings_count)
+#  index_episodes_on_score                                (score)
 #
 
 class Episode < ApplicationRecord
@@ -36,8 +41,7 @@ class Episode < ApplicationRecord
   include Itemable
 
   DIFF_FIELDS = %i(
-    number sort_number sc_count title prev_episode_id fetch_syobocal raw_number
-    title_ro title_en
+    number sort_number sc_count title prev_episode_id fetch_syobocal raw_number title_en
   ).freeze
 
   aasm do

@@ -30,7 +30,7 @@
           button.btn.btn-secondary.mr-2 @click="disableTrackingMode"
             = t "noun.cancel"
           button.btn.btn-primary :class="{ 'c-spinner': isTracking }" v-bind="{ disabled: !isTrackable }" v-show="isTrackingMode" @click="track"
-            = icon "pencil-square-o"
+            = icon "edit"
             = t "verb.track"
   - else
     = render "application/components/empty", text: t("messages._empty.no_episodes")

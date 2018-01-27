@@ -9,7 +9,7 @@
     - if user_signed_in? && current_user.committer?
       .col.text-right
         = link_to new_db_work_episode_path(@work), class: "btn btn-outline-primary" do
-          = icon "pencil-square-o"
+          = icon "edit"
           = t "resources.episode.new_episodes"
 
 = render "db/works/subnav", work: @work
@@ -52,14 +52,10 @@
                   = episode.title.presence || "-"
                   br
                   = episode.title_en.presence || "-"
-                  br
-                  = episode.title_ro.presence || "-"
                 - elsif locale == :ja
                   = episode.title.presence || "-"
                 - elsif locale == :en
                   = episode.title_en.presence || "-"
-                  br
-                  = "(#{episode.title_ro.presence || '-'})"
               td = episode.prev_episode&.decorate&.local_number.presence || "-"
               - if current_user.role.admin?
                 td = episode.sc_count

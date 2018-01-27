@@ -5,7 +5,7 @@
   - if user_signed_in?
     - if locale_ja?
       = link_to programs_path, class: "col text-center" do
-        = icon "calendar-o"
+        = icon "calendar", "far"
         span.c-tabbar__text = t "noun.programs"
     - else
       = link_to search_path, class: "col text-center" do
@@ -15,7 +15,7 @@
       = icon "play"
       span.c-tabbar__text = t "noun.watching_shorten"
     = link_to season_works_path(slug: ENV.fetch("ANNICT_CURRENT_SEASON")), class: "col text-center" do
-      = icon "television"
+      = icon "tv"
       span.c-tabbar__text = t "noun.airing"
     = link_to menu_path, class: "col text-center" do
       = icon "th"
@@ -25,13 +25,13 @@
           = current_user.notifications_count
   - else
     = link_to season_works_path(slug: ENV.fetch("ANNICT_CURRENT_SEASON")), class: "col text-center" do
-      = icon "television"
+      = icon "tv"
       span.c-tabbar__text = t "noun.airing"
     = link_to new_user_registration_path, class: "col text-center" do
       = icon "rocket"
       span.c-tabbar__text = t "noun.sign_up_shorten"
     = link_to about_path, class: "col text-center" do
-      = icon "lightbulb-o"
+      = icon "lightbulb", "far"
       span.c-tabbar__text = t "head.title.pages.about_shoten"
     = link_to menu_path, class: "col text-center" do
       = icon "th"

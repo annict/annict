@@ -115,24 +115,32 @@ namespace :work do
   end
 
   task update_score: :environment do
-    SCORE_MAX = 10
+    RATE_MAX = 100
 
     Work.published.find_each do |w|
-      scores = w.episodes.published.where.not(score: nil).pluck(:score)
+      episodes = w.episodes.published.where.not(satisfaction_rate: nil)
+      ratings_count = episodes.pluck(:ratings_count).inject(&:+)
+      rates = episodes.pluck(:satisfaction_rate)
 
-      if scores.all?(&:nil?)
-        w.update_column(:score, nil)
+      if rates.all?(&:nil?)
+        w.update_column(:satisfaction_rate, nil)
         next
       end
 
-      score_avg = scores.inject(&:+) / scores.length
-      score_range = 0..SCORE_MAX
-      wilson_score = WilsonScore.rating_lower_bound(score_avg, w.watchers_count, score_range)
-      score = (wilson_score / SCORE_MAX * 10).round(2)
+      rates_count = rates.length
+      rates_sum = rates.inject(&:+)
+      rates_avg = rates_sum.to_f / rates_count
+      satisfaction_rate = (rates_avg / RATE_MAX * 100).round(2)
 
-      puts "Work: #{w.id} => #{score}"
+      outputs = [
+        "rates_count: #{rates_count}",
+        "rates_sum: #{rates_sum}",
+        "rates_avg: #{rates_avg}",
+        "satisfaction_rate: #{satisfaction_rate}"
+      ]
+      puts "Work: #{w.id} => #{outputs.join(', ')}"
 
-      w.update_column(:score, score)
+      w.update_columns(satisfaction_rate: satisfaction_rate, ratings_count: ratings_count)
     end
   end
 end

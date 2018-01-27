@@ -2,7 +2,7 @@
 
 module Db
   class WorksController < Db::ApplicationController
-    permits :title, :title_kana, :title_ro, :title_en, :media, :official_site_url,
+    permits :title, :title_kana, :title_en, :media, :official_site_url,
       :official_site_url_en, :wikipedia_url, :wikipedia_url_en, :twitter_username,
       :twitter_hashtag, :sc_tid, :mal_anime_id, :number_format_id, :synopsis,
       :synopsis_source, :synopsis_en, :synopsis_source_en, :season_year, :season_name,

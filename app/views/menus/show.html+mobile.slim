@@ -29,31 +29,31 @@
       .col-4.text-center.mb-5
         = link_to season_works_path(slug: ENV.fetch("ANNICT_PREVIOUS_SEASON")) do
           .h1.mb-1.text-primary
-            = icon "television"
+            = icon "tv"
           .small.u-text-body
             = t "noun.previous_season"
       .col-4.text-center.mb-5
         = link_to season_works_path(slug: ENV.fetch("ANNICT_CURRENT_SEASON")) do
           .h1.mb-1.text-primary
-            = icon "television"
+            = icon "tv"
           .small.u-text-body
             = t "noun.current_season"
       .col-4.text-center.mb-5
         = link_to season_works_path(slug: ENV.fetch("ANNICT_NEXT_SEASON")) do
           .h1.mb-1.text-primary
-            = icon "television"
+            = icon "tv"
           .small.u-text-body
             = t "noun.next_season"
       .col-4.text-center.mb-5
         = link_to popular_works_path do
           .h1.mb-1.text-primary
-            = icon "television"
+            = icon "tv"
           .small.u-text-body
             = t "noun.popular_anime"
       .col-4.text-center.mb-5
         = link_to newest_works_path do
           .h1.mb-1.text-primary
-            = icon "television"
+            = icon "tv"
           .small.u-text-body
             = t "head.title.works.newest"
       .col-4.text-center.mb-5
@@ -85,7 +85,7 @@
       .col-4.text-center.mb-5
         = link_to forum_root_path do
           .h1.mb-1.text-primary
-            = icon "comments-o"
+            = icon "comments", "far"
           .small.u-text-body
             = t "noun.annict_forum"
       .col-4.text-center.mb-5
@@ -104,7 +104,7 @@
       .col-4.text-center.mb-5
         = link_to supporters_path do
           .h1.mb-1.text-primary
-            = icon "diamond"
+            = icon "gem"
           .small.u-text-body
             = t "head.title.supporters.index"
       .col-4.text-center.mb-5
@@ -116,7 +116,7 @@
       .col-4.text-center.mb-5
         = link_to destroy_user_session_path, method: "delete" do
           .h1.mb-1.text-primary
-            = icon "sign-out"
+            = icon "sign-out-alt"
           .small.u-text-body
             = t "verb.sign_out"
   - else
@@ -124,31 +124,31 @@
       .col-4.text-center.mb-5
         = link_to season_works_path(slug: ENV.fetch("ANNICT_PREVIOUS_SEASON")) do
           .h1.mb-1.text-primary
-            = icon "television"
+            = icon "tv"
           .small.u-text-body
             = t "noun.previous_season"
       .col-4.text-center.mb-5
         = link_to season_works_path(slug: ENV.fetch("ANNICT_CURRENT_SEASON")) do
           .h1.mb-1.text-primary
-            = icon "television"
+            = icon "tv"
           .small.u-text-body
             = t "noun.current_season"
       .col-4.text-center.mb-5
         = link_to season_works_path(slug: ENV.fetch("ANNICT_NEXT_SEASON")) do
           .h1.mb-1.text-primary
-            = icon "television"
+            = icon "tv"
           .small.u-text-body
             = t "noun.next_season"
       .col-4.text-center.mb-5
         = link_to popular_works_path do
           .h1.mb-1.text-primary
-            = icon "television"
+            = icon "tv"
           .small.u-text-body
             = t "noun.popular_anime"
       .col-4.text-center.mb-5
         = link_to newest_works_path do
           .h1.mb-1.text-primary
-            = icon "television"
+            = icon "tv"
           .small.u-text-body
             = t "head.title.works.newest"
       .col-4.text-center.mb-5
@@ -160,7 +160,7 @@
       .col-4.text-center.mb-5
         = link_to forum_root_path do
           .h1.mb-1.text-primary
-            = icon "comments-o"
+            = icon "comments", "far"
           .small.u-text-body
             = t "noun.annict_forum"
       .col-4.text-center.mb-5
@@ -185,7 +185,7 @@
       .col-4.text-center.mb-5
         = link_to new_user_session_path do
           .h1.mb-1.text-primary
-            = icon "sign-in"
+            = icon "sign-in-alt"
           .small.u-text-body
             = t "verb.sign_in"
       .col-4.text-center
