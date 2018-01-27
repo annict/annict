@@ -10,6 +10,7 @@ module Oauth
     include Gonable
     include FlashMessage
     include ViewSelector
+    include RavenContext
 
     helper_method :gon
 

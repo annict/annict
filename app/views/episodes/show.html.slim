@@ -79,12 +79,12 @@
               .row.align-items-center
                 .col.text-right
                   .small.text-muted
-                    = t "noun.satisfaction"
+                    = t "noun.satisfaction_rate_shorten"
                 .col.pl-0
                   .h3
-                    = @episode.score.presence || "-"
-                    span.u-very-small.ml-1
-                      | / 10
+                    = @episode.satisfaction_rate.presence || "-"
+                    span.small.ml-1
+                      | %
               .row.align-items-center
                 .col.text-right
                   .small.text-muted
@@ -95,6 +95,13 @@
                 .col.pl-0
                   .h3
                     = @all_records.count
+              .row.align-items-center
+                .col.text-right
+                  .small.text-muted
+                    = t "noun.ratings_count"
+                .col.pl-0
+                  .h3
+                    = @episode.ratings_count
               .row.align-items-center
                 .col.text-right
                   .small.text-muted

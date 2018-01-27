@@ -2,7 +2,7 @@ exclude:
   - "vendor/assets/stylesheets/**"
 linters:
   LeadingZero:
-    style: exclude_zero
+    style: include_zero
   NestingDepth:
     max_depth: 5
   SelectorDepth:
@@ -10,4 +10,4 @@ linters:
   SelectorFormat:
     convention: hyphenated_BEM
   StringQuotes:
-    style: double_quotes
+    style: single_quotes

@@ -21,13 +21,10 @@ class TwitterService
   end
 
   def uids
-    return [] if client.blank?
-
-    begin
-      client.friend_ids.to_a.map(&:to_s)
-    rescue Twitter::Error::Unauthorized
-      @user.expire_twitter_token
-    end
+    client.friend_ids.to_a.map(&:to_s)
+  rescue Twitter::Error::Unauthorized
+    @user.expire_twitter_token
+    []
   end
 
   def share!(record, data)

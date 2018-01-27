@@ -6,7 +6,7 @@
   ul.list-unstyled.mb-0
     li.mb-2
       = link_to profile_path do
-        = icon "smile-o", class: "mr-2 text-muted"
+        = icon "smile", "far", class: "mr-2 text-muted"
         = t "head.title.profiles.show"
     li.mb-2
       = link_to account_path do
@@ -22,7 +22,7 @@
         = t "head.title.providers.index"
     li.mb-2
       = link_to settings_email_notification_path do
-        = icon "envelope-o", class: "mr-2 text-muted"
+        = icon "envelope", "far", class: "mr-2 text-muted"
         = t "head.title.settings.email_notifications.show"
     li.mb-2
       = link_to mutes_path do

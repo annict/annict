@@ -36,6 +36,7 @@ ja:
     characters: キャラクター
     comment: コメント
     comments_count: コメント数
+    comments_count_shorten: コメント
     contents: コンテンツ
     column: 項目
     completed: 見たアニメ
@@ -102,6 +103,7 @@ ja:
     programs: 放送予定
     pv: PV
     rating: 評価
+    ratings_count: 評価数
     rebroadcast: 再放送
     records: 記録
     records_count: 記録数
@@ -115,6 +117,7 @@ ja:
     review_of_the_work: "「%{work_title}」のレビュー"
     reviews_by: "%{profile_name}が書いたレビュー"
     satisfaction: 満足度
+    satisfaction_rate_shorten: 満足度
     search: 検索
     season: シーズン
     seasonal_anime: シーズン別アニメ

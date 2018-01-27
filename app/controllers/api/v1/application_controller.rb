@@ -5,6 +5,7 @@ module Api
     class ApplicationController < ActionController::Base
       include Analyzable
       include LogrageSetting
+      include RavenContext
 
       rescue_from ActiveRecord::RecordNotFound, with: :not_found
 

@@ -13,7 +13,6 @@ class EpisodeDecorator < ApplicationDecorator
   def local_title(fallback: true)
     return title if I18n.locale == :ja
     return title_en if title_en.present?
-    return title_ro if title_ro.present?
     title if fallback
   end
 

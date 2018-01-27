@@ -48,7 +48,6 @@ class WorkDecorator < ApplicationDecorator
 
   def local_title
     return title if I18n.locale == :ja
-    return title_ro if title_ro.present?
     return title_en if title_en.present?
     title
   end

@@ -47,7 +47,7 @@
                       = link_to pv.url, target: "_blank" do
                         .c-video-thumbnail
                           = ann_image_tag pv, :thumbnail, size: "200x113", class: "img-fluid rounded img-thumbnail"
-                          = icon "play-circle-o"
+                          = icon "play-circle", "far"
                         - if locale_ja? || pv.title_en.present?
                           .small
                             = pv.decorate.local_title

@@ -40,14 +40,6 @@ Rails.application.configure do
   # Raise an error on page load if there are pending migrations.
   config.active_record.migration_error = :page_load
 
-  # Debug mode disables concatenation and preprocessing of assets.
-  # This option may cause significant delays in view rendering with a large
-  # number of complex assets.
-  config.assets.debug = true
-
-  # Suppress logger output for asset requests.
-  config.assets.quiet = true
-
   # Raises error for missing translations
   # config.action_view.raise_on_missing_translations = true
 
@@ -66,10 +58,6 @@ Rails.application.configure do
   # https://github.com/charliesome/better_errors#security
   # Wating to be fixed: https://github.com/charliesome/better_errors/issues/341
   # BetterErrors::Middleware.allow_ip! "192.168.33.1"
-
-  # Inline Source Maps
-  # https://github.com/sass/sassc-rails/tree/b76761dd7b3bda9df559cf35f332364878ec7ad8#inline-source-maps
-  config.sass.inline_source_maps = true
 
   # https://github.com/ruckus/active-record-query-trace
   ActiveRecordQueryTrace.enabled = true

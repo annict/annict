@@ -11,6 +11,7 @@ module Userland
     include FlashMessage
     include PageCategoryHelper
     include ViewSelector
+    include RavenContext
 
     layout "application"
 

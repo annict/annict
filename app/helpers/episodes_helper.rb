@@ -12,8 +12,8 @@ module EpisodesHelper
 
     stars = stars.map do |star|
       case star
-      when 0 then icon("star-o")
-      when 1 then icon("star-half-o")
+      when 0 then icon("star", "far")
+      when 1 then icon("star-half")
       when 2 then icon("star")
       end
     end

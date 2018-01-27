@@ -4,13 +4,13 @@ module RecordsHelper
   def rating_state_icon(state, options)
     case state
     when "bad"
-      icon "thumbs-o-down", options
+      icon "thumbs-down", "far", options
     when "average"
-      icon "meh-o", options
+      icon "meh", "far", options
     when "good"
-      icon "thumbs-o-up", options
+      icon "thumbs-up", "far", options
     when "great"
-      icon "heart-o", options
+      icon "heart", "far", options
     end
   end
 end

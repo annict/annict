@@ -5,7 +5,8 @@
     "@rails/webpacker": "^3.2.0",
     "async": "2.6.0",
     "bootstrap": "4.0.0",
-    "britecharts": "^2.0.0",
+    "bourbon": "^5.0.0",
+    "britecharts": "^2.4.11",
     "browserify": "15.0.0",
     "browserify-incremental": "3.1.1",
     "cal-heatmap": "3.6.2",
@@ -13,7 +14,7 @@
     "d3": "4.12.2",
     "d3-selection": "^1.2.0",
     "dropzone": "5.2.0",
-    "jquery": "^3.2.1",
+    "jquery": "^3.3.1",
     "jquery-ujs": "^1.2.2",
     "js-cookie": "2.2.0",
     "keen-tracking": "^1.4.0",
@@ -23,7 +24,7 @@
     "mjml": "3.3.5",
     "moment-timezone": "0.5.14",
     "mousetrap": "1.6.1",
-    "popper.js": "^1.12.5",
+    "popper.js": "^1.12.9",
     "select2": "^4.0.3",
     "tether": "^1.4.3",
     "turbolinks": "5.0.3",
@@ -37,8 +38,10 @@
   },
   "devDependencies": {
     "eslint": "^4.6.0",
+    "postcss-smart-import": "^0.7.6",
     "prettier": "^1.6.1",
-    "webpack-dev-server": "^2.7.1",
-    "webpack-merge": "^4.1.0"
+    "prettier-eslint": "^8.8.1",
+    "webpack-dev-server": "^2.11.1",
+    "webpack-merge": "^4.1.1"
   }
 }
