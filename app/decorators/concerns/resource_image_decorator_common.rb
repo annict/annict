@@ -7,13 +7,13 @@ module ResourceImageDecoratorCommon
     def asin_or_copyright_text
       if copyright.present?
         messages = []
-        messages << h.icon("copyright", class: "mr-1")
+        messages << h.icon("copyright", "far", class: "mr-1")
         messages << Rack::Utils.escape_html(copyright)
         h.content_tag(:span, messages.join.html_safe, class: "text-muted")
       elsif asin.present?
         h.link_to amazon_url, target: "_blank" do
           messages = []
-          messages << h.icon("amazon", class: "mr-1")
+          messages << h.icon("amazon", "fab", class: "mr-1")
           messages << I18n.t("messages._common.view_amazon_product")
           messages.join.html_safe
         end

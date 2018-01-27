@@ -9,7 +9,7 @@
     - if user_signed_in? && current_user.committer?
       .col.text-right
         = link_to new_db_series_series_work_path(@series), class: "btn btn-outline-primary" do
-          = icon "pencil-square-o"
+          = icon "edit"
           = t "resources.series_work.new_series_works"
 
 = render "db/series/subnav", series: @series

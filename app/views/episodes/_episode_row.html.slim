@@ -1,6 +1,6 @@
 tr
   - if user_signed_in? && (params[:controller] == "episodes" && params[:action] == "index")
-    td.c-episode-row__tracking-checkbox v-show="isTrackingMode"
+    td.c-episode-row__tracking-checkbox.align-middle v-show="isTrackingMode"
       input type="checkbox" v-model="episodeIds" value="#{episode.id}"
   - if episode.single?
     td

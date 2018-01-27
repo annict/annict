@@ -12,13 +12,13 @@
             .row
               .col.col-auto
                 = link_to "https://twitter.com/#{twitter_username}", target: "_blank", class: "h2" do
-                  = icon "twitter"
+                  = icon "twitter", "fab"
               .col.col-auto
                 = link_to "https://github.com/annict", target: "_blank", class: "h2" do
-                  = icon "github"
+                  = icon "github", "fab"
               .col.col-auto
                 = link_to discord_invite_url, target: "_blank", class: "h2" do
-                  = icon "comments-o"
+                  = icon "discord", "fab"
         .col-3
           h4.font-weight-bold = t "noun.services"
           ul.p-footer__list.list-unstyled
@@ -56,8 +56,8 @@
             li.list-inline-item = link_to "English", local_url_with_path(locale: :en)
         .col.text-center
           = link_to root_path do
-            = image_tag "logos/color-white.png", width: "25", alt: "Annict", class: "img-fluid rounded"
+            = image_tag asset_pack_path("images/logos/color-white.png"), width: "25", alt: "Annict", class: "img-fluid rounded"
         .col.text-right
           .p-footer__copyright.small
-            = icon "copyright", class: "mr-1"
+            = icon "copyright", "far", class: "mr-1"
             | 2014-2018 Annict

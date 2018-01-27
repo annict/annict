@@ -25,6 +25,9 @@ module Annict
     # Initialize configuration defaults for originally generated Rails version.
     config.load_defaults 5.1
 
+    # Disable Asset Pipeline/Sprockets
+    config.assets.enabled = false
+
     # Settings in config/environments/* take precedence over those specified here.
     # Application configuration should go into files in config/initializers
     # -- all .rb files in that directory are automatically loaded.
@@ -56,6 +59,7 @@ module Annict
       g.test_framework :rspec, controller_specs: false, helper_specs: false,
                                routing_specs: false, view_specs: false
       g.factory_bot false
+      g.assets false
     end
 
     # Don't generate system test files.
