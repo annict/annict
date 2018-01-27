@@ -46,18 +46,6 @@ Rails.application.configure do
   # like nginx, varnish or squid.
   # config.action_dispatch.rack_cache = true
 
-  # Compress JavaScripts and CSS.
-  # Prevents to break some of JavaScript (ex: Angular.js) code due to renaming
-  # https://shellycloud.com/blog/2013/10/how-to-integrate-angularjs-with-rails-4
-  config.assets.js_compressor = Uglifier.new(mangle: false)
-  # config.assets.css_compressor = :sass
-
-  # Do not fallback to assets pipeline if a precompiled asset is missed.
-  config.assets.compile = false
-
-  # Generate digests for assets URLs.
-  config.assets.digest = true
-
   # Specifies the header that your server uses for sending files.
   # config.action_dispatch.x_sendfile_header = "X-Sendfile" # for Apache
   # config.action_dispatch.x_sendfile_header = 'X-Accel-Redirect' # for NGINX
