@@ -1,3 +1,5 @@
+@import '~bootstrap/scss/mixins';
+
 .c-navbar {
   height: $ann-navbar-height;
   z-index: 3;
@@ -43,7 +45,7 @@
   }
 
   &.is-transparent {
-    background: linear-gradient(to top, transparent, rgba($ann-color-black, .25));
+    background: linear-gradient(to top, transparent, rgba($ann-color-black, 0.25));
 
     .navbar-nav {
       .nav-link {

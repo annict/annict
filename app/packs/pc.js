@@ -1,1 +1,0 @@
-import './javascripts/pc';

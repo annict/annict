@@ -1,11 +1,13 @@
+@import '~bootstrap/scss/mixins';
+
 $ann-bootstrap-badge-colors: (
-  danger: map-get($theme-colors, "danger"),
-  dark: map-get($theme-colors, "dark"),
-  default: map-get($theme-colors, "light"),
-  info: map-get($theme-colors, "info"),
-  primary: map-get($theme-colors, "primary"),
-  success: map-get($theme-colors, "success"),
-  warning: map-get($theme-colors, "warning")
+  danger: map-get($theme-colors, 'danger'),
+  dark: map-get($theme-colors, 'dark'),
+  default: map-get($theme-colors, 'light'),
+  info: map-get($theme-colors, 'info'),
+  primary: map-get($theme-colors, 'primary'),
+  success: map-get($theme-colors, 'success'),
+  warning: map-get($theme-colors, 'warning')
 );
 
 $ann-badge-colors: (
@@ -16,7 +18,6 @@ $ann-badge-colors: (
   mizuho: $ann-color-mizuho,
   supporter: $ann-color-supporter
 );
-
 
 @each $color-name, $color in $ann-badge-colors {
   .u-badge-#{$color-name} {
