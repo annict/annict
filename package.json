@@ -23,7 +23,7 @@
     "moment-timezone": "0.5.14",
     "mousetrap": "1.6.1",
     "popper.js": "^1.12.9",
-    "select2": "^4.0.3",
+    "select2": "^4.0.5",
     "tether": "^1.4.3",
     "turbolinks": "5.0.3",
     "vue": "^2.5.13",
