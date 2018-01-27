@@ -2,8 +2,8 @@ doctype html
 html lang="#{I18n.locale}"
   head
     = ann_display_meta_tags "Annict DB"
-    = render "application/head_links"
     = stylesheet_link_tag "db", media: "all"
+    = render "application/head_common"
     = javascript_pack_tag "pc"
     = csrf_meta_tags
   body class="p-db #{body_classes}"
