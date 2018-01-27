@@ -3,7 +3,7 @@
 
 nav.c-navbar.navbar.navbar-expand-sm class="#{transparent ? 'navbar-dark is-transparent' : 'navbar-light'}"
   = link_to root_path, class: "navbar-brand" do
-    = image_tag "logos/color-#{transparent ? 'white' : 'mizuho'}.png", size: "25x30", alt: "Annict"
+    = image_tag asset_pack_path("images/logos/color-#{transparent ? 'white' : 'mizuho'}.png"), size: "25x30", alt: "Annict"
   .collapse.navbar-collapse.align-items-center
     ul.navbar-nav.navbar-nav--left.mr-auto.align-items-center
       - if user_signed_in?

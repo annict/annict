@@ -67,10 +67,6 @@ Rails.application.configure do
   # Wating to be fixed: https://github.com/charliesome/better_errors/issues/341
   # BetterErrors::Middleware.allow_ip! "192.168.33.1"
 
-  # Inline Source Maps
-  # https://github.com/sass/sassc-rails/tree/b76761dd7b3bda9df559cf35f332364878ec7ad8#inline-source-maps
-  config.sass.inline_source_maps = true
-
   # https://github.com/ruckus/active-record-query-trace
   ActiveRecordQueryTrace.enabled = true
 end
