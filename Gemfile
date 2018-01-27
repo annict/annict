@@ -20,7 +20,7 @@ gem "amazon-ecs"
 gem "annotate"
 # Use aws-sdk 2.x for Paperclip
 # https://github.com/thoughtbot/paperclip/issues/2484
-gem "aws-sdk", "< 3.0"
+gem "aws-sdk", "< 4.0"
 gem "bootsnap", require: false
 gem "browser"
 gem "by_star"
