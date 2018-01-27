@@ -31,6 +31,7 @@ export default {
       resourceId: Number(this.initResourceId),
       likesCount: Number(this.initLikesCount),
       isLiked: JSON.parse(this.initIsLiked),
+      isLoading: false,
     }
   },
 
@@ -41,6 +42,12 @@ export default {
         return
       }
 
+      if (this.isLoading) {
+        return
+      }
+
+      this.isLoading = true
+
       if (this.isLiked) {
         return $.ajax({
           method: 'POST',
@@ -50,8 +57,9 @@ export default {
             recipient_id: this.resourceId,
           },
         }).done(() => {
+          this.isLoading = false
           this.likesCount += -1
-          return (this.isLiked = false)
+          this.isLiked = false
         })
       } else {
         return $.ajax({
@@ -63,8 +71,9 @@ export default {
             page_category: window.gon.basic.pageCategory,
           },
         }).done(() => {
+          this.isLoading = false
           this.likesCount += 1
-          return (this.isLiked = true)
+          this.isLiked = true
         })
       }
     },
