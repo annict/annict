@@ -1,4 +1,4 @@
-import $ from 'jquery';
+import $ from 'jquery'
 
 export default {
   template: '#t-follow-button',
@@ -6,72 +6,72 @@ export default {
   props: {
     username: {
       type: String,
-      required: true
+      required: true,
     },
     initIsFollowing: {
       type: Boolean,
-      required: true
+      required: true,
     },
     isSmall: {
       type: Boolean,
-      default: false
+      default: false,
     },
     isSignedIn: {
       type: Boolean,
-      default: false
-    }
+      default: false,
+    },
   },
 
   data() {
     return {
       isFollowing: this.initIsFollowing,
-      isSaving: false
-    };
+      isSaving: false,
+    }
   },
 
   computed: {
     buttonText() {
       if (this.isFollowing) {
-        return gon.I18n['noun.following'];
+        return window.gon.I18n['noun.following']
       } else {
-        return gon.I18n['verb.follow'];
+        return window.gon.I18n['verb.follow']
       }
-    }
+    },
   },
 
   methods: {
     toggle() {
       if (!this.isSignedIn) {
-        $('.c-sign-up-modal').modal('show');
-        return;
+        $('.c-sign-up-modal').modal('show')
+        return
       }
 
-      this.isSaving = true;
+      this.isSaving = true
 
       if (this.isFollowing) {
         return $.ajax({
           method: 'POST',
           url: '/api/internal/follows/unfollow',
           data: {
-            username: this.username
-          }
+            username: this.username,
+          },
         }).done(() => {
-          this.isFollowing = false;
-          return (this.isSaving = false);
-        });
+          this.isFollowing = false
+          return (this.isSaving = false)
+        })
       } else {
         return $.ajax({
           method: 'POST',
           url: '/api/internal/follows',
           data: {
             username: this.username,
-            page_category: gon.basic.pageCategory
-          }
+            page_category: window.gon.basic.pageCategory,
+          },
         }).done(() => {
-          this.isFollowing = true;
-          return (this.isSaving = false);
-        });
+          this.isFollowing = true
+          return (this.isSaving = false)
+        })
       }
-    }
-  }
-};
+    },
+  },
+}

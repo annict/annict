@@ -106,7 +106,7 @@
         - if @user.profile.description.present? || @user.profile.url.present?
           .mb-4
             h2.p-users-show__sub-title
-              = icon "comment-o", class: "mr-2"
+              = icon "comment", "far", class: "mr-2"
               = t "noun.bio"
             - if @user.profile.description.present?
               .description
@@ -145,7 +145,7 @@
             h2.p-users-show__sub-title
               .row.align-items-center
                 .col
-                  = icon "star-o", class: "mr-2"
+                  = icon "star", "far", class: "mr-2"
                   = t "noun.favorite_characters"
                 - if @favorite_characters.length > 6
                   .col.col-auto
@@ -169,7 +169,7 @@
             h2.p-users-show__sub-title
               .row
                 .col
-                  = icon "star-o", class: "mr-2"
+                  = icon "star", "far", class: "mr-2"
                   = t "noun.favorite_people"
                 - if @favorite_casts.length > 6 || @favorite_staffs.length > 6
                   .col.col-auto
@@ -207,7 +207,7 @@
             h2.p-users-show__sub-title
               .row
                 .col
-                  = icon "star-o", class: "mr-2"
+                  = icon "star", "far", class: "mr-2"
                   = t "noun.favorite_organizations"
                 - if @favorite_organizations.length > 6
                   .col.col-auto
@@ -226,7 +226,7 @@
 
         .mb-4
           h2.p-users-show__sub-title
-            = icon "bar-chart", class: "mr-2"
+            = icon "chart-bar", class: "mr-2"
             = t "noun.your_statistics"
           c-user-heatmap :username='"#{@user.username}"'
 

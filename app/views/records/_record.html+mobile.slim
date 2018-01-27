@@ -31,17 +31,17 @@ c-record inline-template="" :user-id="#{record.user.id}"
       .col
         - if record.shared_twitter? || record.twitter_url_hash.present?
           small
-            = icon "twitter", class: "mr-1 u-text-twitter"
+            = icon "twitter", "fab", class: "mr-1 u-text-twitter"
             = record.twitter_click_count
         - if record.shared_facebook? || record.facebook_url_hash.present?
           small.ml-2
-            = icon "facebook", class: "mr-1 u-text-facebook"
+            = icon "facebook", "fab", class: "mr-1 u-text-facebook"
             = record.facebook_click_count
       .col
         .text-right
           c-like-button resource-name="Checkin" :init-resource-id="#{record.id}" :init-likes-count="#{record.likes_count}" :init-is-liked="#{user_signed_in? && current_user.like?(record)}" :is-signed-in="#{user_signed_in?}"
           = link_to record_path(record.user.username, record), class: "d-inline-block ml-2" do
-            = icon "comment-o", class: "mr-1"
+            = icon "comment", "far", class: "mr-1"
             = record.comments_count
           - if user_signed_in? && current_user != record.user
             .c-options-dropdown.dropdown.ml-2.d-inline-block

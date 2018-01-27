@@ -1,11 +1,11 @@
 .c-episode-row {
   &__stars {
     .fa-star,
-    .fa-star-half-o {
+    .fa-star-half {
       color: $ann-color-yellow;
     }
 
-    .fa-star-o {
+    .fa-star {
       color: $ann-color-navy-l3;
     }
   }
@@ -18,7 +18,7 @@
 
   &__tracking-checkbox {
     line-height: map-get($ann-line-height-sizes, 0);
-    padding: .5rem 0 .5rem 1rem !important;
+    padding: 0.5rem 0 0.5rem 1rem !important;
     width: 20px;
   }
 }

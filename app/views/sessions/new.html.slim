@@ -16,11 +16,11 @@
 
           .text-center.mb-3
             = link_to user_twitter_omniauth_authorize_path, class: "btn u-btn-twitter" do
-              = icon "twitter"
+              = icon "twitter", "fab"
               = t "messages.sessions.new.sign_in_with_twitter"
           .text-center
             = link_to user_facebook_omniauth_authorize_path, class: "btn u-btn-facebook" do
-              = icon "facebook"
+              = icon "facebook", "fab"
               = t "messages.sessions.new.sign_in_with_facebook"
 
           .text-muted.text-center.mt-4.mb-3
@@ -46,7 +46,7 @@
 
             .text-center
               = f.button class: "btn btn-primary", tabindex: 4 do
-                = icon "sign-in"
+                = icon "sign-in-alt"
                 = t "noun.sign_in"
 
       .text-center

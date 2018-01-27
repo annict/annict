@@ -2,19 +2,13 @@
   thead {
     th {
       border: 0;
-      padding: .5rem 1rem;
-    }
-  }
-
-  tr:last-child {
-    td {
-      padding: .5rem 1rem 0;
+      padding: 0.5rem 1rem;
     }
   }
 
   td {
     border: 0;
-    padding: .5rem 1rem;
+    padding: 0.5rem 1rem;
     vertical-align: middle;
   }
 }

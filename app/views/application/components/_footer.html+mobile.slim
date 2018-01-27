@@ -10,13 +10,13 @@
         .row
           .col.col-auto
             = link_to "https://twitter.com/#{twitter_username}", target: "_blank", class: "h2" do
-              = icon "twitter"
+              = icon "twitter", "fab"
           .col.col-auto
             = link_to "https://github.com/annict", target: "_blank", class: "h2" do
-              = icon "github"
+              = icon "github", "fab"
           .col.col-auto
             = link_to discord_invite_url, target: "_blank", class: "h2" do
-              = icon "comments-o"
+              = icon "discord", "fab"
     .container.mb-3
       h4.font-weight-bold = t "noun.services"
       ul.p-footer__list.list-inline

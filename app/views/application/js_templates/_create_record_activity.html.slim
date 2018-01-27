@@ -65,5 +65,5 @@ script#t-create-record-activity type="x-template"
     .mt-2
       c-like-button.u-fake-link.mr-3 resource-name="Checkin" :init-resource-id="activity.record.id" :init-likes-count="activity.record.likes_count" :init-is-liked="activity.meta.liked" :is-signed-in="#{user_signed_in?}"
       a :href='"/@" + activity.user.username + "/records/" + activity.record.id'
-        = icon "comment-o", class: "mr-1"
+        = icon "comment", "far", class: "mr-1"
         | {{ activity.record.comments_count }}

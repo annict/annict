@@ -12,7 +12,7 @@
       filter: brightness(100%);
     }
 
-    i {
+    .fa-play-circle {
       color: $ann-color-mizuho;
     }
   }
@@ -23,11 +23,11 @@
     background-size: cover;
     filter: brightness(70%);
     height: 100%;
-    transition: filter .2s linear;
+    transition: filter 0.2s linear;
   }
 
-  i {
-    color: rgba(255, 255, 255, .75);
+  .fa-play-circle {
+    color: rgba(255, 255, 255, 0.75);
     font-size: 50px;
     height: 50%;
     left: 50%;
@@ -35,7 +35,7 @@
     margin-top: -25px;
     position: absolute;
     top: 50%;
-    transition: color .2s linear;
+    transition: color 0.2s linear;
     width: 50px;
   }
 }

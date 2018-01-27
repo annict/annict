@@ -1,4 +1,4 @@
-import $ from 'jquery';
+import $ from 'jquery'
 
 export default {
   template: '#t-like-button',
@@ -6,39 +6,39 @@ export default {
   props: {
     resourceName: {
       type: String,
-      required: true
+      required: true,
     },
     initResourceId: {
       type: Number,
-      required: true
+      required: true,
     },
     initLikesCount: {
       type: Number,
-      required: true
+      required: true,
     },
     initIsLiked: {
       type: Boolean,
-      required: true
+      required: true,
     },
     isSignedIn: {
       type: Boolean,
-      default: false
-    }
+      default: false,
+    },
   },
 
   data() {
     return {
       resourceId: Number(this.initResourceId),
       likesCount: Number(this.initLikesCount),
-      isLiked: JSON.parse(this.initIsLiked)
-    };
+      isLiked: JSON.parse(this.initIsLiked),
+    }
   },
 
   methods: {
     toggleLike() {
       if (!this.isSignedIn) {
-        $('.c-sign-up-modal').modal('show');
-        return;
+        $('.c-sign-up-modal').modal('show')
+        return
       }
 
       if (this.isLiked) {
@@ -47,12 +47,12 @@ export default {
           url: '/api/internal/likes/unlike',
           data: {
             recipient_type: this.resourceName,
-            recipient_id: this.resourceId
-          }
+            recipient_id: this.resourceId,
+          },
         }).done(() => {
-          this.likesCount += -1;
-          return (this.isLiked = false);
-        });
+          this.likesCount += -1
+          return (this.isLiked = false)
+        })
       } else {
         return $.ajax({
           method: 'POST',
@@ -60,13 +60,13 @@ export default {
           data: {
             recipient_type: this.resourceName,
             recipient_id: this.resourceId,
-            page_category: gon.basic.pageCategory
-          }
+            page_category: window.gon.basic.pageCategory,
+          },
         }).done(() => {
-          this.likesCount += 1;
-          return (this.isLiked = true);
-        });
+          this.likesCount += 1
+          return (this.isLiked = true)
+        })
       }
-    }
-  }
-};
+    },
+  },
+}

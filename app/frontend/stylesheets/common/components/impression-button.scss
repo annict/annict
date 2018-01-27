@@ -4,7 +4,8 @@
   &.is-default {
     height: 38px;
 
-    i {
+    .fa-ellipsis-h {
+      height: 100%;
       line-height: 38px;
     }
   }
@@ -12,7 +13,8 @@
   &.is-small {
     height: 25px;
 
-    i {
+    .fa-ellipsis-h {
+      height: 100%;
       line-height: 25px;
     }
   }
