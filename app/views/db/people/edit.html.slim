@@ -6,7 +6,7 @@
       = render "db/application/topbar_title", parent: @person.decorate.local_name.truncate(70)
     .col.text-right
       = link_to person_url(@person, subdomain: false), class: "btn btn-outline-primary" do
-        = icon "external-link"
+        = icon "external-link-alt"
         = t "resources.person.go_to_person"
 
 .container-fluid.p-3

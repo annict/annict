@@ -6,7 +6,7 @@
       = render "db/application/topbar_title", parent: @organization.decorate.local_name.truncate(70)
     .col.text-right
       = link_to organization_url(@organization, subdomain: false), class: "btn btn-outline-primary" do
-        = icon "external-link"
+        = icon "external-link-alt"
         = t "resources.organization.go_to_organization"
 
 .container-fluid.p-3

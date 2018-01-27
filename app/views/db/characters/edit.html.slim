@@ -6,7 +6,7 @@
       = render "db/application/topbar_title", parent: @character, child: t("resources.character.edit")
     .col.text-right
       = link_to character_path(@character), class: "btn btn-outline-primary" do
-        = icon "external-link"
+        = icon "external-link-alt"
         = t "resources.character.go_to_character"
 
 = render "db/characters/subnav", character: @character

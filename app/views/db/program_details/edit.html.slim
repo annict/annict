@@ -8,7 +8,7 @@
       = render "db/application/topbar_title", parent: @work, child: title
     .col.text-right
       = link_to work_path(@work), class: "btn btn-outline-primary" do
-        = icon "external-link"
+        = icon "external-link-alt"
         = t "resources.work.go_to_work"
 
 = render "db/works/subnav", work: @work

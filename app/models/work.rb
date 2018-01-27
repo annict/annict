@@ -42,17 +42,22 @@
 #  started_on            :date
 #  ended_on              :date
 #  score                 :float
+#  ratings_count         :integer          default(0), not null
+#  satisfaction_rate     :float
 #
 # Indexes
 #
-#  index_works_on_aasm_state                   (aasm_state)
-#  index_works_on_key_pv_id                    (key_pv_id)
-#  index_works_on_number_format_id             (number_format_id)
-#  index_works_on_score                        (score)
-#  index_works_on_season_year                  (season_year)
-#  index_works_on_season_year_and_season_name  (season_year,season_name)
-#  works_sc_tid_key                            (sc_tid) UNIQUE
-#  works_season_id_idx                         (season_id)
+#  index_works_on_aasm_state                           (aasm_state)
+#  index_works_on_key_pv_id                            (key_pv_id)
+#  index_works_on_number_format_id                     (number_format_id)
+#  index_works_on_ratings_count                        (ratings_count)
+#  index_works_on_satisfaction_rate                    (satisfaction_rate)
+#  index_works_on_satisfaction_rate_and_ratings_count  (satisfaction_rate,ratings_count)
+#  index_works_on_score                                (score)
+#  index_works_on_season_year                          (season_year)
+#  index_works_on_season_year_and_season_name          (season_year,season_name)
+#  works_sc_tid_key                                    (sc_tid) UNIQUE
+#  works_season_id_idx                                 (season_id)
 #
 
 class Work < ApplicationRecord

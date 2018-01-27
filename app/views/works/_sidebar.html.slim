@@ -16,22 +16,19 @@ h1.h2.font-weight-bold.mb-3
       = t "noun.watchers_count"
   .col.text-center
     .h4.font-weight-bold.mb-1
-      - if work.no_episodes?
-        = work.reviews_count
-      - else
-        = work.records_count
+      = work.satisfaction_rate.presence || "-"
+      span.small.ml-1
+        | %
     .text-muted.small
-      - if locale_ja?
-        = t "noun.records_count"
-      - else
-        = t "noun.records"
+      = t "noun.satisfaction_rate_shorten"
   .col.text-center
     .h4.font-weight-bold.mb-1
-      = work.score.presence || "-"
-      span.u-very-small.ml-1
-        | / 10
+      - if work.no_episodes?
+        | -
+      - else
+        = work.ratings_count
     .text-muted.small
-      = t "noun.satisfaction"
+      = t "noun.ratings_count"
 
 .mb-3
   c-status-selector :work-id="#{work.id}"
