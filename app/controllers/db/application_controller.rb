@@ -9,6 +9,7 @@ module Db
     include Analyzable
     include LogrageSetting
     include Gonable
+    include RavenContext
 
     layout "db"
 

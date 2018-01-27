@@ -10,6 +10,7 @@ module Forum
     include Gonable
     include FlashMessage
     include ViewSelector
+    include RavenContext
 
     layout "application"
 

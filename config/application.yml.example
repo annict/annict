@@ -24,6 +24,7 @@ local_default: &local_default
   GUMROAD_ACCESS_TOKEN: ""
   KEEN_PROJECT_ID: ""
   KEEN_WRITE_KEY: ""
+  SENTRY_DSN: ""
 
 development:
   <<: *local_default
