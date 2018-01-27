@@ -95,7 +95,6 @@ GEM
       msgpack (~> 1.0)
     browser (2.5.2)
     buftok (0.2.0)
-    bugsnag (6.4.0)
     builder (3.2.3)
     bullet (5.7.2)
       activesupport (>= 3.0.0)
@@ -592,7 +591,6 @@ DEPENDENCIES
   binding_of_caller
   bootsnap
   browser
-  bugsnag
   bullet
   by_star
   capybara

@@ -1,7 +1,6 @@
 {
   "name": "annict",
-  "scripts": {
-  },
+  "scripts": {},
   "env": {
     "AMAZON_ASSOCIATE_TAG": {
       "required": true
@@ -133,9 +132,6 @@
       "required": true
     },
     "AWS_PAA_SECRET_KEY": {
-      "required": true
-    },
-    "BUGSNAG_API_KEY": {
       "required": true
     },
     "DEVISE_SECRET": {
@@ -567,15 +563,7 @@
       "quantity": 1
     }
   },
-  "addons": [
-    "bugsnag",
-    "logentries",
-    "memcachier",
-    "pointdns",
-    "heroku-postgresql",
-    "scheduler",
-    "sendgrid"
-  ],
+  "addons": ["logentries", "memcachier", "pointdns", "heroku-postgresql", "scheduler", "sendgrid"],
   "buildpacks": [
     {
       "url": "https://github.com/rcaught/heroku-buildpack-cmake"
