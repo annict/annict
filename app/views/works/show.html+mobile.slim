@@ -158,7 +158,7 @@
           = t "noun.reviews"
       .col.text-right
         = link_to new_work_review_path(@work), class: "btn btn-primary btn-sm" do
-          = icon "pencil-square-o", class: "mr-1"
+          = icon "edit", class: "mr-1"
           = t "verb.write_review"
   .c-card.mt-3
     = render "works/review_list", work: @work, reviews: @reviews

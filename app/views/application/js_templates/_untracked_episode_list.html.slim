@@ -52,12 +52,12 @@ script#t-untracked-episode-list type="x-template"
               .w-100
                 .text-center
                   button.btn.btn-primary type="button" @click.stop="postRecord(status)" :class='{ "c-spinner": status.record.isSaving }'
-                    = icon "pencil-square-o", class: "mr-1"
+                    = icon "edit", class: "mr-1"
                     = t "verb.track"
             template v-else=""
               .col.col-auto
                 button.btn.btn-primary type="button" @click.stop="postRecord(status)" :class='{ "c-spinner": status.record.isSaving }'
-                  = icon "pencil-square-o", class: "mr-0"
+                  = icon "edit", class: "mr-0"
     template v-else=""
       template v-if="!isLoading"
         = render "application/components/empty", text: t("messages.tracks.no_trackable_episodes")

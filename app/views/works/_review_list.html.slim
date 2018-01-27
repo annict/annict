@@ -11,7 +11,7 @@
 - else
   = render "application/components/empty", text: t("messages._empty.no_reviews") do
     = link_to new_work_review_path(work), class: "btn btn-primary mt-2" do
-      = icon "pencil-square-o", class: "mr-1"
+      = icon "edit", class: "mr-1"
       = t "verb.write_review"
 
 - content_for :js_templates do

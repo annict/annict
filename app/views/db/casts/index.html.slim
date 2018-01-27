@@ -9,7 +9,7 @@
     - if user_signed_in? && current_user.committer?
       .col.text-right
         = link_to new_db_work_cast_path(@work), class: "btn btn-outline-primary" do
-          = icon "pencil-square-o"
+          = icon "edit"
           = t "resources.cast.new_casts"
 
 = render "db/works/subnav", work: @work

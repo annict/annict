@@ -53,12 +53,12 @@ script#t-program-list type="x-template"
               template v-if="program.record.isEditingComment"
                 .col.pl-0.text-center
                   button.btn.btn-primary type="button" @click="submit(program)" :class='{ disabled: program.record.isRecorded, "c-spinner": program.record.isSaving }'
-                    = icon "pencil-square-o", class: "mr-1"
+                    = icon "edit", class: "mr-1"
                     = t "verb.track"
               template v-else=""
                 .col.u-flex-grow-0.pl-0
                   button.btn.btn-primary type="button" @click="submit(program)" :class='{ disabled: program.record.isRecorded, "c-spinner": program.record.isSaving }'
-                    = icon "pencil-square-o", class: "mr-0"
+                    = icon "edit", class: "mr-0"
       template v-if="!isLoading && programs.length === 0"
         = render "application/components/empty", text: t('messages.programs.no_programs') do
           = t "messages.programs.please_set_channels_html", channels_link: link_to(t("noun.channel_list"), channels_path)
