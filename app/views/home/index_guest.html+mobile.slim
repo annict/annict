@@ -5,7 +5,7 @@
 .p-top-hero
   .p-top-hero__bg-image style="background-image: url(#{ann_image_url(@cover_image_work.work_image, :attachment, size: '640x640', blur: 200)});"
   .p-top-hero__content.text-center.p-3
-    = image_tag "logos/color-white.png", size: "40x48", alt: "Annict"
+    = image_tag asset_pack_path("images/logos/color-white.png"), size: "40x48", alt: "Annict"
     h1.mb-3 = t("messages.home.index_guest.hero_title_mobile_html")
     p.p-top-hero__description.mb-4
       = t "messages.home.index_guest.hero_description_mobile_html"
