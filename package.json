@@ -25,7 +25,7 @@
     "popper.js": "^1.12.9",
     "select2": "^4.0.5",
     "tether": "^1.4.3",
-    "turbolinks": "5.0.3",
+    "turbolinks": "5.1.1",
     "vue": "^2.5.13",
     "vue-lazyload": "1.1.4",
     "vue-loader": "^13.7.0",
