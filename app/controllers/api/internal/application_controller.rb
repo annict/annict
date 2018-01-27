@@ -6,6 +6,7 @@ module Api
       include ControllerCommon
       include Analyzable
       include LogrageSetting
+      include RavenContext
 
       before_action :switch_locale
 

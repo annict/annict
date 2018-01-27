@@ -18,7 +18,6 @@ gem "activerecord-session_store"
 gem "acts_as_list"
 gem "amazon-ecs"
 gem "annotate"
-gem "autoprefixer-rails"
 # Use aws-sdk 2.x for Paperclip
 # https://github.com/thoughtbot/paperclip/issues/2484
 gem "aws-sdk", "< 3.0"
@@ -75,12 +74,12 @@ gem "rails-i18n"
 gem "rails_autolink"
 gem "ransack"
 gem "rmagick"
+gem "sentry-raven"
 gem "sitemap_generator"
 gem "slack-notifier"
 gem "slim"
 gem "traceroute"
 gem "twitter"
-gem "uglifier"
 gem "validate_url"
 gem "virtus"
 gem "webpacker"
@@ -132,7 +131,6 @@ group :test do
 end
 
 group :production do
-  gem "bugsnag"
   gem "heroku-deflater"
   gem "lograge"
 end

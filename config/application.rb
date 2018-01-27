@@ -98,5 +98,10 @@ module Annict
     # Gzip all the things
     # https://schneems.com/2017/11/08/80-smaller-rails-footprint-with-rack-deflate/
     config.middleware.insert_after ActionDispatch::Static, Rack::Deflater
+
+    Raven.configure do |config|
+      config.dsn = ENV.fetch("SENTRY_DSN")
+      config.sanitize_fields = Rails.application.config.filter_parameters.map(&:to_s)
+    end
   end
 end

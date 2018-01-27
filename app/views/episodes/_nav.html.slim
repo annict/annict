@@ -1,7 +1,7 @@
-h2
+h2.mb-0
   = link_to episode.decorate.title_with_number(fallback: false), work_episode_path(work, episode), class: "u-text-body"
 - if user_signed_in? && current_user.tracked?(episode)
-  .small
+  .small.mt-2
     = icon "check-circle", class: "mr-1 u-text-green"
     = t "messages.episodes.watched_x_times", records_count: current_user.checkins_count_in(episode)
 - if episode.prev_episode.present? || episode.next_episode.present?
