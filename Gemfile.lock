@@ -138,7 +138,7 @@ GEM
     crass (1.0.3)
     daemons (1.2.6)
     dalli (2.7.6)
-    database_rewinder (0.8.2)
+    database_rewinder (0.8.3)
     debug_inspector (0.0.3)
     delayed_job (4.1.4)
       activesupport (>= 3.0, < 5.2)
