@@ -1,6 +1,6 @@
-import $ from 'jquery';
+import $ from 'jquery'
 
-import eventHub from '../../common/eventHub';
+import eventHub from '../../common/eventHub'
 
 export default {
   template: '#t-amazon-item-attacher',
@@ -8,13 +8,13 @@ export default {
   props: {
     resourceType: {
       type: String,
-      required: true
+      required: true,
     },
 
     resourceId: {
       type: String,
-      required: true
-    }
+      required: true,
+    },
   },
 
   data() {
@@ -22,19 +22,19 @@ export default {
       keyword: '',
       page: 1,
       items: [],
-      isLoading: false
-    };
+      isLoading: false,
+    }
   },
 
   methods: {
     search(page) {
       if (!this.keyword) {
-        return;
+        return
       }
 
-      $(window).scrollTop(0);
+      $(window).scrollTop(0)
 
-      this.isLoading = true;
+      this.isLoading = true
 
       return $.ajax({
         method: 'GET',
@@ -43,30 +43,29 @@ export default {
           keyword: this.keyword,
           resource_type: this.resourceType,
           resource_id: this.resourceId,
-          page
-        }
+          page,
+        },
       })
         .done(data => {
-          this.items = data.items;
-          this.page = page;
-          return (this.totalPages = data.total_pages);
+          this.items = data.items
+          this.page = page
+          return (this.totalPages = data.total_pages)
         })
         .fail(function() {
-          const message =
-            gon.I18n['messages._components.amazon_item_attacher.error'];
-          return eventHub.$emit('flash:show', message, 'alert');
+          const message = gon.I18n['messages._components.amazon_item_attacher.error']
+          return eventHub.$emit('flash:show', message, 'alert')
         })
         .always(() => {
-          return (this.isLoading = false);
-        });
+          return (this.isLoading = false)
+        })
     },
 
     add(item) {
       if (item.added_to_resource) {
-        return;
+        return
       }
 
-      item.isLoading = true;
+      item.isLoading = true
 
       return $.ajax({
         method: 'POST',
@@ -75,12 +74,12 @@ export default {
           resource_type: this.resourceType,
           resource_id: this.resourceId,
           asin: item.asin,
-          page_category: gon.basic.pageCategory
-        }
+          page_category: gon.basic.pageCategory,
+        },
       }).done(function() {
-        item.isLoading = false;
-        return (item.added_to_resource = true);
-      });
-    }
-  }
-};
+        item.isLoading = false
+        return (item.added_to_resource = true)
+      })
+    },
+  },
+}
