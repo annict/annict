@@ -69,7 +69,7 @@ export default {
             resource_type: this.resourceType,
             resource_id: this.resourceId,
             kind: 'thumbs_up',
-            page_category: gon.basic.pageCategory,
+            page_category: gon.app.pageCategory,
           },
         })
           .done(() => {

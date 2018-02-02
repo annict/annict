@@ -67,7 +67,7 @@ export default {
           data: {
             resource_type: this.resourceType,
             resource_id: this.resourceId,
-            page_category: gon.basic.pageCategory,
+            page_category: gon.app.pageCategory,
           },
         }).done(() => {
           this.isFavorited = true

@@ -92,7 +92,7 @@ export default {
   mounted() {
     this.gon = window.gon
 
-    if (this.gon.user.device === 'pc' && this.gon.basic.pageCategory === 'home_index') {
+    if (this.gon.user.device === 'pc' && this.gon.app.pageCategory === 'home_index') {
       $(this.$el).css({ maxHeight: window.innerHeight * 0.7 })
     }
 

@@ -70,7 +70,7 @@ export default {
         url: '/api/internal/multiple_records',
         data: {
           episode_ids: this.episodeIds,
-          page_category: gon.basic.pageCategory,
+          page_category: gon.app.pageCategory,
         },
       }).done(() => {
         return (location.href = `/works/${this.workId}/episodes`)

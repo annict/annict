@@ -8,7 +8,7 @@ module PageCategoryHelper
   # rubocop:disable AccessorMethodName
   def set_page_category(name)
     @page_category = name
-    gon.push(basic: { pageCategory: name })
+    gon.push(app: { pageCategory: name })
   end
   # rubocop:enable AccessorMethodName
 end

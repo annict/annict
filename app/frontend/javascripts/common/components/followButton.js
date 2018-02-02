@@ -65,7 +65,7 @@ export default {
           url: '/api/internal/follows',
           data: {
             username: this.username,
-            page_category: window.gon.basic.pageCategory,
+            page_category: gon.app.pageCategory,
           },
         }).done(() => {
           this.isFollowing = true

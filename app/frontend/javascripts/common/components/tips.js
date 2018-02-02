@@ -17,7 +17,7 @@ export default {
           url: '/api/internal/tips/close',
           data: {
             slug: this.tips[index].slug,
-            page_category: window.gon.basic.pageCategory,
+            page_category: window.gon.app.pageCategory,
           },
         }).done(() => {
           return this.tips.splice(index, 1)

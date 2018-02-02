@@ -70,7 +70,7 @@ export default {
           url: `/api/internal/works/${this.workId}/statuses/select`,
           data: {
             status_kind: this.statusKind,
-            page_category: window.gon.basic.pageCategory,
+            page_category: window.gon.app.pageCategory,
           },
         }).done(() => {
           return (this.isLoading = false)
