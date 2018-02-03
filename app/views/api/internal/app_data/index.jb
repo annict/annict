@@ -1,0 +1,18 @@
+# frozen_string_literal: true
+
+json = {
+  currentUser: {},
+  isUserSignedIn: @user.present?
+}
+
+return json if @user.blank?
+
+json[:currentUser] = {
+  id: @user.id,
+  username: @user.username,
+  avatarImage: {
+    size30: ann_image_url(@user.profile, :tombo_avatar, size: "30x30")
+  }
+}
+
+json

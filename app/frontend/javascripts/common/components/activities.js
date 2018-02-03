@@ -82,20 +82,18 @@ export default {
     },
 
     _activityData() {
-      if (!this.gon.activityData) {
+      if (!gon.activityData) {
         return {}
       }
-      return JSON.parse(this.gon.activityData)
+      return JSON.parse(gon.activityData)
     },
   },
 
   mounted() {
-    this.gon = window.gon
-
-    if (this.gon.user.device === 'pc' && this.gon.app.pageCategory === 'home_index') {
+    if (gon.user.device === 'pc' && (gon.page && gon.page.category === 'home_index')) {
       $(this.$el).css({ maxHeight: window.innerHeight * 0.7 })
     }
 
-    return this.load()
+    this.load()
   },
 }

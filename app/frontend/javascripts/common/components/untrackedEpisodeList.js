@@ -58,7 +58,7 @@ export default {
             shared_facebook: this.user.share_record_to_facebook,
             rating_state: latestStatus.record.ratingState,
           },
-          page_category: this.gon.app.pageCategory,
+          page_category: this.gon.page.category,
         },
       })
         .done(() => {

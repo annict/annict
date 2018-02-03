@@ -95,7 +95,7 @@ export default {
             shared_facebook: this.user.share_record_to_facebook,
             rating_state: program.record.ratingState,
           },
-          page_category: gon.app.pageCategory,
+          page_category: gon.page.category,
         },
       })
         .done(function(data) {

@@ -74,7 +74,7 @@ export default {
           resource_type: this.resourceType,
           resource_id: this.resourceId,
           asin: item.asin,
-          page_category: gon.app.pageCategory,
+          page_category: gon.page.category,
         },
       }).done(function() {
         item.isLoading = false

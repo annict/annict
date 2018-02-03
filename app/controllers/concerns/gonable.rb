@@ -16,7 +16,7 @@ module Gonable
 
   private
 
-  def load_data_into_gon
+  def store_data_into_gon
     data = {
       user: {
         clientUUID: client_uuid,
@@ -39,7 +39,8 @@ module Gonable
       },
       rails: {
         env: Rails.env
-      }
+      },
+      page: {}
     }
 
     if user_signed_in?

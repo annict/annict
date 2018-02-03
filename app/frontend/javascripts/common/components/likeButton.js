@@ -68,7 +68,7 @@ export default {
           data: {
             recipient_type: this.resourceName,
             recipient_id: this.resourceId,
-            page_category: gon.app.pageCategory,
+            page_category: gon.page.category,
           },
         }).done(() => {
           this.isLoading = false

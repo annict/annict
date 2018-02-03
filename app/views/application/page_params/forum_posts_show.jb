@@ -1,0 +1,10 @@
+# frozen_string_literal: true
+
+json = {
+  post: {
+    id: @post.id
+  },
+  comments: @comments.pluck(:id).map { |id| { id: id } }
+}
+
+json

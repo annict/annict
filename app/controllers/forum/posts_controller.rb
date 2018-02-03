@@ -5,7 +5,6 @@ module Forum
     permits :forum_category_id, :title, :body, model_name: "ForumPost"
 
     before_action :authenticate_user!, only: %i(new create edit update)
-    before_action :load_post, only: %i(show edit update)
 
     def new(category: nil)
       @post = ForumPost.new
@@ -29,16 +28,21 @@ module Forum
       redirect_to forum_post_path(@post), notice: t("messages.forum.posts.created")
     end
 
-    def show
+    def show(id)
+      @post = ForumPost.find(id)
       @comments = @post.forum_comments.order(:created_at)
       @comment = @post.forum_comments.new
+
+      store_page_params(post: @post, comments: @comments)
     end
 
-    def edit
+    def edit(id)
+      @post = ForumPost.find(id)
       authorize @post, :edit?
     end
 
-    def update(forum_post)
+    def update(id, forum_post)
+      @post = ForumPost.find(id)
       authorize @post, :update?
 
       @post.attributes = forum_post
@@ -49,12 +53,6 @@ module Forum
       else
         render :edit
       end
-    end
-
-    private
-
-    def load_post
-      @post = ForumPost.find(params[:id])
     end
   end
 end

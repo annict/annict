@@ -11,7 +11,7 @@ export default {
     const basicData = {
       action: action,
       device: gon.user.device,
-      page_category: gon.app.pageCategory,
+      page_category: gon.page.category,
       request_uuid: gon.user.requestUUID,
       user_id: gon.user.userId,
     }
