@@ -210,7 +210,7 @@ GEM
       request_store (>= 1.0)
     graphiql-rails (1.4.8)
       rails
-    graphql (1.7.8)
+    graphql (1.7.9)
     graphql-batch (0.3.9)
       graphql (>= 0.8, < 2)
       promise.rb (~> 0.7.2)
