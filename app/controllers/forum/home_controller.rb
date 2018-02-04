@@ -7,7 +7,6 @@ module Forum
     def index(page: nil)
       @posts = localable_resources(ForumPost.all).order(last_commented_at: :desc).page(page)
 
-      set_page_category "forum_home_index"
       set_surrogate_key_header(page_category, @posts.map(&:record_key))
     end
   end

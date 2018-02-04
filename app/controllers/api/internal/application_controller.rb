@@ -7,8 +7,10 @@ module Api
       include Analyzable
       include LogrageSetting
       include RavenContext
+      include PageCategoryMethods
 
       before_action :switch_locale
+      before_action :store_page_category
 
       private
 
