@@ -59,14 +59,12 @@
         .c-card.p-3.mb-3
           = render "forum/comments/form", comment: @comment
 
-        - unless current_user&.supporter?
-          = render "application/components/adsense", slots: [ENV["GOOGLE_AD_336x280_5"], ENV["GOOGLE_AD_336x280_6"]], size: "336x280"
+        c-adsense-container.text-center :slots="['#{ENV['GOOGLE_AD_336x280_5']}', '#{ENV['GOOGLE_AD_336x280_6']}']" ad-size="336x280"
       .col-4
-        - unless current_user&.supporter?
-          .text-center.mb-3
-            = render "application/components/adsense", slots: [ENV["GOOGLE_AD_336x280_4"]], size: "336x280"
+        c-adsense-container.text-center :slots="['#{ENV['GOOGLE_AD_336x280_4']}']" ad-size="336x280"
 
 = render "application/components/footer"
 
 - content_for :js_templates
+  = render "application/js_templates/adsense_container"
   = render "application/js_templates/forum_edit_link"
