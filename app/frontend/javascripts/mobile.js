@@ -9,6 +9,8 @@ import Turbolinks from 'turbolinks'
 import Vue from 'vue'
 import VueLazyload from 'vue-lazyload'
 
+import app from './common/app'
+import eventHub from './common/eventHub'
 import vueLazyLoad from './common/vueLazyLoad'
 
 import activities from './common/components/activities'
@@ -118,6 +120,18 @@ document.addEventListener('turbolinks:load', event => {
 
   return new Vue({
     el: '.p-application',
+    data: {
+      appData: {},
+    },
+    created: async function() {
+      this.appData = await app.loadAppData()
+
+      if (this.appData.isUserSignedIn) {
+        this.pageData = await app.loadPageData()
+      }
+
+      eventHub.$emit('app:loaded')
+    },
   })
 })
 
