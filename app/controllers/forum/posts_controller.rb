@@ -23,6 +23,7 @@ module Forum
       ActiveRecord::Base.transaction do
         @post.save!(validate: false)
         @post.forum_post_participants.create!(user: current_user)
+        FastlyRails.purge_by_key("forum_home_index", "forum_categories_show")
         @post.notify_discord
       end
 
@@ -51,6 +52,7 @@ module Forum
       @post.detect_locale!(:body)
 
       if @post.save
+        @post.purge
         redirect_to forum_post_path(@post), notice: t("messages.forum.posts.updated")
       else
         render :edit
