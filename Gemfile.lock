@@ -201,7 +201,7 @@ GEM
     flamegraph (0.9.5)
     flutie (2.0.0)
     get_process_mem (0.2.1)
-    github-markup (1.7.0)
+    github-markup (2.0.0)
     globalid (0.4.1)
       activesupport (>= 4.2.0)
     gon (6.2.0)
