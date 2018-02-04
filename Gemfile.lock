@@ -99,8 +99,8 @@ GEM
     bullet (5.7.2)
       activesupport (>= 3.0.0)
       uniform_notifier (~> 1.11.0)
-    by_star (2.2.1)
-      activesupport
+    by_star (3.0.0)
+      activesupport (> 3)
     byebug (9.1.0)
     capybara (2.17.0)
       addressable
