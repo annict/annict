@@ -31,11 +31,8 @@
           c-body :markdown="true" inline-template=""
             .c-body__content
               = @post.body
-          - if policy(@post).edit?
-            .text-right.small
-              = link_to edit_forum_post_path(@post) do
-                = icon "pencil", class: "mr-1"
-                = t "noun.edit"
+          .text-right.small
+            c-forum-edit-link :user-id="#{@post.user_id}" path="#{edit_forum_post_path(@post)}"
 
         - if @comments.present?
           - @comments.each do |comment|
@@ -53,11 +50,8 @@
               c-body :markdown="true" inline-template=""
                 .c-body__content
                   = comment.body
-              - if policy(comment).edit?
-                .text-right.small
-                  = link_to edit_forum_post_comment_path(@post, comment) do
-                    = icon "pencil", class: "mr-1"
-                    = t "noun.edit"
+              .text-right.small
+                c-forum-edit-link :user-id="#{comment.user_id}" path="#{edit_forum_post_comment_path(@post, comment)}"
         - else
           .mb-3
             = render "application/components/empty", text: t("messages.forum.posts.no_comments")
@@ -73,3 +67,6 @@
             = render "application/components/adsense", slots: [ENV["GOOGLE_AD_336x280_4"]], size: "336x280"
 
 = render "application/components/footer"
+
+- content_for :js_templates
+  = render "application/js_templates/forum_edit_link"
