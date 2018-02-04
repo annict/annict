@@ -1,8 +1,6 @@
 import $ from 'jquery'
 import _ from 'lodash'
 
-import eventHub from '../eventHub'
-
 const NO_SELECT = 'no_select'
 
 export default {
