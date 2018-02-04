@@ -9,9 +9,7 @@
   .container.py-3
     = render "application/components/breadcrumb"
 
-    - unless current_user&.supporter?
-      .text-center.mb-3
-        = render "application/components/adsense", slots: [ENV["GOOGLE_AD_728x90_18"]], size: "728x90"
+    c-adsense-container.text-center.mb-3 :slots="['#{ENV['GOOGLE_AD_728x90_18']}']" ad-size="728x90"
 
     .text-right.mb-3
       = link_to new_forum_post_path, class: "btn btn-primary" do

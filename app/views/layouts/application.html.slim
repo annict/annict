@@ -16,6 +16,8 @@ html lang="#{I18n.locale}"
 
       = render "application/analytics"
 
+    = render "application/js_templates/adsense_container"
     = render "application/js_templates/adsense"
     = render "application/js_templates/flash"
+
     = yield :js_templates

@@ -4,6 +4,7 @@ module Forum
   class PostsController < Forum::ApplicationController
     permits :forum_category_id, :title, :body, model_name: "ForumPost"
 
+    before_action :set_cache_control_headers, only: %i(show)
     before_action :authenticate_user!, only: %i(new create edit update)
 
     def new(category: nil)
@@ -34,6 +35,7 @@ module Forum
       @comment = @post.forum_comments.new
 
       store_page_params(post: @post, comments: @comments)
+      set_surrogate_key_header(page_category, @post.record_key, @comments.map(&:record_key))
     end
 
     def edit(id)
