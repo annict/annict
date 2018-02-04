@@ -3,7 +3,7 @@
 - keywords = meta_keywords(@work.decorate.local_title)
 - image_url = ann_image_url(@work.work_image, :attachment, size: "640x")
 - set_meta_tags(title: title, description: description, keywords: keywords, og: { description: description }, twitter: { description: description, image: image_url }, reverse: true, prefix: false)
-- set_page_category "records_show"
+
 
 - unless current_user&.supporter?
   = render "application/components/adsense", slots: [ENV["GOOGLE_AD_320x50_11"]], size: "320x50"

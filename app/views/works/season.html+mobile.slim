@@ -2,7 +2,7 @@
 - description = meta_description(t("head.meta.description.works.season", name: @season.local_name))
 - keywords = meta_keywords(@season.local_name)
 - set_meta_tags(title: title, description: description, keywords: keywords, og: { description: description }, reverse: true, prefix: false)
-- set_page_category "works_season"
+
 - breadcrumb :seasonal_works, @season.slug, @season.local_name
 
 - unless current_user&.supporter?

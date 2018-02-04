@@ -2,7 +2,7 @@
 - description = meta_description(t("head.meta.description.works.popular"))
 - keywords = meta_keywords
 - set_meta_tags(title: title, description: description, keywords: keywords, og: { description: description }, twitter: { description: description }, reverse: true, prefix: false)
-- set_page_category "works_popular"
+
 - breadcrumb :popular_works
 
 - unless current_user&.supporter?

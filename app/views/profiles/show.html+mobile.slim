@@ -1,6 +1,6 @@
 - title = t "head.title.profiles.show"
 - set_meta_tags(title: title, reverse: true, prefix: false)
-- set_page_category "profiles_show"
+
 
 .c-card.p-3.mb-4
   = form_for current_user.profile, url: profile_path, method: :patch do |f|

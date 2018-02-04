@@ -3,7 +3,7 @@
 - keywords = meta_keywords
 - image_url = ann_image_url(@user.profile, :tombo_avatar, size: "640x")
 - set_meta_tags(title: title, description: description, keywords: keywords, og: { description: description, image: image_url }, twitter: { description: description, image: image_url }, reverse: true, prefix: false)
-- set_page_category "reviews_index"
+
 - breadcrumb :user_review_list, @user
 
 = render "application/components/navbar", transparent: true
