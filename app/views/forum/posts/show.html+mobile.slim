@@ -23,11 +23,7 @@
   c-body :markdown="true" inline-template=""
     .c-body__content
       = @post.body
-  - if policy(@post).edit?
-    .text-right.small
-      = link_to edit_forum_post_path(@post) do
-        = icon "pencil", class: "mr-1"
-        = t "noun.edit"
+  c-forum-edit-link.text-right.small :user-id="#{@post.user_id}" path="#{edit_forum_post_path(@post)}"
 
 .c-card.mb-3
   .container
@@ -47,11 +43,7 @@
           c-body :markdown="true" inline-template=""
             .c-body__content
               = comment.body
-          - if policy(comment).edit?
-            .text-right.small
-              = link_to edit_forum_post_comment_path(@post, comment) do
-                = icon "pencil", class: "mr-1"
-                = t "noun.edit"
+          c-forum-edit-link.text-right.small :user-id="#{comment.user_id}" path="#{edit_forum_post_comment_path(@post, comment)}"
     - else
       .mb-3
         = render "application/components/empty", text: t("messages.forum.posts.no_comments")
@@ -62,3 +54,6 @@
 = render "application/components/breadcrumb"
 = render "application/components/footer"
 = render "application/components/tabbar"
+
+- content_for :js_templates
+  = render "application/js_templates/forum_edit_link"

@@ -15,6 +15,7 @@ import vueLazyLoad from './common/vueLazyLoad'
 
 import activities from './common/components/activities'
 import adsense from './common/components/adsense'
+import adsenseContainer from './common/components/adsenseContainer'
 import amazonItemAttacher from './common/components/amazonItemAttacher'
 import analytics from './common/components/analytics'
 import body from './common/components/body'
@@ -25,6 +26,7 @@ import episodeList from './common/components/episodeList'
 import episodeProgress from './common/components/episodeProgress'
 import favoriteButton from './common/components/favoriteButton'
 import flash from './common/components/flash'
+import forumEditLink from './common/components/forumEditLink'
 import followButton from './common/components/followButton'
 import impressionButton from './common/components/impressionButton'
 import impressionButtonModal from './common/components/impressionButtonModal'
@@ -57,8 +59,6 @@ import youtubeModalPlayer from './common/components/youtubeModalPlayer'
 import resourceSelect from './common/directives/resourceSelect'
 
 document.addEventListener('turbolinks:load', event => {
-  const gon = window.gon
-
   moment.locale(gon.user.locale)
   Cookies.set('ann_time_zone', moment.tz.guess(), {
     domain: `.${gon.annict.domain}`,
@@ -75,6 +75,7 @@ document.addEventListener('turbolinks:load', event => {
 
   Vue.component('c-activities', activities)
   Vue.component('c-adsense', adsense)
+  Vue.component('c-adsense-container', adsenseContainer)
   Vue.component('c-amazon-item-attacher', amazonItemAttacher)
   Vue.component('c-analytics', analytics(event))
   Vue.component('c-body', body)
@@ -85,6 +86,7 @@ document.addEventListener('turbolinks:load', event => {
   Vue.component('c-episode-progress', episodeProgress)
   Vue.component('c-favorite-button', favoriteButton)
   Vue.component('c-flash', flash)
+  Vue.component('c-forum-edit-link', forumEditLink)
   Vue.component('c-follow-button', followButton)
   Vue.component('c-impression-button', impressionButton)
   Vue.component('c-impression-button-modal', impressionButtonModal)

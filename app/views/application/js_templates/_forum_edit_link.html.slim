@@ -1,4 +1,5 @@
 script#t-forum-edit-link type="x-template"
-  a.c-forum-edit-link :href="path" v-if="appLoaded && isEditable()"
-    = icon "pencil", class: "mr-1"
-    = t "noun.edit"
+  .c-forum-edit-link
+    a :href="path" v-if="appLoaded && isEditable()"
+      = icon "pencil-alt", class: "mr-1"
+      = t "noun.edit"

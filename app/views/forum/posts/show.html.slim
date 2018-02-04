@@ -31,8 +31,7 @@
           c-body :markdown="true" inline-template=""
             .c-body__content
               = @post.body
-          .text-right.small
-            c-forum-edit-link :user-id="#{@post.user_id}" path="#{edit_forum_post_path(@post)}"
+          c-forum-edit-link.text-right.small :user-id="#{@post.user_id}" path="#{edit_forum_post_path(@post)}"
 
         - if @comments.present?
           - @comments.each do |comment|
@@ -50,8 +49,7 @@
               c-body :markdown="true" inline-template=""
                 .c-body__content
                   = comment.body
-              .text-right.small
-                c-forum-edit-link :user-id="#{comment.user_id}" path="#{edit_forum_post_comment_path(@post, comment)}"
+              c-forum-edit-link.text-right.small :user-id="#{comment.user_id}" path="#{edit_forum_post_comment_path(@post, comment)}"
         - else
           .mb-3
             = render "application/components/empty", text: t("messages.forum.posts.no_comments")
