@@ -435,7 +435,7 @@ GEM
     rainbow (2.2.2)
       rake
     rake (12.3.0)
-    ransack (1.8.6)
+    ransack (1.8.7)
       actionpack (>= 3.0)
       activerecord (>= 3.0)
       activesupport (>= 3.0)
@@ -544,7 +544,7 @@ GEM
       multipart-post (~> 2.0)
       naught (~> 1.0)
       simple_oauth (~> 0.3.0)
-    tzinfo (1.2.4)
+    tzinfo (1.2.5)
       thread_safe (~> 0.1)
     unf (0.1.4)
       unf_ext
