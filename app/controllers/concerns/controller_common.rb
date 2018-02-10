@@ -5,7 +5,7 @@ module ControllerCommon
 
   included do
     helper_method :render_jb, :locale_ja?, :locale_en?, :local_url, :discord_invite_url, :local_url_with_path,
-      :localable_resources
+      :localable_resources, :browser
 
     rescue_from ActionView::MissingTemplate do
       raise ActionController::RoutingError, "Not Found" if Rails.env.production?
@@ -16,6 +16,18 @@ module ControllerCommon
       name = ENV.fetch("ANNICT_BASIC_AUTH_NAME")
       password = ENV.fetch("ANNICT_BASIC_AUTH_PASSWORD")
       http_basic_authenticate_with name: name, password: password
+    end
+
+    def browser
+      ua = if Rails.env.production?
+        request.headers["X-UA-Device"]
+      else
+        request.headers["User-Agent"]
+      end
+      logger.info "request.headers['User-Agent']: #{request.headers['User-Agent']}"
+      logger.info "request.headers['X-UA-Device']: #{request.headers['X-UA-Device']}"
+      logger.info "request.headers['X-Visitor-Type']: #{request.headers['X-Visitor-Type']}"
+      @browser ||= Browser.new(ua, accept_language: request.headers["Accept-Language"])
     end
 
     def render_jb(path, assigns)

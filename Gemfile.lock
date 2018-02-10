@@ -194,11 +194,13 @@ GEM
       railties (>= 3.0.0)
     faraday (0.12.2)
       multipart-post (>= 1.2, < 3)
-    fast_stack (0.2.0)
+    fastly (1.13.2)
+    fastly-rails (0.8.0)
+      fastly (~> 1.6)
+      railties (> 2, < 6)
     ffi (1.9.18)
     figaro (1.1.1)
       thor (~> 0.14)
-    flamegraph (0.9.5)
     flutie (2.0.0)
     get_process_mem (0.2.1)
     github-markup (2.0.0)
@@ -397,8 +399,6 @@ GEM
       activesupport (>= 3.0.0)
     rack (2.0.4)
     rack-cors (1.0.2)
-    rack-mini-profiler (0.10.7)
-      rack (>= 1.2.0)
     rack-proxy (0.6.3)
       rack
     rack-rewrite (1.5.1)
@@ -515,7 +515,6 @@ GEM
       activesupport (>= 4.0)
       sprockets (>= 3.0.0)
     squasher (0.6.0)
-    stackprof (0.2.11)
     temple (0.8.0)
     term-ansicolor (1.6.0)
       tins (~> 1.0)
@@ -611,9 +610,8 @@ DEPENDENCIES
   email_validator
   enumerize
   factory_bot_rails
-  fast_stack
+  fastly-rails
   figaro
-  flamegraph
   flutie
   github-markup
   gon
@@ -636,7 +634,6 @@ DEPENDENCIES
   letter_opener_web
   listen
   lograge
-  memory_profiler
   meta-tags
   mini_magick
   miro
@@ -658,7 +655,6 @@ DEPENDENCIES
   puma_worker_killer
   pundit
   rack-cors
-  rack-mini-profiler
   rack-rewrite
   rails (= 5.1.4)
   rails-html-sanitizer
@@ -678,7 +674,6 @@ DEPENDENCIES
   spring
   spring-commands-rspec
   squasher
-  stackprof
   thin
   timecop
   traceroute

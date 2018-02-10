@@ -7,10 +7,12 @@ namespace :api do
     resource :records_sort_type, only: %i(update)
     resource :search, only: [:show]
     resources :activities, only: [:index]
+    resources :app_data, only: %i(index)
     resources :characters, only: [:index]
     resources :items, only: %i(create)
     resources :mute_users, only: [:create]
     resources :organizations, only: [:index]
+    resources :page_data, only: %i(index)
     resources :people, only: [:index]
     resources :receptions, only: %i(create destroy)
     resources :records, only: %i(create)

@@ -11,10 +11,13 @@ import Turbolinks from 'turbolinks'
 import Vue from 'vue'
 import VueLazyload from 'vue-lazyload'
 
+import app from './common/app'
+import eventHub from './common/eventHub'
 import vueLazyLoad from './common/vueLazyLoad'
 
 import activities from './common/components/activities'
 import adsense from './common/components/adsense'
+import adsenseContainer from './common/components/adsenseContainer'
 import amazonItemAttacher from './common/components/amazonItemAttacher'
 import analytics from './common/components/analytics'
 import body from './common/components/body'
@@ -27,6 +30,7 @@ import episodeRatingStateChart from './common/components/episodeRatingStateChart
 import episodeRecordsChart from './common/components/episodeRecordsChart'
 import favoriteButton from './common/components/favoriteButton'
 import flash from './common/components/flash'
+import forumEditLink from './common/components/forumEditLink'
 import followButton from './common/components/followButton'
 import impressionButton from './common/components/impressionButton'
 import impressionButtonModal from './common/components/impressionButtonModal'
@@ -58,6 +62,7 @@ import workTags from './common/components/workTags'
 import workWatchersChart from './common/components/workWatchersChart'
 import youtubeModalPlayer from './common/components/youtubeModalPlayer'
 
+import navbarSubmenuDropdown from './pc/components/navbarSubmenuDropdown'
 import searchForm from './pc/components/searchForm'
 import imageAttachForm from './pc/components/imageAttachForm'
 import imageAttachModal from './pc/components/imageAttachModal'
@@ -65,8 +70,6 @@ import imageAttachModal from './pc/components/imageAttachModal'
 import resourceSelect from './common/directives/resourceSelect'
 
 document.addEventListener('turbolinks:load', event => {
-  const gon = window.gon
-
   moment.locale(gon.user.locale)
   Cookies.set('ann_time_zone', moment.tz.guess(), {
     domain: `.${gon.annict.domain}`,
@@ -83,6 +86,7 @@ document.addEventListener('turbolinks:load', event => {
 
   Vue.component('c-activities', activities)
   Vue.component('c-adsense', adsense)
+  Vue.component('c-adsense-container', adsenseContainer)
   Vue.component('c-amazon-item-attacher', amazonItemAttacher)
   Vue.component('c-analytics', analytics(event))
   Vue.component('c-body', body)
@@ -95,6 +99,7 @@ document.addEventListener('turbolinks:load', event => {
   Vue.component('c-episode-records-chart', episodeRecordsChart)
   Vue.component('c-favorite-button', favoriteButton)
   Vue.component('c-flash', flash)
+  Vue.component('c-forum-edit-link', forumEditLink)
   Vue.component('c-follow-button', followButton)
   Vue.component('c-image-attach-form', imageAttachForm)
   Vue.component('c-image-attach-modal', imageAttachModal)
@@ -102,6 +107,7 @@ document.addEventListener('turbolinks:load', event => {
   Vue.component('c-impression-button-modal', impressionButtonModal)
   Vue.component('c-input-words-count', inputWordsCount)
   Vue.component('c-like-button', likeButton)
+  Vue.component('c-navbar-submenu-dropdown', navbarSubmenuDropdown)
   Vue.component('c-omitted-synopsis', omittedSynopsis)
   Vue.component('c-mute-user-button', muteUserButton)
   Vue.component('c-program-list', programList)
@@ -137,6 +143,18 @@ document.addEventListener('turbolinks:load', event => {
 
   new Vue({
     el: '.p-application',
+    data: {
+      appData: {},
+    },
+    created: async function() {
+      this.appData = await app.loadAppData()
+
+      if (this.appData.isUserSignedIn) {
+        this.pageData = await app.loadPageData()
+      }
+
+      eventHub.$emit('app:loaded')
+    },
   })
 })
 

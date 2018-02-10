@@ -1,9 +1,7 @@
-import $ from 'jquery';
-import _ from 'lodash';
+import $ from 'jquery'
+import _ from 'lodash'
 
-import eventHub from '../eventHub';
-
-const NO_SELECT = 'no_select';
+const NO_SELECT = 'no_select'
 
 export default {
   template: '#t-status-selector',
@@ -15,83 +13,83 @@ export default {
       statusKind: null,
       prevStatusKind: null,
       works: [],
-      workListData: window.gon.workListData ? JSON.parse(window.gon.workListData) : {}
-    };
+      workListData: window.gon.workListData ? JSON.parse(window.gon.workListData) : {},
+    }
   },
 
   props: {
     workId: {
       type: Number,
-      required: true
+      required: true,
     },
 
     size: {
       type: String,
-      default: 'default'
+      default: 'default',
     },
 
     isTransparent: {
       type: Boolean,
-      default: false
+      default: false,
     },
 
     initStatusKind: {
-      type: String
-    }
+      type: String,
+    },
   },
 
   methods: {
     currentStatusKind() {
       if (!this.works.length) {
-        return 'no_select';
+        return 'no_select'
       }
       const data = _.find(this.works, work => {
-        return work.id === this.workId;
-      });
-      return data.statusSelector.currentStatusKind;
+        return work.id === this.workId
+      })
+      return data.statusSelector.currentStatusKind
     },
 
     resetKind() {
-      return (this.statusKind = NO_SELECT);
+      return (this.statusKind = NO_SELECT)
     },
 
     change() {
       if (!this.isSignedIn) {
-        $('.c-sign-up-modal').modal('show');
-        this.resetKind();
-        return;
+        $('.c-sign-up-modal').modal('show')
+        this.resetKind()
+        return
       }
 
       if (this.statusKind !== this.prevStatusKind) {
-        this.isLoading = true;
+        this.isLoading = true
 
         return $.ajax({
           method: 'POST',
           url: `/api/internal/works/${this.workId}/statuses/select`,
           data: {
             status_kind: this.statusKind,
-            page_category: window.gon.basic.pageCategory
-          }
+            page_category: window.gon.page.category,
+          },
         }).done(() => {
-          return (this.isLoading = false);
-        });
+          return (this.isLoading = false)
+        })
       }
-    }
+    },
   },
 
   mounted() {
     if (!this.isSignedIn) {
-      this.statusKind = this.prevStatusKind = NO_SELECT;
-      return;
+      this.statusKind = this.prevStatusKind = NO_SELECT
+      return
     }
 
     if (this.initStatusKind) {
-      this.prevStatusKind = this.initStatusKind;
-      return (this.statusKind = this.initStatusKind);
+      this.prevStatusKind = this.initStatusKind
+      return (this.statusKind = this.initStatusKind)
     } else {
-      this.works = this.workListData.works;
-      this.prevStatusKind = this.currentStatusKind();
-      return (this.statusKind = this.currentStatusKind());
+      this.works = this.workListData.works
+      this.prevStatusKind = this.currentStatusKind()
+      return (this.statusKind = this.currentStatusKind())
     }
-  }
-};
+  },
+}

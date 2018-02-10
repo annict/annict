@@ -1,12 +1,12 @@
-import $ from 'jquery';
+import $ from 'jquery'
 
 export default {
   template: '#t-tips',
 
   data() {
     return {
-      tips: JSON.parse(window.gon.tipsData)
-    };
+      tips: JSON.parse(window.gon.tipsData),
+    }
   },
 
   methods: {
@@ -17,12 +17,12 @@ export default {
           url: '/api/internal/tips/close',
           data: {
             slug: this.tips[index].slug,
-            page_category: window.gon.basic.pageCategory
-          }
+            page_category: window.gon.page.category,
+          },
         }).done(() => {
-          return this.tips.splice(index, 1);
-        });
+          return this.tips.splice(index, 1)
+        })
       }
-    }
-  }
-};
+    },
+  },
+}

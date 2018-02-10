@@ -18,6 +18,8 @@ local_default: &local_default
   ANNICT_PAPERCLIP_PATH: ":rails_root/public/paperclip/:class/:id/:attachment/:style/:hash.:extension"
   ANNICT_URL: "http://annict.test:3000"
 
+  FASTLY_API_KEY: ""
+  FASTLY_SERVICE_ID: ""
   GOOGLE_AD_CLIENT: ""
   GUMROAD_APPLICATION_ID: ""
   GUMROAD_APP_SECRET: ""

@@ -1,6 +1,5 @@
 - title = "#{t('head.title.forum.posts.show', title: @post.title)} - Forum"
 - set_meta_tags(title: title, reverse: true, prefix: false)
-- set_page_category "forum_posts_show"
 - breadcrumb :forum_post_detail, @post
 
 = render "application/components/navbar"
@@ -32,11 +31,7 @@
           c-body :markdown="true" inline-template=""
             .c-body__content
               = @post.body
-          - if policy(@post).edit?
-            .text-right.small
-              = link_to edit_forum_post_path(@post) do
-                = icon "pencil", class: "mr-1"
-                = t "noun.edit"
+          c-forum-edit-link.text-right.small :user-id="#{@post.user_id}" path="#{edit_forum_post_path(@post)}"
 
         - if @comments.present?
           - @comments.each do |comment|
@@ -54,11 +49,7 @@
               c-body :markdown="true" inline-template=""
                 .c-body__content
                   = comment.body
-              - if policy(comment).edit?
-                .text-right.small
-                  = link_to edit_forum_post_comment_path(@post, comment) do
-                    = icon "pencil", class: "mr-1"
-                    = t "noun.edit"
+              c-forum-edit-link.text-right.small :user-id="#{comment.user_id}" path="#{edit_forum_post_comment_path(@post, comment)}"
         - else
           .mb-3
             = render "application/components/empty", text: t("messages.forum.posts.no_comments")
@@ -66,11 +57,11 @@
         .c-card.p-3.mb-3
           = render "forum/comments/form", comment: @comment
 
-        - unless current_user&.supporter?
-          = render "application/components/adsense", slots: [ENV["GOOGLE_AD_336x280_5"], ENV["GOOGLE_AD_336x280_6"]], size: "336x280"
+        c-adsense-container.text-center :slots="['#{ENV['GOOGLE_AD_336x280_5']}', '#{ENV['GOOGLE_AD_336x280_6']}']" ad-size="336x280"
       .col-4
-        - unless current_user&.supporter?
-          .text-center.mb-3
-            = render "application/components/adsense", slots: [ENV["GOOGLE_AD_336x280_4"]], size: "336x280"
+        c-adsense-container.text-center :slots="['#{ENV['GOOGLE_AD_336x280_4']}']" ad-size="336x280"
 
 = render "application/components/footer"
+
+- content_for :js_templates
+  = render "application/js_templates/forum_edit_link"

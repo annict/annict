@@ -1,10 +1,10 @@
-import $ from 'jquery';
-import _ from 'lodash';
-import moment from 'moment';
+import $ from 'jquery'
+import _ from 'lodash'
+import moment from 'moment'
 
-import eventHub from '../../common/eventHub';
-import vueLazyLoad from '../../common/vueLazyLoad';
-import loadMoreButton from './loadMoreButton';
+import eventHub from '../../common/eventHub'
+import vueLazyLoad from '../../common/vueLazyLoad'
+import loadMoreButton from './loadMoreButton'
 
 export default {
   template: '#t-program-list',
@@ -17,26 +17,26 @@ export default {
       user: null,
       page: 1,
       sort: gon.currentProgramsSortType,
-      sortTypes: gon.programsSortTypes
-    };
+      sortTypes: gon.programsSortTypes,
+    }
   },
 
   components: {
-    'c-load-more-button': loadMoreButton
+    'c-load-more-button': loadMoreButton,
   },
 
   methods: {
     requestData() {
       const data = {
         page: this.page,
-        sort: this.sort
-      };
-      return data;
+        sort: this.sort,
+      }
+      return data
     },
 
     initPrograms(programs) {
       return _.each(programs, function(program) {
-        program.isBroadcasted = moment().isAfter(program.started_at);
+        program.isBroadcasted = moment().isAfter(program.started_at)
         return (program.record = {
           uid: _.uniqueId(),
           comment: '',
@@ -45,47 +45,44 @@ export default {
           isSaving: false,
           ratingState: null,
           wordCount: 0,
-          commentRows: 1
-        });
-      });
+          commentRows: 1,
+        })
+      })
     },
 
     loadMore() {
       if (this.isLoading) {
-        return;
+        return
       }
 
-      this.isLoading = true;
-      this.page += 1;
+      this.isLoading = true
+      this.page += 1
 
       return $.ajax({
         method: 'GET',
         url: '/api/internal/user/programs',
-        data: this.requestData()
+        data: this.requestData(),
       }).done(data => {
-        this.isLoading = false;
+        this.isLoading = false
         if (data.programs.length > 0) {
-          this.hasNext = true;
-          return this.programs.push.apply(
-            this.programs,
-            this.initPrograms(data.programs)
-          );
+          this.hasNext = true
+          return this.programs.push.apply(this.programs, this.initPrograms(data.programs))
         } else {
-          return (this.hasNext = false);
+          return (this.hasNext = false)
         }
-      });
+      })
     },
 
     reload() {
-      return this.updateProgramsSortType(() => (location.href = '/programs'));
+      return this.updateProgramsSortType(() => (location.href = '/programs'))
     },
 
     submit(program) {
       if (program.record.isSaving || program.record.isRecorded) {
-        return;
+        return
       }
 
-      program.record.isSaving = true;
+      program.record.isSaving = true
 
       return $.ajax({
         method: 'POST',
@@ -96,32 +93,28 @@ export default {
             comment: program.record.comment,
             shared_twitter: this.user.share_record_to_twitter,
             shared_facebook: this.user.share_record_to_facebook,
-            rating_state: program.record.ratingState
+            rating_state: program.record.ratingState,
           },
-          page_category: gon.basic.pageCategory
-        }
+          page_category: gon.page.category,
+        },
       })
         .done(function(data) {
-          program.record.isSaving = false;
-          program.record.isRecorded = true;
-          const msg = gon.I18n['messages.components.program_list.tracked'];
-          return eventHub.$emit('flash:show', msg);
+          program.record.isSaving = false
+          program.record.isRecorded = true
+          const msg = gon.I18n['messages.components.program_list.tracked']
+          return eventHub.$emit('flash:show', msg)
         })
         .fail(function(data) {
-          program.record.isSaving = false;
-          return eventHub.$emit(
-            'flash:show',
-            data.responseJSON.message,
-            'alert'
-          );
-        });
+          program.record.isSaving = false
+          return eventHub.$emit('flash:show', data.responseJSON.message, 'alert')
+        })
     },
 
     load() {
-      this.programs = this.initPrograms(this._pageObject().programs);
-      this.hasNext = this.programs.length > 0;
-      this.user = this._pageObject().user;
-      return this.$nextTick(() => vueLazyLoad.refresh());
+      this.programs = this.initPrograms(this._pageObject().programs)
+      this.hasNext = this.programs.length > 0
+      this.user = this._pageObject().user
+      return this.$nextTick(() => vueLazyLoad.refresh())
     },
 
     updateProgramsSortType(callback) {
@@ -129,20 +122,20 @@ export default {
         method: 'PATCH',
         url: '/api/internal/programs_sort_type',
         data: {
-          programs_sort_type: this.sort
-        }
-      }).done(callback);
+          programs_sort_type: this.sort,
+        },
+      }).done(callback)
     },
 
     _pageObject() {
       if (!gon.pageObject) {
-        return {};
+        return {}
       }
-      return JSON.parse(gon.pageObject);
-    }
+      return JSON.parse(gon.pageObject)
+    },
   },
 
   mounted() {
-    return this.load();
-  }
-};
+    return this.load()
+  },
+}

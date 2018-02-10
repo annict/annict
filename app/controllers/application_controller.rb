@@ -7,10 +7,12 @@ class ApplicationController < ActionController::Base
   include Analyzable
   include LogrageSetting
   include Gonable
-  include PageCategoryHelper
+  include PageCategoryMethods
+  include PageParamsMethods
   include ViewSelector
   include FlashMessage
   include RavenContext
+  include HeadersForFastly
 
   # Prevent CSRF attacks by raising an exception.
   # For APIs, you may want to use :null_session instead.
@@ -22,7 +24,8 @@ class ApplicationController < ActionController::Base
   before_action :switch_locale
   before_action :set_search_params
   before_action :load_new_user
-  before_action :load_data_into_gon
+  before_action :store_data_into_gon
+  before_action :store_page_category
 
   # テスト実行時にDragonflyでアップロードした画像を読み込むときに呼ばれるアクション
   # 画像サーバはこのRailsアプリから切り離しているので、CircleCI等でテストを実行するときは

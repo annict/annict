@@ -2,7 +2,7 @@
 - description = meta_description t("head.meta.description.character_fans.index", character_name: @character.decorate.name_with_series)
 - keywords = meta_keywords @character.decorate.local_name
 - set_meta_tags(title: title, description: description, keywords: keywords, og: { description: description }, twitter: { description: description }, reverse: true, prefix: false)
-- set_page_category "character_fans_index"
+
 
 = render "application/components/navbar"
 

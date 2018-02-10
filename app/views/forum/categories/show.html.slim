@@ -1,6 +1,5 @@
 - title = "#{t('head.title.forum.categories.show', name: @category.decorate.local_name)} - Forum"
 - set_meta_tags(title: title, reverse: true, prefix: false)
-- set_page_category "forum_categories_show"
 - breadcrumb :forum_category_detail, @category
 
 = render "application/components/navbar"
@@ -10,16 +9,14 @@
   .container.py-3.mb-3
     = render "application/components/breadcrumb"
 
-    - unless current_user&.supporter?
-      .text-center.mb-3
-        = render "application/components/adsense", slots: [ENV["GOOGLE_AD_728x90_24"]], size: "728x90"
+    c-adsense-container.text-center.mb-3 :slots="['#{ENV['GOOGLE_AD_728x90_24']}']" ad-size="728x90"
 
     .row
       .col
         h1.h2.mb-3
           = @category.decorate.local_name
       .col
-        - if !@category.slug.site_news? || (@category.slug.site_news? && user_signed_in? && current_user.role.admin?)
+        - if !@category.slug.site_news?
           .text-right.mb-3
             = link_to new_forum_post_path(category: @category.slug), class: "btn btn-primary" do
               = icon "plus"

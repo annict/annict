@@ -1,80 +1,80 @@
-import $ from 'jquery';
+import $ from 'jquery'
 
 export default {
   props: {
     isSignedIn: {
       type: Boolean,
-      required: true
+      required: true,
     },
     workId: {
       type: Number,
-      required: true
+      required: true,
     },
     initIsTrackingMode: {
       type: Boolean,
       required: true,
-      default: false
+      default: false,
     },
     allEpisodeIds: {
       type: Array,
       required: true,
-      default: []
-    }
+      default: [],
+    },
   },
 
   data() {
     return {
       isTrackingMode: this.initIsTrackingMode,
       isTracking: false,
-      episodeIds: []
-    };
+      episodeIds: [],
+    }
   },
 
   computed: {
     isTrackable() {
-      return !!this.episodeIds.length;
-    }
+      return !!this.episodeIds.length
+    },
   },
 
   methods: {
     enableTrackingMode() {
       if (!this.isSignedIn) {
-        $('.c-sign-up-modal').modal('show');
-        return;
+        $('.c-sign-up-modal').modal('show')
+        return
       }
-      return (this.isTrackingMode = true);
+      return (this.isTrackingMode = true)
     },
 
     disableTrackingMode() {
-      this.uncheckAll();
-      return (this.isTrackingMode = false);
+      this.uncheckAll()
+      return (this.isTrackingMode = false)
     },
 
     checkAll() {
-      return (this.episodeIds = this.allEpisodeIds);
+      return (this.episodeIds = this.allEpisodeIds)
     },
 
     uncheckAll() {
-      return (this.episodeIds = []);
+      return (this.episodeIds = [])
     },
 
     track() {
       if (this.isTracking) {
-        return;
+        return
       }
 
-      this.isTracking = true;
+      this.isTracking = true
 
       return $.ajax({
         method: 'POST',
         url: '/api/internal/multiple_records',
         data: {
           episode_ids: this.episodeIds,
-          page_category: gon.basic.pageCategory
-        }
+          page_category: gon.page.category,
+        },
       }).done(() => {
-        return (location.href = `/works/${this.workId}/episodes`);
-      });
-    }
-  }
-};
+        return (location.href = `/works/${this.workId}/episodes`)
+      })
+    },
+  },
+}

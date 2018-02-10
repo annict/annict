@@ -1,0 +1,25 @@
+# frozen_string_literal: true
+
+json = {
+  flash: @flash&.data.presence || {},
+  currentUser: {},
+  isUserSignedIn: @user.present?
+}
+
+return json if @user.blank?
+
+json[:currentUser] = {
+  id: @user.id,
+  username: @user.username,
+  profile: {
+    name: @user.profile.name
+  },
+  avatarImage: {
+    size30: ann_image_url(@user.profile, :tombo_avatar, size: "30x30")
+  },
+  notificationsCount: @user.notifications_count,
+  locale: I18n.locale,
+  isSupporter: @user.supporter?
+}
+
+json

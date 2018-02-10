@@ -1,4 +1,4 @@
-import $ from 'jquery';
+import $ from 'jquery'
 
 export default {
   template: '#t-reaction-button',
@@ -6,20 +6,20 @@ export default {
   props: {
     resourceType: {
       type: String,
-      required: true
+      required: true,
     },
     resourceId: {
       type: Number,
-      required: true
+      required: true,
     },
     initReactionsCount: {
       type: Number,
-      required: true
+      required: true,
     },
     initIsReacted: {
       type: Boolean,
-      required: true
-    }
+      required: true,
+    },
   },
 
   data() {
@@ -27,22 +27,22 @@ export default {
       isSignedIn: gon.user.isSignedIn,
       reactionsCount: this.initReactionsCount,
       isReacted: this.initIsReacted,
-      isLoading: false
-    };
+      isLoading: false,
+    }
   },
 
   methods: {
     toggleReact() {
       if (!this.isSignedIn) {
-        $('.c-sign-up-modal').modal('show');
-        return;
+        $('.c-sign-up-modal').modal('show')
+        return
       }
 
       if (this.isLoading) {
-        return;
+        return
       }
 
-      this.isLoading = true;
+      this.isLoading = true
 
       if (this.isReacted) {
         return $.ajax({
@@ -51,16 +51,16 @@ export default {
           data: {
             resource_type: this.resourceType,
             resource_id: this.resourceId,
-            kind: 'thumbs_up'
-          }
+            kind: 'thumbs_up',
+          },
         })
           .done(() => {
-            this.reactionsCount += -1;
-            return (this.isReacted = false);
+            this.reactionsCount += -1
+            return (this.isReacted = false)
           })
           .always(() => {
-            return (this.isLoading = false);
-          });
+            return (this.isLoading = false)
+          })
       } else {
         return $.ajax({
           method: 'POST',
@@ -69,17 +69,17 @@ export default {
             resource_type: this.resourceType,
             resource_id: this.resourceId,
             kind: 'thumbs_up',
-            page_category: gon.basic.pageCategory
-          }
+            page_category: gon.page.category,
+          },
         })
           .done(() => {
-            this.reactionsCount += 1;
-            return (this.isReacted = true);
+            this.reactionsCount += 1
+            return (this.isReacted = true)
           })
           .always(() => {
-            return (this.isLoading = false);
-          });
+            return (this.isLoading = false)
+          })
       }
-    }
-  }
-};
+    },
+  },
+}
