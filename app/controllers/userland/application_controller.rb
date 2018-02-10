@@ -9,7 +9,6 @@ module Userland
     include LogrageSetting
     include Gonable
     include FlashMessage
-    include PageCategoryHelper
     include ViewSelector
     include RavenContext
     include PageCategoryMethods
