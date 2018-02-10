@@ -13,6 +13,7 @@ module Forum
     include RavenContext
     include PageCategoryMethods
     include PageParamsMethods
+    include HeadersForFastly
 
     layout "application"
 

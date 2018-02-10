@@ -3,7 +3,7 @@ html lang="#{I18n.locale}"
   head
     = render "application/head"
     = render "application/adsense"
-  body class="#{body_classes} #{user_signed_in? ? 'is-user' : 'is-guest'} #{browser.firefox? ? 'is-firefox' : ''} #{browser.webkit? ? 'is-webkit' : ''}"
+  body class="#{body_classes} #{user_signed_in? ? 'is-user' : 'is-guest'}"
     = include_gon
 
     .p-application.d-flex.flex-column

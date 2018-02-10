@@ -22,7 +22,7 @@ gem "annotate"
 # https://github.com/thoughtbot/paperclip/issues/2484
 gem "aws-sdk", "< 3.0"
 gem "bootsnap", require: false
-gem "browser"
+gem "browser", require: "browser/browser"
 gem "by_star"
 gem "cld"
 gem "commonmarker"
