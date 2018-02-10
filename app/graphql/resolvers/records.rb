@@ -23,6 +23,15 @@ module Resolvers
         end
       end
 
+      @collection = case @args[:hasComment]
+      when true
+        @collection.with_comment
+      when false
+        @collection.with_no_comment
+      else
+        @collection
+      end
+
       @collection
     end
   end

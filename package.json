@@ -6,7 +6,7 @@
     "async": "2.6.0",
     "bootstrap": "4.0.0",
     "bourbon": "^5.0.0",
-    "britecharts": "^2.4.12",
+    "britecharts": "^2.5.0",
     "cal-heatmap": "3.6.2",
     "cropperjs": "1.2.2",
     "d3": "^4.13.0",
@@ -17,7 +17,7 @@
     "js-cookie": "2.2.0",
     "keen-tracking": "^1.4.0",
     "linkifyjs": "2.1.5",
-    "lodash": "4.17.4",
+    "lodash": "4.17.5",
     "marked": "^0.3.12",
     "mjml": "3.3.5",
     "moment-timezone": "0.5.14",
@@ -35,7 +35,7 @@
     "node": "~> 8.9.0"
   },
   "devDependencies": {
-    "eslint": "^4.16.0",
+    "eslint": "^4.17.0",
     "postcss-smart-import": "^0.7.6",
     "prettier": "^1.6.1",
     "prettier-eslint": "^8.8.1",
