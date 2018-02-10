@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 json = {
+  flash: @flash&.data.presence || {},
   currentUser: {},
   isUserSignedIn: @user.present?
 }

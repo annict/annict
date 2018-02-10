@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180120155138) do
+ActiveRecord::Schema.define(version: 20180210073441) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -387,6 +387,14 @@ ActiveRecord::Schema.define(version: 20180120155138) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["user_id", "tip_id"], name: "index_finished_tips_on_user_id_and_tip_id", unique: true
+  end
+
+  create_table "flashes", force: :cascade do |t|
+    t.string "client_uuid", null: false
+    t.json "message"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["client_uuid"], name: "index_flashes_on_client_uuid", unique: true
   end
 
   create_table "follows", id: :serial, force: :cascade do |t|

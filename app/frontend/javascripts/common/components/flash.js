@@ -41,7 +41,7 @@ export default {
   },
 
   created() {
-    return eventHub.$on('flash:show', (message, type) => {
+    eventHub.$on('flash:show', (message, type) => {
       if (type == null) {
         type = 'notice';
       }
@@ -50,6 +50,16 @@ export default {
       return setTimeout(() => {
         return this.close();
       }, 6000);
+    });
+
+    eventHub.$on('app:loaded', () => {
+      const appData = this.$parent.appData;
+
+      if (!appData.flash || !appData.flash.type) {
+        return;
+      }
+
+      eventHub.$emit('flash:show', appData.flash.message, appData.flash.type);
     });
   },
 
