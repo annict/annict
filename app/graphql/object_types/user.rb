@@ -19,6 +19,13 @@ ObjectTypes::User = GraphQL::ObjectType.define do
     resolve Resolvers::Activities.new
   end
 
+  connection :records, ObjectTypes::Record.connection_type do
+    argument :orderBy, InputObjectTypes::RecordOrder
+    argument :hasComment, types.Boolean
+
+    resolve Resolvers::Records.new
+  end
+
   connection :followingActivities, Connections::ActivityConnection do
     argument :orderBy, InputObjectTypes::ActivityOrder
 
