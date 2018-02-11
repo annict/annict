@@ -12,7 +12,15 @@ AnnictSchema = GraphQL::Schema.define do
 
   object_from_id ->(id, _query_ctx) {
     type_name, item_id = GraphQL::Schema::UniqueWithinType.decode(id)
+
     return nil if type_name.blank? || item_id.blank?
+
+    type_name = case type_name
+    when "Record" then "Checkin"
+    else
+      type_name
+    end
+
     Object.const_get(type_name).find(item_id)
   }
 
