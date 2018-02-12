@@ -143,17 +143,27 @@ document.addEventListener('turbolinks:load', event => {
 
   new Vue({
     el: '.p-application',
+
     data: {
       appData: {},
     },
-    created: async function() {
-      this.appData = await app.loadAppData()
 
-      if (this.appData.isUserSignedIn) {
-        this.pageData = await app.loadPageData()
-      }
+    created() {
+      const self = this
 
-      eventHub.$emit('app:loaded')
+      app.loadAppData().done(appData => {
+        self.appData = appData
+
+        if (self.appData.isUserSignedIn && app.loadPageData()) {
+          app.loadPageData().done(pageData => {
+            this.pageData = pageData
+            eventHub.$emit('app:loaded')
+            return
+          })
+        }
+
+        eventHub.$emit('app:loaded')
+      })
     },
   })
 })
