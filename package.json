@@ -27,7 +27,7 @@
     "tether": "^1.4.3",
     "turbolinks": "5.1.1",
     "vue": "^2.5.13",
-    "vue-lazyload": "1.1.4",
+    "vue-lazyload": "1.2.0",
     "vue-loader": "^14.1.1",
     "vue-template-compiler": "^2.5.13"
   },
