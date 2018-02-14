@@ -1,3 +1,5 @@
+import 'babel-polyfill'
+
 import '../javascripts/mobile'
 import '../stylesheets/mobile'
 

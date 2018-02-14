@@ -127,22 +127,15 @@ document.addEventListener('turbolinks:load', event => {
       appData: {},
     },
 
-    created() {
-      const self = this
+    created: async function() {
+      this.appData = await app.loadAppData()
 
-      app.loadAppData().done(appData => {
-        self.appData = appData
+      if (this.appData.isUserSignedIn && app.loadPageData()) {
+        const pageData = await app.loadPageData()
+        this.pageData = pageData
+      }
 
-        if (self.appData.isUserSignedIn && app.loadPageData()) {
-          app.loadPageData().done(pageData => {
-            this.pageData = pageData
-            eventHub.$emit('app:loaded')
-            return
-          })
-        }
-
-        eventHub.$emit('app:loaded')
-      })
+      eventHub.$emit('app:loaded')
     },
   })
 })

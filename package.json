@@ -4,6 +4,7 @@
   "dependencies": {
     "@rails/webpacker": "^3.2.0",
     "async": "2.6.0",
+    "babel-polyfill": "^6.26.0",
     "bootstrap": "4.0.0",
     "bourbon": "^5.0.0",
     "britecharts": "^2.5.0",
