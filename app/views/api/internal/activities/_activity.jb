@@ -19,7 +19,7 @@ json = Rails.cache.fetch(cache_keys) do
     },
     viewer: {
       status: {
-        kind: kinds.select { |k| k[:work_id] == activity.work.id }.first[:kind]
+        kind: statuses.select { |k| k[:work_id] == activity.work.id }.first[:kind]
       }
     },
     meta: {
