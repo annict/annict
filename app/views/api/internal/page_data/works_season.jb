@@ -1,0 +1,9 @@
+# frozen_string_literal: true
+
+json = {
+  work_ids: @results[:work_ids],
+  statuses: @results[:statuses],
+  users_data: @results[:users_data]
+}
+
+json

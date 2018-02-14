@@ -197,8 +197,8 @@ class Work < ApplicationRecord
       order("seasons.sort_number #{type} NULLS LAST, works.id #{type}")
   }
 
-  def self.status_kinds(works, user)
-    work_ids = works.pluck(:id).uniq
+  def self.statuses(work_ids, user)
+    work_ids = work_ids.uniq
     latest_statuses = LatestStatus.where(user: user, work_id: work_ids)
 
     work_ids.map do |work_id|
@@ -238,8 +238,8 @@ class Work < ApplicationRecord
     end
   end
 
-  def self.watching_friends_data(works, user)
-    work_ids = works.pluck(:id).uniq
+  def self.watching_friends_data(work_ids, user)
+    work_ids = work_ids.uniq
     status_kinds = %w(wanna_watch watching watched)
     users = user.followings.includes(:profile)
     user_ids = users.pluck(:id)
