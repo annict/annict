@@ -33,6 +33,7 @@
 class WorksController < ApplicationController
   include ApplicationHelper
 
+  before_action :set_cache_control_headers, only: %i(popular newest season)
   before_action :authenticate_user!, only: %i(switch)
   before_action :set_display_option, only: %i(popular newest season)
 
@@ -118,11 +119,7 @@ class WorksController < ApplicationController
     display_options = Setting.display_option_work_list.values
     display = params[:display].in?(display_options) ? params[:display] : nil
 
-    @display_option = if user_signed_in?
-      display.presence || current_user.setting.display_option_work_list
-    else
-      display.presence || "list_detailed"
-    end
+    @display_option = display.presence || "list_detailed"
   end
 
   def display_works_count
@@ -142,16 +139,8 @@ class WorksController < ApplicationController
       @channels = Channel.published.with_vod
     end
 
-    return unless user_signed_in?
+    store_page_params(works: @works, display_option: @display_option)
 
-    if @display_option.in?(Setting.display_option_work_list.values) &&
-        current_user.setting.display_option_work_list != @display_option
-      current_user.setting.update_column(:display_option_work_list, @display_option)
-    end
-
-    gon.workListData = render_jb "works/_list",
-      user: current_user,
-      works: @works,
-      display_option: @display_option
+    set_surrogate_key_header(page_category, @works.map(&:record_key))
   end
 end
