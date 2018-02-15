@@ -1,8 +1,8 @@
-import _ from 'lodash';
+import _ from 'lodash'
 
-import eventHub from '../eventHub';
+import eventHub from '../eventHub'
 
-const DISPLAY_USERS_LIMIT = 12;
+const DISPLAY_USERS_LIMIT = 12
 
 export default {
   template: '#t-work-friends',
@@ -12,50 +12,50 @@ export default {
       isSignedIn: window.gon.user.isSignedIn,
       showAll: false,
       works: [],
-      workListData: window.gon.workListData ? JSON.parse(window.gon.workListData) : {}
-    };
+      workListData: window.gon.workListData ? JSON.parse(window.gon.workListData) : {},
+    }
   },
 
   props: {
     workId: {
       type: Number,
-      required: true
-    }
+      required: true,
+    },
   },
 
   computed: {
     allUsers() {
       if (!this.works.length) {
-        return [];
+        return []
       }
       const data = _.find(this.works, work => {
-        return work.id === this.workId;
-      });
-      return data.users;
+        return work.id === this.workId
+      })
+      return data.users
     },
 
     users() {
       if (this.showAll) {
-        return this.allUsers;
+        return this.allUsers
       }
-      return _.take(this.allUsers, DISPLAY_USERS_LIMIT);
+      return _.take(this.allUsers, DISPLAY_USERS_LIMIT)
     },
 
     isMoreUsers() {
-      return !this.showAll && this.allUsers.length > DISPLAY_USERS_LIMIT;
-    }
+      return !this.showAll && this.allUsers.length > DISPLAY_USERS_LIMIT
+    },
   },
 
   methods: {
     more() {
-      return (this.showAll = true);
-    }
+      return (this.showAll = true)
+    },
   },
 
   mounted() {
     if (!this.isSignedIn) {
-      return;
+      return
     }
-    return (this.works = this.workListData.works);
-  }
-};
+    return (this.works = this.workListData.works)
+  },
+}
