@@ -1,6 +1,7 @@
 script#t-work-friends type="x-template"
-  .c-work-friends v-if="isSignedIn && users.length"
-    .font-weight-bold = t "noun.friends_who_are_watching"
+  .c-work-friends v-if="appData.isUserSignedIn && users.length"
+    .font-weight-bold
+      = t "noun.friends_who_are_watching"
     .row.align-items-center.px-3.pt-2
       .col.col-auto.pl-0.pr-2.pb-2 v-for="user in users"
         a :href='"/@" + user.username'

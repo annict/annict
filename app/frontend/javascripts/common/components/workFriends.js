@@ -9,10 +9,10 @@ export default {
 
   data() {
     return {
-      isSignedIn: window.gon.user.isSignedIn,
+      appData: {},
+      pageData: {},
       showAll: false,
-      works: [],
-      workListData: window.gon.workListData ? JSON.parse(window.gon.workListData) : {},
+      usersData: [],
     }
   },
 
@@ -25,12 +25,18 @@ export default {
 
   computed: {
     allUsers() {
-      if (!this.works.length) {
+      if (!this.usersData.length) {
         return []
       }
-      const data = _.find(this.works, work => {
-        return work.id === this.workId
-      })
+
+      const data = this.usersData.filter(ud => {
+        return ud.work_id === this.workId
+      })[0]
+
+      if (!data) {
+        return []
+      }
+
       return data.users
     },
 
@@ -53,9 +59,15 @@ export default {
   },
 
   mounted() {
-    if (!this.isSignedIn) {
-      return
-    }
-    return (this.works = this.workListData.works)
+    eventHub.$on('app:loaded', () => {
+      this.appData = this.$parent.appData
+      this.pageData = this.$parent.pageData
+
+      if (!this.appData.isUserSignedIn) {
+        return
+      }
+
+      this.usersData = this.pageData.users_data
+    })
   },
 }
