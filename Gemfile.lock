@@ -182,7 +182,7 @@ GEM
       thread_safe
     email_validator (1.6.0)
       activemodel
-    enumerize (2.1.2)
+    enumerize (2.2.1)
       activesupport (>= 3.2)
     equalizer (0.0.11)
     erubi (1.7.0)
