@@ -44,10 +44,11 @@ class RecordsController < ApplicationController
 
       data = {
         recordsSortTypes: Setting.records_sort_type.options,
-        currentRecordsSortType: current_user&.setting&.records_sort_type.presence || "created_at_desc",
-        workListData: render_jb("works/_detail", user: current_user, work: @work)
+        currentRecordsSortType: current_user&.setting&.records_sort_type.presence || "created_at_desc"
       }
       gon.push(data)
+
+      store_page_params(work: @work)
 
       @is_spoiler = current_user.hide_checkin_comment?(@episode)
 
