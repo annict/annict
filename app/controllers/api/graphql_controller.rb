@@ -16,8 +16,7 @@ module Api
       context = {
         doorkeeper_token: doorkeeper_token,
         viewer: current_user,
-        ga_client: ga_client,
-        keen_client: keen_client
+        ga_client: ga_client
       }
       result = AnnictSchema.execute(query, variables: variables, context: context)
       render json: result

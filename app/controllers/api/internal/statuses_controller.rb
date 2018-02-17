@@ -30,7 +30,6 @@ module Api
         ga_client.page_category = page_category
         status = StatusService.new(current_user, @work)
         status.ga_client = ga_client
-        status.keen_client = keen_client
         status.via = "internal_api"
         status.page_category = page_category
         status.change!(status_kind)

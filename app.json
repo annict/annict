@@ -467,12 +467,6 @@
     "IMGIX_SOURCE": {
       "required": true
     },
-    "KEEN_PROJECT_ID": {
-      "required": true
-    },
-    "KEEN_WRITE_KEY": {
-      "required": true
-    },
     "LANG": {
       "required": true
     },

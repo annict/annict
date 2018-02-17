@@ -18,12 +18,6 @@ class RegistrationsController < Devise::RegistrationsController
       @new_user.save!
       ga_client.user = @new_user
       ga_client.events.create(:users, :create)
-      keen_client.publish(
-        "create_users",
-        user: @new_user,
-        via: "web",
-        via_oauth: false
-      )
     end
 
     bypass_sign_in(@new_user)
