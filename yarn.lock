@@ -985,9 +985,9 @@ braces@^2.3.0:
     split-string "^3.0.2"
     to-regex "^3.0.1"
 
-britecharts@^2.5.0:
-  version "2.5.0"
-  resolved "https://registry.yarnpkg.com/britecharts/-/britecharts-2.5.0.tgz#b8822879502a6e54cf1638e86f326e93230fff7c"
+britecharts@^2.5.1:
+  version "2.5.1"
+  resolved "https://registry.yarnpkg.com/britecharts/-/britecharts-2.5.1.tgz#96c7aa6473583b1d08c7c561968283c2d59e71da"
   dependencies:
     base-64 "^0.1.0"
     d3 "^4.10.0"
