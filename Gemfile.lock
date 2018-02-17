@@ -530,7 +530,7 @@ GEM
     tilt (2.0.8)
     timecop (0.9.1)
     tins (1.16.3)
-    traceroute (0.5.0)
+    traceroute (0.6.1)
       rails (>= 3.0.0)
     twitter (6.2.0)
       addressable (~> 2.3)
