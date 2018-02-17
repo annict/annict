@@ -23,7 +23,7 @@ export default {
 
   methods: {
     isEditable: function() {
-      return this.userId === (this.appData.currentUser && this.appData.currentUser.id)
+      return this.userId === (this.appData.current_user && this.appData.current_user.id)
     },
   },
 

@@ -37,7 +37,7 @@ export default {
     },
 
     isDisplayable: function() {
-      return !this.appData.isUserSignedIn || (this.appData.currentUser && !this.appData.currentUser.isSupporter)
+      return !this.appData.isUserSignedIn || (this.appData.current_user && !this.appData.current_user.is_supporter)
     },
   },
 
