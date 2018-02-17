@@ -6,6 +6,7 @@
   },
   "extends": "eslint:recommended",
   "globals": {
+    "ga": true,
     "gon": true
   },
   "parserOptions": {
