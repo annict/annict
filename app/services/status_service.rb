@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class StatusService
-  attr_writer :app, :via, :ga_client, :keen_client, :page_category
+  attr_writer :app, :via, :ga_client, :page_category
 
   def initialize(user, work)
     @user = user
@@ -16,9 +16,7 @@ class StatusService
 
       if @status.save!
         UserWatchedWorksCountJob.perform_later(@user)
-        data_source = @app.present? ? :api : :web
-        @ga_client.events.create(:statuses, :create, ds: data_source)
-        create_keen_event
+        create_ga_event
       end
     elsif @kind == "no_select"
       latest_status = @user.latest_statuses.find_by(work: @work)
@@ -31,18 +29,8 @@ class StatusService
 
   private
 
-  def create_keen_event
-    return if @keen_client.blank?
-
-    @keen_client.publish(
-      "create_statuses",
-      user: @user,
-      page_category: @page_category,
-      work_id: @work.id,
-      kind: @kind,
-      is_first_status: @user.statuses.initial?(@status),
-      via: @via,
-      oauth_application_id: @app&.id
-    )
+  def create_ga_event
+    return if @ga_client.blank?
+    @ga_client.events.create(:statuses, :create, ds: @via)
   end
 end

@@ -25,13 +25,7 @@ class OauthUsersController < Devise::RegistrationsController
 
     @user.save
     ga_client.user = @user
-    ga_client.events.create(:users, :create)
-    keen_client.publish(
-      "create_users",
-      user: @user,
-      via: "web",
-      via_oauth: true
-    )
+    ga_client.events.create(:users, :create, el: "via_oauth")
 
     bypass_sign_in(@user)
 

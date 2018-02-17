@@ -102,7 +102,7 @@ GEM
     by_star (3.0.0)
       activesupport (> 3)
     byebug (10.0.0)
-    capybara (2.17.0)
+    capybara (2.18.0)
       addressable
       mini_mime (>= 0.1.3)
       nokogiri (>= 1.3.3)
@@ -182,7 +182,7 @@ GEM
       thread_safe
     email_validator (1.6.0)
       activemodel
-    enumerize (2.1.2)
+    enumerize (2.2.1)
       activesupport (>= 3.2)
     equalizer (0.0.11)
     erubi (1.7.0)
@@ -212,7 +212,7 @@ GEM
       request_store (>= 1.0)
     graphiql-rails (1.4.8)
       rails
-    graphql (1.7.9)
+    graphql (1.7.12)
     graphql-batch (0.3.9)
       graphql (>= 0.8, < 2)
       promise.rb (~> 0.7.2)
@@ -236,9 +236,9 @@ GEM
     http-form_data (2.0.0)
     http_accept_language (2.1.1)
     http_parser.rb (0.6.0)
-    httparty (0.15.7)
+    httparty (0.16.0)
       multi_xml (>= 0.5.2)
-    i18n (0.9.3)
+    i18n (0.9.5)
       concurrent-ruby (~> 1.0)
     i18n-tasks (0.9.20)
       activesupport (>= 4.0.2)
@@ -274,9 +274,6 @@ GEM
       activerecord
       kaminari-core (= 1.1.1)
     kaminari-core (1.1.1)
-    keen (1.1.1)
-      addressable (~> 2.5)
-      multi_json (~> 1.12)
     koala (3.0.0)
       addressable
       faraday
@@ -298,7 +295,7 @@ GEM
       activesupport (>= 4)
       railties (>= 4)
       request_store (~> 1.0)
-    loofah (2.1.1)
+    loofah (2.2.0)
       crass (~> 1.0.2)
       nokogiri (>= 1.5.9)
     mail (2.7.0)
@@ -390,7 +387,7 @@ GEM
       coolline (~> 0.5)
     pry-rails (0.3.6)
       pry (>= 0.10.4)
-    public_suffix (3.0.1)
+    public_suffix (3.0.2)
     puma (3.11.2)
     puma_worker_killer (0.1.0)
       get_process_mem (~> 0.2)
@@ -421,9 +418,9 @@ GEM
       nokogiri (>= 1.6)
     rails-html-sanitizer (1.0.3)
       loofah (~> 2.0)
-    rails-i18n (5.0.4)
-      i18n (~> 0.7)
-      railties (~> 5.0)
+    rails-i18n (5.1.0)
+      i18n (>= 0.7, < 2)
+      railties (>= 5.0, < 6)
     rails_autolink (1.1.6)
       rails (> 3.1)
     railties (5.1.4)
@@ -530,7 +527,7 @@ GEM
     tilt (2.0.8)
     timecop (0.9.1)
     tins (1.16.3)
-    traceroute (0.5.0)
+    traceroute (0.6.1)
       rails (>= 3.0.0)
     twitter (6.2.0)
       addressable (~> 2.3)
@@ -561,7 +558,7 @@ GEM
       equalizer (~> 0.0, >= 0.0.9)
     warden (1.2.7)
       rack (>= 1.0)
-    webpacker (3.2.1)
+    webpacker (3.2.2)
       activesupport (>= 4.2)
       rack-proxy (>= 0.6.1)
       railties (>= 4.2)
@@ -629,7 +626,6 @@ DEPENDENCIES
   impressionist
   jb
   kaminari
-  keen
   koala
   letter_opener_web
   listen
@@ -687,4 +683,4 @@ RUBY VERSION
    ruby 2.5.0p0
 
 BUNDLED WITH
-   1.16.0
+   1.16.1

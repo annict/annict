@@ -18,7 +18,7 @@ module Annict
       # https://developers.google.com/analytics/devguides/collection/protocol/v1/devguide#event
       # ec: Event Category. Required.
       # ea: Event Action. Required.
-      # el: Event label.
+      # el: Event label. Recommended.
       # ev: Event value.
       # ds: Data source.
       def create(ec, ea, el: "", ev: "", ds: :web)

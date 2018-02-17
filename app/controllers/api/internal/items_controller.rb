@@ -8,14 +8,7 @@ module Api
       def create(resource_type, resource_id, asin, page_category)
         CreateItemJob.perform_later(current_user.id, resource_type, resource_id, asin)
         ga_client.page_category = page_category
-        ga_client.events.create(:items, :create)
-        keen_client.publish(
-          "create_items",
-          user: current_user,
-          page_category: page_category,
-          via: "internal_api",
-          resource_type: resource_type
-        )
+        ga_client.events.create(:items, :create, el: resource_type, ev: resource_id, ds: "internal_api")
         head 201
       end
     end

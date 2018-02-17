@@ -1,6 +1,4 @@
-import Vue from 'vue';
-
-import analytics from '../analytics';
+import analytics from '../analytics'
 
 export default function(event) {
   return {
@@ -9,57 +7,57 @@ export default function(event) {
     props: {
       trackingId: {
         type: String,
-        required: true
+        required: true,
       },
       clientId: {
         type: String,
-        required: true
+        required: true,
       },
       userId: {
         type: String,
-        required: true
+        required: true,
       },
       dimension1: {
         type: String,
-        required: true
+        required: true,
       },
       dimension2: {
         type: String,
-        required: true
-      }
+        required: true,
+      },
     },
 
     methods: {
       create() {
         const options = {
           storage: 'none',
-          clientId: this.clientId
-        };
+          clientId: this.clientId,
+        }
 
         if (this.userId) {
-          options['userId'] = this.userId;
+          options['userId'] = this.userId
         }
 
         if (typeof ga === 'function') {
-          return ga('create', this.trackingId, options);
+          return ga('create', this.trackingId, options)
         }
       },
 
       send() {
         if (typeof ga === 'function') {
-          ga('set', 'location', event.data.url);
+          ga('set', 'location', event.data.url)
           return ga('send', 'pageview', {
             dimension1: this.dimension1,
-            dimension2: this.dimension2
-          });
+            dimension2: this.dimension2,
+          })
         }
-      }
+      },
     },
 
     mounted() {
-      analytics.load();
-      this.create();
-      return this.send();
-    }
-  };
+      analytics.load()
+      this.create()
+      return this.send()
+    },
+  }
 }
