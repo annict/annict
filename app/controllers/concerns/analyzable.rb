@@ -10,10 +10,6 @@ module Analyzable
       @ga_client ||= Annict::Analytics::Client.new(request, current_user)
     end
 
-    def keen_client
-      @keen_client ||= Annict::Keen::Client.new(request)
-    end
-
     def store_client_uuid
       return if cookies[:ann_client_uuid].present?
 

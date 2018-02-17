@@ -274,9 +274,6 @@ GEM
       activerecord
       kaminari-core (= 1.1.1)
     kaminari-core (1.1.1)
-    keen (1.1.1)
-      addressable (~> 2.5)
-      multi_json (~> 1.12)
     koala (3.0.0)
       addressable
       faraday
@@ -629,7 +626,6 @@ DEPENDENCIES
   impressionist
   jb
   kaminari
-  keen
   koala
   letter_opener_web
   listen
@@ -687,4 +683,4 @@ RUBY VERSION
    ruby 2.5.0p0
 
 BUNDLED WITH
-   1.16.0
+   1.16.1

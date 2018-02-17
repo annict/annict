@@ -20,12 +20,6 @@ module Oauth
       if @application.save
         ga_client.page_category = params[:page_category]
         ga_client.events.create(:oauth_applications, :create)
-        keen_client.publish(
-          "create_oauth_applications",
-          user: current_user,
-          page_category: params[:page_category],
-          via: "web"
-        )
         flash[:notice] = t "messages.oauth.applications.created"
         redirect_to oauth_application_url(@application)
       else

@@ -26,13 +26,6 @@ module Api
         current_user.follow(@user)
         ga_client.page_category = page_category
         ga_client.events.create(:follows, :create)
-        keen_client.publish(
-          "create_follows",
-          user: current_user,
-          page_category: page_category,
-          via: "internal_api",
-          followed_user: @user
-        )
         EmailNotificationService.send_email("followed_user", @user, current_user.id)
         head 201
       end

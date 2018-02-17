@@ -1485,7 +1485,7 @@ commondir@^1.0.1:
   version "1.0.1"
   resolved "https://registry.yarnpkg.com/commondir/-/commondir-1.0.1.tgz#ddd800da0c66127393cca5950ea968a3aaf1253b"
 
-component-emitter@^1.2.0, component-emitter@^1.2.1:
+component-emitter@^1.2.1:
   version "1.2.1"
   resolved "https://registry.yarnpkg.com/component-emitter/-/component-emitter-1.2.1.tgz#137918d6d78283f7df7a6b7c5a63e140e69425e6"
 
@@ -3987,10 +3987,6 @@ js-beautify@^1.6.8:
     mkdirp "~0.5.0"
     nopt "~3.0.1"
 
-js-cookie@2.1.0:
-  version "2.1.0"
-  resolved "https://registry.yarnpkg.com/js-cookie/-/js-cookie-2.1.0.tgz#479c20d0a0bb6cab81491f917788cd025d6452f0"
-
 js-cookie@2.2.0:
   version "2.2.0"
   resolved "https://registry.yarnpkg.com/js-cookie/-/js-cookie-2.2.0.tgz#1b2c279a6eece380a12168b92485265b35b1effb"
@@ -4104,20 +4100,6 @@ juice@^4.0.2:
     mensch "^0.3.3"
     slick "1.12.2"
     web-resource-inliner "^4.1.0"
-
-keen-core@^0.1.3:
-  version "0.1.3"
-  resolved "https://registry.yarnpkg.com/keen-core/-/keen-core-0.1.3.tgz#b78cccad3cd62ef2e35196984d9b370bec6b1ce2"
-  dependencies:
-    component-emitter "^1.2.0"
-
-keen-tracking@^1.4.0:
-  version "1.4.0"
-  resolved "https://registry.yarnpkg.com/keen-tracking/-/keen-tracking-1.4.0.tgz#7951cc2da2ea68c4aa8c04a4bb3c411d0c03cf99"
-  dependencies:
-    component-emitter "^1.2.0"
-    js-cookie "2.1.0"
-    keen-core "^0.1.3"
 
 killable@^1.0.0:
   version "1.0.0"

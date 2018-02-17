@@ -33,10 +33,6 @@ module Gonable
       facebook: {
         appId: ENV.fetch("FACEBOOK_APP_ID")
       },
-      keen: {
-        projectId: ENV.fetch("KEEN_PROJECT_ID"),
-        writeKey: ENV.fetch("KEEN_WRITE_KEY")
-      },
       rails: {
         env: Rails.env
       },
