@@ -52,9 +52,7 @@ export default {
       }, 6000)
     })
 
-    eventHub.$on('app:loaded', () => {
-      const appData = this.$parent.appData
-
+    eventHub.$on('app:loaded', ({ appData }) => {
       if (!appData.flash || !appData.flash.type) {
         return
       }

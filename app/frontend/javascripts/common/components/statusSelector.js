@@ -87,12 +87,13 @@ export default {
   mounted() {
     this.isLoading = true
 
-    eventHub.$on('app:loaded', () => {
-      this.appData = this.$parent.appData
-      this.pageData = this.$parent.pageData
+    eventHub.$on('app:loaded', ({ appData, pageData }) => {
+      this.appData = appData
+      this.pageData = pageData
 
       if (!this.appData.isUserSignedIn) {
         this.statusKind = this.prevStatusKind = NO_SELECT
+        this.isLoading = false
         return
       }
 

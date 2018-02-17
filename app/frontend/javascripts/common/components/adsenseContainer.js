@@ -42,8 +42,8 @@ export default {
   },
 
   mounted() {
-    eventHub.$on('app:loaded', () => {
-      this.appData = this.$parent.appData
+    eventHub.$on('app:loaded', ({ appData }) => {
+      this.appData = appData
       this.appLoaded = true
     })
   },

@@ -59,9 +59,9 @@ export default {
   },
 
   mounted() {
-    eventHub.$on('app:loaded', () => {
-      this.appData = this.$parent.appData
-      this.pageData = this.$parent.pageData
+    eventHub.$on('app:loaded', ({ appData, pageData }) => {
+      this.appData = appData
+      this.pageData = pageData
 
       if (!this.appData.isUserSignedIn) {
         return
