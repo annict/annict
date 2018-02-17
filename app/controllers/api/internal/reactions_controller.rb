@@ -24,7 +24,7 @@ module Api
         resource = resource_type.constantize.find(resource_id)
         current_user.add_reaction!(resource, kind.to_sym)
         ga_client.page_category = page_category
-        ga_client.events.create(:reactions, :create)
+        ga_client.events.create(:reactions, :create, el: recipient_type, ev: kind, ds: "internal_api")
 
         head 201
       end

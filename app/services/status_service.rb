@@ -16,8 +16,7 @@ class StatusService
 
       if @status.save!
         UserWatchedWorksCountJob.perform_later(@user)
-        data_source = @app.present? ? :api : :web
-        @ga_client.events.create(:statuses, :create, ds: data_source)
+        create_ga_event
       end
     elsif @kind == "no_select"
       latest_status = @user.latest_statuses.find_by(work: @work)
@@ -26,5 +25,12 @@ class StatusService
         UserWatchedWorksCountJob.perform_later(@user)
       end
     end
+  end
+
+  private
+
+  def create_ga_event
+    return if @ga_client.blank?
+    @ga_client.events.create(:statuses, :create, ds: @via)
   end
 end

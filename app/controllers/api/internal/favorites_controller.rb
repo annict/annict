@@ -24,7 +24,7 @@ module Api
         resource = resource_type.constantize.find(resource_id)
         current_user.favorite(resource)
         ga_client.page_category = page_category
-        ga_client.events.create(:favorites, :create)
+        ga_client.events.create(:favorites, :create, el: resource_type, ev: resource_id, ds: "internal_api")
         head 200
       end
 

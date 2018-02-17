@@ -8,7 +8,7 @@ module Api
       def close(slug, page_category)
         UserTipsService.new(current_user).finish!(slug)
         ga_client.page_category = page_category
-        ga_client.events.create(:tips, :close, ev: slug)
+        ga_client.events.create(:tips, :close, el: slug, ds: "internal_api")
         head 200
       end
     end

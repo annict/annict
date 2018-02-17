@@ -17,7 +17,7 @@ class RegistrationsController < Devise::RegistrationsController
     ActiveRecord::Base.transaction do
       @new_user.save!
       ga_client.user = @new_user
-      ga_client.events.create(:users, :create)
+      ga_client.events.create(:users, :create, el: "via_web")
     end
 
     bypass_sign_in(@new_user)

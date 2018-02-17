@@ -46,8 +46,8 @@ class NewRecordService
 
   def create_ga_event
     return if @ga_client.blank?
-    data_source = @app.present? ? :api : :web
-    @ga_client.events.create(:records, :create, ds: data_source)
+    el = @record.episode.present? ? "Episode" : "Work"
+    @ga_client.events.create(:records, :create, el: el, ds: @via)
   end
 
   def update_record_comments_count

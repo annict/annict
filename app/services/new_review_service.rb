@@ -33,7 +33,6 @@ class NewReviewService
 
   def create_ga_event
     return if @ga_client.blank?
-    data_source = @app.present? ? :api : :web
-    @ga_client.events.create(:reviews, :create, ds: data_source)
+    @ga_client.events.create(:reviews, :create, ds: @via)
   end
 end

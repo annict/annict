@@ -24,7 +24,7 @@ module Api
         recipient = recipient_type.constantize.find(recipient_id)
         current_user.like(recipient)
         ga_client.page_category = page_category
-        ga_client.events.create(:likes, :create)
+        ga_client.events.create(:likes, :create, el: recipient_type, ev: recipient_id, ds: "internal_api")
 
         if recipient_type == "Checkin"
           EmailNotificationService.send_email(
