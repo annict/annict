@@ -4,7 +4,7 @@ FastlyRails.configure do |c|
   # Fastly api key, required
   c.api_key = ENV.fetch("FASTLY_API_KEY")
   # time in seconds, optional, defaults to 2592000 (30 days)
-  c.max_age = 86_400
+  c.max_age = 2_592_000
   # time in seconds, optional, defaults to nil
   c.stale_while_revalidate = 86_400
   # time in seconds, optional, defaults to nil
