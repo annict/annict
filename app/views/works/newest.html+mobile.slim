@@ -14,7 +14,7 @@ h1.h2.text-center.my-3
       c-share-button-twitter.mr-2 text="#{title}" url="#{local_url}#{newest_works_path}"
       c-share-button-facebook url="#{local_url}#{newest_works_path}"
     .col.text-right
-      = render "display_option_buttons", switch_path: :newest_works_path, display_option: @display_option
+      = render "display_option_buttons", display_option: @display_option
 
 = render "works/display_options/#{@display_option}", works: @works
 - if @works.present? && @works.total_pages > 1

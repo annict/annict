@@ -38,7 +38,7 @@
             = @next_season.local_name
             = icon "angle-right", class: "ml-2"
       .col.text-right
-        = render "display_option_buttons", redirect_path: request.path, display_option: @display_option
+        = render "display_option_buttons", display_option: @display_option
 
   - if @display_option == "list_detailed"
     .container

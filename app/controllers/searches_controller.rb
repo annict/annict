@@ -16,10 +16,7 @@ class SearchesController < ApplicationController
 
     return unless user_signed_in?
 
-    gon.workListData = render_jb "works/_list",
-      user: current_user,
-      works: @works,
-      with_friends: true
+    store_page_params(works: @works)
   end
 
   private

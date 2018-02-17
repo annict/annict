@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
 module PageData
-  class WorksSeasonService < PageData::WorkListService
+  class WorksNewestService < PageData::WorkListService
   end
 end
