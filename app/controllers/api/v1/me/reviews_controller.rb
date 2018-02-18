@@ -78,8 +78,7 @@ module Api
           errors = review.errors.full_messages.map do |message|
             {
               type: "invalid_params",
-              message: message,
-              url: "http://example.com/docs/api/validations"
+              message: message
             }
           end
 

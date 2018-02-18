@@ -4,7 +4,7 @@ Mutations::UpdateReview = GraphQL::Relay::Mutation.define do
   name "UpdateReview"
 
   input_field :reviewId, !types.ID
-  input_field :title, !types.String
+  input_field :title, types.String
   input_field :body, !types.String
   Review::STATES.each do |state|
     input_field state.to_s.camelcase(:lower).to_sym, !EnumTypes::RatingState
