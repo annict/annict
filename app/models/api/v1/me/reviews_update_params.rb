@@ -23,8 +23,6 @@ module Api
             only_integer: true,
             greater_than_or_equal_to: 1
           }
-        validates :title,
-          presence: true
         validates :body,
           presence: true
         validates :share_twitter,
