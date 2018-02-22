@@ -24,7 +24,7 @@ namespace :seed do
   end
 
   task generate_channels_csv: :environment do
-    attrs = %w(id channel_group_id sc_chid name published)
+    attrs = %w(id channel_group_id sc_chid name aasm_state)
 
     CSV.open("#{Dir.pwd}/db/data/csv/channels.csv", "wb") do |csv|
       csv << attrs
