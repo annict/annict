@@ -1,5 +1,3 @@
-const Vue = require('vue')
-
 import eventHub from '../../common/eventHub'
 
 export default {
