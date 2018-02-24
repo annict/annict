@@ -41,6 +41,7 @@ module Db
 
       return render(:new) unless @work.valid?
       @work.save_and_create_activity!
+      FastlyRails.purge_by_key("works_newest")
 
       redirect_to edit_db_work_path(@work), notice: t("resources.work.created")
     end
@@ -57,6 +58,7 @@ module Db
 
       return render(:edit) unless @work.valid?
       @work.save_and_create_activity!
+      @work.purge
 
       redirect_to edit_db_work_path(@work), notice: t("resources.work.updated")
     end
@@ -65,6 +67,7 @@ module Db
       authorize @work, :hide?
 
       @work.hide!
+      @work.purge
 
       flash[:notice] = t("resources.work.unpublished")
       redirect_back fallback_location: db_works_path
@@ -74,6 +77,7 @@ module Db
       authorize @work, :destroy?
 
       @work.destroy
+      @work.purge
 
       flash[:notice] = t("resources.work.deleted")
       redirect_back fallback_location: db_works_path

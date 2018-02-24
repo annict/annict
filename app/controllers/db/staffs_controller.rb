@@ -28,6 +28,7 @@ module Db
 
       return render(:new) unless @form.valid?
       @form.save!
+      @work.purge
 
       redirect_to db_work_staffs_path(@work), notice: t("resources.staff.created")
     end
@@ -46,6 +47,7 @@ module Db
 
       return render(:edit) unless @staff.valid?
       @staff.save_and_create_activity!
+      @work.purge
 
       redirect_to db_work_staffs_path(@work), notice: t("resources.staff.updated")
     end
@@ -54,6 +56,7 @@ module Db
       authorize @staff, :hide?
 
       @staff.hide!
+      @staff.work.purge
 
       flash[:notice] = t("resources.staff.unpublished")
       redirect_back fallback_location: db_works_path
@@ -63,6 +66,7 @@ module Db
       authorize @staff, :destroy?
 
       @staff.destroy
+      @staff.work.purge
 
       flash[:notice] = t("resources.staff.deleted")
       redirect_back fallback_location: db_works_path

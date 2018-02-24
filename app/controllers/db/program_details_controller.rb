@@ -25,6 +25,7 @@ module Db
 
       return render(:new) unless @form.valid?
       @form.save!
+      @work.purge
 
       flash[:notice] = t("messages._common.created")
       redirect_to db_work_program_details_path(@work)
@@ -44,6 +45,7 @@ module Db
 
       return render(:edit) unless @program_detail.valid?
       @program_detail.save_and_create_activity!
+      @work.purge
 
       flash[:notice] = t("messages._common.updated")
       redirect_to db_work_program_details_path(@work)
@@ -53,6 +55,7 @@ module Db
       authorize @program_detail, :hide?
 
       @program_detail.hide!
+      @program_detail.work.purge
 
       flash[:notice] = t("resources.program_detail.unpublished")
       redirect_back fallback_location: db_works_path
@@ -62,6 +65,7 @@ module Db
       authorize @program_detail, :destroy?
 
       @program_detail.destroy
+      @program_detail.work.purge
 
       flash[:notice] = t("resources.program_detail.deleted")
       redirect_back fallback_location: db_works_path
