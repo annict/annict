@@ -130,7 +130,7 @@ document.addEventListener('turbolinks:load', event => {
             eventHub.$emit('app:loaded', { appData, pageData })
           })
         } else {
-          eventHub.$emit('app:loaded', { appData, pageData: null })
+          eventHub.$emit('app:loaded', { appData, pageData: {} })
         }
       })
     },

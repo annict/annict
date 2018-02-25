@@ -101,7 +101,7 @@ export default {
         this.prevStatusKind = this.initStatusKind
         this.statusKind = this.initStatusKind
       } else {
-        this.statuses = this.pageData.statuses
+        this.statuses = this.pageData.statuses || []
         this.prevStatusKind = this.currentStatusKind()
         this.statusKind = this.currentStatusKind()
       }
