@@ -33,7 +33,7 @@ h1.h2.text-center.my-3
       c-share-button-twitter.mr-2 text="#{title}" url="#{local_url}#{season_works_path(slug: @season.slug)}"
       c-share-button-facebook url="#{local_url}#{season_works_path(slug: @season.slug)}"
     .col.text-right
-      = render "display_option_buttons", switch_path: :season_works_path, display_option: @display_option
+      = render "display_option_buttons", display_option: @display_option
 
 = render "works/display_options/#{@display_option}", works: @works
 - if @works.present? && @works.total_pages > 1
@@ -46,7 +46,7 @@ h1.h2.text-center.my-3
 
 = render "application/components/breadcrumb"
 = render "application/components/footer"
-= render "application/components/tabbar"
+c-tabbar
 
 - content_for :js_templates do
   = render "application/js_templates/omitted_synopsis"

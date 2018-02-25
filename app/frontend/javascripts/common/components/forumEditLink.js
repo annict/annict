@@ -23,13 +23,13 @@ export default {
 
   methods: {
     isEditable: function() {
-      return this.userId === (this.appData.currentUser && this.appData.currentUser.id)
+      return this.userId === (this.appData.current_user && this.appData.current_user.id)
     },
   },
 
   mounted() {
-    eventHub.$on('app:loaded', () => {
-      this.appData = this.$parent.appData
+    eventHub.$on('app:loaded', ({ appData }) => {
+      this.appData = appData
       this.appLoaded = true
     })
   },

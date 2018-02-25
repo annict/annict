@@ -1,0 +1,8 @@
+# frozen_string_literal: true
+
+json = {
+  statuses: results[:statuses],
+  users_data: results[:users_data]
+}
+
+json

@@ -56,6 +56,8 @@ import workFriends from './common/components/workFriends'
 import workTags from './common/components/workTags'
 import youtubeModalPlayer from './common/components/youtubeModalPlayer'
 
+import tabbar from './mobile/components/tabbar'
+
 import resourceSelect from './common/directives/resourceSelect'
 
 document.addEventListener('turbolinks:load', event => {
@@ -106,6 +108,7 @@ document.addEventListener('turbolinks:load', event => {
   Vue.component('c-share-button-facebook', shareButtonFacebook)
   Vue.component('c-share-button-twitter', shareButtonTwitter)
   Vue.component('c-status-selector', statusSelector)
+  Vue.component('c-tabbar', tabbar)
   Vue.component('c-time-ago', timeAgo)
   Vue.component('c-tips', tips)
   Vue.component('c-untracked-episode-list', untrackedEpisodeList)
@@ -123,25 +126,15 @@ document.addEventListener('turbolinks:load', event => {
   new Vue({
     el: '.p-application',
 
-    data: {
-      appData: {},
-    },
-
-    created() {
-      const self = this
-
+    created: () => {
       app.loadAppData().done(appData => {
-        self.appData = appData
-
-        if (self.appData.isUserSignedIn && app.loadPageData()) {
+        if (appData.isUserSignedIn && app.existsPageParams()) {
           app.loadPageData().done(pageData => {
-            this.pageData = pageData
-            eventHub.$emit('app:loaded')
-            return
+            eventHub.$emit('app:loaded', { appData, pageData })
           })
+        } else {
+          eventHub.$emit('app:loaded', { appData, pageData: {} })
         }
-
-        eventHub.$emit('app:loaded')
       })
     },
   })

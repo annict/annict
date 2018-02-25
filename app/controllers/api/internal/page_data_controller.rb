@@ -9,7 +9,7 @@ module Api
         @page_category = page_category
         @page_params = JSON.parse(page_params)
         service_name = "PageData::#{@page_category.classify}Service"
-        @results = service_name.safe_constantize.exec(@page_params)
+        @results = service_name.safe_constantize.exec(current_user, @page_params)
 
         render page_category
       end

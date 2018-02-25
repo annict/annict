@@ -37,13 +37,13 @@ export default {
     },
 
     isDisplayable: function() {
-      return !this.appData.isUserSignedIn || (this.appData.currentUser && !this.appData.currentUser.isSupporter)
+      return !this.appData.isUserSignedIn || (this.appData.current_user && !this.appData.current_user.is_supporter)
     },
   },
 
   mounted() {
-    eventHub.$on('app:loaded', () => {
-      this.appData = this.$parent.appData
+    eventHub.$on('app:loaded', ({ appData }) => {
+      this.appData = appData
       this.appLoaded = true
     })
   },

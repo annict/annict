@@ -1,61 +1,73 @@
-import _ from 'lodash';
+import _ from 'lodash'
 
-import eventHub from '../eventHub';
+import eventHub from '../eventHub'
 
-const DISPLAY_USERS_LIMIT = 12;
+const DISPLAY_USERS_LIMIT = 12
 
 export default {
   template: '#t-work-friends',
 
   data() {
     return {
-      isSignedIn: window.gon.user.isSignedIn,
+      appData: {},
+      pageData: {},
       showAll: false,
-      works: [],
-      workListData: window.gon.workListData ? JSON.parse(window.gon.workListData) : {}
-    };
+      usersData: [],
+    }
   },
 
   props: {
     workId: {
       type: Number,
-      required: true
-    }
+      required: true,
+    },
   },
 
   computed: {
     allUsers() {
-      if (!this.works.length) {
-        return [];
+      if (!this.usersData || !this.usersData.length) {
+        return []
       }
-      const data = _.find(this.works, work => {
-        return work.id === this.workId;
-      });
-      return data.users;
+
+      const data = this.usersData.filter(ud => {
+        return ud.work_id === this.workId
+      })[0]
+
+      if (!data) {
+        return []
+      }
+
+      return data.users
     },
 
     users() {
       if (this.showAll) {
-        return this.allUsers;
+        return this.allUsers
       }
-      return _.take(this.allUsers, DISPLAY_USERS_LIMIT);
+      return _.take(this.allUsers, DISPLAY_USERS_LIMIT)
     },
 
     isMoreUsers() {
-      return !this.showAll && this.allUsers.length > DISPLAY_USERS_LIMIT;
-    }
+      return !this.showAll && this.allUsers.length > DISPLAY_USERS_LIMIT
+    },
   },
 
   methods: {
     more() {
-      return (this.showAll = true);
-    }
+      return (this.showAll = true)
+    },
   },
 
   mounted() {
-    if (!this.isSignedIn) {
-      return;
-    }
-    return (this.works = this.workListData.works);
-  }
-};
+    eventHub.$on('app:loaded', ({ appData, pageData }) => {
+      this.appData = appData
+      this.pageData = pageData
+
+      if (!this.appData.isUserSignedIn) {
+        return
+      }
+
+      this.usersData = this.pageData.users_data
+    })
+  },
+}

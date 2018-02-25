@@ -23,10 +23,7 @@ class ReviewsController < ApplicationController
 
     @works = Work.where(id: @reviews.pluck(:work_id))
 
-    gon.workListData = render_jb "works/_list",
-      user: current_user,
-      works: @works,
-      with_friends: true
+    store_page_params(works: @works)
   end
 
   def show
@@ -38,12 +35,12 @@ class ReviewsController < ApplicationController
       where.not(id: @review.id).
       includes(work: :work_image).
       order(id: :desc)
-    set_page_object
+    store_page_params(work: @work)
   end
 
   def new
     @review = @work.reviews.new
-    set_page_object
+    store_page_params(work: @work)
   end
 
   def create(review)
@@ -62,7 +59,7 @@ class ReviewsController < ApplicationController
       flash[:notice] = t("messages._common.post")
       redirect_to review_path(current_user.username, @review)
     rescue
-      set_page_object
+      store_page_params(work: @work)
       render :new
     end
   end
@@ -70,7 +67,7 @@ class ReviewsController < ApplicationController
   def edit(id)
     @review = current_user.reviews.published.find(id)
     authorize @review, :edit?
-    set_page_object
+    store_page_params(work: @work)
   end
 
   def update(id, review)
@@ -96,7 +93,7 @@ class ReviewsController < ApplicationController
       flash[:notice] = t("messages._common.updated")
       redirect_to review_path(@review.user.username, @review)
     rescue
-      set_page_object
+      store_page_params(work: @work)
       render :edit
     end
   end
@@ -119,14 +116,6 @@ class ReviewsController < ApplicationController
 
   def load_review
     @review = @user.reviews.published.find(params[:id])
-  end
-
-  def set_page_object
-    return unless user_signed_in?
-
-    gon.workListData = render_jb "works/_detail",
-      user: current_user,
-      work: @work
   end
 
   def setting_params

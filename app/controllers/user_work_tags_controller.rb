@@ -7,11 +7,6 @@ class UserWorkTagsController < ApplicationController
     @taggable = @user.work_taggables.find_by(work_tag: @tag)
     @works = Work.joins(:work_taggings).merge(WorkTagging.where(user: @user, work_tag: @tag))
 
-    return unless user_signed_in?
-
-    gon.workListData = render_jb "works/_list",
-      user: current_user,
-      works: @works,
-      with_friends: false
+    store_page_params(works: @works)
   end
 end

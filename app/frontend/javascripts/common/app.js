@@ -8,8 +8,12 @@ export default {
     })
   },
 
+  existsPageParams() {
+    return !!gon.page.params
+  },
+
   loadPageData() {
-    if (!gon.page.params) {
+    if (!this.existsPageParams()) {
       return
     }
 

@@ -62,6 +62,7 @@ import workTags from './common/components/workTags'
 import workWatchersChart from './common/components/workWatchersChart'
 import youtubeModalPlayer from './common/components/youtubeModalPlayer'
 
+import navbarLeftMenu from './pc/components/navbarLeftMenu'
 import navbarSubmenuDropdown from './pc/components/navbarSubmenuDropdown'
 import searchForm from './pc/components/searchForm'
 import imageAttachForm from './pc/components/imageAttachForm'
@@ -107,9 +108,10 @@ document.addEventListener('turbolinks:load', event => {
   Vue.component('c-impression-button-modal', impressionButtonModal)
   Vue.component('c-input-words-count', inputWordsCount)
   Vue.component('c-like-button', likeButton)
+  Vue.component('c-mute-user-button', muteUserButton)
+  Vue.component('c-navbar-left-menu', navbarLeftMenu)
   Vue.component('c-navbar-submenu-dropdown', navbarSubmenuDropdown)
   Vue.component('c-omitted-synopsis', omittedSynopsis)
-  Vue.component('c-mute-user-button', muteUserButton)
   Vue.component('c-program-list', programList)
   Vue.component('c-rating-label', ratingLabel)
   Vue.component('c-rating-state-label', ratingStateLabel)
@@ -144,25 +146,15 @@ document.addEventListener('turbolinks:load', event => {
   new Vue({
     el: '.p-application',
 
-    data: {
-      appData: {},
-    },
-
-    created() {
-      const self = this
-
+    created: () => {
       app.loadAppData().done(appData => {
-        self.appData = appData
-
-        if (self.appData.isUserSignedIn && app.loadPageData()) {
+        if (appData.isUserSignedIn && app.existsPageParams()) {
           app.loadPageData().done(pageData => {
-            this.pageData = pageData
-            eventHub.$emit('app:loaded')
-            return
+            eventHub.$emit('app:loaded', { appData, pageData })
           })
+        } else {
+          eventHub.$emit('app:loaded', { appData, pageData: {} })
         }
-
-        eventHub.$emit('app:loaded')
       })
     },
   })

@@ -1,5 +1,6 @@
 import $ from 'jquery'
-import _ from 'lodash'
+
+import eventHub from '../../common/eventHub'
 
 const NO_SELECT = 'no_select'
 
@@ -8,12 +9,12 @@ export default {
 
   data() {
     return {
+      appData: {},
+      pageData: {},
+      statuses: [],
       isLoading: false,
-      isSignedIn: window.gon.user.isSignedIn,
       statusKind: null,
       prevStatusKind: null,
-      works: [],
-      workListData: window.gon.workListData ? JSON.parse(window.gon.workListData) : {},
     }
   },
 
@@ -40,13 +41,19 @@ export default {
 
   methods: {
     currentStatusKind() {
-      if (!this.works.length) {
-        return 'no_select'
+      if (!this.statuses.length) {
+        return NO_SELECT
       }
-      const data = _.find(this.works, work => {
-        return work.id === this.workId
-      })
-      return data.statusSelector.currentStatusKind
+
+      const status = this.statuses.filter(status => {
+        return status.work_id === this.workId
+      })[0]
+
+      if (!status) {
+        return NO_SELECT
+      }
+
+      return status.kind
     },
 
     resetKind() {
@@ -54,7 +61,7 @@ export default {
     },
 
     change() {
-      if (!this.isSignedIn) {
+      if (!this.appData.isUserSignedIn) {
         $('.c-sign-up-modal').modal('show')
         this.resetKind()
         return
@@ -68,28 +75,38 @@ export default {
           url: `/api/internal/works/${this.workId}/statuses/select`,
           data: {
             status_kind: this.statusKind,
-            page_category: window.gon.page.category,
+            page_category: gon.page.category,
           },
         }).done(() => {
-          return (this.isLoading = false)
+          this.isLoading = false
         })
       }
     },
   },
 
   mounted() {
-    if (!this.isSignedIn) {
-      this.statusKind = this.prevStatusKind = NO_SELECT
-      return
-    }
+    this.isLoading = true
 
-    if (this.initStatusKind) {
-      this.prevStatusKind = this.initStatusKind
-      return (this.statusKind = this.initStatusKind)
-    } else {
-      this.works = this.workListData.works
-      this.prevStatusKind = this.currentStatusKind()
-      return (this.statusKind = this.currentStatusKind())
-    }
+    eventHub.$on('app:loaded', ({ appData, pageData }) => {
+      this.appData = appData
+      this.pageData = pageData
+
+      if (!this.appData.isUserSignedIn) {
+        this.statusKind = this.prevStatusKind = NO_SELECT
+        this.isLoading = false
+        return
+      }
+
+      if (this.initStatusKind) {
+        this.prevStatusKind = this.initStatusKind
+        this.statusKind = this.initStatusKind
+      } else {
+        this.statuses = this.pageData.statuses || []
+        this.prevStatusKind = this.currentStatusKind()
+        this.statusKind = this.currentStatusKind()
+      }
+
+      this.isLoading = false
+    })
   },
 }

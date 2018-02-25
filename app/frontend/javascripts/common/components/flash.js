@@ -1,6 +1,4 @@
-const Vue = require('vue');
-
-import eventHub from '../../common/eventHub';
+import eventHub from '../../common/eventHub'
 
 export default {
   template: '#t-flash',
@@ -8,66 +6,64 @@ export default {
   data() {
     return {
       type: gon.flash.type || '',
-      message: gon.flash.message || ''
-    };
+      message: gon.flash.message || '',
+    }
   },
 
   computed: {
     show() {
-      return !!this.message;
+      return !!this.message
     },
     alertClass() {
       switch (this.type) {
         case 'notice':
-          return 'alert-success';
+          return 'alert-success'
         case 'alert':
-          return 'alert-danger';
+          return 'alert-danger'
       }
     },
     alertIcon() {
       switch (this.type) {
         case 'notice':
-          return 'fa-check-circle';
+          return 'fa-check-circle'
         case 'alert':
-          return 'fa-exclamation-triangle';
+          return 'fa-exclamation-triangle'
       }
-    }
+    },
   },
 
   methods: {
     close() {
-      return (this.message = '');
-    }
+      return (this.message = '')
+    },
   },
 
   created() {
     eventHub.$on('flash:show', (message, type) => {
       if (type == null) {
-        type = 'notice';
+        type = 'notice'
       }
-      this.message = message;
-      this.type = type;
+      this.message = message
+      this.type = type
       return setTimeout(() => {
-        return this.close();
-      }, 6000);
-    });
+        return this.close()
+      }, 6000)
+    })
 
-    eventHub.$on('app:loaded', () => {
-      const appData = this.$parent.appData;
-
+    eventHub.$on('app:loaded', ({ appData }) => {
       if (!appData.flash || !appData.flash.type) {
-        return;
+        return
       }
 
-      eventHub.$emit('flash:show', appData.flash.message, appData.flash.type);
-    });
+      eventHub.$emit('flash:show', appData.flash.message, appData.flash.type)
+    })
   },
 
   mounted() {
     if (this.show) {
       return setTimeout(() => {
-        return this.close();
-      }, 6000);
+        return this.close()
+      }, 6000)
     }
-  }
-};
+  },
+}

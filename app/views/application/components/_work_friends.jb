@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-users.map do |user|
+@users.map do |user|
   {
     username: user.username,
     avatar_url: ann_image_url(user.profile, :tombo_avatar, size: "30x30")

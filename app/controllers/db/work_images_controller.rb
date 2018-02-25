@@ -18,6 +18,7 @@ module Db
       @image.user = current_user
 
       if @image.save
+        @work.purge
         flash[:notice] = t "messages.work_images.saved"
         redirect_to db_work_image_path(@work)
       else
@@ -32,6 +33,7 @@ module Db
       @image.user = current_user
 
       if @image.save
+        @work.purge
         flash[:notice] = t "messages.work_images.saved"
         redirect_to db_work_image_path(@work)
       else
@@ -42,6 +44,7 @@ module Db
     def destroy
       authorize @item, :destroy?
       @item.destroy
+      @work.purge
       redirect_to db_work_image_path(@work), notice: t("messages.work_images.deleted")
     end
 

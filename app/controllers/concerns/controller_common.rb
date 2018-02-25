@@ -24,9 +24,7 @@ module ControllerCommon
       else
         request.headers["User-Agent"]
       end
-      logger.info "request.headers['User-Agent']: #{request.headers['User-Agent']}"
-      logger.info "request.headers['X-UA-Device']: #{request.headers['X-UA-Device']}"
-      logger.info "request.headers['X-Visitor-Type']: #{request.headers['X-Visitor-Type']}"
+
       @browser ||= Browser.new(ua, accept_language: request.headers["Accept-Language"])
     end
 
