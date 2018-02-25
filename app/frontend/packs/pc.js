@@ -1,5 +1,3 @@
-import 'babel-polyfill'
-
 import '../javascripts/pc'
 import '../stylesheets/pc'
 import '../stylesheets/db'
