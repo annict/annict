@@ -1,44 +1,13 @@
 - transparent = local_assigns.fetch(:transparent, false)
-- is_on_cover_image = local_assigns.fetch(:is_on_cover_image, false)
 
 nav.c-navbar.navbar.navbar-expand-sm class="#{transparent ? 'navbar-dark is-transparent' : 'navbar-light'}"
   = link_to root_path, class: "navbar-brand" do
     = image_tag asset_pack_path("images/logos/color-#{transparent ? 'white' : 'mizuho'}.png"), size: "25x30", alt: "Annict"
   .collapse.navbar-collapse.align-items-center
-    ul.navbar-nav.navbar-nav--left.mr-auto.align-items-center
-      - if user_signed_in?
-        - if locale_ja?
-          li.nav-item
-            = link_to t("head.title.programs.index"), programs_path, class: "nav-link"
-        li.nav-item.dropdown
-          = link_to t("noun.watching"), library_path(current_user.username, :watching), class: "nav-link"
-          .dropdown-menu
-            = link_to t("noun.plan_to_watch"), library_path(current_user.username, :wanna_watch), class: "dropdown-item"
-            = link_to t("noun.completed"), library_path(current_user.username, :watched), class: "dropdown-item"
-            = link_to t("noun.on_hold"), library_path(current_user.username, :on_hold), class: "dropdown-item"
-            = link_to t("noun.dropped"), library_path(current_user.username, :stop_watching), class: "dropdown-item"
-        li.nav-item.dropdown
-          = link_to t("noun.current_season"), season_works_path(slug: ENV.fetch("ANNICT_CURRENT_SEASON")), class: "nav-link"
-          .dropdown-menu
-            = link_to t("noun.next_season"), season_works_path(slug: ENV.fetch("ANNICT_NEXT_SEASON")), class: "dropdown-item"
-            = link_to t("noun.previous_season"), season_works_path(slug: ENV.fetch("ANNICT_PREVIOUS_SEASON")), class: "dropdown-item"
-            = link_to t("noun.popular"), popular_works_path, class: "dropdown-item"
-            = link_to t("head.title.works.newest"), newest_works_path, class: "dropdown-item"
-            = link_to t("noun.search"), search_path, class: "dropdown-item"
-      - else
-        li.nav-item.dropdown
-          = link_to t("noun.current_season"), season_works_path(slug: ENV.fetch("ANNICT_CURRENT_SEASON")), class: "nav-link"
-          .dropdown-menu
-            = link_to t("noun.next_season"), season_works_path(slug: ENV.fetch("ANNICT_NEXT_SEASON")), class: "dropdown-item"
-            = link_to t("noun.previous_season"), season_works_path(slug: ENV.fetch("ANNICT_PREVIOUS_SEASON")), class: "dropdown-item"
-            = link_to t("head.title.works.newest"), newest_works_url, class: "dropdown-item"
-            = link_to t("noun.search"), search_url, class: "dropdown-item"
-        li.nav-item
-          = link_to t("noun.popular"), popular_works_path, class: "nav-link"
-      li.nav-item.ml-3
-        c-search-form :init-q='"#{@search.q}"' :is-transparent="#{transparent}"
+    c-navbar-left-menu :is-transparent="#{transparent}"
     c-navbar-submenu-dropdown
 
 - content_for :js_templates
+  = render "application/js_templates/navbar_left_menu"
   = render "application/js_templates/navbar_submenu_dropdown"
   = render "application/js_templates/search_form"
