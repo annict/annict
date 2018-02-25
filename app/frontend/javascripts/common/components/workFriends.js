@@ -25,7 +25,7 @@ export default {
 
   computed: {
     allUsers() {
-      if (!this.usersData.length) {
+      if (!this.usersData || !this.usersData.length) {
         return []
       }
 
