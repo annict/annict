@@ -1,32 +1,32 @@
 export default {
-  template: "#t-adsence",
+  template: '#t-adsence',
 
   props: {
     adClient: {
       type: String,
-      required: true
+      required: true,
     },
     adSlot: {
       type: String,
-      required: true
+      required: true,
     },
     adSize: {
       type: String,
-      required: true
+      required: true,
     },
     adFormat: {
       type: String,
       required: false,
-      default: "auto"
+      default: 'auto',
     },
     adStyle: {
       type: String,
       required: false,
-      default: "display: block"
-    }
+      default: 'display: block',
+    },
   },
 
   mounted() {
-    return (window.adsbygoogle = window.adsbygoogle || []).push({});
-  }
-};
+    return (window.adsbygoogle = window.adsbygoogle || []).push({})
+  },
+}
