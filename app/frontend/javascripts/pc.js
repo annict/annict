@@ -69,6 +69,7 @@ import imageAttachForm from './pc/components/imageAttachForm'
 import imageAttachModal from './pc/components/imageAttachModal'
 
 import resourceSelect from './common/directives/resourceSelect'
+import prerender from './pc/directives/prerender'
 
 document.addEventListener('turbolinks:load', event => {
   moment.locale(gon.user.locale)
@@ -138,6 +139,7 @@ document.addEventListener('turbolinks:load', event => {
   Vue.component('c-youtube-modal-player', youtubeModalPlayer)
 
   Vue.directive('resource-select', resourceSelect)
+  Vue.directive('prerender', prerender)
 
   Vue.nextTick(() => {
     vueLazyLoad.refresh()

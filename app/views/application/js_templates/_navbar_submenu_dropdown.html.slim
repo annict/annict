@@ -20,7 +20,7 @@ script#t-navbar-submenu-dropdown type="x-template"
             = link_to t("head.title.channels.index"), channels_path, class: "dropdown-item"
           = link_to t("noun.settings"), profile_path, class: "dropdown-item"
           = link_to t("noun.annict_userland"), userland_root_path, class: "dropdown-item"
-          = link_to t("noun.annict_forum"), forum_root_path, class: "dropdown-item"
+          = link_to t("noun.annict_forum"), forum_root_path, class: "dropdown-item", "v-prerender": ""
           = link_to t("noun.annict_db"), db_root_path, class: "dropdown-item"
           template v-if='appData.current_user.locale === "ja"'
             = link_to t("noun.annict_api"), "https://docs.annict.com/ja/", target: "_blank", class: "dropdown-item"
