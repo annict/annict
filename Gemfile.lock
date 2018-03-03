@@ -210,7 +210,7 @@ GEM
       actionpack (>= 3.0)
       multi_json
       request_store (>= 1.0)
-    graphiql-rails (1.4.8)
+    graphiql-rails (1.4.9)
       rails
     graphql (1.7.13)
     graphql-batch (0.3.9)
