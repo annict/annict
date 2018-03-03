@@ -9,7 +9,7 @@ script#t-activities type="x-template"
         c-create-multiple-records-activity.u-underline :activity="activity"
       template v-else-if='activity.action === "create_status"'
         c-create-status-activity.u-underline :activity="activity"
-    template v-if="!isLoading && activities.length !== 0"
+    template v-if="activities.length !== 0"
       c-load-more-button.mx-3.mt-3 :handler="loadMore" :is-loading="isLoading" :has-next="hasNext"
     template v-if="!isLoading && activities.length === 0"
       .c-card.p-3.mt-3

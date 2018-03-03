@@ -46,7 +46,7 @@
         = render "application/components/adsense", slots: [ENV["GOOGLE_AD_728x90_4"]], size: "728x90"
     .row
       .col-7
-        c-activities username="#{@user.username}"
+        c-activities.pb-3 username="#{@user.username}"
       .col-5
         .text-center.mb-4
           c-share-button-twitter.mr-2 text="#{title}" url="#{local_url}#{user_path(@user.username)}"
