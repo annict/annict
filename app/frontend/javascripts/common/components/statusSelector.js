@@ -61,7 +61,7 @@ export default {
     },
 
     change() {
-      if (!this.appData.isUserSignedIn) {
+      if (!this.$root.appData.isUserSignedIn) {
         $('.c-sign-up-modal').modal('show')
         this.resetKind()
         return
@@ -70,7 +70,7 @@ export default {
       if (this.statusKind !== this.prevStatusKind) {
         this.isLoading = true
 
-        return $.ajax({
+        $.ajax({
           method: 'POST',
           url: `/api/internal/works/${this.workId}/statuses/select`,
           data: {
@@ -87,26 +87,27 @@ export default {
   mounted() {
     this.isLoading = true
 
-    eventHub.$on('app:loaded', ({ appData, pageData }) => {
-      this.appData = appData
-      this.pageData = pageData
+    if (this.initStatusKind) {
+      this.prevStatusKind = this.initStatusKind
+      this.statusKind = this.initStatusKind
+      this.isLoading = false
+      return
+    }
 
-      if (!this.appData.isUserSignedIn) {
+    eventHub.$on('app:loaded', () => {
+      if (!this.$root.appData.isUserSignedIn) {
         this.statusKind = this.prevStatusKind = NO_SELECT
         this.isLoading = false
         return
       }
 
-      if (this.initStatusKind) {
-        this.prevStatusKind = this.initStatusKind
-        this.statusKind = this.initStatusKind
-      } else {
-        this.statuses = this.pageData.statuses || []
+      this.statuses = this.$root.pageData.statuses || []
+
+      if (this.statuses.length) {
         this.prevStatusKind = this.currentStatusKind()
         this.statusKind = this.currentStatusKind()
+        this.isLoading = false
       }
-
-      this.isLoading = false
     })
   },
 }

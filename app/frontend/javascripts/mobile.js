@@ -126,15 +126,26 @@ document.addEventListener('turbolinks:load', event => {
   new Vue({
     el: '.p-application',
 
-    created: () => {
+    data() {
+      return {
+        appData: {},
+        pageData: {},
+      }
+    },
+
+    created() {
       app.loadAppData().done(appData => {
-        if (appData.isUserSignedIn && app.existsPageParams()) {
-          app.loadPageData().done(pageData => {
-            eventHub.$emit('app:loaded', { appData, pageData })
-          })
-        } else {
-          eventHub.$emit('app:loaded', { appData, pageData: {} })
+        this.appData = appData
+
+        if (!appData.isUserSignedIn || !app.existsPageParams()) {
+          eventHub.$emit('app:loaded')
+          return
         }
+
+        app.loadPageData().done(pageData => {
+          this.pageData = pageData
+          eventHub.$emit('app:loaded')
+        })
       })
     },
   })
