@@ -20,14 +20,14 @@ module PageData
     private
 
     def users_data
-      friends_data = Work.watching_friends_data(@work_ids, @current_user) if @display_option == "list_detailed"
+      return if @display_option != "list_detailed"
+
+      friends_data = Work.watching_friends_data(@work_ids, @current_user)
 
       @work_ids.map do |work_id|
         data = {
           work_id: work_id
         }
-
-        next if @display_option != "list_detailed"
 
         data[:users] = friends_data.
           select { |ud| ud[:work_id] == work_id }.
