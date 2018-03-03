@@ -1,17 +1,15 @@
 # frozen_string_literal: true
 
-["", "en.", "ja."].each do |subdomain|
+["", "jp."].each do |subdomain|
   SitemapGenerator::Sitemap.default_host = "https://#{subdomain}annict.com"
   SitemapGenerator::Sitemap.sitemaps_path = "sitemaps/#{subdomain.delete('.')}"
 
   adapter_options = {
-    fog_provider: "AWS",
     aws_access_key_id: ENV.fetch("S3_ACCESS_KEY_ID"),
     aws_secret_access_key: ENV.fetch("S3_SECRET_ACCESS_KEY"),
-    fog_directory: ENV.fetch("S3_BUCKET_NAME"),
-    fog_region: ENV.fetch("S3_REGION")
+    aws_region: ENV.fetch("S3_REGION")
   }
-  SitemapGenerator::Sitemap.adapter = SitemapGenerator::S3Adapter.new(adapter_options)
+  SitemapGenerator::Sitemap.adapter = SitemapGenerator::AwsSdkAdapter.new(ENV.fetch("S3_BUCKET_NAME"), adapter_options)
 
   SitemapGenerator::Sitemap.create do
     add about_path, priority: 0.7
