@@ -26,7 +26,7 @@
         add library_path(u.username, k), priority: 0.8
       end
 
-      u.records.find_each do |r|
+      u.records.published.with_comment.find_each do |r|
         add record_path(u.username, r), priority: 0.8
       end
 
