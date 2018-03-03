@@ -1,29 +1,27 @@
-import Vue from 'vue';
-
 export default {
   template: '#t-load-more-button',
 
   props: {
     handler: {
       type: Function,
-      required: true
+      required: true,
     },
     isLoading: {
       type: Boolean,
-      required: true
+      required: true,
     },
     hasNext: {
       type: Boolean,
-      required: true
-    }
+      required: true,
+    },
   },
 
   methods: {
     loadMore() {
       if (this.isLoading || !this.hasNext) {
-        return;
+        return
       }
-      return this.handler();
-    }
-  }
-};
+      return this.handler()
+    },
+  },
+}
