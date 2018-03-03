@@ -29,15 +29,12 @@ module PageData
 
         next if @display_option != "list_detailed"
 
-        users = friends_data.
+        data[:users] = friends_data.
           select { |ud| ud[:work_id] == work_id }.
           first[:users_data].
           sort_by { |ud| ud[:latest_status_id] }.
           reverse.
           map { |ud| ud[:user] }
-
-        template_path = "application/components/_work_friends.jb"
-        data[:users] = JSON.parse(ApplicationController.render(template_path, assigns: { users: users }))
 
         data
       end
