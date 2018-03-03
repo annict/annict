@@ -8,6 +8,6 @@
 
 @each $color-name, $color in $ann-btn-colors {
   .u-btn-outline-#{$color-name} {
-    @include button-variant($ann-color-white, $color);
+    @include button-outline-variant($color);
   }
 }
