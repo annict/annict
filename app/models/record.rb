@@ -29,10 +29,10 @@
 #
 # Indexes
 #
-#  records_episode_id_idx                (episode_id)
-#  records_facebook_url_hash_key         (facebook_url_hash) UNIQUE
-#  records_twitter_url_hash_key          (twitter_url_hash) UNIQUE
-#  records_user_id_idx                   (user_id)
+#  checkins_episode_id_idx                (episode_id)
+#  checkins_facebook_url_hash_key         (facebook_url_hash) UNIQUE
+#  checkins_twitter_url_hash_key          (twitter_url_hash) UNIQUE
+#  checkins_user_id_idx                   (user_id)
 #  index_records_on_locale                (locale)
 #  index_records_on_multiple_record_id    (multiple_record_id)
 #  index_records_on_oauth_application_id  (oauth_application_id)

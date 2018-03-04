@@ -15,7 +15,7 @@
 #
 # Indexes
 #
-#  comments_record_id_idx    (record_id)
+#  comments_checkin_id_idx    (record_id)
 #  comments_user_id_idx       (user_id)
 #  index_comments_on_locale   (locale)
 #  index_comments_on_work_id  (work_id)

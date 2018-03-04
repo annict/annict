@@ -18,7 +18,7 @@
 #  confirmed_at                  :datetime
 #  confirmation_sent_at          :datetime
 #  unconfirmed_email             :string(510)
-#  records_count                :integer          default(0), not null
+#  records_count                 :integer          default(0), not null
 #  notifications_count           :integer          default(0), not null
 #  created_at                    :datetime
 #  updated_at                    :datetime

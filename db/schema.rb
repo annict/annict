@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180304030937) do
+ActiveRecord::Schema.define(version: 20180304030717) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -1037,7 +1037,7 @@ ActiveRecord::Schema.define(version: 20180304030937) do
     t.datetime "confirmed_at"
     t.datetime "confirmation_sent_at"
     t.string "unconfirmed_email", limit: 510
-    t.integer "checkins_count", default: 0, null: false
+    t.integer "records_count", default: 0, null: false
     t.integer "notifications_count", default: 0, null: false
     t.datetime "created_at"
     t.datetime "updated_at"
