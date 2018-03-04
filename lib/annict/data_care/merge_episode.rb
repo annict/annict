@@ -34,10 +34,10 @@ module Annict
       def merge_records!
         episode.records.find_each do |c|
           attrs = c.attributes.except("id")
-          checkin = base_episode.records.create(attrs)
-          c.activities.update_all(trackable_id: checkin.id, recipient_id: base_episode_id)
-          c.likes.update_all(recipient_id: checkin.id)
-          c.comments.update_all(checkin_id: checkin.id)
+          record = base_episode.records.create(attrs)
+          c.activities.update_all(trackable_id: record.id, recipient_id: base_episode_id)
+          c.likes.update_all(recipient_id: record.id)
+          c.comments.update_all(record_id: record.id)
         end
       end
 

@@ -1,6 +1,6 @@
 en:
   enumerize:
-    checkin:
+    record:
       rating_state:
         average: Average
         bad: Bad

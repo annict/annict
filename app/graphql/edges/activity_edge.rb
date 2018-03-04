@@ -37,8 +37,8 @@ Edges::ActivityEdge = ObjectTypes::Activity.define_edge do
       case activity.trackable_type
       when "Status"
         RecordLoader.for(Status).load(activity.trackable_id)
-      when "Checkin"
-        RecordLoader.for(Checkin).load(activity.trackable_id)
+      when "Record"
+        RecordLoader.for(Record).load(activity.trackable_id)
       when "Review"
         RecordLoader.for(Review).load(activity.trackable_id)
       when "MultipleRecord"

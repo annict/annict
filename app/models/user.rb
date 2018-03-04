@@ -18,7 +18,7 @@
 #  confirmed_at                  :datetime
 #  confirmation_sent_at          :datetime
 #  unconfirmed_email             :string(510)
-#  checkins_count                :integer          default(0), not null
+#  records_count                 :integer          default(0), not null
 #  notifications_count           :integer          default(0), not null
 #  created_at                    :datetime
 #  updated_at                    :datetime
@@ -75,7 +75,7 @@ class User < ApplicationRecord
   belongs_to :gumroad_subscriber, optional: true
   has_many :activities, dependent: :destroy
   has_many :channel_works, dependent: :destroy
-  has_many :records, class_name: "Checkin", dependent: :destroy
+  has_many :records, dependent: :destroy
   has_many :db_activities, dependent: :destroy
   has_many :db_comments, dependent: :destroy
   has_many :favorite_characters, dependent: :destroy
@@ -158,10 +158,6 @@ class User < ApplicationRecord
     elsif conditions.key?(:email) || conditions.key?(:username)
       where(conditions.to_h).first
     end
-  end
-
-  def checking_works
-    @checking_works ||= CheckingWorks.new(read_attribute(:checking_works))
   end
 
   def works
@@ -249,14 +245,14 @@ class User < ApplicationRecord
     twitter.update_column(:token_expires_at, Time.now.to_i)
   end
 
-  def hide_checkin_comment?(episode)
-    setting.hide_checkin_comment? &&
+  def hide_record_comment?(episode)
+    setting.hide_record_comment? &&
       works.desiring_to_watch.include?(episode.work) &&
       !records.pluck(:episode_id).include?(episode.id)
   end
 
   def hide_review?(review)
-    setting.hide_checkin_comment? &&
+    setting.hide_record_comment? &&
       works.desiring_to_watch.include?(review.work) &&
       !reviews.pluck(:work_id).include?(review.work_id)
   end

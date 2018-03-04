@@ -1,7 +1,7 @@
 script#t-record-rating type="x-template"
   .c-record-rating
     .btn-group.btn-group-sm
-      - Checkin.rating_state.values.each do |state|
+      - Record.rating_state.values.each do |state|
         .btn :class=="[record.ratingState === '#{state}' ? 'u-btn-#{state}' : 'u-btn-outline-input-border']" @click=="changeState('#{state}')"
           = rating_state_icon state, class: "mr-1 #{browser.device.mobile? ? 'u-very-small' : ''}"
           span class="#{browser.device.mobile? ? 'u-very-small' : ''}" = state.text

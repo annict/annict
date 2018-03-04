@@ -41,7 +41,7 @@ en:
         weight: Weight
       character_image:
         attachment: Image
-      checkin:
+      record:
         comment: Comment
         rating: Rating
       comment:
@@ -57,7 +57,7 @@ en:
         event_next_season_came: Email when the next season will start
         event_favorite_works_added: Email when anime which is your favorites has been added
       episode:
-        checkins_count: Records count
+        records_count: Records count
         fetch_syobocal: Fetch Syobocal
         number: Number (ja)
         prev_episode_id: Previous Episode

@@ -15,12 +15,6 @@ AnnictSchema = GraphQL::Schema.define do
 
     return nil if type_name.blank? || item_id.blank?
 
-    type_name = case type_name
-    when "Record" then "Checkin"
-    else
-      type_name
-    end
-
     Object.const_get(type_name).find(item_id)
   }
 
@@ -28,7 +22,7 @@ AnnictSchema = GraphQL::Schema.define do
     case obj
     when Activity
       UnionTypes::Activity
-    when Checkin
+    when Record
       ObjectTypes::Record
     when Episode
       ObjectTypes::Episode

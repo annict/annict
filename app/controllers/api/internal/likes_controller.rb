@@ -26,7 +26,7 @@ module Api
         ga_client.page_category = page_category
         ga_client.events.create(:likes, :create, el: recipient_type, ev: recipient_id, ds: "internal_api")
 
-        if recipient_type == "Checkin"
+        if recipient_type == "Record"
           EmailNotificationService.send_email(
             "liked_record",
             recipient.user,

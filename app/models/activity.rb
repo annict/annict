@@ -43,7 +43,7 @@ class Activity < ApplicationRecord
   belongs_to :episode, optional: true
   belongs_to :multiple_record, optional: true
   belongs_to :recipient, polymorphic: true
-  belongs_to :record, class_name: "Checkin", optional: true
+  belongs_to :record, optional: true
   belongs_to :review, optional: true
   belongs_to :status, optional: true
   belongs_to :trackable, polymorphic: true

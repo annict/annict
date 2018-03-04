@@ -1,8 +1,7 @@
 # frozen_string_literal: true
 
 class RecordsController < ApplicationController
-  permits :episode_id, :comment, :shared_twitter, :shared_facebook, :rating_state,
-    model_name: "Checkin"
+  permits :episode_id, :comment, :shared_twitter, :shared_facebook, :rating_state
 
   before_action :authenticate_user!, only: %i(create edit update destroy switch)
   before_action :load_user, only: %i(create show edit update destroy)
@@ -13,13 +12,13 @@ class RecordsController < ApplicationController
     @episode = @record.episode
     @comments = @record.comments.order(created_at: :desc)
     @comment = Comment.new
-    @is_spoiler = user_signed_in? && current_user.hide_checkin_comment?(@episode)
+    @is_spoiler = user_signed_in? && current_user.hide_record_comment?(@episode)
   end
 
-  def create(checkin)
-    @episode = Episode.published.find(checkin[:episode_id])
+  def create(record)
+    @episode = Episode.published.find(record[:episode_id])
     @work = @episode.work
-    @record = @episode.records.new(checkin)
+    @record = @episode.records.new(record)
     ga_client.page_category = params[:page_category]
 
     service = NewRecordService.new(current_user, @record)
@@ -50,7 +49,7 @@ class RecordsController < ApplicationController
 
       store_page_params(work: @work)
 
-      @is_spoiler = current_user.hide_checkin_comment?(@episode)
+      @is_spoiler = current_user.hide_record_comment?(@episode)
 
       render "/episodes/show"
     end
@@ -61,14 +60,14 @@ class RecordsController < ApplicationController
     @work = @record.work
   end
 
-  def update(checkin)
+  def update(record)
     authorize @record, :update?
 
     @record.modify_comment = true
     @record.detect_locale!(:comment)
 
-    if @record.update_attributes(checkin)
-      @record.update_share_checkin_status
+    if @record.update_attributes(record)
+      @record.update_share_record_status
       @record.share_to_sns
       path = record_path(@user.username, @record)
       redirect_to path, notice: t("messages.records.updated")
@@ -96,6 +95,36 @@ class RecordsController < ApplicationController
     redirect_to work_episode_path(episode.work, episode)
   end
 
+  def redirect(provider, url_hash)
+    case provider
+    when "tw"
+      record = Record.published.find_by!(twitter_url_hash: url_hash)
+
+      log_messages = [
+        "Twitterからのアクセス ",
+        "remote_host: #{request.remote_host}, ",
+        "remote_ip: #{request.remote_ip}, ",
+        "remote_user: #{request.remote_user}"
+      ]
+      logger.info(log_messages.join)
+
+      bots = TwitterBot.pluck(:name)
+      no_bots = bots.map do |bot|
+        request.user_agent.present? && !request.user_agent.include?(bot)
+      end
+      record.increment!(:twitter_click_count) if no_bots.all?
+
+      redirect_to_user_record(record)
+    when "fb"
+      record = Record.published.find_by!(facebook_url_hash: url_hash)
+      record.increment!(:facebook_click_count)
+
+      redirect_to_user_record(record)
+    else
+      redirect_to root_path
+    end
+  end
+
   private
 
   def load_user
@@ -104,5 +133,11 @@ class RecordsController < ApplicationController
 
   def load_record
     @record = @user.records.find(params[:id])
+  end
+
+  def redirect_to_user_record(record)
+    username = record.user.username
+
+    redirect_to record_path(username, record)
   end
 end

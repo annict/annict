@@ -39,7 +39,7 @@
                 = record.facebook_click_count
           .col
             .text-right
-              c-like-button resource-name="Checkin" :init-resource-id="#{record.id}" :init-likes-count="#{record.likes_count}" :init-is-liked="#{user_signed_in? && current_user.like?(record)}" :is-signed-in="#{user_signed_in?}"
+              c-like-button resource-name="Record" :init-resource-id="#{record.id}" :init-likes-count="#{record.likes_count}" :init-is-liked="#{user_signed_in? && current_user.like?(record)}" :is-signed-in="#{user_signed_in?}"
               = link_to record_path(record.user.username, record), class: "d-inline-block ml-2" do
                 = icon "comment", "far", class: "mr-1"
                 = record.comments_count

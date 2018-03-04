@@ -8,7 +8,7 @@ module UserCheckable
       records.exists?(episode_id: episode.id)
     end
 
-    def checkins_count_in(episode)
+    def records_count_in(episode)
       records.where(episode: episode).count
     end
   end

@@ -2,7 +2,7 @@
 
 describe "Comment" do
   describe "create a comment" do
-    let(:record) { create(:checkin) }
+    let(:record) { create(:record) }
     let(:user) { create(:registered_user) }
 
     before do

@@ -1,15 +1,8 @@
 # frozen_string_literal: true
 
 namespace :tmp do
-  task move_title_ro_to_title_en: :environment do
-    Work.where.not(title_ro: "").find_each do |w|
-      puts "Work: #{w.id}"
-      w.update_column(:title_en, w.title_ro)
-    end
-
-    Episode.where.not(title_ro: "").find_each do |e|
-      puts "Episode: #{e.id}"
-      e.update_column(:title_en, e.title_ro)
-    end
+  task rename_checkin_to_record: :environment do
+    Activity.where(trackable_type: "Checkin").update_all(trackable_type: "Record")
+    Like.where(recipient_type: "Checkin").update_all(recipient_type: "Record")
   end
 end

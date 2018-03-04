@@ -10,7 +10,7 @@
 #  sort_number     :integer          default(0), not null
 #  sc_count        :integer
 #  title           :string(510)
-#  checkins_count  :integer          default(0), not null
+#  records_count  :integer          default(0), not null
 #  created_at      :datetime
 #  updated_at      :datetime
 #  prev_episode_id :integer
@@ -72,7 +72,7 @@ class EpisodesController < ApplicationController
 
     return unless user_signed_in?
 
-    @is_spoiler = current_user.hide_checkin_comment?(@episode)
+    @is_spoiler = current_user.hide_record_comment?(@episode)
     @record = @episode.records.new
     @record.setup_shared_sns(current_user)
 

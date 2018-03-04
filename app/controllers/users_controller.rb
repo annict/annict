@@ -18,7 +18,7 @@
 #  confirmed_at         :datetime
 #  confirmation_sent_at :datetime
 #  unconfirmed_email    :string(510)
-#  checkins_count       :integer          default(0), not null
+#  records_count       :integer          default(0), not null
 #  notifications_count  :integer          default(0), not null
 #  created_at           :datetime
 #  updated_at           :datetime
@@ -37,7 +37,7 @@ class UsersController < ApplicationController
 
   def show
     @watching_works = @user.works.watching.published
-    checkedin_works = @watching_works.checkedin_by(@user).order("c2.checkin_id DESC")
+    checkedin_works = @watching_works.checkedin_by(@user).order("c2.record_id DESC")
     other_works = @watching_works.where.not(id: checkedin_works.pluck(:id))
     @works = (checkedin_works + other_works).first(9)
     @favorite_characters = @user.favorite_characters.includes(:character).order(id: :desc)
