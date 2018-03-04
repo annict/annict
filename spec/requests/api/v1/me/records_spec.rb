@@ -29,7 +29,7 @@ describe "Api::V1::Me::Records" do
   end
 
   describe "PATCH /v1/me/records/:id" do
-    let(:record) { create(:checkin, work: work, episode: episode, user: user) }
+    let(:record) { create(:record, work: work, episode: episode, user: user) }
     let(:uniq_comment) { SecureRandom.uuid }
 
     before do
@@ -51,7 +51,7 @@ describe "Api::V1::Me::Records" do
   end
 
   describe "DELETE /v1/me/records/:id" do
-    let!(:record) { create(:checkin, work: work, episode: episode, user: user) }
+    let!(:record) { create(:record, work: work, episode: episode, user: user) }
 
     it "responses 204" do
       delete api("/v1/me/records/#{record.id}", access_token: access_token.token)

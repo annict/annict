@@ -45,7 +45,7 @@ module Api
           if @record.valid?
             ActiveRecord::Base.transaction do
               @record.save(validate: false)
-              @record.update_share_checkin_status
+              @record.update_share_record_status
               @record.share_to_sns
             end
           else

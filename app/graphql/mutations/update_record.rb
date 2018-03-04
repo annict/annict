@@ -25,7 +25,7 @@ Mutations::UpdateRecord = GraphQL::Relay::Mutation.define do
     record.detect_locale!(:comment)
 
     record.save!
-    record.update_share_checkin_status
+    record.update_share_record_status
     record.share_to_sns
 
     {

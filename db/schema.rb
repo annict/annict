@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180210073441) do
+ActiveRecord::Schema.define(version: 20180304030937) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -142,41 +142,6 @@ ActiveRecord::Schema.define(version: 20180210073441) do
     t.index ["series_id"], name: "index_characters_on_series_id"
   end
 
-  create_table "checkins", id: :serial, force: :cascade do |t|
-    t.integer "user_id", null: false
-    t.integer "episode_id", null: false
-    t.text "comment"
-    t.boolean "modify_comment", default: false, null: false
-    t.string "twitter_url_hash", limit: 510
-    t.string "facebook_url_hash", limit: 510
-    t.integer "twitter_click_count", default: 0, null: false
-    t.integer "facebook_click_count", default: 0, null: false
-    t.integer "comments_count", default: 0, null: false
-    t.integer "likes_count", default: 0, null: false
-    t.datetime "created_at"
-    t.datetime "updated_at"
-    t.boolean "shared_twitter", default: false, null: false
-    t.boolean "shared_facebook", default: false, null: false
-    t.integer "work_id", null: false
-    t.float "rating"
-    t.integer "multiple_record_id"
-    t.integer "oauth_application_id"
-    t.string "rating_state"
-    t.integer "review_id"
-    t.string "aasm_state", default: "published", null: false
-    t.string "locale", default: "other", null: false
-    t.index ["episode_id"], name: "checkins_episode_id_idx"
-    t.index ["facebook_url_hash"], name: "checkins_facebook_url_hash_key", unique: true
-    t.index ["locale"], name: "index_checkins_on_locale"
-    t.index ["multiple_record_id"], name: "index_checkins_on_multiple_record_id"
-    t.index ["oauth_application_id"], name: "index_checkins_on_oauth_application_id"
-    t.index ["rating_state"], name: "index_checkins_on_rating_state"
-    t.index ["review_id"], name: "index_checkins_on_review_id"
-    t.index ["twitter_url_hash"], name: "checkins_twitter_url_hash_key", unique: true
-    t.index ["user_id"], name: "checkins_user_id_idx"
-    t.index ["work_id"], name: "index_checkins_on_work_id"
-  end
-
   create_table "collection_items", force: :cascade do |t|
     t.integer "user_id", null: false
     t.integer "collection_id", null: false
@@ -208,15 +173,15 @@ ActiveRecord::Schema.define(version: 20180210073441) do
 
   create_table "comments", id: :serial, force: :cascade do |t|
     t.integer "user_id", null: false
-    t.integer "checkin_id", null: false
+    t.integer "record_id", null: false
     t.text "body", null: false
     t.integer "likes_count", default: 0, null: false
     t.datetime "created_at"
     t.datetime "updated_at"
     t.integer "work_id"
     t.string "locale", default: "other", null: false
-    t.index ["checkin_id"], name: "comments_checkin_id_idx"
     t.index ["locale"], name: "index_comments_on_locale"
+    t.index ["record_id"], name: "comments_checkin_id_idx"
     t.index ["user_id"], name: "comments_user_id_idx"
     t.index ["work_id"], name: "index_comments_on_work_id"
   end
@@ -301,7 +266,7 @@ ActiveRecord::Schema.define(version: 20180210073441) do
     t.integer "sort_number", default: 0, null: false
     t.integer "sc_count"
     t.string "title", limit: 510
-    t.integer "checkins_count", default: 0, null: false
+    t.integer "records_count", default: 0, null: false
     t.datetime "created_at"
     t.datetime "updated_at"
     t.integer "prev_episode_id"
@@ -391,7 +356,7 @@ ActiveRecord::Schema.define(version: 20180210073441) do
 
   create_table "flashes", force: :cascade do |t|
     t.string "client_uuid", null: false
-    t.json "message"
+    t.json "data"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["client_uuid"], name: "index_flashes_on_client_uuid", unique: true
@@ -812,6 +777,41 @@ ActiveRecord::Schema.define(version: 20180210073441) do
     t.index ["user_id"], name: "receptions_user_id_idx"
   end
 
+  create_table "records", id: :serial, force: :cascade do |t|
+    t.integer "user_id", null: false
+    t.integer "episode_id", null: false
+    t.text "comment"
+    t.boolean "modify_comment", default: false, null: false
+    t.string "twitter_url_hash", limit: 510
+    t.string "facebook_url_hash", limit: 510
+    t.integer "twitter_click_count", default: 0, null: false
+    t.integer "facebook_click_count", default: 0, null: false
+    t.integer "comments_count", default: 0, null: false
+    t.integer "likes_count", default: 0, null: false
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.boolean "shared_twitter", default: false, null: false
+    t.boolean "shared_facebook", default: false, null: false
+    t.integer "work_id", null: false
+    t.float "rating"
+    t.integer "multiple_record_id"
+    t.integer "oauth_application_id"
+    t.string "rating_state"
+    t.integer "review_id"
+    t.string "aasm_state", default: "published", null: false
+    t.string "locale", default: "other", null: false
+    t.index ["episode_id"], name: "checkins_episode_id_idx"
+    t.index ["facebook_url_hash"], name: "checkins_facebook_url_hash_key", unique: true
+    t.index ["locale"], name: "index_records_on_locale"
+    t.index ["multiple_record_id"], name: "index_records_on_multiple_record_id"
+    t.index ["oauth_application_id"], name: "index_records_on_oauth_application_id"
+    t.index ["rating_state"], name: "index_records_on_rating_state"
+    t.index ["review_id"], name: "index_records_on_review_id"
+    t.index ["twitter_url_hash"], name: "checkins_twitter_url_hash_key", unique: true
+    t.index ["user_id"], name: "checkins_user_id_idx"
+    t.index ["work_id"], name: "index_records_on_work_id"
+  end
+
   create_table "reviews", force: :cascade do |t|
     t.integer "user_id", null: false
     t.integer "work_id", null: false
@@ -881,7 +881,7 @@ ActiveRecord::Schema.define(version: 20180210073441) do
 
   create_table "settings", id: :serial, force: :cascade do |t|
     t.integer "user_id", null: false
-    t.boolean "hide_checkin_comment", default: true, null: false
+    t.boolean "hide_record_comment", default: true, null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.boolean "share_record_to_twitter", default: false
@@ -1214,9 +1214,9 @@ ActiveRecord::Schema.define(version: 20180210073441) do
     t.index ["season_year"], name: "index_works_on_season_year"
   end
 
-  add_foreign_key "activities", "checkins", column: "record_id"
   add_foreign_key "activities", "episodes"
   add_foreign_key "activities", "multiple_records"
+  add_foreign_key "activities", "records"
   add_foreign_key "activities", "reviews"
   add_foreign_key "activities", "statuses"
   add_foreign_key "activities", "users", name: "activities_user_id_fk", on_delete: :cascade
@@ -1231,17 +1231,11 @@ ActiveRecord::Schema.define(version: 20180210073441) do
   add_foreign_key "character_images", "characters"
   add_foreign_key "character_images", "users"
   add_foreign_key "characters", "series"
-  add_foreign_key "checkins", "episodes", name: "checkins_episode_id_fk", on_delete: :cascade
-  add_foreign_key "checkins", "multiple_records"
-  add_foreign_key "checkins", "oauth_applications"
-  add_foreign_key "checkins", "reviews"
-  add_foreign_key "checkins", "users", name: "checkins_user_id_fk", on_delete: :cascade
-  add_foreign_key "checkins", "works", name: "checkins_work_id_fk"
   add_foreign_key "collection_items", "collections"
   add_foreign_key "collection_items", "users"
   add_foreign_key "collection_items", "works"
   add_foreign_key "collections", "users"
-  add_foreign_key "comments", "checkins", name: "comments_checkin_id_fk", on_delete: :cascade
+  add_foreign_key "comments", "records", name: "comments_checkin_id_fk", on_delete: :cascade
   add_foreign_key "comments", "users", name: "comments_user_id_fk", on_delete: :cascade
   add_foreign_key "comments", "works"
   add_foreign_key "db_activities", "users"
@@ -1299,6 +1293,12 @@ ActiveRecord::Schema.define(version: 20180210073441) do
   add_foreign_key "reactions", "users", column: "target_user_id"
   add_foreign_key "receptions", "channels", name: "receptions_channel_id_fk", on_delete: :cascade
   add_foreign_key "receptions", "users", name: "receptions_user_id_fk", on_delete: :cascade
+  add_foreign_key "records", "episodes", name: "checkins_episode_id_fk", on_delete: :cascade
+  add_foreign_key "records", "multiple_records"
+  add_foreign_key "records", "oauth_applications"
+  add_foreign_key "records", "reviews"
+  add_foreign_key "records", "users", name: "checkins_user_id_fk", on_delete: :cascade
+  add_foreign_key "records", "works", name: "checkins_work_id_fk"
   add_foreign_key "reviews", "oauth_applications"
   add_foreign_key "reviews", "users"
   add_foreign_key "reviews", "works"

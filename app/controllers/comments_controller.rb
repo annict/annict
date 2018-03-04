@@ -5,7 +5,7 @@
 #
 #  id          :integer          not null, primary key
 #  user_id     :integer          not null
-#  checkin_id  :integer          not null
+#  record_id  :integer          not null
 #  body        :text             not null
 #  likes_count :integer          default(0), not null
 #  created_at  :datetime
@@ -14,7 +14,7 @@
 #
 # Indexes
 #
-#  comments_checkin_id_idx    (checkin_id)
+#  comments_record_id_idx    (record_id)
 #  comments_user_id_idx       (user_id)
 #  index_comments_on_work_id  (work_id)
 #

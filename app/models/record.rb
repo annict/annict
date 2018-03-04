@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 # == Schema Information
 #
-# Table name: checkins
+# Table name: records
 #
 #  id                   :integer          not null, primary key
 #  user_id              :integer          not null
@@ -29,19 +29,19 @@
 #
 # Indexes
 #
-#  checkins_episode_id_idx                 (episode_id)
-#  checkins_facebook_url_hash_key          (facebook_url_hash) UNIQUE
-#  checkins_twitter_url_hash_key           (twitter_url_hash) UNIQUE
-#  checkins_user_id_idx                    (user_id)
-#  index_checkins_on_locale                (locale)
-#  index_checkins_on_multiple_record_id    (multiple_record_id)
-#  index_checkins_on_oauth_application_id  (oauth_application_id)
-#  index_checkins_on_rating_state          (rating_state)
-#  index_checkins_on_review_id             (review_id)
-#  index_checkins_on_work_id               (work_id)
+#  records_episode_id_idx                (episode_id)
+#  records_facebook_url_hash_key         (facebook_url_hash) UNIQUE
+#  records_twitter_url_hash_key          (twitter_url_hash) UNIQUE
+#  records_user_id_idx                   (user_id)
+#  index_records_on_locale                (locale)
+#  index_records_on_multiple_record_id    (multiple_record_id)
+#  index_records_on_oauth_application_id  (oauth_application_id)
+#  index_records_on_rating_state          (rating_state)
+#  index_records_on_review_id             (review_id)
+#  index_records_on_work_id               (work_id)
 #
 
-class Checkin < ApplicationRecord
+class Record < ApplicationRecord
   extend Enumerize
   include AASM
   include LocaleDetectable
@@ -85,8 +85,8 @@ class Checkin < ApplicationRecord
   after_destroy :expire_cache
   after_save :expire_cache
 
-  def self.initial?(checkin)
-    count == 1 && first.id == checkin.id
+  def self.initial?(record)
+    count == 1 && first.id == record.id
   end
 
   def self.rating_state_order(direction = :asc)
@@ -143,7 +143,7 @@ class Checkin < ApplicationRecord
       shared_twitter? || shared_facebook?
   end
 
-  def update_share_checkin_status
+  def update_share_record_status
     if user.setting.share_record_to_twitter? != shared_twitter?
       user.setting.update_column(:share_record_to_twitter, shared_twitter?)
     end

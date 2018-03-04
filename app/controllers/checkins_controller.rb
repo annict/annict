@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 # == Schema Information
 #
-# Table name: checkins
+# Table name: records
 #
 #  id                   :integer          not null, primary key
 #  user_id              :integer          not null
@@ -25,57 +25,19 @@
 #
 # Indexes
 #
-#  checkins_episode_id_idx                 (episode_id)
-#  checkins_facebook_url_hash_key          (facebook_url_hash) UNIQUE
-#  checkins_twitter_url_hash_key           (twitter_url_hash) UNIQUE
-#  checkins_user_id_idx                    (user_id)
-#  index_checkins_on_multiple_record_id    (multiple_record_id)
-#  index_checkins_on_oauth_application_id  (oauth_application_id)
-#  index_checkins_on_work_id               (work_id)
+#  records_episode_id_idx                 (episode_id)
+#  records_facebook_url_hash_key          (facebook_url_hash) UNIQUE
+#  records_twitter_url_hash_key           (twitter_url_hash) UNIQUE
+#  records_user_id_idx                    (user_id)
+#  index_records_on_multiple_record_id    (multiple_record_id)
+#  index_records_on_oauth_application_id  (oauth_application_id)
+#  index_records_on_work_id               (work_id)
 #
 
 class CheckinsController < ApplicationController
   # Old record page
   def show(id)
-    record = Checkin.find(id)
+    record = Record.published.find(id)
     redirect_to record_path(record.user.username, record), status: 301
-  end
-
-  def redirect(provider, url_hash)
-    case provider
-    when "tw"
-      checkin = Checkin.find_by!(twitter_url_hash: url_hash)
-
-      log_messages = [
-        "Twitterからのアクセス ",
-        "remote_host: #{request.remote_host}, ",
-        "remote_ip: #{request.remote_ip}, ",
-        "remote_user: #{request.remote_user}"
-      ]
-      logger.info(log_messages.join)
-
-      bots = TwitterBot.pluck(:name)
-      no_bots = bots.map do |bot|
-        request.user_agent.present? && !request.user_agent.include?(bot)
-      end
-      checkin.increment!(:twitter_click_count) if no_bots.all?
-
-      redirect_to_user_record(checkin)
-    when "fb"
-      checkin = Checkin.find_by!(facebook_url_hash: url_hash)
-      checkin.increment!(:facebook_click_count)
-
-      redirect_to_user_record(checkin)
-    else
-      redirect_to root_path
-    end
-  end
-
-  private
-
-  def redirect_to_user_record(checkin)
-    username = checkin.user.username
-
-    redirect_to record_path(username, checkin)
   end
 end

@@ -17,7 +17,7 @@ class RecordsListService
   end
 
   def friend_comment_records
-    return Checkin.none if @user.blank?
+    return Record.none if @user.blank?
 
     results = all_records
     results = results.with_comment
@@ -29,7 +29,7 @@ class RecordsListService
   end
 
   def my_records
-    return Checkin.none if @user.blank?
+    return Record.none if @user.blank?
 
     results = all_records
     results = results.where(user: @user)

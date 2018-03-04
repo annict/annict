@@ -12,7 +12,7 @@ describe "Api::V1::Activities" do
   describe "GET /v1/activities" do
     let(:user) { create(:user, :with_profile) }
     let(:access_token) { create(:oauth_access_token, owner: user) }
-    let!(:record) { create(:checkin, user: user) }
+    let!(:record) { create(:record, user: user) }
     let!(:activity) do
       create(:activity, user: user, recipient: record.episode, trackable: record)
     end

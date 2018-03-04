@@ -7,7 +7,7 @@ namespace :internal_statistic do
     users_yesterday = User.yesterday
 
     [
-      { key_name: "episode_records", model: Checkin },
+      { key_name: "episode_records", model: Record },
       { key_name: "statuses", model: Status },
       { key_name: "work_records", model: Review }
     ].each do |h|

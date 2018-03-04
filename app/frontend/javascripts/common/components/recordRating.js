@@ -16,7 +16,7 @@ export default {
     },
     inputName: {
       type: String,
-      default: 'checkin[rating_state]',
+      default: 'record[rating_state]',
     },
   },
 

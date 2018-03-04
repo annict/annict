@@ -104,7 +104,7 @@ class Work < ApplicationRecord
   has_many :cast_people, through: :casts, source: :person
   has_many :channel_works, dependent: :destroy
   has_many :characters, through: :casts
-  has_many :checkins, dependent: :destroy
+  has_many :records, dependent: :destroy
   has_many :db_activities, as: :trackable, dependent: :destroy
   has_many :db_comments, as: :resource, dependent: :destroy
   has_many :episodes, dependent: :destroy
@@ -179,8 +179,8 @@ class Work < ApplicationRecord
   scope :checkedin_by, -> (user) {
     joins(
       "INNER JOIN (
-        SELECT DISTINCT work_id, MAX(id) AS checkin_id FROM checkins
-          WHERE checkins.user_id = #{user.id} GROUP BY work_id
+        SELECT DISTINCT work_id, MAX(id) AS record_id FROM records
+          WHERE records.user_id = #{user.id} GROUP BY work_id
       ) AS c2 ON works.id = c2.work_id"
     )
   }
@@ -338,7 +338,7 @@ class Work < ApplicationRecord
   end
 
   def chart_values
-    episodes.published.order(:sort_number).pluck(:checkins_count)
+    episodes.published.order(:sort_number).pluck(:records_count)
   end
 
   def records_count
@@ -347,9 +347,9 @@ class Work < ApplicationRecord
 
   def comments_count
     episode_ids = episodes.pluck(:id)
-    checkins = Checkin.where(episode_id: episode_ids).where("comment != ?", "")
+    records = Record.where(episode_id: episode_ids).where("comment != ?", "")
 
-    checkins.count
+    records.count
   end
 
   def sync_with_syobocal?

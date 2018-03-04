@@ -3,7 +3,7 @@ h2.mb-0
 - if user_signed_in? && current_user.tracked?(episode)
   .small.mt-2
     = icon "check-circle", class: "mr-1 u-text-green"
-    = t "messages.episodes.watched_x_times", records_count: current_user.checkins_count_in(episode)
+    = t "messages.episodes.watched_x_times", records_count: current_user.records_count_in(episode)
 - if episode.prev_episode.present? || episode.next_episode.present?
   .row.mt-3
     .col

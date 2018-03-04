@@ -17,7 +17,7 @@ FactoryBot.define do
 
   factory :record_tip, class: Tip do
     target 0
-    slug "checkin"
+    slug "record"
     title "エピソードを記録しよう"
     icon_name 0
   end

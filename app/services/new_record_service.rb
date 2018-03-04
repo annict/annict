@@ -16,7 +16,7 @@ class NewRecordService
 
     ActiveRecord::Base.transaction do
       @record.save!
-      @record.update_share_checkin_status
+      @record.update_share_record_status
       @record.share_to_sns
       save_activity
       update_record_comments_count

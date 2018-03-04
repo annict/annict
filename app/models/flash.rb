@@ -5,7 +5,7 @@
 #
 #  id          :integer          not null, primary key
 #  client_uuid :string           not null
-#  message     :json
+#  data        :json
 #  created_at  :datetime         not null
 #  updated_at  :datetime         not null
 #

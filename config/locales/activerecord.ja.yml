@@ -40,7 +40,7 @@ ja:
         weight: 体重
       character_image:
         attachment: キャラクター画像
-      checkin:
+      record:
         comment: 感想
         rating: レーティング
       comment:
@@ -56,7 +56,7 @@ ja:
         event_next_season_came: 来期アニメが始まるときメールを受け取る
         event_favorite_works_added: お気に入りの人物などが関わる作品が追加されたとき受け取る
       episode:
-        checkins_count: 記録数
+        records_count: 記録数
         fetch_syobocal: しょぼかると同期する
         number: 話数
         prev_episode_id: 前のエピソード

@@ -8,7 +8,7 @@
         = render "notifications/follows_create", notification: notification
       - elsif notification.action == "likes.create"
         - recipient = notification.trackable.recipient
-        - if recipient.class.name == "Checkin"
+        - if recipient.class.name == "Record"
           = render "notifications/likes_create_record", notification: notification
         - elsif recipient.class.name == "MultipleRecord"
           = render "notifications/likes_create_multiple_records", notification: notification

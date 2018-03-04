@@ -9,7 +9,7 @@
 #  sort_number           :integer          default(0), not null
 #  sc_count              :integer
 #  title                 :string(510)
-#  checkins_count        :integer          default(0), not null
+#  records_count         :integer          default(0), not null
 #  created_at            :datetime
 #  updated_at            :datetime
 #  prev_episode_id       :integer
@@ -61,7 +61,7 @@ class Episode < ApplicationRecord
     optional: true
   belongs_to :work
   has_many :activities, dependent: :destroy, as: :recipient
-  has_many :records, dependent: :destroy, class_name: "Checkin"
+  has_many :records, dependent: :destroy
   has_many :db_activities, as: :trackable, dependent: :destroy
   has_many :db_comments, as: :resource, dependent: :destroy
   has_many :draft_episodes, dependent: :destroy
@@ -71,7 +71,7 @@ class Episode < ApplicationRecord
 
   validates :sort_number, presence: true, numericality: { only_integer: true }
 
-  scope :recorded, -> { where("checkins_count > 0") }
+  scope :recorded, -> { where("records_count > 0") }
 
   before_create :set_sort_number
   after_create :update_prev_episode
@@ -124,7 +124,7 @@ class Episode < ApplicationRecord
 
   def rating_state_chart_dataset
     all_records_count = records.where.not(rating_state: nil).count
-    Checkin.rating_state.values.map do |state|
+    Record.rating_state.values.map do |state|
       state_records_count = records.with_rating_state(state).count
       ratio = state_records_count / all_records_count.to_f
       {

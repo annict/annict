@@ -17,23 +17,23 @@ class FacebookService
     client.get_connections(:me, :friends).map { |friend| friend["id"] }
   end
 
-  def share!(checkin)
-    if checkin.facebook_url_hash.blank?
-      checkin.update_column(:facebook_url_hash, checkin.generate_url_hash)
+  def share!(record)
+    if record.facebook_url_hash.blank?
+      record.update_column(:facebook_url_hash, record.generate_url_hash)
     end
 
-    title = checkin.work.title
-    episode_title = checkin.episode.decorate.title_with_number
+    title = record.work.title
+    episode_title = record.episode.decorate.title_with_number
     title += " #{episode_title}" if title != episode_title
-    message = checkin.comment.squish if checkin.comment.present?
+    message = record.comment.squish if record.comment.present?
     link = if Rails.env.development?
-      "https://annict.com/r/fb/#{checkin.facebook_url_hash}"
+      "https://annict.com/r/fb/#{record.facebook_url_hash}"
     else
-      "#{checkin.user.annict_url}/r/fb/#{checkin.facebook_url_hash}"
+      "#{record.user.annict_url}/r/fb/#{record.facebook_url_hash}"
     end
     caption = "Annict | アニクト - 見たアニメを記録して、共有しよう"
 
-    work_image = checkin.work.work_image
+    work_image = record.work.work_image
     source = if work_image.present? && Rails.env.production?
       # Using `rescue` to avoid occurring error `undefined method `ann_image_url'`
       work_image.decorate.image_url(:attachment, size: "600x315") rescue nil # rubocop:disable Style/RescueModifier

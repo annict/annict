@@ -22,7 +22,7 @@ class MultipleRecord < ApplicationRecord
   has_many :activities,
     dependent: :destroy,
     as: :trackable
-  has_many :records, class_name: "Checkin", dependent: :destroy
+  has_many :records, dependent: :destroy
 
   validates :user_id, presence: true
 

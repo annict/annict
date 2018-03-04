@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class CheckinPolicy < ApplicationPolicy
+class RecordPolicy < ApplicationPolicy
   def update?
     user == record.user
   end
