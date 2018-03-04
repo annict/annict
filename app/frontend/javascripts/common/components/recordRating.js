@@ -3,42 +3,40 @@
  * DS102: Remove unnecessary code created because of implicit returns
  * Full docs: https://github.com/decaffeinate/decaffeinate/blob/master/docs/suggestions.md
  */
-import Vue from "vue";
-
 export default {
-  template: "#t-record-rating",
+  template: '#t-record-rating',
 
   data() {
-    return {record: this.initRecord};
+    return { record: this.initRecord }
   },
 
   props: {
     initRecord: {
-      type: Object
+      type: Object,
     },
     inputName: {
       type: String,
-      default: "checkin[rating_state]"
-    }
+      default: 'checkin[rating_state]',
+    },
   },
 
   watch: {
-    "record.ratingState"(val) {
-      return this.record.ratingState = val;
+    'record.ratingState'(val) {
+      return (this.record.ratingState = val)
     },
 
     initRecord(val) {
-      return this.record = val;
-    }
+      return (this.record = val)
+    },
   },
 
   methods: {
     changeState(state) {
       if (this.record.ratingState === state) {
-        return this.record.ratingState = null;
+        return (this.record.ratingState = null)
       } else {
-        return this.record.ratingState = state;
+        return (this.record.ratingState = state)
       }
-    }
-  }
-};
+    },
+  },
+}
