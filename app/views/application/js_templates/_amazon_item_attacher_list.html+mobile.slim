@@ -3,7 +3,7 @@ template v-for="item in items"
     .col-4
       template v-if="item.images.length"
         a :href="item.detail_page_url" target="_blank"
-          img.c-vue-lazyload.img-fluid.img-thumbnail.rounded v-lazy="item.images[0].url"
+          img.img-fluid.img-thumbnail.rounded v-lazy="item.images[0].url"
     .col-8
       a :href="item.detail_page_url" target="_blank"
         | {{ item.title }}
