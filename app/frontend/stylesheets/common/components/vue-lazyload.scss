@@ -1,5 +1,12 @@
+img,
+div {
+  &[lazy='loading'] {
+    background-color: $ann-color-mizuho-l4;
+    opacity: 0.7;
+  }
 
-img[lazy=loaded] {
-  opacity: 1;
-  transition: opacity .1s linear;
+  &[lazy='loaded'] {
+    opacity: 1;
+    transition: opacity 0.3s linear;
+  }
 }
