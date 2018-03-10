@@ -2,6 +2,7 @@
 
 /.bundle
 /.idea
+/.sass-cache
 /config/application.yml
 /coverage
 /db/dump/*
