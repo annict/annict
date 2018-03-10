@@ -4,18 +4,14 @@ module ImageHelper
   def ann_image_url(record, field, options = {})
     path = image_path(record, field)
 
-    msize = options[:msize]
-    is_mobile = defined?(browser) && browser.device.mobile? && msize.present?
-    size = is_mobile ? msize : options[:size]
-    width, height = size.split("x").map do |s|
-      s.present? ? (s.to_i * 2) : nil
+    width, _height = options[:size].split("x").map do |s|
+      s.present? ? (s.to_i * (options[:size_rate].presence || 1)) : nil
     end
 
     ix_options = {
       auto: "format"
     }
     ix_options[:w] = width if width.present?
-    ix_options[:h] = height if height.present?
 
     ix_image_url(path, ix_options)
   end
@@ -35,17 +31,15 @@ module ImageHelper
 
   def ann_image_tag(record, field, options = {})
     url = ann_image_url(record, field, options)
+    url2x = ann_image_url(record, field, options.merge(size_rate: 2))
 
-    msize = options[:msize]
-    options[:size] = msize if browser.device.mobile? && msize.present?
-    options.delete(:msize) if options.key?(:msize)
-
-    options["v-lazy"] = "'#{url}'"
+    options["v-lazy"] = "{ src: '#{url}' }"
     options[:class] = if options[:class].present?
       options[:class].split(" ").push("c-vue-lazyload").join(" ")
     else
       "c-vue-lazyload"
     end
+    options["data-srcset"] = "#{url} 320w, #{url2x} 640w"
 
     image_tag("", options)
   end
