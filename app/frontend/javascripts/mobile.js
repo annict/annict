@@ -10,7 +10,6 @@ import Vue from 'vue'
 import VueLazyload from 'vue-lazyload'
 
 import app from './common/app'
-import cssLazyLoad from './common/cssLazyLoad'
 import eventHub from './common/eventHub'
 import vueLazyLoad from './common/vueLazyLoad'
 
@@ -62,7 +61,6 @@ import tabbar from './mobile/components/tabbar'
 import resourceSelect from './common/directives/resourceSelect'
 
 document.addEventListener('turbolinks:load', event => {
-  cssLazyLoad.exec()
   moment.locale(gon.user.locale)
   Cookies.set('ann_time_zone', moment.tz.guess(), {
     domain: `.${gon.annict.domain}`,
