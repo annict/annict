@@ -127,7 +127,7 @@ module Syobocal
 
     def update_episode(title)
       if episode.fetch_syobocal? && (episode.sc_count.blank? || episode.title != title)
-        episode.update_attributes(title: title, sc_count: @count)
+        episode.update(title: title, sc_count: @count)
       end
 
       episode
@@ -155,7 +155,7 @@ module Syobocal
         if deleted?
           program.destroy
         else
-          program.update_attributes(sc_last_update: @last_update, started_at: @st_time)
+          program.update(sc_last_update: @last_update, started_at: @st_time)
         end
       end
     end

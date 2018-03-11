@@ -14,7 +14,7 @@ module Settings
     def update(email_notification)
       @email_notification = current_user.email_notification
 
-      if @email_notification.update_attributes(email_notification)
+      if @email_notification.update(email_notification)
         flash[:notice] = t("messages.settings.email_notifications.updated")
         redirect_to settings_email_notification_path
       else

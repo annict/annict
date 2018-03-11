@@ -28,7 +28,7 @@ module Oauth
     end
 
     def update
-      if @application.update_attributes(application_params)
+      if @application.update(application_params)
         flash[:notice] = t "doorkeeper.flash.applications.update.notice"
         redirect_to oauth_application_url(@application)
       else
