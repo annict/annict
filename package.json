@@ -2,7 +2,7 @@
   "name": "annict",
   "private": true,
   "dependencies": {
-    "@rails/webpacker": "^3.2.2",
+    "@rails/webpacker": "^3.3.1",
     "async": "2.6.0",
     "bootstrap": "4.0.0",
     "bourbon": "^5.0.0",
