@@ -65,4 +65,20 @@ namespace :data_care do
       end
     end
   end
+
+  task :reset_user_records_and_statuses, %i(username) => :environment do |_, args|
+    user = User.find_by(username: args[:username])
+
+    puts "Deleting Records..."
+    user.records.destroy_all
+
+    puts "Deleting Multiple Records..."
+    user.multiple_records.destroy_all
+
+    puts "Deleting Reviews..."
+    user.reviews.destroy_all
+
+    puts "Deleting Statuses..."
+    user.statuses.destroy_all
+  end
 end
