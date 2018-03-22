@@ -18,7 +18,7 @@
     "linkifyjs": "2.1.6",
     "lodash": "4.17.5",
     "marked": "^0.3.17",
-    "mjml": "3.3.5",
+    "mjml": "4.0.2",
     "moment-timezone": "0.5.14",
     "mousetrap": "1.6.1",
     "popper.js": "^1.14.1",
