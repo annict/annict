@@ -120,7 +120,7 @@ GEM
     coercible (1.0.0)
       descendants_tracker (~> 0.0.1)
     color (1.8)
-    commonmarker (0.17.8)
+    commonmarker (0.17.9)
       ruby-enum (~> 0.5)
     concurrent-ruby (1.0.5)
     coolline (0.5.0)
