@@ -131,8 +131,7 @@ module ControllerCommon
     end
 
     def discord_invite_url
-      locale = locale_ja? ? "JA" : "EN"
-      ENV.fetch("ANNICT_DISCORD_INVITE_URL_#{locale}")
+      ENV.fetch("ANNICT_DISCORD_INVITE_URL")
     end
   end
 end
