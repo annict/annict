@@ -71,13 +71,18 @@ GEM
     arel (8.0.0)
     ast (2.4.0)
     awesome_print (1.8.0)
-    aws-sdk (2.10.111)
-      aws-sdk-resources (= 2.10.111)
-    aws-sdk-core (2.10.111)
+    aws-partitions (1.72.0)
+    aws-sdk-core (3.17.1)
+      aws-partitions (~> 1.0)
       aws-sigv4 (~> 1.0)
       jmespath (~> 1.0)
-    aws-sdk-resources (2.10.111)
-      aws-sdk-core (= 2.10.111)
+    aws-sdk-kms (1.5.0)
+      aws-sdk-core (~> 3)
+      aws-sigv4 (~> 1.0)
+    aws-sdk-s3 (1.8.2)
+      aws-sdk-core (~> 3)
+      aws-sdk-kms (~> 1)
+      aws-sigv4 (~> 1.0)
     aws-sigv4 (1.0.2)
     axiom-types (0.1.1)
       descendants_tracker (~> 0.0.4)
@@ -114,8 +119,8 @@ GEM
       ffi
     climate_control (0.2.0)
     cliver (0.3.2)
-    cocaine (0.5.8)
-      climate_control (>= 0.0.3, < 1.0)
+    cocaine (0.6.0)
+      terrapin (= 0.6.0)
     coderay (1.1.2)
     coercible (1.0.0)
       descendants_tracker (~> 0.0.1)
@@ -357,12 +362,12 @@ GEM
       omniauth-oauth (~> 1.1)
       rack
     orm_adapter (0.5.0)
-    paperclip (5.2.1)
+    paperclip (6.0.0)
       activemodel (>= 4.2.0)
       activesupport (>= 4.2.0)
-      cocaine (~> 0.5.5)
       mime-types
       mimemagic (~> 0.3.0)
+      terrapin (~> 0.6.0)
     parallel (1.12.1)
     parser (2.5.0.4)
       ast (~> 2.4.0)
@@ -517,6 +522,8 @@ GEM
       tins (~> 1.0)
     terminal-table (1.8.0)
       unicode-display_width (~> 1.1, >= 1.1.1)
+    terrapin (0.6.0)
+      climate_control (>= 0.0.3, < 1.0)
     thin (1.7.2)
       daemons (~> 1.0, >= 1.0.9)
       eventmachine (~> 1.0, >= 1.0.4)
@@ -582,7 +589,7 @@ DEPENDENCIES
   amazon-ecs
   annotate
   awesome_print
-  aws-sdk (< 3.0)
+  aws-sdk-s3
   better_errors
   binding_of_caller
   bootsnap
