@@ -71,13 +71,18 @@ GEM
     arel (8.0.0)
     ast (2.4.0)
     awesome_print (1.8.0)
-    aws-sdk (2.10.111)
-      aws-sdk-resources (= 2.10.111)
-    aws-sdk-core (2.10.111)
+    aws-partitions (1.72.0)
+    aws-sdk-core (3.17.1)
+      aws-partitions (~> 1.0)
       aws-sigv4 (~> 1.0)
       jmespath (~> 1.0)
-    aws-sdk-resources (2.10.111)
-      aws-sdk-core (= 2.10.111)
+    aws-sdk-kms (1.5.0)
+      aws-sdk-core (~> 3)
+      aws-sigv4 (~> 1.0)
+    aws-sdk-s3 (1.8.2)
+      aws-sdk-core (~> 3)
+      aws-sdk-kms (~> 1)
+      aws-sigv4 (~> 1.0)
     aws-sigv4 (1.0.2)
     axiom-types (0.1.1)
       descendants_tracker (~> 0.0.4)
@@ -584,7 +589,7 @@ DEPENDENCIES
   amazon-ecs
   annotate
   awesome_print
-  aws-sdk (< 3.0)
+  aws-sdk-s3
   better_errors
   binding_of_caller
   bootsnap
