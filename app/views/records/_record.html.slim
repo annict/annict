@@ -15,7 +15,7 @@
             .text-right
               - if record.modify_comment?
                 small.mr-1.text-muted
-                  = icon "pencil"
+                  = icon "pencil-alt"
               = link_to record_path(record.user.username, record), class: "small text-muted", title: local_datetime(record.created_at) do
                 = local_time_ago_in_words(record.created_at)
         c-comment-guard inline-template="" :init-is-spoiler="#{is_spoiler == true}"
