@@ -1,7 +1,7 @@
 <mj-section background-color="#fff">
   <mj-column width="100%">
     <mj-text align="center" padding-bottom="20px">
-      <%= I18n.t("email_notification_mailer.next_season_came.description_html", name: @season.local_name) %>
+      <%== I18n.t("email_notification_mailer.next_season_came.description_html", name: @season.local_name) %>
     </mj-text>
 
     <% @works.each do |work| %>
