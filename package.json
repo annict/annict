@@ -15,7 +15,7 @@
     "jquery": "^3.3.1",
     "jquery-ujs": "^1.2.2",
     "js-cookie": "2.2.0",
-    "linkifyjs": "2.1.5",
+    "linkifyjs": "2.1.6",
     "lodash": "4.17.5",
     "marked": "^0.3.17",
     "mjml": "3.3.5",
@@ -27,7 +27,7 @@
     "turbolinks": "5.1.1",
     "vue": "^2.5.16",
     "vue-lazyload": "1.2.2",
-    "vue-loader": "^14.1.1",
+    "vue-loader": "^14.2.1",
     "vue-template-compiler": "^2.5.16"
   },
   "engines": {
