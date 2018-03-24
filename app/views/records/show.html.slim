@@ -56,7 +56,7 @@
                         = icon "edit", class: "mr-1"
                         = t "noun.edit"
                       = link_to comment_path(comment), method: :delete, data: { confirm: t("messages._common.are_you_sure") } do
-                        = icon "trash-o", class: "mr-1"
+                        = icon "trash-alt", "far", class: "mr-1"
                         = t "noun.delete"
             - else
               = render "application/components/empty", text: t("resources.comment.no_comments")
