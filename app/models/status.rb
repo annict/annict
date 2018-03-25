@@ -27,6 +27,9 @@ class Status < ApplicationRecord
   has_many :activities,
     dependent: :destroy,
     as: :trackable
+  has_many :likes,
+    dependent: :destroy,
+    as: :recipient
 
   after_create :finish_tips
   after_create :refresh_watchers_count
