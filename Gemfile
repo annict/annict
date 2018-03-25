@@ -9,7 +9,7 @@ git_source(:github) do |repo_name|
   "https://github.com/#{repo_name}.git"
 end
 
-gem "rails", "5.1.5"
+gem "rails", "5.2.0.rc2"
 
 gem "aasm"
 gem "action_args"
