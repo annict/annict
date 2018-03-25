@@ -11,9 +11,9 @@ RAILS_SECRET_KEY_BASE: "abcdefghijklmnopqrstuvwxyz"
 local_default: &local_default
   ANNICT_BASIC_AUTH: "off"
   ANNICT_DOMAIN: "annict.test"
-  ANNICT_JP_DOMAIN: "jp.annict.test"
-  ANNICT_JP_HOST: "jp.annict.test:3000"
-  ANNICT_JP_URL: "http://jp.annict.test:3000"
+  ANNICT_JP_DOMAIN: "annict.testjp"
+  ANNICT_JP_HOST: "annict.testjp:3000"
+  ANNICT_JP_URL: "http://annict.testjp:3000"
   ANNICT_PAPERCLIP_PATH: ":rails_root/public/paperclip/:class/:id/:attachment/:style/:hash.:extension"
   ANNICT_URL: "http://annict.test:3000"
 

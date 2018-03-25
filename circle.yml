@@ -10,7 +10,7 @@ machine:
   hosts:
     annict.test: 127.0.0.1
     api.annict.test: 127.0.0.1
-    jp.annict.test: 127.0.0.1
+    annict.testjp: 127.0.0.1
   node:
     version: 8.9.0
   timezone:
