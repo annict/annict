@@ -7,6 +7,7 @@ require_relative "boot"
   active_model/railtie
   active_job/railtie
   active_record/railtie
+  active_storage/engine
   action_controller/railtie
   action_mailer/railtie
   action_view/railtie
@@ -23,7 +24,7 @@ Bundler.require(*Rails.groups)
 module Annict
   class Application < Rails::Application
     # Initialize configuration defaults for originally generated Rails version.
-    config.load_defaults 5.1
+    config.load_defaults 5.2
 
     # Disable Asset Pipeline/Sprockets
     config.assets.enabled = false
