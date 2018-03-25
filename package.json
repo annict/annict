@@ -28,7 +28,8 @@
     "vue": "^2.5.16",
     "vue-lazyload": "1.2.2",
     "vue-loader": "^14.2.1",
-    "vue-template-compiler": "^2.5.16"
+    "vue-template-compiler": "^2.5.16",
+    "webpack-merge": "^4.1.2"
   },
   "engines": {
     "node": "~> 8.9.0"
@@ -38,7 +39,6 @@
     "postcss-smart-import": "^0.7.6",
     "prettier": "^1.11.1",
     "prettier-eslint": "^8.8.1",
-    "webpack-dev-server": "^2.11.2",
-    "webpack-merge": "^4.1.2"
+    "webpack-dev-server": "^2.11.2"
   }
 }
