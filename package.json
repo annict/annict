@@ -22,6 +22,7 @@
     "moment-timezone": "0.5.14",
     "mousetrap": "1.6.1",
     "popper.js": "^1.14.1",
+    "postcss-smart-import": "^0.7.6",
     "select2": "^4.0.5",
     "tether": "^1.4.3",
     "turbolinks": "5.1.1",
@@ -36,7 +37,6 @@
   },
   "devDependencies": {
     "eslint": "^4.19.1",
-    "postcss-smart-import": "^0.7.6",
     "prettier": "^1.11.1",
     "prettier-eslint": "^8.8.1",
     "webpack-dev-server": "^2.11.2"
