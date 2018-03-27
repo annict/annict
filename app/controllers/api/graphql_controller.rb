@@ -6,7 +6,6 @@ module Api
     include LogrageSetting
     include RavenContext
 
-    skip_before_action :verify_authenticity_token, raise: false
     before_action :doorkeeper_authorize!
 
     rescue_from ActionController::InvalidAuthenticityToken, with: :bad_credentials
