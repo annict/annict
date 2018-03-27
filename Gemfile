@@ -4,9 +4,12 @@ source "https://rubygems.org"
 
 ruby "2.5.0"
 
-git_source(:github) { |repo| "https://github.com/#{repo}.git" }
+git_source(:github) do |repo_name|
+  repo_name = "#{repo_name}/#{repo_name}" unless repo_name.include?("/")
+  "https://github.com/#{repo_name}.git"
+end
 
-gem "rails", "5.2.0.rc2"
+gem "rails", "5.1.5"
 
 gem "aasm"
 gem "action_args"
