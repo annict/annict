@@ -12,6 +12,7 @@ module Api
 
       attr_reader :current_user
 
+      skip_before_action :verify_authenticity_token, raise: false
       before_action :store_page_category
       before_action -> { doorkeeper_authorize! :read }, only: %i(index show)
       before_action only: %i(create update destroy) do

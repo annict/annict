@@ -44,7 +44,13 @@ class ForumPost < ApplicationRecord
     }
     host = ENV.fetch("ANNICT_URL")
     url = Rails.application.routes.url_helpers.forum_post_url(self, host: host)
-    message = "@everyone #{user.profile.name} created the post #{title} #{url}"
+    message = [
+      forum_category.discord_mention,
+      user.profile.name,
+      "created the post",
+      title,
+      url
+    ].select(&:present?).join(" ")
 
     Discord::Notifier.message(message, options)
   end
