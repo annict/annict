@@ -31,4 +31,17 @@ class ForumCategory < ApplicationRecord
     return all if user.role.admin?
     where.not(slug: :site_news)
   }
+
+  def discord_mention
+    case slug
+    when "site_news"
+      "@everyone"
+    when "feedback"
+      "@admin"
+    when "db_request"
+      "@admin @editor"
+    else
+      ""
+    end
+  end
 end
