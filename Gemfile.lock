@@ -309,7 +309,7 @@ GEM
     memoizable (0.4.2)
       thread_safe (~> 0.3, >= 0.3.1)
     memory_profiler (0.9.10)
-    meta-tags (2.8.0)
+    meta-tags (2.9.0)
       actionpack (>= 3.2.0, < 5.3)
     method_source (0.9.0)
     mime-types (3.1)
@@ -405,7 +405,7 @@ GEM
     rack-proxy (0.6.4)
       rack
     rack-rewrite (1.5.1)
-    rack-test (0.8.3)
+    rack-test (1.0.0)
       rack (>= 1.0, < 3)
     rails (5.1.5)
       actioncable (= 5.1.5)
