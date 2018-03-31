@@ -6,7 +6,7 @@
     "async": "2.6.0",
     "bootstrap": "4.0.0",
     "bourbon": "^5.0.0",
-    "britecharts": "^2.6.0",
+    "britecharts": "^2.7.0",
     "cal-heatmap": "3.6.2",
     "cropperjs": "1.3.3",
     "d3": "^5.0.0",
