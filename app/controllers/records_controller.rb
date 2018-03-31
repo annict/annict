@@ -66,7 +66,7 @@ class RecordsController < ApplicationController
     @record.modify_comment = true
     @record.detect_locale!(:comment)
 
-    if @record.update_attributes(record)
+    if @record.update(record)
       @record.update_share_record_status
       @record.share_to_sns
       path = record_path(@user.username, @record)
