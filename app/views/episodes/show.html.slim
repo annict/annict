@@ -17,9 +17,8 @@
       .col-9
         = render "works/subnav", work: @work
 
-        - unless current_user&.supporter?
-          .text-center.my-3
-            = render "application/components/adsense", slots: [ENV["GOOGLE_AD_728x90_9"]], size: "728x90"
+        - if @all_comment_records.total_count != 0
+          c-adsense-container.text-center.my-3 :slots="['#{ENV['GOOGLE_AD_728x90_9']}']" ad-size="728x90"
 
         .c-card.container.py-3.my-3
           = render "episodes/nav", work: @work, episode: @episode
@@ -68,9 +67,8 @@
             .c-card.container.mb-3.py-2
               = render "episodes/item_list", episode: @episode, items: @items
 
-            - unless current_user&.supporter?
-              .mt-4.text-center
-                = render "application/components/adsense", slots: [ENV["GOOGLE_AD_300x250_3"], ENV["GOOGLE_AD_300x250_4"]], size: "300x250"
+            - if @all_comment_records.total_count != 0
+              c-adsense-container.text-center.mt-3 :slots="['#{ENV['GOOGLE_AD_300x250_3']}', '#{ENV['GOOGLE_AD_300x250_4']}']" ad-size= "300x250"
 
           .col-3.pl-0
             .mb-4
