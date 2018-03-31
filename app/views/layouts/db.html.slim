@@ -5,6 +5,7 @@ html lang="#{I18n.locale}"
     = render "application/head_common"
     = stylesheet_pack_tag "pc", media: "all"
     = javascript_pack_tag "pc"
+    = csrf_meta_tags
   body class="p-db #{body_classes}"
     = include_gon
 
