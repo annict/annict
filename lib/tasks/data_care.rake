@@ -1,6 +1,12 @@
 # frozen_string_literal: true
 
 namespace :data_care do
+  task :merge_work, %i(base_work_id work_id) => :environment do |_, args|
+    base_work_id, work_id = args.values_at(:base_work_id, :work_id)
+    merge_work = Annict::DataCare::MergeWork.new(base_work_id, work_id)
+    merge_work.run!
+  end
+
   task :merge_episode, %i(base_episode_id episode_id) => :environment do |_, args|
     base_episode_id, episode_id = args.values_at(:base_episode_id, :episode_id)
     merge_episode = Annict::DataCare::MergeEpisode.new(base_episode_id, episode_id)

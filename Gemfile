@@ -2,7 +2,7 @@
 
 source "https://rubygems.org"
 
-ruby "2.5.0"
+ruby "2.5.1"
 
 git_source(:github) do |repo_name|
   repo_name = "#{repo_name}/#{repo_name}" unless repo_name.include?("/")
@@ -18,9 +18,7 @@ gem "activerecord-session_store"
 gem "acts_as_list"
 gem "amazon-ecs"
 gem "annotate"
-# Use aws-sdk 2.x for Paperclip
-# https://github.com/thoughtbot/paperclip/issues/2484
-gem "aws-sdk", "< 3.0"
+gem "aws-sdk-s3" # Uses in Paperclip
 gem "bootsnap", require: false
 gem "browser", require: "browser/browser"
 gem "by_star"

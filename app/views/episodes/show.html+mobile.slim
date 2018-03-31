@@ -8,9 +8,8 @@
 
 = render "works/header", work: @work
 
-- unless current_user&.supporter?
-  .mb-3.text-center
-    = render "application/components/adsense", slots: [ENV["GOOGLE_AD_320x100_9"]], size: "320x100"
+- if @all_comment_records.total_count != 0
+  c-adsense-container.text-center.mb-3 :slots="['#{ENV['GOOGLE_AD_320x100_9']}']" ad-size= "320x100"
 
 .c-card.mb-3.py-3
   = render "episodes/nav", work: @work, episode: @episode, all_records: @all_records
@@ -61,9 +60,8 @@
 .c-card.container.mb-3.py-2
   = render "episodes/item_list", episode: @episode, items: @items
 
-- unless current_user&.supporter?
-  .mb-3.text-center
-    = render "application/components/adsense", slots: [ENV["GOOGLE_AD_320x100_10"]], size: "320x100"
+- if @all_comment_records.total_count != 0
+  c-adsense-container.text-center.mb-3 :slots="['#{ENV['GOOGLE_AD_320x100_10']}']" ad-size= "320x100"
 
 = render "application/components/breadcrumb"
 = render "application/components/footer"

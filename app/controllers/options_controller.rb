@@ -6,7 +6,7 @@ class OptionsController < ApplicationController
   before_action :authenticate_user!
 
   def update(setting)
-    if current_user.setting.update_attributes(setting)
+    if current_user.setting.update(setting)
       redirect_to options_path, notice: t("messages._common.updated")
     else
       render :show

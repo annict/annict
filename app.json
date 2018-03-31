@@ -38,10 +38,7 @@
     "ANNICT_CURRENT_SEASON": {
       "required": true
     },
-    "ANNICT_DISCORD_INVITE_URL_EN": {
-      "required": true
-    },
-    "ANNICT_DISCORD_INVITE_URL_JA": {
+    "ANNICT_DISCORD_INVITE_URL": {
       "required": true
     },
     "ANNICT_DISCORD_WEBHOOK_URL_FOR_FORUM_DB_REQUEST": {
