@@ -18,7 +18,7 @@ AnnictSchema = GraphQL::Schema.define do
     Object.const_get(type_name).find(item_id)
   }
 
-  resolve_type ->(obj, _ctx) {
+  resolve_type ->(_type, obj, _ctx) {
     case obj
     when Activity
       UnionTypes::Activity
