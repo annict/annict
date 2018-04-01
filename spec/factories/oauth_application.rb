@@ -7,6 +7,6 @@ FactoryBot.define do
     sequence(:secret) { |n| "secret#{n}" }
     redirect_uri "https://example.com"
     scopes "read write"
-    association :owner, factory: :user
+    association :owner, factory: :registered_user
   end
 end
