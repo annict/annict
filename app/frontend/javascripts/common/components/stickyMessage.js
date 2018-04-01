@@ -30,7 +30,7 @@ export default {
       this.appLoaded = true
 
       if (this.isDisplayable() && typeof ga === 'function') {
-        return ga('send', 'event', 'Components', 'load', `stickyMessage-${this.pageCategory}`, {
+        return ga('send', 'event', 'components', 'load', `sticky-message_${this.pageCategory}`, {
           nonInteraction: true
         })
       }

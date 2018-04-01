@@ -139,7 +139,7 @@ class RecordsController < ApplicationController
     username = record.user.username
     utm = {
       utm_source: provider,
-      utm_medium: "record-share",
+      utm_medium: "record_share",
       utm_campaign: username
     }
 
