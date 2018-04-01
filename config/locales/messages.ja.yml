@@ -158,9 +158,13 @@ ja:
         sign_up_with_oauth: "%{provider_name}で始める"
     options:
       hide_supporter_badge: Annictサポーターのバッジを非表示にする
-      hide_supporter_badge_detail: プロフィールページなどに表示されるAnnictサポーターを示すバッジを非表示にします
+      hide_supporter_badge_detail: プロフィールページなどに表示されるAnnictサポーターを示すバッジを非表示にします。
       prevent_spoiler_of_episode_you_have_not_watched: 未記録エピソードのネタバレを防ぐ
       prevent_spoiler_of_episode_you_have_not_watched_detail: 見てる、見たい、または一時中断したアニメの中で、記録していないエピソードに投稿された他の利用者からの感想を表示しないようにします。
+      share_status_to_facebook: ステータスの変更をFacebookにシェアする
+      share_status_to_facebook_detail_html: "作品のステータスを変更したとき、自動でFacebookにシェアします。<br>テキスト例: (作品名)のステータスを「見たい」にしました。見たいアニメリスト: (URL)"
+      share_status_to_twitter: ステータスの変更をTwitterにシェアする
+      share_status_to_twitter_detail_html: "作品のステータスを変更したとき、自動でTwitterにシェアします。<br>テキスト例: (作品名)のステータスを「見たい」にしました。見たいアニメリスト: (URL)"
     organization_fans:
       no_users: ファンはいません
     passwords:

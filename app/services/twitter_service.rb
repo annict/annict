@@ -45,6 +45,12 @@ class TwitterService
     review.user.expire_twitter_token
   end
 
+  def share_status!(status)
+    client.update(status.decorate.tweet_body)
+  rescue Twitter::Error::Unauthorized
+    status.user.expire_twitter_token
+  end
+
   private
 
   def tweet_body(data)
