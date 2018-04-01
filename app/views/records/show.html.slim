@@ -65,6 +65,8 @@
           .text-center
             = render "application/components/adsense", slots: [ENV["GOOGLE_AD_250x250_3"]], size: "250x250"
 
+c-sticky-message message-body="#{t('messages._components.sticky_message.records_show.body')}"
+
 = render "application/components/footer"
 
 - content_for :js_templates do
