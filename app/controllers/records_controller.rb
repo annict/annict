@@ -114,12 +114,12 @@ class RecordsController < ApplicationController
       end
       record.increment!(:twitter_click_count) if no_bots.all?
 
-      redirect_to_user_record(record)
+      redirect_to_user_record(record, provider: "twitter")
     when "fb"
       record = Record.published.find_by!(facebook_url_hash: url_hash)
       record.increment!(:facebook_click_count)
 
-      redirect_to_user_record(record)
+      redirect_to_user_record(record, provider: "facebook")
     else
       redirect_to root_path
     end
@@ -135,9 +135,14 @@ class RecordsController < ApplicationController
     @record = @user.records.find(params[:id])
   end
 
-  def redirect_to_user_record(record)
+  def redirect_to_user_record(record, provider:)
     username = record.user.username
+    utm = {
+      utm_source: provider,
+      utm_medium: "record-share",
+      utm_campaign: username
+    }
 
-    redirect_to record_path(username, record)
+    redirect_to record_path(username, record, utm)
   end
 end
