@@ -23,7 +23,6 @@ class StatusDecorator < ApplicationDecorator
   def tweet_body
     I18n.locale = user.locale
     work_title = work.decorate.local_title
-    kind_action = I18n.t "enumerize.status.kind_action.#{kind.to_s}"
     utm = {
       utm_source: "twitter",
       utm_medium: "status_share",
@@ -32,7 +31,7 @@ class StatusDecorator < ApplicationDecorator
     library_url_with_query = "#{library_url}?#{utm.to_query}"
 
     base_body = if user.locale == "ja"
-      "%s のステータスを「#{kind_text}」にしました。#{kind_action}アニメリスト: #{library_url_with_query}"
+      "%s のステータスを「#{kind_text}」にしました。 #{library_url_with_query}"
     else
       "Changed %s's status to \"#{kind_text}\". Anime list: #{library_url}"
     end
