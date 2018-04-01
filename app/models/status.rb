@@ -47,6 +47,11 @@ class Status < ApplicationRecord
     count == 1 && initial.id == status.id
   end
 
+  def share_to_sns
+    ShareStatusToTwitterJob.perform_later(user.id, id) if user.setting.share_status_to_twitter?
+    ShareStatusToFacebookJob.perform_later(user.id, id) if user.setting.share_status_to_facebook?
+  end
+
   private
 
   def save_activity

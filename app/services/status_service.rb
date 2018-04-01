@@ -16,6 +16,7 @@ class StatusService
 
       if @status.save!
         UserWatchedWorksCountJob.perform_later(@user)
+        @status.share_to_sns
         create_ga_event
       end
     elsif @kind == "no_select"

@@ -56,4 +56,19 @@ class FacebookService
       caption: "Annict | アニクト - 見たアニメを記録して、共有しよう",
       source: image_url)
   end
+
+  def share_status!(status, image_url)
+    utm = {
+      utm_source: "facebook",
+      utm_medium: "status_share",
+      utm_campaign: status.user.username
+    }
+
+    client.put_connections("me", "feed",
+      name: status.work.title,
+      message: status.decorate.facebook_share_body,
+      link: "#{status.decorate.library_url}?#{utm.to_query}",
+      caption: "Annict | アニクト - 見たアニメを記録して、共有しよう",
+      source: image_url)
+  end
 end
