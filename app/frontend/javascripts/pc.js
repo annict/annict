@@ -50,6 +50,7 @@ import recordWordCount from './common/components/recordWordCount'
 import shareButtonFacebook from './common/components/shareButtonFacebook'
 import shareButtonTwitter from './common/components/shareButtonTwitter'
 import statusSelector from './common/components/statusSelector'
+import stickyMessage from './common/components/stickyMessage'
 import timeAgo from './common/components/timeAgo'
 import tips from './common/components/tips'
 import untrackedEpisodeList from './common/components/untrackedEpisodeList'
@@ -126,6 +127,7 @@ document.addEventListener('turbolinks:load', event => {
   Vue.component('c-share-button-facebook', shareButtonFacebook)
   Vue.component('c-share-button-twitter', shareButtonTwitter)
   Vue.component('c-status-selector', statusSelector)
+  Vue.component('c-sticky-message', stickyMessage)
   Vue.component('c-time-ago', timeAgo)
   Vue.component('c-tips', tips)
   Vue.component('c-untracked-episode-list', untrackedEpisodeList)
