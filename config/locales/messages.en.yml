@@ -30,6 +30,13 @@ en:
         kind:
           thumbs_up:
             exactly: Exactly
+      sticky_message:
+        about: "Learn more"
+        sign_up: "Get started"
+        libraries_show:
+          body: Do you want to create own anime lists? Let's get started!
+        records_show:
+          body: Do you want to create own anime lists? Let's get started!
     _empty:
       no_characters: No Characters
       no_episodes: No Episodes

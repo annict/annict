@@ -30,6 +30,13 @@ ja:
         kind:
           thumbs_up:
             exactly: わかる
+      sticky_message:
+        about: "Annictとは？"
+        sign_up: "はじめる"
+        libraries_show:
+          body: "Annict (アニクト) で自分が見たアニメを管理しよう！"
+        records_show:
+          body: "Annict (アニクト) で見たアニメを記録しよう！"
     _empty:
       no_characters: キャラクターはいません
       no_episodes: エピソードはありません
