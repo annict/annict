@@ -18,6 +18,8 @@
 #  share_review_to_twitter       :boolean          default(FALSE), not null
 #  share_review_to_facebook      :boolean          default(FALSE), not null
 #  hide_supporter_badge          :boolean          default(FALSE), not null
+#  share_status_to_twitter       :boolean          default(FALSE), not null
+#  share_status_to_facebook      :boolean          default(FALSE), not null
 #
 # Indexes
 #
