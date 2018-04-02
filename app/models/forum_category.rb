@@ -37,9 +37,9 @@ class ForumCategory < ApplicationRecord
     when "site_news"
       "@everyone"
     when "feedback"
-      "@admin"
+      "<@&#{ENV.fetch('ANNICT_DISCORD_ROLE_ID_ADMIN')}>"
     when "db_request"
-      "@admin @editor"
+      "<@&#{ENV.fetch('ANNICT_DISCORD_ROLE_ID_ADMIN')}> <@&#{ENV.fetch('ANNICT_DISCORD_ROLE_ID_EDITOR')}>"
     else
       ""
     end
