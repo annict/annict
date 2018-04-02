@@ -1,17 +1,24 @@
-<mj-section>
-  <mj-column width="180">
+<mj-section padding-top="10px">
+  <mj-column width="180" padding-top="10px">
     <mj-image width="180"
+              padding-right="0"
               src="<%= ann_email_image_url(work.work_image, :attachment, size: "240x240") %>"
               align="center"
-              href="<%= work_url(work, utm_source: 'email_notification', utm_campaign: utm_campaign, utm_medium: 'email') %>"></mj-image>
-    <mj-button href="<%= work_url(id: work.id, utm_source: 'email_notification', utm_campaign: utm_campaign, utm_medium: 'email') %>" background-color="#fff" border="1px solid #f85b73" color="#f85b73" padding-top="0">
+              href="<%= work_url(work, utm_source: 'email_notification', utm_campaign: utm_campaign, utm_medium: 'email', domain: local_domain) %>"></mj-image>
+    <mj-button href="<%= work_url(id: work.id, utm_source: 'email_notification', utm_campaign: utm_campaign, utm_medium: 'email', domain: local_domain) %>"
+               background-color="#fff"
+               border="1px solid #f85b73"
+               color="#f85b73"
+               padding-top="0"
+               padding-right="0">
       <%= I18n.t("email_notification_mailer.favorite_works_added.view_detail") %>
     </mj-button>
   </mj-column>
+
   <mj-column width="420">
-    <mj-text padding="10px 25px 0 25px">
+    <mj-text>
       <% if work.season.present? %>
-        <span style="color: #fff; background-color: <%= work.season.color %>; padding: 3px;">
+        <span style="color: #fff; background-color: <%= work.season.color %>; padding: 3px; display: inline-block;">
           <%= work.season.local_name %>
         </span>
       <% else %>
@@ -21,14 +28,14 @@
       <% end %>
     </mj-text>
 
-    <mj-text font-size="14px" padding-bottom="5px" padding-top="5px"><%= "#{work.watchers_count} Watchers" %></mj-text>
-    <mj-text font-size="18px" font-weight="400" padding-top="0" padding-bottom="7px">
-      <%= link_to "#{work.decorate.local_title}", work_url(id: work.id, utm_source: 'email_notification', utm_campaign: utm_campaign, utm_medium: 'email'), style: "color: #0366d6; text-decoration: none;" %>
+    <mj-text font-size="18px" font-weight="400" padding-top="0" padding-bottom="5px">
+      <%= link_to "#{work.decorate.local_title}", work_url(id: work.id, utm_source: 'email_notification', utm_campaign: utm_campaign, utm_medium: 'email', domain: local_domain), style: "color: #0366d6; text-decoration: none;" %>
     </mj-text>
+    <mj-text font-size="14px" padding-top="0px" padding-bottom="7px"><%= "#{work.watchers_count} Watchers" %></mj-text>
 
     <% if work.decorate.local_synopsis.present? %>
-      <mj-text font-weight="800" padding="10px 25px 0 25px"><%= I18n.t("activerecord.attributes.work.synopsis") %></mj-text>
-      <mj-text padding-top="0">
+      <mj-text font-weight="800" padding="10px 25px"><%= I18n.t("activerecord.attributes.work.synopsis") %></mj-text>
+      <mj-text padding-top="0" line-height="22px">
         <%= work.decorate.local_synopsis(raw: true) %>
       </mj-text>
     <% end %>
@@ -50,8 +57,8 @@
     <% end %>
 
     <% if work.casts.published.exists? %>
-      <mj-text font-weight="800" padding="10px 25px 0 25px"><%= I18n.t("noun.casts") %></mj-text>
-      <mj-text padding-top="0">
+      <mj-text font-weight="800" padding="10px 25px"><%= I18n.t("noun.casts") %></mj-text>
+      <mj-text padding-top="0" line-height="22px">
         <% work.casts.published.order(:sort_number).limit(10).each do |cast| %>
           <%= cast.character.decorate.local_name %>: <%= cast.person.decorate.local_name %>
         <% end %>
@@ -59,8 +66,8 @@
     <% end %>
 
     <% if work.staffs.published.exists? %>
-      <mj-text font-weight="800" padding="10px 25px 0 25px"><%= I18n.t("noun.staffs") %></mj-text>
-      <mj-text padding-top="0">
+      <mj-text font-weight="800" padding="10px 25px"><%= I18n.t("noun.staffs") %></mj-text>
+      <mj-text padding-top="0" line-height="22px">
         <% work.staffs.published.major.order(:sort_number).each do |staff| %>
           <%= staff.decorate.role_name %>: <%= staff.decorate.local_name %>
         <% end %>

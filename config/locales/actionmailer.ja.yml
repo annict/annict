@@ -24,7 +24,7 @@ ja:
       view_profile: プロフィールを見る
       view_record: 記録を見る
     next_season_came:
-      description_html: "%{name}アニメの季節がやって来ました。<br>Annictで注目されている5作品をご紹介します。"
+      description_html: "%{name}アニメの季節がやって来ました！<br>Annictで注目されている5作品をご紹介します。"
       subject: "Annictで%{name}アニメをチェックしよう！"
       view_detail: "詳しく見る"
       view_more: "%{name}アニメを全て見る"

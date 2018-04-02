@@ -7,6 +7,7 @@ class EmailNotificationMailer < ActionMailer::Base
   )
 
   add_template_helper ImageHelper
+  add_template_helper LocalHelper
 
   def followed_user(followed_user_id, user_id)
     @followed_user = User.find(followed_user_id)
