@@ -197,6 +197,15 @@ class Work < ApplicationRecord
       order("seasons.sort_number #{type} NULLS LAST, works.id #{type}")
   }
 
+  scope :gt_current_season, -> {
+    season = Season.find_by_slug(ENV.fetch("ANNICT_CURRENT_SEASON"))
+
+    where("season_year >= ? AND season_name > ?", season.year, season.name_value).
+      or(where("season_year > ?", season.year)).
+      or(where(season_year: season.year, season_name: nil)).
+      or(where(season_year: nil))
+  }
+
   def self.statuses(work_ids, user)
     work_ids = work_ids.uniq
     latest_statuses = LatestStatus.where(user: user, work_id: work_ids)
@@ -445,5 +454,11 @@ class Work < ApplicationRecord
 
   def image_text_color_rgb
     work_image&.text_color_rgb.presence || "0,0,0"
+  end
+
+  def related_works
+    series_work_ids = SeriesWork.where(series_id: series_list.pluck(:id)).pluck(:id)
+    series_works = SeriesWork.where(id: series_work_ids)
+    Work.where(id: series_works.pluck(:work_id) - [id])
   end
 end

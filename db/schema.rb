@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180401123249) do
+ActiveRecord::Schema.define(version: 20180403091308) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -241,6 +241,7 @@ ActiveRecord::Schema.define(version: 20180401123249) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.boolean "event_favorite_works_added", default: true, null: false
+    t.boolean "event_related_works_added", default: true, null: false
     t.index ["unsubscription_key"], name: "index_email_notifications_on_unsubscription_key", unique: true
     t.index ["user_id"], name: "index_email_notifications_on_user_id", unique: true
   end

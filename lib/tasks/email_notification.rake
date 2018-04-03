@@ -9,13 +9,7 @@ namespace :email_notification do
   task send_favorite_works_added_email: :environment do
     cast_work_ids = Cast.published.yesterday.pluck(:work_id)
     staff_work_ids = Staff.published.yesterday.pluck(:work_id)
-    season = Season.find_by_slug(ENV.fetch("ANNICT_CURRENT_SEASON"))
-    works = Work.published.where(id: (cast_work_ids | staff_work_ids))
-    works = works.
-        where("season_year >= ? AND season_name > ?", season.year, season.name_value).
-        or(works.where("season_year > ?", season.year)).
-        or(works.where(season_year: season.year, season_name: nil)).
-        or(works.where(season_year: nil))
+    works = Work.published.where(id: (cast_work_ids | staff_work_ids)).gt_current_season
 
     works.find_each do |work|
       favorite_character_user_ids = FavoriteCharacter.
@@ -41,6 +35,34 @@ namespace :email_notification do
       users.find_each do |user|
         next if user.statuses.where(work: work).exists?
         EmailNotificationService.send_email("favorite_works_added", user, work.id)
+      end
+    end
+  end
+
+  task send_related_works_added_email: :environment do
+    works = Work.published.yesterday.gt_current_season
+
+    next if works.blank?
+
+    users = User.
+      joins(:email_notification).
+      where(email_notifications: { event_related_works_added: true })
+
+    works.find_each do |work|
+      series_ids = work.series_list.pluck(:id)
+      related_work_ids = SeriesWork.where(series_id: series_ids).pluck(:work_id).uniq - [work.id]
+
+      next if related_work_ids.blank?
+
+      users.find_each do |user|
+        positive_statuses = user.statuses.positive
+
+        next unless positive_statuses.exists?
+        next if user.statuses.pluck(:work_id).include?(work.id)
+
+        if (positive_statuses.pluck(:work_id) & related_work_ids).present?
+          EmailNotificationService.send_email("related_works_added", user, work.id)
+        end
       end
     end
   end

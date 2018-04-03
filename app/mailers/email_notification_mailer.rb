@@ -76,4 +76,19 @@ class EmailNotificationMailer < ActionMailer::Base
     )
     mail(to: @user.email, subject: subject, &:mjml)
   end
+
+  def related_works_added(user_id, work_id)
+    @user = User.find(user_id)
+    @work = Work.published.find(work_id)
+    @related_works = @work.related_works.published.order_by_season
+    @unsubscription_key = @user.email_notification.unsubscription_key
+
+    I18n.locale = @user.locale
+
+    subject = default_i18n_subject(
+      work_title: @work.decorate.local_title,
+      related_work_title: @related_works.first.decorate.local_title
+    )
+    mail(to: @user.email, subject: subject, &:mjml)
+  end
 end

@@ -13,6 +13,7 @@
 #  created_at                 :datetime         not null
 #  updated_at                 :datetime         not null
 #  event_favorite_works_added :boolean          default(TRUE), not null
+#  event_related_works_added  :boolean          default(TRUE), not null
 #
 # Indexes
 #
