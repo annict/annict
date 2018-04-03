@@ -19,13 +19,13 @@
         = f.check_box :event_friends_joined, class: "form-check-input"
         = t "activerecord.attributes.email_notification.event_friends_joined"
     .form-check
-      = f.label :event_next_season_came, class: "form-check-label" do
-        = f.check_box :event_next_season_came, class: "form-check-input"
-        = t "activerecord.attributes.email_notification.event_next_season_came"
-    .form-check
       = f.label :event_favorite_works_added, class: "form-check-label" do
         = f.check_box :event_favorite_works_added, class: "form-check-input"
         = t "activerecord.attributes.email_notification.event_favorite_works_added"
+    .form-check
+      = f.label :event_related_works_added, class: "form-check-label" do
+        = f.check_box :event_related_works_added, class: "form-check-input"
+        = t "activerecord.attributes.email_notification.event_related_works_added"
     .form-submit.text-center.mt-3
       = f.submit class: "btn btn-primary"
 

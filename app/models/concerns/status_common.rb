@@ -17,6 +17,7 @@ module StatusCommon
     belongs_to :user
     belongs_to :work
 
+    scope :positive, -> { with_kind(:wanna_watch, :watching, :watched) }
     scope :work_published, -> { joins(:work).merge(Work.published) }
   end
 end

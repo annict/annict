@@ -23,11 +23,10 @@ ja:
       subject: "%{name} (@%{username})が %{title} への記録に「いいね！」しました"
       view_profile: プロフィールを見る
       view_record: 記録を見る
-    next_season_came:
-      description_html: "%{name}アニメの季節がやって来ました！<br>Annictで注目されている5作品をご紹介します。"
-      subject: "Annictで%{name}アニメをチェックしよう！"
-      view_detail: "詳しく見る"
-      view_more: "%{name}アニメを全て見る"
+    related_works_added:
+      description_html: "アニメ「%{work_title}」がAnnictに登録されました。"
+      related_works: 関連する作品
+      subject: "「%{related_work_title}」に関連するアニメ「%{work_title}」がAnnictに登録されました！"
   mention_mailer:
     notify:
       subject: "%{name} (@%{username})がAnnictであなたにメンションしました！"

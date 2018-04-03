@@ -17,6 +17,10 @@
 
   <mj-column width="420">
     <mj-text>
+      <span style="color: #fff; background-color: #2985be; padding: 3px; display: inline-block; margin-right: 3px;">
+        <%= work.media.text %>
+      </span>
+
       <% if work.season.present? %>
         <span style="color: #fff; background-color: <%= work.season.color %>; padding: 3px; display: inline-block;">
           <%= work.season.local_name %>
