@@ -53,7 +53,6 @@ ja:
         event_followed_user: フォローされたときメールを受け取る
         event_friends_joined: Twitter/Facebookの友達がAnnictに参加したときメールを受け取る
         event_liked_record: 自分の記録が「いいね！」されたときメールを受け取る
-        event_next_season_came: 来期アニメが始まるときメールを受け取る
         event_favorite_works_added: お気に入りの人物などが関わる作品が追加されたとき受け取る
       episode:
         records_count: 記録数

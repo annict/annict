@@ -6,28 +6,6 @@ namespace :email_notification do
     WorkMailer.untouched_works_notification(works.pluck(:id)).deliver_later
   end
 
-  task :send_next_season_came_email, %i(season_year season_name all) => :environment do |t, args|
-    Rails.logger = Logger.new(STDOUT) if Rails.env.development?
-    Rails.logger.info "work:send_next_season_came_email >> task started"
-
-    users = if args[:all] == "true"
-              User.
-                  joins(:email_notification).
-                  where(email_notifications: { event_next_season_came: true })
-            else
-              User.where(username: "shimbaco")
-            end
-
-    users.find_each do |user|
-      Rails.logger.info "work:send_next_season_came_email >> user: #{user.id}"
-      EmailNotificationService.send_email(
-          "next_season_came", user, args[:season_year], args[:season_name]
-      )
-    end
-
-    Rails.logger.info "work:send_next_season_came_email >> task processed"
-  end
-
   task send_favorite_works_added_email: :environment do
     cast_work_ids = Cast.published.yesterday.pluck(:work_id)
     staff_work_ids = Staff.published.yesterday.pluck(:work_id)
