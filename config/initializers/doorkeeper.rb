@@ -155,6 +155,11 @@ module Doorkeeper
     module Helpers
       module URIChecker
         def self.valid?(url)
+          # Return true if the url is native URI (urn:ietf:wg:oauth:2.0:oob).
+          # This patch would be able to remove when #1060 will be released.
+          # https://github.com/doorkeeper-gem/doorkeeper/pull/1060
+          return true if native_uri?(url)
+
           uri = as_uri(url)
           !uri.host.nil? && !uri.scheme.nil?
         rescue URI::InvalidURIError
