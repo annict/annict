@@ -85,14 +85,10 @@ export default {
     },
 
     select(event) {
-      event.preventDefault();
-
-      const path =
-        this.index === -1
-          ? `/search?q=${this.q}`
-          : this.resultPath(this.results[this.index]);
-
-      return (location.href = path);
+      if (this.index !== -1) {
+        location.href = this.resultPath(this.results[this.index]);
+        event.preventDefault();
+      }
     },
 
     onMouseover(index) {
