@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180403091308) do
+ActiveRecord::Schema.define(version: 20180405091856) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -780,7 +780,7 @@ ActiveRecord::Schema.define(version: 20180403091308) do
 
   create_table "records", id: :serial, force: :cascade do |t|
     t.integer "user_id", null: false
-    t.integer "episode_id", null: false
+    t.integer "episode_id"
     t.text "comment"
     t.boolean "modify_comment", default: false, null: false
     t.string "twitter_url_hash", limit: 510
@@ -801,8 +801,10 @@ ActiveRecord::Schema.define(version: 20180403091308) do
     t.integer "review_id"
     t.string "aasm_state", default: "published", null: false
     t.string "locale", default: "other", null: false
+    t.integer "impressions_count", default: 0, null: false
     t.index ["episode_id"], name: "checkins_episode_id_idx"
     t.index ["facebook_url_hash"], name: "checkins_facebook_url_hash_key", unique: true
+    t.index ["impressions_count"], name: "index_records_on_impressions_count"
     t.index ["locale"], name: "index_records_on_locale"
     t.index ["multiple_record_id"], name: "index_records_on_multiple_record_id"
     t.index ["oauth_application_id"], name: "index_records_on_oauth_application_id"
@@ -831,8 +833,10 @@ ActiveRecord::Schema.define(version: 20180403091308) do
     t.datetime "updated_at", null: false
     t.integer "oauth_application_id"
     t.string "locale", default: "other", null: false
+    t.integer "record_id"
     t.index ["locale"], name: "index_reviews_on_locale"
     t.index ["oauth_application_id"], name: "index_reviews_on_oauth_application_id"
+    t.index ["record_id"], name: "index_reviews_on_record_id"
     t.index ["user_id"], name: "index_reviews_on_user_id"
     t.index ["work_id"], name: "index_reviews_on_work_id"
   end
@@ -1303,6 +1307,7 @@ ActiveRecord::Schema.define(version: 20180403091308) do
   add_foreign_key "records", "users", name: "checkins_user_id_fk", on_delete: :cascade
   add_foreign_key "records", "works", name: "checkins_work_id_fk"
   add_foreign_key "reviews", "oauth_applications"
+  add_foreign_key "reviews", "records"
   add_foreign_key "reviews", "users"
   add_foreign_key "reviews", "works"
   add_foreign_key "series_works", "series"

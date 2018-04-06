@@ -84,6 +84,11 @@ crumb :user_review_list do |user|
   parent :user_detail, user
 end
 
+crumb :user_record_list do |user|
+  link t("noun.record_list")
+  parent :user_detail, user
+end
+
 crumb :work_review_list do |work|
   link t("noun.reviews"), work_reviews_path(work)
   parent :work_detail, work
@@ -105,6 +110,19 @@ crumb :review_detail do |review|
   link_title = t("noun.review_of_the_work", work_title: work.decorate.local_title)
   link link_title, review_path(user.username, review)
   parent :user_review_list, user
+end
+
+crumb :record_detail do |record|
+  user = record.user
+  work = record.work
+  episode = record.episode
+  link_title = if episode.present?
+    I18n.t("noun.record_of_episode", work_title: work.decorate.local_title, episode_title_with_number: episode.decorate.title_with_number)
+  else
+    I18n.t("noun.record_of_work", work_title: work.decorate.local_title)
+  end
+  link link_title, record_path(user.username, record)
+  parent :user_record_list, user
 end
 
 crumb :work_episode_list do |work|

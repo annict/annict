@@ -28,7 +28,8 @@ en:
         person_fans:
           index: Check out fans of %{person_name}!
         records:
-          show: Check out %{profile_name} (%{username})'s records!
+          show_episode: Check out %{profile_name} (%{username})'s records!
+          show_work: Check out %{profile_name} (%{username})'s records!
         registrations:
           new: Start using Annict!
         reviews:
@@ -194,7 +195,8 @@ en:
       providers:
         index: Connections
       records:
-        show: "A Record by %{profile_name} (%{username}) on %{work_title} - %{episode_title_with_number}"
+        show_episode: "A Record by %{profile_name} (%{username}) on %{work_title} - %{episode_title_with_number}"
+        show_work: "A Record by %{profile_name} (%{username}) on %{work_title}"
       registrations:
         new: Sign Up
       reviews:

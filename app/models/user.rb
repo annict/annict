@@ -245,10 +245,15 @@ class User < ApplicationRecord
     twitter.update_column(:token_expires_at, Time.now.to_i)
   end
 
-  def hide_record_comment?(episode)
-    setting.hide_record_comment? &&
-      works.desiring_to_watch.include?(episode.work) &&
-      !records.pluck(:episode_id).include?(episode.id)
+  def hide_record?(record)
+    return false unless setting.hide_record_comment?
+    return false unless works.desiring_to_watch.include?(record.work)
+
+    if record.episode.present?
+      !records.pluck(:episode_id).include?(record.episode_id)
+    else
+      !records.pluck(:work_id).include?(record.work_id)
+    end
   end
 
   def hide_review?(review)

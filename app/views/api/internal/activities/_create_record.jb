@@ -8,22 +8,16 @@ cache_keys = [
 ]
 
 json = Rails.cache.fetch(cache_keys) do
-  episode = activity.recipient
   record = activity.trackable
 
-  {
+  data = {
     work: {
-      id: episode.work.id,
-      title: episode.work.decorate.local_title,
-      is_single: episode.decorate.local_title == episode.work.decorate.local_title
+      id: record.work.id,
+      title: record.work.decorate.local_title,
+      is_single: record.work.no_episodes?
     },
     item: {
-      image_url: ann_image_url(episode.work.work_image, :attachment, size: "125x125")
-    },
-    episode: {
-      id: episode.id,
-      number: episode.decorate.local_number,
-      title: episode.decorate.local_title(fallback: false)
+      image_url: ann_image_url(record.work.work_image, :attachment, size: "125x125")
     },
     record: {
       id: record.id,
@@ -34,6 +28,17 @@ json = Rails.cache.fetch(cache_keys) do
       rating_state: record.rating_state
     }
   }
+
+  if activity.recipient.instance_of?(Episode)
+    episode = activity.recipient
+    data[:episode] = {
+      id: episode.id,
+      number: episode.decorate.local_number,
+      title: episode.decorate.local_title(fallback: false)
+    }
+  end
+
+  data
 end
 
 cache_keys = [
@@ -47,7 +52,7 @@ cache_keys = [
 
 json[:record][:hide_comment] = Rails.cache.fetch(cache_keys) do
   record = activity.trackable
-  user.present? && user.hide_record_comment?(record.episode)
+  user.present? && user.hide_record?(record)
 end
 
 json

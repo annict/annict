@@ -28,7 +28,8 @@ ja:
         person_fans:
           index: "%{person_name}のファンをチェック！"
         records:
-          show: "%{profile_name} (%{username})さんの感想をチェック！"
+          show_episode: "%{profile_name} (%{username})さんのアニメ「%{work_title}」%{episode_title_with_number}への感想をチェック！"
+          show_work: "%{profile_name} (%{username})さんのアニメ「%{work_title}」への感想をチェック！"
         registrations:
           new: Annictを始めよう！
         reviews:
@@ -194,7 +195,8 @@ ja:
       providers:
         index: サービス連携
       records:
-        show: "%{profile_name} (%{username})の%{work_title} %{episode_title_with_number}への感想"
+        show_episode: "%{profile_name} (%{username})のアニメ「%{work_title}」%{episode_title_with_number}への記録"
+        show_work: "%{profile_name} (%{username})のアニメ「%{work_title}」への記録"
       registrations:
         new: ユーザ登録
       reviews:

@@ -12,13 +12,15 @@ class RecordsController < ApplicationController
     @episode = @record.episode
     @comments = @record.comments.order(created_at: :desc)
     @comment = Comment.new
-    @is_spoiler = user_signed_in? && current_user.hide_record_comment?(@episode)
+    @is_spoiler = user_signed_in? && current_user.hide_record?(@record)
+    store_page_params(work: @work)
   end
 
   def create(record)
     @episode = Episode.published.find(record[:episode_id])
     @work = @episode.work
     @record = @episode.records.new(record)
+    @record.work = @work
     ga_client.page_category = params[:page_category]
 
     service = NewRecordService.new(current_user, @record)
@@ -49,7 +51,7 @@ class RecordsController < ApplicationController
 
       store_page_params(work: @work)
 
-      @is_spoiler = current_user.hide_record_comment?(@episode)
+      @is_spoiler = current_user.hide_record?(@record)
 
       render "/episodes/show"
     end
