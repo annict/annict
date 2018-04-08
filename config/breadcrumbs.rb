@@ -89,13 +89,13 @@ crumb :user_record_list do |user|
   parent :user_detail, user
 end
 
-crumb :work_review_list do |work|
-  link t("noun.reviews"), work_reviews_path(work)
+crumb :work_record_list do |work|
+  link t("noun.reviews"), work_records_path(work)
   parent :work_detail, work
 end
 
 crumb :new_review do |work|
-  link t("head.title.reviews.new"), new_work_review_path(work)
+  link t("head.title.reviews.new"), new_work_record_path(work)
   parent :work_review_list, work
 end
 

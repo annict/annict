@@ -47,7 +47,7 @@ en:
           popular: Looking for popular anime? Find out more with Annict!
           season: Looking for information on %{name} anime? Find out more with Annict!
           show: Looking for information on %{title}? Find out more with Annict!
-        work_reviews:
+        work_records:
           index: Looking for reviews of %{work_title}? Find out more with Annict!
       keywords:
         _common: annict, anime, review
@@ -244,5 +244,5 @@ en:
         popular: Popular Anime
         season: "%{name} Anime"
         show: "%{title} (Anime)"
-      work_reviews:
+      work_records:
         index: Reviews of %{work_title} (Anime)

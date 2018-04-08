@@ -47,8 +47,8 @@ ja:
           popular: 人気アニメをチェック！
           season: "%{name}アニメをチェック！"
           show: アニメ「%{title}」の感想や情報をチェック！
-        work_reviews:
-          index: "アニメ「%{work_title}」のレビューをチェック！"
+        work_records:
+          index: "アニメ「%{work_title}」の感想をチェック！"
       keywords:
         _common: annict, anime, review
     title:
@@ -244,5 +244,5 @@ ja:
         popular: 人気アニメ
         season: "%{name}のアニメ"
         show: "アニメ「%{title}」"
-      work_reviews:
-        index: アニメ「%{work_title}」のレビュー一覧
+      work_records:
+        index: アニメ「%{work_title}」の感想一覧

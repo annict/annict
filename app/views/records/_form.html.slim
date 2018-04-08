@@ -1,4 +1,3 @@
-- url = record.new_record? ? records_path(current_user.username) : record_path(current_user.username, record)
 = form_for record, url: url do |f|
   = render "application/components/error_panel", resource: record
   

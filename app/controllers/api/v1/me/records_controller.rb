@@ -9,6 +9,7 @@ module Api
         def create
           episode = Episode.published.find(@params.episode_id)
           record = episode.records.new do |r|
+            r.work_id = episode.work.id
             r.rating = @params.rating
             r.rating_state = @params.rating_state
             r.comment = @params.comment

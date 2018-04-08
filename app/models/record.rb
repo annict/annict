@@ -48,6 +48,8 @@ class Record < ApplicationRecord
   include AASM
   include LocaleDetectable
 
+  is_impressionable counter_cache: true, unique: true
+
   enumerize :rating_state, in: %i(bad average good great), scope: true
 
   aasm do
@@ -83,6 +85,7 @@ class Record < ApplicationRecord
 
   scope :with_comment, -> { where.not(comment: ["", nil]) }
   scope :with_no_comment, -> { where(comment: ["", nil]) }
+  scope :with_no_episode, -> { where(episode_id: nil) }
 
   after_destroy :expire_cache
   after_save :expire_cache
@@ -152,7 +155,7 @@ class Record < ApplicationRecord
   end
 
   def share_to_sns
-    TwitterShareJob.perform_later(user_id, id) if shared_twitter?
+    ShareRecordToTwitterJob.perform_later(user_id, id) if shared_twitter?
     FacebookShareJob.perform_later(user_id, id) if shared_facebook?
   end
 

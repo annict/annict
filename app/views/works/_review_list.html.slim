@@ -10,7 +10,7 @@
         = t "messages.works.view_all_n_reviews", n: reviews.length
 - else
   = render "application/components/empty", text: t("messages._empty.no_reviews") do
-    = link_to new_work_review_path(work), class: "btn btn-primary mt-2" do
+    = link_to new_work_record_path(work), class: "btn btn-primary mt-2" do
       = icon "edit", class: "mr-1"
       = t "verb.write_review"
 

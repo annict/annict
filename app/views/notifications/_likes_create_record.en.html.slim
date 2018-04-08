@@ -8,7 +8,7 @@ span.mr-1
 | liked your record on
 span.ml-1
   = work.decorate.title_link
-- unless work.single?
+- if episode.present? && episode.number.present?
   span.ml-1
     = episode.decorate.number_link
 

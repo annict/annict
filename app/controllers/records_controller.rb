@@ -3,6 +3,8 @@
 class RecordsController < ApplicationController
   permits :episode_id, :comment, :shared_twitter, :shared_facebook, :rating_state
 
+  impressionist actions: %i(show)
+
   before_action :authenticate_user!, only: %i(create edit update destroy switch)
   before_action :load_user, only: %i(create show edit update destroy)
   before_action :load_record, only: %i(show edit update destroy)

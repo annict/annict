@@ -1208,6 +1208,7 @@ ActiveRecord::Schema.define(version: 20180405091856) do
     t.float "score"
     t.integer "ratings_count", default: 0, null: false
     t.float "satisfaction_rate"
+    t.integer "record_comments_count", default: 0, null: false
     t.index ["aasm_state"], name: "index_works_on_aasm_state"
     t.index ["key_pv_id"], name: "index_works_on_key_pv_id"
     t.index ["number_format_id"], name: "index_works_on_number_format_id"
