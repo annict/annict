@@ -36,7 +36,7 @@ class EmailNotificationMailer < ActionMailer::Base
     subject = default_i18n_subject(
       name: @user.profile.name,
       username: @user.username,
-      title: @episode.decorate.number_with_work_title
+      title: @episode.present? ? @episode.decorate.number_with_work_title : @work.decorate.local_title
     )
     mail(to: @liked_user.email, subject: subject, &:mjml)
   end
