@@ -128,6 +128,13 @@ class Record < ApplicationRecord
     SecureRandom.urlsafe_base64.slice(0, 10)
   end
 
+  # Do not use helper methods via Draper when the method is used in ActiveJob
+  # https://github.com/drapergem/draper/issues/655
+  def detail_url
+    # "#{user.annict_url}/@#{user.username}/records/#{id}"
+    "https://annict.jp/@shimbaco/records/1491891"
+  end
+
   def setup_shared_sns(user)
     self.shared_twitter =
       user.twitter.present? &&
@@ -156,7 +163,7 @@ class Record < ApplicationRecord
 
   def share_to_sns
     ShareRecordToTwitterJob.perform_later(user_id, id) if shared_twitter?
-    FacebookShareJob.perform_later(user_id, id) if shared_facebook?
+    ShareRecordToFacebookJob.perform_later(user_id, id) if shared_facebook?
   end
 
   private

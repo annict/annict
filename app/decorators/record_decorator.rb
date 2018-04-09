@@ -20,12 +20,27 @@ class RecordDecorator < ApplicationDecorator
     end
   end
 
-  def tweet_body
+  def facebook_share_body
+    return comment if comment.present?
+
+    if user.locale == "ja"
+      "見ました。"
+    else
+      "Watched."
+    end
+  end
+
+  def twitter_share_body
     user = record.user
-    title = record.comment.present? ? work_title.truncate(20) : work_title
+    title = record.comment.present? ? work_title.truncate(30) : work_title
     comment = record.comment.present? ? "#{record.comment} / " : ""
     episode_number = episode.present? ? " #{episode.decorate.local_number} " : ""
-    share_url = detail_url
+    utm = {
+      utm_source: "twitter",
+      utm_medium: "record_share",
+      utm_campaign: user.username
+    }
+    share_url = "#{detail_url}?#{utm.to_query}"
     share_hashtag = record.work.hashtag_with_hash
 
     base_body = if user.locale == "ja"
@@ -35,9 +50,10 @@ class RecordDecorator < ApplicationDecorator
     end
 
     body = base_body % comment
-    return body if body.length <= 140
+    body_without_url = body.sub(share_url, '')
+    return body if body_without_url.length <= 130
 
-    comment = comment.truncate(comment.length - (body.length - 140)) + " / "
+    comment = comment.truncate(comment.length - (body_without_url.length - 130)) + " / "
     base_body % comment
   end
 
@@ -57,11 +73,5 @@ class RecordDecorator < ApplicationDecorator
 
   def episode_title_with_number
     episode.decorate.title_with_number
-  end
-
-  # Do not use helper methods via Draper when the method is used in ActiveJob
-  # https://github.com/drapergem/draper/issues/655
-  def detail_url
-    "#{user.annict_url}/@#{user.username}/records/#{id}"
   end
 end
