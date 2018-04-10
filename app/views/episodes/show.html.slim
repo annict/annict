@@ -27,7 +27,7 @@
             .c-card.py-3
               - if user_signed_in?
                 .container
-                  = render "records/form", record: @record, url: records_path(current_user.username)
+                  = render "records/form", record: @record, url: episode_records_path(@episode)
                   hr
               .container
                 - if user_signed_in?
