@@ -98,15 +98,17 @@ class WorksController < ApplicationController
     @channels = Channel.published.with_vod
     @series_list = @work.series_list.published.where("series_works_count > ?", 1)
 
-    @reviews = @work.reviews.includes(:user).published
-    @reviews = localable_resources(@reviews)
-    @reviews = @reviews.order(created_at: :desc)
+    @records = @work.records.published.reviews.includes(:user)
+    @records = localable_resources(@records)
+    @records = @records.order(created_at: :desc)
 
     @items = @work.items.published
     @items = localable_resources(@items)
     @items = @items.order(created_at: :desc).limit(10)
 
     return unless user_signed_in?
+
+    @record = @work.records.new
 
     store_page_params(work: @work)
   end

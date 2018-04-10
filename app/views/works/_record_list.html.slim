@@ -1,0 +1,24 @@
+- if user_signed_in?
+  .container.pt-3
+    = render "records/form", record: @record, url: work_records_path(@work)
+    hr
+
+- if records.present?
+  .px-3
+    - records.first(10).each do |record|
+      .py-3.u-underline
+        = render "records/record", record: record, is_spoiler: user_signed_in? && current_user.hide_record?(record)
+  - if records.length > 10
+    .container.mb-3
+      = link_to work_records_path(work), class: "btn btn-secondary w-100" do
+        = icon "angle-right"
+        = t "messages.works.view_all_n_reviews", n: records.length
+- else
+  = render "application/components/empty", text: t("messages._empty.no_records") do
+    = link_to new_work_record_path(work), class: "btn btn-primary mt-2" do
+      = icon "edit", class: "mr-1"
+      = t "verb.write_record"
+
+- content_for :js_templates do
+  = render "application/js_templates/like_button"
+  = render "application/js_templates/rating_state_label"

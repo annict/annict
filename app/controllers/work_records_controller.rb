@@ -43,7 +43,7 @@ class WorkRecordsController < ApplicationController
     @records = @work.
         records.
         published.
-        with_no_episode.
+        reviews.
         includes(user: :profile)
     @records = localable_resources(@records)
     @records = @records.order(created_at: :desc).page(page)

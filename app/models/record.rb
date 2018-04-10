@@ -86,6 +86,7 @@ class Record < ApplicationRecord
   scope :with_comment, -> { where.not(comment: ["", nil]) }
   scope :with_no_comment, -> { where(comment: ["", nil]) }
   scope :with_no_episode, -> { where(episode_id: nil) }
+  scope :reviews, -> { with_no_episode.with_comment }
 
   after_destroy :expire_cache
   after_save :expire_cache
