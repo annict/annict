@@ -30,13 +30,23 @@ namespace :counter_cache do
   end
 
   task refresh_record_comments_count: :environment do
-    Episode.find_each do |episode|
+    Episode.published.find_each do |episode|
       record_comments_count = episode.records.with_comment.count
       if record_comments_count != episode.record_comments_count
         episode.update_column(:record_comments_count, record_comments_count)
         puts "Episode ID: #{episode.id} - #{record_comments_count}"
       else
         puts "Episode ID: #{episode.id} - skipped."
+      end
+    end
+
+    Work.published.find_each do |work|
+      record_comments_count = work.records.reviews.count
+      if record_comments_count != work.record_comments_count
+        work.update_column(:record_comments_count, record_comments_count)
+        puts "Work ID: #{work.id} - #{record_comments_count}"
+      else
+        puts "Work ID: #{work.id} - skipped."
       end
     end
   end
