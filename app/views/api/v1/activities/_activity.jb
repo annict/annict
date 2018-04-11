@@ -9,12 +9,15 @@ json[:created_at] = activity.created_at if params.fields_contain?("#{field_prefi
 
 case activity.action
 when "create_record"
-  json[:work] = render("api/v1/works/work", work: activity.recipient.work, params: params, field_prefix: "work.")
-  json[:episode] = render("api/v1/episodes/episode", episode: activity.recipient, params: params, field_prefix: "episode.")
-  json[:record] = render("api/v1/records/record", record: activity.trackable, params: params, field_prefix: "record.")
-when "create_review"
-  json[:work] = render("api/v1/works/work", work: activity.recipient, params: params, field_prefix: "work.")
-  json[:review] = render("api/v1/reviews/review", review: activity.trackable, params: params, field_prefix: "review.")
+  if activity.recipient.instance_of?(Episode)
+    json[:work] = render("api/v1/works/work", work: activity.recipient.work, params: params, field_prefix: "work.")
+    json[:episode] = render("api/v1/episodes/episode", episode: activity.recipient, params: params, field_prefix: "episode.")
+    json[:record] = render("api/v1/records/record", record: activity.trackable, params: params, field_prefix: "record.")
+  else
+    json[:action] = "create_review" if params.fields_contain?("#{field_prefix}action")
+    json[:work] = render("api/v1/works/work", work: activity.recipient, params: params, field_prefix: "work.")
+    json[:review] = render("api/v1/reviews/review", record: activity.trackable, params: params, field_prefix: "review.")
+  end
 when "create_multiple_records"
   json[:work] = render("api/v1/works/work", work: activity.recipient, params: params, field_prefix: "work.")
   json[:multiple_record] = render("api/v1/multiple_records/multiple_record", multiple_record: activity.trackable, params: params, field_prefix: "multiple_record.")
