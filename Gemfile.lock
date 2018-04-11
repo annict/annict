@@ -142,7 +142,7 @@ GEM
       tins (~> 1.6)
     crass (1.0.3)
     daemons (1.2.6)
-    dalli (2.7.7)
+    dalli (2.7.8)
     database_rewinder (0.8.3)
     debug_inspector (0.0.3)
     delayed_job (4.1.4)
