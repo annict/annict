@@ -13,6 +13,7 @@ class RecordsController < ApplicationController
     @comments = @record.comments.order(created_at: :desc)
     @comment = Comment.new
     @is_spoiler = user_signed_in? && current_user.hide_record_comment?(@episode)
+    store_page_params(work: @work)
   end
 
   def create(record)

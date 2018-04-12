@@ -3,26 +3,26 @@
 - keywords = meta_keywords(@work.decorate.local_title)
 - image_url = ann_image_url(@work.work_image, :attachment, size: "640x")
 - set_meta_tags(title: title, description: description, keywords: keywords, og: { description: description }, twitter: { description: description, image: image_url }, reverse: true, prefix: false)
-
+- breadcrumb :record_detail, @record
 
 = render "application/components/navbar"
 
 .p-application__content
-  .container.my-3.mb-4
-    .row.justify-content-center
-      .col-7
+  .container.py-3
+    = render "application/components/breadcrumb"
+    .row
+      .col-9.pr-0
+        - unless current_user&.supporter?
+          .mb-3.text-center
+            = render "application/components/adsense", slots: [ENV["GOOGLE_AD_728x90_17"]], size: "728x90"
+
         .c-card.py-3
-          .p-records-show__work-info.px-3
-            .row
-              .col.u-flex-grow-0.p-records-show__work-image.pr-0
-                = link_to work_path(@work) do
-                  = image_tag ann_image_url(@work.work_image, :attachment, size: "280x373"), class: "img-fluid img-thumbnail rounded"
-              .col
-                h1.h2
-                  = link_to work_path(@work) do
-                    = @work.decorate.local_title
-                = link_to work_episode_path(@work, @episode) do
-                  = @episode.decorate.title_with_number
+          .container
+            h1.h2
+              = link_to work_path(@work), class: "u-text-body" do
+                = @work.decorate.local_title
+            = link_to work_episode_path(@work, @episode), class: "u-text-body" do
+              = @episode.decorate.title_with_number
           hr
           .p-records-show__record.px-3
             = render "records/record", record: @record, is_spoiler: @is_spoiler
@@ -61,6 +61,19 @@
             - else
               = render "application/components/empty", text: t("resources.comment.no_comments")
       .col-3
+        .mb-2
+          = link_to work_path(@work) do
+            = ann_image_tag @work.work_image, :attachment, size: "280x373", class: "img-fluid img-thumbnail rounded"
+          - if @work.work_image.present?
+            .u-very-small.text-right
+              = @work.work_image.decorate.asin_or_copyright_text
+        h2.font-weight-bold.mb-3
+          = link_to @work.decorate.local_title, work_path(@work), class: "u-text-body"
+        c-status-selector :work-id="#{@work.id}"
+        .mb-3
+          = link_to work_path(@work), class: "btn btn-primary w-100" do
+            = icon "angle-right"
+            = t "verb.view_work_detail"
         - unless current_user&.supporter?
           .text-center
             = render "application/components/adsense", slots: [ENV["GOOGLE_AD_250x250_3"]], size: "250x250"
@@ -72,3 +85,5 @@ c-sticky-message message-body="#{t('messages._components.sticky_message.records_
 - content_for :js_templates do
   = render "application/js_templates/like_button"
   = render "application/js_templates/rating_state_label"
+  = render "application/js_templates/status_selector"
+  = render "application/js_templates/mute_user_button"
