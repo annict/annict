@@ -38,12 +38,7 @@ class ReviewsController < ApplicationController
     store_page_params(work: @work)
   end
 
-  def new
-    @review = @work.reviews.new
-    store_page_params(work: @work)
-  end
-
-  def create(review)
+  def create(review, page: nil)
     @review = @work.reviews.new(review)
     @review.user = current_user
     current_user.setting.attributes = setting_params
@@ -59,8 +54,19 @@ class ReviewsController < ApplicationController
       flash[:notice] = t("messages._common.post")
       redirect_to review_path(current_user.username, @review)
     rescue
+      @reviews = @work.
+        reviews.
+        published.
+        with_body.
+        includes(user: :profile)
+      @reviews = localable_resources(@reviews)
+      @reviews = @reviews.order(created_at: :desc).page(params[:page])
+
+      @is_spoiler = @user.present? && reviews.present? && @user.hide_review?(reviews.first)
+
       store_page_params(work: @work)
-      render :new
+
+      render "work_reviews/index"
     end
   end
 

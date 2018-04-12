@@ -70,7 +70,9 @@ class Review < ApplicationRecord
     dependent: :destroy,
     as: :recipient
 
-  validates :body, presence: true, length: { maximum: 1_500 }
+  validates :body, length: { maximum: 1_500 }
+
+  scope :with_body, -> { where.not(body: ["", nil]) }
 
   before_save :append_title_to_body
 
