@@ -4,6 +4,7 @@ namespace :counter_cache do
       refresh_watchers_count
       refresh_notifications_count
       refresh_record_comments_count
+      refresh_review_comments_count
     ).each do |task_name|
       puts "============== #{task_name} =============="
       Rake::Task["counter_cache:#{task_name}"].invoke
@@ -30,13 +31,25 @@ namespace :counter_cache do
   end
 
   task refresh_record_comments_count: :environment do
-    Episode.find_each do |episode|
+    Episode.published.find_each do |episode|
       record_comments_count = episode.records.with_comment.count
       if record_comments_count != episode.record_comments_count
         episode.update_column(:record_comments_count, record_comments_count)
         puts "Episode ID: #{episode.id} - #{record_comments_count}"
       else
         puts "Episode ID: #{episode.id} - skipped."
+      end
+    end
+  end
+
+  task refresh_review_comments_count: :environment do
+    Work.published.find_each do |work|
+      review_comments_count = work.reviews.published.with_body.count
+      if review_comments_count != work.review_comments_count
+        work.update_column(:review_comments_count, review_comments_count)
+        puts "Work ID: #{work.id} - #{review_comments_count}"
+      else
+        puts "Work ID: #{work.id} - skipped."
       end
     end
   end
