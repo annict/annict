@@ -45,6 +45,7 @@ class Record < ApplicationRecord
   extend Enumerize
   include AASM
   include LocaleDetectable
+  include Shareable
 
   enumerize :rating_state, in: %i(bad average good great), scope: true
 
@@ -154,8 +155,50 @@ class Record < ApplicationRecord
   end
 
   def share_to_sns
-    TwitterShareJob.perform_later(user_id, id) if shared_twitter?
-    FacebookShareJob.perform_later(user_id, id) if shared_facebook?
+    ShareRecordToTwitterJob.perform_later(user_id, id) if shared_twitter?
+    ShareRecordToFacebookJob.perform_later(user_id, id) if shared_facebook?
+  end
+
+  # Do not use helper methods via Draper when the method is used in ActiveJob
+  # https://github.com/drapergem/draper/issues/655
+  def share_url
+    "#{user.annict_url}/@#{user.username}/records/#{id}"
+  end
+
+  def facebook_share_title
+    "#{work.title} #{episode.decorate.title_with_number}"
+  end
+
+  def twitter_share_body
+    work_title = work.decorate.local_title
+    title = self.comment.present? ? work_title.truncate(30) : work_title
+    comment = self.comment.present? ? "#{self.comment} / " : ""
+    episode_number = episode.decorate.local_number
+    share_url = share_url_with_query(:twitter)
+    share_hashtag = work.hashtag_with_hash
+
+    base_body = if user.locale == "ja"
+      "%s#{title} #{episode_number} を見ました #{share_url} #{share_hashtag}"
+    else
+      "%sWatched: #{title} #{episode_number} #{share_url} #{share_hashtag}"
+    end
+
+    body = base_body % comment
+    body_without_url = body.sub(share_url, "")
+    return body if body_without_url.length <= 130
+
+    comment = comment.truncate(comment.length - (body_without_url.length - 130)) + " / "
+    base_body % comment
+  end
+
+  def facebook_share_body
+    return self.comment if self.comment.present?
+
+    if user.locale == "ja"
+      "見ました。"
+    else
+      "Watched."
+    end
   end
 
   private
