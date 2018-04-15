@@ -1,10 +1,10 @@
 # frozen_string_literal: true
 
 class ReviewsController < ApplicationController
+  impressionist actions: %i(show)
+
   permits :title, :body, :rating_animation_state, :rating_music_state, :rating_story_state,
     :rating_character_state, :rating_overall_state
-
-  impressionist actions: %i(show)
 
   before_action :authenticate_user!, only: %i(new create edit update destroy)
   before_action :load_user, only: %i(index show)

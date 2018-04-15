@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 class RecordsController < ApplicationController
+  impressionist actions: %i(show)
+
   permits :episode_id, :comment, :shared_twitter, :shared_facebook, :rating_state
 
   before_action :authenticate_user!, only: %i(create edit update destroy switch)
@@ -97,33 +99,16 @@ class RecordsController < ApplicationController
   end
 
   def redirect(provider, url_hash)
-    case provider
+    url = case provider
     when "tw"
-      record = Record.published.find_by!(twitter_url_hash: url_hash)
-
-      log_messages = [
-        "Twitterからのアクセス ",
-        "remote_host: #{request.remote_host}, ",
-        "remote_ip: #{request.remote_ip}, ",
-        "remote_user: #{request.remote_user}"
-      ]
-      logger.info(log_messages.join)
-
-      bots = TwitterBot.pluck(:name)
-      no_bots = bots.map do |bot|
-        request.user_agent.present? && !request.user_agent.include?(bot)
-      end
-      record.increment!(:twitter_click_count) if no_bots.all?
-
-      redirect_to_user_record(record, provider: "twitter")
+      Record.published.find_by!(twitter_url_hash: url_hash).share_url_with_query(:twitter)
     when "fb"
-      record = Record.published.find_by!(facebook_url_hash: url_hash)
-      record.increment!(:facebook_click_count)
-
-      redirect_to_user_record(record, provider: "facebook")
+      Record.published.find_by!(facebook_url_hash: url_hash).share_url_with_query(:facebook)
     else
-      redirect_to root_path
+      root_path
     end
+
+    redirect_to url
   end
 
   private
