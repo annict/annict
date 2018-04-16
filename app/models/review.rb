@@ -74,6 +74,7 @@ class Review < ApplicationRecord
   validates :body, length: { maximum: 1_500 }
 
   scope :with_body, -> { where.not(body: ["", nil]) }
+  scope :with_no_body, -> { where(body: ["", nil]) }
 
   before_save :append_title_to_body
 
