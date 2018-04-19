@@ -261,7 +261,7 @@ GEM
       addressable
     imgix-rails (2.1.4)
       imgix (~> 1.1, >= 1.1.0)
-    impressionist (1.6.0)
+    impressionist (1.6.1)
       nokogiri (~> 1)
     jb (0.5.0)
       multi_json
