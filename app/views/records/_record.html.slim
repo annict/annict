@@ -11,6 +11,9 @@
             - if record.user.supporter? && !record.user.setting.hide_supporter_badge?
               span.badge.u-badge-supporter.ml-1
                 = t "noun.supporter"
+            - if page_category == "records_show"
+              .small.text-muted
+                = "#{record.impressions_count} views"
           .col
             .text-right
               - if record.modify_comment?
@@ -27,29 +30,18 @@
             .c-body @click="remove"
               c-body inline-template=""
                 .c-body__content = record.comment
-        .row
-          .col
-            - if record.shared_twitter? || record.twitter_url_hash.present?
-              small
-                = icon "twitter", "fab", class: "mr-1 u-text-twitter"
-                = record.twitter_click_count
-            - if record.shared_facebook? || record.facebook_url_hash.present?
-              small.ml-2
-                = icon "facebook", "fab", class: "mr-1 u-text-facebook"
-                = record.facebook_click_count
-          .col
-            .text-right
-              c-like-button resource-name="Record" :init-resource-id="#{record.id}" :init-likes-count="#{record.likes_count}" :init-is-liked="#{user_signed_in? && current_user.like?(record)}" :is-signed-in="#{user_signed_in?}"
-              = link_to record_path(record.user.username, record), class: "d-inline-block ml-2" do
-                = icon "comment", "far", class: "mr-1"
-                = record.comments_count
-              - if user_signed_in? && current_user != record.user
-                .c-options-dropdown.dropdown.ml-2.d-inline-block
-                  .dropdown-toggle data-toggle="dropdown"
-                    = icon "ellipsis-h"
-                  .dropdown-menu
-                    = link_to "#", class: "dropdown-item" do
-                      c-mute-user-button :user-id="#{record.user.id}"
+        .text-right
+          c-like-button resource-name="Record" :init-resource-id="#{record.id}" :init-likes-count="#{record.likes_count}" :init-is-liked="#{user_signed_in? && current_user.like?(record)}" :is-signed-in="#{user_signed_in?}"
+          = link_to record_path(record.user.username, record), class: "d-inline-block ml-2" do
+            = icon "comment", "far", class: "mr-1"
+            = record.comments_count
+          - if user_signed_in? && current_user != record.user
+            .c-options-dropdown.dropdown.ml-2.d-inline-block
+              .dropdown-toggle data-toggle="dropdown"
+                = icon "ellipsis-h"
+              .dropdown-menu
+                = link_to "#", class: "dropdown-item" do
+                  c-mute-user-button :user-id="#{record.user.id}"
         - if policy(record).update?
           .small.text-right.mb-2
             = link_to edit_record_path(record.user.username, record), class: "mr-2" do

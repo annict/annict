@@ -21,10 +21,10 @@
           .pt-3.text-center
             = render "application/components/adsense", slots: [ENV["GOOGLE_AD_728x90_22"]], size: "728x90"
 
-        .text-right.my-3
-          = link_to new_work_review_path(@work), class: "btn btn-primary" do
-            = icon "edit", class: "mr-1"
-            = t "verb.write_review"
+        - if user_signed_in?
+          .c-card.container.mt-3.pt-3
+            = render "reviews/form", review: @review
+
         .c-card.container.mt-3
           - if @reviews.present?
             div
