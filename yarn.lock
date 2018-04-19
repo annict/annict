@@ -2041,9 +2041,9 @@ d3@^4.10.0:
     d3-voronoi "1.1.2"
     d3-zoom "1.7.1"
 
-d3@^5.0.0:
-  version "5.0.0"
-  resolved "https://registry.yarnpkg.com/d3/-/d3-5.0.0.tgz#b373ce8ccc953cbe09cef4c1e7e2223b42441df9"
+d3@^5.1.0:
+  version "5.1.0"
+  resolved "https://registry.yarnpkg.com/d3/-/d3-5.1.0.tgz#2506c4f070fe8a5a1e9a16308caacf96ae51f522"
   dependencies:
     d3-array "1"
     d3-axis "1"
