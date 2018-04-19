@@ -25,7 +25,7 @@
     "popper.js": "^1.14.3",
     "postcss-smart-import": "^0.7.6",
     "select2": "^4.0.5",
-    "tether": "^1.4.3",
+    "tether": "^1.4.4",
     "turbolinks": "5.1.1",
     "vue": "^2.5.16",
     "vue-lazyload": "1.2.3",
