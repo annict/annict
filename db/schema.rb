@@ -10,11 +10,11 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180414223051) do
+ActiveRecord::Schema.define(version: 2018_04_14_223051) do
 
   # These are extensions that must be enabled in order to support this database
-  enable_extension "plpgsql"
   enable_extension "pg_stat_statements"
+  enable_extension "plpgsql"
 
   create_table "activities", id: :serial, force: :cascade do |t|
     t.integer "user_id", null: false
