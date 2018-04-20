@@ -4,10 +4,11 @@
 /.idea
 /.sass-cache
 /config/application.yml
+/config/master.key
 /coverage
 /db/dump/*
 /lib/tasks/data.rake
-/log/*.log
+/log/*
 /node_modules
 /public/dmmyix
 /public/packs
@@ -15,6 +16,8 @@
 /public/paperclip
 /public/sitemap*
 /spec/test_files/paperclip
+/storage/*
 /tags
-/tmp
+/tmp/*
 /vendor/bundler
+/yarn-error.log
