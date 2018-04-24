@@ -74,13 +74,6 @@ ajv-keywords@^2.0.0, ajv-keywords@^2.1.0:
   version "2.1.1"
   resolved "https://registry.yarnpkg.com/ajv-keywords/-/ajv-keywords-2.1.1.tgz#617997fc5f60576894c435f940d819e135b80762"
 
-ajv@^4.9.1:
-  version "4.11.8"
-  resolved "https://registry.yarnpkg.com/ajv/-/ajv-4.11.8.tgz#82ffb02b29e662ae53bdc20af15947706739c536"
-  dependencies:
-    co "^4.6.0"
-    json-stable-stringify "^1.0.1"
-
 ajv@^5.0.0, ajv@^5.1.0, ajv@^5.1.5, ajv@^5.2.3, ajv@^5.3.0:
   version "5.5.2"
   resolved "https://registry.yarnpkg.com/ajv/-/ajv-5.5.2.tgz#73b5eeca3fab653e3d3f9422b341ad42205dc965"
@@ -325,8 +318,8 @@ aws-sign2@~0.7.0:
   resolved "https://registry.yarnpkg.com/aws-sign2/-/aws-sign2-0.7.0.tgz#b46e890934a9591f2d2f6f86d7e6a9f1b3fe76a8"
 
 aws4@^1.2.1, aws4@^1.6.0:
-  version "1.6.0"
-  resolved "https://registry.yarnpkg.com/aws4/-/aws4-1.6.0.tgz#83ef5ca860b2b32e4a0deedee8c771b9db57471e"
+  version "1.7.0"
+  resolved "https://registry.yarnpkg.com/aws4/-/aws4-1.7.0.tgz#d4d0e9b9dbfca77bf08eeb0a8a471550fe39e289"
 
 babel-code-frame@^6.22.0, babel-code-frame@^6.26.0:
   version "6.26.0"
@@ -1582,7 +1575,11 @@ core-js@^1.0.0:
   version "1.2.7"
   resolved "https://registry.yarnpkg.com/core-js/-/core-js-1.2.7.tgz#652294c14651db28fa93bd2d5ff2983a4f08c636"
 
-core-js@^2.4.0, core-js@^2.5.0:
+core-js@^2.4.0:
+  version "2.5.5"
+  resolved "https://registry.yarnpkg.com/core-js/-/core-js-2.5.5.tgz#b14dde936c640c0579a6b50cabcc132dd6127e3b"
+
+core-js@^2.5.0:
   version "2.5.3"
   resolved "https://registry.yarnpkg.com/core-js/-/core-js-2.5.3.tgz#8acc38345824f16d8365b7c9b4259168e8ed603e"
 
@@ -1632,6 +1629,13 @@ create-hmac@^1.1.0, create-hmac@^1.1.2, create-hmac@^1.1.4:
 cropperjs@1.3.5:
   version "1.3.5"
   resolved "https://registry.yarnpkg.com/cropperjs/-/cropperjs-1.3.5.tgz#d235665e370f2ce27c5115e203ed0d7b68d722b6"
+
+cross-env@^5.1.4:
+  version "5.1.4"
+  resolved "https://registry.yarnpkg.com/cross-env/-/cross-env-5.1.4.tgz#f61c14291f7cc653bb86457002ea80a04699d022"
+  dependencies:
+    cross-spawn "^5.1.0"
+    is-windows "^1.0.0"
 
 cross-spawn@^3.0.0:
   version "3.0.1"
@@ -2045,7 +2049,7 @@ debug@2.6.8:
   dependencies:
     ms "2.0.0"
 
-debug@2.6.9, debug@^2.2.0, debug@^2.3.3, debug@^2.6.6, debug@^2.6.8:
+debug@2.6.9, debug@^2.1.2, debug@^2.2.0, debug@^2.3.3, debug@^2.6.6, debug@^2.6.8:
   version "2.6.9"
   resolved "https://registry.yarnpkg.com/debug/-/debug-2.6.9.tgz#5d128515df134ff327e90a4c93f4e077a536341f"
   dependencies:
@@ -2884,6 +2888,12 @@ fs-extra@^0.30.0:
     path-is-absolute "^1.0.0"
     rimraf "^2.2.8"
 
+fs-minipass@^1.2.5:
+  version "1.2.5"
+  resolved "https://registry.yarnpkg.com/fs-minipass/-/fs-minipass-1.2.5.tgz#06c277218454ec288df77ada54a03b8702aacb9d"
+  dependencies:
+    minipass "^2.2.1"
+
 fs-write-stream-atomic@^1.0.8:
   version "1.0.10"
   resolved "https://registry.yarnpkg.com/fs-write-stream-atomic/-/fs-write-stream-atomic-1.0.10.tgz#b47df53493ef911df75731e70a9ded0189db40c9"
@@ -2898,21 +2908,13 @@ fs.realpath@^1.0.0:
   resolved "https://registry.yarnpkg.com/fs.realpath/-/fs.realpath-1.0.0.tgz#1504ad2523158caa40db4a2787cb01411994ea4f"
 
 fsevents@^1.0.0:
-  version "1.1.3"
-  resolved "https://registry.yarnpkg.com/fsevents/-/fsevents-1.1.3.tgz#11f82318f5fe7bb2cd22965a108e9306208216d8"
+  version "1.2.2"
+  resolved "https://registry.yarnpkg.com/fsevents/-/fsevents-1.2.2.tgz#4f598f0f69b273188ef4a62ca4e9e08ace314bbf"
   dependencies:
-    nan "^2.3.0"
-    node-pre-gyp "^0.6.39"
+    nan "^2.9.2"
+    node-pre-gyp "^0.9.0"
 
-fstream-ignore@^1.0.5:
-  version "1.0.5"
-  resolved "https://registry.yarnpkg.com/fstream-ignore/-/fstream-ignore-1.0.5.tgz#9c31dae34767018fe1d249b24dada67d092da105"
-  dependencies:
-    fstream "^1.0.0"
-    inherits "2"
-    minimatch "^3.0.0"
-
-fstream@^1.0.0, fstream@^1.0.10, fstream@^1.0.2:
+fstream@^1.0.0, fstream@^1.0.2:
   version "1.0.11"
   resolved "https://registry.yarnpkg.com/fstream/-/fstream-1.0.11.tgz#5c1fb1f117477114f0632a0eb4b71b3cb0fd3171"
   dependencies:
@@ -3076,10 +3078,6 @@ handle-thing@^1.2.5:
   version "1.2.5"
   resolved "https://registry.yarnpkg.com/handle-thing/-/handle-thing-1.2.5.tgz#fd7aad726bf1a5fd16dfc29b2f7a6601d27139c4"
 
-har-schema@^1.0.5:
-  version "1.0.5"
-  resolved "https://registry.yarnpkg.com/har-schema/-/har-schema-1.0.5.tgz#d263135f43307c02c602afc8fe95970c0151369e"
-
 har-schema@^2.0.0:
   version "2.0.0"
   resolved "https://registry.yarnpkg.com/har-schema/-/har-schema-2.0.0.tgz#a94c2224ebcac04782a0d9035521f24735b7ec92"
@@ -3092,13 +3090,6 @@ har-validator@~2.0.6:
     commander "^2.9.0"
     is-my-json-valid "^2.12.4"
     pinkie-promise "^2.0.0"
-
-har-validator@~4.2.1:
-  version "4.2.1"
-  resolved "https://registry.yarnpkg.com/har-validator/-/har-validator-4.2.1.tgz#33481d0f1bbff600dd203d75812a6a5fba002e2a"
-  dependencies:
-    ajv "^4.9.1"
-    har-schema "^1.0.5"
 
 har-validator@~5.0.3:
   version "5.0.3"
@@ -3182,7 +3173,7 @@ hash.js@^1.0.0, hash.js@^1.0.3:
     inherits "^2.0.3"
     minimalistic-assert "^1.0.0"
 
-hawk@3.1.3, hawk@~3.1.3:
+hawk@~3.1.3:
   version "3.1.3"
   resolved "https://registry.yarnpkg.com/hawk/-/hawk-3.1.3.tgz#078444bd7c1640b0fe540d2c9b73d59678e8e1c4"
   dependencies:
@@ -3249,14 +3240,13 @@ html-entities@^1.2.0:
   resolved "https://registry.yarnpkg.com/html-entities/-/html-entities-1.2.1.tgz#0df29351f0721163515dfb9e5543e5f6eed5162f"
 
 html-minifier@^3.5.3:
-  version "3.5.12"
-  resolved "https://registry.yarnpkg.com/html-minifier/-/html-minifier-3.5.12.tgz#6bfad4d0327f5b8d2b62f5854654ac3703b9b031"
+  version "3.5.15"
+  resolved "https://registry.yarnpkg.com/html-minifier/-/html-minifier-3.5.15.tgz#f869848d4543cbfd84f26d5514a2a87cbf9a05e0"
   dependencies:
     camel-case "3.0.x"
     clean-css "4.1.x"
     commander "2.15.x"
     he "1.1.x"
-    ncname "1.0.x"
     param-case "2.1.x"
     relateurl "0.2.x"
     uglify-js "3.3.x"
@@ -3325,6 +3315,12 @@ iconv-lite@0.4, iconv-lite@0.4.19, iconv-lite@^0.4.17, iconv-lite@~0.4.13:
   version "0.4.19"
   resolved "https://registry.yarnpkg.com/iconv-lite/-/iconv-lite-0.4.19.tgz#f7468f60135f5e5dad3399c0a81be9a1603a082b"
 
+iconv-lite@^0.4.4:
+  version "0.4.21"
+  resolved "https://registry.yarnpkg.com/iconv-lite/-/iconv-lite-0.4.21.tgz#c47f8733d02171189ebc4a400f3218d348094798"
+  dependencies:
+    safer-buffer "^2.1.0"
+
 icss-replace-symbols@^1.1.0:
   version "1.1.0"
   resolved "https://registry.yarnpkg.com/icss-replace-symbols/-/icss-replace-symbols-1.1.0.tgz#06ea6f83679a7749e386cfe1fe812ae5db223ded"
@@ -3342,6 +3338,12 @@ ieee754@^1.1.4:
 iferr@^0.1.5:
   version "0.1.5"
   resolved "https://registry.yarnpkg.com/iferr/-/iferr-0.1.5.tgz#c60eed69e6d8fdb6b3104a1fcbca1c192dc5b501"
+
+ignore-walk@^3.0.1:
+  version "3.0.1"
+  resolved "https://registry.yarnpkg.com/ignore-walk/-/ignore-walk-3.0.1.tgz#a83e62e7d272ac0e3b551aaa82831a19b69f82f8"
+  dependencies:
+    minimatch "^3.0.4"
 
 ignore@^3.3.3:
   version "3.3.5"
@@ -3695,6 +3697,10 @@ is-utf8@^0.2.0:
   version "0.2.1"
   resolved "https://registry.yarnpkg.com/is-utf8/-/is-utf8-0.2.1.tgz#4b0da1442104d1b336340e80797e865cf39f7d72"
 
+is-windows@^1.0.0:
+  version "1.0.2"
+  resolved "https://registry.yarnpkg.com/is-windows/-/is-windows-1.0.2.tgz#d1850eb9791ecd18e6182ce12a30f396634bb19d"
+
 is-wsl@^1.1.0:
   version "1.1.0"
   resolved "https://registry.yarnpkg.com/is-wsl/-/is-wsl-1.1.0.tgz#1f16e4aa22b04d1336b66188a66af3c600c3a66d"
@@ -3813,12 +3819,6 @@ json-stable-stringify-without-jsonify@^1.0.1:
   version "1.0.1"
   resolved "https://registry.yarnpkg.com/json-stable-stringify-without-jsonify/-/json-stable-stringify-without-jsonify-1.0.1.tgz#9db7b59496ad3f3cfef30a75142d2d930ad72651"
 
-json-stable-stringify@^1.0.1:
-  version "1.0.1"
-  resolved "https://registry.yarnpkg.com/json-stable-stringify/-/json-stable-stringify-1.0.1.tgz#9a759d39c5f2ff503fd5300646ed445f88c4f9af"
-  dependencies:
-    jsonify "~0.0.0"
-
 json-stringify-safe@~5.0.1:
   version "5.0.1"
   resolved "https://registry.yarnpkg.com/json-stringify-safe/-/json-stringify-safe-5.0.1.tgz#1296a2d58fd45f19a0f6ce01d65701e2c735b6eb"
@@ -3836,10 +3836,6 @@ jsonfile@^2.1.0:
   resolved "https://registry.yarnpkg.com/jsonfile/-/jsonfile-2.4.0.tgz#3736a2b428b87bbda0cc83b53fa3d633a35c2ae8"
   optionalDependencies:
     graceful-fs "^4.1.6"
-
-jsonify@~0.0.0:
-  version "0.0.0"
-  resolved "https://registry.yarnpkg.com/jsonify/-/jsonify-0.0.0.tgz#2c74b6ee41d93ca51b7b5aaee8f503631d252a73"
 
 jsonpointer@^4.0.0:
   version "4.0.1"
@@ -4076,9 +4072,13 @@ lodash.uniq@^4.5.0:
   version "4.5.0"
   resolved "https://registry.yarnpkg.com/lodash.uniq/-/lodash.uniq-4.5.0.tgz#d0225373aeb652adc1bc82e4945339a842754773"
 
-lodash@4.17.5, "lodash@>=3.5 <5", lodash@^4.0.0, lodash@^4.14.0, lodash@^4.17.2, lodash@^4.17.3, lodash@^4.17.4, lodash@^4.17.5, lodash@^4.3.0, lodash@~4.17.4:
+lodash@4.17.5, "lodash@>=3.5 <5", lodash@^4.0.0, lodash@^4.17.5, lodash@^4.3.0, lodash@~4.17.4:
   version "4.17.5"
   resolved "https://registry.yarnpkg.com/lodash/-/lodash-4.17.5.tgz#99a92d65c0272debe8c96b6057bc8fbfa3bed511"
+
+lodash@^4.14.0, lodash@^4.17.2, lodash@^4.17.3, lodash@^4.17.4:
+  version "4.17.10"
+  resolved "https://registry.yarnpkg.com/lodash/-/lodash-4.17.10.tgz#1b7793cf7259ea38fb3661d4d38b3260af8ae4e7"
 
 loglevel-colored-level-prefix@^1.0.0:
   version "1.0.0"
@@ -4302,7 +4302,7 @@ minimalistic-crypto-utils@^1.0.0, minimalistic-crypto-utils@^1.0.1:
   version "1.0.1"
   resolved "https://registry.yarnpkg.com/minimalistic-crypto-utils/-/minimalistic-crypto-utils-1.0.1.tgz#f6c00c1c0b082246e5c4d99dfb8c7c083b2b582a"
 
-"minimatch@2 || 3", minimatch@^3.0.0, minimatch@^3.0.2, minimatch@^3.0.4, minimatch@~3.0.2:
+"minimatch@2 || 3", minimatch@^3.0.2, minimatch@^3.0.4, minimatch@~3.0.2:
   version "3.0.4"
   resolved "https://registry.yarnpkg.com/minimatch/-/minimatch-3.0.4.tgz#5166e286457f03306064be5497e8dbb0c3d32083"
   dependencies:
@@ -4319,6 +4319,19 @@ minimist@1.1.x:
 minimist@^1.1.3, minimist@^1.2.0:
   version "1.2.0"
   resolved "https://registry.yarnpkg.com/minimist/-/minimist-1.2.0.tgz#a35008b20f41383eec1fb914f4cd5df79a264284"
+
+minipass@^2.2.1, minipass@^2.2.4:
+  version "2.2.4"
+  resolved "https://registry.yarnpkg.com/minipass/-/minipass-2.2.4.tgz#03c824d84551ec38a8d1bb5bc350a5a30a354a40"
+  dependencies:
+    safe-buffer "^5.1.1"
+    yallist "^3.0.0"
+
+minizlib@^1.1.0:
+  version "1.1.0"
+  resolved "https://registry.yarnpkg.com/minizlib/-/minizlib-1.1.0.tgz#11e13658ce46bc3a70a267aac58359d1e0c29ceb"
+  dependencies:
+    minipass "^2.2.1"
 
 mississippi@^1.3.0:
   version "1.3.0"
@@ -4349,257 +4362,287 @@ mixin-object@^2.0.1:
     for-in "^0.1.3"
     is-extendable "^0.1.1"
 
-mjml-accordion@^4.0.2:
-  version "4.0.2"
-  resolved "https://registry.yarnpkg.com/mjml-accordion/-/mjml-accordion-4.0.2.tgz#48b4ea6078a08f246c70609e260215033a8733f5"
+mjml-accordion@^4.0.4:
+  version "4.0.4"
+  resolved "https://registry.yarnpkg.com/mjml-accordion/-/mjml-accordion-4.0.4.tgz#cc292d80e52afe0a6f967c22c62ceb879d60aa65"
   dependencies:
+    cross-env "^5.1.4"
     lodash "^4.17.2"
-    mjml-core "^4.0.1"
+    mjml-core "^4.0.4"
 
-mjml-body@^4.0.2:
-  version "4.0.2"
-  resolved "https://registry.yarnpkg.com/mjml-body/-/mjml-body-4.0.2.tgz#4291823936a92cb48743c807147286a01fbe43cd"
+mjml-body@^4.0.4:
+  version "4.0.4"
+  resolved "https://registry.yarnpkg.com/mjml-body/-/mjml-body-4.0.4.tgz#fc72e145da036db79f71bff2762685ddc4e47a93"
   dependencies:
+    cross-env "^5.1.4"
     lodash "^4.17.2"
-    mjml-core "^4.0.1"
+    mjml-core "^4.0.4"
 
-mjml-button@^4.0.1:
-  version "4.0.1"
-  resolved "https://registry.yarnpkg.com/mjml-button/-/mjml-button-4.0.1.tgz#1e91ad5f066daadc3f13d4c3910ccf70cfbc14eb"
+mjml-button@^4.0.4:
+  version "4.0.4"
+  resolved "https://registry.yarnpkg.com/mjml-button/-/mjml-button-4.0.4.tgz#371ee199d6dc2c5b08906cb5ac0fbcc2254bc9ea"
   dependencies:
+    cross-env "^5.1.4"
     lodash "^4.17.2"
-    mjml-core "^4.0.1"
+    mjml-core "^4.0.4"
 
-mjml-carousel@^4.0.2:
-  version "4.0.2"
-  resolved "https://registry.yarnpkg.com/mjml-carousel/-/mjml-carousel-4.0.2.tgz#425b0acd6775ca65bb0fa8d31b9f50761dfc702c"
+mjml-carousel@^4.0.4:
+  version "4.0.4"
+  resolved "https://registry.yarnpkg.com/mjml-carousel/-/mjml-carousel-4.0.4.tgz#3629655a67d68a0197ce3b6e488fadca7525d207"
   dependencies:
+    cross-env "^5.1.4"
     lodash "^4.17.2"
-    mjml-core "^4.0.1"
+    mjml-core "^4.0.4"
 
-mjml-cli@^4.0.3:
-  version "4.0.3"
-  resolved "https://registry.yarnpkg.com/mjml-cli/-/mjml-cli-4.0.3.tgz#5bf43c558bdb613391abda91e1a763c87a9f9335"
+mjml-cli@^4.0.4:
+  version "4.0.4"
+  resolved "https://registry.yarnpkg.com/mjml-cli/-/mjml-cli-4.0.4.tgz#f958618de66948d14babe278b9e30e57880379bf"
   dependencies:
     babel-runtime "^6.26.0"
     chokidar "^1.6.1"
+    cross-env "^5.1.4"
     glob "^7.1.1"
     js-beautify "^1.6.14"
     lodash "^4.17.4"
-    mjml-core "^4.0.1"
-    mjml-migrate "^4.0.1"
-    mjml-parser-xml "^4.0.1"
-    mjml-validator "^4.0.1"
+    mjml-core "^4.0.4"
+    mjml-migrate "^4.0.4"
+    mjml-parser-xml "^4.0.4"
+    mjml-validator "^4.0.4"
     yargs "^8.0.2"
 
-mjml-column@^4.0.3:
-  version "4.0.3"
-  resolved "https://registry.yarnpkg.com/mjml-column/-/mjml-column-4.0.3.tgz#b517b5c28140b5932c6dce8087b7c3dd9dc74314"
+mjml-column@^4.0.4:
+  version "4.0.4"
+  resolved "https://registry.yarnpkg.com/mjml-column/-/mjml-column-4.0.4.tgz#c1ba7bd1b40f4de9595cb9913b1dba27070f582e"
   dependencies:
+    cross-env "^5.1.4"
     lodash "^4.17.2"
-    mjml-core "^4.0.1"
+    mjml-core "^4.0.4"
 
-mjml-core@^4.0.1:
-  version "4.0.1"
-  resolved "https://registry.yarnpkg.com/mjml-core/-/mjml-core-4.0.1.tgz#1eb4a9d989138f7d780a121f600500b455275715"
+mjml-core@^4.0.4:
+  version "4.0.4"
+  resolved "https://registry.yarnpkg.com/mjml-core/-/mjml-core-4.0.4.tgz#493205cb7a4d671938bf77544e46833c9da833fd"
   dependencies:
+    cross-env "^5.1.4"
     html-minifier "^3.5.3"
     js-beautify "^1.6.14"
     juice "^4.1.0"
     lodash "^4.17.3"
-    mjml-migrate "^4.0.1"
-    mjml-parser-xml "^4.0.1"
-    mjml-validator "^4.0.1"
+    mjml-migrate "^4.0.4"
+    mjml-parser-xml "^4.0.4"
+    mjml-validator "^4.0.4"
 
-mjml-divider@^4.0.1:
-  version "4.0.1"
-  resolved "https://registry.yarnpkg.com/mjml-divider/-/mjml-divider-4.0.1.tgz#c35859522df0084961fbaf39cae2e8a337133c71"
+mjml-divider@^4.0.4:
+  version "4.0.4"
+  resolved "https://registry.yarnpkg.com/mjml-divider/-/mjml-divider-4.0.4.tgz#14084a3e2488b5a5b6ea535719c1893853a7212e"
   dependencies:
+    cross-env "^5.1.4"
     lodash "^4.17.2"
-    mjml-core "^4.0.1"
+    mjml-core "^4.0.4"
 
-mjml-group@^4.0.2:
-  version "4.0.2"
-  resolved "https://registry.yarnpkg.com/mjml-group/-/mjml-group-4.0.2.tgz#e3d884c8deb79149e924909c9ecb334303ab5ddf"
+mjml-group@^4.0.4:
+  version "4.0.4"
+  resolved "https://registry.yarnpkg.com/mjml-group/-/mjml-group-4.0.4.tgz#4afe85a0116cb1ebd0786468c9e6119ca9fe63a4"
   dependencies:
+    cross-env "^5.1.4"
     lodash "^4.17.2"
-    mjml-core "^4.0.1"
+    mjml-core "^4.0.4"
 
-mjml-head-attributes@^4.0.1:
-  version "4.0.1"
-  resolved "https://registry.yarnpkg.com/mjml-head-attributes/-/mjml-head-attributes-4.0.1.tgz#5f45db52ea8c08aeb0fc6c8de4427a7b631fb98c"
+mjml-head-attributes@^4.0.4:
+  version "4.0.4"
+  resolved "https://registry.yarnpkg.com/mjml-head-attributes/-/mjml-head-attributes-4.0.4.tgz#7651bc9c67c7434c3a7c41df06fff4c1a61a765a"
   dependencies:
+    cross-env "^5.1.4"
     lodash "^4.17.2"
-    mjml-core "^4.0.1"
+    mjml-core "^4.0.4"
 
-mjml-head-breakpoint@^4.0.1:
-  version "4.0.1"
-  resolved "https://registry.yarnpkg.com/mjml-head-breakpoint/-/mjml-head-breakpoint-4.0.1.tgz#aa196d6e721039ab740287b60e2f7835eb5e4c11"
+mjml-head-breakpoint@^4.0.4:
+  version "4.0.4"
+  resolved "https://registry.yarnpkg.com/mjml-head-breakpoint/-/mjml-head-breakpoint-4.0.4.tgz#5764b27edbe24cfc79b7a2d08f6e8e3e07402d93"
   dependencies:
+    cross-env "^5.1.4"
     lodash "^4.17.2"
-    mjml-core "^4.0.1"
+    mjml-core "^4.0.4"
 
-mjml-head-font@^4.0.2:
-  version "4.0.2"
-  resolved "https://registry.yarnpkg.com/mjml-head-font/-/mjml-head-font-4.0.2.tgz#329647f4c60cde4620a75d348a79cf0d55ea9271"
+mjml-head-font@^4.0.4:
+  version "4.0.4"
+  resolved "https://registry.yarnpkg.com/mjml-head-font/-/mjml-head-font-4.0.4.tgz#3a64df4ddcb158baa7ebbd83c51e05ade1f73a64"
   dependencies:
+    cross-env "^5.1.4"
     lodash "^4.17.2"
-    mjml-core "^4.0.1"
+    mjml-core "^4.0.4"
 
-mjml-head-preview@^4.0.1:
-  version "4.0.1"
-  resolved "https://registry.yarnpkg.com/mjml-head-preview/-/mjml-head-preview-4.0.1.tgz#88bd1f2f8b196d28361e28bfaa62b82b132b7b67"
+mjml-head-preview@^4.0.4:
+  version "4.0.4"
+  resolved "https://registry.yarnpkg.com/mjml-head-preview/-/mjml-head-preview-4.0.4.tgz#552bc82813972d527f2d5a6090c696d03bb8cb31"
   dependencies:
+    cross-env "^5.1.4"
     lodash "^4.17.2"
-    mjml-core "^4.0.1"
+    mjml-core "^4.0.4"
 
-mjml-head-style@^4.0.1:
-  version "4.0.1"
-  resolved "https://registry.yarnpkg.com/mjml-head-style/-/mjml-head-style-4.0.1.tgz#44b3082c3d373afe11319c9f9e511532bc082ff4"
+mjml-head-style@^4.0.4:
+  version "4.0.4"
+  resolved "https://registry.yarnpkg.com/mjml-head-style/-/mjml-head-style-4.0.4.tgz#17c594db15ea0d26b5e13f43bbb13a0ddacebae1"
   dependencies:
+    cross-env "^5.1.4"
     lodash "^4.17.2"
-    mjml-core "^4.0.1"
+    mjml-core "^4.0.4"
 
-mjml-head-title@^4.0.1:
-  version "4.0.1"
-  resolved "https://registry.yarnpkg.com/mjml-head-title/-/mjml-head-title-4.0.1.tgz#7ef0dbfd90e0b3be6ca43d844015b7ed9f7d7012"
+mjml-head-title@^4.0.4:
+  version "4.0.4"
+  resolved "https://registry.yarnpkg.com/mjml-head-title/-/mjml-head-title-4.0.4.tgz#5510ea9dc4e3a3b1b17fbef4a6588eda8a66fe21"
   dependencies:
+    cross-env "^5.1.4"
     lodash "^4.17.2"
-    mjml-core "^4.0.1"
+    mjml-core "^4.0.4"
 
-mjml-head@^4.0.1:
-  version "4.0.1"
-  resolved "https://registry.yarnpkg.com/mjml-head/-/mjml-head-4.0.1.tgz#96cfc6a38ae285c908b6af601123f713c15780e6"
+mjml-head@^4.0.4:
+  version "4.0.4"
+  resolved "https://registry.yarnpkg.com/mjml-head/-/mjml-head-4.0.4.tgz#25503487b04be87a7d4197c50de155b78f2d38f9"
   dependencies:
+    cross-env "^5.1.4"
     lodash "^4.17.2"
-    mjml-core "^4.0.1"
+    mjml-core "^4.0.4"
 
-mjml-hero@^4.0.1:
-  version "4.0.1"
-  resolved "https://registry.yarnpkg.com/mjml-hero/-/mjml-hero-4.0.1.tgz#5b41286e980e7da72e4a9a6a796e15448032f104"
+mjml-hero@^4.0.4:
+  version "4.0.4"
+  resolved "https://registry.yarnpkg.com/mjml-hero/-/mjml-hero-4.0.4.tgz#55c3af9eb67e647642759bffeba9fecddd970960"
   dependencies:
+    cross-env "^5.1.4"
     lodash "^4.17.2"
-    mjml-core "^4.0.1"
+    mjml-core "^4.0.4"
 
-mjml-image@^4.0.3:
-  version "4.0.3"
-  resolved "https://registry.yarnpkg.com/mjml-image/-/mjml-image-4.0.3.tgz#eaa9385af992a81ad9c809247ae5524783cf797c"
+mjml-image@^4.0.4:
+  version "4.0.4"
+  resolved "https://registry.yarnpkg.com/mjml-image/-/mjml-image-4.0.4.tgz#f006ee578d6882944de776229a0fca3786d6608a"
   dependencies:
+    cross-env "^5.1.4"
     lodash "^4.17.2"
-    mjml-core "^4.0.1"
+    mjml-core "^4.0.4"
 
-mjml-migrate@^4.0.1:
-  version "4.0.1"
-  resolved "https://registry.yarnpkg.com/mjml-migrate/-/mjml-migrate-4.0.1.tgz#d830bee7a0ed0e4fbc9a27d78a779d50eb6ddfaa"
+mjml-migrate@^4.0.4:
+  version "4.0.4"
+  resolved "https://registry.yarnpkg.com/mjml-migrate/-/mjml-migrate-4.0.4.tgz#f82e82a8c9c999e78e413c935f14609abafaa180"
   dependencies:
     commander "^2.11.0"
-    mjml-core "^4.0.1"
-    mjml-parser-xml "^4.0.1"
+    cross-env "^5.1.4"
+    mjml-core "^4.0.4"
+    mjml-parser-xml "^4.0.4"
 
-mjml-navbar@^4.0.3:
-  version "4.0.3"
-  resolved "https://registry.yarnpkg.com/mjml-navbar/-/mjml-navbar-4.0.3.tgz#17ed8c2daca5bc9b04a653c040ab23bb30f2f0dc"
+mjml-navbar@^4.0.4:
+  version "4.0.4"
+  resolved "https://registry.yarnpkg.com/mjml-navbar/-/mjml-navbar-4.0.4.tgz#98ec1c10bf4c38f6f33717a53b4332f6d55a9e75"
   dependencies:
+    cross-env "^5.1.4"
     lodash "^4.17.2"
-    mjml-core "^4.0.1"
+    mjml-core "^4.0.4"
 
-mjml-parser-xml@^4.0.1:
-  version "4.0.1"
-  resolved "https://registry.yarnpkg.com/mjml-parser-xml/-/mjml-parser-xml-4.0.1.tgz#30f319fb840871ca2939f66ef1172d37909a1308"
+mjml-parser-xml@^4.0.4:
+  version "4.0.4"
+  resolved "https://registry.yarnpkg.com/mjml-parser-xml/-/mjml-parser-xml-4.0.4.tgz#4f3ed9af2ed2a929df25d6a022cf18fcf6e81b28"
   dependencies:
+    cross-env "^5.1.4"
     htmlparser2 "^3.9.2"
     lodash "^4.17.2"
 
-mjml-raw@^4.0.2:
-  version "4.0.2"
-  resolved "https://registry.yarnpkg.com/mjml-raw/-/mjml-raw-4.0.2.tgz#9e44fcaae2546cfba7885ae61ed5ed70e791b0fb"
+mjml-raw@^4.0.4:
+  version "4.0.4"
+  resolved "https://registry.yarnpkg.com/mjml-raw/-/mjml-raw-4.0.4.tgz#461724acec3a3c5949a627776f3727823b255242"
   dependencies:
+    cross-env "^5.1.4"
     lodash "^4.17.2"
-    mjml-core "^4.0.1"
+    mjml-core "^4.0.4"
 
-mjml-section@^4.0.1:
-  version "4.0.1"
-  resolved "https://registry.yarnpkg.com/mjml-section/-/mjml-section-4.0.1.tgz#eff71e8df5244e3f91f7364753cfe14a89b61b85"
+mjml-section@^4.0.4:
+  version "4.0.4"
+  resolved "https://registry.yarnpkg.com/mjml-section/-/mjml-section-4.0.4.tgz#a8e870af2dcd2fdcc1320fecc82ed40410804cb3"
   dependencies:
+    cross-env "^5.1.4"
     lodash "^4.17.2"
-    mjml-core "^4.0.1"
+    mjml-core "^4.0.4"
 
-mjml-social@^4.0.2:
-  version "4.0.2"
-  resolved "https://registry.yarnpkg.com/mjml-social/-/mjml-social-4.0.2.tgz#97ca20ead3661f1d7c8449e3ae68bdf4190e336c"
+mjml-social@^4.0.4:
+  version "4.0.4"
+  resolved "https://registry.yarnpkg.com/mjml-social/-/mjml-social-4.0.4.tgz#67e358b7d7f62229cc8596e562a2efd13d6fc5c7"
   dependencies:
+    cross-env "^5.1.4"
     lodash "^4.17.2"
-    mjml-core "^4.0.1"
+    mjml-core "^4.0.4"
 
-mjml-spacer@^4.0.1:
-  version "4.0.1"
-  resolved "https://registry.yarnpkg.com/mjml-spacer/-/mjml-spacer-4.0.1.tgz#c8e224db80486e74f705a4517fa5a6ac92b27290"
+mjml-spacer@^4.0.4:
+  version "4.0.4"
+  resolved "https://registry.yarnpkg.com/mjml-spacer/-/mjml-spacer-4.0.4.tgz#b818e43e54ccc67690b3f3db535a93b7ffbcd1f3"
   dependencies:
+    cross-env "^5.1.4"
     lodash "^4.17.2"
-    mjml-core "^4.0.1"
+    mjml-core "^4.0.4"
 
-mjml-table@^4.0.1:
-  version "4.0.1"
-  resolved "https://registry.yarnpkg.com/mjml-table/-/mjml-table-4.0.1.tgz#ca7dd8cf8ad6ee9ff277afcbad1e669ef953556c"
+mjml-table@^4.0.4:
+  version "4.0.4"
+  resolved "https://registry.yarnpkg.com/mjml-table/-/mjml-table-4.0.4.tgz#58fbcd84284accb0a026e4abeeaf9181c761195a"
   dependencies:
+    cross-env "^5.1.4"
     lodash "^4.17.2"
-    mjml-core "^4.0.1"
+    mjml-core "^4.0.4"
 
-mjml-text@^4.0.3:
-  version "4.0.3"
-  resolved "https://registry.yarnpkg.com/mjml-text/-/mjml-text-4.0.3.tgz#3fd40df02d9db3ef3b8bf7d6432fe50e9ba42cab"
+mjml-text@^4.0.4:
+  version "4.0.4"
+  resolved "https://registry.yarnpkg.com/mjml-text/-/mjml-text-4.0.4.tgz#2a3850e33e2e4c707e6ed5c65f2c7225d8056a7d"
   dependencies:
+    cross-env "^5.1.4"
     lodash "^4.17.2"
-    mjml-core "^4.0.1"
+    mjml-core "^4.0.4"
 
-mjml-validator@^4.0.1:
-  version "4.0.1"
-  resolved "https://registry.yarnpkg.com/mjml-validator/-/mjml-validator-4.0.1.tgz#959c4653940046292695b06da7eabe78c3a3f467"
+mjml-validator@^4.0.4:
+  version "4.0.4"
+  resolved "https://registry.yarnpkg.com/mjml-validator/-/mjml-validator-4.0.4.tgz#45c5bd0f48b8782a3c4e5455390bb6ad955f22e8"
   dependencies:
+    cross-env "^5.1.4"
     lodash "^4.17.4"
-    mjml-core "^4.0.1"
+    mjml-core "^4.0.4"
     warning "^3.0.0"
 
-mjml-wrapper@^4.0.1:
-  version "4.0.1"
-  resolved "https://registry.yarnpkg.com/mjml-wrapper/-/mjml-wrapper-4.0.1.tgz#749fa5532d859b39d552ee0ba8d673047f21a42b"
+mjml-wrapper@^4.0.4:
+  version "4.0.4"
+  resolved "https://registry.yarnpkg.com/mjml-wrapper/-/mjml-wrapper-4.0.4.tgz#187c876f1f690e00a569438d60a9ff6e2dd9d237"
   dependencies:
+    cross-env "^5.1.4"
     lodash "^4.17.2"
-    mjml-core "^4.0.1"
-    mjml-section "^4.0.1"
+    mjml-core "^4.0.4"
+    mjml-section "^4.0.4"
 
-mjml@4.0.3:
-  version "4.0.3"
-  resolved "https://registry.yarnpkg.com/mjml/-/mjml-4.0.3.tgz#9b9a3bdf5ac94e8464c11b0149a1f5deea16c95e"
+mjml@4.0.4:
+  version "4.0.4"
+  resolved "https://registry.yarnpkg.com/mjml/-/mjml-4.0.4.tgz#01c73520cc2aa32b606da161480f027878abad6a"
   dependencies:
-    mjml-accordion "^4.0.2"
-    mjml-body "^4.0.2"
-    mjml-button "^4.0.1"
-    mjml-carousel "^4.0.2"
-    mjml-cli "^4.0.3"
-    mjml-column "^4.0.3"
-    mjml-core "^4.0.1"
-    mjml-divider "^4.0.1"
-    mjml-group "^4.0.2"
-    mjml-head "^4.0.1"
-    mjml-head-attributes "^4.0.1"
-    mjml-head-breakpoint "^4.0.1"
-    mjml-head-font "^4.0.2"
-    mjml-head-preview "^4.0.1"
-    mjml-head-style "^4.0.1"
-    mjml-head-title "^4.0.1"
-    mjml-hero "^4.0.1"
-    mjml-image "^4.0.3"
-    mjml-migrate "^4.0.1"
-    mjml-navbar "^4.0.3"
-    mjml-raw "^4.0.2"
-    mjml-section "^4.0.1"
-    mjml-social "^4.0.2"
-    mjml-spacer "^4.0.1"
-    mjml-table "^4.0.1"
-    mjml-text "^4.0.3"
-    mjml-validator "^4.0.1"
-    mjml-wrapper "^4.0.1"
+    cross-env "^5.1.4"
+    mjml-accordion "^4.0.4"
+    mjml-body "^4.0.4"
+    mjml-button "^4.0.4"
+    mjml-carousel "^4.0.4"
+    mjml-cli "^4.0.4"
+    mjml-column "^4.0.4"
+    mjml-core "^4.0.4"
+    mjml-divider "^4.0.4"
+    mjml-group "^4.0.4"
+    mjml-head "^4.0.4"
+    mjml-head-attributes "^4.0.4"
+    mjml-head-breakpoint "^4.0.4"
+    mjml-head-font "^4.0.4"
+    mjml-head-preview "^4.0.4"
+    mjml-head-style "^4.0.4"
+    mjml-head-title "^4.0.4"
+    mjml-hero "^4.0.4"
+    mjml-image "^4.0.4"
+    mjml-migrate "^4.0.4"
+    mjml-navbar "^4.0.4"
+    mjml-raw "^4.0.4"
+    mjml-section "^4.0.4"
+    mjml-social "^4.0.4"
+    mjml-spacer "^4.0.4"
+    mjml-table "^4.0.4"
+    mjml-text "^4.0.4"
+    mjml-validator "^4.0.4"
+    mjml-wrapper "^4.0.4"
 
 mkdirp@0.5.x, "mkdirp@>=0.5 0", mkdirp@^0.5.0, mkdirp@^0.5.1, mkdirp@~0.5.0, mkdirp@~0.5.1:
   version "0.5.1"
@@ -4651,13 +4694,13 @@ mute-stream@0.0.7:
   version "0.0.7"
   resolved "https://registry.yarnpkg.com/mute-stream/-/mute-stream-0.0.7.tgz#3075ce93bc21b8fab43e1bc4da7e8115ed1e7bab"
 
-nan@^2.3.0:
-  version "2.10.0"
-  resolved "https://registry.yarnpkg.com/nan/-/nan-2.10.0.tgz#96d0cd610ebd58d4b4de9cc0c6828cda99c7548f"
-
 nan@^2.3.2:
   version "2.8.0"
   resolved "https://registry.yarnpkg.com/nan/-/nan-2.8.0.tgz#ed715f3fe9de02b57a5e6252d90a96675e1f085a"
+
+nan@^2.9.2:
+  version "2.10.0"
+  resolved "https://registry.yarnpkg.com/nan/-/nan-2.10.0.tgz#96d0cd610ebd58d4b4de9cc0c6828cda99c7548f"
 
 nanomatch@^1.2.5:
   version "1.2.7"
@@ -4679,11 +4722,13 @@ natural-compare@^1.4.0:
   version "1.4.0"
   resolved "https://registry.yarnpkg.com/natural-compare/-/natural-compare-1.4.0.tgz#4abebfeed7541f2c27acfb29bdbbd15c8d5ba4f7"
 
-ncname@1.0.x:
-  version "1.0.0"
-  resolved "https://registry.yarnpkg.com/ncname/-/ncname-1.0.0.tgz#5b57ad18b1ca092864ef62b0b1ed8194f383b71c"
+needle@^2.2.0:
+  version "2.2.0"
+  resolved "https://registry.yarnpkg.com/needle/-/needle-2.2.0.tgz#f14efc69cee1024b72c8b21c7bdf94a731dc12fa"
   dependencies:
-    xml-char-classes "^1.0.0"
+    debug "^2.1.2"
+    iconv-lite "^0.4.4"
+    sax "^1.2.4"
 
 negotiator@0.6.1:
   version "0.6.1"
@@ -4756,21 +4801,20 @@ node-libs-browser@^2.0.0:
     util "^0.10.3"
     vm-browserify "0.0.4"
 
-node-pre-gyp@^0.6.39:
-  version "0.6.39"
-  resolved "https://registry.yarnpkg.com/node-pre-gyp/-/node-pre-gyp-0.6.39.tgz#c00e96860b23c0e1420ac7befc5044e1d78d8649"
+node-pre-gyp@^0.9.0:
+  version "0.9.1"
+  resolved "https://registry.yarnpkg.com/node-pre-gyp/-/node-pre-gyp-0.9.1.tgz#f11c07516dd92f87199dbc7e1838eab7cd56c9e0"
   dependencies:
     detect-libc "^1.0.2"
-    hawk "3.1.3"
     mkdirp "^0.5.1"
+    needle "^2.2.0"
     nopt "^4.0.1"
+    npm-packlist "^1.1.6"
     npmlog "^4.0.2"
     rc "^1.1.7"
-    request "2.81.0"
     rimraf "^2.6.1"
     semver "^5.3.0"
-    tar "^2.2.1"
-    tar-pack "^3.4.0"
+    tar "^4"
 
 node-sass@^4.7.2:
   version "4.7.2"
@@ -4836,6 +4880,17 @@ normalize-url@^1.4.0:
     prepend-http "^1.0.0"
     query-string "^4.1.0"
     sort-keys "^1.0.0"
+
+npm-bundled@^1.0.1:
+  version "1.0.3"
+  resolved "https://registry.yarnpkg.com/npm-bundled/-/npm-bundled-1.0.3.tgz#7e71703d973af3370a9591bafe3a63aca0be2308"
+
+npm-packlist@^1.1.6:
+  version "1.1.10"
+  resolved "https://registry.yarnpkg.com/npm-packlist/-/npm-packlist-1.1.10.tgz#1039db9e985727e464df066f4cf0ab6ef85c398a"
+  dependencies:
+    ignore-walk "^3.0.1"
+    npm-bundled "^1.0.1"
 
 npm-run-path@^2.0.0:
   version "2.0.2"
@@ -4919,7 +4974,7 @@ on-headers@~1.0.1:
   version "1.0.1"
   resolved "https://registry.yarnpkg.com/on-headers/-/on-headers-1.0.1.tgz#928f5d0f470d49342651ea6794b0857c100693f7"
 
-once@^1.3.0, once@^1.3.1, once@^1.3.3, once@^1.4.0:
+once@^1.3.0, once@^1.3.1, once@^1.4.0:
   version "1.4.0"
   resolved "https://registry.yarnpkg.com/once/-/once-1.4.0.tgz#583b1aa775961d4b113ac17d9c50baef9dd76bd1"
   dependencies:
@@ -5138,10 +5193,6 @@ pbkdf2@^3.0.3:
     ripemd160 "^2.0.1"
     safe-buffer "^5.0.1"
     sha.js "^2.4.8"
-
-performance-now@^0.2.0:
-  version "0.2.0"
-  resolved "https://registry.yarnpkg.com/performance-now/-/performance-now-0.2.0.tgz#33ef30c5c77d4ea21c5a53869d91b56d8f2555e5"
 
 performance-now@^2.1.0:
   version "2.1.0"
@@ -5897,10 +5948,6 @@ qs@~6.3.0:
   version "6.3.2"
   resolved "https://registry.yarnpkg.com/qs/-/qs-6.3.2.tgz#e75bd5f6e268122a2a0e0bda630b2550c166502c"
 
-qs@~6.4.0:
-  version "6.4.0"
-  resolved "https://registry.yarnpkg.com/qs/-/qs-6.4.0.tgz#13e26d28ad6b0ffaa91312cd3bf708ed351e7233"
-
 query-string@^4.1.0:
   version "4.3.4"
   resolved "https://registry.yarnpkg.com/query-string/-/query-string-4.3.4.tgz#bbb693b9ca915c232515b228b1a02b609043dbeb"
@@ -6032,16 +6079,16 @@ read-pkg@^2.0.0:
     string_decoder "~1.0.3"
     util-deprecate "~1.0.1"
 
-readable-stream@^2.0.2, readable-stream@^2.0.6, readable-stream@^2.1.4:
-  version "2.3.5"
-  resolved "https://registry.yarnpkg.com/readable-stream/-/readable-stream-2.3.5.tgz#b4f85003a938cbb6ecbce2a124fb1012bd1a838d"
+readable-stream@^2.0.2, readable-stream@^2.0.6:
+  version "2.3.6"
+  resolved "https://registry.yarnpkg.com/readable-stream/-/readable-stream-2.3.6.tgz#b11c27d88b8ff1fbe070643cf94b0c79ae1b0aaf"
   dependencies:
     core-util-is "~1.0.0"
     inherits "~2.0.3"
     isarray "~1.0.0"
     process-nextick-args "~2.0.0"
     safe-buffer "~5.1.1"
-    string_decoder "~1.0.3"
+    string_decoder "~1.1.1"
     util-deprecate "~1.0.1"
 
 readdirp@^2.0.0:
@@ -6192,33 +6239,6 @@ request@2:
     tunnel-agent "^0.6.0"
     uuid "^3.1.0"
 
-request@2.81.0:
-  version "2.81.0"
-  resolved "https://registry.yarnpkg.com/request/-/request-2.81.0.tgz#c6928946a0e06c5f8d6f8a9333469ffda46298a0"
-  dependencies:
-    aws-sign2 "~0.6.0"
-    aws4 "^1.2.1"
-    caseless "~0.12.0"
-    combined-stream "~1.0.5"
-    extend "~3.0.0"
-    forever-agent "~0.6.1"
-    form-data "~2.1.1"
-    har-validator "~4.2.1"
-    hawk "~3.1.3"
-    http-signature "~1.1.0"
-    is-typedarray "~1.0.0"
-    isstream "~0.1.2"
-    json-stringify-safe "~5.0.1"
-    mime-types "~2.1.7"
-    oauth-sign "~0.8.1"
-    performance-now "^0.2.0"
-    qs "~6.4.0"
-    safe-buffer "^5.0.1"
-    stringstream "~0.0.4"
-    tough-cookie "~2.3.0"
-    tunnel-agent "^0.6.0"
-    uuid "^3.0.0"
-
 request@^2.78.0:
   version "2.85.0"
   resolved "https://registry.yarnpkg.com/request/-/request-2.85.0.tgz#5a03615a47c61420b3eb99b7dba204f83603e1fa"
@@ -6343,7 +6363,7 @@ right-align@^0.1.1:
   dependencies:
     align-text "^0.1.1"
 
-rimraf@2, rimraf@^2.2.8, rimraf@^2.5.1, rimraf@^2.5.4, rimraf@^2.6.1:
+rimraf@2, rimraf@^2.2.8, rimraf@^2.5.4, rimraf@^2.6.1:
   version "2.6.2"
   resolved "https://registry.yarnpkg.com/rimraf/-/rimraf-2.6.2.tgz#2ed8150d24a16ea8651e6d6ef0f47c4158ce7a36"
   dependencies:
@@ -6386,6 +6406,10 @@ safe-buffer@5.1.1, safe-buffer@^5.0.1, safe-buffer@^5.1.0, safe-buffer@^5.1.1, s
   version "5.1.1"
   resolved "https://registry.yarnpkg.com/safe-buffer/-/safe-buffer-5.1.1.tgz#893312af69b2123def71f57889001671eeb2c853"
 
+safer-buffer@^2.1.0:
+  version "2.1.2"
+  resolved "https://registry.yarnpkg.com/safer-buffer/-/safer-buffer-2.1.2.tgz#44fa161b0187b9549dd84bb91802f9bd8385cd6a"
+
 sass-graph@^2.2.4:
   version "2.2.4"
   resolved "https://registry.yarnpkg.com/sass-graph/-/sass-graph-2.2.4.tgz#13fbd63cd1caf0908b9fd93476ad43a51d1e0b49"
@@ -6405,7 +6429,7 @@ sass-loader@^6.0.6:
     lodash.tail "^4.1.1"
     pify "^3.0.0"
 
-sax@~1.2.1:
+sax@^1.2.4, sax@~1.2.1:
   version "1.2.4"
   resolved "https://registry.yarnpkg.com/sax/-/sax-1.2.4.tgz#2816234e2378bddc4e5354fab5caa895df7100d9"
 
@@ -6845,6 +6869,12 @@ string_decoder@^1.0.0, string_decoder@~1.0.3:
   dependencies:
     safe-buffer "~5.1.0"
 
+string_decoder@~1.1.1:
+  version "1.1.1"
+  resolved "https://registry.yarnpkg.com/string_decoder/-/string_decoder-1.1.1.tgz#9cf1611ba62685d7030ae9e4ba34149c3af03fc8"
+  dependencies:
+    safe-buffer "~5.1.0"
+
 stringstream@~0.0.4, stringstream@~0.0.5:
   version "0.0.5"
   resolved "https://registry.yarnpkg.com/stringstream/-/stringstream-0.0.5.tgz#4e484cd4de5a0bbbee18e46307710a8a81621878"
@@ -6947,26 +6977,25 @@ tapable@^0.2.7:
   version "0.2.8"
   resolved "https://registry.yarnpkg.com/tapable/-/tapable-0.2.8.tgz#99372a5c999bf2df160afc0d74bed4f47948cd22"
 
-tar-pack@^3.4.0:
-  version "3.4.1"
-  resolved "https://registry.yarnpkg.com/tar-pack/-/tar-pack-3.4.1.tgz#e1dbc03a9b9d3ba07e896ad027317eb679a10a1f"
-  dependencies:
-    debug "^2.2.0"
-    fstream "^1.0.10"
-    fstream-ignore "^1.0.5"
-    once "^1.3.3"
-    readable-stream "^2.1.4"
-    rimraf "^2.5.1"
-    tar "^2.2.1"
-    uid-number "^0.0.6"
-
-tar@^2.0.0, tar@^2.2.1:
+tar@^2.0.0:
   version "2.2.1"
   resolved "https://registry.yarnpkg.com/tar/-/tar-2.2.1.tgz#8e4d2a256c0e2185c6b18ad694aec968b83cb1d1"
   dependencies:
     block-stream "*"
     fstream "^1.0.2"
     inherits "2"
+
+tar@^4:
+  version "4.4.1"
+  resolved "https://registry.yarnpkg.com/tar/-/tar-4.4.1.tgz#b25d5a8470c976fd7a9a8a350f42c59e9fa81749"
+  dependencies:
+    chownr "^1.0.1"
+    fs-minipass "^1.2.5"
+    minipass "^2.2.4"
+    minizlib "^1.1.0"
+    mkdirp "^0.5.0"
+    safe-buffer "^5.1.1"
+    yallist "^3.0.2"
 
 tether@^1.4.4:
   version "1.4.4"
@@ -7122,8 +7151,8 @@ uglify-es@^3.3.4:
     source-map "~0.6.1"
 
 uglify-js@3.3.x:
-  version "3.3.16"
-  resolved "https://registry.yarnpkg.com/uglify-js/-/uglify-js-3.3.16.tgz#23ba13efa27aa00885be7417819e8a9787f94028"
+  version "3.3.22"
+  resolved "https://registry.yarnpkg.com/uglify-js/-/uglify-js-3.3.22.tgz#e5f0e50ddd386b7e35b728b51600bf7a7ad0b0dc"
   dependencies:
     commander "~2.15.0"
     source-map "~0.6.1"
@@ -7161,10 +7190,6 @@ uglifyjs-webpack-plugin@^1.1.8:
     uglify-es "^3.3.4"
     webpack-sources "^1.1.0"
     worker-farm "^1.5.2"
-
-uid-number@^0.0.6:
-  version "0.0.6"
-  resolved "https://registry.yarnpkg.com/uid-number/-/uid-number-0.0.6.tgz#0ea10e8035e8eb5b8e4449f06da1c730663baa81"
 
 union-value@^1.0.0:
   version "1.0.0"
@@ -7555,10 +7580,6 @@ write@^0.2.1:
   dependencies:
     mkdirp "^0.5.1"
 
-xml-char-classes@^1.0.0:
-  version "1.0.0"
-  resolved "https://registry.yarnpkg.com/xml-char-classes/-/xml-char-classes-1.0.0.tgz#64657848a20ffc5df583a42ad8a277b4512bbc4d"
-
 xtend@^4.0.0, xtend@^4.0.1, xtend@~4.0.1:
   version "4.0.1"
   resolved "https://registry.yarnpkg.com/xtend/-/xtend-4.0.1.tgz#a5c6d532be656e23db820efb943a1f04998d63af"
@@ -7570,6 +7591,10 @@ y18n@^3.2.1:
 yallist@^2.1.2:
   version "2.1.2"
   resolved "https://registry.yarnpkg.com/yallist/-/yallist-2.1.2.tgz#1c11f9218f076089a47dd512f93c6699a6a81d52"
+
+yallist@^3.0.0, yallist@^3.0.2:
+  version "3.0.2"
+  resolved "https://registry.yarnpkg.com/yallist/-/yallist-3.0.2.tgz#8452b4bb7e83c7c188d8041c1a837c773d6d8bb9"
 
 yargs-parser@^4.2.0:
   version "4.2.1"
