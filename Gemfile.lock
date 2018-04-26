@@ -491,7 +491,7 @@ GEM
     scss_lint (0.57.0)
       rake (>= 0.9, < 13)
       sass (~> 3.5.5)
-    sentry-raven (2.7.2)
+    sentry-raven (2.7.3)
       faraday (>= 0.7.6, < 1.0)
     simple_oauth (0.3.1)
     simplecov (0.14.1)
