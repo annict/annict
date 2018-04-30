@@ -167,7 +167,7 @@ GEM
       responders
       warden (~> 1.2.3)
     diff-lcs (1.3)
-    discord-notifier (1.0.0)
+    discord-notifier (1.0.1)
     dmmyix (0.2.0)
       mini_magick (~> 4.5.0)
       rails (>= 5)
