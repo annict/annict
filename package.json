@@ -4,7 +4,7 @@
   "dependencies": {
     "@rails/webpacker": "^3.4.3",
     "async": "2.6.0",
-    "autosize": "^4.0.1",
+    "autosize": "^4.0.2",
     "bootstrap": "4.0.0",
     "bourbon": "^5.0.0",
     "britecharts": "^2.8.6",
