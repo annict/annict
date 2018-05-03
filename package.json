@@ -29,7 +29,7 @@
     "turbolinks": "5.1.1",
     "vue": "^2.5.16",
     "vue-lazyload": "1.2.3",
-    "vue-loader": "^14.2.2",
+    "vue-loader": "^15.0.7",
     "vue-template-compiler": "^2.5.16",
     "webpack-merge": "^4.1.2"
   },
