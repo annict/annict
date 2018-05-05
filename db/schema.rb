@@ -1027,7 +1027,7 @@ ActiveRecord::Schema.define(version: 20180504171424) do
     t.datetime "confirmed_at"
     t.datetime "confirmation_sent_at"
     t.string "unconfirmed_email", limit: 510
-    t.integer "records_count", default: 0, null: false
+    t.integer "episode_records_count", default: 0, null: false
     t.integer "notifications_count", default: 0, null: false
     t.datetime "created_at"
     t.datetime "updated_at"

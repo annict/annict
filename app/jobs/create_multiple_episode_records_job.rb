@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class CreateMultipleRecordsJob < ApplicationJob
+class CreateMultipleEpisodeRecordsJob < ApplicationJob
   queue_as :default
 
   def perform(user_id, episode_ids)
@@ -10,14 +10,14 @@ class CreateMultipleRecordsJob < ApplicationJob
     return if episodes.blank?
 
     ActiveRecord::Base.transaction do
-      multiple_record = user.multiple_records.create!(work: episodes.first.work)
+      multiple_episode_record = user.multiple_episode_records.create!(work: episodes.first.work)
 
       episodes.each do |episode|
-        episode.records.create! do |c|
+        episode.episode_records.create! do |c|
           c.user = user
           c.work = episode.work
           c.rating = 0
-          c.multiple_record_id = multiple_record.id
+          c.multiple_episode_record = multiple_episode_record
         end
 
         latest_status = user.latest_statuses.find_by(work: episode.work)

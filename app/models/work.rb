@@ -348,7 +348,7 @@ class Work < ApplicationRecord
   end
 
   def chart_values
-    episodes.published.order(:sort_number).pluck(:records_count)
+    episodes.published.order(:sort_number).pluck(:episode_records_count)
   end
 
   def records_count

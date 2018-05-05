@@ -37,7 +37,7 @@ class NewEpisodeRecordService
   end
 
   def finish_tips
-    FinishUserTipsJob.perform_later(@user, "record") if @user.records.initial?(@episode_record)
+    FinishUserTipsJob.perform_later(@user, "record") if @user.episode_records.initial?(@episode_record)
   end
 
   def update_latest_status
@@ -50,7 +50,7 @@ class NewEpisodeRecordService
     @ga_client.events.create(:records, :create, el: "Episode", ds: @via)
   end
 
-  def update_record_comments_count
+  def update_episode_record_comments_count
     @episode_record.episode.increment!(:episode_record_comments_count) if @episode_record.comment.present?
   end
 end

@@ -18,7 +18,7 @@
 #  confirmed_at                  :datetime
 #  confirmation_sent_at          :datetime
 #  unconfirmed_email             :string(510)
-#  records_count                 :integer          default(0), not null
+#  episode_records_count         :integer          default(0), not null
 #  notifications_count           :integer          default(0), not null
 #  created_at                    :datetime
 #  updated_at                    :datetime
@@ -76,7 +76,6 @@ class User < ApplicationRecord
   has_many :activities, dependent: :destroy
   has_many :channel_works, dependent: :destroy
   has_many :episode_records, dependent: :destroy
-  has_many :records, dependent: :destroy
   has_many :db_activities, dependent: :destroy
   has_many :db_comments, dependent: :destroy
   has_many :favorite_characters, dependent: :destroy
@@ -93,7 +92,7 @@ class User < ApplicationRecord
   has_many :receptions, dependent: :destroy
   has_many :channels, through:   :receptions
   has_many :statuses, dependent: :destroy
-  has_many :multiple_records, dependent: :destroy
+  has_many :multiple_episode_records, dependent: :destroy
   has_many :mute_users, dependent: :destroy
   has_many :muted_users, dependent: :destroy, foreign_key: :muted_user_id, class_name: "MuteUser"
   has_many :oauth_applications, class_name: "Doorkeeper::Application", as: :owner
@@ -111,6 +110,7 @@ class User < ApplicationRecord
     source: :application
   has_many :reactions, dependent: :destroy
   has_many :record_comments, class_name: "Comment", dependent: :destroy
+  has_many :records, dependent: :destroy
   has_many :work_taggables, dependent: :destroy
   has_many :work_taggings, dependent: :destroy
   has_many :work_tags, through: :work_taggables

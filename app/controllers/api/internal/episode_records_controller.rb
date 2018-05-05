@@ -25,9 +25,8 @@ module Api
         begin
           service.save!
           head 201
-        rescue
-          episode_record = service.episode_record
-          render status: 400, json: { message: episode_record.errors.full_messages.first }
+        rescue => err
+          render status: 400, json: { message: err.message }
         end
       end
     end

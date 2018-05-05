@@ -20,7 +20,7 @@ namespace :tmp do
       m.where(record: nil).find_each do |r|
         ActiveRecord::Base.transaction do
           puts "#{r.class.name}: #{r.id}"
-          record = Record.create!(user: r.user)
+          record = r.user.records.create!
           r.update_column(:record_id, record.id)
         end
       end
