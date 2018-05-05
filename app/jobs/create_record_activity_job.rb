@@ -9,10 +9,10 @@ class CreateRecordActivityJob < ApplicationJob
 
     Activity.create! do |a|
       a.user = user
-      a.recipient = record.episode
+      a.recipient = record.episode.presence || record.work
       a.trackable = record
       a.action = "create_record"
-      a.work = record.episode.work
+      a.work = record.work
       a.episode = record.episode
       a.record = record
     end

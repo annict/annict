@@ -5,7 +5,7 @@
 #
 #  id                   :integer          not null, primary key
 #  user_id              :integer          not null
-#  episode_id           :integer          not null
+#  episode_id           :integer
 #  comment              :text
 #  modify_comment       :boolean          default(FALSE), not null
 #  twitter_url_hash     :string(510)
@@ -26,6 +26,7 @@
 #  review_id            :integer
 #  aasm_state           :string           default("published"), not null
 #  locale               :string           default("other"), not null
+#  impressions_count    :integer          default(0), not null
 #
 # Indexes
 #
@@ -33,6 +34,7 @@
 #  checkins_facebook_url_hash_key         (facebook_url_hash) UNIQUE
 #  checkins_twitter_url_hash_key          (twitter_url_hash) UNIQUE
 #  checkins_user_id_idx                   (user_id)
+#  index_records_on_impressions_count     (impressions_count)
 #  index_records_on_locale                (locale)
 #  index_records_on_multiple_record_id    (multiple_record_id)
 #  index_records_on_oauth_application_id  (oauth_application_id)
@@ -45,6 +47,8 @@ class Record < ApplicationRecord
   extend Enumerize
   include AASM
   include LocaleDetectable
+
+  is_impressionable counter_cache: true, unique: true
 
   enumerize :rating_state, in: %i(bad average good great), scope: true
 
@@ -60,7 +64,7 @@ class Record < ApplicationRecord
   belongs_to :oauth_application, class_name: "Doorkeeper::Application", optional: true
   belongs_to :review, optional: true
   belongs_to :work
-  belongs_to :episode, counter_cache: true
+  belongs_to :episode, counter_cache: true, optional: true
   belongs_to :multiple_record, optional: true
   belongs_to :user, counter_cache: true
   has_many :comments, dependent: :destroy
@@ -71,7 +75,7 @@ class Record < ApplicationRecord
     dependent: :destroy,
     as: :recipient
 
-  validates :comment, length: { maximum: 1000 }
+  validates :comment, length: { maximum: 1_500 }
   validates :rating,
     allow_blank: true,
     numericality: {
@@ -81,6 +85,8 @@ class Record < ApplicationRecord
 
   scope :with_comment, -> { where.not(comment: ["", nil]) }
   scope :with_no_comment, -> { where(comment: ["", nil]) }
+  scope :with_no_episode, -> { where(episode_id: nil) }
+  scope :reviews, -> { with_no_episode.with_comment }
 
   after_destroy :expire_cache
   after_save :expire_cache
@@ -123,8 +129,11 @@ class Record < ApplicationRecord
     SecureRandom.urlsafe_base64.slice(0, 10)
   end
 
-  def work
-    episode.work
+  # Do not use helper methods via Draper when the method is used in ActiveJob
+  # https://github.com/drapergem/draper/issues/655
+  def detail_url
+    # "#{user.annict_url}/@#{user.username}/records/#{id}"
+    "https://annict.jp/@shimbaco/records/1491891"
   end
 
   def setup_shared_sns(user)
@@ -154,8 +163,8 @@ class Record < ApplicationRecord
   end
 
   def share_to_sns
-    TwitterShareJob.perform_later(user_id, id) if shared_twitter?
-    FacebookShareJob.perform_later(user_id, id) if shared_facebook?
+    ShareRecordToTwitterJob.perform_later(user_id, id) if shared_twitter?
+    ShareRecordToFacebookJob.perform_later(user_id, id) if shared_facebook?
   end
 
   private

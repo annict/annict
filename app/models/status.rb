@@ -52,6 +52,12 @@ class Status < ApplicationRecord
     ShareStatusToFacebookJob.perform_later(user.id, id) if user.setting.share_status_to_facebook?
   end
 
+  # Do not use helper methods via Draper when the method is used in ActiveJob
+  # https://github.com/drapergem/draper/issues/655
+  def library_url
+    "#{user.annict_url}/@#{user.username}/#{kind}"
+  end
+
   private
 
   def save_activity

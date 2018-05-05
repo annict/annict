@@ -73,12 +73,6 @@
 
     .row
       .p-users-show__count.col.px-0
-        = link_to reviews_path(@user.username), class: "p-users-show__count-link" do
-          .h3.mb-1
-            = @reviews.length
-          .small
-            | Reviews
-      .p-users-show__count.col.px-0
         = link_to favorite_characters_path(@user.username), class: "p-users-show__count-link" do
           .h3.mb-1
             = @favorite_characters.length

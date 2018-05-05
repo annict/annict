@@ -6,7 +6,7 @@
 
 
 .c-card.p-3.mb-4
-  = render "records/form", record: @record
+  = render "records/form", record: @record, url: record_path(current_user.username, @record)
 
 = render "application/components/footer"
 c-tabbar

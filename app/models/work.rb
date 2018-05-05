@@ -44,6 +44,7 @@
 #  score                 :float
 #  ratings_count         :integer          default(0), not null
 #  satisfaction_rate     :float
+#  record_comments_count :integer          default(0), not null
 #
 # Indexes
 #
@@ -118,7 +119,7 @@ class Work < ApplicationRecord
     source_type: "Organization"
   has_many :programs, dependent: :destroy
   has_many :pvs, dependent: :destroy
-  has_many :reviews, dependent: :destroy
+  has_many :records, dependent: :destroy
   has_many :series_works, dependent: :destroy
   has_many :series_list, through: :series_works, source: :series
   has_many :statuses, dependent: :destroy
@@ -391,13 +392,6 @@ class Work < ApplicationRecord
 
   def next_season?
     season.present? && season.slug == ENV["ANNICT_NEXT_SEASON"]
-  end
-
-  # 映画などのエピソードを持たない作品かどうか
-  def single?
-    episodes.count == 1 &&
-      episodes.first.number.blank? &&
-      episodes.first.title == title
   end
 
   def duration

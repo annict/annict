@@ -70,17 +70,10 @@
             .container
               = render "works/vod_list", channels: @channels, slice: 3, work: @work
 
-        .row.align-items-center
-          .col
-          .col
-            h2.h4.text-center.my-4.font-weight-bold
-              = t "noun.reviews"
-          .col.text-right
-            = link_to new_work_review_path(@work), class: "btn btn-primary btn-sm" do
-              = icon "edit", class: "mr-1"
-              = t "verb.write_review"
+        h2.h4.text-center.my-4.font-weight-bold
+          = t "noun.reviews"
         .c-card
-          = render "works/review_list", work: @work, reviews: @reviews
+          = render "works/record_list", work: @work, records: @records
 
         h2.h4.text-center.my-4.font-weight-bold
           = t "noun.stats"

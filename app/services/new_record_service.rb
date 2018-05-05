@@ -11,7 +11,6 @@ class NewRecordService
 
   def save!
     @record.user = @user
-    @record.work = @record.episode.work
     @record.detect_locale!(:comment)
 
     ActiveRecord::Base.transaction do
@@ -40,6 +39,8 @@ class NewRecordService
   end
 
   def update_latest_status
+    return if @record.episode.blank?
+
     latest_status = @user.latest_statuses.find_by(work: @record.work)
     latest_status.append_episode(@record.episode) if latest_status.present?
   end
@@ -51,6 +52,12 @@ class NewRecordService
   end
 
   def update_record_comments_count
-    @record.episode.increment!(:record_comments_count) if @record.comment.present?
+    return if @record.comment.blank?
+
+    if @record.episode.present?
+      @record.episode.increment!(:record_comments_count)
+    else
+      @record.work.increment!(:record_comments_count)
+    end
   end
 end

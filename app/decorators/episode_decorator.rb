@@ -57,7 +57,6 @@ class EpisodeDecorator < ApplicationDecorator
   def number_with_work_title
     work_title = work.decorate.local_title
 
-    return work_title if work.single?
     return "#{work_title} #{local_title}" if local_number.blank?
 
     "#{work_title} #{local_number}"

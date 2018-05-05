@@ -2,17 +2,17 @@
 
 json = {}
 
-json[:id] = review.id if @params.fields_contain?("#{field_prefix}id")
-json[:title] = review.title if @params.fields_contain?("#{field_prefix}title")
-json[:body] = review.body if @params.fields_contain?("#{field_prefix}body")
-json[:rating_animation_state] = review.rating_animation_state if @params.fields_contain?("#{field_prefix}rating_animation_state")
-json[:rating_music_state] = review.rating_music_state if @params.fields_contain?("#{field_prefix}rating_music_state")
-json[:rating_story_state] = review.rating_story_state if @params.fields_contain?("#{field_prefix}rating_story_state")
-json[:rating_character_state] = review.rating_character_state if @params.fields_contain?("#{field_prefix}rating_character_state")
-json[:rating_overall_state] = review.rating_overall_state if @params.fields_contain?("#{field_prefix}rating_overall_state")
-json[:likes_count] = review.likes_count if @params.fields_contain?("#{field_prefix}likes_count")
-json[:impressions_count] = review.impressions_count if @params.fields_contain?("#{field_prefix}impressions_count")
-json[:modified_at] = review.modified_at if @params.fields_contain?("#{field_prefix}modified_at")
-json[:created_at] = review.created_at if @params.fields_contain?("#{field_prefix}created_at")
+json[:id] = record.id if @params.fields_contain?("#{field_prefix}id")
+json[:title] = "" if @params.fields_contain?("#{field_prefix}title")
+json[:body] = record.comment if @params.fields_contain?("#{field_prefix}body")
+json[:rating_animation_state] = nil if @params.fields_contain?("#{field_prefix}rating_animation_state")
+json[:rating_music_state] = nil if @params.fields_contain?("#{field_prefix}rating_music_state")
+json[:rating_story_state] = nil if @params.fields_contain?("#{field_prefix}rating_story_state")
+json[:rating_character_state] = nil if @params.fields_contain?("#{field_prefix}rating_character_state")
+json[:rating_overall_state] = record.rating_state if @params.fields_contain?("#{field_prefix}rating_overall_state")
+json[:likes_count] = record.likes_count if @params.fields_contain?("#{field_prefix}likes_count")
+json[:impressions_count] = record.impressions_count if @params.fields_contain?("#{field_prefix}impressions_count")
+json[:modified_at] = record.updated_at if @params.fields_contain?("#{field_prefix}modified_at")
+json[:created_at] = record.created_at if @params.fields_contain?("#{field_prefix}created_at")
 
 json

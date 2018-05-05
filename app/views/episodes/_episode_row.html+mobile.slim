@@ -2,20 +2,14 @@ tr
   - if user_signed_in? && (params[:controller] == "episodes" && params[:action] == "index")
     td.c-episode-row__tracking-checkbox v-show="isTrackingMode"
       input type="checkbox" v-model="episodeIds" value="#{episode.id}"
-  - if episode.single?
-    td
+  td
+    = link_to work_episode_path(work, episode) do
+      = episode.decorate.local_number
+  td
+    - episode_title = episode.decorate.local_title(fallback: false)
+    - if episode_title.present?
       = link_to work_episode_path(work, episode) do
-        = episode.decorate.local_title
-      = render "episodes/episode_statistics", episode: episode
-  - else
-    td
-      = link_to work_episode_path(work, episode) do
-        = episode.decorate.local_number
-    td
-      - episode_title = episode.decorate.local_title(fallback: false)
-      - if episode_title.present?
-        = link_to work_episode_path(work, episode) do
-          = episode_title
-      - else
-        | -
-      = render "episodes/episode_statistics", episode: episode
+        = episode_title
+    - else
+      | -
+    = render "episodes/episode_statistics", episode: episode

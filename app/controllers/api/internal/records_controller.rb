@@ -10,6 +10,7 @@ module Api
       def create(record, page_category)
         episode = Episode.published.find(record[:episode_id])
         record = episode.records.new do |c|
+          c.work_id = episode.work.id
           c.comment = record[:comment]
           c.shared_twitter = record[:shared_twitter]
           c.shared_facebook = record[:shared_facebook]

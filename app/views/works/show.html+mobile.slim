@@ -152,16 +152,10 @@
 
 .mb-3
   .container
-    .row.align-items-center
-      .col
-        h2.h4.font-weight-bold.my-3
-          = t "noun.reviews"
-      .col.text-right
-        = link_to new_work_review_path(@work), class: "btn btn-primary btn-sm" do
-          = icon "edit", class: "mr-1"
-          = t "verb.write_review"
+    h2.h4.font-weight-bold.mt-3.mb-4
+      = t "noun.reviews"
   .c-card.mt-3
-    = render "works/review_list", work: @work, reviews: @reviews
+    = render "works/record_list", work: @work, records: @records
 
 .mb-3
   .container

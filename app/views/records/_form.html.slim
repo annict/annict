@@ -1,8 +1,6 @@
-- url = record.new_record? ? records_path(current_user.username) : record_path(current_user.username, record)
 = form_for record, url: url do |f|
   = render "application/components/error_panel", resource: record
   
-  = f.hidden_field :episode_id
   = hidden_field_tag :page_category, page_category
 
   .mb-2

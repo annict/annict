@@ -17,6 +17,7 @@ Mutations::CreateRecord = GraphQL::Relay::Mutation.define do
     episode = Episode.published.find_by_graphql_id(inputs[:episodeId])
 
     record = episode.records.new do |r|
+      r.work_id = episode.work.id
       r.rating_state = inputs[:ratingState]&.downcase
       r.comment = inputs[:comment]
       r.shared_twitter = inputs[:shareTwitter] == true

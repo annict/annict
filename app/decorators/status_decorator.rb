@@ -1,12 +1,6 @@
 # frozen_string_literal: true
 
 class StatusDecorator < ApplicationDecorator
-  # Do not use helper methods via Draper when the method is used in ActiveJob
-  # https://github.com/drapergem/draper/issues/655
-  def library_url
-    "#{user.annict_url}/@#{user.username}/#{kind}"
-  end
-
   def facebook_share_body
     I18n.locale = user.locale
     work_title = work.decorate.local_title
@@ -20,7 +14,7 @@ class StatusDecorator < ApplicationDecorator
     base_body % work_title
   end
 
-  def tweet_body
+  def twitter_share_body
     I18n.locale = user.locale
     work_title = work.decorate.local_title
     utm = {
@@ -28,12 +22,12 @@ class StatusDecorator < ApplicationDecorator
       utm_medium: "status_share",
       utm_campaign: user.username
     }
-    library_url_with_query = "#{library_url}?#{utm.to_query}"
+    share_url = "#{library_url}?#{utm.to_query}"
 
     base_body = if user.locale == "ja"
-      "アニメ「%s」の視聴ステータスを「#{kind_text}」にしました。 #{library_url_with_query}"
+      "アニメ「%s」の視聴ステータスを「#{kind_text}」にしました。 #{share_url}"
     else
-      "Changed %s's status to \"#{kind_text}\". Anime list: #{library_url}"
+      "Changed %s's status to \"#{kind_text}\". Anime list: #{share_url}"
     end
 
     base_body % work_title

@@ -1,10 +1,10 @@
-- title = t "head.title.work_reviews.index", work_title: @work.decorate.local_title
-- description = meta_description t("head.meta.description.work_reviews.index", work_title: @work.decorate.local_title)
+- title = t "head.title.work_records.index", work_title: @work.decorate.local_title
+- description = meta_description t("head.meta.description.work_records.index", work_title: @work.decorate.local_title)
 - keywords = meta_keywords(@work.title)
 - image_url = ann_image_url(@work.work_image, :attachment, size: "640x")
 - set_meta_tags(title: title, description: description, keywords: keywords, og: { description: description, image: image_url }, twitter: { description: description, image: image_url }, reverse: true, prefix: false)
 
-- breadcrumb :work_review_list, @work
+- breadcrumb :work_record_list, @work
 
 = render "application/components/navbar"
 
@@ -15,27 +15,28 @@
       .col-3.pr-0
         = render "works/sidebar", work: @work
       .col-9
-        = render "works/subnav", work: @work
+        .mb-3
+          = render "works/subnav", work: @work
 
         - unless current_user&.supporter?
-          .pt-3.text-center
+          .mb-3.text-center
             = render "application/components/adsense", slots: [ENV["GOOGLE_AD_728x90_22"]], size: "728x90"
 
-        .text-right.my-3
-          = link_to new_work_review_path(@work), class: "btn btn-primary" do
-            = icon "edit", class: "mr-1"
-            = t "verb.write_review"
-        .c-card.container.mt-3
-          - if @reviews.present?
+        - if user_signed_in?
+          .c-card.container.mb-3.py-3
+            = render "records/form", record: @record, url: work_records_path(@work)
+
+        .c-card.container
+          - if @records.present?
             div
-              - @reviews.each do |review|
+              - @records.each do |record|
                 .py-3.u-underline
-                  = render "reviews/review", review: review, is_spoiler: @is_spoiler
-            - if @reviews.total_pages > 1
+                  = render "records/record", record: record, is_spoiler: @is_spoiler
+            - if @records.total_pages > 1
               .mb-3.text-center
-                = paginate @reviews
+                = paginate @records
           - else
-            = render "application/components/empty", text: t("messages._empty.no_reviews")
+            = render "application/components/empty", text: t("messages._empty.no_record_comments")
 
 = render "application/components/footer"
 

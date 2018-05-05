@@ -36,8 +36,7 @@
                   thead.small
                     tr
                       th v-show="isTrackingMode"
-                      - unless @work.single?
-                        th = t "noun.episode_number"
+                      th = t "noun.episode_number"
                       th = t "noun.title"
                       th
                         - if locale_ja?
