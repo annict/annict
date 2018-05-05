@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class CreateReviewActivityJob < ApplicationJob
+class CreateWorkRecordActivityJob < ApplicationJob
   queue_as :default
 
   def perform(user_id, review_id)

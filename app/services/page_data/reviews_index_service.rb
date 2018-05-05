@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module PageData
-  class ReviewsIndexService
+  class RecordsIndexService
     def self.exec(current_user, page_params)
       new.exec(current_user, page_params)
     end

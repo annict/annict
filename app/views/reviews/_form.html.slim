@@ -11,7 +11,7 @@
       c-input-words-count :max-words-count="1500" :init-words-count="#{f.object.body&.length.presence || 0}" input-name="review[body]"
 
   .form-row
-    - Review::STATES.each do |state|
+    - WorkRecord::STATES.each do |state|
       .form-group.col-md-6
         = f.label state
         c-record-rating :init-record=="{ ratingState: '#{review.send(state)}' }" input-name="review[#{state}]"

@@ -73,12 +73,6 @@
 
     .row
       .p-users-show__count.col.px-0
-        = link_to reviews_path(@user.username), class: "p-users-show__count-link" do
-          .h3.mb-1
-            = @reviews.length
-          .small
-            | Reviews
-      .p-users-show__count.col.px-0
         = link_to favorite_characters_path(@user.username), class: "p-users-show__count-link" do
           .h3.mb-1
             = @favorite_characters.length
@@ -109,8 +103,8 @@ c-tabbar
 
 - content_for :js_templates
   = render "application/js_templates/activities"
-  = render "application/js_templates/create_multiple_records_activity"
-  = render "application/js_templates/create_record_activity"
+  = render "application/js_templates/create_multiple_episode_records_activity"
+  = render "application/js_templates/create_episode_record_activity"
   = render "application/js_templates/create_status_activity"
   = render "application/js_templates/follow_button"
   = render "application/js_templates/like_button"

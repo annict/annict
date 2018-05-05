@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 work = activity.recipient
-review = activity.trackable
+work_record = activity.trackable
 
 cache_keys = [
   I18n.locale,
@@ -19,11 +19,12 @@ json = Rails.cache.fetch(cache_keys) do
     item: {
       image_url: ann_image_url(work.work_image, :attachment, size: "125x125")
     },
-    review: {
-      id: review.id,
-      body: review.body,
-      rating_overall_state: review.rating_overall_state,
-      likes_count: review.likes_count
+    work_record: {
+      id: work_record.id,
+      record_id: work_record.record_id,
+      body: work_record.body,
+      rating_overall_state: work_record.rating_overall_state,
+      likes_count: work_record.likes_count
     }
   }
 end
@@ -37,8 +38,8 @@ cache_keys = [
   activity.action
 ]
 
-json[:review][:hide_review] = Rails.cache.fetch(cache_keys) do
-  user.present? && user.hide_review?(review)
+json[:work_record][:hide_work_record_body] = Rails.cache.fetch(cache_keys) do
+  user.present? && user.hide_work_record_body?(work_record.work)
 end
 
 json

@@ -75,6 +75,7 @@ class User < ApplicationRecord
   belongs_to :gumroad_subscriber, optional: true
   has_many :activities, dependent: :destroy
   has_many :channel_works, dependent: :destroy
+  has_many :episode_records, dependent: :destroy
   has_many :records, dependent: :destroy
   has_many :db_activities, dependent: :destroy
   has_many :db_comments, dependent: :destroy
@@ -90,7 +91,6 @@ class User < ApplicationRecord
   has_many :notifications, dependent: :destroy
   has_many :providers, dependent: :destroy
   has_many :receptions, dependent: :destroy
-  has_many :reviews, dependent: :destroy
   has_many :channels, through:   :receptions
   has_many :statuses, dependent: :destroy
   has_many :multiple_records, dependent: :destroy
@@ -115,6 +115,7 @@ class User < ApplicationRecord
   has_many :work_taggings, dependent: :destroy
   has_many :work_tags, through: :work_taggables
   has_many :work_comments, dependent: :destroy
+  has_many :work_records, dependent: :destroy
   has_many :userland_project_members, dependent: :destroy
   has_many :userland_projects, through: :userland_project_members
   has_one :email_notification, dependent: :destroy
@@ -245,16 +246,16 @@ class User < ApplicationRecord
     twitter.update_column(:token_expires_at, Time.now.to_i)
   end
 
-  def hide_record_comment?(episode)
+  def hide_episode_record_body?(episode)
     setting.hide_record_comment? &&
       works.desiring_to_watch.include?(episode.work) &&
-      !records.pluck(:episode_id).include?(episode.id)
+      !episode_records.pluck(:episode_id).include?(episode.id)
   end
 
-  def hide_review?(review)
+  def hide_work_record_body?(work)
     setting.hide_record_comment? &&
-      works.desiring_to_watch.include?(review.work) &&
-      !reviews.pluck(:work_id).include?(review.work_id)
+      works.desiring_to_watch.include?(work) &&
+      !work_records.pluck(:work_id).include?(work.id)
   end
 
   def committer?

@@ -62,7 +62,7 @@
         .text-right
           c-share-button-twitter.mr-2 text="#{t("head.title.reviews.show", profile_name: review.user.profile.name, username: review.user.username, work_title: review.work.decorate.local_title)}" url="#{local_url}#{review_path(review.user.username, review)}" hashtags="#{review.work.twitter_hashtag.presence || ''}"
           c-share-button-facebook.mr-2 url="#{local_url}#{review_path(review.user.username, review)}"
-          c-like-button.ml-2 resource-name="Review" :init-resource-id="#{review.id}" :init-likes-count="#{review.likes_count}" :init-is-liked="#{user_signed_in? && current_user.like?(review)}" :is-signed-in="#{user_signed_in?}"
+          c-like-button.ml-2 resource-name="WorkRecord" :init-resource-id="#{review.id}" :init-likes-count="#{review.likes_count}" :init-is-liked="#{user_signed_in? && current_user.like?(review)}" :is-signed-in="#{user_signed_in?}"
 
     - if policy(review).update?
       .small.text-right.mt-2

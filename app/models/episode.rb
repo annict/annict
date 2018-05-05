@@ -3,25 +3,25 @@
 #
 # Table name: episodes
 #
-#  id                    :integer          not null, primary key
-#  work_id               :integer          not null
-#  number                :string(510)
-#  sort_number           :integer          default(0), not null
-#  sc_count              :integer
-#  title                 :string(510)
-#  records_count         :integer          default(0), not null
-#  created_at            :datetime
-#  updated_at            :datetime
-#  prev_episode_id       :integer
-#  aasm_state            :string           default("published"), not null
-#  fetch_syobocal        :boolean          default(FALSE), not null
-#  raw_number            :string
-#  title_ro              :string           default(""), not null
-#  title_en              :string           default(""), not null
-#  record_comments_count :integer          default(0), not null
-#  score                 :float
-#  ratings_count         :integer          default(0), not null
-#  satisfaction_rate     :float
+#  id                            :integer          not null, primary key
+#  work_id                       :integer          not null
+#  number                        :string(510)
+#  sort_number                   :integer          default(0), not null
+#  sc_count                      :integer
+#  title                         :string(510)
+#  episode_records_count         :integer          default(0), not null
+#  created_at                    :datetime
+#  updated_at                    :datetime
+#  prev_episode_id               :integer
+#  aasm_state                    :string           default("published"), not null
+#  fetch_syobocal                :boolean          default(FALSE), not null
+#  raw_number                    :string
+#  title_ro                      :string           default(""), not null
+#  title_en                      :string           default(""), not null
+#  episode_record_comments_count :integer          default(0), not null
+#  score                         :float
+#  ratings_count                 :integer          default(0), not null
+#  satisfaction_rate             :float
 #
 # Indexes
 #
@@ -61,10 +61,10 @@ class Episode < ApplicationRecord
     optional: true
   belongs_to :work
   has_many :activities, dependent: :destroy, as: :recipient
-  has_many :records, dependent: :destroy
   has_many :db_activities, as: :trackable, dependent: :destroy
   has_many :db_comments, as: :resource, dependent: :destroy
   has_many :draft_episodes, dependent: :destroy
+  has_many :episode_records, dependent: :destroy
   has_many :resource_items, dependent: :destroy, class_name: "EpisodeItem"
   has_many :items, through: :resource_items
   has_many :programs, dependent: :destroy

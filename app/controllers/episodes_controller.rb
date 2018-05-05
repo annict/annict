@@ -72,7 +72,7 @@ class EpisodesController < ApplicationController
 
     return unless user_signed_in?
 
-    @is_spoiler = current_user.hide_record_comment?(@episode)
+    @is_spoiler = current_user.hide_episode_record_body?(@episode)
     @record = @episode.records.new
     @record.setup_shared_sns(current_user)
 

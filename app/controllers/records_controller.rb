@@ -14,7 +14,7 @@ class RecordsController < ApplicationController
     @episode = @record.episode
     @comments = @record.comments.order(created_at: :desc)
     @comment = Comment.new
-    @is_spoiler = user_signed_in? && current_user.hide_record_comment?(@episode)
+    @is_spoiler = user_signed_in? && current_user.hide_episode_record_body?(@episode)
     store_page_params(work: @work)
   end
 
@@ -24,7 +24,7 @@ class RecordsController < ApplicationController
     @record = @episode.records.new(record)
     ga_client.page_category = params[:page_category]
 
-    service = NewRecordService.new(current_user, @record)
+    service = NewEpisodeRecordService.new(current_user, @record)
     service.page_category = params[:page_category]
     service.ga_client = ga_client
     service.via = "web"
@@ -52,7 +52,7 @@ class RecordsController < ApplicationController
 
       store_page_params(work: @work)
 
-      @is_spoiler = current_user.hide_record_comment?(@episode)
+      @is_spoiler = current_user.hide_episode_record_body?(@episode)
 
       render "/episodes/show"
     end

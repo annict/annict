@@ -13,14 +13,14 @@ h2.h4.font-weight-bold.text-center.my-4
   = t "noun.reviews_by", profile_name: @user.profile.name
 .c-card.mb-3
   .container
-    - if @reviews.present?
-      - @reviews.each do |review|
+    - if @records.present?
+      - @records.each do |record|
         .py-3.u-underline
-          = render "reviews/review", review: review, is_spoiler: user_signed_in? && current_user.hide_review?(review)
+          = render "work_records/record", work_record: record.work_record, is_spoiler: user_signed_in? && current_user.hide_work_record_body?(record.work_record.work)
           .alert.alert-secondary.mt-3.mb-0
             .row
               .col.col-auto.pr-0
-                = link_to work_path(review.work) do
+                = link_to work_path(record.work_record.work) do
                   = ann_image_tag review.work.work_image, :attachment, size: "70x93", class: "img-fluid img-thumbnail rounded"
               .col
                 .h4

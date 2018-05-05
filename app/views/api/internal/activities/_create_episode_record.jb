@@ -46,8 +46,8 @@ cache_keys = [
 ]
 
 json[:record][:hide_comment] = Rails.cache.fetch(cache_keys) do
-  record = activity.trackable
-  user.present? && user.hide_record_comment?(record.episode)
+  episode_record = activity.trackable
+  user.present? && user.hide_episode_record_body?(episode_record.episode)
 end
 
 json

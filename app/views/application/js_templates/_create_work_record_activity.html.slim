@@ -1,5 +1,5 @@
-script#t-create-review-activity type="x-template"
-  .c-create-review-activity.py-3
+script#t-create-work-record-activity type="x-template"
+  .c-create-work-record-activity.py-3
     .mb-2
       .row
         .col.col-auto.pr-0
@@ -9,7 +9,7 @@ script#t-create-review-activity type="x-template"
           .mb-2 v-if='locale === "en"'
             a.mr-1 :href='"/@" + activity.user.username'
               | {{ activity.profile.name }}
-            a.mr-1 :href='"/@" + activity.user.username + "/reviews/" + activity.review.id'
+            a.mr-1 :href='"/@" + activity.user.username + "/records/" + activity.work_record.record_id'
               | watched
             a :href='"/works/" + activity.work.id'
               | {{ activity.work.title }}
@@ -20,19 +20,19 @@ script#t-create-review-activity type="x-template"
             a :href='"/works/" + activity.work.id'
               | {{ activity.work.title }}
             | を
-            a :href='"/@" + activity.user.username + "/reviews/" + activity.review.id'
+            a :href='"/@" + activity.user.username + "/records/" + activity.work_record.record_id'
               | 見ました
           .small.text-muted
             c-time-ago :time="activity.created_at"
 
-    c-comment-guard inline-template="" :init-is-spoiler="activity.review.hide_review" :activity="activity"
+    c-comment-guard inline-template="" :init-is-spoiler="activity.work_record.hide_work_record_body" :activity="activity"
       .mb-3 @click="remove"
-        template v-if="activity.review.rating_overall_state"
-          c-rating-state-label :init-rating-state="activity.review.rating_overall_state" v-show="!isSpoiler"
+        template v-if="activity.work_record.rating_overall_state"
+          c-rating-state-label :init-rating-state="activity.work_record.rating_overall_state" v-show="!isSpoiler"
         .c-body @click="remove"
           c-body inline-template=""
             .c-body__content
-              | {{ $parent.activity.review.body }}
+              | {{ $parent.activity.work_record.body }}
 
     .mb-2
       .row.align-items-center.mx-0.u-border-1.rounded
@@ -46,4 +46,4 @@ script#t-create-review-activity type="x-template"
             c-status-selector :work-id="activity.work.id" :initStatusKind="activity.viewer.status.kind" style="width: 150px;" size="small"
 
     .mt-2
-      c-like-button.u-fake-link.mr-3 resource-name="Review" :init-resource-id="activity.review.id" :init-likes-count="activity.review.likes_count" :init-is-liked="activity.meta.liked" :is-signed-in="#{user_signed_in?}"
+      c-like-button.u-fake-link.mr-3 resource-name="WorkRecord" :init-resource-id="activity.work_record.id" :init-likes-count="activity.work_record.likes_count" :init-is-liked="activity.meta.liked" :is-signed-in="#{user_signed_in?}"

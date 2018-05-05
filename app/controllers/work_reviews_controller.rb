@@ -12,7 +12,7 @@ class WorkReviewsController < ApplicationController
     @reviews = localable_resources(@reviews)
     @reviews = @reviews.order(created_at: :desc).page(params[:page])
 
-    @is_spoiler = @user.present? && reviews.present? && @user.hide_review?(reviews.first)
+    @is_spoiler = @user.present? && work_records.present? && @user.hide_work_record_body?(work_records.first.work)
 
     return unless user_signed_in?
 

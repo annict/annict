@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class NewReviewService
+class NewWorkRecordService
   attr_writer :app, :via, :ga_client, :page_category
   attr_reader :review
 
@@ -28,7 +28,7 @@ class NewReviewService
   private
 
   def save_activity
-    CreateReviewActivityJob.perform_later(@user.id, @review.id)
+    CreateWorkRecordActivityJob.perform_later(@user.id, @review.id)
   end
 
   def create_ga_event

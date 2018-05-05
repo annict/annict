@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 # == Schema Information
 #
-# Table name: reviews
+# Table name: work_records
 #
 #  id                     :integer          not null, primary key
 #  user_id                :integer          not null
@@ -21,16 +21,18 @@
 #  updated_at             :datetime         not null
 #  oauth_application_id   :integer
 #  locale                 :string           default("other"), not null
+#  record_id              :integer
 #
 # Indexes
 #
-#  index_reviews_on_locale                (locale)
-#  index_reviews_on_oauth_application_id  (oauth_application_id)
-#  index_reviews_on_user_id               (user_id)
-#  index_reviews_on_work_id               (work_id)
+#  index_work_records_on_locale                (locale)
+#  index_work_records_on_oauth_application_id  (oauth_application_id)
+#  index_work_records_on_record_id             (record_id) UNIQUE
+#  index_work_records_on_user_id               (user_id)
+#  index_work_records_on_work_id               (work_id)
 #
 
-class Review < ApplicationRecord
+class WorkRecord < ApplicationRecord
   extend Enumerize
   include AASM
   include LocaleDetectable
@@ -47,7 +49,7 @@ class Review < ApplicationRecord
   is_impressionable counter_cache: true, unique: true
 
   STATES.each do |state|
-    enumerize state, in: %i(bad average good great)
+    enumerize state, in: Record::RATING_STATES
   end
 
   aasm do
@@ -62,6 +64,7 @@ class Review < ApplicationRecord
   counter_culture :work, column_name: proc { |model| model.published? ? "reviews_count" : nil }
 
   belongs_to :oauth_application, class_name: "Doorkeeper::Application", optional: true
+  belongs_to :record
   belongs_to :user
   belongs_to :work
   has_many :activities,
@@ -79,8 +82,8 @@ class Review < ApplicationRecord
   before_save :append_title_to_body
 
   def share_to_sns
-    ShareReviewToTwitterJob.perform_later(user.id, id) if user.setting.share_review_to_twitter?
-    ShareReviewToFacebookJob.perform_later(user.id, id) if user.setting.share_review_to_facebook?
+    ShareWorkRecordToTwitterJob.perform_later(user.id, id) if user.setting.share_review_to_twitter?
+    ShareWorkRecordToFacebookJob.perform_later(user.id, id) if user.setting.share_review_to_facebook?
   end
 
   # Do not use helper methods via Draper when the method is used in ActiveJob

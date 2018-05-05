@@ -78,12 +78,6 @@
 
         .row.text-center.mb-4
           .p-users-show__count.col.px-0
-            = link_to reviews_path(@user.username), class: "p-users-show__count-link" do
-              .h3
-                = @reviews.length
-              .p-profile-header__count-text
-                | Reviews
-          .p-users-show__count.col.px-0
             = link_to favorite_characters_path(@user.username), class: "p-users-show__count-link" do
               .h3
                 = @favorite_characters.length
@@ -237,8 +231,8 @@
 
 - content_for :js_templates
   = render "application/js_templates/activities"
-  = render "application/js_templates/create_multiple_records_activity"
-  = render "application/js_templates/create_record_activity"
+  = render "application/js_templates/create_multiple_episode_records_activity"
+  = render "application/js_templates/create_episode_record_activity"
   = render "application/js_templates/create_status_activity"
   = render "application/js_templates/follow_button"
   = render "application/js_templates/like_button"

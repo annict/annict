@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class ReviewDecorator < ApplicationDecorator
+class WorkRecordDecorator < ApplicationDecorator
   def detail_link(options = {})
     title = options.delete(:title).presence || self.title
     path = h.review_path(user.username, self)
