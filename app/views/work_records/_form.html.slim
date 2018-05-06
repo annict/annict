@@ -1,20 +1,20 @@
-- url = review.new_record? ? work_reviews_path(review.work) : work_review_path(review.work)
-= form_with model: review, url: url, local: true do |f|
-  = render "application/components/error_panel", resource: review
+- url = work_record.new_record? ? work_records_path(work_record.work) : work_record_path(work_record.work)
+= form_with model: work_record, url: url, local: true do |f|
+  = render "application/components/error_panel", resource: work_record
 
   = hidden_field_tag :page_category, page_category
 
   .form-group
     = f.label :body
-    c-autosize-textarea.form-control name="review[body]" value="#{f.object.body}" placeholder="#{t('messages.records.new.write_your_comment')}"
+    c-autosize-textarea.form-control name="work_record[body]" value="#{f.object.body}" placeholder="#{t('messages.records.new.write_your_comment')}"
     .text-right.text-muted.small
-      c-input-words-count :max-words-count="1500" :init-words-count="#{f.object.body&.length.presence || 0}" input-name="review[body]"
+      c-input-words-count :max-words-count="1500" :init-words-count="#{f.object.body&.length.presence || 0}" input-name="work_record[body]"
 
   .form-row
     - WorkRecord::STATES.each do |state|
       .form-group.col-md-6
         = f.label state
-        c-record-rating :init-record=="{ ratingState: '#{review.send(state)}' }" input-name="review[#{state}]"
+        c-record-rating :init-record=="{ ratingState: '#{work_record.send(state)}' }" input-name="work_record[#{state}]"
 
   - if current_user.authorized_to?(:twitter, shareable: true) || current_user.authorized_to?(:facebook, shareable: true)
     .mt-4

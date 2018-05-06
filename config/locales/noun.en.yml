@@ -105,6 +105,7 @@ en:
     rating: Rating
     ratings_count: Ratings
     rebroadcast: Rebroadcast
+    record_body_list: Comments
     record_list: Record List
     record_of_episode: "Record of %{work_title} %{episode_title_with_number}"
     records: Records

@@ -105,6 +105,7 @@ ja:
     rating: 評価
     ratings_count: 評価数
     rebroadcast: 再放送
+    record_body_list: 感想
     record_list: 記録一覧
     record_of_episode: "「%{work_title}」%{episode_title_with_number}への記録"
     records: 記録

@@ -45,7 +45,7 @@ ja:
       no_people: 人物はいません
       no_program_details: 登録されていません
       no_projects: プロジェクトはありません
-      no_reviews: レビューはありません
+      no_record_body_list: 感想はありません
       no_series_works: シリーズ作品はありません
       no_series: シリーズはありません
       no_staffs: スタッフはいません
@@ -255,5 +255,5 @@ ja:
       view_all_n_characters: "%{n}人のキャラクターを全て見る"
       view_all_n_episodes: "%{n}エピソードを全て見る"
       view_all_n_items: "%{n}個のアイテムを全て見る"
-      view_all_n_reviews: "%{n}件のレビューを全て見る"
+      view_all_n_record_body_list: "%{n}件の感想を全て見る"
       view_all_n_staffs: "%{n}人のスタッフを全て見る"

@@ -2,21 +2,22 @@
 
 class NewWorkRecordService
   attr_writer :app, :via, :ga_client, :page_category
-  attr_reader :review
+  attr_reader :work_record
 
-  def initialize(user, review, setting)
+  def initialize(user, work_record, setting)
     @user = user
-    @review = review
+    @work_record = work_record
     @setting = setting
   end
 
   def save!
     ActiveRecord::Base.transaction do
-      @review.detect_locale!(:body)
+      @work_record.detect_locale!(:body)
+      @work_record.record = @user.records.create!
 
-      @review.save!
+      @work_record.save!
       @setting.save!
-      @review.share_to_sns
+      @work_record.share_to_sns
 
       save_activity
       create_ga_event
@@ -28,11 +29,11 @@ class NewWorkRecordService
   private
 
   def save_activity
-    CreateWorkRecordActivityJob.perform_later(@user.id, @review.id)
+    CreateWorkRecordActivityJob.perform_later(@user.id, @work_record.id)
   end
 
   def create_ga_event
     return if @ga_client.blank?
-    @ga_client.events.create(:reviews, :create, ds: @via)
+    @ga_client.events.create(:work_records, :create, ds: @via)
   end
 end

@@ -45,7 +45,7 @@ en:
       no_people: No People
       no_program_details: No Streaming Links
       no_projects: No Projects
-      no_reviews: No Reviews
+      no_record_body_list: No Comments
       no_series_works: No Series Works
       no_series: No Series
       no_staffs: No Staffs
@@ -255,5 +255,5 @@ en:
       view_all_n_characters: View All %{n} Characters
       view_all_n_episodes: View All %{n} Episodes
       view_all_n_items: View All %{n} Items
-      view_all_n_reviews: View All %{n} Reviews
+      view_all_n_record_body_list: View All %{n} Comments
       view_all_n_staffs: View All %{n} Staffs

@@ -136,8 +136,7 @@ end
 
 resources :works, only: %i(index show) do
   resources :items, only: %i(index new destroy), controller: :work_items
-  resources :reviews, only: %i(create edit update destroy)
-  resources :reviews, only: %i(index), controller: :work_reviews
+  resources :records, only: %i(index create edit update), controller: :work_records
 
   resources :episodes, only: %i(index show) do
     resources :checkins, only: %i(show)

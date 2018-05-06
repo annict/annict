@@ -131,6 +131,8 @@ en:
         index: FAQ
       episode_items:
         new: New Item
+      episode_records:
+        show: "A Record by %{profile_name} (%{username}) on %{work_title} - %{episode_title_with_number}"
       episodes:
         index: Episodes of %{title} (Anime)
         show: Anime "%{work_title}" - %{episode_title_with_number}
@@ -193,15 +195,8 @@ en:
         index: Program List
       providers:
         index: Connections
-      records:
-        show: "A Record by %{profile_name} (%{username}) on %{work_title} - %{episode_title_with_number}"
       registrations:
         new: Sign Up
-      reviews:
-        edit: "Edit Review"
-        index: "%{profile_name} (%{username})'s Reviews"
-        new: "New Review"
-        show: "%{work_title} - %{profile_name} (%{username})'s Review"
       searches:
         show: "%{q}Anime Search"
       sessions:
@@ -237,6 +232,8 @@ en:
       work_items:
         index: Items of %{work_title} (Anime)
         new: New Item
+      work_records:
+        show: "%{work_title} - %{profile_name} (%{username})'s Review"
       works:
         newest: Just Added Anime
         popular: Popular Anime

@@ -30,7 +30,7 @@
               c-status-selector :work-id="#{review.work.id}"
 
       - else
-        = render "application/components/empty", text: t("messages._empty.no_reviews")
+        = render "application/components/empty", text: t("messages._empty.no_record_body_list")
 
     - if @reviews.present? && @reviews.total_pages > 1
       .mt-3.text-center
