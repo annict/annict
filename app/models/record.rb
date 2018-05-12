@@ -20,8 +20,8 @@ class Record < ApplicationRecord
   is_impressionable counter_cache: true, unique: true
 
   belongs_to :user
-  has_one :episode_record
-  has_one :work_record
+  has_one :episode_record, dependent: :destroy
+  has_one :work_record, dependent: :destroy
 
   def episode_record?
     episode_record.present?

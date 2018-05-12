@@ -45,7 +45,7 @@ class RecordsController < ApplicationController
       work_episode_path(episode_record.work, episode_record.episode)
     else
       work_record = @record.work_record
-      work_records_path(episode_record.work)
+      work_records_path(work_record.work)
     end
 
     redirect_to path, notice: t("messages._common.deleted")
