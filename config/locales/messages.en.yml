@@ -81,6 +81,7 @@ en:
         no_episodes: No Episodes
         no_image: No Image
     episode_records:
+      created: Created
       new:
         write_your_comment: Write Your Comment! (optional)
     episodes:
@@ -184,9 +185,6 @@ en:
       removed: Removed.
       you_can_not_disconnect: You can not disconnect.
     records:
-      created: Created
-      deleted: Deleted
-      updated: Updated
       show:
         record_by_name: "%{name}'s Record"
       view_record_body: "View Comment"

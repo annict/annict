@@ -4,6 +4,13 @@ crumb :root do
   link t("noun.home"), root_path
 end
 
+crumb :edit_episode_record do |episode_record|
+  episode = episode_record.episode
+  link_title = I18n.t("head.title.episode_records.edit")
+  link link_title, edit_episode_record_path(episode, episode_record)
+  parent :episode_detail, episode
+end
+
 crumb :faq_list do
   link t("noun.faqs"), faqs_path
   parent :root

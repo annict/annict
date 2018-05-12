@@ -1,4 +1,4 @@
-- url = episode_record.new_record? ? episode_records_path(episode_record.episode) : episode_record_path(episode_record.episode, episode_record)
+- url = episode_record.new_record? ? episode_records_path(episode_record.episode) : episode_record_path(episode_record.episode, episode_record.record)
 = form_for episode_record, url: url do |f|
   = render "application/components/error_panel", resource: episode_record
   
