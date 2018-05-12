@@ -6,16 +6,33 @@ class RecordsController < ApplicationController
   permits :episode_id, :comment, :shared_twitter, :shared_facebook, :rating_state
 
   before_action :authenticate_user!, only: %i(create edit update destroy switch)
-  before_action :load_user, only: %i(create show edit update destroy)
-  before_action :load_record, only: %i(show edit update destroy)
 
   def show
-    @work = @record.work
-    @episode = @record.episode
-    @comments = @record.comments.order(created_at: :desc)
-    @comment = Comment.new
-    @is_spoiler = user_signed_in? && current_user.hide_episode_record_body?(@episode)
-    store_page_params(work: @work)
+    load_user
+    load_record
+
+    if @record.episode_record?
+      @episode_record = @record.episode_record
+      @work = @episode_record.work
+      @episode = @episode_record.episode
+      @comments = @episode_record.comments.order(created_at: :desc)
+      @comment = @episode_record.comments.new
+      @is_spoiler = user_signed_in? && current_user.hide_episode_record_body?(@episode)
+      store_page_params(work: @work)
+      render "episode_records/show"
+    else
+      @work_record = @record.work_record
+      @work = @work_record.work
+      @is_spoiler = user_signed_in? && current_user.hide_work_record_body?(@work)
+      @work_records = @user.
+        work_records.
+        published.
+        where.not(id: @work_record.id).
+        includes(work: :work_image).
+        order(id: :desc)
+      store_page_params(work: @work)
+      render "work_records/show"
+    end
   end
 
   def create(record)

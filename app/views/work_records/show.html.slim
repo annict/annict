@@ -1,10 +1,10 @@
-- title = t "head.title.reviews.show", profile_name: @user.profile.name, username: @user.username, work_title: @work.decorate.local_title
-- description = meta_description t("head.meta.description.reviews.show", profile_name: @user.profile.name, username: @user.username, work_title: @work.decorate.local_title)
+- title = t "head.title.work_records.show", profile_name: @user.profile.name, username: @user.username, work_title: @work.decorate.local_title
+- description = meta_description t("head.meta.description.work_records.show", profile_name: @user.profile.name, username: @user.username, work_title: @work.decorate.local_title)
 - keywords = meta_keywords(@work.decorate.local_title)
 - image_url = ann_image_url(@work.work_image, :attachment, size: "640x")
 - set_meta_tags(title: title, description: description, keywords: keywords, og: { description: description, image: image_url }, twitter: { description: description, image: image_url }, reverse: true, prefix: false)
 
-- breadcrumb :review_detail, @review
+- breadcrumb :work_record_detail, @work_record
 
 = render "application/components/navbar"
 
@@ -19,32 +19,32 @@
 
         .c-card.py-3
           .container
-            = render "reviews/review", review: @review, is_spoiler: @is_spoiler
+            = render "work_records/work_record", work_record: @work_record, is_spoiler: @is_spoiler
 
-        - if @reviews.length > 1
+        - if @work_records.length > 1
           h2.h4.text-center.my-4.font-weight-bold
-            = t "noun.other_reviews_by", profile_name: @user.profile.name
+            = t "noun.other_record_body_list_by", profile_name: @user.profile.name
           .c-card.container.mt-3.mb-3
             .px-3
-              - @reviews.first(5).each do |review|
+              - @work_records.first(5).each do |work_record|
                 .row.py-3.u-underline
                   .col-auto
-                    = link_to work_path(review.work) do
-                      = ann_image_tag review.work.work_image, :attachment, size: "70x93", class: "img-fluid img-thumbnail rounded"
+                    = link_to work_path(work_record.work) do
+                      = ann_image_tag work_record.work.work_image, :attachment, size: "70x93", class: "img-fluid img-thumbnail rounded"
                   .col
                     .small.text-muted.mb-1
-                      = link_to review.work.decorate.local_title, work_path(review.work), class: "u-text-body"
+                      = link_to work_record.work.decorate.local_title, work_path(work_record.work), class: "u-text-body"
                     .mb-2
-                      - title = t("messages.reviews.view_review_with_words_count", count: review.body.length)
-                      = link_to title, review_path(review.user.username, review)
+                      - title = t("messages.records.view_record_body")
+                      = link_to title, record_path(work_record.user.username, work_record.record)
                     .small
-                      = link_to review_path(review.user.username, review), title: local_datetime(review.created_at), class: "u-text-body" do
-                        = local_time_ago_in_words(review.created_at)
-            - if @reviews.length > 5
+                      = link_to work_record_path(work_record.user.username, work_record), title: local_datetime(work_record.created_at), class: "u-text-body" do
+                        = local_time_ago_in_words(work_record.created_at)
+            - if @work_records.length > 5
               .mb-3
-                = link_to reviews_path(@user.username), class: "btn btn-secondary w-100" do
+                = link_to work_records_path(@user.username), class: "btn btn-secondary w-100" do
                   = icon "angle-right"
-                  = t "messages.works.view_all_n_reviews", n: @reviews.length
+                  = t "messages.works.view_all_n_record_body_list", n: @work_records.length
       .col-3
         .mb-2
           = link_to work_path(@work) do

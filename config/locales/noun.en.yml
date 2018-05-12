@@ -84,7 +84,7 @@ en:
     or: OR
     organization: Organization
     organizations: Organizations
-    other_reviews_by: "Reviews by %{profile_name}"
+    other_record_body_list_by: "Comments by %{profile_name}"
     other_users: Other Users
     overall: Overall
     password: Password

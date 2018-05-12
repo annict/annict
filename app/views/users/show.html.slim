@@ -130,7 +130,7 @@
                   .col
                     .small.text-muted.mb-1
                       = link_to review.work.decorate.local_title, work_path(review.work), class: "u-text-body"
-                    - title = t("messages.reviews.view_review_with_words_count", count: review.body.length)
+                    - title = t("messages.records.view_record_body")
                     = link_to title, review_path(@user.username, review)
 
         - if @favorite_characters.exists?

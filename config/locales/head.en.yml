@@ -28,12 +28,9 @@ en:
         person_fans:
           index: Check out fans of %{person_name}!
         records:
-          show: Check out %{profile_name} (%{username})'s records!
+          index: Check out %{profile_name} (%{username})'s records!
         registrations:
           new: Start using Annict!
-        reviews:
-          index: Check out %{profile_name} (%{username})'s reviews!
-          show: Check out %{profile_name} (%{username})'s reviews!
         sessions:
           new: Welcome back!
         staffs:
@@ -46,8 +43,9 @@ en:
           popular: Looking for popular anime? Find out more with Annict!
           season: Looking for information on %{name} anime? Find out more with Annict!
           show: Looking for information on %{title}? Find out more with Annict!
-        work_reviews:
-          index: Looking for reviews of %{work_title}? Find out more with Annict!
+        work_records:
+          index: Looking for records of %{work_title}? Find out more with Annict!
+          show: Check out %{profile_name} (%{username})'s records!
       keywords:
         _common: annict, anime, review
     title:
@@ -234,7 +232,7 @@ en:
         new: New Item
       work_records:
         edit: Edit Record
-        show: "%{work_title} - %{profile_name} (%{username})'s Review"
+        show: "%{work_title} - %{profile_name} (%{username})'s Record"
       works:
         newest: Just Added Anime
         popular: Popular Anime

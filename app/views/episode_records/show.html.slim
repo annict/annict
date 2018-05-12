@@ -1,9 +1,9 @@
-- title = t "head.title.records.show", profile_name: @user.profile.name, username: @user.username, work_title: @work.decorate.local_title, episode_title_with_number: @episode.decorate.title_with_number
-- description = meta_description(t("head.meta.description.records.show", profile_name: @user.profile.name, username: @user.username, work_title: @work.decorate.local_title, episode_title_with_number: @episode.decorate.title_with_number))
+- title = t "head.title.episode_records.show", profile_name: @user.profile.name, username: @user.username, work_title: @work.decorate.local_title, episode_title_with_number: @episode.decorate.title_with_number
+- description = meta_description(t("head.meta.description.episode_records.show", profile_name: @user.profile.name, username: @user.username, work_title: @work.decorate.local_title, episode_title_with_number: @episode.decorate.title_with_number))
 - keywords = meta_keywords(@work.decorate.local_title)
 - image_url = ann_image_url(@work.work_image, :attachment, size: "640x")
 - set_meta_tags(title: title, description: description, keywords: keywords, og: { description: description }, twitter: { description: description, image: image_url }, reverse: true, prefix: false)
-- breadcrumb :record_detail, @record
+- breadcrumb :episode_record_detail, @episode_record
 
 = render "application/components/navbar"
 
@@ -24,12 +24,12 @@
             = link_to work_episode_path(@work, @episode), class: "u-text-body" do
               = @episode.decorate.title_with_number
           hr
-          .p-records-show__record.px-3
-            = render "records/record", record: @record, is_spoiler: @is_spoiler
+          .p-episode_records-show__record.px-3
+            = render "episode_records/episode_record", episode_record: @episode_record, is_spoiler: @is_spoiler
           hr
           .px-3
             - if user_signed_in?
-              .p-records-show__comment-form
+              .p-episode_records-show__comment-form
                 = render "comments/form", record: @record, comment: @comment, user: @user
               hr
             - if @comments.present?

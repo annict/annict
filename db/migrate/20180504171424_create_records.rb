@@ -9,6 +9,7 @@ class CreateRecords < ActiveRecord::Migration[5.1]
     rename_column :activities, :multiple_record_id, :multiple_episode_record_id
     rename_column :activities, :record_id, :episode_record_id
     rename_column :activities, :review_id, :work_record_id
+    rename_column :comments, :record_id, :episode_record_id
     rename_column :episode_records, :multiple_record_id, :multiple_episode_record_id
     rename_column :episodes, :record_comments_count, :episode_record_comments_count
     rename_column :episodes, :records_count, :episode_records_count
@@ -16,6 +17,7 @@ class CreateRecords < ActiveRecord::Migration[5.1]
 
     create_table :records do |t|
       t.references :user, null: false, foreign_key: true
+      t.integer :impressions_count, null: false, default: 0
       t.timestamps null: false
     end
 

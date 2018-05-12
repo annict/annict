@@ -188,6 +188,7 @@ ja:
         write_your_comment: 見た感想を残しませんか？ (自由入力)
       show:
         record_by_name: "%{name}の記録"
+      view_record_body: "感想を見る"
     registrations:
       new:
         sign_in_link_html: 登録済みですか？ %{link}
@@ -199,7 +200,6 @@ ja:
         confirmation_mail_has_sent: 確認メールを送信しました
     reviews:
       n_people_changed_status_to_wanna_watch: "%{count}人がこのレビューを見て視聴ステータスを「見たい」にしました"
-      view_review_with_words_count: "レビューを見る"
     sayonara:
       are_you_sure_really: 後戻りできませんがよろしいですか？
       delete_account: アカウントを削除する

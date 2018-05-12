@@ -28,12 +28,9 @@ ja:
         person_fans:
           index: "%{person_name}のファンをチェック！"
         records:
-          show: "%{profile_name} (%{username})さんの感想をチェック！"
+          index: "%{profile_name} (%{username})さんの記録をチェック！"
         registrations:
           new: Annictを始めよう！
-        reviews:
-          index: "%{profile_name} (%{username})さんのレビューをチェック！"
-          show: "%{profile_name} (%{username})さんのレビューをチェック！"
         sessions:
           new: おかえりなさい！
         staffs:
@@ -46,8 +43,9 @@ ja:
           popular: 人気アニメをチェック！
           season: "%{name}アニメをチェック！"
           show: アニメ「%{title}」の感想や情報をチェック！
-        work_reviews:
+        work_records:
           index: "アニメ「%{work_title}」のレビューをチェック！"
+          show: "%{profile_name} (%{username})さんのアニメ「%{work_title}」への記録をチェック！"
       keywords:
         _common: annict, anime, review
     title:
@@ -57,11 +55,11 @@ ja:
         index: 作品ごとのチャンネル
       channels:
         index: チャンネル一覧
+      character_fans:
+        index: "%{character_name}のファン一覧"
       characters:
         index: "アニメ「%{title}」のキャラクター"
         show: "%{name}"
-      character_fans:
-        index: "%{character_name}のファン一覧"
       comments:
         edit: コメント編集
       db:
@@ -234,7 +232,7 @@ ja:
         new: 商品登録
       work_records:
         edit: 記録の編集
-        show: "アニメ「%{work_title}」のレビュー by %{profile_name} (%{username})"
+        show: "アニメ「%{work_title}」の記録 by %{profile_name} (%{username})"
       works:
         newest: 新規登録アニメ
         popular: 人気アニメ

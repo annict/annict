@@ -51,8 +51,6 @@ class EpisodeRecord < ApplicationRecord
   include LocaleDetectable
   include Shareable
 
-  is_impressionable counter_cache: true, unique: true
-
   enumerize :rating_state, in: Record::RATING_STATES, scope: true
 
   aasm do

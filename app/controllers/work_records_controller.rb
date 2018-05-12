@@ -73,7 +73,7 @@ class WorkRecordsController < ApplicationController
         ShareWorkRecordToFacebookJob.perform_later(current_user.id, @work_record.id)
       end
       flash[:notice] = t("messages._common.updated")
-      redirect_to record_path(@work_record.user.username, @work_record)
+      redirect_to record_path(@work_record.user.username, @work_record.record)
     rescue
       store_page_params(work: @work)
       render :edit

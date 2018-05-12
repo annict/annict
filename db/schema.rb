@@ -173,15 +173,15 @@ ActiveRecord::Schema.define(version: 20180504171424) do
 
   create_table "comments", id: :serial, force: :cascade do |t|
     t.integer "user_id", null: false
-    t.integer "record_id", null: false
+    t.integer "episode_record_id", null: false
     t.text "body", null: false
     t.integer "likes_count", default: 0, null: false
     t.datetime "created_at"
     t.datetime "updated_at"
     t.integer "work_id"
     t.string "locale", default: "other", null: false
+    t.index ["episode_record_id"], name: "comments_checkin_id_idx"
     t.index ["locale"], name: "index_comments_on_locale"
-    t.index ["record_id"], name: "comments_checkin_id_idx"
     t.index ["user_id"], name: "comments_user_id_idx"
     t.index ["work_id"], name: "index_comments_on_work_id"
   end
@@ -821,6 +821,7 @@ ActiveRecord::Schema.define(version: 20180504171424) do
     t.bigint "user_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.integer "impressions_count", default: 0, null: false
     t.index ["user_id"], name: "index_records_on_user_id"
   end
 
@@ -1252,7 +1253,7 @@ ActiveRecord::Schema.define(version: 20180504171424) do
   add_foreign_key "collection_items", "users"
   add_foreign_key "collection_items", "works"
   add_foreign_key "collections", "users"
-  add_foreign_key "comments", "episode_records", column: "record_id", name: "comments_checkin_id_fk", on_delete: :cascade
+  add_foreign_key "comments", "episode_records", name: "comments_checkin_id_fk", on_delete: :cascade
   add_foreign_key "comments", "users", name: "comments_user_id_fk", on_delete: :cascade
   add_foreign_key "comments", "works"
   add_foreign_key "db_activities", "users"

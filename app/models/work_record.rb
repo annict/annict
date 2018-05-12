@@ -46,8 +46,6 @@ class WorkRecord < ApplicationRecord
     rating_character_state
   ).freeze
 
-  is_impressionable counter_cache: true, unique: true
-
   STATES.each do |state|
     enumerize state, in: Record::RATING_STATES
   end

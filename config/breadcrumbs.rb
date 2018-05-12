@@ -99,20 +99,20 @@ crumb :edit_work_record do |work_record|
   parent :work_record_detail, work_record
 end
 
+crumb :episode_record_detail do |episode_record|
+  user = episode_record.user
+  work = episode_record.work
+  episode = episode_record.episode
+  link_title = I18n.t("noun.record_of_episode", work_title: work.decorate.local_title, episode_title_with_number: episode.decorate.title_with_number)
+  link link_title, record_path(user.username, episode_record.record)
+  parent :user_record_list, user
+end
+
 crumb :work_record_detail do |work_record|
   user = work_record.user
   work = work_record.work
   link_title = t("noun.record_of_work", work_title: work.decorate.local_title)
   link link_title, record_path(user.username, work_record.record)
-  parent :user_record_list, user
-end
-
-crumb :record_detail do |record|
-  user = record.user
-  work = record.work
-  episode = record.episode
-  link_title = I18n.t("noun.record_of_episode", work_title: work.decorate.local_title, episode_title_with_number: episode.decorate.title_with_number)
-  link link_title, record_path(user.username, record)
   parent :user_record_list, user
 end
 
