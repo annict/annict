@@ -1,15 +1,15 @@
-- url = record.new_record? ? records_path(current_user.username) : record_path(current_user.username, record)
-= form_for record, url: url do |f|
-  = render "application/components/error_panel", resource: record
+- url = episode_record.new_record? ? episode_records_path(episode_record.episode) : episode_record_path(episode_record.episode, episode_record)
+= form_for episode_record, url: url do |f|
+  = render "application/components/error_panel", resource: episode_record
   
   = f.hidden_field :episode_id
   = hidden_field_tag :page_category, page_category
 
   .mb-2
-    c-record-rating :init-record=="{ ratingState: '#{record.rating_state}' }"
+    c-record-rating :init-record=="{ ratingState: '#{episode_record.rating_state}' }"
   .mb-2
-    - comment = record.comment&.gsub(/(?:\n\r?|\r\n?)/, "\\n").presence || ""
-    c-record-textarea :init-record="{ uid: 1, comment: '#{comment}', commentRows: 2 }" placeholder="#{t('messages.records.new.write_your_comment')}"
+    - comment = episode_record.comment&.gsub(/(?:\n\r?|\r\n?)/, "\\n").presence || ""
+    c-record-textarea :init-record="{ uid: 1, comment: '#{comment}', commentRows: 2 }" placeholder="#{t('messages.episode_records.new.write_your_comment')}"
   .row
     .col
       - if current_user.authorized_to?(:twitter, shareable: true)
@@ -24,7 +24,7 @@
       .text-center
         = f.button class: "btn btn-primary" do
           = icon "edit"
-          - if record.new_record?
+          - if episode_record.new_record?
             = t "verb.track"
           - else
             = t "verb.update"

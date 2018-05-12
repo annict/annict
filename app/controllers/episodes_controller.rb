@@ -44,13 +44,13 @@ class EpisodesController < ApplicationController
   def show
     params[:locale_en] = locale_en?
     params[:locale_ja] = locale_ja?
-    service = RecordsListService.new(current_user, @episode, params)
+    service = EpisodeRecordsListService.new(current_user, @episode, params)
 
-    @all_records = service.all_records
-    @all_comment_records = service.all_comment_records
-    @friend_comment_records = service.friend_comment_records
-    @my_records = service.my_records
-    @selected_comment_records = service.selected_comment_records
+    @all_episode_records = service.all_episode_records
+    @all_comment_episode_records = service.all_comment_episode_records
+    @friend_comment_episode_records = service.friend_comment_episode_records
+    @my_episode_records = service.my_episode_records
+    @selected_comment_episode_records = service.selected_comment_episode_records
 
     episode_items = @episode.resource_items.published
     work_items = @episode.
@@ -73,8 +73,8 @@ class EpisodesController < ApplicationController
     return unless user_signed_in?
 
     @is_spoiler = current_user.hide_episode_record_body?(@episode)
-    @record = @episode.records.new
-    @record.setup_shared_sns(current_user)
+    @episode_record = @episode.episode_records.new
+    @episode_record.setup_shared_sns(current_user)
 
     store_page_params(work: @work)
   end

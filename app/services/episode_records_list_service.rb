@@ -1,58 +1,58 @@
 # frozen_string_literal: true
 
-class RecordsListService
+class EpisodeRecordsListService
   def initialize(user, episode, params)
     @user = user
     @episode = episode
     @params = params
   end
 
-  def all_comment_records
-    results = all_records
+  def all_comment_episode_records
+    results = all_episode_records
     results = results.with_comment
-    results = localable_records(results)
+    results = localable_episode_records(results)
     results = results.page(@params[:page])
     results = sort(results)
     results.per(20)
   end
 
-  def friend_comment_records
-    return Record.none if @user.blank?
+  def friend_comment_episode_records
+    return EpisodeRecord.none if @user.blank?
 
-    results = all_records
+    results = all_episode_records
     results = results.with_comment
     results = results.joins(:user).merge(@user.followings)
-    results = localable_records(results)
+    results = localable_episode_records(results)
     results = results.page(@params[:page])
     results = sort(results)
     results.per(20)
   end
 
-  def my_records
-    return Record.none if @user.blank?
+  def my_episode_records
+    return EpisodeRecord.none if @user.blank?
 
-    results = all_records
+    results = all_episode_records
     results = results.where(user: @user)
-    results = localable_records(results)
+    results = localable_episode_records(results)
     results = results.page(@params[:page])
     results = sort(results)
     results.per(20)
   end
 
-  def selected_comment_records
-    return all_comment_records if @user.blank?
+  def selected_comment_episode_records
+    return all_comment_episode_records if @user.blank?
 
     case @user.setting.display_option_record_list
-    when "all_comments" then all_comment_records
-    when "friend_comments" then friend_comment_records
-    when "my_records" then my_records
+    when "all_comments" then all_comment_episode_records
+    when "friend_comments" then friend_comment_episode_records
+    when "my_records" then my_episode_records
     end
   end
 
-  def all_records
-    records = @episode.records.includes(user: :profile)
-    records = records.where.not(user_id: @user.mute_users.pluck(:muted_user_id)) if @user.present?
-    records
+  def all_episode_records
+    episode_records = @episode.episode_records.includes(user: :profile)
+    episode_records = episode_records.where.not(user_id: @user.mute_users.pluck(:muted_user_id)) if @user.present?
+    episode_records
   end
 
   private
@@ -74,15 +74,15 @@ class RecordsListService
     end
   end
 
-  def localable_records(records)
+  def localable_episode_records(episode_records)
     if @user.present?
-      records.where(user: @user).or(records.with_locale(*@user.allowed_locales))
+      episode_records.where(user: @user).or(episode_records.with_locale(*@user.allowed_locales))
     elsif @user.blank? && @params[:locale_en]
-      records.with_locale(:en)
+      episode_records.with_locale(:en)
     elsif @user.blank? && @params[:locale_ja]
-      records.with_locale(:ja)
+      episode_records.with_locale(:ja)
     else
-      records
+      episode_records
     end
   end
 end

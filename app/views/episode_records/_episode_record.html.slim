@@ -44,7 +44,7 @@
                   c-mute-user-button :user-id="#{episode_record.user.id}"
         - if policy(episode_record).update?
           .small.text-right.mb-2
-            = link_to edit_record_path(episode_record.user.username, episode_record.record), class: "mr-2" do
+            = link_to edit_episode_record_path(episode_record.episode, episode_record.record), class: "mr-2" do
               = icon "edit", class: "mr-1"
               = t "noun.edit"
             = link_to record_path(episode_record.user.username, episode_record.record), method: :delete, data: { confirm: t("messages._common.are_you_sure") } do

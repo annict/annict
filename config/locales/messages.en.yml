@@ -80,6 +80,9 @@ en:
       works:
         no_episodes: No Episodes
         no_image: No Image
+    episode_records:
+      new:
+        write_your_comment: Write Your Comment! (optional)
     episodes:
       comments: Comments
       comments_by_others: Comments by Others
@@ -184,8 +187,6 @@ en:
       created: Created
       deleted: Deleted
       updated: Updated
-      new:
-        write_your_comment: Write Your Comment! (optional)
       show:
         record_by_name: "%{name}'s Record"
       view_record_body: "View Comment"

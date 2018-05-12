@@ -80,6 +80,9 @@ ja:
       works:
         no_episodes: エピソード未登録
         no_image: 画像未登録
+    episode_records:
+      new:
+        write_your_comment: 見た感想を残しませんか？ (自由入力)
     episodes:
       comments: 感想
       comments_by_others: 皆さんの感想
@@ -184,8 +187,6 @@ ja:
       created: 記録しました
       deleted: 削除しました
       updated: 更新しました
-      new:
-        write_your_comment: 見た感想を残しませんか？ (自由入力)
       show:
         record_by_name: "%{name}の記録"
       view_record_body: "感想を見る"

@@ -114,7 +114,7 @@ class Episode < ApplicationRecord
       current_month.months_ago(1),
       current_month
     ].map do |date|
-      count += records.by_month(date).count
+      count += episode_records.by_month(date).count
       {
         date: date.to_time.to_datetime.strftime("%Y/%m/%d"),
         value: count
@@ -123,9 +123,9 @@ class Episode < ApplicationRecord
   end
 
   def rating_state_chart_dataset
-    all_records_count = records.where.not(rating_state: nil).count
-    Record.rating_state.values.map do |state|
-      state_records_count = records.with_rating_state(state).count
+    all_records_count = episode_records.where.not(rating_state: nil).count
+    EpisodeRecord.rating_state.values.map do |state|
+      state_records_count = episode_records.with_rating_state(state).count
       ratio = state_records_count / all_records_count.to_f
       {
         name: state.text,
