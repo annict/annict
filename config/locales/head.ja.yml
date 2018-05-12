@@ -233,6 +233,7 @@ ja:
         index: アニメ「%{work_title}」の関連商品
         new: 商品登録
       work_records:
+        edit: 記録の編集
         show: "アニメ「%{work_title}」のレビュー by %{profile_name} (%{username})"
       works:
         newest: 新規登録アニメ

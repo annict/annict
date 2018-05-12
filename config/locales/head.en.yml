@@ -233,6 +233,7 @@ en:
         index: Items of %{work_title} (Anime)
         new: New Item
       work_records:
+        edit: Edit Record
         show: "%{work_title} - %{profile_name} (%{username})'s Review"
       works:
         newest: Just Added Anime

@@ -42,6 +42,44 @@ class WorkRecordsController < ApplicationController
     end
   end
 
+  def edit(work_id, id)
+    @record = current_user.records.find(id)
+    @work_record = current_user.work_records.published.where(work_id: work_id).find(@record.work_record&.id)
+    @work = @work_record.work
+    authorize @work_record, :edit?
+    store_page_params(work: @work)
+  end
+
+  def update(work_id, id, work_record)
+    @record = current_user.records.find(id)
+    @work_record = current_user.work_records.published.where(work_id: work_id).find(@record.work_record&.id)
+    @work = @work_record.work
+    authorize @work_record, :update?
+
+    @work_record.attributes = work_record
+    @work_record.detect_locale!(:body)
+    @work_record.modified_at = Time.now
+    current_user.setting.attributes = setting_params
+
+    begin
+      ActiveRecord::Base.transaction do
+        @work_record.save!
+        current_user.setting.save!
+      end
+      if current_user.setting.share_review_to_twitter?
+        ShareWorkRecordToTwitterJob.perform_later(current_user.id, @work_record.id)
+      end
+      if current_user.setting.share_review_to_facebook?
+        ShareWorkRecordToFacebookJob.perform_later(current_user.id, @work_record.id)
+      end
+      flash[:notice] = t("messages._common.updated")
+      redirect_to record_path(@work_record.user.username, @work_record)
+    rescue
+      store_page_params(work: @work)
+      render :edit
+    end
+  end
+
   private
 
   def setting_params

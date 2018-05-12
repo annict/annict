@@ -79,11 +79,6 @@ crumb :work_detail do |work|
   end
 end
 
-crumb :user_review_list do |user|
-  link t("noun.review_list"), reviews_path(user.username)
-  parent :user_detail, user
-end
-
 crumb :user_record_list do |user|
   link t("noun.record_list")
   parent :user_detail, user
@@ -99,17 +94,17 @@ crumb :new_review do |work|
   parent :work_review_list, work
 end
 
-crumb :edit_review do |review|
-  link t("head.title.reviews.edit"), edit_work_review_path(review.work, review)
-  parent :review_detail, review
+crumb :edit_work_record do |work_record|
+  link t("head.title.work_records.edit"), edit_work_record_path(work_record.work, work_record.record)
+  parent :work_record_detail, work_record
 end
 
-crumb :review_detail do |review|
-  user = review.user
-  work = review.work
-  link_title = t("noun.review_of_the_work", work_title: work.decorate.local_title)
-  link link_title, review_path(user.username, review)
-  parent :user_review_list, user
+crumb :work_record_detail do |work_record|
+  user = work_record.user
+  work = work_record.work
+  link_title = t("noun.record_of_work", work_title: work.decorate.local_title)
+  link link_title, record_path(user.username, work_record.record)
+  parent :user_record_list, user
 end
 
 crumb :record_detail do |record|
