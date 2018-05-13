@@ -822,7 +822,9 @@ ActiveRecord::Schema.define(version: 20180504171424) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.integer "impressions_count", default: 0, null: false
+    t.bigint "work_id"
     t.index ["user_id"], name: "index_records_on_user_id"
+    t.index ["work_id"], name: "index_records_on_work_id"
   end
 
   create_table "seasons", id: :serial, force: :cascade do |t|
@@ -1042,6 +1044,7 @@ ActiveRecord::Schema.define(version: 20180504171424) do
     t.datetime "work_comment_cache_expired_at"
     t.integer "gumroad_subscriber_id"
     t.string "allowed_locales", array: true
+    t.integer "records_count", default: 0, null: false
     t.index ["allowed_locales"], name: "index_users_on_allowed_locales", using: :gin
     t.index ["confirmation_token"], name: "users_confirmation_token_key", unique: true
     t.index ["email"], name: "users_email_key", unique: true
@@ -1212,13 +1215,14 @@ ActiveRecord::Schema.define(version: 20180504171424) do
     t.integer "key_pv_id"
     t.integer "manual_episodes_count"
     t.boolean "no_episodes", default: false, null: false
-    t.integer "reviews_count", default: 0, null: false
+    t.integer "work_records_count", default: 0, null: false
     t.date "started_on"
     t.date "ended_on"
     t.float "score"
     t.integer "ratings_count", default: 0, null: false
     t.float "satisfaction_rate"
     t.integer "review_comments_count", default: 0, null: false
+    t.integer "records_count", default: 0, null: false
     t.index ["aasm_state"], name: "index_works_on_aasm_state"
     t.index ["key_pv_id"], name: "index_works_on_key_pv_id"
     t.index ["number_format_id"], name: "index_works_on_number_format_id"
@@ -1319,6 +1323,7 @@ ActiveRecord::Schema.define(version: 20180504171424) do
   add_foreign_key "receptions", "channels", name: "receptions_channel_id_fk", on_delete: :cascade
   add_foreign_key "receptions", "users", name: "receptions_user_id_fk", on_delete: :cascade
   add_foreign_key "records", "users"
+  add_foreign_key "records", "works", name: "works.id"
   add_foreign_key "series_works", "series"
   add_foreign_key "series_works", "works"
   add_foreign_key "settings", "users"

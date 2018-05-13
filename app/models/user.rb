@@ -32,6 +32,7 @@
 #  work_comment_cache_expired_at :datetime
 #  gumroad_subscriber_id         :integer
 #  allowed_locales               :string           is an Array
+#  records_count                 :integer          default(0), not null
 #
 # Indexes
 #

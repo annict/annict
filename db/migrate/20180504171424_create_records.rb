@@ -14,15 +14,20 @@ class CreateRecords < ActiveRecord::Migration[5.1]
     rename_column :episodes, :record_comments_count, :episode_record_comments_count
     rename_column :episodes, :records_count, :episode_records_count
     rename_column :users, :records_count, :episode_records_count
+    rename_column :works, :reviews_count, :work_records_count
 
     create_table :records do |t|
       t.references :user, null: false, foreign_key: true
+      t.references :work, null: false, foreign_key: true
+      t.string :aasm_state, null: false, default: "published"
       t.integer :impressions_count, null: false, default: 0
       t.timestamps null: false
     end
 
     add_column :episode_records, :record_id, :integer
     add_column :work_records, :record_id, :integer
+    add_column :works, :records_count, :integer, null: false, default: 0
+    add_column :users, :records_count, :integer, null: false, default: 0
 
     add_index :episode_records, :record_id, unique: true
     add_index :work_records, :record_id, unique: true

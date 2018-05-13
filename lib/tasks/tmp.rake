@@ -6,7 +6,12 @@ namespace :tmp do
       m.where(record: nil).find_each do |r|
         ActiveRecord::Base.transaction do
           puts "#{r.class.name}: #{r.id}"
-          record = r.user.records.create!(impressions_count: r.impressions_count)
+          record = r.user.records.create!(
+            work: r.work,
+            impressions_count: r.impressions_count,
+            created_at: r.created_at,
+            updated_at: r.updated_at
+          )
           r.update_column(:record_id, record.id)
         end
       end
@@ -39,6 +44,14 @@ namespace :tmp do
           i.update(impressionable_id: EpisodeRecord.find(i.impressionable_id).record_id)
         end
       end
+    end
+  end
+
+  task update_records: :environment do
+    Record.find_each do |r|
+      puts r.id
+      resource_record = r.episode_record.presence || r.work_record
+      r.update_column(:work_id, resource_record.work_id)
     end
   end
 end

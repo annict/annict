@@ -59,7 +59,7 @@ class WorkRecord < ApplicationRecord
     end
   end
 
-  counter_culture :work, column_name: proc { |model| model.published? ? "reviews_count" : nil }
+  counter_culture :work, column_name: proc { |model| model.published? ? "work_records_count" : nil }
 
   belongs_to :oauth_application, class_name: "Doorkeeper::Application", optional: true
   belongs_to :record

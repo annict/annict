@@ -108,31 +108,6 @@
               .url
                 = link_to @user.profile.decorate.shorten_url, @user.profile.url, target: "_blank"
 
-        - if @reviews.exists?
-          .mb-4
-            h2.p-users-show__sub-title
-              .row.align-items-center
-                .col
-                  = icon "edit", class: "mr-2"
-                  = t "noun.reviews"
-                - if @reviews.length > 5
-                  .col.col-auto
-                    = link_to reviews_path(@user.username), class: "small" do
-                      = icon "angle-right", class: "mr-1"
-                      = t "verb.view_all"
-
-            .container
-              - @reviews.first(5).each do |review|
-                .row.pb-3
-                  .col-auto.px-0
-                    = link_to work_path(review.work) do
-                      = ann_image_tag review.work.work_image, :attachment, size: "70x93", class: "img-fluid img-thumbnail rounded"
-                  .col
-                    .small.text-muted.mb-1
-                      = link_to review.work.decorate.local_title, work_path(review.work), class: "u-text-body"
-                    - title = t("messages.records.view_record_body")
-                    = link_to title, review_path(@user.username, review)
-
         - if @favorite_characters.exists?
           .mb-4
             h2.p-users-show__sub-title

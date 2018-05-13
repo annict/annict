@@ -37,21 +37,20 @@ class UsersController < ApplicationController
 
   def show
     @watching_works = @user.works.watching.published
-    checkedin_works = @watching_works.checkedin_by(@user).order("c2.record_id DESC")
-    other_works = @watching_works.where.not(id: checkedin_works.pluck(:id))
-    @works = (checkedin_works + other_works).first(9)
+    tracked_works = @watching_works.tracked_by(@user).order("c2.record_id DESC")
+    other_works = @watching_works.where.not(id: tracked_works.pluck(:id))
+    @works = (tracked_works + other_works).first(9)
     @favorite_characters = @user.favorite_characters.includes(:character).order(id: :desc)
     @favorite_casts = @user.favorite_people.with_cast.includes(:person).order(id: :desc)
     @favorite_staffs = @user.favorite_people.with_staff.includes(:person).order(id: :desc)
     @favorite_organizations = @user.favorite_organizations.includes(:organization).order(id: :desc)
-    @reviews = @user.reviews.includes(work: :work_image).published.order(id: :desc)
 
     activities = @user.
       activities.
       order(id: :desc).
       includes(:work).
       page(1)
-    works = Work.where(id: activities.pluck(:work_id))
+    works = Work.published.where(id: activities.pluck(:work_id))
 
     activity_data = render_jb("api/internal/activities/index",
       user: user_signed_in? ? current_user : nil,
