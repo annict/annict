@@ -25,6 +25,21 @@
           .c-card.container.mt-3.pt-3
             = render "work_records/form", work_record: @work_record
 
+          h2.h4.text-center.my-3.font-weight-bold
+            = t "noun.my_records"
+
+          .c-card.container.mt-3
+            - if @my_work_records.present?
+              div
+                - @my_work_records.each do |work_record|
+                  .py-3.u-underline
+                    = render "work_records/work_record", work_record: work_record, is_spoiler: @is_spoiler
+            - else
+              = render "application/components/empty", text: t("messages._empty.no_records")
+
+        h2.h4.text-center.my-3.font-weight-bold
+          = t "noun.other_record_body_list"
+
         .c-card.container.mt-3
           - if @work_records.present?
             div

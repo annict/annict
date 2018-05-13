@@ -93,8 +93,13 @@ class WorkRecordsController < ApplicationController
       with_body.
       includes(user: :profile)
     @work_records = localable_resources(@work_records)
-    @work_records = @work_records.order(created_at: :desc).page(params[:page])
 
-    @is_spoiler = @user.present? && @work_records.present? && @user.hide_work_record_body?(@work_records.first.work)
+    if user_signed_in?
+      @my_work_records = current_user.work_records.published.where(work: @work).includes(user: :profile).order(created_at: :desc)
+      @work_records = @work_records.where.not(user: current_user)
+    end
+
+    @work_records = @work_records.order(created_at: :desc).page(params[:page])
+    @is_spoiler = user_signed_in? && @work_records.present? && current_user.hide_work_record_body?(@work_records.first.work)
   end
 end
