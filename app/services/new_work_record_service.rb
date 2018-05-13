@@ -7,13 +7,14 @@ class NewWorkRecordService
   def initialize(user, work_record, setting)
     @user = user
     @work_record = work_record
+    @work = @work_record.work
     @setting = setting
   end
 
   def save!
     ActiveRecord::Base.transaction do
       @work_record.detect_locale!(:body)
-      @work_record.record = @user.records.create!
+      @work_record.record = @user.records.create!(work: @work)
 
       @work_record.save!
       @setting.save!
@@ -34,6 +35,6 @@ class NewWorkRecordService
 
   def create_ga_event
     return if @ga_client.blank?
-    @ga_client.events.create(:work_records, :create, ds: @via)
+    @ga_client.events.create(:records, :create, el: "Work", ds: @via)
   end
 end

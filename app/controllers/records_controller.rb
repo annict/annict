@@ -5,6 +5,21 @@ class RecordsController < ApplicationController
 
   before_action :authenticate_user!, only: %i(destroy)
 
+  def index(page: nil)
+    load_user
+    @records = @user.
+      records.
+      published.
+      includes(:episode_record, work: :work_image, work_record: %i(work user)).
+      order(created_at: :desc).
+      page(page)
+
+    return unless user_signed_in?
+
+    works = Work.published.where(id: @records.pluck(:work_id))
+    store_page_params(works: works)
+  end
+
   def show
     load_user
     load_record

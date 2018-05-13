@@ -194,6 +194,8 @@ en:
         index: Program List
       providers:
         index: Connections
+      records:
+        index: "%{profile_name} (%{username})'s Records"
       registrations:
         new: Sign Up
       searches:

@@ -194,6 +194,8 @@ ja:
         index: 放送予定
       providers:
         index: サービス連携
+      records:
+        index: "%{profile_name} (%{username})さんの記録一覧"
       registrations:
         new: ユーザ登録
       searches:

@@ -5,22 +5,19 @@
         = link_to user_path(episode_record.user.username) do
           = ann_image_tag episode_record.user.profile, :tombo_avatar, size: "50x50", class: "rounded-circle"
       .col
-        .row
-          .col
-            = link_to episode_record.user.profile.name, user_path(episode_record.user.username)
-            - if episode_record.user.supporter? && !episode_record.user.setting.hide_supporter_badge?
-              span.badge.u-badge-supporter.ml-1
-                = t "noun.supporter"
-            - if page_category == "records_show"
-              .small.text-muted
-                = "#{episode_record.record.impressions_count} views"
-          .col
-            .text-right
-              - if episode_record.modify_comment?
-                small.mr-1.text-muted
-                  = icon "pencil-alt"
-              = link_to record_path(episode_record.user.username, episode_record.record), class: "small text-muted", title: local_datetime(episode_record.created_at) do
-                = local_time_ago_in_words(episode_record.created_at)
+        .text-left
+          = link_to episode_record.user.profile.name, user_path(episode_record.user.username)
+          - if episode_record.user.supporter? && !episode_record.user.setting.hide_supporter_badge?
+            span.badge.u-badge-supporter.ml-1
+              = t "noun.supporter"
+        .text-left
+          = link_to record_path(episode_record.user.username, episode_record.record), class: "small text-muted", title: local_datetime(episode_record.created_at) do
+            = local_time_ago_in_words(episode_record.created_at)
+          - if episode_record.modify_comment?
+            small.mr-1.text-muted
+              = icon "pencil-alt"
+          small.ml-2.text-muted
+            = "#{episode_record.record.impressions_count} views"
         c-comment-guard inline-template="" :init-is-spoiler="#{is_spoiler == true}"
           .c-record__content
             - if episode_record.rating.present?

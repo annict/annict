@@ -6,6 +6,9 @@
     .mb-3
       .text-left
         = link_to work_record.user.profile.name, user_path(work_record.user.username)
+        - if work_record.user.supporter? && !work_record.user.setting.hide_supporter_badge?
+          span.badge.u-badge-supporter.ml-1
+            = t "noun.supporter"
       .text-left
         = link_to record_path(work_record.user.username, work_record.record), class: "small text-muted", title: local_datetime(work_record.created_at) do
           = local_time_ago_in_words(work_record.created_at)

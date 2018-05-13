@@ -122,13 +122,10 @@ scope "@:username", username: /[A-Za-z0-9_]+/ do
   resources :favorite_organizations, only: %i(index)
   resources :favorite_people, only: %i(index)
   resources :tags, only: %i(show), controller: :user_work_tags, as: :user_work_tag
+  resources :reviews, only: %i(show)
 
-  resources :records, only: %i(show destroy) do
+  resources :records, only: %i(index show destroy) do
     resources :comments, only: %i(create)
-  end
-
-  resources :reviews, only: %i(index show) do
-    resources :review_comments, only: %i(create)
   end
 
   root to: "users#show", as: :user

@@ -7,15 +7,16 @@ class NewEpisodeRecordService
   def initialize(user, episode_record)
     @user = user
     @episode_record = episode_record
+    @work = @episode_record.work
   end
 
   def save!
     @episode_record.user = @user
-    @episode_record.work = @episode_record.episode.work
+    @episode_record.work = @work
     @episode_record.detect_locale!(:comment)
 
     ActiveRecord::Base.transaction do
-      @episode_record.record = @user.records.create!
+      @episode_record.record = @user.records.create!(work: @work)
       @episode_record.save!
       @episode_record.update_share_record_status
       @episode_record.share_to_sns
