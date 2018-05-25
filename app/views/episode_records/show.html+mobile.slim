@@ -3,7 +3,7 @@
 - keywords = meta_keywords(@work.decorate.local_title)
 - image_url = ann_image_url(@work.work_image, :attachment, size: "640x")
 - set_meta_tags(title: title, description: description, keywords: keywords, og: { description: description }, twitter: { description: description, image: image_url }, reverse: true, prefix: false)
-- breadcrumb :record_detail, @record
+- breadcrumb :record_detail, @episode_record
 
 - unless current_user&.supporter?
   .mb-3.text-center
@@ -31,12 +31,12 @@ h2.h4.text-center.mb-3.font-weight-bold
 
 .c-card.py-3.mb-3
   .p-records-show__record.px-3
-    = render "records/record", record: @record, is_spoiler: @is_spoiler
+    = render "records/record", record: @episode_record, is_spoiler: @is_spoiler
   hr
   .px-3
     - if user_signed_in?
       .p-records-show__comment-form
-        = form_for @comment, url: record_comments_path(@user.username, @record) do |f|
+        = form_for @comment, url: record_comments_path(@user.username, @episode_record) do |f|
           = render "application/components/error_panel", resource: @comment
           = f.text_area :body, class: "form-control", rows: "5", placeholder: t("messages.comments.comment_form_placeholder")
           .w-100.text-center
