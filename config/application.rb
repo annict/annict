@@ -75,6 +75,7 @@ module Annict
       r301 %r{\A/users/([A-Za-z0-9_]+)/(following|followers|wanna_watch|watching|watched|on_hold|stop_watching)\z}, "/@$1/$2"
       # rubocop:enable Metrics/LineLength
       r301 %r{\A/track}, "/"
+      r301 %r{\A/@([A-Za-z0-9_]+)/reviews\z}, "/@$1/records"
 
       maintenance_file = File.join(Rails.root, "public", "maintenance.html")
       send_file /(.*)$(?<!maintenance|favicons)/, maintenance_file, if: proc { |rack_env|

@@ -6,7 +6,7 @@ Mutations::UpdateReview = GraphQL::Relay::Mutation.define do
   input_field :reviewId, !types.ID
   input_field :title, types.String
   input_field :body, !types.String
-  Review::STATES.each do |state|
+  WorkRecord::STATES.each do |state|
     input_field state.to_s.camelcase(:lower).to_sym, !EnumTypes::RatingState
   end
   input_field :shareTwitter, types.Boolean
@@ -21,7 +21,7 @@ Mutations::UpdateReview = GraphQL::Relay::Mutation.define do
 
     review.title = inputs[:title]
     review.body = inputs[:body]
-    Review::STATES.each do |state|
+    WorkRecord::STATES.each do |state|
       review.send("#{state}=".to_sym, inputs[state.to_s.camelcase(:lower).to_sym]&.downcase)
     end
     review.modified_at = Time.now

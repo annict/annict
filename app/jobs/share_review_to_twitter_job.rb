@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class ShareReviewToTwitterJob < ApplicationJob
+class ShareWorkRecordToTwitterJob < ApplicationJob
   queue_as :default
 
   def perform(user_id, review_id)

@@ -84,7 +84,8 @@ en:
     or: OR
     organization: Organization
     organizations: Organizations
-    other_reviews_by: "Reviews by %{profile_name}"
+    other_record_body_list_by: "Comments by %{profile_name}"
+    other_record_body_list: "All Comments"
     other_users: Other Users
     overall: Overall
     password: Password
@@ -105,8 +106,10 @@ en:
     rating: Rating
     ratings_count: Ratings
     rebroadcast: Rebroadcast
+    record_body_list: Comments
     record_list: Record List
     record_of_episode: "Record of %{work_title} %{episode_title_with_number}"
+    record_of_work: 'Record of "%{work_title}"'
     records: Records
     records_count: Records Count
     related_items: Items
@@ -116,7 +119,6 @@ en:
     resources: Resources
     review_list: Review List
     reviews: Reviews
-    review_of_the_work: 'Review of "%{work_title}"'
     reviews_by: "Reviews by %{profile_name}"
     satisfaction: Score
     satisfaction_rate_shorten: Satisfaction

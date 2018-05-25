@@ -6,7 +6,7 @@
 import Vue from "vue";
 
 export default {
-  template: "#t-create-multiple-records-activity",
+  template: "#t-create-multiple-episode-records-activity",
 
   props: {
     activity: {

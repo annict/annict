@@ -6,7 +6,7 @@ Mutations::CreateReview = GraphQL::Relay::Mutation.define do
   input_field :workId, !types.ID
   input_field :title, types.String
   input_field :body, !types.String
-  Review::STATES.each do |state|
+  WorkRecord::STATES.each do |state|
     input_field state.to_s.camelcase(:lower).to_sym, EnumTypes::RatingState
   end
   input_field :shareTwitter, types.Boolean
@@ -24,7 +24,7 @@ Mutations::CreateReview = GraphQL::Relay::Mutation.define do
       r.work = work
       r.title = inputs[:title]
       r.body = inputs[:body]
-      Review::STATES.each do |state|
+      WorkRecord::STATES.each do |state|
         r.send("#{state}=".to_sym, inputs[state.to_s.camelcase(:lower).to_sym]&.downcase)
       end
       r.oauth_application = ctx[:doorkeeper_token].application
@@ -34,7 +34,7 @@ Mutations::CreateReview = GraphQL::Relay::Mutation.define do
       share_review_to_facebook: inputs[:shareFacebook] == true
     }
 
-    service = NewReviewService.new(ctx[:viewer], review, ctx[:viewer].setting)
+    service = NewWorkRecordService.new(ctx[:viewer], review, ctx[:viewer].setting)
     service.via = "graphql_api"
     service.app = ctx[:doorkeeper_token].application
     service.ga_client = ctx[:ga_client]

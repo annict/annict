@@ -11,7 +11,6 @@
 # It's strongly recommended that you check this file into your version control system.
 
 ActiveRecord::Schema.define(version: 2018_04_14_223051) do
-
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_stat_statements"
   enable_extension "plpgsql"
@@ -28,16 +27,16 @@ ActiveRecord::Schema.define(version: 2018_04_14_223051) do
     t.integer "work_id"
     t.integer "episode_id"
     t.integer "status_id"
-    t.integer "record_id"
-    t.integer "multiple_record_id"
-    t.integer "review_id"
+    t.integer "episode_record_id"
+    t.integer "multiple_episode_record_id"
+    t.integer "work_record_id"
     t.index ["episode_id"], name: "index_activities_on_episode_id"
-    t.index ["multiple_record_id"], name: "index_activities_on_multiple_record_id"
-    t.index ["record_id"], name: "index_activities_on_record_id"
-    t.index ["review_id"], name: "index_activities_on_review_id"
+    t.index ["episode_record_id"], name: "index_activities_on_episode_record_id"
+    t.index ["multiple_episode_record_id"], name: "index_activities_on_multiple_episode_record_id"
     t.index ["status_id"], name: "index_activities_on_status_id"
     t.index ["user_id"], name: "activities_user_id_idx"
     t.index ["work_id"], name: "index_activities_on_work_id"
+    t.index ["work_record_id"], name: "index_activities_on_work_record_id"
   end
 
   create_table "casts", id: :serial, force: :cascade do |t|
@@ -173,15 +172,15 @@ ActiveRecord::Schema.define(version: 2018_04_14_223051) do
 
   create_table "comments", id: :serial, force: :cascade do |t|
     t.integer "user_id", null: false
-    t.integer "record_id", null: false
+    t.integer "episode_record_id", null: false
     t.text "body", null: false
     t.integer "likes_count", default: 0, null: false
     t.datetime "created_at"
     t.datetime "updated_at"
     t.integer "work_id"
     t.string "locale", default: "other", null: false
+    t.index ["episode_record_id"], name: "comments_checkin_id_idx"
     t.index ["locale"], name: "index_comments_on_locale"
-    t.index ["record_id"], name: "comments_checkin_id_idx"
     t.index ["user_id"], name: "comments_user_id_idx"
     t.index ["work_id"], name: "index_comments_on_work_id"
   end
@@ -261,13 +260,52 @@ ActiveRecord::Schema.define(version: 2018_04_14_223051) do
     t.index ["work_id"], name: "index_episode_items_on_work_id"
   end
 
+  create_table "episode_records", id: :serial, force: :cascade do |t|
+    t.integer "user_id", null: false
+    t.integer "episode_id", null: false
+    t.text "comment"
+    t.boolean "modify_comment", default: false, null: false
+    t.string "twitter_url_hash", limit: 510
+    t.string "facebook_url_hash", limit: 510
+    t.integer "twitter_click_count", default: 0, null: false
+    t.integer "facebook_click_count", default: 0, null: false
+    t.integer "comments_count", default: 0, null: false
+    t.integer "likes_count", default: 0, null: false
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.boolean "shared_twitter", default: false, null: false
+    t.boolean "shared_facebook", default: false, null: false
+    t.integer "work_id", null: false
+    t.float "rating"
+    t.integer "multiple_episode_record_id"
+    t.integer "oauth_application_id"
+    t.string "rating_state"
+    t.integer "review_id"
+    t.string "aasm_state", default: "published", null: false
+    t.string "locale", default: "other", null: false
+    t.integer "impressions_count", default: 0, null: false
+    t.integer "record_id"
+    t.index ["episode_id"], name: "checkins_episode_id_idx"
+    t.index ["facebook_url_hash"], name: "checkins_facebook_url_hash_key", unique: true
+    t.index ["impressions_count"], name: "index_episode_records_on_impressions_count"
+    t.index ["locale"], name: "index_episode_records_on_locale"
+    t.index ["multiple_episode_record_id"], name: "index_episode_records_on_multiple_episode_record_id"
+    t.index ["oauth_application_id"], name: "index_episode_records_on_oauth_application_id"
+    t.index ["rating_state"], name: "index_episode_records_on_rating_state"
+    t.index ["record_id"], name: "index_episode_records_on_record_id", unique: true
+    t.index ["review_id"], name: "index_episode_records_on_review_id"
+    t.index ["twitter_url_hash"], name: "checkins_twitter_url_hash_key", unique: true
+    t.index ["user_id"], name: "checkins_user_id_idx"
+    t.index ["work_id"], name: "index_episode_records_on_work_id"
+  end
+
   create_table "episodes", id: :serial, force: :cascade do |t|
     t.integer "work_id", null: false
     t.string "number", limit: 510
     t.integer "sort_number", default: 0, null: false
     t.integer "sc_count"
     t.string "title", limit: 510
-    t.integer "records_count", default: 0, null: false
+    t.integer "episode_records_count", default: 0, null: false
     t.datetime "created_at"
     t.datetime "updated_at"
     t.integer "prev_episode_id"
@@ -276,7 +314,7 @@ ActiveRecord::Schema.define(version: 2018_04_14_223051) do
     t.string "raw_number"
     t.string "title_ro", default: "", null: false
     t.string "title_en", default: "", null: false
-    t.integer "record_comments_count", default: 0, null: false
+    t.integer "episode_record_comments_count", default: 0, null: false
     t.float "score"
     t.integer "ratings_count", default: 0, null: false
     t.float "satisfaction_rate"
@@ -529,14 +567,14 @@ ActiveRecord::Schema.define(version: 2018_04_14_223051) do
     t.index ["user_id"], name: "likes_user_id_idx"
   end
 
-  create_table "multiple_records", id: :serial, force: :cascade do |t|
+  create_table "multiple_episode_records", id: :serial, force: :cascade do |t|
     t.integer "user_id", null: false
     t.integer "work_id", null: false
     t.integer "likes_count", default: 0, null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.index ["user_id"], name: "index_multiple_records_on_user_id"
-    t.index ["work_id"], name: "index_multiple_records_on_work_id"
+    t.index ["user_id"], name: "index_multiple_episode_records_on_user_id"
+    t.index ["work_id"], name: "index_multiple_episode_records_on_work_id"
   end
 
   create_table "mute_users", id: :serial, force: :cascade do |t|
@@ -778,65 +816,14 @@ ActiveRecord::Schema.define(version: 2018_04_14_223051) do
     t.index ["user_id"], name: "receptions_user_id_idx"
   end
 
-  create_table "records", id: :serial, force: :cascade do |t|
-    t.integer "user_id", null: false
-    t.integer "episode_id", null: false
-    t.text "comment"
-    t.boolean "modify_comment", default: false, null: false
-    t.string "twitter_url_hash", limit: 510
-    t.string "facebook_url_hash", limit: 510
-    t.integer "twitter_click_count", default: 0, null: false
-    t.integer "facebook_click_count", default: 0, null: false
-    t.integer "comments_count", default: 0, null: false
-    t.integer "likes_count", default: 0, null: false
-    t.datetime "created_at"
-    t.datetime "updated_at"
-    t.boolean "shared_twitter", default: false, null: false
-    t.boolean "shared_facebook", default: false, null: false
-    t.integer "work_id", null: false
-    t.float "rating"
-    t.integer "multiple_record_id"
-    t.integer "oauth_application_id"
-    t.string "rating_state"
-    t.integer "review_id"
-    t.string "aasm_state", default: "published", null: false
-    t.string "locale", default: "other", null: false
-    t.integer "impressions_count", default: 0, null: false
-    t.index ["episode_id"], name: "checkins_episode_id_idx"
-    t.index ["facebook_url_hash"], name: "checkins_facebook_url_hash_key", unique: true
-    t.index ["impressions_count"], name: "index_records_on_impressions_count"
-    t.index ["locale"], name: "index_records_on_locale"
-    t.index ["multiple_record_id"], name: "index_records_on_multiple_record_id"
-    t.index ["oauth_application_id"], name: "index_records_on_oauth_application_id"
-    t.index ["rating_state"], name: "index_records_on_rating_state"
-    t.index ["review_id"], name: "index_records_on_review_id"
-    t.index ["twitter_url_hash"], name: "checkins_twitter_url_hash_key", unique: true
-    t.index ["user_id"], name: "checkins_user_id_idx"
-    t.index ["work_id"], name: "index_records_on_work_id"
-  end
-
-  create_table "reviews", force: :cascade do |t|
-    t.integer "user_id", null: false
-    t.integer "work_id", null: false
-    t.string "title", default: ""
-    t.text "body", null: false
-    t.string "rating_animation_state"
-    t.string "rating_music_state"
-    t.string "rating_story_state"
-    t.string "rating_character_state"
-    t.string "rating_overall_state"
-    t.integer "likes_count", default: 0, null: false
-    t.integer "impressions_count", default: 0, null: false
-    t.string "aasm_state", default: "published", null: false
-    t.datetime "modified_at"
+  create_table "records", force: :cascade do |t|
+    t.bigint "user_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.integer "oauth_application_id"
-    t.string "locale", default: "other", null: false
-    t.index ["locale"], name: "index_reviews_on_locale"
-    t.index ["oauth_application_id"], name: "index_reviews_on_oauth_application_id"
-    t.index ["user_id"], name: "index_reviews_on_user_id"
-    t.index ["work_id"], name: "index_reviews_on_work_id"
+    t.integer "impressions_count", default: 0, null: false
+    t.bigint "work_id"
+    t.index ["user_id"], name: "index_records_on_user_id"
+    t.index ["work_id"], name: "index_records_on_work_id"
   end
 
   create_table "seasons", id: :serial, force: :cascade do |t|
@@ -1042,7 +1029,7 @@ ActiveRecord::Schema.define(version: 2018_04_14_223051) do
     t.datetime "confirmed_at"
     t.datetime "confirmation_sent_at"
     t.string "unconfirmed_email", limit: 510
-    t.integer "records_count", default: 0, null: false
+    t.integer "episode_records_count", default: 0, null: false
     t.integer "notifications_count", default: 0, null: false
     t.datetime "created_at"
     t.datetime "updated_at"
@@ -1056,6 +1043,7 @@ ActiveRecord::Schema.define(version: 2018_04_14_223051) do
     t.datetime "work_comment_cache_expired_at"
     t.integer "gumroad_subscriber_id"
     t.string "allowed_locales", array: true
+    t.integer "records_count", default: 0, null: false
     t.index ["allowed_locales"], name: "index_users_on_allowed_locales", using: :gin
     t.index ["confirmation_token"], name: "users_confirmation_token_key", unique: true
     t.index ["email"], name: "users_email_key", unique: true
@@ -1126,6 +1114,32 @@ ActiveRecord::Schema.define(version: 2018_04_14_223051) do
     t.index ["user_id"], name: "index_work_items_on_user_id"
     t.index ["work_id", "item_id"], name: "index_work_items_on_work_id_and_item_id", unique: true
     t.index ["work_id"], name: "index_work_items_on_work_id"
+  end
+
+  create_table "work_records", force: :cascade do |t|
+    t.integer "user_id", null: false
+    t.integer "work_id", null: false
+    t.string "title", default: ""
+    t.text "body", null: false
+    t.string "rating_animation_state"
+    t.string "rating_music_state"
+    t.string "rating_story_state"
+    t.string "rating_character_state"
+    t.string "rating_overall_state"
+    t.integer "likes_count", default: 0, null: false
+    t.integer "impressions_count", default: 0, null: false
+    t.string "aasm_state", default: "published", null: false
+    t.datetime "modified_at"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.integer "oauth_application_id"
+    t.string "locale", default: "other", null: false
+    t.integer "record_id"
+    t.index ["locale"], name: "index_work_records_on_locale"
+    t.index ["oauth_application_id"], name: "index_work_records_on_oauth_application_id"
+    t.index ["record_id"], name: "index_work_records_on_record_id", unique: true
+    t.index ["user_id"], name: "index_work_records_on_user_id"
+    t.index ["work_id"], name: "index_work_records_on_work_id"
   end
 
   create_table "work_taggables", force: :cascade do |t|
@@ -1200,13 +1214,14 @@ ActiveRecord::Schema.define(version: 2018_04_14_223051) do
     t.integer "key_pv_id"
     t.integer "manual_episodes_count"
     t.boolean "no_episodes", default: false, null: false
-    t.integer "reviews_count", default: 0, null: false
+    t.integer "work_records_count", default: 0, null: false
     t.date "started_on"
     t.date "ended_on"
     t.float "score"
     t.integer "ratings_count", default: 0, null: false
     t.float "satisfaction_rate"
     t.integer "review_comments_count", default: 0, null: false
+    t.integer "records_count", default: 0, null: false
     t.index ["aasm_state"], name: "index_works_on_aasm_state"
     t.index ["key_pv_id"], name: "index_works_on_key_pv_id"
     t.index ["number_format_id"], name: "index_works_on_number_format_id"
@@ -1220,12 +1235,12 @@ ActiveRecord::Schema.define(version: 2018_04_14_223051) do
     t.index ["season_year"], name: "index_works_on_season_year"
   end
 
+  add_foreign_key "activities", "episode_records"
   add_foreign_key "activities", "episodes"
-  add_foreign_key "activities", "multiple_records"
-  add_foreign_key "activities", "records"
-  add_foreign_key "activities", "reviews"
+  add_foreign_key "activities", "multiple_episode_records"
   add_foreign_key "activities", "statuses"
   add_foreign_key "activities", "users", name: "activities_user_id_fk", on_delete: :cascade
+  add_foreign_key "activities", "work_records"
   add_foreign_key "activities", "works"
   add_foreign_key "casts", "characters"
   add_foreign_key "casts", "people"
@@ -1241,7 +1256,7 @@ ActiveRecord::Schema.define(version: 2018_04_14_223051) do
   add_foreign_key "collection_items", "users"
   add_foreign_key "collection_items", "works"
   add_foreign_key "collections", "users"
-  add_foreign_key "comments", "records", name: "comments_checkin_id_fk", on_delete: :cascade
+  add_foreign_key "comments", "episode_records", name: "comments_checkin_id_fk", on_delete: :cascade
   add_foreign_key "comments", "users", name: "comments_user_id_fk", on_delete: :cascade
   add_foreign_key "comments", "works"
   add_foreign_key "db_activities", "users"
@@ -1251,6 +1266,13 @@ ActiveRecord::Schema.define(version: 2018_04_14_223051) do
   add_foreign_key "episode_items", "items"
   add_foreign_key "episode_items", "users"
   add_foreign_key "episode_items", "works"
+  add_foreign_key "episode_records", "episodes", name: "checkins_episode_id_fk", on_delete: :cascade
+  add_foreign_key "episode_records", "multiple_episode_records"
+  add_foreign_key "episode_records", "oauth_applications"
+  add_foreign_key "episode_records", "records"
+  add_foreign_key "episode_records", "users", name: "checkins_user_id_fk", on_delete: :cascade
+  add_foreign_key "episode_records", "work_records", column: "review_id"
+  add_foreign_key "episode_records", "works", name: "checkins_work_id_fk"
   add_foreign_key "episodes", "episodes", column: "prev_episode_id"
   add_foreign_key "episodes", "works", name: "episodes_work_id_fk", on_delete: :cascade
   add_foreign_key "faq_contents", "faq_categories"
@@ -1275,8 +1297,8 @@ ActiveRecord::Schema.define(version: 2018_04_14_223051) do
   add_foreign_key "latest_statuses", "users"
   add_foreign_key "latest_statuses", "works"
   add_foreign_key "likes", "users", name: "likes_user_id_fk", on_delete: :cascade
-  add_foreign_key "multiple_records", "users"
-  add_foreign_key "multiple_records", "works"
+  add_foreign_key "multiple_episode_records", "users"
+  add_foreign_key "multiple_episode_records", "works"
   add_foreign_key "mute_users", "users"
   add_foreign_key "mute_users", "users", column: "muted_user_id"
   add_foreign_key "notifications", "users", column: "action_user_id", name: "notifications_action_user_id_fk", on_delete: :cascade
@@ -1299,15 +1321,8 @@ ActiveRecord::Schema.define(version: 2018_04_14_223051) do
   add_foreign_key "reactions", "users", column: "target_user_id"
   add_foreign_key "receptions", "channels", name: "receptions_channel_id_fk", on_delete: :cascade
   add_foreign_key "receptions", "users", name: "receptions_user_id_fk", on_delete: :cascade
-  add_foreign_key "records", "episodes", name: "checkins_episode_id_fk", on_delete: :cascade
-  add_foreign_key "records", "multiple_records"
-  add_foreign_key "records", "oauth_applications"
-  add_foreign_key "records", "reviews"
-  add_foreign_key "records", "users", name: "checkins_user_id_fk", on_delete: :cascade
-  add_foreign_key "records", "works", name: "checkins_work_id_fk"
-  add_foreign_key "reviews", "oauth_applications"
-  add_foreign_key "reviews", "users"
-  add_foreign_key "reviews", "works"
+  add_foreign_key "records", "users"
+  add_foreign_key "records", "works", name: "works.id"
   add_foreign_key "series_works", "series"
   add_foreign_key "series_works", "works"
   add_foreign_key "settings", "users"
@@ -1331,6 +1346,10 @@ ActiveRecord::Schema.define(version: 2018_04_14_223051) do
   add_foreign_key "work_items", "items"
   add_foreign_key "work_items", "users"
   add_foreign_key "work_items", "works"
+  add_foreign_key "work_records", "oauth_applications"
+  add_foreign_key "work_records", "records"
+  add_foreign_key "work_records", "users"
+  add_foreign_key "work_records", "works"
   add_foreign_key "work_taggables", "users"
   add_foreign_key "work_taggables", "work_tags"
   add_foreign_key "work_taggings", "users"

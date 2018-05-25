@@ -45,7 +45,8 @@ en:
       no_people: No People
       no_program_details: No Streaming Links
       no_projects: No Projects
-      no_reviews: No Reviews
+      no_record_body_list: No Comments
+      no_records: No Records
       no_series_works: No Series Works
       no_series: No Series
       no_staffs: No Staffs
@@ -80,6 +81,10 @@ en:
       works:
         no_episodes: No Episodes
         no_image: No Image
+    episode_records:
+      created: Created
+      new:
+        write_your_comment: Write Your Comment! (optional)
     episodes:
       comments: Comments
       comments_by_others: Comments by Others
@@ -181,13 +186,9 @@ en:
       removed: Removed.
       you_can_not_disconnect: You can not disconnect.
     records:
-      created: Created
-      deleted: Deleted
-      updated: Updated
-      new:
-        write_your_comment: Write Your Comment! (optional)
       show:
         record_by_name: "%{name}'s Record"
+      view_record_body: "View Comment"
     registrations:
       new:
         sign_in_link_html: Already have an account? %{link}
@@ -246,6 +247,9 @@ en:
       allowed_locales_description: "This setting which languages you are more likely to see throughout the site, but you may still see other languages, especially english."
       bye_bye: "Bye Bye... (´・ω;:.."
       no_works: No works
+    work_records:
+      new:
+        write_your_comment: Write Your Comment! (optional)
     work_images:
       deleted: Work image has been deleted.
       saved: Work image has been saved.
@@ -255,5 +259,5 @@ en:
       view_all_n_characters: View All %{n} Characters
       view_all_n_episodes: View All %{n} Episodes
       view_all_n_items: View All %{n} Items
-      view_all_n_reviews: View All %{n} Reviews
+      view_all_n_record_body_list: View All %{n} Comments
       view_all_n_staffs: View All %{n} Staffs
