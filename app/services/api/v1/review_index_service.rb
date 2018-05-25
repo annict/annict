@@ -2,7 +2,7 @@
 
 module Api
   module V1
-    class ReviewIndexService < Api::V1::BaseService
+    class WorkRecordIndexService < Api::V1::BaseService
       def result
         @collection = filter_ids
         @collection = filter_work_id

@@ -4,7 +4,7 @@
   - if user_signed_in? && current_user.tracked?(episode)
     .text-center.small
       = icon "check-circle", class: "mr-1 u-text-green"
-      = t "messages.episodes.watched_x_times", records_count: current_user.records_count_in(episode)
+      = t "messages.episodes.watched_x_times", records_count: current_user.episode_records_count_in(episode)
 .container
   .row
     .col.text-center

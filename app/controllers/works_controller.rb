@@ -98,13 +98,13 @@ class WorksController < ApplicationController
     @channels = Channel.published.with_vod
     @series_list = @work.series_list.published.where("series_works_count > ?", 1)
 
-    @reviews = @work.
-      reviews.
+    @work_records = @work.
+      work_records.
       published.
       with_body.
       includes(user: :profile)
-    @reviews = localable_resources(@reviews)
-    @reviews = @reviews.order(created_at: :desc)
+    @work_records = localable_resources(@work_records)
+    @work_records = @work_records.order(created_at: :desc)
 
     @items = @work.items.published
     @items = localable_resources(@items)

@@ -15,12 +15,15 @@ namespace :api do
     resources :page_data, only: %i(index)
     resources :people, only: [:index]
     resources :receptions, only: %i(create destroy)
-    resources :records, only: %i(create)
     resources :series_list, only: %i(index)
     resources :works, only: %i(index show)
 
     resource :amazon, only: [], controller: :amazon do
       get :search
+    end
+
+    resources :episodes, only: [] do
+      resources :records, only: %i(create), controller: :episode_records
     end
 
     resources :favorites, only: %i(create) do

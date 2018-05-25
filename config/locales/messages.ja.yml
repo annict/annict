@@ -45,7 +45,8 @@ ja:
       no_people: 人物はいません
       no_program_details: 登録されていません
       no_projects: プロジェクトはありません
-      no_reviews: レビューはありません
+      no_record_body_list: 感想はありません
+      no_records: 記録はありません
       no_series_works: シリーズ作品はありません
       no_series: シリーズはありません
       no_staffs: スタッフはいません
@@ -80,6 +81,10 @@ ja:
       works:
         no_episodes: エピソード未登録
         no_image: 画像未登録
+    episode_records:
+      created: 記録しました
+      new:
+        write_your_comment: 見た感想を残しませんか？ (自由入力)
     episodes:
       comments: 感想
       comments_by_others: 皆さんの感想
@@ -181,13 +186,9 @@ ja:
       removed: 接続解除しました
       you_can_not_disconnect: 接続解除できません
     records:
-      created: 記録しました
-      deleted: 削除しました
-      updated: 更新しました
-      new:
-        write_your_comment: 見た感想を残しませんか？ (自由入力)
       show:
         record_by_name: "%{name}の記録"
+      view_record_body: "感想を見る"
     registrations:
       new:
         sign_in_link_html: 登録済みですか？ %{link}
@@ -199,7 +200,6 @@ ja:
         confirmation_mail_has_sent: 確認メールを送信しました
     reviews:
       n_people_changed_status_to_wanna_watch: "%{count}人がこのレビューを見て視聴ステータスを「見たい」にしました"
-      view_review_with_words_count: "レビューを見る"
     sayonara:
       are_you_sure_really: 後戻りできませんがよろしいですか？
       delete_account: アカウントを削除する
@@ -246,6 +246,9 @@ ja:
       allowed_locales_description: "サイト内に投稿された文書 (感想やレビューなど) の中で、どの言語で書かれたものを表示するかを設定することができます。"
       bye_bye: "退会しました。(´・ω;:.."
       no_works: 作品はありません
+    work_records:
+      new:
+        write_your_comment: 見た感想を残しませんか？ (自由入力)
     work_images:
       deleted: 削除しました
       saved: 保存しました
@@ -255,5 +258,5 @@ ja:
       view_all_n_characters: "%{n}人のキャラクターを全て見る"
       view_all_n_episodes: "%{n}エピソードを全て見る"
       view_all_n_items: "%{n}個のアイテムを全て見る"
-      view_all_n_reviews: "%{n}件のレビューを全て見る"
+      view_all_n_record_body_list: "%{n}件の感想を全て見る"
       view_all_n_staffs: "%{n}人のスタッフを全て見る"

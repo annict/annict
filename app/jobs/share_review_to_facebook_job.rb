@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class ShareReviewToFacebookJob < ApplicationJob
+class ShareWorkRecordToFacebookJob < ApplicationJob
   queue_as :default
 
   def perform(user_id, review_id)

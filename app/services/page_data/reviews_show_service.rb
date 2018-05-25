@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
 module PageData
-  class ReviewsShowService < PageData::WorkDetailService
+  class RecordsShowService < PageData::WorkDetailService
   end
 end
