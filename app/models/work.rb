@@ -44,6 +44,7 @@
 #  score                 :float
 #  ratings_count         :integer          default(0), not null
 #  satisfaction_rate     :float
+#  review_comments_count :integer          default(0), not null
 #
 # Indexes
 #

@@ -12,12 +12,11 @@
   .mb-3.text-center
     = render "application/components/adsense", slots: [ENV["GOOGLE_AD_320x100_6"]], size: "320x100"
 
+- if user_signed_in?
+  .c-card.container.mb-3.pt-3
+    = render "reviews/form", review: @review
+
 .c-card.pt-3.mb-3
-  .container.mb-3.text-right
-    = link_to new_work_review_path(@work), class: "btn btn-primary" do
-      = icon "edit", class: "mr-1"
-      = t "verb.write_review"
-  hr.mb-0
   .container
     - if @reviews.present?
       div

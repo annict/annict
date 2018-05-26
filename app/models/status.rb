@@ -22,6 +22,7 @@
 
 class Status < ApplicationRecord
   include StatusCommon
+  include Shareable
 
   belongs_to :oauth_application, class_name: "Doorkeeper::Application", optional: true
   has_many :activities,
@@ -50,6 +51,41 @@ class Status < ApplicationRecord
   def share_to_sns
     ShareStatusToTwitterJob.perform_later(user.id, id) if user.setting.share_status_to_twitter?
     ShareStatusToFacebookJob.perform_later(user.id, id) if user.setting.share_status_to_facebook?
+  end
+
+  # Do not use helper methods via Draper when the method is used in ActiveJob
+  # https://github.com/drapergem/draper/issues/655
+  def share_url
+    "#{user.annict_url}/@#{user.username}/#{kind}"
+  end
+
+  def facebook_share_title
+    work.decorate.local_title
+  end
+
+  def twitter_share_body
+    work_title = work.decorate.local_title
+    share_url = share_url_with_query(:twitter)
+
+    base_body = if user.locale == "ja"
+      "アニメ「%s」の視聴ステータスを「#{kind_text}」にしました #{share_url}"
+    else
+      "Changed %s's status to \"#{kind_text}\". Anime list: #{share_url}"
+    end
+
+    base_body % work_title
+  end
+
+  def facebook_share_body
+    work_title = work.decorate.local_title
+
+    base_body = if user.locale == "ja"
+      "アニメ「%s」の視聴ステータスを「#{kind_text}」にしました。"
+    else
+      "Changed %s's status to \"#{kind_text}\"."
+    end
+
+    base_body % work_title
   end
 
   private

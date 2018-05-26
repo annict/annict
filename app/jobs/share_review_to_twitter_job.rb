@@ -7,6 +7,6 @@ class ShareReviewToTwitterJob < ApplicationJob
     user = User.find(user_id)
     review = user.reviews.published.find(review_id)
 
-    TwitterService.new(user).share_review!(review)
+    TwitterService.new(user).share!(review)
   end
 end
