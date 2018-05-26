@@ -24,7 +24,7 @@ Mutations::CreateRecord = GraphQL::Relay::Mutation.define do
       r.oauth_application = ctx[:doorkeeper_token].application
     end
 
-    service = NewRecordService.new(ctx[:viewer], record)
+    service = NewEpisodeRecordService.new(ctx[:viewer], record)
     service.ga_client = ctx[:ga_client]
     service.app = ctx[:doorkeeper_token].application
     service.via = "graphql_api"

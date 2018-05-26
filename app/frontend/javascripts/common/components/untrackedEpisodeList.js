@@ -49,10 +49,9 @@ export default {
 
       return $.ajax({
         method: 'POST',
-        url: '/api/internal/records',
+        url: `/api/internal/episodes/${latestStatus.next_episode.id}/records`,
         data: {
-          record: {
-            episode_id: latestStatus.next_episode.id,
+          episode_record: {
             comment: latestStatus.record.comment,
             shared_twitter: this.user.share_record_to_twitter,
             shared_facebook: this.user.share_record_to_facebook,

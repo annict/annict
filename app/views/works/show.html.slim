@@ -74,13 +74,13 @@
           .col
           .col
             h2.h4.text-center.my-4.font-weight-bold
-              = t "noun.reviews"
+              = t "noun.record_body_list"
           .col.text-right
-            = link_to work_reviews_path(@work), class: "btn btn-primary btn-sm" do
+            = link_to work_records_path(@work), class: "btn btn-primary btn-sm" do
               = icon "edit", class: "mr-1"
-              = t "verb.write_review"
+              = t "verb.track"
         .c-card
-          = render "works/review_list", work: @work, reviews: @reviews
+          = render "works/work_record_list", work: @work, work_records: @work_records
 
         h2.h4.text-center.my-4.font-weight-bold
           = t "noun.stats"

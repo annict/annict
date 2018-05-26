@@ -6,7 +6,7 @@
 import Vue from "vue";
 
 export default {
-  template: "#t-create-review-activity",
+  template: "#t-create-work-record-activity",
 
   props: {
     activity: {

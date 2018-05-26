@@ -87,7 +87,7 @@ end
 
 resources :episodes, only: [] do
   resources :items, only: %i(new destroy), controller: :episode_items
-  resources :records, only: [] do
+  resources :records, only: %i(create edit update), controller: :episode_records do
     post :switch, on: :collection
   end
 end
@@ -122,13 +122,10 @@ scope "@:username", username: /[A-Za-z0-9_]+/ do
   resources :favorite_organizations, only: %i(index)
   resources :favorite_people, only: %i(index)
   resources :tags, only: %i(show), controller: :user_work_tags, as: :user_work_tag
+  resources :reviews, only: %i(show)
 
-  resources :records, only: %i(create show edit update destroy) do
+  resources :records, only: %i(index show destroy) do
     resources :comments, only: %i(create)
-  end
-
-  resources :reviews, only: %i(index show) do
-    resources :review_comments, only: %i(create)
   end
 
   root to: "users#show", as: :user
@@ -136,8 +133,7 @@ end
 
 resources :works, only: %i(index show) do
   resources :items, only: %i(index new destroy), controller: :work_items
-  resources :reviews, only: %i(create edit update destroy)
-  resources :reviews, only: %i(index), controller: :work_reviews
+  resources :records, only: %i(index create edit update), controller: :work_records
 
   resources :episodes, only: %i(index show) do
     resources :checkins, only: %i(show)

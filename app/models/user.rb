@@ -18,7 +18,7 @@
 #  confirmed_at                  :datetime
 #  confirmation_sent_at          :datetime
 #  unconfirmed_email             :string(510)
-#  records_count                 :integer          default(0), not null
+#  episode_records_count         :integer          default(0), not null
 #  notifications_count           :integer          default(0), not null
 #  created_at                    :datetime
 #  updated_at                    :datetime
@@ -32,6 +32,7 @@
 #  work_comment_cache_expired_at :datetime
 #  gumroad_subscriber_id         :integer
 #  allowed_locales               :string           is an Array
+#  records_count                 :integer          default(0), not null
 #
 # Indexes
 #
@@ -75,7 +76,7 @@ class User < ApplicationRecord
   belongs_to :gumroad_subscriber, optional: true
   has_many :activities, dependent: :destroy
   has_many :channel_works, dependent: :destroy
-  has_many :records, dependent: :destroy
+  has_many :episode_records, dependent: :destroy
   has_many :db_activities, dependent: :destroy
   has_many :db_comments, dependent: :destroy
   has_many :favorite_characters, dependent: :destroy
@@ -90,10 +91,9 @@ class User < ApplicationRecord
   has_many :notifications, dependent: :destroy
   has_many :providers, dependent: :destroy
   has_many :receptions, dependent: :destroy
-  has_many :reviews, dependent: :destroy
   has_many :channels, through:   :receptions
   has_many :statuses, dependent: :destroy
-  has_many :multiple_records, dependent: :destroy
+  has_many :multiple_episode_records, dependent: :destroy
   has_many :mute_users, dependent: :destroy
   has_many :muted_users, dependent: :destroy, foreign_key: :muted_user_id, class_name: "MuteUser"
   has_many :oauth_applications, class_name: "Doorkeeper::Application", as: :owner
@@ -111,10 +111,12 @@ class User < ApplicationRecord
     source: :application
   has_many :reactions, dependent: :destroy
   has_many :record_comments, class_name: "Comment", dependent: :destroy
+  has_many :records, dependent: :destroy
   has_many :work_taggables, dependent: :destroy
   has_many :work_taggings, dependent: :destroy
   has_many :work_tags, through: :work_taggables
   has_many :work_comments, dependent: :destroy
+  has_many :work_records, dependent: :destroy
   has_many :userland_project_members, dependent: :destroy
   has_many :userland_projects, through: :userland_project_members
   has_one :email_notification, dependent: :destroy
@@ -245,16 +247,16 @@ class User < ApplicationRecord
     twitter.update_column(:token_expires_at, Time.now.to_i)
   end
 
-  def hide_record_comment?(episode)
+  def hide_episode_record_body?(episode)
     setting.hide_record_comment? &&
       works.desiring_to_watch.include?(episode.work) &&
-      !records.pluck(:episode_id).include?(episode.id)
+      !episode_records.pluck(:episode_id).include?(episode.id)
   end
 
-  def hide_review?(review)
+  def hide_work_record_body?(work)
     setting.hide_record_comment? &&
-      works.desiring_to_watch.include?(review.work) &&
-      !reviews.pluck(:work_id).include?(review.work_id)
+      works.desiring_to_watch.include?(work) &&
+      !work_records.pluck(:work_id).include?(work.id)
   end
 
   def committer?

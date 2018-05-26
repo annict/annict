@@ -5,6 +5,7 @@ namespace :counter_cache do
       refresh_notifications_count
       refresh_record_comments_count
       refresh_review_comments_count
+      refresh_records_count
     ).each do |task_name|
       puts "============== #{task_name} =============="
       Rake::Task["counter_cache:#{task_name}"].invoke
@@ -50,6 +51,31 @@ namespace :counter_cache do
         puts "Work ID: #{work.id} - #{review_comments_count}"
       else
         puts "Work ID: #{work.id} - skipped."
+      end
+    end
+  end
+
+  task refresh_records_count: :environment do
+    # Attach monky patch to update readonly field
+    [User, Work].each do |model|
+      model.class_eval do
+        def self.readonly_attributes
+          []
+        end
+      end
+    end
+
+    ActiveRecord::Base.transaction do
+      User.find_each do |u|
+        puts "User #{u.id}"
+        u.update_column(:records_count, u.records.published.count)
+      end
+    end
+
+    ActiveRecord::Base.transaction do
+      Work.published.find_each do |w|
+        puts "Work #{w.id}"
+        w.update_column(:records_count, w.records.published.count)
       end
     end
   end
