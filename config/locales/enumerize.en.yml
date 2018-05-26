@@ -1,6 +1,6 @@
 en:
   enumerize:
-    record:
+    episode_record:
       rating_state:
         average: Average
         bad: Bad

@@ -81,7 +81,7 @@ namespace :data_care do
     puts "Deleting Multiple Records..."
     user.multiple_records.destroy_all
 
-    puts "Deleting Reviews..."
+    puts "Deleting WorkRecords..."
     user.reviews.destroy_all
 
     puts "Deleting Statuses..."

@@ -39,8 +39,8 @@ Edges::ActivityEdge = ObjectTypes::Activity.define_edge do
         RecordLoader.for(Status).load(activity.trackable_id)
       when "Record"
         RecordLoader.for(Record).load(activity.trackable_id)
-      when "Review"
-        RecordLoader.for(Review).load(activity.trackable_id)
+      when "WorkRecord"
+        RecordLoader.for(WorkRecord).load(activity.trackable_id)
       when "MultipleRecord"
         RecordLoader.for(MultipleRecord).load(activity.trackable_id)
       end

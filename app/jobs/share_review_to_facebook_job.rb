@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class ShareReviewToFacebookJob < ApplicationJob
+class ShareWorkRecordToFacebookJob < ApplicationJob
   queue_as :default
 
   def perform(user_id, review_id)
@@ -14,6 +14,6 @@ class ShareReviewToFacebookJob < ApplicationJob
       "https://annict.com/images/og_image.png"
     end
 
-    FacebookService.new(user).share_review!(review, image_url)
+    FacebookService.new(user).share!(review, image_url)
   end
 end

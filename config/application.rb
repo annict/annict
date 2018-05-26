@@ -7,6 +7,7 @@ require_relative "boot"
   active_model/railtie
   active_job/railtie
   active_record/railtie
+  active_storage/engine
   action_controller/railtie
   action_mailer/railtie
   action_view/railtie
@@ -23,14 +24,18 @@ Bundler.require(*Rails.groups)
 module Annict
   class Application < Rails::Application
     # Initialize configuration defaults for originally generated Rails version.
-    config.load_defaults 5.1
+    config.load_defaults 5.2
+
+    # Don't generate system test files.
+    config.generators.system_tests = nil
+
+    # Settings in config/environments/* take precedence over those specified here.
+    # Application configuration can go into files in config/initializers
+    # -- all .rb files in that directory are automatically loaded after loading
+    # the framework and any gems in your application.
 
     # Disable Asset Pipeline/Sprockets
     config.assets.enabled = false
-
-    # Settings in config/environments/* take precedence over those specified here.
-    # Application configuration should go into files in config/initializers
-    # -- all .rb files in that directory are automatically loaded.
 
     # Set Time.zone default to the specified zone and
     # make Active Record auto-convert to this zone.
@@ -62,9 +67,6 @@ module Annict
       g.assets false
     end
 
-    # Don't generate system test files.
-    config.generators.system_tests = nil
-
     config.active_job.queue_adapter = :delayed_job
 
     config.middleware.insert_before(Rack::Runtime, Rack::Rewrite) do
@@ -73,6 +75,7 @@ module Annict
       r301 %r{\A/users/([A-Za-z0-9_]+)/(following|followers|wanna_watch|watching|watched|on_hold|stop_watching)\z}, "/@$1/$2"
       # rubocop:enable Metrics/LineLength
       r301 %r{\A/track}, "/"
+      r301 %r{\A/@([A-Za-z0-9_]+)/reviews\z}, "/@$1/records"
 
       maintenance_file = File.join(Rails.root, "public", "maintenance.html")
       send_file /(.*)$(?<!maintenance|favicons)/, maintenance_file, if: proc { |rack_env|

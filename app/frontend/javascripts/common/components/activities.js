@@ -27,9 +27,9 @@ export default {
   },
 
   components: {
-    'c-create-record-activity': createRecordActivity,
-    'c-create-review-activity': createReviewActivity,
-    'c-create-multiple-records-activity': createMultipleRecordsActivity,
+    'c-create-episode-record-activity': createRecordActivity,
+    'c-create-work-record-activity': createReviewActivity,
+    'c-create-multiple-episode-records-activity': createMultipleRecordsActivity,
     'c-create-status-activity': createStatusActivity,
     'c-load-more-button': loadMoreButton,
   },

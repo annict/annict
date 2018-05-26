@@ -38,12 +38,14 @@
 #  key_pv_id             :integer
 #  manual_episodes_count :integer
 #  no_episodes           :boolean          default(FALSE), not null
-#  reviews_count         :integer          default(0), not null
+#  work_records_count    :integer          default(0), not null
 #  started_on            :date
 #  ended_on              :date
 #  score                 :float
 #  ratings_count         :integer          default(0), not null
 #  satisfaction_rate     :float
+#  review_comments_count :integer          default(0), not null
+#  records_count         :integer          default(0), not null
 #
 # Indexes
 #
@@ -104,9 +106,9 @@ class Work < ApplicationRecord
   has_many :cast_people, through: :casts, source: :person
   has_many :channel_works, dependent: :destroy
   has_many :characters, through: :casts
-  has_many :records, dependent: :destroy
   has_many :db_activities, as: :trackable, dependent: :destroy
   has_many :db_comments, as: :resource, dependent: :destroy
+  has_many :episode_records, dependent: :destroy
   has_many :episodes, dependent: :destroy
   has_many :resource_items, dependent: :destroy, class_name: "WorkItem"
   has_many :items, through: :resource_items
@@ -118,12 +120,13 @@ class Work < ApplicationRecord
     source_type: "Organization"
   has_many :programs, dependent: :destroy
   has_many :pvs, dependent: :destroy
-  has_many :reviews, dependent: :destroy
+  has_many :records, dependent: :destroy
   has_many :series_works, dependent: :destroy
   has_many :series_list, through: :series_works, source: :series
   has_many :statuses, dependent: :destroy
   has_many :staff_people, through: :staffs, source: :resource, source_type: "Person"
   has_many :program_details, dependent: :destroy
+  has_many :work_records, dependent: :destroy
   has_many :work_taggings, dependent: :destroy
   has_many :work_tags, through: :work_taggings
   has_one :work_image, dependent: :destroy
@@ -176,7 +179,7 @@ class Work < ApplicationRecord
     where(id: work_ids)
   }
 
-  scope :checkedin_by, -> (user) {
+  scope :tracked_by, -> (user) {
     joins(
       "INNER JOIN (
         SELECT DISTINCT work_id, MAX(id) AS record_id FROM records
@@ -347,11 +350,7 @@ class Work < ApplicationRecord
   end
 
   def chart_values
-    episodes.published.order(:sort_number).pluck(:records_count)
-  end
-
-  def records_count
-    chart_values.reduce(&:+).presence || 0
+    episodes.published.order(:sort_number).pluck(:episode_records_count)
   end
 
   def comments_count

@@ -86,10 +86,9 @@ export default {
 
       return $.ajax({
         method: 'POST',
-        url: '/api/internal/records',
+        url: `/api/internal/episodes/${program.episode.id}/records`,
         data: {
-          record: {
-            episode_id: program.episode.id,
+          episode_record: {
             comment: program.record.comment,
             shared_twitter: this.user.share_record_to_twitter,
             shared_facebook: this.user.share_record_to_facebook,
