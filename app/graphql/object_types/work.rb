@@ -22,6 +22,7 @@ ObjectTypes::Work = GraphQL::ObjectType.define do
 
   connection :reviews, ObjectTypes::Review.connection_type do
     argument :orderBy, InputObjectTypes::ReviewOrder
+    argument :hasBody, types.Boolean
 
     resolve Resolvers::Reviews.new
   end

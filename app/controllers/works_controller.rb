@@ -98,7 +98,11 @@ class WorksController < ApplicationController
     @channels = Channel.published.with_vod
     @series_list = @work.series_list.published.where("series_works_count > ?", 1)
 
-    @reviews = @work.reviews.includes(:user).published
+    @reviews = @work.
+      reviews.
+      published.
+      with_body.
+      includes(user: :profile)
     @reviews = localable_resources(@reviews)
     @reviews = @reviews.order(created_at: :desc)
 

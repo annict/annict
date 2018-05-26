@@ -9,12 +9,8 @@ script#t-create-review-activity type="x-template"
           .mb-2 v-if='locale === "en"'
             a.mr-1 :href='"/@" + activity.user.username'
               | {{ activity.profile.name }}
-            span.mr-1
-              | wrote
             a.mr-1 :href='"/@" + activity.user.username + "/reviews/" + activity.review.id'
-              | a review
-            span.mr-1
-              | on
+              | watched
             a :href='"/works/" + activity.work.id'
               | {{ activity.work.title }}
           .mb-2 v-else=""
@@ -23,10 +19,9 @@ script#t-create-review-activity type="x-template"
             | が
             a :href='"/works/" + activity.work.id'
               | {{ activity.work.title }}
-            | の
+            | を
             a :href='"/@" + activity.user.username + "/reviews/" + activity.review.id'
-              | レビュー
-            | を書きました
+              | 見ました
           .small.text-muted
             c-time-ago :time="activity.created_at"
 

@@ -14,6 +14,6 @@ class ShareStatusToFacebookJob < ApplicationJob
       "https://annict.com/images/og_image.png"
     end
 
-    FacebookService.new(user).share_status!(status, image_url)
+    FacebookService.new(user).share!(status, image_url)
   end
 end
