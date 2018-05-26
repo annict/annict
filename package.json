@@ -5,7 +5,7 @@
     "@rails/webpacker": "^3.4.3",
     "async": "2.6.0",
     "autosize": "^4.0.1",
-    "bootstrap": "4.0.0",
+    "bootstrap": "^4.1.1",
     "bourbon": "^5.0.0",
     "britecharts": "^2.8.6",
     "cal-heatmap": "3.6.2",
