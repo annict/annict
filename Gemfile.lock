@@ -69,7 +69,7 @@ GEM
     amazon-ecs (2.5.0)
       nokogiri (~> 1.4)
       ruby-hmac (~> 0.3)
-    annotate (2.7.2)
+    annotate (2.7.3)
       activerecord (>= 3.2, < 6.0)
       rake (>= 10.4, < 13.0)
     arel (9.0.0)
