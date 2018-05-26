@@ -20,7 +20,7 @@
     "lodash": "4.17.10",
     "marked": "^0.4.0",
     "mjml": "4.0.3",
-    "moment-timezone": "0.5.16",
+    "moment-timezone": "0.5.17",
     "mousetrap": "1.6.1",
     "popper.js": "^1.14.3",
     "postcss-smart-import": "^0.7.6",
