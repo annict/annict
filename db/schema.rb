@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180403091308) do
+ActiveRecord::Schema.define(version: 20180526135117) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -549,6 +549,17 @@ ActiveRecord::Schema.define(version: 20180403091308) do
     t.index ["user_id"], name: "index_mute_users_on_user_id"
   end
 
+  create_table "new_records", force: :cascade do |t|
+    t.bigint "user_id", null: false
+    t.bigint "work_id", null: false
+    t.string "aasm_state", default: "published", null: false
+    t.integer "impressions_count", default: 0, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["user_id"], name: "index_new_records_on_user_id"
+    t.index ["work_id"], name: "index_new_records_on_work_id"
+  end
+
   create_table "notifications", id: :serial, force: :cascade do |t|
     t.integer "user_id", null: false
     t.integer "action_user_id", null: false
@@ -801,10 +812,12 @@ ActiveRecord::Schema.define(version: 20180403091308) do
     t.integer "review_id"
     t.string "aasm_state", default: "published", null: false
     t.string "locale", default: "other", null: false
+    t.integer "new_record_id"
     t.index ["episode_id"], name: "checkins_episode_id_idx"
     t.index ["facebook_url_hash"], name: "checkins_facebook_url_hash_key", unique: true
     t.index ["locale"], name: "index_records_on_locale"
     t.index ["multiple_record_id"], name: "index_records_on_multiple_record_id"
+    t.index ["new_record_id"], name: "index_records_on_new_record_id", unique: true
     t.index ["oauth_application_id"], name: "index_records_on_oauth_application_id"
     t.index ["rating_state"], name: "index_records_on_rating_state"
     t.index ["review_id"], name: "index_records_on_review_id"
@@ -831,7 +844,9 @@ ActiveRecord::Schema.define(version: 20180403091308) do
     t.datetime "updated_at", null: false
     t.integer "oauth_application_id"
     t.string "locale", default: "other", null: false
+    t.integer "new_record_id"
     t.index ["locale"], name: "index_reviews_on_locale"
+    t.index ["new_record_id"], name: "index_reviews_on_new_record_id", unique: true
     t.index ["oauth_application_id"], name: "index_reviews_on_oauth_application_id"
     t.index ["user_id"], name: "index_reviews_on_user_id"
     t.index ["work_id"], name: "index_reviews_on_work_id"
@@ -1276,6 +1291,8 @@ ActiveRecord::Schema.define(version: 20180403091308) do
   add_foreign_key "multiple_records", "works"
   add_foreign_key "mute_users", "users"
   add_foreign_key "mute_users", "users", column: "muted_user_id"
+  add_foreign_key "new_records", "users"
+  add_foreign_key "new_records", "works"
   add_foreign_key "notifications", "users", column: "action_user_id", name: "notifications_action_user_id_fk", on_delete: :cascade
   add_foreign_key "notifications", "users", name: "notifications_user_id_fk", on_delete: :cascade
   add_foreign_key "oauth_access_grants", "oauth_applications", column: "application_id"
@@ -1298,10 +1315,12 @@ ActiveRecord::Schema.define(version: 20180403091308) do
   add_foreign_key "receptions", "users", name: "receptions_user_id_fk", on_delete: :cascade
   add_foreign_key "records", "episodes", name: "checkins_episode_id_fk", on_delete: :cascade
   add_foreign_key "records", "multiple_records"
+  add_foreign_key "records", "new_records"
   add_foreign_key "records", "oauth_applications"
   add_foreign_key "records", "reviews"
   add_foreign_key "records", "users", name: "checkins_user_id_fk", on_delete: :cascade
   add_foreign_key "records", "works", name: "checkins_work_id_fk"
+  add_foreign_key "reviews", "new_records"
   add_foreign_key "reviews", "oauth_applications"
   add_foreign_key "reviews", "users"
   add_foreign_key "reviews", "works"
