@@ -40,6 +40,6 @@
     "eslint": "^4.19.1",
     "prettier": "^1.12.1",
     "prettier-eslint": "^8.8.1",
-    "webpack-dev-server": "^3.1.4"
+    "webpack-dev-server": "^2.11.2"
   }
 }
