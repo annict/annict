@@ -3,24 +3,33 @@
 - keywords = meta_keywords(@work.decorate.local_title)
 - image_url = ann_image_url(@work.work_image, :attachment, size: "640x")
 - set_meta_tags(title: title, description: description, keywords: keywords, og: { description: description }, twitter: { description: description, image: image_url }, reverse: true, prefix: false)
-
+- breadcrumb :record_detail, @record
 
 - unless current_user&.supporter?
-  = render "application/components/adsense", slots: [ENV["GOOGLE_AD_320x50_11"]], size: "320x50"
+  .mb-3.text-center
+    = render "application/components/adsense", slots: [ENV["GOOGLE_AD_320x50_11"]], size: "320x50"
 
-.c-card.py-3.mb-4
+.c-card.py-3.mb-3
   .p-records-show__work-info.px-3
     .row
       .col.u-flex-grow-0.p-records-show__work-image.pr-0
         = link_to work_path(@work) do
           = image_tag ann_image_url(@work.work_image, :attachment, size: "280x373"), class: "img-fluid img-thumbnail rounded"
+        - if @work.work_image.present?
+          .u-very-small.mt-1
+            = @work.work_image.decorate.asin_or_copyright_text
       .col
         h1.h2
-          = link_to work_path(@work) do
+          = link_to work_path(@work), class: "u-text-body" do
             = @work.decorate.local_title
-        = link_to work_episode_path(@work, @episode) do
+        = link_to work_episode_path(@work, @episode), class: "u-text-body mb-2 d-inline-block" do
           = @episode.decorate.title_with_number
-  hr
+        c-status-selector :work-id="#{@work.id}"
+
+h2.h4.text-center.mb-3.font-weight-bold
+  = t "messages.records.show.record_by_name", name: @user.profile.name
+
+.c-card.py-3.mb-3
   .p-records-show__record.px-3
     = render "records/record", record: @record, is_spoiler: @is_spoiler
   hr
@@ -62,9 +71,12 @@
     - else
       = render "application/components/empty", text: t("resources.comment.no_comments")
 
+= render "application/components/breadcrumb"
 = render "application/components/footer"
 c-tabbar
 
 - content_for :js_templates do
   = render "application/js_templates/like_button"
   = render "application/js_templates/rating_state_label"
+  = render "application/js_templates/status_selector"
+  = render "application/js_templates/mute_user_button"

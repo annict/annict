@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180403091308) do
+ActiveRecord::Schema.define(version: 20180414223051) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -801,8 +801,10 @@ ActiveRecord::Schema.define(version: 20180403091308) do
     t.integer "review_id"
     t.string "aasm_state", default: "published", null: false
     t.string "locale", default: "other", null: false
+    t.integer "impressions_count", default: 0, null: false
     t.index ["episode_id"], name: "checkins_episode_id_idx"
     t.index ["facebook_url_hash"], name: "checkins_facebook_url_hash_key", unique: true
+    t.index ["impressions_count"], name: "index_records_on_impressions_count"
     t.index ["locale"], name: "index_records_on_locale"
     t.index ["multiple_record_id"], name: "index_records_on_multiple_record_id"
     t.index ["oauth_application_id"], name: "index_records_on_oauth_application_id"
@@ -1204,6 +1206,7 @@ ActiveRecord::Schema.define(version: 20180403091308) do
     t.float "score"
     t.integer "ratings_count", default: 0, null: false
     t.float "satisfaction_rate"
+    t.integer "review_comments_count", default: 0, null: false
     t.index ["aasm_state"], name: "index_works_on_aasm_state"
     t.index ["key_pv_id"], name: "index_works_on_key_pv_id"
     t.index ["number_format_id"], name: "index_works_on_number_format_id"
