@@ -11,8 +11,29 @@ Layout/CaseIndentation:
 Layout/EmptyLineAfterMagicComment:
   Enabled: false
 
-Lint/EndAlignment:
+Layout/EndAlignment:
   EnforcedStyleAlignWith: variable
+
+Layout/AlignArray:
+  Enabled: false
+
+Layout/AlignParameters:
+  EnforcedStyle: with_fixed_indentation
+
+Layout/DotPosition:
+  EnforcedStyle: trailing
+
+Layout/IndentArray:
+  EnforcedStyle: consistent
+
+Layout/MultilineOperationIndentation:
+  EnforcedStyle: indented
+
+Layout/MultilineMethodCallIndentation:
+  EnforcedStyle: indented
+
+Lint/UnusedMethodArgument:
+  Enabled: false
 
 Metrics/LineLength:
   Max: 120
@@ -37,32 +58,14 @@ Metrics/MethodLength:
 Metrics/CyclomaticComplexity:
   Enabled: false
 
-Style/AlignArray:
-  Enabled: false
-
-Style/AlignParameters:
-  EnforcedStyle: with_fixed_indentation
-
 Style/AsciiComments:
   Enabled: false
 
 Style/Documentation:
   Enabled: false
 
-Style/DotPosition:
-  EnforcedStyle: trailing
-
-Style/IndentArray:
-  EnforcedStyle: consistent
-
 Style/Lambda:
   Enabled: false
-
-Style/MultilineOperationIndentation:
-  EnforcedStyle: indented
-
-Style/MultilineMethodCallIndentation:
-  EnforcedStyle: indented
 
 Style/PercentLiteralDelimiters:
   PreferredDelimiters:

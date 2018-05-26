@@ -23,6 +23,15 @@ module Resolvers
         end
       end
 
+      @collection = case @args[:hasBody]
+      when true
+        @collection.with_body
+      when false
+        @collection.with_no_body
+      else
+        @collection
+      end
+
       @collection
     end
   end

@@ -62,11 +62,11 @@ class RecordsListService
 
     case @user.setting.records_sort_type
     when "likes_count_desc"
-      results.order(likes_count: :desc)
+      results.order(likes_count: :desc).order(created_at: :desc)
     when "rating_state_desc"
-      results.rating_state_order(:desc)
+      results.rating_state_order(:desc).order(created_at: :desc)
     when "rating_state_asc"
-      results.rating_state_order(:asc)
+      results.rating_state_order(:asc).order(created_at: :desc)
     when "created_at_desc"
       results.order(created_at: :desc)
     when "created_at_asc"
