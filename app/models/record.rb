@@ -3,12 +3,13 @@
 #
 # Table name: records
 #
-#  id                :integer          not null, primary key
-#  user_id           :integer          not null
+#  id                :bigint(8)        not null, primary key
+#  user_id           :bigint(8)        not null
+#  work_id           :bigint(8)        not null
+#  aasm_state        :string           default("published"), not null
+#  impressions_count :integer          default(0), not null
 #  created_at        :datetime         not null
 #  updated_at        :datetime         not null
-#  impressions_count :integer          default(0), not null
-#  work_id           :integer
 #
 # Indexes
 #

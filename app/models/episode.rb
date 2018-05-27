@@ -3,25 +3,25 @@
 #
 # Table name: episodes
 #
-#  id                            :integer          not null, primary key
-#  work_id                       :integer          not null
-#  number                        :string(510)
-#  sort_number                   :integer          default(0), not null
-#  sc_count                      :integer
-#  title                         :string(510)
-#  episode_records_count         :integer          default(0), not null
-#  created_at                    :datetime
-#  updated_at                    :datetime
-#  prev_episode_id               :integer
-#  aasm_state                    :string           default("published"), not null
-#  fetch_syobocal                :boolean          default(FALSE), not null
-#  raw_number                    :string
-#  title_ro                      :string           default(""), not null
-#  title_en                      :string           default(""), not null
-#  episode_record_comments_count :integer          default(0), not null
-#  score                         :float
-#  ratings_count                 :integer          default(0), not null
-#  satisfaction_rate             :float
+#  id                              :integer          not null, primary key
+#  work_id                         :integer          not null
+#  number                          :string(510)
+#  sort_number                     :integer          default(0), not null
+#  sc_count                        :integer
+#  title                           :string(510)
+#  episode_records_count           :integer          default(0), not null
+#  created_at                      :datetime
+#  updated_at                      :datetime
+#  prev_episode_id                 :integer
+#  aasm_state                      :string           default("published"), not null
+#  fetch_syobocal                  :boolean          default(FALSE), not null
+#  raw_number                      :string
+#  title_ro                        :string           default(""), not null
+#  title_en                        :string           default(""), not null
+#  episode_records_with_body_count :integer          default(0), not null
+#  score                           :float
+#  ratings_count                   :integer          default(0), not null
+#  satisfaction_rate               :float
 #
 # Indexes
 #

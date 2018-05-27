@@ -3,49 +3,49 @@
 #
 # Table name: works
 #
-#  id                    :integer          not null, primary key
-#  season_id             :integer
-#  sc_tid                :integer
-#  title                 :string(510)      not null
-#  media                 :integer          not null
-#  official_site_url     :string(510)      default(""), not null
-#  wikipedia_url         :string(510)      default(""), not null
-#  auto_episodes_count   :integer          default(0), not null
-#  watchers_count        :integer          default(0), not null
-#  released_at           :date
-#  created_at            :datetime
-#  updated_at            :datetime
-#  twitter_username      :string(510)
-#  twitter_hashtag       :string(510)
-#  released_at_about     :string
-#  aasm_state            :string           default("published"), not null
-#  number_format_id      :integer
-#  title_kana            :string           default(""), not null
-#  title_ro              :string           default(""), not null
-#  title_en              :string           default(""), not null
-#  official_site_url_en  :string           default(""), not null
-#  wikipedia_url_en      :string           default(""), not null
-#  synopsis              :text             default(""), not null
-#  synopsis_en           :text             default(""), not null
-#  synopsis_source       :string           default(""), not null
-#  synopsis_source_en    :string           default(""), not null
-#  mal_anime_id          :integer
-#  facebook_og_image_url :string           default(""), not null
-#  twitter_image_url     :string           default(""), not null
-#  recommended_image_url :string           default(""), not null
-#  season_year           :integer
-#  season_name           :integer
-#  key_pv_id             :integer
-#  manual_episodes_count :integer
-#  no_episodes           :boolean          default(FALSE), not null
-#  work_records_count    :integer          default(0), not null
-#  started_on            :date
-#  ended_on              :date
-#  score                 :float
-#  ratings_count         :integer          default(0), not null
-#  satisfaction_rate     :float
-#  review_comments_count :integer          default(0), not null
-#  records_count         :integer          default(0), not null
+#  id                           :integer          not null, primary key
+#  season_id                    :integer
+#  sc_tid                       :integer
+#  title                        :string(510)      not null
+#  media                        :integer          not null
+#  official_site_url            :string(510)      default(""), not null
+#  wikipedia_url                :string(510)      default(""), not null
+#  auto_episodes_count          :integer          default(0), not null
+#  watchers_count               :integer          default(0), not null
+#  released_at                  :date
+#  created_at                   :datetime
+#  updated_at                   :datetime
+#  twitter_username             :string(510)
+#  twitter_hashtag              :string(510)
+#  released_at_about            :string
+#  aasm_state                   :string           default("published"), not null
+#  number_format_id             :integer
+#  title_kana                   :string           default(""), not null
+#  title_ro                     :string           default(""), not null
+#  title_en                     :string           default(""), not null
+#  official_site_url_en         :string           default(""), not null
+#  wikipedia_url_en             :string           default(""), not null
+#  synopsis                     :text             default(""), not null
+#  synopsis_en                  :text             default(""), not null
+#  synopsis_source              :string           default(""), not null
+#  synopsis_source_en           :string           default(""), not null
+#  mal_anime_id                 :integer
+#  facebook_og_image_url        :string           default(""), not null
+#  twitter_image_url            :string           default(""), not null
+#  recommended_image_url        :string           default(""), not null
+#  season_year                  :integer
+#  season_name                  :integer
+#  key_pv_id                    :integer
+#  manual_episodes_count        :integer
+#  no_episodes                  :boolean          default(FALSE), not null
+#  work_records_count           :integer          default(0), not null
+#  started_on                   :date
+#  ended_on                     :date
+#  score                        :float
+#  ratings_count                :integer          default(0), not null
+#  satisfaction_rate            :float
+#  work_records_with_body_count :integer          default(0), not null
+#  records_count                :integer          default(0), not null
 #
 # Indexes
 #

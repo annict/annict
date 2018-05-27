@@ -3,7 +3,7 @@
 #
 # Table name: twitter_tweets
 #
-#  id               :integer          not null, primary key
+#  id               :bigint(8)        not null, primary key
 #  twitter_user_id  :integer          not null
 #  user_screen_name :string           not null
 #  user_name        :string           not null

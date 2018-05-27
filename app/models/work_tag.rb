@@ -3,7 +3,7 @@
 #
 # Table name: work_tags
 #
-#  id                  :integer          not null, primary key
+#  id                  :bigint(8)        not null, primary key
 #  name                :string           not null
 #  aasm_state          :string           default("published"), not null
 #  work_taggings_count :integer          default(0), not null

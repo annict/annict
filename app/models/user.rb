@@ -36,7 +36,7 @@
 #
 # Indexes
 #
-#  index_users_on_allowed_locales        (allowed_locales)
+#  index_users_on_allowed_locales        (allowed_locales) USING gin
 #  index_users_on_gumroad_subscriber_id  (gumroad_subscriber_id)
 #  users_confirmation_token_key          (confirmation_token) UNIQUE
 #  users_email_key                       (email) UNIQUE

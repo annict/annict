@@ -4,7 +4,7 @@ namespace :counter_cache do
       refresh_watchers_count
       refresh_notifications_count
       refresh_record_comments_count
-      refresh_review_comments_count
+      refresh_work_records_with_body_count
       refresh_records_count
     ).each do |task_name|
       puts "============== #{task_name} =============="
@@ -43,12 +43,12 @@ namespace :counter_cache do
     end
   end
 
-  task refresh_review_comments_count: :environment do
+  task refresh_work_records_with_body_count: :environment do
     Work.published.find_each do |work|
-      review_comments_count = work.reviews.published.with_body.count
-      if review_comments_count != work.review_comments_count
-        work.update_column(:review_comments_count, review_comments_count)
-        puts "Work ID: #{work.id} - #{review_comments_count}"
+      work_records_with_body_count = work.reviews.published.with_body.count
+      if work_records_with_body_count != work.work_records_with_body_count
+        work.update_column(:work_records_with_body_count, work_records_with_body_count)
+        puts "Work ID: #{work.id} - #{work_records_with_body_count}"
       else
         puts "Work ID: #{work.id} - skipped."
       end

@@ -3,7 +3,7 @@
 #
 # Table name: faq_contents
 #
-#  id              :integer          not null, primary key
+#  id              :bigint(8)        not null, primary key
 #  faq_category_id :integer          not null
 #  question        :string           not null
 #  answer          :text             not null

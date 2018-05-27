@@ -3,9 +3,9 @@
 #
 # Table name: vod_titles
 #
-#  id           :integer          not null, primary key
-#  channel_id   :integer          not null
-#  work_id      :integer
+#  id           :bigint(8)        not null, primary key
+#  channel_id   :bigint(8)        not null
+#  work_id      :bigint(8)
 #  code         :string           not null
 #  name         :string           not null
 #  aasm_state   :string           default("published"), not null

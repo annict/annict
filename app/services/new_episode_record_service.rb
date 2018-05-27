@@ -21,7 +21,7 @@ class NewEpisodeRecordService
       @episode_record.update_share_record_status
       @episode_record.share_to_sns
       save_activity
-      update_episode_record_comments_count
+      update_episode_records_with_body_count
       finish_tips
       update_latest_status
       create_ga_event
@@ -51,7 +51,7 @@ class NewEpisodeRecordService
     @ga_client.events.create(:records, :create, el: "Episode", ds: @via)
   end
 
-  def update_episode_record_comments_count
-    @episode_record.episode.increment!(:episode_record_comments_count) if @episode_record.comment.present?
+  def update_episode_records_with_body_count
+    @episode_record.episode.increment!(:episode_records_with_body_count) if @episode_record.comment.present?
   end
 end

@@ -10,7 +10,8 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2018_04_14_223051) do
+ActiveRecord::Schema.define(version: 2018_05_27_171424) do
+
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_stat_statements"
   enable_extension "plpgsql"
@@ -283,11 +284,9 @@ ActiveRecord::Schema.define(version: 2018_04_14_223051) do
     t.integer "review_id"
     t.string "aasm_state", default: "published", null: false
     t.string "locale", default: "other", null: false
-    t.integer "impressions_count", default: 0, null: false
     t.integer "record_id"
     t.index ["episode_id"], name: "checkins_episode_id_idx"
     t.index ["facebook_url_hash"], name: "checkins_facebook_url_hash_key", unique: true
-    t.index ["impressions_count"], name: "index_episode_records_on_impressions_count"
     t.index ["locale"], name: "index_episode_records_on_locale"
     t.index ["multiple_episode_record_id"], name: "index_episode_records_on_multiple_episode_record_id"
     t.index ["oauth_application_id"], name: "index_episode_records_on_oauth_application_id"
@@ -314,7 +313,7 @@ ActiveRecord::Schema.define(version: 2018_04_14_223051) do
     t.string "raw_number"
     t.string "title_ro", default: "", null: false
     t.string "title_en", default: "", null: false
-    t.integer "episode_record_comments_count", default: 0, null: false
+    t.integer "episode_records_with_body_count", default: 0, null: false
     t.float "score"
     t.integer "ratings_count", default: 0, null: false
     t.float "satisfaction_rate"
@@ -818,10 +817,11 @@ ActiveRecord::Schema.define(version: 2018_04_14_223051) do
 
   create_table "records", force: :cascade do |t|
     t.bigint "user_id", null: false
+    t.bigint "work_id", null: false
+    t.string "aasm_state", default: "published", null: false
+    t.integer "impressions_count", default: 0, null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.integer "impressions_count", default: 0, null: false
-    t.bigint "work_id"
     t.index ["user_id"], name: "index_records_on_user_id"
     t.index ["work_id"], name: "index_records_on_work_id"
   end
@@ -1220,8 +1220,8 @@ ActiveRecord::Schema.define(version: 2018_04_14_223051) do
     t.float "score"
     t.integer "ratings_count", default: 0, null: false
     t.float "satisfaction_rate"
-    t.integer "review_comments_count", default: 0, null: false
     t.integer "records_count", default: 0, null: false
+    t.integer "work_records_with_body_count", default: 0, null: false
     t.index ["aasm_state"], name: "index_works_on_aasm_state"
     t.index ["key_pv_id"], name: "index_works_on_key_pv_id"
     t.index ["number_format_id"], name: "index_works_on_number_format_id"
@@ -1322,7 +1322,7 @@ ActiveRecord::Schema.define(version: 2018_04_14_223051) do
   add_foreign_key "receptions", "channels", name: "receptions_channel_id_fk", on_delete: :cascade
   add_foreign_key "receptions", "users", name: "receptions_user_id_fk", on_delete: :cascade
   add_foreign_key "records", "users"
-  add_foreign_key "records", "works", name: "works.id"
+  add_foreign_key "records", "works"
   add_foreign_key "series_works", "series"
   add_foreign_key "series_works", "works"
   add_foreign_key "settings", "users"

@@ -3,7 +3,7 @@
 #
 # Table name: pvs
 #
-#  id                     :integer          not null, primary key
+#  id                     :bigint(8)        not null, primary key
 #  work_id                :integer          not null
 #  url                    :string           not null
 #  title                  :string           not null
