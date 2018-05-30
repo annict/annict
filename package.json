@@ -37,7 +37,7 @@
   },
   "devDependencies": {
     "eslint": "^4.19.1",
-    "prettier": "^1.11.1",
+    "prettier": "^1.13.3",
     "prettier-eslint": "^8.8.1",
     "webpack-dev-server": "^2.11.2"
   }
