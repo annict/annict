@@ -36,6 +36,8 @@ class PeopleController < ApplicationController
       @casts_with_year = @person.
         casts.
         published.
+        joins(:work).
+        where(works: { aasm_state: :published }).
         includes(:character, work: :work_image).
         group_by { |cast| cast.work.season_year.presence || 0 }
       @cast_years = @casts_with_year.keys.sort.reverse
@@ -45,6 +47,8 @@ class PeopleController < ApplicationController
       @staffs_with_year = @person.
         staffs.
         published.
+        joins(:work).
+        where(works: { aasm_state: :published }).
         includes(work: :work_image).
         group_by { |staff| staff.work.season_year.presence || 0 }
       @staff_years = @staffs_with_year.keys.sort.reverse
