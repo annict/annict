@@ -14,7 +14,7 @@
           = link_to record_path(episode_record.user.username, episode_record.record), class: "small text-muted", title: local_datetime(episode_record.created_at) do
             = local_time_ago_in_words(episode_record.created_at)
           - if episode_record.modify_comment?
-            small.mr-1.text-muted
+            small.ml-1.text-muted
               = icon "pencil-alt"
           small.ml-2.text-muted
             = "#{episode_record.record.impressions_count} views"
