@@ -22,6 +22,7 @@ namespace :tmp do
 
   task rename_record_types: :environment do
     Activity.where(trackable_type: "Checkin").update_all(trackable_type: "EpisodeRecord")
+    Activity.where(trackable_type: "Record").update_all(trackable_type: "EpisodeRecord")
     Activity.where(trackable_type: "Review").update_all(trackable_type: "WorkRecord")
     Activity.where(trackable_type: "MultipleRecord").update_all(trackable_type: "MultipleEpisodeRecord")
 
@@ -30,6 +31,7 @@ namespace :tmp do
     Activity.where(action: "create_multiple_records").update_all(action: "create_multiple_episode_records")
 
     Like.where(recipient_type: "Checkin").update_all(recipient_type: "EpisodeRecord")
+    Like.where(recipient_type: "Record").update_all(recipient_type: "EpisodeRecord")
     Like.where(recipient_type: "Review").update_all(recipient_type: "WorkRecord")
     Like.where(recipient_type: "MultipleRecord").update_all(recipient_type: "MultipleEpisodeRecord")
 
@@ -37,6 +39,7 @@ namespace :tmp do
 
     ActiveRecord::Base.transaction do
       Impression.find_each do |i|
+        puts i.id
         case i.impressionable_type
         when "Review"
           i.update(

@@ -235,11 +235,10 @@ en:
         new: New Item
       work_records:
         edit: Edit Record
+        index: Records of %{work_title} (Anime)
         show: "%{work_title} - %{profile_name} (%{username})'s Record"
       works:
         newest: Just Added Anime
         popular: Popular Anime
         season: "%{name} Anime"
         show: "%{title} (Anime)"
-      work_reviews:
-        index: Reviews of %{work_title} (Anime)

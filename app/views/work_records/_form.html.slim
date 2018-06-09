@@ -35,10 +35,13 @@
       = sf.hidden_field :share_review_to_twitter, value: false
       = sf.hidden_field :share_review_to_facebook, value: false
 
-  .form-group.text-center.mt-4
+  .form-group.text-center.mt-3
     = f.button class: "btn btn-primary" do
       = icon "edit", class: "mr-2"
-      = t "verb.track"
+      - if work_record.new_record?
+        = t "verb.track"
+      - else
+        = t "verb.update"
 
 - content_for :js_templates do
   = render "application/js_templates/record_rating"

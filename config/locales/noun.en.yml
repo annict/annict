@@ -111,6 +111,7 @@ en:
     record_of_episode: "Record of %{work_title} %{episode_title_with_number}"
     record_of_work: 'Record of "%{work_title}"'
     records: Records
+    records_by: "Records by %{profile_name}"
     records_count: Records Count
     related_items: Items
     related_works: Related Works
@@ -119,7 +120,6 @@ en:
     resources: Resources
     review_list: Review List
     reviews: Reviews
-    reviews_by: "Reviews by %{profile_name}"
     satisfaction: Score
     satisfaction_rate_shorten: Satisfaction
     search: Search

@@ -7,13 +7,13 @@
       .text-left
         = link_to work_record.user.profile.name, user_path(work_record.user.username)
       .text-left
-        = link_to record_path(work_record.user.username, work_record), class: "small text-muted", title: local_datetime(work_record.created_at) do
+        = link_to record_path(work_record.user.username, work_record.record), class: "small text-muted", title: local_datetime(work_record.created_at) do
           = local_time_ago_in_words(work_record.created_at)
         - if work_record.modified_at.present?
           small.ml-2.text-muted
             = icon "pencil-alt"
         span.small.ml-2.text-muted
-          = "#{work_record.impressions_count} views"
+          = "#{work_record.record.impressions_count} views"
 
 c-comment-guard inline-template="" :init-is-spoiler="#{is_spoiler == true}"
   div
@@ -69,6 +69,6 @@ c-comment-guard inline-template="" :init-is-spoiler="#{is_spoiler == true}"
     = link_to edit_work_record_path(work_record.work, work_record.record), class: "mr-2" do
       = icon "edit", class: "mr-1"
       = t "noun.edit"
-    = link_to record_path(work_record.work, work_record.record), method: :delete, data: { confirm: t("messages._common.are_you_sure") } do
+    = link_to record_path(work_record.user.username, work_record.record), method: :delete, data: { confirm: t("messages._common.are_you_sure") } do
       = icon "trash-alt", "far", class: "mr-1"
       = t "noun.delete"

@@ -2,7 +2,7 @@
 
 module Settings
   class EmailNotificationsController < ApplicationController
-    permits :event_followed_user, :event_liked_record, :event_friends_joined,
+    permits :event_followed_user, :event_liked_episode_record, :event_friends_joined,
       :event_favorite_works_added, :event_related_works_added
 
     before_action :authenticate_user!, only: %i(show update)

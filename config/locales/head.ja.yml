@@ -44,7 +44,7 @@ ja:
           season: "%{name}アニメをチェック！"
           show: アニメ「%{title}」の感想や情報をチェック！
         work_records:
-          index: "アニメ「%{work_title}」のレビューをチェック！"
+          index: "アニメ「%{work_title}」の感想をチェック！"
           show: "%{profile_name} (%{username})さんのアニメ「%{work_title}」への記録をチェック！"
       keywords:
         _common: annict, anime, review
@@ -235,11 +235,10 @@ ja:
         new: 商品登録
       work_records:
         edit: 記録の編集
+        index: アニメ「%{work_title}」の記録一覧
         show: "アニメ「%{work_title}」の記録 by %{profile_name} (%{username})"
       works:
         newest: 新規登録アニメ
         popular: 人気アニメ
         season: "%{name}のアニメ"
         show: "アニメ「%{title}」"
-      work_reviews:
-        index: アニメ「%{work_title}」のレビュー一覧

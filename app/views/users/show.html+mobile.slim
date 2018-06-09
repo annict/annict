@@ -48,10 +48,11 @@
   .container.text-center.pb-3
     .row.mb-3
       .p-users-show__count.col.px-0
-        .h3.mb-1
-          = @user.records_count
-        .small
-          | Records
+        = link_to records_path(@user.username), class: "p-users-show__count-link" do
+          .h3.mb-1
+            = @user.records_count
+          .small
+            | Records
       .p-users-show__count.col.px-0
         = link_to library_path(@user.username, :watching), class: "p-users-show__count-link" do
           .h3.mb-1

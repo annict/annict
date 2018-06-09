@@ -60,7 +60,7 @@
               - if current_user.role.admin?
                 td = episode.sc_count
               td = episode.sort_number
-              td = episode.records.count
+              td = episode.episode_records.count
               - if locale_ja?
                 td
                   - if episode.fetch_syobocal?

@@ -11,6 +11,7 @@ class RebuildRecords < ActiveRecord::Migration[5.1]
     rename_column :activities, :record_id, :episode_record_id
     rename_column :activities, :review_id, :work_record_id
     rename_column :comments, :record_id, :episode_record_id
+    rename_column :email_notifications, :event_liked_record, :event_liked_episode_record
     rename_column :episode_records, :multiple_record_id, :multiple_episode_record_id
     rename_column :episode_records, :new_record_id, :record_id
     rename_column :episodes, :record_comments_count, :episode_records_with_body_count

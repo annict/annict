@@ -26,9 +26,9 @@ module Api
         ga_client.page_category = page_category
         ga_client.events.create(:likes, :create, el: recipient_type, ev: recipient_id, ds: "internal_api")
 
-        if recipient_type == "Record"
+        if recipient_type == "EpisodeRecord"
           EmailNotificationService.send_email(
-            "liked_record",
+            "liked_episode_record",
             recipient.user,
             current_user.id,
             recipient_id

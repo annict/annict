@@ -9,7 +9,7 @@ cache_keys = [
 
 json = Rails.cache.fetch(cache_keys) do
   episode = activity.recipient
-  record = activity.trackable
+  episode_record = activity.trackable
 
   {
     work: {
@@ -25,13 +25,16 @@ json = Rails.cache.fetch(cache_keys) do
       number: episode.decorate.local_number,
       title: episode.decorate.local_title(fallback: false)
     },
+    episode_record: {
+      id: episode_record.id,
+      comment: episode_record.comment,
+      comments_count: episode_record.comments_count,
+      likes_count: episode_record.likes_count,
+      rating: episode_record.rating,
+      rating_state: episode_record.rating_state
+    },
     record: {
-      id: record.id,
-      comment: record.comment,
-      comments_count: record.comments_count,
-      likes_count: record.likes_count,
-      rating: record.rating,
-      rating_state: record.rating_state
+      id: episode_record.record_id
     }
   }
 end
@@ -45,7 +48,7 @@ cache_keys = [
   activity.action
 ]
 
-json[:record][:hide_comment] = Rails.cache.fetch(cache_keys) do
+json[:episode_record][:hide_comment] = Rails.cache.fetch(cache_keys) do
   episode_record = activity.trackable
   user.present? && user.hide_episode_record_body?(episode_record.episode)
 end

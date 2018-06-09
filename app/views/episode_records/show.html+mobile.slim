@@ -1,9 +1,9 @@
-- title = t "head.title.records.show", profile_name: @user.profile.name, username: @user.username, work_title: @work.decorate.local_title, episode_title_with_number: @episode.decorate.title_with_number
+- title = t "head.title.episode_records.show", profile_name: @user.profile.name, username: @user.username, work_title: @work.decorate.local_title, episode_title_with_number: @episode.decorate.title_with_number
 - description = meta_description(t("head.meta.description.records.show", profile_name: @user.profile.name, username: @user.username, work_title: @work.decorate.local_title, episode_title_with_number: @episode.decorate.title_with_number))
 - keywords = meta_keywords(@work.decorate.local_title)
 - image_url = ann_image_url(@work.work_image, :attachment, size: "640x")
 - set_meta_tags(title: title, description: description, keywords: keywords, og: { description: description }, twitter: { description: description, image: image_url }, reverse: true, prefix: false)
-- breadcrumb :record_detail, @episode_record
+- breadcrumb :episode_record_detail, @episode_record
 
 - unless current_user&.supporter?
   .mb-3.text-center
@@ -12,13 +12,13 @@
 .c-card.py-3.mb-3
   .p-records-show__work-info.px-3
     .row
-      .col.u-flex-grow-0.p-records-show__work-image.pr-0
+      .col-3.pr-0
         = link_to work_path(@work) do
           = image_tag ann_image_url(@work.work_image, :attachment, size: "280x373"), class: "img-fluid img-thumbnail rounded"
         - if @work.work_image.present?
           .u-very-small.mt-1
             = @work.work_image.decorate.asin_or_copyright_text
-      .col
+      .col-9
         h1.h2
           = link_to work_path(@work), class: "u-text-body" do
             = @work.decorate.local_title
@@ -31,7 +31,7 @@ h2.h4.text-center.mb-3.font-weight-bold
 
 .c-card.py-3.mb-3
   .p-records-show__record.px-3
-    = render "records/record", record: @episode_record, is_spoiler: @is_spoiler
+    = render "episode_records/episode_record", episode_record: @episode_record, is_spoiler: @is_spoiler
   hr
   .px-3
     - if user_signed_in?

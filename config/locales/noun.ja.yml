@@ -111,6 +111,7 @@ ja:
     record_of_episode: "「%{work_title}」%{episode_title_with_number}への記録"
     record_of_work: "「%{work_title}」の記録"
     records: 記録
+    records_by: "%{profile_name}の記録"
     records_count: 記録数
     related_items: 関連商品
     related_works: 関連作品
@@ -119,7 +120,6 @@ ja:
     resources: 種類
     review_list: レビュー一覧
     reviews: レビュー
-    reviews_by: "%{profile_name}が書いたレビュー"
     satisfaction: 満足度
     satisfaction_rate_shorten: 満足度
     search: 検索

@@ -18,8 +18,8 @@
       = link_to @post.user.profile.name, user_path(@post.user.username), class: "mr-2"
       = @post.user.decorate.role_badge
       .mt-1
-        = link_to forum_post_path(@post), class: "small text-muted", title: local_datetime(@post.created_at) do
-          = local_time_ago_in_words(@post.created_at)
+        = link_to forum_post_path(@post), class: "small text-muted", title: display_time(@post.created_at) do
+          = display_time(@post.created_at)
   c-body :markdown="true" inline-template=""
     .c-body__content
       = @post.body
@@ -38,8 +38,8 @@
               = link_to comment.user.profile.name, user_path(comment.user.username), class: "mr-2"
               = comment.user.decorate.role_badge
               .mt-1
-                span.small.text-muted title="#{local_datetime(comment.created_at)}"
-                  = local_time_ago_in_words(comment.created_at)
+                span.small.text-muted title="#{display_time(comment.created_at)}"
+                  = display_time(comment.created_at)
           c-body :markdown="true" inline-template=""
             .c-body__content
               = comment.body
