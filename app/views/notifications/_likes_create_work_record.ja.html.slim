@@ -1,14 +1,14 @@
 - action_user = notification.action_user
 - like = notification.trackable
-- review = like.recipient
+- work_record = like.recipient
 
 span.mr-1
   = action_user.decorate.name_link
 | が
 span.mx-1
-  = review.work.decorate.title_link
+  = work_record.work.decorate.title_link
 | への
-= link_to "レビュー", review_path(review.user.username, review)
+= link_to "記録", record_path(work_record.user.username, work_record.record)
 | に「いいね！」しました
 
 .small.text-muted
