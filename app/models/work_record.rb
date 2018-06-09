@@ -87,7 +87,7 @@ class WorkRecord < ApplicationRecord
   # Do not use helper methods via Draper when the method is used in ActiveJob
   # https://github.com/drapergem/draper/issues/655
   def share_url
-    "#{user.annict_url}/@#{user.username}/reviews/#{id}"
+    "#{user.annict_url}/@#{user.username}/records/#{record.id}"
   end
 
   def facebook_share_title
