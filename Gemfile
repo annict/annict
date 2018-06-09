@@ -102,6 +102,7 @@ group :development do
   gem "i18n-tasks"
   gem "letter_opener_web"
   gem "listen" # Rails 5から `rails s` するときに必要になった
+  gem "meta_request"
   gem "rubocop"
   gem "ruby_identicon"
   gem "scss_lint", require: false
