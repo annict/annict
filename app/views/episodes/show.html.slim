@@ -39,7 +39,7 @@
                       = active_link_to switch_episode_records_path(@episode, to: :friend_comments), class: "btn", class_active: "btn-primary", class_inactive: "btn-secondary", active: (user_signed_in? ? current_user.setting.display_option_record_list.friend_comments? : false ), data: { method: :post } do
                         = t "noun.friend_comments"
                         span.ml-1 = "(#{@friend_comment_episode_records.total_count})"
-                      = active_link_to switch_episode_records_path(@episode, to: :my_episode_records), class: "btn", class_active: "btn-primary", class_inactive: "btn-secondary", active: (user_signed_in? ? current_user.setting.display_option_record_list.my_records? : false ), data: { method: :post } do
+                      = active_link_to switch_episode_records_path(@episode, to: :my_episode_records), class: "btn", class_active: "btn-primary", class_inactive: "btn-secondary", active: (user_signed_in? ? current_user.setting.display_option_record_list.my_episode_records? : false ), data: { method: :post } do
                         = t "noun.my_records"
                         span.ml-1 = "(#{@my_episode_records.total_count})"
                 - if @selected_comment_episode_records.present?

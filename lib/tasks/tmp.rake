@@ -33,6 +33,8 @@ namespace :tmp do
     Like.where(recipient_type: "Review").update_all(recipient_type: "WorkRecord")
     Like.where(recipient_type: "MultipleRecord").update_all(recipient_type: "MultipleEpisodeRecord")
 
+    Setting.where(display_option_record_list: "my_records").update_all(display_option_record_list: "my_episode_records")
+
     ActiveRecord::Base.transaction do
       Impression.find_each do |i|
         case i.impressionable_type
@@ -43,6 +45,7 @@ namespace :tmp do
             controller_name: "records"
           )
         when "Record"
+          next if i.impressionable.episode_record.present? || i.impressionable.work_record.present?
           i.update(impressionable_id: EpisodeRecord.find(i.impressionable_id).record_id)
         end
       end

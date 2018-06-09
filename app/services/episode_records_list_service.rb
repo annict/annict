@@ -45,7 +45,7 @@ class EpisodeRecordsListService
     case @user.setting.display_option_record_list
     when "all_comments" then all_comment_episode_records
     when "friend_comments" then friend_comment_episode_records
-    when "my_records" then my_episode_records
+    when "my_episode_records" then my_episode_records
     end
   end
 
