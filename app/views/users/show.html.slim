@@ -53,10 +53,11 @@
           c-share-button-facebook url="#{local_url}#{user_path(@user.username)}"
         .row.text-center.mb-4
           .p-users-show__count.col.px-0
-            .h3
-              = @user.records_count
-            .p-profile-header__count-text
-              | Records
+            = link_to records_path(@user.username), class: "p-users-show__count-link" do
+              .h3
+                = @user.records_count
+              .p-profile-header__count-text
+                | Records
           .p-users-show__count.col.px-0
             = link_to library_path(@user.username, :watching), class: "p-users-show__count-link" do
               .h3
