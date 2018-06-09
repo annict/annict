@@ -6,6 +6,6 @@ class MultipleRecordsService
   end
 
   def save!(episode_ids)
-    CreateMultipleRecordsJob.perform_later(@user.id, episode_ids)
+    CreateMultipleEpisodeRecordsJob.perform_later(@user.id, episode_ids)
   end
 end

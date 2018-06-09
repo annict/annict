@@ -16,6 +16,7 @@ class CreateMultipleEpisodeRecordsJob < ApplicationJob
         episode.episode_records.create! do |c|
           c.user = user
           c.work = episode.work
+          c.record = user.records.create!(work: episode.work)
           c.rating = 0
           c.multiple_episode_record = multiple_episode_record
         end

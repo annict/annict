@@ -37,7 +37,7 @@ class MultipleEpisodeRecord < ApplicationRecord
       a.trackable = self
       a.action = "create_multiple_episode_records"
       a.work = work
-      a.multiple_record = self
+      a.multiple_episode_record = self
     end
   end
 end
