@@ -63,7 +63,7 @@ script#t-create-episode-record-activity type="x-template"
               c-status-selector :work-id="activity.work.id" :init-status-kind="activity.viewer.status.kind" style="width: 150px;" size="small"
 
     .mt-2
-      c-like-button.u-fake-link.mr-3 resource-name="Record" :init-resource-id="activity.record.id" :init-likes-count="activity.record.likes_count" :init-is-liked="activity.meta.liked" :is-signed-in="#{user_signed_in?}"
+      c-like-button.u-fake-link.mr-3 resource-name="EpisodeRecord" :init-resource-id="activity.record.id" :init-likes-count="activity.record.likes_count" :init-is-liked="activity.meta.liked" :is-signed-in="#{user_signed_in?}"
       a :href='"/@" + activity.user.username + "/records/" + activity.record.id'
         = icon "comment", "far", class: "mr-1"
         | {{ activity.record.comments_count }}

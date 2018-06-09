@@ -8,15 +8,15 @@
         = render "notifications/follows_create", notification: notification
       - elsif notification.action == "likes.create"
         - recipient = notification.trackable.recipient
-        - if recipient.class.name == "Record"
-          = render "notifications/likes_create_record", notification: notification
-        - elsif recipient.class.name == "MultipleRecord"
-          = render "notifications/likes_create_multiple_records", notification: notification
+        - if recipient.class.name == "EpisodeRecord"
+          = render "notifications/likes_create_episode_record", notification: notification
+        - elsif recipient.class.name == "MultipleEpisodeRecord"
+          = render "notifications/likes_create_multiple_episode_records", notification: notification
         - elsif recipient.class.name == "Comment"
           = render "notifications/likes_create_comment", notification: notification
         - elsif recipient.class.name == "Status"
           = render "notifications/likes_create_status", notification: notification
         - elsif recipient.class.name == "WorkRecord"
-          = render "notifications/likes_create_review", notification: notification
+          = render "notifications/likes_create_work_record", notification: notification
       - elsif notification.action == "comments.create"
         = render "notifications/comments_create_record", notification: notification
