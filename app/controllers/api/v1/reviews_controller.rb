@@ -6,8 +6,8 @@ module Api
       before_action :prepare_params!, only: %i(index)
 
       def index
-        @reviews = WorkRecord.includes(:work).all
-        @reviews = Api::V1::ReviewIndexService.new(@reviews, @params).result
+        @work_records = WorkRecord.includes(:work).all
+        @work_records = Api::V1::WorkRecordIndexService.new(@work_records, @params).result
       end
     end
   end

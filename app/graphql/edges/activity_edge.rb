@@ -23,9 +23,9 @@ Edges::ActivityEdge = ObjectTypes::Activity.define_edge do
 
       case activity.action
       when "create_status" then "CREATE"
-      when "create_record" then "CREATE"
-      when "create_review" then "CREATE"
-      when "create_multiple_records" then "CREATE"
+      when "create_episode_record" then "CREATE"
+      when "create_work_record" then "CREATE"
+      when "create_multiple_episode_records" then "CREATE"
       end
     }
   end

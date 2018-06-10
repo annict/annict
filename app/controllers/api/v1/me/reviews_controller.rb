@@ -8,7 +8,7 @@ module Api
 
         def create
           work = Work.published.find(@params.work_id)
-          review = work.reviews.new do |r|
+          work_record = work.work_records.new do |r|
             r.user = current_user
             r.work = work
             r.title = @params.title
@@ -25,50 +25,50 @@ module Api
             share_review_to_facebook: @params.share_facebook == "true"
           }
 
-          service = NewWorkRecordService.new(current_user, review, current_user.setting)
+          service = NewWorkRecordService.new(current_user, work_record, current_user.setting)
           service.ga_client = ga_client
           service.app = doorkeeper_token.application
           service.via = "rest_api"
 
           begin
             service.save!
-            @review = service.review
+            @work_record = service.work_record
           rescue
-            render_validation_errors service.review
+            render_validation_errors service.work_record
           end
         end
 
         def update
-          @review = current_user.reviews.find(@params.id)
-          @review.title = @params.title
-          @review.body = @params.body
-          @review.rating_animation_state = @params.rating_animation_state
-          @review.rating_music_state = @params.rating_music_state
-          @review.rating_story_state = @params.rating_story_state
-          @review.rating_character_state = @params.rating_character_state
-          @review.rating_overall_state = @params.rating_overall_state
-          @review.modified_at = Time.now
-          @review.oauth_application = doorkeeper_token.application
-          @review.detect_locale!(:body)
+          @work_record = current_user.work_records.published.find(@params.id)
+          @work_record.title = @params.title
+          @work_record.body = @params.body
+          @work_record.rating_animation_state = @params.rating_animation_state
+          @work_record.rating_music_state = @params.rating_music_state
+          @work_record.rating_story_state = @params.rating_story_state
+          @work_record.rating_character_state = @params.rating_character_state
+          @work_record.rating_overall_state = @params.rating_overall_state
+          @work_record.modified_at = Time.now
+          @work_record.oauth_application = doorkeeper_token.application
+          @work_record.detect_locale!(:body)
           current_user.setting.attributes = {
             share_review_to_twitter: @params.share_twitter == "true",
             share_review_to_facebook: @params.share_facebook == "true"
           }
 
-          if @review.valid?
+          if @work_record.valid?
             ActiveRecord::Base.transaction do
-              @review.save(validate: false)
-              @review.share_to_sns
+              @work_record.save(validate: false)
+              @work_record.share_to_sns
               current_user.setting.save!
             end
           else
-            render_validation_errors(@review)
+            render_validation_errors(@work_record)
           end
         end
 
         def destroy
-          @review = current_user.reviews.find(@params.id)
-          @review.destroy
+          @work_record = current_user.work_records.published.find(@params.id)
+          @work_record.record.destroy
           head 204
         end
 

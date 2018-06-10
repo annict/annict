@@ -73,7 +73,7 @@ class RecordsController < ApplicationController
   end
 
   def load_record
-    @record = @user.records.find(params[:id])
+    @record = @user.records.published.find(params[:id])
   end
 
   def redirect_to_user_record(record, provider:)

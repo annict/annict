@@ -50,5 +50,18 @@ class Activity < ApplicationRecord
   belongs_to :user
   belongs_to :work, optional: true
 
-  scope :records_and_reviews, -> { with_action(:create_record, :create_review, :create_multiple_records) }
+  scope :records_and_reviews, -> { with_action(:create_episode_record, :create_work_record, :create_multiple_episode_records) }
+
+  def deprecated_action
+    case action
+    when "create_episode_record"
+      "create_record"
+    when "create_work_record"
+      "create_review"
+    when "create_multiple_episode_records"
+      "create_multiple_records"
+    else
+      action
+    end
+  end
 end

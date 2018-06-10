@@ -17,6 +17,7 @@ module Api
       before_action only: %i(create update destroy) do
         doorkeeper_authorize! :write
       end
+      skip_before_action :verify_authenticity_token
 
       def not_found
         error = {
