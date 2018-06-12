@@ -22,13 +22,13 @@ AnnictSchema = GraphQL::Schema.define do
     case obj
     when Activity
       UnionTypes::Activity
-    when Record
+    when EpisodeRecord
       ObjectTypes::Record
     when Episode
       ObjectTypes::Episode
-    when MultipleRecord
+    when MultipleEpisodeRecord
       ObjectTypes::MultipleRecord
-    when Review
+    when WorkRecord
       ObjectTypes::Review
     when Status
       ObjectTypes::Status

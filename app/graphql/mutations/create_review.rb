@@ -19,7 +19,7 @@ Mutations::CreateReview = GraphQL::Relay::Mutation.define do
 
     work = Work.published.find_by_graphql_id(inputs[:workId])
 
-    review = work.reviews.new do |r|
+    review = work.work_records.new do |r|
       r.user = ctx[:viewer]
       r.work = work
       r.title = inputs[:title]
@@ -42,7 +42,7 @@ Mutations::CreateReview = GraphQL::Relay::Mutation.define do
     service.save!
 
     {
-      review: service.review
+      review: service.work_record
     }
   }
 end

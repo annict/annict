@@ -124,7 +124,7 @@ ObjectTypes::Work = GraphQL::ObjectType.define do
   end
   field :reviewsCount, !types.Int do
     resolve ->(obj, _args, _ctx) {
-      obj.reviews_count
+      obj.work_records_count
     }
   end
 

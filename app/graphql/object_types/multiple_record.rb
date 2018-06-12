@@ -27,7 +27,7 @@ ObjectTypes::MultipleRecord = GraphQL::ObjectType.define do
 
   connection :records, ObjectTypes::Record.connection_type do
     resolve ->(obj, _args, _ctx) {
-      ForeignKeyLoader.for(Record, :multiple_record_id).load([obj.id])
+      ForeignKeyLoader.for(EpisodeRecord, :multiple_episode_record_id).load([obj.id])
     }
   end
 

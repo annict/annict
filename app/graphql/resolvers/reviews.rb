@@ -5,7 +5,7 @@ module Resolvers
     def call(obj, args, _ctx)
       @obj = obj
       @args = args
-      @collection = obj.reviews.published.all
+      @collection = obj.work_records.published.all
       from_arguments
     end
 
