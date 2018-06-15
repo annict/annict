@@ -26,6 +26,7 @@
 #  review_id            :integer
 #  aasm_state           :string           default("published"), not null
 #  locale               :string           default("other"), not null
+#  new_record_id        :integer
 #
 # Indexes
 #
@@ -35,6 +36,7 @@
 #  checkins_user_id_idx                   (user_id)
 #  index_records_on_locale                (locale)
 #  index_records_on_multiple_record_id    (multiple_record_id)
+#  index_records_on_new_record_id         (new_record_id) UNIQUE
 #  index_records_on_oauth_application_id  (oauth_application_id)
 #  index_records_on_rating_state          (rating_state)
 #  index_records_on_review_id             (review_id)

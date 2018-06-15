@@ -21,10 +21,12 @@
 #  updated_at             :datetime         not null
 #  oauth_application_id   :integer
 #  locale                 :string           default("other"), not null
+#  new_record_id          :integer
 #
 # Indexes
 #
 #  index_reviews_on_locale                (locale)
+#  index_reviews_on_new_record_id         (new_record_id) UNIQUE
 #  index_reviews_on_oauth_application_id  (oauth_application_id)
 #  index_reviews_on_user_id               (user_id)
 #  index_reviews_on_work_id               (work_id)
