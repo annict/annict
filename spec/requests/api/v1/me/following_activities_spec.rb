@@ -14,7 +14,7 @@ describe "Api::V1::Me::FollowingActivities" do
     let(:user2) { create(:user, :with_profile) }
     let(:access_token) { create(:oauth_access_token, owner: user1) }
     let!(:follow) { create(:follow, user: user1, following: user2) }
-    let!(:record) { create(:record, user: user2) }
+    let!(:record) { create(:episode_record, user: user2) }
     let!(:activity) do
       create(:activity, user: user2, recipient: record.episode, trackable: record)
     end
@@ -51,7 +51,7 @@ describe "Api::V1::Me::FollowingActivities" do
             "stop_watching_count" => 0,
             "created_at" => "2017-01-28T23:39:04.000Z"
           },
-          "action" => activity.action.to_s,
+          "action" => "create_record",
           "created_at" => "2017-01-28T23:39:04.000Z",
           "work" => {
             "id" => record.work.id,

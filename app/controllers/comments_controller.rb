@@ -29,7 +29,7 @@ class CommentsController < ApplicationController
 
   def create(comment)
     @user = @record.user
-    @comment = @record.comments.new(comment)
+    @comment = @record.episode_record.comments.new(comment)
     @comment.user = current_user
     @comment.work = @record.work
     @comment.detect_locale!(:body)
@@ -40,7 +40,7 @@ class CommentsController < ApplicationController
     else
       @work = @record.work
       @episode = @record.episode
-      @comments = @record.comments.order(created_at: :desc)
+      @comments = @record.episode_record.comments.order(created_at: :desc)
       render "/records/show"
     end
   end
@@ -56,7 +56,7 @@ class CommentsController < ApplicationController
     @comment.detect_locale!(:body)
 
     if @comment.save
-      path = record_path(@comment.record.user.username, @comment.record)
+      path = record_path(@comment.episode_record.user.username, @comment.episode_record.record)
       redirect_to path, notice: t("messages.comments.updated")
     else
       render :edit
@@ -68,7 +68,7 @@ class CommentsController < ApplicationController
 
     @comment.destroy
 
-    path = record_path(@comment.record.user.username, @comment.record)
+    path = record_path(@comment.episode_record.user.username, @comment.episode_record.record)
     redirect_to path, notice: t("messages.comments.deleted")
   end
 
@@ -79,7 +79,7 @@ class CommentsController < ApplicationController
   end
 
   def load_record
-    @record = @user.records.find(params[:record_id])
+    @record = @user.records.published.find(params[:record_id])
   end
 
   def load_comment

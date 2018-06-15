@@ -2,7 +2,7 @@
 
 describe "Comment" do
   describe "create a comment" do
-    let(:record) { create(:record) }
+    let(:episode_record) { create(:episode_record) }
     let(:user) { create(:registered_user) }
 
     before do
@@ -10,7 +10,7 @@ describe "Comment" do
     end
 
     it "creates a comment" do
-      visit "/@#{record.user.username}/records/#{record.id}"
+      visit "/@#{episode_record.user.username}/records/#{episode_record.record.id}"
 
       within "#new_comment" do
         fill_in "comment[body]", with: "Hahaha"

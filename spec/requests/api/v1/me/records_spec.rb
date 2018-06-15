@@ -23,13 +23,13 @@ describe "Api::V1::Me::Records" do
     end
 
     it "creates a record" do
-      expect(access_token.owner.records.count).to eq(1)
-      expect(access_token.owner.records.first.comment).to eq("Hello World")
+      expect(access_token.owner.episode_records.count).to eq(1)
+      expect(access_token.owner.episode_records.first.comment).to eq("Hello World")
     end
   end
 
   describe "PATCH /v1/me/records/:id" do
-    let(:record) { create(:record, work: work, episode: episode, user: user) }
+    let(:record) { create(:episode_record, work: work, episode: episode, user: user) }
     let(:uniq_comment) { SecureRandom.uuid }
 
     before do
@@ -45,13 +45,13 @@ describe "Api::V1::Me::Records" do
     end
 
     it "updates a record" do
-      expect(access_token.owner.records.count).to eq(1)
-      expect(access_token.owner.records.first.comment).to eq(uniq_comment)
+      expect(access_token.owner.episode_records.count).to eq(1)
+      expect(access_token.owner.episode_records.first.comment).to eq(uniq_comment)
     end
   end
 
   describe "DELETE /v1/me/records/:id" do
-    let!(:record) { create(:record, work: work, episode: episode, user: user) }
+    let!(:record) { create(:episode_record, work: work, episode: episode, user: user) }
 
     it "responses 204" do
       delete api("/v1/me/records/#{record.id}", access_token: access_token.token)
@@ -59,11 +59,11 @@ describe "Api::V1::Me::Records" do
     end
 
     it "deletes a record" do
-      expect(access_token.owner.records.count).to eq(1)
+      expect(access_token.owner.episode_records.count).to eq(1)
 
       delete api("/v1/me/records/#{record.id}", access_token: access_token.token)
 
-      expect(access_token.owner.records.count).to eq(0)
+      expect(access_token.owner.episode_records.count).to eq(0)
     end
   end
 end
