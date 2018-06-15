@@ -34,7 +34,7 @@
     "webpack-merge": "^4.1.2"
   },
   "engines": {
-    "node": "~> 8.11.2"
+    "node": "~> 8.11.3"
   },
   "devDependencies": {
     "eslint": "^4.19.1",
