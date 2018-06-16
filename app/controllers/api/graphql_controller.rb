@@ -7,6 +7,7 @@ module Api
     include RavenContext
 
     before_action :doorkeeper_authorize!
+    skip_before_action :verify_authenticity_token
 
     rescue_from ActionController::InvalidAuthenticityToken, with: :bad_credentials
 

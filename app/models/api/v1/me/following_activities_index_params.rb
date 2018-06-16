@@ -19,7 +19,7 @@ module Api
         validates :filter_actions,
           allow_blank: true,
           inclusion: {
-            in: %w(create_record create_multiple_records create_status)
+            in: %w(create_record create_multiple_records create_review create_status)
           }
         validates :filter_muted,
           allow_blank: true,
@@ -40,6 +40,18 @@ module Api
         validates :sort_id,
           allow_blank: true,
           sort_params: true
+
+        def latest_filter_actions
+          filter_actions.split(",").map do |action|
+            case action
+            when "create_record" then "create_episode_record"
+            when "create_review" then "create_work_record"
+            when "create_multiple_records" then "create_multiple_episode_records"
+            else
+              action
+            end
+          end
+        end
       end
     end
   end

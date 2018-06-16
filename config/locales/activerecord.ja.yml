@@ -40,9 +40,6 @@ ja:
         weight: 体重
       character_image:
         attachment: キャラクター画像
-      record:
-        comment: 感想
-        rating: レーティング
       comment:
         body: コメント
       doorkeeper/application:
@@ -52,7 +49,7 @@ ja:
       email_notification:
         event_followed_user: フォローされたときメールを受け取る
         event_friends_joined: Twitter/Facebookの友達がAnnictに参加したときメールを受け取る
-        event_liked_record: 自分の記録が「いいね！」されたときメールを受け取る
+        event_liked_episode_record: 自分の記録が「いいね！」されたときメールを受け取る
         event_favorite_works_added: お気に入りの人物などが関わる作品が追加されたとき受け取る
         event_related_works_added: 自分が見た作品に関連する作品が追加されたとき受け取る
       episode:
@@ -64,6 +61,9 @@ ja:
         sc_count: しょぼかる番号
         sort_number: ソート番号
         title: タイトル
+      episode_record:
+        comment: 感想
+        rating: レーティング
       forum_comment:
         body: 本文
       forum_post:
@@ -129,14 +129,6 @@ ja:
         title: タイトル
         thumbnail: サムネイル
         url: URL
-      review:
-        title: タイトル
-        body: 本文
-        rating_animation_state: 映像
-        rating_music_state: 音楽
-        rating_story_state: ストーリー
-        rating_character_state: キャラクター
-        rating_overall_state: 全体
       series:
         name_en: 名前 (英語)
         name_ro: 名前 (ローマ字)
@@ -220,6 +212,14 @@ ja:
         role: 担当
         role_other: 担当 (その他)
         sort_number: ソート番号
+      work_record:
+        title: タイトル
+        body: 本文
+        rating_animation_state: 映像
+        rating_music_state: 音楽
+        rating_story_state: ストーリー
+        rating_character_state: キャラクター
+        rating_overall_state: 全体
     errors:
       messages:
         accepted: に同意してください。

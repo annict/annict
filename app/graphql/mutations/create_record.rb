@@ -16,7 +16,7 @@ Mutations::CreateRecord = GraphQL::Relay::Mutation.define do
 
     episode = Episode.published.find_by_graphql_id(inputs[:episodeId])
 
-    record = episode.records.new do |r|
+    record = episode.episode_records.new do |r|
       r.rating_state = inputs[:ratingState]&.downcase
       r.comment = inputs[:comment]
       r.shared_twitter = inputs[:shareTwitter] == true
@@ -24,7 +24,7 @@ Mutations::CreateRecord = GraphQL::Relay::Mutation.define do
       r.oauth_application = ctx[:doorkeeper_token].application
     end
 
-    service = NewRecordService.new(ctx[:viewer], record)
+    service = NewEpisodeRecordService.new(ctx[:viewer], record)
     service.ga_client = ctx[:ga_client]
     service.app = ctx[:doorkeeper_token].application
     service.via = "graphql_api"
@@ -32,7 +32,7 @@ Mutations::CreateRecord = GraphQL::Relay::Mutation.define do
     service.save!
 
     {
-      record: service.record
+      record: service.episode_record
     }
   }
 end

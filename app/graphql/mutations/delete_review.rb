@@ -10,11 +10,11 @@ Mutations::DeleteReview = GraphQL::Relay::Mutation.define do
   resolve RescueFrom.new ->(_obj, inputs, ctx) {
     raise Annict::Errors::InvalidAPITokenScopeError unless ctx[:doorkeeper_token].writable?
 
-    review = ctx[:viewer].reviews.published.find_by_graphql_id(inputs[:reviewId])
-    review.destroy
+    work_record = ctx[:viewer].work_records.published.find_by_graphql_id(inputs[:reviewId])
+    work_record.record.destroy
 
     {
-      work: review.work
+      work: work_record.work
     }
   }
 end

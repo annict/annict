@@ -3,7 +3,7 @@
 #
 # Table name: program_details
 #
-#  id             :integer          not null, primary key
+#  id             :bigint(8)        not null, primary key
 #  channel_id     :integer          not null
 #  work_id        :integer          not null
 #  url            :string

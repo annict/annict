@@ -27,6 +27,8 @@ class OrganizationsController < ApplicationController
     @staffs_with_year = @organization.
       staffs.
       published.
+      joins(:work).
+      where(works: { aasm_state: :published }).
       includes(work: :work_image).
       group_by { |s| s.work.season_year.presence || 0 }
     @staff_years = @staffs_with_year.keys.sort.reverse

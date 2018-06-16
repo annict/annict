@@ -65,7 +65,7 @@ class Setting < ApplicationRecord
     in: %i(
       all_comments
       friend_comments
-      my_records
+      my_episode_records
     ),
     default: :all_comments
 end

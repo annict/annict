@@ -3,7 +3,7 @@
 #
 # Table name: gumroad_subscribers
 #
-#  id                                     :integer          not null, primary key
+#  id                                     :bigint(8)        not null, primary key
 #  gumroad_id                             :string           not null
 #  gumroad_product_id                     :string           not null
 #  gumroad_product_name                   :string           not null

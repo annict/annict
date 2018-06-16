@@ -12,7 +12,7 @@ describe "Api::V1::Activities" do
   describe "GET /v1/activities" do
     let(:user) { create(:user, :with_profile) }
     let(:access_token) { create(:oauth_access_token, owner: user) }
-    let!(:record) { create(:record, user: user) }
+    let!(:record) { create(:episode_record, user: user) }
     let!(:activity) do
       create(:activity, user: user, recipient: record.episode, trackable: record)
     end
@@ -49,7 +49,7 @@ describe "Api::V1::Activities" do
             "stop_watching_count" => 0,
             "created_at" => "2017-01-28T23:39:04.000Z"
           },
-          "action" => activity.action.to_s,
+          "action" => "create_record",
           "created_at" => "2017-01-28T23:39:04.000Z",
           "work" => {
             "id" => record.work.id,

@@ -1,6 +1,6 @@
 ja:
   enumerize:
-    record:
+    episode_record:
       rating_state:
         average: 普通
         bad: 良くない

@@ -23,9 +23,9 @@ Edges::ActivityEdge = ObjectTypes::Activity.define_edge do
 
       case activity.action
       when "create_status" then "CREATE"
-      when "create_record" then "CREATE"
-      when "create_review" then "CREATE"
-      when "create_multiple_records" then "CREATE"
+      when "create_episode_record" then "CREATE"
+      when "create_work_record" then "CREATE"
+      when "create_multiple_episode_records" then "CREATE"
       end
     }
   end
@@ -37,12 +37,12 @@ Edges::ActivityEdge = ObjectTypes::Activity.define_edge do
       case activity.trackable_type
       when "Status"
         RecordLoader.for(Status).load(activity.trackable_id)
-      when "Record"
-        RecordLoader.for(Record).load(activity.trackable_id)
-      when "Review"
-        RecordLoader.for(Review).load(activity.trackable_id)
-      when "MultipleRecord"
-        RecordLoader.for(MultipleRecord).load(activity.trackable_id)
+      when "EpisodeRecord"
+        RecordLoader.for(EpisodeRecord).load(activity.trackable_id)
+      when "WorkRecord"
+        RecordLoader.for(WorkRecord).load(activity.trackable_id)
+      when "MultipleEpisodeRecord"
+        RecordLoader.for(MultipleEpisodeRecord).load(activity.trackable_id)
       end
     }
   end

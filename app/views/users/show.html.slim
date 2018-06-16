@@ -53,10 +53,11 @@
           c-share-button-facebook url="#{local_url}#{user_path(@user.username)}"
         .row.text-center.mb-4
           .p-users-show__count.col.px-0
-            .h3
-              = @user.records_count
-            .p-profile-header__count-text
-              | Records
+            = link_to records_path(@user.username), class: "p-users-show__count-link" do
+              .h3
+                = @user.records_count
+              .p-profile-header__count-text
+                | Records
           .p-users-show__count.col.px-0
             = link_to library_path(@user.username, :watching), class: "p-users-show__count-link" do
               .h3
@@ -77,12 +78,6 @@
                 | Followers
 
         .row.text-center.mb-4
-          .p-users-show__count.col.px-0
-            = link_to reviews_path(@user.username), class: "p-users-show__count-link" do
-              .h3
-                = @reviews.length
-              .p-profile-header__count-text
-                | Reviews
           .p-users-show__count.col.px-0
             = link_to favorite_characters_path(@user.username), class: "p-users-show__count-link" do
               .h3
@@ -113,31 +108,6 @@
             - if @user.profile.url.present?
               .url
                 = link_to @user.profile.decorate.shorten_url, @user.profile.url, target: "_blank"
-
-        - if @reviews.exists?
-          .mb-4
-            h2.p-users-show__sub-title
-              .row.align-items-center
-                .col
-                  = icon "edit", class: "mr-2"
-                  = t "noun.reviews"
-                - if @reviews.length > 5
-                  .col.col-auto
-                    = link_to reviews_path(@user.username), class: "small" do
-                      = icon "angle-right", class: "mr-1"
-                      = t "verb.view_all"
-
-            .container
-              - @reviews.first(5).each do |review|
-                .row.pb-3
-                  .col-auto.px-0
-                    = link_to work_path(review.work) do
-                      = ann_image_tag review.work.work_image, :attachment, size: "70x93", class: "img-fluid img-thumbnail rounded"
-                  .col
-                    .small.text-muted.mb-1
-                      = link_to review.work.decorate.local_title, work_path(review.work), class: "u-text-body"
-                    - title = t("messages.reviews.view_review_with_words_count", count: review.body.length)
-                    = link_to title, review_path(@user.username, review)
 
         - if @favorite_characters.exists?
           .mb-4
@@ -230,15 +200,15 @@
           c-user-heatmap :username='"#{@user.username}"'
 
         - unless current_user&.supporter?
-          .mb-4
+          .mb-3.text-center
             = render "application/components/adsense", slots: [ENV["GOOGLE_AD_336x280_1"]], size: "336x280"
 
 = render "application/components/footer"
 
 - content_for :js_templates
   = render "application/js_templates/activities"
-  = render "application/js_templates/create_multiple_records_activity"
-  = render "application/js_templates/create_record_activity"
+  = render "application/js_templates/create_multiple_episode_records_activity"
+  = render "application/js_templates/create_episode_record_activity"
   = render "application/js_templates/create_status_activity"
   = render "application/js_templates/follow_button"
   = render "application/js_templates/like_button"

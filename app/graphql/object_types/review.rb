@@ -27,13 +27,13 @@ ObjectTypes::Review = GraphQL::ObjectType.define do
 
   field :title, types.String do
     resolve ->(obj, _args, _ctx) {
-      obj.title.presence || I18n.t("noun.review_of_the_work", work_title: obj.work.decorate.local_title)
+      obj.title.presence || I18n.t("noun.record_of_work", work_title: obj.work.decorate.local_title)
     }
   end
 
   field :body, !types.String
 
-  Review::STATES.each do |state|
+  WorkRecord::STATES.each do |state|
     field state.to_s.camelcase(:lower).to_sym, EnumTypes::RatingState do
       resolve ->(obj, _args, _ctx) {
         obj.send(state)&.upcase

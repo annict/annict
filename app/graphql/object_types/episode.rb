@@ -43,13 +43,13 @@ ObjectTypes::Episode = GraphQL::ObjectType.define do
 
   field :recordsCount, !types.Int do
     resolve ->(obj, _args, _ctx) {
-      obj.records_count
+      obj.episode_records_count
     }
   end
 
   field :recordCommentsCount, !types.Int do
     resolve ->(obj, _args, _ctx) {
-      obj.record_comments_count
+      obj.episode_records_with_body_count
     }
   end
 
@@ -79,7 +79,7 @@ ObjectTypes::Episode = GraphQL::ObjectType.define do
 
   field :viewerRecordsCount, !types.Int do
     resolve ->(obj, _args, ctx) {
-      ctx[:viewer].records_count_in(obj)
+      ctx[:viewer].episode_records_count_in(obj)
     }
   end
 end

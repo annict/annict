@@ -3,25 +3,25 @@
 #
 # Table name: episodes
 #
-#  id                    :integer          not null, primary key
-#  work_id               :integer          not null
-#  number                :string(510)
-#  sort_number           :integer          default(0), not null
-#  sc_count              :integer
-#  title                 :string(510)
-#  records_count         :integer          default(0), not null
-#  created_at            :datetime
-#  updated_at            :datetime
-#  prev_episode_id       :integer
-#  aasm_state            :string           default("published"), not null
-#  fetch_syobocal        :boolean          default(FALSE), not null
-#  raw_number            :string
-#  title_ro              :string           default(""), not null
-#  title_en              :string           default(""), not null
-#  record_comments_count :integer          default(0), not null
-#  score                 :float
-#  ratings_count         :integer          default(0), not null
-#  satisfaction_rate     :float
+#  id                              :integer          not null, primary key
+#  work_id                         :integer          not null
+#  number                          :string(510)
+#  sort_number                     :integer          default(0), not null
+#  sc_count                        :integer
+#  title                           :string(510)
+#  episode_records_count           :integer          default(0), not null
+#  created_at                      :datetime
+#  updated_at                      :datetime
+#  prev_episode_id                 :integer
+#  aasm_state                      :string           default("published"), not null
+#  fetch_syobocal                  :boolean          default(FALSE), not null
+#  raw_number                      :string
+#  title_ro                        :string           default(""), not null
+#  title_en                        :string           default(""), not null
+#  episode_records_with_body_count :integer          default(0), not null
+#  score                           :float
+#  ratings_count                   :integer          default(0), not null
+#  satisfaction_rate               :float
 #
 # Indexes
 #
@@ -61,10 +61,10 @@ class Episode < ApplicationRecord
     optional: true
   belongs_to :work
   has_many :activities, dependent: :destroy, as: :recipient
-  has_many :records, dependent: :destroy
   has_many :db_activities, as: :trackable, dependent: :destroy
   has_many :db_comments, as: :resource, dependent: :destroy
   has_many :draft_episodes, dependent: :destroy
+  has_many :episode_records, dependent: :destroy
   has_many :resource_items, dependent: :destroy, class_name: "EpisodeItem"
   has_many :items, through: :resource_items
   has_many :programs, dependent: :destroy
@@ -114,7 +114,7 @@ class Episode < ApplicationRecord
       current_month.months_ago(1),
       current_month
     ].map do |date|
-      count += records.by_month(date).count
+      count += episode_records.by_month(date).count
       {
         date: date.to_time.to_datetime.strftime("%Y/%m/%d"),
         value: count
@@ -123,9 +123,9 @@ class Episode < ApplicationRecord
   end
 
   def rating_state_chart_dataset
-    all_records_count = records.where.not(rating_state: nil).count
-    Record.rating_state.values.map do |state|
-      state_records_count = records.with_rating_state(state).count
+    all_records_count = episode_records.where.not(rating_state: nil).count
+    EpisodeRecord.rating_state.values.map do |state|
+      state_records_count = episode_records.with_rating_state(state).count
       ratio = state_records_count / all_records_count.to_f
       {
         name: state.text,

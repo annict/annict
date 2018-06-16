@@ -23,13 +23,13 @@ class EmailNotificationMailer < ActionMailer::Base
     mail(to: @followed_user.email, subject: subject, &:mjml)
   end
 
-  def liked_record(liked_user_id, user_id, record_id)
+  def liked_episode_record(liked_user_id, user_id, episode_record_id)
     @liked_user = User.find(liked_user_id)
     @unsubscription_key = @liked_user.email_notification.unsubscription_key
     @user = User.find(user_id)
-    @record = @liked_user.records.find(record_id)
-    @work = @record.work
-    @episode = @record.episode
+    @episode_record = @liked_user.episode_records.published.find(episode_record_id)
+    @work = @episode_record.work
+    @episode = @episode_record.episode
 
     I18n.locale = @liked_user.locale
 

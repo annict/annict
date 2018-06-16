@@ -6,8 +6,8 @@ module Api
       before_action :prepare_params!, only: %i(index)
 
       def index
-        @records = Record.published.includes(episode: :work, user: :profile).all
-        @records = Api::V1::RecordIndexService.new(@records, @params).result
+        @episode_records = EpisodeRecord.published.includes(episode: :work, user: :profile).all
+        @episode_records = Api::V1::EpisodeRecordIndexService.new(@episode_records, @params).result
       end
     end
   end

@@ -3,47 +3,49 @@
 #
 # Table name: works
 #
-#  id                    :integer          not null, primary key
-#  season_id             :integer
-#  sc_tid                :integer
-#  title                 :string(510)      not null
-#  media                 :integer          not null
-#  official_site_url     :string(510)      default(""), not null
-#  wikipedia_url         :string(510)      default(""), not null
-#  auto_episodes_count   :integer          default(0), not null
-#  watchers_count        :integer          default(0), not null
-#  released_at           :date
-#  created_at            :datetime
-#  updated_at            :datetime
-#  twitter_username      :string(510)
-#  twitter_hashtag       :string(510)
-#  released_at_about     :string
-#  aasm_state            :string           default("published"), not null
-#  number_format_id      :integer
-#  title_kana            :string           default(""), not null
-#  title_ro              :string           default(""), not null
-#  title_en              :string           default(""), not null
-#  official_site_url_en  :string           default(""), not null
-#  wikipedia_url_en      :string           default(""), not null
-#  synopsis              :text             default(""), not null
-#  synopsis_en           :text             default(""), not null
-#  synopsis_source       :string           default(""), not null
-#  synopsis_source_en    :string           default(""), not null
-#  mal_anime_id          :integer
-#  facebook_og_image_url :string           default(""), not null
-#  twitter_image_url     :string           default(""), not null
-#  recommended_image_url :string           default(""), not null
-#  season_year           :integer
-#  season_name           :integer
-#  key_pv_id             :integer
-#  manual_episodes_count :integer
-#  no_episodes           :boolean          default(FALSE), not null
-#  reviews_count         :integer          default(0), not null
-#  started_on            :date
-#  ended_on              :date
-#  score                 :float
-#  ratings_count         :integer          default(0), not null
-#  satisfaction_rate     :float
+#  id                           :integer          not null, primary key
+#  season_id                    :integer
+#  sc_tid                       :integer
+#  title                        :string(510)      not null
+#  media                        :integer          not null
+#  official_site_url            :string(510)      default(""), not null
+#  wikipedia_url                :string(510)      default(""), not null
+#  auto_episodes_count          :integer          default(0), not null
+#  watchers_count               :integer          default(0), not null
+#  released_at                  :date
+#  created_at                   :datetime
+#  updated_at                   :datetime
+#  twitter_username             :string(510)
+#  twitter_hashtag              :string(510)
+#  released_at_about            :string
+#  aasm_state                   :string           default("published"), not null
+#  number_format_id             :integer
+#  title_kana                   :string           default(""), not null
+#  title_ro                     :string           default(""), not null
+#  title_en                     :string           default(""), not null
+#  official_site_url_en         :string           default(""), not null
+#  wikipedia_url_en             :string           default(""), not null
+#  synopsis                     :text             default(""), not null
+#  synopsis_en                  :text             default(""), not null
+#  synopsis_source              :string           default(""), not null
+#  synopsis_source_en           :string           default(""), not null
+#  mal_anime_id                 :integer
+#  facebook_og_image_url        :string           default(""), not null
+#  twitter_image_url            :string           default(""), not null
+#  recommended_image_url        :string           default(""), not null
+#  season_year                  :integer
+#  season_name                  :integer
+#  key_pv_id                    :integer
+#  manual_episodes_count        :integer
+#  no_episodes                  :boolean          default(FALSE), not null
+#  work_records_count           :integer          default(0), not null
+#  started_on                   :date
+#  ended_on                     :date
+#  score                        :float
+#  ratings_count                :integer          default(0), not null
+#  satisfaction_rate            :float
+#  work_records_with_body_count :integer          default(0), not null
+#  records_count                :integer          default(0), not null
 #
 # Indexes
 #
@@ -104,9 +106,9 @@ class Work < ApplicationRecord
   has_many :cast_people, through: :casts, source: :person
   has_many :channel_works, dependent: :destroy
   has_many :characters, through: :casts
-  has_many :records, dependent: :destroy
   has_many :db_activities, as: :trackable, dependent: :destroy
   has_many :db_comments, as: :resource, dependent: :destroy
+  has_many :episode_records, dependent: :destroy
   has_many :episodes, dependent: :destroy
   has_many :resource_items, dependent: :destroy, class_name: "WorkItem"
   has_many :items, through: :resource_items
@@ -118,12 +120,13 @@ class Work < ApplicationRecord
     source_type: "Organization"
   has_many :programs, dependent: :destroy
   has_many :pvs, dependent: :destroy
-  has_many :reviews, dependent: :destroy
+  has_many :records, dependent: :destroy
   has_many :series_works, dependent: :destroy
   has_many :series_list, through: :series_works, source: :series
   has_many :statuses, dependent: :destroy
   has_many :staff_people, through: :staffs, source: :resource, source_type: "Person"
   has_many :program_details, dependent: :destroy
+  has_many :work_records, dependent: :destroy
   has_many :work_taggings, dependent: :destroy
   has_many :work_tags, through: :work_taggings
   has_one :work_image, dependent: :destroy
@@ -176,7 +179,7 @@ class Work < ApplicationRecord
     where(id: work_ids)
   }
 
-  scope :checkedin_by, -> (user) {
+  scope :tracked_by, -> (user) {
     joins(
       "INNER JOIN (
         SELECT DISTINCT work_id, MAX(id) AS record_id FROM records
@@ -347,11 +350,7 @@ class Work < ApplicationRecord
   end
 
   def chart_values
-    episodes.published.order(:sort_number).pluck(:records_count)
-  end
-
-  def records_count
-    chart_values.reduce(&:+).presence || 0
+    episodes.published.order(:sort_number).pluck(:episode_records_count)
   end
 
   def comments_count

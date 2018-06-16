@@ -16,7 +16,7 @@ export default {
     },
     inputName: {
       type: String,
-      default: 'record[rating_state]',
+      default: 'episode_record[rating_state]',
     },
   },
 

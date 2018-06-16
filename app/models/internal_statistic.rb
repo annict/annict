@@ -3,7 +3,7 @@
 #
 # Table name: internal_statistics
 #
-#  id         :integer          not null, primary key
+#  id         :bigint(8)        not null, primary key
 #  key        :string           not null
 #  value      :float            not null
 #  date       :date             not null

@@ -28,7 +28,7 @@ module Api
 
       def filter_actions
         return @collection if @params.filter_actions.blank?
-        @collection.where(action: @params.filter_actions)
+        @collection.where(action: @params.latest_filter_actions)
       end
     end
   end

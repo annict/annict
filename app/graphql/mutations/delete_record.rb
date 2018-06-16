@@ -10,11 +10,11 @@ Mutations::DeleteRecord = GraphQL::Relay::Mutation.define do
   resolve RescueFrom.new ->(_obj, inputs, ctx) {
     raise Annict::Errors::InvalidAPITokenScopeError unless ctx[:doorkeeper_token].writable?
 
-    record = ctx[:viewer].records.find_by_graphql_id(inputs[:recordId])
-    record.destroy
+    episode_record = ctx[:viewer].episode_records.published.find_by_graphql_id(inputs[:recordId])
+    episode_record.record.destroy
 
     {
-      episode: record.episode
+      episode: episode_record.episode
     }
   }
 end

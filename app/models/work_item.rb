@@ -3,7 +3,7 @@
 #
 # Table name: work_items
 #
-#  id         :integer          not null, primary key
+#  id         :bigint(8)        not null, primary key
 #  work_id    :integer          not null
 #  item_id    :integer          not null
 #  user_id    :integer          not null

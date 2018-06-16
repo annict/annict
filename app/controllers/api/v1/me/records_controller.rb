@@ -8,7 +8,7 @@ module Api
 
         def create
           episode = Episode.published.find(@params.episode_id)
-          record = episode.records.new do |r|
+          record = episode.episode_records.new do |r|
             r.rating = @params.rating
             r.rating_state = @params.rating_state
             r.comment = @params.comment
@@ -18,44 +18,44 @@ module Api
           end
           record.rating_state = record.rating_to_rating_state if record.rating.present?
 
-          service = NewRecordService.new(current_user, record)
+          service = NewEpisodeRecordService.new(current_user, record)
           service.ga_client = ga_client
           service.app = doorkeeper_token.application
           service.via = "rest_api"
 
           begin
             service.save!
-            @record = service.record
+            @episode_record = service.episode_record
           rescue
-            render_validation_errors service.record
+            render_validation_errors service.episode_record
           end
         end
 
         def update
-          @record = current_user.records.find(@params.id)
-          @record.rating = @params.rating
-          @record.rating_state = @params.rating_state
-          @record.comment = @params.comment
-          @record.shared_twitter = @params.share_twitter == "true"
-          @record.shared_facebook = @params.share_facebook == "true"
-          @record.modify_comment = true
-          @record.oauth_application = doorkeeper_token.application
-          @record.detect_locale!(:comment)
+          @episode_record = current_user.episode_records.published.find(@params.id)
+          @episode_record.rating = @params.rating
+          @episode_record.rating_state = @params.rating_state
+          @episode_record.comment = @params.comment
+          @episode_record.shared_twitter = @params.share_twitter == "true"
+          @episode_record.shared_facebook = @params.share_facebook == "true"
+          @episode_record.modify_comment = true
+          @episode_record.oauth_application = doorkeeper_token.application
+          @episode_record.detect_locale!(:comment)
 
-          if @record.valid?
+          if @episode_record.valid?
             ActiveRecord::Base.transaction do
-              @record.save(validate: false)
-              @record.update_share_record_status
-              @record.share_to_sns
+              @episode_record.save(validate: false)
+              @episode_record.update_share_record_status
+              @episode_record.share_to_sns
             end
           else
-            render_validation_errors(@record)
+            render_validation_errors(@episode_record)
           end
         end
 
         def destroy
-          @record = current_user.records.find(@params.id)
-          @record.destroy
+          @episode_record = current_user.episode_records.published.find(@params.id)
+          @episode_record.record.destroy
           head 204
         end
 

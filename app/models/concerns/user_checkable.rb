@@ -5,11 +5,11 @@ module UserCheckable
 
   included do
     def tracked?(episode)
-      records.exists?(episode_id: episode.id)
+      episode_records.exists?(episode_id: episode.id)
     end
 
-    def records_count_in(episode)
-      records.where(episode: episode).count
+    def episode_records_count_in(episode)
+      episode_records.where(episode: episode).count
     end
   end
 end

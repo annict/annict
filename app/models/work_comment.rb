@@ -3,7 +3,7 @@
 #
 # Table name: work_comments
 #
-#  id         :integer          not null, primary key
+#  id         :bigint(8)        not null, primary key
 #  user_id    :integer          not null
 #  work_id    :integer          not null
 #  body       :string           not null

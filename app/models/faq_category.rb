@@ -3,7 +3,7 @@
 #
 # Table name: faq_categories
 #
-#  id          :integer          not null, primary key
+#  id          :bigint(8)        not null, primary key
 #  name        :string           not null
 #  locale      :string           not null
 #  sort_number :integer          default(0), not null

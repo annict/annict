@@ -41,9 +41,6 @@ en:
         weight: Weight
       character_image:
         attachment: Image
-      record:
-        comment: Comment
-        rating: Rating
       comment:
         body: Comment
       doorkeeper/application:
@@ -53,7 +50,7 @@ en:
       email_notification:
         event_followed_user: Email when you are followed by someone
         event_friends_joined: Email when your Twitter/Facebook friends joined Annict
-        event_liked_record: Email when your record are liked by someone
+        event_liked_episode_record: Email when your record are liked by someone
         event_favorite_works_added: Email when anime which is your favorites has been added
         event_related_works_added: Email when anime which is related to anime you watched has been added
       episode:
@@ -65,6 +62,9 @@ en:
         sc_count: Syobocal number
         sort_number: Sort number
         title: Title
+      episode_record:
+        comment: Comment
+        rating: Rating
       forum_comment:
         body: Body
       forum_post:
@@ -130,14 +130,6 @@ en:
         title: Title
         thumbnail: Thumbnail
         url: URL
-      review:
-        title: Title
-        body: Body
-        rating_animation_state: Animation
-        rating_music_state: Music
-        rating_story_state: Story
-        rating_character_state: Character
-        rating_overall_state: Overall
       series:
         name_en: Name (en)
         name_ro: Name (ro)
@@ -221,6 +213,14 @@ en:
         role: Role
         role_other: Role (Other)
         sort_number: Sort Number
+      work_record:
+        title: Title
+        body: Body
+        rating_animation_state: Animation
+        rating_music_state: Music
+        rating_story_state: Story
+        rating_character_state: Character
+        rating_overall_state: Overall
     errors:
       messages:
         accepted: should be accepted.

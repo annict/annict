@@ -3,7 +3,7 @@
 #
 # Table name: reactions
 #
-#  id                 :integer          not null, primary key
+#  id                 :bigint(8)        not null, primary key
 #  user_id            :integer          not null
 #  target_user_id     :integer          not null
 #  kind               :string           not null

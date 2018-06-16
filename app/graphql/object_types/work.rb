@@ -22,6 +22,7 @@ ObjectTypes::Work = GraphQL::ObjectType.define do
 
   connection :reviews, ObjectTypes::Review.connection_type do
     argument :orderBy, InputObjectTypes::ReviewOrder
+    argument :hasBody, types.Boolean
 
     resolve Resolvers::Reviews.new
   end
@@ -123,7 +124,7 @@ ObjectTypes::Work = GraphQL::ObjectType.define do
   end
   field :reviewsCount, !types.Int do
     resolve ->(obj, _args, _ctx) {
-      obj.reviews_count
+      obj.work_records_count
     }
   end
 

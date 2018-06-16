@@ -7,6 +7,7 @@ module Userland
 
     before_action :authenticate_user!, only: %i(new create edit update destroy)
     before_action :load_project, only: %i(show edit update destroy)
+    before_action :load_i18n, only: %i(show)
 
     def new
       @project = UserlandProject.new
@@ -55,6 +56,15 @@ module Userland
 
     def load_project
       @project = UserlandProject.find(params[:id])
+    end
+
+    def load_i18n
+      keys = {
+        "verb.follow": nil,
+        "noun.following": nil
+      }
+
+      load_i18n_into_gon keys
     end
   end
 end

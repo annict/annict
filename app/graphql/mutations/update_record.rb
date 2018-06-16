@@ -14,7 +14,7 @@ Mutations::UpdateRecord = GraphQL::Relay::Mutation.define do
   resolve RescueFrom.new ->(_obj, inputs, ctx) {
     raise Annict::Errors::InvalidAPITokenScopeError unless ctx[:doorkeeper_token].writable?
 
-    record = ctx[:viewer].records.find_by_graphql_id(inputs[:recordId])
+    record = ctx[:viewer].episode_records.published.find_by_graphql_id(inputs[:recordId])
 
     record.rating_state = inputs[:ratingState]&.downcase
     record.modify_comment = record.comment != inputs[:comment]

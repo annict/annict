@@ -95,7 +95,7 @@ ObjectTypes::User = GraphQL::ObjectType.define do
 
   field :recordsCount, !types.Int do
     resolve ->(obj, _args, _ctx) {
-      obj.records_count
+      obj.episode_records_count
     }
   end
 

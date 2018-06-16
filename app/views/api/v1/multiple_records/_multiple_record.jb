@@ -1,8 +1,0 @@
-# frozen_string_literal: true
-
-multiple_record.records.map do |record|
-  json = {}
-  json[:record] = render("api/v1/records/record", record: record, params: params, field_prefix: "#{field_prefix}record.")
-  json[:episode] = render("api/v1/episodes/episode", episode: record.episode, params: params, field_prefix: "#{field_prefix}episode.")
-  json
-end

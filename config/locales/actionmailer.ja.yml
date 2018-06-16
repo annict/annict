@@ -18,8 +18,8 @@ ja:
       subject_facebook: "Facebookの友達がAnnictを使い始めました！"
       subject_twitter: "Twitterでフォローしている友達がAnnictを使い始めました！"
       view_profile: "プロフィールを見る"
-    liked_record:
-      liked_your_records: "%{name} (@%{username})が、あなたの記録に「いいね！」しました。"
+    liked_episode_record:
+      liked_your_episode_records: "%{name} (@%{username})が、あなたの記録に「いいね！」しました。"
       subject: "%{name} (@%{username})が %{title} への記録に「いいね！」しました"
       view_profile: プロフィールを見る
       view_record: 記録を見る
