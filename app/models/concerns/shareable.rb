@@ -7,7 +7,7 @@ module Shareable
     def share_url_with_query(provider)
       utm = {
         utm_source: provider,
-        utm_medium: "#{self.class.name.downcase}_share",
+        utm_medium: "#{self.class.name.underscore}_share",
         utm_campaign: user.username
       }
 
