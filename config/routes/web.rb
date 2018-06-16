@@ -80,7 +80,7 @@ resources :checkins, only: [] do
   get "redirect/:provider/:url_hash",
     on: :collection,
     as: :redirect,
-    to: "records#redirect",
+    to: "episode_records#redirect",
     provider: /fb|tw/,
     url_hash: /[0-9a-zA-Z_-]{10}/
 end
