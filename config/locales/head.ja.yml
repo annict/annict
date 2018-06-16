@@ -8,9 +8,11 @@ ja:
         characters:
           index: アニメ「%{title}」のキャラクターをチェック！
           show: Annictで%{name}をチェック！
+        episode_records:
+          show: "%{profile_name} (%{username})さんのアニメ「%{work_title}」%{episode_title_with_number}への記録をチェック！"
         episodes:
-          index: アニメ「%{title}」のエピソードをチェック！
-          show: アニメ「%{work_title}」%{episode_title_with_number}の感想をチェック!
+          index: "アニメ「%{title}」のエピソードをチェック！"
+          show: "アニメ「%{work_title}」%{episode_title_with_number}の感想をチェック!"
         favorite_characters:
           index: "%{profile_name} (%{username})のお気に入りのキャラをチェック！"
         favorite_organizations:

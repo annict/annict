@@ -8,6 +8,8 @@ en:
         characters:
           index: Looking for character information on %{title}? Find out more with Annict!
           show: Looking for character information on %{name}? Find out more with Annict!
+        episode_records:
+          show: Check out %{profile_name} (%{username})'s records!
         episodes:
           index: Looking for episode information on %{title}? Find out more with Annict!
           show: Looking for reviews on %{work_title} %{episode_title_with_number}? Find out more with Annict!
