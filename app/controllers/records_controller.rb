@@ -75,15 +75,4 @@ class RecordsController < ApplicationController
   def load_record
     @record = @user.records.published.find(params[:id])
   end
-
-  def redirect_to_user_record(record, provider:)
-    username = record.user.username
-    utm = {
-      utm_source: provider,
-      utm_medium: "record_share",
-      utm_campaign: username
-    }
-
-    redirect_to record_path(username, record, utm)
-  end
 end

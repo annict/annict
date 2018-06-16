@@ -156,7 +156,7 @@ get "terms", to: "pages#terms"
 
 # 新リダイレクト用URL
 get "r/:provider/:url_hash",
-  to: "records#redirect",
+  to: "episode_records#redirect",
   provider: /fb|tw/,
   url_hash: /[0-9a-zA-Z_-]{10}/
 

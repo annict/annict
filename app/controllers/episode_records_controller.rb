@@ -81,30 +81,19 @@ class EpisodeRecordsController < ApplicationController
   def redirect(provider, url_hash)
     url = case provider
     when "tw"
-      Record.published.find_by!(twitter_url_hash: url_hash).share_url_with_query(:twitter)
+      EpisodeRecord.published.find_by!(twitter_url_hash: url_hash).share_url_with_query(:twitter)
     when "fb"
-      Record.published.find_by!(facebook_url_hash: url_hash).share_url_with_query(:facebook)
+      EpisodeRecord.published.find_by!(facebook_url_hash: url_hash).share_url_with_query(:facebook)
     else
       root_path
     end
 
-    redirect_to url
+    redirect_to url, status: 301
   end
 
   private
 
   def load_episode_record
     @episode_record = current_user.episode_records.published.find_by(episode_id: params[:episode_id], record_id: params[:id])
-  end
-
-  def redirect_to_user_record(record, provider:)
-    username = record.user.username
-    utm = {
-      utm_source: provider,
-      utm_medium: "record_share",
-      utm_campaign: username
-    }
-
-    redirect_to record_path(username, record, utm)
   end
 end
