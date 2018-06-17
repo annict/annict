@@ -44,7 +44,7 @@ class WorksController < ApplicationController
   def popular(page: nil)
     @works = Work.
       published.
-      includes(:work_image).
+      preload(:work_image).
       order(watchers_count: :desc, id: :desc).
       page(page).
       per(display_works_count)
@@ -55,7 +55,7 @@ class WorksController < ApplicationController
   def newest(page: nil)
     @works = Work.
       published.
-      includes(:work_image).
+      preload(:work_image).
       order(id: :desc).
       page(page).
       per(display_works_count)
@@ -67,7 +67,7 @@ class WorksController < ApplicationController
     @works = Work.
       published.
       by_season(slug).
-      includes(:work_image).
+      preload(:work_image).
       order(watchers_count: :desc, id: :desc).
       page(page).
       per(display_works_count)
