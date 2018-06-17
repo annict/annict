@@ -26,7 +26,7 @@
 #  review_id                  :integer
 #  aasm_state                 :string           default("published"), not null
 #  locale                     :string           default("other"), not null
-#  record_id                  :integer
+#  record_id                  :integer          not null
 #
 # Indexes
 #

@@ -7,7 +7,7 @@
 #  user_id                    :integer          not null
 #  unsubscription_key         :string           not null
 #  event_followed_user        :boolean          default(TRUE), not null
-#  event_liked_record         :boolean          default(TRUE), not null
+#  event_liked_episode_record :boolean          default(TRUE), not null
 #  event_friends_joined       :boolean          default(TRUE), not null
 #  event_next_season_came     :boolean          default(TRUE), not null
 #  created_at                 :datetime         not null

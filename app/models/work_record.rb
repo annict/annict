@@ -21,7 +21,7 @@
 #  updated_at             :datetime         not null
 #  oauth_application_id   :integer
 #  locale                 :string           default("other"), not null
-#  record_id              :integer
+#  record_id              :integer          not null
 #
 # Indexes
 #
