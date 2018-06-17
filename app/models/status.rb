@@ -49,8 +49,8 @@ class Status < ApplicationRecord
   end
 
   def share_to_sns
-    ShareStatusToTwitterJob.perform_later(user.id, id) if user.setting.share_status_to_twitter?
-    ShareStatusToFacebookJob.perform_later(user.id, id) if user.setting.share_status_to_facebook?
+    ShareStatusToTwitterJob.perform_later(user.id, id) if user.setting.share_status_to_twitter? && user.authorized_to?(:twitter, shareable: true)
+    ShareStatusToFacebookJob.perform_later(user.id, id) if user.setting.share_status_to_facebook? && user.authorized_to?(:facebook, shareable: true)
   end
 
   # Do not use helper methods via Draper when the method is used in ActiveJob
