@@ -956,9 +956,9 @@ bootstrap@^4.1.1:
   version "4.1.1"
   resolved "https://registry.yarnpkg.com/bootstrap/-/bootstrap-4.1.1.tgz#3aec85000fa619085da8d2e4983dfd67cf2114cb"
 
-bourbon@^5.0.0:
-  version "5.0.0"
-  resolved "https://registry.yarnpkg.com/bourbon/-/bourbon-5.0.0.tgz#030ba01893889cd77d964101e735d446fd50426a"
+bourbon@^5.0.1:
+  version "5.0.1"
+  resolved "https://registry.yarnpkg.com/bourbon/-/bourbon-5.0.1.tgz#70ac5c529a7d9e8f1cda088ca2fee2f0a20ea4f6"
 
 brace-expansion@^1.1.7:
   version "1.1.11"
