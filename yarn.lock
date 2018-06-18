@@ -4652,9 +4652,9 @@ mkdirp@0.5.x, "mkdirp@>=0.5 0", mkdirp@^0.5.0, mkdirp@^0.5.1, mkdirp@~0.5.0, mkd
   dependencies:
     minimist "0.0.8"
 
-moment-timezone@0.5.17:
-  version "0.5.17"
-  resolved "https://registry.yarnpkg.com/moment-timezone/-/moment-timezone-0.5.17.tgz#3c8fef32051d84c3af174d91dc52977dcb0ad7e5"
+moment-timezone@0.5.20:
+  version "0.5.20"
+  resolved "https://registry.yarnpkg.com/moment-timezone/-/moment-timezone-0.5.20.tgz#fe66da425dd9f9bbf416f131bf17659680aabb99"
   dependencies:
     moment ">= 2.9.0"
 
