@@ -1,8 +1,8 @@
 - action_user = notification.action_user
 - comment = notification.trackable
-- record = comment.record
-- work = record.work
-- episode = record.episode
+- episode_record = comment.episode_record
+- work = episode_record.work
+- episode = episode_record.episode
 
 span.mr-1
   = action_user.decorate.name_link
@@ -14,11 +14,11 @@ span.mx-1
 | への記録にコメントしました
 
 .small.text-muted.my-2
-  = link_to local_time_ago_in_words(comment.created_at), record_path(current_user.username, record)
-  - if record.comment.present?
+  = link_to local_time_ago_in_words(comment.created_at), record_path(current_user.username, episode_record.record)
+  - if episode_record.comment.present?
     | :
     span.ml-1
-    = record.comment
+    = episode_record.comment
 
 .small.text-muted
   = local_time_ago_in_words(notification.created_at)
