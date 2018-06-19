@@ -71,7 +71,7 @@ class Episode < ApplicationRecord
 
   validates :sort_number, presence: true, numericality: { only_integer: true }
 
-  scope :recorded, -> { where("records_count > 0") }
+  scope :recorded, -> { where("episode_records_count > 0") }
 
   before_create :set_sort_number
   after_create :update_prev_episode

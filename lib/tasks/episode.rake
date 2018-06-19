@@ -11,7 +11,7 @@ namespace :episode do
       next if episodes.blank?
 
       episodes.find_each do |episode|
-        rating_states = episode.records.where.not(rating_state: nil).pluck(:rating_state)
+        rating_states = episode.episode_records.published.where.not(rating_state: nil).pluck(:rating_state)
 
         if rating_states.length.zero?
           episode.update_columns(satisfaction_rate: nil)
@@ -22,10 +22,9 @@ namespace :episode do
           case state.to_s
           when "bad" then 0
           when "average" then 1
-          when "good" then RATING_MAX
-          when "great" then [RATING_MAX, RATING_MAX]
+          when "good", "great" then RATING_MAX
           end
-        end.flatten
+        end
 
         ratings_count = ratings.length
         ratings_sum = ratings.inject(:+)
