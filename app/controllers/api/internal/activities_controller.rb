@@ -16,9 +16,10 @@ module Api
         @activities = activities.
           order(id: :desc).
           includes(:work, user: :profile).
+          merge(Work.published).
           page(page)
 
-        @works = Work.where(id: @activities.pluck(:work_id))
+        @works = Work.published.where(id: @activities.pluck(:work_id))
       end
     end
   end

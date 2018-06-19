@@ -49,6 +49,7 @@ class UsersController < ApplicationController
       activities.
       order(id: :desc).
       includes(:work).
+      merge(Work.published).
       page(1)
     works = Work.published.where(id: activities.pluck(:work_id))
 
