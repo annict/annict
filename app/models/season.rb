@@ -46,19 +46,28 @@ class Season
     new(year, name)
   end
 
+  def self.no_season
+    new(nil, nil)
+  end
+
   def initialize(year, name)
     @year = year
     @name = name
   end
 
   def work_conditions
-    conds = { season_year: @year }
-    conds[:season_name] = name_value unless all?
-    conds
+    {
+      season_year: @year,
+      season_name: all? ? nil : name_value
+    }
   end
 
   def all?
     @name == "all"
+  end
+
+  def no_season?
+    @year.nil? && @name.nil?
   end
 
   def slug
@@ -71,6 +80,9 @@ class Season
 
   def local_name(locale = nil)
     I18n.locale = locale if locale.present?
+
+    return I18n.t("resources.season.no_season") if no_season?
+
     I18n.t("resources.season.yearly.#{@name}", year: @year)
   end
 

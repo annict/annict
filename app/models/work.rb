@@ -150,6 +150,10 @@ class Work < ApplicationRecord
     where(Season.find_by_slug(season_slug).work_conditions)
   })
 
+  scope :by_no_season, -> {
+    where(season_year: nil, season_name: nil)
+  }
+
   scope(:by_seasons, ->(season_slugs) {
     return self if season_slugs.blank?
 
