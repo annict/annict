@@ -9,6 +9,7 @@ module Api
       include RavenContext
       include PageCategoryMethods
 
+      skip_before_action :verify_authenticity_token
       before_action :switch_locale
       before_action :store_page_category
 
