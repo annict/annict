@@ -1,4 +1,6 @@
 p = t "messages.sayonara.description"
+.alert.alert-warning
+  p 現在一時的にアカウント削除機能を停止しています。再開次第<a href="https://twitter.com/@AnnictJP" target="_blank">Twitter</a>で告知します。m(__)m
     
 .text-center
-  = link_to t("messages.sayonara.delete_account"), users_path, data: { confirm: t("messages.sayonara.are_you_sure_really"), method: :delete }
+  = link_to t("messages.sayonara.delete_account"), "#", data: { confirm: t("messages.sayonara.are_you_sure_really"), method: :delete }, class: "btn disabled"
