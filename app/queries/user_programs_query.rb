@@ -34,41 +34,36 @@ class UserProgramsQuery
   end
 
   def program_ids(channel_works, scope: :all)
-    cache_keys = [scope, channel_works.pluck(:updated_at)].flatten
-    Rails.cache.fetch cache_keys do
-      program_ids = []
+    program_ids = []
 
-      channel_works.each do |cw|
-        program_ids << Rails.cache.fetch([scope, cw]) do
-          episode_ids = case scope
-          when :all then cw.work.episodes.published.pluck(:id)
-          when :unwatched then user.episodes.unwatched(cw.work).pluck(:id)
-          end
-
-          next if episode_ids.blank?
-
-          # 過去の放送を取得しないようにするため、直近の放送分のみ取得する
-          sql = <<-SQL
-            WITH ranked_programs AS (
-              SELECT id, episode_id, started_at,
-                dense_rank() OVER (
-                  PARTITION BY episode_id ORDER BY started_at ASC
-                ) AS episode_rank
-              FROM programs
-              WHERE
-                channel_id = #{cw.channel_id} AND
-                episode_id IN (#{episode_ids.join(",")})
-            )
-            SELECT id FROM ranked_programs WHERE
-              episode_rank = (SELECT max(episode_rank) FROM ranked_programs);
-          SQL
-
-          Program.published.find_by_sql(sql).map(&:id)
-        end
+    channel_works.each do |cw|
+      episode_ids = case scope
+      when :all then cw.work.episodes.published.pluck(:id)
+      when :unwatched then user.episodes.unwatched(cw.work).pluck(:id)
       end
 
-      program_ids.flatten
+      next if episode_ids.blank?
+
+      # 過去の放送を取得しないようにするため、直近の放送分のみ取得する
+      sql = <<-SQL
+        WITH ranked_programs AS (
+          SELECT id, episode_id, started_at,
+            dense_rank() OVER (
+              PARTITION BY episode_id ORDER BY started_at ASC
+            ) AS episode_rank
+          FROM programs
+          WHERE
+            channel_id = #{cw.channel_id} AND
+            episode_id IN (#{episode_ids.join(",")})
+        )
+        SELECT id FROM ranked_programs WHERE
+          episode_rank = (SELECT max(episode_rank) FROM ranked_programs);
+      SQL
+
+      program_ids << Program.published.find_by_sql(sql).map(&:id)
     end
+
+    program_ids.flatten
   end
 
   def sort_type(sort)
