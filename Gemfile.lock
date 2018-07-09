@@ -215,7 +215,7 @@ GEM
       thor (~> 0.14)
     flutie (2.0.0)
     get_process_mem (0.2.2)
-    github-markup (2.0.0)
+    github-markup (2.0.1)
     globalid (0.4.1)
       activesupport (>= 4.2.0)
     gon (6.2.0)
