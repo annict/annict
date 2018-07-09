@@ -34,7 +34,8 @@ class UserProgramsQuery
   end
 
   def program_ids(channel_works, scope: :all)
-    Rails.cache.fetch [scope, channel_works] do
+    cache_keys = [scope, channel_works.pluck(:updated_at)].flatten
+    Rails.cache.fetch cache_keys do
       program_ids = []
 
       channel_works.each do |cw|
