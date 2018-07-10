@@ -2,7 +2,7 @@
   "name": "annict",
   "private": true,
   "dependencies": {
-    "@rails/webpacker": "^3.4.3",
+    "@rails/webpacker": "^3.5.5",
     "async": "2.6.1",
     "autosize": "^4.0.1",
     "bootstrap": "^4.1.1",
@@ -39,7 +39,7 @@
   "devDependencies": {
     "eslint": "^5.1.0",
     "prettier": "^1.13.7",
-    "prettier-eslint": "^8.8.1",
+    "prettier-eslint": "^8.8.2",
     "webpack-dev-server": "^2.11.2"
   }
 }
