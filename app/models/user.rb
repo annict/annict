@@ -33,9 +33,11 @@
 #  gumroad_subscriber_id         :integer
 #  allowed_locales               :string           is an Array
 #  records_count                 :integer          default(0), not null
+#  aasm_state                    :string           default("published"), not null
 #
 # Indexes
 #
+#  index_users_on_aasm_state             (aasm_state)
 #  index_users_on_allowed_locales        (allowed_locales) USING gin
 #  index_users_on_gumroad_subscriber_id  (gumroad_subscriber_id)
 #  users_confirmation_token_key          (confirmation_token) UNIQUE
@@ -44,6 +46,7 @@
 #
 
 class User < ApplicationRecord
+  include AASM
   # registrations#createが実行されたあとメールアドレスの確認を挟まず
   # ログインできるようにするため、Confirmableモジュールを直接includeする
   include Devise::Models::Confirmable
@@ -72,6 +75,15 @@ class User < ApplicationRecord
   enumerize :allowed_locales, in: ApplicationRecord::LOCALES, multiple: true, default: ApplicationRecord::LOCALES
   enumerize :locale, in: %i(ja en)
   enumerize :role, in: { user: 0, admin: 1, editor: 2 }, default: :user, scope: true
+
+  aasm do
+    state :published, initial: true
+    state :hidden
+
+    event :hide do
+      transitions from: :published, to: :hidden
+    end
+  end
 
   belongs_to :gumroad_subscriber, optional: true
   has_many :activities, dependent: :destroy
@@ -391,6 +403,19 @@ class User < ApplicationRecord
   def weeks
     days = (Time.zone.now.to_date - created_at.to_date).to_f
     (days / 7).floor
+  end
+
+  def leave
+    username = SecureRandom.uuid.tr("-", "_")
+
+    ActiveRecord::Base.transaction do
+      update_columns(username: username, email: "#{username}@example.com", aasm_state: :hidden)
+
+      oauth_applications.available.find_each do |app|
+        app.update(owner: nil)
+        app.hide!
+      end
+    end
   end
 
   private

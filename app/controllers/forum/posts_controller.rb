@@ -31,7 +31,7 @@ module Forum
     end
 
     def show(id)
-      @post = ForumPost.find(id)
+      @post = ForumPost.joins(:user).merge(User.published).find(id)
       @comments = @post.forum_comments.order(:created_at)
       @comment = @post.forum_comments.new
 

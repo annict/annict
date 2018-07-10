@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2018_06_17_144946) do
+ActiveRecord::Schema.define(version: 2018_07_10_152207) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_stat_statements"
@@ -1044,6 +1044,8 @@ ActiveRecord::Schema.define(version: 2018_06_17_144946) do
     t.integer "gumroad_subscriber_id"
     t.string "allowed_locales", array: true
     t.integer "records_count", default: 0, null: false
+    t.string "aasm_state", default: "published", null: false
+    t.index ["aasm_state"], name: "index_users_on_aasm_state"
     t.index ["allowed_locales"], name: "index_users_on_allowed_locales", using: :gin
     t.index ["confirmation_token"], name: "users_confirmation_token_key", unique: true
     t.index ["email"], name: "users_email_key", unique: true

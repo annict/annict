@@ -70,7 +70,7 @@ class UsersController < ApplicationController
   end
 
   def destroy
-    ByeByeJob.perform_later(current_user.id)
+    current_user.leave
     sign_out current_user
     redirect_to root_path, notice: t("messages.users.bye_bye")
   end
@@ -78,7 +78,7 @@ class UsersController < ApplicationController
   private
 
   def set_user
-    @user = User.find_by!(username: params[:username])
+    @user = User.published.find_by!(username: params[:username])
   end
 
   def load_i18n

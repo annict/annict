@@ -91,7 +91,8 @@ class WorkRecordsController < ApplicationController
       work_records.
       published.
       with_body.
-      includes(user: :profile)
+      includes(user: :profile).
+      merge(User.published)
     @work_records = localable_resources(@work_records)
 
     if user_signed_in?

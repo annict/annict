@@ -57,6 +57,8 @@ class PeopleController < ApplicationController
     @favorite_people = @person.
       favorite_people.
       includes(user: :profile).
+      joins(:user).
+      merge(User.published).
       order(id: :desc)
   end
 

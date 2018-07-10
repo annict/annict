@@ -75,7 +75,7 @@ class CommentsController < ApplicationController
   private
 
   def load_user
-    @user = User.find_by(username: params[:username])
+    @user = User.published.find_by(username: params[:username])
   end
 
   def load_record

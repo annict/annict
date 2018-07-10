@@ -10,7 +10,7 @@ ObjectTypes::Query = GraphQL::ObjectType.define do
     argument :username, !types.String
 
     resolve ->(_obj, args, _ctx) {
-      User.find_by(username: args[:username])
+      User.published.find_by(username: args[:username])
     }
   end
 

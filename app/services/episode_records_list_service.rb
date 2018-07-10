@@ -50,7 +50,7 @@ class EpisodeRecordsListService
   end
 
   def all_episode_records
-    episode_records = @episode.episode_records.includes(user: :profile)
+    episode_records = @episode.episode_records.includes(user: :profile).joins(:user).merge(User.published)
     episode_records = episode_records.where.not(user_id: @user.mute_users.pluck(:muted_user_id)) if @user.present?
     episode_records
   end

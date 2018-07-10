@@ -35,6 +35,8 @@ class OrganizationsController < ApplicationController
 
     @favorite_orgs = @organization.
       favorite_organizations.
+      joins(:user).
+      merge(User.published).
       order(id: :desc)
   end
 

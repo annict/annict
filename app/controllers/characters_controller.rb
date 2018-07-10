@@ -15,6 +15,8 @@ class CharactersController < ApplicationController
 
     @favorite_characters = @character.
       favorite_characters.
+      joins(:user).
+      merge(User.published).
       order(id: :desc)
   end
 

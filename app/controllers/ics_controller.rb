@@ -2,7 +2,7 @@
 
 class IcsController < ApplicationController
   def show(username)
-    @user = User.find_by!(username: username)
+    @user = User.published.find_by!(username: username)
     I18n.locale = @user.locale
 
     @programs = @user.

@@ -8,7 +8,7 @@ module Api
       def user_heatmap(username, start_date, end_date)
         start_date = Time.parse(start_date)
         end_date = Time.parse(end_date)
-        user = User.find_by!(username: username)
+        user = User.published.find_by!(username: username)
         time_zone = local_time_zone.presence || user.time_zone
 
         @days = user.records.between_times(start_date, end_date).

@@ -7,6 +7,8 @@ class OrganizationFansController < ApplicationController
     @organization = Organization.published.find(organization_id)
     @favorite_orgs = @organization.
       favorite_organizations.
+      joins(:user).
+      merge(User.published).
       order(watched_works_count: :desc)
   end
 

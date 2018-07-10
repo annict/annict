@@ -7,6 +7,8 @@ class PersonFansController < ApplicationController
     @person = Person.published.find(person_id)
     @favorite_people = @person.
       favorite_people.
+      joins(:user).
+      merge(User.published).
       order(watched_works_count: :desc)
   end
 

@@ -7,6 +7,8 @@ class CharacterFansController < ApplicationController
     @character = Character.published.find(character_id)
     @favorite_characters = @character.
       favorite_characters.
+      joins(:user).
+      merge(User.published).
       order(id: :desc)
   end
 
