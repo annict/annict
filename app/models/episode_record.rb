@@ -136,30 +136,20 @@ class EpisodeRecord < ApplicationRecord
       user.twitter.present? &&
       user.authorized_to?(:twitter, shareable: true) &&
       user.setting.share_record_to_twitter?
-    self.shared_facebook =
-      user.facebook.present? &&
-      user.authorized_to?(:facebook, shareable: true) &&
-      user.setting.share_record_to_facebook?
   end
 
   def shared_sns?
-    twitter_url_hash.present? || facebook_url_hash.present? ||
-      shared_twitter? || shared_facebook?
+    twitter_url_hash.present? || shared_twitter?
   end
 
   def update_share_record_status
     if user.setting.share_record_to_twitter? != shared_twitter?
       user.setting.update_column(:share_record_to_twitter, shared_twitter?)
     end
-
-    if user.setting.share_record_to_facebook? != shared_facebook?
-      user.setting.update_column(:share_record_to_facebook, shared_facebook?)
-    end
   end
 
   def share_to_sns
     ShareEpisodeRecordToTwitterJob.perform_later(user_id, id) if shared_twitter?
-    ShareEpisodeRecordToFacebookJob.perform_later(user_id, id) if shared_facebook?
   end
 
   # Do not use helper methods via Draper when the method is used in ActiveJob

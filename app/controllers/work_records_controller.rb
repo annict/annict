@@ -69,9 +69,6 @@ class WorkRecordsController < ApplicationController
       if current_user.setting.share_review_to_twitter?
         ShareWorkRecordToTwitterJob.perform_later(current_user.id, @work_record.id)
       end
-      if current_user.setting.share_review_to_facebook?
-        ShareWorkRecordToFacebookJob.perform_later(current_user.id, @work_record.id)
-      end
       flash[:notice] = t("messages._common.updated")
       redirect_to record_path(@work_record.user.username, @work_record.record)
     rescue

@@ -91,7 +91,6 @@ export default {
           episode_record: {
             comment: program.record.comment,
             shared_twitter: this.user.share_record_to_twitter,
-            shared_facebook: this.user.share_record_to_facebook,
             rating_state: program.record.ratingState,
           },
           page_category: gon.page.category,

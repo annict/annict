@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class EpisodeRecordsController < ApplicationController
-  permits :episode_id, :comment, :shared_twitter, :shared_facebook, :rating_state
+  permits :episode_id, :comment, :shared_twitter, :rating_state
 
   before_action :authenticate_user!, only: %i(create edit update switch)
 

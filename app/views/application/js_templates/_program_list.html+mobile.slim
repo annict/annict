@@ -42,10 +42,6 @@ script#t-program-list type="x-template"
                         label
                           input type="checkbox" v-model="user.share_record_to_twitter"
                           = icon "twitter", "fab", class: "u-text-twitter ml-1"
-                      span.ml-2 v-if="user.authorized_to_facebook"
-                        label
-                          input type="checkbox" v-model="user.share_record_to_facebook"
-                          = icon "facebook", "fab", class: "u-text-facebook ml-1"
                   .col
                     .text-right
                       .small.text-mute
