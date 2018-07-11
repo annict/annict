@@ -410,6 +410,7 @@ class User < ApplicationRecord
 
     ActiveRecord::Base.transaction do
       update_columns(username: username, email: "#{username}@example.com", aasm_state: :hidden)
+      providers.delete_all
 
       oauth_applications.available.find_each do |app|
         app.update(owner: nil)
