@@ -16,14 +16,6 @@
         .small.text-muted
           = t "messages.options.share_status_to_twitter_detail_html"
 
-  - if current_user.authorized_to?(:facebook, shareable: true)
-    .form-check.mb-3
-      label.form-check-label
-        = f.check_box :share_status_to_facebook, class: "form-check-input"
-        = t "messages.options.share_status_to_facebook"
-        .small.text-muted
-          = t "messages.options.share_status_to_facebook_detail_html"
-
   - if current_user.supporter?
     .form-check.mb-3
       label.form-check-label

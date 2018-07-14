@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class OptionsController < ApplicationController
-  permits :hide_record_comment, :hide_supporter_badge, :share_status_to_facebook, :share_status_to_twitter,
+  permits :hide_record_comment, :hide_supporter_badge, :share_status_to_twitter,
           model_name: "Setting"
 
   before_action :authenticate_user!

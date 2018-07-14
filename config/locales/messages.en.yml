@@ -166,8 +166,6 @@ en:
       hide_supporter_badge_detail: Hide supporter badges on profiles page and so on.
       prevent_spoiler_of_episode_you_have_not_watched: Prevent spoiler of episode which you have not watched
       prevent_spoiler_of_episode_you_have_not_watched_detail: This option will hide comments on unwatched episodes when you've set status as "Watched", "Plan to Watch", or "On Hold".
-      share_status_to_facebook: Share changing statuses to Facebook
-      share_status_to_facebook_detail_html: If you change a status of a work, it'll be post to Facebook.
       share_status_to_twitter: Share changing statuses to Twitter
       share_status_to_twitter_detail_html: If you change a status of a work, it'll be post to Twitter.
     organization_fans:
