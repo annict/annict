@@ -81,7 +81,6 @@ class WorkRecord < ApplicationRecord
 
   def share_to_sns
     ShareWorkRecordToTwitterJob.perform_later(user.id, id) if user.setting.share_review_to_twitter?
-    ShareWorkRecordToFacebookJob.perform_later(user.id, id) if user.setting.share_review_to_facebook?
   end
 
   # Do not use helper methods via Draper when the method is used in ActiveJob

@@ -42,9 +42,7 @@ module Gonable
     if user_signed_in?
       data[:user].merge!(
         shareRecordToTwitter: current_user.setting.share_record_to_twitter?,
-        shareRecordToFacebook: current_user.setting.share_record_to_facebook?,
-        sharableToTwitter: current_user.authorized_to?(:twitter, shareable: true),
-        sharableToFacebook: current_user.authorized_to?(:facebook, shareable: true)
+        sharableToTwitter: current_user.authorized_to?(:twitter, shareable: true)
       )
     end
 

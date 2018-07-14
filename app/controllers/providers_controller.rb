@@ -29,8 +29,6 @@ class ProvidersController < ApplicationController
       case provider.name
       when "twitter"
         provider.user.setting.update_column(:share_record_to_twitter, false)
-      when "facebook"
-        provider.user.setting.update_column(:share_record_to_facebook, false)
       end
 
       provider.destroy

@@ -3,7 +3,7 @@
 module Api
   module Internal
     class EpisodeRecordsController < Api::Internal::ApplicationController
-      permits :comment, :shared_twitter, :shared_facebook, :rating_state
+      permits :comment, :shared_twitter, :rating_state
 
       before_action :authenticate_user!, only: %i(create)
 
@@ -12,7 +12,6 @@ module Api
         episode_record = episode.episode_records.new do |er|
           er.comment = episode_record[:comment]
           er.shared_twitter = episode_record[:shared_twitter]
-          er.shared_facebook = episode_record[:shared_facebook]
           er.rating_state = episode_record[:rating_state]
         end
         ga_client.page_category = page_category

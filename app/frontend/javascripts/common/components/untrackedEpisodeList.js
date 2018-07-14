@@ -54,7 +54,6 @@ export default {
           episode_record: {
             comment: latestStatus.record.comment,
             shared_twitter: this.user.share_record_to_twitter,
-            shared_facebook: this.user.share_record_to_facebook,
             rating_state: latestStatus.record.ratingState,
           },
           page_category: this.gon.page.category,
