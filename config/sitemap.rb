@@ -1,8 +1,11 @@
 # frozen_string_literal: true
 
-["", "jp."].each do |subdomain|
-  SitemapGenerator::Sitemap.default_host = "https://#{subdomain}annict.com"
-  SitemapGenerator::Sitemap.sitemaps_path = "sitemaps/#{subdomain.delete('.')}"
+[
+  { host: ENV.fetch("ANNICT_HOST"), namespace: "en" },
+  { host: ENV.fetch("ANNICT_JP_HOST"), namespace: "ja" }
+].each do |data|
+  SitemapGenerator::Sitemap.default_host = "https://#{data[:host]}"
+  SitemapGenerator::Sitemap.sitemaps_path = "sitemaps/#{data[:namespace]}"
 
   adapter_options = {
     aws_access_key_id: ENV.fetch("S3_ACCESS_KEY_ID"),
@@ -19,19 +22,19 @@
     add search_path, priority: 0.8
     add terms_path
 
-    User.find_each do |u|
+    User.published.find_each do |u|
       add user_path(u.username), priority: 0.9, lastmod: u.updated_at
 
       Status.kind.values.each do |k|
         add library_path(u.username, k), priority: 0.8
       end
 
-      u.records.published.with_comment.find_each do |r|
-        add record_path(u.username, r), priority: 0.8
+      u.episode_records.published.with_comment.find_each do |er|
+        add record_path(u.username, er.record), priority: 0.8
       end
 
-      u.reviews.published.find_each do |r|
-        add review_path(u.username, r), priority: 0.8
+      u.work_records.published.with_body.find_each do |wr|
+        add record_path(u.username, wr.record), priority: 0.8
       end
     end
 
@@ -61,7 +64,7 @@
       add work_path(w.id), priority: 1.0, lastmod: w.updated_at
 
       w.episodes.published.find_each do |e|
-        add work_episode_path(w.id, e.id), priority: 1.0 if e.records.present?
+        add work_episode_path(w.id, e.id), priority: 1.0 if e.episode_records.published.with_comment.present?
       end
     end
   end
