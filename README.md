@@ -13,7 +13,7 @@
 To run Annict on a local machine, you need to have the following dependencies installed:
 
 * Ruby 2.5
-* PostgreSQL 9.5
+* PostgreSQL 10.4
 * ImageMagick
 * PhantomJS
   * For tests
