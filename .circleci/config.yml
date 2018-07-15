@@ -15,7 +15,7 @@ jobs:
           # The `CFLAGS` and `CXXFLAGS` are required to install cld gem
           # https://github.com/jtoy/cld/issues/10
           CFLAGS: -Wno-narrowing
-          CXXFLAGS: $CFLAGS
+          CXXFLAGS: -Wno-narrowing
       - image: circleci/postgres:10.4-alpine
         environment:
           POSTGRES_USER: postgres
