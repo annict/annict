@@ -11,6 +11,7 @@ jobs:
           BUNDLE_JOBS: 3
           BUNDLE_RETRY: 3
           BUNDLE_PATH: vendor/bundle
+          CC_TEST_REPORTER_ID: 473c071c4d1900d58ceed984bd49d8a39368393ce6f010cf5d52287f3072f6ef
           RAILS_ENV: test
           TZ: Asia/Tokyo
           # The `CFLAGS` and `CXXFLAGS` are required to install cld gem
@@ -76,13 +77,21 @@ jobs:
           command: bin/rails db:schema:load --trace
 
       - run:
-          name: Run rspec in parallel
+          name: Setup Code Climate test-reporter
           command: |
+            curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter
+            chmod +x ./cc-test-reporter
+
+      - run:
+          name: Run RSpec
+          command: |
+            ./cc-test-reporter before-build
             bundle exec rspec --profile 1 \
                               --format RspecJunitFormatter \
                               --out test_results/rspec.xml \
                               --format documentation \
                               $(circleci tests glob "spec/**/*_spec.rb" | circleci tests split --split-by=timings)
+            ./cc-test-reporter after-build --coverage-input-type simplecov --exit-code $?
 
       # Save test results for timing analysis
       - store_test_results:
