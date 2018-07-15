@@ -12,6 +12,7 @@ jobs:
           BUNDLE_RETRY: 3
           BUNDLE_PATH: vendor/bundle
           RAILS_ENV: test
+          TZ: Asia/Tokyo
           # The `CFLAGS` and `CXXFLAGS` are required to install cld gem
           # https://github.com/jtoy/cld/issues/10
           CFLAGS: -Wno-narrowing
