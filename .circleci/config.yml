@@ -23,8 +23,8 @@ jobs:
 
       # Which version of bundler?
       - run:
-        name: Which bundler?
-        command: bundle -v
+          name: Which bundler?
+          command: bundle -v
 
       # Restore bundler cache
       - restore_cache:
@@ -63,8 +63,8 @@ jobs:
           command: dockerize -wait tcp://localhost:5432 -timeout 1m
 
       - run:
-        name: Copy application.yml
-        command: cp config/application.yml{.example,}
+          name: Copy application.yml
+          command: cp config/application.yml{.example,}
 
       - run:
           name: Database setup
