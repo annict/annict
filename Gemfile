@@ -90,6 +90,7 @@ group :development, :test do
   gem "pry-rails"
   gem "rspec-mocks"
   gem "rspec-rails"
+  gem "rspec_junit_formatter" # Using on CircleCI
 end
 
 group :development do

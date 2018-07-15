@@ -486,6 +486,8 @@ GEM
       rspec-mocks (~> 3.7.0)
       rspec-support (~> 3.7.0)
     rspec-support (3.7.1)
+    rspec_junit_formatter (0.4.1)
+      rspec-core (>= 2, < 4, != 2.12.0)
     rubocop (0.58.1)
       jaro_winkler (~> 1.5.1)
       parallel (~> 1.10)
@@ -690,6 +692,7 @@ DEPENDENCIES
   rmagick
   rspec-mocks
   rspec-rails
+  rspec_junit_formatter
   rubocop
   ruby_identicon
   scss_lint
