@@ -2,12 +2,11 @@
 
 ENV["RAILS_ENV"] ||= "test"
 
-require "coveralls"
-Coveralls.wear!
+require "simplecov"
+SimpleCov.start("rails")
 
 require File.expand_path("../../config/environment", __FILE__)
 require "rspec/rails"
-require "capybara/poltergeist"
 require "capybara/rails"
 require "capybara/rspec"
 
@@ -48,4 +47,8 @@ RSpec.configure do |config|
   # the seed, which is printed after each run.
   #     --seed 1234
   config.order = "random"
+
+  config.before(:each, type: :system) do
+    driven_by :selenium_chrome_headless
+  end
 end

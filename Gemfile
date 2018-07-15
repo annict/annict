@@ -90,6 +90,7 @@ group :development, :test do
   gem "pry-rails"
   gem "rspec-mocks"
   gem "rspec-rails"
+  gem "rspec_junit_formatter" # Using on CircleCI
 end
 
 group :development do
@@ -114,10 +115,11 @@ end
 
 group :test do
   gem "capybara"
-  gem "coveralls", require: false
+  gem "chromedriver-helper"
   gem "database_rewinder"
   gem "factory_bot_rails"
-  gem "poltergeist"
+  gem "selenium-webdriver"
+  gem "simplecov", require: false
   gem "timecop"
 end
 
