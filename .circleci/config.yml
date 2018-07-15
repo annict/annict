@@ -12,6 +12,10 @@ jobs:
           BUNDLE_RETRY: 3
           BUNDLE_PATH: vendor/bundle
           RAILS_ENV: test
+          # The `CFLAGS` and `CXXFLAGS` are required to install cld gem
+          # https://github.com/jtoy/cld/issues/10
+          CFLAGS: -Wno-narrowing
+          CXXFLAGS: $CFLAGS
       - image: circleci/postgres:10.4-alpine
         environment:
           POSTGRES_USER: postgres
@@ -36,7 +40,7 @@ jobs:
           name: Bundle Install
           command: bundle check || bundle install
 
-      # Store bundle cache
+      # Store bundler cache
       - save_cache:
           key: annict-bundler-{{ checksum "Gemfile.lock" }}
           paths:
