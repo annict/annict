@@ -1,6 +1,6 @@
-import _ from 'lodash';
+import _ from 'lodash'
 
-import eventHub from '../eventHub';
+import eventHub from '../eventHub'
 
 export default {
   template: '#t-work-comment',
@@ -8,23 +8,23 @@ export default {
   props: {
     workId: {
       type: Number,
-      required: true
+      required: true,
     },
     initComment: {
       type: String,
-      required: true
-    }
+      required: true,
+    },
   },
 
   data() {
-    return { comment: this.initComment };
+    return { comment: this.initComment }
   },
 
   mounted() {
     return eventHub.$on('workComment:saved', (workId, comment) => {
       if (this.workId === workId) {
-        return (this.comment = comment);
+        return (this.comment = comment)
       }
-    });
-  }
-};
+    })
+  },
+}

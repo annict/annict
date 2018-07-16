@@ -1,4 +1,4 @@
-import eventHub from "../eventHub";
+import eventHub from '../eventHub'
 
 export default {
   template: '#t-sticky-message',
@@ -31,7 +31,7 @@ export default {
 
       if (this.isDisplayable() && typeof ga === 'function') {
         return ga('send', 'event', 'components', 'load', `sticky-message_${this.pageCategory}`, {
-          nonInteraction: true
+          nonInteraction: true,
         })
       }
     })
