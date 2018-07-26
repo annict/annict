@@ -82,7 +82,6 @@ gem "wilson_score"
 
 group :development, :test do
   gem "awesome_print"
-  gem "dmmyix"
   gem "pry"
   gem "pry-alias"
   gem "pry-byebug"

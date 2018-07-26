@@ -10,7 +10,6 @@
 /lib/tasks/data.rake
 /log/*
 /node_modules
-/public/dmmyix
 /public/packs
 /public/packs-test
 /public/paperclip
