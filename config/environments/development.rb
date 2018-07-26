@@ -67,4 +67,9 @@ Rails.application.configure do
 
   # https://github.com/ruckus/active-record-query-trace
   ActiveRecordQueryTrace.enabled = true
+
+  config.imgix = {
+    use_https: true,
+    source: ENV.fetch("IMGIX_SOURCE")
+  }
 end

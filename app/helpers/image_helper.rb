@@ -78,10 +78,10 @@ module ImageHelper
   private
 
   def image_path(record, field)
-    path = if Rails.env.production?
-      record&.send(field)&.path(:master)
-    else
+    path = if Rails.env.test?
       record&.send(field)&.url(:master)
+    else
+      record&.send(field)&.path(:master)
     end
 
     path.presence || "no-image.jpg"

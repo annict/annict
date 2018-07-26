@@ -9,7 +9,11 @@ base_options = {
   default_url: "/paperclip/default/:style/no-image.jpg"
 }
 
-options = if Rails.env.production?
+options = if Rails.env.test?
+  base_options.merge(
+    path: ":rails_root/spec/test_files/#{ENV['ANNICT_PAPERCLIP_PATH']}"
+  )
+else
   base_options.merge(
     storage: :s3,
     s3_credentials: {
@@ -19,12 +23,6 @@ options = if Rails.env.production?
     },
     s3_region: "ap-northeast-1"
   )
-elsif Rails.env.test?
-  base_options.merge(
-    path: ":rails_root/spec/test_files/#{ENV['ANNICT_PAPERCLIP_PATH']}"
-  )
-else
-  base_options
 end
 
 Paperclip::Attachment.default_options.update(options)
