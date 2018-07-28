@@ -9,7 +9,7 @@ namespace :graphql do
 
   task build_docs: :environment do
     config = {
-      filename: "#{File.dirname(__FILE__)}/../../app/graphql/schema.graphql",
+      filename: "#{Rails.root}/app/graphql/schema.graphql",
       output_dir: "../developers/graphql-api/reference/",
       base_url: "/graphql-api/reference"
     }
