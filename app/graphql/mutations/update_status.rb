@@ -9,11 +9,11 @@ Mutations::UpdateStatus = GraphQL::Relay::Mutation.define do
   return_field :work, ObjectTypes::Work
 
   resolve RescueFrom.new ->(_obj, inputs, ctx) {
-    raise Annict::Errors::InvalidAPITokenScopeError unless ctx[:doorkeeper_token].writable?
+    raise Annict::Errors::InvalidAPITokenScopeError unless ctx[:access_token].writable?
 
     work = Work.published.find_by_graphql_id(inputs[:workId])
     status = StatusService.new(ctx[:viewer], work)
-    status.app = ctx[:doorkeeper_token].application
+    status.app = ctx[:oauth_application]
     status.ga_client = ctx[:ga_client]
     status.via = "graphql_api"
 

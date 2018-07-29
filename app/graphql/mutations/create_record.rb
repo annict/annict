@@ -12,7 +12,7 @@ Mutations::CreateRecord = GraphQL::Relay::Mutation.define do
   return_field :record, ObjectTypes::Record
 
   resolve RescueFrom.new ->(_obj, inputs, ctx) {
-    raise Annict::Errors::InvalidAPITokenScopeError unless ctx[:doorkeeper_token].writable?
+    raise Annict::Errors::InvalidAPITokenScopeError unless ctx[:access_token].writable?
 
     episode = Episode.published.find_by_graphql_id(inputs[:episodeId])
 
@@ -21,12 +21,12 @@ Mutations::CreateRecord = GraphQL::Relay::Mutation.define do
       r.comment = inputs[:comment]
       r.shared_twitter = inputs[:shareTwitter] == true
       r.shared_facebook = inputs[:shareFacebook] == true
-      r.oauth_application = ctx[:doorkeeper_token].application
+      r.oauth_application = ctx[:oauth_application]
     end
 
     service = NewEpisodeRecordService.new(ctx[:viewer], record)
     service.ga_client = ctx[:ga_client]
-    service.app = ctx[:doorkeeper_token].application
+    service.app = ctx[:oauth_application]
     service.via = "graphql_api"
 
     service.save!

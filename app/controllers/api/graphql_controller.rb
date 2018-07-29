@@ -15,8 +15,10 @@ module Api
       variables = ensure_hash(params[:variables])
       query = params[:query]
       context = {
-        doorkeeper_token: doorkeeper_token,
+        access_token: doorkeeper_token,
+        oauth_application: doorkeeper_token.application,
         viewer: current_user,
+        internal: false,
         ga_client: ga_client
       }
       result = AnnictSchema.execute(query, variables: variables, context: context)
@@ -26,8 +28,8 @@ module Api
     private
 
     def current_user
-      return nil if doorkeeper_token.blank?
-      @current_user ||= User.find(doorkeeper_token.resource_owner_id)
+      return if doorkeeper_token.nil?
+      @current_user ||= doorkeeper_token.owner
     end
 
     def bad_credentials

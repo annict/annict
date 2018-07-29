@@ -15,7 +15,7 @@ Mutations::CreateReview = GraphQL::Relay::Mutation.define do
   return_field :review, ObjectTypes::Review
 
   resolve RescueFrom.new ->(_obj, inputs, ctx) {
-    raise Annict::Errors::InvalidAPITokenScopeError unless ctx[:doorkeeper_token].writable?
+    raise Annict::Errors::InvalidAPITokenScopeError unless ctx[:access_token].writable?
 
     work = Work.published.find_by_graphql_id(inputs[:workId])
 
@@ -27,7 +27,7 @@ Mutations::CreateReview = GraphQL::Relay::Mutation.define do
       WorkRecord::STATES.each do |state|
         r.send("#{state}=".to_sym, inputs[state.to_s.camelcase(:lower).to_sym]&.downcase)
       end
-      r.oauth_application = ctx[:doorkeeper_token].application
+      r.oauth_application = ctx[:oauth_application]
     end
     ctx[:viewer].setting.attributes = {
       share_review_to_twitter: inputs[:shareTwitter] == true,
@@ -36,7 +36,7 @@ Mutations::CreateReview = GraphQL::Relay::Mutation.define do
 
     service = NewWorkRecordService.new(ctx[:viewer], review, ctx[:viewer].setting)
     service.via = "graphql_api"
-    service.app = ctx[:doorkeeper_token].application
+    service.app = ctx[:oauth_application]
     service.ga_client = ctx[:ga_client]
 
     service.save!

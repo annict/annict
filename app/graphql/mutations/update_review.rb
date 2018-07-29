@@ -15,7 +15,7 @@ Mutations::UpdateReview = GraphQL::Relay::Mutation.define do
   return_field :review, ObjectTypes::Review
 
   resolve RescueFrom.new ->(_obj, inputs, ctx) {
-    raise Annict::Errors::InvalidAPITokenScopeError unless ctx[:doorkeeper_token].writable?
+    raise Annict::Errors::InvalidAPITokenScopeError unless ctx[:access_token].writable?
 
     work_record = ctx[:viewer].work_records.published.find_by_graphql_id(inputs[:reviewId])
 
@@ -25,7 +25,7 @@ Mutations::UpdateReview = GraphQL::Relay::Mutation.define do
       work_record.send("#{state}=".to_sym, inputs[state.to_s.camelcase(:lower).to_sym]&.downcase)
     end
     work_record.modified_at = Time.now
-    work_record.oauth_application = ctx[:doorkeeper_token].application
+    work_record.oauth_application = ctx[:oauth_application]
     work_record.detect_locale!(:body)
 
     ctx[:viewer].setting.attributes = {
