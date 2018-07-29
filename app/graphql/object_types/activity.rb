@@ -1,21 +1,18 @@
 # frozen_string_literal: true
 
-ObjectTypes::Activity = GraphQL::ObjectType.define do
-  name "Activity"
+module ObjectTypes
+  class Activity < Types::BaseObject
+    implements GraphQL::Relay::Node.interface
 
-  implements GraphQL::Relay::Node.interface
+    field :annict_id, Integer, null: false
+    field :user, ObjectTypes::User, null: false
 
-  global_id_field :id
+    def annict_id
+      object.id
+    end
 
-  field :annictId, !types.Int do
-    resolve ->(obj, _args, _ctx) {
-      obj.id
-    }
-  end
-
-  field :user, !ObjectTypes::User do
-    resolve ->(obj, _args, _ctx) {
-      RecordLoader.for(User).load(obj.user_id)
-    }
+    def user
+      RecordLoader.for(User).load(object.user_id)
+    end
   end
 end
