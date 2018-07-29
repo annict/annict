@@ -2,10 +2,13 @@
 
 namespace :api do
   namespace :internal do
+    post "/graphql", to: "graphql#execute"
+
     resource :impression, only: %i(show update)
-    resource :programs_sort_type, only: [:update]
+    resource :programs_sort_type, only: %i(update)
     resource :records_sort_type, only: %i(update)
-    resource :search, only: [:show]
+    resource :search, only: %i(show)
+
     resources :activities, only: [:index]
     resources :app_data, only: %i(index)
     resources :characters, only: [:index]
