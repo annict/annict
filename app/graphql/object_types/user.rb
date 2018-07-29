@@ -128,6 +128,7 @@ ObjectTypes::User = GraphQL::ObjectType.define do
   field :viewerCanFollow, !types.Boolean do
     resolve ->(obj, _args, ctx) {
       viewer = ctx[:viewer]
+      return false unless viewer
       viewer != obj && !viewer.following?(obj)
     }
   end
@@ -135,6 +136,7 @@ ObjectTypes::User = GraphQL::ObjectType.define do
   field :viewerIsFollowing, !types.Boolean do
     resolve ->(obj, _args, ctx) {
       viewer = ctx[:viewer]
+      return false unless viewer
       viewer.following?(obj)
     }
   end
