@@ -1,23 +1,17 @@
 # frozen_string_literal: true
 
 class HomeController < ApplicationController
-  before_action :load_i18n, only: %i(index)
+  layout "v3/application"
 
-  def index
-    return index_member if user_signed_in?
+  def show
+    return show_for_member if user_signed_in?
 
-    @season_top_work = GuestTopPageService.season_top_work
-    @season_works = GuestTopPageService.season_works
-    @top_work = GuestTopPageService.top_work
-    @works = GuestTopPageService.works
-    @cover_image_work = GuestTopPageService.cover_image_work
-
-    render :index_guest
+    render :show_for_guest
   end
 
   private
 
-  def index_member
+  def show_for_member
     @tips = current_user.tips.unfinished.with_locale(current_user.locale)
     tips_data = render_jb("home/_tips", tips: @tips.limit(3))
 
@@ -52,16 +46,5 @@ class HomeController < ApplicationController
     )
 
     render :index
-  end
-
-  def load_i18n
-    keys = {
-      "messages._common.are_you_sure": nil,
-      "messages.tracks.see_records": nil,
-      "messages.tracks.skip_episode_confirmation": nil,
-      "messages.tracks.tracked": nil
-    }
-
-    load_i18n_into_gon keys
   end
 end

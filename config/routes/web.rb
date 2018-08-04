@@ -159,4 +159,4 @@ get "r/:provider/:url_hash",
   provider: /fb|tw/,
   url_hash: /[0-9a-zA-Z_-]{10}/
 
-root "home#index"
+root "home#show"
