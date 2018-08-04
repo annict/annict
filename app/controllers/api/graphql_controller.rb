@@ -19,7 +19,6 @@ module Api
         access_token: doorkeeper_token,
         oauth_application: doorkeeper_token.application,
         viewer: current_user,
-        internal: false,
         ga_client: ga_client
       }
       result = AnnictSchema.execute(query, variables: variables, context: context)
