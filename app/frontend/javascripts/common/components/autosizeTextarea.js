@@ -8,7 +8,7 @@ export default {
   methods: {
     handleChange(e) {
       this.$emit('input', e.target.value)
-    }
+    },
   },
 
   mounted() {

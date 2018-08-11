@@ -1,8 +1,8 @@
-import $ from 'jquery';
-import Vue from 'vue';
+import $ from 'jquery'
+import Vue from 'vue'
 
 export default {
   mounted() {
-    return $('[data-toggle="tooltip"]').tooltip();
-  }
-};
+    return $('[data-toggle="tooltip"]').tooltip()
+  },
+}

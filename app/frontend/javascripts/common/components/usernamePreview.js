@@ -1,5 +1,5 @@
-import $ from 'jquery';
-import Vue from 'vue';
+import $ from 'jquery'
+import Vue from 'vue'
 
 export default {
   template: '#t-username-preview',
@@ -7,14 +7,14 @@ export default {
   data() {
     return {
       message: gon.I18n['messages.registrations.new.username_preview'],
-      username: $('#user_username').val() || ''
-    };
+      username: $('#user_username').val() || '',
+    }
   },
 
   mounted() {
-    const self = this;
+    const self = this
     return $('#user_username').on('change paste keyup', function() {
-      return (self.username = $(this).val());
-    });
-  }
-};
+      return (self.username = $(this).val())
+    })
+  },
+}

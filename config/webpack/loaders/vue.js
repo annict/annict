@@ -6,8 +6,10 @@ const extractCSS = !(inDevServer && (devServer && devServer.hmr)) || isProductio
 
 module.exports = {
   test: /\.vue(\.erb)?$/,
-  use: [{
-    loader: 'vue-loader',
-    options: { extractCSS }
-  }]
+  use: [
+    {
+      loader: 'vue-loader',
+      options: { extractCSS },
+    },
+  ],
 }
