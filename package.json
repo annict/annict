@@ -37,7 +37,10 @@
     "node": "~> 8.11.3"
   },
   "devDependencies": {
+    "babel-eslint": "^8.2.6",
     "eslint": "^5.2.0",
+    "eslint-config-prettier": "^2.9.0",
+    "eslint-plugin-vue": "^4.7.1",
     "prettier": "^1.13.7",
     "prettier-eslint": "^8.8.2",
     "webpack-dev-server": "^3.1.5"
