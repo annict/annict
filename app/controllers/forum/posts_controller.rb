@@ -26,7 +26,7 @@ module Forum
         @post.notify_discord
       end
 
-      Flash.store_data(cookies[:ann_client_uuid], notice: t("messages.forum.posts.created"))
+      Flash.store_data(viewer_uuid, notice: t("messages.forum.posts.created"))
       redirect_to forum_post_path(@post)
     end
 
@@ -53,7 +53,7 @@ module Forum
 
       if @post.save
         @post.purge
-        Flash.store_data(cookies[:ann_client_uuid], notice: t("messages.forum.posts.updated"))
+        Flash.store_data(viewer_uuid, notice: t("messages.forum.posts.updated"))
         redirect_to forum_post_path(@post)
       else
         render :edit

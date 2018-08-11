@@ -5,6 +5,7 @@ module Forum
     include Pundit
 
     include ControllerCommon
+    include ViewerIdentifiable
     include Analyzable
     include LogrageSetting
     include Gonable

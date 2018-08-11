@@ -19,7 +19,7 @@ module Gonable
   def store_data_into_gon
     data = {
       user: {
-        clientUUID: client_uuid,
+        clientUUID: viewer_uuid,
         device: browser.device.mobile? ? "mobile" : "pc",
         locale: locale,
         userId: user_signed_in? ? current_user.encoded_id : nil,

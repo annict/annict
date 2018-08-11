@@ -27,7 +27,7 @@ module Forum
 
       @comment.send_notification
 
-      Flash.store_data(cookies[:ann_client_uuid], notice: t("messages.forum.comments.created"))
+      Flash.store_data(viewer_uuid, notice: t("messages.forum.comments.created"))
       redirect_to forum_post_path(@post)
     end
 
@@ -43,7 +43,7 @@ module Forum
 
       if @comment.save
         @comment.purge
-        Flash.store_data(cookies[:ann_client_uuid], notice: t("messages.forum.comments.updated"))
+        Flash.store_data(viewer_uuid, notice: t("messages.forum.comments.updated"))
         redirect_to forum_post_path(@post)
       else
         render :edit

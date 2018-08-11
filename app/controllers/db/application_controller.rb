@@ -5,6 +5,7 @@ module Db
     include Pundit
 
     include ControllerCommon
+    include ViewerIdentifiable
     include FlashMessage
     include Analyzable
     include LogrageSetting

@@ -3,6 +3,7 @@
 module Api
   module V1
     class ApplicationController < ActionController::Base
+      include ViewerIdentifiable
       include Analyzable
       include LogrageSetting
       include RavenContext
