@@ -77,7 +77,7 @@ gem "traceroute"
 gem "twitter"
 gem "validate_url"
 gem "virtus"
-gem "webpacker"
+gem "webpacker", ">= 4.0.x"
 gem "wilson_score"
 
 group :development, :test do
