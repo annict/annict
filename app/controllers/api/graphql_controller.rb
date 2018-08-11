@@ -2,12 +2,10 @@
 
 module Api
   class GraphqlController < ActionController::Base
-    include GraphqlMethods
     include Analyzable
     include LogrageSetting
     include RavenContext
 
-    before_action :doorkeeper_authorize!
     skip_before_action :verify_authenticity_token
 
     rescue_from ActionController::InvalidAuthenticityToken, with: :bad_credentials
@@ -16,8 +14,8 @@ module Api
       variables = ensure_hash(params[:variables])
       query = params[:query]
       context = {
-        access_token: doorkeeper_token,
-        oauth_application: doorkeeper_token.application,
+        access_token: access_token,
+        oauth_application: access_token.application,
         viewer: current_user,
         ga_client: ga_client
       }
@@ -27,9 +25,16 @@ module Api
 
     private
 
+    def access_token
+      doorkeeper_token.presence || guest_access_token
+    end
+
+    def guest_access_token
+      @guest_access_token ||= GuestAccessToken.new
+    end
+
     def current_user
-      return if doorkeeper_token.nil?
-      @current_user ||= doorkeeper_token.owner
+      @current_user ||= access_token.owner
     end
 
     def bad_credentials
@@ -45,6 +50,24 @@ module Api
           message: "Not authorized"
         }
       }
+    end
+
+    # Handle form data, JSON body, or a blank value
+    def ensure_hash(ambiguous_param)
+      case ambiguous_param
+      when String
+        if ambiguous_param.present?
+          ensure_hash(JSON.parse(ambiguous_param))
+        else
+          {}
+        end
+      when Hash, ActionController::Parameters
+        ambiguous_param
+      when nil
+        {}
+      else
+        raise ArgumentError, "Unexpected parameter: #{ambiguous_param}"
+      end
     end
   end
 end

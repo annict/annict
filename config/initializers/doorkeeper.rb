@@ -132,8 +132,8 @@ Doorkeeper::Application.class_eval do
   }
   scope :authorized, -> { where(oauth_access_tokens: { revoked_at: nil }) }
 
-  def official?
-    owner.role.admin?
+  def self.official
+    find_by(official: true)
   end
 end
 

@@ -25,7 +25,7 @@ ObjectTypes::WorkImage = GraphQL::ObjectType.define do
     argument :size, !types.String
 
     resolve ->(obj, args, ctx) {
-      return unless ctx[:oauth_application]&.official?
+      return unless ctx[:oauth_application].official?
       return if obj.blank?
       ann_image_url obj, :attachment, size: args[:size]
     }
