@@ -136,7 +136,6 @@ ObjectTypes::Work = GraphQL::ObjectType.define do
 
   field :viewerStatusState, EnumTypes::StatusState do
     resolve ->(obj, _args, ctx) {
-      return unless ctx[:viewer]
       state = ctx[:viewer].status_kind(obj)
       state == "no_select" ? "NO_STATE" : state.upcase
     }

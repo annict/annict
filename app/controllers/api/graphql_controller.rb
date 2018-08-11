@@ -2,10 +2,12 @@
 
 module Api
   class GraphqlController < ActionController::Base
+    include ViewerIdentifiable
     include Analyzable
     include LogrageSetting
     include RavenContext
 
+    before_action :doorkeeper_authorize!
     skip_before_action :verify_authenticity_token
 
     rescue_from ActionController::InvalidAuthenticityToken, with: :bad_credentials
@@ -14,9 +16,9 @@ module Api
       variables = ensure_hash(params[:variables])
       query = params[:query]
       context = {
-        access_token: access_token,
-        oauth_application: access_token.application,
-        viewer: current_user,
+        access_token: doorkeeper_token,
+        oauth_application: doorkeeper_token.application,
+        viewer: doorkeeper_token.owner,
         ga_client: ga_client
       }
       result = AnnictSchema.execute(query, variables: variables, context: context)
@@ -24,18 +26,6 @@ module Api
     end
 
     private
-
-    def access_token
-      doorkeeper_token.presence || guest_access_token
-    end
-
-    def guest_access_token
-      @guest_access_token ||= GuestAccessToken.new
-    end
-
-    def current_user
-      @current_user ||= access_token.owner
-    end
 
     def bad_credentials
       json = {

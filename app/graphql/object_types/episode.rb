@@ -73,14 +73,12 @@ ObjectTypes::Episode = GraphQL::ObjectType.define do
 
   field :viewerDidTrack, !types.Boolean do
     resolve ->(obj, _args, ctx) {
-      return false unless ctx[:viewer]
       ctx[:viewer].tracked?(obj)
     }
   end
 
   field :viewerRecordsCount, !types.Int do
     resolve ->(obj, _args, ctx) {
-      return 0 unless ctx[:viewer]
       ctx[:viewer].episode_records_count_in(obj)
     }
   end
