@@ -2,6 +2,10 @@
 
 namespace :api do
   namespace :internal do
+    namespace :v3 do
+      resource :access_token, only: %i(create)
+    end
+
     resource :impression, only: %i(show update)
     resource :programs_sort_type, only: %i(update)
     resource :records_sort_type, only: %i(update)
