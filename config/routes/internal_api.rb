@@ -4,6 +4,7 @@ namespace :api do
   namespace :internal do
     namespace :v3 do
       resource :access_token, only: %i(create)
+      resource :base_data, only: %i(show)
     end
 
     resource :impression, only: %i(show update)
