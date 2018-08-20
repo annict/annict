@@ -26,7 +26,7 @@
     "postcss-smart-import": "^0.7.6",
     "select2": "4.0.2",
     "tether": "^1.4.4",
-    "turbolinks": "5.1.1",
+    "turbolinks": "5.2.0",
     "vue": "^2.5.16",
     "vue-lazyload": "1.2.6",
     "vue-loader": "^15.2.6",
