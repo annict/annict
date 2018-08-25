@@ -31,7 +31,7 @@
     "vue-lazyload": "1.2.6",
     "vue-loader": "^15.4.0",
     "vue-template-compiler": "^2.5.17",
-    "webpack-merge": "^4.1.3"
+    "webpack-merge": "^4.1.4"
   },
   "engines": {
     "node": "~> 8.11.3"
