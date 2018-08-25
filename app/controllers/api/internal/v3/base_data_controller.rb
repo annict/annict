@@ -6,13 +6,12 @@ module Api
       class BaseDataController < Api::Internal::V3::ApplicationController
         def show
           data = {
-            csrf: {
-              param: request_forgery_protection_token,
-              token: form_authenticity_token,
-            },
+            csrfParam: request_forgery_protection_token,
+            csrfToken: form_authenticity_token,
             domain: locale == :ja ? ENV.fetch("ANNICT_JP_DOMAIN") : ENV.fetch("ANNICT_DOMAIN"),
             env: Rails.env,
-            locale: locale
+            locale: locale,
+            isSignedIn: user_signed_in?
           }
 
           render json: data
