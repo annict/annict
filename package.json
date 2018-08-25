@@ -27,7 +27,7 @@
     "select2": "4.0.2",
     "tether": "^1.4.4",
     "turbolinks": "5.2.0",
-    "vue": "^2.5.16",
+    "vue": "^2.5.17",
     "vue-lazyload": "1.2.6",
     "vue-loader": "^15.4.0",
     "vue-template-compiler": "^2.5.17",
