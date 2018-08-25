@@ -34,7 +34,7 @@ class EpisodesController < ApplicationController
   def index
     raise ActionController::RoutingError, "Not Found" if @work.no_episodes?
 
-    @episodes = @work.episodes.published
+    @episodes = @work.episodes.published.order(:sort_number)
 
     return unless user_signed_in?
 
