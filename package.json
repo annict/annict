@@ -22,7 +22,7 @@
     "mjml": "4.1.1",
     "moment-timezone": "0.5.21",
     "mousetrap": "1.6.2",
-    "popper.js": "^1.14.3",
+    "popper.js": "^1.14.4",
     "postcss-smart-import": "^0.7.6",
     "select2": "4.0.2",
     "tether": "^1.4.4",
