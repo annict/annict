@@ -28,8 +28,6 @@ html lang="#{I18n.locale}"
     = javascript_pack_tag "v3", "data-turbolinks-track": "reload"
 
     = yield :head
-
-    = render "application/adsense"
   body class="#{body_classes}"
     .p-application.d-flex.flex-column
       = yield
