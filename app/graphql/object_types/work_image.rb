@@ -25,8 +25,8 @@ ObjectTypes::WorkImage = GraphQL::ObjectType.define do
     argument :size, !types.String
 
     resolve ->(obj, args, ctx) {
-      return nil unless ctx[:doorkeeper_token].owner.role.admin?
-      return "" if obj.blank?
+      return unless ctx[:oauth_application].official?
+      return if obj.blank?
       ann_image_url obj, :attachment, size: args[:size]
     }
   end

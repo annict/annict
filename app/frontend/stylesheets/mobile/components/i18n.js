@@ -1,4 +1,4 @@
-export default function ({ app, env, isHMR, req, store }) {
+export default function({ app, env, isHMR, req, store }) {
   // If middleware is called from hot module replacement, ignore it
   if (isHMR) return
 

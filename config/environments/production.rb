@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 Rails.application.configure do
+  # Verifies that versions and hashed value of the package contents in the project's package.json
+    config.webpacker.check_yarn_integrity = false
   # Settings specified here will take precedence over those in config/application.rb.
 
   # Code is not reloaded between requests.
@@ -143,7 +145,7 @@ Rails.application.configure do
 
   config.lograge.enabled = true
   config.lograge.custom_options = lambda do |event|
-    options = event.payload.slice(:request_id, :client_uuid, :user_id)
+    options = event.payload.slice(:request_id, :viewer_uuid, :user_id)
     options[:params] = event.payload[:params].except("controller", "action")
     options
   end

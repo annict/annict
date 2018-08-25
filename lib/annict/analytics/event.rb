@@ -25,7 +25,7 @@ module Annict
         body = {
           v: 1,
           tid: ga_tracking_id(@request),
-          cid: @request.cookies["ann_client_uuid"],
+          cid: @request.cookies["ann_client_uuid"].presence || @request.cookies["ann_viewer_uuid"],
           t: "event",
           ec: ec.to_s,
           ea: ea.to_s,

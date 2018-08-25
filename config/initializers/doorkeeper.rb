@@ -131,10 +131,19 @@ Doorkeeper::Application.class_eval do
     unscoped.where(aasm_state: ["hidden"]).or(where(owner: nil))
   }
   scope :authorized, -> { where(oauth_access_tokens: { revoked_at: nil }) }
+
+  def self.official
+    find_by(uid: ENV.fetch("ANNICT_OFFICIAL_OAUTH_APP_UID"))
+  end
+
+  def official?
+    uid == ENV.fetch("ANNICT_OFFICIAL_OAUTH_APP_UID")
+  end
 end
 
 Doorkeeper::AccessToken.class_eval do
-  belongs_to :owner, class_name: "User", foreign_key: :resource_owner_id
+  belongs_to :user, foreign_key: :resource_owner_id, optional: true
+  belongs_to :guest, optional: true
 
   scope :available, -> { where(revoked_at: nil) }
   scope :personal, -> { where(application_id: nil) }
@@ -142,6 +151,10 @@ Doorkeeper::AccessToken.class_eval do
   validates :description, presence: { on: :personal }
 
   before_validation :generate_token, on: %i(create personal)
+
+  def owner
+    user.presence || guest
+  end
 
   def writable?
     scopes.include?("write")

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2018_07_22_042758) do
+ActiveRecord::Schema.define(version: 2018_08_11_141123) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_stat_statements"
@@ -463,6 +463,18 @@ ActiveRecord::Schema.define(version: 2018_07_22_042758) do
     t.index ["user_id"], name: "index_forum_posts_on_user_id"
   end
 
+  create_table "guests", force: :cascade do |t|
+    t.string "uuid", null: false
+    t.string "user_agent", default: "", null: false
+    t.string "remote_ip", default: "", null: false
+    t.string "time_zone", null: false
+    t.string "locale", null: false
+    t.string "aasm_state", default: "published", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["uuid"], name: "index_guests_on_uuid", unique: true
+  end
+
   create_table "gumroad_subscribers", force: :cascade do |t|
     t.string "gumroad_id", null: false
     t.string "gumroad_product_id", null: false
@@ -622,7 +634,7 @@ ActiveRecord::Schema.define(version: 2018_07_22_042758) do
   end
 
   create_table "oauth_access_tokens", id: :serial, force: :cascade do |t|
-    t.integer "resource_owner_id", null: false
+    t.integer "user_id"
     t.integer "application_id"
     t.string "token", null: false
     t.string "refresh_token"
@@ -632,9 +644,11 @@ ActiveRecord::Schema.define(version: 2018_07_22_042758) do
     t.string "scopes"
     t.string "previous_refresh_token", default: "", null: false
     t.string "description", default: "", null: false
+    t.integer "guest_id"
+    t.index ["guest_id"], name: "index_oauth_access_tokens_on_guest_id"
     t.index ["refresh_token"], name: "index_oauth_access_tokens_on_refresh_token", unique: true
-    t.index ["resource_owner_id"], name: "index_oauth_access_tokens_on_resource_owner_id"
     t.index ["token"], name: "index_oauth_access_tokens_on_token", unique: true
+    t.index ["user_id"], name: "index_oauth_access_tokens_on_user_id"
   end
 
   create_table "oauth_applications", id: :serial, force: :cascade do |t|
@@ -1308,8 +1322,9 @@ ActiveRecord::Schema.define(version: 2018_07_22_042758) do
   add_foreign_key "notifications", "users", name: "notifications_user_id_fk", on_delete: :cascade
   add_foreign_key "oauth_access_grants", "oauth_applications", column: "application_id"
   add_foreign_key "oauth_access_grants", "users", column: "resource_owner_id"
+  add_foreign_key "oauth_access_tokens", "guests"
   add_foreign_key "oauth_access_tokens", "oauth_applications", column: "application_id"
-  add_foreign_key "oauth_access_tokens", "users", column: "resource_owner_id"
+  add_foreign_key "oauth_access_tokens", "users"
   add_foreign_key "people", "prefectures"
   add_foreign_key "profiles", "users", name: "profiles_user_id_fk", on_delete: :cascade
   add_foreign_key "program_details", "channels"

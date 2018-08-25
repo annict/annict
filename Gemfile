@@ -77,7 +77,7 @@ gem "traceroute"
 gem "twitter"
 gem "validate_url"
 gem "virtus"
-gem "webpacker"
+gem "webpacker", ">= 4.0.x"
 gem "wilson_score"
 
 group :development, :test do
@@ -99,9 +99,10 @@ group :development do
   gem "bullet"
   gem "derailed_benchmarks"
   gem "graphiql-rails"
+  gem "graphql-docs"
   gem "i18n-tasks"
   gem "letter_opener_web"
-  gem "listen" # Rails 5から `rails s` するときに必要になった
+  gem "listen" # Using with `rails s` since Rails 5
   gem "meta_request"
   gem "rubocop"
   gem "ruby_identicon"

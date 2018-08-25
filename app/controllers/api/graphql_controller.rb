@@ -2,6 +2,7 @@
 
 module Api
   class GraphqlController < ActionController::Base
+    include ViewerIdentifiable
     include Analyzable
     include LogrageSetting
     include RavenContext
@@ -15,8 +16,9 @@ module Api
       variables = ensure_hash(params[:variables])
       query = params[:query]
       context = {
-        doorkeeper_token: doorkeeper_token,
-        viewer: current_user,
+        access_token: doorkeeper_token,
+        oauth_application: doorkeeper_token.application,
+        viewer: doorkeeper_token.owner,
         ga_client: ga_client
       }
       result = AnnictSchema.execute(query, variables: variables, context: context)
@@ -24,11 +26,6 @@ module Api
     end
 
     private
-
-    def current_user
-      return nil if doorkeeper_token.blank?
-      @current_user ||= User.find(doorkeeper_token.resource_owner_id)
-    end
 
     def bad_credentials
       json = {

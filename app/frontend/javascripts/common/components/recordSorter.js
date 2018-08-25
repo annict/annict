@@ -1,4 +1,4 @@
-import $ from 'jquery';
+import $ from 'jquery'
 
 export default {
   template: '#t-record-sorter',
@@ -6,22 +6,22 @@ export default {
   props: {
     currentUrl: {
       type: String,
-      required: true
-    }
+      required: true,
+    },
   },
 
   data() {
     return {
       sort: gon.currentRecordsSortType,
-      sortTypes: gon.recordsSortTypes
-    };
+      sortTypes: gon.recordsSortTypes,
+    }
   },
 
   methods: {
     reload() {
       return this.updateRecordsSortType(() => {
-        return (location.href = this.currentUrl);
-      });
+        return (location.href = this.currentUrl)
+      })
     },
 
     updateRecordsSortType(callback) {
@@ -29,9 +29,9 @@ export default {
         method: 'PATCH',
         url: '/api/internal/records_sort_type',
         data: {
-          records_sort_type: this.sort
-        }
-      }).done(callback);
-    }
-  }
-};
+          records_sort_type: this.sort,
+        },
+      }).done(callback)
+    },
+  },
+}

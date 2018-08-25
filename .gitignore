@@ -1,5 +1,6 @@
 .DS_Store
 
+.yarn-integrity
 /.bundle
 /.idea
 /.sass-cache
@@ -20,3 +21,4 @@
 /tmp/*
 /vendor/bundler
 /yarn-error.log
+yarn-debug.log*

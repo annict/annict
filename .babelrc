@@ -5,7 +5,7 @@
       {
         "modules": false,
         "targets": {
-          "browsers": "> 1%",
+          "browsers": "last 2 versions",
           "uglify": true
         },
         "useBuiltIns": true
