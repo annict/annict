@@ -1,0 +1,7 @@
+- title = t "head.title.home.show"
+- set_meta_tags(title: title, reverse: false)
+
+ann-home
+
+- content_for :js_templates do
+  = render "application/js_templates/v3/home"

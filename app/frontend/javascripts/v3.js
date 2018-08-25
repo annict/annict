@@ -13,12 +13,12 @@ import VueLazyload from 'vue-lazyload'
 import AccessToken from './v3/AccessToken'
 import Ajax from './v3/Ajax'
 
-import HomeGuest from './v3/components/HomeGuest'
+import Home from './v3/components/Home'
 
 document.addEventListener('turbolinks:load', async function() {
   Vue.use(VueLazyload)
 
-  Vue.component('ann-home-guest', HomeGuest)
+  Vue.component('ann-home', Home)
 
   new Vue({
     el: '.p-application',

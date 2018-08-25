@@ -157,8 +157,7 @@ en:
       friends:
         index: Find Friends
       home:
-        show_for_member: Annict
-        show_for_guest: The platform for anime addicts.
+        show: The platform for anime addicts.
       libraries:
         show: "%{profile_name} (%{username})'s \"%{action}\" anime"
       menus:

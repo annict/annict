@@ -155,8 +155,7 @@ ja:
       friends:
         index: 友達を探す
       home:
-        show_for_member: Annict
-        show_for_guest: 見たアニメを記録して、共有しよう
+        show: 見たアニメを記録して、共有しよう
       libraries:
         show: "%{profile_name} (%{username})が%{action}アニメ"
       menus:

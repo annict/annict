@@ -1,0 +1,12 @@
+script#t-home type="x-template"
+  div
+    template v-if='isLoaded'
+      template v-if="isSignedIn"
+        h1
+          | ＼(^o^)／ signed in
+      template v-else=""
+        h1
+          | ＼(^o^)／ not signed in
+    template v-else=""
+      h1
+        | (^^)
