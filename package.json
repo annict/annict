@@ -1,6 +1,16 @@
 {
   "name": "annict",
   "private": true,
+  "engines": {
+    "node": "~> 8.11.3"
+  },
+  "scripts": {
+    "bsb": "bsb -make-world",
+    "bsb:watch": "bsb -make-world -w",
+    "bsb:clean": "bsb -clean-world",
+    "webpack:watch": "webpack -w --progress",
+    "webpack:production": "NODE_ENV=production webpack"
+  },
   "dependencies": {
     "async": "2.6.1",
     "autosize": "^4.0.1",
@@ -23,6 +33,9 @@
     "mousetrap": "1.6.2",
     "popper.js": "^1.14.4",
     "postcss-smart-import": "^0.7.6",
+    "react": "^16.4.2",
+    "react-dom": "^16.4.2",
+    "reason-react": "^0.5.3",
     "select2": "4.0.2",
     "tether": "^1.4.4",
     "turbolinks": "5.2.0",
@@ -32,19 +45,25 @@
     "vue-template-compiler": "^2.5.17",
     "webpack-merge": "^4.1.4"
   },
-  "engines": {
-    "node": "~> 8.11.3"
-  },
   "devDependencies": {
     "babel-eslint": "^8.2.6",
     "babel-polyfill": "^6.26.0",
     "babel-preset-env": "^1.7.0",
     "babel-preset-latest": "^6.24.1",
+    "bs-platform": "^4.0.5",
+    "css-loader": "^1.0.0",
+    "eslint": "^5.4.0",
     "eslint-config-prettier": "^2.9.0",
     "eslint-plugin-vue": "^4.7.1",
-    "eslint": "^5.4.0",
-    "prettier-eslint": "^8.8.2",
+    "file-loader": "^2.0.0",
+    "node-sass": "^4.9.3",
     "prettier": "^1.14.2",
-    "webpack-dev-server": "^3.1.5"
+    "prettier-eslint": "^8.8.2",
+    "sass-loader": "^7.1.0",
+    "style-loader": "^0.22.1",
+    "webpack": "^4.17.1",
+    "webpack-cli": "^3.1.0",
+    "webpack-dev-server": "^3.1.5",
+    "webpack-manifest-plugin": "^2.0.3"
   }
 }
