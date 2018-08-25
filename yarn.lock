@@ -7123,9 +7123,9 @@ tunnel-agent@^0.6.0:
   dependencies:
     safe-buffer "^5.0.1"
 
-turbolinks@5.1.1:
-  version "5.1.1"
-  resolved "https://registry.yarnpkg.com/turbolinks/-/turbolinks-5.1.1.tgz#3d418a2d8172edbde5e787bf74cb7bef151ae43f"
+turbolinks@5.2.0:
+  version "5.2.0"
+  resolved "https://registry.yarnpkg.com/turbolinks/-/turbolinks-5.2.0.tgz#e6877a55ea5c1cb3bb225f0a4ae303d6d32ff77c"
 
 tweetnacl@^0.14.3, tweetnacl@~0.14.0:
   version "0.14.5"
