@@ -109,7 +109,7 @@ GEM
     browser (2.5.3)
     buftok (0.2.0)
     builder (3.2.3)
-    bullet (5.7.5)
+    bullet (5.7.6)
       activesupport (>= 3.0.0)
       uniform_notifier (~> 1.11.0)
     by_star (3.0.0)
