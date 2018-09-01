@@ -143,7 +143,7 @@ GEM
     concurrent-ruby (1.0.5)
     coolline (0.5.0)
       unicode_utils (~> 1.4)
-    counter_culture (2.0.0)
+    counter_culture (2.0.1)
       activerecord (>= 3.0.0)
       activesupport (>= 3.0.0)
       after_commit_action (~> 1.0)
