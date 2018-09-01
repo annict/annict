@@ -4,25 +4,21 @@
   an issue! */
 {
   "name": "annict",
+  "namespace": true,
   "reason": {
     "react-jsx": 2
   },
   "sources": [
-    // {
-    //   "dir" : "src",
-    //   "subdirs" : true
-    // },
     {
-      "dir" : "app/frontend/javascripts",
+      "dir" : "app/frontend/reason",
       "subdirs" : true
     }
   ],
-  "package-specs": [{
+  "package-specs": {
     "module": "commonjs",
-    "in-source": true
-  }],
+    "in-source": false /* Output to lib/js/ */
+  },
   "suffix": ".bs.js",
-  "namespace": true,
   "bs-dependencies": [
     "reason-react"
   ],

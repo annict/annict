@@ -25,7 +25,7 @@ html lang="#{I18n.locale}"
     = csp_meta_tag
 
     / = stylesheet_bundle_tag "v3", media: "all", "data-turbolinks-track": "reload"
-    = javascript_bundle_tag("App.js", defer: true, "data-turbolinks-track": "reload")
+    = javascript_bundle_tag("application.js", defer: true, "data-turbolinks-track": "reload")
 
     = yield :head
   body class="#{body_classes}"

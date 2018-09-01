@@ -7,12 +7,12 @@
 /.bundle
 /.idea
 /.sass-cache
-/app/frontend/javascripts/**/*.bs.js
 /config/application.yml
 /config/master.key
 /coverage
 /db/dump/*
 /lib/bs
+/lib/js
 /lib/tasks/data.rake
 /log/*
 /node_modules
