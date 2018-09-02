@@ -2,6 +2,10 @@
 
 module ReactHelper
   def react_component(name, options = {})
-    tag.div(id: "ann-react-app", "data-component-name": name)
+    tag.div(
+      id: "ann-app",
+      class: " d-flex flex-column",
+      "data-component-name": name
+    )
   end
 end
