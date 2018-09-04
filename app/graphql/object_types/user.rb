@@ -34,13 +34,13 @@ ObjectTypes::User = GraphQL::ObjectType.define do
 
   connection :followers, ObjectTypes::User.connection_type do
     resolve ->(obj, _args, _ctx) {
-      ForeignKeyLoader.for(User, :id).load(obj.followers.pluck(:id))
+      ForeignKeyLoader.for(User, :id).load(obj.followers.published.pluck(:id))
     }
   end
 
   connection :following, ObjectTypes::User.connection_type do
     resolve ->(obj, _args, _ctx) {
-      ForeignKeyLoader.for(User, :id).load(obj.followings.pluck(:id))
+      ForeignKeyLoader.for(User, :id).load(obj.followings.published.pluck(:id))
     }
   end
 
@@ -101,13 +101,13 @@ ObjectTypes::User = GraphQL::ObjectType.define do
 
   field :followingsCount, !types.Int do
     resolve ->(obj, _args, _ctx) {
-      obj.followings.count
+      obj.followings.published.count
     }
   end
 
   field :followersCount, !types.Int do
     resolve ->(obj, _args, _ctx) {
-      obj.followers.count
+      obj.followers.published.count
     }
   end
 

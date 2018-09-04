@@ -62,11 +62,11 @@ class UsersController < ApplicationController
   end
 
   def following
-    @users = @user.followings.order("follows.id DESC")
+    @users = @user.followings.published.order("follows.id DESC")
   end
 
   def followers
-    @users = @user.followers.order("follows.id DESC")
+    @users = @user.followers.published.order("follows.id DESC")
   end
 
   def destroy

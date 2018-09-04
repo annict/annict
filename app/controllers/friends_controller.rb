@@ -5,7 +5,7 @@ class FriendsController < ApplicationController
   before_action :authenticate_user!
 
   def index
-    me_and_following_ids = current_user.followings.pluck(:id) << current_user.id
+    me_and_following_ids = current_user.followings.published.pluck(:id) << current_user.id
 
     begin
       friend_ids = current_user.social_friends.all.pluck(:id)
