@@ -6,6 +6,11 @@
         "tslint-config-prettier"
     ],
     "jsRules": {},
-    "rules": {},
+    "rules": {
+        "no-unused-expression": [
+            true,
+            "allow-new" // To allow `new Vue(...)`
+        ]
+    },
     "rulesDirectory": []
 }
