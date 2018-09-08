@@ -1,7 +1,7 @@
 import 'd3'
 import 'dropzone'
 import 'select2'
-import Turbolinks from 'turbolinks'
+import { start } from 'turbolinks'
 import Vue from 'vue'
 import VueLazyload from 'vue-lazyload'
 
@@ -17,4 +17,4 @@ document.addEventListener('turbolinks:load', async () => {
   new App({ el: '.p-application' })
 })
 
-Turbolinks.start()
+start()
