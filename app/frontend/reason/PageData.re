@@ -1,0 +1,1 @@
+type pageData = {pageCategory: string};

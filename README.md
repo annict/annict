@@ -27,7 +27,25 @@ $ cp config/application.yml{.example,}
 $ bundle
 $ rake db:setup
 $ yarn
+```
+
+Run Rails server:
+
+```
 $ rails s -b 0.0.0.0
+```
+
+Start Forman to create asset files:
+
+```
+$ foreman start -f Procfile.dev
+```
+
+If you don't want to use Foreman, you need to run following commands:
+
+```
+$ yarn bsb:watch
+$ yarn webpack:watch
 ```
 
 You should then be able to open [http://localhost:3000](http://localhost:3000) in your browser.

@@ -1,6 +1,7 @@
 doctype html
 html lang="#{I18n.locale}"
   head
+    script async="" src="https://www.googletagmanager.com/gtag/js?id=#{ga_tracking_id(request)}"
     = ann_display_meta_tags
     meta http-equiv='x-dns-prefetch-control' content='on'
 
@@ -24,13 +25,12 @@ html lang="#{I18n.locale}"
 
     = csp_meta_tag
 
-    = stylesheet_pack_tag "v3", media: "all", "data-turbolinks-track": "reload"
-    = javascript_pack_tag "v3", "data-turbolinks-track": "reload"
+    / = stylesheet_bundle_tag "v3", media: "all", "data-turbolinks-track": "reload"
+    = javascript_bundle_tag("application.js", defer: true, "data-turbolinks-track": "reload")
 
     = yield :head
   body class="#{body_classes}"
-    .p-application.d-flex.flex-column
-      = yield
+    = yield
 
     // Font Awesome
     javascript:

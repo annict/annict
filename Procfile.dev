@@ -1,0 +1,2 @@
+bsb: yarn bsb:watch
+webpack: yarn webpack:watch

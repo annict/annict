@@ -1,6 +1,9 @@
 .DS_Store
 
+.bsb.lock
+.merlin
 .yarn-integrity
+
 /.bundle
 /.idea
 /.sass-cache
@@ -8,6 +11,8 @@
 /config/master.key
 /coverage
 /db/dump/*
+/lib/bs
+/lib/js
 /lib/tasks/data.rake
 /log/*
 /node_modules
@@ -21,4 +26,6 @@
 /tmp/*
 /vendor/bundler
 /yarn-error.log
+
+npm-debug.log
 yarn-debug.log*

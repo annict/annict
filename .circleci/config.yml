@@ -58,7 +58,7 @@ jobs:
           name: Yarn Install
           command: yarn install --cache-folder ~/.cache/yarn
 
-      # Store yarn / webpacker cache
+      # Store yarn cache
       - save_cache:
           key: annict-yarn-{{ checksum "yarn.lock" }}
           paths:
