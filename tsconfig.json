@@ -13,7 +13,13 @@
     // Disallow features that require cross-file information for emit.
     "isolatedModules": true,
     // Import non-ES modules as default imports.
-    "esModuleInterop": true
+    "esModuleInterop": true,
+    // Raise error on expressions and declarations with an implied any type.
+    "noImplicitAny": true,
+    // In strict null checking mode, the null and undefined values are not
+    // in the domain of every type and are only assignable to themselves and
+    // any (the one exception being that undefined is also assignable to void).
+    "strictNullChecks": true
   },
   "include": [
     "app/frontend/scripts"

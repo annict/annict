@@ -14,10 +14,10 @@ export default {
 
     isLoaded() {
       return this.$root.isAppLoaded && this.isComponentLoaded
-    }
+    },
   },
 
   created() {
     this.isComponentLoaded = true
-  }
+  },
 }
