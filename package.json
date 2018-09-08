@@ -11,6 +11,7 @@
   },
   "dependencies": {
     "@babel/polyfill": "^7.0.0",
+    "@types/js-cookie": "^2.2.0",
     "async": "2.6.1",
     "autosize": "^4.0.1",
     "axios": "^0.18.0",
