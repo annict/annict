@@ -7,10 +7,10 @@ import Turbolinks from 'turbolinks'
 import Vue from 'vue'
 import VueLazyload from 'vue-lazyload'
 
-import AccessToken from './v3/AccessToken'
-import Ajax from './v3/Ajax'
+import AccessToken from './AccessToken'
+import Ajax from './Ajax'
 
-import Home from './v3/components/Home'
+import Home from './components/Home'
 
 document.addEventListener('turbolinks:load', async function() {
   Vue.use(VueLazyload)
