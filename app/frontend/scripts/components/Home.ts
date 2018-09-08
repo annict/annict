@@ -16,7 +16,7 @@ export default class Home extends Vue {
     return this.root.isAppLoaded && this.isComponentLoaded
   }
 
-  public created() {
+  private created() {
     this.isComponentLoaded = true
   }
 }
