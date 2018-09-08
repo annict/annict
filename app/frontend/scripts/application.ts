@@ -1,3 +1,4 @@
+import axios from 'axios'
 import 'select2'
 import 'd3'
 import 'dropzone'
@@ -8,7 +9,6 @@ import Vue from 'vue'
 import VueLazyload from 'vue-lazyload'
 
 import AccessToken from './AccessToken'
-import Ajax from './Ajax'
 
 import Home from './components/Home'
 
@@ -28,14 +28,14 @@ document.addEventListener('turbolinks:load', async function() {
         env: '',
         locale: '',
         isSignedIn: false,
-        isAppLoaded: false
+        isAppLoaded: false,
       }
     },
 
     computed: {
       isProduction() {
         return this.env === 'production'
-      }
+      },
     },
 
     methods: {
@@ -47,9 +47,9 @@ document.addEventListener('turbolinks:load', async function() {
           secure: this.isProduction,
         })
 
-        Ajax.setup({
-          headers: { 'X-CSRF-Token': this.csrfToken },
-        })
+        axios.defaults.headers.common = {
+          'X-CSRF-Token': this.csrfToken,
+        }
 
         await AccessToken.generate()
       },
@@ -63,8 +63,7 @@ document.addEventListener('turbolinks:load', async function() {
     },
 
     async created() {
-      const res = await fetch('/api/internal/v3/base_data')
-      const baseData = await res.json()
+      const baseData = await axios.get('/api/internal/v3/base_data')
 
       Object.assign(this, baseData)
 

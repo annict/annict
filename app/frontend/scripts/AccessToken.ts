@@ -1,4 +1,4 @@
-import Ajax from './Ajax'
+import axios from 'axios'
 
 export default {
   async generate() {
@@ -8,7 +8,7 @@ export default {
       return
     }
 
-    const res = await Ajax.fetch('/api/internal/v3/access_token', { method: 'POST' })
+    const res = await axios.post('/api/internal/v3/access_token')
 
     localStorage.setItem('accessToken', res.data.accessToken)
   },
