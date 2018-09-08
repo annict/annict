@@ -1,17 +1,21 @@
 {
   "presets": [
+    "@babel/typescript",
     [
-      "env",
+      "@babel/preset-env",
       {
         "modules": false,
         "targets": {
-          "browsers": "last 2 versions",
+          "browsers": ["last 2 versions", "Chrome >= 41"],
           "uglify": true
         },
-        "useBuiltIns": true
+        "useBuiltIns": "usage"
       }
     ]
   ],
 
-  "plugins": ["syntax-dynamic-import", "transform-object-rest-spread", ["transform-class-properties", { "spec": true }]]
+  "plugins": [
+    "@babel/proposal-class-properties",
+    "@babel/proposal-object-rest-spread"
+  ]
 }
