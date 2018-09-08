@@ -1,25 +1,34 @@
 type state = {
   loading: bool,
   baseData: BaseData.baseData,
+  pageData: PageData.pageData,
 };
 
 type action =
   | FetchBaseData
-  | LoadBaseData(BaseData.baseData);
+  | LoadBaseData(BaseData.baseData)
+  | SetupAnalytics(BaseData.baseData);
 
 let appComponent = ReasonReact.reducerComponent("App");
 
-let make = (~pageComponentName, _children) => {
+let make = (~pageComponentName, ~pageCategory, _children) => {
   ...appComponent,
   initialState: () => {
     loading: false,
     baseData: {
+      viewerUUID: "",
       csrfParam: "",
       csrfToken: "",
       domain: "",
+      encodedUserId: "",
       env: "",
-      locale: "",
+      gaTrackingId: "",
       isSignedIn: false,
+      locale: "",
+      userType: "",
+    },
+    pageData: {
+      pageCategory: pageCategory,
     },
   },
   reducer: (action, state) =>
@@ -34,26 +43,67 @@ let make = (~pageComponentName, _children) => {
         (
           self => {
             Js.log(
-              "UpdateWithSideEffects called. state.loading: "
+              "FetchBaseData - UpdateWithSideEffects called. state.loading: "
               ++ string_of_bool(self.state.loading),
             );
             Js.Promise.(
               BaseData.fetch()
               |> then_(baseData =>
-                   self.send(LoadBaseData(baseData)) |> resolve
+                   {
+                     self.send(LoadBaseData(baseData));
+                     self.send(SetupAnalytics(baseData));
+                   }
+                   |> resolve
                  )
               |> ignore
             );
           }
         ),
       );
+    | SetupAnalytics(baseData) =>
+      ReasonReact.SideEffects(
+        (
+          self => {
+            let load = [%raw
+              {|
+              function(gaTrackingId, viewerUUID, encodedUserId, userType, pageCategory) {
+                window.dataLayer = window.dataLayer || [];
+                function gtag(){dataLayer.push(arguments);}
+                gtag("js", new Date());
+
+                gtag("config", gaTrackingId, {
+                  "client_id": viewerUUID,
+                  "user_id": encodedUserId,
+                  "dimension1": userType,
+                  "dimension2": pageCategory,
+                  "custom_map": {
+                    "dimension1": userType,
+                    "dimension2": pageCategory,
+                  }
+                });
+              }
+              |}
+            ];
+            load(
+              baseData.gaTrackingId,
+              baseData.viewerUUID,
+              baseData.encodedUserId,
+              baseData.userType,
+              self.state.pageData.pageCategory,
+            );
+          }
+        ),
+      )
     | LoadBaseData(baseData) =>
-      ReasonReact.Update({loading: false, baseData})
+      ReasonReact.Update({loading: false, baseData, pageData: state.pageData})
     },
   didMount: self => self.send(FetchBaseData),
-  render: _self =>
-    switch (pageComponentName) {
-    | "Home" => <Components.Home />
-    | _ => <Components.Blank />
-    },
+  render: self => {
+    let pageComponent =
+      switch (pageComponentName) {
+      | "Home" => <PageComponents.Home baseData={self.state.baseData} />
+      | _ => <PageComponents.Blank />
+      };
+    <> pageComponent </>;
+  },
 };

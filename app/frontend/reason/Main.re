@@ -1,7 +1,8 @@
 let listener = () => {
   let appElm = Document.getElementById("ann-app");
   let pageComponentName = Element.getAttribute(appElm, "data-component-name");
-  ReactDOMRe.render(<App pageComponentName />, appElm);
+  let pageCategory = Element.getAttribute(appElm, "data-page-category");
+  ReactDOMRe.render(<App pageComponentName pageCategory />, appElm);
 };
 
 Document.addEventListener("turbolinks:load", listener);

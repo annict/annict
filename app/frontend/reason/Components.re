@@ -1,2 +1,1 @@
-module Blank = BlankComponent;
-module Home = HomeComponent;
+module Footer = FooterComponent;
