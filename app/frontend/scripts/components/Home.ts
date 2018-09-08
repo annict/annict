@@ -6,13 +6,14 @@ import Component from 'vue-class-component'
 })
 export default class Home extends Vue {
   public isComponentLoaded = false
+  private root: any = this.$root
 
   get isSignedIn() {
-    return this.$root.isSignedIn
+    return this.root.isSignedIn
   }
 
   get isLoaded() {
-    return this.$root.isAppLoaded && this.isComponentLoaded
+    return this.root.isAppLoaded && this.isComponentLoaded
   }
 
   public created() {
