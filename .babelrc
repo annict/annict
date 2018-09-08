@@ -6,10 +6,10 @@
       {
         "modules": false,
         "targets": {
-          "browsers": ["last 2 versions", "Chrome >= 41"],
-          "uglify": true
+          "browsers": ["last 2 versions", "Chrome >= 41"]
         },
-        "useBuiltIns": "usage"
+        "useBuiltIns": "usage",
+        "forceAllTransforms": true
       }
     ]
   ],
