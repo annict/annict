@@ -582,6 +582,12 @@
   version "2.2.0"
   resolved "https://registry.yarnpkg.com/@types/js-cookie/-/js-cookie-2.2.0.tgz#ae2eabaa4bc892ba553c664cca21e6ee5224e5b5"
 
+"@types/moment-timezone@^0.5.8":
+  version "0.5.8"
+  resolved "https://registry.yarnpkg.com/@types/moment-timezone/-/moment-timezone-0.5.8.tgz#92aba9bc238cabf69a27a1a4f52e0ebb8f10f896"
+  dependencies:
+    moment ">=2.14.0"
+
 "@vue/component-compiler-utils@^2.0.0":
   version "2.1.0"
   resolved "https://registry.yarnpkg.com/@vue/component-compiler-utils/-/component-compiler-utils-2.1.0.tgz#8331eadc8acdbc35aace5a61d2153e6f6434bfe2"
@@ -4351,6 +4357,10 @@ moment-timezone@^0.5.21:
 "moment@>= 2.9.0":
   version "2.22.1"
   resolved "https://registry.yarnpkg.com/moment/-/moment-2.22.1.tgz#529a2e9bf973f259c9643d237fda84de3a26e8ad"
+
+moment@>=2.14.0:
+  version "2.22.2"
+  resolved "https://registry.yarnpkg.com/moment/-/moment-2.22.2.tgz#3c257f9839fc0e93ff53149632239eb90783ff66"
 
 mousetrap@1.6.2:
   version "1.6.2"
