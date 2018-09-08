@@ -33,6 +33,16 @@ module.exports = {
         test: /\.(tsx?)|(js)$/,
         exclude: /node_modules/,
         loader: 'babel-loader',
+        query: {
+          plugins: [
+            [
+              '@babel/plugin-proposal-decorators',
+              {
+                legacy: true,
+              },
+            ],
+          ],
+        },
       },
       {
         test: /\.scss$/,

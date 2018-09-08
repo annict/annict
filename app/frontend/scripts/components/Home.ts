@@ -1,23 +1,21 @@
-export default {
+import Vue from 'vue'
+import Component from 'vue-class-component'
+
+@Component({
   template: '#t-home',
+})
+export default class Home extends Vue {
+  public isComponentLoaded = false
 
-  data() {
-    return {
-      isComponentLoaded: false,
-    }
-  },
+  get isSignedIn() {
+    return this.$root.isSignedIn
+  }
 
-  computed: {
-    isSignedIn() {
-      return this.$root.isSignedIn
-    },
+  get isLoaded() {
+    return this.$root.isAppLoaded && this.isComponentLoaded
+  }
 
-    isLoaded() {
-      return this.$root.isAppLoaded && this.isComponentLoaded
-    },
-  },
-
-  created() {
+  public created() {
     this.isComponentLoaded = true
-  },
+  }
 }
