@@ -24,7 +24,6 @@ class ApplicationController < ActionController::Base
   before_action :switch_locale
   before_action :set_search_params
   before_action :load_new_user
-  before_action :store_page_category
 
   # テスト実行時にDragonflyでアップロードした画像を読み込むときに呼ばれるアクション
   # 画像サーバはこのRailsアプリから切り離しているので、CircleCI等でテストを実行するときは
