@@ -53,8 +53,6 @@
     "@babel/preset-typescript": "^7.0.0",
     "babel-loader": "^8.0.2",
     "css-loader": "^1.0.0",
-    "eslint": "^5.5.0",
-    "eslint-config-prettier": "^3.0.1",
     "file-loader": "^2.0.0",
     "mini-css-extract-plugin": "^0.4.2",
     "node-sass": "^4.9.3",
