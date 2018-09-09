@@ -4,7 +4,7 @@ module Annict
   module Analytics
     class Event
       include HTTParty
-      include GaHelper
+      include Analyzable
 
       base_uri "https://ssl.google-analytics.com"
 
