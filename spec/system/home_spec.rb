@@ -8,7 +8,7 @@ describe "Top page" do
       visit "/"
     end
 
-    it "displays the hero words", js: true do
+    skip "displays the hero words", js: true do
       expect(page).to have_content("The platform for anime addicts.")
     end
   end
