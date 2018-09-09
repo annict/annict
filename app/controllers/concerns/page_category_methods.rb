@@ -17,7 +17,7 @@ module PageCategoryMethods
       else
         params[:action]
       end
-  
+
       "#{params[:controller]}_#{action}".tr("/", "_")
     end
   end
