@@ -27,6 +27,17 @@ $ cp config/application.yml{.example,}
 $ bundle
 $ rake db:setup
 $ yarn
+```
+
+Run Webpack:
+
+```
+$ yarn webpack:watch
+```
+
+And run Rails server:
+
+```
 $ rails s -b 0.0.0.0
 ```
 
