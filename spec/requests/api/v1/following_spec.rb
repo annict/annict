@@ -12,7 +12,7 @@ describe "Api::V1::Following" do
   describe "GET /v1/following" do
     let(:user1) { create(:user, :with_profile) }
     let(:user2) { create(:user, :with_profile) }
-    let(:access_token) { create(:oauth_access_token, owner: user1) }
+    let(:access_token) { create(:oauth_access_token, user: user1) }
     let!(:follow) { create(:follow, user: user1, following: user2) }
 
     before do

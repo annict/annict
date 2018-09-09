@@ -4,7 +4,7 @@ describe "Api::V1::Users" do
   describe "GET /v1/users" do
     let(:user) { create(:user, :with_profile) }
     let(:application) { create(:oauth_application, owner: user) }
-    let(:access_token) { create(:oauth_access_token, owner: user, application: application) }
+    let(:access_token) { create(:oauth_access_token, user: user, application: application) }
 
     before do
       Timecop.freeze(Time.parse("2017-01-29 08:39:04"))
