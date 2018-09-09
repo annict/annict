@@ -257,7 +257,7 @@ class Work < ApplicationRecord
   def self.watching_friends_data(work_ids, user)
     work_ids = work_ids.uniq
     status_kinds = %w(wanna_watch watching watched)
-    users = user.followings.includes(:profile)
+    users = user.followings.published.includes(:profile)
     user_ids = users.pluck(:id)
     latest_statuses = LatestStatus.
       where(work: work_ids, user: user_ids).

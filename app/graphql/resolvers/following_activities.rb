@@ -5,7 +5,7 @@ module Resolvers
     def call(obj, args, _ctx)
       @obj = obj
       @args = args
-      following_ids = obj.followings.pluck(:id)
+      following_ids = obj.followings.published.pluck(:id)
       following_ids << obj.id
       @collection = Activity.where(user_id: following_ids)
       from_arguments
