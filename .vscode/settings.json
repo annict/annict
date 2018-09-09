@@ -1,3 +1,4 @@
 {
-  "eslint.packageManager": "yarn"
+  "eslint.packageManager": "yarn",
+  "sasslint.enable": true
 }

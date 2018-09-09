@@ -103,7 +103,6 @@ group :development do
   gem "meta_request"
   gem "rubocop"
   gem "ruby_identicon"
-  gem "scss_lint", require: false
   gem "solargraph"
   gem "spring-commands-rspec", require: false
   gem "spring"
