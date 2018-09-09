@@ -4,17 +4,23 @@ import * as moment from 'moment-timezone'
 import Vue from 'vue'
 import Component from 'vue-class-component'
 
-import AccessToken from './AccessToken'
+import AccessToken from './utils/AccessToken'
+import Analytics from './utils/Analytics'
+import './utils/Global'
 
 @Component
 export default class App extends Vue {
   private csrfParam = ''
   private csrfToken = ''
   private domain = ''
+  private encodedUserId = ''
   private env = ''
+  private gaTrackingId = ''
   private isAppLoaded = false
   private isSignedIn = false
   private locale = ''
+  private userType = ''
+  private viewerUUID = ''
 
   get isProduction() {
     return this.env === 'production'
@@ -43,10 +49,13 @@ export default class App extends Vue {
   }
 
   private async created() {
-    const baseData = await axios.get('/api/internal/v3/base_data')
+    const res = await axios.get('/api/internal/base_data')
+    const baseData = res.data
+    const pageData = window.ann.pageData
 
     Object.assign(this, baseData)
 
+    Analytics.load(baseData, pageData)
     await this.setup()
     this.setupVue()
 

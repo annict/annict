@@ -7,12 +7,12 @@ import VueLazyload from 'vue-lazyload'
 
 import App from './App'
 
-import Home from './components/Home'
+import Home from './page_components/Home'
 
-document.addEventListener('turbolinks:load', async () => {
+document.addEventListener('turbolinks:load', () => {
   Vue.use(VueLazyload)
 
-  Vue.component('ann-home', Home)
+  Vue.component('pc-home', Home)
 
   new App({ el: '.p-application' })
 })
