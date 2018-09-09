@@ -5,13 +5,10 @@ module.exports = {
     es6: true,
     node: true,
   },
-  extends: ['eslint:recommended', 'plugin:vue/essential', 'prettier'],
-  globals: {
-    ga: true,
-    gon: true,
-  },
+  extends: ['eslint:recommended', 'prettier'],
+  globals: {},
   parserOptions: {
-    parser: 'babel-eslint',
+    sourceType: 'module',
   },
   rules: {
     'no-console': process.env.NODE_ENV === 'production' ? 'error' : 'off',
