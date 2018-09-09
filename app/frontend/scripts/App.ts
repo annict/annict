@@ -1,4 +1,5 @@
 import axios from 'axios'
+import 'bootstrap'
 import * as Cookies from 'js-cookie'
 import * as moment from 'moment-timezone'
 import Vue from 'vue'
