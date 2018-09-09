@@ -15,3 +15,7 @@ sass-lint:
 
 scss:
   enabled: false
+
+tslint:
+  enabled: true
+  config_file: tslint.json
