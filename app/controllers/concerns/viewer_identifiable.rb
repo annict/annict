@@ -2,7 +2,7 @@
 
 module ViewerIdentifiable
   def viewer_uuid
-    cookies[:ann_client_uuid].presence || cookies[:ann_viewer_uuid].presence || store_client_uuid
+    cookies[:ann_client_uuid].presence || cookies[:ann_viewer_uuid].presence || store_viewer_uuid
   end
 
   def current_viewer
