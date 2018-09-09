@@ -6,7 +6,6 @@ module Db
 
     include ControllerCommon
     include ViewerIdentifiable
-    include FlashMessage
     include Analyzable
     include LogrageSetting
     include RavenContext

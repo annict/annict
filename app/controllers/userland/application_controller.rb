@@ -8,7 +8,6 @@ module Userland
     include ViewerIdentifiable
     include Analyzable
     include LogrageSetting
-    include FlashMessage
     include ViewSelector
     include RavenContext
     include PageCategoryMethods

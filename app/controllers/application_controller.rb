@@ -10,7 +10,6 @@ class ApplicationController < ActionController::Base
   include PageCategoryMethods
   include PageParamsMethods
   include ViewSelector
-  include FlashMessage
   include RavenContext
   include HeadersForFastly
 
