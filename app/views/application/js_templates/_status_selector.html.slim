@@ -1,7 +1,0 @@
-script#t-status-selector type="x-template"
-  .c-status-selector :class='{ "is-small": size === "small", "is-transparent": isTransparent || statusKind === "no_select", "c-spinner": isLoading }'
-    .c-status-selector__object
-      select.w-100 v-model="statusKind" @change="change"
-        - options = Status.kind.options.insert(0, [t("messages.components.status_selector.select_status"), "no_select"])
-        = options_for_select(options)
-      = icon "caret-down"

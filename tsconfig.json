@@ -1,0 +1,35 @@
+{
+  "compilerOptions": {
+    // Process & infer types from .js files.
+    "allowJs": false,
+    // Import non-ES modules as default imports.
+    "esModuleInterop": true,
+    "experimentalDecorators": true,
+    // Disallow features that require cross-file information for emit.
+    "isolatedModules": true,
+    "lib": [
+      "dom",
+      "es2015"
+    ],
+    // Search under node_modules for non-relative imports.
+    "moduleResolution": "node",
+    "module": "es2015",
+    // Don't emit; allow Babel to transform files.
+    "noEmit": true,
+    // Raise error on expressions and declarations with an implied any type.
+    "noImplicitAny": true,
+    // Enable strictest settings like strictNullChecks & noImplicitAny.
+    "strict": true,
+    // In strict null checking mode, the null and undefined values are not
+    // in the domain of every type and are only assignable to themselves and
+    // any (the one exception being that undefined is also assignable to void).
+    "strictNullChecks": true,
+    "target": "es5",
+    "typeRoots": [
+      "./app/frontend/scripts/typings"
+    ]
+  },
+  "include": [
+    "./app/frontend/scripts"
+  ]
+}

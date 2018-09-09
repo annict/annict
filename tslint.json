@@ -1,0 +1,17 @@
+{
+    "defaultSeverity": "error",
+    "extends": [
+        "tslint:recommended",
+        "tslint-config-standard",
+        "tslint-config-prettier"
+    ],
+    "jsRules": {},
+    "rules": {
+        "interface-name" : [true, "never-prefix"],
+        "no-unused-expression": [
+            true,
+            "allow-new" // To allow `new Vue(...)`
+        ]
+    },
+    "rulesDirectory": []
+}

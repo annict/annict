@@ -1,8 +1,0 @@
-script#t-omitted-synopsis type="x-template"
-  .c-omitted-synopsis
-    template v-if="canViewFullSynopsis"
-      span v-html="format(text)"
-    template v-else=""
-      span v-html="format(shortenText)"
-      span.u-fake-link.ml-2 @click="expand"
-        = t "verb.more"
