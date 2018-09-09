@@ -8,7 +8,6 @@ module Forum
     include ViewerIdentifiable
     include Analyzable
     include LogrageSetting
-    include Gonable
     include FlashMessage
     include ViewSelector
     include RavenContext
@@ -23,7 +22,6 @@ module Forum
     before_action :redirect_if_unexpected_subdomain
     before_action :switch_locale
     before_action :set_search_params
-    before_action :store_data_into_gon
     before_action :store_page_category
     before_action :load_new_user
   end

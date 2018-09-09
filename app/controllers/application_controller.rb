@@ -7,7 +7,6 @@ class ApplicationController < ActionController::Base
   include ViewerIdentifiable
   include Analyzable
   include LogrageSetting
-  include Gonable
   include PageCategoryMethods
   include PageParamsMethods
   include ViewSelector
@@ -19,13 +18,12 @@ class ApplicationController < ActionController::Base
   # For APIs, you may want to use :null_session instead.
   protect_from_forgery with: :exception, prepend: true
 
-  helper_method :gon
+  helper_method :ga_tracking_id
 
   before_action :redirect_if_unexpected_subdomain
   before_action :switch_locale
   before_action :set_search_params
   before_action :load_new_user
-  before_action :store_data_into_gon
   before_action :store_page_category
 
   # テスト実行時にDragonflyでアップロードした画像を読み込むときに呼ばれるアクション
