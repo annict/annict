@@ -32,7 +32,7 @@ $ yarn
 Run Webpack:
 
 ```
-$ yarn webpack:watch
+$ foreman start -f Procfile.dev
 ```
 
 And run Rails server:

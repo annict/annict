@@ -5,7 +5,7 @@
     "node": "~> 8.11.3"
   },
   "scripts": {
-    "ts:check-types": "tsc",
+    "tsc:watch": "tsc -w",
     "webpack:watch": "webpack -w --progress",
     "webpack:production": "NODE_ENV=production webpack"
   },
