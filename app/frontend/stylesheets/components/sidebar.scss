@@ -1,0 +1,13 @@
+.c-sidebar {
+  background-color: $ann-color-white;
+  display: none;
+  margin-top: $ann-navbar-height;
+  overflow-y: auto;
+  top: 0;
+  z-index: 1;
+
+  &--show {
+    display: block;
+    width: $ann-sidebar-width;
+  }
+}

@@ -1,11 +1,16 @@
 import Vue from 'vue'
 import Component from 'vue-class-component'
 
+import GuestHome from '../GuestHome'
+
 @Component({
+  components: {
+    'c-guest-home': GuestHome,
+  },
   template: '#t-home',
 })
 export default class Home extends Vue {
-  public isComponentLoaded = false
+  private isComponentLoaded = false
   private root: any = this.$root
 
   get isSignedIn() {

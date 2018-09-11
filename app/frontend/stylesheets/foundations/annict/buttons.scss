@@ -1,0 +1,11 @@
+@each $color-name, $color in $ann-btn-colors {
+  .ann-btn-#{$color-name} {
+    @include button-variant($color, $color);
+  }
+}
+
+@each $color-name, $color in $ann-btn-colors {
+  .ann-btn-outline-#{$color-name} {
+    @include button-outline-variant($color);
+  }
+}

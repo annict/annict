@@ -2,3 +2,22 @@
 @import './variables/bootstrap';
 
 @import '~bootstrap/scss/bootstrap';
+
+@import './mixins/background-variant';
+
+@import './foundations/annict/all';
+@import './foundations/annict/background';
+@import './foundations/annict/buttons';
+@import './foundations/annict/html';
+@import './foundations/annict/body';
+@import './foundations/annict/font';
+@import './foundations/annict/input';
+@import './foundations/annict/type';
+
+@import './foundations/bootstrap/buttons';
+
+@import './components/app';
+@import './components/navbar';
+@import './components/sidebar';
+
+@import './projects/home-hero';

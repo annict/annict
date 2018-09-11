@@ -1,0 +1,6 @@
+@mixin ann-bg-gradient-variant($name, $color1, $color2) {
+  .ann-bg-gradient-#{$name} {
+    background: $color1;
+    background: linear-gradient(120deg, $color1 25%, $color2 150%);
+  }
+}

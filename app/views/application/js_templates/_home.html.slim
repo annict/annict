@@ -2,11 +2,9 @@ script#t-home type="x-template"
   div
     template v-if='isLoaded'
       template v-if="isSignedIn"
-        h1
-          | ＼(^o^)／ signed in
+        c-user-home
       template v-else=""
-        h1
-          | ＼(^o^)／ not signed in
+        c-guest-home :with-sidebar="false"
     template v-else=""
       h1
         | (^^)

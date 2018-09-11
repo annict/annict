@@ -1,7 +1,10 @@
 - title = t "head.title.home.show"
 - set_meta_tags(title: title, reverse: false)
 
-pc-home
+c-home
 
 - content_for :js_templates do
+  = render "application/js_templates/guest_home"
   = render "application/js_templates/home"
+  = render "application/js_templates/navbar"
+  = render "application/js_templates/sidebar"

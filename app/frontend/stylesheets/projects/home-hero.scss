@@ -1,0 +1,48 @@
+.p-home-hero {
+  position: relative;
+
+  &__bg-image {
+    background-position: center;
+    background-size: cover;
+    filter: brightness(50%);
+    height: 100%;
+    position: absolute;
+    width: 100%;
+  }
+
+  &__search {
+    input {
+      border: none;
+      border-top-right-radius: 0;
+      border-bottom-right-radius: 0;
+      font-size: 1rem;
+    }
+
+    button {
+      border-top-left-radius: 0;
+      border-bottom-left-radius: 0;
+    }
+  }
+
+  .jumbotron {
+    @include media-breakpoint-up(sm) {
+      padding: 10rem 0;
+    }
+
+    background: rgba(254,144,175,0.5);
+    background: linear-gradient(120deg, rgba(254,144,175,0.8) 25%, rgba(198,234,141,0.8) 150%);
+    position: relative;
+
+    h1 {
+      @include media-breakpoint-up(sm) {
+        font-size: $h1-font-size;
+      }
+    }
+
+    p {
+      @include media-breakpoint-up(sm) {
+        font-size: $h5-font-size;
+      }
+    }
+  }
+}

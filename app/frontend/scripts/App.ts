@@ -9,7 +9,13 @@ import AccessToken from './utils/AccessToken'
 import Analytics from './utils/Analytics'
 import './utils/Global'
 
-@Component
+import Home from './components/pages/Home'
+
+@Component({
+  components: {
+    'c-home': Home,
+  },
+})
 export default class App extends Vue {
   private csrfParam = ''
   private csrfToken = ''

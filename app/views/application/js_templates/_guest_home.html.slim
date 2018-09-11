@@ -1,0 +1,22 @@
+script#t-guest-home type="x-template"
+  .c-app__content
+    c-navbar
+    div
+      c-sidebar :show="withSidebar"
+      .c-app__main.d-flex.flex-column.h-100.position-relative v-bind:class='{ "c-app__content--with-sidebar": withSidebar }'
+        header.p-home-hero
+          .p-home-hero__bg-image style="background-image: url(https://annict.imgix.net/paperclip/work_images/2085/attachments/master/7ee5138b26f17c6ac030b15d51034ea8c7eb6ddc.jpg?ixlib=rails-2.1.4&auto=format&w=640);"
+          .jumbotron.jumbotron-fluid.mb-0
+            .container
+              h1.ann-font-logo.text-white
+                | Annict
+              p.text-white
+                = t("messages.home.index_guest.hero_title")
+              form
+                .p-home-hero__search.form-group.d-flex
+                  input.form-control.form-control-lg placeholder="#{t('messages.home.show.search_placeholder')}"
+                  button.btn.btn-primary type="submit"
+                    = icon "search", class: "mr-0"
+        article
+        footer
+          | footer

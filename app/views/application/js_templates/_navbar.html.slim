@@ -1,0 +1,16 @@
+script#t-navbar type="x-template"
+  nav.c-navbar.container-fluid.navbar.navbar-expand-lg
+    = link_to root_path, class: "navbar-brand" do
+      = image_tag asset_bundle_path("images/logos/color-mizuho.png"), size: "25x30", alt: "Annict"
+    ul.navbar-nav
+      li.nav-item @click="toggleSidebar"
+        = icon "bars"
+    ul.navbar-nav.ml-auto
+      li.nav-item
+        = link_to t("head.title.pages.about"), about_path, class: "nav-link"
+      li.nav-item.mr-2
+        = link_to t("head.title.sessions.new"), new_user_session_path, class: "nav-link"
+      li.nav-item
+        = link_to new_user_registration_path, class: "nav-link btn btn-outline-primary" do
+          = icon "rocket"
+          = t "head.title.registrations.new"
