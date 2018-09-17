@@ -38,8 +38,13 @@ html lang="#{I18n.locale}"
   body class="#{body_classes}"
     javascript:
       window.ann = {
-        pageData: {
-          pageCategory: "#{page_category}"
+        BASE_DATA: {
+          API_URL: "#{ENV.fetch('ANNICT_API_URL')}",
+          DOMAIN: "#{local_domain}",
+          ENV: "#{Rails.env}",
+          GA_TRACKING_ID: "#{ga_tracking_id(request)}",
+          LOCALE: "#{locale}",
+          PAGE_CATEGORY: "#{page_category}"
         }
       };
 

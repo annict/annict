@@ -1,25 +1,25 @@
 import { BaseData } from './BaseData'
-import { PageData } from './PageData'
+import { ContextData } from './ContextData'
 
 export default {
-  load(baseData: BaseData, pageData: PageData) {
+  load(baseData: BaseData, contextData: ContextData) {
     window.dataLayer = window.dataLayer || []
     function gtag(...args: any[]) {
       window.dataLayer.push(arguments)
     }
-    const { encodedUserId, gaTrackingId, userType, viewerUUID } = baseData
-    const { pageCategory } = pageData
+    const { ENCODED_USER_ID, USER_TYPE, VIEWER_UUID } = contextData
+    const { GA_TRACKING_ID, PAGE_CATEGORY } = baseData
 
     gtag('js', new Date())
-    gtag('config', gaTrackingId, {
-      client_id: viewerUUID,
+    gtag('config', GA_TRACKING_ID, {
+      client_id: VIEWER_UUID,
       custom_map: {
-        dimension1: userType,
-        dimension2: pageCategory,
+        dimension1: USER_TYPE,
+        dimension2: PAGE_CATEGORY,
       },
-      dimension1: userType,
-      dimension2: pageCategory,
-      user_id: encodedUserId,
+      dimension1: USER_TYPE,
+      dimension2: PAGE_CATEGORY,
+      user_id: ENCODED_USER_ID,
     })
   },
 }

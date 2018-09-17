@@ -11,6 +11,7 @@
   },
   "dependencies": {
     "@babel/polyfill": "^7.0.0",
+    "@types/graphql": "^14.0.0",
     "@types/js-cookie": "^2.2.0",
     "@types/moment-timezone": "^0.5.8",
     "apollo-cache-inmemory": "^1.2.10",

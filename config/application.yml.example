@@ -10,6 +10,7 @@ DEVISE_SECRET: "abcdefghijklmnopqrstuvwxyz"
 RAILS_SECRET_KEY_BASE: "abcdefghijklmnopqrstuvwxyz"
 
 local_default: &local_default
+  ANNICT_API_URL: "http://api.annict.test:3000"
   ANNICT_BASIC_AUTH: "off"
   ANNICT_DOMAIN: "annict.test"
   ANNICT_JP_DOMAIN: "annict.testjp"

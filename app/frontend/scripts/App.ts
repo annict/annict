@@ -17,6 +17,7 @@ import Home from './components/pages/Home'
   },
 })
 export default class App extends Vue {
+  private apiUrl = ''
   private csrfParam = ''
   private csrfToken = ''
   private domain = ''
@@ -56,15 +57,16 @@ export default class App extends Vue {
   }
 
   private async created() {
-    const res = await axios.get('/api/internal/base_data')
-    const baseData = res.data
-    const pageData = window.ann.pageData
+    const res = await axios.get('/api/internal/context_data')
+    const contextData = res.data
 
+    const baseData = window.ann.BASE_DATA
     Object.assign(this, baseData)
 
-    Analytics.load(baseData, pageData)
     await this.setup()
     this.setupVue()
+
+    Analytics.load(baseData, contextData)
 
     this.isAppLoaded = true
   }

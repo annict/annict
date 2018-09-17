@@ -1,5 +1,5 @@
-import { PageData } from './PageData'
+import { BaseData } from './BaseData'
 
 export interface Ann {
-  readonly pageData: PageData
+  readonly BASE_DATA: BaseData
 }
