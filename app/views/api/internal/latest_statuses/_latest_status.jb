@@ -22,7 +22,7 @@ json[:next_episode] = {
   title: episode.decorate.local_title(fallback: false)
 }
 
-program = program_data.select { |pd| pd.present? && pd[:episode_id] == episode.id }.first
+program = program_data.detect { |pd| pd.present? && pd[:episode_id] == episode.id }
 
 if program.present?
   json[:program] = {
