@@ -45,9 +45,8 @@ class Profile < ApplicationRecord
 
   before_save :check_animated_gif
 
-
   def description=(description)
-    value = description.present? ? description.truncate(150) : ''
+    value = description.present? ? description.truncate(150) : ""
     write_attribute(:description, value)
   end
 
@@ -56,10 +55,8 @@ class Profile < ApplicationRecord
   def check_animated_gif
     if tombo_background_image_updated_at_changed?
       file_path = Paperclip.io_adapters.for(tombo_background_image).path
-      image = Magick::ImageList.new(file_path)
-      # sceneが0より大きければGifアニメ画像
-      # http://stackoverflow.com/questions/27238816/how-to-tell-if-gif-is-animated
-      self.background_image_animated = (image.scene > 0)
+      image = MiniMagick::Image.open(file_path)
+      self.background_image_animated = (image.frames.length > 1)
     end
 
     self
