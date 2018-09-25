@@ -70,7 +70,6 @@ gem "ransack"
 gem "rmagick"
 gem "sentry-raven"
 gem "sitemap_generator"
-gem "slack-notifier"
 gem "slim"
 gem "traceroute"
 gem "twitter"
@@ -101,6 +100,7 @@ group :development do
   gem "i18n-tasks"
   gem "letter_opener_web"
   gem "listen" # Rails 5から `rails s` するときに必要になった
+  gem "memory_profiler"
   gem "meta_request"
   gem "rubocop"
   gem "ruby_identicon"
@@ -109,6 +109,7 @@ group :development do
   gem "spring-commands-rspec", require: false
   gem "spring"
   gem "squasher"
+  gem "stackprof"
   gem "thin"
 end
 

@@ -479,7 +479,7 @@ GEM
     rspec-support (3.8.0)
     rspec_junit_formatter (0.4.1)
       rspec-core (>= 2, < 4, != 2.12.0)
-    rubocop (0.58.2)
+    rubocop (0.59.2)
       jaro_winkler (~> 1.5.1)
       parallel (~> 1.10)
       parser (>= 2.5, != 2.5.1.1)
@@ -516,7 +516,6 @@ GEM
     simplecov-html (0.10.2)
     sitemap_generator (6.0.1)
       builder (~> 3.0)
-    slack-notifier (2.3.2)
     slim (4.0.1)
       temple (>= 0.7.6, < 0.9)
       tilt (>= 2.0.6, < 2.1)
@@ -543,6 +542,7 @@ GEM
       activesupport (>= 4.0)
       sprockets (>= 3.0.0)
     squasher (0.6.1)
+    stackprof (0.2.12)
     temple (0.8.0)
     terminal-table (1.8.0)
       unicode-display_width (~> 1.1, >= 1.1.1)
@@ -659,6 +659,7 @@ DEPENDENCIES
   letter_opener_web
   listen
   lograge
+  memory_profiler
   meta-tags
   meta_request
   mini_magick
@@ -697,12 +698,12 @@ DEPENDENCIES
   sentry-raven
   simplecov
   sitemap_generator
-  slack-notifier
   slim
   solargraph
   spring
   spring-commands-rspec
   squasher
+  stackprof
   thin
   timecop
   traceroute
