@@ -543,6 +543,7 @@ GEM
       activesupport (>= 4.0)
       sprockets (>= 3.0.0)
     squasher (0.6.1)
+    stackprof (0.2.12)
     temple (0.8.0)
     terminal-table (1.8.0)
       unicode-display_width (~> 1.1, >= 1.1.1)
@@ -659,6 +660,7 @@ DEPENDENCIES
   letter_opener_web
   listen
   lograge
+  memory_profiler
   meta-tags
   meta_request
   mini_magick
@@ -703,6 +705,7 @@ DEPENDENCIES
   spring
   spring-commands-rspec
   squasher
+  stackprof
   thin
   timecop
   traceroute
