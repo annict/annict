@@ -13,7 +13,6 @@ gem "active_link_to"
 gem "activerecord-session_store"
 gem "acts_as_list"
 gem "amazon-ecs"
-gem "annotate"
 gem "aws-sdk-s3" # Uses in Paperclip
 gem "bootsnap", require: false
 gem "browser", require: "browser/browser"
@@ -67,10 +66,8 @@ gem "rails-html-sanitizer"
 gem "rails-i18n"
 gem "rails_autolink"
 gem "ransack"
-gem "rmagick"
 gem "sentry-raven"
 gem "sitemap_generator"
-gem "slack-notifier"
 gem "slim"
 gem "traceroute"
 gem "twitter"
@@ -93,6 +90,7 @@ end
 
 group :development do
   gem "active_record_query_trace"
+  gem "annotate"
   gem "better_errors"
   gem "binding_of_caller" # Using better_errors
   gem "bullet"
@@ -101,6 +99,7 @@ group :development do
   gem "i18n-tasks"
   gem "letter_opener_web"
   gem "listen" # Rails 5から `rails s` するときに必要になった
+  gem "memory_profiler"
   gem "meta_request"
   gem "rubocop"
   gem "ruby_identicon"
@@ -109,6 +108,7 @@ group :development do
   gem "spring-commands-rspec", require: false
   gem "spring"
   gem "squasher"
+  gem "stackprof"
   gem "thin"
 end
 

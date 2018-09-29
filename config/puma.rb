@@ -24,7 +24,7 @@ end
 before_fork do
   require "puma_worker_killer"
 
-  PumaWorkerKiller.enable_rolling_restart(1 * 3600) # every 1 hour
+  PumaWorkerKiller.enable_rolling_restart(12 * 3600) # every 12 hours
 end
 
 # Allow puma to be restarted by `rails restart` command.

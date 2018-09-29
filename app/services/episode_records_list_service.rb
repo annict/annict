@@ -21,7 +21,7 @@ class EpisodeRecordsListService
 
     results = all_episode_records
     results = results.with_comment
-    results = results.joins(:user).merge(@user.followings)
+    results = results.joins(:user).merge(@user.followings.published)
     results = localable_episode_records(results)
     results = results.page(@params[:page])
     results = sort(results)

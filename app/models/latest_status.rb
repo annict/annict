@@ -48,7 +48,8 @@ class LatestStatus < ApplicationRecord
     next_episode_data = latest_statuses.fetch_next_episode_data
 
     latest_statuses.find_each do |ls|
-      next_episode = next_episode_data.select { |ne| ne[:work_id] == ls.work_id }.first
+      next_episode = next_episode_data.detect { |ne| ne[:work_id] == ls.work_id }
+      next if ls.next_episode_id == next_episode[:next_episode_id]
       ls.update_column(:next_episode_id, next_episode[:next_episode_id])
     end
   end

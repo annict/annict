@@ -116,9 +116,6 @@
     "ANNICT_SITEMAP_URL": {
       "required": true
     },
-    "ANNICT_SLACK_WEBHOOK_URL_FOR_NOTIFICATIONS": {
-      "required": true
-    },
     "ANNICT_TOMBO_URL": {
       "required": true
     },
