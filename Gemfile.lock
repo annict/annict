@@ -459,7 +459,6 @@ GEM
       railties (>= 4.2.0, < 5.3)
     reverse_markdown (1.1.0)
       nokogiri
-    rmagick (2.16.0)
     rspec-core (3.8.0)
       rspec-support (~> 3.8.0)
     rspec-expectations (3.8.0)
@@ -687,7 +686,6 @@ DEPENDENCIES
   rails-i18n
   rails_autolink
   ransack
-  rmagick
   rspec-mocks
   rspec-rails
   rspec_junit_formatter
