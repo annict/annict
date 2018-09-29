@@ -13,7 +13,6 @@ gem "active_link_to"
 gem "activerecord-session_store"
 gem "acts_as_list"
 gem "amazon-ecs"
-gem "annotate"
 gem "aws-sdk-s3" # Uses in Paperclip
 gem "bootsnap", require: false
 gem "browser", require: "browser/browser"
@@ -91,6 +90,7 @@ end
 
 group :development do
   gem "active_record_query_trace"
+  gem "annotate"
   gem "better_errors"
   gem "binding_of_caller" # Using better_errors
   gem "bullet"
