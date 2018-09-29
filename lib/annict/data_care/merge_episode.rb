@@ -11,14 +11,16 @@ module Annict
       end
 
       def run!
-        puts "Running merge_records! ..."
-        merge_records!
-        puts "Running merge_acticities! ..."
-        merge_acticities!
-        puts "Running merge_programs! ..."
-        merge_programs!
-        puts "Running hide_episode! ..."
-        hide_episode!
+        ActiveRecord::Base.transaction do
+          puts "Running merge_records! ..."
+          merge_records!
+          puts "Running merge_acticities! ..."
+          merge_acticities!
+          puts "Running merge_programs! ..."
+          merge_programs!
+          puts "Running hide_episode! ..."
+          hide_episode!
+        end
       end
 
       private
@@ -32,12 +34,15 @@ module Annict
       end
 
       def merge_records!
-        episode.records.find_each do |c|
-          attrs = c.attributes.except("id")
-          record = base_episode.records.create(attrs)
-          c.activities.update_all(trackable_id: record.id, recipient_id: base_episode_id)
-          c.likes.update_all(recipient_id: record.id)
-          c.comments.update_all(record_id: record.id)
+        episode.episode_records.find_each do |er|
+          attrs = er.attributes.except("id", "episode_id", "record_id")
+          episode_record = base_episode.episode_records.create!(attrs) do |new_er|
+            new_er.record = er.user.records.create!(work_id: er.work_id)
+          end
+          er.activities.update_all(trackable_id: episode_record.id, recipient_id: base_episode_id)
+          er.likes.update_all(recipient_id: episode_record.id)
+          er.comments.update_all(episode_record_id: episode_record.id)
+          er.hide!
         end
       end
 
