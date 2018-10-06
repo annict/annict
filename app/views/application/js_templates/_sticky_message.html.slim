@@ -6,7 +6,7 @@ script#t-sticky-message type="x-template"
       .col.row.align-items-center
         .col.col-auto.pl-0
           = link_to root_path(utm) do
-            = image_tag asset_pack_path("images/logos/color-mizuho.png"), size: "25x30", alt: "Annict"
+            = image_tag asset_bundle_path("images/logos/color-mizuho.png"), size: "25x30", alt: "Annict"
         .col
           | {{ messageBody }}
           div

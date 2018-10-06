@@ -62,6 +62,14 @@ $ann-color-average: #ff6d00;
 $ann-color-good: #00c853;
 $ann-color-great: #00b0ff;
 
+$ann-bs-cyan: #17a2b8;
+$ann-bs-gray-100: #f8f9fa;
+$ann-bs-gray-600: #6c757d;
+$ann-bs-gray-800: #343a40;
+$ann-bs-green: #28a745;
+$ann-bs-red: #dc3545;
+$ann-bs-yellow: #ffc107;
+
 
 // Typography
 
@@ -83,6 +91,10 @@ $ann-text-colors: (
   twitter: $ann-color-twitter
 );
 
+// Forms
+
+$ann-bs-input-border-color: #ced4da;
+
 
 // Buttons
 
@@ -94,7 +106,7 @@ $ann-btn-colors: (
   great: $ann-color-great,
   green: $ann-color-green,
   gumroad: $ann-color-gumroad,
-  input-border: $input-border-color,
+  input-border: $ann-bs-input-border-color,
   link: $ann-color-link,
   supporter: $ann-color-supporter,
   twitter: $ann-color-twitter

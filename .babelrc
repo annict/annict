@@ -1,17 +1,15 @@
 {
   "presets": [
     [
-      "env",
+      "@babel/preset-env",
       {
         "modules": false,
         "targets": {
-          "browsers": "> 1%",
-          "uglify": true
+          "browsers": ["last 2 versions", "Chrome >= 41"]
         },
-        "useBuiltIns": true
+        "useBuiltIns": "usage",
+        "forceAllTransforms": true
       }
     ]
-  ],
-
-  "plugins": ["syntax-dynamic-import", "transform-object-rest-spread", ["transform-class-properties", { "spec": true }]]
+  ]
 }

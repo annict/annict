@@ -3,8 +3,8 @@ html lang="#{I18n.locale}"
   head
     = ann_display_meta_tags "Annict DB"
     = render "application/head_common"
-    = stylesheet_pack_tag "pc", media: "all"
-    = javascript_pack_tag "pc"
+    = stylesheet_bundle_tag "pc.css", media: "all", "data-turbolinks-track": "reload"
+    = javascript_bundle_tag "pc.js", "data-turbolinks-track": "reload"
   body class="p-db #{body_classes}"
     = include_gon
 
@@ -30,7 +30,7 @@ html lang="#{I18n.locale}"
             li = link_to t("head.title.db.vod_titles.index"), db_vod_titles_path, class: "d-inline-block"
 
         = link_to root_path, class: "l-sidebar__annict-link d-inline-block text-center" do
-          = image_tag asset_pack_path("images/logos/color-white.png"), size: "33x40"
+          = image_tag asset_bundle_path("images/logos/color-white.png"), size: "33x40"
       .l-main.h-100
         c-flash
         = yield
