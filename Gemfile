@@ -105,7 +105,6 @@ group :development do
   gem "spring"
   gem "squasher"
   gem "stackprof"
-  gem "thin"
 end
 
 group :test do
