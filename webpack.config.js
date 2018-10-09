@@ -110,4 +110,9 @@ module.exports = {
       chunkFilename: '[name].bundle-[hash].css',
     }),
   ],
+  devServer: {
+    contentBase: path.resolve(__dirname, 'public', 'packs'),
+    host: '0.0.0.0',
+    disableHostCheck: true
+  }
 }

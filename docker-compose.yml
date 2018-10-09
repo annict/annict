@@ -1,0 +1,37 @@
+version: "3.7"
+
+services:
+  postgresql:
+    image: postgres:10.3-alpine
+    ports:
+      - 5432:5432
+    volumes:
+      - ../_postgresql/data:/var/lib/postgresql/data
+  webpack:
+    build:
+      context: .
+      dockerfile: ./app/frontend/Dockerfile.dev
+    command: /bin/ash -c 'yarn webpack:start'
+    volumes:
+      - ./app/frontend:/annict/app/frontend
+      - ./public/packs:/annict/public/packs
+    ports:
+      - 8080:8080
+  rails:
+    build:
+      context: .
+      dockerfile: ./Dockerfile.dev
+    command: /bin/ash -c 'rm -rf tmp/pids/server.pid; bundle exec rails s -b 0.0.0.0'
+    depends_on:
+      - postgresql
+      - webpack
+    env_file:
+      - .env
+      - .env.development
+    ports:
+      - 3000:3000
+    stdin_open: true # for Pry
+    tty: true # for Pry
+    volumes:
+      - ./:/annict
+      - ./public/packs:/annict/public/packs

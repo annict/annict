@@ -14,7 +14,7 @@ default: &default
 development:
   <<: *default
   database: annict_development
-  host: localhost
+  host: postgresql
 
 test:
   <<: *default

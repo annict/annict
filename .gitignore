@@ -1,9 +1,9 @@
 .DS_Store
 
 /.bundle
+/.env.development
 /.idea
 /.sass-cache
-/config/application.yml
 /config/master.key
 /coverage
 /db/dump/*

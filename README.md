@@ -13,30 +13,26 @@
 
 To run Annict on a local machine, you need to have the following dependencies installed:
 
-* Ruby 2.5
-* PostgreSQL 10.4
-* ImageMagick
-* ChromeDriver
+* Docker
+
 
 #### Running the app
 
 ```
 $ git clone git@github.com:annict/annict.git
 $ cd annict
-$ cp config/application.yml{.example,}
-$ bundle
-$ rake db:setup
-$ yarn
-$ rails s -b 0.0.0.0
+$ docker-compose up
 ```
 
 You should then be able to open [http://localhost:3000](http://localhost:3000) in your browser.
+
 
 #### Running the tests
 
 ```
 $ rspec
 ```
+
 
 ### License
 

@@ -1,0 +1,11 @@
+.DS_Store
+
+/.dockerignore
+/.git
+/.idea
+/.sass-cache
+/config/master.key
+/coverage
+/log
+/tmp
+/yarn-error.log

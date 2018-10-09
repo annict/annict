@@ -180,6 +180,10 @@ GEM
       unf (>= 0.0.5, < 1.0.0)
     doorkeeper (5.0.0)
       railties (>= 4.2)
+    dotenv (2.5.0)
+    dotenv-rails (2.5.0)
+      dotenv (= 2.5.0)
+      railties (>= 3.2, < 6.0)
     draper (3.0.1)
       actionpack (~> 5.0)
       activemodel (~> 5.0)
@@ -205,8 +209,6 @@ GEM
       fastly (~> 1.6)
       railties (> 2, < 6)
     ffi (1.9.25)
-    figaro (1.1.1)
-      thor (~> 0.14)
     flutie (2.1.0)
     get_process_mem (0.2.2)
     github-markup (2.0.1)
@@ -625,12 +627,12 @@ DEPENDENCIES
   devise
   discord-notifier
   doorkeeper
+  dotenv-rails
   draper
   email_validator
   enumerize
   factory_bot_rails
   fastly-rails
-  figaro
   flutie
   github-markup
   gon

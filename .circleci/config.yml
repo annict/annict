@@ -69,10 +69,6 @@ jobs:
           command: dockerize -wait tcp://localhost:5432 -timeout 1m
 
       - run:
-          name: Copy application.yml
-          command: cp config/application.yml{.example,}
-
-      - run:
           name: Database setup
           command: bin/rails db:schema:load --trace
 
