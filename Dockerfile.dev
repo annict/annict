@@ -14,8 +14,11 @@ ENV RAILS_ENV=development
 
 # Set to install cld gem
 # https://github.com/jtoy/cld/issues/10
-ENV CFLAGS="-Wno-narrowing"
-ENV CXXFLAGS="$CFLAGS"
+ENV CFLAGS=-Wno-narrowing \
+    CXXFLAGS=-Wno-narrowing
+# Set to run `ls` in Pry
+# https://github.com/pry/pry/issues/1494#issuecomment-162336567
+ENV PAGER=busybox\ less
 
 RUN apk add --update build-base postgresql-dev tzdata
 
