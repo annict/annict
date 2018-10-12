@@ -67,7 +67,7 @@ module Annict
       g.assets false
     end
 
-    config.active_job.queue_adapter = :delayed_job
+    config.active_job.queue_adapter = :sidekiq
 
     config.middleware.insert_before(Rack::Runtime, Rack::Rewrite) do
       r301 %r{\A/users/([A-Za-z0-9_]+)\z}, "/@$1"

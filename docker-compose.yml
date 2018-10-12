@@ -7,6 +7,12 @@ services:
       - 5432:5432
     volumes:
       - ../_postgresql/data:/var/lib/postgresql/data
+  redis:
+    image: redis:4.0.11-alpine3.8
+    ports:
+      - 6379:6379
+    volumes:
+      - ../_redis/data:/data
   webpack:
     build:
       context: .
@@ -24,6 +30,7 @@ services:
     command: /bin/ash -c 'rm -rf tmp/pids/server.pid; bundle exec rails s -b 0.0.0.0'
     depends_on:
       - postgresql
+      - redis
       - webpack
     env_file:
       - .env
@@ -35,3 +42,14 @@ services:
     volumes:
       - ./:/annict
       - ./public/packs:/annict/public/packs
+  sidekiq:
+    build:
+      context: .
+      dockerfile: ./Dockerfile.dev
+    command: /bin/ash -c 'bundle exec sidekiq'
+    depends_on:
+      - postgresql
+      - redis
+    env_file:
+      - .env
+      - .env.development
