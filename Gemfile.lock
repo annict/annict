@@ -44,12 +44,6 @@ GEM
       activemodel (= 5.2.1)
       activesupport (= 5.2.1)
       arel (>= 9.0)
-    activerecord-session_store (1.1.1)
-      actionpack (>= 4.0)
-      activerecord (>= 4.0)
-      multi_json (~> 1.11, >= 1.11.2)
-      rack (>= 1.5.2, < 3)
-      railties (>= 4.0)
     activestorage (5.2.1)
       actionpack (= 5.2.1)
       activerecord (= 5.2.1)
@@ -147,7 +141,6 @@ GEM
       activesupport (>= 3.0.0)
       after_commit_action (~> 1.0)
     crass (1.0.4)
-    dalli (2.7.8)
     database_rewinder (0.9.0)
     debug_inspector (0.0.3)
     derailed_benchmarks (1.3.5)
@@ -228,6 +221,7 @@ GEM
     heroku-deflater (0.6.3)
       rack (>= 1.4.5)
     highline (2.0.0)
+    hiredis (0.6.1)
     htmlentities (4.3.4)
     http (3.3.0)
       addressable (~> 2.3)
@@ -443,6 +437,22 @@ GEM
     rb-inotify (0.9.10)
       ffi (>= 0.5.0, < 2)
     redis (4.0.2)
+    redis-actionpack (5.0.2)
+      actionpack (>= 4.0, < 6)
+      redis-rack (>= 1, < 3)
+      redis-store (>= 1.1.0, < 2)
+    redis-activesupport (5.0.7)
+      activesupport (>= 3, < 6)
+      redis-store (>= 1.3, < 2)
+    redis-rack (2.0.4)
+      rack (>= 1.5, < 3)
+      redis-store (>= 1.2, < 2)
+    redis-rails (5.0.2)
+      redis-actionpack (>= 5.0, < 6)
+      redis-activesupport (>= 5.0, < 6)
+      redis-store (>= 1.2, < 2)
+    redis-store (1.6.0)
+      redis (>= 2.2, < 5)
     request_store (1.4.1)
       rack (>= 1.4)
     responders (2.4.0)
@@ -592,7 +602,6 @@ DEPENDENCIES
   action_args
   active_link_to
   active_record_query_trace
-  activerecord-session_store
   acts_as_list
   amazon-ecs
   annotate
@@ -609,7 +618,6 @@ DEPENDENCIES
   cld
   commonmarker
   counter_culture
-  dalli
   database_rewinder
   derailed_benchmarks
   devise
@@ -631,6 +639,7 @@ DEPENDENCIES
   groupdate
   hashdiff
   heroku-deflater
+  hiredis
   http_accept_language
   httparty
   i18n-tasks
@@ -667,6 +676,8 @@ DEPENDENCIES
   rails-i18n
   rails_autolink
   ransack
+  redis
+  redis-rails
   rspec-mocks
   rspec-rails
   rspec_junit_formatter

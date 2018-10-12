@@ -18,11 +18,12 @@ Rails.application.configure do
   config.consider_all_requests_local = true
 
   config.action_controller.asset_host = ENV.fetch("ANNICT_ASSET_URL")
-
   config.action_controller.perform_caching = is_cache_enabled
 
   if is_cache_enabled
-    config.cache_store = :memory_store
+    config.cache_store = :redis_cache_store, {
+      url: "#{ENV.fetch('REDIS_URL')}/cache"
+    }
     config.public_file_server.headers = {
       'Cache-Control' => "public, max-age=#{2.days.to_i}"
     }
