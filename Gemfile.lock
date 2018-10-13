@@ -193,10 +193,6 @@ GEM
       railties (>= 3.0.0)
     faraday (0.12.2)
       multipart-post (>= 1.2, < 3)
-    fastly (1.15.0)
-    fastly-rails (0.8.0)
-      fastly (~> 1.6)
-      railties (> 2, < 6)
     ffi (1.9.25)
     flutie (2.1.0)
     get_process_mem (0.2.2)
@@ -633,7 +629,6 @@ DEPENDENCIES
   email_validator
   enumerize
   factory_bot_rails
-  fastly-rails
   flutie
   github-markup
   gon

@@ -555,7 +555,6 @@
     }
   },
   "addons": [
-    "fastly",
     "logentries",
     "pointdns",
     "heroku-postgresql",
