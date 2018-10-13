@@ -21,7 +21,8 @@
       "required": true
     },
     "ANNICT_ASSET_URL": {
-      "required": true
+      "required": true,
+      "value": "https://d71auhuoj6r2w.cloudfront.net"
     },
     "ANNICT_BANNED_WRITING_USER_IDS": {
       "required": true
@@ -75,7 +76,8 @@
       "required": true
     },
     "ANNICT_FILE_STORAGE_URL": {
-      "required": true
+      "required": true,
+      "value": "https://d32jo2u8unqym6.cloudfront.net"
     },
     "ANNICT_FORCE_SSL": {
       "required": true
@@ -462,7 +464,8 @@
       "required": true
     },
     "IMGIX_SOURCE": {
-      "required": true
+      "required": true,
+      "value": "annict-staging.imgix.net"
     },
     "LANG": {
       "required": true
