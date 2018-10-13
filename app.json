@@ -557,11 +557,16 @@
       "quantity": 1
     }
   },
-  "addons": ["logentries", "memcachier", "pointdns", "heroku-postgresql", "scheduler", "sendgrid"],
+  "addons": [
+    "fastly",
+    "logentries",
+    "pointdns",
+    "heroku-postgresql",
+    "heroku-redis",
+    "scheduler",
+    "sentry"
+  ],
   "buildpacks": [
-    {
-      "url": "https://github.com/rcaught/heroku-buildpack-cmake"
-    },
     {
       "url": "https://github.com/heroku/heroku-buildpack-nodejs.git"
     },
