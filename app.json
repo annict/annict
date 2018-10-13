@@ -458,9 +458,6 @@
     "GUMROAD_PRODUCT_ID_JP_YEN": {
       "required": true
     },
-    "HEROKU_POSTGRESQL_BLUE_URL": {
-      "required": true
-    },
     "HOST": {
       "required": true
     },
