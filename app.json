@@ -22,7 +22,7 @@
     },
     "ANNICT_ASSET_URL": {
       "required": true,
-      "value": "https://d71auhuoj6r2w.cloudfront.net"
+      "value": "https://annict.review"
     },
     "ANNICT_BANNED_WRITING_USER_IDS": {
       "required": true
