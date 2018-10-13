@@ -19,7 +19,7 @@ development:
 test:
   <<: *default
   database: annict_test
-  host: localhost
+  host: postgresql
 
 production:
   <<: *default

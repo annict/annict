@@ -30,7 +30,7 @@ You should then be able to open [http://localhost:3000](http://localhost:3000) i
 #### Running the tests
 
 ```
-$ rspec
+$ docker-compose exec -e RAILS_ENV=test rails bundle exec rspec
 ```
 
 
