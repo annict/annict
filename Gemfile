@@ -13,6 +13,7 @@ gem "active_link_to"
 gem "acts_as_list"
 gem "amazon-ecs"
 gem "aws-sdk-s3" # Uses in Paperclip
+gem "barnes"
 gem "bootsnap", require: false
 gem "browser", require: "browser/browser"
 gem "by_star"

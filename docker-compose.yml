@@ -19,8 +19,7 @@ services:
       dockerfile: ./app/frontend/Dockerfile.dev
     command: /bin/ash -c 'yarn webpack:start'
     volumes:
-      - ./app/frontend:/annict/app/frontend
-      - ./public/packs:/annict/public/packs
+      - ./:/annict
     ports:
       - 8080:8080
   rails:
@@ -41,7 +40,6 @@ services:
     tty: true # for Pry
     volumes:
       - ./:/annict
-      - ./public/packs:/annict/public/packs
   sidekiq:
     build:
       context: .

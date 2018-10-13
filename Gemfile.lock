@@ -90,6 +90,9 @@ GEM
       descendants_tracker (~> 0.0.4)
       ice_nine (~> 0.11.0)
       thread_safe (~> 0.3, >= 0.3.1)
+    barnes (0.0.7)
+      multi_json (~> 1)
+      statsd-ruby (~> 1.1)
     bcrypt (3.1.12)
     benchmark-ips (2.7.2)
     better_errors (2.5.0)
@@ -164,7 +167,7 @@ GEM
     docile (1.3.1)
     domain_name (0.5.20180417)
       unf (>= 0.0.5, < 1.0.0)
-    doorkeeper (5.0.0)
+    doorkeeper (5.0.1)
       railties (>= 4.2)
     dotenv (2.5.0)
     dotenv-rails (2.5.0)
@@ -547,6 +550,7 @@ GEM
       sprockets (>= 3.0.0)
     squasher (0.6.1)
     stackprof (0.2.12)
+    statsd-ruby (1.4.0)
     temple (0.8.0)
     terminal-table (1.8.0)
       unicode-display_width (~> 1.1, >= 1.1.1)
@@ -607,6 +611,7 @@ DEPENDENCIES
   annotate
   awesome_print
   aws-sdk-s3
+  barnes
   better_errors
   binding_of_caller
   bootsnap
