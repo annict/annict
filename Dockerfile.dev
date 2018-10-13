@@ -20,8 +20,6 @@ ENV CFLAGS=-Wno-narrowing \
 # https://github.com/pry/pry/issues/1494#issuecomment-162336567
 ENV PAGER=busybox\ less
 
-RUN apk add --update build-base postgresql-dev tzdata
-
 WORKDIR /annict/
 
 COPY Gemfile Gemfile.lock /annict/
