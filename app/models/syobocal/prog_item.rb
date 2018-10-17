@@ -153,7 +153,7 @@ module Syobocal
     end
 
     def update_program(program)
-      if deleted?
+      if deleted? && !program.hidden?
         program.hide!
       elsif @last_update > program.sc_last_update
         program.update(sc_last_update: @last_update, started_at: @st_time)
