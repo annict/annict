@@ -17,7 +17,7 @@ namespace :seed do
       csv << attrs
 
       ChannelGroup.select(attrs).find_each do |record|
-        puts "ChannelGroup: #{record.id}"
+        puts "Inserting ChannelGroup: #{record.id}"
         csv << attrs.map { |attr| record.send(attr) }
       end
     end
@@ -30,7 +30,7 @@ namespace :seed do
       csv << attrs
 
       Channel.select(attrs).find_each do |record|
-        puts "Channel: #{record.id}"
+        puts "Inserting Channel: #{record.id}"
         csv << attrs.map { |attr| record.send(attr) }
       end
     end
@@ -72,7 +72,7 @@ namespace :seed do
       csv << work_attrs
 
       works.each do |record|
-        puts "Work: #{record.id}"
+        puts "Inserting Work: #{record.id}"
         csv << work_attrs.map do |attr|
           case attr
           when "title_kana" then "-"
@@ -93,7 +93,7 @@ namespace :seed do
 
       works.each do |work|
         work.episodes.order(:id).select(episode_attrs).each do |record|
-          puts "Episode: #{record.id}"
+          puts "Inserting Episode: #{record.id}"
           csv << episode_attrs.map { |attr| record.send(attr) }
         end
       end
@@ -107,7 +107,7 @@ namespace :seed do
       csv << attrs
 
       NumberFormat.select(attrs).find_each do |record|
-        puts "NumberFormat: #{record.id}"
+        puts "Inserting NumberFormat: #{record.id}"
         csv << attrs.map { |attr| record.send(attr) }
       end
     end
@@ -120,7 +120,7 @@ namespace :seed do
       csv << attrs
 
       Prefecture.select(attrs).find_each do |record|
-        puts "Prefecture: #{record.id}"
+        puts "Inserting Prefecture: #{record.id}"
         csv << attrs.map { |attr| record.send(attr) }
       end
     end
@@ -133,7 +133,7 @@ namespace :seed do
       csv << attrs
 
       Tip.select(attrs).find_each do |record|
-        puts "Tip: #{record.id}"
+        puts "Inserting Tip: #{record.id}"
         csv << attrs.map { |attr| record.send(attr) }
       end
     end
