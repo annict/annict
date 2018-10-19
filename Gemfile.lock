@@ -717,7 +717,7 @@ DEPENDENCIES
   wilson_score
 
 RUBY VERSION
-   ruby 2.5.1p57
+   ruby 2.5.3p105
 
 BUNDLED WITH
-   1.16.1
+   1.16.6
