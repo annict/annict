@@ -8,7 +8,9 @@ RUN apk update && \
         build-base \
         postgresql \
         postgresql-dev \
-        nodejs-npm
+        nodejs-npm \
+        file \
+        imagemagick
 
 ENV RAILS_ENV=development
 
