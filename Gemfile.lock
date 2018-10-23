@@ -249,9 +249,9 @@ GEM
     http_parser.rb (0.6.0)
     httparty (0.16.2)
       multi_xml (>= 0.5.2)
-    i18n (1.1.0)
+    i18n (1.1.1)
       concurrent-ruby (~> 1.0)
-    i18n-tasks (0.9.25)
+    i18n-tasks (0.9.27)
       activesupport (>= 4.0.2)
       ast (>= 2.1.0)
       erubi
