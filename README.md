@@ -22,6 +22,7 @@ To run Annict on a local machine, you need to have the following dependencies in
 $ git clone git@github.com:annict/annict.git
 $ cd annict
 $ docker-compose up
+$ docker-compose exec rails bundle exec rake db:setup
 ```
 
 You should then be able to open [http://localhost:3000](http://localhost:3000) in your browser.
