@@ -1000,9 +1000,9 @@ braces@^2.3.0, braces@^2.3.1:
     split-string "^3.0.2"
     to-regex "^3.0.1"
 
-britecharts@^2.9.7:
-  version "2.9.7"
-  resolved "https://registry.yarnpkg.com/britecharts/-/britecharts-2.9.7.tgz#84958c90a840c8bee625089cdb674c95729829e4"
+britecharts@^2.9.8:
+  version "2.9.8"
+  resolved "https://registry.yarnpkg.com/britecharts/-/britecharts-2.9.8.tgz#7adcd242e2a4037ef384586ae288ed91c0f03121"
   dependencies:
     base-64 "^0.1.0"
     d3 "^5.0.0"
