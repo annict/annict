@@ -539,7 +539,7 @@ GEM
       actionpack (>= 4.0)
       activesupport (>= 4.0)
       sprockets (>= 3.0.0)
-    squasher (0.6.1)
+    squasher (0.6.2)
     stackprof (0.2.12)
     temple (0.8.0)
     terminal-table (1.8.0)
