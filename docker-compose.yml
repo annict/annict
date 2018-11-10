@@ -32,8 +32,8 @@ services:
       - redis
       - webpack
     env_file:
-      - .env
       - .env.development
+      - .env.development.local
     ports:
       - 3000:3000
     stdin_open: true # for Pry
@@ -49,5 +49,5 @@ services:
       - postgresql
       - redis
     env_file:
-      - .env
       - .env.development
+      - .env.development.local
