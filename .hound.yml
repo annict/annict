@@ -8,5 +8,9 @@ jshint:
 ruby:
   config_file: .rubocop.yml
 
+sass-lint:
+  enabled: true
+  config_file: .sass-lint.yml
+
 scss:
-  config_file: .scss-lint.yml
+  enabled: false
