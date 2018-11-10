@@ -8,9 +8,6 @@ jobs:
     docker:
       - image: circleci/ruby:2.5.3-node-browsers
         environment:
-          ANNICT_CURRENT_SEASON: 2017-winter
-          ANNICT_NEXT_SEASON: 2017-spring
-          ANNICT_PREVIOUS_SEASON: 2016-autumn
           BUNDLE_JOBS: 3
           BUNDLE_PATH: vendor/bundle
           BUNDLE_RETRY: 3
