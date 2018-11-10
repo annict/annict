@@ -14,6 +14,7 @@ jobs:
           CC_TEST_REPORTER_ID: 473c071c4d1900d58ceed984bd49d8a39368393ce6f010cf5d52287f3072f6ef
           POSTGRES_HOST: localhost
           RAILS_ENV: test
+          REDIS_URL: redis://localhost:6379/0
           TZ: Asia/Tokyo
           # The `CFLAGS` and `CXXFLAGS` are required to install cld gem
           # https://github.com/jtoy/cld/issues/10
@@ -24,6 +25,7 @@ jobs:
           POSTGRES_USER: postgres
           POSTGRES_DB: annict_test
           POSTGRES_PASSWORD: ""
+      - image: circleci/redis:4.0.11-alpine
     steps:
       # special step to check out source code to working directory
       - checkout
