@@ -1,9 +1,9 @@
 .DS_Store
 
 /.bundle
+/.env.development.local
 /.idea
 /.sass-cache
-/config/application.yml
 /config/master.key
 /coverage
 /db/dump/*
@@ -11,7 +11,6 @@
 /log/*
 /node_modules
 /public/packs
-/public/packs-test
 /public/paperclip
 /public/sitemap*
 /spec/test_files/paperclip

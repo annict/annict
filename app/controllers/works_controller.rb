@@ -33,7 +33,6 @@
 class WorksController < ApplicationController
   include ApplicationHelper
 
-  before_action :set_cache_control_headers, only: %i(popular newest season)
   before_action :authenticate_user!, only: %i(switch)
   before_action :set_display_option, only: %i(popular newest season)
 
@@ -143,7 +142,5 @@ class WorksController < ApplicationController
     end
 
     store_page_params(works: @works, display_option: @display_option)
-
-    set_surrogate_key_header(page_category, @works.map(&:record_key))
   end
 end

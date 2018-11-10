@@ -41,7 +41,6 @@ module Db
 
       return render(:new) unless @work.valid?
       @work.save_and_create_activity!
-      FastlyRails.purge_by_key("works_newest")
 
       redirect_to edit_db_work_path(@work), notice: t("resources.work.created")
     end

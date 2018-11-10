@@ -24,6 +24,7 @@ describe "Api::V1::Episodes" do
           "title" => episode.title,
           "records_count" => 0,
           "prev_episode" => nil,
+          "record_comments_count" => 0,
           "next_episode" => nil,
           "work" => {
             "id" => work.id,

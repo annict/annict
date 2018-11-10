@@ -14,12 +14,12 @@ default: &default
 development:
   <<: *default
   database: annict_development
-  host: localhost
+  host: postgresql
 
 test:
   <<: *default
   database: annict_test
-  host: localhost
+  host: <%= ENV.fetch("POSTGRES_HOST", "postgresql") %>
 
 production:
   <<: *default

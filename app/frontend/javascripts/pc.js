@@ -84,6 +84,12 @@ document.addEventListener('turbolinks:load', event => {
     headers: { 'X-CSRF-Token': $('meta[name="csrf-token"]').attr('content') },
   })
 
+  WebFont.load({
+    google: {
+      families: ['Raleway'],
+    },
+  })
+
   Vue.config.debug = gon.rails.env !== 'production'
 
   Vue.use(VueLazyload)

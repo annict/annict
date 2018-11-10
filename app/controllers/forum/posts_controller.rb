@@ -22,7 +22,6 @@ module Forum
       ActiveRecord::Base.transaction do
         @post.save!(validate: false)
         @post.forum_post_participants.create!(user: current_user)
-        FastlyRails.purge_by_key("forum_home_index", "forum_categories_show")
         @post.notify_discord
       end
 
@@ -36,7 +35,6 @@ module Forum
       @comment = @post.forum_comments.new
 
       store_page_params(post: @post, comments: @comments)
-      set_surrogate_key_header(page_category, @post.record_key, @comments.map(&:record_key))
     end
 
     def edit(id)

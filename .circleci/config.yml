@@ -9,10 +9,12 @@ jobs:
       - image: circleci/ruby:2.5.3-node-browsers
         environment:
           BUNDLE_JOBS: 3
-          BUNDLE_RETRY: 3
           BUNDLE_PATH: vendor/bundle
+          BUNDLE_RETRY: 3
           CC_TEST_REPORTER_ID: 473c071c4d1900d58ceed984bd49d8a39368393ce6f010cf5d52287f3072f6ef
+          POSTGRES_HOST: localhost
           RAILS_ENV: test
+          REDIS_URL: redis://localhost:6379/0
           TZ: Asia/Tokyo
           # The `CFLAGS` and `CXXFLAGS` are required to install cld gem
           # https://github.com/jtoy/cld/issues/10
@@ -23,6 +25,7 @@ jobs:
           POSTGRES_USER: postgres
           POSTGRES_DB: annict_test
           POSTGRES_PASSWORD: ""
+      - image: circleci/redis:4.0.11-alpine
     steps:
       # special step to check out source code to working directory
       - checkout
@@ -58,19 +61,19 @@ jobs:
           name: Yarn Install
           command: yarn install --cache-folder ~/.cache/yarn
 
-      # Store yarn / webpacker cache
+      # Store yarn cache
       - save_cache:
           key: annict-yarn-{{ checksum "yarn.lock" }}
           paths:
             - ~/.cache/yarn
 
       - run:
-          name: Wait for DB
-          command: dockerize -wait tcp://localhost:5432 -timeout 1m
+          name: Run heroku-postbuild
+          command: yarn heroku-postbuild
 
       - run:
-          name: Copy application.yml
-          command: cp config/application.yml{.example,}
+          name: Wait for DB
+          command: dockerize -wait tcp://localhost:5432 -timeout 1m
 
       - run:
           name: Database setup

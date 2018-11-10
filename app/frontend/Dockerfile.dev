@@ -1,0 +1,17 @@
+FROM node:8.12.0-alpine
+
+LABEL maintainer="https://annict.com/@shimbaco" \
+      description="A platform for anime addicts."
+
+ENV PATH=./node_modules/.bin/:$PATH \
+    NODE_ENV=development
+
+WORKDIR /annict/
+
+COPY package.json yarn.lock webpack.config.js /annict/
+RUN yarn install && \
+    yarn cache clean
+
+COPY ./app/frontend/ /annict/app/frontend/
+
+EXPOSE 8080

@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-require "barnes"
-
 def development?
   ENV.fetch("RAILS_ENV") == "development"
 end
@@ -27,10 +25,6 @@ before_fork do
   require "puma_worker_killer"
 
   PumaWorkerKiller.enable_rolling_restart(12 * 3600) # every 12 hours
-
-  # Start Barnes to use Ruby Language Metrics on Heroku
-  # https://devcenter.heroku.com/articles/language-runtime-metrics-ruby
-  Barnes.start
 end
 
 # Allow puma to be restarted by `rails restart` command.

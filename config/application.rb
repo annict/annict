@@ -67,9 +67,17 @@ module Annict
       g.assets false
     end
 
-    config.active_job.queue_adapter = :delayed_job
+    config.active_job.queue_adapter = :sidekiq
 
     config.middleware.insert_before(Rack::Runtime, Rack::Rewrite) do
+      # Redirect: www.annict.com -> annict.com
+      r301 /.*/, "https://#{ENV.fetch('ANNICT_HOST')}$&", if: proc { |rack_env|
+        rack_env["SERVER_NAME"].in?(["www.#{ENV.fetch('ANNICT_HOST')}"])
+      }
+      # Redirect: www.annict.jp -> annict.jp
+      r301 /.*/, "https://#{ENV.fetch('ANNICT_JP_HOST')}$&", if: proc { |rack_env|
+        rack_env["SERVER_NAME"].in?(["www.#{ENV.fetch('ANNICT_JP_HOST')}"])
+      }
       r301 %r{\A/users/([A-Za-z0-9_]+)\z}, "/@$1"
       # rubocop:disable Metrics/LineLength
       r301 %r{\A/users/([A-Za-z0-9_]+)/(following|followers|wanna_watch|watching|watched|on_hold|stop_watching)\z}, "/@$1/$2"
