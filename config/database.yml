@@ -19,7 +19,7 @@ development:
 test:
   <<: *default
   database: annict_test
-  host: postgresql
+  host: <%= ENV.fetch("POSTGRES_HOST", "postgresql") %>
 
 production:
   <<: *default
