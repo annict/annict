@@ -15,7 +15,7 @@ jobs:
           REDIS_BLUE_URL: redis://localhost:6379
           POSTGRES_HOST: localhost
           RAILS_ENV: test
-          REDIS_URL: redis://localhost:6379/0
+          REDIS_URL: redis://localhost:6379
           TZ: Asia/Tokyo
           # The `CFLAGS` and `CXXFLAGS` are required to install cld gem
           # https://github.com/jtoy/cld/issues/10
