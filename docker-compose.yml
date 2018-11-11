@@ -20,6 +20,7 @@ services:
     command: /bin/ash -c 'yarn webpack:start'
     volumes:
       - ./:/annict
+      - node_modules_vol:/annict/node_modules
     ports:
       - 8080:8080
   rails:
@@ -53,3 +54,8 @@ services:
       - .env.development.local
     volumes:
       - ./:/annict
+
+volumes:
+  # Exclude the node_modules directory
+  # https://stackoverflow.com/questions/29181032/add-a-volume-to-docker-but-exclude-a-sub-folder
+  node_modules_vol:
