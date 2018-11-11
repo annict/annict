@@ -6,6 +6,7 @@ class EmailNotificationMailer < ActionMailer::Base
     bcc: "admin+email-notification@annict.com"
   )
 
+  add_template_helper AssetsHelper
   add_template_helper ImageHelper
   add_template_helper LocalHelper
 
