@@ -22,7 +22,7 @@ Rails.application.configure do
 
   if is_cache_enabled
     config.cache_store = :redis_cache_store, {
-      url: "#{ENV.fetch('REDIS_URL')}/cache",
+      url: "#{ENV.fetch('REDIS_URL')}/0",
       driver: :hiredis
     }
     config.public_file_server.headers = {
