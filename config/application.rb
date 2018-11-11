@@ -36,6 +36,7 @@ module Annict
 
     # Disable Asset Pipeline/Sprockets
     config.assets.enabled = false
+    config.assets.compile = false
 
     # Set Time.zone default to the specified zone and
     # make Active Record auto-convert to this zone.
