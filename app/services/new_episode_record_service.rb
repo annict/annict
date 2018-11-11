@@ -19,13 +19,14 @@ class NewEpisodeRecordService
       @episode_record.record = @user.records.create!(work: @work)
       @episode_record.save!
       @episode_record.update_share_record_status
-      @episode_record.share_to_sns
-      save_activity
       update_episode_records_with_body_count
-      finish_tips
       update_latest_status
-      create_ga_event
     end
+
+    @episode_record.share_to_sns
+    save_activity
+    finish_tips
+    create_ga_event
 
     true
   end

@@ -18,11 +18,11 @@ class NewWorkRecordService
 
       @work_record.save!
       @setting.save!
-      @work_record.share_to_sns
-
-      save_activity
-      create_ga_event
     end
+
+    @work_record.share_to_sns
+    save_activity
+    create_ga_event
 
     true
   end
