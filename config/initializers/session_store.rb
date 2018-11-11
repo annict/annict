@@ -4,4 +4,5 @@
 Annict::Application.config.session_store :redis_store,
   servers: ["#{ENV.fetch('REDIS_BLUE_URL')}/session"],
   expire_after: 30.days,
-  domain: :all
+  domain: :all,
+  key: "_ann_session"
