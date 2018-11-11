@@ -23,6 +23,7 @@ To run Annict on a local machine, you need to have the following dependencies in
 $ git clone git@github.com:annict/annict.git
 $ cd annict
 $ touch .env.development.local
+$ docker-compose build
 $ docker-compose up
 $ docker-compose exec rails bundle exec rake db:setup
 ```
