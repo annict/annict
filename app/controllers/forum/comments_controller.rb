@@ -22,7 +22,6 @@ module Forum
         @comment.save!(validate: false)
         @post.forum_post_participants.where(user: current_user).first_or_create!
         @post.update!(last_commented_at: Time.now)
-        @post.purge
       end
 
       @comment.send_notification
@@ -42,7 +41,6 @@ module Forum
       @comment.detect_locale!(:body)
 
       if @comment.save
-        @comment.purge
         Flash.store_data(cookies[:ann_client_uuid], notice: t("messages.forum.comments.updated"))
         redirect_to forum_post_path(@post)
       else

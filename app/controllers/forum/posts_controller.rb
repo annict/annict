@@ -50,7 +50,6 @@ module Forum
       @post.detect_locale!(:body)
 
       if @post.save
-        @post.purge
         Flash.store_data(cookies[:ann_client_uuid], notice: t("messages.forum.posts.updated"))
         redirect_to forum_post_path(@post)
       else

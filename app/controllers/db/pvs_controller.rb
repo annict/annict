@@ -25,7 +25,6 @@ module Db
 
       return render(:new) unless @form.valid?
       @form.save!
-      @work.purge
 
       redirect_to db_work_pvs_path(@work), notice: t("messages._common.created")
     end
@@ -43,7 +42,6 @@ module Db
 
       return render(:edit) unless @pv.valid?
       @pv.save_and_create_activity!
-      @pv.work.purge
 
       redirect_to db_work_pvs_path(@pv.work), notice: t("messages._common.updated")
     end
@@ -52,7 +50,6 @@ module Db
       authorize @pv, :hide?
 
       @pv.hide!
-      @pv.work.purge
 
       flash[:notice] = t("resources.pv.unpublished")
       redirect_back fallback_location: db_work_pvs_path(@pv.work)
@@ -60,7 +57,6 @@ module Db
 
     def destroy
       @pv.destroy
-      @pv.work.purge
 
       flash[:notice] = t("resources.pv.deleted")
       redirect_back fallback_location: db_work_pvs_path(@pv.work)

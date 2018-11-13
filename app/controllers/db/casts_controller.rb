@@ -27,7 +27,6 @@ module Db
 
       return render(:new) unless @form.valid?
       @form.save!
-      @work.purge
 
       redirect_to db_work_casts_path(@work), notice: t("resources.cast.created")
     end
@@ -46,7 +45,6 @@ module Db
 
       return render(:edit) unless @cast.valid?
       @cast.save_and_create_activity!
-      @work.purge
 
       redirect_to db_work_casts_path(@work), notice: t("resources.cast.updated")
     end
@@ -55,7 +53,6 @@ module Db
       authorize @cast, :hide?
 
       @cast.hide!
-      @cast.work.purge
 
       flash[:notice] = t("resources.cast.unpublished")
       redirect_back fallback_location: db_works_path
@@ -65,7 +62,6 @@ module Db
       authorize @cast, :destroy?
 
       @cast.destroy
-      @cast.work.purge
 
       flash[:notice] = t("resources.cast.deleted")
       redirect_back fallback_location: db_works_path
