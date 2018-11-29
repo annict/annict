@@ -243,9 +243,9 @@ GEM
       rainbow (>= 2.2.2, < 4.0)
       terminal-table (>= 1.5.1)
     ice_nine (0.11.2)
-    imgix (1.2.1)
+    imgix (1.2.2)
       addressable
-    imgix-rails (3.0.1)
+    imgix-rails (3.0.2)
       imgix (~> 1.1, >= 1.1.0)
     impressionist (1.6.1)
       nokogiri (~> 1)
