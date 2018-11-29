@@ -103,9 +103,9 @@ GEM
     browser (2.5.3)
     buftok (0.2.0)
     builder (3.2.3)
-    bullet (5.7.6)
+    bullet (5.9.0)
       activesupport (>= 3.0.0)
-      uniform_notifier (~> 1.11.0)
+      uniform_notifier (~> 1.11)
     by_star (3.0.0)
       activesupport (> 3)
     byebug (10.0.2)
@@ -572,7 +572,7 @@ GEM
       unf_ext
     unf_ext (0.0.7.5)
     unicode-display_width (1.4.0)
-    uniform_notifier (1.11.0)
+    uniform_notifier (1.12.1)
     validate_url (1.0.2)
       activemodel (>= 3.0.0)
       addressable
