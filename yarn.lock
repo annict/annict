@@ -5774,8 +5774,8 @@ prettier-eslint@^8.8.2:
     vue-eslint-parser "^2.0.2"
 
 prettier@^1.13.7, prettier@^1.15.1, prettier@^1.7.0:
-  version "1.15.1"
-  resolved "https://registry.yarnpkg.com/prettier/-/prettier-1.15.1.tgz#06c67106afb1b40e74b002353b2079cc7e0e67bf"
+  version "1.15.2"
+  resolved "https://registry.yarnpkg.com/prettier/-/prettier-1.15.2.tgz#d31abe22afa4351efa14c7f8b94b58bb7452205e"
 
 pretty-format@^23.0.1:
   version "23.2.0"
