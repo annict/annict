@@ -300,7 +300,7 @@ GEM
     memoizable (0.4.2)
       thread_safe (~> 0.3, >= 0.3.1)
     memory_profiler (0.9.12)
-    meta-tags (2.10.0)
+    meta-tags (2.11.0)
       actionpack (>= 3.2.0, < 5.3)
     meta_request (0.6.0)
       callsite (~> 0.0, >= 0.0.11)
