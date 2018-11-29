@@ -666,7 +666,7 @@ DEPENDENCIES
   pundit
   rack-cors
   rack-rewrite
-  rails (= 5.2.1)
+  rails
   rails-html-sanitizer
   rails-i18n
   rails_autolink
@@ -701,4 +701,4 @@ RUBY VERSION
    ruby 2.5.3p105
 
 BUNDLED WITH
-   1.16.6
+   1.17.0
