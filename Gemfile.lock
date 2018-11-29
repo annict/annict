@@ -108,7 +108,6 @@ GEM
       uniform_notifier (~> 1.11)
     by_star (3.0.0)
       activesupport (> 3)
-    byebug (10.0.2)
     callsite (0.0.11)
     capybara (3.10.1)
       addressable
@@ -373,9 +372,6 @@ GEM
     pry (0.11.3)
       coderay (~> 1.1.0)
       method_source (~> 0.9.0)
-    pry-byebug (3.6.0)
-      byebug (~> 10.0)
-      pry (~> 0.10)
     pry-rails (0.3.6)
       pry (>= 0.10.4)
     public_suffix (3.0.3)
@@ -660,7 +656,6 @@ DEPENDENCIES
   omniauth-twitter
   paperclip
   pg
-  pry-byebug
   pry-rails
   puma
   puma_worker_killer
