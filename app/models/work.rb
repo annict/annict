@@ -381,6 +381,14 @@ class Work < ApplicationRecord
     "https://twitter.com/#{twitter_username}/profile_image?size=#{size}"
   end
 
+  def twitter_username_url
+    "https://twitter.com/#{twitter_username}"
+  end
+
+  def twitter_hashtag_url
+    URI.encode("https://twitter.com/search?q=##{twitter_hashtag}&src=hash")
+  end
+
   def channels
     return nil if episodes.blank?
 

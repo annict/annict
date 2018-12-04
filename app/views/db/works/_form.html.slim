@@ -41,35 +41,67 @@
       .col-sm-9
         = f.text_field :ended_on, class: "form-control", value: f.object.ended_on&.in_time_zone(current_user.time_zone)&.strftime("%Y-%m-%d"), placeholder: t("resources.work.started_on_eg")
     .form-group.row
-      = f.label :official_site_url, class: "col-sm-3 col-form-label"
+      = f.label :official_site_url, class: "col-sm-3 col-form-label" do
+        = t "activerecord.attributes.work.official_site_url"
+        - if f.object.official_site_url.present?
+          = link_to f.object.official_site_url, class: "ml-2", target: "_blank" do
+            = icon "external-link-alt"
       .col-sm-9
         = f.text_field :official_site_url, class: "form-control"
     .form-group.row
-      = f.label :official_site_url_en, class: "col-sm-3 col-form-label"
+      = f.label :official_site_url_en, class: "col-sm-3 col-form-label" do
+        = t "activerecord.attributes.work.official_site_url_en"
+        - if f.object.official_site_url_en.present?
+          = link_to f.object.official_site_url_en, class: "ml-2", target: "_blank" do
+            = icon "external-link-alt"
       .col-sm-9
         = f.text_field :official_site_url_en, class: "form-control"
     .form-group.row
-      = f.label :wikipedia_url, class: "col-sm-3 col-form-label"
+      = f.label :wikipedia_url, class: "col-sm-3 col-form-label" do
+        = t "activerecord.attributes.work.wikipedia_url"
+        - if f.object.wikipedia_url.present?
+          = link_to f.object.wikipedia_url, class: "ml-2", target: "_blank" do
+            = icon "external-link-alt"
       .col-sm-9
         = f.text_field :wikipedia_url, class: "form-control"
     .form-group.row
-      = f.label :wikipedia_url_en, class: "col-sm-3 col-form-label"
+      = f.label :wikipedia_url_en, class: "col-sm-3 col-form-label" do
+        = t "activerecord.attributes.work.wikipedia_url_en"
+        - if f.object.wikipedia_url_en.present?
+          = link_to f.object.wikipedia_url_en, class: "ml-2", target: "_blank" do
+            = icon "external-link-alt"
       .col-sm-9
         = f.text_field :wikipedia_url_en, class: "form-control"
     .form-group.row
-      = f.label :twitter_username, class: "col-sm-3 col-form-label"
+      = f.label :twitter_username, class: "col-sm-3 col-form-label" do
+        = t "activerecord.attributes.work.twitter_username"
+        - if f.object.twitter_username.present?
+          = link_to f.object.twitter_username_url, class: "ml-2", target: "_blank" do
+            = icon "external-link-alt"
       .col-sm-9
         = f.text_field :twitter_username, class: "form-control", placeholder: t("resources.work.twitter_username_placeholder")
     .form-group.row
-      = f.label :twitter_hashtag, class: "col-sm-3 col-form-label"
+      = f.label :twitter_hashtag, class: "col-sm-3 col-form-label" do
+        = t "activerecord.attributes.work.twitter_hashtag"
+        - if f.object.twitter_hashtag.present?
+          = link_to f.object.twitter_hashtag_url, class: "ml-2", target: "_blank" do
+            = icon "external-link-alt"
       .col-sm-9
         = f.text_field :twitter_hashtag, class: "form-control", placeholder: t("resources.work.twitter_hashtag_placeholder")
     .form-group.row
-      = f.label :sc_tid, class: "col-sm-3 col-form-label"
+      = f.label :sc_tid, class: "col-sm-3 col-form-label" do
+        = t "activerecord.attributes.work.sc_tid"
+        - if f.object.sc_tid.present?
+          = link_to f.object.syobocal_url, class: "ml-2", target: "_blank" do
+            = icon "external-link-alt"
       .col-sm-9
         = f.text_field :sc_tid, class: "form-control"
     .form-group.row
-      = f.label :mal_anime_id, class: "col-sm-3 col-form-label"
+      = f.label :mal_anime_id, class: "col-sm-3 col-form-label" do
+        = t "activerecord.attributes.work.mal_anime_id"
+        - if f.object.mal_anime_id.present?
+          = link_to f.object.mal_anime_url, class: "ml-2", target: "_blank" do
+            = icon "external-link-alt"
       .col-sm-9
         = f.text_field :mal_anime_id, class: "form-control"
     .form-group.row

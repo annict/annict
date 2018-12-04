@@ -8,13 +8,11 @@ class WorkDecorator < ApplicationDecorator
   end
 
   def twitter_username_link
-    url = "https://twitter.com/#{twitter_username}"
-    h.link_to "@#{twitter_username}", url, target: "_blank"
+    h.link_to "@#{twitter_username}", twitter_username_url, target: "_blank"
   end
 
   def twitter_hashtag_link
-    url = URI.encode("https://twitter.com/search?q=##{twitter_hashtag}&src=hash")
-    h.link_to "##{twitter_hashtag}", url, target: "_blank"
+    h.link_to "##{twitter_hashtag}", twitter_hashtag_url, target: "_blank"
   end
 
   def syobocal_link(title = nil)
