@@ -95,11 +95,15 @@ class LatestStatus < ApplicationRecord
     Episode.where(id: next_episode_ids).order(:sort_number).first
   end
 
-  def append_episode(episode)
-    episode_ids = watched_episode_ids << episode.id
-    self.watched_episode_ids = episode_ids.uniq
-    self.next_episode = self.fetch_next_episode
-    move_to_top
+  def append_episode!(episode)
+    ActiveRecord::Base.transaction do
+      episode_ids = watched_episode_ids << episode.id
+      self.watched_episode_ids = episode_ids.uniq
+      self.next_episode = fetch_next_episode
+      save!
+      move_to_top
+    end
+
     self
   end
 

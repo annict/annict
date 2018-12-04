@@ -22,7 +22,7 @@ class CreateMultipleEpisodeRecordsJob < ApplicationJob
         end
 
         latest_status = user.latest_statuses.find_by(work: episode.work)
-        latest_status.append_episode(episode) if latest_status.present?
+        latest_status.append_episode!(episode) if latest_status.present?
       end
     end
   end

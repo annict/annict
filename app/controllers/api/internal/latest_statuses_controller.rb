@@ -12,7 +12,7 @@ module Api
 
       def skip_episode(latest_status_id)
         @latest_status = LatestStatus.find(latest_status_id)
-        @latest_status.append_episode(@latest_status.next_episode)
+        @latest_status.append_episode!(@latest_status.next_episode)
         @user = current_user
         render :show
       end
