@@ -549,7 +549,7 @@ GEM
     thread_safe (0.3.6)
     tilt (2.0.9)
     timecop (0.9.1)
-    traceroute (0.7.1)
+    traceroute (0.8.0)
       rails (>= 3.0.0)
     twitter (6.2.0)
       addressable (~> 2.3)
