@@ -1,7 +1,7 @@
-「<%= link_to "#{@episode.work.title}", work_url(@episode.work) %>」のエピソードが追加されました。<br>
+「<%= link_to "#{@episode.work.title}", work_url(@episode.work, host: ENV.fetch("ANNICT_JP_URL")) %>」のエピソードが追加されました。<br>
 <br>
-<%= link_to db_work_episodes_url(@episode.work), db_work_episodes_url(@episode.work) %><br>
+<%= link_to db_work_episodes_url(@episode.work, host: ENV.fetch("ANNICT_JP_URL")), db_work_episodes_url(@episode.work, host: ENV.fetch("ANNICT_JP_URL")) %><br>
 <br>
 <br>
 ---<br>
-<%= ENV['ANNICT_URL'] %>
+<%= ENV['ANNICT_JP_URL'] %>
