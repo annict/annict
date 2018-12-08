@@ -3,7 +3,6 @@
 module Api
   class GraphqlController < ActionController::Base
     include Analyzable
-    include LogrageSetting
     include RavenContext
 
     before_action :doorkeeper_authorize!
@@ -17,8 +16,14 @@ module Api
       context = {
         doorkeeper_token: doorkeeper_token,
         viewer: current_user,
-        ga_client: ga_client
+        ga_client: ga_client,
+        timber: timber
       }
+      timber.log(:info, :GRAPHQL_API_REQUEST,
+        oauth_access_token_id: doorkeeper_token.id,
+        query: query,
+        variables: variables
+      )
       result = AnnictSchema.execute(query, variables: variables, context: context)
       render json: result
     end

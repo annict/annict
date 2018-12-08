@@ -473,15 +473,6 @@
     "MAINTENANCE_PAGE_URL": {
       "required": true
     },
-    "MEMCACHIER_PASSWORD": {
-      "required": true
-    },
-    "MEMCACHIER_SERVERS": {
-      "required": true
-    },
-    "MEMCACHIER_USERNAME": {
-      "required": true
-    },
     "PAPERCLIP_PATH": {
       "required": true
     },
@@ -558,12 +549,14 @@
     }
   },
   "addons": [
-    "logentries",
-    "pointdns",
     "heroku-postgresql",
     "heroku-redis",
-    "scheduler",
-    "sentry"
+    "sentry",
+    "timber-logging",
+    {
+      "plan": "heroku-redis",
+      "as": "redis_blue"
+    }
   ],
   "buildpacks": [
     {

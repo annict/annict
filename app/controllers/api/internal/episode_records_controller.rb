@@ -15,10 +15,12 @@ module Api
           er.rating_state = episode_record[:rating_state]
         end
         ga_client.page_category = page_category
+        timber.page_category = page_category
 
         service = NewEpisodeRecordService.new(current_user, episode_record)
         service.page_category = page_category
         service.ga_client = ga_client
+        service.timber = timber
         service.via = "internal_api"
 
         begin

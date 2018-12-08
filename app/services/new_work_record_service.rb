@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class NewWorkRecordService
-  attr_writer :app, :via, :ga_client, :page_category
+  attr_writer :app, :via, :ga_client, :timber, :page_category
   attr_reader :work_record
 
   def initialize(user, work_record, setting)
@@ -23,6 +23,7 @@ class NewWorkRecordService
     @work_record.share_to_sns
     save_activity
     create_ga_event
+    create_timber_log
 
     true
   end
@@ -36,5 +37,10 @@ class NewWorkRecordService
   def create_ga_event
     return if @ga_client.blank?
     @ga_client.events.create(:records, :create, el: "Work", ds: @via)
+  end
+
+  def create_timber_log
+    return if @timber.blank?
+    @timber.log(:info, :WORK_RECORD_CREATE, via: @via)
   end
 end

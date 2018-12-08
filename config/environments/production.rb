@@ -92,22 +92,6 @@ Rails.application.configure do
   # Send deprecation notices to registered listeners.
   config.active_support.deprecation = :notify
 
-  # Use default logging formatter so that PID and timestamp are not suppressed.
-  config.log_formatter = ::Logger::Formatter.new
-
-  # Use a different logger for distributed setups.
-  # require 'syslog/logger'
-  # config.logger = ActiveSupport::TaggedLogging.new(Syslog::Logger.new 'app-name')
-
-  # Heroku will set `RAILS_LOG_TO_STDOUT` when you deploy a Ruby app via
-  # the Heroku Ruby Buildpack for Rails 4.2+ apps.
-  # https://blog.heroku.com/container_ready_rails_5#stdout-logging
-  if ENV["RAILS_LOG_TO_STDOUT"].present?
-    logger = ActiveSupport::Logger.new(STDOUT)
-    logger.formatter = config.log_formatter
-    config.logger = ActiveSupport::TaggedLogging.new(logger)
-  end
-
   config.action_mailer.default_url_options = {
     protocol: "https://",
     host: ENV.fetch("ANNICT_HOST")
@@ -134,10 +118,9 @@ Rails.application.configure do
     source: ENV.fetch("IMGIX_SOURCE")
   }
 
-  config.lograge.enabled = true
-  config.lograge.custom_options = lambda do |event|
-    options = event.payload.slice(:request_id, :client_uuid, :user_id)
-    options[:params] = event.payload[:params].except("controller", "action")
-    options
-  end
+  # Install the Timber.io logger, send logs over STDOUT. Actual log delivery
+  # to the Timber service is handled external of this application.
+  logger = Timber::Logger.new(STDOUT)
+  logger.level = config.log_level
+  config.logger = ActiveSupport::TaggedLogging.new(logger)
 end

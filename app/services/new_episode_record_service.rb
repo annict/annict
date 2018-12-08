@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class NewEpisodeRecordService
-  attr_writer :app, :via, :ga_client, :page_category
+  attr_writer :app, :via, :ga_client, :timber, :page_category
   attr_reader :episode_record
 
   def initialize(user, episode_record)
@@ -27,6 +27,7 @@ class NewEpisodeRecordService
     save_activity
     finish_tips
     create_ga_event
+    create_timber_log
 
     true
   end
@@ -50,6 +51,11 @@ class NewEpisodeRecordService
   def create_ga_event
     return if @ga_client.blank?
     @ga_client.events.create(:records, :create, el: "Episode", ds: @via)
+  end
+
+  def create_timber_log
+    return if @timber.blank?
+    @timber.log(:info, :EPISODE_RECORD_CREATE, via: @via)
   end
 
   def update_episode_records_with_body_count
