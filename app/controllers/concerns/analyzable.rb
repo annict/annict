@@ -10,6 +10,10 @@ module Analyzable
       @ga_client ||= Annict::Analytics::Client.new(request, current_user)
     end
 
+    def timber
+      @timber ||= Annict::Timber.new(request, current_user)
+    end
+
     def store_client_uuid
       return if cookies[:ann_client_uuid].present?
 

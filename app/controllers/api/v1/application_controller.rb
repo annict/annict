@@ -16,6 +16,7 @@ module Api
       before_action only: %i(create update destroy) do
         doorkeeper_authorize! :write
       end
+      before_action :send_log_to_timber
       skip_before_action :verify_authenticity_token
 
       def not_found
@@ -51,6 +52,12 @@ module Api
         end
 
         render json: { errors: errors }, status: 400
+      end
+
+      def send_log_to_timber
+        timber.log(:info, :REST_API_REQUEST,
+          oauth_access_token_id: doorkeeper_token.id
+        )
       end
     end
   end
