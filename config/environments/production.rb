@@ -92,22 +92,6 @@ Rails.application.configure do
   # Send deprecation notices to registered listeners.
   config.active_support.deprecation = :notify
 
-  # Use default logging formatter so that PID and timestamp are not suppressed.
-  config.log_formatter = ::Logger::Formatter.new
-
-  # Use a different logger for distributed setups.
-  # require 'syslog/logger'
-  # config.logger = ActiveSupport::TaggedLogging.new(Syslog::Logger.new 'app-name')
-
-  # Heroku will set `RAILS_LOG_TO_STDOUT` when you deploy a Ruby app via
-  # the Heroku Ruby Buildpack for Rails 4.2+ apps.
-  # https://blog.heroku.com/container_ready_rails_5#stdout-logging
-  if ENV["RAILS_LOG_TO_STDOUT"].present?
-    logger = ActiveSupport::Logger.new(STDOUT)
-    logger.formatter = config.log_formatter
-    config.logger = ActiveSupport::TaggedLogging.new(logger)
-  end
-
   config.action_mailer.default_url_options = {
     protocol: "https://",
     host: ENV.fetch("ANNICT_HOST")
