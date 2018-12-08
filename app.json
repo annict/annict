@@ -552,10 +552,13 @@
     "pointdns",
     "heroku-postgresql",
     "heroku-redis",
-    "heroku-redis",
     "scheduler",
     "sentry",
-    "timber-logging"
+    "timber-logging",
+    {
+      "plan": "heroku-redis",
+      "as": "redis_blue"
+    }
   ],
   "buildpacks": [
     {
