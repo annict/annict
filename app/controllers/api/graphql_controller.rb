@@ -3,7 +3,6 @@
 module Api
   class GraphqlController < ActionController::Base
     include Analyzable
-    include LogrageSetting
     include RavenContext
 
     before_action :doorkeeper_authorize!

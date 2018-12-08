@@ -134,13 +134,6 @@ Rails.application.configure do
     source: ENV.fetch("IMGIX_SOURCE")
   }
 
-  config.lograge.enabled = true
-  config.lograge.custom_options = lambda do |event|
-    options = event.payload.slice(:request_id, :client_uuid, :user_id)
-    options[:params] = event.payload[:params].except("controller", "action")
-    options
-  end
-
   # Install the Timber.io logger, send logs over STDOUT. Actual log delivery
   # to the Timber service is handled external of this application.
   logger = Timber::Logger.new(STDOUT)
