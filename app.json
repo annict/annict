@@ -549,10 +549,8 @@
     }
   },
   "addons": [
-    "pointdns",
     "heroku-postgresql",
     "heroku-redis",
-    "scheduler",
     "sentry",
     "timber-logging",
     {
