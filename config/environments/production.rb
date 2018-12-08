@@ -140,4 +140,11 @@ Rails.application.configure do
     options[:params] = event.payload[:params].except("controller", "action")
     options
   end
+
+  # Install the Timber.io logger, send logs over STDOUT. Actual log delivery
+  # to the Timber service is handled external of this application.
+  logger = Timber::Logger.new(STDOUT)
+  logger.level = config.log_level
+  config.logger = ActiveSupport::TaggedLogging.new(logger)
+
 end

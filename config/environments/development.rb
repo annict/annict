@@ -84,4 +84,11 @@ Rails.application.configure do
     use_https: true,
     source: ENV.fetch("IMGIX_SOURCE")
   }
+
+  # Install the Timber.io logger, send logs over STDOUT. Actual log delivery
+  # to the Timber service is handled external of this application.
+  logger = Timber::Logger.new(STDOUT)
+  logger.level = config.log_level
+  config.logger = ActiveSupport::TaggedLogging.new(logger)
+
 end
