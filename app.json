@@ -549,12 +549,12 @@
     }
   },
   "addons": [
-    "logentries",
     "pointdns",
     "heroku-postgresql",
     "heroku-redis",
     "scheduler",
-    "sentry"
+    "sentry",
+    "timber-logging"
   ],
   "buildpacks": [
     {
