@@ -67,7 +67,6 @@ gem "sentry-raven"
 gem "sidekiq"
 gem "sitemap_generator"
 gem "slim"
-gem "timber"
 gem "traceroute"
 gem "twitter"
 gem "validate_url"
@@ -117,5 +116,6 @@ group :test do
 end
 
 group :production do
+  gem "timber"
   gem "lograge"
 end

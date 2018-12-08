@@ -146,5 +146,4 @@ Rails.application.configure do
   logger = Timber::Logger.new(STDOUT)
   logger.level = config.log_level
   config.logger = ActiveSupport::TaggedLogging.new(logger)
-
 end
