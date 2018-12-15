@@ -209,7 +209,7 @@ GEM
       promise.rb (~> 0.7.2)
     gretel (3.0.9)
       rails (>= 3.1.0)
-    groupdate (4.1.0)
+    groupdate (4.1.1)
       activesupport (>= 4.2)
     hashdiff (0.3.7)
     hashie (3.6.0)
