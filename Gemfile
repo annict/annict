@@ -116,5 +116,5 @@ group :test do
 end
 
 group :production do
-  gem "timber"
+  gem "lograge"
 end

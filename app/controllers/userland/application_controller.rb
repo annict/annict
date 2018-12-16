@@ -6,6 +6,7 @@ module Userland
 
     include ControllerCommon
     include Analyzable
+    include LogrageSetting
     include Gonable
     include FlashMessage
     include ViewSelector

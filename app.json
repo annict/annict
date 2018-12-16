@@ -551,8 +551,8 @@
   "addons": [
     "heroku-postgresql",
     "heroku-redis",
+    "logentries",
     "sentry",
-    "timber-logging",
     {
       "plan": "heroku-redis",
       "as": "redis_blue"

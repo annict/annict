@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module Annict
-  class Timber
+  class Logentries
     ACTIONS = {
       EPISODE_RECORD_CREATE: "episode_record.create",
       GRAPHQL_API_REQUEST: "graphql_api.request",
@@ -18,11 +18,7 @@ module Annict
     end
 
     def log(type, action, metadata = {})
-      if Rails.env.production?
-        Rails.logger.send(type, "Send log to Timber: #{action}", data: build_metadata(action, metadata))
-      else
-        puts "Send log to Timber: #{build_metadata(action, metadata).merge(type: type)}"
-      end
+      Rails.logger.send(type, build_metadata(action, metadata).to_json)
     end
 
     private

@@ -10,12 +10,12 @@ class EpisodeRecordsController < ApplicationController
     @work = @episode.work
     @episode_record = @episode.episode_records.new(episode_record)
     ga_client.page_category = params[:page_category]
-    timber.page_category = params[:page_category]
+    logentries.page_category = params[:page_category]
 
     service = NewEpisodeRecordService.new(current_user, @episode_record)
     service.page_category = params[:page_category]
     service.ga_client = ga_client
-    service.timber = timber
+    service.logentries = logentries
     service.via = "web"
 
     begin

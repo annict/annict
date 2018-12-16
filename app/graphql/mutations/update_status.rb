@@ -15,7 +15,7 @@ Mutations::UpdateStatus = GraphQL::Relay::Mutation.define do
     status = StatusService.new(ctx[:viewer], work)
     status.app = ctx[:doorkeeper_token].application
     status.ga_client = ctx[:ga_client]
-    status.timber = ctx[:timber]
+    status.logentries = ctx[:logentries]
     status.via = "graphql_api"
 
     state = case inputs[:state]

@@ -3,6 +3,7 @@
 module Api
   class GraphqlController < ActionController::Base
     include Analyzable
+    include LogrageSetting
     include RavenContext
 
     before_action :doorkeeper_authorize!
@@ -17,9 +18,9 @@ module Api
         doorkeeper_token: doorkeeper_token,
         viewer: current_user,
         ga_client: ga_client,
-        timber: timber
+        logentries: logentries
       }
-      timber.log(:info, :GRAPHQL_API_REQUEST,
+      logentries.log(:info, :GRAPHQL_API_REQUEST,
         oauth_access_token_id: doorkeeper_token.id,
         query: query,
         variables: variables
