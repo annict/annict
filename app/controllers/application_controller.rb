@@ -5,6 +5,7 @@ class ApplicationController < ActionController::Base
 
   include ControllerCommon
   include Analyzable
+  include LogrageSetting
   include Gonable
   include PageCategoryMethods
   include PageParamsMethods

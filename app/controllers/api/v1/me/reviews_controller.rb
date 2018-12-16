@@ -27,7 +27,7 @@ module Api
 
           service = NewWorkRecordService.new(current_user, work_record, current_user.setting)
           service.ga_client = ga_client
-          service.timber = timber
+          service.logentries = logentries
           service.app = doorkeeper_token.application
           service.via = "rest_api"
 

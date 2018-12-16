@@ -28,10 +28,10 @@ module Api
 
       def select(status_kind, page_category)
         ga_client.page_category = page_category
-        timber.page_category = page_category
+        logentries.page_category = page_category
         status = StatusService.new(current_user, @work)
         status.ga_client = ga_client
-        status.timber = timber
+        status.logentries = logentries
         status.via = "internal_api"
         status.page_category = page_category
         status.change!(status_kind)

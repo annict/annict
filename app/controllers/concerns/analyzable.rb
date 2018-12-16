@@ -10,8 +10,8 @@ module Analyzable
       @ga_client ||= Annict::Analytics::Client.new(request, current_user)
     end
 
-    def timber
-      @timber ||= Annict::Timber.new(request, current_user)
+    def logentries
+      @logentries ||= Annict::Logentries.new(request, current_user)
     end
 
     def store_client_uuid

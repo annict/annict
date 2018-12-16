@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class StatusService
-  attr_writer :app, :via, :ga_client, :timber, :page_category
+  attr_writer :app, :via, :ga_client, :logentries, :page_category
 
   def initialize(user, work)
     @user = user
@@ -18,7 +18,7 @@ class StatusService
         UserWatchedWorksCountJob.perform_later(@user)
         @status.share_to_sns
         create_ga_event
-        create_timber_log
+        create_logentries_log
       end
     elsif @kind == "no_select"
       latest_status = @user.latest_statuses.find_by(work: @work)
@@ -36,8 +36,8 @@ class StatusService
     @ga_client.events.create(:statuses, :create, ds: @via)
   end
 
-  def create_timber_log
-    return if @timber.blank?
-    @timber.log(:info, :STATUS_CREATE, via: @via)
+  def create_logentries_log
+    return if @logentries.blank?
+    @logentries.log(:info, :STATUS_CREATE, via: @via)
   end
 end

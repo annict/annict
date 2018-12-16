@@ -7,6 +7,7 @@ module Db
     include ControllerCommon
     include FlashMessage
     include Analyzable
+    include LogrageSetting
     include Gonable
     include RavenContext
     include PageCategoryMethods

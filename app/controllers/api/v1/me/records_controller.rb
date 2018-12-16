@@ -20,7 +20,7 @@ module Api
 
           service = NewEpisodeRecordService.new(current_user, record)
           service.ga_client = ga_client
-          service.timber = timber
+          service.logentries = logentries
           service.app = doorkeeper_token.application
           service.via = "rest_api"
 

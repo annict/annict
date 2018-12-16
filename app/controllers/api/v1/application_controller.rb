@@ -4,6 +4,7 @@ module Api
   module V1
     class ApplicationController < ActionController::Base
       include Analyzable
+      include LogrageSetting
       include RavenContext
       include PageCategoryMethods
 
@@ -16,7 +17,7 @@ module Api
       before_action only: %i(create update destroy) do
         doorkeeper_authorize! :write
       end
-      before_action :send_log_to_timber
+      before_action :send_log_to_logentries
       skip_before_action :verify_authenticity_token
 
       def not_found
@@ -54,8 +55,8 @@ module Api
         render json: { errors: errors }, status: 400
       end
 
-      def send_log_to_timber
-        timber.log(:info, :REST_API_REQUEST,
+      def send_log_to_logentries
+        logentries.log(:info, :REST_API_REQUEST,
           oauth_access_token_id: doorkeeper_token.id
         )
       end
