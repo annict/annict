@@ -90,9 +90,10 @@ group :development do
   gem "bullet"
   gem "derailed_benchmarks"
   gem "graphiql-rails"
+  gem "graphql-docs"
   gem "i18n-tasks"
   gem "letter_opener_web"
-  gem "listen" # Rails 5から `rails s` するときに必要になった
+  gem "listen" # Using with `rails s` since Rails 5
   gem "memory_profiler"
   gem "meta_request"
   gem "rubocop"

@@ -182,7 +182,10 @@ GEM
       activesupport (>= 3.2)
     equalizer (0.0.11)
     erubi (1.7.1)
+    escape_utils (1.2.1)
     eventmachine (1.2.7)
+    extended-markdown-filter (0.7.0)
+      html-pipeline (~> 2.9)
     factory_bot (4.11.1)
       activesupport (>= 3.0.0)
     factory_bot_rails (4.11.1)
@@ -192,6 +195,7 @@ GEM
       multipart-post (>= 1.2, < 3)
     ffi (1.9.25)
     flutie (2.1.0)
+    gemoji (3.0.0)
     get_process_mem (0.2.3)
     github-markup (3.0.2)
     globalid (0.4.1)
@@ -207,6 +211,14 @@ GEM
     graphql-batch (0.3.10)
       graphql (>= 0.8, < 2)
       promise.rb (~> 0.7.2)
+    graphql-docs (1.6.1)
+      commonmarker (~> 0.16)
+      escape_utils (~> 1.2)
+      extended-markdown-filter (~> 0.4)
+      gemoji (~> 3.0)
+      graphql (~> 1.6)
+      html-pipeline (~> 2.9)
+      sass (~> 3.4)
     gretel (3.0.9)
       rails (>= 3.1.0)
     groupdate (4.1.1)
@@ -216,6 +228,9 @@ GEM
     heapy (0.1.4)
     highline (2.0.0)
     hiredis (0.6.3)
+    html-pipeline (2.9.1)
+      activesupport (>= 2)
+      nokogiri (>= 1.4)
     htmlentities (4.3.4)
     http (3.3.0)
       addressable (~> 2.3)
@@ -627,6 +642,7 @@ DEPENDENCIES
   graphiql-rails
   graphql
   graphql-batch
+  graphql-docs
   gretel
   groupdate
   hashdiff
