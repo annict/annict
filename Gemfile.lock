@@ -442,8 +442,8 @@ GEM
       activesupport (>= 5.0)
       i18n
     rb-fsevent (0.10.3)
-    rb-inotify (0.9.10)
-      ffi (>= 0.5.0, < 2)
+    rb-inotify (0.10.0)
+      ffi (~> 1.0)
     redis (4.1.0)
     redis-actionpack (5.0.2)
       actionpack (>= 4.0, < 6)
