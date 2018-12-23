@@ -181,7 +181,7 @@ GEM
     enumerize (2.2.2)
       activesupport (>= 3.2)
     equalizer (0.0.11)
-    erubi (1.7.1)
+    erubi (1.8.0)
     escape_utils (1.2.1)
     eventmachine (1.2.7)
     extended-markdown-filter (0.7.0)
