@@ -6,7 +6,7 @@ script#t-untracked-episode-list type="x-template"
           .row
             .col.col-auto.pr-0
               a :href='"/works/" + status.work.id'
-                img.rounded v-lazy="status.work.image_url" width="48" :alt="status.work.title"
+                img.rounded v-lazy="status.work.image_url" :key="status.work.image_url" width="48" :alt="status.work.title"
             .col
               a.small :href='"/works/" + status.work.id'
                 | {{ status.work.title }}
