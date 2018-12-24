@@ -1,8 +1,6 @@
 - title = t "head.title.home.index_guest"
 - set_meta_tags(title: title, reverse: false)
 
-= render "application/components/navbar", transparent: true
-
 .p-application__content.mb-4
   .p-top-hero
     .p-top-hero__bg-image style="background-image: url(#{ann_image_url(@cover_image_work.work_image, :attachment, size: '640x640', blur: 200)});"

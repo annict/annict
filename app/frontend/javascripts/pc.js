@@ -64,9 +64,6 @@ import workTags from './common/components/workTags'
 import workWatchersChart from './common/components/workWatchersChart'
 import youtubeModalPlayer from './common/components/youtubeModalPlayer'
 
-import navbarLeftMenu from './pc/components/navbarLeftMenu'
-import navbarSubmenuDropdown from './pc/components/navbarSubmenuDropdown'
-import searchForm from './pc/components/searchForm'
 import imageAttachForm from './pc/components/imageAttachForm'
 import imageAttachModal from './pc/components/imageAttachModal'
 
@@ -119,8 +116,6 @@ document.addEventListener('turbolinks:load', event => {
   Vue.component('c-input-words-count', inputWordsCount)
   Vue.component('c-like-button', likeButton)
   Vue.component('c-mute-user-button', muteUserButton)
-  Vue.component('c-navbar-left-menu', navbarLeftMenu)
-  Vue.component('c-navbar-submenu-dropdown', navbarSubmenuDropdown)
   Vue.component('c-omitted-synopsis', omittedSynopsis)
   Vue.component('c-program-list', programList)
   Vue.component('c-rating-label', ratingLabel)
@@ -131,7 +126,6 @@ document.addEventListener('turbolinks:load', event => {
   Vue.component('c-record-sorter', recordSorter)
   Vue.component('c-record-textarea', recordTextarea)
   Vue.component('c-record-word-count', recordWordCount)
-  Vue.component('c-search-form', searchForm)
   Vue.component('c-share-button-facebook', shareButtonFacebook)
   Vue.component('c-share-button-twitter', shareButtonTwitter)
   Vue.component('c-status-selector', statusSelector)
