@@ -582,7 +582,7 @@ GEM
     unf (0.1.4)
       unf_ext
     unf_ext (0.0.7.5)
-    unicode-display_width (1.4.0)
+    unicode-display_width (1.4.1)
     uniform_notifier (1.12.1)
     validate_url (1.0.2)
       activemodel (>= 3.0.0)
