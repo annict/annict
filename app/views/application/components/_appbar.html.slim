@@ -1,0 +1,105 @@
+c-appbar
+  / PC
+  nav.c-appbar__navbar--pc.navbar.navbar-expand.navbar-white.bg-white.fixed-top.d-none.d-sm-block
+    ul.navbar-nav.align-items-center.h-100
+      li.nav-item
+        = link_to root_path, class: "navbar-brand" do
+          = image_tag asset_bundle_path("images/logos/color-mizuho.png"), size: "25x30", alt: "Annict"
+      template v-if="appData.isUserSignedIn"
+        template v-if='appData.current_user.locale === "ja"'
+          li.nav-item
+            = link_to t("head.title.programs.index"), programs_path, class: "nav-link text-dark"
+        li.nav-item.dropdown
+          a.nav-link.text-dark :href='"/@" + appData.current_user.username + "/watching"'
+            = t("noun.watching")
+          .dropdown-menu
+            a.dropdown-item.text-dark :href='"/@" + appData.current_user.username + "/wanna_watch"'
+              = t("noun.plan_to_watch")
+            a.dropdown-item.text-dark :href='"/@" + appData.current_user.username + "/watched"'
+              = t("noun.completed")
+            a.dropdown-item.text-dark :href='"/@" + appData.current_user.username + "/on_hold"'
+              = t("noun.on_hold")
+            a.dropdown-item.text-dark :href='"/@" + appData.current_user.username + "/stop_watching"'
+              = t("noun.dropped")
+        li.nav-item.dropdown
+          = link_to t("noun.current_season"), season_works_path(slug: ENV.fetch("ANNICT_CURRENT_SEASON")), class: "nav-link text-dark", "v-prerender": ""
+          .dropdown-menu
+            = link_to t("noun.next_season"), season_works_path(slug: ENV.fetch("ANNICT_NEXT_SEASON")), class: "dropdown-item text-dark", "v-prerender": ""
+            = link_to t("noun.previous_season"), season_works_path(slug: ENV.fetch("ANNICT_PREVIOUS_SEASON")), class: "dropdown-item text-dark", "v-prerender": ""
+            = link_to t("noun.popular"), popular_works_path, class: "dropdown-item text-dark", "v-prerender": ""
+            = link_to t("head.title.works.newest"), newest_works_path, class: "dropdown-item text-dark", "v-prerender": ""
+            = link_to t("noun.search"), search_path, class: "dropdown-item text-dark"
+      template v-else=""
+        li.nav-item.dropdown
+          = link_to t("noun.current_season"), season_works_path(slug: ENV.fetch("ANNICT_CURRENT_SEASON")), class: "nav-link text-dark", "v-prerender": ""
+          .dropdown-menu
+            = link_to t("noun.next_season"), season_works_path(slug: ENV.fetch("ANNICT_NEXT_SEASON")), class: "dropdown-item text-dark", "v-prerender": ""
+            = link_to t("noun.previous_season"), season_works_path(slug: ENV.fetch("ANNICT_PREVIOUS_SEASON")), class: "dropdown-item text-dark", "v-prerender": ""
+            = link_to t("head.title.works.newest"), newest_works_url, class: "dropdown-item text-dark", "v-prerender": ""
+            = link_to t("noun.search"), search_url, class: "dropdown-item text-dark"
+        li.nav-item
+          = link_to t("noun.popular"), popular_works_path, class: "nav-link text-dark", "v-prerender": ""
+      li.nav-item
+        c-search-form :init-q='"#{@search.q}"'
+  / Mobile
+  nav.navbar.navbar-expand.navbar-white.bg-white.fixed-bottom.d-block.d-sm-none
+    ul.navbar-nav.justify-content-around
+      li.nav-item.text-center
+        = link_to root_path, class: "text-dark" do
+          = icon "home"
+          .small
+            = t "noun.home"
+      template v-if="appData.isUserSignedIn"
+        template v-if='appData.current_user.locale === "ja"'
+          li.nav-item.text-center
+            = link_to programs_path, class: "text-dark" do
+              = icon "calendar", "far"
+              .small
+                = t "noun.programs"
+        template v-else=""
+          li.nav-item.text-center
+            = link_to search_path, class: "text-dark" do
+              = icon "search"
+              .small
+                = t "noun.search"
+        li.nav-item.text-center
+          a.text-dark :href='"/@" + appData.current_user.username + "/watching"'
+            = icon "play"
+            .small
+              = t "noun.watching_shorten"
+        li.nav-item.text-center
+          = link_to season_works_path(slug: ENV.fetch("ANNICT_CURRENT_SEASON")), class: "text-dark" do
+            = icon "tv"
+            .small
+              = t "noun.airing"
+        li.nav-item.text-center
+          = link_to menu_path, class: "text-dark" do
+            = icon "th"
+            .small
+              = t "noun.menu"
+            template v-if="appData.current_user.notifications_count > 0"
+              | {{ appData.current_user.notifications_count }}
+      template v-else=""
+        li.nav-item.text-center
+          = link_to season_works_path(slug: ENV.fetch("ANNICT_CURRENT_SEASON")), class: "text-dark" do
+            = icon "tv"
+            .small
+              = t "noun.airing"
+        li.nav-item.text-center
+          = link_to new_user_registration_path, class: "text-dark" do
+            = icon "rocket"
+            .small
+              = t "noun.sign_up_shorten"
+        li.nav-item.text-center
+          = link_to about_path, class: "text-dark" do
+            = icon "lightbulb", "far"
+            .small
+              = t "head.title.pages.about_shoten"
+        li.nav-item.text-center
+          = link_to menu_path, class: "text-dark" do
+            = icon "th"
+            .small
+              = t "noun.menu"
+
+- content_for :js_templates	
+  = render "application/js_templates/search_form"
