@@ -57,8 +57,6 @@ import workFriends from './common/components/workFriends'
 import workTags from './common/components/workTags'
 import youtubeModalPlayer from './common/components/youtubeModalPlayer'
 
-import tabbar from './mobile/components/tabbar'
-
 import resourceSelect from './common/directives/resourceSelect'
 
 document.addEventListener('turbolinks:load', event => {
@@ -116,7 +114,6 @@ document.addEventListener('turbolinks:load', event => {
   Vue.component('c-share-button-facebook', shareButtonFacebook)
   Vue.component('c-share-button-twitter', shareButtonTwitter)
   Vue.component('c-status-selector', statusSelector)
-  Vue.component('c-tabbar', tabbar)
   Vue.component('c-time-ago', timeAgo)
   Vue.component('c-tips', tips)
   Vue.component('c-untracked-episode-list', untrackedEpisodeList)

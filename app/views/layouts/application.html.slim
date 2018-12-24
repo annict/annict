@@ -22,7 +22,4 @@ html lang="#{I18n.locale}"
     = render "application/js_templates/flash"
     = render "application/js_templates/sticky_message"
 
-    - if browser.device.mobile?
-      = render "application/js_templates/tabbar"
-
     = yield :js_templates
