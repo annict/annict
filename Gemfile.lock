@@ -400,7 +400,7 @@ GEM
     rack-contrib (2.1.0)
       rack (~> 2.0)
     rack-cors (1.0.2)
-    rack-protection (2.0.4)
+    rack-protection (2.0.5)
       rack
     rack-rewrite (1.5.1)
     rack-test (1.1.0)
