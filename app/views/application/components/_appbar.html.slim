@@ -1,6 +1,6 @@
 c-appbar
   / PC
-  nav.c-appbar__navbar--pc.navbar.navbar-expand.navbar-white.bg-white.fixed-top.d-none.d-sm-block.shadow-sm
+  nav.c-appbar__navbar--pc.navbar.navbar-expand.navbar-white.bg-white.fixed-top.d-none.d-sm-flex.justify-content-between.shadow-sm
     ul.navbar-nav.align-items-center.h-100
       li.nav-item
         = link_to root_path, class: "navbar-brand" do
@@ -41,6 +41,46 @@ c-appbar
           = link_to t("noun.popular"), popular_works_path, class: "nav-link text-dark", "v-prerender": ""
       li.nav-item
         c-search-form :init-q='"#{@search.q}"'
+    ul.c-appbar__navbar--right.navbar-nav.align-items-center
+      template v-if="appData.isUserSignedIn"
+        li.nav-item.dropdown
+          a.nav-link.p-0 :href='"/@" + appData.current_user.username'
+            img.rounded-circle width="30" height="30" :alt="appData.current_user.profile.name" :src="appData.current_user.avatar_image.size30"
+          template v-if="appData.current_user.notifications_count > 0"
+            .c-navbar__notifications-count
+              | {{ appData.current_user.notifications_count }}
+          .dropdown-menu
+            a.dropdown-item :href='"/@" + appData.current_user.username'
+              = t "noun.profile"
+            = link_to notifications_path, class: "dropdown-item" do
+              = t "head.title.notifications.index"
+              template v-if="appData.current_user.notifications_count > 0"
+                span.badge.badge-pill.u-badge-mizuho.ml-2
+                  | {{ appData.current_user.notifications_count }}
+            = link_to t("head.title.friends.index"), friends_path, class: "dropdown-item"
+            template v-if='appData.current_user.locale === "ja"'
+              = link_to t("head.title.channels.index"), channels_path, class: "dropdown-item"
+            = link_to t("noun.settings"), profile_path, class: "dropdown-item"
+            = link_to t("noun.annict_userland"), userland_root_path, class: "dropdown-item"
+            = link_to t("noun.annict_forum"), forum_root_path, class: "dropdown-item", "v-prerender": ""
+            = link_to t("noun.annict_db"), db_root_path, class: "dropdown-item"
+            template v-if='appData.current_user.locale === "ja"'
+              = link_to t("noun.annict_developers"), "https://developers.annict.jp", target: "_blank", class: "dropdown-item"
+            = link_to t("head.title.supporters.index"), supporters_path, class: "dropdown-item"
+            template v-if='appData.current_user.locale === "ja"'
+              = link_to t("head.title.faqs.index"), faqs_path, class: "dropdown-item"
+            = link_to t("head.title.pages.about"), about_path, class: "dropdown-item"
+            = link_to t("verb.sign_out"), destroy_user_session_path, method: "delete", class: "dropdown-item"
+      template v-else=""
+        li.nav-item
+          = link_to t("head.title.pages.about"), about_path, class: "nav-link"
+        li.nav-item.mr-2
+          = link_to t("head.title.sessions.new"), new_user_session_path, class: "nav-link"
+        li.nav-item
+          = link_to new_user_registration_path, class: "nav-link btn btn-outline-primary" do
+            = icon "rocket"
+            = t "head.title.registrations.new"
+
   / Mobile
   nav.navbar.navbar-expand.navbar-white.bg-white.fixed-bottom.d-block.d-sm-none
     ul.navbar-nav.justify-content-around

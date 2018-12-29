@@ -4,15 +4,26 @@ c-appbar,
     height: $ann-appbar-height;
   }
 
-  &__navbar--pc {
-    .navbar-brand {
-      line-height: 1;
-    }
+  &__navbar {
+    $navbar: &;
 
-    .dropdown {
-      &:hover {
+    &--pc {
+      .navbar-brand {
+        line-height: 1;
+      }
+  
+      .dropdown {
+        &:hover {
+          .dropdown-menu {
+            display: block;
+          }
+        }
+      }
+      
+      #{$navbar}--right {
         .dropdown-menu {
-          display: block;
+          left: auto;
+          right: -16px;
         }
       }
     }
