@@ -8,6 +8,6 @@
             = ann_image_tag(user.profile, :tombo_avatar, size: "80x80", class: "p-profile-header__avatar rounded-circle")
         .col.pt-2.pl-0
           h1
-            = link_to user.profile.name, user_path(username: user.username), class: "font-weight-bold"
+            = link_to user.profile.name, user_path(username: user.username), class: "font-weight-bold text-white"
           .mt-2
-            = link_to "@#{user.username}", user_path(username: user.username)
+            = link_to "@#{user.username}", user_path(username: user.username), class: "text-white"
