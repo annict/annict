@@ -40,7 +40,7 @@ c-appbar
               = link_to t("noun.search"), search_url, class: "dropdown-item text-dark"
           li.nav-item
             = link_to t("noun.popular"), popular_works_path, class: "nav-link text-dark"
-        li.nav-item
+        li.nav-item.ml-2
           c-search-form :init-q='"#{@search.q}"'
       ul.c-appbar__navbar--right.navbar-nav.align-items-center v-if="appLoaded"
         template v-if="appData.isUserSignedIn"
