@@ -22,10 +22,8 @@
 
   &__info {
     background: linear-gradient(to bottom, transparent, rgba($ann-color-black, .35));
-    height: 100%;
-    position: absolute;
-    top: 0;
     width: 100%;
+    z-index: 1;
 
     a {
       color: $ann-color-white;

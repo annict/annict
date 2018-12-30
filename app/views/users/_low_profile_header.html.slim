@@ -1,6 +1,6 @@
-.p-profile-header.p-profile-header--low
-  .p-profile-header__cover-image style=" background: linear-gradient( rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5) ), url(#{profile_background_image_url(user.profile, size: '800x520', size_rate: 2)}) center center /cover no-repeat;"
-  .p-profile-header__info.d-flex.align-items-center
+.p-profile-header.p-profile-header--low.d-flex
+  .p-profile-header__cover-image style="background: url(#{profile_background_image_url(user.profile, size: '800x520', size_rate: 2)}) center center /cover no-repeat;"
+  .p-profile-header__info.align-self-end.py-3
     .container
       .row
         .col.u-flex-grow-0
