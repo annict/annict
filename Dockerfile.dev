@@ -1,4 +1,4 @@
-FROM ruby:2.5.3-alpine
+FROM ruby:2.6.0-alpine
 
 LABEL maintainer="https://annict.com/@shimbaco" \
       description="A platform for anime addicts."
