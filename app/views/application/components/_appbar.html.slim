@@ -88,35 +88,35 @@ c-appbar
         li.nav-item.text-center
           = link_to root_path, class: "text-dark" do
             = icon "home"
-            .small
+            .small.mt-1
               = t "noun.home"
         template v-if="appData.isUserSignedIn"
           template v-if='appData.current_user.locale === "ja"'
             li.nav-item.text-center
               = link_to programs_path, class: "text-dark" do
                 = icon "calendar", "far"
-                .small
+                .small.mt-1
                   = t "noun.programs"
           template v-else=""
             li.nav-item.text-center
               = link_to search_path, class: "text-dark" do
                 = icon "search"
-                .small
+                .small.mt-1
                   = t "noun.search"
           li.nav-item.text-center
             a.text-dark :href='"/@" + appData.current_user.username + "/watching"'
               = icon "play"
-              .small
+              .small.mt-1
                 = t "noun.watching_shorten"
           li.nav-item.text-center
             = link_to season_works_path(slug: ENV.fetch("ANNICT_CURRENT_SEASON")), class: "text-dark" do
               = icon "tv"
-              .small
+              .small.mt-1
                 = t "noun.airing"
           li.nav-item.text-center
             = link_to menu_path, class: "text-dark" do
               = icon "th"
-              .small
+              .small.mt-1
                 = t "noun.menu"
               template v-if="appData.current_user.notifications_count > 0"
                 | {{ appData.current_user.notifications_count }}
@@ -124,22 +124,22 @@ c-appbar
           li.nav-item.text-center
             = link_to season_works_path(slug: ENV.fetch("ANNICT_CURRENT_SEASON")), class: "text-dark" do
               = icon "tv"
-              .small
+              .small.mt-1
                 = t "noun.airing"
           li.nav-item.text-center
             = link_to new_user_registration_path, class: "text-dark" do
               = icon "rocket"
-              .small
+              .small.mt-1
                 = t "noun.sign_up_shorten"
           li.nav-item.text-center
             = link_to about_path, class: "text-dark" do
               = icon "lightbulb", "far"
-              .small
+              .small.mt-1
                 = t "head.title.pages.about_shoten"
           li.nav-item.text-center
             = link_to menu_path, class: "text-dark" do
               = icon "th"
-              .small
+              .small.mt-1
                 = t "noun.menu"
 
 - content_for :js_templates	
