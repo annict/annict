@@ -1,145 +1,146 @@
 c-appbar
-  / PC
-  nav.c-appbar__navbar--pc.navbar.navbar-expand.navbar-white.bg-white.fixed-top.d-none.d-sm-flex.justify-content-between.shadow-sm
-    ul.navbar-nav.align-items-center.h-100
-      li.nav-item
-        = link_to root_path, class: "navbar-brand" do
-          = image_tag asset_bundle_path("images/logos/color-mizuho.png"), size: "25x30", alt: "Annict"
-      template v-if="appData.isUserSignedIn"
-        template v-if='appData.current_user.locale === "ja"'
+  template slot-scope="{ appLoaded }"
+    / PC
+    nav.c-appbar__navbar--pc.navbar.navbar-expand.navbar-white.bg-white.fixed-top.d-none.d-sm-flex.justify-content-between.shadow-sm
+      ul.navbar-nav.align-items-center.h-100 v-if="appLoaded"
+        li.nav-item
+          = link_to root_path, class: "navbar-brand" do
+            = image_tag asset_bundle_path("images/logos/color-mizuho.png"), size: "25x30", alt: "Annict"
+        template v-if="appData.isUserSignedIn"
+          template v-if='appData.current_user.locale === "ja"'
+            li.nav-item
+              = link_to t("head.title.programs.index"), programs_path, class: "nav-link text-dark"
+          li.nav-item.dropdown
+            a.nav-link.text-dark :href='"/@" + appData.current_user.username + "/watching"'
+              = t("noun.watching")
+            .dropdown-menu
+              a.dropdown-item.text-dark :href='"/@" + appData.current_user.username + "/wanna_watch"'
+                = t("noun.plan_to_watch")
+              a.dropdown-item.text-dark :href='"/@" + appData.current_user.username + "/watched"'
+                = t("noun.completed")
+              a.dropdown-item.text-dark :href='"/@" + appData.current_user.username + "/on_hold"'
+                = t("noun.on_hold")
+              a.dropdown-item.text-dark :href='"/@" + appData.current_user.username + "/stop_watching"'
+                = t("noun.dropped")
+          li.nav-item.dropdown
+            = link_to t("noun.current_season"), season_works_path(slug: ENV.fetch("ANNICT_CURRENT_SEASON")), class: "nav-link text-dark"
+            .dropdown-menu
+              = link_to t("noun.next_season"), season_works_path(slug: ENV.fetch("ANNICT_NEXT_SEASON")), class: "dropdown-item text-dark"
+              = link_to t("noun.previous_season"), season_works_path(slug: ENV.fetch("ANNICT_PREVIOUS_SEASON")), class: "dropdown-item text-dark"
+              = link_to t("noun.popular"), popular_works_path, class: "dropdown-item text-dark"
+              = link_to t("head.title.works.newest"), newest_works_path, class: "dropdown-item text-dark"
+              = link_to t("noun.search"), search_path, class: "dropdown-item text-dark"
+        template v-else=""
+          li.nav-item.dropdown
+            = link_to t("noun.current_season"), season_works_path(slug: ENV.fetch("ANNICT_CURRENT_SEASON")), class: "nav-link text-dark"
+            .dropdown-menu
+              = link_to t("noun.next_season"), season_works_path(slug: ENV.fetch("ANNICT_NEXT_SEASON")), class: "dropdown-item text-dark"
+              = link_to t("noun.previous_season"), season_works_path(slug: ENV.fetch("ANNICT_PREVIOUS_SEASON")), class: "dropdown-item text-dark"
+              = link_to t("head.title.works.newest"), newest_works_url, class: "dropdown-item text-dark"
+              = link_to t("noun.search"), search_url, class: "dropdown-item text-dark"
           li.nav-item
-            = link_to t("head.title.programs.index"), programs_path, class: "nav-link text-dark"
-        li.nav-item.dropdown
-          a.nav-link.text-dark :href='"/@" + appData.current_user.username + "/watching"'
-            = t("noun.watching")
-          .dropdown-menu
-            a.dropdown-item.text-dark :href='"/@" + appData.current_user.username + "/wanna_watch"'
-              = t("noun.plan_to_watch")
-            a.dropdown-item.text-dark :href='"/@" + appData.current_user.username + "/watched"'
-              = t("noun.completed")
-            a.dropdown-item.text-dark :href='"/@" + appData.current_user.username + "/on_hold"'
-              = t("noun.on_hold")
-            a.dropdown-item.text-dark :href='"/@" + appData.current_user.username + "/stop_watching"'
-              = t("noun.dropped")
-        li.nav-item.dropdown
-          = link_to t("noun.current_season"), season_works_path(slug: ENV.fetch("ANNICT_CURRENT_SEASON")), class: "nav-link text-dark"
-          .dropdown-menu
-            = link_to t("noun.next_season"), season_works_path(slug: ENV.fetch("ANNICT_NEXT_SEASON")), class: "dropdown-item text-dark"
-            = link_to t("noun.previous_season"), season_works_path(slug: ENV.fetch("ANNICT_PREVIOUS_SEASON")), class: "dropdown-item text-dark"
-            = link_to t("noun.popular"), popular_works_path, class: "dropdown-item text-dark"
-            = link_to t("head.title.works.newest"), newest_works_path, class: "dropdown-item text-dark"
-            = link_to t("noun.search"), search_path, class: "dropdown-item text-dark"
-      template v-else=""
-        li.nav-item.dropdown
-          = link_to t("noun.current_season"), season_works_path(slug: ENV.fetch("ANNICT_CURRENT_SEASON")), class: "nav-link text-dark"
-          .dropdown-menu
-            = link_to t("noun.next_season"), season_works_path(slug: ENV.fetch("ANNICT_NEXT_SEASON")), class: "dropdown-item text-dark"
-            = link_to t("noun.previous_season"), season_works_path(slug: ENV.fetch("ANNICT_PREVIOUS_SEASON")), class: "dropdown-item text-dark"
-            = link_to t("head.title.works.newest"), newest_works_url, class: "dropdown-item text-dark"
-            = link_to t("noun.search"), search_url, class: "dropdown-item text-dark"
+            = link_to t("noun.popular"), popular_works_path, class: "nav-link text-dark"
         li.nav-item
-          = link_to t("noun.popular"), popular_works_path, class: "nav-link text-dark"
-      li.nav-item
-        c-search-form :init-q='"#{@search.q}"'
-    ul.c-appbar__navbar--right.navbar-nav.align-items-center
-      template v-if="appData.isUserSignedIn"
-        li.nav-item.dropdown
-          a.nav-link.p-0 :href='"/@" + appData.current_user.username'
-            img.rounded-circle width="30" height="30" :alt="appData.current_user.profile.name" :src="appData.current_user.avatar_image.size30"
-          template v-if="appData.current_user.notifications_count > 0"
-            .c-navbar__notifications-count
-              | {{ appData.current_user.notifications_count }}
-          .dropdown-menu
-            a.dropdown-item :href='"/@" + appData.current_user.username'
-              = t "noun.profile"
-            = link_to notifications_path, class: "dropdown-item" do
-              = t "head.title.notifications.index"
-              template v-if="appData.current_user.notifications_count > 0"
-                span.badge.badge-pill.u-badge-mizuho.ml-2
-                  | {{ appData.current_user.notifications_count }}
-            = link_to t("head.title.friends.index"), friends_path, class: "dropdown-item"
-            template v-if='appData.current_user.locale === "ja"'
-              = link_to t("head.title.channels.index"), channels_path, class: "dropdown-item"
-            = link_to t("noun.settings"), profile_path, class: "dropdown-item"
-            = link_to t("noun.annict_userland"), userland_root_path, class: "dropdown-item"
-            = link_to t("noun.annict_forum"), forum_root_path, class: "dropdown-item"
-            = link_to t("noun.annict_db"), db_root_path, class: "dropdown-item"
-            template v-if='appData.current_user.locale === "ja"'
-              = link_to t("noun.annict_developers"), "https://developers.annict.jp", target: "_blank", class: "dropdown-item"
-            = link_to t("head.title.supporters.index"), supporters_path, class: "dropdown-item"
-            template v-if='appData.current_user.locale === "ja"'
-              = link_to t("head.title.faqs.index"), faqs_path, class: "dropdown-item"
-            = link_to t("head.title.pages.about"), about_path, class: "dropdown-item"
-            = link_to t("verb.sign_out"), destroy_user_session_path, method: "delete", class: "dropdown-item"
-      template v-else=""
-        li.nav-item
-          = link_to t("head.title.pages.about"), about_path, class: "nav-link"
-        li.nav-item.mr-2
-          = link_to t("head.title.sessions.new"), new_user_session_path, class: "nav-link"
-        li.nav-item
-          = link_to new_user_registration_path, class: "nav-link btn btn-outline-primary" do
-            = icon "rocket"
-            = t "head.title.registrations.new"
+          c-search-form :init-q='"#{@search.q}"'
+      ul.c-appbar__navbar--right.navbar-nav.align-items-center v-if="appLoaded"
+        template v-if="appData.isUserSignedIn"
+          li.nav-item.dropdown
+            a.nav-link.p-0 :href='"/@" + appData.current_user.username'
+              img.rounded-circle width="30" height="30" :alt="appData.current_user.profile.name" :src="appData.current_user.avatar_image.size30"
+            template v-if="appData.current_user.notifications_count > 0"
+              .c-navbar__notifications-count
+                | {{ appData.current_user.notifications_count }}
+            .dropdown-menu
+              a.dropdown-item :href='"/@" + appData.current_user.username'
+                = t "noun.profile"
+              = link_to notifications_path, class: "dropdown-item" do
+                = t "head.title.notifications.index"
+                template v-if="appData.current_user.notifications_count > 0"
+                  span.badge.badge-pill.u-badge-mizuho.ml-2
+                    | {{ appData.current_user.notifications_count }}
+              = link_to t("head.title.friends.index"), friends_path, class: "dropdown-item"
+              template v-if='appData.current_user.locale === "ja"'
+                = link_to t("head.title.channels.index"), channels_path, class: "dropdown-item"
+              = link_to t("noun.settings"), profile_path, class: "dropdown-item"
+              = link_to t("noun.annict_userland"), userland_root_path, class: "dropdown-item"
+              = link_to t("noun.annict_forum"), forum_root_path, class: "dropdown-item"
+              = link_to t("noun.annict_db"), db_root_path, class: "dropdown-item"
+              template v-if='appData.current_user.locale === "ja"'
+                = link_to t("noun.annict_developers"), "https://developers.annict.jp", target: "_blank", class: "dropdown-item"
+              = link_to t("head.title.supporters.index"), supporters_path, class: "dropdown-item"
+              template v-if='appData.current_user.locale === "ja"'
+                = link_to t("head.title.faqs.index"), faqs_path, class: "dropdown-item"
+              = link_to t("head.title.pages.about"), about_path, class: "dropdown-item"
+              = link_to t("verb.sign_out"), destroy_user_session_path, method: "delete", class: "dropdown-item"
+        template v-else=""
+          li.nav-item
+            = link_to t("head.title.pages.about"), about_path, class: "nav-link"
+          li.nav-item.mr-2
+            = link_to t("head.title.sessions.new"), new_user_session_path, class: "nav-link"
+          li.nav-item
+            = link_to new_user_registration_path, class: "nav-link btn btn-outline-primary" do
+              = icon "rocket"
+              = t "head.title.registrations.new"
 
-  / Mobile
-  nav.c-appbar__navbar--mobile.navbar.navbar-expand.navbar-white.bg-white.fixed-bottom.d-block.d-sm-none
-    ul.navbar-nav.justify-content-around
-      li.nav-item.text-center
-        = link_to root_path, class: "text-dark" do
-          = icon "home"
-          .small
-            = t "noun.home"
-      template v-if="appData.isUserSignedIn"
-        template v-if='appData.current_user.locale === "ja"'
+    / Mobile
+    nav.c-appbar__navbar--mobile.navbar.navbar-expand.navbar-white.bg-white.fixed-bottom.d-block.d-sm-none
+      ul.navbar-nav.justify-content-around v-if="appLoaded"
+        li.nav-item.text-center
+          = link_to root_path, class: "text-dark" do
+            = icon "home"
+            .small
+              = t "noun.home"
+        template v-if="appData.isUserSignedIn"
+          template v-if='appData.current_user.locale === "ja"'
+            li.nav-item.text-center
+              = link_to programs_path, class: "text-dark" do
+                = icon "calendar", "far"
+                .small
+                  = t "noun.programs"
+          template v-else=""
+            li.nav-item.text-center
+              = link_to search_path, class: "text-dark" do
+                = icon "search"
+                .small
+                  = t "noun.search"
           li.nav-item.text-center
-            = link_to programs_path, class: "text-dark" do
-              = icon "calendar", "far"
+            a.text-dark :href='"/@" + appData.current_user.username + "/watching"'
+              = icon "play"
               .small
-                = t "noun.programs"
+                = t "noun.watching_shorten"
+          li.nav-item.text-center
+            = link_to season_works_path(slug: ENV.fetch("ANNICT_CURRENT_SEASON")), class: "text-dark" do
+              = icon "tv"
+              .small
+                = t "noun.airing"
+          li.nav-item.text-center
+            = link_to menu_path, class: "text-dark" do
+              = icon "th"
+              .small
+                = t "noun.menu"
+              template v-if="appData.current_user.notifications_count > 0"
+                | {{ appData.current_user.notifications_count }}
         template v-else=""
           li.nav-item.text-center
-            = link_to search_path, class: "text-dark" do
-              = icon "search"
+            = link_to season_works_path(slug: ENV.fetch("ANNICT_CURRENT_SEASON")), class: "text-dark" do
+              = icon "tv"
               .small
-                = t "noun.search"
-        li.nav-item.text-center
-          a.text-dark :href='"/@" + appData.current_user.username + "/watching"'
-            = icon "play"
-            .small
-              = t "noun.watching_shorten"
-        li.nav-item.text-center
-          = link_to season_works_path(slug: ENV.fetch("ANNICT_CURRENT_SEASON")), class: "text-dark" do
-            = icon "tv"
-            .small
-              = t "noun.airing"
-        li.nav-item.text-center
-          = link_to menu_path, class: "text-dark" do
-            = icon "th"
-            .small
-              = t "noun.menu"
-            template v-if="appData.current_user.notifications_count > 0"
-              | {{ appData.current_user.notifications_count }}
-      template v-else=""
-        li.nav-item.text-center
-          = link_to season_works_path(slug: ENV.fetch("ANNICT_CURRENT_SEASON")), class: "text-dark" do
-            = icon "tv"
-            .small
-              = t "noun.airing"
-        li.nav-item.text-center
-          = link_to new_user_registration_path, class: "text-dark" do
-            = icon "rocket"
-            .small
-              = t "noun.sign_up_shorten"
-        li.nav-item.text-center
-          = link_to about_path, class: "text-dark" do
-            = icon "lightbulb", "far"
-            .small
-              = t "head.title.pages.about_shoten"
-        li.nav-item.text-center
-          = link_to menu_path, class: "text-dark" do
-            = icon "th"
-            .small
-              = t "noun.menu"
+                = t "noun.airing"
+          li.nav-item.text-center
+            = link_to new_user_registration_path, class: "text-dark" do
+              = icon "rocket"
+              .small
+                = t "noun.sign_up_shorten"
+          li.nav-item.text-center
+            = link_to about_path, class: "text-dark" do
+              = icon "lightbulb", "far"
+              .small
+                = t "head.title.pages.about_shoten"
+          li.nav-item.text-center
+            = link_to menu_path, class: "text-dark" do
+              = icon "th"
+              .small
+                = t "noun.menu"
 
 - content_for :js_templates	
   = render "application/js_templates/search_form"
