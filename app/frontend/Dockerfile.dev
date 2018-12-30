@@ -1,4 +1,4 @@
-FROM node:10.14.0-alpine
+FROM node:10.15.0-alpine
 
 LABEL maintainer="https://annict.com/@shimbaco" \
       description="A platform for anime addicts."
