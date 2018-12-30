@@ -13,7 +13,7 @@ c-appbar
           li.nav-item.dropdown
             a.nav-link.text-dark :href='"/@" + appData.current_user.username + "/watching"'
               = t("noun.watching")
-            .dropdown-menu
+            .dropdown-menu.m-0
               a.dropdown-item.text-dark :href='"/@" + appData.current_user.username + "/wanna_watch"'
                 = t("noun.plan_to_watch")
               a.dropdown-item.text-dark :href='"/@" + appData.current_user.username + "/watched"'
@@ -24,7 +24,7 @@ c-appbar
                 = t("noun.dropped")
           li.nav-item.dropdown
             = link_to t("noun.current_season"), season_works_path(slug: ENV.fetch("ANNICT_CURRENT_SEASON")), class: "nav-link text-dark"
-            .dropdown-menu
+            .dropdown-menu.m-0
               = link_to t("noun.next_season"), season_works_path(slug: ENV.fetch("ANNICT_NEXT_SEASON")), class: "dropdown-item text-dark"
               = link_to t("noun.previous_season"), season_works_path(slug: ENV.fetch("ANNICT_PREVIOUS_SEASON")), class: "dropdown-item text-dark"
               = link_to t("noun.popular"), popular_works_path, class: "dropdown-item text-dark"
@@ -33,7 +33,7 @@ c-appbar
         template v-else=""
           li.nav-item.dropdown
             = link_to t("noun.current_season"), season_works_path(slug: ENV.fetch("ANNICT_CURRENT_SEASON")), class: "nav-link text-dark"
-            .dropdown-menu
+            .dropdown-menu.m-0
               = link_to t("noun.next_season"), season_works_path(slug: ENV.fetch("ANNICT_NEXT_SEASON")), class: "dropdown-item text-dark"
               = link_to t("noun.previous_season"), season_works_path(slug: ENV.fetch("ANNICT_PREVIOUS_SEASON")), class: "dropdown-item text-dark"
               = link_to t("head.title.works.newest"), newest_works_url, class: "dropdown-item text-dark"
