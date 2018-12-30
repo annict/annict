@@ -23,7 +23,7 @@
           h4.font-weight-bold = t "noun.services"
           ul.p-footer__list.list-unstyled
             li = link_to t("noun.annict_userland"), userland_root_path
-            li = link_to t("noun.annict_forum"), forum_root_path, "v-prerender": ""
+            li = link_to t("noun.annict_forum"), forum_root_path
             li = link_to t("noun.annict_db"), db_root_path
             - if locale_ja?
               li = link_to t("noun.annict_developers"), "https://developers.annict.jp", target: "_blank"
@@ -44,7 +44,7 @@
             - Season.latest_slugs.each do |slug|
               li
                 - year, name = slug.split("-")
-                = link_to Season.new(year, name).local_name, season_works_path(slug: slug), "v-prerender": ""
+                = link_to Season.new(year, name).local_name, season_works_path(slug: slug)
   .p-footer__auxiliary
     .container.py-2
       .row.align-items-center

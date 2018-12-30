@@ -22,23 +22,23 @@ c-appbar
             a.dropdown-item.text-dark :href='"/@" + appData.current_user.username + "/stop_watching"'
               = t("noun.dropped")
         li.nav-item.dropdown
-          = link_to t("noun.current_season"), season_works_path(slug: ENV.fetch("ANNICT_CURRENT_SEASON")), class: "nav-link text-dark", "v-prerender": ""
+          = link_to t("noun.current_season"), season_works_path(slug: ENV.fetch("ANNICT_CURRENT_SEASON")), class: "nav-link text-dark"
           .dropdown-menu
-            = link_to t("noun.next_season"), season_works_path(slug: ENV.fetch("ANNICT_NEXT_SEASON")), class: "dropdown-item text-dark", "v-prerender": ""
-            = link_to t("noun.previous_season"), season_works_path(slug: ENV.fetch("ANNICT_PREVIOUS_SEASON")), class: "dropdown-item text-dark", "v-prerender": ""
-            = link_to t("noun.popular"), popular_works_path, class: "dropdown-item text-dark", "v-prerender": ""
-            = link_to t("head.title.works.newest"), newest_works_path, class: "dropdown-item text-dark", "v-prerender": ""
+            = link_to t("noun.next_season"), season_works_path(slug: ENV.fetch("ANNICT_NEXT_SEASON")), class: "dropdown-item text-dark"
+            = link_to t("noun.previous_season"), season_works_path(slug: ENV.fetch("ANNICT_PREVIOUS_SEASON")), class: "dropdown-item text-dark"
+            = link_to t("noun.popular"), popular_works_path, class: "dropdown-item text-dark"
+            = link_to t("head.title.works.newest"), newest_works_path, class: "dropdown-item text-dark"
             = link_to t("noun.search"), search_path, class: "dropdown-item text-dark"
       template v-else=""
         li.nav-item.dropdown
-          = link_to t("noun.current_season"), season_works_path(slug: ENV.fetch("ANNICT_CURRENT_SEASON")), class: "nav-link text-dark", "v-prerender": ""
+          = link_to t("noun.current_season"), season_works_path(slug: ENV.fetch("ANNICT_CURRENT_SEASON")), class: "nav-link text-dark"
           .dropdown-menu
-            = link_to t("noun.next_season"), season_works_path(slug: ENV.fetch("ANNICT_NEXT_SEASON")), class: "dropdown-item text-dark", "v-prerender": ""
-            = link_to t("noun.previous_season"), season_works_path(slug: ENV.fetch("ANNICT_PREVIOUS_SEASON")), class: "dropdown-item text-dark", "v-prerender": ""
-            = link_to t("head.title.works.newest"), newest_works_url, class: "dropdown-item text-dark", "v-prerender": ""
+            = link_to t("noun.next_season"), season_works_path(slug: ENV.fetch("ANNICT_NEXT_SEASON")), class: "dropdown-item text-dark"
+            = link_to t("noun.previous_season"), season_works_path(slug: ENV.fetch("ANNICT_PREVIOUS_SEASON")), class: "dropdown-item text-dark"
+            = link_to t("head.title.works.newest"), newest_works_url, class: "dropdown-item text-dark"
             = link_to t("noun.search"), search_url, class: "dropdown-item text-dark"
         li.nav-item
-          = link_to t("noun.popular"), popular_works_path, class: "nav-link text-dark", "v-prerender": ""
+          = link_to t("noun.popular"), popular_works_path, class: "nav-link text-dark"
       li.nav-item
         c-search-form :init-q='"#{@search.q}"'
     ul.c-appbar__navbar--right.navbar-nav.align-items-center
@@ -62,7 +62,7 @@ c-appbar
               = link_to t("head.title.channels.index"), channels_path, class: "dropdown-item"
             = link_to t("noun.settings"), profile_path, class: "dropdown-item"
             = link_to t("noun.annict_userland"), userland_root_path, class: "dropdown-item"
-            = link_to t("noun.annict_forum"), forum_root_path, class: "dropdown-item", "v-prerender": ""
+            = link_to t("noun.annict_forum"), forum_root_path, class: "dropdown-item"
             = link_to t("noun.annict_db"), db_root_path, class: "dropdown-item"
             template v-if='appData.current_user.locale === "ja"'
               = link_to t("noun.annict_developers"), "https://developers.annict.jp", target: "_blank", class: "dropdown-item"
