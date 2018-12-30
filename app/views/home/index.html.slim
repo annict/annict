@@ -1,8 +1,6 @@
 - title = t "head.title.home.index"
 - set_meta_tags(title: title, site: false)
 
-= render "application/components/navbar"
-
 .p-application__content
   .container.my-3
     - unless current_user&.supporter?

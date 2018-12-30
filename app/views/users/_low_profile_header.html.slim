@@ -1,6 +1,6 @@
-.p-profile-header.p-profile-header--low
-  .p-profile-header__cover-image style=" background: linear-gradient( rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5) ), url(#{profile_background_image_url(user.profile, size: '800x520', size_rate: 2)}) center center /cover no-repeat;"
-  .p-profile-header__info
+.p-profile-header.p-profile-header--low.d-flex
+  .p-profile-header__cover-image style="background: url(#{profile_background_image_url(user.profile, size: '800x520', size_rate: 2)}) center center /cover no-repeat;"
+  .p-profile-header__info.align-self-end.py-3
     .container
       .row
         .col.u-flex-grow-0
@@ -8,6 +8,6 @@
             = ann_image_tag(user.profile, :tombo_avatar, size: "80x80", class: "p-profile-header__avatar rounded-circle")
         .col.pt-2.pl-0
           h1
-            = link_to user.profile.name, user_path(username: user.username), class: "font-weight-bold"
+            = link_to user.profile.name, user_path(username: user.username), class: "font-weight-bold text-white"
           .mt-2
-            = link_to "@#{user.username}", user_path(username: user.username)
+            = link_to "@#{user.username}", user_path(username: user.username), class: "text-white"

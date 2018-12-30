@@ -7,6 +7,7 @@ html lang="#{I18n.locale}"
     = include_gon
 
     .p-application.d-flex.flex-column
+      = render "application/components/appbar"
       c-flash
 
       = yield
@@ -19,10 +20,8 @@ html lang="#{I18n.locale}"
     = render "application/font_awesome"
     = render "application/js_templates/adsense_container"
     = render "application/js_templates/adsense"
+    = render "application/js_templates/appbar"
     = render "application/js_templates/flash"
     = render "application/js_templates/sticky_message"
-
-    - if browser.device.mobile?
-      = render "application/js_templates/tabbar"
 
     = yield :js_templates

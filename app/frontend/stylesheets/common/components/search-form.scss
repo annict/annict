@@ -10,21 +10,6 @@
     }
   }
 
-  &.is-transparent {
-    .form-control {
-      border-color: transparent;
-      color: $ann-color-white;
-
-      &:focus {
-        border: 1px solid rgba($ann-color-white, .5);
-      }
-
-      &::placeholder {
-        color: rgba($ann-color-white, .5);
-      }
-    }
-  }
-
   .dropdown-menu {
     left: 0 !important;
     width: 400px;

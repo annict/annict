@@ -1,7 +1,7 @@
 import eventHub from '../../common/eventHub'
 
 export default {
-  template: '#t-tabbar',
+  template: '#t-appbar',
 
   data() {
     return {

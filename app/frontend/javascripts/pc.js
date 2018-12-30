@@ -20,6 +20,7 @@ import adsense from './common/components/adsense'
 import adsenseContainer from './common/components/adsenseContainer'
 import amazonItemAttacher from './common/components/amazonItemAttacher'
 import analytics from './common/components/analytics'
+import appbar from './common/components/appbar'
 import autosizeTextarea from './common/components/autosizeTextarea'
 import body from './common/components/body'
 import channelReceiveButton from './common/components/channelReceiveButton'
@@ -48,6 +49,7 @@ import recordRating from './common/components/recordRating'
 import recordSorter from './common/components/recordSorter'
 import recordTextarea from './common/components/recordTextarea'
 import recordWordCount from './common/components/recordWordCount'
+import searchForm from './common/components/searchForm'
 import shareButtonFacebook from './common/components/shareButtonFacebook'
 import shareButtonTwitter from './common/components/shareButtonTwitter'
 import statusSelector from './common/components/statusSelector'
@@ -64,9 +66,6 @@ import workTags from './common/components/workTags'
 import workWatchersChart from './common/components/workWatchersChart'
 import youtubeModalPlayer from './common/components/youtubeModalPlayer'
 
-import navbarLeftMenu from './pc/components/navbarLeftMenu'
-import navbarSubmenuDropdown from './pc/components/navbarSubmenuDropdown'
-import searchForm from './pc/components/searchForm'
 import imageAttachForm from './pc/components/imageAttachForm'
 import imageAttachModal from './pc/components/imageAttachModal'
 
@@ -99,6 +98,7 @@ document.addEventListener('turbolinks:load', event => {
   Vue.component('c-adsense-container', adsenseContainer)
   Vue.component('c-amazon-item-attacher', amazonItemAttacher)
   Vue.component('c-analytics', analytics(event))
+  Vue.component('c-appbar', appbar)
   Vue.component('c-autosize-textarea', autosizeTextarea)
   Vue.component('c-body', body)
   Vue.component('c-channel-receive-button', channelReceiveButton)
@@ -119,8 +119,6 @@ document.addEventListener('turbolinks:load', event => {
   Vue.component('c-input-words-count', inputWordsCount)
   Vue.component('c-like-button', likeButton)
   Vue.component('c-mute-user-button', muteUserButton)
-  Vue.component('c-navbar-left-menu', navbarLeftMenu)
-  Vue.component('c-navbar-submenu-dropdown', navbarSubmenuDropdown)
   Vue.component('c-omitted-synopsis', omittedSynopsis)
   Vue.component('c-program-list', programList)
   Vue.component('c-rating-label', ratingLabel)

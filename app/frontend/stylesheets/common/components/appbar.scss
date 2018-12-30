@@ -1,0 +1,35 @@
+c-appbar,
+.c-appbar {
+  .navbar {
+    height: $ann-appbar-height;
+  }
+
+  &__navbar {
+    $navbar: &;
+
+    &--pc {
+      .navbar-brand {
+        line-height: 1;
+      }
+  
+      .dropdown {
+        &:hover {
+          .dropdown-menu {
+            display: block;
+          }
+        }
+      }
+      
+      #{$navbar}--right {
+        .dropdown-menu {
+          left: auto;
+          right: -16px;
+        }
+      }
+    }
+
+    &--mobile {
+      box-shadow: 0 -.125rem .25rem -.125rem rgba(0,0,0,.075);
+    }
+  }
+}

@@ -1,12 +1,6 @@
 .p-home-index {
   $root: &;
 
-  &.is-guest {
-    #{$root}__main {
-      margin-top: 340px;
-    }
-  }
-
   &.is-user {
     .c-activities {
       overflow-x: hidden;

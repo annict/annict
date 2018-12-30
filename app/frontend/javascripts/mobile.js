@@ -18,6 +18,7 @@ import adsense from './common/components/adsense'
 import adsenseContainer from './common/components/adsenseContainer'
 import amazonItemAttacher from './common/components/amazonItemAttacher'
 import analytics from './common/components/analytics'
+import appbar from './common/components/appbar'
 import autosizeTextarea from './common/components/autosizeTextarea'
 import body from './common/components/body'
 import channelReceiveButton from './common/components/channelReceiveButton'
@@ -44,6 +45,7 @@ import recordRating from './common/components/recordRating'
 import recordSorter from './common/components/recordSorter'
 import recordTextarea from './common/components/recordTextarea'
 import recordWordCount from './common/components/recordWordCount'
+import searchForm from './common/components/searchForm'
 import shareButtonTwitter from './common/components/shareButtonTwitter'
 import shareButtonFacebook from './common/components/shareButtonFacebook'
 import statusSelector from './common/components/statusSelector'
@@ -56,8 +58,6 @@ import workComment from './common/components/workComment'
 import workFriends from './common/components/workFriends'
 import workTags from './common/components/workTags'
 import youtubeModalPlayer from './common/components/youtubeModalPlayer'
-
-import tabbar from './mobile/components/tabbar'
 
 import resourceSelect from './common/directives/resourceSelect'
 
@@ -87,6 +87,7 @@ document.addEventListener('turbolinks:load', event => {
   Vue.component('c-adsense-container', adsenseContainer)
   Vue.component('c-amazon-item-attacher', amazonItemAttacher)
   Vue.component('c-analytics', analytics(event))
+  Vue.component('c-appbar', appbar)
   Vue.component('c-autosize-textarea', autosizeTextarea)
   Vue.component('c-body', body)
   Vue.component('c-channel-receive-button', channelReceiveButton)
@@ -113,10 +114,10 @@ document.addEventListener('turbolinks:load', event => {
   Vue.component('c-record-sorter', recordSorter)
   Vue.component('c-record-textarea', recordTextarea)
   Vue.component('c-record-word-count', recordWordCount)
+  Vue.component('c-search-form', searchForm)
   Vue.component('c-share-button-facebook', shareButtonFacebook)
   Vue.component('c-share-button-twitter', shareButtonTwitter)
   Vue.component('c-status-selector', statusSelector)
-  Vue.component('c-tabbar', tabbar)
   Vue.component('c-time-ago', timeAgo)
   Vue.component('c-tips', tips)
   Vue.component('c-untracked-episode-list', untrackedEpisodeList)

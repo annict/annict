@@ -5,8 +5,6 @@
 
 - breadcrumb :seasonal_works, @season.slug, @season.local_name
 
-= render "application/components/navbar"
-
 .p-application__content
   .my-3 class="#{@display_option == "list_detailed" ? 'container' : 'px-3'}"
     = render "application/components/breadcrumb"
@@ -23,7 +21,7 @@
         c-share-button-facebook url="#{local_url}#{season_works_path(slug: @season.slug)}"
       .col.text-center
         - if @prev_season.present?
-          = link_to season_works_path(slug: @prev_season.slug, display: params[:display]), class: "mr-3", "v-prerender": "" do
+          = link_to season_works_path(slug: @prev_season.slug, display: params[:display]), class: "mr-3" do
             = icon "angle-left", class: "mr-2"
             = @prev_season.local_name
         .dropdown.d-inline-block
@@ -31,9 +29,9 @@
             = @season.local_name
           .dropdown-menu.pre-scrollable.mr-3
             - @seasons.each do |season|
-              = link_to season.local_name, season_works_path(slug: season.slug, display: params[:display]), class: "dropdown-item", "v-prerender": ""
+              = link_to season.local_name, season_works_path(slug: season.slug, display: params[:display]), class: "dropdown-item"
         - if @next_season.present?
-          = link_to season_works_path(slug: @next_season.slug, display: params[:display]), class: "ml-3", "v-prerender": "" do
+          = link_to season_works_path(slug: @next_season.slug, display: params[:display]), class: "ml-3" do
             = @next_season.local_name
             = icon "angle-right", class: "ml-2"
       .col.text-right

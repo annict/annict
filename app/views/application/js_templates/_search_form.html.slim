@@ -1,5 +1,5 @@
 script#t-search-form type="x-template"
-  .c-search-form :class='{ "is-transparent": isTransparent }'
+  .c-search-form
     form.form-inline.dropdown action="/search" accept-charset="UTF-8" method="get" :class='{ show: !!results.length }'
       input.form-control type="text" name="q" placeholder="#{t('messages._common.search_with_keywords')}" autocomplete="off" v-model="q" @keyup="onKeyup" @keydown.down="next" @keydown.up="prev" @keydown.enter="select" @blur="hideResults" @keydown.esc="hideResults"
       .dropdown-menu v-if="results.length"

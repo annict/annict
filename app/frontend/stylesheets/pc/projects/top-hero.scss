@@ -1,7 +1,5 @@
 .p-top-hero {
   height: 400px;
-  position: absolute;
-  top: 0;
   width: 100%;
 
   &__bg-image {
@@ -12,15 +10,11 @@
   }
 
   &__content {
-    height: 100%;
-    left: 0;
-    position: absolute;
-    top: 0;
     width: 100%;
+    z-index: 1;
 
     h1 {
       color: $ann-color-white;
-      margin-top: 8rem;
     }
   }
 
