@@ -1,3 +1,5 @@
 body {
-  padding-top: $ann-appbar-height;
+  &:not(.p-db) {
+    padding-top: $ann-appbar-height;
+  }
 }
