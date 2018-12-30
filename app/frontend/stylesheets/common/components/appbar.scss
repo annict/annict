@@ -27,5 +27,9 @@ c-appbar,
         }
       }
     }
+
+    &--mobile {
+      box-shadow: 0 -.125rem .25rem -.125rem rgba(0,0,0,.075);
+    }
   }
 }
