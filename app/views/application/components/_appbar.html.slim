@@ -48,7 +48,7 @@ c-appbar
             a.nav-link.p-0 :href='"/@" + appData.current_user.username'
               img.rounded-circle width="30" height="30" :alt="appData.current_user.profile.name" :src="appData.current_user.avatar_image.size30"
             template v-if="appData.current_user.notifications_count > 0"
-              .c-navbar__notifications-count
+              .c-appbar__navbar--pc__notifications-count
                 | {{ appData.current_user.notifications_count }}
             .dropdown-menu
               a.dropdown-item :href='"/@" + appData.current_user.username'
@@ -113,13 +113,14 @@ c-appbar
               = icon "tv"
               .small.mt-1
                 = t "noun.airing"
-          li.nav-item.text-center
+          li.nav-item.text-center.position-relative
             = link_to menu_path, class: "text-dark" do
               = icon "th"
               .small.mt-1
                 = t "noun.menu"
               template v-if="appData.current_user.notifications_count > 0"
-                | {{ appData.current_user.notifications_count }}
+                .c-appbar__navbar--mobile__notifications-count
+                  | {{ appData.current_user.notifications_count }}
         template v-else=""
           li.nav-item.text-center
             = link_to season_works_path(slug: ENV.fetch("ANNICT_CURRENT_SEASON")), class: "text-dark" do

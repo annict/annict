@@ -26,10 +26,32 @@ c-appbar,
           right: -16px;
         }
       }
+      
+      &__notifications-count {
+        background-color: $ann-color-mizuho;
+        border-radius: 10px;
+        color: $ann-color-white;
+        left: 18px;
+        line-height: normal;
+        padding: 1px 6px;
+        position: absolute;
+        top: -10px;
+      }
     }
 
     &--mobile {
       box-shadow: 0 -.125rem .25rem -.125rem rgba(0,0,0,.075);
+
+      &__notifications-count {
+        background-color: $ann-color-mizuho;
+        border-radius: 10px;
+        color: $ann-color-white;
+        line-height: normal;
+        padding: 1px 6px;
+        position: absolute;
+        right: -5px;
+        top: -10px;
+      }
     }
   }
 }
