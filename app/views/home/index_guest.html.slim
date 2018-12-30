@@ -2,9 +2,9 @@
 - set_meta_tags(title: title, reverse: false)
 
 .p-application__content.mb-4
-  .p-top-hero
-    .p-top-hero__bg-image style="background-image: url(#{ann_image_url(@cover_image_work.work_image, :attachment, size: '640x640', blur: 200)});"
-    .p-top-hero__content.text-center
+  .p-top-hero.d-flex.align-items-center.position-relative
+    .p-top-hero__bg-image.position-absolute.w-100 style="background-image: url(#{ann_image_url(@cover_image_work.work_image, :attachment, size: '640x640', blur: 200)});"
+    .p-top-hero__content.text-center.align-self-center
       h1.display-1.mb-3 = t("messages.home.index_guest.hero_title")
       p.lead.p-top-hero__description.mb-4
         = t "messages.home.index_guest.hero_description_html"

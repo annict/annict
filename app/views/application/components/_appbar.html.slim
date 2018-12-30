@@ -74,9 +74,9 @@ c-appbar
               = link_to t("verb.sign_out"), destroy_user_session_path, method: "delete", class: "dropdown-item"
         template v-else=""
           li.nav-item
-            = link_to t("head.title.pages.about"), about_path, class: "nav-link"
+            = link_to t("head.title.pages.about"), about_path, class: "nav-link text-dark"
           li.nav-item.mr-2
-            = link_to t("head.title.sessions.new"), new_user_session_path, class: "nav-link"
+            = link_to t("head.title.sessions.new"), new_user_session_path, class: "nav-link text-dark"
           li.nav-item
             = link_to new_user_registration_path, class: "nav-link btn btn-outline-primary" do
               = icon "rocket"
