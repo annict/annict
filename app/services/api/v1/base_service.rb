@@ -45,6 +45,11 @@ module Api
         @collection.search(title_or_title_kana_cont: @params.filter_title).result
       end
 
+      def filter_name
+        @collection if @params.filter_name.blank?
+        @collection.search(name_or_name_kana_cont: @params.filter_name).result
+      end
+
       def sort_season
         return @collection if @params.sort_season.blank?
         @collection.order_by_season(@params.sort_season)

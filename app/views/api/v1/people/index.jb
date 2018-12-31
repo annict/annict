@@ -1,0 +1,20 @@
+# frozen_string_literal: true
+
+json = {}
+
+json[:people] = @people.map do |person|
+  person_json = {}
+  person_json.merge!(render("api/v1/people/person", person: person, params: @params, field_prefix: ""))
+
+  if person.prefecture
+    person_json[:prefecture] = render("api/v1/prefectures/prefecture", prefecture: person.prefecture, params: @params, field_prefix: "prefecture.")
+  else
+    person_json[:prefecture] = nil if @params.fields.blank? || @params.fields.include?("prefecture")
+  end
+
+  person_json
+end
+
+json.merge!(render("api/v1/application/pagination", collection: @people, params: @params))
+
+json
