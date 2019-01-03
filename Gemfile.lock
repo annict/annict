@@ -266,7 +266,7 @@ GEM
       nokogiri (~> 1)
     io-like (0.3.0)
     jaro_winkler (1.5.1)
-    jb (0.5.0)
+    jb (0.6.0)
       multi_json
     jmespath (1.4.0)
     json (2.1.0)
