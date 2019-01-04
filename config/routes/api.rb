@@ -9,6 +9,7 @@ scope module: :api do
       resources :episodes, only: [:index]
       resources :followers, only: %i(index)
       resources :following, only: %i(index)
+      resources :organizations, only: %i(index)
       resources :people, only: %i(index)
       resources :records, only: [:index]
       resources :reviews, only: %i(index)

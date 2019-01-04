@@ -1,0 +1,11 @@
+# frozen_string_literal: true
+
+json = {}
+
+json[:organizations] = @organizations.map do |organization|
+  render("api/v1/organizations/organization", organization: organization, params: @params, field_prefix: "")
+end
+
+json.merge!(render("api/v1/application/pagination", collection: @organizations, params: @params))
+
+json
