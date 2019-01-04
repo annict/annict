@@ -6,6 +6,7 @@ scope module: :api do
 
     namespace :v1 do
       resources :activities, only: %i(index)
+      resources :casts, only: %i(index)
       resources :characters, only: %i(index)
       resources :episodes, only: [:index]
       resources :followers, only: %i(index)
