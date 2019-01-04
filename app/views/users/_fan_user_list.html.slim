@@ -13,7 +13,7 @@
             = link_to favorite_resource.user.profile.name, user_path(username: favorite_resource.user.username)
             .small
               = link_to "@#{favorite_resource.user.username}", user_path(username: favorite_resource.user.username)
-          .col.pr-0.u-flex-grow-0
+          .col-auto.pr-0.u-flex-grow-0
             - if user_signed_in? && current_user != favorite_resource.user
               c-follow-button username="#{favorite_resource.user.username}" :init-is-following="#{current_user.following?(favorite_resource.user)}" :is-signed-in="true"
             - elsif !user_signed_in?
