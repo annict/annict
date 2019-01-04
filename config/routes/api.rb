@@ -13,6 +13,7 @@ scope module: :api do
       resources :people, only: %i(index)
       resources :records, only: [:index]
       resources :reviews, only: %i(index)
+      resources :series, only: %i(index)
       resources :users, only: %i(index)
       resources :works, only: [:index]
 
