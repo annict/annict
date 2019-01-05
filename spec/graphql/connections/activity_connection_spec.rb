@@ -2,9 +2,9 @@
 
 describe Connections::ActivityConnection do
   let(:user) { create(:user) }
-  let(:activity) { create(:create_episode_record_activity, user: user) }
-  let!(:status) { create(:status, user: user) }
   let(:id) { GraphQL::Schema::UniqueWithinType.encode(user.class.name, user.id) }
+  let!(:activity) { create(:create_episode_record_activity, user: user) }
+  let!(:status) { create(:status, user: user) }
   let(:result) do
     query_string = <<~GRAPHQL
       query {
@@ -12,7 +12,7 @@ describe Connections::ActivityConnection do
           id
           ... on User {
             username
-            activities {
+            activities(orderBy: { field: CREATED_AT, direction: DESC }) {
               edges {
                 node {
                   ... on Record {
