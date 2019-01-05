@@ -12,6 +12,7 @@ jobs:
           BUNDLE_PATH: vendor/bundle
           BUNDLE_RETRY: 3
           CC_TEST_REPORTER_ID: 473c071c4d1900d58ceed984bd49d8a39368393ce6f010cf5d52287f3072f6ef
+          COVERAGE: true
           REDIS_BLUE_URL: redis://localhost:6379
           POSTGRES_HOST: localhost
           RAILS_ENV: test
