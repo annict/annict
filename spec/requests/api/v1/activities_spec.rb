@@ -14,7 +14,7 @@ describe "Api::V1::Activities" do
     let(:access_token) { create(:oauth_access_token, owner: user) }
     let!(:record) { create(:episode_record, user: user) }
     let!(:activity) do
-      create(:activity, user: user, recipient: record.episode, trackable: record)
+      create(:activity, user: user, recipient: record.episode, trackable: record, action: "create_episode_record")
     end
 
     before do
