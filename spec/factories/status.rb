@@ -8,7 +8,7 @@ FactoryBot.define do
 
     before(:create) do
       attrs = attributes_for(:status_tip)
-      Tip.create(attrs)
+      Tip.where(attrs).first_or_create
     end
   end
 end
