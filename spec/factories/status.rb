@@ -4,7 +4,7 @@ FactoryBot.define do
   factory :status do
     association :user
     association :work
-    kind :watching
+    kind { :watching }
 
     before(:create) do
       attrs = attributes_for(:status_tip)

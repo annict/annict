@@ -5,6 +5,6 @@ FactoryBot.define do
     association :user
     association :recipient
     association :trackable
-    action "create_episode_record"
+    action { "create_episode_record" }
   end
 end
