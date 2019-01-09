@@ -7,7 +7,7 @@ Mutations::CreateReview = GraphQL::Relay::Mutation.define do
   input_field :title, types.String
   input_field :body, !types.String
   WorkRecord::STATES.each do |state|
-    input_field state.to_s.camelcase(:lower).to_sym, EnumTypes::RatingState
+    input_field state.to_s.camelcase(:lower).to_sym, Types::Enum::RatingState
   end
   input_field :shareTwitter, types.Boolean
   input_field :shareFacebook, types.Boolean

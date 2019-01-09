@@ -39,7 +39,7 @@ ObjectTypes::Record = GraphQL::ObjectType.define do
     }
   end
 
-  field :ratingState, EnumTypes::RatingState do
+  field :ratingState, Types::Enum::RatingState do
     resolve ->(obj, _args, _ctx) {
       obj.rating_state&.upcase
     }

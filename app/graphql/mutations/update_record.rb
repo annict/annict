@@ -5,7 +5,7 @@ Mutations::UpdateRecord = GraphQL::Relay::Mutation.define do
 
   input_field :recordId, !types.ID
   input_field :comment, types.String
-  input_field :ratingState, EnumTypes::RatingState
+  input_field :ratingState, Types::Enum::RatingState
   input_field :shareTwitter, types.Boolean
   input_field :shareFacebook, types.Boolean
 

@@ -3,6 +3,6 @@
 InputObjectTypes::WorkOrder = GraphQL::InputObjectType.define do
   name "WorkOrder"
 
-  argument :field, !EnumTypes::WorkOrderField
-  argument :direction, !EnumTypes::OrderDirection
+  argument :field, !Types::Enum::WorkOrderField
+  argument :direction, !Types::Enum::OrderDirection
 end

@@ -25,7 +25,7 @@ ObjectTypes::Status = GraphQL::ObjectType.define do
     }
   end
 
-  field :state, !EnumTypes::StatusState do
+  field :state, !Types::Enum::StatusState do
     resolve ->(obj, _args, _ctx) {
       obj.kind.upcase
     }

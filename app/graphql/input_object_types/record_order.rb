@@ -3,6 +3,6 @@
 InputObjectTypes::RecordOrder = GraphQL::InputObjectType.define do
   name "RecordOrder"
 
-  argument :field, !EnumTypes::RecordOrderField
-  argument :direction, !EnumTypes::OrderDirection
+  argument :field, !Types::Enum::RecordOrderField
+  argument :direction, !Types::Enum::OrderDirection
 end

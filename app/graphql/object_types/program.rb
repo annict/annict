@@ -43,7 +43,7 @@ ObjectTypes::Program = GraphQL::ObjectType.define do
     }
   end
 
-  field :state, !EnumTypes::ProgramState do
+  field :state, !Types::Enum::ProgramState do
     resolve ->(obj, _args, _ctx) {
       obj.aasm_state.upcase
     }

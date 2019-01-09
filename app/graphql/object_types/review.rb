@@ -34,7 +34,7 @@ ObjectTypes::Review = GraphQL::ObjectType.define do
   field :body, !types.String
 
   WorkRecord::STATES.each do |state|
-    field state.to_s.camelcase(:lower).to_sym, EnumTypes::RatingState do
+    field state.to_s.camelcase(:lower).to_sym, Types::Enum::RatingState do
       resolve ->(obj, _args, _ctx) {
         obj.send(state)&.upcase
       }

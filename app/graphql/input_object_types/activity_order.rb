@@ -3,6 +3,6 @@
 InputObjectTypes::ActivityOrder = GraphQL::InputObjectType.define do
   name "ActivityOrder"
 
-  argument :field, !EnumTypes::ActivityOrderField
-  argument :direction, !EnumTypes::OrderDirection
+  argument :field, !Types::Enum::ActivityOrderField
+  argument :direction, !Types::Enum::OrderDirection
 end

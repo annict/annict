@@ -50,7 +50,7 @@ ObjectTypes::Work = GraphQL::ObjectType.define do
     }
   end
 
-  field :media, !EnumTypes::Media do
+  field :media, !Types::Enum::Media do
     resolve ->(obj, _args, _ctx) {
       obj.media.upcase
     }
@@ -61,7 +61,7 @@ ObjectTypes::Work = GraphQL::ObjectType.define do
       obj.season_year
     }
   end
-  field :seasonName, EnumTypes::SeasonName do
+  field :seasonName, Types::Enum::SeasonName do
     resolve ->(obj, _args, _ctx) {
       obj.season_name&.upcase
     }
@@ -134,7 +134,7 @@ ObjectTypes::Work = GraphQL::ObjectType.define do
     }
   end
 
-  field :viewerStatusState, EnumTypes::StatusState do
+  field :viewerStatusState, Types::Enum::StatusState do
     resolve ->(obj, _args, ctx) {
       state = ctx[:viewer].status_kind(obj)
       state == "no_select" ? "NO_STATE" : state.upcase

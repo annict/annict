@@ -48,7 +48,7 @@ ObjectTypes::User = GraphQL::ObjectType.define do
     argument :annictIds, types[!types.Int]
     argument :seasons, types[!types.String]
     argument :titles, types[!types.String]
-    argument :state, EnumTypes::StatusState
+    argument :state, Types::Enum::StatusState
     argument :orderBy, InputObjectTypes::WorkOrder
 
     resolve Resolvers::Works.new

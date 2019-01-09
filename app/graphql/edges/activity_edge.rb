@@ -17,7 +17,7 @@ Edges::ActivityEdge = ObjectTypes::Activity.define_edge do
     }
   end
 
-  field :action, !EnumTypes::ActivityAction do
+  field :action, !Types::Enum::ActivityAction do
     resolve ->(obj, _args, _ctx) {
       activity = obj.node
 

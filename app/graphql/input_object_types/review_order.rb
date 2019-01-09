@@ -3,6 +3,6 @@
 InputObjectTypes::ReviewOrder = GraphQL::InputObjectType.define do
   name "ReviewOrder"
 
-  argument :field, !EnumTypes::ReviewOrderField
-  argument :direction, !EnumTypes::OrderDirection
+  argument :field, !Types::Enum::ReviewOrderField
+  argument :direction, !Types::Enum::OrderDirection
 end

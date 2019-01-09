@@ -4,7 +4,7 @@ Mutations::UpdateStatus = GraphQL::Relay::Mutation.define do
   name "UpdateStatus"
 
   input_field :workId, !types.ID
-  input_field :state, !EnumTypes::StatusState
+  input_field :state, !Types::Enum::StatusState
 
   return_field :work, ObjectTypes::Work
 
