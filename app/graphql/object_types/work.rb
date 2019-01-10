@@ -15,20 +15,20 @@ ObjectTypes::Work = GraphQL::ObjectType.define do
   end
 
   connection :episodes, ObjectTypes::Episode.connection_type do
-    argument :orderBy, InputObjectTypes::EpisodeOrder
+    argument :orderBy, Types::InputObjects::EpisodeOrder
 
     resolve Resolvers::Episodes.new
   end
 
   connection :reviews, ObjectTypes::Review.connection_type do
-    argument :orderBy, InputObjectTypes::ReviewOrder
+    argument :orderBy, Types::InputObjects::ReviewOrder
     argument :hasBody, types.Boolean
 
     resolve Resolvers::Reviews.new
   end
 
   connection :programs, ObjectTypes::Program.connection_type do
-    argument :orderBy, InputObjectTypes::ProgramOrder
+    argument :orderBy, Types::InputObjects::ProgramOrder
 
     resolve Resolvers::Programs.new
   end

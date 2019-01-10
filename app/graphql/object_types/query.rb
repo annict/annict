@@ -24,7 +24,7 @@ ObjectTypes::Query = GraphQL::ObjectType.define do
     argument :annictIds, types[!types.Int]
     argument :seasons, types[!types.String]
     argument :titles, types[!types.String]
-    argument :orderBy, InputObjectTypes::WorkOrder
+    argument :orderBy, Types::InputObjects::WorkOrder
 
     resolve Resolvers::Works.new
   end

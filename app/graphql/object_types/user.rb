@@ -14,20 +14,20 @@ ObjectTypes::User = GraphQL::ObjectType.define do
   end
 
   connection :activities, Connections::ActivityConnection do
-    argument :orderBy, InputObjectTypes::ActivityOrder
+    argument :orderBy, Types::InputObjects::ActivityOrder
 
     resolve Resolvers::Activities.new
   end
 
   connection :records, ObjectTypes::Record.connection_type do
-    argument :orderBy, InputObjectTypes::RecordOrder
+    argument :orderBy, Types::InputObjects::RecordOrder
     argument :hasComment, types.Boolean
 
     resolve Resolvers::Records.new
   end
 
   connection :followingActivities, Connections::ActivityConnection do
-    argument :orderBy, InputObjectTypes::ActivityOrder
+    argument :orderBy, Types::InputObjects::ActivityOrder
 
     resolve Resolvers::FollowingActivities.new
   end
@@ -49,14 +49,14 @@ ObjectTypes::User = GraphQL::ObjectType.define do
     argument :seasons, types[!types.String]
     argument :titles, types[!types.String]
     argument :state, Types::Enum::StatusState
-    argument :orderBy, InputObjectTypes::WorkOrder
+    argument :orderBy, Types::InputObjects::WorkOrder
 
     resolve Resolvers::Works.new
   end
 
   connection :programs, ObjectTypes::Program.connection_type do
     argument :unwatched, types.Boolean
-    argument :orderBy, InputObjectTypes::ProgramOrder
+    argument :orderBy, Types::InputObjects::ProgramOrder
 
     resolve Resolvers::Programs.new
   end

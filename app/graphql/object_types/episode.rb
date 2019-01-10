@@ -15,7 +15,7 @@ ObjectTypes::Episode = GraphQL::ObjectType.define do
   end
 
   connection :records, ObjectTypes::Record.connection_type do
-    argument :orderBy, InputObjectTypes::RecordOrder
+    argument :orderBy, Types::InputObjects::RecordOrder
     argument :hasComment, types.Boolean
 
     resolve Resolvers::Records.new
