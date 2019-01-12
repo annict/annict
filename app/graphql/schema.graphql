@@ -460,6 +460,86 @@ type PageInfo {
   startCursor: String
 }
 
+type Person implements Node {
+  annictId: Int!
+  birthday: String!
+  bloodType: String!
+  castsCount: Int!
+  favoritePeopleCount: Int!
+  genderText: String!
+  height: String!
+  id: ID!
+  name: String!
+  nameEn: String!
+  nameKana: String!
+  nickname: String!
+  nicknameEn: String!
+  prefecture: Prefecture!
+  staffsCount: Int!
+  twitterUsername: String!
+  twitterUsernameEn: String!
+  url: String!
+  urlEn: String!
+  wikipediaUrl: String!
+  wikipediaUrlEn: String!
+}
+
+"""
+The connection type for Person.
+"""
+type PersonConnection {
+  """
+  A list of edges.
+  """
+  edges: [PersonEdge]
+
+  """
+  A list of nodes.
+  """
+  nodes: [Person]
+
+  """
+  Information to aid in pagination.
+  """
+  pageInfo: PageInfo!
+}
+
+"""
+An edge in a connection.
+"""
+type PersonEdge {
+  """
+  A cursor for use in pagination.
+  """
+  cursor: String!
+
+  """
+  The item at the end of the edge.
+  """
+  node: Person
+}
+
+input PersonOrder {
+  direction: OrderDirection!
+  field: PersonOrderField!
+}
+
+enum PersonOrderField {
+  """
+  """
+  CREATED_AT
+
+  """
+  """
+  FAVORITE_PEOPLE_COUNT
+}
+
+type Prefecture implements Node {
+  annictId: Int!
+  id: ID!
+  name: String!
+}
+
 type Program implements Node {
   annictId: Int!
   channel: Channel!
@@ -548,6 +628,30 @@ type Query {
     """
     ids: [ID!]!
   ): [Node]!
+  searchPeople(
+    """
+    Returns the elements in the list that come after the specified cursor.
+    """
+    after: String
+    annictIds: [Int!]
+
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
+    before: String
+
+    """
+    Returns the first _n_ elements from the list.
+    """
+    first: Int
+
+    """
+    Returns the last _n_ elements from the list.
+    """
+    last: Int
+    names: [String!]
+    orderBy: PersonOrder
+  ): PersonConnection
   searchWorks(
     """
     Returns the elements in the list that come after the specified cursor.
