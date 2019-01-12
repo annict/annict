@@ -56,7 +56,6 @@ describe "Api::V1::Casts" do
             "name" => cast.character.name,
             "name_kana" => cast.character.name_kana,
             "name_en" => cast.character.name_en,
-            "kind" => cast.character.kind,
             "nickname" => cast.character.nickname,
             "nickname_en" => cast.character.nickname_en,
             "birthday" => cast.character.birthday,
