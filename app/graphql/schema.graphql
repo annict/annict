@@ -947,6 +947,14 @@ enum SeasonName {
   WINTER
 }
 
+type Series implements Node {
+  annictId: Int!
+  id: ID!
+  name: String!
+  nameEn: String!
+  nameRo: String!
+}
+
 type Status implements Node {
   annictId: Int!
   createdAt: DateTime!
