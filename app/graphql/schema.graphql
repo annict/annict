@@ -1,3 +1,13 @@
+type Activity implements Node {
+  annictId: Int!
+
+  """
+  ID of the object.
+  """
+  id: ID!
+  user: User!
+}
+
 enum ActivityAction {
   """
   """
@@ -12,6 +22,11 @@ type ActivityConnection {
   A list of edges.
   """
   edges: [ActivityEdge]
+
+  """
+  A list of nodes.
+  """
+  nodes: [Activity]
 
   """
   Information to aid in pagination.
@@ -85,6 +100,11 @@ type ChannelConnection {
   A list of edges.
   """
   edges: [ChannelEdge]
+
+  """
+  A list of nodes.
+  """
+  nodes: [Channel]
 
   """
   Information to aid in pagination.
@@ -291,6 +311,11 @@ type EpisodeConnection {
   edges: [EpisodeEdge]
 
   """
+  A list of nodes.
+  """
+  nodes: [Episode]
+
+  """
   Information to aid in pagination.
   """
   pageInfo: PageInfo!
@@ -457,6 +482,11 @@ type ProgramConnection {
   edges: [ProgramEdge]
 
   """
+  A list of nodes.
+  """
+  nodes: [Program]
+
+  """
   Information to aid in pagination.
   """
   pageInfo: PageInfo!
@@ -593,6 +623,11 @@ type RecordConnection {
   edges: [RecordEdge]
 
   """
+  A list of nodes.
+  """
+  nodes: [Record]
+
+  """
   Information to aid in pagination.
   """
   pageInfo: PageInfo!
@@ -655,6 +690,11 @@ type ReviewConnection {
   A list of edges.
   """
   edges: [ReviewEdge]
+
+  """
+  A list of nodes.
+  """
+  nodes: [Review]
 
   """
   Information to aid in pagination.
@@ -1022,6 +1062,11 @@ type UserConnection {
   edges: [UserEdge]
 
   """
+  A list of nodes.
+  """
+  nodes: [User]
+
+  """
   Information to aid in pagination.
   """
   pageInfo: PageInfo!
@@ -1145,6 +1190,11 @@ type WorkConnection {
   A list of edges.
   """
   edges: [WorkEdge]
+
+  """
+  A list of nodes.
+  """
+  nodes: [Work]
 
   """
   Information to aid in pagination.
