@@ -52,15 +52,15 @@ module Types
         argument :order_by, Types::InputObjects::StaffOrder, required: false
       end
 
-      def episodes(order_by:)
+      def episodes(order_by: nil)
         SearchEpisodesQuery.new(object.episodes, order_by: order_by).call
       end
 
-      def reviews(order_by:, has_body:)
+      def reviews(order_by: nil, has_body: nil)
         SearchWorkRecordsQuery.new(object.work_records, order_by: order_by, has_body: has_body).call
       end
 
-      def programs(order_by:)
+      def programs(order_by: nil)
         SearchProgramsQuery.new(
           object.programs,
           order_by: order_by

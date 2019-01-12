@@ -136,14 +136,14 @@ module Types
         ForeignKeyLoader.for(User, :id).load(object.followers.published.pluck(:id))
       end
 
-      def activities(order_by:)
+      def activities(order_by: nil)
         SearchActivitiesQuery.new(
           object.activities,
           order_by: order_by
         ).call
       end
 
-      def following_activities(order_by:)
+      def following_activities(order_by: nil)
         following_ids = object.followings.published.pluck(:id)
         following_ids << object.id
         SearchActivitiesQuery.new(
@@ -152,7 +152,7 @@ module Types
         ).call
       end
 
-      def records(order_by:, has_comment:)
+      def records(order_by: nil, has_comment: nil)
         SearchEpisodeRecordsQuery.new(
           object.episode_records,
           order_by: order_by,
@@ -172,7 +172,7 @@ module Types
         ).call
       end
 
-      def programs(unwatched:, order_by:)
+      def programs(unwatched: nil, order_by: nil)
         SearchProgramsQuery.new(
           object.programs.all,
           unwatched: unwatched,

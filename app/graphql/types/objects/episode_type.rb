@@ -63,7 +63,7 @@ module Types
         context[:viewer].episode_records_count_in(object)
       end
 
-      def records(order_by:, has_comment:)
+      def records(order_by: nil, has_comment: nil)
         SearchEpisodeRecordsQuery.new(
           object.episode_records,
           order_by: order_by,
