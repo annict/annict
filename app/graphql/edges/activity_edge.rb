@@ -1,25 +1,26 @@
 # frozen_string_literal: true
 
-Edges::ActivityEdge = ObjectTypes::Activity.define_edge do
-  name "ActivityEdge"
+module Edges
+  class ActivityEdge < GraphQL::Types::Relay::BaseEdge
+    node_type Types::Objects::ActivityType
 
-  field :annictId, !types.Int do
-    resolve ->(obj, _args, _ctx) {
-      activity = obj.node
+    field :annict_id, Integer, null: false
+    field :user, Types::Objects::UserType, null: false
+    field :action, Types::Enums::ActivityAction, null: false
+    field :node, Types::Unions::ActivityItem, null: true
+
+    def annict_id
+      activity = object.node
       activity.id
-    }
-  end
+    end
 
-  field :user, !ObjectTypes::User do
-    resolve ->(obj, _args, _ctx) {
-      activity = obj.node
+    def user
+      activity = object.node
       RecordLoader.for(User).load(activity.user_id)
-    }
-  end
+    end
 
-  field :action, !EnumTypes::ActivityAction do
-    resolve ->(obj, _args, _ctx) {
-      activity = obj.node
+    def action
+      activity = object.node
 
       case activity.action
       when "create_status" then "CREATE"
@@ -27,12 +28,10 @@ Edges::ActivityEdge = ObjectTypes::Activity.define_edge do
       when "create_work_record" then "CREATE"
       when "create_multiple_episode_records" then "CREATE"
       end
-    }
-  end
+    end
 
-  field :node, UnionTypes::ActivityItem do
-    resolve ->(obj, _args, _ctx) {
-      activity = obj.node
+    def node
+      activity = object.node
 
       case activity.trackable_type
       when "Status"
@@ -44,6 +43,6 @@ Edges::ActivityEdge = ObjectTypes::Activity.define_edge do
       when "MultipleEpisodeRecord"
         RecordLoader.for(MultipleEpisodeRecord).load(activity.trackable_id)
       end
-    }
+    end
   end
 end

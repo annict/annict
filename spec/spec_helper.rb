@@ -17,7 +17,6 @@ require "capybara/rspec"
 Dir[
   Rails.root.join("spec/support/helper.rb"),
   Rails.root.join("spec/support/**/*.rb"),
-  Rails.root.join("spec/elements/**/*.rb"),
   Rails.root.join("spec/steps/**/*.rb")
 ].each { |f| require f }
 

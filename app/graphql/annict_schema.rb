@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
 class AnnictSchema < GraphQL::Schema
-  query ObjectTypes::Query
-  mutation ObjectTypes::Mutation
+  query Types::Objects::Query
+  mutation Types::Objects::Mutation
 
   use GraphQL::Batch
 
@@ -21,23 +21,23 @@ class AnnictSchema < GraphQL::Schema
   def self.resolve_type(_type, obj, _ctx)
     case obj
     when Activity
-      UnionTypes::Activity
+      Types::Unions::ActivityItem
     when EpisodeRecord
-      ObjectTypes::Record
+      Types::Objects::RecordType
     when Episode
-      ObjectTypes::Episode
+      Types::Objects::EpisodeType
     when MultipleEpisodeRecord
-      ObjectTypes::MultipleRecord
+      Types::Objects::MultipleRecordType
     when WorkRecord
-      ObjectTypes::Review
+      Types::Objects::ReviewType
     when Status
-      ObjectTypes::Status
+      Types::Objects::StatusType
     when User
-      ObjectTypes::User
+      Types::Objects::UserType
     when Work
-      ObjectTypes::Work
+      Types::Objects::WorkType
     when WorkImage
-      ObjectTypes::WorkImage
+      Types::Objects::WorkImageType
     else
       raise "Unexpected object: #{obj}"
     end

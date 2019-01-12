@@ -16,7 +16,7 @@ describe "Api::V1::Me::FollowingActivities" do
     let!(:follow) { create(:follow, user: user1, following: user2) }
     let!(:record) { create(:episode_record, user: user2) }
     let!(:activity) do
-      create(:activity, user: user2, recipient: record.episode, trackable: record)
+      create(:activity, user: user2, recipient: record.episode, trackable: record, action: "create_episode_record")
     end
 
     before do

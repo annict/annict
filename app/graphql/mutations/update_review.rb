@@ -1,44 +1,47 @@
 # frozen_string_literal: true
 
-Mutations::UpdateReview = GraphQL::Relay::Mutation.define do
-  name "UpdateReview"
-
-  input_field :reviewId, !types.ID
-  input_field :title, types.String
-  input_field :body, !types.String
-  WorkRecord::STATES.each do |state|
-    input_field state.to_s.camelcase(:lower).to_sym, !EnumTypes::RatingState
-  end
-  input_field :shareTwitter, types.Boolean
-  input_field :shareFacebook, types.Boolean
-
-  return_field :review, ObjectTypes::Review
-
-  resolve RescueFrom.new ->(_obj, inputs, ctx) {
-    raise Annict::Errors::InvalidAPITokenScopeError unless ctx[:doorkeeper_token].writable?
-
-    work_record = ctx[:viewer].work_records.published.find_by_graphql_id(inputs[:reviewId])
-
-    work_record.title = inputs[:title]
-    work_record.body = inputs[:body]
+module Mutations
+  class UpdateReview < Mutations::Base
+    argument :review_id, ID, required: true
+    argument :title, String, required: false
+    argument :body, String, required: true
     WorkRecord::STATES.each do |state|
-      work_record.send("#{state}=".to_sym, inputs[state.to_s.camelcase(:lower).to_sym]&.downcase)
+      argument state.to_s.camelcase(:lower).to_sym, Types::Enums::RatingState, required: true
     end
-    work_record.modified_at = Time.now
-    work_record.oauth_application = ctx[:doorkeeper_token].application
-    work_record.detect_locale!(:body)
+    argument :share_twitter, Boolean, required: false
+    argument :share_facebook, Boolean, required: false
 
-    ctx[:viewer].setting.attributes = {
-      share_review_to_twitter: inputs[:shareTwitter] == true,
-      share_review_to_facebook: inputs[:shareFacebook] == true
-    }
+    field :review, Types::Objects::ReviewType, null: true
 
-    work_record.save!
-    ctx[:viewer].setting.save!
-    work_record.share_to_sns
+    def resolve(review_id:, title:, body:,
+      rating_overall_state:, rating_animation_state:, rating_music_state:, rating_story_state:, rating_character_state:,
+      share_twitter:, share_facebook:
+    )
+      raise Annict::Errors::InvalidAPITokenScopeError unless context[:doorkeeper_token].writable?
 
-    {
-      review: work_record
-    }
-  }
+      work_record = context[:viewer].work_records.published.find_by_graphql_id(review_id)
+
+      work_record.title = title
+      work_record.body = body
+      WorkRecord::STATES.each do |state|
+        work_record.send("#{state}=".to_sym, send(state.to_s.camelcase(:lower).to_sym)&.downcase)
+      end
+      work_record.modified_at = Time.now
+      work_record.oauth_application = context[:doorkeeper_token].application
+      work_record.detect_locale!(:body)
+
+      context[:viewer].setting.attributes = {
+        share_review_to_twitter: share_twitter == true,
+        share_review_to_facebook: share_facebook == true
+      }
+
+      work_record.save!
+      context[:viewer].setting.save!
+      work_record.share_to_sns
+
+      {
+        review: work_record
+      }
+    end
+  end
 end

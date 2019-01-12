@@ -1,20 +1,20 @@
 # frozen_string_literal: true
 
-Mutations::DeleteReview = GraphQL::Relay::Mutation.define do
-  name "DeleteReview"
+module Mutations
+  class DeleteReview < Mutations::Base
+    argument :review_id, ID, required: true
 
-  input_field :reviewId, !types.ID
+    field :work, Types::Objects::WorkType, null: true
 
-  return_field :work, ObjectTypes::Work
+    def resolve(review_id:)
+      raise Annict::Errors::InvalidAPITokenScopeError unless context[:doorkeeper_token].writable?
 
-  resolve RescueFrom.new ->(_obj, inputs, ctx) {
-    raise Annict::Errors::InvalidAPITokenScopeError unless ctx[:doorkeeper_token].writable?
+      work_record = context[:viewer].work_records.published.find_by_graphql_id(review_id)
+      work_record.record.destroy
 
-    work_record = ctx[:viewer].work_records.published.find_by_graphql_id(inputs[:reviewId])
-    work_record.record.destroy
-
-    {
-      work: work_record.work
-    }
-  }
+      {
+        work: work_record.work
+      }
+    end
+  end
 end
