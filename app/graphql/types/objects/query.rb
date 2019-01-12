@@ -18,6 +18,24 @@ module Types
         argument :order_by, Types::InputObjects::WorkOrder, required: false
       end
 
+      field :search_people, Types::Objects::PersonType.connection_type, null: true do
+        argument :annict_ids, [Integer], required: false
+        argument :names, [String], required: false
+        argument :order_by, Types::InputObjects::PersonOrder, required: false
+      end
+
+      field :search_organizations, Types::Objects::OrganizationType.connection_type, null: true do
+        argument :annict_ids, [Integer], required: false
+        argument :names, [String], required: false
+        argument :order_by, Types::InputObjects::OrganizationOrder, required: false
+      end
+
+      field :search_characters, Types::Objects::CharacterType.connection_type, null: true do
+        argument :annict_ids, [Integer], required: false
+        argument :names, [String], required: false
+        argument :order_by, Types::InputObjects::CharacterOrder, required: false
+      end
+
       def viewer
         context[:viewer]
       end
@@ -31,6 +49,30 @@ module Types
           annict_ids: annict_ids,
           seasons: seasons,
           titles: titles,
+          order_by: order_by
+        ).call
+      end
+
+      def search_people(annict_ids: nil, names: nil, order_by: nil)
+        SearchPeopleQuery.new(
+          annict_ids: annict_ids,
+          names: names,
+          order_by: order_by
+        ).call
+      end
+
+      def search_organizations(annict_ids: nil, names: nil, order_by: nil)
+        SearchOrganizationsQuery.new(
+          annict_ids: annict_ids,
+          names: names,
+          order_by: order_by
+        ).call
+      end
+
+      def search_characters(annict_ids: nil, names: nil, order_by: nil)
+        SearchCharactersQuery.new(
+          annict_ids: annict_ids,
+          names: names,
           order_by: order_by
         ).call
       end

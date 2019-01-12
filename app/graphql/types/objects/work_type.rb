@@ -10,20 +10,6 @@ module Types
       global_id_field :id
 
       field :annict_id, Integer, null: false
-
-      field :episodes, Types::Objects::EpisodeType.connection_type, null: true do
-        argument :order_by, Types::InputObjects::EpisodeOrder, required: false
-      end
-
-      field :reviews, Types::Objects::ReviewType.connection_type, null: true do
-        argument :order_by, Types::InputObjects::ReviewOrder, required: false
-        argument :has_body, Boolean, required: false
-      end
-
-      field :programs, Types::Objects::ProgramType.connection_type, null: true do
-        argument :order_by, Types::InputObjects::ProgramOrder, required: false
-      end
-
       field :title, String, null: false
       field :title_Kana, String, null: true
       field :title_ro, String, null: true
@@ -45,19 +31,48 @@ module Types
       field :no_episodes, Boolean, null: false
       field :viewer_status_state, Types::Enums::StatusState, null: true
 
-      def episodes(order_by:)
+      field :episodes, Types::Objects::EpisodeType.connection_type, null: true do
+        argument :order_by, Types::InputObjects::EpisodeOrder, required: false
+      end
+
+      field :reviews, Types::Objects::ReviewType.connection_type, null: true do
+        argument :order_by, Types::InputObjects::ReviewOrder, required: false
+        argument :has_body, Boolean, required: false
+      end
+
+      field :programs, Types::Objects::ProgramType.connection_type, null: true do
+        argument :order_by, Types::InputObjects::ProgramOrder, required: false
+      end
+
+      field :casts, Types::Objects::CastType.connection_type, null: true do
+        argument :order_by, Types::InputObjects::CastOrder, required: false
+      end
+
+      field :staffs, Types::Objects::StaffType.connection_type, null: true do
+        argument :order_by, Types::InputObjects::StaffOrder, required: false
+      end
+
+      def episodes(order_by: nil)
         SearchEpisodesQuery.new(object.episodes, order_by: order_by).call
       end
 
-      def reviews(order_by:, has_body:)
+      def reviews(order_by: nil, has_body: nil)
         SearchWorkRecordsQuery.new(object.work_records, order_by: order_by, has_body: has_body).call
       end
 
-      def programs(order_by:)
+      def programs(order_by: nil)
         SearchProgramsQuery.new(
           object.programs,
           order_by: order_by
         ).call
+      end
+
+      def casts(order_by: nil)
+        SearchCastsQuery.new(object.casts, order_by: order_by).call
+      end
+
+      def staffs(order_by: nil)
+        SearchStaffsQuery.new(object.staffs, order_by: order_by).call
       end
 
       def media

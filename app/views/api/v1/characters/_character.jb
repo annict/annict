@@ -1,0 +1,31 @@
+# frozen_string_literal: true
+
+json = {}
+
+json[:id] = character.id if params.fields_contain?("#{field_prefix}id")
+json[:name] = character.name if params.fields_contain?("#{field_prefix}name")
+json[:name_kana] = character.name_kana if params.fields_contain?("#{field_prefix}name_kana")
+json[:name_en] = character.name_en if params.fields_contain?("#{field_prefix}name_en")
+json[:nickname] = character.nickname if params.fields_contain?("#{field_prefix}nickname")
+json[:nickname_en] = character.nickname_en if params.fields_contain?("#{field_prefix}nickname_en")
+json[:birthday] = character.birthday if params.fields_contain?("#{field_prefix}birthday")
+json[:birthday_en] = character.birthday_en if params.fields_contain?("#{field_prefix}birthday_en")
+json[:age] = character.age if params.fields_contain?("#{field_prefix}age")
+json[:age_en] = character.age_en if params.fields_contain?("#{field_prefix}age_en")
+json[:blood_type] = character.blood_type if params.fields_contain?("#{field_prefix}blood_type")
+json[:blood_type_en] = character.blood_type_en if params.fields_contain?("#{field_prefix}blood_type_en")
+json[:height] = character.height if params.fields_contain?("#{field_prefix}height")
+json[:height_en] = character.height_en if params.fields_contain?("#{field_prefix}height_en")
+json[:weight] = character.weight if params.fields_contain?("#{field_prefix}weight")
+json[:weight_en] = character.weight_en if params.fields_contain?("#{field_prefix}weight_en")
+json[:nationality] = character.nationality if params.fields_contain?("#{field_prefix}nationality")
+json[:nationality_en] = character.nationality_en if params.fields_contain?("#{field_prefix}nationality_en")
+json[:occupation] = character.occupation if params.fields_contain?("#{field_prefix}occupation")
+json[:occupation_en] = character.occupation_en if params.fields_contain?("#{field_prefix}occupation_en")
+json[:description] = character.description if params.fields_contain?("#{field_prefix}description")
+json[:description_en] = character.description_en if params.fields_contain?("#{field_prefix}description_en")
+json[:description_source] = character.description_source if params.fields_contain?("#{field_prefix}description_source")
+json[:description_source_en] = character.description_source_en if params.fields_contain?("#{field_prefix}description_source_en")
+json[:favorite_characters_count] = character.favorite_characters_count if params.fields_contain?("#{field_prefix}favorite_characters_count")
+
+json

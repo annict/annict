@@ -28,8 +28,10 @@ class AnnictSchema < GraphQL::Schema
       Types::Objects::EpisodeType
     when MultipleEpisodeRecord
       Types::Objects::MultipleRecordType
-    when WorkRecord
-      Types::Objects::ReviewType
+    when Organization
+      Types::Objects::OrganizationType
+    when Person
+      Types::Objects::PersonType
     when Status
       Types::Objects::StatusType
     when User
@@ -38,6 +40,8 @@ class AnnictSchema < GraphQL::Schema
       Types::Objects::WorkType
     when WorkImage
       Types::Objects::WorkImageType
+    when WorkRecord
+      Types::Objects::ReviewType
     else
       raise "Unexpected object: #{obj}"
     end
