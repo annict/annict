@@ -2,8 +2,10 @@
 
 ENV["RAILS_ENV"] ||= "test"
 
-require "simplecov"
-SimpleCov.start("rails")
+if ENV["COVERAGE"]
+  require "simplecov"
+  SimpleCov.start("rails")
+end
 
 require File.expand_path("../../config/environment", __FILE__)
 require "rspec/rails"
@@ -15,7 +17,6 @@ require "capybara/rspec"
 Dir[
   Rails.root.join("spec/support/helper.rb"),
   Rails.root.join("spec/support/**/*.rb"),
-  Rails.root.join("spec/elements/**/*.rb"),
   Rails.root.join("spec/steps/**/*.rb")
 ].each { |f| require f }
 

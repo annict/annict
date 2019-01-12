@@ -5,6 +5,6 @@ FactoryBot.define do
     association :application, factory: :oauth_application
     owner { application.owner }
     sequence(:token) { |n| "token#{n}" }
-    scopes "read write"
+    scopes { "read write" }
   end
 end

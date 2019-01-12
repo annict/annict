@@ -1,35 +1,35 @@
 # frozen_string_literal: true
 
-Mutations::UpdateRecord = GraphQL::Relay::Mutation.define do
-  name "UpdateRecord"
+module Mutations
+  class UpdateRecord < Mutations::Base
+    argument :record_id, ID, required: true
+    argument :comment, String, required: false
+    argument :rating_state, Types::Enums::RatingState, required: false
+    argument :share_twitter, Boolean, required: false
+    argument :share_facebook, Boolean, required: false
 
-  input_field :recordId, !types.ID
-  input_field :comment, types.String
-  input_field :ratingState, EnumTypes::RatingState
-  input_field :shareTwitter, types.Boolean
-  input_field :shareFacebook, types.Boolean
+    field :record, Types::Objects::RecordType, null: true
 
-  return_field :record, ObjectTypes::Record
+    def resolve(record_id:, comment:, rating_state:, share_twitter:, share_facebook:)
+      raise Annict::Errors::InvalidAPITokenScopeError unless context[:doorkeeper_token].writable?
 
-  resolve RescueFrom.new ->(_obj, inputs, ctx) {
-    raise Annict::Errors::InvalidAPITokenScopeError unless ctx[:doorkeeper_token].writable?
+      record = context[:viewer].episode_records.published.find_by_graphql_id(record_id)
 
-    record = ctx[:viewer].episode_records.published.find_by_graphql_id(inputs[:recordId])
+      record.rating_state = rating_state&.downcase
+      record.modify_comment = record.comment != comment
+      record.comment = comment
+      record.shared_twitter = share_twitter == true
+      record.shared_facebook = share_facebook == true
+      record.oauth_application = context[:doorkeeper_token].application
+      record.detect_locale!(:comment)
 
-    record.rating_state = inputs[:ratingState]&.downcase
-    record.modify_comment = record.comment != inputs[:comment]
-    record.comment = inputs[:comment]
-    record.shared_twitter = inputs[:shareTwitter] == true
-    record.shared_facebook = inputs[:shareFacebook] == true
-    record.oauth_application = ctx[:doorkeeper_token].application
-    record.detect_locale!(:comment)
+      record.save!
+      record.update_share_record_status
+      record.share_to_sns
 
-    record.save!
-    record.update_share_record_status
-    record.share_to_sns
-
-    {
-      record: record
-    }
-  }
+      {
+        record: record
+      }
+    end
+  end
 end

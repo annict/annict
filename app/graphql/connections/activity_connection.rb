@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
-Connections::ActivityConnection =
-  ObjectTypes::Activity.define_connection(edge_type: Edges::ActivityEdge) do
-    name "ActivityConnection"
+module Connections
+  class ActivityConnection < GraphQL::Types::Relay::BaseConnection
+    edge_type Edges::ActivityEdge
   end
+end
