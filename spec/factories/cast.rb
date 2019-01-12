@@ -7,6 +7,6 @@ FactoryBot.define do
     character
     sequence(:name) { |n| "山田#{n}郎" }
     sequence(:name_en) { |n| "Yamada, #{n}rou" }
-    part ""
+    part { "" }
   end
 end
