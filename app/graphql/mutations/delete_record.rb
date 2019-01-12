@@ -1,20 +1,20 @@
 # frozen_string_literal: true
 
-Mutations::DeleteRecord = GraphQL::Relay::Mutation.define do
-  name "DeleteRecord"
+module Mutations
+  class DeleteRecord < Mutations::Base
+    argument :record_id, ID, required: true
 
-  input_field :recordId, !types.ID
+    field :episode, Types::Objects::EpisodeType, null: false
 
-  return_field :episode, ObjectTypes::Episode
+    def resolve(record_id:)
+      raise Annict::Errors::InvalidAPITokenScopeError unless context[:doorkeeper_token].writable?
 
-  resolve RescueFrom.new ->(_obj, inputs, ctx) {
-    raise Annict::Errors::InvalidAPITokenScopeError unless ctx[:doorkeeper_token].writable?
+      episode_record = context[:viewer].episode_records.published.find_by_graphql_id(record_id)
+      episode_record.record.destroy
 
-    episode_record = ctx[:viewer].episode_records.published.find_by_graphql_id(inputs[:recordId])
-    episode_record.record.destroy
-
-    {
-      episode: episode_record.episode
-    }
-  }
+      {
+        episode: episode_record.episode
+      }
+    end
+  end
 end

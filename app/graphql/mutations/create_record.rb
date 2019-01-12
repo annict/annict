@@ -1,39 +1,39 @@
 # frozen_string_literal: true
 
-Mutations::CreateRecord = GraphQL::Relay::Mutation.define do
-  name "CreateRecord"
+module Mutations
+  class CreateRecord < Mutations::Base
+    argument :episode_id, ID, required: true
+    argument :comment, String, required: false
+    argument :rating_state, Types::Enums::RatingState, required: false
+    argument :share_twitter, Boolean, required: false
+    argument :share_facebook, Boolean, required: false
 
-  input_field :episodeId, !types.ID
-  input_field :comment, types.String
-  input_field :ratingState, Types::Enum::RatingState
-  input_field :shareTwitter, types.Boolean
-  input_field :shareFacebook, types.Boolean
+    field :record, Types::Objects::RecordType, null: false
 
-  return_field :record, ObjectTypes::Record
+    def resolve(episode_id:, comment:, rating_state:, share_twitter:, share_facebook:)
+      raise Annict::Errors::InvalidAPITokenScopeError unless context[:doorkeeper_token].writable?
 
-  resolve RescueFrom.new ->(_obj, inputs, ctx) {
-    raise Annict::Errors::InvalidAPITokenScopeError unless ctx[:doorkeeper_token].writable?
+      episode = Episode.published.find_by_graphql_id(episode_id)
 
-    episode = Episode.published.find_by_graphql_id(inputs[:episodeId])
+      record = episode.episode_records.new do |r|
+        r.rating_state = rating_state&.downcase
+        r.comment = comment
+        r.shared_twitter = share_twitter == true
+        r.shared_facebook = share_facebook == true
+        r.oauth_application = context[:doorkeeper_token].application
+      end
 
-    record = episode.episode_records.new do |r|
-      r.rating_state = inputs[:ratingState]&.downcase
-      r.comment = inputs[:comment]
-      r.shared_twitter = inputs[:shareTwitter] == true
-      r.shared_facebook = inputs[:shareFacebook] == true
-      r.oauth_application = ctx[:doorkeeper_token].application
+      service = NewEpisodeRecordService.new(context[:viewer], record)
+      service.ga_client = context[:ga_client]
+      service.logentries = context[:logentries]
+      service.app = context[:doorkeeper_token].application
+      service.via = "graphql_api"
+
+      service.save!
+
+      {
+        record: service.episode_record
+      }
     end
-
-    service = NewEpisodeRecordService.new(ctx[:viewer], record)
-    service.ga_client = ctx[:ga_client]
-    service.logentries = ctx[:logentries]
-    service.app = ctx[:doorkeeper_token].application
-    service.via = "graphql_api"
-
-    service.save!
-
-    {
-      record: service.episode_record
-    }
-  }
+  end
 end

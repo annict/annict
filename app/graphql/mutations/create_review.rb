@@ -1,49 +1,53 @@
 # frozen_string_literal: true
 
-Mutations::CreateReview = GraphQL::Relay::Mutation.define do
-  name "CreateReview"
-
-  input_field :workId, !types.ID
-  input_field :title, types.String
-  input_field :body, !types.String
-  WorkRecord::STATES.each do |state|
-    input_field state.to_s.camelcase(:lower).to_sym, Types::Enum::RatingState
-  end
-  input_field :shareTwitter, types.Boolean
-  input_field :shareFacebook, types.Boolean
-
-  return_field :review, ObjectTypes::Review
-
-  resolve RescueFrom.new ->(_obj, inputs, ctx) {
-    raise Annict::Errors::InvalidAPITokenScopeError unless ctx[:doorkeeper_token].writable?
-
-    work = Work.published.find_by_graphql_id(inputs[:workId])
-
-    review = work.work_records.new do |r|
-      r.user = ctx[:viewer]
-      r.work = work
-      r.title = inputs[:title]
-      r.body = inputs[:body]
-      WorkRecord::STATES.each do |state|
-        r.send("#{state}=".to_sym, inputs[state.to_s.camelcase(:lower).to_sym]&.downcase)
-      end
-      r.oauth_application = ctx[:doorkeeper_token].application
+module Mutations
+  class CreateReview < Mutations::Base
+    argument :work_id, ID, required: true
+    argument :title, String, required: false
+    argument :body, String, required: false
+    WorkRecord::STATES.each do |state|
+      argument state.to_s.camelcase(:lower).to_sym, Types::Enums::RatingState, required: false
     end
-    ctx[:viewer].setting.attributes = {
-      share_review_to_twitter: inputs[:shareTwitter] == true,
-      share_review_to_facebook: inputs[:shareFacebook] == true
-    }
+    argument :share_twitter, Boolean, required: false
+    argument :share_facebook, Boolean, required: false
 
-    service = NewWorkRecordService.new(ctx[:viewer], review, ctx[:viewer].setting)
-    service.via = "graphql_api"
-    service.app = ctx[:doorkeeper_token].application
-    service.ga_client = ctx[:ga_client]
-    service.logentries = ctx[:logentries]
+    field :review, Types::Objects::ReviewType, null: false
 
-    service.save!
+    def resolve(
+      work_id:, title:, body:,
+      rating_overall_state:, rating_animation_state:, rating_music_state:, rating_story_state:, rating_character_state:,
+      share_twitter:, share_facebook:
+    )
+      raise Annict::Errors::InvalidAPITokenScopeError unless context[:doorkeeper_token].writable?
 
-    {
-      review: service.work_record
-    }
-  }
+      work = Work.published.find_by_graphql_id(work_id)
+
+      review = work.work_records.new do |r|
+        r.user = context[:viewer]
+        r.work = work
+        r.title = title
+        r.body = body
+        WorkRecord::STATES.each do |state|
+          r.send("#{state}=".to_sym, inputs[state.to_s.camelcase(:lower).to_sym]&.downcase)
+        end
+        r.oauth_application = context[:doorkeeper_token].application
+      end
+      context[:viewer].setting.attributes = {
+        share_review_to_twitter: share_twitter == true,
+        share_review_to_facebook: :share_facebook == true
+      }
+
+      service = NewWorkRecordService.new(context[:viewer], review, context[:viewer].setting)
+      service.via = "graphql_api"
+      service.app = context[:doorkeeper_token].application
+      service.ga_client = context[:ga_client]
+      service.logentries = context[:logentries]
+
+      service.save!
+
+      {
+        review: service.work_record
+      }
+    end
+  end
 end

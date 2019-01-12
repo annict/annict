@@ -2,12 +2,12 @@
 
 module Edges
   class ActivityEdge < GraphQL::Types::Relay::BaseEdge
-    node_type ObjectTypes::Activity
+    node_type Types::Objects::ActivityType
 
     field :annict_id, Integer, null: false
-    field :user, ObjectTypes::User, null: false
-    field :action, Types::Enum::ActivityAction, null: false
-    field :node, UnionTypes::ActivityItem, null: false
+    field :user, Types::Objects::UserType, null: false
+    field :action, Types::Enums::ActivityAction, null: false
+    field :node, Types::Unions::ActivityItem, null: false
 
     def annict_id
       activity = object.node

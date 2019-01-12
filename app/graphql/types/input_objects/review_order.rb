@@ -3,8 +3,8 @@
 module Types
   module InputObjects
     class ReviewOrder < Types::InputObjects::Base
-      argument :field, Types::Enum::ReviewOrderField, required: true
-      argument :direction, !Types::Enum::OrderDirection, required: true
+      argument :field, Types::Enums::ReviewOrderField, required: true
+      argument :direction, Types::Enums::OrderDirection, required: true
     end
   end
 end
