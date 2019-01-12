@@ -4,8 +4,10 @@ require "graphql/rake_task"
 
 namespace :graphql do
   task dump_schema: :environment do
-    GraphQL::RakeTask.new(directory: "./app/graphql/", schema_name: "AnnictSchema")
-    Rake::Task["graphql:schema:idl"].invoke
+    schema_definition = AnnictSchema.to_definition
+    schema_path = "app/graphql/schema.graphql"
+    File.write(Rails.root.join(schema_path), schema_definition)
+    puts "Updated #{schema_path}"
   end
 
   task build_docs: :environment do
