@@ -48,6 +48,10 @@ module Types
         argument :order_by, Types::InputObjects::CastOrder, required: false
       end
 
+      field :staffs, Types::Objects::StaffType.connection_type, null: true do
+        argument :order_by, Types::InputObjects::StaffOrder, required: false
+      end
+
       def episodes(order_by:)
         SearchEpisodesQuery.new(object.episodes, order_by: order_by).call
       end
@@ -65,6 +69,10 @@ module Types
 
       def casts(order_by: nil)
         SearchCastsQuery.new(object.casts, order_by: order_by).call
+      end
+
+      def staffs(order_by: nil)
+        SearchStaffsQuery.new(object.staffs, order_by: order_by).call
       end
 
       def media
