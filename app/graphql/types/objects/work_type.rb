@@ -10,20 +10,6 @@ module Types
       global_id_field :id
 
       field :annict_id, Integer, null: false
-
-      field :episodes, Types::Objects::EpisodeType.connection_type, null: true do
-        argument :order_by, Types::InputObjects::EpisodeOrder, required: false
-      end
-
-      field :reviews, Types::Objects::ReviewType.connection_type, null: true do
-        argument :order_by, Types::InputObjects::ReviewOrder, required: false
-        argument :has_body, Boolean, required: false
-      end
-
-      field :programs, Types::Objects::ProgramType.connection_type, null: true do
-        argument :order_by, Types::InputObjects::ProgramOrder, required: false
-      end
-
       field :title, String, null: false
       field :title_Kana, String, null: true
       field :title_ro, String, null: true
@@ -45,6 +31,23 @@ module Types
       field :no_episodes, Boolean, null: false
       field :viewer_status_state, Types::Enums::StatusState, null: true
 
+      field :episodes, Types::Objects::EpisodeType.connection_type, null: true do
+        argument :order_by, Types::InputObjects::EpisodeOrder, required: false
+      end
+
+      field :reviews, Types::Objects::ReviewType.connection_type, null: true do
+        argument :order_by, Types::InputObjects::ReviewOrder, required: false
+        argument :has_body, Boolean, required: false
+      end
+
+      field :programs, Types::Objects::ProgramType.connection_type, null: true do
+        argument :order_by, Types::InputObjects::ProgramOrder, required: false
+      end
+
+      field :casts, Types::Objects::CastType.connection_type, null: true do
+        argument :order_by, Types::InputObjects::CastOrder, required: false
+      end
+
       def episodes(order_by:)
         SearchEpisodesQuery.new(object.episodes, order_by: order_by).call
       end
@@ -58,6 +61,10 @@ module Types
           object.programs,
           order_by: order_by
         ).call
+      end
+
+      def casts(order_by: nil)
+        SearchCastsQuery.new(object.casts, order_by: order_by).call
       end
 
       def media

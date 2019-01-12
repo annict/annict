@@ -62,6 +62,67 @@ enum ActivityOrderField {
   CREATED_AT
 }
 
+type Cast implements Node {
+  annictId: Int!
+  character: Character!
+  id: ID!
+  name: String!
+  nameEn: String!
+  person: Person!
+  sortNumber: Int!
+  work: Work!
+}
+
+"""
+The connection type for Cast.
+"""
+type CastConnection {
+  """
+  A list of edges.
+  """
+  edges: [CastEdge]
+
+  """
+  A list of nodes.
+  """
+  nodes: [Cast]
+
+  """
+  Information to aid in pagination.
+  """
+  pageInfo: PageInfo!
+}
+
+"""
+An edge in a connection.
+"""
+type CastEdge {
+  """
+  A cursor for use in pagination.
+  """
+  cursor: String!
+
+  """
+  The item at the end of the edge.
+  """
+  node: Cast
+}
+
+input CastOrder {
+  direction: OrderDirection!
+  field: CastOrderField!
+}
+
+enum CastOrderField {
+  """
+  """
+  CREATED_AT
+
+  """
+  """
+  SORT_NUMBER
+}
+
 type Channel implements Node {
   annictId: Int!
   channelGroup: ChannelGroup!
@@ -1398,6 +1459,28 @@ An anime title
 """
 type Work implements Node {
   annictId: Int!
+  casts(
+    """
+    Returns the elements in the list that come after the specified cursor.
+    """
+    after: String
+
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
+    before: String
+
+    """
+    Returns the first _n_ elements from the list.
+    """
+    first: Int
+
+    """
+    Returns the last _n_ elements from the list.
+    """
+    last: Int
+    orderBy: CastOrder
+  ): CastConnection
   episodes(
     """
     Returns the elements in the list that come after the specified cursor.

@@ -139,5 +139,105 @@ describe "GraphQL API Query" do
         ])
       end
     end
+
+    context "when `casts` are fetched" do
+      let!(:cast1) { create(:cast, work: work1) }
+      let!(:cast2) { create(:cast, work: work1) }
+      let!(:cast3) { create(:cast, work: work2) }
+      let(:result) do
+        query_string = <<~QUERY
+          query {
+            searchWorks(orderBy: { field: WATCHERS_COUNT, direction: DESC }) {
+              edges {
+                node {
+                  title
+                  watchersCount
+                  casts(orderBy: { field: CREATED_AT, direction: DESC }) {
+                    edges {
+                      node {
+                        character {
+                          name
+                        }
+                        person {
+                          name
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        QUERY
+
+        res = AnnictSchema.execute(query_string)
+        pp(res) if res["errors"]
+        res
+      end
+
+      it "shows ordered casts" do
+        expect(result.dig("data", "searchWorks", "edges")).to match_array([
+          {
+            "node" => {
+              "title" => work2.title,
+              "watchersCount" => 30,
+              "casts" => {
+                "edges" => [
+                  {
+                    "node" => {
+                      "character" => {
+                        "name" => cast3.character.name
+                      },
+                      "person" => {
+                        "name" => cast3.person.name
+                      }
+                    }
+                  }
+                ]
+              }
+            }
+          },
+          {
+            "node" => {
+              "title" => work3.title,
+              "watchersCount" => 20,
+              "casts" => {
+                "edges" => []
+              }
+            }
+          },
+          {
+            "node" => {
+              "title" => work1.title,
+              "watchersCount" => 10,
+              "casts" => {
+                "edges" => [
+                  {
+                    "node" => {
+                      "character" => {
+                        "name" => cast2.character.name
+                      },
+                      "person" => {
+                        "name" => cast2.person.name
+                      }
+                    }
+                  },
+                  {
+                    "node" => {
+                      "character" => {
+                        "name" => cast1.character.name
+                      },
+                      "person" => {
+                        "name" => cast1.person.name
+                      }
+                    }
+                  }
+                ]
+              }
+            }
+          }
+        ])
+      end
+    end
   end
 end
