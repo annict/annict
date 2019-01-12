@@ -4,7 +4,7 @@ module Mutations
   class DeleteReview < Mutations::Base
     argument :review_id, ID, required: true
 
-    field :work, Types::Objects::WorkType, null: false
+    field :work, Types::Objects::WorkType, null: true
 
     def resolve(review_id:)
       raise Annict::Errors::InvalidAPITokenScopeError unless context[:doorkeeper_token].writable?

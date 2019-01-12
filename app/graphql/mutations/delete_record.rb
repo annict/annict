@@ -4,7 +4,7 @@ module Mutations
   class DeleteRecord < Mutations::Base
     argument :record_id, ID, required: true
 
-    field :episode, Types::Objects::EpisodeType, null: false
+    field :episode, Types::Objects::EpisodeType, null: true
 
     def resolve(record_id:)
       raise Annict::Errors::InvalidAPITokenScopeError unless context[:doorkeeper_token].writable?

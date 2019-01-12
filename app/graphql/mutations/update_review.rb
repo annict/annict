@@ -4,14 +4,14 @@ module Mutations
   class UpdateReview < Mutations::Base
     argument :review_id, ID, required: true
     argument :title, String, required: false
-    argument :body, String, required: false
+    argument :body, String, required: true
     WorkRecord::STATES.each do |state|
-      argument state.to_s.camelcase(:lower).to_sym, Types::Enums::RatingState, required: false
+      argument state.to_s.camelcase(:lower).to_sym, Types::Enums::RatingState, required: true
     end
     argument :share_twitter, Boolean, required: false
     argument :share_facebook, Boolean, required: false
 
-    field :review, Types::Objects::ReviewType, null: false
+    field :review, Types::Objects::ReviewType, null: true
 
     def resolve(review_id:, title:, body:,
       rating_overall_state:, rating_animation_state:, rating_music_state:, rating_story_state:, rating_character_state:,

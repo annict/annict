@@ -8,7 +8,7 @@ module Mutations
     argument :share_twitter, Boolean, required: false
     argument :share_facebook, Boolean, required: false
 
-    field :record, Types::Objects::RecordType, null: false
+    field :record, Types::Objects::RecordType, null: true
 
     def resolve(record_id:, comment:, rating_state:, share_twitter:, share_facebook:)
       raise Annict::Errors::InvalidAPITokenScopeError unless context[:doorkeeper_token].writable?

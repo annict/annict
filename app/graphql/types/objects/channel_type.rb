@@ -8,7 +8,7 @@ module Types
       global_id_field :id
 
       field :annict_id, Integer, null: false
-      field :programs, Types::Objects::ProgramType.connection_type, null: false
+      field :programs, Types::Objects::ProgramType.connection_type, null: true
       field :channel_group, Types::Objects::ChannelGroupType, null: false
       field :sc_chid, Integer, null: false
       field :name, String, null: false

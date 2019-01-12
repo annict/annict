@@ -7,8 +7,8 @@ module Types
 
       global_id_field :id
 
-      field :annict_id, Integer, null: false
-      field :work, Types::Objects::WorkType, null: false
+      field :annict_id, Integer, null: true
+      field :work, Types::Objects::WorkType, null: true
       field :facebook_og_image_url, String, null: true
       field :twitter_avatar_url, String, null: true
       field :twitter_mini_avatar_url, String, null: true

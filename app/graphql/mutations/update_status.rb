@@ -5,7 +5,7 @@ module Mutations
     argument :work_id, ID, required: true
     argument :state, Types::Enums::StatusState, required: true
 
-    field :work, Types::Objects::WorkType, null: false
+    field :work, Types::Objects::WorkType, null: true
 
     def resolve(work_id:, state:)
       raise Annict::Errors::InvalidAPITokenScopeError unless context[:doorkeeper_token].writable?

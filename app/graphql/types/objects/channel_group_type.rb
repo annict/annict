@@ -8,7 +8,7 @@ module Types
       global_id_field :id
 
       field :annict_id, Integer, null: false
-      field :channels, Types::Objects::ChannelType.connection_type, null: false
+      field :channels, Types::Objects::ChannelType.connection_type, null: true
       field :name, String, null: false
       field :sort_number, Integer, null: false
 
