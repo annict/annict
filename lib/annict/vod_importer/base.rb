@@ -17,13 +17,20 @@ module Annict
             { channel: channel, code: attr[:code] }
           end
           vod_title = VodTitle.find_by(conditions)
-          if vod_title.present?
+          if vod_title
             puts "exists. id: #{vod_title.id}"
             vod_title_ids << nil
           else
-            vod_title = VodTitle.create!(name: attr[:name], channel: channel, work: work, code: attr[:code])
-            puts "created."
-            vod_title_ids << vod_title.id
+            begin
+              vod_title = VodTitle.create!(name: attr[:name], channel: channel, work: work, code: attr[:code])
+              puts "created."
+              vod_title_ids << vod_title.id
+            rescue ActiveRecord::NotNullViolation => e
+              Rails.logger.error(
+                "[0d3248b1-e661-4032-8a53-9ad1515df8a9] create_vod_title! - " \
+                "vod_title is not created. attr: #{attr}, message: #{e.message}"
+              )
+            end
           end
 
           next if work.blank?
