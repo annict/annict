@@ -10,6 +10,6 @@ module ViewSelector
   private
 
   def register_mobile_variant
-    request.variant = :mobile if browser.device.mobile?
+    request.variant = :mobile unless device_pc?
   end
 end

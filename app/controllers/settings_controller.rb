@@ -20,7 +20,7 @@ class SettingsController < ApplicationController
   before_action :authenticate_user!
 
   def index
-    return render(:index) if browser.device.mobile?
+    return render(:index) unless device_pc?
     redirect_to profile_path
   end
 end

@@ -10,7 +10,7 @@ class EpisodeItemsController < ApplicationController
 
     store_page_params(work: @work)
 
-    return unless browser.device.mobile?
+    return if device_pc?
 
     params[:locale_en] = locale_en?
     params[:locale_ja] = locale_ja?

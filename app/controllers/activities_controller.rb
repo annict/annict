@@ -4,7 +4,7 @@ class ActivitiesController < ApplicationController
   before_action :authenticate_user!
 
   def index
-    return redirect_to root_path unless browser.device.mobile?
+    return redirect_to root_path if device_pc?
 
     activities = current_user.
       following_activities.

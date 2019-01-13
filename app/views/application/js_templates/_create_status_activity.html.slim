@@ -26,7 +26,7 @@ script#t-create-status-activity type="x-template"
             c-time-ago :time="activity.created_at"
 
     template v-if="isPositive"
-      .mb-2 class="#{browser.device.mobile? ? 'is-mobile' : 'is-pc'}"
+      .mb-2 class="#{device_pc? ? 'is-pc' : 'is-mobile'}"
         .row.align-items-center.mx-0.u-border-1.rounded
           .col-2.p-0
             a :href='"/works/" + activity.work.id'
