@@ -128,5 +128,29 @@ describe "GraphQL API Query" do
         end
       end
     end
+
+    context "`avatar_url` field" do
+      let(:result) do
+        query_string = <<~QUERY
+          query {
+            user(username: "#{user.username}") {
+              username
+              avatarUrl
+            }
+          }
+        QUERY
+
+        res = AnnictSchema.execute(query_string)
+        pp(res) if res["errors"]
+        res
+      end
+
+      it "shows user's avatar image URL" do
+        expect(result.dig("data", "user")).to eq(
+          "username" => user.username,
+          "avatarUrl" => "#{ENV.fetch('ANNICT_API_ASSETS_URL')}/no-image.jpg"
+        )
+      end
+    end
   end
 end
