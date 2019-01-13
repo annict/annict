@@ -1,12 +1,12 @@
 - resource.class::DIFF_FIELDS.each do |field|
   - diff = select_diff_by_field(diffs, field)
   - if diff.present?
-    - draft_value = draft_values[field].presence || ""
-    - origin_value = origin_values[field].presence || ""
+    - draft_value = draft_values[field]&.to_s.presence || ""
+    - origin_value = origin_values[field]&.to_s.presence || ""
     tr
       td = t("activerecord.attributes.#{resource.class.name.underscore}.#{field}")
       - if diff[0] == "+"
-        td.success = draft_value.to_s.html_safe
+        td.success = draft_value.html_safe
       - elsif diff[0] == "-"
         td
       - elsif diff[0] == "~"

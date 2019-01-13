@@ -10,7 +10,7 @@ module Mutations
 
     field :record, Types::Objects::RecordType, null: true
 
-    def resolve(record_id:, comment:, rating_state:, share_twitter:, share_facebook:)
+    def resolve(record_id:, comment: nil, rating_state: nil, share_twitter: nil, share_facebook: nil)
       raise Annict::Errors::InvalidAPITokenScopeError unless context[:doorkeeper_token].writable?
 
       record = context[:viewer].episode_records.published.find_by_graphql_id(record_id)

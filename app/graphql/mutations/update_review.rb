@@ -13,9 +13,17 @@ module Mutations
 
     field :review, Types::Objects::ReviewType, null: true
 
-    def resolve(review_id:, title:, body:,
-      rating_overall_state:, rating_animation_state:, rating_music_state:, rating_story_state:, rating_character_state:,
-      share_twitter:, share_facebook:
+    def resolve(
+      review_id:,
+      title: nil,
+      body:,
+      rating_overall_state: nil,
+      rating_animation_state: nil,
+      rating_music_state: nil,
+      rating_story_state: nil,
+      rating_character_state: nil,
+      share_twitter: nil,
+      share_facebook: nil
     )
       raise Annict::Errors::InvalidAPITokenScopeError unless context[:doorkeeper_token].writable?
 
