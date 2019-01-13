@@ -63,7 +63,6 @@ class Episode < ApplicationRecord
   has_many :activities, dependent: :destroy, as: :recipient
   has_many :db_activities, as: :trackable, dependent: :destroy
   has_many :db_comments, as: :resource, dependent: :destroy
-  has_many :draft_episodes, dependent: :destroy
   has_many :episode_records, dependent: :destroy
   has_many :resource_items, dependent: :destroy, class_name: "EpisodeItem"
   has_many :items, through: :resource_items
