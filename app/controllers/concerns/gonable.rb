@@ -8,7 +8,7 @@ module Gonable
       gon.I18n = gon.I18n.presence || {}
 
       keys.each do |k, v|
-        key = v.present? && browser.device.mobile? && v.key?(:mobile) ? v[:mobile] : k
+        key = v.present? && !device_pc? && v.key?(:mobile) ? v[:mobile] : k
         gon.I18n[k] = I18n.t(key)
       end
     end
@@ -20,7 +20,7 @@ module Gonable
     data = {
       user: {
         clientUUID: client_uuid,
-        device: browser.device.mobile? ? "mobile" : "pc",
+        device: device_pc? ? "pc" : "mobile",
         locale: locale,
         userId: user_signed_in? ? current_user.encoded_id : nil,
         isSignedIn: user_signed_in?
@@ -50,7 +50,7 @@ module Gonable
   end
 
   def default_i18n_data
-    username_preview_val = if browser.device.mobile?
+    username_preview_val = if !device_pc?
       I18n.t("messages.registrations.new.username_preview_mobile")
     else
       I18n.t("messages.registrations.new.username_preview")

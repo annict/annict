@@ -26,7 +26,7 @@ class HomeController < ApplicationController
       user: current_user,
       latest_statuses: latest_statuses
 
-    unless browser.device.mobile?
+    if device_pc?
       @forum_posts = ForumPost.
         joins(:forum_category).
         merge(ForumCategory.with_slug(:site_news))

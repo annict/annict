@@ -1,7 +1,7 @@
 c-appbar
   template slot-scope="{ appLoaded }"
     / PC
-    nav.c-appbar__navbar--pc.navbar.navbar-expand.navbar-white.bg-white.fixed-top.d-none.d-sm-flex.justify-content-between.shadow-sm
+    nav.c-appbar__navbar--pc.navbar.navbar-expand.navbar-white.bg-white.fixed-top.d-none.d-lg-flex.justify-content-between.shadow-sm
       ul.navbar-nav.align-items-center.h-100 v-if="appLoaded"
         li.nav-item
           = link_to root_path, class: "navbar-brand" do
@@ -83,7 +83,7 @@ c-appbar
               = t "head.title.registrations.new"
 
     / Mobile
-    nav.c-appbar__navbar--mobile.navbar.navbar-expand.navbar-white.bg-white.fixed-bottom.d-block.d-sm-none
+    nav.c-appbar__navbar--mobile.navbar.navbar-expand.navbar-white.bg-white.fixed-bottom.d-block.d-lg-none
       ul.navbar-nav.justify-content-around v-if="appLoaded"
         li.nav-item.text-center
           = link_to root_path, class: "text-dark" do
