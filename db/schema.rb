@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2018_09_25_112149) do
+ActiveRecord::Schema.define(version: 2019_01_14_090325) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_stat_statements"
@@ -951,6 +951,15 @@ ActiveRecord::Schema.define(version: 2018_09_25_112149) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.index ["name"], name: "twitter_bots_name_key", unique: true
+  end
+
+  create_table "twitter_watching_lists", force: :cascade do |t|
+    t.string "username", null: false
+    t.string "list_name", null: false
+    t.string "since_id"
+    t.string "discord_webhook_url", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
   end
 
   create_table "userland_categories", id: :serial, force: :cascade do |t|
