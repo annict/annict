@@ -29,10 +29,9 @@ namespace :twitter do
           "#{tweet_body}\n<#{tweet.url}>",
           username: tweet.user.name,
           avatar_url: tweet.user.profile_image_uri_https&.to_s,
-          url: list.discord_webhook_url
+          url: list.discord_webhook_url,
+          wait: true
         )
-
-        sleep 1
       end
 
       latest_tweet = tweets.first
