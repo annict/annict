@@ -198,10 +198,8 @@ class Work < ApplicationRecord
       where("work_images.id IS NULL")
   }
 
-  # リリース時期順に並べる
-  scope :order_by_season, -> (type = :asc) {
-    joins('LEFT OUTER JOIN "seasons" ON "seasons"."id" = "works"."season_id"').
-      order("seasons.sort_number #{type} NULLS LAST, works.id #{type}")
+  scope :order_by_season, ->(type = :asc) {
+    order(season_year: type, season_name: type)
   }
 
   scope :gt_current_season, -> {
