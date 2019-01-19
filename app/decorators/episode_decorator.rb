@@ -2,12 +2,12 @@
 
 module EpisodeDecorator
   def number_link
-    h.link_to local_number, h.work_episode_path(work, self)
+    link_to local_number, work_episode_path(work, self)
   end
 
   def db_detail_link(options = {})
     name = options.delete(:title).presence || title
-    h.link_to name, h.edit_db_episode_path(self), options
+    link_to name, edit_db_episode_path(self), options
   end
 
   def local_title(fallback: true)
@@ -30,8 +30,8 @@ module EpisodeDecorator
           episode = work.episodes.where(id: send(field)).first
           if episode.present?
             title = episode.title_with_number
-            path = h.work_episode_path(episode.work, episode)
-            h.link_to(title, path, target: "_blank")
+            path = work_episode_path(episode.work, episode)
+            link_to(title, path, target: "_blank")
           else
             ""
           end
@@ -64,6 +64,6 @@ module EpisodeDecorator
   end
 
   def delete_item_path(item)
-    h.episode_item_path(self, item)
+    episode_item_path(self, item)
   end
 end

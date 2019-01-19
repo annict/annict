@@ -2,13 +2,13 @@
 
 module UserDecorator
   def name_link(options = {})
-    h.link_to(profile.name, h.annict_url(:user_url, username), options)
+    link_to(profile.name, annict_url(:user_url, username), options)
   end
 
   def role_badge
     return "" unless committer?
 
-    h.content_tag(:span, class: "u-badge-outline u-badge-outline-dark") do
+    content_tag(:span, class: "u-badge-outline u-badge-outline-dark") do
       role_text
     end
   end

@@ -21,6 +21,6 @@ module DbActivityDecorator
       origin_values: origin_values
     }
 
-    h.render("db/activities/resource_diff_table", data)
+    render("db/activities/resource_diff_table", data)
   end
 end

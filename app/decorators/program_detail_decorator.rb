@@ -3,7 +3,7 @@
 module ProgramDetailDecorator
   def db_detail_link(options = {})
     name = options.delete(:name).presence || id
-    h.link_to(name, h.edit_db_program_detail_path(self), options)
+    link_to(name, edit_db_program_detail_path(self), options)
   end
 
   def to_values
@@ -14,7 +14,7 @@ module ProgramDetailDecorator
       when :locale
         send(:locale_text)
       when :unique_id
-        h.link_to unique_id, url, target: "_blank"
+        link_to unique_id, url, target: "_blank"
       else
         send(field)
       end

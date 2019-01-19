@@ -4,30 +4,30 @@ module WorkDecorator
   include RootResourceDecoratorCommon
 
   def title_link
-    h.link_to local_title, h.work_path(self)
+    link_to local_title, work_path(self)
   end
 
   def twitter_username_link
-    h.link_to "@#{twitter_username}", twitter_username_url, target: "_blank"
+    link_to "@#{twitter_username}", twitter_username_url, target: "_blank"
   end
 
   def twitter_hashtag_link
-    h.link_to "##{twitter_hashtag}", twitter_hashtag_url, target: "_blank"
+    link_to "##{twitter_hashtag}", twitter_hashtag_url, target: "_blank"
   end
 
   def syobocal_link(title = nil)
     title = title.presence || sc_tid
-    h.link_to title, syobocal_url, target: "_blank"
+    link_to title, syobocal_url, target: "_blank"
   end
 
   def mal_anime_link(title = nil)
     title = title.presence || mal_anime_id
-    h.link_to title, mal_anime_url, target: "_blank"
+    link_to title, mal_anime_url, target: "_blank"
   end
 
   def db_detail_link(options = {})
     name = options.delete(:name).presence || title
-    h.link_to(name, h.edit_db_work_path(self), options)
+    link_to(name, edit_db_work_path(self), options)
   end
 
   def release_season
@@ -37,7 +37,7 @@ module WorkDecorator
 
   def release_season_link
     return release_season if season.blank?
-    h.link_to release_season, h.season_works_path(season.slug)
+    link_to release_season, season_works_path(season.slug)
   end
 
   def db_header_title
@@ -58,7 +58,7 @@ module WorkDecorator
 
     return if text.blank?
 
-    raw ? text : h.simple_format(text)
+    raw ? text : simple_format(text)
   end
 
   def local_synopsis_source
@@ -69,17 +69,17 @@ module WorkDecorator
 
     return if source.blank?
 
-    h.auto_link(source, html: { target: "_blank" })
+    auto_link(source, html: { target: "_blank" })
   end
 
   def media_label
-    h.content_tag :span, class: "badge u-badge-works" do
+    content_tag :span, class: "badge u-badge-works" do
       media.text
     end
   end
 
   def delete_item_path(item)
-    h.work_item_path(self, item)
+    work_item_path(self, item)
   end
 
   def started_on_label
@@ -101,7 +101,7 @@ module WorkDecorator
         sc_tid = send(:sc_tid)
         if sc_tid.present?
           url = "http://cal.syoboi.jp/tid/#{sc_tid}"
-          h.link_to(sc_tid, url, target: "_blank")
+          link_to(sc_tid, url, target: "_blank")
         end
       when :media
         Work.media.find_value(send(:media)).text
@@ -109,7 +109,7 @@ module WorkDecorator
         url = send(field)
         if url.present?
           begin
-            h.link_to(URI.decode(url), url, target: "_blank")
+            link_to(URI.decode(url), url, target: "_blank")
           rescue
             url
           end
@@ -118,13 +118,13 @@ module WorkDecorator
         username = send(:twitter_username)
         if username.present?
           url = "https://twitter.com/#{username}"
-          h.link_to("@#{username}", url, target: "_blank")
+          link_to("@#{username}", url, target: "_blank")
         end
       when :twitter_hashtag
         hashtag = send(:twitter_hashtag)
         if hashtag.present?
           url = "https://twitter.com/search?q=%23#{hashtag}"
-          h.link_to("##{hashtag}", url, target: "_blank")
+          link_to("##{hashtag}", url, target: "_blank")
         end
       when :number_format_id
         send(:number_format).name if send(:number_format_id).present?

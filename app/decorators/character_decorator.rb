@@ -4,7 +4,7 @@ module CharacterDecorator
   include RootResourceDecoratorCommon
 
   def name_link
-    h.link_to local_name, h.character_path(self)
+    link_to local_name, character_path(self)
   end
 
   def db_header_title
@@ -30,7 +30,7 @@ module CharacterDecorator
 
   def db_detail_link(options = {})
     name = options.delete(:name).presence || self.name
-    path = h.edit_db_character_path(self)
-    h.link_to name, path, options
+    path = edit_db_character_path(self)
+    link_to name, path, options
   end
 end

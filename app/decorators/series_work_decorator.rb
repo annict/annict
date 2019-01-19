@@ -3,15 +3,15 @@
 module SeriesWorkDecorator
   def db_detail_link(options = {})
     name = options.delete(:name).presence || id
-    h.link_to(name, h.edit_db_series_work_path(self), options)
+    link_to(name, edit_db_series_work_path(self), options)
   end
 
   def to_values
     model.class::DIFF_FIELDS.each_with_object({}) do |field, hash|
       hash[field] = case field
       when :work_id
-        path = h.work_path(work)
-        h.link_to(work.local_title, path, target: "_blank")
+        path = work_path(work)
+        link_to(work.local_title, path, target: "_blank")
       else
         send(field)
       end
