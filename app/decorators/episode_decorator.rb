@@ -16,12 +16,6 @@ module EpisodeDecorator
     title if fallback
   end
 
-  def local_number
-    return number if I18n.locale == :ja
-    return "##{raw_number}" if raw_number.present?
-    number
-  end
-
   def to_values
     model.class::DIFF_FIELDS.each_with_object({}) do |field, hash|
       hash[field] = case field
