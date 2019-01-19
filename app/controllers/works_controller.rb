@@ -103,6 +103,7 @@ class WorksController < ApplicationController
       with_body.
       includes(user: :profile).
       merge(User.published)
+    @work_records = @work_records.where.not(user_id: current_user.mute_users.pluck(:muted_user_id)) if user_signed_in?
     @work_records = localable_resources(@work_records)
     @work_records = @work_records.order(created_at: :desc)
 
