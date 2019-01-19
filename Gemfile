@@ -9,6 +9,7 @@ gem "rails"
 
 gem "aasm"
 gem "action_args"
+gem "active_decorator"
 gem "active_link_to"
 gem "acts_as_list"
 gem "amazon-ecs"
