@@ -61,9 +61,9 @@
                 - casts.first(10).each do |cast|
                   - cache [I18n.locale, cast] do
                     li.list-inline-item
-                      = cast.character.name_link
+                      = ActiveDecorator::Decorator.instance.decorate(cast.character).name_link
                       | :
-                      = cast.local_name_with_old_link
+                      = ActiveDecorator::Decorator.instance.decorate(cast).local_name_with_old_link
 
           - cache [I18n.locale, work.staffs.published] do
             - staffs = @staffs_data.select { |sd| sd[:work_id] == work.id }.first[:staffs].sort_by { |s| s.sort_number }
@@ -74,8 +74,8 @@
                 - staffs.each do |staff|
                   - cache [I18n.locale, staff] do
                     li.list-inline-item
-                      = "#{staff.role_name}: "
-                      = staff.local_name_with_old_link
+                      = "#{ActiveDecorator::Decorator.instance.decorate(staff).role_name}: "
+                      = ActiveDecorator::Decorator.instance.decorate(staff).local_name_with_old_link
 
           - cache [I18n.locale, work.program_details.published] do
             - program_details = @program_details_data.select { |pdd| pdd[:work_id] == work.id }.first[:program_details].sort_by { |s| s.channel_id }
