@@ -9,7 +9,7 @@ module OrganizationDecorator
   end
 
   def grid_description(staff)
-    staff.role_name
+    ActiveDecorator::Decorator.instance.decorate(staff).role_name
   end
 
   def to_values
