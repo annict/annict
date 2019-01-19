@@ -96,7 +96,9 @@ class WorkRecordsController < ApplicationController
 
     if user_signed_in?
       @my_work_records = current_user.work_records.published.where(work: @work).includes(user: :profile).order(created_at: :desc)
-      @work_records = @work_records.where.not(user: current_user)
+      @work_records = @work_records.
+        where.not(user: current_user).
+        where.not(user_id: current_user.mute_users.pluck(:muted_user_id))
     end
 
     @work_records = @work_records.order(created_at: :desc).page(params[:page])
