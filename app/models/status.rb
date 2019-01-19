@@ -52,10 +52,8 @@ class Status < ApplicationRecord
     ShareStatusToTwitterJob.perform_later(user.id, id) if user.setting.share_status_to_twitter? && user.authorized_to?(:twitter, shareable: true)
   end
 
-  # Do not use helper methods via Draper when the method is used in ActiveJob
-  # https://github.com/drapergem/draper/issues/655
   def share_url
-    "#{user.annict_url}/@#{user.username}/#{kind}"
+    "#{user.preferred_annict_url}/@#{user.username}/#{kind}"
   end
 
   def facebook_share_title
