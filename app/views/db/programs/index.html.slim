@@ -37,7 +37,7 @@
             tr
               td = program.id
               td = program.channel.name
-              td = program.episode.decorate.title_with_number
+              td = program.episode.title_with_number
               td = display_time(program.started_at)&.presence || "-"
               td = program.rebroadcast? ? icon("check") : "-"
               td = link_to t("head.title.db.programs.activities"), activities_db_program_path(program)

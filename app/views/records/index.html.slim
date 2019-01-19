@@ -21,12 +21,12 @@
                   = ann_image_tag record.work.work_image, :attachment, size: "265x331", class: "img-fluid img-thumbnail rounded"
                 - if record.work.work_image.present?
                   .u-very-small.text-right
-                    = record.work.work_image.decorate.asin_or_copyright_text
+                    = record.work.work_image.asin_or_copyright_text
               h2.h3.font-weight-bold
-                = link_to record.work.decorate.local_title, work_path(record.work), class: "u-text-body"
+                = link_to record.work.local_title, work_path(record.work), class: "u-text-body"
               - if record.episode_record?
                 .mb-2
-                  = link_to record.episode_record.episode.decorate.title_with_number(fallback: false), work_episode_path(record.work, record.episode_record.episode), class: "u-text-body"
+                  = link_to record.episode_record.episode.title_with_number(fallback: false), work_episode_path(record.work, record.episode_record.episode), class: "u-text-body"
               c-status-selector :work-id="#{record.work.id}"
             .col-9
               - if record.episode_record?

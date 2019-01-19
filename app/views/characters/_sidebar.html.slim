@@ -1,5 +1,5 @@
 h1.h2.font-weight-bold
-  = link_to character.decorate.local_name, character_path(character), class: "u-text-body"
+  = link_to character.local_name, character_path(character), class: "u-text-body"
 
 .mb-3
   span.badge.u-badge-characters
@@ -24,41 +24,41 @@ h1.h2.font-weight-bold
     - if character.name_en.present?
       dt.small = t "activerecord.attributes.character.name_en"
       dd = character.name_en
-    - if character.decorate.local_nickname.present?
+    - if character.local_nickname.present?
       dt.small = t "activerecord.attributes.character.nickname"
-      dd = character.decorate.local_nickname
+      dd = character.local_nickname
     - if character.series.present?
       dt.small = t "activerecord.attributes.character.series"
-      dd = character.series.decorate.local_name
-    - if character.decorate.local_birthday.present?
+      dd = character.series.local_name
+    - if character.local_birthday.present?
       dt.small = t "activerecord.attributes.character.birthday"
-      dd = character.decorate.local_birthday
-    - if character.decorate.local_age.present?
+      dd = character.local_birthday
+    - if character.local_age.present?
       dt.small = t "activerecord.attributes.character.age"
-      dd = character.decorate.local_age
-    - if character.decorate.local_blood_type.present?
+      dd = character.local_age
+    - if character.local_blood_type.present?
       dt.small = t "activerecord.attributes.character.blood_type"
-      dd = character.decorate.local_blood_type
-    - if character.decorate.local_height.present?
+      dd = character.local_blood_type
+    - if character.local_height.present?
       dt.small = t "activerecord.attributes.character.height"
-      dd = character.decorate.local_height
-    - if character.decorate.local_weight.present?
+      dd = character.local_height
+    - if character.local_weight.present?
       dt.small = t "activerecord.attributes.character.weight"
-      dd = character.decorate.local_weight
-    - if character.decorate.local_nationality.present?
+      dd = character.local_weight
+    - if character.local_nationality.present?
       dt.small = t "activerecord.attributes.character.nationality"
-      dd = character.decorate.local_nationality
-    - if character.decorate.local_occupation.present?
+      dd = character.local_nationality
+    - if character.local_occupation.present?
       dt.small = t "activerecord.attributes.character.occupation"
-      dd = character.decorate.local_occupation
-    - if character.decorate.local_description.present?
+      dd = character.local_occupation
+    - if character.local_description.present?
       dt.small = t "activerecord.attributes.character.description"
       dd
-        = character.decorate.local_description
+        = character.local_description
         .small
           span.mr-1
             = "#{t('noun.source')}:".html_safe
-          = character.decorate.local_description_source
+          = character.local_description_source
 
 - if @favorite_characters.present?
   .mb-4
@@ -72,7 +72,7 @@ h1.h2.font-weight-bold
       - @favorite_characters.each do |favorite_character|
         .col.col-auto.pl-0.pr-2.pb-2
           = link_to user_path(favorite_character.user.username) do
-            = ann_image_tag(favorite_character.user.profile, :tombo_avatar, size: "30x30", class: "rounded-circle", alt: favorite_character.user.decorate.name_with_username, title: favorite_character.user.decorate.name_with_username)
+            = ann_image_tag(favorite_character.user.profile, :tombo_avatar, size: "30x30", class: "rounded-circle", alt: favorite_character.user.name_with_username, title: favorite_character.user.name_with_username)
 
     - if @favorite_characters.length > 30
       .text-right

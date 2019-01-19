@@ -1,5 +1,5 @@
 span.c-db-activity__profile-link
-  = activity.user.decorate.name_link
+  = activity.user.name_link
 
 - if activity.action_verb == "create"
   | created
@@ -10,4 +10,4 @@ span.c-db-activity__resource-title
   - if activity.action_table_name == "comments"
     = DbComment.model_name.human.downcase
   - else
-    = activity.trackable.decorate.db_detail_link
+    = activity.trackable.db_detail_link

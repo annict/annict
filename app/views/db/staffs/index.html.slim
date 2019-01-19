@@ -38,7 +38,7 @@
             tr
               td = staff.id
               td
-                = staff.resource.decorate.db_detail_link
+                = staff.resource.db_detail_link
                 br
                 = staff.resource.name_en.presence || "-"
               td
@@ -46,7 +46,7 @@
                 br
                 = staff.name_en.presence || "-"
               td
-                = staff.decorate.role_name
+                = staff.role_name
                 br
                 - if staff.role_value == "other"
                   = staff.role_other_en.presence || "-"

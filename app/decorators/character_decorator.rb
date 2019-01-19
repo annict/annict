@@ -13,12 +13,12 @@ module CharacterDecorator
 
   def name_with_series
     return local_name if series.blank?
-    series_text = I18n.t("noun.series_with_name", series_name: series.decorate.local_name)
+    series_text = I18n.t("noun.series_with_name", series_name: series.local_name)
     "#{local_name} (#{series_text})"
   end
 
   def grid_description(cast)
-    "CV: #{cast.person.decorate.name_link}"
+    "CV: #{cast.person.name_link}"
   end
 
   def to_values

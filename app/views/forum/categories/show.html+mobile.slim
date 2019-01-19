@@ -1,4 +1,4 @@
-- title = "#{t('head.title.forum.categories.show', name: @category.decorate.local_name)} - Forum"
+- title = "#{t('head.title.forum.categories.show', name: @category.local_name)} - Forum"
 - set_meta_tags(title: title, reverse: true, prefix: false)
 
 - breadcrumb :forum_category_detail, @category
@@ -7,7 +7,7 @@
   .row.align-items-center
     .col
       h1.h2.mb-0
-        = @category.decorate.local_name
+        = @category.local_name
     .col.text-right
       = link_to new_forum_post_path(category: @category.slug), class: "btn btn-primary" do
         = icon "plus"

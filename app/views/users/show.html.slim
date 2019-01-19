@@ -105,7 +105,7 @@
                 = @user.profile.description
             - if @user.profile.url.present?
               .url
-                = link_to @user.profile.decorate.shorten_url, @user.profile.url, target: "_blank"
+                = link_to @user.profile.shorten_url, @user.profile.url, target: "_blank"
 
         - if @favorite_characters.exists?
           .mb-4
@@ -125,11 +125,11 @@
                 - list.each do |favorite_character|
                   - character = favorite_character.character
                   .col-6
-                    = link_to character.decorate.local_name, character_path(character)
+                    = link_to character.local_name, character_path(character)
                     - if character.oldest_work.present?
                       = link_to work_path(character.oldest_work) do
                         .text-muted.u-very-small
-                          = character.oldest_work.decorate.local_title
+                          = character.oldest_work.local_title
 
         - if @favorite_casts.exists? || @favorite_staffs.exists?
           .mb-4
@@ -151,7 +151,7 @@
                   - list.each do |favorite_person|
                     - person = favorite_person.person
                     .col-6
-                      = link_to person.decorate.local_name, person_path(person)
+                      = link_to person.local_name, person_path(person)
                       .text-muted.u-very-small
                         = t "noun.n_works_watched", count: favorite_person.watched_works_count
 
@@ -165,7 +165,7 @@
                   - list.each do |favorite_person|
                     - person = favorite_person.person
                     .col-6
-                      = link_to person.decorate.local_name, person_path(person)
+                      = link_to person.local_name, person_path(person)
                       .text-muted.u-very-small
                         = t "noun.n_works_watched", count: favorite_person.watched_works_count
 
@@ -187,7 +187,7 @@
                 - list.each do |favorite_org|
                   - organization = favorite_org.organization
                   .col-6
-                    = link_to organization.decorate.local_name, organization_path(organization)
+                    = link_to organization.local_name, organization_path(organization)
                     .text-muted.u-very-small
                       = t "noun.n_works_watched", count: favorite_org.watched_works_count
 

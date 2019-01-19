@@ -15,9 +15,9 @@ module PersonDecorator
   def grid_description(resource)
     case resource.class.name
     when "Cast"
-      resource.character.decorate.name_link
+      resource.character.name_link
     when "Staff"
-      resource.decorate.role_name
+      resource.role_name
     end
   end
 

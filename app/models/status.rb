@@ -59,11 +59,11 @@ class Status < ApplicationRecord
   end
 
   def facebook_share_title
-    work.decorate.local_title
+    work.local_title
   end
 
   def twitter_share_body
-    work_title = work.decorate.local_title
+    work_title = work.local_title
     share_url = share_url_with_query(:twitter)
 
     base_body = if user.locale == "ja"
@@ -76,7 +76,7 @@ class Status < ApplicationRecord
   end
 
   def facebook_share_body
-    work_title = work.decorate.local_title
+    work_title = work.local_title
 
     base_body = if user.locale == "ja"
       "アニメ「%s」の視聴ステータスを「#{kind_text}」にしました。"

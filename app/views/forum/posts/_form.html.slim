@@ -3,7 +3,7 @@
 
   .form-group
     = f.label :forum_category_id, class: "c-label-required"
-    = f.select :forum_category_id, options_from_collection_for_select(ForumCategory.selectable(current_user).decorate, :id, :local_name, post.forum_category_id), { include_blank: true }, class: "form-control"
+    = f.select :forum_category_id, options_from_collection_for_select(ForumCategory.selectable(current_user), :id, :local_name, post.forum_category_id), { include_blank: true }, class: "form-control"
 
   .form-group
     = f.label :title, class: "c-label-required"

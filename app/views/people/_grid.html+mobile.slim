@@ -12,7 +12,7 @@
               .c-hover-image__over
           .p-1
             .text-truncate.small
-              = link_to work.decorate.local_title.truncate(10), work_path(work)
-            - description = resources.map { |resource| root_resource.decorate.grid_description(resource) }.join(", ")
+              = link_to work.local_title.truncate(10), work_path(work)
+            - description = resources.map { |resource| root_resource.grid_description(resource) }.join(", ")
             .text-truncate.small
               = description.html_safe

@@ -10,7 +10,7 @@
     .row.align-items-center
       .col
         .small
-          = link_to post.forum_category.decorate.local_name, forum_category_path(post.forum_category.slug)
+          = link_to post.forum_category.local_name, forum_category_path(post.forum_category.slug)
       .col.col-auto
         .small.text-muted
           = display_time post.last_commented_at

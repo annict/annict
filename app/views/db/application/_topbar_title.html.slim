@@ -1,7 +1,7 @@
 h1.c-topbar-title.h2
   .c-topbar-title__parent.d-inline-block
     - if parent.is_a?(ApplicationRecord) && parent.root_resource?
-      = link_to parent.decorate.db_header_title.truncate(25), parent.decorate.edit_db_root_resource_path
+      = link_to parent.db_header_title.truncate(25), parent.edit_db_root_resource_path
     - else
       = parent
   - if defined?(child) && child.present?

@@ -45,7 +45,7 @@
                   - if cast.character.series.present?
                     br
                     = link_to edit_db_series_path(cast.character.series), class: "small" do
-                      = t("noun.series_with_name", series_name: cast.character.series.decorate.local_name)
+                      = t("noun.series_with_name", series_name: cast.character.series.local_name)
                 - else
                   | -
               td

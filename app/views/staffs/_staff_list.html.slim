@@ -4,7 +4,7 @@
       - staffs.each do |staff|
         - cache [I18n.locale, staff] do
           .col-4
-            = staff.decorate.local_name_with_old_link
-            .small = staff.decorate.role_name
+            = staff.local_name_with_old_link
+            .small = staff.role_name
 - else
   = render "application/components/empty", text: t("messages._empty.no_staffs")

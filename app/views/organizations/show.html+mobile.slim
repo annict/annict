@@ -1,6 +1,6 @@
-- title = t "head.title.organizations.show", name: @organization.decorate.name_with_other_name
-- description = meta_description(t("head.meta.description.organizations.show", name: @organization.decorate.name_with_other_name))
-- keywords = meta_keywords(@organization.decorate.name_with_other_name)
+- title = t "head.title.organizations.show", name: @organization.name_with_other_name
+- description = meta_description(t("head.meta.description.organizations.show", name: @organization.name_with_other_name))
+- keywords = meta_keywords(@organization.name_with_other_name)
 - set_meta_tags(title: title, description: description, keywords: keywords, og: { description: description }, twitter: { description: description }, reverse: true, prefix: false)
 
 
@@ -29,7 +29,7 @@ h2.h4.font-weight-bold.text-center.mt-3.mb-4
         dd.col-6 = link_with_domain @organization.url
       - if @organization.twitter_username.present?
         dt.col-6.text-right = t "noun.twitter"
-        dd.col-6 = @organization.decorate.twitter_username_link
+        dd.col-6 = @organization.twitter_username_link
       - if @organization.wikipedia_url.present?
         dt.col-6.text-right = t "noun.wikipedia"
         dd.col-6 = link_with_domain @organization.wikipedia_url

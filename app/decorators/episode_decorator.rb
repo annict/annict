@@ -29,7 +29,7 @@ module EpisodeDecorator
         if send(field).present?
           episode = work.episodes.where(id: send(field)).first
           if episode.present?
-            title = episode.decorate.title_with_number
+            title = episode.title_with_number
             path = h.work_episode_path(episode.work, episode)
             h.link_to(title, path, target: "_blank")
           else
@@ -55,7 +55,7 @@ module EpisodeDecorator
   end
 
   def number_with_work_title
-    work_title = work.decorate.local_title
+    work_title = work.local_title
 
     return work_title if work.single?
     return "#{work_title} #{local_title}" if local_number.blank?

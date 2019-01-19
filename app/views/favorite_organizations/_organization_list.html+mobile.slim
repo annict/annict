@@ -3,7 +3,7 @@
     - organization = favorite_organization.organization
     .row.align-items-center.mb-2.pt-2
       .col
-        = link_to organization.decorate.local_name, organization_path(organization)
+        = link_to organization.local_name, organization_path(organization)
         .text-muted.u-very-small
           = t "noun.n_works_watched", count: favorite_organization.watched_works_count
       .col.col-auto

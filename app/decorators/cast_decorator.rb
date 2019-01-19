@@ -7,8 +7,8 @@ module CastDecorator
   end
 
   def local_name_with_old
-    return local_name if local_name == person.decorate.local_name
-    "#{local_name} (#{person.decorate.local_name})"
+    return local_name if local_name == person.local_name
+    "#{local_name} (#{person.local_name})"
   end
 
   def local_name_with_old_link

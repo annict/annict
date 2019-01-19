@@ -1,5 +1,5 @@
-- title = t "head.title.works.show", title: @work.decorate.local_title
-- description = meta_description(t("head.meta.description.works.show", title: @work.decorate.local_title))
+- title = t "head.title.works.show", title: @work.local_title
+- description = meta_description(t("head.meta.description.works.show", title: @work.local_title))
 - keywords = meta_keywords(@work.title)
 - image_url = ann_image_url(@work.work_image, :attachment, size: "640x")
 - set_meta_tags(title: title, description: description, keywords: keywords, og: { description: description, image: image_url }, twitter: { description: description, image: image_url }, reverse: true, prefix: false)
@@ -30,7 +30,7 @@
               - @work.pvs.published.order(:sort_number).each do |pv|
                 .col-4.text-center.mb-3
                   - if pv.youtube?
-                    c-youtube-modal-player thumbnail-url="#{ann_image_url(pv, :thumbnail, size: "300x169")}" video-id="#{pv.youtube_video_id}" video-title="#{pv.decorate.local_title(fallback: false)}" annict-url="#{ENV.fetch('ANNICT_URL')}"
+                    c-youtube-modal-player thumbnail-url="#{ann_image_url(pv, :thumbnail, size: "300x169")}" video-id="#{pv.youtube_video_id}" video-title="#{pv.local_title(fallback: false)}" annict-url="#{ENV.fetch('ANNICT_URL')}"
                   - else
                     = link_to pv.url, target: "_blank" do
                       .c-video-thumbnail
@@ -39,15 +39,15 @@
                       .small
                         = pv.title
 
-        - if @work.decorate.local_synopsis.present?
+        - if @work.local_synopsis.present?
           h2.h4.text-center.my-4.font-weight-bold = t "activerecord.attributes.work.synopsis"
           .c-card.mt-3.p-3
-            = @work.decorate.local_synopsis
+            = @work.local_synopsis
             .text-right.small
               span.mr-1
                 = t("noun.source")
                 | :
-              = @work.decorate.local_synopsis_source
+              = @work.local_synopsis_source
 
         h2.h4.text-center.my-4.font-weight-bold = t "noun.characters"
         .c-card.container.mt-3.py-3
@@ -111,7 +111,7 @@
           .c-card.container.mt-3.py-3
             - @series_list.each do |series|
               h3.text-center.mb-3
-                = t("noun.series_with_name", series_name: series.decorate.local_name)
+                = t("noun.series_with_name", series_name: series.local_name)
               .px-3
                 = render "series/work_list", series: series, work: @work
 

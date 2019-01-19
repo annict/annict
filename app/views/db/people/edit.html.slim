@@ -3,7 +3,7 @@
 .l-topbar.container-fluid.px-3
   .row.flex-items-xs-between
     .col-8
-      = render "db/application/topbar_title", parent: @person.decorate.local_name.truncate(70)
+      = render "db/application/topbar_title", parent: @person.local_name.truncate(70)
     .col.text-right
       = link_to person_url(@person, subdomain: false), class: "btn btn-outline-primary" do
         = icon "external-link-alt"

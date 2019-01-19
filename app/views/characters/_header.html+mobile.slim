@@ -1,7 +1,7 @@
 .container.py-3.mb-3
   .text-center
     h1.h2.font-weight-bold
-      = link_to @character.decorate.local_name, character_path(@character), class: "u-text-body"
+      = link_to @character.local_name, character_path(@character), class: "u-text-body"
     span.badge.u-badge-characters
       = t "noun.character"
 

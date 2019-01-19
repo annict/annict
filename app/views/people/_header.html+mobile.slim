@@ -1,7 +1,7 @@
 .container.py-3.mb-3
   .text-center
     h1.h2.font-weight-bold
-      = link_to person.decorate.local_name, person_path(person), class: "u-text-body"
+      = link_to person.local_name, person_path(person), class: "u-text-body"
     - if person.voice_actor?
       span.badge.u-badge-people
         = t "noun.voice_actor"

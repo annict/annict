@@ -90,11 +90,11 @@ class WorkRecord < ApplicationRecord
   end
 
   def facebook_share_title
-    work.decorate.local_title
+    work.local_title
   end
 
   def twitter_share_body
-    work_title = work.decorate.local_title
+    work_title = work.local_title
     title = self.body.present? ? work_title.truncate(30) : work_title
     comment = self.body.present? ? "#{self.body} / " : ""
     share_url = share_url_with_query(:twitter)

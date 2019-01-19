@@ -14,7 +14,7 @@ json = Rails.cache.fetch(cache_keys) do
   {
     work: {
       id: work.id,
-      title: work.decorate.local_title
+      title: work.local_title
     },
     item: {
       image_url: ann_image_url(work.work_image, :attachment, size: "125x125")

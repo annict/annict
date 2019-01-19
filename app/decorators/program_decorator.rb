@@ -17,7 +17,7 @@ module ProgramDecorator
         Channel.find(send(field)).name
       when :episode_id
         episode = work.episodes.find(send(field))
-        title = episode.decorate.title_with_number
+        title = episode.title_with_number
         path = h.work_episode_path(episode.work, episode)
         h.link_to(title, path, target: "_blank")
       when :work_id

@@ -1,11 +1,11 @@
-- title = t "head.title.db.series.edit", title: @series.decorate.local_name
+- title = t "head.title.db.series.edit", title: @series.local_name
 - set_meta_tags(title: title, reverse: true, prefix: false)
 
 
 .l-topbar.container-fluid.px-3
   .row.flex-items-xs-between
     .col-8
-      = render "db/application/topbar_title", parent: @series.decorate.local_name.truncate(70)
+      = render "db/application/topbar_title", parent: @series.local_name.truncate(70)
 
 = render "db/series/subnav", series: @series
 

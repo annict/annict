@@ -11,7 +11,7 @@
           - else
             = token.description
             .small.text-muted
-              = token.decorate.local_scopes
+              = token.local_scopes
         .col-auto
           = link_to t("verb.edit"), edit_settings_token_path(token), class: "btn btn-sm btn-link"
         .col-auto

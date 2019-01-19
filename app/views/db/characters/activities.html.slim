@@ -1,11 +1,11 @@
-- title = t "head.title.db.characters.activities", name: @character.decorate.local_name
+- title = t "head.title.db.characters.activities", name: @character.local_name
 - set_meta_tags(title: title, reverse: true, prefix: false)
 
 
 .l-topbar.container-fluid.px-3
   .row.flex-items-xs-between
     .col
-      = render "db/application/topbar_title", parent: @character.decorate.db_detail_link, child: t("noun.activities")
+      = render "db/application/topbar_title", parent: @character.db_detail_link, child: t("noun.activities")
 
 = render "db/characters/subnav", character: @character
 

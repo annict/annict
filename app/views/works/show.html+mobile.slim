@@ -1,5 +1,5 @@
-- title = t "head.title.works.show", title: @work.decorate.local_title
-- description = meta_description(t("head.meta.description.works.show", title: @work.decorate.local_title))
+- title = t "head.title.works.show", title: @work.local_title
+- description = meta_description(t("head.meta.description.works.show", title: @work.local_title))
 - keywords = meta_keywords(@work.title)
 - image_url = ann_image_url(@work.work_image, :attachment, size: "640x")
 - set_meta_tags(title: title, description: description, keywords: keywords, og: { description: description, image: image_url }, twitter: { description: description, image: image_url }, reverse: true, prefix: false)
@@ -35,14 +35,14 @@
         = t "activerecord.attributes.work.media"
       dd.col-6
         = @work.media.text
-      - if @work.decorate.release_season.present?
+      - if @work.release_season.present?
         dt.col-6.text-right
           = t "noun.release_season"
         dd.col-6
-          = @work.decorate.release_season_link
+          = @work.release_season_link
       - if @work.started_on.present?
         dt.col-6.text-right
-          = @work.decorate.started_on_label
+          = @work.started_on_label
         dd.col-6
           = display_date(@work.started_on)
       - if @work.official_site_url.present?
@@ -59,12 +59,12 @@
         dt.col-6.text-right
           = t "activerecord.attributes.work.twitter_username"
         dd.col-6
-          = @work.decorate.twitter_username_link
+          = @work.twitter_username_link
       - if @work.twitter_hashtag.present?
         dt.col-6.text-right
           = t "activerecord.attributes.work.twitter_hashtag"
         dd.col-6
-          = @work.decorate.twitter_hashtag_link
+          = @work.twitter_hashtag_link
       - if @work.wikipedia_url.present?
         dt.col-6.text-right
           = t "activerecord.attributes.work.wikipedia_url"
@@ -79,12 +79,12 @@
         dt.col-6.text-right
           = t "activerecord.attributes.work.sc_tid"
         dd.col-6
-          = @work.decorate.syobocal_link(@work.sc_tid)
+          = @work.syobocal_link(@work.sc_tid)
       - if @work.mal_anime_id.present?
         dt.col-6.text-right
           = t "noun.my_anime_list"
         dd.col-6
-          = @work.decorate.mal_anime_link
+          = @work.mal_anime_link
 
 - if @work.pvs.published.present?
   .mb-3
@@ -106,19 +106,19 @@
                   .small
                     = pv.title
 
-- if @work.decorate.local_synopsis.present?
+- if @work.local_synopsis.present?
   .mb-3
     .container
       h2.h4.font-weight-bold.mt-3.mb-4
         = t "activerecord.attributes.work.synopsis"
     .c-card.py-3
       .container
-        = @work.decorate.local_synopsis
+        = @work.local_synopsis
         .text-right.u-very-small
           span.mr-1
             = t("noun.source")
             | :
-          = @work.decorate.local_synopsis_source
+          = @work.local_synopsis_source
 
 - unless current_user&.supporter?
   .my-3.text-center
@@ -184,7 +184,7 @@
     .c-card.p-3
       - @series_list.each do |series|
         h3.mb-3.text-center
-          = t("noun.series_with_name", series_name: series.decorate.local_name)
+          = t("noun.series_with_name", series_name: series.local_name)
         = render "series/work_list", series: series, work: @work
 
 - unless current_user&.supporter?

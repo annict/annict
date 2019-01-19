@@ -1,14 +1,14 @@
 .row
   .col.col-3
     = link_to work_path(top_work) do
-      = ann_image_tag(top_work.work_image, :attachment, size: "250x250", alt: top_work.decorate.local_title, class: "rounded img-fluid")
+      = ann_image_tag(top_work.work_image, :attachment, size: "250x250", alt: top_work.local_title, class: "rounded img-fluid")
     c-status-selector.mt-2 :work-id="#{top_work.id}"
   .col.pl-0
     .mb-1
       span.font-weight-bold.mr-1 = top_work.watchers_count
       span.text-muted.small Watchers
     h3.h2.font-weight-bold.mb-3
-      = link_to top_work.decorate.local_title, work_path(top_work), class: "u-text-body"
+      = link_to top_work.local_title, work_path(top_work), class: "u-text-body"
     - casts = top_work.casts.order(:sort_number).limit(10)
     - casts = casts.select { |c| locale_ja? ? true : c.support_en? }
     - if casts.present?
@@ -18,9 +18,9 @@
         - casts.each do |cast|
           - cache cast do
             li.list-inline-item
-              = cast.character.decorate.name_link
+              = cast.character.name_link
               | :
-              = cast.decorate.local_name_with_old_link
+              = cast.local_name_with_old_link
     - staffs = top_work.staffs.major.order(:sort_number)
     - staffs = staffs.select { |s| locale_ja? ? true : s.support_en? }
     - if staffs.present?
@@ -30,5 +30,5 @@
         - staffs.each do |staff|
           - cache staff do
             li.list-inline-item
-              = "#{staff.decorate.role_name}: "
-              = staff.decorate.local_name_with_old_link
+              = "#{staff.role_name}: "
+              = staff.local_name_with_old_link

@@ -17,7 +17,7 @@ crumb :edit_work_record do |work_record|
 end
 
 crumb :episode_detail do |episode|
-  link episode.decorate.title_with_number(fallback: false), work_episode_path(episode.work, episode)
+  link episode.title_with_number(fallback: false), work_episode_path(episode.work, episode)
   parent :work_detail, episode.work
 end
 
@@ -26,7 +26,7 @@ crumb :episode_record_detail do |episode_record|
   user = episode_record.user
   work = episode_record.work
   episode = episode_record.episode
-  link_title = I18n.t("noun.record_of_episode", work_title: work.decorate.local_title, episode_title_with_number: episode.decorate.title_with_number)
+  link_title = I18n.t("noun.record_of_episode", work_title: work.local_title, episode_title_with_number: episode.title_with_number)
   link link_title, record_path(user.username, episode_record.record)
   parent :user_record_list, user
 end
@@ -42,7 +42,7 @@ crumb :forum_root do
 end
 
 crumb :forum_category_detail do |category|
-  link category.decorate.local_name, forum_category_path(category.slug)
+  link category.local_name, forum_category_path(category.slug)
   parent :forum_root
 end
 
@@ -162,7 +162,7 @@ crumb :userland_edit_project do |project|
 end
 
 crumb :work_detail do |work|
-  link work.decorate.local_title, work_path(work)
+  link work.local_title, work_path(work)
 
   if work.season.present?
     parent :seasonal_works, work.season.slug, work.season.local_name
@@ -184,7 +184,7 @@ end
 crumb :work_record_detail do |work_record|
   user = work_record.user
   work = work_record.work
-  link_title = t("noun.record_of_work", work_title: work.decorate.local_title)
+  link_title = t("noun.record_of_work", work_title: work.local_title)
   link link_title, record_path(user.username, work_record.record)
   parent :user_record_list, user
 end

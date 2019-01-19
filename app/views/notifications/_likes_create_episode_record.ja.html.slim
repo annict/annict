@@ -4,13 +4,13 @@
 - work = episode.work
 
 span.mr-1
-  = action_user.decorate.name_link
+  = action_user.name_link
 | が
 span.mx-1
-  = work.decorate.title_link
+  = work.title_link
 - unless work.single?
   span.mr-1
-    = episode.decorate.number_link
+    = episode.number_link
 | への記録に「いいね！」しました
 
 .small.text-muted.my-2

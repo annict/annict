@@ -3,11 +3,11 @@
     - works.each do |work|
       .col-6
         = link_to work_path(work), class: "d-inline-block mb-1" do
-          = ann_image_tag(work.work_image, :attachment, size: "250x250", alt: work.decorate.local_title, class: "rounded img-fluid")
+          = ann_image_tag(work.work_image, :attachment, size: "250x250", alt: work.local_title, class: "rounded img-fluid")
         .mb-1
           span.mr-1
             = work.watchers_count
           span.text-muted.small Watchers
         h3.h4.mb-1
-          = link_to work.decorate.local_title, work_path(work), class: "text-truncate w-100 d-inline-block"
+          = link_to work.local_title, work_path(work), class: "text-truncate w-100 d-inline-block"
         c-status-selector :work-id="#{work.id}" :is-transparent="true" size="small"

@@ -7,15 +7,15 @@
             .row
               .col-2.pr-0
                 = link_to work_path(work) do
-                  = ann_image_tag work.work_image, :attachment, size: "200x200", alt: work.decorate.local_title, class: "img-fluid img-thumbnail rounded"
+                  = ann_image_tag work.work_image, :attachment, size: "200x200", alt: work.local_title, class: "img-fluid img-thumbnail rounded"
                 - if work.work_image.present?
                   .u-very-small.text-right
-                    = work.work_image.decorate.asin_or_copyright_text
+                    = work.work_image.asin_or_copyright_text
               .col
                 .mb-1.u-lh-0
-                  = work.decorate.media_label
+                  = work.media_label
                 h3.h3.font-weight-bold.mb-1
-                  = link_to work.decorate.local_title, work_path(work), class: "u-text-body"
+                  = link_to work.local_title, work_path(work), class: "u-text-body"
                 .mb-2
                   span.font-weight-bold.mr-1 = work.watchers_count
                   span.text-muted.small Watchers

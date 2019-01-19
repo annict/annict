@@ -32,7 +32,7 @@ module Types
       end
 
       def title
-        object.title.presence || I18n.t("noun.record_of_work", work_title: object.work.decorate.local_title)
+        object.title.presence || I18n.t("noun.record_of_work", work_title: object.work.local_title)
       end
     end
   end

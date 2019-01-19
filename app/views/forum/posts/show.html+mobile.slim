@@ -5,7 +5,7 @@
 
 .container.my-3
   .mb-1
-    = link_to @post.forum_category.decorate.local_name,  forum_category_path(@post.forum_category.slug), class: "badge badge-secondary"
+    = link_to @post.forum_category.local_name,  forum_category_path(@post.forum_category.slug), class: "badge badge-secondary"
   h1.h2.mb-0
     = @post.title
 
@@ -16,7 +16,7 @@
         = ann_image_tag @post.user.profile, :tombo_avatar, size: "45x45", class: "rounded-circle"
     .col.pl-2
       = link_to @post.user.profile.name, user_path(@post.user.username), class: "mr-2"
-      = @post.user.decorate.role_badge
+      = @post.user.role_badge
       .mt-1
         = link_to forum_post_path(@post), class: "small text-muted", title: display_time(@post.created_at) do
           = display_time(@post.created_at)
@@ -36,7 +36,7 @@
                 = ann_image_tag comment.user.profile, :tombo_avatar, size: "45x45", class: "rounded-circle"
             .col.pl-2
               = link_to comment.user.profile.name, user_path(comment.user.username), class: "mr-2"
-              = comment.user.decorate.role_badge
+              = comment.user.role_badge
               .mt-1
                 span.small.text-muted title="#{display_time(comment.created_at)}"
                   = display_time(comment.created_at)
