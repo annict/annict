@@ -44,12 +44,6 @@ module WorkDecorator
     local_title
   end
 
-  def local_title
-    return title if I18n.locale == :ja
-    return title_en if title_en.present?
-    title
-  end
-
   def local_synopsis(raw: false)
     text = case I18n.locale
     when :ja then synopsis

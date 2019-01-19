@@ -470,4 +470,10 @@ class Work < ApplicationRecord
     series_works = SeriesWork.where(id: series_work_ids)
     Work.where(id: series_works.pluck(:work_id) - [id])
   end
+
+  def local_title
+    return title if I18n.locale == :ja
+    return title_en if title_en.present?
+    title
+  end
 end
