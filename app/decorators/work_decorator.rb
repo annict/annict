@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class WorkDecorator < ApplicationDecorator
+module WorkDecorator
   include RootResourceDecoratorCommon
 
   def title_link

@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class PvDecorator < ApplicationDecorator
+module PvDecorator
   def db_detail_link(options = {})
     name = options.delete(:name).presence || id
     h.link_to(name, h.edit_db_pv_path(self), options)

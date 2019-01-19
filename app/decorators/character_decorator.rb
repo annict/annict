@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class CharacterDecorator < ApplicationDecorator
+module CharacterDecorator
   include RootResourceDecoratorCommon
 
   def name_link

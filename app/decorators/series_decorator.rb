@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class SeriesDecorator < ApplicationDecorator
+module SeriesDecorator
   include RootResourceDecoratorCommon
 
   def local_name

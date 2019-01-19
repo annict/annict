@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class PersonDecorator < ApplicationDecorator
+module PersonDecorator
   include PersonOrgDecoratorCommon
 
   def name_link

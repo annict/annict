@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class CastDecorator < ApplicationDecorator
+module CastDecorator
   def db_detail_link(options = {})
     name = options.delete(:name).presence || character&.name.presence || id
     h.link_to name, h.edit_db_cast_path(self), options

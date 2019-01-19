@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class SeriesWorkDecorator < ApplicationDecorator
+module SeriesWorkDecorator
   def db_detail_link(options = {})
     name = options.delete(:name).presence || id
     h.link_to(name, h.edit_db_series_work_path(self), options)

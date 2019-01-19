@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class EpisodeDecorator < ApplicationDecorator
+module EpisodeDecorator
   def number_link
     h.link_to local_number, h.work_episode_path(work, self)
   end

@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class UserDecorator < ApplicationDecorator
+module UserDecorator
   def name_link(options = {})
     h.link_to(profile.name, h.annict_url(:user_url, username), options)
   end

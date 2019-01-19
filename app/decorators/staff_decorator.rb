@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class StaffDecorator < ApplicationDecorator
+module StaffDecorator
   def db_detail_link(options = {})
     name = options.delete(:name).presence || resource&.name.presence || id
     path = h.edit_db_staff_path(self)

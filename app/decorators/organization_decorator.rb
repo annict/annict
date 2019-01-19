@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class OrganizationDecorator < ApplicationDecorator
+module OrganizationDecorator
   include PersonOrgDecoratorCommon
 
   def db_detail_link(options = {})

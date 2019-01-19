@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class ProgramDecorator < ApplicationDecorator
+module ProgramDecorator
   def db_detail_link(options = {})
     name = options.delete(:name).presence || id
     h.link_to(name, h.edit_db_program_path(self), options)
