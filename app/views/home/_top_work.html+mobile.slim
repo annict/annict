@@ -17,9 +17,9 @@ h3.h2.font-weight-bold.mb-2
     - casts.each do |cast|
       - cache cast do
         li.list-inline-item
-          = cast.character.name_link
+          = cast.character.decorate.name_link
           | :
-          = cast.local_name_with_old_link
+          = cast.decorate.local_name_with_old_link
 - staffs = top_work.staffs.major.order(:sort_number)
 - staffs = staffs.select { |s| locale_ja? ? true : s.support_en? }
 - if staffs.present?
@@ -29,5 +29,5 @@ h3.h2.font-weight-bold.mb-2
     - staffs.each do |staff|
       - cache staff do
         li.list-inline-item
-          = "#{staff.role_name}: "
-          = staff.local_name_with_old_link
+          = "#{staff.decorate.role_name}: "
+          = staff.decorate.local_name_with_old_link
