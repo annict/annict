@@ -1,6 +1,6 @@
-- name = t "head.title.characters.show", name: @character.decorate.name_with_series
+- name = t "head.title.characters.show", name: @character.name_with_series
 - description = meta_description t("head.meta.description.characters.show", name: name)
-- keywords = meta_keywords @character.decorate.local_name
+- keywords = meta_keywords @character.local_name
 - image_url = ann_image_url(@character.character_images.first, :attachment, size: "640x")
 - set_meta_tags(title: name, description: description, keywords: keywords, og: { description: description, image: image_url }, twitter: { description: description, image: image_url }, reverse: true, prefix: false)
 
@@ -40,22 +40,22 @@ h2.h4.font-weight-bold.text-center.mt-3.mb-4
         dt.col-6.text-right
           = t "activerecord.attributes.character.series"
         dd.col-6
-          = @character.series.decorate.local_name
+          = @character.series.local_name
       - if @character.birthday.present?
         dt.col-6.text-right
           = t "activerecord.attributes.character.birthday"
         dd.col-6
-          = @character.decorate.local_birthday
+          = @character.local_birthday
       - if @character.age.present?
         dt.col-6.text-right
           = t "activerecord.attributes.character.age"
         dd.col-6
           = @character.age
-      - if @character.decorate.local_blood_type.present?
+      - if @character.local_blood_type.present?
         dt.col-6.text-right
           = t "activerecord.attributes.character.blood_type"
         dd.col-6
-          = @character.decorate.local_blood_type
+          = @character.local_blood_type
       - if @character.height.present?
         dt.col-6.text-right
           = t "activerecord.attributes.character.height"

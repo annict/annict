@@ -2,6 +2,6 @@
   .c-card.row.py-3.mb-3
     .col.col-auto.pr-0
       = link_to character_path(character), class: "d-inline-block" do
-        = ann_image_tag(character.character_image, :attachment, size: "150x150", alt: character.decorate.local_name, class: "rounded img-thumbnail")
+        = ann_image_tag(character.character_image, :attachment, size: "150x150", alt: character.local_name, class: "rounded img-thumbnail")
     .col
-      = link_to character.decorate.local_name, character_path(character)
+      = link_to character.local_name, character_path(character)

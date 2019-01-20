@@ -9,6 +9,6 @@ table.table.mb-0
     - posts.each do |post|
       tr
         td = link_to post.title, forum_post_path(post)
-        td = link_to post.forum_category.decorate.local_name, forum_category_path(post.forum_category.slug)
+        td = link_to post.forum_category.local_name, forum_category_path(post.forum_category.slug)
         td = post.forum_comments_count
         td = display_time(post.last_commented_at)

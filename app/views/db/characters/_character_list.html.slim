@@ -23,7 +23,7 @@
             = character.name_kana.presence || "-"
             br
             = character.name_en.presence || "-"
-          td = character.series&.decorate&.local_name.presence || "-"
+          td = character.series&.local_name.presence || "-"
           td
             .badge class="#{character.published? ? 'badge-success' : 'badge-warning'}"
               = t("resources.character.aasm_state.#{character.aasm_state}")

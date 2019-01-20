@@ -3,10 +3,10 @@
     = ann_image_tag work.work_image, :attachment, size: "280x373", class: "img-fluid img-thumbnail rounded"
   - if work.work_image.present?
     .u-very-small.text-right
-      = work.work_image.decorate.asin_or_copyright_text
+      = work.work_image.asin_or_copyright_text
 
 h1.h2.font-weight-bold.mb-3
-  = link_to work.decorate.local_title, work_path(work), class: "u-text-body"
+  = link_to work.local_title, work_path(work), class: "u-text-body"
 
 .row.mb-3
   .col.text-center
@@ -48,9 +48,9 @@ dl
   dd = work.media.text
   - if work.season.present?
     dt.small = t "noun.release_season"
-    dd = work.decorate.release_season_link
+    dd = work.release_season_link
   - if work.started_on.present?
-    dt.small = work.decorate.started_on_label
+    dt.small = work.started_on_label
     dd = display_date(work.started_on)
   - if work.official_site_url.present?
     dt.small = t "activerecord.attributes.work.official_site_url"
@@ -60,10 +60,10 @@ dl
     dd = link_with_domain work.official_site_url_en
   - if work.twitter_username.present?
     dt.small = t "activerecord.attributes.work.twitter_username"
-    dd = work.decorate.twitter_username_link
+    dd = work.twitter_username_link
   - if work.twitter_hashtag.present?
     dt.small = t "activerecord.attributes.work.twitter_hashtag"
-    dd = work.decorate.twitter_hashtag_link
+    dd = work.twitter_hashtag_link
   - if work.wikipedia_url.present?
     dt.small = t "activerecord.attributes.work.wikipedia_url"
     dd = link_with_domain work.wikipedia_url
@@ -72,10 +72,10 @@ dl
     dd = link_with_domain work.wikipedia_url_en
   - if locale_ja? && work.sc_tid.present?
     dt.small = t "activerecord.attributes.work.sc_tid"
-    dd = work.decorate.syobocal_link(work.sc_tid)
+    dd = work.syobocal_link(work.sc_tid)
   - if work.mal_anime_id.present?
     dt.small = t "noun.my_anime_list"
-    dd = work.decorate.mal_anime_link
+    dd = work.mal_anime_link
 
 - program_details = work.program_details.includes(:channel).published.in_vod
 - program_details = program_details.select { |pd| locale_ja? ? true : pd.support_en? }
@@ -91,7 +91,7 @@ h2.h4.font-weight-bold.mt-4.mb-3
   = icon "share", class: "mr-1"
   = t "noun.share"
 
-c-share-button-twitter.mr-2 text="#{work.decorate.local_title}" url="#{local_url}#{work_path(work)}" hashtags="#{work.twitter_hashtag.presence || ''}"
+c-share-button-twitter.mr-2 text="#{work.local_title}" url="#{local_url}#{work_path(work)}" hashtags="#{work.twitter_hashtag.presence || ''}"
 c-share-button-facebook url="#{local_url}#{work_path(work)}"
 
 - if user_signed_in? && current_user.committer?

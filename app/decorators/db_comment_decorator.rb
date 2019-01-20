@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class DbCommentDecorator < ApplicationDecorator
+module DbCommentDecorator
   def detail_url
     case model.class.name
     when "DbComment"

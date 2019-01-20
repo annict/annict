@@ -27,6 +27,7 @@ GEM
       erubi (~> 1.4)
       rails-dom-testing (~> 2.0)
       rails-html-sanitizer (~> 1.0, >= 1.0.3)
+    active_decorator (1.1.1)
     active_link_to (1.0.5)
       actionpack
       addressable
@@ -36,10 +37,6 @@ GEM
       globalid (>= 0.3.6)
     activemodel (5.2.2)
       activesupport (= 5.2.2)
-    activemodel-serializers-xml (1.0.2)
-      activemodel (> 5.x)
-      activesupport (> 5.x)
-      builder (~> 3.1)
     activerecord (5.2.2)
       activemodel (= 5.2.2)
       activesupport (= 5.2.2)
@@ -171,12 +168,6 @@ GEM
     dotenv-rails (2.6.0)
       dotenv (= 2.6.0)
       railties (>= 3.2, < 6.0)
-    draper (3.0.1)
-      actionpack (~> 5.0)
-      activemodel (~> 5.0)
-      activemodel-serializers-xml (~> 1.0)
-      activesupport (~> 5.0)
-      request_store (~> 1.0)
     email_validator (1.6.0)
       activemodel
     enumerize (2.2.2)
@@ -610,6 +601,7 @@ PLATFORMS
 DEPENDENCIES
   aasm
   action_args
+  active_decorator
   active_link_to
   active_record_query_trace
   acts_as_list
@@ -634,7 +626,6 @@ DEPENDENCIES
   discord-notifier
   doorkeeper
   dotenv-rails
-  draper
   email_validator
   enumerize
   factory_bot_rails

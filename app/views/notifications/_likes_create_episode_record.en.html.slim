@@ -4,13 +4,13 @@
 - work = episode.work
 
 span.mr-1
-  = action_user.decorate.name_link
+  = action_user.name_link
 | liked your episode_record on
 span.ml-1
-  = work.decorate.title_link
+  = work.title_link
 - unless work.single?
   span.ml-1
-    = episode.decorate.number_link
+    = episode.number_link
 
 .small.text-muted.my-2
   = link_to local_time_ago_in_words(episode_record.created_at), record_path(current_user.username, episode_record.record)

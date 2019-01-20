@@ -152,21 +152,19 @@ class EpisodeRecord < ApplicationRecord
     ShareEpisodeRecordToTwitterJob.perform_later(user_id, id) if shared_twitter?
   end
 
-  # Do not use helper methods via Draper when the method is used in ActiveJob
-  # https://github.com/drapergem/draper/issues/655
   def share_url
-    "#{user.annict_url}/@#{user.username}/records/#{record.id}"
+    "#{user.preferred_annict_url}/@#{user.username}/records/#{record.id}"
   end
 
   def facebook_share_title
-    "#{work.title} #{episode.decorate.title_with_number}"
+    "#{work.title} #{episode.title_with_number}"
   end
 
   def twitter_share_body
-    work_title = work.decorate.local_title
+    work_title = work.local_title
     title = self.comment.present? ? work_title.truncate(30) : work_title
     comment = self.comment.present? ? "#{self.comment} / " : ""
-    episode_number = episode.decorate.local_number
+    episode_number = episode.local_number
     share_url = share_url_with_query(:twitter)
     share_hashtag = work.hashtag_with_hash
 

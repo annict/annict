@@ -15,10 +15,10 @@ DTEND:<%= (p.started_at + 30.minutes).strftime("%Y%m%d\T%H%M%S\Z") %>
 DTSTAMP:<%= Time.now.utc.strftime("%Y%m%d\T%H%M%S\Z") %>
 UID:<%= work_episode_url(p.work, p.episode) %>
 CREATED:<%= p.created_at.strftime("%Y%m%d\T%H%M%S\Z") %>
-DESCRIPTION:<%= p.work.decorate.local_title %> <%= p.episode.decorate.title_with_number %> <%= work_episode_url(p.work, p.episode) %>
+DESCRIPTION:<%= p.work.local_title %> <%= p.episode.title_with_number %> <%= work_episode_url(p.work, p.episode) %>
 LAST-MODIFIED:<%= p.updated_at.strftime("%Y%m%d\T%H%M%S\Z") %>
 SEQUENCE:0
-SUMMARY:<%= p.work.decorate.local_title %> <%= p.episode.decorate.title_with_number %> (<%= p.channel.name %>)
+SUMMARY:<%= p.work.local_title %> <%= p.episode.title_with_number %> (<%= p.channel.name %>)
 END:VEVENT
 <% end %>
 <% @works.each do |w| %>
@@ -28,10 +28,10 @@ DTEND;VALUE=DATE:<%= (w.started_on + 1.day).strftime("%Y%m%d") %>
 DTSTAMP:<%= Time.now.utc.strftime("%Y%m%d\T%H%M%S\Z") %>
 UID:<%= work_url(w) %>
 CREATED:<%= w.created_at.strftime("%Y%m%d\T%H%M%S\Z") %>
-DESCRIPTION:<%= w.decorate.local_title %> <%= work_url(w) %>
+DESCRIPTION:<%= w.local_title %> <%= work_url(w) %>
 LAST-MODIFIED:<%= w.updated_at.strftime("%Y%m%d\T%H%M%S\Z") %>
 SEQUENCE:0
-SUMMARY:<%= w.decorate.local_title %>
+SUMMARY:<%= w.local_title %>
 END:VEVENT
 <% end %>
 END:VCALENDAR

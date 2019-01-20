@@ -5,14 +5,14 @@ tr
   - if episode.single?
     td
       = link_to work_episode_path(work, episode) do
-        = episode.decorate.local_title
+        = episode.local_title
       = render "episodes/episode_statistics", episode: episode
   - else
     td
       = link_to work_episode_path(work, episode) do
-        = episode.decorate.local_number
+        = episode.local_number
     td
-      - episode_title = episode.decorate.local_title(fallback: false)
+      - episode_title = episode.local_title(fallback: false)
       - if episode_title.present?
         = link_to work_episode_path(work, episode) do
           = episode_title

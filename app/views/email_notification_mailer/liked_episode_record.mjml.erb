@@ -8,8 +8,8 @@
           <mj-image src="<%= ann_email_image_url(@work.work_image, :attachment, size: "140x140") %>" align="center" href="<%= work_url(@work) %>"></mj-image>
         </mj-column>
         <mj-column width="80%">
-          <mj-text font-size="24px" font-weight="600" padding-bottom="7px"><%= "#{@work.decorate.local_title}" %></mj-text>
-          <mj-text padding-top="0px"><%= @episode.decorate.title_with_number %></mj-text>
+          <mj-text font-size="24px" font-weight="600" padding-bottom="7px"><%= "#{@work.local_title}" %></mj-text>
+          <mj-text padding-top="0px"><%= @episode.title_with_number %></mj-text>
         </mj-column>
       </mj-section>
 

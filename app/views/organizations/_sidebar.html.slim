@@ -1,5 +1,5 @@
 h1.h2.font-weight-bold
-  = link_to organization.decorate.local_name, organization_path(organization), class: "u-text-body"
+  = link_to organization.local_name, organization_path(organization), class: "u-text-body"
 
 .mb-3
   span.badge.u-badge-organizations
@@ -29,7 +29,7 @@ h1.h2.font-weight-bold
       dd = link_with_domain organization.url
     - if organization.twitter_username.present?
       dt.small = t "noun.twitter"
-      dd = organization.decorate.twitter_username_link
+      dd = organization.twitter_username_link
     - if organization.wikipedia_url.present?
       dt.small = t "noun.wikipedia"
       dd = link_with_domain organization.wikipedia_url
@@ -46,7 +46,7 @@ h1.h2.font-weight-bold
       - @favorite_orgs.each do |favorite_org|
         .col.col-auto.pl-0.pr-2.pb-2
           = link_to user_path(favorite_org.user.username) do
-            = ann_image_tag(favorite_org.user.profile, :tombo_avatar, size: "30x30", class: "rounded-circle", alt: favorite_org.user.decorate.name_with_username, title: favorite_org.user.decorate.name_with_username)
+            = ann_image_tag(favorite_org.user.profile, :tombo_avatar, size: "30x30", class: "rounded-circle", alt: favorite_org.user.name_with_username, title: favorite_org.user.name_with_username)
 
     - if @favorite_orgs.length > 30
       .text-right

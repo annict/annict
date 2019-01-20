@@ -1,10 +1,10 @@
 span.c-db-activity__profile-link
-  = activity.user.decorate.name_link
+  = activity.user.name_link
 
 | が
 
 span.c-db-activity__resource-title
-  = activity.trackable.decorate.db_detail_link
+  = activity.trackable.db_detail_link
 
 - resource = activity.action.split(".")[0]
 - action = activity.action.split(".")[1]

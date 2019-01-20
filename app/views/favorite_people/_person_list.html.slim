@@ -6,7 +6,7 @@
       - person = favorite_person.person
       .row.align-items-center.mb-2.pt-2
         .col
-          = link_to person.decorate.local_name, person_path(person)
+          = link_to person.local_name, person_path(person)
           .text-muted.u-very-small
             = t "noun.n_works_watched", count: favorite_person.watched_works_count
         .col.col-auto
@@ -19,7 +19,7 @@
         - person = favorite_person.person
         .row.align-items-center.mb-2.pt-2
           .col
-            = link_to person.decorate.local_name, person_path(person)
+            = link_to person.local_name, person_path(person)
             .text-muted.u-very-small
               = t "noun.n_works_watched", count: favorite_person.watched_works_count
           .col.col-auto

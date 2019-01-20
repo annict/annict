@@ -1,6 +1,6 @@
 .container.mb-3
   h2.h4.font-weight-bold.text-center
-    = link_to episode.decorate.title_with_number(fallback: false), work_episode_path(work, episode), class: "u-text-body"
+    = link_to episode.title_with_number(fallback: false), work_episode_path(work, episode), class: "u-text-body"
   - if user_signed_in? && current_user.tracked?(episode)
     .text-center.small
       = icon "check-circle", class: "mr-1 u-text-green"
@@ -35,9 +35,9 @@
         - if episode.prev_episode.present?
           = link_to work_episode_path(work, episode.prev_episode) do
             = icon "angle-left", class: "mr-1"
-            = episode.prev_episode.decorate.local_number
+            = episode.prev_episode.local_number
       .col.text-right
         - if episode.next_episode.present?
           = link_to work_episode_path(work, episode.next_episode) do
-            = episode.next_episode.decorate.local_number
+            = episode.next_episode.local_number
             = icon "angle-right", class: "ml-1"

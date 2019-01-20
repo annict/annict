@@ -22,9 +22,9 @@
           = ann_image_tag work.work_image, :attachment, size: "300x300", class: "img-fluid img-thumbnail rounded"
         - if work.work_image.present?
           .u-very-small.text-muted
-            = work.work_image.decorate.asin_or_copyright_text
+            = work.work_image.asin_or_copyright_text
         h3.h3.font-weight-bold.my-2
-          = link_to work.decorate.local_title, work_path(work)
+          = link_to work.local_title, work_path(work)
         - if !user_signed_in? || current_user.id == @user.id
           .mt-2
             = render "application/components/work_action", work_id: work.id

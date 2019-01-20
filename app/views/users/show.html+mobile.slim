@@ -25,7 +25,7 @@
           = @user.profile.description
       - if @user.profile.url.present?
         .small
-          = link_to @user.profile.decorate.shorten_url, @user.profile.url, target: "_blank"
+          = link_to @user.profile.shorten_url, @user.profile.url, target: "_blank"
 
     .p-users-show__follow-button.text-center.mt-2
       - if user_signed_in? && current_user != @user

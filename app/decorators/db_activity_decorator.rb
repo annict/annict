@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class DbActivityDecorator < ApplicationDecorator
+module DbActivityDecorator
   def resource_diff_table
     return if action_table_name == "comments"
     model = trackable.class
@@ -21,6 +21,6 @@ class DbActivityDecorator < ApplicationDecorator
       origin_values: origin_values
     }
 
-    h.render("db/activities/resource_diff_table", data)
+    render("db/activities/resource_diff_table", data)
   end
 end

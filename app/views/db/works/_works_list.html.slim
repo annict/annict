@@ -21,7 +21,7 @@
         tr
           td = link_to work.id, annict_url(:work_url, work), target: "_blank"
           td
-            = work.decorate.media_label
+            = work.media_label
             br
             = work.title
             br
@@ -31,11 +31,11 @@
           - if locale_ja?
             td
               - if work.sc_tid.present?
-                = work.decorate.syobocal_link
+                = work.syobocal_link
               - else
                 | -
           td = work.watchers_count
-          td = work.decorate.release_season.presence || "-"
+          td = work.release_season.presence || "-"
           td = ann_image_tag(work.work_image, :attachment, size: "70x70", class: "rounded img-thumbnail")
           td
             .badge class="#{work.published? ? 'badge-success' : 'badge-warning'}"

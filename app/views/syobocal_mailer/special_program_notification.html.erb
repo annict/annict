@@ -3,7 +3,7 @@
 sub_title: <%= @sub_title %><br>
 prog_comment: <%= @prog_comment %><br>
 <br>
-<%= @work.decorate.syobocal_link(@work.syobocal_url) %>
+<%= @work.syobocal_link(@work.syobocal_url) %>
 <%= link_to db_work_episodes_url(@work, host: ENV.fetch("ANNICT_JP_URL")), db_work_episodes_url(@work, host: ENV.fetch("ANNICT_JP_URL")) %><br>
 <br>
 <br>

@@ -3,9 +3,9 @@
     - works.each do |work|
       .col-2
         = link_to work_path(work), class: "p-top-other-works__image d-inline-block" do
-          = ann_image_tag(work.work_image, :attachment, size: "250x250", alt: work.decorate.local_title, class: "rounded img-fluid img-thumbnail")
+          = ann_image_tag(work.work_image, :attachment, size: "250x250", alt: work.local_title, class: "rounded img-fluid img-thumbnail")
         .my-1
           span.mr-1 = work.watchers_count
           span.text-muted.small Watchers
-        h3.h4.mb-1 = link_to work.decorate.local_title, work_path(work), class: "text-truncate w-100 d-inline-block"
+        h3.h4.mb-1 = link_to work.local_title, work_path(work), class: "text-truncate w-100 d-inline-block"
         c-status-selector :work-id="#{work.id}" :is-transparent="true"

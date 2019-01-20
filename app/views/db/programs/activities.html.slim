@@ -5,7 +5,7 @@
 .l-topbar.container-fluid.px-3
   .row.flex-items-xs-between
     .col
-      = render "db/application/topbar_title", parent: @program.decorate.db_detail_link, child: title
+      = render "db/application/topbar_title", parent: @program.db_detail_link, child: title
 
 = render "db/works/subnav", work: @program.work
 

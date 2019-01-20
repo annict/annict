@@ -14,16 +14,16 @@ json = Rails.cache.fetch(cache_keys) do
   {
     work: {
       id: episode.work.id,
-      title: episode.work.decorate.local_title,
-      is_single: episode.decorate.local_title == episode.work.decorate.local_title
+      title: episode.work.local_title,
+      is_single: episode.local_title == episode.work.local_title
     },
     item: {
       image_url: ann_image_url(episode.work.work_image, :attachment, size: "125x125")
     },
     episode: {
       id: episode.id,
-      number: episode.decorate.local_number,
-      title: episode.decorate.local_title(fallback: false)
+      number: episode.local_number,
+      title: episode.local_title(fallback: false)
     },
     episode_record: {
       id: episode_record.id,

@@ -2,4 +2,4 @@
   .col
     ul.list-unstyled.mb-0
       - people.each do |person|
-        li = link_to person.decorate.local_name, person_path(person)
+        li = link_to person.local_name, person_path(person)

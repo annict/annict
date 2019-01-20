@@ -1,7 +1,7 @@
 .container.py-3.mb-3
   .text-center
     h1.h2.font-weight-bold
-      = link_to @organization.decorate.local_name, organization_path(@organization), class: "u-text-body"
+      = link_to @organization.local_name, organization_path(@organization), class: "u-text-body"
     span.badge.u-badge-organizations
       = t "noun.organization"
 

@@ -20,7 +20,7 @@ h2.h4.font-weight-bold.text-center.mt-3.mb-4
   .container
     dl.row.mb-0
       dt.col-6.text-right = t "noun.category"
-      dd.col-6 = @project.userland_category.decorate.local_name
+      dd.col-6 = @project.userland_category.local_name
       dt.col-6.text-right = t "activerecord.attributes.userland_project.url"
       dd.col-6 = link_with_domain @project.url
 

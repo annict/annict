@@ -7,12 +7,12 @@
 - work_title = link_to work.title, work_path(work), class: "work-title"
 
 span.mr-1
-  = action_user.decorate.name_link
+  = action_user.name_link
 | が
 span.ml-1
-  = work.decorate.title_link
+  = work.title_link
 span.mx-1
-  = "#{records.first.episode.decorate.local_number} ~ #{records.last.episode.decorate.local_number}"
+  = "#{records.first.episode.local_number} ~ #{records.last.episode.local_number}"
 | の一括記録に「いいね！」しました
 
 .small.text-muted

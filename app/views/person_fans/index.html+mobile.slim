@@ -1,6 +1,6 @@
-- title = t "head.title.person_fans.index", person_name: @person.decorate.name_with_other_name
-- description = meta_description t("head.meta.description.person_fans.index", person_name: @person.decorate.name_with_other_name)
-- keywords = meta_keywords @person.decorate.local_name
+- title = t "head.title.person_fans.index", person_name: @person.name_with_other_name
+- description = meta_description t("head.meta.description.person_fans.index", person_name: @person.name_with_other_name)
+- keywords = meta_keywords @person.local_name
 - set_meta_tags(title: title, description: description, keywords: keywords, og: { description: description }, twitter: { description: description }, reverse: true, prefix: false)
 
 

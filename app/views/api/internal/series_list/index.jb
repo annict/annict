@@ -3,7 +3,7 @@
 resources = @series_list.map do |series|
   {
     id: series.id,
-    text: series.decorate.local_name
+    text: series.local_name
   }
 end
 

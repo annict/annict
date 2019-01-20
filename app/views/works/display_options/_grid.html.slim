@@ -3,12 +3,12 @@
     - works.each do |work|
       .col-2.p-0.pr-3.mb-3.u-lh-0
         .u-lh-0
-          = link_to work_path(work), title: work.decorate.local_title do
+          = link_to work_path(work), title: work.local_title do
             .c-hover-image
               .c-hover-image__image
                 = ann_image_tag work.work_image, :attachment, size: "280x373", class: "img-fluid rounded"
               .c-hover-image__over.p-1.u-lh-3.w-100
                 .c-grid-work__work-title.small.font-weight-bold
-                  = work.decorate.local_title
+                  = work.local_title
         - if page_category.in?(%w(works_season works_popular works_newest))
           c-status-selector :work-id="#{work.id}"

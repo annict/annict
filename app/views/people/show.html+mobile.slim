@@ -1,6 +1,6 @@
-- name = t "head.title.people.show", name: @person.decorate.name_with_other_name
+- name = t "head.title.people.show", name: @person.name_with_other_name
 - description = meta_description t("head.meta.description.people.show", name: name)
-- keywords = meta_keywords @person.decorate.local_name
+- keywords = meta_keywords @person.local_name
 - set_meta_tags(title: name, description: description, keywords: keywords, og: { description: description }, twitter: { description: description }, reverse: true, prefix: false)
 
 
@@ -44,7 +44,7 @@ h2.h4.font-weight-bold.text-center.mt-3.mb-4
         dd.col-6 = link_with_domain @person.url
       - if @person.twitter_username.present?
         dt.col-6.text-right = t "activerecord.attributes.person.twitter"
-        dd.col-6 = @person.decorate.twitter_username_link
+        dd.col-6 = @person.twitter_username_link
       - if @person.wikipedia_url.present?
         dt.col-6.text-right = t "activerecord.attributes.person.wikipedia"
         dd.col-6 = link_with_domain @person.wikipedia_url

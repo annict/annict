@@ -26,7 +26,7 @@ module PersonOrgDecoratorCommon
 
     def twitter_username_link
       url = "https://twitter.com/#{twitter_username}"
-      h.link_to "@#{twitter_username}", url, target: "_blank"
+      link_to "@#{twitter_username}", url, target: "_blank"
     end
   end
 end

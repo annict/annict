@@ -44,7 +44,7 @@
               .col-sm-9
                 = f.select :series_id, nil, { include_blank: true }, { class: "form-control", "v-resource-select": "{ model: 'Series' }" }
                   - if f.object.series&.id.present?
-                    option value="#{f.object.series.id}" selected="" = f.object.series.decorate.local_name
+                    option value="#{f.object.series.id}" selected="" = f.object.series.local_name
                   - else
                     option value="" selected=""
             .form-group.row

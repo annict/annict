@@ -4,9 +4,9 @@
       - casts.each do |cast|
         - cache [I18n.locale, cast] do
           .col-4
-            = link_to cast.character.decorate.local_name, character_path(cast.character)
+            = link_to cast.character.local_name, character_path(cast.character)
             .small
               span CV: 
-              = link_to cast.decorate.local_name_with_old, person_path(cast.person)
+              = link_to cast.local_name_with_old, person_path(cast.person)
 - else
   = render "application/components/empty", text: t("messages._empty.no_characters")

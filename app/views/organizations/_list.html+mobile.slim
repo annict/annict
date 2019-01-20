@@ -4,4 +4,4 @@
       .col
         ul.list-unstyled.mb-0
           - organizations.each do |organization|
-            li = link_to organization.decorate.local_name, organization_path(organization)
+            li = link_to organization.local_name, organization_path(organization)

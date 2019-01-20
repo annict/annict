@@ -10,7 +10,7 @@
       .col-8
         - @categories.each do |category|
           h2.h4.text-center.my-4.font-weight-bold
-            = category.decorate.local_name
+            = category.local_name
           .c-card
             - projects = localable_resources(category.userland_projects)
             - if projects.exists?

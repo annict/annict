@@ -37,7 +37,7 @@ class EmailNotificationMailer < ActionMailer::Base
     subject = default_i18n_subject(
       name: @user.profile.name,
       username: @user.username,
-      title: @episode.decorate.number_with_work_title
+      title: @episode.number_with_work_title
     )
     mail(to: @liked_user.email, subject: subject, &:mjml)
   end
@@ -72,8 +72,8 @@ class EmailNotificationMailer < ActionMailer::Base
     I18n.locale = @user.locale
 
     subject = default_i18n_subject(
-      work_title: @work.decorate.local_title,
-      resource_name: @resources.first.decorate.local_name
+      work_title: @work.local_title,
+      resource_name: @resources.first.local_name
     )
     mail(to: @user.email, subject: subject, &:mjml)
   end
@@ -87,8 +87,8 @@ class EmailNotificationMailer < ActionMailer::Base
     I18n.locale = @user.locale
 
     subject = default_i18n_subject(
-      work_title: @work.decorate.local_title,
-      related_work_title: @related_works.first.decorate.local_title
+      work_title: @work.local_title,
+      related_work_title: @related_works.first.local_title
     )
     mail(to: @user.email, subject: subject, &:mjml)
   end

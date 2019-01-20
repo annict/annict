@@ -1,5 +1,5 @@
 # frozen_string_literal: true
 
-class WorkImageDecorator < ApplicationDecorator
+module WorkImageDecorator
   include ResourceImageDecoratorCommon
 end

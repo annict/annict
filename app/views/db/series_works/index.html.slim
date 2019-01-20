@@ -35,8 +35,8 @@
           - @series_works.each do |series_work|
             tr
               td = series_work.id
-              td = link_to series_work.work.decorate.local_title, work_path(series_work.work), target: "_blank"
-              td = series_work.decorate.local_summary.presence || "-"
+              td = link_to series_work.work.local_title, work_path(series_work.work), target: "_blank"
+              td = series_work.local_summary.presence || "-"
               td
                 .badge class="#{series_work.published? ? 'badge-success' : 'badge-warning'}"
                   = t("resources.series.aasm_state.#{series_work.aasm_state}")

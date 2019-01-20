@@ -135,6 +135,12 @@ class Episode < ApplicationRecord
     end.to_json
   end
 
+  def local_number
+    return number if I18n.locale == :ja
+    return "##{raw_number}" if raw_number.present?
+    number
+  end
+
   private
 
   def unset_prev_episode_id

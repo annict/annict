@@ -309,7 +309,7 @@ class User < ApplicationRecord
     end
   end
 
-  def annict_url
+  def preferred_annict_url
     case locale
     when "ja" then ENV.fetch("ANNICT_JP_URL")
     else

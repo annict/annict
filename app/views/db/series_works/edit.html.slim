@@ -22,7 +22,7 @@
               .col-sm-9
                 = f.select :work_id, nil, { include_blank: true }, { class: "form-control", "v-resource-select": "{ model: 'Work' }" }
                   - if f.object.work&.id.present?
-                    option value="#{f.object.work.id}" selected="" = f.object.work.decorate.local_title
+                    option value="#{f.object.work.id}" selected="" = f.object.work.local_title
                   - else
                     option value="" selected=""
             .form-group.row

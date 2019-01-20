@@ -10,9 +10,9 @@
             .c-hover-image__over
         .p-1
           .u-very-small
-            = link_to work.decorate.local_title, work_path(work)
+            = link_to work.local_title, work_path(work)
 
-          - summary = series_work.decorate.local_summary(fallback: false)
+          - summary = series_work.local_summary(fallback: false)
           - if summary.present?
             .u-very-small
               = summary

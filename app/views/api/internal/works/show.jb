@@ -3,7 +3,7 @@
 json = {
   work: {
     id: @work.id,
-    title: @work.decorate.local_title,
+    title: @work.local_title,
     image_url: ann_image_url(@work.work_image, :attachment, size: "300x300")
   }
 }
