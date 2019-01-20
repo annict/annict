@@ -7,7 +7,7 @@ module PvDecorator
   end
 
   def to_values
-    model.class::DIFF_FIELDS.each_with_object({}) do |field, hash|
+    self.class::DIFF_FIELDS.each_with_object({}) do |field, hash|
       hash[field] = send(field)
       hash
     end

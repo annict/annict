@@ -16,7 +16,7 @@ module CastDecorator
   end
 
   def to_values
-    model.class::DIFF_FIELDS.each_with_object({}) do |field, hash|
+    self.class::DIFF_FIELDS.each_with_object({}) do |field, hash|
       hash[field] = case field
       when :person_id
         person_id = send(:person_id)

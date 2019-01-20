@@ -7,7 +7,7 @@ module SeriesWorkDecorator
   end
 
   def to_values
-    model.class::DIFF_FIELDS.each_with_object({}) do |field, hash|
+    self.class::DIFF_FIELDS.each_with_object({}) do |field, hash|
       hash[field] = case field
       when :work_id
         path = work_path(work)
