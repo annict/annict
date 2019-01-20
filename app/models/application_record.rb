@@ -15,6 +15,10 @@ class ApplicationRecord < ActiveRecord::Base
     false
   end
 
+  def decorate
+    ActiveDecorator::Decorator.instance.decorate(self)
+  end
+
   def method_missing(method_name, *arguments, &block)
     return super if method_name.blank?
     return super unless method_name.to_s.start_with?("local_")

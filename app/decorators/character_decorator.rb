@@ -18,7 +18,7 @@ module CharacterDecorator
   end
 
   def grid_description(cast)
-    "CV: #{ActiveDecorator::Decorator.instance.decorate(cast.person).name_link}"
+    "CV: #{cast.person.decorate.name_link}"
   end
 
   def to_values
