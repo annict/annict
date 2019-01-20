@@ -56,7 +56,7 @@
                   = episode.title.presence || "-"
                 - elsif locale == :en
                   = episode.title_en.presence || "-"
-              td = episode.prev_episode&&.local_number.presence || "-"
+              td = episode.prev_episode&.local_number.presence || "-"
               - if current_user.role.admin?
                 td = episode.sc_count
               td = episode.sort_number
