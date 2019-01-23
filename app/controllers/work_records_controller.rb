@@ -23,10 +23,12 @@ class WorkRecordsController < ApplicationController
     @work_record.user = current_user
     current_user.setting.attributes = setting_params
     ga_client.page_category = params[:page_category]
+    keen_client.page_category = params[:page_category]
     logentries.page_category = params[:page_category]
 
     service = NewWorkRecordService.new(current_user, @work_record, current_user.setting)
     service.ga_client = ga_client
+    service.keen_client = keen_client
     service.logentries = logentries
     service.page_category = params[:page_category]
     service.via = "web"

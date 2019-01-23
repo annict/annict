@@ -18,6 +18,7 @@ module Api
         doorkeeper_token: doorkeeper_token,
         viewer: current_user,
         ga_client: ga_client,
+        keen_client: keen_client,
         logentries: logentries
       }
       logentries.log(:info, :GRAPHQL_API_REQUEST,

@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class NewEpisodeRecordService
-  attr_writer :app, :via, :ga_client, :logentries, :page_category
+  attr_writer :app, :via, :ga_client, :keen_client, :logentries, :page_category
   attr_reader :episode_record
 
   def initialize(user, episode_record)
@@ -27,6 +27,7 @@ class NewEpisodeRecordService
     save_activity
     finish_tips
     create_ga_event
+    create_keen_event
     create_logentries_log
 
     true
@@ -51,6 +52,11 @@ class NewEpisodeRecordService
   def create_ga_event
     return if @ga_client.blank?
     @ga_client.events.create(:records, :create, el: "Episode", ds: @via)
+  end
+
+  def create_keen_event
+    return if @keen_client.blank?
+    @keen_client.publish(:episode_record_create, via: @via)
   end
 
   def create_logentries_log
