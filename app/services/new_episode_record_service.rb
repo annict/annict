@@ -56,7 +56,15 @@ class NewEpisodeRecordService
 
   def create_keen_event
     return if @keen_client.blank?
-    @keen_client.publish(:episode_record_create, via: @via)
+    @keen_client.publish(
+      :episode_record_create,
+      via: @via,
+      has_comment: @episode_record.comment.present?,
+      shared_twitter: @episode_record.shared_twitter?,
+      shared_facebook: @episode_record.shared_facebook?,
+      is_first_episode_record: @user.episode_records.initial?(@episode_record),
+      oauth_application_id: @app&.id
+    )
   end
 
   def create_logentries_log

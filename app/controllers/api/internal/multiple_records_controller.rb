@@ -12,6 +12,7 @@ module Api
         records.save!(episode_ids)
         ga_client.page_category = page_category
         ga_client.events.create(:multiple_records, :create, ds: "internal_api")
+        keen_client.publish(:multiple_record_create, via: "internal_api")
         flash[:notice] = t "messages.multiple_records.create.saved"
         head 201
       end

@@ -42,7 +42,12 @@ class NewWorkRecordService
 
   def create_keen_event
     return if @keen_client.blank?
-    @keen_client.publish(:work_record_create, via: @via)
+    @keen_client.publish(
+      :work_record_create,
+      via: @via,
+      has_body: @work_record.body.present?,
+      oauth_application_id: @app&.id
+    )
   end
 
   def create_logentries_log

@@ -7,7 +7,13 @@ module Annict
 
       ACTIONS = {
         episode_record_create: "episode_record.create",
+        favorite_create: "favorite.create",
+        follow_create: "follow.create",
+        item_create: "item.create",
+        like_create: "like.create",
+        multiple_record_create: "multiple_record.create",
         status_create: "status.create",
+        user_create: "user.create",
         work_record_create: "work_record.create"
       }.freeze
 

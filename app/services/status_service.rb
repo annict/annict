@@ -39,7 +39,13 @@ class StatusService
 
   def create_keen_event
     return if @keen_client.blank?
-    @keen_client.publish(:status_create, via: @via)
+    @keen_client.publish(
+      :status_create,
+      via: @via,
+      kind: @kind,
+      is_first_status: @user.statuses.initial?(@status),
+      oauth_application_id: @app&.id
+    )
   end
 
   def create_logentries_log
