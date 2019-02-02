@@ -3,6 +3,7 @@
 
 Annict::Application.config.session_store :redis_session_store,
   key: "_annict_session",
+  domain: :all,
   redis: {
     expire_after: 30.days,
     key_prefix: "annict:session:",
