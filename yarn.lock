@@ -2492,9 +2492,9 @@ d3@^3.0.6:
   integrity sha1-vEZ0gAQ3iyGjYMn8fPUjF5B2L7g=
 
 d3@^5.0.0, d3@^5.7.0:
-  version "5.7.0"
-  resolved "https://registry.yarnpkg.com/d3/-/d3-5.7.0.tgz#f189d338bdde62acf02f308918e0ec34dd7568f9"
-  integrity sha512-8KEIfx+dFm8PlbJN9PI0suazrZ41QcaAufsKE9PRcqYPWLngHIyWJZX96n6IQKePGgeSu0l7rtlueSSNq8Zc3g==
+  version "5.8.0"
+  resolved "https://registry.yarnpkg.com/d3/-/d3-5.8.0.tgz#251f12fe46d811ef300664590ec85eb574c44896"
+  integrity sha512-0rc4LL3fbyWhAqrxOt00svoxB2qoHHo6Bgs0WGcDPZ8ELqbA09evfeCnuy0ZrYbRHc+hCvBZaTT+GW3pnn05fw==
   dependencies:
     d3-array "1"
     d3-axis "1"
