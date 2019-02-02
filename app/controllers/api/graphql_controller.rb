@@ -18,15 +18,14 @@ module Api
         doorkeeper_token: doorkeeper_token,
         viewer: current_user,
         ga_client: ga_client,
-        keen_client: keen_client,
-        logentries: logentries
+        keen_client: keen_client
       }
-      logentries.log(:info, :GRAPHQL_API_REQUEST,
+      result = AnnictSchema.execute(query, variables: variables, context: context)
+      annict_logger.log(:info, :GRAPHQL_API_REQUEST,
         oauth_access_token_id: doorkeeper_token.id,
         query: query,
         variables: variables
       )
-      result = AnnictSchema.execute(query, variables: variables, context: context)
       render json: result
     end
 

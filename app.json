@@ -551,7 +551,7 @@
   "addons": [
     "heroku-postgresql",
     "heroku-redis",
-    "logentries",
+    "logdna",
     "sentry",
     {
       "plan": "heroku-redis",

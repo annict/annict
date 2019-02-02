@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class NewEpisodeRecordService
-  attr_writer :app, :via, :ga_client, :keen_client, :logentries, :page_category
+  attr_writer :app, :via, :ga_client, :keen_client, :page_category
   attr_reader :episode_record
 
   def initialize(user, episode_record)
@@ -28,7 +28,6 @@ class NewEpisodeRecordService
     finish_tips
     create_ga_event
     create_keen_event
-    create_logentries_log
 
     true
   end
@@ -65,11 +64,6 @@ class NewEpisodeRecordService
       is_first_episode_record: @user.episode_records.initial?(@episode_record),
       oauth_application_id: @app&.id
     )
-  end
-
-  def create_logentries_log
-    return if @logentries.blank?
-    @logentries.log(:info, :EPISODE_RECORD_CREATE, via: @via)
   end
 
   def update_episode_records_with_body_count

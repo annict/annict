@@ -12,7 +12,6 @@ module Api
           status.app = doorkeeper_token.application
           status.ga_client = ga_client
           status.keen_client = keen_client
-          status.logentries = logentries
           status.via = "rest_api"
 
           status.change!(@params.kind)
