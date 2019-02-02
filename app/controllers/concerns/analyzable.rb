@@ -10,6 +10,10 @@ module Analyzable
       @ga_client ||= Annict::Analytics::Client.new(request, current_user)
     end
 
+    def keen_client
+      @keen_client ||= Annict::Keen::Client.new(request, current_user)
+    end
+
     def logentries
       @logentries ||= Annict::Logentries.new(request, current_user)
     end

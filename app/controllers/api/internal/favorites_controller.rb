@@ -25,6 +25,7 @@ module Api
         current_user.favorite(resource)
         ga_client.page_category = page_category
         ga_client.events.create(:favorites, :create, el: resource_type, ev: resource_id, ds: "internal_api")
+        keen_client.publish(:favorite_create, via: "internal_api", resource_type: resource_type)
         head 200
       end
 
