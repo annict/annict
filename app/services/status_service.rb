@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class StatusService
-  attr_writer :app, :via, :ga_client, :keen_client, :logentries, :page_category
+  attr_writer :app, :via, :ga_client, :keen_client, :page_category
 
   def initialize(user, work)
     @user = user
@@ -19,7 +19,6 @@ class StatusService
         @status.share_to_sns
         create_ga_event
         create_keen_event
-        create_logentries_log
       end
     elsif @kind == "no_select"
       latest_status = @user.latest_statuses.find_by(work: @work)
@@ -46,10 +45,5 @@ class StatusService
       is_first_status: @user.statuses.initial?(@status),
       oauth_application_id: @app&.id
     )
-  end
-
-  def create_logentries_log
-    return if @logentries.blank?
-    @logentries.log(:info, :STATUS_CREATE, via: @via)
   end
 end

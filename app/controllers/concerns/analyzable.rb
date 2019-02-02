@@ -14,8 +14,8 @@ module Analyzable
       @keen_client ||= Annict::Keen::Client.new(request, current_user)
     end
 
-    def logentries
-      @logentries ||= Annict::Logentries.new(request, current_user)
+    def annict_logger
+      @annict_logger ||= Annict::Logger.new(request, current_user)
     end
 
     def store_client_uuid

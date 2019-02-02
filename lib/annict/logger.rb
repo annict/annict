@@ -1,13 +1,10 @@
 # frozen_string_literal: true
 
 module Annict
-  class Logentries
+  class Logger
     ACTIONS = {
-      EPISODE_RECORD_CREATE: "episode_record.create",
       GRAPHQL_API_REQUEST: "graphql_api.request",
-      REST_API_REQUEST: "rest_api.request",
-      STATUS_CREATE: "status.create",
-      WORK_RECORD_CREATE: "work_record.create"
+      REST_API_REQUEST: "rest_api.request"
     }.freeze
 
     attr_writer :page_category

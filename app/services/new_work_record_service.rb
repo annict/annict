@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class NewWorkRecordService
-  attr_writer :app, :via, :ga_client, :keen_client, :logentries, :page_category
+  attr_writer :app, :via, :ga_client, :keen_client, :page_category
   attr_reader :work_record
 
   def initialize(user, work_record, setting)
@@ -24,7 +24,6 @@ class NewWorkRecordService
     save_activity
     create_ga_event
     create_keen_event
-    create_logentries_log
 
     true
   end
@@ -48,10 +47,5 @@ class NewWorkRecordService
       has_body: @work_record.body.present?,
       oauth_application_id: @app&.id
     )
-  end
-
-  def create_logentries_log
-    return if @logentries.blank?
-    @logentries.log(:info, :WORK_RECORD_CREATE, via: @via)
   end
 end

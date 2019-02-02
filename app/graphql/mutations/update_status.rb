@@ -15,7 +15,6 @@ module Mutations
       status.app = context[:doorkeeper_token].application
       status.ga_client = context[:ga_client]
       status.keen_client = context[:keen_client]
-      status.logentries = context[:logentries]
       status.via = "graphql_api"
 
       state = case state

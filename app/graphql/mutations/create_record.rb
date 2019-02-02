@@ -26,7 +26,6 @@ module Mutations
       service = NewEpisodeRecordService.new(context[:viewer], record)
       service.ga_client = context[:ga_client]
       service.keen_client = context[:keen_client]
-      service.logentries = context[:logentries]
       service.app = context[:doorkeeper_token].application
       service.via = "graphql_api"
 
