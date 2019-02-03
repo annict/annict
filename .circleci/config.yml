@@ -22,12 +22,14 @@ jobs:
           # https://github.com/jtoy/cld/issues/10
           CFLAGS: -Wno-narrowing
           CXXFLAGS: -Wno-narrowing
+          SELENIUM_DRIVER_URL: http://localhost:4444/wd/hub
       - image: circleci/postgres:10.4-alpine
         environment:
           POSTGRES_USER: postgres
           POSTGRES_DB: annict_test
           POSTGRES_PASSWORD: ""
       - image: circleci/redis:4.0.11-alpine
+      - image: selenium/standalone-chrome:3.141.59
     steps:
       # special step to check out source code to working directory
       - checkout
@@ -76,6 +78,10 @@ jobs:
       - run:
           name: Wait for DB
           command: dockerize -wait tcp://localhost:5432 -timeout 1m
+    
+      - run:
+          name: Wait for Selenium
+          command: dockerize -wait tcp://localhost:4444 -timeout 1m
 
       - run:
           name: Database setup

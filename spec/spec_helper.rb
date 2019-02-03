@@ -50,6 +50,31 @@ RSpec.configure do |config|
   config.order = "random"
 
   config.before(:each, type: :system) do
-    driven_by :selenium_chrome_headless
+    return driven_by(:selenium_chrome_headless) unless ENV["CI"]
+
+    Capybara.register_driver :selenium_chrome_for_ci do |app|
+      caps = Selenium::WebDriver::Remote::Capabilities.chrome(
+        chrome_options: {
+          args: %w(headless)
+        }
+      )
+
+      driver = Capybara::Selenium::Driver.new(
+        app,
+        browser: :remote,
+        url: ENV.fetch("SELENIUM_DRIVER_URL"),
+        desired_capabilities: caps
+      )
+
+      # https://stackoverflow.com/questions/51989015/selenium-file-detector-unable-to-find-file-to-upload-to-selenium-grid
+      driver.browser.file_detector = ->(args) do
+        str = args.first.to_s
+        str if File.exist?(str)
+      end
+
+      driver
+    end
+
+    driven_by :selenium_chrome_for_ci
   end
 end
