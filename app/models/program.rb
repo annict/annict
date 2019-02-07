@@ -1,12 +1,11 @@
 # frozen_string_literal: true
-
 # == Schema Information
 #
 # Table name: programs
 #
 #  id             :integer          not null, primary key
 #  channel_id     :integer          not null
-#  episode_id     :integer          not null
+#  episode_id     :integer
 #  work_id        :integer          not null
 #  started_at     :datetime         not null
 #  sc_last_update :datetime
@@ -49,7 +48,6 @@ class Program < ApplicationRecord
   has_many :db_comments, as: :resource, dependent: :destroy
 
   validates :channel_id, presence: true
-  validates :episode_id, presence: true
   validates :started_at, presence: true
 
   scope :episode_published, -> { joins(:episode).merge(Episode.published) }
