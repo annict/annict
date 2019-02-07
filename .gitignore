@@ -17,5 +17,5 @@
 /storage/*
 /tags
 /tmp/*
-/vendor/bundler
+/vendor/bundle
 /yarn-error.log
