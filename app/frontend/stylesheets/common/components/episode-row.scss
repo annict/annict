@@ -21,13 +21,14 @@
     padding: 0 !important;
     width: 20px;
 
-    label{
+    label {
       position: relative;
       width: 30px;
       height: 30px;
-      padding: 1.5rem .5rem 1.5rem 1rem;
+      padding: 1.5rem 0.5rem 1.5rem 1rem;
       margin-bottom: 0;
-      input{
+
+      input {
         position: absolute;
         top: 0;
         left: auto;
