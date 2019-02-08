@@ -32,6 +32,7 @@ describe "Api::V1::Casts" do
             "wikipedia_url" => cast.work.wikipedia_url,
             "twitter_username" => cast.work.twitter_username,
             "twitter_hashtag" => cast.work.twitter_hashtag,
+            "syobocal_tid" => "",
             "mal_anime_id" => cast.work.mal_anime_id&.to_s,
             "images" => {
               "recommended_url" => cast.work.recommended_image_url,

@@ -35,6 +35,7 @@ describe "Api::V1::Staffs" do
             "wikipedia_url" => staff.work.wikipedia_url,
             "twitter_username" => staff.work.twitter_username,
             "twitter_hashtag" => staff.work.twitter_hashtag,
+            "syobocal_tid" => "",
             "mal_anime_id" => staff.work.mal_anime_id&.to_s,
             "images" => {
               "recommended_url" => staff.work.recommended_image_url,

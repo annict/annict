@@ -40,6 +40,7 @@ describe "Api::V1::Episodes" do
             "wikipedia_url" => "http://wikipedia.org",
             "twitter_username" => "precure_official",
             "twitter_hashtag" => "precure",
+            "syobocal_tid" => "",
             "mal_anime_id" => "12345",
             "images" => {
               "recommended_url" => "",
