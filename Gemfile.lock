@@ -3,7 +3,7 @@ GEM
   specs:
     aasm (5.0.1)
       concurrent-ruby (~> 1.0)
-    action_args (2.3.1)
+    action_args (2.3.2)
     actioncable (5.2.2)
       actionpack (= 5.2.2)
       nio4r (~> 2.0)
