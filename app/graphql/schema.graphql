@@ -1646,6 +1646,7 @@ type Work implements Node {
     last: Int
     orderBy: StaffOrder
   ): StaffConnection
+  syobocalTid: Int
   title: String!
   titleEn: String
   titleKana: String
