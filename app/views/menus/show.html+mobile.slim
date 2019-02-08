@@ -18,8 +18,8 @@
           .small.u-text-body
             = t "noun.notification"
             - if current_user.notifications_count > 0
-             span.badge.badge-pill.u-badge-mizuho.ml-2
-               = current_user.notifications_count
+              span.badge.badge-pill.u-badge-mizuho.ml-2
+                = current_user.notifications_count
       .col-4.text-center.mb-5
         = link_to friends_path do
           .h1.mb-1.text-primary
