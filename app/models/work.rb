@@ -98,11 +98,16 @@ class Work < ApplicationRecord
     class_name: "SeasonModel",
     foreign_key: :season_id,
     optional: true
+  has_many :casts, dependent: :destroy
+  has_many :program_details, dependent: :destroy
+  has_many :resource_items, dependent: :destroy, class_name: "WorkItem"
+  has_many :series_works, dependent: :destroy
+  has_many :staffs, dependent: :destroy
+  has_many :work_taggings, dependent: :destroy
   has_many :activities,
     foreign_key: :recipient_id,
     foreign_type: :recipient,
     dependent: :destroy
-  has_many :casts, dependent: :destroy
   has_many :cast_people, through: :casts, source: :person
   has_many :channel_works, dependent: :destroy
   has_many :characters, through: :casts
@@ -110,10 +115,8 @@ class Work < ApplicationRecord
   has_many :db_comments, as: :resource, dependent: :destroy
   has_many :episode_records, dependent: :destroy
   has_many :episodes, dependent: :destroy
-  has_many :resource_items, dependent: :destroy, class_name: "WorkItem"
   has_many :items, through: :resource_items
   has_many :latest_statuses, dependent: :destroy
-  has_many :staffs, dependent: :destroy
   has_many :organizations,
     through: :staffs,
     source: :resource,
@@ -121,13 +124,11 @@ class Work < ApplicationRecord
   has_many :programs, dependent: :destroy
   has_many :pvs, dependent: :destroy
   has_many :records, dependent: :destroy
-  has_many :series_works, dependent: :destroy
   has_many :series_list, through: :series_works, source: :series
   has_many :statuses, dependent: :destroy
   has_many :staff_people, through: :staffs, source: :resource, source_type: "Person"
-  has_many :program_details, dependent: :destroy
+  has_many :channels, through: :program_details
   has_many :work_records, dependent: :destroy
-  has_many :work_taggings, dependent: :destroy
   has_many :work_tags, through: :work_taggings
   has_one :work_image, dependent: :destroy
 
@@ -385,13 +386,6 @@ class Work < ApplicationRecord
 
   def twitter_hashtag_url
     URI.encode("https://twitter.com/search?q=##{twitter_hashtag}&src=hash")
-  end
-
-  def channels
-    return nil if episodes.blank?
-
-    programs = Program.published.where(episode_id: episodes.pluck(:id))
-    Channel.published.where(id: programs.pluck(:channel_id).uniq) if programs.present?
   end
 
   def current_season?
