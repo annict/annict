@@ -13,6 +13,7 @@ json[:official_site_url] = work.official_site_url.presence || "" if params.field
 json[:wikipedia_url] = work.wikipedia_url.presence || "" if params.fields_contain?("#{field_prefix}wikipedia_url")
 json[:twitter_username] = work.twitter_username.presence || "" if params.fields_contain?("#{field_prefix}twitter_username")
 json[:twitter_hashtag] = work.twitter_hashtag.presence || "" if params.fields_contain?("#{field_prefix}twitter_hashtag")
+json[:syobocal_tid] = work.sc_tid&.to_s.presence || "" if params.fields_contain?("#{field_prefix}syobocal_tid")
 json[:mal_anime_id] = work.mal_anime_id&.to_s.presence || "" if params.fields_contain?("#{field_prefix}mal_anime_id")
 if params.fields_contain?("#{field_prefix}images")
   json[:images] = {}

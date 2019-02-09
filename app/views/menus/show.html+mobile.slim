@@ -18,12 +18,14 @@
           .small.u-text-body
             = t "noun.notification"
             - if current_user.notifications_count > 0
-             span.badge.badge-pill.u-badge-mizuho.ml-2
-               = current_user.notifications_count
+              span.badge.badge-pill.u-badge-mizuho.ml-2
+                = current_user.notifications_count
       .col-4.text-center.mb-5
         = link_to friends_path do
           .h1.mb-1.text-primary
-            = icon "search"
+            span.fa-layers
+              = icon "user"
+              = icon "search", "fas", "data-fa-transform": "shrink-7 right-11"
           .small.u-text-body
             = t "head.title.friends.index"
       .col-4.text-center.mb-5

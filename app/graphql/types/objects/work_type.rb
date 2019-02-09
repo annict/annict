@@ -23,6 +23,7 @@ module Types
       field :wikipedia_url_en, String, null: true
       field :twitter_username, String, null: true
       field :twitter_hashtag, String, null: true
+      field :syobocal_tid, Integer, null: true
       field :mal_anime_id, String, null: true
       field :image, Types::Objects::WorkImageType, null: true
       field :episodes_count, Integer, null: false
@@ -81,6 +82,10 @@ module Types
 
       def season_name
         object.season_name&.upcase
+      end
+
+      def syobocal_tid
+        object.sc_tid
       end
 
       def image

@@ -21,9 +21,14 @@ c-appbar,
       }
       
       #{$navbar}--right {
+        .dropdown {
+          padding: 2px 0 2px;
+        }
+
         .dropdown-menu {
           left: auto;
           right: -16px;
+          margin: 0;
         }
       }
       
