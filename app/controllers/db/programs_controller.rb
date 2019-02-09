@@ -14,6 +14,8 @@ module Db
 
     def new
       @form = DB::ProgramRowsForm.new
+      @form.work = @work
+      @form.set_default_rows!(params[:program_detail_id]) if params[:program_detail_id]
       authorize @form, :new?
     end
 

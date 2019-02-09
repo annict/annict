@@ -13,6 +13,25 @@ module DB
     validate :valid_time
     validate :valid_resource
 
+    def set_default_rows!(program_detail_id, time_zone: "Asia/Tokyo")
+      program_detail = @work.program_details.published.find_by(id: program_detail_id)
+      return unless program_detail
+
+      rows = []
+      14.times do |i|
+        rows << [
+          program_detail.channel.name,
+          "",
+          (program_detail.started_at + (i * 7).days).in_time_zone(time_zone).strftime("%Y-%m-%d %H:%M"),
+          program_detail.rebroadcast? ? 1 : 0
+        ]
+      end
+
+      self.rows = rows.map do |r|
+        r.join(",")
+      end.join("\n")
+    end
+
     private
 
     def attrs_list

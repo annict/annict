@@ -178,6 +178,7 @@ ja:
     profiles:
       saved: 保存しました
     programs:
+      new_programs_csv_by_program_detail: 放送情報をもとに放送予定CSVを生成する
       no_programs: 放送予定はありません
       please_set_channels_html: "%{channels_link}でチャンネルを設定して下さい"
     providers:
