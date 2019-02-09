@@ -13,6 +13,7 @@
 #  updated_at     :datetime         not null
 #  vod_title_code :string           default(""), not null
 #  vod_title_name :string           default(""), not null
+#  rebroadcast    :boolean          default(FALSE), not null
 #
 # Indexes
 #

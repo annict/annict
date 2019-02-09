@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_02_05_160536) do
+ActiveRecord::Schema.define(version: 2019_02_09_182047) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_stat_statements"
@@ -742,6 +742,7 @@ ActiveRecord::Schema.define(version: 2019_02_05_160536) do
     t.datetime "updated_at", null: false
     t.string "vod_title_code", default: "", null: false
     t.string "vod_title_name", default: "", null: false
+    t.boolean "rebroadcast", default: false, null: false
     t.index ["channel_id"], name: "index_program_details_on_channel_id"
     t.index ["vod_title_code"], name: "index_program_details_on_vod_title_code"
     t.index ["work_id"], name: "index_program_details_on_work_id"
