@@ -42,7 +42,7 @@ class Program < ApplicationRecord
   attr_accessor :time_zone
 
   belongs_to :channel
-  belongs_to :episode
+  belongs_to :episode, optional: true
   belongs_to :work
   has_many :db_activities, as: :trackable, dependent: :destroy
   has_many :db_comments, as: :resource, dependent: :destroy
