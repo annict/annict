@@ -13,17 +13,30 @@ module DB
     validate :valid_time
     validate :valid_resource
 
-    def set_default_rows!(program_detail_id, time_zone: "Asia/Tokyo")
+    def set_default_rows_by_program_detail!(program_detail_id, time_zone: "Asia/Tokyo")
       program_detail = @work.program_details.published.find_by(id: program_detail_id)
       return unless program_detail
 
+      set_default_rows!(program_detail, program_detail.started_at, time_zone)
+    end
+
+    def set_default_rows_by_program!(program_id, time_zone: "Asia/Tokyo")
+      program = @work.programs.published.find_by(id: program_id)
+      return unless program
+
+      set_default_rows!(program, program.started_at + 7.days, time_zone)
+    end
+
+    private
+
+    def set_default_rows!(resource, base_started_at, time_zone)
       rows = []
       14.times do |i|
         rows << [
-          program_detail.channel.name,
+          resource.channel.name,
           "",
-          (program_detail.started_at + (i * 7).days).in_time_zone(time_zone).strftime("%Y-%m-%d %H:%M"),
-          program_detail.rebroadcast? ? 1 : 0
+          (base_started_at + (i * 7).days).in_time_zone(time_zone).strftime("%Y-%m-%d %H:%M"),
+          resource.rebroadcast? ? 1 : 0
         ]
       end
 
@@ -31,8 +44,6 @@ module DB
         r.join(",")
       end.join("\n")
     end
-
-    private
 
     def attrs_list
       @attrs_list ||= fetched_rows.map do |row_data|

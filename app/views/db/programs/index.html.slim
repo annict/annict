@@ -31,6 +31,8 @@
             th = t "activerecord.attributes.program.episode_id"
             th = t "activerecord.attributes.program.rebroadcast"
             th = t "head.title.db.programs.activities"
+            - if policy(@programs).create?
+              th = t "noun.additional_create"
             - if policy(@programs).edit?
               th = t "noun.edit"
             - if policy(@programs).hide?
@@ -46,6 +48,9 @@
               td = program.episode&.title_with_number.presence || "-"
               td = program.rebroadcast? ? icon("circle") : icon("times")
               td = link_to t("head.title.db.programs.activities"), activities_db_program_path(program)
+              - if policy(program).create?
+                td
+                  = link_to t("noun.additional_create"), new_db_work_program_path(@work, program_id: program.id), class: "btn btn-outline-secondary btn-sm"
               - if policy(program).edit?
                 td
                   = link_to t("noun.edit"), edit_db_program_path(program), class: "btn btn-primary btn-sm"
