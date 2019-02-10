@@ -70,7 +70,7 @@ module DB
 
         begin
           Time.parse(started_at)
-        rescue
+        rescue ArgumentError
           i18n_path = "activemodel.errors.forms.db/program_rows_form.invalid_start_time"
           errors.add(:rows, I18n.t(i18n_path))
         end
@@ -79,8 +79,9 @@ module DB
 
     def valid_resource
       fetched_rows.each do |row_data|
-        row_data.slice(:channel, :episode).each do |_, data|
-          next if data[:id].present?
+        row_data.slice(:channel).each do |_, data|
+          next if data[:id]
+
           i18n_path = "activemodel.errors.forms.db/program_rows_form.invalid"
           errors.add(:rows, I18n.t(i18n_path, value: data[:value]))
         end

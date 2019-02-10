@@ -9,7 +9,9 @@ module Db
     before_action :load_program, only: %i(edit update hide destroy activities)
 
     def index
-      @programs = @work.programs.order(started_at: :desc).order(:channel_id)
+      @programs = @work.programs
+      @programs = @programs.where(channel_id: params[:channel_id]) if params[:channel_id]
+      @programs = @programs.order(started_at: :desc).order(:channel_id)
     end
 
     def new

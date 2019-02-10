@@ -15,15 +15,20 @@
 = render "db/works/subnav", work: @work
 
 .container-fluid.p-3
-  - if @programs.present?
-    .c-card
+  .c-card
+    .p-3
+      .btn-group
+        = link_to t("noun.all"), db_work_programs_path(@work), class: "btn btn-sm #{params[:channel_id] ? 'btn-outline-secondary' : 'btn-secondary'}"
+        - @work.channels.published.each do |c|
+          = link_to c.name, db_work_programs_path(@work, channel_id: c.id), class: "btn btn-sm #{c.id.to_s == params[:channel_id] ? 'btn-secondary' : 'btn-outline-secondary'}"
+    - if @programs.present?
       table.table.table-hover
         thead
           tr
             th ID
             th = t "activerecord.attributes.program.channel_id"
-            th = t "activerecord.attributes.program.episode_id"
             th = t "activerecord.attributes.program.started_at"
+            th = t "activerecord.attributes.program.episode_id"
             th = t "activerecord.attributes.program.rebroadcast"
             th = t "head.title.db.programs.activities"
             - if policy(@programs).edit?
@@ -37,9 +42,9 @@
             tr
               td = program.id
               td = program.channel.name
-              td = program.episode.title_with_number
               td = display_time(program.started_at)&.presence || "-"
-              td = program.rebroadcast? ? icon("check") : "-"
+              td = program.episode&.title_with_number.presence || "-"
+              td = program.rebroadcast? ? icon("circle") : icon("times")
               td = link_to t("head.title.db.programs.activities"), activities_db_program_path(program)
               - if policy(program).edit?
                 td
@@ -50,6 +55,5 @@
                     = link_to t("noun.unpublish"), hide_db_program_path(program), class: "btn btn-warning btn-sm", data: { method: "patch", confirm: t("messages._common.are_you_sure") }
               - if policy(program).destroy?
                 td = link_to t("noun.delete"), db_program_path(program), class: "btn btn-danger btn-sm", data: { method: :delete, confirm: t("messages._common.are_you_sure") }
-
-  - else
-    = render "application/components/empty", text: t("resources.program.there_are_no_programs")
+    - else
+      = render "application/components/empty", text: t("resources.program.there_are_no_programs")
