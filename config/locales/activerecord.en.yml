@@ -125,6 +125,7 @@ en:
         episode_id: Episode
         rebroadcast: Rebroadcast
         started_at: Started at
+        time_zone: Timezone
       pv:
         sort_number: Sort Number
         title: Title

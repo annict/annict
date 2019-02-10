@@ -124,6 +124,7 @@ ja:
         episode_id: エピソード
         rebroadcast: 再放送
         started_at: 放送日時
+        time_zone: タイムゾーン
       pv:
         sort_number: ソート番号
         title: タイトル
