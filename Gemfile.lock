@@ -195,7 +195,7 @@ GEM
       actionpack (>= 3.0)
       multi_json
       request_store (>= 1.0)
-    graphiql-rails (1.6.0)
+    graphiql-rails (1.7.0)
       railties
       sprockets-rails
     graphql (1.9.2)
