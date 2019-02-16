@@ -40,6 +40,7 @@ import inputWordsCount from './common/components/inputWordsCount'
 import likeButton from './common/components/likeButton'
 import omittedSynopsis from './common/components/omittedSynopsis'
 import muteUserButton from './common/components/muteUserButton'
+import privacyPolicyModal from './common/components/privacyPolicyModal'
 import programList from './common/components/programList'
 import ratingLabel from './common/components/ratingLabel'
 import ratingStateLabel from './common/components/ratingStateLabel'
@@ -120,6 +121,7 @@ document.addEventListener('turbolinks:load', event => {
   Vue.component('c-like-button', likeButton)
   Vue.component('c-mute-user-button', muteUserButton)
   Vue.component('c-omitted-synopsis', omittedSynopsis)
+  Vue.component('c-privacy-policy-modal', privacyPolicyModal)
   Vue.component('c-program-list', programList)
   Vue.component('c-rating-label', ratingLabel)
   Vue.component('c-rating-state-label', ratingStateLabel)
