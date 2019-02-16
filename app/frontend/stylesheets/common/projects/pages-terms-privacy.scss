@@ -1,0 +1,28 @@
+.p-pages-terms,
+.p-pages-privacy {
+  .p-application__content {
+    h2 {
+      margin: 2rem 0;
+    }
+
+    ol {
+      margin-bottom: 1rem;
+    }
+
+    table {
+      border: $table-border-width solid $table-border-color;
+
+      th,
+      td {
+        border: $table-border-width solid $table-border-color;
+      }
+
+      thead {
+        th,
+        td {
+          border-bottom-width: 2 * $table-border-width;
+        }
+      }
+    }
+  }
+}
