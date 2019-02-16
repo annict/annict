@@ -2,5 +2,6 @@
 
 FactoryBot.define do
   factory :setting do
+    privacy_policy_agreed { true }
   end
 end

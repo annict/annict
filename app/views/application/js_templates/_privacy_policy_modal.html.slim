@@ -1,0 +1,22 @@
+script#t-privacy-policy-modal type="x-template"
+  .c-privacy-policy-modal.modal
+    .modal-dialog.modal-dialog-centered
+      .modal-content
+        .modal-header
+          h4.modal-title
+            = t "messages._components.privacy_policy_modal.title"
+        .modal-body
+          = t "messages._components.privacy_policy_modal.body_html"
+          h5.mt-3
+            = t "messages._components.privacy_policy_modal.changelog_title"
+          = t "messages._components.privacy_policy_modal.changelog_body"
+          = link_to t("noun.detail"), ENV["ANNICT_PRIVACY_POLICY_UPDATE_POST_URL"], class: "ml-1", target: "_blank"
+        .modal-footer
+          button.btn.btn-outline-secondary @click="cancel"
+            = t "noun.cancel"
+          button.btn.btn-primary @click="agree"
+            template v-if="isLoading"
+              span.spinner-border.spinner-border-sm
+            template v-else=""
+              = icon "check-circle", class: "mr-1"
+              = t "verb.agree"

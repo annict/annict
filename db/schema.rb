@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_01_14_090325) do
+ActiveRecord::Schema.define(version: 2019_02_16_165345) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_stat_statements"
@@ -742,6 +742,7 @@ ActiveRecord::Schema.define(version: 2019_01_14_090325) do
     t.datetime "updated_at", null: false
     t.string "vod_title_code", default: "", null: false
     t.string "vod_title_name", default: "", null: false
+    t.boolean "rebroadcast", default: false, null: false
     t.index ["channel_id"], name: "index_program_details_on_channel_id"
     t.index ["vod_title_code"], name: "index_program_details_on_vod_title_code"
     t.index ["work_id"], name: "index_program_details_on_work_id"
@@ -749,7 +750,7 @@ ActiveRecord::Schema.define(version: 2019_01_14_090325) do
 
   create_table "programs", id: :serial, force: :cascade do |t|
     t.integer "channel_id", null: false
-    t.integer "episode_id", null: false
+    t.integer "episode_id"
     t.integer "work_id", null: false
     t.datetime "started_at", null: false
     t.datetime "sc_last_update"
@@ -887,6 +888,7 @@ ActiveRecord::Schema.define(version: 2019_01_14_090325) do
     t.boolean "hide_supporter_badge", default: false, null: false
     t.boolean "share_status_to_twitter", default: false, null: false
     t.boolean "share_status_to_facebook", default: false, null: false
+    t.boolean "privacy_policy_agreed", default: false, null: false
     t.index ["user_id"], name: "index_settings_on_user_id"
   end
 
@@ -955,7 +957,7 @@ ActiveRecord::Schema.define(version: 2019_01_14_090325) do
 
   create_table "twitter_watching_lists", force: :cascade do |t|
     t.string "username", null: false
-    t.string "list_name", null: false
+    t.string "name", null: false
     t.string "since_id"
     t.string "discord_webhook_url", null: false
     t.datetime "created_at", null: false
