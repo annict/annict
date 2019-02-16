@@ -3,6 +3,6 @@
 
 
 .c-card.container.py-3.mb-4
-  = render "privacy_body"
+  == render_markdown File.read("docs/policies/privacy_policy_ja.md")
 
 = render "application/components/footer"

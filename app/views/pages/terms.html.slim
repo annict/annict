@@ -4,6 +4,6 @@
 
 .p-application__content
   .c-card.container.py-3.mt-3.mb-4
-    = render "terms_body"
+    == render_markdown File.read("docs/policies/terms_ja.md")
 
 = render "application/components/footer"
