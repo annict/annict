@@ -1,12 +1,11 @@
 # frozen_string_literal: true
-
 # == Schema Information
 #
 # Table name: programs
 #
 #  id             :integer          not null, primary key
 #  channel_id     :integer          not null
-#  episode_id     :integer          not null
+#  episode_id     :integer
 #  work_id        :integer          not null
 #  started_at     :datetime         not null
 #  sc_last_update :datetime
