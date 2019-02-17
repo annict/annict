@@ -4,8 +4,10 @@ LABEL maintainer="https://annict.com/@shimbaco" \
       description="A platform for anime addicts."
 
 RUN apk update && \
-    apk add -t build-dependencies \
+    apk add -t \
+        build-dependencies \
         build-base \
+        git \
         postgresql \
         postgresql-dev \
         nodejs-npm \
