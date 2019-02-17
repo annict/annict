@@ -282,14 +282,6 @@ GEM
       faraday
       json (>= 1.8)
     kramdown (1.17.0)
-    launchy (2.4.3)
-      addressable (~> 2.3)
-    letter_opener (1.7.0)
-      launchy (~> 2.2)
-    letter_opener_web (1.3.4)
-      actionmailer (>= 3.2)
-      letter_opener (~> 1.0)
-      railties (>= 3.2)
     listen (3.1.5)
       rb-fsevent (~> 0.9, >= 0.9.4)
       rb-inotify (~> 0.9, >= 0.9.7)
@@ -639,7 +631,6 @@ DEPENDENCIES
   kaminari
   keen
   koala
-  letter_opener_web
   listen
   lograge
   memory_profiler

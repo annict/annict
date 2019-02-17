@@ -93,7 +93,6 @@ group :development do
   gem "graphiql-rails"
   gem "graphql-docs"
   gem "i18n-tasks"
-  gem "letter_opener_web"
   gem "listen" # Using with `rails s` since Rails 5
   gem "memory_profiler"
   gem "meta_request"
