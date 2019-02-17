@@ -26,6 +26,11 @@ ja:
         add_to_favorites: お気に入りに登録
         added_to_favorites: 登録済み
         hint: "お気に入りに登録すると、この%{resource_type}が関係する新作アニメがAnnictに登録されたとき通知します (通知をオフにすることもできます)"
+      privacy_policy_modal:
+        body_html: "Annictの<a href='/privacy'>プライバシーポリシー</a>が更新されています。<br>サービスを継続してご利用するには、新しいプライバシーポリシーに同意していただく必要があります。"
+        changelog_title: 主な変更点
+        changelog_body: Annict API公開に伴いAPIを利用する第三者に作品や視聴記録等のデータを提供するようになったので、その辺りの文書を修正しています。
+        title: プライバシーポリシー更新のお知らせ
       reaction_button:
         kind:
           thumbs_up:

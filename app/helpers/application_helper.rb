@@ -32,4 +32,8 @@ module ApplicationHelper
   def twitter_username
     I18n.locale == :ja ? "@AnnictJP" : "@anannict"
   end
+
+  def show_privacy_policy_modal?
+    user_signed_in? && !current_user.setting.privacy_policy_agreed?
+  end
 end

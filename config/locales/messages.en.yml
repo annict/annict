@@ -26,6 +26,11 @@ en:
         add_to_favorites: Add to Favorites
         added_to_favorites: Added to Favorites
         hint: If you add this %{resource_type} into your favorites, you'll get a notification when upcoming animes which is related to this %{resource_type} will be added to Annict.
+      privacy_policy_modal:
+        body_html: "Our <a href='/privacy'>Privacy policy</a> has been updated. Please take a moment to review some changes to our policy. Let us know if you agree to them to continue using Annict."
+        changelog_title: Changelog
+        changelog_body: Updated a sentence related to Annict API.
+        title: Updates to our privacy policy
       reaction_button:
         kind:
           thumbs_up:

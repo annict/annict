@@ -12,6 +12,9 @@ html lang="#{I18n.locale}"
 
       = yield
 
+      - if show_privacy_policy_modal?
+        c-privacy-policy-modal
+
       - if !user_signed_in? && !page_category.in?(%w(sessions_new registrations_new))
         = render "application/components/sign_up_modal", user: @new_user
 
@@ -22,6 +25,7 @@ html lang="#{I18n.locale}"
     = render "application/js_templates/adsense"
     = render "application/js_templates/appbar"
     = render "application/js_templates/flash"
+    = render "application/js_templates/privacy_policy_modal"
     = render "application/js_templates/sticky_message"
 
     = yield :js_templates

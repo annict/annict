@@ -151,7 +151,7 @@ GEM
       thor (~> 0.19)
     descendants_tracker (0.0.4)
       thread_safe (~> 0.3, >= 0.3.1)
-    devise (4.5.0)
+    devise (4.6.1)
       bcrypt (~> 3.0)
       orm_adapter (~> 0.1)
       railties (>= 4.1.0, < 6.0)
@@ -177,28 +177,28 @@ GEM
     escape_utils (1.2.1)
     extended-markdown-filter (0.7.0)
       html-pipeline (~> 2.9)
-    factory_bot (4.11.1)
-      activesupport (>= 3.0.0)
-    factory_bot_rails (4.11.1)
-      factory_bot (~> 4.11.1)
-      railties (>= 3.0.0)
+    factory_bot (5.0.0)
+      activesupport (>= 4.2.0)
+    factory_bot_rails (5.0.1)
+      factory_bot (~> 5.0.0)
+      railties (>= 4.2.0)
     faraday (0.15.4)
       multipart-post (>= 1.2, < 3)
     ffi (1.10.0)
     flutie (2.1.0)
     gemoji (3.0.0)
     get_process_mem (0.2.3)
-    github-markup (3.0.2)
-    globalid (0.4.1)
+    github-markup (3.0.3)
+    globalid (0.4.2)
       activesupport (>= 4.2.0)
     gon (6.2.1)
       actionpack (>= 3.0)
       multi_json
       request_store (>= 1.0)
-    graphiql-rails (1.6.0)
+    graphiql-rails (1.7.0)
       railties
       sprockets-rails
-    graphql (1.8.13)
+    graphql (1.9.2)
     graphql-batch (0.3.10)
       graphql (>= 0.8, < 2)
       promise.rb (~> 0.7.2)
@@ -217,7 +217,7 @@ GEM
     hashdiff (0.3.8)
     hashie (3.6.0)
     heapy (0.1.4)
-    highline (2.0.0)
+    highline (2.0.1)
     hiredis (0.6.3)
     html-pipeline (2.10.0)
       activesupport (>= 2)
@@ -282,14 +282,6 @@ GEM
       faraday
       json (>= 1.8)
     kramdown (1.17.0)
-    launchy (2.4.3)
-      addressable (~> 2.3)
-    letter_opener (1.7.0)
-      launchy (~> 2.2)
-    letter_opener_web (1.3.4)
-      actionmailer (>= 3.2)
-      letter_opener (~> 1.0)
-      railties (>= 3.2)
     listen (3.1.5)
       rb-fsevent (~> 0.9, >= 0.9.4)
       rb-inotify (~> 0.9, >= 0.9.7)
@@ -329,7 +321,7 @@ GEM
       cocaine
       color
       oily_png
-    mjml-rails (4.2.4)
+    mjml-rails (4.2.5)
     moji (1.6)
     msgpack (1.2.6)
     multi_json (1.13.1)
@@ -469,7 +461,7 @@ GEM
     rspec-support (3.8.0)
     rspec_junit_formatter (0.4.1)
       rspec-core (>= 2, < 4, != 2.12.0)
-    rubocop (0.63.1)
+    rubocop (0.64.0)
       jaro_winkler (~> 1.5.1)
       parallel (~> 1.10)
       parser (>= 2.5, != 2.5.1.1)
@@ -514,7 +506,7 @@ GEM
     slim (4.0.1)
       temple (>= 0.7.6, < 0.9)
       tilt (>= 2.0.6, < 2.1)
-    solargraph (0.31.2)
+    solargraph (0.31.3)
       backport (~> 0.3)
       htmlentities (~> 4.3, >= 4.3.4)
       jaro_winkler (~> 1.5)
@@ -639,7 +631,6 @@ DEPENDENCIES
   kaminari
   keen
   koala
-  letter_opener_web
   listen
   lograge
   memory_profiler
