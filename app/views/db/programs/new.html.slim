@@ -14,11 +14,12 @@
 = render "db/works/subnav", work: @work
 
 .container-fluid.p-3
-  .c-card.p-3.mb-3
-    h3.h4
-      = t("messages.programs.new_programs_csv_by_program_detail")
-    - @work.program_details.published.each do |pd|
-      = link_to "#{pd.channel.name}<br>#{display_time(pd.started_at)}〜".html_safe, new_db_work_program_path(program_detail_id: pd.id), class: "btn btn-sm #{pd.id.to_s == params[:program_detail_id] ? 'btn-secondary' : 'btn-outline-secondary'} mr-2 mb-2"
+  - if @work.program_details.published.exists?
+    .c-card.p-3.mb-3
+      h3.h4
+        = t("messages.programs.new_programs_csv_by_program_detail")
+      - @work.program_details.published.each do |pd|
+        = link_to "#{pd.channel.name}<br>#{display_time(pd.started_at)}〜".html_safe, new_db_work_program_path(program_detail_id: pd.id), class: "btn btn-sm #{pd.id.to_s == params[:program_detail_id] ? 'btn-secondary' : 'btn-outline-secondary'} mr-2 mb-2"
   .row
     .col-6
       .c-card.p-3
