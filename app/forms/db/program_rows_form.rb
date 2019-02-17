@@ -17,26 +17,18 @@ module DB
       program_detail = @work.program_details.published.find_by(id: program_detail_id)
       return unless program_detail
 
-      set_default_rows!(program_detail, program_detail.started_at, time_zone)
-    end
+      last_program = program_detail.programs.published.order(started_at: :desc).first
+      base_started_at = if last_program
+        last_program.started_at + 7.days
+      else
+        program_detail.started_at
+      end
 
-    def set_default_rows_by_program!(program_id, time_zone: "Asia/Tokyo")
-      program = @work.programs.published.find_by(id: program_id)
-      return unless program
-
-      set_default_rows!(program, program.started_at + 7.days, time_zone)
-    end
-
-    private
-
-    def set_default_rows!(resource, base_started_at, time_zone)
       rows = []
       14.times do |i|
         rows << [
-          resource.channel.name,
-          "",
+          program_detail.id,
           (base_started_at + (i * 7).days).in_time_zone(time_zone).strftime("%Y-%m-%d %H:%M"),
-          resource.rebroadcast? ? 1 : 0
         ]
       end
 
@@ -44,6 +36,8 @@ module DB
         r.join(",")
       end.join("\n")
     end
+
+    private
 
     def attrs_list
       @attrs_list ||= fetched_rows.map do |row_data|
