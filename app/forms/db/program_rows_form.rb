@@ -45,6 +45,7 @@ module DB
           work_id: @work.id,
           channel_id: row_data[:channel][:id],
           episode_id: row_data[:episode][:id],
+          program_detail_id: row_data[:program_detail][:id],
           started_at: row_data[:started_at][:value],
           rebroadcast: row_data[:rebroadcast][:value],
           time_zone: @user.time_zone
@@ -54,17 +55,17 @@ module DB
 
     def fetched_rows
       parsed_rows.map do |row_columns|
-        channel = Channel.published.where(id: row_columns[0]).
-          or(Channel.published.where(name: row_columns[0])).first
-        episode = @work.episodes.published.where(id: row_columns[1]).
-          or(@work.episodes.published.where(number: row_columns[1])).
-          or(@work.episodes.published.where(title: row_columns[1])).first
+        program_detail = ProgramDetail.published.find_by(id: row_columns[0])
+        episode = @work.episodes.published.where(id: row_columns[2]).
+          or(@work.episodes.published.where(number: row_columns[2])).
+          or(@work.episodes.published.where(title: row_columns[2])).first
 
         {
-          channel: { id: channel&.id, value: row_columns[0] },
-          episode: { id: episode&.id, value: row_columns[1] },
-          started_at: { value: row_columns[2] },
-          rebroadcast: { value: row_columns[3] == "1" }
+          channel: { id: program_detail&.channel&.id, value: row_columns[0] },
+          started_at: { value: row_columns[1] },
+          episode: { id: episode&.id },
+          rebroadcast: { value: program_detail&.rebroadcast? == true },
+          program_detail: { id: program_detail&.id, value: row_columns[0] }
         }
       end
     end
@@ -84,7 +85,7 @@ module DB
 
     def valid_resource
       fetched_rows.each do |row_data|
-        row_data.slice(:channel).each do |_, data|
+        row_data.slice(:channel, :program_detail).each do |_, data|
           next if data[:id]
 
           i18n_path = "activemodel.errors.forms.db/program_rows_form.invalid"

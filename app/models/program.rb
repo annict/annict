@@ -18,12 +18,13 @@
 #
 # Indexes
 #
-#  index_programs_on_aasm_state         (aasm_state)
-#  index_programs_on_program_detail_id  (program_detail_id)
-#  index_programs_on_sc_pid             (sc_pid) UNIQUE
-#  programs_channel_id_idx              (channel_id)
-#  programs_episode_id_idx              (episode_id)
-#  programs_work_id_idx                 (work_id)
+#  index_programs_on_aasm_state                        (aasm_state)
+#  index_programs_on_program_detail_id                 (program_detail_id)
+#  index_programs_on_program_detail_id_and_started_at  (program_detail_id,started_at) UNIQUE
+#  index_programs_on_sc_pid                            (sc_pid) UNIQUE
+#  programs_channel_id_idx                             (channel_id)
+#  programs_episode_id_idx                             (episode_id)
+#  programs_work_id_idx                                (work_id)
 #
 
 class Program < ApplicationRecord
