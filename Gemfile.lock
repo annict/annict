@@ -199,8 +199,8 @@ GEM
       railties
       sprockets-rails
     graphql (1.9.2)
-    graphql-batch (0.3.10)
-      graphql (>= 0.8, < 2)
+    graphql-batch (0.4.0)
+      graphql (>= 1.3, < 2)
       promise.rb (~> 0.7.2)
     graphql-docs (1.7.1)
       commonmarker (~> 0.16)
