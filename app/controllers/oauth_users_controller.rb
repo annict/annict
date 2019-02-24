@@ -23,6 +23,7 @@ class OauthUsersController < Devise::RegistrationsController
 
     return render(:new) unless @user.valid?
 
+    @user.setting.privacy_policy_agreed = true
     @user.save
     ga_client.user = @user
     ga_client.events.create(:users, :create, el: "via_oauth")
