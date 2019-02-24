@@ -168,6 +168,8 @@ ja:
         locale: 言語
         password: パスワード
         password_confirmation: パスワード (確認)
+        terms_and_privacy_policy_agreement: 利用規約とプライバシーポリシー
+        terms_and_privacy_policy_agreement_html: "<a href='/terms' target='_blank'>利用規約</a>と<a href='/privacy' target='_blank'>プライバシーポリシー</a>に同意する"
         terms: 利用規約とプライバシーポリシー
         time_zone: タイムゾーン
         username: ユーザ名

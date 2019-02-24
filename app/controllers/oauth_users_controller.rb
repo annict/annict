@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class OauthUsersController < Devise::RegistrationsController
-  permits :username, :email, model_name: "User"
+  permits :username, :email, :terms_and_privacy_policy_agreement, model_name: "User"
 
   before_action :set_oauth, only: %i(new create)
 

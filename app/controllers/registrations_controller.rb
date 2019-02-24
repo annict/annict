@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class RegistrationsController < Devise::RegistrationsController
-  permits :username, :email, :password, model_name: "User"
+  permits :username, :email, :password, :terms_and_privacy_policy_agreement, model_name: "User"
 
   def new
     @new_user = User.new_with_session({}, session)
