@@ -435,6 +435,7 @@ type Episode implements Node {
     orderBy: RecordOrder
   ): RecordConnection
   recordsCount: Int!
+  satisfactionRate: Float
   sortNumber: Int!
   title: String
   viewerDidTrack: Boolean!
@@ -937,20 +938,9 @@ type Query {
 }
 
 enum RatingState {
-  """
-  """
   AVERAGE
-
-  """
-  """
   BAD
-
-  """
-  """
   GOOD
-
-  """
-  """
   GREAT
 }
 
@@ -1622,6 +1612,7 @@ type Work implements Node {
     orderBy: ReviewOrder
   ): ReviewConnection
   reviewsCount: Int!
+  satisfactionRate: Float
   seasonName: SeasonName
   seasonYear: Int
   staffs(
