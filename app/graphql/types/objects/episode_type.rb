@@ -14,6 +14,7 @@ module Types
       field :number_text, String, null: true
       field :sort_number, Integer, null: false
       field :title, String, null: true
+      field :satisfaction_rate, Float, null: true
       field :records_count, Integer, null: false
       field :record_comments_count, Integer, null: false
       field :work, Types::Objects::WorkType, null: false

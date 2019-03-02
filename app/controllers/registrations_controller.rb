@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class RegistrationsController < Devise::RegistrationsController
-  permits :username, :email, :password, model_name: "User"
+  permits :username, :email, :password, :terms_and_privacy_policy_agreement, model_name: "User"
 
   def new
     @new_user = User.new_with_session({}, session)
@@ -14,6 +14,7 @@ class RegistrationsController < Devise::RegistrationsController
 
     return render(:new) unless @new_user.valid?
 
+    @new_user.setting.privacy_policy_agreed = true
     @new_user.save!
     ga_client.user = @new_user
     ga_client.events.create(:users, :create, el: "via_web")

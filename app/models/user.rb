@@ -63,7 +63,7 @@ class User < ApplicationRecord
   # In order to be able to update their user data, it needs to enable the `case_sensitive` option.
   DUPLICATED_USERNAMES = %w(a d k).freeze
 
-  attr_accessor :email_username, :current_password
+  attr_accessor :email_username, :current_password, :terms_and_privacy_policy_agreement
 
   # Include default devise modules. Others available are:
   # :confirmable, :lockable, :timeoutable
@@ -157,6 +157,7 @@ class User < ApplicationRecord
   validates :username,
     uniqueness: { case_sensitive: true },
     if: proc { |u| u.username.downcase.in?(DUPLICATED_USERNAMES) }
+  validates :terms_and_privacy_policy_agreement, acceptance: true
 
   # Override the Devise's `find_for_database_authentication`
   # https://github.com/plataformatec/devise/wiki/How-To:-Allow-users-to-sign-in-using-their-username-or-email-address

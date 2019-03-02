@@ -169,6 +169,8 @@ en:
         locale: Language
         password: Password
         password_confirmation: Password (Confirmation)
+        terms_and_privacy_policy_agreement: Terms of Use and Privacy Policy
+        terms_and_privacy_policy_agreement_html: "I have read and agree to the <a href='/terms' target='_blank'>Terms of Use</a> and <a href='/privacy' target='_blank'>Privacy Policy</a>"
         terms: Terms and Privacy
         time_zone: Time zone
         username: Username

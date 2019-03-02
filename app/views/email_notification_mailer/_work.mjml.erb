@@ -72,7 +72,7 @@
       <mj-text font-weight="800" padding="10px 25px"><%= I18n.t("noun.staffs") %></mj-text>
       <mj-text padding-top="0" line-height="22px">
         <% work.staffs.published.major.order(:sort_number).each do |staff| %>
-          <%= staff.role_name %>: <%= staff.local_name %>
+          <%= staff.decorate.role_name %>: <%= staff.local_name %>
         <% end %>
       </mj-text>
     <% end %>

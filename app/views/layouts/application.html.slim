@@ -13,7 +13,7 @@ html lang="#{I18n.locale}"
       = yield
 
       - if show_privacy_policy_modal?
-        c-privacy-policy-modal
+        c-privacy-policy-modal :hide="#{params[:hide_privacy_policy_modal] == 'true'}"
 
       - if !user_signed_in? && !page_category.in?(%w(sessions_new registrations_new))
         = render "application/components/sign_up_modal", user: @new_user
