@@ -224,8 +224,8 @@ ja:
         rating_overall_state: 全体
     errors:
       messages:
-        accepted: に同意してください。
-        url: にはURLを入力してください。
+        accepted: に同意してください
+        url: にはURLを入力してください
     models:
       character:
         one: キャラクター
