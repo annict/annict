@@ -532,7 +532,7 @@ GEM
       sprockets (>= 3.0.0)
     squasher (0.6.2)
     stackprof (0.2.12)
-    temple (0.8.0)
+    temple (0.8.1)
     terminal-table (1.8.0)
       unicode-display_width (~> 1.1, >= 1.1.1)
     terrapin (0.6.0)
