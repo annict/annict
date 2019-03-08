@@ -168,7 +168,7 @@ GEM
     dotenv-rails (2.7.1)
       dotenv (= 2.7.1)
       railties (>= 3.2, < 6.1)
-    email_validator (1.6.0)
+    email_validator (2.0.0)
       activemodel
     enumerize (2.2.2)
       activesupport (>= 3.2)
@@ -236,7 +236,7 @@ GEM
     httparty (0.16.4)
       mime-types (~> 3.0)
       multi_xml (>= 0.5.2)
-    i18n (1.5.3)
+    i18n (1.6.0)
       concurrent-ruby (~> 1.0)
     i18n-tasks (0.9.28)
       activesupport (>= 4.0.2)
