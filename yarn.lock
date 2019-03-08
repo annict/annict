@@ -1352,9 +1352,9 @@ braces@^2.3.0, braces@^2.3.1:
     to-regex "^3.0.1"
 
 britecharts@^2.9.8:
-  version "2.9.8"
-  resolved "https://registry.yarnpkg.com/britecharts/-/britecharts-2.9.8.tgz#7adcd242e2a4037ef384586ae288ed91c0f03121"
-  integrity sha512-nHOee20POFXvkOHxULGyc7DngTJ9lzpbIrnfOO/SmPUhbKnRUcsG05bH3aELJ+KYN9O/eUyf+3BGXvtPx0E1Pw==
+  version "2.10.0"
+  resolved "https://registry.yarnpkg.com/britecharts/-/britecharts-2.10.0.tgz#099bcdee74b7f39b3935f27ebee39801261925c7"
+  integrity sha512-L/ZbvyRGpzx5jh082l78VDnzYgsaf7tqlKsGsRmaXFgFr6AiqwJpJw9K6WVTg3zwT6GMECb1z0CaaDdzMulGSw==
   dependencies:
     base-64 "^0.1.0"
     d3 "^5.0.0"
