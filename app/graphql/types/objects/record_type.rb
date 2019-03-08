@@ -34,10 +34,6 @@ module Types
         RecordLoader.for(Episode).load(object.episode_id)
       end
 
-      def rating_state
-        object.rating_state&.upcase
-      end
-
       def modified
         object.modify_comment?
       end

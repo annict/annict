@@ -26,6 +26,7 @@ module Types
       field :syobocal_tid, Integer, null: true
       field :mal_anime_id, String, null: true
       field :image, Types::Objects::WorkImageType, null: true
+      field :satisfaction_rate, Float, null: true
       field :episodes_count, Integer, null: false
       field :watchers_count, Integer, null: false
       field :reviews_count, Integer, null: false

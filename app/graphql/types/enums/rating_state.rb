@@ -3,10 +3,10 @@
 module Types
   module Enums
     class RatingState < Types::Enums::Base
-      value "GREAT", ""
-      value "GOOD", ""
-      value "AVERAGE", ""
-      value "BAD", ""
+      value "GREAT", value: "great"
+      value "GOOD", value: "good"
+      value "AVERAGE", value: "average"
+      value "BAD", value: "bad"
     end
   end
 end

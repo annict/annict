@@ -7,7 +7,7 @@ module Api
 
       def index(page_category, page_params = "{}")
         @page_category = page_category
-        @page_params = JSON.parse(page_params)
+        @page_params = JSON.parse(params[:page_params].presence || "{}")
         service_name = "PageData::#{@page_category.classify}Service"
         @results = service_name.safe_constantize.exec(current_user, @page_params)
 

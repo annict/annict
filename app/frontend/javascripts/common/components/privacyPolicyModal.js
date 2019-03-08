@@ -10,6 +10,13 @@ export default {
     }
   },
 
+  props: {
+    hide: {
+      type: Boolean,
+      required: true
+    }
+  },
+
   methods: {
     agree() {
       this.isLoading = true
@@ -29,6 +36,10 @@ export default {
   },
 
   mounted() {
+    if (this.hide) {
+      return;
+    }
+
     this.modalElm = $('.c-privacy-policy-modal')
     this.modalElm.modal('show')
   }

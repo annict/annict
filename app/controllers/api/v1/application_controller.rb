@@ -56,7 +56,7 @@ module Api
       end
 
       def logging_request
-        annict_logger.log(:info, :REST_API_REQUEST, oauth_access_token_id: doorkeeper_token.id)
+        annict_logger.log(:info, :REST_API_REQUEST, oauth_access_token_id: doorkeeper_token&.id)
       end
     end
   end
