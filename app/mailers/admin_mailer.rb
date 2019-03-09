@@ -6,7 +6,7 @@ class AdminMailer < ActionMailer::Base
   def episode_created_notification(episode_id)
     @episode = Episode.find(episode_id)
 
-    mail(to: "shimbaco@annict.com", subject: "エピソードが作成されました")
+    mail(to: "shimbaco@annict.com", subject: "エピソードが追加されました")
   end
 
   def special_program_notification(alert_id)
