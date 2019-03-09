@@ -8,13 +8,4 @@ class AdminMailer < ActionMailer::Base
 
     mail(to: "shimbaco@annict.com", subject: "エピソードが追加されました")
   end
-
-  def special_program_notification(alert_id)
-    alert = Syobocal::Alert.find(alert_id)
-    @work = alert.work
-    @sub_title = alert.sc_sub_title
-    @prog_comment = alert.sc_prog_comment
-
-    mail(to: "shimbaco@annict.com", subject: "特別番組が見つかりました")
-  end
 end
