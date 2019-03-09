@@ -23,6 +23,7 @@
             th ID
             th = t "activerecord.attributes.program_detail.channel_id"
             th = t "activerecord.attributes.program_detail.started_at"
+            th = t "activerecord.attributes.program_detail.rebroadcast"
             th = t "activerecord.attributes.program_detail.vod_title_code"
             th = t "activerecord.attributes.program_detail.vod_title_name"
             th = t "head.title.db.program_details.activities"
@@ -38,6 +39,7 @@
               td = program_detail.id
               td = program_detail.channel.name
               td = display_time(program_detail.started_at)&.presence || "-"
+              td = program_detail.rebroadcast? ? icon("circle", "far") : icon("times")
               td
                 - if program_detail.vod_title_code.present?
                   = link_to program_detail.vod_title_code, vod_title_url(program_detail.channel_id, program_detail.vod_title_code), target: "_blank"

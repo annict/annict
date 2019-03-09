@@ -29,6 +29,13 @@
               = f.label :started_at, class: "col-sm-3 col-form-label"
               .col-sm-9
                 = f.text_field :started_at, class: "form-control", value: f.object.started_at&.in_time_zone(current_user.time_zone)&.strftime("%Y-%m-%d %H:%M"), placeholder: t("resources.program.started_at_eg")
+            .form-group.row.row
+              label.col-sm-3
+              .col-sm-9
+                .form-check
+                  = f.label :rebroadcast, class: "form-check-label" do
+                    = f.check_box :rebroadcast, class: "form-check-input"
+                    = t "activerecord.attributes.program_detail.rebroadcast"
             .form-group.row
               = f.label :vod_title_code, class: "col-sm-3 col-form-label"
               .col-sm-9

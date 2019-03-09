@@ -127,6 +127,13 @@ en:
         rebroadcast: Rebroadcast
         started_at: Started at
         time_zone: Timezone
+      program_detail:
+        channel_id: Channel
+        url: URL
+        started_at: Started At
+        rebroadcast: Rebroadcast
+        vod_title_code: VOD Title Code
+        vod_title_name: VOD Title Name
       pv:
         sort_number: Sort Number
         title: Title
@@ -157,12 +164,6 @@ en:
         summary: Summary
         url: URL
         userland_category_id: Category
-      program_detail:
-        channel_id: Channel
-        url: URL
-        started_at: Started At
-        vod_title_code: VOD Title Code
-        vod_title_name: VOD Title Name
       user:
         allowed_locales: Allowed Languages
         current_password: Current password

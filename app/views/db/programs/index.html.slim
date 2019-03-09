@@ -46,7 +46,7 @@
               td = display_time(program.started_at)&.presence || "-"
               td = program.number.presence || "-"
               td = program.episode&.title_with_number.presence || "-"
-              td = program.rebroadcast? ? icon("circle") : icon("times")
+              td = program.rebroadcast? ? icon("circle", "far") : icon("times")
               td = link_to t("head.title.db.programs.activities"), activities_db_program_path(program)
               - if policy(program).edit?
                 td
