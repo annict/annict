@@ -123,6 +123,7 @@ en:
       program:
         channel_id: Channel
         episode_id: Episode
+        number: Number
         rebroadcast: Rebroadcast
         started_at: Started at
         time_zone: Timezone

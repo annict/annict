@@ -28,6 +28,7 @@
             th ID
             th = t "activerecord.attributes.program.channel_id"
             th = t "activerecord.attributes.program.started_at"
+            th = t "activerecord.attributes.program.number"
             th = t "activerecord.attributes.program.episode_id"
             th = t "activerecord.attributes.program.rebroadcast"
             th = t "head.title.db.programs.activities"
@@ -43,6 +44,7 @@
               td = program.id
               td = program.channel.name
               td = display_time(program.started_at)&.presence || "-"
+              td = program.number.presence || "-"
               td = program.episode&.title_with_number.presence || "-"
               td = program.rebroadcast? ? icon("circle") : icon("times")
               td = link_to t("head.title.db.programs.activities"), activities_db_program_path(program)

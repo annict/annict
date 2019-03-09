@@ -122,6 +122,7 @@ ja:
       program:
         channel_id: チャンネル
         episode_id: エピソード
+        number: 回数
         rebroadcast: 再放送
         started_at: 放送日時
         time_zone: タイムゾーン

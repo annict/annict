@@ -2,7 +2,7 @@
 
 module Db
   class ProgramsController < Db::ApplicationController
-    permits :channel_id, :episode_id, :started_at, :rebroadcast, :time_zone
+    permits :channel_id, :episode_id, :started_at, :number, :rebroadcast, :time_zone
 
     before_action :authenticate_user!
     before_action :load_work, only: %i(index new create)
@@ -28,7 +28,11 @@ module Db
       authorize @form, :create?
 
       return render(:new) unless @form.valid?
-      @form.save!
+
+      ActiveRecord::Base.transaction do
+        @form.save!
+        @form.reset_number!
+      end
 
       redirect_to db_work_programs_path(@work), notice: t("resources.program.created")
     end

@@ -33,6 +33,11 @@
               = f.label :started_at, class: "col-sm-3 col-form-label"
               .col-sm-9
                 = f.text_field :started_at, class: "form-control", value: f.object.started_at&.in_time_zone(current_user.time_zone)&.strftime("%Y-%m-%d %H:%M"), placeholder: t("resources.program.started_at_eg")
+            - if current_user.role.admin?
+              .form-group.row
+                = f.label :number, class: "col-sm-3 col-form-label"
+                .col-sm-9
+                  = f.text_field :number, class: "form-control"
             .form-group.row
               = label_tag :time_zone, t("activerecord.attributes.program.time_zone"), class: "col-sm-3 col-form-label"
               .col-sm-9

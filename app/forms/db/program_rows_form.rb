@@ -37,6 +37,14 @@ module DB
       end.join("\n")
     end
 
+    def reset_number!
+      ProgramDetail.where(id: attrs_list.pluck(:program_detail_id).uniq).each do |pd|
+        pd.programs.published.order(:started_at).each_with_index do |p, i|
+          p.update_column(:number, i + 1)
+        end
+      end
+    end
+
     private
 
     def attrs_list

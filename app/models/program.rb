@@ -15,11 +15,13 @@
 #  rebroadcast       :boolean          default(FALSE), not null
 #  aasm_state        :string           default("published"), not null
 #  program_detail_id :integer
+#  number            :integer
 #
 # Indexes
 #
 #  index_programs_on_aasm_state                        (aasm_state)
 #  index_programs_on_program_detail_id                 (program_detail_id)
+#  index_programs_on_program_detail_id_and_number      (program_detail_id,number) UNIQUE
 #  index_programs_on_program_detail_id_and_started_at  (program_detail_id,started_at) UNIQUE
 #  index_programs_on_sc_pid                            (sc_pid) UNIQUE
 #  programs_channel_id_idx                             (channel_id)
