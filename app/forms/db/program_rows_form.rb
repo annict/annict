@@ -56,9 +56,7 @@ module DB
     def fetched_rows
       parsed_rows.map do |row_columns|
         program_detail = ProgramDetail.published.find_by(id: row_columns[0])
-        episode = @work.episodes.published.where(id: row_columns[2]).
-          or(@work.episodes.published.where(number: row_columns[2])).
-          or(@work.episodes.published.where(title: row_columns[2])).first
+        episode = @work.episodes.published.find_by(id: row_columns[2])
 
         {
           channel: { id: program_detail&.channel&.id, value: row_columns[0] },
