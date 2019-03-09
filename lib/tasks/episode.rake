@@ -3,7 +3,7 @@
 namespace :episode do
   task generate: :environment do
     EpisodeGeneratorService.execute!
-    # SyobocalEpisodeTitleFetcherService.execute!
+    SyobocalEpisodeDataFetcherService.execute!
   end
 
   task update_score: :environment do
