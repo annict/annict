@@ -9,7 +9,7 @@ GIT
 GEM
   remote: https://rubygems.org/
   specs:
-    aasm (5.0.1)
+    aasm (5.0.2)
       concurrent-ruby (~> 1.0)
     action_args (2.4.0)
     actioncable (5.2.2)
@@ -58,7 +58,7 @@ GEM
       i18n (>= 0.7, < 2)
       minitest (~> 5.1)
       tzinfo (~> 1.1)
-    acts_as_list (0.9.17)
+    acts_as_list (0.9.18)
       activerecord (>= 3.0)
     addressable (2.6.0)
       public_suffix (>= 2.0.2, < 4.0)
@@ -77,7 +77,7 @@ GEM
     ast (2.4.0)
     awesome_print (1.8.0)
     aws-eventstream (1.0.1)
-    aws-partitions (1.142.0)
+    aws-partitions (1.143.0)
     aws-sdk-core (3.46.2)
       aws-eventstream (~> 1.0)
       aws-partitions (~> 1.0)
