@@ -67,15 +67,6 @@ Rails.application.configure do
   # Prepend all log lines with the following tags.
   config.log_tags = [:request_id]
 
-  # Heroku will set `RAILS_LOG_TO_STDOUT` when you deploy a Ruby app via
-  # the Heroku Ruby Buildpack for Rails 4.2+ apps.
-  # https://blog.heroku.com/container_ready_rails_5#stdout-logging
-  if ENV["RAILS_LOG_TO_STDOUT"].present?
-    logger = ActiveSupport::Logger.new(STDOUT)
-    logger.formatter = config.log_formatter
-    config.logger = ActiveSupport::TaggedLogging.new(logger)
-  end
-
   config.lograge.enabled = true
   config.lograge.formatter = Lograge::Formatters::Json.new
   config.lograge.custom_options = lambda do |event|

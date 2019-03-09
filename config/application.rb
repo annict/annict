@@ -26,6 +26,14 @@ module Annict
     # Initialize configuration defaults for originally generated Rails version.
     config.load_defaults 5.2
 
+    # Heroku will set `RAILS_LOG_TO_STDOUT` when you deploy a Ruby app via
+    # the Heroku Ruby Buildpack for Rails 4.2+ apps.
+    # https://blog.heroku.com/container_ready_rails_5#stdout-logging
+    if ENV["RAILS_LOG_TO_STDOUT"].present?
+      logger = ActiveSupport::Logger.new(STDOUT)
+      config.logger = ActiveSupport::TaggedLogging.new(logger)
+    end
+
     # Don't generate system test files.
     config.generators.system_tests = nil
 
