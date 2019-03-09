@@ -310,7 +310,7 @@ ActiveRecord::Schema.define(version: 2019_02_18_014736) do
     t.integer "prev_episode_id"
     t.string "aasm_state", default: "published", null: false
     t.boolean "fetch_syobocal", default: false, null: false
-    t.string "raw_number"
+    t.float "raw_number"
     t.string "title_ro", default: "", null: false
     t.string "title_en", default: "", null: false
     t.integer "episode_records_with_body_count", default: 0, null: false

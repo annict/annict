@@ -2,6 +2,8 @@
 
 class UpdateForManualPrograms < ActiveRecord::Migration[5.2]
   def change
+    change_column :episodes, :raw_number, "float USING raw_number::double precision"
+
     add_column :program_details, :rebroadcast, :boolean, default: false, null: false
     add_column :programs, :program_detail_id, :integer
     add_column :programs, :number, :integer

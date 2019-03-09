@@ -15,7 +15,7 @@
 #  prev_episode_id                 :integer
 #  aasm_state                      :string           default("published"), not null
 #  fetch_syobocal                  :boolean          default(FALSE), not null
-#  raw_number                      :string
+#  raw_number                      :float
 #  title_ro                        :string           default(""), not null
 #  title_en                        :string           default(""), not null
 #  episode_records_with_body_count :integer          default(0), not null
@@ -137,7 +137,8 @@ class Episode < ApplicationRecord
 
   def local_number
     return number if I18n.locale == :ja
-    return "##{raw_number}" if raw_number.present?
+    return "##{raw_number}" if raw_number
+
     number
   end
 
