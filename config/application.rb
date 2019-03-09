@@ -30,8 +30,7 @@ module Annict
     # the Heroku Ruby Buildpack for Rails 4.2+ apps.
     # https://blog.heroku.com/container_ready_rails_5#stdout-logging
     if ENV["RAILS_LOG_TO_STDOUT"].present?
-      logger = ActiveSupport::Logger.new(STDOUT)
-      config.logger = ActiveSupport::TaggedLogging.new(logger)
+      config.logger = ActiveSupport::Logger.new(STDOUT)
     end
 
     # Don't generate system test files.
