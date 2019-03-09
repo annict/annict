@@ -128,9 +128,10 @@ ja:
         time_zone: タイムゾーン
       program_detail:
         channel_id: チャンネル
-        url: URL
-        started_at: 放送開始日時
         rebroadcast: 再放送
+        started_at: 放送開始日時
+        time_zone: タイムゾーン
+        url: URL
         vod_title_code: VOD作品コード
         vod_title_name: VOD作品名
       pv:

@@ -129,9 +129,10 @@ en:
         time_zone: Timezone
       program_detail:
         channel_id: Channel
-        url: URL
-        started_at: Started At
         rebroadcast: Rebroadcast
+        started_at: Started At
+        time_zone: Timezone
+        url: URL
         vod_title_code: VOD Title Code
         vod_title_name: VOD Title Name
       pv:
