@@ -144,7 +144,8 @@ class Episode < ApplicationRecord
   private
 
   def unset_prev_episode_id
-    return if next_episode.blank?
+    return if next_episode.nil?
+
     # エピソードを削除するとき、次のエピソードの `prev_episode_id` に
     # 削除対象のエピソードが設定されていたとき、その情報を削除する
     next_episode.update_column(:prev_episode_id, nil) if self == next_episode.prev_episode
