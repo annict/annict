@@ -10,4 +10,5 @@
 /log
 /public/paperclip
 /tmp
+/vendor/bundle
 /yarn-error.log

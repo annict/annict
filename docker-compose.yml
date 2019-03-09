@@ -41,6 +41,7 @@ services:
     tty: true # for Pry
     volumes:
       - ./:/annict
+      - ./vendor/bundle:/annict/vendor/bundle
   sidekiq:
     build:
       context: .
