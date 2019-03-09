@@ -21,6 +21,7 @@
 #
 #  index_programs_on_aasm_state                        (aasm_state)
 #  index_programs_on_program_detail_id                 (program_detail_id)
+#  index_programs_on_program_detail_id_and_episode_id  (program_detail_id,episode_id) UNIQUE
 #  index_programs_on_program_detail_id_and_number      (program_detail_id,number) UNIQUE
 #  index_programs_on_program_detail_id_and_started_at  (program_detail_id,started_at) UNIQUE
 #  index_programs_on_sc_pid                            (sc_pid) UNIQUE

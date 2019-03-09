@@ -764,6 +764,7 @@ ActiveRecord::Schema.define(version: 2019_02_18_014736) do
     t.index ["aasm_state"], name: "index_programs_on_aasm_state"
     t.index ["channel_id"], name: "programs_channel_id_idx"
     t.index ["episode_id"], name: "programs_episode_id_idx"
+    t.index ["program_detail_id", "episode_id"], name: "index_programs_on_program_detail_id_and_episode_id", unique: true
     t.index ["program_detail_id", "number"], name: "index_programs_on_program_detail_id_and_number", unique: true
     t.index ["program_detail_id", "started_at"], name: "index_programs_on_program_detail_id_and_started_at", unique: true
     t.index ["program_detail_id"], name: "index_programs_on_program_detail_id"
