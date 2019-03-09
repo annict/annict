@@ -66,7 +66,7 @@ class Episode < ApplicationRecord
   has_many :episode_records, dependent: :destroy
   has_many :resource_items, dependent: :destroy, class_name: "EpisodeItem"
   has_many :items, through: :resource_items
-  has_many :programs, dependent: :destroy
+  has_many :programs, dependent: :nullify
 
   validates :sort_number, presence: true, numericality: { only_integer: true }
 
