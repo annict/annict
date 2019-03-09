@@ -1,6 +1,11 @@
 # frozen_string_literal: true
 
 namespace :episode do
+  task generate: :environment do
+    EpisodeGeneratorService.execute!
+    # SyobocalEpisodeTitleFetcherService.execute!
+  end
+
   task update_score: :environment do
     RATING_MAX = 2
 
