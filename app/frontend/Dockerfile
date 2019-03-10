@@ -1,6 +1,6 @@
 FROM node:10.15.1-alpine
 
-LABEL maintainer="https://annict.com/@shimbaco" \
+LABEL maintainer="https://annict.jp/@shimbaco" \
       description="A platform for anime addicts."
 
 RUN apk update && \
@@ -12,10 +12,8 @@ ENV PATH=./node_modules/.bin/:$PATH \
 
 WORKDIR /annict/
 
-COPY package.json yarn.lock webpack.config.js /annict/
+COPY package.json yarn.lock webpack.config.js ./
 RUN yarn install && \
     yarn cache clean
-
-COPY ./app/frontend/ /annict/app/frontend/
 
 EXPOSE 8080

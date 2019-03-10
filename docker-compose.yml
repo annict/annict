@@ -12,21 +12,21 @@ services:
     ports:
       - 6379:6379
     volumes:
-      - ../_redis/data:/data
+      - ../_redis/data:/var/lib/redis/data
   webpack:
     build:
       context: .
-      dockerfile: ./app/frontend/Dockerfile.dev
+      dockerfile: ./app/frontend/Dockerfile
     command: /bin/ash -c 'yarn webpack:start'
     volumes:
-      - ./:/annict
+      - .:/annict
       - node_modules_vol:/annict/node_modules
     ports:
       - 8080:8080
   rails:
     build:
       context: .
-      dockerfile: ./Dockerfile.dev
+      dockerfile: ./Dockerfile
     command: /bin/ash -c 'rm -rf tmp/pids/server.pid; bundle exec rails s -b 0.0.0.0'
     depends_on:
       - postgresql
@@ -40,12 +40,11 @@ services:
     stdin_open: true # for Pry
     tty: true # for Pry
     volumes:
-      - ./:/annict
-      - ./vendor/bundle:/annict/vendor/bundle
+      - .:/annict
   sidekiq:
     build:
       context: .
-      dockerfile: ./Dockerfile.dev
+      dockerfile: Dockerfile
     command: /bin/ash -c 'bundle exec sidekiq'
     depends_on:
       - postgresql
@@ -54,7 +53,7 @@ services:
       - .env.development
       - .env.development.local
     volumes:
-      - ./:/annict
+      - .:/annict
 
 volumes:
   # Exclude the node_modules directory

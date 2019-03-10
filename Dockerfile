@@ -1,6 +1,6 @@
 FROM ruby:2.6.1-alpine
 
-LABEL maintainer="https://annict.com/@shimbaco" \
+LABEL maintainer="https://annict.jp/@shimbaco" \
       description="A platform for anime addicts."
 
 RUN apk update && \
@@ -25,10 +25,8 @@ ENV PAGER=busybox\ less
 
 WORKDIR /annict/
 
-COPY Gemfile Gemfile.lock /annict/
-RUN bundle install -j$(getconf _NPROCESSORS_ONLN) --path vendor/bundle && \
+COPY Gemfile* ./
+RUN bundle install -j$(getconf _NPROCESSORS_ONLN) && \
     npm i -g mjml@4.1.2
-
-COPY . /annict/
 
 EXPOSE 3000
