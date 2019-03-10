@@ -18,8 +18,9 @@
         - casts.each do |cast|
           - cache cast do
             li.list-inline-item
-              = cast.character.decorate.name_link
-              | :
+              span.mr-1
+                = cast.character.decorate.name_link
+                | :
               = cast.decorate.local_name_with_old_link
     - staffs = top_work.staffs.major.order(:sort_number)
     - staffs = staffs.select { |s| locale_ja? ? true : s.support_en? }
