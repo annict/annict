@@ -10,7 +10,6 @@ RUN apk update && \
         git \
         postgresql \
         postgresql-dev \
-        nodejs-npm \
         imagemagick
 
 ENV RAILS_ENV=development
@@ -26,7 +25,6 @@ ENV PAGER=busybox\ less
 WORKDIR /annict/
 
 COPY Gemfile* ./
-RUN bundle install -j$(getconf _NPROCESSORS_ONLN) && \
-    npm i -g mjml@4.1.2
+RUN bundle install -j$(getconf _NPROCESSORS_ONLN)
 
 EXPOSE 3000
