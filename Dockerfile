@@ -25,6 +25,7 @@ ENV PAGER=busybox\ less
 WORKDIR /annict/
 
 COPY Gemfile* ./
-RUN bundle install -j$(getconf _NPROCESSORS_ONLN)
+RUN gem install bundler && \
+    bundle install -j$(getconf _NPROCESSORS_ONLN)
 
 EXPOSE 3000
