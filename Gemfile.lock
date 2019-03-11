@@ -140,7 +140,7 @@ GEM
     color (1.8)
     commonmarker (0.18.2)
       ruby-enum (~> 0.5)
-    concurrent-ruby (1.1.4)
+    concurrent-ruby (1.1.5)
     connection_pool (2.2.2)
     counter_culture (2.1.4)
       activerecord (>= 3.0.0)
