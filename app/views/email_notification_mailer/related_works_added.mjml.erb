@@ -1,15 +1,22 @@
-<mj-section background-color="#fff" padding-bottom="0">
-  <mj-text align="center">
-    <%= I18n.t("email_notification_mailer.related_works_added.description_html", work_title: @work.local_title) %>
-  </mj-text>
-  <mj-section padding-bottom="10px">
-    <mj-text align="center" line-height="22px">
-      <%= I18n.t("email_notification_mailer.related_works_added.related_works") %>:
-    </mj-text>
-    <mj-text align="center">
-      <%= @related_works.map { |work| work.local_title }.join(", ") %>
-    </mj-text>
+<mj-wrapper background-color="#fff" padding-top="0px" padding-bottom="0px">
+  <mj-section>
+    <mj-column>
+      <mj-text align="center">
+        <%= I18n.t("email_notification_mailer.related_works_added.description_html", work_title: @work.local_title) %>
+      </mj-text>
+    </mj-column>
+  </mj-section>
+
+  <mj-section padding-top="0px" padding-bottom="10px">
+    <mj-column>
+      <mj-text align="center" line-height="22px">
+        <%= I18n.t("email_notification_mailer.related_works_added.related_works") %>:
+      </mj-text>
+      <mj-text align="center">
+        <%= @related_works.map { |work| work.local_title }.join(", ") %>
+      </mj-text>
+    </mj-column>
   </mj-section>
 
   <%= render "email_notification_mailer/work", work: @work, utm_campaign: "related_works_added" %>
-</mj-section>
+</mj-wrapper>
