@@ -176,7 +176,7 @@ GEM
     dotenv-rails (2.7.1)
       dotenv (= 2.7.1)
       railties (>= 3.2, < 6.1)
-    email_validator (2.0.0)
+    email_validator (2.0.1)
       activemodel
     enumerize (2.2.2)
       activesupport (>= 3.2)
