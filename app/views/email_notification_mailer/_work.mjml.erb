@@ -1,6 +1,6 @@
 <mj-section padding-top="10px">
-  <mj-column width="180" padding-top="10px">
-    <mj-image width="180"
+  <mj-column width="180px" padding-top="0px">
+    <mj-image width="180px"
               padding-right="0"
               src="<%= ann_email_image_url(work.work_image, :attachment, size: "240x240") %>"
               align="center"
@@ -15,7 +15,7 @@
     </mj-button>
   </mj-column>
 
-  <mj-column width="420">
+  <mj-column width="420px">
     <mj-text>
       <span style="color: #fff; background-color: #2985be; padding: 3px; display: inline-block; margin-right: 3px;">
         <%= work.media.text %>
@@ -45,18 +45,14 @@
     <% end %>
 
     <% if work.pvs.published.exists? %>
+      <%- pv = work.pvs.published.order(:sort_number).first %>
       <mj-text font-weight="800" padding="10px 25px 0 25px"><%= I18n.t("noun.pv") %></mj-text>
-      <mj-section padding="0">
-        <%- pv = work.pvs.published.order(:sort_number).first %>
-        <mj-column width="420" padding="0">
-          <mj-image src="<%= ann_email_image_url(pv, :thumbnail, size: "640x640") %>" align="center" href="<%= pv.url %>"></mj-image>
-          <mj-text padding-top="0"
-                   align="center"
-                   color="#0366d6">
-            <%= link_to pv.title, pv.url, style: "text-decoration: none;" %>
-          </mj-text>
-        </mj-column>
-      </mj-section>
+      <mj-image src="<%= ann_email_image_url(pv, :thumbnail, size: "640x640") %>" align="center" href="<%= pv.url %>"></mj-image>
+      <mj-text padding-top="0"
+               align="center"
+               color="#0366d6">
+        <%= link_to pv.title, pv.url, style: "text-decoration: none;" %>
+      </mj-text>
     <% end %>
 
     <% if work.casts.published.exists? %>

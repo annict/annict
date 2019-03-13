@@ -1,3 +1,4 @@
+FROM node:10.15.1-alpine as node
 FROM ruby:2.6.1-alpine
 
 LABEL maintainer="https://annict.jp/@shimbaco" \
@@ -10,10 +11,11 @@ RUN apk update && \
         git \
         postgresql \
         postgresql-dev \
-        nodejs-npm \
-        imagemagick
+        imagemagick \
+        yarn
 
-ENV RAILS_ENV=development
+ENV PATH=./node_modules/.bin/:$PATH \
+    RAILS_ENV=development
 
 # Set to install cld gem
 # https://github.com/jtoy/cld/issues/10
@@ -25,8 +27,12 @@ ENV PAGER=busybox\ less
 
 WORKDIR /annict/
 
-COPY Gemfile* ./
-RUN bundle install -j$(getconf _NPROCESSORS_ONLN) && \
-    npm i -g mjml@4.1.2
+COPY --from=node /usr/local/bin/node /usr/local/bin/
+
+COPY Gemfile* package.json yarn.lock ./
+RUN gem install bundler && \
+    bundle install -j$(getconf _NPROCESSORS_ONLN) && \
+    yarn install && \
+    yarn cache clean
 
 EXPOSE 3000

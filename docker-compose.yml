@@ -41,6 +41,8 @@ services:
     tty: true # for Pry
     volumes:
       - .:/annict
+      - bundle_vol:/usr/local/bundle
+      - node_modules_vol:/annict/node_modules
   sidekiq:
     build:
       context: .
@@ -49,13 +51,17 @@ services:
     depends_on:
       - postgresql
       - redis
+      - webpack
     env_file:
       - .env.development
       - .env.development.local
     volumes:
       - .:/annict
+      - bundle_vol:/usr/local/bundle
+      - node_modules_vol:/annict/node_modules
 
 volumes:
-  # Exclude the node_modules directory
+  # Exclude the bundle/node_modules directory
   # https://stackoverflow.com/questions/29181032/add-a-volume-to-docker-but-exclude-a-sub-folder
+  bundle_vol:
   node_modules_vol:

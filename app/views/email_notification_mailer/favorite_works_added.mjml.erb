@@ -1,17 +1,22 @@
-<mj-section background-color="#fff">
-  <mj-column>
-    <mj-text align="center">
-      <%= I18n.t("email_notification_mailer.favorite_works_added.description_html", work_title: @work.local_title) %>
-    </mj-text>
-    <mj-section padding-bottom="10px" padding-top="0">
+<mj-wrapper background-color="#fff" padding-top="0px" padding-bottom="0px">
+  <mj-section>
+    <mj-column>
+      <mj-text align="center">
+        <%= I18n.t("email_notification_mailer.favorite_works_added.description_html", work_title: @work.local_title) %>
+      </mj-text>
+    </mj-column>
+  </mj-section>
+
+  <mj-section padding-bottom="10px" padding-top="0">
+    <mj-column>
       <mj-text align="center">
         <%= I18n.t("email_notification_mailer.favorite_works_added.favorites_joins_work") %>
       </mj-text>
       <mj-text align="center">
         <%= @resources.map { |resource| resource.local_name }.join(", ") %>
       </mj-text>
-    </mj-section>
+    </mj-column>
+  </mj-section>
 
-    <%= render "email_notification_mailer/work", work: @work, utm_campaign: "favorite_works_added" %>
-  </mj-column>
-</mj-section>
+  <%= render "email_notification_mailer/work", work: @work, utm_campaign: "favorite_works_added" %>
+</mj-wrapper>
