@@ -1,5 +1,5 @@
 FROM node:10.15.1-alpine as node
-FROM ruby:2.6.1-alpine
+FROM ruby:2.6.2-alpine
 
 LABEL maintainer="https://annict.jp/@shimbaco" \
       description="A platform for anime addicts."
