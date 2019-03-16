@@ -2,7 +2,7 @@
   "name": "annict",
   "private": true,
   "engines": {
-    "node": "10.15.1"
+    "node": "10.15.3"
   },
   "scripts": {
     "webpack:start": "webpack-dev-server",
@@ -27,7 +27,7 @@
     "linkifyjs": "2.1.7",
     "lodash": "4.17.11",
     "marked": "^0.5.1",
-    "mjml": "4.1.2",
+    "mjml": "^4.3.1",
     "moment-timezone": "0.5.23",
     "mousetrap": "1.6.2",
     "popper.js": "^1.14.4",
