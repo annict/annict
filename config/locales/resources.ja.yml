@@ -1,5 +1,7 @@
 ja:
   resources:
+    channel:
+      new_channels: チャンネル登録
     character:
       aasm_state:
         published: 公開

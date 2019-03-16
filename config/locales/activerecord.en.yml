@@ -10,6 +10,8 @@ en:
         sort_number: Sort number
         work_id: Work
       channel:
+        channel_group: Channel Group
+        channel_group_id: Channel Group
         name: Name
       character:
         aasm_state: State

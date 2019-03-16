@@ -47,6 +47,9 @@ class Channel < ApplicationRecord
 
   scope :with_vod, -> { where(vod: true) }
 
+  validates :name, presence: true
+  validates :channel_group, presence: true
+
   def self.fastest(work)
     receivable_channel_ids = pluck(:id)
 

@@ -10,6 +10,8 @@ ja:
         sort_number: ソート番号
         work_id: 作品
       channel:
+        channel_group: チャンネルグループ
+        channel_group_id: チャンネルグループ
         name: 名前
       character:
         aasm_state: 状態

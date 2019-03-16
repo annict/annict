@@ -1,5 +1,7 @@
 en:
   resources:
+    channel:
+      new_channels: New Channels
     character:
       aasm_state:
         published: Published
