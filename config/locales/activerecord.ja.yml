@@ -13,6 +13,9 @@ ja:
         channel_group: チャンネルグループ
         channel_group_id: チャンネルグループ
         name: 名前
+      channel_group:
+        name: 名前
+        sort_number: ソート番号
       character:
         aasm_state: 状態
         age_en: 年齢 (英語)

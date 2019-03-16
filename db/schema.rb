@@ -59,11 +59,12 @@ ActiveRecord::Schema.define(version: 2019_02_18_014736) do
   end
 
   create_table "channel_groups", id: :serial, force: :cascade do |t|
-    t.string "sc_chgid", limit: 510, null: false
+    t.string "sc_chgid", limit: 510
     t.string "name", limit: 510, null: false
-    t.integer "sort_number"
+    t.integer "sort_number", default: 0, null: false
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.datetime "unpublished_at"
     t.index ["sc_chgid"], name: "channel_groups_sc_chgid_key", unique: true
   end
 

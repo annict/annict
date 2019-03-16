@@ -1,7 +1,12 @@
 en:
   resources:
+    _common:
+      published: Published
+      unpublished: Unpublished
     channel:
       new_channels: New Channels
+    channel_group:
+      new_channel_groups: New Channel Groups
     character:
       aasm_state:
         published: Published

@@ -1,0 +1,16 @@
+- title = t "head.title.db.channel_groups.index"
+- set_meta_tags(title: title, reverse: true, prefix: false)
+
+
+.l-topbar.container-fluid.px-3
+  .row.flex-items-xs-between
+    .col-8
+      = render "db/application/topbar_title", parent: title
+    - if user_signed_in? && current_user.role.admin?
+      .col.text-right
+        = link_to new_db_channel_group_path, class: "btn btn-outline-primary" do
+          = icon "edit"
+          = t "resources.channel_group.new_channel_groups"
+
+.container-fluid.p-3.mb-4
+  = render "channel_group_list", channel_groups: @channel_groups

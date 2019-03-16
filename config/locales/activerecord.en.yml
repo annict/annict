@@ -13,6 +13,9 @@ en:
         channel_group: Channel Group
         channel_group_id: Channel Group
         name: Name
+      channel_group:
+        name: Name
+        sort_number: Sort Number
       character:
         aasm_state: State
         age_en: Age (en)

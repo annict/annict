@@ -25,6 +25,7 @@ html lang="#{I18n.locale}"
           li = link_to Person.model_name.human(count: 2), db_people_path, class: "d-inline-block"
           li = link_to Organization.model_name.human(count: 2), db_organizations_path, class: "d-inline-block"
           li = link_to Character.model_name.human(count: 2), db_characters_path, class: "d-inline-block"
+          li = link_to t("head.title.db.channel_groups.index"), db_channel_groups_path, class: "d-inline-block"
           li = link_to t("head.title.db.channels.index"), db_channels_path, class: "d-inline-block"
           - if user_signed_in? && current_user.role.admin?
             li = link_to t("head.title.db.vod_titles.index"), db_vod_titles_path, class: "d-inline-block"

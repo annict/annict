@@ -1,15 +1,15 @@
 # frozen_string_literal: true
-
 # == Schema Information
 #
 # Table name: channel_groups
 #
-#  id          :integer          not null, primary key
-#  sc_chgid    :string(510)      not null
-#  name        :string(510)      not null
-#  sort_number :integer
-#  created_at  :datetime
-#  updated_at  :datetime
+#  id             :integer          not null, primary key
+#  sc_chgid       :string(510)
+#  name           :string(510)      not null
+#  sort_number    :integer          default(0), not null
+#  created_at     :datetime
+#  updated_at     :datetime
+#  unpublished_at :datetime
 #
 # Indexes
 #
@@ -17,7 +17,7 @@
 #
 
 class ChannelGroup < ApplicationRecord
-  has_many :channels
+  include Publishable
 
-  scope(:published, -> { where.not(sort_number: nil) })
+  has_many :channels
 end

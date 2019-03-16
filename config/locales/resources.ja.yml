@@ -1,7 +1,12 @@
 ja:
   resources:
+    _common:
+      published: 公開
+      unpublished: 非公開
     channel:
       new_channels: チャンネル登録
+    channel_group:
+      new_channel_groups: チャンネルグループ登録
     character:
       aasm_state:
         published: 公開

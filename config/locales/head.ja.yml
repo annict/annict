@@ -72,6 +72,8 @@ ja:
           edit: キャスト編集
           index: キャスト一覧
           new: キャスト登録
+        channel_groups:
+          index: チャンネルグループ
         channels:
           index: チャンネル
         characters:
