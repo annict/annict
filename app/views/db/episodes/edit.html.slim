@@ -32,10 +32,6 @@
               .col-sm-9
                 = f.text_field :sort_number, class: "form-control", required: true
             .form-group.row
-              = f.label :sc_count, class: "col-sm-3 col-form-label"
-              .col-sm-9
-                = f.text_field :sc_count, class: "form-control"
-            .form-group.row
               = f.label :title, class: "col-sm-3 col-form-label"
               .col-sm-9
                 = f.text_field :title, class: "form-control"
@@ -43,13 +39,6 @@
               = f.label :prev_episode_id, class: "col-sm-3 col-form-label"
               .col-sm-9
                 = f.select :prev_episode_id, options_for_select(@work.episodes.order(:sort_number).map { |episode| ["#{episode.number} #{episode.title}", episode.id] }, f.object.prev_episode_id), { include_blank: true }, { class: "form-control" }
-            .form-group.row.row
-              label.col-sm-3
-              .col-sm-9
-                .form-check
-                  = f.label :fetch_syobocal, class: "form-check-label" do
-                    = f.check_box :fetch_syobocal, class: "form-check-input"
-                    = t "activerecord.attributes.episode.fetch_syobocal"
 
             .form-group.row
               .ml-auto.col-sm-9

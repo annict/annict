@@ -10,7 +10,12 @@ en:
         sort_number: Sort number
         work_id: Work
       channel:
+        channel_group: Channel Group
+        channel_group_id: Channel Group
         name: Name
+      channel_group:
+        name: Name
+        sort_number: Sort Number
       character:
         aasm_state: State
         age_en: Age (en)
@@ -123,8 +128,18 @@ en:
       program:
         channel_id: Channel
         episode_id: Episode
+        number: Number
         rebroadcast: Rebroadcast
         started_at: Started at
+        time_zone: Timezone
+      program_detail:
+        channel_id: Channel
+        rebroadcast: Rebroadcast
+        started_at: Started At
+        time_zone: Timezone
+        url: URL
+        vod_title_code: VOD Title Code
+        vod_title_name: VOD Title Name
       pv:
         sort_number: Sort Number
         title: Title
@@ -155,12 +170,6 @@ en:
         summary: Summary
         url: URL
         userland_category_id: Category
-      program_detail:
-        channel_id: Channel
-        url: URL
-        started_at: Started At
-        vod_title_code: VOD Title Code
-        vod_title_name: VOD Title Name
       user:
         allowed_locales: Allowed Languages
         current_password: Current password

@@ -2,8 +2,7 @@
 
 module Db
   class EpisodesController < Db::ApplicationController
-    permits :number, :raw_number, :sort_number, :sc_count, :title,
-      :prev_episode_id, :fetch_syobocal
+    permits :number, :raw_number, :sort_number, :title, :prev_episode_id
 
     before_action :authenticate_user!
     before_action :load_work, only: %i(index new create)

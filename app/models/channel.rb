@@ -27,6 +27,7 @@ class Channel < ApplicationRecord
   D_ANIME_STORE_ID = 241
   NICONICO_CHANNEL_ID = 165
   NETFLIX_ID = 244
+  ABEMA_VIDEO_ID = 260
 
   aasm do
     state :published, initial: true
@@ -46,6 +47,9 @@ class Channel < ApplicationRecord
   has_many :programs, dependent: :destroy
 
   scope :with_vod, -> { where(vod: true) }
+
+  validates :name, presence: true
+  validates :channel_group, presence: true
 
   def self.fastest(work)
     receivable_channel_ids = pluck(:id)

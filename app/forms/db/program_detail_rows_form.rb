@@ -20,6 +20,7 @@ module DB
           channel_id: row_data[:channel][:id],
           work_id: @work.id,
           started_at: row_data[:started_at][:value],
+          rebroadcast: row_data[:rebroadcast][:value],
           vod_title_code: row_data[:vod_title_code][:value],
           vod_title_name: row_data[:vod_title_name][:value],
           time_zone: @user.time_zone
@@ -50,8 +51,9 @@ module DB
         {
           channel: { id: channel&.id, value: row_columns[0] },
           started_at: { value: row_columns[1] },
-          vod_title_code: { value: row_columns[2].presence || "" },
-          vod_title_name: { value: row_columns[3].presence || "" }
+          rebroadcast: { value: row_columns[2] == "1" },
+          vod_title_code: { value: row_columns[3].presence || "" },
+          vod_title_name: { value: row_columns[4].presence || "" }
         }
       end
     end

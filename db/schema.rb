@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_02_16_165345) do
+ActiveRecord::Schema.define(version: 2019_02_18_014736) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_stat_statements"
@@ -59,11 +59,12 @@ ActiveRecord::Schema.define(version: 2019_02_16_165345) do
   end
 
   create_table "channel_groups", id: :serial, force: :cascade do |t|
-    t.string "sc_chgid", limit: 510, null: false
+    t.string "sc_chgid", limit: 510
     t.string "name", limit: 510, null: false
-    t.integer "sort_number"
+    t.integer "sort_number", default: 0, null: false
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.datetime "unpublished_at"
     t.index ["sc_chgid"], name: "channel_groups_sc_chgid_key", unique: true
   end
 
@@ -310,7 +311,7 @@ ActiveRecord::Schema.define(version: 2019_02_16_165345) do
     t.integer "prev_episode_id"
     t.string "aasm_state", default: "published", null: false
     t.boolean "fetch_syobocal", default: false, null: false
-    t.string "raw_number"
+    t.float "raw_number"
     t.string "title_ro", default: "", null: false
     t.string "title_en", default: "", null: false
     t.integer "episode_records_with_body_count", default: 0, null: false
@@ -759,9 +760,15 @@ ActiveRecord::Schema.define(version: 2019_02_16_165345) do
     t.integer "sc_pid"
     t.boolean "rebroadcast", default: false, null: false
     t.string "aasm_state", default: "published", null: false
+    t.integer "program_detail_id"
+    t.integer "number"
     t.index ["aasm_state"], name: "index_programs_on_aasm_state"
     t.index ["channel_id"], name: "programs_channel_id_idx"
     t.index ["episode_id"], name: "programs_episode_id_idx"
+    t.index ["program_detail_id", "episode_id"], name: "index_programs_on_program_detail_id_and_episode_id", unique: true
+    t.index ["program_detail_id", "number"], name: "index_programs_on_program_detail_id_and_number", unique: true
+    t.index ["program_detail_id", "started_at"], name: "index_programs_on_program_detail_id_and_started_at", unique: true
+    t.index ["program_detail_id"], name: "index_programs_on_program_detail_id"
     t.index ["sc_pid"], name: "index_programs_on_sc_pid", unique: true
     t.index ["work_id"], name: "programs_work_id_idx"
   end
@@ -1302,6 +1309,7 @@ ActiveRecord::Schema.define(version: 2019_02_16_165345) do
   add_foreign_key "program_details", "works"
   add_foreign_key "programs", "channels", name: "programs_channel_id_fk", on_delete: :cascade
   add_foreign_key "programs", "episodes", name: "programs_episode_id_fk", on_delete: :cascade
+  add_foreign_key "programs", "program_details"
   add_foreign_key "programs", "works", name: "programs_work_id_fk", on_delete: :cascade
   add_foreign_key "providers", "users", name: "providers_user_id_fk", on_delete: :cascade
   add_foreign_key "pvs", "works"

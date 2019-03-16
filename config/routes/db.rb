@@ -2,8 +2,19 @@
 
 namespace :db do
   resources :activities, only: [:index]
-  resources :channels, only: [:index]
   resource :search, only: [:show]
+
+  resources :channel_groups, except: %i(show) do
+    member do
+      patch :unpublish
+    end
+  end
+
+  resources :channels, except: %i(show) do
+    member do
+      patch :hide
+    end
+  end
 
   resources :characters, except: [:show] do
     member do

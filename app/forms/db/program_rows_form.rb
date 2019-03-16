@@ -13,6 +13,38 @@ module DB
     validate :valid_time
     validate :valid_resource
 
+    def set_default_rows_by_program_detail!(program_detail_id, time_zone: "Asia/Tokyo")
+      program_detail = @work.program_details.published.find_by(id: program_detail_id)
+      return unless program_detail
+
+      last_program = program_detail.programs.published.order(started_at: :desc).first
+      base_started_at = if last_program
+        last_program.started_at + 7.days
+      else
+        program_detail.started_at
+      end
+
+      rows = []
+      14.times do |i|
+        rows << [
+          program_detail.id,
+          (base_started_at + (i * 7).days).in_time_zone(time_zone).strftime("%Y-%m-%d %H:%M"),
+        ]
+      end
+
+      self.rows = rows.map do |r|
+        r.join(",")
+      end.join("\n")
+    end
+
+    def reset_number!
+      ProgramDetail.where(id: attrs_list.pluck(:program_detail_id).uniq).each do |pd|
+        pd.programs.published.order(:started_at).each_with_index do |p, i|
+          p.update_column(:number, i + 1)
+        end
+      end
+    end
+
     private
 
     def attrs_list
@@ -21,6 +53,7 @@ module DB
           work_id: @work.id,
           channel_id: row_data[:channel][:id],
           episode_id: row_data[:episode][:id],
+          program_detail_id: row_data[:program_detail][:id],
           started_at: row_data[:started_at][:value],
           rebroadcast: row_data[:rebroadcast][:value],
           time_zone: @user.time_zone
@@ -30,17 +63,15 @@ module DB
 
     def fetched_rows
       parsed_rows.map do |row_columns|
-        channel = Channel.published.where(id: row_columns[0]).
-          or(Channel.published.where(name: row_columns[0])).first
-        episode = @work.episodes.published.where(id: row_columns[1]).
-          or(@work.episodes.published.where(number: row_columns[1])).
-          or(@work.episodes.published.where(title: row_columns[1])).first
+        program_detail = ProgramDetail.published.find_by(id: row_columns[0])
+        episode = @work.episodes.published.find_by(id: row_columns[2])
 
         {
-          channel: { id: channel&.id, value: row_columns[0] },
-          episode: { id: episode&.id, value: row_columns[1] },
-          started_at: { value: row_columns[2] },
-          rebroadcast: { value: row_columns[3] == "1" }
+          channel: { id: program_detail&.channel&.id, value: row_columns[0] },
+          started_at: { value: row_columns[1] },
+          episode: { id: episode&.id },
+          rebroadcast: { value: program_detail&.rebroadcast? == true },
+          program_detail: { id: program_detail&.id, value: row_columns[0] }
         }
       end
     end
@@ -51,7 +82,7 @@ module DB
 
         begin
           Time.parse(started_at)
-        rescue
+        rescue ArgumentError
           i18n_path = "activemodel.errors.forms.db/program_rows_form.invalid_start_time"
           errors.add(:rows, I18n.t(i18n_path))
         end
@@ -60,8 +91,9 @@ module DB
 
     def valid_resource
       fetched_rows.each do |row_data|
-        row_data.slice(:channel, :episode).each do |_, data|
-          next if data[:id].present?
+        row_data.slice(:channel, :program_detail).each do |_, data|
+          next if data[:id]
+
           i18n_path = "activemodel.errors.forms.db/program_rows_form.invalid"
           errors.add(:rows, I18n.t(i18n_path, value: data[:value]))
         end

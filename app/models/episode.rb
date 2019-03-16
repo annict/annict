@@ -15,7 +15,7 @@
 #  prev_episode_id                 :integer
 #  aasm_state                      :string           default("published"), not null
 #  fetch_syobocal                  :boolean          default(FALSE), not null
-#  raw_number                      :string
+#  raw_number                      :float
 #  title_ro                        :string           default(""), not null
 #  title_en                        :string           default(""), not null
 #  episode_records_with_body_count :integer          default(0), not null
@@ -66,13 +66,12 @@ class Episode < ApplicationRecord
   has_many :episode_records, dependent: :destroy
   has_many :resource_items, dependent: :destroy, class_name: "EpisodeItem"
   has_many :items, through: :resource_items
-  has_many :programs, dependent: :destroy
+  has_many :programs, dependent: :nullify
 
   validates :sort_number, presence: true, numericality: { only_integer: true }
 
   scope :recorded, -> { where("episode_records_count > 0") }
 
-  before_create :set_sort_number
   after_create :update_prev_episode
   before_destroy :unset_prev_episode_id
   after_save :expire_cache
@@ -137,14 +136,16 @@ class Episode < ApplicationRecord
 
   def local_number
     return number if I18n.locale == :ja
-    return "##{raw_number}" if raw_number.present?
+    return "##{raw_number}" if raw_number
+
     number
   end
 
   private
 
   def unset_prev_episode_id
-    return if next_episode.blank?
+    return if next_episode.nil?
+
     # エピソードを削除するとき、次のエピソードの `prev_episode_id` に
     # 削除対象のエピソードが設定されていたとき、その情報を削除する
     next_episode.update_column(:prev_episode_id, nil) if self == next_episode.prev_episode
@@ -152,11 +153,7 @@ class Episode < ApplicationRecord
 
   def update_prev_episode
     prev_episode = work.episodes.where.not(id: id).order(sort_number: :desc).first
-    update_column(:prev_episode_id, prev_episode.id) if prev_episode.present?
-  end
-
-  def set_sort_number
-    self.sort_number = (work.episodes.count + 1) * 10
+    update_column(:prev_episode_id, prev_episode.id) if prev_episode
   end
 
   def expire_cache

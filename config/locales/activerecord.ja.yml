@@ -10,7 +10,12 @@ ja:
         sort_number: ソート番号
         work_id: 作品
       channel:
+        channel_group: チャンネルグループ
+        channel_group_id: チャンネルグループ
         name: 名前
+      channel_group:
+        name: 名前
+        sort_number: ソート番号
       character:
         aasm_state: 状態
         age_en: 年齢 (英語)
@@ -122,8 +127,18 @@ ja:
       program:
         channel_id: チャンネル
         episode_id: エピソード
+        number: 回数
         rebroadcast: 再放送
         started_at: 放送日時
+        time_zone: タイムゾーン
+      program_detail:
+        channel_id: チャンネル
+        rebroadcast: 再放送
+        started_at: 放送開始日時
+        time_zone: タイムゾーン
+        url: URL
+        vod_title_code: VOD作品コード
+        vod_title_name: VOD作品名
       pv:
         sort_number: ソート番号
         title: タイトル
@@ -154,12 +169,6 @@ ja:
         summary: 要約
         url: URL
         userland_category_id: カテゴリ
-      program_detail:
-        channel_id: チャンネル
-        url: URL
-        started_at: 放送開始日時
-        vod_title_code: VOD作品コード
-        vod_title_name: VOD作品名
       user:
         allowed_locales: 表示する言語
         current_password: 現在のパスワード

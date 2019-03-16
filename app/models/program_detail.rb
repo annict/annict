@@ -45,6 +45,7 @@ class ProgramDetail < ApplicationRecord
   belongs_to :work, touch: true
   has_many :db_activities, as: :trackable, dependent: :destroy
   has_many :db_comments, as: :resource, dependent: :destroy
+  has_many :programs, dependent: :destroy
 
   scope :in_vod, -> { joins(:channel).where(channels: { vod: true }) }
 

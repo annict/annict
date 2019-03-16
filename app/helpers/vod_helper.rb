@@ -13,6 +13,8 @@ module VodHelper
       "http://ch.nicovideo.jp/#{code}"
     when Channel::NETFLIX_ID
       "https://www.netflix.com/title/#{code}"
+    when Channel::ABEMA_VIDEO_ID
+      "https://abema.tv/video/title/#{code}"
     end
   end
 end

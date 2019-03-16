@@ -1,0 +1,16 @@
+.container
+  = form_for [:db, channel_group] do |f|
+    = render "application/components/error_panel", resource: f.object
+
+    .form-group.row
+      = f.label :name, class: "col-sm-3 col-form-label c-label-required"
+      .col-sm-9
+        = f.text_field :name, class: "form-control", autofocus: true, required: true
+    .form-group.row
+      = f.label :sort_number, class: "col-sm-3 col-form-label"
+      .col-sm-9
+        = f.text_field :sort_number, class: "form-control"
+
+    .form-group.row
+      .ml-auto.col-sm-9
+        = f.submit class: "btn btn-primary"

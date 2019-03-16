@@ -14,7 +14,8 @@ namespace :twitter do
       puts "--- list: @#{list.username}/#{list.name}"
 
       options = {
-        count: 100
+        count: 100,
+        tweet_mode: "extended" # Get tweet which is not truncated https://github.com/sferik/twitter/issues/813
       }
       options[:since_id] = list.since_id if list.since_id
       tweets = client.list_timeline(list.username, list.name, options)
@@ -24,9 +25,18 @@ namespace :twitter do
         puts "tweet: #{tweet.url}"
 
         # Prevent to embed https://support.discordapp.com/hc/en-us/articles/206342858--How-do-I-disable-auto-embed-
-        tweet_body = tweet.full_text.gsub(%r{(https?:\/\/[\S]+)}, "<\\1>")
+        tweet_body = tweet.attrs[:full_text].gsub(%r{(https?:\/\/[\S]+)}, "<\\1>")
+        work_urls = Work.
+          published.
+          where(twitter_username: tweet.user.screen_name).
+          by_season(list.name.delete_prefix("anime-")).
+          select(:title, :id).
+          map do |w|
+            "#{w.title}: <https://annict.jp/db/works/#{w.id}/edit>"
+          end.join(", ")
+
         Discord::Notifier.message(
-          "#{tweet_body}\n<#{tweet.url}>",
+          "#{tweet_body}\n<#{tweet.url}>\nAnnict DB: #{work_urls}",
           username: tweet.user.name,
           avatar_url: tweet.user.profile_image_uri_https&.to_s,
           url: list.discord_webhook_url,

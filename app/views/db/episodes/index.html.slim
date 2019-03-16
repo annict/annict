@@ -26,12 +26,8 @@
               th = t "activerecord.attributes.episode.number"
             th = t "noun.title"
             th = t "resources.episode.previous_episode"
-            - if current_user.role.admin?
-              th = t "activerecord.attributes.episode.sc_count"
             th = t "activerecord.attributes.episode.sort_number"
             th = t "activerecord.attributes.episode.records_count"
-            - if locale_ja?
-              th = t "noun.syobocal"
             th = t "noun.state"
             th = t "head.title.db.episodes.activities"
             - if policy(@episodes).edit?
@@ -57,16 +53,8 @@
                 - elsif locale == :en
                   = episode.title_en.presence || "-"
               td = episode.prev_episode&.local_number.presence || "-"
-              - if current_user.role.admin?
-                td = episode.sc_count
               td = episode.sort_number
               td = episode.episode_records.count
-              - if locale_ja?
-                td
-                  - if episode.fetch_syobocal?
-                    .badge.badge-success 同期中
-                  - else
-                    .badge.badge-warning 同期停止中
               td
                 .badge class="#{episode.published? ? 'badge-success' : 'badge-warning'}"
                   = t("resources.episode.aasm_state.#{episode.aasm_state}")
