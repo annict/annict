@@ -4,7 +4,7 @@ module Publishable
   extend ActiveSupport::Concern
 
   included do
-    scope :published, -> { where.not(unpublished_at: nil) }
+    scope :published, -> { where(unpublished_at: nil) }
 
     def published?
       unpublished_at.nil?
