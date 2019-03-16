@@ -14,7 +14,8 @@ namespace :twitter do
       puts "--- list: @#{list.username}/#{list.name}"
 
       options = {
-        count: 100
+        count: 100,
+        tweet_mode: "extended" # Get tweet which is not truncated https://github.com/sferik/twitter/issues/813
       }
       options[:since_id] = list.since_id if list.since_id
       tweets = client.list_timeline(list.username, list.name, options)
@@ -24,7 +25,7 @@ namespace :twitter do
         puts "tweet: #{tweet.url}"
 
         # Prevent to embed https://support.discordapp.com/hc/en-us/articles/206342858--How-do-I-disable-auto-embed-
-        tweet_body = tweet.full_text.gsub(%r{(https?:\/\/[\S]+)}, "<\\1>")
+        tweet_body = tweet.attrs[:full_text].gsub(%r{(https?:\/\/[\S]+)}, "<\\1>")
         Discord::Notifier.message(
           "#{tweet_body}\n<#{tweet.url}>",
           username: tweet.user.name,
