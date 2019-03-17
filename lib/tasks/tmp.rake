@@ -8,7 +8,7 @@ namespace :tmp do
 
       puts "--- work: #{w.id}"
 
-      programs = w.programs.published.from("
+      programs = w.programs.published.where(rebroadcast: false).from("
         (
           select *,
             row_number() over (
@@ -16,7 +16,7 @@ namespace :tmp do
               order by started_at asc
             ) as row_num
           from programs
-          where programs.work_id = #{w.id} and programs.aasm_state = 'published'
+          where programs.work_id = #{w.id} and programs.rebroadcast = FALSE and programs.aasm_state = 'published'
         ) as programs
       ")
 
