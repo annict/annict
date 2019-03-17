@@ -744,6 +744,7 @@ ActiveRecord::Schema.define(version: 2019_03_17_000000) do
     t.string "vod_title_code", default: "", null: false
     t.string "vod_title_name", default: "", null: false
     t.boolean "rebroadcast", default: false, null: false
+    t.integer "minimum_episode_generatable_number", default: 1, null: false
     t.index ["channel_id"], name: "index_program_details_on_channel_id"
     t.index ["vod_title_code"], name: "index_program_details_on_vod_title_code"
     t.index ["work_id"], name: "index_program_details_on_work_id"

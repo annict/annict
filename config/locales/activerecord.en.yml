@@ -135,6 +135,7 @@ en:
         time_zone: Timezone
       program_detail:
         channel_id: Channel
+        minimum_episode_generatable_number: Minimum Episode Generatable Number
         rebroadcast: Rebroadcast
         started_at: Started At
         time_zone: Timezone

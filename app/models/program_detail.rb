@@ -3,17 +3,18 @@
 #
 # Table name: program_details
 #
-#  id             :bigint(8)        not null, primary key
-#  channel_id     :integer          not null
-#  work_id        :integer          not null
-#  url            :string
-#  started_at     :datetime
-#  aasm_state     :string           default("published"), not null
-#  created_at     :datetime         not null
-#  updated_at     :datetime         not null
-#  vod_title_code :string           default(""), not null
-#  vod_title_name :string           default(""), not null
-#  rebroadcast    :boolean          default(FALSE), not null
+#  id                                 :bigint(8)        not null, primary key
+#  channel_id                         :integer          not null
+#  work_id                            :integer          not null
+#  url                                :string
+#  started_at                         :datetime
+#  aasm_state                         :string           default("published"), not null
+#  created_at                         :datetime         not null
+#  updated_at                         :datetime         not null
+#  vod_title_code                     :string           default(""), not null
+#  vod_title_name                     :string           default(""), not null
+#  rebroadcast                        :boolean          default(FALSE), not null
+#  minimum_episode_generatable_number :integer          default(1), not null
 #
 # Indexes
 #

@@ -134,6 +134,7 @@ ja:
         time_zone: タイムゾーン
       program_detail:
         channel_id: チャンネル
+        minimum_episode_generatable_number: エピソード生成可能最低回数
         rebroadcast: 再放送
         started_at: 放送開始日時
         time_zone: タイムゾーン

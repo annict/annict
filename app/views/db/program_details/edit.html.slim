@@ -48,6 +48,11 @@
               = f.label :vod_title_name, class: "col-sm-3 col-form-label"
               .col-sm-9
                 = f.text_field :vod_title_name, class: "form-control"
+            - if current_user.role.admin?
+              .form-group.row
+                = f.label :minimum_episode_generatable_number, class: "col-sm-3 col-form-label"
+                .col-sm-9
+                  = f.text_field :minimum_episode_generatable_number, class: "form-control"
             .form-group.row
               .ml-auto.col-sm-9
                 = f.submit t("helpers.submit.update"), class: "btn btn-primary"

@@ -2,7 +2,8 @@
 
 module Db
   class ProgramDetailsController < Db::ApplicationController
-    permits :channel_id, :started_at, :time_zone, :rebroadcast, :vod_title_code, :vod_title_name
+    permits :channel_id, :started_at, :time_zone, :rebroadcast, :vod_title_code, :vod_title_name,
+            :minimum_episode_generatable_number
 
     before_action :authenticate_user!
     before_action :load_work, only: %i(index new create)
