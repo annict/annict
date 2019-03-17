@@ -44,8 +44,9 @@
 #  score                        :float
 #  ratings_count                :integer          default(0), not null
 #  satisfaction_rate            :float
-#  work_records_with_body_count :integer          default(0), not null
 #  records_count                :integer          default(0), not null
+#  work_records_with_body_count :integer          default(0), not null
+#  irregular_episodes_count     :integer          default(0), not null
 #
 # Indexes
 #

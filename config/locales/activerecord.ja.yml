@@ -188,6 +188,7 @@ ja:
         name: 作品名
       work:
         ended_on: 終了日
+        irregular_episodes_count: イレギュラー話数
         mal_anime_id: MAL Anime ID
         manual_episodes_count: 話数
         media: メディア

@@ -189,6 +189,7 @@ en:
         name: Name
       work:
         ended_on: Ended On
+        irregular_episodes_count: Irregular Episodes
         mal_anime_id: MAL Anime ID
         manual_episodes_count: Episodes
         media: Media

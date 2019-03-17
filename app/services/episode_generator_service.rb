@@ -21,9 +21,10 @@ class EpisodeGeneratorService
       episode = work.episodes.published.order(:sort_number)[p.number - 1]
       episode_not_exists = episode.nil?
       ActiveRecord::Base.transaction do
+        new_number = p.number - work.irregular_episodes_count
         episode ||= work.episodes.create!(
-          raw_number: p.number,
-          number: "第#{p.number}話",
+          raw_number: new_number,
+          number: "第#{new_number}話",
           sort_number: p.number * 100
         )
 
