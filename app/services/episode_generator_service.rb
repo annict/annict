@@ -8,7 +8,8 @@ class EpisodeGeneratorService
   def execute!(now:)
     episodeless_programs = Program.
       published.
-      where(episode_id: nil, rebroadcast: false).
+      where(episode_id: nil, rebroadcast: false, irregular: false).
+      where.not(program_detail_id: nil).
       where.not(number: nil).
       before(now + 7.days, field: :started_at).
       includes(:work)
@@ -18,13 +19,19 @@ class EpisodeGeneratorService
 
       next if work.manual_episodes_count && work.manual_episodes_count < p.number
 
-      episode = work.episodes.published.order(:sort_number)[p.number - 1]
+      irregular_programs_count = Program.
+        published.
+        where(program_detail_id: p.program_detail_id, irregular: true).
+        where("number >= ?", p.program_detail.minimum_episode_generatable_number).
+        count
+      new_episode_number = p.number - irregular_programs_count
+      episode = work.episodes.published.find_by(raw_number: new_episode_number)
       episode_not_exists = episode.nil?
+
       ActiveRecord::Base.transaction do
-        new_number = p.number - work.irregular_episodes_count
         episode ||= work.episodes.create!(
-          raw_number: new_number,
-          number: "第#{new_number}話",
+          raw_number: new_episode_number,
+          number: "第#{new_episode_number}話",
           sort_number: p.number * 100
         )
 
