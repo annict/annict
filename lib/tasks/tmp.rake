@@ -1,8 +1,9 @@
 # frozen_string_literal: true
 
 namespace :tmp do
-  task create_program_details: :environment do
-    Work.published.find_each do |w|
+  task update_number_on_programs: :environment do
+    works = Work.published
+    works.find_each do |w|
       next if w.programs.empty?
 
       puts "--- work: #{w.id}"
@@ -17,20 +18,12 @@ namespace :tmp do
           from programs
           where programs.work_id = #{w.id} and programs.aasm_state = 'published'
         ) as programs
-      ").where("programs.row_num <= 1")
+      ")
 
       programs.each do |p|
         puts "--- work: #{w.id} program: #{p.id}"
 
-        w.
-          program_details.
-          published.
-          where(
-            channel_id: p.channel_id,
-            started_at: p.started_at,
-            rebroadcast: p.rebroadcast
-          ).
-          first_or_create!
+        p.update_column(:number, p.row_num)
       end
     end
   end
