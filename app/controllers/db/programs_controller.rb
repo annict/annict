@@ -2,7 +2,8 @@
 
 module Db
   class ProgramsController < Db::ApplicationController
-    permits :channel_id, :episode_id, :started_at, :number, :rebroadcast, :time_zone
+    permits :program_detail_id, :channel_id, :episode_id, :started_at, :number, :rebroadcast,
+            :irregular, :time_zone
 
     before_action :authenticate_user!
     before_action :load_work, only: %i(index new create)

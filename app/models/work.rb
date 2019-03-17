@@ -46,7 +46,6 @@
 #  satisfaction_rate            :float
 #  records_count                :integer          default(0), not null
 #  work_records_with_body_count :integer          default(0), not null
-#  irregular_episodes_count     :integer          default(0), not null
 #
 # Indexes
 #

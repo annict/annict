@@ -124,11 +124,6 @@
       = f.label :manual_episodes_count, class: "col-sm-3 col-form-label"
       .col-sm-9
         = f.text_field :manual_episodes_count, class: "form-control"
-    - if user_signed_in? && current_user.role.admin?
-      .form-group.row
-        = f.label :irregular_episodes_count, class: "col-sm-3 col-form-label"
-        .col-sm-9
-          = f.text_field :irregular_episodes_count, class: "form-control"
     .form-group.row
       = f.label :number_format_id, class: "col-sm-3 col-form-label"
       .col-sm-9

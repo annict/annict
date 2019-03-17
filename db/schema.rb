@@ -762,6 +762,7 @@ ActiveRecord::Schema.define(version: 2019_03_17_000000) do
     t.string "aasm_state", default: "published", null: false
     t.integer "program_detail_id"
     t.integer "number"
+    t.boolean "irregular", default: false, null: false
     t.index ["aasm_state"], name: "index_programs_on_aasm_state"
     t.index ["channel_id"], name: "programs_channel_id_idx"
     t.index ["episode_id"], name: "programs_episode_id_idx"
@@ -1218,7 +1219,6 @@ ActiveRecord::Schema.define(version: 2019_03_17_000000) do
     t.float "satisfaction_rate"
     t.integer "records_count", default: 0, null: false
     t.integer "work_records_with_body_count", default: 0, null: false
-    t.integer "irregular_episodes_count", default: 0, null: false
     t.index ["aasm_state"], name: "index_works_on_aasm_state"
     t.index ["key_pv_id"], name: "index_works_on_key_pv_id"
     t.index ["number_format_id"], name: "index_works_on_number_format_id"

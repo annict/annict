@@ -16,6 +16,7 @@
 #  aasm_state        :string           default("published"), not null
 #  program_detail_id :integer
 #  number            :integer
+#  irregular         :boolean          default(FALSE), not null
 #
 # Indexes
 #

@@ -127,6 +127,7 @@ ja:
       program:
         channel_id: チャンネル
         episode_id: エピソード
+        irregular: イレギュラー回
         number: 回数
         rebroadcast: 再放送
         started_at: 放送日時
@@ -188,7 +189,6 @@ ja:
         name: 作品名
       work:
         ended_on: 終了日
-        irregular_episodes_count: イレギュラー話数
         mal_anime_id: MAL Anime ID
         manual_episodes_count: 話数
         media: メディア
