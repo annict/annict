@@ -10,7 +10,7 @@ describe "Api::V1::Me::Programs" do
   let(:channel_work) do
     create(:channel_work, user: access_token.owner, work: work)
   end
-  let!(:program) { create(:program, episode: episode, channel: channel_work.channel) }
+  let!(:program) { create(:program, work: work, episode: episode, channel: channel_work.channel) }
 
   describe "GET /v1/me/programs" do
     before do
