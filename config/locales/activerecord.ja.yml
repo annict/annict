@@ -129,6 +129,7 @@ ja:
         episode_id: エピソード
         irregular: イレギュラー回
         number: 回数
+        program_detail_id: 放送情報
         rebroadcast: 再放送
         started_at: 放送日時
         time_zone: タイムゾーン

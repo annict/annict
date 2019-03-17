@@ -26,6 +26,7 @@
         thead
           tr
             th ID
+            th = t "activerecord.attributes.program.program_detail_id"
             th = t "activerecord.attributes.program.channel_id"
             th = t "activerecord.attributes.program.started_at"
             th = t "activerecord.attributes.program.number"
@@ -43,6 +44,11 @@
           - @programs.each do |program|
             tr
               td = program.id
+              td
+                - if program.program_detail
+                  = link_to program.program_detail.decorate.name, edit_db_program_detail_path(program.program_detail)
+                - else
+                  | -
               td = program.channel.name
               td = display_time(program.started_at)&.presence || "-"
               td = program.number.presence || "-"

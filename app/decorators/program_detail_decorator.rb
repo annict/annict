@@ -1,6 +1,10 @@
 # frozen_string_literal: true
 
 module ProgramDetailDecorator
+  def name
+    "#{channel.name} #{display_time(started_at)}~"
+  end
+
   def db_detail_link(options = {})
     name = options.delete(:name).presence || id
     link_to(name, edit_db_program_detail_path(self), options)

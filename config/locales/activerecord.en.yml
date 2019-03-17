@@ -130,6 +130,7 @@ en:
         episode_id: Episode
         irregular: Irregular
         number: Number
+        program_detail_id: Program Detail
         rebroadcast: Rebroadcast
         started_at: Started at
         time_zone: Timezone
