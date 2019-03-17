@@ -40,7 +40,7 @@ module DB
     def reset_number!
       ProgramDetail.where(id: attrs_list.pluck(:program_detail_id).uniq).each do |pd|
         pd.programs.published.order(:started_at).each_with_index do |p, i|
-          p.update_column(:number, i + 1)
+          p.update_column(:number, i + pd.minimum_episode_generatable_number)
         end
       end
     end
