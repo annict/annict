@@ -24,6 +24,7 @@ class SyobocalEpisodeDataFetcherService
 
       title = titles.find { |t| t.id == e.work.sc_tid }
       next unless title
+      next unless title.sub_titles
 
       sub_titles = title.sub_titles.split("\n").map do |st|
         ary = st.split("*") # `"*01*アンダーワールド"` => `["", "01", "アンダーワールド"]`
