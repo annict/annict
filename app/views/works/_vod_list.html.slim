@@ -10,7 +10,7 @@
             .dropdown-menu.w-100
               - pds.each do |pd|
                 = link_to pd.vod_title_name, vod_title_url(channel.id, pd.vod_title_code), class: "dropdown-item", target: "_blank"
-        - elsif pds.present? && pds.length == 1
+        - elsif pds.present? && pds.length == 1 && pds[0].vod_title_code.present?
           = link_to channel.name, vod_title_url(channel.id, pds[0].vod_title_code), class: "btn u-btn-link w-100", target: "_blank"
         - else
           button.btn.u-btn-link.w-100 type="button" disabled=""
