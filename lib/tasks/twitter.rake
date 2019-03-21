@@ -37,7 +37,7 @@ namespace :twitter do
           end.join("\n")
 
         Discord::Notifier.message(
-          "#{tweet_body}\n---\nTwitter: <#{tweet.url}>\nAnnict DB:\n#{work_urls}\n---",
+          "#{tweet_body}\nTweet URL:\n- <#{tweet.url}>\nAnnict DB:\n#{work_urls}\n---",
           username: tweet.user.name,
           avatar_url: tweet.user.profile_image_uri_https&.to_s,
           url: list.discord_webhook_url,
