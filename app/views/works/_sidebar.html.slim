@@ -77,7 +77,7 @@ dl
     dt.small = t "noun.my_anime_list"
     dd = work.mal_anime_link
 
-- program_details = work.program_details.includes(:channel).published.in_vod
+- program_details = work.program_details.includes(:channel).published.in_vod.where.not(vod_title_code: "")
 - program_details = program_details.select { |pd| locale_ja? ? true : pd.support_en? }
 - if program_details.present?
   h2.h4.font-weight-bold.mt-4.mb-3
