@@ -29,7 +29,8 @@ namespace :twitter do
         work_urls = Work.
           published.
           where(twitter_username: tweet.user.screen_name).
-          by_season(list.name.delete_prefix("anime-")).
+          order_by_season(:desc).
+          limit(3).
           select(:title, :id).
           map do |w|
             "#{w.title}: <https://annict.jp/db/works/#{w.id}/edit>"
