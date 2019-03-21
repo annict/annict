@@ -33,11 +33,11 @@ namespace :twitter do
           limit(3).
           select(:title, :id).
           map do |w|
-            "#{w.title}: <https://annict.jp/db/works/#{w.id}/edit>"
-          end.join(", ")
+            "- #{w.title}: <https://annict.jp/db/works/#{w.id}/edit>"
+          end.join("\n")
 
         Discord::Notifier.message(
-          "#{tweet_body}\n<#{tweet.url}>\nAnnict DB: #{work_urls}",
+          "#{tweet_body}\n---\nTwitter: <#{tweet.url}>\nAnnict DB:\n#{work_urls}\n---",
           username: tweet.user.name,
           avatar_url: tweet.user.profile_image_uri_https&.to_s,
           url: list.discord_webhook_url,
