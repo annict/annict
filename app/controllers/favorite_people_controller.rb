@@ -3,8 +3,8 @@
 class FavoritePeopleController < ApplicationController
   before_action :load_i18n, only: %i(index)
 
-  def index(username)
-    @user = User.published.find_by!(username: username)
+  def index
+    @user = User.published.find_by!(username: params[:username])
     @favorite_casts = @user.
       favorite_people.
       with_cast.

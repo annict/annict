@@ -3,8 +3,8 @@
 class CharacterFansController < ApplicationController
   before_action :load_i18n, only: %i(index)
 
-  def index(character_id)
-    @character = Character.published.find(character_id)
+  def index
+    @character = Character.published.find(params[:character_id])
     @favorite_characters = @character.
       favorite_characters.
       joins(:user).

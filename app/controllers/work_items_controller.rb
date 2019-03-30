@@ -2,27 +2,29 @@
 
 class WorkItemsController < ApplicationController
   before_action :authenticate_user!, only: %i(new destroy)
-  before_action :load_work, only: %i(index new destroy)
   before_action :load_i18n, only: %i(new)
 
-  def index(page: nil)
+  def index
+    @work = Work.published.find(params[:work_id])
     @items = @work.
       items.
       published
     @items = localable_resources(@items)
-    @items = @items.order(created_at: :desc).page(page)
+    @items = @items.order(created_at: :desc).page(params[:page])
 
     store_page_params(work: @work)
   end
 
   def new
+    @work = Work.published.find(params[:work_id])
     @item = @work.items.new
 
     store_page_params(work: @work)
   end
 
-  def destroy(id)
-    item = @work.items.published.find(id)
+  def destroy
+    @work = Work.published.find(params[:work_id])
+    item = @work.items.published.find(params[:id])
     work_item = @work.resource_items.find_by(item: item, user: current_user)
 
     work_item.destroy

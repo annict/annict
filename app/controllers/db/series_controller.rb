@@ -2,13 +2,10 @@
 
 module Db
   class SeriesController < Db::ApplicationController
-    permits :name, :name_en, :name_ro
-
     before_action :authenticate_user!, only: %i(new create edit update hide destroy)
-    before_action :load_series, only: %i(edit update hide destroy activities)
 
-    def index(page: nil)
-      @series_list = Series.order(id: :desc).page(page)
+    def index
+      @series_list = Series.order(id: :desc).page(params[:page])
     end
 
     def new
@@ -16,8 +13,8 @@ module Db
       authorize @series, :new?
     end
 
-    def create(series)
-      @series = Series.new(series)
+    def create
+      @series = Series.new(series_params)
       @series.user = current_user
       authorize @series, :create?
 
@@ -28,13 +25,15 @@ module Db
     end
 
     def edit
+      @series = Series.find(params[:id])
       authorize @series, :edit?
     end
 
-    def update(series)
+    def update
+      @series = Series.find(params[:id])
       authorize @series, :update?
 
-      @series.attributes = series
+      @series.attributes = series_params
       @series.user = current_user
 
       return render(:edit) unless @series.valid?
@@ -44,6 +43,7 @@ module Db
     end
 
     def hide
+      @series = Series.find(params[:id])
       authorize @series, :hide?
 
       @series.hide!
@@ -53,6 +53,7 @@ module Db
     end
 
     def destroy
+      @series = Series.find(params[:id])
       authorize @series, :destroy?
 
       @series.destroy
@@ -62,14 +63,15 @@ module Db
     end
 
     def activities
+      @series = Series.find(params[:id])
       @activities = @series.db_activities.order(id: :desc)
       @comment = @series.db_comments.new
     end
 
     private
 
-    def load_series
-      @series = Series.find(params[:id])
+    def series_params
+      params.require(:series).permit(:name, :name_en, :name_ro)
     end
   end
 end

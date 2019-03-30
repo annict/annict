@@ -22,8 +22,8 @@
 class OrganizationsController < ApplicationController
   before_action :load_i18n, only: %i(show)
 
-  def show(id)
-    @organization = Organization.published.find(id)
+  def show
+    @organization = Organization.published.find(params[:id])
     @staffs_with_year = @organization.
       staffs.
       published.

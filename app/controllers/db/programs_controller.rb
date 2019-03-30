@@ -2,28 +2,26 @@
 
 module Db
   class ProgramsController < Db::ApplicationController
-    permits :program_detail_id, :channel_id, :episode_id, :started_at, :number, :rebroadcast,
-            :irregular, :time_zone
-
     before_action :authenticate_user!
-    before_action :load_work, only: %i(index new create)
-    before_action :load_program, only: %i(edit update hide destroy activities)
 
     def index
-      @programs = @work.programs.eager_load(:channel, :episode)
+      @work = Work.find(params[:work_id])
+      @programs = @work.programs.eager_load(:channel, :episode, program_detail: :channel)
       @programs = @programs.where(channel_id: params[:channel_id]) if params[:channel_id]
       @programs = @programs.order(started_at: :desc).order(:channel_id)
     end
 
     def new
+      @work = Work.find(params[:work_id])
       @form = DB::ProgramRowsForm.new
       @form.work = @work
       @form.set_default_rows_by_program_detail!(params[:program_detail_id]) if params[:program_detail_id]
       authorize @form, :new?
     end
 
-    def create(db_program_rows_form)
-      @form = DB::ProgramRowsForm.new(db_program_rows_form.permit(:rows).to_h)
+    def create
+      @work = Work.find(params[:work_id])
+      @form = DB::ProgramRowsForm.new(program_rows_form)
       @form.user = current_user
       @form.work = @work
       authorize @form, :create?
@@ -39,15 +37,17 @@ module Db
     end
 
     def edit
+      @program = Program.find(params[:id])
       authorize @program, :edit?
       @work = @program.work
     end
 
-    def update(program)
+    def update
+      @program = Program.find(params[:id])
       authorize @program, :update?
       @work = @program.work
 
-      @program.attributes = program
+      @program.attributes = program_params
       @program.user = current_user
 
       return render(:edit) unless @program.valid?
@@ -57,6 +57,7 @@ module Db
     end
 
     def hide
+      @program = Program.find(params[:id])
       authorize @program, :hide?
 
       @program.hide!
@@ -66,6 +67,7 @@ module Db
     end
 
     def destroy
+      @program = Program.find(params[:id])
       authorize @program, :destroy?
 
       @program.destroy
@@ -75,14 +77,22 @@ module Db
     end
 
     def activities
+      @program = Program.find(params[:id])
       @activities = @program.db_activities.order(id: :desc)
       @comment = @program.db_comments.new
     end
 
     private
 
-    def load_program
-      @program = Program.find(params[:id])
+    def program_params
+      params.require(:program).permit(
+        :program_detail_id, :channel_id, :episode_id, :started_at, :number, :rebroadcast,
+        :irregular, :time_zone
+      )
+    end
+
+    def program_rows_form
+      params.require(:db_program_rows_form).permit(:rows)
     end
   end
 end

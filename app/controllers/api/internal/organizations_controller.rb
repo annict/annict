@@ -3,8 +3,9 @@
 module Api
   module Internal
     class OrganizationsController < Api::Internal::ApplicationController
-      def index(q: nil)
-        @organizations = if q.present?
+      def index
+        q = params[:q]
+        @organizations = if q
           Organization.where("name ILIKE ?", "%#{q}%").published
         else
           Organization.none

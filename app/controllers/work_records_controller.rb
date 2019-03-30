@@ -1,13 +1,10 @@
 # frozen_string_literal: true
 
 class WorkRecordsController < ApplicationController
-  permits :body, :rating_animation_state, :rating_music_state, :rating_story_state,
-          :rating_character_state, :rating_overall_state
-
   before_action :authenticate_user!, only: %i(create edit update destroy)
 
-  def index(work_id, page: nil)
-    @work = Work.published.find(work_id)
+  def index
+    @work = Work.published.find(params[:work_id])
     load_work_records
 
     return unless user_signed_in?
@@ -17,9 +14,9 @@ class WorkRecordsController < ApplicationController
     store_page_params(work: @work)
   end
 
-  def create(work_id, work_record, page: nil)
-    @work = Work.published.find(work_id)
-    @work_record = @work.work_records.new(work_record)
+  def create
+    @work = Work.published.find(params[:work_id])
+    @work_record = @work.work_records.new(work_record_params)
     @work_record.user = current_user
     current_user.setting.attributes = setting_params
     ga_client.page_category = params[:page_category]
@@ -44,21 +41,29 @@ class WorkRecordsController < ApplicationController
     end
   end
 
-  def edit(work_id, id)
-    @record = current_user.records.find(id)
-    @work_record = current_user.work_records.published.where(work_id: work_id).find(@record.work_record&.id)
+  def edit
+    @record = current_user.records.find(params[:id])
+    @work_record = current_user.
+      work_records.
+      published.
+      where(work_id: params[:work_id]).
+      find(@record.work_record&.id)
     @work = @work_record.work
     authorize @work_record, :edit?
     store_page_params(work: @work)
   end
 
-  def update(work_id, id, work_record)
-    @record = current_user.records.find(id)
-    @work_record = current_user.work_records.published.where(work_id: work_id).find(@record.work_record&.id)
+  def update
+    @record = current_user.records.find(params[:id])
+    @work_record = current_user.
+      work_records.
+      published.
+      where(work_id: params[:work_id]).
+      find(@record.work_record&.id)
     @work = @work_record.work
     authorize @work_record, :update?
 
-    @work_record.attributes = work_record
+    @work_record.attributes = work_record_params
     @work_record.detect_locale!(:body)
     @work_record.modified_at = Time.now
     current_user.setting.attributes = setting_params
@@ -83,6 +88,13 @@ class WorkRecordsController < ApplicationController
 
   def setting_params
     params.require(:setting).permit(:share_review_to_twitter, :share_review_to_facebook)
+  end
+
+  def work_record_params
+    params.require(:work_record).permit(
+      :body, :rating_animation_state, :rating_music_state, :rating_story_state,
+      :rating_character_state, :rating_overall_state
+    )
   end
 
   def load_work_records

@@ -24,14 +24,15 @@ class EpisodeGeneratorService
         where(program_detail_id: p.program_detail_id, irregular: true).
         where("number >= ?", p.program_detail.minimum_episode_generatable_number).
         count
-      new_episode_number = p.number - irregular_programs_count
-      episode = work.episodes.published.find_by(raw_number: new_episode_number)
+      raw_number = p.number - irregular_programs_count
+      raw_number = raw_number + work.start_episode_raw_number - 1
+      episode = work.episodes.published.find_by(raw_number: raw_number)
       episode_not_exists = episode.nil?
 
       ActiveRecord::Base.transaction do
         episode ||= work.episodes.create!(
-          raw_number: new_episode_number,
-          number: "第#{new_episode_number}話",
+          raw_number: raw_number,
+          number: work.formatted_number(raw_number).presence || "第#{raw_number}話",
           sort_number: p.number * 100
         )
 

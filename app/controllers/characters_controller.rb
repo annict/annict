@@ -3,8 +3,8 @@
 class CharactersController < ApplicationController
   before_action :load_i18n, only: %i(show)
 
-  def show(id)
-    @character = Character.published.find(id)
+  def show
+    @character = Character.published.find(params[:id])
     @casts_with_year = @character.
       casts.
       published.

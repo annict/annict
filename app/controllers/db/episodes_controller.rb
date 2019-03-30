@@ -2,26 +2,25 @@
 
 module Db
   class EpisodesController < Db::ApplicationController
-    permits :number, :raw_number, :sort_number, :title, :prev_episode_id
-
     before_action :authenticate_user!
-    before_action :load_work, only: %i(index new create)
-    before_action :load_episode, only: %i(edit update hide destroy activities)
 
-    def index(page: nil)
+    def index
+      @work = Work.find(params[:work_id])
       @episodes = @work.episodes.
         includes(:prev_episode).
         order(sort_number: :desc).
-        page(page)
+        page(params[:page])
     end
 
     def new
+      @work = Work.find(params[:work_id])
       @form = DB::EpisodeRowsForm.new
       authorize @form, :new?
     end
 
-    def create(db_episode_rows_form)
-      @form = DB::EpisodeRowsForm.new(db_episode_rows_form.permit(:rows).to_h)
+    def create
+      @work = Work.find(params[:work_id])
+      @form = DB::EpisodeRowsForm.new(episode_rows_form_params)
       @form.user = current_user
       @form.work = @work
       authorize @form, :create?
@@ -33,15 +32,17 @@ module Db
     end
 
     def edit
+      @episode = Episode.find(params[:id])
       authorize @episode, :edit?
       @work = @episode.work
     end
 
-    def update(episode)
+    def update
+      @episode = Episode.find(params[:id])
       authorize @episode, :update?
       @work = @episode.work
 
-      @episode.attributes = episode
+      @episode.attributes = episode_params
       @episode.user = current_user
 
       return render(:edit) unless @episode.valid?
@@ -51,6 +52,7 @@ module Db
     end
 
     def hide
+      @episode = Episode.find(params[:id])
       authorize @episode, :hide?
 
       @episode.hide!
@@ -60,6 +62,7 @@ module Db
     end
 
     def destroy
+      @episode = Episode.find(params[:id])
       authorize @episode, :destroy?
 
       @episode.destroy
@@ -69,14 +72,19 @@ module Db
     end
 
     def activities
+      @episode = Episode.find(params[:id])
       @activities = @episode.db_activities.order(id: :desc)
       @comment = @episode.db_comments.new
     end
 
     private
 
-    def load_episode
-      @episode = Episode.find(params[:id])
+    def episode_rows_form_params
+      params.require(:db_episode_rows_form).permit(:rows)
+    end
+
+    def episode_params
+      params.require(:episode).permit(:number, :raw_number, :sort_number, :title, :prev_episode_id)
     end
   end
 end

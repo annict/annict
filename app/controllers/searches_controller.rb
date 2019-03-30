@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
 class SearchesController < ApplicationController
-  def show(q: nil, resource: nil)
-    @works, @characters, @people, @organizations = if q.present?
+  def show
+    @works, @characters, @people, @organizations = if params[:q]
       [
         @search.works.order(id: :desc),
         @search.characters.order(id: :desc),
@@ -12,7 +12,7 @@ class SearchesController < ApplicationController
     else
       [Work.none, Character.none, Person.none, Organization.none]
     end
-    @view = select_view resource
+    @view = select_view(params[:resource])
 
     return unless user_signed_in?
 

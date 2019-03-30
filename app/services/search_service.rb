@@ -9,23 +9,23 @@ class SearchService
   end
 
   def series_list
-    collection(Series).search(name_or_name_ro_or_name_en_cont_any: keywords).result
+    collection(Series).ransack(name_or_name_ro_or_name_en_cont_any: keywords).result
   end
 
   def works
-    collection(Work).search(title_or_title_en_or_title_kana_cont_any: keywords).result
+    collection(Work).ransack(title_or_title_en_or_title_kana_cont_any: keywords).result
   end
 
   def people
-    collection(Person).search(name_or_name_en_or_name_kana_cont_any: keywords).result
+    collection(Person).ransack(name_or_name_en_or_name_kana_cont_any: keywords).result
   end
 
   def organizations
-    collection(Organization).search(name_or_name_en_or_name_kana_cont_any: keywords).result
+    collection(Organization).ransack(name_or_name_en_or_name_kana_cont_any: keywords).result
   end
 
   def characters
-    collection(Character).search(name_or_name_en_or_name_kana_cont_any: keywords).result
+    collection(Character).ransack(name_or_name_en_or_name_kana_cont_any: keywords).result
   end
 
   private

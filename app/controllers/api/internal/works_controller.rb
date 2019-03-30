@@ -3,16 +3,17 @@
 module Api
   module Internal
     class WorksController < Api::Internal::ApplicationController
-      def index(q: nil)
-        @works = if q.present?
+      def index
+        q = params[:q]
+        @works = if q
           Work.where("title ILIKE ?", "%#{q}%").published
         else
           Work.none
         end
       end
 
-      def show(id)
-        @work = Work.published.find(id)
+      def show
+        @work = Work.published.find(params[:id])
       end
     end
   end

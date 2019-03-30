@@ -46,6 +46,7 @@
 #  satisfaction_rate            :float
 #  records_count                :integer          default(0), not null
 #  work_records_with_body_count :integer          default(0), not null
+#  start_episode_raw_number     :float            default(1.0), not null
 #
 # Indexes
 #
@@ -469,5 +470,11 @@ class Work < ApplicationRecord
     return title if I18n.locale == :ja
     return title_en if title_en.present?
     title
+  end
+
+  def formatted_number(raw_number)
+    return unless number_format
+    return number_format.data[raw_number - 1] if number_format.format.blank?
+    number_format.format % raw_number
   end
 end

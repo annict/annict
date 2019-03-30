@@ -3,8 +3,8 @@
 class FavoriteOrganizationsController < ApplicationController
   before_action :load_i18n, only: %i(index)
 
-  def index(username)
-    @user = User.published.find_by!(username: username)
+  def index
+    @user = User.published.find_by!(username: params[:username])
     @favorite_organizations = @user.
       favorite_organizations.
       order(watched_works_count: :desc)

@@ -204,6 +204,7 @@ en:
         season: Season
         season_name: Season
         season_year: Year
+        start_episode_raw_number: Start episode number
         started_on: Started On
         synopsis_en: Synopsis (en)
         synopsis_source_en: Synopsis source (en)

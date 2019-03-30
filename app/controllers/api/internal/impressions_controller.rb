@@ -5,25 +5,25 @@ module Api
     class ImpressionsController < Api::Internal::ApplicationController
       before_action :authenticate_user!
 
-      def show(work_id)
-        work = Work.find(work_id)
+      def show
+        work = Work.find(params[:work_id])
         @tags = current_user.tags_by_work(work)
         @all_tags = current_user.work_tags.published
         @popular_tags = WorkTag.published.popular_tags(work).limit(10)
         @comment = current_user.comment_by_work(work)
       end
 
-      def update(work_id, tags: [], comment: "")
-        work = Work.find(work_id)
+      def update
+        work = Work.find(params[:work_id])
 
         ActiveRecord::Base.transaction do
-          current_user.update_work_tags!(work, tags)
+          current_user.update_work_tags!(work, params[:tags].presence || [])
 
           work_comment = current_user.work_comments.find_by(work: work)
           work_comment = current_user.work_comments.new(work: work) if work_comment.blank?
 
-          if comment.blank? || comment != work_comment.body
-            work_comment.body = comment.presence || ""
+          if params[:comment].blank? || params[:comment] != work_comment.body
+            work_comment.body = params[:comment].presence || ""
             work_comment.save!
             current_user.touch(:work_comment_cache_expired_at)
           end

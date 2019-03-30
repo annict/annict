@@ -8,7 +8,6 @@ ruby "2.6.2"
 gem "rails"
 
 gem "aasm"
-gem "action_args"
 gem "active_decorator"
 gem "active_link_to"
 gem "acts_as_list"
@@ -69,9 +68,8 @@ gem "sidekiq"
 gem "sitemap_generator"
 gem "slim"
 gem "syoboi_calendar"
-gem "traceroute"
 gem "twitter"
-gem "validate_url", github: "perfectline/validates_url", ref: "771474eb820e0429a579b269b58680fc18adb6aa"
+gem "validate_url"
 gem "virtus"
 gem "wilson_score"
 
@@ -105,6 +103,7 @@ group :development do
   gem "spring"
   gem "squasher"
   gem "stackprof"
+  gem "traceroute"
 end
 
 group :test do

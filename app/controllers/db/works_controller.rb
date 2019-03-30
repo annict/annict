@@ -2,30 +2,25 @@
 
 module Db
   class WorksController < Db::ApplicationController
-    permits :title, :title_kana, :title_en, :media, :official_site_url,
-      :official_site_url_en, :wikipedia_url, :wikipedia_url_en, :twitter_username,
-      :twitter_hashtag, :sc_tid, :mal_anime_id, :number_format_id, :synopsis,
-      :synopsis_source, :synopsis_en, :synopsis_source_en, :season_year, :season_name,
-      :manual_episodes_count, :no_episodes, :started_on, :ended_on
-
     before_action :authenticate_user!, only: %i(new create edit update destroy)
-    before_action :load_work, only: %i(edit update hide destroy activities)
 
-    def index(page: nil)
-      @works = Work.order(id: :desc).page(page)
+    def index
+      @works = Work.order(id: :desc).page(params[:page])
     end
 
-    def season(page: nil, slug: ENV["ANNICT_CURRENT_SEASON"])
-      @works = Work.by_season(slug).order(id: :desc).page(page)
+    def season
+      slug = params[:slug].presence || ENV.fetch("ANNICT_CURRENT_SEASON")
+      @works = Work.by_season(slug).order(id: :desc).page(params[:page])
       render :index
     end
 
-    def resourceless(page: nil, name: "episode")
+    def resourceless
+      name = params[:name].presence || "episode"
       @works = case name
       when "episode" then Work.where(auto_episodes_count: 0, no_episodes: false)
       when "item" then Work.image_not_attached
       end
-      @works = @works.order(watchers_count: :desc).page(page)
+      @works = @works.order(watchers_count: :desc).page(params[:page])
       render :index
     end
 
@@ -34,8 +29,8 @@ module Db
       authorize @work, :new?
     end
 
-    def create(work)
-      @work = Work.new(work)
+    def create
+      @work = Work.new(work_params)
       @work.user = current_user
       authorize @work, :create?
 
@@ -46,13 +41,15 @@ module Db
     end
 
     def edit
+      @work = Work.find(params[:id])
       authorize @work, :edit?
     end
 
-    def update(work)
+    def update
+      @work = Work.find(params[:id])
       authorize @work, :update?
 
-      @work.attributes = work
+      @work.attributes = work_params
       @work.user = current_user
 
       return render(:edit) unless @work.valid?
@@ -62,6 +59,7 @@ module Db
     end
 
     def hide
+      @work = Work.find(params[:id])
       authorize @work, :hide?
 
       @work.hide!
@@ -71,6 +69,7 @@ module Db
     end
 
     def destroy
+      @work = Work.find(params[:id])
       authorize @work, :destroy?
 
       @work.destroy
@@ -80,14 +79,21 @@ module Db
     end
 
     def activities
+      @work = Work.find(params[:id])
       @activities = @work.db_activities.order(id: :desc)
       @comment = @work.db_comments.new
     end
 
     private
 
-    def load_work
-      @work = Work.find(params[:id])
+    def work_params
+      params.require(:work).permit(
+        :title, :title_kana, :title_en, :media, :official_site_url,
+        :official_site_url_en, :wikipedia_url, :wikipedia_url_en, :twitter_username,
+        :twitter_hashtag, :sc_tid, :mal_anime_id, :number_format_id, :synopsis,
+        :synopsis_source, :synopsis_en, :synopsis_source_en, :season_year, :season_name,
+        :manual_episodes_count, :start_episode_raw_number, :no_episodes, :started_on, :ended_on
+      )
     end
   end
 end

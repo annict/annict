@@ -5,8 +5,8 @@ module Api
     class MuteUsersController < Api::Internal::ApplicationController
       before_action :authenticate_user!
 
-      def create(user_id)
-        user = User.find(user_id)
+      def create
+        user = User.find(params[:user_id])
 
         if current_user.mute(user)
           head :created

@@ -2,18 +2,16 @@
 
 module Db
   class CharacterImagesController < Db::ApplicationController
-    permits :attachment, :asin, :copyright
-
     before_action :authenticate_user!
-    before_action :load_character, only: %i(show create update destroy)
-    before_action :load_image, only: %i(update destroy)
 
     def show
+      @character = Character.find(params[:character_id])
       @image = @character.character_image.presence || @character.build_character_image
     end
 
-    def create(character_image)
-      @image = @character.build_character_image(character_image)
+    def create
+      @character = Character.find(params[:character_id])
+      @image = @character.build_character_image(character_image_params)
       authorize @image, :create?
       @image.user = current_user
 
@@ -25,10 +23,12 @@ module Db
       end
     end
 
-    def update(character_image)
+    def update
+      @character = Character.find(params[:character_id])
+      @image = CharacterImage.find_by!(character_id: @character.id)
       authorize @image, :update?
 
-      @image.attributes = character_image
+      @image.attributes = character_image_params
       @image.user = current_user
 
       if @image.save
@@ -40,6 +40,8 @@ module Db
     end
 
     def destroy
+      @character = Character.find(params[:character_id])
+      @image = CharacterImage.find_by!(character_id: @character.id)
       authorize @item, :destroy?
       @item.destroy
       redirect_to db_character_image_path(@character), notice: t("messages.character_images.deleted")
@@ -47,9 +49,8 @@ module Db
 
     private
 
-    def load_image
-      @image = @character.character_image
-      raise ActiveRecord::RecordNotFound if @image.blank?
+    def character_image_params
+      params.require(:character_image).permit(:attachment, :asin, :copyright)
     end
   end
 end

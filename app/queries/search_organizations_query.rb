@@ -49,6 +49,6 @@ class SearchOrganizationsQuery
   end
 
   def names
-    @collection.search(name_or_name_kana_cont_any: @args[:names]).result
+    @collection.ransack(name_or_name_kana_cont_any: @args[:names]).result
   end
 end

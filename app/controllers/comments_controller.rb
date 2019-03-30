@@ -20,16 +20,13 @@
 #
 
 class CommentsController < ApplicationController
-  permits :body
-
   before_action :authenticate_user!
-  before_action :load_user, only: %i(create)
-  before_action :load_record, only: %i(create)
-  before_action :load_comment, only: %i(edit update destroy)
 
-  def create(comment)
+  def create
+    @user = User.published.find_by(username: params[:username])
+    @record = @user.records.published.find(params[:record_id])
     @user = @record.user
-    @comment = @record.episode_record.comments.new(comment)
+    @comment = @record.episode_record.comments.new(comment_params)
     @comment.user = current_user
     @comment.work = @record.work
     @comment.detect_locale!(:body)
@@ -46,13 +43,15 @@ class CommentsController < ApplicationController
   end
 
   def edit
+    @comment = current_user.record_comments.find(params[:id])
     authorize @comment, :edit?
   end
 
-  def update(comment)
+  def update
+    @comment = current_user.record_comments.find(params[:id])
     authorize @comment, :update?
 
-    @comment.attributes = comment
+    @comment.attributes = comment_params
     @comment.detect_locale!(:body)
 
     if @comment.save
@@ -64,6 +63,7 @@ class CommentsController < ApplicationController
   end
 
   def destroy
+    @comment = current_user.record_comments.find(params[:id])
     authorize @comment, :destroy?
 
     @comment.destroy
@@ -74,15 +74,7 @@ class CommentsController < ApplicationController
 
   private
 
-  def load_user
-    @user = User.published.find_by(username: params[:username])
-  end
-
-  def load_record
-    @record = @user.records.published.find(params[:record_id])
-  end
-
-  def load_comment
-    @comment = current_user.record_comments.find(params[:id])
+  def comment_params
+    params.require(:comment).permit(:body)
   end
 end

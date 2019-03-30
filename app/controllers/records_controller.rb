@@ -5,14 +5,14 @@ class RecordsController < ApplicationController
 
   before_action :authenticate_user!, only: %i(destroy)
 
-  def index(page: nil)
-    load_user
+  def index
+    @user = User.published.find_by!(username: params[:username])
     @records = @user.
       records.
       published.
       includes(:episode_record, work: :work_image, work_record: %i(work user)).
       order(created_at: :desc).
-      page(page)
+      page(params[:page])
 
     return unless user_signed_in?
 
@@ -21,8 +21,8 @@ class RecordsController < ApplicationController
   end
 
   def show
-    load_user
-    load_record
+    @user = User.published.find_by!(username: params[:username])
+    @record = @user.records.published.find(params[:id])
 
     if @record.episode_record?
       @episode_record = @record.episode_record
@@ -49,8 +49,9 @@ class RecordsController < ApplicationController
   end
 
   def destroy
-    load_user
-    load_record
+    @user = User.published.find_by!(username: params[:username])
+    @record = @user.records.published.find(params[:id])
+
     authorize @record, :destroy?
 
     @record.destroy
@@ -64,15 +65,5 @@ class RecordsController < ApplicationController
     end
 
     redirect_to path, notice: t("messages._common.deleted")
-  end
-
-  private
-
-  def load_user
-    @user = User.published.find_by!(username: params[:username])
-  end
-
-  def load_record
-    @record = @user.records.published.find(params[:id])
   end
 end

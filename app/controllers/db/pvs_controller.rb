@@ -2,23 +2,22 @@
 
 module Db
   class PvsController < Db::ApplicationController
-    permits :title, :url, :sort_number
-
     before_action :authenticate_user!
-    before_action :load_work, only: %i(index new create)
-    before_action :load_pv, only: %i(edit update hide destroy activities)
 
     def index
+      @work = Work.find(params[:work_id])
       @pvs = @work.pvs.order(:sort_number)
     end
 
     def new
+      @work = Work.find(params[:work_id])
       @form = DB::PvRowsForm.new
       authorize @form, :new?
     end
 
-    def create(db_pv_rows_form)
-      @form = DB::PvRowsForm.new(db_pv_rows_form.permit(:rows).to_h)
+    def create
+      @work = Work.find(params[:work_id])
+      @form = DB::PvRowsForm.new(pv_rows_form_params)
       @form.user = current_user
       @form.work = @work
       authorize @form, :create?
@@ -30,14 +29,16 @@ module Db
     end
 
     def edit
+      @pv = Pv.find(params[:id])
       authorize @pv, :edit?
       @work = @pv.work
     end
 
-    def update(pv)
+    def update
+      @pv = Pv.find(params[:id])
       authorize @pv, :update?
 
-      @pv.attributes = pv
+      @pv.attributes = pv_params
       @pv.user = current_user
 
       return render(:edit) unless @pv.valid?
@@ -47,6 +48,7 @@ module Db
     end
 
     def hide
+      @pv = Pv.find(params[:id])
       authorize @pv, :hide?
 
       @pv.hide!
@@ -56,6 +58,7 @@ module Db
     end
 
     def destroy
+      @pv = Pv.find(params[:id])
       @pv.destroy
 
       flash[:notice] = t("resources.pv.deleted")
@@ -63,14 +66,19 @@ module Db
     end
 
     def activities
+      @pv = Pv.find(params[:id])
       @activities = @pv.db_activities.order(id: :desc)
       @comment = @pv.db_comments.new
     end
 
     private
 
-    def load_pv
-      @pv = Pv.find(params[:id])
+    def pv_rows_form_params
+      params.require(:db_pv_rows_form).permit(:rows)
+    end
+
+    def pv_params
+      params.require(:pv).permit(:title, :url, :sort_number)
     end
   end
 end

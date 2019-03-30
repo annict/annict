@@ -29,8 +29,8 @@
 class PeopleController < ApplicationController
   before_action :load_i18n, only: %i(show)
 
-  def show(id)
-    @person = Person.published.find(id)
+  def show
+    @person = Person.published.find(params[:id])
 
     if @person.voice_actor?
       @casts_with_year = @person.

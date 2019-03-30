@@ -20,27 +20,27 @@ module Api
     class LikesController < Api::Internal::ApplicationController
       before_action :authenticate_user!
 
-      def create(recipient_type, recipient_id, page_category)
-        recipient = recipient_type.constantize.find(recipient_id)
+      def create
+        recipient = params[:recipient_type].constantize.find(params[:recipient_id])
         current_user.like(recipient)
-        ga_client.page_category = page_category
-        ga_client.events.create(:likes, :create, el: recipient_type, ev: recipient_id, ds: "internal_api")
-        keen_client.publish(:like_create, via: "internal_api", resource_type: recipient_type)
+        ga_client.page_category = params[:page_category]
+        ga_client.events.create(:likes, :create, el: params[:recipient_type], ev: params[:recipient_id], ds: "internal_api")
+        keen_client.publish(:like_create, via: "internal_api", resource_type: params[:recipient_type])
 
-        if recipient_type == "EpisodeRecord"
+        if params[:recipient_type] == "EpisodeRecord"
           EmailNotificationService.send_email(
             "liked_episode_record",
             recipient.user,
             current_user.id,
-            recipient_id
+            params[:recipient_id]
           )
         end
 
         head 200
       end
 
-      def unlike(recipient_type, recipient_id)
-        recipient = recipient_type.constantize.find(recipient_id)
+      def unlike
+        recipient = params[:recipient_type].constantize.find(params[:recipient_id])
         current_user.unlike(recipient)
         head 200
       end

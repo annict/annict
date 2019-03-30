@@ -5,10 +5,10 @@ module Api
     class StatisticsController < Api::Internal::ApplicationController
       include TimeZoneHelper
 
-      def user_heatmap(username, start_date, end_date)
-        start_date = Time.parse(start_date)
-        end_date = Time.parse(end_date)
-        user = User.published.find_by!(username: username)
+      def user_heatmap
+        start_date = Time.parse(params[:start_date])
+        end_date = Time.parse(params[:end_date])
+        user = User.published.find_by!(username: params[:username])
         time_zone = local_time_zone.presence || user.time_zone
 
         @days = user.records.between_times(start_date, end_date).

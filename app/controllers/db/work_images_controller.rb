@@ -2,18 +2,16 @@
 
 module Db
   class WorkImagesController < Db::ApplicationController
-    permits :attachment, :asin, :copyright
-
     before_action :authenticate_user!
-    before_action :load_work, only: %i(show create update destroy)
-    before_action :load_image, only: %i(update destroy)
 
     def show
+      @work = Work.find(params[:work_id])
       @image = @work.work_image.presence || @work.build_work_image
     end
 
-    def create(work_image)
-      @image = @work.build_work_image(work_image)
+    def create
+      @work = Work.find(params[:work_id])
+      @image = @work.build_work_image(work_image_params)
       authorize @image, :create?
       @image.user = current_user
 
@@ -25,10 +23,12 @@ module Db
       end
     end
 
-    def update(work_image)
+    def update
+      @work = Work.find(params[:work_id])
+      @image = WorkImage.find_by!(work_id: @work.id)
       authorize @image, :update?
 
-      @image.attributes = work_image
+      @image.attributes = work_image_params
       @image.user = current_user
 
       if @image.save
@@ -40,6 +40,8 @@ module Db
     end
 
     def destroy
+      @work = Work.find(params[:work_id])
+      @image = WorkImage.find_by!(work_id: @work.id)
       authorize @item, :destroy?
       @item.destroy
       redirect_to db_work_image_path(@work), notice: t("messages.work_images.deleted")
@@ -47,9 +49,8 @@ module Db
 
     private
 
-    def load_image
-      @image = @work.work_image
-      raise ActiveRecord::RecordNotFound if @image.blank?
+    def work_image_params
+      params.require(:work_image).permit(:attachment, :asin, :copyright)
     end
   end
 end

@@ -1,24 +1,22 @@
 # frozen_string_literal: true
 
 class AccountsController < ApplicationController
-  permits :username, :email, :time_zone, :locale, allowed_locales: [], model_name: "User"
-
   before_action :authenticate_user!
 
   def show
     @user = current_user
   end
 
-  def update(user)
+  def update
     @user = User.find(current_user.id)
-    @user.attributes = user
+    @user.attributes = user_params
 
     if @user.valid?
       message = nil
 
       User.transaction do
         if @user.email_changed?
-          @user.update_column(:unconfirmed_email, user[:email])
+          @user.update_column(:unconfirmed_email, user_params[:email])
           @user.resend_confirmation_instructions
           message = t "messages.accounts.email_sent_for_confirmation"
         end
@@ -39,5 +37,11 @@ class AccountsController < ApplicationController
     else
       render "/accounts/show"
     end
+  end
+
+  private
+
+  def user_params
+    params.require(:user).permit(:username, :email, :time_zone, :locale, allowed_locales: [])
   end
 end

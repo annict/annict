@@ -2,16 +2,14 @@
 
 module Settings
   class TokensController < ApplicationController
-    permits :description, :scopes, model_name: "Doorkeeper::AccessToken"
-
     before_action :authenticate_user!
 
     def new
       @token = current_user.oauth_access_tokens.new
     end
 
-    def create(doorkeeper_access_token)
-      @token = current_user.oauth_access_tokens.new(doorkeeper_access_token)
+    def create
+      @token = current_user.oauth_access_tokens.new(access_token_params)
 
       if @token.save(context: :personal)
         flash[:notice] = t("messages.settings.tokens.created")
@@ -22,13 +20,13 @@ module Settings
       end
     end
 
-    def edit(id)
-      @token = current_user.oauth_access_tokens.available.personal.find(id)
+    def edit
+      @token = current_user.oauth_access_tokens.available.personal.find(params[:id])
     end
 
-    def update(id, doorkeeper_access_token)
-      @token = current_user.oauth_access_tokens.available.personal.find(id)
-      @token.attributes = doorkeeper_access_token
+    def update
+      @token = current_user.oauth_access_tokens.available.personal.find(params[:id])
+      @token.attributes = access_token_params
 
       if @token.save
         flash[:notice] = t("messages.settings.tokens.updated")
@@ -38,13 +36,19 @@ module Settings
       end
     end
 
-    def destroy(id)
-      @token = current_user.oauth_access_tokens.available.personal.find(id)
+    def destroy
+      @token = current_user.oauth_access_tokens.available.personal.find(params[:id])
 
       @token.destroy
 
       flash[:notice] = t("messages.settings.tokens.deleted")
       redirect_to settings_apps_path
+    end
+
+    private
+
+    def access_token_params
+      params.require(:doorkeeper_access_token).permit(:description, :scopes)
     end
   end
 end

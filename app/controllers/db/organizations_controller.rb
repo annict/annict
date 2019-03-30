@@ -2,14 +2,10 @@
 
 module Db
   class OrganizationsController < Db::ApplicationController
-    permits :name, :name_en, :name_kana, :url, :url_en, :wikipedia_url,
-      :wikipedia_url_en, :twitter_username, :twitter_username_en
-
     before_action :authenticate_user!, only: %i(new create edit update hide destroy)
-    before_action :load_organization, only: %i(edit update hide destroy activities)
 
-    def index(page: nil)
-      @organizations = Organization.order(id: :desc).page(page)
+    def index
+      @organizations = Organization.order(id: :desc).page(params[:page])
     end
 
     def new
@@ -17,8 +13,8 @@ module Db
       authorize @organization, :new?
     end
 
-    def create(organization)
-      @organization = Organization.new(organization)
+    def create
+      @organization = Organization.new(organization_params)
       @organization.user = current_user
       authorize @organization, :create?
 
@@ -30,13 +26,15 @@ module Db
     end
 
     def edit
+      @organization = Organization.find(params[:id])
       authorize @organization, :edit?
     end
 
-    def update(organization)
+    def update
+      @organization = Organization.find(params[:id])
       authorize @organization, :update?
 
-      @organization.attributes = organization
+      @organization.attributes = organization_params
       @organization.user = current_user
 
       return render(:edit) unless @organization.valid?
@@ -47,6 +45,7 @@ module Db
     end
 
     def hide
+      @organization = Organization.find(params[:id])
       authorize @organization, :hide?
 
       @organization.hide!
@@ -56,6 +55,7 @@ module Db
     end
 
     def destroy
+      @organization = Organization.find(params[:id])
       authorize @organization, :destroy?
 
       @organization.destroy
@@ -65,14 +65,18 @@ module Db
     end
 
     def activities
+      @organization = Organization.find(params[:id])
       @activities = @organization.db_activities.order(id: :desc)
       @comment = @organization.db_comments.new
     end
 
     private
 
-    def load_organization
-      @organization = Organization.find(params[:id])
+    def organization_params
+      params.require(:organization).permit(
+        :name, :name_en, :name_kana, :url, :url_en, :wikipedia_url,
+        :wikipedia_url_en, :twitter_username, :twitter_username_en
+      )
     end
   end
 end

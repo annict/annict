@@ -20,17 +20,19 @@ module Api
     class FavoritesController < Api::Internal::ApplicationController
       before_action :authenticate_user!
 
-      def create(resource_type, resource_id, page_category)
+      def create
+        resource_type = params[:resource_type]
+        resource_id = params[:resource_id]
         resource = resource_type.constantize.find(resource_id)
         current_user.favorite(resource)
-        ga_client.page_category = page_category
+        ga_client.page_category = params[:page_category]
         ga_client.events.create(:favorites, :create, el: resource_type, ev: resource_id, ds: "internal_api")
         keen_client.publish(:favorite_create, via: "internal_api", resource_type: resource_type)
         head 200
       end
 
-      def unfavorite(resource_type, resource_id)
-        resource = resource_type.constantize.find(resource_id)
+      def unfavorite
+        resource = params[:resource_type].constantize.find(params[:resource_id])
         current_user.unfavorite(resource)
         head 200
       end

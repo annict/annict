@@ -3,7 +3,6 @@
 module Oauth
   class ApplicationsController < Oauth::ApplicationController
     before_action :authenticate_admin!
-    before_action :load_application, only: %i(show edit update destroy)
 
     def index
       @applications = current_user.oauth_applications.available
@@ -27,7 +26,16 @@ module Oauth
       end
     end
 
+    def show
+      @application = current_user.oauth_applications.available.find(params[:id])
+    end
+
+    def edit
+      @application = current_user.oauth_applications.available.find(params[:id])
+    end
+
     def update
+      @application = current_user.oauth_applications.available.find(params[:id])
       if @application.update(application_params)
         flash[:notice] = t "doorkeeper.flash.applications.update.notice"
         redirect_to oauth_application_url(@application)
@@ -37,16 +45,13 @@ module Oauth
     end
 
     def destroy
+      @application = current_user.oauth_applications.available.find(params[:id])
       @application.hide!
       flash[:notice] = t "messages.oauth.applications.deleted"
       redirect_to oauth_applications_url
     end
 
     private
-
-    def load_application
-      @application = current_user.oauth_applications.available.find(params[:id])
-    end
 
     def application_params
       if params.respond_to?(:permit)
