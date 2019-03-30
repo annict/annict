@@ -10,7 +10,7 @@ module Db
     before_action :load_program, only: %i(edit update hide destroy activities)
 
     def index
-      @programs = @work.programs.eager_load(:channel, :episode)
+      @programs = @work.programs.eager_load(:channel, :episode, program_detail: :channel)
       @programs = @programs.where(channel_id: params[:channel_id]) if params[:channel_id]
       @programs = @programs.order(started_at: :desc).order(:channel_id)
     end
