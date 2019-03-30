@@ -68,7 +68,6 @@ gem "sidekiq"
 gem "sitemap_generator"
 gem "slim"
 gem "syoboi_calendar"
-gem "traceroute"
 gem "twitter"
 gem "validate_url", github: "perfectline/validates_url", ref: "771474eb820e0429a579b269b58680fc18adb6aa"
 gem "virtus"
@@ -104,6 +103,7 @@ group :development do
   gem "spring"
   gem "squasher"
   gem "stackprof"
+  gem "traceroute"
 end
 
 group :test do
