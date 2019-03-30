@@ -3,10 +3,9 @@
 module Db
   class EpisodesController < Db::ApplicationController
     before_action :authenticate_user!
-    before_action :load_work, only: %i(index new create)
-    before_action :load_episode, only: %i(edit update hide destroy activities)
 
     def index
+      @work = Work.find(params[:work_id])
       @episodes = @work.episodes.
         includes(:prev_episode).
         order(sort_number: :desc).
@@ -14,11 +13,13 @@ module Db
     end
 
     def new
+      @work = Work.find(params[:work_id])
       @form = DB::EpisodeRowsForm.new
       authorize @form, :new?
     end
 
     def create
+      @work = Work.find(params[:work_id])
       @form = DB::EpisodeRowsForm.new(episode_rows_form_params)
       @form.user = current_user
       @form.work = @work
@@ -31,11 +32,13 @@ module Db
     end
 
     def edit
+      @episode = Episode.find(params[:id])
       authorize @episode, :edit?
       @work = @episode.work
     end
 
     def update
+      @episode = Episode.find(params[:id])
       authorize @episode, :update?
       @work = @episode.work
 
@@ -49,6 +52,7 @@ module Db
     end
 
     def hide
+      @episode = Episode.find(params[:id])
       authorize @episode, :hide?
 
       @episode.hide!
@@ -58,6 +62,7 @@ module Db
     end
 
     def destroy
+      @episode = Episode.find(params[:id])
       authorize @episode, :destroy?
 
       @episode.destroy
@@ -67,15 +72,12 @@ module Db
     end
 
     def activities
+      @episode = Episode.find(params[:id])
       @activities = @episode.db_activities.order(id: :desc)
       @comment = @episode.db_comments.new
     end
 
     private
-
-    def load_episode
-      @episode = Episode.find(params[:id])
-    end
 
     def episode_rows_form_params
       params.require(:db_episode_rows_form).permit(:rows)

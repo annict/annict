@@ -3,21 +3,22 @@
 module Db
   class CastsController < Db::ApplicationController
     before_action :authenticate_user!
-    before_action :load_work, only: %i(index new create)
-    before_action :load_cast, only: %i(edit update destroy hide activities)
 
     def index
+      @work = Work.find(params[:work_id])
       @casts = @work.casts.
         includes(:person, :character).
         order(aasm_state: :desc, sort_number: :asc)
     end
 
     def new
+      @work = Work.find(params[:work_id])
       @form = DB::CastRowsForm.new
       authorize @form, :new?
     end
 
     def create
+      @work = Work.find(params[:work_id])
       @form = DB::CastRowsForm.new(cast_rows_form_params)
       @form.user = current_user
       @form.work = @work
@@ -30,11 +31,13 @@ module Db
     end
 
     def edit
+      @cast = Cast.find(params[:id])
       authorize @cast, :edit?
       @work = @cast.work
     end
 
     def update
+      @cast = Cast.find(params[:id])
       authorize @cast, :update?
       @work = @cast.work
 
@@ -48,6 +51,7 @@ module Db
     end
 
     def hide
+      @cast = Cast.find(params[:id])
       authorize @cast, :hide?
 
       @cast.hide!
@@ -57,6 +61,7 @@ module Db
     end
 
     def destroy
+      @cast = Cast.find(params[:id])
       authorize @cast, :destroy?
 
       @cast.destroy
@@ -66,15 +71,12 @@ module Db
     end
 
     def activities
+      @cast = Cast.find(params[:id])
       @activities = @cast.db_activities.order(id: :desc)
       @comment = @cast.db_comments.new
     end
 
     private
-
-    def load_cast
-      @cast = Cast.find(params[:id])
-    end
 
     def cast_rows_form_params
       params.require(:db_cast_rows_form).permit(:rows)

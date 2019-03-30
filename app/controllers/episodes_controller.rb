@@ -27,11 +27,10 @@
 #
 
 class EpisodesController < ApplicationController
-  before_action :load_work, only: %i(index show)
-  before_action :load_episode, only: %i(show)
   before_action :load_i18n, only: %i(show)
 
   def index
+    @work = Work.published.find(params[:work_id])
     raise ActionController::RoutingError, "Not Found" if @work.no_episodes?
 
     @episodes = @work.episodes.published.order(:sort_number)
@@ -42,6 +41,8 @@ class EpisodesController < ApplicationController
   end
 
   def show
+    @work = Work.published.find(params[:work_id])
+    @episode = @work.episodes.published.find(params[:id])
     params[:locale_en] = locale_en?
     params[:locale_ja] = locale_ja?
     service = EpisodeRecordsListService.new(current_user, @episode, params)
@@ -80,10 +81,6 @@ class EpisodesController < ApplicationController
   end
 
   private
-
-  def load_episode
-    @episode = @work.episodes.published.find(params[:id])
-  end
 
   def load_i18n
     keys = {

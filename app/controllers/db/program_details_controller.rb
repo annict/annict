@@ -3,19 +3,20 @@
 module Db
   class ProgramDetailsController < Db::ApplicationController
     before_action :authenticate_user!
-    before_action :load_work, only: %i(index new create)
-    before_action :load_program_detail, only: %i(edit update hide destroy activities)
 
     def index
+      @work = Work.find(params[:work_id])
       @program_details = @work.program_details.order(id: :desc)
     end
 
     def new
+      @work = Work.find(params[:work_id])
       @form = DB::ProgramDetailRowsForm.new
       authorize @form, :new?
     end
 
     def create
+      @work = Work.find(params[:work_id])
       @form = DB::ProgramDetailRowsForm.new(program_detail_rows_form_params)
       @form.user = current_user
       @form.work = @work
@@ -29,11 +30,13 @@ module Db
     end
 
     def edit
+      @program_detail = ProgramDetail.find(params[:id])
       authorize @program_detail, :edit?
       @work = @program_detail.work
     end
 
     def update
+      @program_detail = ProgramDetail.find(params[:id])
       authorize @program_detail, :update?
       @work = @program_detail.work
 
@@ -48,6 +51,7 @@ module Db
     end
 
     def hide
+      @program_detail = ProgramDetail.find(params[:id])
       authorize @program_detail, :hide?
 
       @program_detail.hide!
@@ -57,6 +61,7 @@ module Db
     end
 
     def destroy
+      @program_detail = ProgramDetail.find(params[:id])
       authorize @program_detail, :destroy?
 
       @program_detail.destroy
@@ -66,15 +71,12 @@ module Db
     end
 
     def activities
+      @program_detail = ProgramDetail.find(params[:id])
       @activities = @program_detail.db_activities.order(id: :desc)
       @comment = @program_detail.db_comments.new
     end
 
     private
-
-    def load_program_detail
-      @program_detail = ProgramDetail.find(params[:id])
-    end
 
     def program_detail_params
       params.require(:program_detail).permit(

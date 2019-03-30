@@ -3,7 +3,6 @@
 module Db
   class CommentsController < Db::ApplicationController
     before_action :authenticate_user!
-    before_action :load_db_comment, only: %i(destroy)
 
     def create
       @comment = current_user.db_comments.new(db_comment_params)
@@ -17,10 +16,6 @@ module Db
     end
 
     private
-
-    def load_db_comment
-      @comment = DbComment.find(params[:id])
-    end
 
     def db_comment_params
       params.require(:db_comment).permit(:body, :resource_id, :resource_type)

@@ -21,11 +21,10 @@
 
 class CommentsController < ApplicationController
   before_action :authenticate_user!
-  before_action :load_user, only: %i(create)
-  before_action :load_record, only: %i(create)
-  before_action :load_comment, only: %i(edit update destroy)
 
   def create
+    @user = User.published.find_by(username: params[:username])
+    @record = @user.records.published.find(params[:record_id])
     @user = @record.user
     @comment = @record.episode_record.comments.new(comment_params)
     @comment.user = current_user
@@ -44,10 +43,12 @@ class CommentsController < ApplicationController
   end
 
   def edit
+    @comment = current_user.record_comments.find(params[:id])
     authorize @comment, :edit?
   end
 
   def update
+    @comment = current_user.record_comments.find(params[:id])
     authorize @comment, :update?
 
     @comment.attributes = comment_params
@@ -62,6 +63,7 @@ class CommentsController < ApplicationController
   end
 
   def destroy
+    @comment = current_user.record_comments.find(params[:id])
     authorize @comment, :destroy?
 
     @comment.destroy
@@ -71,18 +73,6 @@ class CommentsController < ApplicationController
   end
 
   private
-
-  def load_user
-    @user = User.published.find_by(username: params[:username])
-  end
-
-  def load_record
-    @record = @user.records.published.find(params[:record_id])
-  end
-
-  def load_comment
-    @comment = current_user.record_comments.find(params[:id])
-  end
 
   def comment_params
     params.require(:comment).permit(:body)

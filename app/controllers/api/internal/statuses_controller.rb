@@ -24,9 +24,9 @@ module Api
   module Internal
     class StatusesController < Api::Internal::ApplicationController
       before_action :authenticate_user!
-      before_action :load_work
 
       def select
+        @work = Work.published.find(params[:work_id])
         page_category = params[:page_category]
         ga_client.page_category = page_category
         keen_client.page_category = page_category

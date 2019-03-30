@@ -46,13 +46,13 @@ class EpisodeRecordsController < ApplicationController
   end
 
   def edit
-    load_episode_record
+    @episode_record = current_user.episode_records.published.find_by(episode_id: params[:episode_id], record_id: params[:id])
     authorize @episode_record, :edit?
     @work = @episode_record.work
   end
 
   def update
-    load_episode_record
+    @episode_record = current_user.episode_records.published.find_by(episode_id: params[:episode_id], record_id: params[:id])
     authorize @episode_record, :update?
 
     @episode_record.modify_comment = true
@@ -92,10 +92,6 @@ class EpisodeRecordsController < ApplicationController
   end
 
   private
-
-  def load_episode_record
-    @episode_record = current_user.episode_records.published.find_by(episode_id: params[:episode_id], record_id: params[:id])
-  end
 
   def episode_record_params
     params.require(:episode_record).permit(:episode_id, :comment, :shared_twitter, :rating_state)

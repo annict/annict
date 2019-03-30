@@ -3,7 +3,6 @@
 module Db
   class WorksController < Db::ApplicationController
     before_action :authenticate_user!, only: %i(new create edit update destroy)
-    before_action :load_work, only: %i(edit update hide destroy activities)
 
     def index
       @works = Work.order(id: :desc).page(params[:page])
@@ -42,10 +41,12 @@ module Db
     end
 
     def edit
+      @work = Work.find(params[:id])
       authorize @work, :edit?
     end
 
     def update
+      @work = Work.find(params[:id])
       authorize @work, :update?
 
       @work.attributes = work_params
@@ -58,6 +59,7 @@ module Db
     end
 
     def hide
+      @work = Work.find(params[:id])
       authorize @work, :hide?
 
       @work.hide!
@@ -67,6 +69,7 @@ module Db
     end
 
     def destroy
+      @work = Work.find(params[:id])
       authorize @work, :destroy?
 
       @work.destroy
@@ -76,15 +79,12 @@ module Db
     end
 
     def activities
+      @work = Work.find(params[:id])
       @activities = @work.db_activities.order(id: :desc)
       @comment = @work.db_comments.new
     end
 
     private
-
-    def load_work
-      @work = Work.find(params[:id])
-    end
 
     def work_params
       params.require(:work).permit(

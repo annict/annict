@@ -3,7 +3,6 @@
 module Db
   class CharactersController < Db::ApplicationController
     before_action :authenticate_user!, only: %i(new create edit update)
-    before_action :load_character, only: %i(edit update activities hide destroy)
 
     def index
       @characters = Character.order(id: :desc).page(params[:page])
@@ -26,10 +25,12 @@ module Db
     end
 
     def edit
+      @character = Character.find(params[:id])
       authorize @character, :edit?
     end
 
     def update
+      @character = Character.find(params[:id])
       authorize @character, :update?
 
       @character.attributes = character_params
@@ -43,6 +44,7 @@ module Db
     end
 
     def hide
+      @character = Character.find(params[:id])
       authorize @character, :hide?
 
       @character.hide!
@@ -52,6 +54,7 @@ module Db
     end
 
     def destroy
+      @character = Character.find(params[:id])
       authorize @character, :destroy?
 
       @character.destroy
@@ -61,15 +64,12 @@ module Db
     end
 
     def activities
+      @character = Character.find(params[:id])
       @activities = @character.db_activities.order(id: :desc)
       @comment = @character.db_comments.new
     end
 
     private
-
-    def load_character
-      @character = Character.find(params[:id])
-    end
 
     def character_rows_form_params
       params.require(:db_character_rows_form).permit(:rows)

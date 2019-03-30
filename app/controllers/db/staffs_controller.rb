@@ -3,21 +3,22 @@
 module Db
   class StaffsController < Db::ApplicationController
     before_action :authenticate_user!
-    before_action :load_work, only: %i(index new create)
-    before_action :load_staff, only: %i(edit update destroy hide activities)
 
     def index
+      @work = Work.find(params[:work_id])
       @staffs = @work.staffs.
         includes(:resource).
         order(aasm_state: :desc, sort_number: :asc)
     end
 
     def new
+      @work = Work.find(params[:work_id])
       @form = DB::StaffRowsForm.new
       authorize @form, :new?
     end
 
     def create
+      @work = Work.find(params[:work_id])
       @form = DB::StaffRowsForm.new(staff_rows_form_params)
       @form.user = current_user
       @form.work = @work
@@ -30,11 +31,13 @@ module Db
     end
 
     def edit
+      @staff = Staff.find(params[:id])
       authorize @staff, :edit?
       @work = @staff.work
     end
 
     def update
+      @staff = Staff.find(params[:id])
       authorize @staff, :update?
       @work = @staff.work
 
@@ -48,6 +51,7 @@ module Db
     end
 
     def hide
+      @staff = Staff.find(params[:id])
       authorize @staff, :hide?
 
       @staff.hide!
@@ -57,6 +61,7 @@ module Db
     end
 
     def destroy
+      @staff = Staff.find(params[:id])
       authorize @staff, :destroy?
 
       @staff.destroy
@@ -66,15 +71,12 @@ module Db
     end
 
     def activities
+      @staff = Staff.find(params[:id])
       @activities = @staff.db_activities.order(id: :desc)
       @comment = @staff.db_comments.new
     end
 
     private
-
-    def load_staff
-      @staff = Staff.find(params[:id])
-    end
 
     def staff_rows_form_params
       params.require(:db_staff_rows_form).permit(:rows)

@@ -3,7 +3,6 @@
 module Db
   class PeopleController < Db::ApplicationController
     before_action :authenticate_user!, only: %i(new create edit update hide destroy)
-    before_action :load_person, only: %i(edit update hide destroy activities)
 
     def index
       @people = Person.order(id: :desc).page(params[:page])
@@ -26,10 +25,12 @@ module Db
     end
 
     def edit
+      @person = Person.find(params[:id])
       authorize @person, :edit?
     end
 
     def update
+      @person = Person.find(params[:id])
       authorize @person, :update?
 
       @person.attributes = person_params
@@ -42,6 +43,7 @@ module Db
     end
 
     def hide
+      @person = Person.find(params[:id])
       authorize @person, :hide?
 
       @person.hide!
@@ -51,6 +53,7 @@ module Db
     end
 
     def destroy
+      @person = Person.find(params[:id])
       @person.destroy
 
       flash[:notice] = t("resources.person.deleted")
@@ -58,15 +61,12 @@ module Db
     end
 
     def activities
+      @person = Person.find(params[:id])
       @activities = @person.db_activities.order(id: :desc)
       @comment = @person.db_comments.new
     end
 
     private
-
-    def load_person
-      @person = Person.find(params[:id])
-    end
 
     def person_params
       params.require(:person).permit(

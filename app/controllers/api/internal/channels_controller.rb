@@ -4,9 +4,9 @@ module Api
   module Internal
     class ChannelsController < Api::Internal::ApplicationController
       before_action :authenticate_user!
-      before_action :load_work
 
       def select
+        @work = Work.published.find(params[:work_id])
         channel_work = current_user.channel_works.where(work: @work).first_or_initialize
 
         if params[:channel_id] == "no_select"

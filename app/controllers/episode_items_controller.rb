@@ -2,10 +2,10 @@
 
 class EpisodeItemsController < ApplicationController
   before_action :authenticate_user!, only: %i(new destroy)
-  before_action :load_episode, only: %i(new destroy)
   before_action :load_i18n, only: %i(new)
 
   def new
+    @episode = Episode.published.find(params[:episode_id])
     @work = @episode.work
 
     store_page_params(work: @work)
@@ -19,6 +19,7 @@ class EpisodeItemsController < ApplicationController
   end
 
   def destroy
+    @episode = Episode.published.find(params[:episode_id])
     item = @episode.items.published.find(params[:id])
     episode_item = @episode.resource_items.find_by(item: item, user: current_user)
 
@@ -29,10 +30,6 @@ class EpisodeItemsController < ApplicationController
   end
 
   private
-
-  def load_episode
-    @episode = Episode.published.find(params[:episode_id])
-  end
 
   def load_i18n
     keys = {
