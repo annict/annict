@@ -25,6 +25,7 @@ class EpisodeGeneratorService
         where("number >= ?", p.program_detail.minimum_episode_generatable_number).
         count
       raw_number = p.number - irregular_programs_count
+      raw_number = raw_number + work.start_episode_raw_number - 1
       episode = work.episodes.published.find_by(raw_number: raw_number)
       episode_not_exists = episode.nil?
 

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_03_17_000000) do
+ActiveRecord::Schema.define(version: 2019_03_30_112541) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_stat_statements"
@@ -1220,6 +1220,7 @@ ActiveRecord::Schema.define(version: 2019_03_17_000000) do
     t.float "satisfaction_rate"
     t.integer "records_count", default: 0, null: false
     t.integer "work_records_with_body_count", default: 0, null: false
+    t.float "start_episode_raw_number", default: 1.0, null: false
     t.index ["aasm_state"], name: "index_works_on_aasm_state"
     t.index ["key_pv_id"], name: "index_works_on_key_pv_id"
     t.index ["number_format_id"], name: "index_works_on_number_format_id"
