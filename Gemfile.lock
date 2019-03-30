@@ -1,11 +1,3 @@
-GIT
-  remote: https://github.com/perfectline/validates_url.git
-  revision: 771474eb820e0429a579b269b58680fc18adb6aa
-  ref: 771474eb820e0429a579b269b58680fc18adb6aa
-  specs:
-    validate_url (1.0.4)
-      activemodel (>= 3.0.0)
-
 GEM
   remote: https://rubygems.org/
   specs:
@@ -573,6 +565,9 @@ GEM
     unf_ext (0.0.7.5)
     unicode-display_width (1.5.0)
     uniform_notifier (1.12.1)
+    validate_url (1.0.6)
+      activemodel (>= 3.0.0)
+      public_suffix
     virtus (1.0.5)
       axiom-types (~> 0.1)
       coercible (~> 1.0)
@@ -690,7 +685,7 @@ DEPENDENCIES
   timecop
   traceroute
   twitter
-  validate_url!
+  validate_url
   virtus
   wilson_score
 
