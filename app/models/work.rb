@@ -471,4 +471,10 @@ class Work < ApplicationRecord
     return title_en if title_en.present?
     title
   end
+
+  def formatted_number(raw_number)
+    return unless number_format
+    return number_format.data[raw_number - 1] if number_format.format.blank?
+    number_format.format % raw_number
+  end
 end

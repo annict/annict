@@ -32,7 +32,7 @@ class EpisodeGeneratorService
       ActiveRecord::Base.transaction do
         episode ||= work.episodes.create!(
           raw_number: raw_number,
-          number: formatted_number(work, raw_number).presence || "第#{raw_number}話",
+          number: work.formatted_number(raw_number).presence || "第#{raw_number}話",
           sort_number: p.number * 100
         )
 
@@ -41,13 +41,5 @@ class EpisodeGeneratorService
 
       AdminMailer.episode_created_notification(episode.id).deliver_later if episode_not_exists
     end
-  end
-
-  private
-
-  def formatted_number(work, raw_number)
-    return nil if work.number_format.blank?
-    return work.number_format.data[raw_number - 1] if work.number_format.format.blank?
-    work.number_format.format % raw_number
   end
 end
