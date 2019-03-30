@@ -2,8 +2,6 @@
 
 module Db
   class CastsController < Db::ApplicationController
-    permits :character_id, :person_id, :name, :name_en, :sort_number
-
     before_action :authenticate_user!
     before_action :load_work, only: %i(index new create)
     before_action :load_cast, only: %i(edit update destroy hide activities)
@@ -19,8 +17,8 @@ module Db
       authorize @form, :new?
     end
 
-    def create(db_cast_rows_form)
-      @form = DB::CastRowsForm.new(db_cast_rows_form.permit(:rows).to_h)
+    def create
+      @form = DB::CastRowsForm.new(cast_rows_form_params)
       @form.user = current_user
       @form.work = @work
       authorize @form, :create?
@@ -36,11 +34,11 @@ module Db
       @work = @cast.work
     end
 
-    def update(cast)
+    def update
       authorize @cast, :update?
       @work = @cast.work
 
-      @cast.attributes = cast
+      @cast.attributes = cast_params
       @cast.user = current_user
 
       return render(:edit) unless @cast.valid?
@@ -76,6 +74,14 @@ module Db
 
     def load_cast
       @cast = Cast.find(params[:id])
+    end
+
+    def cast_rows_form_params
+      params.require(:db_cast_rows_form).permit(:rows)
+    end
+
+    def cast_params
+      params.require(:cast).permit(:character_id, :person_id, :name, :name_en, :sort_number)
     end
   end
 end

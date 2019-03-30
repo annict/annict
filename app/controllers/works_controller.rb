@@ -40,39 +40,39 @@ class WorksController < ApplicationController
     redirect_to season_works_path(ENV["ANNICT_CURRENT_SEASON"])
   end
 
-  def popular(page: nil)
+  def popular
     @works = Work.
       published.
       preload(:work_image).
       order(watchers_count: :desc, id: :desc).
-      page(page).
+      page(params[:page]).
       per(display_works_count)
 
     render_list
   end
 
-  def newest(page: nil)
+  def newest
     @works = Work.
       published.
       preload(:work_image).
       order(id: :desc).
-      page(page).
+      page(params[:page]).
       per(display_works_count)
 
     render_list
   end
 
-  def season(slug, page: nil)
+  def season
     @works = Work.
       published.
-      by_season(slug).
+      by_season(params[:slug]).
       preload(:work_image).
       order(watchers_count: :desc, id: :desc).
-      page(page).
+      page(params[:page]).
       per(display_works_count)
 
     @seasons = Season.list(sort: :desc, include_all: true)
-    @season = Season.find_by_slug(slug)
+    @season = Season.find_by_slug(params[:slug])
     @prev_season = @season.sibling_season(:prev)
     @next_season = @season.sibling_season(:next)
 

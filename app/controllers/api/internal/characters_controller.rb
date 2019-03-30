@@ -3,9 +3,9 @@
 module Api
   module Internal
     class CharactersController < Api::Internal::ApplicationController
-      def index(q: nil)
-        @characters = if q.present?
-          Character.where("name ILIKE ?", "%#{q}%").published
+      def index
+        @characters = if params[:q].present?
+          Character.where("name ILIKE ?", "%#{params[:q]}%").published
         else
           Character.none
         end

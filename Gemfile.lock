@@ -11,7 +11,6 @@ GEM
   specs:
     aasm (5.0.2)
       concurrent-ruby (~> 1.0)
-    action_args (2.4.0)
     actioncable (5.2.2.1)
       actionpack (= 5.2.2.1)
       nio4r (~> 2.0)
@@ -594,7 +593,6 @@ PLATFORMS
 
 DEPENDENCIES
   aasm
-  action_args
   active_decorator
   active_link_to
   active_record_query_trace

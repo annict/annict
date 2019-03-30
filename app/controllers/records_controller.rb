@@ -5,14 +5,14 @@ class RecordsController < ApplicationController
 
   before_action :authenticate_user!, only: %i(destroy)
 
-  def index(page: nil)
+  def index
     load_user
     @records = @user.
       records.
       published.
       includes(:episode_record, work: :work_image, work_record: %i(work user)).
       order(created_at: :desc).
-      page(page)
+      page(params[:page])
 
     return unless user_signed_in?
 

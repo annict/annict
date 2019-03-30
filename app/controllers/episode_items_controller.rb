@@ -18,8 +18,8 @@ class EpisodeItemsController < ApplicationController
     @all_records = service.all_records
   end
 
-  def destroy(id)
-    item = @episode.items.published.find(id)
+  def destroy
+    item = @episode.items.published.find(params[:id])
     episode_item = @episode.resource_items.find_by(item: item, user: current_user)
 
     episode_item.destroy

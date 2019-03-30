@@ -2,13 +2,11 @@
 
 module Db
   class SeriesController < Db::ApplicationController
-    permits :name, :name_en, :name_ro
-
     before_action :authenticate_user!, only: %i(new create edit update hide destroy)
     before_action :load_series, only: %i(edit update hide destroy activities)
 
-    def index(page: nil)
-      @series_list = Series.order(id: :desc).page(page)
+    def index
+      @series_list = Series.order(id: :desc).page(params[:page])
     end
 
     def new
@@ -16,8 +14,8 @@ module Db
       authorize @series, :new?
     end
 
-    def create(series)
-      @series = Series.new(series)
+    def create
+      @series = Series.new(series_params)
       @series.user = current_user
       authorize @series, :create?
 
@@ -31,10 +29,10 @@ module Db
       authorize @series, :edit?
     end
 
-    def update(series)
+    def update
       authorize @series, :update?
 
-      @series.attributes = series
+      @series.attributes = series_params
       @series.user = current_user
 
       return render(:edit) unless @series.valid?
@@ -70,6 +68,10 @@ module Db
 
     def load_series
       @series = Series.find(params[:id])
+    end
+
+    def series_params
+      params.require(:series).permit(:name, :name_en, :name_ro)
     end
   end
 end

@@ -5,8 +5,8 @@ module Api
     class PageDataController < Api::Internal::ApplicationController
       before_action :authenticate_user!, only: %i(index)
 
-      def index(page_category, page_params = "{}")
-        @page_category = page_category
+      def index
+        @page_category = params[:page_category]
         @page_params = JSON.parse(params[:page_params].presence || "{}")
         service_name = "PageData::#{@page_category.classify}Service"
         @results = service_name.safe_constantize.exec(current_user, @page_params)

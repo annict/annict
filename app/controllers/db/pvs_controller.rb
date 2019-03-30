@@ -2,8 +2,6 @@
 
 module Db
   class PvsController < Db::ApplicationController
-    permits :title, :url, :sort_number
-
     before_action :authenticate_user!
     before_action :load_work, only: %i(index new create)
     before_action :load_pv, only: %i(edit update hide destroy activities)
@@ -17,8 +15,8 @@ module Db
       authorize @form, :new?
     end
 
-    def create(db_pv_rows_form)
-      @form = DB::PvRowsForm.new(db_pv_rows_form.permit(:rows).to_h)
+    def create
+      @form = DB::PvRowsForm.new(pv_rows_form_params)
       @form.user = current_user
       @form.work = @work
       authorize @form, :create?
@@ -34,10 +32,10 @@ module Db
       @work = @pv.work
     end
 
-    def update(pv)
+    def update
       authorize @pv, :update?
 
-      @pv.attributes = pv
+      @pv.attributes = pv_params
       @pv.user = current_user
 
       return render(:edit) unless @pv.valid?
@@ -71,6 +69,14 @@ module Db
 
     def load_pv
       @pv = Pv.find(params[:id])
+    end
+
+    def pv_rows_form_params
+      params.require(:db_pv_rows_form).permit(:rows)
+    end
+
+    def pv_params
+      params.require(:pv).permit(:title, :url, :sort_number)
     end
   end
 end

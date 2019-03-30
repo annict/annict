@@ -2,14 +2,12 @@
 
 module Forum
   class CommentsController < Forum::ApplicationController
-    permits :body, model_name: "ForumComment"
-
     before_action :authenticate_user!, only: %i(create edit update)
     before_action :load_post, only: %i(create edit update)
     before_action :load_comment, only: %i(edit update)
 
-    def create(forum_comment)
-      @comment = @post.forum_comments.new(forum_comment)
+    def create
+      @comment = @post.forum_comments.new(forum_comment_params)
       @comment.user = current_user
       @comment.detect_locale!(:body)
 
@@ -34,10 +32,10 @@ module Forum
       authorize @comment, :edit?
     end
 
-    def update(forum_comment)
+    def update
       authorize @comment, :update?
 
-      @comment.attributes = forum_comment
+      @comment.attributes = forum_comment_params
       @comment.detect_locale!(:body)
 
       if @comment.save
@@ -56,6 +54,10 @@ module Forum
 
     def load_comment
       @comment = @post.forum_comments.find(params[:id])
+    end
+
+    def forum_comment_params
+      params.require(:forum_comment).permit(:body)
     end
   end
 end

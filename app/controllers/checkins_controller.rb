@@ -36,8 +36,8 @@
 
 class CheckinsController < ApplicationController
   # Old record page
-  def show(id)
-    record = Record.published.find(id)
+  def show
+    record = Record.published.find(params[:id])
     redirect_to record_path(record.user.username, record), status: 301
   end
 end

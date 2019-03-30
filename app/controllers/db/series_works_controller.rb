@@ -2,8 +2,6 @@
 
 module Db
   class SeriesWorksController < Db::ApplicationController
-    permits :series_id, :work_id, :summary, :summary_en
-
     before_action :authenticate_user!
     before_action :load_series, only: %i(index new create)
     before_action :load_series_work, only: %i(edit update hide destroy activities)
@@ -17,8 +15,8 @@ module Db
       authorize @form, :new?
     end
 
-    def create(db_series_work_rows_form)
-      @form = DB::SeriesWorkRowsForm.new(db_series_work_rows_form.permit(:rows))
+    def create
+      @form = DB::SeriesWorkRowsForm.new(series_work_rows_form_params)
       @form.user = current_user
       @form.series = @series
       authorize @form, :create?
@@ -35,11 +33,11 @@ module Db
       @series = @series_work.series
     end
 
-    def update(series_work)
+    def update
       authorize @series_work, :update?
       @series = @series_work.series
 
-      @series_work.attributes = series_work
+      @series_work.attributes = series_work_params
       @series_work.user = current_user
 
       return render(:edit) unless @series_work.valid?
@@ -76,6 +74,14 @@ module Db
 
     def load_series_work
       @series_work = SeriesWork.find(params[:id])
+    end
+
+    def series_work_rows_form_params
+      params.require(:db_series_work_rows_form).permit(:rows)
+    end
+
+    def series_work_params
+      params.require(:series_work).permit(:series_id, :work_id, :summary, :summary_en)
     end
   end
 end

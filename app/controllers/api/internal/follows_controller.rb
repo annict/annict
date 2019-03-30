@@ -22,9 +22,9 @@ module Api
       before_action :authenticate_user!
       before_action :load_user, only: %i(create unfollow)
 
-      def create(page_category)
+      def create
         current_user.follow(@user)
-        ga_client.page_category = page_category
+        ga_client.page_category = params[:page_category]
         ga_client.events.create(:follows, :create, el: "User", ev: @user.id, ds: "internal_api")
         keen_client.publish(:follow_create, via: "internal_api")
         EmailNotificationService.send_email("followed_user", @user, current_user.id)

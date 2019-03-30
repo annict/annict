@@ -5,12 +5,12 @@ class WorkItemsController < ApplicationController
   before_action :load_work, only: %i(index new destroy)
   before_action :load_i18n, only: %i(new)
 
-  def index(page: nil)
+  def index
     @items = @work.
       items.
       published
     @items = localable_resources(@items)
-    @items = @items.order(created_at: :desc).page(page)
+    @items = @items.order(created_at: :desc).page(params[:page])
 
     store_page_params(work: @work)
   end
@@ -21,8 +21,8 @@ class WorkItemsController < ApplicationController
     store_page_params(work: @work)
   end
 
-  def destroy(id)
-    item = @work.items.published.find(id)
+  def destroy
+    item = @work.items.published.find(params[:id])
     work_item = @work.resource_items.find_by(item: item, user: current_user)
 
     work_item.destroy

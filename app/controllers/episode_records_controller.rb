@@ -1,14 +1,12 @@
 # frozen_string_literal: true
 
 class EpisodeRecordsController < ApplicationController
-  permits :episode_id, :comment, :shared_twitter, :rating_state
-
   before_action :authenticate_user!, only: %i(create edit update switch)
 
-  def create(episode_record)
-    @episode = Episode.published.find(episode_record[:episode_id])
+  def create
+    @episode = Episode.published.find(episode_record_params[:episode_id])
     @work = @episode.work
-    @episode_record = @episode.episode_records.new(episode_record)
+    @episode_record = @episode.episode_records.new(episode_record_params)
     ga_client.page_category = params[:page_category]
     keen_client.page_category = params[:page_category]
 
@@ -53,14 +51,14 @@ class EpisodeRecordsController < ApplicationController
     @work = @episode_record.work
   end
 
-  def update(episode_record)
+  def update
     load_episode_record
     authorize @episode_record, :update?
 
     @episode_record.modify_comment = true
     @episode_record.detect_locale!(:comment)
 
-    if @episode_record.update(episode_record)
+    if @episode_record.update(episode_record_params)
       @episode_record.update_share_record_status
       @episode_record.share_to_sns
       path = record_path(current_user.username, @episode_record.record)
@@ -71,21 +69,21 @@ class EpisodeRecordsController < ApplicationController
     end
   end
 
-  def switch(episode_id, to)
-    episode = Episode.find(episode_id)
+  def switch
+    episode = Episode.find(params[:episode_id])
 
-    return redirect_to work_episode_path(episode.work, episode) unless to.in?(Setting.display_option_record_list.values)
+    return redirect_to work_episode_path(episode.work, episode) unless params[:to].in?(Setting.display_option_record_list.values)
 
-    current_user.setting.update_column(:display_option_record_list, to)
+    current_user.setting.update_column(:display_option_record_list, params[:to])
     redirect_to work_episode_path(episode.work, episode)
   end
 
-  def redirect(provider, url_hash)
-    url = case provider
+  def redirect
+    url = case params[:provider]
     when "tw"
-      EpisodeRecord.published.find_by!(twitter_url_hash: url_hash).share_url_with_query(:twitter)
+      EpisodeRecord.published.find_by!(twitter_url_hash: params[:url_hash]).share_url_with_query(:twitter)
     when "fb"
-      EpisodeRecord.published.find_by!(facebook_url_hash: url_hash).share_url_with_query(:facebook)
+      EpisodeRecord.published.find_by!(facebook_url_hash: params[:url_hash]).share_url_with_query(:facebook)
     else
       root_path
     end
@@ -97,5 +95,9 @@ class EpisodeRecordsController < ApplicationController
 
   def load_episode_record
     @episode_record = current_user.episode_records.published.find_by(episode_id: params[:episode_id], record_id: params[:id])
+  end
+
+  def episode_record_params
+    params.require(:episode_record).permit(:episode_id, :comment, :shared_twitter, :rating_state)
   end
 end

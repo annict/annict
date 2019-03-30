@@ -3,8 +3,8 @@
 class PersonFansController < ApplicationController
   before_action :load_i18n, only: %i(index)
 
-  def index(person_id)
-    @person = Person.published.find(person_id)
+  def index
+    @person = Person.published.find(params[:person_id])
     @favorite_people = @person.
       favorite_people.
       joins(:user).

@@ -26,7 +26,8 @@ module Api
       before_action :authenticate_user!
       before_action :load_work
 
-      def select(status_kind, page_category)
+      def select
+        page_category = params[:page_category]
         ga_client.page_category = page_category
         keen_client.page_category = page_category
         status = StatusService.new(current_user, @work)
@@ -34,7 +35,7 @@ module Api
         status.keen_client = keen_client
         status.via = "internal_api"
         status.page_category = page_category
-        status.change!(status_kind)
+        status.change!(params[:status_kind])
         head(200)
       end
     end

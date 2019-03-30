@@ -2,9 +2,6 @@
 
 module Db
   class ProgramDetailsController < Db::ApplicationController
-    permits :channel_id, :started_at, :time_zone, :rebroadcast, :vod_title_code, :vod_title_name,
-            :minimum_episode_generatable_number
-
     before_action :authenticate_user!
     before_action :load_work, only: %i(index new create)
     before_action :load_program_detail, only: %i(edit update hide destroy activities)
@@ -18,8 +15,8 @@ module Db
       authorize @form, :new?
     end
 
-    def create(db_program_detail_rows_form)
-      @form = DB::ProgramDetailRowsForm.new(db_program_detail_rows_form.permit(:rows))
+    def create
+      @form = DB::ProgramDetailRowsForm.new(program_detail_rows_form_params)
       @form.user = current_user
       @form.work = @work
       authorize @form, :create?
@@ -36,11 +33,11 @@ module Db
       @work = @program_detail.work
     end
 
-    def update(program_detail)
+    def update
       authorize @program_detail, :update?
       @work = @program_detail.work
 
-      @program_detail.attributes = program_detail
+      @program_detail.attributes = program_detail_params
       @program_detail.user = current_user
 
       return render(:edit) unless @program_detail.valid?
@@ -77,6 +74,17 @@ module Db
 
     def load_program_detail
       @program_detail = ProgramDetail.find(params[:id])
+    end
+
+    def program_detail_params
+      params.require(:program_detail).permit(
+        :channel_id, :started_at, :time_zone, :rebroadcast, :vod_title_code, :vod_title_name,
+        :minimum_episode_generatable_number
+      )
+    end
+
+    def program_detail_rows_form_params
+      params.require(:db_program_detail_rows_form).permit(:rows)
     end
   end
 end

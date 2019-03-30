@@ -20,16 +20,14 @@
 #
 
 class CommentsController < ApplicationController
-  permits :body
-
   before_action :authenticate_user!
   before_action :load_user, only: %i(create)
   before_action :load_record, only: %i(create)
   before_action :load_comment, only: %i(edit update destroy)
 
-  def create(comment)
+  def create
     @user = @record.user
-    @comment = @record.episode_record.comments.new(comment)
+    @comment = @record.episode_record.comments.new(comment_params)
     @comment.user = current_user
     @comment.work = @record.work
     @comment.detect_locale!(:body)
@@ -49,10 +47,10 @@ class CommentsController < ApplicationController
     authorize @comment, :edit?
   end
 
-  def update(comment)
+  def update
     authorize @comment, :update?
 
-    @comment.attributes = comment
+    @comment.attributes = comment_params
     @comment.detect_locale!(:body)
 
     if @comment.save
@@ -84,5 +82,9 @@ class CommentsController < ApplicationController
 
   def load_comment
     @comment = current_user.record_comments.find(params[:id])
+  end
+
+  def comment_params
+    params.require(:comment).permit(:body)
   end
 end

@@ -2,8 +2,6 @@
 
 module Db
   class CharacterImagesController < Db::ApplicationController
-    permits :attachment, :asin, :copyright
-
     before_action :authenticate_user!
     before_action :load_character, only: %i(show create update destroy)
     before_action :load_image, only: %i(update destroy)
@@ -12,8 +10,8 @@ module Db
       @image = @character.character_image.presence || @character.build_character_image
     end
 
-    def create(character_image)
-      @image = @character.build_character_image(character_image)
+    def create
+      @image = @character.build_character_image(character_image_params)
       authorize @image, :create?
       @image.user = current_user
 
@@ -25,10 +23,10 @@ module Db
       end
     end
 
-    def update(character_image)
+    def update
       authorize @image, :update?
 
-      @image.attributes = character_image
+      @image.attributes = character_image_params
       @image.user = current_user
 
       if @image.save
@@ -50,6 +48,10 @@ module Db
     def load_image
       @image = @character.character_image
       raise ActiveRecord::RecordNotFound if @image.blank?
+    end
+
+    def character_image_params
+      params.require(:character_image).permit(:attachment, :asin, :copyright)
     end
   end
 end

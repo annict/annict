@@ -5,9 +5,9 @@ module Api
     class UserProgramsController < Api::Internal::ApplicationController
       before_action :authenticate_user!
 
-      def index(page: nil, sort: nil)
+      def index
         @user = current_user
-        @programs = current_user.programs.unwatched(page, sort)
+        @programs = current_user.programs.unwatched(params[:page], params[:sort])
       end
     end
   end

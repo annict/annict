@@ -20,18 +20,18 @@ module Api
     class ReactionsController < Api::Internal::ApplicationController
       before_action :authenticate_user!
 
-      def add(resource_type, resource_id, kind, page_category)
-        resource = resource_type.constantize.find(resource_id)
-        current_user.add_reaction!(resource, kind.to_sym)
-        ga_client.page_category = page_category
-        ga_client.events.create(:reactions, :create, el: recipient_type, ev: kind, ds: "internal_api")
+      def add
+        resource = params[:resource_type].constantize.find(params[:resource_id])
+        current_user.add_reaction!(resource, params[:kind].to_sym)
+        ga_client.page_category = params[:page_category]
+        ga_client.events.create(:reactions, :create, el: recipient_type, ev: params[:kind], ds: "internal_api")
 
         head 201
       end
 
-      def remove(resource_type, resource_id, kind)
-        resource = resource_type.constantize.find(resource_id)
-        current_user.remove_reaction!(resource, kind.to_sym)
+      def remove
+        resource = params[:resource_type].constantize.find(params[:resource_id])
+        current_user.remove_reaction!(resource, params[:kind].to_sym)
 
         head 200
       end

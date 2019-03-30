@@ -2,17 +2,15 @@
 
 module Forum
   class PostsController < Forum::ApplicationController
-    permits :forum_category_id, :title, :body, model_name: "ForumPost"
-
     before_action :authenticate_user!, only: %i(new create edit update)
 
-    def new(category: nil)
+    def new
       @post = ForumPost.new
-      @post.forum_category = ForumCategory.find_by(slug: category) if category.present?
+      @post.forum_category = ForumCategory.find_by(slug: params[:category]) if params[:category]
     end
 
-    def create(forum_post)
-      @post = ForumPost.new(forum_post)
+    def create
+      @post = ForumPost.new(forum_post_params)
       @post.user = current_user
       @post.last_commented_at = Time.now
       @post.detect_locale!(:body)
@@ -29,24 +27,24 @@ module Forum
       redirect_to forum_post_path(@post)
     end
 
-    def show(id)
-      @post = ForumPost.joins(:user).merge(User.published).find(id)
+    def show
+      @post = ForumPost.joins(:user).merge(User.published).find(params[:id])
       @comments = @post.forum_comments.order(:created_at)
       @comment = @post.forum_comments.new
 
       store_page_params(post: @post, comments: @comments)
     end
 
-    def edit(id)
-      @post = ForumPost.find(id)
+    def edit
+      @post = ForumPost.find(params[:id])
       authorize @post, :edit?
     end
 
-    def update(id, forum_post)
-      @post = ForumPost.find(id)
+    def update
+      @post = ForumPost.find(params[:id])
       authorize @post, :update?
 
-      @post.attributes = forum_post
+      @post.attributes = forum_post_params
       @post.detect_locale!(:body)
 
       if @post.save
@@ -55,6 +53,12 @@ module Forum
       else
         render :edit
       end
+    end
+
+    private
+
+    def forum_post_params
+      params.require(:forum_post).permit(:forum_category_id, :title, :body)
     end
   end
 end

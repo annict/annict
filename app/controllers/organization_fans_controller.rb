@@ -3,8 +3,8 @@
 class OrganizationFansController < ApplicationController
   before_action :load_i18n, only: %i(index)
 
-  def index(organization_id)
-    @organization = Organization.published.find(organization_id)
+  def index
+    @organization = Organization.published.find(params[:organization_id])
     @favorite_orgs = @organization.
       favorite_organizations.
       joins(:user).

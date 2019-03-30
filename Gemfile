@@ -8,7 +8,6 @@ ruby "2.6.2"
 gem "rails"
 
 gem "aasm"
-gem "action_args"
 gem "active_decorator"
 gem "active_link_to"
 gem "acts_as_list"

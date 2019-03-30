@@ -2,9 +2,6 @@
 
 module Db
   class ProgramsController < Db::ApplicationController
-    permits :program_detail_id, :channel_id, :episode_id, :started_at, :number, :rebroadcast,
-            :irregular, :time_zone
-
     before_action :authenticate_user!
     before_action :load_work, only: %i(index new create)
     before_action :load_program, only: %i(edit update hide destroy activities)
@@ -22,8 +19,8 @@ module Db
       authorize @form, :new?
     end
 
-    def create(db_program_rows_form)
-      @form = DB::ProgramRowsForm.new(db_program_rows_form.permit(:rows).to_h)
+    def create
+      @form = DB::ProgramRowsForm.new(program_rows_form)
       @form.user = current_user
       @form.work = @work
       authorize @form, :create?
@@ -43,11 +40,11 @@ module Db
       @work = @program.work
     end
 
-    def update(program)
+    def update
       authorize @program, :update?
       @work = @program.work
 
-      @program.attributes = program
+      @program.attributes = program_params
       @program.user = current_user
 
       return render(:edit) unless @program.valid?
@@ -83,6 +80,17 @@ module Db
 
     def load_program
       @program = Program.find(params[:id])
+    end
+
+    def program_params
+      params.require(:program).permit(
+        :program_detail_id, :channel_id, :episode_id, :started_at, :number, :rebroadcast,
+        :irregular, :time_zone
+      )
+    end
+
+    def program_rows_form
+      params.require(:db_program_rows_form).permit(:rows)
     end
   end
 end

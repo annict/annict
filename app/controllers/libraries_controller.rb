@@ -4,8 +4,8 @@ class LibrariesController < ApplicationController
   before_action :set_user, only: %i(show)
   before_action :set_display_option, only: %i(show)
 
-  def show(status_kind, page: 1)
-    @works = @user.works.on(status_kind).published
+  def show
+    @works = @user.works.on(params[:status_kind]).published
     season_slugs = @works.map(&:season).select(&:present?).map(&:slug).uniq
     @seasons = season_slugs.
       map { |slug| Season.find_by_slug(slug) }.
@@ -13,7 +13,7 @@ class LibrariesController < ApplicationController
       reverse
     @seasons << Season.no_season if @works.by_no_season.present?
     paginate_per = @display_option == "grid_detailed" ? 8 : 20
-    @seasons = Kaminari.paginate_array(@seasons).page(page).per(paginate_per)
+    @seasons = Kaminari.paginate_array(@seasons).page(params[:page]).per(paginate_per)
 
     if @display_option == "grid_detailed"
       @work_tags_data = Work.work_tags_data(@works, @user)

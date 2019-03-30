@@ -13,8 +13,8 @@ module Settings
         order(created_at: :desc)
     end
 
-    def revoke(app_id)
-      access_tokens = current_user.oauth_access_tokens.where(application_id: app_id)
+    def revoke
+      access_tokens = current_user.oauth_access_tokens.where(application_id: params[:app_id])
       access_tokens.each(&:revoke)
 
       flash[:notice] = t("messages.settings.apps.disconnected")

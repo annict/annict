@@ -2,9 +2,6 @@
 
 module Db
   class StaffsController < Db::ApplicationController
-    permits :resource_id, :resource_type, :name, :role, :role_other, :sort_number,
-      :name_en, :role_other_en
-
     before_action :authenticate_user!
     before_action :load_work, only: %i(index new create)
     before_action :load_staff, only: %i(edit update destroy hide activities)
@@ -20,8 +17,8 @@ module Db
       authorize @form, :new?
     end
 
-    def create(db_staff_rows_form)
-      @form = DB::StaffRowsForm.new(db_staff_rows_form.permit(:rows).to_h)
+    def create
+      @form = DB::StaffRowsForm.new(staff_rows_form_params)
       @form.user = current_user
       @form.work = @work
       authorize @form, :create?
@@ -37,11 +34,11 @@ module Db
       @work = @staff.work
     end
 
-    def update(staff)
+    def update
       authorize @staff, :update?
       @work = @staff.work
 
-      @staff.attributes = staff
+      @staff.attributes = staff_params
       @staff.user = current_user
 
       return render(:edit) unless @staff.valid?
@@ -77,6 +74,17 @@ module Db
 
     def load_staff
       @staff = Staff.find(params[:id])
+    end
+
+    def staff_rows_form_params
+      params.require(:db_staff_rows_form).permit(:rows)
+    end
+
+    def staff_params
+      params.require(:staff).permit(
+        :resource_id, :resource_type, :name, :role, :role_other, :sort_number,
+        :name_en, :role_other_en
+      )
     end
   end
 end

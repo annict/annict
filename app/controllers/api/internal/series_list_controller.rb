@@ -3,9 +3,9 @@
 module Api
   module Internal
     class SeriesListController < Api::Internal::ApplicationController
-      def index(q: nil)
-        @series_list = if q.present?
-          Series.where("name ILIKE ?", "%#{q}%").published
+      def index
+        @series_list = if params[:q].present?
+          Series.where("name ILIKE ?", "%#{params[:q]}%").published
         else
           Series.none
         end

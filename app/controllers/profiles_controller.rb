@@ -27,15 +27,19 @@
 #
 
 class ProfilesController < ApplicationController
-  permits :tombo_avatar, :tombo_background_image, :description, :name, :url
-
   before_action :authenticate_user!
 
-  def update(profile)
-    if current_user.profile.update(profile)
+  def update
+    if current_user.profile.update(profile_params)
       redirect_to profile_path, notice: t("messages.profiles.saved")
     else
       render :show
     end
+  end
+  
+  private
+
+  def profile_params
+    params.require(:profile).permit(:tombo_avatar, :tombo_background_image, :description, :name, :url)
   end
 end

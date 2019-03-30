@@ -3,9 +3,9 @@
 module Api
   module Internal
     class PeopleController < Api::Internal::ApplicationController
-      def index(q: nil)
-        @people = if q.present?
-          Person.where("name ILIKE ?", "%#{q}%").published
+      def index
+        @people = if params[:q].present?
+          Person.where("name ILIKE ?", "%#{params[:q]}%").published
         else
           Person.none
         end

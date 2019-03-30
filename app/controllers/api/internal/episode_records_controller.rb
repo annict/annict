@@ -3,22 +3,20 @@
 module Api
   module Internal
     class EpisodeRecordsController < Api::Internal::ApplicationController
-      permits :comment, :shared_twitter, :rating_state
-
       before_action :authenticate_user!, only: %i(create)
 
-      def create(episode_id, episode_record, page_category)
-        episode = Episode.published.find(episode_id)
+      def create
+        episode = Episode.published.find(params[:episode_id])
         episode_record = episode.episode_records.new do |er|
-          er.comment = episode_record[:comment]
-          er.shared_twitter = episode_record[:shared_twitter]
-          er.rating_state = episode_record[:rating_state]
+          er.comment = episode_record_params[:comment]
+          er.shared_twitter = episode_record_params[:shared_twitter]
+          er.rating_state = episode_record_params[:rating_state]
         end
-        ga_client.page_category = page_category
-        keen_client.page_category = page_category
+        ga_client.page_category = params[:page_category]
+        keen_client.page_category = params[:page_category]
 
         service = NewEpisodeRecordService.new(current_user, episode_record)
-        service.page_category = page_category
+        service.page_category = params[:page_category]
         service.ga_client = ga_client
         service.keen_client = keen_client
         service.via = "internal_api"
@@ -29,6 +27,12 @@ module Api
         rescue => err
           render status: 400, json: { message: err.message }
         end
+      end
+
+      private
+
+      def episode_record_params
+        params.require(:episode_record).permit(:comment, :shared_twitter, :rating_state)
       end
     end
   end

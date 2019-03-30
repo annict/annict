@@ -2,11 +2,11 @@
 
 module Db
   class ActivitiesController < Db::ApplicationController
-    def index(page = nil)
+    def index
       @activities = DbActivity.
         includes(:trackable, :root_resource, user: :profile).
         order(id: :desc).
-        page(page)
+        page(params[:page])
     end
   end
 end

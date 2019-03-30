@@ -22,8 +22,8 @@
 class ProvidersController < ApplicationController
   before_action :authenticate_user!
 
-  def destroy(id)
-    provider = current_user.providers.find(id)
+  def destroy
+    provider = current_user.providers.find(params[:id])
 
     ActiveRecord::Base.transaction do
       case provider.name

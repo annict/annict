@@ -2,15 +2,11 @@
 
 module Db
   class PeopleController < Db::ApplicationController
-    permits :name, :name_kana, :name_en, :nickname, :nickname_en, :gender,
-      :blood_type, :prefecture_id, :birthday, :height, :url, :url_en,
-      :wikipedia_url, :wikipedia_url_en, :twitter_username, :twitter_username_en
-
     before_action :authenticate_user!, only: %i(new create edit update hide destroy)
     before_action :load_person, only: %i(edit update hide destroy activities)
 
-    def index(page: nil)
-      @people = Person.order(id: :desc).page(page)
+    def index
+      @people = Person.order(id: :desc).page(params[:page])
     end
 
     def new
@@ -18,8 +14,8 @@ module Db
       authorize @person, :new?
     end
 
-    def create(person)
-      @person = Person.new(person)
+    def create
+      @person = Person.new(person_params)
       @person.user = current_user
       authorize @person, :create?
 
@@ -33,10 +29,10 @@ module Db
       authorize @person, :edit?
     end
 
-    def update(person)
+    def update
       authorize @person, :update?
 
-      @person.attributes = person
+      @person.attributes = person_params
       @person.user = current_user
 
       return render(:edit) unless @person.valid?
@@ -70,6 +66,14 @@ module Db
 
     def load_person
       @person = Person.find(params[:id])
+    end
+
+    def person_params
+      params.require(:person).permit(
+        :name, :name_kana, :name_en, :nickname, :nickname_en, :gender,
+        :blood_type, :prefecture_id, :birthday, :height, :url, :url_en,
+        :wikipedia_url, :wikipedia_url_en, :twitter_username, :twitter_username_en
+      )
     end
   end
 end

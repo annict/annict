@@ -4,12 +4,12 @@ module Db
   class VodTitlesController < Db::ApplicationController
     before_action :authenticate_user!, only: %i(new create edit update destroy)
 
-    def index(page: nil)
-      @vod_titles = VodTitle.order(id: :desc).page(page)
+    def index
+      @vod_titles = VodTitle.order(id: :desc).page(params[:page])
     end
 
-    def hide(id)
-      vod_title = VodTitle.find(id)
+    def hide
+      vod_title = VodTitle.find(params[:id])
       authorize vod_title, :hide?
 
       vod_title.hide!
