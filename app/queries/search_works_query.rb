@@ -59,7 +59,7 @@ class SearchWorksQuery
   end
 
   def titles
-    @collection.search(title_or_title_kana_cont_any: @args[:titles]).result
+    @collection.ransack(title_or_title_kana_cont_any: @args[:titles]).result
   end
 
   def seasons
