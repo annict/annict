@@ -33,6 +33,7 @@ COPY Gemfile* package.json yarn.lock ./
 RUN gem install bundler && \
     bundle install -j$(getconf _NPROCESSORS_ONLN) && \
     yarn install && \
+    yarn global add npm && \
     yarn cache clean
 
 EXPOSE 3000
