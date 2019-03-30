@@ -79,8 +79,6 @@ document.addEventListener('turbolinks:load', event => {
     },
   })
 
-  Vue.config.debug = gon.rails.env !== 'production'
-
   Vue.use(VueLazyload)
 
   Vue.component('c-activities', activities)
