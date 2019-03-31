@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="<%= I18n.locale %>">
+<head>
+  <meta charset="UTF-8">
+  <%= ann_display_meta_tags %>
+  <meta http-equiv="x-dns-prefetch-control" content="on">
+
+  <link rel="dns-prefetch" href="//annict.imgix.net">
+  <link rel="dns-prefetch" href="//fonts.googleapis.com">
+  <link rel="dns-prefetch" href="//fonts.gstatic.com">
+  <link rel="dns-prefetch" href="//use.fontawesome.com">
+  <link rel="dns-prefetch" href="//www.google-analytics.com">
+  <link rel="shortcut icon" href="/images/favicon.png" type="image/png">
+  <link rel="author" href="<%= ENV.fetch("ANNICT_URL") %>/humans.txt" type="text/plain">
+  <link rel="canonical" href="<%= "#{request.protocol}#{request.host_with_port}#{request.path}" %>">
+  <link rel="alternate" hreflang="x-default" href="<%= "#{ENV.fetch('ANNICT_URL')}#{request.path}" %>">
+  <link rel="alternate" hreflang="ja" href="<%= "#{ENV.fetch('ANNICT_JP_URL')}#{request.path}" %>">
+  <link rel="alternate" hreflang="en" href="<%= "#{ENV.fetch('ANNICT_URL')}#{request.path}" %>">
+
+  <script src="https://ajax.googleapis.com/ajax/libs/webfont/1.6.26/webfont.js" defer></script>
+
+  <%= csrf_meta_tags %>
+  <%= csp_meta_tag %>
+
+  <%= stylesheet_bundle_tag "v3.css", media: "all", "data-turbolinks-track": "reload" %>
+  <%= javascript_bundle_tag "v3.js", defer: "", "data-turbolinks-track": "reload" %>
+</head>
+
+<body>
+  <%= yield %>
+  <div class="p-application d-flex flex-column">
+  </div>
+</body>
+</html>
