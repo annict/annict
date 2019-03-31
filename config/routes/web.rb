@@ -39,6 +39,10 @@ use_doorkeeper do
   skip_controllers :authorized_applications
 end
 
+scope module: :v3 do
+  resource :track, only: %i(show)
+end
+
 resource :confirmation, only: [:show]
 resource :menu, only: %i(show)
 resource :search, only: [:show]
