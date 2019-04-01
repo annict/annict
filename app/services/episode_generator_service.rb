@@ -32,7 +32,7 @@ class EpisodeGeneratorService
       ActiveRecord::Base.transaction do
         episode ||= work.episodes.create!(
           raw_number: raw_number,
-          number: work.formatted_number(raw_number).presence || "第#{raw_number}話",
+          number: work.formatted_number(raw_number).presence || "第#{raw_number.to_i}話",
           sort_number: p.number * 100
         )
 

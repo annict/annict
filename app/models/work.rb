@@ -474,7 +474,10 @@ class Work < ApplicationRecord
 
   def formatted_number(raw_number)
     return unless number_format
-    return number_format.data[raw_number - 1] if number_format.format.blank?
-    number_format.format % raw_number
+
+    number = raw_number.to_i
+    return number_format.data[number - 1] if number_format.format.blank?
+
+    number_format.format % number
   end
 end
