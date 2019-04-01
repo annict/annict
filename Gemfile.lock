@@ -26,7 +26,7 @@ GEM
       erubi (~> 1.4)
       rails-dom-testing (~> 2.0)
       rails-html-sanitizer (~> 1.0, >= 1.0.3)
-    active_decorator (1.1.1)
+    active_decorator (1.2.0)
     active_link_to (1.0.5)
       actionpack
       addressable
