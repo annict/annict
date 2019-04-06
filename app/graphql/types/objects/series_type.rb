@@ -11,6 +11,12 @@ module Types
       field :name, String, null: false
       field :name_ro, String, null: false
       field :name_en, String, null: false
+
+      field :works, Connections::SeriesWorkConnection, null: true, connection: true
+
+      def works
+        object.series_works
+      end
     end
   end
 end
