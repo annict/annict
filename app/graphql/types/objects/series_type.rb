@@ -12,10 +12,15 @@ module Types
       field :name_ro, String, null: false
       field :name_en, String, null: false
 
-      field :works, Connections::SeriesWorkConnection, null: true, connection: true
+      field :works, Connections::SeriesWorkConnection, null: true, connection: true do
+        argument :order_by, Types::InputObjects::SeriesWorkOrder, required: false
+      end
 
-      def works
-        object.series_works
+      def works(order_by: nil)
+        SearchSeriesWorksQuery.new(
+          object.series_works,
+          order_by: order_by
+        ).call
       end
     end
   end
