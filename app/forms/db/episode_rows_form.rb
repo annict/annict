@@ -23,11 +23,14 @@ module DB
     private
 
     def attrs_list
+      sort_number = @work.episodes.count * 100
       @attrs_list ||= parsed_rows.map do |row_columns|
+        sort_number += 100
         {
           work_id: @work.id,
           number: row_columns[0],
-          title: row_columns[1]
+          title: row_columns[1],
+          sort_number: sort_number
         }
       end
     end
