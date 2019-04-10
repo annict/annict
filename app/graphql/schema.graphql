@@ -1108,6 +1108,107 @@ type Series implements Node {
   name: String!
   nameEn: String!
   nameRo: String!
+  works(
+    """
+    Returns the elements in the list that come after the specified cursor.
+    """
+    after: String
+
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
+    before: String
+
+    """
+    Returns the first _n_ elements from the list.
+    """
+    first: Int
+
+    """
+    Returns the last _n_ elements from the list.
+    """
+    last: Int
+    orderBy: SeriesWorkOrder
+  ): SeriesWorkConnection
+}
+
+"""
+The connection type for Series.
+"""
+type SeriesConnection {
+  """
+  A list of edges.
+  """
+  edges: [SeriesEdge]
+
+  """
+  A list of nodes.
+  """
+  nodes: [Series]
+
+  """
+  Information to aid in pagination.
+  """
+  pageInfo: PageInfo!
+}
+
+"""
+An edge in a connection.
+"""
+type SeriesEdge {
+  """
+  A cursor for use in pagination.
+  """
+  cursor: String!
+
+  """
+  The item at the end of the edge.
+  """
+  node: Series
+}
+
+"""
+The connection type for Work.
+"""
+type SeriesWorkConnection {
+  """
+  A list of edges.
+  """
+  edges: [SeriesWorkEdge]
+
+  """
+  A list of nodes.
+  """
+  nodes: [Work]
+
+  """
+  Information to aid in pagination.
+  """
+  pageInfo: PageInfo!
+}
+
+"""
+An edge in a connection.
+"""
+type SeriesWorkEdge {
+  """
+  A cursor for use in pagination.
+  """
+  cursor: String!
+  node: Work!
+  summary: String
+  summaryEn: String
+}
+
+input SeriesWorkOrder {
+  direction: OrderDirection!
+  field: SeriesWorkOrderField!
+}
+
+enum SeriesWorkOrderField {
+  """
+  """
+  SEASON
 }
 
 type Staff implements Node {
@@ -1615,6 +1716,27 @@ type Work implements Node {
   satisfactionRate: Float
   seasonName: SeasonName
   seasonYear: Int
+  seriesList(
+    """
+    Returns the elements in the list that come after the specified cursor.
+    """
+    after: String
+
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
+    before: String
+
+    """
+    Returns the first _n_ elements from the list.
+    """
+    first: Int
+
+    """
+    Returns the last _n_ elements from the list.
+    """
+    last: Int
+  ): SeriesConnection
   staffs(
     """
     Returns the elements in the list that come after the specified cursor.
