@@ -120,5 +120,7 @@ module Annict
       config.dsn = ENV.fetch("SENTRY_DSN")
       config.sanitize_fields = Rails.application.config.filter_parameters.map(&:to_s)
     end
+
+    ActiveRecord::SessionStore::Session.serializer = :null
   end
 end

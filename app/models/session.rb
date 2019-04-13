@@ -2,15 +2,16 @@
 #
 # Table name: sessions
 #
-#  id         :integer          not null, primary key
-#  session_id :string(510)      not null
-#  data       :text
-#  created_at :datetime
-#  updated_at :datetime
+#  id         :bigint(8)        not null, primary key
+#  session_id :string           not null
+#  data       :jsonb            not null
+#  created_at :datetime         not null
+#  updated_at :datetime         not null
 #
 # Indexes
 #
-#  sessions_session_id_key  (session_id) UNIQUE
+#  index_sessions_on_session_id  (session_id) UNIQUE
+#  index_sessions_on_updated_at  (updated_at)
 #
 
 class Session < ApplicationRecord
