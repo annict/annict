@@ -39,6 +39,7 @@ class VodTitle < ApplicationRecord
     [
       channel_id,
       nil,
+      nil,
       code,
       name
     ].join(",")
