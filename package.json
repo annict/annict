@@ -17,6 +17,7 @@
     "bourbon": "^5.1.0",
     "britecharts": "^2.9.8",
     "cal-heatmap": "3.6.2",
+    "core-js": "3",
     "cropperjs": "1.4.3",
     "d3": "^5.7.0",
     "d3-selection": "^1.3.2",
