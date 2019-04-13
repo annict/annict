@@ -54,6 +54,8 @@ module Types
         argument :order_by, Types::InputObjects::StaffOrder, required: false
       end
 
+      field :series_list, Types::Objects::SeriesType.connection_type, null: true
+
       def episodes(order_by: nil)
         SearchEpisodesQuery.new(object.episodes, order_by: order_by).call
       end
@@ -75,6 +77,10 @@ module Types
 
       def staffs(order_by: nil)
         SearchStaffsQuery.new(object.staffs, order_by: order_by).call
+      end
+
+      def series_list
+        object.series_list.published.where("series_works_count > ?", 1)
       end
 
       def media

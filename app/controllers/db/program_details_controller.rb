@@ -6,7 +6,7 @@ module Db
 
     def index
       @work = Work.find(params[:work_id])
-      @program_details = @work.program_details.order(id: :desc)
+      @program_details = @work.program_details.order(started_at: :desc, channel_id: :asc)
     end
 
     def new

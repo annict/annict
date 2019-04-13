@@ -22,7 +22,7 @@
           tr
             th ID
             th = t "activerecord.attributes.pv.thumbnail"
-            th = t "activerecord.attributes.pv.url"
+            th = t "noun.video_page"
             th = t "activerecord.attributes.pv.title"
             th = t "activerecord.attributes.pv.sort_number"
             th = t "head.title.db.pvs.activities"
@@ -37,7 +37,13 @@
             tr
               td = pv.id
               td = ann_image_tag(pv, :thumbnail, size: "70x70", class: "rounded img-thumbnail")
-              td = link_with_domain pv.url
+              td
+                - if pv.youtube?
+                  span.mr-1
+                    | YouTube:
+                  = link_to pv.youtube_video_id, pv.url, target: "_blank", rel: "noopener"
+                - else
+                  = link_with_domain pv.url
               td = pv.title
               td = pv.sort_number
               td = link_to t("head.title.db.pvs.activities"), activities_db_pv_path(pv)
