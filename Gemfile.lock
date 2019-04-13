@@ -590,6 +590,7 @@ DEPENDENCIES
   active_link_to
   active_record_query_trace
   acts_as_list
+  addressable
   amazon-ecs
   annotate
   awesome_print

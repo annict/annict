@@ -11,6 +11,7 @@ gem "aasm"
 gem "active_decorator"
 gem "active_link_to"
 gem "acts_as_list"
+gem "addressable"
 gem "amazon-ecs"
 gem "aws-sdk-s3" # Uses in Paperclip
 gem "browser", require: "browser/browser"

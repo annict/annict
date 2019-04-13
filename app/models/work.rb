@@ -382,11 +382,13 @@ class Work < ApplicationRecord
   end
 
   def twitter_username_url
-    "https://twitter.com/#{twitter_username}"
+    url = "https://twitter.com/#{twitter_username}"
+    Addressable::URI.parse(url).normalize.to_s
   end
 
   def twitter_hashtag_url
-    URI.encode("https://twitter.com/search?q=##{twitter_hashtag}&src=hash")
+    url = "https://twitter.com/search?q=##{twitter_hashtag}&src=hash"
+    Addressable::URI.parse(url).normalize.to_s
   end
 
   def current_season?
