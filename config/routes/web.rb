@@ -1,21 +1,8 @@
 # frozen_string_literal: true
 
-require "sidekiq/web"
-
 if Rails.env.development?
   mount GraphiQL::Rails::Engine, at: "/graphiql", graphql_path: "/graphql"
 end
-
-Sidekiq::Web.use Rack::Auth::Basic do |username, password|
-  # https://github.com/mperham/sidekiq/wiki/Monitoring#rails-http-basic-auth-from-routes
-  ActiveSupport::SecurityUtils.secure_compare(
-    ::Digest::SHA256.hexdigest(username),
-    ::Digest::SHA256.hexdigest(ENV["ANNICT_BASIC_AUTH_NAME"])) &
-  ActiveSupport::SecurityUtils.secure_compare(
-    ::Digest::SHA256.hexdigest(password),
-    ::Digest::SHA256.hexdigest(ENV["ANNICT_BASIC_AUTH_PASSWORD"]))
-end
-mount Sidekiq::Web, at: "/sidekiq"
 
 get "dummy_image", to: "application#dummy_image" if Rails.env.test?
 

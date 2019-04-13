@@ -75,7 +75,7 @@ module Annict
       g.assets false
     end
 
-    config.active_job.queue_adapter = :sidekiq
+    config.active_job.queue_adapter = :delayed_job
 
     config.middleware.insert_before(Rack::Runtime, Rack::Rewrite) do
       # Redirect: www.annict.com -> annict.com

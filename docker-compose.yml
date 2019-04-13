@@ -43,14 +43,13 @@ services:
       - .:/annict
       - bundle_vol:/usr/local/bundle
       - node_modules_vol:/annict/node_modules
-  sidekiq:
+  delayed_job:
     build:
       context: .
       dockerfile: Dockerfile
-    command: /bin/ash -c 'bundle exec sidekiq'
+    command: /bin/ash -c 'bundle exec rake jobs:work'
     depends_on:
       - postgresql
-      - redis
       - webpack
     env_file:
       - .env.development
