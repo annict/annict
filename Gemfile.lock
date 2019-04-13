@@ -228,7 +228,6 @@ GEM
     hashie (3.6.0)
     heapy (0.1.4)
     highline (2.0.1)
-    hiredis (0.6.3)
     html-pipeline (2.11.0)
       activesupport (>= 2)
       nokogiri (>= 1.4)
@@ -437,7 +436,6 @@ GEM
     rb-fsevent (0.10.3)
     rb-inotify (0.10.0)
       ffi (~> 1.0)
-    redis (4.1.0)
     regexp_parser (1.4.0)
     request_store (1.4.1)
       rack (>= 1.4)
@@ -626,7 +624,6 @@ DEPENDENCIES
   gretel
   groupdate
   hashdiff
-  hiredis
   http_accept_language
   httparty
   i18n-tasks
@@ -662,7 +659,6 @@ DEPENDENCIES
   rails-i18n
   rails_autolink
   ransack
-  redis
   rspec-mocks
   rspec-rails
   rspec_junit_formatter
