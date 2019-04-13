@@ -25,7 +25,7 @@
               .form-group.row
                 = f.label :program_detail_id, class: "col-sm-3 col-form-label"
                 .col-sm-9
-                  = f.select :program_detail_id, options_from_collection_for_select(@work.program_details.order(:started_at).map(&:decorate), :id, :name, f.object.channel.try!(:id)), { include_blank: true }, { class: "form-control" }
+                  = f.select :program_detail_id, options_from_collection_for_select(@work.program_details.order(:started_at).map(&:decorate), :id, :name, f.object.program_detail.try!(:id)), { include_blank: true }, { class: "form-control" }
             .form-group.row
               = f.label :channel_id, class: "col-sm-3 col-form-label"
               .col-sm-9
