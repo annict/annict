@@ -323,7 +323,7 @@ GEM
       cocaine
       color
       oily_png
-    mjml-rails (4.2.5)
+    mjml-rails (4.3.0)
     moji (1.6)
     msgpack (1.2.9)
     multi_json (1.13.1)
