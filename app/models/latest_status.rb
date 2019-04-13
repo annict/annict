@@ -36,9 +36,6 @@ class LatestStatus < ApplicationRecord
   scope :watching, -> { with_kind(:watching) }
   scope :has_next_episode, -> { where.not(next_episode_id: nil) }
 
-  after_save :expire_cache
-  after_destroy :expire_cache
-
   def self.count_on(status_kind)
     work_published.with_kind(status_kind).count
   end
@@ -105,9 +102,5 @@ class LatestStatus < ApplicationRecord
     end
 
     self
-  end
-
-  def expire_cache
-    user.touch(:status_cache_expired_at)
   end
 end

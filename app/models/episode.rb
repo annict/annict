@@ -74,8 +74,6 @@ class Episode < ApplicationRecord
 
   after_create :update_prev_episode
   before_destroy :unset_prev_episode_id
-  after_save :expire_cache
-  after_destroy :expire_cache
 
   def next_episode
     work.episodes.find_by(prev_episode: self)
@@ -154,9 +152,5 @@ class Episode < ApplicationRecord
   def update_prev_episode
     prev_episode = work.episodes.where.not(id: id).order(sort_number: :desc).first
     update_column(:prev_episode_id, prev_episode.id) if prev_episode
-  end
-
-  def expire_cache
-    programs.update_all(updated_at: Time.now)
   end
 end

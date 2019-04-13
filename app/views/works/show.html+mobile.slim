@@ -129,18 +129,16 @@
     h2.h4.font-weight-bold.mt-3.mb-4
       = t "noun.characters"
   .c-card.p-3
-    - cache [I18n.locale, @casts] do
-      - casts = @casts.select { |c| locale_ja? ? true : c.support_en? }
-      = render "characters/character_list", casts: casts
+    - casts = @casts.select { |c| locale_ja? ? true : c.support_en? }
+    = render "characters/character_list", casts: casts
 
 .mb-3
   .container
     h2.h4.font-weight-bold.mt-3.mb-4
       = t "noun.staffs"
   .c-card.p-3
-    - cache [I18n.locale, @staffs] do
-      - staffs = @staffs.select { |s| locale_ja? ? true : s.support_en? }
-      = render "staffs/staff_list", staffs: staffs
+    - staffs = @staffs.select { |s| locale_ja? ? true : s.support_en? }
+    = render "staffs/staff_list", staffs: staffs
 
 - if locale_ja?
   .mb-3

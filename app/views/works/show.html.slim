@@ -51,15 +51,13 @@
 
         h2.h4.text-center.my-4.font-weight-bold = t "noun.characters"
         .c-card.container.mt-3.py-3
-          - cache [I18n.locale, @casts] do
-            - casts = @casts.select { |c| locale_ja? ? true : c.support_en? }
-            = render "characters/character_list", casts: casts
+          - casts = @casts.select { |c| locale_ja? ? true : c.support_en? }
+          = render "characters/character_list", casts: casts
 
         h2.h4.text-center.my-4.font-weight-bold = t "noun.staffs"
         .c-card.container.mt-3.py-3
-          - cache [I18n.locale, @staffs] do
-            - staffs = @staffs.select { |s| locale_ja? ? true : s.support_en? }
-            = render "staffs/staff_list", staffs: staffs
+          - staffs = @staffs.select { |s| locale_ja? ? true : s.support_en? }
+          = render "staffs/staff_list", staffs: staffs
 
         - if locale_ja?
           h2.h4.text-center.my-4.font-weight-bold

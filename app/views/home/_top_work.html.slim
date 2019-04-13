@@ -16,12 +16,11 @@
         = t "noun.casts"
       ul.list-inline
         - casts.each do |cast|
-          - cache cast do
-            li.list-inline-item
-              span.mr-1
-                = cast.character.decorate.name_link
-                | :
-              = cast.decorate.local_name_with_old_link
+          li.list-inline-item
+            span.mr-1
+              = cast.character.decorate.name_link
+              | :
+            = cast.decorate.local_name_with_old_link
     - staffs = top_work.staffs.major.order(:sort_number)
     - staffs = staffs.select { |s| locale_ja? ? true : s.support_en? }
     - if staffs.present?
@@ -29,7 +28,6 @@
         = t "noun.staffs"
       ul.list-inline
         - staffs.each do |staff|
-          - cache staff do
-            li.list-inline-item
-              = "#{staff.decorate.role_name}: "
-              = staff.decorate.local_name_with_old_link
+          li.list-inline-item
+            = "#{staff.decorate.role_name}: "
+            = staff.decorate.local_name_with_old_link
