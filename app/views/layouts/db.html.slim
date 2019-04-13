@@ -3,7 +3,7 @@ html lang="#{I18n.locale}"
   head
     = ann_display_meta_tags "Annict DB"
     = render "application/head_common"
-    = stylesheet_bundle_tag "pc.css", media: "all", "data-turbolinks-track": "reload"
+    = stylesheet_bundle_tag "db.css", media: "all", "data-turbolinks-track": "reload"
     = javascript_bundle_tag "pc.js", defer: "", "data-turbolinks-track": "reload"
   body class="p-db #{body_classes}"
     = include_gon
