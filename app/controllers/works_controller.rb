@@ -97,13 +97,10 @@ class WorksController < ApplicationController
     @channels = Channel.published.with_vod
     @series_list = @work.series_list.published.where("series_works_count > ?", 1)
 
-    @work_records = @work.
-      work_records.
-      published.
-      with_body.
-      includes(user: :profile).
-      merge(User.published)
-    @work_records = @work_records.where.not(user_id: current_user.mute_users.pluck(:muted_user_id)) if user_signed_in?
+    @work_records = UserWorkRecordsQuery.new.call(
+      work_records: @work.work_records,
+      user: current_user
+    )
     @work_records = localable_resources(@work_records)
     @work_records = @work_records.order(created_at: :desc)
 

@@ -85,11 +85,11 @@
             .col
               h3.small.text-center
                 | Watchers
-              c-work-watchers-chart init-dataset="#{@work.watchers_chart_dataset}"
+              c-work-watchers-chart :work-id="#{@work.id}"
             .col
               h3.small.text-center
                 | Status
-              c-work-status-chart init-dataset="#{@work.status_chart_dataset}"
+              c-work-status-chart :work-id="#{@work.id}"
 
         .row.align-items-center
           .col

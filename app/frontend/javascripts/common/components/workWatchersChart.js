@@ -5,14 +5,10 @@ export default {
   template: '<div class="c-work-watchers-chart"></div>',
 
   props: {
-    initDataset: {
-      type: String,
+    workId: {
+      type: Number,
       required: true
     }
-  },
-
-  data() {
-    return {dataset: JSON.parse(this.initDataset)};
   },
 
   mounted() {
@@ -30,25 +26,30 @@ export default {
 
     const lineChart = new LineChart();
 
-    const dataset = {
-      dataByTopic: [
-        {
-          topicName: "Watchers",
-          topic: -1,
-          dates: this.dataset
-        }
-      ]
-    };
+    $.ajax({
+      method: 'GET',
+      url: `/api/internal/works/${this.workId}/watchers_chart_data`
+    }).done(data => {
+      const dataset = {
+        dataByTopic: [
+          {
+            topicName: "Watchers",
+            topic: -1,
+            dates: data
+          }
+        ]
+      };
 
-    if (containerWidth) {
-      lineChart
-        .height(200)
-        .margin(lineMargin)
-        .grid("horizontal")
-        .width(containerWidth)
-        .topicLabel(100);
+      if (containerWidth) {
+        lineChart
+          .height(200)
+          .margin(lineMargin)
+          .grid("horizontal")
+          .width(containerWidth)
+          .topicLabel(100);
 
-      return container.datum(dataset).call(lineChart);
-    }
+        container.datum(dataset).call(lineChart);
+      }
+    })
   }
 };
