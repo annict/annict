@@ -45,12 +45,11 @@ class UsersController < ApplicationController
     @favorite_staffs = @user.favorite_people.with_staff.includes(:person).order(id: :desc)
     @favorite_organizations = @user.favorite_organizations.includes(:organization).order(id: :desc)
 
-    activities = @user.
-      activities.
-      order(id: :desc).
-      includes(:work).
-      merge(Work.published).
-      page(1)
+    activities = UserActivitiesQuery.new.call(
+      activities: @user.activities,
+      user: current_user,
+      page: 1
+    )
     works = Work.published.where(id: activities.pluck(:work_id))
 
     activity_data = render_jb("api/internal/activities/index",

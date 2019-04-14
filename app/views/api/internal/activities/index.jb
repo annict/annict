@@ -4,33 +4,8 @@ json = {}
 
 statuses = Work.statuses(@works.pluck(:id), @user)
 
-cache_keys = [
-  I18n.locale,
-  @user&.id,
-  @user&.record_cache_expired_at,
-  @user&.status_cache_expired_at,
-  @activities
-]
-
-json[:activities] = Rails.cache.fetch cache_keys do
-  activities = @activities.select do |activity|
-    cache_keys = [
-      I18n.locale,
-      @user&.id,
-      @user&.record_cache_expired_at,
-      @user&.status_cache_expired_at,
-      activity
-    ]
-
-    Rails.cache.fetch cache_keys do
-      if activity.recipient.present? && activity.trackable.present?
-        next activity
-      end
-    end
-  end
-  render partial: "/api/internal/activities/activity",
-         collection: activities,
-         locals: { user: @user, statuses: statuses }
-end
+json[:activities] = render partial: "/api/internal/activities/activity",
+  collection: @activities,
+  locals: { user: @user, statuses: statuses }
 
 json

@@ -6,11 +6,11 @@ class ActivitiesController < ApplicationController
   def index
     return redirect_to root_path if device_pc?
 
-    activities = current_user.
-      following_activities.
-      order(id: :desc).
-      includes(:work, user: :profile).
-      page(1)
+    activities = UserActivitiesQuery.new.call(
+      activities: current_user.following_activities,
+      user: current_user,
+      page: 1
+    )
     works = Work.where(id: activities.pluck(:work_id))
 
     activity_data = render_jb("api/internal/activities/index",

@@ -13,11 +13,11 @@ module Api
         end
 
         @user = current_user
-        @activities = activities.
-          order(id: :desc).
-          includes(:work, user: :profile).
-          merge(Work.published).
-          page(params[:page])
+        @activities = UserActivitiesQuery.new.call(
+          activities: activities,
+          user: current_user,
+          page: params[:page]
+        )
 
         @works = Work.published.where(id: @activities.pluck(:work_id))
       end

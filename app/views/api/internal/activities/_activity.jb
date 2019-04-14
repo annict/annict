@@ -1,33 +1,130 @@
 # frozen_string_literal: true
 
-cache_keys = [
-  I18n.locale,
-  user&.id,
-  activity
-]
+json = {
+  action: activity.action,
+  created_at: activity.created_at,
+  user: {
+   username: activity.user.username
+  },
+  profile: {
+   avatar_url: ann_image_url(activity.user.profile, :tombo_avatar, size: "60x60"),
+   name: activity.user.profile.name
+  },
+  viewer: {
+   status: {
+     kind: statuses.select { |k| k[:work_id] == activity.work.id }.first[:kind]
+   }
+  },
+  meta: {
+   liked: !user.nil? && !activity.user_like_id.nil?
+  }
+}
 
-json = Rails.cache.fetch(cache_keys) do
+action_json = case activity.action
+when "create_episode_record" then
+  episode = activity.episode
+  episode_record = activity.episode_record
+
   {
-    action: activity.action,
-    created_at: activity.created_at,
-    user: {
-      username: activity.user.username
+    work: {
+      id: episode.work.id,
+      title: episode.work.local_title,
+      is_single: episode.local_title == episode.work.local_title
     },
-    profile: {
-      avatar_url: ann_image_url(activity.user.profile, :tombo_avatar, size: "60x60"),
-      name: activity.user.profile.name
+    item: {
+      image_url: ann_image_url(episode.work.work_image, :attachment, size: "125x125")
     },
-    viewer: {
-      status: {
-        kind: statuses.select { |k| k[:work_id] == activity.work.id }.first[:kind]
-      }
+    episode: {
+      id: episode.id,
+      number: episode.local_number,
+      title: episode.local_title(fallback: false)
     },
-    meta: {
-      liked: user.present? && user.like?(activity.trackable)
+    episode_record: {
+      id: episode_record.id,
+      comment: episode_record.comment,
+      comments_count: episode_record.comments_count,
+      likes_count: episode_record.likes_count,
+      rating: episode_record.rating,
+      rating_state: episode_record.rating_state,
+      hide_comment: !user.nil? && user.setting.hide_record_comment? && !activity.user_latest_status_id.nil? && activity.user_episode_record_id.nil?
+    },
+    record: {
+      id: episode_record.record_id
+    }
+  }
+when "create_multiple_episode_records" then
+  work = activity.work
+  multiple_episode_record = activity.multiple_episode_record
+
+  data = {
+    work: {
+      id: work.id,
+      title: work.title
+    },
+    item: {
+      image_url: ann_image_url(work.work_image, :attachment, size: "125x125")
+    },
+    multiple_record: {
+      id: multiple_episode_record.id,
+      likes_count: multiple_episode_record.likes_count
+    }
+  }
+
+  episode_records = multiple_episode_record.
+    episode_records.
+    eager_load(:episode).
+    order("episodes.sort_number ASC")
+  data[:episodes] = episode_records.map do |episode_record|
+    {
+      id: episode_record.episode.id,
+      number: episode_record.episode.number,
+      title: episode_record.episode.title
+    }
+  end
+
+  data
+when "create_status" then
+  work = activity.work
+  status = activity.status
+
+  {
+    work: {
+      id: work.id,
+      title: work.local_title
+    },
+    item: {
+      image_url: ann_image_url(work.work_image, :attachment, size: "125x125")
+    },
+    status: {
+      id: status.id,
+      likes_count: status.likes_count,
+      kind: activity.status.kind,
+      kind_text: activity.status.kind.text
+    }
+  }
+when "create_work_record" then
+  work = activity.work
+  work_record = activity.work_record
+
+  {
+    work: {
+      id: work.id,
+      title: work.local_title
+    },
+    item: {
+      image_url: ann_image_url(work.work_image, :attachment, size: "125x125")
+    },
+    work_record: {
+      id: work_record.id,
+      record_id: work_record.record_id,
+      body: work_record.body,
+      rating_overall_state: work_record.rating_overall_state,
+      likes_count: work_record.likes_count,
+      hide_work_record_body: !user.nil? && user.setting.hide_record_comment? && !activity.user_latest_status_id.nil? && activity.user_work_record_id.nil?
     }
   }
 end
 
-json.merge! render("api/internal/activities/#{activity.action}", activity: activity, user: user)
+json.merge!(action_json)
 
 json
