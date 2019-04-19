@@ -227,7 +227,7 @@ GEM
     hashdiff (0.3.8)
     hashie (3.6.0)
     heapy (0.1.4)
-    highline (2.0.1)
+    highline (2.0.2)
     html-pipeline (2.11.0)
       activesupport (>= 2)
       nokogiri (>= 1.4)
