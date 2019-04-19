@@ -1,5 +1,0 @@
----
-:queues:
-  - default
-  - mailers
-  - low

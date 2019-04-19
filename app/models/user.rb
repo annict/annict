@@ -284,9 +284,7 @@ class User < ApplicationRecord
   end
 
   def status_kind(work)
-    Rails.cache.fetch([id, latest_statuses, work.id]) do
-      latest_statuses.find_by(work: work)&.kind.presence || "no_select"
-    end
+    latest_statuses.find_by(work: work)&.kind.presence || "no_select"
   end
 
   def encoded_id
@@ -356,7 +354,6 @@ class User < ApplicationRecord
       work_tag = WorkTag.where(name: tag_name).first_or_create!
       work_taggables.where(work_tag: work_tag).first_or_create!
       work_taggings.where(work: work, work_tag: work_tag).first_or_create!
-      touch(:work_tag_cache_expired_at)
     end
 
     work_tag
@@ -385,15 +382,11 @@ class User < ApplicationRecord
   end
 
   def tags_by_work(work)
-    Rails.cache.fetch([id, work_tag_cache_expired_at, work.id, :tags]) do
-      work_tags.published.joins(:work_taggings).merge(work_taggings.where(work: work))
-    end
+    work_tags.published.joins(:work_taggings).merge(work_taggings.where(work: work))
   end
 
   def comment_by_work(work)
-    Rails.cache.fetch([id, work_comment_cache_expired_at, work.id, :comment]) do
-      work_comments.find_by(work: work)
-    end
+    work_comments.find_by(work: work)
   end
 
   def supporter?

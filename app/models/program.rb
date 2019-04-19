@@ -62,8 +62,6 @@ class Program < ApplicationRecord
   scope :work_published, -> { joins(:work).merge(Work.published) }
 
   before_save :calc_for_timezone
-  after_save :expire_cache
-  after_destroy :expire_cache
 
   def broadcasted?(time = Time.now.in_time_zone("Asia/Tokyo"))
     time > started_at.in_time_zone("Asia/Tokyo")
@@ -96,11 +94,5 @@ class Program < ApplicationRecord
       return :tonight if start.between?(now, now.beginning_of_day + 1.day + 5.hours)
       return :unbroadcast
     end
-  end
-
-  private
-
-  def expire_cache
-    work.channel_works.update_all(updated_at: Time.now)
   end
 end

@@ -25,8 +25,6 @@ class Like < ApplicationRecord
     dependent: :destroy
 
   after_create :save_notification
-  after_save :expire_cache
-  after_destroy :expire_cache
 
   private
 
@@ -37,11 +35,5 @@ class Like < ApplicationRecord
       n.trackable   = self
       n.action      = "likes.create"
     end
-  end
-
-  def expire_cache
-    return unless recipient_type.in?(%w(Record MultipleRecord Status))
-    recipient.activities.update_all(updated_at: Time.now)
-    recipient.touch
   end
 end

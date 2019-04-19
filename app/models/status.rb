@@ -37,8 +37,6 @@ class Status < ApplicationRecord
   after_create :save_activity
   after_create :save_latest_status
   after_create :update_channel_work
-  after_destroy :expire_cache
-  after_save :expire_cache
 
   def self.initial
     order(:id).first
@@ -149,9 +147,5 @@ class Status < ApplicationRecord
     latest_status.kind = kind
     latest_status.watched_episode_ids = [] if %w(watched stop_watching).include?(kind)
     latest_status.save!
-  end
-
-  def expire_cache
-    user.touch(:status_cache_expired_at)
   end
 end

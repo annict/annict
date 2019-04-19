@@ -550,13 +550,8 @@
   },
   "addons": [
     "heroku-postgresql",
-    "heroku-redis",
     "logdna",
-    "sentry",
-    {
-      "plan": "heroku-redis",
-      "as": "redis_blue"
-    }
+    "sentry"
   ],
   "buildpacks": [
     {

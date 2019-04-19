@@ -6,16 +6,10 @@ export default {
   template: '<div class="c-work-status-chart"></div>',
 
   props: {
-    initDataset: {
-      type: String,
+    workId: {
+      type: Number,
       required: true,
     },
-  },
-
-  data() {
-    return {
-      dataset: _.sortBy(JSON.parse(this.initDataset), data => data.name_key),
-    }
   },
 
   mounted() {
@@ -28,26 +22,31 @@ export default {
       const colors = ['#FFF9C4', '#B3E5FC', '#C8E6C9', '#FFCDD2', '#CFD8DC']
       const removedColors = []
 
-      // Remove colors which corresponded to status if its quantity is zero.
-      _.forEach(this.dataset, function(data, i) {
-        if (data.quantity === 0) {
-          return removedColors.push(colors[i])
-        }
-      })
-
-      barChart
-        .margin({
-          left: 90,
-          right: 10,
-          top: 0,
-          bottom: 15,
+      $.ajax({
+        method: 'GET',
+        url: `/api/internal/works/${this.workId}/status_chart_data`
+      }).done(data => {
+        // Remove colors which corresponded to status if its quantity is zero.
+        _.forEach(data, function(data, i) {
+          if (data.quantity === 0) {
+            return removedColors.push(colors[i])
+          }
         })
-        .width(containerWidth)
-        .height(200)
-        .isHorizontal(true)
-        .colorSchema(_.difference(colors, removedColors))
 
-      return container.datum(this.dataset.reverse()).call(barChart)
+        barChart
+          .margin({
+            left: 90,
+            right: 10,
+            top: 0,
+            bottom: 15,
+          })
+          .width(containerWidth)
+          .height(200)
+          .isHorizontal(true)
+          .colorSchema(_.difference(colors, removedColors))
+
+        container.datum(data.reverse()).call(barChart)
+      })
     }
   },
 }

@@ -64,6 +64,8 @@ namespace :api do
 
     resources :works, only: [] do
       resource :latest_status, only: [:show]
+      resource :status_chart_data, only: %i(show)
+      resource :watchers_chart_data, only: %i(show)
 
       resources :channels, only: [] do
         post :select, on: :collection
