@@ -90,7 +90,7 @@
                       = t "noun.records"
                 .col.pl-0
                   .h3
-                    = @all_episode_records.count
+                    = @all_episode_records.size
               .row.align-items-center
                 .col.text-right
                   .small.text-muted
@@ -104,7 +104,7 @@
                     = t "noun.comments_count"
                 .col.pl-0
                   .h3
-                    = @all_episode_records.with_comment.count
+                    = @all_episode_records.with_comment.size
             .mb-3.text-center
               .small.font-weight-bold
                 = t "noun.rating"

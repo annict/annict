@@ -14,7 +14,7 @@
       .small
         = t "noun.satisfaction_rate_shorten"
     .col.text-center
-      = all_episode_records.count
+      = all_episode_records.size
       .small
         - if locale_ja?
           = t "noun.records_count"
@@ -25,7 +25,7 @@
       .small
         = t "noun.ratings_count"
     .col.text-center
-      = all_episode_records.with_comment.count
+      = all_episode_records.with_comment.size
       .small
         = t "noun.comments_count_shorten"
 

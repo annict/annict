@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 class EpisodeRecordsListService
+  PAGE_PER = 30
+
   def initialize(user, episode, params)
     @user = user
     @episode = episode
@@ -13,7 +15,7 @@ class EpisodeRecordsListService
     results = localable_episode_records(results)
     results = results.page(@params[:page])
     results = sort(results)
-    results.per(20)
+    results.per(PAGE_PER)
   end
 
   def friend_comment_episode_records
@@ -25,7 +27,7 @@ class EpisodeRecordsListService
     results = localable_episode_records(results)
     results = results.page(@params[:page])
     results = sort(results)
-    results.per(20)
+    results.per(PAGE_PER)
   end
 
   def my_episode_records
@@ -36,7 +38,7 @@ class EpisodeRecordsListService
     results = localable_episode_records(results)
     results = results.page(@params[:page])
     results = sort(results)
-    results.per(20)
+    results.per(PAGE_PER)
   end
 
   def selected_comment_episode_records
@@ -50,9 +52,10 @@ class EpisodeRecordsListService
   end
 
   def all_episode_records
-    episode_records = @episode.episode_records.includes(user: :profile).joins(:user).merge(User.published)
-    episode_records = episode_records.where.not(user_id: @user.mute_users.pluck(:muted_user_id)) if @user.present?
-    episode_records
+    UserEpisodeRecordsQuery.new.call(
+      episode_records:@episode.episode_records,
+      user: @user
+    )
   end
 
   private

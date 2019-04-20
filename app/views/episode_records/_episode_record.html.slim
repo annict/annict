@@ -28,7 +28,7 @@
               c-body inline-template=""
                 .c-body__content = episode_record.comment
         .text-right
-          c-like-button resource-name="EpisodeRecord" :init-resource-id="#{episode_record.id}" :init-likes-count="#{episode_record.likes_count}" :init-is-liked="#{user_signed_in? && current_user.like?(episode_record)}" :is-signed-in="#{user_signed_in?}"
+          c-like-button resource-name="EpisodeRecord" :init-resource-id="#{episode_record.id}" :init-likes-count="#{episode_record.likes_count}" :init-is-liked="#{user_signed_in? && !episode_record.user_like_id.nil?}" :is-signed-in="#{user_signed_in?}"
           = link_to record_path(episode_record.user.username, episode_record.record), class: "d-inline-block ml-2" do
             = icon "comment", "far", class: "mr-1"
             = episode_record.comments_count
