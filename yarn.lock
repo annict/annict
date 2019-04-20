@@ -8375,9 +8375,9 @@ terser@^3.16.1:
     source-map-support "~0.5.10"
 
 tether@^1.4.5:
-  version "1.4.5"
-  resolved "https://registry.yarnpkg.com/tether/-/tether-1.4.5.tgz#8efd7b35572767ba502259ba9b1cc167fcf6f2c1"
-  integrity sha512-fysT1Gug2wbRi7a6waeu39yVDwiNtvwj5m9eRD+qZDSHKNghLo6KqP/U3yM2ap6TNUL2skjXGJaJJTJqoC31vw==
+  version "1.4.6"
+  resolved "https://registry.yarnpkg.com/tether/-/tether-1.4.6.tgz#30c538eebc8ab72a7ac0840843efdd4542d57e5f"
+  integrity sha512-TyWPw9O0ExqH9/ZBnQ0P1/mNI6LX16YPx5XvixC/ZvAqMkhGeXmKTTsMbSBn3ViOrPuQi/Uef11bVp3sd5UcQQ==
 
 text-table@^0.2.0, text-table@~0.2.0:
   version "0.2.0"
