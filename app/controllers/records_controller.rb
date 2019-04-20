@@ -7,12 +7,10 @@ class RecordsController < ApplicationController
 
   def index
     @user = User.published.find_by!(username: params[:username])
-    @records = @user.
-      records.
-      published.
-      includes(:episode_record, work: :work_image, work_record: %i(work user)).
-      order(created_at: :desc).
-      page(params[:page])
+    @records = UserEpisodeRecordsQuery.new.call(
+      episode_records: @user.episode_records,
+      user: @user
+    ).order(created_at: :desc).page(params[:page])
 
     return unless user_signed_in?
 

@@ -24,15 +24,11 @@
                     = record.work.work_image.asin_or_copyright_text
               h2.h3.font-weight-bold
                 = link_to record.work.local_title, work_path(record.work), class: "u-text-body"
-              - if record.episode_record?
-                .mb-2
-                  = link_to record.episode_record.episode.title_with_number(fallback: false), work_episode_path(record.work, record.episode_record.episode), class: "u-text-body"
+              .mb-2
+                = link_to record.episode.title_with_number(fallback: false), work_episode_path(record.work, record.episode), class: "u-text-body"
               c-status-selector :work-id="#{record.work.id}"
             .col-9
-              - if record.episode_record?
-                = render "episode_records/episode_record", episode_record: record.episode_record, is_spoiler: user_signed_in? && current_user.hide_episode_record_body?(record.episode_record.episode)
-              - else
-                = render "work_records/work_record", work_record: record.work_record, is_spoiler: user_signed_in? && current_user.hide_work_record_body?(record.work_record.work)
+              = render "episode_records/episode_record", episode_record: record, is_spoiler: user_signed_in? && current_user.hide_episode_record_body?(record.episode)
 
       - else
         = render "application/components/empty", text: t("messages._empty.no_records")
