@@ -98,16 +98,17 @@ class WorkRecordsController < ApplicationController
   end
 
   def load_work_records
-    @work_records = @work.
-      work_records.
-      published.
-      with_body.
-      includes(user: :profile).
-      merge(User.published)
+    @work_records = UserWorkRecordsQuery.new.call(
+      work_records: @work.work_records,
+      user: current_user
+    )
     @work_records = localable_resources(@work_records)
 
     if user_signed_in?
-      @my_work_records = current_user.work_records.published.where(work: @work).includes(user: :profile).order(created_at: :desc)
+      @my_work_records = UserWorkRecordsQuery.new.call(
+        work_records: current_user.work_records.where(work: @work),
+        user: current_user
+      ).order(created_at: :desc)
       @work_records = @work_records.
         where.not(user: current_user).
         where.not(user_id: current_user.mute_users.pluck(:muted_user_id))
