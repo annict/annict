@@ -4,8 +4,8 @@ class OauthUsersController < Devise::RegistrationsController
   before_action :set_oauth, only: %i(new create)
 
   def new
-    username = @oauth[:info][:nickname].presence || ""
-    email = @oauth[:info][:email].presence || ""
+    username = @oauth["info"]["nickname"].presence || ""
+    email = @oauth["info"]["email"].presence || ""
 
     # Facebookからのユーザ登録のとき `username` に「.」が
     # 含まれている可能性があるので除去する
