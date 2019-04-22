@@ -23,7 +23,10 @@ class RecordsController < ApplicationController
     @record = @user.records.published.find(params[:id])
 
     if @record.episode_record?
-      @episode_record = @record.episode_record
+      @episode_record = UserEpisodeRecordsQuery.new.call(
+        episode_records: EpisodeRecord.where(id: @record.episode_record),
+        user: current_user
+      ).first
       @work = @episode_record.work
       @episode = @episode_record.episode
       @comments = @episode_record.comments.order(created_at: :desc)
@@ -32,15 +35,16 @@ class RecordsController < ApplicationController
       store_page_params(work: @work)
       render "episode_records/show"
     else
-      @work_record = @record.work_record
+      @work_record = UserWorkRecordsQuery.new.call(
+        work_records: WorkRecord.where(id: @record.work_record),
+        user: current_user
+      ).first
       @work = @work_record.work
       @is_spoiler = user_signed_in? && current_user.hide_work_record_body?(@work)
-      @work_records = @user.
-        work_records.
-        published.
-        where.not(id: @work_record.id).
-        includes(work: :work_image).
-        order(id: :desc)
+      @work_records = UserWorkRecordsQuery.new.call(
+        work_records: @user.work_records.where.not(id: @work_record.id),
+        user: current_user
+      )
       store_page_params(work: @work)
       render "work_records/show"
     end
