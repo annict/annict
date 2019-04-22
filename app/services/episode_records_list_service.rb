@@ -10,7 +10,7 @@ class EpisodeRecordsListService
   end
 
   def all_comment_episode_records
-    results = all_episode_records
+    results = all_episode_records.with_comment
     results = results.with_comment
     results = localable_episode_records(results)
     results = results.page(@params[:page])
@@ -21,7 +21,7 @@ class EpisodeRecordsListService
   def friend_comment_episode_records
     return EpisodeRecord.none if @user.blank?
 
-    results = all_episode_records
+    results = all_episode_records.with_comment
     results = results.with_comment
     results = results.joins(:user).merge(@user.followings.published)
     results = localable_episode_records(results)

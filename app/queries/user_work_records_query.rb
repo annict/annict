@@ -7,7 +7,6 @@ class UserWorkRecordsQuery
 
     @work_records = @work_records.
       published.
-      with_body.
       preload(:record, user: :profile).
       joins(:user).
       merge(User.published)

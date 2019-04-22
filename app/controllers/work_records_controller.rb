@@ -102,6 +102,7 @@ class WorkRecordsController < ApplicationController
       work_records: @work.work_records,
       user: current_user
     )
+    @work_records = @work_records.with_body
     @work_records = localable_resources(@work_records)
 
     if user_signed_in?

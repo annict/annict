@@ -7,7 +7,6 @@ class UserEpisodeRecordsQuery
 
     @episode_records = @episode_records.
       published.
-      with_comment.
       preload(:record, episode: { work: :work_image }, user: %i(profile setting gumroad_subscriber)).
       joins(:user).
       merge(User.published)
