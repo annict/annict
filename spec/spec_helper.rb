@@ -24,6 +24,10 @@ Dir[
 # If you are not using ActiveRecord, you can remove this line.
 ActiveRecord::Migration.check_pending! if defined?(ActiveRecord::Migration)
 
+Capybara.default_max_wait_time = 5
+Capybara.server_host = Socket.ip_address_list.detect{ |addr| addr.ipv4_private? }.ip_address
+Capybara.server_port = ENV.fetch("CAPYBARA_SERVER_PORT")
+
 RSpec.configure do |config|
   config.expect_with :rspec do |c|
     c.syntax = :expect
@@ -50,9 +54,9 @@ RSpec.configure do |config|
   config.order = "random"
 
   config.before(:each, type: :system) do
-    Capybara.default_max_wait_time = 5
+    host! "http://#{Capybara.server_host}:#{Capybara.server_port}"
 
-    Capybara.register_driver :selenium_chrome_for_ci do |app|
+    Capybara.register_driver :remote_selenium_chrome do |app|
       caps = Selenium::WebDriver::Remote::Capabilities.chrome(
         chrome_options: {
           args: %w(headless)
@@ -75,10 +79,6 @@ RSpec.configure do |config|
       driver
     end
 
-    if ENV["CI"]
-      driven_by :selenium_chrome_for_ci
-    else
-      driven_by :selenium_chrome_headless
-    end
+    driven_by :remote_selenium_chrome
   end
 end

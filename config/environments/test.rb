@@ -23,7 +23,10 @@ Rails.application.configure do
   # Show full error reports and disable caching.
   config.consider_all_requests_local       = true
   config.action_controller.perform_caching = false
-  config.action_controller.asset_host = ENV.fetch("ANNICT_ASSET_URL")
+
+  asset_ip_address = Socket.ip_address_list.detect{ |addr| addr.ipv4_private? }.ip_address
+  asset_port = ENV["CI"] ? ENV.fetch("CAPYBARA_SERVER_PORT") : ENV.fetch("WEBPACK_DEV_SERVER_PORT")
+  config.action_controller.asset_host = "http://#{asset_ip_address}:#{asset_port}"
 
   # Raise exceptions instead of rendering exception templates.
   config.action_dispatch.show_exceptions = false
