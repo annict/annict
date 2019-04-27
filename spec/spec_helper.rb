@@ -50,8 +50,6 @@ RSpec.configure do |config|
   config.order = "random"
 
   config.before(:each, type: :system) do
-    return driven_by(:selenium_chrome_headless) unless ENV["CI"]
-
     Capybara.register_driver :selenium_chrome_for_ci do |app|
       caps = Selenium::WebDriver::Remote::Capabilities.chrome(
         chrome_options: {
@@ -75,6 +73,10 @@ RSpec.configure do |config|
       driver
     end
 
-    driven_by :selenium_chrome_for_ci
+    if ENV["CI"]
+      driven_by :selenium_chrome_for_ci
+    else
+      driven_by :selenium_chrome_headless
+    end
   end
 end
