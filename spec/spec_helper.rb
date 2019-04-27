@@ -50,6 +50,8 @@ RSpec.configure do |config|
   config.order = "random"
 
   config.before(:each, type: :system) do
+    Capybara.default_max_wait_time = 5
+
     Capybara.register_driver :selenium_chrome_for_ci do |app|
       caps = Selenium::WebDriver::Remote::Capabilities.chrome(
         chrome_options: {
