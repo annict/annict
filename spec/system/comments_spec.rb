@@ -15,6 +15,7 @@ describe "Comment" do
       within "#new_comment" do
         fill_in "comment[body]", with: "Hahaha"
       end
+      scroll_to("button")
       find("button").click
 
       expect(find(".c-record-comment")).to have_content("Hahaha")
