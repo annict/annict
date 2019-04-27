@@ -106,11 +106,11 @@ end
 
 group :test do
   gem "capybara"
-  gem "chromedriver-helper"
   gem "factory_bot_rails"
   gem "selenium-webdriver"
   gem "simplecov", require: false
   gem "timecop"
+  gem "webdrivers"
 end
 
 group :production do
