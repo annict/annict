@@ -52,6 +52,7 @@
     "eslint": "^5.7.0",
     "expose-loader": "^0.7.5",
     "file-loader": "^2.0.0",
+    "ip": "^1.1.5",
     "mini-css-extract-plugin": "^0.4.3",
     "node-sass": "^4.9.3",
     "postcss-loader": "^3.0.0",
@@ -63,7 +64,7 @@
     "style-loader": "^0.23.0",
     "webpack": "^4.20.2",
     "webpack-cli": "^3.1.2",
-    "webpack-dev-server": "^3.1.9",
+    "webpack-dev-server": "3.2.1",
     "webpack-manifest-plugin": "^2.0.4"
   }
 }

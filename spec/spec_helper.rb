@@ -24,6 +24,10 @@ Dir[
 # If you are not using ActiveRecord, you can remove this line.
 ActiveRecord::Migration.check_pending! if defined?(ActiveRecord::Migration)
 
+Capybara.default_max_wait_time = 5
+Capybara.server_host = Socket.ip_address_list.detect{ |addr| addr.ipv4_private? }.ip_address
+Capybara.server_port = ENV.fetch("CAPYBARA_SERVER_PORT")
+
 RSpec.configure do |config|
   config.expect_with :rspec do |c|
     c.syntax = :expect
@@ -36,7 +40,7 @@ RSpec.configure do |config|
   # If you"re not using ActiveRecord, or you"d prefer not to run each of your
   # examples within a transaction, remove the following line or assign false
   # instead of true.
-  config.use_transactional_fixtures = false
+  config.use_transactional_fixtures = true
 
   # If true, the base class of anonymous controllers will be inferred
   # automatically. This will be the default behavior in future versions of
@@ -50,9 +54,9 @@ RSpec.configure do |config|
   config.order = "random"
 
   config.before(:each, type: :system) do
-    return driven_by(:selenium_chrome_headless) unless ENV["CI"]
+    host! "http://#{Capybara.server_host}:#{Capybara.server_port}"
 
-    Capybara.register_driver :selenium_chrome_for_ci do |app|
+    Capybara.register_driver :remote_selenium_chrome do |app|
       caps = Selenium::WebDriver::Remote::Capabilities.chrome(
         chrome_options: {
           args: %w(headless)
@@ -75,6 +79,6 @@ RSpec.configure do |config|
       driver
     end
 
-    driven_by :selenium_chrome_for_ci
+    driven_by :remote_selenium_chrome
   end
 end
