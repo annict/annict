@@ -7,6 +7,9 @@ FactoryBot.define do
     factory :create_episode_record_activity do
       recipient { create(:episode) }
       trackable { create(:episode_record, user: user, episode: recipient) }
+      work_id { recipient.work.id }
+      episode_id { recipient.id }
+      episode_record_id { trackable.id }
       action { "create_episode_record" }
     end
 
