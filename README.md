@@ -15,7 +15,7 @@ The platform for anime addicts.
 
 To run Annict on a local machine, you need to have the following dependencies installed:
 
-- [Ruby](https://www.ruby-lang.org) 2.6.2
+- [Ruby](https://www.ruby-lang.org) 2.6.3
 - [Node.js](https://nodejs.org) 10.15.3
 - [Yarn](https://yarnpkg.com)
 - [Docker](https://www.docker.com)
