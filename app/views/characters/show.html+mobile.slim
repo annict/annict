@@ -31,56 +31,56 @@ h2.h4.font-weight-bold.text-center.mt-3.mb-4
           = t "activerecord.attributes.character.name_en"
         dd.col-6
           = @character.name_en
-      - if @character.nickname.present?
+      - if @character.local_nickname.present?
         dt.col-6.text-right
           = t "activerecord.attributes.character.nickname"
         dd.col-6
-          = @character.nickname
+          = @character.local_nickname
       - if @character.series.present?
         dt.col-6.text-right
           = t "activerecord.attributes.character.series"
         dd.col-6
           = @character.series.local_name
-      - if @character.birthday.present?
+      - if @character.local_birthday.present?
         dt.col-6.text-right
           = t "activerecord.attributes.character.birthday"
         dd.col-6
           = @character.local_birthday
-      - if @character.age.present?
+      - if @character.local_age.present?
         dt.col-6.text-right
           = t "activerecord.attributes.character.age"
         dd.col-6
-          = @character.age
+          = @character.local_age
       - if @character.local_blood_type.present?
         dt.col-6.text-right
           = t "activerecord.attributes.character.blood_type"
         dd.col-6
           = @character.local_blood_type
-      - if @character.height.present?
+      - if @character.local_height.present?
         dt.col-6.text-right
           = t "activerecord.attributes.character.height"
         dd.col-6
-          = "#{@character.height}cm"
-      - if @character.weight.present?
+          = @character.local_height
+      - if @character.local_weight.present?
         dt.col-6.text-right
           = t "activerecord.attributes.character.weight"
         dd.col-6
-          = "#{@character.weight}kg"
-      - if @character.nationality.present?
+          = @character.local_weight
+      - if @character.local_nationality.present?
         dt.col-6.text-right
           = t "activerecord.attributes.character.nationality"
         dd.col-6
-          = @character.nationality
-      - if @character.occupation.present?
+          = @character.local_nationality
+      - if @character.local_occupation.present?
         dt.col-6.text-right
           = t "activerecord.attributes.character.occupation"
         dd.col-6
-          = @character.occupation
-      - if @character.description.present?
+          = @character.local_occupation
+      - if @character.local_description.present?
         dt.col-6.text-right
           = t "activerecord.attributes.character.description"
         dd.col-6
-          = @character.description
+          = @character.local_description
 
 h2.h4.text-center.font-weight-bold.mt-3.mb-4
   = t "noun.works"
