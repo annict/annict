@@ -1,29 +1,16 @@
 # frozen_string_literal: true
 
 namespace :tmp do
-  task update_number_on_programs: :environment do
-    works = Work.published
-    works.find_each do |w|
-      next if w.programs.empty?
-
-      puts "--- work: #{w.id}"
-
-      programs = w.programs.published.where(rebroadcast: false).from("
-        (
-          select *,
-            row_number() over (
-              partition by channel_id
-              order by started_at asc
-            ) as row_num
-          from programs
-          where programs.work_id = #{w.id} and programs.rebroadcast = FALSE and programs.aasm_state = 'published'
-        ) as programs
-      ")
-
-      programs.each do |p|
-        puts "--- work: #{w.id} program: #{p.id}"
-
-        p.update_column(:number, p.row_num)
+  task fix_asin_on_work_image: :environment do
+    WorkImage.where.not(asin: "").find_each do |wi|
+      next if wi.asin.match?(/\A[0-9A-Z]{10}\z/)
+      print "--- work_image: #{wi.id} "
+      asin = wi.asin.scan(%r{(product|dp)/([0-9A-Z]{10})}).flatten[1]
+      if asin && asin.match?(/\A[0-9A-Z]{10}\z/)
+        puts "- #{asin}"
+        wi.update_column(:asin, asin)
+      else
+        puts "- asin not found: #{wi.asin}"
       end
     end
   end
