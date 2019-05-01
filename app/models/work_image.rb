@@ -15,6 +15,7 @@
 #  created_at              :datetime         not null
 #  updated_at              :datetime         not null
 #  color_rgb               :string           default("255,255,255"), not null
+#  file_data               :text
 #
 # Indexes
 #
@@ -23,6 +24,8 @@
 #
 
 class WorkImage < ApplicationRecord
+  include WorkImageUploader::Attachment.new(:file)
+
   has_attached_file :attachment
 
   validates :attachment,
@@ -34,32 +37,13 @@ class WorkImage < ApplicationRecord
   belongs_to :work
   belongs_to :user
 
-  after_save :set_color_rgb
-
-  def attachment_relative_path(convert_type = "master")
-    if Rails.env.production?
-      "/#{attachment.path(convert_type)}"
-    else
-      attachment.url(convert_type)
-    end
-  end
-
-  def attachment_absolute_path(convert_type = "master")
-    if Rails.env.production?
-      attachment_url(convert_type)
-    else
-      attachment.path(convert_type)
-    end
-  end
-
-  def attachment_url(convert_type = "master")
-    "#{ENV.fetch('ANNICT_FILE_STORAGE_URL')}#{attachment_relative_path(convert_type)}"
-  end
+  # Disable until the Paperclip -> Shrine migration is done
+  # after_save :set_color_rgb
 
   def colors
     return @colors if @colors.present?
 
-    colors = Miro::DominantColors.new(attachment_url)
+    colors = Miro::DominantColors.new(file_url(:master))
     @colors = colors.to_rgb.map { |c| c.join(",") }
     @colors
   end
@@ -73,7 +57,7 @@ class WorkImage < ApplicationRecord
   private
 
   def set_color_rgb
-    colors = Miro::DominantColors.new(attachment_absolute_path)
+    colors = Miro::DominantColors.new(file_url(:master))
     color_rgb = colors.to_rgb.map { |c| c.join(",") }.first
     update_column(:color_rgb, color_rgb)
   end
