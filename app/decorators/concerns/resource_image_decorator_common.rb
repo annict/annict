@@ -27,7 +27,6 @@ module ResourceImageDecoratorCommon
     private
 
     def amazon_url
-      return asin unless asin.match?(/\A[0-9A-Z]{10}\z/)
       amazon_url_key = I18n.locale == :ja ? "AMAZON_JA_URL" : "AMAZON_EN_URL"
       "#{ENV.fetch(amazon_url_key)}/dp/#{asin}?tag=annict-22"
     end
