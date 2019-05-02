@@ -17,6 +17,7 @@
 #  created_at           :datetime         not null
 #  updated_at           :datetime         not null
 #  locale               :string           default("other"), not null
+#  image_data           :text
 #
 # Indexes
 #
@@ -25,6 +26,7 @@
 #
 
 class UserlandProject < ApplicationRecord
+  include UserlandProjectImageUploader::Attachment.new(:image)
   include LocaleDetectable
 
   has_attached_file :icon

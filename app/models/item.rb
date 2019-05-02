@@ -22,6 +22,7 @@
 #  created_at             :datetime         not null
 #  updated_at             :datetime         not null
 #  locale                 :string           default("other"), not null
+#  image_data             :text
 #
 # Indexes
 #
@@ -30,6 +31,7 @@
 #
 
 class Item < ApplicationRecord
+  include PvImageUploader::Attachment.new(:image)
   include AASM
   include LocaleDetectable
 
