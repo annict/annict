@@ -32,20 +32,11 @@ class Profile < ApplicationRecord
   include PvImageUploader::Attachment.new(:avatar)
   include PvImageUploader::Attachment.new(:background_image)
 
-  has_attached_file :tombo_avatar
-  has_attached_file :tombo_background_image
-
   belongs_to :user
 
   validates :description, length: { maximum: 150 }
   validates :name, presence: true
   validates :url, url: { allow_blank: true }
-  validates :tombo_avatar, attachment_content_type: {
-                             content_type: /\Aimage/
-                           }
-  validates :tombo_background_image, attachment_content_type: {
-                                       content_type: /\Aimage/
-                                     }
 
   before_save :check_animated_gif
 

@@ -26,11 +26,6 @@
 class WorkImage < ApplicationRecord
   include WorkImageUploader::Attachment.new(:file)
 
-  has_attached_file :attachment
-
-  validates :attachment,
-    attachment_presence: true,
-    attachment_content_type: { content_type: /\Aimage/ }
   validates :asin, asin: true
   validates_with AsinOrCopyrightValidator
 

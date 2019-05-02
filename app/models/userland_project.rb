@@ -29,8 +29,6 @@ class UserlandProject < ApplicationRecord
   include UserlandProjectImageUploader::Attachment.new(:image)
   include LocaleDetectable
 
-  has_attached_file :icon
-
   belongs_to :userland_category, counter_cache: true
   has_many :userland_project_members, dependent: :destroy
   has_many :users, through: :userland_project_members
@@ -38,8 +36,5 @@ class UserlandProject < ApplicationRecord
   validates :description, presence: true
   validates :name, presence: true, length: { maximum: 50 }
   validates :summary, presence: true, length: { maximum: 150 }
-  validates :icon,
-    attachment_content_type: { content_type: /\Aimage/ },
-    attachment_square: true
   validates :url, presence: true, url: true
 end

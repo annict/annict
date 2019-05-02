@@ -30,8 +30,6 @@ class Pv < ApplicationRecord
 
   DIFF_FIELDS = %i(title url sort_number).freeze
 
-  has_attached_file :thumbnail
-
   aasm do
     state :published, initial: true
     state :hidden
@@ -47,7 +45,6 @@ class Pv < ApplicationRecord
 
   validates :title, presence: true
   validates :url, url: true
-  validates :thumbnail, attachment_content_type: { content_type: /\Aimage/ }
 
   before_save :attach_thumbnail
 

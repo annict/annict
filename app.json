@@ -109,15 +109,6 @@
     "ANNICT_NEXT_SEASON": {
       "required": true
     },
-    "ANNICT_PAPERCLIP_PATH": {
-      "required": true
-    },
-    "ANNICT_PAPERCLIP_RANDOM_SECRET": {
-      "required": true
-    },
-    "ANNICT_PAPERCLIP_URL": {
-      "required": true
-    },
     "ANNICT_PREVIOUS_SEASON": {
       "required": true
     },
@@ -471,9 +462,6 @@
       "required": true
     },
     "MAINTENANCE_PAGE_URL": {
-      "required": true
-    },
-    "PAPERCLIP_PATH": {
       "required": true
     },
     "RAILS_ENV": {

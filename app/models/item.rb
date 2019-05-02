@@ -35,8 +35,6 @@ class Item < ApplicationRecord
   include AASM
   include LocaleDetectable
 
-  has_attached_file :thumbnail
-
   aasm do
     state :published, initial: true
     state :hidden
@@ -49,5 +47,4 @@ class Item < ApplicationRecord
   validates :title, presence: true
   validates :detail_page_url, presence: true
   validates :asin, presence: true
-  validates :thumbnail, attachment_content_type: { content_type: /\Aimage/ }
 end

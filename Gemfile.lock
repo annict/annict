@@ -365,12 +365,6 @@ GEM
       omniauth-oauth (~> 1.1)
       rack
     orm_adapter (0.5.0)
-    paperclip (6.1.0)
-      activemodel (>= 4.2.0)
-      activesupport (>= 4.2.0)
-      mime-types
-      mimemagic (~> 0.3.0)
-      terrapin (~> 0.6.0)
     parallel (1.17.0)
     parser (2.6.2.1)
       ast (~> 2.4.0)
@@ -654,7 +648,6 @@ DEPENDENCIES
   omniauth-facebook
   omniauth-gumroad
   omniauth-twitter
-  paperclip
   pg
   pry-rails
   puma
