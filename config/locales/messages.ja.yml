@@ -138,10 +138,6 @@ ja:
         tracked: 記録しました
       status_selector:
         select_status: ステータスを選択
-    character_images:
-      attach_image: 画像を選択...
-      deleted: 削除しました
-      saved: 保存しました
     multiple_records:
       create:
         saved: 記録しました
@@ -254,6 +250,7 @@ ja:
       new:
         write_your_comment: 見た感想を残しませんか？ (自由入力)
     work_images:
+      attach_image: 画像を選択...
       deleted: 削除しました
       saved: 保存しました
       index:

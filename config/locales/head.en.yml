@@ -79,8 +79,6 @@ en:
         characters:
           activities: Resource Activities - %{name}
           index: Characters
-        character_images:
-          show: Character Image - %{name}
         episodes:
           activities: Activities
           index: Episodes of %{work_title}

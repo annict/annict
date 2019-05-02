@@ -138,10 +138,6 @@ en:
         tracked: Tracked.
       status_selector:
         select_status: Select Status
-    character_images:
-      attach_image: Attach Image
-      deleted: Character image has been deleted.
-      saved: Character image has been saved.
     multiple_records:
       create:
         saved: Records have been saved.
@@ -255,6 +251,7 @@ en:
       new:
         write_your_comment: Write Your Comment! (optional)
     work_images:
+      attach_image: Attach Image
       deleted: Work image has been deleted.
       saved: Work image has been saved.
       index:
