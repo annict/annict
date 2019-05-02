@@ -32,6 +32,7 @@ class ImageUploaderBase < Shrine
     io.download do |original|
       versions[:master] = ImageProcessing::MiniMagick.
         source(original).
+        loader(page: 0). # For gif animation image
         convert(:jpg).
         saver(quality: 90).
         strip.
