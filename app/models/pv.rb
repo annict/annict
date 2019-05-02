@@ -72,6 +72,7 @@ class Pv < ApplicationRecord
 
   def attach_thumbnail
     return unless youtube?
+    return unless attribute_changed?(:url)
 
     image_url = ""
 
