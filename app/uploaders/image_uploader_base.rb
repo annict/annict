@@ -22,6 +22,11 @@ class ImageUploaderBase < Shrine
   end
 
   process(:store) do |io, _context|
+    unless io.original_filename
+      ext = MIME::Types[io.metadata["mime_type"]].first.extensions.first
+      io.data["metadata"]["filename"] = "#{io.hash}.#{ext}" if ext
+    end
+
     versions = { original: io }
 
     io.download do |original|
