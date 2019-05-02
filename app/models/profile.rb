@@ -19,7 +19,7 @@
 #  tombo_background_image_file_size    :integer
 #  tombo_background_image_updated_at   :datetime
 #  url                                 :string
-#  avatar_data                         :text
+#  image_data                          :text
 #  background_image_data               :text
 #
 # Indexes
@@ -29,7 +29,7 @@
 #
 
 class Profile < ApplicationRecord
-  include PvImageUploader::Attachment.new(:avatar)
+  include PvImageUploader::Attachment.new(:image)
   include PvImageUploader::Attachment.new(:background_image)
 
   belongs_to :user

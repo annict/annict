@@ -15,7 +15,7 @@
 #  created_at              :datetime         not null
 #  updated_at              :datetime         not null
 #  color_rgb               :string           default("255,255,255"), not null
-#  file_data               :text
+#  image_data              :text
 #
 # Indexes
 #
@@ -24,7 +24,7 @@
 #
 
 class WorkImage < ApplicationRecord
-  include WorkImageUploader::Attachment.new(:file)
+  include WorkImageUploader::Attachment.new(:image)
 
   validates :asin, asin: true
   validates_with AsinOrCopyrightValidator
@@ -38,7 +38,7 @@ class WorkImage < ApplicationRecord
   def colors
     return @colors if @colors.present?
 
-    colors = Miro::DominantColors.new(file_url(:master))
+    colors = Miro::DominantColors.new(image_url(:master))
     @colors = colors.to_rgb.map { |c| c.join(",") }
     @colors
   end
@@ -52,7 +52,7 @@ class WorkImage < ApplicationRecord
   private
 
   def set_color_rgb
-    colors = Miro::DominantColors.new(file_url(:master))
+    colors = Miro::DominantColors.new(image_url(:master))
     color_rgb = colors.to_rgb.map { |c| c.join(",") }.first
     update_column(:color_rgb, color_rgb)
   end

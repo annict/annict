@@ -730,7 +730,7 @@ ActiveRecord::Schema.define(version: 2019_05_01_175021) do
     t.integer "tombo_background_image_file_size"
     t.datetime "tombo_background_image_updated_at"
     t.string "url"
-    t.text "avatar_data"
+    t.text "image_data"
     t.text "background_image_data"
     t.index ["user_id"], name: "profiles_user_id_idx"
     t.index ["user_id"], name: "profiles_user_id_key", unique: true
@@ -1103,7 +1103,7 @@ ActiveRecord::Schema.define(version: 2019_05_01_175021) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.string "color_rgb", default: "255,255,255", null: false
-    t.text "file_data"
+    t.text "image_data"
     t.index ["user_id"], name: "index_work_images_on_user_id"
     t.index ["work_id"], name: "index_work_images_on_work_id"
   end
