@@ -20,10 +20,10 @@ namespace :tmp do
     errors = []
 
     [
-      { model: WorkImage, paperclip_field: :attachment, shrine_field: :file },
+      { model: WorkImage, paperclip_field: :attachment, shrine_field: :image },
       { model: UserlandProject, paperclip_field: :icon, shrine_field: :image },
       { model: Pv, paperclip_field: :thumbnail, shrine_field: :image },
-      { model: Profile, paperclip_field: :tombo_avatar, shrine_field: :avatar },
+      { model: Profile, paperclip_field: :tombo_avatar, shrine_field: :image },
       { model: Profile, paperclip_field: :tombo_background_image, shrine_field: :background_image },
       { model: Item, paperclip_field: :thumbnail, shrine_field: :image }
     ].each do |data|
