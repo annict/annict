@@ -221,7 +221,7 @@ GEM
       rails (>= 3.1.0)
     groupdate (4.1.1)
       activesupport (>= 4.2)
-    hashdiff (0.3.8)
+    hashdiff (0.3.9)
     hashie (3.6.0)
     heapy (0.1.4)
     highline (2.0.2)
