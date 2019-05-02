@@ -7,11 +7,9 @@ require_relative "boot"
   active_model/railtie
   active_job/railtie
   active_record/railtie
-  active_storage/engine
   action_controller/railtie
   action_mailer/railtie
   action_view/railtie
-  action_cable/engine
   sprockets/railtie
 ).each do |railtie|
   require railtie

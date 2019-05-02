@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_04_13_221017) do
+ActiveRecord::Schema.define(version: 2019_05_01_175021) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_stat_statements"
@@ -538,6 +538,7 @@ ActiveRecord::Schema.define(version: 2019_04_13_221017) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.string "locale", default: "other", null: false
+    t.text "image_data"
     t.index ["asin"], name: "index_items_on_asin", unique: true
     t.index ["locale"], name: "index_items_on_locale"
   end
@@ -729,6 +730,8 @@ ActiveRecord::Schema.define(version: 2019_04_13_221017) do
     t.integer "tombo_background_image_file_size"
     t.datetime "tombo_background_image_updated_at"
     t.string "url"
+    t.text "image_data"
+    t.text "background_image_data"
     t.index ["user_id"], name: "profiles_user_id_idx"
     t.index ["user_id"], name: "profiles_user_id_key", unique: true
   end
@@ -801,6 +804,7 @@ ActiveRecord::Schema.define(version: 2019_04_13_221017) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.string "title_en", default: "", null: false
+    t.text "image_data"
     t.index ["work_id"], name: "index_pvs_on_work_id"
   end
 
@@ -1007,6 +1011,7 @@ ActiveRecord::Schema.define(version: 2019_04_13_221017) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.string "locale", default: "other", null: false
+    t.text "image_data"
     t.index ["locale"], name: "index_userland_projects_on_locale"
     t.index ["userland_category_id"], name: "index_userland_projects_on_userland_category_id"
   end
@@ -1098,6 +1103,7 @@ ActiveRecord::Schema.define(version: 2019_04_13_221017) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.string "color_rgb", default: "255,255,255", null: false
+    t.text "image_data"
     t.index ["user_id"], name: "index_work_images_on_user_id"
     t.index ["work_id"], name: "index_work_images_on_work_id"
   end

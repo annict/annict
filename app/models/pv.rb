@@ -16,6 +16,7 @@
 #  created_at             :datetime         not null
 #  updated_at             :datetime         not null
 #  title_en               :string           default(""), not null
+#  image_data             :text
 #
 # Indexes
 #
@@ -23,6 +24,7 @@
 #
 
 class Pv < ApplicationRecord
+  include PvImageUploader::Attachment.new(:image)
   include AASM
   include DbActivityMethods
 
@@ -72,6 +74,7 @@ class Pv < ApplicationRecord
 
   def attach_thumbnail
     return unless youtube?
+    return unless attribute_changed?(:url)
 
     image_url = ""
 
