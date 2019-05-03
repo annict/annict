@@ -29,8 +29,8 @@
 #
 
 class Profile < ApplicationRecord
-  include PvImageUploader::Attachment.new(:image)
-  include PvImageUploader::Attachment.new(:background_image)
+  include ProfileImageUploader::Attachment.new(:image)
+  include ProfileImageUploader::Attachment.new(:background_image)
 
   belongs_to :user
 
