@@ -31,7 +31,7 @@
 #
 
 class Item < ApplicationRecord
-  include PvImageUploader::Attachment.new(:image)
+  include ItemImageUploader::Attachment.new(:image)
   include AASM
   include LocaleDetectable
 
