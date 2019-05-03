@@ -2,7 +2,7 @@
   <mj-column width="180px" padding-top="0px">
     <mj-image width="180px"
               padding-right="0"
-              src="<%= ann_email_image_url(work.work_image, :attachment, size: "240x240") %>"
+              src="<%= ann_email_image_url(work.work_image, :image, size: "240x240") %>"
               align="center"
               href="<%= work_url(work, utm_source: 'email_notification', utm_campaign: utm_campaign, utm_medium: 'email', domain: local_domain) %>"></mj-image>
     <mj-button href="<%= work_url(id: work.id, utm_source: 'email_notification', utm_campaign: utm_campaign, utm_medium: 'email', domain: local_domain) %>"

@@ -21,7 +21,7 @@ h2.h4.font-weight-bold.text-center.my-4
             .row
               .col.col-auto.pr-0
                 = link_to work_path(record.work) do
-                  = ann_image_tag record.work.work_image, :attachment, size: "70x93", class: "img-fluid img-thumbnail rounded"
+                  = ann_image_tag record.work.work_image, :image, size: "70x93", class: "img-fluid img-thumbnail rounded"
               .col
                 .h4
                   = link_to record.work.local_title, work_path(record.work), class: "u-text-body"

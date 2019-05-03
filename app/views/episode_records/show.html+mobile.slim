@@ -1,7 +1,7 @@
 - title = t "head.title.episode_records.show", profile_name: @user.profile.name, username: @user.username, work_title: @work.local_title, episode_title_with_number: @episode.title_with_number
 - description = meta_description(t("head.meta.description.records.show", profile_name: @user.profile.name, username: @user.username, work_title: @work.local_title, episode_title_with_number: @episode.title_with_number))
 - keywords = meta_keywords(@work.local_title)
-- image_url = ann_image_url(@work.work_image, :attachment, size: "640x")
+- image_url = ann_image_url(@work.work_image, :image, size: "640x")
 - set_meta_tags(title: title, description: description, keywords: keywords, og: { description: description, image: image_url }, twitter: { description: description, image: image_url }, reverse: true, prefix: false)
 - breadcrumb :episode_record_detail, @episode_record
 
@@ -14,7 +14,7 @@
     .row
       .col-3.pr-0
         = link_to work_path(@work) do
-          = image_tag ann_image_url(@work.work_image, :attachment, size: "280x373"), class: "img-fluid img-thumbnail rounded"
+          = image_tag ann_image_url(@work.work_image, :image, size: "280x373"), class: "img-fluid img-thumbnail rounded"
         - if @work.work_image.present?
           .u-very-small.mt-1
             = @work.work_image.asin_or_copyright_text

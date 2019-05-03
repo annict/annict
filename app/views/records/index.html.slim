@@ -18,7 +18,7 @@
             .col-3.pr-0
               .mb-2
                 = link_to work_path(record.work) do
-                  = ann_image_tag record.work.work_image, :attachment, size: "265x331", class: "img-fluid img-thumbnail rounded"
+                  = ann_image_tag record.work.work_image, :image, size: "265x331", class: "img-fluid img-thumbnail rounded"
                 - if record.work.work_image.present?
                   .u-very-small.text-right
                     = record.work.work_image.asin_or_copyright_text
