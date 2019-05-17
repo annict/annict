@@ -46,17 +46,24 @@ module Mutations
         share_review_to_facebook: :share_facebook == true
       }
 
+      service = work_record_service(review)
+      service.save!
+
+      {
+        review: service.work_record
+      }
+    end
+
+    private
+
+    def work_record_service(review)
       service = NewWorkRecordService.new(context[:viewer], review, context[:viewer].setting)
       service.via = "graphql_api"
       service.app = context[:doorkeeper_token].application
       service.ga_client = context[:ga_client]
       service.keen_client = context[:keen_client]
 
-      service.save!
-
-      {
-        review: service.work_record
-      }
+      service
     end
   end
 end
