@@ -34,9 +34,11 @@ module Mutations
         r.work = work
         r.title = title
         r.body = body
-        WorkRecord::STATES.each do |state|
-          r.send("#{state}=".to_sym, inputs[state.to_s.camelcase(:lower).to_sym]&.downcase)
-        end
+        r.rating_overall_state = rating_overall_state
+        r.rating_animation_state = rating_animation_state
+        r.rating_music_state = rating_music_state
+        r.rating_story_state = rating_story_state
+        r.rating_character_state = rating_character_state
         r.oauth_application = context[:doorkeeper_token].application
       end
       context[:viewer].setting.attributes = {
@@ -44,17 +46,24 @@ module Mutations
         share_review_to_facebook: :share_facebook == true
       }
 
+      service = work_record_service(review)
+      service.save!
+
+      {
+        review: service.work_record
+      }
+    end
+
+    private
+
+    def work_record_service(review)
       service = NewWorkRecordService.new(context[:viewer], review, context[:viewer].setting)
       service.via = "graphql_api"
       service.app = context[:doorkeeper_token].application
       service.ga_client = context[:ga_client]
       service.keen_client = context[:keen_client]
 
-      service.save!
-
-      {
-        review: service.work_record
-      }
+      service
     end
   end
 end
