@@ -129,7 +129,7 @@ GEM
     coercible (1.0.0)
       descendants_tracker (~> 0.0.1)
     color (1.8)
-    commonmarker (0.20.0)
+    commonmarker (0.20.1)
       ruby-enum (~> 0.5)
     concurrent-ruby (1.1.5)
     content_disposition (1.0.0)
@@ -171,7 +171,7 @@ GEM
     dotenv-rails (2.7.2)
       dotenv (= 2.7.2)
       railties (>= 3.2, < 6.1)
-    down (4.8.0)
+    down (4.8.1)
       addressable (~> 2.5)
     email_validator (2.0.1)
       activemodel
@@ -366,7 +366,7 @@ GEM
       rack
     orm_adapter (0.5.0)
     parallel (1.17.0)
-    parser (2.6.2.1)
+    parser (2.6.3.0)
       ast (~> 2.4.0)
     pg (1.1.4)
     promise.rb (0.7.4)
@@ -375,7 +375,9 @@ GEM
       method_source (~> 0.9.0)
     pry-rails (0.3.9)
       pry (>= 0.10.4)
-    psych (3.1.0)
+    pry-remote (0.1.8)
+      pry (~> 0.9)
+      slop (~> 3.0)
     public_suffix (3.0.3)
     puma (3.12.1)
     puma_worker_killer (0.1.0)
@@ -456,14 +458,13 @@ GEM
     rspec-support (3.8.0)
     rspec_junit_formatter (0.4.1)
       rspec-core (>= 2, < 4, != 2.12.0)
-    rubocop (0.67.2)
+    rubocop (0.69.0)
       jaro_winkler (~> 1.5.1)
       parallel (~> 1.10)
-      parser (>= 2.5, != 2.5.1.1)
-      psych (>= 3.1.0)
+      parser (>= 2.6)
       rainbow (>= 2.2.2, < 4.0)
       ruby-progressbar (~> 1.7)
-      unicode-display_width (>= 1.4.0, < 1.6)
+      unicode-display_width (>= 1.4.0, < 1.7)
     ruby-enum (0.7.2)
       i18n
     ruby-hmac (0.4.0)
@@ -482,7 +483,7 @@ GEM
     scss_lint (0.57.1)
       rake (>= 0.9, < 13)
       sass (~> 3.5, >= 3.5.5)
-    selenium-webdriver (3.141.5926)
+    selenium-webdriver (3.142.2)
       childprocess (>= 0.5, < 2.0)
       rubyzip (~> 1.2, >= 1.2.2)
     sentry-raven (2.9.0)
@@ -501,6 +502,7 @@ GEM
     slim (4.0.1)
       temple (>= 0.7.6, < 0.9)
       tilt (>= 2.0.6, < 2.1)
+    slop (3.6.0)
     solargraph (0.32.1)
       backport (~> 1.0)
       bundler (>= 1.17.2)
@@ -557,7 +559,7 @@ GEM
     unf (0.1.4)
       unf_ext
     unf_ext (0.0.7.6)
-    unicode-display_width (1.5.0)
+    unicode-display_width (1.6.0)
     uniform_notifier (1.12.1)
     validate_url (1.0.8)
       activemodel (>= 3.0.0)
@@ -650,6 +652,7 @@ DEPENDENCIES
   omniauth-twitter
   pg
   pry-rails
+  pry-remote
   puma
   puma_worker_killer
   pundit
