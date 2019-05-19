@@ -69,7 +69,7 @@ module Types
       end
 
       def avatar_url
-        ann_api_assets_url(object.profile, :tombo_avatar)
+        ann_api_assets_url(object.profile, :image)
       end
 
       def background_image_url

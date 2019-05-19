@@ -8,7 +8,7 @@
   <% @friend_users.each do |friend_user| %>
     <mj-section border="1px solid rgba(0, 0, 0, .08)" padding="10px 20px">
       <mj-column>
-        <mj-image padding-bottom="7px" src="<%= ann_email_image_url(friend_user.profile, :tombo_avatar, size: "140x140") %>" align="center" width="70px" border-radius="50%" href="<%= user_url(friend_user.username, utm_source: 'email_notification', utm_campaign: 'friends_joined', utm_medium: 'email', domain: local_domain) %>"></mj-image>
+        <mj-image padding-bottom="7px" src="<%= ann_email_image_url(friend_user.profile, :image, size: "140x140") %>" align="center" width="70px" border-radius="50%" href="<%= user_url(friend_user.username, utm_source: 'email_notification', utm_campaign: 'friends_joined', utm_medium: 'email', domain: local_domain) %>"></mj-image>
         <mj-text align="center" font-size="24px" font-weight="600" padding-bottom="3px"><%= "#{friend_user.profile.name}" %></mj-text>
         <mj-text align="center" padding-bottom="7px" padding-top="0"><%= "@#{friend_user.username}" %></mj-text>
         <% if friend_user.profile.description.present? %>

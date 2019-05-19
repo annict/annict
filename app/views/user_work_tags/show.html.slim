@@ -50,7 +50,7 @@
           .row.align-items-center
             .col.col-auto
               = link_to user_path(username: @user.username) do
-                = ann_image_tag(@user.profile, :tombo_avatar, size: "65x65", class: "img-thumbnail rounded-circle")
+                = ann_image_tag(@user.profile, :image, size: "65x65", class: "img-thumbnail rounded-circle")
             .col.pl-0
               .text-left
                 = link_to @user.profile.name, user_path(username: @user.username), class: "mr-1"

@@ -46,7 +46,7 @@ h1.h2.font-weight-bold
       - @favorite_orgs.each do |favorite_org|
         .col.col-auto.pl-0.pr-2.pb-2
           = link_to user_path(favorite_org.user.username) do
-            = ann_image_tag(favorite_org.user.profile, :tombo_avatar, size: "30x30", class: "rounded-circle", alt: favorite_org.user.name_with_username, title: favorite_org.user.name_with_username)
+            = ann_image_tag(favorite_org.user.profile, :image, size: "30x30", class: "rounded-circle", alt: favorite_org.user.name_with_username, title: favorite_org.user.name_with_username)
 
     - if @favorite_orgs.length > 30
       .text-right

@@ -7,7 +7,7 @@ json = {
    username: activity.user.username
   },
   profile: {
-   avatar_url: ann_image_url(activity.user.profile, :tombo_avatar, size: "60x60"),
+   avatar_url: ann_image_url(activity.user.profile, :image, size: "60x60"),
    name: activity.user.profile.name
   },
   viewer: {
