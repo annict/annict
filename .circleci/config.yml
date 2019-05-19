@@ -39,8 +39,8 @@ jobs:
       # Restore bundler cache
       - restore_cache:
           keys:
-            - annict-bundler-{{ checksum "Gemfile.lock" }}
-            - annict-bundler-
+            - v1-annict-bundler-{{ checksum "Gemfile.lock" }}
+            - v1-annict-bundler-
 
       - run:
           name: Bundle Install
@@ -48,15 +48,15 @@ jobs:
 
       # Store bundler cache
       - save_cache:
-          key: annict-bundler-{{ checksum "Gemfile.lock" }}
+          key: v1-annict-bundler-{{ checksum "Gemfile.lock" }}
           paths:
             - vendor/bundle
 
       # Restore yarn cache
       - restore_cache:
           keys:
-            - annict-yarn-{{ checksum "yarn.lock" }}
-            - annict-yarn-
+            - v1-annict-yarn-{{ checksum "yarn.lock" }}
+            - v1-annict-yarn-
 
       - run:
           name: Yarn Install
@@ -64,7 +64,7 @@ jobs:
 
       # Store yarn cache
       - save_cache:
-          key: annict-yarn-{{ checksum "yarn.lock" }}
+          key: v1-annict-yarn-{{ checksum "yarn.lock" }}
           paths:
             - ~/.cache/yarn
 
