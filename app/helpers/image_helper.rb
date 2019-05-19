@@ -45,13 +45,12 @@ module ImageHelper
   end
 
   def profile_background_image_url(profile, options)
-    background_image = profile.tombo_background_image
-    field = background_image.present? ? :tombo_background_image : :tombo_avatar
+    background_image = profile.background_image[:master]
+    field = background_image.present? ? :background_image : :image
     image = profile.send(field)
 
     if background_image.present? && profile.background_image_animated?
-      path = image.path(:original).sub(%r{\A.*paperclip/}, "paperclip/")
-      return "#{ENV.fetch('ANNICT_FILE_STORAGE_URL')}/#{path}"
+      return "#{ENV.fetch('ANNICT_FILE_STORAGE_URL')}/shrine/#{image[:original].id}"
     end
 
     ann_image_url(profile, field, options)
@@ -62,17 +61,16 @@ module ImageHelper
     "#{ENV.fetch('ANNICT_API_ASSETS_URL')}/#{path}"
   end
 
-  def ann_api_assets_background_image_url(record, field)
-    background_image = record&.send(field)
-    field = background_image.present? ? :tombo_background_image : :tombo_avatar
-    image = record&.send(field)
+  def ann_api_assets_background_image_url(profile)
+    background_image = profile.background_image[:master]
+    field = background_image.present? ? :background_image : :image
+    image = profile.send(field)
 
     if background_image.present? && record.background_image_animated?
-      path = image.path(:original).sub(%r{\A.*paperclip/}, "paperclip/")
-      return "#{ENV.fetch('ANNICT_API_ASSETS_URL')}/#{path}"
+      return "#{ENV.fetch('ANNICT_API_ASSETS_URL')}/shrine/#{image[:original].id}"
     end
 
-    ann_api_assets_url(record, field)
+    ann_api_assets_url(profile, field)
   end
 
   private
