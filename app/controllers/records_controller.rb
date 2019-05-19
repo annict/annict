@@ -27,6 +27,8 @@ class RecordsController < ApplicationController
         episode_records: EpisodeRecord.where(id: @record.episode_record),
         user: current_user
       ).first
+      raise ActiveRecord::RecordNotFound unless @episode_record
+
       @work = @episode_record.work
       @episode = @episode_record.episode
       @comments = @episode_record.comments.order(created_at: :desc)
@@ -39,6 +41,8 @@ class RecordsController < ApplicationController
         work_records: WorkRecord.where(id: @record.work_record),
         user: current_user
       ).first
+      raise ActiveRecord::RecordNotFound unless @work_record
+
       @work = @work_record.work
       @is_spoiler = user_signed_in? && current_user.hide_work_record_body?(@work)
       @work_records = UserWorkRecordsQuery.new.call(
