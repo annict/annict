@@ -50,7 +50,7 @@ class UsersController < ApplicationController
       user: current_user,
       page: 1
     )
-    works = Work.published.where(id: activities.pluck(:work_id))
+    works = Work.published.where(id: activities.all.map(&:work_id))
 
     activity_data = render_jb("api/internal/activities/index",
       user: user_signed_in? ? current_user : nil,
