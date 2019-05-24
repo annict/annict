@@ -28,14 +28,16 @@ describe "GraphQL API Query" do
       end
 
       it "shows episode" do
-        expect(result.dig("data", "searchEpisodes", "edges")).to match_array([
-          {
-            "node" => {
-              "annictId" => episode1.id,
-              "title" => episode1.title
+        expect(result.dig("data", "searchEpisodes", "edges")).to match_array(
+          [
+            {
+              "node" => {
+                "annictId" => episode1.id,
+                "title" => episode1.title
+              }
             }
-          }
-        ])
+          ]
+        )
       end
     end
 
@@ -61,29 +63,31 @@ describe "GraphQL API Query" do
       end
 
       it "shows ordered episodes" do
-        expect(result.dig("data", "searchEpisodes", "edges")).to match_array([
-          {
-            "node" => {
-              "annictId" => episode2.id,
-              "title" => episode2.title,
-              "sortNumber" => 3
+        expect(result.dig("data", "searchEpisodes", "edges")).to match_array(
+          [
+            {
+              "node" => {
+                "annictId" => episode2.id,
+                "title" => episode2.title,
+                "sortNumber" => 3
+              }
+            },
+            {
+              "node" => {
+                "annictId" => episode3.id,
+                "title" => episode3.title,
+                "sortNumber" => 2
+              }
+            },
+            {
+              "node" => {
+                "annictId" => episode1.id,
+                "title" => episode1.title,
+                "sortNumber" => 1
+              }
             }
-          },
-          {
-            "node" => {
-              "annictId" => episode3.id,
-              "title" => episode3.title,
-              "sortNumber" => 2
-            }
-          },
-          {
-            "node" => {
-              "annictId" => episode1.id,
-              "title" => episode1.title,
-              "sortNumber" => 1
-            }
-          }
-        ])
+          ]
+        )
       end
     end
 
@@ -116,23 +120,25 @@ describe "GraphQL API Query" do
       end
 
       it "shows records" do
-        expect(result.dig("data", "searchEpisodes", "edges")).to match_array([
-          {
-            "node" => {
-              "annictId" => episode1.id,
-              "records" => {
-                "edges" => [
-                  {
-                    "node" => {
-                      "annictId" => record.id,
-                      "comment" => record.comment
+        expect(result.dig("data", "searchEpisodes", "edges")).to match_array(
+          [
+            {
+              "node" => {
+                "annictId" => episode1.id,
+                "records" => {
+                  "edges" => [
+                    {
+                      "node" => {
+                        "annictId" => record.id,
+                        "comment" => record.comment
+                      }
                     }
-                  }
-                ]
+                  ]
+                }
               }
             }
-          }
-        ])
+          ]
+        )
       end
     end
   end
