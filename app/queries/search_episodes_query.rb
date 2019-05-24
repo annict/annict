@@ -20,12 +20,7 @@ class SearchEpisodesQuery
   private
 
   def from_arguments
-    %i(
-      annict_ids
-    ).each do |arg_name|
-      next if @args[arg_name].nil?
-      @collection = send(arg_name)
-    end
+    apply_filters
 
     if @args[:order_by].present?
       direction = @args[:order_by][:direction]
@@ -39,6 +34,15 @@ class SearchEpisodesQuery
     end
 
     @collection
+  end
+
+  def apply_filters
+    %i(
+      annict_ids
+    ).each do |arg_name|
+      next if @args[arg_name].nil?
+      @collection = send(arg_name)
+    end
   end
 
   def annict_ids
