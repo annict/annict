@@ -50,8 +50,8 @@ module ImageHelper
   end
 
   def profile_background_image_url(profile, options)
-    background_image = profile.background_image[:master]
-    field = background_image.present? ? :background_image : :image
+    background_image = profile.background_image
+    field = background_image ? :background_image : :image
     image = profile.send(field)
 
     if background_image.present? && profile.background_image_animated?
@@ -67,8 +67,8 @@ module ImageHelper
   end
 
   def ann_api_assets_background_image_url(profile)
-    background_image = profile.background_image[:master]
-    field = background_image.present? ? :background_image : :image
+    background_image = profile.background_image
+    field = background_image ? :background_image : :image
     image = profile.send(field)
 
     if background_image.present? && record.background_image_animated?
