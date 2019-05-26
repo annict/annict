@@ -1,7 +1,7 @@
 .row
   .col-4
     = link_to item.detail_page_url, target: "_blank" do
-      = ann_image_tag item, :thumbnail, size: "280x373", class: "img-fluid img-thumbnail rounded"
+      = ann_image_tag item, :image, size: "280x373", class: "img-fluid img-thumbnail rounded"
   .col-8
     = link_to item.title, item.detail_page_url, target: "_blank"
     - if item.manufacturer.present?

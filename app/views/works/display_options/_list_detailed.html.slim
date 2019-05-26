@@ -39,11 +39,11 @@
           - pvs.each do |pv|
             .col-4.text-center.mb-3
               - if pv.youtube?
-                c-youtube-modal-player thumbnail-url="#{ann_image_url(pv, :thumbnail, size: "255x144")}" video-id="#{pv.youtube_video_id}" video-title="#{locale_ja? ? pv.title : pv.title_en}" annict-url="#{ENV.fetch('ANNICT_URL')}"
+                c-youtube-modal-player thumbnail-url="#{ann_image_url(pv, :image, size: "255x144")}" video-id="#{pv.youtube_video_id}" video-title="#{locale_ja? ? pv.title : pv.title_en}" annict-url="#{ENV.fetch('ANNICT_URL')}"
               - else
                 = link_to pv.url, target: "_blank" do
                   .c-video-thumbnail
-                    = ann_image_tag pv, :thumbnail, size: "255x144", class: "img-fluid rounded img-thumbnail"
+                    = ann_image_tag pv, :image, size: "255x144", class: "img-fluid rounded img-thumbnail"
                     = icon "play-circle", "far"
                   - if locale_ja? || pv.title_en.present?
                     .small

@@ -40,11 +40,11 @@
           - pvs.each do |pv|
             .col-6.text-center.mb-3
               - if pv.youtube?
-                c-youtube-modal-player thumbnail-url="#{ann_image_url(pv, :thumbnail, size: "300x169")}" video-id="#{pv.youtube_video_id}" video-title="#{locale_ja? ? pv.title : pv.title_en}" annict-url="#{ENV.fetch('ANNICT_URL')}" :width="320" :height="180" :is-auto-play="false"
+                c-youtube-modal-player thumbnail-url="#{ann_image_url(pv, :image, size: "300x169")}" video-id="#{pv.youtube_video_id}" video-title="#{locale_ja? ? pv.title : pv.title_en}" annict-url="#{ENV.fetch('ANNICT_URL')}" :width="320" :height="180" :is-auto-play="false"
               - else
                 = link_to pv.url, target: "_blank" do
                   .c-video-thumbnail
-                    = ann_image_tag pv, :thumbnail, size: "300x169", class: "img-fluid rounded img-thumbnail"
+                    = ann_image_tag pv, :image, size: "300x169", class: "img-fluid rounded img-thumbnail"
                     = icon "play-circle", "far"
                   .small
                     = pv.title
