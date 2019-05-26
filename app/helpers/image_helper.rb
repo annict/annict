@@ -1,8 +1,10 @@
 # frozen_string_literal: true
 
 module ImageHelper
-  def ann_image_url(record, field, options = {}, size:)
+  def ann_image_url(record, field, options = {})
     path = image_path(record, field)
+    size = options[:size]
+    ratio = options[:ratio].presence || "1:1"
 
     width, height = size.split("x").map do |s|
       s.present? ? (s.to_i * (options[:size_rate].presence || 1)) : nil
@@ -17,6 +19,10 @@ module ImageHelper
     end
 
     unless height
+      ix_options[:h] = (width * ratio.split(":")[1].to_i) / ratio.split(":")[0].to_i
+    end
+
+    if record.nil? || (record.instance_of?(WorkImage) && ratio == "3:4")
       ix_options[:fit] = "fillmax"
       ix_options[:fill] = "blur"
     end
