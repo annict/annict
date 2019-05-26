@@ -20,10 +20,12 @@
         = f.text_field :url, class: "form-control"
       .form-group
         = f.label :avatar
-        = f.file_field :tombo_avatar, class: "form-control-file"
+        = f.hidden_field :image, value: f.object.cached_image_data
+        = f.file_field :image, class: "form-control-file"
       .form-group
         = f.label :background_image
-        = f.file_field :tombo_background_image, class: "form-control-file"
+        = f.hidden_field :background_image, value: f.object.cached_background_image_data
+        = f.file_field :background_image, class: "form-control-file"
       .form-submit.text-center
         = f.submit class: "btn btn-primary"
 

@@ -40,6 +40,6 @@ class ProfilesController < ApplicationController
   private
 
   def profile_params
-    params.require(:profile).permit(:tombo_avatar, :tombo_background_image, :description, :name, :url)
+    params.require(:profile).permit(:image, :background_image, :description, :name, :url)
   end
 end

@@ -49,9 +49,8 @@ class Profile < ApplicationRecord
   private
 
   def check_animated_gif
-    if tombo_background_image_updated_at_changed?
-      file_path = Paperclip.io_adapters.for(tombo_background_image).path
-      image = MiniMagick::Image.open(file_path)
+    if background_image_data_changed?
+      image = MiniMagick::Image.open(uploaded_file(:background_image, size: :original).url)
       self.background_image_animated = (image.frames.length > 1)
     end
 
