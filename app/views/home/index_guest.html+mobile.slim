@@ -3,7 +3,7 @@
 
 
 .p-top-hero
-  .p-top-hero__bg-image style="background-image: url(#{ann_image_url(@cover_image_work.work_image, :image, size: '640x', ratio: "4:3", blur: 200)});"
+  .p-top-hero__bg-image style="background-image: url(#{ann_image_url(@cover_image_work.work_image, :image, size: '640x', ratio: "4:3", blur: 40)});"
   .p-top-hero__content.text-center.p-3
     = image_tag asset_bundle_path("images/logos/color-white.png"), size: "40x48", alt: "Annict"
     h1.mb-3 = t("messages.home.index_guest.hero_title_mobile_html")

@@ -27,6 +27,10 @@ module ImageHelper
       ix_options[:fill] = "blur"
     end
 
+    if options[:blur]
+      ix_options[:blur] = options[:blur]
+    end
+
     ix_image_url(path, ix_options)
   end
 
