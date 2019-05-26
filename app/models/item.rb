@@ -34,6 +34,7 @@ class Item < ApplicationRecord
   include ItemImageUploader::Attachment.new(:image)
   include AASM
   include LocaleDetectable
+  include ImageUploadable
 
   aasm do
     state :published, initial: true

@@ -27,6 +27,7 @@ class Pv < ApplicationRecord
   include PvImageUploader::Attachment.new(:image)
   include AASM
   include DbActivityMethods
+  include ImageUploadable
 
   DIFF_FIELDS = %i(title url sort_number).freeze
 

@@ -31,6 +31,7 @@
 class Profile < ApplicationRecord
   include ProfileImageUploader::Attachment.new(:image)
   include ProfileImageUploader::Attachment.new(:background_image)
+  include ImageUploadable
 
   belongs_to :user
 
