@@ -18,6 +18,11 @@ module Types
         argument :order_by, Types::InputObjects::WorkOrder, required: false
       end
 
+      field :search_episodes, Types::Objects::EpisodeType.connection_type, null: true do
+        argument :annict_ids, [Integer], required: false
+        argument :order_by, Types::InputObjects::EpisodeOrder, required: false
+      end
+
       field :search_people, Types::Objects::PersonType.connection_type, null: true do
         argument :annict_ids, [Integer], required: false
         argument :names, [String], required: false
@@ -49,6 +54,13 @@ module Types
           annict_ids: annict_ids,
           seasons: seasons,
           titles: titles,
+          order_by: order_by
+        ).call
+      end
+
+      def search_episodes(annict_ids: nil, order_by: nil)
+        SearchEpisodesQuery.new(
+          annict_ids: annict_ids,
           order_by: order_by
         ).call
       end

@@ -11,7 +11,7 @@ class ActivitiesController < ApplicationController
       user: current_user,
       page: 1
     )
-    works = Work.where(id: activities.pluck(:work_id))
+    works = Work.where(id: activities.all.map(&:work_id))
 
     activity_data = render_jb("api/internal/activities/index",
       user: current_user,

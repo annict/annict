@@ -1,9 +1,14 @@
 # frozen_string_literal: true
 
 class SearchEpisodesQuery
-  def initialize(collection = Episode.all, order_by: nil)
+  def initialize(
+    collection = Episode.all,
+    annict_ids: nil,
+    order_by: nil
+  )
     @collection = collection.published
     @args = {
+      annict_ids: annict_ids,
       order_by: order_by
     }
   end
@@ -15,6 +20,8 @@ class SearchEpisodesQuery
   private
 
   def from_arguments
+    apply_filters
+
     if @args[:order_by].present?
       direction = @args[:order_by][:direction]
 
@@ -27,5 +34,18 @@ class SearchEpisodesQuery
     end
 
     @collection
+  end
+
+  def apply_filters
+    %i(
+      annict_ids
+    ).each do |arg_name|
+      next if @args[arg_name].nil?
+      @collection = send(arg_name)
+    end
+  end
+
+  def annict_ids
+    @collection.where(id: @args[:annict_ids])
   end
 end

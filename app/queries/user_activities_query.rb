@@ -33,7 +33,7 @@ class UserActivitiesQuery
       ).
       joins(:work).
       merge(Work.published).
-      select(selects.join(", ")).
+      select("distinct on (activities.id) " + selects.join(", ")).
       page(page)
   end
 
