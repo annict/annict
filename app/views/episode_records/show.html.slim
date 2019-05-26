@@ -61,7 +61,7 @@
       .col-3
         .mb-2
           = link_to work_path(@work) do
-            = ann_image_tag @work.work_image, :image, size: "280x373", class: "img-fluid img-thumbnail rounded"
+            = ann_image_tag @work.work_image, :image, size: "280x", class: "img-fluid img-thumbnail rounded"
           - if @work.work_image.present?
             .u-very-small.text-right
               = @work.work_image.asin_or_copyright_text

@@ -9,7 +9,7 @@
           .row
             .col-5
               = link_to work_path(work) do
-                = ann_image_tag work.work_image, :image, size: "140x140", class: "img-fluid rounded"
+                = ann_image_tag work.work_image, :image, size: "140x", class: "img-fluid rounded"
             .col-7.pl-0
               = link_to work.local_title, work_path(work), title: work.local_title, class: "d-inline-block"
               - if user_signed_in? && current_user.id == user.id

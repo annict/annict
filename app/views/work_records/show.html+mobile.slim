@@ -26,7 +26,7 @@
         .row.py-3.u-underline
           .col.col-auto.pr-0
             = link_to work_path(work_record.work) do
-              = ann_image_tag work_record.work.work_image, :image, size: "70x93", class: "img-fluid img-thumbnail rounded"
+              = ann_image_tag work_record.work.work_image, :image, size: "70x", class: "img-fluid img-thumbnail rounded"
           .col
             .small.text-muted.mb-1
               = link_to work_record.work.local_title, work_path(work_record.work), class: "u-text-body"

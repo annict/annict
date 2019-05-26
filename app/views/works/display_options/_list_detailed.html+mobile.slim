@@ -7,7 +7,7 @@
       .row.mb-3
         .col-4.pr-0
           = link_to work_path(work), class: "d-inline-block" do
-            = ann_image_tag(work.work_image, :image, size: "250x250", alt: work.local_title, class: "rounded img-thumbnail")
+            = ann_image_tag(work.work_image, :image, size: "250x", alt: work.local_title, class: "rounded img-thumbnail")
           - if work.work_image.present?
             .u-very-small.text-right
               = work.work_image.asin_or_copyright_text

@@ -19,7 +19,7 @@ json[:programs] = Rails.cache.fetch [I18n.locale, @programs] do
         work: {
           id: program.work.id,
           title: program.episode.work.title,
-          image_url: ann_image_url(program.work.work_image, :image, size: "48x48")
+          image_url: ann_image_url(program.work.work_image, :image, size: "48x")
         }
       }
     end
