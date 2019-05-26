@@ -79,7 +79,7 @@ module ImageHelper
     path = if Rails.env.test?
       record&.send(field)&.url(:master)
     else
-      id = record&.send(field)&.fetch(:master, nil)&.id
+      id = record&.uploaded_file(field)&.id
       id ? "shrine/#{id}" : ""
     end
 
