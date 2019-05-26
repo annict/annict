@@ -1,7 +1,7 @@
 - title = t "head.title.work_records.show", profile_name: @user.profile.name, username: @user.username, work_title: @work.local_title
 - description = meta_description t("head.meta.description.work_records.show", profile_name: @user.profile.name, username: @user.username, work_title: @work.local_title)
 - keywords = meta_keywords(@work.local_title)
-- image_url = ann_image_url(@work.work_image, :image, size: "640x")
+- image_url = ann_image_url(@work.work_image, :image, size: "640x", ratio: "3:4")
 - set_meta_tags(title: title, description: description, keywords: keywords, og: { description: description, image: image_url }, twitter: { description: description, image: image_url }, reverse: true, prefix: false)
 
 - breadcrumb :work_record_detail, @work_record
@@ -26,7 +26,7 @@
         .row.py-3.u-underline
           .col.col-auto.pr-0
             = link_to work_path(work_record.work) do
-              = ann_image_tag work_record.work.work_image, :image, size: "70x", class: "img-fluid img-thumbnail rounded"
+              = ann_image_tag work_record.work.work_image, :image, size: "70x", ratio: "3:4", class: "img-fluid img-thumbnail rounded"
           .col
             .small.text-muted.mb-1
               = link_to work_record.work.local_title, work_path(work_record.work), class: "u-text-body"

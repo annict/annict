@@ -8,7 +8,7 @@
           = link_to work_path(work) do
             .c-hover-image
               .c-hover-image__image
-                = ann_image_tag(work.work_image, :image, size: "280x", class: "img-fluid rounded")
+                = ann_image_tag(work.work_image, :image, size: "280x", ratio: "3:4", class: "img-fluid rounded")
               .c-hover-image__over
           .p-1
             .text-truncate.small

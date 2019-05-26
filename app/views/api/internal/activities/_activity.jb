@@ -32,7 +32,7 @@ when "create_episode_record" then
       is_single: episode.local_title == episode.work.local_title
     },
     item: {
-      image_url: ann_image_url(episode.work.work_image, :image, size: "125x")
+      image_url: ann_image_url(episode.work.work_image, :image, size: "125x", ratio: "3:4")
     },
     episode: {
       id: episode.id,
@@ -62,7 +62,7 @@ when "create_multiple_episode_records" then
       title: work.title
     },
     item: {
-      image_url: ann_image_url(work.work_image, :image, size: "125x")
+      image_url: ann_image_url(work.work_image, :image, size: "125x", ratio: "3:4")
     },
     multiple_record: {
       id: multiple_episode_record.id,
@@ -93,7 +93,7 @@ when "create_status" then
       title: work.local_title
     },
     item: {
-      image_url: ann_image_url(work.work_image, :image, size: "125x")
+      image_url: ann_image_url(work.work_image, :image, size: "125x", ratio: "3:4")
     },
     status: {
       id: status.id,
@@ -112,7 +112,7 @@ when "create_work_record" then
       title: work.local_title
     },
     item: {
-      image_url: ann_image_url(work.work_image, :image, size: "125x")
+      image_url: ann_image_url(work.work_image, :image, size: "125x", ratio: "3:4")
     },
     work_record: {
       id: work_record.id,

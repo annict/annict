@@ -5,7 +5,7 @@
         .row
           .col-2.pr-0
             = link_to work_path(work) do
-              = ann_image_tag work.work_image, :image, size: "200x", alt: work.local_title, class: "img-fluid img-thumbnail rounded"
+              = ann_image_tag work.work_image, :image, size: "200x", ratio: "3:4", alt: work.local_title, class: "img-fluid img-thumbnail rounded"
             - if work.work_image.present?
               .u-very-small.text-right
                 = work.work_image.asin_or_copyright_text
