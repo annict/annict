@@ -23,7 +23,7 @@ Layout/AlignParameters:
 Layout/DotPosition:
   EnforcedStyle: trailing
 
-Layout/IndentArray:
+Layout/IndentFirstArrayElement:
   EnforcedStyle: consistent
 
 Layout/MultilineOperationIndentation:
