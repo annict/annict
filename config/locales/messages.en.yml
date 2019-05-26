@@ -254,8 +254,6 @@ en:
       attach_image: Attach Image
       deleted: Work image has been deleted.
       saved: Work image has been saved.
-      index:
-        dropzone-empty: Drop your image here or click to upload.
     works:
       view_all_n_characters: View All %{n} Characters
       view_all_n_episodes: View All %{n} Episodes

@@ -253,8 +253,6 @@ ja:
       attach_image: 画像を選択...
       deleted: 削除しました
       saved: 保存しました
-      index:
-        dropzone-empty: 画像をドラッグアンドドロップ、またはクリックして選択できます
     works:
       view_all_n_characters: "%{n}人のキャラクターを全て見る"
       view_all_n_episodes: "%{n}エピソードを全て見る"

@@ -2,7 +2,6 @@ import $ from 'jquery'
 import 'bootstrap'
 import 'select2'
 import 'd3'
-import 'dropzone'
 import {} from 'jquery-ujs'
 import Cookies from 'js-cookie'
 import moment from 'moment-timezone'
@@ -67,9 +66,6 @@ import workTags from './common/components/workTags'
 import workWatchersChart from './common/components/workWatchersChart'
 import youtubeModalPlayer from './common/components/youtubeModalPlayer'
 
-import imageAttachForm from './pc/components/imageAttachForm'
-import imageAttachModal from './pc/components/imageAttachModal'
-
 import resourceSelect from './common/directives/resourceSelect'
 import prerender from './pc/directives/prerender'
 
@@ -111,8 +107,6 @@ document.addEventListener('turbolinks:load', event => {
   Vue.component('c-flash', flash)
   Vue.component('c-forum-edit-link', forumEditLink)
   Vue.component('c-follow-button', followButton)
-  Vue.component('c-image-attach-form', imageAttachForm)
-  Vue.component('c-image-attach-modal', imageAttachModal)
   Vue.component('c-impression-button', impressionButton)
   Vue.component('c-impression-button-modal', impressionButtonModal)
   Vue.component('c-input-words-count', inputWordsCount)
