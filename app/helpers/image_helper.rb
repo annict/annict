@@ -24,19 +24,6 @@ module ImageHelper
     ix_image_url(path, ix_options)
   end
 
-  def ann_email_image_url(record, field, options = {})
-    path = image_path(record, field)
-    width, height = options[:size]&.split("x")
-
-    ix_options = {
-      auto: "format"
-    }
-    ix_options[:w] = width if width.present?
-    ix_options[:h] = height if height.present?
-
-    ix_image_url(path, ix_options)
-  end
-
   def ann_image_tag(record, field, options = {})
     url = ann_image_url(record, field, options)
     url2x = ann_image_url(record, field, options.merge(size_rate: 2))
