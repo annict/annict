@@ -381,9 +381,6 @@ GEM
       method_source (~> 0.9.0)
     pry-rails (0.3.9)
       pry (>= 0.10.4)
-    pry-remote (0.1.8)
-      pry (~> 0.9)
-      slop (~> 3.0)
     public_suffix (3.0.3)
     puma (3.12.1)
     puma_worker_killer (0.1.0)
@@ -508,7 +505,6 @@ GEM
     slim (4.0.1)
       temple (>= 0.7.6, < 0.9)
       tilt (>= 2.0.6, < 2.1)
-    slop (3.6.0)
     solargraph (0.32.1)
       backport (~> 1.0)
       bundler (>= 1.17.2)
@@ -659,7 +655,6 @@ DEPENDENCIES
   paperclip
   pg
   pry-rails
-  pry-remote
   puma
   puma_worker_killer
   pundit
