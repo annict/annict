@@ -12,6 +12,7 @@
 /node_modules
 /public/packs
 /public/sitemap*
+/public/uploads
 /tags
 /tmp/*
 /vendor/bundle
