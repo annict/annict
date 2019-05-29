@@ -21,8 +21,8 @@ class CreateItemJob < ApplicationJob
           Date.parse(amazon_item.release_date)
         end
         i.manufacturer = amazon_item.manufacturer
-        i.thumbnail = if amazon_item.images.present?
-          URI.parse(amazon_item.images.first[:url])
+        i.image = if amazon_item.images.present?
+          Down.open(amazon_item.images.first[:url])
         end
       end
 
