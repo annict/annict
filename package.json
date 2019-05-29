@@ -5,7 +5,6 @@
     "node": "10.15.3"
   },
   "scripts": {
-    "dev:start": "concurrently 'bundle exec rails s' 'bundle exec rake jobs:work' 'docker-compose up' 'yarn webpack:start' --names='rails,delayed_job,docker,webpack'",
     "webpack:start": "webpack-dev-server",
     "webpack:watch": "webpack -w --progress",
     "heroku-postbuild": "NODE_ENV=production webpack",
@@ -48,7 +47,6 @@
     "@babel/polyfill": "^7.0.0",
     "@babel/preset-env": "^7.1.0",
     "babel-loader": "^8.0.4",
-    "concurrently": "^4.1.0",
     "css-loader": "^1.0.0",
     "eslint": "^5.7.0",
     "expose-loader": "^0.7.5",

@@ -95,7 +95,6 @@ group :development do
   gem "listen" # Using with `rails s` since Rails 5
   gem "memory_profiler"
   gem "meta_request"
-  gem "pry-remote"
   gem "rubocop"
   gem "ruby_identicon"
   gem "scss_lint", require: false
