@@ -36,7 +36,7 @@
           - @pvs.each do |pv|
             tr
               td = pv.id
-              td = ann_image_tag(pv, :thumbnail, size: "70x70", class: "rounded img-thumbnail")
+              td = ann_image_tag(pv, :image, size: "70x70", class: "rounded img-thumbnail")
               td
                 - if pv.youtube?
                   span.mr-1
