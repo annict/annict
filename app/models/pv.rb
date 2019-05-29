@@ -88,6 +88,6 @@ class Pv < ApplicationRecord
       break if res.code == 200
     end
 
-    self.thumbnail = URI.parse(image_url)
+    self.image = Down.open(image_url)
   end
 end
