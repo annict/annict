@@ -81,13 +81,8 @@ module ImageHelper
   private
 
   def image_path(record, field)
-    path = if Rails.env.test?
-      record&.send(field)&.url(:master)
-    else
-      id = record&.uploaded_file(field)&.id
-      id ? "shrine/#{id}" : ""
-    end
-
+    id = record&.uploaded_file(field)&.id
+    path = id ? "shrine/#{id}" : ""
     path.presence || "no-image.jpg"
   end
 end
