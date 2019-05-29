@@ -71,7 +71,7 @@ module ImageHelper
     field = background_image ? :background_image : :image
     image = profile.send(field)
 
-    if background_image.present? && record.background_image_animated?
+    if background_image.present? && profile.background_image_animated?
       return "#{ENV.fetch('ANNICT_API_ASSETS_URL')}/shrine/#{image[:original].id}"
     end
 
