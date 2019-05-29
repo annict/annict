@@ -50,7 +50,9 @@ class Profile < ApplicationRecord
 
   def check_animated_gif
     if background_image_data_changed?
-      image = MiniMagick::Image.open(uploaded_file(:background_image, size: :original).url)
+      file = uploaded_file(:background_image, size: :original)
+      data = Rails.env.test? ? file.to_io : file.url
+      image = MiniMagick::Image.open(data)
       self.background_image_animated = (image.frames.length > 1)
     end
 
