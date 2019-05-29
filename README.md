@@ -20,6 +20,7 @@ To run Annict on a local machine, you need to have the following dependencies in
 - [Yarn](https://yarnpkg.com)
 - [Docker](https://www.docker.com)
 - [Docker Compose](https://docs.docker.com/compose/)
+- [Foreman](https://github.com/ddollar/foreman)
 
 
 ## Running the app
@@ -33,7 +34,8 @@ $ yarn install
 $ bundle install
 $ touch .env.development.local
 $ bundle exec rails db:setup
-$ yarn dev:start
+$ foreman start -f Procfile.dev
+$ bundle exec rails s
 ```
 
 You should then be able to open [http://annict.test:3000](http://annict.test:3000) (or [http://annictjp.test:3000](http://annictjp.test:3000)) in your browser.
