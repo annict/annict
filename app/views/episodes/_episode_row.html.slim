@@ -12,7 +12,7 @@ tr
     td
       = link_to work_episode_path(work, episode) do
         = episode.local_number
-    td
+    td.c-episode-row__title
       - episode_title = episode.local_title(fallback: false)
       - if episode_title.present?
         = link_to work_episode_path(work, episode) do
