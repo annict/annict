@@ -56,12 +56,12 @@ class Program < ApplicationRecord
   has_many :db_comments, as: :resource, dependent: :destroy
 
   validates :channel_id, presence: true
-  validates :started_at, presence: true
+  validates :started_at, presence: true, uniqueness: { scope: :program_detail_id }
 
   scope :episode_published, -> { joins(:episode).merge(Episode.published) }
   scope :work_published, -> { joins(:work).merge(Work.published) }
 
-  before_save :calc_for_timezone
+  before_validation :calc_for_timezone
 
   def broadcasted?(time = Time.now.in_time_zone("Asia/Tokyo"))
     time > started_at.in_time_zone("Asia/Tokyo")
