@@ -52,7 +52,7 @@
     "expose-loader": "^0.7.5",
     "file-loader": "^2.0.0",
     "ip": "^1.1.5",
-    "mini-css-extract-plugin": "^0.4.3",
+    "mini-css-extract-plugin": "^0.7.0",
     "node-sass": "^4.9.3",
     "postcss-loader": "^3.0.0",
     "precss": "^3.1.2",
