@@ -4889,10 +4889,10 @@ levn@^0.3.0, levn@~0.3.0:
     prelude-ls "~1.1.2"
     type-check "~0.3.2"
 
-linkifyjs@2.1.7:
-  version "2.1.7"
-  resolved "https://registry.yarnpkg.com/linkifyjs/-/linkifyjs-2.1.7.tgz#e5d68d2ae30b9c055e1d74cc40f9a31d3abb4012"
-  integrity sha512-Cbn77BnYEslpAObZZoP6GVQHF1j5T6RsDydNq5RVxIy4eiZAiADRx7qHfWzfEMQecc1PtZFog1AsCGGX2WjQLA==
+linkifyjs@2.1.8:
+  version "2.1.8"
+  resolved "https://registry.yarnpkg.com/linkifyjs/-/linkifyjs-2.1.8.tgz#2bee2272674dc196cce3740b8436c43df2162f9c"
+  integrity sha512-j3QpiEr4UYzN5foKhrr9Sr06VI9vSlI4HisDWt+7Mq+TWDwpJ6H/LLpogYsXcyUIJLVhGblXXdUnblHsVNMPpg==
   optionalDependencies:
     jquery "^3.3.1"
     react "^16.4.2"
