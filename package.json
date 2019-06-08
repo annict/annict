@@ -55,7 +55,7 @@
     "mini-css-extract-plugin": "^0.4.3",
     "node-sass": "^4.9.3",
     "postcss-loader": "^3.0.0",
-    "precss": "^3.1.2",
+    "precss": "^4.0.0",
     "prettier": "^1.15.1",
     "prettier-eslint": "^8.8.2",
     "sass-lint": "^1.12.1",
