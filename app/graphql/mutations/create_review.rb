@@ -61,7 +61,6 @@ module Mutations
       service.via = "graphql_api"
       service.app = context[:doorkeeper_token].application
       service.ga_client = context[:ga_client]
-      service.keen_client = context[:keen_client]
 
       service
     end

@@ -11,7 +11,6 @@ module Api
           status = StatusService.new(current_user, work)
           status.app = doorkeeper_token.application
           status.ga_client = ga_client
-          status.keen_client = keen_client
           status.via = "rest_api"
 
           status.change!(@params.kind)

@@ -29,10 +29,8 @@ module Api
         @work = Work.published.find(params[:work_id])
         page_category = params[:page_category]
         ga_client.page_category = page_category
-        keen_client.page_category = page_category
         status = StatusService.new(current_user, @work)
         status.ga_client = ga_client
-        status.keen_client = keen_client
         status.via = "internal_api"
         status.page_category = page_category
         status.change!(params[:status_kind])

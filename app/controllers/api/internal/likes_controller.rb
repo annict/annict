@@ -25,7 +25,6 @@ module Api
         current_user.like(recipient)
         ga_client.page_category = params[:page_category]
         ga_client.events.create(:likes, :create, el: params[:recipient_type], ev: params[:recipient_id], ds: "internal_api")
-        keen_client.publish(:like_create, via: "internal_api", resource_type: params[:recipient_type])
 
         if params[:recipient_type] == "EpisodeRecord"
           EmailNotificationService.send_email(
