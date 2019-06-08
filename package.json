@@ -1,0 +1,39 @@
+{
+  "name": "annict",
+  "version": "0.1.0",
+  "private": true,
+  "engines": {
+    "node": "12.4.0"
+  },
+  "scripts": {
+    "webpack:start": "webpack-dev-server",
+    "webpack:watch": "webpack -w --progress",
+    "heroku-postbuild": "NODE_ENV=production webpack"
+  },
+  "dependencies": {
+    "@types/react": "^16.8.17",
+    "@types/react-dom": "^16.8.4",
+    "react": "^16.8.6",
+    "react-dom": "^16.8.6",
+    "turbolinks": "^5.2.0"
+  },
+  "devDependencies": {
+    "awesome-typescript-loader": "^5.2.1",
+    "bulma": "^0.7.4",
+    "css-loader": "^2.1.1",
+    "file-loader": "^3.0.1",
+    "mini-css-extract-plugin": "^0.6.0",
+    "node-sass": "^4.12.0",
+    "prettier": "^1.17.0",
+    "sass-lint": "^1.13.1",
+    "sass-loader": "^7.1.0",
+    "source-map-loader": "^0.2.4",
+    "style-loader": "^0.23.1",
+    "typescript": "^3.4.5",
+    "webpack": "^4.31.0",
+    "webpack-cli": "^3.2.1",
+    "webpack-dev-server": "^3.2.1",
+    "webpack-manifest-plugin": "^2.0.4",
+    "webpack-merge": "^4.2.1"
+  }
+}

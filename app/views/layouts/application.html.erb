@@ -5,7 +5,8 @@
     <%= csrf_meta_tags %>
     <%= csp_meta_tag %>
 
-    <%= stylesheet_link_tag 'application', media: 'all' %>
+    <%= stylesheet_bundle_tag "application.css", media: "all", "data-turbolinks-track": "reload" %>
+    <%= javascript_bundle_tag "application.js", defer: "", "data-turbolinks-track": "reload" %>
   </head>
 
   <body>
