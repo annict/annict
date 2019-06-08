@@ -23,6 +23,9 @@ default: &default
 
 development:
   <<: *default
+  host: <%= ENV.fetch("POSTGRES_HOST", "0.0.0.0") %>
+  username: postgres
+  password:
   database: annict_development
 
   # The specified database role being used to connect to postgres.
@@ -57,6 +60,9 @@ development:
 # Do not set this db to the same as development or production.
 test:
   <<: *default
+  host: <%= ENV.fetch("POSTGRES_HOST", "0.0.0.0") %>
+  username: postgres
+  password:
   database: annict_test
 
 # As with config/credentials.yml, you never want to store sensitive information,
