@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_05_01_175021) do
+ActiveRecord::Schema.define(version: 2019_06_08_074205) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_stat_statements"
@@ -1094,16 +1094,16 @@ ActiveRecord::Schema.define(version: 2019_05_01_175021) do
   create_table "work_images", id: :serial, force: :cascade do |t|
     t.integer "work_id", null: false
     t.integer "user_id", null: false
-    t.string "attachment_file_name", null: false
-    t.integer "attachment_file_size", null: false
-    t.string "attachment_content_type", null: false
-    t.datetime "attachment_updated_at", null: false
+    t.string "attachment_file_name"
+    t.integer "attachment_file_size"
+    t.string "attachment_content_type"
+    t.datetime "attachment_updated_at"
     t.string "copyright", default: "", null: false
     t.string "asin", default: "", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.string "color_rgb", default: "255,255,255", null: false
-    t.text "image_data"
+    t.text "image_data", null: false
     t.index ["user_id"], name: "index_work_images_on_user_id"
     t.index ["work_id"], name: "index_work_images_on_work_id"
   end

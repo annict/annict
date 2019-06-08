@@ -6,16 +6,16 @@
 #  id                      :integer          not null, primary key
 #  work_id                 :integer          not null
 #  user_id                 :integer          not null
-#  attachment_file_name    :string           not null
-#  attachment_file_size    :integer          not null
-#  attachment_content_type :string           not null
-#  attachment_updated_at   :datetime         not null
+#  attachment_file_name    :string
+#  attachment_file_size    :integer
+#  attachment_content_type :string
+#  attachment_updated_at   :datetime
 #  copyright               :string           default(""), not null
 #  asin                    :string           default(""), not null
 #  created_at              :datetime         not null
 #  updated_at              :datetime         not null
 #  color_rgb               :string           default("255,255,255"), not null
-#  image_data              :text
+#  image_data              :text             not null
 #
 # Indexes
 #
