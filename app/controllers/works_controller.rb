@@ -101,7 +101,7 @@ class WorksController < ApplicationController
       work_records: @work.work_records,
       user: current_user
     )
-    @work_records = localable_resources(@work_records)
+    @work_records = localable_resources(@work_records.with_body)
     @work_records = @work_records.order(created_at: :desc)
 
     @items = @work.items.published
