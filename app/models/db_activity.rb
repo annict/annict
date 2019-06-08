@@ -32,7 +32,7 @@ class DbActivity < ApplicationRecord
   belongs_to :user
 
   def diffs(new_resource, old_resource)
-    HashDiff.diff(old_resource.to_diffable_hash, new_resource.to_diffable_hash)
+    Hashdiff.diff(old_resource.to_diffable_hash, new_resource.to_diffable_hash)
   end
 
   def root_resource_action?
