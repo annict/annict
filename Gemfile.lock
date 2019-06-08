@@ -6,6 +6,13 @@ GIT
       msgpack (~> 1.0)
 
 GIT
+  remote: https://github.com/balexand/email_validator.git
+  revision: 756f4226d254713333f83f534b88d174a106eb37
+  specs:
+    email_validator (2.0.1)
+      activemodel
+
+GIT
   remote: https://github.com/bkeepers/dotenv.git
   revision: f796d366444d454e12a65cf1db81781dc0ce2c7b
   specs:
@@ -227,6 +234,7 @@ DEPENDENCIES
   bootsnap!
   devise!
   dotenv-rails!
+  email_validator!
   listen!
   pg!
   pry!
