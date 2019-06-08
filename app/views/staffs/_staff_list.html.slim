@@ -1,9 +1,0 @@
-- if staffs.present?
-  - staffs.each_slice(3).each do |staffs|
-    .row.mb-3
-      - staffs.each do |staff|
-        .col-4
-          = staff.local_name_with_old_link
-          .small = staff.role_name
-- else
-  = render "application/components/empty", text: t("messages._empty.no_staffs")

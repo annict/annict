@@ -1,4 +1,0 @@
-en:
-  forum_mailer:
-    comment_notification:
-      subject: "[Annict Forum] %{name} (@%{username}) has commented on the post %{post_title}"

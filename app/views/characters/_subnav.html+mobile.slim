@@ -1,9 +1,0 @@
-.c-slidable-subnav
-  ul.c-slidable-subnav__list.list-inline
-    li.list-inline-item
-      = active_link_to t("noun.detail"), character_path(character), class: "c-slidable-subnav__link", class_active: "c-slidable-subnav__link--active", active: params[:controller] == "characters" && params[:action].in?(%w(show))
-    li.list-inline-item
-      = active_link_to character_fans_path(character), class: "c-slidable-subnav__link", class_active: "c-slidable-subnav__link--active", active: params[:controller] == "character_fans" && params[:action].in?(%w(index)) do
-        = t "noun.fans"
-        span.pl-1
-          = "(#{t('noun.users_count', count: favorite_resources.length)})"

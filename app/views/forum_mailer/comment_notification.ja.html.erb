@@ -1,4 +1,0 @@
-<%= @name %> (@<%= @username %>) さんが「<%= @post_title %>」にコメントしました。<br>
-<br>
-<%= simple_format(@comment.body) %><br>
-<%= link_to "投稿を見る", forum_post_url(@comment.forum_post, host: @receiver.annict_host) %>

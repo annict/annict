@@ -1,4 +1,0 @@
-script#t-record-sorter type="x-template"
-  .c-record-sorter
-    select.custom-select.form-control-sm v-model="sort" @change="reload"
-      option v-for="type in sortTypes" :value="type[1]" {{ type[0] }}

@@ -1,5 +1,0 @@
-en:
-  devise:
-    mailer:
-      confirmation_instructions:
-        subject: Confirmation instructions - Annict

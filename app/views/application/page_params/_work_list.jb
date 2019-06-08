@@ -1,8 +1,0 @@
-# frozen_string_literal: true
-
-json = {
-  works: works.pluck(:id).map { |work_id| { id: work_id } },
-  display_option: display_option
-}
-
-json

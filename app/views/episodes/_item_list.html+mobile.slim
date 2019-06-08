@@ -1,6 +1,0 @@
-- if items.present?
-  - items.each do |item|
-    .py-2
-      = render "items/item", resource: episode, item: item
-- else
-  = render "application/components/empty", text: t("messages._empty.no_items")

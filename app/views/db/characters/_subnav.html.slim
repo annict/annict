@@ -1,7 +1,0 @@
-.c-subnav
-  = active_link_to edit_db_character_path(character), class: "c-subnav__link", class_active: "c-subnav__link--active", active: params[:controller]  == "db/characters" && %w(edit update).include?(params[:action]) do
-    .c-subnav__item
-      = Character.model_name.human
-  = active_link_to activities_db_character_path(character), class: "c-subnav__link", class_active: "c-subnav__link--active", active: params[:controller]  == "db/characters" && params[:action]  == "activities" do
-    .c-subnav__item
-      = t "noun.activities"

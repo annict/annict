@@ -1,7 +1,0 @@
-.c-subnav.c-subnav--transparent.mb-3
-  = active_link_to organization_path(organization), class: "c-subnav__link", class_active: "c-subnav__link--active", active: params[:controller] == "organizations" && params[:action].in?(%w(show)) do
-    .c-subnav__item
-      = t "noun.joined_works"
-  = active_link_to organization_fans_path(organization), class: "c-subnav__link", class_active: "c-subnav__link--active", active: params[:controller] == "organization_fans" && params[:action].in?(%w(index)) do
-    .c-subnav__item
-      = t "noun.fans"

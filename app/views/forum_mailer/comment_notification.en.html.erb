@@ -1,4 +1,0 @@
-<%= @name %> (@<%= @username %>) has commented on the post "<%= @post_title %>".<br>
-<br>
-<%= simple_format(@comment.body) %><br>
-<%= link_to "View post", forum_post_url(@comment.forum_post, host: @receiver.annict_host) %>

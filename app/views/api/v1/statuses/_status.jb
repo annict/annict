@@ -1,7 +1,0 @@
-# frozen_string_literal: true
-
-json = {}
-
-json[:kind] = status.kind.to_s if params.fields_contain?("#{field_prefix}kind")
-
-json

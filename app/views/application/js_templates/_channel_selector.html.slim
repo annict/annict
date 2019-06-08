@@ -1,6 +1,0 @@
-script#t-channel-selector type="x-template"
-  .c-channel-selector :class='{ "c-spinner": isSaving }'
-    select v-model="channelId" @change="change"
-      option v-for="option in options" :value="option[1]"
-        | {{ option[0] }}
-    = icon "caret-down"

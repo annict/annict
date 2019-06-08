@@ -1,9 +1,0 @@
-- action_user = notification.action_user
-- action_name = link_to(action_user.profile.name, user_path(action_user.username))
-
-span.mr-1
-  = action_user.name_link
-| followed you
-
-.small.text-muted.mt-2
-  = local_time_ago_in_words(notification.created_at)

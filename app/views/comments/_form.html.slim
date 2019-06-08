@@ -1,8 +1,0 @@
-- url = comment.new_record? ? record_comments_path(user.username, record) : comment_path(comment)
-= form_for comment, url: url do |f|
-  = render "application/components/error_panel", resource: comment
-  = f.text_area :body, class: "form-control", rows: "5", placeholder: t("messages.comments.comment_form_placeholder")
-  .w-100.text-center
-    = f.button class: "btn btn-primary mt-2" do
-      = icon "pencil-alt"
-      = comment.new_record? ? t("messages.comments.create") : t("messages.comments.update")

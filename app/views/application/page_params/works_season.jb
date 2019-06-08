@@ -1,3 +1,0 @@
-# frozen_string_literal: true
-
-render "application/page_params/work_list", works: @works, display_option: @display_option

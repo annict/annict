@@ -1,7 +1,0 @@
-.btn-group data-turbolinks="false"
-  = active_link_to work_display_option_path(display: :list_detailed, to: request.path), class: "btn", class_active: "btn-primary", class_inactive: "btn-secondary", active: (display_option == "list_detailed") do
-    = icon "th-list", class: "mr-0"
-  = active_link_to work_display_option_path(display: :grid, to: request.path), class: "btn", class_active: "btn-primary", class_inactive: "btn-secondary", active: (display_option == "grid") do
-    = icon "th-large", class: "mr-0"
-  = active_link_to work_display_option_path(display: :grid_small, to: request.path), class: "btn", class_active: "btn-primary", class_inactive: "btn-secondary", active: (display_option == "grid_small") do
-    = icon "th", class: "mr-0"

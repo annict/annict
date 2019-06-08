@@ -1,7 +1,0 @@
-# frozen_string_literal: true
-
-{
-  total_count: collection.total_count,
-  next_page: collection.last_page? ? nil : (params.page.to_i + 1),
-  prev_page: params.page.to_i > 1 ? (params.page.to_i - 1) : nil
-}

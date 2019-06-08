@@ -1,3 +1,0 @@
-worker: bundle exec rake jobs:work
-docker: docker-compose up
-webpack: yarn webpack:start

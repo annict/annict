@@ -1,4 +1,0 @@
-<%= @sender.profile.name %> (@<%= @sender.username %>) mentioned you.<br>
-<br>
-<%= simple_format(@body) %><br>
-<%= link_to "Reply", "#{ENV.fetch('ANNICT_URL')}#{@reply_path}" %>

@@ -1,9 +1,0 @@
-# frozen_string_literal: true
-
-json = {
-  work: {
-    id: work.id
-  }
-}
-
-json

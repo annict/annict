@@ -1,4 +1,0 @@
-ja:
-  forum_mailer:
-    comment_notification:
-      subject: "[Annict Forum] %{name} (@%{username}) さんが「%{post_title}」にコメントしました"

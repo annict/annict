@@ -1,6 +1,0 @@
-# frozen_string_literal: true
-
-{
-  tags: @tags.map { |tag| { name: tag.name } },
-  comment: @comment&.body
-}
