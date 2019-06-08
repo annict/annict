@@ -45,7 +45,6 @@ class ForumPost < ApplicationRecord
     host = ENV.fetch("ANNICT_JP_URL")
     url = Rails.application.routes.url_helpers.forum_post_url(self, host: host)
     message = [
-      forum_category.discord_mention,
       user.profile.name,
       "created the post",
       title,

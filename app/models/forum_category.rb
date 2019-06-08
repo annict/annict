@@ -31,17 +31,4 @@ class ForumCategory < ApplicationRecord
     return all if user.role.admin?
     where.not(slug: :site_news)
   }
-
-  def discord_mention
-    case slug
-    when "site_news"
-      "@everyone"
-    when "feedback"
-      "<@&#{ENV.fetch('ANNICT_DISCORD_ROLE_ID_ADMIN')}>"
-    when "db_request"
-      "<@&#{ENV.fetch('ANNICT_DISCORD_ROLE_ID_ADMIN')}> <@&#{ENV.fetch('ANNICT_DISCORD_ROLE_ID_EDITOR')}>"
-    else
-      ""
-    end
-  end
 end
