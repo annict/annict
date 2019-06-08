@@ -46,7 +46,7 @@ class Program < ApplicationRecord
     end
   end
 
-  attr_accessor :time_zone
+  attr_accessor :time_zone, :is_started_at_calced
 
   belongs_to :channel
   belongs_to :episode, optional: true
@@ -69,9 +69,13 @@ class Program < ApplicationRecord
 
   def calc_for_timezone
     return if time_zone.blank?
+    return if is_started_at_calced
+
     started_at = ActiveSupport::TimeZone.new(time_zone).local_to_utc(self.started_at)
+
     self.started_at = started_at
     self.sc_last_update = Time.zone.now
+    self.is_started_at_calced = true
   end
 
   def to_diffable_hash
