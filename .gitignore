@@ -1,5 +1,6 @@
 .byebug_history
 /.bundle
+/.idea
 /config/master.key
 /log/*
 /public/assets
