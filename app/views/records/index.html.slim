@@ -1,7 +1,7 @@
 - title = t "head.title.records.index", profile_name: @user.profile.name, username: @user.username
 - description = meta_description t("head.meta.description.records.index", profile_name: @user.profile.name, username: @user.username)
 - keywords = meta_keywords
-- image_url = ann_image_url(@user.profile, :tombo_avatar, size: "640x")
+- image_url = ann_image_url(@user.profile, :image, size: "640x")
 - set_meta_tags(title: title, description: description, keywords: keywords, og: { description: description, image: image_url }, twitter: { description: description, image: image_url }, reverse: true, prefix: false)
 
 - breadcrumb :user_record_list, @user
@@ -18,7 +18,7 @@
             .col-3.pr-0
               .mb-2
                 = link_to work_path(record.work) do
-                  = ann_image_tag record.work.work_image, :attachment, size: "265x331", class: "img-fluid img-thumbnail rounded"
+                  = ann_image_tag record.work.work_image, :image, size: "265x", ratio: "3:4", class: "img-fluid img-thumbnail rounded"
                 - if record.work.work_image.present?
                   .u-very-small.text-right
                     = record.work.work_image.asin_or_copyright_text

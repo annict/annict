@@ -36,7 +36,7 @@
                 | -
           td = work.watchers_count
           td = work.release_season.presence || "-"
-          td = ann_image_tag(work.work_image, :attachment, size: "70x70", class: "rounded img-thumbnail")
+          td = ann_image_tag(work.work_image, :image, size: "70x", ratio: "3:4", class: "rounded img-thumbnail")
           td
             .badge class="#{work.published? ? 'badge-success' : 'badge-warning'}"
               = t("resources.work.aasm_state.#{work.aasm_state}")

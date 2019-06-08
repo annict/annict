@@ -3,7 +3,7 @@
     .row.mb-3
       .col.col-auto.pr-0
         = link_to work_path(work) do
-          = ann_image_tag work.work_image, :attachment, size: "50x67", class: "img-fluid rounded img-thumbnail"
+          = ann_image_tag work.work_image, :image, size: "50x", ratio: "3:4", class: "img-fluid rounded img-thumbnail"
       .col
         .mb-2
           = link_to work.local_title, work_path(work)

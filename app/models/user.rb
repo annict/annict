@@ -209,7 +209,7 @@ class User < ApplicationRecord
         p.name = oauth["info"]["name"].presence || oauth["info"]["nickname"]
         p.description = oauth["info"]["description"]
         image_url = get_large_avatar_image(oauth["provider"], oauth["info"]["image"])
-        p.tombo_avatar = URI.parse(image_url)
+        p.image = Down.open(image_url)
       end
     else
       build_profile(name: username)

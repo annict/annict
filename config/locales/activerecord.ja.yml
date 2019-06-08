@@ -43,8 +43,6 @@ ja:
         series_id: シリーズ
         weight_en: 体重 (英語)
         weight: 体重
-      character_image:
-        attachment: キャラクター画像
       comment:
         body: コメント
       doorkeeper/application:

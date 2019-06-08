@@ -3,7 +3,7 @@
     .row.py-3.align-items-center
       .col.u-flex-grow-0.pl-0
         = link_to user_path(username: user.username) do
-          = ann_image_tag(user.profile, :tombo_avatar, size: "50x50", class: "rounded-circle")
+          = ann_image_tag(user.profile, :image, size: "50x50", class: "rounded-circle")
       .col
         .row.align-items-center
           .col.pl-0

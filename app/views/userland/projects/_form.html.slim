@@ -31,7 +31,8 @@
   .form-group.row
     = f.label :icon, class: "col-2 col-form-label"
     .col-10
-      = f.file_field :icon, class: "form-control-file"
+      = f.hidden_field :image, value: f.object.cached_image_data
+      = f.file_field :image, class: "form-control-file"
 
   .form-group.row
     = f.label :available, class: "col-2 col-form-label"

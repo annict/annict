@@ -31,21 +31,13 @@
 class Profile < ApplicationRecord
   include ProfileImageUploader::Attachment.new(:image)
   include ProfileImageUploader::Attachment.new(:background_image)
-
-  has_attached_file :tombo_avatar
-  has_attached_file :tombo_background_image
+  include ImageUploadable
 
   belongs_to :user
 
   validates :description, length: { maximum: 150 }
   validates :name, presence: true
   validates :url, url: { allow_blank: true }
-  validates :tombo_avatar, attachment_content_type: {
-                             content_type: /\Aimage/
-                           }
-  validates :tombo_background_image, attachment_content_type: {
-                                       content_type: /\Aimage/
-                                     }
 
   before_save :check_animated_gif
 
@@ -57,9 +49,10 @@ class Profile < ApplicationRecord
   private
 
   def check_animated_gif
-    if tombo_background_image_updated_at_changed?
-      file_path = Paperclip.io_adapters.for(tombo_background_image).path
-      image = MiniMagick::Image.open(file_path)
+    if background_image_data_changed?
+      file = uploaded_file(:background_image, size: :original)
+      data = Rails.env.test? ? file.to_io : file.url
+      image = MiniMagick::Image.open(data)
       self.background_image_animated = (image.frames.length > 1)
     end
 

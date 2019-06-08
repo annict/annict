@@ -1,7 +1,7 @@
 - title = t "head.title.episodes.show", work_title: @work.local_title, episode_title_with_number: @episode.title_with_number
 - description = meta_description(t("head.meta.description.episodes.show", work_title: @work.local_title, episode_title_with_number: @episode.title_with_number))
 - keywords = meta_keywords(@work.local_title)
-- image_url = ann_image_url(@work.work_image, :attachment, size: "640x")
+- image_url = ann_image_url(@work.work_image, :image, size: "640x", ratio: "3:4")
 - set_meta_tags(title: title, description: description, keywords: keywords, og: { description: description, image: image_url }, twitter: { description: description, image: image_url }, reverse: true, prefix: false)
 
 - breadcrumb :episode_detail, @episode

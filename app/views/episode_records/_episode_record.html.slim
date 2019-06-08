@@ -3,7 +3,7 @@
     .row
       .c-record__avatar.col.pr-0
         = link_to user_path(episode_record.user.username) do
-          = ann_image_tag episode_record.user.profile, :tombo_avatar, size: "50x50", class: "rounded-circle"
+          = ann_image_tag episode_record.user.profile, :image, size: "50x50", class: "rounded-circle"
       .col
         .text-left
           = link_to episode_record.user.profile.name, user_path(episode_record.user.username)

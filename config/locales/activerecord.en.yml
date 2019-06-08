@@ -44,8 +44,6 @@ en:
         series_id: Series
         weight_en: Weight (en)
         weight: Weight
-      character_image:
-        attachment: Image
       comment:
         body: Comment
       doorkeeper/application:

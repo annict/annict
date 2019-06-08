@@ -79,8 +79,6 @@ ja:
         characters:
           activities: アクティビティ - %{name}
           index: キャラクター
-        character_images:
-          show: キャラクター画像 - %{name}
         episodes:
           activities: アクティビティ
           index: "%{work_title}のエピソード"

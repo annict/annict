@@ -13,7 +13,7 @@
   .row.mb-3
     .col.col-auto.pr-0
       = link_to user_path(@post.user.username) do
-        = ann_image_tag @post.user.profile, :tombo_avatar, size: "45x45", class: "rounded-circle"
+        = ann_image_tag @post.user.profile, :image, size: "45x45", class: "rounded-circle"
     .col.pl-2
       = link_to @post.user.profile.name, user_path(@post.user.username), class: "mr-2"
       = @post.user.role_badge
@@ -33,7 +33,7 @@
           .row.mb-3
             .col.col-auto.pr-0
               = link_to user_path(comment.user.username) do
-                = ann_image_tag comment.user.profile, :tombo_avatar, size: "45x45", class: "rounded-circle"
+                = ann_image_tag comment.user.profile, :image, size: "45x45", class: "rounded-circle"
             .col.pl-2
               = link_to comment.user.profile.name, user_path(comment.user.username), class: "mr-2"
               = comment.user.role_badge

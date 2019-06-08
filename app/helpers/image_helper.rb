@@ -3,28 +3,33 @@
 module ImageHelper
   def ann_image_url(record, field, options = {})
     path = image_path(record, field)
+    size = options[:size]
+    ratio = options[:ratio].presence || "1:1"
 
-    width, _height = options[:size].split("x").map do |s|
+    width, height = size.split("x").map do |s|
       s.present? ? (s.to_i * (options[:size_rate].presence || 1)) : nil
     end
 
     ix_options = {
       auto: "format"
     }
-    ix_options[:w] = width if width.present?
 
-    ix_image_url(path, ix_options)
-  end
+    if width
+      ix_options[:w] = width
+    end
 
-  def ann_email_image_url(record, field, options = {})
-    path = image_path(record, field)
-    width, height = options[:size]&.split("x")
+    unless height
+      ix_options[:h] = (width * ratio.split(":")[1].to_i) / ratio.split(":")[0].to_i
+    end
 
-    ix_options = {
-      auto: "format"
-    }
-    ix_options[:w] = width if width.present?
-    ix_options[:h] = height if height.present?
+    if record.nil? || (record.instance_of?(WorkImage) && ratio == "3:4")
+      ix_options[:fit] = "fillmax"
+      ix_options[:fill] = "blur"
+    end
+
+    if options[:blur]
+      ix_options[:blur] = options[:blur]
+    end
 
     ix_image_url(path, ix_options)
   end
@@ -45,13 +50,12 @@ module ImageHelper
   end
 
   def profile_background_image_url(profile, options)
-    background_image = profile.tombo_background_image
-    field = background_image.present? ? :tombo_background_image : :tombo_avatar
+    background_image = profile.background_image
+    field = background_image ? :background_image : :image
     image = profile.send(field)
 
     if background_image.present? && profile.background_image_animated?
-      path = image.path(:original).sub(%r{\A.*paperclip/}, "paperclip/")
-      return "#{ENV.fetch('ANNICT_FILE_STORAGE_URL')}/#{path}"
+      return "#{ENV.fetch('ANNICT_FILE_STORAGE_URL')}/shrine/#{image[:original].id}"
     end
 
     ann_image_url(profile, field, options)
@@ -62,28 +66,23 @@ module ImageHelper
     "#{ENV.fetch('ANNICT_API_ASSETS_URL')}/#{path}"
   end
 
-  def ann_api_assets_background_image_url(record, field)
-    background_image = record&.send(field)
-    field = background_image.present? ? :tombo_background_image : :tombo_avatar
-    image = record&.send(field)
+  def ann_api_assets_background_image_url(profile)
+    background_image = profile.background_image
+    field = background_image ? :background_image : :image
+    image = profile.send(field)
 
-    if background_image.present? && record.background_image_animated?
-      path = image.path(:original).sub(%r{\A.*paperclip/}, "paperclip/")
-      return "#{ENV.fetch('ANNICT_API_ASSETS_URL')}/#{path}"
+    if background_image.present? && profile.background_image_animated?
+      return "#{ENV.fetch('ANNICT_API_ASSETS_URL')}/shrine/#{image[:original].id}"
     end
 
-    ann_api_assets_url(record, field)
+    ann_api_assets_url(profile, field)
   end
 
   private
 
   def image_path(record, field)
-    path = if Rails.env.test?
-      record&.send(field)&.url(:master)
-    else
-      record&.send(field)&.path(:master)
-    end
-
+    id = record&.uploaded_file(field)&.id
+    path = id ? "shrine/#{id}" : ""
     path.presence || "no-image.jpg"
   end
 end

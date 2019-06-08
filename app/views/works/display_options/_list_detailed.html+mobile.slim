@@ -7,7 +7,7 @@
       .row.mb-3
         .col-4.pr-0
           = link_to work_path(work), class: "d-inline-block" do
-            = ann_image_tag(work.work_image, :attachment, size: "250x250", alt: work.local_title, class: "rounded img-thumbnail")
+            = ann_image_tag(work.work_image, :image, size: "250x", ratio: "3:4", alt: work.local_title, class: "rounded img-thumbnail")
           - if work.work_image.present?
             .u-very-small.text-right
               = work.work_image.asin_or_copyright_text
@@ -40,11 +40,11 @@
           - pvs.each do |pv|
             .col-6.text-center.mb-3
               - if pv.youtube?
-                c-youtube-modal-player thumbnail-url="#{ann_image_url(pv, :thumbnail, size: "300x169")}" video-id="#{pv.youtube_video_id}" video-title="#{locale_ja? ? pv.title : pv.title_en}" annict-url="#{ENV.fetch('ANNICT_URL')}" :width="320" :height="180" :is-auto-play="false"
+                c-youtube-modal-player thumbnail-url="#{ann_image_url(pv, :image, size: "300x169")}" video-id="#{pv.youtube_video_id}" video-title="#{locale_ja? ? pv.title : pv.title_en}" annict-url="#{ENV.fetch('ANNICT_URL')}" :width="320" :height="180" :is-auto-play="false"
               - else
                 = link_to pv.url, target: "_blank" do
                   .c-video-thumbnail
-                    = ann_image_tag pv, :thumbnail, size: "300x169", class: "img-fluid rounded img-thumbnail"
+                    = ann_image_tag pv, :image, size: "300x169", class: "img-fluid rounded img-thumbnail"
                     = icon "play-circle", "far"
                   .small
                     = pv.title

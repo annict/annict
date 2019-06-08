@@ -1,6 +1,6 @@
 .mb-2
   = link_to userland_project_path(project) do
-    = ann_image_tag project, :icon, size: "280x280", class: "img-fluid img-thumbnail rounded"
+    = ann_image_tag project, :image, size: "280x280", class: "img-fluid img-thumbnail rounded"
 
 h1.h2.font-weight-bold.mb-2
   = link_to project.name, userland_project_path(project), class: "u-text-body"
@@ -27,7 +27,7 @@ h2.h4.font-weight-bold.mt-4.mb-3
   - project.users.published.each do |user|
     .col.col-auto.pl-0.pr-2.pb-2
       = link_to user_path(user.username) do
-        = ann_image_tag(user.profile, :tombo_avatar, size: "30x30", class: "rounded-circle", alt: user.decorate.name_with_username, title: user.decorate.name_with_username)
+        = ann_image_tag(user.profile, :image, size: "30x30", class: "rounded-circle", alt: user.decorate.name_with_username, title: user.decorate.name_with_username)
 
 - if user_signed_in? && current_user.userland_project_member?(project)
   = link_to t("resources.userland_project.edit"), edit_userland_project_path(project), class: "btn btn-secondary w-100 mt-2"

@@ -5,7 +5,7 @@
       .row
         .col.u-flex-grow-0
           = link_to user_path(username: user.username) do
-            = ann_image_tag(user.profile, :tombo_avatar, size: "80x80", class: "p-profile-header__avatar rounded-circle")
+            = ann_image_tag(user.profile, :image, size: "80x80", class: "p-profile-header__avatar rounded-circle")
         .col.pt-2.pl-0
           h1
             = link_to user.profile.name, user_path(username: user.username), class: "font-weight-bold text-white"

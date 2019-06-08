@@ -64,13 +64,11 @@ class Character < ApplicationRecord
 
   belongs_to :series, optional: true
   has_many :casts, dependent: :destroy
-  has_many :character_images, dependent: :destroy
   has_many :db_activities, as: :trackable, dependent: :destroy
   has_many :db_comments, as: :resource, dependent: :destroy
   has_many :favorite_characters, dependent: :destroy
   has_many :users, through: :favorite_characters
   has_many :works, through: :casts
-  has_one :character_image
 
   validates :name, presence: true, uniqueness: { scope: :series_id }
   validates :description, presence_pair: :description_source

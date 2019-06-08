@@ -65,7 +65,7 @@ h1.h2.font-weight-bold
       - @favorite_people.each do |favorite_person|
         .col.col-auto.pl-0.pr-2.pb-2
           = link_to user_path(favorite_person.user.username) do
-            = ann_image_tag(favorite_person.user.profile, :tombo_avatar, size: "30x30", class: "rounded-circle", alt: favorite_person.user.name_with_username, title: favorite_person.user.name_with_username)
+            = ann_image_tag(favorite_person.user.profile, :image, size: "30x30", class: "rounded-circle", alt: favorite_person.user.name_with_username, title: favorite_person.user.name_with_username)
 
     - if @favorite_people.length > 30
       .text-right

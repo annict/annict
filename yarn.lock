@@ -2116,11 +2116,6 @@ create-hmac@^1.1.0, create-hmac@^1.1.2, create-hmac@^1.1.4:
     safe-buffer "^5.0.1"
     sha.js "^2.4.8"
 
-cropperjs@1.4.3:
-  version "1.4.3"
-  resolved "https://registry.yarnpkg.com/cropperjs/-/cropperjs-1.4.3.tgz#dc44d6c9e73269e7f96894c726ab91e8913f9e90"
-  integrity sha512-fsUjHuS9mvKVh2aXVRgNcUDlFplW+v4eEB6sOHVI9kMV4G3GViSD4p1qvNLg1ko4ZhOnF0L8/9uXcY4s2bFQPg==
-
 cross-env@^5.1.4:
   version "5.2.0"
   resolved "https://registry.yarnpkg.com/cross-env/-/cross-env-5.2.0.tgz#6ecd4c015d5773e614039ee529076669b9d126f2"
@@ -2769,11 +2764,6 @@ dot-prop@^4.1.1:
   integrity sha512-tUMXrxlExSW6U2EXiiKGSBVdYgtV8qlHL+C10TsW4PURY/ic+eaysnSkwB4kA/mBlCyy/IKDJ+Lc3wbWeaXtuQ==
   dependencies:
     is-obj "^1.0.0"
-
-dropzone@5.5.1:
-  version "5.5.1"
-  resolved "https://registry.yarnpkg.com/dropzone/-/dropzone-5.5.1.tgz#06e2f513e61d6aa363d4b556f18574f47cf7ba26"
-  integrity sha512-3VduRWLxx9hbVr42QieQN25mx/I61/mRdUSuxAmDGdDqZIN8qtP7tcKMa3KfpJjuGjOJGYYUzzeq6eGDnkzesA==
 
 duplexify@^3.4.2, duplexify@^3.6.0:
   version "3.7.1"

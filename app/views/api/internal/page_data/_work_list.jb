@@ -14,7 +14,7 @@ json[:users_data] = results[:users_data].map do |ud|
   data[:users] = ud[:users].map do |user|
     {
       username: user.username,
-      avatar_url: ann_image_url(user.profile, :tombo_avatar, size: "30x30")
+      avatar_url: ann_image_url(user.profile, :image, size: "30x30")
     }
   end
 

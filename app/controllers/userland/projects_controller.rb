@@ -68,7 +68,7 @@ module Userland
 
     def userland_project_params
       params.require(:userland_project).permit(
-        :userland_category_id, :name, :url, :summary, :description, :icon, :available
+        :userland_category_id, :name, :url, :summary, :description, :image, :available
       )
     end
   end

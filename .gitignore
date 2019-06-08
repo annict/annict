@@ -11,9 +11,8 @@
 /log/*
 /node_modules
 /public/packs
-/public/paperclip
 /public/sitemap*
-/spec/test_files/paperclip
+/public/uploads
 /tags
 /tmp/*
 /vendor/bundle

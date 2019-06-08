@@ -1,7 +1,7 @@
 .row
   .col.col-3
     = link_to work_path(top_work) do
-      = ann_image_tag(top_work.work_image, :attachment, size: "250x250", alt: top_work.local_title, class: "rounded img-fluid")
+      = ann_image_tag(top_work.work_image, :image, size: "250x", ratio: "3:4", alt: top_work.local_title, class: "rounded img-fluid")
     c-status-selector.mt-2 :work-id="#{top_work.id}"
   .col.pl-0
     .mb-1

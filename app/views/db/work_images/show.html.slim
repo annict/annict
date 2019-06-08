@@ -13,18 +13,15 @@
   .row
     .col-6
       .c-card.p-3.mb-3
-        = image_tag ann_image_url(@image, :attachment, size: "280x373"), width: "280", class: "img-fluid img-thumbnail rounded"
+        = image_tag ann_image_url(@image, :image, size: "280x373"), width: "280", class: "img-fluid img-thumbnail rounded"
       .c-card.p-3
         = form_for @image, url: db_work_image_path(@work) do |f|
           = render "application/components/error_panel", resource: @image
           .form-group.row
             = f.label :attachment, class: "col-2 col-form-label"
             .col-10
-              .btn.btn-secondary data-toggle="modal" data-target=".c-image-attach-modal"
-                = icon "plus"
-                = t "messages.character_images.attach_image"
-              c-image-attach-modal
-              c-image-attach-form input-name="work_image[attachment]"
+              = f.hidden_field :image, value: @image.cached_image_data
+              = f.file_field :image
           .form-group.row
             = f.label :asin, class: "col-2 col-form-label"
             .col-10
@@ -38,7 +35,3 @@
               = f.button class: "btn btn-primary"
     .col-6
       = render "sidebar"
-
-- content_for :js_templates do
-  = render "application/js_templates/image_attach_form"
-  = render "application/js_templates/image_attach_modal"

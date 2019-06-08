@@ -78,6 +78,7 @@ Rails.application.configure do
 
   config.imgix = {
     use_https: true,
-    source: ENV.fetch("IMGIX_SOURCE")
+    source: ENV.fetch("IMGIX_SOURCE"),
+    secure_url_token: ENV.fetch("IMGIX_SECURE_URL_TOKEN")
   }
 end

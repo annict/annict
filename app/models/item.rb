@@ -34,8 +34,7 @@ class Item < ApplicationRecord
   include ItemImageUploader::Attachment.new(:image)
   include AASM
   include LocaleDetectable
-
-  has_attached_file :thumbnail
+  include ImageUploadable
 
   aasm do
     state :published, initial: true
@@ -49,5 +48,4 @@ class Item < ApplicationRecord
   validates :title, presence: true
   validates :detail_page_url, presence: true
   validates :asin, presence: true
-  validates :thumbnail, attachment_content_type: { content_type: /\Aimage/ }
 end

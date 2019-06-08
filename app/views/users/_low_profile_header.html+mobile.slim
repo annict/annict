@@ -2,7 +2,7 @@
   .p-profile-header__cover
     .p-profile-header__cover-image style="background-image: url(#{profile_background_image_url(user.profile, size: '320x209', size_rate: 2)});"
     = link_to user_path(username: user.username) do
-      = ann_image_tag(user.profile, :tombo_avatar, size: "80x80", class: "p-profile-header__avatar rounded-circle")
+      = ann_image_tag(user.profile, :image, size: "80x80", class: "p-profile-header__avatar rounded-circle")
   .p-profile-header__profile.container.text-center.pt-2
     h1.h2.mb-2
       = link_to @user.profile.name, user_path(@user.username), class: "u-text-body"

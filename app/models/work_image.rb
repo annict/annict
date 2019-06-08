@@ -25,12 +25,8 @@
 
 class WorkImage < ApplicationRecord
   include WorkImageUploader::Attachment.new(:image)
+  include ImageUploadable
 
-  has_attached_file :attachment
-
-  validates :attachment,
-    attachment_presence: true,
-    attachment_content_type: { content_type: /\Aimage/ }
   validates :asin, asin: true
   validates_with AsinOrCopyrightValidator
 
@@ -52,6 +48,10 @@ class WorkImage < ApplicationRecord
     # https://stackoverflow.com/questions/3942878/how-to-decide-font-color-in-white-or-black-depending-on-background-color
     red, green, blue = color_rgb.split(",").map(&:to_i)
     (red * 0.299 + green * 0.587 + blue * 0.114) > 186 ? dark : light
+  end
+
+  def color_hex
+    color_rgb.split(",").map { |i| i.to_i.to_s(16).rjust(2, "0") }.join
   end
 
   private

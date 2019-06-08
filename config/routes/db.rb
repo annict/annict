@@ -21,7 +21,6 @@ namespace :db do
       get :activities
       patch :hide
     end
-    resource :image, controller: :character_images, only: %i(show create update destroy)
   end
 
   resources :casts, only: %i(edit update destroy) do

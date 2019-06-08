@@ -27,10 +27,9 @@ class Pv < ApplicationRecord
   include PvImageUploader::Attachment.new(:image)
   include AASM
   include DbActivityMethods
+  include ImageUploadable
 
   DIFF_FIELDS = %i(title url sort_number).freeze
-
-  has_attached_file :thumbnail
 
   aasm do
     state :published, initial: true
@@ -47,7 +46,6 @@ class Pv < ApplicationRecord
 
   validates :title, presence: true
   validates :url, url: true
-  validates :thumbnail, attachment_content_type: { content_type: /\Aimage/ }
 
   before_save :attach_thumbnail
 
@@ -90,6 +88,6 @@ class Pv < ApplicationRecord
       break if res.code == 200
     end
 
-    self.thumbnail = URI.parse(image_url)
+    self.image = Down.open(image_url)
   end
 end

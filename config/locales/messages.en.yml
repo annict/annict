@@ -138,10 +138,6 @@ en:
         tracked: Tracked.
       status_selector:
         select_status: Select Status
-    character_images:
-      attach_image: Attach Image
-      deleted: Character image has been deleted.
-      saved: Character image has been saved.
     multiple_records:
       create:
         saved: Records have been saved.
@@ -255,10 +251,9 @@ en:
       new:
         write_your_comment: Write Your Comment! (optional)
     work_images:
+      attach_image: Attach Image
       deleted: Work image has been deleted.
       saved: Work image has been saved.
-      index:
-        dropzone-empty: Drop your image here or click to upload.
     works:
       view_all_n_characters: View All %{n} Characters
       view_all_n_episodes: View All %{n} Episodes

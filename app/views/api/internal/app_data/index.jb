@@ -15,7 +15,7 @@ json[:current_user] = {
     name: @user.profile.name
   },
   avatar_image: {
-    size30: ann_image_url(@user.profile, :tombo_avatar, size: "30x30")
+    size30: ann_image_url(@user.profile, :image, size: "30x30")
   },
   notifications_count: @user.notifications_count,
   locale: I18n.locale,
