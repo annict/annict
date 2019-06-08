@@ -83,6 +83,8 @@ en:
     db:
       comments:
         created: Comment has been created.
+      episodes:
+        auto_generate_info_html: "Episodes: %{manual_episodes_count}<br>Auto generate episodes: %{max_generate_episodes_count}"
       works:
         no_episodes: No Episodes
         no_image: No Image

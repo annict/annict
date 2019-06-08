@@ -1,7 +1,6 @@
 - title = t "head.title.db.episodes.index", work_title: @work.local_title
 - set_meta_tags(title: title, reverse: true, prefix: false)
 
-
 .l-topbar.container-fluid.px-3
   .row.flex-items-xs-between
     .col-8
@@ -15,6 +14,10 @@
 = render "db/works/subnav", work: @work
 
 .container-fluid.p-3
+  - max_generate_episodes_count = @work.programs.published.order(number: :desc).first&.number
+  .alert.alert-info
+    = t "messages.db.episodes.auto_generate_info_html", manual_episodes_count: (@work.manual_episodes_count.presence || t("noun.unknown")), max_generate_episodes_count: (max_generate_episodes_count.presence || 0)
+
   - if @episodes.present?
     .c-card
       table.table.table-hover
