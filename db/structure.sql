@@ -24,6 +24,20 @@ COMMENT ON EXTENSION plpgsql IS 'PL/pgSQL procedural language';
 
 
 --
+-- Name: citext; Type: EXTENSION; Schema: -; Owner: -
+--
+
+CREATE EXTENSION IF NOT EXISTS citext WITH SCHEMA public;
+
+
+--
+-- Name: EXTENSION citext; Type: COMMENT; Schema: -; Owner: -
+--
+
+COMMENT ON EXTENSION citext IS 'data type for case-insensitive character strings';
+
+
+--
 -- Name: pg_stat_statements; Type: EXTENSION; Schema: -; Owner: -
 --
 
@@ -35,6 +49,20 @@ CREATE EXTENSION IF NOT EXISTS pg_stat_statements WITH SCHEMA public;
 --
 
 COMMENT ON EXTENSION pg_stat_statements IS 'track execution statistics of all SQL statements executed';
+
+
+--
+-- Name: pgcrypto; Type: EXTENSION; Schema: -; Owner: -
+--
+
+CREATE EXTENSION IF NOT EXISTS pgcrypto WITH SCHEMA public;
+
+
+--
+-- Name: EXTENSION pgcrypto; Type: COMMENT; Schema: -; Owner: -
+--
+
+COMMENT ON EXTENSION pgcrypto IS 'cryptographic functions';
 
 
 --
@@ -5256,6 +5284,13 @@ CREATE INDEX index_users_on_allowed_locales ON public.users USING gin (allowed_l
 
 
 --
+-- Name: index_users_on_deleted_at; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_users_on_deleted_at ON public.users USING btree (deleted_at);
+
+
+--
 -- Name: index_users_on_gumroad_subscriber_id; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -6883,6 +6918,7 @@ INSERT INTO "schema_migrations" (version) VALUES
 ('20190330112541'),
 ('20190413221017'),
 ('20190501175021'),
-('20190608074205');
+('20190608074205'),
+('20190608172837');
 
 
