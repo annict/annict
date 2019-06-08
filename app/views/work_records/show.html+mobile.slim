@@ -40,7 +40,7 @@
         .mb-3
           = link_to work_records_path(@user.username), class: "btn btn-secondary w-100" do
             = icon "angle-right"
-            = t "messages.works.view_all_n_work_records", n: @work_records.length
+            = t "messages.works.view_all_n_record_body_list", n: @work_records.length
 
 = render "application/components/breadcrumb"
 = render "application/components/footer"

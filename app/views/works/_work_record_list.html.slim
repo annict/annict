@@ -7,7 +7,7 @@
     .container.mb-3
       = link_to work_records_path(work), class: "btn btn-secondary w-100" do
         = icon "angle-right"
-        = t "messages.works.view_all_n_reviews", n: work_records.length
+        = t "messages.works.view_all_n_record_body_list", n: work_records.length
 - else
   = render "application/components/empty", text: t("messages._empty.no_record_body_list") do
     = link_to work_records_path(work), class: "btn btn-primary mt-2" do
