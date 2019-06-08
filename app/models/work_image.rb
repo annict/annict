@@ -50,6 +50,10 @@ class WorkImage < ApplicationRecord
     (red * 0.299 + green * 0.587 + blue * 0.114) > 186 ? dark : light
   end
 
+  def color_hex
+    color_rgb.split(",").map { |i| i.to_i.to_s(16).rjust(2, "0") }.join
+  end
+
   private
 
   def set_color_rgb
