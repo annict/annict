@@ -34,11 +34,13 @@
 #  allowed_locales               :string           is an Array
 #  records_count                 :integer          default(0), not null
 #  aasm_state                    :string           default("published"), not null
+#  deleted_at                    :datetime
 #
 # Indexes
 #
 #  index_users_on_aasm_state             (aasm_state)
 #  index_users_on_allowed_locales        (allowed_locales) USING gin
+#  index_users_on_deleted_at             (deleted_at)
 #  index_users_on_gumroad_subscriber_id  (gumroad_subscriber_id)
 #  users_confirmation_token_key          (confirmation_token) UNIQUE
 #  users_email_key                       (email) UNIQUE
