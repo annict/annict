@@ -30,7 +30,9 @@ module DB
     def fetched_rows
       parsed_rows.map do |row_columns|
         character = Character.published.where(id: row_columns[0]).
-          or(Character.published.where(name: row_columns[0])).first
+          or(Character.published.where(name: row_columns[0])).
+          order(updated_at: :desc).
+          first
         person = Person.published.where(id: row_columns[1]).
           or(Person.published.where(name: row_columns[1])).first
 
