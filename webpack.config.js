@@ -7,7 +7,7 @@ const MiniCssExtractPlugin = require('mini-css-extract-plugin')
 const isProd = process.env.NODE_ENV === 'production'
 
 const packs = path.join(__dirname, 'app', 'frontend', 'packs')
-const targets = glob.sync(path.join(packs, '**/*.tsx'))
+const targets = glob.sync(path.join(packs, '**/*.ts'))
 const entry = targets.reduce((entry, target) => {
   const bundle = path.relative(packs, target)
   const ext = path.extname(bundle)
@@ -34,7 +34,7 @@ module.exports = {
     rules: [
       {
         test: /\.tsx?$/,
-        loader: 'awesome-typescript-loader',
+        loader: 'ts-loader',
       },
       {
         enforce: 'pre',
