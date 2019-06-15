@@ -40,6 +40,9 @@ module.exports = {
         enforce: 'pre',
         test: /\.js$/,
         loader: 'source-map-loader',
+        // Exclude node_modules to avoid output warning like this:
+        // https://github.com/apollographql/react-apollo/issues/597
+        exclude: [/node_modules/],
       },
       {
         test: /\.scss$/,
