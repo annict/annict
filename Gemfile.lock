@@ -69,7 +69,7 @@ GIT
 
 GIT
   remote: https://github.com/rails/rails.git
-  revision: dc2a5d4c3407dc8dc12b389f845b7797bafdfdd7
+  revision: c8a84603e2fa97822407bf4a1c8ac0308a899163
   specs:
     actioncable (6.1.0.alpha)
       actionpack (= 6.1.0.alpha)
@@ -326,9 +326,9 @@ GEM
       thread_safe (~> 0.1)
     warden (1.2.8)
       rack (>= 2.0.6)
-    websocket-driver (0.7.0)
+    websocket-driver (0.7.1)
       websocket-extensions (>= 0.1.0)
-    websocket-extensions (0.1.3)
+    websocket-extensions (0.1.4)
     xpath (3.2.0)
       nokogiri (~> 1.8)
     zeitwerk (2.1.6)
