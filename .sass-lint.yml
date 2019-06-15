@@ -21,4 +21,4 @@ rules:
     - convention: hyphenatedbem
   quotes:
     - 2
-    - style: single
+    - style: double
