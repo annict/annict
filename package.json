@@ -19,7 +19,6 @@
     "@types/webpack-env": "^1.13.9",
     "@typescript-eslint/eslint-plugin": "^1.10.2",
     "@typescript-eslint/parser": "^1.10.2",
-    "bulma": "^0.7.4",
     "css-loader": "^3.0.0",
     "eslint": "^5.16.0",
     "eslint-config-prettier": "^5.0.0",
