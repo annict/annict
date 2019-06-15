@@ -11,17 +11,14 @@
     "heroku-postbuild": "NODE_ENV=production webpack"
   },
   "dependencies": {
-    "@types/react": "^16.8.20",
-    "@types/react-dom": "^16.8.4",
     "ip": "^1.1.5",
-    "react": "^16.8.6",
-    "react-dom": "^16.8.6",
+    "stimulus": "^1.1.1",
     "turbolinks": "^5.2.0"
   },
   "devDependencies": {
+    "@types/webpack-env": "^1.13.9",
     "@typescript-eslint/eslint-plugin": "^1.10.2",
     "@typescript-eslint/parser": "^1.10.2",
-    "awesome-typescript-loader": "^5.2.1",
     "bulma": "^0.7.4",
     "css-loader": "^3.0.0",
     "eslint": "^5.16.0",
@@ -34,6 +31,7 @@
     "sass-loader": "^7.1.0",
     "source-map-loader": "^0.2.4",
     "style-loader": "^0.23.1",
+    "ts-loader": "^6.0.2",
     "typescript": "^3.5.2",
     "webpack": "^4.34.0",
     "webpack-cli": "^3.3.4",
