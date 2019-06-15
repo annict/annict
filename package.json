@@ -11,7 +11,7 @@
     "heroku-postbuild": "NODE_ENV=production webpack"
   },
   "dependencies": {
-    "@types/react": "^16.8.17",
+    "@types/react": "^16.8.20",
     "@types/react-dom": "^16.8.4",
     "ip": "^1.1.5",
     "react": "^16.8.6",
