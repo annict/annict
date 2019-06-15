@@ -1,3 +1,6 @@
 <h1>Welcome!</h1>
 
-<div id="app"></div>
+<div data-controller="hello">
+  <input type="text" data-target="hello.name">
+  <button data-action="click->hello#greet">Greet</button>
+</div>
