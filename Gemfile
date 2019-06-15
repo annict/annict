@@ -35,5 +35,6 @@ group :test do
   gem "capybara", github: "teamcapybara/capybara"
   gem "factory_bot_rails", github: "thoughtbot/factory_bot_rails"
   gem "selenium-webdriver"
+  gem "simplecov", github: "colszowka/simplecov", require: false
   gem "webdrivers", github: "titusfortner/webdrivers"
 end

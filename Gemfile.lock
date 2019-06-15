@@ -22,6 +22,15 @@ GIT
       railties (>= 3.2, < 6.1)
 
 GIT
+  remote: https://github.com/colszowka/simplecov.git
+  revision: 240caf9f62dd492a20e7db020a1c5305d26bc924
+  specs:
+    simplecov (0.16.1)
+      docile (~> 1.1)
+      json (>= 1.8, < 3)
+      simplecov-html (~> 0.10.0)
+
+GIT
   remote: https://github.com/ged/ruby-pg.git
   revision: 44300258355e9b221dd53bb27e450ee594e1f57d
   specs:
@@ -257,6 +266,7 @@ GEM
     concurrent-ruby (1.1.5)
     crass (1.0.4)
     diff-lcs (1.3)
+    docile (1.3.2)
     erubi (1.8.0)
     factory_bot (5.0.2)
       activesupport (>= 4.2.0)
@@ -265,6 +275,7 @@ GEM
       activesupport (>= 4.2.0)
     i18n (1.6.0)
       concurrent-ruby (~> 1.0)
+    json (2.2.0)
     loofah (2.2.3)
       crass (~> 1.0.2)
       nokogiri (>= 1.5.9)
@@ -301,6 +312,7 @@ GEM
     selenium-webdriver (3.142.3)
       childprocess (>= 0.5, < 2.0)
       rubyzip (~> 1.2, >= 1.2.2)
+    simplecov-html (0.10.2)
     sprockets (3.7.2)
       concurrent-ruby (~> 1.0)
       rack (> 1, < 3)
@@ -344,6 +356,7 @@ DEPENDENCIES
   rspec-support!
   rspec_junit_formatter!
   selenium-webdriver
+  simplecov!
   spring!
   spring-watcher-listen!
   webdrivers!
