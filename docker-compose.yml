@@ -1,9 +1,28 @@
 version: "3.7"
 
 services:
+  webpack:
+    build:
+      context: .
+      dockerfile: ./app/frontend/Dockerfile
+    command: /bin/ash -c 'yarn webpack:start'
+    volumes:
+      - .:/annict
+      - node_modules_vol:/annict/node_modules
+    ports:
+      - 8080:8080
   postgresql:
     image: postgres:10.3-alpine
     ports:
       - 5432:5432
     volumes:
       - ../_postgresql/data:/var/lib/postgresql/data
+  selenium:
+    image: selenium/standalone-chrome:latest
+    ports:
+      - 4444:4444
+
+volumes:
+  # Exclude the bundle/node_modules directory
+  # https://stackoverflow.com/questions/29181032/add-a-volume-to-docker-but-exclude-a-sub-folder
+  node_modules_vol:

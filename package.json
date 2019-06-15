@@ -13,6 +13,7 @@
   "dependencies": {
     "@types/react": "^16.8.17",
     "@types/react-dom": "^16.8.4",
+    "ip": "^1.1.5",
     "react": "^16.8.6",
     "react-dom": "^16.8.6",
     "turbolinks": "^5.2.0"
