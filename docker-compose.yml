@@ -17,6 +17,10 @@ services:
       - 5432:5432
     volumes:
       - ../_postgresql/data:/var/lib/postgresql/data
+  selenium:
+    image: selenium/standalone-chrome:latest
+    ports:
+      - 4444:4444
 
 volumes:
   # Exclude the bundle/node_modules directory

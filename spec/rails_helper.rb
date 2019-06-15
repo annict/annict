@@ -36,6 +36,11 @@ rescue ActiveRecord::PendingMigrationError => e
   puts e.to_s.strip
   exit 1
 end
+
+Capybara.default_max_wait_time = 5
+Capybara.server_host = Socket.ip_address_list.detect { |addr| addr.ipv4_private? }.ip_address
+Capybara.server_port = ENV.fetch("CAPYBARA_SERVER_PORT")
+
 RSpec.configure do |config|
   # Remove this line if you're not using ActiveRecord or ActiveRecord fixtures
   # config.fixture_path = "#{::Rails.root}/spec/fixtures"
@@ -64,4 +69,33 @@ RSpec.configure do |config|
   config.filter_rails_from_backtrace!
   # arbitrary gems may also be filtered via:
   # config.filter_gems_from_backtrace("gem name")
+
+  config.before(:each, type: :system) do
+    host! "http://#{Capybara.server_host}:#{Capybara.server_port}"
+
+    Capybara.register_driver :remote_selenium_chrome do |app|
+      caps = Selenium::WebDriver::Remote::Capabilities.chrome(
+        chrome_options: {
+          args: %w(headless)
+        }
+      )
+
+      driver = Capybara::Selenium::Driver.new(
+        app,
+        browser: :remote,
+        url: ENV.fetch("SELENIUM_DRIVER_URL"),
+        desired_capabilities: caps
+      )
+
+      # https://stackoverflow.com/questions/51989015/selenium-file-detector-unable-to-find-file-to-upload-to-selenium-grid
+      driver.browser.file_detector = ->(args) do
+        str = args.first.to_s
+        str if File.exist?(str)
+      end
+
+      driver
+    end
+
+    driven_by :remote_selenium_chrome
+  end
 end

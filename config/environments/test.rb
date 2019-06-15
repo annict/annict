@@ -34,6 +34,10 @@ Rails.application.configure do
 
   config.action_mailer.perform_caching = false
 
+  asset_ip_address = Socket.ip_address_list.detect { |addr| addr.ipv4_private? }.ip_address
+  asset_port = ENV["CI"] ? ENV.fetch("CAPYBARA_SERVER_PORT") : ENV.fetch("WEBPACK_DEV_SERVER_PORT")
+  config.action_controller.asset_host = "http://#{asset_ip_address}:#{asset_port}"
+
   # Tell Action Mailer not to deliver emails to the real world.
   # The :test delivery method accumulates sent emails in the
   # ActionMailer::Base.deliveries array.
