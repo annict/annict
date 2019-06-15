@@ -150,10 +150,9 @@ GIT
 
 GIT
   remote: https://github.com/rails/spring.git
-  revision: e7a36afa436fcc59b6945f68dbc08f1076e65585
+  revision: ec03cc7ba126535a9d5562fb44583485245ee816
   specs:
-    spring (2.0.2)
-      activesupport (>= 4.2)
+    spring (2.1.0)
 
 GIT
   remote: https://github.com/rspec/rspec-core.git
