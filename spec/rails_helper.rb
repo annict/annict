@@ -1,5 +1,6 @@
-# This file is copied to spec/ when you run 'rails generate rspec:install'
 # frozen_string_literal: true
+
+# This file is copied to spec/ when you run 'rails generate rspec:install'
 
 require "spec_helper"
 ENV["RAILS_ENV"] ||= "test"
@@ -43,7 +44,7 @@ rescue ActiveRecord::PendingMigrationError => e
 end
 
 Capybara.default_max_wait_time = 5
-Capybara.server_host = Socket.ip_address_list.detect { |addr| addr.ipv4_private? }.ip_address
+Capybara.server_host = Socket.ip_address_list.detect(&:ipv4_private?).ip_address
 Capybara.server_port = ENV.fetch("CAPYBARA_SERVER_PORT")
 
 RSpec.configure do |config|
@@ -93,7 +94,7 @@ RSpec.configure do |config|
       )
 
       # https://stackoverflow.com/questions/51989015/selenium-file-detector-unable-to-find-file-to-upload-to-selenium-grid
-      driver.browser.file_detector = ->(args) do
+      driver.browser.file_detector = lambda do |args|
         str = args.first.to_s
         str if File.exist?(str)
       end

@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class MemberConstraint
-  def matches?(request)
+  def matches?(_request)
     # !User.without_deleted.find_by_session(request.session).nil?
     false
   end

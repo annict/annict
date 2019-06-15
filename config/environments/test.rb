@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # The test environment is used exclusively to run your application's
 # test suite. You never need to work with it otherwise. Remember that
 # your test database is "scratch space" for the test suite and is wiped
@@ -34,7 +36,7 @@ Rails.application.configure do
 
   config.action_mailer.perform_caching = false
 
-  asset_ip_address = Socket.ip_address_list.detect { |addr| addr.ipv4_private? }.ip_address
+  asset_ip_address = Socket.ip_address_list.detect(&:ipv4_private?).ip_address
   asset_port = ENV["CI"] ? ENV.fetch("CAPYBARA_SERVER_PORT") : ENV.fetch("WEBPACK_DEV_SERVER_PORT")
   config.action_controller.asset_host = "http://#{asset_ip_address}:#{asset_port}"
 
