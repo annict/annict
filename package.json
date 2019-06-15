@@ -19,9 +19,12 @@
     "turbolinks": "^5.2.0"
   },
   "devDependencies": {
+    "@typescript-eslint/eslint-plugin": "^1.10.2",
+    "@typescript-eslint/parser": "^1.10.2",
     "awesome-typescript-loader": "^5.2.1",
     "bulma": "^0.7.4",
     "css-loader": "^2.1.1",
+    "eslint-config-prettier": "^5.0.0",
     "file-loader": "^3.0.1",
     "mini-css-extract-plugin": "^0.6.0",
     "node-sass": "^4.12.0",
