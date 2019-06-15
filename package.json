@@ -12,6 +12,7 @@
   },
   "dependencies": {
     "ip": "^1.1.5",
+    "stimulus": "^1.1.1",
     "turbolinks": "^5.2.0"
   },
   "devDependencies": {
