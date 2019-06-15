@@ -1,24 +1,47 @@
-# README
+<p align="center"><a href="https://annict.com" target="_blank" rel="noopener"><img src="https://user-images.githubusercontent.com/56767/56467671-fdd6ea80-645c-11e9-9056-a5d3fd5739e6.png" width="130" /></a></p>
 
-This README would normally document whatever steps are necessary to get the
-application up and running.
+# Annict (アニクト)
 
-Things you may want to cover:
+The platform for anime addicts.
 
-* Ruby version
+[![CircleCI](https://img.shields.io/circleci/project/github/annict/annict.svg)](https://circleci.com/gh/annict/annict)
+[![Test Coverage](https://api.codeclimate.com/v1/badges/ba10b596888853bc3f83/test_coverage)](https://codeclimate.com/github/annict/annict/test_coverage)
+[![Code Climate](https://codeclimate.com/github/annict/annict/badges/gpa.svg)](https://codeclimate.com/github/annict/annict)
+[![Hound](https://camo.githubusercontent.com/23ee7a697b291798079e258bbc25434c4fac4f8b/68747470733a2f2f696d672e736869656c64732e696f2f62616467652f50726f7465637465645f62792d486f756e642d6138373364312e737667)](https://houndci.com)
+[![Discord](https://camo.githubusercontent.com/b12a95e20b7ca35f918c0ab5103fe56b6f44c067/68747470733a2f2f696d672e736869656c64732e696f2f62616467652f636861742d6f6e253230646973636f72642d3732383964612e737667)](https://discord.gg/PVJRUKP)
 
-* System dependencies
 
-* Configuration
+## Requirements
 
-* Database creation
+To run Annict on a local machine, you need to have the following dependencies installed:
 
-* Database initialization
+- [Ruby](https://www.ruby-lang.org) 2.6.3
+- [Node.js](https://nodejs.org) 12.4.0
+- [Yarn](https://yarnpkg.com)
+- [Docker](https://www.docker.com)
+- [Docker Compose](https://docs.docker.com/compose/)
 
-* How to run the test suite
 
-* Services (job queues, cache servers, search engines, etc.)
+## Running the app
 
-* Deployment instructions
+```
+$ sudo sh -c "echo '127.0.0.1  annict.test' >> /etc/hosts"
+$ sudo sh -c "echo '127.0.0.1  annict-jp.test' >> /etc/hosts"
+$ git clone git@github.com:annict/annict.git
+$ cd annict
+$ yarn install
+$ bundle install
+$ touch .env.development.local
+$ bundle exec rails db:setup
+$ docker-compose up --build
+$ bundle exec rails s
+```
 
-* ...
+You should then be able to open [http://annict.test:3000](http://annict.test:3000) (or [http://annict-jp.test:3000](http://annict-jp.test:3000) for Japanese) in your browser.
+
+
+#### Running the tests
+
+```
+$ bundle exec rspec
+```
