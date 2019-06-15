@@ -1,6 +1,6 @@
 GIT
   remote: https://github.com/Shopify/bootsnap.git
-  revision: 55ead96fbf831d33d3f748aa390d6e097923fea1
+  revision: b4def902b6fc9fba7dc8ac47f8d9b43666464c55
   specs:
     bootsnap (1.4.4)
       msgpack (~> 1.0)
