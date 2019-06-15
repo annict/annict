@@ -23,7 +23,7 @@
     "@typescript-eslint/parser": "^1.10.2",
     "awesome-typescript-loader": "^5.2.1",
     "bulma": "^0.7.4",
-    "css-loader": "^2.1.1",
+    "css-loader": "^3.0.0",
     "eslint": "^5.16.0",
     "eslint-config-prettier": "^5.0.0",
     "file-loader": "^4.0.0",
