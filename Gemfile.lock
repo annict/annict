@@ -1,6 +1,6 @@
 GIT
   remote: https://github.com/Shopify/bootsnap.git
-  revision: 55ead96fbf831d33d3f748aa390d6e097923fea1
+  revision: b4def902b6fc9fba7dc8ac47f8d9b43666464c55
   specs:
     bootsnap (1.4.4)
       msgpack (~> 1.0)
@@ -54,7 +54,7 @@ GIT
 
 GIT
   remote: https://github.com/pry/pry.git
-  revision: 6cc6e55f205c421ca6ca010a8afcafc3ed7dc299
+  revision: bfc66a12ead879186cd3a5ad7fa8c561096b9ccb
   specs:
     pry (0.12.2)
       coderay (~> 1.1.0)
@@ -62,14 +62,14 @@ GIT
 
 GIT
   remote: https://github.com/puma/puma.git
-  revision: d39fe92a2dd1b2ee037852a6af38579abc5a5d7c
+  revision: c242e76f4d14dd7582ce27062c6b0d26ff4abaf5
   specs:
     puma (3.12.1)
       nio4r (~> 2.0)
 
 GIT
   remote: https://github.com/rails/rails.git
-  revision: dc2a5d4c3407dc8dc12b389f845b7797bafdfdd7
+  revision: c8a84603e2fa97822407bf4a1c8ac0308a899163
   specs:
     actioncable (6.1.0.alpha)
       actionpack (= 6.1.0.alpha)
@@ -150,10 +150,9 @@ GIT
 
 GIT
   remote: https://github.com/rails/spring.git
-  revision: e7a36afa436fcc59b6945f68dbc08f1076e65585
+  revision: ec03cc7ba126535a9d5562fb44583485245ee816
   specs:
-    spring (2.0.2)
-      activesupport (>= 4.2)
+    spring (2.1.0)
 
 GIT
   remote: https://github.com/rspec/rspec-core.git
@@ -326,9 +325,9 @@ GEM
       thread_safe (~> 0.1)
     warden (1.2.8)
       rack (>= 2.0.6)
-    websocket-driver (0.7.0)
+    websocket-driver (0.7.1)
       websocket-extensions (>= 0.1.0)
-    websocket-extensions (0.1.3)
+    websocket-extensions (0.1.4)
     xpath (3.2.0)
       nokogiri (~> 1.8)
     zeitwerk (2.1.6)
