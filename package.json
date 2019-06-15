@@ -16,6 +16,7 @@
     "turbolinks": "^5.2.0"
   },
   "devDependencies": {
+    "@types/webpack-env": "^1.13.9",
     "@typescript-eslint/eslint-plugin": "^1.10.2",
     "@typescript-eslint/parser": "^1.10.2",
     "bulma": "^0.7.4",
