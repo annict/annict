@@ -2548,7 +2548,8 @@ CREATE TABLE public.users (
     gumroad_subscriber_id integer,
     allowed_locales character varying[],
     records_count integer DEFAULT 0 NOT NULL,
-    aasm_state character varying DEFAULT 'published'::character varying NOT NULL
+    aasm_state character varying DEFAULT 'published'::character varying NOT NULL,
+    deleted_at timestamp without time zone
 );
 
 
@@ -6919,6 +6920,7 @@ INSERT INTO "schema_migrations" (version) VALUES
 ('20190413221017'),
 ('20190501175021'),
 ('20190608074205'),
-('20190608172837');
+('20190608172837'),
+('20190608173815');
 
 
