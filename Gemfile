@@ -22,6 +22,7 @@ group :development, :test do
   gem "rspec-mocks", github: "rspec/rspec-mocks"
   gem "rspec-rails", github: "rspec/rspec-rails"
   gem "rspec-support", github: "rspec/rspec-support"
+  gem "rspec_junit_formatter", github: "sj26/rspec_junit_formatter" # Using on CircleCI
 end
 
 group :development do

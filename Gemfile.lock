@@ -208,6 +208,13 @@ GIT
       warden (~> 1.2.3)
 
 GIT
+  remote: https://github.com/sj26/rspec_junit_formatter.git
+  revision: 8f981d20979a9efa235cc878790b92d8862ba560
+  specs:
+    rspec_junit_formatter (0.4.1)
+      rspec-core (>= 2, < 4, != 2.12.0)
+
+GIT
   remote: https://github.com/teamcapybara/capybara.git
   revision: 135dcb75d4763f5887535ac2e8145b6aca93c889
   specs:
@@ -335,6 +342,7 @@ DEPENDENCIES
   rspec-mocks!
   rspec-rails!
   rspec-support!
+  rspec_junit_formatter!
   selenium-webdriver
   spring!
   spring-watcher-listen!
