@@ -1,5 +1,5 @@
 eslint:
-  enabled: true
+  enabled: false
   config_file: .eslintrc
   version: 5.16.0
 
