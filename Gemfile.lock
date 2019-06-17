@@ -156,7 +156,7 @@ GIT
 
 GIT
   remote: https://github.com/rspec/rspec-core.git
-  revision: c408a2a31e4cd3a1c4081513d8da1c1c27842605
+  revision: 4c83f3ca10147c168473b18fd5dfb49612c1d57a
   specs:
     rspec-core (3.9.0.pre)
       rspec-support (= 3.9.0.pre)
