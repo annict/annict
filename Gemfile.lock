@@ -224,9 +224,9 @@ GIT
 
 GIT
   remote: https://github.com/teamcapybara/capybara.git
-  revision: 135dcb75d4763f5887535ac2e8145b6aca93c889
+  revision: f1cb0ee9dcc4f595d9e53febbf736c7879a2f10c
   specs:
-    capybara (3.23.0)
+    capybara (3.24.0)
       addressable
       mini_mime (>= 0.1.3)
       nokogiri (~> 1.8)
