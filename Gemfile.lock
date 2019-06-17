@@ -54,7 +54,7 @@ GIT
 
 GIT
   remote: https://github.com/pry/pry.git
-  revision: bfc66a12ead879186cd3a5ad7fa8c561096b9ccb
+  revision: 028af11c0e530398060e0a3e2194140590ec3c7c
   specs:
     pry (0.12.2)
       coderay (~> 1.1.0)
