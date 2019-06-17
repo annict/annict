@@ -245,12 +245,12 @@ GIT
 
 GIT
   remote: https://github.com/titusfortner/webdrivers.git
-  revision: a287cad1fad20a2160156e53ce83f91e201096ee
+  revision: 4ed73c57ff43027b567625da43ad1006e26c7497
   specs:
-    webdrivers (4.0.0)
+    webdrivers (4.0.1)
       nokogiri (~> 1.6)
       rubyzip (~> 1.0)
-      selenium-webdriver (~> 3.0)
+      selenium-webdriver (>= 3.0, < 4.0)
 
 GEM
   remote: https://rubygems.org/
