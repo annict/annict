@@ -1,0 +1,73 @@
+// Color system
+
+$theme-colors: (
+  primary: $ann-color-mizuho,
+  secondary: $ann-bs-gray-600,
+  success: $ann-bs-green,
+  info: $ann-bs-cyan,
+  warning: $ann-bs-yellow,
+  danger: $ann-bs-red,
+  light: $ann-bs-gray-100,
+  dark: $ann-bs-gray-800
+);
+
+
+// Body
+
+$body-bg: $ann-color-white-d1;
+$body-color: $ann-color-body;
+
+
+// Links
+
+$link-color: $ann-color-link;
+$link-hover-color: darken($link-color, 15%);
+$link-hover-decoration: none;
+
+
+// Typography
+
+$h1-font-size: 1.75rem;
+$h2-font-size: 1.5rem;
+$h3-font-size: 1.25rem;
+$h4-font-size: 1rem;
+$h5-font-size: .75rem;
+$h6-font-size: .5rem;
+
+$display1-size: 3rem;
+$display2-size: 2.5rem;
+
+$headings-font-family: -apple-system, BlinkMacSystemFont, "Helvetica Neue", "Segoe UI", "ヒラギノ角ゴ ProN W3", Hiragino Kaku Gothic ProN, Arial, "メイリオ", Meiryo, sans-serif;
+$headings-font-weight: 300;
+
+$list-inline-padding: .5rem;
+
+
+// Fonts
+
+$hr-border-color: rgba(0, 0, 0, .08);
+
+
+// Components
+
+$border-radius: .12rem;
+
+
+// Tables
+
+$table-hover-bg: rgba(0, 0, 0, .03);
+
+
+// Forms
+
+$input-border-color: $ann-bs-input-border-color;
+
+
+// Navbar
+
+$navbar-padding-y: .3rem;
+
+
+// Image thumbnails
+
+$thumbnail-padding: 0;
