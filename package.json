@@ -34,7 +34,7 @@
     "typescript": "^3.5.2",
     "webpack": "^4.35.0",
     "webpack-cli": "^3.3.4",
-    "webpack-dev-server": "^3.2.1",
+    "webpack-dev-server": "^3.7.2",
     "webpack-manifest-plugin": "^2.0.4",
     "webpack-merge": "^4.2.1"
   }
