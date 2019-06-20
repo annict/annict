@@ -14,7 +14,7 @@ GIT
 
 GIT
   remote: https://github.com/bkeepers/dotenv.git
-  revision: f796d366444d454e12a65cf1db81781dc0ce2c7b
+  revision: 5c812db9cfceaf74ead3531eeacc01827bd17c36
   specs:
     dotenv (2.7.2)
     dotenv-rails (2.7.2)
