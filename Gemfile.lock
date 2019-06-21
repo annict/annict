@@ -245,7 +245,7 @@ GIT
 
 GIT
   remote: https://github.com/titusfortner/webdrivers.git
-  revision: c8440df645fd9f8a1d003ca896b3a06df8d9faf8
+  revision: 231d53cb291a89a76d9988de9ff14069b90c707a
   specs:
     webdrivers (4.0.1)
       nokogiri (~> 1.6)
