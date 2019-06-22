@@ -171,7 +171,7 @@ GIT
 
 GIT
   remote: https://github.com/rspec/rspec-mocks.git
-  revision: d0cd8dfba88f6a802e94a4a8966e03196ce6385c
+  revision: b789d70b76d5bde224796de6e5d2c5af2bbd291b
   specs:
     rspec-mocks (3.9.0.pre)
       diff-lcs (>= 1.2.0, < 2.0)
