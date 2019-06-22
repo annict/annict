@@ -11,7 +11,7 @@ NULLCMD = :
 
 #### Start of system configuration section. ####
 
-srcdir = /Users/shimbaco/.rbenv/versions/2.6.3/lib/ruby/gems/2.6.0/gems/sorbet-0.4.4259/bin
+srcdir = ./bin
 topdir = /Users/shimbaco/.rbenv/versions/2.6.3/include/ruby-2.6.0
 hdrdir = $(topdir)
 arch_hdrdir = /Users/shimbaco/.rbenv/versions/2.6.3/include/ruby-2.6.0/x86_64-darwin18

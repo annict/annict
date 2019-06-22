@@ -2833,9 +2833,6 @@ end
 class ActionView::Template::Inline
 end
 
-class ActionView::Template::LegacyTemplate
-end
-
 class ActionView::Template::RawFile
   def format(); end
 
@@ -13793,10 +13790,6 @@ module Bundler::VersionRanges
   def self.for_many(requirements); end
 end
 
-module Bundler::YAMLSerializer
-  extend ::T::Sig
-end
-
 module Bundler
   extend ::T::Sig
 end
@@ -14545,56 +14538,60 @@ module CodeRay::PluginHost
   extend ::T::Sig
 end
 
-module CodeRay::Scanners
+module CodeRay::Scanners::Ruby::Patterns
+  BINARY = ::T.let(nil, ::T.untyped)
+  CHARACTER = ::T.let(nil, ::T.untyped)
+  CLASS_VARIABLE = ::T.let(nil, ::T.untyped)
+  CONTROL_META_ESCAPE = ::T.let(nil, ::T.untyped)
+  DATA = ::T.let(nil, ::T.untyped)
+  DECIMAL = ::T.let(nil, ::T.untyped)
+  ESCAPE = ::T.let(nil, ::T.untyped)
+  EXPONENT = ::T.let(nil, ::T.untyped)
+  FANCY_STRING_INTERPRETED = ::T.let(nil, ::T.untyped)
+  FANCY_STRING_KIND = ::T.let(nil, ::T.untyped)
+  FANCY_STRING_START = ::T.let(nil, ::T.untyped)
+  FLOAT_OR_INT = ::T.let(nil, ::T.untyped)
+  FLOAT_SUFFIX = ::T.let(nil, ::T.untyped)
+  GLOBAL_VARIABLE = ::T.let(nil, ::T.untyped)
+  HEREDOC_OPEN = ::T.let(nil, ::T.untyped)
+  HEXADECIMAL = ::T.let(nil, ::T.untyped)
+  IDENT = ::T.let(nil, ::T.untyped)
+  IDENT_KIND = ::T.let(nil, ::T.untyped)
+  INSTANCE_VARIABLE = ::T.let(nil, ::T.untyped)
+  KEYWORDS = ::T.let(nil, ::T.untyped)
+  KEYWORDS_EXPECTING_VALUE = ::T.let(nil, ::T.untyped)
+  KEYWORD_NEW_STATE = ::T.let(nil, ::T.untyped)
+  METHOD_AFTER_DOT = ::T.let(nil, ::T.untyped)
+  METHOD_NAME = ::T.let(nil, ::T.untyped)
+  METHOD_NAME_EX = ::T.let(nil, ::T.untyped)
+  METHOD_NAME_OPERATOR = ::T.let(nil, ::T.untyped)
+  METHOD_NAME_OR_SYMBOL = ::T.let(nil, ::T.untyped)
+  METHOD_SUFFIX = ::T.let(nil, ::T.untyped)
+  NUMERIC = ::T.let(nil, ::T.untyped)
+  OBJECT_VARIABLE = ::T.let(nil, ::T.untyped)
+  OCTAL = ::T.let(nil, ::T.untyped)
+  PREDEFINED_CONSTANTS = ::T.let(nil, ::T.untyped)
+  PREFIX_VARIABLE = ::T.let(nil, ::T.untyped)
+  QUOTE_TO_TYPE = ::T.let(nil, ::T.untyped)
+  REGEXP_MODIFIERS = ::T.let(nil, ::T.untyped)
+  RUBYDOC = ::T.let(nil, ::T.untyped)
+  RUBYDOC_OR_DATA = ::T.let(nil, ::T.untyped)
+  SIMPLE_ESCAPE = ::T.let(nil, ::T.untyped)
+  SYMBOL = ::T.let(nil, ::T.untyped)
+  VALUE_FOLLOWS = ::T.let(nil, ::T.untyped)
+  VARIABLE = ::T.let(nil, ::T.untyped)
+end
+
+module CodeRay::Scanners::Ruby::Patterns
+  extend ::T::Sig
+end
+
+class CodeRay::Scanners::Ruby::StringState
+  CLOSING_PAREN = ::T.let(nil, ::T.untyped)
+  STRING_PATTERN = ::T.let(nil, ::T.untyped)
 end
 
 class CodeRay::Scanners::Scanner
-  include ::Enumerable
-  def binary_string(); end
-
-  def column(pos=T.unsafe(nil)); end
-
-  def each(&block); end
-
-  def file_extension(); end
-
-  def initialize(code=T.unsafe(nil), options=T.unsafe(nil)); end
-
-  def lang(); end
-
-  def line(pos=T.unsafe(nil)); end
-
-  def raise_inspect(message, tokens, state=T.unsafe(nil), ambit=T.unsafe(nil), backtrace=T.unsafe(nil)); end
-
-  def raise_inspect_arguments(message, tokens, state, ambit); end
-
-  def reset_instance(); end
-
-  def scan_rest(); end
-
-  def scan_tokens(tokens, options); end
-
-  def scanner_state_info(state); end
-
-  def set_string_from_source(source); end
-
-  def set_tokens_from_options(options); end
-
-  def setup(); end
-
-  def state(); end
-
-  def state=(state); end
-
-  def string=(code); end
-
-  def tokenize(source=T.unsafe(nil), options=T.unsafe(nil)); end
-
-  def tokens(); end
-
-  def tokens_last(tokens, n); end
-
-  def tokens_size(tokens); end
   DEFAULT_OPTIONS = ::T.let(nil, ::T.untyped)
   KINDS_NOT_LOC = ::T.let(nil, ::T.untyped)
   SCANNER_STATE_INFO = ::T.let(nil, ::T.untyped)
@@ -14603,31 +14600,7 @@ end
 
 CodeRay::Scanners::Scanner::PLUGIN_HOST = CodeRay::Scanners
 
-class CodeRay::Scanners::Scanner::ScanError
-end
-
-class CodeRay::Scanners::Scanner::ScanError
-end
-
-class CodeRay::Scanners::Scanner
-  extend ::CodeRay::Plugin
-  def self.encode_with_encoding(code, target_encoding); end
-
-  def self.encoding(name=T.unsafe(nil)); end
-
-  def self.file_extension(extension=T.unsafe(nil)); end
-
-  def self.guess_encoding(s); end
-
-  def self.lang(); end
-
-  def self.normalize(code); end
-
-  def self.to_unix(code); end
-end
-
 module CodeRay::Scanners
-  extend ::CodeRay::PluginHost
   extend ::T::Sig
 end
 
@@ -14647,70 +14620,6 @@ end
 module CodeRay::Styles
   extend ::CodeRay::PluginHost
   extend ::T::Sig
-end
-
-class CodeRay::Tokens
-  def begin_group(kind); end
-
-  def begin_line(kind); end
-
-  def count(); end
-
-  def encode(encoder, options=T.unsafe(nil)); end
-
-  def end_group(kind); end
-
-  def end_line(kind); end
-
-  def method_missing(meth, options=T.unsafe(nil)); end
-
-  def scanner(); end
-
-  def scanner=(scanner); end
-
-  def split_into_parts(*sizes); end
-
-  def text_token(*_); end
-
-  def to_s(); end
-
-  def tokens(*_); end
-end
-
-class CodeRay::Tokens
-end
-
-class CodeRay::TokensProxy
-  def block(); end
-
-  def block=(block); end
-
-  def each(*args, &blk); end
-
-  def encode(encoder, options=T.unsafe(nil)); end
-
-  def initialize(input, lang, options=T.unsafe(nil), block=T.unsafe(nil)); end
-
-  def input(); end
-
-  def input=(input); end
-
-  def lang(); end
-
-  def lang=(lang); end
-
-  def method_missing(method, *args, &blk); end
-
-  def options(); end
-
-  def options=(options); end
-
-  def scanner(); end
-
-  def tokens(); end
-end
-
-class CodeRay::TokensProxy
 end
 
 module CodeRay
@@ -16161,137 +16070,8 @@ module DeviseHelper
   extend ::T::Sig
 end
 
-class DidYouMean::ClassNameChecker
-  include ::ActiveSupport::ToJsonWithActiveSupportEncoder
-  def class_name(); end
-
-  def class_names(); end
-
-  def corrections(); end
-
-  def initialize(exception); end
-
-  def scopes(); end
-end
-
-class DidYouMean::ClassNameChecker
-  extend ::T::Sig
-end
-
-module DidYouMean::Correctable
-  def corrections(); end
-
-  def original_message(); end
-
-  def spell_checker(); end
-
-  def to_s(); end
-end
-
-module DidYouMean::Correctable
-  extend ::T::Sig
-end
-
-module DidYouMean::Jaro
-  extend ::T::Sig
-  def self.distance(str1, str2); end
-end
-
-module DidYouMean::JaroWinkler
-  extend ::T::Sig
-  def self.distance(str1, str2); end
-end
-
-class DidYouMean::KeyErrorChecker
-  def corrections(); end
-
-  def initialize(key_error); end
-end
-
-class DidYouMean::KeyErrorChecker
-end
-
-module DidYouMean::Levenshtein
-  extend ::T::Sig
-  def self.distance(str1, str2); end
-
-  def self.min3(a, b, c); end
-end
-
-class DidYouMean::MethodNameChecker
-  include ::ActiveSupport::ToJsonWithActiveSupportEncoder
-  def corrections(); end
-
-  def initialize(exception); end
-
-  def method_name(); end
-
-  def method_names(); end
-
-  def receiver(); end
-  RB_RESERVED_WORDS = ::T.let(nil, ::T.untyped)
-end
-
-class DidYouMean::MethodNameChecker
-  extend ::T::Sig
-end
-
-class DidYouMean::NullChecker
-  include ::ActiveSupport::ToJsonWithActiveSupportEncoder
-  def corrections(); end
-
-  def initialize(*_); end
-end
-
-class DidYouMean::NullChecker
-  extend ::T::Sig
-end
-
-class DidYouMean::PlainFormatter
-  def message_for(corrections); end
-end
-
-class DidYouMean::PlainFormatter
-end
-
-class DidYouMean::SpellChecker
-  include ::ActiveSupport::ToJsonWithActiveSupportEncoder
-  def correct(input); end
-
-  def initialize(dictionary:); end
-end
-
-class DidYouMean::SpellChecker
-  extend ::T::Sig
-end
-
-class DidYouMean::VariableNameChecker
-  include ::ActiveSupport::ToJsonWithActiveSupportEncoder
-  def corrections(); end
-
-  def cvar_names(); end
-
-  def initialize(exception); end
-
-  def ivar_names(); end
-
-  def lvar_names(); end
-
-  def method_names(); end
-
-  def name(); end
-  RB_RESERVED_WORDS = ::T.let(nil, ::T.untyped)
-end
-
-class DidYouMean::VariableNameChecker
-  extend ::T::Sig
-end
-
 module DidYouMean
   extend ::T::Sig
-  def self.formatter(); end
-
-  def self.formatter=(formatter); end
 end
 
 class Digest::Base
@@ -17453,13 +17233,15 @@ end
 
 class File
   extend ::T::Sig
-  def self.empty?(_); end
+  def self.atomic_write(file_name, temp_dir=T.unsafe(nil)); end
 
   def self.exists?(_); end
 
   def self.lutime(*_); end
 
   def self.mkfifo(*_); end
+
+  def self.probe_stat_in(dir); end
 
 end
 
@@ -22013,7 +21795,7 @@ end
 
 class Hash
   extend ::T::Sig
-  def self.try_convert(_); end
+  def self.from_trusted_xml(xml); end
 end
 
 HashWithIndifferentAccess = ActiveSupport::HashWithIndifferentAccess
@@ -23041,7 +22823,6 @@ module Kernel
 end
 
 class KeyError
-  include ::DidYouMean::Correctable
   def key(); end
 
   def receiver(); end
@@ -24160,7 +23941,6 @@ module NIO
 end
 
 class NameError
-  include ::DidYouMean::Correctable
   def name(); end
 
   def receiver(); end
@@ -24251,8 +24031,6 @@ end
 module Net::HTTP::ProxyDelta
   extend ::T::Sig
 end
-
-Net::HTTP::ProxyMod = Net::HTTP::ProxyDelta
 
 class Net::HTTP::Put
   extend ::T::Sig
@@ -24604,7 +24382,15 @@ class Net::HTTPServiceUnavailable
   extend ::T::Sig
 end
 
-Net::HTTPSession = Net::HTTP
+class Net::HTTP
+end
+
+Net::HTTPSession::ProxyDelta = Net::HTTP::ProxyDelta
+
+Net::HTTPSession::ProxyMod = Net::HTTP::ProxyDelta
+
+class Net::HTTP
+end
 
 Net::HTTPSuccess::EXCEPTION_TYPE = Net::HTTPError
 
@@ -24831,7 +24617,6 @@ class NoMemoryError
 end
 
 class NoMethodError
-  include ::DidYouMean::Correctable
   def args(); end
 
   def private_call?(); end
@@ -34259,6 +34044,92 @@ module RbConfig
   def self.ruby(); end
 end
 
+module Readline
+  FILENAME_COMPLETION_PROC = ::T.let(nil, ::T.untyped)
+  HISTORY = ::T.let(nil, ::T.untyped)
+  USERNAME_COMPLETION_PROC = ::T.let(nil, ::T.untyped)
+  VERSION = ::T.let(nil, ::T.untyped)
+end
+
+module Readline
+  extend ::T::Sig
+  def self.basic_quote_characters(); end
+
+  def self.basic_quote_characters=(basic_quote_characters); end
+
+  def self.basic_word_break_characters(); end
+
+  def self.basic_word_break_characters=(basic_word_break_characters); end
+
+  def self.completer_quote_characters(); end
+
+  def self.completer_quote_characters=(completer_quote_characters); end
+
+  def self.completer_word_break_characters(); end
+
+  def self.completer_word_break_characters=(completer_word_break_characters); end
+
+  def self.completion_append_character(); end
+
+  def self.completion_append_character=(completion_append_character); end
+
+  def self.completion_case_fold(); end
+
+  def self.completion_case_fold=(completion_case_fold); end
+
+  def self.completion_proc(); end
+
+  def self.completion_proc=(completion_proc); end
+
+  def self.completion_quote_character(); end
+
+  def self.delete_text(*_); end
+
+  def self.emacs_editing_mode(); end
+
+  def self.emacs_editing_mode?(); end
+
+  def self.filename_quote_characters(); end
+
+  def self.filename_quote_characters=(filename_quote_characters); end
+
+  def self.get_screen_size(); end
+
+  def self.input=(input); end
+
+  def self.insert_text(_); end
+
+  def self.line_buffer(); end
+
+  def self.output=(output); end
+
+  def self.point(); end
+
+  def self.point=(point); end
+
+  def self.pre_input_hook(); end
+
+  def self.pre_input_hook=(pre_input_hook); end
+
+  def self.quoting_detection_proc(); end
+
+  def self.quoting_detection_proc=(quoting_detection_proc); end
+
+  def self.redisplay(); end
+
+  def self.refresh_line(); end
+
+  def self.set_screen_size(_, _1); end
+
+  def self.special_prefixes(); end
+
+  def self.special_prefixes=(special_prefixes); end
+
+  def self.vi_editing_mode(); end
+
+  def self.vi_editing_mode?(); end
+end
+
 class Regexp
   include ::ActiveSupport::ToJsonWithActiveSupportEncoder
   def match?(*_); end
@@ -38547,9 +38418,6 @@ end
 
 module Zip::NullInputStream
   extend ::T::Sig
-end
-
-class Zip::StreamableStream
 end
 
 module Zip::TraditionalEncryption

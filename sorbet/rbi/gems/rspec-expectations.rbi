@@ -346,7 +346,7 @@ end
 module RSpec::Expectations::Configuration::NullBacktraceFormatter
   def self.format_backtrace(backtrace); end
 end
-class InvalidName___Class_0x00___Differ_7
+class InvalidName___Class_0x00___Differ_8
 end
 module RSpec::Expectations::ExpectationHelper
   def self.check_message(msg); end

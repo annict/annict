@@ -7,7 +7,7 @@
 #
 #   https://github.com/sorbet/sorbet-typed/new/master?filename=lib/sorbet-runtime/all/sorbet-runtime.rbi
 #
-# sorbet-runtime-0.4.4259
+# sorbet-runtime-0.4.4289
 module T::Configuration
   def self.call_validation_error_handler(signature, opts); end
   def self.call_validation_error_handler=(value); end
@@ -614,7 +614,7 @@ module T::Props::TypeValidation::DecoratorMethods
   def validate_type(*args, &blk); end
   extend T::Sig
 end
-class T::Struct
+class T::InexactStruct
   extend T::Props::ClassMethods
   extend T::Props::ClassMethods
   extend T::Props::ClassMethods
@@ -627,6 +627,16 @@ class T::Struct
   include T::Props
   include T::Props::Constructor
   include T::Props::Serializable
+end
+class T::Struct < T::InexactStruct
+  def self.inherited(subclass); end
+  extend T::Props::ClassMethods
+  extend T::Props::Plugin::ClassMethods
+  extend T::Props::Plugin::ClassMethods
+  extend T::Props::Plugin::ClassMethods
+  extend T::Props::Plugin::ClassMethods
+  extend T::Props::Plugin::ClassMethods
+  extend T::Props::Serializable::ClassMethods
 end
 module T::Private::Abstract
 end
