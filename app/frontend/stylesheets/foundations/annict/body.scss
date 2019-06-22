@@ -3,18 +3,8 @@ body {
   -webkit-font-smoothing: antialiased;
   letter-spacing: 0.02rem;
   text-rendering: optimizeLegibility;
-}
 
-@include media-breakpoint-up(lg) {
-  body {
-    &:not(.p-db) {
-      padding-top: $ann-appbar-height;
-    }
-  }
-}
-
-@include media-breakpoint-down(lg) {
-  body {
-    padding-bottom: $ann-appbar-height;
+  &:not(.p-db) {
+    padding-top: $ann-navbar-height;
   }
 }
