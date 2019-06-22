@@ -163,7 +163,7 @@ GIT
 
 GIT
   remote: https://github.com/rspec/rspec-expectations.git
-  revision: 721be32ab57024e19a73e36847dcfd45f22db846
+  revision: b1d15ac6d05532949b55ad02d360232e1432e91e
   specs:
     rspec-expectations (3.9.0.pre)
       diff-lcs (>= 1.2.0, < 2.0)
