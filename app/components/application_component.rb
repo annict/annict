@@ -1,6 +1,9 @@
 # frozen_string_literal: true
 
 class ApplicationComponent < ActionView::Base
+  include Rails.application.routes.url_helpers
+  include AssetsHelper
+
   def self.compile
     @compiled ||= nil
     return if @compiled
