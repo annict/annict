@@ -1,3 +1,4 @@
+# typed: false
 # frozen_string_literal: true
 
 class ChangeSchemaForV3 < ActiveRecord::Migration[6.1]
