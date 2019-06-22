@@ -1,15 +1,18 @@
 <!DOCTYPE html>
-<html>
+<html lang="<%= I18n.locale %>">
   <head>
-    <title>Annict</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <%= csrf_meta_tags %>
     <%= csp_meta_tag %>
+
+    <title>Annict</title>
 
     <%= stylesheet_bundle_tag "application.css", media: "all", "data-turbolinks-track": "reload" %>
     <%= javascript_bundle_tag "application.js", defer: "", "data-turbolinks-track": "reload" %>
   </head>
-
   <body>
+    <%= render NavbarComponent.new %>
     <%= yield %>
   </body>
 </html>
