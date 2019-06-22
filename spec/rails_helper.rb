@@ -1,5 +1,5 @@
-# typed: false
 # frozen_string_literal: true
+# typed: false
 
 # This file is copied to spec/ when you run 'rails generate rspec:install'
 

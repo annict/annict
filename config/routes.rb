@@ -1,5 +1,6 @@
-# typed: true
 # frozen_string_literal: true
+# typed: true
+
 module ActionDispatch
   module Routing
     class Mapper

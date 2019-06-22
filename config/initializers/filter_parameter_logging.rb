@@ -1,5 +1,5 @@
-# typed: strict
 # frozen_string_literal: true
+# typed: strict
 
 # Be sure to restart your server when you modify this file.
 

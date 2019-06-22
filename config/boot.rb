@@ -1,5 +1,5 @@
-# typed: strong
 # frozen_string_literal: true
+# typed: strong
 
 ENV["BUNDLE_GEMFILE"] ||= File.expand_path("../Gemfile", __dir__)
 

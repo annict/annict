@@ -1,5 +1,5 @@
-# typed: false
 # frozen_string_literal: true
+# typed: false
 
 class MemberConstraint
   def matches?(_request)
