@@ -1,6 +1,6 @@
 GIT
   remote: https://github.com/Shopify/bootsnap.git
-  revision: b4def902b6fc9fba7dc8ac47f8d9b43666464c55
+  revision: d7fbdb66e396e08924af76750982017140b89ea8
   specs:
     bootsnap (1.4.4)
       msgpack (~> 1.0)
@@ -14,7 +14,7 @@ GIT
 
 GIT
   remote: https://github.com/bkeepers/dotenv.git
-  revision: f796d366444d454e12a65cf1db81781dc0ce2c7b
+  revision: 5c812db9cfceaf74ead3531eeacc01827bd17c36
   specs:
     dotenv (2.7.2)
     dotenv-rails (2.7.2)
@@ -53,8 +53,19 @@ GIT
       spring (>= 1.2, < 3.0)
 
 GIT
+  remote: https://github.com/plataformatec/devise.git
+  revision: 81cb5b00f46cc24e6f41d6f1841ecaf442013898
+  specs:
+    devise (4.6.2)
+      bcrypt (~> 3.0)
+      orm_adapter (~> 0.1)
+      railties (>= 4.1.0)
+      responders
+      warden (~> 1.2.3)
+
+GIT
   remote: https://github.com/pry/pry.git
-  revision: bfc66a12ead879186cd3a5ad7fa8c561096b9ccb
+  revision: 028af11c0e530398060e0a3e2194140590ec3c7c
   specs:
     pry (0.12.2)
       coderay (~> 1.1.0)
@@ -69,7 +80,7 @@ GIT
 
 GIT
   remote: https://github.com/rails/rails.git
-  revision: c8a84603e2fa97822407bf4a1c8ac0308a899163
+  revision: a2a515d9de4ef0ddf4d78b05fcb0b838d2e1b5e3
   specs:
     actioncable (6.1.0.alpha)
       actionpack (= 6.1.0.alpha)
@@ -156,14 +167,14 @@ GIT
 
 GIT
   remote: https://github.com/rspec/rspec-core.git
-  revision: c408a2a31e4cd3a1c4081513d8da1c1c27842605
+  revision: 2a62a644b52536d44a7969b5c5b69077a35687ca
   specs:
     rspec-core (3.9.0.pre)
       rspec-support (= 3.9.0.pre)
 
 GIT
   remote: https://github.com/rspec/rspec-expectations.git
-  revision: 721be32ab57024e19a73e36847dcfd45f22db846
+  revision: b1d15ac6d05532949b55ad02d360232e1432e91e
   specs:
     rspec-expectations (3.9.0.pre)
       diff-lcs (>= 1.2.0, < 2.0)
@@ -171,7 +182,7 @@ GIT
 
 GIT
   remote: https://github.com/rspec/rspec-mocks.git
-  revision: d0cd8dfba88f6a802e94a4a8966e03196ce6385c
+  revision: b789d70b76d5bde224796de6e5d2c5af2bbd291b
   specs:
     rspec-mocks (3.9.0.pre)
       diff-lcs (>= 1.2.0, < 2.0)
@@ -179,7 +190,7 @@ GIT
 
 GIT
   remote: https://github.com/rspec/rspec-rails.git
-  revision: 85643cd7cd59c51f9be315b32f120311041b3197
+  revision: 75e66e4f6bca255f20b56b6246f9b4fad292af87
   specs:
     rspec-rails (3.9.0.pre)
       actionpack (>= 3.0)
@@ -192,7 +203,7 @@ GIT
 
 GIT
   remote: https://github.com/rspec/rspec-support.git
-  revision: 5cda28d6f5ea9b16f579340dfbafa7092c7a0bc6
+  revision: 667ad802a4fadd153044e6223a8561a1e143e202
   specs:
     rspec-support (3.9.0.pre)
 
@@ -204,18 +215,6 @@ GIT
       pry (>= 0.10.4)
 
 GIT
-  remote: https://github.com/shimbaco/devise.git
-  revision: 72002da3d1cd0ca244c6188c899cbce80ebc6aad
-  branch: rails-6.1
-  specs:
-    devise (4.6.2)
-      bcrypt (~> 3.0)
-      orm_adapter (~> 0.1)
-      railties (>= 4.1.0, < 6.2)
-      responders
-      warden (~> 1.2.3)
-
-GIT
   remote: https://github.com/sj26/rspec_junit_formatter.git
   revision: 8f981d20979a9efa235cc878790b92d8862ba560
   specs:
@@ -224,9 +223,9 @@ GIT
 
 GIT
   remote: https://github.com/teamcapybara/capybara.git
-  revision: 135dcb75d4763f5887535ac2e8145b6aca93c889
+  revision: 62bd0f97c5fd8956b0d0539c9d2798b68b3e4ea8
   specs:
-    capybara (3.23.0)
+    capybara (3.24.0)
       addressable
       mini_mime (>= 0.1.3)
       nokogiri (~> 1.8)
@@ -237,7 +236,7 @@ GIT
 
 GIT
   remote: https://github.com/thoughtbot/factory_bot_rails.git
-  revision: 34982c03f1cff4840d78206ec03b355501fc3847
+  revision: 3815aae2b9e4a5c5c3027a2ee8851f44b7c6a4da
   specs:
     factory_bot_rails (5.0.2)
       factory_bot (~> 5.0.2)
@@ -245,12 +244,12 @@ GIT
 
 GIT
   remote: https://github.com/titusfortner/webdrivers.git
-  revision: a287cad1fad20a2160156e53ce83f91e201096ee
+  revision: 0e754604fe8760569f413dd4403eb4c90b837254
   specs:
-    webdrivers (4.0.0)
+    webdrivers (4.0.1)
       nokogiri (~> 1.6)
       rubyzip (~> 1.0)
-      selenium-webdriver (~> 3.0)
+      selenium-webdriver (>= 3.0, < 4.0)
 
 GEM
   remote: https://rubygems.org/
@@ -287,7 +286,7 @@ GEM
     mini_mime (1.0.1)
     mini_portile2 (2.4.0)
     minitest (5.11.3)
-    msgpack (1.2.10)
+    msgpack (1.3.0)
     nio4r (2.3.1)
     nokogiri (1.10.3)
       mini_portile2 (~> 2.4.0)
@@ -306,12 +305,18 @@ GEM
     rb-inotify (0.10.0)
       ffi (~> 1.0)
     regexp_parser (1.5.1)
-    responders (0.6.5)
+    responders (3.0.0)
+      actionpack (>= 5.0)
+      railties (>= 5.0)
     rubyzip (1.2.3)
     selenium-webdriver (3.142.3)
       childprocess (>= 0.5, < 2.0)
       rubyzip (~> 1.2, >= 1.2.2)
     simplecov-html (0.10.2)
+    sorbet (0.4.4289)
+      sorbet-static (= 0.4.4289)
+    sorbet-runtime (0.4.4289)
+    sorbet-static (0.4.4289-universal-darwin-14)
     sprockets (3.7.2)
       concurrent-ruby (~> 1.0)
       rack (> 1, < 3)
@@ -356,6 +361,8 @@ DEPENDENCIES
   rspec_junit_formatter!
   selenium-webdriver
   simplecov!
+  sorbet
+  sorbet-runtime
   spring!
   spring-watcher-listen!
   webdrivers!

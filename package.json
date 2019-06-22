@@ -30,11 +30,11 @@
     "sass-loader": "^7.1.0",
     "source-map-loader": "^0.2.4",
     "style-loader": "^0.23.1",
-    "ts-loader": "^6.0.2",
+    "ts-loader": "^6.0.4",
     "typescript": "^3.5.2",
-    "webpack": "^4.34.0",
+    "webpack": "^4.35.0",
     "webpack-cli": "^3.3.4",
-    "webpack-dev-server": "^3.2.1",
+    "webpack-dev-server": "^3.7.2",
     "webpack-manifest-plugin": "^2.0.4",
     "webpack-merge": "^4.2.1"
   }

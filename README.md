@@ -37,7 +37,17 @@ $ bundle exec rails s
 You should then be able to open [http://annict.test:3000](http://annict.test:3000) (or [http://annict-jp.test:3000](http://annict-jp.test:3000) for Japanese) in your browser.
 
 
-#### Running the tests
+## Running Sorbet
+
+We use [Sorbet](https://sorbet.org). You can run its commands like following:
+
+```
+$ ./bin/srb
+$ ./bin/srb-rbi
+```
+
+
+## Running the tests
 
 ```
 $ bundle exec rspec
