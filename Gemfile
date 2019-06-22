@@ -12,6 +12,7 @@ gem "devise", github: "plataformatec/devise"
 gem "email_validator", github: "balexand/email_validator"
 gem "pg", github: "ged/ruby-pg"
 gem "puma", github: "puma/puma"
+gem "sorbet-runtime"
 
 group :development, :test do
   gem "dotenv-rails", github: "bkeepers/dotenv"
@@ -27,6 +28,7 @@ end
 
 group :development do
   gem "listen", github: "guard/listen"
+  gem "sorbet"
   gem "spring", github: "rails/spring"
   gem "spring-watcher-listen", github: "jonleighton/spring-watcher-listen"
 end
