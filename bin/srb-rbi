@@ -26,4 +26,42 @@ end
 require "rubygems"
 require "bundler/setup"
 
+# Monkey patch: Override `Sorbet::Private::RequireEverything#excluded_rails_files` for Rails 6
+
+class Sorbet; end
+module Sorbet::Private; end
+
+require_everything = [
+  Bundler.rubygems.find_name("sorbet").first.full_gem_path,
+  "/lib/require_everything.rb"
+].join
+
+require require_everything
+
+class Sorbet::Private::RequireEverything
+  private
+
+  def self.excluded_rails_files
+    excluded_paths = Set.new
+
+    # Exclude files that have already been loaded by rails
+    rails = Object.const_get(:Rails)
+    # Monkey patch: Set load path config to the _all_load_paths method for Rails 6
+    # https://github.com/rails/rails/commit/668673f7793be1ce318a32bb622ed411029d00a9
+    load_paths = if rails::VERSION::MAJOR >= 6
+      rails.application.send(:_all_load_paths, rails.application.config.add_autoload_paths_to_load_path)
+    else
+      rails.application.send(:_all_load_paths)
+    end
+    load_paths.each do |path|
+      excluded_paths += Dir.glob("#{path}/**/*.rb")
+    end
+
+    # Exclude initializers, as they have already been run by rails and
+    # can contain side-effects like monkey-patching that should
+    # only be run once.
+    excluded_paths += Dir.glob("#{Dir.pwd}/config/initializers/**/*.rb")
+  end
+end
+
 load Gem.bin_path("sorbet", "srb-rbi")
