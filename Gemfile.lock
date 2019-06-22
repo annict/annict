@@ -192,7 +192,7 @@ GIT
 
 GIT
   remote: https://github.com/rspec/rspec-support.git
-  revision: 5cda28d6f5ea9b16f579340dfbafa7092c7a0bc6
+  revision: 667ad802a4fadd153044e6223a8561a1e143e202
   specs:
     rspec-support (3.9.0.pre)
 
