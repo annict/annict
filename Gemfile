@@ -8,7 +8,7 @@ ruby "2.6.3"
 gem "rails", github: "rails/rails"
 
 gem "bootsnap", github: "Shopify/bootsnap", require: false
-gem "devise", github: "shimbaco/devise", branch: "rails-6.1"
+gem "devise", github: "plataformatec/devise"
 gem "email_validator", github: "balexand/email_validator"
 gem "pg", github: "ged/ruby-pg"
 gem "puma", github: "puma/puma"

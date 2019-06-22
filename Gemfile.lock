@@ -53,6 +53,17 @@ GIT
       spring (>= 1.2, < 3.0)
 
 GIT
+  remote: https://github.com/plataformatec/devise.git
+  revision: 81cb5b00f46cc24e6f41d6f1841ecaf442013898
+  specs:
+    devise (4.6.2)
+      bcrypt (~> 3.0)
+      orm_adapter (~> 0.1)
+      railties (>= 4.1.0)
+      responders
+      warden (~> 1.2.3)
+
+GIT
   remote: https://github.com/pry/pry.git
   revision: 028af11c0e530398060e0a3e2194140590ec3c7c
   specs:
@@ -204,18 +215,6 @@ GIT
       pry (>= 0.10.4)
 
 GIT
-  remote: https://github.com/shimbaco/devise.git
-  revision: 72002da3d1cd0ca244c6188c899cbce80ebc6aad
-  branch: rails-6.1
-  specs:
-    devise (4.6.2)
-      bcrypt (~> 3.0)
-      orm_adapter (~> 0.1)
-      railties (>= 4.1.0, < 6.2)
-      responders
-      warden (~> 1.2.3)
-
-GIT
   remote: https://github.com/sj26/rspec_junit_formatter.git
   revision: 8f981d20979a9efa235cc878790b92d8862ba560
   specs:
@@ -306,7 +305,9 @@ GEM
     rb-inotify (0.10.0)
       ffi (~> 1.0)
     regexp_parser (1.5.1)
-    responders (0.6.5)
+    responders (3.0.0)
+      actionpack (>= 5.0)
+      railties (>= 5.0)
     rubyzip (1.2.3)
     selenium-webdriver (3.142.3)
       childprocess (>= 0.5, < 2.0)
