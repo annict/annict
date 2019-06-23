@@ -3,7 +3,6 @@ AllCops:
   Exclude:
     - "**/*.slim"
     - "vendor/**/*"
-    - "db/schema.rb"
 
 Layout/CaseIndentation:
   EnforcedStyle: end
