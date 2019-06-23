@@ -129,7 +129,7 @@ scope "@:username", username: /[A-Za-z0-9_]+/ do
   root to: "users#show", as: :user
 end
 
-resources :works, only: %i(index show) do
+resources :works, only: %i(index) do
   resources :items, only: %i(index new destroy), controller: :work_items
   resources :records, only: %i(index create edit update), controller: :work_records
 
@@ -157,5 +157,9 @@ get "r/:provider/:url_hash",
   to: "episode_records#redirect",
   provider: /fb|tw/,
   url_hash: /[0-9a-zA-Z_-]{10}/
+
+scope module: :v3 do
+  resources :works, only: %i(show)
+end
 
 root "home#index"
