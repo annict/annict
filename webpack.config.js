@@ -112,7 +112,8 @@ module.exports = {
   ],
   devServer: {
     contentBase: path.resolve(__dirname, 'public', 'packs'),
-    host: require('ip').address(),
+    host: '0.0.0.0',
+    port: 8080,
     disableHostCheck: true
   }
 }
