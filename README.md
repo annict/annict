@@ -32,6 +32,7 @@ $ bundle install
 $ touch .env.development.local
 $ bundle exec rails db:setup
 $ docker-compose up --build
+$ bundle exec rake jobs:work
 $ bundle exec rails s
 ```
 
