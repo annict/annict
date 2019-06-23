@@ -24,7 +24,7 @@ To run Annict on a local machine, you need to have the following dependencies in
 
 ```
 $ sudo sh -c "echo '127.0.0.1  annict.test' >> /etc/hosts"
-$ sudo sh -c "echo '127.0.0.1  annictjp.test' >> /etc/hosts"
+$ sudo sh -c "echo '127.0.0.1  annict-jp.test' >> /etc/hosts"
 $ git clone git@github.com:annict/annict.git
 $ cd annict
 $ yarn install
@@ -36,7 +36,7 @@ $ bundle exec rake jobs:work
 $ bundle exec rails s
 ```
 
-You should then be able to open [http://annict.test:3000](http://annict.test:3000) (or [http://annictjp.test:3000](http://annictjp.test:3000)) in your browser.
+You should then be able to open [http://annict.test:3000](http://annict.test:3000) (or [http://annict-jp.test:3000](http://annict-jp.test:3000)) in your browser.
 
 
 #### Running the tests
