@@ -12,7 +12,7 @@ class SearchesController < ApplicationController
     else
       [Work.none, Character.none, Person.none, Organization.none]
     end
-    @view = select_view(params[:resource])
+    @view = select_view(params[:resource].presence || "work")
 
     return unless user_signed_in?
 
