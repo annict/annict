@@ -1,11 +1,11 @@
 .l-topbar {
   background-color: $ann-color-white;
   box-shadow: 0 2px 2px -2px rgba($ann-color-navy-l2, .30);
-  height: $ann-appbar-height;
-  line-height: $ann-appbar-height;
+  height: $ann-navbar-height;
+  line-height: $ann-navbar-height;
 
   .c-topbar-title {
-    height: $ann-appbar-height;
-    line-height: $ann-appbar-height;
+    height: $ann-navbar-height;
+    line-height: $ann-navbar-height;
   }
 }

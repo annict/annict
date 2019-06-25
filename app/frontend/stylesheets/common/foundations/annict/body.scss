@@ -8,13 +8,13 @@ body {
 @include media-breakpoint-up(lg) {
   body {
     &:not(.p-db) {
-      padding-top: $ann-appbar-height;
+      padding-top: $ann-navbar-height;
     }
   }
 }
 
 @include media-breakpoint-down(lg) {
   body {
-    padding-bottom: $ann-appbar-height;
+    padding-bottom: $ann-navbar-height;
   }
 }
