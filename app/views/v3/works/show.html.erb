@@ -1,4 +1,92 @@
-<div data-controller="hello">
-  <input type="text" data-target="hello.name">
-  <button data-action="click->hello#greet">Greet</button>
+<div class="container p-3">
+  <div class="row">
+    <div class="col-sm-3">
+      <div class="mb-2">
+        <%= link_to work_path(@work["annictId"]) do %>
+          <%= image_tag(@work["image"]["facebookOgImageUrl"], class: "img-fluid img-thumbnail rounded") %>
+        <% end %>
+      </div>
+      <h1 class="h2 font-weight-bold">
+        <%= @work["title"] %>
+      </h1>
+      <div class="row">
+        <div class="col text-center">
+          <div class="h4 font-weight-bold mb-1">
+            <%= @work["watchersCount"] %>
+          </div>
+          <div class="text-muted small">
+            <%= t "noun.watchers_count" %>
+          </div>
+        </div>
+        <div class="col text-center">
+          <div class="h4 font-weight-bold mb-1">
+            <%= @work["satisfactionRate"] %><span class="small ml-1">%</span>
+          </div>
+          <div class="text-muted small">
+            <%= t "noun.satisfaction_rate_shorten" %>
+          </div>
+        </div>
+        <div class="col text-center">
+          <div class="h4 font-weight-bold mb-1">
+            <%= @work["ratingsCount"] %>
+          </div>
+          <div class="text-muted small">
+            <%= t "noun.ratings_count" %>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-sm-9">
+      <h2 class="h4 text-center my-4 font-weight-bold">
+        <%= t "noun.characters" %>
+      </h2>
+      <div class="c-card container mt-3 py-3">
+        <div class="row">
+          <% @work["casts"]["nodes"].each do |cast| %>
+            <div class="col-3">
+              <%= link_to cast["character"]["name"], character_path(cast["character"]["annictId"]) %>
+              <div class="small">
+                <span>CV:</span>
+                <%= link_to cast["person"]["name"], person_path(cast["person"]["annictId"]) %>
+              </div>
+            </div>
+          <% end %>
+        </div>
+      </div>
+      <h2 class="h4 text-center my-4 font-weight-bold">
+        <%= t "noun.staffs" %>
+      </h2>
+      <div class="c-card container mt-3 pt-3">
+        <div class="row">
+          <% @work["staffs"]["nodes"].each do |staff| %>
+            <div class="col-3 mb-3">
+              <%= link_to staff["resource"]["name"], "" %>
+              <div class="small">
+                <%= staff["roleText"] %>
+              </div>
+            </div>
+          <% end %>
+        </div>
+      </div>
+      <h2 class="h4 text-center my-4 font-weight-bold">
+        <%= t "noun.episodes" %>
+      </h2>
+      <div class="c-card container mt-3 pt-3">
+        <div class="row">
+          <% @work["episodes"]["nodes"].each do |episode| %>
+            <div class="col-4 mb-3">
+              <%= link_to "" do %>
+                <div class="">
+                  <%= episode["numberText"] %>
+                </div>
+                <div class="small u-text-body">
+                  <%= episode["title"] %>
+                </div>
+              <% end %>
+            </div>
+          <% end %>
+        </div>
+      </div>
+    </div>
+  </div>
 </div>
