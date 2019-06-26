@@ -1,0 +1,31 @@
+<nav class="navbar navbar-expand-lg navbar-light bg-white fixed-top shadow-sm">
+  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbar-toggler">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+  <div class="collapse navbar-collapse" id="navbar-toggler">
+    <%= link_to root_path, class: "navbar-brand" do %>
+      <%= image_tag asset_bundle_path("images/logos/color-mizuho.png"), size: "25x30", alt: "Annict" %>
+    <% end %>
+    <ul class="navbar-nav mr-auto mt-2 mt-lg-0">
+      <li class="nav-item dropdown active">
+        <a class="nav-link dropdown-toggle" href="" data-toggle="dropdown">
+          <%= t("verb.explore") %>
+        </a>
+        <div class="dropdown-menu">
+          <%= link_to t("noun.current_season"), "", class: "dropdown-item" %>
+          <%= link_to t("noun.next_season"), "", class: "dropdown-item" %>
+          <%= link_to t("noun.prev_season"), "", class: "dropdown-item" %>
+          <%= link_to t("verb.search"), "", class: "dropdown-item" %>
+        </div>
+      </li>
+    </ul>
+    <ul class="navbar-nav">
+      <li class="nav-item">
+        <%= link_to t("noun.sign_in"), new_user_session_path, class: "btn btn-primary", class: "nav-link" %>
+      </li>
+      <li class="nav-item">
+        <%= link_to t("noun.sign_up"), new_user_registration_path, class: "btn btn-primary" %>
+      </li>
+    </ul>
+  </div>
+</nav>

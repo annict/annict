@@ -27,6 +27,7 @@
     <%= javascript_bundle_tag "v3.js", defer: "", "data-turbolinks-track": "reload" %>
   </head>
   <body>
+    <%= render "v3/application/navbar" %>
     <%= yield %>
     <script>
       // Set this config to rerender icon when Vue's state changed
