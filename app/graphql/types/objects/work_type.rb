@@ -3,17 +3,22 @@
 module Types
   module Objects
     class WorkType < Types::Objects::Base
-      description "An anime title"
+      description "作品情報"
 
       implements GraphQL::Relay::Node.interface
 
       global_id_field :id
 
-      field :annict_id, Integer, null: false
-      field :title, String, null: false
-      field :title_Kana, String, null: true
-      field :title_ro, String, null: true
-      field :title_en, String, null: true
+      field :annict_id, Integer, null: false,
+        description: "Annict ID"
+      field :title, String, null: false,
+        description: "タイトル"
+      field :title_Kana, String, null: true,
+        description: "タイトル (かな)"
+      field :title_ro, String, null: true,
+        deprecation_reason: "このフィールドは使われていません。 `titleEn` を使用してください。"
+      field :title_en, String, null: true,
+        description: "タイトル (英語)"
       field :media, Types::Enums::Media, null: false
       field :season_year, Integer, null: true
       field :season_name, Types::Enums::SeasonName, null: true
@@ -27,6 +32,8 @@ module Types
       field :mal_anime_id, String, null: true
       field :image, Types::Objects::WorkImageType, null: true
       field :satisfaction_rate, Float, null: true
+      field :ratings_count, Integer, null: false,
+        description: "評価数"
       field :episodes_count, Integer, null: false
       field :watchers_count, Integer, null: false
       field :reviews_count, Integer, null: false
