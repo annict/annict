@@ -454,6 +454,9 @@
     "HOST": {
       "required": true
     },
+    "IMGIX_SECURE_URL_TOKEN": {
+      "generator": "secret"
+    },
     "IMGIX_SOURCE": {
       "required": true,
       "value": "annict-staging.imgix.net"
