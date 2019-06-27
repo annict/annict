@@ -1,0 +1,13 @@
+<div
+  class="c-status-selector"
+  data-controller="status-selector"
+  data-status-selector-work-id="<%= work_id %>"
+>
+  <div class="c-status-selector__object">
+    <select class="w-100" data-target="status-selector.status">
+      <% options = Status.kind.options.insert(0, [t("messages.components.status_selector.select_status"), "no_select"]) %>
+      <%= options_for_select(options) %>
+    </select>
+    <%= icon "caret-down" %>
+  </div>
+</div>
