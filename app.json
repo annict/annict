@@ -503,6 +503,10 @@
     "SENDGRID_USERNAME": {
       "required": true
     },
+    "SENTRY_DSN": {
+      "required": true,
+      "value": "xxxxx"
+    },
     "SMTP_HOST": {
       "required": true
     },
