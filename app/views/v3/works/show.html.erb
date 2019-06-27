@@ -41,10 +41,10 @@
       <h2 class="h4 text-center my-4 font-weight-bold">
         <%= t "noun.characters" %>
       </h2>
-      <div class="c-card container mt-3 py-3">
+      <div class="c-card container mt-3 pt-3">
         <div class="row">
           <% @work["casts"]["nodes"].each do |cast| %>
-            <div class="col-3">
+            <div class="col-3 mb-3">
               <%= link_to cast["character"]["name"], character_path(cast["character"]["annictId"]) %>
               <div class="small">
                 <span>CV:</span>
