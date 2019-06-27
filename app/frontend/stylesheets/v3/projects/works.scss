@@ -1,0 +1,13 @@
+.p-v3-works {
+  h1 {
+    @include media-breakpoint-down(md) {
+      text-align: center;
+    }
+  }
+
+  .c-work-image {
+    @include media-breakpoint-down(md) {
+      text-align: center;
+    }
+  }
+}
