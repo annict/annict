@@ -26,7 +26,7 @@
     <%= stylesheet_bundle_tag "v3.css", media: "all", "data-turbolinks-track": "reload" %>
     <%= javascript_bundle_tag "v3.js", defer: "", "data-turbolinks-track": "reload" %>
   </head>
-  <body>
+  <body class="<%= body_classes %>">
     <%= render "v3/application/navbar" %>
     <%= yield %>
     <script>
