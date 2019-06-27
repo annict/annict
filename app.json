@@ -544,6 +544,7 @@
     }
   },
   "addons": [
+    "fastly",
     "heroku-postgresql",
     "logdna"
   ],
