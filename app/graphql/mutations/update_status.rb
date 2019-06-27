@@ -9,11 +9,11 @@ module Mutations
     field :work, Types::Objects::WorkType, null: true
 
     def resolve(work_id: nil, work_annict_id: nil, state:)
-      # raise Annict::Errors::InvalidAPITokenScopeError unless context[:doorkeeper_token].writable?
+      raise Annict::Errors::InvalidAPITokenScopeError unless context[:writable]
 
       work = work_id ? Work.published.find_by_graphql_id(work_id) : Work.published.find(work_annict_id)
       status = StatusService.new(context[:viewer], work)
-      # status.app = context[:doorkeeper_token].application
+      status.app = context[:application]
       # status.ga_client = context[:ga_client]
       status.via = "graphql_api"
 

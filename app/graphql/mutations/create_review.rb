@@ -25,7 +25,7 @@ module Mutations
       share_twitter: nil,
       share_facebook: nil
     )
-      raise Annict::Errors::InvalidAPITokenScopeError unless context[:doorkeeper_token].writable?
+      raise Annict::Errors::InvalidAPITokenScopeError unless context[:writable]
 
       work = Work.published.find_by_graphql_id(work_id)
 
@@ -39,7 +39,7 @@ module Mutations
         r.rating_music_state = rating_music_state
         r.rating_story_state = rating_story_state
         r.rating_character_state = rating_character_state
-        r.oauth_application = context[:doorkeeper_token].application
+        r.oauth_application = context[:application]
       end
       context[:viewer].setting.attributes = {
         share_review_to_twitter: share_twitter == true,
@@ -59,7 +59,7 @@ module Mutations
     def work_record_service(review)
       service = NewWorkRecordService.new(context[:viewer], review, context[:viewer].setting)
       service.via = "graphql_api"
-      service.app = context[:doorkeeper_token].application
+      service.app = context[:application]
       service.ga_client = context[:ga_client]
 
       service

@@ -11,7 +11,7 @@ module Mutations
     field :record, Types::Objects::RecordType, null: true
 
     def resolve(episode_id:, comment: nil, rating_state: nil, share_twitter: nil, share_facebook: nil)
-      raise Annict::Errors::InvalidAPITokenScopeError unless context[:doorkeeper_token].writable?
+      raise Annict::Errors::InvalidAPITokenScopeError unless context[:writable]
 
       episode = Episode.published.find_by_graphql_id(episode_id)
 
@@ -20,12 +20,12 @@ module Mutations
         r.comment = comment
         r.shared_twitter = share_twitter == true
         r.shared_facebook = share_facebook == true
-        r.oauth_application = context[:doorkeeper_token].application
+        r.oauth_application = context[:application]
       end
 
       service = NewEpisodeRecordService.new(context[:viewer], record)
       service.ga_client = context[:ga_client]
-      service.app = context[:doorkeeper_token].application
+      service.app = context[:application]
       service.via = "graphql_api"
 
       service.save!

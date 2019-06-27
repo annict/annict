@@ -7,7 +7,7 @@ module Mutations
     field :work, Types::Objects::WorkType, null: true
 
     def resolve(review_id:)
-      raise Annict::Errors::InvalidAPITokenScopeError unless context[:doorkeeper_token].writable?
+      raise Annict::Errors::InvalidAPITokenScopeError unless context[:writable]
 
       work_record = context[:viewer].work_records.published.find_by_graphql_id(review_id)
       work_record.record.destroy
