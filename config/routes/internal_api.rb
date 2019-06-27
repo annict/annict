@@ -2,6 +2,12 @@
 
 namespace :api do
   namespace :internal do
+    namespace :v3 do
+      namespace :me do
+        resource :status, only: %i(show)
+      end
+    end
+
     resource :impression, only: %i(show update)
     resource :privacy_policy_agreement, only: %i(create)
     resource :programs_sort_type, only: [:update]
