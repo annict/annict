@@ -7,7 +7,9 @@ module V3
     end
 
     def call
-      AnnictSchema.execute(query_string)
+      AnnictSchema.execute(query_string, context: {
+        admin: true
+      })
     end
 
     private
@@ -30,7 +32,7 @@ module V3
             twitterUsername
             wikipediaUrl
             image {
-              facebookOgImageUrl
+              internalUrl(size: "280x")
             }
             casts {
               nodes {

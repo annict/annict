@@ -3,7 +3,7 @@
     <div class="col-md-3">
       <div class="c-work-image mb-2">
         <%= link_to work_path(@work["annictId"]) do %>
-          <%= image_tag(@work["image"]["facebookOgImageUrl"], class: "img-fluid img-thumbnail rounded") %>
+          <%= image_tag(@work["image"]["internalUrl"], class: "img-fluid img-thumbnail rounded") %>
         <% end %>
       </div>
       <h1 class="h2 font-weight-bold">
