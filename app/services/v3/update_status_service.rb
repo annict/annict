@@ -9,7 +9,10 @@ module V3
     end
 
     def call
-      AnnictSchema.execute(query_string, context: { viewer: user })
+      AnnictSchema.execute(query_string, context: {
+        viewer: user,
+        writable: true
+      })
     end
 
     private
