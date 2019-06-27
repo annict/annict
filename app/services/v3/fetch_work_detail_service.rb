@@ -1,20 +1,21 @@
 # frozen_string_literal: true
 
-class FetchWorkDetailService
-  def initialize(work_id:)
-    @work_id = work_id
-  end
+module V3
+  class FetchWorkDetailService
+    def initialize(work_id:)
+      @work_id = work_id
+    end
 
-  def call
-    AnnictSchema.execute(query_string)
-  end
+    def call
+      AnnictSchema.execute(query_string)
+    end
 
-  private
+    private
 
-  attr_reader :work_id
+    attr_reader :work_id
 
-  def query_string
-    <<~GRAPHQL
+    def query_string
+      <<~GRAPHQL
       {
         searchWorks(annictIds: [#{work_id}]) {
           nodes {
@@ -67,6 +68,7 @@ class FetchWorkDetailService
           }
         }
       }
-    GRAPHQL
+      GRAPHQL
+    end
   end
 end
