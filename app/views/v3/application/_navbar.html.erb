@@ -20,12 +20,22 @@
       </li>
     </ul>
     <ul class="navbar-nav">
-      <li class="nav-item">
-        <%= link_to t("noun.sign_in"), new_user_session_path, class: "btn btn-primary", class: "nav-link" %>
-      </li>
-      <li class="nav-item">
-        <%= link_to t("noun.sign_up"), new_user_registration_path, class: "btn btn-primary" %>
-      </li>
+      <% if user_signed_in? %>
+        <li class="nav-item">
+          <div data-controller="user-menu">
+            <a class="nav-link p-0" href="">
+              <img class="rounded-circle" width="30" height="30" alt="" src="">
+            </a>
+          </div>
+        </li>
+      <% else %>
+        <li class="nav-item">
+          <%= link_to t("noun.sign_in"), new_user_session_path, class: "btn btn-primary", class: "nav-link" %>
+        </li>
+        <li class="nav-item">
+          <%= link_to t("noun.sign_up"), new_user_registration_path, class: "btn btn-primary" %>
+        </li>
+      <% end %>
     </ul>
   </div>
 </nav>
