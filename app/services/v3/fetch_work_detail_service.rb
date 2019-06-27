@@ -19,6 +19,7 @@ module V3
       {
         searchWorks(annictIds: [#{work_id}]) {
           nodes {
+            id
             annictId
             title
             watchersCount

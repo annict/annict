@@ -15,6 +15,11 @@ module Api
               status: data["viewerStatusState"]
             }
           end
+
+          def update
+            ::V3::UpdateStatusService.new(user: current_user, work_id: params[:work_id], status_kind: params[:status_kind]).call
+            head 204
+          end
         end
       end
     end

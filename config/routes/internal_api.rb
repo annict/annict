@@ -4,7 +4,7 @@ namespace :api do
   namespace :internal do
     namespace :v3 do
       namespace :me do
-        resource :status, only: %i(show)
+        resource :status, only: %i(show update)
       end
     end
 
