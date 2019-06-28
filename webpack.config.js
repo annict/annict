@@ -40,13 +40,16 @@ module.exports = {
       },
       {
         test: require.resolve('jquery'),
-        use: [{
-          loader: 'expose-loader',
-          options: 'jQuery'
-        }, {
-          loader: 'expose-loader',
-          options: '$'
-        }]
+        use: [
+          {
+            loader: 'expose-loader',
+            options: 'jQuery',
+          },
+          {
+            loader: 'expose-loader',
+            options: '$',
+          },
+        ],
       },
       {
         test: /\.scss$/,
@@ -114,6 +117,6 @@ module.exports = {
     contentBase: path.resolve(__dirname, 'public', 'packs'),
     host: '0.0.0.0',
     port: 8080,
-    disableHostCheck: true
-  }
+    disableHostCheck: true,
+  },
 }
