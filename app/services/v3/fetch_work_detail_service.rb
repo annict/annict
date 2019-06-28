@@ -34,6 +34,7 @@ module V3
             image {
               internalUrl(size: "280x")
             }
+            copyright
             casts(orderBy: { field: SORT_NUMBER, direction: ASC }) {
               nodes {
                 character {

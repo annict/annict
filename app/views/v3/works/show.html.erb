@@ -5,6 +5,10 @@
         <%= link_to work_path(@work["annictId"]) do %>
           <%= image_tag(@work["image"]["internalUrl"], class: "img-fluid img-thumbnail rounded") %>
         <% end %>
+        <div class="u-very-small text-right text-muted">
+          <%= icon "copyright", "far", class: "mr-1" %>
+          <%= @work["copyright"] %>
+        </div>
       </div>
       <h1 class="h2 font-weight-bold">
         <%= @work["title"] %>

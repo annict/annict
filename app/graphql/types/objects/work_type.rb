@@ -31,6 +31,7 @@ module Types
       field :syobocal_tid, Integer, null: true
       field :mal_anime_id, String, null: true
       field :image, Types::Objects::WorkImageType, null: true
+      field :copyright, String, null: true
       field :satisfaction_rate, Float, null: true
       field :ratings_count, Integer, null: false,
         description: "評価数"
@@ -104,6 +105,10 @@ module Types
 
       def image
         RecordLoader.for(WorkImage).load(object.work_image&.id)
+      end
+
+      def copyright
+        object.work_image&.copyright
       end
 
       def reviews_count
