@@ -34,7 +34,7 @@ module V3
             image {
               internalUrl(size: "280x")
             }
-            casts {
+            casts(orderBy: { field: SORT_NUMBER, direction: ASC }) {
               nodes {
                 character {
                   annictId
@@ -46,7 +46,7 @@ module V3
                 }
               }
             }
-            staffs {
+            staffs(orderBy: { field: SORT_NUMBER, direction: ASC }) {
               nodes {
                 resource {
                   ... on Person {
