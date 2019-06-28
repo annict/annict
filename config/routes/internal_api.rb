@@ -5,6 +5,7 @@ namespace :api do
     namespace :v3 do
       namespace :me do
         resource :status, only: %i(show update)
+        resource :user_menu, only: %i(show)
       end
     end
 
