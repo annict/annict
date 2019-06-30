@@ -1,33 +1,47 @@
-<nav class="navbar navbar-expand-lg navbar-light bg-white fixed-top shadow-sm">
+<nav class="navbar navbar-expand-lg navbar-light bg-white sticky-top shadow-sm">
   <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbar-toggler">
     <span class="navbar-toggler-icon"></span>
   </button>
-  <div class="collapse navbar-collapse" id="navbar-toggler">
+  <ul class="navbar-nav mx-auto d-lg-none">
     <%= link_to root_path, class: "navbar-brand" do %>
       <%= image_tag asset_bundle_path("images/logos/color-mizuho.png"), size: "25x30", alt: "Annict" %>
     <% end %>
-    <ul class="navbar-nav mr-auto mt-2 mt-lg-0">
+  </ul>
+  <div class="collapse navbar-collapse" id="navbar-toggler">
+    <%= link_to root_path, class: "navbar-brand d-none d-lg-inline-block" do %>
+      <%= image_tag asset_bundle_path("images/logos/color-mizuho.png"), size: "25x30", alt: "Annict" %>
+    <% end %>
+    <ul class="navbar-nav mt-2 mt-lg-0 mr-lg-2">
       <li class="nav-item dropdown active">
         <a class="nav-link dropdown-toggle" href="" data-toggle="dropdown">
           <%= t("verb.explore") %>
         </a>
         <div class="dropdown-menu">
-          <%= link_to t("noun.current_season"), "", class: "dropdown-item" %>
-          <%= link_to t("noun.next_season"), "", class: "dropdown-item" %>
-          <%= link_to t("noun.prev_season"), "", class: "dropdown-item" %>
-          <%= link_to t("verb.search"), "", class: "dropdown-item" %>
+          <%= link_to t("noun.current_season"), season_works_path(slug: ENV.fetch("ANNICT_CURRENT_SEASON")), class: "dropdown-item" %>
+          <%= link_to t("noun.next_season"), season_works_path(slug: ENV.fetch("ANNICT_NEXT_SEASON")), class: "dropdown-item" %>
+          <%= link_to t("noun.prev_season"), season_works_path(slug: ENV.fetch("ANNICT_PREVIOUS_SEASON")), class: "dropdown-item" %>
+          <%= link_to t("head.title.works.newest"), newest_works_path, class: "dropdown-item" %>
+          <%= link_to t("verb.search"), search_path, class: "dropdown-item" %>
         </div>
       </li>
     </ul>
+    <%= form_with url: search_path, method: :get, class: "col-lg-2 mt-2 mt-lg-0 px-0 mr-auto" do |f| %>
+      <%= f.text_field :q, class: "form-control", autocomplete: "off", placeholder: t("messages._common.search_with_keywords") %>
+    <% end %>
     <ul class="navbar-nav">
       <% if user_signed_in? %>
         <li class="nav-item dropdown" data-controller="user-menu"></li>
       <% else %>
         <li class="nav-item">
-          <%= link_to t("noun.sign_in"), new_user_session_path, class: "btn btn-primary", class: "nav-link" %>
+          <%= link_to t("head.title.pages.about"), about_path, class: "nav-link text-dark" %>
         </li>
         <li class="nav-item">
-          <%= link_to t("noun.sign_up"), new_user_registration_path, class: "btn btn-primary" %>
+          <%= link_to t("noun.sign_in"), new_user_session_path, class: "nav-link text-dark" %>
+        </li>
+        <li class="nav-item">
+          <%= link_to new_user_registration_path, class: "btn btn btn-outline-primary" do %>
+            <%= icon "rocket" %><%= t("noun.sign_up") %>
+          <% end %>
         </li>
       <% end %>
     </ul>
