@@ -4,17 +4,3 @@ body {
   letter-spacing: .02rem;
   text-rendering: optimizeLegibility;
 }
-
-@include media-breakpoint-up(lg) {
-  body {
-    &:not(.p-db) {
-      padding-top: $ann-navbar-height;
-    }
-  }
-}
-
-@include media-breakpoint-down(lg) {
-  body {
-    padding-bottom: $ann-navbar-height;
-  }
-}
