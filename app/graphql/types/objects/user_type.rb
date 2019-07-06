@@ -109,22 +109,22 @@ module Types
       end
 
       def viewer_can_follow
-        viewer = context[:viewer]
+        viewer = context[:doorkeeper_token].owner
         viewer != object && !viewer.following?(object)
       end
 
       def viewer_is_following
-        viewer = context[:viewer]
+        viewer = context[:doorkeeper_token].owner
         viewer.following?(object)
       end
 
       def email
-        return if context[:viewer] != object
+        return if context[:doorkeeper_token].owner != object
         object.email
       end
 
       def notifications_count
-        return if context[:viewer] != object
+        return if context[:doorkeeper_token].owner != object
         object.notifications_count
       end
 

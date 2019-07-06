@@ -3,22 +3,17 @@
 module Types
   module Objects
     class WorkType < Types::Objects::Base
-      description "作品情報"
+      description "An anime title"
 
       implements GraphQL::Relay::Node.interface
 
       global_id_field :id
 
-      field :annict_id, Integer, null: false,
-        description: "Annict ID"
-      field :title, String, null: false,
-        description: "タイトル"
-      field :title_Kana, String, null: true,
-        description: "タイトル (かな)"
-      field :title_ro, String, null: true,
-        deprecation_reason: "このフィールドは使われていません。 `titleEn` を使用してください。"
-      field :title_en, String, null: true,
-        description: "タイトル (英語)"
+      field :annict_id, Integer, null: false
+      field :title, String, null: false
+      field :title_Kana, String, null: true
+      field :title_ro, String, null: true
+      field :title_en, String, null: true
       field :media, Types::Enums::Media, null: false
       field :season_year, Integer, null: true
       field :season_name, Types::Enums::SeasonName, null: true
@@ -31,10 +26,7 @@ module Types
       field :syobocal_tid, Integer, null: true
       field :mal_anime_id, String, null: true
       field :image, Types::Objects::WorkImageType, null: true
-      field :copyright, String, null: true
       field :satisfaction_rate, Float, null: true
-      field :ratings_count, Integer, null: false,
-        description: "評価数"
       field :episodes_count, Integer, null: false
       field :watchers_count, Integer, null: false
       field :reviews_count, Integer, null: false
@@ -105,10 +97,6 @@ module Types
 
       def image
         RecordLoader.for(WorkImage).load(object.work_image&.id)
-      end
-
-      def copyright
-        object.work_image&.copyright
       end
 
       def reviews_count

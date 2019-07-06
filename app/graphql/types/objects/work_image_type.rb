@@ -25,9 +25,9 @@ module Types
       end
 
       def internal_url(size:)
-        return unless context[:admin]
+        return unless context[:doorkeeper_token].owner.role.admin?
         return "" if object.blank?
-        ann_image_url object, :image, size: size, ratio: "3:4"
+        ann_image_url object, :image, size: size
       end
 
       def facebook_og_image_url

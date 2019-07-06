@@ -15,9 +15,7 @@ module Api
       variables = ensure_hash(params[:variables])
       query = params[:query]
       context = {
-        writable: doorkeeper_token.writable?,
-        application: doorkeeper_token.application,
-        admin: doorkeeper_token.application&.owner&.role&.admin?,
+        doorkeeper_token: doorkeeper_token,
         viewer: current_user,
         ga_client: ga_client
       }

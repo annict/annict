@@ -25,7 +25,7 @@ module Mutations
       share_twitter: nil,
       share_facebook: nil
     )
-      raise Annict::Errors::InvalidAPITokenScopeError unless context[:writable]
+      raise Annict::Errors::InvalidAPITokenScopeError unless context[:doorkeeper_token].writable?
 
       work_record = context[:viewer].work_records.published.find_by_graphql_id(review_id)
 
@@ -35,7 +35,7 @@ module Mutations
         work_record.send("#{state}=".to_sym, send(state.to_s.camelcase(:lower).to_sym)&.downcase)
       end
       work_record.modified_at = Time.now
-      work_record.oauth_application = context[:application]
+      work_record.oauth_application = context[:doorkeeper_token].application
       work_record.detect_locale!(:body)
 
       context[:viewer].setting.attributes = {
