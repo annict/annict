@@ -2,24 +2,24 @@
 
 module V3
   class FetchStatusService
-    def initialize(user:, work_id:)
+    def initialize(user:, gql_work_id:)
       @user = user
-      @work_id = work_id
+      @gql_work_id = gql_work_id
     end
 
     def call
-      AnnictSchema.execute(query_string, context: { viewer: user })
+      Canary::AnnictSchema.execute(query_string, context: { viewer: user })
     end
 
     private
 
-    attr_reader :user, :work_id
+    attr_reader :user, :gql_work_id
 
     def query_string
       <<~GRAPHQL
       {
-        searchWorks(annictIds: [#{work_id}]) {
-          nodes {
+        node(id: "#{gql_work_id}") {
+          ... on Work {
             viewerStatusState
           }
         }

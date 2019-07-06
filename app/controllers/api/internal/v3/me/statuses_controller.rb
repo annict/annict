@@ -10,8 +10,8 @@ module Api
           def show
             data = ::V3::FetchStatusService.new(
               user: current_user,
-              work_id: params[:work_id]
-            ).call.to_h.dig("data", "searchWorks", "nodes").first
+              gql_work_id: params[:gql_work_id]
+            ).call.to_h.dig("data", "node")
 
             render json: {
               status: data["viewerStatusState"]
@@ -21,7 +21,7 @@ module Api
           def update
             ::V3::UpdateStatusService.new(
               user: current_user,
-              work_id: params[:work_id],
+              gql_work_id: params[:gql_work_id],
               status_kind: params[:status_kind]
             ).call
 

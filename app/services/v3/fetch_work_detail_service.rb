@@ -7,7 +7,7 @@ module V3
     end
 
     def call
-      AnnictSchema.execute(query_string, context: {
+      Canary::AnnictSchema.execute(query_string, context: {
         admin: true
       })
     end
@@ -19,7 +19,7 @@ module V3
     def query_string
       <<~GRAPHQL
       {
-        searchWorks(annictIds: [#{work_id}]) {
+        works(annictIds: [#{work_id}]) {
           nodes {
             id
             annictId

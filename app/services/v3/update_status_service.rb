@@ -2,14 +2,14 @@
 
 module V3
   class UpdateStatusService
-    def initialize(user:, work_id:, status_kind:)
+    def initialize(user:, gql_work_id:, status_kind:)
       @user = user
-      @work_id = work_id
+      @gql_work_id = gql_work_id
       @status_kind = status_kind
     end
 
     def call
-      AnnictSchema.execute(query_string, context: {
+      Canary::AnnictSchema.execute(query_string, context: {
         viewer: user,
         writable: true
       })
@@ -17,12 +17,12 @@ module V3
 
     private
 
-    attr_reader :user, :work_id, :status_kind
+    attr_reader :user, :gql_work_id, :status_kind
 
     def query_string
       <<~GRAPHQL
         mutation {
-          updateStatus(input: { workAnnictId: #{work_id}, state: #{status_kind.upcase} }) {
+          statusUpdate(input: { workId: #{gql_work_id}, state: #{status_kind.upcase} }) {
             work {
               id
             }

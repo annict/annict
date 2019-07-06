@@ -19,10 +19,9 @@ module Api
           writable: doorkeeper_token.writable?,
           application: doorkeeper_token.application,
           admin: doorkeeper_token.application&.owner&.role&.admin?,
-          viewer: current_user,
-          ga_client: ga_client
+          viewer: current_user
         }
-        result = AnnictSchema.execute(query, variables: variables, context: context)
+        result = ::Canary::AnnictSchema.execute(query, variables: variables, context: context)
         annict_logger.log(:info, :GRAPHQL_API_REQUEST,
           oauth_access_token_id: doorkeeper_token.id,
           query: query,
@@ -35,7 +34,7 @@ module Api
 
       def current_user
         return nil if doorkeeper_token.blank?
-        @current_user ||= User.find(doorkeeper_token.resource_owner_id)
+        @current_user ||= User.published.find(doorkeeper_token.resource_owner_id)
       end
 
       def bad_credentials

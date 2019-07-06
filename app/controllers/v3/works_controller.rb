@@ -6,7 +6,7 @@ module V3
 
     def show
       @work = V3::FetchWorkDetailService.new(work_id: params[:id]).call.
-        to_h.dig("data", "searchWorks", "nodes").first
+        to_h.dig("data", "works", "nodes").first
     end
   end
 end
