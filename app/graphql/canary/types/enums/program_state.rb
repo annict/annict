@@ -1,10 +1,12 @@
 # frozen_string_literal: true
 
-module Types
-  module Enums
-    class ProgramState < Types::Enums::Base
-      value "PUBLISHED", ""
-      value "HIDDEN", ""
+module Canary
+  module Types
+    module Enums
+      class ProgramState < Canary::Types::Enums::Base
+        value "PUBLISHED", "公開中"
+        value "HIDDEN", "非公開中"
+      end
     end
   end
 end

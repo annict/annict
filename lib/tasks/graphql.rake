@@ -3,10 +3,23 @@
 require "graphql/rake_task"
 
 namespace :graphql do
-  task dump_schema: :environment do
-    schema_definition = AnnictSchema.to_definition
-    schema_path = "app/graphql/schema.graphql"
+  task :dump_schema, %i(version) => :environment do |_, args|
+    version = args[:version]
+
+    schema_definition = if version
+      "#{version.classify}::AnnictSchema".constantize.to_definition
+    else
+      AnnictSchema.to_definition
+    end
+
+    schema_path = if version
+      "app/graphql/#{version}/schema.graphql"
+    else
+      "app/graphql/schema.graphql"
+    end
+
     File.write(Rails.root.join(schema_path), schema_definition)
+
     puts "Updated #{schema_path}"
   end
 

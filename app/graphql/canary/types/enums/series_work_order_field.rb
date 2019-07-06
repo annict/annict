@@ -1,9 +1,11 @@
 # frozen_string_literal: true
 
-module Types
-  module Enums
-    class SeriesWorkOrderField < Types::Enums::Base
-      value "SEASON", ""
+module Canary
+  module Types
+    module Enums
+      class SeriesWorkOrderField < Canary::Types::Enums::Base
+        value "SEASON", "シーズン"
+      end
     end
   end
 end

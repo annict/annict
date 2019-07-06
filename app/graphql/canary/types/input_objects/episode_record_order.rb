@@ -3,8 +3,8 @@
 module Canary
   module Types
     module InputObjects
-      class PersonOrder < Canary::Types::InputObjects::Base
-        argument :field, Canary::Types::Enums::PersonOrderField, required: true
+      class EpisodeRecordOrder < Canary::Types::InputObjects::Base
+        argument :field, Canary::Types::Enums::EpisodeRecordOrderField, required: true
         argument :direction, Canary::Types::Enums::OrderDirection, required: true
       end
     end

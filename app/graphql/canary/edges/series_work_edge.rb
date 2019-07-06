@@ -1,24 +1,26 @@
 # frozen_string_literal: true
 
-module Edges
-  class SeriesWorkEdge < GraphQL::Types::Relay::BaseEdge
-    node_type Types::Objects::WorkType
-    graphql_name "SeriesWorkEdge"
+module Canary
+  module Edges
+    class SeriesWorkEdge < GraphQL::Types::Relay::BaseEdge
+      node_type Canary::Types::Objects::WorkType
+      graphql_name "SeriesWorkEdge"
 
-    field :summary, String, null: true
-    field :summary_en, String, null: true
-    field :node, Types::Objects::WorkType, null: false
+      field :summary, String, null: true
+      field :summary_en, String, null: true
+      field :node, Types::Objects::WorkType, null: false
 
-    def summary
-      object.node.summary
-    end
+      def summary
+        object.node.summary
+      end
 
-    def summary_en
-      object.node.summary_en
-    end
+      def summary_en
+        object.node.summary_en
+      end
 
-    def node
-      object.node.work
+      def node
+        object.node.work
+      end
     end
   end
 end

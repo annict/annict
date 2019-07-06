@@ -1,9 +1,11 @@
 # frozen_string_literal: true
 
-module Types
-  module Unions
-    class StaffResourceItem < Types::Unions::Base
-      possible_types Types::Objects::PersonType, Types::Objects::OrganizationType
+module Canary
+  module Types
+    module Unions
+      class StaffResourceItem < Canary::Types::Unions::Base
+        possible_types Canary::Types::Objects::PersonType, Canary::Types::Objects::OrganizationType
+      end
     end
   end
 end

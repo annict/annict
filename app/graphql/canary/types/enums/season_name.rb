@@ -1,14 +1,16 @@
 # frozen_string_literal: true
 
-module Types
-  module Enums
-    class SeasonName < Types::Enums::Base
-      description "Season name"
+module Canary
+  module Types
+    module Enums
+      class SeasonName < Canary::Types::Enums::Base
+        description "シーズン"
 
-      value "WINTER", ""
-      value "SPRING", ""
-      value "SUMMER", ""
-      value "AUTUMN", ""
+        value "WINTER", "冬"
+        value "SPRING", "春"
+        value "SUMMER", "夏"
+        value "AUTUMN", "秋"
+      end
     end
   end
 end

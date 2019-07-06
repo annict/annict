@@ -1,75 +1,74 @@
 # frozen_string_literal: true
 
-module Types
-  module Objects
-    class EpisodeType < Types::Objects::Base
-      description "An episode of a work"
+module Canary
+  module Types
+    module Objects
+      class EpisodeType < Canary::Types::Objects::Base
+        description "エピソード情報"
 
-      implements GraphQL::Relay::Node.interface
+        implements GraphQL::Relay::Node.interface
 
-      global_id_field :id
+        global_id_field :id
 
-      field :annict_id, Integer, null: false
-      field :number, Integer, null: true
-      field :number_text, String, null: true
-      field :sort_number, Integer, null: false
-      field :title, String, null: true
-      field :satisfaction_rate, Float, null: true
-      field :records_count, Integer, null: false
-      field :record_comments_count, Integer, null: false
-      field :work, Types::Objects::WorkType, null: false
-      field :prev_episode, Types::Objects::EpisodeType, null: true
-      field :next_episode, Types::Objects::EpisodeType, null: true
-      field :viewer_did_track, Boolean, null: false
-      field :viewer_records_count, Integer, null: false
+        field :annict_id, Integer, null: false
+        field :number, Integer, null: true
+        field :number_text, String, null: true
+        field :sort_number, Integer, null: false
+        field :title, String, null: true
+        field :satisfaction_rate, Float, null: true,
+          description: "満足度"
+        field :episode_records_count, Integer, null: false
+        field :episode_record_bodies_count, Integer, null: false
+        field :work, Canary::Types::Objects::WorkType, null: false
+        field :prev_episode, Canary::Types::Objects::EpisodeType, null: true
+        field :next_episode, Canary::Types::Objects::EpisodeType, null: true
+        field :viewer_did_track, Boolean, null: false
+        field :viewer_records_count, Integer, null: false
 
-      field :records, Types::Objects::RecordType.connection_type, null: true do
-        argument :order_by, Types::InputObjects::RecordOrder, required: false
-        argument :has_comment, Boolean, required: false
-      end
+        field :episode_records, Canary::Types::Objects::EpisodeRecordType.connection_type, null: true do
+          argument :order_by, Canary::Types::InputObjects::EpisodeRecordOrder, required: false
+          argument :has_body, Boolean, required: false
+        end
 
-      def number
-        object.raw_number
-      end
+        def number
+          object.raw_number
+        end
 
-      def number_text
-        object.number
-      end
+        def number_text
+          object.number
+        end
 
-      def records_count
-        object.episode_records_count
-      end
+        def episode_record_bodies_count
+          object.episode_records_with_body_count
+        end
 
-      def record_comments_count
-        object.episode_records_with_body_count
-      end
+        def work
+          RecordLoader.for(Work).load(object.work_id)
+        end
 
-      def work
-        RecordLoader.for(Work).load(object.work_id)
-      end
+        def prev_episode
+          RecordLoader.for(Episode).load(object.prev_episode_id)
+        end
 
-      def prev_episode
-        RecordLoader.for(Episode).load(object.prev_episode_id)
-      end
+        def next_episode
+          RecordLoader.for(Episode).load(object.next_episode_id)
+        end
 
-      def next_episode
-        RecordLoader.for(Episode).load(object.next_episode_id)
-      end
+        def viewer_did_track
+          context[:viewer].tracked?(object)
+        end
 
-      def viewer_did_track
-        context[:viewer].tracked?(object)
-      end
+        def viewer_records_count
+          context[:viewer].episode_records_count_in(object)
+        end
 
-      def viewer_records_count
-        context[:viewer].episode_records_count_in(object)
-      end
-
-      def records(order_by: nil, has_comment: nil)
-        SearchEpisodeRecordsQuery.new(
-          object.episode_records,
-          order_by: order_by,
-          has_comment: has_comment
-        ).call
+        def episode_records(order_by: nil, has_body: nil)
+          SearchEpisodeRecordsQuery.new(
+            object.episode_records,
+            order_by: order_by,
+            has_body: has_body
+          ).call
+        end
       end
     end
   end

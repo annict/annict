@@ -1,12 +1,14 @@
 # frozen_string_literal: true
 
-module Types
-  module Unions
-    class ActivityItem < Types::Unions::Base
-      possible_types Types::Objects::StatusType,
-        Types::Objects::RecordType,
-        Types::Objects::ReviewType,
-        Types::Objects::MultipleRecordType
+module Canary
+  module Types
+    module Unions
+      class ActivityItem < Canary::Types::Unions::Base
+        possible_types Canary::Types::Objects::StatusType,
+          Canary::Types::Objects::EpisodeRecordType,
+          Canary::Types::Objects::WorkRecordType,
+          Canary::Types::Objects::MultipleEpisodeRecordType
+      end
     end
   end
 end

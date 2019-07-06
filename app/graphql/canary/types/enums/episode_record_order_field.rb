@@ -3,8 +3,9 @@
 module Canary
   module Types
     module Enums
-      class ActivityOrderField < Canary::Types::Enums::Base
+      class EpisodeRecordOrderField < Canary::Types::Enums::Base
         value "CREATED_AT", "作成日時"
+        value "LIKES_COUNT", "いいね数"
       end
     end
   end

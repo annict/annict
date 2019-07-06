@@ -1,17 +1,19 @@
 # frozen_string_literal: true
 
-module Types
-  module Objects
-    class Mutation < Types::Objects::Base
-      field :updateStatus, mutation: Mutations::UpdateStatus
+module Canary
+  module Types
+    module Objects
+      class Mutation < Canary::Types::Objects::Base
+        field :statusUpdate, mutation: Canary::Mutations::StatusUpdate
 
-      field :createRecord, mutation: Mutations::CreateRecord
-      field :updateRecord, mutation: Mutations::UpdateRecord
-      field :deleteRecord, mutation: Mutations::DeleteRecord
+        field :episodeRecordCreate, mutation: Canary::Mutations::EpisodeRecordCreate
+        field :episodeRecordUpdate, mutation: Canary::Mutations::EpisodeRecordUpdate
+        field :episodeRecordDelete, mutation: Canary::Mutations::EpisodeRecordDelete
 
-      field :createReview, mutation: Mutations::CreateReview
-      field :updateReview, mutation: Mutations::UpdateReview
-      field :deleteReview, mutation: Mutations::DeleteReview
+        field :workRecordCreate, mutation: Canary::Mutations::WorkRecordCreate
+        field :workRecordUpdate, mutation: Canary::Mutations::WorkRecordUpdate
+        field :workRecordDelete, mutation: Canary::Mutations::WorkRecordDelete
+      end
     end
   end
 end
