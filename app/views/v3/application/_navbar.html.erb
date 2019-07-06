@@ -1,19 +1,12 @@
-<nav class="navbar navbar-expand-lg navbar-light bg-white sticky-top shadow-sm">
-  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbar-toggler">
-    <span class="navbar-toggler-icon"></span>
-  </button>
-  <ul class="navbar-nav mx-auto d-lg-none">
-    <%= link_to root_path, class: "navbar-brand" do %>
-      <%= image_tag asset_bundle_path("images/logos/color-mizuho.png"), size: "25x30", alt: "Annict" %>
-    <% end %>
-  </ul>
-  <div class="collapse navbar-collapse" id="navbar-toggler">
+<div class="c-navbar">
+  <!--  PC-->
+  <nav class="navbar navbar-expand navbar-light bg-white shadow-sm">
     <%= link_to root_path, class: "navbar-brand d-none d-lg-inline-block" do %>
       <%= image_tag asset_bundle_path("images/logos/color-mizuho.png"), size: "25x30", alt: "Annict" %>
     <% end %>
-    <ul class="navbar-nav mt-2 mt-lg-0 mr-lg-2">
-      <li class="nav-item dropdown active">
-        <a class="nav-link dropdown-toggle" href="" data-toggle="dropdown">
+    <ul class="navbar-nav mt-2 mt-md-0 mr-md-2">
+      <li class="nav-item dropdown d-none d-lg-inline-block">
+        <a class="nav-link dropdown-toggle text-dark" href="" data-toggle="dropdown">
           <%= t("verb.explore") %>
         </a>
         <div class="dropdown-menu">
@@ -25,7 +18,7 @@
         </div>
       </li>
     </ul>
-    <%= form_with url: search_path, method: :get, class: "col-lg-2 mt-2 mt-lg-0 px-0 mr-auto" do |f| %>
+    <%= form_with url: search_path, method: :get, class: "col-md-2 px-0 mr-auto d-none d-lg-inline-block" do |f| %>
       <%= f.text_field :q, class: "form-control", autocomplete: "off", placeholder: t("messages._common.search_with_keywords") %>
     <% end %>
     <ul class="navbar-nav">
@@ -45,5 +38,86 @@
         </li>
       <% end %>
     </ul>
-  </div>
-</nav>
+  </nav>
+
+  <!--  Mobile-->
+  <nav class="navbar navbar-expand navbar-white bg-white fixed-bottom d-block d-lg-none">
+    <ul class="navbar-nav justify-content-around align-items-center h-100">
+      <li class="nav-item text-center">
+        <%= link_to root_path, class: "text-dark" do %>
+          <%= icon "home" %>
+          <div class="small mt-1">
+            <%= t "noun.home" %>
+          </div>
+        <% end %>
+      </li>
+      <% if user_signed_in? %>
+        <li class="nav-item text-center">
+          <%= link_to programs_path, class: "text-dark" do %>
+            <%= icon "calendar", "far" %>
+            <div class="small mt-1">
+              <%= t "noun.programs" %>
+            </div>
+          <% end %>
+        </li>
+        <li class="nav-item text-center">
+          <a class="text-dark" href="">
+            <%= icon "play" %>
+            <div class="small mt-1">
+              <%= t "noun.watching_shorten" %>
+            </div>
+          </a>
+        </li>
+        <li class="nav-item text-center">
+          <%= link_to season_works_path(slug: ENV.fetch("ANNICT_CURRENT_SEASON")), class: "text-dark" do %>
+            <%= icon "tv" %>
+            <div class="small mt-1">
+              <%= t "noun.airing" %>
+            </div>
+          <% end %>
+        </li>
+        <li class="nav-item text-center position-relative">
+          <%= link_to menu_path, class: "text-dark" do %>
+            <%= icon "th" %>
+            <div class="small mt-1">
+              <%= t "noun.menu" %>
+            </div>
+          <% end %>
+        </li>
+      <% else %>
+        <li class="nav-item text-center">
+          <%= link_to season_works_path(slug: ENV.fetch("ANNICT_CURRENT_SEASON")), class: "text-dark" do %>
+            <%= icon "tv" %>
+            <div class="small mt-1">
+              <%= t "noun.airing" %>
+            </div>
+          <% end %>
+        </li>
+        <li class="nav-item text-center">
+          <%= link_to new_user_registration_path, class: "text-dark" do %>
+            <%= icon "rocket" %>
+            <div class="small mt-1">
+              <%= t "noun.sign_up_shorten" %>
+            </div>
+          <% end %>
+        </li>
+        <li class="nav-item text-center">
+          <%= link_to about_path, class: "text-dark" do %>
+            <%= icon "lightbulb", "far" %>
+            <div class="small mt-1">
+              <%= t "head.title.pages.about_shoten" %>
+            </div>
+          <% end %>
+        </li>
+        <li class="nav-item text-center">
+          <%= link_to menu_path, class: "text-dark" do %>
+            <%= icon "th" %>
+            <div class="small mt-1">
+              <%= t "noun.menu" %>
+            </div>
+          <% end %>
+        </li>
+      <% end %>
+    </ul>
+  </nav>
+</div>

@@ -1,0 +1,24 @@
+.navbar {
+  @include media-breakpoint-up(md) {
+    & {
+      height: $ann-navbar-height;
+
+      @supports (position: sticky) {
+        position: sticky;
+        top: 0;
+        z-index: $zindex-sticky;
+      }
+    }
+  }
+
+  @include media-breakpoint-down(md) {
+    & {
+      bottom: 0;
+      height: $ann-navbar-height_mobile;
+      left: 0;
+      position: fixed;
+      right: 0;
+      z-index: $zindex-fixed;
+    }
+  }
+}
