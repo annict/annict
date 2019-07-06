@@ -27,7 +27,6 @@ $ sudo sh -c "echo '127.0.0.1  annict.test' >> /etc/hosts"
 $ sudo sh -c "echo '127.0.0.1  annict-jp.test' >> /etc/hosts"
 $ git clone git@github.com:annict/annict.git
 $ cd annict
-$ yarn install
 $ bundle install
 $ touch .env.development.local
 $ bundle exec rails db:setup
