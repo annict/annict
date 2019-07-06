@@ -1,6 +1,8 @@
 .navbar {
+  // PC
   @include media-breakpoint-up(md) {
     & {
+      box-shadow: $box-shadow-sm;
       height: $ann-navbar-height;
 
       @supports (position: sticky) {
@@ -11,9 +13,11 @@
     }
   }
 
+  // Mobile
   @include media-breakpoint-down(md) {
     & {
       bottom: 0;
+      box-shadow: 0 -0.125rem 0.25rem -0.125rem rgba(0, 0, 0, 0.075);
       height: $ann-navbar-height_mobile;
       left: 0;
       position: fixed;
