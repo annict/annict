@@ -82,6 +82,26 @@
       <% end %>
 
       <h2 class="h4 text-center my-4 font-weight-bold">
+        <%= t "noun.episodes" %>
+      </h2>
+      <div class="c-card container mt-3 pt-3">
+        <div class="row">
+          <% @work.episodes.each do |episode| %>
+            <div class="col-4 mb-3">
+              <%= link_to "" do %>
+                <div class="">
+                  <%= episode.number_text %>
+                </div>
+                <div class="small u-text-body">
+                  <%= episode.title %>
+                </div>
+              <% end %>
+            </div>
+          <% end %>
+        </div>
+      </div>
+
+      <h2 class="h4 text-center my-4 font-weight-bold">
         <%= t "noun.characters" %>
       </h2>
       <div class="c-card container mt-3 pt-3">
@@ -108,25 +128,6 @@
               <div class="small">
                 <%= staff.role_text %>
               </div>
-            </div>
-          <% end %>
-        </div>
-      </div>
-      <h2 class="h4 text-center my-4 font-weight-bold">
-        <%= t "noun.episodes" %>
-      </h2>
-      <div class="c-card container mt-3 pt-3">
-        <div class="row">
-          <% @work.episodes.each do |episode| %>
-            <div class="col-4 mb-3">
-              <%= link_to "" do %>
-                <div class="">
-                  <%= episode.number_text %>
-                </div>
-                <div class="small u-text-body">
-                  <%= episode.title %>
-                </div>
-              <% end %>
             </div>
           <% end %>
         </div>
