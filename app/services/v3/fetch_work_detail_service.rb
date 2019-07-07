@@ -18,60 +18,68 @@ module V3
 
     def query_string
       <<~GRAPHQL
-      {
-        works(annictIds: [#{work_id}]) {
-          nodes {
-            id
-            annictId
-            title
-            watchersCount
-            satisfactionRate
-            ratingsCount
-            titleKana
-            officialSiteUrl
-            twitterUsername
-            wikipediaUrl
-            image {
-              internalUrl(size: "280x")
-            }
-            copyright
-            casts(orderBy: { field: SORT_NUMBER, direction: ASC }) {
-              nodes {
-                character {
-                  annictId
-                  name
-                }
-                person {
-                  annictId
-                  name
+        {
+          works(annictIds: [#{work_id}]) {
+            nodes {
+              id
+              annictId
+              title
+              watchersCount
+              satisfactionRate
+              ratingsCount
+              titleKana
+              officialSiteUrl
+              twitterUsername
+              wikipediaUrl
+              noEpisodes
+              image {
+                internalUrl(size: "280x")
+              }
+              copyright
+              trailers(orderBy: { field: SORT_NUMBER, direction: ASC }) {
+                nodes {
+                  title
+                  url
+                  internalImageUrl(size: "300x169")
                 }
               }
-            }
-            staffs(orderBy: { field: SORT_NUMBER, direction: ASC }) {
-              nodes {
-                resource {
-                  ... on Person {
+              casts(orderBy: { field: SORT_NUMBER, direction: ASC }) {
+                nodes {
+                  character {
                     annictId
                     name
                   }
-                  ... on Organization {
+                  person {
                     annictId
                     name
                   }
                 }
-                roleText
               }
-            }
-            episodes(orderBy: { field: SORT_NUMBER, direction: ASC }) {
-              nodes {
-                annictId
-                numberText
-                title
+              staffs(orderBy: { field: SORT_NUMBER, direction: ASC }) {
+                nodes {
+                  resource {
+                    ... on Person {
+                      annictId
+                      name
+                    }
+                    ... on Organization {
+                      annictId
+                      name
+                    }
+                  }
+                  roleText
+                }
+              }
+              episodes(orderBy: { field: SORT_NUMBER, direction: ASC }) {
+                nodes {
+                  annictId
+                  numberText
+                  title
+                }
               }
             }
           }
         }
-      }
       GRAPHQL
     end
   end

@@ -65,6 +65,10 @@ module Canary
 
         field :series_list, Canary::Types::Objects::SeriesType.connection_type, null: true
 
+        field :trailers, Canary::Types::Objects::TrailerType.connection_type, null: true do
+          argument :order_by, Canary::Types::InputObjects::TrailerOrder, required: false
+        end
+
         def episodes(order_by: nil)
           SearchEpisodesQuery.new(object.episodes, order_by: order_by).call
         end
@@ -90,6 +94,10 @@ module Canary
 
         def series_list
           object.series_list.published.where("series_works_count > ?", 1)
+        end
+
+        def trailers(order_by: nil)
+          SearchTrailersQuery.new(object.pvs, order_by: order_by).call
         end
 
         def media

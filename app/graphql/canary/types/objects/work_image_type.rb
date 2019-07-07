@@ -17,7 +17,7 @@ module Canary
         field :twitter_bigger_avatar_url, String, null: true
         field :recommended_image_url, String, null: true
 
-        field :internal_url, String, null: true do
+        field :internal_url, String, null: true, description: "このフィールドの値は公開されていません" do
           argument :size, String, required: true
         end
 

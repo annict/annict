@@ -1,0 +1,19 @@
+<div class="c-subnav c-subnav--transparent">
+  <%= active_link_to work_path(work["annictId"]), class: "c-subnav__link", class_active: "c-subnav__link--active", active: params[:controller] == "v3/works" && params[:action].in?(%w(show)) do %>
+    <div class="c-subnav__item">
+      <%= t "noun.detail" %>
+    </div>
+  <% end %>
+  <% unless work["noEpisodes"] %>
+    <%= active_link_to work_episodes_path(work["annictId"]), class: "c-subnav__link", class_active: "c-subnav__link--active", active: params[:controller].in?(%w(episodes episode_items)) && params[:action].in?(%w(index show new)) do %>
+      <div class="c-subnav__item">
+        <%= t "noun.episodes" %>
+      </div>
+    <% end %>
+  <% end %>
+  <%= active_link_to work_records_path(work["annictId"]), class: "c-subnav__link", class_active: "c-subnav__link--active", active: params[:controller].in?(%w(work_records)) && params[:action].in?(%w(index new create edit update)) do %>
+    <div class="c-subnav__item">
+      <%= t "noun.records" %>
+    </div>
+  <% end %>
+</div>
