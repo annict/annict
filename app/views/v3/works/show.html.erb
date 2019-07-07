@@ -2,21 +2,21 @@
   <div class="row">
     <div class="col-md-3 pr-md-0">
       <div class="c-work-image mb-2">
-        <%= link_to work_path(@work["annictId"]) do %>
-          <%= image_tag(@work["image"]["internalUrl"], class: "img-fluid img-thumbnail rounded") %>
+        <%= link_to work_path(@work.annict_id) do %>
+          <%= image_tag(@work.image.internal_url, class: "img-fluid img-thumbnail rounded") %>
         <% end %>
         <div class="u-very-small text-right text-muted">
           <%= icon "copyright", "far", class: "mr-1" %>
-          <%= @work["copyright"] %>
+          <%= @work.copyright %>
         </div>
       </div>
       <h1 class="h2 font-weight-bold">
-        <%= @work["title"] %>
+        <%= @work.title %>
       </h1>
       <div class="row mb-3">
         <div class="col text-center">
           <div class="h4 font-weight-bold mb-1">
-            <%= @work["watchersCount"] %>
+            <%= @work.watchers_count %>
           </div>
           <div class="text-muted small">
             <%= t "noun.watchers_count" %>
@@ -24,7 +24,7 @@
         </div>
         <div class="col text-center">
           <div class="h4 font-weight-bold mb-1">
-            <%= @work["satisfactionRate"] %><span class="small ml-1">%</span>
+            <%= @work.satisfaction_rate %><span class="small ml-1">%</span>
           </div>
           <div class="text-muted small">
             <%= t "noun.satisfaction_rate_shorten" %>
@@ -32,33 +32,33 @@
         </div>
         <div class="col text-center">
           <div class="h4 font-weight-bold mb-1">
-            <%= @work["ratingsCount"] %>
+            <%= @work.ratings_count %>
           </div>
           <div class="text-muted small">
             <%= t "noun.ratings_count" %>
           </div>
         </div>
       </div>
-      <%= render "v3/application/status_selector", gql_work_id: @work["id"] %>
+      <%= render "v3/application/status_selector", gql_work_id: @work.id %>
     </div>
     <div class="col-md-9">
       <%= render "subnav", work: @work %>
 
-      <% if @work.dig("trailers", "nodes").present? %>
+      <% if @work.trailers.present? %>
         <h2 class="h4 text-center my-4 font-weight-bold">
           <%= t "noun.pv" %>
         </h2>
         <div class="c-card mt-3 pt-3">
           <div class="row ml-3 pr-3">
-            <% @work.dig("trailers", "nodes").each do |trailer| %>
+            <% @work.trailers.each do |trailer| %>
               <div class="col-md-4 col-6 text-center mb-3 pl-0">
-                <%= link_to trailer["url"], target: "_blank" do %>
+                <%= link_to trailer.url, target: "_blank" do %>
                   <div class="c-video-thumbnail">
-                    <div class="c-video-thumbnail__image" style="background-image: url('<%= trailer["internalImageUrl"] %>')"></div>
+                    <div class="c-video-thumbnail__image" style="background-image: url('<%= trailer.internal_image_url%>')"></div>
                     <%= icon "play-circle", "far" %>
                   </div>
                   <div class="small">
-                    <%= trailer["title"] %>
+                    <%= trailer.title %>
                   </div>
                 <% end %>
               </div>
@@ -72,12 +72,12 @@
       </h2>
       <div class="c-card container mt-3 pt-3">
         <div class="row">
-          <% @work["casts"]["nodes"].each do |cast| %>
+          <% @work.casts.each do |cast| %>
             <div class="col-3 mb-3">
-              <%= link_to cast["character"]["name"], character_path(cast["character"]["annictId"]) %>
+              <%= link_to cast.character.name, character_path(cast.character.annict_id) %>
               <div class="small">
                 <span>CV:</span>
-                <%= link_to cast["person"]["name"], person_path(cast["person"]["annictId"]) %>
+                <%= link_to cast.person.name, person_path(cast.person.annict_id) %>
               </div>
             </div>
           <% end %>
@@ -88,11 +88,11 @@
       </h2>
       <div class="c-card container mt-3 pt-3">
         <div class="row">
-          <% @work["staffs"]["nodes"].each do |staff| %>
+          <% @work.staffs.each do |staff| %>
             <div class="col-3 mb-3">
-              <%= link_to staff["resource"]["name"], "" %>
+              <%= link_to staff.person.name, "" %>
               <div class="small">
-                <%= staff["roleText"] %>
+                <%= staff.role_text %>
               </div>
             </div>
           <% end %>
@@ -103,14 +103,14 @@
       </h2>
       <div class="c-card container mt-3 pt-3">
         <div class="row">
-          <% @work["episodes"]["nodes"].each do |episode| %>
+          <% @work.episodes.each do |episode| %>
             <div class="col-4 mb-3">
               <%= link_to "" do %>
                 <div class="">
-                  <%= episode["numberText"] %>
+                  <%= episode.number_text %>
                 </div>
                 <div class="small u-text-body">
-                  <%= episode["title"] %>
+                  <%= episode.title %>
                 </div>
               <% end %>
             </div>
