@@ -39,7 +39,7 @@ module Canary
         field :episodes_count, Integer, null: false
         field :watchers_count, Integer, null: false
         field :work_records_count, Integer, null: false
-        field :no_episodes, Boolean, null: false
+        field :is_no_episodes, Boolean, null: false
         field :viewer_status_state, Canary::Types::Enums::StatusState, null: true
         field :synopsis, String, null: false
         field :synopsis_en, String, null: false
@@ -117,14 +117,14 @@ module Canary
         end
 
         def image
-          RecordLoader.for(WorkImage).load(object.work_image&.id)
+          Canary::RecordLoader.for(WorkImage).load(object.work_image&.id)
         end
 
         def copyright
           object.work_image&.copyright
         end
 
-        def no_episodes
+        def is_no_episodes
           object.no_episodes?
         end
 
