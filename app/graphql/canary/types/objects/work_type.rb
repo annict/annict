@@ -41,6 +41,10 @@ module Canary
         field :work_records_count, Integer, null: false
         field :no_episodes, Boolean, null: false
         field :viewer_status_state, Canary::Types::Enums::StatusState, null: true
+        field :synopsis, String, null: false
+        field :synopsis_en, String, null: false
+        field :synopsis_source, String, null: false
+        field :synopsis_source_en, String, null: false
 
         field :episodes, Canary::Types::Objects::EpisodeType.connection_type, null: true do
           argument :order_by, Canary::Types::InputObjects::EpisodeOrder, required: false
