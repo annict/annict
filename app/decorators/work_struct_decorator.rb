@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-module WorkObjectDecorator
+module WorkStructDecorator
   def local_synopsis(raw: false)
     text = case I18n.locale
     when :en then synopsis_en

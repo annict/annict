@@ -1,5 +1,5 @@
 # frozen_string_literal: true
 
-module ObjectTypes
+module StructTypes
   include Dry.Types
 end

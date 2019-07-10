@@ -18,25 +18,25 @@ class WorkDetailQuery < ApplicationQuery
       dig(:data, :works, :nodes).
       first
 
-    attrs = data.slice(*WorkObject.attribute_names)
-    attrs[:image] = WorkImageObject.new(data[:image])
-    attrs[:trailers] = data.dig(:trailers, :nodes).map { |hash| TrailerObject.new(hash.slice(*TrailerObject.attribute_names)) }
+    attrs = data.slice(*WorkStruct.attribute_names)
+    attrs[:image] = WorkImageStruct.new(data[:image])
+    attrs[:trailers] = data.dig(:trailers, :nodes).map { |hash| TrailerStruct.new(hash.slice(*TrailerStruct.attribute_names)) }
     attrs[:casts] = data.dig(:casts, :nodes).map do |hash|
-      CastObject.new(
-        character: CharacterObject.new(hash[:character]),
-        person: PersonObject.new(hash[:person]),
+      CastStruct.new(
+        character: CharacterStruct.new(hash[:character]),
+        person: PersonStruct.new(hash[:person]),
       )
     end
     attrs[:staffs] = data.dig(:staffs, :nodes).map do |hash|
-      StaffObject.new(
-        person: PersonObject.new(hash[:resource]),
+      StaffStruct.new(
+        person: PersonStruct.new(hash[:resource]),
         organization: nil,
         role_text: hash[:role_text]
       )
     end
-    attrs[:episodes] = data.dig(:episodes, :nodes).map { |hash| EpisodeObject.new(hash.slice(*EpisodeObject.attribute_names)) }
+    attrs[:episodes] = data.dig(:episodes, :nodes).map { |hash| EpisodeStruct.new(hash.slice(*EpisodeStruct.attribute_names)) }
 
-    WorkObject.new(attrs)
+    WorkStruct.new(attrs)
   end
 
   def query_string
