@@ -5,7 +5,7 @@ module V3
     before_action :set_cache_control_headers, only: %i(show)
 
     def show
-      @work = WorkDetailQuery.new(work_id: params[:id]).call
+      @work = V3::WorkDetailQuery.new(work_id: params[:id]).call
     end
   end
 end

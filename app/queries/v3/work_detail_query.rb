@@ -1,46 +1,47 @@
 # frozen_string_literal: true
 
-class WorkDetailQuery < ApplicationQuery
-  def initialize(work_id:)
-    @work_id = work_id
-  end
-
-  def call
-    build_object(execute(query_string))
-  end
-
-  private
-
-  attr_reader :work_id
-
-  def build_object(result)
-    data = result.
-      dig(:data, :works, :nodes).
-      first
-
-    attrs = data.slice(*WorkStruct.attribute_names)
-    attrs[:image] = WorkImageStruct.new(data[:image])
-    attrs[:trailers] = data.dig(:trailers, :nodes).map { |hash| TrailerStruct.new(hash.slice(*TrailerStruct.attribute_names)) }
-    attrs[:casts] = data.dig(:casts, :nodes).map do |hash|
-      CastStruct.new(
-        character: CharacterStruct.new(hash[:character]),
-        person: PersonStruct.new(hash[:person]),
-      )
+module V3
+  class WorkDetailQuery < V3::ApplicationQuery
+    def initialize(work_id:)
+      @work_id = work_id
     end
-    attrs[:staffs] = data.dig(:staffs, :nodes).map do |hash|
-      StaffStruct.new(
-        person: PersonStruct.new(hash[:resource]),
-        organization: nil,
-        role_text: hash[:role_text]
-      )
+
+    def call
+      build_object(execute(query_string))
     end
-    attrs[:episodes] = data.dig(:episodes, :nodes).map { |hash| EpisodeStruct.new(hash.slice(*EpisodeStruct.attribute_names)) }
 
-    WorkStruct.new(attrs)
-  end
+    private
 
-  def query_string
-    <<~GRAPHQL
+    attr_reader :work_id
+
+    def build_object(result)
+      data = result.
+        dig(:data, :works, :nodes).
+        first
+
+      attrs = data.slice(*WorkStruct.attribute_names)
+      attrs[:image] = WorkImageStruct.new(data[:image])
+      attrs[:trailers] = data.dig(:trailers, :nodes).map { |hash| TrailerStruct.new(hash.slice(*TrailerStruct.attribute_names)) }
+      attrs[:casts] = data.dig(:casts, :nodes).map do |hash|
+        CastStruct.new(
+          character: CharacterStruct.new(hash[:character]),
+          person: PersonStruct.new(hash[:person]),
+        )
+      end
+      attrs[:staffs] = data.dig(:staffs, :nodes).map do |hash|
+        StaffStruct.new(
+          person: PersonStruct.new(hash[:resource]),
+          organization: nil,
+          role_text: hash[:role_text]
+        )
+      end
+      attrs[:episodes] = data.dig(:episodes, :nodes).map { |hash| EpisodeStruct.new(hash.slice(*EpisodeStruct.attribute_names)) }
+
+      WorkStruct.new(attrs)
+    end
+
+    def query_string
+      <<~GRAPHQL
       {
         works(annictIds: [#{work_id}]) {
           nodes {
@@ -106,6 +107,7 @@ class WorkDetailQuery < ApplicationQuery
           }
         }
       }
-    GRAPHQL
+      GRAPHQL
+    end
   end
 end
