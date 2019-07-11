@@ -8,18 +8,18 @@ module Api
           before_action :authenticate_user!
 
           def show
-            data = ::V3::FetchStatusService.new(
+            work = ::V3::FetchStatusQuery.new(
               user: current_user,
               gql_work_id: params[:gql_work_id]
-            ).call.to_h.dig("data", "node")
+            ).call
 
             render json: {
-              status: data["viewerStatusState"]
+              status: work.viewer_status_state
             }
           end
 
           def update
-            ::V3::UpdateStatusService.new(
+            ::V3::UpdateStatusQuery.new(
               user: current_user,
               gql_work_id: params[:gql_work_id],
               status_kind: params[:status_kind]

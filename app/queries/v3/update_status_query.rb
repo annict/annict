@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module V3
-  class UpdateStatusService
+  class UpdateStatusQuery < V3::ApplicationQuery
     def initialize(user:, gql_work_id:, status_kind:)
       @user = user
       @gql_work_id = gql_work_id
@@ -9,10 +9,7 @@ module V3
     end
 
     def call
-      Canary::AnnictSchema.execute(query_string, context: {
-        viewer: user,
-        writable: true
-      })
+      execute(query_string, viewer: user)
     end
 
     private
