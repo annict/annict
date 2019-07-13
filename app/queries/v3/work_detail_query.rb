@@ -18,6 +18,7 @@ module V3
       data = result.
         dig(:data, :works, :nodes).
         first
+      return unless data
 
       attrs = data.slice(*WorkStruct.attribute_names)
       attrs[:image] = WorkImageStruct.new(data[:image])

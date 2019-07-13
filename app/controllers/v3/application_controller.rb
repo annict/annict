@@ -7,5 +7,9 @@ module V3
     layout "v3"
 
     before_action :set_vary_header
+
+    def render_404
+      render file: "#{Rails.root}/public/404", layout: false, status: :not_found
+    end
   end
 end
