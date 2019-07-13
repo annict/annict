@@ -8,7 +8,12 @@ module V3
     end
 
     def call
-      build_object(execute(query_string, viewer: user))
+      build_object(
+        execute(query_string,
+          variables: { work_id: gql_work_id },
+          context: { viewer: user }
+        )
+      )
     end
 
     private
@@ -22,8 +27,8 @@ module V3
 
       def query_string
       <<~GRAPHQL
-        {
-          node(id: "#{gql_work_id}") {
+        query($workId: ID!) {
+          node(id: $workId) {
             ... on Work {
               viewerStatusState
             }

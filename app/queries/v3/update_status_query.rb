@@ -9,7 +9,10 @@ module V3
     end
 
     def call
-      execute(query_string, viewer: user)
+      execute(query_string,
+        variables: { work_id: gql_work_id, state: status_kind.upcase },
+        context: { viewer: user }
+      )
     end
 
     private
@@ -18,8 +21,8 @@ module V3
 
     def query_string
       <<~GRAPHQL
-        mutation {
-          statusUpdate(input: { workId: #{gql_work_id}, state: #{status_kind.upcase} }) {
+        mutation StatusUpdate($workId: ID!, $state: StatusState!) {
+          statusUpdate(input: { workId: $workId, state: $state }) {
             work {
               id
             }
