@@ -70,6 +70,7 @@ module V3
               synopsis
               synopsisEn
               synopsisSource
+              synopsisSourceEn
               image {
                 internalUrl(size: "280x")
               }

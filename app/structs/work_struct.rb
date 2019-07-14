@@ -26,6 +26,7 @@ class WorkStruct < ApplicationStruct
   attribute :synopsis, StructTypes::Strict::String
   attribute :synopsis_en, StructTypes::Strict::String
   attribute :synopsis_source, StructTypes::Strict::String
+  attribute :synopsis_source_en, StructTypes::Strict::String
   attribute :viewer_status_state, StructTypes::Strict::String
 
   attribute :image, WorkImageStruct
