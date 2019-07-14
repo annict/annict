@@ -9,7 +9,7 @@ module Canary
         value "TV", "テレビ"
         value "OVA", "OVA"
         value "MOVIE", "映画"
-        value "WEB", "Web配信"
+        value "WEB", "Web"
         value "OTHER", "その他"
       end
     end

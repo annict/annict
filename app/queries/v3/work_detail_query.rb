@@ -49,13 +49,23 @@ module V3
               id
               annictId
               title
+              titleKana
+              titleEn
+              media
+              seasonYear
+              seasonName
+              startedOn
               watchersCount
               satisfactionRate
               ratingsCount
-              titleKana
               officialSiteUrl
-              twitterUsername
+              officialSiteUrlEn
               wikipediaUrl
+              wikipediaUrlEn
+              twitterUsername
+              twitterHashtag
+              syobocalTid
+              malAnimeId
               isNoEpisodes
               synopsis
               synopsisEn

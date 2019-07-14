@@ -10,7 +10,7 @@
           <%= @work.copyright %>
         </div>
       </div>
-      <h1 class="h2 font-weight-bold">
+      <h1 class="h2 font-weight-bold mb-3">
         <%= @work.title %>
       </h1>
       <div class="row mb-3">
@@ -39,7 +39,120 @@
           </div>
         </div>
       </div>
-      <%= render "v3/application/status_selector", gql_work_id: @work.id %>
+
+      <div class="mb-3">
+        <%= render "v3/application/status_selector", gql_work_id: @work.id %>
+      </div>
+
+      <h2 class="h4 font-weight-bold mb-3">
+        <%= icon "sticky-note", "far", class: "mr-1" %>
+        <%= t "noun.information" %>
+      </h2>
+
+      <dl>
+        <% if @work.title_kana.present? %>
+          <dt class="small">
+            <%= t "activerecord.attributes.work.title_kana" %>
+          </dt>
+          <dd>
+            <%= @work.title_kana %>
+          </dd>
+        <% end %>
+        <% if @work.title_en.present? %>
+          <dt class="small">
+            <%= t "activerecord.attributes.work.title_en" %>
+          </dt>
+          <dd>
+            <%= @work.title_en %>
+          </dd>
+        <% end %>
+        <dt class="small">
+          <%= t "activerecord.attributes.work.media" %>
+        </dt>
+        <dd>
+          <%= @work.decorate.media_text %>
+        </dd>
+        <% if @work.decorate.release_season_link.present? %>
+          <dt class="small">
+            <%= t "noun.release_season" %>
+          </dt>
+          <dd>
+            <%= @work.decorate.release_season_link %>
+          </dd>
+        <% end %>
+        <% if @work.started_on.present? %>
+          <dt class="small">
+            <%= @work.started_on_label %>
+          </dt>
+          <dd>
+            <%= display_date(@work.casted_started_on) %>
+          </dd>
+        <% end %>
+        <% if @work.official_site_url.present? %>
+          <dt class="small">
+            <%= t "activerecord.attributes.work.official_site_url" %>
+          </dt>
+          <dd>
+            <%= link_with_domain @work.official_site_url %>
+          </dd>
+        <% end %>
+        <% if @work.official_site_url_en.present? %>
+          <dt class="small">
+            <%= t "activerecord.attributes.work.official_site_url_en" %>
+          </dt>
+          <dd>
+            <%= link_with_domain @work.official_site_url_en %>
+          </dd>
+        <% end %>
+        <% if @work.twitter_username.present? %>
+          <dt class="small">
+            <%= t "activerecord.attributes.work.twitter_username" %>
+          </dt>
+          <dd>
+            <%= @work.twitter_username_link %>
+          </dd>
+        <% end %>
+        <% if @work.twitter_hashtag.present? %>
+          <dt class="small">
+            <%= t "activerecord.attributes.work.twitter_hashtag" %>
+          </dt>
+          <dd>
+            <%= @work.twitter_hashtag_link %>
+          </dd>
+        <% end %>
+        <% if @work.wikipedia_url.present? %>
+          <dt class="small">
+            <%= t "activerecord.attributes.work.wikipedia_url" %>
+          </dt>
+          <dd>
+            <%= link_with_domain @work.wikipedia_url %>
+          </dd>
+        <% end %>
+        <% if @work.wikipedia_url_en.present? %>
+          <dt class="small">
+            <%= t "activerecord.attributes.work.wikipedia_url_en" %>
+          </dt>
+          <dd>
+            <%= link_with_domain @work.wikipedia_url_en %>
+          </dd>
+        <% end %>
+        <% if @work.syobocal_tid.present? %>
+          <dt class="small">
+            <%= t "noun.syobocal" %>
+          </dt>
+          <dd>
+            <%= @work.syobocal_link(@work.syobocal_tid) %>
+          </dd>
+        <% end %>
+        <% if @work.mal_anime_id.present? %>
+          <dt class="small">
+            <%= t "noun.my_anime_list" %>
+          </dt>
+          <dd>
+            <%= @work.mal_anime_link %>
+          </dd>
+        <% end %>
+      </dl>
     </div>
     <div class="col-md-9">
       <%= render "subnav", work: @work %>
