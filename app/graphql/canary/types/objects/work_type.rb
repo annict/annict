@@ -10,41 +10,100 @@ module Canary
 
         global_id_field :id
 
-        field :annict_id, Integer, null: false,
+        field :annict_id, Integer,
+          null: false,
           description: "Annict ID"
-        field :title, String, null: false,
+
+        field :title, String,
+          null: false,
           description: "タイトル"
-        field :title_Kana, String, null: true,
+
+        field :title_Kana, String,
+          null: true,
           description: "タイトル (かな)"
-        field :title_ro, String, null: true,
-          deprecation_reason: "このフィールドは使われていません。 `titleEn` を使用してください。"
+
         field :title_en, String, null: true,
           description: "タイトル (英語)"
-        field :media, Canary::Types::Enums::Media, null: false
-        field :season_year, Integer, null: true
-        field :season_name, Canary::Types::Enums::SeasonName, null: true
-        field :official_site_url, String, null: true
-        field :official_site_url_en, String, null: true
-        field :wikipedia_url, String, null: true
-        field :wikipedia_url_en, String, null: true
-        field :twitter_username, String, null: true
-        field :twitter_hashtag, String, null: true
-        field :syobocal_tid, Integer, null: true
-        field :mal_anime_id, String, null: true
-        field :image, Canary::Types::Objects::WorkImageType, null: true
-        field :copyright, String, null: true
-        field :satisfaction_rate, Float, null: true
-        field :ratings_count, Integer, null: false,
+
+        field :title_ro, String,
+          null: true,
+          deprecation_reason: "このフィールドは使われていません。 `titleEn` を使用してください。"
+
+        field :media, Canary::Types::Enums::Media,
+          null: false
+
+        field :season_year, Integer,
+          null: true
+
+        field :season_name, Canary::Types::Enums::SeasonName,
+          null: true
+
+        field :started_on, Canary::Types::Scalars::Date,
+          null: true
+
+        field :official_site_url, String,
+          null: true
+
+        field :official_site_url_en, String,
+          null: true
+
+        field :wikipedia_url, String,
+          null: true
+
+        field :wikipedia_url_en, String,
+          null: true
+
+        field :twitter_username, String,
+          null: true
+
+        field :twitter_hashtag, String,
+          null: true
+
+        field :syobocal_tid, Integer,
+          null: true
+
+        field :mal_anime_id, String,
+          null: true
+
+        field :image, Canary::Types::Objects::WorkImageType,
+          null: true
+
+        field :copyright, String,
+          null: true
+
+        field :satisfaction_rate, Float,
+          null: true
+
+        field :ratings_count, Integer,
+          null: false,
           description: "評価数"
-        field :episodes_count, Integer, null: false
-        field :watchers_count, Integer, null: false
-        field :work_records_count, Integer, null: false
-        field :is_no_episodes, Boolean, null: false
-        field :viewer_status_state, Canary::Types::Enums::StatusState, null: true
-        field :synopsis, String, null: false
-        field :synopsis_en, String, null: false
-        field :synopsis_source, String, null: false
-        field :synopsis_source_en, String, null: false
+
+        field :episodes_count, Integer,
+          null: false
+
+        field :watchers_count, Integer,
+          null: false
+
+        field :work_records_count, Integer,
+          null: false
+
+        field :is_no_episodes, Boolean,
+          null: false
+
+        field :viewer_status_state, Canary::Types::Enums::StatusState,
+          null: true
+
+        field :synopsis, String,
+          null: false
+
+        field :synopsis_en, String,
+          null: false
+
+        field :synopsis_source, String,
+          null: false
+
+        field :synopsis_source_en, String,
+          null: false
 
         field :episodes, Canary::Types::Objects::EpisodeType.connection_type, null: true do
           argument :order_by, Canary::Types::InputObjects::EpisodeOrder, required: false
