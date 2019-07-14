@@ -4,6 +4,7 @@ module Api
   module Internal
     class ApplicationController < ActionController::Base
       include ControllerCommon
+      include Localable
       include Analyzable
       include LogrageSetting
       include RavenContext

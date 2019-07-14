@@ -3,5 +3,6 @@
 module Chat
   class ApplicationController < ActionController::Base
     include ControllerCommon
+    include Localable
   end
 end

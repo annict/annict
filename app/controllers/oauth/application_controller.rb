@@ -5,6 +5,7 @@ module Oauth
     include Doorkeeper::Helpers::Controller
 
     include ControllerCommon
+    include Localable
     include Analyzable
     include LogrageSetting
     include Gonable

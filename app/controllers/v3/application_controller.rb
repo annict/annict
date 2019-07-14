@@ -3,8 +3,11 @@
 module V3
   class ApplicationController < ActionController::Base
     include HeadersForFastly
+    include Localable
 
     layout "v3"
+
+    helper_method :locale_ja?, :locale_en?
 
     before_action :set_vary_header
 

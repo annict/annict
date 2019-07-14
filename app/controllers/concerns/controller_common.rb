@@ -4,8 +4,7 @@ module ControllerCommon
   extend ActiveSupport::Concern
 
   included do
-    helper_method :render_jb, :locale_ja?, :locale_en?, :local_url, :discord_invite_url, :local_url_with_path,
-      :localable_resources, :browser, :device_pc?
+    helper_method :render_jb, :local_url, :discord_invite_url, :local_url_with_path, :localable_resources, :browser, :device_pc?
 
     rescue_from ActionView::MissingTemplate do
       raise ActionController::RoutingError, "Not Found" if Rails.env.production?
@@ -33,14 +32,6 @@ module ControllerCommon
 
     def render_jb(path, assigns)
       ApplicationController.render("#{path}.jb", assigns: assigns)
-    end
-
-    def locale_ja?
-      locale.to_s == "ja"
-    end
-
-    def locale_en?
-      locale.to_s == "en"
     end
 
     def localable_resources(resources)

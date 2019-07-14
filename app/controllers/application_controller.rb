@@ -4,6 +4,7 @@ class ApplicationController < ActionController::Base
   include Pundit
 
   include ControllerCommon
+  include Localable
   include Analyzable
   include LogrageSetting
   include Gonable
