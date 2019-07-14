@@ -185,7 +185,7 @@
           <%= t "activerecord.attributes.work.synopsis" %>
         </h2>
         <div class="c-card mt-3 p-3">
-          <%= @work.decorate.local_synopsis %>
+          <%= simple_format(@work.local_synopsis) %>
           <div class="text-right small">
             <span class="mr-1">
               <%= t("noun.source") %>: <%= @work.synopsis_source %>

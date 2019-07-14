@@ -15,17 +15,6 @@ module WorkStructDecorator
     link_to release_season, season_works_path(season.slug)
   end
 
-  def local_synopsis(raw: false)
-    text = case I18n.locale
-    when :en then synopsis_en
-    else synopsis
-    end
-
-    return if text.blank?
-
-    raw ? text : simple_format(text)
-  end
-
   def started_on_label
     case media.downcase
     when "tv" then I18n.t("noun.start_to_broadcast_tv_date")
