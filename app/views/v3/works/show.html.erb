@@ -224,7 +224,7 @@
               <%= link_to cast.character.name, character_path(cast.character.annict_id) %>
               <div class="small">
                 <span>CV:</span>
-                <%= link_to cast.person.name, person_path(cast.person.annict_id) %>
+                <%= cast.decorate.local_accurated_name_link %>
               </div>
             </div>
           <% end %>
@@ -237,9 +237,9 @@
         <div class="row">
           <% @work.staffs.each do |staff| %>
             <div class="col-3 mb-3">
-              <%= link_to staff.person.name, "" %>
+              <%= staff.decorate.local_accurated_name_link %>
               <div class="small">
-                <%= staff.role_text %>
+                <%= staff.local_role %>
               </div>
             </div>
           <% end %>

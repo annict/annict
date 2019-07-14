@@ -25,15 +25,20 @@ module V3
       attrs[:trailers] = data.dig(:trailers, :nodes).map { |hash| TrailerStruct.new(hash.slice(*TrailerStruct.attribute_names)) }
       attrs[:casts] = data.dig(:casts, :nodes).map do |hash|
         CastStruct.new(
+          name: hash[:name],
+          name_en: hash[:name_en],
           character: CharacterStruct.new(hash[:character]),
-          person: PersonStruct.new(hash[:person]),
+          person: PersonStruct.new(hash[:person])
         )
       end
       attrs[:staffs] = data.dig(:staffs, :nodes).map do |hash|
         StaffStruct.new(
-          person: PersonStruct.new(hash[:resource]),
-          organization: nil,
-          role_text: hash[:role_text]
+          name: hash[:name],
+          name_en: hash[:name_en],
+          role: hash[:role],
+          role_en: hash[:role_en],
+          resource: hash[:resource].slice(*"#{hash[:resource][:__typename]}Struct".constantize.attribute_names),
+          resource_typename: hash[:resource][:__typename]
         )
       end
       attrs[:episodes] = data.dig(:episodes, :nodes).map { |hash| EpisodeStruct.new(hash.slice(*EpisodeStruct.attribute_names)) }
@@ -84,29 +89,39 @@ module V3
               }
               casts(orderBy: { field: SORT_NUMBER, direction: ASC }) {
                 nodes {
+                  name
+                  nameEn
                   character {
                     annictId
                     name
+                    nameEn
                   }
                   person {
                     annictId
                     name
+                    nameEn
                   }
                 }
               }
               staffs(orderBy: { field: SORT_NUMBER, direction: ASC }) {
                 nodes {
+                  name
+                  nameEn
+                  role
+                  roleEn
                   resource {
+                    __typename
                     ... on Person {
                       annictId
                       name
+                      nameEn
                     }
                     ... on Organization {
                       annictId
                       name
+                      nameEn
                     }
                   }
-                  roleText
                 }
               }
               episodes(orderBy: { field: SORT_NUMBER, direction: ASC }) {
