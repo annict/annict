@@ -31,22 +31,25 @@ jobs:
       # special step to check out source code to working directory
       - checkout
 
-      # Which version of bundler?
-      - run:
-          name: Which bundler?
-          command: bundle -v
-
-      # Restore bundler cache
+      # Restore Bundler cache
       - restore_cache:
           keys:
             - v2-annict-bundler-{{ checksum "Gemfile.lock" }}
             - v2-annict-bundler-
 
+      # Install Bundler
+      - run:
+          name: Install Bundler
+          command: |
+            echo 'export BUNDLER_VERSION=$(cat Gemfile.lock | tail -1 | tr -d " ")' >> $BASH_ENV
+            source $BASH_ENV
+            gem install bundler
+
       - run:
           name: Bundle Install
           command: bundle check || bundle install
 
-      # Store bundler cache
+      # Store Bundler cache
       - save_cache:
           key: v2-annict-bundler-{{ checksum "Gemfile.lock" }}
           paths:
