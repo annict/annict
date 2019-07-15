@@ -1,5 +1,6 @@
-.c-card.row.py-3.mb-3
-  .col
-    ul.list-unstyled.mb-0
+.c-card.pt-3.mb-3
+  .container
+    ul.list-unstyled
       - people.each do |person|
-        li = link_to person.local_name, person_path(person)
+        li.mb-2
+          = link_to person.local_name, person_path(person)

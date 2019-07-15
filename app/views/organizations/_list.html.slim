@@ -1,5 +1,6 @@
-.c-card.row.py-3.mb-3
-  .col
-    ul.list-unstyled.mb-0
+.c-card.pt-3.mb-3
+  .container
+    ul.list-unstyled
       - organizations.each do |organization|
-        li = link_to organization.local_name, organization_path(organization)
+        li.mb-2
+          = link_to organization.local_name, organization_path(organization)
