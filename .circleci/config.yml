@@ -31,11 +31,6 @@ jobs:
       # special step to check out source code to working directory
       - checkout
 
-      # Which version of Bundler?
-      - run:
-          name: Which bundler?
-          command: bundle -v
-
       # Restore Bundler cache
       - restore_cache:
           keys:
