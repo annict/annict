@@ -16,7 +16,7 @@ module Userland
 
     layout "application"
 
-    helper_method :gon
+    helper_method :gon, :locale_ja?, :locale_en?
 
     before_action :redirect_if_unexpected_subdomain
     before_action :switch_locale

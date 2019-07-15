@@ -14,7 +14,7 @@ module Oauth
     include RavenContext
     include PageCategoryMethods
 
-    helper_method :gon
+    helper_method :gon, :locale_ja?, :locale_en?
 
     layout "application"
 
