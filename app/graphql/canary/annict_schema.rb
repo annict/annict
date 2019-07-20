@@ -33,6 +33,10 @@ module Canary
         Canary::Types::Objects::OrganizationType
       when Person
         Canary::Types::Objects::PersonType
+      when Program
+        Canary::Types::Objects::SlotType
+      when ProgramDetail
+        Canary::Types::Objects::ProgramType
       when Status
         Canary::Types::Objects::StatusType
       when User

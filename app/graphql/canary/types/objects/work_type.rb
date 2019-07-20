@@ -114,6 +114,10 @@ module Canary
           argument :has_body, Boolean, required: false
         end
 
+        field :programs, Canary::Types::Objects::ProgramType.connection_type, null: true do
+          argument :order_by, Canary::Types::InputObjects::ProgramOrder, required: false
+        end
+
         field :slots, Canary::Types::Objects::SlotType.connection_type, null: true do
           argument :order_by, Canary::Types::InputObjects::SlotOrder, required: false
         end
@@ -138,6 +142,13 @@ module Canary
 
         def work_records(order_by: nil, has_body: nil)
           SearchWorkRecordsQuery.new(object.work_records, order_by: order_by, has_body: has_body).call
+        end
+
+        def programs(order_by: nil)
+          SearchProgramsRepository.new(
+            object.program_details,
+            order_by: order_by
+          ).call
         end
 
         def slots(order_by: nil)
