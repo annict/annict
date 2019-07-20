@@ -3,7 +3,7 @@
 module Canary
   module Types
     module Enums
-      class ProgramState < Canary::Types::Enums::Base
+      class SlotState < Canary::Types::Enums::Base
         value "PUBLISHED", "公開中"
         value "HIDDEN", "非公開中"
       end

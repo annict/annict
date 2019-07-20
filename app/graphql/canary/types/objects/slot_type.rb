@@ -3,7 +3,7 @@
 module Canary
   module Types
     module Objects
-      class ProgramType < Canary::Types::Objects::Base
+      class SlotType < Canary::Types::Objects::Base
         implements GraphQL::Relay::Node.interface
 
         global_id_field :id
@@ -14,7 +14,7 @@ module Canary
         field :work, Canary::Types::Objects::WorkType, null: false
         field :started_at, Canary::Types::Scalars::DateTime, null: false
         field :sc_pid, Integer, null: true
-        field :state, Canary::Types::Enums::ProgramState, null: false
+        field :state, Canary::Types::Enums::SlotState, null: false
         field :rebroadcast, Boolean, null: false
 
         def channel

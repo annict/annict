@@ -9,14 +9,14 @@ module Canary
         global_id_field :id
 
         field :annict_id, Integer, null: false
-        field :programs, Canary::Types::Objects::ProgramType.connection_type, null: true
+        field :slots, Canary::Types::Objects::SlotType.connection_type, null: true
         field :channel_group, Canary::Types::Objects::ChannelGroupType, null: false
         field :sc_chid, Integer, null: false,
           description: "しょぼいカレンダーのチャンネルID"
         field :name, String, null: false
         field :published, Boolean, null: false
 
-        def programs
+        def slots
           ForeignKeyLoader.for(Program, :channel_id).load([object.id])
         end
 

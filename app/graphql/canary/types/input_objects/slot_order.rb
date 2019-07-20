@@ -3,8 +3,8 @@
 module Canary
   module Types
     module InputObjects
-      class ProgramOrder < Canary::Types::InputObjects::Base
-        argument :field, Canary::Types::Enums::ProgramOrderField, required: true
+      class SlotOrder < Canary::Types::InputObjects::Base
+        argument :field, Canary::Types::Enums::SlotOrderField, required: true
         argument :direction, Canary::Types::Enums::OrderDirection, required: true
       end
     end

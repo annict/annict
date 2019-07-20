@@ -52,9 +52,9 @@ module Canary
           argument :order_by, Canary::Types::InputObjects::WorkOrder, required: false
         end
 
-        field :programs, Canary::Types::Objects::ProgramType.connection_type, null: true do
+        field :slots, Canary::Types::Objects::SlotType.connection_type, null: true do
           argument :unwatched, Boolean, required: false
-          argument :order_by, Canary::Types::InputObjects::ProgramOrder, required: false
+          argument :order_by, Canary::Types::InputObjects::SlotOrder, required: false
         end
 
         def name
@@ -173,7 +173,7 @@ module Canary
           ).call
         end
 
-        def programs(unwatched: nil, order_by: nil)
+        def slots(unwatched: nil, order_by: nil)
           SearchProgramsQuery.new(
             object.programs.all,
             unwatched: unwatched,
