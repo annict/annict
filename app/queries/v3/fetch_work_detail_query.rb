@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module V3
-  class WorkDetailQuery < V3::ApplicationQuery
+  class FetchWorkDetailQuery < V3::ApplicationQuery
     def initialize(work_id:)
       @work_id = work_id
     end

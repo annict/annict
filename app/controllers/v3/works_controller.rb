@@ -6,8 +6,10 @@ module V3
 
     def show
       return render_404 if params[:id].to_i == 0
-      @work = V3::WorkDetailQuery.new(work_id: params[:id].to_i).call
-      return render_404 unless @work
+
+      @work = V3::FetchWorkDetailQuery.new(work_id: params[:id].to_i).call
+
+      render_404 unless @work
     end
   end
 end
