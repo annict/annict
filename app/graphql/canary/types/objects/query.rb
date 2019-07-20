@@ -43,6 +43,10 @@ module Canary
           argument :order_by, Canary::Types::InputObjects::CharacterOrder, required: false
         end
 
+        field :channels, Canary::Types::Objects::ChannelType.connection_type, null: true do
+          argument :is_vod, Boolean, required: false
+        end
+
         def viewer
           context[:viewer]
         end
@@ -88,6 +92,13 @@ module Canary
             annict_ids: annict_ids,
             names: names,
             order_by: order_by
+          ).call
+        end
+
+        def channels(is_vod: nil)
+          SearchChannelsRepository.new(
+            Channel.published,
+            is_vod: is_vod
           ).call
         end
       end
