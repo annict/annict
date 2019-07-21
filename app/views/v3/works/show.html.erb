@@ -230,6 +230,7 @@
           <% end %>
         </div>
       </div>
+
       <h2 class="h4 text-center my-4 font-weight-bold">
         <%= t "noun.staffs" %>
       </h2>
@@ -245,6 +246,15 @@
           <% end %>
         </div>
       </div>
+
+      <% if locale_ja? %>
+        <h2 class="h4 text-center my-4 font-weight-bold">
+          <%= t "noun.vods" %>
+        </h2>
+        <div class="c-card container mt-3 pt-3">
+          <%= render "v3/works/vod_list", vod_channels: @vod_channels, programs: @work.programs %>
+        </div>
+      <% end %>
     </div>
   </div>
 </div>

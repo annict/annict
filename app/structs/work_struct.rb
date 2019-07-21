@@ -34,6 +34,7 @@ class WorkStruct < ApplicationStruct
   attribute :casts, StructTypes::Strict::Array.of(CastStruct)
   attribute :staffs, StructTypes::Strict::Array.of(StaffStruct)
   attribute :episodes, StructTypes::Strict::Array.of(EpisodeStruct)
+  attribute :programs, StructTypes::Strict::Array.of(ProgramStruct)
 
   def season
     return if season_year.blank?

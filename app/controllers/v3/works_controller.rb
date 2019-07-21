@@ -7,6 +7,7 @@ module V3
     def show
       return render_404 if params[:id].to_i == 0
 
+      @vod_channels = V3::FetchVodChannelsQuery.new.call
       @work = V3::FetchWorkDetailQuery.new(work_id: params[:id].to_i).call
 
       render_404 unless @work

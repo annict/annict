@@ -1,0 +1,25 @@
+<div class="row pr-3">
+  <% vod_channels.each do |vod_channel| %>
+    <% vod_programs = programs.select { |p| p.channel.annict_id == vod_channel.annict_id } %>
+    <div class="col-4 mb-3 pr-0">
+      <% if vod_programs.length > 1 %>
+        <div class="btn-group w-100">
+          <button class="btn u-btn-link w-100 dropdown-toggle" type="button" data-toggle="dropdown">
+            <%= vod_channel.name %>
+            <div class="dropdown-menu w-100">
+              <% vod_programs.each do |vp| %>
+                <%= link_to vp.vod_title_name, vod_title_url(vod_channel.annict_id, vp.vod_title_code), class: "dropdown-item", target: "_blank", rel: "noopener" %>
+              <% end %>
+            </div>
+          </button>
+        </div>
+      <% elsif vod_programs.length == 1 && vod_programs.first.vod_title_code.present? %>
+        <%= link_to vod_channel.name, vod_title_url(vod_channel.annict_id, vod_programs.first.vod_title_code), class: "btn u-btn-link w-100", target: "_blank", rel: "noopener" %>
+      <% else %>
+        <button class="btn u-btn-link w-100" type="button" disabled>
+          <%= vod_channel.name %>
+        </button>
+      <% end %>
+    </div>
+  <% end %>
+</div>

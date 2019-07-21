@@ -42,6 +42,7 @@ module V3
         )
       end
       attrs[:episodes] = data.dig(:episodes, :nodes).map { |hash| EpisodeStruct.new(hash.slice(*EpisodeStruct.attribute_names)) }
+      attrs[:programs] = data.dig(:programs, :nodes).map { |hash| ProgramStruct.new(hash.slice(*ProgramStruct.attribute_names)) }
 
       WorkStruct.new(attrs)
     end
@@ -129,6 +130,16 @@ module V3
                   annictId
                   numberText
                   title
+                }
+              }
+              programs {
+                nodes {
+                  vodTitleCode
+                  vodTitleName
+                  channel {
+                    annictId
+                    name
+                  }
                 }
               }
             }
