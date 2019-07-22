@@ -263,7 +263,7 @@ GEM
       imgix (~> 1.1, >= 1.1.0)
     impressionist (1.6.1)
       nokogiri (~> 1)
-    jaro_winkler (1.5.2)
+    jaro_winkler (1.5.3)
     jb (0.7.0)
       multi_json
     jmespath (1.4.0)
@@ -494,7 +494,7 @@ GEM
     slim (4.0.1)
       temple (>= 0.7.6, < 0.9)
       tilt (>= 2.0.6, < 2.1)
-    solargraph (0.32.5)
+    solargraph (0.35.0)
       backport (~> 1.1)
       bundler (>= 1.17.2)
       htmlentities (~> 4.3, >= 4.3.4)
