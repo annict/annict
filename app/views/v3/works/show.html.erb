@@ -255,6 +255,23 @@
           <%= render "v3/works/vod_list", vod_channels: @vod_channels, programs: @work.programs %>
         </div>
       <% end %>
+
+      <div class="row align-items-center">
+        <div class="col"></div>
+        <div class="col">
+          <h2 class="h4 text-center my-4 font-weight-bold"></h2>
+          <%= t "noun.record_body_list" %>
+        </div>
+        <div class="col text-right">
+          <%= link_to work_records_path(@work.annict_id), class: "btn btn-primary btn-sm" do %>
+            <%= icon "edit", class: "mr-1" %>
+            <%= t "verb.track" %>
+          <% end %>
+        </div>
+      </div>
+      <div class="c-card">
+        <%= render "v3/works/work_record_list", work: @work, work_records: @work_records %>
+      </div>
     </div>
   </div>
 </div>

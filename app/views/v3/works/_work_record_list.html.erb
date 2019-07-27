@@ -1,0 +1,122 @@
+<% if work_records.present? %>
+  <div class="px-3">
+    <% work_records.first(10).each do |work_record| %>
+      <div class="py-3 u-underline">
+        <div class="row">
+          <div class="col-auto pl-3 pr-0">
+            <%= link_to user_path(work_record.user.username) do %>
+              <%= ann_image_tag work_record.user.profile, :image, size: "50x50", class: "rounded-circle" %>
+            <% end %>
+          </div>
+          <div class="col">
+            <div class="mb-3">
+              <div class="text-left">
+                <%= link_to work_record.user.profile.name, user_path(work_record.user.username) %>
+                <% if work_record.user.supporter? && !work_record.user.setting.hide_supporter_badge? %>
+                  <span class="badge.u-badge-supporter.ml-1">
+                    <%= t "noun.supporter" %>
+                  </span>
+                <% end %>
+              </div>
+              <div class="text-left">
+                <%= link_to record_path(work_record.user.username, work_record.record), class: "small text-muted", title: local_datetime(work_record.created_at) do %>
+                  <%= local_time_ago_in_words(work_record.created_at) %>
+                <% end %>
+                <% if work_record.modified_at.present? %>
+                  <small class="ml-2 text-muted">
+                    <%= icon "pencil-alt" %>
+                  </small>
+                <% end %>
+                <span class="small ml-2 text-muted">
+                  <%= "#{work_record.record.impressions_count} views" %>
+                </span>
+              </div>
+            </div>
+            <div data-controller="comment-guard" data-is-spoiler="<%= is_spoiler == true %>">
+              <div class="p-work-records-show__content clearfix">
+                <% if work_record.rating_overall_state.present? %>
+                  <div class="float-right ml-4 mb-4 p-3">
+                    <div class="small font-weight-bold text-center mb-2">
+                      <%= t "noun.rating" %>
+                    </div>
+                    <table>
+                      <tbody>
+                        <%
+                          {
+                            animation: work_record.rating_animation_state,
+                            music: work_record.rating_music_state,
+                            story: work_record.rating_story_state,
+                            character: work_record.rating_character_state,
+                            overall: work_record.rating_overall_state
+                          }.each do |key, value|
+                        %>
+                          <% if value.present? %>
+                            <tr>
+                              <th class="font-weight-normal">
+                                <%= t "noun.#{key}" %>
+                              </th>
+                              <td>
+                                <span class="badge u-badge-<%= value %>">
+                                  <%= icon "heart", "far", class: "mr-1" %>
+                                  <%= t "enumerize.episode_record.rating_state.#{value}" %>
+                                </span>
+                              </td>
+                            </tr>
+                          <% end %>
+                        <% end %>
+                      </tbody>
+                    </table>
+                  </div>
+                <% end %>
+                <div class="c-body mb-3">
+                  <div data-controller="body">
+                    <div class="c-body__content">
+                      <%= work_record.body %>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="row align-items-center">
+              <div class="col">
+                <div class="text-right">
+                  twitter_share_button
+                </div>
+              </div>
+            </div>
+
+            <% if policy(work_record).update? %>
+              <div class="small text-right mt-2">
+                <%= link_to edit_work_record_path(work_record.work, work_record.record), class: "mr-2" do %>
+                  <%= icon "edit", class: "mr-1" %>
+                  <%= t "noun.edit" %>
+                <% end %>
+                <%= link_to record_path(work_record.user.username, work_record.record), method: :delete, data: { confirm: t("messages._common.are_you_sure") } do %>
+                  <%= icon "trash-alt", "far", class: "mr-1" %>
+                  <%= t "noun.delete" %>
+                <% end %>
+              </div>
+            <% end %>
+          </div>
+        </div>
+      </div>
+    <% end %>
+
+    <% if work_records.length > 10 %>
+      <div class="container mb-3">
+        <%= link_to work_records_path(work), class: "btn btn-secondary w-100" do %>
+          <%= icon "angle-right" %>
+          <%= t "messages.works.view_all_n_record_body_list", n: work_records.length %>
+        <% end %>
+      </div>
+    <% end %>
+  </div>
+<% else %>
+  <%= render "application/components/empty", text: t("messages._empty.no_record_body_list") do %>
+    <%= link_to work_records_path(work), class: "btn btn-primary mt-2" do %>
+      <%= icon "edit", class: "mr-1" %>
+      <%= t "verb.track" %>
+    <% end %>
+  <% end %>
+<% end %>
