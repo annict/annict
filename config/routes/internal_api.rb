@@ -3,10 +3,7 @@
 namespace :api do
   namespace :internal do
     namespace :v3 do
-      namespace :me do
-        resource :status, only: %i(show update)
-        resource :user_menu, only: %i(show)
-      end
+      post :graphql, to: "graphql#execute"
     end
 
     resource :impression, only: %i(show update)

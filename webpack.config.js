@@ -3,6 +3,7 @@ const path = require('path')
 
 const ManifestPlugin = require('webpack-manifest-plugin')
 const MiniCssExtractPlugin = require('mini-css-extract-plugin')
+const VueLoaderPlugin = require('vue-loader/lib/plugin')
 
 const isProd = process.env.NODE_ENV === 'production'
 
@@ -30,6 +31,10 @@ module.exports = {
   },
   module: {
     rules: [
+      {
+        test: /\.vue$/,
+        loader: 'vue-loader',
+      },
       {
         test: /\.js$/,
         exclude: /node_modules/,
@@ -112,6 +117,7 @@ module.exports = {
       filename: '[name]-[hash].css',
       chunkFilename: '[name].bundle-[hash].css',
     }),
+    new VueLoaderPlugin(),
   ],
   devServer: {
     contentBase: path.resolve(__dirname, 'public', 'packs'),

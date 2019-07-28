@@ -28,8 +28,9 @@
     <%= javascript_bundle_tag "v3.js", defer: "", "data-turbolinks-track": "reload" %>
   </head>
   <body class="<%= body_classes %>">
-    <%= render "v3/application/navbar" %>
-    <%= yield %>
+    <div id="app">
+      <%= yield %>
+    </div>
     <script>
       // Set this config to rerender icon when Vue's state changed
       window.FontAwesomeConfig = { autoReplaceSvg: 'nest' };

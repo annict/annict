@@ -1,10 +1,15 @@
 import 'bootstrap'
 import Turbolinks from 'turbolinks'
-import { Application } from 'stimulus'
-import { definitionsFromContext } from 'stimulus/webpack-helpers'
+import Vue from 'vue'
 
-const application = Application.start()
-const context = require.context('./v3/controllers', true, /\.js$/)
-application.load(definitionsFromContext(context))
+import WorkDetail from './v3/components/pages/WorkDetail.vue'
+
+document.addEventListener('turbolinks:load', _event => {
+  Vue.component('c-work-detail', WorkDetail)
+
+  new Vue({
+    el: '#app',
+  })
+})
 
 Turbolinks.start()
