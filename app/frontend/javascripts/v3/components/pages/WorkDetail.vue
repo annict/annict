@@ -1,19 +1,22 @@
 <template>
-  <h1>＼(^o^)／ < {{ greeting }}</h1>
+  <div>
+    <ann-navbar></ann-navbar>
+    <h1>＼(^o^)／ < {{ greeting }}</h1>
+  </div>
 </template>
 
 <script>
-  module.exports = {
-    data: () => {
+  import NavBar from '../NavBar.vue'
+
+  export default {
+    components: {
+      'ann-navbar': NavBar
+    },
+
+    data() {
       return {
         greeting: 'Hello!'
       }
     }
   }
 </script>
-
-<style lang="scss" scoped>
-  h1 {
-    text-align: center;
-  }
-</style>
