@@ -11,6 +11,7 @@
     "graphql:update-api-reference": "bundle exec rake graphql:dump_schema && bundle exec rake graphql:build_docs && cp -rf ./tmp/docs/graphql-api/reference/ ../annict-developers-jp/docs/.vuepress/public/graphql-api/reference"
   },
   "dependencies": {
+    "apollo-boost": "^0.4.3",
     "async": "2.6.1",
     "autoprefixer": "^9.1.5",
     "autosize": "^4.0.1",
@@ -21,6 +22,8 @@
     "core-js": "3",
     "d3": "^5.7.0",
     "d3-selection": "^1.3.2",
+    "graphql": "^14.4.2",
+    "graphql-tag": "^2.10.1",
     "jquery": "^3.3.1",
     "jquery-ujs": "^1.2.2",
     "js-cookie": "2.2.0",
@@ -36,6 +39,7 @@
     "tether": "^1.4.5",
     "turbolinks": "5.2.0",
     "vue": "^2.5.17",
+    "vue-i18n": "^8.12.0",
     "vue-lazyload": "1.2.6",
     "vue-loader": "^15.7.1",
     "vue-template-compiler": "^2.6.10",
