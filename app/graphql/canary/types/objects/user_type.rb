@@ -26,6 +26,7 @@ module Canary
         field :viewer_can_follow, Boolean, null: false
         field :viewer_is_following, Boolean, null: false
         field :email, String, null: true
+        field :locale, String, null: true
         field :notifications_count, Integer, null: true
         field :following, Canary::Types::Objects::UserType.connection_type, null: true
         field :followers, Canary::Types::Objects::UserType.connection_type, null: true
