@@ -13,7 +13,6 @@ module Canary
         field :name, String, null: false
         field :description, String, null: false
         field :url, String, null: true
-        field :avatar_url, String, null: true
         field :background_image_url, String, null: true
         field :records_count, Integer, null: false
         field :followings_count, Integer, null: false
@@ -30,6 +29,10 @@ module Canary
         field :notifications_count, Integer, null: true
         field :following, Canary::Types::Objects::UserType.connection_type, null: true
         field :followers, Canary::Types::Objects::UserType.connection_type, null: true
+
+        field :avatar_url, String, null: true, description: "ユーザのアバター画像のURL" do
+          argument :size, Canary::Types::Enums::UserAvatarSize, required: true
+        end
 
         field :activities, Canary::Connections::ActivityConnection, null: true, connection: true do
           argument :order_by, Canary::Types::InputObjects::ActivityOrder, required: false
@@ -69,8 +72,8 @@ module Canary
           object.profile.url
         end
 
-        def avatar_url
-          ann_api_assets_url(object.profile, :image)
+        def avatar_url(size:)
+          api_user_avatar_url(object, size)
         end
 
         def background_image_url
