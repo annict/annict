@@ -2,9 +2,7 @@
 
 namespace :api do
   namespace :internal do
-    namespace :v3 do
-      post :graphql, to: "graphql#execute"
-    end
+    post :graphql, to: "graphql#execute"
 
     resource :impression, only: %i(show update)
     resource :privacy_policy_agreement, only: %i(create)
