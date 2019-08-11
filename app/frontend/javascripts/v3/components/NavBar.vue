@@ -187,10 +187,14 @@
 </template>
 
 <script lang="ts">
+  import { value } from 'vue-function-api'
+
   export default {
-    data() {
+    setup() {
+      const annConfig = value(window.annConfig)
+
       return {
-        annConfig: window.annConfig
+        annConfig
       }
     }
   }

@@ -23,7 +23,7 @@
                   {{ work.watchersCount }}
                 </div>
                 <div class="text-muted small">
-                  {{ $t('noun.watchersCount') }}
+                  {{ $root.$t('noun.watchersCount') }}
                 </div>
               </div>
               <div class="col text-center">
@@ -31,7 +31,7 @@
                   {{ work.satisfactionRate }}<span class="small ml-1">%</span>
                 </div>
                 <div class="text-muted small">
-                  {{ $t('noun.satisfactionRateShorten') }}
+                  {{ $root.$t('noun.satisfactionRateShorten') }}
                 </div>
               </div>
               <div class="col text-center">
@@ -39,7 +39,7 @@
                   {{ work.ratingsCount }}
                 </div>
                 <div class="text-muted small">
-                  {{ $t('noun.ratingsCount') }}
+                  {{ $root.$t('noun.ratingsCount') }}
                 </div>
               </div>
             </div>
@@ -50,12 +50,12 @@
 
             <h2 class="h4 font-weight-bold mb-3">
               <i class="far fa-sticky-note mr-1"></i>
-              {{ $t('noun.information') }}
+              {{ $root.$t('noun.information') }}
             </h2>
             <dl>
               <template v-if="work.titleKana">
                 <dt class="small">
-                  {{ $t('models.work.titleKana') }}
+                  {{ $root.$t('models.work.titleKana') }}
                 </dt>
                 <dd>
                   {{ work.titleKana }}
@@ -63,21 +63,21 @@
               </template>
               <template v-if="work.titleEn">
                 <dt class="small">
-                  {{ $t('models.work.titleEn') }}
+                  {{ $root.$t('models.work.titleEn') }}
                 </dt>
                 <dd>
                   {{ work.titleEn }}
                 </dd>
               </template>
               <dt class="small">
-                {{ $t('models.work.media') }}
+                {{ $root.$t('models.work.media') }}
               </dt>
               <dd>
                 {{ work.media }}
               </dd>
               <template v-if="work.season.year">
                 <dt class="small">
-                  {{ $t('noun.releaseSeason') }}
+                  {{ $root.$t('noun.releaseSeason') }}
                 </dt>
                 <dd>
                   <a :href="'/works/' + work.season.slug">
@@ -95,7 +95,7 @@
               </template>
               <template v-if="work.officialSiteUrl">
                 <dt class="small">
-                  {{ $t('models.work.officialSiteUrl') }}
+                  {{ $root.$t('models.work.officialSiteUrl') }}
                 </dt>
                 <dd>
                   <a :href="work.officialSiteUrl" target="_blank" rel="noopener">
@@ -105,7 +105,7 @@
               </template>
               <template v-if="work.officialSiteUrlEn">
                 <dt class="small">
-                  {{ $t('models.work.officialSiteUrlEn') }}
+                  {{ $root.$t('models.work.officialSiteUrlEn') }}
                 </dt>
                 <dd>
                   <a :href="work.officialSiteUrlEn" target="_blank" rel="noopener">
@@ -115,7 +115,7 @@
               </template>
               <template v-if="work.twitterUsername">
                 <dt class="small">
-                  {{ $t('models.work.twitterUsername') }}
+                  {{ $root.$t('models.work.twitterUsername') }}
                 </dt>
                 <dd>
                   <a :href="'https://twitter.com/' + work.twitterUsername" target="_blank" rel="noopener">
@@ -125,7 +125,7 @@
               </template>
               <template v-if="work.twitterHashtag">
                 <dt class="small">
-                  {{ $t('models.work.twitterHashtag') }}
+                  {{ $root.$t('models.work.twitterHashtag') }}
                 </dt>
                 <dd>
                   <a :href="'https://twitter.com/search?q=%23' + work.twitterHashtag + '&src=typed_query'" target="_blank" rel="noopener">
@@ -135,7 +135,7 @@
               </template>
               <template v-if="work.wikipediaUrl">
                 <dt class="small">
-                  {{ $t('models.work.wikipediaUrl') }}
+                  {{ $root.$t('models.work.wikipediaUrl') }}
                 </dt>
                 <dd>
                   <a :href="work.wikipediaUrl" target="_blank" rel="noopener">
@@ -145,7 +145,7 @@
               </template>
               <template v-if="work.wikipediaUrlEn">
                 <dt class="small">
-                  {{ $t('models.work.wikipediaUrlEn') }}
+                  {{ $root.$t('models.work.wikipediaUrlEn') }}
                 </dt>
                 <dd>
                   <a :href="work.wikipediaUrlEn" target="_blank" rel="noopener">
@@ -155,7 +155,7 @@
               </template>
               <template v-if="work.syobocalTid">
                 <dt class="small">
-                  {{ $t('noun.syoboiCalendar') }}
+                  {{ $root.$t('noun.syoboiCalendar') }}
                 </dt>
                 <dd>
                   <a :href="'http://cal.syoboi.jp/tid/' + work.syobocalTid" target="_blank" rel="noopener">
@@ -165,7 +165,7 @@
               </template>
               <template v-if="work.malAnimeId">
                 <dt class="small">
-                  {{ $t('noun.myAnimeList') }}
+                  {{ $root.$t('noun.myAnimeList') }}
                 </dt>
                 <dd>
                   <a :href="'https://myanimelist.net/anime/' + work.malAnimeId" target="_blank" rel="noopener">
@@ -180,7 +180,7 @@
 
             <template v-if="work.trailers.length">
               <h2 class="h4 text-center my-4 font-weight-bold">
-                {{ $t('noun.pv') }}
+                {{ $root.$t('noun.pv') }}
               </h2>
               <div class="c-card mt-3 pt-3">
                 <div class="row ml-3 pr-3">
@@ -201,7 +201,7 @@
 
             <template v-if="work.synopsis">
               <h2 class="h4 text-center my-4 font-weight-bold">
-                {{ $t('models.work.synopsis') }}
+                {{ $root.$t('models.work.synopsis') }}
               </h2>
               <div class="c-card mt-3 p-3">
                 <span v-html="format(work.localSynopsis())"></span>
@@ -302,6 +302,8 @@
 </template>
 
 <script lang="ts">
+  import { onCreated, value } from 'vue-function-api'
+
   import NavBar from '../NavBar.vue'
   import WorkSubNav from '../WorkSubNav.vue'
 
@@ -322,22 +324,23 @@
       }
     },
 
-    data() {
-      return {
-        work: null
-      }
-    },
+    setup(props, context) {
+      const work = value(null)
 
-    methods: {
-      format(str) {
+      const format = (str) => {
         return newLine(str)
       }
-    },
 
-    async created() {
-      this.work = await fetchWorkQuery({ workId: this.workId })
-      this.work.setVue(this)
-      console.log('this.work: ', this.work)
+      onCreated(async () => {
+        work.value = await fetchWorkQuery({ workId: props.workId })
+        console.log('work: ', work)
+        work.value.setVue(context.root)
+      })
+
+      return {
+        work,
+        format
+      }
     }
   }
 </script>
