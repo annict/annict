@@ -78,6 +78,19 @@ module ImageHelper
     ann_api_assets_url(profile, field)
   end
 
+  def api_user_avatar_url(user, size)
+    size = case size
+    when "size50" then "50x50"
+    when "size100" then "100x100"
+    when "size150" then "150x150"
+    when "size200" then "200x200"
+    else
+      "200x200"
+    end
+
+    ann_image_url(user.profile, :image, size: size)
+  end
+
   private
 
   def image_path(record, field)

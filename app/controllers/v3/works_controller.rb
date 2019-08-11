@@ -2,15 +2,8 @@
 
 module V3
   class WorksController < V3::ApplicationController
-    before_action :set_cache_control_headers, only: %i(show)
-
     def show
-      return render_404 if params[:id].to_i == 0
-
-      @vod_channels = V3::FetchVodChannelsQuery.new.call
-      @work = V3::FetchWorkDetailQuery.new(work_id: params[:id].to_i).call
-
-      render_404 unless @work
+      @work = Work.published.find(params[:id])
     end
   end
 end

@@ -38,6 +38,9 @@ module Canary
         field :season_name, Canary::Types::Enums::SeasonName,
           null: true
 
+        field :season_slug, String,
+          null: true
+
         field :started_on, Canary::Types::Scalars::Date,
           null: true
 
@@ -180,6 +183,10 @@ module Canary
 
         def season_name
           object.season_name&.upcase
+        end
+
+        def season_slug
+          object.season&.slug
         end
 
         def syobocal_tid

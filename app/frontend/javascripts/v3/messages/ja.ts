@@ -1,0 +1,92 @@
+export default {
+  head: {
+    title: {
+      channels: {
+        index: 'チャンネル一覧',
+      },
+      faqs: {
+        index: 'よくある質問',
+      },
+      friends: {
+        index: '友達を探す',
+      },
+      pages: {
+        about: 'Annictについて',
+      },
+      works: {
+        newest: '新規登録アニメ',
+        popular: '人気アニメ',
+      },
+    },
+  },
+  messages: {
+    _common: {
+      search_with_keywords: '作品名や人物名などで検索...',
+    },
+  },
+  models: {
+    season: {
+      yearly: {
+        all: '{year}年',
+        winter: '{year}年冬',
+        spring: '{year}年春',
+        summer: '{year}年夏',
+        autumn: '{year}年秋',
+      },
+      later: '時期未定',
+    },
+    work: {
+      media: 'メディア',
+      officialSiteUrl: '公式サイト',
+      officialSiteUrlEn: '公式サイト (英語)',
+      synopsis: 'あらすじ',
+      titleEn: 'タイトル (英語)',
+      titleKana: 'タイトル (かな)',
+      twitterHashtag: 'ハッシュタグ',
+      twitterUsername: '公式Twitter',
+      wikipediaUrl: 'Wikipedia',
+      wikipediaUrlEn: 'Wikipedia (英語)',
+    },
+  },
+  noun: {
+    about: 'About',
+    airing: '放送中',
+    annictDb: 'Annict DB',
+    annictDevelopers: 'Annict Developers',
+    annictForum: 'Annict Forum',
+    annictSupporters: 'Annict Supporters',
+    annictUserland: 'Annict Userland',
+    currentSeason: '今期のアニメ',
+    detail: '詳細',
+    episodes: 'エピソード',
+    home: 'ホーム',
+    information: '基本情報',
+    menu: 'メニュー',
+    myAnimeList: 'MyAnimeList',
+    nextSeason: '来期のアニメ',
+    prevSeason: '前期のアニメ',
+    profile: 'プロフィール',
+    programs: '放送予定',
+    pv: 'PV',
+    ratingsCount: '評価数',
+    records: '記録',
+    releaseSeason: 'リリース時期',
+    satisfactionRateShorten: '満足度',
+    settings: '設定',
+    signIn: 'ログイン',
+    signUp: 'ユーザ登録',
+    signUpShorten: '登録',
+    startToBroadcastMovieDate: '公開日',
+    startToBroadcastTvDate: '放送開始日',
+    startToPublishDate: '公開日',
+    startToSellDate: '発売開始日',
+    syoboiCalendar: 'しょぼいカレンダー',
+    watchersCount: '視聴者数',
+    watchingShorten: '見てる',
+  },
+  verb: {
+    explore: '見つける',
+    search: '検索する',
+    signOut: 'ログアウトする',
+  },
+}

@@ -544,9 +544,7 @@
     }
   },
   "addons": [
-    "fastly",
-    "heroku-postgresql",
-    "logdna"
+    "heroku-postgresql"
   ],
   "buildpacks": [
     {

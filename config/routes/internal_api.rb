@@ -2,12 +2,7 @@
 
 namespace :api do
   namespace :internal do
-    namespace :v3 do
-      namespace :me do
-        resource :status, only: %i(show update)
-        resource :user_menu, only: %i(show)
-      end
-    end
+    post :graphql, to: "graphql#execute"
 
     resource :impression, only: %i(show update)
     resource :privacy_policy_agreement, only: %i(create)

@@ -1,0 +1,92 @@
+export default {
+  head: {
+    title: {
+      channels: {
+        index: 'Channel List',
+      },
+      faqs: {
+        index: 'FAQ',
+      },
+      friends: {
+        index: 'Find Friends',
+      },
+      pages: {
+        about: 'About',
+      },
+      works: {
+        newest: 'Just Added Anime',
+        popular: 'Popular Anime',
+      },
+    },
+  },
+  messages: {
+    _common: {
+      search_with_keywords: 'Search by anime title...',
+    },
+  },
+  models: {
+    season: {
+      yearly: {
+        all: '{year}',
+        winter: 'Winter {year}',
+        spring: 'Spring {year}',
+        summer: 'Summer {year}',
+        autumn: 'Fall {year}',
+      },
+      later: 'Later',
+    },
+    work: {
+      media: 'Media',
+      officialSiteUrl: 'Official Site (ja)',
+      officialSiteUrlEn: 'Official Site (en)',
+      synopsis: 'Synopsis',
+      titleEn: 'Title (En)',
+      titleKana: 'Title (Kana)',
+      twitterHashtag: 'Twitter Hashtag',
+      twitterUsername: 'Official Twitter',
+      wikipediaUrl: 'Wikipedia (ja)',
+      wikipediaUrlEn: 'Wikipedia (En)',
+    },
+  },
+  noun: {
+    about: 'About',
+    airing: 'Airing',
+    annictDb: 'Annict DB',
+    annictDevelopers: 'Annict Developers',
+    annictForum: 'Annict Forum',
+    annictSupporters: 'Annict Supporters',
+    annictUserland: 'Annict Userland',
+    currentSeason: 'Current Season',
+    detail: 'Detail',
+    episodes: 'Episodes',
+    home: 'Home',
+    information: 'Information',
+    menu: 'Menu',
+    myAnimeList: 'MyAnimeList',
+    nextSeason: 'Next Season',
+    prevSeason: 'Previous Season',
+    profile: 'Profile',
+    programs: 'Programs',
+    pv: 'PV',
+    ratingsCount: 'Ratings',
+    records: 'Records',
+    releaseSeason: 'Release Season',
+    satisfactionRateShorten: 'Satisfaction',
+    settings: 'Settings',
+    signIn: 'Sign In',
+    signUp: 'Sign Up',
+    signUpShorten: 'Sign Up',
+    startToBroadcastMovieDate: 'Aired',
+    startToBroadcastTvDate: 'Aired',
+    startToPublishDate: 'Aired',
+    startToSellDate: 'Aired',
+    syoboiCalendar: 'Syoboi Calendar',
+    watchersCount: 'Watchers',
+    watchingShorten: 'Watching',
+  },
+  verb: {
+    explore: 'Explore',
+    search: 'Search',
+    signOut: 'Sign Out',
+  },
+}

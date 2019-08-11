@@ -36,4 +36,19 @@ module ApplicationHelper
   def show_privacy_policy_modal?
     user_signed_in? && !current_user.setting.privacy_policy_agreed?
   end
+
+  def annict_config
+    config = {
+      images: {
+        logoUrl: asset_bundle_url("images/logos/color-mizuho.png")
+      },
+      season: {
+        current: ENV.fetch("ANNICT_CURRENT_SEASON"),
+        next: ENV.fetch("ANNICT_NEXT_SEASON"),
+        prev: ENV.fetch("ANNICT_PREVIOUS_SEASON")
+      }
+    }
+
+    javascript_tag "window.annConfig = #{config.to_json.html_safe};"
+  end
 end
