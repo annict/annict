@@ -301,7 +301,7 @@
   </div>
 </template>
 
-<script>
+<script lang="ts">
   import NavBar from '../NavBar.vue'
   import WorkSubNav from '../WorkSubNav.vue'
 
