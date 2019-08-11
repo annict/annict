@@ -4,6 +4,7 @@ const path = require('path')
 const ManifestPlugin = require('webpack-manifest-plugin')
 const MiniCssExtractPlugin = require('mini-css-extract-plugin')
 const VueLoaderPlugin = require('vue-loader/lib/plugin')
+const ForkTsCheckerWebpackPlugin = require('fork-ts-checker-webpack-plugin')
 
 const isProd = process.env.NODE_ENV === 'production'
 
@@ -36,11 +37,12 @@ module.exports = {
         loader: 'vue-loader',
       },
       {
-        test: /\.js$/,
-        exclude: /node_modules/,
-        loader: 'babel-loader',
-        query: {
-          plugins: [],
+        test: /\.(js|ts)x?$/,
+        loader: 'ts-loader',
+        options: {
+          appendTsSuffixTo: [/\.vue$/],
+          // disable type checker - we will use it in fork-ts-checker-webpack-plugin
+          transpileOnly: true,
         },
       },
       {
@@ -118,6 +120,9 @@ module.exports = {
       chunkFilename: '[name].bundle-[hash].css',
     }),
     new VueLoaderPlugin(),
+    new ForkTsCheckerWebpackPlugin({
+      vue: true,
+    }),
   ],
   devServer: {
     contentBase: path.resolve(__dirname, 'public', 'packs'),
