@@ -1,19 +1,19 @@
-import Character from './Character'
-import Person from './Person'
+import { ApplicationModel, Character, Person } from '../models'
 
-export default class {
-  constructor(obj) {
-    this.name = obj.name
-    this.nameEn = obj.nameEn
+export class Cast extends ApplicationModel {
+  public constructor(node) {
+    super()
+    this.name = node.name
+    this.nameEn = node.nameEn
     this.character = {}
     this.person = {}
   }
 
-  setCharacter(node) {
+  public setCharacter(node) {
     this.character = new Character(node)
   }
 
-  setPerson(node) {
+  public setPerson(node) {
     this.person = new Person(node)
   }
 }

@@ -1,6 +1,6 @@
 import { ApplicationModel } from './ApplicationModel'
 
-export class Person extends ApplicationModel {
+export class Organization extends ApplicationModel {
   public constructor(node) {
     super()
     this.annictId = node.annictId

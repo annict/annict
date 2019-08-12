@@ -1,4 +1,4 @@
-import fetchViewerQuery from './queries/fetchViewerQuery'
-import fetchWorkQuery from './queries/fetchWorkQuery'
+import { FetchViewerQuery } from './queries/FetchViewerQuery'
+import { FetchWorkQuery } from './queries/FetchWorkQuery'
 
-export { fetchViewerQuery, fetchWorkQuery }
+export { FetchViewerQuery, FetchWorkQuery }

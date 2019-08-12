@@ -1,8 +1,8 @@
-import _ from 'lodash'
 import gql from 'graphql-tag'
 
 import client from '../client'
-import Work from '../models/Work'
+import { Work } from '../models'
+import { ApplicationQuery } from './ApplicationQuery'
 
 const query = gql`
   query($annictId: Int!) {
@@ -104,15 +104,25 @@ const query = gql`
   }
 `
 
-export default async ({ workId }) => {
-  const result = await client.query({ query: query, variables: { annictId: workId } })
-  const node = result.data.works.nodes[0]
-  console.log('node: ', node)
-  const work = new Work(node)
-  work.setSeason(node)
-  work.setImage(node.image)
-  work.setCasts(node.casts.nodes)
-  work.setEpisodes(node.episodes.nodes)
-  work.setTrailers(node.trailers.nodes)
-  return work
+export class FetchWorkQuery extends ApplicationQuery {
+  private workId: number
+
+  public constructor({ workId }) {
+    super()
+    this.workId = workId
+  }
+
+  public async execute(): Promise<Work> {
+    const result = await client.query({ query: query, variables: { annictId: this.workId } })
+    const node = result.data.works.nodes[0]
+    console.log('node: ', node)
+    const work = new Work(node)
+    work.setSeason(node)
+    work.setImage(node.image)
+    work.setCasts(node.casts.nodes)
+    work.setStaffs(node.staffs.nodes)
+    work.setEpisodes(node.episodes.nodes)
+    work.setTrailers(node.trailers.nodes)
+    return work
+  }
 }

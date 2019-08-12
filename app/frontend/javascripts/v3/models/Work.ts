@@ -1,11 +1,10 @@
-import Cast from './Cast'
-import Episode from './Episode'
-import Season from './Season'
-import Trailer from './Trailer'
-import WorkImage from './WorkImage'
+import { ApplicationModel, Cast, Episode, Season, Staff, Trailer, WorkImage } from '../models'
 
-export default class {
-  constructor(node) {
+export class Work extends ApplicationModel {
+  private annictId?: number
+
+  public constructor(node) {
+    super()
     this.annictId = node.annictId
     this.copyright = node.copyright
     this.id = node.id
@@ -33,24 +32,20 @@ export default class {
     this.season = {}
     this.image = {}
     this.casts = []
+    this.staffs = []
     this.episodes = []
     this.trailers = []
-    this.i18n = null
   }
 
-  setVue(vue) {
-    this.vue = vue
-  }
-
-  setSeason(node) {
+  public setSeason(node) {
     this.season = new Season(node)
   }
 
-  setImage(node) {
+  public setImage(node) {
     this.image = new WorkImage(node)
   }
 
-  setCasts(nodes) {
+  public setCasts(nodes) {
     this.casts = nodes.map(node => {
       const cast = new Cast(node)
       cast.setCharacter(node.character)
@@ -59,45 +54,28 @@ export default class {
     })
   }
 
-  setEpisodes(nodes) {
+  public setStaffs(nodes) {
+    this.staffs = nodes.map(node => {
+      console.log('node.resource.__typename: ', node.resource.__typename)
+      const staff = new Staff(node)
+      if (node.resource.__typename === 'Person') {
+        staff.setPerson(node.resource)
+      } else if (node.resource.__typename === 'Organization') {
+        staff.setOrganization(node.resource)
+      }
+      return staff
+    })
+  }
+
+  public setEpisodes(nodes) {
     this.episodes = nodes.map(node => {
       return new Episode(node)
     })
   }
 
-  setTrailers(nodes) {
+  public setTrailers(nodes) {
     this.trailers = nodes.map(node => {
       return new Trailer(node)
     })
-  }
-
-  localSeasonName() {
-    if (this.season.isLater()) {
-      return this.vue.$t('models.season.later')
-    }
-
-    const seasonName = this.season.name || 'all'
-
-    return this.vue.$t(`models.season.yearly.${seasonName.toLowerCase()}`, { year: this.season.year })
-  }
-
-  localStartedOnLabel() {
-    if (this.media === 'TV') {
-      return this.vue.$t('noun.startToBroadcastTvDate')
-    } else if (this.media === 'OVA') {
-      return this.vue.$t('noun.startToSellDate')
-    } else if (this.media === 'MOVIE') {
-      return this.vue.$t('noun.startToBroadcastMovieDate')
-    } else {
-      return this.vue.$t('noun.startToPublishDate')
-    }
-  }
-
-  localSynopsis() {
-    if (this.vue.$i18n.locale === 'en') {
-      return this.synopsisEn
-    }
-
-    return this.synopsis
   }
 }
