@@ -21,7 +21,7 @@ export default {
   },
   messages: {
     _common: {
-      search_with_keywords: '作品名や人物名などで検索...',
+      searchWithKeywords: '作品名や人物名などで検索...',
     },
   },
   models: {

@@ -21,7 +21,7 @@ export default {
   },
   messages: {
     _common: {
-      search_with_keywords: 'Search by anime title...',
+      searchWithKeywords: 'Search by anime title...',
     },
   },
   models: {

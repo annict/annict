@@ -30,7 +30,7 @@
         </li>
       </ul>
       <form action="/search" autocomplete="off" class="col-md-2 px-0 mr-auto d-none d-lg-inline-block" method="get">
-        <input name="q" class="form-control" type="text" :placeholder="$t('messages._common.search_with_keywords')">
+        <input name="q" class="form-control" type="text" :placeholder="$t('messages._common.searchWithKeywords')">
       </form>
       <ul class="navbar-nav">
         <template v-if="$root.isSignedIn()">
