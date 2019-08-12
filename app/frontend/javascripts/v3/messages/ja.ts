@@ -21,7 +21,7 @@ export default {
   },
   messages: {
     _common: {
-      search_with_keywords: '作品名や人物名などで検索...',
+      searchWithKeywords: '作品名や人物名などで検索...',
     },
   },
   models: {
@@ -56,6 +56,7 @@ export default {
     annictForum: 'Annict Forum',
     annictSupporters: 'Annict Supporters',
     annictUserland: 'Annict Userland',
+    characters: 'キャラクター',
     currentSeason: '今期のアニメ',
     detail: '詳細',
     episodes: 'エピソード',
@@ -76,6 +77,8 @@ export default {
     signIn: 'ログイン',
     signUp: 'ユーザ登録',
     signUpShorten: '登録',
+    source: '引用元',
+    staffs: 'スタッフ',
     startToBroadcastMovieDate: '公開日',
     startToBroadcastTvDate: '放送開始日',
     startToPublishDate: '公開日',

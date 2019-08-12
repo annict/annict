@@ -1,6 +1,7 @@
 import gql from 'graphql-tag'
 
 import client from '../client'
+import { ApplicationQuery } from './ApplicationQuery'
 
 const query = gql`
   query fetchViewer {
@@ -12,6 +13,8 @@ const query = gql`
   }
 `
 
-export default () => {
-  return client.query({ query: query })
+export class FetchViewerQuery extends ApplicationQuery {
+  public async execute() {
+    return client.query({ query: query })
+  }
 }

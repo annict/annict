@@ -12,7 +12,7 @@ import newLine from './v3/filters/newLine'
 
 
 import messages from './v3/messages'
-import { fetchViewerQuery } from './v3/queries'
+import { FetchViewerQuery } from './v3/queries'
 
 Vue.config.productionTip = false
 Vue.use(plugin)
@@ -41,7 +41,7 @@ document.addEventListener('turbolinks:load', _event => {
     },
 
     async created() {
-      const result = await fetchViewerQuery()
+      const result = await new FetchViewerQuery().execute()
       this.viewer = result.data.viewer
     },
 

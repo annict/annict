@@ -81,13 +81,13 @@
                 </dt>
                 <dd>
                   <a :href="'/works/' + work.season.slug">
-                    {{ work.localSeasonName() }}
+                    {{ localSeasonName(work) }}
                   </a>
                 </dd>
               </template>
               <template v-if="work.startedOn">
                 <dt class="small">
-                  {{ work.localStartedOnLabel() }}
+                  {{ localStartedOnLabel(work) }}
                 </dt>
                 <dd>
                   {{ work.startedOn }}
@@ -204,65 +204,72 @@
                 {{ $root.$t('models.work.synopsis') }}
               </h2>
               <div class="c-card mt-3 p-3">
-                <span v-html="format(work.localSynopsis())"></span>
+                <span v-html="format(localField(work, 'synopsis'))"></span>
                 <div class="text-right small">
                   <span class="mr-1">
-                    <%= t("noun.source") %>: <%= @work.local_synopsis_source %>
+                    {{ $root.$t('noun.source') }}: {{ localField(work, 'synopsisSource') }}
                   </span>
                 </div>
               </div>
             </template>
 
             <h2 class="h4 text-center my-4 font-weight-bold">
-              <%= t "noun.episodes" %>
+              {{ $root.$t('noun.episodes') }}
             </h2>
             <div class="c-card container mt-3 pt-3">
               <div class="row">
-                <% @work.episodes.each do |episode| %>
-                <div class="col-4 mb-3">
-                  <%= link_to "" do %>
-                  <div class="">
-                    <%= episode.number_text %>
-                  </div>
-                  <div class="small u-text-body">
-                    <%= episode.title %>
-                  </div>
-                  <% end %>
+                <div class="col-4 mb-3" v-for="episode in work.episodes">
+                  <a href="">
+                    <div class="">
+                      {{ episode.numberText }}
+                    </div>
+                    <div class="small u-text-body">
+                      {{ episode.title }}
+                    </div>
+                  </a>
                 </div>
-                <% end %>
               </div>
             </div>
 
             <h2 class="h4 text-center my-4 font-weight-bold">
-              <%= t "noun.characters" %>
+              {{ $root.$t('noun.characters') }}
             </h2>
             <div class="c-card container mt-3 pt-3">
               <div class="row">
-                <% @work.casts.each do |cast| %>
-                <div class="col-3 mb-3">
-                  <%= link_to cast.character.name, character_path(cast.character.annict_id) %>
+                <div class="col-3 mb-3" v-for="cast in work.casts">
+                  <a :href="'/characters/' + cast.character.annictId">
+                    {{ cast.character.name }}
+                  </a>
                   <div class="small">
                     <span>CV:</span>
-                    <%= cast.decorate.local_accurated_name_link %>
+                    <a :href="'/people/' + cast.person.annictId">
+                      {{ localAccuratedPersonName(cast) }}
+                    </a>
                   </div>
                 </div>
-                <% end %>
               </div>
             </div>
 
             <h2 class="h4 text-center my-4 font-weight-bold">
-              <%= t "noun.staffs" %>
+              {{ $root.$t('noun.staffs') }}
             </h2>
             <div class="c-card container mt-3 pt-3">
               <div class="row">
-                <% @work.staffs.each do |staff| %>
-                <div class="col-3 mb-3">
-                  <%= staff.decorate.local_accurated_name_link %>
+                <div class="col-3 mb-3" v-for="staff in work.staffs">
+                  <template v-if="staff.isPerson()">
+                    <a :href="'/people/' + staff.person.annictId">
+                      {{ localAccuratedPersonName(staff) }}
+                    </a>
+                  </template>
+                  <template v-else>
+                    <a :href="'/organizations/' + staff.organization.annictId">
+                      {{ localAccuratedOrgName(staff) }}
+                    </a>
+                  </template>
                   <div class="small">
-                    <%= staff.local_role %>
+                    {{ localField(staff, 'role') }}
                   </div>
                 </div>
-                <% end %>
               </div>
             </div>
 
@@ -309,7 +316,7 @@
 
   import newLine from '../../filters/newLine'
 
-  import { fetchWorkQuery } from '../../queries'
+  import { FetchWorkQuery } from '../../queries'
 
   export default {
     components: {
@@ -331,15 +338,69 @@
         return newLine(str)
       }
 
+      const localField = (model, fieldName) => {
+        if (context.root.$i18n.locale === 'en') {
+          return model[`${fieldName}En`]
+        }
+
+        return model[fieldName]
+      }
+
+      const localSeasonName = (work) => {
+        if (work.season.isLater()) {
+          return context.root.$t('models.season.later')
+        }
+
+        const seasonName = work.season.name || 'all'
+
+        return context.root.$t(`models.season.yearly.${seasonName.toLowerCase()}`, { year: work.season.year })
+      }
+
+      const localStartedOnLabel = (work) => {
+        if (work.media === 'TV') {
+          return context.root.$t('noun.startToBroadcastTvDate')
+        } else if (work.media === 'OVA') {
+          return context.root.$t('noun.startToSellDate')
+        } else if (work.media === 'MOVIE') {
+          return context.root.$t('noun.startToBroadcastMovieDate')
+        } else {
+          return context.root.$t('noun.startToPublishDate')
+        }
+      }
+
+      const localAccuratedPersonName = (model) => {
+        const locale = context.root.$i18n.locale
+
+        if (localField(model, 'name') === localField(model.person, 'name')) {
+          return localField(model, 'name')
+        }
+
+        `${localField(model, 'name')} (${localField(model.person, 'name')})`
+      }
+
+      const localAccuratedOrgName = (model) => {
+        const locale = context.root.$i18n.locale
+
+        if (localField(model, 'name') === localField(model.organization, 'name')) {
+          return localField(model, 'name')
+        }
+
+        `${localField(model, 'name')} (${localField(model.organization, 'name')})`
+      }
+
       onCreated(async () => {
-        work.value = await fetchWorkQuery({ workId: props.workId })
+        work.value = await new FetchWorkQuery({ workId: props.workId }).execute()
         console.log('work: ', work)
-        work.value.setVue(context.root)
       })
 
       return {
         work,
-        format
+        format,
+        localField,
+        localSeasonName,
+        localStartedOnLabel,
+        localAccuratedPersonName,
+        localAccuratedOrgName,
       }
     }
   }

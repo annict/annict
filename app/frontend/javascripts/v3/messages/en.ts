@@ -21,7 +21,7 @@ export default {
   },
   messages: {
     _common: {
-      search_with_keywords: 'Search by anime title...',
+      searchWithKeywords: 'Search by anime title...',
     },
   },
   models: {
@@ -56,6 +56,7 @@ export default {
     annictForum: 'Annict Forum',
     annictSupporters: 'Annict Supporters',
     annictUserland: 'Annict Userland',
+    characters: 'Characters',
     currentSeason: 'Current Season',
     detail: 'Detail',
     episodes: 'Episodes',
@@ -76,6 +77,8 @@ export default {
     signIn: 'Sign In',
     signUp: 'Sign Up',
     signUpShorten: 'Sign Up',
+    source: 'Source',
+    staffs: 'Staffs',
     startToBroadcastMovieDate: 'Aired',
     startToBroadcastTvDate: 'Aired',
     startToPublishDate: 'Aired',
