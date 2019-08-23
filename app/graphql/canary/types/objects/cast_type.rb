@@ -13,11 +13,11 @@ module Canary
 
         field :name, String,
           null: false,
-          description: "役名"
+          description: "出演者名"
 
         field :name_en, String,
           null: false,
-          description: "役名 (英語)"
+          description: "出演者名 (英語)"
 
         field :local_accurated_name, String,
           null: false,
