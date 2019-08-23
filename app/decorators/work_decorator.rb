@@ -55,17 +55,6 @@ module WorkDecorator
     raw ? text : simple_format(text)
   end
 
-  def local_synopsis_source
-    source = case I18n.locale
-    when :ja then synopsis_source
-    when :en then synopsis_source_en
-    end
-
-    return if source.blank?
-
-    auto_link(source, html: { target: "_blank" })
-  end
-
   def media_label
     content_tag :span, class: "badge u-badge-works" do
       media.text
