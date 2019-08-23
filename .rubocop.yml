@@ -13,6 +13,9 @@ Layout/EmptyLineAfterMagicComment:
 Layout/EndAlignment:
   EnforcedStyleAlignWith: variable
 
+Layout/AlignArguments:
+  EnforcedStyle: with_fixed_indentation
+
 Layout/AlignArray:
   Enabled: false
 
