@@ -1,12 +1,12 @@
 import { ApplicationModel, Organization, Person } from '../models'
 
 export class Staff extends ApplicationModel {
-  public constructor(obj) {
+  public constructor(node) {
     super()
-    this.name = obj.name
-    this.nameEn = obj.nameEn
-    this.role = obj.role
-    this.roleEn = obj.roleEn
+    this.name = node.name
+    this.nameEn = node.nameEn
+    this.role = node.role
+    this.roleEn = node.roleEn
     this.organization = {}
     this.person = {}
   }
