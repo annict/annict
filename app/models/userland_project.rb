@@ -27,7 +27,7 @@
 
 class UserlandProject < ApplicationRecord
   include UserlandProjectImageUploader::Attachment.new(:image)
-  include LocaleDetectable
+  include Localizable
   include ImageUploadable
 
   belongs_to :userland_category, counter_cache: true

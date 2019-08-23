@@ -93,6 +93,9 @@ module Canary
         field :is_no_episodes, Boolean,
           null: false
 
+        field :viewer_finished_to_watch, Boolean,
+          null: false
+
         field :viewer_status_state, Canary::Types::Enums::StatusState,
           null: true
 
@@ -115,6 +118,7 @@ module Canary
         field :work_records, Canary::Types::Objects::WorkRecordType.connection_type, null: true do
           argument :order_by, Canary::Types::InputObjects::WorkRecordOrder, required: false
           argument :has_body, Boolean, required: false
+          argument :filter_by_locale, Boolean, required: false
         end
 
         field :programs, Canary::Types::Objects::ProgramType.connection_type, null: true do
@@ -143,8 +147,13 @@ module Canary
           SearchEpisodesQuery.new(object.episodes, order_by: order_by).call
         end
 
-        def work_records(order_by: nil, has_body: nil)
-          SearchWorkRecordsQuery.new(object.work_records, order_by: order_by, has_body: has_body).call
+        def work_records(order_by: nil, has_body: nil, filter_by_locale: false)
+          SearchWorkRecordsQuery.new(object.work_records,
+            context: context,
+            order_by: order_by,
+            has_body: has_body,
+            filter_by_locale: filter_by_locale
+          ).call
         end
 
         def programs(order_by: nil)
@@ -203,6 +212,12 @@ module Canary
 
         def is_no_episodes
           object.no_episodes?
+        end
+
+        def viewer_finished_to_watch
+          return false unless context[:viewer]
+          context[:viewer].latest_statuses.finished_to_watch.where(work_id: object.id).exists? &&
+            context[:viewer].work_records.published.where(work_id: object.id).exists?
         end
 
         def viewer_status_state

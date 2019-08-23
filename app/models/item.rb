@@ -33,7 +33,7 @@
 class Item < ApplicationRecord
   include ItemImageUploader::Attachment.new(:image)
   include AASM
-  include LocaleDetectable
+  include Localizable
   include ImageUploadable
 
   aasm do

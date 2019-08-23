@@ -11,9 +11,18 @@ module Canary
         field :annict_id, Integer, null: false
         field :username, String, null: false
         field :name, String, null: false
+        field :email, String, null: true
         field :description, String, null: false
         field :url, String, null: true
+        field :locale, String, null: true
+        field :avatar_url, String, null: true, description: "ユーザのアバター画像のURL" do
+          argument :size, Canary::Types::Enums::UserAvatarSize, required: true
+        end
         field :background_image_url, String, null: true
+        field :viewer_can_follow, Boolean, null: false
+        field :viewer_is_following, Boolean, null: false
+        field :is_supporter, Boolean, null: false
+        field :hides_supporter_badge, Boolean, null: false
         field :records_count, Integer, null: false
         field :followings_count, Integer, null: false
         field :followers_count, Integer, null: false
@@ -22,18 +31,11 @@ module Canary
         field :watched_count, Integer, null: false
         field :on_hold_count, Integer, null: false
         field :stop_watching_count, Integer, null: false
-        field :created_at, Canary::Types::Scalars::DateTime, null: false
-        field :viewer_can_follow, Boolean, null: false
-        field :viewer_is_following, Boolean, null: false
-        field :email, String, null: true
         field :locale, String, null: true
         field :notifications_count, Integer, null: true
+        field :created_at, Canary::Types::Scalars::DateTime, null: false
         field :following, Canary::Types::Objects::UserType.connection_type, null: true
         field :followers, Canary::Types::Objects::UserType.connection_type, null: true
-
-        field :avatar_url, String, null: true, description: "ユーザのアバター画像のURL" do
-          argument :size, Canary::Types::Enums::UserAvatarSize, required: true
-        end
 
         field :activities, Canary::Connections::ActivityConnection, null: true, connection: true do
           argument :order_by, Canary::Types::InputObjects::ActivityOrder, required: false
@@ -62,7 +64,9 @@ module Canary
         end
 
         def name
-          object.profile.name
+          Canary::RecordBelongsToUserLoader.for(Profile).load(object.id).then do |profile|
+            profile.name
+          end
         end
 
         def description
@@ -74,11 +78,21 @@ module Canary
         end
 
         def avatar_url(size:)
-          api_user_avatar_url(object, size)
+          Canary::RecordBelongsToUserLoader.for(Profile).load(object.id).then do |profile|
+            api_user_avatar_url(profile, size)
+          end
         end
 
         def background_image_url
           ann_api_assets_background_image_url(object.profile)
+        end
+
+        def is_supporter
+          object.supporter?
+        end
+
+        def hides_supporter_badge
+          object.setting.hide_supporter_badge?
         end
 
         def records_count

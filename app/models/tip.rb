@@ -21,7 +21,7 @@
 class Tip < ApplicationRecord
   extend Enumerize
 
-  include LocaleDetectable
+  include Localizable
 
   enumerize :target, in: { new_user: 0, user: 1 }, scope: true
 end

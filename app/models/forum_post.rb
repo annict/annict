@@ -23,7 +23,7 @@
 #
 
 class ForumPost < ApplicationRecord
-  include LocaleDetectable
+  include Localizable
 
   belongs_to :user
   belongs_to :forum_category
