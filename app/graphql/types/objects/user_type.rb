@@ -156,7 +156,7 @@ module Types
         SearchEpisodeRecordsQuery.new(
           object.episode_records,
           order_by: order_by,
-          has_comment: has_comment
+          has_body: has_comment
         ).call
       end
 

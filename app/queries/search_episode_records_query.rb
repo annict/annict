@@ -1,11 +1,10 @@
-
 # frozen_string_literal: true
 
 class SearchEpisodeRecordsQuery
-  def initialize(collection = EpisodeRecord.all, has_comment: nil, order_by: nil)
+  def initialize(collection = EpisodeRecord.all, has_body: nil, order_by: nil)
     @collection = collection.published
     @args = {
-      has_comment: has_comment,
+      has_comment: has_body,
       order_by: order_by
     }
   end
@@ -28,7 +27,7 @@ class SearchEpisodeRecordsQuery
       end
     end
 
-    @collection = case @args[:has_comment]
+    @collection = case @args[:has_body]
     when true
       @collection.with_comment
     when false
