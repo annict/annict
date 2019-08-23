@@ -22,6 +22,7 @@ class ApplicationRecord < ActiveRecord::Base
   def method_missing(method_name, *arguments, &block)
     return super if method_name.blank?
     return super unless method_name.to_s.start_with?("local_")
+
     _local_property(method_name.to_s.sub("local_", ""), *arguments)
   end
 
