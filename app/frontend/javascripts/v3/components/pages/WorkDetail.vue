@@ -81,13 +81,13 @@
                 </dt>
                 <dd>
                   <a :href="'/works/' + work.season.slug">
-                    {{ localSeasonName(work) }}
+                    {{ work.season.localName }}
                   </a>
                 </dd>
               </template>
               <template v-if="work.startedOn">
                 <dt class="small">
-                  {{ localStartedOnLabel(work) }}
+                  {{ work.localStartedOnLabel }}
                 </dt>
                 <dd>
                   {{ work.startedOn }}
@@ -204,10 +204,10 @@
                 {{ $root.$t('models.work.synopsis') }}
               </h2>
               <div class="c-card mt-3 p-3">
-                <span v-html="format(localField(work, 'synopsis'))"></span>
+                <span v-html="format(work.localSynopsis)"></span>
                 <div class="text-right small">
                   <span class="mr-1">
-                    {{ $root.$t('noun.source') }}: {{ localField(work, 'synopsisSource') }}
+                    {{ $root.$t('noun.source') }}: {{ work.localSynopsisSource }}
                   </span>
                 </div>
               </div>
@@ -243,7 +243,7 @@
                   <div class="small">
                     <span>CV:</span>
                     <a :href="'/people/' + cast.person.annictId">
-                      {{ localAccuratedPersonName(cast) }}
+                      {{ cast.localAccuratedName }}
                     </a>
                   </div>
                 </div>
@@ -258,16 +258,16 @@
                 <div class="col-3 mb-3" v-for="staff in work.staffs">
                   <template v-if="staff.isPerson()">
                     <a :href="'/people/' + staff.person.annictId">
-                      {{ localAccuratedPersonName(staff) }}
+                      {{ staff.localAccuratedName }}
                     </a>
                   </template>
                   <template v-else>
                     <a :href="'/organizations/' + staff.organization.annictId">
-                      {{ localAccuratedOrgName(staff) }}
+                      {{ staff.localAccuratedName }}
                     </a>
                   </template>
                   <div class="small">
-                    {{ localField(staff, 'role') }}
+                    {{ staff.localRole }}
                   </div>
                 </div>
               </div>
@@ -338,56 +338,6 @@
         return newLine(str)
       }
 
-      const localField = (model, fieldName) => {
-        if (context.root.$i18n.locale === 'en') {
-          return model[`${fieldName}En`]
-        }
-
-        return model[fieldName]
-      }
-
-      const localSeasonName = (work) => {
-        if (work.season.isLater()) {
-          return context.root.$t('models.season.later')
-        }
-
-        const seasonName = work.season.name || 'all'
-
-        return context.root.$t(`models.season.yearly.${seasonName.toLowerCase()}`, { year: work.season.year })
-      }
-
-      const localStartedOnLabel = (work) => {
-        if (work.media === 'TV') {
-          return context.root.$t('noun.startToBroadcastTvDate')
-        } else if (work.media === 'OVA') {
-          return context.root.$t('noun.startToSellDate')
-        } else if (work.media === 'MOVIE') {
-          return context.root.$t('noun.startToBroadcastMovieDate')
-        } else {
-          return context.root.$t('noun.startToPublishDate')
-        }
-      }
-
-      const localAccuratedPersonName = (model) => {
-        const locale = context.root.$i18n.locale
-
-        if (localField(model, 'name') === localField(model.person, 'name')) {
-          return localField(model, 'name')
-        }
-
-        `${localField(model, 'name')} (${localField(model.person, 'name')})`
-      }
-
-      const localAccuratedOrgName = (model) => {
-        const locale = context.root.$i18n.locale
-
-        if (localField(model, 'name') === localField(model.organization, 'name')) {
-          return localField(model, 'name')
-        }
-
-        `${localField(model, 'name')} (${localField(model.organization, 'name')})`
-      }
-
       onCreated(async () => {
         work.value = await new FetchWorkQuery({ workId: props.workId }).execute()
         console.log('work: ', work)
@@ -396,11 +346,6 @@
       return {
         work,
         format,
-        localField,
-        localSeasonName,
-        localStartedOnLabel,
-        localAccuratedPersonName,
-        localAccuratedOrgName,
       }
     }
   }

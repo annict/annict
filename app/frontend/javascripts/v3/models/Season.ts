@@ -5,6 +5,7 @@ export class Season extends ApplicationModel {
     super()
     this.slug = node.seasonSlug
     this.name = node.seasonName
+    this.localName = node.localSeasonName
     this.year = node.seasonYear
   }
 

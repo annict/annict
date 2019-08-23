@@ -25,6 +25,8 @@ module Canary
         field :title_en, String, null: true,
           description: "タイトル (英語)"
 
+        field :local_title, String, null: false
+
         field :title_ro, String,
           null: true,
           deprecation_reason: "このフィールドは使われていません。 `titleEn` を使用してください。"
@@ -38,8 +40,15 @@ module Canary
         field :season_name, Canary::Types::Enums::SeasonName,
           null: true
 
+        field :local_season_name, String,
+          null: true
+
         field :season_slug, String,
           null: true
+
+        field :local_started_on_label, String,
+          null: false,
+          description: "開始日を表示する際のラベル名。テレビの場合は「放送開始日」、映画の場合は「公開日」といった感じでメディアごとに少し文言が変わる"
 
         field :started_on, Canary::Types::Scalars::Date,
           null: true
@@ -105,10 +114,16 @@ module Canary
         field :synopsis_en, String,
           null: false
 
+        field :local_synopsis, String,
+          null: false
+
         field :synopsis_source, String,
           null: false
 
         field :synopsis_source_en, String,
+          null: false
+
+        field :local_synopsis_source, String,
           null: false
 
         field :episodes, Canary::Types::Objects::EpisodeType.connection_type, null: true do
@@ -194,8 +209,16 @@ module Canary
           object.season_name&.upcase
         end
 
+        def local_season_name
+          object.season&.local_name
+        end
+
         def season_slug
           object.season&.slug
+        end
+
+        def local_started_on_label
+          object.decorate.started_on_label
         end
 
         def syobocal_tid

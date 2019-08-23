@@ -19,6 +19,10 @@ module Canary
           null: false,
           description: "役名 (英語)"
 
+        field :local_accurated_name, String,
+          null: false,
+          description: "出演者名。出演当時と名前が異なる場合新旧2つの名前を併記する。例: 長島雄一 (チョー)"
+
         field :sort_number, Integer,
           null: false,
           description: "ソート番号"
@@ -31,6 +35,10 @@ module Canary
 
         field :person, Canary::Types::Objects::PersonType,
           null: false
+
+        def local_accurated_name
+          object.decorate.local_name_with_old
+        end
       end
     end
   end

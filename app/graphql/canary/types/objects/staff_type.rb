@@ -17,10 +17,17 @@ module Canary
         field :name_en, String,
           null: false
 
+        field :local_accurated_name, String,
+          null: false,
+          description: "担当者名。名義が異なる場合2つの名前を併記する。例: ふでやすかずゆき (筆安一幸)"
+
         field :role, String,
           null: false
 
         field :role_en, String,
+          null: false
+
+        field :local_role, String,
           null: false
 
         field :sort_number, Integer,
@@ -31,6 +38,14 @@ module Canary
 
         field :resource, Canary::Types::Unions::StaffResourceItem,
           null: false
+
+        def local_accurated_name
+          object.decorate.local_name_with_old
+        end
+
+        def local_role
+          object.decorate.role_name
+        end
 
         def role
           return object.role_other if object.role_value == "other"

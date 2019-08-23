@@ -5,8 +5,10 @@ export class Staff extends ApplicationModel {
     super()
     this.name = node.name
     this.nameEn = node.nameEn
+    this.localAccuratedName = node.localAccuratedName
     this.role = node.role
     this.roleEn = node.roleEn
+    this.localRole = node.localRole
     this.organization = {}
     this.person = {}
   }

@@ -5,6 +5,7 @@ export class Cast extends ApplicationModel {
     super()
     this.name = node.name
     this.nameEn = node.nameEn
+    this.localAccuratedName = node.localAccuratedName
     this.character = {}
     this.person = {}
   }

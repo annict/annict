@@ -13,10 +13,13 @@ const query = gql`
         title
         titleKana
         titleEn
+        localTitle
         media
         seasonName
+        localSeasonName
         seasonSlug
         seasonYear
+        localStartedOnLabel
         startedOn
         watchersCount
         satisfactionRate
@@ -32,8 +35,10 @@ const query = gql`
         isNoEpisodes
         synopsis
         synopsisEn
+        localSynopsis
         synopsisSource
         synopsisSourceEn
+        localSynopsisSource
         image {
           internalUrl(size: "280x")
         }
@@ -47,8 +52,7 @@ const query = gql`
         }
         casts(orderBy: { field: SORT_NUMBER, direction: ASC }) {
           nodes {
-            name
-            nameEn
+            localAccuratedName
             character {
               annictId
               name
@@ -56,28 +60,20 @@ const query = gql`
             }
             person {
               annictId
-              name
-              nameEn
             }
           }
         }
         staffs(orderBy: { field: SORT_NUMBER, direction: ASC }) {
           nodes {
-            name
-            nameEn
-            role
-            roleEn
+            localAccuratedName
+            localRole
             resource {
               __typename
               ... on Person {
                 annictId
-                name
-                nameEn
               }
               ... on Organization {
                 annictId
-                name
-                nameEn
               }
             }
           }
