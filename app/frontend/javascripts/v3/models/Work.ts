@@ -1,7 +1,11 @@
-import { ApplicationModel, Cast, Episode, Season, Staff, Trailer, WorkImage } from '../models'
+import { ApplicationModel, Cast, Episode, Program, Season, Staff, Trailer, WorkImage } from '../models'
 
 export class Work extends ApplicationModel {
   private annictId?: number
+  private copyright: string
+  private id: string
+  private isNoEpisodes: boolean
+  private malAnimeId?: number
 
   public constructor(node) {
     super()
@@ -35,10 +39,11 @@ export class Work extends ApplicationModel {
     this.wikipediaUrlEn = node.wikipediaUrlEn
     this.season = {}
     this.image = {}
+    this.trailers = []
     this.casts = []
     this.staffs = []
     this.episodes = []
-    this.trailers = []
+    this.programs = []
   }
 
   public setSeason(node) {
@@ -47,6 +52,12 @@ export class Work extends ApplicationModel {
 
   public setImage(node) {
     this.image = new WorkImage(node)
+  }
+
+  public setTrailers(nodes) {
+    this.trailers = nodes.map(node => {
+      return new Trailer(node)
+    })
   }
 
   public setCasts(nodes) {
@@ -60,7 +71,6 @@ export class Work extends ApplicationModel {
 
   public setStaffs(nodes) {
     this.staffs = nodes.map(node => {
-      console.log('node.resource.__typename: ', node.resource.__typename)
       const staff = new Staff(node)
       if (node.resource.__typename === 'Person') {
         staff.setPerson(node.resource)
@@ -77,9 +87,11 @@ export class Work extends ApplicationModel {
     })
   }
 
-  public setTrailers(nodes) {
-    this.trailers = nodes.map(node => {
-      return new Trailer(node)
+  public setPrograms(nodes) {
+    this.programs = nodes.map(node => {
+      const program = new Program(node)
+      program.setChannel(node.channel)
+      return program
     })
   }
 }

@@ -115,10 +115,11 @@ export class FetchWorkQuery extends ApplicationQuery {
     const work = new Work(node)
     work.setSeason(node)
     work.setImage(node.image)
+    work.setTrailers(node.trailers.nodes)
     work.setCasts(node.casts.nodes)
     work.setStaffs(node.staffs.nodes)
     work.setEpisodes(node.episodes.nodes)
-    work.setTrailers(node.trailers.nodes)
+    work.setPrograms(node.programs.nodes)
     return work
   }
 }
