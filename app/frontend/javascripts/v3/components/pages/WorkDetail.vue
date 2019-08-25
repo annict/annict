@@ -273,14 +273,41 @@
               </div>
             </div>
 
-            <% if locale_ja? %>
-            <h2 class="h4 text-center my-4 font-weight-bold">
-              <%= t "noun.vods" %>
-            </h2>
-            <div class="c-card container mt-3 pt-3">
-              <%= render "v3/works/vod_list", vod_channels: @vod_channels, programs: @work.programs %>
-            </div>
-            <% end %>
+            <template v-if="$root.$i18n.locale === 'ja'">
+              <h2 class="h4 text-center my-4 font-weight-bold">
+                {{ $root.$t('noun.vods') }}
+              </h2>
+              <div class="c-card container mt-3 pt-3">
+                <div class="row pr-3">
+                  <div class="col-4 mb-3 pr-0" v-for="vodChannel in vodChannels">
+                    <template v-if="vodChannel.programs.length > 1">
+                      <div class="btn-group w-100">
+                        <button class="btn u-btn-link w-100 dropdown-toggle" type="button" data-toggle="dropdown">
+                          {{ vodChannel.name }}
+                          <div class="dropdown-menu w-100">
+                            <template v-for="program in vodChannel.programs">
+                              <a :href="program.vodTitleUrl" class="dropdown-item" target="_blank" rel="noopener">
+                                {{ program.vodTitleName }}
+                              </a>
+                            </template>
+                          </div>
+                        </button>
+                      </div>
+                    </template>
+                    <template v-else-if="vodChannel.programs.length === 1 && vodChannel.programs[0].vodTitleCode">
+                      <a :href="vodChannel.programs[0].vodTitleUrl" class="btn u-btn-link w-100" target="_blank" rel="noopener">
+                        {{ vodChannel.name }}
+                      </a>
+                    </template>
+                    <template v-else>
+                      <button class="btn u-btn-link w-100" type="button" disabled>
+                        {{ vodChannel.name }}
+                      </button>
+                    </template>
+                    </div>
+                </div>
+              </div>
+            </template>
 
             <div class="row align-items-center">
               <div class="col"></div>
@@ -317,6 +344,7 @@
   import newLine from '../../filters/newLine'
 
   import { FetchWorkQuery } from '../../queries'
+  import { FetchVodChannelsQuery } from '../../queries/fetchVodChannelsQuery'
 
   export default {
     components: {
@@ -332,19 +360,28 @@
     },
 
     setup(props, context) {
-      const work = value(null)
+      const workWrapper = value(null)
+      const vodChannelsWrapper = value([])
 
       const format = (str) => {
         return newLine(str)
       }
 
       onCreated(async () => {
-        work.value = await new FetchWorkQuery({ workId: props.workId }).execute()
-        console.log('work: ', work)
+        const [work, vodChannels] = await Promise.all([
+          new FetchWorkQuery({ workId: props.workId }).execute(),
+          new FetchVodChannelsQuery().execute()
+        ])
+        workWrapper.value = work
+        vodChannelsWrapper.value = vodChannels.map(vodChannel => {
+          vodChannel.setProgramsOfWork(work)
+          return vodChannel
+        })
       })
 
       return {
-        work,
+        work: workWrapper,
+        vodChannels: vodChannelsWrapper,
         format,
       }
     }

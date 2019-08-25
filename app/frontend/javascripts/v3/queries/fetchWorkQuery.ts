@@ -89,6 +89,7 @@ const query = gql`
           nodes {
             vodTitleCode
             vodTitleName
+            vodTitleUrl
             channel {
               annictId
               name

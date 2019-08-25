@@ -84,6 +84,7 @@ export default {
     startToPublishDate: '公開日',
     startToSellDate: '発売開始日',
     syoboiCalendar: 'しょぼいカレンダー',
+    vods: '動画サービス',
     watchersCount: '視聴者数',
     watchingShorten: '見てる',
   },

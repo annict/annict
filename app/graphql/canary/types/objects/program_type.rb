@@ -14,6 +14,7 @@ module Canary
         field :started_at, Canary::Types::Scalars::DateTime, null: false
         field :vod_title_code, String, null: false
         field :vod_title_name, String, null: false
+        field :vod_title_url, String, null: false
         field :rebroadcast, Boolean, null: false
 
         field :slots, Canary::Types::Objects::SlotType.connection_type, null: true do

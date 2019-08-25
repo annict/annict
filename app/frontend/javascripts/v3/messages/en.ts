@@ -84,6 +84,7 @@ export default {
     startToPublishDate: 'Aired',
     startToSellDate: 'Aired',
     syoboiCalendar: 'Syoboi Calendar',
+    vods: 'VODs',
     watchersCount: 'Watchers',
     watchingShorten: 'Watching',
   },
