@@ -13,6 +13,9 @@ export default {
       pages: {
         about: 'About',
       },
+      workRecords: {
+        show: '{workTitle} - {profileName} ({username})\'s Record'
+      },
       works: {
         newest: 'Just Added Anime',
         popular: 'Popular Anime',
@@ -23,8 +26,24 @@ export default {
     _common: {
       searchWithKeywords: 'Search by anime title...',
     },
+    _components: {
+      empty: {
+        noRecordBodyList: 'No Comments'
+      }
+    },
+    works: {
+      viewAllNRecordBodyList: 'View All %{n} Comments'
+    },
   },
   models: {
+    record: {
+      ratingState: {
+        great: 'Great',
+        good: 'Good',
+        average: 'Average',
+        bad: 'Bad',
+      }
+    },
     season: {
       yearly: {
         all: '{year}',
@@ -51,29 +70,38 @@ export default {
   noun: {
     about: 'About',
     airing: 'Airing',
+    animation: 'Animation',
     annictDb: 'Annict DB',
     annictDevelopers: 'Annict Developers',
     annictForum: 'Annict Forum',
     annictSupporters: 'Annict Supporters',
     annictUserland: 'Annict Userland',
+    character: 'Character',
     characters: 'Characters',
     currentSeason: 'Current Season',
+    delete: 'Delete',
     detail: 'Detail',
+    edit: 'Edit',
     episodes: 'Episodes',
     home: 'Home',
     information: 'Information',
     menu: 'Menu',
+    music: 'Music',
     myAnimeList: 'MyAnimeList',
     nextSeason: 'Next Season',
+    overall: 'Overall',
     prevSeason: 'Previous Season',
     profile: 'Profile',
     programs: 'Programs',
     pv: 'PV',
+    rating: 'Rating',
     ratingsCount: 'Ratings',
+    recordBodyList: 'Comments',
     records: 'Records',
     releaseSeason: 'Release Season',
     satisfactionRateShorten: 'Satisfaction',
     settings: 'Settings',
+    share: 'Share',
     signIn: 'Sign In',
     signUp: 'Sign Up',
     signUpShorten: 'Sign Up',
@@ -83,7 +111,10 @@ export default {
     startToBroadcastTvDate: 'Aired',
     startToPublishDate: 'Aired',
     startToSellDate: 'Aired',
+    story: 'Story',
+    supporter: 'Supporter',
     syoboiCalendar: 'Syoboi Calendar',
+    tweet: 'Tweet',
     vods: 'VODs',
     watchersCount: 'Watchers',
     watchingShorten: 'Watching',
@@ -92,5 +123,6 @@ export default {
     explore: 'Explore',
     search: 'Search',
     signOut: 'Sign Out',
+    track: 'Track',
   },
 }

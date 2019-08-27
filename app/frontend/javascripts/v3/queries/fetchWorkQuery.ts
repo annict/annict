@@ -39,6 +39,7 @@ const query = gql`
         synopsisSource
         synopsisSourceEn
         localSynopsisSource
+        viewerFinishedToWatch
         copyright
         image {
           internalUrl(size: "280x")
@@ -96,6 +97,31 @@ const query = gql`
             }
           }
         }
+        workRecords(hasBody: true, filterByLocale: true, orderBy: { field: CREATED_AT, direction: DESC }, first: 10) {
+          nodes {
+            user {
+              annictId
+              username
+              name
+              avatarUrl(size: size50)
+              isSupporter
+            }
+            record {
+              annictId
+              pageViewsCount
+            }
+            ratingAnimationState
+            ratingMusicState
+            ratingStoryState
+            ratingCharacterState
+            ratingOverallState
+            body
+            likesCount
+            createdAt
+            modifiedAt
+            viewerDidLike
+          }
+        }
       }
     }
   }
@@ -121,6 +147,7 @@ export class FetchWorkQuery extends ApplicationQuery {
     work.setStaffs(node.staffs.nodes)
     work.setEpisodes(node.episodes.nodes)
     work.setPrograms(node.programs.nodes)
+    work.setWorkRecords(node.workRecords.nodes)
     return work
   }
 }

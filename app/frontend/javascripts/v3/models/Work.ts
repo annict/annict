@@ -1,4 +1,4 @@
-import { ApplicationModel, Cast, Episode, Program, Season, Staff, Trailer, WorkImage } from '../models'
+import { ApplicationModel, Cast, Episode, Program, Season, Staff, Trailer, WorkImage, WorkRecord } from '../models'
 
 export class Work extends ApplicationModel {
   private annictId?: number
@@ -37,6 +37,7 @@ export class Work extends ApplicationModel {
   private staffs: Staff[]
   private episodes: Episode[]
   private programs: Program[]
+  private workRecords: WorkRecord[]
 
   public constructor(node) {
     super()
@@ -65,16 +66,10 @@ export class Work extends ApplicationModel {
     this.titleKana = node.titleKana
     this.twitterHashtag = node.twitterHashtag
     this.twitterUsername = node.twitterUsername
-    this.watchersCount = node.watchersCount
     this.wikipediaUrl = node.wikipediaUrl
     this.wikipediaUrlEn = node.wikipediaUrlEn
-    this.season = {}
-    this.image = {}
-    this.trailers = []
-    this.casts = []
-    this.staffs = []
-    this.episodes = []
-    this.programs = []
+    this.viewerFinishedToWatch = node.viewerFinishedToWatch
+    this.watchersCount = node.watchersCount
   }
 
   public setSeason(node) {
@@ -123,6 +118,15 @@ export class Work extends ApplicationModel {
       const program = new Program(node)
       program.setChannel(node.channel)
       return program
+    })
+  }
+
+  public setWorkRecords(nodes) {
+    this.workRecords = nodes.map(node => {
+      const workRecord = new WorkRecord(node)
+      workRecord.setUser(node.user)
+      workRecord.setRecord(node.record)
+      return workRecord
     })
   }
 }

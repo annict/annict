@@ -312,18 +312,147 @@
             <div class="row align-items-center">
               <div class="col"></div>
               <div class="col">
-                <h2 class="h4 text-center my-4 font-weight-bold"></h2>
-                <%= t "noun.record_body_list" %>
+                <h2 class="h4 text-center my-4 font-weight-bold">
+                  {{ $root.$t('noun.recordBodyList') }}
+                </h2>
               </div>
               <div class="col text-right">
-                <%= link_to work_records_path(@work.annict_id), class: "btn btn-primary btn-sm" do %>
-                <%= icon "edit", class: "mr-1" %>
-                <%= t "verb.track" %>
-                <% end %>
+                <a :href="'/works/' + work.annictId + '/records'" class="btn btn-primary btn-sm">
+                  <i class="far fa-edit mr-1"></i>
+                  {{ $root.$t('verb.track') }}
+                </a>
               </div>
             </div>
             <div class="c-card">
-              <%= render "v3/works/work_record_list", work: @work, work_records: @work_records %>
+              <template v-if="work.workRecords.length">
+                <div class="px-3">
+                  <div class="py-3 u-underline" v-for="workRecord in work.workRecords.slice(0, 10)">
+                    <div class="row">
+                      <div class="col-auto pl-3 pr-0">
+                        <a :href="'/@' + workRecord.user.username">
+                          <img :src="workRecord.user.avatarUrl" class="img-fluid img-thumbnail rounded-circle">
+                        </a>
+                      </div>
+                      <div class="col">
+                        <div class="mb-3">
+                          <div class="text-left">
+                            <a :href="'/@/' + workRecord.user.username">
+                              {{ workRecord.user.name }}
+                            </a>
+                            <span class="badge.u-badge-supporter.ml-1" v-if="workRecord.user.isSupportoer">
+                              {{ $root.$t('noun.supporter') }}
+                            </span>
+                          </div>
+                          <div class="text-left">
+                            <a :href="'/@/' + workRecord.user.username + '/records/' + workRecord.record.annictId" class="small text-muted">
+                              {{ workRecord.createdAt }}
+                            </a>
+                            <small class="ml-2 text-muted" v-if="workRecord.modifiedAt">
+                              <i class="far pencil-alt"></i>
+                            </small>
+                            <span class="small ml-2 text-muted">
+                              {{ workRecord.record.pageViewsCount }} views
+                            </span>
+                          </div>
+                        </div>
+                        <div :class="{ 'p-work-records-show__content clearfix': true, 'c-comment-guard': !work.viewerFinishedToWatch }" @click="removeCommentGuard">
+                          <div class="float-right ml-4 mb-4 p-3" v-if="workRecord.ratingOverallState">
+                            <div class="small font-weight-bold text-center mb-2">
+                              {{ $root.$t('noun.rating') }}
+                            </div>
+                            <table>
+                              <tbody>
+                              <tr v-if="workRecord.ratingAnimationState">
+                                <th class="font-weight-normal">
+                                  {{ $root.$t('noun.animation') }}
+                                </th>
+                                <td>
+                                  <ann-rating-label :init-state="workRecord.ratingAnimationState"></ann-rating-label>
+                                </td>
+                              </tr>
+                              <tr v-if="workRecord.ratingMusicState">
+                                <th class="font-weight-normal">
+                                  {{ $root.$t('noun.music') }}
+                                </th>
+                                <td>
+                                  <ann-rating-label :init-state="workRecord.ratingMusicState"></ann-rating-label>
+                                </td>
+                              </tr>
+                              <tr v-if="workRecord.ratingStoryState">
+                                <th class="font-weight-normal">
+                                  {{ $root.$t('noun.story') }}
+                                </th>
+                                <td>
+                                  <ann-rating-label :init-state="workRecord.ratingStoryState"></ann-rating-label>
+                                </td>
+                              </tr>
+                              <tr v-if="workRecord.ratingCharacterState">
+                                <th class="font-weight-normal">
+                                  {{ $root.$t('noun.character') }}
+                                </th>
+                                <td>
+                                  <ann-rating-label :init-state="workRecord.ratingCharacterState"></ann-rating-label>
+                                </td>
+                              </tr>
+                              <tr v-if="workRecord.ratingOverallState">
+                                <th class="font-weight-normal">
+                                  {{ $root.$t('noun.overall') }}
+                                </th>
+                                <td>
+                                  <ann-rating-label :init-state="workRecord.ratingOverallState"></ann-rating-label>
+                                </td>
+                              </tr>
+                              </tbody>
+                            </table>
+                          </div>
+                          <div class="c-body mb-3">
+                            <div class="c-body__content" v-html="format(workRecord.body)"></div>
+                          </div>
+                        </div>
+
+                        <div class="row align-items-center">
+                          <div class="col">
+                            <div class="text-right">
+                              <span class="mr-2">
+                                <ann-share-to-twitter-button :text="$root.$t('head.title.workRecords.show', { profileName: workRecord.user.name, username: workRecord.user.username, workTitle: work.localTitle })" :url="annConfig.localUrl + '/@' + workRecord.user.username + '/records/' + workRecord.record.annictId" :hashtags="work.twitterHashtag || ''"></ann-share-to-twitter-button>
+                              </span>
+                              <span class="mr-2">
+                                <ann-share-to-facebook-button :url="annConfig.localUrl + '/@' + workRecord.user.username + '/records/' + workRecord.record.annictId"></ann-share-to-facebook-button>
+                              </span>
+                            </div>
+                          </div>
+                        </div>
+
+                        <div class="small text-right mt-2" v-if="$root.viewer.username === workRecord.user.username">
+                          <a :href="'/works/' + work.annictId + '/records/' + workRecord.record.annictId + '/edit'" class="mr-2">
+                            <i class="fab fa-edit mr-1"></i>
+                            {{ $root.$t('noun.edit') }}
+                          </a>
+                          <a :href="'/@' + workRecord.user.username + '/records/' + workRecord.record.annictId">
+                            <i class="far fa-trash-alt mr-1"></i>
+                            {{ $root.$t('noun.delete') }}
+                          </a>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="container mb-3" v-if="work.workRecords.length > 10">
+                    <a :href="'/works/' + work.annictId + '/records'" class="btn btn-secondary w-100">
+                      <i class="fab fa-angle-right"></i>
+                      {{ $root.$t('messages.works.viewAllNRecordBodyList', { n: work.workRecords.length }) }}
+                    </a>
+                  </div>
+                </div>
+              </template>
+              <template v-else>
+                <ann-empty :text="$root.$t('messages._components.empty.noRecordBodyList')">
+                  <a :href="'/works/' + work.annictId + '/records'" class="btn btn-primary mt-2">
+                    <i class="fab fa-edit mr-1"></i>
+                    {{ $root.$t('verb.track') }}
+                  </a>
+                </ann-empty>
+              </template>
             </div>
           </div>
         </div>
@@ -336,11 +465,17 @@
 </template>
 
 <script lang="ts">
+  import $ from 'jquery'
   import { onCreated, value } from 'vue-function-api'
 
+  import Empty from '../Empty.vue'
   import NavBar from '../NavBar.vue'
+  import RatingLabel from '../RatingLabel.vue'
+  import ShareToFacebookButton from '../ShareToFacebookButton.vue'
+  import ShareToTwitterButton from '../ShareToTwitterButton.vue'
   import WorkSubNav from '../WorkSubNav.vue'
 
+  import escape from '../../filters/escape'
   import newLine from '../../filters/newLine'
 
   import { FetchWorkQuery } from '../../queries'
@@ -348,7 +483,11 @@
 
   export default {
     components: {
+      'ann-empty': Empty,
       'ann-navbar': NavBar,
+      'ann-rating-label': RatingLabel,
+      'ann-share-to-facebook-button': ShareToFacebookButton,
+      'ann-share-to-twitter-button': ShareToTwitterButton,
       'ann-work-subnav': WorkSubNav,
     },
 
@@ -359,12 +498,16 @@
       }
     },
 
-    setup(props, context) {
+    setup(props, _context) {
       const workWrapper = value(null)
       const vodChannelsWrapper = value([])
 
       const format = (str) => {
-        return newLine(str)
+        return newLine(escape(str))
+      }
+
+      const removeCommentGuard = (event) => {
+        $(event.target).parents('.p-work-records-show__content').removeClass('c-comment-guard')
       }
 
       onCreated(async () => {
@@ -372,6 +515,7 @@
           new FetchWorkQuery({ workId: props.workId }).execute(),
           new FetchVodChannelsQuery().execute()
         ])
+        console.log('work: ', work)
         workWrapper.value = work
         vodChannelsWrapper.value = vodChannels.map(vodChannel => {
           vodChannel.setProgramsOfWork(work)
@@ -380,9 +524,11 @@
       })
 
       return {
+        annConfig: window.annConfig,
         work: workWrapper,
         vodChannels: vodChannelsWrapper,
         format,
+        removeCommentGuard,
       }
     }
   }
