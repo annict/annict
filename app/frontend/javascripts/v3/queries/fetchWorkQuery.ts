@@ -39,10 +39,10 @@ const query = gql`
         synopsisSource
         synopsisSourceEn
         localSynopsisSource
+        copyright
         image {
           internalUrl(size: "280x")
         }
-        copyright
         trailers(orderBy: { field: SORT_NUMBER, direction: ASC }) {
           nodes {
             title
