@@ -17,7 +17,7 @@ module Db
 
     rescue_from Pundit::NotAuthorizedError, with: :user_not_authorized
 
-    helper_method :gon, :locale_ja?, :locale_en?
+    helper_method :gon, :locale_ja?, :locale_en?, :local_url
 
     before_action :redirect_if_unexpected_subdomain
     before_action :switch_locale

@@ -4,7 +4,7 @@ module ControllerCommon
   extend ActiveSupport::Concern
 
   included do
-    helper_method :render_jb, :local_url, :discord_invite_url, :local_url_with_path, :localable_resources, :browser, :device_pc?
+    helper_method :render_jb, :discord_invite_url, :local_url_with_path, :localable_resources, :browser, :device_pc?
 
     rescue_from ActionView::MissingTemplate do
       raise ActionController::RoutingError, "Not Found" if Rails.env.production?
@@ -73,15 +73,6 @@ module ControllerCommon
     def redirect_to_root_domain(options = {})
       url = ENV.fetch("ANNICT_URL")
       redirect_to "#{url}#{request.path}", options
-    end
-
-    def local_url(locale: I18n.locale)
-      case locale.to_s
-      when "ja"
-        ENV.fetch("ANNICT_JP_URL")
-      else
-        ENV.fetch("ANNICT_URL")
-      end
     end
 
     def local_url_with_path(locale: I18n.locale)
