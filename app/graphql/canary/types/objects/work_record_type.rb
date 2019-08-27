@@ -21,7 +21,6 @@ module Canary
         field :rating_character_state, Canary::Types::Enums::RatingState, null: true
         field :viewer_did_like, Boolean, null: false
         field :likes_count, Integer, null: false
-        field :impressions_count, Integer, null: false
         field :modified_at, Canary::Types::Scalars::DateTime, null: true
         field :created_at, Canary::Types::Scalars::DateTime, null: false
         field :updated_at, Canary::Types::Scalars::DateTime, null: false
