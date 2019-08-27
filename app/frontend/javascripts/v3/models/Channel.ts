@@ -1,7 +1,7 @@
 import { ApplicationModel } from './ApplicationModel'
 import { Work } from './Work'
 
-export class Channel extends ApplicationModel{
+export class Channel extends ApplicationModel {
   private annictId: number
   private name: string
   private programs: []
