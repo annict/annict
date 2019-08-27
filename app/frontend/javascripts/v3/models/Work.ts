@@ -6,6 +6,37 @@ export class Work extends ApplicationModel {
   private id: string
   private isNoEpisodes: boolean
   private malAnimeId?: number
+  private media: string
+  private officialSiteUrl: string
+  private officialSiteUrlEn: string
+  private ratingsCount: number
+  private satisfactionRate: number
+  private localStartedOnLabel: string
+  private startedOn: date
+  private synopsis: string
+  private synopsisEn: string
+  private localSynopsis: string
+  private synopsisSource: string
+  private synopsisSourceEn: string
+  private localSynopsisSource: string
+  private syobocalTid: number
+  private title: string
+  private titleEn: string
+  private localTitle: string
+  private titleKana: string
+  private twitterHashtag: string
+  private twitterUsername: string
+  private watchersCount: number
+  private wikipediaUrl: string
+  private wikipediaUrlEn: string
+  private viewerFinishedToWatch: boolean
+  private season: Season
+  private image: WorkImage
+  private trailers: Trailer[]
+  private casts: Cast[]
+  private staffs: Staff[]
+  private episodes: Episode[]
+  private programs: Program[]
 
   public constructor(node) {
     super()
