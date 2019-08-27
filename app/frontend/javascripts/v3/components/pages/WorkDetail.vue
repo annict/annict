@@ -478,8 +478,7 @@
   import escape from '../../filters/escape'
   import newLine from '../../filters/newLine'
 
-  import { FetchWorkQuery } from '../../queries'
-  import { FetchVodChannelsQuery } from '../../queries/fetchVodChannelsQuery'
+  import { FetchVodChannelsQuery, FetchWorkQuery } from '../../queries'
 
   export default {
     components: {
