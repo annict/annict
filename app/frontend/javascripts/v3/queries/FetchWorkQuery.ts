@@ -110,6 +110,7 @@ const query = gql`
               annictId
               pageViewsCount
             }
+            id
             ratingAnimationState
             ratingMusicState
             ratingStoryState

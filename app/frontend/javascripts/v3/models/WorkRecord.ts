@@ -3,6 +3,7 @@ import { User } from './User'
 import { Record } from './Record'
 
 export class WorkRecord extends ApplicationModel {
+  private id: string
   private ratingAnimationState: string
   private ratingMusicState: string
   private ratingStoryState: string
@@ -18,6 +19,7 @@ export class WorkRecord extends ApplicationModel {
 
   public constructor(node) {
     super()
+    this.id = node.id
     this.ratingAnimationState = node.ratingAnimationState
     this.ratingMusicState = node.ratingMusicState
     this.ratingStoryState = node.ratingStoryState

@@ -419,6 +419,9 @@
                               <span class="mr-2">
                                 <ann-share-to-facebook-button :url="annConfig.localUrl + '/@' + workRecord.user.username + '/records/' + workRecord.record.annictId"></ann-share-to-facebook-button>
                               </span>
+                              <span class="ml-2">
+                                <ann-like-button resource-name="WorkRecord" :resource-id="workRecord.id" :init-likes-count="workRecord.likesCount" :init-is-liked="workRecord.viewerDidLike" :is-signed-in="$root.isSignedIn()"></ann-like-button>
+                              </span>
                             </div>
                           </div>
                         </div>
@@ -469,6 +472,7 @@
   import { onCreated, value } from 'vue-function-api'
 
   import Empty from '../Empty.vue'
+  import LikeButton from '../LikeButton.vue'
   import NavBar from '../NavBar.vue'
   import RatingLabel from '../RatingLabel.vue'
   import ShareToFacebookButton from '../ShareToFacebookButton.vue'
@@ -483,6 +487,7 @@
   export default {
     components: {
       'ann-empty': Empty,
+      'ann-like-button': LikeButton,
       'ann-navbar': NavBar,
       'ann-rating-label': RatingLabel,
       'ann-share-to-facebook-button': ShareToFacebookButton,
