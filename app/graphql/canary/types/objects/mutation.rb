@@ -13,6 +13,9 @@ module Canary
         field :workRecordCreate, mutation: Canary::Mutations::WorkRecordCreate
         field :workRecordUpdate, mutation: Canary::Mutations::WorkRecordUpdate
         field :workRecordDelete, mutation: Canary::Mutations::WorkRecordDelete
+
+        field :likeWorkRecord, mutation: Canary::Mutations::LikeWorkRecord
+        field :unlikeWorkRecord, mutation: Canary::Mutations::UnlikeWorkRecord
       end
     end
   end
