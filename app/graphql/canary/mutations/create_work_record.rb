@@ -2,7 +2,7 @@
 
 module Canary
   module Mutations
-    class WorkRecordCreate < Canary::Mutations::Base
+    class CreateWorkRecord < Canary::Mutations::Base
       argument :work_id, ID, required: true
       argument :body, String, required: false,
         description: "作品への感想"

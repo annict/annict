@@ -2,7 +2,7 @@
 
 module Canary
   module Mutations
-    class EpisodeRecordDelete < Canary::Mutations::Base
+    class DeleteEpisodeRecord < Canary::Mutations::Base
       argument :episode_record_id, ID, required: true
 
       field :episode, Canary::Types::Objects::EpisodeType, null: true

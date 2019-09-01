@@ -2,7 +2,7 @@
 
 module Canary
   module Mutations
-    class EpisodeRecordUpdate < Canary::Mutations::Base
+    class UpdateEpisodeRecord < Canary::Mutations::Base
       argument :episode_record_id, ID, required: true
       argument :comment, String, required: false,
         description: "エピソードへの感想"

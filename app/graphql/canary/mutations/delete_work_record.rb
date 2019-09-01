@@ -2,7 +2,7 @@
 
 module Canary
   module Mutations
-    class WorkRecordDelete < Canary::Mutations::Base
+    class DeleteWorkRecord < Canary::Mutations::Base
       argument :work_record_id, ID, required: true
 
       field :work, Canary::Types::Objects::WorkType, null: true

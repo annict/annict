@@ -2,7 +2,7 @@
 
 module Canary
   module Mutations
-    class WorkRecordUpdate < Canary::Mutations::Base
+    class UpdateWorkRecord < Canary::Mutations::Base
       argument :work_record_id, ID, required: true
       argument :body, String, required: false,
         description: "作品への感想"

@@ -4,15 +4,15 @@ module Canary
   module Types
     module Objects
       class Mutation < Canary::Types::Objects::Base
-        field :statusUpdate, mutation: Canary::Mutations::StatusUpdate
+        field :updateStatus, mutation: Canary::Mutations::UpdateStatus
 
-        field :episodeRecordCreate, mutation: Canary::Mutations::EpisodeRecordCreate
-        field :episodeRecordUpdate, mutation: Canary::Mutations::EpisodeRecordUpdate
-        field :episodeRecordDelete, mutation: Canary::Mutations::EpisodeRecordDelete
+        field :createEpisodeRecord, mutation: Canary::Mutations::CreateEpisodeRecord
+        field :updateEpisodeRecord, mutation: Canary::Mutations::UpdateEpisodeRecord
+        field :deleteEpisodeRecord, mutation: Canary::Mutations::DeleteEpisodeRecord
 
-        field :workRecordCreate, mutation: Canary::Mutations::WorkRecordCreate
-        field :workRecordUpdate, mutation: Canary::Mutations::WorkRecordUpdate
-        field :workRecordDelete, mutation: Canary::Mutations::WorkRecordDelete
+        field :createWorkRecord, mutation: Canary::Mutations::CreateWorkRecord
+        field :updateWorkRecord, mutation: Canary::Mutations::UpdateWorkRecord
+        field :deleteWorkRecord, mutation: Canary::Mutations::DeleteWorkRecord
 
         field :likeWorkRecord, mutation: Canary::Mutations::LikeWorkRecord
         field :unlikeWorkRecord, mutation: Canary::Mutations::UnlikeWorkRecord

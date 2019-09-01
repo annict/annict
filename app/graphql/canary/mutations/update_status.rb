@@ -2,7 +2,7 @@
 
 module Canary
   module Mutations
-    class StatusUpdate < Canary::Mutations::Base
+    class UpdateStatus < Canary::Mutations::Base
       argument :work_id, ID, required: true
       argument :kind, Canary::Types::Enums::StatusKind, required: true
 
