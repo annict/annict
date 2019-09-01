@@ -457,6 +457,26 @@
                 </ann-empty>
               </template>
             </div>
+
+            <h2 class="h4 text-center my-4 font-weight-bold">
+              {{ $root.$t('noun.stats') }}
+            </h2>
+            <div class="c-card container mt-3 py-3">
+              <div class="row">
+                <div class="col">
+                  <h3 class="small text-center">
+                    Watchers
+                  </h3>
+                  <ann-work-watchers-chart :work-id="work.annictId"></ann-work-watchers-chart>
+                </div>
+                <div class="col">
+                  <h3 class="small text-center">
+                    Status
+                  </h3>
+                  <ann-work-status-chart :work-id="work.annictId"></ann-work-status-chart>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -477,7 +497,9 @@
   import RatingLabel from '../RatingLabel.vue'
   import ShareToFacebookButton from '../ShareToFacebookButton.vue'
   import ShareToTwitterButton from '../ShareToTwitterButton.vue'
+  import WorkStatusChart from '../WorkStatusChart.vue'
   import WorkSubNav from '../WorkSubNav.vue'
+  import WorkWatchersChart from '../WorkWatchersChart.vue'
 
   import escape from '../../filters/escape'
   import newLine from '../../filters/newLine'
@@ -492,7 +514,9 @@
       'ann-rating-label': RatingLabel,
       'ann-share-to-facebook-button': ShareToFacebookButton,
       'ann-share-to-twitter-button': ShareToTwitterButton,
+      'ann-work-status-chart': WorkStatusChart,
       'ann-work-subnav': WorkSubNav,
+      'ann-work-watchers-chart': WorkWatchersChart,
     },
 
     props: {

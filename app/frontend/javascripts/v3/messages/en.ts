@@ -111,6 +111,7 @@ export default {
     startToBroadcastTvDate: 'Aired',
     startToPublishDate: 'Aired',
     startToSellDate: 'Aired',
+    stats: 'Stats',
     story: 'Story',
     supporter: 'Supporter',
     syoboiCalendar: 'Syoboi Calendar',

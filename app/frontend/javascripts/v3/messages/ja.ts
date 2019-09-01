@@ -111,6 +111,7 @@ export default {
     startToBroadcastTvDate: '放送開始日',
     startToPublishDate: '公開日',
     startToSellDate: '発売開始日',
+    stats: '統計',
     story: 'ストーリー',
     supporter: 'サポーター',
     syoboiCalendar: 'しょぼいカレンダー',
