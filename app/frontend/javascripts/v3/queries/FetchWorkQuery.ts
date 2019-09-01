@@ -128,7 +128,7 @@ const query = gql`
 `
 
 export class FetchWorkQuery extends ApplicationQuery {
-  private workId: number
+  private readonly workId: number
 
   public constructor({ workId }) {
     super()
