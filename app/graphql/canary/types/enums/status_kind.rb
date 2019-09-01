@@ -3,7 +3,7 @@
 module Canary
   module Types
     module Enums
-      class StatusState < Canary::Types::Enums::Base
+      class StatusKind < Canary::Types::Enums::Base
         value "WANNA_WATCH", "見たい"
         value "WATCHING", "見てる"
         value "WATCHED", "見た"

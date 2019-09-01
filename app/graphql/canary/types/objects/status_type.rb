@@ -11,7 +11,7 @@ module Canary
         field :annict_id, Integer, null: false
         field :user, Canary::Types::Objects::UserType, null: false
         field :work, Canary::Types::Objects::WorkType, null: false
-        field :state, Canary::Types::Enums::StatusState, null: false
+        field :kind, Canary::Types::Enums::StatusKind, null: false
         field :likes_count, Integer, null: false
         field :created_at, Canary::Types::Scalars::DateTime, null: false
 
@@ -23,7 +23,7 @@ module Canary
           RecordLoader.for(Work).load(object.work_id)
         end
 
-        def state
+        def kind
           object.kind.upcase
         end
       end

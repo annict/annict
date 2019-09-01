@@ -53,7 +53,7 @@ module Canary
           argument :annict_ids, [Integer], required: false
           argument :seasons, [String], required: false
           argument :titles, [String], required: false
-          argument :state, Canary::Types::Enums::StatusState, required: false
+          argument :status_kind, Canary::Types::Enums::StatusKind, required: false
           argument :order_by, Canary::Types::InputObjects::WorkOrder, required: false
         end
 
@@ -178,14 +178,14 @@ module Canary
           ).call
         end
 
-        def works(annict_ids: nil, seasons: nil, titles: nil, state: nil, order_by: nil)
+        def works(annict_ids: nil, seasons: nil, titles: nil, status_kind: nil, order_by: nil)
           SearchWorksQuery.new(
             object.works.all,
             user: object,
             annict_ids: annict_ids,
             seasons: seasons,
             titles: titles,
-            state: state,
+            state: status_kind,
             order_by: order_by
           ).call
         end

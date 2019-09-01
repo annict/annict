@@ -106,7 +106,7 @@ module Canary
         field :viewer_finished_to_watch, Boolean,
           null: false
 
-        field :viewer_status_state, Canary::Types::Enums::StatusState,
+        field :viewer_status_kind, Canary::Types::Enums::StatusKind,
           null: true
 
         field :synopsis, String,
@@ -244,9 +244,9 @@ module Canary
             context[:viewer].work_records.published.where(work_id: object.id).exists?
         end
 
-        def viewer_status_state
-          state = context[:viewer].status_kind(object)
-          state == "no_select" ? "NO_STATE" : state.upcase
+        def viewer_status_kind
+          kind = context[:viewer].status_kind(object)
+          kind == "no_select" ? "NO_STATE" : kind.upcase
         end
       end
     end
