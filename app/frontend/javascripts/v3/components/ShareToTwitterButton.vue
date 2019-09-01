@@ -11,8 +11,9 @@
 
 <script lang="ts">
   import $ from 'jquery';
+  import { createComponent } from '@vue/composition-api'
 
-  export default {
+  export default createComponent({
     props: {
       text: {
         type: String,
@@ -54,5 +55,5 @@
         openWindow
       }
     },
-  };
+  })
 </script>

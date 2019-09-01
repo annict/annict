@@ -4,11 +4,11 @@
 
 <script lang="ts">
 import _ from 'lodash'
-import { onMounted } from 'vue-function-api'
+import { createComponent, onMounted } from '@vue/composition-api'
 import * as d3Selection from 'd3-selection'
 import BarChart from 'britecharts/dist/umd/bar.min'
 
-export default {
+export default createComponent({
   props: {
     workId: {
       type: Number,
@@ -55,5 +55,5 @@ export default {
       }
     })
   },
-}
+})
 </script>

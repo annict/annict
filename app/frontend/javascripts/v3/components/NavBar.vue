@@ -3,7 +3,7 @@
     <!--  PC-->
     <nav class="navbar navbar-expand navbar-light bg-white">
       <a href="/" class="navbar-brand d-none d-lg-inline-block">
-        <img :src="annConfig.images.logoUrl" width="25" height="30" alt="Annict">
+        <img :src="state.annConfig.images.logoUrl" width="25" height="30" alt="Annict">
       </a>
       <ul class="navbar-nav mt-2 mt-md-0 mr-md-2">
         <li class="nav-item dropdown d-none d-lg-inline-block">
@@ -11,13 +11,13 @@
             {{ $t('verb.explore') }}
           </a>
           <div class="dropdown-menu">
-            <a :href="'/works/' + annConfig.season.current" class="dropdown-item">
+            <a :href="'/works/' + state.annConfig.season.current" class="dropdown-item">
               {{ $t('noun.currentSeason') }}
             </a>
-            <a :href="'/works/' + annConfig.season.next" class="dropdown-item">
+            <a :href="'/works/' + state.annConfig.season.next" class="dropdown-item">
               {{ $t('noun.nextSeason') }}
             </a>
-            <a :href="'/works/' + annConfig.season.prev" class="dropdown-item">
+            <a :href="'/works/' + state.annConfig.season.prev" class="dropdown-item">
               {{ $t('noun.prevSeason') }}
             </a>
             <a href="/works/newest" class="dropdown-item">
@@ -131,7 +131,7 @@
             </a>
           </li>
           <li class="nav-item text-center">
-            <a :href="'/works/' + annConfig.season.current" class="text-dark">
+            <a :href="'/works/' + state.annConfig.season.current" class="text-dark">
               <i class="fas fa-tv"></i>
               <div class="small mt-1">
                 {{ $t('noun.airing') }}
@@ -149,7 +149,7 @@
         </template>
         <template v-else>
           <li class="nav-item text-center">
-            <a :href="'/works/' + annConfig.season.current" class="text-dark">
+            <a :href="'/works/' + state.annConfig.season.current" class="text-dark">
               <i class="fas fa-tv"></i>
               <div class="small mt-1">
                 {{ $t('noun.airing') }}
@@ -187,15 +187,17 @@
 </template>
 
 <script lang="ts">
-  import { value } from 'vue-function-api'
+  import { createComponent, reactive } from '@vue/composition-api'
 
-  export default {
+  export default createComponent({
     setup() {
-      const annConfig = value(window.annConfig)
+      const state = reactive({
+        annConfig: window.annConfig
+      })
 
       return {
-        annConfig
+        state
       }
     }
-  }
+  })
 </script>

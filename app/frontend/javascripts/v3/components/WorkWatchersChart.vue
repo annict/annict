@@ -4,11 +4,11 @@
 
 <script lang="ts">
 import $ from 'jquery'
-import { onMounted } from 'vue-function-api'
+import { createComponent, onMounted } from '@vue/composition-api'
 import * as d3Selection from 'd3-selection'
 import LineChart from 'britecharts/dist/umd/line.min'
 
-export default {
+export default createComponent({
   props: {
     workId: {
       type: Number,
@@ -59,5 +59,5 @@ export default {
       })
     })
   }
-}
+})
 </script>

@@ -21,7 +21,9 @@
 </template>
 
 <script lang="ts">
-  export default {
+  import { createComponent } from '@vue/composition-api'
+
+  export default createComponent({
     props: {
       work: {
         type: Object,
@@ -32,5 +34,5 @@
         required: true
       }
     },
-  }
+  })
 </script>

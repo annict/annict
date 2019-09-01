@@ -1,26 +1,26 @@
 <template>
   <div>
-    <template v-if="work">
+    <template v-if="state.work">
       <ann-navbar></ann-navbar>
       <div class="container p-3">
         <div class="row">
           <div class="col-md-3 pr-md-0">
             <div class="c-work-image mb-2">
-              <a :href="'/works/' + work.annictId">
-                <img :src="work.image.internalUrl" class="img-fluid img-thumbnail rounded">
+              <a :href="'/works/' + state.work.annictId">
+                <img :src="state.work.image.internalUrl" class="img-fluid img-thumbnail rounded">
               </a>
               <div class="u-very-small text-right text-muted">
                 <i class="far fa-copyright mr-1"></i>
-                {{ work.copyright }}
+                {{ state.work.copyright }}
               </div>
             </div>
             <h1 class="h2 font-weight-bold mb-3">
-              {{ work.title }}
+              {{ state.work.title }}
             </h1>
             <div class="row mb-3">
               <div class="col text-center">
                 <div class="h4 font-weight-bold mb-1">
-                  {{ work.watchersCount }}
+                  {{ state.work.watchersCount }}
                 </div>
                 <div class="text-muted small">
                   {{ $root.$t('noun.watchersCount') }}
@@ -28,7 +28,7 @@
               </div>
               <div class="col text-center">
                 <div class="h4 font-weight-bold mb-1">
-                  {{ work.satisfactionRate }}<span class="small ml-1">%</span>
+                  {{ state.work.satisfactionRate }}<span class="small ml-1">%</span>
                 </div>
                 <div class="text-muted small">
                   {{ $root.$t('noun.satisfactionRateShorten') }}
@@ -36,7 +36,7 @@
               </div>
               <div class="col text-center">
                 <div class="h4 font-weight-bold mb-1">
-                  {{ work.ratingsCount }}
+                  {{ state.work.ratingsCount }}
                 </div>
                 <div class="text-muted small">
                   {{ $root.$t('noun.ratingsCount') }}
@@ -53,138 +53,138 @@
               {{ $root.$t('noun.information') }}
             </h2>
             <dl>
-              <template v-if="work.titleKana">
+              <template v-if="state.work.titleKana">
                 <dt class="small">
                   {{ $root.$t('models.work.titleKana') }}
                 </dt>
                 <dd>
-                  {{ work.titleKana }}
+                  {{ state.work.titleKana }}
                 </dd>
               </template>
-              <template v-if="work.titleEn">
+              <template v-if="state.work.titleEn">
                 <dt class="small">
                   {{ $root.$t('models.work.titleEn') }}
                 </dt>
                 <dd>
-                  {{ work.titleEn }}
+                  {{ state.work.titleEn }}
                 </dd>
               </template>
               <dt class="small">
                 {{ $root.$t('models.work.media') }}
               </dt>
               <dd>
-                {{ work.media }}
+                {{ state.work.media }}
               </dd>
-              <template v-if="work.season.year">
+              <template v-if="state.work.season.year">
                 <dt class="small">
                   {{ $root.$t('noun.releaseSeason') }}
                 </dt>
                 <dd>
-                  <a :href="'/works/' + work.season.slug">
-                    {{ work.season.localName }}
+                  <a :href="'/works/' + state.work.season.slug">
+                    {{ state.work.season.localName }}
                   </a>
                 </dd>
               </template>
-              <template v-if="work.startedOn">
+              <template v-if="state.work.startedOn">
                 <dt class="small">
-                  {{ work.localStartedOnLabel }}
+                  {{ state.work.localStartedOnLabel }}
                 </dt>
                 <dd>
-                  {{ work.startedOn }}
+                  {{ state.work.startedOn }}
                 </dd>
               </template>
-              <template v-if="work.officialSiteUrl">
+              <template v-if="state.work.officialSiteUrl">
                 <dt class="small">
                   {{ $root.$t('models.work.officialSiteUrl') }}
                 </dt>
                 <dd>
-                  <a :href="work.officialSiteUrl" target="_blank" rel="noopener">
-                    {{ work.officialSiteUrl | formatDomain }}
+                  <a :href="state.work.officialSiteUrl" target="_blank" rel="noopener">
+                    {{ state.work.officialSiteUrl | formatDomain }}
                   </a>
                 </dd>
               </template>
-              <template v-if="work.officialSiteUrlEn">
+              <template v-if="state.work.officialSiteUrlEn">
                 <dt class="small">
                   {{ $root.$t('models.work.officialSiteUrlEn') }}
                 </dt>
                 <dd>
-                  <a :href="work.officialSiteUrlEn" target="_blank" rel="noopener">
-                    {{ work.officialSiteUrlEn | formatDomain }}
+                  <a :href="state.work.officialSiteUrlEn" target="_blank" rel="noopener">
+                    {{ state.work.officialSiteUrlEn | formatDomain }}
                   </a>
                 </dd>
               </template>
-              <template v-if="work.twitterUsername">
+              <template v-if="state.work.twitterUsername">
                 <dt class="small">
                   {{ $root.$t('models.work.twitterUsername') }}
                 </dt>
                 <dd>
-                  <a :href="'https://twitter.com/' + work.twitterUsername" target="_blank" rel="noopener">
-                    @{{ work.twitterUsername }}
+                  <a :href="'https://twitter.com/' + state.work.twitterUsername" target="_blank" rel="noopener">
+                    @{{ state.work.twitterUsername }}
                   </a>
                 </dd>
               </template>
-              <template v-if="work.twitterHashtag">
+              <template v-if="state.work.twitterHashtag">
                 <dt class="small">
                   {{ $root.$t('models.work.twitterHashtag') }}
                 </dt>
                 <dd>
-                  <a :href="'https://twitter.com/search?q=%23' + work.twitterHashtag + '&src=typed_query'" target="_blank" rel="noopener">
-                    #{{ work.twitterHashtag }}
+                  <a :href="'https://twitter.com/search?q=%23' + state.work.twitterHashtag + '&src=typed_query'" target="_blank" rel="noopener">
+                    #{{ state.work.twitterHashtag }}
                   </a>
                 </dd>
               </template>
-              <template v-if="work.wikipediaUrl">
+              <template v-if="state.work.wikipediaUrl">
                 <dt class="small">
                   {{ $root.$t('models.work.wikipediaUrl') }}
                 </dt>
                 <dd>
-                  <a :href="work.wikipediaUrl" target="_blank" rel="noopener">
-                    {{ work.wikipediaUrl | formatDomain }}
+                  <a :href="state.work.wikipediaUrl" target="_blank" rel="noopener">
+                    {{ state.work.wikipediaUrl | formatDomain }}
                   </a>
                 </dd>
               </template>
-              <template v-if="work.wikipediaUrlEn">
+              <template v-if="state.work.wikipediaUrlEn">
                 <dt class="small">
                   {{ $root.$t('models.work.wikipediaUrlEn') }}
                 </dt>
                 <dd>
-                  <a :href="work.wikipediaUrlEn" target="_blank" rel="noopener">
-                    {{ work.wikipediaUrlEn | formatDomain }}
+                  <a :href="state.work.wikipediaUrlEn" target="_blank" rel="noopener">
+                    {{ state.work.wikipediaUrlEn | formatDomain }}
                   </a>
                 </dd>
               </template>
-              <template v-if="work.syobocalTid">
+              <template v-if="state.work.syobocalTid">
                 <dt class="small">
                   {{ $root.$t('noun.syoboiCalendar') }}
                 </dt>
                 <dd>
-                  <a :href="'http://cal.syoboi.jp/tid/' + work.syobocalTid" target="_blank" rel="noopener">
-                    {{ work.syobocalTid }}
+                  <a :href="'http://cal.syoboi.jp/tid/' + state.work.syobocalTid" target="_blank" rel="noopener">
+                    {{ state.work.syobocalTid }}
                   </a>
                 </dd>
               </template>
-              <template v-if="work.malAnimeId">
+              <template v-if="state.work.malAnimeId">
                 <dt class="small">
                   {{ $root.$t('noun.myAnimeList') }}
                 </dt>
                 <dd>
-                  <a :href="'https://myanimelist.net/anime/' + work.malAnimeId" target="_blank" rel="noopener">
-                    {{ work.malAnimeId }}
+                  <a :href="'https://myanimelist.net/anime/' + state.work.malAnimeId" target="_blank" rel="noopener">
+                    {{ state.work.malAnimeId }}
                   </a>
                 </dd>
               </template>
             </dl>
           </div>
           <div class="col-md-9">
-            <ann-work-subnav :work="work" page-category="workDetail"></ann-work-subnav>
+            <ann-work-subnav :work="state.work" page-category="workDetail"></ann-work-subnav>
 
-            <template v-if="work.trailers.length">
+            <template v-if="state.work.trailers.length">
               <h2 class="h4 text-center my-4 font-weight-bold">
                 {{ $root.$t('noun.pv') }}
               </h2>
               <div class="c-card mt-3 pt-3">
                 <div class="row ml-3 pr-3">
-                  <div class="col-md-4 col-6 text-center mb-3 pl-0" v-for="trailer in work.trailers">
+                  <div class="col-md-4 col-6 text-center mb-3 pl-0" v-for="trailer in state.work.trailers">
                     <a :href="trailer.url" target="_blank" rel="noopener">
                       <div class="c-video-thumbnail">
                         <div class="c-video-thumbnail__image" :style="'background-image: url(\'' + trailer.internalImageUrl + '\');'"></div>
@@ -199,15 +199,15 @@
               </div>
             </template>
 
-            <template v-if="work.synopsis">
+            <template v-if="state.work.synopsis">
               <h2 class="h4 text-center my-4 font-weight-bold">
                 {{ $root.$t('models.work.synopsis') }}
               </h2>
               <div class="c-card mt-3 p-3">
-                <span v-html="format(work.localSynopsis)"></span>
+                <span v-html="format(state.work.localSynopsis)"></span>
                 <div class="text-right small">
                   <span class="mr-1">
-                    {{ $root.$t('noun.source') }}: {{ work.localSynopsisSource }}
+                    {{ $root.$t('noun.source') }}: {{ state.work.localSynopsisSource }}
                   </span>
                 </div>
               </div>
@@ -218,7 +218,7 @@
             </h2>
             <div class="c-card container mt-3 pt-3">
               <div class="row">
-                <div class="col-4 mb-3" v-for="episode in work.episodes">
+                <div class="col-4 mb-3" v-for="episode in state.work.episodes">
                   <a href="">
                     <div class="">
                       {{ episode.numberText }}
@@ -236,7 +236,7 @@
             </h2>
             <div class="c-card container mt-3 pt-3">
               <div class="row">
-                <div class="col-3 mb-3" v-for="cast in work.casts">
+                <div class="col-3 mb-3" v-for="cast in state.work.casts">
                   <a :href="'/characters/' + cast.character.annictId">
                     {{ cast.character.name }}
                   </a>
@@ -255,7 +255,7 @@
             </h2>
             <div class="c-card container mt-3 pt-3">
               <div class="row">
-                <div class="col-3 mb-3" v-for="staff in work.staffs">
+                <div class="col-3 mb-3" v-for="staff in state.work.staffs">
                   <template v-if="staff.isPerson()">
                     <a :href="'/people/' + staff.person.annictId">
                       {{ staff.localAccuratedName }}
@@ -279,7 +279,7 @@
               </h2>
               <div class="c-card container mt-3 pt-3">
                 <div class="row pr-3">
-                  <div class="col-4 mb-3 pr-0" v-for="vodChannel in vodChannels">
+                  <div class="col-4 mb-3 pr-0" v-for="vodChannel in state.vodChannels">
                     <template v-if="vodChannel.programs.length > 1">
                       <div class="btn-group w-100">
                         <button class="btn u-btn-link w-100 dropdown-toggle" type="button" data-toggle="dropdown">
@@ -317,16 +317,16 @@
                 </h2>
               </div>
               <div class="col text-right">
-                <a :href="'/works/' + work.annictId + '/records'" class="btn btn-primary btn-sm">
+                <a :href="'/works/' + state.work.annictId + '/records'" class="btn btn-primary btn-sm">
                   <i class="far fa-edit mr-1"></i>
                   {{ $root.$t('verb.track') }}
                 </a>
               </div>
             </div>
             <div class="c-card">
-              <template v-if="work.workRecords.length">
+              <template v-if="state.work.workRecords.length">
                 <div class="px-3">
-                  <div class="py-3 u-underline" v-for="workRecord in work.workRecords.slice(0, 10)">
+                  <div class="py-3 u-underline" v-for="workRecord in state.work.workRecords.slice(0, 10)">
                     <div class="row">
                       <div class="col-auto pl-3 pr-0">
                         <a :href="'/@' + workRecord.user.username">
@@ -355,7 +355,7 @@
                             </span>
                           </div>
                         </div>
-                        <div :class="{ 'p-work-records-show__content clearfix': true, 'c-comment-guard': !work.viewerFinishedToWatch }" @click="removeCommentGuard">
+                        <div :class="{ 'p-work-records-show__content clearfix': true, 'c-comment-guard': !state.work.viewerFinishedToWatch }" @click="removeCommentGuard">
                           <div class="float-right ml-4 mb-4 p-3" v-if="workRecord.ratingOverallState">
                             <div class="small font-weight-bold text-center mb-2">
                               {{ $root.$t('noun.rating') }}
@@ -367,7 +367,7 @@
                                   {{ $root.$t('noun.animation') }}
                                 </th>
                                 <td>
-                                  <ann-rating-label :init-state="workRecord.ratingAnimationState"></ann-rating-label>
+                                  <ann-rating-label :init-kind="workRecord.ratingAnimationState"></ann-rating-label>
                                 </td>
                               </tr>
                               <tr v-if="workRecord.ratingMusicState">
@@ -375,7 +375,7 @@
                                   {{ $root.$t('noun.music') }}
                                 </th>
                                 <td>
-                                  <ann-rating-label :init-state="workRecord.ratingMusicState"></ann-rating-label>
+                                  <ann-rating-label :init-kind="workRecord.ratingMusicState"></ann-rating-label>
                                 </td>
                               </tr>
                               <tr v-if="workRecord.ratingStoryState">
@@ -383,7 +383,7 @@
                                   {{ $root.$t('noun.story') }}
                                 </th>
                                 <td>
-                                  <ann-rating-label :init-state="workRecord.ratingStoryState"></ann-rating-label>
+                                  <ann-rating-label :init-kind="workRecord.ratingStoryState"></ann-rating-label>
                                 </td>
                               </tr>
                               <tr v-if="workRecord.ratingCharacterState">
@@ -391,7 +391,7 @@
                                   {{ $root.$t('noun.character') }}
                                 </th>
                                 <td>
-                                  <ann-rating-label :init-state="workRecord.ratingCharacterState"></ann-rating-label>
+                                  <ann-rating-label :init-kind="workRecord.ratingCharacterState"></ann-rating-label>
                                 </td>
                               </tr>
                               <tr v-if="workRecord.ratingOverallState">
@@ -399,7 +399,7 @@
                                   {{ $root.$t('noun.overall') }}
                                 </th>
                                 <td>
-                                  <ann-rating-label :init-state="workRecord.ratingOverallState"></ann-rating-label>
+                                  <ann-rating-label :init-kind="workRecord.ratingOverallState"></ann-rating-label>
                                 </td>
                               </tr>
                               </tbody>
@@ -414,7 +414,7 @@
                           <div class="col">
                             <div class="text-right">
                               <span class="mr-2">
-                                <ann-share-to-twitter-button :text="$root.$t('head.title.workRecords.show', { profileName: workRecord.user.name, username: workRecord.user.username, workTitle: work.localTitle })" :url="annConfig.localUrl + '/@' + workRecord.user.username + '/records/' + workRecord.record.annictId" :hashtags="work.twitterHashtag || ''"></ann-share-to-twitter-button>
+                                <ann-share-to-twitter-button :text="$root.$t('head.title.workRecords.show', { profileName: workRecord.user.name, username: workRecord.user.username, workTitle: state.work.localTitle })" :url="annConfig.localUrl + '/@' + workRecord.user.username + '/records/' + workRecord.record.annictId" :hashtags="state.work.twitterHashtag || ''"></ann-share-to-twitter-button>
                               </span>
                               <span class="mr-2">
                                 <ann-share-to-facebook-button :url="annConfig.localUrl + '/@' + workRecord.user.username + '/records/' + workRecord.record.annictId"></ann-share-to-facebook-button>
@@ -427,7 +427,7 @@
                         </div>
 
                         <div class="small text-right mt-2" v-if="$root.viewer.username === workRecord.user.username">
-                          <a :href="'/works/' + work.annictId + '/records/' + workRecord.record.annictId + '/edit'" class="mr-2">
+                          <a :href="'/works/' + state.work.annictId + '/records/' + workRecord.record.annictId + '/edit'" class="mr-2">
                             <i class="fab fa-edit mr-1"></i>
                             {{ $root.$t('noun.edit') }}
                           </a>
@@ -440,17 +440,17 @@
                     </div>
                   </div>
 
-                  <div class="container mb-3" v-if="work.workRecords.length > 10">
-                    <a :href="'/works/' + work.annictId + '/records'" class="btn btn-secondary w-100">
+                  <div class="container mb-3" v-if="state.work.workRecords.length > 10">
+                    <a :href="'/works/' + state.work.annictId + '/records'" class="btn btn-secondary w-100">
                       <i class="fab fa-angle-right"></i>
-                      {{ $root.$t('messages.works.viewAllNRecordBodyList', { n: work.workRecords.length }) }}
+                      {{ $root.$t('messages.works.viewAllNRecordBodyList', { n: state.work.workRecords.length }) }}
                     </a>
                   </div>
                 </div>
               </template>
               <template v-else>
                 <ann-empty :text="$root.$t('messages._components.empty.noRecordBodyList')">
-                  <a :href="'/works/' + work.annictId + '/records'" class="btn btn-primary mt-2">
+                  <a :href="'/works/' + state.work.annictId + '/records'" class="btn btn-primary mt-2">
                     <i class="fab fa-edit mr-1"></i>
                     {{ $root.$t('verb.track') }}
                   </a>
@@ -467,13 +467,13 @@
                   <h3 class="small text-center">
                     Watchers
                   </h3>
-                  <ann-work-watchers-chart :work-id="work.annictId"></ann-work-watchers-chart>
+                  <ann-work-watchers-chart :work-id="state.work.annictId"></ann-work-watchers-chart>
                 </div>
                 <div class="col">
                   <h3 class="small text-center">
                     Status
                   </h3>
-                  <ann-work-status-chart :work-id="work.annictId"></ann-work-status-chart>
+                  <ann-work-status-chart :work-id="state.work.annictId"></ann-work-status-chart>
                 </div>
               </div>
             </div>
@@ -489,7 +489,7 @@
 
 <script lang="ts">
   import $ from 'jquery'
-  import { onCreated, value } from 'vue-function-api'
+  import { createComponent, onMounted, reactive } from '@vue/composition-api'
 
   import Empty from '../Empty.vue'
   import LikeButton from '../LikeButton.vue'
@@ -506,7 +506,7 @@
 
   import { FetchVodChannelsQuery, FetchWorkQuery } from '../../queries'
 
-  export default {
+  export default createComponent({
     components: {
       'ann-empty': Empty,
       'ann-like-button': LikeButton,
@@ -527,8 +527,10 @@
     },
 
     setup(props, _context) {
-      const workWrapper = value(null)
-      const vodChannelsWrapper = value([])
+      const state = reactive({
+        work: null,
+        vodChannels: []
+      })
 
       const format = (str) => {
         return newLine(escape(str))
@@ -538,14 +540,14 @@
         $(event.target).parents('.p-work-records-show__content').removeClass('c-comment-guard')
       }
 
-      onCreated(async () => {
+      onMounted(async () => {
         const [work, vodChannels] = await Promise.all([
           new FetchWorkQuery({ workId: props.workId }).execute(),
           new FetchVodChannelsQuery().execute()
         ])
         console.log('work: ', work)
-        workWrapper.value = work
-        vodChannelsWrapper.value = vodChannels.map(vodChannel => {
+        state.work = work
+        state.vodChannels = vodChannels.map(vodChannel => {
           vodChannel.setProgramsOfWork(work)
           return vodChannel
         })
@@ -553,11 +555,10 @@
 
       return {
         annConfig: window.annConfig,
-        work: workWrapper,
-        vodChannels: vodChannelsWrapper,
+        state,
         format,
         removeCommentGuard,
       }
     }
-  }
+  })
 </script>

@@ -1,19 +1,19 @@
 <template>
-  <div :class="{ 'c-like-button d-inline-block u-fake-link': true, 'is-liked': isLiked }" @click="toggleLike">
-    <i :class="{ 'far fa-heart': !isLiked, 'fas fa-heart': isLiked }"></i>
+  <div :class="{ 'c-like-button d-inline-block u-fake-link': true, 'is-liked': state.isLiked }" @click="toggleLike">
+    <i :class="{ 'far fa-heart': !state.isLiked, 'fas fa-heart': state.isLiked }"></i>
     <span class="count">
-      {{ likesCount }}
+      {{ state.likesCount }}
     </span>
   </div>
 </template>
 
 <script lang="ts">
   import $ from 'jquery';
-  import { value } from 'vue-function-api'
+  import { createComponent, reactive } from '@vue/composition-api'
 
   import { LikeWorkRecordMutation, UnlikeWorkRecordMutation } from '../mutations'
 
-  export default {
+  export default createComponent({
     props: {
       resourceName: {
         type: String,
@@ -38,9 +38,11 @@
     },
 
     setup(props, _context) {
-      const likesCount = value(props.initLikesCount)
-      const isLiked = value(props.initIsLiked)
-      const isLoading = value(false)
+      const state = reactive({
+        likesCount: props.initLikesCount,
+        isLiked: props.initIsLiked,
+        isLoading: false,
+      })
 
       let likeMutation = null
       let unlikeMutation = null
@@ -55,31 +57,29 @@
           return
         }
 
-        if (isLoading.value) {
+        if (state.isLoading) {
           return
         }
 
-        isLoading.value = true
+        state.isLoading = true
 
-        if (isLiked.value) {
+        if (state.isLiked) {
           await unlikeMutation.execute()
-          isLoading.value = false
-          likesCount.value += -1
-          isLiked.value = false
+          state.isLoading = false
+          state.likesCount += -1
+          state.isLiked = false
         } else {
           await likeMutation.execute()
-          isLoading.value = false
-          likesCount.value += 1
-          isLiked.value = true
+          state.isLoading = false
+          state.likesCount += 1
+          state.isLiked = true
         }
       }
 
       return {
         toggleLike,
-        likesCount,
-        isLiked,
-        isLoading
+        state,
       }
     },
-  };
+  })
 </script>

@@ -1,23 +1,25 @@
 <template>
-  <span :class="'badge u-badge-' + state">
-    <i :class="'mr-1 far fa-' + icons[state]"></i>
-    {{ $root.$t(`models.record.ratingState.${state}`) }}
+  <span :class="'badge u-badge-' + state.kind">
+    <i :class="'mr-1 far fa-' + icons[state.kind]"></i>
+    {{ $root.$t(`models.record.ratingState.${state.kind}`) }}
   </span>
 </template>
 
 <script lang="ts">
-  import { value } from 'vue-function-api'
+  import { createComponent, reactive } from '@vue/composition-api'
 
-  export default {
+  export default createComponent({
     props: {
-      initState: {
+      initKind: {
         type: String,
         required: true
       },
     },
 
     setup(props, _context) {
-      const state = value(props.initState.toLowerCase())
+      const state = reactive({
+        kind: props.initKind.toLowerCase(),
+      })
       const icons = {
         great: 'heart',
         good: 'thumbs-up',
@@ -30,5 +32,5 @@
         icons
       }
     }
-  }
+  })
 </script>

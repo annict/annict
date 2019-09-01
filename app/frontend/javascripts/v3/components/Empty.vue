@@ -9,12 +9,14 @@
 </template>
 
 <script lang="ts">
-  export default {
+  import { createComponent } from '@vue/composition-api'
+
+  export default createComponent({
     props: {
       text: {
         type: String,
         required: true
       },
     },
-  }
+  })
 </script>
