@@ -17,7 +17,7 @@ const query = gql`
 
 export class FetchVodChannelsQuery extends ApplicationQuery {
   public async execute(): Promise<[Channel]> {
-    const result = await client.query({ query: query })
+    const result = await client.query({ query })
     return result.data.channels.nodes.map((node): Channel => {
       return new Channel(node)
     })

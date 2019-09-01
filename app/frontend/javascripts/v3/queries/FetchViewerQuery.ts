@@ -15,6 +15,6 @@ const query = gql`
 
 export class FetchViewerQuery extends ApplicationQuery {
   public async execute() {
-    return client.query({ query: query })
+    return client.query({ query })
   }
 }
