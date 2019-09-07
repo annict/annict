@@ -16,6 +16,7 @@ export class Work extends ApplicationModel {
   private synopsis: string
   private synopsisEn: string
   private localSynopsis: string
+  private localSynopsisHtml: string
   private synopsisSource: string
   private synopsisSourceEn: string
   private localSynopsisSource: string
@@ -57,6 +58,7 @@ export class Work extends ApplicationModel {
     this.synopsis = node.synopsis
     this.synopsisEn = node.synopsisEn
     this.localSynopsis = node.localSynopsis
+    this.localSynopsisHtml = node.localSynopsisHtml
     this.synopsisSource = node.synopsisSource
     this.synopsisSourceEn = node.synopsisSourceEn
     this.localSynopsisSource = node.localSynopsisSource

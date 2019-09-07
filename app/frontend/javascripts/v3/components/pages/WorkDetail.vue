@@ -204,7 +204,7 @@
                 {{ $root.$t('models.work.synopsis') }}
               </h2>
               <div class="c-card mt-3 p-3">
-                <span v-html="format(state.work.localSynopsis)"></span>
+                <span v-html="state.work.localSynopsisHtml"></span>
                 <div class="text-right small">
                   <span class="mr-1">
                     {{ $root.$t('noun.source') }}: {{ state.work.localSynopsisSource }}
@@ -406,7 +406,7 @@
                             </table>
                           </div>
                           <div class="c-body mb-3">
-                            <div class="c-body__content" v-html="format(workRecord.body)"></div>
+                            <div class="c-body__content" v-html="workRecord.bodyHtml"></div>
                           </div>
                         </div>
 
@@ -502,9 +502,6 @@
   import WorkSubNav from '../WorkSubNav.vue'
   import WorkWatchersChart from '../WorkWatchersChart.vue'
 
-  import escape from '../../filters/escape'
-  import newLine from '../../filters/newLine'
-
   import { FetchVodChannelsQuery, FetchWorkQuery } from '../../queries'
 
   export default createComponent({
@@ -534,10 +531,6 @@
         vodChannels: []
       })
 
-      const format = (str) => {
-        return newLine(escape(str))
-      }
-
       const removeCommentGuard = (event) => {
         $(event.target).parents('.p-work-records-show__content').removeClass('c-comment-guard')
       }
@@ -558,7 +551,6 @@
       return {
         annConfig: window.annConfig,
         state,
-        format,
         removeCommentGuard,
       }
     }

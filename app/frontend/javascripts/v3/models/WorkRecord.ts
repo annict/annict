@@ -10,6 +10,7 @@ export class WorkRecord extends ApplicationModel {
   private ratingCharacterState: string
   private ratingOverallState: string
   private body: string
+  private bodyHtml: string
   private likesCount: number
   private createdAt: DateTime
   private modifiedAt: DateTime
@@ -26,6 +27,7 @@ export class WorkRecord extends ApplicationModel {
     this.ratingCharacterState = node.ratingCharacterState
     this.ratingOverallState = node.ratingOverallState
     this.body = node.body
+    this.bodyHtml = node.bodyHtml
     this.likesCount = node.likesCount
     this.createdAt = node.createdAt
     this.modifiedAt = node.modifiedAt

@@ -6,9 +6,7 @@ import VueI18n from 'vue-i18n'
 
 import WorkDetail from './v3/components/pages/WorkDetail.vue'
 
-import escape from './v3/filters/escape'
 import formatDomain from './v3/filters/formatDomain'
-import newLine from './v3/filters/newLine'
 
 
 import messages from './v3/messages'
@@ -24,9 +22,7 @@ const i18n = new VueI18n({
   messages,
 })
 
-Vue.filter('escape', escape)
 Vue.filter('formatDomain', formatDomain)
-Vue.filter('newLine', newLine)
 
 Vue.component('c-work-detail', WorkDetail)
 

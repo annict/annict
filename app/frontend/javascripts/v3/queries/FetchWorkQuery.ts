@@ -35,7 +35,7 @@ const query = gql`
         isNoEpisodes
         synopsis
         synopsisEn
-        localSynopsis
+        localSynopsisHtml
         synopsisSource
         synopsisSourceEn
         localSynopsisSource
@@ -117,7 +117,7 @@ const query = gql`
             ratingStoryState
             ratingCharacterState
             ratingOverallState
-            body
+            bodyHtml
             likesCount
             createdAt
             modifiedAt
