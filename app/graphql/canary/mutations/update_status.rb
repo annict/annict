@@ -16,13 +16,7 @@ module Canary
         status.app = context[:application]
         status.via = context[:via]
 
-        kind = case kind
-        when "NO_STATE" then "no_select"
-        else
-          kind.downcase
-        end
-
-        status.change!(kind)
+        status.change!(Status.kind_v3_to_v2(kind.downcase).to_s)
 
         {
           work: work

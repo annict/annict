@@ -40,6 +40,7 @@ const query = gql`
         synopsisSourceEn
         localSynopsisSource
         viewerFinishedToWatch
+        viewerStatusKind
         copyright
         image {
           internalUrl(size: "280x")

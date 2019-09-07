@@ -45,7 +45,7 @@
             </div>
 
             <div class="mb-3">
-              <%= render "v3/application/status_selector", gql_work_id: @work.id %>
+              <ann-status-selector :work-id="state.work.id" :init-kind="state.work.viewerStatusKind"></ann-status-selector>
             </div>
 
             <h2 class="h4 font-weight-bold mb-3">
@@ -497,6 +497,7 @@
   import RatingLabel from '../RatingLabel.vue'
   import ShareToFacebookButton from '../ShareToFacebookButton.vue'
   import ShareToTwitterButton from '../ShareToTwitterButton.vue'
+  import StatusSelector from '../StatusSelector.vue'
   import WorkStatusChart from '../WorkStatusChart.vue'
   import WorkSubNav from '../WorkSubNav.vue'
   import WorkWatchersChart from '../WorkWatchersChart.vue'
@@ -514,6 +515,7 @@
       'ann-rating-label': RatingLabel,
       'ann-share-to-facebook-button': ShareToFacebookButton,
       'ann-share-to-twitter-button': ShareToTwitterButton,
+      'ann-status-selector': StatusSelector,
       'ann-work-status-chart': WorkStatusChart,
       'ann-work-subnav': WorkSubNav,
       'ann-work-watchers-chart': WorkWatchersChart,

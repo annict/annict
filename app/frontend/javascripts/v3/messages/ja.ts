@@ -29,6 +29,9 @@ export default {
     _components: {
       empty: {
         noRecordBodyList: '感想はありません'
+      },
+      statusSelector: {
+        selectStatus: 'ステータスを選択',
       }
     },
     works: {
@@ -53,6 +56,15 @@ export default {
         autumn: '{year}年秋',
       },
       later: '時期未定',
+    },
+    status: {
+      kind: {
+        planToWatch: '見たい',
+        watching: '見てる',
+        completed: '見た',
+        onHold: '一時中断',
+        dropped: '視聴中止',
+      },
     },
     work: {
       media: 'メディア',

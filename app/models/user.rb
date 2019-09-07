@@ -287,6 +287,10 @@ class User < ApplicationRecord
     latest_statuses.find_by(work: work)&.kind.presence || "no_select"
   end
 
+  def status_kind_v3(work)
+    Status.kind_v2_to_v3(latest_statuses.find_by(work: work)&.kind)&.to_s.presence || "no_status"
+  end
+
   def encoded_id
     Digest::SHA256.hexdigest(id.to_s)
   end

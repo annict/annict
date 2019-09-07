@@ -30,6 +30,7 @@ export class Work extends ApplicationModel {
   private wikipediaUrl: string
   private wikipediaUrlEn: string
   private viewerFinishedToWatch: boolean
+  private viewerStatusKind: string
   private season: Season
   private image: WorkImage
   private trailers: Trailer[]
@@ -69,6 +70,7 @@ export class Work extends ApplicationModel {
     this.wikipediaUrl = node.wikipediaUrl
     this.wikipediaUrlEn = node.wikipediaUrlEn
     this.viewerFinishedToWatch = node.viewerFinishedToWatch
+    this.viewerStatusKind = node.viewerStatusKind
     this.watchersCount = node.watchersCount
   }
 

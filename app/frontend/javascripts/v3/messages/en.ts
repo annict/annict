@@ -29,6 +29,9 @@ export default {
     _components: {
       empty: {
         noRecordBodyList: 'No Comments'
+      },
+      statusSelector: {
+        selectStatus: 'Select Status',
       }
     },
     works: {
@@ -53,6 +56,15 @@ export default {
         autumn: 'Fall {year}',
       },
       later: 'Later',
+    },
+    status: {
+      kind: {
+        planToWatch: 'Plan to Watch',
+        watching: 'Watching',
+        completed: 'Completed',
+        onHold: 'On Hold',
+        dropped: 'Dropped',
+      },
     },
     work: {
       media: 'Media',
