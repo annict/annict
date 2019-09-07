@@ -18,7 +18,7 @@ gem "aws-sdk-s3" # Using in Shrine
 gem "browser", require: "browser/browser"
 gem "by_star"
 gem "cld"
-gem "commonmarker"
+gem "commonmarker" # Using github-markup
 gem "counter_culture"
 gem "delayed_job_active_record"
 gem "devise"
