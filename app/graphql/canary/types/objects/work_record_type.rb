@@ -14,6 +14,7 @@ module Canary
         field :record, Canary::Types::Objects::RecordType, null: false
         field :title, String, null: true
         field :body, String, null: false
+        field :body_html, String, null: false
         field :rating_overall_state, Canary::Types::Enums::RatingState, null: true
         field :rating_animation_state, Canary::Types::Enums::RatingState, null: true
         field :rating_music_state, Canary::Types::Enums::RatingState, null: true
@@ -39,6 +40,10 @@ module Canary
 
         def title
           object.title.presence || I18n.t("noun.record_of_work", work_title: object.work.local_title)
+        end
+
+        def body_html
+          render_markdown(object.body)
         end
 
         def viewer_did_like

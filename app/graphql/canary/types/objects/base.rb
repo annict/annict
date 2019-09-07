@@ -6,6 +6,7 @@ module Canary
       class Base < GraphQL::Schema::Object
         include Imgix::Rails::UrlHelper
         include ImageHelper
+        include MarkdownHelper
 
         def annict_id
           object.id
