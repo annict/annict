@@ -118,6 +118,9 @@ module Canary
         field :local_synopsis, String,
           null: false
 
+        field :local_synopsis_html, String,
+          null: false
+
         field :synopsis_source, String,
           null: false
 
@@ -250,6 +253,14 @@ module Canary
 
           kind = context[:viewer].status_kind_v3(object)
           kind == "no_status" ? "NO_STATUS" : kind.upcase
+        end
+
+        def local_synopsis
+          object.local_synopsis(raw: true)
+        end
+
+        def local_synopsis_html
+          object.local_synopsis(raw: false)
         end
       end
     end
