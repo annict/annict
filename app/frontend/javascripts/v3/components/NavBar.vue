@@ -6,6 +6,33 @@
         <img :src="state.annConfig.images.logoUrl" width="25" height="30" alt="Annict">
       </a>
       <ul class="navbar-nav mt-2 mt-md-0 mr-md-2">
+        <li class="nav-item" v-if="$root.isSignedIn()">
+          <a class="nav-link text-dark" href="/programs">
+            {{ $t('noun.programs') }}
+          </a>
+        </li>
+        <li class="nav-item dropdown d-none d-lg-inline-block">
+          <a class="nav-link dropdown-toggle text-dark" data-toggle="dropdown" href="">
+            {{ $t('noun.library') }}
+          </a>
+          <div class="dropdown-menu m-0">
+            <a :href="'/@' + $root.viewer.username + '/watching'" class="dropdown-item text-dark">
+              {{ $t('noun.watching') }}
+            </a>
+            <a :href="'/@' + $root.viewer.username + '/wanna_watch'" class="dropdown-item text-dark">
+              {{ $t('noun.planToWatch') }}
+            </a>
+            <a :href="'/@' + $root.viewer.username + '/watched'" class="dropdown-item text-dark">
+              {{ $t('noun.completed') }}
+            </a>
+            <a :href="'/@' + $root.viewer.username + '/on_hold'" class="dropdown-item text-dark">
+              {{ $t('noun.onHold') }}
+            </a>
+            <a :href="'/@' + $root.viewer.username + '/stop_watching'" class="dropdown-item text-dark">
+              {{ $t('noun.dropped') }}
+            </a>
+          </div>
+        </li>
         <li class="nav-item dropdown d-none d-lg-inline-block">
           <a class="nav-link dropdown-toggle text-dark" href="" data-toggle="dropdown">
             {{ $t('verb.explore') }}
