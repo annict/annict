@@ -189,6 +189,13 @@
                 </a>
               </li>
             </ul>
+
+            <h2 class="h4 font-weight-bold mt-4 mb-3">
+              <i class="fas fa-share mr-1"></i>
+              {{ $root.$t('noun.share') }}
+            </h2>
+            <ann-share-to-twitter-button :text="state.work.localTitle" :url="annConfig.localUrl + '/works/' + state.work.annictId" :hashtags="state.work.twitterHashtag || ''"></ann-share-to-twitter-button>
+            <ann-share-to-facebook-button :url="annConfig.localUrl + '/works/' + state.work.annictId"></ann-share-to-facebook-button>
           </div>
           <div class="col-md-9">
             <ann-work-subnav :work="state.work" page-category="workDetail"></ann-work-subnav>
