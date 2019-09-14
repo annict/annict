@@ -100,6 +100,9 @@ module Canary
         field :work_records_count, Integer,
           null: false
 
+        field :work_records_with_body_count, Integer,
+          null: false
+
         field :is_no_episodes, Boolean,
           null: false
 
