@@ -28,6 +28,7 @@ export class Work extends ApplicationModel {
   private twitterHashtag: string
   private twitterUsername: string
   private watchersCount: number
+  private workRecordsWithBodyCount: number
   private wikipediaUrl: string
   private wikipediaUrlEn: string
   private viewerFinishedToWatch: boolean
@@ -74,6 +75,7 @@ export class Work extends ApplicationModel {
     this.viewerFinishedToWatch = node.viewerFinishedToWatch
     this.viewerStatusKind = node.viewerStatusKind
     this.watchersCount = node.watchersCount
+    this.workRecordsWithBodyCount = node.workRecordsWithBodyCount
   }
 
   public setSeason(node) {

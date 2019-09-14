@@ -464,8 +464,8 @@
 
                   <div class="container mb-3" v-if="state.work.workRecords.length > 10">
                     <a :href="'/works/' + state.work.annictId + '/records'" class="btn btn-secondary w-100">
-                      <i class="fab fa-angle-right"></i>
-                      {{ $root.$t('messages.works.viewAllNRecordBodyList', { n: state.work.workRecords.length }) }}
+                      <i class="fas fa-angle-right"></i>
+                      {{ $root.$t('messages.works.viewAllNRecordBodyList', { n: state.work.workRecordsWithBodyCount }) }}
                     </a>
                   </div>
                 </div>

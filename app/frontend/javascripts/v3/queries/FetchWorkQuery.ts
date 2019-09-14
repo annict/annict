@@ -24,6 +24,7 @@ const query = gql`
         watchersCount
         satisfactionRate
         ratingsCount
+        workRecordsWithBodyCount
         officialSiteUrl
         officialSiteUrlEn
         wikipediaUrl
@@ -98,7 +99,7 @@ const query = gql`
             }
           }
         }
-        workRecords(hasBody: true, filterByLocale: true, orderBy: { field: CREATED_AT, direction: DESC }, first: 10) {
+        workRecords(hasBody: true, filterByLocale: true, orderBy: { field: CREATED_AT, direction: DESC }, first: 11) { # Get 11 work records to display more records link
           nodes {
             user {
               annictId
