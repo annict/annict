@@ -16,7 +16,9 @@
               </div>
             </div>
             <h1 class="h2 font-weight-bold mb-3">
-              {{ state.work.title }}
+              <a :href="'/works/' + state.work.annictId" class="u-text-body">
+                {{ state.work.title }}
+              </a>
             </h1>
             <div class="row mb-3">
               <div class="col text-center">
