@@ -3,6 +3,7 @@
     <template v-if="state.work">
       <ann-navbar></ann-navbar>
       <div class="container p-3">
+        <ann-breadcrumb :items="state.breadcrumbItems" class="mb-3"></ann-breadcrumb>
         <div class="row">
           <div class="col-md-3 pr-md-0">
             <div class="c-work-image mb-2">
@@ -491,6 +492,7 @@
   import $ from 'jquery'
   import { createComponent, onMounted, reactive } from '@vue/composition-api'
 
+  import Breadcrumb from '../Breadcrumb.vue'
   import Empty from '../Empty.vue'
   import LikeButton from '../LikeButton.vue'
   import NavBar from '../NavBar.vue'
@@ -506,6 +508,7 @@
 
   export default createComponent({
     components: {
+      'ann-breadcrumb': Breadcrumb,
       'ann-empty': Empty,
       'ann-like-button': LikeButton,
       'ann-navbar': NavBar,
@@ -525,10 +528,11 @@
       }
     },
 
-    setup(props, _context) {
+    setup(props, context) {
       const state = reactive({
         work: null,
-        vodChannels: []
+        vodChannels: [],
+        breadcrumbItems: [],
       })
 
       const removeCommentGuard = (event) => {
@@ -546,6 +550,21 @@
           vodChannel.setProgramsOfWork(work)
           return vodChannel
         })
+
+        state.breadcrumbItems = [
+          {
+            href: '/',
+            text: context.root.$t('noun.home')
+          },
+          {
+            href: `/works/${work.season.slug}`,
+            text: context.root.$t('noun.seasonXAnime', { seasonName: work.season.localName }),
+          },
+          {
+            text: work.title,
+            current: true
+          }
+        ]
       })
 
       return {

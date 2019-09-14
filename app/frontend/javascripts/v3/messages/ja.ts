@@ -117,6 +117,7 @@ export default {
     records: '記録',
     releaseSeason: 'リリース時期',
     satisfactionRateShorten: '満足度',
+    seasonXAnime: '{seasonName}アニメ',
     settings: '設定',
     share: 'シェア',
     signIn: 'ログイン',

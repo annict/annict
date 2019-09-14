@@ -117,6 +117,7 @@ export default {
     records: 'Records',
     releaseSeason: 'Release Season',
     satisfactionRateShorten: 'Satisfaction',
+    seasonXAnime: '{seasonName} Anime',
     settings: 'Settings',
     share: 'Share',
     signIn: 'Sign In',
