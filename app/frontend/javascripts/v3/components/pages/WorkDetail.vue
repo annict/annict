@@ -544,7 +544,6 @@
           new FetchWorkQuery({ workId: props.workId }).execute(),
           new FetchVodChannelsQuery().execute()
         ])
-        console.log('work: ', work)
         state.work = work
         state.vodChannels = vodChannels.map(vodChannel => {
           vodChannel.setProgramsOfWork(work)

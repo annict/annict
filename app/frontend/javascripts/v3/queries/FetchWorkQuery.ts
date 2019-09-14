@@ -140,7 +140,6 @@ export class FetchWorkQuery extends ApplicationQuery {
   public async execute(): Promise<Work> {
     const result = await client.query({ query, variables: { annictId: this.workId } })
     const node = result.data.works.nodes[0]
-    console.log('node: ', node)
     const work = new Work(node)
     work.setSeason(node)
     work.setImage(node.image)
