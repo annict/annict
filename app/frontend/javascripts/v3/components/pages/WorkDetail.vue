@@ -177,6 +177,18 @@
                 </dd>
               </template>
             </dl>
+
+            <h2 class="h4 font-weight-bold mt-4 mb-3">
+              <i class="fas fa-video mr-1"></i>
+              {{ $root.$t('noun.vods') }}
+            </h2>
+            <ul class="list-unstyled">
+              <li v-for="vodChannel in state.vodChannels">
+                <a :href="vodChannel.programs[0].vodTitleUrl" rel="noopener" target="_blank" v-if="vodChannel.programs[0]">
+                  {{ vodChannel.name }}
+                </a>
+              </li>
+            </ul>
           </div>
           <div class="col-md-9">
             <ann-work-subnav :work="state.work" page-category="workDetail"></ann-work-subnav>
