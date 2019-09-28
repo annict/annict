@@ -361,7 +361,7 @@
                       </div>
                       <div>
                         <a :href="'/@/' + workRecord.user.username + '/records/' + workRecord.record.annictId" class="small text-muted">
-                          {{ workRecord.createdAt }}
+                          {{ workRecord.createdAt | formatDate }}
                         </a>
                         <small class="ml-2 text-muted" v-if="workRecord.modifiedAt">
                           <i class="far pencil-alt"></i>
