@@ -6,9 +6,7 @@ import VueI18n from 'vue-i18n'
 
 import WorkDetail from './v3/components/pages/WorkDetail.vue'
 
-import formatDomain from './v3/filters/formatDomain'
-
-
+import { formatDate, formatDomain } from './v3/filters'
 import messages from './v3/messages'
 import { FetchViewerQuery } from './v3/queries'
 
@@ -21,6 +19,7 @@ const i18n = new VueI18n({
   messages,
 })
 
+Vue.filter('formatDate', formatDate)
 Vue.filter('formatDomain', formatDomain)
 
 Vue.component('c-work-detail', WorkDetail)
