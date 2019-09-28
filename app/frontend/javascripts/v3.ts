@@ -17,8 +17,7 @@ Vue.use(VueCompositionApi)
 Vue.use(VueI18n)
 
 const i18n = new VueI18n({
-  locale: 'ja',
-  fallbackLocale: 'en',
+  locale: annConfig.isDomainJp ? 'ja' : 'en',
   messages,
 })
 
@@ -51,6 +50,10 @@ document.addEventListener('turbolinks:load', _event => {
       isSignedIn() {
         return !!this.viewer
       },
+
+      isLocaleJa() {
+        return annConfig.locale === 'ja'
+      }
     },
   })
 })

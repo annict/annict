@@ -17,7 +17,7 @@
             </div>
             <h1 class="h2 font-weight-bold mb-3">
               <a :href="'/works/' + state.work.annictId" class="u-text-body">
-                {{ state.work.title }}
+                {{ state.work.localTitle }}
               </a>
             </h1>
             <div class="row mb-3">
@@ -221,7 +221,7 @@
               </div>
             </template>
 
-            <template v-if="state.work.synopsis">
+            <template v-if="state.work.localSynopsisHtml">
               <h2 class="h4 text-center my-4 font-weight-bold">
                 {{ $root.$t('models.work.synopsis') }}
               </h2>
@@ -584,7 +584,7 @@
             text: context.root.$t('noun.seasonXAnime', { seasonName: work.season.localName }),
           },
           {
-            text: work.title,
+            text: work.localTitle,
             current: true
           }
         ]

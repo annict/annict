@@ -77,7 +77,7 @@
                   {{ $root.$t('head.title.pages.privacy') }}
                 </a>
               </li>
-              <li v-if="annConfig.isLocaleJa">
+              <li v-if="$root.isLocaleJa()">
                 <a href="/legal">
                   {{ $root.$t('head.title.pages.legal') }}
                 </a>

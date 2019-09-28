@@ -26,7 +26,8 @@ module Canary
           null: true,
           description: "タイトル (英語)"
 
-        field :local_title, String, null: false
+        field :local_title, String,
+          null: false
 
         field :title_ro, String,
           null: true,

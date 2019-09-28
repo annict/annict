@@ -11,7 +11,7 @@
             {{ $t('noun.programs') }}
           </a>
         </li>
-        <li class="nav-item dropdown d-none d-lg-inline-block">
+        <li class="nav-item dropdown d-none d-lg-inline-block" v-if="$root.isSignedIn()">
           <a class="nav-link dropdown-toggle text-dark" data-toggle="dropdown" href="">
             {{ $t('noun.library') }}
           </a>

@@ -23,4 +23,8 @@ module Localable
   def local_current_url(locale: I18n.locale)
     ["#{local_url(locale: locale)}#{request.path}", request.query_string].select(&:present?).join("?")
   end
+
+  def domain_jp?
+    request.domain == ENV.fetch("ANNICT_JP_DOMAIN")
+  end
 end

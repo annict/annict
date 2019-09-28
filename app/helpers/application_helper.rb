@@ -41,13 +41,14 @@ module ApplicationHelper
     config = {
       currentUrlJa: local_current_url(locale: :ja),
       currentUrlEn: local_current_url(locale: :en),
+      isDomainJp: domain_jp?,
       facebook: {
         appId: ENV.fetch("FACEBOOK_APP_ID")
       },
       images: {
         logoUrl: asset_bundle_url("images/logos/color-mizuho.png")
       },
-      isLocaleJa: locale_ja?,
+      locale: I18n.locale.to_s,
       localUrl: local_url,
       season: {
         current: ENV.fetch("ANNICT_CURRENT_SEASON"),

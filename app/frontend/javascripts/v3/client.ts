@@ -10,7 +10,7 @@ const fragmentMatcher = new IntrospectionFragmentMatcher({
 
 const cache = new InMemoryCache({ fragmentMatcher })
 const link = new HttpLink({
-  uri: 'http://annict-jp.test:3000/api/internal/graphql',
+  uri: '/api/internal/graphql',
 })
 
 export default new ApolloClient({

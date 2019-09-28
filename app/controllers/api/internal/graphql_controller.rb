@@ -6,7 +6,9 @@ module Api
       include Analyzable
       include LogrageSetting
       include RavenContext
+      include Localable
 
+      before_action :set_locale
       skip_before_action :verify_authenticity_token
 
       def execute
@@ -39,6 +41,12 @@ module Api
         else
           raise ArgumentError, "Unexpected parameter: #{ambiguous_param}"
         end
+      end
+
+      def set_locale
+        return if user_signed_in?
+
+        I18n.locale = domain_jp? ? :ja : :en
       end
     end
   end
