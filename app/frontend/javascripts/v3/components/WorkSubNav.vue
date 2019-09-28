@@ -1,18 +1,18 @@
 <template>
   <div class="c-subnav c-subnav--transparent">
-    <a href="" :class="{ 'c-subnav__link': true, 'c-subnav__link--active': pageCategory === 'workDetail' }">
+    <a :href="`/works/${work.annictId}`" :class="{ 'c-subnav__link': true, 'c-subnav__link--active': pageCategory === 'workDetail' }">
       <div class="c-subnav__item">
         {{ $t('noun.detail') }}
       </div>
     </a>
     <template v-if="!work.isNoEpisodes">
-      <a href="" :class="{ 'c-subnav__link': true, 'c-subnav__link--active': pageCategory === 'episodeList' }">
+      <a :href="`/works/${work.annictId}/episodes`" :class="{ 'c-subnav__link': true, 'c-subnav__link--active': pageCategory === 'episodeList' }">
         <div class="c-subnav__item">
           {{ $t('noun.episodes') }}
         </div>
       </a>
     </template>
-    <a href="" :class="{ 'c-subnav__link': true, 'c-subnav__link--active': pageCategory === 'workRecordList' }">
+    <a :href="`/works/${work.annictId}/records`" :class="{ 'c-subnav__link': true, 'c-subnav__link--active': pageCategory === 'workRecordList' }">
       <div class="c-subnav__item">
         {{ $t('noun.records') }}
       </div>

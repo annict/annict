@@ -76,7 +76,7 @@
                 {{ $t('head.title.channels.index') }}
               </a>
             </template>
-            <a href="/profile" class="dropdown-item">
+            <a href="/settings/profile" class="dropdown-item">
               {{ $t('noun.settings') }}
             </a>
             <a href="/userland" class="dropdown-item">

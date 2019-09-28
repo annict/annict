@@ -243,10 +243,8 @@
             <div class="c-card container mt-3 pt-3">
               <div class="row pl-3">
                 <div class="col-6 col-sm-4 mb-3 pl-0" v-for="episode in state.work.episodes">
-                  <a href="">
-                    <div class="">
-                      {{ episode.numberText }}
-                    </div>
+                  <a :href="`/works/${state.work.annictId}/episodes/${episode.annictId}`">
+                    {{ episode.numberText }}
                     <div class="small u-text-body">
                       {{ episode.title }}
                     </div>
