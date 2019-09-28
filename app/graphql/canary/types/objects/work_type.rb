@@ -80,7 +80,7 @@ module Canary
           null: true
 
         field :image, Canary::Types::Objects::WorkImageType,
-          null: true
+          null: false
 
         field :copyright, String,
           null: true
@@ -234,7 +234,9 @@ module Canary
         end
 
         def image
-          Canary::RecordLoader.for(WorkImage).load(object.work_image&.id)
+          return WorkImage.new unless object.work_image&.id
+
+          Canary::RecordLoader.for(WorkImage).load(object.work_image.id)
         end
 
         def copyright

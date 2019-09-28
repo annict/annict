@@ -17,7 +17,9 @@ module Canary
         field :twitter_bigger_avatar_url, String, null: true
         field :recommended_image_url, String, null: true
 
-        field :internal_url, String, null: true, description: "このフィールドの値は公開されていません" do
+        field :internal_url, String,
+          null: false,
+          description: "このフィールドの値は公開されていません" do
           argument :size, String, required: true
         end
 
@@ -26,38 +28,44 @@ module Canary
         end
 
         def internal_url(size:)
-          return unless context[:admin]
-          return "" if object.blank?
+          return "" unless context[:admin]
+
           ann_image_url object, :image, size: size, ratio: "3:4"
         end
 
         def facebook_og_image_url
           return "" if object.blank?
+
           object.work.facebook_og_image_url
         end
 
         def twitter_avatar_url
           return "" if object.blank?
+
           object.work.twitter_avatar_url
         end
 
         def twitter_mini_avatar_url
           return "" if object.blank?
+
           object.work.twitter_avatar_url(:mini)
         end
 
         def twitter_normal_avatar_url
           return "" if object.blank?
+
           object.work.twitter_avatar_url(:normal)
         end
 
         def twitter_bigger_avatar_url
           return "" if object.blank?
+
           object.work.twitter_avatar_url(:bigger)
         end
 
         def recommended_image_url
           return "" if object.blank?
+
           object.work.recommended_image_url
         end
       end
