@@ -3,8 +3,8 @@
     <i class="far fa-meh"></i>
     <div class="h2 mt-3">
       {{ text }}
-      <slot></slot>
     </div>
+    <slot></slot>
   </div>
 </template>
 
