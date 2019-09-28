@@ -467,12 +467,7 @@
                 </div>
               </template>
               <template v-else>
-                <ann-empty :text="$root.$t('messages._components.empty.noRecordBodyList')">
-                  <a :href="'/works/' + state.work.annictId + '/records'" class="btn btn-primary mt-2">
-                    <i class="far fa-edit mr-1"></i>
-                    {{ $root.$t('verb.track') }}
-                  </a>
-                </ann-empty>
+                <ann-empty :text="$root.$t('messages._components.empty.noRecordBodyList')"></ann-empty>
               </template>
             </div>
 
