@@ -11,6 +11,9 @@ const fragmentMatcher = new IntrospectionFragmentMatcher({
 const cache = new InMemoryCache({ fragmentMatcher })
 const link = new HttpLink({
   uri: '/api/internal/graphql',
+  headers: {
+    'X-CSRF-Token': document.querySelector('meta[name=csrf-token]').getAttribute('content'),
+  }
 })
 
 export default new ApolloClient({

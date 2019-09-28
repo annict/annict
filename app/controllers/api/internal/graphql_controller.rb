@@ -9,7 +9,6 @@ module Api
       include Localable
 
       before_action :set_locale
-      skip_before_action :verify_authenticity_token
 
       def execute
         variables = ensure_hash(params[:variables])
