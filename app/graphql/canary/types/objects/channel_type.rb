@@ -11,7 +11,8 @@ module Canary
         field :annict_id, Integer, null: false
         field :slots, Canary::Types::Objects::SlotType.connection_type, null: true
         field :channel_group, Canary::Types::Objects::ChannelGroupType, null: false
-        field :sc_chid, Integer, null: false,
+        field :sc_chid, Integer,
+          null: false,
           description: "しょぼいカレンダーのチャンネルID"
         field :name, String, null: false
         field :published, Boolean, null: false

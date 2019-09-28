@@ -11,7 +11,8 @@ module Canary
         field :annict_id, Integer, null: false
         field :channels, Canary::Types::Objects::ChannelType.connection_type, null: true
         field :name, String, null: false
-        field :sort_number, Integer, null: false,
+        field :sort_number, Integer,
+          null: false,
           description: "ソート番号"
 
         def channels

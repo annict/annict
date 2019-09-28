@@ -6,7 +6,8 @@ module Canary
       class Query < Canary::Types::Objects::Base
         field :node, field: GraphQL::Relay::Node.field
         field :nodes, field: GraphQL::Relay::Node.plural_field
-        field :viewer, Canary::Types::Objects::UserType, null: true,
+        field :viewer, Canary::Types::Objects::UserType,
+          null: true,
           description: "認証されているユーザ"
 
         field :user, Canary::Types::Objects::UserType, null: true do

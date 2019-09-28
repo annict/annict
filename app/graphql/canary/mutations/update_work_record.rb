@@ -4,15 +4,19 @@ module Canary
   module Mutations
     class UpdateWorkRecord < Canary::Mutations::Base
       argument :work_record_id, ID, required: true
-      argument :body, String, required: false,
+      argument :body, String,
+        required: false,
         description: "作品への感想"
       WorkRecord::STATES.each do |state|
-        argument state.to_s.camelcase(:lower).to_sym, Canary::Types::Enums::RatingState, required: true,
+        argument state.to_s.camelcase(:lower).to_sym, Canary::Types::Enums::RatingState,
+          required: true,
           description: "作品への評価"
       end
-      argument :share_twitter, Boolean, required: false,
+      argument :share_twitter, Boolean,
+        required: false,
         description: "作品への記録をTwitterでシェアするかどうか"
-      argument :share_facebook, Boolean, required: false,
+      argument :share_facebook, Boolean,
+        required: false,
         description: "作品への記録をFacebookでシェアするかどうか"
 
       field :work_record, Canary::Types::Objects::WorkRecordType, null: true

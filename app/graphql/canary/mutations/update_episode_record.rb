@@ -4,13 +4,17 @@ module Canary
   module Mutations
     class UpdateEpisodeRecord < Canary::Mutations::Base
       argument :episode_record_id, ID, required: true
-      argument :comment, String, required: false,
+      argument :comment, String,
+        required: false,
         description: "エピソードへの感想"
-      argument :rating_state, Canary::Types::Enums::RatingState, required: false,
+      argument :rating_state, Canary::Types::Enums::RatingState,
+        required: false,
         description: "エピソードへの評価"
-      argument :share_twitter, Boolean, required: false,
+      argument :share_twitter, Boolean,
+        required: false,
         description: "エピソードへの記録をTwitterでシェアするかどうか"
-      argument :share_facebook, Boolean, required: false,
+      argument :share_facebook, Boolean,
+        required: false,
         description: "エピソードへの記録をFacebookでシェアするかどうか"
 
       field :episode_record, Canary::Types::Objects::EpisodeRecordType, null: true

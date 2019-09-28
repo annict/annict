@@ -47,8 +47,8 @@ module Canary
         end
 
         def viewer_did_like
-          user.then do |_user|
-            _user.like?(object)
+          user.then do |u|
+            u.like?(object)
           end
         end
       end

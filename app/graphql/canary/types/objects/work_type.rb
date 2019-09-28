@@ -171,7 +171,8 @@ module Canary
         end
 
         def work_records(order_by: nil, has_body: nil, filter_by_locale: false)
-          SearchWorkRecordsQuery.new(object.work_records,
+          SearchWorkRecordsQuery.new(
+            object.work_records,
             context: context,
             order_by: order_by,
             has_body: has_body,

@@ -63,9 +63,7 @@ module Canary
         end
 
         def name
-          Canary::RecordBelongsToUserLoader.for(Profile).load(object.id).then do |profile|
-            profile.name
-          end
+          Canary::RecordBelongsToUserLoader.for(Profile).load(object.id).then(&:name)
         end
 
         def description
