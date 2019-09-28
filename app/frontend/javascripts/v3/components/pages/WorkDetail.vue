@@ -363,12 +363,12 @@
                         <a :href="'/@/' + workRecord.user.username + '/records/' + workRecord.record.annictId" class="small text-muted">
                           {{ workRecord.createdAt | formatDate }}
                         </a>
-                        <small class="ml-2 text-muted" v-if="workRecord.modifiedAt">
+                        <small class="ml-1 text-muted" v-if="workRecord.modifiedAt">
                           <i class="far pencil-alt"></i>
                         </small>
-                        <span class="small ml-2 text-muted">
+                        <a :href="'/@/' + workRecord.user.username + '/records/' + workRecord.record.annictId" class="small ml-1 text-muted">
                           {{ workRecord.record.pageViewsCount }} views
-                        </span>
+                        </a>
                       </div>
                     </div>
                   </div>
