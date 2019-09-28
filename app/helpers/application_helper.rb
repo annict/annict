@@ -39,12 +39,15 @@ module ApplicationHelper
 
   def annict_config
     config = {
+      currentUrlJa: local_current_url(locale: :ja),
+      currentUrlEn: local_current_url(locale: :en),
       facebook: {
         appId: ENV.fetch("FACEBOOK_APP_ID")
       },
       images: {
         logoUrl: asset_bundle_url("images/logos/color-mizuho.png")
       },
+      isLocaleJa: locale_ja?,
       localUrl: local_url,
       season: {
         current: ENV.fetch("ANNICT_CURRENT_SEASON"),

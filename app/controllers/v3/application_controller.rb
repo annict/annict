@@ -6,6 +6,6 @@ module V3
 
     layout "v3"
 
-    helper_method :local_url
+    helper_method :locale_ja?, :locale_en?, :local_url, :local_current_url
   end
 end

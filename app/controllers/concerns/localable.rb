@@ -19,4 +19,8 @@ module Localable
       ENV.fetch("ANNICT_URL")
     end
   end
+
+  def local_current_url(locale: I18n.locale)
+    ["#{local_url(locale: locale)}#{request.path}", request.query_string].select(&:present?).join("?")
+  end
 end
