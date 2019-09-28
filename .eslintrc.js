@@ -13,6 +13,7 @@ module.exports = {
     'plugin:import/typescript',
   ],
   globals: {
+    annConfig: true,
     ga: true,
     gon: true,
   },
