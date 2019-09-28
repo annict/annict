@@ -27,6 +27,12 @@ Vue.filter('formatDomain', formatDomain)
 Vue.component('c-work-detail', WorkDetail)
 
 document.addEventListener('turbolinks:load', _event => {
+  WebFont.load({
+    google: {
+      families: ['Raleway'],
+    },
+  })
+
   new Vue({
     i18n,
     el: '#app',
