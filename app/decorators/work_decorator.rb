@@ -50,7 +50,7 @@ module WorkDecorator
     when :en then synopsis_en
     end
 
-    return if text.blank?
+    return "" if text.blank?
 
     raw ? text : simple_format(text)
   end
