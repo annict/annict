@@ -107,9 +107,7 @@
           <a href="/about" class="dropdown-item">
             <%= t("head.title.pages.about") %>
           </a>
-          <a href="#" class="dropdown-item">
-            <%= t("verb.sign_out") %>
-          </a>
+          <%= link_to t("verb.sign_out"), destroy_user_session_path, method: "delete", class: "dropdown-item" %>
         </div>
       <% else %>
         <li class="nav-item">

@@ -104,7 +104,7 @@
             <a href="/about" class="dropdown-item">
               {{ $t('head.title.pages.about') }}
             </a>
-            <a href="#" class="dropdown-item">
+            <a data-method="delete" href="/sign_out" class="dropdown-item">
               {{ $t('verb.signOut') }}
             </a>
           </div>
