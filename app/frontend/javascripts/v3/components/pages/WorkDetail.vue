@@ -197,7 +197,7 @@
             <ann-share-to-twitter-button :text="state.work.localTitle" :url="annConfig.localUrl + '/works/' + state.work.annictId" :hashtags="state.work.twitterHashtag || ''"></ann-share-to-twitter-button>
             <ann-share-to-facebook-button :url="annConfig.localUrl + '/works/' + state.work.annictId"></ann-share-to-facebook-button>
           </div>
-          <div class="col-md-9">
+          <div class="col-md-9 px-0 px-sm-3">
             <ann-work-subnav :work="state.work" page-category="workDetail"></ann-work-subnav>
 
             <template v-if="state.work.trailers.length">
@@ -239,8 +239,8 @@
               {{ $root.$t('noun.episodes') }}
             </h2>
             <div class="c-card container mt-3 pt-3">
-              <div class="row">
-                <div class="col-4 mb-3" v-for="episode in state.work.episodes">
+              <div class="row pl-3">
+                <div class="col-6 col-sm-4 mb-3 pl-0" v-for="episode in state.work.episodes">
                   <a href="">
                     <div class="">
                       {{ episode.numberText }}
@@ -257,8 +257,8 @@
               {{ $root.$t('noun.characters') }}
             </h2>
             <div class="c-card container mt-3 pt-3">
-              <div class="row">
-                <div class="col-3 mb-3" v-for="cast in state.work.casts">
+              <div class="row pl-3">
+                <div class="col-6 col-sm-3 mb-3 pl-0" v-for="cast in state.work.casts">
                   <a :href="'/characters/' + cast.character.annictId">
                     {{ cast.character.name }}
                   </a>
@@ -276,8 +276,8 @@
               {{ $root.$t('noun.staffs') }}
             </h2>
             <div class="c-card container mt-3 pt-3">
-              <div class="row">
-                <div class="col-3 mb-3" v-for="staff in state.work.staffs">
+              <div class="row pl-3">
+                <div class="col-6 col-sm-3 mb-3 pl-0" v-for="staff in state.work.staffs">
                   <template v-if="staff.isPerson()">
                     <a :href="'/people/' + staff.person.annictId">
                       {{ staff.localAccuratedName }}
@@ -300,8 +300,8 @@
                 {{ $root.$t('noun.vods') }}
               </h2>
               <div class="c-card container mt-3 pt-3">
-                <div class="row pr-3">
-                  <div class="col-4 mb-3 pr-0" v-for="vodChannel in state.vodChannels">
+                <div class="row pl-3">
+                  <div class="col-6 col-sm-4 mb-3 pl-0" v-for="vodChannel in state.vodChannels">
                     <template v-if="vodChannel.programs.length > 1">
                       <div class="btn-group w-100">
                         <button class="btn u-btn-link w-100 dropdown-toggle" type="button" data-toggle="dropdown">
@@ -331,143 +331,133 @@
               </div>
             </template>
 
-            <div class="row align-items-center">
-              <div class="col"></div>
-              <div class="col">
-                <h2 class="h4 text-center my-4 font-weight-bold">
-                  {{ $root.$t('noun.recordBodyList') }}
-                </h2>
-              </div>
-              <div class="col text-right">
+            <h2 class="h4 text-center my-4 font-weight-bold">
+              {{ $root.$t('noun.recordBodyList') }}
+            </h2>
+            <div class="c-card">
+              <div class="text-center pt-3">
                 <a :href="'/works/' + state.work.annictId + '/records'" class="btn btn-primary btn-sm">
                   <i class="far fa-edit mr-1"></i>
                   {{ $root.$t('verb.track') }}
                 </a>
               </div>
-            </div>
-            <div class="c-card">
+              <hr class="mb-0">
               <template v-if="state.work.workRecords.length">
-                <div class="px-3">
-                  <div class="py-3 u-underline" v-for="workRecord in state.work.workRecords.slice(0, 10)">
-                    <div class="row">
-                      <div class="col-auto pl-3 pr-0">
-                        <a :href="'/@' + workRecord.user.username">
-                          <img :src="workRecord.user.avatarUrl" class="img-fluid img-thumbnail rounded-circle">
+                <div class="py-3 u-underline" v-for="workRecord in state.work.workRecords.slice(0, 10)">
+                  <div class="mb-sm-3 px-3 row">
+                    <div class="col-auto pl-3 pr-0">
+                      <a :href="'/@' + workRecord.user.username">
+                        <img :src="workRecord.user.avatarUrl" class="img-fluid img-thumbnail rounded-circle">
+                      </a>
+                    </div>
+                    <div class="col">
+                      <div>
+                        <a :href="'/@/' + workRecord.user.username">
+                          {{ workRecord.user.name }}
                         </a>
+                        <span class="badge.u-badge-supporter.ml-1" v-if="workRecord.user.isSupportoer">
+                          {{ $root.$t('noun.supporter') }}
+                        </span>
                       </div>
-                      <div class="col">
-                        <div class="mb-3">
-                          <div class="text-left">
-                            <a :href="'/@/' + workRecord.user.username">
-                              {{ workRecord.user.name }}
-                            </a>
-                            <span class="badge.u-badge-supporter.ml-1" v-if="workRecord.user.isSupportoer">
-                              {{ $root.$t('noun.supporter') }}
-                            </span>
+                      <div>
+                        <a :href="'/@/' + workRecord.user.username + '/records/' + workRecord.record.annictId" class="small text-muted">
+                          {{ workRecord.createdAt }}
+                        </a>
+                        <small class="ml-2 text-muted" v-if="workRecord.modifiedAt">
+                          <i class="far pencil-alt"></i>
+                        </small>
+                        <span class="small ml-2 text-muted">
+                          {{ workRecord.record.pageViewsCount }} views
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                  <div :class="{ 'p-work-records-show__content clearfix': true, 'c-comment-guard': !state.work.viewerFinishedToWatch }" @click="removeCommentGuard">
+                    <div class="row px-3">
+                      <div class="col-12 col-sm-4 order-1 order-sm-2">
+                        <div class="p-3" v-if="workRecord.ratingOverallState">
+                          <div class="small font-weight-bold text-center mb-2">
+                            {{ $root.$t('noun.rating') }}
                           </div>
-                          <div class="text-left">
-                            <a :href="'/@/' + workRecord.user.username + '/records/' + workRecord.record.annictId" class="small text-muted">
-                              {{ workRecord.createdAt }}
-                            </a>
-                            <small class="ml-2 text-muted" v-if="workRecord.modifiedAt">
-                              <i class="far pencil-alt"></i>
-                            </small>
-                            <span class="small ml-2 text-muted">
-                              {{ workRecord.record.pageViewsCount }} views
-                            </span>
-                          </div>
-                        </div>
-                        <div :class="{ 'p-work-records-show__content clearfix': true, 'c-comment-guard': !state.work.viewerFinishedToWatch }" @click="removeCommentGuard">
-                          <div class="float-right ml-4 mb-4 p-3" v-if="workRecord.ratingOverallState">
-                            <div class="small font-weight-bold text-center mb-2">
-                              {{ $root.$t('noun.rating') }}
+                          <div class="row" v-if="workRecord.ratingAnimationState">
+                            <div class="col">
+                              {{ $root.$t('noun.animation') }}
                             </div>
-                            <table>
-                              <tbody>
-                              <tr v-if="workRecord.ratingAnimationState">
-                                <th class="font-weight-normal">
-                                  {{ $root.$t('noun.animation') }}
-                                </th>
-                                <td>
-                                  <ann-rating-label :init-kind="workRecord.ratingAnimationState"></ann-rating-label>
-                                </td>
-                              </tr>
-                              <tr v-if="workRecord.ratingMusicState">
-                                <th class="font-weight-normal">
-                                  {{ $root.$t('noun.music') }}
-                                </th>
-                                <td>
-                                  <ann-rating-label :init-kind="workRecord.ratingMusicState"></ann-rating-label>
-                                </td>
-                              </tr>
-                              <tr v-if="workRecord.ratingStoryState">
-                                <th class="font-weight-normal">
-                                  {{ $root.$t('noun.story') }}
-                                </th>
-                                <td>
-                                  <ann-rating-label :init-kind="workRecord.ratingStoryState"></ann-rating-label>
-                                </td>
-                              </tr>
-                              <tr v-if="workRecord.ratingCharacterState">
-                                <th class="font-weight-normal">
-                                  {{ $root.$t('noun.character') }}
-                                </th>
-                                <td>
-                                  <ann-rating-label :init-kind="workRecord.ratingCharacterState"></ann-rating-label>
-                                </td>
-                              </tr>
-                              <tr v-if="workRecord.ratingOverallState">
-                                <th class="font-weight-normal">
-                                  {{ $root.$t('noun.overall') }}
-                                </th>
-                                <td>
-                                  <ann-rating-label :init-kind="workRecord.ratingOverallState"></ann-rating-label>
-                                </td>
-                              </tr>
-                              </tbody>
-                            </table>
+                            <div class="col pl-0 text-right">
+                              <ann-rating-label :init-kind="workRecord.ratingAnimationState"></ann-rating-label>
+                            </div>
                           </div>
-                          <div class="c-body mb-3">
-                            <div class="c-body__content" v-html="workRecord.bodyHtml"></div>
+                          <div class="row" v-if="workRecord.ratingMusicState">
+                            <div class="col">
+                              {{ $root.$t('noun.music') }}
+                            </div>
+                            <div class="col pl-0 text-right">
+                              <ann-rating-label :init-kind="workRecord.ratingMusicState"></ann-rating-label>
+                            </div>
                           </div>
-                        </div>
-
-                        <div class="row align-items-center">
-                          <div class="col">
-                            <div class="text-right">
-                              <span class="mr-2">
-                                <ann-share-to-twitter-button :text="$root.$t('head.title.workRecords.show', { profileName: workRecord.user.name, username: workRecord.user.username, workTitle: state.work.localTitle })" :url="annConfig.localUrl + '/@' + workRecord.user.username + '/records/' + workRecord.record.annictId" :hashtags="state.work.twitterHashtag || ''"></ann-share-to-twitter-button>
-                              </span>
-                              <span class="mr-2">
-                                <ann-share-to-facebook-button :url="annConfig.localUrl + '/@' + workRecord.user.username + '/records/' + workRecord.record.annictId"></ann-share-to-facebook-button>
-                              </span>
-                              <span class="ml-2">
-                                <ann-like-button resource-name="WorkRecord" :resource-id="workRecord.id" :init-likes-count="workRecord.likesCount" :init-is-liked="workRecord.viewerDidLike" :is-signed-in="$root.isSignedIn()"></ann-like-button>
-                              </span>
+                          <div class="row" v-if="workRecord.ratingStoryState">
+                            <div class="col">
+                              {{ $root.$t('noun.story') }}
+                            </div>
+                            <div class="col pl-0 text-right">
+                              <ann-rating-label :init-kind="workRecord.ratingStoryState"></ann-rating-label>
+                            </div>
+                          </div>
+                          <div class="row" v-if="workRecord.ratingCharacterState">
+                            <div class="col">
+                              {{ $root.$t('noun.character') }}
+                            </div>
+                            <div class="col pl-0 text-right">
+                              <ann-rating-label :init-kind="workRecord.ratingCharacterState"></ann-rating-label>
+                            </div>
+                          </div>
+                          <div class="row" v-if="workRecord.ratingOverallState">
+                            <div class="col">
+                              {{ $root.$t('noun.overall') }}
+                            </div>
+                            <div class="col pl-0 text-right">
+                              <ann-rating-label :init-kind="workRecord.ratingOverallState"></ann-rating-label>
                             </div>
                           </div>
                         </div>
-
-                        <div class="small text-right mt-2" v-if="$root.viewer.username === workRecord.user.username">
-                          <a :href="'/works/' + state.work.annictId + '/records/' + workRecord.record.annictId + '/edit'" class="mr-2">
-                            <i class="fab fa-edit mr-1"></i>
-                            {{ $root.$t('noun.edit') }}
-                          </a>
-                          <a :href="'/@' + workRecord.user.username + '/records/' + workRecord.record.annictId">
-                            <i class="far fa-trash-alt mr-1"></i>
-                            {{ $root.$t('noun.delete') }}
-                          </a>
+                      </div>
+                      <div class="col-12 col-sm-8 order-2 order-sm-1">
+                        <div class="c-body mb-3">
+                          <div class="c-body__content" v-html="workRecord.bodyHtml"></div>
                         </div>
                       </div>
                     </div>
                   </div>
 
-                  <div class="container mb-3" v-if="state.work.workRecords.length > 10">
-                    <a :href="'/works/' + state.work.annictId + '/records'" class="btn btn-secondary w-100">
-                      <i class="fas fa-angle-right"></i>
-                      {{ $root.$t('messages.works.viewAllNRecordBodyList', { n: state.work.workRecordsWithBodyCount }) }}
+                  <div class="align-items-center px-3 row">
+                    <div class="col text-right">
+                      <span class="mr-2">
+                        <ann-share-to-twitter-button :text="$root.$t('head.title.workRecords.show', { profileName: workRecord.user.name, username: workRecord.user.username, workTitle: state.work.localTitle })" :url="annConfig.localUrl + '/@' + workRecord.user.username + '/records/' + workRecord.record.annictId" :hashtags="state.work.twitterHashtag || ''"></ann-share-to-twitter-button>
+                      </span>
+                      <span class="mr-2">
+                        <ann-share-to-facebook-button :url="annConfig.localUrl + '/@' + workRecord.user.username + '/records/' + workRecord.record.annictId"></ann-share-to-facebook-button>
+                      </span>
+                      <ann-like-button resource-name="WorkRecord" :resource-id="workRecord.id" :init-likes-count="workRecord.likesCount" :init-is-liked="workRecord.viewerDidLike" :is-signed-in="$root.isSignedIn()"></ann-like-button>
+                    </div>
+                  </div>
+
+                  <div class="small text-right mt-2" v-if="$root.viewer.username === workRecord.user.username">
+                    <a :href="'/works/' + state.work.annictId + '/records/' + workRecord.record.annictId + '/edit'" class="mr-2">
+                      <i class="fab fa-edit mr-1"></i>
+                      {{ $root.$t('noun.edit') }}
+                    </a>
+                    <a :href="'/@' + workRecord.user.username + '/records/' + workRecord.record.annictId">
+                      <i class="far fa-trash-alt mr-1"></i>
+                      {{ $root.$t('noun.delete') }}
                     </a>
                   </div>
+                </div>
+
+                <div class="container my-3" v-if="state.work.workRecords.length > 10">
+                  <a :href="'/works/' + state.work.annictId + '/records'" class="btn btn-secondary w-100">
+                    <i class="fas fa-angle-right"></i>
+                    {{ $root.$t('messages.works.viewAllNRecordBodyList', { n: state.work.workRecordsWithBodyCount }) }}
+                  </a>
                 </div>
               </template>
               <template v-else>
@@ -483,15 +473,15 @@
             <h2 class="h4 text-center my-4 font-weight-bold">
               {{ $root.$t('noun.stats') }}
             </h2>
-            <div class="c-card container mt-3 py-3">
+            <div class="c-card container mt-3 pt-3">
               <div class="row">
-                <div class="col">
+                <div class="col-12 col-sm-6 mb-3">
                   <h3 class="small text-center">
                     Watchers
                   </h3>
                   <ann-work-watchers-chart :work-id="state.work.annictId"></ann-work-watchers-chart>
                 </div>
-                <div class="col">
+                <div class="col-12 col-sm-6 mb-3">
                   <h3 class="small text-center">
                     Status
                   </h3>

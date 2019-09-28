@@ -1,9 +1,9 @@
 <template>
   <div class="p-footer">
-    <div class="p-footer__main py-4">
+    <div class="p-footer__main pt-3">
       <div class="container">
         <div class="row">
-          <div class="col-3">
+          <div class="col-12 col-sm-3 mb-3">
             <h2 class="mb-0">
               <a :href="annConfig.localUrl">Annict</a>
             </h2>
@@ -30,7 +30,8 @@
               </div>
             </div>
           </div>
-          <div class="col-3">
+
+          <div class="col-12 col-sm-3">
             <h4 class="font-weight-bold">
               {{ $root.$t('noun.services') }}
             </h4>
@@ -52,7 +53,8 @@
               </li>
             </ul>
           </div>
-          <div class="col-3">
+
+          <div class="col-12 col-sm-3">
             <h4 class="font-weight-bold">
               {{ $root.$t('noun.contents') }}
             </h4>
@@ -84,7 +86,8 @@
               </li>
             </ul>
           </div>
-          <div class="col-3">
+
+          <div class="col-12 col-sm-3">
             <h4 class="font-weight-bold">
               {{ $root.$t('noun.seasonalAnime') }}
             </h4>
@@ -128,12 +131,12 @@
             <ul class="list-inline d-inline-block mb-0">
               <li class="list-inline-item">
                 <a :href="annConfig.currentUrlJa">
-                  {{ $root.$t('noun.japanese') }}
+                  日本語
                 </a>
               </li>
               <li class="list-inline-item">
                 <a :href="annConfig.currentUrlEn">
-                  {{ $root.$t('noun.english') }}
+                  English
                 </a>
               </li>
             </ul>
