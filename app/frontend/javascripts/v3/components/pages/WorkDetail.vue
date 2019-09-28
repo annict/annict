@@ -1,6 +1,6 @@
 <template>
-  <div>
-    <template v-if="state.work">
+  <transition name="app" mode="out-in">
+    <div v-if="state.work" key="content">
       <ann-navbar></ann-navbar>
       <div class="container p-3">
         <ann-breadcrumb :items="state.breadcrumbItems" class="mb-3"></ann-breadcrumb>
@@ -493,8 +493,8 @@
         </div>
       </div>
       <ann-footer></ann-footer>
-    </template>
-    <template v-else>
+    </div>
+    <div v-else key="loading">
       <div class="d-flex justify-content-center align-items-center vh-100">
         <div class="c-loading">
           <div class="c-loading__core">
@@ -502,8 +502,8 @@
           </div>
         </div>
       </div>
-    </template>
-  </div>
+    </div>
+  </transition>
 </template>
 
 <script lang="ts">
