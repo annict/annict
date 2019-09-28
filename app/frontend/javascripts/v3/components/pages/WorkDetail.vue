@@ -259,7 +259,7 @@
               {{ $root.$t('noun.characters') }}
             </h2>
             <div class="c-card container mt-3 pt-3">
-              <div class="row pl-3">
+              <div class="row pl-3" v-if="state.work.casts.length > 0">
                 <div class="col-6 col-sm-3 mb-3 pl-0" v-for="cast in state.work.casts">
                   <a :href="'/characters/' + cast.character.annictId">
                     {{ cast.character.name }}
@@ -272,13 +272,16 @@
                   </div>
                 </div>
               </div>
+              <div v-else>
+                <ann-empty :text="$root.$t('messages._components.empty._notAdded')"></ann-empty>
+              </div>
             </div>
 
             <h2 class="h4 text-center my-4 font-weight-bold">
               {{ $root.$t('noun.staffs') }}
             </h2>
             <div class="c-card container mt-3 pt-3">
-              <div class="row pl-3">
+              <div class="row pl-3" v-if="state.work.staffs.length > 0">
                 <div class="col-6 col-sm-3 mb-3 pl-0" v-for="staff in state.work.staffs">
                   <template v-if="staff.isPerson()">
                     <a :href="'/people/' + staff.person.annictId">
@@ -294,6 +297,9 @@
                     {{ staff.localRole }}
                   </div>
                 </div>
+              </div>
+              <div v-else>
+                <ann-empty :text="$root.$t('messages._components.empty._notAdded')"></ann-empty>
               </div>
             </div>
 

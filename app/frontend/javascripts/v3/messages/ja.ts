@@ -31,7 +31,8 @@ export default {
     },
     _components: {
       empty: {
-        noRecordBodyList: '感想はありません'
+        _notAdded: '登録されていません',
+        noRecordBodyList: '感想はありません',
       },
       statusSelector: {
         selectStatus: 'ステータスを選択',

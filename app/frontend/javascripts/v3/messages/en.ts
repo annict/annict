@@ -31,7 +31,8 @@ export default {
     },
     _components: {
       empty: {
-        noRecordBodyList: 'No Comments'
+        _notAdded: 'Not added',
+        noRecordBodyList: 'No Comments',
       },
       statusSelector: {
         selectStatus: 'Select Status',
