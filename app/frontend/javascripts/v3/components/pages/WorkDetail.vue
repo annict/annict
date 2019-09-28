@@ -6,7 +6,7 @@
         <ann-breadcrumb :items="state.breadcrumbItems" class="mb-3"></ann-breadcrumb>
         <div class="row">
           <div class="col-md-3 pr-md-0">
-            <div class="c-work-image mb-2">
+            <div class="c-work-image mb-2 text-center text-sm-left">
               <a :href="'/works/' + state.work.annictId">
                 <img :src="state.work.image.internalUrl" class="img-fluid img-thumbnail rounded">
               </a>
@@ -15,7 +15,7 @@
                 {{ state.work.copyright }}
               </div>
             </div>
-            <h1 class="h2 font-weight-bold mb-3">
+            <h1 class="h2 font-weight-bold mb-3 text-center text-sm-left">
               <a :href="'/works/' + state.work.annictId" class="u-text-body">
                 {{ state.work.localTitle }}
               </a>
