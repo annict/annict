@@ -12,6 +12,7 @@
     "graphql:build-fragment": "node app/frontend/schemaQuery.js"
   },
   "dependencies": {
+    "@rails/ujs": "^6.0.0",
     "@vue/composition-api": "^0.2.1",
     "apollo-boost": "^0.4.3",
     "async": "2.6.1",
@@ -26,7 +27,6 @@
     "graphql": "^14.4.2",
     "graphql-tag": "^2.10.1",
     "jquery": "^3.3.1",
-    "jquery-ujs": "^1.2.2",
     "js-cookie": "2.2.0",
     "linkifyjs": "2.1.8",
     "lodash": "4.17.14",

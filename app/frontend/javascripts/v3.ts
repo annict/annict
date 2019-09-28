@@ -1,3 +1,4 @@
+import ujs from '@rails/ujs'
 import 'bootstrap'
 import Turbolinks from 'turbolinks'
 import Vue from 'vue'
@@ -57,4 +58,5 @@ document.addEventListener('turbolinks:load', _event => {
   })
 })
 
+ujs.start()
 Turbolinks.start()
