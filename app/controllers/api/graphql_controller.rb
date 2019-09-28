@@ -20,7 +20,9 @@ module Api
         ga_client: ga_client
       }
       result = AnnictSchema.execute(query, variables: variables, context: context)
-      annict_logger.log(:info, :GRAPHQL_API_REQUEST,
+      annict_logger.log(
+        :info,
+        :GRAPHQL_API_REQUEST,
         oauth_access_token_id: doorkeeper_token.id,
         query: query,
         variables: variables
@@ -32,7 +34,8 @@ module Api
 
     def current_user
       return nil if doorkeeper_token.blank?
-      @current_user ||= User.find(doorkeeper_token.resource_owner_id)
+
+      @current_user ||= User.published.find(doorkeeper_token.resource_owner_id)
     end
 
     def bad_credentials
