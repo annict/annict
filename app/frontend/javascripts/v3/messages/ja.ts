@@ -12,6 +12,9 @@ export default {
       },
       pages: {
         about: 'Annictについて',
+        legal: '特定商取引法に基づく表記',
+        privacy: 'プライバシーポリシー',
+        terms: '利用規約'
       },
       workRecords: {
         show: 'アニメ「{workTitle}」の記録 by {profileName} ({username})'
@@ -91,14 +94,19 @@ export default {
     character: 'キャラクター',
     characters: 'キャラクター',
     completed: '見たアニメ',
+    contents: 'コンテンツ',
     currentSeason: '今期のアニメ',
     delete: '削除',
     detail: '詳細',
     dropped: '視聴中止したアニメ',
     edit: '編集',
+    english: '英語',
     episodes: 'エピソード',
+    faqs: 'よくある質問',
     home: 'ホーム',
     information: '基本情報',
+    japanese: '日本語',
+    languages: '言語',
     library: 'ライブラリ',
     menu: 'メニュー',
     music: '音楽',
@@ -117,7 +125,9 @@ export default {
     records: '記録',
     releaseSeason: 'リリース時期',
     satisfactionRateShorten: '満足度',
+    seasonalAnime: 'シーズン別アニメ',
     seasonXAnime: '{seasonName}アニメ',
+    services: 'サービス',
     settings: '設定',
     share: 'シェア',
     signIn: 'ログイン',
@@ -138,6 +148,10 @@ export default {
     watchersCount: '視聴者数',
     watching: '見てるアニメ',
     watchingShorten: '見てる',
+    yearFall: '{year}年秋',
+    yearSpring: '{year}年春',
+    yearSummer: '{year}年夏',
+    yearWinter: '{year}年冬'
   },
   verb: {
     explore: '見つける',

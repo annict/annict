@@ -53,6 +53,9 @@ module ApplicationHelper
         current: ENV.fetch("ANNICT_CURRENT_SEASON"),
         next: ENV.fetch("ANNICT_NEXT_SEASON"),
         prev: ENV.fetch("ANNICT_PREVIOUS_SEASON")
+      },
+      twitter: {
+        username: twitter_username
       }
     }
 

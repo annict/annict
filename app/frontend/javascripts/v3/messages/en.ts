@@ -12,6 +12,9 @@ export default {
       },
       pages: {
         about: 'About',
+        legal: 'Legal',
+        privacy: 'Privacy policy',
+        terms: 'Terms of Service'
       },
       workRecords: {
         show: '{workTitle} - {profileName} ({username})\'s Record'
@@ -91,14 +94,19 @@ export default {
     character: 'Character',
     characters: 'Characters',
     completed: 'Completed',
+    contents: 'Contents',
     currentSeason: 'Current Season',
     delete: 'Delete',
     detail: 'Detail',
     dropped: 'Dropped',
     edit: 'Edit',
+    english: 'English',
     episodes: 'Episodes',
+    faqs: 'FAQs',
     home: 'Home',
     information: 'Information',
+    japanese: 'Japanese',
+    languages: 'Languages',
     library: 'Library',
     menu: 'Menu',
     music: 'Music',
@@ -117,7 +125,9 @@ export default {
     records: 'Records',
     releaseSeason: 'Release Season',
     satisfactionRateShorten: 'Satisfaction',
+    seasonalAnime: 'Seasonal Anime',
     seasonXAnime: '{seasonName} Anime',
+    services: 'Services',
     settings: 'Settings',
     share: 'Share',
     signIn: 'Sign In',
@@ -138,6 +148,10 @@ export default {
     watchersCount: 'Watchers',
     watching: 'Watching',
     watchingShorten: 'Watching',
+    yearFall: 'Fall {year}',
+    yearSpring: 'Spring {year}',
+    yearSummer: 'Summer {year}',
+    yearWinter: 'Winter {year}'
   },
   verb: {
     explore: 'Explore',

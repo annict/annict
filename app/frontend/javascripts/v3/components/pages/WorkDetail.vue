@@ -502,6 +502,7 @@
           </div>
         </div>
       </div>
+      <ann-footer></ann-footer>
     </template>
     <template v-else>
       Loading...
@@ -515,6 +516,7 @@
 
   import Breadcrumb from '../Breadcrumb.vue'
   import Empty from '../Empty.vue'
+  import Footer from '../Footer.vue'
   import LikeButton from '../LikeButton.vue'
   import NavBar from '../NavBar.vue'
   import RatingLabel from '../RatingLabel.vue'
@@ -531,6 +533,7 @@
     components: {
       'ann-breadcrumb': Breadcrumb,
       'ann-empty': Empty,
+      'ann-footer': Footer,
       'ann-like-button': LikeButton,
       'ann-navbar': NavBar,
       'ann-rating-label': RatingLabel,

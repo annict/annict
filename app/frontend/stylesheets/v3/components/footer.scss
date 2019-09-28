@@ -1,0 +1,51 @@
+.p-footer {
+  $root: &;
+
+  &__main,
+  &__auxiliary {
+    h4 {
+      color: $ann-color-black-l5;
+    }
+
+    a {
+      color: $ann-color-black-l2;
+
+      &:hover {
+        color: darken($ann-color-black-l2, 15%);
+      }
+    }
+  }
+
+  &__main {
+    background-color: $ann-color-footer-bg;
+
+    h2 {
+      a {
+        color: $ann-color-white;
+        font-family: "Raleway", sans-serif;
+
+        &:hover {
+          color: $ann-color-white;
+        }
+      }
+    }
+
+    #{$root}__list {
+      li {
+        line-height: map-get($ann-line-height-sizes, 4);
+      }
+    }
+
+    #{$root}__description {
+      color: $ann-color-white;
+    }
+  }
+
+  &__auxiliary {
+    background-color: darken($ann-color-footer-bg, 3%);
+
+    #{$root}__copyright {
+      color: $ann-color-white;
+    }
+  }
+}
