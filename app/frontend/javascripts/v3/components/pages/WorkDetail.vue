@@ -495,7 +495,13 @@
       <ann-footer></ann-footer>
     </template>
     <template v-else>
-      Loading...
+      <div class="d-flex justify-content-center align-items-center vh-100">
+        <div class="c-loading">
+          <div class="c-loading__core">
+            Loading...
+          </div>
+        </div>
+      </div>
     </template>
   </div>
 </template>
