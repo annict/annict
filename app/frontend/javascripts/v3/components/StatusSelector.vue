@@ -70,7 +70,7 @@ export default createComponent({
     }
 
     const changeStatus = async () => {
-      if (!context.root.isSignedIn()) {
+      if (!(context.root as any).isSignedIn()) {
         $('.c-sign-up-modal').modal('show')
         resetKind()
         return
@@ -84,13 +84,13 @@ export default createComponent({
     }
 
     const isTransparent = () => {
-      return props.initIsTransparent || !context.root.isSignedIn() || state.kind === NO_STATUS
+      return props.initIsTransparent || !(context.root as any).isSignedIn() || state.kind === NO_STATUS
     }
 
     onMounted(async () => {
       state.isLoading = true
 
-      if (!context.root.isSignedIn()) {
+      if (!(context.root as any).isSignedIn()) {
         state.kind = state.prevKind = NO_STATUS
         state.isLoading = false
         return

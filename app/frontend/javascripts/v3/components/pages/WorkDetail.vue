@@ -196,8 +196,8 @@
               <i class="fas fa-share mr-1"></i>
               {{ $root.$t('noun.share') }}
             </h2>
-            <ann-share-to-twitter-button :text="state.work.localTitle" :url="annConfig.localUrl + '/works/' + state.work.annictId" :hashtags="state.work.twitterHashtag || ''"></ann-share-to-twitter-button>
-            <ann-share-to-facebook-button :url="annConfig.localUrl + '/works/' + state.work.annictId"></ann-share-to-facebook-button>
+            <ann-share-to-twitter-button :text="state.work.localTitle" :url="AnnConfig.localUrl + '/works/' + state.work.annictId" :hashtags="state.work.twitterHashtag || ''"></ann-share-to-twitter-button>
+            <ann-share-to-facebook-button :url="AnnConfig.localUrl + '/works/' + state.work.annictId"></ann-share-to-facebook-button>
           </div>
           <div class="col-md-9 px-0 px-sm-3">
             <ann-work-subnav :work="state.work" page-category="workDetail"></ann-work-subnav>
@@ -438,10 +438,10 @@
                   <div class="align-items-center px-3 row">
                     <div class="col text-right">
                       <span class="mr-2">
-                        <ann-share-to-twitter-button :text="$root.$t('head.title.workRecords.show', { profileName: workRecord.user.name, username: workRecord.user.username, workTitle: state.work.localTitle })" :url="annConfig.localUrl + '/@' + workRecord.user.username + '/records/' + workRecord.record.annictId" :hashtags="state.work.twitterHashtag || ''"></ann-share-to-twitter-button>
+                        <ann-share-to-twitter-button :text="$root.$t('head.title.workRecords.show', { profileName: workRecord.user.name, username: workRecord.user.username, workTitle: state.work.localTitle })" :url="AnnConfig.localUrl + '/@' + workRecord.user.username + '/records/' + workRecord.record.annictId" :hashtags="state.work.twitterHashtag || ''"></ann-share-to-twitter-button>
                       </span>
                       <span class="mr-2">
-                        <ann-share-to-facebook-button :url="annConfig.localUrl + '/@' + workRecord.user.username + '/records/' + workRecord.record.annictId"></ann-share-to-facebook-button>
+                        <ann-share-to-facebook-button :url="AnnConfig.localUrl + '/@' + workRecord.user.username + '/records/' + workRecord.record.annictId"></ann-share-to-facebook-button>
                       </span>
                       <ann-like-button resource-name="WorkRecord" :resource-id="workRecord.id" :init-likes-count="workRecord.likesCount" :init-is-liked="workRecord.viewerDidLike" :is-signed-in="$root.isSignedIn()"></ann-like-button>
                     </div>
@@ -591,7 +591,7 @@
       })
 
       return {
-        annConfig: window.annConfig,
+        AnnConfig: window.AnnConfig,
         state,
         removeCommentGuard,
       }
