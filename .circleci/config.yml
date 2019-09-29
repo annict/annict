@@ -84,8 +84,10 @@ jobs:
           command: dockerize -wait tcp://localhost:4444 -timeout 1m
 
       - run:
-          name: Database setup
-          command: bin/rails db:setup
+          name: Setup Database
+          command: |
+            bin/rails db:create
+            bin/rails db:structure:load
 
       - run:
           name: Setup Code Climate test-reporter
