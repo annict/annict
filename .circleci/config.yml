@@ -8,6 +8,7 @@ jobs:
     docker:
       - image: circleci/ruby:2.6.3-node-browsers
         environment:
+          ANNICT_ASSET_URL: http://localhost:3030
           BUNDLE_JOBS: 3
           BUNDLE_PATH: vendor/bundle
           BUNDLE_RETRY: 3
