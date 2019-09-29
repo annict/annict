@@ -48,6 +48,7 @@
   },
   "devDependencies": {
     "@types/jquery": "^3.3.31",
+    "@types/node": "^12.7.8",
     "@typescript-eslint/eslint-plugin": "^1.13.0",
     "@typescript-eslint/parser": "^1.13.0",
     "css-loader": "^1.0.0",
