@@ -494,6 +494,7 @@
         </div>
       </div>
       <ann-footer></ann-footer>
+      <ann-sign-up-modal></ann-sign-up-modal>
     </div>
     <div v-else key="loading">
       <div class="d-flex justify-content-center align-items-center vh-100">
@@ -519,6 +520,7 @@
   import RatingLabel from '../RatingLabel.vue'
   import ShareToFacebookButton from '../ShareToFacebookButton.vue'
   import ShareToTwitterButton from '../ShareToTwitterButton.vue'
+  import SignUpModal from '../SignUpModal.vue'
   import StatusSelector from '../StatusSelector.vue'
   import WorkStatusChart from '../WorkStatusChart.vue'
   import WorkSubNav from '../WorkSubNav.vue'
@@ -536,6 +538,7 @@
       'ann-rating-label': RatingLabel,
       'ann-share-to-facebook-button': ShareToFacebookButton,
       'ann-share-to-twitter-button': ShareToTwitterButton,
+      'ann-sign-up-modal': SignUpModal,
       'ann-status-selector': StatusSelector,
       'ann-work-status-chart': WorkStatusChart,
       'ann-work-subnav': WorkSubNav,

@@ -34,6 +34,9 @@ export default {
         _notAdded: 'Not added',
         noRecordBodyList: 'No Comments',
       },
+      signUpModal: {
+        body: 'You can use this feature after sign up.'
+      },
       statusSelector: {
         selectStatus: 'Select Status',
       }

@@ -34,6 +34,9 @@ export default {
         _notAdded: '登録されていません',
         noRecordBodyList: '感想はありません',
       },
+      signUpModal: {
+        body: 'ユーザ登録するとこの機能が使えます。'
+      },
       statusSelector: {
         selectStatus: 'ステータスを選択',
       }
