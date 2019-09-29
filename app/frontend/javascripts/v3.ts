@@ -16,7 +16,7 @@ Vue.use(VueCompositionApi)
 Vue.use(VueI18n)
 
 const i18n = new VueI18n({
-  locale: AnnConfig.isDomainJp ? 'ja' : 'en',
+  locale: window.AnnConfig.isDomainJp ? 'ja' : 'en',
   messages,
 })
 
@@ -26,7 +26,7 @@ Vue.filter('formatDomain', formatDomain)
 Vue.component('c-work-detail', WorkDetail)
 
 document.addEventListener('turbolinks:load', _event => {
-  WebFont.load({
+  window.WebFont.load({
     google: {
       families: ['Raleway'],
     },
@@ -52,7 +52,7 @@ document.addEventListener('turbolinks:load', _event => {
       },
 
       isLocaleJa() {
-        return AnnConfig.locale === 'ja'
+        return window.AnnConfig.locale === 'ja'
       }
     },
   })
