@@ -2,7 +2,7 @@
   "name": "annict",
   "private": true,
   "engines": {
-    "node": "12.4.0"
+    "node": "10.16.3"
   },
   "scripts": {
     "webpack:start": "webpack-dev-server",
