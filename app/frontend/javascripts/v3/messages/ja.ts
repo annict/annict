@@ -11,7 +11,7 @@ export default {
         index: '友達を探す',
       },
       pages: {
-        about: 'Annictについて',
+        about: 'Annictとは？',
         legal: '特定商取引法に基づく表記',
         privacy: 'プライバシーポリシー',
         terms: '利用規約'
