@@ -1,5 +1,5 @@
 <template>
-  <div :class="{ 'c-status-selector': true, 'is-small': size === 'small', 'is-transparent': isTransparent || state.kind === 'no_select', 'c-spinner': state.isLoading }">
+  <div :class="{ 'c-status-selector': true, 'is-small': size === 'small', 'is-transparent': isTransparent(), 'c-spinner': state.isLoading }">
     <div class="c-status-selector__object">
       <select class="w-100" v-model="state.kind" @change="changeStatus">
         <option value="NO_STATUS">
@@ -44,7 +44,7 @@ export default createComponent({
       default: 'default',
     },
 
-    isTransparent: {
+    initIsTransparent: {
       type: Boolean,
       default: false,
     },
@@ -83,6 +83,10 @@ export default createComponent({
       }
     }
 
+    const isTransparent = () => {
+      return props.initIsTransparent || !context.root.isSignedIn() || state.kind === NO_STATUS
+    }
+
     onMounted(async () => {
       state.isLoading = true
 
@@ -101,7 +105,8 @@ export default createComponent({
 
     return {
       state,
-      changeStatus
+      changeStatus,
+      isTransparent,
     }
   },
 })
