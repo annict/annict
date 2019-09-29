@@ -30,7 +30,7 @@
     "js-cookie": "2.2.0",
     "linkifyjs": "2.1.8",
     "lodash": "4.17.14",
-    "marked": "^0.5.1",
+    "marked": "^0.6.1",
     "mjml": "^4.3.1",
     "moment-timezone": "0.5.23",
     "mousetrap": "1.6.2",
