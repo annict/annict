@@ -1,7 +1,7 @@
 import $ from 'jquery'
 import 'bootstrap'
 import 'select2'
-import {} from 'jquery-ujs'
+import ujs from '@rails/ujs'
 import Cookies from 'js-cookie'
 import moment from 'moment-timezone'
 import 'moment/locale/ja'
@@ -158,4 +158,5 @@ document.addEventListener('turbolinks:load', event => {
   })
 })
 
+ujs.start()
 Turbolinks.start()
