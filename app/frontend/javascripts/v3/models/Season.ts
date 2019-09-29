@@ -1,6 +1,11 @@
 import { ApplicationModel } from './ApplicationModel'
 
 export class Season extends ApplicationModel {
+  public slug: string
+  public name: string
+  public localName: string
+  public year: number
+
   public constructor(node) {
     super()
     this.slug = node.seasonSlug

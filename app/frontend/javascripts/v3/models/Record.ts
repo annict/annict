@@ -1,8 +1,8 @@
 import { ApplicationModel } from './ApplicationModel'
 
 export class Record extends ApplicationModel {
-  private annictId: number
-  private pageViewsCount: number
+  public annictId: number
+  public pageViewsCount: number
 
   public constructor(node) {
     super()

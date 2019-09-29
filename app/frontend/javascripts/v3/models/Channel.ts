@@ -1,10 +1,10 @@
 import { ApplicationModel } from './ApplicationModel'
-import { Work } from './Work'
+import { Program, Work } from '../models'
 
 export class Channel extends ApplicationModel {
-  private annictId: number
-  private name: string
-  private programs: []
+  public annictId: number
+  public name: string
+  public programs: Program[]
 
   public constructor(node) {
     super()

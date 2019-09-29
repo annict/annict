@@ -1,11 +1,11 @@
 import { ApplicationModel } from './ApplicationModel'
 
 export class User extends ApplicationModel {
-  private annictId: number
-  private username: string
-  private name: string
-  private avatarUrl: string
-  private isSupporter: boolean
+  public annictId: number
+  public username: string
+  public name: string
+  public avatarUrl: string
+  public isSupporter: boolean
 
   public constructor(node) {
     super()
