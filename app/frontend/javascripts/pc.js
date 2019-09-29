@@ -2,7 +2,7 @@ import $ from 'jquery'
 import 'bootstrap'
 import 'select2'
 import 'd3'
-import {} from 'jquery-ujs'
+import ujs from '@rails/ujs'
 import Cookies from 'js-cookie'
 import moment from 'moment-timezone'
 import 'moment/locale/ja'
@@ -19,7 +19,6 @@ import adsense from './common/components/adsense'
 import adsenseContainer from './common/components/adsenseContainer'
 import amazonItemAttacher from './common/components/amazonItemAttacher'
 import analytics from './common/components/analytics'
-import appbar from './common/components/appbar'
 import autosizeTextarea from './common/components/autosizeTextarea'
 import body from './common/components/body'
 import channelReceiveButton from './common/components/channelReceiveButton'
@@ -61,9 +60,7 @@ import userHeatmap from './common/components/userHeatmap'
 import usernamePreview from './common/components/usernamePreview'
 import workComment from './common/components/workComment'
 import workFriends from './common/components/workFriends'
-import workStatusChart from './common/components/workStatusChart'
 import workTags from './common/components/workTags'
-import workWatchersChart from './common/components/workWatchersChart'
 import youtubeModalPlayer from './common/components/youtubeModalPlayer'
 
 import resourceSelect from './common/directives/resourceSelect'
@@ -93,7 +90,6 @@ document.addEventListener('turbolinks:load', event => {
   Vue.component('c-adsense-container', adsenseContainer)
   Vue.component('c-amazon-item-attacher', amazonItemAttacher)
   Vue.component('c-analytics', analytics(event))
-  Vue.component('c-appbar', appbar)
   Vue.component('c-autosize-textarea', autosizeTextarea)
   Vue.component('c-body', body)
   Vue.component('c-channel-receive-button', channelReceiveButton)
@@ -135,9 +131,7 @@ document.addEventListener('turbolinks:load', event => {
   Vue.component('c-username-preview', usernamePreview)
   Vue.component('c-work-comment', workComment)
   Vue.component('c-work-friends', workFriends)
-  Vue.component('c-work-status-chart', workStatusChart)
   Vue.component('c-work-tags', workTags)
-  Vue.component('c-work-watchers-chart', workWatchersChart)
   Vue.component('c-youtube-modal-player', youtubeModalPlayer)
 
   Vue.directive('resource-select', resourceSelect)
@@ -175,4 +169,5 @@ document.addEventListener('turbolinks:load', event => {
   })
 })
 
+ujs.start()
 Turbolinks.start()

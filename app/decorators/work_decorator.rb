@@ -50,20 +50,9 @@ module WorkDecorator
     when :en then synopsis_en
     end
 
-    return if text.blank?
+    return "" if text.blank?
 
     raw ? text : simple_format(text)
-  end
-
-  def local_synopsis_source
-    source = case I18n.locale
-    when :ja then synopsis_source
-    when :en then synopsis_source_en
-    end
-
-    return if source.blank?
-
-    auto_link(source, html: { target: "_blank" })
   end
 
   def media_label

@@ -30,6 +30,7 @@ class LatestStatus < ApplicationRecord
   belongs_to :next_episode, class_name: "Episode", optional: true
 
   scope :desiring_to_watch, -> { with_kind(:wanna_watch, :watching, :on_hold) }
+  scope :finished_to_watch, -> { with_kind(:watched, :stop_watching) }
   scope :on_hold, -> { with_kind(:on_hold) }
   scope :wanna_watch_and_watching, -> { with_kind(:wanna_watch, :watching) }
   scope :wanna_watch, -> { with_kind(:wanna_watch) }

@@ -3,6 +3,8 @@ const path = require('path')
 
 const ManifestPlugin = require('webpack-manifest-plugin')
 const MiniCssExtractPlugin = require('mini-css-extract-plugin')
+const VueLoaderPlugin = require('vue-loader/lib/plugin')
+const ForkTsCheckerWebpackPlugin = require('fork-ts-checker-webpack-plugin')
 
 const isProd = process.env.NODE_ENV === 'production'
 
@@ -31,22 +33,30 @@ module.exports = {
   module: {
     rules: [
       {
-        test: /\.js$/,
-        exclude: /node_modules/,
-        loader: 'babel-loader',
-        query: {
-          plugins: [],
+        test: /\.vue$/,
+        loader: 'vue-loader',
+      },
+      {
+        test: /\.(js|ts)x?$/,
+        loader: 'ts-loader',
+        options: {
+          appendTsSuffixTo: [/\.vue$/],
+          // disable type checker - we will use it in fork-ts-checker-webpack-plugin
+          transpileOnly: true,
         },
       },
       {
         test: require.resolve('jquery'),
-        use: [{
-          loader: 'expose-loader',
-          options: 'jQuery'
-        }, {
-          loader: 'expose-loader',
-          options: '$'
-        }]
+        use: [
+          {
+            loader: 'expose-loader',
+            options: 'jQuery',
+          },
+          {
+            loader: 'expose-loader',
+            options: '$',
+          },
+        ],
       },
       {
         test: /\.scss$/,
@@ -109,10 +119,15 @@ module.exports = {
       filename: '[name]-[hash].css',
       chunkFilename: '[name].bundle-[hash].css',
     }),
+    new VueLoaderPlugin(),
+    new ForkTsCheckerWebpackPlugin({
+      vue: true,
+    }),
   ],
   devServer: {
     contentBase: path.resolve(__dirname, 'public', 'packs'),
-    host: require('ip').address(),
-    disableHostCheck: true
-  }
+    host: '0.0.0.0',
+    port: 8080,
+    disableHostCheck: true,
+  },
 }

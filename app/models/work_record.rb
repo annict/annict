@@ -35,7 +35,7 @@
 class WorkRecord < ApplicationRecord
   extend Enumerize
   include AASM
-  include LocaleDetectable
+  include Localizable
   include Shareable
 
   STATES = %i(

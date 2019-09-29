@@ -3,7 +3,6 @@ AllCops:
   Exclude:
     - "**/*.slim"
     - "vendor/**/*"
-    - "db/schema.rb"
 
 Layout/CaseIndentation:
   EnforcedStyle: end
@@ -13,6 +12,9 @@ Layout/EmptyLineAfterMagicComment:
 
 Layout/EndAlignment:
   EnforcedStyleAlignWith: variable
+
+Layout/AlignArguments:
+  EnforcedStyle: with_fixed_indentation
 
 Layout/AlignArray:
   Enabled: false
@@ -41,7 +43,7 @@ Metrics/LineLength:
     - "**/*.jbuilder"
   # Ignore lines with comments
   # http://stackoverflow.com/questions/26342570/rubocop-linelength-how-to-ignore-lines-with-comments
-  IgnoredPatterns: ['\A#']
+  IgnoredPatterns: ['\A( *)#']
 
 Metrics/AbcSize:
   Enabled: false

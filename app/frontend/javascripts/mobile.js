@@ -18,7 +18,6 @@ import adsense from './common/components/adsense'
 import adsenseContainer from './common/components/adsenseContainer'
 import amazonItemAttacher from './common/components/amazonItemAttacher'
 import analytics from './common/components/analytics'
-import appbar from './common/components/appbar'
 import autosizeTextarea from './common/components/autosizeTextarea'
 import body from './common/components/body'
 import channelReceiveButton from './common/components/channelReceiveButton'
@@ -86,7 +85,6 @@ document.addEventListener('turbolinks:load', event => {
   Vue.component('c-adsense-container', adsenseContainer)
   Vue.component('c-amazon-item-attacher', amazonItemAttacher)
   Vue.component('c-analytics', analytics(event))
-  Vue.component('c-appbar', appbar)
   Vue.component('c-autosize-textarea', autosizeTextarea)
   Vue.component('c-body', body)
   Vue.component('c-channel-receive-button', channelReceiveButton)

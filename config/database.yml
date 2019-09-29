@@ -1,8 +1,6 @@
 default: &default
   adapter: postgresql
   encoding: unicode
-  user: postgres
-  password:
   # For details on connection pooling, see rails configuration guide
   # http://guides.rubyonrails.org/configuring.html#database-pooling
   pool: <%= ENV.fetch("RAILS_MAX_THREADS") { 5 } %>
@@ -13,13 +11,17 @@ default: &default
 
 development:
   <<: *default
-  database: annict_development
   host: <%= ENV.fetch("POSTGRES_HOST", "0.0.0.0") %>
+  username: postgres
+  password:
+  database: annict_development
 
 test:
   <<: *default
-  database: annict_test
   host: <%= ENV.fetch("POSTGRES_HOST", "0.0.0.0") %>
+  username: postgres
+  password:
+  database: annict_test
 
 production:
   <<: *default

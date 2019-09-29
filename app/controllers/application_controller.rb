@@ -4,6 +4,7 @@ class ApplicationController < ActionController::Base
   include Pundit
 
   include ControllerCommon
+  include Localable
   include Analyzable
   include LogrageSetting
   include Gonable
@@ -17,7 +18,7 @@ class ApplicationController < ActionController::Base
   # For APIs, you may want to use :null_session instead.
   protect_from_forgery with: :exception, prepend: true
 
-  helper_method :gon
+  helper_method :gon, :locale_ja?, :locale_en?, :local_url
 
   before_action :redirect_if_unexpected_subdomain
   before_action :switch_locale

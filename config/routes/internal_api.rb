@@ -2,6 +2,8 @@
 
 namespace :api do
   namespace :internal do
+    post :graphql, to: "graphql#execute"
+
     resource :impression, only: %i(show update)
     resource :privacy_policy_agreement, only: %i(create)
     resource :programs_sort_type, only: [:update]

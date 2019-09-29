@@ -5,6 +5,7 @@ module Forum
     include Pundit
 
     include ControllerCommon
+    include Localable
     include Analyzable
     include LogrageSetting
     include Gonable
@@ -16,7 +17,7 @@ module Forum
 
     layout "application"
 
-    helper_method :gon
+    helper_method :gon, :locale_ja?, :locale_en?, :local_url
 
     before_action :redirect_if_unexpected_subdomain
     before_action :switch_locale

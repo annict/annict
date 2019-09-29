@@ -4,7 +4,11 @@ require "github/markup"
 
 module MarkdownHelper
   def render_markdown(text)
-    html = GitHub::Markup.render_s(GitHub::Markups::MARKUP_MARKDOWN, text)
+    html = GitHub::Markup.render_s(
+      GitHub::Markups::MARKUP_MARKDOWN,
+      text,
+      options: { commonmarker_opts: %i(HARDBREAKS) }
+    )
     doc = Nokogiri::HTML::DocumentFragment.parse(html)
     doc.search("img").each do |img|
       img["class"] = "img-fluid img-thumbnail rounded"

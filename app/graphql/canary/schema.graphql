@@ -1,0 +1,2057 @@
+type Activity implements Node {
+  annictId: Int!
+  id: ID!
+  user: User!
+}
+
+enum ActivityAction {
+  """
+  """
+  CREATE
+}
+
+"""
+The connection type for Activity.
+"""
+type ActivityConnection {
+  """
+  A list of edges.
+  """
+  edges: [ActivityEdge]
+
+  """
+  A list of nodes.
+  """
+  nodes: [Activity]
+
+  """
+  Information to aid in pagination.
+  """
+  pageInfo: PageInfo!
+}
+
+"""
+An edge in a connection.
+"""
+type ActivityEdge {
+  action: ActivityAction!
+  annictId: Int!
+
+  """
+  A cursor for use in pagination.
+  """
+  cursor: String!
+  node: ActivityItem
+  user: User!
+}
+
+union ActivityItem = EpisodeRecord | MultipleEpisodeRecord | Status | WorkRecord
+
+input ActivityOrder {
+  direction: OrderDirection!
+  field: ActivityOrderField!
+}
+
+enum ActivityOrderField {
+  """
+  作成日時
+  """
+  CREATED_AT
+}
+
+type Cast implements Node {
+  annictId: Int!
+  character: Character!
+  id: ID!
+
+  """
+  役名
+  """
+  name: String!
+
+  """
+  役名 (英語)
+  """
+  nameEn: String!
+  person: Person!
+
+  """
+  ソート番号
+  """
+  sortNumber: Int!
+  work: Work!
+}
+
+"""
+The connection type for Cast.
+"""
+type CastConnection {
+  """
+  A list of edges.
+  """
+  edges: [CastEdge]
+
+  """
+  A list of nodes.
+  """
+  nodes: [Cast]
+
+  """
+  Information to aid in pagination.
+  """
+  pageInfo: PageInfo!
+}
+
+"""
+An edge in a connection.
+"""
+type CastEdge {
+  """
+  A cursor for use in pagination.
+  """
+  cursor: String!
+
+  """
+  The item at the end of the edge.
+  """
+  node: Cast
+}
+
+input CastOrder {
+  direction: OrderDirection!
+  field: CastOrderField!
+}
+
+enum CastOrderField {
+  """
+  作成日時
+  """
+  CREATED_AT
+
+  """
+  ソート番号
+  """
+  SORT_NUMBER
+}
+
+type Channel implements Node {
+  annictId: Int!
+  channelGroup: ChannelGroup!
+  id: ID!
+  name: String!
+  programs(
+    """
+    Returns the elements in the list that come after the specified cursor.
+    """
+    after: String
+
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
+    before: String
+
+    """
+    Returns the first _n_ elements from the list.
+    """
+    first: Int
+
+    """
+    Returns the last _n_ elements from the list.
+    """
+    last: Int
+  ): ProgramConnection
+  published: Boolean!
+
+  """
+  しょぼいカレンダーのチャンネルID
+  """
+  scChid: Int!
+}
+
+"""
+The connection type for Channel.
+"""
+type ChannelConnection {
+  """
+  A list of edges.
+  """
+  edges: [ChannelEdge]
+
+  """
+  A list of nodes.
+  """
+  nodes: [Channel]
+
+  """
+  Information to aid in pagination.
+  """
+  pageInfo: PageInfo!
+}
+
+"""
+An edge in a connection.
+"""
+type ChannelEdge {
+  """
+  A cursor for use in pagination.
+  """
+  cursor: String!
+
+  """
+  The item at the end of the edge.
+  """
+  node: Channel
+}
+
+type ChannelGroup implements Node {
+  annictId: Int!
+  channels(
+    """
+    Returns the elements in the list that come after the specified cursor.
+    """
+    after: String
+
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
+    before: String
+
+    """
+    Returns the first _n_ elements from the list.
+    """
+    first: Int
+
+    """
+    Returns the last _n_ elements from the list.
+    """
+    last: Int
+  ): ChannelConnection
+  id: ID!
+  name: String!
+
+  """
+  ソート番号
+  """
+  sortNumber: Int!
+}
+
+type Character implements Node {
+  age: String!
+  ageEn: String!
+  annictId: Int!
+  birthday: String!
+  birthdayEn: String!
+  bloodType: String!
+  bloodTypeEn: String!
+  description: String!
+  descriptionEn: String!
+  descriptionSource: String!
+  descriptionSourceEn: String!
+  favoriteCharactersCount: Int!
+  height: String!
+  heightEn: String!
+  id: ID!
+  name: String!
+  nameEn: String!
+  nameKana: String!
+  nationality: String!
+  nationalityEn: String!
+  nickname: String!
+  nicknameEn: String!
+  occupation: String!
+  occupationEn: String!
+  series: Series!
+  weight: String!
+  weightEn: String!
+}
+
+"""
+The connection type for Character.
+"""
+type CharacterConnection {
+  """
+  A list of edges.
+  """
+  edges: [CharacterEdge]
+
+  """
+  A list of nodes.
+  """
+  nodes: [Character]
+
+  """
+  Information to aid in pagination.
+  """
+  pageInfo: PageInfo!
+}
+
+"""
+An edge in a connection.
+"""
+type CharacterEdge {
+  """
+  A cursor for use in pagination.
+  """
+  cursor: String!
+
+  """
+  The item at the end of the edge.
+  """
+  node: Character
+}
+
+input CharacterOrder {
+  direction: OrderDirection!
+  field: CharacterOrderField!
+}
+
+enum CharacterOrderField {
+  """
+  作成日時
+  """
+  CREATED_AT
+
+  """
+  お気に入り数
+  """
+  FAVORITE_USERS_COUNT
+}
+
+scalar DateTime
+
+"""
+エピソード情報
+"""
+type Episode implements Node {
+  annictId: Int!
+  episodeRecordBodiesCount: Int!
+  episodeRecords(
+    """
+    Returns the elements in the list that come after the specified cursor.
+    """
+    after: String
+
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
+    before: String
+
+    """
+    Returns the first _n_ elements from the list.
+    """
+    first: Int
+    hasBody: Boolean
+
+    """
+    Returns the last _n_ elements from the list.
+    """
+    last: Int
+    orderBy: EpisodeRecordOrder
+  ): EpisodeRecordConnection
+  episodeRecordsCount: Int!
+  id: ID!
+  nextEpisode: Episode
+  number: Int
+  numberText: String
+  prevEpisode: Episode
+
+  """
+  満足度
+  """
+  satisfactionRate: Float
+  sortNumber: Int!
+  title: String
+  viewerDidTrack: Boolean!
+  viewerRecordsCount: Int!
+  work: Work!
+}
+
+"""
+The connection type for Episode.
+"""
+type EpisodeConnection {
+  """
+  A list of edges.
+  """
+  edges: [EpisodeEdge]
+
+  """
+  A list of nodes.
+  """
+  nodes: [Episode]
+
+  """
+  Information to aid in pagination.
+  """
+  pageInfo: PageInfo!
+}
+
+"""
+An edge in a connection.
+"""
+type EpisodeEdge {
+  """
+  A cursor for use in pagination.
+  """
+  cursor: String!
+
+  """
+  The item at the end of the edge.
+  """
+  node: Episode
+}
+
+input EpisodeOrder {
+  direction: OrderDirection!
+  field: EpisodeOrderField!
+}
+
+enum EpisodeOrderField {
+  """
+  作成日時
+  """
+  CREATED_AT
+
+  """
+  ソート番号
+  """
+  SORT_NUMBER
+}
+
+type EpisodeRecord implements Node {
+  annictId: Int!
+  comment: String
+  commentsCount: Int!
+  createdAt: DateTime!
+  episode: Episode!
+  facebookClickCount: Int!
+  id: ID!
+  likesCount: Int!
+  modified: Boolean!
+  rating: Float
+  ratingState: RatingState
+  twitterClickCount: Int!
+  updatedAt: DateTime!
+  user: User!
+  work: Work!
+}
+
+"""
+The connection type for EpisodeRecord.
+"""
+type EpisodeRecordConnection {
+  """
+  A list of edges.
+  """
+  edges: [EpisodeRecordEdge]
+
+  """
+  A list of nodes.
+  """
+  nodes: [EpisodeRecord]
+
+  """
+  Information to aid in pagination.
+  """
+  pageInfo: PageInfo!
+}
+
+"""
+Autogenerated input type of EpisodeRecordCreate
+"""
+input EpisodeRecordCreateInput {
+  """
+  A unique identifier for the client performing the mutation.
+  """
+  clientMutationId: String
+
+  """
+  エピソードへの感想
+  """
+  comment: String
+  episodeId: ID!
+
+  """
+  エピソードへの評価
+  """
+  ratingState: RatingState
+
+  """
+  エピソードへの記録をFacebookでシェアするかどうか
+  """
+  shareFacebook: Boolean
+
+  """
+  エピソードへの記録をTwitterでシェアするかどうか
+  """
+  shareTwitter: Boolean
+}
+
+"""
+Autogenerated return type of EpisodeRecordCreate
+"""
+type EpisodeRecordCreatePayload {
+  """
+  A unique identifier for the client performing the mutation.
+  """
+  clientMutationId: String
+  episodeRecord: EpisodeRecord
+}
+
+"""
+Autogenerated input type of EpisodeRecordDelete
+"""
+input EpisodeRecordDeleteInput {
+  """
+  A unique identifier for the client performing the mutation.
+  """
+  clientMutationId: String
+  episodeRecordId: ID!
+}
+
+"""
+Autogenerated return type of EpisodeRecordDelete
+"""
+type EpisodeRecordDeletePayload {
+  """
+  A unique identifier for the client performing the mutation.
+  """
+  clientMutationId: String
+  episode: Episode
+}
+
+"""
+An edge in a connection.
+"""
+type EpisodeRecordEdge {
+  """
+  A cursor for use in pagination.
+  """
+  cursor: String!
+
+  """
+  The item at the end of the edge.
+  """
+  node: EpisodeRecord
+}
+
+input EpisodeRecordOrder {
+  direction: OrderDirection!
+  field: EpisodeRecordOrderField!
+}
+
+enum EpisodeRecordOrderField {
+  """
+  作成日時
+  """
+  CREATED_AT
+
+  """
+  いいね数
+  """
+  LIKES_COUNT
+}
+
+"""
+Autogenerated input type of EpisodeRecordUpdate
+"""
+input EpisodeRecordUpdateInput {
+  """
+  A unique identifier for the client performing the mutation.
+  """
+  clientMutationId: String
+
+  """
+  エピソードへの感想
+  """
+  comment: String
+  episodeRecordId: ID!
+
+  """
+  エピソードへの評価
+  """
+  ratingState: RatingState
+
+  """
+  エピソードへの記録をFacebookでシェアするかどうか
+  """
+  shareFacebook: Boolean
+
+  """
+  エピソードへの記録をTwitterでシェアするかどうか
+  """
+  shareTwitter: Boolean
+}
+
+"""
+Autogenerated return type of EpisodeRecordUpdate
+"""
+type EpisodeRecordUpdatePayload {
+  """
+  A unique identifier for the client performing the mutation.
+  """
+  clientMutationId: String
+  episodeRecord: EpisodeRecord
+}
+
+"""
+メディア
+"""
+enum Media {
+  """
+  映画
+  """
+  MOVIE
+
+  """
+  その他
+  """
+  OTHER
+
+  """
+  OVA
+  """
+  OVA
+
+  """
+  テレビ
+  """
+  TV
+
+  """
+  Web配信
+  """
+  WEB
+}
+
+type MultipleEpisodeRecord implements Node {
+  annictId: Int!
+  createdAt: DateTime!
+  id: ID!
+  records(
+    """
+    Returns the elements in the list that come after the specified cursor.
+    """
+    after: String
+
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
+    before: String
+
+    """
+    Returns the first _n_ elements from the list.
+    """
+    first: Int
+
+    """
+    Returns the last _n_ elements from the list.
+    """
+    last: Int
+  ): EpisodeRecordConnection
+  user: User!
+  work: Work!
+}
+
+type Mutation {
+  episodeRecordCreate(input: EpisodeRecordCreateInput!): EpisodeRecordCreatePayload
+  episodeRecordDelete(input: EpisodeRecordDeleteInput!): EpisodeRecordDeletePayload
+  episodeRecordUpdate(input: EpisodeRecordUpdateInput!): EpisodeRecordUpdatePayload
+  statusUpdate(input: StatusUpdateInput!): StatusUpdatePayload
+  workRecordCreate(input: WorkRecordCreateInput!): WorkRecordCreatePayload
+  workRecordDelete(input: WorkRecordDeleteInput!): WorkRecordDeletePayload
+  workRecordUpdate(input: WorkRecordUpdateInput!): WorkRecordUpdatePayload
+}
+
+"""
+An object with an ID.
+"""
+interface Node {
+  """
+  ID of the object.
+  """
+  id: ID!
+}
+
+enum OrderDirection {
+  """
+  昇順
+  """
+  ASC
+
+  """
+  降順
+  """
+  DESC
+}
+
+type Organization implements Node {
+  annictId: Int!
+  favoriteUsersCount: Int!
+  id: ID!
+  name: String!
+  nameEn: String!
+  nameKana: String!
+  staffsCount: Int!
+  twitterUsername: String!
+  twitterUsernameEn: String!
+  url: String!
+  urlEn: String!
+  wikipediaUrl: String!
+  wikipediaUrlEn: String!
+}
+
+"""
+The connection type for Organization.
+"""
+type OrganizationConnection {
+  """
+  A list of edges.
+  """
+  edges: [OrganizationEdge]
+
+  """
+  A list of nodes.
+  """
+  nodes: [Organization]
+
+  """
+  Information to aid in pagination.
+  """
+  pageInfo: PageInfo!
+}
+
+"""
+An edge in a connection.
+"""
+type OrganizationEdge {
+  """
+  A cursor for use in pagination.
+  """
+  cursor: String!
+
+  """
+  The item at the end of the edge.
+  """
+  node: Organization
+}
+
+input OrganizationOrder {
+  direction: OrderDirection!
+  field: OrganizationOrderField!
+}
+
+enum OrganizationOrderField {
+  """
+  作成日時
+  """
+  CREATED_AT
+
+  """
+  お気に入り数
+  """
+  FAVORITE_USERS_COUNT
+}
+
+"""
+Information about pagination in a connection.
+"""
+type PageInfo {
+  """
+  When paginating forwards, the cursor to continue.
+  """
+  endCursor: String
+
+  """
+  When paginating forwards, are there more items?
+  """
+  hasNextPage: Boolean!
+
+  """
+  When paginating backwards, are there more items?
+  """
+  hasPreviousPage: Boolean!
+
+  """
+  When paginating backwards, the cursor to continue.
+  """
+  startCursor: String
+}
+
+type Person implements Node {
+  annictId: Int!
+  birthday: String!
+  bloodType: String!
+  castsCount: Int!
+  favoriteUsersCount: Int!
+  genderText: String!
+  height: String!
+  id: ID!
+  name: String!
+  nameEn: String!
+  nameKana: String!
+  nickname: String!
+  nicknameEn: String!
+  prefecture: Prefecture!
+  staffsCount: Int!
+  twitterUsername: String!
+  twitterUsernameEn: String!
+  url: String!
+  urlEn: String!
+  wikipediaUrl: String!
+  wikipediaUrlEn: String!
+}
+
+"""
+The connection type for Person.
+"""
+type PersonConnection {
+  """
+  A list of edges.
+  """
+  edges: [PersonEdge]
+
+  """
+  A list of nodes.
+  """
+  nodes: [Person]
+
+  """
+  Information to aid in pagination.
+  """
+  pageInfo: PageInfo!
+}
+
+"""
+An edge in a connection.
+"""
+type PersonEdge {
+  """
+  A cursor for use in pagination.
+  """
+  cursor: String!
+
+  """
+  The item at the end of the edge.
+  """
+  node: Person
+}
+
+input PersonOrder {
+  direction: OrderDirection!
+  field: PersonOrderField!
+}
+
+enum PersonOrderField {
+  """
+  作成日時
+  """
+  CREATED_AT
+
+  """
+  お気に入り数
+  """
+  FAVORITE_USERS_COUNT
+}
+
+type Prefecture implements Node {
+  annictId: Int!
+  id: ID!
+  name: String!
+}
+
+type Program implements Node {
+  annictId: Int!
+  channel: Channel!
+  episode: Episode!
+  id: ID!
+  rebroadcast: Boolean!
+  scPid: Int
+  startedAt: DateTime!
+  state: ProgramState!
+  work: Work!
+}
+
+"""
+The connection type for Program.
+"""
+type ProgramConnection {
+  """
+  A list of edges.
+  """
+  edges: [ProgramEdge]
+
+  """
+  A list of nodes.
+  """
+  nodes: [Program]
+
+  """
+  Information to aid in pagination.
+  """
+  pageInfo: PageInfo!
+}
+
+"""
+An edge in a connection.
+"""
+type ProgramEdge {
+  """
+  A cursor for use in pagination.
+  """
+  cursor: String!
+
+  """
+  The item at the end of the edge.
+  """
+  node: Program
+}
+
+input ProgramOrder {
+  direction: OrderDirection!
+  field: ProgramOrderField!
+}
+
+enum ProgramOrderField {
+  """
+  開始日時
+  """
+  STARTED_AT
+}
+
+enum ProgramState {
+  """
+  非公開中
+  """
+  HIDDEN
+
+  """
+  公開中
+  """
+  PUBLISHED
+}
+
+type Query {
+  characters(
+    """
+    Returns the elements in the list that come after the specified cursor.
+    """
+    after: String
+    annictIds: [Int!]
+
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
+    before: String
+
+    """
+    Returns the first _n_ elements from the list.
+    """
+    first: Int
+
+    """
+    Returns the last _n_ elements from the list.
+    """
+    last: Int
+    names: [String!]
+    orderBy: CharacterOrder
+  ): CharacterConnection
+  episodes(
+    """
+    Returns the elements in the list that come after the specified cursor.
+    """
+    after: String
+    annictIds: [Int!]
+
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
+    before: String
+
+    """
+    Returns the first _n_ elements from the list.
+    """
+    first: Int
+
+    """
+    Returns the last _n_ elements from the list.
+    """
+    last: Int
+    orderBy: EpisodeOrder
+  ): EpisodeConnection
+
+  """
+  Fetches an object given its ID.
+  """
+  node(
+    """
+    ID of the object.
+    """
+    id: ID!
+  ): Node
+
+  """
+  Fetches a list of objects given a list of IDs.
+  """
+  nodes(
+    """
+    IDs of the objects.
+    """
+    ids: [ID!]!
+  ): [Node]!
+  organizations(
+    """
+    Returns the elements in the list that come after the specified cursor.
+    """
+    after: String
+    annictIds: [Int!]
+
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
+    before: String
+
+    """
+    Returns the first _n_ elements from the list.
+    """
+    first: Int
+
+    """
+    Returns the last _n_ elements from the list.
+    """
+    last: Int
+    names: [String!]
+    orderBy: OrganizationOrder
+  ): OrganizationConnection
+  people(
+    """
+    Returns the elements in the list that come after the specified cursor.
+    """
+    after: String
+    annictIds: [Int!]
+
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
+    before: String
+
+    """
+    Returns the first _n_ elements from the list.
+    """
+    first: Int
+
+    """
+    Returns the last _n_ elements from the list.
+    """
+    last: Int
+    names: [String!]
+    orderBy: PersonOrder
+  ): PersonConnection
+  user(username: String!): User
+
+  """
+  認証されているユーザ
+  """
+  viewer: User
+  works(
+    """
+    Returns the elements in the list that come after the specified cursor.
+    """
+    after: String
+    annictIds: [Int!]
+
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
+    before: String
+
+    """
+    Returns the first _n_ elements from the list.
+    """
+    first: Int
+
+    """
+    Returns the last _n_ elements from the list.
+    """
+    last: Int
+    orderBy: WorkOrder
+    seasons: [String!]
+    titles: [String!]
+  ): WorkConnection
+}
+
+enum RatingState {
+  """
+  普通
+  """
+  AVERAGE
+
+  """
+  良くない
+  """
+  BAD
+
+  """
+  良い
+  """
+  GOOD
+
+  """
+  とても良い
+  """
+  GREAT
+}
+
+"""
+シーズン
+"""
+enum SeasonName {
+  """
+  秋
+  """
+  AUTUMN
+
+  """
+  春
+  """
+  SPRING
+
+  """
+  夏
+  """
+  SUMMER
+
+  """
+  冬
+  """
+  WINTER
+}
+
+type Series implements Node {
+  annictId: Int!
+  id: ID!
+  name: String!
+  nameEn: String!
+  nameRo: String!
+  works(
+    """
+    Returns the elements in the list that come after the specified cursor.
+    """
+    after: String
+
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
+    before: String
+
+    """
+    Returns the first _n_ elements from the list.
+    """
+    first: Int
+
+    """
+    Returns the last _n_ elements from the list.
+    """
+    last: Int
+    orderBy: SeriesWorkOrder
+  ): SeriesWorkConnection
+}
+
+"""
+The connection type for Series.
+"""
+type SeriesConnection {
+  """
+  A list of edges.
+  """
+  edges: [SeriesEdge]
+
+  """
+  A list of nodes.
+  """
+  nodes: [Series]
+
+  """
+  Information to aid in pagination.
+  """
+  pageInfo: PageInfo!
+}
+
+"""
+An edge in a connection.
+"""
+type SeriesEdge {
+  """
+  A cursor for use in pagination.
+  """
+  cursor: String!
+
+  """
+  The item at the end of the edge.
+  """
+  node: Series
+}
+
+"""
+The connection type for Work.
+"""
+type SeriesWorkConnection {
+  """
+  A list of edges.
+  """
+  edges: [SeriesWorkEdge]
+
+  """
+  A list of nodes.
+  """
+  nodes: [Work]
+
+  """
+  Information to aid in pagination.
+  """
+  pageInfo: PageInfo!
+}
+
+"""
+An edge in a connection.
+"""
+type SeriesWorkEdge {
+  """
+  A cursor for use in pagination.
+  """
+  cursor: String!
+  node: Work!
+  summary: String
+  summaryEn: String
+}
+
+input SeriesWorkOrder {
+  direction: OrderDirection!
+  field: SeriesWorkOrderField!
+}
+
+enum SeriesWorkOrderField {
+  """
+  シーズン
+  """
+  SEASON
+}
+
+type Staff implements Node {
+  annictId: Int!
+  id: ID!
+  name: String!
+  nameEn: String!
+  resource: StaffResourceItem!
+  roleOther: String!
+  roleOtherEn: String!
+  roleText: String!
+  sortNumber: Int!
+  work: Work!
+}
+
+"""
+The connection type for Staff.
+"""
+type StaffConnection {
+  """
+  A list of edges.
+  """
+  edges: [StaffEdge]
+
+  """
+  A list of nodes.
+  """
+  nodes: [Staff]
+
+  """
+  Information to aid in pagination.
+  """
+  pageInfo: PageInfo!
+}
+
+"""
+An edge in a connection.
+"""
+type StaffEdge {
+  """
+  A cursor for use in pagination.
+  """
+  cursor: String!
+
+  """
+  The item at the end of the edge.
+  """
+  node: Staff
+}
+
+input StaffOrder {
+  direction: OrderDirection!
+  field: StaffOrderField!
+}
+
+enum StaffOrderField {
+  """
+  作成日時
+  """
+  CREATED_AT
+
+  """
+  ソート番号
+  """
+  SORT_NUMBER
+}
+
+union StaffResourceItem = Organization | Person
+
+type Status implements Node {
+  annictId: Int!
+  createdAt: DateTime!
+  id: ID!
+  likesCount: Int!
+  state: StatusState!
+  user: User!
+  work: Work!
+}
+
+enum StatusState {
+  """
+  未設定
+  """
+  NO_STATE
+
+  """
+  一時中断
+  """
+  ON_HOLD
+
+  """
+  視聴中止
+  """
+  STOP_WATCHING
+
+  """
+  見たい
+  """
+  WANNA_WATCH
+
+  """
+  見た
+  """
+  WATCHED
+
+  """
+  見てる
+  """
+  WATCHING
+}
+
+"""
+Autogenerated input type of StatusUpdate
+"""
+input StatusUpdateInput {
+  """
+  A unique identifier for the client performing the mutation.
+  """
+  clientMutationId: String
+  state: StatusState!
+  workId: ID!
+}
+
+"""
+Autogenerated return type of StatusUpdate
+"""
+type StatusUpdatePayload {
+  """
+  A unique identifier for the client performing the mutation.
+  """
+  clientMutationId: String
+  work: Work
+}
+
+type User implements Node {
+  activities(
+    """
+    Returns the elements in the list that come after the specified cursor.
+    """
+    after: String
+
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
+    before: String
+
+    """
+    Returns the first _n_ elements from the list.
+    """
+    first: Int
+
+    """
+    Returns the last _n_ elements from the list.
+    """
+    last: Int
+    orderBy: ActivityOrder
+  ): ActivityConnection
+  annictId: Int!
+  avatarUrl: String
+  backgroundImageUrl: String
+  createdAt: DateTime!
+  description: String!
+  email: String
+  episodeRecords(
+    """
+    Returns the elements in the list that come after the specified cursor.
+    """
+    after: String
+
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
+    before: String
+
+    """
+    Returns the first _n_ elements from the list.
+    """
+    first: Int
+    hasBody: Boolean
+
+    """
+    Returns the last _n_ elements from the list.
+    """
+    last: Int
+    orderBy: EpisodeRecordOrder
+  ): EpisodeRecordConnection
+  followers(
+    """
+    Returns the elements in the list that come after the specified cursor.
+    """
+    after: String
+
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
+    before: String
+
+    """
+    Returns the first _n_ elements from the list.
+    """
+    first: Int
+
+    """
+    Returns the last _n_ elements from the list.
+    """
+    last: Int
+  ): UserConnection
+  followersCount: Int!
+  following(
+    """
+    Returns the elements in the list that come after the specified cursor.
+    """
+    after: String
+
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
+    before: String
+
+    """
+    Returns the first _n_ elements from the list.
+    """
+    first: Int
+
+    """
+    Returns the last _n_ elements from the list.
+    """
+    last: Int
+  ): UserConnection
+  followingActivities(
+    """
+    Returns the elements in the list that come after the specified cursor.
+    """
+    after: String
+
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
+    before: String
+
+    """
+    Returns the first _n_ elements from the list.
+    """
+    first: Int
+
+    """
+    Returns the last _n_ elements from the list.
+    """
+    last: Int
+    orderBy: ActivityOrder
+  ): ActivityConnection
+  followingsCount: Int!
+  id: ID!
+  name: String!
+  notificationsCount: Int
+  onHoldCount: Int!
+  programs(
+    """
+    Returns the elements in the list that come after the specified cursor.
+    """
+    after: String
+
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
+    before: String
+
+    """
+    Returns the first _n_ elements from the list.
+    """
+    first: Int
+
+    """
+    Returns the last _n_ elements from the list.
+    """
+    last: Int
+    orderBy: ProgramOrder
+    unwatched: Boolean
+  ): ProgramConnection
+  recordsCount: Int!
+  stopWatchingCount: Int!
+  url: String
+  username: String!
+  viewerCanFollow: Boolean!
+  viewerIsFollowing: Boolean!
+  wannaWatchCount: Int!
+  watchedCount: Int!
+  watchingCount: Int!
+  works(
+    """
+    Returns the elements in the list that come after the specified cursor.
+    """
+    after: String
+    annictIds: [Int!]
+
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
+    before: String
+
+    """
+    Returns the first _n_ elements from the list.
+    """
+    first: Int
+
+    """
+    Returns the last _n_ elements from the list.
+    """
+    last: Int
+    orderBy: WorkOrder
+    seasons: [String!]
+    state: StatusState
+    titles: [String!]
+  ): WorkConnection
+}
+
+"""
+The connection type for User.
+"""
+type UserConnection {
+  """
+  A list of edges.
+  """
+  edges: [UserEdge]
+
+  """
+  A list of nodes.
+  """
+  nodes: [User]
+
+  """
+  Information to aid in pagination.
+  """
+  pageInfo: PageInfo!
+}
+
+"""
+An edge in a connection.
+"""
+type UserEdge {
+  """
+  A cursor for use in pagination.
+  """
+  cursor: String!
+
+  """
+  The item at the end of the edge.
+  """
+  node: User
+}
+
+"""
+作品情報
+"""
+type Work implements Node {
+  """
+  Annict ID
+  """
+  annictId: Int!
+  casts(
+    """
+    Returns the elements in the list that come after the specified cursor.
+    """
+    after: String
+
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
+    before: String
+
+    """
+    Returns the first _n_ elements from the list.
+    """
+    first: Int
+
+    """
+    Returns the last _n_ elements from the list.
+    """
+    last: Int
+    orderBy: CastOrder
+  ): CastConnection
+  copyright: String
+  episodes(
+    """
+    Returns the elements in the list that come after the specified cursor.
+    """
+    after: String
+
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
+    before: String
+
+    """
+    Returns the first _n_ elements from the list.
+    """
+    first: Int
+
+    """
+    Returns the last _n_ elements from the list.
+    """
+    last: Int
+    orderBy: EpisodeOrder
+  ): EpisodeConnection
+  episodesCount: Int!
+  id: ID!
+  image: WorkImage
+  malAnimeId: String
+  media: Media!
+  noEpisodes: Boolean!
+  officialSiteUrl: String
+  officialSiteUrlEn: String
+  programs(
+    """
+    Returns the elements in the list that come after the specified cursor.
+    """
+    after: String
+
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
+    before: String
+
+    """
+    Returns the first _n_ elements from the list.
+    """
+    first: Int
+
+    """
+    Returns the last _n_ elements from the list.
+    """
+    last: Int
+    orderBy: ProgramOrder
+  ): ProgramConnection
+
+  """
+  評価数
+  """
+  ratingsCount: Int!
+  satisfactionRate: Float
+  seasonName: SeasonName
+  seasonYear: Int
+  seriesList(
+    """
+    Returns the elements in the list that come after the specified cursor.
+    """
+    after: String
+
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
+    before: String
+
+    """
+    Returns the first _n_ elements from the list.
+    """
+    first: Int
+
+    """
+    Returns the last _n_ elements from the list.
+    """
+    last: Int
+  ): SeriesConnection
+  staffs(
+    """
+    Returns the elements in the list that come after the specified cursor.
+    """
+    after: String
+
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
+    before: String
+
+    """
+    Returns the first _n_ elements from the list.
+    """
+    first: Int
+
+    """
+    Returns the last _n_ elements from the list.
+    """
+    last: Int
+    orderBy: StaffOrder
+  ): StaffConnection
+  syobocalTid: Int
+
+  """
+  タイトル
+  """
+  title: String!
+
+  """
+  タイトル (英語)
+  """
+  titleEn: String
+
+  """
+  タイトル (かな)
+  """
+  titleKana: String
+  titleRo: String @deprecated(reason: "このフィールドは使われていません。 `titleEn` を使用してください。")
+  twitterHashtag: String
+  twitterUsername: String
+  viewerStatusState: StatusState
+  watchersCount: Int!
+  wikipediaUrl: String
+  wikipediaUrlEn: String
+  workRecords(
+    """
+    Returns the elements in the list that come after the specified cursor.
+    """
+    after: String
+
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
+    before: String
+
+    """
+    Returns the first _n_ elements from the list.
+    """
+    first: Int
+    hasBody: Boolean
+
+    """
+    Returns the last _n_ elements from the list.
+    """
+    last: Int
+    orderBy: WorkRecordOrder
+  ): WorkRecordConnection
+  workRecordsCount: Int!
+}
+
+"""
+The connection type for Work.
+"""
+type WorkConnection {
+  """
+  A list of edges.
+  """
+  edges: [WorkEdge]
+
+  """
+  A list of nodes.
+  """
+  nodes: [Work]
+
+  """
+  Information to aid in pagination.
+  """
+  pageInfo: PageInfo!
+}
+
+"""
+An edge in a connection.
+"""
+type WorkEdge {
+  """
+  A cursor for use in pagination.
+  """
+  cursor: String!
+
+  """
+  The item at the end of the edge.
+  """
+  node: Work
+}
+
+type WorkImage implements Node {
+  annictId: Int
+  facebookOgImageUrl: String
+  id: ID!
+  internalUrl(size: String!): String
+  recommendedImageUrl: String
+  twitterAvatarUrl: String
+  twitterBiggerAvatarUrl: String
+  twitterMiniAvatarUrl: String
+  twitterNormalAvatarUrl: String
+  work: Work
+}
+
+input WorkOrder {
+  direction: OrderDirection!
+  field: WorkOrderField!
+}
+
+enum WorkOrderField {
+  """
+  作成日時
+  """
+  CREATED_AT
+
+  """
+  シーズン
+  """
+  SEASON
+
+  """
+  視聴者数
+  """
+  WATCHERS_COUNT
+}
+
+type WorkRecord implements Node {
+  annictId: Int!
+  body: String!
+  createdAt: DateTime!
+  id: ID!
+  impressionsCount: Int!
+  likesCount: Int!
+  modifiedAt: DateTime
+  ratingAnimationState: RatingState
+  ratingCharacterState: RatingState
+  ratingMusicState: RatingState
+  ratingOverallState: RatingState
+  ratingStoryState: RatingState
+  title: String
+  updatedAt: DateTime!
+  user: User!
+  work: Work!
+}
+
+"""
+The connection type for WorkRecord.
+"""
+type WorkRecordConnection {
+  """
+  A list of edges.
+  """
+  edges: [WorkRecordEdge]
+
+  """
+  A list of nodes.
+  """
+  nodes: [WorkRecord]
+
+  """
+  Information to aid in pagination.
+  """
+  pageInfo: PageInfo!
+}
+
+"""
+Autogenerated input type of WorkRecordCreate
+"""
+input WorkRecordCreateInput {
+  """
+  作品への感想
+  """
+  body: String
+
+  """
+  A unique identifier for the client performing the mutation.
+  """
+  clientMutationId: String
+
+  """
+  作品への評価
+  """
+  ratingAnimationState: RatingState
+
+  """
+  作品への評価
+  """
+  ratingCharacterState: RatingState
+
+  """
+  作品への評価
+  """
+  ratingMusicState: RatingState
+
+  """
+  作品への評価
+  """
+  ratingOverallState: RatingState
+
+  """
+  作品への評価
+  """
+  ratingStoryState: RatingState
+
+  """
+  作品への記録をFacebookでシェアするかどうか
+  """
+  shareFacebook: Boolean
+
+  """
+  作品への記録をTwitterでシェアするかどうか
+  """
+  shareTwitter: Boolean
+  workId: ID!
+}
+
+"""
+Autogenerated return type of WorkRecordCreate
+"""
+type WorkRecordCreatePayload {
+  """
+  A unique identifier for the client performing the mutation.
+  """
+  clientMutationId: String
+  workRecord: WorkRecord
+}
+
+"""
+Autogenerated input type of WorkRecordDelete
+"""
+input WorkRecordDeleteInput {
+  """
+  A unique identifier for the client performing the mutation.
+  """
+  clientMutationId: String
+  workRecordId: ID!
+}
+
+"""
+Autogenerated return type of WorkRecordDelete
+"""
+type WorkRecordDeletePayload {
+  """
+  A unique identifier for the client performing the mutation.
+  """
+  clientMutationId: String
+  work: Work
+}
+
+"""
+An edge in a connection.
+"""
+type WorkRecordEdge {
+  """
+  A cursor for use in pagination.
+  """
+  cursor: String!
+
+  """
+  The item at the end of the edge.
+  """
+  node: WorkRecord
+}
+
+input WorkRecordOrder {
+  direction: OrderDirection!
+  field: WorkRecordOrderField!
+}
+
+enum WorkRecordOrderField {
+  """
+  作成日時
+  """
+  CREATED_AT
+
+  """
+  いいね数
+  """
+  LIKES_COUNT
+}
+
+"""
+Autogenerated input type of WorkRecordUpdate
+"""
+input WorkRecordUpdateInput {
+  """
+  作品への感想
+  """
+  body: String
+
+  """
+  A unique identifier for the client performing the mutation.
+  """
+  clientMutationId: String
+
+  """
+  作品への評価
+  """
+  ratingAnimationState: RatingState!
+
+  """
+  作品への評価
+  """
+  ratingCharacterState: RatingState!
+
+  """
+  作品への評価
+  """
+  ratingMusicState: RatingState!
+
+  """
+  作品への評価
+  """
+  ratingOverallState: RatingState!
+
+  """
+  作品への評価
+  """
+  ratingStoryState: RatingState!
+
+  """
+  作品への記録をFacebookでシェアするかどうか
+  """
+  shareFacebook: Boolean
+
+  """
+  作品への記録をTwitterでシェアするかどうか
+  """
+  shareTwitter: Boolean
+  workRecordId: ID!
+}
+
+"""
+Autogenerated return type of WorkRecordUpdate
+"""
+type WorkRecordUpdatePayload {
+  """
+  A unique identifier for the client performing the mutation.
+  """
+  clientMutationId: String
+  workRecord: WorkRecord
+}

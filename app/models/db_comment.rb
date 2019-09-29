@@ -21,7 +21,7 @@
 
 class DbComment < ApplicationRecord
   include Mentionable
-  include LocaleDetectable
+  include Localizable
 
   belongs_to :resource, polymorphic: true
   belongs_to :user

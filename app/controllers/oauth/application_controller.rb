@@ -5,6 +5,7 @@ module Oauth
     include Doorkeeper::Helpers::Controller
 
     include ControllerCommon
+    include Localable
     include Analyzable
     include LogrageSetting
     include Gonable
@@ -13,7 +14,7 @@ module Oauth
     include RavenContext
     include PageCategoryMethods
 
-    helper_method :gon
+    helper_method :gon, :locale_ja?, :locale_en?, :local_url
 
     layout "application"
 

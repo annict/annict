@@ -75,6 +75,8 @@ module Annict
 
     config.active_job.queue_adapter = :delayed_job
 
+    config.active_record.schema_format = :sql
+
     config.middleware.insert_before(Rack::Runtime, Rack::Rewrite) do
       # Redirect: www.annict.com -> annict.com
       r301 /.*/, "https://#{ENV.fetch('ANNICT_HOST')}$&", if: proc { |rack_env|

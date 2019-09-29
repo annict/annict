@@ -1,11 +1,13 @@
 # frozen_string_literal: true
 
 class SearchWorkRecordsQuery
-  def initialize(collection = WorkRecord.all, order_by: nil, has_body: nil)
-    @collection = collection.published
+  def initialize(collection = WorkRecord.published, context: {}, order_by: nil, has_body: nil, filter_by_locale: false)
+    @collection = collection
+    @context = context
     @args = {
       order_by: order_by,
-      has_body: has_body
+      has_body: has_body,
+      filter_by_locale: filter_by_locale
     }
   end
 
@@ -15,27 +17,41 @@ class SearchWorkRecordsQuery
 
   private
 
-  def from_arguments
-    if @args[:order_by].present?
-      direction = @args[:order_by][:direction]
+  attr_reader :collection, :context, :args
 
-      @collection = case @args[:order_by][:field]
+  def from_arguments
+    results = collection
+    viewer = context[:viewer]
+    locale = context[:locale]
+
+    if args[:order_by].present?
+      direction = args[:order_by][:direction]
+
+      results = case args[:order_by][:field]
       when "CREATED_AT"
-        @collection.order(created_at: direction)
+        results.order(created_at: direction)
       when "LIKES_COUNT"
-        @collection.order(likes_count: direction)
+        results.order(likes_count: direction)
       end
     end
 
-    @collection = case @args[:has_body]
+    results = case args[:has_body]
     when true
-      @collection.with_body
+      results.with_body
     when false
-      @collection.with_no_body
+      results.with_no_body
     else
-      @collection
+      results
     end
 
-    @collection
+    results = if args[:filter_by_locale]
+      if viewer
+        results.readable_by_user(viewer)
+      else
+        results.with_locale(locale)
+      end
+    end
+
+    results
   end
 end

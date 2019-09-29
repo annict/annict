@@ -22,7 +22,7 @@
 #
 
 class Comment < ApplicationRecord
-  include LocaleDetectable
+  include Localizable
 
   belongs_to :episode_record, counter_cache: true
   belongs_to :user

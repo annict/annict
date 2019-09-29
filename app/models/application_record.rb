@@ -8,6 +8,7 @@ class ApplicationRecord < ActiveRecord::Base
   def self.find_by_graphql_id(graphql_id)
     type_name, item_id = GraphQL::Schema::UniqueWithinType.decode(graphql_id)
     raise Annict::Errors::ModelMismatchError if Object.const_get(type_name) != self
+
     find item_id
   end
 
@@ -22,6 +23,7 @@ class ApplicationRecord < ActiveRecord::Base
   def method_missing(method_name, *arguments, &block)
     return super if method_name.blank?
     return super unless method_name.to_s.start_with?("local_")
+
     _local_property(method_name.to_s.sub("local_", ""), *arguments)
   end
 

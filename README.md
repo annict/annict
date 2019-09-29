@@ -16,11 +16,8 @@ The platform for anime addicts.
 To run Annict on a local machine, you need to have the following dependencies installed:
 
 - [Ruby](https://www.ruby-lang.org) 2.6.3
-- [Node.js](https://nodejs.org) 10.16.3
-- [Yarn](https://yarnpkg.com)
 - [Docker](https://www.docker.com)
 - [Docker Compose](https://docs.docker.com/compose/)
-- [Foreman](https://github.com/ddollar/foreman)
 
 
 ## Running the app
@@ -30,11 +27,11 @@ $ sudo sh -c "echo '127.0.0.1  annict.test' >> /etc/hosts"
 $ sudo sh -c "echo '127.0.0.1  annict-jp.test' >> /etc/hosts"
 $ git clone git@github.com:annict/annict.git
 $ cd annict
-$ yarn install
 $ bundle install
 $ touch .env.development.local
 $ bundle exec rails db:setup
-$ foreman start -f Procfile.dev
+$ docker-compose up --build
+$ bundle exec rake jobs:work
 $ bundle exec rails s
 ```
 

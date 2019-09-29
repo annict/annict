@@ -46,7 +46,7 @@
 class EpisodeRecord < ApplicationRecord
   extend Enumerize
   include AASM
-  include LocaleDetectable
+  include Localizable
   include Shareable
 
   enumerize :rating_state, in: Record::RATING_STATES, scope: true
