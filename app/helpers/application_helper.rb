@@ -60,6 +60,6 @@ module ApplicationHelper
       }
     }
 
-    javascript_tag "window.annConfig = #{config.to_json.html_safe};"
+    javascript_tag "window.AnnConfig = #{config.to_json.html_safe};"
   end
 end

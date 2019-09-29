@@ -5,7 +5,7 @@
         <div class="row">
           <div class="col-12 col-sm-3 mb-3">
             <h2 class="mb-0">
-              <a :href="annConfig.localUrl">Annict</a>
+              <a :href="AnnConfig.localUrl">Annict</a>
             </h2>
             <div class="p-footer__description small">
               The platform for anime addicts.
@@ -14,7 +14,7 @@
               <h4></h4>
               <div class="row">
                 <div class="col col-auto">
-                  <a class="h2" :href="'https://twitter.com/' + annConfig.twitter.username" rel="noopener" target="_blank">
+                  <a class="h2" :href="'https://twitter.com/' + AnnConfig.twitter.username" rel="noopener" target="_blank">
                     <i class="fab fa-twitter"></i>
                   </a>
                 </div>
@@ -130,12 +130,12 @@
           </h4>
             <ul class="list-inline d-inline-block mb-0">
               <li class="list-inline-item">
-                <a :href="annConfig.currentUrlJa">
+                <a :href="AnnConfig.currentUrlJa">
                   日本語
                 </a>
               </li>
               <li class="list-inline-item">
-                <a :href="annConfig.currentUrlEn">
+                <a :href="AnnConfig.currentUrlEn">
                   English
                 </a>
               </li>
@@ -163,7 +163,7 @@
   export default createComponent({
     setup(_props, _context) {
       return {
-        annConfig: window.annConfig,
+        AnnConfig: window.AnnConfig,
       }
     }
   })
