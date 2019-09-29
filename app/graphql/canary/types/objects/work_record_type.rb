@@ -47,9 +47,9 @@ module Canary
         end
 
         def viewer_did_like
-          user.then do |u|
-            u.like?(object)
-          end
+          return false unless context[:viewer]
+
+          context[:viewer].like?(object)
         end
       end
     end
