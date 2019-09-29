@@ -47,6 +47,7 @@
     "webpack-merge": "^4.1.4"
   },
   "devDependencies": {
+    "@types/jquery": "^3.3.31",
     "@typescript-eslint/eslint-plugin": "^1.13.0",
     "@typescript-eslint/parser": "^1.13.0",
     "css-loader": "^1.0.0",
