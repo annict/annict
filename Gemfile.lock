@@ -524,7 +524,7 @@ GEM
       faraday
       faraday_middleware
       multi_xml
-    temple (0.8.1)
+    temple (0.8.2)
     terminal-table (1.8.0)
       unicode-display_width (~> 1.1, >= 1.1.1)
     terrapin (0.6.0)
