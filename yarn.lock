@@ -8386,9 +8386,9 @@ webpack-log@^2.0.0:
     uuid "^3.3.2"
 
 webpack-manifest-plugin@^2.0.4:
-  version "2.1.2"
-  resolved "https://registry.yarnpkg.com/webpack-manifest-plugin/-/webpack-manifest-plugin-2.1.2.tgz#990c448b4cfe1cf0b2dfad4a422264aabc4c98eb"
-  integrity sha512-XWjPY0NXXJ1tGQZgtOMZtEsm8mST23nvO7q5e5H26NH4pv7wfYbHaX9Uwogve+IF6Ilv4j1e3hPr9N3JGZdilA==
+  version "2.2.0"
+  resolved "https://registry.yarnpkg.com/webpack-manifest-plugin/-/webpack-manifest-plugin-2.2.0.tgz#19ca69b435b0baec7e29fbe90fb4015de2de4f16"
+  integrity sha512-9S6YyKKKh/Oz/eryM1RyLVDVmy3NSPV0JXMRhZ18fJsq+AwGxUY34X54VNwkzYcEmEkDwNxuEOboCZEebJXBAQ==
   dependencies:
     fs-extra "^7.0.0"
     lodash ">=3.5 <5"
