@@ -12,6 +12,21 @@ jobs:
   build:
     runs-on: ubuntu-18.04
 
+    container:
+      image: annict/ruby:2.6.5-node_10.16.3
+      env:
+        BUNDLE_JOBS: 4
+        BUNDLE_RETRY: 3
+        COVERAGE: true
+        POSTGRES_HOST: localhost
+        RAILS_ENV: test
+        SELENIUM_DRIVER_URL: http://localhost:4444/wd/hub
+        TZ: Asia/Tokyo
+        # The `CFLAGS` and `CXXFLAGS` are required to install cld gem
+        # https://github.com/jtoy/cld/issues/10
+        CFLAGS: -Wno-narrowing
+        CXXFLAGS: -Wno-narrowing
+
     services:
       postgresql:
         image: circleci/postgres:10.4-alpine
@@ -19,39 +34,22 @@ jobs:
           POSTGRES_USER: postgres
           POSTGRES_DB: annict_test
           POSTGRES_PASSWORD: ""
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
       selenium:
         image: selenium/standalone-chrome:latest
 
     steps:
-      - name: Install dependencies
-        run: |
-          sudo apt-get update
-          sudo apt-get -yqq install libpq-dev chromium-chromedriver
-
       - uses: actions/checkout@v1
-
-      - name: Set up Ruby
-        uses: actions/setup-ruby@v1
-        with:
-          ruby-version: 2.6.5
-
-      - name: Set up Node
-        uses: actions/setup-node@v1
-        with:
-          node-version: 10.16.3
 
       - name: Install Bundler
         run: |
           gem install bundler
 
       - name: Run `bundle install`
-        env:
-          BUNDLE_JOBS: 4
-          BUNDLE_RETRY: 3
-          # The `CFLAGS` and `CXXFLAGS` are required to install cld gem
-          # https://github.com/jtoy/cld/issues/10
-          CFLAGS: -Wno-narrowing
-          CXXFLAGS: -Wno-narrowing
         run: |
           bundle install --jobs $BUNDLE_JOBS --retry $BUNDLE_RETRY
 
@@ -64,9 +62,6 @@ jobs:
           yarn heroku-postbuild
 
       - name: Setup Database
-        env:
-          POSTGRES_HOST: localhost
-          RAILS_ENV: test
         run: |
           bin/rails db:create
           bin/rails db:structure:load
@@ -77,11 +72,6 @@ jobs:
           chmod +x ./cc-test-reporter
 
       - name: Run tests
-        env:
-          CC_TEST_REPORTER_ID: 473c071c4d1900d58ceed984bd49d8a39368393ce6f010cf5d52287f3072f6ef
-          COVERAGE: true
-          SELENIUM_DRIVER_URL: http://localhost:4444/wd/hub
-          TZ: Asia/Tokyo
         run: |
           ./cc-test-reporter before-build
           bundle exec rspec
