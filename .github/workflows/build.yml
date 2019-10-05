@@ -1,0 +1,88 @@
+name: Build
+
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+    branches:
+      - "*"
+
+jobs:
+  build:
+    runs-on: ubuntu-18.04
+
+    services:
+      postgresql:
+        image: circleci/postgres:10.4-alpine
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_DB: annict_test
+          POSTGRES_PASSWORD: ""
+      selenium:
+        image: selenium/standalone-chrome:latest
+
+    steps:
+      - name: Install dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get -yqq install libpq-dev chromium-chromedriver
+
+      - uses: actions/checkout@v1
+
+      - name: Set up Ruby
+        uses: actions/setup-ruby@v1
+        with:
+          ruby-version: 2.6.5
+
+      - name: Set up Node
+        uses: actions/setup-node@v1
+        with:
+          node-version: 10.16.3
+
+      - name: Install Bundler
+        run: |
+          gem install bundler
+
+      - name: Run `bundle install`
+        env:
+          BUNDLE_JOBS: 4
+          BUNDLE_RETRY: 3
+          # The `CFLAGS` and `CXXFLAGS` are required to install cld gem
+          # https://github.com/jtoy/cld/issues/10
+          CFLAGS: -Wno-narrowing
+          CXXFLAGS: -Wno-narrowing
+        run: |
+          bundle install --jobs $BUNDLE_JOBS --retry $BUNDLE_RETRY
+
+      - name: Run `yarn install`
+        run: |
+          yarn install
+
+      - name: Run `yarn heroku-postbuild`
+        run: |
+          yarn heroku-postbuild
+
+      - name: Setup Database
+        env:
+          POSTGRES_HOST: localhost
+          RAILS_ENV: test
+        run: |
+          bin/rails db:create
+          bin/rails db:structure:load
+
+      - name: Setup Code Climate test-reporter
+        run: |
+          curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter
+          chmod +x ./cc-test-reporter
+
+      - name: Run tests
+        env:
+          CC_TEST_REPORTER_ID: 473c071c4d1900d58ceed984bd49d8a39368393ce6f010cf5d52287f3072f6ef
+          COVERAGE: true
+          SELENIUM_DRIVER_URL: http://localhost:4444/wd/hub
+          TZ: Asia/Tokyo
+        run: |
+          ./cc-test-reporter before-build
+          bundle exec rspec
+          ./cc-test-reporter after-build --coverage-input-type simplecov --exit-code $?
