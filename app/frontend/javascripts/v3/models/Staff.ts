@@ -31,6 +31,6 @@ export class Staff extends ApplicationModel {
   }
 
   public isPerson() {
-    return !!this.person.annictId
+    return !!this.person
   }
 }
