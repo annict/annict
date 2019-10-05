@@ -4,7 +4,7 @@ module VodHelper
   def vod_title_url(channel_id, code)
     case channel_id
     when Channel::AMAZON_VIDEO_ID
-      "https://www.amazon.co.jp/dp/#{code}?tag=annict-22"
+      "https://www.amazon.co.jp/dp/#{code}"
     when Channel::BANDAI_CHANNEL_ID
       "http://www.b-ch.com/ttl/index.php?ttl_c=#{code}"
     when Channel::D_ANIME_STORE_ID

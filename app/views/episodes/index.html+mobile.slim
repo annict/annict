@@ -7,10 +7,6 @@
 
 = render "works/header", work: @work
 
-- unless current_user&.supporter?
-  .mb-3.text-center
-    = render "application/components/adsense", slots: [ENV["GOOGLE_AD_320x100_5"]], size: "320x100"
-
 .c-card.py-3.mb-4
   - if @episodes.present?
     c-episode-list inline-template="" :is-signed-in="#{user_signed_in?}" :init-is-tracking-mode="#{params.key?(:tracking)}" :all-episode-ids="#{@episodes.pluck(:id)}" :work-id="#{@work.id}"

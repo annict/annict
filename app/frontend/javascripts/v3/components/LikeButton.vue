@@ -53,7 +53,7 @@
 
       const toggleLike = async () => {
         if (!props.isSignedIn) {
-          $('.c-sign-up-modal').modal('show')
+          ($('.c-sign-up-modal') as any).modal('show')
           return
         }
 

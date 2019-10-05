@@ -50,7 +50,7 @@ module Db
     private
 
     def work_image_params
-      params.require(:work_image).permit(:image, :asin, :copyright)
+      params.require(:work_image).permit(:image, :copyright)
     end
   end
 end

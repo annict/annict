@@ -2,11 +2,11 @@ import { ApplicationModel } from './ApplicationModel'
 import { Channel } from './Channel'
 
 export class Program extends ApplicationModel{
-  private annictId: number
-  private vodTitleName: string
-  private vodTitleCode: string
-  private vodTitleUrl: string
-  private channel: Channel
+  public annictId: number
+  public vodTitleName: string
+  public vodTitleCode: string
+  public vodTitleUrl: string
+  public channel: Channel
 
   public constructor(node) {
     super()

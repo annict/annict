@@ -34,10 +34,12 @@ module.exports = {
     rules: [
       {
         test: /\.vue$/,
+        exclude: /node_modules/,
         loader: 'vue-loader',
       },
       {
         test: /\.(js|ts)x?$/,
+        exclude: /node_modules/,
         loader: 'ts-loader',
         options: {
           appendTsSuffixTo: [/\.vue$/],

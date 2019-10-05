@@ -1,7 +1,7 @@
 import { ApplicationModel } from './ApplicationModel'
 
 export class WorkImage extends ApplicationModel {
-  private internalUrl: string
+  public internalUrl: string
 
   public constructor(node) {
     super()

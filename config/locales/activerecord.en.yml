@@ -77,10 +77,6 @@ en:
         forum_category_id: Category
         forum_comments_count: Comments
         last_commented_at: Last Comment
-      item:
-        name: Name
-        url: URL
-        tombo_image: Image
       oauth_application:
         redirect_uri: Redirect URI
         scope: Scope
@@ -217,8 +213,6 @@ en:
         wikipedia_url: Wikipedia (ja)
       work_image:
         attachment: Image
-        asin: ASIN
-        asin_or_copyright: ASIN or Copyright
         copyright: Copyright
       work_organization:
         organization_id: Organization

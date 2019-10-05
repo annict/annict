@@ -2,10 +2,7 @@
 - description = meta_description(t("head.meta.description.works.popular"))
 - keywords = meta_keywords
 - set_meta_tags(title: title, description: description, keywords: keywords, og: { description: description }, twitter: { description: description }, reverse: true, prefix: false)
-
 - breadcrumb :popular_works
-
-c-adsense-container.text-center :slots="['#{ENV['GOOGLE_AD_320x100_24']}']" ad-size="320x100"
 
 h1.h2.text-center.my-3
   = title
@@ -22,8 +19,6 @@ h1.h2.text-center.my-3
 - if @works.present? && @works.total_pages > 1
   .mb-3.text-center
     = paginate @works, window: 2
-
-c-adsense-container.text-center.mb-3 :slots="['#{ENV['GOOGLE_AD_320x100_25']}']" ad-size="320x100"
 
 = render "application/components/breadcrumb"
 = render "application/components/footer"

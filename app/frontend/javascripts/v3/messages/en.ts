@@ -10,6 +10,9 @@ export default {
       friends: {
         index: 'Find Friends',
       },
+      notifications: {
+        index: 'Notifications',
+      },
       pages: {
         about: 'About',
         legal: 'Legal',

@@ -11,10 +11,6 @@
     = render "application/components/breadcrumb"
     .row
       .col-9.pr-0
-        - unless current_user&.supporter?
-          .mb-3.text-center
-            = render "application/components/adsense", slots: [ENV["GOOGLE_AD_728x90_17"]], size: "728x90"
-
         .c-card.py-3
           .container
             = render "work_records/work_record", work_record: @work_record, is_spoiler: @is_spoiler
@@ -57,10 +53,6 @@
           = link_to work_path(@work), class: "btn btn-primary w-100" do
             = icon "angle-right"
             = t "verb.view_work_detail"
-
-        - unless current_user&.supporter?
-          .mt-3.text-center
-            = render "application/components/adsense", slots: [ENV["GOOGLE_AD_200x200_5"]], size: "200x200"
 
 = render "application/components/footer"
 

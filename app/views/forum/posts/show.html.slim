@@ -55,10 +55,7 @@
 
         .c-card.p-3.mb-3
           = render "forum/comments/form", comment: @comment
-
-        c-adsense-container.text-center :slots="['#{ENV['GOOGLE_AD_336x280_5']}', '#{ENV['GOOGLE_AD_336x280_6']}']" ad-size="336x280"
       .col-4
-        c-adsense-container.text-center :slots="['#{ENV['GOOGLE_AD_336x280_4']}']" ad-size="336x280"
 
 = render "application/components/footer"
 

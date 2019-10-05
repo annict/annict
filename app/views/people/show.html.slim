@@ -12,10 +12,6 @@
       .col-9
         = render "people/subnav", person: @person
 
-        - unless current_user&.supporter?
-          .text-center.mb-3
-            = render "application/components/adsense", slots: [ENV["GOOGLE_AD_728x90_11"]], size: "728x90"
-
         .c-card
           .container.py-3
             - if @person.voice_actor?

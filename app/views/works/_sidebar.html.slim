@@ -98,10 +98,6 @@ c-share-button-facebook url="#{local_url}#{work_path(work)}"
   .mt-4
     = link_to t("messages._common.edit_on_annict_db"), edit_db_work_path(work), class: "btn btn-secondary w-100 mt-2"
 
-- unless current_user&.supporter?
-  .mt-4.text-center
-    = render "application/components/adsense", slots: [ENV["GOOGLE_AD_RESP_1"]], size: "200x200", format: "rectangle"
-
 - content_for :js_templates do
   = render "application/js_templates/share_button_facebook"
   = render "application/js_templates/share_button_twitter"

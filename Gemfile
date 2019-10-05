@@ -3,7 +3,7 @@
 source "https://rubygems.org"
 git_source(:github) { |repo| "https://github.com/#{repo}.git" }
 
-ruby "2.6.3"
+ruby "2.6.5"
 
 gem "rails"
 
@@ -13,7 +13,6 @@ gem "active_link_to"
 gem "activerecord-session_store"
 gem "acts_as_list"
 gem "addressable"
-gem "amazon-ecs"
 gem "aws-sdk-s3" # Using in Shrine
 gem "browser", require: "browser/browser"
 gem "by_star"

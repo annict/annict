@@ -15,9 +15,6 @@ import eventHub from './common/eventHub'
 import vueLazyLoad from './common/vueLazyLoad'
 
 import activities from './common/components/activities'
-import adsense from './common/components/adsense'
-import adsenseContainer from './common/components/adsenseContainer'
-import amazonItemAttacher from './common/components/amazonItemAttacher'
 import analytics from './common/components/analytics'
 import autosizeTextarea from './common/components/autosizeTextarea'
 import body from './common/components/body'
@@ -86,9 +83,6 @@ document.addEventListener('turbolinks:load', event => {
   Vue.use(VueLazyload)
 
   Vue.component('c-activities', activities)
-  Vue.component('c-adsense', adsense)
-  Vue.component('c-adsense-container', adsenseContainer)
-  Vue.component('c-amazon-item-attacher', amazonItemAttacher)
   Vue.component('c-analytics', analytics(event))
   Vue.component('c-autosize-textarea', autosizeTextarea)
   Vue.component('c-body', body)

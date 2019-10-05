@@ -3,20 +3,20 @@ import { User } from './User'
 import { Record } from './Record'
 
 export class WorkRecord extends ApplicationModel {
-  private id: string
-  private ratingAnimationState: string
-  private ratingMusicState: string
-  private ratingStoryState: string
-  private ratingCharacterState: string
-  private ratingOverallState: string
-  private body: string
-  private bodyHtml: string
-  private likesCount: number
-  private createdAt: DateTime
-  private modifiedAt: DateTime
-  private viewerDidLike: boolean
-  private user: User
-  private record: Record
+  public id: string
+  public ratingAnimationState: string
+  public ratingMusicState: string
+  public ratingStoryState: string
+  public ratingCharacterState: string
+  public ratingOverallState: string
+  public body: string
+  public bodyHtml: string
+  public likesCount: number
+  public createdAt: string
+  public modifiedAt: string
+  public viewerDidLike: boolean
+  public user: User
+  public record: Record
 
   public constructor(node) {
     super()

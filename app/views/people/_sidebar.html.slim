@@ -74,9 +74,5 @@ h1.h2.font-weight-bold
 - if user_signed_in? && current_user.committer?
   = link_to t("messages._common.edit_on_annict_db"), edit_db_person_path(person), class: "btn btn-secondary w-100 mt-2"
 
-- unless current_user&.supporter?
-  .mt-3.text-center
-    = render "application/components/adsense", slots: [ENV["GOOGLE_AD_200x200_3"]], size: "200x200"
-
 - content_for :js_templates
   = render "application/js_templates/favorite_button"

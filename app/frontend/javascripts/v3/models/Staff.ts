@@ -1,6 +1,15 @@
 import { ApplicationModel, Organization, Person } from '../models'
 
 export class Staff extends ApplicationModel {
+  public name: string
+  public nameEn: string
+  public localAccuratedName: string
+  public role: string
+  public roleEn: string
+  public localRole: string
+  public organization: Organization
+  public person: Person
+
   public constructor(node) {
     super()
     this.name = node.name
@@ -9,8 +18,8 @@ export class Staff extends ApplicationModel {
     this.role = node.role
     this.roleEn = node.roleEn
     this.localRole = node.localRole
-    this.organization = {}
-    this.person = {}
+    this.organization = null
+    this.person = null
   }
 
   public setOrganization(node) {
@@ -22,6 +31,6 @@ export class Staff extends ApplicationModel {
   }
 
   public isPerson() {
-    return !!this.person.annictId
+    return !!this.person
   }
 }

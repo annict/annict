@@ -30,7 +30,7 @@
           ref: 'plugin',
           src: 'like',
           kid_directed_site: 0,
-          app_id: window.annConfig.facebook.appId,
+          app_id: window.AnnConfig.facebook.appId,
         });
 
         return `${baseShareUrl}?${params}`;

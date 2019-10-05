@@ -120,6 +120,3 @@ en:
       twitter_hashtag_placeholder: e.g. なのん
       twitter_username_placeholder: e.g. nonnontv
       updated: Work updated
-    work_image:
-      asin_or_copyright_required: required
-      invalid_asin: is invalid format

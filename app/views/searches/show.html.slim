@@ -16,10 +16,6 @@
         = render "subnav", view: @view
 
         .container.my-3
-          - unless current_user&.supporter?
-            .mb-3.text-center
-              = render "application/components/adsense", slots: [ENV["GOOGLE_AD_300x250_7"], ENV["GOOGLE_AD_300x250_8"]], size: "300x250"
-
           - resources = instance_variable_get("@#{@view.pluralize}").page(params[:page])
           = render "#{@view}_list", view: @view, "#{@view.pluralize}": resources
           .text-center

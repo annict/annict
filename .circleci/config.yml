@@ -6,8 +6,9 @@ jobs:
     # directory where steps will run
     working_directory: ~/annict
     docker:
-      - image: circleci/ruby:2.6.3-node-browsers
+      - image: annict/ruby:2.6.5-node_10.16.3
         environment:
+          ANNICT_ASSET_URL: http://localhost:3030
           BUNDLE_JOBS: 3
           BUNDLE_PATH: vendor/bundle
           BUNDLE_RETRY: 3
@@ -84,8 +85,10 @@ jobs:
           command: dockerize -wait tcp://localhost:4444 -timeout 1m
 
       - run:
-          name: Database setup
-          command: bin/rails db:setup
+          name: Setup Database
+          command: |
+            bin/rails db:create
+            bin/rails db:structure:load
 
       - run:
           name: Setup Code Climate test-reporter

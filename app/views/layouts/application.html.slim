@@ -2,7 +2,6 @@ doctype html
 html lang="#{I18n.locale}"
   head
     = render "application/head"
-    = render "application/adsense"
   body class="#{body_classes} #{user_signed_in? ? 'is-user' : 'is-guest'}"
     = include_gon
 
@@ -21,8 +20,6 @@ html lang="#{I18n.locale}"
       = render "application/analytics"
 
     = render "application/font_awesome"
-    = render "application/js_templates/adsense_container"
-    = render "application/js_templates/adsense"
     = render "application/js_templates/flash"
     = render "application/js_templates/privacy_policy_modal"
     = render "application/js_templates/sticky_message"

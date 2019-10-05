@@ -56,8 +56,4 @@ module EpisodeDecorator
 
     "#{work_title} #{local_number}"
   end
-
-  def delete_item_path(item)
-    episode_item_path(self, item)
-  end
 end

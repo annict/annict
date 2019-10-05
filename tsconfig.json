@@ -1,7 +1,7 @@
 {
   "compilerOptions": {
     "allowJs": true,
-    "checkJs": true,
+    "checkJs": false,
     "esModuleInterop": true,
     "importHelpers": true,
     "module": "es2015",
@@ -11,7 +11,8 @@
     "resolveJsonModule": true,
     "sourceMap": true,
     "strict": false,
-    "target": "es5"
+    "target": "es5",
+    "skipLibCheck": true
   },
   "exclude": [
     "node_modules",

@@ -39,9 +39,6 @@
                 c-follow-button username="#{@user.username}" :init-is-following="false" :is-signed-in="false"
 
   .p-users-show__main.container.pt-3
-    - unless current_user&.supporter?
-      .mb-3.text-center
-        = render "application/components/adsense", slots: [ENV["GOOGLE_AD_728x90_4"]], size: "728x90"
     .row
       .col-7
         c-activities.pb-3 username="#{@user.username}"
@@ -196,10 +193,6 @@
             = icon "chart-bar", class: "mr-2"
             = t "noun.your_statistics"
           c-user-heatmap :username='"#{@user.username}"'
-
-        - unless current_user&.supporter?
-          .mb-3.text-center
-            = render "application/components/adsense", slots: [ENV["GOOGLE_AD_336x280_1"]], size: "336x280"
 
 = render "application/components/footer"
 

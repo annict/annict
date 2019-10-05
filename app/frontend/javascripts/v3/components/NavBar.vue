@@ -3,7 +3,7 @@
     <!--  PC-->
     <nav class="navbar navbar-expand navbar-light bg-white">
       <a href="/" class="navbar-brand d-none d-lg-inline-block">
-        <img :src="state.annConfig.images.logoUrl" width="25" height="30" alt="Annict">
+        <img :src="state.AnnConfig.images.logoUrl" width="25" height="30" alt="Annict">
       </a>
       <ul class="navbar-nav mt-2 mt-md-0 mr-md-2">
         <li class="nav-item" v-if="$root.isSignedIn()">
@@ -38,13 +38,13 @@
             {{ $t('verb.explore') }}
           </a>
           <div class="dropdown-menu">
-            <a :href="'/works/' + state.annConfig.season.current" class="dropdown-item">
+            <a :href="'/works/' + state.AnnConfig.season.current" class="dropdown-item">
               {{ $t('noun.currentSeason') }}
             </a>
-            <a :href="'/works/' + state.annConfig.season.next" class="dropdown-item">
+            <a :href="'/works/' + state.AnnConfig.season.next" class="dropdown-item">
               {{ $t('noun.nextSeason') }}
             </a>
-            <a :href="'/works/' + state.annConfig.season.prev" class="dropdown-item">
+            <a :href="'/works/' + state.AnnConfig.season.prev" class="dropdown-item">
               {{ $t('noun.prevSeason') }}
             </a>
             <a href="/works/newest" class="dropdown-item">
@@ -67,6 +67,9 @@
           <div class="dropdown-menu dropdown-menu-right">
             <a :href="'/@' + $root.viewer.username" class="dropdown-item">
               {{ $t('noun.profile') }}
+            </a>
+            <a href="/notifications" class="dropdown-item">
+              {{ $t('head.title.notifications.index') }}
             </a>
             <a href="/friends" class="dropdown-item">
               {{ $t('head.title.friends.index') }}
@@ -158,7 +161,7 @@
             </a>
           </li>
           <li class="nav-item text-center">
-            <a :href="'/works/' + state.annConfig.season.current" class="text-dark">
+            <a :href="'/works/' + state.AnnConfig.season.current" class="text-dark">
               <i class="fas fa-tv"></i>
               <div class="small mt-1">
                 {{ $t('noun.airing') }}
@@ -176,7 +179,7 @@
         </template>
         <template v-else>
           <li class="nav-item text-center">
-            <a :href="'/works/' + state.annConfig.season.current" class="text-dark">
+            <a :href="'/works/' + state.AnnConfig.season.current" class="text-dark">
               <i class="fas fa-tv"></i>
               <div class="small mt-1">
                 {{ $t('noun.airing') }}
@@ -219,7 +222,7 @@
   export default createComponent({
     setup() {
       const state = reactive({
-        annConfig: window.annConfig
+        AnnConfig: window.AnnConfig
       })
 
       return {
