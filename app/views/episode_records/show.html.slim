@@ -10,10 +10,6 @@
     = render "application/components/breadcrumb"
     .row
       .col-9.pr-0
-        - unless current_user&.supporter?
-          .mb-3.text-center
-            = render "application/components/adsense", slots: [ENV["GOOGLE_AD_728x90_17"]], size: "728x90"
-
         .c-card.py-3
           .container
             h1.h2
@@ -72,9 +68,6 @@
           = link_to work_path(@work), class: "btn btn-primary w-100" do
             = icon "angle-right"
             = t "verb.view_work_detail"
-        - unless current_user&.supporter?
-          .text-center
-            = render "application/components/adsense", slots: [ENV["GOOGLE_AD_250x250_3"]], size: "250x250"
 
 c-sticky-message message-body="#{t('messages._components.sticky_message.records_show.body')}"
 

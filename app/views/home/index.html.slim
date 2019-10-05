@@ -3,10 +3,6 @@
 
 .p-application__content
   .container.my-3
-    - unless current_user&.supporter?
-      .text-center.mb-3
-        = render "application/components/adsense", slots: [ENV["GOOGLE_AD_728x90_20"]], size: "728x90"
-
     .row
       .col-7
         h2.h4.font-weight-bold.mb-3.text-center
@@ -43,10 +39,6 @@
             = link_to forum_category_path(:site_news) do
               = icon "angle-right", class: "mr-1"
               = t "messages.forum._common.view_all_site_news"
-
-        - unless current_user&.supporter?
-          .text-center
-            = render "application/components/adsense", slots: [ENV["GOOGLE_AD_300x250_2"]], size: "300x250"
 
 = render "application/components/footer"
 

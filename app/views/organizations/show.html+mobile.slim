@@ -7,10 +7,6 @@
 .c-card.mb-3
   = render "organizations/header", organization: @organization, favorite_resources: @favorite_orgs
 
-- unless current_user&.supporter?
-  .mb-3.text-center
-    = render "application/components/adsense", slots: [ENV["GOOGLE_AD_320x100_22"]], size: "320x100"
-
 h2.h4.font-weight-bold.text-center.mt-3.mb-4
   = t "noun.information"
 .c-card.py-3.mb-3
@@ -38,10 +34,6 @@ h2.h4.text-center.font-weight-bold.mt-3.mb-4
   = t "noun.works"
 .c-card.container.py-3.mb-3
   = render "people/grid", root_resource: @organization, resource_years: @staff_years, resources_with_year: @staffs_with_year
-
-- unless current_user&.supporter?
-  .mb-3.text-center
-    = render "application/components/adsense", slots: [ENV["GOOGLE_AD_320x100_23"]], size: "320x100"
 
 = render "application/components/footer"
 

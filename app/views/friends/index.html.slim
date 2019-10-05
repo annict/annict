@@ -7,10 +7,6 @@
   .container
     = render "application/components/breadcrumb"
 
-    - unless current_user&.supporter?
-      .text-center
-        = render "application/components/adsense", slots: [ENV["GOOGLE_AD_728x90_26"]], size: "728x90"
-
   h1.h4.text-center.my-4.font-weight-bold
     = t "noun.sns_friends"
 

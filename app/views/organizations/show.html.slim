@@ -12,10 +12,6 @@
       .col-9
         = render "organizations/subnav", organization: @organization
 
-        - unless current_user&.supporter?
-          .text-center.mb-3
-            = render "application/components/adsense", slots: [ENV["GOOGLE_AD_728x90_12"]], size: "728x90"
-
         .c-card
           .container.py-3
             = render "people/grid", root_resource: @organization, resource_years: @staff_years, resources_with_year: @staffs_with_year

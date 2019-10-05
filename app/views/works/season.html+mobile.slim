@@ -2,10 +2,7 @@
 - description = meta_description(t("head.meta.description.works.season", name: @season.local_name))
 - keywords = meta_keywords(@season.local_name)
 - set_meta_tags(title: title, description: description, keywords: keywords, og: { description: description }, reverse: true, prefix: false)
-
 - breadcrumb :seasonal_works, @season.slug, @season.local_name
-
-c-adsense-container.text-center :slots="['#{ENV['GOOGLE_AD_320x100_16']}']" ad-size="320x100"
 
 h1.h2.text-center.my-3
   = title
@@ -37,8 +34,6 @@ h1.h2.text-center.my-3
 - if @works.present? && @works.total_pages > 1
   .mb-3.text-center
     = paginate @works, window: 2
-
-c-adsense-container.text-center.mb-3 :slots="['#{ENV['GOOGLE_AD_320x100_17']}']" ad-size="320x100"
 
 = render "application/components/breadcrumb"
 = render "application/components/footer"

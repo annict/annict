@@ -227,8 +227,6 @@ ja:
         make_sure_to_copy: 作成した個人用トークンをコピーしてください。この文字列は再表示できません。
         new: 新規作成
         no_tokens: 作成されていません
-    supporters:
-      hide_ads_html: <a href="/supporters">Annictサポーター</a>になると広告を非表示にできます
     tracks:
       episodes_you_have_watched: 視聴エピソード
       no_trackable_episodes: 記録可能なエピソードはありません

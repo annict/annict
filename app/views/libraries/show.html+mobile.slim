@@ -18,10 +18,6 @@
           .small
             = t("enumerize.status.kind.#{status_kind}").truncate(8)
 
-- unless current_user&.supporter?
-  .text-center
-    = render "application/components/adsense", slots: [ENV["GOOGLE_AD_320x100_15"]], size: "320x100"
-
 - if @seasons.present?
   .mb-3
     - @seasons.each_with_index do |season, i|

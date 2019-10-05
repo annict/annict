@@ -7,10 +7,6 @@
   .container
     = render "application/components/breadcrumb"
 
-    - unless current_user&.supporter?
-      .text-center
-        = render "application/components/adsense", slots: [ENV["GOOGLE_AD_728x90_25"]], size: "728x90"
-
   .c-card.container.my-3.u-mw-600
     - if @notifications.present?
       - @notifications.each do |notification|

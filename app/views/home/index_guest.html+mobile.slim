@@ -16,9 +16,6 @@
       = icon "sign-in-alt"
       = t("noun.sign_in")
 
-.py-3.text-center
-  = render "application/components/adsense", slots: [ENV["GOOGLE_AD_320x50_1"]], size: "320x50"
-
 h2.h3.mb-3.text-center
   = t("noun.popular_airing_anime")
 .c-card.p-3.mb-3
@@ -29,9 +26,6 @@ h2.h3.mb-3.text-center
   .text-center.mt-4
     = link_to t("verb.view_more"), season_works_path(slug: ENV["ANNICT_CURRENT_SEASON"]), class: "btn btn-primary"
 
-.py-3.text-center
-  = render "application/components/adsense", slots: [ENV["GOOGLE_AD_320x50_2"]], size: "320x50"
-
 h2.h3.text-center.mb-3
   = t "noun.popular_anime"
 .c-card.p-3.mb-3
@@ -40,9 +34,6 @@ h2.h3.text-center.mb-3
   = render "home/other_works", other_works: @works
   .text-center.mt-4
     = link_to t("verb.view_more"), popular_works_path, class: "btn btn-primary"
-
-.py-3.text-center
-  = render "application/components/adsense", slots: [ENV["GOOGLE_AD_320x50_3"]], size: "320x50"
 
 = render "application/components/footer"
 
