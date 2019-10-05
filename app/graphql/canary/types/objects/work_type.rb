@@ -251,8 +251,7 @@ module Canary
         def viewer_finished_to_watch
           return false unless context[:viewer]
 
-          context[:viewer].latest_statuses.finished_to_watch.where(work_id: object.id).exists? &&
-            context[:viewer].work_records.published.where(work_id: object.id).exists?
+          context[:viewer].latest_statuses.finished_to_watch.where(work_id: object.id).exists?
         end
 
         def viewer_status_kind
