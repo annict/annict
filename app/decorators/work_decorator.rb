@@ -61,10 +61,6 @@ module WorkDecorator
     end
   end
 
-  def delete_item_path(item)
-    work_item_path(self, item)
-  end
-
   def started_on_label
     if media.tv?
       I18n.t("noun.start_to_broadcast_tv_date")

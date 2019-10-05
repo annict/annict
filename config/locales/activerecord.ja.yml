@@ -76,10 +76,6 @@ ja:
         forum_category_id: カテゴリー
         forum_comments_count: コメント数
         last_commented_at: 最新コメント日
-      item:
-        name: 商品名
-        url: URL
-        tombo_image: 作品画像
       oauth_application:
         redirect_uri: リダイレクトURI
         scope: スコープ

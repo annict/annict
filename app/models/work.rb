@@ -67,7 +67,6 @@ class Work < ApplicationRecord
   extend Enumerize
   include AASM
   include DbActivityMethods
-  include Itemable
   include RootResourceCommon
 
   DIFF_FIELDS = %i(
@@ -101,7 +100,6 @@ class Work < ApplicationRecord
     optional: true
   has_many :casts, dependent: :destroy
   has_many :program_details, dependent: :destroy
-  has_many :resource_items, dependent: :destroy, class_name: "WorkItem"
   has_many :series_works, dependent: :destroy
   has_many :staffs, dependent: :destroy
   has_many :work_taggings, dependent: :destroy
@@ -116,7 +114,6 @@ class Work < ApplicationRecord
   has_many :db_comments, as: :resource, dependent: :destroy
   has_many :episode_records, dependent: :destroy
   has_many :episodes, dependent: :destroy
-  has_many :items, through: :resource_items
   has_many :latest_statuses, dependent: :destroy
   has_many :organizations,
     through: :staffs,

@@ -63,8 +63,6 @@ GEM
     after_commit_action (1.1.0)
       activerecord (>= 3.0.0)
       activesupport (>= 3.0.0)
-    amazon-ecs (2.6.0)
-      nokogiri (~> 1.10)
     annotate (3.0.2)
       activerecord (>= 3.2, < 7.0)
       rake (>= 10.4, < 13.0)
@@ -589,7 +587,6 @@ DEPENDENCIES
   activerecord-session_store
   acts_as_list
   addressable
-  amazon-ecs
   annotate
   awesome_print
   aws-sdk-s3

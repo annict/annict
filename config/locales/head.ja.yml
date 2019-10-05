@@ -127,8 +127,6 @@ ja:
           index: 作品一覧
       faqs:
         index: よくある質問
-      episode_items:
-        new: 商品登録
       episode_records:
         edit: "記録の編集"
         show: "%{profile_name} (%{username})の%{work_title} %{episode_title_with_number}への感想"
@@ -234,9 +232,6 @@ ja:
         followers: "%{profile_name} (%{username})をフォローしている人"
         following: "%{profile_name} (%{username})がフォローしている人"
         show: "%{profile_name} (%{username})"
-      work_items:
-        index: アニメ「%{work_title}」の関連商品
-        new: 商品登録
       work_records:
         edit: 記録の編集
         index: アニメ「%{work_title}」の記録一覧

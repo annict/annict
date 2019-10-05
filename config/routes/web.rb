@@ -84,7 +84,6 @@ resources :checkins, only: [] do
 end
 
 resources :episodes, only: [] do
-  resources :items, only: %i(new destroy), controller: :episode_items
   resources :records, only: %i(create edit update), controller: :episode_records do
     post :switch, on: :collection
   end
@@ -130,7 +129,6 @@ scope "@:username", username: /[A-Za-z0-9_]+/ do
 end
 
 resources :works, only: %i(index) do
-  resources :items, only: %i(index new destroy), controller: :work_items
   resources :records, only: %i(index create edit update), controller: :work_records
 
   resources :episodes, only: %i(index show) do

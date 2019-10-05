@@ -77,10 +77,6 @@ en:
         forum_category_id: Category
         forum_comments_count: Comments
         last_commented_at: Last Comment
-      item:
-        name: Name
-        url: URL
-        tombo_image: Image
       oauth_application:
         redirect_uri: Redirect URI
         scope: Scope
