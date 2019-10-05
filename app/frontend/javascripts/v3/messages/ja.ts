@@ -10,6 +10,9 @@ export default {
       friends: {
         index: '友達を探す',
       },
+      notifications: {
+        index: '通知',
+      },
       pages: {
         about: 'Annictとは？',
         legal: '特定商取引法に基づく表記',

@@ -68,6 +68,9 @@
             <a :href="'/@' + $root.viewer.username" class="dropdown-item">
               {{ $t('noun.profile') }}
             </a>
+            <a href="/notifications" class="dropdown-item">
+              {{ $t('head.title.notifications.index') }}
+            </a>
             <a href="/friends" class="dropdown-item">
               {{ $t('head.title.friends.index') }}
             </a>
