@@ -30,10 +30,14 @@ jobs:
     services:
       postgresql:
         image: circleci/postgres:10.4-alpine
+        ports:
+          - 5432:5432
         env:
           POSTGRES_USER: postgres
           POSTGRES_DB: annict_test
           POSTGRES_PASSWORD: ""
+        # Adding a health check via options
+        # https://github.community/t5/GitHub-Actions/Github-Actions-services-not-reachable/td-p/30050
         options: >-
           --health-cmd pg_isready
           --health-interval 10s
@@ -44,10 +48,6 @@ jobs:
 
     steps:
       - uses: actions/checkout@v1
-
-      - name: Install Bundler
-        run: |
-          gem install bundler
 
       - name: Run `bundle install`
         run: |
