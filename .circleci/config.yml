@@ -6,7 +6,7 @@ jobs:
     # directory where steps will run
     working_directory: ~/annict
     docker:
-      - image: circleci/ruby:2.6.3-node-browsers
+      - image: annict/ruby:2.6.5-node_10.16.3
         environment:
           ANNICT_ASSET_URL: http://localhost:3030
           BUNDLE_JOBS: 3
