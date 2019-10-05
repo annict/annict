@@ -45,18 +45,6 @@
     - else
       = render "application/components/empty", text: t("messages.episodes.no_comments")
 
-.container.mb-3
-  .row.align-items-center
-    .col
-      h2.h4.font-weight-bold.mb-0
-        = t "noun.related_items"
-    .col.text-right
-      = link_to new_episode_item_path(@episode), class: "btn btn-primary btn-sm" do
-        = icon "plus", class: "mr-1"
-        = t "verb.regist_item"
-.c-card.container.mb-3.py-2
-  = render "episodes/item_list", episode: @episode, items: @items
-
 = render "application/components/breadcrumb"
 = render "application/components/footer"
 

@@ -129,8 +129,6 @@ en:
           index: Works
       faqs:
         index: FAQ
-      episode_items:
-        new: New Item
       episode_records:
         edit: "Edit Record"
         show: "A Record by %{profile_name} (%{username}) on %{work_title} - %{episode_title_with_number}"
@@ -234,9 +232,6 @@ en:
         followers: People following %{profile_name} (%{username})
         following: People followed by %{profile_name} (%{username})
         show: "%{profile_name} (%{username})"
-      work_items:
-        index: Items of %{work_title} (Anime)
-        new: New Item
       work_records:
         edit: Edit Record
         index: Records of %{work_title} (Anime)

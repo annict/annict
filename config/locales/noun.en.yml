@@ -115,7 +115,6 @@ en:
     records: Records
     records_by: "Records by %{profile_name}"
     records_count: Records Count
-    related_items: Items
     related_works: Related Works
     release_on: Release on
     release_season: Release Season

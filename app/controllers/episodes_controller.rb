@@ -53,18 +53,6 @@ class EpisodesController < ApplicationController
     @my_episode_records = service.my_episode_records
     @selected_comment_episode_records = service.selected_comment_episode_records
 
-    episode_items = @episode.resource_items.published
-    work_items = @episode.
-      work.
-      resource_items.
-      published.
-      where.not(item_id: episode_items.pluck(:item_id))
-    @items = Item.
-      published.
-      where(id: episode_items.pluck(:item_id) + work_items.pluck(:item_id))
-    @items = localable_resources(@items)
-    @items = @items.order(created_at: :desc).limit(20)
-
     data = {
       recordsSortTypes: Setting.records_sort_type.options,
       currentRecordsSortType: current_user&.setting&.records_sort_type.presence || "created_at_desc"

@@ -76,16 +76,6 @@ crumb :friends_index do
   parent :root
 end
 
-crumb :new_episode_item do |episode|
-  link t("head.title.episode_items.new"), new_episode_item_path(episode)
-  parent :episode_detail, episode
-end
-
-crumb :new_work_item do |work|
-  link t("head.title.work_items.new"), new_work_item_path(work)
-  parent :work_item_list, work
-end
-
 crumb :newest_works do
   link t("head.title.works.newest")
   parent :root
@@ -173,11 +163,6 @@ end
 
 crumb :work_episode_list do |work|
   link t("noun.episodes"), work_episodes_path(work)
-  parent :work_detail, work
-end
-
-crumb :work_item_list do |work|
-  link t("noun.related_items"), work_items_path(work)
   parent :work_detail, work
 end
 

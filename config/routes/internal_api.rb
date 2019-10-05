@@ -12,7 +12,6 @@ namespace :api do
     resources :activities, only: [:index]
     resources :app_data, only: %i(index)
     resources :characters, only: [:index]
-    resources :items, only: %i(create)
     resources :mute_users, only: [:create]
     resources :organizations, only: [:index]
     resources :page_data, only: %i(index)
@@ -20,10 +19,6 @@ namespace :api do
     resources :receptions, only: %i(create destroy)
     resources :series_list, only: %i(index)
     resources :works, only: %i(index show)
-
-    resource :amazon, only: [], controller: :amazon do
-      get :search
-    end
 
     resources :episodes, only: [] do
       resources :records, only: %i(create), controller: :episode_records

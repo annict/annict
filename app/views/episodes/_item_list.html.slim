@@ -1,7 +1,0 @@
-- if items.present?
-  .row
-    - items.each do |item|
-      .col-6.my-2
-        = render "items/item", resource: episode, item: item
-- else
-  = render "application/components/empty", text: t("messages._empty.no_items")

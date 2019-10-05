@@ -18,10 +18,6 @@ en:
       welcome_to_annict: Welcome to Annict!
       you_can_not_access_there: You can not access there.
     _components:
-      amazon_item_attacher:
-        error: Connection error. Please try again later.
-        registed: Added
-        you_can_search_by_keyword_or_asin_or_isbn_code: You can search by keyword or ASIN / ISBN code
       favorite_button:
         add_to_favorites: Add to Favorites
         added_to_favorites: Added to Favorites
