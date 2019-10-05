@@ -2,7 +2,7 @@
   <transition name="app" mode="out-in">
     <div v-if="state.work" key="content">
       <ann-navbar></ann-navbar>
-      <div class="container p-3">
+      <div class="container p-3" data-turbolinks="false">
         <ann-breadcrumb :items="state.breadcrumbItems" class="mb-3"></ann-breadcrumb>
         <div class="row">
           <div class="col-md-3 pr-md-0">
