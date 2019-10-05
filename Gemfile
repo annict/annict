@@ -13,7 +13,6 @@ gem "active_link_to"
 gem "activerecord-session_store"
 gem "acts_as_list"
 gem "addressable"
-gem "amazon-ecs"
 gem "aws-sdk-s3" # Using in Shrine
 gem "browser", require: "browser/browser"
 gem "by_star"
