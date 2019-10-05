@@ -12,10 +12,6 @@
         c-program-list
           .c-loading
             .c-loading__core Loading...
-      .col-3
-        - unless current_user&.supporter?
-          .text-center
-            = render "application/components/adsense", slots: [ENV["GOOGLE_AD_250x250_2"]], size: "250x250"
 
 = render "application/components/footer"
 

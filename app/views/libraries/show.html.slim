@@ -19,10 +19,6 @@
             .small
               = t "enumerize.status.kind.#{status_kind}"
 
-  - unless current_user&.supporter?
-    .mb-3.text-center
-      = render "application/components/adsense", slots: [ENV["GOOGLE_AD_728x90_15"]], size: "728x90"
-
   - if @seasons.present?
     - @seasons.each_with_index do |season, i|
       .mt-3
@@ -51,10 +47,6 @@
       = paginate @seasons
   - else
     = render "application/components/empty", text: t("messages.users.no_works")
-
-  - unless current_user&.supporter?
-    .mt-3.text-center
-      = render "application/components/adsense", slots: [ENV["GOOGLE_AD_728x90_16"]], size: "728x90"
 
 c-sticky-message message-body="#{t('messages._components.sticky_message.libraries_show.body')}"
 

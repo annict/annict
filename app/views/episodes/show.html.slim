@@ -15,9 +15,6 @@
       .col-9
         = render "works/subnav", work: @work
 
-        - if @all_comment_episode_records.total_count != 0
-          c-adsense-container.text-center.my-3 :slots="['#{ENV['GOOGLE_AD_728x90_9']}']" ad-size="728x90"
-
         .c-card.container.py-3.my-3
           = render "episodes/nav", work: @work, episode: @episode
         .row
@@ -64,9 +61,6 @@
                   = t "verb.regist_item"
             .c-card.container.mb-3.py-2
               = render "episodes/item_list", episode: @episode, items: @items
-
-            - if @all_comment_episode_records.total_count != 0
-              c-adsense-container.text-center.mt-3 :slots="['#{ENV['GOOGLE_AD_300x250_3']}', '#{ENV['GOOGLE_AD_300x250_4']}']" ad-size= "300x250"
 
           .col-3.pl-0
             .mb-4

@@ -92,10 +92,6 @@
           .small
             = t "noun.favorite_organizations_shorten"
 
-- unless current_user&.supporter?
-  .text-center
-    = render "application/components/adsense", slots: [ENV["GOOGLE_AD_320x100_14"]], size: "320x100"
-
 .mt-3.mb-4
   c-activities username="#{@user.username}"
 

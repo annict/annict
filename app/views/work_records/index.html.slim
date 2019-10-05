@@ -15,10 +15,6 @@
       .col-9
         = render "works/subnav", work: @work
 
-        - unless current_user&.supporter?
-          .pt-3.text-center
-            = render "application/components/adsense", slots: [ENV["GOOGLE_AD_728x90_22"]], size: "728x90"
-
         - if user_signed_in?
           .c-card.container.mt-3.pt-3
             = render "work_records/form", work_record: @work_record

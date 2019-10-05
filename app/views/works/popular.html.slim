@@ -9,8 +9,6 @@
   .my-3 class="#{@display_option == "list_detailed" ? 'container' : 'px-3'}"
     = render "application/components/breadcrumb"
 
-  c-adsense-container.text-center.mb-3 :slots="['#{ENV['GOOGLE_AD_728x90_13']}']" ad-size="728x90"
-
   h1.text-center.mb-0.mt-3
     = title
 
@@ -30,8 +28,6 @@
   - if @works.present? && @works.total_pages > 1
     .mb-3.text-center
       = paginate @works
-
-  c-adsense-container.text-center.mb-3 :slots="['#{ENV['GOOGLE_AD_728x90_14']}']" ad-size="728x90"
 
 = render "application/components/footer"
 

@@ -6,10 +6,6 @@
 
 - breadcrumb :work_record_detail, @work_record
 
-- unless current_user&.supporter?
-  .mb-3.text-center
-    = render "application/components/adsense", slots: [ENV["GOOGLE_AD_320x50_17"]], size: "320x50"
-
 .c-card.container.pt-3.mb-3
   = render "works/work_info", work: @work
 

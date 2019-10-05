@@ -15,10 +15,6 @@
       .col-9
         = render "works/subnav", work: @work
 
-        - unless current_user&.supporter?
-          .pt-3.text-center
-            = render "application/components/adsense", slots: [ENV["GOOGLE_AD_728x90_23"]], size: "728x90"
-
         .text-right.my-3
           = link_to new_work_item_path(@work), class: "btn btn-primary" do
             = icon "plus", class: "mr-1"

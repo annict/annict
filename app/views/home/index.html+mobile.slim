@@ -3,10 +3,6 @@
 
 
 .mt-3
-  - unless current_user&.supporter?
-    .mb-3.text-center
-      = render "application/components/adsense", slots: [ENV["GOOGLE_AD_320x100_11"]], size: "320x100"
-
   - if @tips.present?
     .c-card.mb-3
       = render "tips"

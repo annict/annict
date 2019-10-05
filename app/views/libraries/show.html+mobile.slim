@@ -18,19 +18,14 @@
           .small
             = t("enumerize.status.kind.#{status_kind}").truncate(8)
 
-- unless current_user&.supporter?
-  .text-center
-    = render "application/components/adsense", slots: [ENV["GOOGLE_AD_320x100_15"]], size: "320x100"
-
 - if @seasons.present?
+  .text-center.mb-3
+    c-share-button-twitter.mr-2 text="#{title}" url="#{local_url}#{library_path(@user.username, params[:status_kind])}"
+    c-share-button-facebook url="#{local_url}#{library_path(@user.username, params[:status_kind])}"
   .mb-3
     - @seasons.each_with_index do |season, i|
-      .mt-3
+      .mb-3
         .container.mb-3
-          - if i == 0
-            .text-center.mb-3
-              c-share-button-twitter.mr-2 text="#{title}" url="#{local_url}#{library_path(@user.username, params[:status_kind])}"
-              c-share-button-facebook url="#{local_url}#{library_path(@user.username, params[:status_kind])}"
           .row.align-items-center
             .col-4
               h3.h4.font-weight-bold.mb-0

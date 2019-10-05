@@ -8,10 +8,6 @@
 
 = render "works/header", work: @work
 
-- unless current_user&.supporter?
-  .mb-3.text-center
-    = render "application/components/adsense", slots: [ENV["GOOGLE_AD_320x100_6"]], size: "320x100"
-
 - if user_signed_in?
   .c-card.container.mb-3.pt-3
     = render "work_records/form", work_record: @work_record
