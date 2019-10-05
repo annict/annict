@@ -89,4 +89,6 @@ Rails.application.configure do
     source: ENV.fetch("IMGIX_SOURCE"),
     secure_url_token: ENV.fetch("IMGIX_SECURE_URL_TOKEN")
   }
+
+  config.hosts += [ENV.fetch("ANNICT_DOMAIN"), ENV.fetch("ANNICT_JP_DOMAIN")]
 end
