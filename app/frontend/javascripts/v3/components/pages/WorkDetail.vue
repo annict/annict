@@ -490,6 +490,47 @@
                 </div>
               </div>
             </div>
+
+            <template v-if="state.work.seriesList.length">
+              <h2 class="h4 text-center my-4 font-weight-bold">
+                {{ $root.$t('noun.relatedWorks') }}
+              </h2>
+              <div class="c-card mt-3 pl-3 py-3">
+                <template v-for="series in state.work.seriesList">
+                  <h3 class="text-center mb-3">
+                    {{ $root.$t('noun.seriesWithName', { seriesName: series.localName }) }}
+                  </h3>
+                  <div class="px-3">
+                    <div class="row">
+                      <template v-for="seriesWork in series.seriesWorks">
+                        <div class="col-4 col-sm-2 p-0 pr-3 mb-3">
+                          <div class="c-card">
+                            <a :href="'/works/' + seriesWork.work.annictId">
+                              <div class="c-hover-image">
+                                <div class="c-hover-image__image">
+                                  <img :src="seriesWork.work.image.internalUrl" class="img-fluid img-thumbnail rounded">
+                                </div>
+                                <div class="c-hover-image__over"></div>
+                              </div>
+                            </a>
+                            <div class="p-1">
+                              <div class="u-very-small">
+                                <a :href="'/works/' + seriesWork.work.annictId">
+                                  {{ seriesWork.work.localTitle }}
+                                </a>
+                              </div>
+                              <div class="u-very-small" v-if="seriesWork.localSummary.length">
+                                {{ seriesWork.localSummary }}
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </template>
+                    </div>
+                  </div>
+                </template>
+              </div>
+            </template>
           </div>
         </div>
       </div>
