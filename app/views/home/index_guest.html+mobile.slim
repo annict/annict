@@ -16,7 +16,7 @@
       = icon "sign-in-alt"
       = t("noun.sign_in")
 
-h2.h3.mb-3.text-center
+h2.h3.mt-3.text-center
   = t("noun.popular_airing_anime")
 .c-card.p-3.mb-3
   = render "home/top_work", top_work: @season_top_work
@@ -26,7 +26,7 @@ h2.h3.mb-3.text-center
   .text-center.mt-4
     = link_to t("verb.view_more"), season_works_path(slug: ENV["ANNICT_CURRENT_SEASON"]), class: "btn btn-primary"
 
-h2.h3.text-center.mb-3
+h2.h3.text-center.mt-3
   = t "noun.popular_anime"
 .c-card.p-3.mb-3
   = render "home/top_work", top_work: @top_work
