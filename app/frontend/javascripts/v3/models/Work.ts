@@ -1,4 +1,4 @@
-import { ApplicationModel, Cast, Episode, Program, Season, Staff, Trailer, WorkImage, WorkRecord } from '../models'
+import { ApplicationModel, Cast, Episode, Program, Season, Series, Staff, Trailer, WorkImage, WorkRecord } from '../models'
 
 export class Work extends ApplicationModel {
   public annictId?: number
@@ -41,6 +41,7 @@ export class Work extends ApplicationModel {
   public episodes: Episode[]
   public programs: Program[]
   public workRecords: WorkRecord[]
+  public seriesList: Series[]
 
   public constructor(node) {
     super()
@@ -76,14 +77,8 @@ export class Work extends ApplicationModel {
     this.viewerStatusKind = node.viewerStatusKind
     this.watchersCount = node.watchersCount
     this.workRecordsWithBodyCount = node.workRecordsWithBodyCount
-  }
-
-  public setSeason(node) {
     this.season = new Season(node)
-  }
-
-  public setImage(node) {
-    this.image = new WorkImage(node)
+    this.image = new WorkImage(node.image)
   }
 
   public setTrailers(nodes) {
@@ -133,6 +128,14 @@ export class Work extends ApplicationModel {
       workRecord.setUser(node.user)
       workRecord.setRecord(node.record)
       return workRecord
+    })
+  }
+
+  public setSeriesList(nodes) {
+    this.seriesList = nodes.map(node => {
+      const series = new Series(node)
+      series.setSeriesWorks(node.works.edges)
+      return series
     })
   }
 }

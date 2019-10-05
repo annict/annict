@@ -6,9 +6,17 @@ module Canary
       node_type Canary::Types::Objects::WorkType
       graphql_name "SeriesWorkEdge"
 
-      field :summary, String, null: true
-      field :summary_en, String, null: true
-      field :node, Types::Objects::WorkType, null: false
+      field :summary, String,
+        null: false
+
+      field :summary_en, String,
+        null: false
+
+      field :local_summary, String,
+        null: false
+
+      field :node, Types::Objects::WorkType,
+        null: false
 
       def summary
         object.node.summary
@@ -16,6 +24,10 @@ module Canary
 
       def summary_en
         object.node.summary_en
+      end
+
+      def local_summary
+        object.node.local_summary
       end
 
       def node

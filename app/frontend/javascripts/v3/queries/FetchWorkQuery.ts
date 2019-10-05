@@ -125,6 +125,23 @@ const query = gql`
             viewerDidLike
           }
         }
+        seriesList {
+          nodes {
+            localName
+            works(orderBy: { field: SEASON, direction: ASC }) {
+              edges {
+                localSummary
+                node {
+                  annictId
+                  localTitle
+                  image {
+                    internalUrl(size: "280x")
+                  }
+                }
+              }
+            }
+          }
+        }
       }
     }
   }
@@ -142,14 +159,13 @@ export class FetchWorkQuery extends ApplicationQuery {
     const result = await client.query({ query, variables: { annictId: this.workId } })
     const node = result.data.works.nodes[0]
     const work = new Work(node)
-    work.setSeason(node)
-    work.setImage(node.image)
     work.setTrailers(node.trailers.nodes)
     work.setCasts(node.casts.nodes)
     work.setStaffs(node.staffs.nodes)
     work.setEpisodes(node.episodes.nodes)
     work.setPrograms(node.programs.nodes)
     work.setWorkRecords(node.workRecords.nodes)
+    work.setSeriesList(node.seriesList.nodes)
     return work
   }
 }

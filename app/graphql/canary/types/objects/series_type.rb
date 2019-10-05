@@ -8,10 +8,17 @@ module Canary
 
         global_id_field :id
 
-        field :annict_id, Integer, null: false
-        field :name, String, null: false
-        field :name_ro, String, null: false
-        field :name_en, String, null: false
+        field :annict_id, Integer,
+          null: false
+
+        field :name, String,
+          null: false
+
+        field :name_en, String,
+          null: false
+
+        field :local_name, String,
+          null: false
 
         field :works, Canary::Connections::SeriesWorkConnection, null: true, connection: true do
           argument :order_by, Canary::Types::InputObjects::SeriesWorkOrder, required: false

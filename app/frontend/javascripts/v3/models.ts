@@ -8,6 +8,8 @@ import { Person } from './models/Person'
 import { Program } from './models/Program'
 import { Record } from './models/Record'
 import { Season } from './models/Season'
+import { Series } from './models/Series'
+import { SeriesWork } from './models/SeriesWork'
 import { Staff } from './models/Staff'
 import { Trailer } from './models/Trailer'
 import { User } from './models/User'
@@ -26,6 +28,8 @@ export {
   Program,
   Record,
   Season,
+  Series,
+  SeriesWork,
   Staff,
   Trailer,
   User,
