@@ -212,8 +212,6 @@ ja:
         wikipedia_url: Wikipedia
       work_image:
         attachment: 作品画像
-        asin: ASIN
-        asin_or_copyright: ASINまたは著作者情報
         copyright: 著作者情報
       work_organization:
         organization_id: 団体

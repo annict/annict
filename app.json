@@ -2,9 +2,6 @@
   "name": "Annict",
   "scripts": {},
   "env": {
-    "AMAZON_ASSOCIATE_TAG": {
-      "required": true
-    },
     "AMAZON_EN_URL": {
       "required": true
     },

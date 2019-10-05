@@ -27,8 +27,7 @@ class WorkImage < ApplicationRecord
   include WorkImageUploader::Attachment.new(:image)
   include ImageUploadable
 
-  validates :asin, asin: true
-  validates_with AsinOrCopyrightValidator
+  validates :copyright, presence: true
 
   belongs_to :work
   belongs_to :user

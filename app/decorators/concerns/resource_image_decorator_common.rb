@@ -28,7 +28,7 @@ module ResourceImageDecoratorCommon
 
     def amazon_url
       amazon_url_key = I18n.locale == :ja ? "AMAZON_JA_URL" : "AMAZON_EN_URL"
-      "#{ENV.fetch(amazon_url_key)}/dp/#{asin}?tag=annict-22"
+      "#{ENV.fetch(amazon_url_key)}/dp/#{asin}"
     end
   end
 end

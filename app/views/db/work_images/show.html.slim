@@ -23,10 +23,6 @@
               = f.hidden_field :image, value: @image.cached_image_data
               = f.file_field :image
           .form-group.row
-            = f.label :asin, class: "col-2 col-form-label"
-            .col-10
-              = f.text_field :asin, class: "form-control"
-          .form-group.row
             = f.label :copyright, class: "col-2 col-form-label"
             .col-10
               = f.text_field :copyright, class: "form-control"

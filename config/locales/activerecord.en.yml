@@ -213,8 +213,6 @@ en:
         wikipedia_url: Wikipedia (ja)
       work_image:
         attachment: Image
-        asin: ASIN
-        asin_or_copyright: ASIN or Copyright
         copyright: Copyright
       work_organization:
         organization_id: Organization
