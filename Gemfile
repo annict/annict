@@ -110,7 +110,7 @@ group :test do
   gem "selenium-webdriver"
   gem "simplecov", require: false
   gem "timecop"
-  gem "webdrivers"
+  gem "webdrivers", require: !ENV["CI"] # Added to run spec with Chrome on local machine
 end
 
 group :production do
