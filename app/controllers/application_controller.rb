@@ -20,8 +20,8 @@ class ApplicationController < ActionController::Base
 
   helper_method :gon, :locale_ja?, :locale_en?, :local_url
 
+  around_action :switch_locale
   before_action :redirect_if_unexpected_subdomain
-  before_action :switch_locale
   before_action :set_search_params
   before_action :load_new_user
   before_action :store_data_into_gon

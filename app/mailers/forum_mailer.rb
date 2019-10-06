@@ -11,13 +11,13 @@ class ForumMailer < ActionMailer::Base
     @username = @sender.username
     @name = @sender.profile.name
 
-    I18n.locale = @receiver.locale
-
-    subject = default_i18n_subject(
-      name: @name,
-      username: @username,
-      post_title: @post_title
-    )
-    mail(to: @receiver.email, subject: subject)
+    I18n.with_locale(@receiver.locale) do
+      subject = default_i18n_subject(
+        name: @name,
+        username: @username,
+        post_title: @post_title
+      )
+      mail(to: @receiver.email, subject: subject)
+    end
   end
 end
