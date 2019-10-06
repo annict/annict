@@ -1,7 +1,7 @@
 <template>
   <div class="c-navbar">
     <!--  PC-->
-    <nav class="navbar navbar-expand navbar-light bg-white">
+    <nav class="navbar navbar-expand navbar-light bg-white d-sm-flex d-none">
       <a href="/" class="navbar-brand d-none d-lg-inline-block">
         <img :src="state.AnnConfig.images.logoUrl" width="25" height="30" alt="Annict">
       </a>
@@ -133,9 +133,9 @@
     </nav>
 
     <!--  Mobile-->
-    <nav class="navbar navbar-expand navbar-white bg-white fixed-bottom d-block d-lg-none">
+    <nav class="bg-white d-block d-sm-none h-100 navbar navbar-expand navbar-white px-0">
       <ul class="navbar-nav justify-content-around align-items-center h-100">
-        <li class="nav-item text-center">
+        <li class="nav-item text-center col px-0">
           <a href="/" class="text-dark">
             <i class="fas fa-home"></i>
             <div class="small mt-1">
@@ -144,7 +144,7 @@
           </a>
         </li>
         <template v-if="$root.isSignedIn()">
-          <li class="nav-item text-center">
+          <li class="nav-item text-center col px-0">
             <a href="/programs" class="text-dark">
               <i class="far fa-calendar"></i>
               <div class="small mt-1">
@@ -152,7 +152,7 @@
               </div>
             </a>
           </li>
-          <li class="nav-item text-center">
+          <li class="nav-item text-center col px-0">
             <a class="text-dark" :href="'/@' + $root.viewer.username + '/watching'">
               <i class="fas fa-play"></i>
               <div class="small mt-1">
@@ -160,7 +160,7 @@
               </div>
             </a>
           </li>
-          <li class="nav-item text-center">
+          <li class="nav-item text-center col px-0">
             <a :href="'/works/' + state.AnnConfig.season.current" class="text-dark">
               <i class="fas fa-tv"></i>
               <div class="small mt-1">
@@ -168,7 +168,7 @@
               </div>
             </a>
           </li>
-          <li class="nav-item text-center position-relative">
+          <li class="nav-item text-center col px-0">
             <a href="/menu" class="text-dark">
               <i class="fas fa-th"></i>
               <div class="small mt-1">
@@ -178,7 +178,7 @@
           </li>
         </template>
         <template v-else>
-          <li class="nav-item text-center">
+          <li class="nav-item text-center col px-0">
             <a :href="'/works/' + state.AnnConfig.season.current" class="text-dark">
               <i class="fas fa-tv"></i>
               <div class="small mt-1">
@@ -186,7 +186,7 @@
               </div>
             </a>
           </li>
-          <li class="nav-item text-center">
+          <li class="nav-item text-center col px-0">
             <a href="/sign_up" class="text-dark">
               <i class="fas fa-rocket"></i>
               <div class="small mt-1">
@@ -194,7 +194,7 @@
               </div>
             </a>
           </li>
-          <li class="nav-item text-center">
+          <li class="nav-item text-center col px-0">
             <a href="/about" class="text-dark">
               <i class="far fa-lightbulb"></i>
               <div class="small mt-1">
@@ -202,7 +202,7 @@
               </div>
             </a>
           </li>
-          <li class="nav-item text-center">
+          <li class="nav-item text-center col px-0">
             <a href="/menu" class="text-dark">
               <i class="fas fa-th"></i>
               <div class="small mt-1">
