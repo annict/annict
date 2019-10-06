@@ -354,8 +354,8 @@
               </div>
               <hr class="mb-0">
               <template v-if="state.work.workRecords.length">
-                <div class="py-3 u-underline" v-for="workRecord in state.work.workRecords.slice(0, 10)">
-                  <div class="mb-sm-3 px-3 row">
+                <div class="container py-3 u-underline" v-for="workRecord in state.work.workRecords.slice(0, 10)">
+                  <div class="mb-sm-3 row">
                     <div class="col-auto pl-3 pr-0">
                       <a :href="'/@' + workRecord.user.username">
                         <img :src="workRecord.user.avatarUrl" class="img-fluid img-thumbnail rounded-circle">
@@ -384,7 +384,7 @@
                     </div>
                   </div>
                   <div :class="{ 'p-work-records-show__content clearfix': true, 'c-comment-guard': !state.work.viewerFinishedToWatch }" @click="removeCommentGuard">
-                    <div class="row px-3">
+                    <div class="row">
                       <div class="col-12 col-sm-4 order-1 order-sm-2">
                         <div class="p-3" v-if="workRecord.ratingOverallState">
                           <div class="small font-weight-bold text-center mb-2">
