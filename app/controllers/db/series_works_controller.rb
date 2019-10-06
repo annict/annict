@@ -11,13 +11,13 @@ module Db
 
     def new
       @series = Series.find(params[:series_id])
-      @form = DB::SeriesWorkRowsForm.new
+      @form = Db::SeriesWorkRowsForm.new
       authorize @form, :new?
     end
 
     def create
       @series = Series.find(params[:series_id])
-      @form = DB::SeriesWorkRowsForm.new(series_work_rows_form_params)
+      @form = Db::SeriesWorkRowsForm.new(series_work_rows_form_params)
       @form.user = current_user
       @form.series = @series
       authorize @form, :create?

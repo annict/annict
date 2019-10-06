@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-module DB
+module Db
   class CastRowsFormPolicy < ApplicationPolicy
     def create?
       user.committer?
