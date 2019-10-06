@@ -14,13 +14,13 @@ module Db
 
     def new
       @work = Work.find(params[:work_id])
-      @form = DB::EpisodeRowsForm.new
+      @form = Db::EpisodeRowsForm.new
       authorize @form, :new?
     end
 
     def create
       @work = Work.find(params[:work_id])
-      @form = DB::EpisodeRowsForm.new(episode_rows_form_params)
+      @form = Db::EpisodeRowsForm.new(episode_rows_form_params)
       @form.user = current_user
       @form.work = @work
       authorize @form, :create?
