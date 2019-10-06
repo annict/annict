@@ -22,7 +22,7 @@ Bundler.require(*Rails.groups)
 module Annict
   class Application < Rails::Application
     # Initialize configuration defaults for originally generated Rails version.
-    config.load_defaults 6.0
+    config.load_defaults 5.2
 
     # Heroku will set `RAILS_LOG_TO_STDOUT` when you deploy a Ruby app via
     # the Heroku Ruby Buildpack for Rails 4.2+ apps.
