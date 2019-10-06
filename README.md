@@ -41,12 +41,7 @@ You should then be able to open [http://annict.test:3000](http://annict.test:300
 #### Running the tests
 
 ```
-// Run all tests
 $ bundle exec rspec
-// Run system spec with headless browser
-$ bundle exec rspec spec/system/xxx_spec.rb
-// Run system spec with local browser (Open browser on local machine)
-$ NO_HEADLESS=true bundle exec rspec spec/system/xxx_spec.rb
 ```
 
 

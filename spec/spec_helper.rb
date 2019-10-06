@@ -79,6 +79,6 @@ RSpec.configure do |config|
       driver
     end
 
-    driven_by :remote_selenium_chrome unless ENV["NO_HEADLESS"]
+    driven_by :remote_selenium_chrome
   end
 end
