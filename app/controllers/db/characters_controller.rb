@@ -9,12 +9,12 @@ module Db
     end
 
     def new
-      @form = DB::CharacterRowsForm.new
+      @form = Db::CharacterRowsForm.new
       authorize @form, :new?
     end
 
     def create
-      @form = DB::CharacterRowsForm.new(character_rows_form_params)
+      @form = Db::CharacterRowsForm.new(character_rows_form_params)
       @form.user = current_user
       authorize @form, :create?
 

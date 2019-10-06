@@ -11,13 +11,13 @@ module Db
 
     def new
       @work = Work.find(params[:work_id])
-      @form = DB::PvRowsForm.new
+      @form = Db::PvRowsForm.new
       authorize @form, :new?
     end
 
     def create
       @work = Work.find(params[:work_id])
-      @form = DB::PvRowsForm.new(pv_rows_form_params)
+      @form = Db::PvRowsForm.new(pv_rows_form_params)
       @form.user = current_user
       @form.work = @work
       authorize @form, :create?

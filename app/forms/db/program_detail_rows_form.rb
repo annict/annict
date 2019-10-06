@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-module DB
+module Db
   class ProgramDetailRowsForm
     include ActiveModel::Model
     include Virtus.model

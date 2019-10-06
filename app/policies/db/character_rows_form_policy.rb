@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-module DB
+module Db
   class CharacterRowsFormPolicy < ApplicationPolicy
     def create?
       user.committer?

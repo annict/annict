@@ -5,7 +5,7 @@ git_source(:github) { |repo| "https://github.com/#{repo}.git" }
 
 ruby "2.6.5"
 
-gem "rails"
+gem "rails", "~> 6.0.0"
 
 gem "aasm"
 gem "active_decorator"
@@ -110,7 +110,7 @@ group :test do
   gem "selenium-webdriver"
   gem "simplecov", require: false
   gem "timecop"
-  gem "webdrivers"
+  gem "webdrivers", require: !ENV["CI"] # Added to run spec with Chrome on local machine
 end
 
 group :production do
