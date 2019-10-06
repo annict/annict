@@ -2,7 +2,7 @@
   <div class="c-navbar">
     <!--  PC-->
     <nav class="navbar navbar-expand navbar-light bg-white d-sm-flex d-none">
-      <a href="/" class="navbar-brand d-none d-lg-inline-block">
+      <a href="/" class="navbar-brand">
         <img :src="state.AnnConfig.images.logoUrl" width="25" height="30" alt="Annict">
       </a>
       <ul class="navbar-nav mt-2 mt-md-0 mr-md-2">
@@ -11,7 +11,7 @@
             {{ $t('noun.programs') }}
           </a>
         </li>
-        <li class="nav-item dropdown d-none d-lg-inline-block" v-if="$root.isSignedIn()">
+        <li class="nav-item dropdown" v-if="$root.isSignedIn()">
           <a class="nav-link dropdown-toggle text-dark" data-toggle="dropdown" href="">
             {{ $t('noun.library') }}
           </a>
@@ -33,7 +33,7 @@
             </a>
           </div>
         </li>
-        <li class="nav-item dropdown d-none d-lg-inline-block">
+        <li class="nav-item dropdown">
           <a class="nav-link dropdown-toggle text-dark" href="" data-toggle="dropdown">
             {{ $t('verb.explore') }}
           </a>
@@ -56,7 +56,7 @@
           </div>
         </li>
       </ul>
-      <form action="/search" autocomplete="off" class="col-md-2 px-0 mr-auto d-none d-lg-inline-block" method="get">
+      <form action="/search" autocomplete="off" class="col-2 px-0 mr-auto" method="get">
         <input name="q" class="form-control" type="text" :placeholder="$t('messages._common.searchWithKeywords')">
       </form>
       <ul class="navbar-nav">
