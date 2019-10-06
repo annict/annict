@@ -13,7 +13,7 @@ module Db
 
     def new
       @work = Work.find(params[:work_id])
-      @form = DB::ProgramRowsForm.new
+      @form = Db::ProgramRowsForm.new
       @form.work = @work
       @form.set_default_rows_by_program_detail!(params[:program_detail_id]) if params[:program_detail_id]
       authorize @form, :new?
@@ -21,7 +21,7 @@ module Db
 
     def create
       @work = Work.find(params[:work_id])
-      @form = DB::ProgramRowsForm.new(program_rows_form)
+      @form = Db::ProgramRowsForm.new(program_rows_form)
       @form.user = current_user
       @form.work = @work
       authorize @form, :create?
