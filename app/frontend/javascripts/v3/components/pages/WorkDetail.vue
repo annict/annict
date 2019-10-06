@@ -363,7 +363,7 @@
                     </div>
                     <div class="col">
                       <div>
-                        <a :href="'/@/' + workRecord.user.username">
+                        <a :href="'/@' + workRecord.user.username">
                           {{ workRecord.user.name }}
                         </a>
                         <span class="badge.u-badge-supporter.ml-1" v-if="workRecord.user.isSupportoer">
@@ -371,13 +371,13 @@
                         </span>
                       </div>
                       <div>
-                        <a :href="'/@/' + workRecord.user.username + '/records/' + workRecord.record.annictId" class="small text-muted">
+                        <a :href="'/@' + workRecord.user.username + '/records/' + workRecord.record.annictId" class="small text-muted">
                           {{ workRecord.createdAt | formatDate }}
                         </a>
                         <small class="ml-1 text-muted" v-if="workRecord.modifiedAt">
                           <i class="far pencil-alt"></i>
                         </small>
-                        <a :href="'/@/' + workRecord.user.username + '/records/' + workRecord.record.annictId" class="small ml-1 text-muted">
+                        <a :href="'/@' + workRecord.user.username + '/records/' + workRecord.record.annictId" class="small ml-1 text-muted">
                           {{ workRecord.record.pageViewsCount }} views
                         </a>
                       </div>
