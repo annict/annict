@@ -237,21 +237,26 @@
               </div>
             </template>
 
-            <h2 class="h4 text-center my-4 font-weight-bold">
-              {{ $root.$t('noun.episodes') }}
-            </h2>
-            <div class="c-card container mt-3 pt-3">
-              <div class="row pl-3">
-                <div class="col-6 col-sm-4 mb-3 pl-0" v-for="episode in state.work.episodes">
-                  <a :href="`/works/${state.work.annictId}/episodes/${episode.annictId}`">
-                    {{ episode.numberText }}
-                    <div class="small u-text-body">
-                      {{ episode.title }}
-                    </div>
-                  </a>
+            <template v-if="!state.work.isNoEpisodes">
+              <h2 class="h4 text-center my-4 font-weight-bold">
+                {{ $root.$t('noun.episodes') }}
+              </h2>
+              <div class="c-card container mt-3 pt-3">
+                <div class="row pl-3" v-if="state.work.episodes.length > 0">
+                  <div class="col-6 col-sm-4 mb-3 pl-0" v-for="episode in state.work.episodes">
+                    <a :href="`/works/${state.work.annictId}/episodes/${episode.annictId}`">
+                      {{ episode.numberText }}
+                      <div class="small u-text-body">
+                        {{ episode.title }}
+                      </div>
+                    </a>
+                  </div>
+                </div>
+                <div v-else>
+                  <ann-empty :text="$root.$t('messages._components.empty._notAdded')"></ann-empty>
                 </div>
               </div>
-            </div>
+            </template>
 
             <h2 class="h4 text-center my-4 font-weight-bold">
               {{ $root.$t('noun.characters') }}
@@ -349,8 +354,8 @@
               </div>
               <hr class="mb-0">
               <template v-if="state.work.workRecords.length">
-                <div class="py-3 u-underline" v-for="workRecord in state.work.workRecords.slice(0, 10)">
-                  <div class="mb-sm-3 px-3 row">
+                <div class="container py-3 u-underline" v-for="workRecord in state.work.workRecords.slice(0, 10)">
+                  <div class="mb-sm-3 row">
                     <div class="col-auto pl-3 pr-0">
                       <a :href="'/@' + workRecord.user.username">
                         <img :src="workRecord.user.avatarUrl" class="img-fluid img-thumbnail rounded-circle">
@@ -358,7 +363,7 @@
                     </div>
                     <div class="col">
                       <div>
-                        <a :href="'/@/' + workRecord.user.username">
+                        <a :href="'/@' + workRecord.user.username">
                           {{ workRecord.user.name }}
                         </a>
                         <span class="badge.u-badge-supporter.ml-1" v-if="workRecord.user.isSupportoer">
@@ -366,20 +371,20 @@
                         </span>
                       </div>
                       <div>
-                        <a :href="'/@/' + workRecord.user.username + '/records/' + workRecord.record.annictId" class="small text-muted">
+                        <a :href="'/@' + workRecord.user.username + '/records/' + workRecord.record.annictId" class="small text-muted">
                           {{ workRecord.createdAt | formatDate }}
                         </a>
                         <small class="ml-1 text-muted" v-if="workRecord.modifiedAt">
                           <i class="far pencil-alt"></i>
                         </small>
-                        <a :href="'/@/' + workRecord.user.username + '/records/' + workRecord.record.annictId" class="small ml-1 text-muted">
+                        <a :href="'/@' + workRecord.user.username + '/records/' + workRecord.record.annictId" class="small ml-1 text-muted">
                           {{ workRecord.record.pageViewsCount }} views
                         </a>
                       </div>
                     </div>
                   </div>
                   <div :class="{ 'p-work-records-show__content clearfix': true, 'c-comment-guard': !state.work.viewerFinishedToWatch }" @click="removeCommentGuard">
-                    <div class="row px-3">
+                    <div class="row">
                       <div class="col-12 col-sm-4 order-1 order-sm-2">
                         <div class="p-3" v-if="workRecord.ratingOverallState">
                           <div class="small font-weight-bold text-center mb-2">

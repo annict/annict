@@ -79,11 +79,11 @@ class Season
   end
 
   def local_name(locale = nil)
-    I18n.locale = locale if locale.present?
+    I18n.with_locale(locale) do
+      return I18n.t("resources.season.no_season") if no_season?
 
-    return I18n.t("resources.season.no_season") if no_season?
-
-    I18n.t("resources.season.yearly.#{@name}", year: @year)
+      I18n.t("resources.season.yearly.#{@name}", year: @year)
+    end
   end
 
   def sibling_season(position)

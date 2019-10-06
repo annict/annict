@@ -93,7 +93,7 @@ module ControllerCommon
       redirect_to_root_domain(status: 301)
     end
 
-    def switch_locale
+    def switch_locale(&action)
       white_list = [
         "/users/auth/gumroad/callback"
       ]
@@ -102,10 +102,14 @@ module ControllerCommon
       case [request.subdomain, request.domain].select(&:present?).join(".")
       when ENV.fetch("ANNICT_DOMAIN")
         return redirect_to local_url_with_path(locale: :ja) if user_signed_in? && current_user.locale == "ja"
-        I18n.locale = :en
+
+        I18n.with_locale(:en, &action)
       when ENV.fetch("ANNICT_JP_DOMAIN")
         return redirect_to local_url_with_path(locale: :en) if user_signed_in? && current_user.locale == "en"
-        I18n.locale = :ja
+
+        I18n.with_locale(:ja, &action)
+      else
+        I18n.with_locale(:ja, &action)
       end
     end
 

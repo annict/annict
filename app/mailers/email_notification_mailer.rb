@@ -15,13 +15,13 @@ class EmailNotificationMailer < ActionMailer::Base
     @unsubscription_key = @followed_user.email_notification.unsubscription_key
     @user = User.find(user_id)
 
-    I18n.locale = @followed_user.locale
-
-    subject = default_i18n_subject(
-      name: @user.profile.name,
-      username: @user.username
-    )
-    mail(to: @followed_user.email, subject: subject, &:mjml)
+    I18n.with_locale(@followed_user.locale) do
+      subject = default_i18n_subject(
+        name: @user.profile.name,
+        username: @user.username
+      )
+      mail(to: @followed_user.email, subject: subject, &:mjml)
+    end
   end
 
   def liked_episode_record(liked_user_id, user_id, episode_record_id)
@@ -32,14 +32,14 @@ class EmailNotificationMailer < ActionMailer::Base
     @work = @episode_record.work
     @episode = @episode_record.episode
 
-    I18n.locale = @liked_user.locale
-
-    subject = default_i18n_subject(
-      name: @user.profile.name,
-      username: @user.username,
-      title: @episode.decorate.number_with_work_title
-    )
-    mail(to: @liked_user.email, subject: subject, &:mjml)
+    I18n.with_locale(@liked_user.locale) do
+      subject = default_i18n_subject(
+        name: @user.profile.name,
+        username: @user.username,
+        title: @episode.decorate.number_with_work_title
+      )
+      mail(to: @liked_user.email, subject: subject, &:mjml)
+    end
   end
 
   def friends_joined(user_id, provider_name, friend_user_ids)
@@ -48,10 +48,10 @@ class EmailNotificationMailer < ActionMailer::Base
     @provider_name = provider_name
     @friend_users = User.where(id: friend_user_ids)
 
-    I18n.locale = @user.locale
-
-    subject = I18n.t("email_notification_mailer.friends_joined.subject_#{provider_name}")
-    mail(to: @user.email, subject: subject, &:mjml)
+    I18n.with_locale(@user.locale) do
+      subject = I18n.t("email_notification_mailer.friends_joined.subject_#{provider_name}")
+      mail(to: @user.email, subject: subject, &:mjml)
+    end
   end
 
   def favorite_works_added(user_id, work_id)
@@ -69,13 +69,13 @@ class EmailNotificationMailer < ActionMailer::Base
       merge(@user.favorite_organizations)
     @resources = @characters | @people | @orgs
 
-    I18n.locale = @user.locale
-
-    subject = default_i18n_subject(
-      work_title: @work.local_title,
-      resource_name: @resources.first.local_name
-    )
-    mail(to: @user.email, subject: subject, &:mjml)
+    I18n.with_locale(@user.locale) do
+      subject = default_i18n_subject(
+        work_title: @work.local_title,
+        resource_name: @resources.first.local_name
+      )
+      mail(to: @user.email, subject: subject, &:mjml)
+    end
   end
 
   def related_works_added(user_id, work_id)
@@ -84,12 +84,12 @@ class EmailNotificationMailer < ActionMailer::Base
     @related_works = @work.related_works.published.order_by_season
     @unsubscription_key = @user.email_notification.unsubscription_key
 
-    I18n.locale = @user.locale
-
-    subject = default_i18n_subject(
-      work_title: @work.local_title,
-      related_work_title: @related_works.first.local_title
-    )
-    mail(to: @user.email, subject: subject, &:mjml)
+    I18n.with_locale(@user.locale) do
+      subject = default_i18n_subject(
+        work_title: @work.local_title,
+        related_work_title: @related_works.first.local_title
+      )
+      mail(to: @user.email, subject: subject, &:mjml)
+    end
   end
 end

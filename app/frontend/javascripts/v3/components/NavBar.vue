@@ -1,8 +1,8 @@
 <template>
   <div class="c-navbar">
     <!--  PC-->
-    <nav class="navbar navbar-expand navbar-light bg-white">
-      <a href="/" class="navbar-brand d-none d-lg-inline-block">
+    <nav class="navbar navbar-expand navbar-light bg-white d-sm-flex d-none">
+      <a href="/" class="navbar-brand">
         <img :src="state.AnnConfig.images.logoUrl" width="25" height="30" alt="Annict">
       </a>
       <ul class="navbar-nav mt-2 mt-md-0 mr-md-2">
@@ -11,7 +11,7 @@
             {{ $t('noun.programs') }}
           </a>
         </li>
-        <li class="nav-item dropdown d-none d-lg-inline-block" v-if="$root.isSignedIn()">
+        <li class="nav-item dropdown" v-if="$root.isSignedIn()">
           <a class="nav-link dropdown-toggle text-dark" data-toggle="dropdown" href="">
             {{ $t('noun.library') }}
           </a>
@@ -33,7 +33,7 @@
             </a>
           </div>
         </li>
-        <li class="nav-item dropdown d-none d-lg-inline-block">
+        <li class="nav-item dropdown">
           <a class="nav-link dropdown-toggle text-dark" href="" data-toggle="dropdown">
             {{ $t('verb.explore') }}
           </a>
@@ -56,7 +56,7 @@
           </div>
         </li>
       </ul>
-      <form action="/search" autocomplete="off" class="col-md-2 px-0 mr-auto d-none d-lg-inline-block" method="get">
+      <form action="/search" autocomplete="off" class="col-2 px-0 mr-auto" method="get">
         <input name="q" class="form-control" type="text" :placeholder="$t('messages._common.searchWithKeywords')">
       </form>
       <ul class="navbar-nav">
@@ -133,9 +133,9 @@
     </nav>
 
     <!--  Mobile-->
-    <nav class="navbar navbar-expand navbar-white bg-white fixed-bottom d-block d-lg-none">
+    <nav class="bg-white d-block d-sm-none h-100 navbar navbar-expand navbar-white px-0">
       <ul class="navbar-nav justify-content-around align-items-center h-100">
-        <li class="nav-item text-center">
+        <li class="nav-item text-center col px-0">
           <a href="/" class="text-dark">
             <i class="fas fa-home"></i>
             <div class="small mt-1">
@@ -144,7 +144,7 @@
           </a>
         </li>
         <template v-if="$root.isSignedIn()">
-          <li class="nav-item text-center">
+          <li class="nav-item text-center col px-0">
             <a href="/programs" class="text-dark">
               <i class="far fa-calendar"></i>
               <div class="small mt-1">
@@ -152,7 +152,7 @@
               </div>
             </a>
           </li>
-          <li class="nav-item text-center">
+          <li class="nav-item text-center col px-0">
             <a class="text-dark" :href="'/@' + $root.viewer.username + '/watching'">
               <i class="fas fa-play"></i>
               <div class="small mt-1">
@@ -160,7 +160,7 @@
               </div>
             </a>
           </li>
-          <li class="nav-item text-center">
+          <li class="nav-item text-center col px-0">
             <a :href="'/works/' + state.AnnConfig.season.current" class="text-dark">
               <i class="fas fa-tv"></i>
               <div class="small mt-1">
@@ -168,7 +168,7 @@
               </div>
             </a>
           </li>
-          <li class="nav-item text-center position-relative">
+          <li class="nav-item text-center col px-0">
             <a href="/menu" class="text-dark">
               <i class="fas fa-th"></i>
               <div class="small mt-1">
@@ -178,7 +178,7 @@
           </li>
         </template>
         <template v-else>
-          <li class="nav-item text-center">
+          <li class="nav-item text-center col px-0">
             <a :href="'/works/' + state.AnnConfig.season.current" class="text-dark">
               <i class="fas fa-tv"></i>
               <div class="small mt-1">
@@ -186,7 +186,7 @@
               </div>
             </a>
           </li>
-          <li class="nav-item text-center">
+          <li class="nav-item text-center col px-0">
             <a href="/sign_up" class="text-dark">
               <i class="fas fa-rocket"></i>
               <div class="small mt-1">
@@ -194,7 +194,7 @@
               </div>
             </a>
           </li>
-          <li class="nav-item text-center">
+          <li class="nav-item text-center col px-0">
             <a href="/about" class="text-dark">
               <i class="far fa-lightbulb"></i>
               <div class="small mt-1">
@@ -202,7 +202,7 @@
               </div>
             </a>
           </li>
-          <li class="nav-item text-center">
+          <li class="nav-item text-center col px-0">
             <a href="/menu" class="text-dark">
               <i class="fas fa-th"></i>
               <div class="small mt-1">

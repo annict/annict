@@ -21,8 +21,7 @@ devise_scope :user do
 end
 
 use_doorkeeper do
-  controllers applications: "oauth/applications",
-              authorizations: "oauth/authorizations"
+  controllers applications: "oauth/applications"
   skip_controllers :authorized_applications
 end
 

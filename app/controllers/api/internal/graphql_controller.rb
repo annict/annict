@@ -8,7 +8,7 @@ module Api
       include RavenContext
       include Localable
 
-      before_action :set_locale
+      around_action :switch_locale
 
       def execute
         variables = ensure_hash(params[:variables])
@@ -42,10 +42,14 @@ module Api
         end
       end
 
-      def set_locale
-        return if user_signed_in?
+      def switch_locale(&action)
+        locale = if user_signed_in?
+          current_user.locale
+        else
+          domain_jp? ? :ja : :en
+        end
 
-        I18n.locale = domain_jp? ? :ja : :en
+        I18n.with_locale(locale, &action)
       end
     end
   end

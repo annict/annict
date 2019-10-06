@@ -24,16 +24,16 @@ class AccountsController < ApplicationController
         @user.save(validate: false)
       end
 
-      I18n.locale = @user.locale
+      I18n.with_locale(@user.locale) do
+        url = case I18n.locale.to_s
+        when "ja" then ENV.fetch("ANNICT_JP_URL")
+        else
+          ENV.fetch("ANNICT_URL")
+        end
 
-      url = case I18n.locale.to_s
-      when "ja" then ENV.fetch("ANNICT_JP_URL")
-      else
-        ENV.fetch("ANNICT_URL")
+        flash[:notice] = message.presence || t("messages.accounts.updated")
+        redirect_to "#{url}#{account_path}"
       end
-
-      flash[:notice] = message.presence || t("messages.accounts.updated")
-      redirect_to "#{url}#{account_path}"
     else
       render "/accounts/show"
     end

@@ -1,6 +1,6 @@
-.navbar {
+.c-navbar {
   // PC
-  @include media-breakpoint-up(md) {
+  @include media-breakpoint-up(sm) {
     & {
       box-shadow: $box-shadow-sm;
       height: $ann-navbar-height;
@@ -14,7 +14,7 @@
   }
 
   // Mobile
-  @include media-breakpoint-down(md) {
+  @include media-breakpoint-down(sm) {
     & {
       bottom: 0;
       box-shadow: 0 -0.125rem 0.25rem -0.125rem rgba(0, 0, 0, 0.075);
