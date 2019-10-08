@@ -4,14 +4,14 @@
     "checkJs": false,
     "esModuleInterop": true,
     "importHelpers": true,
-    "module": "es2015",
-    "moduleResolution": "node",
+    "module": "CommonJS",
+    "moduleResolution": "Node",
     "noEmit": true,
     "noImplicitThis": true,
     "resolveJsonModule": true,
     "sourceMap": true,
     "strict": false,
-    "target": "es5",
+    "target": "ES5",
     "skipLibCheck": true
   },
   "exclude": [
