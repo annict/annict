@@ -8,18 +8,28 @@ ImageHelper.module_eval do
   end
 end
 
+def browser
+  return :chrome if ENV["CI"] || ENV["NO_HEADLESS"]
+
+  :headless_chrome
+end
+
+def options
+  return {} unless ENV["CI"]
+
+  {
+    desired_capabilities: Selenium::WebDriver::Remote::Capabilities.chrome(
+      chrome_options: {
+        args: %w(
+          headless
+          no-sandbox
+          window-size=1280x800
+        )
+      }
+    )
+  }
+end
 
 class ApplicationSystemTestCase < ActionDispatch::SystemTestCase
-  capabilities = Selenium::WebDriver::Remote::Capabilities.chrome(
-    chrome_options: {
-      args: %w(
-        headless
-        no-sandbox
-        window-size=1280x800
-      )
-    }
-  )
-  driven_by :selenium,
-    using: :chrome,
-    options: { desired_capabilities: capabilities }
+  driven_by :selenium, using: browser, options: options
 end
