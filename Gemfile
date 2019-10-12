@@ -75,9 +75,6 @@ group :development, :test do
   gem "awesome_print"
   gem "dotenv-rails"
   gem "pry-rails"
-  gem "rspec-mocks"
-  gem "rspec-rails"
-  gem "rspec_junit_formatter" # Using on CircleCI
 end
 
 group :development do
@@ -97,7 +94,6 @@ group :development do
   gem "ruby_identicon"
   gem "scss_lint", require: false
   gem "solargraph"
-  gem "spring-commands-rspec", require: false
   gem "spring"
   gem "squasher"
   gem "stackprof"
