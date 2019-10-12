@@ -11,6 +11,7 @@ require_relative "boot"
   action_mailer/railtie
   action_view/railtie
   sprockets/railtie
+  rails/test_unit/railtie
 ).each do |railtie|
   require railtie
 end
