@@ -72,7 +72,7 @@ describe "Api::V1::Staffs" do
             "birthday" => staff.resource.birthday&.strftime("%Y-%m-%d"),
             "blood_type" => staff.resource.blood_type,
             "height" => staff.resource.height,
-            "favorite_people_count" => staff.resource.favorite_people_count,
+            "favorite_people_count" => staff.resource.favorite_users_count,
             "casts_count" => staff.resource.casts_count,
             "staffs_count" => staff.resource.staffs_count
           }

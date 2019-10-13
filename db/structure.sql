@@ -1647,7 +1647,7 @@ CREATE TABLE public.people (
     url_en character varying DEFAULT ''::character varying NOT NULL,
     wikipedia_url_en character varying DEFAULT ''::character varying NOT NULL,
     twitter_username_en character varying DEFAULT ''::character varying NOT NULL,
-    favorite_people_count integer DEFAULT 0 NOT NULL,
+    favorite_users_count integer DEFAULT 0 NOT NULL,
     casts_count integer DEFAULT 0 NOT NULL,
     staffs_count integer DEFAULT 0 NOT NULL
 );
@@ -4948,10 +4948,10 @@ CREATE INDEX index_people_on_casts_count ON public.people USING btree (casts_cou
 
 
 --
--- Name: index_people_on_favorite_people_count; Type: INDEX; Schema: public; Owner: -
+-- Name: index_people_on_favorite_users_count; Type: INDEX; Schema: public; Owner: -
 --
 
-CREATE INDEX index_people_on_favorite_people_count ON public.people USING btree (favorite_people_count);
+CREATE INDEX index_people_on_favorite_users_count ON public.people USING btree (favorite_users_count);
 
 
 --

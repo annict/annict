@@ -19,8 +19,8 @@
 #
 
 class FavoritePerson < ApplicationRecord
-  belongs_to :person, counter_cache: true
-  belongs_to :user
+  belongs_to :person
+  belongs_to :user, counter_cache: true
 
   scope :with_cast, -> { joins(:person).where("people.casts_count > ?", 0) }
   scope :with_staff, -> { joins(:person).where("people.staffs_count > ?", 0) }

@@ -96,7 +96,7 @@ describe "Api::V1::Casts" do
             "birthday" => cast.person.birthday&.strftime("%Y-%m-%d"),
             "blood_type" => cast.person.blood_type,
             "height" => cast.person.height,
-            "favorite_people_count" => cast.person.favorite_people_count,
+            "favorite_people_count" => cast.person.favorite_users_count,
             "casts_count" => cast.person.casts_count,
             "staffs_count" => cast.person.staffs_count,
           }

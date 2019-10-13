@@ -2,9 +2,9 @@
 
 describe "GraphQL API Query" do
   describe "searchPeople" do
-    let!(:person1) { create(:person, favorite_people_count: 10) }
-    let!(:person2) { create(:person, favorite_people_count: 30) }
-    let!(:person3) { create(:person, favorite_people_count: 20) }
+    let!(:person1) { create(:person, favorite_users_count: 10) }
+    let!(:person2) { create(:person, favorite_users_count: 30) }
+    let!(:person3) { create(:person, favorite_users_count: 20) }
 
     context "when `annictIds` argument is specified" do
       let(:result) do

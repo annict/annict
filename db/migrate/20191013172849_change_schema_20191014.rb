@@ -12,5 +12,7 @@ class ChangeSchema20191014 < ActiveRecord::Migration[6.0]
     rename_column :characters, :favorite_characters_count, :favorite_users_count
 
     rename_column :organizations, :favorite_organizations_count, :favorite_users_count
+
+    rename_column :people, :favorite_people_count, :favorite_users_count
   end
 end
