@@ -383,7 +383,7 @@
                       </div>
                     </div>
                   </div>
-                  <div :class="{ 'p-work-records-show__content clearfix': true, 'c-comment-guard': !state.work.viewerFinishedToWatch }" @click="removeCommentGuard">
+                  <div :class="{ 'p-work-records-show__content clearfix': true, 'c-comment-guard': $root.isSignedIn() && !state.work.viewerFinishedToWatch }" @click="removeCommentGuard">
                     <div class="row">
                       <div class="col-12 col-sm-4 order-1 order-sm-2">
                         <div class="p-3" v-if="workRecord.ratingOverallState">
@@ -452,7 +452,7 @@
                     </div>
                   </div>
 
-                  <div class="small text-right mt-2" v-if="$root.viewer.username === workRecord.user.username">
+                  <div class="small text-right mt-2" v-if="$root.isSignedIn() && $root.viewer.username === workRecord.user.username">
                     <a :href="'/works/' + state.work.annictId + '/records/' + workRecord.record.annictId + '/edit'" class="mr-2">
                       <i class="fab fa-edit mr-1"></i>
                       {{ $root.$t('noun.edit') }}
