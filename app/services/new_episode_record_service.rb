@@ -13,7 +13,7 @@ class NewEpisodeRecordService
   def save!
     @episode_record.user = @user
     @episode_record.work = @work
-    @episode_record.detect_locale!(:comment)
+    @episode_record.detect_locale!(:body)
 
     ActiveRecord::Base.transaction do
       @episode_record.record = @user.records.create!(work: @work)
@@ -53,6 +53,6 @@ class NewEpisodeRecordService
   end
 
   def update_episode_record_bodies_count
-    @episode_record.episode.increment!(:episode_record_bodies_count) if @episode_record.comment.present?
+    @episode_record.episode.increment!(:episode_record_bodies_count) if @episode_record.body.present?
   end
 end

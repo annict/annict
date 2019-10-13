@@ -33,7 +33,7 @@ script#t-create-episode-record-activity type="x-template"
           .small.text-muted
             c-time-ago :time="activity.created_at"
 
-    template v-if="activity.episode_record.comment"
+    template v-if="activity.episode_record.body"
       c-comment-guard inline-template="" :init-is-spoiler="activity.episode_record.hide_comment" :activity="activity"
         .c-record-comment.mb-3 @click="remove"
           template v-if="activity.episode_record.rating"

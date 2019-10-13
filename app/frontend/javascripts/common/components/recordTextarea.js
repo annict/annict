@@ -23,7 +23,7 @@ export default {
 
   methods: {
     expandOnClick() {
-      if (this.record.commentRows > 2) {
+      if (this.record.bodyRows > 2) {
         return
       }
       this.record.commentRows = 10

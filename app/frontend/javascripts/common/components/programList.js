@@ -39,13 +39,13 @@ export default {
         program.isBroadcasted = moment().isAfter(program.started_at)
         return (program.record = {
           uid: _.uniqueId(),
-          comment: '',
+          body: '',
           isEditingComment: false,
           isRecorded: false,
           isSaving: false,
           ratingState: null,
           wordCount: 0,
-          commentRows: 1,
+          bodyRows: 1,
         })
       })
     },
@@ -89,7 +89,7 @@ export default {
         url: `/api/internal/episodes/${program.episode.id}/records`,
         data: {
           episode_record: {
-            comment: program.record.comment,
+            body: program.record.body,
             shared_twitter: this.user.share_record_to_twitter,
             rating_state: program.record.ratingState,
           },
