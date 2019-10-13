@@ -206,7 +206,7 @@
               <h2 class="h4 text-center my-4 font-weight-bold">
                 {{ $root.$t('noun.pv') }}
               </h2>
-              <div class="c-card mt-3 pt-3">
+              <div class="c-card p-works-show__trailers mt-3 pt-3">
                 <div class="row ml-3 pr-3">
                   <div class="col-md-4 col-6 text-center mb-3 pl-0" v-for="trailer in state.work.trailers">
                     <a :href="trailer.url" target="_blank" rel="noopener">
@@ -241,7 +241,7 @@
               <h2 class="h4 text-center my-4 font-weight-bold">
                 {{ $root.$t('noun.episodes') }}
               </h2>
-              <div class="c-card container mt-3 pt-3">
+              <div class="c-card p-works-show__episodes container mt-3 pt-3">
                 <div class="row pl-3" v-if="state.work.episodes.length > 0">
                   <div class="col-6 col-sm-4 mb-3 pl-0" v-for="episode in state.work.episodes">
                     <a :href="`/works/${state.work.annictId}/episodes/${episode.annictId}`">
@@ -261,7 +261,7 @@
             <h2 class="h4 text-center my-4 font-weight-bold">
               {{ $root.$t('noun.characters') }}
             </h2>
-            <div class="c-card container mt-3 pt-3">
+            <div class="c-card p-works-show__characters container mt-3 pt-3">
               <div class="row pl-3" v-if="state.work.casts.length > 0">
                 <div class="col-6 col-sm-3 mb-3 pl-0" v-for="cast in state.work.casts">
                   <a :href="'/characters/' + cast.character.annictId">
@@ -283,7 +283,7 @@
             <h2 class="h4 text-center my-4 font-weight-bold">
               {{ $root.$t('noun.staffs') }}
             </h2>
-            <div class="c-card container mt-3 pt-3">
+            <div class="c-card p-works-show__staffs container mt-3 pt-3">
               <div class="row pl-3" v-if="state.work.staffs.length > 0">
                 <div class="col-6 col-sm-3 mb-3 pl-0" v-for="staff in state.work.staffs">
                   <template v-if="staff.isPerson()">
@@ -310,7 +310,7 @@
               <h2 class="h4 text-center my-4 font-weight-bold">
                 {{ $root.$t('noun.vods') }}
               </h2>
-              <div class="c-card container mt-3 pt-3">
+              <div class="c-card p-works-show__vods container mt-3 pt-3">
                 <div class="row pl-3">
                   <div class="col-6 col-sm-4 mb-3 pl-0" v-for="vodChannel in state.vodChannels">
                     <template v-if="vodChannel.programs.length > 1">
@@ -345,7 +345,7 @@
             <h2 class="h4 text-center my-4 font-weight-bold">
               {{ $root.$t('noun.recordBodyList') }}
             </h2>
-            <div class="c-card">
+            <div class="c-card p-works-show__work-records">
               <div class="text-center pt-3">
                 <a :href="'/works/' + state.work.annictId + '/records'" class="btn btn-primary btn-sm">
                   <i class="far fa-edit mr-1"></i>
@@ -383,7 +383,7 @@
                       </div>
                     </div>
                   </div>
-                  <div :class="{ 'p-work-records-show__content clearfix': true, 'c-comment-guard': !state.work.viewerFinishedToWatch }" @click="removeCommentGuard">
+                  <div :class="{ 'p-work-records-show__content clearfix': true, 'c-comment-guard': $root.isSignedIn() && !state.work.viewerFinishedToWatch }" @click="removeCommentGuard">
                     <div class="row">
                       <div class="col-12 col-sm-4 order-1 order-sm-2">
                         <div class="p-3" v-if="workRecord.ratingOverallState">
@@ -452,7 +452,7 @@
                     </div>
                   </div>
 
-                  <div class="small text-right mt-2" v-if="$root.viewer.username === workRecord.user.username">
+                  <div class="small text-right mt-2" v-if="$root.isSignedIn() && $root.viewer.username === workRecord.user.username">
                     <a :href="'/works/' + state.work.annictId + '/records/' + workRecord.record.annictId + '/edit'" class="mr-2">
                       <i class="fab fa-edit mr-1"></i>
                       {{ $root.$t('noun.edit') }}
@@ -500,7 +500,7 @@
               <h2 class="h4 text-center my-4 font-weight-bold">
                 {{ $root.$t('noun.relatedWorks') }}
               </h2>
-              <div class="c-card mt-3 pl-3 py-3">
+              <div class="c-card p-works-show__series mt-3 pl-3 py-3">
                 <template v-for="series in state.work.seriesList">
                   <h3 class="text-center mb-3">
                     {{ $root.$t('noun.seriesWithName', { seriesName: series.localName }) }}

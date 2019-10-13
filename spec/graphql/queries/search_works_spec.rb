@@ -240,7 +240,6 @@ describe "GraphQL API Query" do
       end
     end
 
-
     context "when `staffs` are fetched" do
       let(:organization) { create(:organization) }
       let!(:staff1) { create(:staff, work: work1) }
@@ -329,6 +328,45 @@ describe "GraphQL API Query" do
                   }
                 ]
               }
+            }
+          }
+        ])
+      end
+    end
+
+    context "when `reviews` are fetched" do
+      let(:user) { create(:registered_user) }
+      let(:record) { create(:record, user: user, work: work1) }
+      let!(:work_record) { create(:work_record, user: user, work: work1, record: record, body: "Review~~~") }
+      let(:result) do
+        query_string = <<~QUERY
+          query {
+            searchWorks(annictIds: [#{work1.id}]) {
+              nodes {
+                reviews {
+                  nodes {
+                    body
+                  }
+                }
+              }
+            }
+          }
+        QUERY
+
+        res = AnnictSchema.execute(query_string)
+        pp(res) if res["errors"]
+        res
+      end
+
+      it "returns reviews" do
+        expect(result.dig("data", "searchWorks", "nodes")).to match_array([
+          {
+            "reviews" => {
+              "nodes" => [
+                {
+                  "body" => "Review~~~"
+                }
+              ]
             }
           }
         ])
