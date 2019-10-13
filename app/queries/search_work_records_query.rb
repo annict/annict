@@ -44,8 +44,8 @@ class SearchWorkRecordsQuery
       results
     end
 
-    results = if args[:filter_by_locale]
-      if viewer
+    if args[:filter_by_locale]
+      results = if viewer
         results.readable_by_user(viewer)
       else
         results.with_locale(locale)
