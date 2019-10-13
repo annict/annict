@@ -16,5 +16,7 @@ class ChangeSchema20191014 < ActiveRecord::Migration[6.0]
     rename_column :organizations, :favorite_organizations_count, :favorite_users_count
 
     rename_column :people, :favorite_people_count, :favorite_users_count
+
+    remove_index :programs, name: :index_programs_on_program_detail_id_and_started_at
   end
 end

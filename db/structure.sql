@@ -5032,13 +5032,6 @@ CREATE UNIQUE INDEX index_programs_on_program_detail_id_and_number ON public.pro
 
 
 --
--- Name: index_programs_on_program_detail_id_and_started_at; Type: INDEX; Schema: public; Owner: -
---
-
-CREATE UNIQUE INDEX index_programs_on_program_detail_id_and_started_at ON public.programs USING btree (program_detail_id, started_at);
-
-
---
 -- Name: index_programs_on_sc_pid; Type: INDEX; Schema: public; Owner: -
 --
 
