@@ -40,7 +40,7 @@ describe "Api::V1::Characters" do
           "description_en" => character.description_en,
           "description_source" => character.description_source,
           "description_source_en" => character.description_source_en,
-          "favorite_characters_count" => character.favorite_characters_count,
+          "favorite_characters_count" => character.favorite_users_count,
           "series" => nil
         }
         expect(json["characters"][0]).to include(expected_hash)

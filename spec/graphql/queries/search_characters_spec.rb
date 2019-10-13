@@ -2,9 +2,9 @@
 
 describe "GraphQL API Query" do
   describe "searchCharacters" do
-    let!(:character1) { create(:character, favorite_characters_count: 10) }
-    let!(:character2) { create(:character, favorite_characters_count: 30) }
-    let!(:character3) { create(:character, favorite_characters_count: 20) }
+    let!(:character1) { create(:character, favorite_users_count: 10) }
+    let!(:character2) { create(:character, favorite_users_count: 30) }
+    let!(:character3) { create(:character, favorite_users_count: 20) }
 
     context "when `annictIds` argument is specified" do
       let(:result) do

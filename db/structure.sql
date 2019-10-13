@@ -292,7 +292,7 @@ CREATE TABLE public.characters (
     updated_at timestamp without time zone NOT NULL,
     description_source character varying DEFAULT ''::character varying NOT NULL,
     description_source_en character varying DEFAULT ''::character varying NOT NULL,
-    favorite_characters_count integer DEFAULT 0 NOT NULL,
+    favorite_users_count integer DEFAULT 0 NOT NULL,
     series_id integer
 );
 
@@ -4297,10 +4297,10 @@ CREATE INDEX index_character_images_on_user_id ON public.character_images USING 
 
 
 --
--- Name: index_characters_on_favorite_characters_count; Type: INDEX; Schema: public; Owner: -
+-- Name: index_characters_on_favorite_users_count; Type: INDEX; Schema: public; Owner: -
 --
 
-CREATE INDEX index_characters_on_favorite_characters_count ON public.characters USING btree (favorite_characters_count);
+CREATE INDEX index_characters_on_favorite_users_count ON public.characters USING btree (favorite_users_count);
 
 
 --

@@ -32,7 +32,7 @@ module Canary
         field :description_en, String, null: false
         field :description_source, String, null: false
         field :description_source_en, String, null: false
-        field :favorite_characters_count, Integer, null: false
+        field :favorite_users_count, Integer, null: false
         field :series, Canary::Types::Objects::SeriesType, null: false
       end
     end

@@ -26,6 +26,6 @@ json[:description] = character.description if params.fields_contain?("#{field_pr
 json[:description_en] = character.description_en if params.fields_contain?("#{field_prefix}description_en")
 json[:description_source] = character.description_source if params.fields_contain?("#{field_prefix}description_source")
 json[:description_source_en] = character.description_source_en if params.fields_contain?("#{field_prefix}description_source_en")
-json[:favorite_characters_count] = character.favorite_characters_count if params.fields_contain?("#{field_prefix}favorite_characters_count")
+json[:favorite_characters_count] = character.favorite_users_count if params.fields_contain?("#{field_prefix}favorite_characters_count")
 
 json
