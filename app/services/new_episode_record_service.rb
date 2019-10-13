@@ -19,7 +19,7 @@ class NewEpisodeRecordService
       @episode_record.record = @user.records.create!(work: @work)
       @episode_record.save!
       @episode_record.update_share_record_status
-      update_episode_records_with_body_count
+      update_episode_record_bodies_count
       update_latest_status
     end
 
@@ -52,7 +52,7 @@ class NewEpisodeRecordService
     @ga_client.events.create(:records, :create, el: "Episode", ds: @via)
   end
 
-  def update_episode_records_with_body_count
-    @episode_record.episode.increment!(:episode_records_with_body_count) if @episode_record.comment.present?
+  def update_episode_record_bodies_count
+    @episode_record.episode.increment!(:episode_record_bodies_count) if @episode_record.comment.present?
   end
 end

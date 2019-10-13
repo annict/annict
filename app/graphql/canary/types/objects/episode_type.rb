@@ -40,7 +40,7 @@ module Canary
         end
 
         def episode_record_bodies_count
-          object.episode_records_with_body_count
+          object.episode_record_bodies_count
         end
 
         def work

@@ -693,7 +693,7 @@ CREATE TABLE public.episodes (
     raw_number double precision,
     title_ro character varying DEFAULT ''::character varying NOT NULL,
     title_en character varying DEFAULT ''::character varying NOT NULL,
-    episode_records_with_body_count integer DEFAULT 0 NOT NULL,
+    episode_record_bodies_count integer DEFAULT 0 NOT NULL,
     score double precision,
     ratings_count integer DEFAULT 0 NOT NULL,
     satisfaction_rate double precision
