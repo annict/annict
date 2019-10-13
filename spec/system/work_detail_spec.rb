@@ -29,7 +29,7 @@ describe "Work detail page" do
         end
 
         it "displays trailer title" do
-          expect(page.find('.p-works-show__trailers')).to have_content(trailer.local_title)
+          expect(page.find(".p-works-show__trailers")).to have_content(trailer.local_title)
         end
       end
 
@@ -41,7 +41,7 @@ describe "Work detail page" do
         end
 
         it "displays episode title" do
-          expect(page.find('.p-works-show__episodes')).to have_content(episode.local_title)
+          expect(page.find(".p-works-show__episodes")).to have_content(episode.local_title)
         end
       end
 
@@ -53,7 +53,7 @@ describe "Work detail page" do
         end
 
         it "displays character name" do
-          expect(page.find('.p-works-show__characters')).to have_content(cast.character.local_name)
+          expect(page.find(".p-works-show__characters")).to have_content(cast.character.local_name)
         end
       end
 
@@ -66,7 +66,7 @@ describe "Work detail page" do
         end
 
         it "displays staff name" do
-          expect(page.find('.p-works-show__staffs')).to have_content(staff.resource.local_name)
+          expect(page.find(".p-works-show__staffs")).to have_content(staff.resource.local_name)
         end
       end
 
@@ -79,7 +79,7 @@ describe "Work detail page" do
         end
 
         it "displays staff name" do
-          expect(page.find('.p-works-show__staffs')).to have_content(staff.resource.local_name)
+          expect(page.find(".p-works-show__staffs")).to have_content(staff.resource.local_name)
         end
       end
 
@@ -95,7 +95,7 @@ describe "Work detail page" do
         end
 
         it "can access to VOD service" do
-          expect(page.find('.p-works-show__vods')).to have_link(href: vod_title_url)
+          expect(page.find(".p-works-show__vods")).to have_link(href: vod_title_url)
         end
       end
 
@@ -107,7 +107,7 @@ describe "Work detail page" do
         end
 
         it "displays work record body" do
-          expect(page.find('.p-works-show__work-records')).to have_content(work_record.body)
+          expect(page.find(".p-works-show__work-records")).to have_content(work_record.body)
         end
       end
 
@@ -122,13 +122,13 @@ describe "Work detail page" do
         end
 
         it "displays series" do
-          expect(page.find('.p-works-show__series')).to have_content(series_work.series.local_name)
-          expect(page.find('.p-works-show__series')).to have_content(series_work.local_summary)
-          expect(page.find('.p-works-show__series')).to have_link(href: "/works/#{work.id}")
+          expect(page.find(".p-works-show__series")).to have_content(series_work.series.local_name)
+          expect(page.find(".p-works-show__series")).to have_content(series_work.local_summary)
+          expect(page.find(".p-works-show__series")).to have_link(href: "/works/#{work.id}")
 
-          expect(page.find('.p-works-show__series')).to have_content(series_work2.series.local_name)
-          expect(page.find('.p-works-show__series')).to have_content(series_work2.local_summary)
-          expect(page.find('.p-works-show__series')).to have_link(href: "/works/#{work2.id}")
+          expect(page.find(".p-works-show__series")).to have_content(series_work2.series.local_name)
+          expect(page.find(".p-works-show__series")).to have_content(series_work2.local_summary)
+          expect(page.find(".p-works-show__series")).to have_link(href: "/works/#{work2.id}")
         end
       end
     end
@@ -168,7 +168,7 @@ describe "Work detail page" do
         end
 
         it "displays trailer title" do
-          expect(page.find('.p-works-show__trailers')).to have_content(trailer.local_title)
+          expect(page.find(".p-works-show__trailers")).to have_content(trailer.local_title)
         end
       end
 
@@ -180,7 +180,7 @@ describe "Work detail page" do
         end
 
         it "displays episode title" do
-          expect(page.find('.p-works-show__episodes')).to have_content(episode.local_title)
+          expect(page.find(".p-works-show__episodes")).to have_content(episode.local_title)
         end
       end
 
@@ -192,7 +192,7 @@ describe "Work detail page" do
         end
 
         it "displays character name" do
-          expect(page.find('.p-works-show__characters')).to have_content(cast.character.local_name)
+          expect(page.find(".p-works-show__characters")).to have_content(cast.character.local_name)
         end
       end
 
@@ -205,7 +205,7 @@ describe "Work detail page" do
         end
 
         it "displays staff name" do
-          expect(page.find('.p-works-show__staffs')).to have_content(staff.resource.local_name)
+          expect(page.find(".p-works-show__staffs")).to have_content(staff.resource.local_name)
         end
       end
 
@@ -218,7 +218,7 @@ describe "Work detail page" do
         end
 
         it "displays staff name" do
-          expect(page.find('.p-works-show__staffs')).to have_content(staff.resource.local_name)
+          expect(page.find(".p-works-show__staffs")).to have_content(staff.resource.local_name)
         end
       end
 
@@ -234,7 +234,7 @@ describe "Work detail page" do
         end
 
         it "can access to VOD service" do
-          expect(page.find('.p-works-show__vods')).to have_link(href: vod_title_url)
+          expect(page.find(".p-works-show__vods")).to have_link(href: vod_title_url)
         end
       end
 
@@ -246,7 +246,7 @@ describe "Work detail page" do
         end
 
         it "displays work record body" do
-          expect(page.find('.p-works-show__work-records')).to have_content(work_record.body)
+          expect(page.find(".p-works-show__work-records")).to have_content(work_record.body)
         end
       end
 
@@ -261,13 +261,13 @@ describe "Work detail page" do
         end
 
         it "displays series" do
-          expect(page.find('.p-works-show__series')).to have_content(series_work.series.local_name)
-          expect(page.find('.p-works-show__series')).to have_content(series_work.local_summary)
-          expect(page.find('.p-works-show__series')).to have_link(href: "/works/#{work.id}")
+          expect(page.find(".p-works-show__series")).to have_content(series_work.series.local_name)
+          expect(page.find(".p-works-show__series")).to have_content(series_work.local_summary)
+          expect(page.find(".p-works-show__series")).to have_link(href: "/works/#{work.id}")
 
-          expect(page.find('.p-works-show__series')).to have_content(series_work2.series.local_name)
-          expect(page.find('.p-works-show__series')).to have_content(series_work2.local_summary)
-          expect(page.find('.p-works-show__series')).to have_link(href: "/works/#{work2.id}")
+          expect(page.find(".p-works-show__series")).to have_content(series_work2.series.local_name)
+          expect(page.find(".p-works-show__series")).to have_content(series_work2.local_summary)
+          expect(page.find(".p-works-show__series")).to have_link(href: "/works/#{work2.id}")
         end
       end
     end
