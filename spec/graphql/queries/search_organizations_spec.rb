@@ -2,9 +2,9 @@
 
 describe "GraphQL API Query" do
   describe "searchOrganizations" do
-    let!(:organization1) { create(:organization, favorite_organizations_count: 10) }
-    let!(:organization2) { create(:organization, favorite_organizations_count: 30) }
-    let!(:organization3) { create(:organization, favorite_organizations_count: 20) }
+    let!(:organization1) { create(:organization, favorite_users_count: 10) }
+    let!(:organization2) { create(:organization, favorite_users_count: 30) }
+    let!(:organization3) { create(:organization, favorite_users_count: 20) }
 
     context "when `annictIds` argument is specified" do
       let(:result) do

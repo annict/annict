@@ -1598,7 +1598,7 @@ CREATE TABLE public.organizations (
     url_en character varying DEFAULT ''::character varying NOT NULL,
     wikipedia_url_en character varying DEFAULT ''::character varying NOT NULL,
     twitter_username_en character varying DEFAULT ''::character varying NOT NULL,
-    favorite_organizations_count integer DEFAULT 0 NOT NULL,
+    favorite_users_count integer DEFAULT 0 NOT NULL,
     staffs_count integer DEFAULT 0 NOT NULL
 );
 
@@ -4913,10 +4913,10 @@ CREATE INDEX index_organizations_on_aasm_state ON public.organizations USING btr
 
 
 --
--- Name: index_organizations_on_favorite_organizations_count; Type: INDEX; Schema: public; Owner: -
+-- Name: index_organizations_on_favorite_users_count; Type: INDEX; Schema: public; Owner: -
 --
 
-CREATE INDEX index_organizations_on_favorite_organizations_count ON public.organizations USING btree (favorite_organizations_count);
+CREATE INDEX index_organizations_on_favorite_users_count ON public.organizations USING btree (favorite_users_count);
 
 
 --

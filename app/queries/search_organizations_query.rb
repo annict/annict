@@ -37,7 +37,7 @@ class SearchOrganizationsQuery
       when "CREATED_AT"
         @collection.order(created_at: direction)
       when "FAVORITE_ORGANIZATIONS_COUNT"
-        @collection.order(favorite_organizations_count: direction)
+        @collection.order(favorite_users_count: direction)
       end
     end
 

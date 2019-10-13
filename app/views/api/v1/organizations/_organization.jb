@@ -12,7 +12,7 @@ json[:wikipedia_url] = organization.wikipedia_url.presence || "" if params.field
 json[:wikipedia_url_en] = organization.wikipedia_url_en.presence || "" if params.fields_contain?("#{field_prefix}wikipedia_url_en")
 json[:twitter_username] = organization.twitter_username.presence || "" if params.fields_contain?("#{field_prefix}twitter_username")
 json[:twitter_username_en] = organization.twitter_username_en.presence || "" if params.fields_contain?("#{field_prefix}twitter_username_en")
-json[:favorite_organizations_count] = organization.favorite_organizations_count if params.fields_contain?("#{field_prefix}favorite_organizations_count")
+json[:favorite_organizations_count] = organization.favorite_users_count if params.fields_contain?("#{field_prefix}favorite_organizations_count")
 json[:staffs_count] = organization.staffs_count if params.fields_contain?("#{field_prefix}staffs_count")
 
 json

@@ -26,7 +26,7 @@ describe "Api::V1::Organizations" do
           "wikipedia_url_en" => organization.wikipedia_url_en,
           "twitter_username" => organization.twitter_username,
           "twitter_username_en" => organization.twitter_username_en,
-          "favorite_organizations_count" => organization.favorite_organizations_count,
+          "favorite_organizations_count" => organization.favorite_users_count,
           "staffs_count" => organization.staffs_count
         }
         expect(json["organizations"][0]).to include(expected_hash)
