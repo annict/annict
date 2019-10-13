@@ -43,13 +43,13 @@ module Api
       end
 
       def switch_locale(&action)
-        locale = if user_signed_in?
-          current_user.locale
-        else
-          domain_jp? ? :ja : :en
-        end
+        I18n.with_locale(current_locale, &action)
+      end
 
-        I18n.with_locale(locale, &action)
+      def current_locale
+        return current_user.locale if user_signed_in?
+
+        domain_jp? ? :ja : :en
       end
     end
   end
