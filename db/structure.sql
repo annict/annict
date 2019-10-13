@@ -24,6 +24,20 @@ COMMENT ON EXTENSION plpgsql IS 'PL/pgSQL procedural language';
 
 
 --
+-- Name: citext; Type: EXTENSION; Schema: -; Owner: -
+--
+
+CREATE EXTENSION IF NOT EXISTS citext WITH SCHEMA public;
+
+
+--
+-- Name: EXTENSION citext; Type: COMMENT; Schema: -; Owner: -
+--
+
+COMMENT ON EXTENSION citext IS 'data type for case-insensitive character strings';
+
+
+--
 -- Name: pg_stat_statements; Type: EXTENSION; Schema: -; Owner: -
 --
 
@@ -2491,8 +2505,8 @@ CREATE SEQUENCE public.users_id_seq
 
 CREATE TABLE public.users (
     id integer DEFAULT nextval('public.users_id_seq'::regclass) NOT NULL,
-    username character varying(510) NOT NULL,
-    email character varying(510) NOT NULL,
+    username public.citext NOT NULL,
+    email public.citext NOT NULL,
     role integer NOT NULL,
     encrypted_password character varying(510) DEFAULT ''::character varying NOT NULL,
     remember_created_at timestamp with time zone,
@@ -6883,6 +6897,7 @@ INSERT INTO "schema_migrations" (version) VALUES
 ('20190330112541'),
 ('20190413221017'),
 ('20190501175021'),
-('20190608074205');
+('20190608074205'),
+('20191013172849');
 
 
