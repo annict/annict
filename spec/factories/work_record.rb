@@ -6,5 +6,6 @@ FactoryBot.define do
     work
     record
     body { "おもしろかった" }
+    locale { "ja" }
   end
 end

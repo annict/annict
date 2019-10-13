@@ -7,6 +7,8 @@ FactoryBot.define do
     media { :tv }
     official_site_url { "http://example.com" }
     wikipedia_url { "http://wikipedia.org" }
+    synopsis { "プリキュアのあらすじ" }
+    synopsis_source { "あらすじのソース" }
     twitter_username { "precure_official" }
     twitter_hashtag { "precure" }
     mal_anime_id { 12_345 }
