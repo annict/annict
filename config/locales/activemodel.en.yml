@@ -54,7 +54,7 @@ en:
         rows: Episodes
       db/program_rows_form:
         rows: Programs
-      db/pv_rows_form:
+      db/trailer_rows_form:
         rows: PVs
       db/series_work_rows_form:
         rows: Series Works

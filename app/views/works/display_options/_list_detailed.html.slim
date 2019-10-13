@@ -31,23 +31,23 @@
               | :
             = work.local_synopsis_source
 
-      - pvs = @pvs_data.select { |pd| pd[:work_id] == work.id }.first[:pvs].sort_by { |p| p.sort_number }
-      - if pvs.present?
+      - trailers = @trailers_data.select { |pd| pd[:work_id] == work.id }.first[:trailers].sort_by { |p| p.sort_number }
+      - if trailers.present?
         .font-weight-bold.mb-1
-          = t "noun.pv"
+          = t "noun.trailer"
         .row
-          - pvs.each do |pv|
+          - trailers.each do |trailer|
             .col-4.text-center.mb-3
-              - if pv.youtube?
-                c-youtube-modal-player thumbnail-url="#{ann_image_url(pv, :image, size: "255x144")}" video-id="#{pv.youtube_video_id}" video-title="#{locale_ja? ? pv.title : pv.title_en}" annict-url="#{ENV.fetch('ANNICT_URL')}"
+              - if trailer.youtube?
+                c-youtube-modal-player thumbnail-url="#{ann_image_url(trailer, :image, size: "255x144")}" video-id="#{trailer.youtube_video_id}" video-title="#{locale_ja? ? trailer.title : trailer.title_en}" annict-url="#{ENV.fetch('ANNICT_URL')}"
               - else
-                = link_to pv.url, target: "_blank" do
+                = link_to trailer.url, target: "_blank" do
                   .c-video-thumbnail
-                    = ann_image_tag pv, :image, size: "255x144", class: "img-fluid rounded img-thumbnail"
+                    = ann_image_tag trailer, :image, size: "255x144", class: "img-fluid rounded img-thumbnail"
                     = icon "play-circle", "far"
-                  - if locale_ja? || pv.title_en.present?
+                  - if locale_ja? || trailer.title_en.present?
                     .small
-                      = pv.local_title
+                      = trailer.local_title
 
       - casts = @casts_data.select { |cd| cd[:work_id] == work.id }.first[:casts].sort_by { |c| c.sort_number }
       - casts = casts.select { |c| locale_ja? ? true : c.support_en? }

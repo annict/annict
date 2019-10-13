@@ -136,7 +136,7 @@ ja:
         url: URL
         vod_title_code: VOD作品コード
         vod_title_name: VOD作品名
-      pv:
+      trailer:
         sort_number: ソート番号
         title: タイトル
         thumbnail: サムネイル
@@ -256,7 +256,7 @@ ja:
       program:
         one: 放送予定
         other: 放送予定
-      pv:
+      trailer:
         one: PV
         other: PV
       series:

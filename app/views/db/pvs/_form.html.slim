@@ -1,6 +1,6 @@
-- url = pv.new_record? ? db_work_pvs_path(work) : db_pv_path(pv)
+- url = trailer.new_record? ? db_work_trailers_path(work) : db_trailer_path(trailer)
 .container
-  = form_for pv, url: url do |f|
+  = form_for trailer, url: url do |f|
     = render "application/components/error_panel", resource: f.object
 
     .form-group.row

@@ -1,4 +1,4 @@
-- title = t "head.title.db.pvs.edit"
+- title = t "head.title.db.trailers.edit"
 - set_meta_tags(title: title, reverse: true, prefix: false)
 
 
@@ -17,6 +17,6 @@
   .row
     .col-6
       .c-card.p-3
-        = render "form", pv: @pv
+        = render "form", trailer: @trailer
     .col-6
       = render "sidebar_edit"

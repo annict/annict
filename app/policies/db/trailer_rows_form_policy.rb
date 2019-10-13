@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module Db
-  class PvRowsFormPolicy < ApplicationPolicy
+  class TrailerRowsFormPolicy < ApplicationPolicy
     def create?
       user.committer?
     end

@@ -22,9 +22,9 @@
   = active_link_to db_work_image_path(work), class: "c-subnav__link", class_active: "c-subnav__link--active", active: params[:controller]  == "db/work_images" do
     .c-subnav__item
       = t "noun.work_image"
-  = active_link_to db_work_pvs_path(work), class: "c-subnav__link", class_active: "c-subnav__link--active", active: params[:controller]  == "db/pvs" do
+  = active_link_to db_work_trailers_path(work), class: "c-subnav__link", class_active: "c-subnav__link--active", active: params[:controller]  == "db/trailers" do
     .c-subnav__item
-      = Pv.model_name.human(count: 2)
+      = Trailer.model_name.human(count: 2)
   = active_link_to activities_db_work_path(work), class: "c-subnav__link", class_active: "c-subnav__link--active", active: params[:controller]  == "db/works" && params[:action]  == "activities" do
     .c-subnav__item
       = t "head.title.db.works.activities"

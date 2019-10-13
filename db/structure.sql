@@ -1845,47 +1845,6 @@ CREATE TABLE public.providers (
 
 
 --
--- Name: pvs; Type: TABLE; Schema: public; Owner: -
---
-
-CREATE TABLE public.pvs (
-    id bigint NOT NULL,
-    work_id integer NOT NULL,
-    url character varying NOT NULL,
-    title character varying NOT NULL,
-    thumbnail_file_name character varying,
-    thumbnail_content_type character varying,
-    thumbnail_file_size integer,
-    thumbnail_updated_at timestamp without time zone,
-    sort_number integer DEFAULT 0 NOT NULL,
-    aasm_state character varying DEFAULT 'published'::character varying NOT NULL,
-    created_at timestamp without time zone NOT NULL,
-    updated_at timestamp without time zone NOT NULL,
-    title_en character varying DEFAULT ''::character varying NOT NULL,
-    image_data text
-);
-
-
---
--- Name: pvs_id_seq; Type: SEQUENCE; Schema: public; Owner: -
---
-
-CREATE SEQUENCE public.pvs_id_seq
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
-
-
---
--- Name: pvs_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
---
-
-ALTER SEQUENCE public.pvs_id_seq OWNED BY public.pvs.id;
-
-
---
 -- Name: reactions; Type: TABLE; Schema: public; Owner: -
 --
 
@@ -2320,6 +2279,47 @@ CREATE SEQUENCE public.tips_id_seq
 --
 
 ALTER SEQUENCE public.tips_id_seq OWNED BY public.tips.id;
+
+
+--
+-- Name: trailers; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.trailers (
+    id bigint NOT NULL,
+    work_id integer NOT NULL,
+    url character varying NOT NULL,
+    title character varying NOT NULL,
+    thumbnail_file_name character varying,
+    thumbnail_content_type character varying,
+    thumbnail_file_size integer,
+    thumbnail_updated_at timestamp without time zone,
+    sort_number integer DEFAULT 0 NOT NULL,
+    aasm_state character varying DEFAULT 'published'::character varying NOT NULL,
+    created_at timestamp without time zone NOT NULL,
+    updated_at timestamp without time zone NOT NULL,
+    title_en character varying DEFAULT ''::character varying NOT NULL,
+    image_data text
+);
+
+
+--
+-- Name: trailers_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE public.trailers_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: trailers_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE public.trailers_id_seq OWNED BY public.trailers.id;
 
 
 --
@@ -3174,13 +3174,6 @@ ALTER TABLE ONLY public.program_details ALTER COLUMN id SET DEFAULT nextval('pub
 
 
 --
--- Name: pvs id; Type: DEFAULT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public.pvs ALTER COLUMN id SET DEFAULT nextval('public.pvs_id_seq'::regclass);
-
-
---
 -- Name: reactions id; Type: DEFAULT; Schema: public; Owner: -
 --
 
@@ -3234,6 +3227,13 @@ ALTER TABLE ONLY public.syobocal_alerts ALTER COLUMN id SET DEFAULT nextval('pub
 --
 
 ALTER TABLE ONLY public.tips ALTER COLUMN id SET DEFAULT nextval('public.tips_id_seq'::regclass);
+
+
+--
+-- Name: trailers id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.trailers ALTER COLUMN id SET DEFAULT nextval('public.trailers_id_seq'::regclass);
 
 
 --
@@ -3793,14 +3793,6 @@ ALTER TABLE ONLY public.providers
 
 
 --
--- Name: pvs pvs_pkey; Type: CONSTRAINT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public.pvs
-    ADD CONSTRAINT pvs_pkey PRIMARY KEY (id);
-
-
---
 -- Name: reactions reactions_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -3910,6 +3902,14 @@ ALTER TABLE ONLY public.syobocal_alerts
 
 ALTER TABLE ONLY public.tips
     ADD CONSTRAINT tips_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: trailers trailers_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.trailers
+    ADD CONSTRAINT trailers_pkey PRIMARY KEY (id);
 
 
 --
@@ -5040,13 +5040,6 @@ CREATE UNIQUE INDEX index_programs_on_sc_pid ON public.programs USING btree (sc_
 
 
 --
--- Name: index_pvs_on_work_id; Type: INDEX; Schema: public; Owner: -
---
-
-CREATE INDEX index_pvs_on_work_id ON public.pvs USING btree (work_id);
-
-
---
 -- Name: index_reactions_on_collection_item_id; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -5212,6 +5205,13 @@ CREATE INDEX index_tips_on_locale ON public.tips USING btree (locale);
 --
 
 CREATE UNIQUE INDEX index_tips_on_slug_and_locale ON public.tips USING btree (slug, locale);
+
+
+--
+-- Name: index_trailers_on_work_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_trailers_on_work_id ON public.trailers USING btree (work_id);
 
 
 --
@@ -6000,10 +6000,10 @@ ALTER TABLE ONLY public.reactions
 
 
 --
--- Name: pvs fk_rails_5751118f69; Type: FK CONSTRAINT; Schema: public; Owner: -
+-- Name: trailers fk_rails_5751118f69; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
-ALTER TABLE ONLY public.pvs
+ALTER TABLE ONLY public.trailers
     ADD CONSTRAINT fk_rails_5751118f69 FOREIGN KEY (work_id) REFERENCES public.works(id);
 
 
@@ -6340,7 +6340,7 @@ ALTER TABLE ONLY public.work_images
 --
 
 ALTER TABLE ONLY public.works
-    ADD CONSTRAINT fk_rails_bdb9fb31c3 FOREIGN KEY (key_pv_id) REFERENCES public.pvs(id);
+    ADD CONSTRAINT fk_rails_bdb9fb31c3 FOREIGN KEY (key_pv_id) REFERENCES public.trailers(id);
 
 
 --

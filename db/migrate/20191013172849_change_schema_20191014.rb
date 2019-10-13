@@ -4,6 +4,8 @@ class ChangeSchema20191014 < ActiveRecord::Migration[6.0]
   def change
     enable_extension "citext"
 
+    rename_table :pvs, :trailers
+
     add_column :episodes, :number_en, :string, null: false, default: ""
 
     change_column :users, :username, :citext

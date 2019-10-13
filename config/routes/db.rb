@@ -60,7 +60,7 @@ namespace :db do
     end
   end
 
-  resources :pvs, only: %i(edit update destroy) do
+  resources :trailers, only: %i(edit update destroy) do
     member do
       get :activities
       patch :hide
@@ -118,7 +118,7 @@ namespace :db do
     resources :casts, only: %i(index new create)
     resources :episodes, only: %i(index new create)
     resources :programs, only: %i(index new create)
-    resources :pvs, only: %i(index new create)
+    resources :trailers, only: %i(index new create)
     resources :staffs, only: %i(index new create)
     resources :program_details, only: %i(index new create)
   end

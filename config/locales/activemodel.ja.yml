@@ -54,7 +54,7 @@ ja:
         rows: エピソード
       db/program_rows_form:
         rows: 放送予定
-      db/pv_rows_form:
+      db/trailer_rows_form:
         rows: PVs
       db/series_work_rows_form:
         rows: シリーズ作品

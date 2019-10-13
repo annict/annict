@@ -137,7 +137,7 @@ en:
         url: URL
         vod_title_code: VOD Title Code
         vod_title_name: VOD Title Name
-      pv:
+      trailer:
         sort_number: Sort Number
         title: Title
         thumbnail: Thumbnail
@@ -257,9 +257,9 @@ en:
       program:
         one: Program
         other: Programs
-      pv:
-        one: PV
-        other: PVs
+      trailer:
+        one: Trailer
+        other: Trailers
       series:
         one: Series
         other: Series

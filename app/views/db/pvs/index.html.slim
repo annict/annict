@@ -1,4 +1,4 @@
-- title = t "head.title.db.pvs.index"
+- title = t "head.title.db.trailers.index"
 - set_meta_tags(title: title, reverse: true, prefix: false)
 
 
@@ -8,54 +8,54 @@
       = render "db/application/topbar_title", parent: @work, child: title
     - if user_signed_in? && current_user.committer?
       .col.text-right
-        = link_to new_db_work_pv_path(@work), class: "btn btn-outline-primary" do
+        = link_to new_db_work_trailer_path(@work), class: "btn btn-outline-primary" do
           = icon "edit"
-          = t "head.title.db.pvs.new"
+          = t "head.title.db.trailers.new"
 
 = render "db/works/subnav", work: @work
 
 .container-fluid.p-3
-  - if @pvs.present?
+  - if @trailers.present?
     .c-card
       table.table.table-hover
         thead
           tr
             th ID
-            th = t "activerecord.attributes.pv.thumbnail"
+            th = t "activerecord.attributes.trailer.thumbnail"
             th = t "noun.video_page"
-            th = t "activerecord.attributes.pv.title"
-            th = t "activerecord.attributes.pv.sort_number"
-            th = t "head.title.db.pvs.activities"
-            - if policy(@pvs).edit?
+            th = t "activerecord.attributes.trailer.title"
+            th = t "activerecord.attributes.trailer.sort_number"
+            th = t "head.title.db.trailers.activities"
+            - if policy(@trailers).edit?
               th = t "noun.edit"
-            - if policy(@pvs).hide?
+            - if policy(@trailers).hide?
               th = t "noun.state_change"
-            - if policy(@pvs).destroy?
+            - if policy(@trailers).destroy?
               th = t "noun.delete"
         tbody
-          - @pvs.each do |pv|
+          - @trailers.each do |trailer|
             tr
-              td = pv.id
-              td = ann_image_tag(pv, :image, size: "70x70", class: "rounded img-thumbnail")
+              td = trailer.id
+              td = ann_image_tag(trailer, :image, size: "70x70", class: "rounded img-thumbnail")
               td
-                - if pv.youtube?
+                - if trailer.youtube?
                   span.mr-1
                     | YouTube:
-                  = link_to pv.youtube_video_id, pv.url, target: "_blank", rel: "noopener"
+                  = link_to trailer.youtube_video_id, trailer.url, target: "_blank", rel: "noopener"
                 - else
-                  = link_with_domain pv.url
-              td = pv.title
-              td = pv.sort_number
-              td = link_to t("head.title.db.pvs.activities"), activities_db_pv_path(pv)
-              - if policy(pv).edit?
+                  = link_with_domain trailer.url
+              td = trailer.title
+              td = trailer.sort_number
+              td = link_to t("head.title.db.trailers.activities"), activities_db_trailer_path(trailer)
+              - if policy(trailer).edit?
                 td
-                  = link_to t("noun.edit"), edit_db_pv_path(pv), class: "btn btn-primary btn-sm"
-              - if policy(pv).hide?
+                  = link_to t("noun.edit"), edit_db_trailer_path(trailer), class: "btn btn-primary btn-sm"
+              - if policy(trailer).hide?
                 td
-                  - if pv.published?
-                    = link_to t("noun.unpublish"), hide_db_pv_path(pv), class: "btn btn-warning btn-sm", data: { method: "patch", confirm: t("messages._common.are_you_sure") }
-              - if policy(pv).destroy?
-                td = link_to t("noun.delete"), db_pv_path(pv), class: "btn btn-danger btn-sm", data: { method: :delete, confirm: t("messages._common.are_you_sure") }
+                  - if trailer.published?
+                    = link_to t("noun.unpublish"), hide_db_trailer_path(trailer), class: "btn btn-warning btn-sm", data: { method: "patch", confirm: t("messages._common.are_you_sure") }
+              - if policy(trailer).destroy?
+                td = link_to t("noun.delete"), db_trailer_path(trailer), class: "btn btn-danger btn-sm", data: { method: :delete, confirm: t("messages._common.are_you_sure") }
 
   - else
-    = render "application/components/empty", text: t("resources.pv.there_are_no_pvs")
+    = render "application/components/empty", text: t("resources.trailer.there_are_no_trailers")

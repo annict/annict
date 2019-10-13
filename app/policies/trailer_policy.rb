@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class PvPolicy < ApplicationPolicy
+class TrailerPolicy < ApplicationPolicy
   def create?
     user.present? && user.committer?
   end

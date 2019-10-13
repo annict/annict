@@ -1,4 +1,4 @@
-- title = t "head.title.db.pvs.new"
+- title = t "head.title.db.trailers.new"
 - set_meta_tags(title: title, reverse: true, prefix: false)
 
 
@@ -17,7 +17,7 @@
   .row
     .col-6
       .c-card.p-3
-        = form_for [:db, @form], url: db_work_pvs_path(@work) do |f|
+        = form_for [:db, @form], url: db_work_trailers_path(@work) do |f|
           = render "application/components/error_panel", resource: f.object
 
           .form-group.row

@@ -23,8 +23,8 @@
 #  index_pvs_on_work_id  (work_id)
 #
 
-class Pv < ApplicationRecord
-  include PvImageUploader::Attachment.new(:image)
+class Trailer < ApplicationRecord
+  include TrailerImageUploader::Attachment.new(:image)
   include AASM
   include DbActivityMethods
   include ImageUploadable

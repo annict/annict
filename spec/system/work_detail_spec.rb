@@ -22,7 +22,7 @@ describe "Work detail page" do
       end
 
       context "when trailers have been added" do
-        let!(:trailer) { create(:pv, work: work) }
+        let!(:trailer) { create(:trailer, work: work) }
 
         before do
           visit "/works/#{work.id}"
@@ -161,7 +161,7 @@ describe "Work detail page" do
       end
 
       context "when trailers have been added" do
-        let!(:trailer) { create(:pv, work: work) }
+        let!(:trailer) { create(:trailer, work: work) }
 
         before do
           visit "/works/#{work.id}"

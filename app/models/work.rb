@@ -120,7 +120,7 @@ class Work < ApplicationRecord
     source: :resource,
     source_type: "Organization"
   has_many :programs, dependent: :destroy
-  has_many :pvs, dependent: :destroy
+  has_many :trailers, dependent: :destroy
   has_many :records, dependent: :destroy
   has_many :series_list, through: :series_works, source: :series
   has_many :statuses, dependent: :destroy
@@ -281,14 +281,14 @@ class Work < ApplicationRecord
     end
   end
 
-  def self.pvs_data(works)
+  def self.trailers_data(works)
     work_ids = works.pluck(:id)
-    pvs = Pv.published.where(work_id: work_ids)
+    trailers = Trailer.published.where(work_id: work_ids)
 
     work_ids.map do |work_id|
       {
         work_id: work_id,
-        pvs: pvs.select { |p| p.work_id == work_id }
+        trailers: trailers.select { |p| p.work_id == work_id }
       }
     end
   end

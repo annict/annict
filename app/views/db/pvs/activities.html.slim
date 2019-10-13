@@ -1,18 +1,18 @@
-- title = t "head.title.db.pvs.activities"
+- title = t "head.title.db.trailers.activities"
 - set_meta_tags(title: title, reverse: true, prefix: false)
 
 
 .l-topbar.container-fluid.px-3
   .row.flex-items-xs-between
     .col
-      = render "db/application/topbar_title", parent: @pv.db_detail_link, child: title
+      = render "db/application/topbar_title", parent: @trailer.db_detail_link, child: title
 
-= render "db/works/subnav", work: @pv.work
+= render "db/works/subnav", work: @trailer.work
 
 .container-fluid.p-3
   .row.mb-3
     .c-card.col-8.ml-auto.p-3
-      = render "db/comments/form", comment: @comment, resource: @pv
+      = render "db/comments/form", comment: @comment, resource: @trailer
 
   .row
     .c-card.col-8.ml-auto.p-3

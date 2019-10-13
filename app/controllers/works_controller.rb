@@ -98,7 +98,7 @@ class WorksController < ApplicationController
 
   def render_list
     if @display_option == "list_detailed"
-      @pvs_data = Work.pvs_data(@works)
+      @trailers_data = Work.trailers_data(@works)
       @casts_data = Work.casts_data(@works)
       @staffs_data = Work.staffs_data(@works, major: true)
       @program_details_data = Work.program_details_data(@works, only_vod: true)

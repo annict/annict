@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class SearchTrailersQuery
-  def initialize(collection = Pv.all, order_by: nil)
+  def initialize(collection = Trailer.all, order_by: nil)
     @collection = collection.published
     @args = {
       order_by: order_by
