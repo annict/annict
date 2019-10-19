@@ -1,30 +1,4 @@
 # frozen_string_literal: true
-# == Schema Information
-#
-# Table name: people
-#
-#  id               :integer          not null, primary key
-#  prefecture_id    :integer
-#  name             :string           not null
-#  name_kana        :string           default(""), not null
-#  nickname         :string
-#  gender           :string
-#  url              :string
-#  wikipedia_url    :string
-#  twitter_username :string
-#  birthday         :date
-#  blood_type       :string
-#  height           :integer
-#  aasm_state       :string           default("published"), not null
-#  created_at       :datetime         not null
-#  updated_at       :datetime         not null
-#
-# Indexes
-#
-#  index_people_on_aasm_state     (aasm_state)
-#  index_people_on_name           (name) UNIQUE
-#  index_people_on_prefecture_id  (prefecture_id)
-#
 
 class PeopleController < ApplicationController
   before_action :load_i18n, only: %i(show)

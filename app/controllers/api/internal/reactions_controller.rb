@@ -1,19 +1,4 @@
 # frozen_string_literal: true
-# == Schema Information
-#
-# Table name: likes
-#
-#  id             :integer          not null, primary key
-#  user_id        :integer          not null
-#  resource_id   :integer          not null
-#  resource_type :string(510)      not null
-#  created_at     :datetime
-#  updated_at     :datetime
-#
-# Indexes
-#
-#  likes_user_id_idx  (user_id)
-#
 
 module Api
   module Internal
