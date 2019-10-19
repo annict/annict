@@ -3,7 +3,7 @@
 FactoryBot.define do
   factory :episode_record do
     association :user, :with_profile
-    comment { "おもしろかった" }
+    body { "おもしろかった" }
     twitter_url_hash { |n| "xxxxx#{n}" }
     episode
     rating { 3.0 }
