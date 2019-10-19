@@ -636,7 +636,7 @@ CREATE TABLE public.episode_records (
     id integer DEFAULT nextval('public.episode_records_id_seq'::regclass) NOT NULL,
     user_id integer NOT NULL,
     episode_id integer NOT NULL,
-    comment text,
+    body text,
     modify_comment boolean DEFAULT false NOT NULL,
     twitter_url_hash character varying(510) DEFAULT NULL::character varying,
     facebook_url_hash character varying(510) DEFAULT NULL::character varying,
