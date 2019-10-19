@@ -2124,7 +2124,7 @@ CREATE TABLE public.slots (
     sc_pid integer,
     rebroadcast boolean DEFAULT false NOT NULL,
     aasm_state character varying DEFAULT 'published'::character varying NOT NULL,
-    program_detail_id integer,
+    program_id integer,
     number integer,
     irregular boolean DEFAULT false NOT NULL
 );
@@ -5115,24 +5115,24 @@ CREATE INDEX index_slots_on_aasm_state ON public.slots USING btree (aasm_state);
 
 
 --
--- Name: index_slots_on_program_detail_id; Type: INDEX; Schema: public; Owner: -
+-- Name: index_slots_on_program_id; Type: INDEX; Schema: public; Owner: -
 --
 
-CREATE INDEX index_slots_on_program_detail_id ON public.slots USING btree (program_detail_id);
-
-
---
--- Name: index_slots_on_program_detail_id_and_episode_id; Type: INDEX; Schema: public; Owner: -
---
-
-CREATE UNIQUE INDEX index_slots_on_program_detail_id_and_episode_id ON public.slots USING btree (program_detail_id, episode_id);
+CREATE INDEX index_slots_on_program_id ON public.slots USING btree (program_id);
 
 
 --
--- Name: index_slots_on_program_detail_id_and_number; Type: INDEX; Schema: public; Owner: -
+-- Name: index_slots_on_program_id_and_episode_id; Type: INDEX; Schema: public; Owner: -
 --
 
-CREATE UNIQUE INDEX index_slots_on_program_detail_id_and_number ON public.slots USING btree (program_detail_id, number);
+CREATE UNIQUE INDEX index_slots_on_program_id_and_episode_id ON public.slots USING btree (program_id, episode_id);
+
+
+--
+-- Name: index_slots_on_program_id_and_number; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE UNIQUE INDEX index_slots_on_program_id_and_number ON public.slots USING btree (program_id, number);
 
 
 --
@@ -6434,7 +6434,7 @@ ALTER TABLE ONLY public.episode_items
 --
 
 ALTER TABLE ONLY public.slots
-    ADD CONSTRAINT fk_rails_e99f16a883 FOREIGN KEY (program_detail_id) REFERENCES public.programs(id);
+    ADD CONSTRAINT fk_rails_e99f16a883 FOREIGN KEY (program_id) REFERENCES public.programs(id);
 
 
 --
