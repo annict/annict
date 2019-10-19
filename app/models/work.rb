@@ -59,7 +59,6 @@
 #  index_works_on_score                                (score)
 #  index_works_on_season_year                          (season_year)
 #  index_works_on_season_year_and_season_name          (season_year,season_name)
-#  works_sc_tid_key                                    (sc_tid) UNIQUE
 #  works_season_id_idx                                 (season_id)
 #
 # Foreign Keys
@@ -138,8 +137,7 @@ class Work < ApplicationRecord
 
   validates :sc_tid,
     numericality: { only_integer: true },
-    allow_blank: true,
-    uniqueness: true
+    allow_blank: true
   validates :title, presence: true, uniqueness: { conditions: -> { published } }
   validates :media, presence: true
   validates :official_site_url, url: { allow_blank: true }

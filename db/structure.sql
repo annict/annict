@@ -4073,14 +4073,6 @@ ALTER TABLE ONLY public.works
 
 
 --
--- Name: works works_sc_tid_key; Type: CONSTRAINT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public.works
-    ADD CONSTRAINT works_sc_tid_key UNIQUE (sc_tid);
-
-
---
 -- Name: activities_user_id_idx; Type: INDEX; Schema: public; Owner: -
 --
 

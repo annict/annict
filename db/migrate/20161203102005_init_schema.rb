@@ -313,7 +313,6 @@ class InitSchema < ActiveRecord::Migration[5.1]
       t.integer "number_format_id"
       t.string "title_kana", default: "", null: false
       t.index ["number_format_id"], name: "index_draft_works_on_number_format_id"
-      t.index ["sc_tid"], name: "index_draft_works_on_sc_tid"
       t.index ["season_id"], name: "index_draft_works_on_season_id"
       t.index ["work_id"], name: "index_draft_works_on_work_id"
     end
@@ -759,7 +758,6 @@ class InitSchema < ActiveRecord::Migration[5.1]
       t.index ["media"], name: "index_works_on_media"
       t.index ["number_format_id"], name: "index_works_on_number_format_id"
       t.index ["released_at"], name: "index_works_on_released_at"
-      t.index ["sc_tid"], name: "index_works_on_sc_tid", unique: true
       t.index ["watchers_count"], name: "index_works_on_watchers_count"
     end
     add_foreign_key "activities", "users"
