@@ -33,6 +33,10 @@ module Types
       field :description_source_en, String, null: false
       field :favorite_characters_count, Integer, null: false
       field :series, Types::Objects::SeriesType, null: false
+
+      def favorite_characters_count
+        object.favorite_users_count
+      end
     end
   end
 end
