@@ -268,7 +268,6 @@ CREATE TABLE public.characters (
     name character varying NOT NULL,
     name_kana character varying DEFAULT ''::character varying NOT NULL,
     name_en character varying DEFAULT ''::character varying NOT NULL,
-    kind character varying DEFAULT ''::character varying NOT NULL,
     nickname character varying DEFAULT ''::character varying NOT NULL,
     nickname_en character varying DEFAULT ''::character varying NOT NULL,
     birthday character varying DEFAULT ''::character varying NOT NULL,

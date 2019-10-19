@@ -18,7 +18,6 @@
 #  favorite_users_count  :integer          default(0), not null
 #  height                :string           default(""), not null
 #  height_en             :string           default(""), not null
-#  kind                  :string           default(""), not null
 #  name                  :string           not null
 #  name_en               :string           default(""), not null
 #  name_kana             :string           default(""), not null
