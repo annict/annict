@@ -216,7 +216,8 @@ CREATE TABLE public.channels (
     created_at timestamp with time zone,
     updated_at timestamp with time zone,
     vod boolean DEFAULT false,
-    aasm_state character varying DEFAULT 'published'::character varying NOT NULL
+    aasm_state character varying DEFAULT 'published'::character varying NOT NULL,
+    sort_number integer DEFAULT 0 NOT NULL
 );
 
 
@@ -4273,6 +4274,13 @@ CREATE INDEX index_casts_on_sort_number ON public.casts USING btree (sort_number
 --
 
 CREATE INDEX index_casts_on_work_id ON public.casts USING btree (work_id);
+
+
+--
+-- Name: index_channels_on_sort_number; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_channels_on_sort_number ON public.channels USING btree (sort_number);
 
 
 --

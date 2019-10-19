@@ -7,6 +7,7 @@
 #  aasm_state       :string           default("published"), not null
 #  name             :string           not null
 #  sc_chid          :integer
+#  sort_number      :integer          default(0), not null
 #  vod              :boolean          default(FALSE)
 #  created_at       :datetime
 #  updated_at       :datetime
@@ -16,6 +17,7 @@
 #
 #  channels_channel_group_id_idx  (channel_group_id)
 #  channels_sc_chid_key           (sc_chid) UNIQUE
+#  index_channels_on_sort_number  (sort_number)
 #  index_channels_on_vod          (vod)
 #
 # Foreign Keys

@@ -16,7 +16,10 @@ class ChangeSchema20191014 < ActiveRecord::Migration[6.0]
     rename_column :people, :favorite_people_count, :favorite_users_count
     rename_column :settings, :programs_sort_type, :slots_sort_type
 
+    add_column :channels, :sort_number, :integer, null: false, default: 0
     add_column :episodes, :number_en, :string, null: false, default: ""
+
+    add_index :channels, :sort_number
 
     change_column :users, :username, :citext
     change_column :users, :email, :citext
