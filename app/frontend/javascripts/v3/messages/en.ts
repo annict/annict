@@ -30,6 +30,7 @@ export default {
   },
   messages: {
     _common: {
+      editOnAnnictDb: "Edit on Annict DB",
       searchWithKeywords: 'Search by anime title...',
     },
     _components: {

@@ -198,7 +198,14 @@
             </h2>
             <ann-share-to-twitter-button :text="state.work.localTitle" :url="AnnConfig.localUrl + '/works/' + state.work.annictId" :hashtags="state.work.twitterHashtag || ''"></ann-share-to-twitter-button>
             <ann-share-to-facebook-button :url="AnnConfig.localUrl + '/works/' + state.work.annictId"></ann-share-to-facebook-button>
+
+            <div class="mt-4" v-if="$root.isSignedIn() && $root.viewer.isCommitter">
+              <a :href="`/db/works/${state.work.annictId}/edit`" class="btn btn-secondary w-100 mt-2">
+                {{ $root.$t('messages._common.editOnAnnictDb') }}
+              </a>
+            </div>
           </div>
+
           <div class="col-md-9 px-0 px-sm-3">
             <ann-work-subnav :work="state.work" page-category="workDetail"></ann-work-subnav>
 

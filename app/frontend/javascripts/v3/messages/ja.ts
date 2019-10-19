@@ -30,6 +30,7 @@ export default {
   },
   messages: {
     _common: {
+      editOnAnnictDb: "Annict DBで編集する",
       searchWithKeywords: '作品名や人物名などで検索...',
     },
     _components: {

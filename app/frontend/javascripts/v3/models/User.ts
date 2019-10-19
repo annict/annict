@@ -6,6 +6,7 @@ export class User extends ApplicationModel {
   public name: string
   public avatarUrl: string
   public isSupporter: boolean
+  public isCommitter: boolean
 
   public constructor(node) {
     super()
@@ -14,5 +15,6 @@ export class User extends ApplicationModel {
     this.name = node.name
     this.avatarUrl = node.avatarUrl
     this.isSupporter = node.isSupporter
+    this.isCommitter = node.isCommitter
   }
 }
