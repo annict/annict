@@ -58,4 +58,4 @@
                 td = link_to t("noun.delete"), db_trailer_path(trailer), class: "btn btn-danger btn-sm", data: { method: :delete, confirm: t("messages._common.are_you_sure") }
 
   - else
-    = render "application/components/empty", text: t("resources.trailer.there_are_no_trailers")
+    = render "application/components/empty", text: t("messages._empty.no_resources")
