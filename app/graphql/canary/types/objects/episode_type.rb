@@ -52,7 +52,7 @@ module Canary
         end
 
         def next_episode
-          RecordLoader.for(Episode).load(object.next_episode_id)
+          ForeignKeyLoader.for(Episode, :prev_episode_id).load([object.id]).then(&:first)
         end
 
         def viewer_did_track
