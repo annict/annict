@@ -26,7 +26,7 @@ scope module: :api do
 
       namespace :me do
         resources :following_activities, only: %i(index)
-        resources :programs, only: [:index]
+        resources :programs, only: %i(index), controller: :slots
         resources :records, only: %i(create update destroy)
         resources :reviews, only: %i(create update destroy)
         resources :statuses, only: [:create]
