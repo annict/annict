@@ -74,7 +74,7 @@ export default {
     },
 
     reload() {
-      return this.updateSlotsSortType(() => (location.href = '/slots'))
+      return this.updateSlotsSortType(() => (location.href = '/programs'))
     },
 
     submit(slot) {
