@@ -111,7 +111,6 @@ CREATE TABLE public.casts (
     person_id integer NOT NULL,
     work_id integer NOT NULL,
     name character varying NOT NULL,
-    part character varying NOT NULL,
     aasm_state character varying DEFAULT 'published'::character varying NOT NULL,
     sort_number integer DEFAULT 0 NOT NULL,
     created_at timestamp without time zone NOT NULL,
