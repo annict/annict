@@ -49,7 +49,7 @@ describe Connections::ActivityConnection do
               },
               {
                 node: {
-                  comment: activity.trackable.comment
+                  comment: activity.trackable.body
                 }
               }
             ]

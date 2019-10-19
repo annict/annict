@@ -11,7 +11,7 @@ module Api
           record = episode.episode_records.new do |r|
             r.rating = @params.rating
             r.rating_state = @params.rating_state
-            r.comment = @params.comment
+            r.body = @params.comment
             r.shared_twitter = @params.share_twitter == "true"
             r.shared_facebook = @params.share_facebook == "true"
             r.oauth_application = doorkeeper_token.application

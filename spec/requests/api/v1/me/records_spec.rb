@@ -46,7 +46,7 @@ describe "Api::V1::Me::Records" do
 
     it "updates a record" do
       expect(access_token.owner.episode_records.count).to eq(1)
-      expect(access_token.owner.episode_records.first.comment).to eq(uniq_comment)
+      expect(access_token.owner.episode_records.first.body).to eq(uniq_comment)
     end
   end
 

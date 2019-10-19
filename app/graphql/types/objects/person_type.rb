@@ -27,6 +27,10 @@ module Types
       field :casts_count, Integer, null: false
       field :staffs_count, Integer, null: false
       field :prefecture, Types::Objects::PrefectureType, null: false
+
+      def favorite_people_count
+        object.favorite_users_count
+      end
     end
   end
 end
