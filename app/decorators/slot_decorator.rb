@@ -16,6 +16,8 @@ module SlotDecorator
       when :channel_id
         Channel.find(send(field)).name
       when :episode_id
+        next unless send(field)
+
         episode = work.episodes.find(send(field))
         title = episode.decorate.title_with_number
         path = work_episode_path(episode.work, episode)

@@ -60,7 +60,7 @@ class Cast < ApplicationRecord
 
   def to_diffable_hash
     data = self.class::DIFF_FIELDS.each_with_object({}) do |field, hash|
-      hash[field] = send(field)
+      hash[field] = send(field) if respond_to?(field)
       hash
     end
 
