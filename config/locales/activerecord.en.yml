@@ -5,7 +5,6 @@ en:
         character_id: Character
         name_en: Name (en)
         name: Name
-        part: Part
         person_id: Person
         sort_number: Sort number
         work_id: Work

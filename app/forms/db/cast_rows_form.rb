@@ -21,7 +21,6 @@ module Db
           work_id: @work.id,
           person_id: row_data[:person][:id],
           character_id: row_data[:character][:id],
-          part: "",
           sort_number: (i + casts_count) * 10
         }
       end
