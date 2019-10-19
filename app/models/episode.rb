@@ -3,25 +3,26 @@
 #
 # Table name: episodes
 #
-#  id                              :integer          not null, primary key
-#  work_id                         :integer          not null
-#  number                          :string(510)
-#  sort_number                     :integer          default(0), not null
-#  sc_count                        :integer
-#  title                           :string(510)
-#  episode_records_count           :integer          default(0), not null
-#  created_at                      :datetime
-#  updated_at                      :datetime
-#  prev_episode_id                 :integer
-#  aasm_state                      :string           default("published"), not null
-#  fetch_syobocal                  :boolean          default(FALSE), not null
-#  raw_number                      :float
-#  title_ro                        :string           default(""), not null
-#  title_en                        :string           default(""), not null
-#  episode_records_with_body_count :integer          default(0), not null
-#  score                           :float
-#  ratings_count                   :integer          default(0), not null
-#  satisfaction_rate               :float
+#  id                          :integer          not null, primary key
+#  aasm_state                  :string           default("published"), not null
+#  episode_record_bodies_count :integer          default(0), not null
+#  episode_records_count       :integer          default(0), not null
+#  fetch_syobocal              :boolean          default(FALSE), not null
+#  number                      :string(510)
+#  number_en                   :string           default(""), not null
+#  ratings_count               :integer          default(0), not null
+#  raw_number                  :float
+#  satisfaction_rate           :float
+#  sc_count                    :integer
+#  score                       :float
+#  sort_number                 :integer          default(0), not null
+#  title                       :string(510)
+#  title_en                    :string           default(""), not null
+#  title_ro                    :string           default(""), not null
+#  created_at                  :datetime
+#  updated_at                  :datetime
+#  prev_episode_id             :integer
+#  work_id                     :integer          not null
 #
 # Indexes
 #
@@ -33,6 +34,11 @@
 #  index_episodes_on_satisfaction_rate                    (satisfaction_rate)
 #  index_episodes_on_satisfaction_rate_and_ratings_count  (satisfaction_rate,ratings_count)
 #  index_episodes_on_score                                (score)
+#
+# Foreign Keys
+#
+#  episodes_work_id_fk  (work_id => works.id) ON DELETE => cascade
+#  fk_rails_...         (prev_episode_id => episodes.id)
 #
 
 class Episode < ApplicationRecord
@@ -63,7 +69,7 @@ class Episode < ApplicationRecord
   has_many :db_activities, as: :trackable, dependent: :destroy
   has_many :db_comments, as: :resource, dependent: :destroy
   has_many :episode_records, dependent: :destroy
-  has_many :programs, dependent: :nullify
+  has_many :slots, dependent: :nullify
 
   validates :sort_number, presence: true, numericality: { only_integer: true }
 

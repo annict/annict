@@ -41,12 +41,12 @@ when "create_episode_record" then
     },
     episode_record: {
       id: episode_record.id,
-      comment: episode_record.comment,
+      body: episode_record.body,
       comments_count: episode_record.comments_count,
       likes_count: episode_record.likes_count,
       rating: episode_record.rating,
       rating_state: episode_record.rating_state,
-      hide_comment: !user.nil? && user.setting.hide_record_comment? && !activity.user_latest_status_id.nil? && activity.user_episode_record_id.nil?
+      hide_body: !user.nil? && user.setting.hide_record_body? && !activity.user_latest_status_id.nil? && activity.user_episode_record_id.nil?
     },
     record: {
       id: episode_record.record_id
@@ -120,7 +120,7 @@ when "create_work_record" then
       body: work_record.body,
       rating_overall_state: work_record.rating_overall_state,
       likes_count: work_record.likes_count,
-      hide_work_record_body: !user.nil? && user.setting.hide_record_comment? && !activity.user_latest_status_id.nil? && activity.user_work_record_id.nil?
+      hide_work_record_body: !user.nil? && user.setting.hide_record_body? && !activity.user_latest_status_id.nil? && activity.user_work_record_id.nil?
     }
   }
 end

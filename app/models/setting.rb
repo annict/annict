@@ -4,27 +4,31 @@
 # Table name: settings
 #
 #  id                            :integer          not null, primary key
-#  user_id                       :integer          not null
-#  hide_record_comment           :boolean          default(TRUE), not null
+#  display_option_record_list    :string           default("all_comments"), not null
+#  display_option_user_work_list :string           default("grid_detailed"), not null
+#  display_option_work_list      :string           default("list_detailed"), not null
+#  hide_record_body              :boolean          default(TRUE), not null
+#  hide_supporter_badge          :boolean          default(FALSE), not null
+#  privacy_policy_agreed         :boolean          default(FALSE), not null
+#  records_sort_type             :string           default("created_at_desc"), not null
+#  share_record_to_facebook      :boolean          default(FALSE)
+#  share_record_to_twitter       :boolean          default(FALSE)
+#  share_review_to_facebook      :boolean          default(FALSE), not null
+#  share_review_to_twitter       :boolean          default(FALSE), not null
+#  share_status_to_facebook      :boolean          default(FALSE), not null
+#  share_status_to_twitter       :boolean          default(FALSE), not null
+#  slots_sort_type               :string           default(NULL), not null
 #  created_at                    :datetime         not null
 #  updated_at                    :datetime         not null
-#  share_record_to_twitter       :boolean          default(FALSE)
-#  share_record_to_facebook      :boolean          default(FALSE)
-#  programs_sort_type            :string           default(NULL), not null
-#  display_option_work_list      :string           default("list_detailed"), not null
-#  display_option_user_work_list :string           default("grid_detailed"), not null
-#  records_sort_type             :string           default("created_at_desc"), not null
-#  display_option_record_list    :string           default("all_comments"), not null
-#  share_review_to_twitter       :boolean          default(FALSE), not null
-#  share_review_to_facebook      :boolean          default(FALSE), not null
-#  hide_supporter_badge          :boolean          default(FALSE), not null
-#  share_status_to_twitter       :boolean          default(FALSE), not null
-#  share_status_to_facebook      :boolean          default(FALSE), not null
-#  privacy_policy_agreed         :boolean          default(FALSE), not null
+#  user_id                       :integer          not null
 #
 # Indexes
 #
 #  index_settings_on_user_id  (user_id)
+#
+# Foreign Keys
+#
+#  fk_rails_...  (user_id => users.id)
 #
 
 class Setting < ApplicationRecord
@@ -32,7 +36,7 @@ class Setting < ApplicationRecord
 
   belongs_to :user
 
-  enumerize :programs_sort_type,
+  enumerize :slots_sort_type,
     in: %i(started_at_asc started_at_desc),
     default: :started_at_desc
 

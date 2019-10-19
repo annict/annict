@@ -1,23 +1,4 @@
 # frozen_string_literal: true
-# == Schema Information
-#
-# Table name: organizations
-#
-#  id               :integer          not null, primary key
-#  name             :string           not null
-#  url              :string
-#  wikipedia_url    :string
-#  twitter_username :string
-#  aasm_state       :string           default("published"), not null
-#  created_at       :datetime         not null
-#  updated_at       :datetime         not null
-#  name_kana        :string           default(""), not null
-#
-# Indexes
-#
-#  index_organizations_on_aasm_state  (aasm_state)
-#  index_organizations_on_name        (name) UNIQUE
-#
 
 class OrganizationsController < ApplicationController
   before_action :load_i18n, only: %i(show)

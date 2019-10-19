@@ -9,6 +9,7 @@ const query = gql`
       username
       avatarUrl(size: size50)
       locale
+      isCommitter
     }
   }
 `

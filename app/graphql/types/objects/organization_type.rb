@@ -19,6 +19,10 @@ module Types
       field :twitter_username_en, String, null: false
       field :favorite_organizations_count, Integer, null: false
       field :staffs_count, Integer, null: false
+
+      def favorite_organizations_count
+        object.favorite_users_count
+      end
     end
   end
 end

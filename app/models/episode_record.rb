@@ -4,29 +4,29 @@
 # Table name: episode_records
 #
 #  id                         :integer          not null, primary key
-#  user_id                    :integer          not null
-#  episode_id                 :integer          not null
-#  comment                    :text
-#  modify_comment             :boolean          default(FALSE), not null
-#  twitter_url_hash           :string(510)
-#  facebook_url_hash          :string(510)
-#  twitter_click_count        :integer          default(0), not null
-#  facebook_click_count       :integer          default(0), not null
+#  aasm_state                 :string           default("published"), not null
+#  body                       :text
 #  comments_count             :integer          default(0), not null
+#  facebook_click_count       :integer          default(0), not null
+#  facebook_url_hash          :string(510)
 #  likes_count                :integer          default(0), not null
+#  locale                     :string           default("other"), not null
+#  modify_body                :boolean          default(FALSE), not null
+#  rating                     :float
+#  rating_state               :string
+#  shared_facebook            :boolean          default(FALSE), not null
+#  shared_twitter             :boolean          default(FALSE), not null
+#  twitter_click_count        :integer          default(0), not null
+#  twitter_url_hash           :string(510)
 #  created_at                 :datetime
 #  updated_at                 :datetime
-#  shared_twitter             :boolean          default(FALSE), not null
-#  shared_facebook            :boolean          default(FALSE), not null
-#  work_id                    :integer          not null
-#  rating                     :float
+#  episode_id                 :integer          not null
 #  multiple_episode_record_id :integer
 #  oauth_application_id       :integer
-#  rating_state               :string
-#  review_id                  :integer
-#  aasm_state                 :string           default("published"), not null
-#  locale                     :string           default("other"), not null
 #  record_id                  :integer          not null
+#  review_id                  :integer
+#  user_id                    :integer          not null
+#  work_id                    :integer          not null
 #
 # Indexes
 #
@@ -41,6 +41,16 @@
 #  index_episode_records_on_record_id                   (record_id) UNIQUE
 #  index_episode_records_on_review_id                   (review_id)
 #  index_episode_records_on_work_id                     (work_id)
+#
+# Foreign Keys
+#
+#  checkins_episode_id_fk  (episode_id => episodes.id) ON DELETE => cascade
+#  checkins_user_id_fk     (user_id => users.id) ON DELETE => cascade
+#  checkins_work_id_fk     (work_id => works.id)
+#  fk_rails_...            (multiple_episode_record_id => multiple_episode_records.id)
+#  fk_rails_...            (oauth_application_id => oauth_applications.id)
+#  fk_rails_...            (record_id => records.id)
+#  fk_rails_...            (review_id => work_records.id)
 #
 
 class EpisodeRecord < ApplicationRecord
@@ -75,7 +85,7 @@ class EpisodeRecord < ApplicationRecord
     dependent: :destroy,
     as: :recipient
 
-  validates :comment, length: { maximum: 1000 }
+  validates :body, length: { maximum: 1000 }
   validates :rating,
     allow_blank: true,
     numericality: {
@@ -83,8 +93,8 @@ class EpisodeRecord < ApplicationRecord
       less_than_or_equal_to: 5
     }
 
-  scope :with_comment, -> { where.not(comment: ["", nil]) }
-  scope :with_no_comment, -> { where(comment: ["", nil]) }
+  scope :with_body, -> { where.not(body: ["", nil]) }
+  scope :with_no_body, -> { where(body: ["", nil]) }
 
   def self.initial?(record)
     count == 1 && first.id == record.id
@@ -159,8 +169,8 @@ class EpisodeRecord < ApplicationRecord
 
   def twitter_share_body
     work_title = work.local_title
-    title = self.comment.present? ? work_title.truncate(30) : work_title
-    comment = self.comment.present? ? "#{self.comment} / " : ""
+    title = self.body.present? ? work_title.truncate(30) : work_title
+    comment = self.body.present? ? "#{self.body} / " : ""
     episode_number = episode.local_number
     share_url = share_url_with_query(:twitter)
     share_hashtag = work.hashtag_with_hash
@@ -180,7 +190,7 @@ class EpisodeRecord < ApplicationRecord
   end
 
   def facebook_share_body
-    return self.comment if self.comment.present?
+    return self.body if self.body.present?
 
     if user.locale == "ja"
       "見ました。"

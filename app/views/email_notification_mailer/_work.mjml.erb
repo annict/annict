@@ -44,14 +44,14 @@
       </mj-text>
     <% end %>
 
-    <% if work.pvs.published.exists? %>
-      <%- pv = work.pvs.published.order(:sort_number).first %>
+    <% if work.trailers.published.exists? %>
+      <%- trailer = work.trailers.published.order(:sort_number).first %>
       <mj-text font-weight="800" padding="10px 25px 0 25px"><%= I18n.t("noun.pv") %></mj-text>
-      <mj-image src="<%= ann_image_url(pv, :image, size: "640x640") %>" align="center" href="<%= pv.url %>"></mj-image>
+      <mj-image src="<%= ann_image_url(trailer, :image, size: "640x640") %>" align="center" href="<%= trailer.url %>"></mj-image>
       <mj-text padding-top="0"
                align="center"
                color="#0366d6">
-        <%= link_to pv.title, pv.url, style: "text-decoration: none;" %>
+        <%= link_to trailer.title, trailer.url, style: "text-decoration: none;" %>
       </mj-text>
     <% end %>
 

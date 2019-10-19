@@ -33,8 +33,8 @@ script#t-create-episode-record-activity type="x-template"
           .small.text-muted
             c-time-ago :time="activity.created_at"
 
-    template v-if="activity.episode_record.comment"
-      c-comment-guard inline-template="" :init-is-spoiler="activity.episode_record.hide_comment" :activity="activity"
+    template v-if="activity.episode_record.body"
+      c-comment-guard inline-template="" :init-is-spoiler="activity.episode_record.hide_body" :activity="activity"
         .c-record-comment.mb-3 @click="remove"
           template v-if="activity.episode_record.rating"
             c-rating-label :init-rating="activity.episode_record.rating" v-show="!isSpoiler"
@@ -43,7 +43,7 @@ script#t-create-episode-record-activity type="x-template"
           .c-body @click="remove"
             c-body inline-template=""
               .c-body__content
-                | {{ $parent.activity.episode_record.comment }}
+                | {{ $parent.activity.episode_record.body }}
 
       .mb-2
         .row.align-items-center.mx-0.u-border-1.rounded

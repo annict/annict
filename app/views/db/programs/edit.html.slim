@@ -21,28 +21,14 @@
           = form_for [:db, @program] do |f|
             = render "application/components/error_panel", resource: f.object
 
-            - if current_user.role.admin?
-              .form-group.row
-                = f.label :program_detail_id, class: "col-sm-3 col-form-label"
-                .col-sm-9
-                  = f.select :program_detail_id, options_from_collection_for_select(@work.program_details.order(:started_at).map(&:decorate), :id, :name, f.object.program_detail.try!(:id)), { include_blank: true }, { class: "form-control" }
             .form-group.row
-              = f.label :channel_id, class: "col-sm-3 col-form-label"
+              = f.label :channel_id, class: "col-sm-3 col-form-label c-label-required"
               .col-sm-9
-                = f.select :channel_id, options_from_collection_for_select(Channel.published.order(:name), :id, :name, f.object.channel.try!(:id)), { include_blank: true }, { class: "form-control" }
-            .form-group.row
-              = f.label :episode_id, class: "col-sm-3 col-form-label"
-              .col-sm-9
-                = f.select :episode_id, options_for_select(@work.episodes.order(:sort_number).map { |episode| [episode.decorate.title_with_number, episode.id] }, f.object.episode.try!(:id)), { include_blank: true }, { class: "form-control" }
+                = f.select :channel_id, options_from_collection_for_select(Channel.published.order(:id), :id, :name, f.object.channel.try!(:id)), { include_blank: true }, { class: "form-control", required: true }
             .form-group.row
               = f.label :started_at, class: "col-sm-3 col-form-label"
               .col-sm-9
-                = f.text_field :started_at, class: "form-control", value: f.object.started_at&.in_time_zone(current_user.time_zone)&.strftime("%Y-%m-%d %H:%M"), placeholder: t("resources.program.started_at_eg")
-            - if current_user.role.admin?
-              .form-group.row
-                = f.label :number, class: "col-sm-3 col-form-label"
-                .col-sm-9
-                  = f.text_field :number, class: "form-control"
+                = f.text_field :started_at, class: "form-control", value: f.object.started_at&.in_time_zone(current_user.time_zone)&.strftime("%Y-%m-%d %H:%M"), placeholder: t("resources.slot.started_at_eg")
             .form-group.row
               = label_tag :time_zone, t("activerecord.attributes.program.time_zone"), class: "col-sm-3 col-form-label"
               .col-sm-9
@@ -54,14 +40,19 @@
                   = f.label :rebroadcast, class: "form-check-label" do
                     = f.check_box :rebroadcast, class: "form-check-input"
                     = t "activerecord.attributes.program.rebroadcast"
+            .form-group.row
+              = f.label :vod_title_code, class: "col-sm-3 col-form-label"
+              .col-sm-9
+                = f.text_field :vod_title_code, class: "form-control"
+            .form-group.row
+              = f.label :vod_title_name, class: "col-sm-3 col-form-label"
+              .col-sm-9
+                = f.text_field :vod_title_name, class: "form-control"
             - if current_user.role.admin?
-              .form-group.row.row
-                label.col-sm-3
+              .form-group.row
+                = f.label :minimum_episode_generatable_number, class: "col-sm-3 col-form-label"
                 .col-sm-9
-                  .form-check
-                    = f.label :irregular, class: "form-check-label" do
-                      = f.check_box :irregular, class: "form-check-input"
-                      = t "activerecord.attributes.program.irregular"
+                  = f.text_field :minimum_episode_generatable_number, class: "form-control"
             .form-group.row
               .ml-auto.col-sm-9
                 = f.submit t("helpers.submit.update"), class: "btn btn-primary"

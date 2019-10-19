@@ -3,11 +3,11 @@
 #
 # Table name: faq_categories
 #
-#  id          :bigint(8)        not null, primary key
-#  name        :string           not null
-#  locale      :string           not null
-#  sort_number :integer          default(0), not null
+#  id          :bigint           not null, primary key
 #  aasm_state  :string           default("published"), not null
+#  locale      :string           not null
+#  name        :string           not null
+#  sort_number :integer          default(0), not null
 #  created_at  :datetime         not null
 #  updated_at  :datetime         not null
 #

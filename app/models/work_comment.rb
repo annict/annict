@@ -3,13 +3,13 @@
 #
 # Table name: work_comments
 #
-#  id         :bigint(8)        not null, primary key
-#  user_id    :integer          not null
-#  work_id    :integer          not null
+#  id         :bigint           not null, primary key
 #  body       :string           not null
+#  locale     :string           default("other"), not null
 #  created_at :datetime         not null
 #  updated_at :datetime         not null
-#  locale     :string           default("other"), not null
+#  user_id    :integer          not null
+#  work_id    :integer          not null
 #
 # Indexes
 #
@@ -17,6 +17,11 @@
 #  index_work_comments_on_user_id              (user_id)
 #  index_work_comments_on_user_id_and_work_id  (user_id,work_id) UNIQUE
 #  index_work_comments_on_work_id              (work_id)
+#
+# Foreign Keys
+#
+#  fk_rails_...  (user_id => users.id)
+#  fk_rails_...  (work_id => works.id)
 #
 
 class WorkComment < ApplicationRecord

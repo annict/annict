@@ -41,7 +41,7 @@ module Types
       end
 
       def record_comments_count
-        object.episode_records_with_body_count
+        object.episode_record_bodies_count
       end
 
       def work

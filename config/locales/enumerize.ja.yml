@@ -23,7 +23,7 @@ ja:
         female: 女性
         male: 男性
     setting:
-      programs_sort_type:
+      slots_sort_type:
         started_at_asc: 放送日が古い順
         started_at_desc: 放送日が新しい順
       records_sort_type:
@@ -61,7 +61,7 @@ ja:
         watched: 見た
         on_hold: 一時中断した
         stop_watching: 視聴中止した
-    program_detail:
+    program:
       locale:
         en: 英語
         ja: 日本語

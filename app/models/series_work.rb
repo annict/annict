@@ -4,19 +4,24 @@
 # Table name: series_works
 #
 #  id         :integer          not null, primary key
-#  series_id  :integer          not null
-#  work_id    :integer          not null
 #  aasm_state :string           default("published"), not null
-#  created_at :datetime         not null
-#  updated_at :datetime         not null
 #  summary    :string           default(""), not null
 #  summary_en :string           default(""), not null
+#  created_at :datetime         not null
+#  updated_at :datetime         not null
+#  series_id  :integer          not null
+#  work_id    :integer          not null
 #
 # Indexes
 #
 #  index_series_works_on_series_id              (series_id)
 #  index_series_works_on_series_id_and_work_id  (series_id,work_id) UNIQUE
 #  index_series_works_on_work_id                (work_id)
+#
+# Foreign Keys
+#
+#  fk_rails_...  (series_id => series.id)
+#  fk_rails_...  (work_id => works.id)
 #
 
 class SeriesWork < ApplicationRecord

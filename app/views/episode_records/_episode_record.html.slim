@@ -13,7 +13,7 @@
         .text-left
           = link_to record_path(episode_record.user.username, episode_record.record), class: "small text-muted", title: local_datetime(episode_record.created_at) do
             = local_time_ago_in_words(episode_record.created_at)
-          - if episode_record.modify_comment?
+          - if episode_record.modify_body?
             small.ml-1.text-muted
               = icon "pencil-alt"
           small.ml-2.text-muted
@@ -26,7 +26,7 @@
               c-rating-state-label :init-rating-state=="'#{episode_record.rating_state}'" v-show="!isSpoiler"
             .c-body @click="remove"
               c-body inline-template=""
-                .c-body__content = episode_record.comment
+                .c-body__content = episode_record.body
         .text-right
           c-like-button resource-name="EpisodeRecord" :init-resource-id="#{episode_record.id}" :init-likes-count="#{episode_record.likes_count}" :init-is-liked="#{user_signed_in? && !episode_record.user_like_id.nil?}" :is-signed-in="#{user_signed_in?}"
           = link_to record_path(episode_record.user.username, episode_record.record), class: "d-inline-block ml-2" do

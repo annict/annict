@@ -70,12 +70,12 @@ ja:
       unpublished: 非公開にしました
       updated: 更新しました
       person_list: 人物一覧
-    program:
+    slot:
       created: 登録しました
-      new_programs: 放送予定登録
-      program_list: 放送予定一覧
+      new_slots: 放送予定登録
+      slot_list: 放送予定一覧
       started_at_eg: e.g. 2015-04-01 23:00
-      there_are_no_programs: 放送予定は登録されていません
+      there_are_no_slots: 放送予定は登録されていません
       updated: 更新しました
     season:
       yearly:
@@ -100,8 +100,8 @@ ja:
       there_are_no_staffs: スタッフは登録されていません
       unpublished: 非公開にしました
       updated: 更新しました
-    program_detail:
-      new_program_details: 新規登録
+    program:
+      new_programs: 新規登録
     user:
       is_wrong: が間違っています
     userland_project:

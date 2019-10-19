@@ -6,34 +6,27 @@ module Db
 
     def index
       @work = Work.find(params[:work_id])
-      @programs = @work.programs.eager_load(:channel, :episode, program_detail: :channel)
-      @programs = @programs.where(channel_id: params[:channel_id]) if params[:channel_id]
-      @programs = @programs.order(started_at: :desc).order(:channel_id)
+      @programs = @work.programs.order(started_at: :desc, channel_id: :asc)
     end
 
     def new
       @work = Work.find(params[:work_id])
       @form = Db::ProgramRowsForm.new
-      @form.work = @work
-      @form.set_default_rows_by_program_detail!(params[:program_detail_id]) if params[:program_detail_id]
       authorize @form, :new?
     end
 
     def create
       @work = Work.find(params[:work_id])
-      @form = Db::ProgramRowsForm.new(program_rows_form)
+      @form = Db::ProgramRowsForm.new(program_rows_form_params)
       @form.user = current_user
       @form.work = @work
       authorize @form, :create?
 
       return render(:new) unless @form.valid?
+      @form.save!
 
-      ActiveRecord::Base.transaction do
-        @form.save!
-        @form.reset_number!
-      end
-
-      redirect_to db_work_programs_path(@work), notice: t("resources.program.created")
+      flash[:notice] = t("messages._common.created")
+      redirect_to db_work_programs_path(@work)
     end
 
     def edit
@@ -53,7 +46,8 @@ module Db
       return render(:edit) unless @program.valid?
       @program.save_and_create_activity!
 
-      redirect_to db_work_programs_path(@work), notice: t("resources.program.updated")
+      flash[:notice] = t("messages._common.updated")
+      redirect_to db_work_programs_path(@work)
     end
 
     def hide
@@ -86,12 +80,12 @@ module Db
 
     def program_params
       params.require(:program).permit(
-        :program_detail_id, :channel_id, :episode_id, :started_at, :number, :rebroadcast,
-        :irregular, :time_zone
+        :channel_id, :started_at, :time_zone, :rebroadcast, :vod_title_code, :vod_title_name,
+        :minimum_episode_generatable_number
       )
     end
 
-    def program_rows_form
+    def program_rows_form_params
       params.require(:db_program_rows_form).permit(:rows)
     end
   end

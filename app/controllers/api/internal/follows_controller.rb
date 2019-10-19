@@ -1,20 +1,4 @@
 # frozen_string_literal: true
-# == Schema Information
-#
-# Table name: follows
-#
-#  id           :integer          not null, primary key
-#  user_id      :integer          not null
-#  following_id :integer          not null
-#  created_at   :datetime
-#  updated_at   :datetime
-#
-# Indexes
-#
-#  follows_following_id_idx          (following_id)
-#  follows_user_id_following_id_key  (user_id,following_id) UNIQUE
-#  follows_user_id_idx               (user_id)
-#
 
 module Api
   module Internal

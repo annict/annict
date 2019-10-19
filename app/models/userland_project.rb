@@ -4,25 +4,29 @@
 # Table name: userland_projects
 #
 #  id                   :integer          not null, primary key
-#  userland_category_id :integer          not null
-#  name                 :string           not null
-#  summary              :string           not null
+#  available            :boolean          default(FALSE), not null
 #  description          :text             not null
-#  url                  :string           not null
-#  icon_file_name       :string
 #  icon_content_type    :string
+#  icon_file_name       :string
 #  icon_file_size       :integer
 #  icon_updated_at      :datetime
-#  available            :boolean          default(FALSE), not null
+#  image_data           :text
+#  locale               :string           default("other"), not null
+#  name                 :string           not null
+#  summary              :string           not null
+#  url                  :string           not null
 #  created_at           :datetime         not null
 #  updated_at           :datetime         not null
-#  locale               :string           default("other"), not null
-#  image_data           :text
+#  userland_category_id :integer          not null
 #
 # Indexes
 #
 #  index_userland_projects_on_locale                (locale)
 #  index_userland_projects_on_userland_category_id  (userland_category_id)
+#
+# Foreign Keys
+#
+#  fk_rails_...  (userland_category_id => userland_categories.id)
 #
 
 class UserlandProject < ApplicationRecord

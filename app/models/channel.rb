@@ -4,19 +4,25 @@
 # Table name: channels
 #
 #  id               :integer          not null, primary key
-#  channel_group_id :integer          not null
-#  sc_chid          :integer
+#  aasm_state       :string           default("published"), not null
 #  name             :string           not null
+#  sc_chid          :integer
+#  sort_number      :integer          default(0), not null
+#  vod              :boolean          default(FALSE)
 #  created_at       :datetime
 #  updated_at       :datetime
-#  vod              :boolean          default(FALSE)
-#  aasm_state       :string           default("published"), not null
+#  channel_group_id :integer          not null
 #
 # Indexes
 #
 #  channels_channel_group_id_idx  (channel_group_id)
 #  channels_sc_chid_key           (sc_chid) UNIQUE
+#  index_channels_on_sort_number  (sort_number)
 #  index_channels_on_vod          (vod)
+#
+# Foreign Keys
+#
+#  channels_channel_group_id_fk  (channel_group_id => channel_groups.id) ON DELETE => cascade
 #
 
 class Channel < ApplicationRecord
@@ -35,7 +41,7 @@ class Channel < ApplicationRecord
 
     event :hide do
       after do
-        program_details.published.each(&:hide!)
+        programs.published.each(&:hide!)
       end
 
       transitions from: :published, to: :hidden
@@ -43,8 +49,8 @@ class Channel < ApplicationRecord
   end
 
   belongs_to :channel_group
-  has_many :program_details, dependent: :destroy
   has_many :programs, dependent: :destroy
+  has_many :slots, dependent: :destroy
 
   scope :with_vod, -> { where(vod: true) }
 
@@ -56,9 +62,9 @@ class Channel < ApplicationRecord
 
     if receivable_channel_ids.present? && work.episodes.present?
       conditions = { channel_id: receivable_channel_ids, episode: work.episodes.first }
-      fastest_program = Program.where(conditions).order(:started_at).first
+      fastest_slot = Slot.where(conditions).order(:started_at).first
 
-      fastest_program.present? ? fastest_program.channel : nil
+      fastest_slot.present? ? fastest_slot.channel : nil
     end
   end
 

@@ -11,7 +11,7 @@ module Api
           record = episode.episode_records.new do |r|
             r.rating = @params.rating
             r.rating_state = @params.rating_state
-            r.comment = @params.comment
+            r.body = @params.comment
             r.shared_twitter = @params.share_twitter == "true"
             r.shared_facebook = @params.share_facebook == "true"
             r.oauth_application = doorkeeper_token.application
@@ -35,12 +35,12 @@ module Api
           @episode_record = current_user.episode_records.published.find(@params.id)
           @episode_record.rating = @params.rating
           @episode_record.rating_state = @params.rating_state
-          @episode_record.comment = @params.comment
+          @episode_record.body = @params.comment
           @episode_record.shared_twitter = @params.share_twitter == "true"
           @episode_record.shared_facebook = @params.share_facebook == "true"
-          @episode_record.modify_comment = true
+          @episode_record.modify_body = true
           @episode_record.oauth_application = doorkeeper_token.application
-          @episode_record.detect_locale!(:comment)
+          @episode_record.detect_locale!(:body)
 
           if @episode_record.valid?
             ActiveRecord::Base.transaction do

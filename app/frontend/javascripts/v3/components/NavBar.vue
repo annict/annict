@@ -8,7 +8,7 @@
       <ul class="navbar-nav mt-2 mt-md-0 mr-md-2">
         <li class="nav-item" v-if="$root.isSignedIn()">
           <a class="nav-link text-dark" href="/programs">
-            {{ $t('noun.programs') }}
+            {{ $t('noun.slots') }}
           </a>
         </li>
         <li class="nav-item dropdown" v-if="$root.isSignedIn()">
@@ -148,7 +148,7 @@
             <a href="/programs" class="text-dark">
               <i class="far fa-calendar"></i>
               <div class="small mt-1">
-                {{ $t('noun.programs') }}
+                {{ $t('noun.slots') }}
               </div>
             </a>
           </li>

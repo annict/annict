@@ -37,15 +37,15 @@ module Annict
 
           vod_title.hide! if vod_title.published?
 
-          program_detail = work.program_details.published.find_by(channel: channel)
-          if !program_detail
-            work.program_details.create!(
+          program = work.programs.published.find_by(channel: channel)
+          if !program
+            work.programs.create!(
               channel: channel,
               vod_title_code: vod_title.code,
               vod_title_name: vod_title.name
             )
-          elsif program_detail.vod_title_code.blank?
-            program_detail.update!(vod_title_code: vod_title.code, vod_title_name: vod_title.name)
+          elsif program.vod_title_code.blank?
+            program.update!(vod_title_code: vod_title.code, vod_title_name: vod_title.name)
           end
         end
 

@@ -3,28 +3,28 @@
 #
 # Table name: organizations
 #
-#  id                           :integer          not null, primary key
-#  name                         :string           not null
-#  url                          :string
-#  wikipedia_url                :string
-#  twitter_username             :string
-#  aasm_state                   :string           default("published"), not null
-#  created_at                   :datetime         not null
-#  updated_at                   :datetime         not null
-#  name_kana                    :string           default(""), not null
-#  name_en                      :string           default(""), not null
-#  url_en                       :string           default(""), not null
-#  wikipedia_url_en             :string           default(""), not null
-#  twitter_username_en          :string           default(""), not null
-#  favorite_organizations_count :integer          default(0), not null
-#  staffs_count                 :integer          default(0), not null
+#  id                   :integer          not null, primary key
+#  aasm_state           :string           default("published"), not null
+#  favorite_users_count :integer          default(0), not null
+#  name                 :string           not null
+#  name_en              :string           default(""), not null
+#  name_kana            :string           default(""), not null
+#  staffs_count         :integer          default(0), not null
+#  twitter_username     :string
+#  twitter_username_en  :string           default(""), not null
+#  url                  :string
+#  url_en               :string           default(""), not null
+#  wikipedia_url        :string
+#  wikipedia_url_en     :string           default(""), not null
+#  created_at           :datetime         not null
+#  updated_at           :datetime         not null
 #
 # Indexes
 #
-#  index_organizations_on_aasm_state                    (aasm_state)
-#  index_organizations_on_favorite_organizations_count  (favorite_organizations_count)
-#  index_organizations_on_name                          (name) UNIQUE
-#  index_organizations_on_staffs_count                  (staffs_count)
+#  index_organizations_on_aasm_state            (aasm_state)
+#  index_organizations_on_favorite_users_count  (favorite_users_count)
+#  index_organizations_on_name                  (name) UNIQUE
+#  index_organizations_on_staffs_count          (staffs_count)
 #
 
 class Organization < ApplicationRecord

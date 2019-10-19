@@ -4,10 +4,10 @@
 # Table name: favorite_characters
 #
 #  id           :integer          not null, primary key
-#  user_id      :integer          not null
-#  character_id :integer          not null
 #  created_at   :datetime         not null
 #  updated_at   :datetime         not null
+#  character_id :integer          not null
+#  user_id      :integer          not null
 #
 # Indexes
 #
@@ -15,8 +15,13 @@
 #  index_favorite_characters_on_user_id                   (user_id)
 #  index_favorite_characters_on_user_id_and_character_id  (user_id,character_id) UNIQUE
 #
+# Foreign Keys
+#
+#  fk_rails_...  (character_id => characters.id)
+#  fk_rails_...  (user_id => users.id)
+#
 
 class FavoriteCharacter < ApplicationRecord
-  belongs_to :character, counter_cache: true
-  belongs_to :user
+  belongs_to :character
+  belongs_to :user, counter_cache: true
 end

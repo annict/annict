@@ -22,6 +22,7 @@ module Canary
         field :viewer_can_follow, Boolean, null: false
         field :viewer_is_following, Boolean, null: false
         field :is_supporter, Boolean, null: false
+        field :is_committer, Boolean, null: false
         field :records_count, Integer, null: false
         field :followings_count, Integer, null: false
         field :followers_count, Integer, null: false
@@ -90,6 +91,10 @@ module Canary
           Canary::RecordBelongsToUserLoader.for(Setting).load(object.id).then do |setting|
             object.supporter? && setting.hide_supporter_badge?
           end
+        end
+
+        def is_committer
+          object.committer?
         end
 
         def records_count

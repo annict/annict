@@ -15,10 +15,10 @@
     </mj-column>
   </mj-section>
 
-  <% if @episode_record.comment.present? %>
+  <% if @episode_record.body.present? %>
     <mj-section padding="10px 0">
       <mj-column>
-        <mj-text align="center" line-height="22px"><%= "#{@episode_record.comment}" %></mj-text>
+        <mj-text align="center" line-height="22px"><%= "#{@episode_record.body}" %></mj-text>
       </mj-column>
     </mj-section>
   <% end %>

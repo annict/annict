@@ -52,7 +52,7 @@ export default {
         url: `/api/internal/episodes/${latestStatus.next_episode.id}/records`,
         data: {
           episode_record: {
-            comment: latestStatus.record.comment,
+            body: latestStatus.record.body,
             shared_twitter: this.user.share_record_to_twitter,
             rating_state: latestStatus.record.ratingState,
           },
@@ -81,7 +81,7 @@ export default {
         comment: '',
         isSaving: false,
         ratingState: null,
-        isEditingComment: false,
+        isEditingBody: false,
         uid: _.uniqueId(),
         wordCount: 0,
         commentRows: 1,

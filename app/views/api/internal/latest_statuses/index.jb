@@ -2,11 +2,11 @@
 
 json = {}
 
-program_data = @user.episodes.program_data(@latest_statuses)
+slot_data = @user.episodes.slot_data(@latest_statuses)
 
 json[:latest_statuses] = render partial: "api/internal/latest_statuses/latest_status",
                                 collection: @latest_statuses,
-                                locals: { program_data: program_data, user: @user }
+                                locals: { slot_data: slot_data, user: @user }
 
 json[:user] = {
   authorized_to_twitter: @user.authorized_to?(:twitter, shareable: true),

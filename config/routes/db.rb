@@ -53,14 +53,14 @@ namespace :db do
     end
   end
 
-  resources :programs, only: %i(edit update destroy) do
+  resources :slots, only: %i(edit update destroy) do
     member do
       get :activities
       patch :hide
     end
   end
 
-  resources :pvs, only: %i(edit update destroy) do
+  resources :trailers, only: %i(edit update destroy) do
     member do
       get :activities
       patch :hide
@@ -90,7 +90,7 @@ namespace :db do
     end
   end
 
-  resources :program_details, only: %i(edit update destroy) do
+  resources :programs, only: %i(edit update destroy) do
     member do
       get :activities
       patch :hide
@@ -117,10 +117,10 @@ namespace :db do
     resource :image, controller: :work_images, only: %i(show create update destroy)
     resources :casts, only: %i(index new create)
     resources :episodes, only: %i(index new create)
-    resources :programs, only: %i(index new create)
-    resources :pvs, only: %i(index new create)
+    resources :slots, only: %i(index new create)
+    resources :trailers, only: %i(index new create)
     resources :staffs, only: %i(index new create)
-    resources :program_details, only: %i(index new create)
+    resources :programs, only: %i(index new create)
   end
 
   root "home#index"

@@ -4,19 +4,19 @@
 # Table name: activities
 #
 #  id                         :integer          not null, primary key
-#  user_id                    :integer          not null
-#  recipient_id               :integer          not null
-#  recipient_type             :string(510)      not null
-#  trackable_id               :integer          not null
-#  trackable_type             :string(510)      not null
 #  action                     :string(510)      not null
+#  recipient_type             :string(510)      not null
+#  trackable_type             :string(510)      not null
 #  created_at                 :datetime
 #  updated_at                 :datetime
-#  work_id                    :integer
 #  episode_id                 :integer
-#  status_id                  :integer
 #  episode_record_id          :integer
 #  multiple_episode_record_id :integer
+#  recipient_id               :integer          not null
+#  status_id                  :integer
+#  trackable_id               :integer          not null
+#  user_id                    :integer          not null
+#  work_id                    :integer
 #  work_record_id             :integer
 #
 # Indexes
@@ -28,6 +28,16 @@
 #  index_activities_on_status_id                   (status_id)
 #  index_activities_on_work_id                     (work_id)
 #  index_activities_on_work_record_id              (work_record_id)
+#
+# Foreign Keys
+#
+#  activities_user_id_fk  (user_id => users.id) ON DELETE => cascade
+#  fk_rails_...           (episode_id => episodes.id)
+#  fk_rails_...           (episode_record_id => episode_records.id)
+#  fk_rails_...           (multiple_episode_record_id => multiple_episode_records.id)
+#  fk_rails_...           (status_id => statuses.id)
+#  fk_rails_...           (work_id => works.id)
+#  fk_rails_...           (work_record_id => work_records.id)
 #
 
 class Activity < ApplicationRecord

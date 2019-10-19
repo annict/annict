@@ -33,9 +33,9 @@ module Canary
         Canary::Types::Objects::OrganizationType
       when Person
         Canary::Types::Objects::PersonType
-      when Program
+      when Slot
         Canary::Types::Objects::SlotType
-      when ProgramDetail
+      when Program
         Canary::Types::Objects::ProgramType
       when Status
         Canary::Types::Objects::StatusType

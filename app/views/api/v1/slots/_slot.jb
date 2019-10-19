@@ -1,0 +1,9 @@
+# frozen_string_literal: true
+
+json = {}
+
+json[:id] = slot.id if params.fields_contain?("#{field_prefix}id")
+json[:started_at] = slot.started_at if params.fields_contain?("#{field_prefix}started_at")
+json[:is_rebroadcast] = slot.rebroadcast? if params.fields_contain?("#{field_prefix}is_rebroadcast")
+
+json

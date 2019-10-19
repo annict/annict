@@ -5,7 +5,6 @@ en:
         character_id: Character
         name_en: Name (en)
         name: Name
-        part: Part
         person_id: Person
         sort_number: Sort number
         work_id: Work
@@ -119,16 +118,16 @@ en:
         description: Bio
         name: Name
         url: URL
-      program:
+      slot:
         channel_id: Channel
         episode_id: Episode
         irregular: Irregular
         number: Number
-        program_detail_id: Program Detail
+        program_id: Slot Detail
         rebroadcast: Rebroadcast
         started_at: Started at
         time_zone: Timezone
-      program_detail:
+      program:
         channel_id: Channel
         minimum_episode_generatable_number: Minimum Episode Generatable Number
         rebroadcast: Rebroadcast
@@ -137,7 +136,7 @@ en:
         url: URL
         vod_title_code: VOD Title Code
         vod_title_name: VOD Title Name
-      pv:
+      trailer:
         sort_number: Sort Number
         title: Title
         thumbnail: Thumbnail
@@ -254,12 +253,12 @@ en:
       person:
         one: Person
         other: People
-      program:
-        one: Program
-        other: Programs
-      pv:
-        one: PV
-        other: PVs
+      slot:
+        one: Slot
+        other: Slots
+      trailer:
+        one: Trailer
+        other: Trailers
       series:
         one: Series
         other: Series

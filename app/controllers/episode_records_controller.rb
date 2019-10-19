@@ -53,8 +53,8 @@ class EpisodeRecordsController < ApplicationController
     @episode_record = current_user.episode_records.published.find_by(episode_id: params[:episode_id], record_id: params[:id])
     authorize @episode_record, :update?
 
-    @episode_record.modify_comment = true
-    @episode_record.detect_locale!(:comment)
+    @episode_record.modify_body = true
+    @episode_record.detect_locale!(:body)
 
     if @episode_record.update(episode_record_params)
       @episode_record.update_share_record_status
@@ -92,6 +92,6 @@ class EpisodeRecordsController < ApplicationController
   private
 
   def episode_record_params
-    params.require(:episode_record).permit(:episode_id, :comment, :shared_twitter, :rating_state)
+    params.require(:episode_record).permit(:episode_id, :body, :shared_twitter, :rating_state)
   end
 end

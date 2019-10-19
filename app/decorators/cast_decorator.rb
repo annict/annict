@@ -17,6 +17,8 @@ module CastDecorator
 
   def to_values
     self.class::DIFF_FIELDS.each_with_object({}) do |field, hash|
+      next unless respond_to?(field)
+
       hash[field] = case field
       when :person_id
         person_id = send(:person_id)

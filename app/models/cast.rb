@@ -5,16 +5,15 @@
 # Table name: casts
 #
 #  id           :integer          not null, primary key
-#  person_id    :integer          not null
-#  work_id      :integer          not null
-#  name         :string           not null
-#  part         :string           not null
 #  aasm_state   :string           default("published"), not null
+#  name         :string           not null
+#  name_en      :string           default(""), not null
 #  sort_number  :integer          default(0), not null
 #  created_at   :datetime         not null
 #  updated_at   :datetime         not null
 #  character_id :integer          not null
-#  name_en      :string           default(""), not null
+#  person_id    :integer          not null
+#  work_id      :integer          not null
 #
 # Indexes
 #
@@ -23,6 +22,12 @@
 #  index_casts_on_person_id     (person_id)
 #  index_casts_on_sort_number   (sort_number)
 #  index_casts_on_work_id       (work_id)
+#
+# Foreign Keys
+#
+#  fk_rails_...  (character_id => characters.id)
+#  fk_rails_...  (person_id => people.id)
+#  fk_rails_...  (work_id => works.id)
 #
 
 class Cast < ApplicationRecord
@@ -55,7 +60,7 @@ class Cast < ApplicationRecord
 
   def to_diffable_hash
     data = self.class::DIFF_FIELDS.each_with_object({}) do |field, hash|
-      hash[field] = send(field)
+      hash[field] = send(field) if respond_to?(field)
       hash
     end
 

@@ -32,7 +32,7 @@ describe "Api::V1::People" do
           "birthday" => person.birthday&.strftime("%Y-%m-%d"),
           "blood_type" => person.blood_type,
           "height" => person.height,
-          "favorite_people_count" => person.favorite_people_count,
+          "favorite_people_count" => person.favorite_users_count,
           "casts_count" => person.casts_count,
           "staffs_count" => person.staffs_count,
           "prefecture" => nil

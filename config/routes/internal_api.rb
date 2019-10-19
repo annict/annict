@@ -6,7 +6,7 @@ namespace :api do
 
     resource :impression, only: %i(show update)
     resource :privacy_policy_agreement, only: %i(create)
-    resource :programs_sort_type, only: [:update]
+    resource :slots_sort_type, only: [:update]
     resource :records_sort_type, only: %i(update)
     resource :search, only: [:show]
     resources :activities, only: [:index]
@@ -56,7 +56,7 @@ namespace :api do
     end
 
     resource :user, only: [] do
-      resources :programs, only: [:index], controller: "user_programs"
+      resources :slots, only: [:index], controller: "user_slots"
     end
 
     resources :works, only: [] do

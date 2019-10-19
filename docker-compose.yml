@@ -12,11 +12,11 @@ services:
     ports:
       - 8080:8080
   postgresql:
-    image: postgres:10.3-alpine
+    image: postgres:11.5-alpine
     ports:
       - 5432:5432
     volumes:
-      - ../_postgresql/data:/var/lib/postgresql/data
+      - ../_postgresql/annict/data:/var/lib/postgresql/data
   selenium:
     image: selenium/standalone-chrome:latest
     ports:

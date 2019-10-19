@@ -182,7 +182,7 @@ module Canary
 
         def programs(order_by: nil)
           SearchProgramsRepository.new(
-            object.program_details,
+            object.programs,
             order_by: order_by
           ).call
         end
@@ -207,7 +207,7 @@ module Canary
         end
 
         def trailers(order_by: nil)
-          SearchTrailersQuery.new(object.pvs, order_by: order_by).call
+          SearchTrailersQuery.new(object.trailers, order_by: order_by).call
         end
 
         def media

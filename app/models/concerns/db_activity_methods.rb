@@ -22,7 +22,7 @@ module DbActivityMethods
     case self.class.name
     when "Work", "Person", "Organization", "Character", "Series"
       self
-    when "Episode", "Program", "Cast", "Staff"
+    when "Episode", "Slot", "Cast", "Staff"
       work
     when "SeriesWork"
       series

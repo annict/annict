@@ -3,21 +3,26 @@
 #
 # Table name: vod_titles
 #
-#  id           :bigint(8)        not null, primary key
-#  channel_id   :bigint(8)        not null
-#  work_id      :bigint(8)
-#  code         :string           not null
-#  name         :string           not null
+#  id           :bigint           not null, primary key
 #  aasm_state   :string           default("published"), not null
+#  code         :string           not null
 #  mail_sent_at :datetime
+#  name         :string           not null
 #  created_at   :datetime         not null
 #  updated_at   :datetime         not null
+#  channel_id   :bigint           not null
+#  work_id      :bigint
 #
 # Indexes
 #
 #  index_vod_titles_on_channel_id    (channel_id)
 #  index_vod_titles_on_mail_sent_at  (mail_sent_at)
 #  index_vod_titles_on_work_id       (work_id)
+#
+# Foreign Keys
+#
+#  fk_rails_...  (channel_id => channels.id)
+#  fk_rails_...  (work_id => works.id)
 #
 
 class VodTitle < ApplicationRecord

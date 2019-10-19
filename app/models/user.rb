@@ -4,36 +4,36 @@
 # Table name: users
 #
 #  id                            :integer          not null, primary key
-#  username                      :string(510)      not null
-#  email                         :string(510)      not null
-#  role                          :integer          not null
-#  encrypted_password            :string(510)      default(""), not null
-#  remember_created_at           :datetime
-#  sign_in_count                 :integer          default(0), not null
-#  current_sign_in_at            :datetime
-#  last_sign_in_at               :datetime
-#  current_sign_in_ip            :string(510)
-#  last_sign_in_ip               :string(510)
+#  aasm_state                    :string           default("published"), not null
+#  allowed_locales               :string           is an Array
+#  confirmation_sent_at          :datetime
 #  confirmation_token            :string(510)
 #  confirmed_at                  :datetime
-#  confirmation_sent_at          :datetime
-#  unconfirmed_email             :string(510)
+#  current_sign_in_at            :datetime
+#  current_sign_in_ip            :string(510)
+#  email                         :citext           not null
+#  encrypted_password            :string(510)      default(""), not null
 #  episode_records_count         :integer          default(0), not null
+#  last_sign_in_at               :datetime
+#  last_sign_in_ip               :string(510)
+#  locale                        :string           not null
 #  notifications_count           :integer          default(0), not null
+#  record_cache_expired_at       :datetime
+#  records_count                 :integer          default(0), not null
+#  remember_created_at           :datetime
+#  reset_password_sent_at        :datetime
+#  reset_password_token          :string
+#  role                          :integer          not null
+#  sign_in_count                 :integer          default(0), not null
+#  status_cache_expired_at       :datetime
+#  time_zone                     :string           not null
+#  unconfirmed_email             :string(510)
+#  username                      :citext           not null
+#  work_comment_cache_expired_at :datetime
+#  work_tag_cache_expired_at     :datetime
 #  created_at                    :datetime
 #  updated_at                    :datetime
-#  time_zone                     :string           not null
-#  locale                        :string           not null
-#  reset_password_token          :string
-#  reset_password_sent_at        :datetime
-#  record_cache_expired_at       :datetime
-#  status_cache_expired_at       :datetime
-#  work_tag_cache_expired_at     :datetime
-#  work_comment_cache_expired_at :datetime
 #  gumroad_subscriber_id         :integer
-#  allowed_locales               :string           is an Array
-#  records_count                 :integer          default(0), not null
-#  aasm_state                    :string           default("published"), not null
 #
 # Indexes
 #
@@ -43,6 +43,10 @@
 #  users_confirmation_token_key          (confirmation_token) UNIQUE
 #  users_email_key                       (email) UNIQUE
 #  users_username_key                    (username) UNIQUE
+#
+# Foreign Keys
+#
+#  fk_rails_...  (gumroad_subscriber_id => gumroad_subscribers.id)
 #
 
 class User < ApplicationRecord
@@ -58,10 +62,6 @@ class User < ApplicationRecord
   include UserReceivable
 
   extend Enumerize
-
-  # There are also usernames which is expressed in uppercase letters... orz (e.g. annict.com/@a, annict.com/@A)
-  # In order to be able to update their user data, it needs to enable the `case_sensitive` option.
-  DUPLICATED_USERNAMES = %w(a d k).freeze
 
   attr_accessor :email_username, :current_password, :terms_and_privacy_policy_agreement
 
@@ -150,13 +150,8 @@ class User < ApplicationRecord
   validates :username,
     presence: true,
     length: { maximum: 20 },
-    format: { with: /\A[A-Za-z0-9_]+\z/ }
-  validates :username,
-    uniqueness: { case_sensitive: false },
-    if: proc { |u| !u.username.downcase.in?(DUPLICATED_USERNAMES) }
-  validates :username,
-    uniqueness: { case_sensitive: true },
-    if: proc { |u| u.username.downcase.in?(DUPLICATED_USERNAMES) }
+    format: { with: /\A[A-Za-z0-9_]+\z/ },
+    uniqueness: { case_sensitive: false }
   validates :terms_and_privacy_policy_agreement, acceptance: true
 
   # Override the Devise's `find_for_database_authentication`
@@ -183,8 +178,8 @@ class User < ApplicationRecord
     @episodes ||= UserEpisodesQuery.new(self)
   end
 
-  def programs
-    @programs ||= UserProgramsQuery.new(self)
+  def slots
+    @slots ||= UserSlotsQuery.new(self)
   end
 
   def tips
@@ -261,13 +256,13 @@ class User < ApplicationRecord
   end
 
   def hide_episode_record_body?(episode)
-    setting.hide_record_comment? &&
+    setting.hide_record_body? &&
       works.desiring_to_watch.include?(episode.work) &&
       !episode_records.pluck(:episode_id).include?(episode.id)
   end
 
   def hide_work_record_body?(work)
-    setting.hide_record_comment? &&
+    setting.hide_record_body? &&
       works.desiring_to_watch.include?(work) &&
       !work_records.pluck(:work_id).include?(work.id)
   end

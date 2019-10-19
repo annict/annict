@@ -4,11 +4,11 @@
 # Table name: favorite_people
 #
 #  id                  :integer          not null, primary key
-#  user_id             :integer          not null
-#  person_id           :integer          not null
+#  watched_works_count :integer          default(0), not null
 #  created_at          :datetime         not null
 #  updated_at          :datetime         not null
-#  watched_works_count :integer          default(0), not null
+#  person_id           :integer          not null
+#  user_id             :integer          not null
 #
 # Indexes
 #
@@ -17,10 +17,15 @@
 #  index_favorite_people_on_user_id_and_person_id  (user_id,person_id) UNIQUE
 #  index_favorite_people_on_watched_works_count    (watched_works_count)
 #
+# Foreign Keys
+#
+#  fk_rails_...  (person_id => people.id)
+#  fk_rails_...  (user_id => users.id)
+#
 
 class FavoritePerson < ApplicationRecord
-  belongs_to :person, counter_cache: true
-  belongs_to :user
+  belongs_to :person
+  belongs_to :user, counter_cache: true
 
   scope :with_cast, -> { joins(:person).where("people.casts_count > ?", 0) }
   scope :with_staff, -> { joins(:person).where("people.staffs_count > ?", 0) }

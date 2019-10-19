@@ -44,10 +44,10 @@ ja:
       no_items: 商品はありません
       no_organizations: 団体はありません
       no_people: 人物はいません
-      no_program_details: 登録されていません
       no_projects: プロジェクトはありません
       no_record_body_list: 感想はありません
       no_records: 記録はありません
+      no_resources: 登録されていません
       no_series_works: シリーズ作品はありません
       no_series: シリーズはありません
       no_staffs: スタッフはいません
@@ -132,7 +132,7 @@ ja:
       mute_user_button:
         mute_this_user: この人をミュートする...
         the_user_has_been_muted: ミュートしました
-      program_list:
+      slot_list:
         tracked: 記録しました
       status_selector:
         select_status: ステータスを選択
@@ -176,9 +176,9 @@ ja:
       no_users: ファンはいません
     profiles:
       saved: 保存しました
-    programs:
-      new_programs_csv_by_program_detail: 放送情報をもとに放送予定CSVを生成する
-      no_programs: 放送予定はありません
+    slots:
+      new_slots_csv_by_program: 放送情報をもとに放送予定CSVを生成する
+      no_slots: 放送予定はありません
       please_set_channels_html: "%{channels_link}でチャンネルを設定して下さい"
     providers:
       removed: 接続解除しました

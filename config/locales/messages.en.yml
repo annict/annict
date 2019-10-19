@@ -44,10 +44,10 @@ en:
       no_items: No Items
       no_organizations: No Organizations
       no_people: No People
-      no_program_details: No Streaming Links
       no_projects: No Projects
       no_record_body_list: No Comments
       no_records: No Records
+      no_resources: No Resources
       no_series_works: No Series Works
       no_series: No Series
       no_staffs: No Staffs
@@ -125,14 +125,14 @@ en:
         hero_title_mobile_html: The platform for anime addicts.
         start_tracking: Start Tracking
     ics:
-      you_can_see: You can see programs of works which you set "Watching", "Plan to Watch" when you add the following URL to Google Calendar.
+      you_can_see: You can see slots of works which you set "Watching", "Plan to Watch" when you add the following URL to Google Calendar.
     components:
       load_more_button:
         more: View more
       mute_user_button:
         mute_this_user: Mute this user...
         the_user_has_been_muted: The user has been muted.
-      program_list:
+      slot_list:
         tracked: Tracked.
       status_selector:
         select_status: Select Status
@@ -176,9 +176,9 @@ en:
       no_users: No users
     profiles:
       saved: Profile has been saved.
-    programs:
-      new_programs_csv_by_program_detail: New programs by program detail
-      no_programs: No programs
+    slots:
+      new_slots_csv_by_program: New slots by slot detail
+      no_slots: No slots
       please_set_channels_html: Please set channels on %{channels_link} page.
     providers:
       removed: Removed.

@@ -3,13 +3,13 @@
 #
 # Table name: twitter_watching_lists
 #
-#  id                  :bigint(8)        not null, primary key
-#  username            :string           not null
-#  name                :string           not null
-#  since_id            :string
+#  id                  :bigint           not null, primary key
 #  discord_webhook_url :string           not null
+#  name                :string           not null
+#  username            :string           not null
 #  created_at          :datetime         not null
 #  updated_at          :datetime         not null
+#  since_id            :string
 #
 
 class TwitterWatchingList < ApplicationRecord

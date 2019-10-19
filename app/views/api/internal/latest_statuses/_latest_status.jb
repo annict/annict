@@ -22,16 +22,16 @@ json[:next_episode] = {
   title: episode.local_title(fallback: false)
 }
 
-program = program_data.detect { |pd| pd.present? && pd[:episode_id] == episode.id }
+slot = slot_data.detect { |pd| pd.present? && pd[:episode_id] == episode.id }
 
-if program.present?
-  json[:program] = {
-    rebroadcast: program.rebroadcast,
-    started_at: program.started_at.in_time_zone("Asia/Tokyo").strftime("%Y-%m-%d %H:%M"),
+if slot.present?
+  json[:slot] = {
+    rebroadcast: slot.rebroadcast,
+    started_at: slot.started_at.in_time_zone("Asia/Tokyo").strftime("%Y-%m-%d %H:%M"),
     channel: {
-      name: program.channel.name
+      name: slot.channel.name
     },
-    state_text: program.state_text
+    state_text: slot.state_text
   }
 end
 

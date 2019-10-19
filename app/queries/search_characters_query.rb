@@ -37,7 +37,7 @@ class SearchCharactersQuery
       when "CREATED_AT"
         @collection.order(created_at: direction)
       when "FAVORITE_CHARACTERS_COUNT"
-        @collection.order(favorite_characters_count: direction)
+        @collection.order(favorite_users_count: direction)
       end
     end
 

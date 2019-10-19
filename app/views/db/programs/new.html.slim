@@ -11,15 +11,10 @@
         = icon "external-link-alt"
         = t "resources.work.go_to_work"
 
+
 = render "db/works/subnav", work: @work
 
 .container-fluid.p-3
-  - if @work.program_details.published.exists?
-    .c-card.p-3.mb-3
-      h3.h4
-        = t("messages.programs.new_programs_csv_by_program_detail")
-      - @work.program_details.published.each do |pd|
-        = link_to "#{pd.channel.name}<br>#{display_time(pd.started_at)}〜".html_safe, new_db_work_program_path(program_detail_id: pd.id), class: "btn btn-sm #{pd.id.to_s == params[:program_detail_id] ? 'btn-secondary' : 'btn-outline-secondary'} mr-2 mb-2"
   .row
     .col-6
       .c-card.p-3
@@ -35,4 +30,6 @@
             .ml-auto.col-sm-9
               = f.submit t("helpers.submit.create"), class: "btn btn-primary"
     .col-6
-      = render "sidebar_new"
+      .mb-3
+        = render "sidebar_new"
+      = render "sidebar_edit"

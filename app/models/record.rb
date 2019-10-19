@@ -3,18 +3,23 @@
 #
 # Table name: records
 #
-#  id                :bigint(8)        not null, primary key
-#  user_id           :bigint(8)        not null
-#  work_id           :bigint(8)        not null
+#  id                :bigint           not null, primary key
 #  aasm_state        :string           default("published"), not null
 #  impressions_count :integer          default(0), not null
 #  created_at        :datetime         not null
 #  updated_at        :datetime         not null
+#  user_id           :bigint           not null
+#  work_id           :bigint           not null
 #
 # Indexes
 #
 #  index_records_on_user_id  (user_id)
 #  index_records_on_work_id  (work_id)
+#
+# Foreign Keys
+#
+#  fk_rails_...  (user_id => users.id)
+#  fk_rails_...  (work_id => works.id)
 #
 
 class Record < ApplicationRecord

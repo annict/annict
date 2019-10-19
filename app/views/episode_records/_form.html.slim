@@ -8,8 +8,8 @@
   .mb-2
     c-record-rating :init-record=="{ ratingState: '#{episode_record.rating_state}' }"
   .mb-2
-    - comment = episode_record.comment&.gsub(/(?:\n\r?|\r\n?)/, "\\n").presence || ""
-    c-record-textarea :init-record="{ uid: 1, comment: '#{comment}', commentRows: 2 }" placeholder="#{t('messages.episode_records.new.write_your_comment')}"
+    - body = episode_record.body&.gsub(/(?:\n\r?|\r\n?)/, "\\n").presence || ""
+    c-record-textarea :init-record="{ uid: 1, body: '#{body}', bodyRows: 2 }" placeholder="#{t('messages.episode_records.new.write_your_comment')}"
   .row
     .col
       - if current_user.authorized_to?(:twitter, shareable: true)

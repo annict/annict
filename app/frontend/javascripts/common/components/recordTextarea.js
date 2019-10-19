@@ -8,7 +8,7 @@ export default {
   data() {
     return {
       record: this.initRecord,
-      isEditingComment: false,
+      isEditingBody: false,
     }
   },
 
@@ -23,28 +23,33 @@ export default {
 
   methods: {
     expandOnClick() {
-      if (this.record.commentRows > 2) {
+      if (this.record.bodyRows > 2) {
         return
       }
-      this.record.commentRows = 10
-      return (this.isEditingComment = this.record.isEditingComment = true)
+      this.record.bodyRows = 10
+      return (this.isEditingBody = this.record.isEditingBody = true)
     },
 
     expandOnEnter() {
-      if (!this.record.comment) {
+      if (!this.record.body) {
         return
       }
 
-      const lineCount = this.record.comment.split('\n').length
-      if (lineCount > this.record.commentRows) {
-        return (this.record.commentRows = lineCount)
+      const lineCount = this.record.body.split('\n').length
+
+      if (lineCount > this.record.bodyRows) {
+        return (this.record.bodyRows = lineCount)
       }
     },
   },
 
   watch: {
-    'record.comment'(comment) {
-      return eventHub.$emit('wordCount:update', this.record, comment.length || 0)
+    'record.body'(body) {
+      if (!body) {
+        return
+      }
+
+      eventHub.$emit('wordCount:update', this.record, body.length || 0)
     },
 
     initRecord(val) {

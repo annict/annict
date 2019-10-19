@@ -5,19 +5,25 @@
 # Table name: statuses
 #
 #  id                   :integer          not null, primary key
-#  user_id              :integer          not null
-#  work_id              :integer          not null
 #  kind                 :integer          not null
 #  likes_count          :integer          default(0), not null
 #  created_at           :datetime
 #  updated_at           :datetime
 #  oauth_application_id :integer
+#  user_id              :integer          not null
+#  work_id              :integer          not null
 #
 # Indexes
 #
 #  index_statuses_on_oauth_application_id  (oauth_application_id)
 #  statuses_user_id_idx                    (user_id)
 #  statuses_work_id_idx                    (work_id)
+#
+# Foreign Keys
+#
+#  fk_rails_...         (oauth_application_id => oauth_applications.id)
+#  statuses_user_id_fk  (user_id => users.id) ON DELETE => cascade
+#  statuses_work_id_fk  (work_id => works.id) ON DELETE => cascade
 #
 
 class Status < ApplicationRecord

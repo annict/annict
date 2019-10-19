@@ -30,6 +30,7 @@ export default {
   },
   messages: {
     _common: {
+      editOnAnnictDb: "Edit on Annict DB",
       searchWithKeywords: 'Search by anime title...',
     },
     _components: {
@@ -124,7 +125,7 @@ export default {
     planToWatch: 'Plan to Watch',
     prevSeason: 'Previous Season',
     profile: 'Profile',
-    programs: 'Programs',
+    slots: 'Slots',
     pv: 'PV',
     rating: 'Rating',
     ratingsCount: 'Ratings',

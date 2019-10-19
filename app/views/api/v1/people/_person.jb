@@ -18,7 +18,7 @@ json[:twitter_username_en] = person.twitter_username_en.presence || "" if params
 json[:birthday] = person.birthday&.strftime("%Y-%m-%d").presence || "" if params.fields_contain?("#{field_prefix}birthday")
 json[:blood_type] = person.blood_type.presence || "" if params.fields_contain?("#{field_prefix}blood_type")
 json[:height] = person.height.presence || "" if params.fields_contain?("#{field_prefix}height")
-json[:favorite_people_count] = person.favorite_people_count if params.fields_contain?("#{field_prefix}favorite_people_count")
+json[:favorite_people_count] = person.favorite_users_count if params.fields_contain?("#{field_prefix}favorite_people_count")
 json[:casts_count] = person.casts_count if params.fields_contain?("#{field_prefix}casts_count")
 json[:staffs_count] = person.staffs_count if params.fields_contain?("#{field_prefix}staffs_count")
 

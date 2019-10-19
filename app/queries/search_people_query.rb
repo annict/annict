@@ -37,7 +37,7 @@ class SearchPeopleQuery
       when "CREATED_AT"
         @collection.order(created_at: direction)
       when "FAVORITE_PEOPLE_COUNT"
-        @collection.order(favorite_people_count: direction)
+        @collection.order(favorite_users_count: direction)
       end
     end
 

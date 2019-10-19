@@ -3,7 +3,7 @@
 #
 # Table name: flashes
 #
-#  id          :bigint(8)        not null, primary key
+#  id          :bigint           not null, primary key
 #  client_uuid :string           not null
 #  data        :json
 #  created_at  :datetime         not null

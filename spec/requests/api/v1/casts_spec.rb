@@ -77,7 +77,7 @@ describe "Api::V1::Casts" do
             "description_en" => cast.character.description_en,
             "description_source" => cast.character.description_source,
             "description_source_en" => cast.character.description_source_en,
-            "favorite_characters_count" => cast.character.favorite_characters_count,
+            "favorite_characters_count" => cast.character.favorite_users_count,
           },
           "person" => {
             "id" => cast.person.id,
@@ -96,7 +96,7 @@ describe "Api::V1::Casts" do
             "birthday" => cast.person.birthday&.strftime("%Y-%m-%d"),
             "blood_type" => cast.person.blood_type,
             "height" => cast.person.height,
-            "favorite_people_count" => cast.person.favorite_people_count,
+            "favorite_people_count" => cast.person.favorite_users_count,
             "casts_count" => cast.person.casts_count,
             "staffs_count" => cast.person.staffs_count,
           }

@@ -34,8 +34,12 @@ module Types
         RecordLoader.for(Episode).load(object.episode_id)
       end
 
+      def comment
+        object.body
+      end
+
       def modified
-        object.modify_comment?
+        object.modify_body?
       end
     end
   end

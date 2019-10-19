@@ -22,7 +22,7 @@ describe "Work detail page" do
       end
 
       context "when trailers have been added" do
-        let!(:trailer) { create(:pv, work: work) }
+        let!(:trailer) { create(:trailer, work: work) }
 
         before do
           visit "/works/#{work.id}"
@@ -85,11 +85,11 @@ describe "Work detail page" do
 
       context "when vods have been added" do
         let!(:channel) { create(:channel, vod: true) }
-        let!(:program_detail) { create(:program_detail, work: work, channel: channel, vod_title_code: "xxx") }
-        let!(:vod_title_url) { "https://example.com/#{program_detail.vod_title_code}" }
+        let!(:program) { create(:program, work: work, channel: channel, vod_title_code: "xxx") }
+        let!(:vod_title_url) { "https://example.com/#{program.vod_title_code}" }
 
         before do
-          allow_any_instance_of(ProgramDetail).to receive(:vod_title_url).and_return(vod_title_url)
+          allow_any_instance_of(Program).to receive(:vod_title_url).and_return(vod_title_url)
 
           visit "/works/#{work.id}"
         end
@@ -161,7 +161,7 @@ describe "Work detail page" do
       end
 
       context "when trailers have been added" do
-        let!(:trailer) { create(:pv, work: work) }
+        let!(:trailer) { create(:trailer, work: work) }
 
         before do
           visit "/works/#{work.id}"
@@ -224,11 +224,11 @@ describe "Work detail page" do
 
       context "when vods have been added" do
         let!(:channel) { create(:channel, vod: true) }
-        let!(:program_detail) { create(:program_detail, work: work, channel: channel, vod_title_code: "xxx") }
-        let!(:vod_title_url) { "https://example.com/#{program_detail.vod_title_code}" }
+        let!(:program) { create(:program, work: work, channel: channel, vod_title_code: "xxx") }
+        let!(:vod_title_url) { "https://example.com/#{program.vod_title_code}" }
 
         before do
-          allow_any_instance_of(ProgramDetail).to receive(:vod_title_url).and_return(vod_title_url)
+          allow_any_instance_of(Program).to receive(:vod_title_url).and_return(vod_title_url)
 
           visit "/works/#{work.id}"
         end

@@ -20,7 +20,7 @@ jobs:
           # https://github.com/jtoy/cld/issues/10
           CFLAGS: -Wno-narrowing
           CXXFLAGS: -Wno-narrowing
-      - image: circleci/postgres:10.4-alpine
+      - image: circleci/postgres:11.5-alpine
         environment:
           POSTGRES_USER: postgres
           POSTGRES_DB: annict_test

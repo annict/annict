@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class SearchProgramsRepository
-  def initialize(collection = ProgramDetail.all, order_by:)
+  def initialize(collection = Program.all, order_by:)
     @collection = collection
     @args = {
       order_by: order_by

@@ -1,7 +1,7 @@
 en:
   activemodel:
     attributes:
-      api/v1/me/programs_index_params:
+      api/v1/me/slots_index_params:
         fields: fields
         filter_ids: filter_ids
         filter_channel_ids: filter_channel_ids
@@ -52,9 +52,9 @@ en:
         rows: Casts
       db/episode_rows_form:
         rows: Episodes
-      db/program_rows_form:
-        rows: Programs
-      db/pv_rows_form:
+      db/slot_rows_form:
+        rows: Slots
+      db/trailer_rows_form:
         rows: PVs
       db/series_work_rows_form:
         rows: Series Works
@@ -66,12 +66,12 @@ en:
           invalid: "are invalid: %{value} is not found"
         db/character_rows_form:
           invalid: "are invalid: %{value} is not found"
-        db/program_rows_form:
+        db/slot_rows_form:
           invalid: "are invalid: %{value} is not found"
           invalid_start_time: "have invalid start time"
         db/staff_rows_form:
           invalid: "are invalid: %{value} is not found"
-        db/program_detail_rows_form:
+        db/program_rows_form:
           rows: Streaming Links
         db/series_work_rows_form:
           invalid: "are invalid: %{value} is not found"
