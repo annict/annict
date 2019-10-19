@@ -29,6 +29,6 @@ class ChangeSchema20191014 < ActiveRecord::Migration[6.0]
     change_column :users, :username, :citext
     change_column :users, :email, :citext
 
-    remove_index :slots, name: :index_slots_on_program_detail_id_and_started_at
+    # remove_index :slots, name: :index_slots_on_program_detail_id_and_started_at
   end
 end
