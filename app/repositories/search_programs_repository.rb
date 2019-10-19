@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class SearchSlotsRepository
+class SearchProgramsRepository
   def initialize(collection = Program.all, order_by:)
     @collection = collection
     @args = {
