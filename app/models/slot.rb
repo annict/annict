@@ -3,35 +3,35 @@
 #
 # Table name: slots
 #
-#  id                :integer          not null, primary key
-#  aasm_state        :string           default("published"), not null
-#  irregular         :boolean          default(FALSE), not null
-#  number            :integer
-#  rebroadcast       :boolean          default(FALSE), not null
-#  sc_last_update    :datetime
-#  sc_pid            :integer
-#  started_at        :datetime         not null
-#  created_at        :datetime
-#  updated_at        :datetime
-#  channel_id        :integer          not null
-#  episode_id        :integer
-#  program_detail_id :integer
-#  work_id           :integer          not null
+#  id             :integer          not null, primary key
+#  aasm_state     :string           default("published"), not null
+#  irregular      :boolean          default(FALSE), not null
+#  number         :integer
+#  rebroadcast    :boolean          default(FALSE), not null
+#  sc_last_update :datetime
+#  sc_pid         :integer
+#  started_at     :datetime         not null
+#  created_at     :datetime
+#  updated_at     :datetime
+#  channel_id     :integer          not null
+#  episode_id     :integer
+#  program_id     :integer
+#  work_id        :integer          not null
 #
 # Indexes
 #
-#  index_slots_on_aasm_state                        (aasm_state)
-#  index_slots_on_program_detail_id                 (program_detail_id)
-#  index_slots_on_program_detail_id_and_episode_id  (program_detail_id,episode_id) UNIQUE
-#  index_slots_on_program_detail_id_and_number      (program_detail_id,number) UNIQUE
-#  index_slots_on_sc_pid                            (sc_pid) UNIQUE
-#  programs_channel_id_idx                          (channel_id)
-#  programs_episode_id_idx                          (episode_id)
-#  programs_work_id_idx                             (work_id)
+#  index_slots_on_aasm_state                 (aasm_state)
+#  index_slots_on_program_id                 (program_id)
+#  index_slots_on_program_id_and_episode_id  (program_id,episode_id) UNIQUE
+#  index_slots_on_program_id_and_number      (program_id,number) UNIQUE
+#  index_slots_on_sc_pid                     (sc_pid) UNIQUE
+#  programs_channel_id_idx                   (channel_id)
+#  programs_episode_id_idx                   (episode_id)
+#  programs_work_id_idx                      (work_id)
 #
 # Foreign Keys
 #
-#  fk_rails_...            (program_detail_id => programs.id)
+#  fk_rails_...            (program_id => programs.id)
 #  programs_channel_id_fk  (channel_id => channels.id) ON DELETE => cascade
 #  programs_episode_id_fk  (episode_id => episodes.id) ON DELETE => cascade
 #  programs_work_id_fk     (work_id => works.id) ON DELETE => cascade
