@@ -99,7 +99,7 @@ class Work < ApplicationRecord
     foreign_key: :season_id,
     optional: true
   has_many :casts, dependent: :destroy
-  has_many :program_details, dependent: :destroy
+  has_many :programs, dependent: :destroy
   has_many :series_works, dependent: :destroy
   has_many :staffs, dependent: :destroy
   has_many :work_taggings, dependent: :destroy
@@ -119,13 +119,13 @@ class Work < ApplicationRecord
     through: :staffs,
     source: :resource,
     source_type: "Organization"
-  has_many :programs, dependent: :destroy
+  has_many :slots, dependent: :destroy
   has_many :trailers, dependent: :destroy
   has_many :records, dependent: :destroy
   has_many :series_list, through: :series_works, source: :series
   has_many :statuses, dependent: :destroy
   has_many :staff_people, through: :staffs, source: :resource, source_type: "Person"
-  has_many :channels, through: :program_details
+  has_many :channels, through: :programs
   has_many :work_records, dependent: :destroy
   has_many :work_tags, through: :work_taggings
   has_one :work_image, dependent: :destroy
@@ -174,9 +174,9 @@ class Work < ApplicationRecord
     end
   })
 
-  scope :program_registered, -> {
-    work_ids = joins(:programs).
-      merge(Program.published.where(work_id: all.pluck(:id))).
+  scope :slot_registered, -> {
+    work_ids = joins(:slots).
+      merge(Slot.published.where(work_id: all.pluck(:id))).
       pluck(:id).
       uniq
     where(id: work_ids)
@@ -318,11 +318,11 @@ class Work < ApplicationRecord
     end
   end
 
-  def self.program_details_data(works, only_vod: false)
+  def self.programs_data(works, only_vod: false)
     work_ids = works.pluck(:id)
-    program_details = ProgramDetail.published.where(work_id: work_ids).includes(:channel)
+    programs = Program.published.where(work_id: work_ids).includes(:channel)
     if only_vod
-      program_details = program_details.
+      programs = programs.
         joins(:channel).
         where(channels: { vod: true })
     end
@@ -330,7 +330,7 @@ class Work < ApplicationRecord
     work_ids.map do |work_id|
       {
         work_id: work_id,
-        program_details: program_details.select { |pd| pd.work_id == work_id }
+        programs: programs.select { |pd| pd.work_id == work_id }
       }
     end
   end

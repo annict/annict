@@ -101,7 +101,7 @@ class WorksController < ApplicationController
       @trailers_data = Work.trailers_data(@works)
       @casts_data = Work.casts_data(@works)
       @staffs_data = Work.staffs_data(@works, major: true)
-      @program_details_data = Work.program_details_data(@works, only_vod: true)
+      @programs_data = Work.programs_data(@works, only_vod: true)
       @channels = Channel.published.with_vod
     end
 

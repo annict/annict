@@ -35,7 +35,7 @@ module Canary
         Canary::Types::Objects::PersonType
       when Program
         Canary::Types::Objects::SlotType
-      when ProgramDetail
+      when Program
         Canary::Types::Objects::ProgramType
       when Status
         Canary::Types::Objects::StatusType

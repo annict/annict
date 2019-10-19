@@ -1,0 +1,49 @@
+.mb-3
+  h3 放送開始日時について
+  p 動画配信サービス等で配信される時間が不明な場合は、日付さえ合っていれば問題ありません。適当に午後12時などとしてください。
+
+.mb-3
+  h3 VOD作品コードについて
+  p
+    | 動画配信サービスの作品ページのURLに含まれる固有のIDを保存します。
+    | 例えば「<a href="/works/5227">NEW GAME!!</a>」の各配信サービスのIDは以下になります。
+  ul
+    li
+      | バンダイチャンネル: <a href="http://www.b-ch.com/ttl/index.php?ttl_c=5685" target="_blank">5685</a>
+    li
+      | ニコニコチャンネル: <a href="http://ch.nicovideo.jp/ch2632188" target="_blank">ch2632188</a>
+      |  または
+      |  <a href="http://ch.nicovideo.jp/newgame2" target="_blank">newgame2</a>
+    li
+      | dアニメストア: <a href="https://anime.dmkt-sp.jp/animestore/ci_pc?workId=21652" target="_blank">21652</a>
+    li
+      | Amazonビデオ: <a href="https://www.amazon.co.jp/dp/B07418CNBD" target="_blank">B07418CNBD</a>
+    li
+      | Netflix: <a href="https://www.netflix.com/title/80193315" target="_blank">80193315</a>
+    li
+      | Abemaビデオ: <a href="https://abema.tv/video/title/115-61" target="_blank">115-61</a>
+.mb-3
+  h3 VOD作品名について
+  p
+    | 動画配信サービスの作品ページタイトルなどを保存します。
+    | Annictでは1作品だけど動画配信サービスだと2作品に分割されているケースがあるため、それらを識別するために保存します。
+    br
+    | 例えば「<a href="/works/4447">おそ松さん</a>」はAnnict上では1作品ですが、
+    | dアニメストアでは<a href="https://anime.dmkt-sp.jp/animestore/ci_pc?workId=20399" target="_blank">1~24話</a>と
+    | <a href="https://anime.dmkt-sp.jp/animestore/ci_pc?workId=21039" target="_blank">3.5話</a>の2作品に分割されています。
+    | このようなときにVOD作品名に「1~24話」「3.5話」などと入力して識別できるようにします。
+    br
+    | 動画配信サービスのほうも1作品の場合は使用されない項目なので、その場合は入力しなくても問題ありません。
+.mb-3
+  h3 AbemaTVの放送情報について
+  p
+    | AnnictにはAbemaTV関係のチャンネルがいくつか登録されていて、それらは2つに分類することができます。
+    | 1つは「AbemaTV アニメ」や「AbemaTV みんなのアニメ」チャンネルなどの生配信をするチャンネルで、
+    | もう1つは過去作品や生配信終了後の作品がアーカイブされている「Abemaビデオ」チャンネルです。
+  p
+    | そのため、AbemaTVの放送情報を登録するときは以下のようにしてもらえるとありがたいです。
+  ul
+    li 過去作品など配信時間がわからない作品: VOD作品コードと一緒に「Abemaビデオ」チャンネルで登録
+    li 放送中の作品など配信時間がわかる作品: 放送開始日時と一緒に「AbemaTV アニメ」などの生配信用チャンネルで登録し、かつVOD作品コードと一緒に「Abemaビデオ」チャンネルでも登録
+  p
+    | 作品一覧ページなどには「Abemaビデオ」へのリンクを表示し、<a href="/slots">放送予定ページ</a>には「AbemaTV アニメ」などへのリンクを表示するためになります。

@@ -1,0 +1,69 @@
+- title = t "head.title.db.slots.index"
+- set_meta_tags(title: title, reverse: true, prefix: false)
+
+
+.l-topbar.container-fluid.px-3
+  .row.flex-items-xs-between
+    .col-8
+      = render "db/application/topbar_title", parent: @work, child: title
+    - if user_signed_in? && current_user.committer?
+      .col.text-right
+        = link_to new_db_work_slot_path(@work), class: "btn btn-outline-primary" do
+          = icon "edit"
+          = t "resources.slot.new_slots"
+
+= render "db/works/subnav", work: @work
+
+.container-fluid.p-3
+  .c-card
+    .p-3
+      .btn-group
+        = link_to t("noun.all"), db_work_slots_path(@work), class: "btn btn-sm #{params[:channel_id] ? 'btn-outline-secondary' : 'btn-secondary'}"
+        - @work.channels.published.each do |c|
+          = link_to c.name, db_work_slots_path(@work, channel_id: c.id), class: "btn btn-sm #{c.id.to_s == params[:channel_id] ? 'btn-secondary' : 'btn-outline-secondary'}"
+    - if @slots.present?
+      table.table.table-hover
+        thead
+          tr
+            th ID
+            th = t "activerecord.attributes.slot.program_id"
+            th = t "activerecord.attributes.slot.channel_id"
+            th = t "activerecord.attributes.slot.started_at"
+            th = t "activerecord.attributes.slot.number"
+            th = t "activerecord.attributes.slot.episode_id"
+            th = t "activerecord.attributes.slot.rebroadcast"
+            th = t "activerecord.attributes.slot.irregular"
+            th = t "head.title.db.slots.activities"
+            - if policy(@slots).edit?
+              th = t "noun.edit"
+            - if policy(@slots).hide?
+              th = t "noun.state_change"
+            - if policy(@slots).destroy?
+              th = t "noun.delete"
+        tbody
+          - @slots.each do |slot|
+            tr
+              td = slot.id
+              td
+                - if slot.program
+                  = link_to slot.program.decorate.name, edit_db_program_path(slot.program)
+                - else
+                  | -
+              td = slot.channel.name
+              td = display_time(slot.started_at)&.presence || "-"
+              td = slot.number.presence || "-"
+              td = slot.episode&.title_with_number.presence || "-"
+              td = slot.rebroadcast? ? icon("circle", "far") : icon("times")
+              td = slot.irregular? ? icon("circle", "far") : icon("times")
+              td = link_to t("head.title.db.slots.activities"), activities_db_slot_path(slot)
+              - if policy(slot).edit?
+                td
+                  = link_to t("noun.edit"), edit_db_slot_path(slot), class: "btn btn-primary btn-sm"
+              - if policy(slot).hide?
+                td
+                  - if slot.published?
+                    = link_to t("noun.unpublish"), hide_db_slot_path(slot), class: "btn btn-warning btn-sm", data: { method: "patch", confirm: t("messages._common.are_you_sure") }
+              - if policy(slot).destroy?
+                td = link_to t("noun.delete"), db_slot_path(slot), class: "btn btn-danger btn-sm", data: { method: :delete, confirm: t("messages._common.are_you_sure") }
+    - else
+      = render "application/components/empty", text: t("resources.slot.there_are_no_slots")

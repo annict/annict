@@ -1,7 +1,7 @@
 ja:
   activemodel:
     attributes:
-      api/v1/me/programs_index_params:
+      api/v1/me/slots_index_params:
         fields: fields
         filter_ids: filter_ids
         filter_channel_ids: filter_channel_ids
@@ -52,7 +52,7 @@ ja:
         rows: キャスト
       db/episode_rows_form:
         rows: エピソード
-      db/program_rows_form:
+      db/slot_rows_form:
         rows: 放送予定
       db/trailer_rows_form:
         rows: PVs
@@ -60,7 +60,7 @@ ja:
         rows: シリーズ作品
       db/staff_rows_form:
         rows: スタッフ
-      db/program_detail_rows_form:
+      db/program_rows_form:
         rows: 放送情報
     errors:
       forms:
@@ -68,7 +68,7 @@ ja:
           invalid: "は不正です: %{value}が見つかりません"
         db/character_rows_form:
           invalid: "は不正です: %{value}が見つかりません"
-        db/program_rows_form:
+        db/slot_rows_form:
           invalid: "は不正です: %{value}が見つかりません"
           invalid_start_time: "は不正な時刻です"
         db/staff_rows_form:

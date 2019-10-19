@@ -35,7 +35,7 @@ class Channel < ApplicationRecord
 
     event :hide do
       after do
-        program_details.published.each(&:hide!)
+        programs.published.each(&:hide!)
       end
 
       transitions from: :published, to: :hidden
@@ -43,8 +43,8 @@ class Channel < ApplicationRecord
   end
 
   belongs_to :channel_group
-  has_many :program_details, dependent: :destroy
   has_many :programs, dependent: :destroy
+  has_many :slots, dependent: :destroy
 
   scope :with_vod, -> { where(vod: true) }
 
@@ -56,9 +56,9 @@ class Channel < ApplicationRecord
 
     if receivable_channel_ids.present? && work.episodes.present?
       conditions = { channel_id: receivable_channel_ids, episode: work.episodes.first }
-      fastest_program = Program.where(conditions).order(:started_at).first
+      fastest_slot = Slot.where(conditions).order(:started_at).first
 
-      fastest_program.present? ? fastest_program.channel : nil
+      fastest_slot.present? ? fastest_slot.channel : nil
     end
   end
 

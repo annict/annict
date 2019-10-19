@@ -2,24 +2,24 @@
 
 json = {}
 
-json[:programs] = Rails.cache.fetch [I18n.locale, @programs] do
-  @programs.map do |program|
-    Rails.cache.fetch [I18n.locale, program] do
+json[:slots] = Rails.cache.fetch [I18n.locale, @slots] do
+  @slots.map do |slot|
+    Rails.cache.fetch [I18n.locale, slot] do
       {
-        rebroadcast: program.rebroadcast,
-        started_at: program.started_at.in_time_zone("Asia/Tokyo").strftime("%Y-%m-%d %H:%M"),
+        rebroadcast: slot.rebroadcast,
+        started_at: slot.started_at.in_time_zone("Asia/Tokyo").strftime("%Y-%m-%d %H:%M"),
         channel: {
-          name: program.channel.name
+          name: slot.channel.name
         },
         episode: {
-          id: program.episode.id,
-          number: program.episode.number,
-          title: program.episode.title
+          id: slot.episode.id,
+          number: slot.episode.number,
+          title: slot.episode.title
         },
         work: {
-          id: program.work.id,
-          title: program.episode.work.title,
-          image_url: ann_image_url(program.work.work_image, :image, size: "48x", ratio: "3:4")
+          id: slot.work.id,
+          title: slot.episode.work.title,
+          image_url: ann_image_url(slot.work.work_image, :image, size: "48x", ratio: "3:4")
         }
       }
     end

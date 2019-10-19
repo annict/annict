@@ -54,8 +54,8 @@ class DbActivity < ApplicationRecord
       "casts.update",
       "episodes.create",
       "episodes.update",
-      "programs.create",
-      "programs.update",
+      "slots.create",
+      "slots.update",
       "staffs.create",
       "staffs.update"
     ].include?(action)

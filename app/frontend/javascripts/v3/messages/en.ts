@@ -124,7 +124,7 @@ export default {
     planToWatch: 'Plan to Watch',
     prevSeason: 'Previous Season',
     profile: 'Profile',
-    programs: 'Programs',
+    slots: 'Slots',
     pv: 'PV',
     rating: 'Rating',
     ratingsCount: 'Ratings',

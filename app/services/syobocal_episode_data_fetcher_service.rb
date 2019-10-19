@@ -12,9 +12,9 @@ class SyobocalEpisodeDataFetcherService
       where(title: [nil, ""]).
       where.not(raw_number: nil).
       after(now - 7.days).
-      joins(:work, :programs).
+      joins(:work, :slots).
       merge(Work.where.not(sc_tid: nil)).
-      merge(Program.where.not(program_detail_id: nil)).
+      merge(Slot.where.not(program_id: nil)).
       distinct
     works = Work.published.where(id: episodes.pluck(:work_id).uniq)
     titles = client.list_titles(title_id: works.pluck(:sc_tid))

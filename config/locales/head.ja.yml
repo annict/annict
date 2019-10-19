@@ -88,7 +88,7 @@ ja:
         people:
           activities: アクティビティ - %{name}
           index: 人物
-        programs:
+        slots:
           activities: アクティビティ
           edit: 放送予定編集
           index: 放送予定
@@ -112,7 +112,7 @@ ja:
           edit: スタッフ編集
           index: スタッフ
           new: スタッフ登録
-        program_details:
+        programs:
           activities: アクティビティ
           edit: 放送情報編集
           index: 放送情報
@@ -192,7 +192,7 @@ ja:
         show: "%{name}"
       profiles:
         show: プロフィール
-      programs:
+      slots:
         index: 放送予定
       providers:
         index: サービス連携

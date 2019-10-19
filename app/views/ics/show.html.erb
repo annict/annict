@@ -8,7 +8,7 @@ X-WR-TIMEZONE:<%= @user.time_zone %>
 BEGIN:VTIMEZONE
 TZID:<%= @user.time_zone %>
 END:VTIMEZONE
-<% @programs.each do |p| %>
+<% @slots.each do |p| %>
 BEGIN:VEVENT
 DTSTART:<%= p.started_at.strftime("%Y%m%d\T%H%M%S\Z") %>
 DTEND:<%= (p.started_at + 30.minutes).strftime("%Y%m%d\T%H%M%S\Z") %>

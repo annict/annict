@@ -26,7 +26,7 @@ class ChannelWorksController < ApplicationController
       works.
       wanna_watch_and_watching.
       published.
-      program_registered.
+      slot_registered.
       includes(:episodes, :work_image).
       order_by_season(:desc)
   end

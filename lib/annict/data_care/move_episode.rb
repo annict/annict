@@ -13,8 +13,8 @@ module Annict
         move_records!
         puts "Running move_acticities! ..."
         move_acticities!
-        puts "Running move_programs! ..."
-        move_programs!
+        puts "Running move_slots! ..."
+        move_slots!
         puts "Running move_episode! ..."
         move_episode!
       end
@@ -33,8 +33,8 @@ module Annict
         episode.activities.update_all(work_id: @work_id)
       end
 
-      def move_programs!
-        episode.programs.update_all(work_id: @work_id)
+      def move_slots!
+        episode.slots.update_all(work_id: @work_id)
       end
 
       def move_episode!

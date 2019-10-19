@@ -96,8 +96,8 @@ crumb :popular_works do
   parent :root
 end
 
-crumb :programs_index do
-  link t("head.title.programs.index")
+crumb :slots_index do
+  link t("head.title.slots.index")
   parent :root
 end
 

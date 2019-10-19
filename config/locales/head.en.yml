@@ -90,11 +90,11 @@ en:
           index: People
         person_fans:
           index: Fans of %{person_name}
-        programs:
+        slots:
           activities: Activities
-          edit: Edit Program
-          index: Programs
-          new: New Programs
+          edit: Edit Slot
+          index: Slots
+          new: New Slots
         trailers:
           activities: Activities
           edit: Edit PV
@@ -114,11 +114,11 @@ en:
           edit: Edit Staff
           index: Staff
           new: Create Staff
-        program_details:
+        programs:
           activities: Activities
-          edit: Edit Program Detail
-          index: Program Details
-          new: New Program Detail
+          edit: Edit Slot Detail
+          index: Slot Details
+          new: New Slot Detail
         vod_titles:
           index: VOD Titles
         work_images:
@@ -192,8 +192,8 @@ en:
         show: "%{name}"
       profiles:
         show: Profile
-      programs:
-        index: Program List
+      slots:
+        index: Slot List
       providers:
         index: Connections
       records:

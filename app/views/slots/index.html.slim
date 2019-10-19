@@ -1,0 +1,19 @@
+- title = t "head.title.slots.index"
+- set_meta_tags(title: title, reverse: true, prefix: false)
+
+- breadcrumb :slots_index
+
+.p-application__content.my-3
+  .container
+    = render "application/components/breadcrumb"
+
+    .row.justify-content-center
+      .col-7
+        c-slot-list
+          .c-loading
+            .c-loading__core Loading...
+
+= render "application/components/footer"
+
+- content_for :js_templates do
+  = render "application/js_templates/slot_list"

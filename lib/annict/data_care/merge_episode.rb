@@ -16,8 +16,8 @@ module Annict
           merge_records!
           puts "Running merge_acticities! ..."
           merge_acticities!
-          puts "Running merge_programs! ..."
-          merge_programs!
+          puts "Running merge_slots! ..."
+          merge_slots!
           puts "Running hide_episode! ..."
           hide_episode!
         end
@@ -50,8 +50,8 @@ module Annict
         episode.activities.update_all(recipient_id: base_episode_id)
       end
 
-      def merge_programs!
-        episode.programs.update_all(episode_id: base_episode_id)
+      def merge_slots!
+        episode.slots.update_all(episode_id: base_episode_id)
       end
 
       def hide_episode!

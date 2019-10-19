@@ -174,8 +174,8 @@ class User < ApplicationRecord
     @episodes ||= UserEpisodesQuery.new(self)
   end
 
-  def programs
-    @programs ||= UserProgramsQuery.new(self)
+  def slots
+    @slots ||= UserSlotsQuery.new(self)
   end
 
   def tips

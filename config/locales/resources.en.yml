@@ -70,13 +70,13 @@ en:
       unpublished: Person unpublished
       updated: Person updated
       person_list: Person List
-    program:
-      created: Program created
-      new_programs: New programs
-      program_list: Program list
+    slot:
+      created: Slot created
+      new_slots: New slots
+      slot_list: Slot list
       started_at_eg: e.g. 2015-04-01 23:00
-      there_are_no_programs: There are no programs
-      updated: Program updated
+      there_are_no_slots: There are no slots
+      updated: Slot updated
     season:
       yearly:
         all: "%{year}"
@@ -100,8 +100,8 @@ en:
       there_are_no_staffs: There are no staff
       unpublished: Staff unpublished
       updated: Staff updated
-    program_detail:
-      new_program_details: New Link
+    program:
+      new_programs: New Link
     user:
       is_wrong: is wrong
     userland_project:

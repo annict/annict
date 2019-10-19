@@ -1742,10 +1742,10 @@ CREATE TABLE public.profiles (
 
 
 --
--- Name: program_details; Type: TABLE; Schema: public; Owner: -
+-- Name: programs; Type: TABLE; Schema: public; Owner: -
 --
 
-CREATE TABLE public.program_details (
+CREATE TABLE public.programs (
     id bigint NOT NULL,
     channel_id integer NOT NULL,
     work_id integer NOT NULL,
@@ -1762,25 +1762,6 @@ CREATE TABLE public.program_details (
 
 
 --
--- Name: program_details_id_seq; Type: SEQUENCE; Schema: public; Owner: -
---
-
-CREATE SEQUENCE public.program_details_id_seq
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
-
-
---
--- Name: program_details_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
---
-
-ALTER SEQUENCE public.program_details_id_seq OWNED BY public.program_details.id;
-
-
---
 -- Name: programs_id_seq; Type: SEQUENCE; Schema: public; Owner: -
 --
 
@@ -1793,25 +1774,10 @@ CREATE SEQUENCE public.programs_id_seq
 
 
 --
--- Name: programs; Type: TABLE; Schema: public; Owner: -
+-- Name: programs_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
 --
 
-CREATE TABLE public.programs (
-    id integer DEFAULT nextval('public.programs_id_seq'::regclass) NOT NULL,
-    channel_id integer NOT NULL,
-    episode_id integer,
-    work_id integer NOT NULL,
-    started_at timestamp with time zone NOT NULL,
-    sc_last_update timestamp with time zone,
-    created_at timestamp with time zone,
-    updated_at timestamp with time zone,
-    sc_pid integer,
-    rebroadcast boolean DEFAULT false NOT NULL,
-    aasm_state character varying DEFAULT 'published'::character varying NOT NULL,
-    program_detail_id integer,
-    number integer,
-    irregular boolean DEFAULT false NOT NULL
-);
+ALTER SEQUENCE public.programs_id_seq OWNED BY public.programs.id;
 
 
 --
@@ -2097,7 +2063,7 @@ CREATE TABLE public.settings (
     updated_at timestamp without time zone NOT NULL,
     share_record_to_twitter boolean DEFAULT false,
     share_record_to_facebook boolean DEFAULT false,
-    programs_sort_type character varying DEFAULT ''::character varying NOT NULL,
+    slots_sort_type character varying DEFAULT ''::character varying NOT NULL,
     display_option_work_list character varying DEFAULT 'list_detailed'::character varying NOT NULL,
     display_option_user_work_list character varying DEFAULT 'grid_detailed'::character varying NOT NULL,
     records_sort_type character varying DEFAULT 'created_at_desc'::character varying NOT NULL,
@@ -2128,6 +2094,40 @@ CREATE SEQUENCE public.settings_id_seq
 --
 
 ALTER SEQUENCE public.settings_id_seq OWNED BY public.settings.id;
+
+
+--
+-- Name: slots_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE public.slots_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: slots; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.slots (
+    id integer DEFAULT nextval('public.slots_id_seq'::regclass) NOT NULL,
+    channel_id integer NOT NULL,
+    episode_id integer,
+    work_id integer NOT NULL,
+    started_at timestamp with time zone NOT NULL,
+    sc_last_update timestamp with time zone,
+    created_at timestamp with time zone,
+    updated_at timestamp with time zone,
+    sc_pid integer,
+    rebroadcast boolean DEFAULT false NOT NULL,
+    aasm_state character varying DEFAULT 'published'::character varying NOT NULL,
+    program_detail_id integer,
+    number integer,
+    irregular boolean DEFAULT false NOT NULL
+);
 
 
 --
@@ -3166,10 +3166,10 @@ ALTER TABLE ONLY public.prefectures ALTER COLUMN id SET DEFAULT nextval('public.
 
 
 --
--- Name: program_details id; Type: DEFAULT; Schema: public; Owner: -
+-- Name: programs id; Type: DEFAULT; Schema: public; Owner: -
 --
 
-ALTER TABLE ONLY public.program_details ALTER COLUMN id SET DEFAULT nextval('public.program_details_id_seq'::regclass);
+ALTER TABLE ONLY public.programs ALTER COLUMN id SET DEFAULT nextval('public.programs_id_seq'::regclass);
 
 
 --
@@ -3760,14 +3760,6 @@ ALTER TABLE ONLY public.profiles
 
 
 --
--- Name: program_details program_details_pkey; Type: CONSTRAINT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public.program_details
-    ADD CONSTRAINT program_details_pkey PRIMARY KEY (id);
-
-
---
 -- Name: programs programs_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -3869,6 +3861,14 @@ ALTER TABLE ONLY public.sessions
 
 ALTER TABLE ONLY public.settings
     ADD CONSTRAINT settings_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: slots slots_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.slots
+    ADD CONSTRAINT slots_pkey PRIMARY KEY (id);
 
 
 --
@@ -4983,59 +4983,24 @@ CREATE UNIQUE INDEX index_prefectures_on_name ON public.prefectures USING btree 
 
 
 --
--- Name: index_program_details_on_channel_id; Type: INDEX; Schema: public; Owner: -
+-- Name: index_programs_on_channel_id; Type: INDEX; Schema: public; Owner: -
 --
 
-CREATE INDEX index_program_details_on_channel_id ON public.program_details USING btree (channel_id);
-
-
---
--- Name: index_program_details_on_vod_title_code; Type: INDEX; Schema: public; Owner: -
---
-
-CREATE INDEX index_program_details_on_vod_title_code ON public.program_details USING btree (vod_title_code);
+CREATE INDEX index_programs_on_channel_id ON public.programs USING btree (channel_id);
 
 
 --
--- Name: index_program_details_on_work_id; Type: INDEX; Schema: public; Owner: -
+-- Name: index_programs_on_vod_title_code; Type: INDEX; Schema: public; Owner: -
 --
 
-CREATE INDEX index_program_details_on_work_id ON public.program_details USING btree (work_id);
-
-
---
--- Name: index_programs_on_aasm_state; Type: INDEX; Schema: public; Owner: -
---
-
-CREATE INDEX index_programs_on_aasm_state ON public.programs USING btree (aasm_state);
+CREATE INDEX index_programs_on_vod_title_code ON public.programs USING btree (vod_title_code);
 
 
 --
--- Name: index_programs_on_program_detail_id; Type: INDEX; Schema: public; Owner: -
+-- Name: index_programs_on_work_id; Type: INDEX; Schema: public; Owner: -
 --
 
-CREATE INDEX index_programs_on_program_detail_id ON public.programs USING btree (program_detail_id);
-
-
---
--- Name: index_programs_on_program_detail_id_and_episode_id; Type: INDEX; Schema: public; Owner: -
---
-
-CREATE UNIQUE INDEX index_programs_on_program_detail_id_and_episode_id ON public.programs USING btree (program_detail_id, episode_id);
-
-
---
--- Name: index_programs_on_program_detail_id_and_number; Type: INDEX; Schema: public; Owner: -
---
-
-CREATE UNIQUE INDEX index_programs_on_program_detail_id_and_number ON public.programs USING btree (program_detail_id, number);
-
-
---
--- Name: index_programs_on_sc_pid; Type: INDEX; Schema: public; Owner: -
---
-
-CREATE UNIQUE INDEX index_programs_on_sc_pid ON public.programs USING btree (sc_pid);
+CREATE INDEX index_programs_on_work_id ON public.programs USING btree (work_id);
 
 
 --
@@ -5141,6 +5106,41 @@ CREATE INDEX index_sessions_on_updated_at ON public.sessions USING btree (update
 --
 
 CREATE INDEX index_settings_on_user_id ON public.settings USING btree (user_id);
+
+
+--
+-- Name: index_slots_on_aasm_state; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_slots_on_aasm_state ON public.slots USING btree (aasm_state);
+
+
+--
+-- Name: index_slots_on_program_detail_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_slots_on_program_detail_id ON public.slots USING btree (program_detail_id);
+
+
+--
+-- Name: index_slots_on_program_detail_id_and_episode_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE UNIQUE INDEX index_slots_on_program_detail_id_and_episode_id ON public.slots USING btree (program_detail_id, episode_id);
+
+
+--
+-- Name: index_slots_on_program_detail_id_and_number; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE UNIQUE INDEX index_slots_on_program_detail_id_and_number ON public.slots USING btree (program_detail_id, number);
+
+
+--
+-- Name: index_slots_on_sc_pid; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE UNIQUE INDEX index_slots_on_sc_pid ON public.slots USING btree (sc_pid);
 
 
 --
@@ -5595,21 +5595,21 @@ CREATE INDEX profiles_user_id_idx ON public.profiles USING btree (user_id);
 -- Name: programs_channel_id_idx; Type: INDEX; Schema: public; Owner: -
 --
 
-CREATE INDEX programs_channel_id_idx ON public.programs USING btree (channel_id);
+CREATE INDEX programs_channel_id_idx ON public.slots USING btree (channel_id);
 
 
 --
 -- Name: programs_episode_id_idx; Type: INDEX; Schema: public; Owner: -
 --
 
-CREATE INDEX programs_episode_id_idx ON public.programs USING btree (episode_id);
+CREATE INDEX programs_episode_id_idx ON public.slots USING btree (episode_id);
 
 
 --
 -- Name: programs_work_id_idx; Type: INDEX; Schema: public; Owner: -
 --
 
-CREATE INDEX programs_work_id_idx ON public.programs USING btree (work_id);
+CREATE INDEX programs_work_id_idx ON public.slots USING btree (work_id);
 
 
 --
@@ -5983,10 +5983,10 @@ ALTER TABLE ONLY public.activities
 
 
 --
--- Name: program_details fk_rails_513ea7b8c6; Type: FK CONSTRAINT; Schema: public; Owner: -
+-- Name: programs fk_rails_513ea7b8c6; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
-ALTER TABLE ONLY public.program_details
+ALTER TABLE ONLY public.programs
     ADD CONSTRAINT fk_rails_513ea7b8c6 FOREIGN KEY (work_id) REFERENCES public.works(id);
 
 
@@ -6431,11 +6431,11 @@ ALTER TABLE ONLY public.episode_items
 
 
 --
--- Name: programs fk_rails_e99f16a883; Type: FK CONSTRAINT; Schema: public; Owner: -
+-- Name: slots fk_rails_e99f16a883; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
-ALTER TABLE ONLY public.programs
-    ADD CONSTRAINT fk_rails_e99f16a883 FOREIGN KEY (program_detail_id) REFERENCES public.program_details(id);
+ALTER TABLE ONLY public.slots
+    ADD CONSTRAINT fk_rails_e99f16a883 FOREIGN KEY (program_detail_id) REFERENCES public.programs(id);
 
 
 --
@@ -6463,10 +6463,10 @@ ALTER TABLE ONLY public.series_works
 
 
 --
--- Name: program_details fk_rails_f62ce4530d; Type: FK CONSTRAINT; Schema: public; Owner: -
+-- Name: programs fk_rails_f62ce4530d; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
-ALTER TABLE ONLY public.program_details
+ALTER TABLE ONLY public.programs
     ADD CONSTRAINT fk_rails_f62ce4530d FOREIGN KEY (channel_id) REFERENCES public.channels(id);
 
 
@@ -6551,26 +6551,26 @@ ALTER TABLE ONLY public.profiles
 
 
 --
--- Name: programs programs_channel_id_fk; Type: FK CONSTRAINT; Schema: public; Owner: -
+-- Name: slots programs_channel_id_fk; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
-ALTER TABLE ONLY public.programs
+ALTER TABLE ONLY public.slots
     ADD CONSTRAINT programs_channel_id_fk FOREIGN KEY (channel_id) REFERENCES public.channels(id) ON DELETE CASCADE DEFERRABLE INITIALLY DEFERRED;
 
 
 --
--- Name: programs programs_episode_id_fk; Type: FK CONSTRAINT; Schema: public; Owner: -
+-- Name: slots programs_episode_id_fk; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
-ALTER TABLE ONLY public.programs
+ALTER TABLE ONLY public.slots
     ADD CONSTRAINT programs_episode_id_fk FOREIGN KEY (episode_id) REFERENCES public.episodes(id) ON DELETE CASCADE DEFERRABLE INITIALLY DEFERRED;
 
 
 --
--- Name: programs programs_work_id_fk; Type: FK CONSTRAINT; Schema: public; Owner: -
+-- Name: slots programs_work_id_fk; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
-ALTER TABLE ONLY public.programs
+ALTER TABLE ONLY public.slots
     ADD CONSTRAINT programs_work_id_fk FOREIGN KEY (work_id) REFERENCES public.works(id) ON DELETE CASCADE DEFERRABLE INITIALLY DEFERRED;
 
 

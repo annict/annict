@@ -10,7 +10,7 @@
 #  updated_at                    :datetime         not null
 #  share_record_to_twitter       :boolean          default(FALSE)
 #  share_record_to_facebook      :boolean          default(FALSE)
-#  programs_sort_type            :string           default(NULL), not null
+#  slots_sort_type            :string           default(NULL), not null
 #  display_option_work_list      :string           default("list_detailed"), not null
 #  display_option_user_work_list :string           default("grid_detailed"), not null
 #  records_sort_type             :string           default("created_at_desc"), not null
@@ -32,7 +32,7 @@ class Setting < ApplicationRecord
 
   belongs_to :user
 
-  enumerize :programs_sort_type,
+  enumerize :slots_sort_type,
     in: %i(started_at_asc started_at_desc),
     default: :started_at_desc
 

@@ -118,16 +118,16 @@ ja:
         description: ヒトコト
         name: 名前
         url: URL
-      program:
+      slot:
         channel_id: チャンネル
         episode_id: エピソード
         irregular: イレギュラー回
         number: 回数
-        program_detail_id: 放送情報
+        program_id: 放送情報
         rebroadcast: 再放送
         started_at: 放送日時
         time_zone: タイムゾーン
-      program_detail:
+      program:
         channel_id: チャンネル
         minimum_episode_generatable_number: エピソード生成可能最低回数
         rebroadcast: 再放送
@@ -253,7 +253,7 @@ ja:
       person:
         one: 人物
         other: 人物
-      program:
+      slot:
         one: 放送予定
         other: 放送予定
       trailer:

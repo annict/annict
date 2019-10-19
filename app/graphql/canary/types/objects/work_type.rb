@@ -182,7 +182,7 @@ module Canary
 
         def programs(order_by: nil)
           SearchProgramsRepository.new(
-            object.program_details,
+            object.programs,
             order_by: order_by
           ).call
         end

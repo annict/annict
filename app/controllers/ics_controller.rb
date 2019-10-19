@@ -5,8 +5,8 @@ class IcsController < ApplicationController
     @user = User.published.find_by!(username: params[:username])
 
     I18n.with_locale(@user.locale) do
-      @programs = @user.
-        programs.
+      @slots = @user.
+        slots.
         unwatched_all.
         work_published.
         episode_published.

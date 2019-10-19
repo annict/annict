@@ -124,7 +124,7 @@ export default {
     planToWatch: '見たいアニメ',
     prevSeason: '前期のアニメ',
     profile: 'プロフィール',
-    programs: '放送予定',
+    slots: '放送予定',
     pv: 'PV',
     rating: '評価',
     ratingsCount: '評価数',

@@ -6,13 +6,13 @@
     = active_link_to db_work_episodes_path(work), class: "c-subnav__link", class_active: "c-subnav__link--active", active: params[:controller]  == "db/episodes" do
       .c-subnav__item
         = Episode.model_name.human(count: 2)
-  = active_link_to db_work_program_details_path(work), class: "c-subnav__link", class_active: "c-subnav__link--active", active: params[:controller]  == "db/program_details" do
+  = active_link_to db_work_programs_path(work), class: "c-subnav__link", class_active: "c-subnav__link--active", active: params[:controller]  == "db/programs" do
       .c-subnav__item
-        = t "head.title.db.program_details.index"
+        = t "head.title.db.programs.index"
   - unless work.no_episodes?
-    = active_link_to db_work_programs_path(work), class: "c-subnav__link", class_active: "c-subnav__link--active", active: params[:controller]  == "db/programs" do
+    = active_link_to db_work_slots_path(work), class: "c-subnav__link", class_active: "c-subnav__link--active", active: params[:controller]  == "db/slots" do
       .c-subnav__item
-        = Program.model_name.human(count: 2)
+        = Slot.model_name.human(count: 2)
   = active_link_to db_work_casts_path(work), class: "c-subnav__link", class_active: "c-subnav__link--active", active: params[:controller]  == "db/casts" do
     .c-subnav__item
       = Cast.model_name.human(count: 2)

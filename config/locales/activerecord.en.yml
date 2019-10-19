@@ -119,16 +119,16 @@ en:
         description: Bio
         name: Name
         url: URL
-      program:
+      slot:
         channel_id: Channel
         episode_id: Episode
         irregular: Irregular
         number: Number
-        program_detail_id: Program Detail
+        program_id: Slot Detail
         rebroadcast: Rebroadcast
         started_at: Started at
         time_zone: Timezone
-      program_detail:
+      program:
         channel_id: Channel
         minimum_episode_generatable_number: Minimum Episode Generatable Number
         rebroadcast: Rebroadcast
@@ -254,9 +254,9 @@ en:
       person:
         one: Person
         other: People
-      program:
-        one: Program
-        other: Programs
+      slot:
+        one: Slot
+        other: Slots
       trailer:
         one: Trailer
         other: Trailers

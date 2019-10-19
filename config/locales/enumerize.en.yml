@@ -23,7 +23,7 @@ en:
         female: Female
         male: Male
     setting:
-      programs_sort_type:
+      slots_sort_type:
         started_at_asc: Older
         started_at_desc: Newer
       records_sort_type:
@@ -61,7 +61,7 @@ en:
         watched: Completed
         on_hold: On Hold
         stop_watching: Dropped
-    program_detail:
+    program:
       locale:
         en: English
         ja: Japanese

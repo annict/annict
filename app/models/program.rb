@@ -3,39 +3,31 @@
 #
 # Table name: programs
 #
-#  id                :integer          not null, primary key
-#  channel_id        :integer          not null
-#  episode_id        :integer
-#  work_id           :integer          not null
-#  started_at        :datetime         not null
-#  sc_last_update    :datetime
-#  created_at        :datetime
-#  updated_at        :datetime
-#  sc_pid            :integer
-#  rebroadcast       :boolean          default(FALSE), not null
-#  aasm_state        :string           default("published"), not null
-#  program_detail_id :integer
-#  number            :integer
-#  irregular         :boolean          default(FALSE), not null
+#  id                                 :bigint(8)        not null, primary key
+#  channel_id                         :integer          not null
+#  work_id                            :integer          not null
+#  url                                :string
+#  started_at                         :datetime
+#  aasm_state                         :string           default("published"), not null
+#  created_at                         :datetime         not null
+#  updated_at                         :datetime         not null
+#  vod_title_code                     :string           default(""), not null
+#  vod_title_name                     :string           default(""), not null
+#  rebroadcast                        :boolean          default(FALSE), not null
+#  minimum_episode_generatable_number :integer          default(1), not null
 #
 # Indexes
 #
-#  index_programs_on_aasm_state                        (aasm_state)
-#  index_programs_on_program_detail_id                 (program_detail_id)
-#  index_programs_on_program_detail_id_and_episode_id  (program_detail_id,episode_id) UNIQUE
-#  index_programs_on_program_detail_id_and_number      (program_detail_id,number) UNIQUE
-#  index_programs_on_program_detail_id_and_started_at  (program_detail_id,started_at) UNIQUE
-#  index_programs_on_sc_pid                            (sc_pid) UNIQUE
-#  programs_channel_id_idx                             (channel_id)
-#  programs_episode_id_idx                             (episode_id)
-#  programs_work_id_idx                                (work_id)
+#  index_programs_on_channel_id      (channel_id)
+#  index_programs_on_vod_title_code  (vod_title_code)
+#  index_programs_on_work_id         (work_id)
 #
 
 class Program < ApplicationRecord
   include AASM
   include DbActivityMethods
 
-  DIFF_FIELDS = %i(channel_id episode_id started_at rebroadcast).freeze
+  DIFF_FIELDS = %i(channel_id work_id url started_at).freeze
 
   aasm do
     state :published, initial: true
@@ -46,37 +38,19 @@ class Program < ApplicationRecord
     end
   end
 
-  attr_accessor :time_zone, :is_started_at_calced
+  attr_accessor :time_zone
+
+  validates :url, url: { allow_blank: true }
 
   belongs_to :channel
-  belongs_to :episode, optional: true
-  belongs_to :program_detail, optional: true
-  belongs_to :work
+  belongs_to :work, touch: true
   has_many :db_activities, as: :trackable, dependent: :destroy
   has_many :db_comments, as: :resource, dependent: :destroy
+  has_many :slots, dependent: :destroy
 
-  validates :channel_id, presence: true
-  validates :started_at, presence: true, uniqueness: { scope: :program_detail_id }
+  scope :in_vod, -> { joins(:channel).where(channels: { vod: true }) }
 
-  scope :episode_published, -> { joins(:episode).merge(Episode.published) }
-  scope :work_published, -> { joins(:work).merge(Work.published) }
-
-  before_validation :calc_for_timezone
-
-  def broadcasted?(time = Time.now.in_time_zone("Asia/Tokyo"))
-    time > started_at.in_time_zone("Asia/Tokyo")
-  end
-
-  def calc_for_timezone
-    return if time_zone.blank?
-    return if is_started_at_calced
-
-    started_at = ActiveSupport::TimeZone.new(time_zone).local_to_utc(self.started_at)
-
-    self.started_at = started_at
-    self.sc_last_update = Time.zone.now
-    self.is_started_at_calced = true
-  end
+  before_save :calc_for_timezone
 
   def to_diffable_hash
     data = self.class::DIFF_FIELDS.each_with_object({}) do |field, hash|
@@ -87,16 +61,34 @@ class Program < ApplicationRecord
     data.delete_if { |_, v| v.blank? }
   end
 
-  def state
-    now = Time.now.in_time_zone("Asia/Tokyo")
-    start = started_at.in_time_zone("Asia/Tokyo")
+  def support_en?
+    false
+  end
 
-    if now > start
-      return :broadcasting if now.between?(start, start + work.duration.minutes)
-      return :broadcasted
+  def vod_title_url
+    case channel_id
+    when Channel::AMAZON_VIDEO_ID
+      "https://www.amazon.co.jp/dp/#{vod_title_code}"
+    when Channel::BANDAI_CHANNEL_ID
+      "http://www.b-ch.com/ttl/index.php?ttl_c=#{vod_title_code}"
+    when Channel::D_ANIME_STORE_ID
+      "https://anime.dmkt-sp.jp/animestore/ci_pc?workId=#{vod_title_code}"
+    when Channel::NICONICO_CHANNEL_ID
+      "http://ch.nicovideo.jp/#{vod_title_code}"
+    when Channel::NETFLIX_ID
+      "https://www.netflix.com/title/#{vod_title_code}"
+    when Channel::ABEMA_VIDEO_ID
+      "https://abema.tv/video/title/#{vod_title_code}"
     else
-      return :tonight if start.between?(now, now.beginning_of_day + 1.day + 5.hours)
-      return :unbroadcast
+      ""
     end
+  end
+
+  private
+
+  def calc_for_timezone
+    return if time_zone.blank?
+    started_at = ActiveSupport::TimeZone.new(time_zone).local_to_utc(self.started_at)
+    self.started_at = started_at
   end
 end

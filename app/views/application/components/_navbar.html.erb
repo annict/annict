@@ -7,8 +7,8 @@
     <ul class="navbar-nav mt-2 mt-md-0 mr-md-2">
       <% if user_signed_in? %>
         <li class="nav-item">
-          <a class="nav-link text-dark" href="/programs">
-            <%= t("head.title.programs.index") %>
+          <a class="nav-link text-dark" href="/slots">
+            <%= t("head.title.slots.index") %>
           </a>
         </li>
       <% end %>
@@ -145,10 +145,10 @@
       </li>
       <% if user_signed_in? %>
         <li class="nav-item text-center col px-0">
-          <a href="/programs" class="text-dark">
+          <a href="/slots" class="text-dark">
             <i class="far fa-calendar"></i>
             <div class="small mt-1">
-              <%= t("noun.programs") %>
+              <%= t("noun.slots") %>
             </div>
           </a>
         </li>

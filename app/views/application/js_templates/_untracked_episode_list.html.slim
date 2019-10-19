@@ -15,15 +15,15 @@ script#t-untracked-episode-list type="x-template"
                   a.d-block.mb-1 :href='"/works/" + status.work.id + "/episodes/" + status.next_episode.id'
                     | {{ status.next_episode.number }}
                     span.ml-2 v-if="status.next_episode.title" {{ status.next_episode.title }}
-                  .small.mb-1 v-if="status.program"
+                  .small.mb-1 v-if="status.slot"
                     span.badge.badge-info.mr-1
-                      | {{ status.program.channel.name }}
-                    span.badge.badge-success :class='{ "mr-2": !status.program.rebroadcast, "mr-1": status.program.rebroadcast }'
-                      | {{ status.program.state_text }}
-                    span.badge.badge-secondary.mr-2 v-if="status.program.rebroadcast"
+                      | {{ status.slot.channel.name }}
+                    span.badge.badge-success :class='{ "mr-2": !status.slot.rebroadcast, "mr-1": status.slot.rebroadcast }'
+                      | {{ status.slot.state_text }}
+                    span.badge.badge-secondary.mr-2 v-if="status.slot.rebroadcast"
                       = t "noun.rebroadcast"
                     span.mr-2
-                      | {{ status.program.started_at }}
+                      | {{ status.slot.started_at }}
                   c-episode-progress :episodes-count="status.work.episodes_count" :watched-episodes-count="status.work.watched_episodes_count"
                   .u-very-small.u-fake-link.text-right @click="skipEpisode(status)"
                     = icon "angle-right", class: "mr-1"

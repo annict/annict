@@ -15,24 +15,17 @@
 = render "db/works/subnav", work: @work
 
 .container-fluid.p-3
-  .c-card
-    .p-3
-      .btn-group
-        = link_to t("noun.all"), db_work_programs_path(@work), class: "btn btn-sm #{params[:channel_id] ? 'btn-outline-secondary' : 'btn-secondary'}"
-        - @work.channels.published.each do |c|
-          = link_to c.name, db_work_programs_path(@work, channel_id: c.id), class: "btn btn-sm #{c.id.to_s == params[:channel_id] ? 'btn-secondary' : 'btn-outline-secondary'}"
-    - if @programs.present?
+  - if @programs.present?
+    .c-card
       table.table.table-hover
         thead
           tr
             th ID
-            th = t "activerecord.attributes.program.program_detail_id"
             th = t "activerecord.attributes.program.channel_id"
             th = t "activerecord.attributes.program.started_at"
-            th = t "activerecord.attributes.program.number"
-            th = t "activerecord.attributes.program.episode_id"
             th = t "activerecord.attributes.program.rebroadcast"
-            th = t "activerecord.attributes.program.irregular"
+            th = t "activerecord.attributes.program.vod_title_code"
+            th = t "activerecord.attributes.program.vod_title_name"
             th = t "head.title.db.programs.activities"
             - if policy(@programs).edit?
               th = t "noun.edit"
@@ -44,17 +37,19 @@
           - @programs.each do |program|
             tr
               td = program.id
-              td
-                - if program.program_detail
-                  = link_to program.program_detail.decorate.name, edit_db_program_detail_path(program.program_detail)
-                - else
-                  | -
               td = program.channel.name
               td = display_time(program.started_at)&.presence || "-"
-              td = program.number.presence || "-"
-              td = program.episode&.title_with_number.presence || "-"
               td = program.rebroadcast? ? icon("circle", "far") : icon("times")
-              td = program.irregular? ? icon("circle", "far") : icon("times")
+              td
+                - if program.vod_title_code.present?
+                  = link_to program.vod_title_code, vod_title_url(program.channel_id, program.vod_title_code), target: "_blank"
+                - else
+                  | -
+              td
+                - if program.vod_title_name.present?
+                  = program.vod_title_name
+                - else
+                  | -
               td = link_to t("head.title.db.programs.activities"), activities_db_program_path(program)
               - if policy(program).edit?
                 td
@@ -65,5 +60,6 @@
                     = link_to t("noun.unpublish"), hide_db_program_path(program), class: "btn btn-warning btn-sm", data: { method: "patch", confirm: t("messages._common.are_you_sure") }
               - if policy(program).destroy?
                 td = link_to t("noun.delete"), db_program_path(program), class: "btn btn-danger btn-sm", data: { method: :delete, confirm: t("messages._common.are_you_sure") }
-    - else
-      = render "application/components/empty", text: t("resources.program.there_are_no_programs")
+
+  - else
+    = render "application/components/empty", text: t("messages._empty.no_programs")

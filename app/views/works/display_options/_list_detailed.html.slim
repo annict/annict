@@ -71,10 +71,10 @@
               = "#{staff.decorate.role_name}: "
               = staff.local_name_with_old_link
 
-      - program_details = @program_details_data.select { |pdd| pdd[:work_id] == work.id }.first[:program_details].sort_by { |s| s.channel_id }
-      - program_details = program_details.select { |pd| locale_ja? ? true : pd.support_en? }
-      - if program_details.present?
+      - programs = @programs_data.select { |pdd| pdd[:work_id] == work.id }.first[:programs].sort_by { |s| s.channel_id }
+      - programs = programs.select { |pd| locale_ja? ? true : pd.support_en? }
+      - if programs.present?
         .font-weight-bold.mb-1 = t "noun.vods"
-        = render "works/vod_list", channels: @channels, slice: 3, program_details: program_details
+        = render "works/vod_list", channels: @channels, slice: 3, programs: programs
 
       c-work-friends :work-id="#{work.id}"
