@@ -35,7 +35,7 @@ module Types
       end
 
       def modified
-        object.modify_comment?
+        object.modify_body?
       end
     end
   end

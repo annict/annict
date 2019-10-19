@@ -29,7 +29,7 @@
         add library_path(u.username, k), priority: 0.8
       end
 
-      u.episode_records.published.with_comment.find_each do |er|
+      u.episode_records.published.with_body.find_each do |er|
         add record_path(u.username, er.record), priority: 0.8
       end
 
@@ -64,7 +64,7 @@
       add work_path(w.id), priority: 1.0, lastmod: w.updated_at
 
       w.episodes.published.find_each do |e|
-        add work_episode_path(w.id, e.id), priority: 1.0 if e.episode_records.published.with_comment.present?
+        add work_episode_path(w.id, e.id), priority: 1.0 if e.episode_records.published.with_body.present?
       end
     end
   end

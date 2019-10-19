@@ -33,7 +33,7 @@ namespace :counter_cache do
 
   task refresh_record_comments_count: :environment do
     Episode.published.find_each do |episode|
-      record_comments_count = episode.episode_records.with_comment.count
+      record_comments_count = episode.episode_records.with_body.count
       if record_comments_count != episode.episode_record_bodies_count
         episode.update_column(:episode_record_bodies_count, record_comments_count)
         puts "Episode ID: #{episode.id} - #{record_comments_count}"

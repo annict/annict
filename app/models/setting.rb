@@ -7,7 +7,7 @@
 #  display_option_record_list    :string           default("all_comments"), not null
 #  display_option_user_work_list :string           default("grid_detailed"), not null
 #  display_option_work_list      :string           default("list_detailed"), not null
-#  hide_record_comment           :boolean          default(TRUE), not null
+#  hide_record_body              :boolean          default(TRUE), not null
 #  hide_supporter_badge          :boolean          default(FALSE), not null
 #  privacy_policy_agreed         :boolean          default(FALSE), not null
 #  records_sort_type             :string           default("created_at_desc"), not null

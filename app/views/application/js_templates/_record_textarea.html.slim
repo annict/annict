@@ -1,2 +1,2 @@
 script#t-record-textarea type="x-template"
-  textarea.form-control name="episode_record[body]" :class='{ "has-new-line": isEditingComment }' :rows="record.commentRows" :placeholder='placeholder || ""' v-model="record.comment" @click="expandOnClick" @keyup.enter="expandOnEnter"
+  textarea.form-control name="episode_record[body]" :class='{ "has-new-line": isEditingBody }' :rows="record.bodyRows" :placeholder='placeholder || ""' v-model="record.body" @click="expandOnClick" @keyup.enter="expandOnEnter"

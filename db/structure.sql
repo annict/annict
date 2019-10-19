@@ -637,7 +637,7 @@ CREATE TABLE public.episode_records (
     user_id integer NOT NULL,
     episode_id integer NOT NULL,
     body text,
-    modify_comment boolean DEFAULT false NOT NULL,
+    modify_body boolean DEFAULT false NOT NULL,
     twitter_url_hash character varying(510) DEFAULT NULL::character varying,
     facebook_url_hash character varying(510) DEFAULT NULL::character varying,
     twitter_click_count integer DEFAULT 0 NOT NULL,
@@ -2058,7 +2058,7 @@ ALTER SEQUENCE public.sessions_id_seq1 OWNED BY public.sessions.id;
 CREATE TABLE public.settings (
     id integer NOT NULL,
     user_id integer NOT NULL,
-    hide_record_comment boolean DEFAULT true NOT NULL,
+    hide_record_body boolean DEFAULT true NOT NULL,
     created_at timestamp without time zone NOT NULL,
     updated_at timestamp without time zone NOT NULL,
     share_record_to_twitter boolean DEFAULT false,

@@ -19,18 +19,18 @@ module Canary
 
       field :episode_record, Canary::Types::Objects::EpisodeRecordType, null: true
 
-      def resolve(episode_record_id:, comment: nil, rating_state: nil, share_twitter: nil, share_facebook: nil)
+      def resolve(episode_record_id:, body: nil, rating_state: nil, share_twitter: nil, share_facebook: nil)
         raise Annict::Errors::InvalidAPITokenScopeError unless context[:writable]
 
         record = context[:viewer].episode_records.published.find_by_graphql_id(episode_record_id)
 
         record.rating_state = rating_state&.downcase
-        record.modify_comment = record.comment != comment
-        record.comment = comment
+        record.modify_body = record.body != body
+        record.body = body
         record.shared_twitter = share_twitter == true
         record.shared_facebook = share_facebook == true
         record.oauth_application = context[:application]
-        record.detect_locale!(:comment)
+        record.detect_locale!(:body)
 
         record.save!
         record.update_share_record_status

@@ -16,8 +16,8 @@ module Mutations
       record = context[:viewer].episode_records.published.find_by_graphql_id(record_id)
 
       record.rating_state = rating_state&.downcase
-      record.modify_comment = record.comment != comment
-      record.comment = comment
+      record.modify_body = record.body != comment
+      record.body = comment
       record.shared_twitter = share_twitter == true
       record.shared_facebook = share_facebook == true
       record.oauth_application = context[:doorkeeper_token].application

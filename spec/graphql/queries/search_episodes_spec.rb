@@ -130,7 +130,7 @@ describe "GraphQL API Query" do
                     {
                       "node" => {
                         "annictId" => record.id,
-                        "comment" => record.comment
+                        "comment" => record.body
                       }
                     }
                   ]

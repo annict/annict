@@ -28,13 +28,13 @@ script#t-untracked-episode-list type="x-template"
                 = icon "angle-right", class: "mr-1"
                 = t "noun.next_episode"
           form.row
-            div :class='{ "col-12": status.record.isEditingComment, "col pr-0": !status.record.isEditingComment }'
-              c-record-rating.mb-2 :init-record="status.record" v-if="status.record.isEditingComment"
+            div :class='{ "col-12": status.record.isEditingBody, "col pr-0": !status.record.isEditingBody }'
+              c-record-rating.mb-2 :init-record="status.record" v-if="status.record.isEditingBody"
               template :class='{ "mb-2": user.authorized_to_twitter }'
                 c-record-textarea :init-record="status.record"
               .row.mt-2
                 .col
-                  .a-share-buttons v-if="status.record.isEditingComment"
+                  .a-share-buttons v-if="status.record.isEditingBody"
                     span v-if="user.authorized_to_twitter"
                       label
                         input type="checkbox" v-model="user.share_record_to_twitter"
@@ -42,8 +42,8 @@ script#t-untracked-episode-list type="x-template"
                 .col
                   .text-right
                     .small.text-muted
-                      c-record-word-count :init-record="status.record" v-if="status.record.isEditingComment"
-            template v-if="status.record.isEditingComment"
+                      c-record-word-count :init-record="status.record" v-if="status.record.isEditingBody"
+            template v-if="status.record.isEditingBody"
               .w-100
                 .text-center
                   button.btn.btn-primary type="button" @click.stop="postRecord(status)" :class='{ "c-spinner": status.record.isSaving }'

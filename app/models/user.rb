@@ -256,13 +256,13 @@ class User < ApplicationRecord
   end
 
   def hide_episode_record_body?(episode)
-    setting.hide_record_comment? &&
+    setting.hide_record_body? &&
       works.desiring_to_watch.include?(episode.work) &&
       !episode_records.pluck(:episode_id).include?(episode.id)
   end
 
   def hide_work_record_body?(work)
-    setting.hide_record_comment? &&
+    setting.hide_record_body? &&
       works.desiring_to_watch.include?(work) &&
       !work_records.pluck(:work_id).include?(work.id)
   end

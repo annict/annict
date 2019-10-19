@@ -32,12 +32,12 @@ script#t-slot-list type="x-template"
                     span.ml-2 v-if="slot.episode.title" {{ slot.episode.title }}
             form.row
               .col
-                c-record-rating.mb-2 :init-record="slot.record" v-if="slot.record.isEditingComment"
+                c-record-rating.mb-2 :init-record="slot.record" v-if="slot.record.isEditingBody"
                 .mb-2
                   c-record-textarea :init-record="slot.record"
                 .row
                   .col
-                    .a-share-buttons v-if="slot.record.isEditingComment"
+                    .a-share-buttons v-if="slot.record.isEditingBody"
                       span v-if="user.authorized_to_twitter"
                         label
                           input type="checkbox" v-model="user.share_record_to_twitter"
@@ -45,8 +45,8 @@ script#t-slot-list type="x-template"
                   .col
                     .text-right
                       .small.text-mute
-                        c-record-word-count :init-record="slot.record" v-if="slot.record.isEditingComment"
-              template v-if="slot.record.isEditingComment"
+                        c-record-word-count :init-record="slot.record" v-if="slot.record.isEditingBody"
+              template v-if="slot.record.isEditingBody"
                 .col.pl-0.text-center
                   button.btn.btn-primary type="button" @click="submit(slot)" :class='{ disabled: slot.record.isRecorded, "c-spinner": slot.record.isSaving }'
                     = icon "edit", class: "mr-1"

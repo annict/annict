@@ -29,9 +29,9 @@ class SearchEpisodeRecordsQuery
 
     @collection = case @args[:has_body]
     when true
-      @collection.with_comment
+      @collection.with_body
     when false
-      @collection.with_no_comment
+      @collection.with_no_body
     else
       @collection
     end

@@ -8,7 +8,7 @@ module Api
       def create
         episode = Episode.published.find(params[:episode_id])
         episode_record = episode.episode_records.new do |er|
-          er.comment = episode_record_params[:comment]
+          er.body = episode_record_params[:body]
           er.shared_twitter = episode_record_params[:shared_twitter]
           er.rating_state = episode_record_params[:rating_state]
         end
@@ -30,7 +30,7 @@ module Api
       private
 
       def episode_record_params
-        params.require(:episode_record).permit(:comment, :shared_twitter, :rating_state)
+        params.require(:episode_record).permit(:body, :shared_twitter, :rating_state)
       end
     end
   end

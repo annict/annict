@@ -5,13 +5,13 @@
 #
 #  id                         :integer          not null, primary key
 #  aasm_state                 :string           default("published"), not null
-#  comment                    :text
+#  body                       :text
 #  comments_count             :integer          default(0), not null
 #  facebook_click_count       :integer          default(0), not null
 #  facebook_url_hash          :string(510)
 #  likes_count                :integer          default(0), not null
 #  locale                     :string           default("other"), not null
-#  modify_comment             :boolean          default(FALSE), not null
+#  modify_body                :boolean          default(FALSE), not null
 #  rating                     :float
 #  rating_state               :string
 #  shared_facebook            :boolean          default(FALSE), not null
@@ -85,7 +85,7 @@ class EpisodeRecord < ApplicationRecord
     dependent: :destroy,
     as: :recipient
 
-  validates :comment, length: { maximum: 1000 }
+  validates :body, length: { maximum: 1000 }
   validates :rating,
     allow_blank: true,
     numericality: {
@@ -93,8 +93,8 @@ class EpisodeRecord < ApplicationRecord
       less_than_or_equal_to: 5
     }
 
-  scope :with_comment, -> { where.not(comment: ["", nil]) }
-  scope :with_no_comment, -> { where(comment: ["", nil]) }
+  scope :with_body, -> { where.not(body: ["", nil]) }
+  scope :with_no_body, -> { where(body: ["", nil]) }
 
   def self.initial?(record)
     count == 1 && first.id == record.id
@@ -169,8 +169,8 @@ class EpisodeRecord < ApplicationRecord
 
   def twitter_share_body
     work_title = work.local_title
-    title = self.comment.present? ? work_title.truncate(30) : work_title
-    comment = self.comment.present? ? "#{self.comment} / " : ""
+    title = self.body.present? ? work_title.truncate(30) : work_title
+    comment = self.body.present? ? "#{self.body} / " : ""
     episode_number = episode.local_number
     share_url = share_url_with_query(:twitter)
     share_hashtag = work.hashtag_with_hash
@@ -190,7 +190,7 @@ class EpisodeRecord < ApplicationRecord
   end
 
   def facebook_share_body
-    return self.comment if self.comment.present?
+    return self.body if self.body.present?
 
     if user.locale == "ja"
       "見ました。"

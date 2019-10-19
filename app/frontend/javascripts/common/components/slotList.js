@@ -40,7 +40,7 @@ export default {
         return (slot.record = {
           uid: _.uniqueId(),
           body: '',
-          isEditingComment: false,
+          isEditingBody: false,
           isRecorded: false,
           isSaving: false,
           ratingState: null,

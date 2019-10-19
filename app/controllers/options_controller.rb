@@ -14,6 +14,6 @@ class OptionsController < ApplicationController
   private
 
   def setting_params
-    params.require(:setting).permit(:hide_record_comment, :hide_supporter_badge, :share_status_to_twitter)
+    params.require(:setting).permit(:hide_record_body, :hide_supporter_badge, :share_status_to_twitter)
   end
 end

@@ -22,8 +22,8 @@ module Api
 
       def filter_has_record_comment
         return @collection if @params.filter_has_record_comment.blank?
-        return @collection.with_comment if @params.filter_has_record_comment == "true"
-        @collection.with_no_comment
+        return @collection.with_body if @params.filter_has_record_comment == "true"
+        @collection.with_no_body
       end
     end
   end
