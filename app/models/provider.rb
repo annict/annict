@@ -5,19 +5,23 @@
 # Table name: providers
 #
 #  id               :integer          not null, primary key
-#  user_id          :integer          not null
 #  name             :string(510)      not null
-#  uid              :string(510)      not null
 #  token            :string(510)      not null
 #  token_expires_at :integer
 #  token_secret     :string(510)
+#  uid              :string(510)      not null
 #  created_at       :datetime
 #  updated_at       :datetime
+#  user_id          :integer          not null
 #
 # Indexes
 #
 #  providers_name_uid_key  (name,uid) UNIQUE
 #  providers_user_id_idx   (user_id)
+#
+# Foreign Keys
+#
+#  providers_user_id_fk  (user_id => users.id) ON DELETE => cascade
 #
 
 class Provider < ApplicationRecord

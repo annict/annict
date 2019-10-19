@@ -5,15 +5,19 @@
 # Table name: likes
 #
 #  id             :integer          not null, primary key
-#  user_id        :integer          not null
-#  recipient_id   :integer          not null
 #  recipient_type :string(510)      not null
 #  created_at     :datetime
 #  updated_at     :datetime
+#  recipient_id   :integer          not null
+#  user_id        :integer          not null
 #
 # Indexes
 #
 #  likes_user_id_idx  (user_id)
+#
+# Foreign Keys
+#
+#  likes_user_id_fk  (user_id => users.id) ON DELETE => cascade
 #
 
 class Like < ApplicationRecord

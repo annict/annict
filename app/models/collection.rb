@@ -3,19 +3,23 @@
 #
 # Table name: collections
 #
-#  id                :bigint(8)        not null, primary key
-#  user_id           :integer          not null
-#  title             :string           not null
-#  description       :string
+#  id                :bigint           not null, primary key
 #  aasm_state        :string           default("published"), not null
-#  likes_count       :integer          default(0), not null
+#  description       :string
 #  impressions_count :integer          default(0), not null
+#  likes_count       :integer          default(0), not null
+#  title             :string           not null
 #  created_at        :datetime         not null
 #  updated_at        :datetime         not null
+#  user_id           :integer          not null
 #
 # Indexes
 #
 #  index_collections_on_user_id  (user_id)
+#
+# Foreign Keys
+#
+#  fk_rails_...  (user_id => users.id)
 #
 
 class Collection < ApplicationRecord

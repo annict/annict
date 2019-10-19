@@ -4,23 +4,28 @@
 # Table name: work_images
 #
 #  id                      :integer          not null, primary key
-#  work_id                 :integer          not null
-#  user_id                 :integer          not null
+#  asin                    :string           default(""), not null
+#  attachment_content_type :string
 #  attachment_file_name    :string
 #  attachment_file_size    :integer
-#  attachment_content_type :string
 #  attachment_updated_at   :datetime
+#  color_rgb               :string           default("255,255,255"), not null
 #  copyright               :string           default(""), not null
-#  asin                    :string           default(""), not null
+#  image_data              :text             not null
 #  created_at              :datetime         not null
 #  updated_at              :datetime         not null
-#  color_rgb               :string           default("255,255,255"), not null
-#  image_data              :text             not null
+#  user_id                 :integer          not null
+#  work_id                 :integer          not null
 #
 # Indexes
 #
 #  index_work_images_on_user_id  (user_id)
 #  index_work_images_on_work_id  (work_id)
+#
+# Foreign Keys
+#
+#  fk_rails_...  (user_id => users.id)
+#  fk_rails_...  (work_id => works.id)
 #
 
 class WorkImage < ApplicationRecord

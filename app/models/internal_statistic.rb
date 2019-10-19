@@ -3,10 +3,10 @@
 #
 # Table name: internal_statistics
 #
-#  id         :bigint(8)        not null, primary key
+#  id         :bigint           not null, primary key
+#  date       :date             not null
 #  key        :string           not null
 #  value      :float            not null
-#  date       :date             not null
 #  created_at :datetime         not null
 #  updated_at :datetime         not null
 #

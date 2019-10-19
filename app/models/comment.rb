@@ -4,14 +4,14 @@
 # Table name: comments
 #
 #  id                :integer          not null, primary key
-#  user_id           :integer          not null
-#  episode_record_id :integer          not null
 #  body              :text             not null
 #  likes_count       :integer          default(0), not null
+#  locale            :string           default("other"), not null
 #  created_at        :datetime
 #  updated_at        :datetime
+#  episode_record_id :integer          not null
+#  user_id           :integer          not null
 #  work_id           :integer
-#  locale            :string           default("other"), not null
 #
 # Indexes
 #
@@ -19,6 +19,12 @@
 #  comments_user_id_idx       (user_id)
 #  index_comments_on_locale   (locale)
 #  index_comments_on_work_id  (work_id)
+#
+# Foreign Keys
+#
+#  comments_checkin_id_fk  (episode_record_id => episode_records.id) ON DELETE => cascade
+#  comments_user_id_fk     (user_id => users.id) ON DELETE => cascade
+#  fk_rails_...            (work_id => works.id)
 #
 
 class Comment < ApplicationRecord

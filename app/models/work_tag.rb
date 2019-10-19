@@ -3,13 +3,13 @@
 #
 # Table name: work_tags
 #
-#  id                  :bigint(8)        not null, primary key
-#  name                :string           not null
+#  id                  :bigint           not null, primary key
 #  aasm_state          :string           default("published"), not null
+#  locale              :string           default("other"), not null
+#  name                :string           not null
 #  work_taggings_count :integer          default(0), not null
 #  created_at          :datetime         not null
 #  updated_at          :datetime         not null
-#  locale              :string           default("other"), not null
 #
 # Indexes
 #

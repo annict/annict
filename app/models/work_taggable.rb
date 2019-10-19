@@ -3,13 +3,13 @@
 #
 # Table name: work_taggables
 #
-#  id          :bigint(8)        not null, primary key
-#  user_id     :integer          not null
-#  work_tag_id :integer          not null
+#  id          :bigint           not null, primary key
 #  description :string
+#  locale      :string           default("other"), not null
 #  created_at  :datetime         not null
 #  updated_at  :datetime         not null
-#  locale      :string           default("other"), not null
+#  user_id     :integer          not null
+#  work_tag_id :integer          not null
 #
 # Indexes
 #
@@ -17,6 +17,11 @@
 #  index_work_taggables_on_user_id                  (user_id)
 #  index_work_taggables_on_user_id_and_work_tag_id  (user_id,work_tag_id) UNIQUE
 #  index_work_taggables_on_work_tag_id              (work_tag_id)
+#
+# Foreign Keys
+#
+#  fk_rails_...  (user_id => users.id)
+#  fk_rails_...  (work_tag_id => work_tags.id)
 #
 
 class WorkTaggable < ApplicationRecord

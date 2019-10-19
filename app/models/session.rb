@@ -2,11 +2,11 @@
 #
 # Table name: sessions
 #
-#  id         :bigint(8)        not null, primary key
-#  session_id :string           not null
+#  id         :bigint           not null, primary key
 #  data       :jsonb            not null
 #  created_at :datetime         not null
 #  updated_at :datetime         not null
+#  session_id :string           not null
 #
 # Indexes
 #

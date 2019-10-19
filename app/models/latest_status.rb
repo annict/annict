@@ -4,14 +4,14 @@
 # Table name: latest_statuses
 #
 #  id                  :integer          not null, primary key
-#  user_id             :integer          not null
-#  work_id             :integer          not null
-#  next_episode_id     :integer
 #  kind                :integer          not null
-#  watched_episode_ids :integer          default([]), not null, is an Array
 #  position            :integer          default(0), not null
+#  watched_episode_ids :integer          default([]), not null, is an Array
 #  created_at          :datetime         not null
 #  updated_at          :datetime         not null
+#  next_episode_id     :integer
+#  user_id             :integer          not null
+#  work_id             :integer          not null
 #
 # Indexes
 #
@@ -20,6 +20,12 @@
 #  index_latest_statuses_on_user_id_and_position  (user_id,position)
 #  index_latest_statuses_on_user_id_and_work_id   (user_id,work_id) UNIQUE
 #  index_latest_statuses_on_work_id               (work_id)
+#
+# Foreign Keys
+#
+#  fk_rails_...  (next_episode_id => episodes.id)
+#  fk_rails_...  (user_id => users.id)
+#  fk_rails_...  (work_id => works.id)
 #
 
 class LatestStatus < ApplicationRecord

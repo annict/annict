@@ -3,20 +3,25 @@
 #
 # Table name: forum_comments
 #
-#  id            :integer          not null, primary key
-#  user_id       :integer          not null
-#  forum_post_id :integer          not null
-#  body          :text             not null
-#  edited_at     :datetime
-#  created_at    :datetime         not null
-#  updated_at    :datetime         not null
-#  locale        :string           default("other"), not null
+#  id                                                   :integer          not null, primary key
+#  body                                                 :text             not null
+#  edited_at(The datetime which user has changed body.) :datetime
+#  locale                                               :string           default("other"), not null
+#  created_at                                           :datetime         not null
+#  updated_at                                           :datetime         not null
+#  forum_post_id                                        :integer          not null
+#  user_id                                              :integer          not null
 #
 # Indexes
 #
 #  index_forum_comments_on_forum_post_id  (forum_post_id)
 #  index_forum_comments_on_locale         (locale)
 #  index_forum_comments_on_user_id        (user_id)
+#
+# Foreign Keys
+#
+#  fk_rails_...  (forum_post_id => forum_posts.id)
+#  fk_rails_...  (user_id => users.id)
 #
 
 class ForumComment < ApplicationRecord

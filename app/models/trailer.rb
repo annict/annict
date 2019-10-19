@@ -1,26 +1,30 @@
 # frozen_string_literal: true
 # == Schema Information
 #
-# Table name: pvs
+# Table name: trailers
 #
-#  id                     :bigint(8)        not null, primary key
-#  work_id                :integer          not null
-#  url                    :string           not null
-#  title                  :string           not null
-#  thumbnail_file_name    :string
+#  id                     :bigint           not null, primary key
+#  aasm_state             :string           default("published"), not null
+#  image_data             :text
+#  sort_number            :integer          default(0), not null
 #  thumbnail_content_type :string
+#  thumbnail_file_name    :string
 #  thumbnail_file_size    :integer
 #  thumbnail_updated_at   :datetime
-#  sort_number            :integer          default(0), not null
-#  aasm_state             :string           default("published"), not null
+#  title                  :string           not null
+#  title_en               :string           default(""), not null
+#  url                    :string           not null
 #  created_at             :datetime         not null
 #  updated_at             :datetime         not null
-#  title_en               :string           default(""), not null
-#  image_data             :text
+#  work_id                :integer          not null
 #
 # Indexes
 #
-#  index_pvs_on_work_id  (work_id)
+#  index_trailers_on_work_id  (work_id)
+#
+# Foreign Keys
+#
+#  fk_rails_...  (work_id => works.id)
 #
 
 class Trailer < ApplicationRecord

@@ -3,20 +3,20 @@
 #
 # Table name: gumroad_subscribers
 #
-#  id                                     :bigint(8)        not null, primary key
-#  gumroad_id                             :string           not null
-#  gumroad_product_id                     :string           not null
-#  gumroad_product_name                   :string           not null
-#  gumroad_user_id                        :string           not null
-#  gumroad_user_email                     :string           not null
-#  gumroad_purchase_ids                   :string           not null, is an Array
-#  gumroad_created_at                     :datetime         not null
+#  id                                     :bigint           not null, primary key
 #  gumroad_cancelled_at                   :datetime
-#  gumroad_user_requested_cancellation_at :datetime
 #  gumroad_charge_occurrence_count        :datetime
+#  gumroad_created_at                     :datetime         not null
 #  gumroad_ended_at                       :datetime
+#  gumroad_product_name                   :string           not null
+#  gumroad_purchase_ids                   :string           not null, is an Array
+#  gumroad_user_email                     :string           not null
+#  gumroad_user_requested_cancellation_at :datetime
 #  created_at                             :datetime         not null
 #  updated_at                             :datetime         not null
+#  gumroad_id                             :string           not null
+#  gumroad_product_id                     :string           not null
+#  gumroad_user_id                        :string           not null
 #
 # Indexes
 #

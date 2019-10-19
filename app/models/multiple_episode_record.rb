@@ -4,16 +4,21 @@
 # Table name: multiple_episode_records
 #
 #  id          :integer          not null, primary key
-#  user_id     :integer          not null
-#  work_id     :integer          not null
 #  likes_count :integer          default(0), not null
 #  created_at  :datetime         not null
 #  updated_at  :datetime         not null
+#  user_id     :integer          not null
+#  work_id     :integer          not null
 #
 # Indexes
 #
 #  index_multiple_episode_records_on_user_id  (user_id)
 #  index_multiple_episode_records_on_work_id  (work_id)
+#
+# Foreign Keys
+#
+#  fk_rails_...  (user_id => users.id)
+#  fk_rails_...  (work_id => works.id)
 #
 
 class MultipleEpisodeRecord < ApplicationRecord
