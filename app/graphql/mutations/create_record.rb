@@ -17,7 +17,7 @@ module Mutations
 
       record = episode.episode_records.new do |r|
         r.rating_state = rating_state&.downcase
-        r.comment = comment
+        r.body = comment
         r.shared_twitter = share_twitter == true
         r.shared_facebook = share_facebook == true
         r.oauth_application = context[:doorkeeper_token].application
