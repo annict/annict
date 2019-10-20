@@ -1,4 +1,5 @@
 - title @work.title
+- form_disabled = !current_user.role.admin? && !@work.manual_episodes_creatable?
 
 .l-topbar.container-fluid.px-3
   .row.flex-items-xs-between
@@ -18,13 +19,20 @@
         = form_for [:db, @form], url: db_work_episodes_path(@work) do |f|
           = render "application/components/error_panel", resource: f.object
 
+          - unless @work.manual_episodes_creatable?
+            .alert.alert-warning
+              - if @work.episodes_filled?
+                = t "messages.works.creating_episodes_restricted_episodes_filled"
+              - elsif @work.slots_exists?
+                = t "messages.works.creating_episodes_restricted_slots_exists"
+
           .form-group.row
             = f.label :rows, class: "col-sm-3 col-form-label c-label-required"
             .col-sm-9
-              = f.text_area :rows, class: "form-control", autofocus: true, required: true, rows: 30
+              = f.text_area :rows, class: "form-control", autofocus: true, required: true, rows: 30, readonly: form_disabled
 
           .form-group.row
             .ml-auto.col-sm-9
-              = f.submit t("helpers.submit.create"), class: "btn btn-primary"
+              = f.submit t("helpers.submit.create"), class: "btn btn-primary", disabled: form_disabled
     .col-6
       = render "sidebar"
