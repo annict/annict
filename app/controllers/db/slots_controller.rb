@@ -54,7 +54,7 @@ module Db
 
       @slot.save_all_and_create_activity!
 
-      redirect_to db_work_slots_path(@work), notice: t("resources.slot.updated")
+      redirect_to db_work_slots_path(@work, channel_id: @slot.channel_id), notice: t("resources.slot.updated")
     end
 
     def hide
