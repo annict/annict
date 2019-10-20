@@ -22,6 +22,6 @@
 #
 
 class FavoriteCharacter < ApplicationRecord
-  belongs_to :character
-  belongs_to :user, counter_cache: true
+  belongs_to :character, counter_cache: :favorite_users_count
+  belongs_to :user
 end
