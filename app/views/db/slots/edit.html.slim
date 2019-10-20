@@ -33,6 +33,13 @@
               = f.label :started_at, class: "col-sm-3 col-form-label"
               .col-sm-9
                 = f.text_field :started_at, class: "form-control", value: f.object.started_at&.in_time_zone(current_user.time_zone)&.strftime("%Y-%m-%d %H:%M"), placeholder: t("resources.slot.started_at_eg")
+            .form-group.row.row
+              label.col-sm-3
+              .col-sm-9
+                .form-check
+                  = f.label :shift_time_along_with_after_slots, class: "form-check-label" do
+                    = f.check_box :shift_time_along_with_after_slots, class: "form-check-input"
+                    = t "activerecord.attributes.slot.shift_time_along_with_after_slots"
             .form-group.row
               = f.label :number, class: "col-sm-3 col-form-label"
               .col-sm-9

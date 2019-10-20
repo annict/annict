@@ -52,7 +52,7 @@ class Slot < ApplicationRecord
     end
   end
 
-  attr_accessor :time_zone, :is_started_at_calced
+  attr_accessor :time_zone, :is_started_at_calced, :shift_time_along_with_after_slots
 
   belongs_to :channel
   belongs_to :episode, optional: true
@@ -62,7 +62,7 @@ class Slot < ApplicationRecord
   has_many :db_comments, as: :resource, dependent: :destroy
 
   validates :channel_id, presence: true
-  validates :started_at, presence: true, uniqueness: { scope: :program_id }
+  validates :started_at, presence: true
 
   scope :episode_published, -> { joins(:episode).merge(Episode.published) }
   scope :work_published, -> { joins(:work).merge(Work.published) }
@@ -103,6 +103,20 @@ class Slot < ApplicationRecord
     else
       return :tonight if start.between?(now, now.beginning_of_day + 1.day + 5.hours)
       return :unbroadcast
+    end
+  end
+
+  def save_all_and_create_activity!
+    ActiveRecord::Base.transaction do
+      old_started_at = started_at_was
+
+      save_and_create_activity!
+
+      if shift_time_along_with_after_slots == "1" && started_at != old_started_at
+        program.slots.where("number > ?", number).each do |slot|
+          slot.update!(started_at: slot.started_at + (started_at - old_started_at))
+        end
+      end
     end
   end
 end

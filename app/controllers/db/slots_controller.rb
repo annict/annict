@@ -51,7 +51,8 @@ module Db
       @slot.user = current_user
 
       return render(:edit) unless @slot.valid?
-      @slot.save_and_create_activity!
+
+      @slot.save_all_and_create_activity!
 
       redirect_to db_work_slots_path(@work), notice: t("resources.slot.updated")
     end
@@ -87,7 +88,7 @@ module Db
     def slot_params
       params.require(:slot).permit(
         :program_id, :channel_id, :episode_id, :started_at, :number, :rebroadcast,
-        :irregular, :time_zone
+        :irregular, :time_zone, :shift_time_along_with_after_slots
       )
     end
 
