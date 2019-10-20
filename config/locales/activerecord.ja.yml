@@ -124,6 +124,7 @@ ja:
         number: 回数
         program_id: 放送情報
         rebroadcast: 再放送
+        shift_time_along_with_after_slots: これ以降の放送日時もずらす
         started_at: 放送日時
         time_zone: タイムゾーン
       program:

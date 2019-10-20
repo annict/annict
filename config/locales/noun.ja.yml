@@ -28,6 +28,7 @@ ja:
     cast: キャスト
     casts: キャスト
     category: カテゴリ
+    channel_id: チャンネルID
     channel_list: チャンネル一覧
     channel_name: チャンネル名
     channel: チャンネル
@@ -70,6 +71,7 @@ ja:
     language: 言語
     last: Last
     library: ライブラリ
+    line_number: 行番号
     menu: メニュー
     more: その他
     music: 音楽

@@ -23,6 +23,7 @@
       table.table.table-hover
         thead
           tr
+            th = t "noun.line_number"
             th ID
             th = t "activerecord.attributes.episode.raw_number"
             - if locale_ja?
@@ -40,8 +41,9 @@
             - if policy(@episodes).destroy?
               th = t "noun.delete"
         tbody
-          - @episodes.each do |episode|
+          - @episodes.each_with_index do |episode, i|
             tr
+              td = i + 1
               td = link_to episode.id, work_episode_path(@work, episode), target: "_blank"
               td = episode.raw_number.presence || "-"
               - if locale_ja?

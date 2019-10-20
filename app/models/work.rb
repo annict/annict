@@ -369,6 +369,18 @@ class Work < ApplicationRecord
     sc_tid.present?
   end
 
+  def episodes_filled?
+    !manual_episodes_count.nil? && episodes.published.count >= manual_episodes_count
+  end
+
+  def slots_exists?
+    slots.where.not(started_at: nil).exists?
+  end
+
+  def manual_episodes_creatable?
+    !episodes_filled? && !slots_exists?
+  end
+
   def syobocal_url
     "http://cal.syoboi.jp/tid/#{sc_tid}"
   end

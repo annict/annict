@@ -125,6 +125,7 @@ en:
         number: Number
         program_id: Slot Detail
         rebroadcast: Rebroadcast
+        shift_time_along_with_after_slots: Shift time along with after slots
         started_at: Started at
         time_zone: Timezone
       program:

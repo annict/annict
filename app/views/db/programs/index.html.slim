@@ -21,6 +21,7 @@
         thead
           tr
             th ID
+            th = t "noun.channel_id"
             th = t "activerecord.attributes.program.channel_id"
             th = t "activerecord.attributes.program.started_at"
             th = t "activerecord.attributes.program.rebroadcast"
@@ -37,6 +38,7 @@
           - @programs.each do |program|
             tr
               td = program.id
+              td = program.channel_id
               td = program.channel.name
               td = display_time(program.started_at)&.presence || "-"
               td = program.rebroadcast? ? icon("circle", "far") : icon("times")

@@ -255,3 +255,5 @@ ja:
       view_all_n_items: "%{n}個のアイテムを全て見る"
       view_all_n_record_body_list: "%{n}件の感想を全て見る"
       view_all_n_staffs: "%{n}人のスタッフを全て見る"
+      creating_episodes_restricted_episodes_filled: "話数分のエピソードがすでに登録されているため、新規登録はできません。"
+      creating_episodes_restricted_slots_exists: "放送予定が登録されているため、手動によるエピソード登録はできません。エピソードは放送予定の情報を使って自動的に生成されます。"
