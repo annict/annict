@@ -54,14 +54,13 @@
                   = f.label :rebroadcast, class: "form-check-label" do
                     = f.check_box :rebroadcast, class: "form-check-input"
                     = t "activerecord.attributes.slot.rebroadcast"
-            - if current_user.role.admin?
-              .form-group.row.row
-                label.col-sm-3
-                .col-sm-9
-                  .form-check
-                    = f.label :irregular, class: "form-check-label" do
-                      = f.check_box :irregular, class: "form-check-input"
-                      = t "activerecord.attributes.slot.irregular"
+            .form-group.row.row
+              label.col-sm-3
+              .col-sm-9
+                .form-check
+                  = f.label :irregular, class: "form-check-label" do
+                    = f.check_box :irregular, class: "form-check-input"
+                    = t "activerecord.attributes.slot.irregular"
             .form-group.row
               .ml-auto.col-sm-9
                 = f.submit t("helpers.submit.update"), class: "btn btn-primary"
