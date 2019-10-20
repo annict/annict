@@ -173,8 +173,8 @@ module Types
       end
 
       def programs(unwatched: nil, order_by: nil)
-        SearchProgramsQuery.new(
-          object.programs.all,
+        SearchSlotsQuery.new(
+          object.slots.all,
           unwatched: unwatched,
           order_by: order_by
         ).call
