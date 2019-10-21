@@ -44,7 +44,7 @@ GEM
     active_link_to (1.0.5)
       actionpack
       addressable
-    active_record_query_trace (1.6.2)
+    active_record_query_trace (1.7)
     activejob (6.0.0)
       activesupport (= 6.0.0)
       globalid (>= 0.3.6)
