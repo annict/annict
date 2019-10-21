@@ -495,7 +495,7 @@ GEM
       rubyzip (>= 1.2.2)
     sentry-raven (2.9.0)
       faraday (>= 0.7.6, < 1.0)
-    shrine (2.18.1)
+    shrine (2.19.3)
       content_disposition (~> 1.0)
       down (~> 4.1)
     simple_oauth (0.3.1)
