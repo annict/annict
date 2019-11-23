@@ -1,8 +1,6 @@
 GEM
   remote: https://rubygems.org/
   specs:
-    aasm (5.0.6)
-      concurrent-ruby (~> 1.0)
     actioncable (6.0.0)
       actionpack (= 6.0.0)
       nio4r (~> 2.0)
@@ -595,7 +593,6 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
-  aasm
   active_decorator
   active_link_to
   active_record_query_trace

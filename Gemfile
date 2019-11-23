@@ -7,7 +7,6 @@ ruby "2.6.5"
 
 gem "rails", "~> 6.0.0"
 
-gem "aasm"
 gem "active_decorator"
 gem "active_link_to"
 gem "activerecord-session_store"
