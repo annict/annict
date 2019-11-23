@@ -8,7 +8,7 @@ ja:
     channel_group:
       new_channel_groups: チャンネルグループ登録
     character:
-      aasm_state:
+      state:
         published: 公開
         hidden: 非公開
       created: 登録しました
@@ -46,7 +46,7 @@ ja:
     forum_post:
       new: 新規作成
     organization:
-      aasm_state:
+      state:
         published: 公開
         hidden: 非公開
       created: 登録しました
@@ -59,7 +59,7 @@ ja:
       updated: 更新しました
       organization_list: 団体一覧
     person:
-      aasm_state:
+      state:
         published: 公開
         hidden: 非公開
       created: 登録しました
@@ -86,7 +86,7 @@ ja:
         autumn: "%{year}年秋"
       no_season: 時期未定
     series:
-      aasm_state:
+      state:
         published: 公開
         hidden: 非公開
       new_series: シリーズ登録
@@ -109,7 +109,7 @@ ja:
       edit: プロジェクト編集
       new: 新規プロジェクト
     work:
-      aasm_state:
+      state:
         published: 公開
         hidden: 非公開
       created: 登録しました

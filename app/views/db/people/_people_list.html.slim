@@ -6,7 +6,7 @@
         th = t("activerecord.attributes.person.name")
         th = t("activerecord.attributes.person.name_kana")
         th = t("activerecord.attributes.person.name_en")
-        th = t("activerecord.attributes.person.aasm_state")
+        th = t("activerecord.attributes.person.state")
         th = t("noun.activities")
         - if policy(people).edit?
           th = t "noun.edit"
@@ -23,7 +23,7 @@
           td = person.name_en.presence || "-"
           td
             .badge class="#{person.not_deleted? ? 'badge-success' : 'badge-warning'}"
-              = t("resources.person.aasm_state.#{person.aasm_state}")
+              = t("resources.person.state.#{person.not_deleted? ? 'published' : 'hidden'}")
           td = link_to t("verb.view"), activities_db_person_path(person)
           - if policy(person).edit?
             td = link_to t("noun.edit"), edit_db_person_path(person), class: "btn btn-primary btn-sm"

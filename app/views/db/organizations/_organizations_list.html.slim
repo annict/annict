@@ -6,7 +6,7 @@
         th = t("activerecord.attributes.organization.name")
         th = t("activerecord.attributes.organization.name_kana")
         th = t("activerecord.attributes.organization.name_en")
-        th = t("activerecord.attributes.organization.aasm_state")
+        th = t("activerecord.attributes.organization.state")
         th = t("noun.activities")
         - if policy(organizations).edit?
           th = t "noun.edit"
@@ -23,7 +23,7 @@
           td = organization.name_en.presence || "-"
           td
             .badge class="#{organization.not_deleted? ? 'badge-success' : 'badge-warning'}"
-              = t("resources.organization.aasm_state.#{organization.aasm_state}")
+              = t("resources.organization.state.#{organization.not_deleted? ? 'published' : 'hidden'}")
           td = link_to t("verb.view"), activities_db_organization_path(organization)
           - if policy(organization).edit?
             td = link_to t("noun.edit"), edit_db_organization_path(organization), class: "btn btn-primary btn-sm"

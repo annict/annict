@@ -22,7 +22,7 @@
           td = channel.vod? ? icon("check") : "-"
           td
             .badge class="#{channel.not_deleted? ? 'badge-success' : 'badge-warning'}"
-              = t("resources.channel.aasm_state.#{channel.aasm_state}")
+              = t("resources.channel.state.#{channel.not_deleted? ? 'published' : 'hidden'}")
           - if policy(channel).edit?
             td = link_to t("noun.edit"), edit_db_channel_path(channel), class: "btn btn-primary btn-sm"
           - if policy(channel).hide?

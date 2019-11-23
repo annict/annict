@@ -62,7 +62,7 @@
               td = episode.episode_records.count
               td
                 .badge class="#{episode.not_deleted? ? 'badge-success' : 'badge-warning'}"
-                  = t("resources.episode.aasm_state.#{episode.aasm_state}")
+                  = t("resources.episode.state.#{episode.not_deleted? ? 'published' : 'hidden'}")
               td = link_to t("head.title.db.episodes.activities"), activities_db_episode_path(episode)
               - if policy(episode).edit?
                 td

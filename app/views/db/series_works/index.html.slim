@@ -39,7 +39,7 @@
               td = series_work.local_summary.presence || "-"
               td
                 .badge class="#{series_work.not_deleted? ? 'badge-success' : 'badge-warning'}"
-                  = t("resources.series.aasm_state.#{series_work.aasm_state}")
+                  = t("resources.series.state.#{series_work.not_deleted? ? 'published' : 'hidden'}")
               td = link_to t("verb.view"), activities_db_series_work_path(series_work)
               - if policy(series_work).edit?
                 td

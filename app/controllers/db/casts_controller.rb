@@ -8,7 +8,7 @@ module Db
       @work = Work.find(params[:work_id])
       @casts = @work.casts.
         includes(:person, :character).
-        order(aasm_state: :desc, sort_number: :asc)
+        order(deleted_at: :desc, sort_number: :asc)
     end
 
     def new
