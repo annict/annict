@@ -163,7 +163,7 @@ CREATE TABLE public.channel_groups (
     sort_number integer DEFAULT 0 NOT NULL,
     created_at timestamp with time zone,
     updated_at timestamp with time zone,
-    unpublished_at timestamp without time zone
+    deleted_at timestamp without time zone
 );
 
 
@@ -7085,6 +7085,7 @@ INSERT INTO "schema_migrations" (version) VALUES
 ('20191013172849'),
 ('20191019230403'),
 ('20191020110259'),
-('20191123150532');
+('20191123150532'),
+('20191123191135');
 
 
