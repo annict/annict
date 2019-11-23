@@ -115,6 +115,8 @@ Doorkeeper.configure do
 end
 
 Doorkeeper::Application.class_eval do
+  include SoftDeletable
+
   scope :available, -> { without_deleted.where.not(owner: nil) }
   scope :unavailable, -> {
     unscoped.deleted.or(where(owner: nil))
