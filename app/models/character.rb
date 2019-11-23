@@ -11,6 +11,7 @@
 #  birthday_en           :string           default(""), not null
 #  blood_type            :string           default(""), not null
 #  blood_type_en         :string           default(""), not null
+#  deleted_at            :datetime
 #  description           :text             default(""), not null
 #  description_en        :text             default(""), not null
 #  description_source    :string           default(""), not null
@@ -35,6 +36,7 @@
 #
 # Indexes
 #
+#  index_characters_on_deleted_at            (deleted_at)
 #  index_characters_on_favorite_users_count  (favorite_users_count)
 #  index_characters_on_name_and_series_id    (name,series_id) UNIQUE
 #  index_characters_on_series_id             (series_id)

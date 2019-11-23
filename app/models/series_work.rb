@@ -5,6 +5,7 @@
 #
 #  id         :integer          not null, primary key
 #  aasm_state :string           default("published"), not null
+#  deleted_at :datetime
 #  summary    :string           default(""), not null
 #  summary_en :string           default(""), not null
 #  created_at :datetime         not null
@@ -14,6 +15,7 @@
 #
 # Indexes
 #
+#  index_series_works_on_deleted_at             (deleted_at)
 #  index_series_works_on_series_id              (series_id)
 #  index_series_works_on_series_id_and_work_id  (series_id,work_id) UNIQUE
 #  index_series_works_on_work_id                (work_id)

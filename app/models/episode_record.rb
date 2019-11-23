@@ -7,6 +7,7 @@
 #  aasm_state                 :string           default("published"), not null
 #  body                       :text
 #  comments_count             :integer          default(0), not null
+#  deleted_at                 :datetime
 #  facebook_click_count       :integer          default(0), not null
 #  facebook_url_hash          :string(510)
 #  likes_count                :integer          default(0), not null
@@ -34,6 +35,7 @@
 #  checkins_facebook_url_hash_key                       (facebook_url_hash) UNIQUE
 #  checkins_twitter_url_hash_key                        (twitter_url_hash) UNIQUE
 #  checkins_user_id_idx                                 (user_id)
+#  index_episode_records_on_deleted_at                  (deleted_at)
 #  index_episode_records_on_locale                      (locale)
 #  index_episode_records_on_multiple_episode_record_id  (multiple_episode_record_id)
 #  index_episode_records_on_oauth_application_id        (oauth_application_id)

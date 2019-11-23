@@ -5,6 +5,7 @@
 #
 #  id                     :bigint           not null, primary key
 #  aasm_state             :string           default("published"), not null
+#  deleted_at             :datetime
 #  image_data             :text
 #  sort_number            :integer          default(0), not null
 #  thumbnail_content_type :string
@@ -20,7 +21,8 @@
 #
 # Indexes
 #
-#  index_trailers_on_work_id  (work_id)
+#  index_trailers_on_deleted_at  (deleted_at)
+#  index_trailers_on_work_id     (work_id)
 #
 # Foreign Keys
 #

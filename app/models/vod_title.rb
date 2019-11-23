@@ -6,6 +6,7 @@
 #  id           :bigint           not null, primary key
 #  aasm_state   :string           default("published"), not null
 #  code         :string           not null
+#  deleted_at   :datetime
 #  mail_sent_at :datetime
 #  name         :string           not null
 #  created_at   :datetime         not null
@@ -16,6 +17,7 @@
 # Indexes
 #
 #  index_vod_titles_on_channel_id    (channel_id)
+#  index_vod_titles_on_deleted_at    (deleted_at)
 #  index_vod_titles_on_mail_sent_at  (mail_sent_at)
 #  index_vod_titles_on_work_id       (work_id)
 #

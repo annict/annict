@@ -5,6 +5,7 @@
 #
 #  id                          :integer          not null, primary key
 #  aasm_state                  :string           default("published"), not null
+#  deleted_at                  :datetime
 #  episode_record_bodies_count :integer          default(0), not null
 #  episode_records_count       :integer          default(0), not null
 #  fetch_syobocal              :boolean          default(FALSE), not null
@@ -29,6 +30,7 @@
 #  episodes_work_id_idx                                   (work_id)
 #  episodes_work_id_sc_count_key                          (work_id,sc_count) UNIQUE
 #  index_episodes_on_aasm_state                           (aasm_state)
+#  index_episodes_on_deleted_at                           (deleted_at)
 #  index_episodes_on_prev_episode_id                      (prev_episode_id)
 #  index_episodes_on_ratings_count                        (ratings_count)
 #  index_episodes_on_satisfaction_rate                    (satisfaction_rate)

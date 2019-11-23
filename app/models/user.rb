@@ -11,6 +11,7 @@
 #  confirmed_at                  :datetime
 #  current_sign_in_at            :datetime
 #  current_sign_in_ip            :string(510)
+#  deleted_at                    :datetime
 #  email                         :citext           not null
 #  encrypted_password            :string(510)      default(""), not null
 #  episode_records_count         :integer          default(0), not null
@@ -39,6 +40,7 @@
 #
 #  index_users_on_aasm_state             (aasm_state)
 #  index_users_on_allowed_locales        (allowed_locales) USING gin
+#  index_users_on_deleted_at             (deleted_at)
 #  index_users_on_gumroad_subscriber_id  (gumroad_subscriber_id)
 #  users_confirmation_token_key          (confirmation_token) UNIQUE
 #  users_email_key                       (email) UNIQUE

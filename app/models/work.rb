@@ -6,6 +6,7 @@
 #  id                           :integer          not null, primary key
 #  aasm_state                   :string           default("published"), not null
 #  auto_episodes_count          :integer          default(0), not null
+#  deleted_at                   :datetime
 #  ended_on                     :date
 #  facebook_og_image_url        :string           default(""), not null
 #  manual_episodes_count        :integer
@@ -51,6 +52,7 @@
 # Indexes
 #
 #  index_works_on_aasm_state                           (aasm_state)
+#  index_works_on_deleted_at                           (deleted_at)
 #  index_works_on_key_pv_id                            (key_pv_id)
 #  index_works_on_number_format_id                     (number_format_id)
 #  index_works_on_ratings_count                        (ratings_count)

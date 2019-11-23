@@ -5,6 +5,7 @@
 #
 #  id                :bigint           not null, primary key
 #  aasm_state        :string           default("published"), not null
+#  deleted_at        :datetime
 #  description       :string
 #  impressions_count :integer          default(0), not null
 #  likes_count       :integer          default(0), not null
@@ -15,7 +16,8 @@
 #
 # Indexes
 #
-#  index_collections_on_user_id  (user_id)
+#  index_collections_on_deleted_at  (deleted_at)
+#  index_collections_on_user_id     (user_id)
 #
 # Foreign Keys
 #

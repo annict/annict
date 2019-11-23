@@ -6,6 +6,7 @@
 #  id              :bigint           not null, primary key
 #  aasm_state      :string           default("published"), not null
 #  comment         :text
+#  deleted_at      :datetime
 #  position        :integer          default(0), not null
 #  reactions_count :integer          default(0), not null
 #  title           :string           not null
@@ -19,6 +20,7 @@
 #
 #  index_collection_items_on_collection_id              (collection_id)
 #  index_collection_items_on_collection_id_and_work_id  (collection_id,work_id) UNIQUE
+#  index_collection_items_on_deleted_at                 (deleted_at)
 #  index_collection_items_on_user_id                    (user_id)
 #  index_collection_items_on_work_id                    (work_id)
 #

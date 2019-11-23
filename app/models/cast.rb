@@ -6,6 +6,7 @@
 #
 #  id           :integer          not null, primary key
 #  aasm_state   :string           default("published"), not null
+#  deleted_at   :datetime
 #  name         :string           not null
 #  name_en      :string           default(""), not null
 #  sort_number  :integer          default(0), not null
@@ -19,6 +20,7 @@
 #
 #  index_casts_on_aasm_state    (aasm_state)
 #  index_casts_on_character_id  (character_id)
+#  index_casts_on_deleted_at    (deleted_at)
 #  index_casts_on_person_id     (person_id)
 #  index_casts_on_sort_number   (sort_number)
 #  index_casts_on_work_id       (work_id)

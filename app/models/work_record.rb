@@ -6,6 +6,7 @@
 #  id                     :bigint           not null, primary key
 #  aasm_state             :string           default("published"), not null
 #  body                   :text             not null
+#  deleted_at             :datetime
 #  impressions_count      :integer          default(0), not null
 #  likes_count            :integer          default(0), not null
 #  locale                 :string           default("other"), not null
@@ -25,6 +26,7 @@
 #
 # Indexes
 #
+#  index_work_records_on_deleted_at            (deleted_at)
 #  index_work_records_on_locale                (locale)
 #  index_work_records_on_oauth_application_id  (oauth_application_id)
 #  index_work_records_on_record_id             (record_id) UNIQUE

@@ -5,6 +5,7 @@
 #
 #  id                                 :bigint           not null, primary key
 #  aasm_state                         :string           default("published"), not null
+#  deleted_at                         :datetime
 #  minimum_episode_generatable_number :integer          default(1), not null
 #  rebroadcast                        :boolean          default(FALSE), not null
 #  started_at                         :datetime
@@ -19,6 +20,7 @@
 # Indexes
 #
 #  index_programs_on_channel_id      (channel_id)
+#  index_programs_on_deleted_at      (deleted_at)
 #  index_programs_on_vod_title_code  (vod_title_code)
 #  index_programs_on_work_id         (work_id)
 #

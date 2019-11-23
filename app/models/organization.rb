@@ -5,6 +5,7 @@
 #
 #  id                   :integer          not null, primary key
 #  aasm_state           :string           default("published"), not null
+#  deleted_at           :datetime
 #  favorite_users_count :integer          default(0), not null
 #  name                 :string           not null
 #  name_en              :string           default(""), not null
@@ -22,6 +23,7 @@
 # Indexes
 #
 #  index_organizations_on_aasm_state            (aasm_state)
+#  index_organizations_on_deleted_at            (deleted_at)
 #  index_organizations_on_favorite_users_count  (favorite_users_count)
 #  index_organizations_on_name                  (name) UNIQUE
 #  index_organizations_on_staffs_count          (staffs_count)

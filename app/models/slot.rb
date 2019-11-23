@@ -5,6 +5,7 @@
 #
 #  id             :integer          not null, primary key
 #  aasm_state     :string           default("published"), not null
+#  deleted_at     :datetime
 #  irregular      :boolean          default(FALSE), not null
 #  number         :integer
 #  rebroadcast    :boolean          default(FALSE), not null
@@ -21,6 +22,7 @@
 # Indexes
 #
 #  index_slots_on_aasm_state                 (aasm_state)
+#  index_slots_on_deleted_at                 (deleted_at)
 #  index_slots_on_program_id                 (program_id)
 #  index_slots_on_program_id_and_episode_id  (program_id,episode_id) UNIQUE
 #  index_slots_on_program_id_and_number      (program_id,number) UNIQUE

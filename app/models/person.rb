@@ -8,6 +8,7 @@
 #  birthday             :date
 #  blood_type           :string
 #  casts_count          :integer          default(0), not null
+#  deleted_at           :datetime
 #  favorite_users_count :integer          default(0), not null
 #  gender               :string
 #  height               :integer
@@ -31,6 +32,7 @@
 #
 #  index_people_on_aasm_state            (aasm_state)
 #  index_people_on_casts_count           (casts_count)
+#  index_people_on_deleted_at            (deleted_at)
 #  index_people_on_favorite_users_count  (favorite_users_count)
 #  index_people_on_name                  (name) UNIQUE
 #  index_people_on_prefecture_id         (prefecture_id)

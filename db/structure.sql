@@ -116,7 +116,8 @@ CREATE TABLE public.casts (
     created_at timestamp without time zone NOT NULL,
     updated_at timestamp without time zone NOT NULL,
     character_id integer NOT NULL,
-    name_en character varying DEFAULT ''::character varying NOT NULL
+    name_en character varying DEFAULT ''::character varying NOT NULL,
+    deleted_at timestamp without time zone
 );
 
 
@@ -217,7 +218,8 @@ CREATE TABLE public.channels (
     updated_at timestamp with time zone,
     vod boolean DEFAULT false,
     aasm_state character varying DEFAULT 'published'::character varying NOT NULL,
-    sort_number integer DEFAULT 0 NOT NULL
+    sort_number integer DEFAULT 0 NOT NULL,
+    deleted_at timestamp without time zone
 );
 
 
@@ -292,7 +294,8 @@ CREATE TABLE public.characters (
     description_source character varying DEFAULT ''::character varying NOT NULL,
     description_source_en character varying DEFAULT ''::character varying NOT NULL,
     favorite_users_count integer DEFAULT 0 NOT NULL,
-    series_id integer
+    series_id integer,
+    deleted_at timestamp without time zone
 );
 
 
@@ -330,7 +333,8 @@ CREATE TABLE public.collection_items (
     reactions_count integer DEFAULT 0 NOT NULL,
     "position" integer DEFAULT 0 NOT NULL,
     created_at timestamp without time zone NOT NULL,
-    updated_at timestamp without time zone NOT NULL
+    updated_at timestamp without time zone NOT NULL,
+    deleted_at timestamp without time zone
 );
 
 
@@ -366,7 +370,8 @@ CREATE TABLE public.collections (
     likes_count integer DEFAULT 0 NOT NULL,
     impressions_count integer DEFAULT 0 NOT NULL,
     created_at timestamp without time zone NOT NULL,
-    updated_at timestamp without time zone NOT NULL
+    updated_at timestamp without time zone NOT NULL,
+    deleted_at timestamp without time zone
 );
 
 
@@ -656,7 +661,8 @@ CREATE TABLE public.episode_records (
     review_id integer,
     aasm_state character varying DEFAULT 'published'::character varying NOT NULL,
     locale character varying DEFAULT 'other'::character varying NOT NULL,
-    record_id integer NOT NULL
+    record_id integer NOT NULL,
+    deleted_at timestamp without time zone
 );
 
 
@@ -696,7 +702,8 @@ CREATE TABLE public.episodes (
     score double precision,
     ratings_count integer DEFAULT 0 NOT NULL,
     satisfaction_rate double precision,
-    number_en character varying DEFAULT ''::character varying NOT NULL
+    number_en character varying DEFAULT ''::character varying NOT NULL,
+    deleted_at timestamp without time zone
 );
 
 
@@ -711,7 +718,8 @@ CREATE TABLE public.faq_categories (
     sort_number integer DEFAULT 0 NOT NULL,
     aasm_state character varying DEFAULT 'published'::character varying NOT NULL,
     created_at timestamp without time zone NOT NULL,
-    updated_at timestamp without time zone NOT NULL
+    updated_at timestamp without time zone NOT NULL,
+    deleted_at timestamp without time zone
 );
 
 
@@ -747,7 +755,8 @@ CREATE TABLE public.faq_contents (
     sort_number integer DEFAULT 0 NOT NULL,
     aasm_state character varying DEFAULT 'published'::character varying NOT NULL,
     created_at timestamp without time zone NOT NULL,
-    updated_at timestamp without time zone NOT NULL
+    updated_at timestamp without time zone NOT NULL,
+    deleted_at timestamp without time zone
 );
 
 
@@ -1557,7 +1566,8 @@ CREATE TABLE public.oauth_applications (
     updated_at timestamp without time zone,
     owner_id integer,
     owner_type character varying,
-    confidential boolean DEFAULT true NOT NULL
+    confidential boolean DEFAULT true NOT NULL,
+    deleted_at timestamp without time zone
 );
 
 
@@ -1599,7 +1609,8 @@ CREATE TABLE public.organizations (
     wikipedia_url_en character varying DEFAULT ''::character varying NOT NULL,
     twitter_username_en character varying DEFAULT ''::character varying NOT NULL,
     favorite_users_count integer DEFAULT 0 NOT NULL,
-    staffs_count integer DEFAULT 0 NOT NULL
+    staffs_count integer DEFAULT 0 NOT NULL,
+    deleted_at timestamp without time zone
 );
 
 
@@ -1649,7 +1660,8 @@ CREATE TABLE public.people (
     twitter_username_en character varying DEFAULT ''::character varying NOT NULL,
     favorite_users_count integer DEFAULT 0 NOT NULL,
     casts_count integer DEFAULT 0 NOT NULL,
-    staffs_count integer DEFAULT 0 NOT NULL
+    staffs_count integer DEFAULT 0 NOT NULL,
+    deleted_at timestamp without time zone
 );
 
 
@@ -1757,7 +1769,8 @@ CREATE TABLE public.programs (
     vod_title_code character varying DEFAULT ''::character varying NOT NULL,
     vod_title_name character varying DEFAULT ''::character varying NOT NULL,
     rebroadcast boolean DEFAULT false NOT NULL,
-    minimum_episode_generatable_number integer DEFAULT 1 NOT NULL
+    minimum_episode_generatable_number integer DEFAULT 1 NOT NULL,
+    deleted_at timestamp without time zone
 );
 
 
@@ -1879,7 +1892,8 @@ CREATE TABLE public.records (
     aasm_state character varying DEFAULT 'published'::character varying NOT NULL,
     impressions_count integer DEFAULT 0 NOT NULL,
     created_at timestamp without time zone NOT NULL,
-    updated_at timestamp without time zone NOT NULL
+    updated_at timestamp without time zone NOT NULL,
+    deleted_at timestamp without time zone
 );
 
 
@@ -1949,7 +1963,8 @@ CREATE TABLE public.series (
     aasm_state character varying DEFAULT 'published'::character varying NOT NULL,
     series_works_count integer DEFAULT 0 NOT NULL,
     created_at timestamp without time zone NOT NULL,
-    updated_at timestamp without time zone NOT NULL
+    updated_at timestamp without time zone NOT NULL,
+    deleted_at timestamp without time zone
 );
 
 
@@ -1984,7 +1999,8 @@ CREATE TABLE public.series_works (
     summary_en character varying DEFAULT ''::character varying NOT NULL,
     aasm_state character varying DEFAULT 'published'::character varying NOT NULL,
     created_at timestamp without time zone NOT NULL,
-    updated_at timestamp without time zone NOT NULL
+    updated_at timestamp without time zone NOT NULL,
+    deleted_at timestamp without time zone
 );
 
 
@@ -2126,7 +2142,8 @@ CREATE TABLE public.slots (
     aasm_state character varying DEFAULT 'published'::character varying NOT NULL,
     program_id integer,
     number integer,
-    irregular boolean DEFAULT false NOT NULL
+    irregular boolean DEFAULT false NOT NULL,
+    deleted_at timestamp without time zone
 );
 
 
@@ -2159,7 +2176,8 @@ CREATE TABLE public.staffs (
     resource_id integer NOT NULL,
     resource_type character varying NOT NULL,
     name_en character varying DEFAULT ''::character varying NOT NULL,
-    role_other_en character varying DEFAULT ''::character varying NOT NULL
+    role_other_en character varying DEFAULT ''::character varying NOT NULL,
+    deleted_at timestamp without time zone
 );
 
 
@@ -2298,7 +2316,8 @@ CREATE TABLE public.trailers (
     created_at timestamp without time zone NOT NULL,
     updated_at timestamp without time zone NOT NULL,
     title_en character varying DEFAULT ''::character varying NOT NULL,
-    image_data text
+    image_data text,
+    deleted_at timestamp without time zone
 );
 
 
@@ -2534,7 +2553,8 @@ CREATE TABLE public.users (
     gumroad_subscriber_id integer,
     allowed_locales character varying[],
     records_count integer DEFAULT 0 NOT NULL,
-    aasm_state character varying DEFAULT 'published'::character varying NOT NULL
+    aasm_state character varying DEFAULT 'published'::character varying NOT NULL,
+    deleted_at timestamp without time zone
 );
 
 
@@ -2578,7 +2598,8 @@ CREATE TABLE public.vod_titles (
     aasm_state character varying DEFAULT 'published'::character varying NOT NULL,
     mail_sent_at timestamp without time zone,
     created_at timestamp without time zone NOT NULL,
-    updated_at timestamp without time zone NOT NULL
+    updated_at timestamp without time zone NOT NULL,
+    deleted_at timestamp without time zone
 );
 
 
@@ -2732,7 +2753,8 @@ CREATE TABLE public.work_records (
     updated_at timestamp without time zone NOT NULL,
     oauth_application_id integer,
     locale character varying DEFAULT 'other'::character varying NOT NULL,
-    record_id integer NOT NULL
+    record_id integer NOT NULL,
+    deleted_at timestamp without time zone
 );
 
 
@@ -2833,7 +2855,8 @@ CREATE TABLE public.work_tags (
     work_taggings_count integer DEFAULT 0 NOT NULL,
     created_at timestamp without time zone NOT NULL,
     updated_at timestamp without time zone NOT NULL,
-    locale character varying DEFAULT 'other'::character varying NOT NULL
+    locale character varying DEFAULT 'other'::character varying NOT NULL,
+    deleted_at timestamp without time zone
 );
 
 
@@ -2916,7 +2939,8 @@ CREATE TABLE public.works (
     satisfaction_rate double precision,
     records_count integer DEFAULT 0 NOT NULL,
     work_records_with_body_count integer DEFAULT 0 NOT NULL,
-    start_episode_raw_number double precision DEFAULT 1.0 NOT NULL
+    start_episode_raw_number double precision DEFAULT 1.0 NOT NULL,
+    deleted_at timestamp without time zone
 );
 
 
@@ -4247,6 +4271,13 @@ CREATE INDEX index_casts_on_character_id ON public.casts USING btree (character_
 
 
 --
+-- Name: index_casts_on_deleted_at; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_casts_on_deleted_at ON public.casts USING btree (deleted_at);
+
+
+--
 -- Name: index_casts_on_person_id; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -4265,6 +4296,13 @@ CREATE INDEX index_casts_on_sort_number ON public.casts USING btree (sort_number
 --
 
 CREATE INDEX index_casts_on_work_id ON public.casts USING btree (work_id);
+
+
+--
+-- Name: index_channels_on_deleted_at; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_channels_on_deleted_at ON public.channels USING btree (deleted_at);
 
 
 --
@@ -4293,6 +4331,13 @@ CREATE INDEX index_character_images_on_character_id ON public.character_images U
 --
 
 CREATE INDEX index_character_images_on_user_id ON public.character_images USING btree (user_id);
+
+
+--
+-- Name: index_characters_on_deleted_at; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_characters_on_deleted_at ON public.characters USING btree (deleted_at);
 
 
 --
@@ -4331,6 +4376,13 @@ CREATE UNIQUE INDEX index_collection_items_on_collection_id_and_work_id ON publi
 
 
 --
+-- Name: index_collection_items_on_deleted_at; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_collection_items_on_deleted_at ON public.collection_items USING btree (deleted_at);
+
+
+--
 -- Name: index_collection_items_on_user_id; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -4342,6 +4394,13 @@ CREATE INDEX index_collection_items_on_user_id ON public.collection_items USING 
 --
 
 CREATE INDEX index_collection_items_on_work_id ON public.collection_items USING btree (work_id);
+
+
+--
+-- Name: index_collections_on_deleted_at; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_collections_on_deleted_at ON public.collections USING btree (deleted_at);
 
 
 --
@@ -4457,6 +4516,13 @@ CREATE INDEX index_episode_items_on_work_id ON public.episode_items USING btree 
 
 
 --
+-- Name: index_episode_records_on_deleted_at; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_episode_records_on_deleted_at ON public.episode_records USING btree (deleted_at);
+
+
+--
 -- Name: index_episode_records_on_locale; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -4513,6 +4579,13 @@ CREATE INDEX index_episodes_on_aasm_state ON public.episodes USING btree (aasm_s
 
 
 --
+-- Name: index_episodes_on_deleted_at; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_episodes_on_deleted_at ON public.episodes USING btree (deleted_at);
+
+
+--
 -- Name: index_episodes_on_prev_episode_id; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -4548,10 +4621,24 @@ CREATE INDEX index_episodes_on_score ON public.episodes USING btree (score);
 
 
 --
+-- Name: index_faq_categories_on_deleted_at; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_faq_categories_on_deleted_at ON public.faq_categories USING btree (deleted_at);
+
+
+--
 -- Name: index_faq_categories_on_locale; Type: INDEX; Schema: public; Owner: -
 --
 
 CREATE INDEX index_faq_categories_on_locale ON public.faq_categories USING btree (locale);
+
+
+--
+-- Name: index_faq_contents_on_deleted_at; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_faq_contents_on_deleted_at ON public.faq_contents USING btree (deleted_at);
 
 
 --
@@ -4891,6 +4978,13 @@ CREATE UNIQUE INDEX index_oauth_access_tokens_on_token ON public.oauth_access_to
 
 
 --
+-- Name: index_oauth_applications_on_deleted_at; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_oauth_applications_on_deleted_at ON public.oauth_applications USING btree (deleted_at);
+
+
+--
 -- Name: index_oauth_applications_on_owner_id_and_owner_type; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -4909,6 +5003,13 @@ CREATE UNIQUE INDEX index_oauth_applications_on_uid ON public.oauth_applications
 --
 
 CREATE INDEX index_organizations_on_aasm_state ON public.organizations USING btree (aasm_state);
+
+
+--
+-- Name: index_organizations_on_deleted_at; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_organizations_on_deleted_at ON public.organizations USING btree (deleted_at);
 
 
 --
@@ -4944,6 +5045,13 @@ CREATE INDEX index_people_on_aasm_state ON public.people USING btree (aasm_state
 --
 
 CREATE INDEX index_people_on_casts_count ON public.people USING btree (casts_count);
+
+
+--
+-- Name: index_people_on_deleted_at; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_people_on_deleted_at ON public.people USING btree (deleted_at);
 
 
 --
@@ -4989,6 +5097,13 @@ CREATE INDEX index_programs_on_channel_id ON public.programs USING btree (channe
 
 
 --
+-- Name: index_programs_on_deleted_at; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_programs_on_deleted_at ON public.programs USING btree (deleted_at);
+
+
+--
 -- Name: index_programs_on_vod_title_code; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -5021,6 +5136,13 @@ CREATE INDEX index_reactions_on_target_user_id ON public.reactions USING btree (
 --
 
 CREATE INDEX index_reactions_on_user_id ON public.reactions USING btree (user_id);
+
+
+--
+-- Name: index_records_on_deleted_at; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_records_on_deleted_at ON public.records USING btree (deleted_at);
 
 
 --
@@ -5059,10 +5181,24 @@ CREATE UNIQUE INDEX index_seasons_on_year_and_name ON public.seasons USING btree
 
 
 --
+-- Name: index_series_on_deleted_at; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_series_on_deleted_at ON public.series USING btree (deleted_at);
+
+
+--
 -- Name: index_series_on_name; Type: INDEX; Schema: public; Owner: -
 --
 
 CREATE UNIQUE INDEX index_series_on_name ON public.series USING btree (name);
+
+
+--
+-- Name: index_series_works_on_deleted_at; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_series_works_on_deleted_at ON public.series_works USING btree (deleted_at);
 
 
 --
@@ -5115,6 +5251,13 @@ CREATE INDEX index_slots_on_aasm_state ON public.slots USING btree (aasm_state);
 
 
 --
+-- Name: index_slots_on_deleted_at; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_slots_on_deleted_at ON public.slots USING btree (deleted_at);
+
+
+--
 -- Name: index_slots_on_program_id; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -5147,6 +5290,13 @@ CREATE UNIQUE INDEX index_slots_on_sc_pid ON public.slots USING btree (sc_pid);
 --
 
 CREATE INDEX index_staffs_on_aasm_state ON public.staffs USING btree (aasm_state);
+
+
+--
+-- Name: index_staffs_on_deleted_at; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_staffs_on_deleted_at ON public.staffs USING btree (deleted_at);
 
 
 --
@@ -5206,6 +5356,13 @@ CREATE UNIQUE INDEX index_tips_on_slug_and_locale ON public.tips USING btree (sl
 
 
 --
+-- Name: index_trailers_on_deleted_at; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_trailers_on_deleted_at ON public.trailers USING btree (deleted_at);
+
+
+--
 -- Name: index_trailers_on_work_id; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -5262,6 +5419,13 @@ CREATE INDEX index_users_on_allowed_locales ON public.users USING gin (allowed_l
 
 
 --
+-- Name: index_users_on_deleted_at; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_users_on_deleted_at ON public.users USING btree (deleted_at);
+
+
+--
 -- Name: index_users_on_gumroad_subscriber_id; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -5273,6 +5437,13 @@ CREATE INDEX index_users_on_gumroad_subscriber_id ON public.users USING btree (g
 --
 
 CREATE INDEX index_vod_titles_on_channel_id ON public.vod_titles USING btree (channel_id);
+
+
+--
+-- Name: index_vod_titles_on_deleted_at; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_vod_titles_on_deleted_at ON public.vod_titles USING btree (deleted_at);
 
 
 --
@@ -5357,6 +5528,13 @@ CREATE INDEX index_work_items_on_work_id ON public.work_items USING btree (work_
 --
 
 CREATE UNIQUE INDEX index_work_items_on_work_id_and_item_id ON public.work_items USING btree (work_id, item_id);
+
+
+--
+-- Name: index_work_records_on_deleted_at; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_work_records_on_deleted_at ON public.work_records USING btree (deleted_at);
 
 
 --
@@ -5451,6 +5629,13 @@ CREATE INDEX index_work_taggings_on_work_tag_id ON public.work_taggings USING bt
 
 
 --
+-- Name: index_work_tags_on_deleted_at; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_work_tags_on_deleted_at ON public.work_tags USING btree (deleted_at);
+
+
+--
 -- Name: index_work_tags_on_locale; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -5476,6 +5661,13 @@ CREATE INDEX index_work_tags_on_work_taggings_count ON public.work_tags USING bt
 --
 
 CREATE INDEX index_works_on_aasm_state ON public.works USING btree (aasm_state);
+
+
+--
+-- Name: index_works_on_deleted_at; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_works_on_deleted_at ON public.works USING btree (deleted_at);
 
 
 --
@@ -6891,6 +7083,8 @@ INSERT INTO "schema_migrations" (version) VALUES
 ('20190501175021'),
 ('20190608074205'),
 ('20191013172849'),
-('20191019230403');
+('20191019230403'),
+('20191020110259'),
+('20191123150532');
 
 
