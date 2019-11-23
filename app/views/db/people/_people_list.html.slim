@@ -22,14 +22,14 @@
           td = person.name_kana.presence || "-"
           td = person.name_en.presence || "-"
           td
-            .badge class="#{person.published? ? 'badge-success' : 'badge-warning'}"
+            .badge class="#{person.not_deleted? ? 'badge-success' : 'badge-warning'}"
               = t("resources.person.aasm_state.#{person.aasm_state}")
           td = link_to t("verb.view"), activities_db_person_path(person)
           - if policy(person).edit?
             td = link_to t("noun.edit"), edit_db_person_path(person), class: "btn btn-primary btn-sm"
           - if policy(person).hide?
             td
-              - if person.published?
+              - if person.not_deleted?
                 = link_to t("noun.unpublish"), hide_db_person_path(person), class: "btn btn-warning btn-sm", data: { method: "patch", confirm: t("messages._common.are_you_sure") }
           - if policy(person).destroy?
             td = link_to t("noun.delete"), db_person_path(person), class: "btn btn-danger btn-sm", data: { method: "delete", confirm: t("messages._common.are_you_sure") }

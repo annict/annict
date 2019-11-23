@@ -72,8 +72,8 @@ class Person < ApplicationRecord
 
     event :hide do
       after do
-        casts.published.each(&:hide!)
-        staffs.published.each(&:hide!)
+        casts.without_deleted.each(&:soft_delete)
+        staffs.without_deleted.each(&:soft_delete)
       end
 
       transitions from: :published, to: :hidden

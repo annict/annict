@@ -51,7 +51,7 @@ class Collection < ApplicationRecord
   end
 
   def positions_for_select
-    collection_items.published.order(:position).map do |item|
+    collection_items.without_deleted.order(:position).map do |item|
       key = item.position.to_s
       key += " (#{I18n.t('messages.collections.position_of_x', item_title: item.title)})"
       [key, item.position]

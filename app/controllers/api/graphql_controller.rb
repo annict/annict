@@ -35,7 +35,7 @@ module Api
     def current_user
       return nil if doorkeeper_token.blank?
 
-      @current_user ||= User.published.find(doorkeeper_token.resource_owner_id)
+      @current_user ||= User.without_deleted.find(doorkeeper_token.resource_owner_id)
     end
 
     def bad_credentials

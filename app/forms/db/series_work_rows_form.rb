@@ -26,8 +26,8 @@ module Db
 
     def fetched_rows
       parsed_rows.map do |row_columns|
-        work = Work.published.where(id: row_columns[0]).
-          or(Work.published.where(title: row_columns[0])).first
+        work = Work.without_deleted.where(id: row_columns[0]).
+          or(Work.without_deleted.where(title: row_columns[0])).first
 
         {
           work: { id: work&.id, value: row_columns[0] },

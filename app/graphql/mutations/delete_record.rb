@@ -9,7 +9,7 @@ module Mutations
     def resolve(record_id:)
       raise Annict::Errors::InvalidAPITokenScopeError unless context[:doorkeeper_token].writable?
 
-      episode_record = context[:viewer].episode_records.published.find_by_graphql_id(record_id)
+      episode_record = context[:viewer].episode_records.without_deleted.find_by_graphql_id(record_id)
       episode_record.record.destroy
 
       {

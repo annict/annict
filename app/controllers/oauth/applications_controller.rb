@@ -46,7 +46,7 @@ module Oauth
 
     def destroy
       @application = current_user.oauth_applications.available.find(params[:id])
-      @application.hide!
+      @application.soft_delete
       flash[:notice] = t "messages.oauth.applications.deleted"
       redirect_to oauth_applications_url
     end

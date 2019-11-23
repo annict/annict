@@ -1,9 +1,9 @@
 .m-0
   - if user_signed_in?
-    - user_records = current_user.episode_records.published.where(episode: episode)
+    - user_records = current_user.episode_records.without_deleted.where(episode: episode)
   span.small
     = icon "edit", class: "mr-1"
     - if user_signed_in?
       = user_records.length
     - else
-      = episode.episode_records.published.length
+      = episode.episode_records.without_deleted.length

@@ -6,7 +6,7 @@ module Api
       before_action :authenticate_user!
 
       def select
-        @work = Work.published.find(params[:work_id])
+        @work = Work.without_deleted.find(params[:work_id])
         page_category = params[:page_category]
         ga_client.page_category = page_category
         status = StatusService.new(current_user, @work)

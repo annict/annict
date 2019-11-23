@@ -4,11 +4,11 @@ class OrganizationFansController < ApplicationController
   before_action :load_i18n, only: %i(index)
 
   def index
-    @organization = Organization.published.find(params[:organization_id])
+    @organization = Organization.without_deleted.find(params[:organization_id])
     @favorite_orgs = @organization.
       favorite_organizations.
       joins(:user).
-      merge(User.published).
+      merge(User.without_deleted).
       order(watched_works_count: :desc)
   end
 

@@ -54,7 +54,7 @@ module Db
       @series_work = SeriesWork.find(params[:id])
       authorize @series_work, :hide?
 
-      @series_work.hide!
+      @series_work.soft_delete
 
       flash[:notice] = t("messages._common.unpublished")
       redirect_back fallback_location: db_series_series_works_path(@series_work.series)

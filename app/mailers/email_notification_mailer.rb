@@ -28,7 +28,7 @@ class EmailNotificationMailer < ActionMailer::Base
     @liked_user = User.find(liked_user_id)
     @unsubscription_key = @liked_user.email_notification.unsubscription_key
     @user = User.find(user_id)
-    @episode_record = @liked_user.episode_records.published.find(episode_record_id)
+    @episode_record = @liked_user.episode_records.without_deleted.find(episode_record_id)
     @work = @episode_record.work
     @episode = @episode_record.episode
 
@@ -80,8 +80,8 @@ class EmailNotificationMailer < ActionMailer::Base
 
   def related_works_added(user_id, work_id)
     @user = User.find(user_id)
-    @work = Work.published.find(work_id)
-    @related_works = @work.related_works.published.order_by_season
+    @work = Work.without_deleted.find(work_id)
+    @related_works = @work.related_works.without_deleted.order_by_season
     @unsubscription_key = @user.email_notification.unsubscription_key
 
     I18n.with_locale(@user.locale) do

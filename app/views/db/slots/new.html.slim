@@ -14,11 +14,11 @@
 = render "db/works/subnav", work: @work
 
 .container-fluid.p-3
-  - if @work.programs.published.exists?
+  - if @work.programs.without_deleted.exists?
     .c-card.p-3.mb-3
       h3.h4
         = t("messages.slots.new_slots_csv_by_program")
-      - @work.programs.published.each do |pd|
+      - @work.programs.without_deleted.each do |pd|
         = link_to "#{pd.channel.name}<br>#{display_time(pd.started_at)}〜".html_safe, new_db_work_slot_path(program_id: pd.id), class: "btn btn-sm #{pd.id.to_s == params[:program_id] ? 'btn-secondary' : 'btn-outline-secondary'} mr-2 mb-2"
   .row
     .col-6

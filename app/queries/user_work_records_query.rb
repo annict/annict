@@ -6,10 +6,10 @@ class UserWorkRecordsQuery
     @user = user
 
     @work_records = @work_records.
-      published.
+      without_deleted.
       preload(:record, user: :profile).
       joins(:user).
-      merge(User.published)
+      merge(User.without_deleted)
     @work_records = @work_records.where.not(user_id: @user.mute_users.pluck(:muted_user_id)) if @user
     @work_records = join_likes if @user
     @work_records = join_latest_statuses if @user

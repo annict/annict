@@ -12,7 +12,7 @@ module Db
       vod_title = VodTitle.find(params[:id])
       authorize vod_title, :hide?
 
-      vod_title.hide!
+      vod_title.soft_delete
 
       flash[:notice] = t("messages._common.unpublished")
       redirect_back fallback_location: db_vod_titles_path

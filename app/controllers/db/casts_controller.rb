@@ -54,7 +54,7 @@ module Db
       @cast = Cast.find(params[:id])
       authorize @cast, :hide?
 
-      @cast.hide!
+      @cast.soft_delete
 
       flash[:notice] = t("resources.cast.unpublished")
       redirect_back fallback_location: db_works_path

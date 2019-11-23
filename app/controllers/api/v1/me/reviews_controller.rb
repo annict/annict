@@ -7,7 +7,7 @@ module Api
         before_action :prepare_params!, only: %i(create update destroy)
 
         def create
-          work = Work.published.find(@params.work_id)
+          work = Work.without_deleted.find(@params.work_id)
           work_record = work.work_records.new do |r|
             r.user = current_user
             r.work = work
@@ -39,7 +39,7 @@ module Api
         end
 
         def update
-          @work_record = current_user.work_records.published.find(@params.id)
+          @work_record = current_user.work_records.without_deleted.find(@params.id)
           @work_record.title = @params.title
           @work_record.body = @params.body
           @work_record.rating_animation_state = @params.rating_animation_state
@@ -67,7 +67,7 @@ module Api
         end
 
         def destroy
-          @work_record = current_user.work_records.published.find(@params.id)
+          @work_record = current_user.work_records.without_deleted.find(@params.id)
           @work_record.record.destroy
           head 204
         end

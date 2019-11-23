@@ -27,7 +27,7 @@ module Mutations
     )
       raise Annict::Errors::InvalidAPITokenScopeError unless context[:doorkeeper_token].writable?
 
-      work_record = context[:viewer].work_records.published.find_by_graphql_id(review_id)
+      work_record = context[:viewer].work_records.without_deleted.find_by_graphql_id(review_id)
 
       work_record.title = title
       work_record.body = body

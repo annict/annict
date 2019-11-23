@@ -53,7 +53,7 @@ module Canary
         end
 
         def user(username:)
-          User.published.find_by(username: username)
+          User.without_deleted.find_by(username: username)
         end
 
         def works(annict_ids: nil, seasons: nil, titles: nil, order_by: nil)
@@ -98,7 +98,7 @@ module Canary
 
         def channels(is_vod: nil)
           SearchChannelsRepository.new(
-            Channel.published,
+            Channel.without_deleted,
             is_vod: is_vod
           ).call
         end

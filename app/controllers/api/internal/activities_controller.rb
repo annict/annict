@@ -19,7 +19,7 @@ module Api
           page: params[:page]
         )
 
-        @works = Work.published.where(id: @activities.all.map(&:work_id))
+        @works = Work.without_deleted.where(id: @activities.all.map(&:work_id))
       end
     end
   end

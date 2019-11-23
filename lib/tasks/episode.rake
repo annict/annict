@@ -9,14 +9,14 @@ namespace :episode do
   task update_score: :environment do
     RATING_MAX = 2
 
-    works = Work.published
+    works = Work.without_deleted
 
     works.find_each do |work|
-      episodes = work.episodes.published.recorded
+      episodes = work.episodes.without_deleted.recorded
       next if episodes.blank?
 
       episodes.find_each do |episode|
-        rating_states = episode.episode_records.published.where.not(rating_state: nil).pluck(:rating_state)
+        rating_states = episode.episode_records.without_deleted.where.not(rating_state: nil).pluck(:rating_state)
 
         if rating_states.length.zero?
           episode.update_columns(satisfaction_rate: nil)

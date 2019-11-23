@@ -21,13 +21,13 @@
             br
             = series.name_en.presence || "-"
           td
-            .badge class="#{series.published? ? 'badge-success' : 'badge-warning'}"
+            .badge class="#{series.not_deleted? ? 'badge-success' : 'badge-warning'}"
               = t("resources.series.aasm_state.#{series.aasm_state}")
           - if policy(series).edit?
             td = link_to t("noun.edit"), edit_db_series_path(series), class: "btn btn-primary btn-sm"
           - if policy(series).hide?
             td
-              - if series.published?
+              - if series.not_deleted?
                 = link_to t("noun.unpublish"), hide_db_series_path(series), class: "btn btn-warning btn-sm", data: { method: "patch", confirm: t("messages._common.are_you_sure") }
           - if policy(series).destroy?
             td = link_to t("noun.delete"), db_series_path(series), class: "btn btn-danger btn-sm", data: { method: "delete", confirm: t("messages._common.are_you_sure") }

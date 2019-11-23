@@ -126,9 +126,9 @@ Doorkeeper::Application.class_eval do
     end
   end
 
-  scope :available, -> { published.where.not(owner: nil) }
+  scope :available, -> { without_deleted.where.not(owner: nil) }
   scope :unavailable, -> {
-    unscoped.where(aasm_state: ["hidden"]).or(where(owner: nil))
+    unscoped.deleted.or(where(owner: nil))
   }
   scope :authorized, -> { where(oauth_access_tokens: { revoked_at: nil }) }
 end

@@ -45,8 +45,8 @@ module Db
 
     def fetched_rows
       parsed_rows.map do |row_columns|
-        channel = Channel.published.where(id: row_columns[0]).
-          or(Channel.published.where(name: row_columns[0])).first
+        channel = Channel.without_deleted.where(id: row_columns[0]).
+          or(Channel.without_deleted.where(name: row_columns[0])).first
 
         {
           channel: { id: channel&.id, value: row_columns[0] },

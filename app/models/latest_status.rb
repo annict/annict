@@ -78,7 +78,7 @@ class LatestStatus < ApplicationRecord
         WHERE
           #{episode_condition}
           work_id IN (#{work_ids.join(',')}) AND
-          aasm_state = 'published'
+          deleted_at IS NULL
       )
       SELECT work_id, id FROM ranked_episodes WHERE episode_rank = 1;
     SQL
@@ -94,7 +94,7 @@ class LatestStatus < ApplicationRecord
   end
 
   def fetch_next_episode
-    episode_ids = work.episodes.published.pluck(:id)
+    episode_ids = work.episodes.without_deleted.pluck(:id)
     next_episode_ids = episode_ids - watched_episode_ids
     Episode.where(id: next_episode_ids).order(:sort_number).first
   end

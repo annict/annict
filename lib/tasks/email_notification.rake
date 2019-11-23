@@ -7,9 +7,9 @@ namespace :email_notification do
   end
 
   task send_favorite_works_added_email: :environment do
-    cast_work_ids = Cast.published.yesterday.pluck(:work_id)
-    staff_work_ids = Staff.published.yesterday.pluck(:work_id)
-    works = Work.published.where(id: (cast_work_ids | staff_work_ids)).gt_current_season
+    cast_work_ids = Cast.without_deleted.yesterday.pluck(:work_id)
+    staff_work_ids = Staff.without_deleted.yesterday.pluck(:work_id)
+    works = Work.without_deleted.where(id: (cast_work_ids | staff_work_ids)).gt_current_season
 
     works.find_each do |work|
       favorite_character_user_ids = FavoriteCharacter.
@@ -40,7 +40,7 @@ namespace :email_notification do
   end
 
   task send_related_works_added_email: :environment do
-    works = Work.published.yesterday.gt_current_season
+    works = Work.without_deleted.yesterday.gt_current_season
 
     next if works.blank?
 

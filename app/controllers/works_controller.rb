@@ -12,7 +12,7 @@ class WorksController < ApplicationController
 
   def popular
     @works = Work.
-      published.
+      without_deleted.
       preload(:work_image).
       order(watchers_count: :desc, id: :desc).
       page(params[:page]).
@@ -23,7 +23,7 @@ class WorksController < ApplicationController
 
   def newest
     @works = Work.
-      published.
+      without_deleted.
       preload(:work_image).
       order(id: :desc).
       page(params[:page]).
@@ -34,7 +34,7 @@ class WorksController < ApplicationController
 
   def season
     @works = Work.
-      published.
+      without_deleted.
       by_season(params[:slug]).
       preload(:work_image).
       order(watchers_count: :desc, id: :desc).
@@ -72,7 +72,7 @@ class WorksController < ApplicationController
       @casts_data = Work.casts_data(@works)
       @staffs_data = Work.staffs_data(@works, major: true)
       @programs_data = Work.programs_data(@works, only_vod: true)
-      @channels = Channel.published.with_vod
+      @channels = Channel.without_deleted.with_vod
     end
 
     store_page_params(works: @works, display_option: @display_option)

@@ -44,7 +44,7 @@ class Channel < ApplicationRecord
 
     event :hide do
       after do
-        programs.published.each(&:hide!)
+        programs.without_deleted.each(&:soft_delete)
       end
 
       transitions from: :published, to: :hidden

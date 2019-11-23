@@ -13,7 +13,7 @@ module Mutations
     def resolve(record_id:, comment: nil, rating_state: nil, share_twitter: nil, share_facebook: nil)
       raise Annict::Errors::InvalidAPITokenScopeError unless context[:doorkeeper_token].writable?
 
-      record = context[:viewer].episode_records.published.find_by_graphql_id(record_id)
+      record = context[:viewer].episode_records.without_deleted.find_by_graphql_id(record_id)
 
       record.rating_state = rating_state&.downcase
       record.modify_body = record.body != comment

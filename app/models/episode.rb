@@ -61,7 +61,7 @@ class Episode < ApplicationRecord
     end
   end
 
-  counter_culture :work, column_name: proc { |model| model.published? ? "auto_episodes_count" : nil }
+  counter_culture :work, column_name: proc { |model| model.not_deleted? ? "auto_episodes_count" : nil }
 
   belongs_to :prev_episode,
     class_name: "Episode",

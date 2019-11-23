@@ -44,7 +44,7 @@ class SearchService
     when :all
       model
     else
-      model.published
+      model.without_deleted
     end
   end
 end

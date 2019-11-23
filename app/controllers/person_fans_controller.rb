@@ -4,11 +4,11 @@ class PersonFansController < ApplicationController
   before_action :load_i18n, only: %i(index)
 
   def index
-    @person = Person.published.find(params[:person_id])
+    @person = Person.without_deleted.find(params[:person_id])
     @favorite_people = @person.
       favorite_people.
       joins(:user).
-      merge(User.published).
+      merge(User.without_deleted).
       order(watched_works_count: :desc)
   end
 

@@ -7,7 +7,7 @@ module Api
         before_action :prepare_params!, only: [:create]
 
         def create
-          work = Work.published.find(@params.work_id)
+          work = Work.without_deleted.find(@params.work_id)
           status = StatusService.new(current_user, work)
           status.app = doorkeeper_token.application
           status.ga_client = ga_client

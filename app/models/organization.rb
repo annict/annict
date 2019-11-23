@@ -52,7 +52,7 @@ class Organization < ApplicationRecord
 
     event :hide do
       after do
-        staffs.published.each(&:hide!)
+        staffs.without_deleted.each(&:soft_delete)
       end
 
       transitions from: :published, to: :hidden

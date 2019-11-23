@@ -5,7 +5,7 @@ module Api
     class SeriesListController < Api::Internal::ApplicationController
       def index
         @series_list = if params[:q].present?
-          Series.where("name ILIKE ?", "%#{params[:q]}%").published
+          Series.where("name ILIKE ?", "%#{params[:q]}%").without_deleted
         else
           Series.none
         end

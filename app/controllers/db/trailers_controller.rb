@@ -51,7 +51,7 @@ module Db
       @trailer = Trailer.find(params[:id])
       authorize @trailer, :hide?
 
-      @trailer.hide!
+      @trailer.soft_delete
 
       flash[:notice] = t("resources.trailer.unpublished")
       redirect_back fallback_location: db_work_trailers_path(@trailer.work)

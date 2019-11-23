@@ -384,7 +384,7 @@ class User < ApplicationRecord
   end
 
   def tags_by_work(work)
-    work_tags.published.joins(:work_taggings).merge(work_taggings.where(work: work))
+    work_tags.without_deleted.joins(:work_taggings).merge(work_taggings.where(work: work))
   end
 
   def comment_by_work(work)
@@ -405,12 +405,12 @@ class User < ApplicationRecord
     username = SecureRandom.uuid.tr("-", "_")
 
     ActiveRecord::Base.transaction do
-      update_columns(username: username, email: "#{username}@example.com", aasm_state: :hidden)
+      update_columns(username: username, email: "#{username}@example.com", deleted_at: Time.zone.now)
       providers.delete_all
 
       oauth_applications.available.find_each do |app|
         app.update(owner: nil)
-        app.hide!
+        app.soft_delete
       end
     end
   end

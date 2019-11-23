@@ -2,7 +2,7 @@
 
 class IcsController < ApplicationController
   def show
-    @user = User.published.find_by!(username: params[:username])
+    @user = User.without_deleted.find_by!(username: params[:username])
 
     I18n.with_locale(@user.locale) do
       @slots = @user.

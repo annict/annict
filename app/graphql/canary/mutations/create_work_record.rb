@@ -35,7 +35,7 @@ module Canary
       )
         raise Annict::Errors::InvalidAPITokenScopeError unless context[:writable]
 
-        work = Work.published.find_by_graphql_id(work_id)
+        work = Work.without_deleted.find_by_graphql_id(work_id)
 
         review = work.work_records.new do |r|
           r.user = context[:viewer]

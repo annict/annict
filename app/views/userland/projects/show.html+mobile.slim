@@ -32,7 +32,7 @@ h2.h4.font-weight-bold.text-center.mt-3.mb-4
 h2.h4.font-weight-bold.text-center.mt-3.mb-4
   = t "noun.development_members"
 .c-card.mb-3
-  = render "users/user_list", users: @project.users.published
+  = render "users/user_list", users: @project.users.without_deleted
   
 = render "application/components/breadcrumb"
 = render "application/components/footer"

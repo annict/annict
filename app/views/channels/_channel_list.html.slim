@@ -5,7 +5,7 @@
         = link_to cg.name, "#collapse#{cg.id}", data: { toggle: "collapse", parent: "#accordion" }
       .collapse id="collapse#{cg.id}"
         .card-block.p-3
-          - cg.channels.published.order(:sort_number, :id).each do |c|
+          - cg.channels.without_deleted.order(:sort_number, :id).each do |c|
             .row.mb-2
               .col
                 = c.name

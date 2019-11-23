@@ -14,10 +14,10 @@ module Db
     validate :valid_resource
 
     def set_default_rows_by_program!(program_id, time_zone: "Asia/Tokyo")
-      program = @work.programs.published.find_by(id: program_id)
+      program = @work.programs.without_deleted.find_by(id: program_id)
       return unless program
 
-      last_slot = program.slots.published.order(started_at: :desc).first
+      last_slot = program.slots.without_deleted.order(started_at: :desc).first
       base_started_at = if last_slot
         last_slot.started_at + 7.days
       else
@@ -39,7 +39,7 @@ module Db
 
     def reset_number!
       Program.where(id: attrs_list.pluck(:program_id).uniq).each do |pd|
-        pd.slots.published.order(:started_at).each_with_index do |p, i|
+        pd.slots.without_deleted.order(:started_at).each_with_index do |p, i|
           p.update_column(:number, i + pd.minimum_episode_generatable_number)
         end
       end
@@ -63,8 +63,8 @@ module Db
 
     def fetched_rows
       parsed_rows.map do |row_columns|
-        program = Program.published.find_by(id: row_columns[0])
-        episode = @work.episodes.published.find_by(id: row_columns[2])
+        program = Program.without_deleted.find_by(id: row_columns[0])
+        episode = @work.episodes.without_deleted.find_by(id: row_columns[2])
 
         {
           channel: { id: program&.channel&.id, value: row_columns[0] },

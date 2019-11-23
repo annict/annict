@@ -61,7 +61,7 @@ module Db
       @slot = Slot.find(params[:id])
       authorize @slot, :hide?
 
-      @slot.hide!
+      @slot.soft_delete
 
       flash[:notice] = t("resources.slot.unpublished")
       redirect_back fallback_location: db_works_path

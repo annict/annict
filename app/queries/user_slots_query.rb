@@ -9,11 +9,11 @@ class UserSlotsQuery
 
   # 記録していないエピソードと紐づく番組情報を返す
   def unwatched_all
-    Slot.published.where(id: slot_ids(channel_works, scope: :unwatched))
+    Slot.without_deleted.where(id: slot_ids(channel_works, scope: :unwatched))
   end
 
   def all
-    Slot.published.where(id: slot_ids(channel_works, scope: :all))
+    Slot.without_deleted.where(id: slot_ids(channel_works, scope: :all))
   end
 
   def unwatched(page, sort)
@@ -38,7 +38,7 @@ class UserSlotsQuery
 
     channel_works.each do |cw|
       episode_ids = case scope
-      when :all then cw.work.episodes.published.pluck(:id)
+      when :all then cw.work.episodes.without_deleted.pluck(:id)
       when :unwatched then user.episodes.unwatched(cw.work).pluck(:id)
       end
 
@@ -60,7 +60,7 @@ class UserSlotsQuery
           episode_rank = (SELECT max(episode_rank) FROM ranked_slots);
       SQL
 
-      slot_ids << Slot.published.find_by_sql(sql).map(&:id)
+      slot_ids << Slot.without_deleted.find_by_sql(sql).map(&:id)
     end
 
     slot_ids.flatten
