@@ -46,6 +46,7 @@
 class Episode < ApplicationRecord
   include AASM
   include DbActivityMethods
+  include SoftDeletable
 
   DIFF_FIELDS = %i(
     number sort_number sc_count title prev_episode_id fetch_syobocal raw_number title_en

@@ -29,6 +29,7 @@
 
 class Channel < ApplicationRecord
   include AASM
+  include SoftDeletable
 
   AMAZON_VIDEO_ID = 243
   BANDAI_CHANNEL_ID = 107

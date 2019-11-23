@@ -29,6 +29,7 @@
 class SeriesWork < ApplicationRecord
   include AASM
   include DbActivityMethods
+  include SoftDeletable
 
   DIFF_FIELDS = %i(work_id).freeze
 

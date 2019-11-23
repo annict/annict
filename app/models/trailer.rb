@@ -34,6 +34,7 @@ class Trailer < ApplicationRecord
   include AASM
   include DbActivityMethods
   include ImageUploadable
+  include SoftDeletable
 
   DIFF_FIELDS = %i(title url sort_number).freeze
 

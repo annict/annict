@@ -27,7 +27,9 @@
 
 class FaqContent < ApplicationRecord
   extend Enumerize
+
   include AASM
+  include SoftDeletable
 
   enumerize :locale, in: %i(ja en)
 

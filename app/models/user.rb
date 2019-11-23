@@ -62,6 +62,7 @@ class User < ApplicationRecord
   include UserFollowable
   include UserLikeable
   include UserReceivable
+  include SoftDeletable
 
   extend Enumerize
 

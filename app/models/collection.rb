@@ -26,6 +26,7 @@
 
 class Collection < ApplicationRecord
   include AASM
+  include SoftDeletable
 
   is_impressionable counter_cache: true, unique: true
 

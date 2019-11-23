@@ -42,6 +42,7 @@
 class Slot < ApplicationRecord
   include AASM
   include DbActivityMethods
+  include SoftDeletable
 
   DIFF_FIELDS = %i(channel_id episode_id started_at rebroadcast).freeze
 

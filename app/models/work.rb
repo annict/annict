@@ -72,9 +72,11 @@
 
 class Work < ApplicationRecord
   extend Enumerize
+
   include AASM
   include DbActivityMethods
   include RootResourceCommon
+  include SoftDeletable
 
   DIFF_FIELDS = %i(
     sc_tid title title_kana title_en media official_site_url

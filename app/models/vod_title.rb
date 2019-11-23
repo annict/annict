@@ -29,6 +29,7 @@
 
 class VodTitle < ApplicationRecord
   include AASM
+  include SoftDeletable
 
   aasm do
     state :published, initial: true

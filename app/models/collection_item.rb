@@ -33,6 +33,7 @@
 
 class CollectionItem < ApplicationRecord
   include AASM
+  include SoftDeletable
 
   acts_as_list scope: :collection_id
 

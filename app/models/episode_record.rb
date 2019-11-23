@@ -57,9 +57,11 @@
 
 class EpisodeRecord < ApplicationRecord
   extend Enumerize
+
   include AASM
   include Localizable
   include Shareable
+  include SoftDeletable
 
   enumerize :rating_state, in: Record::RATING_STATES, scope: true
 

@@ -35,6 +35,7 @@
 class Cast < ApplicationRecord
   include AASM
   include DbActivityMethods
+  include SoftDeletable
 
   DIFF_FIELDS = %i(person_id name part sort_number character_id name_en).freeze
 

@@ -45,9 +45,11 @@
 
 class Person < ApplicationRecord
   extend Enumerize
+
   include AASM
   include DbActivityMethods
   include RootResourceCommon
+  include SoftDeletable
 
   DIFF_FIELDS = %i(
     prefecture_id name name_kana nickname gender url wikipedia_url twitter_username

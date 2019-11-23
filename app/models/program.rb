@@ -33,6 +33,7 @@
 class Program < ApplicationRecord
   include AASM
   include DbActivityMethods
+  include SoftDeletable
 
   DIFF_FIELDS = %i(channel_id work_id url started_at).freeze
 

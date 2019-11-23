@@ -43,9 +43,11 @@
 
 class WorkRecord < ApplicationRecord
   extend Enumerize
+
   include AASM
   include Localizable
   include Shareable
+  include SoftDeletable
 
   STATES = %i(
     rating_overall_state

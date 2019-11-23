@@ -50,6 +50,7 @@ class Character < ApplicationRecord
   include AASM
   include DbActivityMethods
   include RootResourceCommon
+  include SoftDeletable
 
   DIFF_FIELDS = %i(
     name name_en series_id nickname nickname_en birthday birthday_en age age_en

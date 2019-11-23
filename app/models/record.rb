@@ -26,6 +26,7 @@
 
 class Record < ApplicationRecord
   include AASM
+  include SoftDeletable
 
   RATING_STATES = %i(bad average good great).freeze
 

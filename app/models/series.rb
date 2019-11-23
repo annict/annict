@@ -23,6 +23,7 @@ class Series < ApplicationRecord
   include AASM
   include DbActivityMethods
   include RootResourceCommon
+  include SoftDeletable
 
   DIFF_FIELDS = %i(name name_en).freeze
 
