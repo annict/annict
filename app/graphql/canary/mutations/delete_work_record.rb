@@ -10,7 +10,7 @@ module Canary
       def resolve(work_record_id:)
         raise Annict::Errors::InvalidAPITokenScopeError unless context[:writable]
 
-        work_record = context[:viewer].work_records.published.find_by_graphql_id(work_record_id)
+        work_record = context[:viewer].work_records.without_deleted.find_by_graphql_id(work_record_id)
         work_record.record.destroy
 
         {

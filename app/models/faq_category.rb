@@ -20,18 +20,10 @@
 
 class FaqCategory < ApplicationRecord
   extend Enumerize
-  include AASM
+
+  include SoftDeletable
 
   enumerize :locale, in: %i(ja en)
-
-  aasm do
-    state :published, initial: true
-    state :hidden
-
-    event :hide do
-      transitions from: :published, to: :hidden
-    end
-  end
 
   has_many :faq_contents, dependent: :destroy
 end

@@ -4,12 +4,12 @@ class OrganizationsController < ApplicationController
   before_action :load_i18n, only: %i(show)
 
   def show
-    @organization = Organization.published.find(params[:id])
+    @organization = Organization.without_deleted.find(params[:id])
     @staffs_with_year = @organization.
       staffs.
-      published.
+      without_deleted.
       joins(:work).
-      where(works: { aasm_state: :published }).
+      where(works: { deleted_at: nil }).
       includes(work: :work_image).
       group_by { |s| s.work.season_year.presence || 0 }
     @staff_years = @staffs_with_year.keys.sort.reverse
@@ -17,7 +17,7 @@ class OrganizationsController < ApplicationController
     @favorite_orgs = @organization.
       favorite_organizations.
       joins(:user).
-      merge(User.published).
+      merge(User.without_deleted).
       order(id: :desc)
   end
 

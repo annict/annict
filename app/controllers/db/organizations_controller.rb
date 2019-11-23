@@ -48,7 +48,7 @@ module Db
       @organization = Organization.find(params[:id])
       authorize @organization, :hide?
 
-      @organization.hide!
+      @organization.soft_delete_with_children
 
       flash[:notice] = t("resources.organization.unpublished")
       redirect_back fallback_location: db_people_path

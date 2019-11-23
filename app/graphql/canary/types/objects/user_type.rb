@@ -102,11 +102,11 @@ module Canary
         end
 
         def followings_count
-          object.followings.published.count
+          object.followings.without_deleted.count
         end
 
         def followers_count
-          object.followers.published.count
+          object.followers.without_deleted.count
         end
 
         def wanna_watch_count
@@ -150,11 +150,11 @@ module Canary
         end
 
         def following
-          ForeignKeyLoader.for(User, :id).load(object.followings.published.pluck(:id))
+          ForeignKeyLoader.for(User, :id).load(object.followings.without_deleted.pluck(:id))
         end
 
         def followers
-          ForeignKeyLoader.for(User, :id).load(object.followers.published.pluck(:id))
+          ForeignKeyLoader.for(User, :id).load(object.followers.without_deleted.pluck(:id))
         end
 
         def activities(order_by: nil)
@@ -165,7 +165,7 @@ module Canary
         end
 
         def following_activities(order_by: nil)
-          following_ids = object.followings.published.pluck(:id)
+          following_ids = object.followings.without_deleted.pluck(:id)
           following_ids << object.id
           SearchActivitiesQuery.new(
             Activity.where(user_id: following_ids),

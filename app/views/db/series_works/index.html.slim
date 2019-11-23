@@ -38,15 +38,15 @@
               td = link_to series_work.work.local_title, work_path(series_work.work), target: "_blank"
               td = series_work.local_summary.presence || "-"
               td
-                .badge class="#{series_work.published? ? 'badge-success' : 'badge-warning'}"
-                  = t("resources.series.aasm_state.#{series_work.aasm_state}")
+                .badge class="#{series_work.not_deleted? ? 'badge-success' : 'badge-warning'}"
+                  = t("resources.series.state.#{series_work.not_deleted? ? 'published' : 'hidden'}")
               td = link_to t("verb.view"), activities_db_series_work_path(series_work)
               - if policy(series_work).edit?
                 td
                   = link_to t("noun.edit"), edit_db_series_work_path(series_work), class: "btn btn-primary btn-sm"
               - if policy(series_work).hide?
                 td
-                  - if series_work.published?
+                  - if series_work.not_deleted?
                     = link_to t("noun.unpublish"), hide_db_series_work_path(series_work), class: "btn btn-warning btn-sm", data: { method: "patch", confirm: t("messages._common.are_you_sure") }
               - if policy(series_work).destroy?
                 td = link_to t("noun.delete"), db_series_work_path(series_work), class: "btn btn-danger btn-sm", data: { method: :delete, confirm: t("messages._common.are_you_sure") }

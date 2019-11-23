@@ -16,7 +16,7 @@ en:
         name: Name
         sort_number: Sort Number
       character:
-        aasm_state: State
+        state: State
         age_en: Age (en)
         age: Age
         birthday_en: Birthday (en)
@@ -82,7 +82,7 @@ en:
         secret: Client Secret
         uid: Client ID
       organization:
-        aasm_state: State
+        state: State
         name_en: Name (en)
         name_kana: Name (kana)
         name: Name
@@ -93,7 +93,7 @@ en:
         wikipedia_url_en: Wikipedia (en)
         wikipedia_url: Wikipedia
       person:
-        aasm_state: State
+        state: State
         birthday: Birthday
         blood_type_en: Blood Type (en)
         blood_type: Blood Type

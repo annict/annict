@@ -50,7 +50,7 @@ module Annict
       end
 
       def hide_work!
-        work.update_column(:aasm_state, "hidden")
+        work.soft_delete_with_children
       end
     end
   end

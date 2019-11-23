@@ -4,7 +4,7 @@ class FavoriteCharactersController < ApplicationController
   before_action :load_i18n, only: %i(index)
 
   def index
-    @user = User.published.find_by!(username: params[:username])
+    @user = User.without_deleted.find_by!(username: params[:username])
     @favorite_characters = @user.favorite_characters.order(id: :desc)
   end
 

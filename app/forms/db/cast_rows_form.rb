@@ -28,12 +28,12 @@ module Db
 
     def fetched_rows
       parsed_rows.map do |row_columns|
-        character = Character.published.where(id: row_columns[0]).
-          or(Character.published.where(name: row_columns[0])).
+        character = Character.without_deleted.where(id: row_columns[0]).
+          or(Character.without_deleted.where(name: row_columns[0])).
           order(updated_at: :desc).
           first
-        person = Person.published.where(id: row_columns[1]).
-          or(Person.published.where(name: row_columns[1])).first
+        person = Person.without_deleted.where(id: row_columns[1]).
+          or(Person.without_deleted.where(name: row_columns[1])).first
 
         {
           character: { id: character&.id, value: row_columns[0] },

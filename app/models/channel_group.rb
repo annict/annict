@@ -3,13 +3,13 @@
 #
 # Table name: channel_groups
 #
-#  id             :integer          not null, primary key
-#  sc_chgid       :string(510)
-#  name           :string(510)      not null
-#  sort_number    :integer          default(0), not null
-#  created_at     :datetime
-#  updated_at     :datetime
-#  unpublished_at :datetime
+#  id          :integer          not null, primary key
+#  deleted_at  :datetime
+#  name        :string(510)      not null
+#  sc_chgid    :string(510)
+#  sort_number :integer          default(0), not null
+#  created_at  :datetime
+#  updated_at  :datetime
 #
 # Indexes
 #
@@ -17,7 +17,7 @@
 #
 
 class ChannelGroup < ApplicationRecord
-  include Publishable
+  include SoftDeletable
 
   has_many :channels
 end

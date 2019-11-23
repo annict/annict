@@ -44,23 +44,14 @@
 #
 
 class Episode < ApplicationRecord
-  include AASM
   include DbActivityMethods
+  include SoftDeletable
 
   DIFF_FIELDS = %i(
     number sort_number sc_count title prev_episode_id fetch_syobocal raw_number title_en
   ).freeze
 
-  aasm do
-    state :published, initial: true
-    state :hidden
-
-    event :hide do
-      transitions from: :published, to: :hidden
-    end
-  end
-
-  counter_culture :work, column_name: proc { |model| model.published? ? "auto_episodes_count" : nil }
+  counter_culture :work, column_name: proc { |model| model.not_deleted? ? "auto_episodes_count" : nil }
 
   belongs_to :prev_episode,
     class_name: "Episode",

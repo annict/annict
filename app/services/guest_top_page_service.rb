@@ -2,14 +2,14 @@
 
 class GuestTopPageService
   def self.season_top_work
-    Work.published.
+    Work.without_deleted.
       by_season(ENV.fetch("ANNICT_CURRENT_SEASON")).
       order(watchers_count: :desc).
       first
   end
 
   def self.season_works
-    Work.published.
+    Work.without_deleted.
       by_season(ENV.fetch("ANNICT_CURRENT_SEASON")).
       where.not(id: season_top_work.id).
       order(watchers_count: :desc).
@@ -17,11 +17,11 @@ class GuestTopPageService
   end
 
   def self.top_work
-    Work.published.order(watchers_count: :desc).first
+    Work.without_deleted.order(watchers_count: :desc).first
   end
 
   def self.works
-    Work.published.
+    Work.without_deleted.
       where.not(id: top_work.id).
       order(watchers_count: :desc).
       limit(12)

@@ -54,7 +54,7 @@ module Db
       @program = Program.find(params[:id])
       authorize @program, :hide?
 
-      @program.hide!
+      @program.soft_delete
 
       flash[:notice] = t("resources.program.unpublished")
       redirect_back fallback_location: db_works_path

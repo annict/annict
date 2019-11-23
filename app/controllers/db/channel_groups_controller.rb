@@ -48,7 +48,7 @@ module Db
       @channel_group = ChannelGroup.find(params[:id])
       authorize(@channel_group, :unpublish?)
 
-      @channel_group.unpublish
+      @channel_group.soft_delete
 
       flash[:notice] = t("messages._common.unpublished")
       redirect_back fallback_location: db_channel_groups_path

@@ -4,7 +4,7 @@ class EpisodeRecordsController < ApplicationController
   before_action :authenticate_user!, only: %i(create edit update switch)
 
   def create
-    @episode = Episode.published.find(episode_record_params[:episode_id])
+    @episode = Episode.without_deleted.find(episode_record_params[:episode_id])
     @work = @episode.work
     @episode_record = @episode.episode_records.new(episode_record_params)
     ga_client.page_category = params[:page_category]
@@ -44,13 +44,13 @@ class EpisodeRecordsController < ApplicationController
   end
 
   def edit
-    @episode_record = current_user.episode_records.published.find_by(episode_id: params[:episode_id], record_id: params[:id])
+    @episode_record = current_user.episode_records.without_deleted.find_by(episode_id: params[:episode_id], record_id: params[:id])
     authorize @episode_record, :edit?
     @work = @episode_record.work
   end
 
   def update
-    @episode_record = current_user.episode_records.published.find_by(episode_id: params[:episode_id], record_id: params[:id])
+    @episode_record = current_user.episode_records.without_deleted.find_by(episode_id: params[:episode_id], record_id: params[:id])
     authorize @episode_record, :update?
 
     @episode_record.modify_body = true
@@ -79,9 +79,9 @@ class EpisodeRecordsController < ApplicationController
   def redirect
     url = case params[:provider]
     when "tw"
-      EpisodeRecord.published.find_by!(twitter_url_hash: params[:url_hash]).share_url_with_query(:twitter)
+      EpisodeRecord.without_deleted.find_by!(twitter_url_hash: params[:url_hash]).share_url_with_query(:twitter)
     when "fb"
-      EpisodeRecord.published.find_by!(facebook_url_hash: params[:url_hash]).share_url_with_query(:facebook)
+      EpisodeRecord.without_deleted.find_by!(facebook_url_hash: params[:url_hash]).share_url_with_query(:facebook)
     else
       root_path
     end

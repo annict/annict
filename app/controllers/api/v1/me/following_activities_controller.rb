@@ -7,7 +7,7 @@ module Api
         before_action :prepare_params!, only: %i(index)
 
         def index
-          following_ids = current_user.followings.published.pluck(:id)
+          following_ids = current_user.followings.without_deleted.pluck(:id)
           following_ids << current_user.id
           activities = Activity.
             where(user_id: following_ids).

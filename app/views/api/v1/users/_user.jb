@@ -10,8 +10,8 @@ json[:url] = user.profile.url if @params.fields_contain?("#{field_prefix}url")
 json[:avatar_url] = ann_api_assets_url(user.profile, :image) if @params.fields_contain?("#{field_prefix}avatar_url")
 json[:background_image_url] = ann_api_assets_background_image_url(user.profile) if @params.fields_contain?("#{field_prefix}background_image_url")
 json[:records_count] = user.records_count if @params.fields_contain?("#{field_prefix}records_count")
-json[:followings_count] = user.followings.published.count if @params.fields_contain?("#{field_prefix}followings_count")
-json[:followers_count] = user.followers.published.count if @params.fields_contain?("#{field_prefix}followers_count")
+json[:followings_count] = user.followings.without_deleted.count if @params.fields_contain?("#{field_prefix}followings_count")
+json[:followers_count] = user.followers.without_deleted.count if @params.fields_contain?("#{field_prefix}followers_count")
 LatestStatus.kind.values.each do |kind|
   json["#{kind}_count".to_sym] = user.latest_statuses.count_on(kind.to_sym) if @params.fields_contain?("#{field_prefix}#{kind}_count")
 end

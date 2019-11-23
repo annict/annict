@@ -31,19 +31,10 @@
 #
 
 class Program < ApplicationRecord
-  include AASM
   include DbActivityMethods
+  include SoftDeletable
 
   DIFF_FIELDS = %i(channel_id work_id url started_at).freeze
-
-  aasm do
-    state :published, initial: true
-    state :hidden
-
-    event :hide do
-      transitions from: :published, to: :hidden
-    end
-  end
 
   attr_accessor :time_zone
 

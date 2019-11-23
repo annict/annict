@@ -4,14 +4,14 @@ class PeopleController < ApplicationController
   before_action :load_i18n, only: %i(show)
 
   def show
-    @person = Person.published.find(params[:id])
+    @person = Person.without_deleted.find(params[:id])
 
     if @person.voice_actor?
       @casts_with_year = @person.
         casts.
-        published.
+        without_deleted.
         joins(:work).
-        where(works: { aasm_state: :published }).
+        where(works: { deleted_at: nil }).
         includes(:character, work: :work_image).
         group_by { |cast| cast.work.season_year.presence || 0 }
       @cast_years = @casts_with_year.keys.sort.reverse
@@ -20,9 +20,9 @@ class PeopleController < ApplicationController
     if @person.staff?
       @staffs_with_year = @person.
         staffs.
-        published.
+        without_deleted.
         joins(:work).
-        where(works: { aasm_state: :published }).
+        where(works: { deleted_at: nil }).
         includes(work: :work_image).
         group_by { |staff| staff.work.season_year.presence || 0 }
       @staff_years = @staffs_with_year.keys.sort.reverse
@@ -32,7 +32,7 @@ class PeopleController < ApplicationController
       favorite_people.
       includes(user: :profile).
       joins(:user).
-      merge(User.published).
+      merge(User.without_deleted).
       order(id: :desc)
   end
 

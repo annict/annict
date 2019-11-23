@@ -58,14 +58,14 @@
                  = cast.name_en.presence || "-"
               td = cast.sort_number
               td
-                .badge class="#{cast.published? ? 'badge-success' : 'badge-warning'}"
-                  = t("resources.cast.aasm_state.#{cast.aasm_state}")
+                .badge class="#{cast.not_deleted? ? 'badge-success' : 'badge-warning'}"
+                  = t("resources.cast.state.#{cast.not_deleted? ? 'published' : 'hidden'}")
               td = link_to t("head.title.db.casts.activities"), activities_db_cast_path(cast)
               - if policy(cast).edit?
                 td = link_to t("noun.edit"), edit_db_cast_path(cast), class: "btn btn-primary btn-sm"
               - if policy(cast).hide?
                 td
-                  - if cast.published?
+                  - if cast.not_deleted?
                     = link_to t("noun.unpublish"), hide_db_cast_path(cast), class: "btn btn-warning btn-sm", data: { method: "patch", confirm: t("messages._common.are_you_sure") }
               - if policy(cast).destroy?
                 td = link_to t("noun.delete"), db_cast_path(cast), class: "btn btn-danger btn-sm", data: { method: :delete, confirm: t("messages._common.are_you_sure") }

@@ -33,8 +33,9 @@
 
 class Staff < ApplicationRecord
   extend Enumerize
-  include AASM
+
   include DbActivityMethods
+  include SoftDeletable
 
   DIFF_FIELDS = %i(
     resource_id name role role_other sort_number name_en role_other_en
@@ -56,15 +57,6 @@ class Staff < ApplicationRecord
     studio
     other
   )
-
-  aasm do
-    state :published, initial: true
-    state :hidden
-
-    event :hide do
-      transitions from: :published, to: :hidden
-    end
-  end
 
   belongs_to :resource, polymorphic: true, counter_cache: true
   belongs_to :work, touch: true

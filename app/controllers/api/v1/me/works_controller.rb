@@ -7,7 +7,7 @@ module Api
         before_action :prepare_params!, only: %i(index)
 
         def index
-          works = current_user.works.all.published
+          works = current_user.works.all.without_deleted
           service = Api::V1::Me::WorkIndexService.new(works, @params)
           service.user = current_user
           @works = service.result

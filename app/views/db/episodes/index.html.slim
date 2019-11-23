@@ -14,7 +14,7 @@
 = render "db/works/subnav", work: @work
 
 .container-fluid.p-3
-  - max_generate_episodes_count = @work.slots.published.order(number: :desc).first&.number
+  - max_generate_episodes_count = @work.slots.without_deleted.order(number: :desc).first&.number
   .alert.alert-info
     = t "messages.db.episodes.auto_generate_info_html", manual_episodes_count: (@work.manual_episodes_count.presence || t("noun.unknown")), max_generate_episodes_count: (max_generate_episodes_count.presence || 0)
 
@@ -61,15 +61,15 @@
               td = episode.sort_number
               td = episode.episode_records.count
               td
-                .badge class="#{episode.published? ? 'badge-success' : 'badge-warning'}"
-                  = t("resources.episode.aasm_state.#{episode.aasm_state}")
+                .badge class="#{episode.not_deleted? ? 'badge-success' : 'badge-warning'}"
+                  = t("resources.episode.state.#{episode.not_deleted? ? 'published' : 'hidden'}")
               td = link_to t("head.title.db.episodes.activities"), activities_db_episode_path(episode)
               - if policy(episode).edit?
                 td
                   = link_to t("noun.edit"), edit_db_episode_path(episode), class: "btn btn-primary btn-sm"
               - if policy(episode).hide?
                 td
-                  - if episode.published?
+                  - if episode.not_deleted?
                     = link_to t("noun.unpublish"), hide_db_episode_path(episode), class: "btn btn-warning btn-sm", data: { method: "patch", confirm: t("messages._common.are_you_sure") }
               - if policy(episode).destroy?
                 td = link_to t("noun.delete"), db_episode_path(episode), class: "btn btn-danger btn-sm", data: { method: "delete", confirm: t("messages._common.are_you_sure") }

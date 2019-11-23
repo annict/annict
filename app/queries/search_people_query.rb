@@ -7,7 +7,7 @@ class SearchPeopleQuery
     names: nil,
     order_by: nil
   )
-    @collection = collection.published
+    @collection = collection.without_deleted
     @args = {
       annict_ids: annict_ids,
       names: names,

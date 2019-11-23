@@ -7,7 +7,7 @@ class ChannelWorksController < ApplicationController
     @works = current_user.
       works.
       wanna_watch_and_watching.
-      published.
+      without_deleted.
       slot_registered.
       includes(:episodes, :work_image).
       order_by_season(:desc)

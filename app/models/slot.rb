@@ -40,19 +40,10 @@
 #
 
 class Slot < ApplicationRecord
-  include AASM
   include DbActivityMethods
+  include SoftDeletable
 
   DIFF_FIELDS = %i(channel_id episode_id started_at rebroadcast).freeze
-
-  aasm do
-    state :published, initial: true
-    state :hidden
-
-    event :hide do
-      transitions from: :published, to: :hidden
-    end
-  end
 
   attr_accessor :time_zone, :is_started_at_calced, :shift_time_along_with_after_slots
 
@@ -66,8 +57,8 @@ class Slot < ApplicationRecord
   validates :channel_id, presence: true
   validates :started_at, presence: true
 
-  scope :episode_published, -> { joins(:episode).merge(Episode.published) }
-  scope :work_published, -> { joins(:work).merge(Work.published) }
+  scope :episode_published, -> { joins(:episode).merge(Episode.without_deleted) }
+  scope :work_published, -> { joins(:work).merge(Work.without_deleted) }
 
   before_validation :calc_for_timezone
 

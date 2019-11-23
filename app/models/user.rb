@@ -52,7 +52,6 @@
 #
 
 class User < ApplicationRecord
-  include AASM
   # registrations#createが実行されたあとメールアドレスの確認を挟まず
   # ログインできるようにするため、Confirmableモジュールを直接includeする
   include Devise::Models::Confirmable
@@ -62,6 +61,7 @@ class User < ApplicationRecord
   include UserFollowable
   include UserLikeable
   include UserReceivable
+  include SoftDeletable
 
   extend Enumerize
 
@@ -77,15 +77,6 @@ class User < ApplicationRecord
   enumerize :allowed_locales, in: ApplicationRecord::LOCALES, multiple: true, default: ApplicationRecord::LOCALES
   enumerize :locale, in: %i(ja en)
   enumerize :role, in: { user: 0, admin: 1, editor: 2 }, default: :user, scope: true
-
-  aasm do
-    state :published, initial: true
-    state :hidden
-
-    event :hide do
-      transitions from: :published, to: :hidden
-    end
-  end
 
   belongs_to :gumroad_subscriber, optional: true
   has_many :activities, dependent: :destroy
@@ -383,7 +374,7 @@ class User < ApplicationRecord
   end
 
   def tags_by_work(work)
-    work_tags.published.joins(:work_taggings).merge(work_taggings.where(work: work))
+    work_tags.without_deleted.joins(:work_taggings).merge(work_taggings.where(work: work))
   end
 
   def comment_by_work(work)
@@ -404,12 +395,12 @@ class User < ApplicationRecord
     username = SecureRandom.uuid.tr("-", "_")
 
     ActiveRecord::Base.transaction do
-      update_columns(username: username, email: "#{username}@example.com", aasm_state: :hidden)
+      update_columns(username: username, email: "#{username}@example.com", deleted_at: Time.zone.now)
       providers.delete_all
 
       oauth_applications.available.find_each do |app|
         app.update(owner: nil)
-        app.hide!
+        app.soft_delete
       end
     end
   end

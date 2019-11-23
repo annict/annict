@@ -6,14 +6,14 @@ module Api
       def index
         q = params[:q]
         @works = if q
-          Work.where("title ILIKE ?", "%#{q}%").published
+          Work.where("title ILIKE ?", "%#{q}%").without_deleted
         else
           Work.none
         end
       end
 
       def show
-        @work = Work.published.find(params[:id])
+        @work = Work.without_deleted.find(params[:id])
       end
     end
   end

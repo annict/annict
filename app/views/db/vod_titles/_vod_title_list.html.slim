@@ -19,5 +19,5 @@
           td = display_time(vt.created_at)
           - if policy(vt).hide?
             td
-              - if vt.published?
+              - if vt.not_deleted?
                 = link_to t("noun.unpublish"), hide_db_vod_title_path(vt), class: "btn btn-warning btn-sm", data: { method: "patch", confirm: t("messages._common.are_you_sure") }

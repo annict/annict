@@ -55,7 +55,7 @@ module Db
       @episode = Episode.find(params[:id])
       authorize @episode, :hide?
 
-      @episode.hide!
+      @episode.soft_delete
 
       flash[:notice] = t("resources.episode.unpublished")
       redirect_back fallback_location: db_works_path

@@ -16,7 +16,7 @@ ja:
         name: 名前
         sort_number: ソート番号
       character:
-        aasm_state: 状態
+        state: 状態
         age_en: 年齢 (英語)
         age: 年齢
         birthday_en: 誕生日 (英語)
@@ -81,7 +81,7 @@ ja:
         secret: クライアントシークレット
         uid: クライアントID
       organization:
-        aasm_state: 状態
+        state: 状態
         name_en: 名前 (英語)
         name_kana: 名前 (かな)
         name: 名前
@@ -92,7 +92,7 @@ ja:
         wikipedia_url_en: Wikipedia (英語)
         wikipedia_url: Wikipedia
       person:
-        aasm_state: 状態
+        state: 状態
         birthday: 誕生日
         blood_type_en: 血液型 (英語)
         blood_type: 血液型

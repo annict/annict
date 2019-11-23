@@ -8,7 +8,7 @@ module Db
       @work = Work.find(params[:work_id])
       @staffs = @work.staffs.
         includes(:resource).
-        order(aasm_state: :desc, sort_number: :asc)
+        order(deleted_at: :desc, sort_number: :asc)
     end
 
     def new
@@ -54,7 +54,7 @@ module Db
       @staff = Staff.find(params[:id])
       authorize @staff, :hide?
 
-      @staff.hide!
+      @staff.soft_delete
 
       flash[:notice] = t("resources.staff.unpublished")
       redirect_back fallback_location: db_works_path

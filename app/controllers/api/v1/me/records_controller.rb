@@ -7,7 +7,7 @@ module Api
         before_action :prepare_params!, only: %i(create update destroy)
 
         def create
-          episode = Episode.published.find(@params.episode_id)
+          episode = Episode.without_deleted.find(@params.episode_id)
           record = episode.episode_records.new do |r|
             r.rating = @params.rating
             r.rating_state = @params.rating_state
@@ -32,7 +32,7 @@ module Api
         end
 
         def update
-          @episode_record = current_user.episode_records.published.find(@params.id)
+          @episode_record = current_user.episode_records.without_deleted.find(@params.id)
           @episode_record.rating = @params.rating
           @episode_record.rating_state = @params.rating_state
           @episode_record.body = @params.comment
@@ -54,7 +54,7 @@ module Api
         end
 
         def destroy
-          @episode_record = current_user.episode_records.published.find(@params.id)
+          @episode_record = current_user.episode_records.without_deleted.find(@params.id)
           @episode_record.record.destroy
           head 204
         end

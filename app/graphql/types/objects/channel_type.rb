@@ -25,6 +25,10 @@ module Types
       def sc_chid
         object.sc_chid
       end
+
+      def published
+        object.not_deleted?
+      end
     end
   end
 end

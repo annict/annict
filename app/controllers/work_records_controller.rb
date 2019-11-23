@@ -4,7 +4,7 @@ class WorkRecordsController < ApplicationController
   before_action :authenticate_user!, only: %i(create edit update destroy)
 
   def index
-    @work = Work.published.find(params[:work_id])
+    @work = Work.without_deleted.find(params[:work_id])
     load_work_records
 
     return unless user_signed_in?
@@ -15,7 +15,7 @@ class WorkRecordsController < ApplicationController
   end
 
   def create
-    @work = Work.published.find(params[:work_id])
+    @work = Work.without_deleted.find(params[:work_id])
     @work_record = @work.work_records.new(work_record_params)
     @work_record.user = current_user
     current_user.setting.attributes = setting_params
@@ -43,7 +43,7 @@ class WorkRecordsController < ApplicationController
     @record = current_user.records.find(params[:id])
     @work_record = current_user.
       work_records.
-      published.
+      without_deleted.
       where(work_id: params[:work_id]).
       find(@record.work_record&.id)
     @work = @work_record.work
@@ -55,7 +55,7 @@ class WorkRecordsController < ApplicationController
     @record = current_user.records.find(params[:id])
     @work_record = current_user.
       work_records.
-      published.
+      without_deleted.
       where(work_id: params[:work_id]).
       find(@record.work_record&.id)
     @work = @work_record.work

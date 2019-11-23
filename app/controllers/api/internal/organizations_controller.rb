@@ -6,7 +6,7 @@ module Api
       def index
         q = params[:q]
         @organizations = if q
-          Organization.where("name ILIKE ?", "%#{q}%").published
+          Organization.where("name ILIKE ?", "%#{q}%").without_deleted
         else
           Organization.none
         end

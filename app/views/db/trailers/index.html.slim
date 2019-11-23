@@ -52,7 +52,7 @@
                   = link_to t("noun.edit"), edit_db_trailer_path(trailer), class: "btn btn-primary btn-sm"
               - if policy(trailer).hide?
                 td
-                  - if trailer.published?
+                  - if trailer.not_deleted?
                     = link_to t("noun.unpublish"), hide_db_trailer_path(trailer), class: "btn btn-warning btn-sm", data: { method: "patch", confirm: t("messages._common.are_you_sure") }
               - if policy(trailer).destroy?
                 td = link_to t("noun.delete"), db_trailer_path(trailer), class: "btn btn-danger btn-sm", data: { method: :delete, confirm: t("messages._common.are_you_sure") }

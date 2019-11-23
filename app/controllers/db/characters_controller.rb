@@ -47,7 +47,7 @@ module Db
       @character = Character.find(params[:id])
       authorize @character, :hide?
 
-      @character.hide!
+      @character.soft_delete
 
       flash[:notice] = t("messages._common.updated")
       redirect_back fallback_location: db_characters_path

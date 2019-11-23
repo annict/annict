@@ -38,13 +38,13 @@
           td = work.release_season.presence || "-"
           td = ann_image_tag(work.work_image, :image, size: "70x", ratio: "3:4", class: "rounded img-thumbnail")
           td
-            .badge class="#{work.published? ? 'badge-success' : 'badge-warning'}"
-              = t("resources.work.aasm_state.#{work.aasm_state}")
+            .badge class="#{work.not_deleted? ? 'badge-success' : 'badge-warning'}"
+              = t("resources.work.state.#{work.not_deleted? ? 'published' : 'hidden'}")
           - if policy(work).edit?
             td = link_to t("noun.edit"), edit_db_work_path(work), class: "btn btn-primary btn-sm"
           - if policy(work).hide?
             td
-              - if work.published?
+              - if work.not_deleted?
                 = link_to t("noun.unpublish"), hide_db_work_path(work), class: "btn btn-warning btn-sm", data: { method: "patch", confirm: t("messages._common.are_you_sure") }
           - if policy(work).destroy?
             td = link_to t("noun.delete"), db_work_path(work), class: "btn btn-danger btn-sm", data: { method: "delete", confirm: t("messages._common.are_you_sure") }

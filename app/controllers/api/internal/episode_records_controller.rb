@@ -6,7 +6,7 @@ module Api
       before_action :authenticate_user!, only: %i(create)
 
       def create
-        episode = Episode.published.find(params[:episode_id])
+        episode = Episode.without_deleted.find(params[:episode_id])
         episode_record = episode.episode_records.new do |er|
           er.body = episode_record_params[:body]
           er.shared_twitter = episode_record_params[:shared_twitter]

@@ -27,7 +27,7 @@ module StatusCommon
     belongs_to :work
 
     scope :positive, -> { with_kind(:wanna_watch, :watching, :watched) }
-    scope :work_published, -> { joins(:work).merge(Work.published) }
+    scope :work_published, -> { joins(:work).merge(Work.without_deleted) }
 
     def self.kind_v2_to_v3(kind_v2)
       return if kind_v2.blank?

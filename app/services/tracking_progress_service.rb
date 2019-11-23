@@ -6,7 +6,7 @@ class TrackingProgressService
   def initialize(user, work)
     @user = user
     @work = work
-    @episode_ids = work.episodes.published.pluck(:id)
+    @episode_ids = work.episodes.without_deleted.pluck(:id)
     @checked_episode_ids = user.records.where(work: work).pluck(:episode_id)
     @all_records_count = get_all_records_count(checked_episode_ids)
   end
@@ -39,7 +39,7 @@ class TrackingProgressService
   end
 
   def ratio
-    (halfway_checked_count / work.episodes.published.count.to_f rescue 1) * 100
+    (halfway_checked_count / work.episodes.without_deleted.count.to_f rescue 1) * 100
   end
 
   private

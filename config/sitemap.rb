@@ -22,18 +22,18 @@
     add search_path, priority: 0.8
     add terms_path
 
-    User.published.find_each do |u|
+    User.without_deleted.find_each do |u|
       add user_path(u.username), priority: 0.9, lastmod: u.updated_at
 
       Status.kind.values.each do |k|
         add library_path(u.username, k), priority: 0.8
       end
 
-      u.episode_records.published.with_body.find_each do |er|
+      u.episode_records.without_deleted.with_body.find_each do |er|
         add record_path(u.username, er.record), priority: 0.8
       end
 
-      u.work_records.published.with_body.find_each do |wr|
+      u.work_records.without_deleted.with_body.find_each do |wr|
         add record_path(u.username, wr.record), priority: 0.8
       end
     end
@@ -42,29 +42,29 @@
       add season_works_path(s.slug), priority: 0.9
     end
 
-    Character.published.find_each do |c|
-      if c.casts.published.present?
+    Character.without_deleted.find_each do |c|
+      if c.casts.without_deleted.present?
         add character_path(c.id), priority: 0.9, lastmod: c.updated_at
       end
     end
 
-    Person.published.find_each do |p|
-      if p.casts.published.present? || p.staffs.published.present?
+    Person.without_deleted.find_each do |p|
+      if p.casts.without_deleted.present? || p.staffs.without_deleted.present?
         add person_path(p), priority: 0.8, lastmod: p.updated_at
       end
     end
 
-    Organization.published.find_each do |o|
-      if o.staffs.published.present?
+    Organization.without_deleted.find_each do |o|
+      if o.staffs.without_deleted.present?
         add organization_path(o), priority: 0.8, lastmod: o.updated_at
       end
     end
 
-    Work.published.find_each do |w|
+    Work.without_deleted.find_each do |w|
       add work_path(w.id), priority: 1.0, lastmod: w.updated_at
 
-      w.episodes.published.find_each do |e|
-        add work_episode_path(w.id, e.id), priority: 1.0 if e.episode_records.published.with_body.present?
+      w.episodes.without_deleted.find_each do |e|
+        add work_episode_path(w.id, e.id), priority: 1.0 if e.episode_records.without_deleted.with_body.present?
       end
     end
   end

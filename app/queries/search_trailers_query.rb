@@ -2,7 +2,7 @@
 
 class SearchTrailersQuery
   def initialize(collection = Trailer.all, order_by: nil)
-    @collection = collection.published
+    @collection = collection.without_deleted
     @args = {
       order_by: order_by
     }

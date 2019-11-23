@@ -29,7 +29,7 @@ module Types
       end
 
       def state
-        object.aasm_state.upcase
+        (object.not_deleted? ? "published" : "hidden").upcase
       end
     end
   end

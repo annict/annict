@@ -2,6 +2,6 @@
 
 class FaqsController < ApplicationController
   def index
-    @faq_categories = FaqCategory.published.order(:sort_number)
+    @faq_categories = FaqCategory.without_deleted.order(:sort_number)
   end
 end

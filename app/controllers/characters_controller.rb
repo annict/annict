@@ -4,19 +4,19 @@ class CharactersController < ApplicationController
   before_action :load_i18n, only: %i(show)
 
   def show
-    @character = Character.published.find(params[:id])
+    @character = Character.without_deleted.find(params[:id])
     @casts_with_year = @character.
       casts.
-      published.
+      without_deleted.
       joins(:work).
-      where(works: { aasm_state: :published }).
+      where(works: { deleted_at: nil }).
       group_by { |cast| cast.work.season_year.presence || 0 }
     @cast_years = @casts_with_year.keys.sort.reverse
 
     @favorite_characters = @character.
       favorite_characters.
       joins(:user).
-      merge(User.published).
+      merge(User.without_deleted).
       order(id: :desc)
   end
 

@@ -2,7 +2,7 @@
 
 class SearchSlotsQuery
   def initialize(collection = Slot.all, order_by: nil, unwatched: nil)
-    @collection = collection.published
+    @collection = collection.without_deleted
     @args = {
       unwatched: unwatched,
       order_by: order_by

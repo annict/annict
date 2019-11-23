@@ -19,7 +19,7 @@
           td = channel_group.name
           td = channel_group.sort_number
           td
-            - if channel_group.published?
+            - if channel_group.not_deleted?
               .badge.badge-success
                 = t("resources._common.published")
             - else
@@ -29,7 +29,7 @@
             td = link_to t("noun.edit"), edit_db_channel_group_path(channel_group), class: "btn btn-primary btn-sm"
           - if policy(channel_group).unpublish?
             td
-              - if channel_group.published?
+              - if channel_group.not_deleted?
                 = link_to t("noun.unpublish"), unpublish_db_channel_group_path(channel_group), class: "btn btn-warning btn-sm", data: { method: "patch", confirm: t("messages._common.are_you_sure") }
           - if policy(channel_group).destroy?
             td = link_to t("noun.delete"), db_channel_group_path(channel_group), class: "btn btn-danger btn-sm", data: { method: "delete", confirm: t("messages._common.are_you_sure") }

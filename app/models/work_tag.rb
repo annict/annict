@@ -21,16 +21,7 @@
 #
 
 class WorkTag < ApplicationRecord
-  include AASM
-
-  aasm do
-    state :published, initial: true
-    state :hidden
-
-    event :hide do
-      transitions from: :published, to: :hidden
-    end
-  end
+  include SoftDeletable
 
   has_many :work_taggables, dependent: :destroy
   has_many :work_taggings, dependent: :destroy

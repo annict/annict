@@ -21,13 +21,13 @@
           td = channel.channel_group.name
           td = channel.vod? ? icon("check") : "-"
           td
-            .badge class="#{channel.published? ? 'badge-success' : 'badge-warning'}"
-              = t("resources.channel.aasm_state.#{channel.aasm_state}")
+            .badge class="#{channel.not_deleted? ? 'badge-success' : 'badge-warning'}"
+              = t("resources.channel.state.#{channel.not_deleted? ? 'published' : 'hidden'}")
           - if policy(channel).edit?
             td = link_to t("noun.edit"), edit_db_channel_path(channel), class: "btn btn-primary btn-sm"
           - if policy(channel).hide?
             td
-              - if channel.published?
+              - if channel.not_deleted?
                 = link_to t("noun.unpublish"), hide_db_channel_path(channel), class: "btn btn-warning btn-sm", data: { method: "patch", confirm: t("messages._common.are_you_sure") }
           - if policy(channel).destroy?
             td = link_to t("noun.delete"), db_channel_path(channel), class: "btn btn-danger btn-sm", data: { method: "delete", confirm: t("messages._common.are_you_sure") }

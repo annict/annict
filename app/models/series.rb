@@ -20,20 +20,11 @@
 #
 
 class Series < ApplicationRecord
-  include AASM
   include DbActivityMethods
   include RootResourceCommon
+  include SoftDeletable
 
   DIFF_FIELDS = %i(name name_en).freeze
-
-  aasm do
-    state :published, initial: true
-    state :hidden
-
-    event :hide do
-      transitions from: :published, to: :hidden
-    end
-  end
 
   has_many :series_works, dependent: :destroy
 end

@@ -42,7 +42,7 @@ module Annict
           er.activities.update_all(trackable_id: episode_record.id, recipient_id: base_episode_id)
           er.likes.update_all(recipient_id: episode_record.id)
           er.comments.update_all(episode_record_id: episode_record.id)
-          er.hide!
+          er.soft_delete
         end
       end
 
@@ -55,7 +55,7 @@ module Annict
       end
 
       def hide_episode!
-        episode.update_column(:aasm_state, "hidden")
+        episode.soft_delete
       end
     end
   end

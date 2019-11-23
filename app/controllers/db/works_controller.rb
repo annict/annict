@@ -62,7 +62,7 @@ module Db
       @work = Work.find(params[:id])
       authorize @work, :hide?
 
-      @work.hide!
+      @work.soft_delete_with_children
 
       flash[:notice] = t("resources.work.unpublished")
       redirect_back fallback_location: db_works_path

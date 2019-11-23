@@ -6,10 +6,10 @@ class UserEpisodeRecordsQuery
     @user = user
 
     @episode_records = @episode_records.
-      published.
+      without_deleted.
       preload(:record, episode: { work: :work_image }, user: %i(profile setting gumroad_subscriber)).
       joins(:user).
-      merge(User.published)
+      merge(User.without_deleted)
     @episode_records = @episode_records.where.not(user_id: @user.mute_users.pluck(:muted_user_id)) if @user
     @episode_records = join_likes if @user
 

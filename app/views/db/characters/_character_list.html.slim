@@ -5,7 +5,7 @@
         th ID
         th = t "activerecord.attributes.character.name"
         th = t "activerecord.attributes.character.series"
-        th = t("activerecord.attributes.character.aasm_state")
+        th = t("activerecord.attributes.character.state")
         th = t "noun.activities"
         - if policy(characters).edit?
           th = t "noun.edit"
@@ -25,14 +25,14 @@
             = character.name_en.presence || "-"
           td = character.series&.local_name.presence || "-"
           td
-            .badge class="#{character.published? ? 'badge-success' : 'badge-warning'}"
-              = t("resources.character.aasm_state.#{character.aasm_state}")
+            .badge class="#{character.not_deleted? ? 'badge-success' : 'badge-warning'}"
+              = t("resources.character.state.#{character.not_deleted? ? 'published' : 'hidden'}")
           td = link_to t("verb.view"), activities_db_character_path(character)
           - if policy(character).edit?
             td = link_to t("noun.edit"), edit_db_character_path(character), class: "btn btn-primary btn-sm"
           - if policy(character).hide?
             td
-              - if character.published?
+              - if character.not_deleted?
                 = link_to t("noun.unpublish"), hide_db_character_path(character), class: "btn btn-warning btn-sm", data: { method: "patch", confirm: t("messages._common.are_you_sure") }
           - if policy(character).destroy?
             td = link_to t("noun.delete"), db_character_path(character), class: "btn btn-danger btn-sm", data: { method: "delete", confirm: t("messages._common.are_you_sure") }

@@ -2,7 +2,7 @@
 
 class SearchStaffsQuery
   def initialize(collection = Staff.all, order_by: nil)
-    @collection = collection.published.preload(:resource)
+    @collection = collection.without_deleted.preload(:resource)
     @args = {
       order_by: order_by
     }

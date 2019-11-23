@@ -25,18 +25,9 @@
 #
 
 class Collection < ApplicationRecord
-  include AASM
+  include SoftDeletable
 
   is_impressionable counter_cache: true, unique: true
-
-  aasm do
-    state :published, initial: true
-    state :hidden
-
-    event :hide do
-      transitions from: :published, to: :hidden
-    end
-  end
 
   belongs_to :user
   has_many :collection_items, dependent: :destroy
@@ -50,7 +41,7 @@ class Collection < ApplicationRecord
   end
 
   def positions_for_select
-    collection_items.published.order(:position).map do |item|
+    collection_items.without_deleted.order(:position).map do |item|
       key = item.position.to_s
       key += " (#{I18n.t('messages.collections.position_of_x', item_title: item.title)})"
       [key, item.position]

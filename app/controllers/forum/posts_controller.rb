@@ -28,8 +28,8 @@ module Forum
     end
 
     def show
-      @post = ForumPost.joins(:user).merge(User.published).find(params[:id])
-      @comments = @post.forum_comments.joins(:user).merge(User.published).order(:created_at)
+      @post = ForumPost.joins(:user).merge(User.without_deleted).find(params[:id])
+      @comments = @post.forum_comments.joins(:user).merge(User.without_deleted).order(:created_at)
       @comment = @post.forum_comments.new
 
       store_page_params(post: @post, comments: @comments)

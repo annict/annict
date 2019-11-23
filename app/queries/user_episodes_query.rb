@@ -10,7 +10,7 @@ class UserEpisodesQuery
 
     return Episode.none if latest_status.blank?
 
-    episode_ids = work.episodes.published.pluck(:id)
+    episode_ids = work.episodes.without_deleted.pluck(:id)
     work.episodes.where(id: (episode_ids - latest_status.watched_episode_ids))
   end
 
@@ -27,7 +27,7 @@ class UserEpisodesQuery
     return if channel_work.blank?
     Slot.
       where(channel: channel_work.channel, episode: episode).
-      published.
+      without_deleted.
       order(started_at: :desc).
       first
   end
@@ -39,7 +39,7 @@ class UserEpisodesQuery
     slots = Slot.
       includes(:channel, work: :work_image).
       where(channel_id: channel_ids, episode_id: episode_ids).
-      published
+      without_deleted
 
     channel_works.map do |cw|
       slot = slots.

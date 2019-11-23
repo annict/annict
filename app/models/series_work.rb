@@ -27,19 +27,10 @@
 #
 
 class SeriesWork < ApplicationRecord
-  include AASM
   include DbActivityMethods
+  include SoftDeletable
 
   DIFF_FIELDS = %i(work_id).freeze
-
-  aasm do
-    state :published, initial: true
-    state :hidden
-
-    event :hide do
-      transitions from: :published, to: :hidden
-    end
-  end
 
   belongs_to :series, counter_cache: true
   belongs_to :work

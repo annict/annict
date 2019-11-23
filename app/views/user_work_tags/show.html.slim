@@ -21,7 +21,7 @@
             / - if @taggable.description.present?
             /   = @taggable.description
             hr.mb-0
-            - @works.published.each do |work|
+            - @works.without_deleted.each do |work|
               .py-3.u-underline
                 .row
                   .col.col-4

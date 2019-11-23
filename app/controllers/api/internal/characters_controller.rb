@@ -5,7 +5,7 @@ module Api
     class CharactersController < Api::Internal::ApplicationController
       def index
         @characters = if params[:q].present?
-          Character.where("name ILIKE ?", "%#{params[:q]}%").published
+          Character.where("name ILIKE ?", "%#{params[:q]}%").without_deleted
         else
           Character.none
         end

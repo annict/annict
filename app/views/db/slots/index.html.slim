@@ -19,7 +19,7 @@
     .p-3
       .btn-group
         = link_to t("noun.all"), db_work_slots_path(@work), class: "btn btn-sm #{params[:channel_id] ? 'btn-outline-secondary' : 'btn-secondary'}"
-        - @work.channels.published.each do |c|
+        - @work.channels.without_deleted.each do |c|
           = link_to c.name, db_work_slots_path(@work, channel_id: c.id), class: "btn btn-sm #{c.id.to_s == params[:channel_id] ? 'btn-secondary' : 'btn-outline-secondary'}"
     - if @slots.present?
       table.table.table-hover
@@ -61,7 +61,7 @@
                   = link_to t("noun.edit"), edit_db_slot_path(slot), class: "btn btn-primary btn-sm"
               - if policy(slot).hide?
                 td
-                  - if slot.published?
+                  - if slot.not_deleted?
                     = link_to t("noun.unpublish"), hide_db_slot_path(slot), class: "btn btn-warning btn-sm", data: { method: "patch", confirm: t("messages._common.are_you_sure") }
               - if policy(slot).destroy?
                 td = link_to t("noun.delete"), db_slot_path(slot), class: "btn btn-danger btn-sm", data: { method: :delete, confirm: t("messages._common.are_you_sure") }

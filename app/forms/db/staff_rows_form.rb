@@ -36,10 +36,10 @@ module Db
 
     def fetched_rows
       parsed_rows.map do |row_columns|
-        person = Person.published.where(id: row_columns[1]).
-          or(Person.published.where(name: row_columns[1])).first
-        organization = Organization.published.where(id: row_columns[2]).
-          or(Organization.published.where(name: row_columns[2])).first
+        person = Person.without_deleted.where(id: row_columns[1]).
+          or(Person.without_deleted.where(name: row_columns[1])).first
+        organization = Organization.without_deleted.where(id: row_columns[2]).
+          or(Organization.without_deleted.where(name: row_columns[2])).first
 
         resource, value = if person.present?
           [person, row_columns[1]]

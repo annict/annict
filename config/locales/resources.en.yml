@@ -8,7 +8,7 @@ en:
     channel_group:
       new_channel_groups: New Channel Groups
     character:
-      aasm_state:
+      state:
         published: Published
         hidden: Hidden
       created: Character created
@@ -46,7 +46,7 @@ en:
     forum_post:
       new: New Post
     organization:
-      aasm_state:
+      state:
         published: Published
         hidden: Hidden
       created: Organization created
@@ -59,7 +59,7 @@ en:
       updated: Organization updated
       organization_list: Organization List
     person:
-      aasm_state:
+      state:
         published: Published
         hidden: Hidden
       created: Person created
@@ -86,7 +86,7 @@ en:
         autumn: "Fall %{year}"
       no_season: No Season
     series:
-      aasm_state:
+      state:
         published: Published
         hidden: Hidden
       new_series: New series
@@ -109,7 +109,7 @@ en:
       edit: Edit Project
       new: New Project
     work:
-      aasm_state:
+      state:
         published: Published
         hidden: Hidden
       created: Work created

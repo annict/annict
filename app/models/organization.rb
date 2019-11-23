@@ -30,9 +30,9 @@
 #
 
 class Organization < ApplicationRecord
-  include AASM
   include DbActivityMethods
   include RootResourceCommon
+  include SoftDeletable
 
   DIFF_FIELDS = %i(
     name name_kana url wikipedia_url twitter_username name_kana name_en url_en
@@ -44,19 +44,6 @@ class Organization < ApplicationRecord
   validates :url_en, url: { allow_blank: true }
   validates :wikipedia_url, url: { allow_blank: true }
   validates :wikipedia_url_en, url: { allow_blank: true }
-
-  aasm do
-    state :published, initial: true
-    state :hidden
-
-    event :hide do
-      after do
-        staffs.published.each(&:hide!)
-      end
-
-      transitions from: :published, to: :hidden
-    end
-  end
 
   has_many :db_activities, as: :trackable, dependent: :destroy
   has_many :db_comments, as: :resource, dependent: :destroy
@@ -79,6 +66,11 @@ class Organization < ApplicationRecord
     end
 
     data.delete_if { |_, v| v.blank? }
+  end
+
+  def soft_delete_with_children
+    soft_delete
+    staffs.without_deleted.each(&:soft_delete)
   end
 
   private

@@ -43,9 +43,10 @@
 
 class WorkRecord < ApplicationRecord
   extend Enumerize
-  include AASM
+
   include Localizable
   include Shareable
+  include SoftDeletable
 
   STATES = %i(
     rating_overall_state
@@ -59,16 +60,7 @@ class WorkRecord < ApplicationRecord
     enumerize state, in: Record::RATING_STATES
   end
 
-  aasm do
-    state :published, initial: true
-    state :hidden
-
-    event :hide do
-      transitions from: :published, to: :hidden
-    end
-  end
-
-  counter_culture :work, column_name: proc { |model| model.published? ? "work_records_count" : nil }
+  counter_culture :work, column_name: proc { |model| model.not_deleted? ? "work_records_count" : nil }
 
   belongs_to :oauth_application, class_name: "Doorkeeper::Application", optional: true
   belongs_to :record

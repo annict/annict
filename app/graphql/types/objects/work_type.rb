@@ -80,7 +80,7 @@ module Types
       end
 
       def series_list
-        object.series_list.published.where("series_works_count > ?", 1)
+        object.series_list.without_deleted.where("series_works_count > ?", 1)
       end
 
       def media

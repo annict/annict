@@ -45,9 +45,10 @@
 
 class Person < ApplicationRecord
   extend Enumerize
-  include AASM
+
   include DbActivityMethods
   include RootResourceCommon
+  include SoftDeletable
 
   DIFF_FIELDS = %i(
     prefecture_id name name_kana nickname gender url wikipedia_url twitter_username
@@ -63,20 +64,6 @@ class Person < ApplicationRecord
   validates :url_en, url: { allow_blank: true }
   validates :wikipedia_url, url: { allow_blank: true }
   validates :wikipedia_url_en, url: { allow_blank: true }
-
-  aasm do
-    state :published, initial: true
-    state :hidden
-
-    event :hide do
-      after do
-        casts.published.each(&:hide!)
-        staffs.published.each(&:hide!)
-      end
-
-      transitions from: :published, to: :hidden
-    end
-  end
 
   belongs_to :prefecture, optional: true
   has_many :casts, dependent: :destroy
@@ -115,6 +102,12 @@ class Person < ApplicationRecord
     end
 
     data.delete_if { |_, v| v.blank? }
+  end
+
+  def soft_delete_with_children
+    soft_delete
+    casts.without_deleted.each(&:soft_delete)
+    staffs.without_deleted.each(&:soft_delete)
   end
 
   private
