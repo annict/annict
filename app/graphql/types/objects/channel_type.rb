@@ -12,7 +12,7 @@ module Types
       field :channel_group, Types::Objects::ChannelGroupType, null: false
       field :sc_chid, Integer, null: false
       field :name, String, null: false
-      field :without_deleted, Boolean, null: false
+      field :published, Boolean, null: false
 
       def programs
         ForeignKeyLoader.for(Program, :channel_id).load([object.id])
@@ -24,6 +24,10 @@ module Types
 
       def sc_chid
         object.sc_chid
+      end
+
+      def published
+        object.not_deleted?
       end
     end
   end
