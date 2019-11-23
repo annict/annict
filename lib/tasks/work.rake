@@ -20,7 +20,7 @@ namespace :work do
         update_or_delete_resource(resource_class, target_work, original_work)
       end
 
-      target_work.soft_delete
+      target_work.soft_delete_with_children
     end
   end
 

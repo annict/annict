@@ -47,7 +47,6 @@
 #
 
 class Character < ApplicationRecord
-  include AASM
   include DbActivityMethods
   include RootResourceCommon
   include SoftDeletable
@@ -58,15 +57,6 @@ class Character < ApplicationRecord
     occupation occupation_en description description_en name_kana description_source
     description_source_en
   ).freeze
-
-  aasm do
-    state :published, initial: true
-    state :hidden
-
-    event :hide do
-      transitions from: :published, to: :hidden
-    end
-  end
 
   belongs_to :series, optional: true
   has_many :casts, dependent: :destroy

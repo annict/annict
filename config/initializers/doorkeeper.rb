@@ -115,17 +115,6 @@ Doorkeeper.configure do
 end
 
 Doorkeeper::Application.class_eval do
-  include AASM
-
-  aasm do
-    state :published, initial: true
-    state :hidden
-
-    event :hide do
-      transitions from: :published, to: :hidden
-    end
-  end
-
   scope :available, -> { without_deleted.where.not(owner: nil) }
   scope :unavailable, -> {
     unscoped.deleted.or(where(owner: nil))

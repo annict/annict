@@ -25,19 +25,9 @@
 #
 
 class Collection < ApplicationRecord
-  include AASM
   include SoftDeletable
 
   is_impressionable counter_cache: true, unique: true
-
-  aasm do
-    state :published, initial: true
-    state :hidden
-
-    event :hide do
-      transitions from: :published, to: :hidden
-    end
-  end
 
   belongs_to :user
   has_many :collection_items, dependent: :destroy

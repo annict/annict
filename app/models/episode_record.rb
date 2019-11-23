@@ -58,21 +58,11 @@
 class EpisodeRecord < ApplicationRecord
   extend Enumerize
 
-  include AASM
   include Localizable
   include Shareable
   include SoftDeletable
 
   enumerize :rating_state, in: Record::RATING_STATES, scope: true
-
-  aasm do
-    state :published, initial: true
-    state :hidden
-
-    event :hide do
-      transitions from: :published, to: :hidden
-    end
-  end
 
   belongs_to :oauth_application, class_name: "Doorkeeper::Application", optional: true
   belongs_to :record

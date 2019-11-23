@@ -25,21 +25,11 @@
 #
 
 class Record < ApplicationRecord
-  include AASM
   include SoftDeletable
 
   RATING_STATES = %i(bad average good great).freeze
 
   is_impressionable counter_cache: true, unique: true
-
-  aasm do
-    state :published, initial: true
-    state :hidden
-
-    event :hide do
-      transitions from: :published, to: :hidden
-    end
-  end
 
   belongs_to :user, counter_cache: true
   belongs_to :work, counter_cache: true

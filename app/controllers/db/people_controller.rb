@@ -46,7 +46,7 @@ module Db
       @person = Person.find(params[:id])
       authorize @person, :hide?
 
-      @person.soft_delete
+      @person.soft_delete_with_children
 
       flash[:notice] = t("resources.person.unpublished")
       redirect_back fallback_location: db_people_path

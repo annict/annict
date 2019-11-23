@@ -28,17 +28,7 @@
 #
 
 class VodTitle < ApplicationRecord
-  include AASM
   include SoftDeletable
-
-  aasm do
-    state :published, initial: true
-    state :hidden
-
-    event :hide do
-      transitions from: :published, to: :hidden
-    end
-  end
 
   belongs_to :channel
   belongs_to :work, optional: true

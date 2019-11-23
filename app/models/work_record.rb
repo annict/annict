@@ -44,7 +44,6 @@
 class WorkRecord < ApplicationRecord
   extend Enumerize
 
-  include AASM
   include Localizable
   include Shareable
   include SoftDeletable
@@ -59,15 +58,6 @@ class WorkRecord < ApplicationRecord
 
   STATES.each do |state|
     enumerize state, in: Record::RATING_STATES
-  end
-
-  aasm do
-    state :published, initial: true
-    state :hidden
-
-    event :hide do
-      transitions from: :published, to: :hidden
-    end
   end
 
   counter_culture :work, column_name: proc { |model| model.not_deleted? ? "work_records_count" : nil }

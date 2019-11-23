@@ -49,7 +49,7 @@ module Db
       @channel = Channel.find(params[:id])
       authorize @channel, :hide?
 
-      @channel.soft_delete
+      @channel.soft_delete_with_children
 
       flash[:notice] = t("messages._common.unpublished")
       redirect_back fallback_location: db_channels_path

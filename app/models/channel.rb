@@ -28,7 +28,6 @@
 #
 
 class Channel < ApplicationRecord
-  include AASM
   include SoftDeletable
 
   AMAZON_VIDEO_ID = 243
@@ -37,19 +36,6 @@ class Channel < ApplicationRecord
   NICONICO_CHANNEL_ID = 165
   NETFLIX_ID = 244
   ABEMA_VIDEO_ID = 260
-
-  aasm do
-    state :published, initial: true
-    state :hidden
-
-    event :hide do
-      after do
-        programs.without_deleted.each(&:soft_delete)
-      end
-
-      transitions from: :published, to: :hidden
-    end
-  end
 
   belongs_to :channel_group
   has_many :programs, dependent: :destroy
@@ -69,6 +55,11 @@ class Channel < ApplicationRecord
 
       fastest_slot.present? ? fastest_slot.channel : nil
     end
+  end
+
+  def soft_delete_with_children
+    soft_delete
+    programs.without_deleted.each(&:soft_delete)
   end
 
   def amazon_video?

@@ -33,20 +33,10 @@
 #
 
 class Cast < ApplicationRecord
-  include AASM
   include DbActivityMethods
   include SoftDeletable
 
   DIFF_FIELDS = %i(person_id name part sort_number character_id name_en).freeze
-
-  aasm do
-    state :published, initial: true
-    state :hidden
-
-    event :hide do
-      transitions from: :published, to: :hidden
-    end
-  end
 
   belongs_to :character, touch: true
   belongs_to :person, touch: true, counter_cache: true

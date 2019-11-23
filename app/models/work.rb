@@ -73,7 +73,6 @@
 class Work < ApplicationRecord
   extend Enumerize
 
-  include AASM
   include DbActivityMethods
   include RootResourceCommon
   include SoftDeletable
@@ -88,19 +87,6 @@ class Work < ApplicationRecord
 
   enumerize :media, in: { tv: 1, ova: 2, movie: 3, web: 4, other: 0 }
   enumerize :season_name, in: Season::NAME_HASH
-
-  aasm do
-    state :published, initial: true
-    state :hidden
-
-    event :hide do
-      after do
-        episodes.without_deleted.each(&:soft_delete)
-      end
-
-      transitions from: :published, to: :hidden
-    end
-  end
 
   belongs_to :number_format, optional: true
   belongs_to :season_model,
@@ -498,5 +484,10 @@ class Work < ApplicationRecord
     return number_format.data[number - 1] if number_format.format.blank?
 
     number_format.format % number
+  end
+
+  def soft_delete_with_children
+    soft_delete
+    episodes.without_deleted.each(&:soft_delete)
   end
 end

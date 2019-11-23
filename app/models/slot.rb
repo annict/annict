@@ -40,20 +40,10 @@
 #
 
 class Slot < ApplicationRecord
-  include AASM
   include DbActivityMethods
   include SoftDeletable
 
   DIFF_FIELDS = %i(channel_id episode_id started_at rebroadcast).freeze
-
-  aasm do
-    state :published, initial: true
-    state :hidden
-
-    event :hide do
-      transitions from: :published, to: :hidden
-    end
-  end
 
   attr_accessor :time_zone, :is_started_at_calced, :shift_time_along_with_after_slots
 

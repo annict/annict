@@ -33,7 +33,7 @@
 
 class Staff < ApplicationRecord
   extend Enumerize
-  include AASM
+
   include DbActivityMethods
   include SoftDeletable
 
@@ -57,15 +57,6 @@ class Staff < ApplicationRecord
     studio
     other
   )
-
-  aasm do
-    state :published, initial: true
-    state :hidden
-
-    event :hide do
-      transitions from: :published, to: :hidden
-    end
-  end
 
   belongs_to :resource, polymorphic: true, counter_cache: true
   belongs_to :work, touch: true

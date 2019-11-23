@@ -32,19 +32,9 @@
 #
 
 class CollectionItem < ApplicationRecord
-  include AASM
   include SoftDeletable
 
   acts_as_list scope: :collection_id
-
-  aasm do
-    state :published, initial: true
-    state :hidden
-
-    event :hide do
-      transitions from: :published, to: :hidden
-    end
-  end
 
   belongs_to :user
   belongs_to :collection, touch: true
