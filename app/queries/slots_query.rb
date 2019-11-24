@@ -1,10 +1,10 @@
 # frozen_string_literal: true
 
-class ProgramsQuery
-  # @param [Program::ActiveRecord_Relation] collection
+class SlotsQuery
+  # @param [Slot::ActiveRecord_Relation] collection
   # @param [GraphqlOrderStruct] order
   #
-  # @return [Program::ActiveRecord_Relation]
+  # @return [Slot::ActiveRecord_Relation]
   def initialize(collection, order:)
     @collection = collection
     @order = order
