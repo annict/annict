@@ -14,7 +14,6 @@ module Canary
         field :work, Canary::Types::Objects::WorkType, null: false
         field :started_at, Canary::Types::Scalars::DateTime, null: false
         field :sc_pid, Integer, null: true
-        field :state, Canary::Types::Enums::SlotState, null: false
         field :rebroadcast, Boolean, null: false
 
         def channel
@@ -27,10 +26,6 @@ module Canary
 
         def work
           RecordLoader.for(Work).load(object.work_id)
-        end
-
-        def state
-          (object.not_deleted? ? "published" : "hidden").upcase
         end
       end
     end
