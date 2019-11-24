@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
 class ChannelsQuery
-  # @param [Channel::ActiveRecord_Relation] collection
-  # @param [Boolean, nil] is_vod
+  # @param collection [Channel::ActiveRecord_Relation]
+  # @param is_vod [Boolean, nil]
   #
   # @return [Channel::ActiveRecord_Relation]
   def initialize(collection, is_vod: nil)

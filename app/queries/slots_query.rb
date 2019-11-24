@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
 class SlotsQuery
-  # @param [Slot::ActiveRecord_Relation] collection
-  # @param [GraphqlOrderStruct] order
+  # @param collection [Slot::ActiveRecord_Relation]
+  # @param order [GraphqlOrderStruct]
   #
   # @return [Slot::ActiveRecord_Relation]
   def initialize(collection, order:)

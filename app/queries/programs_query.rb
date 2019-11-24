@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
 class ProgramsQuery
-  # @param [Program::ActiveRecord_Relation] collection
-  # @param [GraphqlOrderStruct] order
+  # @param collection [Program::ActiveRecord_Relation]
+  # @param order [GraphqlOrderStruct]
   #
   # @return [Program::ActiveRecord_Relation]
   def initialize(collection, order:)
