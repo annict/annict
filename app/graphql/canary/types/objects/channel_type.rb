@@ -15,7 +15,6 @@ module Canary
           null: false,
           description: "しょぼいカレンダーのチャンネルID"
         field :name, String, null: false
-        field :published, Boolean, null: false
 
         def slots
           ForeignKeyLoader.for(Program, :channel_id).load([object.id])
