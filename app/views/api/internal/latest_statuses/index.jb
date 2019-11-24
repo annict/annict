@@ -2,7 +2,7 @@
 
 json = {}
 
-slot_data = @user.episodes.slot_data(@latest_statuses)
+slot_data = @user.slot_data(@latest_statuses)
 
 json[:latest_statuses] = render partial: "api/internal/latest_statuses/latest_status",
                                 collection: @latest_statuses,

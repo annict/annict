@@ -42,26 +42,6 @@ class UserEpisodesQuery
       first
   end
 
-  def slot_data(latest_statuses)
-    channel_works = user.channel_works.where(work_id: latest_statuses.pluck(:work_id))
-    channel_ids = channel_works.pluck(:channel_id)
-    episode_ids = latest_statuses.pluck(:next_episode_id)
-    slots = Slot.
-      includes(:channel, work: :work_image).
-      where(channel_id: channel_ids, episode_id: episode_ids).
-      without_deleted
-
-    channel_works.map do |cw|
-      slot = slots.
-        select { |p| p.work_id == cw.work_id && p.channel_id == cw.channel_id }.
-        sort_by(&:started_at).
-        reverse.
-        first
-
-      slot
-    end
-  end
-
   private
 
   attr_reader :user, :episodes, :status_kinds, :watched
