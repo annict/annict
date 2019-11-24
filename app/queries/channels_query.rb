@@ -2,22 +2,26 @@
 
 class ChannelsQuery
   # @param [Channel::ActiveRecord_Relation] collection
-  # @param [Boolean] is_vod
+  # @param [Boolean, nil] is_vod
   #
   # @return [Channel::ActiveRecord_Relation]
-  def initialize(collection, is_vod:)
+  def initialize(collection, is_vod: nil)
     @collection = collection
     @is_vod = is_vod
   end
 
   def call
-    @collection = filter_by_is_vod if @is_vod
+    @collection = filter_by_is_vod unless is_vod.nil?
     @collection
   end
 
   private
 
+  attr_reader :is_vod
+
   def filter_by_is_vod
-    @collection.where(vod: @is_vod)
+    return @collection if is_vod.nil?
+
+    @collection.where(vod: is_vod)
   end
 end
