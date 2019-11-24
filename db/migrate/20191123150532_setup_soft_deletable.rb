@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class SoftDeletable < ActiveRecord::Migration[6.0]
+class SetupSoftDeletable < ActiveRecord::Migration[6.0]
   def change
     add_column :casts, :deleted_at, :datetime
     add_column :channels, :deleted_at, :datetime
