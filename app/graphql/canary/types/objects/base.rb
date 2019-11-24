@@ -12,6 +12,12 @@ module Canary
           object.id
         end
 
+        def build_order(order_by)
+          return unless order_by
+
+          GraphqlOrderStruct.new(order_by[:field], order_by[:direction])
+        end
+
         def method_missing(method_name, *arguments, &block)
           return super if method_name.blank?
           return super unless method_name.to_s.start_with?("local_")
