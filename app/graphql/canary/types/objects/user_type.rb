@@ -193,11 +193,13 @@ module Canary
           ).call
         end
 
-        def slots(unwatched: nil, order_by: nil)
-          SearchProgramsQuery.new(
-            object.programs.all,
-            unwatched: unwatched,
-            order_by: order_by
+        def slots(watched: nil, order_by: nil)
+          UserSlotsQuery.new(
+            object,
+            Slot.without_deleted,
+            status_kinds: %i(wanna_watch watching),
+            watched: watched,
+            order: build_order(order_by)
           ).call
         end
       end

@@ -167,14 +167,6 @@ class User < ApplicationRecord
     @works ||= UserWorksQuery.new(self)
   end
 
-  def episodes
-    @episodes ||= UserEpisodesQuery.new(self)
-  end
-
-  def slots
-    @slots ||= UserSlotsQuery.new(self)
-  end
-
   def tips
     @tips ||= UserTipsQuery.new(self)
   end

@@ -173,10 +173,12 @@ module Types
       end
 
       def programs(unwatched: nil, order_by: nil)
-        SearchSlotsQuery.new(
-          object.slots.all,
-          unwatched: unwatched,
-          order_by: order_by
+        UserSlotsQuery.new(
+          object,
+          Slot.without_deleted,
+          status_kinds: %i(wanna_watch watching),
+          watched: unwatched.nil? ? nil : !unwatched,
+          order: build_order(order_by)
         ).call
       end
     end
