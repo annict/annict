@@ -30,18 +30,6 @@ class UserEpisodesQuery
     collection
   end
 
-  def slot(episode)
-    channel_work = user.channel_works.find_by(work: episode.work)
-
-    return if channel_work.blank?
-
-    Slot.
-      where(channel: channel_work.channel, episode: episode).
-      without_deleted.
-      order(started_at: :desc).
-      first
-  end
-
   private
 
   attr_reader :user, :episodes, :status_kinds, :watched
