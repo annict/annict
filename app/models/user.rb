@@ -398,7 +398,7 @@ class User < ApplicationRecord
   end
 
   def slot_data(latest_statuses)
-    channel_works = channel_works.where(work_id: latest_statuses.pluck(:work_id))
+    channel_works = self.channel_works.where(work_id: latest_statuses.pluck(:work_id))
     channel_ids = channel_works.pluck(:channel_id)
     episode_ids = latest_statuses.pluck(:next_episode_id)
     slots = Slot.
