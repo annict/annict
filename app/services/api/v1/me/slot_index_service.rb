@@ -24,8 +24,16 @@ module Api
 
         def filter_unwatched
           unwatched = @params.filter_unwatched
+
           return @collection if unwatched.blank? || unwatched == "false"
-          @user.slots.unwatched_all.work_published.episode_published
+
+          UserSlotsQuery.new(
+            @user,
+            @collection,
+            status_kinds: %i(wanna_watch watching),
+            watched: false,
+            order: order_property
+          ).call
         end
 
         def filter_channel_ids

@@ -5,8 +5,13 @@ class SlotsController < ApplicationController
   before_action :load_i18n, only: %i(index)
 
   def index
-    sort = current_user.setting.slots_sort_type.presence || "started_at_desc"
-    @slots = current_user.slots.unwatched(1, sort)
+    @slots = UserSlotsQuery.new(
+      current_user,
+      Slot.without_deleted,
+      status_kinds: %i(wanna_watch watching),
+      watched: false,
+      order: order_property
+    ).call.page(1)
 
     page_object = render_jb "api/internal/user_slots/index",
       user: current_user,
@@ -21,6 +26,17 @@ class SlotsController < ApplicationController
   end
 
   private
+
+  def order_property
+    sort_type = current_user.setting.slots_sort_type.presence || "started_at_desc"
+
+    case sort_type
+    when "started_at_asc"
+      OrderProperty.new(:started_at, :asc)
+    else
+      OrderProperty.new(:started_at, :desc)
+    end
+  end
 
   def load_i18n
     keys = {
