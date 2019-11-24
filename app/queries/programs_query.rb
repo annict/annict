@@ -5,24 +5,22 @@ class ProgramsQuery
   # @param order [GraphqlOrderStruct]
   #
   # @return [Program::ActiveRecord_Relation]
-  def initialize(collection, order:)
+  def initialize(collection, order: GraphqlOrderStruct.new(:created_at, :asc))
     @collection = collection
     @order = order
   end
 
   def call
-    @collection = order_collection if @order
-    @collection
+    order_collection
   end
 
   private
 
+  attr_reader :order
+
   def order_collection
-    case @order.field
-    when "STARTED_AT"
-      @collection.order(started_at: @order.direction)
-    else
-      @collection
-    end
+    return @collection.order(:created_at) unless order
+
+    @collection.order(order.field => order.direction)
   end
 end

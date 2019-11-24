@@ -11,7 +11,7 @@ module Types
       end
 
       def build_order(order_by)
-        return unless order_by
+        return GraphqlOrderStruct.new(:created_at, :asc) unless order_by
 
         GraphqlOrderStruct.new(order_by[:field], order_by[:direction])
       end
