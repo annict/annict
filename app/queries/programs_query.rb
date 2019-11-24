@@ -2,10 +2,10 @@
 
 class ProgramsQuery
   # @param collection [Program::ActiveRecord_Relation]
-  # @param order [GraphqlOrderStruct]
+  # @param order [OrderProperty]
   #
   # @return [Program::ActiveRecord_Relation]
-  def initialize(collection, order: GraphqlOrderStruct.new(:created_at, :asc))
+  def initialize(collection, order: OrderProperty.new)
     @collection = collection
     @order = order
   end

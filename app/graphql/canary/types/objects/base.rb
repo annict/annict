@@ -13,9 +13,9 @@ module Canary
         end
 
         def build_order(order_by)
-          return GraphqlOrderStruct.new(:created_at, :asc) unless order_by
+          return OrderProperty.new unless order_by
 
-          GraphqlOrderStruct.new(order_by[:field], order_by[:direction])
+          OrderProperty.new(order_by[:field], order_by[:direction])
         end
 
         def method_missing(method_name, *arguments, &block)
