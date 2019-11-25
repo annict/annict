@@ -207,8 +207,9 @@ GEM
     github-markup (3.0.4)
     globalid (0.4.2)
       activesupport (>= 4.2.0)
-    gon (6.2.1)
-      actionpack (>= 3.0)
+    gon (6.3.2)
+      actionpack (>= 3.0.20)
+      i18n (>= 0.7)
       multi_json
       request_store (>= 1.0)
     graphiql-rails (1.7.0)
@@ -303,7 +304,7 @@ GEM
       activesupport (>= 4)
       railties (>= 4)
       request_store (~> 1.0)
-    loofah (2.3.1)
+    loofah (2.4.0)
       crass (~> 1.0.2)
       nokogiri (>= 1.5.9)
     mail (2.7.1)
@@ -326,7 +327,7 @@ GEM
     mini_magick (4.9.5)
     mini_mime (1.0.2)
     mini_portile2 (2.4.0)
-    minitest (5.12.2)
+    minitest (5.13.0)
     miro (0.4.0)
       chunky_png
       cocaine
@@ -587,7 +588,7 @@ GEM
     xpath (3.2.0)
       nokogiri (~> 1.8)
     yard (0.9.20)
-    zeitwerk (2.2.0)
+    zeitwerk (2.2.1)
 
 PLATFORMS
   ruby
