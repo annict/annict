@@ -7,6 +7,7 @@
 #  aasm_state       :string           default("published"), not null
 #  deleted_at       :datetime
 #  name             :string           not null
+#  name_alter       :string           default(""), not null
 #  sc_chid          :integer
 #  sort_number      :integer          default(0), not null
 #  vod              :boolean          default(FALSE)

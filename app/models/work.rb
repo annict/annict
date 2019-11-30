@@ -31,6 +31,8 @@
 #  synopsis_source              :string           default(""), not null
 #  synopsis_source_en           :string           default(""), not null
 #  title                        :string(510)      not null
+#  title_alter                  :string           default(""), not null
+#  title_alter_en               :string           default(""), not null
 #  title_en                     :string           default(""), not null
 #  title_kana                   :string           default(""), not null
 #  title_ro                     :string           default(""), not null
