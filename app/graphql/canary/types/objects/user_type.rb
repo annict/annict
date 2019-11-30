@@ -196,8 +196,7 @@ module Canary
         def slots(watched: nil, order_by: nil)
           UserSlotsQuery.new(
             object,
-            Slot.without_deleted,
-            status_kinds: %i(wanna_watch watching),
+            Slot.without_deleted.with_works(object.works_on(:wanna_watch, :watching).without_deleted),
             watched: watched,
             order: build_order(order_by)
           ).call

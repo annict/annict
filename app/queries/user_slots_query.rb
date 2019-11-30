@@ -3,7 +3,6 @@
 class UserSlotsQuery
   # @param user [User]
   # @param slots [Slot::ActiveRecord_Relation]
-  # @param status_kinds [Array<Symbol>]
   # @param watched [Boolean, nil]
   # @param order [OrderProperty]
   #
@@ -11,13 +10,11 @@ class UserSlotsQuery
   def initialize(
     user,
     slots,
-    status_kinds: LatestStatus.kind.values.map(&:to_sym),
     watched: nil,
     order: OrderProperty.new
   )
     @user = user
     @slots = slots
-    @status_kinds = status_kinds
     @watched = watched
     @order = order
   end
@@ -29,13 +26,13 @@ class UserSlotsQuery
 
   private
 
-  attr_reader :user, :slots, :status_kinds, :watched, :order
+  attr_reader :user, :slots, :watched, :order
 
   def user_slots
     return slots.none if user_episodes.blank?
 
     id_pair = channel_works.pluck(:channel_id, :work_id).map { |ary| "(#{ary[0]}, #{ary[1]})" }.join(",")
-    id_pair_sql = <<-SQL
+    id_pair_sql = id_pair.blank? ? "NULL" : <<-SQL
       SELECT id FROM slots WHERE
         (channel_id, work_id) IN (VALUES #{id_pair})
     SQL
@@ -74,7 +71,7 @@ class UserSlotsQuery
   end
 
   def latest_statuses
-    @latest_statuses ||= user.latest_statuses.with_kind(*status_kinds)
+    @latest_statuses ||= user.latest_statuses
   end
 
   def order_collection(collection)

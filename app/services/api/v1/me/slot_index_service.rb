@@ -29,8 +29,7 @@ module Api
 
           UserSlotsQuery.new(
             @user,
-            @collection,
-            status_kinds: %i(wanna_watch watching),
+            @collection.with_works(@user.works_on(:wanna_watch, :watching).without_deleted),
             watched: false,
             order: order_property
           ).call

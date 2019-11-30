@@ -9,8 +9,7 @@ module Api
         @user = current_user
         @slots = UserSlotsQuery.new(
           @user,
-          Slot.without_deleted,
-          status_kinds: %i(wanna_watch watching),
+          Slot.without_deleted.with_works(@user.works_on(:wanna_watch, :watching).without_deleted),
           watched: false,
           order: order_property(params[:sort])
         ).call.page(params[:page])

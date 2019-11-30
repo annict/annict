@@ -167,6 +167,10 @@ class User < ApplicationRecord
     @works ||= UserWorksQuery.new(self)
   end
 
+  def works_on(*status_kinds)
+    Work.joins(:latest_statuses).merge(latest_statuses.with_kind(*status_kinds))
+  end
+
   def tips
     @tips ||= UserTipsQuery.new(self)
   end
