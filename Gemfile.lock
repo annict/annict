@@ -532,7 +532,7 @@ GEM
       activesupport (>= 4.0)
       sprockets (>= 3.0.0)
     squasher (0.6.2)
-    stackprof (0.2.12)
+    stackprof (0.2.13)
     syoboi_calendar (0.9.4)
       faraday
       faraday_middleware
