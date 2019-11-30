@@ -64,12 +64,28 @@
                   {{ state.work.titleKana }}
                 </dd>
               </template>
+              <template v-if="state.work.titleAlter">
+                <dt class="small">
+                  {{ $root.$t('models.work.titleAlter') }}
+                </dt>
+                <dd>
+                  {{ state.work.titleAlter }}
+                </dd>
+              </template>
               <template v-if="state.work.titleEn">
                 <dt class="small">
                   {{ $root.$t('models.work.titleEn') }}
                 </dt>
                 <dd>
                   {{ state.work.titleEn }}
+                </dd>
+              </template>
+              <template v-if="state.work.titleAlterEn">
+                <dt class="small">
+                  {{ $root.$t('models.work.titleAlterEn') }}
+                </dt>
+                <dd>
+                  {{ state.work.titleAlterEn }}
                 </dd>
               </template>
               <dt class="small">

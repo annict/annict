@@ -22,6 +22,8 @@ export class Work extends ApplicationModel {
   public localSynopsisSource: string
   public syobocalTid: number
   public title: string
+  public titleAlter: string
+  public titleAlterEn: string
   public titleEn: string
   public localTitle: string
   public titleKana: string
@@ -66,6 +68,8 @@ export class Work extends ApplicationModel {
     this.localSynopsisSource = node.localSynopsisSource
     this.syobocalTid = node.syobocalTid
     this.title = node.title
+    this.titleAlter = node.titleAlter
+    this.titleAlterEn = node.titleAlterEn
     this.titleEn = node.titleEn
     this.localTitle = node.localTitle
     this.titleKana = node.titleKana
