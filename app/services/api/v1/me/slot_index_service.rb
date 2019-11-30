@@ -30,8 +30,7 @@ module Api
           UserSlotsQuery.new(
             @user,
             @collection.with_works(@user.works_on(:wanna_watch, :watching).without_deleted),
-            watched: false,
-            order: order_property
+            watched: false
           ).call
         end
 
