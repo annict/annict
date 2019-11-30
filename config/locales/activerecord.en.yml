@@ -204,6 +204,8 @@ en:
         synopsis_source_en: Synopsis source (en)
         synopsis_source: Synopsis source (ja)
         synopsis: Synopsis (ja)
+        title_alter: Title (alter)
+        title_alter_en: Title (alter/en)
         title_en: Title (en)
         title_kana: Title (kana)
         title: Title (ja)

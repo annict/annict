@@ -11,9 +11,17 @@
       .col-sm-9
         = f.text_field :title_kana, class: "form-control"
     .form-group.row
+      = f.label :title_alter, class: "col-sm-3 col-form-label"
+      .col-sm-9
+        = f.text_field :title_alter, class: "form-control"
+    .form-group.row
       = f.label :title_en, class: "col-sm-3 col-form-label"
       .col-sm-9
         = f.text_field :title_en, class: "form-control"
+    .form-group.row
+      = f.label :title_alter_en, class: "col-sm-3 col-form-label"
+      .col-sm-9
+        = f.text_field :title_alter_en, class: "form-control"
     .form-group.row
       = f.label :media, class: "col-sm-3 col-form-label c-label-required"
       .col-sm-9
