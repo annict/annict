@@ -64,8 +64,7 @@ class UserSlotsQuery
   def user_episodes
     @user_episodes ||= UserEpisodesQuery.new(
       user,
-      Episode.without_deleted,
-      status_kinds: status_kinds,
+      Episode.without_deleted.where(work_id: latest_statuses.pluck(:work_id)),
       watched: watched
     ).call
   end

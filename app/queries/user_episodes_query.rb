@@ -3,19 +3,16 @@
 class UserEpisodesQuery
   # @param user [User]
   # @param episodes [Episode::ActiveRecord_Relation]
-  # @param status_kinds [Array<Symbol>]
   # @param watched [Boolean, nil]
   #
   # @return [Episode::ActiveRecord_Relation]
   def initialize(
     user,
     episodes,
-    status_kinds: LatestStatus.kind.values.map(&:to_sym),
     watched: nil
   )
     @user = user
     @episodes = episodes
-    @status_kinds = status_kinds
     @watched = watched
   end
 
@@ -32,7 +29,7 @@ class UserEpisodesQuery
 
   private
 
-  attr_reader :user, :episodes, :status_kinds, :watched
+  attr_reader :user, :episodes, :watched
 
   def user_episodes
     return episodes.none if latest_statuses.blank?
@@ -41,7 +38,7 @@ class UserEpisodesQuery
   end
 
   def latest_statuses
-    @latest_statuses ||= user.latest_statuses.with_kind(*status_kinds)
+    @latest_statuses ||= user.latest_statuses
   end
 
   def filter_by_watched_episode_ids(collection)
