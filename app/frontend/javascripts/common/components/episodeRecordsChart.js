@@ -1,10 +1,5 @@
-/*
- * decaffeinate suggestions:
- * DS102: Remove unnecessary code created because of implicit returns
- * Full docs: https://github.com/decaffeinate/decaffeinate/blob/master/docs/suggestions.md
- */
-const d3Selection = require('d3-selection')
-const LineChart = require('britecharts/dist/umd/line.min')
+import * as d3Selection from 'd3-selection'
+import LineChart from 'britecharts/dist/umd/line.min'
 
 export default {
   template: '<div class="c-episode-records-chart"></div>',
