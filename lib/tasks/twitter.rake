@@ -9,6 +9,8 @@ namespace :twitter do
       config.access_token_secret = ENV.fetch("TWITTER_ACCESS_SECRET_FOR_DEV")
     end
     lists = TwitterWatchingList.all
+    channels = Channel.without_deleted.joins(:channel_group).merge(ChannelGroup.without_deleted)
+    channel_names = channels.pluck(:name) + channels.pluck(:name_alter).map { |name| name.split(",") }.flatten
 
     lists.each do |list|
       puts "--- list: @#{list.username}/#{list.name}"
@@ -22,6 +24,7 @@ namespace :twitter do
 
       tweets.reverse.each do |tweet|
         next if tweet.retweet? || tweet.reply?
+
         puts "tweet: #{tweet.url}"
 
         # Prevent to embed https://support.discordapp.com/hc/en-us/articles/206342858--How-do-I-disable-auto-embed-
@@ -35,6 +38,9 @@ namespace :twitter do
           map do |w|
             "- #{w.title}: <https://annict.jp/db/works/#{w.id}/edit>"
           end.join("\n")
+
+        # Skip posting to Discord if tweet body does not contain channel name
+        next unless channel_names.any? { |name| tweet_body.include?(name) }
 
         Discord::Notifier.message(
           "#{tweet_body}\nTweet URL:\n- <#{tweet.url}>\nAnnict DB:\n#{work_urls}\n---",

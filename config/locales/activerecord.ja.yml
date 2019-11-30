@@ -203,6 +203,8 @@ ja:
         synopsis_source_en: あらすじの引用元 (英)
         synopsis_source: あらすじの引用元
         synopsis: あらすじ
+        title_alter: タイトル (別名)
+        title_alter_en: タイトル (別名/英)
         title_en: タイトル (英)
         title_kana: タイトル (かな)
         title: タイトル

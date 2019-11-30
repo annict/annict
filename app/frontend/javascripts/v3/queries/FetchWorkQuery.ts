@@ -12,7 +12,9 @@ const query = gql`
         annictId
         title
         titleKana
+        titleAlter
         titleEn
+        titleAlterEn
         localTitle
         media
         seasonName

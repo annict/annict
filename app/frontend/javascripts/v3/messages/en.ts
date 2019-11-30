@@ -82,6 +82,8 @@ export default {
       officialSiteUrl: 'Official Site (ja)',
       officialSiteUrlEn: 'Official Site (en)',
       synopsis: 'Synopsis',
+      titleAlter: 'Title (Alter)',
+      titleAlterEn: 'Title (Alter/En)',
       titleEn: 'Title (En)',
       titleKana: 'Title (Kana)',
       twitterHashtag: 'Twitter Hashtag',

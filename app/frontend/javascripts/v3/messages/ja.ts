@@ -82,6 +82,8 @@ export default {
       officialSiteUrl: '公式サイト',
       officialSiteUrlEn: '公式サイト (英語)',
       synopsis: 'あらすじ',
+      titleAlter: 'タイトル (別名)',
+      titleAlterEn: 'タイトル (別名/英語)',
       titleEn: 'タイトル (英語)',
       titleKana: 'タイトル (かな)',
       twitterHashtag: 'ハッシュタグ',

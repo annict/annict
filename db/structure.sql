@@ -10,6 +10,20 @@ SET client_min_messages = warning;
 SET row_security = off;
 
 --
+-- Name: plpgsql; Type: EXTENSION; Schema: -; Owner: -
+--
+
+CREATE EXTENSION IF NOT EXISTS plpgsql WITH SCHEMA pg_catalog;
+
+
+--
+-- Name: EXTENSION plpgsql; Type: COMMENT; Schema: -; Owner: -
+--
+
+COMMENT ON EXTENSION plpgsql IS 'PL/pgSQL procedural language';
+
+
+--
 -- Name: citext; Type: EXTENSION; Schema: -; Owner: -
 --
 
@@ -205,7 +219,8 @@ CREATE TABLE public.channels (
     vod boolean DEFAULT false,
     aasm_state character varying DEFAULT 'published'::character varying NOT NULL,
     sort_number integer DEFAULT 0 NOT NULL,
-    deleted_at timestamp without time zone
+    deleted_at timestamp without time zone,
+    name_alter character varying DEFAULT ''::character varying NOT NULL
 );
 
 
@@ -2926,7 +2941,9 @@ CREATE TABLE public.works (
     records_count integer DEFAULT 0 NOT NULL,
     work_records_with_body_count integer DEFAULT 0 NOT NULL,
     start_episode_raw_number double precision DEFAULT 1.0 NOT NULL,
-    deleted_at timestamp without time zone
+    deleted_at timestamp without time zone,
+    title_alter character varying DEFAULT ''::character varying NOT NULL,
+    title_alter_en character varying DEFAULT ''::character varying NOT NULL
 );
 
 
@@ -7071,6 +7088,7 @@ INSERT INTO "schema_migrations" (version) VALUES
 ('20191013172849'),
 ('20191019230403'),
 ('20191123150532'),
-('20191123191135');
+('20191123191135'),
+('20191130150830');
 
 
