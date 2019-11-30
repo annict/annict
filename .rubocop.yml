@@ -38,7 +38,7 @@ Lint/UnusedMethodArgument:
   Enabled: false
 
 Metrics/LineLength:
-  Max: 120
+  Max: 150
   Exclude:
     - "**/*.jbuilder"
   # Ignore lines with comments

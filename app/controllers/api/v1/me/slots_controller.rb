@@ -7,11 +7,10 @@ module Api
         before_action :prepare_params!, only: %i(index)
 
         def index
-          slots = current_user.
-            slots.
-            all.
-            work_published.
-            episode_published
+          slots = UserSlotsQuery.new(
+            current_user,
+            Slot.without_deleted.with_works(current_user.works_on(:wanna_watch, :watching).without_deleted)
+          ).call
           service = Api::V1::Me::SlotIndexService.new(slots, @params)
           service.user = current_user
           @slots = service.result

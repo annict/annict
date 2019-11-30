@@ -5,5 +5,6 @@ FactoryBot.define do
     association :channel
     association :work
     started_at { Time.parse("2017-01-29 0:00:00") }
+    rebroadcast { false }
   end
 end

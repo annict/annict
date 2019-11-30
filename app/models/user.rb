@@ -167,12 +167,8 @@ class User < ApplicationRecord
     @works ||= UserWorksQuery.new(self)
   end
 
-  def episodes
-    @episodes ||= UserEpisodesQuery.new(self)
-  end
-
-  def slots
-    @slots ||= UserSlotsQuery.new(self)
+  def works_on(*status_kinds)
+    Work.joins(:latest_statuses).merge(latest_statuses.with_kind(*status_kinds))
   end
 
   def tips
@@ -402,6 +398,26 @@ class User < ApplicationRecord
         app.update(owner: nil)
         app.soft_delete
       end
+    end
+  end
+
+  def slot_data(latest_statuses)
+    channel_works = self.channel_works.where(work_id: latest_statuses.pluck(:work_id))
+    channel_ids = channel_works.pluck(:channel_id)
+    episode_ids = latest_statuses.pluck(:next_episode_id)
+    slots = Slot.
+      includes(:channel, work: :work_image).
+      where(channel_id: channel_ids, episode_id: episode_ids).
+      without_deleted
+
+    channel_works.map do |cw|
+      slot = slots.
+        select { |p| p.work_id == cw.work_id && p.channel_id == cw.channel_id }.
+        sort_by(&:started_at).
+        reverse.
+        first
+
+      slot
     end
   end
 

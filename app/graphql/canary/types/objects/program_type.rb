@@ -30,9 +30,9 @@ module Canary
         end
 
         def slots(order_by: nil)
-          SearchProgramsQuery.new(
-            object.programs,
-            order_by: order_by
+          SlotsQuery.new(
+            object.slots.without_deleted,
+            order: build_order(order_by)
           ).call
         end
       end

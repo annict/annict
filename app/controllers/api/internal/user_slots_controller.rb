@@ -7,7 +7,23 @@ module Api
 
       def index
         @user = current_user
-        @slots = current_user.slots.unwatched(params[:page], params[:sort])
+        @slots = UserSlotsQuery.new(
+          @user,
+          Slot.without_deleted.with_works(@user.works_on(:wanna_watch, :watching).without_deleted),
+          watched: false,
+          order: order_property(params[:sort])
+        ).call.page(params[:page])
+      end
+
+      private
+
+      def order_property(sort_type)
+        case sort_type
+        when "started_at_asc"
+          OrderProperty.new(:started_at, :asc)
+        else
+          OrderProperty.new(:started_at, :desc)
+        end
       end
     end
   end

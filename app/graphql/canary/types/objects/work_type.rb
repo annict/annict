@@ -181,16 +181,16 @@ module Canary
         end
 
         def programs(order_by: nil)
-          SearchProgramsRepository.new(
-            object.programs,
-            order_by: order_by
+          ProgramsQuery.new(
+            object.programs.without_deleted,
+            order: build_order(order_by)
           ).call
         end
 
         def slots(order_by: nil)
-          SearchProgramsQuery.new(
-            object.programs,
-            order_by: order_by
+          SlotsQuery.new(
+            object.slots.without_deleted,
+            order: build_order(order_by)
           ).call
         end
 

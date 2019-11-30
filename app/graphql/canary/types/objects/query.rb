@@ -97,7 +97,7 @@ module Canary
         end
 
         def channels(is_vod: nil)
-          SearchChannelsRepository.new(
+          ChannelsQuery.new(
             Channel.without_deleted,
             is_vod: is_vod
           ).call
