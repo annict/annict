@@ -3,9 +3,10 @@
 FactoryBot.define do
   factory :slot do
     association :program
-    association :work
     association :episode
+    work { episode.work }
+    channel { program.channel }
     started_at { Time.parse("2017-01-29 0:00:00") }
-    channel
+    rebroadcast { false }
   end
 end
