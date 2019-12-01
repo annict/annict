@@ -87,11 +87,11 @@ module Annict
         rack_env["SERVER_NAME"].in?(["www.#{ENV.fetch('ANNICT_JP_HOST')}"])
       }
       r301 %r{\A/users/([A-Za-z0-9_]+)\z}, "/@$1"
-      # rubocop:disable Metrics/LineLength
       r301 %r{\A/users/([A-Za-z0-9_]+)/(following|followers|wanna_watch|watching|watched|on_hold|stop_watching)\z}, "/@$1/$2"
-      # rubocop:enable Metrics/LineLength
       r301 %r{\A/track}, "/"
       r301 %r{\A/@([A-Za-z0-9_]+)/reviews\z}, "/@$1/records"
+      r301 %r{\A/episodes/[0-9]+/items}, "/"
+      r301 %r{\A/works/[0-9]+/items}, "/"
 
       maintenance_file = File.join(Rails.root, "public", "maintenance.html")
       send_file /(.*)$(?<!maintenance|favicons)/, maintenance_file, if: proc { |rack_env|
