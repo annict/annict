@@ -11,9 +11,9 @@ class EmailNotificationMailer < ActionMailer::Base
   add_template_helper LocalHelper
 
   def followed_user(followed_user_id, user_id)
-    @followed_user = User.find(followed_user_id)
+    @followed_user = User.without_deleted.find(followed_user_id)
     @unsubscription_key = @followed_user.email_notification.unsubscription_key
-    @user = User.find(user_id)
+    @user = User.without_deleted.find(user_id)
 
     I18n.with_locale(@followed_user.locale) do
       subject = default_i18n_subject(
@@ -25,9 +25,9 @@ class EmailNotificationMailer < ActionMailer::Base
   end
 
   def liked_episode_record(liked_user_id, user_id, episode_record_id)
-    @liked_user = User.find(liked_user_id)
+    @liked_user = User.without_deleted.find(liked_user_id)
     @unsubscription_key = @liked_user.email_notification.unsubscription_key
-    @user = User.find(user_id)
+    @user = User.without_deleted.find(user_id)
     @episode_record = @liked_user.episode_records.without_deleted.find(episode_record_id)
     @work = @episode_record.work
     @episode = @episode_record.episode
@@ -43,10 +43,10 @@ class EmailNotificationMailer < ActionMailer::Base
   end
 
   def friends_joined(user_id, provider_name, friend_user_ids)
-    @user = User.find(user_id)
+    @user = User.without_deleted.find(user_id)
     @unsubscription_key = @user.email_notification.unsubscription_key
     @provider_name = provider_name
-    @friend_users = User.where(id: friend_user_ids)
+    @friend_users = User.without_deleted.where(id: friend_user_ids)
 
     I18n.with_locale(@user.locale) do
       subject = I18n.t("email_notification_mailer.friends_joined.subject_#{provider_name}")
@@ -55,9 +55,9 @@ class EmailNotificationMailer < ActionMailer::Base
   end
 
   def favorite_works_added(user_id, work_id)
-    @user = User.find(user_id)
+    @user = User.without_deleted.find(user_id)
     @unsubscription_key = @user.email_notification.unsubscription_key
-    @work = Work.find(work_id)
+    @work = Work.without_deleted.find(work_id)
     @characters = @work.
       characters.
       joins(:favorite_characters).
@@ -79,7 +79,7 @@ class EmailNotificationMailer < ActionMailer::Base
   end
 
   def related_works_added(user_id, work_id)
-    @user = User.find(user_id)
+    @user = User.without_deleted.find(user_id)
     @work = Work.without_deleted.find(work_id)
     @related_works = @work.related_works.without_deleted.order_by_season
     @unsubscription_key = @user.email_notification.unsubscription_key
