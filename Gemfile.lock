@@ -390,6 +390,8 @@ GEM
     pundit (2.1.0)
       activesupport (>= 3.0.0)
     rack (2.0.7)
+    rack-attack (6.2.1)
+      rack (>= 1.0, < 3)
     rack-contrib (2.1.0)
       rack (~> 2.0)
     rack-cors (1.1.0)
@@ -658,6 +660,7 @@ DEPENDENCIES
   puma
   puma_worker_killer
   pundit
+  rack-attack
   rack-cors
   rack-rewrite
   rails (~> 6.0.0)
