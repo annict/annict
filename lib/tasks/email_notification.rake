@@ -34,6 +34,7 @@ namespace :email_notification do
 
       users.find_each do |user|
         next if user.statuses.where(work: work).exists?
+
         EmailNotificationService.send_email("favorite_works_added", user, work.id)
       end
     end
@@ -55,7 +56,7 @@ namespace :email_notification do
       next if related_work_ids.blank?
 
       users.find_each do |user|
-        positive_statuses = user.statuses.positive
+        positive_statuses = user.latest_statuses.positive
 
         next unless positive_statuses.exists?
         next if user.statuses.pluck(:work_id).include?(work.id)
