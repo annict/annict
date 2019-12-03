@@ -29,7 +29,7 @@ module Api
 
           UserSlotsQuery.new(
             @user,
-            @collection.with_works(@user.works_on(:wanna_watch, :watching).without_deleted),
+            @collection,
             watched: false
           ).call
         end
@@ -68,7 +68,7 @@ module Api
 
         def sort_started_at
           return @collection if @params.sort_started_at.blank?
-          @collection.order(started_at: @params.sort_started_at)
+          @collection.reorder(started_at: @params.sort_started_at)
         end
       end
     end
