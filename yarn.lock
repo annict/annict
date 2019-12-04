@@ -18,13 +18,6 @@
     esutils "^2.0.2"
     js-tokens "^4.0.0"
 
-"@babel/runtime@^7.4.5":
-  version "7.7.4"
-  resolved "https://registry.yarnpkg.com/@babel/runtime/-/runtime-7.7.4.tgz#b23a856751e4bf099262f867767889c0e3fe175b"
-  integrity sha512-r24eVUUr0QqNZa+qrImUk8fn5SPhHq+IfYvIoIMg0do3GdK9sMdiLKP3GYVVaxpPKORgm8KRKaNTEhAjgIpLMw==
-  dependencies:
-    regenerator-runtime "^0.13.2"
-
 "@csstools/convert-colors@^1.4.0":
   version "1.4.0"
   resolved "https://registry.yarnpkg.com/@csstools/convert-colors/-/convert-colors-1.4.0.tgz#ad495dc41b12e75d588c6db8b9834f08fa131eb7"
@@ -962,11 +955,10 @@ braces@^3.0.1, braces@^3.0.2:
     fill-range "^7.0.1"
 
 britecharts@^2.9.8:
-  version "2.13.0"
-  resolved "https://registry.yarnpkg.com/britecharts/-/britecharts-2.13.0.tgz#41b3a25ec67116a76be5e8fd33390d5deac4a1cd"
-  integrity sha512-oXk5K/2MUjDgKHH+xi7KvbHbt0nHF1SU5iYRw+6Hdyh3uieOzpJBmauSfZR24+TZAu8v6jjhS2XD5dwdQ84QYw==
+  version "2.13.1"
+  resolved "https://registry.yarnpkg.com/britecharts/-/britecharts-2.13.1.tgz#b813caa23e7aa72fd412233f66f9b39fc739cfd1"
+  integrity sha512-Ms7fecm4Ec+GwXCAv2klyhLjZvvYvCFk0aL9zH1ZAgrqwnO03BbH9bQO5QjIEB6HXJXzRnRSBt/YxXXTy1n8Tg==
   dependencies:
-    "@babel/runtime" "^7.4.5"
     base-64 "^0.1.0"
     d3 "^5.9.2"
     lodash.assign "^4.2.0"
@@ -6862,11 +6854,6 @@ regenerator-runtime@^0.11.0:
   version "0.11.1"
   resolved "https://registry.yarnpkg.com/regenerator-runtime/-/regenerator-runtime-0.11.1.tgz#be05ad7f9bf7d22e056f9726cee5017fbf19e2e9"
   integrity sha512-MguG95oij0fC3QV3URf4V2SDYGJhJnJGqvIIgdECeODCT98wSWDAJ94SSuVpYQUoTcGUIL6L4yNB7j1DFFHSBg==
-
-regenerator-runtime@^0.13.2:
-  version "0.13.3"
-  resolved "https://registry.yarnpkg.com/regenerator-runtime/-/regenerator-runtime-0.13.3.tgz#7cf6a77d8f5c6f60eb73c5fc1955b2ceb01e6bf5"
-  integrity sha512-naKIZz2GQ8JWh///G7L3X6LaQUAMp2lvb1rvwwsURe/VXwD6VMfr+/1NuNw3ag8v2kY1aQ/go5SNn79O9JU7yw==
 
 regex-not@^1.0.0, regex-not@^1.0.2:
   version "1.0.2"
