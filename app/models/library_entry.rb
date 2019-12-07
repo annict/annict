@@ -33,7 +33,7 @@
 class LibraryEntry < ApplicationRecord
   acts_as_list scope: :user
 
-  self.ignored_columns = %w(kind)
+  # self.ignored_columns = %w(kind)
 
   belongs_to :next_episode, class_name: "Episode", optional: true
   belongs_to :status, optional: true
