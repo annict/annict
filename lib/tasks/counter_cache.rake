@@ -15,7 +15,7 @@ namespace :counter_cache do
   task refresh_watchers_count: :environment do
     Work.find_each do |work|
       kinds = %w(wanna_watch watching watched)
-      watchers_count = work.latest_statuses.with_kind(*kinds).count
+      watchers_count = work.library_entries.with_status(*kinds).count
 
       if work.watchers_count != watchers_count
         work.update_column(:watchers_count, watchers_count)

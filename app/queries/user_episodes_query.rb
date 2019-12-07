@@ -32,13 +32,13 @@ class UserEpisodesQuery
   attr_reader :user, :episodes, :watched
 
   def user_episodes
-    return episodes.none if latest_statuses.blank?
+    return episodes.none if library_entries.blank?
 
-    episodes.where(work_id: latest_statuses.pluck(:work_id))
+    episodes.where(work_id: library_entries.pluck(:work_id))
   end
 
-  def latest_statuses
-    @latest_statuses ||= user.latest_statuses
+  def library_entries
+    @library_entries ||= user.library_entries
   end
 
   def filter_by_watched_episode_ids(collection)
@@ -50,6 +50,6 @@ class UserEpisodesQuery
   end
 
   def watched_episode_ids
-    latest_statuses.pluck(:watched_episode_ids).flatten
+    library_entries.pluck(:watched_episode_ids).flatten
   end
 end

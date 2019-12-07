@@ -1,7 +1,7 @@
 script#t-untracked-episode-list type="x-template"
   .c-untracked-episode-list
-    template v-if="latestStatuses.length > 0"
-      template v-for="status in filterNoNextEpisode(latestStatuses)"
+    template v-if="libraryEntries.length > 0"
+      template v-for="status in filterNoNextEpisode(libraryEntries)"
         .py-3
           .row
             .col.col-auto.pr-0

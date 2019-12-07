@@ -20,7 +20,7 @@ class NewEpisodeRecordService
       @episode_record.save!
       @episode_record.update_share_record_status
       update_episode_record_bodies_count
-      update_latest_status
+      update_library_entry
     end
 
     @episode_record.share_to_sns
@@ -42,9 +42,9 @@ class NewEpisodeRecordService
     FinishUserTipsJob.perform_later(@user, "record") if @user.episode_records.initial?(@episode_record)
   end
 
-  def update_latest_status
-    latest_status = @user.latest_statuses.find_by(work: @episode_record.work)
-    latest_status.append_episode!(@episode_record.episode) if latest_status.present?
+  def update_library_entry
+    library_entry = @user.library_entries.find_by(work: @episode_record.work)
+    library_entry.append_episode!(@episode_record.episode) if library_entry.present?
   end
 
   def create_ga_event

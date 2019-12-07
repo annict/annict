@@ -7,7 +7,7 @@ class UserActivitiesQuery
 
     if @user
       @activities = join_likes
-      @activities = join_latest_statuses
+      @activities = join_library_entries
       @activities = join_work_records
       @activities = join_episode_records
     end
@@ -15,7 +15,7 @@ class UserActivitiesQuery
     selects = ["activities.*"]
     if @user
       selects << "likes.id AS user_like_id"
-      selects << "latest_statuses.id AS user_latest_status_id"
+      selects << "library_entries.id AS user_library_entry_id"
       selects << "work_records.id AS user_work_record_id"
       selects << "episode_records.id AS user_episode_record_id"
     end
@@ -51,20 +51,21 @@ class UserActivitiesQuery
     @activities.joins(Like.sanitize_sql_array(sql))
   end
 
-  def join_latest_statuses
+  def join_library_entries
     sql = [
       "
-        LEFT OUTER JOIN latest_statuses ON
-          (
-            activities.action = 'create_work_record' OR
-            activities.action = 'create_episode_record'
-          ) AND
-          activities.work_id = latest_statuses.work_id AND
-          latest_statuses.kind IN (1, 2, 5) AND
-          latest_statuses.user_id = %s
+        LEFT OUTER JOIN library_entries
+          INNER JOIN statuses ON statuses.id = library_entries.status_id ON
+            (
+              activities.action = 'create_work_record' OR
+              activities.action = 'create_episode_record'
+            ) AND
+            activities.work_id = library_entries.work_id AND
+            statuses.kind IN (1, 2, 5) AND
+            library_entries.user_id = %s
       ", @user.id
     ]
-    @activities.joins(LatestStatus.sanitize_sql_array(sql))
+    @activities.joins(LibraryEntry.sanitize_sql_array(sql))
   end
 
   def join_work_records

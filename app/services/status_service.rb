@@ -20,9 +20,9 @@ class StatusService
         create_ga_event
       end
     elsif @kind == "no_select"
-      latest_status = @user.latest_statuses.find_by(work: @work)
-      if latest_status.present?
-        latest_status.destroy!
+      library_entry = @user.library_entries.find_by(work: @work)
+      if library_entry
+        library_entry.update_attribute(:status_id, nil)
         UserWatchedWorksCountJob.perform_later(@user)
       end
     end
@@ -32,6 +32,7 @@ class StatusService
 
   def create_ga_event
     return if @ga_client.blank?
+
     @ga_client.events.create(:statuses, :create, ds: @via)
   end
 end

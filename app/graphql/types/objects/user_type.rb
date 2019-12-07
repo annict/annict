@@ -89,23 +89,23 @@ module Types
       end
 
       def wanna_watch_count
-        object.latest_statuses.count_on(:wanna_watch)
+        object.library_entries.count_on(:wanna_watch)
       end
 
       def watching_count
-        object.latest_statuses.count_on(:watching)
+        object.library_entries.count_on(:watching)
       end
 
       def watched_count
-        object.latest_statuses.count_on(:watched)
+        object.library_entries.count_on(:watched)
       end
 
       def on_hold_count
-        object.latest_statuses.count_on(:on_hold)
+        object.library_entries.count_on(:on_hold)
       end
 
       def stop_watching_count
-        object.latest_statuses.count_on(:stop_watching)
+        object.library_entries.count_on(:stop_watching)
       end
 
       def viewer_can_follow

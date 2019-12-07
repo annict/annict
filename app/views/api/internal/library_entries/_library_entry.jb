@@ -1,16 +1,16 @@
 # frozen_string_literal: true
 
-work = latest_status.work
-episode = latest_status.next_episode
+work = library_entry.work
+episode = library_entry.next_episode
 
 json = {
-  id: latest_status.id,
+  id: library_entry.id,
   work: {
     id: work.id,
     title: work.local_title,
     image_url: ann_image_url(work.work_image, :image, size: "125x", ratio: "3:4"),
     episodes_count: work.auto_episodes_count,
-    watched_episodes_count: latest_status.watched_episode_ids.length
+    watched_episodes_count: library_entry.watched_episode_ids.length
   }
 }
 

@@ -14,7 +14,7 @@
       .c-subnav__item
         .text-center
           .mb-1
-            = @user.latest_statuses.count_on(status_kind)
+            = @user.library_entries.count_on(status_kind)
           .small
             = t("enumerize.status.kind.#{status_kind}").truncate(8)
 

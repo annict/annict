@@ -91,7 +91,7 @@ class User < ApplicationRecord
   has_many :follows, dependent: :destroy
   has_many :followings, through: :follows
   has_many :forum_post_participants, dependent: :destroy
-  has_many :latest_statuses, dependent: :destroy
+  has_many :library_entries, dependent: :destroy
   has_many :likes, dependent: :destroy
   has_many :notifications, dependent: :destroy
   has_many :providers, dependent: :destroy
@@ -168,7 +168,7 @@ class User < ApplicationRecord
   end
 
   def works_on(*status_kinds)
-    Work.joins(:latest_statuses).merge(latest_statuses.with_kind(*status_kinds))
+    Work.joins(:library_entries).merge(library_entries.with_status(*status_kinds))
   end
 
   def tips
@@ -262,17 +262,17 @@ class User < ApplicationRecord
 
   def friends_interested_in(work)
     status_kinds = %w(wanna_watch watching watched)
-    latest_statuses = LatestStatus.where(work: work).with_kind(*status_kinds)
+    library_entries = LibraryEntry.where(work: work).with_status(*status_kinds)
 
-    followings.joins(:latest_statuses).merge(latest_statuses)
+    followings.joins(:library_entries).merge(library_entries)
   end
 
   def status_kind(work)
-    latest_statuses.find_by(work: work)&.kind.presence || "no_select"
+    library_entries.find_by(work: work)&.status&.kind.presence || "no_select"
   end
 
   def status_kind_v3(work)
-    Status.kind_v2_to_v3(latest_statuses.find_by(work: work)&.kind)&.to_s.presence || "no_status"
+    Status.kind_v2_to_v3(library_entries.find_by(work: work)&.status&.kind)&.to_s.presence || "no_status"
   end
 
   def encoded_id
@@ -401,10 +401,10 @@ class User < ApplicationRecord
     end
   end
 
-  def slot_data(latest_statuses)
-    channel_works = self.channel_works.where(work_id: latest_statuses.pluck(:work_id))
+  def slot_data(library_entries)
+    channel_works = self.channel_works.where(work_id: library_entries.pluck(:work_id))
     channel_ids = channel_works.pluck(:channel_id)
-    episode_ids = latest_statuses.pluck(:next_episode_id)
+    episode_ids = library_entries.pluck(:next_episode_id)
     slots = Slot.
       includes(:channel, work: :work_image).
       where(channel_id: channel_ids, episode_id: episode_ids).

@@ -32,7 +32,7 @@ namespace :api do
       post :unfollow, on: :collection
     end
 
-    resources :latest_statuses, only: [] do
+    resources :library_entries, only: [] do
       patch :skip_episode
     end
 
@@ -60,7 +60,7 @@ namespace :api do
     end
 
     resources :works, only: [] do
-      resource :latest_status, only: [:show]
+      resource :library_entry, only: [:show]
       resource :status_chart_data, only: %i(show)
       resource :watchers_chart_data, only: %i(show)
 

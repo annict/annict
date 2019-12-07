@@ -16,7 +16,7 @@ namespace :work do
         update_or_delete_pol_resource(hash[:resource_class], hash[:column], target_work, original_work)
       end
 
-      [ChannelWork, Record, Comment, Status, LatestStatus].each do |resource_class|
+      [ChannelWork, Record, Comment, Status, LibraryEntry].each do |resource_class|
         update_or_delete_resource(resource_class, target_work, original_work)
       end
 

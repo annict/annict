@@ -13,8 +13,8 @@ module Annict
       def run!
         puts "Running merge_statuses! ..."
         merge_statuses!
-        puts "Running merge_latest_statuses! ..."
-        merge_latest_statuses!
+        puts "Running merge_library_entries! ..."
+        merge_library_entries!
         puts "Running hide_work! ..."
         hide_work!
       end
@@ -40,12 +40,12 @@ module Annict
         end
       end
 
-      def merge_latest_statuses!
-        work.latest_statuses.find_each do |ls|
-          lstatus = ls.user.latest_statuses.where(work_id: base_work_id).first
+      def merge_library_entries!
+        work.library_entries.find_each do |ls|
+          lstatus = ls.user.library_entries.where(work_id: base_work_id).first
           next if lstatus.present?
           attrs = ls.attributes.except("id")
-          base_work.latest_statuses.create(attrs)
+          base_work.library_entries.create(attrs)
         end
       end
 
