@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 # == Schema Information
 #
-# Table name: latest_statuses
+# Table name: library_entries
 #
 #  id                  :integer          not null, primary key
 #  kind                :integer          not null
@@ -16,12 +16,12 @@
 #
 # Indexes
 #
-#  index_latest_statuses_on_next_episode_id       (next_episode_id)
-#  index_latest_statuses_on_status_id             (status_id)
-#  index_latest_statuses_on_user_id               (user_id)
-#  index_latest_statuses_on_user_id_and_position  (user_id,position)
-#  index_latest_statuses_on_user_id_and_work_id   (user_id,work_id) UNIQUE
-#  index_latest_statuses_on_work_id               (work_id)
+#  index_library_entries_on_next_episode_id       (next_episode_id)
+#  index_library_entries_on_status_id             (status_id)
+#  index_library_entries_on_user_id               (user_id)
+#  index_library_entries_on_user_id_and_position  (user_id,position)
+#  index_library_entries_on_user_id_and_work_id   (user_id,work_id) UNIQUE
+#  index_library_entries_on_work_id               (work_id)
 #
 # Foreign Keys
 #
@@ -31,7 +31,7 @@
 #  fk_rails_...  (work_id => works.id)
 #
 
-class LatestStatus < ApplicationRecord
+class LibraryEntry < ApplicationRecord
   include StatusCommon
 
   acts_as_list scope: :user
