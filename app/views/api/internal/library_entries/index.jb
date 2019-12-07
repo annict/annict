@@ -2,10 +2,10 @@
 
 json = {}
 
-slot_data = @user.slot_data(@latest_statuses)
+slot_data = @user.slot_data(@library_entries)
 
-json[:latest_statuses] = render partial: "api/internal/latest_statuses/latest_status",
-                                collection: @latest_statuses,
+json[:library_entries] = render partial: "api/internal/library_entries/library_entry",
+                                collection: @library_entries,
                                 locals: { slot_data: slot_data, user: @user }
 
 json[:user] = {

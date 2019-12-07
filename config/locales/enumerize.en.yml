@@ -6,13 +6,6 @@ en:
         bad: Bad
         good: Good
         great: Great
-    latest_status:
-      kind:
-        wanna_watch: Plan to Watch
-        watching: Watching
-        watched: Completed
-        on_hold: On Hold
-        stop_watching: Dropped
     person:
       blood_type:
         a: A

@@ -12,8 +12,8 @@ json[:background_image_url] = ann_api_assets_background_image_url(user.profile) 
 json[:records_count] = user.records_count if @params.fields_contain?("#{field_prefix}records_count")
 json[:followings_count] = user.followings.without_deleted.count if @params.fields_contain?("#{field_prefix}followings_count")
 json[:followers_count] = user.followers.without_deleted.count if @params.fields_contain?("#{field_prefix}followers_count")
-LatestStatus.kind.values.each do |kind|
-  json["#{kind}_count".to_sym] = user.latest_statuses.count_on(kind.to_sym) if @params.fields_contain?("#{field_prefix}#{kind}_count")
+Status.kind.values.each do |kind|
+  json["#{kind}_count".to_sym] = user.library_entries.count_on(kind.to_sym) if @params.fields_contain?("#{field_prefix}#{kind}_count")
 end
 json[:created_at] = user.created_at if @params.fields_contain?("#{field_prefix}created_at")
 

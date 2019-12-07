@@ -41,7 +41,7 @@ class Status < ApplicationRecord
   after_create :finish_tips
   after_create :refresh_watchers_count
   after_create :save_activity
-  after_create :save_latest_status
+  after_create :save_library_entry
   after_create :update_channel_work
 
   def self.initial
@@ -148,10 +148,10 @@ class Status < ApplicationRecord
     UserTipsService.new(user).finish!(:status) if user.statuses.initial?(self)
   end
 
-  def save_latest_status
-    latest_status = user.latest_statuses.find_or_initialize_by(work: work)
-    latest_status.kind = kind
-    latest_status.watched_episode_ids = [] if %w(watched stop_watching).include?(kind)
-    latest_status.save!
+  def save_library_entry
+    library_entry = user.library_entries.find_or_initialize_by(work: work)
+    library_entry.status = self
+    library_entry.watched_episode_ids = [] if %w(watched stop_watching).include?(kind)
+    library_entry.save!
   end
 end

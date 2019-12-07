@@ -61,17 +61,17 @@ class UserSlotsQuery
   def user_episodes
     @user_episodes ||= UserEpisodesQuery.new(
       user,
-      Episode.without_deleted.where(work_id: latest_statuses.pluck(:work_id)),
+      Episode.without_deleted.where(work_id: library_entries.pluck(:work_id)),
       watched: watched
     ).call
   end
 
   def channel_works
-    @channel_works ||= user.channel_works.where(work: latest_statuses.pluck(:work_id))
+    @channel_works ||= user.channel_works.where(work: library_entries.pluck(:work_id))
   end
 
-  def latest_statuses
-    @latest_statuses ||= user.latest_statuses
+  def library_entries
+    library_entries ||= user.library_entries
   end
 
   def order_collection(collection)

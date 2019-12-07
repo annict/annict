@@ -5,11 +5,11 @@ class TrackableService
     @user = user
   end
 
-  def latest_statuses
-    LatestStatus.refresh_next_episode(@user)
+  def library_entries
+    LibraryEntry.refresh_next_episode(@user)
 
     @user.
-      latest_statuses.
+      library_entries.
       includes(:next_episode, work: :work_image).
       watching.
       has_next_episode.

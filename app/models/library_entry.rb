@@ -32,29 +32,35 @@
 #
 
 class LibraryEntry < ApplicationRecord
-  include StatusCommon
-
   acts_as_list scope: :user
 
-  belongs_to :next_episode, class_name: "Episode", optional: true
+  self.ignored_columns = %w(kind)
 
-  scope :desiring_to_watch, -> { with_kind(:wanna_watch, :watching, :on_hold) }
-  scope :finished_to_watch, -> { with_kind(:watched, :stop_watching) }
-  scope :on_hold, -> { with_kind(:on_hold) }
-  scope :wanna_watch_and_watching, -> { with_kind(:wanna_watch, :watching) }
-  scope :wanna_watch, -> { with_kind(:wanna_watch) }
-  scope :watching, -> { with_kind(:watching) }
+  belongs_to :next_episode, class_name: "Episode", optional: true
+  belongs_to :status, optional: true
+  belongs_to :user
+  belongs_to :work
+
+  scope :desiring_to_watch, -> { with_status(:wanna_watch, :watching, :on_hold) }
+  scope :finished_to_watch, -> { with_status(:watched, :stop_watching) }
+  scope :on_hold, -> { with_status(:on_hold) }
+  scope :positive, -> { with_status(:wanna_watch, :watching, :watched) }
+  scope :wanna_watch_and_watching, -> { with_status(:wanna_watch, :watching) }
+  scope :wanna_watch, -> { with_status(:wanna_watch) }
+  scope :watching, -> { with_status(:watching) }
   scope :has_next_episode, -> { where.not(next_episode_id: nil) }
+  scope :with_status, -> (*status_kinds) { joins(:status).where(statuses: { kind: status_kinds }) }
+  scope :with_not_deleted_work, -> { joins(:work).merge(Work.without_deleted) }
 
   def self.count_on(status_kind)
-    work_published.with_kind(status_kind).count
+    with_not_deleted_work.with_status(status_kind).count
   end
 
   def self.refresh_next_episode(user)
-    latest_statuses = user.latest_statuses.includes(:work).with_kind(:watching)
-    next_episode_data = latest_statuses.fetch_next_episode_data
+    library_entries = user.library_entries.includes(:work).with_status(:watching)
+    next_episode_data = library_entries.fetch_next_episode_data
 
-    latest_statuses.find_each do |ls|
+    library_entries.find_each do |ls|
       next_episode = next_episode_data.detect { |ne| ne[:work_id] == ls.work_id }
       next if ls.next_episode_id == next_episode[:next_episode_id]
       ls.update_column(:next_episode_id, next_episode[:next_episode_id])

@@ -56,7 +56,7 @@ namespace :email_notification do
       next if related_work_ids.blank?
 
       users.find_each do |user|
-        positive_statuses = user.latest_statuses.positive
+        positive_statuses = user.library_entries.positive
 
         next unless positive_statuses.exists?
         next if user.statuses.pluck(:work_id).include?(work.id)

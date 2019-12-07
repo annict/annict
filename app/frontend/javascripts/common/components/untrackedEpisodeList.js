@@ -10,7 +10,7 @@ export default {
   data() {
     return {
       isLoading: true,
-      latestStatuses: [],
+      libraryEntries: [],
       user: null,
       gon: {},
     }
@@ -18,24 +18,24 @@ export default {
 
   methods: {
     load() {
-      this.latestStatuses = _.each(this._latestStatusData().latest_statuses, this._initLatestStatus)
+      this.libraryEntries = _.each(this._latestStatusData().library_entries, this._initLibraryEntry)
       this.user = this._latestStatusData().user
       this.isLoading = false
       return this.$nextTick(() => vueLazyLoad.refresh())
     },
 
-    filterNoNextEpisode(latestStatuses) {
-      return latestStatuses.filter(latestStatus => !!latestStatus.next_episode)
+    filterNoNextEpisode(libraryEntries) {
+      return libraryEntries.filter(latestStatus => !!latestStatus.next_episode)
     },
 
     skipEpisode(latestStatus) {
       if (confirm(this.gon.I18n['messages.tracks.skip_episode_confirmation'])) {
         return $.ajax({
           method: 'PATCH',
-          url: `/api/internal/latest_statuses/${latestStatus.id}/skip_episode`,
+          url: `/api/internal/library_entries/${latestStatus.id}/skip_episode`,
         }).done(latestStatus => {
-          const index = this._getLatestStatusIndex(latestStatus)
-          return this.$set(this.latestStatuses, index, this._initLatestStatus(latestStatus))
+          const index = this._getLibraryEntryIndex(latestStatus)
+          return this.$set(this.libraryEntries, index, this._initLibraryEntry(latestStatus))
         })
       }
     },
@@ -62,11 +62,11 @@ export default {
         .done(() => {
           return $.ajax({
             method: 'GET',
-            url: `/api/internal/works/${latestStatus.work.id}/latest_status`,
-          }).done(newLatestStatus => {
+            url: `/api/internal/works/${latestStatus.work.id}/library_entry`,
+          }).done(newLibraryEntry => {
             eventHub.$emit('flash:show', this._flashMessage(latestStatus))
-            const index = this._getLatestStatusIndex(newLatestStatus)
-            return this.$set(this.latestStatuses, index, this._initLatestStatus(newLatestStatus))
+            const index = this._getLibraryEntryIndex(newLibraryEntry)
+            return this.$set(this.libraryEntries, index, this._initLibraryEntry(newLibraryEntry))
           })
         })
         .fail(function(data) {
@@ -76,7 +76,7 @@ export default {
         })
     },
 
-    _initLatestStatus(latestStatus) {
+    _initLibraryEntry(latestStatus) {
       latestStatus.record = {
         comment: '',
         isSaving: false,
@@ -89,8 +89,8 @@ export default {
       return latestStatus
     },
 
-    _getLatestStatusIndex(latestStatus) {
-      return _.findIndex(this.latestStatuses, status => status.id === latestStatus.id)
+    _getLibraryEntryIndex(latestStatus) {
+      return _.findIndex(this.libraryEntries, status => status.id === latestStatus.id)
     },
 
     _flashMessage(latestStatus) {

@@ -63,7 +63,7 @@ module Api
 
         def filter_status
           return @collection if @params.filter_status.blank?
-          @collection.merge(@user.latest_statuses.with_kind(@params.filter_status))
+          @collection.merge(@user.library_entries.with_status(@params.filter_status))
         end
 
         def sort_started_at

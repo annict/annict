@@ -56,7 +56,7 @@
           .p-users-show__count.col.px-0
             = link_to library_path(@user.username, :watching), class: "p-users-show__count-link" do
               .h3
-                = @user.latest_statuses.count_on(:watching)
+                = @user.library_entries.count_on(:watching)
               .p-profile-header__count-text
                 | Watching
           .p-users-show__count.col.px-0
