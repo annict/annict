@@ -48,7 +48,7 @@ class LibraryEntry < ApplicationRecord
   scope :wanna_watch, -> { with_status(:wanna_watch) }
   scope :watching, -> { with_status(:watching) }
   scope :has_next_episode, -> { where.not(next_episode_id: nil) }
-  scope :with_status, -> (*status_kinds) { joins(:status).where(statuses: { kind: status_kinds }) }
+  scope :with_status, ->(*status_kinds) { joins(:status).where(statuses: { kind: status_kinds }) }
   scope :with_not_deleted_work, -> { joins(:work).merge(Work.without_deleted) }
 
   def self.count_on(status_kind)

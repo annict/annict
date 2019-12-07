@@ -71,7 +71,7 @@ class UserSlotsQuery
   end
 
   def library_entries
-    library_entries ||= user.library_entries
+    @library_entries ||= user.library_entries
   end
 
   def order_collection(collection)
