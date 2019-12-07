@@ -4,7 +4,6 @@
 # Table name: library_entries
 #
 #  id                  :integer          not null, primary key
-#  kind                :integer          not null
 #  position            :integer          default(0), not null
 #  watched_episode_ids :integer          default([]), not null, is an Array
 #  created_at          :datetime         not null

@@ -1296,7 +1296,7 @@ CREATE TABLE public.library_entries (
     user_id integer NOT NULL,
     work_id integer NOT NULL,
     next_episode_id integer,
-    kind integer NOT NULL,
+    kind integer,
     watched_episode_ids integer[] DEFAULT '{}'::integer[] NOT NULL,
     "position" integer DEFAULT 0 NOT NULL,
     created_at timestamp without time zone NOT NULL,
