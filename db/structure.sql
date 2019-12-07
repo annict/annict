@@ -1300,7 +1300,8 @@ CREATE TABLE public.latest_statuses (
     watched_episode_ids integer[] DEFAULT '{}'::integer[] NOT NULL,
     "position" integer DEFAULT 0 NOT NULL,
     created_at timestamp without time zone NOT NULL,
-    updated_at timestamp without time zone NOT NULL
+    updated_at timestamp without time zone NOT NULL,
+    status_id integer
 );
 
 
@@ -4883,6 +4884,13 @@ CREATE INDEX index_latest_statuses_on_next_episode_id ON public.latest_statuses 
 
 
 --
+-- Name: index_latest_statuses_on_status_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_latest_statuses_on_status_id ON public.latest_statuses USING btree (status_id);
+
+
+--
 -- Name: index_latest_statuses_on_user_id; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -6433,6 +6441,14 @@ ALTER TABLE ONLY public.work_items
 
 
 --
+-- Name: latest_statuses fk_rails_ab6e2c9467; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.latest_statuses
+    ADD CONSTRAINT fk_rails_ab6e2c9467 FOREIGN KEY (status_id) REFERENCES public.statuses(id);
+
+
+--
 -- Name: latest_statuses fk_rails_ac7d3615bf; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -7089,6 +7105,7 @@ INSERT INTO "schema_migrations" (version) VALUES
 ('20191019230403'),
 ('20191123150532'),
 ('20191123191135'),
-('20191130150830');
+('20191130150830'),
+('20191207094223');
 
 

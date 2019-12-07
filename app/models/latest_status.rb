@@ -10,12 +10,14 @@
 #  created_at          :datetime         not null
 #  updated_at          :datetime         not null
 #  next_episode_id     :integer
+#  status_id           :integer
 #  user_id             :integer          not null
 #  work_id             :integer          not null
 #
 # Indexes
 #
 #  index_latest_statuses_on_next_episode_id       (next_episode_id)
+#  index_latest_statuses_on_status_id             (status_id)
 #  index_latest_statuses_on_user_id               (user_id)
 #  index_latest_statuses_on_user_id_and_position  (user_id,position)
 #  index_latest_statuses_on_user_id_and_work_id   (user_id,work_id) UNIQUE
@@ -24,6 +26,7 @@
 # Foreign Keys
 #
 #  fk_rails_...  (next_episode_id => episodes.id)
+#  fk_rails_...  (status_id => statuses.id)
 #  fk_rails_...  (user_id => users.id)
 #  fk_rails_...  (work_id => works.id)
 #

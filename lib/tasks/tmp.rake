@@ -1,37 +1,11 @@
 # frozen_string_literal: true
 
 namespace :tmp do
-  task update_deleted_at: :environment do
-    [
-      Cast,
-      Channel,
-      Character,
-      Collection,
-      CollectionItem,
-      Doorkeeper::Application,
-      Episode,
-      EpisodeRecord,
-      FaqCategory,
-      FaqContent,
-      Organization,
-      Person,
-      Program,
-      Record,
-      Series,
-      SeriesWork,
-      Slot,
-      Staff,
-      Trailer,
-      User,
-      VodTitle,
-      Work,
-      WorkRecord,
-      WorkTag
-    ].each do |model|
-      model.where(aasm_state: "hidden", deleted_at: nil).find_each do |record|
-        puts "Update deleted_at on #{record.class.name} - id: #{record.id}"
-        record.update_column(:deleted_at, record.updated_at)
-      end
+  task update_status_id_on_latest_statuses: :environment do
+    LatestStatus.where(status_id: nil).find_each do |ls|
+      puts "id: #{ls.id}"
+      status = Status.where(user_id: ls.user_id, work_id: ls.work_id, kind: ls.kind.value).order(id: :desc).first
+      ls.update_column(:status_id, status.id)
     end
   end
 end

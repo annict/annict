@@ -15,7 +15,7 @@ def remote_ip(req)
 end
 
 def include_ua?(req)
-  BLOCK_USER_AGENTS.any? { |ua| req.user_agent.include?(ua) }
+  BLOCK_USER_AGENTS.any? { |ua| req.user_agent&.include?(ua) }
 end
 
 def include_ip?(req)
