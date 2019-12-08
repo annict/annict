@@ -28,6 +28,7 @@ namespace :email_notification do
           favorite_people_user_ids |
           favorite_org_user_ids
       users = User.
+          without_deleted.
           joins(:email_notification).
           where(id: user_ids).
           where(email_notifications: { event_favorite_works_added: true })
@@ -46,6 +47,7 @@ namespace :email_notification do
     next if works.blank?
 
     users = User.
+      without_deleted.
       joins(:email_notification).
       where(email_notifications: { event_related_works_added: true })
 
