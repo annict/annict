@@ -4135,13 +4135,6 @@ CREATE INDEX channels_channel_group_id_idx ON public.channels USING btree (chann
 
 
 --
--- Name: checkins_episode_id_idx; Type: INDEX; Schema: public; Owner: -
---
-
-CREATE INDEX checkins_episode_id_idx ON public.episode_records USING btree (episode_id);
-
-
---
 -- Name: checkins_user_id_idx; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -4520,10 +4513,10 @@ CREATE INDEX index_episode_items_on_work_id ON public.episode_items USING btree 
 
 
 --
--- Name: index_episode_records_on_deleted_at; Type: INDEX; Schema: public; Owner: -
+-- Name: index_episode_records_on_episode_id_and_deleted_at; Type: INDEX; Schema: public; Owner: -
 --
 
-CREATE INDEX index_episode_records_on_deleted_at ON public.episode_records USING btree (deleted_at);
+CREATE INDEX index_episode_records_on_episode_id_and_deleted_at ON public.episode_records USING btree (episode_id, deleted_at);
 
 
 --
@@ -7107,6 +7100,7 @@ INSERT INTO "schema_migrations" (version) VALUES
 ('20191123191135'),
 ('20191130150830'),
 ('20191207094223'),
-('20191207113735');
+('20191207113735'),
+('20191208154530');
 
 
