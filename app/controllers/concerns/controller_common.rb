@@ -18,7 +18,11 @@ module ControllerCommon
     end
 
     def browser
-      ua = request.headers["User-Agent"]
+      ua = if Rails.env.production?
+        request.headers["CloudFront-Is-Desktop-Viewer"] == "true" ? "pc" : "mobile"
+      else
+        request.headers["User-Agent"]
+      end
       @browser ||= Browser.new(ua, accept_language: request.headers["Accept-Language"])
     end
 
