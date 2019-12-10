@@ -1288,27 +1288,28 @@ ALTER SEQUENCE public.items_id_seq OWNED BY public.items.id;
 
 
 --
--- Name: latest_statuses; Type: TABLE; Schema: public; Owner: -
+-- Name: library_entries; Type: TABLE; Schema: public; Owner: -
 --
 
-CREATE TABLE public.latest_statuses (
+CREATE TABLE public.library_entries (
     id integer NOT NULL,
     user_id integer NOT NULL,
     work_id integer NOT NULL,
     next_episode_id integer,
-    kind integer NOT NULL,
+    kind integer,
     watched_episode_ids integer[] DEFAULT '{}'::integer[] NOT NULL,
     "position" integer DEFAULT 0 NOT NULL,
     created_at timestamp without time zone NOT NULL,
-    updated_at timestamp without time zone NOT NULL
+    updated_at timestamp without time zone NOT NULL,
+    status_id integer
 );
 
 
 --
--- Name: latest_statuses_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+-- Name: library_entries_id_seq; Type: SEQUENCE; Schema: public; Owner: -
 --
 
-CREATE SEQUENCE public.latest_statuses_id_seq
+CREATE SEQUENCE public.library_entries_id_seq
     START WITH 1
     INCREMENT BY 1
     NO MINVALUE
@@ -1317,10 +1318,10 @@ CREATE SEQUENCE public.latest_statuses_id_seq
 
 
 --
--- Name: latest_statuses_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+-- Name: library_entries_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
 --
 
-ALTER SEQUENCE public.latest_statuses_id_seq OWNED BY public.latest_statuses.id;
+ALTER SEQUENCE public.library_entries_id_seq OWNED BY public.library_entries.id;
 
 
 --
@@ -3123,10 +3124,10 @@ ALTER TABLE ONLY public.items ALTER COLUMN id SET DEFAULT nextval('public.items_
 
 
 --
--- Name: latest_statuses id; Type: DEFAULT; Schema: public; Owner: -
+-- Name: library_entries id; Type: DEFAULT; Schema: public; Owner: -
 --
 
-ALTER TABLE ONLY public.latest_statuses ALTER COLUMN id SET DEFAULT nextval('public.latest_statuses_id_seq'::regclass);
+ALTER TABLE ONLY public.library_entries ALTER COLUMN id SET DEFAULT nextval('public.library_entries_id_seq'::regclass);
 
 
 --
@@ -3675,11 +3676,11 @@ ALTER TABLE ONLY public.items
 
 
 --
--- Name: latest_statuses latest_statuses_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+-- Name: library_entries library_entries_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
-ALTER TABLE ONLY public.latest_statuses
-    ADD CONSTRAINT latest_statuses_pkey PRIMARY KEY (id);
+ALTER TABLE ONLY public.library_entries
+    ADD CONSTRAINT library_entries_pkey PRIMARY KEY (id);
 
 
 --
@@ -4134,13 +4135,6 @@ CREATE INDEX channels_channel_group_id_idx ON public.channels USING btree (chann
 
 
 --
--- Name: checkins_episode_id_idx; Type: INDEX; Schema: public; Owner: -
---
-
-CREATE INDEX checkins_episode_id_idx ON public.episode_records USING btree (episode_id);
-
-
---
 -- Name: checkins_user_id_idx; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -4519,10 +4513,10 @@ CREATE INDEX index_episode_items_on_work_id ON public.episode_items USING btree 
 
 
 --
--- Name: index_episode_records_on_deleted_at; Type: INDEX; Schema: public; Owner: -
+-- Name: index_episode_records_on_episode_id_and_deleted_at; Type: INDEX; Schema: public; Owner: -
 --
 
-CREATE INDEX index_episode_records_on_deleted_at ON public.episode_records USING btree (deleted_at);
+CREATE INDEX index_episode_records_on_episode_id_and_deleted_at ON public.episode_records USING btree (episode_id, deleted_at);
 
 
 --
@@ -4876,38 +4870,45 @@ CREATE INDEX index_items_on_locale ON public.items USING btree (locale);
 
 
 --
--- Name: index_latest_statuses_on_next_episode_id; Type: INDEX; Schema: public; Owner: -
+-- Name: index_library_entries_on_next_episode_id; Type: INDEX; Schema: public; Owner: -
 --
 
-CREATE INDEX index_latest_statuses_on_next_episode_id ON public.latest_statuses USING btree (next_episode_id);
-
-
---
--- Name: index_latest_statuses_on_user_id; Type: INDEX; Schema: public; Owner: -
---
-
-CREATE INDEX index_latest_statuses_on_user_id ON public.latest_statuses USING btree (user_id);
+CREATE INDEX index_library_entries_on_next_episode_id ON public.library_entries USING btree (next_episode_id);
 
 
 --
--- Name: index_latest_statuses_on_user_id_and_position; Type: INDEX; Schema: public; Owner: -
+-- Name: index_library_entries_on_status_id; Type: INDEX; Schema: public; Owner: -
 --
 
-CREATE INDEX index_latest_statuses_on_user_id_and_position ON public.latest_statuses USING btree (user_id, "position");
-
-
---
--- Name: index_latest_statuses_on_user_id_and_work_id; Type: INDEX; Schema: public; Owner: -
---
-
-CREATE UNIQUE INDEX index_latest_statuses_on_user_id_and_work_id ON public.latest_statuses USING btree (user_id, work_id);
+CREATE INDEX index_library_entries_on_status_id ON public.library_entries USING btree (status_id);
 
 
 --
--- Name: index_latest_statuses_on_work_id; Type: INDEX; Schema: public; Owner: -
+-- Name: index_library_entries_on_user_id; Type: INDEX; Schema: public; Owner: -
 --
 
-CREATE INDEX index_latest_statuses_on_work_id ON public.latest_statuses USING btree (work_id);
+CREATE INDEX index_library_entries_on_user_id ON public.library_entries USING btree (user_id);
+
+
+--
+-- Name: index_library_entries_on_user_id_and_position; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_library_entries_on_user_id_and_position ON public.library_entries USING btree (user_id, "position");
+
+
+--
+-- Name: index_library_entries_on_user_id_and_work_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE UNIQUE INDEX index_library_entries_on_user_id_and_work_id ON public.library_entries USING btree (user_id, work_id);
+
+
+--
+-- Name: index_library_entries_on_work_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_library_entries_on_work_id ON public.library_entries USING btree (work_id);
 
 
 --
@@ -6129,10 +6130,10 @@ ALTER TABLE ONLY public.multiple_episode_records
 
 
 --
--- Name: latest_statuses fk_rails_431d8cd1d4; Type: FK CONSTRAINT; Schema: public; Owner: -
+-- Name: library_entries fk_rails_431d8cd1d4; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
-ALTER TABLE ONLY public.latest_statuses
+ALTER TABLE ONLY public.library_entries
     ADD CONSTRAINT fk_rails_431d8cd1d4 FOREIGN KEY (next_episode_id) REFERENCES public.episodes(id);
 
 
@@ -6337,10 +6338,10 @@ ALTER TABLE ONLY public.records
 
 
 --
--- Name: latest_statuses fk_rails_963acfc4d0; Type: FK CONSTRAINT; Schema: public; Owner: -
+-- Name: library_entries fk_rails_963acfc4d0; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
-ALTER TABLE ONLY public.latest_statuses
+ALTER TABLE ONLY public.library_entries
     ADD CONSTRAINT fk_rails_963acfc4d0 FOREIGN KEY (work_id) REFERENCES public.works(id);
 
 
@@ -6433,10 +6434,18 @@ ALTER TABLE ONLY public.work_items
 
 
 --
--- Name: latest_statuses fk_rails_ac7d3615bf; Type: FK CONSTRAINT; Schema: public; Owner: -
+-- Name: library_entries fk_rails_ab6e2c9467; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
-ALTER TABLE ONLY public.latest_statuses
+ALTER TABLE ONLY public.library_entries
+    ADD CONSTRAINT fk_rails_ab6e2c9467 FOREIGN KEY (status_id) REFERENCES public.statuses(id);
+
+
+--
+-- Name: library_entries fk_rails_ac7d3615bf; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.library_entries
     ADD CONSTRAINT fk_rails_ac7d3615bf FOREIGN KEY (user_id) REFERENCES public.users(id);
 
 
@@ -7089,6 +7098,9 @@ INSERT INTO "schema_migrations" (version) VALUES
 ('20191019230403'),
 ('20191123150532'),
 ('20191123191135'),
-('20191130150830');
+('20191130150830'),
+('20191207094223'),
+('20191207113735'),
+('20191208154530');
 
 

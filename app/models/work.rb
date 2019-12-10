@@ -111,7 +111,7 @@ class Work < ApplicationRecord
   has_many :db_comments, as: :resource, dependent: :destroy
   has_many :episode_records, dependent: :destroy
   has_many :episodes, dependent: :destroy
-  has_many :latest_statuses, dependent: :destroy
+  has_many :library_entries, dependent: :destroy
   has_many :organizations,
     through: :staffs,
     source: :resource,
@@ -208,12 +208,12 @@ class Work < ApplicationRecord
 
   def self.statuses(work_ids, user)
     work_ids = work_ids.uniq
-    latest_statuses = LatestStatus.where(user: user, work_id: work_ids)
+    library_entries = LibraryEntry.where(user: user, work_id: work_ids).eager_load(:status)
 
     work_ids.map do |work_id|
       {
         work_id: work_id,
-        kind: latest_statuses.select { |ls| ls.work_id == work_id }.first&.kind.presence || "no_select"
+        kind: library_entries.select { |ls| ls.work_id == work_id }.first&.status&.kind.presence || "no_select"
       }
     end
   end
@@ -252,21 +252,21 @@ class Work < ApplicationRecord
     status_kinds = %w(wanna_watch watching watched)
     users = user.followings.without_deleted.includes(:profile)
     user_ids = users.pluck(:id)
-    latest_statuses = LatestStatus.
+    library_entries = LibraryEntry.
       where(work: work_ids, user: user_ids).
-      with_kind(*status_kinds)
+      with_status(*status_kinds)
 
     work_ids.map do |work_id|
-      latest_statuses_ = latest_statuses.select { |ls| ls.work_id == work_id }
-      users_ = users.select { |u| u.id.in?(latest_statuses_.map(&:user_id)) }
+      library_entries_ = library_entries.select { |ls| ls.work_id == work_id }
+      users_ = users.select { |u| u.id.in?(library_entries_.map(&:user_id)) }
       users_data = users_.map do |u|
-        latest_status = latest_statuses_.select do |ls|
+        library_entry = library_entries_.select do |ls|
           ls.user_id == u.id && ls.work_id == work_id
         end.first
 
         {
           user: u,
-          latest_status_id: latest_status.id
+          library_entry_id: library_entry.id
         }
       end
 
@@ -441,7 +441,7 @@ class Work < ApplicationRecord
 
   def watchers_chart_dataset
     (3.months.ago.to_date..Date.today).map do |date|
-      count = latest_statuses.with_kind(:wanna_watch, :watching, :watched).before(date).count
+      count = library_entries.with_status(:wanna_watch, :watching, :watched).before(date).count
       {
         date: date.to_time.to_datetime.strftime("%Y/%m/%d"),
         value: count
@@ -450,8 +450,8 @@ class Work < ApplicationRecord
   end
 
   def status_chart_dataset
-    LatestStatus.kind.values.map do |kind|
-      kind_count = latest_statuses.with_kind(kind).count
+    Status.kind.values.map do |kind|
+      kind_count = library_entries.with_status(kind).count
       {
         name: kind.text,
         value: kind_count

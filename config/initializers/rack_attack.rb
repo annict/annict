@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 def remote_ip(req)
-  (req.env["action_dispatch.remote_ip"] || req.ip).to_s
+  @remote_ip ||= (req.env["action_dispatch.remote_ip"] || req.ip).to_s
 end
 
 Rack::Attack.throttle("requests by ip", limit: 5, period: 2.seconds) do |req|

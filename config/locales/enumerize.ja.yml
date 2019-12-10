@@ -6,13 +6,6 @@ ja:
         bad: 良くない
         good: 良い
         great: とても良い
-    latest_status:
-      kind:
-        wanna_watch: 見たい
-        watching: 見てる
-        watched: 見た
-        on_hold: 一時中断
-        stop_watching: 視聴中止
     person:
       blood_type:
         a: A型

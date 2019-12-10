@@ -32,7 +32,7 @@ module PageData
         data[:users] = friends_data.
           select { |ud| ud[:work_id] == work_id }.
           first[:users_data].
-          sort_by { |ud| ud[:latest_status_id] }.
+          sort_by { |ud| ud[:library_entry_id] }.
           reverse.
           map { |ud| ud[:user] }
 

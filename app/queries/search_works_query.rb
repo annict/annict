@@ -68,6 +68,6 @@ class SearchWorksQuery
 
   def state
     state = @args[:state].downcase
-    @collection.joins(:latest_statuses).merge(@args[:user].latest_statuses.with_kind(state))
+    @collection.joins(:library_entries).merge(@args[:user].library_entries.with_status(state))
   end
 end
