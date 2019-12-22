@@ -23,6 +23,7 @@ const query = gql`
         seasonYear
         localStartedOnLabel
         startedOn
+        episodesCount
         watchersCount
         satisfactionRate
         ratingsCount
@@ -83,7 +84,7 @@ const query = gql`
             }
           }
         }
-        episodes(orderBy: { field: SORT_NUMBER, direction: ASC }) {
+        episodes(orderBy: { field: SORT_NUMBER, direction: ASC }, first: 50) {
           nodes {
             annictId
             numberText

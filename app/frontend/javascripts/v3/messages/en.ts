@@ -46,6 +46,7 @@ export default {
       }
     },
     works: {
+      viewAllNEpisodes: 'View All %{n} Episodes',
       viewAllNRecordBodyList: 'View All %{n} Comments'
     },
   },
