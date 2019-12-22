@@ -7,8 +7,8 @@
       .c-subnav__item
         = Episode.model_name.human(count: 2)
   = active_link_to db_work_programs_path(work), class: "c-subnav__link", class_active: "c-subnav__link--active", active: params[:controller]  == "db/programs" do
-      .c-subnav__item
-        = t "head.title.db.programs.index"
+    .c-subnav__item
+      = t "head.title.db.programs.index"
   - unless work.no_episodes?
     = active_link_to db_work_slots_path(work), class: "c-subnav__link", class_active: "c-subnav__link--active", active: params[:controller]  == "db/slots" do
       .c-subnav__item
