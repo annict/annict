@@ -32,7 +32,7 @@ module ResourceRows
       # Replace double quote to avoid `CSV::MalformedCSVError`
       rows = self.rows.gsub(/"/, "__double_quote__")
 
-      CSV.parse(rows).map do |row_columns|
+      CSV.parse(rows).reject(&:empty?).map do |row_columns|
         row_columns.map { |column| column&.gsub("__double_quote__", '"')&.strip }
       end
     end
