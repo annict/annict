@@ -93,6 +93,11 @@
             </h4>
             <ul class="p-footer__list list-unstyled">
               <li>
+                <a href="/works/2020-winter">
+                  {{ $root.$t('noun.yearWinter', { year: 2020 }) }}
+                </a>
+              </li>
+              <li>
                 <a href="/works/2019-autumn">
                   {{ $root.$t('noun.yearFall', { year: 2019 }) }}
                 </a>
@@ -110,11 +115,6 @@
               <li>
                 <a href="/works/2019-winter">
                   {{ $root.$t('noun.yearWinter', { year: 2019 }) }}
-                </a>
-              </li>
-              <li>
-                <a href="/works/2018-autumn">
-                  {{ $root.$t('noun.yearFall', { year: 2018 }) }}
                 </a>
               </li>
             </ul>
@@ -148,7 +148,7 @@
           </div>
           <div class="col text-right">
             <div class="p-footer__copyright small">
-              <i class="far fa-copyright mr-1"></i>2014-2019 Annict
+              <i class="far fa-copyright mr-1"></i>2014-2020 Annict
             </div>
           </div>
         </div>
