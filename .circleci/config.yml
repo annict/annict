@@ -6,7 +6,7 @@ jobs:
     # directory where steps will run
     working_directory: ~/annict
     docker:
-      - image: annict/ruby:2.6.5-node_10.16.3
+      - image: annict/ruby:2.7.0-node_12.14.0
         environment:
           BUNDLE_JOBS: 3
           BUNDLE_PATH: vendor/bundle
