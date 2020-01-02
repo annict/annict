@@ -29,8 +29,6 @@ class Record < ApplicationRecord
 
   RATING_STATES = %i(bad average good great).freeze
 
-  is_impressionable counter_cache: true, unique: true
-
   belongs_to :user, counter_cache: true
   belongs_to :work, counter_cache: true
   has_one :episode_record, dependent: :destroy

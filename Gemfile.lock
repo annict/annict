@@ -268,8 +268,6 @@ GEM
       addressable
     imgix-rails (4.0.0)
       imgix (~> 3.0)
-    impressionist (1.6.1)
-      nokogiri (~> 1)
     jaro_winkler (1.5.4)
     jb (0.7.0)
       multi_json
@@ -633,7 +631,6 @@ DEPENDENCIES
   i18n-tasks
   image_processing
   imgix-rails
-  impressionist
   jb
   kaminari
   koala

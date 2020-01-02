@@ -27,8 +27,6 @@
 class Collection < ApplicationRecord
   include SoftDeletable
 
-  is_impressionable counter_cache: true, unique: true
-
   belongs_to :user
   has_many :collection_items, dependent: :destroy
   has_many :works, through: :collection_items
