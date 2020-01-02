@@ -10,7 +10,6 @@ require_relative "boot"
   action_controller/railtie
   action_mailer/railtie
   action_view/railtie
-  sprockets/railtie
 ).each do |railtie|
   require railtie
 end
@@ -39,10 +38,6 @@ module Annict
     # -- all .rb files in that directory are automatically loaded after loading
     # the framework and any gems in your application.
 
-    # Disable Asset Pipeline/Sprockets
-    config.assets.enabled = false
-    config.assets.compile = false
-
     # Set Time.zone default to the specified zone and
     # make Active Record auto-convert to this zone.
     # Run "rake -D time" for a list of tasks for finding time zone names. Default is UTC.
@@ -70,7 +65,6 @@ module Annict
       g.test_framework :rspec, controller_specs: false, helper_specs: false,
                                routing_specs: false, view_specs: false
       g.factory_bot false
-      g.assets false
     end
 
     config.active_job.queue_adapter = :delayed_job

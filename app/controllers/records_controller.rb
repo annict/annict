@@ -1,8 +1,6 @@
 # frozen_string_literal: true
 
 class RecordsController < ApplicationController
-  impressionist actions: %i(show)
-
   before_action :authenticate_user!, only: %i(destroy)
 
   def index
