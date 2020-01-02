@@ -27,9 +27,6 @@ Rails.application.configure do
   # https://blog.heroku.com/container_ready_rails_5#serving-files-by-default
   config.public_file_server.enabled = ENV["RAILS_SERVE_STATIC_FILES"].present?
 
-  # Do not fallback to assets pipeline if a precompiled asset is missed.
-  config.assets.compile = false
-
   # Enable serving of images, stylesheets, and JavaScripts from an asset server.
   # `no-image.jpg` はTombo経由で表示するため、`image_path("no-image.jpg")` の返り値に
   # CloudFrontのURLを付加しないようにする
