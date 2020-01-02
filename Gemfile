@@ -3,7 +3,7 @@
 source "https://rubygems.org"
 git_source(:github) { |repo| "https://github.com/#{repo}.git" }
 
-ruby "2.6.5"
+ruby "2.7.0"
 
 gem "rails", "~> 6.0.0"
 
@@ -28,7 +28,7 @@ gem "enumerize"
 gem "flutie"
 gem "github-markup"
 gem "gon"
-gem "graphql"
+gem "graphql", ">= 1.10.0.pre3" # https://github.com/rmosolgo/graphql-ruby/pull/2640
 gem "graphql-batch"
 gem "gretel"
 gem "groupdate"
@@ -37,7 +37,6 @@ gem "http_accept_language"
 gem "httparty"
 gem "image_processing"
 gem "imgix-rails"
-gem "impressionist"
 gem "jb"
 gem "kaminari"
 gem "koala"
@@ -87,7 +86,6 @@ group :development do
   gem "binding_of_caller" # Using better_errors
   gem "bullet"
   gem "derailed_benchmarks"
-  gem "graphiql-rails"
   gem "graphql-docs"
   gem "i18n-tasks"
   gem "listen" # Using with `rails s` since Rails 5
