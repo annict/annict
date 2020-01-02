@@ -272,7 +272,7 @@ GEM
     jb (0.7.0)
       multi_json
     jmespath (1.4.0)
-    json (2.2.0)
+    json (2.3.0)
     jwt (2.2.1)
     kaminari (1.1.1)
       activesupport (>= 4.1.0)
