@@ -46,6 +46,7 @@ export default {
       }
     },
     works: {
+      viewAllNEpisodes: '%{n}件のエピソードを全て見る',
       viewAllNRecordBodyList: '%{n}件の感想を全て見る'
     },
   },

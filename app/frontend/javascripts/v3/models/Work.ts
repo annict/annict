@@ -9,6 +9,7 @@ export class Work extends ApplicationModel {
   public media: string
   public officialSiteUrl: string
   public officialSiteUrlEn: string
+  public episodesCount: number
   public ratingsCount: number
   public satisfactionRate: number
   public localStartedOnLabel: string
@@ -55,6 +56,7 @@ export class Work extends ApplicationModel {
     this.media = node.media
     this.officialSiteUrl = node.officialSiteUrl
     this.officialSiteUrlEn = node.officialSiteUrlEn
+    this.episodesCount = node.episodesCount
     this.ratingsCount = node.ratingsCount
     this.satisfactionRate = node.satisfactionRate
     this.localStartedOnLabel = node.localStartedOnLabel

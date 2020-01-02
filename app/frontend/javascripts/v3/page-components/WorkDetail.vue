@@ -274,6 +274,13 @@
                       </div>
                     </a>
                   </div>
+
+                  <div class="container my-3" v-if="state.work.episodesCount > 50">
+                    <a :href="'/works/' + state.work.annictId + '/episodes'" class="btn btn-secondary w-100">
+                      <i class="fas fa-angle-right"></i>
+                      {{ $root.$t('messages.works.viewAllNEpisodes', { n: state.work.episodesCount }) }}
+                    </a>
+                  </div>
                 </div>
                 <div v-else>
                   <ann-empty :text="$root.$t('messages._components.empty._notAdded')"></ann-empty>

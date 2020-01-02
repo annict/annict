@@ -14,12 +14,13 @@
 = render "db/works/subnav", work: @work
 
 .container-fluid.p-3
-  - if @work.programs.without_deleted.exists?
+  - if @programs.exists?
     .c-card.p-3.mb-3
       h3.h4
         = t("messages.slots.new_slots_csv_by_program")
-      - @work.programs.without_deleted.each do |pd|
-        = link_to "#{pd.channel.name}<br>#{display_time(pd.started_at)}〜".html_safe, new_db_work_slot_path(program_id: pd.id), class: "btn btn-sm #{pd.id.to_s == params[:program_id] ? 'btn-secondary' : 'btn-outline-secondary'} mr-2 mb-2"
+      = link_to t("noun.all"), new_db_work_slot_path(program_ids: @programs.pluck(:id).join(",")), class: "btn btn-sm #{params[:program_id] == 'all' ? 'btn-secondary' : 'btn-outline-secondary'} mr-2 mb-2"
+      - @programs.each do |p|
+        = link_to "#{p.channel.name} (#{p.id})<br>#{display_time(p.started_at)}〜".html_safe, new_db_work_slot_path(program_ids: p.id), class: "btn btn-sm #{p.id.to_s == params[:program_id] ? 'btn-secondary' : 'btn-outline-secondary'} mr-2 mb-2"
   .row
     .col-6
       .c-card.p-3

@@ -1,9 +1,5 @@
 # frozen_string_literal: true
 
-if Rails.env.development?
-  mount GraphiQL::Rails::Engine, at: "/graphiql", graphql_path: "/graphql"
-end
-
 get "dummy_image", to: "application#dummy_image" if Rails.env.test?
 
 devise_for :users,

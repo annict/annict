@@ -13,9 +13,10 @@ module Db
 
     def new
       @work = Work.find(params[:work_id])
+      @programs = @work.programs.without_deleted.where.not(started_at: nil).order(:started_at, :id)
       @form = Db::SlotRowsForm.new
       @form.work = @work
-      @form.set_default_rows_by_program!(params[:program_id]) if params[:program_id]
+      @form.set_default_rows_by_programs(params[:program_ids]) if params[:program_ids]
       authorize @form, :new?
     end
 

@@ -13,7 +13,23 @@ module Db
     validate :valid_time
     validate :valid_resource
 
-    def set_default_rows_by_program!(program_id, time_zone: "Asia/Tokyo")
+    def set_default_rows_by_programs(program_ids, time_zone: "Asia/Tokyo")
+      program_ids.split(",").each do |program_id|
+        set_default_rows_by_program(program_id, time_zone)
+      end
+    end
+
+    def reset_number!
+      Program.where(id: attrs_list.pluck(:program_id).uniq).each do |pd|
+        pd.slots.without_deleted.order(:started_at).each_with_index do |p, i|
+          p.update_column(:number, i + pd.minimum_episode_generatable_number)
+        end
+      end
+    end
+
+    private
+
+    def set_default_rows_by_program(program_id, time_zone)
       program = @work.programs.without_deleted.find_by(id: program_id)
       return unless program
 
@@ -32,20 +48,10 @@ module Db
         ]
       end
 
-      self.rows = rows.map do |r|
+      self.rows = (self.rows || "") + rows.map do |r|
         r.join(",")
-      end.join("\n")
+      end.join("\n") + "\n"
     end
-
-    def reset_number!
-      Program.where(id: attrs_list.pluck(:program_id).uniq).each do |pd|
-        pd.slots.without_deleted.order(:started_at).each_with_index do |p, i|
-          p.update_column(:number, i + pd.minimum_episode_generatable_number)
-        end
-      end
-    end
-
-    private
 
     def attrs_list
       @attrs_list ||= fetched_rows.map do |row_data|

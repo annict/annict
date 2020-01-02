@@ -15,7 +15,7 @@ The platform for anime addicts.
 
 To run Annict on a local machine, you need to have the following dependencies installed:
 
-- [Ruby](https://www.ruby-lang.org) 2.6.5
+- [Ruby](https://www.ruby-lang.org) 2.7.0
 - [Docker](https://www.docker.com)
 - [Docker Compose](https://docs.docker.com/compose/)
 
@@ -52,7 +52,7 @@ $ NO_HEADLESS=true bundle exec rspec spec/system/xxx_spec.rb
 
 ### License
 
-Copyright 2014-2019 Annict
+Copyright 2014-2020 Annict
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
