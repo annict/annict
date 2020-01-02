@@ -1972,9 +1972,9 @@ d3@^3.0.6:
   integrity sha1-vEZ0gAQ3iyGjYMn8fPUjF5B2L7g=
 
 d3@^5.7.0, d3@^5.9.2:
-  version "5.14.2"
-  resolved "https://registry.yarnpkg.com/d3/-/d3-5.14.2.tgz#a3fb3af016d362aaf4dacbe618ae949c1744b8c4"
-  integrity sha512-Ccipa9XrYW5N0QkP6u0Qb8kU6WekIXBiDenmZm1zLvuq/9pBBhRCJLCICEOsH5Og4B0Xw02bhqGkK5VN/oPH0w==
+  version "5.15.0"
+  resolved "https://registry.yarnpkg.com/d3/-/d3-5.15.0.tgz#ffd44958e6a3cb8a59a84429c45429b8bca5677a"
+  integrity sha512-C+E80SL2nLLtmykZ6klwYj5rPqB5nlfN5LdWEAVdWPppqTD8taoJi2PxLZjPeYT8FFRR2yucXq+kBlOnnvZeLg==
   dependencies:
     d3-array "1"
     d3-axis "1"
