@@ -64,7 +64,14 @@
     </form>
     <ul class="navbar-nav">
       <% if user_signed_in? %>
-        <a href="#" class="nav-link dropdown-toggle p-0 text-dark" data-toggle="dropdown">
+        <ul class="navbar-nav mr-2">
+          <li class="nav-item">
+            <a href="/track" class="btn btn-outline-primary">
+              <i class="far fa-edit"></i><%= t("verb.track") %>
+            </a>
+          </li>
+        </ul>
+        <a href="#" class="nav-link dropdown-toggle p-0 text-dark align-self-center" data-toggle="dropdown">
           <img src="<%= ann_image_url(current_user.profile, :image, size: "30x30") %>" width="30" height="30" alt="<%= current_user.username %>" class="rounded-circle">
         </a>
         <div class="dropdown-menu dropdown-menu-right">

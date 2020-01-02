@@ -156,6 +156,7 @@ get "r/:provider/:url_hash",
   url_hash: /[0-9a-zA-Z_-]{10}/
 
 scope module: :v3 do
+  resource :track, only: %i(show)
   resources :works, only: %i(show)
 end
 

@@ -5,6 +5,7 @@ import Vue from 'vue'
 import VueCompositionApi from '@vue/composition-api'
 import VueI18n from 'vue-i18n'
 
+import Track from "./v3/page-components/Track.vue";
 import WorkDetail from './v3/page-components/WorkDetail.vue'
 
 import { formatDate, formatDomain } from './v3/filters'
@@ -23,6 +24,7 @@ const i18n = new VueI18n({
 Vue.filter('formatDate', formatDate)
 Vue.filter('formatDomain', formatDomain)
 
+Vue.component('pc-track', Track)
 Vue.component('pc-work-detail', WorkDetail)
 
 document.addEventListener('turbolinks:load', _event => {

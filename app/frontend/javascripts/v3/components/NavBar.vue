@@ -61,6 +61,9 @@
       </form>
       <ul class="navbar-nav">
         <template v-if="$root.isSignedIn()">
+          <a href="/track" class="btn btn-outline-primary">
+            <i class="far fa-edit"></i>{{ $t('verb.track') }}
+          </a>
           <a href="#" class="nav-link dropdown-toggle p-0 text-dark" data-toggle="dropdown">
             <img :src="$root.viewer.avatarUrl" width="30" height="30" :alt="$root.viewer.username" class="rounded-circle">
           </a>
