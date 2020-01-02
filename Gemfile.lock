@@ -226,7 +226,7 @@ GEM
       sass (~> 3.4)
     gretel (3.0.9)
       rails (>= 3.1.0)
-    groupdate (4.2.0)
+    groupdate (4.3.0)
       activesupport (>= 5)
     hashdiff (1.0.0)
     hashie (3.6.0)
