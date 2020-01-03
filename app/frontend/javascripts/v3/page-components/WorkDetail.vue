@@ -402,7 +402,7 @@
                       </div>
                       <div>
                         <a :href="'/@' + workRecord.user.username + '/records/' + workRecord.record.annictId" class="small text-muted">
-                          {{ workRecord.createdAt | formatDate }}
+                          {{ workRecord.createdAt | formatDateTime }}
                         </a>
                         <small class="ml-1 text-muted" v-if="workRecord.modifiedAt">
                           <i class="far pencil-alt"></i>

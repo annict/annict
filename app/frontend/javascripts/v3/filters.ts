@@ -1,4 +1,4 @@
-import formatDate from './filters/formatDate'
+import formatDateTime from './filters/formatDateTime'
 import formatDomain from './filters/formatDomain'
 
-export { formatDate, formatDomain }
+export { formatDateTime, formatDomain }
