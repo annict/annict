@@ -63,6 +63,11 @@ module Canary
           argument :order_by, Canary::Types::InputObjects::SlotOrder, required: false
         end
 
+        field :library_entries, Canary::Types::Objects::LibraryEntryType.connection_type, null: true do
+          argument :filter_by, Canary::Types::InputObjects::LibraryEntryFilters, required: false
+          argument :order_by, Canary::Types::InputObjects::LibraryEntryOrder, required: false
+        end
+
         def name
           Canary::RecordBelongsToUserLoader.for(Profile).load(object.id).then(&:name)
         end
@@ -198,6 +203,14 @@ module Canary
             object,
             Slot.without_deleted.with_works(object.works_on(:wanna_watch, :watching).without_deleted),
             watched: watched,
+            order: build_order(order_by)
+          ).call
+        end
+
+        def library_entries(filter_by: nil, order_by: nil)
+          LibraryEntriesQuery.new(
+            object.library_entries,
+            filter_by: filter_by,
             order: build_order(order_by)
           ).call
         end
