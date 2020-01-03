@@ -13,6 +13,7 @@ gem "activerecord-session_store"
 gem "acts_as_list"
 gem "addressable"
 gem "aws-sdk-s3" # Using in Shrine
+gem "batch-loader"
 gem "browser", require: "browser/browser"
 gem "by_star"
 gem "cld"

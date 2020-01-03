@@ -6,6 +6,7 @@ module Canary
     mutation Canary::Types::Objects::Mutation
 
     use GraphQL::Batch
+    use BatchLoader::GraphQL
 
     def self.id_from_object(object, type_definition, _query_ctx)
       GraphQL::Schema::UniqueWithinType.encode(type_definition.name, object.id)
