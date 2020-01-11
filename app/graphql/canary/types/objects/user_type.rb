@@ -59,7 +59,7 @@ module Canary
         end
 
         field :slots, Canary::Types::Objects::SlotType.connection_type, null: true do
-          argument :unwatched, Boolean, required: false
+          argument :watched, Boolean, required: false
           argument :order_by, Canary::Types::InputObjects::SlotOrder, required: false
         end
 

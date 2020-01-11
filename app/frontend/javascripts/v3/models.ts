@@ -3,6 +3,7 @@ import { Cast } from './models/Cast'
 import { Channel } from './models/Channel'
 import { Character } from './models/Character'
 import { Episode } from './models/Episode'
+import { LibraryEntry } from './models/LibraryEntry'
 import { Organization } from './models/Organization'
 import { Person } from './models/Person'
 import { Program } from './models/Program'
@@ -10,6 +11,7 @@ import { Record } from './models/Record'
 import { Season } from './models/Season'
 import { Series } from './models/Series'
 import { SeriesWork } from './models/SeriesWork'
+import { Slot } from './models/Slot'
 import { Staff } from './models/Staff'
 import { Trailer } from './models/Trailer'
 import { User } from './models/User'
@@ -23,6 +25,7 @@ export {
   Channel,
   Character,
   Episode,
+  LibraryEntry,
   Organization,
   Person,
   Program,
@@ -30,6 +33,7 @@ export {
   Season,
   Series,
   SeriesWork,
+  Slot,
   Staff,
   Trailer,
   User,

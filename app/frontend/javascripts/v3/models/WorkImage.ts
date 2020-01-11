@@ -5,6 +5,6 @@ export class WorkImage extends ApplicationModel {
 
   public constructor(node) {
     super()
-    this.internalUrl = node.internalUrl
+    this.internalUrl = node?.internalUrl
   }
 }

@@ -6,11 +6,6 @@
         <img :src="state.AnnConfig.images.logoUrl" width="25" height="30" alt="Annict">
       </a>
       <ul class="navbar-nav mt-2 mt-md-0 mr-md-2">
-        <li class="nav-item" v-if="$root.isSignedIn()">
-          <a class="nav-link text-dark" href="/programs">
-            {{ $t('noun.slots') }}
-          </a>
-        </li>
         <li class="nav-item dropdown" v-if="$root.isSignedIn()">
           <a class="nav-link dropdown-toggle text-dark" data-toggle="dropdown" href="">
             {{ $t('noun.library') }}
@@ -61,11 +56,11 @@
       </form>
       <ul class="navbar-nav">
         <template v-if="$root.isSignedIn()">
-          <a href="/track" class="btn btn-outline-primary">
+          <a href="/track" class="btn btn-outline-primary mr-3">
             <i class="far fa-edit"></i>{{ $t('verb.track') }}
           </a>
           <a href="#" class="nav-link dropdown-toggle p-0 text-dark" data-toggle="dropdown">
-            <img :src="$root.viewer.avatarUrl" width="30" height="30" :alt="$root.viewer.username" class="rounded-circle">
+            <img :src="$root.viewer.avatarUrl" width="38" height="38" :alt="$root.viewer.username" class="rounded-circle">
           </a>
           <div class="dropdown-menu dropdown-menu-right">
             <a :href="'/@' + $root.viewer.username" class="dropdown-item">

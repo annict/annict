@@ -132,6 +132,7 @@ export default {
     pv: 'PV',
     rating: '評価',
     ratingsCount: '評価数',
+    rebroadcast: '再放送',
     recordBodyList: '感想',
     records: '記録',
     relatedWorks: '関連作品',

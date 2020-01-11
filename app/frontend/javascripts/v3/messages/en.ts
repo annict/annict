@@ -132,6 +132,7 @@ export default {
     pv: 'PV',
     rating: 'Rating',
     ratingsCount: 'Ratings',
+    rebroadcast: 'Rebroadcast',
     recordBodyList: 'Comments',
     records: 'Records',
     relatedWorks: 'Related Works',

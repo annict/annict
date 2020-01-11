@@ -1,10 +1,33 @@
 <template>
   <transition name="app" mode="out-in">
-    <div v-if="state.work" key="content">
+    <div v-if="state.libraryEntries" key="content">
       <ann-navbar></ann-navbar>
       <div class="container p-3" data-turbolinks="false">
         <ann-breadcrumb :items="state.breadcrumbItems" class="mb-3"></ann-breadcrumb>
-        hello
+        <div class="container">
+          <div class="row">
+            <div class="col-4">
+              <div class="list-group mb-3">
+                <a class="list-group-item list-group-item-action active" href="/track">
+                  {{ $root.$t('noun.slots') }}
+                </a>
+              </div>
+              <div class="list-group">
+                <a class="align-items-center d-flex justify-content-between list-group-item list-group-item-action" :href="'/works/' + libraryEntry.work.annictId" v-for="libraryEntry in state.libraryEntries">
+                  {{ libraryEntry.work.title }}
+                  <span class="badge badge-primary badge-pill">
+                    {{ libraryEntry.untappedEpisodesCount }}
+                  </span>
+                </a>
+              </div>
+            </div>
+            <div class="col-8">
+              <div class="c-card px-3">
+                <ann-slot-list></ann-slot-list>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
       <ann-footer></ann-footer>
     </div>
@@ -27,9 +50,10 @@
   import Empty from '../components/Empty.vue'
   import Footer from '../components/Footer.vue'
   import NavBar from '../components/NavBar.vue'
+  import SlotList from '../components/SlotList.vue'
   import StatusSelector from '../components/StatusSelector.vue'
 
-  import { FetchVodChannelsQuery, FetchWorkQuery } from '../queries'
+  import { FetchLibraryEntriesQuery } from '../queries'
 
   export default createComponent({
     components: {
@@ -37,6 +61,7 @@
       'ann-empty': Empty,
       'ann-footer': Footer,
       'ann-navbar': NavBar,
+      'ann-slot-list': SlotList,
       'ann-status-selector': StatusSelector,
     },
 
@@ -54,7 +79,11 @@
       })
 
       onMounted(async () => {
-        state.libraryEntries = new FetchLibraryEntriesQuery().execute()
+        const [libraryEntries] = await Promise.all([
+          new FetchLibraryEntriesQuery().execute(),
+        ])
+        state.libraryEntries = libraryEntries
+        console.log('state.libraryEntries: ', state.libraryEntries)
         state.breadcrumbItems = [
           {
             href: '/',
