@@ -8,7 +8,7 @@ module Db
       @work = Work.find(params[:work_id])
       @slots = @work.slots.eager_load(:channel, :episode, program: :channel)
       @slots = @slots.where(channel_id: params[:channel_id]) if params[:channel_id]
-      @slots = @slots.order(started_at: :desc).order(:channel_id)
+      @slots = @slots.order(number: :desc).order(:channel_id)
     end
 
     def new
