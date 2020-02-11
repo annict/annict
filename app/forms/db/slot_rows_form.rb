@@ -21,7 +21,7 @@ module Db
 
     def reset_number!
       Program.where(id: attrs_list.pluck(:program_id).uniq).each do |pd|
-        pd.slots.without_deleted.order(:started_at).each_with_index do |p, i|
+        pd.slots.without_deleted.order(:started_at, :number).each_with_index do |p, i|
           p.update_column(:number, i + pd.minimum_episode_generatable_number)
         end
       end
