@@ -3,6 +3,8 @@
 
 .p-application__content
   .c-card.container.py-3.mt-3.mb-4
+    h1
+      = title
     == render_markdown File.read("docs/policies/terms_ja.md")
 
 = render "application/components/footer"
