@@ -14,6 +14,6 @@ class FacebookService
   end
 
   def uids
-    client.get_connections(:me, :friends).map { |friend| friend["id"] }
+    []
   end
 end

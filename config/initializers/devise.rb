@@ -4,7 +4,7 @@
 Devise.setup do |config|
   config.omniauth :facebook,
     ENV.fetch("FACEBOOK_APP_ID"), ENV.fetch("FACEBOOK_SECRET_KEY"),
-    scope: "email,public_profile,user_friends"
+    scope: "email,public_profile"
 
   config.omniauth :gumroad,
     ENV.fetch("GUMROAD_APPLICATION_ID"), ENV.fetch("GUMROAD_APP_SECRET"),
