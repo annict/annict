@@ -53,9 +53,9 @@
     "@types/node" "*"
 
 "@types/jquery@^3.3.31":
-  version "3.3.31"
-  resolved "https://registry.yarnpkg.com/@types/jquery/-/jquery-3.3.31.tgz#27c706e4bf488474e1cb54a71d8303f37c93451b"
-  integrity sha512-Lz4BAJihoFw5nRzKvg4nawXPzutkv7wmfQ5121avptaSIXlDNJCUuxZxX/G+9EVidZGuO0UBlk+YjKbwRKJigg==
+  version "3.3.33"
+  resolved "https://registry.yarnpkg.com/@types/jquery/-/jquery-3.3.33.tgz#61d9cbd4004ffcdf6cf7e34720a87a5625a7d8e9"
+  integrity sha512-U6IdXYGkfUI42SR79vB2Spj+h1Ly3J3UZjpd8mi943lh126TK7CB+HZOxGh2nM3IySor7wqVQdemD/xtydsBKA==
   dependencies:
     "@types/sizzle" "*"
 
