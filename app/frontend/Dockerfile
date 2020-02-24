@@ -12,7 +12,7 @@ ENV PATH=./node_modules/.bin/:$PATH \
 
 WORKDIR /annict/
 
-COPY package.json yarn.lock tsconfig.json webpack.config.js ./
+COPY package.json yarn.lock webpack.config.js ./
 RUN yarn install && \
     yarn cache clean
 
