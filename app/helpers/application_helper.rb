@@ -38,27 +38,7 @@ module ApplicationHelper
   end
 
   def annict_config
-    config = {
-      currentUrlJa: local_current_url(locale: :ja),
-      currentUrlEn: local_current_url(locale: :en),
-      isDomainJp: domain_jp?,
-      facebook: {
-        appId: ENV.fetch("FACEBOOK_APP_ID")
-      },
-      images: {
-        logoUrl: asset_bundle_url("images/logos/color-mizuho.png")
-      },
-      locale: I18n.locale.to_s,
-      localUrl: local_url,
-      season: {
-        current: ENV.fetch("ANNICT_CURRENT_SEASON"),
-        next: ENV.fetch("ANNICT_NEXT_SEASON"),
-        prev: ENV.fetch("ANNICT_PREVIOUS_SEASON")
-      },
-      twitter: {
-        username: twitter_username
-      }
-    }
+    config = {}.freeze
 
     javascript_tag "window.AnnConfig = #{config.to_json.html_safe};"
   end
