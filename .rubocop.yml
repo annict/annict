@@ -60,6 +60,9 @@ Metrics/MethodLength:
 Metrics/CyclomaticComplexity:
   Enabled: false
 
+Naming/AccessorMethodName:
+  Enabled: false
+
 Style/AsciiComments:
   Enabled: false
 
