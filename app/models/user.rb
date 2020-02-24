@@ -52,10 +52,6 @@
 #
 
 class User < ApplicationRecord
-  # registrations#createが実行されたあとメールアドレスの確認を挟まず
-  # ログインできるようにするため、Confirmableモジュールを直接includeする
-  include Devise::Models::Confirmable
-
   include UserCheckable
   include UserFavoritable
   include UserFollowable
@@ -68,9 +64,9 @@ class User < ApplicationRecord
   attr_accessor :email_username, :current_password, :terms_and_privacy_policy_agreement
 
   # Include default devise modules. Others available are:
-  # :confirmable, :lockable, :timeoutable
+  # :lockable, :timeoutable
   devise :database_authenticatable, :omniauthable, :registerable, :trackable,
-    :rememberable, :recoverable,
+    :rememberable, :recoverable, :confirmable,
     omniauth_providers: %i(facebook gumroad twitter),
     authentication_keys: %i(email_username)
 

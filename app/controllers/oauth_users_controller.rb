@@ -26,10 +26,8 @@ class OauthUsersController < Devise::RegistrationsController
     ga_client.user = @user
     ga_client.events.create(:users, :create, el: "via_oauth")
 
-    bypass_sign_in(@user)
-
     flash[:notice] = t("messages.registrations.create.confirmation_mail_has_sent")
-    redirect_to after_sign_in_path_for(@user)
+    redirect_to root_path
   end
 
   private
