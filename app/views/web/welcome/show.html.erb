@@ -2,5 +2,10 @@
 <% set_meta_tags(title: title, reverse: false) %>
 
 <%= render "partial_layouts/web" do %>
+  <%= link_to new_user_registration_path, class: "btn btn-primary" do %>
+    <%= icon "rocket" %>
+    <%= t "noun.sign_up" %><br>
+  <% end %>
+
   <%= link_to t("noun.sign_in"), new_user_session_path %>
 <% end %>

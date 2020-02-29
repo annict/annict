@@ -1,0 +1,77 @@
+<% title = t "head.title.registrations.new" %>
+<% description = meta_description t("head.meta.description.registrations.new") %>
+<% set_meta_tags(title: title, description: description, og: { description: description }, twitter: { description: description }, prefix: false) %>
+
+<%= render "partial_layouts/web_simple" do %>
+  <div class="container">
+    <div class="justify-content-center row">
+      <div class="col-6">
+        <div class="mb-5 text-center">
+          <%= link_to root_path do %>
+            <%= image_tag asset_bundle_path("images/logos/color-mizuho.png"), size: "50x61", alt: "Annict" %>
+          <% end %>
+        </div>
+        <div class="mb-3 p-3">
+          <h1 class="my-3 text-center">
+            <%= t "messages._common.join_annict" %>
+          </h1>
+
+          <div class="mb-3 text-center">
+            <%= link_to user_twitter_omniauth_authorize_path, class: "u-btn-twitter btn" do %>
+              <%= icon "twitter", "fab" %>
+              <%= t "messages.registrations.new.start_with_twitter" %>
+            <% end %>
+          </div>
+          <div class="text-center">
+            <%= link_to user_facebook_omniauth_authorize_path, class: "u-btn-facebook btn" do %>
+              <%= icon "facebook", "fab" %>
+              <%= t "messages.registrations.new.start_with_facebook" %>
+            <% end %>
+          </div>
+
+          <div class="text-muted text-center my-3">
+            <%= t "noun.or" %>
+          </div>
+
+          <%= form_for @user, url: user_registration_path do |f| %>
+            <%= render "application/components/error_panel", resource: @user %>
+
+            <div class="form-group">
+              <%= f.label :username %>
+              <%= f.text_field :username, class: "form-control", autofocus: true, required: true %>
+            </div>
+
+            <div class="form-group">
+              <%= f.label :email %>
+              <%= f.text_field :email, type: "email", class: "form-control", required: true %>
+            </div>
+
+            <div class="form-group">
+              <%= f.label :password %>
+              <%= f.password_field :password, autocomplete: "off", class: "form-control", required: true %>
+            </div>
+
+            <div class="form-group form-check">
+              <%= f.check_box :terms_and_privacy_policy_agreement, class: "form-check-input" %>
+              <%= f.label :terms_and_privacy_policy_agreement, class: "form-check-label" do %>
+                <%= t "activerecord.attributes.user.terms_and_privacy_policy_agreement_html" %>
+              <% end %>
+            </div>
+
+            <div class="text-center">
+              <%= f.button class: "btn btn-primary" do %>
+                <%= icon "rocket" %>
+                <%= t "noun.sign_up" %>
+              <% end %>
+            </div>
+          <% end %>
+        </div>
+        <div class="text-center">
+          <small>
+            <%= t "messages.registrations.new.sign_in_link_html", link: link_to(t("noun.sign_in"), new_user_session_path) %>
+          </small>
+        </div>
+      </div>
+    </div>
+  </div>
+<% end %>
