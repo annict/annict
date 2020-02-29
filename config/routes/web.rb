@@ -155,4 +155,8 @@ scope module: :v3 do
   resources :works, only: %i(show)
 end
 
-root "home#index"
+
+scope module: :web do
+  root "home#show", constraints: MemberConstraint.new
+  root "welcome#show", constraints: GuestConstraint.new, as: nil # Set :as option to avoid two routes with the same name
+end

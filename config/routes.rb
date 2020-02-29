@@ -10,6 +10,19 @@ module ActionDispatch
   end
 end
 
+class MemberConstraint
+  def matches?(request)
+    #!User.without_deleted.find_by_session(request.session).nil?
+    false
+  end
+end
+
+class GuestConstraint
+  def matches?(request)
+    !MemberConstraint.new.matches?(request)
+  end
+end
+
 Rails.application.routes.draw do
   draw :api
   draw :chat

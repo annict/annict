@@ -123,7 +123,6 @@ en:
         hero_description_mobile_html: Track anime you are watching<br>and see what friends are watching.
         hero_title: The platform for anime addicts.
         hero_title_mobile_html: The platform for anime addicts.
-        start_tracking: Start Tracking
     ics:
       you_can_see: You can see slots of works which you set "Watching", "Plan to Watch" when you add the following URL to Google Calendar.
     components:

@@ -156,7 +156,6 @@ en:
         index: Find Friends
       home:
         index: Annict
-        index_guest: The platform for anime addicts.
       libraries:
         show: "%{profile_name} (%{username})'s \"%{action}\" anime"
       menus:
@@ -232,6 +231,8 @@ en:
         followers: People following %{profile_name} (%{username})
         following: People followed by %{profile_name} (%{username})
         show: "%{profile_name} (%{username})"
+      welcome:
+        show: The platform for anime addicts.
       work_records:
         edit: Edit Record
         index: Records of %{work_title} (Anime)

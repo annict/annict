@@ -1,20 +1,6 @@
 # frozen_string_literal: true
 
 module ApplicationHelper
-  def body_classes
-    controller_name = controller.controller_path.tr("/", "-")
-    basic_body_classes = [
-      "p-#{controller_name}",
-      "p-#{controller_name}-#{controller.action_name}"
-    ].join(" ")
-
-    if content_for?(:extra_body_classes)
-      [basic_body_classes, content_for(:extra_body_classes)].join(" ")
-    else
-      basic_body_classes
-    end
-  end
-
   def local_time_ago_in_words(from_time, options = {})
     days = (Time.zone.now.to_date - from_time.to_date).to_i
     return display_time(from_time) if days > 3

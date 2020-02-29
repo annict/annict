@@ -36,13 +36,11 @@
 
     <%= annict_config %>
 
-    <%= stylesheet_bundle_tag "v3.css", media: "all", "data-turbolinks-track": "reload" %>
-    <%= javascript_bundle_tag "v3.js", defer: "", "data-turbolinks-track": "reload" %>
+    <%= stylesheet_bundle_tag "application.css", media: "all", "data-turbolinks-track": "reload" %>
+    <%= javascript_bundle_tag "application.js", defer: "", "data-turbolinks-track": "reload" %>
   </head>
-  <body class="<%= body_classes %>">
-    <div id="app">
-      <%= yield %>
-    </div>
+  <body class="l-application">
+    <%= yield %>
     <script>
       // Set this config to rerender icon when Vue's state changed
       window.FontAwesomeConfig = { autoReplaceSvg: 'nest' };

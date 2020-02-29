@@ -123,7 +123,6 @@ ja:
         hero_description_mobile_html: Annict (アニクト) は、アニメの視聴記録ができるWebサービスです。
         hero_title: 見たアニメを記録して、共有しよう。
         hero_title_mobile_html: 見たアニメを記録して、<br>共有しよう。
-        start_tracking: 視聴記録を始める
     ics:
       you_can_see: Google Calendarに以下のURLを登録すると、「見てる」「見たい」にしている作品の放送情報などがカレンダーに表示されます。
     components:

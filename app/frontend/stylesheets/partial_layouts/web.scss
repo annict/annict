@@ -1,0 +1,37 @@
+.pl-web {
+  &__sidebar {
+    background-color: $ann-bs-gray-600;
+    height: 100%;
+    left: 0;
+    width: 240px;
+    overflow-y: auto;
+    position: fixed;
+    z-index: 2;
+  }
+
+  &__main {
+    margin-left: 240px;
+    // For sticky footer
+    // https://philipwalton.github.io/solved-by-flexbox/demos/sticky-footer/
+    min-height: 100vh;
+
+    &__content {
+      flex: 1;
+    }
+
+    &__footer {
+    }
+  }
+}
+
+@include media-breakpoint-down(sm) {
+  .pl-web {
+    &__sidebar {
+      display: none;
+    }
+
+    &__main {
+      margin-left: 0;
+    }
+  }
+}
