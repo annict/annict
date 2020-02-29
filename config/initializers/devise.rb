@@ -13,6 +13,8 @@ Devise.setup do |config|
   config.omniauth :twitter,
     ENV.fetch("TWITTER_CONSUMER_KEY"), ENV.fetch("TWITTER_CONSUMER_SECRET")
 
+  config.parent_controller = "Web::ApplicationController"
+
   # The secret key used by Devise. Devise uses this key to generate
   # random tokens. Changing this key will render invalid all existing
   # confirmation, reset password and unlock tokens in the database.

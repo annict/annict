@@ -12,8 +12,7 @@ end
 
 class MemberConstraint
   def matches?(request)
-    #!User.without_deleted.find_by_session(request.session).nil?
-    false
+    request.session["warden.user.user.key"].present?
   end
 end
 

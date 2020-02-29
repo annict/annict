@@ -153,7 +153,7 @@ ja:
       friends:
         index: 友達を探す
       home:
-        index: Annict
+        show: Annict
       libraries:
         show: "%{profile_name} (%{username})が%{action}アニメ"
       menus:

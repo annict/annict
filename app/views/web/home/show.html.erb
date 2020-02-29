@@ -1,0 +1,6 @@
+<% title = t "head.title.home.show" %>
+<% set_meta_tags(title: title, site: false) %>
+
+<%= render "partial_layouts/web" do %>
+  <%= link_to t("verb.sign_out"), destroy_user_session_path, method: "delete", data: { confirm: t("messages._common.are_you_sure") } %>
+<% end %>

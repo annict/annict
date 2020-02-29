@@ -2,4 +2,5 @@
 <% set_meta_tags(title: title, reverse: false) %>
 
 <%= render "partial_layouts/web" do %>
+  <%= link_to t("noun.sign_in"), new_user_session_path %>
 <% end %>

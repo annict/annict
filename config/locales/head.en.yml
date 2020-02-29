@@ -155,7 +155,7 @@ en:
       friends:
         index: Find Friends
       home:
-        index: Annict
+        show: Annict
       libraries:
         show: "%{profile_name} (%{username})'s \"%{action}\" anime"
       menus:

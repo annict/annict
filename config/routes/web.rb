@@ -6,16 +6,6 @@ devise_for :users,
   controllers: { omniauth_callbacks: :callbacks },
   skip: %i(passwords registrations sessions)
 
-devise_scope :user do
-  get "sign_up", to: "registrations#new", as: :new_user_registration
-  get "sign_in", to: "sessions#new", as: :new_user_session
-  post "sign_in", to: "sessions#create", as: :user_session
-  post "users", to: "registrations#create", as: :user_registration
-  delete "sign_out", to: "sessions#destroy", as: :destroy_user_session
-  resource :password, only: %i(new create edit update)
-  resources :oauth_users, only: %i(new create)
-end
-
 use_doorkeeper do
   controllers applications: "oauth/applications"
   skip_controllers :authorized_applications
@@ -155,8 +145,19 @@ scope module: :v3 do
   resources :works, only: %i(show)
 end
 
-
 scope module: :web do
+  constraints(format: "html") do
+    devise_scope :user do
+      get "sign_up", to: "registrations#new", as: :new_user_registration
+      get "sign_in", to: "sessions#new", as: :new_user_session
+      post "sign_in", to: "sessions#create", as: :user_session
+      post "users", to: "registrations#create", as: :user_registration
+      delete "sign_out", to: "sessions#destroy", as: :destroy_user_session
+      resource :password, only: %i(new create edit update)
+      resources :oauth_users, only: %i(new create)
+    end
+  end
+
   root "home#show", constraints: MemberConstraint.new
   root "welcome#show", constraints: GuestConstraint.new, as: nil # Set :as option to avoid two routes with the same name
 end
