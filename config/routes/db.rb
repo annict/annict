@@ -123,5 +123,5 @@ namespace :db do
     resources :programs, only: %i(index new create)
   end
 
-  root "home#index"
+  root "home#show"
 end

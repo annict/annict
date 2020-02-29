@@ -2,5 +2,6 @@
 
 module Db
   class HomeController < Db::ApplicationController
+    def show; end
   end
 end

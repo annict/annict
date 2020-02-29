@@ -1,0 +1,27 @@
+.pl-db {
+  &__sidebar {
+    background-color: $ann-bs-gray-600;
+    height: 100%;
+    left: 0;
+    width: 240px;
+    overflow-y: auto;
+    position: fixed;
+    z-index: 2;
+  }
+
+  &__main {
+    margin-left: 240px;
+  }
+}
+
+@include media-breakpoint-down(sm) {
+  .pl-db {
+    &__sidebar {
+      display: none;
+    }
+
+    &__main {
+      margin-left: 0;
+    }
+  }
+}
