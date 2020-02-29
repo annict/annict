@@ -7,7 +7,6 @@ module HeadHelper
       site: site,
       separator: " |",
       description: meta_description,
-      keywords: meta_keywords,
       og: {
         title: meta_tags.full_title(site: site, separator: " |"),
         type: "website",
@@ -36,10 +35,5 @@ module HeadHelper
     ary << "#{text} -" if text.present?
     ary << t("head.meta.description._common")
     ary.join(" ")
-  end
-
-  def meta_keywords(*keywords)
-    default_keywords = t("head.meta.keywords._common").split(",")
-    (keywords + default_keywords).join(",")
   end
 end
