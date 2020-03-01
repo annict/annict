@@ -117,7 +117,8 @@ CREATE TABLE public.casts (
     updated_at timestamp without time zone NOT NULL,
     character_id integer NOT NULL,
     name_en character varying DEFAULT ''::character varying NOT NULL,
-    deleted_at timestamp without time zone
+    deleted_at timestamp without time zone,
+    unrevealed_at timestamp without time zone
 );
 
 
@@ -163,7 +164,8 @@ CREATE TABLE public.channel_groups (
     sort_number integer DEFAULT 0 NOT NULL,
     created_at timestamp with time zone,
     updated_at timestamp with time zone,
-    deleted_at timestamp without time zone
+    deleted_at timestamp without time zone,
+    unrevealed_at timestamp without time zone
 );
 
 
@@ -220,7 +222,8 @@ CREATE TABLE public.channels (
     aasm_state character varying DEFAULT 'published'::character varying NOT NULL,
     sort_number integer DEFAULT 0 NOT NULL,
     deleted_at timestamp without time zone,
-    name_alter character varying DEFAULT ''::character varying NOT NULL
+    name_alter character varying DEFAULT ''::character varying NOT NULL,
+    unrevealed_at timestamp without time zone
 );
 
 
@@ -296,7 +299,8 @@ CREATE TABLE public.characters (
     description_source_en character varying DEFAULT ''::character varying NOT NULL,
     favorite_users_count integer DEFAULT 0 NOT NULL,
     series_id integer,
-    deleted_at timestamp without time zone
+    deleted_at timestamp without time zone,
+    unrevealed_at timestamp without time zone
 );
 
 
@@ -704,7 +708,8 @@ CREATE TABLE public.episodes (
     ratings_count integer DEFAULT 0 NOT NULL,
     satisfaction_rate double precision,
     number_en character varying DEFAULT ''::character varying NOT NULL,
-    deleted_at timestamp without time zone
+    deleted_at timestamp without time zone,
+    unrevealed_at timestamp without time zone
 );
 
 
@@ -1569,7 +1574,8 @@ CREATE TABLE public.oauth_applications (
     owner_id integer,
     owner_type character varying,
     confidential boolean DEFAULT true NOT NULL,
-    deleted_at timestamp without time zone
+    deleted_at timestamp without time zone,
+    skip_authorization boolean DEFAULT false NOT NULL
 );
 
 
@@ -1612,7 +1618,8 @@ CREATE TABLE public.organizations (
     twitter_username_en character varying DEFAULT ''::character varying NOT NULL,
     favorite_users_count integer DEFAULT 0 NOT NULL,
     staffs_count integer DEFAULT 0 NOT NULL,
-    deleted_at timestamp without time zone
+    deleted_at timestamp without time zone,
+    unrevealed_at timestamp without time zone
 );
 
 
@@ -1663,7 +1670,8 @@ CREATE TABLE public.people (
     favorite_users_count integer DEFAULT 0 NOT NULL,
     casts_count integer DEFAULT 0 NOT NULL,
     staffs_count integer DEFAULT 0 NOT NULL,
-    deleted_at timestamp without time zone
+    deleted_at timestamp without time zone,
+    unrevealed_at timestamp without time zone
 );
 
 
@@ -1772,7 +1780,8 @@ CREATE TABLE public.programs (
     vod_title_name character varying DEFAULT ''::character varying NOT NULL,
     rebroadcast boolean DEFAULT false NOT NULL,
     minimum_episode_generatable_number integer DEFAULT 1 NOT NULL,
-    deleted_at timestamp without time zone
+    deleted_at timestamp without time zone,
+    unrevealed_at timestamp without time zone
 );
 
 
@@ -1966,7 +1975,8 @@ CREATE TABLE public.series (
     series_works_count integer DEFAULT 0 NOT NULL,
     created_at timestamp without time zone NOT NULL,
     updated_at timestamp without time zone NOT NULL,
-    deleted_at timestamp without time zone
+    deleted_at timestamp without time zone,
+    unrevealed_at timestamp without time zone
 );
 
 
@@ -2002,7 +2012,8 @@ CREATE TABLE public.series_works (
     aasm_state character varying DEFAULT 'published'::character varying NOT NULL,
     created_at timestamp without time zone NOT NULL,
     updated_at timestamp without time zone NOT NULL,
-    deleted_at timestamp without time zone
+    deleted_at timestamp without time zone,
+    unrevealed_at timestamp without time zone
 );
 
 
@@ -2145,7 +2156,8 @@ CREATE TABLE public.slots (
     program_id integer,
     number integer,
     irregular boolean DEFAULT false NOT NULL,
-    deleted_at timestamp without time zone
+    deleted_at timestamp without time zone,
+    unrevealed_at timestamp without time zone
 );
 
 
@@ -2179,7 +2191,8 @@ CREATE TABLE public.staffs (
     resource_type character varying NOT NULL,
     name_en character varying DEFAULT ''::character varying NOT NULL,
     role_other_en character varying DEFAULT ''::character varying NOT NULL,
-    deleted_at timestamp without time zone
+    deleted_at timestamp without time zone,
+    unrevealed_at timestamp without time zone
 );
 
 
@@ -2319,7 +2332,8 @@ CREATE TABLE public.trailers (
     updated_at timestamp without time zone NOT NULL,
     title_en character varying DEFAULT ''::character varying NOT NULL,
     image_data text,
-    deleted_at timestamp without time zone
+    deleted_at timestamp without time zone,
+    unrevealed_at timestamp without time zone
 );
 
 
@@ -2601,7 +2615,8 @@ CREATE TABLE public.vod_titles (
     mail_sent_at timestamp without time zone,
     created_at timestamp without time zone NOT NULL,
     updated_at timestamp without time zone NOT NULL,
-    deleted_at timestamp without time zone
+    deleted_at timestamp without time zone,
+    unrevealed_at timestamp without time zone
 );
 
 
@@ -2944,7 +2959,8 @@ CREATE TABLE public.works (
     start_episode_raw_number double precision DEFAULT 1.0 NOT NULL,
     deleted_at timestamp without time zone,
     title_alter character varying DEFAULT ''::character varying NOT NULL,
-    title_alter_en character varying DEFAULT ''::character varying NOT NULL
+    title_alter_en character varying DEFAULT ''::character varying NOT NULL,
+    unrevealed_at timestamp without time zone
 );
 
 
@@ -4289,10 +4305,24 @@ CREATE INDEX index_casts_on_sort_number ON public.casts USING btree (sort_number
 
 
 --
+-- Name: index_casts_on_unrevealed_at; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_casts_on_unrevealed_at ON public.casts USING btree (unrevealed_at);
+
+
+--
 -- Name: index_casts_on_work_id; Type: INDEX; Schema: public; Owner: -
 --
 
 CREATE INDEX index_casts_on_work_id ON public.casts USING btree (work_id);
+
+
+--
+-- Name: index_channel_groups_on_unrevealed_at; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_channel_groups_on_unrevealed_at ON public.channel_groups USING btree (unrevealed_at);
 
 
 --
@@ -4307,6 +4337,13 @@ CREATE INDEX index_channels_on_deleted_at ON public.channels USING btree (delete
 --
 
 CREATE INDEX index_channels_on_sort_number ON public.channels USING btree (sort_number);
+
+
+--
+-- Name: index_channels_on_unrevealed_at; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_channels_on_unrevealed_at ON public.channels USING btree (unrevealed_at);
 
 
 --
@@ -4356,6 +4393,13 @@ CREATE UNIQUE INDEX index_characters_on_name_and_series_id ON public.characters 
 --
 
 CREATE INDEX index_characters_on_series_id ON public.characters USING btree (series_id);
+
+
+--
+-- Name: index_characters_on_unrevealed_at; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_characters_on_unrevealed_at ON public.characters USING btree (unrevealed_at);
 
 
 --
@@ -4615,6 +4659,13 @@ CREATE INDEX index_episodes_on_satisfaction_rate_and_ratings_count ON public.epi
 --
 
 CREATE INDEX index_episodes_on_score ON public.episodes USING btree (score);
+
+
+--
+-- Name: index_episodes_on_unrevealed_at; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_episodes_on_unrevealed_at ON public.episodes USING btree (unrevealed_at);
 
 
 --
@@ -5038,6 +5089,13 @@ CREATE INDEX index_organizations_on_staffs_count ON public.organizations USING b
 
 
 --
+-- Name: index_organizations_on_unrevealed_at; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_organizations_on_unrevealed_at ON public.organizations USING btree (unrevealed_at);
+
+
+--
 -- Name: index_people_on_aasm_state; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -5087,6 +5145,13 @@ CREATE INDEX index_people_on_staffs_count ON public.people USING btree (staffs_c
 
 
 --
+-- Name: index_people_on_unrevealed_at; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_people_on_unrevealed_at ON public.people USING btree (unrevealed_at);
+
+
+--
 -- Name: index_prefectures_on_name; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -5105,6 +5170,13 @@ CREATE INDEX index_programs_on_channel_id ON public.programs USING btree (channe
 --
 
 CREATE INDEX index_programs_on_deleted_at ON public.programs USING btree (deleted_at);
+
+
+--
+-- Name: index_programs_on_unrevealed_at; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_programs_on_unrevealed_at ON public.programs USING btree (unrevealed_at);
 
 
 --
@@ -5199,6 +5271,13 @@ CREATE UNIQUE INDEX index_series_on_name ON public.series USING btree (name);
 
 
 --
+-- Name: index_series_on_unrevealed_at; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_series_on_unrevealed_at ON public.series USING btree (unrevealed_at);
+
+
+--
 -- Name: index_series_works_on_deleted_at; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -5217,6 +5296,13 @@ CREATE INDEX index_series_works_on_series_id ON public.series_works USING btree 
 --
 
 CREATE UNIQUE INDEX index_series_works_on_series_id_and_work_id ON public.series_works USING btree (series_id, work_id);
+
+
+--
+-- Name: index_series_works_on_unrevealed_at; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_series_works_on_unrevealed_at ON public.series_works USING btree (unrevealed_at);
 
 
 --
@@ -5290,6 +5376,13 @@ CREATE UNIQUE INDEX index_slots_on_sc_pid ON public.slots USING btree (sc_pid);
 
 
 --
+-- Name: index_slots_on_unrevealed_at; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_slots_on_unrevealed_at ON public.slots USING btree (unrevealed_at);
+
+
+--
 -- Name: index_staffs_on_aasm_state; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -5315,6 +5408,13 @@ CREATE INDEX index_staffs_on_resource_id_and_resource_type ON public.staffs USIN
 --
 
 CREATE INDEX index_staffs_on_sort_number ON public.staffs USING btree (sort_number);
+
+
+--
+-- Name: index_staffs_on_unrevealed_at; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_staffs_on_unrevealed_at ON public.staffs USING btree (unrevealed_at);
 
 
 --
@@ -5364,6 +5464,13 @@ CREATE UNIQUE INDEX index_tips_on_slug_and_locale ON public.tips USING btree (sl
 --
 
 CREATE INDEX index_trailers_on_deleted_at ON public.trailers USING btree (deleted_at);
+
+
+--
+-- Name: index_trailers_on_unrevealed_at; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_trailers_on_unrevealed_at ON public.trailers USING btree (unrevealed_at);
 
 
 --
@@ -5455,6 +5562,13 @@ CREATE INDEX index_vod_titles_on_deleted_at ON public.vod_titles USING btree (de
 --
 
 CREATE INDEX index_vod_titles_on_mail_sent_at ON public.vod_titles USING btree (mail_sent_at);
+
+
+--
+-- Name: index_vod_titles_on_unrevealed_at; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_vod_titles_on_unrevealed_at ON public.vod_titles USING btree (unrevealed_at);
 
 
 --
@@ -5728,6 +5842,13 @@ CREATE INDEX index_works_on_season_year ON public.works USING btree (season_year
 --
 
 CREATE INDEX index_works_on_season_year_and_season_name ON public.works USING btree (season_year, season_name);
+
+
+--
+-- Name: index_works_on_unrevealed_at; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_works_on_unrevealed_at ON public.works USING btree (unrevealed_at);
 
 
 --
@@ -7101,6 +7222,8 @@ INSERT INTO "schema_migrations" (version) VALUES
 ('20191130150830'),
 ('20191207094223'),
 ('20191207113735'),
-('20191208154530');
+('20191208154530'),
+('20200202111942'),
+('99999999999999');
 
 
