@@ -52,15 +52,6 @@ module Annict
     config.i18n.default_locale = :ja
     config.i18n.available_locales = %i(ja en)
 
-    config.autoload_paths += %W(
-      #{config.root}/lib
-    )
-    # Rails 5から必要になった?
-    # これを設定しないとproductionで `lib/` 以下のモジュールが読み込まれない
-    config.eager_load_paths += %W(
-      #{config.root}/lib
-    )
-
     config.generators do |g|
       g.test_framework :rspec, controller_specs: false, helper_specs: false,
                                routing_specs: false, view_specs: false
