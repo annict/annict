@@ -7,6 +7,7 @@ ruby "2.7.0"
 
 gem "rails", "~> 6.0.0"
 
+gem "actionview-component"
 gem "active_decorator"
 gem "active_link_to"
 gem "activerecord-session_store"

@@ -18,6 +18,8 @@ end
 # you've limited to :test, :development, or :production.
 Bundler.require(*Rails.groups)
 
+require "view_component/engine"
+
 module Annict
   class Application < Rails::Application
     # Initialize configuration defaults for originally generated Rails version.
