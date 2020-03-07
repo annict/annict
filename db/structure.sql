@@ -102,7 +102,7 @@ CREATE TABLE public.casts (
     character_id bigint NOT NULL,
     name_en character varying DEFAULT ''::character varying NOT NULL,
     deleted_at timestamp without time zone,
-    unrevealed_at timestamp without time zone
+    disappeared_at timestamp without time zone
 );
 
 
@@ -149,7 +149,7 @@ CREATE TABLE public.channel_groups (
     created_at timestamp with time zone,
     updated_at timestamp with time zone,
     deleted_at timestamp without time zone,
-    unrevealed_at timestamp without time zone
+    disappeared_at timestamp without time zone
 );
 
 
@@ -207,7 +207,7 @@ CREATE TABLE public.channels (
     sort_number integer DEFAULT 0 NOT NULL,
     deleted_at timestamp without time zone,
     name_alter character varying DEFAULT ''::character varying NOT NULL,
-    unrevealed_at timestamp without time zone
+    disappeared_at timestamp without time zone
 );
 
 
@@ -284,7 +284,7 @@ CREATE TABLE public.characters (
     favorite_users_count integer DEFAULT 0 NOT NULL,
     series_id bigint,
     deleted_at timestamp without time zone,
-    unrevealed_at timestamp without time zone
+    disappeared_at timestamp without time zone
 );
 
 
@@ -693,7 +693,7 @@ CREATE TABLE public.episodes (
     satisfaction_rate double precision,
     number_en character varying DEFAULT ''::character varying NOT NULL,
     deleted_at timestamp without time zone,
-    unrevealed_at timestamp without time zone
+    disappeared_at timestamp without time zone
 );
 
 
@@ -1603,7 +1603,7 @@ CREATE TABLE public.organizations (
     favorite_users_count integer DEFAULT 0 NOT NULL,
     staffs_count integer DEFAULT 0 NOT NULL,
     deleted_at timestamp without time zone,
-    unrevealed_at timestamp without time zone
+    disappeared_at timestamp without time zone
 );
 
 
@@ -1655,7 +1655,7 @@ CREATE TABLE public.people (
     casts_count integer DEFAULT 0 NOT NULL,
     staffs_count integer DEFAULT 0 NOT NULL,
     deleted_at timestamp without time zone,
-    unrevealed_at timestamp without time zone
+    disappeared_at timestamp without time zone
 );
 
 
@@ -1765,7 +1765,7 @@ CREATE TABLE public.programs (
     rebroadcast boolean DEFAULT false NOT NULL,
     minimum_episode_generatable_number integer DEFAULT 1 NOT NULL,
     deleted_at timestamp without time zone,
-    unrevealed_at timestamp without time zone
+    disappeared_at timestamp without time zone
 );
 
 
@@ -1960,7 +1960,7 @@ CREATE TABLE public.series (
     created_at timestamp without time zone NOT NULL,
     updated_at timestamp without time zone NOT NULL,
     deleted_at timestamp without time zone,
-    unrevealed_at timestamp without time zone
+    disappeared_at timestamp without time zone
 );
 
 
@@ -1997,7 +1997,7 @@ CREATE TABLE public.series_works (
     created_at timestamp without time zone NOT NULL,
     updated_at timestamp without time zone NOT NULL,
     deleted_at timestamp without time zone,
-    unrevealed_at timestamp without time zone
+    disappeared_at timestamp without time zone
 );
 
 
@@ -2141,7 +2141,7 @@ CREATE TABLE public.slots (
     number integer,
     irregular boolean DEFAULT false NOT NULL,
     deleted_at timestamp without time zone,
-    unrevealed_at timestamp without time zone
+    disappeared_at timestamp without time zone
 );
 
 
@@ -2176,7 +2176,7 @@ CREATE TABLE public.staffs (
     name_en character varying DEFAULT ''::character varying NOT NULL,
     role_other_en character varying DEFAULT ''::character varying NOT NULL,
     deleted_at timestamp without time zone,
-    unrevealed_at timestamp without time zone
+    disappeared_at timestamp without time zone
 );
 
 
@@ -2317,7 +2317,7 @@ CREATE TABLE public.trailers (
     title_en character varying DEFAULT ''::character varying NOT NULL,
     image_data text,
     deleted_at timestamp without time zone,
-    unrevealed_at timestamp without time zone
+    disappeared_at timestamp without time zone
 );
 
 
@@ -2600,7 +2600,7 @@ CREATE TABLE public.vod_titles (
     created_at timestamp without time zone NOT NULL,
     updated_at timestamp without time zone NOT NULL,
     deleted_at timestamp without time zone,
-    unrevealed_at timestamp without time zone
+    disappeared_at timestamp without time zone
 );
 
 
@@ -2944,7 +2944,7 @@ CREATE TABLE public.works (
     deleted_at timestamp without time zone,
     title_alter character varying DEFAULT ''::character varying NOT NULL,
     title_alter_en character varying DEFAULT ''::character varying NOT NULL,
-    unrevealed_at timestamp without time zone
+    disappeared_at timestamp without time zone
 );
 
 
@@ -4289,10 +4289,10 @@ CREATE INDEX index_casts_on_sort_number ON public.casts USING btree (sort_number
 
 
 --
--- Name: index_casts_on_unrevealed_at; Type: INDEX; Schema: public; Owner: -
+-- Name: index_casts_on_disappeared_at; Type: INDEX; Schema: public; Owner: -
 --
 
-CREATE INDEX index_casts_on_unrevealed_at ON public.casts USING btree (unrevealed_at);
+CREATE INDEX index_casts_on_disappeared_at ON public.casts USING btree (disappeared_at);
 
 
 --
@@ -4303,10 +4303,10 @@ CREATE INDEX index_casts_on_work_id ON public.casts USING btree (work_id);
 
 
 --
--- Name: index_channel_groups_on_unrevealed_at; Type: INDEX; Schema: public; Owner: -
+-- Name: index_channel_groups_on_disappeared_at; Type: INDEX; Schema: public; Owner: -
 --
 
-CREATE INDEX index_channel_groups_on_unrevealed_at ON public.channel_groups USING btree (unrevealed_at);
+CREATE INDEX index_channel_groups_on_disappeared_at ON public.channel_groups USING btree (disappeared_at);
 
 
 --
@@ -4324,10 +4324,10 @@ CREATE INDEX index_channels_on_sort_number ON public.channels USING btree (sort_
 
 
 --
--- Name: index_channels_on_unrevealed_at; Type: INDEX; Schema: public; Owner: -
+-- Name: index_channels_on_disappeared_at; Type: INDEX; Schema: public; Owner: -
 --
 
-CREATE INDEX index_channels_on_unrevealed_at ON public.channels USING btree (unrevealed_at);
+CREATE INDEX index_channels_on_disappeared_at ON public.channels USING btree (disappeared_at);
 
 
 --
@@ -4380,10 +4380,10 @@ CREATE INDEX index_characters_on_series_id ON public.characters USING btree (ser
 
 
 --
--- Name: index_characters_on_unrevealed_at; Type: INDEX; Schema: public; Owner: -
+-- Name: index_characters_on_disappeared_at; Type: INDEX; Schema: public; Owner: -
 --
 
-CREATE INDEX index_characters_on_unrevealed_at ON public.characters USING btree (unrevealed_at);
+CREATE INDEX index_characters_on_disappeared_at ON public.characters USING btree (disappeared_at);
 
 
 --
@@ -4646,10 +4646,10 @@ CREATE INDEX index_episodes_on_score ON public.episodes USING btree (score);
 
 
 --
--- Name: index_episodes_on_unrevealed_at; Type: INDEX; Schema: public; Owner: -
+-- Name: index_episodes_on_disappeared_at; Type: INDEX; Schema: public; Owner: -
 --
 
-CREATE INDEX index_episodes_on_unrevealed_at ON public.episodes USING btree (unrevealed_at);
+CREATE INDEX index_episodes_on_disappeared_at ON public.episodes USING btree (disappeared_at);
 
 
 --
@@ -5073,10 +5073,10 @@ CREATE INDEX index_organizations_on_staffs_count ON public.organizations USING b
 
 
 --
--- Name: index_organizations_on_unrevealed_at; Type: INDEX; Schema: public; Owner: -
+-- Name: index_organizations_on_disappeared_at; Type: INDEX; Schema: public; Owner: -
 --
 
-CREATE INDEX index_organizations_on_unrevealed_at ON public.organizations USING btree (unrevealed_at);
+CREATE INDEX index_organizations_on_disappeared_at ON public.organizations USING btree (disappeared_at);
 
 
 --
@@ -5129,10 +5129,10 @@ CREATE INDEX index_people_on_staffs_count ON public.people USING btree (staffs_c
 
 
 --
--- Name: index_people_on_unrevealed_at; Type: INDEX; Schema: public; Owner: -
+-- Name: index_people_on_disappeared_at; Type: INDEX; Schema: public; Owner: -
 --
 
-CREATE INDEX index_people_on_unrevealed_at ON public.people USING btree (unrevealed_at);
+CREATE INDEX index_people_on_disappeared_at ON public.people USING btree (disappeared_at);
 
 
 --
@@ -5157,10 +5157,10 @@ CREATE INDEX index_programs_on_deleted_at ON public.programs USING btree (delete
 
 
 --
--- Name: index_programs_on_unrevealed_at; Type: INDEX; Schema: public; Owner: -
+-- Name: index_programs_on_disappeared_at; Type: INDEX; Schema: public; Owner: -
 --
 
-CREATE INDEX index_programs_on_unrevealed_at ON public.programs USING btree (unrevealed_at);
+CREATE INDEX index_programs_on_disappeared_at ON public.programs USING btree (disappeared_at);
 
 
 --
@@ -5255,10 +5255,10 @@ CREATE UNIQUE INDEX index_series_on_name ON public.series USING btree (name);
 
 
 --
--- Name: index_series_on_unrevealed_at; Type: INDEX; Schema: public; Owner: -
+-- Name: index_series_on_disappeared_at; Type: INDEX; Schema: public; Owner: -
 --
 
-CREATE INDEX index_series_on_unrevealed_at ON public.series USING btree (unrevealed_at);
+CREATE INDEX index_series_on_disappeared_at ON public.series USING btree (disappeared_at);
 
 
 --
@@ -5283,10 +5283,10 @@ CREATE UNIQUE INDEX index_series_works_on_series_id_and_work_id ON public.series
 
 
 --
--- Name: index_series_works_on_unrevealed_at; Type: INDEX; Schema: public; Owner: -
+-- Name: index_series_works_on_disappeared_at; Type: INDEX; Schema: public; Owner: -
 --
 
-CREATE INDEX index_series_works_on_unrevealed_at ON public.series_works USING btree (unrevealed_at);
+CREATE INDEX index_series_works_on_disappeared_at ON public.series_works USING btree (disappeared_at);
 
 
 --
@@ -5360,10 +5360,10 @@ CREATE UNIQUE INDEX index_slots_on_sc_pid ON public.slots USING btree (sc_pid);
 
 
 --
--- Name: index_slots_on_unrevealed_at; Type: INDEX; Schema: public; Owner: -
+-- Name: index_slots_on_disappeared_at; Type: INDEX; Schema: public; Owner: -
 --
 
-CREATE INDEX index_slots_on_unrevealed_at ON public.slots USING btree (unrevealed_at);
+CREATE INDEX index_slots_on_disappeared_at ON public.slots USING btree (disappeared_at);
 
 
 --
@@ -5395,10 +5395,10 @@ CREATE INDEX index_staffs_on_sort_number ON public.staffs USING btree (sort_numb
 
 
 --
--- Name: index_staffs_on_unrevealed_at; Type: INDEX; Schema: public; Owner: -
+-- Name: index_staffs_on_disappeared_at; Type: INDEX; Schema: public; Owner: -
 --
 
-CREATE INDEX index_staffs_on_unrevealed_at ON public.staffs USING btree (unrevealed_at);
+CREATE INDEX index_staffs_on_disappeared_at ON public.staffs USING btree (disappeared_at);
 
 
 --
@@ -5451,10 +5451,10 @@ CREATE INDEX index_trailers_on_deleted_at ON public.trailers USING btree (delete
 
 
 --
--- Name: index_trailers_on_unrevealed_at; Type: INDEX; Schema: public; Owner: -
+-- Name: index_trailers_on_disappeared_at; Type: INDEX; Schema: public; Owner: -
 --
 
-CREATE INDEX index_trailers_on_unrevealed_at ON public.trailers USING btree (unrevealed_at);
+CREATE INDEX index_trailers_on_disappeared_at ON public.trailers USING btree (disappeared_at);
 
 
 --
@@ -5549,10 +5549,10 @@ CREATE INDEX index_vod_titles_on_mail_sent_at ON public.vod_titles USING btree (
 
 
 --
--- Name: index_vod_titles_on_unrevealed_at; Type: INDEX; Schema: public; Owner: -
+-- Name: index_vod_titles_on_disappeared_at; Type: INDEX; Schema: public; Owner: -
 --
 
-CREATE INDEX index_vod_titles_on_unrevealed_at ON public.vod_titles USING btree (unrevealed_at);
+CREATE INDEX index_vod_titles_on_disappeared_at ON public.vod_titles USING btree (disappeared_at);
 
 
 --
@@ -5829,10 +5829,10 @@ CREATE INDEX index_works_on_season_year_and_season_name ON public.works USING bt
 
 
 --
--- Name: index_works_on_unrevealed_at; Type: INDEX; Schema: public; Owner: -
+-- Name: index_works_on_disappeared_at; Type: INDEX; Schema: public; Owner: -
 --
 
-CREATE INDEX index_works_on_unrevealed_at ON public.works USING btree (unrevealed_at);
+CREATE INDEX index_works_on_disappeared_at ON public.works USING btree (disappeared_at);
 
 
 --

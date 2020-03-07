@@ -19,8 +19,8 @@ class V4 < ActiveRecord::Migration[6.0]
       vod_titles
       works
     ).each do |table_name|
-      add_column table_name, :unrevealed_at, :datetime
-      add_index table_name, :unrevealed_at
+      add_column table_name, :disappeared_at, :datetime
+      add_index table_name, :disappeared_at
     end
 
     %i(
