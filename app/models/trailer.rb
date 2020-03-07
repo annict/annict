@@ -31,7 +31,7 @@
 
 class Trailer < ApplicationRecord
   include TrailerImageUploader::Attachment.new(:image)
-  include DbActivityMethods
+  include DBActivityMethods
   include ImageUploadable
   include SoftDeletable
 

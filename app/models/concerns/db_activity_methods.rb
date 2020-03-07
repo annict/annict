@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-module DbActivityMethods
+module DBActivityMethods
   extend ActiveSupport::Concern
 
   included do

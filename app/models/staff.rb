@@ -34,7 +34,7 @@
 class Staff < ApplicationRecord
   extend Enumerize
 
-  include DbActivityMethods
+  include DBActivityMethods
   include SoftDeletable
 
   DIFF_FIELDS = %i(

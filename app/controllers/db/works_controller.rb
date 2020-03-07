@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
-module Db
-  class WorksController < Db::ApplicationController
+module DB
+  class WorksController < DB::ApplicationController
     before_action :authenticate_user!, only: %i(new create edit update destroy)
 
     def index

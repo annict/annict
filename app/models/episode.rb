@@ -44,7 +44,7 @@
 #
 
 class Episode < ApplicationRecord
-  include DbActivityMethods
+  include DBActivityMethods
   include SoftDeletable
 
   DIFF_FIELDS = %i(

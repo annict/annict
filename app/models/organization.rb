@@ -30,7 +30,7 @@
 #
 
 class Organization < ApplicationRecord
-  include DbActivityMethods
+  include DBActivityMethods
   include RootResourceCommon
   include SoftDeletable
 

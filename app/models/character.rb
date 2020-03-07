@@ -47,7 +47,7 @@
 #
 
 class Character < ApplicationRecord
-  include DbActivityMethods
+  include DBActivityMethods
   include RootResourceCommon
   include SoftDeletable
 

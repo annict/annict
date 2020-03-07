@@ -75,7 +75,7 @@
 class Work < ApplicationRecord
   extend Enumerize
 
-  include DbActivityMethods
+  include DBActivityMethods
   include RootResourceCommon
   include SoftDeletable
 

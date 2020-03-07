@@ -46,7 +46,7 @@
 class Person < ApplicationRecord
   extend Enumerize
 
-  include DbActivityMethods
+  include DBActivityMethods
   include RootResourceCommon
   include SoftDeletable
 

@@ -33,7 +33,7 @@
 #
 
 class Cast < ApplicationRecord
-  include DbActivityMethods
+  include DBActivityMethods
   include SoftDeletable
 
   DIFF_FIELDS = %i(person_id name part sort_number character_id name_en).freeze

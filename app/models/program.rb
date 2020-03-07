@@ -31,7 +31,7 @@
 #
 
 class Program < ApplicationRecord
-  include DbActivityMethods
+  include DBActivityMethods
   include SoftDeletable
 
   DIFF_FIELDS = %i(channel_id work_id url started_at).freeze
