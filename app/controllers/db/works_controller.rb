@@ -5,7 +5,7 @@ module DB
     before_action :authenticate_user!, only: %i(new create edit update destroy)
 
     def index
-      @works = Work.order(id: :desc).page(params[:page])
+      @work_conn = WorkRepository.new(viewer: current_user).resent
     end
 
     def season

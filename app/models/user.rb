@@ -256,8 +256,16 @@ class User < ApplicationRecord
       !work_records.pluck(:work_id).include?(work.id)
   end
 
+  def admin?
+    role.admin?
+  end
+
+  def editor?
+    role.editor?
+  end
+
   def committer?
-    role.admin? || role.editor?
+    admin? || editor?
   end
 
   def friends_interested_in(work)

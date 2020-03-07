@@ -1,0 +1,25 @@
+query getWorks($after: String = "") {
+  works(orderBy: { field: CREATED_AT, direction: DESC }, first: 100, after: $after) {
+    nodes {
+      annictId
+      title
+      titleKana
+      titleEn
+      media
+      startedOn
+      syobocalTid
+      syobocalUrl
+      malAnimeId
+      malAnimeUrl
+      image {
+        internalUrl(size: "70x")
+      }
+      watchersCount
+      disappearedAt
+    }
+    pageInfo {
+      hasNextPage
+      startCursor
+    }
+  }
+}

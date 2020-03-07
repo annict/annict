@@ -1,0 +1,96 @@
+<% title = t "head.title.db.works.index" %>
+<% set_meta_tags(title: title, reverse: true, prefix: false) %>
+
+<%= render "partial_layouts/db" do %>
+  <h1>
+    <%= t("head.title.db.works.index") %>
+  </h1>
+
+  <% if policy(:db).new? %>
+    <%= link_to db_works_new_path, class: "btn btn-outline-primary" do %>
+      <%= icon "plus" %>
+      <%= t "resources.work.new_work" %>
+    <% end %>
+  <% end %>
+
+  <table class="table table-hover">
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th><%= t "noun.title" %></th>
+        <th><%= t "noun.external_services" %></th>
+        <th>Watchers</th>
+        <th><%= t "noun.release_on" %></th>
+        <th><%= t "noun.work_image" %></th>
+        <% if policy(:db).edit? %>
+          <th><%= t "noun.edit" %></th>
+        <% end %>
+        <% if policy(:db).appear? %>
+          <th><%= t "noun.state" %></th>
+        <% end %>
+        <% if policy(:db).destroy? %>
+          <th><%= t "noun.delete" %></th>
+        <% end %>
+      </tr>
+    </thead>
+    <tbody>
+      <% @work_conn.works.each do |work| %>
+        <tr>
+          <td>
+            <%= link_to work.id, work_path(work), target: "_blank" %>
+          </td>
+          <td>
+            <%= render WorkMediaLabelComponent.new(work: work) %>
+            <br>
+            <%= work.title %>
+            <br>
+            <%= work.title_kana.presence || "-" %>
+            <br>
+            <%= work.title_en.presence || "-" %>
+          </td>
+          <td>
+            <dl>
+              <dt>しょぼかる</dt>
+              <dd>
+                <%= render SyobocalLinkComponent.new(work: work) %>
+              </dd>
+              <dt>MyAnimeList</dt>
+              <dd>
+                <%= render MALLinkComponent.new(work: work) %>
+              </dd>
+            </dl>
+          </td>
+          <td>
+            <%= work.watchers_count %>
+          </td>
+          <td>
+            <%= work.started_on.presence || "-" %>
+          </td>
+          <td>
+            <%= image_tag(work.image_url, class: "rounded img-thumbnail") %>
+          </td>
+          <% if policy(:db).edit? %>
+            <td>
+              <%= link_to t("noun.edit"), db_works_edit_path(work), class: "btn btn-primary btn-sm" %>
+            </td>
+          <% end %>
+          <% if policy(:db).appear? %>
+            <td>
+              <%= render AppearanceLabelComponent.new(resource: work) %>
+              <% if work.disappeared_at %>
+                <%= link_to t("noun.publish"), db_works_appearance_path(work), class: "btn btn-warning btn-sm", data: { method: "post", confirm: t("messages._common.are_you_sure") } %>
+              <% else %>
+                <%= link_to t("noun.unpublish"), db_works_appearance_path(work), class: "btn btn-warning btn-sm", data: { method: "destroy", confirm: t("messages._common.are_you_sure") } %>
+              <% end %>
+            </td>
+          <% end %>
+          <% if policy(:db).destroy? %>
+            <td>
+              <%= link_to t("noun.delete"), db_works_detail_path(work), class: "btn btn-danger btn-sm", data: { method: "destroy", confirm: t("messages._common.are_you_sure") } %>
+            </td>
+          <% end %>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+<% end %>

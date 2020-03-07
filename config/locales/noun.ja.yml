@@ -16,6 +16,7 @@ ja:
     annict_forum: Annict Forum
     annict_userland: Annict Userland
     annict: Annict
+    appeared: 公開中
     applications: アプリケーション
     autumn: 秋
     basic_info: 基本情報
@@ -45,12 +46,14 @@ ja:
     delete: 削除
     detail: 詳細
     development_members: 開発メンバー
+    disappeared: 非公開中
     dropped: 視聴中止したアニメ
     edit: 編集
     english: 英語
     episode_number: 話数
     episodes: エピソード
     error: エラー
+    external_services: 外部サービス
     fans: ファン
     faqs: よくある質問
     favorite_characters_shorten: Characters
@@ -105,6 +108,7 @@ ja:
     previous_season: 前期のアニメ
     privacy_policy: プライバシーポリシー
     profile: プロフィール
+    publish: 非公開
     slots: 放送予定
     pv: PV
     rating: 評価

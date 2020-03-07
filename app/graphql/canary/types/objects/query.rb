@@ -57,12 +57,27 @@ module Canary
         end
 
         def works(annict_ids: nil, seasons: nil, titles: nil, order_by: nil)
-          SearchWorksQuery.new(
-            annict_ids: annict_ids,
-            seasons: seasons,
-            titles: titles,
-            order_by: order_by
-          ).call
+          collection = Work.without_deleted.all
+          collection = collection.where(id: annict_ids) if annict_ids
+          collection = collection.ransack(title_or_title_kana_cont_any: titles).result if titles
+          collection = collection.by_seasons(seasons) if seasons
+
+          if order_by
+            order = build_order(order_by)
+
+            collection = case order.field
+            when :created_at
+              collection.order(created_at: order.direction)
+            when :season
+              collection.order_by_season(order.direction)
+            when :watchers_count
+              collection.order(watchers_count: order.direction)
+            else
+              collection
+            end
+          end
+
+          collection
         end
 
         def episodes(annict_ids: nil, order_by: nil)

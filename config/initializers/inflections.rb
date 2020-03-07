@@ -17,5 +17,12 @@
 # end
 
 ActiveSupport::Inflector.inflections(:en) do |inflect|
-  inflect.acronym "DB"
+  %w(
+    API
+    DB
+    GraphQL
+    MAL
+  ).each do |name|
+    inflect.acronym(name)
+  end
 end

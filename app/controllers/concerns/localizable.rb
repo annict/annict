@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-module RequestLocalizable
+module Localizable
   SKIP_TO_SET_LOCALE_PATHS = %w(
     /users/auth/gumroad/callback
   ).freeze
@@ -17,5 +17,13 @@ module RequestLocalizable
     else
       I18n.with_locale(:ja, &action)
     end
+  end
+
+  def locale_ja?
+    locale.to_s == "ja"
+  end
+
+  def locale_en?
+    locale.to_s == "en"
   end
 end

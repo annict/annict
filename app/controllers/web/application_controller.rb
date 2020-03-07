@@ -6,7 +6,7 @@ module Web
 
     include RavenContext
     include Loggable
-    include RequestLocalizable
+    include Localizable
 
     before_action :set_raven_context
     around_action :set_locale

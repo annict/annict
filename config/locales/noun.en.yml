@@ -16,6 +16,7 @@ en:
     annict_forum: Annict Forum
     annict_userland: Annict Userland
     annict: Annict
+    appeared: Appeared
     applications: Applications
     autumn: Fall
     basic_info: Basic Info
@@ -45,12 +46,14 @@ en:
     delete: Delete
     detail: Detail
     development_members: Development Members
+    disappeared: Disappeared
     dropped: Dropped
     edit: Edit
     english: English
     episode_number: Number
     episodes: Episodes
     error: Error
+    external_services: External Services
     fans: Fans
     faqs: FAQs
     favorite_characters_shorten: Characters
@@ -105,6 +108,7 @@ en:
     previous_season: Previous Season
     privacy_policy: Privacy Policy
     profile: Profile
+    publish: Publish
     slots: Slots
     pv: PV
     rating: Rating

@@ -18,7 +18,7 @@ module Canary
         field :recommended_image_url, String, null: true
 
         field :internal_url, String,
-          null: false,
+          null: true,
           description: "このフィールドの値は公開されていません" do
           argument :size, String, required: true
         end
@@ -28,7 +28,7 @@ module Canary
         end
 
         def internal_url(size:)
-          return "" unless context[:admin]
+          return nil unless context[:admin]
 
           ann_image_url object, :image, size: size, ratio: "3:4"
         end

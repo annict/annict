@@ -1,14 +1,12 @@
 # frozen_string_literal: true
 
-module Api
+module API
   module Internal
-    class GraphqlController < ActionController::Base
-      include Analyzable
-      include LogrageSetting
+    class GraphQLController < ActionController::Base
       include RavenContext
-      include Localable
 
-      around_action :switch_locale
+      skip_before_action :verify_authenticity_token
+      before_action :set_raven_context
 
       def execute
         variables = ensure_hash(params[:variables])
@@ -19,10 +17,15 @@ module Api
           viewer: current_user
         }
         result = ::Canary::AnnictSchema.execute(query, variables: variables, context: context)
+
         render json: result
       end
 
       private
+
+      def current_user
+        User.find_by(id: params[:user_id])
+      end
 
       # Handle form data, JSON body, or a blank value
       def ensure_hash(ambiguous_param)
@@ -40,16 +43,6 @@ module Api
         else
           raise ArgumentError, "Unexpected parameter: #{ambiguous_param}"
         end
-      end
-
-      def switch_locale(&action)
-        I18n.with_locale(current_locale, &action)
-      end
-
-      def current_locale
-        return current_user.locale if user_signed_in?
-
-        domain_jp? ? :ja : :en
       end
     end
   end

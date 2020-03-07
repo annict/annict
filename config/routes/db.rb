@@ -1,127 +1,13 @@
 # frozen_string_literal: true
 
-namespace :db do
-  resources :activities, only: [:index]
-  resource :search, only: [:show]
-
-  resources :channel_groups, except: %i(show) do
-    member do
-      patch :unpublish
-    end
+scope module: :db do
+  constraints(format: "html") do
+    delete "/db/works/:id/appearance", to: "work_appearances#destroy", as: :db_works_appearance
+    post   "/db/works/:id/appearance", to: "work_appearances#create"
+    get    "/db/works/:id/edit", to: "works#edit", as: :db_works_edit
+    delete "/db/works/:id", to: "works#destroy", as: :db_works_detail
+    get    "/db/works/new", to: "works#new", as: :db_works_new
+    get    "/db/works", to: "works#index", as: :db_works
+    get    "/db", to: "home#show", as: :db
   end
-
-  resources :channels, except: %i(show) do
-    member do
-      patch :hide
-    end
-  end
-
-  resources :characters, except: [:show] do
-    member do
-      get :activities
-      patch :hide
-    end
-  end
-
-  resources :casts, only: %i(edit update destroy) do
-    member do
-      get :activities
-      patch :hide
-    end
-  end
-
-  resources :comments, only: %i(create destroy)
-
-  resources :episodes, only: %i(edit update destroy) do
-    member do
-      get :activities
-      patch :hide
-    end
-  end
-
-  resources :organizations, except: [:show] do
-    member do
-      get :activities
-      patch :hide
-    end
-  end
-
-  resources :people, except: [:show] do
-    member do
-      get :activities
-      patch :hide
-    end
-  end
-
-  resources :slots, only: %i(edit update destroy) do
-    member do
-      get :activities
-      patch :hide
-    end
-  end
-
-  resources :trailers, only: %i(edit update destroy) do
-    member do
-      get :activities
-      patch :hide
-    end
-  end
-
-  resources :series, only: %i(index new create edit update destroy) do
-    member do
-      get :activities
-      patch :hide
-    end
-
-    resources :series_works, only: %i(index new create)
-  end
-
-  resources :series_works, only: %i(edit update destroy) do
-    member do
-      get :activities
-      patch :hide
-    end
-  end
-
-  resources :staffs, only: %i(edit update destroy) do
-    member do
-      get :activities
-      patch :hide
-    end
-  end
-
-  resources :programs, only: %i(edit update destroy) do
-    member do
-      get :activities
-      patch :hide
-    end
-  end
-
-  resources :vod_titles, only: %i(index) do
-    member do
-      patch :hide
-    end
-  end
-
-  resources :works, except: [:show] do
-    collection do
-      get :season
-      get :resourceless
-    end
-
-    member do
-      get :activities
-      patch :hide
-    end
-
-    resource :image, controller: :work_images, only: %i(show create update destroy)
-    resources :casts, only: %i(index new create)
-    resources :episodes, only: %i(index new create)
-    resources :slots, only: %i(index new create)
-    resources :trailers, only: %i(index new create)
-    resources :staffs, only: %i(index new create)
-    resources :programs, only: %i(index new create)
-  end
-
-  root "home#show"
 end

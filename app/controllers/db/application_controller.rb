@@ -6,12 +6,14 @@ module DB
 
     include RavenContext
     include Loggable
-    include RequestLocalizable
+    include Localizable
 
     before_action :set_raven_context
     around_action :set_locale
 
     rescue_from Pundit::NotAuthorizedError, with: :user_not_authorized
+
+    helper_method :locale_ja?, :locale_en?
 
     private
 

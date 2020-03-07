@@ -77,7 +77,9 @@ class Work < ApplicationRecord
 
   include DBActivityMethods
   include RootResourceCommon
+  include Appearable
   include SoftDeletable
+  include Publishable
 
   DIFF_FIELDS = %i(
     sc_tid title title_kana title_en media official_site_url

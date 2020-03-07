@@ -18,7 +18,7 @@ module Canary
           null: false,
           description: "タイトル"
 
-        field :title_Kana, String,
+        field :title_kana, String,
           null: true,
           description: "タイトル (かな)"
 
@@ -81,10 +81,16 @@ module Canary
         field :twitter_hashtag, String,
           null: true
 
-        field :syobocal_tid, Integer,
+        field :syobocal_tid, String,
+          null: true
+
+        field :syobocal_url, String,
           null: true
 
         field :mal_anime_id, String,
+          null: true
+
+        field :mal_anime_url, String,
           null: true
 
         field :image, Canary::Types::Objects::WorkImageType,
@@ -141,6 +147,9 @@ module Canary
 
         field :local_synopsis_source, String,
           null: false
+
+        field :disappeared_at, Canary::Types::Scalars::DateTime,
+          null: true
 
         field :episodes, Canary::Types::Objects::EpisodeType.connection_type, null: true do
           argument :order_by, Canary::Types::InputObjects::EpisodeOrder, required: false
@@ -243,9 +252,9 @@ module Canary
         end
 
         def image
-          return WorkImage.new unless object.work_image&.id
-
-          Canary::RecordLoader.for(WorkImage).load(object.work_image.id)
+          Canary::RecordLoader.for(WorkImage, column: :work_id).load(object.id).then do |work_image|
+            work_image || WorkImage.new
+          end
         end
 
         def copyright
