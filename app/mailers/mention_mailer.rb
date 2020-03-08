@@ -20,7 +20,7 @@ class MentionMailer < ActionMailer::Base
 
   def reply_path(resource)
     case resource.class.name
-    when "DbComment"
+    when "DBComment"
       "/db/#{resource.resource_type.tableize}/#{resource.resource_id}/activities"
     end
   end

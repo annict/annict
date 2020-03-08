@@ -23,7 +23,7 @@
 #  fk_rails_...  (user_id => users.id)
 #
 
-class DbComment < ApplicationRecord
+class DBComment < ApplicationRecord
   include Mentionable
   include Localizable
 
@@ -36,7 +36,7 @@ class DbComment < ApplicationRecord
   after_commit -> { notify_mentioned_users(:body) }
 
   def create_db_activity!
-    DbActivity.create! do |a|
+    DBActivity.create! do |a|
       a.user = user
       a.root_resource = resource.root_resource
       a.trackable = resource

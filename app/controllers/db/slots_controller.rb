@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
-module Db
-  class SlotsController < Db::ApplicationController
+module DB
+  class SlotsController < DB::ApplicationController
     before_action :authenticate_user!
 
     def index
@@ -14,7 +14,7 @@ module Db
     def new
       @work = Work.find(params[:work_id])
       @programs = @work.programs.without_deleted.where.not(started_at: nil).order(:started_at, :id)
-      @form = Db::SlotRowsForm.new
+      @form = DB::SlotRowsForm.new
       @form.work = @work
       @form.set_default_rows_by_programs(params[:program_ids]) if params[:program_ids]
       authorize @form, :new?
@@ -22,7 +22,7 @@ module Db
 
     def create
       @work = Work.find(params[:work_id])
-      @form = Db::SlotRowsForm.new(slot_rows_form)
+      @form = DB::SlotRowsForm.new(slot_rows_form)
       @form.user = current_user
       @form.work = @work
       authorize @form, :create?

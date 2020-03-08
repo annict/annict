@@ -1,9 +1,9 @@
 # frozen_string_literal: true
 
-module DbCommentDecorator
+module DBCommentDecorator
   def detail_url
     case model.class.name
-    when "DbComment"
+    when "DBComment"
       case resource_type
       when "Work"
         "/works/#{resource.id}/activities##{anchor}"

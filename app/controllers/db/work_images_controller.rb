@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
-module Db
-  class WorkImagesController < Db::ApplicationController
+module DB
+  class WorkImagesController < DB::ApplicationController
     before_action :authenticate_user!
 
     def show

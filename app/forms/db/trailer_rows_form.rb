@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-module Db
+module DB
   class TrailerRowsForm
     include ActiveModel::Model
     include Virtus.model

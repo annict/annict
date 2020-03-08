@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
-module Db
-  class HomeController < Db::ApplicationController
+module DB
+  class HomeController < DB::ApplicationController
     def show; end
   end
 end

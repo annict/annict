@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
-module Api
-  class GraphqlController < ActionController::Base
+module API
+  class GraphQLController < ActionController::Base
     include Analyzable
     include LogrageSetting
     include RavenContext

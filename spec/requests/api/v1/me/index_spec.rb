@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-describe "Api::V1::Me::Index" do
+describe "API::V1::Me::Index" do
   describe "GET /v1/me" do
     let(:user) { create(:user, :with_profile) }
     let(:access_token) { create(:oauth_access_token, owner: user) }

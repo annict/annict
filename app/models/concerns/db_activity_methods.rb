@@ -35,7 +35,7 @@ module DBActivityMethods
     new_attrs = to_attributes
     return if old_attrs == new_attrs
 
-    DbActivity.create! do |a|
+    DBActivity.create! do |a|
       a.user = @user
       a.root_resource = root_resource
       a.trackable = self

@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
-module Api
+module API
   module Internal
-    class MultipleRecordsController < Api::Internal::ApplicationController
+    class MultipleRecordsController < API::Internal::ApplicationController
       before_action :authenticate_user!
 
       def create

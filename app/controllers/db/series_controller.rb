@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
-module Db
-  class SeriesController < Db::ApplicationController
+module DB
+  class SeriesController < DB::ApplicationController
     before_action :authenticate_user!, only: %i(new create edit update hide destroy)
 
     def index

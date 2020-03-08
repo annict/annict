@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-module DbActivityDecorator
+module DBActivityDecorator
   def resource_diff_table
     return if action_table_name == "comments"
     model = trackable.class

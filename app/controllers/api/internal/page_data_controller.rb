@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
-module Api
+module API
   module Internal
-    class PageDataController < Api::Internal::ApplicationController
+    class PageDataController < API::Internal::ApplicationController
       before_action :authenticate_user!, only: %i(index)
 
       def index

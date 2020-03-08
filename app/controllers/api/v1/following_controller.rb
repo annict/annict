@@ -1,13 +1,13 @@
 # frozen_string_literal: true
 
-module Api
+module API
   module V1
-    class FollowingController < Api::V1::ApplicationController
+    class FollowingController < API::V1::ApplicationController
       before_action :prepare_params!, only: %i(index)
 
       def index
         follows = Follow.includes(following: :profile)
-        @follows = Api::V1::FollowingIndexService.new(follows, @params).result
+        @follows = API::V1::FollowingIndexService.new(follows, @params).result
       end
     end
   end

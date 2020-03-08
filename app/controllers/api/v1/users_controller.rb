@@ -1,12 +1,12 @@
 # frozen_string_literal: true
 
-module Api
+module API
   module V1
-    class UsersController < Api::V1::ApplicationController
+    class UsersController < API::V1::ApplicationController
       before_action :prepare_params!, only: %i(index)
 
       def index
-        @users = Api::V1::UserIndexService.new(User.all, @params).result
+        @users = API::V1::UserIndexService.new(User.all, @params).result
       end
     end
   end

@@ -1,13 +1,13 @@
 # frozen_string_literal: true
 
-module Api
+module API
   module V1
-    class CharactersController < Api::V1::ApplicationController
+    class CharactersController < API::V1::ApplicationController
       before_action :prepare_params!, only: %i(index)
 
       def index
         @characters = Character.without_deleted
-        @characters = Api::V1::CharacterIndexService.new(@characters, @params).result
+        @characters = API::V1::CharacterIndexService.new(@characters, @params).result
       end
     end
   end

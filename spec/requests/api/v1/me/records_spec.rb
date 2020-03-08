@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-describe "Api::V1::Me::Records" do
+describe "API::V1::Me::Records" do
   let(:user) { create(:user, :with_profile, :with_setting) }
   let(:application) { create(:oauth_application, owner: user) }
   let(:access_token) { create(:oauth_access_token, application: application) }

@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-module Api
+module API
   module Internal
     class ApplicationController < ActionController::Base
       include ControllerCommon

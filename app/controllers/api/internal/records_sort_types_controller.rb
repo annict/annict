@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
-module Api
+module API
   module Internal
-    class RecordsSortTypesController < Api::Internal::ApplicationController
+    class RecordsSortTypesController < API::Internal::ApplicationController
       before_action :authenticate_user!
 
       def update

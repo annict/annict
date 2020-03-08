@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-describe "Api::V1::Records" do
+describe "API::V1::Records" do
   before do
     Timecop.freeze(Time.parse("2017-01-29 08:39:04"))
   end

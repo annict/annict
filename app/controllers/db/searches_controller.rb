@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
-module Db
-  class SearchesController < Db::ApplicationController
+module DB
+  class SearchesController < DB::ApplicationController
     def show
       @series_list = @search.series_list.order(id: :desc)
       @works = @search.works.

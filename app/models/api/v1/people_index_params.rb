@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-module Api
+module API
   module V1
     class PeopleIndexParams
       include ActiveParameter

@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-describe "Api::V1::Characters" do
+describe "API::V1::Characters" do
   let(:access_token) { create(:oauth_access_token) }
   let!(:character) { create(:character) }
 

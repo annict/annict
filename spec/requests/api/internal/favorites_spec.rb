@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-describe "Api::Internal::Favorites" do
+describe "API::Internal::Favorites" do
   let!(:user) { create(:registered_user) }
 
   describe "POST /api/internal/favorites/unfavorite" do

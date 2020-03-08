@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
-module Api
+module API
   module Internal
-    class StatisticsController < Api::Internal::ApplicationController
+    class StatisticsController < API::Internal::ApplicationController
       include TimeZoneHelper
 
       def user_heatmap

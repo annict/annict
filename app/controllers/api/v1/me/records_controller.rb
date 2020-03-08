@@ -1,9 +1,9 @@
 # frozen_string_literal: true
 
-module Api
+module API
   module V1
     module Me
-      class RecordsController < Api::V1::ApplicationController
+      class RecordsController < API::V1::ApplicationController
         before_action :prepare_params!, only: %i(create update destroy)
 
         def create

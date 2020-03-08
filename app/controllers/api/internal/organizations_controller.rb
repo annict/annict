@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
-module Api
+module API
   module Internal
-    class OrganizationsController < Api::Internal::ApplicationController
+    class OrganizationsController < API::Internal::ApplicationController
       def index
         q = params[:q]
         @organizations = if q

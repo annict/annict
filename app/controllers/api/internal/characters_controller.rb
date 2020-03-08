@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
-module Api
+module API
   module Internal
-    class CharactersController < Api::Internal::ApplicationController
+    class CharactersController < API::Internal::ApplicationController
       def index
         @characters = if params[:q].present?
           Character.where("name ILIKE ?", "%#{params[:q]}%").without_deleted

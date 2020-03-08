@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-module ApiHelpers
+module APIHelpers
   def api(path, data = {})
     return path if data.blank?
 
@@ -18,5 +18,5 @@ RSpec.configure do |config|
     host! "api.annict.test:3000"
   end
 
-  config.include ApiHelpers, type: :request
+  config.include APIHelpers, type: :request
 end

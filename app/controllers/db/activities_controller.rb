@@ -1,9 +1,9 @@
 # frozen_string_literal: true
 
-module Db
-  class ActivitiesController < Db::ApplicationController
+module DB
+  class ActivitiesController < DB::ApplicationController
     def index
-      @activities = DbActivity.
+      @activities = DBActivity.
         includes(:trackable, :root_resource, user: :profile).
         order(id: :desc).
         page(params[:page])

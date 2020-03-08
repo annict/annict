@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
-module Api
+module API
   module V1
-    class WorkRecordIndexService < Api::V1::BaseService
+    class WorkRecordIndexService < API::V1::BaseService
       def result
         @collection = filter_ids
         @collection = filter_work_id

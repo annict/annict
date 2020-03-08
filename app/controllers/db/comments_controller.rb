@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
-module Db
-  class CommentsController < Db::ApplicationController
+module DB
+  class CommentsController < DB::ApplicationController
     before_action :authenticate_user!
 
     def create

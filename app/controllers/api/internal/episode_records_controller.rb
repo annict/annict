@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
-module Api
+module API
   module Internal
-    class EpisodeRecordsController < Api::Internal::ApplicationController
+    class EpisodeRecordsController < API::Internal::ApplicationController
       before_action :authenticate_user!, only: %i(create)
 
       def create

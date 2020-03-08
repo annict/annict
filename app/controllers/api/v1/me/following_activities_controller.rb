@@ -1,9 +1,9 @@
 # frozen_string_literal: true
 
-module Api
+module API
   module V1
     module Me
-      class FollowingActivitiesController < Api::V1::ApplicationController
+      class FollowingActivitiesController < API::V1::ApplicationController
         before_action :prepare_params!, only: %i(index)
 
         def index
@@ -12,7 +12,7 @@ module Api
           activities = Activity.
             where(user_id: following_ids).
             includes(:recipient, :trackable, user: :profile)
-          service = Api::V1::Me::FollowingActivityIndexService.new(activities, @params)
+          service = API::V1::Me::FollowingActivityIndexService.new(activities, @params)
           service.user = current_user
           @activities = service.result
         end
