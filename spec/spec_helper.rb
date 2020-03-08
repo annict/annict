@@ -25,7 +25,7 @@ Dir[
 ActiveRecord::Migration.check_pending! if defined?(ActiveRecord::Migration)
 
 Capybara.default_max_wait_time = 5
-Capybara.server_host = Socket.ip_address_list.detect{ |addr| addr.ipv4_private? }.ip_address
+Capybara.server_host = Socket.ip_address_list.detect(&:ipv4_private?).ip_address
 Capybara.server_port = ENV.fetch("CAPYBARA_SERVER_PORT")
 
 RSpec.configure do |config|
