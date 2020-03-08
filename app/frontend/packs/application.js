@@ -1,4 +1,4 @@
-import '../javascript/application'
-import '../stylesheets/application'
+import '../javascript/application';
+import '../stylesheets/application';
 
-require.context('images', true, /\.(jpg|jpeg|png|svg)$/)
+require.context('images', true, /\.(jpg|jpeg|png|svg)$/);
