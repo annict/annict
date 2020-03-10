@@ -9,14 +9,14 @@ export default {
   props: {
     text: {
       type: String,
-      required: true
-    }
+      required: true,
+    },
   },
 
   data() {
     return {
       shortenText: _.truncate(this.text, { length: 100 }),
-      canViewFullSynopsis: false
+      canViewFullSynopsis: false,
     };
   },
 
@@ -27,11 +27,10 @@ export default {
 
     expand() {
       return (this.canViewFullSynopsis = true);
-    }
+    },
   },
 
   mounted() {
-    return (this.canViewFullSynopsis =
-      this.text.length === this.shortenText.length);
-  }
+    return (this.canViewFullSynopsis = this.text.length === this.shortenText.length);
+  },
 };

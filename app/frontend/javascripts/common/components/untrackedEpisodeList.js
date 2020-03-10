@@ -1,8 +1,8 @@
-import $ from 'jquery'
-import _ from 'lodash'
+import $ from 'jquery';
+import _ from 'lodash';
 
-import eventHub from '../../common/eventHub'
-import vueLazyLoad from '../../common/vueLazyLoad'
+import eventHub from '../../common/eventHub';
+import vueLazyLoad from '../../common/vueLazyLoad';
 
 export default {
   template: '#t-untracked-episode-list',
@@ -13,19 +13,19 @@ export default {
       libraryEntries: [],
       user: null,
       gon: {},
-    }
+    };
   },
 
   methods: {
     load() {
-      this.libraryEntries = _.each(this._latestStatusData().library_entries, this._initLibraryEntry)
-      this.user = this._latestStatusData().user
-      this.isLoading = false
-      return this.$nextTick(() => vueLazyLoad.refresh())
+      this.libraryEntries = _.each(this._latestStatusData().library_entries, this._initLibraryEntry);
+      this.user = this._latestStatusData().user;
+      this.isLoading = false;
+      return this.$nextTick(() => vueLazyLoad.refresh());
     },
 
     filterNoNextEpisode(libraryEntries) {
-      return libraryEntries.filter(latestStatus => !!latestStatus.next_episode)
+      return libraryEntries.filter(latestStatus => !!latestStatus.next_episode);
     },
 
     skipEpisode(latestStatus) {
@@ -34,18 +34,18 @@ export default {
           method: 'PATCH',
           url: `/api/internal/library_entries/${latestStatus.id}/skip_episode`,
         }).done(latestStatus => {
-          const index = this._getLibraryEntryIndex(latestStatus)
-          return this.$set(this.libraryEntries, index, this._initLibraryEntry(latestStatus))
-        })
+          const index = this._getLibraryEntryIndex(latestStatus);
+          return this.$set(this.libraryEntries, index, this._initLibraryEntry(latestStatus));
+        });
       }
     },
 
     postRecord(latestStatus) {
       if (latestStatus.record.isSaving) {
-        return
+        return;
       }
 
-      latestStatus.record.isSaving = true
+      latestStatus.record.isSaving = true;
 
       return $.ajax({
         method: 'POST',
@@ -64,16 +64,16 @@ export default {
             method: 'GET',
             url: `/api/internal/works/${latestStatus.work.id}/library_entry`,
           }).done(newLibraryEntry => {
-            eventHub.$emit('flash:show', this._flashMessage(latestStatus))
-            const index = this._getLibraryEntryIndex(newLibraryEntry)
-            return this.$set(this.libraryEntries, index, this._initLibraryEntry(newLibraryEntry))
-          })
+            eventHub.$emit('flash:show', this._flashMessage(latestStatus));
+            const index = this._getLibraryEntryIndex(newLibraryEntry);
+            return this.$set(this.libraryEntries, index, this._initLibraryEntry(newLibraryEntry));
+          });
         })
         .fail(function(data) {
-          latestStatus.record.isSaving = false
-          const msg = (data.responseJSON != null ? data.responseJSON.message : undefined) || 'Error'
-          return eventHub.$emit('flash:show', msg, 'alert')
-        })
+          latestStatus.record.isSaving = false;
+          const msg = (data.responseJSON != null ? data.responseJSON.message : undefined) || 'Error';
+          return eventHub.$emit('flash:show', msg, 'alert');
+        });
     },
 
     _initLibraryEntry(latestStatus) {
@@ -85,12 +85,12 @@ export default {
         uid: _.uniqueId(),
         wordCount: 0,
         commentRows: 1,
-      }
-      return latestStatus
+      };
+      return latestStatus;
     },
 
     _getLibraryEntryIndex(latestStatus) {
-      return _.findIndex(this.libraryEntries, status => status.id === latestStatus.id)
+      return _.findIndex(this.libraryEntries, status => status.id === latestStatus.id);
     },
 
     _flashMessage(latestStatus) {
@@ -98,20 +98,20 @@ export default {
 <a href='/works/${latestStatus.work.id}/episodes/${latestStatus.next_episode.id}'>
   ${this.gon.I18n['messages.tracks.see_records']}
 </a>\
-`
-      return `${this.gon.I18n['messages.tracks.tracked']} ${episodeLink}`
+`;
+      return `${this.gon.I18n['messages.tracks.tracked']} ${episodeLink}`;
     },
 
     _latestStatusData() {
       if (!this.gon.latestStatusData) {
-        return {}
+        return {};
       }
-      return JSON.parse(this.gon.latestStatusData)
+      return JSON.parse(this.gon.latestStatusData);
     },
   },
 
   mounted() {
-    this.gon = window.gon
-    return this.load()
+    this.gon = window.gon;
+    return this.load();
   },
-}
+};

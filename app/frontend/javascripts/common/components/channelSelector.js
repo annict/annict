@@ -7,24 +7,24 @@ export default {
   props: {
     workId: {
       type: Number,
-      required: true
+      required: true,
     },
 
     initChannelId: {
       type: String,
-      required: true
+      required: true,
     },
 
     options: {
       type: Array,
-      required: true
-    }
+      required: true,
+    },
   },
 
   data() {
     return {
       channelId: this.initChannelId,
-      isSaving: false
+      isSaving: false,
     };
   },
 
@@ -36,11 +36,11 @@ export default {
         method: 'POST',
         url: `/api/internal/works/${this.workId}/channels/select`,
         data: {
-          channel_id: this.channelId
-        }
+          channel_id: this.channelId,
+        },
       }).done(() => {
         return (this.isSaving = false);
       });
-    }
-  }
+    },
+  },
 };

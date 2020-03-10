@@ -8,8 +8,8 @@ export default {
   props: {
     username: {
       type: String,
-      required: true
-    }
+      required: true,
+    },
   },
 
   mounted() {
@@ -18,7 +18,7 @@ export default {
       '/api/internal/statistics/user_heatmap',
       `?username=${this.username}`,
       '&start_date={{d:start}}',
-      '&end_date={{d:end}}'
+      '&end_date={{d:end}}',
     ].join('');
 
     return cal.init({
@@ -37,8 +37,8 @@ export default {
       legendColors: {
         empty: '#ededed',
         min: '#fdd6dc',
-        max: '#f85b73'
-      }
+        max: '#f85b73',
+      },
     });
-  }
+  },
 };

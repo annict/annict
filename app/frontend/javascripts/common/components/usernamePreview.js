@@ -7,7 +7,7 @@ export default {
   data() {
     return {
       message: gon.I18n['messages.registrations.new.username_preview'],
-      username: $('#user_username').val() || ''
+      username: $('#user_username').val() || '',
     };
   },
 
@@ -16,5 +16,5 @@ export default {
     return $('#user_username').on('change paste keyup', function() {
       return (self.username = $(this).val());
     });
-  }
+  },
 };

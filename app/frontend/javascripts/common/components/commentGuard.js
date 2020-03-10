@@ -9,11 +9,11 @@ export default {
   props: {
     initIsSpoiler: {
       type: Boolean,
-      default: true
+      default: true,
     },
     activity: {
-      type: Object
-    }
+      type: Object,
+    },
   },
 
   methods: {
@@ -22,7 +22,7 @@ export default {
         .children()
         .removeClass('c-comment-guard');
       return (this.isSpoiler = false);
-    }
+    },
   },
 
   mounted() {
@@ -31,5 +31,5 @@ export default {
         .children()
         .addClass('c-comment-guard');
     }
-  }
+  },
 };

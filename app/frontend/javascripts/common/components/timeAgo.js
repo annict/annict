@@ -15,8 +15,8 @@ export default {
   props: {
     time: {
       type: String,
-      required: true
-    }
+      required: true,
+    },
   },
 
   data() {
@@ -40,6 +40,6 @@ export default {
 
     timeAgoDetail() {
       return this.datetime.format('YYYY/MM/DD HH:mm');
-    }
-  }
+    },
+  },
 };
