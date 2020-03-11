@@ -10,20 +10,6 @@ SET client_min_messages = warning;
 SET row_security = off;
 
 --
--- Name: plpgsql; Type: EXTENSION; Schema: -; Owner: -
---
-
-CREATE EXTENSION IF NOT EXISTS plpgsql WITH SCHEMA pg_catalog;
-
-
---
--- Name: EXTENSION plpgsql; Type: COMMENT; Schema: -; Owner: -
---
-
-COMMENT ON EXTENSION plpgsql IS 'PL/pgSQL procedural language';
-
-
---
 -- Name: citext; Type: EXTENSION; Schema: -; Owner: -
 --
 
@@ -65,28 +51,26 @@ CREATE SEQUENCE public.activities_id_seq
 
 SET default_tablespace = '';
 
-SET default_with_oids = false;
-
 --
 -- Name: activities; Type: TABLE; Schema: public; Owner: -
 --
 
 CREATE TABLE public.activities (
-    id integer DEFAULT nextval('public.activities_id_seq'::regclass) NOT NULL,
-    user_id integer NOT NULL,
-    recipient_id integer NOT NULL,
+    id bigint DEFAULT nextval('public.activities_id_seq'::regclass) NOT NULL,
+    user_id bigint NOT NULL,
+    recipient_id bigint NOT NULL,
     recipient_type character varying(510) NOT NULL,
-    trackable_id integer NOT NULL,
+    trackable_id bigint NOT NULL,
     trackable_type character varying(510) NOT NULL,
     action character varying(510) NOT NULL,
     created_at timestamp with time zone,
     updated_at timestamp with time zone,
-    work_id integer,
-    episode_id integer,
-    status_id integer,
-    episode_record_id integer,
-    multiple_episode_record_id integer,
-    work_record_id integer
+    work_id bigint,
+    episode_id bigint,
+    status_id bigint,
+    episode_record_id bigint,
+    multiple_episode_record_id bigint,
+    work_record_id bigint
 );
 
 
@@ -107,17 +91,18 @@ CREATE TABLE public.ar_internal_metadata (
 --
 
 CREATE TABLE public.casts (
-    id integer NOT NULL,
-    person_id integer NOT NULL,
-    work_id integer NOT NULL,
+    id bigint NOT NULL,
+    person_id bigint NOT NULL,
+    work_id bigint NOT NULL,
     name character varying NOT NULL,
     aasm_state character varying DEFAULT 'published'::character varying NOT NULL,
     sort_number integer DEFAULT 0 NOT NULL,
     created_at timestamp without time zone NOT NULL,
     updated_at timestamp without time zone NOT NULL,
-    character_id integer NOT NULL,
+    character_id bigint NOT NULL,
     name_en character varying DEFAULT ''::character varying NOT NULL,
-    deleted_at timestamp without time zone
+    deleted_at timestamp without time zone,
+    unpublished_at timestamp without time zone
 );
 
 
@@ -157,13 +142,14 @@ CREATE SEQUENCE public.channel_groups_id_seq
 --
 
 CREATE TABLE public.channel_groups (
-    id integer DEFAULT nextval('public.channel_groups_id_seq'::regclass) NOT NULL,
+    id bigint DEFAULT nextval('public.channel_groups_id_seq'::regclass) NOT NULL,
     sc_chgid character varying(510),
     name character varying(510) NOT NULL,
     sort_number integer DEFAULT 0 NOT NULL,
     created_at timestamp with time zone,
     updated_at timestamp with time zone,
-    deleted_at timestamp without time zone
+    deleted_at timestamp without time zone,
+    unpublished_at timestamp without time zone
 );
 
 
@@ -184,10 +170,10 @@ CREATE SEQUENCE public.channel_works_id_seq
 --
 
 CREATE TABLE public.channel_works (
-    id integer DEFAULT nextval('public.channel_works_id_seq'::regclass) NOT NULL,
-    user_id integer NOT NULL,
-    work_id integer NOT NULL,
-    channel_id integer NOT NULL,
+    id bigint DEFAULT nextval('public.channel_works_id_seq'::regclass) NOT NULL,
+    user_id bigint NOT NULL,
+    work_id bigint NOT NULL,
+    channel_id bigint NOT NULL,
     created_at timestamp with time zone,
     updated_at timestamp with time zone
 );
@@ -210,17 +196,18 @@ CREATE SEQUENCE public.channels_id_seq
 --
 
 CREATE TABLE public.channels (
-    id integer DEFAULT nextval('public.channels_id_seq'::regclass) NOT NULL,
-    channel_group_id integer NOT NULL,
+    id bigint DEFAULT nextval('public.channels_id_seq'::regclass) NOT NULL,
+    channel_group_id bigint NOT NULL,
     sc_chid integer,
-    name character varying COLLATE pg_catalog."C" NOT NULL,
+    name character varying NOT NULL COLLATE pg_catalog."C",
     created_at timestamp with time zone,
     updated_at timestamp with time zone,
     vod boolean DEFAULT false,
     aasm_state character varying DEFAULT 'published'::character varying NOT NULL,
     sort_number integer DEFAULT 0 NOT NULL,
     deleted_at timestamp without time zone,
-    name_alter character varying DEFAULT ''::character varying NOT NULL
+    name_alter character varying DEFAULT ''::character varying NOT NULL,
+    unpublished_at timestamp without time zone
 );
 
 
@@ -229,9 +216,9 @@ CREATE TABLE public.channels (
 --
 
 CREATE TABLE public.character_images (
-    id integer NOT NULL,
-    character_id integer NOT NULL,
-    user_id integer NOT NULL,
+    id bigint NOT NULL,
+    character_id bigint NOT NULL,
+    user_id bigint NOT NULL,
     attachment_file_name character varying NOT NULL,
     attachment_file_size integer NOT NULL,
     attachment_content_type character varying NOT NULL,
@@ -267,7 +254,7 @@ ALTER SEQUENCE public.character_images_id_seq OWNED BY public.character_images.i
 --
 
 CREATE TABLE public.characters (
-    id integer NOT NULL,
+    id bigint NOT NULL,
     name character varying NOT NULL,
     name_kana character varying DEFAULT ''::character varying NOT NULL,
     name_en character varying DEFAULT ''::character varying NOT NULL,
@@ -295,8 +282,9 @@ CREATE TABLE public.characters (
     description_source character varying DEFAULT ''::character varying NOT NULL,
     description_source_en character varying DEFAULT ''::character varying NOT NULL,
     favorite_users_count integer DEFAULT 0 NOT NULL,
-    series_id integer,
-    deleted_at timestamp without time zone
+    series_id bigint,
+    deleted_at timestamp without time zone,
+    unpublished_at timestamp without time zone
 );
 
 
@@ -325,9 +313,9 @@ ALTER SEQUENCE public.characters_id_seq OWNED BY public.characters.id;
 
 CREATE TABLE public.collection_items (
     id bigint NOT NULL,
-    user_id integer NOT NULL,
-    collection_id integer NOT NULL,
-    work_id integer NOT NULL,
+    user_id bigint NOT NULL,
+    collection_id bigint NOT NULL,
+    work_id bigint NOT NULL,
     title character varying NOT NULL,
     comment text,
     aasm_state character varying DEFAULT 'published'::character varying NOT NULL,
@@ -364,7 +352,7 @@ ALTER SEQUENCE public.collection_items_id_seq OWNED BY public.collection_items.i
 
 CREATE TABLE public.collections (
     id bigint NOT NULL,
-    user_id integer NOT NULL,
+    user_id bigint NOT NULL,
     title character varying NOT NULL,
     description character varying,
     aasm_state character varying DEFAULT 'published'::character varying NOT NULL,
@@ -412,14 +400,14 @@ CREATE SEQUENCE public.comments_id_seq
 --
 
 CREATE TABLE public.comments (
-    id integer DEFAULT nextval('public.comments_id_seq'::regclass) NOT NULL,
-    user_id integer NOT NULL,
-    episode_record_id integer NOT NULL,
+    id bigint DEFAULT nextval('public.comments_id_seq'::regclass) NOT NULL,
+    user_id bigint NOT NULL,
+    episode_record_id bigint NOT NULL,
     body text NOT NULL,
     likes_count integer DEFAULT 0 NOT NULL,
     created_at timestamp with time zone,
     updated_at timestamp with time zone,
-    work_id integer,
+    work_id bigint,
     locale character varying DEFAULT 'other'::character varying NOT NULL
 );
 
@@ -441,17 +429,17 @@ CREATE SEQUENCE public.cover_images_id_seq
 --
 
 CREATE TABLE public.db_activities (
-    id integer NOT NULL,
-    user_id integer NOT NULL,
-    trackable_id integer NOT NULL,
+    id bigint NOT NULL,
+    user_id bigint NOT NULL,
+    trackable_id bigint NOT NULL,
     trackable_type character varying NOT NULL,
     action character varying NOT NULL,
     parameters json,
     created_at timestamp without time zone NOT NULL,
     updated_at timestamp without time zone NOT NULL,
-    root_resource_id integer,
+    root_resource_id bigint,
     root_resource_type character varying,
-    object_id integer,
+    object_id bigint,
     object_type character varying
 );
 
@@ -480,9 +468,9 @@ ALTER SEQUENCE public.db_activities_id_seq OWNED BY public.db_activities.id;
 --
 
 CREATE TABLE public.db_comments (
-    id integer NOT NULL,
-    user_id integer NOT NULL,
-    resource_id integer NOT NULL,
+    id bigint NOT NULL,
+    user_id bigint NOT NULL,
+    resource_id bigint NOT NULL,
     resource_type character varying NOT NULL,
     body text NOT NULL,
     created_at timestamp without time zone NOT NULL,
@@ -515,7 +503,7 @@ ALTER SEQUENCE public.db_comments_id_seq OWNED BY public.db_comments.id;
 --
 
 CREATE TABLE public.delayed_jobs (
-    id integer NOT NULL,
+    id bigint NOT NULL,
     priority integer DEFAULT 0 NOT NULL,
     attempts integer DEFAULT 0 NOT NULL,
     handler text NOT NULL,
@@ -554,8 +542,8 @@ ALTER SEQUENCE public.delayed_jobs_id_seq OWNED BY public.delayed_jobs.id;
 --
 
 CREATE TABLE public.email_notifications (
-    id integer NOT NULL,
-    user_id integer NOT NULL,
+    id bigint NOT NULL,
+    user_id bigint NOT NULL,
     unsubscription_key character varying NOT NULL,
     event_followed_user boolean DEFAULT true NOT NULL,
     event_liked_episode_record boolean DEFAULT true NOT NULL,
@@ -593,10 +581,10 @@ ALTER SEQUENCE public.email_notifications_id_seq OWNED BY public.email_notificat
 
 CREATE TABLE public.episode_items (
     id bigint NOT NULL,
-    episode_id integer NOT NULL,
-    item_id integer NOT NULL,
-    user_id integer NOT NULL,
-    work_id integer NOT NULL,
+    episode_id bigint NOT NULL,
+    item_id bigint NOT NULL,
+    user_id bigint NOT NULL,
+    work_id bigint NOT NULL,
     aasm_state character varying DEFAULT 'published'::character varying NOT NULL,
     created_at timestamp without time zone NOT NULL,
     updated_at timestamp without time zone NOT NULL
@@ -639,9 +627,9 @@ CREATE SEQUENCE public.episode_records_id_seq
 --
 
 CREATE TABLE public.episode_records (
-    id integer DEFAULT nextval('public.episode_records_id_seq'::regclass) NOT NULL,
-    user_id integer NOT NULL,
-    episode_id integer NOT NULL,
+    id bigint DEFAULT nextval('public.episode_records_id_seq'::regclass) NOT NULL,
+    user_id bigint NOT NULL,
+    episode_id bigint NOT NULL,
     body text,
     modify_body boolean DEFAULT false NOT NULL,
     twitter_url_hash character varying(510) DEFAULT NULL::character varying,
@@ -654,15 +642,15 @@ CREATE TABLE public.episode_records (
     updated_at timestamp with time zone,
     shared_twitter boolean DEFAULT false NOT NULL,
     shared_facebook boolean DEFAULT false NOT NULL,
-    work_id integer NOT NULL,
+    work_id bigint NOT NULL,
     rating double precision,
-    multiple_episode_record_id integer,
-    oauth_application_id integer,
+    multiple_episode_record_id bigint,
+    oauth_application_id bigint,
     rating_state character varying,
-    review_id integer,
+    review_id bigint,
     aasm_state character varying DEFAULT 'published'::character varying NOT NULL,
     locale character varying DEFAULT 'other'::character varying NOT NULL,
-    record_id integer NOT NULL,
+    record_id bigint NOT NULL,
     deleted_at timestamp without time zone
 );
 
@@ -684,8 +672,8 @@ CREATE SEQUENCE public.episodes_id_seq
 --
 
 CREATE TABLE public.episodes (
-    id integer DEFAULT nextval('public.episodes_id_seq'::regclass) NOT NULL,
-    work_id integer NOT NULL,
+    id bigint DEFAULT nextval('public.episodes_id_seq'::regclass) NOT NULL,
+    work_id bigint NOT NULL,
     number character varying(510) DEFAULT NULL::character varying,
     sort_number integer DEFAULT 0 NOT NULL,
     sc_count integer,
@@ -693,7 +681,7 @@ CREATE TABLE public.episodes (
     episode_records_count integer DEFAULT 0 NOT NULL,
     created_at timestamp with time zone,
     updated_at timestamp with time zone,
-    prev_episode_id integer,
+    prev_episode_id bigint,
     aasm_state character varying DEFAULT 'published'::character varying NOT NULL,
     fetch_syobocal boolean DEFAULT false NOT NULL,
     raw_number double precision,
@@ -704,7 +692,8 @@ CREATE TABLE public.episodes (
     ratings_count integer DEFAULT 0 NOT NULL,
     satisfaction_rate double precision,
     number_en character varying DEFAULT ''::character varying NOT NULL,
-    deleted_at timestamp without time zone
+    deleted_at timestamp without time zone,
+    unpublished_at timestamp without time zone
 );
 
 
@@ -749,7 +738,7 @@ ALTER SEQUENCE public.faq_categories_id_seq OWNED BY public.faq_categories.id;
 
 CREATE TABLE public.faq_contents (
     id bigint NOT NULL,
-    faq_category_id integer NOT NULL,
+    faq_category_id bigint NOT NULL,
     question character varying NOT NULL,
     answer text NOT NULL,
     locale character varying NOT NULL,
@@ -785,9 +774,9 @@ ALTER SEQUENCE public.faq_contents_id_seq OWNED BY public.faq_contents.id;
 --
 
 CREATE TABLE public.favorite_characters (
-    id integer NOT NULL,
-    user_id integer NOT NULL,
-    character_id integer NOT NULL,
+    id bigint NOT NULL,
+    user_id bigint NOT NULL,
+    character_id bigint NOT NULL,
     created_at timestamp without time zone NOT NULL,
     updated_at timestamp without time zone NOT NULL
 );
@@ -817,9 +806,9 @@ ALTER SEQUENCE public.favorite_characters_id_seq OWNED BY public.favorite_charac
 --
 
 CREATE TABLE public.favorite_organizations (
-    id integer NOT NULL,
-    user_id integer NOT NULL,
-    organization_id integer NOT NULL,
+    id bigint NOT NULL,
+    user_id bigint NOT NULL,
+    organization_id bigint NOT NULL,
     created_at timestamp without time zone NOT NULL,
     updated_at timestamp without time zone NOT NULL,
     watched_works_count integer DEFAULT 0 NOT NULL
@@ -850,9 +839,9 @@ ALTER SEQUENCE public.favorite_organizations_id_seq OWNED BY public.favorite_org
 --
 
 CREATE TABLE public.favorite_people (
-    id integer NOT NULL,
-    user_id integer NOT NULL,
-    person_id integer NOT NULL,
+    id bigint NOT NULL,
+    user_id bigint NOT NULL,
+    person_id bigint NOT NULL,
     created_at timestamp without time zone NOT NULL,
     updated_at timestamp without time zone NOT NULL,
     watched_works_count integer DEFAULT 0 NOT NULL
@@ -883,9 +872,9 @@ ALTER SEQUENCE public.favorite_people_id_seq OWNED BY public.favorite_people.id;
 --
 
 CREATE TABLE public.finished_tips (
-    id integer NOT NULL,
-    user_id integer NOT NULL,
-    tip_id integer NOT NULL,
+    id bigint NOT NULL,
+    user_id bigint NOT NULL,
+    tip_id bigint NOT NULL,
     created_at timestamp without time zone NOT NULL,
     updated_at timestamp without time zone NOT NULL
 );
@@ -959,9 +948,9 @@ CREATE SEQUENCE public.follows_id_seq
 --
 
 CREATE TABLE public.follows (
-    id integer DEFAULT nextval('public.follows_id_seq'::regclass) NOT NULL,
-    user_id integer NOT NULL,
-    following_id integer NOT NULL,
+    id bigint DEFAULT nextval('public.follows_id_seq'::regclass) NOT NULL,
+    user_id bigint NOT NULL,
+    following_id bigint NOT NULL,
     created_at timestamp with time zone,
     updated_at timestamp with time zone
 );
@@ -972,7 +961,7 @@ CREATE TABLE public.follows (
 --
 
 CREATE TABLE public.forum_categories (
-    id integer NOT NULL,
+    id bigint NOT NULL,
     slug character varying NOT NULL,
     name character varying NOT NULL,
     name_en character varying NOT NULL,
@@ -1010,9 +999,9 @@ ALTER SEQUENCE public.forum_categories_id_seq OWNED BY public.forum_categories.i
 --
 
 CREATE TABLE public.forum_comments (
-    id integer NOT NULL,
-    user_id integer NOT NULL,
-    forum_post_id integer NOT NULL,
+    id bigint NOT NULL,
+    user_id bigint NOT NULL,
+    forum_post_id bigint NOT NULL,
     body text NOT NULL,
     edited_at timestamp without time zone,
     created_at timestamp without time zone NOT NULL,
@@ -1052,9 +1041,9 @@ ALTER SEQUENCE public.forum_comments_id_seq OWNED BY public.forum_comments.id;
 --
 
 CREATE TABLE public.forum_post_participants (
-    id integer NOT NULL,
-    forum_post_id integer NOT NULL,
-    user_id integer NOT NULL,
+    id bigint NOT NULL,
+    forum_post_id bigint NOT NULL,
+    user_id bigint NOT NULL,
     created_at timestamp without time zone NOT NULL,
     updated_at timestamp without time zone NOT NULL
 );
@@ -1084,9 +1073,9 @@ ALTER SEQUENCE public.forum_post_participants_id_seq OWNED BY public.forum_post_
 --
 
 CREATE TABLE public.forum_posts (
-    id integer NOT NULL,
-    user_id integer NOT NULL,
-    forum_category_id integer NOT NULL,
+    id bigint NOT NULL,
+    user_id bigint NOT NULL,
+    forum_category_id bigint NOT NULL,
     title character varying NOT NULL,
     body text DEFAULT ''::text NOT NULL,
     forum_comments_count integer DEFAULT 0 NOT NULL,
@@ -1172,8 +1161,8 @@ ALTER SEQUENCE public.gumroad_subscribers_id_seq OWNED BY public.gumroad_subscri
 CREATE TABLE public.impressions (
     id bigint NOT NULL,
     impressionable_type character varying,
-    impressionable_id integer,
-    user_id integer,
+    impressionable_id bigint,
+    user_id bigint,
     controller_name character varying,
     action_name character varying,
     view_name character varying,
@@ -1292,16 +1281,16 @@ ALTER SEQUENCE public.items_id_seq OWNED BY public.items.id;
 --
 
 CREATE TABLE public.library_entries (
-    id integer NOT NULL,
-    user_id integer NOT NULL,
-    work_id integer NOT NULL,
-    next_episode_id integer,
+    id bigint NOT NULL,
+    user_id bigint NOT NULL,
+    work_id bigint NOT NULL,
+    next_episode_id bigint,
     kind integer,
-    watched_episode_ids integer[] DEFAULT '{}'::integer[] NOT NULL,
+    watched_episode_ids bigint[] DEFAULT '{}'::integer[] NOT NULL,
     "position" integer DEFAULT 0 NOT NULL,
     created_at timestamp without time zone NOT NULL,
     updated_at timestamp without time zone NOT NULL,
-    status_id integer
+    status_id bigint
 );
 
 
@@ -1341,9 +1330,9 @@ CREATE SEQUENCE public.likes_id_seq
 --
 
 CREATE TABLE public.likes (
-    id integer DEFAULT nextval('public.likes_id_seq'::regclass) NOT NULL,
-    user_id integer NOT NULL,
-    recipient_id integer NOT NULL,
+    id bigint DEFAULT nextval('public.likes_id_seq'::regclass) NOT NULL,
+    user_id bigint NOT NULL,
+    recipient_id bigint NOT NULL,
     recipient_type character varying(510) NOT NULL,
     created_at timestamp with time zone,
     updated_at timestamp with time zone
@@ -1355,9 +1344,9 @@ CREATE TABLE public.likes (
 --
 
 CREATE TABLE public.multiple_episode_records (
-    id integer NOT NULL,
-    user_id integer NOT NULL,
-    work_id integer NOT NULL,
+    id bigint NOT NULL,
+    user_id bigint NOT NULL,
+    work_id bigint NOT NULL,
     likes_count integer DEFAULT 0 NOT NULL,
     created_at timestamp without time zone NOT NULL,
     updated_at timestamp without time zone NOT NULL
@@ -1388,9 +1377,9 @@ ALTER SEQUENCE public.multiple_episode_records_id_seq OWNED BY public.multiple_e
 --
 
 CREATE TABLE public.mute_users (
-    id integer NOT NULL,
-    user_id integer NOT NULL,
-    muted_user_id integer NOT NULL,
+    id bigint NOT NULL,
+    user_id bigint NOT NULL,
+    muted_user_id bigint NOT NULL,
     created_at timestamp without time zone NOT NULL,
     updated_at timestamp without time zone NOT NULL
 );
@@ -1432,10 +1421,10 @@ CREATE SEQUENCE public.notifications_id_seq
 --
 
 CREATE TABLE public.notifications (
-    id integer DEFAULT nextval('public.notifications_id_seq'::regclass) NOT NULL,
-    user_id integer NOT NULL,
-    action_user_id integer NOT NULL,
-    trackable_id integer NOT NULL,
+    id bigint DEFAULT nextval('public.notifications_id_seq'::regclass) NOT NULL,
+    user_id bigint NOT NULL,
+    action_user_id bigint NOT NULL,
+    trackable_id bigint NOT NULL,
     trackable_type character varying(510) NOT NULL,
     action character varying(510) NOT NULL,
     read boolean DEFAULT false NOT NULL,
@@ -1449,7 +1438,7 @@ CREATE TABLE public.notifications (
 --
 
 CREATE TABLE public.number_formats (
-    id integer NOT NULL,
+    id bigint NOT NULL,
     name character varying NOT NULL,
     data character varying[] DEFAULT '{}'::character varying[] NOT NULL,
     sort_number integer DEFAULT 0 NOT NULL,
@@ -1483,9 +1472,9 @@ ALTER SEQUENCE public.number_formats_id_seq OWNED BY public.number_formats.id;
 --
 
 CREATE TABLE public.oauth_access_grants (
-    id integer NOT NULL,
-    resource_owner_id integer NOT NULL,
-    application_id integer NOT NULL,
+    id bigint NOT NULL,
+    resource_owner_id bigint NOT NULL,
+    application_id bigint NOT NULL,
     token character varying NOT NULL,
     expires_in integer NOT NULL,
     redirect_uri text NOT NULL,
@@ -1519,9 +1508,9 @@ ALTER SEQUENCE public.oauth_access_grants_id_seq OWNED BY public.oauth_access_gr
 --
 
 CREATE TABLE public.oauth_access_tokens (
-    id integer NOT NULL,
-    resource_owner_id integer NOT NULL,
-    application_id integer,
+    id bigint NOT NULL,
+    resource_owner_id bigint NOT NULL,
+    application_id bigint,
     token character varying NOT NULL,
     refresh_token character varying,
     expires_in integer,
@@ -1557,7 +1546,7 @@ ALTER SEQUENCE public.oauth_access_tokens_id_seq OWNED BY public.oauth_access_to
 --
 
 CREATE TABLE public.oauth_applications (
-    id integer NOT NULL,
+    id bigint NOT NULL,
     name character varying NOT NULL,
     uid character varying NOT NULL,
     secret character varying NOT NULL,
@@ -1566,7 +1555,7 @@ CREATE TABLE public.oauth_applications (
     aasm_state character varying DEFAULT 'published'::character varying NOT NULL,
     created_at timestamp without time zone,
     updated_at timestamp without time zone,
-    owner_id integer,
+    owner_id bigint,
     owner_type character varying,
     confidential boolean DEFAULT true NOT NULL,
     deleted_at timestamp without time zone
@@ -1597,7 +1586,7 @@ ALTER SEQUENCE public.oauth_applications_id_seq OWNED BY public.oauth_applicatio
 --
 
 CREATE TABLE public.organizations (
-    id integer NOT NULL,
+    id bigint NOT NULL,
     name character varying NOT NULL,
     url character varying,
     wikipedia_url character varying,
@@ -1612,7 +1601,8 @@ CREATE TABLE public.organizations (
     twitter_username_en character varying DEFAULT ''::character varying NOT NULL,
     favorite_users_count integer DEFAULT 0 NOT NULL,
     staffs_count integer DEFAULT 0 NOT NULL,
-    deleted_at timestamp without time zone
+    deleted_at timestamp without time zone,
+    unpublished_at timestamp without time zone
 );
 
 
@@ -1640,8 +1630,8 @@ ALTER SEQUENCE public.organizations_id_seq OWNED BY public.organizations.id;
 --
 
 CREATE TABLE public.people (
-    id integer NOT NULL,
-    prefecture_id integer,
+    id bigint NOT NULL,
+    prefecture_id bigint,
     name character varying NOT NULL,
     name_kana character varying DEFAULT ''::character varying NOT NULL,
     nickname character varying,
@@ -1663,7 +1653,8 @@ CREATE TABLE public.people (
     favorite_users_count integer DEFAULT 0 NOT NULL,
     casts_count integer DEFAULT 0 NOT NULL,
     staffs_count integer DEFAULT 0 NOT NULL,
-    deleted_at timestamp without time zone
+    deleted_at timestamp without time zone,
+    unpublished_at timestamp without time zone
 );
 
 
@@ -1691,7 +1682,7 @@ ALTER SEQUENCE public.people_id_seq OWNED BY public.people.id;
 --
 
 CREATE TABLE public.prefectures (
-    id integer NOT NULL,
+    id bigint NOT NULL,
     name character varying NOT NULL,
     created_at timestamp without time zone NOT NULL,
     updated_at timestamp without time zone NOT NULL
@@ -1734,8 +1725,8 @@ CREATE SEQUENCE public.profiles_id_seq
 --
 
 CREATE TABLE public.profiles (
-    id integer DEFAULT nextval('public.profiles_id_seq'::regclass) NOT NULL,
-    user_id integer NOT NULL,
+    id bigint DEFAULT nextval('public.profiles_id_seq'::regclass) NOT NULL,
+    user_id bigint NOT NULL,
     name character varying(510) DEFAULT ''::character varying NOT NULL,
     description character varying(510) DEFAULT ''::character varying NOT NULL,
     created_at timestamp with time zone,
@@ -1761,8 +1752,8 @@ CREATE TABLE public.profiles (
 
 CREATE TABLE public.programs (
     id bigint NOT NULL,
-    channel_id integer NOT NULL,
-    work_id integer NOT NULL,
+    channel_id bigint NOT NULL,
+    work_id bigint NOT NULL,
     url character varying,
     started_at timestamp without time zone,
     aasm_state character varying DEFAULT 'published'::character varying NOT NULL,
@@ -1772,7 +1763,8 @@ CREATE TABLE public.programs (
     vod_title_name character varying DEFAULT ''::character varying NOT NULL,
     rebroadcast boolean DEFAULT false NOT NULL,
     minimum_episode_generatable_number integer DEFAULT 1 NOT NULL,
-    deleted_at timestamp without time zone
+    deleted_at timestamp without time zone,
+    unpublished_at timestamp without time zone
 );
 
 
@@ -1812,8 +1804,8 @@ CREATE SEQUENCE public.providers_id_seq
 --
 
 CREATE TABLE public.providers (
-    id integer DEFAULT nextval('public.providers_id_seq'::regclass) NOT NULL,
-    user_id integer NOT NULL,
+    id bigint DEFAULT nextval('public.providers_id_seq'::regclass) NOT NULL,
+    user_id bigint NOT NULL,
     name character varying(510) NOT NULL,
     uid character varying(510) NOT NULL,
     token character varying(510) NOT NULL,
@@ -1830,10 +1822,10 @@ CREATE TABLE public.providers (
 
 CREATE TABLE public.reactions (
     id bigint NOT NULL,
-    user_id integer NOT NULL,
-    target_user_id integer NOT NULL,
+    user_id bigint NOT NULL,
+    target_user_id bigint NOT NULL,
     kind character varying NOT NULL,
-    collection_item_id integer,
+    collection_item_id bigint,
     created_at timestamp without time zone NOT NULL,
     updated_at timestamp without time zone NOT NULL
 );
@@ -1875,9 +1867,9 @@ CREATE SEQUENCE public.receptions_id_seq
 --
 
 CREATE TABLE public.receptions (
-    id integer DEFAULT nextval('public.receptions_id_seq'::regclass) NOT NULL,
-    user_id integer NOT NULL,
-    channel_id integer NOT NULL,
+    id bigint DEFAULT nextval('public.receptions_id_seq'::regclass) NOT NULL,
+    user_id bigint NOT NULL,
+    channel_id bigint NOT NULL,
     created_at timestamp with time zone,
     updated_at timestamp with time zone
 );
@@ -1944,7 +1936,7 @@ CREATE SEQUENCE public.seasons_id_seq
 --
 
 CREATE TABLE public.seasons (
-    id integer DEFAULT nextval('public.seasons_id_seq'::regclass) NOT NULL,
+    id bigint DEFAULT nextval('public.seasons_id_seq'::regclass) NOT NULL,
     name character varying(510) NOT NULL,
     created_at timestamp with time zone,
     updated_at timestamp with time zone,
@@ -1958,7 +1950,7 @@ CREATE TABLE public.seasons (
 --
 
 CREATE TABLE public.series (
-    id integer NOT NULL,
+    id bigint NOT NULL,
     name character varying NOT NULL,
     name_ro character varying DEFAULT ''::character varying NOT NULL,
     name_en character varying DEFAULT ''::character varying NOT NULL,
@@ -1966,7 +1958,8 @@ CREATE TABLE public.series (
     series_works_count integer DEFAULT 0 NOT NULL,
     created_at timestamp without time zone NOT NULL,
     updated_at timestamp without time zone NOT NULL,
-    deleted_at timestamp without time zone
+    deleted_at timestamp without time zone,
+    unpublished_at timestamp without time zone
 );
 
 
@@ -1994,15 +1987,16 @@ ALTER SEQUENCE public.series_id_seq OWNED BY public.series.id;
 --
 
 CREATE TABLE public.series_works (
-    id integer NOT NULL,
-    series_id integer NOT NULL,
-    work_id integer NOT NULL,
+    id bigint NOT NULL,
+    series_id bigint NOT NULL,
+    work_id bigint NOT NULL,
     summary character varying DEFAULT ''::character varying NOT NULL,
     summary_en character varying DEFAULT ''::character varying NOT NULL,
     aasm_state character varying DEFAULT 'published'::character varying NOT NULL,
     created_at timestamp without time zone NOT NULL,
     updated_at timestamp without time zone NOT NULL,
-    deleted_at timestamp without time zone
+    deleted_at timestamp without time zone,
+    unpublished_at timestamp without time zone
 );
 
 
@@ -2074,8 +2068,8 @@ ALTER SEQUENCE public.sessions_id_seq1 OWNED BY public.sessions.id;
 --
 
 CREATE TABLE public.settings (
-    id integer NOT NULL,
-    user_id integer NOT NULL,
+    id bigint NOT NULL,
+    user_id bigint NOT NULL,
     hide_record_body boolean DEFAULT true NOT NULL,
     created_at timestamp without time zone NOT NULL,
     updated_at timestamp without time zone NOT NULL,
@@ -2131,10 +2125,10 @@ CREATE SEQUENCE public.slots_id_seq
 --
 
 CREATE TABLE public.slots (
-    id integer DEFAULT nextval('public.slots_id_seq'::regclass) NOT NULL,
-    channel_id integer NOT NULL,
-    episode_id integer,
-    work_id integer NOT NULL,
+    id bigint DEFAULT nextval('public.slots_id_seq'::regclass) NOT NULL,
+    channel_id bigint NOT NULL,
+    episode_id bigint,
+    work_id bigint NOT NULL,
     started_at timestamp with time zone NOT NULL,
     sc_last_update timestamp with time zone,
     created_at timestamp with time zone,
@@ -2142,10 +2136,11 @@ CREATE TABLE public.slots (
     sc_pid integer,
     rebroadcast boolean DEFAULT false NOT NULL,
     aasm_state character varying DEFAULT 'published'::character varying NOT NULL,
-    program_id integer,
+    program_id bigint,
     number integer,
     irregular boolean DEFAULT false NOT NULL,
-    deleted_at timestamp without time zone
+    deleted_at timestamp without time zone,
+    unpublished_at timestamp without time zone
 );
 
 
@@ -2166,8 +2161,8 @@ CREATE SEQUENCE public.staffs_id_seq
 --
 
 CREATE TABLE public.staffs (
-    id integer DEFAULT nextval('public.staffs_id_seq'::regclass) NOT NULL,
-    work_id integer NOT NULL,
+    id bigint DEFAULT nextval('public.staffs_id_seq'::regclass) NOT NULL,
+    work_id bigint NOT NULL,
     name character varying NOT NULL,
     role character varying NOT NULL,
     role_other character varying,
@@ -2175,11 +2170,12 @@ CREATE TABLE public.staffs (
     sort_number integer DEFAULT 0 NOT NULL,
     created_at timestamp without time zone NOT NULL,
     updated_at timestamp without time zone NOT NULL,
-    resource_id integer NOT NULL,
+    resource_id bigint NOT NULL,
     resource_type character varying NOT NULL,
     name_en character varying DEFAULT ''::character varying NOT NULL,
     role_other_en character varying DEFAULT ''::character varying NOT NULL,
-    deleted_at timestamp without time zone
+    deleted_at timestamp without time zone,
+    unpublished_at timestamp without time zone
 );
 
 
@@ -2219,14 +2215,14 @@ CREATE SEQUENCE public.statuses_id_seq
 --
 
 CREATE TABLE public.statuses (
-    id integer DEFAULT nextval('public.statuses_id_seq'::regclass) NOT NULL,
-    user_id integer NOT NULL,
-    work_id integer NOT NULL,
+    id bigint DEFAULT nextval('public.statuses_id_seq'::regclass) NOT NULL,
+    user_id bigint NOT NULL,
+    work_id bigint NOT NULL,
     kind integer NOT NULL,
     likes_count integer DEFAULT 0 NOT NULL,
     created_at timestamp with time zone,
     updated_at timestamp with time zone,
-    oauth_application_id integer
+    oauth_application_id bigint
 );
 
 
@@ -2235,8 +2231,8 @@ CREATE TABLE public.statuses (
 --
 
 CREATE TABLE public.syobocal_alerts (
-    id integer NOT NULL,
-    work_id integer,
+    id bigint NOT NULL,
+    work_id bigint,
     kind integer NOT NULL,
     sc_prog_item_id integer,
     sc_sub_title character varying(255),
@@ -2270,7 +2266,7 @@ ALTER SEQUENCE public.syobocal_alerts_id_seq OWNED BY public.syobocal_alerts.id;
 --
 
 CREATE TABLE public.tips (
-    id integer NOT NULL,
+    id bigint NOT NULL,
     target integer NOT NULL,
     slug character varying(255) NOT NULL,
     title character varying(255) NOT NULL,
@@ -2306,7 +2302,7 @@ ALTER SEQUENCE public.tips_id_seq OWNED BY public.tips.id;
 
 CREATE TABLE public.trailers (
     id bigint NOT NULL,
-    work_id integer NOT NULL,
+    work_id bigint NOT NULL,
     url character varying NOT NULL,
     title character varying NOT NULL,
     thumbnail_file_name character varying,
@@ -2319,7 +2315,8 @@ CREATE TABLE public.trailers (
     updated_at timestamp without time zone NOT NULL,
     title_en character varying DEFAULT ''::character varying NOT NULL,
     image_data text,
-    deleted_at timestamp without time zone
+    deleted_at timestamp without time zone,
+    unpublished_at timestamp without time zone
 );
 
 
@@ -2359,7 +2356,7 @@ CREATE SEQUENCE public.twitter_bots_id_seq
 --
 
 CREATE TABLE public.twitter_bots (
-    id integer DEFAULT nextval('public.twitter_bots_id_seq'::regclass) NOT NULL,
+    id bigint DEFAULT nextval('public.twitter_bots_id_seq'::regclass) NOT NULL,
     name character varying(510) NOT NULL,
     created_at timestamp with time zone,
     updated_at timestamp with time zone
@@ -2405,7 +2402,7 @@ ALTER SEQUENCE public.twitter_watching_lists_id_seq OWNED BY public.twitter_watc
 --
 
 CREATE TABLE public.userland_categories (
-    id integer NOT NULL,
+    id bigint NOT NULL,
     name character varying NOT NULL,
     name_en character varying NOT NULL,
     sort_number integer DEFAULT 0 NOT NULL,
@@ -2439,9 +2436,9 @@ ALTER SEQUENCE public.userland_categories_id_seq OWNED BY public.userland_catego
 --
 
 CREATE TABLE public.userland_project_members (
-    id integer NOT NULL,
-    user_id integer NOT NULL,
-    userland_project_id integer NOT NULL,
+    id bigint NOT NULL,
+    user_id bigint NOT NULL,
+    userland_project_id bigint NOT NULL,
     created_at timestamp without time zone NOT NULL,
     updated_at timestamp without time zone NOT NULL
 );
@@ -2471,8 +2468,8 @@ ALTER SEQUENCE public.userland_project_members_id_seq OWNED BY public.userland_p
 --
 
 CREATE TABLE public.userland_projects (
-    id integer NOT NULL,
-    userland_category_id integer NOT NULL,
+    id bigint NOT NULL,
+    userland_category_id bigint NOT NULL,
     name character varying NOT NULL,
     summary character varying NOT NULL,
     description text NOT NULL,
@@ -2525,7 +2522,7 @@ CREATE SEQUENCE public.users_id_seq
 --
 
 CREATE TABLE public.users (
-    id integer DEFAULT nextval('public.users_id_seq'::regclass) NOT NULL,
+    id bigint DEFAULT nextval('public.users_id_seq'::regclass) NOT NULL,
     username public.citext NOT NULL,
     email public.citext NOT NULL,
     role integer NOT NULL,
@@ -2552,7 +2549,7 @@ CREATE TABLE public.users (
     status_cache_expired_at timestamp without time zone,
     work_tag_cache_expired_at timestamp without time zone,
     work_comment_cache_expired_at timestamp without time zone,
-    gumroad_subscriber_id integer,
+    gumroad_subscriber_id bigint,
     allowed_locales character varying[],
     records_count integer DEFAULT 0 NOT NULL,
     aasm_state character varying DEFAULT 'published'::character varying NOT NULL,
@@ -2577,7 +2574,7 @@ CREATE SEQUENCE public.versions_id_seq
 --
 
 CREATE TABLE public.versions (
-    id integer DEFAULT nextval('public.versions_id_seq'::regclass) NOT NULL,
+    id bigint DEFAULT nextval('public.versions_id_seq'::regclass) NOT NULL,
     item_type character varying(510) NOT NULL,
     item_id integer NOT NULL,
     event character varying(510) NOT NULL,
@@ -2601,7 +2598,8 @@ CREATE TABLE public.vod_titles (
     mail_sent_at timestamp without time zone,
     created_at timestamp without time zone NOT NULL,
     updated_at timestamp without time zone NOT NULL,
-    deleted_at timestamp without time zone
+    deleted_at timestamp without time zone,
+    unpublished_at timestamp without time zone
 );
 
 
@@ -2630,8 +2628,8 @@ ALTER SEQUENCE public.vod_titles_id_seq OWNED BY public.vod_titles.id;
 
 CREATE TABLE public.work_comments (
     id bigint NOT NULL,
-    user_id integer NOT NULL,
-    work_id integer NOT NULL,
+    user_id bigint NOT NULL,
+    work_id bigint NOT NULL,
     body character varying NOT NULL,
     created_at timestamp without time zone NOT NULL,
     updated_at timestamp without time zone NOT NULL,
@@ -2663,9 +2661,9 @@ ALTER SEQUENCE public.work_comments_id_seq OWNED BY public.work_comments.id;
 --
 
 CREATE TABLE public.work_images (
-    id integer NOT NULL,
-    work_id integer NOT NULL,
-    user_id integer NOT NULL,
+    id bigint NOT NULL,
+    work_id bigint NOT NULL,
+    user_id bigint NOT NULL,
     attachment_file_name character varying,
     attachment_file_size integer,
     attachment_content_type character varying,
@@ -2704,9 +2702,9 @@ ALTER SEQUENCE public.work_images_id_seq OWNED BY public.work_images.id;
 
 CREATE TABLE public.work_items (
     id bigint NOT NULL,
-    work_id integer NOT NULL,
-    item_id integer NOT NULL,
-    user_id integer NOT NULL,
+    work_id bigint NOT NULL,
+    item_id bigint NOT NULL,
+    user_id bigint NOT NULL,
     aasm_state character varying DEFAULT 'published'::character varying NOT NULL,
     created_at timestamp without time zone NOT NULL,
     updated_at timestamp without time zone NOT NULL
@@ -2738,8 +2736,8 @@ ALTER SEQUENCE public.work_items_id_seq OWNED BY public.work_items.id;
 
 CREATE TABLE public.work_records (
     id bigint NOT NULL,
-    user_id integer NOT NULL,
-    work_id integer NOT NULL,
+    user_id bigint NOT NULL,
+    work_id bigint NOT NULL,
     title character varying DEFAULT ''::character varying,
     body text NOT NULL,
     rating_animation_state character varying,
@@ -2753,9 +2751,9 @@ CREATE TABLE public.work_records (
     modified_at timestamp without time zone,
     created_at timestamp without time zone NOT NULL,
     updated_at timestamp without time zone NOT NULL,
-    oauth_application_id integer,
+    oauth_application_id bigint,
     locale character varying DEFAULT 'other'::character varying NOT NULL,
-    record_id integer NOT NULL,
+    record_id bigint NOT NULL,
     deleted_at timestamp without time zone
 );
 
@@ -2785,8 +2783,8 @@ ALTER SEQUENCE public.work_records_id_seq OWNED BY public.work_records.id;
 
 CREATE TABLE public.work_taggables (
     id bigint NOT NULL,
-    user_id integer NOT NULL,
-    work_tag_id integer NOT NULL,
+    user_id bigint NOT NULL,
+    work_tag_id bigint NOT NULL,
     description character varying,
     created_at timestamp without time zone NOT NULL,
     updated_at timestamp without time zone NOT NULL,
@@ -2819,9 +2817,9 @@ ALTER SEQUENCE public.work_taggables_id_seq OWNED BY public.work_taggables.id;
 
 CREATE TABLE public.work_taggings (
     id bigint NOT NULL,
-    user_id integer NOT NULL,
-    work_id integer NOT NULL,
-    work_tag_id integer NOT NULL,
+    user_id bigint NOT NULL,
+    work_id bigint NOT NULL,
+    work_tag_id bigint NOT NULL,
     created_at timestamp without time zone NOT NULL,
     updated_at timestamp without time zone NOT NULL
 );
@@ -2898,8 +2896,8 @@ CREATE SEQUENCE public.works_id_seq
 --
 
 CREATE TABLE public.works (
-    id integer DEFAULT nextval('public.works_id_seq'::regclass) NOT NULL,
-    season_id integer,
+    id bigint DEFAULT nextval('public.works_id_seq'::regclass) NOT NULL,
+    season_id bigint,
     sc_tid integer,
     title character varying(510) NOT NULL,
     media integer NOT NULL,
@@ -2914,7 +2912,7 @@ CREATE TABLE public.works (
     twitter_hashtag character varying(510) DEFAULT NULL::character varying,
     released_at_about character varying,
     aasm_state character varying DEFAULT 'published'::character varying NOT NULL,
-    number_format_id integer,
+    number_format_id bigint,
     title_kana character varying DEFAULT ''::character varying NOT NULL,
     title_ro character varying DEFAULT ''::character varying NOT NULL,
     title_en character varying DEFAULT ''::character varying NOT NULL,
@@ -2930,7 +2928,7 @@ CREATE TABLE public.works (
     recommended_image_url character varying DEFAULT ''::character varying NOT NULL,
     season_year integer,
     season_name integer,
-    key_pv_id integer,
+    key_pv_id bigint,
     manual_episodes_count integer,
     no_episodes boolean DEFAULT false NOT NULL,
     work_records_count integer DEFAULT 0 NOT NULL,
@@ -2944,7 +2942,8 @@ CREATE TABLE public.works (
     start_episode_raw_number double precision DEFAULT 1.0 NOT NULL,
     deleted_at timestamp without time zone,
     title_alter character varying DEFAULT ''::character varying NOT NULL,
-    title_alter_en character varying DEFAULT ''::character varying NOT NULL
+    title_alter_en character varying DEFAULT ''::character varying NOT NULL,
+    unpublished_at timestamp without time zone
 );
 
 
@@ -4289,10 +4288,24 @@ CREATE INDEX index_casts_on_sort_number ON public.casts USING btree (sort_number
 
 
 --
+-- Name: index_casts_on_unpublished_at; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_casts_on_unpublished_at ON public.casts USING btree (unpublished_at);
+
+
+--
 -- Name: index_casts_on_work_id; Type: INDEX; Schema: public; Owner: -
 --
 
 CREATE INDEX index_casts_on_work_id ON public.casts USING btree (work_id);
+
+
+--
+-- Name: index_channel_groups_on_unpublished_at; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_channel_groups_on_unpublished_at ON public.channel_groups USING btree (unpublished_at);
 
 
 --
@@ -4307,6 +4320,13 @@ CREATE INDEX index_channels_on_deleted_at ON public.channels USING btree (delete
 --
 
 CREATE INDEX index_channels_on_sort_number ON public.channels USING btree (sort_number);
+
+
+--
+-- Name: index_channels_on_unpublished_at; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_channels_on_unpublished_at ON public.channels USING btree (unpublished_at);
 
 
 --
@@ -4356,6 +4376,13 @@ CREATE UNIQUE INDEX index_characters_on_name_and_series_id ON public.characters 
 --
 
 CREATE INDEX index_characters_on_series_id ON public.characters USING btree (series_id);
+
+
+--
+-- Name: index_characters_on_unpublished_at; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_characters_on_unpublished_at ON public.characters USING btree (unpublished_at);
 
 
 --
@@ -4615,6 +4642,13 @@ CREATE INDEX index_episodes_on_satisfaction_rate_and_ratings_count ON public.epi
 --
 
 CREATE INDEX index_episodes_on_score ON public.episodes USING btree (score);
+
+
+--
+-- Name: index_episodes_on_unpublished_at; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_episodes_on_unpublished_at ON public.episodes USING btree (unpublished_at);
 
 
 --
@@ -5038,6 +5072,13 @@ CREATE INDEX index_organizations_on_staffs_count ON public.organizations USING b
 
 
 --
+-- Name: index_organizations_on_unpublished_at; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_organizations_on_unpublished_at ON public.organizations USING btree (unpublished_at);
+
+
+--
 -- Name: index_people_on_aasm_state; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -5087,6 +5128,13 @@ CREATE INDEX index_people_on_staffs_count ON public.people USING btree (staffs_c
 
 
 --
+-- Name: index_people_on_unpublished_at; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_people_on_unpublished_at ON public.people USING btree (unpublished_at);
+
+
+--
 -- Name: index_prefectures_on_name; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -5105,6 +5153,13 @@ CREATE INDEX index_programs_on_channel_id ON public.programs USING btree (channe
 --
 
 CREATE INDEX index_programs_on_deleted_at ON public.programs USING btree (deleted_at);
+
+
+--
+-- Name: index_programs_on_unpublished_at; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_programs_on_unpublished_at ON public.programs USING btree (unpublished_at);
 
 
 --
@@ -5199,6 +5254,13 @@ CREATE UNIQUE INDEX index_series_on_name ON public.series USING btree (name);
 
 
 --
+-- Name: index_series_on_unpublished_at; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_series_on_unpublished_at ON public.series USING btree (unpublished_at);
+
+
+--
 -- Name: index_series_works_on_deleted_at; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -5217,6 +5279,13 @@ CREATE INDEX index_series_works_on_series_id ON public.series_works USING btree 
 --
 
 CREATE UNIQUE INDEX index_series_works_on_series_id_and_work_id ON public.series_works USING btree (series_id, work_id);
+
+
+--
+-- Name: index_series_works_on_unpublished_at; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_series_works_on_unpublished_at ON public.series_works USING btree (unpublished_at);
 
 
 --
@@ -5290,6 +5359,13 @@ CREATE UNIQUE INDEX index_slots_on_sc_pid ON public.slots USING btree (sc_pid);
 
 
 --
+-- Name: index_slots_on_unpublished_at; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_slots_on_unpublished_at ON public.slots USING btree (unpublished_at);
+
+
+--
 -- Name: index_staffs_on_aasm_state; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -5315,6 +5391,13 @@ CREATE INDEX index_staffs_on_resource_id_and_resource_type ON public.staffs USIN
 --
 
 CREATE INDEX index_staffs_on_sort_number ON public.staffs USING btree (sort_number);
+
+
+--
+-- Name: index_staffs_on_unpublished_at; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_staffs_on_unpublished_at ON public.staffs USING btree (unpublished_at);
 
 
 --
@@ -5364,6 +5447,13 @@ CREATE UNIQUE INDEX index_tips_on_slug_and_locale ON public.tips USING btree (sl
 --
 
 CREATE INDEX index_trailers_on_deleted_at ON public.trailers USING btree (deleted_at);
+
+
+--
+-- Name: index_trailers_on_unpublished_at; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_trailers_on_unpublished_at ON public.trailers USING btree (unpublished_at);
 
 
 --
@@ -5455,6 +5545,13 @@ CREATE INDEX index_vod_titles_on_deleted_at ON public.vod_titles USING btree (de
 --
 
 CREATE INDEX index_vod_titles_on_mail_sent_at ON public.vod_titles USING btree (mail_sent_at);
+
+
+--
+-- Name: index_vod_titles_on_unpublished_at; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_vod_titles_on_unpublished_at ON public.vod_titles USING btree (unpublished_at);
 
 
 --
@@ -5728,6 +5825,13 @@ CREATE INDEX index_works_on_season_year ON public.works USING btree (season_year
 --
 
 CREATE INDEX index_works_on_season_year_and_season_name ON public.works USING btree (season_year, season_name);
+
+
+--
+-- Name: index_works_on_unpublished_at; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_works_on_unpublished_at ON public.works USING btree (unpublished_at);
 
 
 --
@@ -7101,6 +7205,7 @@ INSERT INTO "schema_migrations" (version) VALUES
 ('20191130150830'),
 ('20191207094223'),
 ('20191207113735'),
-('20191208154530');
+('20191208154530'),
+('20200310195638');
 
 
