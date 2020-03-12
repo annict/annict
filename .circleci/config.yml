@@ -16,7 +16,7 @@ jobs:
           POSTGRES_HOST: localhost
           RAILS_ENV: test
           TZ: Asia/Tokyo
-          # The `CFLAGS` and `CXXFLAGS` are required to install cld gem
+          # `CFLAGS` と `CXXFLAGS` は cld gem をインストールするときに必要になる
           # https://github.com/jtoy/cld/issues/10
           CFLAGS: -Wno-narrowing
           CXXFLAGS: -Wno-narrowing
@@ -77,7 +77,7 @@ jobs:
       - run:
           name: Wait for DB
           command: dockerize -wait tcp://localhost:5432 -timeout 1m
-    
+
       - run:
           name: Wait for Selenium
           command: dockerize -wait tcp://localhost:4444 -timeout 1m
