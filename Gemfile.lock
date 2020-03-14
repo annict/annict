@@ -226,7 +226,7 @@ GEM
       sass (~> 3.4)
     gretel (3.0.9)
       rails (>= 3.1.0)
-    groupdate (4.2.0)
+    groupdate (5.0.0)
       activesupport (>= 5)
     hashdiff (1.0.0)
     hashie (4.1.0)
@@ -585,7 +585,7 @@ GEM
     xpath (3.2.0)
       nokogiri (~> 1.8)
     yard (0.9.20)
-    zeitwerk (2.2.2)
+    zeitwerk (2.3.0)
 
 PLATFORMS
   ruby
