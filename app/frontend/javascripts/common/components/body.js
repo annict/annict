@@ -15,15 +15,15 @@ marked.setOptions({
   pedantic: false,
   sanitize: false,
   smartLists: true,
-  smartypants: false
+  smartypants: false,
 });
 
 export default {
   props: {
     markdown: {
       type: Boolean,
-      default: false
-    }
+      default: false,
+    },
   },
 
   methods: {
@@ -40,11 +40,11 @@ export default {
       }
 
       return text;
-    }
+    },
   },
 
   mounted() {
     const $comment = $(this.$el);
     return $comment.html(this.filter($comment.text()));
-  }
+  },
 };

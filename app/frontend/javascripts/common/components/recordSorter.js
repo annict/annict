@@ -6,14 +6,14 @@ export default {
   props: {
     currentUrl: {
       type: String,
-      required: true
-    }
+      required: true,
+    },
   },
 
   data() {
     return {
       sort: gon.currentRecordsSortType,
-      sortTypes: gon.recordsSortTypes
+      sortTypes: gon.recordsSortTypes,
     };
   },
 
@@ -29,9 +29,9 @@ export default {
         method: 'PATCH',
         url: '/api/internal/records_sort_type',
         data: {
-          records_sort_type: this.sort
-        }
+          records_sort_type: this.sort,
+        },
       }).done(callback);
-    }
-  }
+    },
+  },
 };

@@ -3,19 +3,19 @@
  * DS102: Remove unnecessary code created because of implicit returns
  * Full docs: https://github.com/decaffeinate/decaffeinate/blob/master/docs/suggestions.md
  */
-import Vue from "vue";
+import Vue from 'vue';
 
 export default {
-  template: "#t-create-multiple-episode-records-activity",
+  template: '#t-create-multiple-episode-records-activity',
 
   props: {
     activity: {
       type: Object,
-      required: true
-    }
+      required: true,
+    },
   },
 
   data() {
-    return {locale: gon.user.locale};
-  }
+    return { locale: gon.user.locale };
+  },
 };

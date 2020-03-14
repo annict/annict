@@ -1,4 +1,4 @@
-import $ from 'jquery'
+import $ from 'jquery';
 
 export default {
   template: '#t-privacy-policy-modal',
@@ -6,33 +6,33 @@ export default {
   data() {
     return {
       modalElm: null,
-      isLoading: false
-    }
+      isLoading: false,
+    };
   },
 
   props: {
     hide: {
       type: Boolean,
-      required: true
-    }
+      required: true,
+    },
   },
 
   methods: {
     agree() {
-      this.isLoading = true
+      this.isLoading = true;
 
       $.ajax({
         method: 'POST',
-        url: '/api/internal/privacy_policy_agreement'
+        url: '/api/internal/privacy_policy_agreement',
       }).done(() => {
-        this.modalElm.modal('hide')
-        this.isLoading = false
-      })
+        this.modalElm.modal('hide');
+        this.isLoading = false;
+      });
     },
 
     cancel() {
-      this.modalElm.modal('hide')
-    }
+      this.modalElm.modal('hide');
+    },
   },
 
   mounted() {
@@ -40,7 +40,7 @@ export default {
       return;
     }
 
-    this.modalElm = $('.c-privacy-policy-modal')
-    this.modalElm.modal('show')
-  }
-}
+    this.modalElm = $('.c-privacy-policy-modal');
+    this.modalElm.modal('show');
+  },
+};

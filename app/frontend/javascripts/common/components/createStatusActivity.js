@@ -7,17 +7,14 @@ export default {
   props: {
     activity: {
       type: Object,
-      required: true
-    }
+      required: true,
+    },
   },
 
   data() {
     return {
       locale: gon.user.locale,
-      isPositive: _.includes(
-        ['watching', 'wanna_watch', 'watched'],
-        this.activity.status.kind
-      )
+      isPositive: _.includes(['watching', 'wanna_watch', 'watched'], this.activity.status.kind),
     };
-  }
+  },
 };

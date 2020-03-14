@@ -6,39 +6,39 @@ export default {
   props: {
     thumbnailUrl: {
       type: String,
-      required: true
+      required: true,
     },
     videoId: {
       type: String,
-      required: true
+      required: true,
     },
     videoTitle: {
       type: String,
-      required: true
+      required: true,
     },
     annictUrl: {
       type: String,
-      required: true
+      required: true,
     },
     width: {
       type: Number,
-      default: 640
+      default: 640,
     },
     height: {
       type: Number,
-      default: 360
+      default: 360,
     },
     isAutoPlay: {
       type: Boolean,
-      default: true
-    }
+      default: true,
+    },
   },
 
   data: function() {
     return {
       modalId: `youtube-modal-${this.videoId}`,
       playerId: `youtube-player-${this.videoId}`,
-      player: null
+      player: null,
     };
   },
 
@@ -49,17 +49,19 @@ export default {
       window.YTConfig = { host: 'https://www.youtube.com' };
 
       this.$nextTick(() => {
-        this.player = this.player || new YT.Player(this.playerId, {
-          height: this.height,
-          width: this.width,
-          videoId: this.videoId,
-          playerVars: {
-            origin: this.annictUrl,
-            autoplay: this.isAutoPlay
-          },
-        });
-      })
-    }
+        this.player =
+          this.player ||
+          new YT.Player(this.playerId, {
+            height: this.height,
+            width: this.width,
+            videoId: this.videoId,
+            playerVars: {
+              origin: this.annictUrl,
+              autoplay: this.isAutoPlay,
+            },
+          });
+      });
+    },
   },
 
   mounted() {
@@ -70,5 +72,5 @@ export default {
 
       this.player.stopVideo();
     });
-  }
+  },
 };

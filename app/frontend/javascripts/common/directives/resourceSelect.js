@@ -14,14 +14,14 @@ export default {
           return {
             results: _.map(data.resources, resource => ({
               id: resource.id,
-              text: resource.text
-            }))
+              text: resource.text,
+            })),
           };
         },
-        minimumInputLength: 1
-      }
+        minimumInputLength: 1,
+      },
     });
-  }
+  },
 };
 
 var _requestUrl = function(model) {
@@ -30,7 +30,7 @@ var _requestUrl = function(model) {
     Organization: '/api/internal/organizations',
     Person: '/api/internal/people',
     Series: '/api/internal/series_list',
-    Work: '/api/internal/works'
+    Work: '/api/internal/works',
   };
 
   return urls[model];

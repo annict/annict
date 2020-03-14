@@ -1,4 +1,4 @@
-import autosize from 'autosize'
+import autosize from 'autosize';
 
 export default {
   template: `<textarea @input="handleChange">{{ value }}</textarea>`,
@@ -7,11 +7,11 @@ export default {
 
   methods: {
     handleChange(e) {
-      this.$emit('input', e.target.value)
-    }
+      this.$emit('input', e.target.value);
+    },
   },
 
   mounted() {
-    autosize(this.$el)
+    autosize(this.$el);
   },
-}
+};

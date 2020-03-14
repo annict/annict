@@ -1,12 +1,12 @@
-import $ from 'jquery'
+import $ from 'jquery';
 
-import vueLazyLoad from '../../common/vueLazyLoad'
+import vueLazyLoad from '../../common/vueLazyLoad';
 
-import createRecordActivity from './createRecordActivity'
-import createReviewActivity from './createReviewActivity'
-import createMultipleRecordsActivity from './createMultipleRecordsActivity'
-import createStatusActivity from './createStatusActivity'
-import loadMoreButton from './loadMoreButton'
+import createRecordActivity from './createRecordActivity';
+import createReviewActivity from './createReviewActivity';
+import createMultipleRecordsActivity from './createMultipleRecordsActivity';
+import createStatusActivity from './createStatusActivity';
+import loadMoreButton from './loadMoreButton';
 
 export default {
   template: '#t-activities',
@@ -23,7 +23,7 @@ export default {
       hasNext: false,
       activities: [],
       page: 1,
-    }
+    };
   },
 
   components: {
@@ -36,64 +36,64 @@ export default {
 
   methods: {
     requestData() {
-      const data = { page: this.page }
+      const data = { page: this.page };
       if (this.username) {
-        data.username = this.username
+        data.username = this.username;
       }
-      return data
+      return data;
     },
 
     load() {
-      this.isLoading = true
-      const { activities } = this._activityData()
+      this.isLoading = true;
+      const { activities } = this._activityData();
 
       if (activities.length > 0) {
-        this.hasNext = true
-        this.activities = activities
+        this.hasNext = true;
+        this.activities = activities;
       } else {
-        this.hasNext = false
+        this.hasNext = false;
       }
 
-      this.isLoading = false
+      this.isLoading = false;
 
-      return this.$nextTick(() => vueLazyLoad.refresh())
+      return this.$nextTick(() => vueLazyLoad.refresh());
     },
 
     loadMore() {
-      this.isLoading = true
-      this.page += 1
+      this.isLoading = true;
+      this.page += 1;
 
       return $.ajax({
         method: 'GET',
         url: '/api/internal/activities',
         data: this.requestData(),
       }).done(data => {
-        this.isLoading = false
+        this.isLoading = false;
 
         if (data.activities.length > 0) {
-          this.hasNext = true
-          this.activities.push(...Array.from(data.activities || []))
+          this.hasNext = true;
+          this.activities.push(...Array.from(data.activities || []));
         } else {
-          this.hasNext = false
+          this.hasNext = false;
         }
 
-        return this.$nextTick(() => vueLazyLoad.refresh())
-      })
+        return this.$nextTick(() => vueLazyLoad.refresh());
+      });
     },
 
     _activityData() {
       if (!gon.activityData) {
-        return {}
+        return {};
       }
-      return JSON.parse(gon.activityData)
+      return JSON.parse(gon.activityData);
     },
   },
 
   mounted() {
-    if (gon.user.device === 'pc' && (gon.page && gon.page.category === 'home_index')) {
-      $(this.$el).css({ maxHeight: window.innerHeight * 0.7 })
+    if (gon.user.device === 'pc' && gon.page && gon.page.category === 'home_index') {
+      $(this.$el).css({ maxHeight: window.innerHeight * 0.7 });
     }
 
-    this.load()
+    this.load();
   },
-}
+};

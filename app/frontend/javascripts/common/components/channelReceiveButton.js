@@ -7,18 +7,18 @@ export default {
   props: {
     channelId: {
       type: Number,
-      required: true
+      required: true,
     },
     initIsReceiving: {
       type: Boolean,
-      required: true
-    }
+      required: true,
+    },
   },
 
   data() {
     return {
       isReceiving: this.initIsReceiving,
-      isSaving: false
+      isSaving: false,
     };
   },
 
@@ -29,7 +29,7 @@ export default {
       if (this.isReceiving) {
         return $.ajax({
           method: 'DELETE',
-          url: `/api/internal/receptions/${this.channelId}`
+          url: `/api/internal/receptions/${this.channelId}`,
         }).done(() => {
           this.isReceiving = false;
           return (this.isSaving = false);
@@ -39,13 +39,13 @@ export default {
           method: 'POST',
           url: '/api/internal/receptions',
           data: {
-            channel_id: this.channelId
-          }
+            channel_id: this.channelId,
+          },
         }).done(() => {
           this.isReceiving = true;
           return (this.isSaving = false);
         });
       }
-    }
-  }
+    },
+  },
 };

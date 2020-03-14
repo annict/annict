@@ -11,18 +11,18 @@ export default {
   props: {
     maxWordsCount: {
       type: Number,
-      required: true
+      required: true,
     },
 
     initWordsCount: {
       type: Number,
-      required: true
+      required: true,
     },
 
     inputName: {
       type: String,
-      required: true
-    }
+      required: true,
+    },
   },
 
   mounted() {
@@ -31,5 +31,5 @@ export default {
     return $inputArea.on('input', () => {
       return (this.wordsCount = $inputArea.val().length);
     });
-  }
+  },
 };
