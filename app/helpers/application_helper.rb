@@ -62,4 +62,10 @@ module ApplicationHelper
 
     javascript_tag "window.AnnConfig = #{config.to_json.html_safe};"
   end
+
+  def annict_config_v4
+    config = {}.freeze
+
+    javascript_tag "window.AnnConfig = #{config.to_json.html_safe};"
+  end
 end
