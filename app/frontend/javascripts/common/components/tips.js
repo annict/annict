@@ -1,4 +1,4 @@
-import $ from 'jquery'
+import $ from 'jquery';
 
 export default {
   template: '#t-tips',
@@ -6,7 +6,7 @@ export default {
   data() {
     return {
       tips: JSON.parse(window.gon.tipsData),
-    }
+    };
   },
 
   methods: {
@@ -20,9 +20,9 @@ export default {
             page_category: window.gon.page.category,
           },
         }).done(() => {
-          return this.tips.splice(index, 1)
-        })
+          return this.tips.splice(index, 1);
+        });
       }
     },
   },
-}
+};

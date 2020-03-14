@@ -7,7 +7,7 @@ export default {
   template: '#t-record-rating',
 
   data() {
-    return { record: this.initRecord }
+    return { record: this.initRecord };
   },
 
   props: {
@@ -22,21 +22,21 @@ export default {
 
   watch: {
     'record.ratingState'(val) {
-      return (this.record.ratingState = val)
+      return (this.record.ratingState = val);
     },
 
     initRecord(val) {
-      return (this.record = val)
+      return (this.record = val);
     },
   },
 
   methods: {
     changeState(state) {
       if (this.record.ratingState === state) {
-        return (this.record.ratingState = null)
+        return (this.record.ratingState = null);
       } else {
-        return (this.record.ratingState = state)
+        return (this.record.ratingState = state);
       }
     },
   },
-}
+};

@@ -1,8 +1,8 @@
-import $ from 'jquery'
+import $ from 'jquery';
 
-import eventHub from '../../common/eventHub'
+import eventHub from '../../common/eventHub';
 
-const NO_SELECT = 'no_select'
+const NO_SELECT = 'no_select';
 
 export default {
   template: '#t-status-selector',
@@ -15,7 +15,7 @@ export default {
       isLoading: false,
       statusKind: null,
       prevStatusKind: null,
-    }
+    };
   },
 
   props: {
@@ -42,33 +42,33 @@ export default {
   methods: {
     currentStatusKind() {
       if (!this.statuses.length) {
-        return NO_SELECT
+        return NO_SELECT;
       }
 
       const status = this.statuses.filter(status => {
-        return status.work_id === this.workId
-      })[0]
+        return status.work_id === this.workId;
+      })[0];
 
       if (!status) {
-        return NO_SELECT
+        return NO_SELECT;
       }
 
-      return status.kind
+      return status.kind;
     },
 
     resetKind() {
-      return (this.statusKind = NO_SELECT)
+      return (this.statusKind = NO_SELECT);
     },
 
     change() {
       if (!this.$root.appData.isUserSignedIn) {
-        $('.c-sign-up-modal').modal('show')
-        this.resetKind()
-        return
+        $('.c-sign-up-modal').modal('show');
+        this.resetKind();
+        return;
       }
 
       if (this.statusKind !== this.prevStatusKind) {
-        this.isLoading = true
+        this.isLoading = true;
 
         $.ajax({
           method: 'POST',
@@ -78,36 +78,36 @@ export default {
             page_category: gon.page.category,
           },
         }).done(() => {
-          this.isLoading = false
-        })
+          this.isLoading = false;
+        });
       }
     },
   },
 
   mounted() {
-    this.isLoading = true
+    this.isLoading = true;
 
     if (this.initStatusKind) {
-      this.prevStatusKind = this.initStatusKind
-      this.statusKind = this.initStatusKind
-      this.isLoading = false
-      return
+      this.prevStatusKind = this.initStatusKind;
+      this.statusKind = this.initStatusKind;
+      this.isLoading = false;
+      return;
     }
 
     eventHub.$on('app:loaded', () => {
       if (!this.$root.appData.isUserSignedIn) {
-        this.statusKind = this.prevStatusKind = NO_SELECT
-        this.isLoading = false
-        return
+        this.statusKind = this.prevStatusKind = NO_SELECT;
+        this.isLoading = false;
+        return;
       }
 
-      this.statuses = this.$root.pageData.statuses || []
+      this.statuses = this.$root.pageData.statuses || [];
 
       if (this.statuses.length) {
-        this.prevStatusKind = this.currentStatusKind()
-        this.statusKind = this.currentStatusKind()
-        this.isLoading = false
+        this.prevStatusKind = this.currentStatusKind();
+        this.statusKind = this.currentStatusKind();
+        this.isLoading = false;
       }
-    })
+    });
   },
-}
+};

@@ -1,7 +1,7 @@
-import $ from 'jquery'
-import Vue from 'vue'
+import $ from 'jquery';
+import Vue from 'vue';
 
-import eventHub from '../../common/eventHub'
+import eventHub from '../../common/eventHub';
 
 export default {
   props: {
@@ -13,8 +13,8 @@ export default {
   mounted() {
     return eventHub.$on('muteUser:mute', userId => {
       if (this.userId === userId) {
-        return $(this.$el).fadeOut()
+        return $(this.$el).fadeOut();
       }
-    })
+    });
   },
-}
+};

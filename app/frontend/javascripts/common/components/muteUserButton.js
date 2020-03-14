@@ -1,7 +1,7 @@
-import $ from 'jquery'
-import Vue from 'vue'
+import $ from 'jquery';
+import Vue from 'vue';
 
-import eventHub from '../../common/eventHub'
+import eventHub from '../../common/eventHub';
 
 export default {
   template: '#t-mute-user-button',
@@ -23,11 +23,11 @@ export default {
             user_id: this.userId,
           },
         }).done(() => {
-          eventHub.$emit('muteUser:mute', this.userId)
-          const msg = gon.I18n['messages.components.mute_user_button.the_user_has_been_muted']
-          return eventHub.$emit('flash:show', msg)
-        })
+          eventHub.$emit('muteUser:mute', this.userId);
+          const msg = gon.I18n['messages.components.mute_user_button.the_user_has_been_muted'];
+          return eventHub.$emit('flash:show', msg);
+        });
       }
     },
   },
-}
+};

@@ -1,20 +1,20 @@
-import $ from 'jquery'
+import $ from 'jquery';
 
 export default {
   loadAppData() {
     return $.ajax({
       method: 'GET',
       url: '/api/internal/app_data',
-    })
+    });
   },
 
   existsPageParams() {
-    return !!gon.page.params
+    return !!gon.page.params;
   },
 
   loadPageData() {
     if (!this.existsPageParams()) {
-      return
+      return;
     }
 
     return $.ajax({
@@ -24,6 +24,6 @@ export default {
         page_category: gon.page.category,
         page_params: gon.page.params,
       },
-    })
+    });
   },
-}
+};

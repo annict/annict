@@ -1,4 +1,4 @@
-import $ from 'jquery'
+import $ from 'jquery';
 
 export default {
   template: '#t-follow-button',
@@ -26,15 +26,15 @@ export default {
     return {
       isFollowing: this.initIsFollowing,
       isSaving: false,
-    }
+    };
   },
 
   computed: {
     buttonText() {
       if (this.isFollowing) {
-        return window.gon.I18n['noun.following']
+        return window.gon.I18n['noun.following'];
       } else {
-        return window.gon.I18n['verb.follow']
+        return window.gon.I18n['verb.follow'];
       }
     },
   },
@@ -42,11 +42,11 @@ export default {
   methods: {
     toggle() {
       if (!this.isSignedIn) {
-        $('.c-sign-up-modal').modal('show')
-        return
+        $('.c-sign-up-modal').modal('show');
+        return;
       }
 
-      this.isSaving = true
+      this.isSaving = true;
 
       if (this.isFollowing) {
         return $.ajax({
@@ -56,9 +56,9 @@ export default {
             username: this.username,
           },
         }).done(() => {
-          this.isFollowing = false
-          return (this.isSaving = false)
-        })
+          this.isFollowing = false;
+          return (this.isSaving = false);
+        });
       } else {
         return $.ajax({
           method: 'POST',
@@ -68,10 +68,10 @@ export default {
             page_category: gon.page.category,
           },
         }).done(() => {
-          this.isFollowing = true
-          return (this.isSaving = false)
-        })
+          this.isFollowing = true;
+          return (this.isSaving = false);
+        });
       }
     },
   },
-}
+};

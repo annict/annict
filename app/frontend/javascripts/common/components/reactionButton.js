@@ -1,4 +1,4 @@
-import $ from 'jquery'
+import $ from 'jquery';
 
 export default {
   template: '#t-reaction-button',
@@ -28,21 +28,21 @@ export default {
       reactionsCount: this.initReactionsCount,
       isReacted: this.initIsReacted,
       isLoading: false,
-    }
+    };
   },
 
   methods: {
     toggleReact() {
       if (!this.isSignedIn) {
-        $('.c-sign-up-modal').modal('show')
-        return
+        $('.c-sign-up-modal').modal('show');
+        return;
       }
 
       if (this.isLoading) {
-        return
+        return;
       }
 
-      this.isLoading = true
+      this.isLoading = true;
 
       if (this.isReacted) {
         return $.ajax({
@@ -55,12 +55,12 @@ export default {
           },
         })
           .done(() => {
-            this.reactionsCount += -1
-            return (this.isReacted = false)
+            this.reactionsCount += -1;
+            return (this.isReacted = false);
           })
           .always(() => {
-            return (this.isLoading = false)
-          })
+            return (this.isLoading = false);
+          });
       } else {
         return $.ajax({
           method: 'POST',
@@ -73,13 +73,13 @@ export default {
           },
         })
           .done(() => {
-            this.reactionsCount += 1
-            return (this.isReacted = true)
+            this.reactionsCount += 1;
+            return (this.isReacted = true);
           })
           .always(() => {
-            return (this.isLoading = false)
-          })
+            return (this.isLoading = false);
+          });
       }
     },
   },
-}
+};

@@ -1,4 +1,4 @@
-import '../javascripts/mobile'
-import '../stylesheets/mobile'
+import '../javascripts/mobile';
+import '../stylesheets/mobile';
 
-require.context('images', true, /\.(jpg|jpeg|png|svg)$/)
+require.context('images', true, /\.(jpg|jpeg|png|svg)$/);

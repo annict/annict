@@ -1,7 +1,7 @@
-import $ from 'jquery'
-import _ from 'lodash'
+import $ from 'jquery';
+import _ from 'lodash';
 
-import eventHub from '../../common/eventHub'
+import eventHub from '../../common/eventHub';
 
 export default {
   template: '#t-impression-button-modal',
@@ -15,12 +15,12 @@ export default {
       comment: '',
       isLoading: false,
       isSaving: false,
-    }
+    };
   },
 
   methods: {
     load() {
-      this.isLoading = true
+      this.isLoading = true;
 
       return $.ajax({
         method: 'GET',
@@ -30,47 +30,47 @@ export default {
         },
       })
         .done(data => {
-          this.tagNames = data.tag_names
-          this.allTagNames = data.all_tag_names
-          this.popularTagNames = data.popular_tag_names
-          this.comment = data.comment
+          this.tagNames = data.tag_names;
+          this.allTagNames = data.all_tag_names;
+          this.popularTagNames = data.popular_tag_names;
+          this.comment = data.comment;
 
           return setTimeout(() => {
-            const $tagsInput = $('.js-impression-tags')
+            const $tagsInput = $('.js-impression-tags');
             $tagsInput.select2({
               tags: true,
-            })
+            });
             $tagsInput.on('select2:select', event => {
-              return (this.tagNames = $(event.currentTarget).val())
-            })
+              return (this.tagNames = $(event.currentTarget).val());
+            });
             return $tagsInput.on('select2:unselect', event => {
-              return (this.tagNames = $(event.currentTarget).val() || [])
-            })
-          })
+              return (this.tagNames = $(event.currentTarget).val() || []);
+            });
+          });
         })
         .fail(function() {
-          const message = gon.I18n['messages._components.impression_button.error']
-          return eventHub.$emit('flash:show', message, 'alert')
+          const message = gon.I18n['messages._components.impression_button.error'];
+          return eventHub.$emit('flash:show', message, 'alert');
         })
         .always(() => {
-          return (this.isLoading = false)
-        })
+          return (this.isLoading = false);
+        });
     },
 
     add(tagName) {
-      const $tagsInput = $('.js-impression-tags')
+      const $tagsInput = $('.js-impression-tags');
 
-      this.allTagNames.push(tagName)
-      this.allTagNames = _.uniq(this.allTagNames)
-      this.tagNames.push(tagName)
-      this.tagNames = _.uniq(this.tagNames)
+      this.allTagNames.push(tagName);
+      this.allTagNames = _.uniq(this.allTagNames);
+      this.tagNames.push(tagName);
+      this.tagNames = _.uniq(this.tagNames);
 
-      $tagsInput.val(this.tagNames)
-      return $tagsInput.trigger('change')
+      $tagsInput.val(this.tagNames);
+      return $tagsInput.trigger('change');
     },
 
     save() {
-      this.isSaving = true
+      this.isSaving = true;
 
       return $.ajax({
         method: 'PATCH',
@@ -82,26 +82,26 @@ export default {
         },
       })
         .done(data => {
-          $('.c-impression-button-modal').modal('hide')
-          eventHub.$emit('workTags:saved', this.workId, data.tags)
-          eventHub.$emit('workComment:saved', this.workId, data.comment)
-          return eventHub.$emit('flash:show', gon.I18n['messages._common.updated'])
+          $('.c-impression-button-modal').modal('hide');
+          eventHub.$emit('workTags:saved', this.workId, data.tags);
+          eventHub.$emit('workComment:saved', this.workId, data.comment);
+          return eventHub.$emit('flash:show', gon.I18n['messages._common.updated']);
         })
         .fail(function() {
-          const message = gon.I18n['messages._components.impression_button.error']
-          return eventHub.$emit('flash:show', message, 'alert')
+          const message = gon.I18n['messages._components.impression_button.error'];
+          return eventHub.$emit('flash:show', message, 'alert');
         })
         .always(() => {
-          return (this.isSaving = false)
-        })
+          return (this.isSaving = false);
+        });
     },
   },
 
   created() {
     return eventHub.$on('impressionButtonModal:show', workId => {
-      this.workId = workId
-      this.load()
-      return $('.c-impression-button-modal').modal('show')
-    })
+      this.workId = workId;
+      this.load();
+      return $('.c-impression-button-modal').modal('show');
+    });
   },
-}
+};

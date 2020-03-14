@@ -19,9 +19,9 @@ export default {
   methods: {
     loadMore() {
       if (this.isLoading || !this.hasNext) {
-        return
+        return;
       }
-      return this.handler()
+      return this.handler();
     },
   },
-}
+};

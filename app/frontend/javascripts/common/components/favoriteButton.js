@@ -1,4 +1,4 @@
-import $ from 'jquery'
+import $ from 'jquery';
 
 export default {
   template: '#t-favorite-button',
@@ -26,15 +26,15 @@ export default {
     return {
       isFavorited: this.initIsFavorited,
       isSaving: false,
-    }
+    };
   },
 
   computed: {
     buttonText() {
       if (this.isFavorited) {
-        return gon.I18n['messages._components.favorite_button.added_to_favorites']
+        return gon.I18n['messages._components.favorite_button.added_to_favorites'];
       } else {
-        return gon.I18n['messages._components.favorite_button.add_to_favorites']
+        return gon.I18n['messages._components.favorite_button.add_to_favorites'];
       }
     },
   },
@@ -42,11 +42,11 @@ export default {
   methods: {
     toggleFavorite() {
       if (!this.isSignedIn) {
-        $('.c-sign-up-modal').modal('show')
-        return
+        $('.c-sign-up-modal').modal('show');
+        return;
       }
 
-      this.isSaving = true
+      this.isSaving = true;
 
       if (this.isFavorited) {
         return $.ajax({
@@ -57,9 +57,9 @@ export default {
             resource_id: this.resourceId,
           },
         }).done(() => {
-          this.isFavorited = false
-          return (this.isSaving = false)
-        })
+          this.isFavorited = false;
+          return (this.isSaving = false);
+        });
       } else {
         return $.ajax({
           method: 'POST',
@@ -70,10 +70,10 @@ export default {
             page_category: gon.page.category,
           },
         }).done(() => {
-          this.isFavorited = true
-          return (this.isSaving = false)
-        })
+          this.isFavorited = true;
+          return (this.isSaving = false);
+        });
       }
     },
   },
-}
+};

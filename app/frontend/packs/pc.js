@@ -1,4 +1,4 @@
-import '../javascripts/pc'
-import '../stylesheets/pc'
+import '../javascripts/pc';
+import '../stylesheets/pc';
 
-require.context('images', true, /\.(jpg|jpeg|png|svg)$/)
+require.context('images', true, /\.(jpg|jpeg|png|svg)$/);

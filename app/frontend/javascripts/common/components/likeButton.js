@@ -1,4 +1,4 @@
-import $ from 'jquery'
+import $ from 'jquery';
 
 export default {
   template: '#t-like-button',
@@ -32,21 +32,21 @@ export default {
       likesCount: Number(this.initLikesCount),
       isLiked: JSON.parse(this.initIsLiked),
       isLoading: false,
-    }
+    };
   },
 
   methods: {
     toggleLike() {
       if (!this.isSignedIn) {
-        $('.c-sign-up-modal').modal('show')
-        return
+        $('.c-sign-up-modal').modal('show');
+        return;
       }
 
       if (this.isLoading) {
-        return
+        return;
       }
 
-      this.isLoading = true
+      this.isLoading = true;
 
       if (this.isLiked) {
         return $.ajax({
@@ -57,10 +57,10 @@ export default {
             recipient_id: this.resourceId,
           },
         }).done(() => {
-          this.isLoading = false
-          this.likesCount += -1
-          this.isLiked = false
-        })
+          this.isLoading = false;
+          this.likesCount += -1;
+          this.isLiked = false;
+        });
       } else {
         return $.ajax({
           method: 'POST',
@@ -71,11 +71,11 @@ export default {
             page_category: gon.page.category,
           },
         }).done(() => {
-          this.isLoading = false
-          this.likesCount += 1
-          this.isLiked = true
-        })
+          this.isLoading = false;
+          this.likesCount += 1;
+          this.isLiked = true;
+        });
       }
     },
   },
-}
+};
