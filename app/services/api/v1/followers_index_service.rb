@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
-module API
+module Api
   module V1
-    class FollowersIndexService < API::V1::BaseService
+    class FollowersIndexService < Api::V1::BaseService
       def result
         @collection = filter_user_id
         @collection = filter_username

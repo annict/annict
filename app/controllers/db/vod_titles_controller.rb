@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
-module DB
-  class VodTitlesController < DB::ApplicationController
+module Db
+  class VodTitlesController < Db::ApplicationController
     before_action :authenticate_user!, only: %i(new create edit update destroy)
 
     def index

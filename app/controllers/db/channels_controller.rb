@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
-module DB
-  class ChannelsController < DB::ApplicationController
+module Db
+  class ChannelsController < Db::ApplicationController
     before_action :authenticate_user!, only: %i(new create edit update hide destroy)
 
     def index

@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
-module API
+module Api
   module Internal
-    class SearchesController < API::Internal::ApplicationController
+    class SearchesController < Api::Internal::ApplicationController
       def show
         search = SearchService.new(params[:q])
         @works = search.works.order(id: :desc).limit(5)

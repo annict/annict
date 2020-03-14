@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
-module DB
-  class SeriesWorksController < DB::ApplicationController
+module Db
+  class SeriesWorksController < Db::ApplicationController
     before_action :authenticate_user!
 
     def index
@@ -11,13 +11,13 @@ module DB
 
     def new
       @series = Series.find(params[:series_id])
-      @form = DB::SeriesWorkRowsForm.new
+      @form = Db::SeriesWorkRowsForm.new
       authorize @form, :new?
     end
 
     def create
       @series = Series.find(params[:series_id])
-      @form = DB::SeriesWorkRowsForm.new(series_work_rows_form_params)
+      @form = Db::SeriesWorkRowsForm.new(series_work_rows_form_params)
       @form.user = current_user
       @form.series = @series
       authorize @form, :create?

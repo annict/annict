@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
-module API
+module Api
   module Internal
-    class StatusChartDataController < API::Internal::ApplicationController
+    class StatusChartDataController < Api::Internal::ApplicationController
       def show
         @work = Work.without_deleted.find(params[:work_id])
         render json: @work.status_chart_dataset

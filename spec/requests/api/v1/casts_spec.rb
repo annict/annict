@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-describe "API::V1::Casts" do
+describe "Api::V1::Casts" do
   let(:access_token) { create(:oauth_access_token) }
   let!(:cast) { create(:cast) }
 

@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
-module API
+module Api
   module Internal
-    class TipsController < API::Internal::ApplicationController
+    class TipsController < Api::Internal::ApplicationController
       before_action :authenticate_user!, only: %i(close)
 
       def close

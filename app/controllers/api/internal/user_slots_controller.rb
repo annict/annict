@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
-module API
+module Api
   module Internal
-    class UserSlotsController < API::Internal::ApplicationController
+    class UserSlotsController < Api::Internal::ApplicationController
       before_action :authenticate_user!
 
       def index

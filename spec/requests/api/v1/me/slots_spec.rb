@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-describe "API::V1::Me::Slots" do
+describe "Api::V1::Me::Slots" do
   let(:access_token) { create(:oauth_access_token) }
   let(:work) { create(:work, :with_current_season) }
   let(:episode) { create(:episode, work: work) }

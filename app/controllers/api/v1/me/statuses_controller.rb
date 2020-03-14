@@ -1,9 +1,9 @@
 # frozen_string_literal: true
 
-module API
+module Api
   module V1
     module Me
-      class StatusesController < API::V1::ApplicationController
+      class StatusesController < Api::V1::ApplicationController
         before_action :prepare_params!, only: [:create]
 
         def create

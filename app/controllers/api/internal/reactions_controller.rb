@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
-module API
+module Api
   module Internal
-    class ReactionsController < API::Internal::ApplicationController
+    class ReactionsController < Api::Internal::ApplicationController
       before_action :authenticate_user!
 
       def add

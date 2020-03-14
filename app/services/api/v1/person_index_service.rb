@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
-module API
+module Api
   module V1
-    class PersonIndexService < API::V1::BaseService
+    class PersonIndexService < Api::V1::BaseService
       def result
         @collection = filter_ids
         @collection = filter_name

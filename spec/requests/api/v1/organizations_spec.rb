@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-describe "API::V1::Organizations" do
+describe "Api::V1::Organizations" do
   let(:access_token) { create(:oauth_access_token) }
   let!(:organization) { create(:organization) }
 

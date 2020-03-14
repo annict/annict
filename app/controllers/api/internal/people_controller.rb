@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
-module API
+module Api
   module Internal
-    class PeopleController < API::Internal::ApplicationController
+    class PeopleController < Api::Internal::ApplicationController
       def index
         @people = if params[:q].present?
           Person.where("name ILIKE ?", "%#{params[:q]}%").without_deleted

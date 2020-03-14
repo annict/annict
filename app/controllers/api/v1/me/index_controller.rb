@@ -1,9 +1,9 @@
 # frozen_string_literal: true
 
-module API
+module Api
   module V1
     module Me
-      class IndexController < API::V1::ApplicationController
+      class IndexController < Api::V1::ApplicationController
         before_action :prepare_params!, only: %i(show)
 
         def show

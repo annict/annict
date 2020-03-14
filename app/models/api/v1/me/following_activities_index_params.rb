@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-module API
+module Api
   module V1
     module Me
       class FollowingActivitiesIndexParams

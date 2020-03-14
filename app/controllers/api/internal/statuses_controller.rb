@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
-module API
+module Api
   module Internal
-    class StatusesController < API::Internal::ApplicationController
+    class StatusesController < Api::Internal::ApplicationController
       before_action :authenticate_user!
 
       def select

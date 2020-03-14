@@ -27,7 +27,7 @@
 #  fk_rails_...  (user_id => users.id)
 #
 
-class DBActivity < ApplicationRecord
+class DbActivity < ApplicationRecord
   extend Enumerize
 
   belongs_to :object, polymorphic: true, optional: true
@@ -74,7 +74,7 @@ class DBActivity < ApplicationRecord
   end
 
   def anchor
-    return "" if object_type != "DBComment"
+    return "" if object_type != "DbComment"
     object.anchor
   end
 end

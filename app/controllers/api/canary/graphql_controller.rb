@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
-module API
+module Api
   module Canary
-    class GraphQLController < ActionController::Base
+    class GraphqlController < ActionController::Base
       include Analyzable
       include LogrageSetting
       include RavenContext

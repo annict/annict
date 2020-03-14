@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
-module API
+module Api
   module Internal
-    class AppDataController < API::Internal::ApplicationController
+    class AppDataController < Api::Internal::ApplicationController
       def index
         @user = current_user
         @flash = Flash.find_by(client_uuid: cookies[:ann_client_uuid])

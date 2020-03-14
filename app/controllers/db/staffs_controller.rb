@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
-module DB
-  class StaffsController < DB::ApplicationController
+module Db
+  class StaffsController < Db::ApplicationController
     before_action :authenticate_user!
 
     def index
@@ -13,13 +13,13 @@ module DB
 
     def new
       @work = Work.find(params[:work_id])
-      @form = DB::StaffRowsForm.new
+      @form = Db::StaffRowsForm.new
       authorize @form, :new?
     end
 
     def create
       @work = Work.find(params[:work_id])
-      @form = DB::StaffRowsForm.new(staff_rows_form_params)
+      @form = Db::StaffRowsForm.new(staff_rows_form_params)
       @form.user = current_user
       @form.work = @work
       authorize @form, :create?

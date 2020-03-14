@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
-module DB
-  class TrailersController < DB::ApplicationController
+module Db
+  class TrailersController < Db::ApplicationController
     before_action :authenticate_user!
 
     def index
@@ -11,13 +11,13 @@ module DB
 
     def new
       @work = Work.find(params[:work_id])
-      @form = DB::TrailerRowsForm.new
+      @form = Db::TrailerRowsForm.new
       authorize @form, :new?
     end
 
     def create
       @work = Work.find(params[:work_id])
-      @form = DB::TrailerRowsForm.new(trailer_rows_form_params)
+      @form = Db::TrailerRowsForm.new(trailer_rows_form_params)
       @form.user = current_user
       @form.work = @work
       authorize @form, :create?

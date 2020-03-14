@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
-module API
+module Api
   module Internal
-    class LikesController < API::Internal::ApplicationController
+    class LikesController < Api::Internal::ApplicationController
       before_action :authenticate_user!
 
       def create

@@ -1,9 +1,9 @@
 # frozen_string_literal: true
 
-module API
+module Api
   module V1
     module Me
-      class SlotIndexService < API::V1::BaseService
+      class SlotIndexService < Api::V1::BaseService
         attr_writer :user
 
         def result

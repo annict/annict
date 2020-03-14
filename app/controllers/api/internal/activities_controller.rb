@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
-module API
+module Api
   module Internal
-    class ActivitiesController < API::Internal::ApplicationController
+    class ActivitiesController < Api::Internal::ApplicationController
       def index
         return head(404) if params[:username].blank? && !user_signed_in?
 

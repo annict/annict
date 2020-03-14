@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-describe "API::V1::Series" do
+describe "Api::V1::Series" do
   let(:access_token) { create(:oauth_access_token) }
   let!(:series) { create(:series) }
 

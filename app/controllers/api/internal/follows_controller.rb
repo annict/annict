@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-module API
+module Api
   module Internal
     class FollowsController < ApplicationController
       before_action :authenticate_user!

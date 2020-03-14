@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
-module API
+module Api
   module Internal
-    class SeriesListController < API::Internal::ApplicationController
+    class SeriesListController < Api::Internal::ApplicationController
       def index
         @series_list = if params[:q].present?
           Series.where("name ILIKE ?", "%#{params[:q]}%").without_deleted
