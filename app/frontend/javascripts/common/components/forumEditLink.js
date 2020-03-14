@@ -1,4 +1,4 @@
-import eventHub from '../../common/eventHub'
+import eventHub from '../../common/eventHub';
 
 export default {
   template: '#t-forum-edit-link',
@@ -18,19 +18,19 @@ export default {
     return {
       appData: {},
       appLoaded: false,
-    }
+    };
   },
 
   methods: {
     isEditable: function() {
-      return this.userId === (this.appData.current_user && this.appData.current_user.id)
+      return this.userId === (this.appData.current_user && this.appData.current_user.id);
     },
   },
 
   mounted() {
     eventHub.$on('app:loaded', () => {
-      this.appData = this.$root.appData
-      this.appLoaded = true
-    })
+      this.appData = this.$root.appData;
+      this.appLoaded = true;
+    });
   },
-}
+};

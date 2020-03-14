@@ -1,4 +1,4 @@
-import eventHub from '../eventHub'
+import eventHub from '../eventHub';
 
 export default {
   template: '#t-sticky-message',
@@ -8,7 +8,7 @@ export default {
       appData: {},
       appLoaded: false,
       pageCategory: gon.page.category,
-    }
+    };
   },
 
   props: {
@@ -20,20 +20,20 @@ export default {
 
   methods: {
     isDisplayable: function() {
-      return !this.appData.isUserSignedIn
+      return !this.appData.isUserSignedIn;
     },
   },
 
   mounted() {
     eventHub.$on('app:loaded', () => {
-      this.appData = this.$root.appData
-      this.appLoaded = true
+      this.appData = this.$root.appData;
+      this.appLoaded = true;
 
       if (this.isDisplayable() && typeof ga === 'function') {
         return ga('send', 'event', 'components', 'load', `sticky-message_${this.pageCategory}`, {
           nonInteraction: true,
-        })
+        });
       }
-    })
+    });
   },
-}
+};

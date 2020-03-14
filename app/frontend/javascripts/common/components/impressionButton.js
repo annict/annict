@@ -1,6 +1,6 @@
-import $ from 'jquery'
+import $ from 'jquery';
 
-import eventHub from '../../common/eventHub'
+import eventHub from '../../common/eventHub';
 
 export default {
   template: '#t-impression-button',
@@ -18,17 +18,17 @@ export default {
   },
 
   data() {
-    return { isSignedIn: gon.user.isSignedIn }
+    return { isSignedIn: gon.user.isSignedIn };
   },
 
   methods: {
     openModal() {
       if (!this.isSignedIn) {
-        $('.c-sign-up-modal').modal('show')
-        return
+        $('.c-sign-up-modal').modal('show');
+        return;
       }
 
-      return eventHub.$emit('impressionButtonModal:show', this.workId)
+      return eventHub.$emit('impressionButtonModal:show', this.workId);
     },
   },
-}
+};

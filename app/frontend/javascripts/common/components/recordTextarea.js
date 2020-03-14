@@ -1,6 +1,6 @@
-import Vue from 'vue'
+import Vue from 'vue';
 
-import eventHub from '../../common/eventHub'
+import eventHub from '../../common/eventHub';
 
 export default {
   template: '#t-record-textarea',
@@ -9,7 +9,7 @@ export default {
     return {
       record: this.initRecord,
       isEditingBody: false,
-    }
+    };
   },
 
   props: {
@@ -24,21 +24,21 @@ export default {
   methods: {
     expandOnClick() {
       if (this.record.bodyRows > 2) {
-        return
+        return;
       }
-      this.record.bodyRows = 10
-      return (this.isEditingBody = this.record.isEditingBody = true)
+      this.record.bodyRows = 10;
+      return (this.isEditingBody = this.record.isEditingBody = true);
     },
 
     expandOnEnter() {
       if (!this.record.body) {
-        return
+        return;
       }
 
-      const lineCount = this.record.body.split('\n').length
+      const lineCount = this.record.body.split('\n').length;
 
       if (lineCount > this.record.bodyRows) {
-        return (this.record.bodyRows = lineCount)
+        return (this.record.bodyRows = lineCount);
       }
     },
   },
@@ -46,14 +46,14 @@ export default {
   watch: {
     'record.body'(body) {
       if (!body) {
-        return
+        return;
       }
 
-      eventHub.$emit('wordCount:update', this.record, body.length || 0)
+      eventHub.$emit('wordCount:update', this.record, body.length || 0);
     },
 
     initRecord(val) {
-      return (this.record = val)
+      return (this.record = val);
     },
   },
-}
+};

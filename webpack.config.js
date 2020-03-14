@@ -1,25 +1,25 @@
-const glob = require('glob')
-const path = require('path')
+const glob = require('glob');
+const path = require('path');
 
-const ManifestPlugin = require('webpack-manifest-plugin')
-const MiniCssExtractPlugin = require('mini-css-extract-plugin')
-const VueLoaderPlugin = require('vue-loader/lib/plugin')
-const ForkTsCheckerWebpackPlugin = require('fork-ts-checker-webpack-plugin')
+const ManifestPlugin = require('webpack-manifest-plugin');
+const MiniCssExtractPlugin = require('mini-css-extract-plugin');
+const VueLoaderPlugin = require('vue-loader/lib/plugin');
+const ForkTsCheckerWebpackPlugin = require('fork-ts-checker-webpack-plugin');
 
-const isProd = process.env.NODE_ENV === 'production'
+const isProd = process.env.NODE_ENV === 'production';
 
-const packs = path.join(__dirname, 'app', 'frontend', 'packs')
-const targets = glob.sync(path.join(packs, '**/*.js'))
+const packs = path.join(__dirname, 'app', 'frontend', 'packs');
+const targets = glob.sync(path.join(packs, '**/*.js'));
 const entry = targets.reduce((entry, target) => {
-  const bundle = path.relative(packs, target)
-  const ext = path.extname(bundle)
+  const bundle = path.relative(packs, target);
+  const ext = path.extname(bundle);
 
   return Object.assign({}, entry, {
     // Input: "application.js"
     // Output: { "application": "./application.js" }
     [bundle.replace(ext, '')]: `./${path.relative(__dirname, packs)}/${bundle}`,
-  })
-}, {})
+  });
+}, {});
 
 module.exports = {
   entry,
@@ -79,7 +79,7 @@ module.exports = {
             options: {
               plugins: function() {
                 // post css plugins, can be exported to postcss.config.js
-                return [require('precss'), require('autoprefixer')]
+                return [require('precss'), require('autoprefixer')];
               },
             },
           },
@@ -132,4 +132,4 @@ module.exports = {
     port: 8080,
     disableHostCheck: true,
   },
-}
+};

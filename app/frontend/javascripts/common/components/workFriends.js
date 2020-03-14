@@ -1,8 +1,8 @@
-import _ from 'lodash'
+import _ from 'lodash';
 
-import eventHub from '../eventHub'
+import eventHub from '../eventHub';
 
-const DISPLAY_USERS_LIMIT = 12
+const DISPLAY_USERS_LIMIT = 12;
 
 export default {
   template: '#t-work-friends',
@@ -13,7 +13,7 @@ export default {
       pageData: {},
       showAll: false,
       usersData: [],
-    }
+    };
   },
 
   props: {
@@ -26,48 +26,48 @@ export default {
   computed: {
     allUsers() {
       if (!this.usersData || !this.usersData.length) {
-        return []
+        return [];
       }
 
       const data = this.usersData.filter(ud => {
-        return ud.work_id === this.workId
-      })[0]
+        return ud.work_id === this.workId;
+      })[0];
 
       if (!data) {
-        return []
+        return [];
       }
 
-      return data.users
+      return data.users;
     },
 
     users() {
       if (this.showAll) {
-        return this.allUsers
+        return this.allUsers;
       }
-      return _.take(this.allUsers, DISPLAY_USERS_LIMIT)
+      return _.take(this.allUsers, DISPLAY_USERS_LIMIT);
     },
 
     isMoreUsers() {
-      return !this.showAll && this.allUsers.length > DISPLAY_USERS_LIMIT
+      return !this.showAll && this.allUsers.length > DISPLAY_USERS_LIMIT;
     },
   },
 
   methods: {
     more() {
-      return (this.showAll = true)
+      return (this.showAll = true);
     },
   },
 
   mounted() {
     eventHub.$on('app:loaded', () => {
-      this.appData = this.$root.appData
-      this.pageData = this.$root.pageData
+      this.appData = this.$root.appData;
+      this.pageData = this.$root.pageData;
 
       if (!this.appData.isUserSignedIn) {
-        return
+        return;
       }
 
-      this.usersData = this.pageData.users_data
-    })
+      this.usersData = this.pageData.users_data;
+    });
   },
-}
+};

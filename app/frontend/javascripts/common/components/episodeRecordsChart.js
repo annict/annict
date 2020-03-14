@@ -1,5 +1,5 @@
-import * as d3Selection from 'd3-selection'
-import LineChart from 'britecharts/dist/umd/line.min'
+import * as d3Selection from 'd3-selection';
+import LineChart from 'britecharts/dist/umd/line.min';
 
 export default {
   template: '<div class="c-episode-records-chart"></div>',
@@ -12,20 +12,20 @@ export default {
   },
 
   data() {
-    return { dataset: JSON.parse(this.initDataset) }
+    return { dataset: JSON.parse(this.initDataset) };
   },
 
   mounted() {
-    const container = d3Selection.select('.c-episode-records-chart')
-    const containerWidth = container.node() ? container.node().getBoundingClientRect().width : false
+    const container = d3Selection.select('.c-episode-records-chart');
+    const containerWidth = container.node() ? container.node().getBoundingClientRect().width : false;
     const lineMargin = {
       top: 12,
       bottom: 50,
       left: 60,
       right: 30,
-    }
+    };
 
-    const lineChart = new LineChart()
+    const lineChart = new LineChart();
 
     const dataset = {
       dataByTopic: [
@@ -35,7 +35,7 @@ export default {
           dates: this.dataset,
         },
       ],
-    }
+    };
 
     if (containerWidth) {
       lineChart
@@ -43,9 +43,9 @@ export default {
         .margin(lineMargin)
         .grid('horizontal')
         .width(containerWidth)
-        .topicLabel(100)
+        .topicLabel(100);
 
-      return container.datum(dataset).call(lineChart)
+      return container.datum(dataset).call(lineChart);
     }
   },
-}
+};

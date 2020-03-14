@@ -1,4 +1,4 @@
-import $ from 'jquery'
+import $ from 'jquery';
 
 export default {
   props: {
@@ -27,43 +27,43 @@ export default {
       isTrackingMode: this.initIsTrackingMode,
       isTracking: false,
       episodeIds: [],
-    }
+    };
   },
 
   computed: {
     isTrackable() {
-      return !!this.episodeIds.length
+      return !!this.episodeIds.length;
     },
   },
 
   methods: {
     enableTrackingMode() {
       if (!this.isSignedIn) {
-        $('.c-sign-up-modal').modal('show')
-        return
+        $('.c-sign-up-modal').modal('show');
+        return;
       }
-      return (this.isTrackingMode = true)
+      return (this.isTrackingMode = true);
     },
 
     disableTrackingMode() {
-      this.uncheckAll()
-      return (this.isTrackingMode = false)
+      this.uncheckAll();
+      return (this.isTrackingMode = false);
     },
 
     checkAll() {
-      return (this.episodeIds = this.allEpisodeIds)
+      return (this.episodeIds = this.allEpisodeIds);
     },
 
     uncheckAll() {
-      return (this.episodeIds = [])
+      return (this.episodeIds = []);
     },
 
     track() {
       if (this.isTracking) {
-        return
+        return;
       }
 
-      this.isTracking = true
+      this.isTracking = true;
 
       return $.ajax({
         method: 'POST',
@@ -73,8 +73,8 @@ export default {
           page_category: gon.page.category,
         },
       }).done(() => {
-        return (location.href = `/works/${this.workId}/episodes`)
-      })
+        return (location.href = `/works/${this.workId}/episodes`);
+      });
     },
   },
-}
+};
