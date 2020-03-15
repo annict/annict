@@ -4,5 +4,10 @@
 }
 
 .u-bg-white {
-  background-color: $ann-color-white;
+}
+
+@each $color-name, $color in $ann-bg-colors {
+  .u-bg-#{$color-name} {
+    background-color: $color;
+  }
 }
