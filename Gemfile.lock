@@ -290,7 +290,7 @@ GEM
       addressable
       faraday
       json (>= 1.8)
-    listen (3.2.0)
+    listen (3.2.1)
       rb-fsevent (~> 0.10, >= 0.10.3)
       rb-inotify (~> 0.9, >= 0.9.10)
     lograge (0.11.2)
@@ -434,7 +434,7 @@ GEM
       i18n
       polyamorous (= 2.3.0)
     rb-fsevent (0.10.3)
-    rb-inotify (0.10.0)
+    rb-inotify (0.10.1)
       ffi (~> 1.0)
     regexp_parser (1.6.0)
     request_store (1.4.1)
