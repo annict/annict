@@ -1,8 +1,6 @@
 # frozen_string_literal: true
 
 class SidebarComponent < ApplicationComponent
-  inline!
-
   def initialize(user:)
     @user = user
   end

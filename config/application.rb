@@ -10,6 +10,7 @@ require_relative "boot"
   action_controller/railtie
   action_mailer/railtie
   action_view/railtie
+  view_component/engine
 ).each do |railtie|
   require railtie
 end
@@ -17,8 +18,6 @@ end
 # Require the gems listed in Gemfile, including any gems
 # you've limited to :test, :development, or :production.
 Bundler.require(*Rails.groups)
-
-require "view_component/engine"
 
 module Annict
   class Application < Rails::Application

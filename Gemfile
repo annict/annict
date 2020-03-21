@@ -7,7 +7,6 @@ ruby "2.7.0"
 
 gem "rails", "~> 6.0.0"
 
-gem "actionview-component"
 gem "active_decorator"
 gem "active_link_to"
 gem "activerecord-session_store"
@@ -70,6 +69,7 @@ gem "slim"
 gem "syoboi_calendar"
 gem "twitter"
 gem "validate_url"
+gem "view_component", github: "github/view_component", branch: "131-v2.0.0"
 gem "virtus"
 gem "wilson_score"
 
