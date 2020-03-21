@@ -6,6 +6,7 @@ module SoftDeletable
   included do
     scope :without_deleted, -> { where(deleted_at: nil) }
     scope :deleted, -> { where.not(deleted_at: nil) }
+    scope :only_kept, -> { without_deleted }
 
     def soft_delete
       touch :deleted_at
