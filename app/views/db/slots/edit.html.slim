@@ -28,7 +28,7 @@
             .form-group.row
               = f.label :channel_id, class: "col-sm-3 col-form-label"
               .col-sm-9
-                = f.select :channel_id, options_from_collection_for_select(Channel.without_deleted.order(:name), :id, :name, f.object.channel.try!(:id)), { include_blank: true }, { class: "form-control" }
+                = f.select :channel_id, options_from_collection_for_select(Channel.only_kept.order(:name), :id, :name, f.object.channel.try!(:id)), { include_blank: true }, { class: "form-control" }
             .form-group.row
               = f.label :started_at, class: "col-sm-3 col-form-label"
               .col-sm-9

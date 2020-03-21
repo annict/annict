@@ -19,7 +19,7 @@
     .p-3
       .btn-group
         = link_to t("noun.all"), db_work_slots_path(@work), class: "btn btn-sm #{params[:channel_id] ? 'btn-outline-secondary' : 'btn-secondary'}"
-        - @work.channels.without_deleted.each do |c|
+        - @work.channels.only_kept.each do |c|
           = link_to c.name, db_work_slots_path(@work, channel_id: c.id), class: "btn btn-sm #{c.id.to_s == params[:channel_id] ? 'btn-secondary' : 'btn-outline-secondary'}"
     - if @slots.present?
       table.table.table-hover

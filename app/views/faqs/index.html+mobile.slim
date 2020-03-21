@@ -11,7 +11,7 @@
     .c-card
       .container.py-3
         #accordion
-          - category.faq_contents.without_deleted.order(:sort_number).each do |content|
+          - category.faq_contents.only_kept.order(:sort_number).each do |content|
             .card
               .card-header
                 = link_to content.question, "#collapse#{content.id}", data: { toggle: "collapse", parent: "#accordion" }

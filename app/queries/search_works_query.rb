@@ -10,7 +10,7 @@ class SearchWorksQuery
     state: nil,
     order_by: nil
   )
-    @collection = collection.without_deleted
+    @collection = collection.only_kept
     @args = {
       user: user,
       annict_ids: annict_ids,

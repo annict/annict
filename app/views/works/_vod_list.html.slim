@@ -1,7 +1,7 @@
 - channels.each_slice(slice).each do |channels|
   .row.mb-3
     - channels.each do |channel|
-      - pds = defined?(programs) ? programs.select { |pd| pd.channel_id == channel.id } : channel.programs.includes(:channel).without_deleted.where(work: work)
+      - pds = defined?(programs) ? programs.select { |pd| pd.channel_id == channel.id } : channel.programs.includes(:channel).only_kept.where(work: work)
       div class="col-#{12 / slice}"
         - if pds.present? && pds.length > 1
           .btn-group.w-100

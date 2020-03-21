@@ -6,7 +6,7 @@ module Api
       before_action :prepare_params!, only: %i(index)
 
       def index
-        @casts = Cast.without_deleted
+        @casts = Cast.only_kept
         @casts = Api::V1::CastIndexService.new(@casts, @params).result
       end
     end

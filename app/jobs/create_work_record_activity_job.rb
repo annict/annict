@@ -5,7 +5,7 @@ class CreateWorkRecordActivityJob < ApplicationJob
 
   def perform(user_id, work_record_id)
     user = User.find(user_id)
-    work_record = user.work_records.without_deleted.find(work_record_id)
+    work_record = user.work_records.only_kept.find(work_record_id)
 
     Activity.create! do |a|
       a.user = user

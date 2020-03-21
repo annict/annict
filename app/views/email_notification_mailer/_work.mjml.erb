@@ -44,8 +44,8 @@
       </mj-text>
     <% end %>
 
-    <% if work.trailers.without_deleted.exists? %>
-      <%- trailer = work.trailers.without_deleted.order(:sort_number).first %>
+    <% if work.trailers.only_kept.exists? %>
+      <%- trailer = work.trailers.only_kept.order(:sort_number).first %>
       <mj-text font-weight="800" padding="10px 25px 0 25px"><%= I18n.t("noun.pv") %></mj-text>
       <mj-image src="<%= ann_image_url(trailer, :image, size: "640x640") %>" align="center" href="<%= trailer.url %>"></mj-image>
       <mj-text padding-top="0"
@@ -55,19 +55,19 @@
       </mj-text>
     <% end %>
 
-    <% if work.casts.without_deleted.exists? %>
+    <% if work.casts.only_kept.exists? %>
       <mj-text font-weight="800" padding="10px 25px"><%= I18n.t("noun.casts") %></mj-text>
       <mj-text padding-top="0" line-height="22px">
-        <% work.casts.without_deleted.order(:sort_number).limit(10).each do |cast| %>
+        <% work.casts.only_kept.order(:sort_number).limit(10).each do |cast| %>
           <%= cast.character.local_name %>: <%= cast.person.local_name %>
         <% end %>
       </mj-text>
     <% end %>
 
-    <% if work.staffs.without_deleted.exists? %>
+    <% if work.staffs.only_kept.exists? %>
       <mj-text font-weight="800" padding="10px 25px"><%= I18n.t("noun.staffs") %></mj-text>
       <mj-text padding-top="0" line-height="22px">
-        <% work.staffs.without_deleted.major.order(:sort_number).each do |staff| %>
+        <% work.staffs.only_kept.major.order(:sort_number).each do |staff| %>
           <%= staff.decorate.role_name %>: <%= staff.local_name %>
         <% end %>
       </mj-text>

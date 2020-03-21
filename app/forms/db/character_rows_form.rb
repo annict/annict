@@ -30,8 +30,8 @@ module Db
 
     def fetched_rows
       parsed_rows.map do |row_columns|
-        series = Series.without_deleted.where(id: row_columns[1]).
-          or(Series.without_deleted.where(name: row_columns[1])).first
+        series = Series.only_kept.where(id: row_columns[1]).
+          or(Series.only_kept.where(name: row_columns[1])).first
 
         {
           name: { value: row_columns[0] },

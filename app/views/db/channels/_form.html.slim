@@ -5,7 +5,7 @@
     .form-group.row
       = f.label :channel_group_id, class: "col-sm-3 col-form-label c-label-required"
       .col-sm-9
-        = f.select :channel_group_id, options_from_collection_for_select(ChannelGroup.without_deleted.order(:name), :id, :name, f.object.channel_group_id), { include_blank: true }, { class: "form-control" }
+        = f.select :channel_group_id, options_from_collection_for_select(ChannelGroup.only_kept.order(:name), :id, :name, f.object.channel_group_id), { include_blank: true }, { class: "form-control" }
     .form-group.row
       = f.label :name, class: "col-sm-3 col-form-label c-label-required"
       .col-sm-9
