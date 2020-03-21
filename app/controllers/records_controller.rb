@@ -4,7 +4,7 @@ class RecordsController < ApplicationController
   before_action :authenticate_user!, only: %i(destroy)
 
   def index
-    @user = User.without_deleted.find_by!(username: params[:username])
+    @user = User.only_kept.find_by!(username: params[:username])
     @records = UserEpisodeRecordsQuery.new.call(
       episode_records: @user.episode_records,
       user: @user
@@ -12,13 +12,13 @@ class RecordsController < ApplicationController
 
     return unless user_signed_in?
 
-    works = Work.without_deleted.where(id: @records.pluck(:work_id))
+    works = Work.only_kept.where(id: @records.pluck(:work_id))
     store_page_params(works: works)
   end
 
   def show
-    @user = User.without_deleted.find_by!(username: params[:username])
-    @record = @user.records.without_deleted.find(params[:id])
+    @user = User.only_kept.find_by!(username: params[:username])
+    @record = @user.records.only_kept.find(params[:id])
 
     if @record.episode_record?
       @episode_record = UserEpisodeRecordsQuery.new.call(
@@ -53,8 +53,8 @@ class RecordsController < ApplicationController
   end
 
   def destroy
-    @user = User.without_deleted.find_by!(username: params[:username])
-    @record = @user.records.without_deleted.find(params[:id])
+    @user = User.only_kept.find_by!(username: params[:username])
+    @record = @user.records.only_kept.find(params[:id])
 
     authorize @record, :destroy?
 

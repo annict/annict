@@ -3,13 +3,13 @@
     .c-subnav__item
       .text-center
         .mb-1
-          = user.followings.without_deleted.count
+          = user.followings.only_kept.count
         .small
           | Following
   = active_link_to followers_user_path(user.username), class: "c-subnav__link", class_active: "c-subnav__link--active", active: current_page?(action: :followers) do
     .c-subnav__item
       .text-center
         .mb-1
-          = user.followers.without_deleted.count
+          = user.followers.only_kept.count
         .small
           | Followers

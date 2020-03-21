@@ -6,7 +6,7 @@ module Api
       before_action :prepare_params!, only: %i(index)
 
       def index
-        @characters = Character.without_deleted
+        @characters = Character.only_kept
         @characters = Api::V1::CharacterIndexService.new(@characters, @params).result
       end
     end

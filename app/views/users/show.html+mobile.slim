@@ -62,13 +62,13 @@
       .p-users-show__count.col.px-0
         = link_to following_user_path(@user.username), class: "p-users-show__count-link" do
           .h3.mb-1
-            = @user.followings.without_deleted.count
+            = @user.followings.only_kept.count
           .small
             | Following
       .p-users-show__count.col.px-0
         = link_to followers_user_path(@user.username), class: "p-users-show__count-link" do
           .h3.mb-1
-            = @user.followers.without_deleted.count
+            = @user.followers.only_kept.count
           .small
             | Followers
 

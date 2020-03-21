@@ -16,7 +16,7 @@ describe EpisodeGeneratorService, type: :service do
         end
 
         it "creates 1 episode" do
-          episodes = work.episodes.without_deleted.order(:raw_number)
+          episodes = work.episodes.only_kept.order(:raw_number)
           expect(episodes.count).to eq(1)
           expect(episodes[0].raw_number).to eq(1.0)
         end
@@ -28,7 +28,7 @@ describe EpisodeGeneratorService, type: :service do
         end
 
         it "creates 2 episodes" do
-          episodes = work.episodes.without_deleted.order(:raw_number)
+          episodes = work.episodes.only_kept.order(:raw_number)
           expect(episodes.count).to eq(2)
           expect(episodes[0].raw_number).to eq(1.0)
           expect(episodes[1].raw_number).to eq(2.0)
@@ -48,7 +48,7 @@ describe EpisodeGeneratorService, type: :service do
         end
 
         it "does not create episodes" do
-          episodes = work.episodes.without_deleted.order(:raw_number)
+          episodes = work.episodes.only_kept.order(:raw_number)
           expect(episodes.count).to eq(1)
           expect(episodes[0].raw_number).to eq(1.0)
         end
@@ -60,7 +60,7 @@ describe EpisodeGeneratorService, type: :service do
         end
 
         it "creates 1 episode" do
-          episodes = work.episodes.without_deleted.order(:raw_number)
+          episodes = work.episodes.only_kept.order(:raw_number)
           expect(episodes.count).to eq(2)
           expect(episodes[0].raw_number).to eq(1.0)
           expect(episodes[1].raw_number).to eq(2.0)
@@ -82,7 +82,7 @@ describe EpisodeGeneratorService, type: :service do
         end
 
         it "does not create episodes" do
-          episodes = work.episodes.without_deleted.order(:raw_number)
+          episodes = work.episodes.only_kept.order(:raw_number)
           expect(episodes.count).to eq(2)
           expect(episodes[0].raw_number).to eq(1.0)
           expect(episodes[1].raw_number).to eq(1.5)
@@ -95,7 +95,7 @@ describe EpisodeGeneratorService, type: :service do
         end
 
         it "creates 1 episode" do
-          episodes = work.episodes.without_deleted.order(:raw_number)
+          episodes = work.episodes.only_kept.order(:raw_number)
           expect(episodes.count).to eq(3)
           expect(episodes[0].raw_number).to eq(1.0)
           expect(episodes[1].raw_number).to eq(1.5)
@@ -125,7 +125,7 @@ describe EpisodeGeneratorService, type: :service do
         end
 
         it "does not create episodes" do
-          episodes = work.episodes.without_deleted.order(:sort_number)
+          episodes = work.episodes.only_kept.order(:sort_number)
           expect(episodes.count).to eq(3)
           expect(episodes[0].id).to eq(episode1.id)
           expect(episodes[0].raw_number).to eq(nil)
@@ -142,7 +142,7 @@ describe EpisodeGeneratorService, type: :service do
         end
 
         it "creates 1 episode" do
-          episodes = work.episodes.without_deleted.order(:sort_number)
+          episodes = work.episodes.only_kept.order(:sort_number)
           expect(episodes.count).to eq(4)
           expect(episodes[0].id).to eq(episode1.id)
           expect(episodes[0].raw_number).to eq(nil)
@@ -171,7 +171,7 @@ describe EpisodeGeneratorService, type: :service do
         end
 
         it "does not create episodes" do
-          episodes = work.episodes.without_deleted.order(:sort_number)
+          episodes = work.episodes.only_kept.order(:sort_number)
           expect(episodes.count).to eq(3)
           expect(episodes[0].id).to eq(episode1.id)
           expect(episodes[0].raw_number).to eq(nil)
@@ -188,7 +188,7 @@ describe EpisodeGeneratorService, type: :service do
         end
 
         it "creates 1 episode" do
-          episodes = work.episodes.without_deleted.order(:sort_number)
+          episodes = work.episodes.only_kept.order(:sort_number)
           expect(episodes.count).to eq(4)
           expect(episodes[0].id).to eq(episode1.id)
           expect(episodes[0].raw_number).to eq(nil)

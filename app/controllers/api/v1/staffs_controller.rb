@@ -6,7 +6,7 @@ module Api
       before_action :prepare_params!, only: %i(index)
 
       def index
-        @staffs = Staff.without_deleted
+        @staffs = Staff.only_kept
         @staffs = Api::V1::StaffIndexService.new(@staffs, @params).result
       end
     end

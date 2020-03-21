@@ -6,7 +6,7 @@ module Api
       before_action :authenticate_user!
 
       def select
-        @work = Work.without_deleted.find(params[:work_id])
+        @work = Work.only_kept.find(params[:work_id])
         channel_work = current_user.channel_works.where(work: @work).first_or_initialize
 
         if params[:channel_id] == "no_select"
@@ -14,7 +14,7 @@ module Api
           return head(200)
         end
 
-        channel = Channel.without_deleted.find(params[:channel_id])
+        channel = Channel.only_kept.find(params[:channel_id])
         channel_work.channel = channel
 
         head(200) if channel_work.save
