@@ -2,8 +2,6 @@
 
 namespace :api do
   namespace :internal do
-    post :graphql, to: "graphql#execute"
-
     resource :impression, only: %i(show update)
     resource :privacy_policy_agreement, only: %i(create)
     resource :slots_sort_type, only: [:update]
@@ -70,6 +68,17 @@ namespace :api do
 
       resources :statuses, only: [] do
         post :select, on: :collection
+      end
+    end
+  end
+end
+
+scope module: :v4 do
+  scope module: :api do
+    scope module: :internal do
+      constraints(format: "json") do
+        post "/api/internal/graphql", to: "graphql#execute"
+        post "/api/internal/graphql_local", to: "graphql#execute_local" if Rails.env.development?
       end
     end
   end
