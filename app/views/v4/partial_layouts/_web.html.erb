@@ -1,3 +1,15 @@
 <div class="pl-web">
-  <%= yield %>
+  <div class="pl-web__sidebar">
+    <%= render SidebarComponent.new(user: current_user) %>
+  </div>
+
+  <div class="pl-web__main d-flex flex-column">
+    <div class="pl-web__main__content">
+      <%= yield %>
+    </div>
+
+    <div class="pl-web__main__footer container-fluid">
+      <%#= render FooterComponent.new %>
+    </div>
+  </div>
 </div>

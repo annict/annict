@@ -151,8 +151,10 @@ get "r/:provider/:url_hash",
   provider: /fb|tw/,
   url_hash: /[0-9a-zA-Z_-]{10}/
 
-scope module: :v3 do
-  resources :works, only: %i(show)
+scope module: :v4 do
+  constraints format: "html" do
+    get "/works/:id", to: "works#show", as: :work
+  end
 end
 
 root "home#index"
