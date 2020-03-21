@@ -27,6 +27,13 @@ $link-hover-decoration: none;
 
 // Typography
 
+$font-family-sans-serif: "Helvetica Neue",
+  Arial,
+  "Hiragino Kaku Gothic ProN",
+  "Hiragino Sans",
+  Meiryo,
+  sans-serif;
+
 $h1-font-size: 1.75rem;
 $h2-font-size: 1.5rem;
 $h3-font-size: 1.25rem;
@@ -37,7 +44,6 @@ $h6-font-size: .5rem;
 $display1-size: 3rem;
 $display2-size: 2.5rem;
 
-$headings-font-family: -apple-system, BlinkMacSystemFont, "Helvetica Neue", "Segoe UI", "ヒラギノ角ゴ ProN W3", Hiragino Kaku Gothic ProN, Arial, "メイリオ", Meiryo, sans-serif;
 $headings-font-weight: 300;
 
 $list-inline-padding: .5rem;
