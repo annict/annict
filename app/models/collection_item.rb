@@ -7,14 +7,14 @@
 #  aasm_state      :string           default("published"), not null
 #  comment         :text
 #  deleted_at      :datetime
-#  position        :integer          default(0), not null
-#  reactions_count :integer          default(0), not null
+#  position        :integer          default("0"), not null
+#  reactions_count :integer          default("0"), not null
 #  title           :string           not null
 #  created_at      :datetime         not null
 #  updated_at      :datetime         not null
-#  collection_id   :integer          not null
-#  user_id         :integer          not null
-#  work_id         :integer          not null
+#  collection_id   :bigint           not null
+#  user_id         :bigint           not null
+#  work_id         :bigint           not null
 #
 # Indexes
 #

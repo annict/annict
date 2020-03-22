@@ -3,11 +3,11 @@
 #
 # Table name: userland_categories
 #
-#  id                      :integer          not null, primary key
+#  id                      :bigint           not null, primary key
 #  name                    :string           not null
 #  name_en                 :string           not null
-#  sort_number             :integer          default(0), not null
-#  userland_projects_count :integer          default(0), not null
+#  sort_number             :integer          default("0"), not null
+#  userland_projects_count :integer          default("0"), not null
 #  created_at              :datetime         not null
 #  updated_at              :datetime         not null
 #

@@ -7,9 +7,9 @@
 #  kind               :string           not null
 #  created_at         :datetime         not null
 #  updated_at         :datetime         not null
-#  collection_item_id :integer
-#  target_user_id     :integer          not null
-#  user_id            :integer          not null
+#  collection_item_id :bigint
+#  target_user_id     :bigint           not null
+#  user_id            :bigint           not null
 #
 # Indexes
 #

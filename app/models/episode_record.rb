@@ -3,31 +3,31 @@
 #
 # Table name: episode_records
 #
-#  id                         :integer          not null, primary key
+#  id                         :bigint           not null, primary key
 #  aasm_state                 :string           default("published"), not null
 #  body                       :text
-#  comments_count             :integer          default(0), not null
+#  comments_count             :integer          default("0"), not null
 #  deleted_at                 :datetime
-#  facebook_click_count       :integer          default(0), not null
+#  facebook_click_count       :integer          default("0"), not null
 #  facebook_url_hash          :string(510)
-#  likes_count                :integer          default(0), not null
+#  likes_count                :integer          default("0"), not null
 #  locale                     :string           default("other"), not null
-#  modify_body                :boolean          default(FALSE), not null
+#  modify_body                :boolean          default("false"), not null
 #  rating                     :float
 #  rating_state               :string
-#  shared_facebook            :boolean          default(FALSE), not null
-#  shared_twitter             :boolean          default(FALSE), not null
-#  twitter_click_count        :integer          default(0), not null
+#  shared_facebook            :boolean          default("false"), not null
+#  shared_twitter             :boolean          default("false"), not null
+#  twitter_click_count        :integer          default("0"), not null
 #  twitter_url_hash           :string(510)
 #  created_at                 :datetime
 #  updated_at                 :datetime
-#  episode_id                 :integer          not null
-#  multiple_episode_record_id :integer
-#  oauth_application_id       :integer
-#  record_id                  :integer          not null
-#  review_id                  :integer
-#  user_id                    :integer          not null
-#  work_id                    :integer          not null
+#  episode_id                 :bigint           not null
+#  multiple_episode_record_id :bigint
+#  oauth_application_id       :bigint
+#  record_id                  :bigint           not null
+#  review_id                  :bigint
+#  user_id                    :bigint           not null
+#  work_id                    :bigint           not null
 #
 # Indexes
 #

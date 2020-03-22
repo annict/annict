@@ -3,12 +3,12 @@
 #
 # Table name: multiple_episode_records
 #
-#  id          :integer          not null, primary key
-#  likes_count :integer          default(0), not null
+#  id          :bigint           not null, primary key
+#  likes_count :integer          default("0"), not null
 #  created_at  :datetime         not null
 #  updated_at  :datetime         not null
-#  user_id     :integer          not null
-#  work_id     :integer          not null
+#  user_id     :bigint           not null
+#  work_id     :bigint           not null
 #
 # Indexes
 #

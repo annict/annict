@@ -4,12 +4,12 @@
 #
 # Table name: likes
 #
-#  id             :integer          not null, primary key
+#  id             :bigint           not null, primary key
 #  recipient_type :string(510)      not null
 #  created_at     :datetime
 #  updated_at     :datetime
-#  recipient_id   :integer          not null
-#  user_id        :integer          not null
+#  recipient_id   :bigint           not null
+#  user_id        :bigint           not null
 #
 # Indexes
 #

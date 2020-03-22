@@ -7,8 +7,8 @@
 #  aasm_state             :string           default("published"), not null
 #  body                   :text             not null
 #  deleted_at             :datetime
-#  impressions_count      :integer          default(0), not null
-#  likes_count            :integer          default(0), not null
+#  impressions_count      :integer          default("0"), not null
+#  likes_count            :integer          default("0"), not null
 #  locale                 :string           default("other"), not null
 #  modified_at            :datetime
 #  rating_animation_state :string
@@ -19,10 +19,10 @@
 #  title                  :string           default("")
 #  created_at             :datetime         not null
 #  updated_at             :datetime         not null
-#  oauth_application_id   :integer
-#  record_id              :integer          not null
-#  user_id                :integer          not null
-#  work_id                :integer          not null
+#  oauth_application_id   :bigint
+#  record_id              :bigint           not null
+#  user_id                :bigint           not null
+#  work_id                :bigint           not null
 #
 # Indexes
 #

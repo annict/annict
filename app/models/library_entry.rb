@@ -3,15 +3,15 @@
 #
 # Table name: library_entries
 #
-#  id                  :integer          not null, primary key
-#  position            :integer          default(0), not null
-#  watched_episode_ids :integer          default([]), not null, is an Array
+#  id                  :bigint           not null, primary key
+#  position            :integer          default("0"), not null
+#  watched_episode_ids :bigint           default("{}"), not null, is an Array
 #  created_at          :datetime         not null
 #  updated_at          :datetime         not null
-#  next_episode_id     :integer
-#  status_id           :integer
-#  user_id             :integer          not null
-#  work_id             :integer          not null
+#  next_episode_id     :bigint
+#  status_id           :bigint
+#  user_id             :bigint           not null
+#  work_id             :bigint           not null
 #
 # Indexes
 #

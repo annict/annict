@@ -3,14 +3,14 @@
 #
 # Table name: db_comments
 #
-#  id            :integer          not null, primary key
+#  id            :bigint           not null, primary key
 #  body          :text             not null
 #  locale        :string           default("other"), not null
 #  resource_type :string           not null
 #  created_at    :datetime         not null
 #  updated_at    :datetime         not null
-#  resource_id   :integer          not null
-#  user_id       :integer          not null
+#  resource_id   :bigint           not null
+#  user_id       :bigint           not null
 #
 # Indexes
 #

@@ -3,21 +3,21 @@
 #
 # Table name: activities
 #
-#  id                         :integer          not null, primary key
+#  id                         :bigint           not null, primary key
 #  action                     :string(510)      not null
 #  recipient_type             :string(510)      not null
 #  trackable_type             :string(510)      not null
 #  created_at                 :datetime
 #  updated_at                 :datetime
-#  episode_id                 :integer
-#  episode_record_id          :integer
-#  multiple_episode_record_id :integer
-#  recipient_id               :integer          not null
-#  status_id                  :integer
-#  trackable_id               :integer          not null
-#  user_id                    :integer          not null
-#  work_id                    :integer
-#  work_record_id             :integer
+#  episode_id                 :bigint
+#  episode_record_id          :bigint
+#  multiple_episode_record_id :bigint
+#  recipient_id               :bigint           not null
+#  status_id                  :bigint
+#  trackable_id               :bigint           not null
+#  user_id                    :bigint           not null
+#  work_id                    :bigint
+#  work_record_id             :bigint
 #
 # Indexes
 #

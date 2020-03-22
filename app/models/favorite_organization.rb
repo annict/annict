@@ -3,12 +3,12 @@
 #
 # Table name: favorite_organizations
 #
-#  id                  :integer          not null, primary key
-#  watched_works_count :integer          default(0), not null
+#  id                  :bigint           not null, primary key
+#  watched_works_count :integer          default("0"), not null
 #  created_at          :datetime         not null
 #  updated_at          :datetime         not null
-#  organization_id     :integer          not null
-#  user_id             :integer          not null
+#  organization_id     :bigint           not null
+#  user_id             :bigint           not null
 #
 # Indexes
 #

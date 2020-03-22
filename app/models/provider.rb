@@ -4,7 +4,7 @@
 #
 # Table name: providers
 #
-#  id               :integer          not null, primary key
+#  id               :bigint           not null, primary key
 #  name             :string(510)      not null
 #  token            :string(510)      not null
 #  token_expires_at :integer
@@ -12,7 +12,7 @@
 #  uid              :string(510)      not null
 #  created_at       :datetime
 #  updated_at       :datetime
-#  user_id          :integer          not null
+#  user_id          :bigint           not null
 #
 # Indexes
 #

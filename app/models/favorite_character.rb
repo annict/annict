@@ -3,11 +3,11 @@
 #
 # Table name: favorite_characters
 #
-#  id           :integer          not null, primary key
+#  id           :bigint           not null, primary key
 #  created_at   :datetime         not null
 #  updated_at   :datetime         not null
-#  character_id :integer          not null
-#  user_id      :integer          not null
+#  character_id :bigint           not null
+#  user_id      :bigint           not null
 #
 # Indexes
 #

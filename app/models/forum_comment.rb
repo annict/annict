@@ -3,14 +3,14 @@
 #
 # Table name: forum_comments
 #
-#  id                                                   :integer          not null, primary key
+#  id                                                   :bigint           not null, primary key
 #  body                                                 :text             not null
 #  edited_at(The datetime which user has changed body.) :datetime
 #  locale                                               :string           default("other"), not null
 #  created_at                                           :datetime         not null
 #  updated_at                                           :datetime         not null
-#  forum_post_id                                        :integer          not null
-#  user_id                                              :integer          not null
+#  forum_post_id                                        :bigint           not null
+#  user_id                                              :bigint           not null
 #
 # Indexes
 #

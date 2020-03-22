@@ -3,13 +3,13 @@
 #
 # Table name: people
 #
-#  id                   :integer          not null, primary key
+#  id                   :bigint           not null, primary key
 #  aasm_state           :string           default("published"), not null
 #  birthday             :date
 #  blood_type           :string
-#  casts_count          :integer          default(0), not null
+#  casts_count          :integer          default("0"), not null
 #  deleted_at           :datetime
-#  favorite_users_count :integer          default(0), not null
+#  favorite_users_count :integer          default("0"), not null
 #  gender               :string
 #  height               :integer
 #  name                 :string           not null
@@ -17,16 +17,17 @@
 #  name_kana            :string           default(""), not null
 #  nickname             :string
 #  nickname_en          :string           default(""), not null
-#  staffs_count         :integer          default(0), not null
+#  staffs_count         :integer          default("0"), not null
 #  twitter_username     :string
 #  twitter_username_en  :string           default(""), not null
+#  unpublished_at       :datetime
 #  url                  :string
 #  url_en               :string           default(""), not null
 #  wikipedia_url        :string
 #  wikipedia_url_en     :string           default(""), not null
 #  created_at           :datetime         not null
 #  updated_at           :datetime         not null
-#  prefecture_id        :integer
+#  prefecture_id        :bigint
 #
 # Indexes
 #
@@ -37,6 +38,7 @@
 #  index_people_on_name                  (name) UNIQUE
 #  index_people_on_prefecture_id         (prefecture_id)
 #  index_people_on_staffs_count          (staffs_count)
+#  index_people_on_unpublished_at        (unpublished_at)
 #
 # Foreign Keys
 #

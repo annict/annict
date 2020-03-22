@@ -3,11 +3,11 @@
 #
 # Table name: mute_users
 #
-#  id            :integer          not null, primary key
+#  id            :bigint           not null, primary key
 #  created_at    :datetime         not null
 #  updated_at    :datetime         not null
-#  muted_user_id :integer          not null
-#  user_id       :integer          not null
+#  muted_user_id :bigint           not null
+#  user_id       :bigint           not null
 #
 # Indexes
 #

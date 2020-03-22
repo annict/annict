@@ -2,13 +2,13 @@
 #
 # Table name: number_formats
 #
-#  id          :integer          not null, primary key
+#  id          :bigint           not null, primary key
+#  data        :string           default("{}"), not null, is an Array
+#  format      :string           default(""), not null
 #  name        :string           not null
-#  data        :string           default([]), not null, is an Array
-#  sort_number :integer          default(0), not null
+#  sort_number :integer          default("0"), not null
 #  created_at  :datetime         not null
 #  updated_at  :datetime         not null
-#  format      :string           default(""), not null
 #
 # Indexes
 #
