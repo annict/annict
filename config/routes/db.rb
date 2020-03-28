@@ -67,7 +67,7 @@ namespace :db do
     end
   end
 
-  resources :series, only: %i(index new create edit update destroy) do
+  resources :series, only: %i(new create update destroy) do
     member do
       get :activities
       patch :hide
@@ -124,4 +124,16 @@ namespace :db do
   end
 
   root "home#index"
+end
+
+scope module: :v4 do
+  scope module: :db do
+    constraints format: "html" do
+      match "/db/series", via: :get, to: "series#index", as: :db_series_list
+      match "/db/series/:id", via: :delete, to: "series#destroy", as: :db_series_detail
+      match "/db/series/:id/edit", via: :get, to: "series#edit", as: :db_edit_series
+      match "/db/series/:id/publishing", via: :delete, to: "series_publishing#destroy", as: :db_series_publishing
+      match "/db/series/:id/publishing", via: :post, to: "series_publishing#create"
+    end
+  end
 end

@@ -7,6 +7,8 @@
 #  aasm_state         :string           default("published"), not null
 #  deleted_at         :datetime
 #  name               :string           not null
+#  name_alter         :string           default(""), not null
+#  name_alter_en      :string           default(""), not null
 #  name_en            :string           default(""), not null
 #  name_ro            :string           default(""), not null
 #  series_works_count :integer          default("0"), not null
@@ -24,7 +26,7 @@
 class Series < ApplicationRecord
   include DbActivityMethods
   include RootResourceCommon
-  include SoftDeletable
+  include Unpublishable
 
   DIFF_FIELDS = %i(name name_en).freeze
 

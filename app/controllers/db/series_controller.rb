@@ -4,10 +4,6 @@ module Db
   class SeriesController < Db::ApplicationController
     before_action :authenticate_user!, only: %i(new create edit update hide destroy)
 
-    def index
-      @series_list = Series.order(id: :desc).page(params[:page])
-    end
-
     def new
       @series = Series.new
       authorize @series, :new?
@@ -21,7 +17,7 @@ module Db
       return render(:new) unless @series.valid?
       @series.save_and_create_activity!
 
-      redirect_to db_series_index_path, notice: t("messages._common.created")
+      redirect_to db_series_list_path, notice: t("messages._common.created")
     end
 
     def edit
@@ -49,7 +45,7 @@ module Db
       @series.soft_delete
 
       flash[:notice] = t("messages._common.unpublished")
-      redirect_back fallback_location: db_series_index_path
+      redirect_back fallback_location: db_series_list_path
     end
 
     def destroy
@@ -59,7 +55,7 @@ module Db
       @series.destroy
 
       flash[:notice] = t("messages._common.deleted")
-      redirect_back fallback_location: db_series_index_path
+      redirect_back fallback_location: db_series_list_path
     end
 
     def activities

@@ -20,7 +20,7 @@ html lang="#{I18n.locale}"
 
         ul.l-sidebar__menu.nav.navbar-nav.px-3
           li = link_to DbActivity.model_name.human(count: 2), db_activities_path, class: "d-inline-block"
-          li = link_to t("noun.series"), db_series_index_path, class: "d-inline-block"
+          li = link_to t("noun.series"), db_series_list_path, class: "d-inline-block"
           li = link_to Work.model_name.human(count: 2), db_works_path, class: "d-inline-block"
           li = link_to Person.model_name.human(count: 2), db_people_path, class: "d-inline-block"
           li = link_to Organization.model_name.human(count: 2), db_organizations_path, class: "d-inline-block"

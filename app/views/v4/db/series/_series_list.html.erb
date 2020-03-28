@@ -1,0 +1,46 @@
+<div class="c-card">
+  <table class="table table-hover">
+    <thead>
+      <tr>
+        <th>
+          ID
+        </th>
+        <th>
+          <%= t "activerecord.attributes.series.name" %>
+        </th>
+        <th>
+          <%= t "noun.state" %>
+        </th>
+        <th>
+          <%= t "noun.actions" %>
+        </th>
+      </tr>
+    </thead>
+    <tbody>
+      <% series_list.each do |series| %>
+        <tr>
+          <td>
+            <%= series.id %>
+          </td>
+          <td>
+            <%= series.name %>
+            <br>
+            <%= series.name_en.presence || "-" %>
+          </td>
+          <td>
+            <%= render Db::PublishingStateLabelComponent.new(resource: series) %>
+          </td>
+          <td>
+            <%= render Db::ActionButtonsComponent.new(
+              user: current_user,
+              resource: series,
+              detail_path: db_series_detail_path(series),
+              edit_path: db_edit_series_path(series),
+              publishing_path: db_series_publishing_path(series)
+            ) %>
+          </td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+</div>

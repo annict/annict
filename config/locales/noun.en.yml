@@ -1,6 +1,7 @@
 en:
   noun:
     account_deletion: Delete Account
+    actions: Actions
     activities: Activities
     after: After
     ago: ago
@@ -105,6 +106,7 @@ en:
     previous_season: Previous Season
     privacy_policy: Privacy Policy
     profile: Profile
+    publish: Publish
     slots: Slots
     pv: PV
     rating: Rating

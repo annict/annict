@@ -16,5 +16,9 @@ module Unpublishable
     def unpublish
       touch :unpublished_at
     end
+
+    def published?
+      unpublished_at.nil?
+    end
   end
 end

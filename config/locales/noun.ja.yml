@@ -1,6 +1,7 @@
 ja:
   noun:
     account_deletion: アカウント削除
+    actions: アクション
     activities: アクティビティ
     after: After
     ago: 前
@@ -105,6 +106,7 @@ ja:
     previous_season: 前期のアニメ
     privacy_policy: プライバシーポリシー
     profile: プロフィール
+    publish: 公開
     slots: 放送予定
     pv: PV
     rating: 評価
