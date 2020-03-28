@@ -10,9 +10,9 @@ html lang="#{I18n.locale}"
 
     .p-application
       .l-sidebar
-        = link_to db_root_path, class: "c-lockup my-3 px-3" do
-          span.c-lockup__logo Annict
-          span.c-lockup__brand DB
+        = link_to db_root_path, class: "l-sidebar__lockup my-3 px-3" do
+          span.l-sidebar__lockup__logo Annict
+          span.l-sidebar__lockup__brand DB
 
         = form_tag db_search_path, method: :get, class: "px-1" do
           .form-group
