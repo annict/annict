@@ -1959,7 +1959,9 @@ CREATE TABLE public.series (
     created_at timestamp without time zone NOT NULL,
     updated_at timestamp without time zone NOT NULL,
     deleted_at timestamp without time zone,
-    unpublished_at timestamp without time zone
+    unpublished_at timestamp without time zone,
+    name_alter character varying DEFAULT ''::character varying NOT NULL,
+    name_alter_en character varying DEFAULT ''::character varying NOT NULL
 );
 
 
@@ -7206,6 +7208,7 @@ INSERT INTO "schema_migrations" (version) VALUES
 ('20191207094223'),
 ('20191207113735'),
 ('20191208154530'),
-('20200310195638');
+('20200310195638'),
+('20200322025837');
 
 
