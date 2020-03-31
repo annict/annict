@@ -4,7 +4,7 @@ import ujs from '@rails/ujs';
 import Turbolinks from 'turbolinks';
 
 document.addEventListener('turbolinks:load', _event => {
-  WebFont.load({
+  window.WebFont.load({
     google: {
       families: ['Raleway'],
     },
