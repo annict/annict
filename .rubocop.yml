@@ -28,6 +28,9 @@ Layout/DotPosition:
 Layout/FirstArrayElementIndentation:
   EnforcedStyle: consistent
 
+Layout/LineLength:
+  Max: 128
+
 Layout/MultilineOperationIndentation:
   EnforcedStyle: indented
 
@@ -36,14 +39,6 @@ Layout/MultilineMethodCallIndentation:
 
 Lint/UnusedMethodArgument:
   Enabled: false
-
-Metrics/LineLength:
-  Max: 150
-  Exclude:
-    - "**/*.jbuilder"
-  # Ignore lines with comments
-  # http://stackoverflow.com/questions/26342570/rubocop-linelength-how-to-ignore-lines-with-comments
-  IgnoredPatterns: ['\A( *)#']
 
 Metrics/AbcSize:
   Enabled: false
@@ -70,6 +65,18 @@ Style/Documentation:
   Enabled: false
 
 Style/DoubleNegation:
+  Enabled: false
+
+Style/HashEachMethods:
+  Enabled: true
+
+Style/HashTransformKeys:
+  Enabled: true
+
+Style/HashTransformValues:
+  Enabled: true
+
+Style/IfUnlessModifier:
   Enabled: false
 
 Style/Lambda:
