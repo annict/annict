@@ -3,8 +3,8 @@
 module V4
   module Localizable
     SKIP_TO_SET_LOCALE_PATHS = %w(
-    /users/auth/gumroad/callback
-  ).freeze
+      /users/auth/gumroad/callback
+    ).freeze
     private_constant :SKIP_TO_SET_LOCALE_PATHS
 
     private

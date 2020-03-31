@@ -22,7 +22,12 @@ module Db
 
         if series_policy.publish?
           el.div class: "mb-1" do
-            el.a class: "btn btn-warning btn-sm", data_method: publishing_method, data_confirm: t("messages._common.are_you_sure"), href: publishing_path do
+            el.a(
+              class: "btn btn-warning btn-sm",
+              data_method: publishing_method,
+              data_confirm: t("messages._common.are_you_sure"),
+              href: publishing_path
+            ) do
               publishing_text
             end
           end
@@ -30,7 +35,12 @@ module Db
 
         if series_policy.destroy?
           el.div class: "mb-1" do
-            el.a class: "btn btn-danger btn-sm", data_method: "delete", data_confirm: t("messages._common.are_you_sure"), href: detail_path do
+            el.a(
+              class: "btn btn-danger btn-sm",
+              data_method: "delete",
+              data_confirm: t("messages._common.are_you_sure"),
+              href: detail_path
+            ) do
               I18n.t("noun.delete")
             end
           end
