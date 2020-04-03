@@ -1,0 +1,12 @@
+@import '~bootstrap/scss/bootstrap';
+@import '~select2/src/scss/core';
+@import '~cal-heatmap/cal-heatmap';
+
+@import './foundations/bootstrap/buttons';
+@import './foundations/turbolinks';
+@import './foundations/select2';
+
+@import './foundations/annict/all';
+@import './foundations/annict/app';
+@import './foundations/annict/body';
+@import './foundations/annict/input';

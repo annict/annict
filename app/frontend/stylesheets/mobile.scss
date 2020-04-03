@@ -1,13 +1,13 @@
 @import 'common/variables/annict';
 @import 'common/variables/bootstrap';
 
-@import 'common/foundations/foundation';
+@import 'web/foundations/foundation';
 @import 'mobile/foundations/foundation';
 
 @import 'common/components';
-@import 'common/projects';
 @import 'common/utilities';
 
+@import 'web/projects';
 @import 'web/components';
 
 @import 'mobile/components';
