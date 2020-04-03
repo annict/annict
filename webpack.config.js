@@ -33,12 +33,22 @@ module.exports = {
   module: {
     rules: [
       {
+        test: /\.m?js$/,
+        exclude: /node_modules/,
+        use: {
+          loader: 'babel-loader',
+          options: {
+            presets: ['@babel/preset-env'],
+          },
+        },
+      },
+      {
         test: /\.vue$/,
         exclude: /node_modules/,
         loader: 'vue-loader',
       },
       {
-        test: /\.(js|ts)x?$/,
+        test: /\.tsx?$/,
         exclude: /node_modules/,
         loader: 'ts-loader',
         options: {
