@@ -69,7 +69,7 @@ gem "slim"
 gem "syoboi_calendar"
 gem "twitter"
 gem "validate_url"
-gem "view_component", github: "github/view_component", branch: "131-v2.0.0"
+gem "view_component"
 gem "virtus"
 gem "wilson_score"
 
