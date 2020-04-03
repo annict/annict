@@ -101,7 +101,9 @@ ja:
         searches:
           show: 検索
         series:
+          edit: シリーズ編集 | %{title}
           index: シリーズ一覧
+          new: シリーズ登録
         series_works:
           activities: アクティビティ
           edit: シリーズ作品編集

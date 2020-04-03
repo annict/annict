@@ -132,6 +132,7 @@ en:
     seasonal_anime: Seasonal Anime
     series: Series
     series_with_name: "%{series_name} Series"
+    series_works: Series Works
     services: Services
     settings: Settings
     share: Share

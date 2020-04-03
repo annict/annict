@@ -15,5 +15,9 @@ module SoftDeletable
     def not_deleted?
       deleted_at.nil?
     end
+
+    def deleted?
+      !not_deleted?
+    end
   end
 end

@@ -13,6 +13,10 @@ module Unpublishable
     scope :unpublished, -> { where.not(unpublished_at: nil) }
     scope :only_kept, -> { without_deleted.published }
 
+    def publish
+      update_attribute(:unpublished_at, nil)
+    end
+
     def unpublish
       touch :unpublished_at
     end

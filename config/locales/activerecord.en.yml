@@ -143,9 +143,10 @@ en:
         thumbnail: Thumbnail
         url: URL
       series:
-        name_en: Name (en)
-        name_ro: Name (ro)
         name: Name
+        name_alter: Name (alter)
+        name_alter_en: Name (alter/en)
+        name_en: Name (en)
       series_work:
         summary: Summary
         summary_en: Summary (en)

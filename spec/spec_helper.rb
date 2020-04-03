@@ -82,3 +82,5 @@ RSpec.configure do |config|
     driven_by :remote_selenium_chrome unless ENV["NO_HEADLESS"]
   end
 end
+
+RSpec::Matchers.define_negated_matcher :not_chage, :change

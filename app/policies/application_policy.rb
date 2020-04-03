@@ -30,10 +30,6 @@ class ApplicationPolicy
     update?
   end
 
-  def unpublish?
-    publish?
-  end
-
   def destroy?
     false
   end

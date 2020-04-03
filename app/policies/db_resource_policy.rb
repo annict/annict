@@ -1,15 +1,11 @@
 # frozen_string_literal: true
 
-class SeriesPolicy < ApplicationPolicy
+class DbResourcePolicy < ApplicationPolicy
   def create?
     user.present? && user.committer?
   end
 
   def update?
-    user.present? && user.committer?
-  end
-
-  def publish?
     user.present? && user.committer?
   end
 

@@ -103,7 +103,9 @@ en:
         searches:
           show: Search
         series:
+          edit: Edit Series | %{title}
           index: Series
+          new: New Series
         series_works:
           activities: Activities
           edit: Edit Series Work

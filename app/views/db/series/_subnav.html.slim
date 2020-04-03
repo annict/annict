@@ -1,7 +1,0 @@
-.c-subnav
-  = active_link_to edit_db_series_path(series), class: "c-subnav__link", class_active: "c-subnav__link--active", active: params[:controller]  == "db/series" && %w(edit update).include?(params[:action]) do
-    .c-subnav__item
-      = Series.model_name.human
-  = active_link_to db_series_series_works_path(series), class: "c-subnav__link", class_active: "c-subnav__link--active", active: params[:controller]  == "db/series_works" do
-    .c-subnav__item
-      = SeriesWork.model_name.human(count: 2)

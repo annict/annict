@@ -29,5 +29,13 @@ module Db
       flash[:alert] = t "messages._common.you_can_not_access_there"
       redirect_to(request.referrer || db_root_path)
     end
+
+    def authorize_db_resource(resource)
+      authorize resource, policy_class: DbResourcePolicy
+    end
+
+    def authorize_db_resource_publishing(resource)
+      authorize resource, policy_class: DbResourcePublishingPolicy
+    end
   end
 end

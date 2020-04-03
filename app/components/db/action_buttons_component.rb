@@ -12,7 +12,7 @@ module Db
 
     def call
       Htmlrb.build do |el|
-        if series_policy.edit?
+        if db_resource_policy.edit?
           el.div class: "mb-1" do
             el.a class: "btn btn-primary btn-sm", href: edit_path do
               I18n.t("noun.edit")
@@ -20,10 +20,10 @@ module Db
           end
         end
 
-        if series_policy.publish?
+        if db_resource_publishing_policy.create?
           el.div class: "mb-1" do
             el.a(
-              class: "btn btn-warning btn-sm",
+              class: "btn btn-sm #{publishing_btn_class}",
               data_method: publishing_method,
               data_confirm: t("messages._common.are_you_sure"),
               href: publishing_path
@@ -33,7 +33,7 @@ module Db
           end
         end
 
-        if series_policy.destroy?
+        if db_resource_policy.destroy?
           el.div class: "mb-1" do
             el.a(
               class: "btn btn-danger btn-sm",
@@ -52,12 +52,20 @@ module Db
 
     attr_reader :detail_path, :edit_path, :publishing_path, :resource, :user
 
-    def series_policy
-      SeriesPolicy.new(user, resource)
+    def db_resource_policy
+      DbResourcePolicy.new(user, resource)
+    end
+
+    def db_resource_publishing_policy
+      DbResourcePublishingPolicy.new(user, resource)
     end
 
     def publishing_method
       resource.published? ? "delete" : "post"
+    end
+
+    def publishing_btn_class
+      resource.published? ? "btn-warning" : "btn-success"
     end
 
     def publishing_text
