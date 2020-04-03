@@ -1,11 +1,12 @@
 .c-db-sidebar {
   background-color: $ann-color-black-l1;
   float: left;
+  font-size: 0.95rem;
   height: 100%;
   overflow-y: auto;
   position: fixed;
   top: 0;
-  width: 14rem;
+  width: 240px;
 
   a {
     color: $ann-color-white;
@@ -14,6 +15,10 @@
       color: $ann-color-white;
       text-decoration: none;
     }
+  }
+
+  input {
+    font-size: 0.95rem;
   }
 
   &__lockup {

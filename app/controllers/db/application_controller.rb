@@ -4,26 +4,20 @@ module Db
   class ApplicationController < ActionController::Base
     include Pundit
 
-    include ControllerCommon
-    include Localable
-    include FlashMessage
-    include Analyzable
-    include LogrageSetting
-    include Gonable
-    include RavenContext
-    include PageCategoryMethods
+    include V4::RavenContext
+    include V4::Loggable
+    include V4::Localizable
+    include V4::PageCategorizable
 
     layout "db"
 
     rescue_from Pundit::NotAuthorizedError, with: :user_not_authorized
 
-    helper_method :gon, :locale_ja?, :locale_en?, :local_url
+    helper_method :client_uuid, :local_time_zone, :locale_en?, :locale_ja?, :page_category
 
-    around_action :switch_locale
-    before_action :redirect_if_unexpected_subdomain
+    before_action :set_raven_context
     before_action :set_search_params
-    before_action :store_data_into_gon
-    before_action :store_page_category
+    around_action :set_locale
 
     private
 

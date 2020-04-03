@@ -1,14 +1,8 @@
 @import 'common/variables/annict';
 @import 'common/variables/bootstrap';
-
-@import 'v4/variables/variables';
-
-@import 'common/foundations/foundation';
+@import 'db/variables/variables';
 
 @import 'common/components';
-@import 'common/utilities';
 
-@import 'pc/components';
-
+@import 'db/foundations/foundations';
 @import 'db/components';
-@import 'db/layouts';

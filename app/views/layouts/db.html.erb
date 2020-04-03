@@ -13,9 +13,9 @@
 
     <%= ann_display_meta_tags %>
 
-    <meta http-equiv="x-dns-prefetch-control" content="on">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
+    <link rel="dns-prefetch" href="//ajax.googleapis.com">
     <link rel="dns-prefetch" href="//annict.imgix.net">
     <link rel="dns-prefetch" href="//fonts.googleapis.com">
     <link rel="dns-prefetch" href="//fonts.gstatic.com">
@@ -34,12 +34,20 @@
     <%= csrf_meta_tags %>
     <%= csp_meta_tag %>
 
-    <%= annict_config_v4 %>
-
-    <%= stylesheet_bundle_tag "v4.css", media: "all", "data-turbolinks-track": "reload" %>
-    <%= javascript_bundle_tag "v4.js", defer: "", "data-turbolinks-track": "reload" %>
+    <%= stylesheet_bundle_tag "db.css", media: "all", "data-turbolinks-track": "reload" %>
+    <%= javascript_bundle_tag "db.js", defer: "", "data-turbolinks-track": "reload" %>
   </head>
   <body>
-    <%= yield %>
+    <div class="f-app">
+      <div class="f-app__sidebar">
+        <%= render Db::SidebarComponent.new %>
+      </div>
+      <div class="f-app__main d-flex flex-column">
+        <div class="f-application__main__content">
+          <%= render FlashComponent.new(flash) %>
+          <%= yield %>
+        </div>
+      </div>
+    </div>
   </body>
 </html>

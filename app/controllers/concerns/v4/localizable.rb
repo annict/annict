@@ -27,5 +27,9 @@ module V4
     def locale_en?
       locale.to_s == "en"
     end
+
+    def local_time_zone
+      current_user&.time_zone.presence || cookies["ann_time_zone"]
+    end
   end
 end
