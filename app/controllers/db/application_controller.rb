@@ -13,7 +13,7 @@ module Db
 
     rescue_from Pundit::NotAuthorizedError, with: :user_not_authorized
 
-    helper_method :client_uuid, :local_time_zone, :locale_en?, :locale_ja?, :page_category
+    helper_method :client_uuid, :locale_en?, :locale_ja?, :page_category
 
     before_action :set_raven_context
     before_action :set_search_params

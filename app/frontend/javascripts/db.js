@@ -1,5 +1,4 @@
 import 'bootstrap';
-import 'select2';
 import ujs from '@rails/ujs';
 import { Application } from 'stimulus';
 import { definitionsFromContext } from 'stimulus/webpack-helpers';

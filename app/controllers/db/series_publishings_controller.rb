@@ -2,30 +2,26 @@
 
 module Db
   class SeriesPublishingsController < Db::ApplicationController
+    include V4::ResourcePublishable
+
     before_action :authenticate_user!
 
-    def create
-      @series = Series.without_deleted.unpublished.find(params[:id])
-      authorize_db_resource_publishing @series
+    private
 
-      @series.publish
-
-      redirect_back(
-        fallback_location: db_series_list_path,
-        notice: t("messages._common.published")
-      )
+    def create_resource
+      @create_resource ||= Series.without_deleted.unpublished.find(params[:id])
     end
 
-    def destroy
-      @series = Series.without_deleted.published.find(params[:id])
-      authorize_db_resource_publishing @series
+    def destroy_resource
+      @destroy_resource ||= Series.without_deleted.published.find(params[:id])
+    end
 
-      @series.unpublish
+    def after_created_path
+      db_series_list_path
+    end
 
-      redirect_back(
-        fallback_location: db_series_list_path,
-        notice: t("messages._common.unpublished")
-      )
+    def after_destroyed_path
+      db_series_list_path
     end
   end
 end

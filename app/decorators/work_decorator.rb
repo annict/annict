@@ -40,10 +40,6 @@ module WorkDecorator
     link_to release_season, season_works_path(season.slug)
   end
 
-  def db_header_title
-    local_title
-  end
-
   def local_synopsis(raw: false)
     text = case I18n.locale
     when :ja then synopsis

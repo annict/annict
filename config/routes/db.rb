@@ -66,19 +66,13 @@ namespace :db do
     end
   end
 
-  resources :series, only: %i(create) do
-    member do
-      get :activities
-      patch :hide
-    end
-
+  resources :series, only: [] do
     resources :series_works, only: %i(index new create)
   end
 
-  resources :series_works, only: %i(edit update destroy) do
+  resources :series_works, only: [] do
     member do
       get :activities
-      patch :hide
     end
   end
 
@@ -127,13 +121,23 @@ end
 
 scope module: :db do
   constraints format: "html" do
-    match "/db/activities", via: :get, to: "activities#index", as: :db_activity_list
-    match "/db/series", via: :get, to: "series#index", as: :db_series_list
-    match "/db/series/:id", via: :delete, to: "series#destroy", as: :db_series_detail
-    match "/db/series/:id", via: :patch, to: "series#update"
-    match "/db/series/:id/edit", via: :get, to: "series#edit", as: :db_edit_series
-    match "/db/series/:id/publishing", via: :delete, to: "series_publishings#destroy", as: :db_series_publishing
-    match "/db/series/:id/publishing", via: :post, to: "series_publishings#create"
-    match "/db/series/new", via: :get, to: "series#new", as: :db_new_series
+    # rubocop:disable Layout/ExtraSpacing, Layout/LineLength
+    match "/db/activities",                         via: :get,    as: :db_activity_list,          to: "activities#index"
+    match "/db/series",                             via: :get,    as: :db_series_list,            to: "series#index"
+    match "/db/series",                             via: :post,                                   to: "series#create"
+    match "/db/series/:id",                         via: :delete, as: :db_series_detail,          to: "series#destroy"
+    match "/db/series/:id",                         via: :patch,                                  to: "series#update"
+    match "/db/series/:id/edit",                    via: :get,    as: :db_edit_series,            to: "series#edit"
+    match "/db/series/:id/publishing",              via: :delete, as: :db_series_publishing,      to: "series_publishings#destroy"
+    match "/db/series/:id/publishing",              via: :post,                                   to: "series_publishings#create"
+    match "/db/series/:series_id/series_works",     via: :get,    as: :db_series_work_list,       to: "series_works#index"
+    match "/db/series_works/:id",                   via: :delete, as: :db_series_work_detail,     to: "series_works#destroy"
+    match "/db/series_works/:id",                   via: :patch,                                  to: "series_works#update"
+    match "/db/series_works/:id/edit",              via: :get,    as: :db_edit_series_work,       to: "series_works#edit"
+    match "/db/series_works/:id/publishing",        via: :delete, as: :db_series_work_publishing, to: "series_work_publishings#destroy"
+    match "/db/series_works/:id/publishing",        via: :post,                                   to: "series_work_publishings#create"
+    match "/db/series/:series_id/series_works/new", via: :get,    as: :db_new_series_work,        to: "series_works#new"
+    match "/db/series/new",                         via: :get,    as: :db_new_series,             to: "series#new"
+    # rubocop:enable Layout/ExtraSpacing, Layout/LineLength
   end
 end

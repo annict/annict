@@ -53,11 +53,11 @@ module Db
     attr_reader :detail_path, :edit_path, :publishing_path, :resource, :user
 
     def db_resource_policy
-      DbResourcePolicy.new(user, resource)
+      @db_resource_policy ||= DbResourcePolicy.new(user, resource)
     end
 
     def db_resource_publishing_policy
-      DbResourcePublishingPolicy.new(user, resource)
+      @db_resource_publishing_policy ||= DbResourcePublishingPolicy.new(user, resource)
     end
 
     def publishing_method

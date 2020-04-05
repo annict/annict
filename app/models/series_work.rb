@@ -30,7 +30,7 @@
 
 class SeriesWork < ApplicationRecord
   include DbActivityMethods
-  include SoftDeletable
+  include Unpublishable
 
   DIFF_FIELDS = %i(work_id).freeze
 

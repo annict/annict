@@ -7,10 +7,6 @@ module CharacterDecorator
     link_to local_name, character_path(self)
   end
 
-  def db_header_title
-    local_name
-  end
-
   def name_with_series
     return local_name if series.blank?
     series_text = I18n.t("noun.series_with_name", series_name: series.local_name)

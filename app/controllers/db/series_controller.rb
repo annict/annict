@@ -2,7 +2,7 @@
 
 module Db
   class SeriesController < Db::ApplicationController
-    before_action :authenticate_user!, only: %i(new create edit update hide destroy)
+    before_action :authenticate_user!, only: %i(new create edit update destroy)
 
     def index
       @series_list = Series.without_deleted.order(id: :desc).page(params[:page]).per(100)
@@ -54,12 +54,6 @@ module Db
         fallback_location: db_series_list_path,
         notice: t("messages._common.deleted")
       )
-    end
-
-    def activities
-      @series = Series.find(params[:id])
-      @activities = @series.db_activities.order(id: :desc)
-      @comment = @series.db_comments.new
     end
 
     private

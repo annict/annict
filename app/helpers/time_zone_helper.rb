@@ -16,4 +16,8 @@ module TimeZoneHelper
     formatted_offset = offset >= 0 ? "+#{formatted_offset}" : "-#{formatted_offset}"
     "(GMT#{formatted_offset}) #{time_zone.name}"
   end
+
+  def local_time_zone
+    current_user&.time_zone.presence || cookies["ann_time_zone"]
+  end
 end
