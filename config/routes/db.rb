@@ -66,16 +66,6 @@ namespace :db do
     end
   end
 
-  resources :series, only: [] do
-    resources :series_works, only: %i(index new create)
-  end
-
-  resources :series_works, only: [] do
-    member do
-      get :activities
-    end
-  end
-
   resources :staffs, only: %i(edit update destroy) do
     member do
       get :activities
