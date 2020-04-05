@@ -12,16 +12,14 @@ module Db
 
     def call
       Htmlrb.build do |el|
-        if db_resource_policy.edit?
-          el.div class: "mb-1" do
+        el.div class: "btn-group btn-group-sm", role: "actions", "aria-label": "Actions" do
+          if db_resource_policy.edit?
             el.a class: "btn btn-primary btn-sm", href: edit_path do
               I18n.t("noun.edit")
             end
           end
-        end
 
-        if db_resource_publishing_policy.create?
-          el.div class: "mb-1" do
+          if db_resource_publishing_policy.create?
             el.a(
               class: "btn btn-sm #{publishing_btn_class}",
               data_method: publishing_method,
@@ -31,10 +29,8 @@ module Db
               publishing_text
             end
           end
-        end
 
-        if db_resource_policy.destroy?
-          el.div class: "mb-1" do
+          if db_resource_policy.destroy?
             el.a(
               class: "btn btn-danger btn-sm",
               data_method: "delete",
