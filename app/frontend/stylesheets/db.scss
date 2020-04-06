@@ -1,8 +1,9 @@
-@import './common/variables/annict';
-@import './common/variables/bootstrap';
-@import './db/variables/variables';
+@import './common/variables';
+@import './db/variables';
 
+@import './common/foundations';
 @import './common/components';
+@import './common/utilities';
 
 @import './db/foundations';
 @import './db/components';
