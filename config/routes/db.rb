@@ -111,6 +111,7 @@ scope module: :db do
     match "/db/series/:id/publishing",              via: :delete, as: :db_series_publishing,      to: "series_publishings#destroy"
     match "/db/series/:id/publishing",              via: :post,                                   to: "series_publishings#create"
     match "/db/series/:series_id/series_works",     via: :get,    as: :db_series_work_list,       to: "series_works#index"
+    match "/db/series/:series_id/series_works",     via: :post,                                   to: "series_works#create"
     match "/db/series/:series_id/series_works/new", via: :get,    as: :db_new_series_work,        to: "series_works#new"
     match "/db/series/new",                         via: :get,    as: :db_new_series,             to: "series#new"
     match "/db/series_works/:id",                   via: :delete, as: :db_series_work_detail,     to: "series_works#destroy"

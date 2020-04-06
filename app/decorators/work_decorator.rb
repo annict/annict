@@ -27,7 +27,7 @@ module WorkDecorator
 
   def db_detail_link(options = {})
     name = options.delete(:name).presence || title
-    link_to(name, edit_db_work_path(self), options)
+    link_to(name, db_edit_work_path(self), options)
   end
 
   def release_season

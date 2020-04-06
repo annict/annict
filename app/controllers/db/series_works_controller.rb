@@ -50,7 +50,7 @@ module Db
 
       @series_work.save_and_create_activity!
 
-      redirect_to db_series_series_works_path(@series), notice: t("messages._common.updated")
+      redirect_to db_series_work_list_path(@series), notice: t("messages._common.updated")
     end
 
     def destroy
@@ -60,7 +60,7 @@ module Db
       @series_work.soft_delete
 
       redirect_back(
-        fallback_location: db_series_series_works_path(@series_work.series),
+        fallback_location: db_series_work_list_path(@series_work.series),
         notice: t("messages._common.deleted")
       )
     end
