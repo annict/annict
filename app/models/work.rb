@@ -147,10 +147,6 @@ class Work < ApplicationRecord
     where(Season.find_by_slug(season_slug).work_conditions)
   })
 
-  scope :by_no_season, -> {
-    where(season_year: nil, season_name: nil)
-  }
-
   scope(:by_seasons, ->(season_slugs) {
     return self if season_slugs.blank?
 
@@ -187,6 +183,10 @@ class Work < ApplicationRecord
           WHERE records.user_id = #{user.id} GROUP BY work_id
       ) AS c2 ON works.id = c2.work_id"
     )
+  }
+
+  scope :with_no_season, -> {
+    where(season_year: nil, season_name: nil)
   }
 
   # 作品画像が設定されていない作品
