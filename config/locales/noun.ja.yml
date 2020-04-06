@@ -52,6 +52,7 @@ ja:
     episode_number: 話数
     episodes: エピソード
     error: エラー
+    external_services: 外部サービス
     fans: ファン
     faqs: よくある質問
     favorite_characters_shorten: Characters
@@ -129,6 +130,7 @@ ja:
     satisfaction_rate_shorten: 満足度
     search: 検索
     season: シーズン
+    seasons: シーズン
     seasonal_anime: シーズン別アニメ
     series: シリーズ
     series_with_name: "%{series_name}シリーズ"

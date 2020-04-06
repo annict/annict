@@ -85,6 +85,8 @@ en:
       works:
         no_episodes: No Episodes
         no_image: No Image
+        no_release_season: No Season
+        no_slots: No Slots
     episode_records:
       created: Created
       new:

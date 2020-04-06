@@ -1,0 +1,81 @@
+<table class="table table-hover table-sm">
+  <thead>
+    <tr>
+      <th>
+        ID
+      </th>
+      <th style="width: 45%;">
+        <%= t "noun.title" %>
+      </th>
+      <th>
+        <%= t "noun.external_services" %>
+      </th>
+      <th>
+        Watchers
+      </th>
+      <th>
+        <%= t "noun.release_season" %>
+      </th>
+      <th>
+        <%= t "noun.work_image" %>
+      </th>
+      <th>
+        <%= t "noun.state" %>
+      </th>
+      <th>
+        <%= t "noun.actions" %>
+      </th>
+    </tr>
+  </thead>
+  <tbody>
+    <% works.each do |work| %>
+      <tr>
+        <td>
+          <%= link_to work.id, work_path(work), target: "_blank" %>
+        </td>
+        <td>
+          <%= render WorkMediaLabelComponent.new(work: work) %>
+          <br>
+          <%= work.title %>
+          <br>
+          <%= work.title_kana.presence || "-" %>
+          <br>
+          <%= work.title_en.presence || "-" %>
+        </td>
+        <td>
+          <dl>
+            <dt>しょぼかる</dt>
+            <dd>
+              <%= render SyobocalLinkComponent.new(work: work) %>
+            </dd>
+            <dt>MyAnimeList</dt>
+            <dd>
+              <%= render MalLinkComponent.new(work: work) %>
+            </dd>
+          </dl>
+        </td>
+        <td>
+          <%= work.watchers_count %>
+        </td>
+        <td>
+          <%= work.release_season.presence || "-" %>
+        </td>
+        <td>
+          <%= image_tag ann_image_url(work.work_image, :image, size: "70x", ratio: "3:4"), class: "rounded img-thumbnail" %>
+        </td>
+        <td>
+          <%= render Db::PublishingStateLabelComponent.new(resource: work) %>
+        </td>
+        <td>
+          <%= render Db::ActionButtonsComponent.new(
+              user: current_user,
+              resource: work,
+              detail_path: db_work_detail_path(work),
+              edit_path: db_edit_work_path(work),
+              publishing_path: db_work_publishing_path(work)
+          ) %>
+        </td>
+      </tr>
+  <% end %>
+  </tbody>
+</table>

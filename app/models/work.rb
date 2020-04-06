@@ -79,7 +79,7 @@ class Work < ApplicationRecord
 
   include DbActivityMethods
   include RootResourceCommon
-  include SoftDeletable
+  include Unpublishable
 
   DIFF_FIELDS = %i(
     sc_tid title title_kana title_en media official_site_url
@@ -189,8 +189,32 @@ class Work < ApplicationRecord
     where(season_year: nil, season_name: nil)
   }
 
+  scope :with_no_episodes, -> {
+    where(no_episodes: false).where(<<~SQL)
+      NOT EXISTS (
+        SELECT * FROM episodes WHERE
+          1 = 1
+          AND episodes.work_id = works.id
+          AND episodes.deleted_at IS NULL
+          AND episodes.unpublished_at IS NULL
+      )
+    SQL
+  }
+
+  scope :with_no_slots, -> {
+    where(<<~SQL)
+      NOT EXISTS (
+        SELECT * FROM slots WHERE
+          1 = 1
+          AND slots.work_id = works.id
+          AND slots.deleted_at IS NULL
+          AND slots.unpublished_at IS NULL
+      )
+    SQL
+  }
+
   # 作品画像が設定されていない作品
-  scope :image_not_attached, -> {
+  scope :with_no_image, -> {
     joins("LEFT OUTER JOIN work_images ON work_images.work_id = works.id").
       where("work_images.id IS NULL")
   }

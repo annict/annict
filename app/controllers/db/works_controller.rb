@@ -5,23 +5,19 @@ module Db
     before_action :authenticate_user!, only: %i(new create edit update destroy)
 
     def index
-      @works = Work.order(id: :desc).page(params[:page])
-    end
+      @is_no_episodes = search_params[:no_episodes] == "1"
+      @is_no_image = search_params[:no_image] == "1"
+      @is_no_release_season = search_params[:no_release_season] == "1"
+      @is_no_slots = search_params[:no_slots] == "1"
+      @season_slugs = search_params[:season_slugs]
 
-    def season
-      slug = params[:slug].presence || ENV.fetch("ANNICT_CURRENT_SEASON")
-      @works = Work.by_season(slug).order(id: :desc).page(params[:page])
-      render :index
-    end
-
-    def resourceless
-      name = params[:name].presence || "episode"
-      @works = case name
-      when "episode" then Work.where(auto_episodes_count: 0, no_episodes: false)
-      when "item" then Work.image_not_attached
-      end
-      @works = @works.order(watchers_count: :desc).page(params[:page])
-      render :index
+      @works = Work.without_deleted.preload(:work_image)
+      @works = @works.with_no_episodes if @is_no_episodes
+      @works = @works.with_no_image if @is_no_image
+      @works = @works.with_no_season if @is_no_release_season
+      @works = @works.with_no_slots if @is_no_slots
+      @works = @works.by_seasons(@season_slugs) if @season_slugs.present?
+      @works = @works.order(id: :desc).page(params[:page]).per(100)
     end
 
     def new
@@ -85,6 +81,10 @@ module Db
     end
 
     private
+
+    def search_params
+      params.permit(:commit, :no_episodes, :no_image, :no_release_season, :no_slots, season_slugs: [])
+    end
 
     def work_params
       params.require(:work).permit(

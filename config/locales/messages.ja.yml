@@ -85,6 +85,8 @@ ja:
       works:
         no_episodes: エピソード未登録
         no_image: 画像未登録
+        no_release_season: リリース時期未登録
+        no_slots: 放送予定未登録
     episode_records:
       created: 記録しました
       new:

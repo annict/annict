@@ -52,6 +52,7 @@ en:
     episode_number: Number
     episodes: Episodes
     error: Error
+    external_services: External Services
     fans: Fans
     faqs: FAQs
     favorite_characters_shorten: Characters
@@ -129,6 +130,7 @@ en:
     satisfaction_rate_shorten: Satisfaction
     search: Search
     season: Season
+    seasons: Seasons
     seasonal_anime: Seasonal Anime
     series: Series
     series_with_name: "%{series_name} Series"
