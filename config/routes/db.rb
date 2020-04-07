@@ -124,8 +124,8 @@ scope module: :db do
     match "/db/works/:id",                          via: :delete, as: :db_work_detail,            to: "works#destroy"
     match "/db/works/:id",                          via: :patch,                                  to: "works#update"
     match "/db/works/:id/edit",                     via: :get,    as: :db_edit_work,              to: "works#edit"
-    match "/db/works/:id/publishing",               via: :delete, as: :db_work_publishing,        to: "works_publishings#destroy"
-    match "/db/works/:id/publishing",               via: :post,                                   to: "works_publishings#create"
+    match "/db/works/:id/publishing",               via: :delete, as: :db_work_publishing,        to: "work_publishings#destroy"
+    match "/db/works/:id/publishing",               via: :post,                                   to: "work_publishings#create"
     match "/db/works/new",                          via: :get,    as: :db_new_work,               to: "works#new"
     # rubocop:enable Layout/ExtraSpacing, Layout/LineLength
   end

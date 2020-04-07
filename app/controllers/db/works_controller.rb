@@ -56,30 +56,16 @@ module Db
       redirect_to db_edit_work_path(@work), notice: t("resources.work.updated")
     end
 
-    def hide
-      @work = Work.find(params[:id])
-      authorize @work, :hide?
-
-      @work.soft_delete_with_children
-
-      flash[:notice] = t("resources.work.unpublished")
-      redirect_back fallback_location: db_works_path
-    end
-
     def destroy
-      @work = Work.find(params[:id])
-      authorize @work, :destroy?
+      @work = Work.without_deleted.find(params[:id])
+      authorize_db_resource @work
 
-      @work.destroy
+      @work.soft_delete
 
-      flash[:notice] = t("resources.work.deleted")
-      redirect_back fallback_location: db_works_path
-    end
-
-    def activities
-      @work = Work.find(params[:id])
-      @activities = @work.db_activities.order(id: :desc)
-      @comment = @work.db_comments.new
+      redirect_back(
+        fallback_location: db_work_list_path,
+        notice: t("messages._common.deleted")
+      )
     end
 
     private
