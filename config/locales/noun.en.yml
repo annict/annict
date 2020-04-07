@@ -107,6 +107,7 @@ en:
     previous_season: Previous Season
     privacy_policy: Privacy Policy
     profile: Profile
+    programs: Programs
     publish: Publish
     slots: Slots
     pv: PV
@@ -179,5 +180,6 @@ en:
     winter: Winter
     work_detail_page: Work Detail
     work_image: Work image
+    work: Work
     works: Works
     your_statistics: Your Statistics

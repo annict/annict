@@ -37,21 +37,22 @@ module Db
     end
 
     def edit
-      @work = Work.find(params[:id])
-      authorize @work, :edit?
+      @work = Work.without_deleted.find(params[:id])
+      authorize_db_resource @work
     end
 
     def update
-      @work = Work.find(params[:id])
-      authorize @work, :update?
+      @work = Work.without_deleted.find(params[:id])
+      authorize_db_resource @work
 
       @work.attributes = work_params
       @work.user = current_user
 
       return render(:edit) unless @work.valid?
+
       @work.save_and_create_activity!
 
-      redirect_to edit_db_work_path(@work), notice: t("resources.work.updated")
+      redirect_to db_edit_work_path(@work), notice: t("resources.work.updated")
     end
 
     def hide
