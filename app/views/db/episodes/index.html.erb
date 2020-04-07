@@ -29,7 +29,8 @@
     <div class="alert alert-info">
       <%= t("messages.db.episodes.auto_generate_info_html",
         manual_episodes_count: (@work.manual_episodes_count.presence || t("noun.unknown")),
-        max_generate_episodes_count: (max_generate_episodes_count.presence || 0)
+        max_generate_episodes_count: (max_generate_episodes_count.presence || 0),
+        episodes_count: @work.episodes.only_kept.count
       ) %>
     </div>
   </div>
@@ -39,9 +40,6 @@
       <table class="mb-3 table table-hover table-sm">
         <thead>
           <tr>
-            <th>
-              <%= t "noun.line_number" %>
-            </th>
             <th>
               ID
             </th>
@@ -69,11 +67,8 @@
           </tr>
         </thead>
         <tbody>
-          <% @episodes.each_with_index do |episode, i| %>
+          <% @episodes.each do |episode| %>
             <tr>
-              <td>
-                <%= i + 1 %>
-              </td>
               <td>
                 <%= link_to episode.id, work_episode_path(@work, episode), target: "_blank" %>
               </td>
