@@ -73,30 +73,32 @@ ja:
           index: キャスト一覧
           new: キャスト登録
         channel_groups:
-          index: チャンネルグループ
+          index: チャンネルグループ一覧
         channels:
-          index: チャンネル
+          index: チャンネル一覧
         characters:
           activities: アクティビティ - %{name}
-          index: キャラクター
+          index: キャラクター一覧
         episodes:
           activities: アクティビティ
-          index: "%{work_title}のエピソード"
+          edit: エピソード編集
+          index: エピソード一覧
+          new: エピソード登録
         organizations:
           activities: アクティビティ - %{name}
-          index: 団体
+          index: 団体一覧
         people:
           activities: アクティビティ - %{name}
-          index: 人物
+          index: 人物一覧
         slots:
           activities: アクティビティ
           edit: 放送予定編集
-          index: 放送予定
+          index: 放送予定一覧
           new: 放送予定登録
         trailers:
           activities: アクティビティ
           edit: PVの編集
-          index: PV
+          index: PV一覧
           new: PV登録
         searches:
           show: 検索
@@ -112,15 +114,15 @@ ja:
         staffs:
           activities: アクティビティ
           edit: スタッフ編集
-          index: スタッフ
+          index: スタッフ一覧
           new: スタッフ登録
         programs:
           activities: アクティビティ
           edit: 放送情報編集
-          index: 放送情報
+          index: 放送情報一覧
           new: 放送情報登録
         vod_titles:
-          index: VOD作品
+          index: VOD作品一覧
         work_images:
           show: 作品画像 - %{title}
         works:

@@ -81,7 +81,9 @@ en:
           index: Characters
         episodes:
           activities: Activities
-          index: Episodes of %{work_title}
+          edit: Edit Episode
+          index: Episodes
+          new: New Episode
         organizations:
           activities: Resource Activities - %{name}
           index: Organizations

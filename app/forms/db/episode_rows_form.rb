@@ -29,7 +29,8 @@ module Db
         {
           work_id: @work.id,
           number: row_columns[0],
-          title: row_columns[1],
+          raw_number: row_columns[1],
+          title: row_columns[2],
           sort_number: sort_number
         }
       end

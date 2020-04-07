@@ -10,7 +10,7 @@
   <% unless work.no_episodes? %>
     <%= active_link_to(
       t("noun.episodes"),
-      db_work_episodes_path(work),
+      db_episode_list_path(work),
       class: "nav-link",
       class_active: "active",
       active: params[:controller]  == "db/episodes"
