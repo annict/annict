@@ -4,14 +4,14 @@ describe "PATCH /db/series/:id", type: :request do
   context "user does not sign in" do
     let!(:series) { create(:series) }
     let!(:old_series) { series.attributes }
-    let!(:series_params) {
+    let!(:series_params) do
       {
         name: "シリーズ2",
         name_alter: "シリーズ2 (別名)",
         name_en: "The Series2",
         name_alter_en: "The Series2 (alt)"
       }
-    }
+    end
 
     it "user can not access this page" do
       patch "/db/series/#{series.id}", params: { series: series_params }
@@ -28,14 +28,14 @@ describe "PATCH /db/series/:id", type: :request do
     let!(:user) { create(:registered_user) }
     let!(:series) { create(:series) }
     let!(:old_series) { series.attributes }
-    let!(:series_params) {
+    let!(:series_params) do
       {
         name: "シリーズ2",
         name_alter: "シリーズ2 (別名)",
         name_en: "The Series2",
         name_alter_en: "The Series2 (alt)"
       }
-    }
+    end
 
     before do
       login_as(user, scope: :user)
@@ -56,22 +56,22 @@ describe "PATCH /db/series/:id", type: :request do
     let!(:user) { create(:registered_user, :with_editor_role) }
     let!(:series) { create(:series) }
     let!(:old_series) { series.attributes }
-    let!(:attr_names) {
+    let!(:attr_names) do
       %i(
         name
         name_alter
         name_en
         name_alter_en
       )
-    }
-    let!(:series_params) {
+    end
+    let!(:series_params) do
       {
         name: "シリーズ2",
         name_alter: "シリーズ2 (別名)",
         name_en: "The Series2",
         name_alter_en: "The Series2 (alt)"
       }
-    }
+    end
 
     before do
       login_as(user, scope: :user)

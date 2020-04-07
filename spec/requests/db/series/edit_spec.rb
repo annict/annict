@@ -36,7 +36,7 @@ describe "GET /db/series/:id/edit", type: :request do
       login_as(user, scope: :user)
     end
 
-    it "responses series list" do
+    it "responses series edit form" do
       get "/db/series/#{series.id}/edit"
 
       expect(response.status).to eq(200)

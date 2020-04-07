@@ -27,7 +27,7 @@ module Db
 
     def edit
       @series = Series.without_deleted.find(params[:id])
-      authorize @series, policy_class: DbResourcePolicy
+      authorize_db_resource @series
     end
 
     def update
