@@ -4,7 +4,7 @@ describe "GET /db/works", type: :request do
   context "user does not sign in" do
     let!(:work) { create(:work) }
 
-    it "responses series list" do
+    it "responses work list" do
       get "/db/works"
 
       expect(response.status).to eq(200)
@@ -20,7 +20,7 @@ describe "GET /db/works", type: :request do
       login_as(user, scope: :user)
     end
 
-    it "responses series list" do
+    it "responses work list" do
       get "/db/works"
 
       expect(response.status).to eq(200)
