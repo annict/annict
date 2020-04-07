@@ -418,7 +418,7 @@ class Work < ApplicationRecord
   end
 
   def twitter_hashtag_url
-    url = "https://twitter.com/search?q=##{twitter_hashtag}&src=hash"
+    url = "https://twitter.com/search?q=%23#{twitter_hashtag}"
     Addressable::URI.parse(url).normalize.to_s
   end
 
