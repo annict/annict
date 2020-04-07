@@ -22,18 +22,19 @@ module Db
 
     def new
       @work = Work.new
-      authorize @work, :new?
+      authorize_db_resource @work
     end
 
     def create
       @work = Work.new(work_params)
       @work.user = current_user
-      authorize @work, :create?
+      authorize_db_resource @work
 
       return render(:new) unless @work.valid?
+
       @work.save_and_create_activity!
 
-      redirect_to edit_db_work_path(@work), notice: t("resources.work.created")
+      redirect_to db_edit_work_path(@work), notice: t("resources.work.created")
     end
 
     def edit

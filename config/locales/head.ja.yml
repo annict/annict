@@ -127,6 +127,7 @@ ja:
           activities: アクティビティ
           edit: "%{title}"
           index: 作品一覧
+          new: 作品登録
       faqs:
         index: よくある質問
       episode_records:
