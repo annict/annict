@@ -421,6 +421,11 @@ class User < ApplicationRecord
     end
   end
 
+  def registered_after_email_confirmation_required?
+    # After 2020-04-07, registered users must confirm email before sign in
+    created_at > Time.zone.parse("2020-04-07 0:00:00")
+  end
+
   private
 
   def get_large_avatar_image(provider, image_url)

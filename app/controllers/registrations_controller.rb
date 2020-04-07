@@ -17,10 +17,8 @@ class RegistrationsController < Devise::RegistrationsController
     ga_client.user = @new_user
     ga_client.events.create(:users, :create, el: "via_web")
 
-    bypass_sign_in(@new_user)
-
     flash[:notice] = t("messages.registrations.create.confirmation_mail_has_sent")
-    redirect_to after_sign_in_path_for(@new_user)
+    redirect_to root_path
   end
 
   private
