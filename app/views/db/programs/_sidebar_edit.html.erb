@@ -1,0 +1,124 @@
+<h3>
+  放送開始日時について
+</h3>
+
+<p>
+  動画配信サービス等では配信日は判明しているが時間が不明な場合があります。
+  その場合はひとまず午後12時などと仮置きして登録します。(利用者にその日配信があるということは伝えたいため)
+</p>
+
+<hr>
+
+<h3>
+  VOD作品コードについて
+</h3>
+
+<p>
+  動画配信サービスの作品ページのURLに含まれる固有のIDを保存します。
+  例えば「<a href="/works/5227">NEW GAME!!</a>」の各配信サービスのIDは以下になります。
+</p>
+
+<table class="table table-bordered">
+  <tbody>
+    <tr>
+      <td>
+        バンダイチャンネル
+      </td>
+      <td>
+        <a href="http://www.b-ch.com/ttl/index.php?ttl_c=5685" target="_blank" rel="noopener">5685</a>
+      </td>
+    </tr>
+    <tr>
+      <td>
+        ニコニコチャンネル
+      </td>
+      <td>
+        <a href="http://ch.nicovideo.jp/ch2632188" target="_blank" rel="noopener">ch2632188</a>
+        または
+        <a href="http://ch.nicovideo.jp/newgame2" target="_blank" rel="noopener">newgame2</a>
+      </td>
+    </tr>
+    <tr>
+      <td>
+        dアニメストア
+      </td>
+      <td>
+        <a href="https://anime.dmkt-sp.jp/animestore/ci_pc?workId=21652" target="_blank" rel="noopener">21652</a>
+      </td>
+    </tr>
+    <tr>
+      <td>
+        Amazonビデオ
+      </td>
+      <td>
+        <a href="https://www.amazon.co.jp/dp/B07418CNBD" target="_blank" rel="noopener">B07418CNBD</a>
+      </td>
+    </tr>
+    <tr>
+      <td>
+        Netflix
+      </td>
+      <td>
+        <a href="https://www.netflix.com/title/80193277" target="_blank" rel="noopener">80193277</a>
+      </td>
+    </tr>
+    <tr>
+      <td>
+        Abemaビデオ
+      </td>
+      <td>
+        <a href="https://abema.tv/video/title/25-70" target="_blank" rel="noopener">25-70</a>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+<hr>
+
+<h3>
+  VOD作品名について
+</h3>
+
+<p>
+  動画配信サービスの作品ページタイトルなどを保存します。
+  Annictでは1作品だけど動画配信サービスだと2作品に分割されているケースがあるため、それらを識別するために保存します。
+</p>
+<p>
+  例えば「<a href="/works/4447">おそ松さん</a>」はAnnict上では1作品ですが、
+  dアニメストアでは<a href="https://anime.dmkt-sp.jp/animestore/ci_pc?workId=20399" target="_blank" rel="noopener">1~24話</a>と
+  <a href="https://anime.dmkt-sp.jp/animestore/ci_pc?workId=21039" target="_blank" rel="noopener">3.5話</a>の2作品に分割されています。
+  このようなときにVOD作品名に「1~24話」「3.5話」などと入力して識別できるようにします。
+</p>
+<p>
+  動画配信サービスのほうも1作品の場合は使用されない項目なので、その場合は入力しなくても問題ありません。
+</p>
+
+<hr>
+
+<h3>
+  AbemaTVの放送情報について
+</h3>
+
+<p>
+  AnnictにはAbemaTV関係のチャンネルがいくつか登録されていて、それらは2つに分類することができます。
+  1つは「AbemaTV アニメ」や「AbemaTV みんなのアニメ」チャンネルなどの生配信をするチャンネルで、
+  もう1つは過去作品や生配信終了後の作品がアーカイブされている「Abemaビデオ」チャンネルです。
+</p>
+
+<p>
+  そのため、AbemaTVの放送情報を登録するときは以下のようにしてもらえるとありがたいです。
+</p>
+
+<ul>
+  <li>
+    過去作品など配信時間がわからない作品: VOD作品コードと一緒に「Abemaビデオ」チャンネルで登録
+  </li>
+  <li>
+    放送中の作品など配信時間がわかる作品: 放送開始日時と一緒に「AbemaTV アニメ」などの生配信用チャンネルで登録し、
+    かつVOD作品コードと一緒に「Abemaビデオ」チャンネルでも登録
+  </li>
+</ul>
+
+<p>
+  作品一覧ページなどには「Abemaビデオ」へのリンクを表示し、<a href="/programs">放送予定ページ</a>には「AbemaTV アニメ」などへのリンクを表示するためになります。
+</p>

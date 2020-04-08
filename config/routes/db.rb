@@ -66,13 +66,6 @@ namespace :db do
     end
   end
 
-  resources :programs, only: %i(edit update destroy) do
-    member do
-      get :activities
-      patch :hide
-    end
-  end
-
   resources :vod_titles, only: %i(index) do
     member do
       patch :hide
@@ -85,7 +78,6 @@ namespace :db do
     resources :slots, only: %i(index new create)
     resources :trailers, only: %i(index new create)
     resources :staffs, only: %i(index new create)
-    resources :programs, only: %i(index new create)
   end
 
   root "home#index"
@@ -100,6 +92,11 @@ scope module: :db do
     match "/db/episodes/:id/edit",                  via: :get,    as: :db_edit_episode,           to: "episodes#edit"
     match "/db/episodes/:id/publishing",            via: :delete, as: :db_episode_publishing,     to: "episode_publishings#destroy"
     match "/db/episodes/:id/publishing",            via: :post,                                   to: "episode_publishings#create"
+    match "/db/programs/:id",                       via: :delete, as: :db_program_detail,         to: "programs#destroy"
+    match "/db/programs/:id",                       via: :patch,                                  to: "programs#update"
+    match "/db/programs/:id/edit",                  via: :get,    as: :db_edit_program,           to: "programs#edit"
+    match "/db/programs/:id/publishing",            via: :delete, as: :db_program_publishing,     to: "program_publishings#destroy"
+    match "/db/programs/:id/publishing",            via: :post,                                   to: "program_publishings#create"
     match "/db/series",                             via: :get,    as: :db_series_list,            to: "series#index"
     match "/db/series",                             via: :post,                                   to: "series#create"
     match "/db/series/:id",                         via: :delete, as: :db_series_detail,          to: "series#destroy"
@@ -124,6 +121,9 @@ scope module: :db do
     match "/db/works/:work_id/episodes",            via: :get,    as: :db_episode_list,           to: "episodes#index"
     match "/db/works/:work_id/episodes",            via: :post,                                   to: "episodes#create"
     match "/db/works/:work_id/episodes/new",        via: :get,    as: :db_new_episode,            to: "episodes#new"
+    match "/db/works/:work_id/programs",            via: :get,    as: :db_program_list,           to: "programs#index"
+    match "/db/works/:work_id/programs",            via: :post,                                   to: "programs#create"
+    match "/db/works/:work_id/programs/new",        via: :get,    as: :db_new_program,            to: "programs#new"
     match "/db/works/:id/publishing",               via: :delete, as: :db_work_publishing,        to: "work_publishings#destroy"
     match "/db/works/:id/publishing",               via: :post,                                   to: "work_publishings#create"
     match "/db/works/new",                          via: :get,    as: :db_new_work,               to: "works#new"

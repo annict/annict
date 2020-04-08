@@ -12,7 +12,7 @@
 
     <% if policy(:db_resource).create? %>
       <div class="text-right">
-        <%= link_to db_new_episode_path, class: "btn btn-outline-primary" do %>
+        <%= link_to db_new_episode_path(@work), class: "btn btn-outline-primary" do %>
           <%= icon "plus" %>
           <%= t "resources.episode.new_episodes" %>
         <% end %>
@@ -104,8 +104,8 @@
                 ) %>
               </td>
             </tr>
-          </tbody>
-        <% end %>
+          <% end %>
+        </tbody>
       </table>
 
       <div class="text-center">
