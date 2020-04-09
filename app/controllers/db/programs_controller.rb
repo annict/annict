@@ -58,7 +58,8 @@ module Db
 
       redirect_back(
         fallback_location: db_program_list_path(@program.work),
-        notice: t("messages._common.deleted"))
+        notice: t("messages._common.deleted")
+      )
     end
 
     private

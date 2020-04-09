@@ -46,7 +46,6 @@ describe "POST /db/works/:work_id/programs", type: :request do
 
   context "user who is editor signs in" do
     let!(:channel) { create(:channel) }
-    let!(:number_format) { create(:number_format) }
     let!(:work) { create(:work) }
     let!(:user) { create(:registered_user, :with_editor_role) }
     let!(:form_params) {
