@@ -43,7 +43,7 @@
 
 class Slot < ApplicationRecord
   include DbActivityMethods
-  include SoftDeletable
+  include Unpublishable
 
   DIFF_FIELDS = %i(channel_id episode_id started_at rebroadcast).freeze
 

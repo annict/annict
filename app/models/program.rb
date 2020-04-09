@@ -50,6 +50,8 @@ class Program < ApplicationRecord
 
   scope :in_vod, -> { joins(:channel).where(channels: { vod: true }) }
 
+  delegate :name, to: :channel, prefix: true
+
   before_save :calc_for_timezone
 
   def to_diffable_hash
