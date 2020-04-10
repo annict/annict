@@ -11,6 +11,5 @@ module.exports = function(api) {
         },
       ],
     ],
-    plugins: ['@babel/plugin-proposal-class-properties'],
   };
 };

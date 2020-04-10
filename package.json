@@ -43,7 +43,6 @@
     "popper.js": "^1.14.4",
     "postcss-smart-import": "^0.7.6",
     "select2": "4.0.2",
-    "stimulus": "^1.1.1",
     "tether": "^1.4.5",
     "turbolinks": "5.2.0",
     "vue": "^2.5.17",
@@ -54,7 +53,6 @@
     "webpack-merge": "^4.1.4"
   },
   "devDependencies": {
-    "@babel/plugin-proposal-class-properties": "^7.8.3",
     "@types/jquery": "^3.3.31",
     "@types/node": "^12.7.8",
     "@typescript-eslint/eslint-plugin": "^1.13.0",
