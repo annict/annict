@@ -36,7 +36,7 @@
 
 class Cast < ApplicationRecord
   include DbActivityMethods
-  include SoftDeletable
+  include Unpublishable
 
   DIFF_FIELDS = %i(person_id name part sort_number character_id name_en).freeze
 

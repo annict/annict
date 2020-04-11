@@ -22,13 +22,6 @@ namespace :db do
     end
   end
 
-  resources :casts, only: %i(edit update destroy) do
-    member do
-      get :activities
-      patch :hide
-    end
-  end
-
   resources :comments, only: %i(create destroy)
 
   resources :organizations, except: [:show] do
@@ -67,7 +60,6 @@ namespace :db do
 
   resources :works, only: [] do
     resource :image, controller: :work_images, only: %i(show create update destroy)
-    resources :casts, only: %i(index new create)
     resources :trailers, only: %i(index new create)
     resources :staffs, only: %i(index new create)
   end
@@ -79,6 +71,11 @@ scope module: :db do
   constraints format: "html" do
     # rubocop:disable Layout/ExtraSpacing, Layout/LineLength
     match "/db/activities",                         via: :get,    as: :db_activity_list,          to: "activities#index"
+    match "/db/casts/:id",                          via: :delete, as: :db_cast_detail,            to: "casts#destroy"
+    match "/db/casts/:id",                          via: :patch,                                  to: "casts#update"
+    match "/db/casts/:id/edit",                     via: :get,    as: :db_edit_cast,              to: "casts#edit"
+    match "/db/casts/:id/publishing",               via: :delete, as: :db_cast_publishing,        to: "cast_publishings#destroy"
+    match "/db/casts/:id/publishing",               via: :post,                                   to: "cast_publishings#create"
     match "/db/episodes/:id",                       via: :delete, as: :db_episode_detail,         to: "episodes#destroy"
     match "/db/episodes/:id",                       via: :patch,                                  to: "episodes#update"
     match "/db/episodes/:id/edit",                  via: :get,    as: :db_edit_episode,           to: "episodes#edit"
@@ -117,6 +114,9 @@ scope module: :db do
     match "/db/works/:id/edit",                     via: :get,    as: :db_edit_work,              to: "works#edit"
     match "/db/works/:id/publishing",               via: :delete, as: :db_work_publishing,        to: "work_publishings#destroy"
     match "/db/works/:id/publishing",               via: :post,                                   to: "work_publishings#create"
+    match "/db/works/:work_id/casts",               via: :get,    as: :db_cast_list,              to: "casts#index"
+    match "/db/works/:work_id/casts",               via: :post,                                   to: "casts#create"
+    match "/db/works/:work_id/casts/new",           via: :get,    as: :db_new_cast,               to: "casts#new"
     match "/db/works/:work_id/episodes",            via: :get,    as: :db_episode_list,           to: "episodes#index"
     match "/db/works/:work_id/episodes",            via: :post,                                   to: "episodes#create"
     match "/db/works/:work_id/episodes/new",        via: :get,    as: :db_new_episode,            to: "episodes#new"
