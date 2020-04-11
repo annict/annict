@@ -1,0 +1,103 @@
+<% title = t "head.title.db.staffs.index" %>
+<% set_meta_tags(title: title, reverse: true, prefix: false) %>
+
+<div class="container-fluid py-3">
+  <div class="mb-3">
+    <div class="mb-1">
+      <%= link_to @work.local_title, db_edit_work_path(@work) %>
+    </div>
+    <h1>
+      <%= title %>
+    </h1>
+
+    <% if policy(:db_resource).create? %>
+      <div class="text-right">
+        <%= link_to db_new_staff_path(@work), class: "btn btn-outline-primary" do %>
+          <%= icon "plus" %>
+          <%= t "resources.staff.new_staffs" %>
+        <% end %>
+      </div>
+    <% end %>
+  </div>
+
+  <div class="mb-3">
+    <%= render "db/works/subnav", work: @work %>
+  </div>
+
+  <div class="mb-3">
+    <% if @staffs.present? %>
+      <table class="mb-3 table table-hover table-sm">
+        <thead>
+          <tr>
+            <th>
+              ID
+            </th>
+            <th>
+              <%= t "activerecord.attributes.staff.resource_id" %>
+            </th>
+            <th>
+              <%= t "activerecord.attributes.staff.name" %>
+            </th>
+            <th>
+              <%= t "activerecord.attributes.staff.role" %>
+            </th>
+            <th>
+              <%= t "activerecord.attributes.staff.sort_number" %>
+            </th>
+            <th>
+              <%= t "noun.state" %>
+            </th>
+            <th>
+              <%= t "noun.actions" %>
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          <% @staffs.each do |staff| %>
+            <tr>
+              <td>
+                <%= staff.id %>
+              </td>
+              <td>
+                <%= staff.resource.db_detail_link %>
+                <br>
+                <%= staff.resource.name_en.presence || "-" %>
+              </td>
+              <td>
+                <%= staff.name.presence || "-" %>
+                <br>
+                <%= staff.name_en.presence || "-" %>
+              </td>
+              <td>
+                <%= staff.role_name %>
+                <br>
+                <% if staff.role_value == "other" %>
+                  <%= staff.role_other_en.presence || "-" %>
+                <% else %>
+                  <%= t "enumerize.staff.role.#{staff.role_value}", locale: :en %>
+                <% end %>
+              </td>
+              <td>
+                <%= staff.sort_number %>
+              </td>
+              <td>
+                <%= render Db::PublishingStateLabelComponent.new(resource: staff) %>
+              </td>
+              <td>
+                <%= render Db::ActionButtonsComponent.new(
+                    user: current_user,
+                    resource: staff,
+                    detail_path: db_staff_detail_path(staff),
+                    edit_path: db_edit_staff_path(staff),
+                    publishing_path: db_staff_publishing_path(staff)
+                ) %>
+              </td>
+            </tr>
+        <% end %>
+        </tbody>
+      </table>
+    <% else %>
+      <%= render "application/components/empty", text: t("messages._empty.no_resources") %>
+    <% end %>
+  </div>
+</div>

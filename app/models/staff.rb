@@ -37,7 +37,7 @@ class Staff < ApplicationRecord
   extend Enumerize
 
   include DbActivityMethods
-  include SoftDeletable
+  include Unpublishable
 
   DIFF_FIELDS = %i(
     resource_id name role role_other sort_number name_en role_other_en

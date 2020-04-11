@@ -45,13 +45,6 @@ namespace :db do
     end
   end
 
-  resources :staffs, only: %i(edit update destroy) do
-    member do
-      get :activities
-      patch :hide
-    end
-  end
-
   resources :vod_titles, only: %i(index) do
     member do
       patch :hide
@@ -61,7 +54,6 @@ namespace :db do
   resources :works, only: [] do
     resource :image, controller: :work_images, only: %i(show create update destroy)
     resources :trailers, only: %i(index new create)
-    resources :staffs, only: %i(index new create)
   end
 
   root "home#index"
@@ -107,6 +99,11 @@ scope module: :db do
     match "/db/slots/:id/edit",                     via: :get,    as: :db_edit_slot,              to: "slots#edit"
     match "/db/slots/:id/publishing",               via: :delete, as: :db_slot_publishing,        to: "slot_publishings#destroy"
     match "/db/slots/:id/publishing",               via: :post,                                   to: "slot_publishings#create"
+    match "/db/staffs/:id",                         via: :delete, as: :db_staff_detail,           to: "staffs#destroy"
+    match "/db/staffs/:id",                         via: :patch,                                  to: "staffs#update"
+    match "/db/staffs/:id/edit",                    via: :get,    as: :db_edit_staff,             to: "staffs#edit"
+    match "/db/staffs/:id/publishing",              via: :delete, as: :db_staff_publishing,       to: "staff_publishings#destroy"
+    match "/db/staffs/:id/publishing",              via: :post,                                   to: "staff_publishings#create"
     match "/db/works",                              via: :get,    as: :db_work_list,              to: "works#index"
     match "/db/works",                              via: :post,                                   to: "works#create"
     match "/db/works/:id",                          via: :delete, as: :db_work_detail,            to: "works#destroy"
@@ -126,6 +123,9 @@ scope module: :db do
     match "/db/works/:work_id/slots",               via: :get,    as: :db_slot_list,              to: "slots#index"
     match "/db/works/:work_id/slots",               via: :post,                                   to: "slots#create"
     match "/db/works/:work_id/slots/new",           via: :get,    as: :db_new_slot,               to: "slots#new"
+    match "/db/works/:work_id/staffs",              via: :get,    as: :db_staff_list,             to: "staffs#index"
+    match "/db/works/:work_id/staffs",              via: :post,                                   to: "staffs#create"
+    match "/db/works/:work_id/staffs/new",          via: :get,    as: :db_new_staff,              to: "staffs#new"
     match "/db/works/new",                          via: :get,    as: :db_new_work,               to: "works#new"
     # rubocop:enable Layout/ExtraSpacing, Layout/LineLength
   end

@@ -95,7 +95,7 @@ ja:
     staff:
       created: 登録しました
       deleted: 削除しました
-      new_staff: スタッフ登録
+      new_staffs: スタッフ登録
       staff_list: スタッフ一覧
       there_are_no_staffs: スタッフは登録されていません
       unpublished: 非公開にしました

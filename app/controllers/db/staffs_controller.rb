@@ -2,78 +2,68 @@
 
 module Db
   class StaffsController < Db::ApplicationController
-    before_action :authenticate_user!
+    before_action :authenticate_user!, only: %i(new create edit update destroy)
 
     def index
-      @work = Work.find(params[:work_id])
-      @staffs = @work.staffs.
+      @work = Work.without_deleted.find(params[:work_id])
+      @staffs = @work.
+        staffs.
+        without_deleted.
         includes(:resource).
         order(deleted_at: :desc, sort_number: :asc)
     end
 
     def new
-      @work = Work.find(params[:work_id])
+      @work = Work.without_deleted.find(params[:work_id])
       @form = Db::StaffRowsForm.new
-      authorize @form, :new?
+      authorize @form
     end
 
     def create
-      @work = Work.find(params[:work_id])
+      @work = Work.without_deleted.find(params[:work_id])
       @form = Db::StaffRowsForm.new(staff_rows_form_params)
       @form.user = current_user
       @form.work = @work
-      authorize @form, :create?
+      authorize @form
 
       return render(:new) unless @form.valid?
+
       @form.save!
 
-      redirect_to db_work_staffs_path(@work), notice: t("resources.staff.created")
+      redirect_to db_staff_list_path(@work), notice: t("resources.staff.created")
     end
 
     def edit
-      @staff = Staff.find(params[:id])
-      authorize @staff, :edit?
+      @staff = Staff.without_deleted.find(params[:id])
+      authorize_db_resource @staff
       @work = @staff.work
     end
 
     def update
-      @staff = Staff.find(params[:id])
-      authorize @staff, :update?
+      @staff = Staff.without_deleted.find(params[:id])
+      authorize_db_resource @staff
       @work = @staff.work
 
       @staff.attributes = staff_params
       @staff.user = current_user
 
       return render(:edit) unless @staff.valid?
+
       @staff.save_and_create_activity!
 
-      redirect_to db_work_staffs_path(@work), notice: t("resources.staff.updated")
-    end
-
-    def hide
-      @staff = Staff.find(params[:id])
-      authorize @staff, :hide?
-
-      @staff.soft_delete
-
-      flash[:notice] = t("resources.staff.unpublished")
-      redirect_back fallback_location: db_works_path
+      redirect_to db_staff_list_path(@work), notice: t("resources.staff.updated")
     end
 
     def destroy
-      @staff = Staff.find(params[:id])
-      authorize @staff, :destroy?
+      @staff = Staff.without_deleted.find(params[:id])
+      authorize_db_resource @staff
 
-      @staff.destroy
+      @staff.soft_delete
 
-      flash[:notice] = t("resources.staff.deleted")
-      redirect_back fallback_location: db_works_path
-    end
-
-    def activities
-      @staff = Staff.find(params[:id])
-      @activities = @staff.db_activities.order(id: :desc)
-      @comment = @staff.db_comments.new
+      redirect_back(
+        fallback_location: db_staff_list_path(@staff.work),
+        notice: t("resources.cast.deleted")
+      )
     end
 
     private
