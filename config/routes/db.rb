@@ -52,7 +52,6 @@ namespace :db do
   end
 
   resources :works, only: [] do
-    resource :image, controller: :work_images, only: %i(show create update destroy)
     resources :trailers, only: %i(index new create)
   end
 
@@ -117,6 +116,9 @@ scope module: :db do
     match "/db/works/:work_id/episodes",            via: :get,    as: :db_episode_list,           to: "episodes#index"
     match "/db/works/:work_id/episodes",            via: :post,                                   to: "episodes#create"
     match "/db/works/:work_id/episodes/new",        via: :get,    as: :db_new_episode,            to: "episodes#new"
+    match "/db/works/:work_id/image",               via: :get,    as: :db_work_image_detail,      to: "work_images#show"
+    match "/db/works/:work_id/image",               via: :patch,                                  to: "work_images#update"
+    match "/db/works/:work_id/image",               via: :post,                                   to: "work_images#create"
     match "/db/works/:work_id/programs",            via: :get,    as: :db_program_list,           to: "programs#index"
     match "/db/works/:work_id/programs",            via: :post,                                   to: "programs#create"
     match "/db/works/:work_id/programs/new",        via: :get,    as: :db_new_program,            to: "programs#new"
