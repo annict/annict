@@ -15,13 +15,13 @@ module Db
 
     def new
       @form = Db::CharacterRowsForm.new
-      authorize_db_resource @form
+      authorize @form
     end
 
     def create
       @form = Db::CharacterRowsForm.new(character_rows_form_params)
       @form.user = current_user
-      authorize_db_resource @form
+      authorize @form
 
       return render(:new) unless @form.valid?
 
@@ -32,12 +32,12 @@ module Db
 
     def edit
       @character = Character.without_deleted.find(params[:id])
-      authorize_db_resource @character
+      authorize @character
     end
 
     def update
       @character = Character.without_deleted.find(params[:id])
-      authorize_db_resource @character
+      authorize @character
 
       @character.attributes = character_params
       @character.user = current_user
@@ -51,7 +51,7 @@ module Db
 
     def destroy
       @character = Character.without_deleted.find(params[:id])
-      authorize_db_resource @character
+      authorize @character
 
       @character.soft_delete
 

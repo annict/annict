@@ -10,13 +10,13 @@ module Db
 
     def new
       @form = Db::PersonRowsForm.new
-      authorize_db_resource @form
+      authorize @form
     end
 
     def create
       @form = Db::PersonRowsForm.new(person_rows_form_params)
       @form.user = current_user
-      authorize_db_resource @form
+      authorize @form
 
       return render(:new) unless @form.valid?
 
@@ -27,12 +27,12 @@ module Db
 
     def edit
       @person = Person.without_deleted.find(params[:id])
-      authorize_db_resource @person
+      authorize @person
     end
 
     def update
       @person = Person.without_deleted.find(params[:id])
-      authorize_db_resource @person
+      authorize @person
 
       @person.attributes = person_params
       @person.user = current_user
@@ -46,7 +46,7 @@ module Db
 
     def destroy
       @person = Person.without_deleted.find(params[:id])
-      authorize_db_resource @person
+      authorize @person
 
       @person.soft_delete
 

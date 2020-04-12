@@ -7,7 +7,7 @@
       <%= title %>
     </h1>
 
-    <% if policy(:db_resource).create? %>
+    <% if policy(Organization).create? %>
       <div class="text-right">
         <%= link_to db_new_organization_path, class: "btn btn-outline-primary" do %>
           <%= icon "plus" %>

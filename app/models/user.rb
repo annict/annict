@@ -128,6 +128,8 @@ class User < ApplicationRecord
   has_one :profile, dependent: :destroy
   has_one :setting, dependent: :destroy
 
+  delegate :admin?, :editor?, to: :role
+
   validates :email,
     presence: true,
     uniqueness: { case_sensitive: false },

@@ -12,12 +12,12 @@ module Db
 
     def new
       @channel_group = ChannelGroup.new
-      authorize_db_resource @channel_group
+      authorize @channel_group
     end
 
     def create
       @channel_group = ChannelGroup.new(channel_group_params)
-      authorize_db_resource @channel_group
+      authorize @channel_group
 
       return render(:new) unless @channel_group.valid?
 
@@ -28,12 +28,12 @@ module Db
 
     def edit
       @channel_group = ChannelGroup.without_deleted.find(params[:id])
-      authorize_db_resource @channel_group
+      authorize @channel_group
     end
 
     def update
       @channel_group = ChannelGroup.without_deleted.find(params[:id])
-      authorize_db_resource @channel_group
+      authorize @channel_group
 
       @channel_group.attributes = channel_group_params
 
@@ -46,7 +46,7 @@ module Db
 
     def destroy
       @channel_group = ChannelGroup.without_deleted.find(params[:id])
-      authorize_db_resource @channel_group
+      authorize @channel_group
 
       @channel_group.soft_delete
 

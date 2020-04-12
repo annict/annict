@@ -32,7 +32,7 @@ module Db
     def edit
       @series_work = SeriesWork.without_deleted.find(params[:id])
 
-      authorize @series_work, policy_class: DbResourcePolicy
+      authorize @series_work
 
       @series = @series_work.series
     end
@@ -40,7 +40,7 @@ module Db
     def update
       @series_work = SeriesWork.without_deleted.find(params[:id])
 
-      authorize @series_work, policy_class: DbResourcePolicy
+      authorize @series_work
 
       @series = @series_work.series
       @series_work.attributes = series_work_params
@@ -55,7 +55,7 @@ module Db
 
     def destroy
       @series_work = SeriesWork.without_deleted.find(params[:id])
-      authorize_db_resource @series_work
+      authorize @series_work
 
       @series_work.soft_delete
 

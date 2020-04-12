@@ -10,13 +10,13 @@ module Db
 
     def new
       @series = Series.new
-      authorize_db_resource @series
+      authorize @series
     end
 
     def create
       @series = Series.new(series_params)
       @series.user = current_user
-      authorize_db_resource @series
+      authorize @series
 
       return render(:new) unless @series.valid?
 
@@ -27,12 +27,12 @@ module Db
 
     def edit
       @series = Series.without_deleted.find(params[:id])
-      authorize_db_resource @series
+      authorize @series
     end
 
     def update
       @series = Series.without_deleted.find(params[:id])
-      authorize_db_resource @series
+      authorize @series
 
       @series.attributes = series_params
       @series.user = current_user
@@ -46,7 +46,7 @@ module Db
 
     def destroy
       @series = Series.without_deleted.find(params[:id])
-      authorize_db_resource @series
+      authorize @series
 
       @series.soft_delete
 

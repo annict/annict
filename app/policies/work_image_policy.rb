@@ -2,10 +2,10 @@
 
 class WorkImagePolicy < ApplicationPolicy
   def create?
-    user.committer?
+    user.present? && user.committer?
   end
 
   def update?
-    user.committer?
+    user.present? && user.committer?
   end
 end

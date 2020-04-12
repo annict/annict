@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class StaffPolicy < ApplicationPolicy
+class SeriesPolicy < ApplicationPolicy
   def create?
     user.present? && user.committer?
   end

@@ -5,7 +5,7 @@ module V4
     extend ActiveSupport::Concern
 
     def create
-      authorize_db_resource_publishing create_resource
+      authorize(create_resource, :publish?)
 
       create_resource.publish
 
@@ -16,7 +16,7 @@ module V4
     end
 
     def destroy
-      authorize_db_resource_publishing destroy_resource
+      authorize(destroy_resource, :unpublish?)
 
       destroy_resource.unpublish
 

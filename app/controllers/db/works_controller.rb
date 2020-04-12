@@ -22,13 +22,13 @@ module Db
 
     def new
       @work = Work.new
-      authorize_db_resource @work
+      authorize @work
     end
 
     def create
       @work = Work.new(work_params)
       @work.user = current_user
-      authorize_db_resource @work
+      authorize @work
 
       return render(:new) unless @work.valid?
 
@@ -39,12 +39,12 @@ module Db
 
     def edit
       @work = Work.without_deleted.find(params[:id])
-      authorize_db_resource @work
+      authorize @work
     end
 
     def update
       @work = Work.without_deleted.find(params[:id])
-      authorize_db_resource @work
+      authorize @work
 
       @work.attributes = work_params
       @work.user = current_user
@@ -58,7 +58,7 @@ module Db
 
     def destroy
       @work = Work.without_deleted.find(params[:id])
-      authorize_db_resource @work
+      authorize @work
 
       @work.soft_delete
 

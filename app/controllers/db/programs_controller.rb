@@ -31,13 +31,13 @@ module Db
 
     def edit
       @program = Program.without_deleted.find(params[:id])
-      authorize_db_resource @program
+      authorize @program
       @work = @program.work
     end
 
     def update
       @program = Program.without_deleted.find(params[:id])
-      authorize_db_resource @program
+      authorize @program
       @work = @program.work
 
       @program.attributes = program_params
@@ -52,7 +52,7 @@ module Db
 
     def destroy
       @program = Program.without_deleted.find(params[:id])
-      authorize_db_resource @program
+      authorize @program
 
       @program.soft_delete
 

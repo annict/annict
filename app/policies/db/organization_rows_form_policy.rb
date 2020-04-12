@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module Db
-  class CharacterRowsFormPolicy < ApplicationPolicy
+  class OrganizationRowsFormPolicy < ApplicationPolicy
     def create?
       user.present? && user.committer?
     end

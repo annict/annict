@@ -14,13 +14,13 @@ module Db
 
     def new
       @form = Db::OrganizationRowsForm.new
-      authorize_db_resource @form
+      authorize @form
     end
 
     def create
       @form = Db::OrganizationRowsForm.new(organization_rows_form_params)
       @form.user = current_user
-      authorize_db_resource @form
+      authorize @form
 
       return render(:new) unless @form.valid?
 
@@ -31,12 +31,12 @@ module Db
 
     def edit
       @organization = Organization.without_deleted.find(params[:id])
-      authorize_db_resource @organization
+      authorize @organization
     end
 
     def update
       @organization = Organization.without_deleted.find(params[:id])
-      authorize_db_resource @organization
+      authorize @organization
 
       @organization.attributes = organization_params
       @organization.user = current_user
@@ -50,7 +50,7 @@ module Db
 
     def destroy
       @organization = Organization.without_deleted.find(params[:id])
-      authorize_db_resource @organization
+      authorize @organization
 
       @organization.soft_delete
 

@@ -35,13 +35,13 @@ module Db
 
     def edit
       @cast = Cast.without_deleted.find(params[:id])
-      authorize_db_resource @cast
+      authorize @cast
       @work = @cast.work
     end
 
     def update
       @cast = Cast.without_deleted.find(params[:id])
-      authorize_db_resource @cast
+      authorize @cast
       @work = @cast.work
 
       @cast.attributes = cast_params
@@ -56,7 +56,7 @@ module Db
 
     def destroy
       @cast = Cast.without_deleted.find(params[:id])
-      authorize_db_resource @cast
+      authorize @cast
 
       @cast.soft_delete
 

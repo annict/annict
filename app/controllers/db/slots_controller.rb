@@ -40,7 +40,7 @@ module Db
 
     def edit
       @slot = Slot.without_deleted.find(params[:id])
-      authorize_db_resource @slot
+      authorize @slot
       @work = @slot.work
       @programs = @work.programs.order(:started_at)
       @channels = Channel.only_kept.order(:name)
@@ -49,7 +49,7 @@ module Db
 
     def update
       @slot = Slot.without_deleted.find(params[:id])
-      authorize_db_resource @slot
+      authorize @slot
       @work = @slot.work
 
       @slot.attributes = slot_params
@@ -64,7 +64,7 @@ module Db
 
     def destroy
       @slot = Slot.without_deleted.find(params[:id])
-      authorize_db_resource @slot
+      authorize @slot
 
       @slot.soft_delete
 

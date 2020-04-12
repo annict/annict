@@ -12,7 +12,7 @@ module Db
     def create
       @work = Work.without_deleted.find(params[:work_id])
       @image = @work.build_work_image(work_image_params)
-      authorize_db_resource @image
+      authorize @image
       @image.user = current_user
 
       return render(:show) unless @image.valid?
@@ -25,7 +25,7 @@ module Db
     def update
       @work = Work.without_deleted.find(params[:work_id])
       @image = WorkImage.find_by!(work_id: @work.id)
-      authorize_db_resource @image
+      authorize @image
 
       @image.attributes = work_image_params
       @image.user = current_user

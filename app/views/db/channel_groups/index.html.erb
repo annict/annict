@@ -7,7 +7,7 @@
       <%= title %>
     </h1>
 
-    <% if policy(:db_resource).create? %>
+    <% if policy(ChannelGroup).create? %>
       <div class="text-right">
         <%= link_to db_new_channel_group_path, class: "btn btn-outline-primary" do %>
           <%= icon "plus" %>

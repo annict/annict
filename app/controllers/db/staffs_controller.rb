@@ -35,13 +35,13 @@ module Db
 
     def edit
       @staff = Staff.without_deleted.find(params[:id])
-      authorize_db_resource @staff
+      authorize @staff
       @work = @staff.work
     end
 
     def update
       @staff = Staff.without_deleted.find(params[:id])
-      authorize_db_resource @staff
+      authorize @staff
       @work = @staff.work
 
       @staff.attributes = staff_params
@@ -56,7 +56,7 @@ module Db
 
     def destroy
       @staff = Staff.without_deleted.find(params[:id])
-      authorize_db_resource @staff
+      authorize @staff
 
       @staff.soft_delete
 

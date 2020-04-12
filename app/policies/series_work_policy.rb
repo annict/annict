@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class DbResourcePolicy < ApplicationPolicy
+class SeriesWorkPolicy < ApplicationPolicy
   def create?
     user.present? && user.committer?
   end
@@ -10,6 +10,10 @@ class DbResourcePolicy < ApplicationPolicy
   end
 
   def destroy?
-    user.present? && user.role.admin?
+    user.present? && user.admin?
+  end
+
+  def unpublish?
+    user.present? && user.committer?
   end
 end

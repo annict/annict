@@ -10,7 +10,7 @@
       <%= title %>
     </h1>
 
-    <% if policy(:db_resource).create? %>
+    <% if policy(Cast).create? %>
       <div class="text-right">
         <%= link_to db_new_cast_path(@work), class: "btn btn-outline-primary" do %>
           <%= icon "plus" %>

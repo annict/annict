@@ -2,18 +2,18 @@
 
 class ChannelPolicy < ApplicationPolicy
   def create?
-    user&.role&.admin?
+    user.present? && user.admin?
   end
 
   def update?
-    user&.role&.admin?
-  end
-
-  def hide?
-    user&.role&.admin?
+    user.present? && user.admin?
   end
 
   def destroy?
-    user&.role&.admin?
+    user.present? && user.admin?
+  end
+
+  def unpublish?
+    user.present? && user.admin?
   end
 end

@@ -34,6 +34,14 @@ class ApplicationPolicy
     false
   end
 
+  def unpublish?
+    false
+  end
+
+  def publish?
+    unpublish?
+  end
+
   def scope
     Pundit.policy_scope!(user, record.class)
   end

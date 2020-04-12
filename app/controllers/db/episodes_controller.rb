@@ -35,13 +35,13 @@ module Db
 
     def edit
       @episode = Episode.without_deleted.find(params[:id])
-      authorize_db_resource @episode
+      authorize @episode
       @work = @episode.work
     end
 
     def update
       @episode = Episode.without_deleted.find(params[:id])
-      authorize_db_resource @episode
+      authorize @episode
       @work = @episode.work
 
       @episode.attributes = episode_params
@@ -56,7 +56,7 @@ module Db
 
     def destroy
       @episode = Episode.without_deleted.find(params[:id])
-      authorize_db_resource @episode
+      authorize @episode
 
       @episode.soft_delete
 

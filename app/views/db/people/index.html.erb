@@ -7,7 +7,7 @@
       <%= title %>
     </h1>
 
-    <% if policy(:db_resource).create? %>
+    <% if policy(Person).create? %>
       <div class="text-right">
         <%= link_to db_new_person_path, class: "btn btn-outline-primary" do %>
           <%= icon "plus" %>

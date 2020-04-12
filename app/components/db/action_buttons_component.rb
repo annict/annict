@@ -19,7 +19,7 @@ module Db
             end
           end
 
-          if db_resource_publishing_policy.create?
+          if db_resource_policy.unpublish?
             el.a(
               class: "btn btn-sm #{publishing_btn_class}",
               data_method: publishing_method,
@@ -49,11 +49,7 @@ module Db
     attr_reader :detail_path, :edit_path, :publishing_path, :resource, :user
 
     def db_resource_policy
-      @db_resource_policy ||= DbResourcePolicy.new(user, resource)
-    end
-
-    def db_resource_publishing_policy
-      @db_resource_publishing_policy ||= DbResourcePublishingPolicy.new(user, resource)
+      @db_resource_policy ||= Pundit::PolicyFinder.new(resource).policy.new(user, resource)
     end
 
     def publishing_method

@@ -31,13 +31,13 @@ module Db
 
     def edit
       @trailer = Trailer.without_deleted.find(params[:id])
-      authorize_db_resource @trailer
+      authorize @trailer
       @work = @trailer.work
     end
 
     def update
       @trailer = Trailer.without_deleted.find(params[:id])
-      authorize_db_resource @trailer
+      authorize @trailer
 
       @trailer.attributes = trailer_params
       @trailer.user = current_user
@@ -51,7 +51,7 @@ module Db
 
     def destroy
       @trailer = Trailer.without_deleted.find(params[:id])
-      authorize_db_resource @trailer
+      authorize @trailer
 
       @trailer.soft_delete
 
