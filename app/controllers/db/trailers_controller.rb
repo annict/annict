@@ -2,73 +2,63 @@
 
 module Db
   class TrailersController < Db::ApplicationController
-    before_action :authenticate_user!
+    before_action :authenticate_user!, only: %i(new create edit update destroy)
 
     def index
-      @work = Work.find(params[:work_id])
-      @trailers = @work.trailers.order(:sort_number)
+      @work = Work.without_deleted.find(params[:work_id])
+      @trailers = @work.trailers.without_deleted.order(:sort_number)
     end
 
     def new
-      @work = Work.find(params[:work_id])
+      @work = Work.without_deleted.find(params[:work_id])
       @form = Db::TrailerRowsForm.new
-      authorize @form, :new?
+      authorize @form
     end
 
     def create
-      @work = Work.find(params[:work_id])
+      @work = Work.without_deleted.find(params[:work_id])
       @form = Db::TrailerRowsForm.new(trailer_rows_form_params)
       @form.user = current_user
       @form.work = @work
-      authorize @form, :create?
+      authorize @form
 
       return render(:new) unless @form.valid?
+
       @form.save!
 
-      redirect_to db_work_trailers_path(@work), notice: t("messages._common.created")
+      redirect_to db_trailer_list_path(@work), notice: t("messages._common.created")
     end
 
     def edit
-      @trailer = Trailer.find(params[:id])
-      authorize @trailer, :edit?
+      @trailer = Trailer.without_deleted.find(params[:id])
+      authorize_db_resource @trailer
       @work = @trailer.work
     end
 
     def update
-      @trailer = Trailer.find(params[:id])
-      authorize @trailer, :update?
+      @trailer = Trailer.without_deleted.find(params[:id])
+      authorize_db_resource @trailer
 
       @trailer.attributes = trailer_params
       @trailer.user = current_user
 
       return render(:edit) unless @trailer.valid?
+
       @trailer.save_and_create_activity!
 
-      redirect_to db_work_trailers_path(@trailer.work), notice: t("messages._common.updated")
-    end
-
-    def hide
-      @trailer = Trailer.find(params[:id])
-      authorize @trailer, :hide?
-
-      @trailer.soft_delete
-
-      flash[:notice] = t("resources.trailer.unpublished")
-      redirect_back fallback_location: db_work_trailers_path(@trailer.work)
+      redirect_to db_trailer_list_path(@trailer.work), notice: t("messages._common.updated")
     end
 
     def destroy
-      @trailer = Trailer.find(params[:id])
-      @trailer.destroy
+      @trailer = Trailer.without_deleted.find(params[:id])
+      authorize_db_resource @trailer
 
-      flash[:notice] = t("resources.trailer.deleted")
-      redirect_back fallback_location: db_work_trailers_path(@trailer.work)
-    end
+      @trailer.soft_delete
 
-    def activities
-      @trailer = Trailer.find(params[:id])
-      @activities = @trailer.db_activities.order(id: :desc)
-      @comment = @trailer.db_comments.new
+      redirect_back(
+        fallback_location: db_trailer_list_path(@trailer.work),
+        notice: t("resources.cast.deleted")
+      )
     end
 
     private

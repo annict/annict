@@ -35,7 +35,7 @@ class Trailer < ApplicationRecord
   include TrailerImageUploader::Attachment.new(:image)
   include DbActivityMethods
   include ImageUploadable
-  include SoftDeletable
+  include Unpublishable
 
   DIFF_FIELDS = %i(title url sort_number).freeze
 
