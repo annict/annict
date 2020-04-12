@@ -26,7 +26,7 @@ module CharacterDecorator
 
   def db_detail_link(options = {})
     name = options.delete(:name).presence || self.name
-    path = edit_db_character_path(self)
+    path = db_edit_character_path(self)
     link_to name, path, options
   end
 end

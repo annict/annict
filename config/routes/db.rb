@@ -15,13 +15,6 @@ namespace :db do
     end
   end
 
-  resources :characters, except: [:show] do
-    member do
-      get :activities
-      patch :hide
-    end
-  end
-
   resources :comments, only: %i(create destroy)
 
   resources :vod_titles, only: %i(index) do
@@ -42,6 +35,14 @@ scope module: :db do
     match "/db/casts/:id/edit",                     via: :get,    as: :db_edit_cast,              to: "casts#edit"
     match "/db/casts/:id/publishing",               via: :delete, as: :db_cast_publishing,        to: "cast_publishings#destroy"
     match "/db/casts/:id/publishing",               via: :post,                                   to: "cast_publishings#create"
+    match "/db/characters",                         via: :get,    as: :db_character_list,         to: "characters#index"
+    match "/db/characters",                         via: :post,                                   to: "characters#create"
+    match "/db/characters/:id",                     via: :delete, as: :db_character_detail,       to: "characters#destroy"
+    match "/db/characters/:id",                     via: :patch,                                  to: "characters#update"
+    match "/db/characters/:id/edit",                via: :get,    as: :db_edit_character,         to: "characters#edit"
+    match "/db/characters/:id/publishing",          via: :delete, as: :db_character_publishing,   to: "character_publishings#destroy"
+    match "/db/characters/:id/publishing",          via: :post,                                   to: "character_publishings#create"
+    match "/db/characters/new",                     via: :get,    as: :db_new_character,          to: "characters#new"
     match "/db/episodes/:id",                       via: :delete, as: :db_episode_detail,         to: "episodes#destroy"
     match "/db/episodes/:id",                       via: :patch,                                  to: "episodes#update"
     match "/db/episodes/:id/edit",                  via: :get,    as: :db_edit_episode,           to: "episodes#edit"

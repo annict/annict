@@ -77,8 +77,9 @@ en:
         channels:
           index: Channels
         characters:
-          activities: Resource Activities - %{name}
+          edit: "%{name}"
           index: Characters
+          new: New Characters
         episodes:
           activities: Activities
           edit: Edit Episode

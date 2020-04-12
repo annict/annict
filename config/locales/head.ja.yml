@@ -77,8 +77,9 @@ ja:
         channels:
           index: チャンネル一覧
         characters:
-          activities: アクティビティ - %{name}
+          edit: "%{name}"
           index: キャラクター一覧
+          new: キャラクター登録
         episodes:
           activities: アクティビティ
           edit: エピソード編集

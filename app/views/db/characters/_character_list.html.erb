@@ -1,0 +1,52 @@
+<table class="table table-hover table-sm">
+  <thead>
+    <tr>
+      <th>
+        ID
+      </th>
+      <th>
+        <%= t "activerecord.attributes.character.name" %>
+      </th>
+      <th>
+        <%= t "activerecord.attributes.character.series" %>
+      </th>
+      <th>
+        <%= t "noun.state" %>
+      </th>
+      <th>
+        <%= t "noun.actions" %>
+      </th>
+    </tr>
+  </thead>
+  <tbody>
+    <% characters.each do |character| %>
+      <tr>
+        <td>
+          <%= link_to character.id, character_path(character), target: "_blank" %>
+        </td>
+        <td>
+          <%= character.name %>
+          <br>
+          <%= character.name_kana.presence || "-" %>
+          <br>
+          <%= character.name_en.presence || "-" %>
+        </td>
+        <td>
+          <%= character.series&.local_name.presence || "-" %>
+        </td>
+        <td>
+          <%= render Db::PublishingStateLabelComponent.new(resource: character) %>
+        </td>
+        <td>
+          <%= render Db::ActionButtonsComponent.new(
+              user: current_user,
+              resource: character,
+              detail_path: db_character_detail_path(character),
+              edit_path: db_edit_character_path(character),
+              publishing_path: db_character_publishing_path(character)
+          ) %>
+        </td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>

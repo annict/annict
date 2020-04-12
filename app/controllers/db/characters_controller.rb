@@ -2,71 +2,58 @@
 
 module Db
   class CharactersController < Db::ApplicationController
-    before_action :authenticate_user!, only: %i(new create edit update)
+    before_action :authenticate_user!, only: %i(new create edit update destroy)
 
     def index
-      @characters = Character.order(id: :desc).page(params[:page])
+      @characters = Character.without_deleted.order(id: :desc).page(params[:page]).per(100)
     end
 
     def new
       @form = Db::CharacterRowsForm.new
-      authorize @form, :new?
+      authorize_db_resource @form
     end
 
     def create
       @form = Db::CharacterRowsForm.new(character_rows_form_params)
       @form.user = current_user
-      authorize @form, :create?
+      authorize_db_resource @form
 
       return render(:new) unless @form.valid?
+
       @form.save!
 
-      redirect_to db_characters_path, notice: t("resources.character.created")
+      redirect_to db_character_list_path, notice: t("resources.character.created")
     end
 
     def edit
-      @character = Character.find(params[:id])
-      authorize @character, :edit?
+      @character = Character.without_deleted.find(params[:id])
+      authorize_db_resource @character
     end
 
     def update
-      @character = Character.find(params[:id])
-      authorize @character, :update?
+      @character = Character.without_deleted.find(params[:id])
+      authorize_db_resource @character
 
       @character.attributes = character_params
       @character.user = current_user
 
       return render(:edit) unless @character.valid?
+
       @character.save_and_create_activity!
 
-      message = t("resources.character.updated")
-      redirect_to db_characters_path, notice: message
-    end
-
-    def hide
-      @character = Character.find(params[:id])
-      authorize @character, :hide?
-
-      @character.soft_delete
-
-      flash[:notice] = t("messages._common.updated")
-      redirect_back fallback_location: db_characters_path
+      redirect_to db_edit_character_path(@character), notice: t("resources.character.updated")
     end
 
     def destroy
-      @character = Character.find(params[:id])
-      authorize @character, :destroy?
+      @character = Character.without_deleted.find(params[:id])
+      authorize_db_resource @character
 
-      @character.destroy
+      @character.soft_delete
 
-      flash[:notice] = t("messages._common.deleted")
-      redirect_back fallback_location: db_characters_path
-    end
-
-    def activities
-      @character = Character.find(params[:id])
-      @activities = @character.db_activities.order(id: :desc)
-      @comment = @character.db_comments.new
+      redirect_back(
+        fallback_location: db_character_list_path,
+        notice: t("messages._common.deleted")
+      )
     end
 
     private

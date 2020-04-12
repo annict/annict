@@ -60,7 +60,7 @@
               </td>
               <td>
                 <% if cast.character %>
-                  <%= link_to cast.character.name, edit_db_character_path(cast.character) %>
+                  <%= link_to cast.character.name, db_edit_character_path(cast.character) %>
                   <br>
                   <%= cast.character.name_en.presence || "-" %>
                   <% if cast.character.series %>
