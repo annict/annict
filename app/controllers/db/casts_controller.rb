@@ -10,7 +10,7 @@ module Db
         casts.
         without_deleted.
         includes(:person, :character).
-        order(deleted_at: :desc, sort_number: :asc)
+        order(:sort_number)
     end
 
     def new

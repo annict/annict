@@ -10,7 +10,7 @@ module Db
         staffs.
         without_deleted.
         includes(:resource).
-        order(deleted_at: :desc, sort_number: :asc)
+        order(:sort_number)
     end
 
     def new
