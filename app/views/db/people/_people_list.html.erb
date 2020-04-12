@@ -1,0 +1,46 @@
+<table class="table table-hover table-sm">
+  <thead>
+    <tr>
+      <th>
+        ID
+      </th>
+      <th>
+        <%= t("activerecord.attributes.person.name") %>
+      </th>
+      <th>
+        <%= t "noun.state" %>
+      </th>
+      <th>
+        <%= t "noun.actions" %>
+      </th>
+    </tr>
+  </thead>
+  <tbody>
+    <% people.each do |person| %>
+      <tr>
+        <td>
+          <%= link_to person.id, annict_url(:person_url, person), target: "_blank" %>
+        </td>
+        <td>
+          <%= person.name %>
+          <br>
+          <%= person.name_kana.presence || "-" %>
+          <br>
+          <%= person.name_en.presence || "-" %>
+        </td>
+        <td>
+          <%= render Db::PublishingStateLabelComponent.new(resource: person) %>
+        </td>
+        <td>
+          <%= render Db::ActionButtonsComponent.new(
+              user: current_user,
+              resource: person,
+              detail_path: db_person_detail_path(person),
+              edit_path: db_edit_person_path(person),
+              publishing_path: db_person_publishing_path(person)
+          ) %>
+        </td>
+      </tr>
+  <% end %>
+  </tbody>
+</table>

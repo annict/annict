@@ -88,8 +88,9 @@ ja:
           activities: アクティビティ - %{name}
           index: 団体一覧
         people:
-          activities: アクティビティ - %{name}
+          edit: "%{name}"
           index: 人物一覧
+          new: 人物登録
         slots:
           activities: アクティビティ
           edit: 放送予定編集

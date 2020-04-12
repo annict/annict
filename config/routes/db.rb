@@ -31,13 +31,6 @@ namespace :db do
     end
   end
 
-  resources :people, except: [:show] do
-    member do
-      get :activities
-      patch :hide
-    end
-  end
-
   resources :vod_titles, only: %i(index) do
     member do
       patch :hide
@@ -61,6 +54,14 @@ scope module: :db do
     match "/db/episodes/:id/edit",                  via: :get,    as: :db_edit_episode,           to: "episodes#edit"
     match "/db/episodes/:id/publishing",            via: :delete, as: :db_episode_publishing,     to: "episode_publishings#destroy"
     match "/db/episodes/:id/publishing",            via: :post,                                   to: "episode_publishings#create"
+    match "/db/people",                             via: :get,    as: :db_person_list,            to: "people#index"
+    match "/db/people",                             via: :post,                                   to: "people#create"
+    match "/db/people/:id",                         via: :delete, as: :db_person_detail,          to: "people#destroy"
+    match "/db/people/:id",                         via: :patch,                                  to: "people#update"
+    match "/db/people/:id/edit",                    via: :get,    as: :db_edit_person,            to: "people#edit"
+    match "/db/people/:id/publishing",              via: :delete, as: :db_person_publishing,      to: "person_publishings#destroy"
+    match "/db/people/:id/publishing",              via: :post,                                   to: "person_publishings#create"
+    match "/db/people/new",                         via: :get,    as: :db_new_person,             to: "people#new"
     match "/db/programs/:id",                       via: :delete, as: :db_program_detail,         to: "programs#destroy"
     match "/db/programs/:id",                       via: :patch,                                  to: "programs#update"
     match "/db/programs/:id/edit",                  via: :get,    as: :db_edit_program,           to: "programs#edit"

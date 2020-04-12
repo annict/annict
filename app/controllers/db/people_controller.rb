@@ -2,71 +2,65 @@
 
 module Db
   class PeopleController < Db::ApplicationController
-    before_action :authenticate_user!, only: %i(new create edit update hide destroy)
+    before_action :authenticate_user!, only: %i(new create edit update destroy)
 
     def index
-      @people = Person.order(id: :desc).page(params[:page])
+      @people = Person.without_deleted.order(id: :desc).page(params[:page]).per(100)
     end
 
     def new
-      @person = Person.new
-      authorize @person, :new?
+      @form = Db::PersonRowsForm.new
+      authorize_db_resource @form
     end
 
     def create
-      @person = Person.new(person_params)
-      @person.user = current_user
-      authorize @person, :create?
+      @form = Db::PersonRowsForm.new(person_rows_form_params)
+      @form.user = current_user
+      authorize_db_resource @form
 
-      return render(:new) unless @person.valid?
-      @person.save_and_create_activity!
+      return render(:new) unless @form.valid?
 
-      redirect_to db_people_path, notice: t("resources.person.created")
+      @form.save!
+
+      redirect_to db_person_list_path, notice: t("resources.person.created")
     end
 
     def edit
-      @person = Person.find(params[:id])
-      authorize @person, :edit?
+      @person = Person.without_deleted.find(params[:id])
+      authorize_db_resource @person
     end
 
     def update
-      @person = Person.find(params[:id])
-      authorize @person, :update?
+      @person = Person.without_deleted.find(params[:id])
+      authorize_db_resource @person
 
       @person.attributes = person_params
       @person.user = current_user
 
       return render(:edit) unless @person.valid?
+
       @person.save_and_create_activity!
 
-      redirect_to edit_db_person_path(@person), notice: t("resources.person.updated")
-    end
-
-    def hide
-      @person = Person.find(params[:id])
-      authorize @person, :hide?
-
-      @person.soft_delete_with_children
-
-      flash[:notice] = t("resources.person.unpublished")
-      redirect_back fallback_location: db_people_path
+      redirect_to db_edit_person_path(@person), notice: t("resources.person.updated")
     end
 
     def destroy
-      @person = Person.find(params[:id])
-      @person.destroy
+      @person = Person.without_deleted.find(params[:id])
+      authorize_db_resource @person
 
-      flash[:notice] = t("resources.person.deleted")
-      redirect_back fallback_location: db_people_path
-    end
+      @person.soft_delete
 
-    def activities
-      @person = Person.find(params[:id])
-      @activities = @person.db_activities.order(id: :desc)
-      @comment = @person.db_comments.new
+      redirect_back(
+        fallback_location: db_person_list_path,
+        notice: t("resources.cast.deleted")
+      )
     end
 
     private
+
+    def person_rows_form_params
+      params.require(:db_person_rows_form).permit(:rows)
+    end
 
     def person_params
       params.require(:person).permit(

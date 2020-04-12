@@ -74,7 +74,7 @@
                 <% end %>
               </td>
               <td>
-                <%= link_to cast.person.name, edit_db_person_path(cast.person) %>
+                <%= link_to cast.person.name, db_edit_person_path(cast.person) %>
                 <br>
                 <%= cast.person.name_en.presence || "-" %>
               </td>

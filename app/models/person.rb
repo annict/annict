@@ -50,7 +50,7 @@ class Person < ApplicationRecord
 
   include DbActivityMethods
   include RootResourceCommon
-  include SoftDeletable
+  include Unpublishable
 
   DIFF_FIELDS = %i(
     prefecture_id name name_kana nickname gender url wikipedia_url twitter_username

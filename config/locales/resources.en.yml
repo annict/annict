@@ -1,6 +1,7 @@
 en:
   resources:
     _common:
+      new: New
       published: Published
       unpublished: Unpublished
     channel:

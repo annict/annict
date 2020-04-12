@@ -88,8 +88,9 @@ en:
           activities: Resource Activities - %{name}
           index: Organizations
         people:
-          activities: Resource Activities - %{name}
+          edit: "%{name}"
           index: People
+          new: New People
         person_fans:
           index: Fans of %{person_name}
         slots:

@@ -1,6 +1,7 @@
 ja:
   resources:
     _common:
+      new: 新規登録
       published: 公開
       unpublished: 非公開
     channel:
