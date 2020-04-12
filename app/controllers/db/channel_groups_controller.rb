@@ -2,66 +2,58 @@
 
 module Db
   class ChannelGroupsController < Db::ApplicationController
-    before_action :authenticate_user!, only: %i(new create edit update unpublish destroy)
+    before_action :authenticate_user!, only: %i(new create edit update destroy)
 
     def index
       @channel_groups = ChannelGroup.
-        all.
-        order(sort_number: :desc)
+        without_deleted.
+        order(:sort_number)
     end
 
     def new
       @channel_group = ChannelGroup.new
-      authorize(@channel_group, :new?)
+      authorize_db_resource @channel_group
     end
 
     def create
       @channel_group = ChannelGroup.new(channel_group_params)
-      authorize(@channel_group, :create?)
+      authorize_db_resource @channel_group
 
-      if @channel_group.save
-        redirect_to db_channel_groups_path, notice: t("messages._common.created")
-      else
-        render :new
-      end
+      return render(:new) unless @channel_group.valid?
+
+      @channel_group.save
+
+      redirect_to db_channel_group_list_path, notice: t("messages._common.created")
     end
 
     def edit
-      @channel_group = ChannelGroup.find(params[:id])
-      authorize(@channel_group, :edit?)
+      @channel_group = ChannelGroup.without_deleted.find(params[:id])
+      authorize_db_resource @channel_group
     end
 
     def update
-      @channel_group = ChannelGroup.find(params[:id])
-      authorize(@channel_group, :update?)
+      @channel_group = ChannelGroup.without_deleted.find(params[:id])
+      authorize_db_resource @channel_group
 
       @channel_group.attributes = channel_group_params
 
-      if @channel_group.save
-        redirect_to db_channel_groups_path, notice: t("messages._common.updated")
-      else
-        render :edit
-      end
-    end
+      return render(:edit) unless @channel_group.valid?
 
-    def unpublish
-      @channel_group = ChannelGroup.find(params[:id])
-      authorize(@channel_group, :unpublish?)
+      @channel_group.save
 
-      @channel_group.soft_delete
-
-      flash[:notice] = t("messages._common.unpublished")
-      redirect_back fallback_location: db_channel_groups_path
+      redirect_to db_channel_group_list_path, notice: t("messages._common.updated")
     end
 
     def destroy
-      @channel_group = ChannelGroup.find(params[:id])
-      authorize(@channel_group, :destroy?)
+      @channel_group = ChannelGroup.without_deleted.find(params[:id])
+      authorize_db_resource @channel_group
 
-      @channel_group.destroy
+      @channel_group.soft_delete
 
-      flash[:notice] = t("messages._common.deleted")
-      redirect_back fallback_location: db_channel_groups_path
+      redirect_back(
+        fallback_location: db_channel_group_list_path,
+        notice: t("resources.cast.deleted")
+      )
     end
 
     private

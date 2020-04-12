@@ -73,7 +73,9 @@ ja:
           index: キャスト一覧
           new: キャスト登録
         channel_groups:
+          edit: "%{name}"
           index: チャンネルグループ一覧
+          new: チャンネルグループ登録
         channels:
           index: チャンネル一覧
         characters:

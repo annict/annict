@@ -19,7 +19,7 @@
 #
 
 class ChannelGroup < ApplicationRecord
-  include SoftDeletable
+  include Unpublishable
 
   has_many :channels
 end

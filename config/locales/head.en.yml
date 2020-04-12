@@ -73,7 +73,9 @@ en:
           index: Casts
           new: Create Casts
         channel_groups:
+          edit: "%{name}"
           index: Channel Groups
+          new: New Channel Group
         channels:
           index: Channels
         characters:
