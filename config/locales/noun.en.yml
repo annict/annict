@@ -29,6 +29,7 @@ en:
     cast: Cast
     casts: Casts
     category: Category
+    channel_groups: Channel Groups
     channel_id: Channel ID
     channel_list: Channel List
     channel_name: Channel Name
@@ -171,6 +172,7 @@ en:
     untracked_episodes: Untracked Episodes
     users_count: "%{count} people"
     video_page: Video Page
+    vod_works: VOD Works
     vods: Video Services
     voice_actor: Voice Actor
     voice_actors: Voice Actors

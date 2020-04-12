@@ -60,17 +60,17 @@ module Db
             end
             el.li do
               el.a class: "d-inline-block", href: db_channel_groups_path do
-                I18n.t("head.title.db.channel_groups.index")
+                I18n.t("noun.channel_groups")
               end
             end
             el.li do
               el.a class: "d-inline-block", href: db_channels_path do
-                I18n.t("head.title.db.channels.index")
+                I18n.t("noun.channels")
               end
             end
             el.li do
               el.a class: "d-inline-block", href: db_vod_titles_path do
-                I18n.t("head.title.db.vod_titles.index")
+                I18n.t("noun.vod_works")
               end
             end
           end
