@@ -85,8 +85,9 @@ ja:
           index: エピソード一覧
           new: エピソード登録
         organizations:
-          activities: アクティビティ - %{name}
+          edit: "%{name}"
           index: 団体一覧
+          new: 団体登録
         people:
           edit: "%{name}"
           index: 人物一覧

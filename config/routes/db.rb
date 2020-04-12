@@ -24,13 +24,6 @@ namespace :db do
 
   resources :comments, only: %i(create destroy)
 
-  resources :organizations, except: [:show] do
-    member do
-      get :activities
-      patch :hide
-    end
-  end
-
   resources :vod_titles, only: %i(index) do
     member do
       patch :hide
@@ -54,6 +47,14 @@ scope module: :db do
     match "/db/episodes/:id/edit",                  via: :get,    as: :db_edit_episode,           to: "episodes#edit"
     match "/db/episodes/:id/publishing",            via: :delete, as: :db_episode_publishing,     to: "episode_publishings#destroy"
     match "/db/episodes/:id/publishing",            via: :post,                                   to: "episode_publishings#create"
+    match "/db/organizations",                      via: :get,    as: :db_organization_list,      to: "organizations#index"
+    match "/db/organizations",                      via: :post,                                   to: "organizations#create"
+    match "/db/organizations/:id",                  via: :delete, as: :db_organization_detail,    to: "organizations#destroy"
+    match "/db/organizations/:id",                  via: :patch,                                  to: "organizations#update"
+    match "/db/organizations/:id/edit",             via: :get,    as: :db_edit_organization,      to: "organizations#edit"
+    match "/db/organizations/:id/publishing",       via: :delete, as: :db_organization_publishing,to: "organization_publishings#destroy"
+    match "/db/organizations/:id/publishing",       via: :post,                                   to: "organization_publishings#create"
+    match "/db/organizations/new",                  via: :get,    as: :db_new_organization,       to: "organizations#new"
     match "/db/people",                             via: :get,    as: :db_person_list,            to: "people#index"
     match "/db/people",                             via: :post,                                   to: "people#create"
     match "/db/people/:id",                         via: :delete, as: :db_person_detail,          to: "people#destroy"

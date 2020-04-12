@@ -85,8 +85,9 @@ en:
           index: Episodes
           new: New Episode
         organizations:
-          activities: Resource Activities - %{name}
+          edit: "%{name}"
           index: Organizations
+          new: New Organizations
         people:
           edit: "%{name}"
           index: People

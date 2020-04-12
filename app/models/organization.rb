@@ -34,7 +34,7 @@
 class Organization < ApplicationRecord
   include DbActivityMethods
   include RootResourceCommon
-  include SoftDeletable
+  include Unpublishable
 
   DIFF_FIELDS = %i(
     name name_kana url wikipedia_url twitter_username name_kana name_en url_en

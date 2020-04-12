@@ -52,6 +52,8 @@ en:
         rows: Characters
       db/episode_rows_form:
         rows: Episodes
+      db/organization_rows_form:
+        rows: Organizations
       db/person_rows_form:
         rows: People
       db/program_rows_form:

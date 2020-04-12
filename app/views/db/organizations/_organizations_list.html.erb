@@ -1,0 +1,46 @@
+<table class="table table-hover table-sm">
+  <thead>
+    <tr>
+      <th>
+        ID
+      </th>
+      <th>
+        <%= t("activerecord.attributes.organization.name") %>
+      </th>
+      <th>
+        <%= t "noun.state" %>
+      </th>
+      <th>
+        <%= t "noun.actions" %>
+      </th>
+    </tr>
+  </thead>
+  <tbody>
+    <% organizations.each do |organization| %>
+      <tr>
+        <td>
+          <%= link_to organization.id, organization_path(organization), target: "_blank" %>
+        </td>
+        <td>
+          <%= organization.name %>
+          <br>
+          <%= organization.name_kana.presence || "-" %>
+          <br>
+          <%= organization.name_en.presence || "-" %>
+        </td>
+        <td>
+          <%= render Db::PublishingStateLabelComponent.new(resource: organization) %>
+        </td>
+        <td>
+          <%= render Db::ActionButtonsComponent.new(
+              user: current_user,
+              resource: organization,
+              detail_path: db_organization_detail_path(organization),
+              edit_path: db_edit_organization_path(organization),
+              publishing_path: db_organization_publishing_path(organization)
+          ) %>
+        </td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>

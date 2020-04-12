@@ -5,7 +5,7 @@ module OrganizationDecorator
 
   def db_detail_link(options = {})
     name = options.delete(:name).presence || self.name
-    link_to name, edit_db_organization_path(self), options
+    link_to name, db_edit_organization_path(self), options
   end
 
   def grid_description(staff)
