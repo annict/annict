@@ -1,12 +1,9 @@
 # frozen_string_literal: true
 
-namespace :db do
-  root "home#index"
-end
-
 scope module: :db do
   constraints format: "html" do
     # rubocop:disable Layout/ExtraSpacing, Layout/LineLength
+    match "/db",                                    via: :get,    as: :db_root,                     to: "home#show"
     match "/db/activities",                         via: :get,    as: :db_activity_list,            to: "activities#index"
     match "/db/casts/:id",                          via: :delete, as: :db_cast_detail,              to: "casts#destroy"
     match "/db/casts/:id",                          via: :patch,                                    to: "casts#update"
