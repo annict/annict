@@ -41,7 +41,12 @@ describe "Api::V1::Characters" do
           "description_source" => character.description_source,
           "description_source_en" => character.description_source_en,
           "favorite_characters_count" => character.favorite_users_count,
-          "series" => nil
+          "series" => {
+            "id" => character.series.id,
+            "name" => character.series.name,
+            "name_en" => character.series.name_en,
+            "name_ro" => character.series.name_ro
+          }
         }
         expect(json["characters"][0]).to include(expected_hash)
         expect(json["total_count"]).to eq(1)
