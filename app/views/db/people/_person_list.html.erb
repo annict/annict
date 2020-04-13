@@ -16,7 +16,7 @@
     </tr>
   </thead>
   <tbody>
-    <% people.each do |person| %>
+    <% resources.each do |person| %>
       <tr>
         <td>
           <%= link_to person.id, annict_url(:person_url, person), target: "_blank" %>

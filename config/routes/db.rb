@@ -1,8 +1,6 @@
 # frozen_string_literal: true
 
 namespace :db do
-  resource :search, only: [:show]
-
   resources :comments, only: %i(create destroy)
 
   root "home#index"
@@ -67,6 +65,7 @@ scope module: :db do
     match "/db/programs/:id/edit",                  via: :get,    as: :db_edit_program,             to: "programs#edit"
     match "/db/programs/:id/publishing",            via: :delete, as: :db_program_publishing,       to: "program_publishings#destroy"
     match "/db/programs/:id/publishing",            via: :post,                                     to: "program_publishings#create"
+    match "/db/search",                             via: :get,    as: :db_search,                   to: "searches#show"
     match "/db/series",                             via: :get,    as: :db_series_list,              to: "series#index"
     match "/db/series",                             via: :post,                                     to: "series#create"
     match "/db/series/:id",                         via: :delete, as: :db_series_detail,            to: "series#destroy"
