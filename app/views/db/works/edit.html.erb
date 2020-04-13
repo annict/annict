@@ -8,7 +8,7 @@
     </h1>
 
     <div class="text-right">
-      <%= link_to work_url(@work, subdomain: false), class: "btn btn-outline-primary" do %>
+      <%= link_to work_path(@work), class: "btn btn-outline-primary", target: "_blank" do %>
         <%= icon "external-link-alt" %>
         <%= t("resources.work.go_to_work") %>
       <% end %>

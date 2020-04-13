@@ -8,7 +8,7 @@
     </h1>
 
     <div class="text-right">
-      <%= link_to person_url(@person, subdomain: false), class: "btn btn-outline-primary" do %>
+      <%= link_to person_path(@person), class: "btn btn-outline-primary", target: "_blank" do %>
         <%= icon "external-link-alt" %>
         <%= t("resources.person.go_to_person") %>
       <% end %>
