@@ -982,9 +982,9 @@ braces@^3.0.1, braces@~3.0.2:
     fill-range "^7.0.1"
 
 britecharts@^2.9.8:
-  version "2.13.2"
-  resolved "https://registry.yarnpkg.com/britecharts/-/britecharts-2.13.2.tgz#1596e439daf370fdace5bc32665e630f8427ea9f"
-  integrity sha512-sK7NuUEyBdLYXNJmZcrjjWMmzByqpRhySddNPhjpRgFhrJNg+5E0m2Y1nawRDeiWFhUXg0Pziid5lCRzR4vybw==
+  version "2.15.0"
+  resolved "https://registry.yarnpkg.com/britecharts/-/britecharts-2.15.0.tgz#29433d49e1c3c18da049f97e6475cf1258f0d9e8"
+  integrity sha512-atho0P/UXM7b9Rm3tInPUwazwNSo06uhnNTtsc86vVJIuczCxvv/veG3lQu02SpVnF3lwbyfhCi5DAByAh3heA==
   dependencies:
     base-64 "^0.1.0"
     d3 "^5.9.2"
