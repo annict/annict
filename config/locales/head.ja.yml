@@ -77,7 +77,9 @@ ja:
           index: チャンネルグループ一覧
           new: チャンネルグループ登録
         channels:
+          edit: "%{name}"
           index: チャンネル一覧
+          new: チャンネル登録
         characters:
           edit: "%{name}"
           index: キャラクター一覧

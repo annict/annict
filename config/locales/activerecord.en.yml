@@ -12,6 +12,7 @@ en:
         channel_group: Channel Group
         channel_group_id: Channel Group
         name: Name
+        sort_number: Sort Number
       channel_group:
         name: Name
         sort_number: Sort Number

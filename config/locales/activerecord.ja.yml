@@ -12,6 +12,7 @@ ja:
         channel_group: チャンネルグループ
         channel_group_id: チャンネルグループ
         name: 名前
+        sort_number: ソート番号
       channel_group:
         name: 名前
         sort_number: ソート番号

@@ -3,12 +3,6 @@
 namespace :db do
   resource :search, only: [:show]
 
-  resources :channels, except: %i(show) do
-    member do
-      patch :hide
-    end
-  end
-
   resources :comments, only: %i(create destroy)
 
   resources :vod_titles, only: %i(index) do
@@ -37,6 +31,14 @@ scope module: :db do
     match "/db/channel_groups/:id/publishing",      via: :delete, as: :db_channel_group_publishing, to: "channel_group_publishings#destroy"
     match "/db/channel_groups/:id/publishing",      via: :post,                                     to: "channel_group_publishings#create"
     match "/db/channel_groups/new",                 via: :get,    as: :db_new_channel_group,        to: "channel_groups#new"
+    match "/db/channels",                           via: :get,    as: :db_channel_list,             to: "channels#index"
+    match "/db/channels",                           via: :post,                                     to: "channels#create"
+    match "/db/channels/:id",                       via: :delete, as: :db_channel_detail,           to: "channels#destroy"
+    match "/db/channels/:id",                       via: :patch,                                    to: "channels#update"
+    match "/db/channels/:id/edit",                  via: :get,    as: :db_edit_channel,             to: "channels#edit"
+    match "/db/channels/:id/publishing",            via: :delete, as: :db_channel_publishing,       to: "channel_publishings#destroy"
+    match "/db/channels/:id/publishing",            via: :post,                                     to: "channel_publishings#create"
+    match "/db/channels/new",                       via: :get,    as: :db_new_channel,              to: "channels#new"
     match "/db/characters",                         via: :get,    as: :db_character_list,           to: "characters#index"
     match "/db/characters",                         via: :post,                                     to: "characters#create"
     match "/db/characters/:id",                     via: :delete, as: :db_character_detail,         to: "characters#destroy"
