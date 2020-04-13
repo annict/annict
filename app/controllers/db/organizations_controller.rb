@@ -56,7 +56,7 @@ module Db
 
       redirect_back(
         fallback_location: db_organization_list_path,
-        notice: t("resources.cast.deleted")
+        notice: t("messages._common.deleted")
       )
     end
 

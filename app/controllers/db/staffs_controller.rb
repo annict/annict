@@ -62,7 +62,7 @@ module Db
 
       redirect_back(
         fallback_location: db_staff_list_path(@staff.work),
-        notice: t("resources.cast.deleted")
+        notice: t("messages._common.deleted")
       )
     end
 

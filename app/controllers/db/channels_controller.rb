@@ -54,7 +54,7 @@ module Db
 
       redirect_back(
         fallback_location: db_channel_list_path,
-        notice: t("resources.cast.deleted")
+        notice: t("messages._common.deleted")
       )
     end
 
