@@ -7,19 +7,23 @@ class EpisodeGeneratorService
 
   def execute!(now:)
     episodeless_slots(now).order(:started_at).each do |slot|
-      work = slot.work
+      begin
+        work = slot.work
 
-      next if work.manual_episodes_count && work.manual_episodes_count < slot.number
+        next if work.manual_episodes_count && work.manual_episodes_count < slot.number
 
-      raw_number = target_raw_number(slot)
-      episode = work.episodes.only_kept.find_by(raw_number: raw_number)
+        raw_number = target_raw_number(slot)
+        episode = work.episodes.only_kept.find_by(raw_number: raw_number)
 
-      if episode
-        slot.update_column(:episode_id, episode.id)
-        next
+        if episode
+          slot.update_column(:episode_id, episode.id)
+          next
+        end
+
+        create_new_episode!(slot, raw_number)
+      rescue StandardError => e
+        AdminMailer.error_in_episode_generator_notification(slot.id, e.message).deliver_later
       end
-
-      create_new_episode!(slot, raw_number)
     end
   end
 
