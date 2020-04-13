@@ -7,7 +7,7 @@ module ProgramDecorator
 
   def db_detail_link(options = {})
     name = options.delete(:name).presence || id
-    link_to(name, edit_db_program_path(self), options)
+    link_to(name, db_edit_program_path(self), options)
   end
 
   def to_values

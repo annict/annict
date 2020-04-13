@@ -96,7 +96,7 @@ c-share-button-facebook url="#{local_url}#{work_path(work)}"
 
 - if user_signed_in? && current_user.committer?
   .mt-4
-    = link_to t("messages._common.edit_on_annict_db"), edit_db_work_path(work), class: "btn btn-secondary w-100 mt-2"
+    = link_to t("messages._common.edit_on_annict_db"), db_edit_work_path(work), class: "btn btn-secondary w-100 mt-2"
 
 - content_for :js_templates do
   = render "application/js_templates/share_button_facebook"

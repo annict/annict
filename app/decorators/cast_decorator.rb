@@ -3,7 +3,7 @@
 module CastDecorator
   def db_detail_link(options = {})
     name = options.delete(:name).presence || character&.name.presence || id
-    link_to name, edit_db_cast_path(self), options
+    link_to name, db_edit_cast_path(self), options
   end
 
   def local_name_with_old
