@@ -30,7 +30,7 @@ class EpisodeGeneratorService
   private
 
   def episodeless_slots(now)
-    @episodeless_slots ||= Slot.
+    Slot.
       only_kept.
       where(episode_id: nil, rebroadcast: false, irregular: false).
       where.not(program_id: nil).
