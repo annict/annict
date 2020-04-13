@@ -7,7 +7,7 @@ class EpisodeGeneratorService
 
   def execute!(now:)
     episodeless_slots = Slot.
-      without_deleted.
+      only_kept.
       where(episode_id: nil, rebroadcast: false, irregular: false).
       where.not(program_id: nil).
       where.not(number: nil).
@@ -20,13 +20,13 @@ class EpisodeGeneratorService
       next if work.manual_episodes_count && work.manual_episodes_count < slot.number
 
       irregular_slots_count = Slot.
-        without_deleted.
+        only_kept.
         where(program_id: slot.program_id, irregular: true).
         where("number >= ?", slot.program.minimum_episode_generatable_number).
         count
       raw_number = slot.number - irregular_slots_count
       raw_number = raw_number + work.start_episode_raw_number - 1
-      episode = work.episodes.without_deleted.find_by(raw_number: raw_number)
+      episode = work.episodes.only_kept.find_by(raw_number: raw_number)
       episode_not_exists = episode.nil?
 
       ActiveRecord::Base.transaction do
