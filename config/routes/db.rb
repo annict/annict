@@ -1,8 +1,6 @@
 # frozen_string_literal: true
 
 namespace :db do
-  resources :comments, only: %i(create destroy)
-
   root "home#index"
 end
 

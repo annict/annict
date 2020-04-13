@@ -29,9 +29,6 @@ ja:
       updated: 更新しました
     comment:
       no_comments: コメントはありません
-    db_comment:
-      create: コメントする
-      write_some_comments: コメントを書く
     episode:
       created: 登録しました
       edit_episodes: エピソード編集

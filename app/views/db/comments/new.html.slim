@@ -1,9 +1,0 @@
-.l-topbar.container-fluid.px-3
-  .row.flex-items-xs-between
-    .col
-      = render "db/application/topbar_title", parent: DbComment.model_name.human(count: 2)
-
-.container-fluid.p-3
-  .row
-    .c-card.col-8.ml-auto.p-3
-      = render "db/comments/form", comment: @comment, resource: @comment.resource

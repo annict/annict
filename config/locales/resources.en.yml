@@ -29,9 +29,6 @@ en:
       updated: Cast updated
     comment:
       no_comments: No comments
-    db_comment:
-      create: Comment
-      write_some_comments: Write some comments...
     episode:
       created: Episode created
       edit_episodes: Edit episodes

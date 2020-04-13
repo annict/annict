@@ -247,9 +247,6 @@ en:
       db_activity:
         one: Activity
         other: Activities
-      db_comment:
-        one: Comment
-        other: Comments
       episode:
         one: Episode
         other: Episodes

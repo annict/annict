@@ -1,9 +1,0 @@
-= form_for comment do |f|
-  = render "application/components/error_panel", resource: f.object
-
-  = f.text_area :body, class: "form-control mb-1", rows: 10, placeholder: t("resources.db_comment.write_some_comments"), required: true
-  = f.hidden_field :resource_id, value: resource.id
-  = f.hidden_field :resource_type, value: resource.class.name
-
-  .text-right
-    = f.submit t("resources.db_comment.create"), class: "btn btn-primary"

@@ -246,9 +246,6 @@ ja:
       db_activity:
         one: アクティビティ
         other: アクティビティ
-      db_comment:
-        one: コメント
-        other: コメント
       episode:
         one: エピソード
         other: エピソード
