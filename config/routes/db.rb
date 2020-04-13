@@ -5,12 +5,6 @@ namespace :db do
 
   resources :comments, only: %i(create destroy)
 
-  resources :vod_titles, only: %i(index) do
-    member do
-      patch :hide
-    end
-  end
-
   root "home#index"
 end
 

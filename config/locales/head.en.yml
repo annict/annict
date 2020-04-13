@@ -130,8 +130,6 @@ en:
           edit: Edit Slot Detail
           index: Slot Details
           new: New Slot Detail
-        vod_titles:
-          index: VOD Titles
         work_images:
           show: Work Image - %{title}
         works:

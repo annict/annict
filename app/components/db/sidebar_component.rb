@@ -68,11 +68,6 @@ module Db
                 I18n.t("noun.channels")
               end
             end
-            el.li do
-              el.a class: "d-inline-block", href: db_vod_titles_path do
-                I18n.t("noun.vod_works")
-              end
-            end
           end
 
           el.a class: "c-db-sidebar__annict-link d-inline-block text-center", href: root_path do
