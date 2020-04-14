@@ -53,7 +53,7 @@ describe "PATCH /db/episodes/:id", type: :request do
     let!(:old_episode) { episode.attributes }
     let!(:episode_params) do
       {
-        title: "タイトルUpdated",
+        title: "タイトルUpdated"
       }
     end
     let!(:attr_names) { episode_params.keys }

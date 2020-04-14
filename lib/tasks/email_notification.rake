@@ -13,25 +13,25 @@ namespace :email_notification do
 
     works.find_each do |work|
       favorite_character_user_ids = FavoriteCharacter.
-          joins(:character).
-          merge(work.characters).
-          pluck(:user_id)
+        joins(:character).
+        merge(work.characters).
+        pluck(:user_id)
       favorite_people_user_ids = FavoritePerson.
-          joins(:person).
-          merge(work.people).
-          pluck(:user_id)
+        joins(:person).
+        merge(work.people).
+        pluck(:user_id)
       favorite_org_user_ids = FavoriteOrganization.
-          joins(:organization).
-          merge(work.organizations).
-          pluck(:user_id)
+        joins(:organization).
+        merge(work.organizations).
+        pluck(:user_id)
       user_ids = favorite_character_user_ids |
-          favorite_people_user_ids |
-          favorite_org_user_ids
+        favorite_people_user_ids |
+        favorite_org_user_ids
       users = User.
-          only_kept.
-          joins(:email_notification).
-          where(id: user_ids).
-          where(email_notifications: { event_favorite_works_added: true })
+        only_kept.
+        joins(:email_notification).
+        where(id: user_ids).
+        where(email_notifications: { event_favorite_works_added: true })
 
       users.find_each do |user|
         next if user.statuses.where(work: work).exists?
