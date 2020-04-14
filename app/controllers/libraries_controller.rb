@@ -5,7 +5,7 @@ class LibrariesController < ApplicationController
   before_action :set_display_option, only: %i(show)
 
   def show
-    @works = @user.works.on(params[:status_kind]).without_deleted
+    @works = @user.works.on(params[:status_kind]).only_kept
     season_slugs = @works.map(&:season).select(&:present?).map(&:slug).uniq
     @seasons = season_slugs.
       map { |slug| Season.find_by_slug(slug) }.
@@ -32,7 +32,7 @@ class LibrariesController < ApplicationController
   private
 
   def set_user
-    @user = User.without_deleted.find_by!(username: params[:username])
+    @user = User.only_kept.find_by!(username: params[:username])
   end
 
   def set_display_option

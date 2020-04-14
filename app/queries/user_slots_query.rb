@@ -61,7 +61,7 @@ class UserSlotsQuery
   def user_episodes
     @user_episodes ||= UserEpisodesQuery.new(
       user,
-      Episode.without_deleted.where(work_id: library_entries.pluck(:work_id)),
+      Episode.only_kept.where(work_id: library_entries.pluck(:work_id)),
       watched: watched
     ).call
   end

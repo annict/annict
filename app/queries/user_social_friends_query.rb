@@ -21,7 +21,7 @@ class UserSocialFriendsQuery
     when "facebook" then FacebookService.new(@user).uids
     end
 
-    User.without_deleted.joins(:providers).where(providers: { name: provider_name, uid: uids })
+    User.only_kept.joins(:providers).where(providers: { name: provider_name, uid: uids })
   end
 
   private
@@ -33,6 +33,6 @@ class UserSocialFriendsQuery
     t = Provider.arel_table
     twitter_conds = t[:name].eq("twitter").and(t[:uid].in(twitter_uids))
     facebook_conds = t[:name].eq("facebook").and(t[:uid].in(facebook_uids))
-    User.without_deleted.joins(:providers).where(twitter_conds.or(facebook_conds))
+    User.only_kept.joins(:providers).where(twitter_conds.or(facebook_conds))
   end
 end

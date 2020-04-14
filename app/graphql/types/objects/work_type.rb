@@ -66,7 +66,7 @@ module Types
 
       def programs(order_by: nil)
         SlotsQuery.new(
-          object.slots.without_deleted,
+          object.slots.only_kept,
           order: build_order(order_by)
         ).call
       end
@@ -80,7 +80,7 @@ module Types
       end
 
       def series_list
-        object.series_list.without_deleted.where("series_works_count > ?", 1)
+        object.series_list.only_kept.where("series_works_count > ?", 1)
       end
 
       def media

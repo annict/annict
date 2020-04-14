@@ -7,7 +7,7 @@ module Annict
         vod_title_ids = []
 
         attrs.each do |attr|
-          work = Work.without_deleted.find_by(title: attr[:name])
+          work = Work.only_kept.find_by(title: attr[:name])
 
           print "name: #{attr[:name]} -> "
 
@@ -37,7 +37,7 @@ module Annict
 
           vod_title.soft_delete if vod_title.not_deleted?
 
-          program = work.programs.without_deleted.find_by(channel: channel)
+          program = work.programs.only_kept.find_by(channel: channel)
           if !program
             work.programs.create!(
               channel: channel,

@@ -4,8 +4,8 @@ class CommentsController < ApplicationController
   before_action :authenticate_user!
 
   def create
-    @user = User.without_deleted.find_by(username: params[:username])
-    @record = @user.records.without_deleted.find(params[:record_id])
+    @user = User.only_kept.find_by(username: params[:username])
+    @record = @user.records.only_kept.find(params[:record_id])
     @user = @record.user
     @comment = @record.episode_record.comments.new(comment_params)
     @comment.user = current_user

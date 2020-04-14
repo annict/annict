@@ -4,10 +4,10 @@ class CharactersController < ApplicationController
   before_action :load_i18n, only: %i(show)
 
   def show
-    @character = Character.without_deleted.find(params[:id])
+    @character = Character.only_kept.find(params[:id])
     @casts_with_year = @character.
       casts.
-      without_deleted.
+      only_kept.
       joins(:work).
       where(works: { deleted_at: nil }).
       group_by { |cast| cast.work.season_year.presence || 0 }
@@ -16,7 +16,7 @@ class CharactersController < ApplicationController
     @favorite_characters = @character.
       favorite_characters.
       joins(:user).
-      merge(User.without_deleted).
+      merge(User.only_kept).
       order(id: :desc)
   end
 

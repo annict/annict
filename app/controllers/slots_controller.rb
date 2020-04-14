@@ -7,7 +7,7 @@ class SlotsController < ApplicationController
   def index
     @slots = UserSlotsQuery.new(
       current_user,
-      Slot.without_deleted.with_works(current_user.works_on(:wanna_watch, :watching).without_deleted),
+      Slot.only_kept.with_works(current_user.works_on(:wanna_watch, :watching).only_kept),
       watched: false,
       order: order_property
     ).call.page(1)

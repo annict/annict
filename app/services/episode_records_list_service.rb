@@ -21,7 +21,7 @@ class EpisodeRecordsListService
     return EpisodeRecord.none if @user.blank?
 
     results = all_episode_records.with_body
-    results = results.joins(:user).merge(@user.followings.without_deleted)
+    results = results.joins(:user).merge(@user.followings.only_kept)
     results = localable_episode_records(results)
     results = results.page(@params[:page])
     results = sort(results)

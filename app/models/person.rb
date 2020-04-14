@@ -108,8 +108,8 @@ class Person < ApplicationRecord
 
   def soft_delete_with_children
     soft_delete
-    casts.without_deleted.each(&:soft_delete)
-    staffs.without_deleted.each(&:soft_delete)
+    casts.only_kept.each(&:soft_delete)
+    staffs.only_kept.each(&:soft_delete)
   end
 
   private

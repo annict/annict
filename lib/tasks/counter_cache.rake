@@ -32,7 +32,7 @@ namespace :counter_cache do
   end
 
   task refresh_record_comments_count: :environment do
-    Episode.without_deleted.find_each do |episode|
+    Episode.only_kept.find_each do |episode|
       record_comments_count = episode.episode_records.with_body.count
       if record_comments_count != episode.episode_record_bodies_count
         episode.update_column(:episode_record_bodies_count, record_comments_count)
@@ -44,8 +44,8 @@ namespace :counter_cache do
   end
 
   task refresh_work_records_with_body_count: :environment do
-    Work.without_deleted.find_each do |work|
-      work_records_with_body_count = work.work_records.without_deleted.with_body.count
+    Work.only_kept.find_each do |work|
+      work_records_with_body_count = work.work_records.only_kept.with_body.count
       if work_records_with_body_count != work.work_records_with_body_count
         work.update_column(:work_records_with_body_count, work_records_with_body_count)
         puts "Work ID: #{work.id} - #{work_records_with_body_count}"
@@ -68,14 +68,14 @@ namespace :counter_cache do
     ActiveRecord::Base.transaction do
       User.find_each do |u|
         puts "User #{u.id}"
-        u.update_column(:records_count, u.records.without_deleted.count)
+        u.update_column(:records_count, u.records.only_kept.count)
       end
     end
 
     ActiveRecord::Base.transaction do
-      Work.without_deleted.find_each do |w|
+      Work.only_kept.find_each do |w|
         puts "Work #{w.id}"
-        w.update_column(:records_count, w.records.without_deleted.count)
+        w.update_column(:records_count, w.records.only_kept.count)
       end
     end
   end

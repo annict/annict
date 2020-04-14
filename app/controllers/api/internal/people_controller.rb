@@ -5,7 +5,7 @@ module Api
     class PeopleController < Api::Internal::ApplicationController
       def index
         @people = if params[:q].present?
-          Person.where("name ILIKE ?", "%#{params[:q]}%").without_deleted
+          Person.where("name ILIKE ?", "%#{params[:q]}%").only_kept
         else
           Person.none
         end

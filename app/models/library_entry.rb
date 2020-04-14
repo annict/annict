@@ -49,7 +49,7 @@ class LibraryEntry < ApplicationRecord
   scope :watching, -> { with_status(:watching) }
   scope :has_next_episode, -> { where.not(next_episode_id: nil) }
   scope :with_status, ->(*status_kinds) { joins(:status).where(statuses: { kind: status_kinds }) }
-  scope :with_not_deleted_work, -> { joins(:work).merge(Work.without_deleted) }
+  scope :with_not_deleted_work, -> { joins(:work).merge(Work.only_kept) }
 
   def self.count_on(status_kind)
     with_not_deleted_work.with_status(status_kind).count
@@ -102,7 +102,7 @@ class LibraryEntry < ApplicationRecord
   end
 
   def fetch_next_episode
-    episode_ids = work.episodes.without_deleted.pluck(:id)
+    episode_ids = work.episodes.only_kept.pluck(:id)
     next_episode_ids = episode_ids - watched_episode_ids
     Episode.where(id: next_episode_ids).order(:sort_number).first
   end

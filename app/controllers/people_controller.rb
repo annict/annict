@@ -4,12 +4,12 @@ class PeopleController < ApplicationController
   before_action :load_i18n, only: %i(show)
 
   def show
-    @person = Person.without_deleted.find(params[:id])
+    @person = Person.only_kept.find(params[:id])
 
     if @person.voice_actor?
       @casts_with_year = @person.
         casts.
-        without_deleted.
+        only_kept.
         joins(:work).
         where(works: { deleted_at: nil }).
         includes(:character, work: :work_image).
@@ -20,7 +20,7 @@ class PeopleController < ApplicationController
     if @person.staff?
       @staffs_with_year = @person.
         staffs.
-        without_deleted.
+        only_kept.
         joins(:work).
         where(works: { deleted_at: nil }).
         includes(work: :work_image).
@@ -32,7 +32,7 @@ class PeopleController < ApplicationController
       favorite_people.
       includes(user: :profile).
       joins(:user).
-      merge(User.without_deleted).
+      merge(User.only_kept).
       order(id: :desc)
   end
 

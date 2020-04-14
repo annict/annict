@@ -11,7 +11,7 @@ module Canary
       def resolve(work_id:, kind:)
         raise Annict::Errors::InvalidAPITokenScopeError unless context[:writable]
 
-        work = Work.without_deleted.find_by_graphql_id(work_id)
+        work = Work.only_kept.find_by_graphql_id(work_id)
         status = StatusService.new(context[:viewer], work)
         status.app = context[:application]
         status.via = context[:via]

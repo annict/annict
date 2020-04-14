@@ -81,11 +81,11 @@ module Types
       end
 
       def followings_count
-        object.followings.without_deleted.count
+        object.followings.only_kept.count
       end
 
       def followers_count
-        object.followers.without_deleted.count
+        object.followers.only_kept.count
       end
 
       def wanna_watch_count
@@ -129,11 +129,11 @@ module Types
       end
 
       def following
-        ForeignKeyLoader.for(User, :id).load(object.followings.without_deleted.pluck(:id))
+        ForeignKeyLoader.for(User, :id).load(object.followings.only_kept.pluck(:id))
       end
 
       def followers
-        ForeignKeyLoader.for(User, :id).load(object.followers.without_deleted.pluck(:id))
+        ForeignKeyLoader.for(User, :id).load(object.followers.only_kept.pluck(:id))
       end
 
       def activities(order_by: nil)
@@ -144,7 +144,7 @@ module Types
       end
 
       def following_activities(order_by: nil)
-        following_ids = object.followings.without_deleted.pluck(:id)
+        following_ids = object.followings.only_kept.pluck(:id)
         following_ids << object.id
         SearchActivitiesQuery.new(
           Activity.where(user_id: following_ids),
@@ -175,7 +175,7 @@ module Types
       def programs(unwatched: nil, order_by: nil)
         UserSlotsQuery.new(
           object,
-          Slot.without_deleted.with_works(object.works_on(:wanna_watch, :watching).without_deleted),
+          Slot.only_kept.with_works(object.works_on(:wanna_watch, :watching).only_kept),
           watched: unwatched.nil? ? nil : !unwatched,
           order: build_order(order_by)
         ).call

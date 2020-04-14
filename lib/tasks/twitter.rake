@@ -9,7 +9,7 @@ namespace :twitter do
       config.access_token_secret = ENV.fetch("TWITTER_ACCESS_SECRET_FOR_DEV")
     end
     lists = TwitterWatchingList.all
-    channels = Channel.without_deleted.joins(:channel_group).merge(ChannelGroup.without_deleted)
+    channels = Channel.only_kept.joins(:channel_group).merge(ChannelGroup.only_kept)
     channel_names = channels.pluck(:name) + channels.pluck(:name_alter).map { |name| name.split(",") }.flatten
 
     lists.each do |list|
@@ -30,7 +30,7 @@ namespace :twitter do
         # Prevent to embed https://support.discordapp.com/hc/en-us/articles/206342858--How-do-I-disable-auto-embed-
         tweet_body = tweet.attrs[:full_text].gsub(%r{(https?:\/\/[\S]+)}, "<\\1>")
         work_urls = Work.
-          without_deleted.
+          only_kept.
           where(twitter_username: tweet.user.screen_name).
           order_by_season(:desc).
           limit(3).

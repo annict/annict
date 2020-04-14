@@ -132,7 +132,7 @@ class Work < ApplicationRecord
   validates :sc_tid,
     numericality: { only_integer: true },
     allow_blank: true
-  validates :title, presence: true, uniqueness: { conditions: -> { without_deleted } }
+  validates :title, presence: true, uniqueness: { conditions: -> { only_kept } }
   validates :media, presence: true
   validates :official_site_url, url: { allow_blank: true }
   validates :official_site_url_en, url: { allow_blank: true }
@@ -170,7 +170,7 @@ class Work < ApplicationRecord
 
   scope :slot_registered, -> {
     work_ids = joins(:slots).
-      merge(Slot.without_deleted.where(work_id: all.pluck(:id))).
+      merge(Slot.only_kept.where(work_id: all.pluck(:id))).
       pluck(:id).
       uniq
     where(id: work_ids)
@@ -276,7 +276,7 @@ class Work < ApplicationRecord
   def self.watching_friends_data(work_ids, user)
     work_ids = work_ids.uniq
     status_kinds = %w(wanna_watch watching watched)
-    users = user.followings.without_deleted.includes(:profile)
+    users = user.followings.only_kept.includes(:profile)
     user_ids = users.pluck(:id)
     library_entries = LibraryEntry.
       where(work: work_ids, user: user_ids).
@@ -305,7 +305,7 @@ class Work < ApplicationRecord
 
   def self.trailers_data(works)
     work_ids = works.pluck(:id)
-    trailers = Trailer.without_deleted.where(work_id: work_ids)
+    trailers = Trailer.only_kept.where(work_id: work_ids)
 
     work_ids.map do |work_id|
       {
@@ -317,7 +317,7 @@ class Work < ApplicationRecord
 
   def self.casts_data(works)
     work_ids = works.pluck(:id)
-    casts = Cast.without_deleted.where(work_id: work_ids).includes(:person, :character)
+    casts = Cast.only_kept.where(work_id: work_ids).includes(:person, :character)
 
     work_ids.map do |work_id|
       {
@@ -329,7 +329,7 @@ class Work < ApplicationRecord
 
   def self.staffs_data(works, major: false)
     work_ids = works.pluck(:id)
-    staffs = Staff.without_deleted.where(work_id: work_ids).includes(:resource)
+    staffs = Staff.only_kept.where(work_id: work_ids).includes(:resource)
     staffs = staffs.major if major
 
     work_ids.map do |work_id|
@@ -342,7 +342,7 @@ class Work < ApplicationRecord
 
   def self.programs_data(works, only_vod: false)
     work_ids = works.pluck(:id)
-    programs = Program.without_deleted.where(work_id: work_ids).includes(:channel)
+    programs = Program.only_kept.where(work_id: work_ids).includes(:channel)
     if only_vod
       programs = programs.
         joins(:channel).
@@ -369,11 +369,11 @@ class Work < ApplicationRecord
   # 作品のエピソード数分の空白文字列が入った配列を返す
   # Chart.jsのx軸のラベルを消すにはこれしか方法がなかったんだ…! たぶん…。
   def chart_labels
-    episodes.without_deleted.pluck(:id).map { "" }
+    episodes.only_kept.pluck(:id).map { "" }
   end
 
   def chart_values
-    episodes.without_deleted.order(:sort_number).pluck(:episode_records_count)
+    episodes.only_kept.order(:sort_number).pluck(:episode_records_count)
   end
 
   def comments_count
@@ -388,7 +388,7 @@ class Work < ApplicationRecord
   end
 
   def episodes_filled?
-    !manual_episodes_count.nil? && episodes.without_deleted.count >= manual_episodes_count
+    !manual_episodes_count.nil? && episodes.only_kept.count >= manual_episodes_count
   end
 
   def slots_exists?
@@ -516,6 +516,6 @@ class Work < ApplicationRecord
 
   def soft_delete_with_children
     soft_delete
-    episodes.without_deleted.each(&:soft_delete)
+    episodes.only_kept.each(&:soft_delete)
   end
 end

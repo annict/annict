@@ -65,7 +65,7 @@ class Status < ApplicationRecord
   after_create :update_channel_work
 
   scope :positive, -> { with_kind(:wanna_watch, :watching, :watched) }
-  scope :with_not_deleted_work, -> { joins(:work).merge(Work.without_deleted) }
+  scope :with_not_deleted_work, -> { joins(:work).merge(Work.only_kept) }
 
   def self.kind_v2_to_v3(kind_v2)
     return if kind_v2.blank?

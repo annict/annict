@@ -32,7 +32,7 @@ class UserActivitiesQuery
         user: :profile
       ).
       joins(:work).
-      merge(Work.without_deleted).
+      merge(Work.only_kept).
       select("distinct on (activities.id) " + selects.join(", ")).
       page(page)
   end

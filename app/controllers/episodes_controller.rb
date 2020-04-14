@@ -4,10 +4,10 @@ class EpisodesController < ApplicationController
   before_action :load_i18n, only: %i(show)
 
   def index
-    @work = Work.without_deleted.find(params[:work_id])
+    @work = Work.only_kept.find(params[:work_id])
     raise ActionController::RoutingError, "Not Found" if @work.no_episodes?
 
-    @episodes = @work.episodes.without_deleted.order(:sort_number)
+    @episodes = @work.episodes.only_kept.order(:sort_number)
 
     return unless user_signed_in?
 
@@ -15,8 +15,8 @@ class EpisodesController < ApplicationController
   end
 
   def show
-    @work = Work.without_deleted.find(params[:work_id])
-    @episode = @work.episodes.without_deleted.find(params[:id])
+    @work = Work.only_kept.find(params[:work_id])
+    @episode = @work.episodes.only_kept.find(params[:id])
     params[:locale_en] = locale_en?
     params[:locale_ja] = locale_ja?
     service = EpisodeRecordsListService.new(current_user, @episode, params)

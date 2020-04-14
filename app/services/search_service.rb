@@ -45,7 +45,7 @@ class SearchService
     when :all
       model
     else
-      model.without_deleted
+      model.only_kept
     end
   end
 end

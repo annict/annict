@@ -7,9 +7,9 @@ namespace :email_notification do
   end
 
   task send_favorite_works_added_email: :environment do
-    cast_work_ids = Cast.without_deleted.yesterday.pluck(:work_id)
-    staff_work_ids = Staff.without_deleted.yesterday.pluck(:work_id)
-    works = Work.without_deleted.where(id: (cast_work_ids | staff_work_ids)).gt_current_season
+    cast_work_ids = Cast.only_kept.yesterday.pluck(:work_id)
+    staff_work_ids = Staff.only_kept.yesterday.pluck(:work_id)
+    works = Work.only_kept.where(id: (cast_work_ids | staff_work_ids)).gt_current_season
 
     works.find_each do |work|
       favorite_character_user_ids = FavoriteCharacter.
@@ -28,7 +28,7 @@ namespace :email_notification do
           favorite_people_user_ids |
           favorite_org_user_ids
       users = User.
-          without_deleted.
+          only_kept.
           joins(:email_notification).
           where(id: user_ids).
           where(email_notifications: { event_favorite_works_added: true })
@@ -42,12 +42,12 @@ namespace :email_notification do
   end
 
   task send_related_works_added_email: :environment do
-    works = Work.without_deleted.yesterday.gt_current_season
+    works = Work.only_kept.yesterday.gt_current_season
 
     next if works.blank?
 
     users = User.
-      without_deleted.
+      only_kept.
       joins(:email_notification).
       where(email_notifications: { event_related_works_added: true })
 

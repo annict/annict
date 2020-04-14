@@ -372,7 +372,7 @@ class User < ApplicationRecord
   end
 
   def tags_by_work(work)
-    work_tags.without_deleted.joins(:work_taggings).merge(work_taggings.where(work: work))
+    work_tags.only_kept.joins(:work_taggings).merge(work_taggings.where(work: work))
   end
 
   def comment_by_work(work)
@@ -410,7 +410,7 @@ class User < ApplicationRecord
     slots = Slot.
       includes(:channel, work: :work_image).
       where(channel_id: channel_ids, episode_id: episode_ids).
-      without_deleted
+      only_kept
 
     channel_works.map do |cw|
       slot = slots.

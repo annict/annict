@@ -46,7 +46,7 @@ module Types
       end
 
       def user(username:)
-        User.without_deleted.find_by(username: username)
+        User.only_kept.find_by(username: username)
       end
 
       def search_works(annict_ids: nil, seasons: nil, titles: nil, order_by: nil)

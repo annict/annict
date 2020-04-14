@@ -7,7 +7,7 @@ class SearchOrganizationsQuery
     names: nil,
     order_by: nil
   )
-    @collection = collection.without_deleted
+    @collection = collection.only_kept
     @args = {
       annict_ids: annict_ids,
       names: names,
