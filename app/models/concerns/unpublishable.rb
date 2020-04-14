@@ -6,12 +6,13 @@ module Unpublishable
   include SoftDeletable
 
   included do
-    # Unpublishable.only_kept を定義するため、SoftDeletable.only_kept の定義を取り消す
-    class << self; undef :only_kept; end
-
     scope :published, -> { where(unpublished_at: nil) }
     scope :unpublished, -> { where.not(unpublished_at: nil) }
-    scope :only_kept, -> { without_deleted.published }
+    scope :without_deleted, -> { where(deleted_at: nil) }
+
+    def self.only_kept
+      without_deleted.published
+    end
 
     def publish
       update_attribute(:unpublished_at, nil)
