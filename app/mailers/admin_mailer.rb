@@ -8,4 +8,12 @@ class AdminMailer < ActionMailer::Base
 
     mail(to: "hello@annict.com", subject: "エピソードが追加されました")
   end
+
+  def error_in_episode_generator_notification(slot_id, error_message)
+    @slot = Slot.find(slot_id)
+    @work = @slot.work
+    @error_message = error_message
+
+    mail(to: "hello@annict.com", subject: "エピソード生成中にエラーが発生しました")
+  end
 end

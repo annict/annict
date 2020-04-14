@@ -3,9 +3,9 @@
 describe EpisodeGeneratorService, type: :service do
   context "New work" do
     let(:channel) { create(:channel) }
-    let(:work) { create(:work) }
 
     context "has no episodes" do
+      let(:work) { create(:work) }
       let(:program) { create(:program, channel: channel, work: work, started_at: Time.parse("2019-01-04 0:00:00")) }
       let!(:slot1) { create(:slot, program: program, channel: channel, work: work, episode: nil, number: 1, started_at: Time.parse("2019-01-04 0:00:00")) }
       let!(:slot2) { create(:slot, program: program, channel: channel, work: work, episode: nil, number: 2, started_at: Time.parse("2019-01-11 0:00:00")) }
@@ -37,6 +37,7 @@ describe EpisodeGeneratorService, type: :service do
     end
 
     context "has episodes but no irregular" do
+      let(:work) { create(:work) }
       let(:program) { create(:program, channel: channel, work: work, started_at: Time.parse("2019-01-04 0:00:00")) }
       let(:episode1) { create(:episode, work: work, raw_number: 1.0) }
       let!(:slot1) { create(:slot, program: program, channel: channel, work: work, episode: episode1, number: 1, started_at: Time.parse("2019-01-04 0:00:00")) }
@@ -69,8 +70,9 @@ describe EpisodeGeneratorService, type: :service do
     end
 
     context "has irregular episodes" do
+      let(:work) { create(:work) }
       let(:program) { create(:program, channel: channel, work: work, started_at: Time.parse("2019-01-04 0:00:00")) }
-      let(:episode1) { create(:episode, work: work, raw_number: 1.0,) }
+      let(:episode1) { create(:episode, work: work, raw_number: 1.0) }
       let(:episode2) { create(:episode, work: work, raw_number: 1.5, title: "2話目から総集編！") }
       let!(:slot1) { create(:slot, program: program, channel: channel, work: work, episode: episode1, number: 1, started_at: Time.parse("2019-01-04 0:00:00")) }
       let!(:slot2) { create(:slot, program: program, channel: channel, work: work, episode: episode2, number: 2, started_at: Time.parse("2019-01-11 0:00:00"), irregular: true) }
