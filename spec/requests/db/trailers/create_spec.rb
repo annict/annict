@@ -3,11 +3,11 @@
 describe "POST /db/works/:work_id/trailers", type: :request do
   context "user does not sign in" do
     let!(:work) { create(:work) }
-    let!(:form_params) {
+    let!(:form_params) do
       {
         rows: "https://www.youtube.com/watch?v=nGgm5yBznTM,第1弾"
       }
-    }
+    end
 
     it "user can not access this page" do
       post "/db/works/#{work.id}/trailers", params: { db_trailer_rows_form: form_params }
@@ -22,11 +22,11 @@ describe "POST /db/works/:work_id/trailers", type: :request do
   context "user who is not editor signs in" do
     let!(:work) { create(:work) }
     let!(:user) { create(:registered_user) }
-    let!(:form_params) {
+    let!(:form_params) do
       {
         rows: "https://www.youtube.com/watch?v=nGgm5yBznTM,第1弾"
       }
-    }
+    end
 
     before do
       login_as(user, scope: :user)
@@ -45,11 +45,11 @@ describe "POST /db/works/:work_id/trailers", type: :request do
   context "user who is editor signs in" do
     let!(:work) { create(:work) }
     let!(:user) { create(:registered_user, :with_editor_role) }
-    let!(:form_params) {
+    let!(:form_params) do
       {
         rows: "https://www.youtube.com/watch?v=nGgm5yBznTM,第1弾"
       }
-    }
+    end
 
     before do
       login_as(user, scope: :user)

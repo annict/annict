@@ -4,11 +4,11 @@ describe "POST /db/works/:work_id/staffs", type: :request do
   context "user does not sign in" do
     let!(:person) { create(:person) }
     let!(:work) { create(:work) }
-    let!(:form_params) {
+    let!(:form_params) do
       {
         rows: "監督,#{person.id}"
       }
-    }
+    end
 
     it "user can not access this page" do
       post "/db/works/#{work.id}/staffs", params: { db_staff_rows_form: form_params }
@@ -24,11 +24,11 @@ describe "POST /db/works/:work_id/staffs", type: :request do
     let!(:person) { create(:person) }
     let!(:work) { create(:work) }
     let!(:user) { create(:registered_user) }
-    let!(:form_params) {
+    let!(:form_params) do
       {
         rows: "監督,#{person.id}"
       }
-    }
+    end
 
     before do
       login_as(user, scope: :user)
@@ -48,11 +48,11 @@ describe "POST /db/works/:work_id/staffs", type: :request do
     let!(:person) { create(:person) }
     let!(:work) { create(:work) }
     let!(:user) { create(:registered_user, :with_editor_role) }
-    let!(:form_params) {
+    let!(:form_params) do
       {
         rows: "監督,#{person.id}"
       }
-    }
+    end
 
     before do
       login_as(user, scope: :user)

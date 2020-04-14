@@ -2,11 +2,11 @@
 
 describe "POST /db/works", type: :request do
   context "user does not sign in" do
-    let!(:work_params) {
+    let!(:work_params) do
       {
         title: "作品タイトル"
       }
-    }
+    end
 
     it "user can not access this page" do
       post "/db/works", params: { work: work_params }
@@ -20,11 +20,11 @@ describe "POST /db/works", type: :request do
 
   context "user who is not editor signs in" do
     let!(:user) { create(:registered_user) }
-    let!(:work_params) {
+    let!(:work_params) do
       {
         title: "作品タイトル"
       }
-    }
+    end
 
     before do
       login_as(user, scope: :user)
@@ -43,7 +43,7 @@ describe "POST /db/works", type: :request do
   context "user who is editor signs in" do
     let!(:number_format) { create(:number_format) }
     let!(:user) { create(:registered_user, :with_editor_role) }
-    let!(:work_params) {
+    let!(:work_params) do
       {
         title: "作品タイトル",
         title_kana: "タイトル (かな)",
@@ -72,7 +72,7 @@ describe "POST /db/works", type: :request do
         started_on: "2020-01-01",
         ended_on: "2020-03-31"
       }
-    }
+    end
 
     before do
       login_as(user, scope: :user)

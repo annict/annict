@@ -4,11 +4,11 @@ describe "POST /db/works/:work_id/programs", type: :request do
   context "user does not sign in" do
     let!(:channel) { create(:channel) }
     let!(:work) { create(:work) }
-    let!(:form_params) {
+    let!(:form_params) do
       {
         rows: "#{channel.id},2020-04-01 0:00"
       }
-    }
+    end
 
     it "user can not access this page" do
       post "/db/works/#{work.id}/programs", params: { db_program_rows_form: form_params }
@@ -24,11 +24,11 @@ describe "POST /db/works/:work_id/programs", type: :request do
     let!(:channel) { create(:channel) }
     let!(:work) { create(:work) }
     let!(:user) { create(:registered_user) }
-    let!(:form_params) {
+    let!(:form_params) do
       {
         rows: "#{channel.id},2020-04-01 0:00"
       }
-    }
+    end
 
     before do
       login_as(user, scope: :user)
@@ -48,11 +48,11 @@ describe "POST /db/works/:work_id/programs", type: :request do
     let!(:channel) { create(:channel) }
     let!(:work) { create(:work) }
     let!(:user) { create(:registered_user, :with_editor_role) }
-    let!(:form_params) {
+    let!(:form_params) do
       {
         rows: "#{channel.id},2020-04-01 0:00"
       }
-    }
+    end
 
     before do
       login_as(user, scope: :user)

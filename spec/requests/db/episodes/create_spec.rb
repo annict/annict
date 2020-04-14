@@ -3,11 +3,11 @@
 describe "POST /db/works/:work_id/episodes", type: :request do
   context "user does not sign in" do
     let!(:work) { create(:work) }
-    let!(:form_params) {
+    let!(:form_params) do
       {
         rows: "#1,1,The episode"
       }
-    }
+    end
 
     it "user can not access this page" do
       post "/db/works/#{work.id}/episodes", params: { db_episode_rows_form: form_params }
@@ -22,11 +22,11 @@ describe "POST /db/works/:work_id/episodes", type: :request do
   context "user who is not editor signs in" do
     let!(:work) { create(:work) }
     let!(:user) { create(:registered_user) }
-    let!(:form_params) {
+    let!(:form_params) do
       {
         rows: "#1,1,The episode"
       }
-    }
+    end
 
     before do
       login_as(user, scope: :user)
@@ -46,11 +46,11 @@ describe "POST /db/works/:work_id/episodes", type: :request do
     let!(:number_format) { create(:number_format) }
     let!(:work) { create(:work) }
     let!(:user) { create(:registered_user, :with_editor_role) }
-    let!(:form_params) {
+    let!(:form_params) do
       {
         rows: "第127話,127,逆転！稲妻の戦士\r\n第128話,128,城之内 死す"
       }
-    }
+    end
 
     before do
       login_as(user, scope: :user)

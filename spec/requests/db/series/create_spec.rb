@@ -2,14 +2,14 @@
 
 describe "POST /db/series", type: :request do
   context "user does not sign in" do
-    let!(:series_params) {
+    let!(:series_params) do
       {
         name: "シリーズ",
         name_alter: "シリーズ (別名)",
         name_en: "The Series",
         name_alter_en: "The Series (alt)"
       }
-    }
+    end
 
     it "user can not access this page" do
       post "/db/series", params: { series: series_params }
@@ -23,14 +23,14 @@ describe "POST /db/series", type: :request do
 
   context "user who is not editor signs in" do
     let!(:user) { create(:registered_user) }
-    let!(:series_params) {
+    let!(:series_params) do
       {
         name: "シリーズ",
         name_alter: "シリーズ (別名)",
         name_en: "The Series",
         name_alter_en: "The Series (alt)"
       }
-    }
+    end
 
     before do
       login_as(user, scope: :user)
@@ -48,14 +48,14 @@ describe "POST /db/series", type: :request do
 
   context "user who is editor signs in" do
     let!(:user) { create(:registered_user, :with_editor_role) }
-    let!(:series_params) {
+    let!(:series_params) do
       {
         name: "シリーズ",
         name_alter: "シリーズ (別名)",
         name_en: "The Series",
         name_alter_en: "The Series (alt)"
       }
-    }
+    end
 
     before do
       login_as(user, scope: :user)

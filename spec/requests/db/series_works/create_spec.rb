@@ -4,11 +4,11 @@ describe "POST /db/series/:series_id/series_works", type: :request do
   context "user does not sign in" do
     let!(:series) { create(:series) }
     let!(:work) { create(:work) }
-    let!(:form_params) {
+    let!(:form_params) do
       {
         rows: "#{work.id}, Season 1"
       }
-    }
+    end
 
     it "user can not access this page" do
       post "/db/series/#{series.id}/series_works", params: { db_series_work_rows_form: form_params }
@@ -24,11 +24,11 @@ describe "POST /db/series/:series_id/series_works", type: :request do
     let!(:user) { create(:registered_user) }
     let!(:series) { create(:series) }
     let!(:work) { create(:work) }
-    let!(:form_params) {
+    let!(:form_params) do
       {
         rows: "#{work.id}, Season 1"
       }
-    }
+    end
 
     before do
       login_as(user, scope: :user)
@@ -48,11 +48,11 @@ describe "POST /db/series/:series_id/series_works", type: :request do
     let!(:user) { create(:registered_user, :with_editor_role) }
     let!(:series) { create(:series) }
     let!(:work) { create(:work) }
-    let!(:form_params) {
+    let!(:form_params) do
       {
         rows: "#{work.id}, Season 1"
       }
-    }
+    end
 
     before do
       login_as(user, scope: :user)
