@@ -5,13 +5,15 @@ describe "DELETE /db/episodes/:id", type: :request do
     let!(:episode) { create(:episode, :not_deleted) }
 
     it "user can not access this page" do
+      expect(Episode.count).to eq(1)
+
       delete "/db/episodes/#{episode.id}"
       episode.reload
 
       expect(response.status).to eq(302)
       expect(flash[:alert]).to eq("ログインしてください")
 
-      expect(episode.deleted?).to eq(false)
+      expect(Episode.count).to eq(1)
     end
   end
 
@@ -24,13 +26,15 @@ describe "DELETE /db/episodes/:id", type: :request do
     end
 
     it "user can not access" do
+      expect(Episode.count).to eq(1)
+
       delete "/db/episodes/#{episode.id}"
       episode.reload
 
       expect(response.status).to eq(302)
       expect(flash[:alert]).to eq("アクセスできません")
 
-      expect(episode.deleted?).to eq(false)
+      expect(Episode.count).to eq(1)
     end
   end
 
@@ -43,13 +47,15 @@ describe "DELETE /db/episodes/:id", type: :request do
     end
 
     it "user can not access" do
+      expect(Episode.count).to eq(1)
+
       delete "/db/episodes/#{episode.id}"
       episode.reload
 
       expect(response.status).to eq(302)
       expect(flash[:alert]).to eq("アクセスできません")
 
-      expect(episode.deleted?).to eq(false)
+      expect(Episode.count).to eq(1)
     end
   end
 
@@ -62,15 +68,14 @@ describe "DELETE /db/episodes/:id", type: :request do
     end
 
     it "user can delete episode softly" do
-      expect(episode.deleted?).to eq(false)
+      expect(Episode.count).to eq(1)
 
       delete "/db/episodes/#{episode.id}"
-      episode.reload
 
       expect(response.status).to eq(302)
       expect(flash[:notice]).to eq("削除しました")
 
-      expect(episode.deleted?).to eq(true)
+      expect(Episode.count).to eq(0)
     end
   end
 end

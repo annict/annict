@@ -52,7 +52,7 @@ module Db
       @organization = Organization.without_deleted.find(params[:id])
       authorize @organization
 
-      @organization.soft_delete
+      @organization.destroy_in_batches
 
       redirect_back(
         fallback_location: db_organization_list_path,

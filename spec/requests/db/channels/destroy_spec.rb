@@ -5,13 +5,15 @@ describe "DELETE /db/channels/:id", type: :request do
     let!(:channel) { create(:channel, :not_deleted) }
 
     it "user can not access this page" do
+      expect(Channel.count).to eq(1)
+
       delete "/db/channels/#{channel.id}"
       channel.reload
 
       expect(response.status).to eq(302)
       expect(flash[:alert]).to eq("ログインしてください")
 
-      expect(channel.deleted?).to eq(false)
+      expect(Channel.count).to eq(1)
     end
   end
 
@@ -24,13 +26,15 @@ describe "DELETE /db/channels/:id", type: :request do
     end
 
     it "user can not access" do
+      expect(Channel.count).to eq(1)
+
       delete "/db/channels/#{channel.id}"
       channel.reload
 
       expect(response.status).to eq(302)
       expect(flash[:alert]).to eq("アクセスできません")
 
-      expect(channel.deleted?).to eq(false)
+      expect(Channel.count).to eq(1)
     end
   end
 
@@ -43,13 +47,15 @@ describe "DELETE /db/channels/:id", type: :request do
     end
 
     it "user can not access" do
+      expect(Channel.count).to eq(1)
+
       delete "/db/channels/#{channel.id}"
       channel.reload
 
       expect(response.status).to eq(302)
       expect(flash[:alert]).to eq("アクセスできません")
 
-      expect(channel.deleted?).to eq(false)
+      expect(Channel.count).to eq(1)
     end
   end
 
@@ -62,15 +68,14 @@ describe "DELETE /db/channels/:id", type: :request do
     end
 
     it "user can delete channel softly" do
-      expect(channel.deleted?).to eq(false)
+      expect(Channel.count).to eq(1)
 
       delete "/db/channels/#{channel.id}"
-      channel.reload
 
       expect(response.status).to eq(302)
       expect(flash[:notice]).to eq("削除しました")
 
-      expect(channel.deleted?).to eq(true)
+      expect(Channel.count).to eq(0)
     end
   end
 end

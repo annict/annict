@@ -66,7 +66,7 @@ module Db
       @slot = Slot.without_deleted.find(params[:id])
       authorize @slot
 
-      @slot.soft_delete
+      @slot.destroy_in_batches
 
       redirect_back(
         fallback_location: db_work_list_path,

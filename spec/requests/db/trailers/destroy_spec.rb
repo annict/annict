@@ -5,13 +5,15 @@ describe "DELETE /db/trailers/:id", type: :request do
     let!(:trailer) { create(:trailer, :not_deleted) }
 
     it "user can not access this page" do
+      expect(Trailer.count).to eq(1)
+
       delete "/db/trailers/#{trailer.id}"
       trailer.reload
 
       expect(response.status).to eq(302)
       expect(flash[:alert]).to eq("ログインしてください")
 
-      expect(trailer.deleted?).to eq(false)
+      expect(Trailer.count).to eq(1)
     end
   end
 
@@ -24,13 +26,15 @@ describe "DELETE /db/trailers/:id", type: :request do
     end
 
     it "user can not access" do
+      expect(Trailer.count).to eq(1)
+
       delete "/db/trailers/#{trailer.id}"
       trailer.reload
 
       expect(response.status).to eq(302)
       expect(flash[:alert]).to eq("アクセスできません")
 
-      expect(trailer.deleted?).to eq(false)
+      expect(Trailer.count).to eq(1)
     end
   end
 
@@ -43,13 +47,15 @@ describe "DELETE /db/trailers/:id", type: :request do
     end
 
     it "user can not access" do
+      expect(Trailer.count).to eq(1)
+
       delete "/db/trailers/#{trailer.id}"
       trailer.reload
 
       expect(response.status).to eq(302)
       expect(flash[:alert]).to eq("アクセスできません")
 
-      expect(trailer.deleted?).to eq(false)
+      expect(Trailer.count).to eq(1)
     end
   end
 
@@ -62,15 +68,14 @@ describe "DELETE /db/trailers/:id", type: :request do
     end
 
     it "user can delete trailer softly" do
-      expect(trailer.deleted?).to eq(false)
+      expect(Trailer.count).to eq(1)
 
       delete "/db/trailers/#{trailer.id}"
-      trailer.reload
 
       expect(response.status).to eq(302)
       expect(flash[:notice]).to eq("削除しました")
 
-      expect(trailer.deleted?).to eq(true)
+      expect(Trailer.count).to eq(0)
     end
   end
 end

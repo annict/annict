@@ -70,11 +70,6 @@ class Organization < ApplicationRecord
     data.delete_if { |_, v| v.blank? }
   end
 
-  def soft_delete_with_children
-    soft_delete
-    staffs.only_kept.each(&:soft_delete)
-  end
-
   private
 
   def touch_children

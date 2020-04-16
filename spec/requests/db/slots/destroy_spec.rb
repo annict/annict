@@ -5,13 +5,15 @@ describe "DELETE /db/slots/:id", type: :request do
     let!(:slot) { create(:slot, :not_deleted) }
 
     it "user can not access this page" do
+      expect(Slot.count).to eq(1)
+
       delete "/db/slots/#{slot.id}"
       slot.reload
 
       expect(response.status).to eq(302)
       expect(flash[:alert]).to eq("ログインしてください")
 
-      expect(slot.deleted?).to eq(false)
+      expect(Slot.count).to eq(1)
     end
   end
 
@@ -24,13 +26,15 @@ describe "DELETE /db/slots/:id", type: :request do
     end
 
     it "user can not access" do
+      expect(Slot.count).to eq(1)
+
       delete "/db/slots/#{slot.id}"
       slot.reload
 
       expect(response.status).to eq(302)
       expect(flash[:alert]).to eq("アクセスできません")
 
-      expect(slot.deleted?).to eq(false)
+      expect(Slot.count).to eq(1)
     end
   end
 
@@ -43,13 +47,15 @@ describe "DELETE /db/slots/:id", type: :request do
     end
 
     it "user can not access" do
+      expect(Slot.count).to eq(1)
+
       delete "/db/slots/#{slot.id}"
       slot.reload
 
       expect(response.status).to eq(302)
       expect(flash[:alert]).to eq("アクセスできません")
 
-      expect(slot.deleted?).to eq(false)
+      expect(Slot.count).to eq(1)
     end
   end
 
@@ -62,15 +68,14 @@ describe "DELETE /db/slots/:id", type: :request do
     end
 
     it "user can delete slot softly" do
-      expect(slot.deleted?).to eq(false)
+      expect(Slot.count).to eq(1)
 
       delete "/db/slots/#{slot.id}"
-      slot.reload
 
       expect(response.status).to eq(302)
       expect(flash[:notice]).to eq("削除しました")
 
-      expect(slot.deleted?).to eq(true)
+      expect(Slot.count).to eq(0)
     end
   end
 end

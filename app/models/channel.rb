@@ -60,11 +60,6 @@ class Channel < ApplicationRecord
     end
   end
 
-  def soft_delete_with_children
-    soft_delete
-    programs.only_kept.each(&:soft_delete)
-  end
-
   def amazon_video?
     id == AMAZON_VIDEO_ID
   end

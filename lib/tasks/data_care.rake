@@ -40,7 +40,7 @@ namespace :data_care do
       end
     end
 
-    person.soft_delete_with_children
+    person.destroy_in_batches
   end
 
   task :copy_casts, %i(base_work_id work_id) => :environment do |_, args|

@@ -5,13 +5,15 @@ describe "DELETE /db/programs/:id", type: :request do
     let!(:program) { create(:program, :not_deleted) }
 
     it "user can not access this page" do
+      expect(Program.count).to eq(1)
+
       delete "/db/programs/#{program.id}"
       program.reload
 
       expect(response.status).to eq(302)
       expect(flash[:alert]).to eq("ログインしてください")
 
-      expect(program.deleted?).to eq(false)
+      expect(Program.count).to eq(1)
     end
   end
 
@@ -24,13 +26,15 @@ describe "DELETE /db/programs/:id", type: :request do
     end
 
     it "user can not access" do
+      expect(Program.count).to eq(1)
+
       delete "/db/programs/#{program.id}"
       program.reload
 
       expect(response.status).to eq(302)
       expect(flash[:alert]).to eq("アクセスできません")
 
-      expect(program.deleted?).to eq(false)
+      expect(Program.count).to eq(1)
     end
   end
 
@@ -43,13 +47,15 @@ describe "DELETE /db/programs/:id", type: :request do
     end
 
     it "user can not access" do
+      expect(Program.count).to eq(1)
+
       delete "/db/programs/#{program.id}"
       program.reload
 
       expect(response.status).to eq(302)
       expect(flash[:alert]).to eq("アクセスできません")
 
-      expect(program.deleted?).to eq(false)
+      expect(Program.count).to eq(1)
     end
   end
 
@@ -62,15 +68,14 @@ describe "DELETE /db/programs/:id", type: :request do
     end
 
     it "user can delete program softly" do
-      expect(program.deleted?).to eq(false)
+      expect(Program.count).to eq(1)
 
       delete "/db/programs/#{program.id}"
-      program.reload
 
       expect(response.status).to eq(302)
       expect(flash[:notice]).to eq("削除しました")
 
-      expect(program.deleted?).to eq(true)
+      expect(Program.count).to eq(0)
     end
   end
 end

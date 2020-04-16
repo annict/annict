@@ -5,13 +5,15 @@ describe "DELETE /db/people/:id", type: :request do
     let!(:person) { create(:person, :not_deleted) }
 
     it "user can not access this page" do
+      expect(Person.count).to eq(1)
+
       delete "/db/people/#{person.id}"
       person.reload
 
       expect(response.status).to eq(302)
       expect(flash[:alert]).to eq("ログインしてください")
 
-      expect(person.deleted?).to eq(false)
+      expect(Person.count).to eq(1)
     end
   end
 
@@ -24,13 +26,15 @@ describe "DELETE /db/people/:id", type: :request do
     end
 
     it "user can not access" do
+      expect(Person.count).to eq(1)
+
       delete "/db/people/#{person.id}"
       person.reload
 
       expect(response.status).to eq(302)
       expect(flash[:alert]).to eq("アクセスできません")
 
-      expect(person.deleted?).to eq(false)
+      expect(Person.count).to eq(1)
     end
   end
 
@@ -43,13 +47,15 @@ describe "DELETE /db/people/:id", type: :request do
     end
 
     it "user can not access" do
+      expect(Person.count).to eq(1)
+
       delete "/db/people/#{person.id}"
       person.reload
 
       expect(response.status).to eq(302)
       expect(flash[:alert]).to eq("アクセスできません")
 
-      expect(person.deleted?).to eq(false)
+      expect(Person.count).to eq(1)
     end
   end
 
@@ -62,15 +68,14 @@ describe "DELETE /db/people/:id", type: :request do
     end
 
     it "user can delete person softly" do
-      expect(person.deleted?).to eq(false)
+      expect(Person.count).to eq(1)
 
       delete "/db/people/#{person.id}"
-      person.reload
 
       expect(response.status).to eq(302)
       expect(flash[:notice]).to eq("削除しました")
 
-      expect(person.deleted?).to eq(true)
+      expect(Person.count).to eq(0)
     end
   end
 end

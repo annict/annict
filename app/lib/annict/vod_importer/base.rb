@@ -35,7 +35,7 @@ module Annict
 
           next if work.blank?
 
-          vod_title.soft_delete if vod_title.not_deleted?
+          vod_title.destroy_in_batches if vod_title.not_deleted?
 
           program = work.programs.only_kept.find_by(channel: channel)
           if !program

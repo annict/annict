@@ -57,7 +57,7 @@ module Db
       @series_work = SeriesWork.without_deleted.find(params[:id])
       authorize @series_work
 
-      @series_work.soft_delete
+      @series_work.destroy_in_batches
 
       redirect_back(
         fallback_location: db_series_work_list_path(@series_work.series),

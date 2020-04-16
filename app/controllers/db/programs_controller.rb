@@ -54,7 +54,7 @@ module Db
       @program = Program.without_deleted.find(params[:id])
       authorize @program
 
-      @program.soft_delete
+      @program.destroy_in_batches
 
       redirect_back(
         fallback_location: db_program_list_path(@program.work),

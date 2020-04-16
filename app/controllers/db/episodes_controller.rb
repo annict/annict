@@ -58,7 +58,7 @@ module Db
       @episode = Episode.without_deleted.find(params[:id])
       authorize @episode
 
-      @episode.soft_delete
+      @episode.destroy_in_batches
 
       redirect_back(
         fallback_location: db_episode_list_path(@episode.work),

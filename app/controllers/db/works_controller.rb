@@ -60,7 +60,7 @@ module Db
       @work = Work.without_deleted.find(params[:id])
       authorize @work
 
-      @work.soft_delete
+      @work.destroy_in_batches
 
       redirect_back(
         fallback_location: db_work_list_path,

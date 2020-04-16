@@ -5,13 +5,15 @@ describe "DELETE /db/series/:id", type: :request do
     let!(:series) { create(:series, :not_deleted) }
 
     it "user can not access this page" do
+      expect(Series.count).to eq(1)
+
       delete "/db/series/#{series.id}"
       series.reload
 
       expect(response.status).to eq(302)
       expect(flash[:alert]).to eq("ログインしてください")
 
-      expect(series.deleted?).to eq(false)
+      expect(Series.count).to eq(1)
     end
   end
 
@@ -24,13 +26,15 @@ describe "DELETE /db/series/:id", type: :request do
     end
 
     it "user can not access" do
+      expect(Series.count).to eq(1)
+
       delete "/db/series/#{series.id}"
       series.reload
 
       expect(response.status).to eq(302)
       expect(flash[:alert]).to eq("アクセスできません")
 
-      expect(series.deleted?).to eq(false)
+      expect(Series.count).to eq(1)
     end
   end
 
@@ -43,13 +47,15 @@ describe "DELETE /db/series/:id", type: :request do
     end
 
     it "user can not access" do
+      expect(Series.count).to eq(1)
+
       delete "/db/series/#{series.id}"
       series.reload
 
       expect(response.status).to eq(302)
       expect(flash[:alert]).to eq("アクセスできません")
 
-      expect(series.deleted?).to eq(false)
+      expect(Series.count).to eq(1)
     end
   end
 
@@ -62,15 +68,14 @@ describe "DELETE /db/series/:id", type: :request do
     end
 
     it "user can delete series softly" do
-      expect(series.deleted?).to eq(false)
+      expect(Series.count).to eq(1)
 
       delete "/db/series/#{series.id}"
-      series.reload
 
       expect(response.status).to eq(302)
       expect(flash[:notice]).to eq("削除しました")
 
-      expect(series.deleted?).to eq(true)
+      expect(Series.count).to eq(0)
     end
   end
 end

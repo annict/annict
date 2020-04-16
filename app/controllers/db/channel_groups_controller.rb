@@ -48,7 +48,7 @@ module Db
       @channel_group = ChannelGroup.without_deleted.find(params[:id])
       authorize @channel_group
 
-      @channel_group.soft_delete
+      @channel_group.destroy_in_batches
 
       redirect_back(
         fallback_location: db_channel_group_list_path,

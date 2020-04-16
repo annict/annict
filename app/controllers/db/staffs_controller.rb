@@ -58,7 +58,7 @@ module Db
       @staff = Staff.without_deleted.find(params[:id])
       authorize @staff
 
-      @staff.soft_delete
+      @staff.destroy_in_batches
 
       redirect_back(
         fallback_location: db_staff_list_path(@staff.work),

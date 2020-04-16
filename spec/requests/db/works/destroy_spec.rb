@@ -5,13 +5,15 @@ describe "DELETE /db/works/:id", type: :request do
     let!(:work) { create(:work, :not_deleted) }
 
     it "user can not access this page" do
+      expect(Work.count).to eq(1)
+
       delete "/db/works/#{work.id}"
       work.reload
 
       expect(response.status).to eq(302)
       expect(flash[:alert]).to eq("ログインしてください")
 
-      expect(work.deleted?).to eq(false)
+      expect(Work.count).to eq(1)
     end
   end
 
@@ -24,13 +26,15 @@ describe "DELETE /db/works/:id", type: :request do
     end
 
     it "user can not access" do
+      expect(Work.count).to eq(1)
+
       delete "/db/works/#{work.id}"
       work.reload
 
       expect(response.status).to eq(302)
       expect(flash[:alert]).to eq("アクセスできません")
 
-      expect(work.deleted?).to eq(false)
+      expect(Work.count).to eq(1)
     end
   end
 
@@ -43,13 +47,15 @@ describe "DELETE /db/works/:id", type: :request do
     end
 
     it "user can not access" do
+      expect(Work.count).to eq(1)
+
       delete "/db/works/#{work.id}"
       work.reload
 
       expect(response.status).to eq(302)
       expect(flash[:alert]).to eq("アクセスできません")
 
-      expect(work.deleted?).to eq(false)
+      expect(Work.count).to eq(1)
     end
   end
 
@@ -62,15 +68,14 @@ describe "DELETE /db/works/:id", type: :request do
     end
 
     it "user can delete work softly" do
-      expect(work.deleted?).to eq(false)
+      expect(Work.count).to eq(1)
 
       delete "/db/works/#{work.id}"
-      work.reload
 
       expect(response.status).to eq(302)
       expect(flash[:notice]).to eq("削除しました")
 
-      expect(work.deleted?).to eq(true)
+      expect(Work.count).to eq(0)
     end
   end
 end

@@ -48,7 +48,7 @@ module Db
       @series = Series.without_deleted.find(params[:id])
       authorize @series
 
-      @series.soft_delete
+      @series.destroy_in_batches
 
       redirect_back(
         fallback_location: db_series_list_path,

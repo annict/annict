@@ -53,7 +53,7 @@ module Db
       @character = Character.without_deleted.find(params[:id])
       authorize @character
 
-      @character.soft_delete
+      @character.destroy_in_batches
 
       redirect_back(
         fallback_location: db_character_list_path,

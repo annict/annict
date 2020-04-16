@@ -5,13 +5,15 @@ describe "DELETE /db/organizations/:id", type: :request do
     let!(:organization) { create(:organization, :not_deleted) }
 
     it "user can not access this page" do
+      expect(Organization.count).to eq(1)
+
       delete "/db/organizations/#{organization.id}"
       organization.reload
 
       expect(response.status).to eq(302)
       expect(flash[:alert]).to eq("ログインしてください")
 
-      expect(organization.deleted?).to eq(false)
+      expect(Organization.count).to eq(1)
     end
   end
 
@@ -24,13 +26,15 @@ describe "DELETE /db/organizations/:id", type: :request do
     end
 
     it "user can not access" do
+      expect(Organization.count).to eq(1)
+
       delete "/db/organizations/#{organization.id}"
       organization.reload
 
       expect(response.status).to eq(302)
       expect(flash[:alert]).to eq("アクセスできません")
 
-      expect(organization.deleted?).to eq(false)
+      expect(Organization.count).to eq(1)
     end
   end
 
@@ -43,13 +47,15 @@ describe "DELETE /db/organizations/:id", type: :request do
     end
 
     it "user can not access" do
+      expect(Organization.count).to eq(1)
+
       delete "/db/organizations/#{organization.id}"
       organization.reload
 
       expect(response.status).to eq(302)
       expect(flash[:alert]).to eq("アクセスできません")
 
-      expect(organization.deleted?).to eq(false)
+      expect(Organization.count).to eq(1)
     end
   end
 
@@ -62,15 +68,14 @@ describe "DELETE /db/organizations/:id", type: :request do
     end
 
     it "user can delete organization softly" do
-      expect(organization.deleted?).to eq(false)
+      expect(Organization.count).to eq(1)
 
       delete "/db/organizations/#{organization.id}"
-      organization.reload
 
       expect(response.status).to eq(302)
       expect(flash[:notice]).to eq("削除しました")
 
-      expect(organization.deleted?).to eq(true)
+      expect(Organization.count).to eq(0)
     end
   end
 end

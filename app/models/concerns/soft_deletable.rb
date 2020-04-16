@@ -10,10 +10,6 @@ module SoftDeletable
       where(deleted_at: nil)
     end
 
-    def soft_delete
-      touch :deleted_at
-    end
-
     def not_deleted?
       deleted_at.nil?
     end

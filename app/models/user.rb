@@ -398,7 +398,7 @@ class User < ApplicationRecord
 
       oauth_applications.available.find_each do |app|
         app.update(owner: nil)
-        app.soft_delete
+        app.destroy_in_batches
       end
     end
   end

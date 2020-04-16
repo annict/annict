@@ -5,13 +5,15 @@ describe "DELETE /db/series_works/:id", type: :request do
     let!(:series_work) { create(:series_work, :not_deleted) }
 
     it "user can not access this page" do
+      expect(SeriesWork.count).to eq(1)
+
       delete "/db/series_works/#{series_work.id}"
       series_work.reload
 
       expect(response.status).to eq(302)
       expect(flash[:alert]).to eq("ログインしてください")
 
-      expect(series_work.deleted?).to eq(false)
+      expect(SeriesWork.count).to eq(1)
     end
   end
 
@@ -24,13 +26,15 @@ describe "DELETE /db/series_works/:id", type: :request do
     end
 
     it "user can not access" do
+      expect(SeriesWork.count).to eq(1)
+
       delete "/db/series_works/#{series_work.id}"
       series_work.reload
 
       expect(response.status).to eq(302)
       expect(flash[:alert]).to eq("アクセスできません")
 
-      expect(series_work.deleted?).to eq(false)
+      expect(SeriesWork.count).to eq(1)
     end
   end
 
@@ -43,13 +47,15 @@ describe "DELETE /db/series_works/:id", type: :request do
     end
 
     it "user can not access" do
+      expect(SeriesWork.count).to eq(1)
+
       delete "/db/series_works/#{series_work.id}"
       series_work.reload
 
       expect(response.status).to eq(302)
       expect(flash[:alert]).to eq("アクセスできません")
 
-      expect(series_work.deleted?).to eq(false)
+      expect(SeriesWork.count).to eq(1)
     end
   end
 
@@ -62,15 +68,14 @@ describe "DELETE /db/series_works/:id", type: :request do
     end
 
     it "user can delete series work softly" do
-      expect(series_work.deleted?).to eq(false)
+      expect(SeriesWork.count).to eq(1)
 
       delete "/db/series_works/#{series_work.id}"
-      series_work.reload
 
       expect(response.status).to eq(302)
       expect(flash[:notice]).to eq("削除しました")
 
-      expect(series_work.deleted?).to eq(true)
+      expect(SeriesWork.count).to eq(0)
     end
   end
 end

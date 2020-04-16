@@ -58,7 +58,7 @@ module Db
       @cast = Cast.without_deleted.find(params[:id])
       authorize @cast
 
-      @cast.soft_delete
+      @cast.destroy_in_batches
 
       redirect_back(
         fallback_location: db_cast_list_path(@cast.work),

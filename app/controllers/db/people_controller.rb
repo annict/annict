@@ -48,7 +48,7 @@ module Db
       @person = Person.without_deleted.find(params[:id])
       authorize @person
 
-      @person.soft_delete
+      @person.destroy_in_batches
 
       redirect_back(
         fallback_location: db_person_list_path,

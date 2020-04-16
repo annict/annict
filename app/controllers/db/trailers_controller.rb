@@ -53,7 +53,7 @@ module Db
       @trailer = Trailer.without_deleted.find(params[:id])
       authorize @trailer
 
-      @trailer.soft_delete
+      @trailer.destroy_in_batches
 
       redirect_back(
         fallback_location: db_trailer_list_path(@trailer.work),
