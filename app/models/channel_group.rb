@@ -7,7 +7,7 @@
 #  deleted_at     :datetime
 #  name           :string(510)      not null
 #  sc_chgid       :string(510)
-#  sort_number    :integer          default("0"), not null
+#  sort_number    :integer          default(0), not null
 #  unpublished_at :datetime
 #  created_at     :datetime
 #  updated_at     :datetime

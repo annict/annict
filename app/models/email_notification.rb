@@ -4,12 +4,12 @@
 # Table name: email_notifications
 #
 #  id                         :bigint           not null, primary key
-#  event_favorite_works_added :boolean          default("true"), not null
-#  event_followed_user        :boolean          default("true"), not null
-#  event_friends_joined       :boolean          default("true"), not null
-#  event_liked_episode_record :boolean          default("true"), not null
-#  event_next_season_came     :boolean          default("true"), not null
-#  event_related_works_added  :boolean          default("true"), not null
+#  event_favorite_works_added :boolean          default(TRUE), not null
+#  event_followed_user        :boolean          default(TRUE), not null
+#  event_friends_joined       :boolean          default(TRUE), not null
+#  event_liked_episode_record :boolean          default(TRUE), not null
+#  event_next_season_came     :boolean          default(TRUE), not null
+#  event_related_works_added  :boolean          default(TRUE), not null
 #  unsubscription_key         :string           not null
 #  created_at                 :datetime         not null
 #  updated_at                 :datetime         not null

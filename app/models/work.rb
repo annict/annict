@@ -5,18 +5,18 @@
 #
 #  id                           :bigint           not null, primary key
 #  aasm_state                   :string           default("published"), not null
-#  auto_episodes_count          :integer          default("0"), not null
+#  auto_episodes_count          :integer          default(0), not null
 #  deleted_at                   :datetime
 #  ended_on                     :date
 #  facebook_og_image_url        :string           default(""), not null
 #  manual_episodes_count        :integer
 #  media                        :integer          not null
-#  no_episodes                  :boolean          default("false"), not null
+#  no_episodes                  :boolean          default(FALSE), not null
 #  official_site_url            :string(510)      default(""), not null
 #  official_site_url_en         :string           default(""), not null
-#  ratings_count                :integer          default("0"), not null
+#  ratings_count                :integer          default(0), not null
 #  recommended_image_url        :string           default(""), not null
-#  records_count                :integer          default("0"), not null
+#  records_count                :integer          default(0), not null
 #  released_at                  :date
 #  released_at_about            :string
 #  satisfaction_rate            :float
@@ -24,7 +24,7 @@
 #  score                        :float
 #  season_name                  :integer
 #  season_year                  :integer
-#  start_episode_raw_number     :float            default("1.0"), not null
+#  start_episode_raw_number     :float            default(1.0), not null
 #  started_on                   :date
 #  synopsis                     :text             default(""), not null
 #  synopsis_en                  :text             default(""), not null
@@ -40,11 +40,11 @@
 #  twitter_image_url            :string           default(""), not null
 #  twitter_username             :string(510)
 #  unpublished_at               :datetime
-#  watchers_count               :integer          default("0"), not null
+#  watchers_count               :integer          default(0), not null
 #  wikipedia_url                :string(510)      default(""), not null
 #  wikipedia_url_en             :string           default(""), not null
-#  work_records_count           :integer          default("0"), not null
-#  work_records_with_body_count :integer          default("0"), not null
+#  work_records_count           :integer          default(0), not null
+#  work_records_with_body_count :integer          default(0), not null
 #  created_at                   :datetime
 #  updated_at                   :datetime
 #  key_pv_id                    :bigint

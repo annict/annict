@@ -6,17 +6,17 @@
 #  id                          :bigint           not null, primary key
 #  aasm_state                  :string           default("published"), not null
 #  deleted_at                  :datetime
-#  episode_record_bodies_count :integer          default("0"), not null
-#  episode_records_count       :integer          default("0"), not null
-#  fetch_syobocal              :boolean          default("false"), not null
+#  episode_record_bodies_count :integer          default(0), not null
+#  episode_records_count       :integer          default(0), not null
+#  fetch_syobocal              :boolean          default(FALSE), not null
 #  number                      :string(510)
 #  number_en                   :string           default(""), not null
-#  ratings_count               :integer          default("0"), not null
+#  ratings_count               :integer          default(0), not null
 #  raw_number                  :float
 #  satisfaction_rate           :float
 #  sc_count                    :integer
 #  score                       :float
-#  sort_number                 :integer          default("0"), not null
+#  sort_number                 :integer          default(0), not null
 #  title                       :string(510)
 #  title_en                    :string           default(""), not null
 #  title_ro                    :string           default(""), not null

@@ -7,8 +7,8 @@
 #  aasm_state        :string           default("published"), not null
 #  deleted_at        :datetime
 #  description       :string
-#  impressions_count :integer          default("0"), not null
-#  likes_count       :integer          default("0"), not null
+#  impressions_count :integer          default(0), not null
+#  likes_count       :integer          default(0), not null
 #  title             :string           not null
 #  created_at        :datetime         not null
 #  updated_at        :datetime         not null

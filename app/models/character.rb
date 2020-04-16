@@ -16,7 +16,7 @@
 #  description_en        :text             default(""), not null
 #  description_source    :string           default(""), not null
 #  description_source_en :string           default(""), not null
-#  favorite_users_count  :integer          default("0"), not null
+#  favorite_users_count  :integer          default(0), not null
 #  height                :string           default(""), not null
 #  height_en             :string           default(""), not null
 #  name                  :string           not null

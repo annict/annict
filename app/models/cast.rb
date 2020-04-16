@@ -9,7 +9,7 @@
 #  deleted_at     :datetime
 #  name           :string           not null
 #  name_en        :string           default(""), not null
-#  sort_number    :integer          default("0"), not null
+#  sort_number    :integer          default(0), not null
 #  unpublished_at :datetime
 #  created_at     :datetime         not null
 #  updated_at     :datetime         not null

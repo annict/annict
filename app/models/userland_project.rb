@@ -4,7 +4,7 @@
 # Table name: userland_projects
 #
 #  id                   :bigint           not null, primary key
-#  available            :boolean          default("false"), not null
+#  available            :boolean          default(FALSE), not null
 #  description          :text             not null
 #  icon_content_type    :string
 #  icon_file_name       :string

@@ -7,9 +7,9 @@
 #  aasm_state           :string           default("published"), not null
 #  birthday             :date
 #  blood_type           :string
-#  casts_count          :integer          default("0"), not null
+#  casts_count          :integer          default(0), not null
 #  deleted_at           :datetime
-#  favorite_users_count :integer          default("0"), not null
+#  favorite_users_count :integer          default(0), not null
 #  gender               :string
 #  height               :integer
 #  name                 :string           not null
@@ -17,7 +17,7 @@
 #  name_kana            :string           default(""), not null
 #  nickname             :string
 #  nickname_en          :string           default(""), not null
-#  staffs_count         :integer          default("0"), not null
+#  staffs_count         :integer          default(0), not null
 #  twitter_username     :string
 #  twitter_username_en  :string           default(""), not null
 #  unpublished_at       :datetime

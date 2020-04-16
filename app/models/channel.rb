@@ -9,9 +9,9 @@
 #  name             :string           not null
 #  name_alter       :string           default(""), not null
 #  sc_chid          :integer
-#  sort_number      :integer          default("0"), not null
+#  sort_number      :integer          default(0), not null
 #  unpublished_at   :datetime
-#  vod              :boolean          default("false")
+#  vod              :boolean          default(FALSE)
 #  created_at       :datetime
 #  updated_at       :datetime
 #  channel_group_id :bigint           not null

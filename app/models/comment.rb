@@ -5,7 +5,7 @@
 #
 #  id                :bigint           not null, primary key
 #  body              :text             not null
-#  likes_count       :integer          default("0"), not null
+#  likes_count       :integer          default(0), not null
 #  locale            :string           default("other"), not null
 #  created_at        :datetime
 #  updated_at        :datetime

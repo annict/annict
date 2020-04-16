@@ -4,8 +4,8 @@
 # Table name: library_entries
 #
 #  id                  :bigint           not null, primary key
-#  position            :integer          default("0"), not null
-#  watched_episode_ids :bigint           default("{}"), not null, is an Array
+#  position            :integer          default(0), not null
+#  watched_episode_ids :bigint           default([]), not null, is an Array
 #  created_at          :datetime         not null
 #  updated_at          :datetime         not null
 #  next_episode_id     :bigint

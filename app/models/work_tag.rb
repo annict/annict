@@ -8,7 +8,7 @@
 #  deleted_at          :datetime
 #  locale              :string           default("other"), not null
 #  name                :string           not null
-#  work_taggings_count :integer          default("0"), not null
+#  work_taggings_count :integer          default(0), not null
 #  created_at          :datetime         not null
 #  updated_at          :datetime         not null
 #

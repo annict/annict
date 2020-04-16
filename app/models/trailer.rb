@@ -7,7 +7,7 @@
 #  aasm_state             :string           default("published"), not null
 #  deleted_at             :datetime
 #  image_data             :text
-#  sort_number            :integer          default("0"), not null
+#  sort_number            :integer          default(0), not null
 #  thumbnail_content_type :string
 #  thumbnail_file_name    :string
 #  thumbnail_file_size    :integer

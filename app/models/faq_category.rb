@@ -8,7 +8,7 @@
 #  deleted_at  :datetime
 #  locale      :string           not null
 #  name        :string           not null
-#  sort_number :integer          default("0"), not null
+#  sort_number :integer          default(0), not null
 #  created_at  :datetime         not null
 #  updated_at  :datetime         not null
 #

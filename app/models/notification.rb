@@ -4,7 +4,7 @@
 #
 #  id             :bigint           not null, primary key
 #  action         :string(510)      not null
-#  read           :boolean          default("false"), not null
+#  read           :boolean          default(FALSE), not null
 #  trackable_type :string(510)      not null
 #  created_at     :datetime
 #  updated_at     :datetime

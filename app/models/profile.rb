@@ -4,7 +4,7 @@
 # Table name: profiles
 #
 #  id                                  :bigint           not null, primary key
-#  background_image_animated           :boolean          default("false"), not null
+#  background_image_animated           :boolean          default(FALSE), not null
 #  background_image_data               :text
 #  description                         :string(510)      default(""), not null
 #  image_data                          :text

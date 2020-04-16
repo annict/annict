@@ -9,7 +9,7 @@
 #  deleted_at      :datetime
 #  locale          :string           not null
 #  question        :string           not null
-#  sort_number     :integer          default("0"), not null
+#  sort_number     :integer          default(0), not null
 #  created_at      :datetime         not null
 #  updated_at      :datetime         not null
 #  faq_category_id :bigint           not null

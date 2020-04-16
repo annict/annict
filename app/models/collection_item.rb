@@ -7,8 +7,8 @@
 #  aasm_state      :string           default("published"), not null
 #  comment         :text
 #  deleted_at      :datetime
-#  position        :integer          default("0"), not null
-#  reactions_count :integer          default("0"), not null
+#  position        :integer          default(0), not null
+#  reactions_count :integer          default(0), not null
 #  title           :string           not null
 #  created_at      :datetime         not null
 #  updated_at      :datetime         not null

@@ -4,7 +4,7 @@
 # Table name: multiple_episode_records
 #
 #  id          :bigint           not null, primary key
-#  likes_count :integer          default("0"), not null
+#  likes_count :integer          default(0), not null
 #  created_at  :datetime         not null
 #  updated_at  :datetime         not null
 #  user_id     :bigint           not null

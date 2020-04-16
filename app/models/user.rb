@@ -14,18 +14,18 @@
 #  deleted_at                    :datetime
 #  email                         :citext           not null
 #  encrypted_password            :string(510)      default(""), not null
-#  episode_records_count         :integer          default("0"), not null
+#  episode_records_count         :integer          default(0), not null
 #  last_sign_in_at               :datetime
 #  last_sign_in_ip               :string(510)
 #  locale                        :string           not null
-#  notifications_count           :integer          default("0"), not null
+#  notifications_count           :integer          default(0), not null
 #  record_cache_expired_at       :datetime
-#  records_count                 :integer          default("0"), not null
+#  records_count                 :integer          default(0), not null
 #  remember_created_at           :datetime
 #  reset_password_sent_at        :datetime
 #  reset_password_token          :string
 #  role                          :integer          not null
-#  sign_in_count                 :integer          default("0"), not null
+#  sign_in_count                 :integer          default(0), not null
 #  status_cache_expired_at       :datetime
 #  time_zone                     :string           not null
 #  unconfirmed_email             :string(510)

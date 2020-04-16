@@ -6,7 +6,7 @@
 #  id                                                                    :bigint           not null, primary key
 #  body                                                                  :text             default(""), not null
 #  edited_at(The datetime which user has changed title, body and so on.) :datetime
-#  forum_comments_count                                                  :integer          default("0"), not null
+#  forum_comments_count                                                  :integer          default(0), not null
 #  last_commented_at                                                     :datetime         not null
 #  locale                                                                :string           default("other"), not null
 #  title                                                                 :string           not null

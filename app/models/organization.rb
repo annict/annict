@@ -6,11 +6,11 @@
 #  id                   :bigint           not null, primary key
 #  aasm_state           :string           default("published"), not null
 #  deleted_at           :datetime
-#  favorite_users_count :integer          default("0"), not null
+#  favorite_users_count :integer          default(0), not null
 #  name                 :string           not null
 #  name_en              :string           default(""), not null
 #  name_kana            :string           default(""), not null
-#  staffs_count         :integer          default("0"), not null
+#  staffs_count         :integer          default(0), not null
 #  twitter_username     :string
 #  twitter_username_en  :string           default(""), not null
 #  unpublished_at       :datetime

@@ -6,9 +6,9 @@
 #  id             :bigint           not null, primary key
 #  aasm_state     :string           default("published"), not null
 #  deleted_at     :datetime
-#  irregular      :boolean          default("false"), not null
+#  irregular      :boolean          default(FALSE), not null
 #  number         :integer
-#  rebroadcast    :boolean          default("false"), not null
+#  rebroadcast    :boolean          default(FALSE), not null
 #  sc_last_update :datetime
 #  sc_pid         :integer
 #  started_at     :datetime         not null
