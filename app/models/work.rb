@@ -101,31 +101,30 @@ class Work < ApplicationRecord
   has_many :programs, dependent: :destroy
   has_many :series_works, dependent: :destroy
   has_many :staffs, dependent: :destroy
-  has_many :work_taggings, dependent: :destroy
+  has_many :work_taggings
   has_many :activities,
     foreign_key: :recipient_id,
-    foreign_type: :recipient,
-    dependent: :destroy
+    foreign_type: :recipient
   has_many :cast_people, through: :casts, source: :person
-  has_many :channel_works, dependent: :destroy
+  has_many :channel_works
   has_many :characters, through: :casts
   has_many :db_activities, as: :trackable, dependent: :destroy
   has_many :db_comments, as: :resource, dependent: :destroy
-  has_many :episode_records, dependent: :destroy
+  has_many :episode_records
   has_many :episodes, dependent: :destroy
-  has_many :library_entries, dependent: :destroy
+  has_many :library_entries
   has_many :organizations,
     through: :staffs,
     source: :resource,
     source_type: "Organization"
   has_many :slots, dependent: :destroy
   has_many :trailers, dependent: :destroy
-  has_many :records, dependent: :destroy
+  has_many :records
   has_many :series_list, through: :series_works, source: :series
-  has_many :statuses, dependent: :destroy
+  has_many :statuses
   has_many :staff_people, through: :staffs, source: :resource, source_type: "Person"
   has_many :channels, through: :programs
-  has_many :work_records, dependent: :destroy
+  has_many :work_records
   has_many :work_tags, through: :work_taggings
   has_one :work_image, dependent: :destroy
 

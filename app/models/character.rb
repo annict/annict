@@ -64,7 +64,7 @@ class Character < ApplicationRecord
   has_many :casts, dependent: :destroy
   has_many :db_activities, as: :trackable, dependent: :destroy
   has_many :db_comments, as: :resource, dependent: :destroy
-  has_many :favorite_characters, dependent: :destroy
+  has_many :favorite_characters
   has_many :users, through: :favorite_characters
   has_many :works, through: :casts
 

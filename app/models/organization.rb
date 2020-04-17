@@ -49,7 +49,7 @@ class Organization < ApplicationRecord
 
   has_many :db_activities, as: :trackable, dependent: :destroy
   has_many :db_comments, as: :resource, dependent: :destroy
-  has_many :favorite_organizations, dependent: :destroy
+  has_many :favorite_organizations
   has_many :staffs, as: :resource, dependent: :destroy
   has_many :staff_works, through: :staffs, source: :work
   has_many :users, through: :favorite_organizations
