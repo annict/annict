@@ -33,29 +33,21 @@ module.exports = {
   module: {
     rules: [
       {
-        test: /\.m?js$/,
-        exclude: /node_modules/,
-        use: {
-          loader: 'babel-loader',
-          options: {
-            presets: ['@babel/preset-env'],
-          },
-        },
-      },
-      {
         test: /\.vue$/,
         exclude: /node_modules/,
         loader: 'vue-loader',
       },
       {
-        test: /\.tsx?$/,
+        test: /\.(js|ts)x?$/,
         exclude: /node_modules/,
-        loader: 'ts-loader',
-        options: {
-          appendTsSuffixTo: [/\.vue$/],
-          // disable type checker - we will use it in fork-ts-checker-webpack-plugin
-          transpileOnly: true,
-        },
+        use: [
+          {
+            loader: 'babel-loader',
+            options: {
+              presets: ['@babel/preset-env'],
+            },
+          },
+        ],
       },
       {
         test: require.resolve('jquery'),
