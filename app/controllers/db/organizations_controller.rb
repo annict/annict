@@ -2,75 +2,69 @@
 
 module Db
   class OrganizationsController < Db::ApplicationController
-    before_action :authenticate_user!, only: %i(new create edit update hide destroy)
+    before_action :authenticate_user!, only: %i(new create edit update destroy)
 
     def index
-      @organizations = Organization.order(id: :desc).page(params[:page])
+      @organizations = Organization.
+        without_deleted.
+        order(id: :desc).
+        page(params[:page]).
+        per(100)
     end
 
     def new
-      @organization = Organization.new
-      authorize @organization, :new?
+      @form = Db::OrganizationRowsForm.new
+      authorize @form
     end
 
     def create
-      @organization = Organization.new(organization_params)
-      @organization.user = current_user
-      authorize @organization, :create?
+      @form = Db::OrganizationRowsForm.new(organization_rows_form_params)
+      @form.user = current_user
+      authorize @form
 
-      return render(:new) unless @organization.valid?
-      @organization.save_and_create_activity!
+      return render(:new) unless @form.valid?
 
-      flash[:notice] = t("resources.organization.created")
-      redirect_to db_organizations_path
+      @form.save!
+
+      redirect_to db_organization_list_path, notice: t("resources.person.created")
     end
 
     def edit
-      @organization = Organization.find(params[:id])
-      authorize @organization, :edit?
+      @organization = Organization.without_deleted.find(params[:id])
+      authorize @organization
     end
 
     def update
-      @organization = Organization.find(params[:id])
-      authorize @organization, :update?
+      @organization = Organization.without_deleted.find(params[:id])
+      authorize @organization
 
       @organization.attributes = organization_params
       @organization.user = current_user
 
       return render(:edit) unless @organization.valid?
+
       @organization.save_and_create_activity!
 
-      flash[:notice] = t("resources.organization.updated")
-      redirect_to edit_db_organization_path(@organization)
-    end
-
-    def hide
-      @organization = Organization.find(params[:id])
-      authorize @organization, :hide?
-
-      @organization.soft_delete_with_children
-
-      flash[:notice] = t("resources.organization.unpublished")
-      redirect_back fallback_location: db_people_path
+      redirect_to db_edit_organization_path(@organization), notice: t("resources.person.updated")
     end
 
     def destroy
-      @organization = Organization.find(params[:id])
-      authorize @organization, :destroy?
+      @organization = Organization.without_deleted.find(params[:id])
+      authorize @organization
 
-      @organization.destroy
+      @organization.destroy_in_batches
 
-      flash[:notice] = t("resources.organization.deleted")
-      redirect_back fallback_location: db_people_path
-    end
-
-    def activities
-      @organization = Organization.find(params[:id])
-      @activities = @organization.db_activities.order(id: :desc)
-      @comment = @organization.db_comments.new
+      redirect_back(
+        fallback_location: db_organization_list_path,
+        notice: t("messages._common.deleted")
+      )
     end
 
     private
+
+    def organization_rows_form_params
+      params.require(:db_organization_rows_form).permit(:rows)
+    end
 
     def organization_params
       params.require(:organization).permit(

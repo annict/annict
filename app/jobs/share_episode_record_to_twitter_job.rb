@@ -5,7 +5,7 @@ class ShareEpisodeRecordToTwitterJob < ApplicationJob
 
   def perform(user_id, episode_record_id)
     user = User.find(user_id)
-    episode_record = user.episode_records.without_deleted.find(episode_record_id)
+    episode_record = user.episode_records.only_kept.find(episode_record_id)
 
     TwitterService.new(user).share!(episode_record)
   end

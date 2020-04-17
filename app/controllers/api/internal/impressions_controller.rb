@@ -8,8 +8,8 @@ module Api
       def show
         work = Work.find(params[:work_id])
         @tags = current_user.tags_by_work(work)
-        @all_tags = current_user.work_tags.without_deleted
-        @popular_tags = WorkTag.without_deleted.popular_tags(work).limit(10)
+        @all_tags = current_user.work_tags.only_kept
+        @popular_tags = WorkTag.only_kept.popular_tags(work).limit(10)
         @comment = current_user.comment_by_work(work)
       end
 

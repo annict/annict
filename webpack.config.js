@@ -40,12 +40,14 @@ module.exports = {
       {
         test: /\.(js|ts)x?$/,
         exclude: /node_modules/,
-        loader: 'ts-loader',
-        options: {
-          appendTsSuffixTo: [/\.vue$/],
-          // disable type checker - we will use it in fork-ts-checker-webpack-plugin
-          transpileOnly: true,
-        },
+        use: [
+          {
+            loader: 'babel-loader',
+            options: {
+              presets: ['@babel/preset-env'],
+            },
+          },
+        ],
       },
       {
         test: require.resolve('jquery'),

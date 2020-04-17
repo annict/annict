@@ -23,9 +23,11 @@ else
   }
 end
 
+Shrine.logger = Rails.logger
+
 Shrine.plugin :activerecord
 Shrine.plugin :backgrounding
-Shrine.plugin :logging
+Shrine.plugin :instrumentation
 Shrine.plugin :determine_mime_type
 Shrine.plugin :cached_attachment_data
 Shrine.plugin :restore_cached_data

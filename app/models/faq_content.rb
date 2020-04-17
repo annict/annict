@@ -12,7 +12,7 @@
 #  sort_number     :integer          default(0), not null
 #  created_at      :datetime         not null
 #  updated_at      :datetime         not null
-#  faq_category_id :integer          not null
+#  faq_category_id :bigint           not null
 #
 # Indexes
 #

@@ -27,7 +27,7 @@ namespace :user do
           Rails.logger.info "user:send_friends_joined_notification_email >> user: #{u.id} >> failed to fetch friends. #{err}}"
           next
         end
-        new_friend_ids = (user_ids & friend_ids) - u.followings.without_deleted.pluck(:id)
+        new_friend_ids = (user_ids & friend_ids) - u.followings.only_kept.pluck(:id)
         Rails.logger.info "user:send_friends_joined_notification_email >> user: #{u.id} >> new_friend_ids: #{new_friend_ids.join(', ')}"
 
         if new_friend_ids.blank?

@@ -9,11 +9,11 @@ class SeriesPolicy < ApplicationPolicy
     user.present? && user.committer?
   end
 
-  def hide?
-    user.present? && user.role.admin?
+  def destroy?
+    user.present? && user.admin?
   end
 
-  def destroy?
-    user.present? && user.role.admin?
+  def unpublish?
+    user.present? && user.committer?
   end
 end

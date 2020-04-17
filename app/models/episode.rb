@@ -3,7 +3,7 @@
 #
 # Table name: episodes
 #
-#  id                          :integer          not null, primary key
+#  id                          :bigint           not null, primary key
 #  aasm_state                  :string           default("published"), not null
 #  deleted_at                  :datetime
 #  episode_record_bodies_count :integer          default(0), not null
@@ -20,10 +20,11 @@
 #  title                       :string(510)
 #  title_en                    :string           default(""), not null
 #  title_ro                    :string           default(""), not null
+#  unpublished_at              :datetime
 #  created_at                  :datetime
 #  updated_at                  :datetime
-#  prev_episode_id             :integer
-#  work_id                     :integer          not null
+#  prev_episode_id             :bigint
+#  work_id                     :bigint           not null
 #
 # Indexes
 #
@@ -36,6 +37,7 @@
 #  index_episodes_on_satisfaction_rate                    (satisfaction_rate)
 #  index_episodes_on_satisfaction_rate_and_ratings_count  (satisfaction_rate,ratings_count)
 #  index_episodes_on_score                                (score)
+#  index_episodes_on_unpublished_at                       (unpublished_at)
 #
 # Foreign Keys
 #
@@ -45,7 +47,7 @@
 
 class Episode < ApplicationRecord
   include DbActivityMethods
-  include SoftDeletable
+  include Unpublishable
 
   DIFF_FIELDS = %i(
     number sort_number sc_count title prev_episode_id fetch_syobocal raw_number title_en
@@ -58,10 +60,11 @@ class Episode < ApplicationRecord
     foreign_key: :prev_episode_id,
     optional: true
   belongs_to :work
-  has_many :activities, dependent: :destroy, as: :recipient
+  has_many :activities, as: :recipient
   has_many :db_activities, as: :trackable, dependent: :destroy
   has_many :db_comments, as: :resource, dependent: :destroy
-  has_many :episode_records, dependent: :destroy
+  has_many :episode_records
+  has_many :library_entries, foreign_key: :next_episode_id, dependent: :nullify
   has_many :slots, dependent: :nullify
 
   validates :sort_number, presence: true, numericality: { only_integer: true }

@@ -3,7 +3,7 @@
 #
 # Table name: works
 #
-#  id                           :integer          not null, primary key
+#  id                           :bigint           not null, primary key
 #  aasm_state                   :string           default("published"), not null
 #  auto_episodes_count          :integer          default(0), not null
 #  deleted_at                   :datetime
@@ -39,6 +39,7 @@
 #  twitter_hashtag              :string(510)
 #  twitter_image_url            :string           default(""), not null
 #  twitter_username             :string(510)
+#  unpublished_at               :datetime
 #  watchers_count               :integer          default(0), not null
 #  wikipedia_url                :string(510)      default(""), not null
 #  wikipedia_url_en             :string           default(""), not null
@@ -46,10 +47,10 @@
 #  work_records_with_body_count :integer          default(0), not null
 #  created_at                   :datetime
 #  updated_at                   :datetime
-#  key_pv_id                    :integer
+#  key_pv_id                    :bigint
 #  mal_anime_id                 :integer
-#  number_format_id             :integer
-#  season_id                    :integer
+#  number_format_id             :bigint
+#  season_id                    :bigint
 #
 # Indexes
 #
@@ -63,6 +64,7 @@
 #  index_works_on_score                                (score)
 #  index_works_on_season_year                          (season_year)
 #  index_works_on_season_year_and_season_name          (season_year,season_name)
+#  index_works_on_unpublished_at                       (unpublished_at)
 #  works_season_id_idx                                 (season_id)
 #
 # Foreign Keys
@@ -77,7 +79,7 @@ class Work < ApplicationRecord
 
   include DbActivityMethods
   include RootResourceCommon
-  include SoftDeletable
+  include Unpublishable
 
   DIFF_FIELDS = %i(
     sc_tid title title_kana title_en media official_site_url
@@ -99,38 +101,37 @@ class Work < ApplicationRecord
   has_many :programs, dependent: :destroy
   has_many :series_works, dependent: :destroy
   has_many :staffs, dependent: :destroy
-  has_many :work_taggings, dependent: :destroy
+  has_many :work_taggings
   has_many :activities,
     foreign_key: :recipient_id,
-    foreign_type: :recipient,
-    dependent: :destroy
+    foreign_type: :recipient
   has_many :cast_people, through: :casts, source: :person
-  has_many :channel_works, dependent: :destroy
+  has_many :channel_works
   has_many :characters, through: :casts
   has_many :db_activities, as: :trackable, dependent: :destroy
   has_many :db_comments, as: :resource, dependent: :destroy
-  has_many :episode_records, dependent: :destroy
+  has_many :episode_records
   has_many :episodes, dependent: :destroy
-  has_many :library_entries, dependent: :destroy
+  has_many :library_entries
   has_many :organizations,
     through: :staffs,
     source: :resource,
     source_type: "Organization"
   has_many :slots, dependent: :destroy
   has_many :trailers, dependent: :destroy
-  has_many :records, dependent: :destroy
+  has_many :records
   has_many :series_list, through: :series_works, source: :series
-  has_many :statuses, dependent: :destroy
+  has_many :statuses
   has_many :staff_people, through: :staffs, source: :resource, source_type: "Person"
   has_many :channels, through: :programs
-  has_many :work_records, dependent: :destroy
+  has_many :work_records
   has_many :work_tags, through: :work_taggings
   has_one :work_image, dependent: :destroy
 
   validates :sc_tid,
     numericality: { only_integer: true },
     allow_blank: true
-  validates :title, presence: true, uniqueness: { conditions: -> { without_deleted } }
+  validates :title, presence: true, uniqueness: { conditions: -> { only_kept } }
   validates :media, presence: true
   validates :official_site_url, url: { allow_blank: true }
   validates :official_site_url_en, url: { allow_blank: true }
@@ -144,10 +145,6 @@ class Work < ApplicationRecord
 
     where(Season.find_by_slug(season_slug).work_conditions)
   })
-
-  scope :by_no_season, -> {
-    where(season_year: nil, season_name: nil)
-  }
 
   scope(:by_seasons, ->(season_slugs) {
     return self if season_slugs.blank?
@@ -172,7 +169,7 @@ class Work < ApplicationRecord
 
   scope :slot_registered, -> {
     work_ids = joins(:slots).
-      merge(Slot.without_deleted.where(work_id: all.pluck(:id))).
+      merge(Slot.only_kept.where(work_id: all.pluck(:id))).
       pluck(:id).
       uniq
     where(id: work_ids)
@@ -187,8 +184,36 @@ class Work < ApplicationRecord
     )
   }
 
+  scope :with_no_season, -> {
+    where(season_year: nil, season_name: nil)
+  }
+
+  scope :with_no_episodes, -> {
+    where(no_episodes: false).where(<<~SQL)
+      NOT EXISTS (
+        SELECT * FROM episodes WHERE
+          1 = 1
+          AND episodes.work_id = works.id
+          AND episodes.deleted_at IS NULL
+          AND episodes.unpublished_at IS NULL
+      )
+    SQL
+  }
+
+  scope :with_no_slots, -> {
+    where(<<~SQL)
+      NOT EXISTS (
+        SELECT * FROM slots WHERE
+          1 = 1
+          AND slots.work_id = works.id
+          AND slots.deleted_at IS NULL
+          AND slots.unpublished_at IS NULL
+      )
+    SQL
+  }
+
   # 作品画像が設定されていない作品
-  scope :image_not_attached, -> {
+  scope :with_no_image, -> {
     joins("LEFT OUTER JOIN work_images ON work_images.work_id = works.id").
       where("work_images.id IS NULL")
   }
@@ -250,7 +275,7 @@ class Work < ApplicationRecord
   def self.watching_friends_data(work_ids, user)
     work_ids = work_ids.uniq
     status_kinds = %w(wanna_watch watching watched)
-    users = user.followings.without_deleted.includes(:profile)
+    users = user.followings.only_kept.includes(:profile)
     user_ids = users.pluck(:id)
     library_entries = LibraryEntry.
       where(work: work_ids, user: user_ids).
@@ -279,7 +304,7 @@ class Work < ApplicationRecord
 
   def self.trailers_data(works)
     work_ids = works.pluck(:id)
-    trailers = Trailer.without_deleted.where(work_id: work_ids)
+    trailers = Trailer.only_kept.where(work_id: work_ids)
 
     work_ids.map do |work_id|
       {
@@ -291,7 +316,7 @@ class Work < ApplicationRecord
 
   def self.casts_data(works)
     work_ids = works.pluck(:id)
-    casts = Cast.without_deleted.where(work_id: work_ids).includes(:person, :character)
+    casts = Cast.only_kept.where(work_id: work_ids).includes(:person, :character)
 
     work_ids.map do |work_id|
       {
@@ -303,7 +328,7 @@ class Work < ApplicationRecord
 
   def self.staffs_data(works, major: false)
     work_ids = works.pluck(:id)
-    staffs = Staff.without_deleted.where(work_id: work_ids).includes(:resource)
+    staffs = Staff.only_kept.where(work_id: work_ids).includes(:resource)
     staffs = staffs.major if major
 
     work_ids.map do |work_id|
@@ -316,7 +341,7 @@ class Work < ApplicationRecord
 
   def self.programs_data(works, only_vod: false)
     work_ids = works.pluck(:id)
-    programs = Program.without_deleted.where(work_id: work_ids).includes(:channel)
+    programs = Program.only_kept.where(work_id: work_ids).includes(:channel)
     if only_vod
       programs = programs.
         joins(:channel).
@@ -343,11 +368,11 @@ class Work < ApplicationRecord
   # 作品のエピソード数分の空白文字列が入った配列を返す
   # Chart.jsのx軸のラベルを消すにはこれしか方法がなかったんだ…! たぶん…。
   def chart_labels
-    episodes.without_deleted.pluck(:id).map { "" }
+    episodes.only_kept.pluck(:id).map { "" }
   end
 
   def chart_values
-    episodes.without_deleted.order(:sort_number).pluck(:episode_records_count)
+    episodes.only_kept.order(:sort_number).pluck(:episode_records_count)
   end
 
   def comments_count
@@ -362,7 +387,7 @@ class Work < ApplicationRecord
   end
 
   def episodes_filled?
-    !manual_episodes_count.nil? && episodes.without_deleted.count >= manual_episodes_count
+    !manual_episodes_count.nil? && episodes.only_kept.count >= manual_episodes_count
   end
 
   def slots_exists?
@@ -392,7 +417,7 @@ class Work < ApplicationRecord
   end
 
   def twitter_hashtag_url
-    url = "https://twitter.com/search?q=##{twitter_hashtag}&src=hash"
+    url = "https://twitter.com/search?q=%23#{twitter_hashtag}"
     Addressable::URI.parse(url).normalize.to_s
   end
 
@@ -486,10 +511,5 @@ class Work < ApplicationRecord
     return number_format.data[number - 1] if number_format.format.blank?
 
     number_format.format % number
-  end
-
-  def soft_delete_with_children
-    soft_delete
-    episodes.without_deleted.each(&:soft_delete)
   end
 end

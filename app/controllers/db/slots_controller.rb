@@ -2,30 +2,31 @@
 
 module Db
   class SlotsController < Db::ApplicationController
-    before_action :authenticate_user!
+    before_action :authenticate_user!, only: %i(new create edit update destroy)
 
     def index
-      @work = Work.find(params[:work_id])
-      @slots = @work.slots.eager_load(:channel, :episode, program: :channel)
-      @slots = @slots.where(channel_id: params[:channel_id]) if params[:channel_id]
-      @slots = @slots.order(number: :desc).order(:channel_id)
+      @work = Work.without_deleted.find(params[:work_id])
+      @slots = @work.slots.without_deleted.eager_load(:channel, :episode, program: :channel)
+      @slots = @slots.where(program_id: params[:program_id]) if params[:program_id]
+      @slots = @slots.order(started_at: :desc, number: :desc, channel_id: :asc)
+      @programs = @work.programs.preload(:channel).without_deleted.where.not(started_at: nil).order(:started_at, :id)
     end
 
     def new
-      @work = Work.find(params[:work_id])
-      @programs = @work.programs.without_deleted.where.not(started_at: nil).order(:started_at, :id)
+      @work = Work.without_deleted.find(params[:work_id])
+      @programs = @work.programs.only_kept.where.not(started_at: nil).order(:started_at, :id)
       @form = Db::SlotRowsForm.new
       @form.work = @work
       @form.set_default_rows_by_programs(params[:program_ids]) if params[:program_ids]
-      authorize @form, :new?
+      authorize @form
     end
 
     def create
-      @work = Work.find(params[:work_id])
+      @work = Work.without_deleted.find(params[:work_id])
       @form = Db::SlotRowsForm.new(slot_rows_form)
       @form.user = current_user
       @form.work = @work
-      authorize @form, :create?
+      authorize @form
 
       return render(:new) unless @form.valid?
 
@@ -34,18 +35,21 @@ module Db
         @form.reset_number!
       end
 
-      redirect_to db_work_slots_path(@work), notice: t("resources.slot.created")
+      redirect_to db_slot_list_path(@work), notice: t("resources.slot.created")
     end
 
     def edit
-      @slot = Slot.find(params[:id])
-      authorize @slot, :edit?
+      @slot = Slot.without_deleted.find(params[:id])
+      authorize @slot
       @work = @slot.work
+      @programs = @work.programs.order(:started_at)
+      @channels = Channel.only_kept.order(:name)
+      @episodes = @work.episodes.only_kept.order(sort_number: :desc)
     end
 
     def update
-      @slot = Slot.find(params[:id])
-      authorize @slot, :update?
+      @slot = Slot.without_deleted.find(params[:id])
+      authorize @slot
       @work = @slot.work
 
       @slot.attributes = slot_params
@@ -55,33 +59,19 @@ module Db
 
       @slot.save_all_and_create_activity!
 
-      redirect_to db_work_slots_path(@work, channel_id: @slot.channel_id), notice: t("resources.slot.updated")
-    end
-
-    def hide
-      @slot = Slot.find(params[:id])
-      authorize @slot, :hide?
-
-      @slot.soft_delete
-
-      flash[:notice] = t("resources.slot.unpublished")
-      redirect_back fallback_location: db_works_path
+      redirect_to db_slot_list_path(@work, program_id: @slot.program_id), notice: t("resources.slot.updated")
     end
 
     def destroy
-      @slot = Slot.find(params[:id])
-      authorize @slot, :destroy?
+      @slot = Slot.without_deleted.find(params[:id])
+      authorize @slot
 
-      @slot.destroy
+      @slot.destroy_in_batches
 
-      flash[:notice] = t("resources.slot.deleted")
-      redirect_back fallback_location: db_works_path
-    end
-
-    def activities
-      @slot = Slot.find(params[:id])
-      @activities = @slot.db_activities.order(id: :desc)
-      @comment = @slot.db_comments.new
+      redirect_back(
+        fallback_location: db_work_list_path,
+        notice: t("messages._common.deleted")
+      )
     end
 
     private

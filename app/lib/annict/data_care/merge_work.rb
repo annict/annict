@@ -50,7 +50,7 @@ module Annict
       end
 
       def hide_work!
-        work.soft_delete_with_children
+        work.destroy_in_batches
       end
     end
   end

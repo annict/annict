@@ -3,7 +3,7 @@
 #
 # Table name: userland_categories
 #
-#  id                      :integer          not null, primary key
+#  id                      :bigint           not null, primary key
 #  name                    :string           not null
 #  name_en                 :string           not null
 #  sort_number             :integer          default(0), not null

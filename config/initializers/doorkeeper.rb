@@ -115,6 +115,8 @@ Doorkeeper.configure do
 end
 
 Doorkeeper::Application.class_eval do
+  include BatchDestroyable
+
   scope :available, -> { where(deleted_at: nil).where.not(owner: nil) }
   scope :unavailable, -> {
     unscoped.where.not(deleted_at: nil).or(where(owner: nil))

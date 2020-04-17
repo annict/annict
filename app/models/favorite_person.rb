@@ -3,12 +3,12 @@
 #
 # Table name: favorite_people
 #
-#  id                  :integer          not null, primary key
+#  id                  :bigint           not null, primary key
 #  watched_works_count :integer          default(0), not null
 #  created_at          :datetime         not null
 #  updated_at          :datetime         not null
-#  person_id           :integer          not null
-#  user_id             :integer          not null
+#  person_id           :bigint           not null
+#  user_id             :bigint           not null
 #
 # Indexes
 #

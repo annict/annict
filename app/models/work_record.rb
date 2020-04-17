@@ -19,10 +19,10 @@
 #  title                  :string           default("")
 #  created_at             :datetime         not null
 #  updated_at             :datetime         not null
-#  oauth_application_id   :integer
-#  record_id              :integer          not null
-#  user_id                :integer          not null
-#  work_id                :integer          not null
+#  oauth_application_id   :bigint
+#  record_id              :bigint           not null
+#  user_id                :bigint           not null
+#  work_id                :bigint           not null
 #
 # Indexes
 #

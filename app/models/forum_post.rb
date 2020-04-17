@@ -3,7 +3,7 @@
 #
 # Table name: forum_posts
 #
-#  id                                                                    :integer          not null, primary key
+#  id                                                                    :bigint           not null, primary key
 #  body                                                                  :text             default(""), not null
 #  edited_at(The datetime which user has changed title, body and so on.) :datetime
 #  forum_comments_count                                                  :integer          default(0), not null
@@ -12,8 +12,8 @@
 #  title                                                                 :string           not null
 #  created_at                                                            :datetime         not null
 #  updated_at                                                            :datetime         not null
-#  forum_category_id                                                     :integer          not null
-#  user_id                                                               :integer          not null
+#  forum_category_id                                                     :bigint           not null
+#  user_id                                                               :bigint           not null
 #
 # Indexes
 #

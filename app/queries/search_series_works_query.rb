@@ -5,7 +5,7 @@ class SearchSeriesWorksQuery
     collection = SeriesWork.all,
     order_by: nil
   )
-    @collection = collection.without_deleted
+    @collection = collection.only_kept
     @args = {
       order_by: order_by
     }

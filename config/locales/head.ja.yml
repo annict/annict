@@ -73,35 +73,46 @@ ja:
           index: キャスト一覧
           new: キャスト登録
         channel_groups:
-          index: チャンネルグループ
+          edit: "%{name}"
+          index: チャンネルグループ一覧
+          new: チャンネルグループ登録
         channels:
-          index: チャンネル
+          edit: "%{name}"
+          index: チャンネル一覧
+          new: チャンネル登録
         characters:
-          activities: アクティビティ - %{name}
-          index: キャラクター
+          edit: "%{name}"
+          index: キャラクター一覧
+          new: キャラクター登録
         episodes:
           activities: アクティビティ
-          index: "%{work_title}のエピソード"
+          edit: エピソード編集
+          index: エピソード一覧
+          new: エピソード登録
         organizations:
-          activities: アクティビティ - %{name}
-          index: 団体
+          edit: "%{name}"
+          index: 団体一覧
+          new: 団体登録
         people:
-          activities: アクティビティ - %{name}
-          index: 人物
+          edit: "%{name}"
+          index: 人物一覧
+          new: 人物登録
         slots:
           activities: アクティビティ
           edit: 放送予定編集
-          index: 放送予定
+          index: 放送予定一覧
           new: 放送予定登録
         trailers:
           activities: アクティビティ
           edit: PVの編集
-          index: PV
+          index: PV一覧
           new: PV登録
         searches:
           show: 検索
         series:
+          edit: シリーズ編集 | %{title}
           index: シリーズ一覧
+          new: シリーズ登録
         series_works:
           activities: アクティビティ
           edit: シリーズ作品編集
@@ -110,21 +121,20 @@ ja:
         staffs:
           activities: アクティビティ
           edit: スタッフ編集
-          index: スタッフ
+          index: スタッフ一覧
           new: スタッフ登録
         programs:
           activities: アクティビティ
           edit: 放送情報編集
-          index: 放送情報
+          index: 放送情報一覧
           new: 放送情報登録
-        vod_titles:
-          index: VOD作品
         work_images:
           show: 作品画像 - %{title}
         works:
           activities: アクティビティ
           edit: "%{title}"
           index: 作品一覧
+          new: 作品登録
       faqs:
         index: よくある質問
       episode_records:
@@ -167,7 +177,10 @@ ja:
         new: ユーザ登録
       oauth:
         applications:
+          edit: アプリケーション編集
+          index: アプリケーション一覧
           new: アプリケーション登録
+          show: "%{application_name} | アプリケーション詳細"
         authorizations:
           new: アプリケーション認証
           show: 認証コード

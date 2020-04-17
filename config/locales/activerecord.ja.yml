@@ -12,6 +12,7 @@ ja:
         channel_group: チャンネルグループ
         channel_group_id: チャンネルグループ
         name: 名前
+        sort_number: ソート番号
       channel_group:
         name: 名前
         sort_number: ソート番号
@@ -63,6 +64,7 @@ ja:
         sc_count: しょぼかる番号
         sort_number: ソート番号
         title: タイトル
+        title_en: タイトル (英)
       episode_record:
         comment: 感想
         rating: レーティング
@@ -142,9 +144,10 @@ ja:
         thumbnail: サムネイル
         url: URL
       series:
-        name_en: 名前 (英語)
-        name_ro: 名前 (ローマ字)
         name: 名前
+        name_alter: 別名
+        name_alter_en: 別名 (英語)
+        name_en: 名前 (英語)
       series_work:
         summary: 関係性
         summary_en: 関係性 (英語)
@@ -172,6 +175,7 @@ ja:
         email_username: メールアドレスまたはユーザ名
         email: メールアドレス
         locale: 言語
+        oauth_applications: OAuthアプリケーション
         password: パスワード
         password_confirmation: パスワード (確認)
         terms_and_privacy_policy_agreement: 利用規約とプライバシーポリシー
@@ -186,7 +190,7 @@ ja:
       work:
         ended_on: 終了日
         mal_anime_id: MAL Anime ID
-        manual_episodes_count: 話数
+        manual_episodes_count: エピソード数
         media: メディア
         no_episodes: エピソード無し
         number_format_id: 話数フォーマット
@@ -203,8 +207,8 @@ ja:
         synopsis_source_en: あらすじの引用元 (英)
         synopsis_source: あらすじの引用元
         synopsis: あらすじ
-        title_alter: タイトル (別名)
-        title_alter_en: タイトル (別名/英)
+        title_alter: タイトルの別名
+        title_alter_en: タイトルの別名 (英語)
         title_en: タイトル (英)
         title_kana: タイトル (かな)
         title: タイトル
@@ -243,9 +247,6 @@ ja:
       db_activity:
         one: アクティビティ
         other: アクティビティ
-      db_comment:
-        one: コメント
-        other: コメント
       episode:
         one: エピソード
         other: エピソード

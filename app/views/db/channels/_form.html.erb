@@ -1,0 +1,32 @@
+<%= form_with model: channel, url: form_url, method: form_method, local: true do |f| %>
+  <%= render "application/components/error_panel", resource: f.object %>
+
+  <div class="form-group">
+    <%= f.label :channel_group_id, class: "c-label-required" %>
+    <%= f.select(
+      :channel_group_id,
+      options_from_collection_for_select(ChannelGroup.only_kept.order(:name), :id, :name, f.object.channel_group_id),
+      { include_blank: true },
+      { class: "form-control" }
+    ) %>
+  </div>
+
+  <div class="form-group">
+    <%= f.label :name, class: "c-label-required" %>
+    <%= f.text_field :name, class: "form-control", autofocus: true, required: true %>
+  </div>
+
+  <div class="form-group">
+    <%= f.label :sort_number %>
+    <%= f.text_field :sort_number, class: "form-control" %>
+  </div>
+
+  <div class="form-group form-check">
+    <%= f.check_box :vod, class: "form-check-input" %>
+    <%= f.label :vod, class: "form-check-label" do %>
+      <%= t "messages.channels.supported_vod" %>
+    <% end %>
+  </div>
+
+  <%= f.submit class: "btn btn-primary" %>
+<% end %>

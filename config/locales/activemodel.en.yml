@@ -46,20 +46,26 @@ en:
         sort_id: sort_id
         sort_season: sort_season
         sort_watchers_count: sort_watchers_count
-      db/character_rows_form:
-        rows: Characters
       db/cast_rows_form:
         rows: Casts
+      db/character_rows_form:
+        rows: Characters
       db/episode_rows_form:
         rows: Episodes
-      db/slot_rows_form:
-        rows: Slots
-      db/trailer_rows_form:
-        rows: PVs
+      db/organization_rows_form:
+        rows: Organizations
+      db/person_rows_form:
+        rows: People
+      db/program_rows_form:
+        rows: Programs
       db/series_work_rows_form:
         rows: Series Works
-      db/ws_form:
+      db/slot_rows_form:
+        rows: Slots
+      db/staff_rows_form:
         rows: Staffs
+      db/trailer_rows_form:
+        rows: PVs
     errors:
       forms:
         db/cast_rows_form:

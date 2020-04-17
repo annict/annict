@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 # NOTE: only doing this in development as some production environments (Heroku)
 # NOTE: are sensitive to local FS writes, and besides -- it's just not proper
 # NOTE: to have a dev-mode tool do its thing in production.
@@ -9,7 +10,7 @@ if Rails.env.development?
     Annotate.set_defaults(
       "additional_file_patterns" => [],
       "routes" => "false",
-      "models" => "false",
+      "models" => "true",
       "position_in_routes" => "before",
       "position_in_class" => "before",
       "position_in_test" => "before",

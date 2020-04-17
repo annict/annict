@@ -1,6 +1,7 @@
 ja:
   noun:
     account_deletion: アカウント削除
+    actions: アクション
     activities: アクティビティ
     after: After
     ago: 前
@@ -28,6 +29,7 @@ ja:
     cast: キャスト
     casts: キャスト
     category: カテゴリ
+    channel_groups: チャンネルグループ
     channel_id: チャンネルID
     channel_list: チャンネル一覧
     channel_name: チャンネル名
@@ -51,6 +53,7 @@ ja:
     episode_number: 話数
     episodes: エピソード
     error: エラー
+    external_services: 外部サービス
     fans: ファン
     faqs: よくある質問
     favorite_characters_shorten: Characters
@@ -105,6 +108,8 @@ ja:
     previous_season: 前期のアニメ
     privacy_policy: プライバシーポリシー
     profile: プロフィール
+    programs: 放送情報
+    publish: 公開
     slots: 放送予定
     pv: PV
     rating: 評価
@@ -127,9 +132,11 @@ ja:
     satisfaction_rate_shorten: 満足度
     search: 検索
     season: シーズン
+    seasons: シーズン
     seasonal_anime: シーズン別アニメ
     series: シリーズ
     series_with_name: "%{series_name}シリーズ"
+    series_works: シリーズ作品
     services: サービス
     settings: 設定
     share: シェア
@@ -165,6 +172,7 @@ ja:
     untracked_episodes: 未視聴エピソード
     users_count: "%{count}人"
     video_page: 動画ページ
+    vod_works: VOD作品
     vods: 動画サービス
     voice_actor: 声優
     voice_actors: 声優
@@ -174,5 +182,6 @@ ja:
     winter: 冬
     work_detail_page: 作品ページ
     work_image: 作品画像
+    work: 作品
     works: 作品
     your_statistics: 視聴状況

@@ -3,17 +3,17 @@
 #
 # Table name: forum_categories
 #
-#  id                :integer          not null, primary key
-#  slug              :string           not null
-#  name              :string           not null
-#  forum_posts_count :integer          default(0), not null
-#  created_at        :datetime         not null
-#  updated_at        :datetime         not null
-#  name_en           :string           not null
+#  id                :bigint           not null, primary key
 #  description       :string           not null
 #  description_en    :string           not null
+#  forum_posts_count :integer          default(0), not null
+#  name              :string           not null
+#  name_en           :string           not null
 #  postable_role     :string           not null
+#  slug              :string           not null
 #  sort_number       :integer          not null
+#  created_at        :datetime         not null
+#  updated_at        :datetime         not null
 #
 # Indexes
 #

@@ -20,7 +20,7 @@ namespace :work do
         update_or_delete_resource(resource_class, target_work, original_work)
       end
 
-      target_work.soft_delete_with_children
+      target_work.destroy_in_batches
     end
   end
 
@@ -51,8 +51,8 @@ namespace :work do
   task update_score: :environment do
     RATE_MAX = 100
 
-    Work.without_deleted.find_each do |w|
-      episodes = w.episodes.without_deleted.where.not(satisfaction_rate: nil)
+    Work.only_kept.find_each do |w|
+      episodes = w.episodes.only_kept.where.not(satisfaction_rate: nil)
       ratings_count = episodes.pluck(:ratings_count).inject(&:+)
       rates = episodes.pluck(:satisfaction_rate)
 

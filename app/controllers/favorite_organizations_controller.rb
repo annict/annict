@@ -4,7 +4,7 @@ class FavoriteOrganizationsController < ApplicationController
   before_action :load_i18n, only: %i(index)
 
   def index
-    @user = User.without_deleted.find_by!(username: params[:username])
+    @user = User.only_kept.find_by!(username: params[:username])
     @favorite_organizations = @user.
       favorite_organizations.
       order(watched_works_count: :desc)

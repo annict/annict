@@ -2,6 +2,7 @@
 
 FactoryBot.define do
   factory :character do
+    series
     sequence(:name) { |n| "山田#{n}郎" }
     sequence(:name_kana) { |n| "やまだ#{n}ろう" }
     sequence(:name_en) { |n| "Yamada, #{n}rou" }
@@ -25,5 +26,21 @@ FactoryBot.define do
     description_en { "description_en_data" }
     description_source { "description_source_data" }
     description_source_en { "description_source_en_data" }
+
+    trait :published do
+      unpublished_at { nil }
+    end
+
+    trait :unpublished do
+      unpublished_at { Time.zone.now }
+    end
+
+    trait :not_deleted do
+      deleted_at { nil }
+    end
+
+    trait :deleted do
+      deleted_at { Time.zone.now }
+    end
   end
 end

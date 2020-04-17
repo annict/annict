@@ -2,15 +2,15 @@
 #
 # Table name: notifications
 #
-#  id             :integer          not null, primary key
+#  id             :bigint           not null, primary key
 #  action         :string(510)      not null
 #  read           :boolean          default(FALSE), not null
 #  trackable_type :string(510)      not null
 #  created_at     :datetime
 #  updated_at     :datetime
-#  action_user_id :integer          not null
-#  trackable_id   :integer          not null
-#  user_id        :integer          not null
+#  action_user_id :bigint           not null
+#  trackable_id   :bigint           not null
+#  user_id        :bigint           not null
 #
 # Indexes
 #

@@ -31,7 +31,7 @@ module Canary
 
         def slots(order_by: nil)
           SlotsQuery.new(
-            object.slots.without_deleted,
+            object.slots.only_kept,
             order: build_order(order_by)
           ).call
         end

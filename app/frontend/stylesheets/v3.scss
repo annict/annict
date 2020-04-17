@@ -1,9 +1,11 @@
 @import 'common/variables/annict';
 @import 'common/variables/bootstrap';
 
-@import 'common/foundations/foundation';
+@import 'web/foundations/foundation';
 
 @import 'common/components';
 @import 'common/utilities';
+
+@import 'web/components';
 
 @import 'v3/components/footer';

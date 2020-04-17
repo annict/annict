@@ -14,15 +14,17 @@
 #  thumbnail_updated_at   :datetime
 #  title                  :string           not null
 #  title_en               :string           default(""), not null
+#  unpublished_at         :datetime
 #  url                    :string           not null
 #  created_at             :datetime         not null
 #  updated_at             :datetime         not null
-#  work_id                :integer          not null
+#  work_id                :bigint           not null
 #
 # Indexes
 #
-#  index_trailers_on_deleted_at  (deleted_at)
-#  index_trailers_on_work_id     (work_id)
+#  index_trailers_on_deleted_at      (deleted_at)
+#  index_trailers_on_unpublished_at  (unpublished_at)
+#  index_trailers_on_work_id         (work_id)
 #
 # Foreign Keys
 #
@@ -33,7 +35,7 @@ class Trailer < ApplicationRecord
   include TrailerImageUploader::Attachment.new(:image)
   include DbActivityMethods
   include ImageUploadable
-  include SoftDeletable
+  include Unpublishable
 
   DIFF_FIELDS = %i(title url sort_number).freeze
 

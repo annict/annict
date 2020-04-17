@@ -3,7 +3,7 @@
 #
 # Table name: work_images
 #
-#  id                      :integer          not null, primary key
+#  id                      :bigint           not null, primary key
 #  asin                    :string           default(""), not null
 #  attachment_content_type :string
 #  attachment_file_name    :string
@@ -14,8 +14,8 @@
 #  image_data              :text             not null
 #  created_at              :datetime         not null
 #  updated_at              :datetime         not null
-#  user_id                 :integer          not null
-#  work_id                 :integer          not null
+#  user_id                 :bigint           not null
+#  work_id                 :bigint           not null
 #
 # Indexes
 #

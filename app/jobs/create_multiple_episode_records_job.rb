@@ -5,7 +5,7 @@ class CreateMultipleEpisodeRecordsJob < ApplicationJob
 
   def perform(user_id, episode_ids)
     user = User.find(user_id)
-    episodes = Episode.without_deleted.where(id: episode_ids).order(:sort_number)
+    episodes = Episode.only_kept.where(id: episode_ids).order(:sort_number)
 
     return if episodes.blank?
 

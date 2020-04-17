@@ -3,12 +3,13 @@
 module Db
   class SearchesController < Db::ApplicationController
     def show
-      @series_list = @search.series_list.order(id: :desc)
-      @works = @search.works.
-        order(id: :desc)
-      @people = @search.people.order(id: :desc)
-      @organizations = @search.organizations.order(id: :desc)
-      @characters = @search.characters.order(id: :desc)
+      @results = {
+        series: @search.series_list.order(id: :desc).limit(100),
+        work: @search.works.preload(:work_image).order(id: :desc).limit(100),
+        person: @search.people.order(id: :desc).limit(100),
+        organization: @search.organizations.order(id: :desc).limit(100),
+        character: @search.characters.preload(:series).order(id: :desc).limit(100)
+      }
     end
   end
 end

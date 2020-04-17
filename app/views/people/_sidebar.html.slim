@@ -72,7 +72,7 @@ h1.h2.font-weight-bold
         = link_to t("verb.view_all"), person_fans_path(person)
 
 - if user_signed_in? && current_user.committer?
-  = link_to t("messages._common.edit_on_annict_db"), edit_db_person_path(person), class: "btn btn-secondary w-100 mt-2"
+  = link_to t("messages._common.edit_on_annict_db"), db_edit_person_path(person), class: "btn btn-secondary w-100 mt-2"
 
 - content_for :js_templates
   = render "application/js_templates/favorite_button"

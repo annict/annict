@@ -6,7 +6,7 @@ module Api
       before_action :prepare_params!, only: %i(index)
 
       def index
-        @organizations = Organization.without_deleted
+        @organizations = Organization.only_kept
         @organizations = Api::V1::OrganizationIndexService.new(@organizations, @params).result
       end
     end

@@ -8,8 +8,8 @@
 #  locale      :string           default("other"), not null
 #  created_at  :datetime         not null
 #  updated_at  :datetime         not null
-#  user_id     :integer          not null
-#  work_tag_id :integer          not null
+#  user_id     :bigint           not null
+#  work_tag_id :bigint           not null
 #
 # Indexes
 #

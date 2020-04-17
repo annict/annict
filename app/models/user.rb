@@ -3,7 +3,7 @@
 #
 # Table name: users
 #
-#  id                            :integer          not null, primary key
+#  id                            :bigint           not null, primary key
 #  aasm_state                    :string           default("published"), not null
 #  allowed_locales               :string           is an Array
 #  confirmation_sent_at          :datetime
@@ -34,7 +34,7 @@
 #  work_tag_cache_expired_at     :datetime
 #  created_at                    :datetime
 #  updated_at                    :datetime
-#  gumroad_subscriber_id         :integer
+#  gumroad_subscriber_id         :bigint
 #
 # Indexes
 #
@@ -127,6 +127,8 @@ class User < ApplicationRecord
   has_one :email_notification, dependent: :destroy
   has_one :profile, dependent: :destroy
   has_one :setting, dependent: :destroy
+
+  delegate :admin?, :editor?, to: :role
 
   validates :email,
     presence: true,
@@ -370,7 +372,7 @@ class User < ApplicationRecord
   end
 
   def tags_by_work(work)
-    work_tags.without_deleted.joins(:work_taggings).merge(work_taggings.where(work: work))
+    work_tags.only_kept.joins(:work_taggings).merge(work_taggings.where(work: work))
   end
 
   def comment_by_work(work)
@@ -387,18 +389,13 @@ class User < ApplicationRecord
     (days / 7).floor
   end
 
-  def leave
-    username = SecureRandom.uuid.tr("-", "_")
-
-    ActiveRecord::Base.transaction do
-      update_columns(username: username, email: "#{username}@example.com", deleted_at: Time.zone.now)
-      providers.delete_all
-
-      oauth_applications.available.find_each do |app|
-        app.update(owner: nil)
-        app.soft_delete
-      end
+  def validate_to_destroy
+    if oauth_applications.where(deleted_at: nil).exists?
+      errors.add(:oauth_applications, I18n.t("messages.users._validators.exists_active_oauth_applications"))
+      return false
     end
+
+    true
   end
 
   def slot_data(library_entries)
@@ -408,7 +405,7 @@ class User < ApplicationRecord
     slots = Slot.
       includes(:channel, work: :work_image).
       where(channel_id: channel_ids, episode_id: episode_ids).
-      without_deleted
+      only_kept
 
     channel_works.map do |cw|
       slot = slots.

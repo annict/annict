@@ -3,20 +3,21 @@
 #
 # Table name: staffs
 #
-#  id            :integer          not null, primary key
-#  aasm_state    :string           default("published"), not null
-#  deleted_at    :datetime
-#  name          :string           not null
-#  name_en       :string           default(""), not null
-#  resource_type :string           not null
-#  role          :string           not null
-#  role_other    :string
-#  role_other_en :string           default(""), not null
-#  sort_number   :integer          default(0), not null
-#  created_at    :datetime         not null
-#  updated_at    :datetime         not null
-#  resource_id   :integer          not null
-#  work_id       :integer          not null
+#  id             :bigint           not null, primary key
+#  aasm_state     :string           default("published"), not null
+#  deleted_at     :datetime
+#  name           :string           not null
+#  name_en        :string           default(""), not null
+#  resource_type  :string           not null
+#  role           :string           not null
+#  role_other     :string
+#  role_other_en  :string           default(""), not null
+#  sort_number    :integer          default(0), not null
+#  unpublished_at :datetime
+#  created_at     :datetime         not null
+#  updated_at     :datetime         not null
+#  resource_id    :bigint           not null
+#  work_id        :bigint           not null
 #
 # Indexes
 #
@@ -24,6 +25,7 @@
 #  index_staffs_on_deleted_at                     (deleted_at)
 #  index_staffs_on_resource_id_and_resource_type  (resource_id,resource_type)
 #  index_staffs_on_sort_number                    (sort_number)
+#  index_staffs_on_unpublished_at                 (unpublished_at)
 #  index_staffs_on_work_id                        (work_id)
 #
 # Foreign Keys
@@ -35,7 +37,7 @@ class Staff < ApplicationRecord
   extend Enumerize
 
   include DbActivityMethods
-  include SoftDeletable
+  include Unpublishable
 
   DIFF_FIELDS = %i(
     resource_id name role role_other sort_number name_en role_other_en

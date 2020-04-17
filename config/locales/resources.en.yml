@@ -1,6 +1,7 @@
 en:
   resources:
     _common:
+      new: New
       published: Published
       unpublished: Unpublished
     channel:
@@ -28,9 +29,6 @@ en:
       updated: Cast updated
     comment:
       no_comments: No comments
-    db_comment:
-      create: Comment
-      write_some_comments: Write some comments...
     episode:
       created: Episode created
       edit_episodes: Edit episodes
@@ -95,7 +93,7 @@ en:
     staff:
       created: Staff created
       deleted: Staff deleted
-      new_staff: New staff
+      new_staffs: New staffs
       staff_list: Staff list
       there_are_no_staffs: There are no staff
       unpublished: Staff unpublished

@@ -1,6 +1,7 @@
 ja:
   resources:
     _common:
+      new: 新規登録
       published: 公開
       unpublished: 非公開
     channel:
@@ -28,9 +29,6 @@ ja:
       updated: 更新しました
     comment:
       no_comments: コメントはありません
-    db_comment:
-      create: コメントする
-      write_some_comments: コメントを書く
     episode:
       created: 登録しました
       edit_episodes: エピソード編集
@@ -95,7 +93,7 @@ ja:
     staff:
       created: 登録しました
       deleted: 削除しました
-      new_staff: スタッフ登録
+      new_staffs: スタッフ登録
       staff_list: スタッフ一覧
       there_are_no_staffs: スタッフは登録されていません
       unpublished: 非公開にしました

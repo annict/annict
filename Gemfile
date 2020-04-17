@@ -23,6 +23,7 @@ gem "devise"
 gem "discord-notifier"
 gem "doorkeeper"
 gem "down"
+gem "dry-struct"
 gem "email_validator"
 gem "enumerize"
 gem "flutie"
@@ -33,6 +34,7 @@ gem "graphql-batch"
 gem "gretel"
 gem "groupdate"
 gem "hashdiff"
+gem "htmlrb"
 gem "http_accept_language"
 gem "httparty"
 gem "image_processing"
@@ -67,6 +69,7 @@ gem "slim"
 gem "syoboi_calendar"
 gem "twitter"
 gem "validate_url"
+gem "view_component"
 gem "virtus"
 gem "wilson_score"
 
@@ -106,7 +109,9 @@ group :test do
   gem "capybara"
   gem "factory_bot_rails"
   gem "selenium-webdriver"
-  gem "simplecov", require: false
+  # Use < 0.18 until the following issue will be resolved.
+  # https://github.com/codeclimate/test-reporter/issues/418
+  gem "simplecov", "< 0.18", require: false
   gem "timecop"
   gem "webdrivers", require: !ENV["CI"] # Added to run spec with Chrome on local machine
 end

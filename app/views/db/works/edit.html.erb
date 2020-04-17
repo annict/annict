@@ -1,0 +1,30 @@
+<% title = t "head.title.db.works.edit", title: @work.local_title %>
+<% set_meta_tags(title: title, reverse: true, prefix: false) %>
+
+<div class="container-fluid py-3">
+  <div class="mb-3">
+    <h1>
+      <%= title %>
+    </h1>
+
+    <div class="text-right">
+      <%= link_to work_path(@work), class: "btn btn-outline-primary", target: "_blank" do %>
+        <%= icon "external-link-alt" %>
+        <%= t("resources.work.go_to_work") %>
+      <% end %>
+    </div>
+  </div>
+
+  <div class="mb-3">
+    <%= render "db/works/subnav", work: @work %>
+  </div>
+
+  <div class="mb-3 row">
+    <div class="col-6">
+      <%= render "form", model: @work, form_url: db_work_detail_path(@work), form_method: :patch %>
+    </div>
+    <div class="col-6">
+      <%= render "sidebar" %>
+    </div>
+  </div>
+</div>

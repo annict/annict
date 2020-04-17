@@ -2,11 +2,11 @@
 #
 # Table name: follows
 #
-#  id           :integer          not null, primary key
+#  id           :bigint           not null, primary key
 #  created_at   :datetime
 #  updated_at   :datetime
-#  following_id :integer          not null
-#  user_id      :integer          not null
+#  following_id :bigint           not null
+#  user_id      :bigint           not null
 #
 # Indexes
 #

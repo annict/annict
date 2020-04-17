@@ -9,5 +9,21 @@ FactoryBot.define do
     role { :original_creator }
     role_other { "role_other_data" }
     role_other_en { "role_other_en_data" }
+
+    trait :published do
+      unpublished_at { nil }
+    end
+
+    trait :unpublished do
+      unpublished_at { Time.zone.now }
+    end
+
+    trait :not_deleted do
+      deleted_at { nil }
+    end
+
+    trait :deleted do
+      deleted_at { Time.zone.now }
+    end
   end
 end

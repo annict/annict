@@ -4,11 +4,11 @@ class CharacterFansController < ApplicationController
   before_action :load_i18n, only: %i(index)
 
   def index
-    @character = Character.without_deleted.find(params[:character_id])
+    @character = Character.only_kept.find(params[:character_id])
     @favorite_characters = @character.
       favorite_characters.
       joins(:user).
-      merge(User.without_deleted).
+      merge(User.only_kept).
       order(id: :desc)
   end
 

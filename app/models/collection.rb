@@ -12,7 +12,7 @@
 #  title             :string           not null
 #  created_at        :datetime         not null
 #  updated_at        :datetime         not null
-#  user_id           :integer          not null
+#  user_id           :bigint           not null
 #
 # Indexes
 #
@@ -39,7 +39,7 @@ class Collection < ApplicationRecord
   end
 
   def positions_for_select
-    collection_items.without_deleted.order(:position).map do |item|
+    collection_items.only_kept.order(:position).map do |item|
       key = item.position.to_s
       key += " (#{I18n.t('messages.collections.position_of_x', item_title: item.title)})"
       [key, item.position]

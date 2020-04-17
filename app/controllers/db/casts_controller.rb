@@ -2,78 +2,68 @@
 
 module Db
   class CastsController < Db::ApplicationController
-    before_action :authenticate_user!
+    before_action :authenticate_user!, only: %i(new create edit update destroy)
 
     def index
-      @work = Work.find(params[:work_id])
-      @casts = @work.casts.
+      @work = Work.without_deleted.find(params[:work_id])
+      @casts = @work.
+        casts.
+        without_deleted.
         includes(:person, :character).
-        order(deleted_at: :desc, sort_number: :asc)
+        order(:sort_number)
     end
 
     def new
-      @work = Work.find(params[:work_id])
+      @work = Work.without_deleted.find(params[:work_id])
       @form = Db::CastRowsForm.new
-      authorize @form, :new?
+      authorize @form
     end
 
     def create
-      @work = Work.find(params[:work_id])
+      @work = Work.without_deleted.find(params[:work_id])
       @form = Db::CastRowsForm.new(cast_rows_form_params)
       @form.user = current_user
       @form.work = @work
-      authorize @form, :create?
+      authorize @form
 
       return render(:new) unless @form.valid?
+
       @form.save!
 
-      redirect_to db_work_casts_path(@work), notice: t("resources.cast.created")
+      redirect_to db_cast_list_path(@work), notice: t("resources.cast.created")
     end
 
     def edit
-      @cast = Cast.find(params[:id])
-      authorize @cast, :edit?
+      @cast = Cast.without_deleted.find(params[:id])
+      authorize @cast
       @work = @cast.work
     end
 
     def update
-      @cast = Cast.find(params[:id])
-      authorize @cast, :update?
+      @cast = Cast.without_deleted.find(params[:id])
+      authorize @cast
       @work = @cast.work
 
       @cast.attributes = cast_params
       @cast.user = current_user
 
       return render(:edit) unless @cast.valid?
+
       @cast.save_and_create_activity!
 
-      redirect_to db_work_casts_path(@work), notice: t("resources.cast.updated")
-    end
-
-    def hide
-      @cast = Cast.find(params[:id])
-      authorize @cast, :hide?
-
-      @cast.soft_delete
-
-      flash[:notice] = t("resources.cast.unpublished")
-      redirect_back fallback_location: db_works_path
+      redirect_to db_cast_list_path(@work), notice: t("resources.cast.updated")
     end
 
     def destroy
-      @cast = Cast.find(params[:id])
-      authorize @cast, :destroy?
+      @cast = Cast.without_deleted.find(params[:id])
+      authorize @cast
 
-      @cast.destroy
+      @cast.destroy_in_batches
 
-      flash[:notice] = t("resources.cast.deleted")
-      redirect_back fallback_location: db_works_path
-    end
-
-    def activities
-      @cast = Cast.find(params[:id])
-      @activities = @cast.db_activities.order(id: :desc)
-      @comment = @cast.db_comments.new
+      redirect_back(
+        fallback_location: db_cast_list_path(@cast.work),
+        notice: t("messages._common.deleted")
+      )
     end
 
     private

@@ -73,21 +73,30 @@ en:
           index: Casts
           new: Create Casts
         channel_groups:
+          edit: "%{name}"
           index: Channel Groups
+          new: New Channel Group
         channels:
+          edit: "%{name}"
           index: Channels
+          new: New Channel
         characters:
-          activities: Resource Activities - %{name}
+          edit: "%{name}"
           index: Characters
+          new: New Characters
         episodes:
           activities: Activities
-          index: Episodes of %{work_title}
+          edit: Edit Episode
+          index: Episodes
+          new: New Episode
         organizations:
-          activities: Resource Activities - %{name}
+          edit: "%{name}"
           index: Organizations
+          new: New Organizations
         people:
-          activities: Resource Activities - %{name}
+          edit: "%{name}"
           index: People
+          new: New People
         person_fans:
           index: Fans of %{person_name}
         slots:
@@ -103,7 +112,9 @@ en:
         searches:
           show: Search
         series:
+          edit: Edit Series | %{title}
           index: Series
+          new: New Series
         series_works:
           activities: Activities
           edit: Edit Series Work
@@ -119,14 +130,13 @@ en:
           edit: Edit Slot Detail
           index: Slot Details
           new: New Slot Detail
-        vod_titles:
-          index: VOD Titles
         work_images:
           show: Work Image - %{title}
         works:
           activities: Activities
           edit: "%{title}"
           index: Works
+          new: New Work
       faqs:
         index: FAQ
       episode_records:
@@ -167,7 +177,10 @@ en:
         index: Notifications
       oauth:
         applications:
+          edit: Edit Application
+          index: Applications
           new: New application
+          show: "%{application_name} | Application Detail"
         authorizations:
           new: Authorize an application
           show: Authorization code

@@ -4,10 +4,10 @@ class OrganizationsController < ApplicationController
   before_action :load_i18n, only: %i(show)
 
   def show
-    @organization = Organization.without_deleted.find(params[:id])
+    @organization = Organization.only_kept.find(params[:id])
     @staffs_with_year = @organization.
       staffs.
-      without_deleted.
+      only_kept.
       joins(:work).
       where(works: { deleted_at: nil }).
       includes(work: :work_image).
@@ -17,7 +17,7 @@ class OrganizationsController < ApplicationController
     @favorite_orgs = @organization.
       favorite_organizations.
       joins(:user).
-      merge(User.without_deleted).
+      merge(User.only_kept).
       order(id: :desc)
   end
 

@@ -24,7 +24,7 @@ h2.h4.font-weight-bold.mt-4.mb-3
   = t "noun.development_members"
 
 .row.px-3
-  - project.users.without_deleted.each do |user|
+  - project.users.only_kept.each do |user|
     .col.col-auto.pl-0.pr-2.pb-2
       = link_to user_path(user.username) do
         = ann_image_tag(user.profile, :image, size: "30x30", class: "rounded-circle", alt: user.decorate.name_with_username, title: user.decorate.name_with_username)

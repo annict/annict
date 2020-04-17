@@ -3,7 +3,7 @@
 #
 # Table name: db_activities
 #
-#  id                 :integer          not null, primary key
+#  id                 :bigint           not null, primary key
 #  action             :string           not null
 #  object_type        :string
 #  parameters         :json
@@ -11,10 +11,10 @@
 #  trackable_type     :string           not null
 #  created_at         :datetime         not null
 #  updated_at         :datetime         not null
-#  object_id          :integer
-#  root_resource_id   :integer
-#  trackable_id       :integer          not null
-#  user_id            :integer          not null
+#  object_id          :bigint
+#  root_resource_id   :bigint
+#  trackable_id       :bigint           not null
+#  user_id            :bigint           not null
 #
 # Indexes
 #

@@ -7,10 +7,6 @@ module CharacterDecorator
     link_to local_name, character_path(self)
   end
 
-  def db_header_title
-    local_name
-  end
-
   def name_with_series
     return local_name if series.blank?
     series_text = I18n.t("noun.series_with_name", series_name: series.local_name)
@@ -30,7 +26,7 @@ module CharacterDecorator
 
   def db_detail_link(options = {})
     name = options.delete(:name).presence || self.name
-    path = edit_db_character_path(self)
+    path = db_edit_character_path(self)
     link_to name, path, options
   end
 end

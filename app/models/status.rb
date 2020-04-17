@@ -4,14 +4,14 @@
 #
 # Table name: statuses
 #
-#  id                   :integer          not null, primary key
+#  id                   :bigint           not null, primary key
 #  kind                 :integer          not null
 #  likes_count          :integer          default(0), not null
 #  created_at           :datetime
 #  updated_at           :datetime
-#  oauth_application_id :integer
-#  user_id              :integer          not null
-#  work_id              :integer          not null
+#  oauth_application_id :bigint
+#  user_id              :bigint           not null
+#  work_id              :bigint           not null
 #
 # Indexes
 #
@@ -65,7 +65,7 @@ class Status < ApplicationRecord
   after_create :update_channel_work
 
   scope :positive, -> { with_kind(:wanna_watch, :watching, :watched) }
-  scope :with_not_deleted_work, -> { joins(:work).merge(Work.without_deleted) }
+  scope :with_not_deleted_work, -> { joins(:work).merge(Work.only_kept) }
 
   def self.kind_v2_to_v3(kind_v2)
     return if kind_v2.blank?

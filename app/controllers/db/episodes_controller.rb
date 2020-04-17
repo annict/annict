@@ -2,79 +2,68 @@
 
 module Db
   class EpisodesController < Db::ApplicationController
-    before_action :authenticate_user!
+    before_action :authenticate_user!, only: %i(new create edit update destroy)
 
     def index
-      @work = Work.find(params[:work_id])
-      @episodes = @work.episodes.
+      @work = Work.without_deleted.find(params[:work_id])
+      @episodes = @work.episodes.without_deleted.
         includes(:prev_episode).
         order(sort_number: :desc).
-        page(params[:page])
+        page(params[:page]).
+        per(100)
     end
 
     def new
-      @work = Work.find(params[:work_id])
+      @work = Work.without_deleted.find(params[:work_id])
       @form = Db::EpisodeRowsForm.new
-      authorize @form, :new?
+      authorize @form
     end
 
     def create
-      @work = Work.find(params[:work_id])
+      @work = Work.without_deleted.find(params[:work_id])
       @form = Db::EpisodeRowsForm.new(episode_rows_form_params)
       @form.user = current_user
       @form.work = @work
-      authorize @form, :create?
+      authorize @form
 
       return render(:new) unless @form.valid?
+
       @form.save!
 
-      redirect_to db_work_episodes_path(@work), notice: t("resources.episode.created")
+      redirect_to db_episode_list_path(@work), notice: t("resources.episode.created")
     end
 
     def edit
-      @episode = Episode.find(params[:id])
-      authorize @episode, :edit?
+      @episode = Episode.without_deleted.find(params[:id])
+      authorize @episode
       @work = @episode.work
     end
 
     def update
-      @episode = Episode.find(params[:id])
-      authorize @episode, :update?
+      @episode = Episode.without_deleted.find(params[:id])
+      authorize @episode
       @work = @episode.work
 
       @episode.attributes = episode_params
       @episode.user = current_user
 
       return render(:edit) unless @episode.valid?
+
       @episode.save_and_create_activity!
 
-      redirect_to db_work_episodes_path(@work), notice: t("resources.episode.updated")
-    end
-
-    def hide
-      @episode = Episode.find(params[:id])
-      authorize @episode, :hide?
-
-      @episode.soft_delete
-
-      flash[:notice] = t("resources.episode.unpublished")
-      redirect_back fallback_location: db_works_path
+      redirect_to db_episode_list_path(@work), notice: t("resources.episode.updated")
     end
 
     def destroy
-      @episode = Episode.find(params[:id])
-      authorize @episode, :destroy?
+      @episode = Episode.without_deleted.find(params[:id])
+      authorize @episode
 
-      @episode.destroy
+      @episode.destroy_in_batches
 
-      flash[:notice] = t("resources.episode.deleted")
-      redirect_back fallback_location: db_works_path
-    end
-
-    def activities
-      @episode = Episode.find(params[:id])
-      @activities = @episode.db_activities.order(id: :desc)
-      @comment = @episode.db_comments.new
+      redirect_back(
+        fallback_location: db_episode_list_path(@episode.work),
+        notice: t("messages._common.deleted")
+      )
     end
 
     private

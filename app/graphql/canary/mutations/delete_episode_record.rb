@@ -10,7 +10,7 @@ module Canary
       def resolve(episode_record_id:)
         raise Annict::Errors::InvalidAPITokenScopeError unless context[:writable]
 
-        episode_record = context[:viewer].episode_records.without_deleted.find_by_graphql_id(episode_record_id)
+        episode_record = context[:viewer].episode_records.only_kept.find_by_graphql_id(episode_record_id)
         episode_record.record.destroy
 
         {

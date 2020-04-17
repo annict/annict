@@ -3,25 +3,27 @@
 #
 # Table name: channels
 #
-#  id               :integer          not null, primary key
+#  id               :bigint           not null, primary key
 #  aasm_state       :string           default("published"), not null
 #  deleted_at       :datetime
 #  name             :string           not null
 #  name_alter       :string           default(""), not null
 #  sc_chid          :integer
 #  sort_number      :integer          default(0), not null
+#  unpublished_at   :datetime
 #  vod              :boolean          default(FALSE)
 #  created_at       :datetime
 #  updated_at       :datetime
-#  channel_group_id :integer          not null
+#  channel_group_id :bigint           not null
 #
 # Indexes
 #
-#  channels_channel_group_id_idx  (channel_group_id)
-#  channels_sc_chid_key           (sc_chid) UNIQUE
-#  index_channels_on_deleted_at   (deleted_at)
-#  index_channels_on_sort_number  (sort_number)
-#  index_channels_on_vod          (vod)
+#  channels_channel_group_id_idx     (channel_group_id)
+#  channels_sc_chid_key              (sc_chid) UNIQUE
+#  index_channels_on_deleted_at      (deleted_at)
+#  index_channels_on_sort_number     (sort_number)
+#  index_channels_on_unpublished_at  (unpublished_at)
+#  index_channels_on_vod             (vod)
 #
 # Foreign Keys
 #
@@ -29,7 +31,7 @@
 #
 
 class Channel < ApplicationRecord
-  include SoftDeletable
+  include Unpublishable
 
   AMAZON_VIDEO_ID = 243
   BANDAI_CHANNEL_ID = 107
@@ -56,11 +58,6 @@ class Channel < ApplicationRecord
 
       fastest_slot.present? ? fastest_slot.channel : nil
     end
-  end
-
-  def soft_delete_with_children
-    soft_delete
-    programs.without_deleted.each(&:soft_delete)
   end
 
   def amazon_video?

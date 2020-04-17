@@ -9,8 +9,4 @@ module SeriesDecorator
     return name_en if name_en.present?
     name
   end
-
-  def db_header_title
-    local_name
-  end
 end

@@ -3,7 +3,7 @@
 #
 # Table name: settings
 #
-#  id                            :integer          not null, primary key
+#  id                            :bigint           not null, primary key
 #  display_option_record_list    :string           default("all_comments"), not null
 #  display_option_user_work_list :string           default("grid_detailed"), not null
 #  display_option_work_list      :string           default("list_detailed"), not null
@@ -20,7 +20,7 @@
 #  slots_sort_type               :string           default(NULL), not null
 #  created_at                    :datetime         not null
 #  updated_at                    :datetime         not null
-#  user_id                       :integer          not null
+#  user_id                       :bigint           not null
 #
 # Indexes
 #

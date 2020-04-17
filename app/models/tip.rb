@@ -3,14 +3,14 @@
 #
 # Table name: tips
 #
-#  id         :integer          not null, primary key
-#  target     :integer          not null
-#  slug       :string(255)      not null
-#  title      :string(255)      not null
+#  id         :bigint           not null, primary key
 #  icon_name  :string(255)      not null
+#  locale     :string           default("other"), not null
+#  slug       :string(255)      not null
+#  target     :integer          not null
+#  title      :string(255)      not null
 #  created_at :datetime         not null
 #  updated_at :datetime         not null
-#  locale     :string           default("other"), not null
 #
 # Indexes
 #

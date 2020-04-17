@@ -3,15 +3,15 @@
 #
 # Table name: comments
 #
-#  id                :integer          not null, primary key
+#  id                :bigint           not null, primary key
 #  body              :text             not null
 #  likes_count       :integer          default(0), not null
 #  locale            :string           default("other"), not null
 #  created_at        :datetime
 #  updated_at        :datetime
-#  episode_record_id :integer          not null
-#  user_id           :integer          not null
-#  work_id           :integer
+#  episode_record_id :bigint           not null
+#  user_id           :bigint           not null
+#  work_id           :bigint
 #
 # Indexes
 #

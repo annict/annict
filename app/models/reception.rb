@@ -2,11 +2,11 @@
 #
 # Table name: receptions
 #
-#  id         :integer          not null, primary key
+#  id         :bigint           not null, primary key
 #  created_at :datetime
 #  updated_at :datetime
-#  channel_id :integer          not null
-#  user_id    :integer          not null
+#  channel_id :bigint           not null
+#  user_id    :bigint           not null
 #
 # Indexes
 #

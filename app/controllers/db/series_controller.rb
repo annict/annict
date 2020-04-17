@@ -2,76 +2,64 @@
 
 module Db
   class SeriesController < Db::ApplicationController
-    before_action :authenticate_user!, only: %i(new create edit update hide destroy)
+    before_action :authenticate_user!, only: %i(new create edit update destroy)
 
     def index
-      @series_list = Series.order(id: :desc).page(params[:page])
+      @series_list = Series.without_deleted.order(id: :desc).page(params[:page]).per(100)
     end
 
     def new
       @series = Series.new
-      authorize @series, :new?
+      authorize @series
     end
 
     def create
       @series = Series.new(series_params)
       @series.user = current_user
-      authorize @series, :create?
+      authorize @series
 
       return render(:new) unless @series.valid?
+
       @series.save_and_create_activity!
 
-      redirect_to db_series_index_path, notice: t("messages._common.created")
+      redirect_to db_series_list_path, notice: t("messages._common.created")
     end
 
     def edit
-      @series = Series.find(params[:id])
-      authorize @series, :edit?
+      @series = Series.without_deleted.find(params[:id])
+      authorize @series
     end
 
     def update
-      @series = Series.find(params[:id])
-      authorize @series, :update?
+      @series = Series.without_deleted.find(params[:id])
+      authorize @series
 
       @series.attributes = series_params
       @series.user = current_user
 
       return render(:edit) unless @series.valid?
+
       @series.save_and_create_activity!
 
-      redirect_to edit_db_series_path(@series), notice: t("messages._common.updated")
-    end
-
-    def hide
-      @series = Series.find(params[:id])
-      authorize @series, :hide?
-
-      @series.soft_delete
-
-      flash[:notice] = t("messages._common.unpublished")
-      redirect_back fallback_location: db_series_index_path
+      redirect_to db_edit_series_path(@series), notice: t("messages._common.updated")
     end
 
     def destroy
-      @series = Series.find(params[:id])
-      authorize @series, :destroy?
+      @series = Series.without_deleted.find(params[:id])
+      authorize @series
 
-      @series.destroy
+      @series.destroy_in_batches
 
-      flash[:notice] = t("messages._common.deleted")
-      redirect_back fallback_location: db_series_index_path
-    end
-
-    def activities
-      @series = Series.find(params[:id])
-      @activities = @series.db_activities.order(id: :desc)
-      @comment = @series.db_comments.new
+      redirect_back(
+        fallback_location: db_series_list_path,
+        notice: t("messages._common.deleted")
+      )
     end
 
     private
 
     def series_params
-      params.require(:series).permit(:name, :name_en, :name_ro)
+      params.require(:series).permit(:name, :name_alter, :name_alter_en, :name_en)
     end
   end
 end

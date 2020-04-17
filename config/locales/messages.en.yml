@@ -8,6 +8,7 @@ en:
       edit_on_annict_db: Edit on Annict DB
       join_annict: Join Annict
       post: Finished to post
+      published: Published
       search_with_keywords: Search by anime title...
       share_to_facebook: Share to Facebook
       share_to_twitter: Share to Twitter
@@ -80,10 +81,12 @@ en:
       comments:
         created: Comment has been created.
       episodes:
-        auto_generate_info_html: "Episodes: %{manual_episodes_count}<br>Auto generate episodes: %{max_generate_episodes_count}"
+        auto_generate_info_html: "Total episodes: %{manual_episodes_count}<br>Published episodes: %{episodes_count}<br>Auto generate episodes: %{max_generate_episodes_count}"
       works:
         no_episodes: No Episodes
         no_image: No Image
+        no_release_season: No Season
+        no_slots: No Slots
     episode_records:
       created: Created
       new:
@@ -240,6 +243,8 @@ en:
         markdown_support: You can write in Markdown.
       welcome: Welcome to Userland!
     users:
+      _validators:
+        exists_active_oauth_applications: which you created are active.
       allowed_locales_description: "This setting which languages you are more likely to see throughout the site, but you may still see other languages, especially english."
       bye_bye: "Bye Bye... (´・ω;:.."
       no_works: No works

@@ -3,7 +3,7 @@
 #
 # Table name: people
 #
-#  id                   :integer          not null, primary key
+#  id                   :bigint           not null, primary key
 #  aasm_state           :string           default("published"), not null
 #  birthday             :date
 #  blood_type           :string
@@ -20,13 +20,14 @@
 #  staffs_count         :integer          default(0), not null
 #  twitter_username     :string
 #  twitter_username_en  :string           default(""), not null
+#  unpublished_at       :datetime
 #  url                  :string
 #  url_en               :string           default(""), not null
 #  wikipedia_url        :string
 #  wikipedia_url_en     :string           default(""), not null
 #  created_at           :datetime         not null
 #  updated_at           :datetime         not null
-#  prefecture_id        :integer
+#  prefecture_id        :bigint
 #
 # Indexes
 #
@@ -37,6 +38,7 @@
 #  index_people_on_name                  (name) UNIQUE
 #  index_people_on_prefecture_id         (prefecture_id)
 #  index_people_on_staffs_count          (staffs_count)
+#  index_people_on_unpublished_at        (unpublished_at)
 #
 # Foreign Keys
 #
@@ -48,7 +50,7 @@ class Person < ApplicationRecord
 
   include DbActivityMethods
   include RootResourceCommon
-  include SoftDeletable
+  include Unpublishable
 
   DIFF_FIELDS = %i(
     prefecture_id name name_kana nickname gender url wikipedia_url twitter_username
@@ -70,7 +72,7 @@ class Person < ApplicationRecord
   has_many :cast_works, through: :casts, source: :work
   has_many :db_activities, as: :trackable, dependent: :destroy
   has_many :db_comments, as: :resource, dependent: :destroy
-  has_many :favorite_people, dependent: :destroy
+  has_many :favorite_people
   has_many :staffs, as: :resource, dependent: :destroy
   has_many :staff_works, through: :staffs, source: :work
   has_many :users, through: :favorite_people
@@ -102,12 +104,6 @@ class Person < ApplicationRecord
     end
 
     data.delete_if { |_, v| v.blank? }
-  end
-
-  def soft_delete_with_children
-    soft_delete
-    casts.without_deleted.each(&:soft_delete)
-    staffs.without_deleted.each(&:soft_delete)
   end
 
   private

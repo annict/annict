@@ -45,7 +45,6 @@ import recordRating from './common/components/recordRating';
 import recordSorter from './common/components/recordSorter';
 import recordTextarea from './common/components/recordTextarea';
 import recordWordCount from './common/components/recordWordCount';
-import searchForm from './common/components/searchForm';
 import shareButtonFacebook from './common/components/shareButtonFacebook';
 import shareButtonTwitter from './common/components/shareButtonTwitter';
 import statusSelector from './common/components/statusSelector';
@@ -113,7 +112,6 @@ document.addEventListener('turbolinks:load', event => {
   Vue.component('c-record-sorter', recordSorter);
   Vue.component('c-record-textarea', recordTextarea);
   Vue.component('c-record-word-count', recordWordCount);
-  Vue.component('c-search-form', searchForm);
   Vue.component('c-share-button-facebook', shareButtonFacebook);
   Vue.component('c-share-button-twitter', shareButtonTwitter);
   Vue.component('c-status-selector', statusSelector);

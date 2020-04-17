@@ -3,7 +3,7 @@
     .col
       span.c-db-activity__avatar
         = link_to annict_url(:user_url, activity.user.username) do
-          = ann_image_tag(activity.user.profile, :image, size: "35x35", class: "rounded-circle")
+          = image_tag ann_image_url(activity.user.profile, :image, size: "35x35"), alt: activity.user.username, class: "rounded-circle", loading: :lazy
       = render "db/activities/activity_root_resources_action", activity: activity
     .col-3.text-right
       = local_time_ago_in_words(activity.created_at)

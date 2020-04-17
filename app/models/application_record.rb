@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 class ApplicationRecord < ActiveRecord::Base
+  include BatchDestroyable
+
   self.abstract_class = true
 
   LOCALES = %i(en ja other).freeze

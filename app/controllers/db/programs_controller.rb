@@ -2,78 +2,64 @@
 
 module Db
   class ProgramsController < Db::ApplicationController
-    before_action :authenticate_user!
+    before_action :authenticate_user!, only: %i(new create edit update destroy)
 
     def index
-      @work = Work.find(params[:work_id])
-      @programs = @work.programs.order(started_at: :desc, channel_id: :asc)
+      @work = Work.without_deleted.find(params[:work_id])
+      @programs = @work.programs.without_deleted.order(started_at: :desc, channel_id: :asc)
     end
 
     def new
-      @work = Work.find(params[:work_id])
+      @work = Work.without_deleted.find(params[:work_id])
       @form = Db::ProgramRowsForm.new
-      authorize @form, :new?
+      authorize @form
     end
 
     def create
-      @work = Work.find(params[:work_id])
+      @work = Work.without_deleted.find(params[:work_id])
       @form = Db::ProgramRowsForm.new(program_rows_form_params)
       @form.user = current_user
       @form.work = @work
-      authorize @form, :create?
+      authorize @form
 
       return render(:new) unless @form.valid?
+
       @form.save!
 
-      flash[:notice] = t("messages._common.created")
-      redirect_to db_work_programs_path(@work)
+      redirect_to db_program_list_path(@work), notice: t("messages._common.created")
     end
 
     def edit
-      @program = Program.find(params[:id])
-      authorize @program, :edit?
+      @program = Program.without_deleted.find(params[:id])
+      authorize @program
       @work = @program.work
     end
 
     def update
-      @program = Program.find(params[:id])
-      authorize @program, :update?
+      @program = Program.without_deleted.find(params[:id])
+      authorize @program
       @work = @program.work
 
       @program.attributes = program_params
       @program.user = current_user
 
       return render(:edit) unless @program.valid?
+
       @program.save_and_create_activity!
 
-      flash[:notice] = t("messages._common.updated")
-      redirect_to db_work_programs_path(@work)
-    end
-
-    def hide
-      @program = Program.find(params[:id])
-      authorize @program, :hide?
-
-      @program.soft_delete
-
-      flash[:notice] = t("resources.program.unpublished")
-      redirect_back fallback_location: db_works_path
+      redirect_to db_program_list_path(@work), notice: t("messages._common.updated")
     end
 
     def destroy
-      @program = Program.find(params[:id])
-      authorize @program, :destroy?
+      @program = Program.without_deleted.find(params[:id])
+      authorize @program
 
-      @program.destroy
+      @program.destroy_in_batches
 
-      flash[:notice] = t("resources.program.deleted")
-      redirect_back fallback_location: db_works_path
-    end
-
-    def activities
-      @program = Program.find(params[:id])
-      @activities = @program.db_activities.order(id: :desc)
-      @comment = @program.db_comments.new
+      redirect_back(
+        fallback_location: db_program_list_path(@program.work),
+        notice: t("messages._common.deleted")
+      )
     end
 
     private

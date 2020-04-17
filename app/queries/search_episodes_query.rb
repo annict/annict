@@ -6,7 +6,7 @@ class SearchEpisodesQuery
     annict_ids: nil,
     order_by: nil
   )
-    @collection = collection.without_deleted
+    @collection = collection.only_kept
     @args = {
       annict_ids: annict_ids,
       order_by: order_by

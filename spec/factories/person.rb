@@ -17,5 +17,21 @@ FactoryBot.define do
     birthday { Date.parse("2000-01-01") }
     blood_type { :a }
     height { 150 }
+
+    trait :published do
+      unpublished_at { nil }
+    end
+
+    trait :unpublished do
+      unpublished_at { Time.zone.now }
+    end
+
+    trait :not_deleted do
+      deleted_at { nil }
+    end
+
+    trait :deleted do
+      deleted_at { Time.zone.now }
+    end
   end
 end

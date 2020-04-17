@@ -23,7 +23,7 @@ module Canary
       def resolve(episode_id:, comment: nil, rating_state: nil, share_twitter: nil, share_facebook: nil)
         raise Annict::Errors::InvalidAPITokenScopeError unless context[:writable]
 
-        episode = Episode.without_deleted.find_by_graphql_id(episode_id)
+        episode = Episode.only_kept.find_by_graphql_id(episode_id)
 
         record = episode.episode_records.new do |r|
           r.rating_state = rating_state&.downcase

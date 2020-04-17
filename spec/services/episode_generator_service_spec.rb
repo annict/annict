@@ -3,9 +3,9 @@
 describe EpisodeGeneratorService, type: :service do
   context "New work" do
     let(:channel) { create(:channel) }
-    let(:work) { create(:work) }
 
     context "has no episodes" do
+      let(:work) { create(:work) }
       let(:program) { create(:program, channel: channel, work: work, started_at: Time.parse("2019-01-04 0:00:00")) }
       let!(:slot1) { create(:slot, program: program, channel: channel, work: work, episode: nil, number: 1, started_at: Time.parse("2019-01-04 0:00:00")) }
       let!(:slot2) { create(:slot, program: program, channel: channel, work: work, episode: nil, number: 2, started_at: Time.parse("2019-01-11 0:00:00")) }
@@ -16,7 +16,7 @@ describe EpisodeGeneratorService, type: :service do
         end
 
         it "creates 1 episode" do
-          episodes = work.episodes.without_deleted.order(:raw_number)
+          episodes = work.episodes.only_kept.order(:raw_number)
           expect(episodes.count).to eq(1)
           expect(episodes[0].raw_number).to eq(1.0)
         end
@@ -28,7 +28,7 @@ describe EpisodeGeneratorService, type: :service do
         end
 
         it "creates 2 episodes" do
-          episodes = work.episodes.without_deleted.order(:raw_number)
+          episodes = work.episodes.only_kept.order(:raw_number)
           expect(episodes.count).to eq(2)
           expect(episodes[0].raw_number).to eq(1.0)
           expect(episodes[1].raw_number).to eq(2.0)
@@ -37,6 +37,7 @@ describe EpisodeGeneratorService, type: :service do
     end
 
     context "has episodes but no irregular" do
+      let(:work) { create(:work) }
       let(:program) { create(:program, channel: channel, work: work, started_at: Time.parse("2019-01-04 0:00:00")) }
       let(:episode1) { create(:episode, work: work, raw_number: 1.0) }
       let!(:slot1) { create(:slot, program: program, channel: channel, work: work, episode: episode1, number: 1, started_at: Time.parse("2019-01-04 0:00:00")) }
@@ -48,7 +49,7 @@ describe EpisodeGeneratorService, type: :service do
         end
 
         it "does not create episodes" do
-          episodes = work.episodes.without_deleted.order(:raw_number)
+          episodes = work.episodes.only_kept.order(:raw_number)
           expect(episodes.count).to eq(1)
           expect(episodes[0].raw_number).to eq(1.0)
         end
@@ -60,7 +61,7 @@ describe EpisodeGeneratorService, type: :service do
         end
 
         it "creates 1 episode" do
-          episodes = work.episodes.without_deleted.order(:raw_number)
+          episodes = work.episodes.only_kept.order(:raw_number)
           expect(episodes.count).to eq(2)
           expect(episodes[0].raw_number).to eq(1.0)
           expect(episodes[1].raw_number).to eq(2.0)
@@ -69,8 +70,9 @@ describe EpisodeGeneratorService, type: :service do
     end
 
     context "has irregular episodes" do
+      let(:work) { create(:work) }
       let(:program) { create(:program, channel: channel, work: work, started_at: Time.parse("2019-01-04 0:00:00")) }
-      let(:episode1) { create(:episode, work: work, raw_number: 1.0,) }
+      let(:episode1) { create(:episode, work: work, raw_number: 1.0) }
       let(:episode2) { create(:episode, work: work, raw_number: 1.5, title: "2話目から総集編！") }
       let!(:slot1) { create(:slot, program: program, channel: channel, work: work, episode: episode1, number: 1, started_at: Time.parse("2019-01-04 0:00:00")) }
       let!(:slot2) { create(:slot, program: program, channel: channel, work: work, episode: episode2, number: 2, started_at: Time.parse("2019-01-11 0:00:00"), irregular: true) }
@@ -82,7 +84,7 @@ describe EpisodeGeneratorService, type: :service do
         end
 
         it "does not create episodes" do
-          episodes = work.episodes.without_deleted.order(:raw_number)
+          episodes = work.episodes.only_kept.order(:raw_number)
           expect(episodes.count).to eq(2)
           expect(episodes[0].raw_number).to eq(1.0)
           expect(episodes[1].raw_number).to eq(1.5)
@@ -95,7 +97,7 @@ describe EpisodeGeneratorService, type: :service do
         end
 
         it "creates 1 episode" do
-          episodes = work.episodes.without_deleted.order(:raw_number)
+          episodes = work.episodes.only_kept.order(:raw_number)
           expect(episodes.count).to eq(3)
           expect(episodes[0].raw_number).to eq(1.0)
           expect(episodes[1].raw_number).to eq(1.5)
@@ -125,7 +127,7 @@ describe EpisodeGeneratorService, type: :service do
         end
 
         it "does not create episodes" do
-          episodes = work.episodes.without_deleted.order(:sort_number)
+          episodes = work.episodes.only_kept.order(:sort_number)
           expect(episodes.count).to eq(3)
           expect(episodes[0].id).to eq(episode1.id)
           expect(episodes[0].raw_number).to eq(nil)
@@ -142,7 +144,7 @@ describe EpisodeGeneratorService, type: :service do
         end
 
         it "creates 1 episode" do
-          episodes = work.episodes.without_deleted.order(:sort_number)
+          episodes = work.episodes.only_kept.order(:sort_number)
           expect(episodes.count).to eq(4)
           expect(episodes[0].id).to eq(episode1.id)
           expect(episodes[0].raw_number).to eq(nil)
@@ -171,7 +173,7 @@ describe EpisodeGeneratorService, type: :service do
         end
 
         it "does not create episodes" do
-          episodes = work.episodes.without_deleted.order(:sort_number)
+          episodes = work.episodes.only_kept.order(:sort_number)
           expect(episodes.count).to eq(3)
           expect(episodes[0].id).to eq(episode1.id)
           expect(episodes[0].raw_number).to eq(nil)
@@ -188,7 +190,7 @@ describe EpisodeGeneratorService, type: :service do
         end
 
         it "creates 1 episode" do
-          episodes = work.episodes.without_deleted.order(:sort_number)
+          episodes = work.episodes.only_kept.order(:sort_number)
           expect(episodes.count).to eq(4)
           expect(episodes[0].id).to eq(episode1.id)
           expect(episodes[0].raw_number).to eq(nil)

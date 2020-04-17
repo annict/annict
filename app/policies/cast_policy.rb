@@ -2,18 +2,18 @@
 
 class CastPolicy < ApplicationPolicy
   def create?
-    user.committer?
+    user.present? && user.committer?
   end
 
   def update?
-    user.committer?
-  end
-
-  def hide?
-    signed_in? && user.role.admin?
+    user.present? && user.committer?
   end
 
   def destroy?
-    user.role.admin?
+    user.present? && user.admin?
+  end
+
+  def unpublish?
+    user.present? && user.committer?
   end
 end

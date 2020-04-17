@@ -29,6 +29,10 @@ FactoryBot.define do
       role { :editor }
     end
 
+    trait :with_admin_role do
+      role { :admin }
+    end
+
     factory :registered_user, traits: %i(with_profile with_provider with_setting) do
       after :create, &:confirm
     end

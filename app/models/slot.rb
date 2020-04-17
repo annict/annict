@@ -3,7 +3,7 @@
 #
 # Table name: slots
 #
-#  id             :integer          not null, primary key
+#  id             :bigint           not null, primary key
 #  aasm_state     :string           default("published"), not null
 #  deleted_at     :datetime
 #  irregular      :boolean          default(FALSE), not null
@@ -12,12 +12,13 @@
 #  sc_last_update :datetime
 #  sc_pid         :integer
 #  started_at     :datetime         not null
+#  unpublished_at :datetime
 #  created_at     :datetime
 #  updated_at     :datetime
-#  channel_id     :integer          not null
-#  episode_id     :integer
-#  program_id     :integer
-#  work_id        :integer          not null
+#  channel_id     :bigint           not null
+#  episode_id     :bigint
+#  program_id     :bigint
+#  work_id        :bigint           not null
 #
 # Indexes
 #
@@ -27,6 +28,7 @@
 #  index_slots_on_program_id_and_episode_id  (program_id,episode_id) UNIQUE
 #  index_slots_on_program_id_and_number      (program_id,number) UNIQUE
 #  index_slots_on_sc_pid                     (sc_pid) UNIQUE
+#  index_slots_on_unpublished_at             (unpublished_at)
 #  programs_channel_id_idx                   (channel_id)
 #  programs_episode_id_idx                   (episode_id)
 #  programs_work_id_idx                      (work_id)
@@ -41,7 +43,7 @@
 
 class Slot < ApplicationRecord
   include DbActivityMethods
-  include SoftDeletable
+  include Unpublishable
 
   DIFF_FIELDS = %i(channel_id episode_id started_at rebroadcast).freeze
 
@@ -57,8 +59,8 @@ class Slot < ApplicationRecord
   validates :channel_id, presence: true
   validates :started_at, presence: true
 
-  scope :episode_published, -> { joins(:episode).merge(Episode.without_deleted) }
-  scope :with_not_deleted_work, -> { joins(:work).merge(Work.without_deleted) }
+  scope :episode_published, -> { joins(:episode).merge(Episode.only_kept) }
+  scope :with_not_deleted_work, -> { joins(:work).merge(Work.only_kept) }
   scope :with_works, ->(works) { joins(:work).merge(works) }
 
   before_validation :calc_for_timezone

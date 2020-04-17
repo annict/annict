@@ -3,7 +3,7 @@
 #
 # Table name: profiles
 #
-#  id                                  :integer          not null, primary key
+#  id                                  :bigint           not null, primary key
 #  background_image_animated           :boolean          default(FALSE), not null
 #  background_image_data               :text
 #  description                         :string(510)      default(""), not null
@@ -20,7 +20,7 @@
 #  url                                 :string
 #  created_at                          :datetime
 #  updated_at                          :datetime
-#  user_id                             :integer          not null
+#  user_id                             :bigint           not null
 #
 # Indexes
 #

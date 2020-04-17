@@ -3,7 +3,7 @@
 #
 # Table name: characters
 #
-#  id                    :integer          not null, primary key
+#  id                    :bigint           not null, primary key
 #  aasm_state            :string           default("published"), not null
 #  age                   :string           default(""), not null
 #  age_en                :string           default(""), not null
@@ -28,11 +28,12 @@
 #  nickname_en           :string           default(""), not null
 #  occupation            :string           default(""), not null
 #  occupation_en         :string           default(""), not null
+#  unpublished_at        :datetime
 #  weight                :string           default(""), not null
 #  weight_en             :string           default(""), not null
 #  created_at            :datetime         not null
 #  updated_at            :datetime         not null
-#  series_id             :integer
+#  series_id             :bigint
 #
 # Indexes
 #
@@ -40,6 +41,7 @@
 #  index_characters_on_favorite_users_count  (favorite_users_count)
 #  index_characters_on_name_and_series_id    (name,series_id) UNIQUE
 #  index_characters_on_series_id             (series_id)
+#  index_characters_on_unpublished_at        (unpublished_at)
 #
 # Foreign Keys
 #
@@ -49,7 +51,7 @@
 class Character < ApplicationRecord
   include DbActivityMethods
   include RootResourceCommon
-  include SoftDeletable
+  include Unpublishable
 
   DIFF_FIELDS = %i(
     name name_en series_id nickname nickname_en birthday birthday_en age age_en
@@ -58,14 +60,15 @@ class Character < ApplicationRecord
     description_source_en
   ).freeze
 
-  belongs_to :series, optional: true
+  belongs_to :series
   has_many :casts, dependent: :destroy
   has_many :db_activities, as: :trackable, dependent: :destroy
   has_many :db_comments, as: :resource, dependent: :destroy
-  has_many :favorite_characters, dependent: :destroy
+  has_many :favorite_characters
   has_many :users, through: :favorite_characters
   has_many :works, through: :casts
 
+  validates :series_id, presence: true
   validates :name, presence: true, uniqueness: { scope: :series_id }
   validates :description, presence_pair: :description_source
   validates :description_en, presence_pair: :description_source_en

@@ -3,7 +3,7 @@
 #
 # Table name: userland_projects
 #
-#  id                   :integer          not null, primary key
+#  id                   :bigint           not null, primary key
 #  available            :boolean          default(FALSE), not null
 #  description          :text             not null
 #  icon_content_type    :string
@@ -17,7 +17,7 @@
 #  url                  :string           not null
 #  created_at           :datetime         not null
 #  updated_at           :datetime         not null
-#  userland_category_id :integer          not null
+#  userland_category_id :bigint           not null
 #
 # Indexes
 #

@@ -46,22 +46,26 @@ ja:
         sort_id: sort_id
         sort_season: sort_season
         sort_watchers_count: sort_watchers_count
-      db/character_rows_form:
-        rows: キャラクター
       db/cast_rows_form:
         rows: キャスト
+      db/character_rows_form:
+        rows: キャラクター
       db/episode_rows_form:
         rows: エピソード
-      db/slot_rows_form:
-        rows: 放送予定
-      db/trailer_rows_form:
-        rows: PVs
-      db/series_work_rows_form:
-        rows: シリーズ作品
-      db/staff_rows_form:
-        rows: スタッフ
+      db/organization_rows_form:
+        rows: 団体
+      db/person_rows_form:
+        rows: 人物
       db/program_rows_form:
         rows: 放送情報
+      db/series_work_rows_form:
+        rows: シリーズ作品
+      db/slot_rows_form:
+        rows: 放送予定
+      db/staff_rows_form:
+        rows: スタッフ
+      db/trailer_rows_form:
+        rows: PVs
     errors:
       forms:
         db/cast_rows_form:

@@ -23,6 +23,7 @@ module Db
       @attrs_list ||= fetched_rows.map do |row_data|
         {
           name: row_data[:name][:value],
+          name_kana: row_data[:name_kana][:value],
           series_id: row_data[:series][:id]
         }
       end
@@ -30,12 +31,13 @@ module Db
 
     def fetched_rows
       parsed_rows.map do |row_columns|
-        series = Series.without_deleted.where(id: row_columns[1]).
-          or(Series.without_deleted.where(name: row_columns[1])).first
+        series = Series.only_kept.where(id: row_columns[2]).
+          or(Series.only_kept.where(name: row_columns[2])).first
 
         {
           name: { value: row_columns[0] },
-          series: { id: series&.id, value: row_columns[1] }
+          name_kana: { value: row_columns[1] },
+          series: { id: series&.id, value: row_columns[2] }
         }
       end
     end
@@ -45,18 +47,9 @@ module Db
 
       new_resources.each do |c|
         next if c.valid?
-        message = "\"#{c.name}\"#{c.errors.messages[:name].first}"
-        errors.add(:rows, message)
-      end
-    end
 
-    def valid_resource
-      fetched_rows.each do |row_data|
-        row_data.slice(:series).each do |_, data|
-          next if data[:id].present?
-          i18n_path = "activemodel.errors.forms.db/character_rows_form.invalid"
-          errors.add(:rows, I18n.t(i18n_path, value: data[:value]))
-        end
+        message = "\"#{c.name}\": #{c.errors.full_messages.first}"
+        errors.add(:rows, message)
       end
     end
   end

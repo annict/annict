@@ -16,7 +16,7 @@
     / - if @collection.description.present?
     /   = @collection.description
     hr.mb-0
-    - @works.without_deleted.each do |work|
+    - @works.only_kept.each do |work|
       .py-3.u-underline
         = link_to work_path(work) do
           = ann_image_tag work.work_image, :image, size: "300x", ratio: "3:4", class: "img-fluid img-thumbnail rounded"
@@ -36,7 +36,7 @@
         .text-right
           c-share-button-twitter.mr-2 text="#{title}" url="#{local_url}#{user_work_tag_path(@user.username, @tag.name)}"
           c-share-button-facebook.mr-2 url="#{local_url}#{user_work_tag_path(@user.username, @tag.name)}"
-        
+
 = render "application/components/breadcrumb"
 = render "application/components/footer"
 
