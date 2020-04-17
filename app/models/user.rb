@@ -389,18 +389,13 @@ class User < ApplicationRecord
     (days / 7).floor
   end
 
-  def leave
-    username = SecureRandom.uuid.tr("-", "_")
-
-    ActiveRecord::Base.transaction do
-      update_columns(username: username, email: "#{username}@example.com", deleted_at: Time.zone.now)
-      providers.delete_all
-
-      oauth_applications.available.find_each do |app|
-        app.update(owner: nil)
-        app.destroy_in_batches
-      end
+  def validate_to_destroy
+    if oauth_applications.where(deleted_at: nil).exists?
+      errors.add(:oauth_applications, I18n.t("messages.users._validators.exists_active_oauth_applications"))
+      return false
     end
+
+    true
   end
 
   def slot_data(library_entries)

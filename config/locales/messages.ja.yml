@@ -242,6 +242,8 @@ ja:
         markdown_support: Markdownで書くことができます。
       welcome: Userlandにようこそ！
     users:
+      _validators:
+        exists_active_oauth_applications: が存在するため、退会できません
       allowed_locales_description: "サイト内に投稿された文書 (感想やレビューなど) の中で、どの言語で書かれたものを表示するかを設定することができます。"
       bye_bye: "退会しました。(´・ω;:.."
       no_works: 作品はありません

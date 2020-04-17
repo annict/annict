@@ -243,6 +243,8 @@ en:
         markdown_support: You can write in Markdown.
       welcome: Welcome to Userland!
     users:
+      _validators:
+        exists_active_oauth_applications: which you created are active.
       allowed_locales_description: "This setting which languages you are more likely to see throughout the site, but you may still see other languages, especially english."
       bye_bye: "Bye Bye... (´・ω;:.."
       no_works: No works
