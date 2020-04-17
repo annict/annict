@@ -175,6 +175,7 @@ ja:
         email_username: メールアドレスまたはユーザ名
         email: メールアドレス
         locale: 言語
+        oauth_applications: OAuthアプリケーション
         password: パスワード
         password_confirmation: パスワード (確認)
         terms_and_privacy_policy_agreement: 利用規約とプライバシーポリシー

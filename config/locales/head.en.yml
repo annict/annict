@@ -177,7 +177,10 @@ en:
         index: Notifications
       oauth:
         applications:
+          edit: Edit Application
+          index: Applications
           new: New application
+          show: "%{application_name} | Application Detail"
         authorizations:
           new: Authorize an application
           show: Authorization code

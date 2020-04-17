@@ -37,7 +37,7 @@ module Oauth
     def update
       @application = current_user.oauth_applications.available.find(params[:id])
       if @application.update(application_params)
-        flash[:notice] = t "doorkeeper.flash.applications.update.notice"
+        flash[:notice] = t "messages._common.updated"
         redirect_to oauth_application_url(@application)
       else
         render :edit
@@ -47,7 +47,7 @@ module Oauth
     def destroy
       @application = current_user.oauth_applications.available.find(params[:id])
       @application.destroy_in_batches
-      flash[:notice] = t "messages.oauth.applications.deleted"
+      flash[:notice] = t "messages._common.deleted"
       redirect_to oauth_applications_url
     end
 

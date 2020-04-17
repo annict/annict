@@ -177,7 +177,10 @@ ja:
         new: ユーザ登録
       oauth:
         applications:
+          edit: アプリケーション編集
+          index: アプリケーション一覧
           new: アプリケーション登録
+          show: "%{application_name} | アプリケーション詳細"
         authorizations:
           new: アプリケーション認証
           show: 認証コード
