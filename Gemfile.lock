@@ -609,8 +609,8 @@ GEM
     validate_url (1.0.8)
       activemodel (>= 3.0.0)
       public_suffix
-    view_component (2.2.2)
-      capybara (~> 3)
+    view_component (2.5.1)
+      activesupport (>= 5.0.0, < 7.0)
     virtus (1.0.5)
       axiom-types (~> 0.1)
       coercible (~> 1.0)
