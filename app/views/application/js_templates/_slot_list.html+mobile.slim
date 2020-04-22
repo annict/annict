@@ -30,14 +30,14 @@ script#t-slot-list type="x-template"
                   a :href='"/works/" + slot.work.id + "/episodes/" + slot.episode.id'
                     | {{ slot.episode.number }}
                     span.ml-2 v-if="slot.episode.title" {{ slot.episode.title }}
-            form.row
-              .col
-                c-record-rating.mb-2 :init-record="slot.record" v-if="slot.record.isEditingBody"
+            form
+              template v-if="slot.record.isEditingBody"
+                c-record-rating.mb-2 :init-record="slot.record"
                 .mb-2
                   c-record-textarea :init-record="slot.record"
                 .row
                   .col
-                    .a-share-buttons v-if="slot.record.isEditingBody"
+                    .a-share-buttons
                       span v-if="user.authorized_to_twitter"
                         label
                           input type="checkbox" v-model="user.share_record_to_twitter"
@@ -45,16 +45,20 @@ script#t-slot-list type="x-template"
                   .col
                     .text-right
                       .small.text-mute
-                        c-record-word-count :init-record="slot.record" v-if="slot.record.isEditingBody"
-              template v-if="slot.record.isEditingBody"
-                .col.pl-0.text-center
+                        c-record-word-count :init-record="slot.record"
+
+                .text-center
                   button.btn.btn-primary type="button" @click="submit(slot)" :class='{ disabled: slot.record.isRecorded, "c-spinner": slot.record.isSaving }'
                     = icon "edit", class: "mr-1"
                     = t "verb.track"
               template v-else=""
-                .col.u-flex-grow-0.pl-0
-                  button.btn.btn-primary type="button" @click="submit(slot)" :class='{ disabled: slot.record.isRecorded, "c-spinner": slot.record.isSaving }'
-                    = icon "edit", class: "mr-0"
+                .row
+                  .col
+                    .mb-2
+                      c-record-textarea :init-record="slot.record"
+                  .col.u-flex-grow-0.pl-0
+                    button.btn.btn-primary type="button" @click="submit(slot)" :class='{ disabled: slot.record.isRecorded, "c-spinner": slot.record.isSaving }'
+                      = icon "edit", class: "mr-0"
       template v-if="!isLoading && slots.length === 0"
         = render "application/components/empty", text: t('messages.slots.no_slots') do
           = t "messages.slots.please_set_channels_html", channels_link: link_to(t("noun.channel_list"), channels_path)
