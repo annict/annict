@@ -8,15 +8,12 @@
     "webpack:start": "webpack-dev-server",
     "webpack:watch": "webpack -w --progress",
     "heroku-postbuild": "NODE_ENV=production webpack",
-    "graphql:update-api-reference": "bundle exec rake graphql:dump_schema && bundle exec rake graphql:build_docs && cp -rf ./tmp/docs/graphql-api/reference/ ../annict-developers-jp/docs/.vuepress/public/graphql-api/reference",
-    "graphql:build-fragment": "node app/frontend/schemaQuery.js"
+    "graphql:update-api-reference": "bundle exec rake graphql:dump_schema && bundle exec rake graphql:build_docs && cp -rf ./tmp/docs/graphql-api/reference/ ../annict-developers-jp/docs/.vuepress/public/graphql-api/reference"
   },
   "dependencies": {
     "@babel/core": "^7.9.0",
     "@babel/preset-env": "^7.9.0",
     "@rails/ujs": "^6.0.0",
-    "@vue/composition-api": "^0.2.1",
-    "apollo-boost": "^0.4.3",
     "async": "2.6.1",
     "autoprefixer": "^9.1.5",
     "autosize": "^4.0.1",
@@ -29,8 +26,6 @@
     "core-js": "^3.6.4",
     "d3": "^5.7.0",
     "d3-selection": "^1.3.2",
-    "graphql": "^14.4.2",
-    "graphql-tag": "^2.10.1",
     "jquery": "^3.3.1",
     "js-cookie": "2.2.0",
     "linkifyjs": "2.1.8",
@@ -48,15 +43,10 @@
     "vue": "^2.5.17",
     "vue-i18n": "^8.12.0",
     "vue-lazyload": "1.2.6",
-    "vue-loader": "^15.7.1",
-    "vue-template-compiler": "^2.6.10",
     "webpack-merge": "^4.1.4"
   },
   "devDependencies": {
     "@babel/plugin-proposal-class-properties": "^7.8.3",
-    "@babel/plugin-proposal-object-rest-spread": "^7.9.5",
-    "@babel/plugin-transform-runtime": "^7.9.0",
-    "@babel/plugin-transform-typescript": "^7.9.4",
     "@babel/preset-typescript": "^7.9.0",
     "@types/jquery": "^3.3.31",
     "@types/node": "^12.7.8",
