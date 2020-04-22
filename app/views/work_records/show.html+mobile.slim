@@ -15,7 +15,7 @@
 
 - if @work_records.length > 1
   h2.h4.text-center.mt-3.mb-4.font-weight-bold
-    = t "noun.other_work_records_by", profile_name: @user.profile.name
+    = t "noun.other_record_body_list_by", profile_name: @user.profile.name
   .c-card.mb-3
     .container
       - @work_records.first(5).each do |work_record|
@@ -27,16 +27,11 @@
             .small.text-muted.mb-1
               = link_to work_record.work.local_title, work_path(work_record.work), class: "u-text-body"
             .mb-2
-              - title = t("messages.work_records.view_work_record_with_words_count", count: work_record.body.length)
-              = link_to title, work_record_path(work_record.user.username, work_record)
+              - title = t("messages.records.view_record_body")
+              = link_to title, record_path(work_record.user.username, work_record)
             .small
-              = link_to work_record_path(work_record.user.username, work_record), title: local_datetime(work_record.created_at), class: "u-text-body" do
+              = link_to record_path(work_record.user.username, work_record), title: local_datetime(work_record.created_at), class: "u-text-body" do
                 = local_time_ago_in_words(work_record.created_at)
-      - if @work_records.length > 5
-        .mb-3
-          = link_to work_records_path(@user.username), class: "btn btn-secondary w-100" do
-            = icon "angle-right"
-            = t "messages.works.view_all_n_record_body_list", n: @work_records.length
 
 = render "application/components/breadcrumb"
 = render "application/components/footer"

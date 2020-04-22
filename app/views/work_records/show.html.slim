@@ -32,13 +32,8 @@
                       - title = t("messages.records.view_record_body")
                       = link_to title, record_path(work_record.user.username, work_record.record)
                     .small
-                      = link_to work_record_path(work_record.user.username, work_record), title: local_datetime(work_record.created_at), class: "u-text-body" do
+                      = link_to record_path(work_record.user.username, work_record), title: local_datetime(work_record.created_at), class: "u-text-body" do
                         = local_time_ago_in_words(work_record.created_at)
-            - if @work_records.length > 5
-              .mb-3
-                = link_to work_records_path(@user.username), class: "btn btn-secondary w-100" do
-                  = icon "angle-right"
-                  = t "messages.works.view_all_n_record_body_list", n: @work_records.length
       .col-3
         .mb-2
           = link_to work_path(@work) do
