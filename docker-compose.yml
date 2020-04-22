@@ -4,7 +4,7 @@ services:
   webpack:
     build:
       context: .
-      dockerfile: ./app/frontend/Dockerfile
+      dockerfile: ./app/frontend/Dockerfile.local
     command: /bin/ash -c 'yarn webpack:start'
     volumes:
       - .:/annict
