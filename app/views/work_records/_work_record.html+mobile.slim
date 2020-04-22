@@ -12,8 +12,6 @@
         - if work_record.modified_at.present?
           small.ml-2.text-muted
             = icon "pencil-alt"
-        span.small.ml-2.text-muted
-          = "#{work_record.record.impressions_count} views"
 
 c-comment-guard inline-template="" :init-is-spoiler="#{is_spoiler == true}"
   div
@@ -65,7 +63,7 @@ c-comment-guard inline-template="" :init-is-spoiler="#{is_spoiler == true}"
       c-like-button.ml-2 resource-name="WorkRecord" :init-resource-id="#{work_record.id}" :init-likes-count="#{work_record.likes_count}" :init-is-liked="#{user_signed_in? && !work_record.user_like_id.nil?}" :is-signed-in="#{user_signed_in?}"
 
 - if policy(work_record).update?
-  .small.text-right.mt-2
+  .text-right.mt-2
     = link_to edit_work_record_path(work_record.work, work_record.record), class: "mr-2" do
       = icon "edit", class: "mr-1"
       = t "noun.edit"

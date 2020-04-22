@@ -16,12 +16,10 @@ c-record inline-template="" :user-id="#{episode_record.user.id}"
           - if episode_record.modify_body?
             small.ml-1.text-muted
               = icon "pencil-alt"
-          small.ml-2.text-muted
-            = "#{episode_record.record.impressions_count} views"
     c-comment-guard inline-template="" :init-is-spoiler="#{is_spoiler == true}"
       .c-record__content.mb-2
         - if episode_record.rating.present?
-          c-rating-label :init-rating="#{episode_record.rating}" v-show="!isSpoiler"
+          c-rating-state-label :init-rating-state=="'#{episode_record.rating_to_rating_state}'" v-show="!isSpoiler"
         - elsif episode_record.rating_state.present?
           c-rating-state-label :init-rating-state=="'#{episode_record.rating_state}'" v-show="!isSpoiler"
         .c-body @click="remove"
@@ -39,7 +37,7 @@ c-record inline-template="" :user-id="#{episode_record.user.id}"
           .dropdown-menu
             = link_to "#", class: "dropdown-item" do
               c-mute-user-button :user-id="#{episode_record.user.id}"
-    .text-right
+    .text-right.mt-2
       - if episode_record.user == current_user
         = link_to edit_episode_record_path(episode_record.episode, episode_record.record), class: "mr-2" do
           = icon "edit", class: "mr-1"

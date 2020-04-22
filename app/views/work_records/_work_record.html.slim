@@ -15,8 +15,6 @@
         - if work_record.modified_at.present?
           small.ml-2.text-muted
             = icon "pencil-alt"
-        span.small.ml-2.text-muted
-          = "#{work_record.record.impressions_count} views"
 
     c-comment-guard inline-template="" :init-is-spoiler="#{is_spoiler == true}"
       .p-work-records-show__content.clearfix @click="remove"
