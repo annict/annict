@@ -91,6 +91,11 @@ $ann-text-colors: (
   twitter: $ann-color-twitter
 );
 
+$ann-bg-colors: (
+  mizuho: $ann-color-mizuho,
+  white: $ann-color-white
+);
+
 // Forms
 
 $ann-bs-input-border-color: #ced4da;
