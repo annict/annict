@@ -16,6 +16,7 @@ Rails.application.routes.draw do
   draw :db
   draw :forum
   draw :internal_api
+  draw :local_api
   draw :userland
   draw :web
 end
