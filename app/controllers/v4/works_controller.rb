@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
-module V3
-  class WorksController < V3::ApplicationController
+module V4
+  class WorksController < V4::ApplicationController
     def show
       @work = Work.only_kept.find(params[:id])
     end
