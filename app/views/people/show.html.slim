@@ -3,8 +3,7 @@
 - keywords = meta_keywords @person.local_name
 - set_meta_tags(title: title, description: description, keywords: keywords, og: { description: description }, twitter: { description: description }, reverse: true, prefix: false)
 
-
-.p-application__content
+= render "partial_layouts/v2/default" do
   .container.py-3.mb-4
     .row
       .col-3.pr-0
@@ -18,5 +17,3 @@
               = render "grid", root_resource: @person, resource_years: @cast_years, resources_with_year: @casts_with_year
             - if @person.staff?
               = render "grid", root_resource: @person, resource_years: @staff_years, resources_with_year: @staffs_with_year
-
-= render "application/components/footer"

@@ -1,9 +1,6 @@
 - title = t "head.title.oauth.applications.new"
 - set_meta_tags(title: title, og: { title: title }, reverse: true, prefix: false)
 
-
-.p-application__content
+= render "partial_layouts/v2/default" do
   .c-card.container.mt-3.mb-4.py-3
     = render "oauth/applications/form", application: @application
-
-= render "application/components/footer"

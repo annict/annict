@@ -1,10 +1,9 @@
 - title = t "head.title.profiles.show"
 - set_meta_tags title: title, reverse: true, prefix: false
 
+= render "partial_layouts/v2/default" do
+  = render "settings/subnav"
 
-= render "settings/subnav"
-
-.p-application__content
   .c-card.u-mw-600.mx-auto.p-3.mt-3.mb-4
     = form_for current_user.profile, url: profile_path, method: :patch do |f|
       = render "application/components/error_panel", resource: current_user.profile
@@ -28,5 +27,3 @@
         = f.file_field :background_image, class: "form-control-file"
       .form-submit.text-center
         = f.submit class: "btn btn-primary"
-
-= render "application/components/footer"

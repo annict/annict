@@ -4,7 +4,7 @@
 - image_url = ann_image_url(@user.profile, :image, size: "640x")
 - set_meta_tags(title: title, description: description, keywords: keywords, og: { description: description, image: image_url }, twitter: { description: description }, reverse: true, prefix: false)
 
-.p-application__content.mb-4
+= render "partial_layouts/v2/default" do
   .p-profile-header.d-flex
     .p-profile-header__cover-image style="background-image: url(#{profile_background_image_url(@user.profile, size: '800x520', size_rate: 2)});"
     .p-profile-header__info.align-self-end
@@ -193,8 +193,6 @@
             = icon "chart-bar", class: "mr-2"
             = t "noun.your_statistics"
           c-user-heatmap :username='"#{@user.username}"'
-
-= render "application/components/footer"
 
 - content_for :js_templates
   = render "application/js_templates/activities"

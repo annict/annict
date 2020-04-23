@@ -5,7 +5,7 @@
 
 - breadcrumb :newest_works
 
-.p-application__content
+= render "partial_layouts/v2/default" do
   .my-3 class="#{@display_option == "list_detailed" ? 'container' : 'px-3'}"
     = render "application/components/breadcrumb"
 
@@ -28,8 +28,6 @@
   - if @works.present? && @works.total_pages > 1
     .mb-3.text-center
       = paginate @works
-
-= render "application/components/footer"
 
 - content_for :js_templates do
   = render "application/js_templates/omitted_synopsis"

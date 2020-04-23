@@ -3,10 +3,8 @@
 
 - breadcrumb :supporters_index
 
-.p-application__content.my-3
-  .container.mb-3
+= render "partial_layouts/v2/default" do
+  .container.my-3
     = render "application/components/breadcrumb"
   .c-card.u-mw-600.mx-auto.p-3
     = render "index_body"
-
-= render "application/components/footer"

@@ -3,7 +3,7 @@
 
 - breadcrumb :userland_project_detail, @project
 
-.p-application__content
+= render "partial_layouts/v2/default" do
   .container.py-3.mb-3
     = render "application/components/breadcrumb"
     .row
@@ -13,5 +13,3 @@
         .c-card
           .container.py-3
             == render_markdown @project.description
-
-= render "application/components/footer"

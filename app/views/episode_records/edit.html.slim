@@ -5,12 +5,10 @@
 - set_meta_tags(title: title, description: description, keywords: keywords, og: { title: title, description: description, image: image_url }, reverse: true, prefix: false)
 - breadcrumb :edit_episode_record, @episode_record
 
-.p-application__content
+= render "partial_layouts/v2/default" do
   .container.my-3
     = render "application/components/breadcrumb"
     .row.justify-content-center
       .col-6
         .c-card.p-3
           = render "episode_records/form", episode_record: @episode_record
-
-= render "application/components/footer"

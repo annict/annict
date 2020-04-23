@@ -3,7 +3,7 @@
 
 - breadcrumb :edit_work_record, @work_record
 
-.p-application__content
+= render "partial_layouts/v2/default" do
   .container.py-3.mb-3
     = render "application/components/breadcrumb"
     .row
@@ -13,8 +13,6 @@
         = render "works/subnav", work: @work
         .c-card.container.mt-3.pt-3
           = render "work_records/form", work_record: @work_record
-
-= render "application/components/footer"
 
 - content_for :js_templates do
   = render "application/js_templates/like_button"

@@ -1,7 +1,7 @@
 - title = t "head.title.home.index"
 - set_meta_tags(title: title, site: false)
 
-.p-application__content
+= render "partial_layouts/v2/default" do
   .container.my-3
     .row
       .col-7
@@ -39,8 +39,6 @@
             = link_to forum_category_path(:site_news) do
               = icon "angle-right", class: "mr-1"
               = t "messages.forum._common.view_all_site_news"
-
-= render "application/components/footer"
 
 - content_for :js_templates
   = render "application/js_templates/activities"

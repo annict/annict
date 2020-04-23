@@ -6,10 +6,10 @@
 
 - breadcrumb :user_record_list, @user
 
-= render "users/low_profile_header", user: @user
+= render "partial_layouts/v2/default" do
+  = render "users/low_profile_header", user: @user
 
-.p-application__content
-  .container.py-3
+  .container.pt-3
     = render "application/components/breadcrumb"
     .c-card.container
       - if @records.present?
@@ -36,8 +36,6 @@
     - if @records.present? && @records.total_pages > 1
       .mt-3.text-center
         = paginate @records
-
-= render "application/components/footer"
 
 - content_for :js_templates do
   = render "application/js_templates/like_button"

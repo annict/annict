@@ -3,7 +3,7 @@
 
 - breadcrumb :user_work_tag_detail, @user, @tag
 
-.p-application__content
+= render "partial_layouts/v2/default" do
   .container.py-3
     = render "application/components/breadcrumb"
     .row
@@ -57,8 +57,6 @@
                 | (
                 = link_to "@#{@user.username}", user_path(username: @user.username)
                 | )
-
-= render "application/components/footer"
 
 c-impression-button-modal
 

@@ -6,7 +6,7 @@
 
 - breadcrumb :work_episode_list, @work
 
-.p-application__content
+= render "partial_layouts/v2/default" do
   .container.py-3.mb-3
     = render "application/components/breadcrumb"
     .row
@@ -49,5 +49,3 @@
                     = t "verb.track"
           - else
             = render "application/components/empty", text: t("messages._empty.no_episodes")
-
-= render "application/components/footer"

@@ -5,7 +5,7 @@
 - set_meta_tags(title: title, description: description, keywords: keywords, og: { description: description, image: image_url }, twitter: { description: description, image: image_url }, reverse: true, prefix: false)
 - breadcrumb :episode_record_detail, @episode_record
 
-.p-application__content
+= render "partial_layouts/v2/default" do
   .container.py-3
     = render "application/components/breadcrumb"
     .row
@@ -70,8 +70,6 @@
             = t "verb.view_work_detail"
 
 c-sticky-message message-body="#{t('messages._components.sticky_message.records_show.body')}"
-
-= render "application/components/footer"
 
 - content_for :js_templates do
   = render "application/js_templates/like_button"

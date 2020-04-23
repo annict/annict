@@ -6,7 +6,7 @@
 
 - breadcrumb :episode_detail, @episode
 
-.p-application__content
+= render "partial_layouts/v2/default" do
   .container.py-3.mb-3
     = render "application/components/breadcrumb"
     .row
@@ -98,8 +98,6 @@
                 - else
                   = t "noun.records"
               c-episode-records-chart init-dataset="#{@episode.records_chart_dataset}"
-
-= render "application/components/footer"
 
 - content_for :js_templates do
   = render "application/js_templates/like_button"

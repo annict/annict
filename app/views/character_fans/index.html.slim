@@ -3,8 +3,7 @@
 - keywords = meta_keywords @character.local_name
 - set_meta_tags(title: title, description: description, keywords: keywords, og: { description: description }, twitter: { description: description }, reverse: true, prefix: false)
 
-
-.p-application__content
+= render "partial_layouts/v2/default" do
   .container.py-3.mb-4
     .row
       .col-3.pr-0
@@ -18,5 +17,3 @@
               = render "users/fan_user_list", favorite_resources: @favorite_characters
             - else
               = render "application/components/empty", text: t("messages.character_fans.no_users")
-
-= render "application/components/footer"

@@ -6,7 +6,7 @@
 
 - breadcrumb :work_record_detail, @work_record
 
-.p-application__content
+= render "partial_layouts/v2/default" do
   .container.py-3
     = render "application/components/breadcrumb"
     .row
@@ -48,8 +48,6 @@
           = link_to work_path(@work), class: "btn btn-primary w-100" do
             = icon "angle-right"
             = t "verb.view_work_detail"
-
-= render "application/components/footer"
 
 - content_for :js_templates do
   = render "application/js_templates/like_button"

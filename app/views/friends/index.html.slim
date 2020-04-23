@@ -3,8 +3,8 @@
 
 - breadcrumb :friends_index
 
-.p-application__content.my-3
-  .container
+= render "partial_layouts/v2/default" do
+  .container.my-3
     = render "application/components/breadcrumb"
 
   h1.h4.text-center.my-4.font-weight-bold
@@ -24,5 +24,3 @@
       = render "users/user_list", users: @users
     - else
       = render "application/components/empty", text: t("messages.friends.no_users")
-
-= render "application/components/footer"

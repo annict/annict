@@ -1,10 +1,9 @@
 - title = t "head.title.settings.apps.index"
 - set_meta_tags(title: title, reverse: true, prefix: false)
 
+= render "partial_layouts/v2/default" do
+  = render "settings/subnav"
 
-= render "settings/subnav"
-
-.p-application__content
   h2.h4.text-center.my-4.font-weight-bold = t "noun.applications"
   .c-card.u-mw-600.mx-auto.mb-4
     .px-3
@@ -18,5 +17,3 @@
         = t "messages.settings.tokens.new"
     .c-card.px-3.mt-3.mb-4
       = render "settings/tokens/token_list", tokens: @tokens
-
-= render "application/components/footer"

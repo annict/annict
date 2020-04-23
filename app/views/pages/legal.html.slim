@@ -6,10 +6,8 @@
 - content_for :head do
   meta name="robots" content="noindex,nofollow,noarchive"
 
-.p-application__content.my-3
+= render "partial_layouts/v2/default" do
   .container.mb-3
     = render "application/components/breadcrumb"
   .c-card.u-mw-600.mx-auto.p-3
     = render "legal_body"
-
-= render "application/components/footer"

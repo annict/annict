@@ -3,11 +3,9 @@
 
 - breadcrumb :userland_new_project
 
-.p-application__content
+= render "partial_layouts/v2/default" do
   .container.py-3
     = render "application/components/breadcrumb"
 
   .c-card.container.mb-4.py-3
     = render "userland/projects/form", project: @project
-
-= render "application/components/footer"
