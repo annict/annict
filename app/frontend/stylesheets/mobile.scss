@@ -3,14 +3,12 @@
 
 @import './web/foundations';
 @import './v2/foundations';
-@import './mobile/foundations/foundation';
+@import './mobile/foundations';
 
 @import './web/projects';
 @import './mobile/projects';
 
 @import './common/components';
-@import './web/components';
 @import './mobile/components';
-@import './v4/components';
 
 @import './common/utilities';

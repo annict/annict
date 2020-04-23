@@ -2,8 +2,9 @@
 @import './db/variables';
 
 @import './common/foundations';
-@import './common/components';
-@import './common/utilities';
-
 @import './db/foundations';
+
+@import './common/components';
 @import './db/components';
+
+@import './common/utilities';
