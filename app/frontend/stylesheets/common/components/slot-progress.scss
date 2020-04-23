@@ -5,11 +5,11 @@
 
   &.is-unbroadcasted {
     #{$root}__line {
-      border-left: solid 1px $ann-color-green-l3;
+      border-left: solid 1px $ann-color-green;
     }
 
     #{$root}__point {
-      background-color: $ann-color-green-l3;
+      background-color: $ann-color-green;
     }
   }
 

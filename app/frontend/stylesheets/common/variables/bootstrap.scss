@@ -2,19 +2,19 @@
 
 $theme-colors: (
   primary: $ann-color-mizuho,
-  secondary: $ann-bs-gray-600,
-  success: $ann-bs-green,
-  info: $ann-bs-cyan,
-  warning: $ann-bs-yellow,
-  danger: $ann-bs-red,
-  light: $ann-bs-gray-100,
-  dark: $ann-bs-gray-800
+  secondary: $ann-color-black-040,
+  success: $ann-color-green,
+  info: $ann-color-blue,
+  warning: $ann-color-yellow,
+  danger: $ann-color-red,
+  light: $ann-color-black-005,
+  dark: $ann-color-black-080
 );
 
 
 // Body
 
-$body-bg: $ann-color-white-d1;
+$body-bg: $ann-color-background;
 $body-color: $ann-color-body;
 
 
@@ -60,7 +60,7 @@ $table-hover-bg: rgba(0, 0, 0, .03);
 
 // Forms
 
-$input-border-color: $ann-bs-input-border-color;
+$input-border-color: $ann-input-border-color;
 
 
 // Navbar

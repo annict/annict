@@ -4,14 +4,14 @@
   &__main,
   &__auxiliary {
     h4 {
-      color: $ann-color-black-l5;
+      color: $ann-color-black-020;
     }
 
     a {
-      color: $ann-color-black-l2;
+      color: $ann-color-black-005;
 
       &:hover {
-        color: darken($ann-color-black-l2, 15%);
+        color: darken($ann-color-black-005, 15%);
       }
     }
   }
