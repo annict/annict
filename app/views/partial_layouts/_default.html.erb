@@ -1,0 +1,15 @@
+<div class="pl-default">
+  <div class="pl-default__sidebar">
+    <%= render SidebarComponent.new(user: current_user) %>
+  </div>
+
+  <div class="pl-default__main d-flex flex-column">
+    <div class="pl-default__content">
+      <%= yield %>
+    </div>
+
+    <div class="pl-default__footer">
+      <%= render FooterComponent.new %>
+    </div>
+  </div>
+</div>

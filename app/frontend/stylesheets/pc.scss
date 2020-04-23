@@ -3,11 +3,15 @@
 
 @import 'web/foundations/foundation';
 
-@import 'common/components';
-@import 'common/utilities';
+@import './v4/partial_layouts';
 
 @import 'web/projects';
-@import 'web/components';
-
-@import 'pc/components';
 @import 'pc/projects';
+
+@import 'common/components';
+@import 'web/components';
+@import 'pc/components';
+@import 'v4/components';
+
+@import 'common/utilities';
+

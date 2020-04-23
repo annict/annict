@@ -1,10 +1,9 @@
 - title = t "head.title.accounts.show"
 - set_meta_tags(title: title, reverse: true, prefix: false)
 
+= render "partial_layouts/v2/default" do
+  = render "settings/subnav"
 
-= render "settings/subnav"
-
-.p-application__content
   h2.h4.text-center.my-4.font-weight-bold
     = t "noun.basic_info"
   .c-card.u-mw-600.mx-auto.p-3.mt-3.mb-4
@@ -61,5 +60,3 @@
     = t "noun.account_deletion"
   .c-card.u-mw-600.mx-auto.p-3.mt-3.mb-4
     = render "sayonara/content"
-
-= render "application/components/footer"

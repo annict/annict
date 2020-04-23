@@ -4,11 +4,12 @@
 @import 'web/foundations/foundation';
 @import 'mobile/foundations/foundation';
 
-@import 'common/components';
-@import 'common/utilities';
-
 @import 'web/projects';
-@import 'web/components';
-
-@import 'mobile/components';
 @import 'mobile/projects';
+
+@import 'common/components';
+@import 'web/components';
+@import 'mobile/components';
+@import 'v4/components';
+
+@import 'common/utilities';
