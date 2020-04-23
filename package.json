@@ -50,6 +50,7 @@
     "@babel/preset-typescript": "latest",
     "@types/jquery": "latest",
     "@types/node": "latest",
+    "@types/turbolinks": "latest",
     "@typescript-eslint/eslint-plugin": "latest",
     "@typescript-eslint/parser": "latest",
     "css-loader": "latest",

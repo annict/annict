@@ -881,6 +881,11 @@
   resolved "https://registry.yarnpkg.com/@types/sizzle/-/sizzle-2.3.2.tgz#a811b8c18e2babab7d542b3365887ae2e4d9de47"
   integrity sha512-7EJYyKTL7tFR8+gDbB6Wwz/arpGa0Mywk1TJbNzKzHtzbwVmY4HR9WqS5VV7dsBUKQmPNr192jHr/VpBluj/hg==
 
+"@types/turbolinks@^5.2.0":
+  version "5.2.0"
+  resolved "https://registry.yarnpkg.com/@types/turbolinks/-/turbolinks-5.2.0.tgz#cdfd3691143ea2f452113c2a06bd12d9a88b25d6"
+  integrity sha512-xEgHb25lj23EaUlsU3Y4KlFH7elhlYINGSnqyn/8zmcMnenY4Idyjk/x9kw1kOoOToY3de9fD8NSwRzNc6f5nw==
+
 "@typescript-eslint/eslint-plugin@latest":
   version "2.29.0"
   resolved "https://registry.yarnpkg.com/@typescript-eslint/eslint-plugin/-/eslint-plugin-2.29.0.tgz#c9efab7624e3dd6d144a0e4577a541d1bd42c2ac"
