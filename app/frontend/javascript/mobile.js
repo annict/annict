@@ -55,9 +55,12 @@ import workFriends from './common/components/workFriends';
 import workTags from './common/components/workTags';
 import youtubeModalPlayer from './common/components/youtubeModalPlayer';
 
+import sidebar from './web/components/sidebar';
+import tabBar from './web/components/tabBar';
+
 import resourceSelect from './common/directives/resourceSelect';
 
-document.addEventListener('turbolinks:load', event => {
+document.addEventListener('turbolinks:load', (event) => {
   moment.locale(gon.user.locale);
   Cookies.set('ann_time_zone', moment.tz.guess(), {
     domain: `.${gon.annict.domain}`,
@@ -107,7 +110,9 @@ document.addEventListener('turbolinks:load', event => {
   Vue.component('c-record-word-count', recordWordCount);
   Vue.component('c-share-button-facebook', shareButtonFacebook);
   Vue.component('c-share-button-twitter', shareButtonTwitter);
+  Vue.component('c-sidebar', sidebar);
   Vue.component('c-status-selector', statusSelector);
+  Vue.component('c-tab-bar', tabBar);
   Vue.component('c-time-ago', timeAgo);
   Vue.component('c-tips', tips);
   Vue.component('c-untracked-episode-list', untrackedEpisodeList);
@@ -133,7 +138,7 @@ document.addEventListener('turbolinks:load', event => {
     },
 
     created() {
-      app.loadAppData().done(appData => {
+      app.loadAppData().done((appData) => {
         this.appData = appData;
 
         if (!appData.isUserSignedIn || !app.existsPageParams()) {
@@ -141,7 +146,7 @@ document.addEventListener('turbolinks:load', event => {
           return;
         }
 
-        app.loadPageData().done(pageData => {
+        app.loadPageData().done((pageData) => {
           this.pageData = pageData;
           eventHub.$emit('app:loaded');
         });

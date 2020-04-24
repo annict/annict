@@ -7,8 +7,7 @@ class SidebarComponent < ApplicationComponent
 
   def call
     Htmlrb.build do |el|
-      el.div class: "c-sidebar h-100" do
-        # PC
+      el.c_sidebar class: "h-100" do
         el.a class: "c-sidebar__logo d-inline-block mb-3 py-3 text-center u-bg-mizuho w-100", href: "/" do
           el.img alt: "Annict", height: "30", src: helpers.asset_bundle_url("images/logos/color-white.png"), width: "25"
         end

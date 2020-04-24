@@ -7,9 +7,18 @@ class TabBarComponent < ApplicationComponent
 
   def call
     Htmlrb.build do |el|
-      el.div class: "c-tab-bar" do
+      el.c_tab_bar v_slot: "tabBar" do
         el.div class: "bg-white d-block d-sm-none h-100 navbar navbar-expand navbar-white px-0" do
           el.ul class: "align-items-center h-100 justify-content-around navbar-nav" do
+            el.li class: "col nav-item px-0 text-center", "v-on:click.prevent": "tabBar.showSidebar" do
+              el.a class: "text-dark", href: "/menu" do
+                el.i(class: "fal fa-bars") {}
+                el.div class: "small mt-1" do
+                  t "noun.menu"
+                end
+              end
+            end
+
             el.li class: "col nav-item px-0 text-center" do
               el.a class: "text-dark", href: "/" do
                 el.i(class: "fal fa-home") {}
@@ -46,15 +55,6 @@ class TabBarComponent < ApplicationComponent
                   end
                 end
               end
-
-              el.li class: "col nav-item px-0 text-center" do
-                el.a class: "text-dark", href: "/menu" do
-                  el.i(class: "fal fa-th") {}
-                  el.div class: "mt-1 small" do
-                    t "noun.menu"
-                  end
-                end
-              end
             else
               el.li class: "col nav-item px-0 text-center" do
                 el.a class: "text-dark", href: "/works/#{ENV.fetch('ANNICT_CURRENT_SEASON')}" do
@@ -79,15 +79,6 @@ class TabBarComponent < ApplicationComponent
                   el.i(class: "fal fa-lightbulb") {}
                   el.div class: "mt-1 small" do
                     t "noun.about"
-                  end
-                end
-              end
-
-              el.li class: "col nav-item px-0 text-center" do
-                el.a class: "text-dark", href: "/menu" do
-                  el.i(class: "fal fa-th") {}
-                  el.div class: "small mt-1" do
-                    t "noun.menu"
                   end
                 end
               end

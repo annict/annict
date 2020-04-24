@@ -10,19 +10,6 @@
     #{$root}__content {
       flex: 1;
     }
-
-    #{$root}__footer {
-    }
-  }
-
-  &__sidebar {
-    background-color: $ann-color-sidebar-bg;
-    height: 100%;
-    left: 0;
-    width: 240px;
-    overflow-y: auto;
-    position: fixed;
-    z-index: $zindex-popover;
   }
 }
 
@@ -30,10 +17,6 @@
   .pl-default {
     &__main {
       margin-left: 0;
-    }
-
-    &__sidebar {
-      display: none;
     }
   }
 }
