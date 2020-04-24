@@ -3,9 +3,9 @@
 
 - breadcrumb :forum_edit_comment, @comment
 
-.c-card.mb-3
-  .container.py-3
-    = render "forum/comments/form", comment: @comment
+= render "partial_layouts/v2/default" do
+  .c-card.mb-3
+    .container.py-3
+      = render "forum/comments/form", comment: @comment
 
-= render "application/components/breadcrumb"
-= render "application/components/footer"
+  = render "application/components/breadcrumb"

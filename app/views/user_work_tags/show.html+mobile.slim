@@ -3,42 +3,42 @@
 
 - breadcrumb :user_work_tag_detail, @user, @tag
 
-.c-card.mb-3
-  .container.py-3
-    h1.h2
-      = link_to t("messages.user_work_tags.anime_list_tagged", tag_name: @tag.name), user_work_tag_path(@user.username, @tag.name), class: "u-text-body"
-    .small
-      span.mr-1 by
-      = link_to @user.profile.name, user_path(username: @user.username), class: "mr-1"
-      | (
-      = link_to "@#{@user.username}", user_path(username: @user.username)
-      | )
-    / - if @collection.description.present?
-    /   = @collection.description
-    hr.mb-0
-    - @works.only_kept.each do |work|
-      .py-3.u-underline
-        = link_to work_path(work) do
-          = ann_image_tag work.work_image, :image, size: "300x", ratio: "3:4", class: "img-fluid img-thumbnail rounded"
-        - if work.work_image.present?
-          .u-very-small.text-muted
-            = work.work_image.asin_or_copyright_text
-        h3.h3.font-weight-bold.my-2
-          = link_to work.local_title, work_path(work)
-        - if !user_signed_in? || current_user.id == @user.id
-          .mt-2
-            = render "application/components/work_action", work_id: work.id
-        c-work-tags :work-id="#{work.id}" :init-tags="#{build_work_tags_json(@user, work)}" path="/@#{@user.username}/tags"
-        - comment = @user.comment_by_work(work)
-        c-work-comment.p-2.mt-2.mb-0 :work-id="#{work.id}" init-comment="#{comment.present? ? comment.body : ''}"
-    .row.mt-3
-      .col
-        .text-right
-          c-share-button-twitter.mr-2 text="#{title}" url="#{local_url}#{user_work_tag_path(@user.username, @tag.name)}"
-          c-share-button-facebook.mr-2 url="#{local_url}#{user_work_tag_path(@user.username, @tag.name)}"
+= render "partial_layouts/v2/default" do
+  .c-card.mb-3
+    .container.py-3
+      h1.h2
+        = link_to t("messages.user_work_tags.anime_list_tagged", tag_name: @tag.name), user_work_tag_path(@user.username, @tag.name), class: "u-text-body"
+      .small
+        span.mr-1 by
+        = link_to @user.profile.name, user_path(username: @user.username), class: "mr-1"
+        | (
+        = link_to "@#{@user.username}", user_path(username: @user.username)
+        | )
+      / - if @collection.description.present?
+      /   = @collection.description
+      hr.mb-0
+      - @works.only_kept.each do |work|
+        .py-3.u-underline
+          = link_to work_path(work) do
+            = ann_image_tag work.work_image, :image, size: "300x", ratio: "3:4", class: "img-fluid img-thumbnail rounded"
+          - if work.work_image.present?
+            .u-very-small.text-muted
+              = work.work_image.asin_or_copyright_text
+          h3.h3.font-weight-bold.my-2
+            = link_to work.local_title, work_path(work)
+          - if !user_signed_in? || current_user.id == @user.id
+            .mt-2
+              = render "application/components/work_action", work_id: work.id
+          c-work-tags :work-id="#{work.id}" :init-tags="#{build_work_tags_json(@user, work)}" path="/@#{@user.username}/tags"
+          - comment = @user.comment_by_work(work)
+          c-work-comment.p-2.mt-2.mb-0 :work-id="#{work.id}" init-comment="#{comment.present? ? comment.body : ''}"
+      .row.mt-3
+        .col
+          .text-right
+            c-share-button-twitter.mr-2 text="#{title}" url="#{local_url}#{user_work_tag_path(@user.username, @tag.name)}"
+            c-share-button-facebook.mr-2 url="#{local_url}#{user_work_tag_path(@user.username, @tag.name)}"
 
-= render "application/components/breadcrumb"
-= render "application/components/footer"
+  = render "application/components/breadcrumb"
 
 c-impression-button-modal
 

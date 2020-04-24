@@ -4,98 +4,96 @@
 - image_url = ann_image_url(@user.profile, :image, size: "640x")
 - set_meta_tags(title: title, description: description, keywords: keywords, og: { description: description }, twitter: { description: description }, reverse: true, prefix: false)
 
+= render "partial_layouts/v2/default" do
+  .c-card.mb-3
+    .p-profile-header
+      .p-profile-header__cover
+        .p-profile-header__cover-image style="background-image: url(#{profile_background_image_url(@user.profile, size: '320x209', size_rate: 2)});"
+        = link_to user_path(@user.username) do
+          = ann_image_tag(@user.profile, :image, size: "80x80", class: "p-profile-header__avatar rounded-circle")
 
-.c-card.mb-3
-  .p-profile-header
-    .p-profile-header__cover
-      .p-profile-header__cover-image style="background-image: url(#{profile_background_image_url(@user.profile, size: '320x209', size_rate: 2)});"
-      = link_to user_path(@user.username) do
-        = ann_image_tag(@user.profile, :image, size: "80x80", class: "p-profile-header__avatar rounded-circle")
+      .p-profile-header__profile.container.text-center.pt-2
+        - if @user.supporter? && !@user.setting.hide_supporter_badge?
+          .badge.u-badge-supporter.mb-1
+            = t "noun.supporter"
+        h1.h2.font-weight-bold.mb-0
+          = link_to @user.profile.name, user_path(@user.username), class: "u-text-body"
+        = link_to "@#{@user.username}", user_path(@user.username), class: "u-text-body"
 
-    .p-profile-header__profile.container.text-center.pt-2
-      - if @user.supporter? && !@user.setting.hide_supporter_badge?
-        .badge.u-badge-supporter.mb-1
-          = t "noun.supporter"
-      h1.h2.font-weight-bold.mb-0
-        = link_to @user.profile.name, user_path(@user.username), class: "u-text-body"
-      = link_to "@#{@user.username}", user_path(@user.username), class: "u-text-body"
-
-      - if @user.profile.description.present?
-        .small.text-muted.mt-2
-          = @user.profile.description
-      - if @user.profile.url.present?
-        .small
-          = link_to @user.profile.shorten_url, @user.profile.url, target: "_blank"
-
-    .p-users-show__follow-button.text-center.mt-2
-      - if user_signed_in? && current_user != @user
-        c-follow-button username="#{@user.username}" :init-is-following="#{current_user.following?(@user)}" :is-signed-in="true"
-        .c-user-options-dropdown.dropdown
-          .dropdown-toggle data-toggle="dropdown"
-            = icon "cog"
-          .dropdown-menu
-            = link_to "#", class: "dropdown-item" do
-              c-mute-user-button :user-id="#{@user.id}"
-      - elsif !user_signed_in?
-        c-follow-button username="#{@user.username}" :init-is-following="false" :is-signed-in="false"
-
-    .text-center.mt-3
-      c-share-button-twitter.mr-2 text="#{title}" url="#{local_url}#{user_path(@user.username)}"
-      c-share-button-facebook url="#{local_url}#{user_path(@user.username)}"
-
-  hr
-
-  .container.text-center.pb-3
-    .row.mb-3
-      .p-users-show__count.col.px-0
-        = link_to records_path(@user.username), class: "p-users-show__count-link" do
-          .h3.mb-1
-            = @user.records_count
+        - if @user.profile.description.present?
+          .small.text-muted.mt-2
+            = @user.profile.description
+        - if @user.profile.url.present?
           .small
-            | Records
-      .p-users-show__count.col.px-0
-        = link_to library_path(@user.username, :watching), class: "p-users-show__count-link" do
-          .h3.mb-1
-            = @user.library_entries.count_on(:watching)
-          .small
-            | Watching
-      .p-users-show__count.col.px-0
-        = link_to following_user_path(@user.username), class: "p-users-show__count-link" do
-          .h3.mb-1
-            = @user.followings.only_kept.count
-          .small
-            | Following
-      .p-users-show__count.col.px-0
-        = link_to followers_user_path(@user.username), class: "p-users-show__count-link" do
-          .h3.mb-1
-            = @user.followers.only_kept.count
-          .small
-            | Followers
+            = link_to @user.profile.shorten_url, @user.profile.url, target: "_blank"
 
-    .row
-      .p-users-show__count.col.px-0
-        = link_to favorite_characters_path(@user.username), class: "p-users-show__count-link" do
-          .h3.mb-1
-            = @favorite_characters.length
-          .small
-            = t "noun.favorite_characters_shorten"
-      .p-users-show__count.col.px-0
-        = link_to favorite_people_path(@user.username), class: "p-users-show__count-link" do
-          .h3.mb-1
-            = @favorite_casts.length + @favorite_staffs.length
-          .small
-            = t "noun.favorite_people_shorten"
-      .p-users-show__count.col.px-0
-        = link_to favorite_organizations_path(@user.username), class: "p-users-show__count-link" do
-          .h3.mb-1
-            = @favorite_organizations.length
-          .small
-            = t "noun.favorite_organizations_shorten"
+      .p-users-show__follow-button.text-center.mt-2
+        - if user_signed_in? && current_user != @user
+          c-follow-button username="#{@user.username}" :init-is-following="#{current_user.following?(@user)}" :is-signed-in="true"
+          .c-user-options-dropdown.dropdown
+            .dropdown-toggle data-toggle="dropdown"
+              = icon "cog"
+            .dropdown-menu
+              = link_to "#", class: "dropdown-item" do
+                c-mute-user-button :user-id="#{@user.id}"
+        - elsif !user_signed_in?
+          c-follow-button username="#{@user.username}" :init-is-following="false" :is-signed-in="false"
 
-.mt-3.mb-4
-  c-activities username="#{@user.username}"
+      .text-center.mt-3
+        c-share-button-twitter.mr-2 text="#{title}" url="#{local_url}#{user_path(@user.username)}"
+        c-share-button-facebook url="#{local_url}#{user_path(@user.username)}"
 
-= render "application/components/footer"
+    hr
+
+    .container.text-center.pb-3
+      .row.mb-3
+        .p-users-show__count.col.px-0
+          = link_to records_path(@user.username), class: "p-users-show__count-link" do
+            .h3.mb-1
+              = @user.records_count
+            .small
+              | Records
+        .p-users-show__count.col.px-0
+          = link_to library_path(@user.username, :watching), class: "p-users-show__count-link" do
+            .h3.mb-1
+              = @user.library_entries.count_on(:watching)
+            .small
+              | Watching
+        .p-users-show__count.col.px-0
+          = link_to following_user_path(@user.username), class: "p-users-show__count-link" do
+            .h3.mb-1
+              = @user.followings.only_kept.count
+            .small
+              | Following
+        .p-users-show__count.col.px-0
+          = link_to followers_user_path(@user.username), class: "p-users-show__count-link" do
+            .h3.mb-1
+              = @user.followers.only_kept.count
+            .small
+              | Followers
+
+      .row
+        .p-users-show__count.col.px-0
+          = link_to favorite_characters_path(@user.username), class: "p-users-show__count-link" do
+            .h3.mb-1
+              = @favorite_characters.length
+            .small
+              = t "noun.favorite_characters_shorten"
+        .p-users-show__count.col.px-0
+          = link_to favorite_people_path(@user.username), class: "p-users-show__count-link" do
+            .h3.mb-1
+              = @favorite_casts.length + @favorite_staffs.length
+            .small
+              = t "noun.favorite_people_shorten"
+        .p-users-show__count.col.px-0
+          = link_to favorite_organizations_path(@user.username), class: "p-users-show__count-link" do
+            .h3.mb-1
+              = @favorite_organizations.length
+            .small
+              = t "noun.favorite_organizations_shorten"
+
+  .mt-3.mb-4
+    c-activities username="#{@user.username}"
 
 - content_for :js_templates
   = render "application/js_templates/activities"

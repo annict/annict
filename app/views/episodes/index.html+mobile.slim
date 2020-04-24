@@ -4,34 +4,32 @@
 - image_url = ann_image_url(@work.work_image, :image, size: "640x", ratio: "3:4")
 - set_meta_tags(title: title, description: description, keywords: keywords, og: { description: description, image: image_url }, twitter: { description: description, image: image_url }, reverse: true, prefix: false)
 
+= render "partial_layouts/v2/default" do
+  = render "works/header", work: @work
 
-= render "works/header", work: @work
-
-.c-card.py-3.mb-4
-  - if @episodes.present?
-    c-episode-list inline-template="" :is-signed-in="#{user_signed_in?}" :init-is-tracking-mode="#{params.key?(:tracking)}" :all-episode-ids="#{@episodes.pluck(:id)}" :work-id="#{@work.id}"
-      .c-episode-list
-        .mb-2.px-3 v-if="isSignedIn"
-          small.u-fake-link v-show="!isTrackingMode" @click="enableTrackingMode"
-            = t "noun.bulk_tracking"
-          small.u-fake-link.mr-2 v-show="isTrackingMode" @click="checkAll"
-            = t "verb.check_all"
-          small.u-fake-link v-show="isTrackingMode && !!episodeIds.length" @click="uncheckAll"
-            = t "verb.uncheck_all"
-        table.p-episodes-table.table.mb-0
-          tbody
-            - @episodes.order(:sort_number).each do |episode|
-              = render "episodes/episode_row", work: @work, episode: episode
-        .text-right.pt-3 v-show="isTrackingMode"
-          button.btn.btn-secondary.mr-2 @click="disableTrackingMode"
-            = t "noun.cancel"
-          button.btn.btn-primary :class="{ 'c-spinner': isTracking }" v-bind="{ disabled: !isTrackable }" v-show="isTrackingMode" @click="track"
-            = icon "edit"
-            = t "verb.track"
-  - else
-    = render "application/components/empty", text: t("messages._empty.no_episodes")
-
-= render "application/components/footer"
+  .c-card.py-3.mb-4
+    - if @episodes.present?
+      c-episode-list inline-template="" :is-signed-in="#{user_signed_in?}" :init-is-tracking-mode="#{params.key?(:tracking)}" :all-episode-ids="#{@episodes.pluck(:id)}" :work-id="#{@work.id}"
+        .c-episode-list
+          .mb-2.px-3 v-if="isSignedIn"
+            small.u-fake-link v-show="!isTrackingMode" @click="enableTrackingMode"
+              = t "noun.bulk_tracking"
+            small.u-fake-link.mr-2 v-show="isTrackingMode" @click="checkAll"
+              = t "verb.check_all"
+            small.u-fake-link v-show="isTrackingMode && !!episodeIds.length" @click="uncheckAll"
+              = t "verb.uncheck_all"
+          table.p-episodes-table.table.mb-0
+            tbody
+              - @episodes.order(:sort_number).each do |episode|
+                = render "episodes/episode_row", work: @work, episode: episode
+          .text-right.pt-3 v-show="isTrackingMode"
+            button.btn.btn-secondary.mr-2 @click="disableTrackingMode"
+              = t "noun.cancel"
+            button.btn.btn-primary :class="{ 'c-spinner': isTracking }" v-bind="{ disabled: !isTrackable }" v-show="isTrackingMode" @click="track"
+              = icon "edit"
+              = t "verb.track"
+    - else
+      = render "application/components/empty", text: t("messages._empty.no_episodes")
 
 - content_for :js_templates do
   = render "application/js_templates/share_button_facebook"

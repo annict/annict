@@ -6,38 +6,38 @@
 
 - breadcrumb :user_record_list, @user
 
-= render "users/low_profile_header", user: @user
-.u-underline
+= render "partial_layouts/v2/default" do
+  = render "users/low_profile_header", user: @user
+  .u-underline
 
-h2.h4.font-weight-bold.text-center.my-4
-  = t "noun.records_by", profile_name: @user.profile.name
-.c-card.mb-3
-  .container
-    - if @records.present?
-      - @records.each do |record|
-        .py-3.u-underline
-          = render "episode_records/episode_record", episode_record: record, is_spoiler: user_signed_in? && current_user.hide_episode_record_body?(record.episode)
-          .alert.alert-secondary.mt-3.mb-0.p-2
-            .row
-              .col.col-auto.pr-0
-                = link_to work_path(record.work) do
-                  = ann_image_tag record.work.work_image, :image, size: "70x", ratio: "3:4", class: "img-fluid img-thumbnail rounded"
-              .col
-                .h4
-                  = link_to record.work.local_title, work_path(record.work), class: "u-text-body"
-                .h4
-                  = link_to record.episode.title_with_number(fallback: false), work_episode_path(record.work, record.episode), class: "u-text-body"
-                c-status-selector :work-id="#{record.work_id}"
+  h2.h4.font-weight-bold.text-center.my-4
+    = t "noun.records_by", profile_name: @user.profile.name
+  .c-card.mb-3
+    .container
+      - if @records.present?
+        - @records.each do |record|
+          .py-3.u-underline
+            = render "episode_records/episode_record", episode_record: record, is_spoiler: user_signed_in? && current_user.hide_episode_record_body?(record.episode)
+            .alert.alert-secondary.mt-3.mb-0.p-2
+              .row
+                .col.col-auto.pr-0
+                  = link_to work_path(record.work) do
+                    = ann_image_tag record.work.work_image, :image, size: "70x", ratio: "3:4", class: "img-fluid img-thumbnail rounded"
+                .col
+                  .h4
+                    = link_to record.work.local_title, work_path(record.work), class: "u-text-body"
+                  .h4
+                    = link_to record.episode.title_with_number(fallback: false), work_episode_path(record.work, record.episode), class: "u-text-body"
+                  c-status-selector :work-id="#{record.work_id}"
 
-    - else
-      = render "application/components/empty", text: t("messages._empty.no_records")
+      - else
+        = render "application/components/empty", text: t("messages._empty.no_records")
 
-- if @records.present? && @records.total_pages > 1
-  .mb-3.text-center
-    = paginate @records
+  - if @records.present? && @records.total_pages > 1
+    .mb-3.text-center
+      = paginate @records
 
-= render "application/components/breadcrumb"
-= render "application/components/footer"
+  = render "application/components/breadcrumb"
 
 - content_for :js_templates do
   = render "application/js_templates/like_button"

@@ -6,45 +6,45 @@
 
 - breadcrumb :work_record_list, @work
 
-= render "works/header", work: @work
+= render "partial_layouts/v2/default" do
+  = render "works/header", work: @work
 
-- if user_signed_in?
-  .c-card.container.mb-3.pt-3
-    = render "work_records/form", work_record: @work_record
+  - if user_signed_in?
+    .c-card.container.mb-3.pt-3
+      = render "work_records/form", work_record: @work_record
 
-.container
-  h2.h4.font-weight-bold.mt-3.mb-4
-    = t "noun.my_records"
-
-.c-card.pt-3.mb-3
   .container
-    - if @my_work_records.present?
-      div
-        - @my_work_records.each do |work_record|
-          .py-3.u-underline
-            = render "work_records/work_record", work_record: work_record, is_spoiler: @is_spoiler
-    - else
-      = render "application/components/empty", text: t("messages._empty.no_records")
+    h2.h4.font-weight-bold.mt-3.mb-4
+      = t "noun.my_records"
 
-.container
-  h2.h4.font-weight-bold.mt-3.mb-4
-    = t "noun.other_record_body_list"
+  .c-card.pt-3.mb-3
+    .container
+      - if @my_work_records.present?
+        div
+          - @my_work_records.each do |work_record|
+            .py-3.u-underline
+              = render "work_records/work_record", work_record: work_record, is_spoiler: @is_spoiler
+      - else
+        = render "application/components/empty", text: t("messages._empty.no_records")
 
-.c-card.pt-3.mb-3
   .container
-    - if @work_records.present?
-      div
-        - @work_records.each do |work_record|
-          .py-3.u-underline
-            = render "work_records/work_record", work_record: work_record, is_spoiler: @is_spoiler
-      - if @work_records.total_pages > 1
-        .mb-3.text-center
-          = paginate @work_records
-    - else
-      = render "application/components/empty", text: t("messages._empty.no_record_body_list")
+    h2.h4.font-weight-bold.mt-3.mb-4
+      = t "noun.other_record_body_list"
 
-= render "application/components/breadcrumb"
-= render "application/components/footer"
+  .c-card.pt-3.mb-3
+    .container
+      - if @work_records.present?
+        div
+          - @work_records.each do |work_record|
+            .py-3.u-underline
+              = render "work_records/work_record", work_record: work_record, is_spoiler: @is_spoiler
+        - if @work_records.total_pages > 1
+          .mb-3.text-center
+            = paginate @work_records
+      - else
+        = render "application/components/empty", text: t("messages._empty.no_record_body_list")
+
+  = render "application/components/breadcrumb"
 
 - content_for :js_templates do
   = render "application/js_templates/like_button"

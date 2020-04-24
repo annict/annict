@@ -1,17 +1,15 @@
 - title = t "head.title.activities.index"
 - set_meta_tags(title: title, site: false)
 
+= render "partial_layouts/v2/default" do
+  .mt-3
+    .container.mb-3
+      = render "home/subnav"
 
-.mt-3
-  .container.mb-3
-    = render "home/subnav"
-
-.mb-3
-  c-activities
-    .c-loading
-      .c-loading__core Loading...
-
-= render "application/components/footer"
+  .mb-3
+    c-activities
+      .c-loading
+        .c-loading__core Loading...
 
 - content_for :js_templates
   = render "application/js_templates/activities"

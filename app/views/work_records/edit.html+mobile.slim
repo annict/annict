@@ -3,14 +3,14 @@
 
 - breadcrumb :edit_work_record, @work_record
 
-= render "works/header", work: @work
+= render "partial_layouts/v2/default" do
+  = render "works/header", work: @work
 
-.c-card.pt-3.mb-3
-  .container
-    = render "work_records/form", work_record: @work_record
+  .c-card.pt-3.mb-3
+    .container
+      = render "work_records/form", work_record: @work_record
 
-= render "application/components/breadcrumb"
-= render "application/components/footer"
+  = render "application/components/breadcrumb"
 
 - content_for :js_templates do
   = render "application/js_templates/like_button"

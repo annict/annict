@@ -3,17 +3,15 @@
 - keywords = meta_keywords @person.local_name
 - set_meta_tags(title: title, description: description, keywords: keywords, og: { description: description }, twitter: { description: description }, reverse: true, prefix: false)
 
+= render "partial_layouts/v2/default" do
+  .c-card.mb-3
+    = render "people/header", person: @person, favorite_resources: @favorite_people
 
-.c-card.mb-3
-  = render "people/header", person: @person, favorite_resources: @favorite_people
-
-.c-card.mb-4
-  - if @favorite_people.present?
-    = render "users/fan_user_list", favorite_resources: @favorite_people
-  - else
-    = render "application/components/empty", text: t("messages.person_fans.no_users")
-
-= render "application/components/footer"
+  .c-card.mb-4
+    - if @favorite_people.present?
+      = render "users/fan_user_list", favorite_resources: @favorite_people
+    - else
+      = render "application/components/empty", text: t("messages.person_fans.no_users")
 
 - content_for :js_templates
   = render "application/js_templates/favorite_button"
