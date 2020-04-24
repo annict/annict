@@ -22,7 +22,7 @@
     width: 240px;
     overflow-y: auto;
     position: fixed;
-    z-index: 2;
+    z-index: $zindex-popover;
   }
 }
 
