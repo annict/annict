@@ -1,18 +1,4 @@
-.c-navbar {
-  // PC
-  @include media-breakpoint-up(sm) {
-    & {
-      box-shadow: $box-shadow-sm;
-      height: $ann-navbar-height;
-
-      @supports (position: sticky) {
-        position: sticky;
-        top: 0;
-        z-index: $zindex-sticky;
-      }
-    }
-  }
-
+.c-tab-bar {
   // Mobile
   @include media-breakpoint-down(sm) {
     & {

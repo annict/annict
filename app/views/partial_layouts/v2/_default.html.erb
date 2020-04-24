@@ -13,4 +13,8 @@
       <%= render FooterComponent.new %>
     </div>
   </div>
+
+  <div class="pl-default__tab_bar">
+    <%= render TabBarComponent.new(user: current_user) %>
+  </div>
 </div>

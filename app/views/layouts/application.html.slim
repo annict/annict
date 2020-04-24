@@ -6,10 +6,6 @@ html lang="#{I18n.locale}"
     = include_gon
 
     .p-application
-      - unless device_pc?
-        = render "application/components/navbar"
-        c-flash
-
       = yield
 
       - if show_privacy_policy_modal?
