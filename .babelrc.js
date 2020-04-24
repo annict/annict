@@ -1,4 +1,4 @@
-module.exports = function(api) {
+module.exports = function (api) {
   return {
     presets: [
       [
@@ -10,8 +10,6 @@ module.exports = function(api) {
           forceAllTransforms: api.env('production'),
         },
       ],
-      '@babel/preset-typescript',
     ],
-    plugins: ['@babel/plugin-proposal-class-properties', '@babel/plugin-proposal-object-rest-spread'],
   };
 };
