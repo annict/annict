@@ -5,18 +5,18 @@ class FooterComponent < ApplicationComponent
 
   def call
     Htmlrb.build do |el|
-      el.div class: "c-footer" do
-        el.div class: "c-footer__main py-4" do
+      el.div class: "c-footer py-5" do
+        el.div class: "c-footer__main" do
           el.div class: "container" do
             el.div class: "row" do
-              el.div class: "col-3" do
-                el.h2 class: "mb-0" do
+              el.div class: "col-12 col-sm-3 mb-3 mb-sm-0" do
+                el.h2 class: "mb-1" do
                   el.a href: "/" do
                     "Annict"
                   end
                 end
 
-                el.div class: "c-footer__description small" do
+                el.div class: "c-footer__description mb-3 small" do
                   "The platform for anime addicts."
                 end
 
@@ -45,8 +45,8 @@ class FooterComponent < ApplicationComponent
                 end
               end
 
-              el.div class: "col-3" do
-                el.h4 class: "font-weight-bold" do
+              el.div class: "col-12 col-sm-3 mb-3 mb-sm-0" do
+                el.h4 class: "font-weight-bold mb-3" do
                   t "noun.services"
                 end
 
@@ -58,7 +58,7 @@ class FooterComponent < ApplicationComponent
                     [t("noun.annict_developers"), "https://developers.annict.jp"],
                     [t("noun.annict_supporters"), supporters_path]
                   ].each do |(link_title, link_url)|
-                    el.li do
+                    el.li class: "mb-2" do
                       el.a href: link_url, target: "_blank" do
                         link_title
                       end
@@ -68,8 +68,8 @@ class FooterComponent < ApplicationComponent
                 end
               end
 
-              el.div class: "col-3" do
-                el.h4 class: "font-weight-bold" do
+              el.div class: "col-12 col-sm-3 mb-3 mb-sm-0" do
+                el.h4 class: "font-weight-bold mb-3" do
                   t "noun.contents"
                 end
 
@@ -82,7 +82,7 @@ class FooterComponent < ApplicationComponent
                     [t("head.title.pages.legal"), legal_path, true]
                   ].each do |(link_title, link_url, is_for_japanese)|
                     if helpers.locale_ja? || !is_for_japanese
-                      el.li do
+                      el.li class: "mb-2" do
                         el.a href: link_url, target: "_blank" do
                           link_title
                         end
@@ -93,14 +93,14 @@ class FooterComponent < ApplicationComponent
                 end
               end
 
-              el.div class: "col-3" do
-                el.h4 class: "font-weight-bold" do
+              el.div class: "col-12 col-sm-3" do
+                el.h4 class: "font-weight-bold mb-3" do
                   t "noun.seasonal_anime"
                 end
 
                 el.ul class: "c-footer__list list-unstyled" do
                   Season.latest_slugs.each do |slug|
-                    el.li do
+                    el.li class: "mb-2" do
                       year, name = slug.split("-")
                       el.a href: season_works_path(slug: slug) do
                         Season.new(year, name).local_name
@@ -117,9 +117,9 @@ class FooterComponent < ApplicationComponent
         el.div class: "c-footer__auxiliary" do
           el.div class: "container py-2" do
             el.div class: "align-items-center row" do
-              el.div class: "col" do
-                el.h4 class: "font-weight-bold d-inline-block mb-0 mr-2" do
-                  "#{t('noun.language')}: "
+              el.div class: "col-6" do
+                el.h4 class: "d-inline-block font-weight-bold mb-0 mr-2 small" do
+                  "#{t('noun.language')}:"
                 end
                 el.ul class: "d-inline-block list-inline mb-0" do
                   [
@@ -136,18 +136,7 @@ class FooterComponent < ApplicationComponent
                 end
               end
 
-              el.div class: "col text-center" do
-                el.a href: root_path do
-                  el.img(
-                    alt: "Annict",
-                    class: "img-fluid rounded",
-                    src: helpers.asset_bundle_path("images/logos/color-white.png"),
-                    width: "25"
-                  )
-                end
-              end
-
-              el.div class: "col text-right" do
+              el.div class: "col-6 text-right" do
                 el.div class: "c-footer__copyright small" do
                   el.i(class: "fal fa-copyright mr-1") {}
                   "2014-2020 Annict"
