@@ -46,7 +46,7 @@
   }
 }
 
-@include media-breakpoint-up(sm) {
+@include media-breakpoint-up(lg) {
   .c-sidebar {
     &__content {
       display: block !important;
