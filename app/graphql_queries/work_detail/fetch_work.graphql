@@ -34,7 +34,8 @@ query($annictId: Int!) {
       viewerStatusKind
       copyright
       image {
-        internalUrl(size: "280x")
+        internalUrl_1x: internalUrl(size: "350x")
+        internalUrl_2x: internalUrl(size: "700x")
       }
       trailers(orderBy: { field: SORT_NUMBER, direction: ASC }) {
         nodes {

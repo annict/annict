@@ -2,6 +2,7 @@ import 'bootstrap';
 
 import ujs from '@rails/ujs';
 import Turbolinks from 'turbolinks';
+import LazyLoad from 'vanilla-lazyload';
 import Vue from 'vue';
 
 import sidebar from './web/components/sidebar';
@@ -19,6 +20,10 @@ document.addEventListener('turbolinks:load', (_event) => {
 
   new Vue({
     el: '.ann-application',
+  });
+
+  new LazyLoad({
+    elements_selector: '.js-lazy',
   });
 });
 

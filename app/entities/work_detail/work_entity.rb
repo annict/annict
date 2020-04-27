@@ -36,7 +36,8 @@ module WorkDetail
     attribute :viewer_finished_to_watch, Types::Bool
     attribute :viewer_status_kind, Types::StatusKinds.optional
     attribute :copyright, Types::String.optional
-    attribute :image_url, Types::String.optional
+    attribute :image_url_1x, Types::String.optional
+    attribute :image_url_2x, Types::String.optional
     attribute :trailers, Types::Array.of(TrailerEntity)
     attribute :casts, Types::Array.of(CastEntity)
     attribute :staffs, Types::Array.of(StaffEntity)
