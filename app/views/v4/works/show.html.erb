@@ -300,7 +300,7 @@
             <div class="row pl-3">
               <% @work.casts.each do |cast| %>
                 <div class="col-6 col-sm-3 mb-3 pl-0">
-                  <%= link_to cast.character.name, character_path(cast.character) %>
+                  <%= link_to cast.character.local_name, character_path(cast.character) %>
                   <div class="small">
                     <span>CV:</span>
                     <%= link_to cast.local_accurate_name, person_path(cast.person) %>
