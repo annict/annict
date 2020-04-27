@@ -18,6 +18,10 @@ module Canary
           null: false,
           description: "タイトル"
 
+        field :title_en, String,
+          null: true,
+          description: "タイトル (英語)"
+
         field :title_Kana, String,
           null: true,
           description: "タイトル (かな)"
@@ -26,16 +30,9 @@ module Canary
           null: true,
           description: "タイトル (別名)"
 
-        field :title_en, String,
-          null: true,
-          description: "タイトル (英語)"
-
         field :title_alter_en, String,
           null: true,
           description: "タイトル (別名/英語)"
-
-        field :local_title, String,
-          null: false
 
         field :title_ro, String,
           null: true,
@@ -47,18 +44,11 @@ module Canary
         field :season_year, Integer,
           null: true
 
-        field :season_name, Canary::Types::Enums::SeasonName,
-          null: true
-
-        field :local_season_name, String,
+        field :season_type, Canary::Types::Enums::SeasonType,
           null: true
 
         field :season_slug, String,
           null: true
-
-        field :local_started_on_label, String,
-          null: false,
-          description: "開始日を表示する際のラベル名。テレビの場合は「放送開始日」、映画の場合は「公開日」といった感じでメディアごとに少し文言が変わる"
 
         field :started_on, Canary::Types::Scalars::Date,
           null: true
@@ -81,7 +71,7 @@ module Canary
         field :twitter_hashtag, String,
           null: true
 
-        field :syobocal_tid, Integer,
+        field :syobocal_tid, String,
           null: true
 
         field :mal_anime_id, String,
@@ -127,19 +117,16 @@ module Canary
         field :synopsis_en, String,
           null: false
 
-        field :local_synopsis, String,
+        field :synopsis_html, String,
           null: false
 
-        field :local_synopsis_html, String,
+        field :synopsis_en_html, String,
           null: false
 
         field :synopsis_source, String,
           null: false
 
         field :synopsis_source_en, String,
-          null: false
-
-        field :local_synopsis_source, String,
           null: false
 
         field :episodes, Canary::Types::Objects::EpisodeType.connection_type, null: true do
@@ -149,7 +136,6 @@ module Canary
         field :work_records, Canary::Types::Objects::WorkRecordType.connection_type, null: true do
           argument :order_by, Canary::Types::InputObjects::WorkRecordOrder, required: false
           argument :has_body, Boolean, required: false
-          argument :filter_by_locale, Boolean, required: false
         end
 
         field :programs, Canary::Types::Objects::ProgramType.connection_type, null: true do
@@ -178,13 +164,12 @@ module Canary
           SearchEpisodesQuery.new(object.episodes, order_by: order_by).call
         end
 
-        def work_records(order_by: nil, has_body: nil, filter_by_locale: false)
+        def work_records(order_by: nil, has_body: nil)
           SearchWorkRecordsQuery.new(
             object.work_records,
             context: context,
             order_by: order_by,
-            has_body: has_body,
-            filter_by_locale: filter_by_locale
+            has_body: has_body
           ).call
         end
 
@@ -222,20 +207,12 @@ module Canary
           object.media.upcase
         end
 
-        def season_name
+        def season_type
           object.season_name&.upcase
-        end
-
-        def local_season_name
-          object.season&.local_name
         end
 
         def season_slug
           object.season&.slug
-        end
-
-        def local_started_on_label
-          object.decorate.started_on_label
         end
 
         def syobocal_tid
@@ -269,12 +246,12 @@ module Canary
           kind == "no_status" ? "NO_STATUS" : kind.upcase
         end
 
-        def local_synopsis
-          object.local_synopsis(raw: true)
+        def synopsis_html
+          object.decorate.synopsis_html
         end
 
-        def local_synopsis_html
-          object.local_synopsis(raw: false)
+        def synopsis_en_html
+          object.decorate.synopsis_en_html
         end
       end
     end

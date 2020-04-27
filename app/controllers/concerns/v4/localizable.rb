@@ -20,6 +20,11 @@ module V4
       end
     end
 
+    def set_locale_with_params(&action)
+      locale = current_user&.locale.presence || params[:locale].presence || :ja
+      I18n.with_locale(locale, &action)
+    end
+
     def locale_ja?
       locale.to_s == "ja"
     end

@@ -161,6 +161,16 @@ crumb :work_detail do |work|
   end
 end
 
+crumb :work_detail_v4 do |work|
+  link work.local_title, work_path(work)
+
+  if work.season_slug.present?
+    parent :seasonal_works, work.season_slug, work.local_season_name
+  else
+    parent :root
+  end
+end
+
 crumb :work_episode_list do |work|
   link t("noun.episodes"), work_episodes_path(work)
   parent :work_detail, work

@@ -3,7 +3,7 @@
 module Canary
   module Types
     module Enums
-      class SeasonName < Canary::Types::Enums::Base
+      class SeasonType < Canary::Types::Enums::Base
         description "シーズン"
 
         value "WINTER", "冬"

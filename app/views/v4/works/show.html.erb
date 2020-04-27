@@ -1,8 +1,593 @@
 <% title = t "head.title.works.show", title: @work.local_title %>
 <% description = meta_description(t("head.meta.description.works.show", title: @work.local_title)) %>
-<% image_url = ann_image_url(@work.work_image, :image, size: "640x", ratio: "3:4") %>
+<% image_url = @work.image_url %>
 <% set_meta_tags(title: title, description: description, og: { description: description, image: image_url }, twitter: { description: description, image: image_url }, reverse: true, prefix: false) %>
+<% breadcrumb :work_detail_v4, @work %>
 
 <%= render "partial_layouts/default" do %>
-  ＼(^o^)／
+  <div class="container-fluid">
+    <div class="row">
+      <div class="col-md-3 pr-md-0">
+        <div class="mb-2 text-center text-sm-left">
+          <%= link_to work_path(@work) do %>
+            <%= image_tag @work.image_url, class: "img-fluid img-thumbnail rounded" %>
+          <% end %>
+          <div class="u-very-small text-right text-muted">
+            <i class="far fa-copyright mr-1"></i>
+            <%= @work.copyright %>
+          </div>
+        </div>
+        <h1 class="h2 font-weight-bold mb-3 text-center text-sm-left">
+          <%= link_to work_path(@work), class: "u-text-body" do %>
+            <%= @work.local_title %>
+          <% end %>
+        </h1>
+        <div class="row mb-3">
+          <div class="col text-center">
+            <div class="h4 font-weight-bold mb-1">
+              <%= @work.watchers_count %>
+            </div>
+            <div class="text-muted small">
+              <%= t "noun.watchers_count" %>
+            </div>
+          </div>
+          <div class="col text-center">
+            <div class="h4 font-weight-bold mb-1">
+              <%= @work.satisfaction_rate %><span class="small ml-1">%</span>
+            </div>
+            <div class="text-muted small">
+              <%= t "noun.satisfaction_rate_shorten" %>
+            </div>
+          </div>
+          <div class="col text-center">
+            <div class="h4 font-weight-bold mb-1">
+              <%= @work.ratings_count %>
+            </div>
+            <div class="text-muted small">
+              <%= t "noun.ratings_count" %>
+            </div>
+          </div>
+        </div>
+
+        <div class="mb-3">
+          <%# <ann-status-selector :work-id="state.work.id" :init-kind="state.work.viewerStatusKind"></ann-status-selector> %>
+        </div>
+
+        <h2 class="h4 font-weight-bold mb-3">
+          <i class="far fa-sticky-note mr-1"></i>
+          <%= t "noun.information" %>
+        </h2>
+        <dl>
+          <% if @work.title_kana.present? %>
+            <dt class="small">
+              <%= t "activerecord.attributes.work.title_kana" %>
+            </dt>
+            <dd>
+              <%= @work.title_kana %>
+            </dd>
+          <% end %>
+
+          <% if @work.title_alter.present? %>
+            <dt class="small">
+              <%= t "activerecord.attributes.work.title_alter" %>
+            </dt>
+            <dd>
+              <%= @work.title_alter %>
+            </dd>
+          <% end %>
+
+          <% if @work.title_en.present? %>
+            <dt class="small">
+              <%= t "activerecord.attributes.work.title_en" %>
+            </dt>
+            <dd>
+              <%= @work.title_en %>
+            </dd>
+          <% end %>
+
+          <% if @work.title_alter_en.present? %>
+            <dt class="small">
+              <%= t "activerecord.attributes.work.title_alter_en" %>
+            </dt>
+            <dd>
+              <%= @work.title_alter_en %>
+            </dd>
+          <% end %>
+
+          <dt class="small">
+            <%= t "activerecord.attributes.work.media" %>
+          </dt>
+          <dd>
+            <%= @work.media %>
+          </dd>
+
+          <% if @work.season_year.present? %>
+            <dt class="small">
+              <%= t "noun.release_season" %>
+            </dt>
+            <dd>
+              <%= link_to @work.local_season_name, season_works_path(slug: @work.season_slug) %>
+            </dd>
+          <% end %>
+
+          <% if @work.started_on.present? %>
+            <dt class="small">
+              <%= t "noun.aired" %>
+            </dt>
+            <dd>
+              <%= @work.started_on %>
+            </dd>
+          <% end %>
+
+          <% if @work.official_site_url.present? %>
+            <dt class="small">
+              <%= t "activerecord.attributes.work.official_site_url" %>
+            </dt>
+            <dd>
+              <%= link_with_domain(@work.official_site_url) %>
+            </dd>
+          <% end %>
+
+          <% if @work.official_site_url_en.present? %>
+            <dt class="small">
+              <%= t "activerecord.attributes.work.official_site_url_en" %>
+            </dt>
+            <dd>
+              <%= link_with_domain(@work.official_site_url_en) %>
+            </dd>
+          <% end %>
+
+          <% if @work.twitter_username.present? %>
+            <dt class="small">
+              <%= t "activerecord.attributes.work.twitter_username" %>
+            </dt>
+            <dd>
+              <%= twitter_profile_link(@work.twitter_username)  %>
+            </dd>
+          <% end %>
+
+          <% if @work.twitter_hashtag.present? %>
+            <dt class="small">
+              <%= t "activerecord.attributes.work.twitter_hashtag" %>
+            </dt>
+            <dd>
+              <%= twitter_hashtag_link(@work.twitter_hashtag) %>
+            </dd>
+          <% end %>
+
+          <% if @work.wikipedia_url.present? %>
+            <dt class="small">
+              <%= t "activerecord.attributes.work.wikipedia_url" %>
+            </dt>
+            <dd>
+              <%= link_with_domain(@work.wikipedia_url) %>
+            </dd>
+          <% end %>
+
+          <% if @work.wikipedia_url_en.present? %>
+            <dt class="small">
+              <%= t "activerecord.attributes.work.wikipedia_url_en" %>
+            </dt>
+            <dd>
+              <%= link_with_domain(@work.wikipedia_url_en) %>
+            </dd>
+          <% end %>
+
+          <% if @work.syobocal_tid.present? %>
+            <dt class="small">
+              <%= t "noun.syoboi_calendar" %>
+            </dt>
+            <dd>
+              <%= syobocal_link(@work.syobocal_tid) %>
+            </dd>
+          <% end %>
+
+          <% if @work.mal_anime_id.present? %>
+            <dt class="small">
+              <%= t "noun.my_anime_list" %>
+            </dt>
+            <dd>
+              <%= mal_link(@work.mal_anime_id) %>
+            </dd>
+          <% end %>
+        </dl>
+
+        <% if @existing_vod_channels.present? %>
+          <h2 class="h4 font-weight-bold mt-4 mb-3">
+            <i class="fas fa-video mr-1"></i>
+            <%= t "noun.vods" %>
+          </h2>
+
+          <ul class="list-unstyled">
+            <% @existing_vod_channels.each do |vod_channel| %>
+              <li>
+                <%= link_to vod_channel.name, vod_channel.programs.first.vod_title_url, rel: "noopener", target: "_blank" %>
+              </li>
+            <% end %>
+          </ul>
+        <% end %>
+
+        <h2 class="h4 font-weight-bold mt-4 mb-3">
+          <i class="fas fa-share mr-1"></i>
+          <%= t "noun.share" %>
+        </h2>
+        <%# <ann-share-to-twitter-button :text="state.work.localTitle" :url="AnnConfig.localUrl + '/works/' + state.work.annictId" :hashtags="state.work.twitterHashtag || ''"></ann-share-to-twitter-button> %>
+        <%# <ann-share-to-facebook-button :url="AnnConfig.localUrl + '/works/' + state.work.annictId"></ann-share-to-facebook-button> %>
+
+        <% if user_signed_in? && current_user.committer? %>
+          <%= link_to t("messages._common.edit_on_annict_db"), db_edit_work_path(@work), class: "btn btn-secondary w-100 mt-2" %>
+        <% end %>
+      </div>
+
+      <div class="col-md-9 px-0 px-sm-3">
+        <%# <ann-work-subnav :work="state.work" page-category="workDetail"></ann-work-subnav> %>
+
+        <% if @work.trailers.present? %>
+          <h2 class="h4 text-center my-4 font-weight-bold">
+            <%= t "noun.pv" %>
+          </h2>
+          <div class="c-card p-works-show__trailers mt-3 pt-3">
+            <div class="row ml-3 pr-3">
+              <% @work.trailers.each do |trailer| %>
+                <div class="col-md-4 col-6 text-center mb-3 pl-0">
+                  <%= link_to trailer.url, rel: "noopener", target: "_blank" do %>
+                    <div class="c-video-thumbnail">
+                      <div class="c-video-thumbnail__image" style="background-image: url(<%= trailer.image_url %>);"></div>
+                      <i class="far fa-play-circle"></i>
+                    </div>
+                    <div class="small">
+                      <%= trailer.title %>
+                    </div>
+                  <% end %>
+                </div>
+              <% end %>
+            </div>
+          </div>
+        <% end %>
+
+        <% if @work.local_synopsis_html.present? %>
+          <h2 class="h4 text-center my-4 font-weight-bold">
+            <%= t "activerecord.attributes.work.synopsis" %>
+          </h2>
+          <div class="c-card mt-3 p-3">
+            <%= @work.local_synopsis_html.html_safe %>
+            <div class="text-right small">
+              <span class="mr-1">
+                <%= t "noun.source" %>: <%= @work.local_synopsis_source %>
+              </span>
+            </div>
+          </div>
+        <% end %>
+
+        <% unless @work.is_no_episodes %>
+          <h2 class="h4 text-center my-4 font-weight-bold">
+            <%= t "noun.episodes" %>
+          </h2>
+          <div class="c-card p-works-show__episodes container mt-3 pt-3">
+            <% if @work.episodes.length > 0 %>
+              <div class="row pl-3">
+                <% @work.episodes.each do |episode| %>
+                  <div class="col-6 col-sm-4 mb-3 pl-0">
+                    <%= link_to work_episode_path(@work, episode) do %>
+                      <%= episode.number_text %>
+                      <div class="small u-text-body">
+                        <%= episode.local_title %>
+                      </div>
+                    <% end %>
+                  </div>
+                <% end %>
+
+                <% if @work.episodes_count > 50 %>
+                  <div class="container my-3">
+                    <%= link_to work_episodes_path(@work), class: "btn btn-secondary w-100" do %>
+                      <i class="fas fa-angle-right"></i>
+                      <%= t "messages.works.view_all_n_episodes", n: @work.episodes_count %>
+                    <% end %>
+                  </div>
+                <% end %>
+              </div>
+            <% else %>
+              <%# <ann-empty :text="$root.$t('messages._components.empty._notAdded')"></ann-empty> %>
+            <% end %>
+          </div>
+        <% end %>
+
+        <h2 class="h4 text-center my-4 font-weight-bold">
+          <%= t "noun.characters" %>
+        </h2>
+        <div class="c-card p-works-show__characters container mt-3 pt-3">
+          <% if @work.casts.present? %>
+            <div class="row pl-3">
+              <% @work.casts.each do |cast| %>
+                <div class="col-6 col-sm-3 mb-3 pl-0">
+                  <%= link_to cast.character.name, character_path(cast.character) %>
+                  <div class="small">
+                    <span>CV:</span>
+                    <%= link_to cast.local_accurate_name, person_path(cast.person) %>
+                  </div>
+                </div>
+              <% end %>
+            </div>
+          <% else %>
+            <%# <ann-empty :text="$root.$t('messages._components.empty._notAdded')"></ann-empty> %>
+          <% end %>
+        </div>
+
+        <h2 class="h4 text-center my-4 font-weight-bold">
+          <%= t "noun.staffs" %>
+        </h2>
+        <div class="c-card p-works-show__staffs container mt-3 pt-3">
+          <% if @work.staffs.present? %>
+            <div class="row pl-3">
+              <% @work.staffs.each do |staff| %>
+                <div class="col-6 col-sm-3 mb-3 pl-0">
+                  <% if staff.person? %>
+                    <%= link_to staff.local_accurate_name, person_path(staff.resource) %>
+                  <% else %>
+                    <%= link_to staff.local_accurate_name, organization_path(staff.resource) %>
+                  <% end %>
+                  <div class="small">
+                    <%= staff.local_role %>
+                  </div>
+                </div>
+              <% end %>
+            </div>
+          <% else %>
+            <%# <ann-empty :text="$root.$t('messages._components.empty._notAdded')"></ann-empty> %>
+          <% end %>
+        </div>
+
+        <% if locale_ja? %>
+          <h2 class="h4 text-center my-4 font-weight-bold">
+            <%= t "noun.vods" %>
+          </h2>
+          <div class="c-card p-works-show__vods container mt-3 pt-3">
+            <div class="row pl-3">
+              <% @vod_channels.each do |vod_channel| %>
+                <div class="col-6 col-sm-4 mb-3 pl-0">
+                  <% if vod_channel.programs.present? %>
+                    <div class="btn-group w-100">
+                      <button class="btn u-btn-link w-100 dropdown-toggle" type="button" data-toggle="dropdown">
+                        <%= vod_channel.name %>
+                        <div class="dropdown-menu w-100">
+                          <% vod_channel.programs.each do |program| %>
+                            <%= link_to program.vod_title_name, program.vod_title_url, class: "dropdown-item", target: "_blank", rel: "noopener" %>
+                          <% end %>
+                        </div>
+                      </button>
+                    </div>
+                  <% elsif vod_channel.programs.length == 1 && vod_channel.programs.first.vod_title_url.present? %>
+                    <%= link_to vod_channel.name, vod_channel.programs.first.vod_title_url, class: "btn u-btn-link w-100", target: "_blank", rel: "noopener" %>
+                  <% else %>
+                    <button class="btn u-btn-link w-100" type="button" disabled>
+                      <%= vod_channel.name %>
+                    </button>
+                  <% end %>
+                </div>
+              <% end %>
+            </div>
+          </div>
+        <% end %>
+
+        <h2 class="h4 text-center my-4 font-weight-bold">
+          <%= t "noun.record_body_list" %>
+        </h2>
+
+        <div class="c-card p-works-show__work-records">
+          <div class="text-center pt-3">
+            <%= link_to work_records_path(@work), class: "btn btn-primary btn-sm" do %>
+              <i class="far fa-edit mr-1"></i>
+              <%= t "verb.track" %>
+            <% end %>
+          </div>
+
+          <hr class="mb-0">
+
+          <% if @work.work_records.present? %>
+            <% @work.work_records.first(10).each do |work_record| %>
+              <div class="container py-3 u-underline">
+                <div class="mb-sm-3 row">
+                  <div class="col-auto pl-3 pr-0">
+                    <%= link_to user_path(work_record.user.username) do %>
+                      <%= image_tag work_record.user.avatar_url, class: "img-fluid img-thumbnail rounded-circle" %>
+                    <% end %>
+                  </div>
+                  <div class="col">
+                    <div>
+                      <%= link_to user_path(work_record.user.username) do %>
+                        <%= work_record.user.name %>
+                      <% end %>
+                      <% if work_record.user.is_supporter %>
+                        <span class="badge u-badge-supporter ml-1">
+                          <%= t "noun.supporter" %>
+                        </span>
+                      <% end %>
+                    </div>
+                    <div>
+                      <%= link_to record_path(work_record.user.username, work_record.record), class: "small text-muted" do %>
+                        <%= work_record.created_at %>
+                      <% end %>
+                      <% if work_record.modified_at.present? %>
+                        <small class="ml-1 text-muted">
+                          <i class="far pencil-alt"></i>
+                        </small>
+                      <% end %>
+                    </div>
+                  </div>
+                </div>
+                <div>
+                  <div class="row">
+                    <div class="col-12 col-sm-4 order-1 order-sm-2">
+                      <% if work_record.rating_overall_state.present? %>
+                        <div class="p-3">
+                          <div class="small font-weight-bold text-center mb-2">
+                            <%= t "noun.rating" %>
+                          </div>
+                          <% if work_record.rating_animation_state.present? %>
+                            <div class="row">
+                              <div class="col">
+                                <%= t "noun.animation" %>
+                              </div>
+                              <div class="col pl-0 text-right">
+                                <%# <ann-rating-label :init-kind="workRecord.ratingAnimationState"></ann-rating-label> %>
+                              </div>
+                            </div>
+                          <% end %>
+                          <% if work_record.rating_music_state.present? %>
+                            <div class="row">
+                              <div class="col">
+                                <%= t "noun.music" %>
+                              </div>
+                              <div class="col pl-0 text-right">
+                                <%# <ann-rating-label :init-kind="workRecord.ratingMusicState"></ann-rating-label> %>
+                              </div>
+                            </div>
+                          <% end %>
+                          <% if work_record.rating_story_state.present? %>
+                            <div class="row">
+                              <div class="col">
+                                <%= t "noun.story" %>
+                              </div>
+                              <div class="col pl-0 text-right">
+                                <%# <ann-rating-label :init-kind="workRecord.ratingStoryState"></ann-rating-label> %>
+                              </div>
+                            </div>
+                          <% end %>
+                          <% if work_record.rating_character_state.present? %>
+                            <div class="row">
+                              <div class="col">
+                                <%= t "noun.character" %>
+                              </div>
+                              <div class="col pl-0 text-right">
+                                <%# <ann-rating-label :init-kind="workRecord.ratingCharacterState"></ann-rating-label> %>
+                              </div>
+                            </div>
+                          <% end %>
+                          <% if work_record.rating_overall_state.present? %>
+                            <div class="row">
+                              <div class="col">
+                                <%= t "noun.overall" %>
+                              </div>
+                              <div class="col pl-0 text-right">
+                                <%# <ann-rating-label :init-kind="workRecord.ratingOverallState"></ann-rating-label> %>
+                              </div>
+                            </div>
+                          <% end %>
+                        </div>
+                      <% end %>
+                    </div>
+                    <div class="col-12 col-sm-8 order-2 order-sm-1">
+                      <div class="c-body mb-3">
+                        <div class="c-body__content">
+                          <%= work_record.body_html %>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="align-items-center px-3 row">
+                  <div class="col text-right">
+                    <span class="mr-2">
+                      <%# <ann-share-to-twitter-button :text="$root.$t('head.title.workRecords.show', { profileName: workRecord.user.name, username: workRecord.user.username, workTitle: state.work.localTitle })" :url="AnnConfig.localUrl + '/@' + workRecord.user.username + '/records/' + workRecord.record.annictId" :hashtags="state.work.twitterHashtag || ''"></ann-share-to-twitter-button> %>
+                    </span>
+                    <span class="mr-2">
+                      <%# <ann-share-to-facebook-button :url="AnnConfig.localUrl + '/@' + workRecord.user.username + '/records/' + workRecord.record.annictId"></ann-share-to-facebook-button> %>
+                    </span>
+                    <%# <ann-like-button resource-name="WorkRecord" :resource-id="workRecord.id" :init-likes-count="workRecord.likesCount" :init-is-liked="workRecord.viewerDidLike" :is-signed-in="$root.isSignedIn()"></ann-like-button> %>
+                  </div>
+                </div>
+
+                <% if user_signed_in? && current_user.username == work_record.user.username %>
+                  <div class="small text-right mt-2">
+                    <%= link_to edit_work_record_path(@work, work_record.record), class: "mr-2" do %>
+                      <i class="fab fa-edit mr-1"></i>
+                      <%= t "noun.edit" %>
+                    <% end %>
+                    <%= link_to record_path(work_record.user.username, work_record.record), method: :delete do %>
+                      <i class="far fa-trash-alt mr-1"></i>
+                      <%= t "noun.delete" %>
+                    <% end %>
+                  </div>
+                <% end %>
+              </div>
+            <% end %>
+
+            <% if @work.work_records.length > 10 %>
+              <div class="container my-3">
+                <%= link_to work_records_path(@work), class: "btn btn-secondary w-100" do %>
+                  <i class="fas fa-angle-right"></i>
+                  <%= t "messages.works.view_all_n_record_body_list", n: @work.work_records_with_body_count %>
+                <% end %>
+              </div>
+            <% end %>
+          <% else %>
+            <%# <ann-empty :text="$root.$t('messages._components.empty.noRecordBodyList')"></ann-empty> %>
+          <% end %>
+        </div>
+
+        <h2 class="h4 text-center my-4 font-weight-bold">
+          <%= t "noun.stats" %>
+        </h2>
+
+        <div class="c-card container mt-3 pt-3">
+          <div class="row">
+            <div class="col-12 col-sm-6 mb-3">
+              <h3 class="small text-center">
+                Watchers
+              </h3>
+              <%# <ann-work-watchers-chart :work-id="state.work.annictId"></ann-work-watchers-chart> %>
+            </div>
+            <div class="col-12 col-sm-6 mb-3">
+              <h3 class="small text-center">
+                Status
+              </h3>
+              <%# <ann-work-status-chart :work-id="state.work.annictId"></ann-work-status-chart> %>
+            </div>
+          </div>
+        </div>
+
+        <% if @work.series_list.present? %>
+          <h2 class="h4 text-center my-4 font-weight-bold">
+            <%= t "noun.related_works" %>
+          </h2>
+          <div class="c-card p-works-show__series mt-3 pl-3 py-3">
+            <% @work.series_list.each do |series| %>
+              <h3 class="text-center mb-3">
+                <%= t "noun.series_with_name", series_name: series.local_name %>
+              </h3>
+              <div class="px-3">
+                <div class="row">
+                  <% series.series_works.each do |series_work| %>
+                    <div class="col-4 col-sm-2 p-0 pr-3 mb-3">
+                      <div class="c-card">
+                        <%= link_to work_path(series_work) do %>
+                          <div class="c-hover-image">
+                            <div class="c-hover-image__image">
+                              <%= image_tag series_work.image_url, class: "img-fluid img-thumbnail rounded" %>
+                            </div>
+                            <div class="c-hover-image__over"></div>
+                          </div>
+                        <% end %>
+                        <div class="p-1">
+                          <div class="u-very-small">
+                            <%= link_to series_work.local_title, work_path(series_work) %>
+                          </div>
+                          <% if series_work.local_summary.present? %>
+                            <div class="u-very-small">
+                              <%= series_work.local_summary %>
+                            </div>
+                          <% end %>
+                        </div>
+                      </div>
+                    </div>
+                  <% end %>
+                </div>
+              </div>
+            <% end %>
+          </div>
+        <% end %>
+      </div>
+    </div>
+  </div>
 <% end %>

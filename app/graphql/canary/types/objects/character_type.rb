@@ -10,8 +10,8 @@ module Canary
 
         field :annict_id, Integer, null: false
         field :name, String, null: false
-        field :name_kana, String, null: false
         field :name_en, String, null: false
+        field :name_kana, String, null: false
         field :nickname, String, null: false
         field :nickname_en, String, null: false
         field :birthday, String, null: false

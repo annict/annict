@@ -11,10 +11,11 @@ module Canary
         global_id_field :id
 
         field :annict_id, Integer, null: false
-        field :number, Integer, null: true
+        field :number, Float, null: true
         field :number_text, String, null: true
         field :sort_number, Integer, null: false
         field :title, String, null: true
+        field :title_en, String, null: true
         field :satisfaction_rate, Float,
           null: true,
           description: "満足度"
