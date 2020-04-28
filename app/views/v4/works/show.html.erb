@@ -5,17 +5,17 @@
 <% breadcrumb :work_detail_v4, @work %>
 
 <%= render "partial_layouts/default" do %>
-  <c-content class="container-fluid py-3" page-category="work-detail">
+  <c-content class="py-3" page-category="work-detail">
     <div class="row">
       <div class="col-md-3 pr-md-0">
         <div class="row">
           <div class="col-4 col-sm-12">
             <div class="mb-2 text-center text-sm-left">
-              <%= link_to work_path(@work) do %>
+              <%= link_to work_path(@work.id) do %>
                 <%= render WorkImageComponent.new(image_url_1x: @work.image_url_1x, image_url_2x: @work.image_url_2x) %>
               <% end %>
-              <div class="u-very-small text-right text-muted">
-                <i class="far fa-copyright mr-1"></i>
+              <div class="u-very-small text-muted">
+                <i class="far fa-copyright"></i>
                 <%= @work.copyright %>
               </div>
             </div>
@@ -60,196 +60,205 @@
           </div>
         </div>
 
-        <h2 class="h4 font-weight-bold mb-3">
-          <i class="far fa-sticky-note mr-1"></i>
-          <%= t "noun.information" %>
-        </h2>
-        <dl>
-          <% if @work.title_kana.present? %>
-            <dt class="small">
-              <%= t "activerecord.attributes.work.title_kana" %>
-            </dt>
-            <dd>
-              <%= @work.title_kana %>
-            </dd>
-          <% end %>
-
-          <% if @work.title_alter.present? %>
-            <dt class="small">
-              <%= t "activerecord.attributes.work.title_alter" %>
-            </dt>
-            <dd>
-              <%= @work.title_alter %>
-            </dd>
-          <% end %>
-
-          <% if @work.title_en.present? %>
-            <dt class="small">
-              <%= t "activerecord.attributes.work.title_en" %>
-            </dt>
-            <dd>
-              <%= @work.title_en %>
-            </dd>
-          <% end %>
-
-          <% if @work.title_alter_en.present? %>
-            <dt class="small">
-              <%= t "activerecord.attributes.work.title_alter_en" %>
-            </dt>
-            <dd>
-              <%= @work.title_alter_en %>
-            </dd>
-          <% end %>
-
-          <dt class="small">
-            <%= t "activerecord.attributes.work.media" %>
-          </dt>
-          <dd>
-            <%= @work.decorate.media_text %>
-          </dd>
-
-          <% if @work.season_year.present? %>
-            <dt class="small">
-              <%= t "noun.release_season" %>
-            </dt>
-            <dd>
-              <%= link_to @work.local_season_name, season_works_path(slug: @work.season_slug) %>
-            </dd>
-          <% end %>
-
-          <% if @work.started_on.present? %>
-            <dt class="small">
-              <%= t "noun.aired" %>
-            </dt>
-            <dd>
-              <%= @work.started_on %>
-            </dd>
-          <% end %>
-
-          <% if @work.official_site_url.present? %>
-            <dt class="small">
-              <%= t "activerecord.attributes.work.official_site_url" %>
-            </dt>
-            <dd>
-              <%= link_with_domain(@work.official_site_url) %>
-            </dd>
-          <% end %>
-
-          <% if @work.official_site_url_en.present? %>
-            <dt class="small">
-              <%= t "activerecord.attributes.work.official_site_url_en" %>
-            </dt>
-            <dd>
-              <%= link_with_domain(@work.official_site_url_en) %>
-            </dd>
-          <% end %>
-
-          <% if @work.twitter_username.present? %>
-            <dt class="small">
-              <%= t "activerecord.attributes.work.twitter_username" %>
-            </dt>
-            <dd>
-              <%= @work.decorate.twitter_profile_link  %>
-            </dd>
-          <% end %>
-
-          <% if @work.twitter_hashtag.present? %>
-            <dt class="small">
-              <%= t "activerecord.attributes.work.twitter_hashtag" %>
-            </dt>
-            <dd>
-              <%= @work.decorate.twitter_hashtag_link %>
-            </dd>
-          <% end %>
-
-          <% if @work.wikipedia_url.present? %>
-            <dt class="small">
-              <%= t "activerecord.attributes.work.wikipedia_url" %>
-            </dt>
-            <dd>
-              <%= link_with_domain(@work.wikipedia_url) %>
-            </dd>
-          <% end %>
-
-          <% if @work.wikipedia_url_en.present? %>
-            <dt class="small">
-              <%= t "activerecord.attributes.work.wikipedia_url_en" %>
-            </dt>
-            <dd>
-              <%= link_with_domain(@work.wikipedia_url_en) %>
-            </dd>
-          <% end %>
-
-          <% if @work.syobocal_tid.present? %>
-            <dt class="small">
-              <%= t "noun.syobocal" %>
-            </dt>
-            <dd>
-              <%= @work.decorate.syobocal_link %>
-            </dd>
-          <% end %>
-
-          <% if @work.mal_anime_id.present? %>
-            <dt class="small">
-              <%= t "noun.my_anime_list" %>
-            </dt>
-            <dd>
-              <%= @work.decorate.mal_link %>
-            </dd>
-          <% end %>
-        </dl>
-
-        <% if @existing_vod_channels.present? %>
-          <h2 class="h4 font-weight-bold mt-4 mb-3">
-            <i class="fas fa-video mr-1"></i>
-            <%= t "noun.vods" %>
+        <div class="mb-3">
+          <h2 class="font-weight-bold h4 mb-3">
+            <%= t "noun.information" %>
           </h2>
 
-          <ul class="list-unstyled">
-            <% @existing_vod_channels.each do |vod_channel| %>
-              <li>
-                <%= link_to vod_channel.name, vod_channel.programs.first.vod_title_url, rel: "noopener", target: "_blank" %>
-              </li>
+          <dl class="mb-3">
+            <% if @work.title_kana.present? %>
+              <dt class="small">
+                <%= t "activerecord.attributes.work.title_kana" %>
+              </dt>
+              <dd>
+                <%= @work.title_kana %>
+              </dd>
             <% end %>
-          </ul>
+
+            <% if @work.title_alter.present? %>
+              <dt class="small">
+                <%= t "activerecord.attributes.work.title_alter" %>
+              </dt>
+              <dd>
+                <%= @work.title_alter %>
+              </dd>
+            <% end %>
+
+            <% if @work.title_en.present? %>
+              <dt class="small">
+                <%= t "activerecord.attributes.work.title_en" %>
+              </dt>
+              <dd>
+                <%= @work.title_en %>
+              </dd>
+            <% end %>
+
+            <% if @work.title_alter_en.present? %>
+              <dt class="small">
+                <%= t "activerecord.attributes.work.title_alter_en" %>
+              </dt>
+              <dd>
+                <%= @work.title_alter_en %>
+              </dd>
+            <% end %>
+
+            <dt class="small">
+              <%= t "activerecord.attributes.work.media" %>
+            </dt>
+            <dd>
+              <%= @work.decorate.media_text %>
+            </dd>
+
+            <% if @work.season_year.present? %>
+              <dt class="small">
+                <%= t "noun.release_season" %>
+              </dt>
+              <dd>
+                <%= link_to @work.local_season_name, season_works_path(slug: @work.season_slug) %>
+              </dd>
+            <% end %>
+
+            <% if @work.started_on.present? %>
+              <dt class="small">
+                <%= t "noun.aired" %>
+              </dt>
+              <dd>
+                <%= @work.started_on %>
+              </dd>
+            <% end %>
+
+            <% if @work.official_site_url.present? %>
+              <dt class="small">
+                <%= t "activerecord.attributes.work.official_site_url" %>
+              </dt>
+              <dd>
+                <%= link_with_domain(@work.official_site_url) %>
+              </dd>
+            <% end %>
+
+            <% if @work.official_site_url_en.present? %>
+              <dt class="small">
+                <%= t "activerecord.attributes.work.official_site_url_en" %>
+              </dt>
+              <dd>
+                <%= link_with_domain(@work.official_site_url_en) %>
+              </dd>
+            <% end %>
+
+            <% if @work.twitter_username.present? %>
+              <dt class="small">
+                <%= t "activerecord.attributes.work.twitter_username" %>
+              </dt>
+              <dd>
+                <%= @work.decorate.twitter_profile_link  %>
+              </dd>
+            <% end %>
+
+            <% if @work.twitter_hashtag.present? %>
+              <dt class="small">
+                <%= t "activerecord.attributes.work.twitter_hashtag" %>
+              </dt>
+              <dd>
+                <%= @work.decorate.twitter_hashtag_link %>
+              </dd>
+            <% end %>
+
+            <% if @work.wikipedia_url.present? %>
+              <dt class="small">
+                <%= t "activerecord.attributes.work.wikipedia_url" %>
+              </dt>
+              <dd>
+                <%= link_with_domain(@work.wikipedia_url) %>
+              </dd>
+            <% end %>
+
+            <% if @work.wikipedia_url_en.present? %>
+              <dt class="small">
+                <%= t "activerecord.attributes.work.wikipedia_url_en" %>
+              </dt>
+              <dd>
+                <%= link_with_domain(@work.wikipedia_url_en) %>
+              </dd>
+            <% end %>
+
+            <% if @work.syobocal_tid.present? %>
+              <dt class="small">
+                <%= t "noun.syobocal" %>
+              </dt>
+              <dd>
+                <%= @work.decorate.syobocal_link %>
+              </dd>
+            <% end %>
+
+            <% if @work.mal_anime_id.present? %>
+              <dt class="small">
+                <%= t "noun.my_anime_list" %>
+              </dt>
+              <dd>
+                <%= @work.decorate.mal_link %>
+              </dd>
+            <% end %>
+          </dl>
+        </div>
+
+        <% if @existing_vod_channels.present? %>
+          <div class="mb-3">
+            <h2 class="font-weight-bold h4 mb-3">
+              <%= t "noun.vods" %>
+            </h2>
+
+            <ul class="list-unstyled mb-3 u-lh-4">
+              <% @existing_vod_channels.each do |vod_channel| %>
+                <li>
+                  <%= link_to vod_channel.name, vod_channel.programs.first.vod_title_url, rel: "noopener", target: "_blank" %>
+                </li>
+              <% end %>
+            </ul>
+          </div>
         <% end %>
 
-        <h2 class="h4 font-weight-bold mt-4 mb-3">
-          <i class="fas fa-share mr-1"></i>
-          <%= t "noun.share" %>
-        </h2>
+        <div class="mb-3">
+          <h2 class="font-weight-bold h4 mb-3">
+            <%= t "noun.share" %>
+          </h2>
 
-        <c-share-to-twitter-button
-          text="<%= @work.local_title %>"
-          url="<%= "#{local_url}/works/#{@work.id}" %>"
-          hashtags="<%= @work.twitter_hashtag.presence || '' %>"
-          btn-text="<%= t "noun.tweet" %>"
-        ></c-share-to-twitter-button>
+          <c-share-to-twitter-button
+            text="<%= @work.local_title %>"
+            url="<%= "#{local_url}/works/#{@work.id}" %>"
+            hashtags="<%= @work.twitter_hashtag.presence || '' %>"
+            btn-text="<%= t "noun.tweet" %>"
+          ></c-share-to-twitter-button>
 
-        <c-share-to-facebook-button
-          url="<%= "#{local_url}/works/#{@work.id}" %>"
-          btn-text="<%= t "noun.share" %>"
-        ></c-share-to-facebook-button>
+          <c-share-to-facebook-button
+            url="<%= "#{local_url}/works/#{@work.id}" %>"
+            btn-text="<%= t "noun.share" %>"
+          ></c-share-to-facebook-button>
+        </div>
 
         <% if user_signed_in? && current_user.committer? %>
-          <%= link_to t("messages._common.edit_on_annict_db"), db_edit_work_path(@work), class: "btn btn-secondary w-100 mt-2" %>
+          <div class="mt-3">
+            <%= link_to t("messages._common.edit_on_annict_db"), db_edit_work_path(@work), class: "btn btn-secondary w-100 mt-2" %>
+          </div>
         <% end %>
       </div>
 
       <div class="col-md-9 px-0 px-sm-3">
-        <%= render WorkSubNavComponent.new(work: @work, page_category: "work_detail") %>
+        <div class="mb-3">
+          <%= render WorkSubNavComponent.new(work: @work, page_category: "work_detail") %>
+        </div>
 
         <% if @work.trailers.present? %>
-          <h2 class="h4 text-center my-4 font-weight-bold">
-            <%= t "noun.pv" %>
-          </h2>
-          <div class="p-works-show__trailers mt-3 pt-3">
-            <div class="row ml-3 pr-3">
+          <div>
+            <h2 class="font-weight-bold h3 mb-3">
+              <%= t "noun.pv" %>
+            </h2>
+
+            <div class="row">
               <% @work.trailers.each do |trailer| %>
-                <div class="col-md-4 col-6 text-center mb-3 pl-0">
+                <div class="col-md-4 col-6 text-center mb-4">
                   <%= link_to trailer.url, rel: "noopener", target: "_blank" do %>
                     <div class="c-video-thumbnail">
-                      <div class="c-video-thumbnail__image" style="background-image: url(<%= trailer.image_url %>);"></div>
+                      <div class="c-video-thumbnail__image rounded" style="background-image: url(<%= trailer.image_url %>);"></div>
                       <i class="far fa-play-circle"></i>
                     </div>
                     <div class="small">
@@ -263,28 +272,31 @@
         <% end %>
 
         <% if @work.local_synopsis_html.present? %>
-          <h2 class="h4 text-center my-4 font-weight-bold">
-            <%= t "activerecord.attributes.work.synopsis" %>
-          </h2>
-          <div class="mt-3 p-3">
-            <%= @work.local_synopsis_html.html_safe %>
-            <div class="text-right small">
-              <span class="mr-1">
-                <%= t "noun.source" %>: <%= @work.local_synopsis_source %>
-              </span>
+          <div class="mb-3">
+            <h2 class="font-weight-bold h3 mb-3">
+              <%= t "activerecord.attributes.work.synopsis" %>
+            </h2>
+
+            <div class="c-body">
+              <%= @work.local_synopsis_html.html_safe %>
+            </div>
+
+            <div class="small text-right">
+              <%= t "noun.source" %>: <%= @work.local_synopsis_source %>
             </div>
           </div>
         <% end %>
 
         <% unless @work.is_no_episodes %>
-          <h2 class="h4 text-center my-4 font-weight-bold">
-            <%= t "noun.episodes" %>
-          </h2>
-          <div class="p-works-show__episodes container mt-3 pt-3">
+          <div class="mb-3">
+            <h2 class="font-weight-bold h3 mb-3">
+              <%= t "noun.episodes" %>
+            </h2>
+
             <% if @work.episodes.length > 0 %>
-              <div class="row pl-3">
+              <div class="row">
                 <% @work.episodes.each do |episode| %>
-                  <div class="col-6 col-sm-4 mb-3 pl-0">
+                  <div class="col-6 col-sm-4 mb-3">
                     <%= link_to work_episode_path(@work.id, episode.id) do %>
                       <%= episode.number_text %>
                       <div class="small u-text-body">
@@ -309,14 +321,15 @@
           </div>
         <% end %>
 
-        <h2 class="h4 text-center my-4 font-weight-bold">
-          <%= t "noun.characters" %>
-        </h2>
-        <div class="p-works-show__characters container mt-3 pt-3">
+        <div class="mb-3">
+          <h2 class="font-weight-bold h3 mb-3">
+            <%= t "noun.characters" %>
+          </h2>
+
           <% if @work.casts.present? %>
-            <div class="row pl-3">
+            <div class="row">
               <% @work.casts.each do |cast| %>
-                <div class="col-6 col-sm-3 mb-3 pl-0">
+                <div class="col-6 col-sm-3 mb-3">
                   <%= link_to cast.character.local_name, character_path(cast.character) %>
                   <div class="small">
                     <span>CV:</span>
@@ -330,14 +343,15 @@
           <% end %>
         </div>
 
-        <h2 class="h4 text-center my-4 font-weight-bold">
-          <%= t "noun.staffs" %>
-        </h2>
-        <div class="p-works-show__staffs container mt-3 pt-3">
+        <div class="mb-3">
+          <h2 class="font-weight-bold h3 mb-3">
+            <%= t "noun.staffs" %>
+          </h2>
+
           <% if @work.staffs.present? %>
-            <div class="row pl-3">
+            <div class="row">
               <% @work.staffs.each do |staff| %>
-                <div class="col-6 col-sm-3 mb-3 pl-0">
+                <div class="col-6 col-sm-3 mb-3">
                   <% if staff.person? %>
                     <%= link_to staff.local_accurate_name, person_path(staff.resource) %>
                   <% else %>
@@ -355,13 +369,14 @@
         </div>
 
         <% if locale_ja? %>
-          <h2 class="h4 text-center my-4 font-weight-bold">
-            <%= t "noun.vods" %>
-          </h2>
-          <div class="p-works-show__vods container mt-3 pt-3">
-            <div class="row pl-3">
+          <div class="mb-3">
+            <h2 class="font-weight-bold h3 mb-3">
+              <%= t "noun.vods" %>
+            </h2>
+
+            <div class="row">
               <% @vod_channels.each do |vod_channel| %>
-                <div class="col-6 col-sm-4 mb-3 pl-0">
+                <div class="col-6 col-sm-4 mb-3">
                   <% if vod_channel.programs.present? %>
                     <div class="btn-group w-100">
                       <button class="btn u-btn-link w-100 dropdown-toggle" type="button" data-toggle="dropdown">
@@ -386,19 +401,21 @@
           </div>
         <% end %>
 
-        <h2 class="h4 text-center my-4 font-weight-bold">
-          <%= t "noun.record_body_list" %>
-        </h2>
+        <div class="mb-6">
+          <div class="container">
+            <div class="row justify-content-between">
+              <h2 class="font-weight-bold h3 mb-3">
+                <%= t "noun.record_body_list" %>
+              </h2>
 
-        <div class="p-works-show__work-records">
-          <div class="text-center pt-3">
-            <%= link_to work_records_path(@work), class: "btn btn-primary btn-sm" do %>
-              <i class="far fa-edit mr-1"></i>
-              <%= t "verb.track" %>
-            <% end %>
+              <div>
+                <%= link_to work_records_path(@work), class: "btn btn-primary btn-sm" do %>
+                  <i class="far fa-edit mr-1"></i>
+                  <%= t "verb.track" %>
+                <% end %>
+              </div>
+            </div>
           </div>
-
-          <hr class="mb-0">
 
           <% if @work.work_records.present? %>
             <% @work.work_records.first(10).each do |work_record| %>
