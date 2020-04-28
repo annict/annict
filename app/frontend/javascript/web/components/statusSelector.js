@@ -5,16 +5,28 @@ import eventHub from '../../common/eventHub';
 const NO_SELECT = 'no_select';
 
 export default {
-  template: '#t-status-selector',
+  template: `
+    <div
+      class="c-status-selector"
+      :class='{
+        "unselected": statusKind === "no_select",
+        "c-spinner": isLoading
+      }'>
+      <div class="c-status-selector__object">
+        <select class="w-100" v-model="statusKind" @change="change">
+          <slot></slot>
+        </select>
+        <i class="fas fa-caret-down"></i>
+      </div>
+    </div>
+  `,
 
   data() {
     return {
-      appData: {},
-      pageData: {},
-      statuses: [],
       isLoading: false,
       statusKind: null,
       prevStatusKind: null,
+      isUserSignedIn: false,
     };
   },
 
@@ -24,28 +36,22 @@ export default {
       required: true,
     },
 
-    size: {
-      type: String,
-      default: 'default',
-    },
-
-    isTransparent: {
-      type: Boolean,
-      default: false,
-    },
-
     initStatusKind: {
+      type: String,
+    },
+
+    pageCategory: {
       type: String,
     },
   },
 
   methods: {
-    currentStatusKind() {
-      if (!this.statuses.length) {
+    currentStatusKind(statuses) {
+      if (!statuses.length) {
         return NO_SELECT;
       }
 
-      const status = this.statuses.filter(status => {
+      const status = statuses.filter((status) => {
         return status.work_id === this.workId;
       })[0];
 
@@ -53,15 +59,15 @@ export default {
         return NO_SELECT;
       }
 
-      return status.kind;
+      return status.status_kind;
     },
 
     resetKind() {
-      return (this.statusKind = NO_SELECT);
+      this.statusKind = NO_SELECT;
     },
 
     change() {
-      if (!this.$root.appData.isUserSignedIn) {
+      if (!this.isUserSignedIn) {
         $('.c-sign-up-modal').modal('show');
         this.resetKind();
         return;
@@ -75,7 +81,7 @@ export default {
           url: `/api/internal/works/${this.workId}/statuses/select`,
           data: {
             status_kind: this.statusKind,
-            page_category: gon.page.category,
+            page_category: this.pageCategory,
           },
         }).done(() => {
           this.isLoading = false;
@@ -87,27 +93,24 @@ export default {
   mounted() {
     this.isLoading = true;
 
-    if (this.initStatusKind) {
-      this.prevStatusKind = this.initStatusKind;
-      this.statusKind = this.initStatusKind;
-      this.isLoading = false;
-      return;
-    }
+    eventHub.$on('request:viewer:fetched', (viewer) => {
+      if (!viewer) {
+        this.isUserSignedIn = false;
+        return;
+      }
 
-    eventHub.$on('app:loaded', () => {
-      if (!this.$root.appData.isUserSignedIn) {
+      this.isUserSignedIn = true;
+
+      const statuses = viewer.library_entries;
+
+      if (!statuses || !statuses.length) {
         this.statusKind = this.prevStatusKind = NO_SELECT;
         this.isLoading = false;
         return;
       }
 
-      this.statuses = this.$root.pageData.statuses || [];
-
-      if (this.statuses.length) {
-        this.prevStatusKind = this.currentStatusKind();
-        this.statusKind = this.currentStatusKind();
-        this.isLoading = false;
-      }
+      this.statusKind = this.prevStatusKind = this.currentStatusKind(statuses);
+      this.isLoading = false;
     });
   },
 };

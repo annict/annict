@@ -74,3 +74,13 @@ namespace :api do
     end
   end
 end
+
+scope module: :api do
+  scope module: :internal do
+    constraints format: "json" do
+      # rubocop:disable Layout/ExtraSpacing, Layout/LineLength
+      match "/api/internal/viewer", via: :get, as: :internal_api_viewer_detail, to: "viewers#show"
+      # rubocop:enable Layout/ExtraSpacing, Layout/LineLength
+    end
+  end
+end

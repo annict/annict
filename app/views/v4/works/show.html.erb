@@ -5,52 +5,59 @@
 <% breadcrumb :work_detail_v4, @work %>
 
 <%= render "partial_layouts/default" do %>
-  <div class="container-fluid">
+  <c-content class="container-fluid py-3" page-category="work-detail">
     <div class="row">
       <div class="col-md-3 pr-md-0">
-        <div class="mb-2 text-center text-sm-left">
-          <%= link_to work_path(@work) do %>
-            <%= render WorkImageComponent.new(image_url_1x: @work.image_url_1x, image_url_2x: @work.image_url_2x) %>
-          <% end %>
-          <div class="u-very-small text-right text-muted">
-            <i class="far fa-copyright mr-1"></i>
-            <%= @work.copyright %>
-          </div>
-        </div>
-        <h1 class="h2 font-weight-bold mb-3 text-center text-sm-left">
-          <%= link_to work_path(@work), class: "u-text-body" do %>
-            <%= @work.local_title %>
-          <% end %>
-        </h1>
-        <div class="row mb-3">
-          <div class="col text-center">
-            <div class="h4 font-weight-bold mb-1">
-              <%= @work.watchers_count %>
-            </div>
-            <div class="text-muted small">
-              <%= t "noun.watchers_count" %>
+        <div class="row">
+          <div class="col-4 col-sm-12">
+            <div class="mb-2 text-center text-sm-left">
+              <%= link_to work_path(@work) do %>
+                <%= render WorkImageComponent.new(image_url_1x: @work.image_url_1x, image_url_2x: @work.image_url_2x) %>
+              <% end %>
+              <div class="u-very-small text-right text-muted">
+                <i class="far fa-copyright mr-1"></i>
+                <%= @work.copyright %>
+              </div>
             </div>
           </div>
-          <div class="col text-center">
-            <div class="h4 font-weight-bold mb-1">
-              <%= @work.satisfaction_rate %><span class="small ml-1">%</span>
-            </div>
-            <div class="text-muted small">
-              <%= t "noun.satisfaction_rate_shorten" %>
-            </div>
-          </div>
-          <div class="col text-center">
-            <div class="h4 font-weight-bold mb-1">
-              <%= @work.ratings_count %>
-            </div>
-            <div class="text-muted small">
-              <%= t "noun.ratings_count" %>
-            </div>
-          </div>
-        </div>
+          <div class="col-8 col-sm-12 pl-0 pl-sm-3">
+            <h1 class="h2 font-weight-bold mb-3 text-center text-sm-left">
+              <%= link_to work_path(@work), class: "u-text-body" do %>
+                <%= @work.local_title %>
+              <% end %>
+            </h1>
 
-        <div class="mb-3">
-          <%# <ann-status-selector :work-id="state.work.id" :init-kind="state.work.viewerStatusKind"></ann-status-selector> %>
+            <div class="row mb-3">
+              <div class="col text-center">
+                <div class="h4 font-weight-bold mb-1">
+                  <%= @work.watchers_count %>
+                </div>
+                <div class="text-muted small">
+                  <%= t "noun.watchers_count" %>
+                </div>
+              </div>
+              <div class="col text-center">
+                <div class="h4 font-weight-bold mb-1">
+                  <%= @work.satisfaction_rate %><span class="small ml-1">%</span>
+                </div>
+                <div class="text-muted small">
+                  <%= t "noun.satisfaction_rate_shorten" %>
+                </div>
+              </div>
+              <div class="col text-center">
+                <div class="h4 font-weight-bold mb-1">
+                  <%= @work.ratings_count %>
+                </div>
+                <div class="text-muted small">
+                  <%= t "noun.ratings_count" %>
+                </div>
+              </div>
+            </div>
+
+            <div class="mb-3">
+              <%= render StatusSelectorComponent.new(work_id: @work.id, page_category: "work-detail") %>
+            </div>
+          </div>
         </div>
 
         <h2 class="h4 font-weight-bold mb-3">
@@ -268,7 +275,7 @@
               <div class="row pl-3">
                 <% @work.episodes.each do |episode| %>
                   <div class="col-6 col-sm-4 mb-3 pl-0">
-                    <%= link_to work_episode_path(@work, episode) do %>
+                    <%= link_to work_episode_path(@work.id, episode.id) do %>
                       <%= episode.number_text %>
                       <div class="small u-text-body">
                         <%= episode.local_title %>
@@ -279,7 +286,7 @@
 
                 <% if @work.episodes_count > 50 %>
                   <div class="container my-3">
-                    <%= link_to work_episodes_path(@work), class: "btn btn-secondary w-100" do %>
+                    <%= link_to work_episodes_path(@work.id), class: "btn btn-secondary w-100" do %>
                       <i class="fas fa-angle-right"></i>
                       <%= t "messages.works.view_all_n_episodes", n: @work.episodes_count %>
                     <% end %>
@@ -589,5 +596,5 @@
         <% end %>
       </div>
     </div>
-  </div>
+  </c-content>
 <% end %>
