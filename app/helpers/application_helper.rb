@@ -64,7 +64,11 @@ module ApplicationHelper
   end
 
   def annict_config_v4
-    config = {}.freeze
+    config = {
+      facebook: {
+        appId: ENV.fetch("FACEBOOK_APP_ID")
+      },
+    }.freeze
 
     javascript_tag "window.AnnConfig = #{config.to_json.html_safe};"
   end

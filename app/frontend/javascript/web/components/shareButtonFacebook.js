@@ -1,11 +1,24 @@
-import $ from 'jquery';
-import Vue from 'vue';
+import urlParams from '../utils/urlParams';
 
 export default {
-  template: '#t-share-button-facebook',
+  template: `
+    <span class="c-share-button-facebook">
+      <span class="btn btn-sm u-btn-facebook" @click="open">
+        <div class="small">
+          <i class="fab fa-facebook mr-1"></i>
+          {{ btnText }}
+        </div>
+      </span>
+    </span>
+  `,
 
   props: {
     url: {
+      type: String,
+      required: true,
+    },
+
+    btnText: {
       type: String,
       required: true,
     },
@@ -17,14 +30,15 @@ export default {
 
   computed: {
     shareUrl() {
-      const params = $.param({
+      const params = urlParams({
         u: this.url,
         display: 'popup',
         ref: 'plugin',
         src: 'like',
         kid_directed_site: 0,
-        app_id: gon.facebook.appId,
+        app_id: AnnConfig.facebook.appId,
       });
+
       return `${this.baseShareUrl}?${params}`;
     },
   },

@@ -1,18 +1,33 @@
-import $ from 'jquery';
-import Vue from 'vue';
+import urlParams from '../utils/urlParams';
 
 export default {
-  template: '#t-share-button-twitter',
+  template: `
+    <span class="c-share-button-twitter">
+      <span class="btn btn-sm u-btn-twitter" @click="open">
+        <div class="small">
+          <i class="fab fa-twitter mr-1"></i>
+          {{ btnText }}
+        </div>
+      </span>
+    </span>
+  `,
 
   props: {
     text: {
       type: String,
       required: true,
     },
+
     url: {
       type: String,
       required: true,
     },
+
+    btnText: {
+      type: String,
+      required: true,
+    },
+
     hashtags: {
       type: String,
     },
@@ -24,11 +39,12 @@ export default {
 
   computed: {
     tweetUrl() {
-      const params = $.param({
+      const params = urlParams({
         text: `${this.text} | Annict`,
         url: this.url,
         hashtags: this.hashtags,
       });
+
       return `${this.baseTweetUrl}?${params}`;
     },
   },

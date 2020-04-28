@@ -9,7 +9,7 @@ module V4
 
     layout "v4"
 
-    helper_method :client_uuid, :local_url_with_path, :locale_en?, :locale_ja?, :page_category
+    helper_method :client_uuid, :local_url_with_path, :locale_en?, :locale_ja?, :local_url, :page_category
 
     before_action :set_raven_context
     around_action :set_locale

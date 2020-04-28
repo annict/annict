@@ -42,9 +42,6 @@ import recordRating from './common/components/recordRating';
 import recordSorter from './common/components/recordSorter';
 import recordTextarea from './common/components/recordTextarea';
 import recordWordCount from './common/components/recordWordCount';
-import shareButtonTwitter from './common/components/shareButtonTwitter';
-import shareButtonFacebook from './common/components/shareButtonFacebook';
-import statusSelector from './common/components/statusSelector';
 import timeAgo from './common/components/timeAgo';
 import tips from './common/components/tips';
 import untrackedEpisodeList from './common/components/untrackedEpisodeList';
@@ -55,7 +52,10 @@ import workFriends from './common/components/workFriends';
 import workTags from './common/components/workTags';
 import youtubeModalPlayer from './common/components/youtubeModalPlayer';
 
+import shareButtonTwitter from './web/components/shareButtonTwitter';
+import shareButtonFacebook from './web/components/shareButtonFacebook';
 import sidebar from './web/components/sidebar';
+import statusSelector from './web/components/statusSelector';
 import tabBar from './web/components/tabBar';
 
 import resourceSelect from './common/directives/resourceSelect';

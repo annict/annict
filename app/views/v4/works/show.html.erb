@@ -218,8 +218,18 @@
           <i class="fas fa-share mr-1"></i>
           <%= t "noun.share" %>
         </h2>
-        <%# <ann-share-to-twitter-button :text="state.work.localTitle" :url="AnnConfig.localUrl + '/works/' + state.work.annictId" :hashtags="state.work.twitterHashtag || ''"></ann-share-to-twitter-button> %>
-        <%# <ann-share-to-facebook-button :url="AnnConfig.localUrl + '/works/' + state.work.annictId"></ann-share-to-facebook-button> %>
+
+        <c-share-to-twitter-button
+          text="<%= @work.local_title %>"
+          url="<%= "#{local_url}/works/#{@work.id}" %>"
+          hashtags="<%= @work.twitter_hashtag.presence || '' %>"
+          btn-text="<%= t "noun.tweet" %>"
+        ></c-share-to-twitter-button>
+
+        <c-share-to-facebook-button
+          url="<%= "#{local_url}/works/#{@work.id}" %>"
+          btn-text="<%= t "noun.share" %>"
+        ></c-share-to-facebook-button>
 
         <% if user_signed_in? && current_user.committer? %>
           <%= link_to t("messages._common.edit_on_annict_db"), db_edit_work_path(@work), class: "btn btn-secondary w-100 mt-2" %>
