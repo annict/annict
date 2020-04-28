@@ -237,7 +237,7 @@
       </div>
 
       <div class="col-md-9 px-0 px-sm-3">
-        <%# <ann-work-subnav :work="state.work" page-category="workDetail"></ann-work-subnav> %>
+        <%= render WorkSubNavComponent.new(work: @work, page_category: "work_detail") %>
 
         <% if @work.trailers.present? %>
           <h2 class="h4 text-center my-4 font-weight-bold">
