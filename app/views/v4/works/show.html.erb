@@ -243,7 +243,7 @@
           <h2 class="h4 text-center my-4 font-weight-bold">
             <%= t "noun.pv" %>
           </h2>
-          <div class="c-card p-works-show__trailers mt-3 pt-3">
+          <div class="p-works-show__trailers mt-3 pt-3">
             <div class="row ml-3 pr-3">
               <% @work.trailers.each do |trailer| %>
                 <div class="col-md-4 col-6 text-center mb-3 pl-0">
@@ -266,7 +266,7 @@
           <h2 class="h4 text-center my-4 font-weight-bold">
             <%= t "activerecord.attributes.work.synopsis" %>
           </h2>
-          <div class="c-card mt-3 p-3">
+          <div class="mt-3 p-3">
             <%= @work.local_synopsis_html.html_safe %>
             <div class="text-right small">
               <span class="mr-1">
@@ -280,7 +280,7 @@
           <h2 class="h4 text-center my-4 font-weight-bold">
             <%= t "noun.episodes" %>
           </h2>
-          <div class="c-card p-works-show__episodes container mt-3 pt-3">
+          <div class="p-works-show__episodes container mt-3 pt-3">
             <% if @work.episodes.length > 0 %>
               <div class="row pl-3">
                 <% @work.episodes.each do |episode| %>
@@ -312,7 +312,7 @@
         <h2 class="h4 text-center my-4 font-weight-bold">
           <%= t "noun.characters" %>
         </h2>
-        <div class="c-card p-works-show__characters container mt-3 pt-3">
+        <div class="p-works-show__characters container mt-3 pt-3">
           <% if @work.casts.present? %>
             <div class="row pl-3">
               <% @work.casts.each do |cast| %>
@@ -333,7 +333,7 @@
         <h2 class="h4 text-center my-4 font-weight-bold">
           <%= t "noun.staffs" %>
         </h2>
-        <div class="c-card p-works-show__staffs container mt-3 pt-3">
+        <div class="p-works-show__staffs container mt-3 pt-3">
           <% if @work.staffs.present? %>
             <div class="row pl-3">
               <% @work.staffs.each do |staff| %>
@@ -358,7 +358,7 @@
           <h2 class="h4 text-center my-4 font-weight-bold">
             <%= t "noun.vods" %>
           </h2>
-          <div class="c-card p-works-show__vods container mt-3 pt-3">
+          <div class="p-works-show__vods container mt-3 pt-3">
             <div class="row pl-3">
               <% @vod_channels.each do |vod_channel| %>
                 <div class="col-6 col-sm-4 mb-3 pl-0">
@@ -390,7 +390,7 @@
           <%= t "noun.record_body_list" %>
         </h2>
 
-        <div class="c-card p-works-show__work-records">
+        <div class="p-works-show__work-records">
           <div class="text-center pt-3">
             <%= link_to work_records_path(@work), class: "btn btn-primary btn-sm" do %>
               <i class="far fa-edit mr-1"></i>
@@ -547,7 +547,7 @@
           <%= t "noun.stats" %>
         </h2>
 
-        <div class="c-card container mt-3 pt-3">
+        <div class="container mt-3 pt-3">
           <div class="row">
             <div class="col-12 col-sm-6 mb-3">
               <h3 class="small text-center">
@@ -568,7 +568,7 @@
           <h2 class="h4 text-center my-4 font-weight-bold">
             <%= t "noun.related_works" %>
           </h2>
-          <div class="c-card p-works-show__series mt-3 pl-3 py-3">
+          <div class="p-works-show__series mt-3 pl-3 py-3">
             <% @work.series_list.each do |series| %>
               <h3 class="text-center mb-3">
                 <%= t "noun.series_with_name", series_name: series.local_name %>
