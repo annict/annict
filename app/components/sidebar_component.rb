@@ -40,8 +40,19 @@ class SidebarComponent < ApplicationComponent
           end
         end
 
-        if user
-          el.ul class: "list-unstyled px-3" do
+        el.ul class: "list-unstyled px-3" do
+          el.li do
+            el.a class: "d-flex justify-content-between py-2 w-100", href: "/" do
+              el.div class: "c-sidebar__icon text-muted" do
+                el.i(class: "fal fa-home") {}
+              end
+              el.div class: "flex-grow-1 text-body" do
+                t "noun.home"
+              end
+            end
+          end
+
+          if user
             el.li do
               el.a class: "d-flex justify-content-between py-2 w-100", href: user_path(user.username) do
                 el.div class: "c-sidebar__icon text-muted" do
