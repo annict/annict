@@ -41,10 +41,14 @@ module WorkDecorator
   end
 
   def synopsis_html
+    return "" if synopsis.blank?
+
     simple_format synopsis
   end
 
   def synopsis_en_html
+    return "" if synopsis.blank?
+
     simple_format synopsis_en
   end
 
