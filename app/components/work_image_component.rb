@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class WorkImageComponent < ApplicationComponent
-  def initialize(image_url_1x:, image_url_2x:, bg_color: "#FFE1F4")
+  def initialize(image_url_1x:, image_url_2x:, bg_color: "#F1F1F1")
     @image_url_1x = image_url_1x
     @image_url_2x = image_url_2x
     @bg_color = bg_color

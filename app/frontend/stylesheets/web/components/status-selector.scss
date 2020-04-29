@@ -8,11 +8,10 @@
   width: 100%;
 
   &.unselected {
+    border: solid 1px $ann-color-green;
     color: $ann-color-green;
 
     .c-status-selector__object {
-      border: solid 1px $ann-color-green;
-
       select {
         background-color: rgba(255, 255, 255, 0);
         color: $ann-color-green;

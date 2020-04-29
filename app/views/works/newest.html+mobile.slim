@@ -5,7 +5,7 @@
 
 - breadcrumb :newest_works
 
-= render "partial_layouts/v2/default" do
+= render "partial_layouts/v2/default", page_category: "work-list" do
   h1.h2.text-center.my-3
     = title
 
@@ -26,8 +26,5 @@
 
 - content_for :js_templates do
   = render "application/js_templates/omitted_synopsis"
-  = render "application/js_templates/share_button_facebook"
-  = render "application/js_templates/share_button_twitter"
-  = render "application/js_templates/status_selector"
   = render "application/js_templates/work_friends"
   = render "application/js_templates/youtube_modal_player"

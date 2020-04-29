@@ -17,6 +17,6 @@
             .mb-2
               span.font-weight-bold.mr-1 = work.watchers_count
               span.text-muted.small Watchers
-            c-status-selector :work-id="#{work.id}" style="width: 200px;" size="small"
+            c-status-selector :work-id="#{work.id}" style="width: 200px;"
 - else
   = render "application/components/empty", text: t("messages._empty.no_works")

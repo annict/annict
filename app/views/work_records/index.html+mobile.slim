@@ -6,7 +6,7 @@
 
 - breadcrumb :work_record_list, @work
 
-= render "partial_layouts/v2/default" do
+= render "partial_layouts/v2/default", page_category: "record-list" do
   = render "works/header", work: @work
 
   - if user_signed_in?
@@ -45,10 +45,3 @@
         = render "application/components/empty", text: t("messages._empty.no_record_body_list")
 
   = render "application/components/breadcrumb"
-
-- content_for :js_templates do
-  = render "application/js_templates/like_button"
-  = render "application/js_templates/rating_state_label"
-  = render "application/js_templates/share_button_facebook"
-  = render "application/js_templates/share_button_twitter"
-  = render "application/js_templates/status_selector"

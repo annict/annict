@@ -6,7 +6,7 @@
 
 - breadcrumb :work_record_detail, @work_record
 
-= render "partial_layouts/v2/default" do
+= render "partial_layouts/v2/default", page_category: "record-detail" do
   .c-card.container.pt-3.mb-3
     = render "works/work_info", work: @work
 
@@ -35,10 +35,3 @@
                   = local_time_ago_in_words(work_record.created_at)
 
   = render "application/components/breadcrumb"
-
-- content_for :js_templates do
-  = render "application/js_templates/like_button"
-  = render "application/js_templates/rating_state_label"
-  = render "application/js_templates/share_button_facebook"
-  = render "application/js_templates/share_button_twitter"
-  = render "application/js_templates/status_selector"

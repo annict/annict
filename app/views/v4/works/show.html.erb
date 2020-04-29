@@ -10,7 +10,7 @@
       <div class="col-md-3 pr-md-0">
         <div class="row mb-3 mb-sm-0">
           <div class="col-4 col-sm-12">
-            <div class="mb-2 text-center text-sm-left">
+            <div class="mb-2 text-sm-left">
               <%= link_to work_path(@work.id) do %>
                 <%= render WorkImageComponent.new(image_url_1x: @work.image_url_1x, image_url_2x: @work.image_url_2x) %>
               <% end %>
@@ -38,7 +38,7 @@
               </div>
               <div class="col text-center">
                 <div class="h4 font-weight-bold mb-1">
-                  <%= @work.satisfaction_rate %><span class="small ml-1">%</span>
+                  <%= @work.satisfaction_rate.presence || "-" %><span class="small ml-1">%</span>
                 </div>
                 <div class="text-muted small">
                   <%= t "noun.satisfaction_rate_shorten" %>

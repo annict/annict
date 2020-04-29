@@ -5,13 +5,13 @@
 
 = render "partial_layouts/v2/default" do
   .container.pt-3
-    = render "application/components/breadcrumb"
-
     .row.justify-content-center
       .col-7
         c-slot-list
           .c-loading
             .c-loading__core Loading...
+
+    = render "application/components/breadcrumb"
 
 - content_for :js_templates do
   = render "application/js_templates/slot_list"

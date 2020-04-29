@@ -4,10 +4,10 @@
   </div>
 
   <div class="pl-default__main d-flex flex-column">
-    <div class="pl-default__content mb-3">
+    <c-content class="pl-default__content mb-3" page-category="<%= page_category %>">
       <c-flash></c-flash>
       <%= yield %>
-    </div>
+    </c-content>
 
     <div class="pl-default__footer">
       <%= render FooterComponent.new %>

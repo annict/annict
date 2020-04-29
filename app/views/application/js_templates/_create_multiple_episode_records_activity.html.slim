@@ -42,4 +42,4 @@ script#t-create-multiple-episode-records-activity type="x-template"
             c-time-ago :time="activity.created_at"
 
     .mt-2
-      c-like-button.u-fake-link resource-name="MultipleEpisodeRecord" :init-resource-id="activity.multiple_record.id" :init-likes-count="activity.multiple_record.likes_count" :init-is-liked="activity.meta.liked" :is-signed-in="#{user_signed_in?}"
+      c-like-button.u-fake-link resource-name="MultipleEpisodeRecord" :resource-id="activity.multiple_record.id" :init-likes-count="activity.multiple_record.likes_count" :is-signed-in="#{user_signed_in?}" page-category="home-show"

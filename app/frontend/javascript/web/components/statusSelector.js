@@ -28,7 +28,6 @@ export default {
       isLoading: false,
       statusKind: null,
       prevStatusKind: null,
-      isUserSignedIn: false,
     };
   },
 
@@ -71,12 +70,6 @@ export default {
     },
 
     change() {
-      if (!this.isUserSignedIn) {
-        $('.c-sign-up-modal').modal('show');
-        this.resetKind();
-        return;
-      }
-
       if (this.statusKind !== this.prevStatusKind) {
         this.isLoading = true;
 
@@ -87,9 +80,15 @@ export default {
             status_kind: this.statusKind,
             page_category: this.pageCategory,
           },
-        }).done(() => {
-          this.isLoading = false;
-        });
+        })
+          .done(() => {
+            this.isLoading = false;
+          })
+          .fail(() => {
+            $('.c-sign-up-modal').modal('show');
+            this.resetKind();
+            this.isLoading = false;
+          });
       }
     },
   },
@@ -98,13 +97,6 @@ export default {
     this.isLoading = true;
 
     eventHub.$on('request:libraryEntries:fetched', (libraryEntries) => {
-      if (!libraryEntries) {
-        this.isUserSignedIn = false;
-        return;
-      }
-
-      this.isUserSignedIn = true;
-
       if (!libraryEntries || !libraryEntries.length) {
         this.statusKind = this.prevStatusKind = NO_SELECT;
         this.isLoading = false;

@@ -3,7 +3,7 @@
 
 - breadcrumb :user_work_tag_detail, @user, @tag
 
-= render "partial_layouts/v2/default" do
+= render "partial_layouts/v2/default", page_category: "user-work-tag-detail" do
   .c-card.mb-3
     .container.py-3
       h1.h2
@@ -45,10 +45,6 @@ c-impression-button-modal
 - content_for :js_templates do
   = render "application/js_templates/impression_button_modal"
   = render "application/js_templates/impression_button"
-  = render "application/js_templates/like_button"
   = render "application/js_templates/reaction_button"
-  = render "application/js_templates/share_button_facebook"
-  = render "application/js_templates/share_button_twitter"
-  = render "application/js_templates/status_selector"
   = render "application/js_templates/work_comment"
   = render "application/js_templates/work_tags"

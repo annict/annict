@@ -3,7 +3,7 @@
 - keywords = meta_keywords
 - set_meta_tags(title: title, description: description, keywords: keywords, og: { description: description }, reverse: true, prefix: false)
 
-= render "partial_layouts/v2/default" do
+= render "partial_layouts/v2/default", page_category: "search-detail" do
   .mb-4
     .c-card.p-3.mb-3
       = render "form"
@@ -32,6 +32,3 @@
       = render "#{@view}_list", view: @view, "#{@view.pluralize}": resources
       .text-center
         = paginate resources
-
-- content_for :js_templates do
-  = render "application/js_templates/status_selector"

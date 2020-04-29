@@ -7,6 +7,7 @@ import Cookies from 'js-cookie';
 import moment from 'moment-timezone';
 import 'moment/locale/ja';
 import Turbolinks from 'turbolinks';
+import LazyLoad from 'vanilla-lazyload';
 import Vue from 'vue';
 import VueLazyload from 'vue-lazyload';
 
@@ -36,7 +37,6 @@ import omittedSynopsis from './common/components/omittedSynopsis';
 import muteUserButton from './common/components/muteUserButton';
 import privacyPolicyModal from './common/components/privacyPolicyModal';
 import slotList from './common/components/slotList';
-import ratingLabel from './common/components/ratingLabel';
 import reactionButton from './common/components/reactionButton';
 import record from './common/components/record';
 import recordRating from './common/components/recordRating';
@@ -54,7 +54,9 @@ import workFriends from './common/components/workFriends';
 import workTags from './common/components/workTags';
 import youtubeModalPlayer from './common/components/youtubeModalPlayer';
 
+import content from './web/components/content';
 import likeButton from './web/components/likeButton';
+import ratingLabel from './web/components/ratingLabel';
 import shareToFacebookButton from './web/components/shareToFacebookButton';
 import shareToTwitterButton from './web/components/shareToTwitterButton';
 import sidebar from './web/components/sidebar';
@@ -90,6 +92,7 @@ document.addEventListener('turbolinks:load', (event) => {
   Vue.component('c-channel-receive-button', channelReceiveButton);
   Vue.component('c-channel-selector', channelSelector);
   Vue.component('c-comment-guard', commentGuard);
+  Vue.component('c-content', content);
   Vue.component('c-episode-list', episodeList);
   Vue.component('c-episode-progress', episodeProgress);
   Vue.component('c-episode-rating-state-chart', episodeRatingStateChart);
@@ -107,7 +110,6 @@ document.addEventListener('turbolinks:load', (event) => {
   Vue.component('c-privacy-policy-modal', privacyPolicyModal);
   Vue.component('c-slot-list', slotList);
   Vue.component('c-rating-label', ratingLabel);
-  Vue.component('c-rating-state-label', ratingStateLabel);
   Vue.component('c-reaction-button', reactionButton);
   Vue.component('c-record', record);
   Vue.component('c-record-rating', recordRating);
@@ -162,6 +164,10 @@ document.addEventListener('turbolinks:load', (event) => {
         });
       });
     },
+  });
+
+  new LazyLoad({
+    elements_selector: '.js-lazy',
   });
 });
 

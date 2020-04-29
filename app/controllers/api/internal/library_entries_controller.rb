@@ -3,9 +3,11 @@
 module Api
   module Internal
     class LibraryEntriesController < Api::Internal::ApplicationController
-      before_action :authenticate_user!
+      before_action :authenticate_user!, only: %i(show skip_episode)
 
       def index
+        return render(json: []) unless user_signed_in?
+
         library_entries = current_user.
           library_entries.
           joins(:status).

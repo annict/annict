@@ -5,11 +5,8 @@
 
 - breadcrumb :popular_works
 
-= render "partial_layouts/v2/default" do
-  .my-3 class="#{@display_option == "list_detailed" ? 'container' : 'px-3'}"
-    = render "application/components/breadcrumb"
-
-  h1.text-center.mb-0.mt-3
+= render "partial_layouts/v2/default", page_category: "work-list" do
+  h1.text-center.mb-0.my-3
     = title
 
   .mb-3 class="#{@display_option == "list_detailed" ? 'container pr-0' : 'px-3'}"
@@ -29,10 +26,10 @@
     .mb-3.text-center
       = paginate @works
 
+  .container
+    = render "application/components/breadcrumb"
+
 - content_for :js_templates do
   = render "application/js_templates/omitted_synopsis"
-  = render "application/js_templates/share_button_facebook"
-  = render "application/js_templates/share_button_twitter"
-  = render "application/js_templates/status_selector"
   = render "application/js_templates/work_friends"
   = render "application/js_templates/youtube_modal_player"

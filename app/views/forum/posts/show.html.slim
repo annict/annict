@@ -6,8 +6,6 @@
   = render "forum/application/subnav", post: @post
 
   .container.py-3.mb-3
-    = render "application/components/breadcrumb"
-
     .mb-3
       .mb-1
         = link_to @post.forum_category.local_name,  forum_category_path(@post.forum_category.slug), class: "badge badge-secondary"
@@ -56,6 +54,8 @@
         .c-card.p-3.mb-3
           = render "forum/comments/form", comment: @comment
       .col-4
+
+    = render "application/components/breadcrumb"
 
 - content_for :js_templates
   = render "application/js_templates/forum_edit_link"

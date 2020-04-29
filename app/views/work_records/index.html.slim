@@ -6,9 +6,8 @@
 
 - breadcrumb :work_record_list, @work
 
-= render "partial_layouts/v2/default" do
+= render "partial_layouts/v2/default", page_category: "work-record-list" do
   .container.py-3.mb-3
-    = render "application/components/breadcrumb"
     .row
       .col-3.pr-0
         = render "works/sidebar", work: @work
@@ -46,6 +45,4 @@
           - else
             = render "application/components/empty", text: t("messages._empty.no_record_body_list")
 
-- content_for :js_templates do
-  = render "application/js_templates/like_button"
-  = render "application/js_templates/rating_state_label"
+    = render "application/components/breadcrumb"

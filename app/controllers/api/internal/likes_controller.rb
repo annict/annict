@@ -3,9 +3,11 @@
 module Api
   module Internal
     class LikesController < Api::Internal::ApplicationController
-      before_action :authenticate_user!
+      before_action :authenticate_user!, only: %i(create unlike)
 
       def index
+        return render(json: []) unless user_signed_in?
+
         likes = current_user.likes.pluck(:recipient_id, :recipient_type).map do |(recipient_id, recipient_type)|
           {
             recipient_type: recipient_type,

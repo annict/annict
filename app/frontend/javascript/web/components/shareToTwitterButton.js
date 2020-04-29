@@ -37,7 +37,7 @@ export default {
       const params = urlParams({
         text: `${this.text} | Annict`,
         url: this.url,
-        hashtags: this.hashtags,
+        hashtags: this.hashtags || '',
       });
 
       return `${this.baseTweetUrl}?${params}`;

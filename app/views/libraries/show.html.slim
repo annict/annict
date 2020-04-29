@@ -5,7 +5,7 @@
 - image_url = ann_image_url(@user.profile, :image, size: "640x")
 - set_meta_tags(title: title, description: description, keywords: keywords, og: { description: description }, twitter: { description: description }, reverse: true, prefix: false)
 
-= render "partial_layouts/v2/default" do
+= render "partial_layouts/v2/default", page_category: "library-detail" do
   = render "users/low_profile_header", user: @user
 
   .p-libraries-show__subnav.c-subnav.mb-3
@@ -54,8 +54,5 @@ c-impression-button-modal
 - content_for :js_templates do
   = render "application/js_templates/impression_button_modal"
   = render "application/js_templates/impression_button"
-  = render "application/js_templates/share_button_facebook"
-  = render "application/js_templates/share_button_twitter"
-  = render "application/js_templates/status_selector"
   = render "application/js_templates/work_comment"
   = render "application/js_templates/work_tags"

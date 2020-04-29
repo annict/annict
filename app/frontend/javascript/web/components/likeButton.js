@@ -31,7 +31,6 @@ export default {
     },
     pageCategory: {
       type: String,
-      required: true,
     },
   },
 

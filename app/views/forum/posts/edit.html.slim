@@ -7,6 +7,7 @@
   = render "forum/application/subnav", post: @post
 
   .container.py-3.mb-3
-    = render "application/components/breadcrumb"
     .c-card.p-3
       = render "forum/posts/form", post: @post
+
+    = render "application/components/breadcrumb"

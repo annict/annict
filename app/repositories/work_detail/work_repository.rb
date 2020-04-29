@@ -16,7 +16,7 @@ module WorkDetail
         title_alter_en: node["titleAlterEn"],
         media: node["media"].downcase,
         season_year: node["seasonYear"],
-        season_type: node["seasonType"].downcase,
+        season_type: node["seasonType"]&.downcase,
         season_slug: node["seasonSlug"],
         started_on: node["startedOn"] ? Date.parse(node["startedOn"]) : nil,
         episodes_count: node["episodesCount"],

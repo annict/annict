@@ -6,8 +6,6 @@
   = render "forum/application/subnav"
 
   .container.py-3.mb-3
-    = render "application/components/breadcrumb"
-
     .row
       .col
         h1.h2.mb-3
@@ -26,3 +24,5 @@
     - if @posts.total_pages > 1
       .text-center.mt-3
         = paginate @posts
+
+    = render "application/components/breadcrumb"

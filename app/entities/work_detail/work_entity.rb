@@ -17,7 +17,7 @@ module WorkDetail
     attribute :started_on, Types::Date.optional
     attribute :episodes_count, Types::Integer
     attribute :watchers_count, Types::Integer
-    attribute :satisfaction_rate, Types::Float
+    attribute :satisfaction_rate, Types::Float.optional
     attribute :ratings_count, Types::Integer
     attribute :work_records_with_body_count, Types::Integer
     attribute :official_site_url, Types::String.optional

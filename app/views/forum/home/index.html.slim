@@ -6,8 +6,6 @@
   = render "forum/application/subnav"
 
   .container.py-3
-    = render "application/components/breadcrumb"
-
     .text-right.mb-3
       = link_to new_forum_post_path, class: "btn btn-primary" do
         = icon "plus"
@@ -20,3 +18,5 @@
     - if @posts.present?
       .text-center.mt-3
         = paginate @posts
+
+    = render "application/components/breadcrumb"

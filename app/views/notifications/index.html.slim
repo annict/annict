@@ -4,9 +4,6 @@
 - breadcrumb :notifications_index
 
 = render "partial_layouts/v2/default" do
-  .container.mt-3
-    = render "application/components/breadcrumb"
-
   .c-card.container.my-3.u-mw-600
     - if @notifications.present?
       - @notifications.each do |notification|
@@ -15,3 +12,6 @@
       = render "application/components/empty", text: t("messages.notifications.no_notifications")
   .text-center
     = paginate @notifications
+
+  .container
+    = render "application/components/breadcrumb"
