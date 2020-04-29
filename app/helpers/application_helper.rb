@@ -68,6 +68,18 @@ module ApplicationHelper
       facebook: {
         appId: ENV.fetch("FACEBOOK_APP_ID")
       },
+      i18n: {
+        noun: {
+          share: t("noun.share"),
+          tweet: t("noun.tweet")
+        },
+        ratingState: {
+          average: t("enumerize.episode_record.rating_state.average"),
+          bad: t("enumerize.episode_record.rating_state.bad"),
+          good: t("enumerize.episode_record.rating_state.good"),
+          great: t("enumerize.episode_record.rating_state.great")
+        }
+      }
     }.freeze
 
     javascript_tag "window.AnnConfig = #{config.to_json.html_safe};"

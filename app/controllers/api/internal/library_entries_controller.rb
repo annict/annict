@@ -5,6 +5,21 @@ module Api
     class LibraryEntriesController < Api::Internal::ApplicationController
       before_action :authenticate_user!
 
+      def index
+        library_entries = current_user.
+          library_entries.
+          joins(:status).
+          select("library_entries.work_id, statuses.kind as status_kind").
+          map do |library_entry|
+            {
+              work_id: library_entry.work_id,
+              status_kind:  Status.kind.find_value(library_entry.status_kind)
+            }
+          end
+
+        render json: library_entries
+      end
+
       def show
         @library_entry = current_user.library_entries.find_by(work_id: params[:work_id])
         @user = current_user

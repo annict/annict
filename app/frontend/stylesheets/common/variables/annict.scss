@@ -28,7 +28,7 @@ $ann-color-green-070: #02A762;
 $ann-color-green-080: #019849;
 $ann-color-green-090: #008734;
 
-$ann-color-black-000: #FFFFFF;
+$ann-color-black-000: #F1F1F1;
 $ann-color-black-005: #E6E6E6;
 $ann-color-black-010: #CCCCCC;
 $ann-color-black-020: #B3B3B3;
@@ -78,7 +78,7 @@ $ann-color-red-090: #870002;
 
 $ann-color-mizuho: $ann-color-mizuho-040;
 $ann-color-black: $ann-color-black-090;
-$ann-color-white: $ann-color-black-000;
+$ann-color-white: #FFFFFF;
 $ann-color-green: $ann-color-green-040;
 $ann-color-blue: $ann-color-blue-040;
 $ann-color-yellow: $ann-color-yellow-040;
@@ -133,7 +133,8 @@ $ann-text-colors: (
 
 $ann-bg-colors: (
   mizuho: $ann-color-mizuho,
-  white: $ann-color-white
+  white: $ann-color-white,
+  black-000: $ann-color-black-000
 );
 
 // Forms

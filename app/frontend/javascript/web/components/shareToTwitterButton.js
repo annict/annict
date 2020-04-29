@@ -23,11 +23,6 @@ export default {
       required: true,
     },
 
-    btnText: {
-      type: String,
-      required: true,
-    },
-
     hashtags: {
       type: String,
     },
@@ -46,6 +41,10 @@ export default {
       });
 
       return `${this.baseTweetUrl}?${params}`;
+    },
+
+    btnText() {
+      return AnnConfig.i18n.noun.tweet;
     },
   },
 

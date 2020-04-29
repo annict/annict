@@ -1,14 +1,23 @@
 import $ from 'jquery';
 
+import eventHub from '../../common/eventHub';
+
 export default {
-  template: '#t-like-button',
+  template: `
+    <div :class="{ 'c-like-button': true, 'd-inline-block': true, 'u-fake-link': true, 'is-liked': isLiked }" @click="toggleLike">
+      <i :class="{ 'far fa-heart': !isLiked, 'fas fa-heart': isLiked }"></i>
+      <span class="count">
+        {{ likesCount }}
+      </span>
+    </div>
+  `,
 
   props: {
     resourceName: {
       type: String,
       required: true,
     },
-    initResourceId: {
+    resourceId: {
       type: Number,
       required: true,
     },
@@ -16,21 +25,20 @@ export default {
       type: Number,
       required: true,
     },
-    initIsLiked: {
-      type: Boolean,
-      required: true,
-    },
     isSignedIn: {
       type: Boolean,
       default: false,
+    },
+    pageCategory: {
+      type: String,
+      required: true,
     },
   },
 
   data() {
     return {
-      resourceId: Number(this.initResourceId),
       likesCount: Number(this.initLikesCount),
-      isLiked: JSON.parse(this.initIsLiked),
+      isLiked: false,
       isLoading: false,
     };
   },
@@ -49,7 +57,7 @@ export default {
       this.isLoading = true;
 
       if (this.isLiked) {
-        return $.ajax({
+        $.ajax({
           method: 'POST',
           url: '/api/internal/likes/unlike',
           data: {
@@ -62,13 +70,13 @@ export default {
           this.isLiked = false;
         });
       } else {
-        return $.ajax({
+        $.ajax({
           method: 'POST',
           url: '/api/internal/likes',
           data: {
             recipient_type: this.resourceName,
             recipient_id: this.resourceId,
-            page_category: gon.page.category,
+            page_category: this.pageCategory,
           },
         }).done(() => {
           this.isLoading = false;
@@ -77,5 +85,15 @@ export default {
         });
       }
     },
+  },
+
+  mounted() {
+    eventHub.$on('request:likes:fetched', (likes) => {
+      const like = likes.filter((like) => {
+        return like.recipient_type === this.resourceName && like.recipient_id === this.resourceId;
+      })[0];
+
+      this.isLiked = !!like;
+    });
   },
 };

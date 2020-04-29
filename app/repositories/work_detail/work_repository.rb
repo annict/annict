@@ -110,6 +110,7 @@ module WorkDetail
 
       node["workRecords"]["nodes"].map do |node|
         work[:work_records] << {
+          id: node["annictId"],
           rating_animation_state: node["ratingAnimationState"]&.downcase,
           rating_music_state: node["ratingMusicState"]&.downcase,
           rating_story_state: node["ratingStoryState"]&.downcase,

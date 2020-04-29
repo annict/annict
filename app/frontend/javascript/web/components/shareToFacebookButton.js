@@ -17,11 +17,6 @@ export default {
       type: String,
       required: true,
     },
-
-    btnText: {
-      type: String,
-      required: true,
-    },
   },
 
   data() {
@@ -40,6 +35,10 @@ export default {
       });
 
       return `${this.baseShareUrl}?${params}`;
+    },
+
+    btnText() {
+      return AnnConfig.i18n.noun.share;
     },
   },
 

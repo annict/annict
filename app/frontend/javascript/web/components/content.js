@@ -1,9 +1,10 @@
 import eventHub from '../../common/eventHub';
 
-import viewerRequest from '../requests/viewerRequest';
+import libraryEntriesRequest from '../requests/libraryEntriesRequest';
+import likesRequest from '../requests/likesRequest';
 
 const REQUEST_LIST = {
-  'work-detail': [viewerRequest],
+  'work-detail': [libraryEntriesRequest, likesRequest],
 };
 
 export default {

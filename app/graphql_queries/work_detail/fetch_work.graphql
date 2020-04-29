@@ -95,6 +95,7 @@ query($annictId: Int!) {
       }
       workRecords(hasBody: true, orderBy: { field: CREATED_AT, direction: DESC }, first: 11) { # Get 11 work records to display more records link
         nodes {
+          annictId
           ratingAnimationState
           ratingMusicState
           ratingStoryState

@@ -46,12 +46,12 @@ export default {
   },
 
   methods: {
-    currentStatusKind(statuses) {
-      if (!statuses.length) {
+    currentStatusKind(libraryEntries) {
+      if (!libraryEntries.length) {
         return NO_SELECT;
       }
 
-      const status = statuses.filter((status) => {
+      const status = libraryEntries.filter((status) => {
         return status.work_id === this.workId;
       })[0];
 
@@ -93,23 +93,21 @@ export default {
   mounted() {
     this.isLoading = true;
 
-    eventHub.$on('request:viewer:fetched', (viewer) => {
-      if (!viewer) {
+    eventHub.$on('request:libraryEntries:fetched', (libraryEntries) => {
+      if (!libraryEntries) {
         this.isUserSignedIn = false;
         return;
       }
 
       this.isUserSignedIn = true;
 
-      const statuses = viewer.library_entries;
-
-      if (!statuses || !statuses.length) {
+      if (!libraryEntries || !libraryEntries.length) {
         this.statusKind = this.prevStatusKind = NO_SELECT;
         this.isLoading = false;
         return;
       }
 
-      this.statusKind = this.prevStatusKind = this.currentStatusKind(statuses);
+      this.statusKind = this.prevStatusKind = this.currentStatusKind(libraryEntries);
       this.isLoading = false;
     });
   },

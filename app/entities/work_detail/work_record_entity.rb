@@ -2,6 +2,7 @@
 
 module WorkDetail
   class WorkRecordEntity < ApplicationEntity
+    attribute :id, Types::Integer
     attribute :rating_animation_state, Types::RecordRatingStateKinds
     attribute :rating_music_state, Types::RecordRatingStateKinds
     attribute :rating_story_state, Types::RecordRatingStateKinds

@@ -5,6 +5,17 @@ module Api
     class LikesController < Api::Internal::ApplicationController
       before_action :authenticate_user!
 
+      def index
+        likes = current_user.likes.pluck(:recipient_id, :recipient_type).map do |(recipient_id, recipient_type)|
+          {
+            recipient_type: recipient_type,
+            recipient_id: recipient_id
+          }
+        end
+
+        render json: likes
+      end
+
       def create
         recipient = params[:recipient_type].constantize.find(params[:recipient_id])
         current_user.like(recipient)

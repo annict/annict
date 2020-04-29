@@ -226,12 +226,10 @@
             text="<%= @work.local_title %>"
             url="<%= "#{local_url}/works/#{@work.id}" %>"
             hashtags="<%= @work.twitter_hashtag.presence || '' %>"
-            btn-text="<%= t "noun.tweet" %>"
           ></c-share-to-twitter-button>
 
           <c-share-to-facebook-button
             url="<%= "#{local_url}/works/#{@work.id}" %>"
-            btn-text="<%= t "noun.share" %>"
           ></c-share-to-facebook-button>
         </div>
 
@@ -377,7 +375,7 @@
             <div class="row">
               <% @vod_channels.each do |vod_channel| %>
                 <div class="col-6 col-sm-4 mb-3">
-                  <% if vod_channel.programs.present? %>
+                  <% if vod_channel.programs.length > 1 %>
                     <div class="btn-group w-100">
                       <button class="btn u-btn-link w-100 dropdown-toggle" type="button" data-toggle="dropdown">
                         <%= vod_channel.name %>
@@ -391,7 +389,7 @@
                   <% elsif vod_channel.programs.length == 1 && vod_channel.programs.first.vod_title_url.present? %>
                     <%= link_to vod_channel.name, vod_channel.programs.first.vod_title_url, class: "btn u-btn-link w-100", target: "_blank", rel: "noopener" %>
                   <% else %>
-                    <button class="btn u-btn-link w-100" type="button" disabled>
+                    <button class="btn u-btn-link u-cursor-default w-100" type="button" disabled>
                       <%= vod_channel.name %>
                     </button>
                   <% end %>
@@ -401,7 +399,7 @@
           </div>
         <% end %>
 
-        <div class="mb-6">
+        <div class="mb-5">
           <div class="container">
             <div class="row justify-content-between">
               <h2 class="font-weight-bold h3 mb-3">
@@ -418,138 +416,152 @@
           </div>
 
           <% if @work.work_records.present? %>
-            <% @work.work_records.first(10).each do |work_record| %>
-              <div class="container py-3 u-underline">
-                <div class="mb-sm-3 row">
-                  <div class="col-auto pl-3 pr-0">
-                    <%= link_to user_path(work_record.user.username) do %>
-                      <%= image_tag work_record.user.avatar_url, class: "img-fluid img-thumbnail rounded-circle" %>
-                    <% end %>
-                  </div>
-                  <div class="col">
-                    <div>
+            <div>
+              <% @work.work_records.first(10).each do |work_record| %>
+                <div class="container py-3 u-underline">
+                  <div class="mb-sm-3 row">
+                    <div class="col-auto pl-3 pr-0">
                       <%= link_to user_path(work_record.user.username) do %>
-                        <%= work_record.user.name %>
+                        <%= image_tag work_record.user.avatar_url, class: "img-fluid img-thumbnail rounded-circle" %>
                       <% end %>
-                      <% if work_record.user.is_supporter %>
+                    </div>
+                    <div class="col">
+                      <div>
+                        <%= link_to user_path(work_record.user.username) do %>
+                          <%= work_record.user.name %>
+                        <% end %>
+                        <% if work_record.user.is_supporter %>
                         <span class="badge u-badge-supporter ml-1">
                           <%= t "noun.supporter" %>
                         </span>
-                      <% end %>
-                    </div>
-                    <div>
-                      <%= link_to record_path(work_record.user.username, work_record.record), class: "small text-muted" do %>
-                        <%= work_record.created_at %>
-                      <% end %>
-                      <% if work_record.modified_at.present? %>
-                        <small class="ml-1 text-muted">
-                          <i class="far pencil-alt"></i>
-                        </small>
-                      <% end %>
+                        <% end %>
+                      </div>
+                      <div>
+                        <%= link_to record_path(work_record.user.username, work_record.record.id), class: "small text-muted" do %>
+                          <%= display_time(work_record.created_at) %>
+                        <% end %>
+                        <% if work_record.modified_at.present? %>
+                          <small class="ml-1 text-muted">
+                            <i class="far pencil-alt"></i>
+                          </small>
+                        <% end %>
+                      </div>
                     </div>
                   </div>
-                </div>
-                <div>
-                  <div class="row">
-                    <div class="col-12 col-sm-4 order-1 order-sm-2">
-                      <% if work_record.rating_overall_state.present? %>
-                        <div class="p-3">
-                          <div class="small font-weight-bold text-center mb-2">
-                            <%= t "noun.rating" %>
+                  <div class="mb-3">
+                    <div class="row">
+                      <div class="col-12 col-sm-4 order-1 order-sm-2">
+                        <% if work_record.rating_overall_state.present? %>
+                          <div class="p-3 rounded u-bg-black-000">
+                            <div class="small font-weight-bold text-center mb-2">
+                              <%= t "noun.rating" %>
+                            </div>
+                            <% if work_record.rating_animation_state.present? %>
+                              <div class="row">
+                                <div class="col">
+                                  <%= t "noun.animation" %>
+                                </div>
+                                <div class="col pl-0 text-right">
+                                  <c-rating-label init-kind="<%= work_record.rating_animation_state %>"></c-rating-label>
+                                </div>
+                              </div>
+                            <% end %>
+                            <% if work_record.rating_music_state.present? %>
+                              <div class="row">
+                                <div class="col">
+                                  <%= t "noun.music" %>
+                                </div>
+                                <div class="col pl-0 text-right">
+                                  <c-rating-label init-kind="<%= work_record.rating_music_state %>"></c-rating-label>
+                                </div>
+                              </div>
+                            <% end %>
+                            <% if work_record.rating_story_state.present? %>
+                              <div class="row">
+                                <div class="col">
+                                  <%= t "noun.story" %>
+                                </div>
+                                <div class="col pl-0 text-right">
+                                  <c-rating-label init-kind="<%= work_record.rating_story_state %>"></c-rating-label>
+                                </div>
+                              </div>
+                            <% end %>
+                            <% if work_record.rating_character_state.present? %>
+                              <div class="row">
+                                <div class="col">
+                                  <%= t "noun.character" %>
+                                </div>
+                                <div class="col pl-0 text-right">
+                                  <c-rating-label init-kind="<%= work_record.rating_character_state %>"></c-rating-label>
+                                </div>
+                              </div>
+                            <% end %>
+                            <% if work_record.rating_overall_state.present? %>
+                              <div class="row">
+                                <div class="col">
+                                  <%= t "noun.overall" %>
+                                </div>
+                                <div class="col pl-0 text-right">
+                                  <c-rating-label init-kind="<%= work_record.rating_overall_state %>"></c-rating-label>
+                                </div>
+                              </div>
+                            <% end %>
                           </div>
-                          <% if work_record.rating_animation_state.present? %>
-                            <div class="row">
-                              <div class="col">
-                                <%= t "noun.animation" %>
-                              </div>
-                              <div class="col pl-0 text-right">
-                                <%# <ann-rating-label :init-kind="workRecord.ratingAnimationState"></ann-rating-label> %>
-                              </div>
-                            </div>
-                          <% end %>
-                          <% if work_record.rating_music_state.present? %>
-                            <div class="row">
-                              <div class="col">
-                                <%= t "noun.music" %>
-                              </div>
-                              <div class="col pl-0 text-right">
-                                <%# <ann-rating-label :init-kind="workRecord.ratingMusicState"></ann-rating-label> %>
-                              </div>
-                            </div>
-                          <% end %>
-                          <% if work_record.rating_story_state.present? %>
-                            <div class="row">
-                              <div class="col">
-                                <%= t "noun.story" %>
-                              </div>
-                              <div class="col pl-0 text-right">
-                                <%# <ann-rating-label :init-kind="workRecord.ratingStoryState"></ann-rating-label> %>
-                              </div>
-                            </div>
-                          <% end %>
-                          <% if work_record.rating_character_state.present? %>
-                            <div class="row">
-                              <div class="col">
-                                <%= t "noun.character" %>
-                              </div>
-                              <div class="col pl-0 text-right">
-                                <%# <ann-rating-label :init-kind="workRecord.ratingCharacterState"></ann-rating-label> %>
-                              </div>
-                            </div>
-                          <% end %>
-                          <% if work_record.rating_overall_state.present? %>
-                            <div class="row">
-                              <div class="col">
-                                <%= t "noun.overall" %>
-                              </div>
-                              <div class="col pl-0 text-right">
-                                <%# <ann-rating-label :init-kind="workRecord.ratingOverallState"></ann-rating-label> %>
-                              </div>
-                            </div>
-                          <% end %>
-                        </div>
-                      <% end %>
-                    </div>
-                    <div class="col-12 col-sm-8 order-2 order-sm-1">
-                      <div class="c-body mb-3">
-                        <div class="c-body__content">
-                          <%= work_record.body_html %>
+                        <% end %>
+                      </div>
+                      <div class="col-12 col-sm-8 order-2 order-sm-1">
+                        <div class="c-body mb-3">
+                          <%== work_record.body_html %>
                         </div>
                       </div>
                     </div>
                   </div>
-                </div>
 
-                <div class="align-items-center px-3 row">
-                  <div class="col text-right">
+                  <div class="align-items-center px-3 row">
+                    <div class="col text-right">
                     <span class="mr-2">
-                      <%# <ann-share-to-twitter-button :text="$root.$t('head.title.workRecords.show', { profileName: workRecord.user.name, username: workRecord.user.username, workTitle: state.work.localTitle })" :url="AnnConfig.localUrl + '/@' + workRecord.user.username + '/records/' + workRecord.record.annictId" :hashtags="state.work.twitterHashtag || ''"></ann-share-to-twitter-button> %>
+                      <c-share-to-twitter-button
+                        text="<%= t("head.title.work_records.show", work_title: @work.local_title, profile_name: work_record.user.name, username: work_record.user.username) %>"
+                        url="<%= "#{local_url}/@#{work_record.user.username}/records/#{work_record.record.id}" %>"
+                        hashtags="<%= @work.twitter_hashtag.presence || '' %>"
+                      ></c-share-to-twitter-button>
                     </span>
-                    <span class="mr-2">
-                      <%# <ann-share-to-facebook-button :url="AnnConfig.localUrl + '/@' + workRecord.user.username + '/records/' + workRecord.record.annictId"></ann-share-to-facebook-button> %>
-                    </span>
-                    <%# <ann-like-button resource-name="WorkRecord" :resource-id="workRecord.id" :init-likes-count="workRecord.likesCount" :init-is-liked="workRecord.viewerDidLike" :is-signed-in="$root.isSignedIn()"></ann-like-button> %>
-                  </div>
-                </div>
 
-                <% if user_signed_in? && current_user.username == work_record.user.username %>
-                  <div class="small text-right mt-2">
-                    <%= link_to edit_work_record_path(@work, work_record.record), class: "mr-2" do %>
-                      <i class="fab fa-edit mr-1"></i>
-                      <%= t "noun.edit" %>
-                    <% end %>
-                    <%= link_to record_path(work_record.user.username, work_record.record), method: :delete do %>
-                      <i class="far fa-trash-alt mr-1"></i>
-                      <%= t "noun.delete" %>
-                    <% end %>
+                      <span class="mr-2">
+                      <c-share-to-facebook-button
+                        url="<%= "#{local_url}/@#{work_record.user.username}/records/#{work_record.record.id}" %>"
+                      ></c-share-to-facebook-button>
+                    </span>
+
+                      <c-like-button
+                        resource-name="WorkRecord"
+                        :resource-id="<%= work_record.id %>"
+                        :init-likes-count="<%= work_record.likes_count %>"
+                        :is-signed-in="<%= user_signed_in? ? 'true' : 'false' %>"
+                        page-category="work-detail"
+                      ></c-like-button>
+                    </div>
                   </div>
-                <% end %>
-              </div>
-            <% end %>
+
+                  <% if user_signed_in? && current_user.username == work_record.user.username %>
+                    <div class="small text-right mt-2">
+                      <%= link_to edit_work_record_path(@work, work_record.record), class: "mr-2" do %>
+                        <i class="fab fa-edit mr-1"></i>
+                        <%= t "noun.edit" %>
+                      <% end %>
+                      <%= link_to record_path(work_record.user.username, work_record.record), method: :delete do %>
+                        <i class="far fa-trash-alt mr-1"></i>
+                        <%= t "noun.delete" %>
+                      <% end %>
+                    </div>
+                  <% end %>
+                </div>
+              <% end %>
+            </div>
 
             <% if @work.work_records.length > 10 %>
-              <div class="container my-3">
-                <%= link_to work_records_path(@work), class: "btn btn-secondary w-100" do %>
+              <div class="container mb-3">
+                <%= link_to work_records_path(@work.id), class: "btn btn-secondary w-100" do %>
                   <i class="fas fa-angle-right"></i>
                   <%= t "messages.works.view_all_n_record_body_list", n: @work.work_records_with_body_count %>
                 <% end %>
@@ -560,23 +572,28 @@
           <% end %>
         </div>
 
-        <h2 class="h4 text-center my-4 font-weight-bold">
-          <%= t "noun.stats" %>
-        </h2>
+        <div class="mb-5">
+          <h2 class="font-weight-bold h3 mb-3">
+            <%= t "noun.stats" %>
+          </h2>
 
-        <div class="container mt-3 pt-3">
-          <div class="row">
-            <div class="col-12 col-sm-6 mb-3">
-              <h3 class="small text-center">
-                Watchers
-              </h3>
-              <%# <ann-work-watchers-chart :work-id="state.work.annictId"></ann-work-watchers-chart> %>
-            </div>
-            <div class="col-12 col-sm-6 mb-3">
-              <h3 class="small text-center">
-                Status
-              </h3>
-              <%# <ann-work-status-chart :work-id="state.work.annictId"></ann-work-status-chart> %>
+          <div class="container mt-3 pt-3">
+            <div class="row">
+              <div class="col-12 col-sm-6 mb-3">
+                <h3 class="small text-center">
+                  Watchers
+                </h3>
+
+                <c-work-watchers-chart :work-id="<%= @work.id %>"></c-work-watchers-chart>
+              </div>
+
+              <div class="col-12 col-sm-6 mb-3">
+                <h3 class="small text-center">
+                  Status
+                </h3>
+
+                <c-work-status-chart :work-id="<%= @work.id %>"></c-work-status-chart>
+              </div>
             </div>
           </div>
         </div>
