@@ -344,7 +344,7 @@
                 <% end %>
               </div>
             <% else %>
-              <%# <ann-empty :text="$root.$t('messages._components.empty._notAdded')"></ann-empty> %>
+              <%= render EmptyComponent.new(text: t("messages._empty.no_episodes")) %>
             <% end %>
           </div>
         <% end %>
@@ -367,7 +367,7 @@
               <% end %>
             </div>
           <% else %>
-            <%# <ann-empty :text="$root.$t('messages._components.empty._notAdded')"></ann-empty> %>
+            <%= render EmptyComponent.new(text: t("messages._empty.no_characters")) %>
           <% end %>
         </div>
 
@@ -392,7 +392,7 @@
               <% end %>
             </div>
           <% else %>
-            <%# <ann-empty :text="$root.$t('messages._components.empty._notAdded')"></ann-empty> %>
+            <%= render EmptyComponent.new(text: t("messages._empty.no_staffs")) %>
           <% end %>
         </div>
 
@@ -598,7 +598,7 @@
               </div>
             <% end %>
           <% else %>
-            <%# <ann-empty :text="$root.$t('messages._components.empty.noRecordBodyList')"></ann-empty> %>
+            <%= render EmptyComponent.new(text: t("messages._empty.no_record_body_list")) %>
           <% end %>
         </div>
 
