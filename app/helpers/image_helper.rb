@@ -21,6 +21,11 @@ module ImageHelper
       ix_options[:fit] = "crop"
     end
 
+    if options[:ratio]
+      ix_options[:fit] = "crop"
+      ix_options[:ar] = options[:ratio]
+    end
+
     if options[:blur]
       ix_options[:blur] = options[:blur]
     end
@@ -82,7 +87,7 @@ module ImageHelper
       "200x200"
     end
 
-    ann_image_url(profile, :image, size: size)
+    ann_image_url(profile, :image, size: size, ratio: "1:1")
   end
 
   private
