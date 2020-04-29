@@ -14,7 +14,9 @@ export default {
       }'>
       <div class="c-status-selector__object">
         <select class="w-100" v-model="statusKind" @change="change">
-          <slot></slot>
+          <option :value="option[1]" v-for="option in statusOptions">
+            {{ option[0] }}
+          </option>
         </select>
         <i class="fas fa-caret-down"></i>
       </div>
@@ -30,14 +32,16 @@ export default {
     };
   },
 
+  computed: {
+    statusOptions() {
+      return AnnConfig.statusOptions;
+    },
+  },
+
   props: {
     workId: {
       type: Number,
       required: true,
-    },
-
-    initStatusKind: {
-      type: String,
     },
 
     pageCategory: {

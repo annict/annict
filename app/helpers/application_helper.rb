@@ -79,7 +79,8 @@ module ApplicationHelper
           good: t("enumerize.episode_record.rating_state.good"),
           great: t("enumerize.episode_record.rating_state.great")
         }
-      }
+      },
+      statusOptions: Status.kind.options.insert(0, [t("messages.components.status_selector.select_status"), "no_select"])
     }.freeze
 
     javascript_tag "window.AnnConfig = #{config.to_json.html_safe};"
