@@ -4,10 +4,10 @@
   </div>
 
   <div class="pl-default__main d-flex flex-column">
-    <c-content class="pl-default__content mb-3" page-category="<%= page_category %>">
+    <div class="pl-default__content mb-3">
       <c-flash></c-flash>
       <%= yield %>
-    </c-content>
+    </div>
 
     <div class="pl-default__footer">
       <%= render FooterComponent.new %>
@@ -18,3 +18,5 @@
     </div>
   </div>
 </div>
+
+<c-user-data-fetcher page-category="<%= page_category %>"></c-user-data-fetcher>

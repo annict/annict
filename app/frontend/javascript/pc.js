@@ -54,7 +54,6 @@ import workFriends from './common/components/workFriends';
 import workTags from './common/components/workTags';
 import youtubeModalPlayer from './common/components/youtubeModalPlayer';
 
-import content from './web/components/content';
 import likeButton from './web/components/likeButton';
 import ratingLabel from './web/components/ratingLabel';
 import shareToFacebookButton from './web/components/shareToFacebookButton';
@@ -62,6 +61,7 @@ import shareToTwitterButton from './web/components/shareToTwitterButton';
 import sidebar from './web/components/sidebar';
 import statusSelector from './web/components/statusSelector';
 import tabBar from './web/components/tabBar';
+import userDataFetcher from './web/components/userDataFetcher';
 
 import resourceSelect from './common/directives/resourceSelect';
 import prerender from './pc/directives/prerender';
@@ -92,7 +92,6 @@ document.addEventListener('turbolinks:load', (event) => {
   Vue.component('c-channel-receive-button', channelReceiveButton);
   Vue.component('c-channel-selector', channelSelector);
   Vue.component('c-comment-guard', commentGuard);
-  Vue.component('c-content', content);
   Vue.component('c-episode-list', episodeList);
   Vue.component('c-episode-progress', episodeProgress);
   Vue.component('c-episode-rating-state-chart', episodeRatingStateChart);
@@ -125,6 +124,7 @@ document.addEventListener('turbolinks:load', (event) => {
   Vue.component('c-time-ago', timeAgo);
   Vue.component('c-tips', tips);
   Vue.component('c-untracked-episode-list', untrackedEpisodeList);
+  Vue.component('c-user-data-fetcher', userDataFetcher);
   Vue.component('c-user-heatmap', userHeatmap);
   Vue.component('c-username-preview', usernamePreview);
   Vue.component('c-work-comment', workComment);

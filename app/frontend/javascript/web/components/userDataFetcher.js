@@ -22,11 +22,7 @@ const REQUEST_LIST = {
 };
 
 export default {
-  template: `
-    <div>
-      <slot></slot>
-    </div>
-  `,
+  render() {},
 
   props: {
     pageCategory: {
@@ -38,7 +34,7 @@ export default {
   mounted() {
     this.fetchAll();
 
-    eventHub.$on('content:refetch', () => {
+    eventHub.$on('userDataFetcher:refetch', () => {
       this.fetchAll();
     });
   },
@@ -50,7 +46,7 @@ export default {
 
     fetchAll() {
       Promise.all(this.getRequests().map((req) => req.execute())).then(() => {
-        eventHub.$emit('request:fetched');
+        eventHub.$emit('userDataFetcher:fetched');
       });
     },
   },

@@ -80,7 +80,7 @@ export default {
 
         this.$nextTick(() => {
           vueLazyLoad.refresh();
-          eventHub.$emit('content:refetch');
+          eventHub.$emit('userDataFetcher:refetch');
         });
       });
     },
