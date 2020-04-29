@@ -7,7 +7,7 @@ class FooterComponent < ApplicationComponent
     Htmlrb.build do |el|
       el.div class: "c-footer py-5" do
         el.div class: "c-footer__main" do
-          el.div class: "container" do
+          el.div class: "container-fluid" do
             el.div class: "row" do
               el.div class: "col-12 col-sm-3 mb-3 mb-sm-0" do
                 el.h2 class: "mb-1" do
@@ -115,7 +115,7 @@ class FooterComponent < ApplicationComponent
         end
 
         el.div class: "c-footer__auxiliary" do
-          el.div class: "container py-2" do
+          el.div class: "container-fluid py-2" do
             el.div class: "align-items-center row" do
               el.div class: "col-6" do
                 el.h4 class: "d-inline-block font-weight-bold mb-0 mr-2 small" do
