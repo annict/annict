@@ -7,7 +7,7 @@ module WorkDetail
       data = result.to_h.dig("data", "channels")
 
       data["nodes"].map do |node|
-        WorkDetail::VodChannelEntity.new(
+        VodChannelEntity.new(
           id: node["annictId"],
           name: node["name"],
           programs: work.programs.select do |program|

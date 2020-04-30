@@ -148,7 +148,7 @@ module WorkDetail
         }
       end
 
-      WorkDetail::WorkEntity.new(work)
+      WorkEntity.new(work)
     end
 
     private

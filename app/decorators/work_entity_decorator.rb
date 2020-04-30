@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-module WorkEntityDecoratorMethods
+module WorkEntityDecorator
   def media_text
     t "enumerize.work.media.#{media}"
   end
