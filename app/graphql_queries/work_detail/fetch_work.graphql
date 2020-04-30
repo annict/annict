@@ -30,8 +30,6 @@ query($annictId: Int!) {
       synopsisEnHtml
       synopsisSource
       synopsisSourceEn
-      viewerFinishedToWatch
-      viewerStatusKind
       copyright
       image {
         internalUrl_1x: internalUrl(size: "350x")
@@ -105,7 +103,6 @@ query($annictId: Int!) {
           likesCount
           createdAt
           modifiedAt
-          viewerDidLike
           user {
             username
             name

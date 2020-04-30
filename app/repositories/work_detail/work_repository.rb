@@ -37,8 +37,6 @@ module WorkDetail
         synopsis_en_html: node["synopsis_en_html"],
         synopsis_source: node["synopsisSource"],
         synopsis_source_en: node["synopsisSourceEn"],
-        viewer_finished_to_watch: node["viewerFinishedToWatch"],
-        viewer_status_kind: node["viewerStatusKind"]&.downcase,
         copyright: node["copyright"],
         image_url_1x: node.dig("image", "internalUrl_1x"),
         image_url_2x: node.dig("image", "internalUrl_2x"),

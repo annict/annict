@@ -12,7 +12,6 @@ module WorkDetail
     attribute :likes_count, Types::Integer
     attribute :created_at, Types::DateTime
     attribute :modified_at, Types::DateTime.optional
-    attribute :viewer_did_like, Types::Bool
     attribute :user do
       attribute :username, Types::String
       attribute :name, Types::String.optional

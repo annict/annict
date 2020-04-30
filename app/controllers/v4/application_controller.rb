@@ -28,7 +28,8 @@ module V4
 
     def graphql_client
       @graphql_client ||= Annict::Graphql::InternalClient.new(
-        viewer: current_user
+        # We don't fetch user related data from GraphQL to cache GraphQL data.
+        viewer: nil
       )
     end
   end

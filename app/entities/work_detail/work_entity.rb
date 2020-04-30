@@ -33,8 +33,6 @@ module WorkDetail
     attribute :synopsis_en_html, Types::String.optional
     attribute :synopsis_source, Types::String.optional
     attribute :synopsis_source_en, Types::String.optional
-    attribute :viewer_finished_to_watch, Types::Bool
-    attribute :viewer_status_kind, Types::StatusKinds.optional
     attribute :copyright, Types::String.optional
     attribute :image_url_1x, Types::String.optional
     attribute :image_url_2x, Types::String.optional
