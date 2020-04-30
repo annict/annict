@@ -1,23 +1,9 @@
 # frozen_string_literal: true
 
 class HomeController < ApplicationController
-  before_action :load_i18n, only: %i(index)
+  before_action :load_i18n, only: %i(show)
 
-  def index
-    return index_member if user_signed_in?
-
-    @season_top_work = GuestTopPageService.season_top_work
-    @season_works = GuestTopPageService.season_works
-    @top_work = GuestTopPageService.top_work
-    @works = GuestTopPageService.works
-    @cover_image_work = GuestTopPageService.cover_image_work
-
-    render :index_guest
-  end
-
-  private
-
-  def index_member
+  def show
     @tips = current_user.tips.unfinished.with_locale(current_user.locale)
     tips_data = render_jb("home/_tips", tips: @tips.limit(3))
 
@@ -50,9 +36,9 @@ class HomeController < ApplicationController
       latestStatusData: library_entry_data,
       activityData: activity_data
     )
-
-    render :index
   end
+
+  private
 
   def load_i18n
     keys = {

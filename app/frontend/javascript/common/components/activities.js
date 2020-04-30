@@ -94,7 +94,7 @@ export default {
   },
 
   mounted() {
-    if (gon.user.device === 'pc' && gon.page && gon.page.category === 'home_index') {
+    if (gon.user.device === 'pc' && gon.page && gon.page.category === 'home_show') {
       $(this.$el).css({ maxHeight: window.innerHeight * 0.7 });
     }
 

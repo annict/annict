@@ -151,7 +151,8 @@ get "r/:provider/:url_hash",
   provider: /fb|tw/,
   url_hash: /[0-9a-zA-Z_-]{10}/
 
-root "home#index"
+root "home#show", constraints: Annict::RoutingConstraints::Member.new
+root "welcome#show", constraints: Annict::RoutingConstraints::Guest.new, as: nil # Set :as option to avoid two routes with the same name
 
 scope module: :v4 do
   constraints format: "html" do

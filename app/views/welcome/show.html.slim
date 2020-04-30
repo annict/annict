@@ -12,21 +12,21 @@
         = icon "rocket"
         = t "messages.home.index_guest.start_tracking"
 
-  .container.p-home-index__main
+  .container.p-home-show__main
     h2.text-center.pt-5.mb-5
       = t "noun.popular_airing_anime"
     .c-card.p-3.mb-3
-      = render "home/top_work", top_work: @season_top_work
+      = render "welcome/top_work", top_work: @season_top_work
     .c-card.p-3
-      = render "home/other_works", other_works: @season_works
+      = render "welcome/other_works", other_works: @season_works
       .text-center.mt-4
         = link_to t("verb.view_more"), season_works_path(slug: ENV["ANNICT_CURRENT_SEASON"]), class: "btn btn-primary"
 
     h2.text-center.pt-5.mb-5
       = t "noun.popular_anime"
     .c-card.p-3.mb-3
-      = render "home/top_work", top_work: @top_work
+      = render "welcome/top_work", top_work: @top_work
     .c-card.p-3
-      = render "home/other_works", other_works: @works
+      = render "welcome/other_works", other_works: @works
       .text-center.mt-4
         = link_to t("verb.view_more"), popular_works_path, class: "btn btn-primary"
