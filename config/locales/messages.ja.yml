@@ -31,6 +31,8 @@ ja:
         kind:
           thumbs_up:
             exactly: わかる
+      sign_up_modal:
+        body: ユーザ登録するとこの機能が使えます。
       sticky_message:
         about: "Annictとは？"
         sign_up: "はじめる"

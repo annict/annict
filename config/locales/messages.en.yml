@@ -31,6 +31,8 @@ en:
         kind:
           thumbs_up:
             exactly: Exactly
+      sign_up_modal:
+        body: You can use this feature after sign up.
       sticky_message:
         about: "Learn more"
         sign_up: "Get started"

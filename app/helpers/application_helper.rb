@@ -45,6 +45,8 @@ module ApplicationHelper
       i18n: {
         noun: {
           share: t("noun.share"),
+          signIn: t("noun.sign_in"),
+          signUp: t("noun.sign_up"),
           tweet: t("noun.tweet")
         },
         ratingState: {
@@ -52,6 +54,9 @@ module ApplicationHelper
           bad: t("enumerize.episode_record.rating_state.bad"),
           good: t("enumerize.episode_record.rating_state.good"),
           great: t("enumerize.episode_record.rating_state.great")
+        },
+        signUpModal: {
+          body: t("messages._components.sign_up_modal.body")
         }
       },
       statusOptions: Status.kind.options.insert(0, [t("messages.components.status_selector.select_status"), "no_select"])
