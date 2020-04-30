@@ -220,9 +220,9 @@ module Canary
         end
 
         def image
-          return WorkImage.new unless object.work_image&.id
-
-          Canary::RecordLoader.for(WorkImage).load(object.work_image.id)
+          Canary::RecordLoader.for(WorkImage, column: :work_id).load(object.id).then do |work_image|
+            work_image || WorkImage.new
+          end
         end
 
         def copyright
