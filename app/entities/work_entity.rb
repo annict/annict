@@ -43,6 +43,14 @@ class WorkEntity < ApplicationEntity
   attribute? :work_records, Types::Array.of(WorkRecordEntity)
   attribute? :series_list, Types::Array.of(SeriesEntity)
 
+  def self.from_model(work)
+    new(
+      media: work.media.to_s,
+      syobocal_tid: work.sc_tid&.to_s,
+      mal_anime_id: work.mal_anime_id&.to_s
+    )
+  end
+
   def local_synopsis_html
     return synopsis_en_html if I18n.locale == :en
 
@@ -53,5 +61,17 @@ class WorkEntity < ApplicationEntity
     return I18n.t("resources.season.no_season") if season_year.nil? && season_type.nil?
 
     I18n.t("resources.season.yearly.#{season_type.presence || 'all'}", year: season_year)
+  end
+
+  def media_text
+    I18n.t("enumerize.work.media.#{media}")
+  end
+
+  def syobocal_url
+    "http://cal.syoboi.jp/tid/#{syobocal_tid}"
+  end
+
+  def mal_anime_url
+    "https://myanimelist.net/anime/#{mal_anime_id}"
   end
 end

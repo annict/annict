@@ -356,6 +356,10 @@ class Work < ApplicationRecord
     end
   end
 
+  def to_entity
+    @work_entity ||= WorkEntity.from_model(self)
+  end
+
   def people
     Person.where(id: (cast_people.pluck(:id) | staff_people.pluck(:id)))
   end
