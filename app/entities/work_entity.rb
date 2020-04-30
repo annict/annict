@@ -67,6 +67,16 @@ class WorkEntity < ApplicationEntity
     I18n.t("enumerize.work.media.#{media}")
   end
 
+  def twitter_profile_url
+    url = "https://twitter.com/#{twitter_username}"
+    Addressable::URI.parse(url).normalize.to_s
+  end
+
+  def twitter_hashtag_url
+    url = "https://twitter.com/search?q=%23#{twitter_hashtag}"
+    Addressable::URI.parse(url).normalize.to_s
+  end
+
   def syobocal_url
     "http://cal.syoboi.jp/tid/#{syobocal_tid}"
   end

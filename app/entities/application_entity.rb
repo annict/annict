@@ -23,8 +23,4 @@ class ApplicationEntity < Dry::Struct
       end
     end
   end
-
-  def decorate
-    ActiveDecorator::Decorator.instance.decorate(self)
-  end
 end

@@ -169,7 +169,7 @@
                   <%= t "activerecord.attributes.work.twitter_username" %>
                 </div>
                 <div>
-                  <%= @work.decorate.twitter_profile_link  %>
+                  <%= render TwitterProfileLinkComponent.new(entity: @work)  %>
                 </div>
               </div>
             <% end %>
@@ -180,7 +180,7 @@
                   <%= t "activerecord.attributes.work.twitter_hashtag" %>
                 </div>
                 <div>
-                  <%= @work.decorate.twitter_hashtag_link %>
+                  <%= render TwitterHashtagLinkComponent.new(entity: @work) %>
                 </div>
               </div>
             <% end %>
@@ -213,7 +213,7 @@
                   <%= t "noun.syobocal" %>
                 </div>
                 <div>
-                  <%= @work.decorate.syobocal_link %>
+                  <%= render SyobocalLinkComponent.new(work_entity: @work) %>
                 </div>
               </div>
             <% end %>
@@ -224,7 +224,7 @@
                   <%= t "noun.my_anime_list" %>
                 </div>
                 <div>
-                  <%= @work.decorate.mal_link %>
+                  <%= render MalLinkComponent.new(work_entity: @work) %>
                 </div>
               </div>
             <% end %>
