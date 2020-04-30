@@ -259,7 +259,7 @@ class User < ApplicationRecord
   end
 
   def committer?
-    role.admin? || role.editor?
+    admin? || editor?
   end
 
   def friends_interested_in(work)
