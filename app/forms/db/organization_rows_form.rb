@@ -23,7 +23,7 @@ module Db
       @attrs_list ||= fetched_rows.map do |row_data|
         {
           name: row_data[:name][:value],
-          name_kana: row_data[:name_kana][:value]
+          name_kana: row_data[:name_kana][:value].presence || ""
         }
       end
     end
