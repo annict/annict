@@ -38,8 +38,8 @@ module WorkDetail
         synopsis_source: node["synopsisSource"],
         synopsis_source_en: node["synopsisSourceEn"],
         copyright: node["copyright"],
-        image_url_1x: node.dig("image", "internalUrl_1x"),
-        image_url_2x: node.dig("image", "internalUrl_2x"),
+        image_url_1x: node.dig("image", "internalUrl1x"),
+        image_url_2x: node.dig("image", "internalUrl2x"),
         trailers: [],
         casts: [],
         staffs: [],
@@ -141,7 +141,8 @@ module WorkDetail
               id: work_edge.dig("node", "annictId"),
               title: work_edge.dig("node", "title"),
               title_en: work_edge.dig("node", "titleEn"),
-              image_url: work_edge.dig("node", "image", "internalUrl")
+              image_url_1x: work_edge.dig("node", "image", "internalUrl1x"),
+              image_url_2x: work_edge.dig("node", "image", "internalUrl2x"),
             }
           end
         }

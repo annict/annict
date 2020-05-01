@@ -8,5 +8,6 @@ class SeriesWorkEntity < ApplicationEntity
   attribute? :id, Types::Integer
   attribute? :title, Types::String
   attribute? :title_en, Types::String.optional
-  attribute? :image_url, Types::String.optional
+  attribute? :image_url_1x, Types::String.optional
+  attribute? :image_url_2x, Types::String.optional
 end

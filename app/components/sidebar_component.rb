@@ -21,7 +21,14 @@ class SidebarComponent < ApplicationComponent
             v_show: "slotProps.isSidebarOpen"
           ) do
             el.a class: "c-sidebar__logo d-inline-block mb-3 py-3 text-center u-bg-mizuho w-100", href: "/" do
-              el.img alt: "Annict", height: "30", src: helpers.asset_bundle_url("images/logos/color-white.png"), width: "25"
+              el.img(
+                alt: "Annict",
+                class: "js-lazy",
+                data_src: helpers.asset_bundle_url("images/logos/color-white.png"),
+                height: "30",
+                src: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1 1'%3E%3C/svg%3E",
+                width: "25"
+              )
             end
 
             if user

@@ -32,8 +32,8 @@ query($annictId: Int!) {
       synopsisSourceEn
       copyright
       image {
-        internalUrl_1x: internalUrl(size: "350x")
-        internalUrl_2x: internalUrl(size: "700x")
+        internalUrl1x: internalUrl(size: "350x")
+        internalUrl2x: internalUrl(size: "700x")
       }
       trailers(orderBy: { field: SORT_NUMBER, direction: ASC }) {
         nodes {
@@ -127,7 +127,8 @@ query($annictId: Int!) {
                 title
                 titleEn
                 image {
-                  internalUrl(size: "280x")
+                  internalUrl1x: internalUrl(size: "130x")
+                  internalUrl2x: internalUrl(size: "260x")
                 }
               }
             }
