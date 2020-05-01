@@ -17,7 +17,8 @@ module Canary
         field :name_en, String,
           null: false
 
-        field :accurate_name, String,
+        field :accurate_name,
+          String,
           null: false,
           description: "担当者名。名義が異なる場合2つの名前を併記する。例: ふでやすかずゆき (筆安一幸)"
 

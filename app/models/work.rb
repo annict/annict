@@ -357,7 +357,7 @@ class Work < ApplicationRecord
   end
 
   def to_entity
-    @work_entity ||= WorkEntity.from_model(self)
+    @to_entity ||= WorkEntity.from_model(self)
   end
 
   def people

@@ -9,8 +9,8 @@ class WorkRecordEntity < ApplicationEntity
   attribute? :rating_overall_state, Types::RecordRatingStateKinds.optional
   attribute? :body_html, Types::String.optional
   attribute? :likes_count, Types::Integer
-  attribute? :created_at, Types::DateTime
-  attribute? :modified_at, Types::DateTime.optional
+  attribute? :created_at, Types::Time
+  attribute? :modified_at, Types::Time.optional
   attribute? :user, UserEntity
   attribute? :record, RecordEntity
 end
