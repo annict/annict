@@ -1,10 +1,9 @@
 - title = t "head.title.providers.index"
 - set_meta_tags(title: title, reverse: true, prefix: false)
 
+= render "partial_layouts/v2/default" do
+  = render "settings/subnav"
 
-= render "settings/subnav"
-
-.p-application__content
   .c-card.u-mw-600.mx-auto.mt-3.mb-4.py-3
     = render "providers/provider_list"
 
@@ -14,5 +13,3 @@
     p.mb-3
       = t "messages.ics.you_can_see"
     = text_field_tag "", "#{ENV.fetch('ANNICT_URL')}#{user_ics_path(current_user.username)}", onclick: "this.select();", class: "form-control"
-
-= render "application/components/footer"

@@ -3,18 +3,11 @@
 
 - breadcrumb :edit_work_record, @work_record
 
-= render "works/header", work: @work
+= render "partial_layouts/v2/default", page_category: "edit-record" do
+  = render "works/header", work: @work
 
-.c-card.pt-3.mb-3
-  .container
-    = render "work_records/form", work_record: @work_record
+  .c-card.pt-3.mb-3
+    .container
+      = render "work_records/form", work_record: @work_record
 
-= render "application/components/breadcrumb"
-= render "application/components/footer"
-
-- content_for :js_templates do
-  = render "application/js_templates/like_button"
-  = render "application/js_templates/rating_state_label"
-  = render "application/js_templates/share_button_facebook"
-  = render "application/js_templates/share_button_twitter"
-  = render "application/js_templates/status_selector"
+  = render "application/components/breadcrumb"

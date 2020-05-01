@@ -1,0 +1,10 @@
+.p-home-show {
+  $root: &;
+
+  &.is-user {
+    .c-activities {
+      overflow-x: hidden;
+      overflow-y: scroll;
+    }
+  }
+}

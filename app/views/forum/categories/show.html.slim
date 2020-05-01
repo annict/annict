@@ -2,12 +2,10 @@
 - set_meta_tags(title: title, reverse: true, prefix: false)
 - breadcrumb :forum_category_detail, @category
 
-= render "forum/application/subnav"
+= render "partial_layouts/v2/default" do
+  = render "forum/application/subnav"
 
-.p-application__content
   .container.py-3.mb-3
-    = render "application/components/breadcrumb"
-
     .row
       .col
         h1.h2.mb-3
@@ -27,4 +25,4 @@
       .text-center.mt-3
         = paginate @posts
 
-= render "application/components/footer"
+    = render "application/components/breadcrumb"

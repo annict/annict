@@ -1,0 +1,8 @@
+query {
+  channels(isVod: true) {
+    nodes {
+      annictId
+      name
+    }
+  }
+}

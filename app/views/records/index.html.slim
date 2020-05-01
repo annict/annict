@@ -6,11 +6,10 @@
 
 - breadcrumb :user_record_list, @user
 
-= render "users/low_profile_header", user: @user
+= render "partial_layouts/v2/default", page_category: "record-list" do
+  = render "users/low_profile_header", user: @user
 
-.p-application__content
-  .container.py-3
-    = render "application/components/breadcrumb"
+  .container.pt-3
     .c-card.container
       - if @records.present?
         - @records.each do |record|
@@ -37,12 +36,7 @@
       .mt-3.text-center
         = paginate @records
 
-= render "application/components/footer"
+    = render "application/components/breadcrumb"
 
 - content_for :js_templates do
-  = render "application/js_templates/like_button"
   = render "application/js_templates/mute_user_button"
-  = render "application/js_templates/rating_state_label"
-  = render "application/js_templates/share_button_facebook"
-  = render "application/js_templates/share_button_twitter"
-  = render "application/js_templates/status_selector"

@@ -3,8 +3,8 @@
 
 - breadcrumb :forum_edit_post, @post
 
-.c-card.p-3.mb-3
-  = render "forum/posts/form", post: @post
+= render "partial_layouts/v2/default" do
+  .c-card.p-3.mb-3
+    = render "forum/posts/form", post: @post
 
-= render "application/components/breadcrumb"
-= render "application/components/footer"
+  = render "application/components/breadcrumb"

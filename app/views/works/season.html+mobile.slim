@@ -4,44 +4,41 @@
 - set_meta_tags(title: title, description: description, keywords: keywords, og: { description: description }, reverse: true, prefix: false)
 - breadcrumb :seasonal_works, @season.slug, @season.local_name
 
-h1.h2.text-center.my-3
-  = title
+= render "partial_layouts/v2/default", page_category: "work-list" do
+  h1.h2.text-center.my-3
+    = title
 
-.px-3
-  .text-center.mb-3
-    - if @prev_season.present?
-      = link_to season_works_path(slug: @prev_season.slug, display: params[:display]), class: "mr-3" do
-        = icon "angle-left", class: "mr-2"
-        = @prev_season.local_name
-    .dropdown.d-inline-block
-      a.dropdown-toggle href="#" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"
-        = @season.local_name
-      .dropdown-menu.pre-scrollable.mr-3
-        - @seasons.each do |season|
-          = link_to season.local_name, season_works_path(slug: season.slug, display: params[:display]), class: "dropdown-item"
-    - if @next_season.present?
-      = link_to season_works_path(slug: @next_season.slug, display: params[:display]), class: "ml-3" do
-        = @next_season.local_name
-        = icon "angle-right", class: "ml-2"
-  .row.align-items-center.mb-3
-    .col.pr-0
-      c-share-button-twitter.mr-2 text="#{title}" url="#{local_url}#{season_works_path(slug: @season.slug)}"
-      c-share-button-facebook url="#{local_url}#{season_works_path(slug: @season.slug)}"
-    .col.text-right
-      = render "display_option_buttons", display_option: @display_option
+  .px-3
+    .text-center.mb-3
+      - if @prev_season.present?
+        = link_to season_works_path(slug: @prev_season.slug, display: params[:display]), class: "mr-3" do
+          = icon "angle-left", class: "mr-2"
+          = @prev_season.local_name
+      .dropdown.d-inline-block
+        a.dropdown-toggle href="#" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"
+          = @season.local_name
+        .dropdown-menu.pre-scrollable.mr-3
+          - @seasons.each do |season|
+            = link_to season.local_name, season_works_path(slug: season.slug, display: params[:display]), class: "dropdown-item"
+      - if @next_season.present?
+        = link_to season_works_path(slug: @next_season.slug, display: params[:display]), class: "ml-3" do
+          = @next_season.local_name
+          = icon "angle-right", class: "ml-2"
+    .row.align-items-center.mb-3
+      .col.pr-0
+        c-share-button-twitter.mr-2 text="#{title}" url="#{local_url}#{season_works_path(slug: @season.slug)}"
+        c-share-button-facebook url="#{local_url}#{season_works_path(slug: @season.slug)}"
+      .col.text-right
+        = render "display_option_buttons", display_option: @display_option
 
-= render "works/display_options/#{@display_option}", works: @works
-- if @works.present? && @works.total_pages > 1
-  .mb-3.text-center
-    = paginate @works, window: 2
+  = render "works/display_options/#{@display_option}", works: @works
+  - if @works.present? && @works.total_pages > 1
+    .mb-3.text-center
+      = paginate @works, window: 2
 
-= render "application/components/breadcrumb"
-= render "application/components/footer"
+  = render "application/components/breadcrumb"
 
 - content_for :js_templates do
   = render "application/js_templates/omitted_synopsis"
-  = render "application/js_templates/share_button_facebook"
-  = render "application/js_templates/share_button_twitter"
-  = render "application/js_templates/status_selector"
   = render "application/js_templates/work_friends"
   = render "application/js_templates/youtube_modal_player"

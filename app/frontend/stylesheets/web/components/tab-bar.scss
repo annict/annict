@@ -1,0 +1,18 @@
+.c-tab-bar {
+  bottom: 0;
+  box-shadow: 0 -0.125rem 0.25rem -0.125rem rgba(0, 0, 0, 0.075);
+  height: $ann-navbar-height-mobile;
+  left: 0;
+  //For iPhone X
+  // https://webkit.org/blog/7929/designing-websites-for-iphone-x/
+  padding-bottom: env(safe-area-inset-bottom);
+  position: fixed;
+  right: 0;
+  z-index: $zindex-fixed;
+}
+
+@include media-breakpoint-up(lg) {
+  .c-tab-bar {
+    display: none;
+  }
+}

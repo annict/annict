@@ -4,9 +4,8 @@ module ImageHelper
   def ann_image_url(record, field, options = {})
     path = image_path(record, field)
     size = options[:size]
-    ratio = options[:ratio].presence || "1:1"
 
-    width, height = size.split("x").map do |s|
+    width, = size.split("x").map do |s|
       s.present? ? (s.to_i * (options[:size_rate].presence || 1)) : nil
     end
 
@@ -18,13 +17,13 @@ module ImageHelper
       ix_options[:w] = width
     end
 
-    unless height
-      ix_options[:h] = (width * ratio.split(":")[1].to_i) / ratio.split(":")[0].to_i
+    if options[:crop]
+      ix_options[:fit] = "crop"
     end
 
-    if record.nil? || (record.instance_of?(WorkImage) && ratio == "3:4")
-      ix_options[:fit] = "fillmax"
-      ix_options[:fill] = "blur"
+    if options[:ratio]
+      ix_options[:fit] = "crop"
+      ix_options[:ar] = options[:ratio]
     end
 
     if options[:blur]
@@ -88,7 +87,7 @@ module ImageHelper
       "200x200"
     end
 
-    ann_image_url(profile, :image, size: size)
+    ann_image_url(profile, :image, size: size, ratio: "1:1")
   end
 
   private

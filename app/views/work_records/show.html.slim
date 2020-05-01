@@ -6,9 +6,8 @@
 
 - breadcrumb :work_record_detail, @work_record
 
-.p-application__content
+= render "partial_layouts/v2/default", page_category: "record-detail" do
   .container.py-3
-    = render "application/components/breadcrumb"
     .row
       .col-9.pr-0
         .c-card.py-3
@@ -32,13 +31,8 @@
                       - title = t("messages.records.view_record_body")
                       = link_to title, record_path(work_record.user.username, work_record.record)
                     .small
-                      = link_to work_record_path(work_record.user.username, work_record), title: local_datetime(work_record.created_at), class: "u-text-body" do
+                      = link_to record_path(work_record.user.username, work_record), title: local_datetime(work_record.created_at), class: "u-text-body" do
                         = local_time_ago_in_words(work_record.created_at)
-            - if @work_records.length > 5
-              .mb-3
-                = link_to work_records_path(@user.username), class: "btn btn-secondary w-100" do
-                  = icon "angle-right"
-                  = t "messages.works.view_all_n_record_body_list", n: @work_records.length
       .col-3
         .mb-2
           = link_to work_path(@work) do
@@ -54,11 +48,4 @@
             = icon "angle-right"
             = t "verb.view_work_detail"
 
-= render "application/components/footer"
-
-- content_for :js_templates do
-  = render "application/js_templates/like_button"
-  = render "application/js_templates/rating_state_label"
-  = render "application/js_templates/share_button_facebook"
-  = render "application/js_templates/share_button_twitter"
-  = render "application/js_templates/status_selector"
+    = render "application/components/breadcrumb"

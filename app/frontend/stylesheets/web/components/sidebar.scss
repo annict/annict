@@ -1,0 +1,65 @@
+.c-sidebar {
+  $root: &;
+
+  height: 100%;
+  left: 0;
+  position: fixed;
+  z-index: $zindex-popover;
+
+  &__background {
+    background-color: rgba(0, 0, 0, 0.4);
+    cursor: pointer;
+    display: none;
+    height: 100vh;
+    left: 0;
+    position: fixed;
+    top: 0;
+    width: 100vw;
+  }
+
+  &__background.active {
+    display: block;
+  }
+
+  &__content {
+    background-color: $ann-color-sidebar-bg;
+    display: none;
+    font-size: 0.95rem;
+    height: 100%;
+    left: 0;
+    position: fixed;
+    overflow-y: auto;
+    width: 240px;
+
+    #{$root}__icon {
+      width: 25px;
+    }
+
+    input {
+      font-size: 0.95rem;
+    }
+  }
+
+  &__content.active {
+    display: block;
+  }
+
+  .slide-enter-active,
+  .slide-leave-active {
+    transition: transform 0.2s ease;
+  }
+
+  .slide-enter,
+  .slide-leave-to {
+    transform: translateX(-100%);
+    transition: all 150ms ease-out 0s;
+  }
+}
+
+@include media-breakpoint-up(lg) {
+  .c-sidebar {
+    &__content {
+      display: block !important;
+    }
+  }
+}

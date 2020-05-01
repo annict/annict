@@ -5,9 +5,8 @@
 - set_meta_tags(title: title, description: description, keywords: keywords, og: { description: description, image: image_url }, twitter: { description: description, image: image_url }, reverse: true, prefix: false)
 - breadcrumb :episode_record_detail, @episode_record
 
-.p-application__content
+= render "partial_layouts/v2/default", page_category: "record-detail" do
   .container.py-3
-    = render "application/components/breadcrumb"
     .row
       .col-9.pr-0
         .c-card.py-3
@@ -43,7 +42,7 @@
                       c-body inline-template=""
                         .c-body__content = comment.body
                   .text-right
-                    c-like-button resource-name="Comment" :init-resource-id="#{comment.id}" :init-likes-count="#{comment.likes_count}" :init-is-liked="#{user_signed_in? && current_user.like?(comment)}" :is-signed-in="#{user_signed_in?}"
+                    c-like-button resource-name="Comment" :resource-id="#{comment.id}" :init-likes-count="#{comment.likes_count}" :is-signed-in="#{user_signed_in?}"
                   - if policy(comment).update?
                     .small.text-right.mb-2
                       = link_to edit_comment_path(comment), class: "mr-2" do
@@ -69,12 +68,7 @@
             = icon "angle-right"
             = t "verb.view_work_detail"
 
-c-sticky-message message-body="#{t('messages._components.sticky_message.records_show.body')}"
-
-= render "application/components/footer"
+    = render "application/components/breadcrumb"
 
 - content_for :js_templates do
-  = render "application/js_templates/like_button"
-  = render "application/js_templates/rating_state_label"
-  = render "application/js_templates/status_selector"
   = render "application/js_templates/mute_user_button"

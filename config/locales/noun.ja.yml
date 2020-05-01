@@ -1,10 +1,12 @@
 ja:
   noun:
+    about: About
     account_deletion: アカウント削除
     actions: アクション
     activities: アクティビティ
     after: After
     ago: 前
+    aired: 開始日
     airing_anime: 放送中アニメ
     airing: 放送中
     all: 全て
@@ -15,6 +17,7 @@ ja:
     annict_db: Annict DB
     annict_developers: Annict Developers
     annict_forum: Annict Forum
+    annict_supporters: Annict Supporters
     annict_userland: Annict Userland
     annict: Annict
     applications: アプリケーション

@@ -2,16 +2,13 @@
 - description = meta_description(t("head.meta.description.favorite_characters.index", profile_name: @user.profile.name, username: @user.username))
 - set_meta_tags(title: title, description: description, og: { description: description }, twitter: { description: description }, reverse: true, prefix: false)
 
+= render "partial_layouts/v2/default" do
+  = render "users/low_profile_header", user: @user
+  = render "users/favorite_nav", user: @user
 
-= render "users/low_profile_header", user: @user
-= render "users/favorite_nav", user: @user
-
-.p-application__content.mb-4
   .row.justify-content-center.my-3
     .c-card.col-6.py-2
       = render "favorite_characters/character_list", favorite_characters: @favorite_characters
-
-= render "application/components/footer"
 
 - content_for :js_templates do
   = render "application/js_templates/favorite_button"

@@ -16,19 +16,17 @@
           - if episode_record.modify_body?
             small.ml-1.text-muted
               = icon "pencil-alt"
-          small.ml-2.text-muted
-            = "#{episode_record.record.impressions_count} views"
         c-comment-guard inline-template="" :init-is-spoiler="#{is_spoiler == true}"
           .c-record__content
             - if episode_record.rating.present?
-              c-rating-label :init-rating="#{episode_record.rating}" v-show="!isSpoiler"
+              c-rating-label init-kind="#{episode_record.rating_to_rating_state}" v-show="!isSpoiler"
             - elsif episode_record.rating_state.present?
-              c-rating-state-label :init-rating-state=="'#{episode_record.rating_state}'" v-show="!isSpoiler"
+              c-rating-label init-kind="#{episode_record.rating_state}" v-show="!isSpoiler"
             .c-body @click="remove"
               c-body inline-template=""
                 .c-body__content = episode_record.body
         .text-right
-          c-like-button resource-name="EpisodeRecord" :init-resource-id="#{episode_record.id}" :init-likes-count="#{episode_record.likes_count}" :init-is-liked="#{user_signed_in? && !episode_record.user_like_id.nil?}" :is-signed-in="#{user_signed_in?}"
+          c-like-button resource-name="EpisodeRecord" :resource-id="#{episode_record.id}" :init-likes-count="#{episode_record.likes_count}" :is-signed-in="#{user_signed_in?}"
           = link_to record_path(episode_record.user.username, episode_record.record), class: "d-inline-block ml-2" do
             = icon "comment", "far", class: "mr-1"
             = episode_record.comments_count

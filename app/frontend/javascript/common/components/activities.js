@@ -1,6 +1,7 @@
 import $ from 'jquery';
 
 import vueLazyLoad from '../../common/vueLazyLoad';
+import eventHub from '../eventHub';
 
 import createRecordActivity from './createRecordActivity';
 import createReviewActivity from './createReviewActivity';
@@ -67,7 +68,7 @@ export default {
         method: 'GET',
         url: '/api/internal/activities',
         data: this.requestData(),
-      }).done(data => {
+      }).done((data) => {
         this.isLoading = false;
 
         if (data.activities.length > 0) {
@@ -77,7 +78,10 @@ export default {
           this.hasNext = false;
         }
 
-        return this.$nextTick(() => vueLazyLoad.refresh());
+        this.$nextTick(() => {
+          vueLazyLoad.refresh();
+          eventHub.$emit('userDataFetcher:refetch');
+        });
       });
     },
 
@@ -90,7 +94,7 @@ export default {
   },
 
   mounted() {
-    if (gon.user.device === 'pc' && gon.page && gon.page.category === 'home_index') {
+    if (gon.user.device === 'pc' && gon.page && gon.page.category === 'home_show') {
       $(this.$el).css({ maxHeight: window.innerHeight * 0.7 });
     }
 

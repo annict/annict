@@ -1,8 +1,7 @@
 - title = t "head.title.oauth.applications.show", application_name: @application.name
 - set_meta_tags(title: title, og: { title: title }, reverse: true, prefix: false)
 
-
-.p-application__content
+= render "partial_layouts/v2/default" do
   .c-card.container.mt-3.mb-4.py-3
     .row.mb-3
       .col
@@ -28,5 +27,3 @@
                   = uri
                 td
                   = link_to t("messages.oauth.applications.authorize"), oauth_authorization_path(client_id: @application.uid, redirect_uri: uri, response_type: "code", scope: @application.scopes), class: "btn btn-primary", target: "_blank"
-
-= render "application/components/footer"

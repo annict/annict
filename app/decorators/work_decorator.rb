@@ -40,6 +40,18 @@ module WorkDecorator
     link_to release_season, season_works_path(season.slug)
   end
 
+  def synopsis_html
+    return "" if synopsis.blank?
+
+    simple_format synopsis
+  end
+
+  def synopsis_en_html
+    return "" if synopsis.blank?
+
+    simple_format synopsis_en
+  end
+
   def local_synopsis(raw: false)
     text = case I18n.locale
     when :ja then synopsis

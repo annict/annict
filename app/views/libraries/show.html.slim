@@ -5,10 +5,9 @@
 - image_url = ann_image_url(@user.profile, :image, size: "640x")
 - set_meta_tags(title: title, description: description, keywords: keywords, og: { description: description }, twitter: { description: description }, reverse: true, prefix: false)
 
+= render "partial_layouts/v2/default", page_category: "library-detail" do
+  = render "users/low_profile_header", user: @user
 
-= render "users/low_profile_header", user: @user
-
-.p-application__content.mb-3
   .p-libraries-show__subnav.c-subnav.mb-3
     - %i(watching wanna_watch watched on_hold stop_watching).each do |status_kind|
       = active_link_to library_path(@user.username, status_kind, display: params[:display]), class: "c-subnav__link", class_active: "c-subnav__link--active", active: (status_kind.to_s == params[:status_kind]) do
@@ -50,15 +49,10 @@
 
 c-sticky-message message-body="#{t('messages._components.sticky_message.libraries_show.body')}"
 
-= render "application/components/footer"
-
 c-impression-button-modal
 
 - content_for :js_templates do
   = render "application/js_templates/impression_button_modal"
   = render "application/js_templates/impression_button"
-  = render "application/js_templates/share_button_facebook"
-  = render "application/js_templates/share_button_twitter"
-  = render "application/js_templates/status_selector"
   = render "application/js_templates/work_comment"
   = render "application/js_templates/work_tags"

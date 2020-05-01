@@ -1,8 +1,6 @@
 - title = t "head.title.options.index"
 - set_meta_tags(title: title, reverse: true, prefix: false)
 
-
-.c-card.container.py-3.mb-4
-  = render "options/form"
-
-= render "application/components/footer"
+= render "partial_layouts/v2/default" do
+  .c-card.container.py-3.mb-4
+    = render "options/form"

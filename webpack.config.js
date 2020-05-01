@@ -3,8 +3,6 @@ const path = require('path');
 
 const ManifestPlugin = require('webpack-manifest-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
-const VueLoaderPlugin = require('vue-loader/lib/plugin');
-const ForkTsCheckerWebpackPlugin = require('fork-ts-checker-webpack-plugin');
 
 const isProd = process.env.NODE_ENV === 'production';
 
@@ -33,12 +31,7 @@ module.exports = {
   module: {
     rules: [
       {
-        test: /\.vue$/,
-        exclude: /node_modules/,
-        loader: 'vue-loader',
-      },
-      {
-        test: /\.(js|ts)x?$/,
+        test: /\.js$/,
         exclude: /node_modules/,
         use: [
           {
@@ -79,7 +72,7 @@ module.exports = {
           {
             loader: 'postcss-loader', // Run post css actions
             options: {
-              plugins: function() {
+              plugins: function () {
                 // post css plugins, can be exported to postcss.config.js
                 return [require('precss'), require('autoprefixer')];
               },
@@ -109,7 +102,7 @@ module.exports = {
       vue: 'vue/dist/vue.js',
     },
     modules: ['node_modules', path.resolve(__dirname, 'app', 'frontend')],
-    extensions: ['.css', '.gif', '.jpeg', '.jpg', '.js', '.json', '.png', '.scss', '.svg', '.ts', '.tsx'],
+    extensions: ['.css', '.gif', '.jpeg', '.jpg', '.js', '.json', '.png', '.scss', '.svg'],
   },
   plugins: [
     new ManifestPlugin({
@@ -122,10 +115,6 @@ module.exports = {
       // both options are optional
       filename: '[name]-[hash].css',
       chunkFilename: '[name].bundle-[hash].css',
-    }),
-    new VueLoaderPlugin(),
-    new ForkTsCheckerWebpackPlugin({
-      vue: true,
     }),
   ],
   devServer: {

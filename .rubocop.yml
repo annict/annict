@@ -1,4 +1,5 @@
 AllCops:
+  NewCops: enable
   TargetRubyVersion: 2.4
   Exclude:
     - "**/*.slim"
@@ -81,6 +82,9 @@ Style/IfUnlessModifier:
 
 Style/Lambda:
   Enabled: false
+
+Style/NumericPredicate:
+  EnforcedStyle: comparison
 
 Style/PercentLiteralDelimiters:
   PreferredDelimiters:

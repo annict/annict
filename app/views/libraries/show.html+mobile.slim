@@ -5,54 +5,49 @@
 - image_url = ann_image_url(@user.profile, :image, size: "640x")
 - set_meta_tags(title: title, description: description, keywords: keywords, og: { description: description }, twitter: { description: description }, reverse: true, prefix: false)
 
+= render "partial_layouts/v2/default", page_category: "library-detail" do
+  = render "users/low_profile_header", user: @user
 
-= render "users/low_profile_header", user: @user
+  .p-users-works__subnav.c-subnav.mb-3
+    - %i(watching wanna_watch watched on_hold stop_watching).each do |status_kind|
+      = active_link_to library_path(@user.username, status_kind, display: params[:display]), class: "c-subnav__link", class_active: "c-subnav__link--active", active: (status_kind.to_s == params[:status_kind]) do
+        .c-subnav__item
+          .text-center
+            .mb-1
+              = @user.library_entries.count_on(status_kind)
+            .small
+              = t("enumerize.status.kind.#{status_kind}").truncate(8)
 
-.p-users-works__subnav.c-subnav.mb-3
-  - %i(watching wanna_watch watched on_hold stop_watching).each do |status_kind|
-    = active_link_to library_path(@user.username, status_kind, display: params[:display]), class: "c-subnav__link", class_active: "c-subnav__link--active", active: (status_kind.to_s == params[:status_kind]) do
-      .c-subnav__item
-        .text-center
-          .mb-1
-            = @user.library_entries.count_on(status_kind)
-          .small
-            = t("enumerize.status.kind.#{status_kind}").truncate(8)
-
-- if @seasons.present?
-  .text-center.mb-3
-    c-share-button-twitter.mr-2 text="#{title}" url="#{local_url}#{library_path(@user.username, params[:status_kind])}"
-    c-share-button-facebook url="#{local_url}#{library_path(@user.username, params[:status_kind])}"
-  .mb-3
-    - @seasons.each_with_index do |season, i|
-      .mb-3
-        .container.mb-3
-          .row.align-items-center
-            .col-4
-              h3.h4.font-weight-bold.mb-0
-                = season.local_name
-            .col-8.text-right
-              - if i == 0
-                = render "display_option_buttons", display_option: @display_option
-        - works = season.no_season? ? @works.with_no_season : @works.by_season(season.slug)
-        - works = works.order(watchers_count: :desc).includes(:work_image)
-        - if @display_option == "grid_detailed"
-          = render "libraries/display_options/#{@display_option}", works: works, work_tags_data: @work_tags_data, work_comment_data: @work_comment_data, user: @user
-        - else
-          = render "works/display_options/#{@display_option}", works: works
-    .text-center
-      = paginate @seasons, window: 2
-- else
-  = render "application/components/empty", text: t("messages.users.no_works")
-
-= render "application/components/footer"
+  - if @seasons.present?
+    .text-center.mb-3
+      c-share-button-twitter.mr-2 text="#{title}" url="#{local_url}#{library_path(@user.username, params[:status_kind])}"
+      c-share-button-facebook url="#{local_url}#{library_path(@user.username, params[:status_kind])}"
+    .mb-3
+      - @seasons.each_with_index do |season, i|
+        .mb-3
+          .container.mb-3
+            .row.align-items-center
+              .col-4
+                h3.h4.font-weight-bold.mb-0
+                  = season.local_name
+              .col-8.text-right
+                - if i == 0
+                  = render "display_option_buttons", display_option: @display_option
+          - works = season.no_season? ? @works.with_no_season : @works.by_season(season.slug)
+          - works = works.order(watchers_count: :desc).includes(:work_image)
+          - if @display_option == "grid_detailed"
+            = render "libraries/display_options/#{@display_option}", works: works, work_tags_data: @work_tags_data, work_comment_data: @work_comment_data, user: @user
+          - else
+            = render "works/display_options/#{@display_option}", works: works
+      .text-center
+        = paginate @seasons, window: 2
+  - else
+    = render "application/components/empty", text: t("messages.users.no_works")
 
 c-impression-button-modal
 
 - content_for :js_templates do
   = render "application/js_templates/impression_button_modal"
   = render "application/js_templates/impression_button"
-  = render "application/js_templates/share_button_facebook"
-  = render "application/js_templates/share_button_twitter"
-  = render "application/js_templates/status_selector"
   = render "application/js_templates/work_comment"
   = render "application/js_templates/work_tags"

@@ -74,3 +74,14 @@ namespace :api do
     end
   end
 end
+
+scope module: :api do
+  scope module: :internal do
+    constraints format: "json" do
+      # rubocop:disable Layout/ExtraSpacing, Layout/LineLength
+      match "/api/internal/library_entries", via: :get, as: :internal_api_library_entry_list, to: "library_entries#index"
+      match "/api/internal/likes",           via: :get, as: :internal_api_like_list,          to: "likes#index"
+      # rubocop:enable Layout/ExtraSpacing, Layout/LineLength
+    end
+  end
+end

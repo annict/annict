@@ -2,12 +2,10 @@
 - set_meta_tags(title: title, reverse: true, prefix: false)
 - breadcrumb :forum_post_detail, @post
 
-= render "forum/application/subnav", post: @post
+= render "partial_layouts/v2/default" do
+  = render "forum/application/subnav", post: @post
 
-.p-application__content
   .container.py-3.mb-3
-    = render "application/components/breadcrumb"
-
     .mb-3
       .mb-1
         = link_to @post.forum_category.local_name,  forum_category_path(@post.forum_category.slug), class: "badge badge-secondary"
@@ -57,7 +55,7 @@
           = render "forum/comments/form", comment: @comment
       .col-4
 
-= render "application/components/footer"
+    = render "application/components/breadcrumb"
 
 - content_for :js_templates
   = render "application/js_templates/forum_edit_link"

@@ -28,7 +28,7 @@ script#t-create-work-record-activity type="x-template"
     c-comment-guard inline-template="" :init-is-spoiler="activity.work_record.hide_work_record_body" :activity="activity"
       .mb-3 @click="remove"
         template v-if="activity.work_record.rating_overall_state"
-          c-rating-state-label :init-rating-state="activity.work_record.rating_overall_state" v-show="!isSpoiler"
+          c-rating-label :init-kind="activity.work_record.rating_overall_state" v-show="!isSpoiler"
         .c-body @click="remove"
           c-body inline-template=""
             .c-body__content
@@ -43,7 +43,7 @@ script#t-create-work-record-activity type="x-template"
           a :href='"/works/" + activity.work.id'
             | {{ activity.work.title }}
           .mt-2
-            c-status-selector :work-id="activity.work.id" :initStatusKind="activity.viewer.status.kind" style="width: 150px;" size="small"
+            c-status-selector :work-id="activity.work.id" page-category="home-show" style="width: 200px;"
 
     .mt-2
-      c-like-button.u-fake-link.mr-3 resource-name="WorkRecord" :init-resource-id="activity.work_record.id" :init-likes-count="activity.work_record.likes_count" :init-is-liked="activity.meta.liked" :is-signed-in="#{user_signed_in?}"
+      c-like-button.u-fake-link.mr-3 resource-name="WorkRecord" :resource-id="activity.work_record.id" :init-likes-count="activity.work_record.likes_count" :is-signed-in="#{user_signed_in?}" page-category="home-show"

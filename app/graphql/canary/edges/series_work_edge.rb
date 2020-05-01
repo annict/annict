@@ -12,9 +12,6 @@ module Canary
       field :summary_en, String,
         null: false
 
-      field :local_summary, String,
-        null: false
-
       field :node, Types::Objects::WorkType,
         null: false
 
@@ -24,10 +21,6 @@ module Canary
 
       def summary_en
         object.node.summary_en
-      end
-
-      def local_summary
-        object.node.local_summary
       end
 
       def node

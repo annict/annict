@@ -11,7 +11,6 @@ module Canary
         field :annict_id, Integer, null: false
         field :user, Canary::Types::Objects::UserType, null: false
         field :work, Canary::Types::Objects::WorkType, null: false
-        field :page_views_count, Integer, null: false
 
         def user
           Canary::RecordLoader.for(User).load(object.user_id)
@@ -19,10 +18,6 @@ module Canary
 
         def work
           Canary::RecordLoader.for(Work).load(object.work_id)
-        end
-
-        def page_views_count
-          object.impressions_count
         end
       end
     end

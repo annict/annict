@@ -4,13 +4,10 @@
 - image_url = ann_image_url(@user.profile, :image, size: "640x")
 - set_meta_tags(title: title, description: description, keywords: keywords, og: { description: description }, twitter: { description: description }, reverse: true, prefix: false)
 
+= render "partial_layouts/v2/default" do
+  = render "users/low_profile_header", user: @user
+  = render "users/follow_nav", user: @user
 
-= render "users/low_profile_header", user: @user
-= render "users/follow_nav", user: @user
-
-.p-application__content.mb-4
   .row.justify-content-center.my-3
     .c-card.col-6
       = render "users/user_list", users: @users
-
-= render "application/components/footer"

@@ -3,17 +3,15 @@
 
 - breadcrumb :slots_index
 
-.p-application__content.my-3
-  .container
-    = render "application/components/breadcrumb"
-
+= render "partial_layouts/v2/default" do
+  .container.pt-3
     .row.justify-content-center
       .col-7
         c-slot-list
           .c-loading
             .c-loading__core Loading...
 
-= render "application/components/footer"
+    = render "application/components/breadcrumb"
 
 - content_for :js_templates do
   = render "application/js_templates/slot_list"

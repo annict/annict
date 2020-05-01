@@ -1,0 +1,23 @@
+<div class="pl-default">
+  <div class="pl-default__sidebar">
+    <%= render SidebarComponent.new(user: current_user) %>
+  </div>
+
+  <div class="pl-default__main d-flex flex-column">
+    <div class="container-fluid pl-default__content">
+      <%= yield %>
+      <%= breadcrumbs %>
+    </div>
+
+    <div class="pl-default__footer">
+      <%= render FooterComponent.new %>
+    </div>
+
+    <div class="pl-default__tab_bar">
+      <%= render TabBarComponent.new(user: current_user) %>
+    </div>
+  </div>
+</div>
+
+<c-user-data-fetcher page-category="<%= page_category %>"></c-user-data-fetcher>
+<c-sign-up-modal></c-sign-up-modal>

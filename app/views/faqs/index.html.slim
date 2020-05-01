@@ -3,10 +3,8 @@
 
 - breadcrumb :faq_list
 
-.p-application__content
+= render "partial_layouts/v2/default" do
   .container.py-3.mb-3
-    = render "application/components/breadcrumb"
-
     - @faq_categories.each do |category|
       h2.h4.text-center.my-4.font-weight-bold
         = category.name
@@ -21,4 +19,4 @@
                 .card-block.p-3
                   == render_markdown content.answer
 
-= render "application/components/footer"
+    = render "application/components/breadcrumb"

@@ -2,7 +2,7 @@
   = link_to work_path(work) do
     = ann_image_tag work.work_image, :image, size: "280x", ratio: "3:4", class: "img-fluid img-thumbnail rounded"
   - if work.work_image.present?
-    .u-very-small.text-right
+    .u-very-small
       = work.work_image.asin_or_copyright_text
 
 h1.h2.font-weight-bold.mb-3
@@ -34,7 +34,6 @@ h1.h2.font-weight-bold.mb-3
   c-status-selector :work-id="#{work.id}"
 
 h2.h4.font-weight-bold.mb-3
-  = icon "sticky-note", "far", class: "mr-1"
   = t "noun.information"
 
 dl
@@ -81,14 +80,12 @@ dl
 - programs = programs.select { |pd| locale_ja? ? true : pd.support_en? }
 - if programs.present?
   h2.h4.font-weight-bold.mt-4.mb-3
-    = icon "video", class: "mr-1"
     = t "noun.vods"
   ul.list-unstyled
     - programs.each do |pd|
       li = link_to pd.channel.name, vod_title_url(pd.channel.id, pd.vod_title_code), target: "_blank"
 
 h2.h4.font-weight-bold.mt-4.mb-3
-  = icon "share", class: "mr-1"
   = t "noun.share"
 
 c-share-button-twitter.mr-2 text="#{work.local_title}" url="#{local_url}#{work_path(work)}" hashtags="#{work.twitter_hashtag.presence || ''}"
@@ -97,8 +94,3 @@ c-share-button-facebook url="#{local_url}#{work_path(work)}"
 - if user_signed_in? && current_user.committer?
   .mt-4
     = link_to t("messages._common.edit_on_annict_db"), db_edit_work_path(work), class: "btn btn-secondary w-100 mt-2"
-
-- content_for :js_templates do
-  = render "application/js_templates/share_button_facebook"
-  = render "application/js_templates/share_button_twitter"
-  = render "application/js_templates/status_selector"

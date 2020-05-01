@@ -1,11 +1,8 @@
 - title = t "head.title.channel_works.index"
 - set_meta_tags(title: title, reverse: true, prefix: false)
 
+= render "partial_layouts/v2/default" do
+  = render "channels/subnav"
 
-= render "channels/subnav"
-
-.p-application__content
   .c-card.u-mw-600.mx-auto.mt-3.mb-4.p-3
     = render "channel_works/work_list", works: @works
-
-= render "application/components/footer"

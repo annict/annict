@@ -1,10 +1,12 @@
 en:
   noun:
+    about: About
     account_deletion: Delete Account
     actions: Actions
     activities: Activities
     after: After
     ago: ago
+    aired: Aired
     airing_anime: Airing Anime
     airing: Airing
     all: All
@@ -15,6 +17,7 @@ en:
     annict_db: Annict DB
     annict_developers: Annict Developers
     annict_forum: Annict Forum
+    annict_supporters: Annict Supporters
     annict_userland: Annict Userland
     annict: Annict
     applications: Applications

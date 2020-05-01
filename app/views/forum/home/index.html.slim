@@ -2,12 +2,10 @@
 - set_meta_tags(title: title, reverse: true, prefix: false)
 - breadcrumb :forum_root
 
-= render "forum/application/subnav"
+= render "partial_layouts/v2/default" do
+  = render "forum/application/subnav"
 
-.p-application__content
   .container.py-3
-    = render "application/components/breadcrumb"
-
     .text-right.mb-3
       = link_to new_forum_post_path, class: "btn btn-primary" do
         = icon "plus"
@@ -21,4 +19,4 @@
       .text-center.mt-3
         = paginate @posts
 
-= render "application/components/footer"
+    = render "application/components/breadcrumb"

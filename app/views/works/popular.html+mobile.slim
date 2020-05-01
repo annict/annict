@@ -4,29 +4,26 @@
 - set_meta_tags(title: title, description: description, keywords: keywords, og: { description: description }, twitter: { description: description }, reverse: true, prefix: false)
 - breadcrumb :popular_works
 
-h1.h2.text-center.my-3
-  = title
+= render "partial_layouts/v2/default", page_category: "work-list" do
+  h1.h2.text-center.my-3
+    = title
 
-.px-3
-  .row.align-items-center.mb-3
-    .col.pr-0
-      c-share-button-twitter.mr-2 text="#{title}" url="#{local_url}#{popular_works_path}"
-      c-share-button-facebook url="#{local_url}#{popular_works_path}"
-    .col.text-right
-      = render "display_option_buttons", display_option: @display_option
+  .px-3
+    .row.align-items-center.mb-3
+      .col.pr-0
+        c-share-button-twitter.mr-2 text="#{title}" url="#{local_url}#{popular_works_path}"
+        c-share-button-facebook url="#{local_url}#{popular_works_path}"
+      .col.text-right
+        = render "display_option_buttons", display_option: @display_option
 
-= render "works/display_options/#{@display_option}", works: @works
-- if @works.present? && @works.total_pages > 1
-  .mb-3.text-center
-    = paginate @works, window: 2
+  = render "works/display_options/#{@display_option}", works: @works
+  - if @works.present? && @works.total_pages > 1
+    .mb-3.text-center
+      = paginate @works, window: 2
 
-= render "application/components/breadcrumb"
-= render "application/components/footer"
+  = render "application/components/breadcrumb"
 
 - content_for :js_templates do
   = render "application/js_templates/omitted_synopsis"
-  = render "application/js_templates/share_button_facebook"
-  = render "application/js_templates/share_button_twitter"
-  = render "application/js_templates/status_selector"
   = render "application/js_templates/work_friends"
   = render "application/js_templates/youtube_modal_player"

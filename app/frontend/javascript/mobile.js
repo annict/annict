@@ -6,6 +6,7 @@ import Cookies from 'js-cookie';
 import moment from 'moment-timezone';
 import 'moment/locale/ja';
 import Turbolinks from 'turbolinks';
+import LazyLoad from 'vanilla-lazyload';
 import Vue from 'vue';
 import VueLazyload from 'vue-lazyload';
 
@@ -29,22 +30,16 @@ import followButton from './common/components/followButton';
 import impressionButton from './common/components/impressionButton';
 import impressionButtonModal from './common/components/impressionButtonModal';
 import inputWordsCount from './common/components/inputWordsCount';
-import likeButton from './common/components/likeButton';
 import omittedSynopsis from './common/components/omittedSynopsis';
 import muteUserButton from './common/components/muteUserButton';
 import privacyPolicyModal from './common/components/privacyPolicyModal';
 import slotList from './common/components/slotList';
-import ratingLabel from './common/components/ratingLabel';
-import ratingStateLabel from './common/components/ratingStateLabel';
 import reactionButton from './common/components/reactionButton';
 import record from './common/components/record';
 import recordRating from './common/components/recordRating';
 import recordSorter from './common/components/recordSorter';
 import recordTextarea from './common/components/recordTextarea';
 import recordWordCount from './common/components/recordWordCount';
-import shareButtonTwitter from './common/components/shareButtonTwitter';
-import shareButtonFacebook from './common/components/shareButtonFacebook';
-import statusSelector from './common/components/statusSelector';
 import timeAgo from './common/components/timeAgo';
 import tips from './common/components/tips';
 import untrackedEpisodeList from './common/components/untrackedEpisodeList';
@@ -55,9 +50,18 @@ import workFriends from './common/components/workFriends';
 import workTags from './common/components/workTags';
 import youtubeModalPlayer from './common/components/youtubeModalPlayer';
 
+import likeButton from './web/components/likeButton';
+import ratingLabel from './web/components/ratingLabel';
+import shareToTwitterButton from './web/components/shareToTwitterButton';
+import shareToFacebookButton from './web/components/shareToFacebookButton';
+import sidebar from './web/components/sidebar';
+import statusSelector from './web/components/statusSelector';
+import tabBar from './web/components/tabBar';
+import userDataFetcher from './web/components/userDataFetcher';
+
 import resourceSelect from './common/directives/resourceSelect';
 
-document.addEventListener('turbolinks:load', event => {
+document.addEventListener('turbolinks:load', (event) => {
   moment.locale(gon.user.locale);
   Cookies.set('ann_time_zone', moment.tz.guess(), {
     domain: `.${gon.annict.domain}`,
@@ -98,19 +102,21 @@ document.addEventListener('turbolinks:load', event => {
   Vue.component('c-privacy-policy-modal', privacyPolicyModal);
   Vue.component('c-slot-list', slotList);
   Vue.component('c-rating-label', ratingLabel);
-  Vue.component('c-rating-state-label', ratingStateLabel);
   Vue.component('c-reaction-button', reactionButton);
   Vue.component('c-record', record);
   Vue.component('c-record-rating', recordRating);
   Vue.component('c-record-sorter', recordSorter);
   Vue.component('c-record-textarea', recordTextarea);
   Vue.component('c-record-word-count', recordWordCount);
-  Vue.component('c-share-button-facebook', shareButtonFacebook);
-  Vue.component('c-share-button-twitter', shareButtonTwitter);
+  Vue.component('c-share-button-facebook', shareToFacebookButton);
+  Vue.component('c-share-button-twitter', shareToTwitterButton);
+  Vue.component('c-sidebar', sidebar);
   Vue.component('c-status-selector', statusSelector);
+  Vue.component('c-tab-bar', tabBar);
   Vue.component('c-time-ago', timeAgo);
   Vue.component('c-tips', tips);
   Vue.component('c-untracked-episode-list', untrackedEpisodeList);
+  Vue.component('c-user-data-fetcher', userDataFetcher);
   Vue.component('c-user-heatmap', userHeatmap);
   Vue.component('c-username-preview', usernamePreview);
   Vue.component('c-work-comment', workComment);
@@ -133,7 +139,7 @@ document.addEventListener('turbolinks:load', event => {
     },
 
     created() {
-      app.loadAppData().done(appData => {
+      app.loadAppData().done((appData) => {
         this.appData = appData;
 
         if (!appData.isUserSignedIn || !app.existsPageParams()) {
@@ -141,12 +147,16 @@ document.addEventListener('turbolinks:load', event => {
           return;
         }
 
-        app.loadPageData().done(pageData => {
+        app.loadPageData().done((pageData) => {
           this.pageData = pageData;
           eventHub.$emit('app:loaded');
         });
       });
     },
+  });
+
+  new LazyLoad({
+    elements_selector: '.js-lazy',
   });
 });
 

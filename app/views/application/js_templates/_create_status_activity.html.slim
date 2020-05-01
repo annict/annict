@@ -35,7 +35,7 @@ script#t-create-status-activity type="x-template"
             a :href='"/works/" + activity.work.id'
               | {{ activity.work.title }}
             .mt-2
-              c-status-selector :work-id="activity.work.id" :initStatusKind="activity.viewer.status.kind" style="width: 150px;" size="small"
+              c-status-selector :work-id="activity.work.id" page-category="home-show" style="width: 200px;"
 
     .mt-2
-      c-like-button.u-fake-link resource-name="Status" :init-resource-id="activity.status.id" :init-likes-count="activity.status.likes_count" :init-is-liked="activity.meta.liked" :is-signed-in="#{user_signed_in?}"
+      c-like-button.u-fake-link resource-name="Status" :resource-id="activity.status.id" :init-likes-count="activity.status.likes_count" :is-signed-in="#{user_signed_in?}" page-category="home-show"

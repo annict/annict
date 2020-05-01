@@ -20,12 +20,27 @@ module V4
       end
     end
 
+    def set_locale_with_params(&action)
+      locale = current_user&.locale.presence || params[:locale].presence || :ja
+      I18n.with_locale(locale, &action)
+    end
+
     def locale_ja?
       locale.to_s == "ja"
     end
 
     def locale_en?
       locale.to_s == "en"
+    end
+
+    def local_url(locale: I18n.locale)
+      return ENV.fetch("ANNICT_JP_URL") if locale.to_s == "ja"
+
+      ENV.fetch("ANNICT_URL")
+    end
+
+    def local_url_with_path(locale: I18n.locale)
+      ["#{local_url(locale: locale)}#{request.path}", request.query_string].select(&:present?).join("?")
     end
   end
 end

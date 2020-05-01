@@ -4,7 +4,7 @@ services:
   webpack:
     build:
       context: .
-      dockerfile: ./app/frontend/Dockerfile
+      dockerfile: ./app/frontend/Dockerfile.local
     command: /bin/ash -c 'yarn webpack:start'
     volumes:
       - .:/annict
@@ -17,6 +17,10 @@ services:
       - 5432:5432
     volumes:
       - ../_postgresql/annict/data:/var/lib/postgresql/data
+  redis:
+    image: redis:5.0.5-alpine
+    ports:
+      - 6379:6379
   selenium:
     image: selenium/standalone-chrome:latest
     ports:

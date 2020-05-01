@@ -1,0 +1,139 @@
+query($annictId: Int!) {
+  works(annictIds: [$annictId]) {
+    nodes {
+      annictId
+      title
+      titleEn
+      titleKana
+      titleAlter
+      titleAlterEn
+      media
+      seasonYear
+      seasonType
+      seasonSlug
+      startedOn
+      episodesCount
+      watchersCount
+      satisfactionRate
+      ratingsCount
+      workRecordsWithBodyCount
+      officialSiteUrl
+      officialSiteUrlEn
+      wikipediaUrl
+      wikipediaUrlEn
+      twitterUsername
+      twitterHashtag
+      syobocalTid
+      malAnimeId
+      isNoEpisodes
+      synopsisHtml
+      synopsisEnHtml
+      synopsisSource
+      synopsisSourceEn
+      copyright
+      image {
+        internalUrl_1x: internalUrl(size: "350x")
+        internalUrl_2x: internalUrl(size: "700x")
+      }
+      trailers(orderBy: { field: SORT_NUMBER, direction: ASC }) {
+        nodes {
+          title
+          url
+          internalImageUrl(size: "300x169")
+        }
+      }
+      casts(orderBy: { field: SORT_NUMBER, direction: ASC }) {
+        nodes {
+          accurateName
+          accurateNameEn
+          character {
+            annictId
+            name
+            nameEn
+          }
+          person {
+            annictId
+          }
+        }
+      }
+      staffs(orderBy: { field: SORT_NUMBER, direction: ASC }) {
+        nodes {
+          accurateName
+          accurateNameEn
+          role
+          roleEn
+          resource {
+            __typename
+            ... on Person {
+              annictId
+            }
+            ... on Organization {
+              annictId
+            }
+          }
+        }
+      }
+      episodes(orderBy: { field: SORT_NUMBER, direction: ASC }, first: 50) {
+        nodes {
+          annictId
+          numberText
+          title
+          titleEn
+        }
+      }
+      programs {
+        nodes {
+          vodTitleName
+          vodTitleUrl
+          channel {
+            annictId
+            name
+          }
+        }
+      }
+      workRecords(hasBody: true, orderBy: { field: CREATED_AT, direction: DESC }, first: 11) { # Get 11 work records to display more records link
+        nodes {
+          annictId
+          ratingAnimationState
+          ratingMusicState
+          ratingStoryState
+          ratingCharacterState
+          ratingOverallState
+          bodyHtml
+          likesCount
+          createdAt
+          modifiedAt
+          user {
+            username
+            name
+            avatarUrl(size: size50)
+            isSupporter
+          }
+          record {
+            annictId
+          }
+        }
+      }
+      seriesList {
+        nodes {
+          name
+          nameEn
+          works(orderBy: { field: SEASON, direction: ASC }) {
+            edges {
+              summary
+              summaryEn
+              node {
+                annictId
+                title
+                titleEn
+                image {
+                  internalUrl(size: "280x")
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

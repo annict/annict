@@ -3,7 +3,7 @@
 
 - breadcrumb :userland_root
 
-.p-application__content
+= render "partial_layouts/v2/default" do
   .container.py-3.mb-3
     = render "application/components/breadcrumb"
     .row
@@ -37,5 +37,3 @@
             = t "messages.userland.welcome"
           p.mb-0
             = t "messages.userland.description_html"
-
-= render "application/components/footer"

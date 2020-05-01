@@ -1,13 +1,20 @@
-@import 'common/variables/annict';
-@import 'common/variables/bootstrap';
+@import './common/variables';
 
-@import 'web/foundations/foundation';
+@import './common/vendors';
+@import './web/vendors';
+@import './v2/vendors';
 
-@import 'common/components';
-@import 'common/utilities';
+@import './common/foundations';
+@import './web/foundations';
 
-@import 'web/projects';
-@import 'web/components';
+@import './web/partial_layouts';
 
-@import 'pc/components';
-@import 'pc/projects';
+@import './web/projects';
+@import './pc/projects';
+
+@import './common/components';
+@import './web/components';
+@import './v2/components';
+@import './pc/components';
+
+@import './common/utilities';

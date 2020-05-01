@@ -10,7 +10,6 @@ en:
       post: Finished to post
       published: Published
       search_with_keywords: Search by anime title...
-      share_to_facebook: Share to Facebook
       share_to_twitter: Share to Twitter
       unpublished: Unpublished
       updated: Updated
@@ -32,6 +31,8 @@ en:
         kind:
           thumbs_up:
             exactly: Exactly
+      sign_up_modal:
+        body: You can use this feature after sign up.
       sticky_message:
         about: "Learn more"
         sign_up: "Get started"
@@ -164,7 +165,7 @@ en:
       new:
         sign_up_with_oauth: Sign Up with %{provider_name}
     options:
-      hide_supporter_badge: Hide Annict Supporter badges
+      hide_supporter_badge: Hide Annict Supporters badges
       hide_supporter_badge_detail: Hide supporter badges on profiles page and so on.
       prevent_spoiler_of_episode_you_have_not_watched: Prevent spoiler of episode which you have not watched
       prevent_spoiler_of_episode_you_have_not_watched_detail: This option will hide comments on unwatched episodes when you've set status as "Watched", "Plan to Watch", or "On Hold".
