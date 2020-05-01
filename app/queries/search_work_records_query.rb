@@ -20,7 +20,7 @@ class SearchWorkRecordsQuery
   attr_reader :collection, :context, :args
 
   def from_arguments
-    results = collection
+    results = collection.joins(:user).merge(User.only_kept)
     viewer = context[:viewer]
     locale = context[:locale]
 
