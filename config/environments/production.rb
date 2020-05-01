@@ -28,15 +28,7 @@ Rails.application.configure do
   config.public_file_server.enabled = ENV["RAILS_SERVE_STATIC_FILES"].present?
 
   # Enable serving of images, stylesheets, and JavaScripts from an asset server.
-  # `no-image.jpg` はTombo経由で表示するため、`image_path("no-image.jpg")` の返り値に
-  # CloudFrontのURLを付加しないようにする
-  config.action_controller.asset_host = proc do |source|
-    if source =~ %r{/assets/no-image}
-      nil
-    else
-      ENV.fetch("ANNICT_ASSET_URL")
-    end
-  end
+  config.action_controller.asset_host = ENV.fetch("ANNICT_ASSET_URL")
 
   # Enable Rack::Cache to put a simple HTTP cache in front of your application
   # Add `rack-cache` to your Gemfile before enabling this.
