@@ -5,7 +5,7 @@ module ImageHelper
     path = image_path(record, field)
     size = options[:size]
 
-    width, _ = size.split("x").map do |s|
+    width, = size.split("x").map do |s|
       s.present? ? (s.to_i * (options[:size_rate].presence || 1)) : nil
     end
 

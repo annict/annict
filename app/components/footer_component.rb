@@ -81,11 +81,11 @@ class FooterComponent < ApplicationComponent
                     [t("noun.privacy_policy"), privacy_path, true],
                     [t("head.title.pages.legal"), legal_path, true]
                   ].each do |(link_title, link_url, is_for_japanese)|
-                    if helpers.locale_ja? || !is_for_japanese
-                      el.li class: "mb-2" do
-                        el.a href: link_url, target: "_blank" do
-                          link_title
-                        end
+                    next if !helpers.locale_ja? && is_for_japanese
+
+                    el.li class: "mb-2" do
+                      el.a href: link_url, target: "_blank" do
+                        link_title
                       end
                     end
                   end
