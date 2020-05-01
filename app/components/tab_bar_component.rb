@@ -7,8 +7,8 @@ class TabBarComponent < ApplicationComponent
 
   def call
     Htmlrb.build do |el|
-      el.c_tab_bar v_slot: "tabBar" do
-        el.div class: "bg-white d-block h-100 navbar navbar-expand navbar-white px-0" do
+      el.c_tab_bar class: "bg-white", v_slot: "tabBar" do
+        el.div class: "d-block h-100 navbar navbar-expand navbar-white px-0" do
           el.ul class: "align-items-center h-100 justify-content-around navbar-nav" do
             el.li class: "col nav-item px-0 text-center", "v-on:click.prevent": "tabBar.showSidebar" do
               el.a class: "text-dark", href: "/menu" do
