@@ -15,6 +15,9 @@
 #  email                         :citext           not null
 #  encrypted_password            :string(510)      default(""), not null
 #  episode_records_count         :integer          default(0), not null
+#  favorite_characters_count     :integer          default(0), not null
+#  favorite_organizations_count  :integer          default(0), not null
+#  favorite_people_count         :integer          default(0), not null
 #  last_sign_in_at               :datetime
 #  last_sign_in_ip               :string(510)
 #  locale                        :string           not null

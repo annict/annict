@@ -38,21 +38,15 @@ namespace :one_shot do
     end
   end
 
-  task update_name_on_series: :environment do
-    Series.where.not(name_en: "").find_each do |series|
-      puts "series.id: #{series.id}"
-      series.update_column(:name_alter_en, series.name_en)
-    end
-
-    Series.where.not(name_ro: "").find_each do |series|
-      puts "series.id: #{series.id}"
-      series.update_column(:name_en, series.name_ro)
-    end
-
-    Series.where.not(name_alter_en: "").find_each do |series|
-      puts "series.id: #{series.id}"
-      if series.name_alter_en == series.name_en
-        series.update_column(:name_alter_en, "")
+  task update_counter_cache: :environment do
+    [
+      [FavoriteCharacter, :favorite_characters_count, :favorite_characters],
+      [FavoriteOrganization, :favorite_organizations_count, :favorite_organizations],
+      [FavoritePerson, :favorite_people_count, :favorite_people]
+    ].each do |(model, field, assoc)|
+      User.only_kept.where(id: model.select(:user_id).distinct).find_each do |user|
+        puts "#{model.name} > user: #{user.id}"
+        user.update_column(field, user.send(assoc).size)
       end
     end
   end

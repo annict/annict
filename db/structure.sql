@@ -2555,7 +2555,10 @@ CREATE TABLE public.users (
     allowed_locales character varying[],
     records_count integer DEFAULT 0 NOT NULL,
     aasm_state character varying DEFAULT 'published'::character varying NOT NULL,
-    deleted_at timestamp without time zone
+    deleted_at timestamp without time zone,
+    favorite_characters_count integer DEFAULT 0 NOT NULL,
+    favorite_people_count integer DEFAULT 0 NOT NULL,
+    favorite_organizations_count integer DEFAULT 0 NOT NULL
 );
 
 
@@ -7209,6 +7212,7 @@ INSERT INTO "schema_migrations" (version) VALUES
 ('20191207113735'),
 ('20191208154530'),
 ('20200310195638'),
-('20200322025837');
+('20200322025837'),
+('20200501162535');
 
 
