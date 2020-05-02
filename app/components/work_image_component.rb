@@ -11,7 +11,7 @@ class WorkImageComponent < ApplicationComponent
   def call
     Htmlrb.build do |el|
       el.div(
-        class: "c-work-image img-fluid js-lazy rounded",
+        class: "c-work-image img-fluid js-lazy",
         data_bg: image_url_1x,
         data_bg_hidpi: image_url_2x,
         style: "background-color: #{bg_color};"
