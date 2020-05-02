@@ -28,7 +28,7 @@
 class ChannelWork < ApplicationRecord
   belongs_to :channel
   belongs_to :user
-  belongs_to :work, touch: true
+  belongs_to :work
 
   def self.current_channel(work)
     channel_work = find_by(work_id: work.id)

@@ -52,7 +52,7 @@ class Slot < ApplicationRecord
   belongs_to :channel
   belongs_to :episode, optional: true
   belongs_to :program, optional: true
-  belongs_to :work
+  belongs_to :work, touch: true
   has_many :db_activities, as: :trackable, dependent: :destroy
   has_many :db_comments, as: :resource, dependent: :destroy
 
