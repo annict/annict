@@ -99,7 +99,7 @@ module.exports = {
   },
   resolve: {
     alias: {
-      vue: 'vue/dist/vue.js',
+      vue: isProd ? 'vue/dist/vue.min.js' : 'vue/dist/vue.js',
     },
     modules: ['node_modules', path.resolve(__dirname, 'app', 'frontend')],
     extensions: ['.css', '.gif', '.jpeg', '.jpg', '.js', '.json', '.png', '.scss', '.svg'],
