@@ -576,41 +576,6 @@ ALTER SEQUENCE public.email_notifications_id_seq OWNED BY public.email_notificat
 
 
 --
--- Name: episode_items; Type: TABLE; Schema: public; Owner: -
---
-
-CREATE TABLE public.episode_items (
-    id bigint NOT NULL,
-    episode_id bigint NOT NULL,
-    item_id bigint NOT NULL,
-    user_id bigint NOT NULL,
-    work_id bigint NOT NULL,
-    aasm_state character varying DEFAULT 'published'::character varying NOT NULL,
-    created_at timestamp without time zone NOT NULL,
-    updated_at timestamp without time zone NOT NULL
-);
-
-
---
--- Name: episode_items_id_seq; Type: SEQUENCE; Schema: public; Owner: -
---
-
-CREATE SEQUENCE public.episode_items_id_seq
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
-
-
---
--- Name: episode_items_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
---
-
-ALTER SEQUENCE public.episode_items_id_seq OWNED BY public.episode_items.id;
-
-
---
 -- Name: episode_records_id_seq; Type: SEQUENCE; Schema: public; Owner: -
 --
 
@@ -1155,48 +1120,6 @@ ALTER SEQUENCE public.gumroad_subscribers_id_seq OWNED BY public.gumroad_subscri
 
 
 --
--- Name: impressions; Type: TABLE; Schema: public; Owner: -
---
-
-CREATE TABLE public.impressions (
-    id bigint NOT NULL,
-    impressionable_type character varying,
-    impressionable_id bigint,
-    user_id bigint,
-    controller_name character varying,
-    action_name character varying,
-    view_name character varying,
-    request_hash character varying,
-    ip_address character varying,
-    session_hash character varying,
-    message text,
-    referrer text,
-    params text,
-    created_at timestamp without time zone NOT NULL,
-    updated_at timestamp without time zone NOT NULL
-);
-
-
---
--- Name: impressions_id_seq; Type: SEQUENCE; Schema: public; Owner: -
---
-
-CREATE SEQUENCE public.impressions_id_seq
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
-
-
---
--- Name: impressions_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
---
-
-ALTER SEQUENCE public.impressions_id_seq OWNED BY public.impressions.id;
-
-
---
 -- Name: internal_statistics; Type: TABLE; Schema: public; Owner: -
 --
 
@@ -1227,53 +1150,6 @@ CREATE SEQUENCE public.internal_statistics_id_seq
 --
 
 ALTER SEQUENCE public.internal_statistics_id_seq OWNED BY public.internal_statistics.id;
-
-
---
--- Name: items; Type: TABLE; Schema: public; Owner: -
---
-
-CREATE TABLE public.items (
-    id bigint NOT NULL,
-    title character varying NOT NULL,
-    detail_page_url character varying NOT NULL,
-    asin character varying NOT NULL,
-    ean character varying,
-    amount integer,
-    currency_code character varying DEFAULT ''::character varying NOT NULL,
-    offer_amount integer,
-    offer_currency_code character varying DEFAULT ''::character varying NOT NULL,
-    release_on timestamp without time zone,
-    manufacturer character varying DEFAULT ''::character varying NOT NULL,
-    thumbnail_file_name character varying,
-    thumbnail_content_type character varying,
-    thumbnail_file_size integer,
-    thumbnail_updated_at timestamp without time zone,
-    aasm_state character varying DEFAULT 'published'::character varying NOT NULL,
-    created_at timestamp without time zone NOT NULL,
-    updated_at timestamp without time zone NOT NULL,
-    locale character varying DEFAULT 'other'::character varying NOT NULL,
-    image_data text
-);
-
-
---
--- Name: items_id_seq; Type: SEQUENCE; Schema: public; Owner: -
---
-
-CREATE SEQUENCE public.items_id_seq
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
-
-
---
--- Name: items_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
---
-
-ALTER SEQUENCE public.items_id_seq OWNED BY public.items.id;
 
 
 --
@@ -2699,40 +2575,6 @@ ALTER SEQUENCE public.work_images_id_seq OWNED BY public.work_images.id;
 
 
 --
--- Name: work_items; Type: TABLE; Schema: public; Owner: -
---
-
-CREATE TABLE public.work_items (
-    id bigint NOT NULL,
-    work_id bigint NOT NULL,
-    item_id bigint NOT NULL,
-    user_id bigint NOT NULL,
-    aasm_state character varying DEFAULT 'published'::character varying NOT NULL,
-    created_at timestamp without time zone NOT NULL,
-    updated_at timestamp without time zone NOT NULL
-);
-
-
---
--- Name: work_items_id_seq; Type: SEQUENCE; Schema: public; Owner: -
---
-
-CREATE SEQUENCE public.work_items_id_seq
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
-
-
---
--- Name: work_items_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
---
-
-ALTER SEQUENCE public.work_items_id_seq OWNED BY public.work_items.id;
-
-
---
 -- Name: work_records; Type: TABLE; Schema: public; Owner: -
 --
 
@@ -3013,13 +2855,6 @@ ALTER TABLE ONLY public.email_notifications ALTER COLUMN id SET DEFAULT nextval(
 
 
 --
--- Name: episode_items id; Type: DEFAULT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public.episode_items ALTER COLUMN id SET DEFAULT nextval('public.episode_items_id_seq'::regclass);
-
-
---
 -- Name: faq_categories id; Type: DEFAULT; Schema: public; Owner: -
 --
 
@@ -3104,24 +2939,10 @@ ALTER TABLE ONLY public.gumroad_subscribers ALTER COLUMN id SET DEFAULT nextval(
 
 
 --
--- Name: impressions id; Type: DEFAULT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public.impressions ALTER COLUMN id SET DEFAULT nextval('public.impressions_id_seq'::regclass);
-
-
---
 -- Name: internal_statistics id; Type: DEFAULT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public.internal_statistics ALTER COLUMN id SET DEFAULT nextval('public.internal_statistics_id_seq'::regclass);
-
-
---
--- Name: items id; Type: DEFAULT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public.items ALTER COLUMN id SET DEFAULT nextval('public.items_id_seq'::regclass);
 
 
 --
@@ -3314,13 +3135,6 @@ ALTER TABLE ONLY public.work_images ALTER COLUMN id SET DEFAULT nextval('public.
 
 
 --
--- Name: work_items id; Type: DEFAULT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public.work_items ALTER COLUMN id SET DEFAULT nextval('public.work_items_id_seq'::regclass);
-
-
---
 -- Name: work_records id; Type: DEFAULT; Schema: public; Owner: -
 --
 
@@ -3509,14 +3323,6 @@ ALTER TABLE ONLY public.email_notifications
 
 
 --
--- Name: episode_items episode_items_pkey; Type: CONSTRAINT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public.episode_items
-    ADD CONSTRAINT episode_items_pkey PRIMARY KEY (id);
-
-
---
 -- Name: episode_records episode_records_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -3653,27 +3459,11 @@ ALTER TABLE ONLY public.gumroad_subscribers
 
 
 --
--- Name: impressions impressions_pkey; Type: CONSTRAINT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public.impressions
-    ADD CONSTRAINT impressions_pkey PRIMARY KEY (id);
-
-
---
 -- Name: internal_statistics internal_statistics_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public.internal_statistics
     ADD CONSTRAINT internal_statistics_pkey PRIMARY KEY (id);
-
-
---
--- Name: items items_pkey; Type: CONSTRAINT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public.items
-    ADD CONSTRAINT items_pkey PRIMARY KEY (id);
 
 
 --
@@ -4053,14 +3843,6 @@ ALTER TABLE ONLY public.work_images
 
 
 --
--- Name: work_items work_items_pkey; Type: CONSTRAINT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public.work_items
-    ADD CONSTRAINT work_items_pkey PRIMARY KEY (id);
-
-
---
 -- Name: work_records work_records_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -4157,27 +3939,6 @@ CREATE INDEX comments_user_id_idx ON public.comments USING btree (user_id);
 
 
 --
--- Name: controlleraction_ip_index; Type: INDEX; Schema: public; Owner: -
---
-
-CREATE INDEX controlleraction_ip_index ON public.impressions USING btree (controller_name, action_name, ip_address);
-
-
---
--- Name: controlleraction_request_index; Type: INDEX; Schema: public; Owner: -
---
-
-CREATE INDEX controlleraction_request_index ON public.impressions USING btree (controller_name, action_name, request_hash);
-
-
---
--- Name: controlleraction_session_index; Type: INDEX; Schema: public; Owner: -
---
-
-CREATE INDEX controlleraction_session_index ON public.impressions USING btree (controller_name, action_name, session_hash);
-
-
---
 -- Name: delayed_jobs_priority; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -4203,13 +3964,6 @@ CREATE INDEX follows_following_id_idx ON public.follows USING btree (following_i
 --
 
 CREATE INDEX follows_user_id_idx ON public.follows USING btree (user_id);
-
-
---
--- Name: impressionable_type_message_index; Type: INDEX; Schema: public; Owner: -
---
-
-CREATE INDEX impressionable_type_message_index ON public.impressions USING btree (impressionable_type, message, impressionable_id);
 
 
 --
@@ -4504,41 +4258,6 @@ CREATE UNIQUE INDEX index_email_notifications_on_unsubscription_key ON public.em
 --
 
 CREATE UNIQUE INDEX index_email_notifications_on_user_id ON public.email_notifications USING btree (user_id);
-
-
---
--- Name: index_episode_items_on_episode_id; Type: INDEX; Schema: public; Owner: -
---
-
-CREATE INDEX index_episode_items_on_episode_id ON public.episode_items USING btree (episode_id);
-
-
---
--- Name: index_episode_items_on_episode_id_and_item_id; Type: INDEX; Schema: public; Owner: -
---
-
-CREATE UNIQUE INDEX index_episode_items_on_episode_id_and_item_id ON public.episode_items USING btree (episode_id, item_id);
-
-
---
--- Name: index_episode_items_on_item_id; Type: INDEX; Schema: public; Owner: -
---
-
-CREATE INDEX index_episode_items_on_item_id ON public.episode_items USING btree (item_id);
-
-
---
--- Name: index_episode_items_on_user_id; Type: INDEX; Schema: public; Owner: -
---
-
-CREATE INDEX index_episode_items_on_user_id ON public.episode_items USING btree (user_id);
-
-
---
--- Name: index_episode_items_on_work_id; Type: INDEX; Schema: public; Owner: -
---
-
-CREATE INDEX index_episode_items_on_work_id ON public.episode_items USING btree (work_id);
 
 
 --
@@ -4871,13 +4590,6 @@ CREATE INDEX index_gumroad_subscribers_on_gumroad_user_id ON public.gumroad_subs
 
 
 --
--- Name: index_impressions_on_user_id; Type: INDEX; Schema: public; Owner: -
---
-
-CREATE INDEX index_impressions_on_user_id ON public.impressions USING btree (user_id);
-
-
---
 -- Name: index_internal_statistics_on_key; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -4889,20 +4601,6 @@ CREATE INDEX index_internal_statistics_on_key ON public.internal_statistics USIN
 --
 
 CREATE UNIQUE INDEX index_internal_statistics_on_key_and_date ON public.internal_statistics USING btree (key, date);
-
-
---
--- Name: index_items_on_asin; Type: INDEX; Schema: public; Owner: -
---
-
-CREATE UNIQUE INDEX index_items_on_asin ON public.items USING btree (asin);
-
-
---
--- Name: index_items_on_locale; Type: INDEX; Schema: public; Owner: -
---
-
-CREATE INDEX index_items_on_locale ON public.items USING btree (locale);
 
 
 --
@@ -5606,34 +5304,6 @@ CREATE INDEX index_work_images_on_work_id ON public.work_images USING btree (wor
 
 
 --
--- Name: index_work_items_on_item_id; Type: INDEX; Schema: public; Owner: -
---
-
-CREATE INDEX index_work_items_on_item_id ON public.work_items USING btree (item_id);
-
-
---
--- Name: index_work_items_on_user_id; Type: INDEX; Schema: public; Owner: -
---
-
-CREATE INDEX index_work_items_on_user_id ON public.work_items USING btree (user_id);
-
-
---
--- Name: index_work_items_on_work_id; Type: INDEX; Schema: public; Owner: -
---
-
-CREATE INDEX index_work_items_on_work_id ON public.work_items USING btree (work_id);
-
-
---
--- Name: index_work_items_on_work_id_and_item_id; Type: INDEX; Schema: public; Owner: -
---
-
-CREATE UNIQUE INDEX index_work_items_on_work_id_and_item_id ON public.work_items USING btree (work_id, item_id);
-
-
---
 -- Name: index_work_records_on_deleted_at; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -5858,34 +5528,6 @@ CREATE INDEX notifications_user_id_idx ON public.notifications USING btree (user
 
 
 --
--- Name: poly_ip_index; Type: INDEX; Schema: public; Owner: -
---
-
-CREATE INDEX poly_ip_index ON public.impressions USING btree (impressionable_type, impressionable_id, ip_address);
-
-
---
--- Name: poly_params_request_index; Type: INDEX; Schema: public; Owner: -
---
-
-CREATE INDEX poly_params_request_index ON public.impressions USING btree (impressionable_type, impressionable_id, params);
-
-
---
--- Name: poly_request_index; Type: INDEX; Schema: public; Owner: -
---
-
-CREATE INDEX poly_request_index ON public.impressions USING btree (impressionable_type, impressionable_id, request_hash);
-
-
---
--- Name: poly_session_index; Type: INDEX; Schema: public; Owner: -
---
-
-CREATE INDEX poly_session_index ON public.impressions USING btree (impressionable_type, impressionable_id, session_hash);
-
-
---
 -- Name: profiles_user_id_idx; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -6100,35 +5742,11 @@ ALTER TABLE ONLY public.work_taggings
 
 
 --
--- Name: episode_items fk_rails_14aec3c892; Type: FK CONSTRAINT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public.episode_items
-    ADD CONSTRAINT fk_rails_14aec3c892 FOREIGN KEY (work_id) REFERENCES public.works(id);
-
-
---
--- Name: work_items fk_rails_163eec0ac6; Type: FK CONSTRAINT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public.work_items
-    ADD CONSTRAINT fk_rails_163eec0ac6 FOREIGN KEY (work_id) REFERENCES public.works(id);
-
-
---
 -- Name: db_comments fk_rails_179d1443d6; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public.db_comments
     ADD CONSTRAINT fk_rails_179d1443d6 FOREIGN KEY (user_id) REFERENCES public.users(id);
-
-
---
--- Name: work_items fk_rails_1ee12c0aff; Type: FK CONSTRAINT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public.work_items
-    ADD CONSTRAINT fk_rails_1ee12c0aff FOREIGN KEY (item_id) REFERENCES public.items(id);
 
 
 --
@@ -6428,14 +6046,6 @@ ALTER TABLE ONLY public.collection_items
 
 
 --
--- Name: episode_items fk_rails_901684e7ba; Type: FK CONSTRAINT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public.episode_items
-    ADD CONSTRAINT fk_rails_901684e7ba FOREIGN KEY (item_id) REFERENCES public.items(id);
-
-
---
 -- Name: records fk_rails_9502ee6cab; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -6492,14 +6102,6 @@ ALTER TABLE ONLY public.work_taggables
 
 
 --
--- Name: episode_items fk_rails_9bfca2a7dd; Type: FK CONSTRAINT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public.episode_items
-    ADD CONSTRAINT fk_rails_9bfca2a7dd FOREIGN KEY (user_id) REFERENCES public.users(id);
-
-
---
 -- Name: reactions fk_rails_9f02fc96a0; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -6529,14 +6131,6 @@ ALTER TABLE ONLY public.activities
 
 ALTER TABLE ONLY public.activities
     ADD CONSTRAINT fk_rails_a20b2f59b3 FOREIGN KEY (episode_id) REFERENCES public.episodes(id);
-
-
---
--- Name: work_items fk_rails_a9cab3453b; Type: FK CONSTRAINT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public.work_items
-    ADD CONSTRAINT fk_rails_a9cab3453b FOREIGN KEY (user_id) REFERENCES public.users(id);
 
 
 --
@@ -6732,14 +6326,6 @@ ALTER TABLE ONLY public.vod_titles
 
 
 --
--- Name: episode_items fk_rails_e7798a5e51; Type: FK CONSTRAINT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public.episode_items
-    ADD CONSTRAINT fk_rails_e7798a5e51 FOREIGN KEY (episode_id) REFERENCES public.episodes(id);
-
-
---
 -- Name: slots fk_rails_e99f16a883; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -6753,14 +6339,6 @@ ALTER TABLE ONLY public.slots
 
 ALTER TABLE ONLY public.oauth_access_tokens
     ADD CONSTRAINT fk_rails_ee63f25419 FOREIGN KEY (resource_owner_id) REFERENCES public.users(id);
-
-
---
--- Name: impressions fk_rails_f3d458d513; Type: FK CONSTRAINT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public.impressions
-    ADD CONSTRAINT fk_rails_f3d458d513 FOREIGN KEY (user_id) REFERENCES public.users(id);
 
 
 --
@@ -7209,6 +6787,7 @@ INSERT INTO "schema_migrations" (version) VALUES
 ('20191207113735'),
 ('20191208154530'),
 ('20200310195638'),
-('20200322025837');
+('20200322025837'),
+('20200503204607');
 
 
