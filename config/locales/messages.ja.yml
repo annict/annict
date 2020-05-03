@@ -43,7 +43,6 @@ ja:
     _empty:
       no_characters: キャラクターはいません
       no_episodes: エピソードはありません
-      no_items: 商品はありません
       no_organizations: 団体はありません
       no_people: 人物はいません
       no_projects: プロジェクトはありません
@@ -258,7 +257,6 @@ ja:
     works:
       view_all_n_characters: "%{n}人のキャラクターを全て見る"
       view_all_n_episodes: "%{n}エピソードを全て見る"
-      view_all_n_items: "%{n}個のアイテムを全て見る"
       view_all_n_record_body_list: "%{n}件の感想を全て見る"
       view_all_n_staffs: "%{n}人のスタッフを全て見る"
       creating_episodes_restricted_episodes_filled: "話数分のエピソードがすでに登録されているため、新規登録はできません。"
