@@ -5,9 +5,9 @@ class OrganizationFansController < ApplicationController
 
   def index
     @organization = Organization.only_kept.find(params[:organization_id])
-    @favorite_orgs = @organization.
-      favorite_organizations.
-      joins(:user).
+    @organization_favorites = @organization.
+      organization_favorites.
+      eager_load(user: :profile).
       merge(User.only_kept).
       order(watched_works_count: :desc)
   end

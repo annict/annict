@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 # == Schema Information
 #
-# Table name: favorite_organizations
+# Table name: organization_favorites
 #
 #  id                  :bigint           not null, primary key
 #  watched_works_count :integer          default(0), not null
@@ -12,10 +12,10 @@
 #
 # Indexes
 #
-#  index_favorite_organizations_on_organization_id              (organization_id)
-#  index_favorite_organizations_on_user_id                      (user_id)
-#  index_favorite_organizations_on_user_id_and_organization_id  (user_id,organization_id) UNIQUE
-#  index_favorite_organizations_on_watched_works_count          (watched_works_count)
+#  index_organization_favorites_on_organization_id              (organization_id)
+#  index_organization_favorites_on_user_id                      (user_id)
+#  index_organization_favorites_on_user_id_and_organization_id  (user_id,organization_id) UNIQUE
+#  index_organization_favorites_on_watched_works_count          (watched_works_count)
 #
 # Foreign Keys
 #
@@ -23,7 +23,7 @@
 #  fk_rails_...  (user_id => users.id)
 #
 
-class FavoriteOrganization < ApplicationRecord
+class OrganizationFavorite < ApplicationRecord
   belongs_to :organization, counter_cache: :favorite_users_count
   belongs_to :user
 

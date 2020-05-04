@@ -60,21 +60,21 @@ h1.h2.font-weight-bold
             = "#{t('noun.source')}:".html_safe
           = character.local_description_source
 
-- if @favorite_characters.present?
+- if character_favorites.present?
   .mb-4
     h2.h4.font-weight-bold.mb-3
       = icon "users", class: "mr-1"
       = t "noun.fans"
       span.pl-1
-        = "(#{t('noun.users_count', count: @favorite_characters.length)})"
+        = "(#{t('noun.users_count', count: character_favorites.length)})"
 
     .row.px-3
-      - @favorite_characters.each do |favorite_character|
+      - character_favorites.each do |character_favorite|
         .col.col-auto.pl-0.pr-2.pb-2
-          = link_to user_path(favorite_character.user.username) do
-            = ann_image_tag(favorite_character.user.profile, :image, size: "30x30", class: "rounded-circle", alt: favorite_character.user.name_with_username, title: favorite_character.user.name_with_username)
+          = link_to user_path(character_favorite.user.username) do
+            = ann_image_tag(character_favorite.user.profile, :image, size: "30x30", class: "rounded-circle", alt: character_favorite.user.name_with_username, title: character_favorite.user.name_with_username)
 
-    - if @favorite_characters.length > 30
+    - if character_favorites.length > 30
       .text-right
         = link_to t("verb.view_all"), character_fans_path(character)
 

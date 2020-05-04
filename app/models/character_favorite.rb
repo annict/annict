@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 # == Schema Information
 #
-# Table name: favorite_characters
+# Table name: character_favorites
 #
 #  id           :bigint           not null, primary key
 #  created_at   :datetime         not null
@@ -11,9 +11,9 @@
 #
 # Indexes
 #
-#  index_favorite_characters_on_character_id              (character_id)
-#  index_favorite_characters_on_user_id                   (user_id)
-#  index_favorite_characters_on_user_id_and_character_id  (user_id,character_id) UNIQUE
+#  index_character_favorites_on_character_id              (character_id)
+#  index_character_favorites_on_user_id                   (user_id)
+#  index_character_favorites_on_user_id_and_character_id  (user_id,character_id) UNIQUE
 #
 # Foreign Keys
 #
@@ -21,7 +21,7 @@
 #  fk_rails_...  (user_id => users.id)
 #
 
-class FavoriteCharacter < ApplicationRecord
+class CharacterFavorite < ApplicationRecord
   belongs_to :character, counter_cache: :favorite_users_count
   belongs_to :user
 end

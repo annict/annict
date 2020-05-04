@@ -1,22 +1,17 @@
 <mj-wrapper background-color="#fff" padding-top="0px" padding-bottom="0px">
-  <mj-section>
-    <mj-column>
-      <mj-text align="center">
-        <%= I18n.t("email_notification_mailer.favorite_works_added.description_html", work_title: @work.local_title) %>
-      </mj-text>
-    </mj-column>
-  </mj-section>
-
-  <mj-section padding-bottom="10px" padding-top="0">
-    <mj-column>
-      <mj-text align="center">
+  <% @works.each do |work| %>
+    <%= render "email_notification_mailer/work", work: work, utm_campaign: "favorite_works_added" do %>
+      <mj-text font-weight="800" padding="10px 25px">
         <%= I18n.t("email_notification_mailer.favorite_works_added.favorites_joins_work") %>
       </mj-text>
-      <mj-text align="center">
-        <%= @resources.map { |resource| resource.local_name }.join(", ") %>
-      </mj-text>
-    </mj-column>
-  </mj-section>
 
-  <%= render "email_notification_mailer/work", work: @work, utm_campaign: "favorite_works_added" %>
+      <mj-text padding-top="0" line-height="22px">
+        <% characters = work.characters.merge(@user.favorite_characters) %>
+        <% people = work.people.merge(@user.favorite_people) %>
+        <% organizations = work.organizations.merge(@user.favorite_organizations) %>
+        <% resources = characters | people | organizations %>
+        <%= resources.map { |resource| resource.local_name }.join(", ") %>
+      </mj-text>
+    <% end %>
+  <% end %>
 </mj-wrapper>

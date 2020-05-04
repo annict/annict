@@ -5,8 +5,9 @@ class FavoriteOrganizationsController < ApplicationController
 
   def index
     @user = User.only_kept.find_by!(username: params[:username])
-    @favorite_organizations = @user.
-      favorite_organizations.
+    @organization_favorites = @user.
+      organization_favorites.
+      preload(:organization).
       order(watched_works_count: :desc)
   end
 

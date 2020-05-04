@@ -5,11 +5,11 @@
 
 = render "partial_layouts/v2/default" do
   .c-card.mb-3
-    = render "organizations/header", organization: @organization, favorite_resources: @favorite_orgs
+    = render "organizations/header", organization: @organization, favorite_resources: @organization_favorites
 
   .c-card.mb-4
-    - if @favorite_orgs.present?
-      = render "users/fan_user_list", favorite_resources: @favorite_orgs
+    - if @organization_favorites.present?
+      = render "users/fan_user_list", favorite_resources: @organization_favorites
     - else
       = render "application/components/empty", text: t("messages.organization_fans.no_users")
 
