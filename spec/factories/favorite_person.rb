@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 FactoryBot.define do
-  factory :favorite_person do
+  factory :person_favorite do
     person
     user
   end
