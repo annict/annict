@@ -2,8 +2,7 @@
 
 class EmailNotificationMailer < ActionMailer::Base
   default(
-    from: "Annict <no-reply@annict.com>",
-    bcc: "admin+email-notification@annict.com"
+    from: "Annict <no-reply@annict.com>"
   )
 
   add_template_helper AssetsHelper
