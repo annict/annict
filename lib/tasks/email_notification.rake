@@ -7,37 +7,37 @@ namespace :email_notification do
   end
 
   task send_favorite_works_added_email: :environment do
-    cast_work_ids = Cast.only_kept.yesterday.pluck(:work_id)
-    staff_work_ids = Staff.only_kept.yesterday.pluck(:work_id)
-    works = Work.only_kept.where(id: (cast_work_ids | staff_work_ids)).gt_current_season
+    casts = Cast.only_kept.past_week
+    staffs = Staff.only_kept.past_week
 
-    works.find_each do |work|
-      favorite_character_user_ids = CharacterFavorite.
-        joins(:character).
-        merge(work.characters).
-        pluck(:user_id)
-      favorite_people_user_ids = PersonFavorite.
-        joins(:person).
-        merge(work.people).
-        pluck(:user_id)
-      favorite_org_user_ids = OrganizationFavorite.
-        joins(:organization).
-        merge(work.organizations).
-        pluck(:user_id)
-      user_ids = favorite_character_user_ids |
-        favorite_people_user_ids |
-        favorite_org_user_ids
-      users = User.
-        only_kept.
-        joins(:email_notification).
-        where(id: user_ids).
-        where(email_notifications: { event_favorite_works_added: true })
+    works = Work.only_kept.where(id: casts.pluck(:work_id) | staffs.pluck(:work_id)).gt_current_season
 
-      users.find_each do |user|
-        next if user.statuses.where(work: work).exists?
+    next if works.blank?
 
-        EmailNotificationService.send_email("favorite_works_added", user, work.id)
-      end
+    users = User.
+      only_kept.
+      joins(:email_notification).
+      where(email_notifications: { event_favorite_works_added: true })
+
+    users.find_each do |user|
+      favorite_character_ids = user.favorite_characters.only_kept.pluck(:id)
+      favorite_person_ids = user.favorite_people.only_kept.pluck(:id)
+      favorite_organization_ids = user.favorite_organizations.only_kept.pluck(:id)
+
+      next if favorite_character_ids.blank? && favorite_person_ids.blank? && favorite_organization_ids.blank?
+
+      character_works = works.joins(:casts).where(casts: { character_id: favorite_character_ids })
+      cast_person_works = works.joins(:cast_people).where(casts: { person_id: favorite_person_ids })
+      staff_person_works = works.joins(:staff_people).where(staffs: { resource_id: favorite_person_ids })
+      organization_works = works.joins(:organizations).where(staffs: { resource_id: favorite_organization_ids })
+
+      work_ids = (character_works | cast_person_works | staff_person_works | organization_works).pluck(:id)
+      library_work_ids = user.statuses.where(work_id: work_ids).pluck(:work_id)
+      target_work_ids = work_ids - library_work_ids
+
+      next if target_work_ids.blank?
+
+      EmailNotificationService.send_email("favorite_works_added", user, target_work_ids)
     end
   end
 

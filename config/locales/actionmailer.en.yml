@@ -4,9 +4,8 @@ en:
       unsubscribe: "Unsubscribe"
       unsubscribe_message: "You're receiving this email because you are a user of Annict."
     favorite_works_added:
-      description_html: "The anime \"%{work_title}\" has been added on Annict."
-      favorites_joins_work: "Your favorites which joins to this anime:"
-      subject: "\"%{work_title}\" which %{resource_name} joins has been added on Annict!"
+      favorites_joins_work: "Your favorites which joins to this anime"
+      subject: "%{n} anime which relates to your favorites has been added on Annict!"
       view_detail: "View Detail"
     followed_user:
       followed_you: "%{name} (@%{username}) followed you."

@@ -4,9 +4,8 @@ ja:
       unsubscribe: "購読解除"
       unsubscribe_message: "不要なメールでしたか？"
     favorite_works_added:
-      description_html: "アニメ「%{work_title}」がAnnictに登録されました。"
-      favorites_joins_work: "このアニメに関わるあなたのお気に入り:"
-      subject: "%{resource_name}が関わるアニメ「%{work_title}」がAnnictに登録されました！"
+      favorites_joins_work: "このアニメに関わるあなたのお気に入り"
+      subject: "あなたのお気に入りが関連するアニメ%{n}作品がAnnictに登録されました！"
       view_detail: "詳しく見る"
     followed_user:
       followed_you: "%{name} (@%{username})にフォローされました。"

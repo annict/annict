@@ -41,26 +41,13 @@ class EmailNotificationMailer < ActionMailer::Base
     end
   end
 
-  def favorite_works_added(user_id, work_id)
+  def favorite_works_added(user_id, work_ids)
     @user = User.only_kept.find(user_id)
     @unsubscription_key = @user.email_notification.unsubscription_key
-    @work = Work.only_kept.find(work_id)
-    @characters = @work.
-      characters.
-      joins(:favorite_characters).
-      merge(@user.favorite_characters)
-    @people = @work.people.joins(:favorite_people).merge(@user.favorite_people)
-    @orgs = @work.
-      organizations.
-      joins(:favorite_organizations).
-      merge(@user.favorite_organizations)
-    @resources = @characters | @people | @orgs
+    @works = Work.only_kept.where(id: work_ids)
 
     I18n.with_locale(@user.locale) do
-      subject = default_i18n_subject(
-        work_title: @work.local_title,
-        resource_name: @resources.first.local_name
-      )
+      subject = default_i18n_subject(n: @works.size)
       mail(to: @user.email, subject: subject, &:mjml)
     end
   end
