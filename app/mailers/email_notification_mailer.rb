@@ -2,8 +2,7 @@
 
 class EmailNotificationMailer < ActionMailer::Base
   default(
-    from: "Annict <no-reply@annict.com>",
-    bcc: "admin+email-notification@annict.com"
+    from: "Annict <no-reply@annict.com>"
   )
 
   add_template_helper AssetsHelper
@@ -39,18 +38,6 @@ class EmailNotificationMailer < ActionMailer::Base
         title: @episode.decorate.number_with_work_title
       )
       mail(to: @liked_user.email, subject: subject, &:mjml)
-    end
-  end
-
-  def friends_joined(user_id, provider_name, friend_user_ids)
-    @user = User.only_kept.find(user_id)
-    @unsubscription_key = @user.email_notification.unsubscription_key
-    @provider_name = provider_name
-    @friend_users = User.only_kept.where(id: friend_user_ids)
-
-    I18n.with_locale(@user.locale) do
-      subject = I18n.t("email_notification_mailer.friends_joined.subject_#{provider_name}")
-      mail(to: @user.email, subject: subject, &:mjml)
     end
   end
 

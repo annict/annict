@@ -51,7 +51,6 @@ ja:
         scopes: スコープ
       email_notification:
         event_followed_user: フォローされたときメールを受け取る
-        event_friends_joined: Twitter/Facebookの友達がAnnictに参加したときメールを受け取る
         event_liked_episode_record: 自分の記録が「いいね！」されたときメールを受け取る
         event_favorite_works_added: お気に入りの人物などが関わる作品が追加されたとき受け取る
         event_related_works_added: 自分が見た作品に関連する作品が追加されたとき受け取る

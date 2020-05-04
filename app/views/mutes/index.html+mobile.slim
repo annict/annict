@@ -2,5 +2,8 @@
 - set_meta_tags(title: title, og: { title: title }, reverse: true, prefix: false)
 
 = render "partial_layouts/v2/default" do
-  .c-card.container.pt-3.mb-4
+  .container.py-3
+    .mb-3
+      = render "settings/subnav"
+
     = render "mutes/user_list", users: @mute_users

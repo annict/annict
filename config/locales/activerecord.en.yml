@@ -52,7 +52,6 @@ en:
         scopes: Scopes
       email_notification:
         event_followed_user: Email when you are followed by someone
-        event_friends_joined: Email when your Twitter/Facebook friends joined Annict
         event_liked_episode_record: Email when your record are liked by someone
         event_favorite_works_added: Email when anime which is your favorites has been added
         event_related_works_added: Email when anime which is related to anime you watched has been added
