@@ -20,7 +20,7 @@ class SidebarComponent < ApplicationComponent
             class: "c-sidebar__content",
             v_show: "slotProps.isSidebarOpen"
           ) do
-            el.a class: "c-sidebar__logo d-inline-block mb-3 py-3 text-center u-bg-mizuho w-100", href: "/" do
+            el.a class: "c-sidebar__logo d-inline-block mb-3 text-center u-bg-mizuho w-100", href: "/" do
               el.img(
                 alt: "Annict",
                 class: "js-lazy",

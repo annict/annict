@@ -31,6 +31,11 @@
     overflow-y: auto;
     width: 240px;
 
+    #{$root}__logo {
+      height: $ann-navbar-height;
+      line-height: $ann-navbar-height - 2px;
+    }
+
     #{$root}__icon {
       width: 25px;
     }
