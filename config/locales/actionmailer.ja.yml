@@ -12,12 +12,6 @@ ja:
       followed_you: "%{name} (@%{username})にフォローされました。"
       subject: "%{name} (@%{username})がAnnictであなたをフォローしました！"
       view_profile: プロフィールを見る
-    friends_joined:
-      joined_facebook: "Facebookの友達がAnnictを使い始めました。"
-      joined_twitter: "Twitterでフォローしている友達がAnnictを使い始めました。"
-      subject_facebook: "Facebookの友達がAnnictを使い始めました！"
-      subject_twitter: "Twitterでフォローしている友達がAnnictを使い始めました！"
-      view_profile: "プロフィールを見る"
     liked_episode_record:
       liked_your_episode_records: "%{name} (@%{username})が、あなたの記録に「いいね！」しました。"
       subject: "%{name} (@%{username})が %{title} への記録に「いいね！」しました"

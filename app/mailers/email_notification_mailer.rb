@@ -42,18 +42,6 @@ class EmailNotificationMailer < ActionMailer::Base
     end
   end
 
-  def friends_joined(user_id, provider_name, friend_user_ids)
-    @user = User.only_kept.find(user_id)
-    @unsubscription_key = @user.email_notification.unsubscription_key
-    @provider_name = provider_name
-    @friend_users = User.only_kept.where(id: friend_user_ids)
-
-    I18n.with_locale(@user.locale) do
-      subject = I18n.t("email_notification_mailer.friends_joined.subject_#{provider_name}")
-      mail(to: @user.email, subject: subject, &:mjml)
-    end
-  end
-
   def favorite_works_added(user_id, work_id)
     @user = User.only_kept.find(user_id)
     @unsubscription_key = @user.email_notification.unsubscription_key

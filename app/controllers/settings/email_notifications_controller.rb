@@ -36,7 +36,7 @@ module Settings
 
     def email_notification_params
       params.require(:email_notification).permit(
-        :event_followed_user, :event_liked_episode_record, :event_friends_joined,
+        :event_followed_user, :event_liked_episode_record,
         :event_favorite_works_added, :event_related_works_added
       )
     end
