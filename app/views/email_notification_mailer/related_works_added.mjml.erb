@@ -1,22 +1,14 @@
 <mj-wrapper background-color="#fff" padding-top="0px" padding-bottom="0px">
-  <mj-section>
-    <mj-column>
-      <mj-text align="center">
-        <%= I18n.t("email_notification_mailer.related_works_added.description_html", work_title: @work.local_title) %>
+  <% @works.each do |work| %>
+    <%= render "email_notification_mailer/work", work: work, utm_campaign: "related_works_added" do %>
+      <mj-text font-weight="800" padding="10px 25px">
+        <%= I18n.t("email_notification_mailer.related_works_added.related_works") %>
       </mj-text>
-    </mj-column>
-  </mj-section>
 
-  <mj-section padding-top="0px" padding-bottom="10px">
-    <mj-column>
-      <mj-text align="center" line-height="22px">
-        <%= I18n.t("email_notification_mailer.related_works_added.related_works") %>:
+      <mj-text padding-top="0" line-height="22px">
+        <% related_works = work.related_works.only_kept.order_by_season %>
+        <%= related_works.map { |work| work.local_title }.join(", ") %>
       </mj-text>
-      <mj-text align="center">
-        <%= @related_works.map { |work| work.local_title }.join(", ") %>
-      </mj-text>
-    </mj-column>
-  </mj-section>
-
-  <%= render "email_notification_mailer/work", work: @work, utm_campaign: "related_works_added" %>
+    <% end %>
+  <% end %>
 </mj-wrapper>

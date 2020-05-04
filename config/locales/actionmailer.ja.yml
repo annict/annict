@@ -17,9 +17,8 @@ ja:
       view_profile: プロフィールを見る
       view_record: 記録を見る
     related_works_added:
-      description_html: "アニメ「%{work_title}」がAnnictに登録されました。"
       related_works: 関連する作品
-      subject: "「%{related_work_title}」に関連するアニメ「%{work_title}」がAnnictに登録されました！"
+      subject: "あなたのライブラリに登録されている作品に関連するアニメ%{n}作品がAnnictに登録されました！"
   mention_mailer:
     notify:
       subject: "%{name} (@%{username})がAnnictであなたにメンションしました！"

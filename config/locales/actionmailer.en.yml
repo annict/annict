@@ -17,9 +17,8 @@ en:
       view_profile: "View Profile"
       view_record: "View Record"
     related_works_added:
-      description_html: "The anime \"%{work_title}\" has been added on Annict."
       related_works: Related Anime
-      subject: "\"%{work_title}\" which is related with %{related_work_title} has been added on Annict!"
+      subject: "%{n} anime which relates to your library has been added on Annict!"
   mention_mailer:
     notify:
       subject: "%{name} (@%{username}) mentioned you on Annict!"

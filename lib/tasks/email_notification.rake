@@ -42,31 +42,31 @@ namespace :email_notification do
   end
 
   task send_related_works_added_email: :environment do
-    works = Work.only_kept.yesterday.gt_current_season
-
+    works = Work.only_kept.past_week.gt_current_season
     next if works.blank?
+
+    series_ids = SeriesWork.where(work: works).pluck(:series_id)
+    next if series_ids.blank?
 
     users = User.
       only_kept.
       joins(:email_notification).
       where(email_notifications: { event_related_works_added: true })
 
-    works.find_each do |work|
-      series_ids = work.series_list.pluck(:id)
-      related_work_ids = SeriesWork.where(series_id: series_ids).pluck(:work_id).uniq - [work.id]
+    users = User.where(id: 2)
 
-      next if related_work_ids.blank?
+    users.find_each do |user|
+      positive_statuses = user.library_entries.positive
+      next unless positive_statuses.exists?
 
-      users.find_each do |user|
-        positive_statuses = user.library_entries.positive
+      series_works = SeriesWork.where(series_id: series_ids, work_id: positive_statuses.pluck(:work_id))
+      target_series_ids = series_works.pluck(:series_id).uniq
+      next if target_series_ids.blank?
 
-        next unless positive_statuses.exists?
-        next if user.statuses.pluck(:work_id).include?(work.id)
+      target_work_ids = works.joins(:series_works).where(series_works: { series_id: target_series_ids }).pluck(:id)
+      next if target_work_ids.blank?
 
-        if (positive_statuses.pluck(:work_id) & related_work_ids).present?
-          EmailNotificationService.send_email("related_works_added", user, work.id)
-        end
-      end
+      EmailNotificationService.send_email("related_works_added", user, target_work_ids)
     end
   end
 end

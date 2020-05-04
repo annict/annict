@@ -52,17 +52,13 @@ class EmailNotificationMailer < ActionMailer::Base
     end
   end
 
-  def related_works_added(user_id, work_id)
+  def related_works_added(user_id, work_ids)
     @user = User.only_kept.find(user_id)
-    @work = Work.only_kept.find(work_id)
-    @related_works = @work.related_works.only_kept.order_by_season
     @unsubscription_key = @user.email_notification.unsubscription_key
+    @works = Work.only_kept.where(id: work_ids)
 
     I18n.with_locale(@user.locale) do
-      subject = default_i18n_subject(
-        work_title: @work.local_title,
-        related_work_title: @related_works.first.local_title
-      )
+      subject = default_i18n_subject(n: @works.size)
       mail(to: @user.email, subject: subject, &:mjml)
     end
   end
