@@ -2,5 +2,9 @@
 - set_meta_tags(title: title, og: { title: title }, reverse: true, prefix: false)
 
 = render "partial_layouts/v2/default" do
-  .c-card.py-3.mb-4
+  .container
+    .my-3
+      = render "settings/subnav"
+
+  .py-3
     = render "providers/provider_list"

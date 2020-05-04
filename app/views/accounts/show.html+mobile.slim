@@ -2,11 +2,14 @@
 - set_meta_tags(title: title, reverse: true, prefix: false)
 
 = render "partial_layouts/v2/default" do
-  .my-3
-    .container
-      h2.h4.font-weight-bold.mb-3
-        = t "noun.basic_info"
-    .c-card.p-3
+  .container.py-3
+    .mb-3
+      = render "settings/subnav"
+
+    h2.h4.font-weight-bold.mb-3
+      = t "noun.basic_info"
+
+    .mb-5
       = form_for @user, url: account_path, method: :patch do |f|
         - if params[:controller] == "accounts"
           = render "application/components/error_panel", resource: @user
@@ -37,11 +40,10 @@
         .form-submit.text-center
           = f.submit class: "btn btn-primary"
 
-  .mb-3
-    .container
-      h2.h4.font-weight-bold.mb-3
-        = t "noun.password"
-    .c-card.p-3
+    h2.h4.font-weight-bold.mb-3
+      = t "noun.password"
+
+    .mb-5
       = form_for @user, url: settings_password_path, method: :patch do |f|
         - if params[:controller] == "settings/passwords"
           = render "application/components/error_panel", resource: @user
@@ -58,9 +60,7 @@
         .form-submit.text-center
           = f.submit class: "btn btn-primary"
 
-  .mb-3
-    .container
-      h2.h4.font-weight-bold.mb-3
-        = t "noun.account_deletion"
-    .c-card.p-3
-      = render "sayonara/content"
+    h2.h4.font-weight-bold.mb-3
+      = t "noun.account_deletion"
+
+    = render "sayonara/content"

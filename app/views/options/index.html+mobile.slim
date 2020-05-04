@@ -2,5 +2,8 @@
 - set_meta_tags(title: title, reverse: true, prefix: false)
 
 = render "partial_layouts/v2/default" do
-  .c-card.container.py-3.mb-4
+  .container.py-3
+    .mb-5
+      = render "settings/subnav"
+
     = render "options/form"

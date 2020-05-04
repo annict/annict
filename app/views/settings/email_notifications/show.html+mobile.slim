@@ -2,7 +2,10 @@
 - set_meta_tags(title: title, reverse: true, prefix: false)
 
 = render "partial_layouts/v2/default" do
-  .c-card.p-3.mb-4
+  .container.py-3
+    .mb-5
+      = render "settings/subnav"
+
     = form_for [:settings, @email_notification], method: :patch do |f|
       = render "application/components/error_panel", resource: @email_notification
 
