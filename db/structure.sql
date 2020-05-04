@@ -212,6 +212,38 @@ CREATE TABLE public.channels (
 
 
 --
+-- Name: character_favorites; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.character_favorites (
+    id bigint NOT NULL,
+    user_id bigint NOT NULL,
+    character_id bigint NOT NULL,
+    created_at timestamp without time zone NOT NULL,
+    updated_at timestamp without time zone NOT NULL
+);
+
+
+--
+-- Name: character_favorites_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE public.character_favorites_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: character_favorites_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE public.character_favorites_id_seq OWNED BY public.character_favorites.id;
+
+
+--
 -- Name: character_images; Type: TABLE; Schema: public; Owner: -
 --
 
@@ -732,104 +764,6 @@ CREATE SEQUENCE public.faq_contents_id_seq
 --
 
 ALTER SEQUENCE public.faq_contents_id_seq OWNED BY public.faq_contents.id;
-
-
---
--- Name: favorite_characters; Type: TABLE; Schema: public; Owner: -
---
-
-CREATE TABLE public.favorite_characters (
-    id bigint NOT NULL,
-    user_id bigint NOT NULL,
-    character_id bigint NOT NULL,
-    created_at timestamp without time zone NOT NULL,
-    updated_at timestamp without time zone NOT NULL
-);
-
-
---
--- Name: favorite_characters_id_seq; Type: SEQUENCE; Schema: public; Owner: -
---
-
-CREATE SEQUENCE public.favorite_characters_id_seq
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
-
-
---
--- Name: favorite_characters_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
---
-
-ALTER SEQUENCE public.favorite_characters_id_seq OWNED BY public.favorite_characters.id;
-
-
---
--- Name: favorite_organizations; Type: TABLE; Schema: public; Owner: -
---
-
-CREATE TABLE public.favorite_organizations (
-    id bigint NOT NULL,
-    user_id bigint NOT NULL,
-    organization_id bigint NOT NULL,
-    created_at timestamp without time zone NOT NULL,
-    updated_at timestamp without time zone NOT NULL,
-    watched_works_count integer DEFAULT 0 NOT NULL
-);
-
-
---
--- Name: favorite_organizations_id_seq; Type: SEQUENCE; Schema: public; Owner: -
---
-
-CREATE SEQUENCE public.favorite_organizations_id_seq
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
-
-
---
--- Name: favorite_organizations_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
---
-
-ALTER SEQUENCE public.favorite_organizations_id_seq OWNED BY public.favorite_organizations.id;
-
-
---
--- Name: favorite_people; Type: TABLE; Schema: public; Owner: -
---
-
-CREATE TABLE public.favorite_people (
-    id bigint NOT NULL,
-    user_id bigint NOT NULL,
-    person_id bigint NOT NULL,
-    created_at timestamp without time zone NOT NULL,
-    updated_at timestamp without time zone NOT NULL,
-    watched_works_count integer DEFAULT 0 NOT NULL
-);
-
-
---
--- Name: favorite_people_id_seq; Type: SEQUENCE; Schema: public; Owner: -
---
-
-CREATE SEQUENCE public.favorite_people_id_seq
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
-
-
---
--- Name: favorite_people_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
---
-
-ALTER SEQUENCE public.favorite_people_id_seq OWNED BY public.favorite_people.id;
 
 
 --
@@ -1458,6 +1392,39 @@ ALTER SEQUENCE public.oauth_applications_id_seq OWNED BY public.oauth_applicatio
 
 
 --
+-- Name: organization_favorites; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.organization_favorites (
+    id bigint NOT NULL,
+    user_id bigint NOT NULL,
+    organization_id bigint NOT NULL,
+    created_at timestamp without time zone NOT NULL,
+    updated_at timestamp without time zone NOT NULL,
+    watched_works_count integer DEFAULT 0 NOT NULL
+);
+
+
+--
+-- Name: organization_favorites_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE public.organization_favorites_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: organization_favorites_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE public.organization_favorites_id_seq OWNED BY public.organization_favorites.id;
+
+
+--
 -- Name: organizations; Type: TABLE; Schema: public; Owner: -
 --
 
@@ -1551,6 +1518,39 @@ CREATE SEQUENCE public.people_id_seq
 --
 
 ALTER SEQUENCE public.people_id_seq OWNED BY public.people.id;
+
+
+--
+-- Name: person_favorites; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.person_favorites (
+    id bigint NOT NULL,
+    user_id bigint NOT NULL,
+    person_id bigint NOT NULL,
+    created_at timestamp without time zone NOT NULL,
+    updated_at timestamp without time zone NOT NULL,
+    watched_works_count integer DEFAULT 0 NOT NULL
+);
+
+
+--
+-- Name: person_favorites_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE public.person_favorites_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: person_favorites_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE public.person_favorites_id_seq OWNED BY public.person_favorites.id;
 
 
 --
@@ -2799,6 +2799,13 @@ ALTER TABLE ONLY public.casts ALTER COLUMN id SET DEFAULT nextval('public.casts_
 
 
 --
+-- Name: character_favorites id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.character_favorites ALTER COLUMN id SET DEFAULT nextval('public.character_favorites_id_seq'::regclass);
+
+
+--
 -- Name: character_images id; Type: DEFAULT; Schema: public; Owner: -
 --
 
@@ -2866,27 +2873,6 @@ ALTER TABLE ONLY public.faq_categories ALTER COLUMN id SET DEFAULT nextval('publ
 --
 
 ALTER TABLE ONLY public.faq_contents ALTER COLUMN id SET DEFAULT nextval('public.faq_contents_id_seq'::regclass);
-
-
---
--- Name: favorite_characters id; Type: DEFAULT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public.favorite_characters ALTER COLUMN id SET DEFAULT nextval('public.favorite_characters_id_seq'::regclass);
-
-
---
--- Name: favorite_organizations id; Type: DEFAULT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public.favorite_organizations ALTER COLUMN id SET DEFAULT nextval('public.favorite_organizations_id_seq'::regclass);
-
-
---
--- Name: favorite_people id; Type: DEFAULT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public.favorite_people ALTER COLUMN id SET DEFAULT nextval('public.favorite_people_id_seq'::regclass);
 
 
 --
@@ -2995,6 +2981,13 @@ ALTER TABLE ONLY public.oauth_applications ALTER COLUMN id SET DEFAULT nextval('
 
 
 --
+-- Name: organization_favorites id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.organization_favorites ALTER COLUMN id SET DEFAULT nextval('public.organization_favorites_id_seq'::regclass);
+
+
+--
 -- Name: organizations id; Type: DEFAULT; Schema: public; Owner: -
 --
 
@@ -3006,6 +2999,13 @@ ALTER TABLE ONLY public.organizations ALTER COLUMN id SET DEFAULT nextval('publi
 --
 
 ALTER TABLE ONLY public.people ALTER COLUMN id SET DEFAULT nextval('public.people_id_seq'::regclass);
+
+
+--
+-- Name: person_favorites id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.person_favorites ALTER COLUMN id SET DEFAULT nextval('public.person_favorites_id_seq'::regclass);
 
 
 --
@@ -3235,6 +3235,14 @@ ALTER TABLE ONLY public.channels
 
 
 --
+-- Name: character_favorites character_favorites_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.character_favorites
+    ADD CONSTRAINT character_favorites_pkey PRIMARY KEY (id);
+
+
+--
 -- Name: character_images character_images_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -3360,30 +3368,6 @@ ALTER TABLE ONLY public.faq_categories
 
 ALTER TABLE ONLY public.faq_contents
     ADD CONSTRAINT faq_contents_pkey PRIMARY KEY (id);
-
-
---
--- Name: favorite_characters favorite_characters_pkey; Type: CONSTRAINT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public.favorite_characters
-    ADD CONSTRAINT favorite_characters_pkey PRIMARY KEY (id);
-
-
---
--- Name: favorite_organizations favorite_organizations_pkey; Type: CONSTRAINT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public.favorite_organizations
-    ADD CONSTRAINT favorite_organizations_pkey PRIMARY KEY (id);
-
-
---
--- Name: favorite_people favorite_people_pkey; Type: CONSTRAINT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public.favorite_people
-    ADD CONSTRAINT favorite_people_pkey PRIMARY KEY (id);
 
 
 --
@@ -3539,6 +3523,14 @@ ALTER TABLE ONLY public.oauth_applications
 
 
 --
+-- Name: organization_favorites organization_favorites_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.organization_favorites
+    ADD CONSTRAINT organization_favorites_pkey PRIMARY KEY (id);
+
+
+--
 -- Name: organizations organizations_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -3552,6 +3544,14 @@ ALTER TABLE ONLY public.organizations
 
 ALTER TABLE ONLY public.people
     ADD CONSTRAINT people_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: person_favorites person_favorites_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.person_favorites
+    ADD CONSTRAINT person_favorites_pkey PRIMARY KEY (id);
 
 
 --
@@ -4093,6 +4093,27 @@ CREATE INDEX index_channels_on_vod ON public.channels USING btree (vod);
 
 
 --
+-- Name: index_character_favorites_on_character_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_character_favorites_on_character_id ON public.character_favorites USING btree (character_id);
+
+
+--
+-- Name: index_character_favorites_on_user_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_character_favorites_on_user_id ON public.character_favorites USING btree (user_id);
+
+
+--
+-- Name: index_character_favorites_on_user_id_and_character_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE UNIQUE INDEX index_character_favorites_on_user_id_and_character_id ON public.character_favorites USING btree (user_id, character_id);
+
+
+--
 -- Name: index_character_images_on_character_id; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -4408,83 +4429,6 @@ CREATE INDEX index_faq_contents_on_locale ON public.faq_contents USING btree (lo
 
 
 --
--- Name: index_favorite_characters_on_character_id; Type: INDEX; Schema: public; Owner: -
---
-
-CREATE INDEX index_favorite_characters_on_character_id ON public.favorite_characters USING btree (character_id);
-
-
---
--- Name: index_favorite_characters_on_user_id; Type: INDEX; Schema: public; Owner: -
---
-
-CREATE INDEX index_favorite_characters_on_user_id ON public.favorite_characters USING btree (user_id);
-
-
---
--- Name: index_favorite_characters_on_user_id_and_character_id; Type: INDEX; Schema: public; Owner: -
---
-
-CREATE UNIQUE INDEX index_favorite_characters_on_user_id_and_character_id ON public.favorite_characters USING btree (user_id, character_id);
-
-
---
--- Name: index_favorite_organizations_on_organization_id; Type: INDEX; Schema: public; Owner: -
---
-
-CREATE INDEX index_favorite_organizations_on_organization_id ON public.favorite_organizations USING btree (organization_id);
-
-
---
--- Name: index_favorite_organizations_on_user_id; Type: INDEX; Schema: public; Owner: -
---
-
-CREATE INDEX index_favorite_organizations_on_user_id ON public.favorite_organizations USING btree (user_id);
-
-
---
--- Name: index_favorite_organizations_on_user_id_and_organization_id; Type: INDEX; Schema: public; Owner: -
---
-
-CREATE UNIQUE INDEX index_favorite_organizations_on_user_id_and_organization_id ON public.favorite_organizations USING btree (user_id, organization_id);
-
-
---
--- Name: index_favorite_organizations_on_watched_works_count; Type: INDEX; Schema: public; Owner: -
---
-
-CREATE INDEX index_favorite_organizations_on_watched_works_count ON public.favorite_organizations USING btree (watched_works_count);
-
-
---
--- Name: index_favorite_people_on_person_id; Type: INDEX; Schema: public; Owner: -
---
-
-CREATE INDEX index_favorite_people_on_person_id ON public.favorite_people USING btree (person_id);
-
-
---
--- Name: index_favorite_people_on_user_id; Type: INDEX; Schema: public; Owner: -
---
-
-CREATE INDEX index_favorite_people_on_user_id ON public.favorite_people USING btree (user_id);
-
-
---
--- Name: index_favorite_people_on_user_id_and_person_id; Type: INDEX; Schema: public; Owner: -
---
-
-CREATE UNIQUE INDEX index_favorite_people_on_user_id_and_person_id ON public.favorite_people USING btree (user_id, person_id);
-
-
---
--- Name: index_favorite_people_on_watched_works_count; Type: INDEX; Schema: public; Owner: -
---
-
-CREATE INDEX index_favorite_people_on_watched_works_count ON public.favorite_people USING btree (watched_works_count);
-
-
---
 -- Name: index_finished_tips_on_user_id_and_tip_id; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -4737,6 +4681,34 @@ CREATE UNIQUE INDEX index_oauth_applications_on_uid ON public.oauth_applications
 
 
 --
+-- Name: index_organization_favorites_on_organization_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_organization_favorites_on_organization_id ON public.organization_favorites USING btree (organization_id);
+
+
+--
+-- Name: index_organization_favorites_on_user_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_organization_favorites_on_user_id ON public.organization_favorites USING btree (user_id);
+
+
+--
+-- Name: index_organization_favorites_on_user_id_and_organization_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE UNIQUE INDEX index_organization_favorites_on_user_id_and_organization_id ON public.organization_favorites USING btree (user_id, organization_id);
+
+
+--
+-- Name: index_organization_favorites_on_watched_works_count; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_organization_favorites_on_watched_works_count ON public.organization_favorites USING btree (watched_works_count);
+
+
+--
 -- Name: index_organizations_on_aasm_state; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -4832,6 +4804,34 @@ CREATE INDEX index_people_on_staffs_count ON public.people USING btree (staffs_c
 --
 
 CREATE INDEX index_people_on_unpublished_at ON public.people USING btree (unpublished_at);
+
+
+--
+-- Name: index_person_favorites_on_person_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_person_favorites_on_person_id ON public.person_favorites USING btree (person_id);
+
+
+--
+-- Name: index_person_favorites_on_user_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_person_favorites_on_user_id ON public.person_favorites USING btree (user_id);
+
+
+--
+-- Name: index_person_favorites_on_user_id_and_person_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE UNIQUE INDEX index_person_favorites_on_user_id_and_person_id ON public.person_favorites USING btree (user_id, person_id);
+
+
+--
+-- Name: index_person_favorites_on_watched_works_count; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_person_favorites_on_watched_works_count ON public.person_favorites USING btree (watched_works_count);
 
 
 --
@@ -5822,10 +5822,10 @@ ALTER TABLE ONLY public.work_images
 
 
 --
--- Name: favorite_people fk_rails_3bf5fa6ba3; Type: FK CONSTRAINT; Schema: public; Owner: -
+-- Name: person_favorites fk_rails_3bf5fa6ba3; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
-ALTER TABLE ONLY public.favorite_people
+ALTER TABLE ONLY public.person_favorites
     ADD CONSTRAINT fk_rails_3bf5fa6ba3 FOREIGN KEY (person_id) REFERENCES public.people(id);
 
 
@@ -5878,18 +5878,18 @@ ALTER TABLE ONLY public.settings
 
 
 --
--- Name: favorite_characters fk_rails_480f5306c2; Type: FK CONSTRAINT; Schema: public; Owner: -
+-- Name: character_favorites fk_rails_480f5306c2; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
-ALTER TABLE ONLY public.favorite_characters
+ALTER TABLE ONLY public.character_favorites
     ADD CONSTRAINT fk_rails_480f5306c2 FOREIGN KEY (character_id) REFERENCES public.characters(id);
 
 
 --
--- Name: favorite_organizations fk_rails_4b59cb0180; Type: FK CONSTRAINT; Schema: public; Owner: -
+-- Name: organization_favorites fk_rails_4b59cb0180; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
-ALTER TABLE ONLY public.favorite_organizations
+ALTER TABLE ONLY public.organization_favorites
     ADD CONSTRAINT fk_rails_4b59cb0180 FOREIGN KEY (organization_id) REFERENCES public.organizations(id);
 
 
@@ -5958,10 +5958,10 @@ ALTER TABLE ONLY public.work_taggings
 
 
 --
--- Name: favorite_people fk_rails_623cbf8cc5; Type: FK CONSTRAINT; Schema: public; Owner: -
+-- Name: person_favorites fk_rails_623cbf8cc5; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
-ALTER TABLE ONLY public.favorite_people
+ALTER TABLE ONLY public.person_favorites
     ADD CONSTRAINT fk_rails_623cbf8cc5 FOREIGN KEY (user_id) REFERENCES public.users(id);
 
 
@@ -6030,10 +6030,10 @@ ALTER TABLE ONLY public.forum_post_participants
 
 
 --
--- Name: favorite_characters fk_rails_8a1652d591; Type: FK CONSTRAINT; Schema: public; Owner: -
+-- Name: character_favorites fk_rails_8a1652d591; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
-ALTER TABLE ONLY public.favorite_characters
+ALTER TABLE ONLY public.character_favorites
     ADD CONSTRAINT fk_rails_8a1652d591 FOREIGN KEY (user_id) REFERENCES public.users(id);
 
 
@@ -6286,10 +6286,10 @@ ALTER TABLE ONLY public.work_records
 
 
 --
--- Name: favorite_organizations fk_rails_d9d1d7e461; Type: FK CONSTRAINT; Schema: public; Owner: -
+-- Name: organization_favorites fk_rails_d9d1d7e461; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
-ALTER TABLE ONLY public.favorite_organizations
+ALTER TABLE ONLY public.organization_favorites
     ADD CONSTRAINT fk_rails_d9d1d7e461 FOREIGN KEY (user_id) REFERENCES public.users(id);
 
 
@@ -6788,6 +6788,7 @@ INSERT INTO "schema_migrations" (version) VALUES
 ('20191208154530'),
 ('20200310195638'),
 ('20200322025837'),
-('20200503204607');
+('20200503204607'),
+('20200504053317');
 
 
