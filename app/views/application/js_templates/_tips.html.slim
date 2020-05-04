@@ -9,7 +9,7 @@ script#t-tips type="x-template"
         .c-tips__close.u-fake-link.col.text-right @click="close(i)"
           = icon :times
 
-      .collapse.show :id='"c-tips__" + tip.slug'
+      .collapse :id='"c-tips__" + tip.slug'
         .c-tips__body.pb-3
           - @tips.each do |t|
             template v-if=="tip.slug === '#{t.slug}'"

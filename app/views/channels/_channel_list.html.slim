@@ -3,7 +3,7 @@
     .card
       .card-header
         = link_to cg.name, "#collapse#{cg.id}", data: { toggle: "collapse", parent: "#accordion" }
-      .collapse.show id="collapse#{cg.id}"
+      .collapse id="collapse#{cg.id}"
         .card-block.p-3
           - cg.channels.only_kept.order(:sort_number, :id).each do |c|
             .row.mb-2

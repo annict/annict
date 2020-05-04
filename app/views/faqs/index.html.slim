@@ -15,7 +15,7 @@
             .card
               .card-header
                 = link_to content.question, "#collapse#{content.id}", data: { toggle: "collapse", parent: "#accordion" }
-              .collapse.show id="collapse#{content.id}"
+              .collapse id="collapse#{content.id}"
                 .card-block.p-3
                   == render_markdown content.answer
 
