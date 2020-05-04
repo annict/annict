@@ -1,6 +1,6 @@
 - if @favorite_characters.exists?
   - @favorite_characters.each do |favorite_character|
-    - character = favorite_character.character
+    - character = favorite_character
     .row.align-items-center.mb-2.pt-2
       .col
         = link_to character.local_name, character_path(character)

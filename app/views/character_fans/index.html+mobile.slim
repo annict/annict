@@ -5,11 +5,11 @@
 
 = render "partial_layouts/v2/default" do
   .c-card.mb-3
-    = render "characters/header", character: @character, favorite_resources: @favorite_characters
+    = render "characters/header", character: @character, favorite_resources: @character_favorites
 
   .c-card.mb-4
-    - if @favorite_characters.present?
-      = render "users/fan_user_list", favorite_resources: @favorite_characters
+    - if @character_favorites.present?
+      = render "users/fan_user_list", favorite_resources: @character_favorites
     - else
       = render "application/components/empty", text: t("messages.character_fans.no_users")
 

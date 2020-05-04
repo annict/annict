@@ -28,8 +28,8 @@ class PeopleController < ApplicationController
       @staff_years = @staffs_with_year.keys.sort.reverse
     end
 
-    @favorite_people = @person.
-      favorite_people.
+    @person_favorites = @person.
+      person_favorites.
       includes(user: :profile).
       joins(:user).
       merge(User.only_kept).

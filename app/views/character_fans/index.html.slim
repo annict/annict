@@ -7,13 +7,13 @@
   .container.py-3.mb-4
     .row
       .col-3.pr-0
-        = render "characters/sidebar", character: @character
+        = render "characters/sidebar", character: @character, character_favorites: @character_favorites
       .col-9
         = render "characters/subnav", character: @character
 
         .c-card
           .container
-            - if @favorite_characters.present?
-              = render "users/fan_user_list", favorite_resources: @favorite_characters
+            - if @character_favorites.present?
+              = render "users/fan_user_list", favorite_resources: @character_favorites
             - else
               = render "application/components/empty", text: t("messages.character_fans.no_users")

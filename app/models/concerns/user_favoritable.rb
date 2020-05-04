@@ -13,7 +13,7 @@ module UserFavoritable
 
       favorite_resource = resource.favorites.create(user: self)
 
-      return if favorite_resource.instance_of?(FavoriteCharacter)
+      return if favorite_resource.instance_of?(CharacterFavorite)
 
       FavoritableWatchedWorksCountJob.perform_later(favorite_resource, self)
     end

@@ -12,15 +12,15 @@ namespace :email_notification do
     works = Work.only_kept.where(id: (cast_work_ids | staff_work_ids)).gt_current_season
 
     works.find_each do |work|
-      favorite_character_user_ids = FavoriteCharacter.
+      favorite_character_user_ids = CharacterFavorite.
         joins(:character).
         merge(work.characters).
         pluck(:user_id)
-      favorite_people_user_ids = FavoritePerson.
+      favorite_people_user_ids = PersonFavorite.
         joins(:person).
         merge(work.people).
         pluck(:user_id)
-      favorite_org_user_ids = FavoriteOrganization.
+      favorite_org_user_ids = OrganizationFavorite.
         joins(:organization).
         merge(work.organizations).
         pluck(:user_id)

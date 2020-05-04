@@ -10,10 +10,10 @@ class UsersController < ApplicationController
     tracked_works = @watching_works.tracked_by(@user).order("c2.record_id DESC")
     other_works = @watching_works.where.not(id: tracked_works.pluck(:id))
     @works = (tracked_works + other_works).first(9)
-    @favorite_characters = @user.favorite_characters.includes(:character).order(id: :desc)
-    @favorite_casts = @user.favorite_people.with_cast.includes(:person).order(id: :desc)
-    @favorite_staffs = @user.favorite_people.with_staff.includes(:person).order(id: :desc)
-    @favorite_organizations = @user.favorite_organizations.includes(:organization).order(id: :desc)
+    @character_favorites = @user.character_favorites.includes(:character).order(id: :desc)
+    @cast_favorites = @user.person_favorites.with_cast.includes(:person).order(id: :desc)
+    @staff_favorites = @user.person_favorites.with_staff.includes(:person).order(id: :desc)
+    @organization_favorites = @user.organization_favorites.includes(:organization).order(id: :desc)
 
     activities = UserActivitiesQuery.new.call(
       activities: @user.activities,

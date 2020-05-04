@@ -5,7 +5,7 @@
 
 = render "partial_layouts/v2/default" do
   .c-card.mb-3
-    = render "characters/header", character: @character, favorite_resources: @favorite_characters
+    = render "characters/header", character: @character, favorite_resources: @character_favorites
 
   h2.h4.font-weight-bold.text-center.mt-3.mb-4
     = t "noun.information"

@@ -72,13 +72,13 @@ class Person < ApplicationRecord
   has_many :cast_works, through: :casts, source: :work
   has_many :db_activities, as: :trackable, dependent: :destroy
   has_many :db_comments, as: :resource, dependent: :destroy
-  has_many :favorite_people
+  has_many :person_favorites
   has_many :staffs, as: :resource, dependent: :destroy
   has_many :staff_works, through: :staffs, source: :work
-  has_many :users, through: :favorite_people
+  has_many :users, through: :person_favorites
 
   def favorites
-    favorite_people
+    person_favorites
   end
 
   after_save :touch_children

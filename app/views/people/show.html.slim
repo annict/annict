@@ -7,7 +7,7 @@
   .container.py-3.mb-4
     .row
       .col-3.pr-0
-        = render "people/sidebar", person: @person
+        = render "people/sidebar", person: @person, person_favorites: @person_favorites
       .col-9
         = render "people/subnav", person: @person
 
