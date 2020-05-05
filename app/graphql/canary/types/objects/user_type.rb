@@ -67,11 +67,11 @@ module Canary
         end
 
         def name
-          Canary::RecordBelongsToUserLoader.for(Profile).load(object.id).then(&:name)
+          Canary::RecordLoader.for(Profile, column: :user_id).load(object.id).then(&:name)
         end
 
         def description
-          object.profile.description
+          Canary::RecordLoader.for(Profile, column: :user_id).load(object.id).then(&:description)
         end
 
         def url
@@ -79,7 +79,7 @@ module Canary
         end
 
         def avatar_url(size:)
-          Canary::RecordBelongsToUserLoader.for(Profile).load(object.id).then do |profile|
+          Canary::RecordLoader.for(Profile, column: :user_id).load(object.id).then do |profile|
             api_user_avatar_url(profile, size)
           end
         end
@@ -91,7 +91,7 @@ module Canary
         def is_supporter
           return object.supporter? if context[:viewer] == object
 
-          Canary::RecordBelongsToUserLoader.for(Setting).load(object.id).then do |setting|
+          Canary::RecordLoader.for(Setting, column: :user_id).load(object.id).then do |setting|
             object.supporter? && setting.hide_supporter_badge?
           end
         end
