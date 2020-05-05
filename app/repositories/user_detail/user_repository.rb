@@ -17,7 +17,7 @@ module UserDetail
     private
 
     def query
-      load_query "user_detail/fetch_user.graphql"
+      load_query "profile/fetch_user.graphql"
     end
   end
 end

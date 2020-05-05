@@ -5,7 +5,7 @@
   = render "settings/subnav"
 
   .c-card.u-mw-600.mx-auto.p-3.mt-3.mb-4
-    = form_for current_user.profile, url: profile_path, method: :patch do |f|
+    = form_for current_user.profile, url: profile_setting_path, method: :patch do |f|
       = render "application/components/error_panel", resource: current_user.profile
 
       .form-group

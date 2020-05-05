@@ -33,7 +33,7 @@ class SidebarComponent < ApplicationComponent
 
             if user
               el.div class: "mb-3 px-3" do
-                el.a class: "align-content-center d-flex", href: user_detail_path(user.username) do
+                el.a class: "align-content-center d-flex", href: profile_path(user.username) do
                   el.img(
                     alt: user.username,
                     class: "rounded-circle",
@@ -73,7 +73,7 @@ class SidebarComponent < ApplicationComponent
 
               if user
                 el.li do
-                  el.a class: "d-flex justify-content-between py-2 w-100", href: user_detail_path(user.username) do
+                  el.a class: "d-flex justify-content-between py-2 w-100", href: profile_path(user.username) do
                     el.div class: "c-sidebar__icon text-muted" do
                       el.i(class: "fal fa-user") {}
                     end
@@ -184,7 +184,7 @@ class SidebarComponent < ApplicationComponent
               [
                 [friends_path, "search", t("head.title.friends.index"), true],
                 [channels_path, "tv-retro", t("head.title.channels.index"), true],
-                [profile_path, "cog", t("noun.settings"), true],
+                [profile_setting_path, "cog", t("noun.settings"), true],
                 [faqs_path, "question-circle", t("head.title.faqs.index"), false],
                 [about_path, "info-circle", t("head.title.pages.about"), false]
               ].each do |(link_path, icon_name, link_text, sign_in_required)|

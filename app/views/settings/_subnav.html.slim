@@ -1,5 +1,5 @@
 .c-subnav
-  = active_link_to profile_path, class: "c-subnav__link", class_active: "c-subnav__link--active", active: params[:controller] == "profiles" do
+  = active_link_to profile_setting_path, class: "c-subnav__link", class_active: "c-subnav__link--active", active: params[:controller] == "profiles" do
     .c-subnav__item
       = t "head.title.profiles.show"
   = active_link_to account_path, class: "c-subnav__link", class_active: "c-subnav__link--active", active: params[:controller] == "accounts"

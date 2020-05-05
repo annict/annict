@@ -5,16 +5,16 @@ module V4
     def show
       user = User.only_kept.find_by!(username: params[:username])
 
-      @user = Rails.cache.fetch(user_detail_user_cache_key(user), expires_in: 3.hours) do
+      @user = Rails.cache.fetch(profile_user_cache_key(user), expires_in: 3.hours) do
         UserDetail::UserRepository.new(graphql_client: graphql_client).fetch(username: user.username)
       end
     end
 
     private
 
-    def user_detail_user_cache_key(user)
+    def profile_user_cache_key(user)
       [
-        "user-detail",
+        "profile",
         "user",
         user.id,
         user.updated_at.rfc3339

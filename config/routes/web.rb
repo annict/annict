@@ -40,7 +40,7 @@ resources :supporters, only: %i(index)
 resources :settings, only: [:index]
 scope :settings do
   resource :account, only: %i(show update)
-  resource :profile, only: %i(show update)
+  resource :profile, only: %i(show update), as: :profile_setting
   resources :mutes, only: [:index]
   resources :options, only: [:index]
   resources :providers, only: %i(index destroy)
@@ -160,7 +160,7 @@ root "welcome#show",
 
 scope module: :v4 do
   constraints format: "html" do
-    match "/@:username", via: :get, as: :user_detail, to: "users#show", username: USERNAME_FORMAT
-    match "/works/:id",  via: :get, as: :work, to: "works#show"
+    match "/@:username", via: :get, as: :profile, to: "users#show", username: USERNAME_FORMAT
+    match "/works/:id",  via: :get, as: :work,    to: "works#show"
   end
 end
