@@ -49,5 +49,18 @@ namespace :one_shot do
         user.update_column(field, user.send(assoc).size)
       end
     end
+
+    User.only_kept.find_each do |user|
+      puts "LibraryEntry > user: #{user.id}"
+      [
+        %i(plan_to_watch_works_count wanna_watch),
+        %i(watching_works_count watching),
+        %i(completed_works_count watched),
+        %i(on_hold_works_count on_hold),
+        %i(dropped_works_count stop_watching)
+      ].each do |(counter_field, status_kind)|
+        user.update_column(counter_field, user.library_entries.count_on(status_kind))
+      end
+    end
   end
 end
