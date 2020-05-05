@@ -11,5 +11,8 @@ class ChangeSchemaForUserDetail202005 < ActiveRecord::Migration[6.0]
     add_column :users, :completed_works_count, :integer, null: false, default: 0
     add_column :users, :on_hold_works_count, :integer, null: false, default: 0
     add_column :users, :dropped_works_count, :integer, null: false, default: 0
+
+    add_column :users, :following_count, :integer, null: false, default: 0
+    add_column :users, :followers_count, :integer, null: false, default: 0
   end
 end
