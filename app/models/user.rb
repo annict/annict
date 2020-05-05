@@ -18,6 +18,8 @@
 #  email                         :citext           not null
 #  encrypted_password            :string(510)      default(""), not null
 #  episode_records_count         :integer          default(0), not null
+#  followers_count               :integer          default(0), not null
+#  following_count               :integer          default(0), not null
 #  last_sign_in_at               :datetime
 #  last_sign_in_ip               :string(510)
 #  locale                        :string           not null

@@ -52,6 +52,7 @@ namespace :one_shot do
 
     User.only_kept.find_each do |user|
       puts "LibraryEntry > user: #{user.id}"
+
       [
         %i(plan_to_watch_works_count wanna_watch),
         %i(watching_works_count watching),
@@ -61,6 +62,9 @@ namespace :one_shot do
       ].each do |(counter_field, status_kind)|
         user.update_column(counter_field, user.library_entries.count_on(status_kind))
       end
+
+      user.update_column(:following_count, user.followings.only_kept.count)
+      user.update_column(:followers_count, user.followers.only_kept.count)
     end
   end
 end

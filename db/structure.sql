@@ -2439,7 +2439,9 @@ CREATE TABLE public.users (
     watching_works_count integer DEFAULT 0 NOT NULL,
     completed_works_count integer DEFAULT 0 NOT NULL,
     on_hold_works_count integer DEFAULT 0 NOT NULL,
-    dropped_works_count integer DEFAULT 0 NOT NULL
+    dropped_works_count integer DEFAULT 0 NOT NULL,
+    following_count integer DEFAULT 0 NOT NULL,
+    followers_count integer DEFAULT 0 NOT NULL
 );
 
 
