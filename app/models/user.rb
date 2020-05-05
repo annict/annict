@@ -6,6 +6,7 @@
 #  id                            :bigint           not null, primary key
 #  aasm_state                    :string           default("published"), not null
 #  allowed_locales               :string           is an Array
+#  character_favorites_count     :integer          default(0), not null
 #  confirmation_sent_at          :datetime
 #  confirmation_token            :string(510)
 #  confirmed_at                  :datetime
@@ -15,13 +16,12 @@
 #  email                         :citext           not null
 #  encrypted_password            :string(510)      default(""), not null
 #  episode_records_count         :integer          default(0), not null
-#  favorite_characters_count     :integer          default(0), not null
-#  favorite_organizations_count  :integer          default(0), not null
-#  favorite_people_count         :integer          default(0), not null
 #  last_sign_in_at               :datetime
 #  last_sign_in_ip               :string(510)
 #  locale                        :string           not null
 #  notifications_count           :integer          default(0), not null
+#  organization_favorites_count  :integer          default(0), not null
+#  person_favorites_count        :integer          default(0), not null
 #  record_cache_expired_at       :datetime
 #  records_count                 :integer          default(0), not null
 #  remember_created_at           :datetime

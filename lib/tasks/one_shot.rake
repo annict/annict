@@ -40,9 +40,9 @@ namespace :one_shot do
 
   task update_counter_cache: :environment do
     [
-      [FavoriteCharacter, :favorite_characters_count, :favorite_characters],
-      [FavoriteOrganization, :favorite_organizations_count, :favorite_organizations],
-      [FavoritePerson, :favorite_people_count, :favorite_people]
+      [CharacterFavorite, :character_favorites_count, :character_favorites],
+      [OrganizationFavorite, :organization_favorites_count, :organization_favorites],
+      [PersonFavorite, :person_favorites_count, :person_favorites]
     ].each do |(model, field, assoc)|
       User.only_kept.where(id: model.select(:user_id).distinct).find_each do |user|
         puts "#{model.name} > user: #{user.id}"
