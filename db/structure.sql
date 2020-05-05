@@ -2434,7 +2434,12 @@ CREATE TABLE public.users (
     deleted_at timestamp without time zone,
     character_favorites_count integer DEFAULT 0 NOT NULL,
     person_favorites_count integer DEFAULT 0 NOT NULL,
-    organization_favorites_count integer DEFAULT 0 NOT NULL
+    organization_favorites_count integer DEFAULT 0 NOT NULL,
+    plan_to_watch_works_count integer DEFAULT 0 NOT NULL,
+    watching_works_count integer DEFAULT 0 NOT NULL,
+    completed_works_count integer DEFAULT 0 NOT NULL,
+    on_hold_works_count integer DEFAULT 0 NOT NULL,
+    dropped_works_count integer DEFAULT 0 NOT NULL
 );
 
 
@@ -6791,8 +6796,8 @@ INSERT INTO "schema_migrations" (version) VALUES
 ('20191208154530'),
 ('20200310195638'),
 ('20200322025837'),
-('20200501162535'),
 ('20200503204607'),
-('20200504053317');
+('20200504053317'),
+('99999999999999');
 
 

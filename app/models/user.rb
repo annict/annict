@@ -7,12 +7,14 @@
 #  aasm_state                    :string           default("published"), not null
 #  allowed_locales               :string           is an Array
 #  character_favorites_count     :integer          default(0), not null
+#  completed_works_count         :integer          default(0), not null
 #  confirmation_sent_at          :datetime
 #  confirmation_token            :string(510)
 #  confirmed_at                  :datetime
 #  current_sign_in_at            :datetime
 #  current_sign_in_ip            :string(510)
 #  deleted_at                    :datetime
+#  dropped_works_count           :integer          default(0), not null
 #  email                         :citext           not null
 #  encrypted_password            :string(510)      default(""), not null
 #  episode_records_count         :integer          default(0), not null
@@ -20,8 +22,10 @@
 #  last_sign_in_ip               :string(510)
 #  locale                        :string           not null
 #  notifications_count           :integer          default(0), not null
+#  on_hold_works_count           :integer          default(0), not null
 #  organization_favorites_count  :integer          default(0), not null
 #  person_favorites_count        :integer          default(0), not null
+#  plan_to_watch_works_count     :integer          default(0), not null
 #  record_cache_expired_at       :datetime
 #  records_count                 :integer          default(0), not null
 #  remember_created_at           :datetime
@@ -33,6 +37,7 @@
 #  time_zone                     :string           not null
 #  unconfirmed_email             :string(510)
 #  username                      :citext           not null
+#  watching_works_count          :integer          default(0), not null
 #  work_comment_cache_expired_at :datetime
 #  work_tag_cache_expired_at     :datetime
 #  created_at                    :datetime
