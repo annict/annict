@@ -84,12 +84,15 @@ class User < ApplicationRecord
   belongs_to :gumroad_subscriber, optional: true
   has_many :activities, dependent: :destroy
   has_many :channel_works, dependent: :destroy
+  has_many :character_favorites, dependent: :destroy
+  has_many :organization_favorites, dependent: :destroy
+  has_many :person_favorites, dependent: :destroy
+  has_many :favorite_characters, through: :character_favorites, source: :character
+  has_many :favorite_organizations, through: :organization_favorites, source: :organization
+  has_many :favorite_people, through: :person_favorites, source: :person
   has_many :episode_records, dependent: :destroy
   has_many :db_activities, dependent: :destroy
   has_many :db_comments, dependent: :destroy
-  has_many :favorite_characters, dependent: :destroy
-  has_many :favorite_organizations, dependent: :destroy
-  has_many :favorite_people, dependent: :destroy
   has_many :finished_tips, dependent: :destroy
   has_many :follows, dependent: :destroy
   has_many :followings, through: :follows

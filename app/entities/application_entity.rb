@@ -16,9 +16,11 @@ class ApplicationEntity < Dry::Struct
     def local_attributes(*names)
       names.each do |name|
         define_method "local_#{name}" do
-          return send("#{name}_en".to_sym) if I18n.locale == :en
+          value = send(name.to_sym)
 
-          send(name.to_sym)
+          return send("#{name}_en".to_sym).presence || value if I18n.locale == :en
+
+          value
         end
       end
     end

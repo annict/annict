@@ -7,13 +7,13 @@
   .container.py-3.mb-4
     .row
       .col-3.pr-0
-        = render "organizations/sidebar", organization: @organization
+        = render "organizations/sidebar", organization: @organization, organization_favorites: @organization_favorites
       .col-9
         = render "organizations/subnav", organization: @organization
 
         .c-card
           .container
-            - if @favorite_orgs.exists?
-              = render "users/fan_user_list", favorite_resources: @favorite_orgs
+            - if @organization_favorites.exists?
+              = render "users/fan_user_list", favorite_resources: @organization_favorites
             - else
               = render "application/components/empty", text: t("messages.organization_fans.no_users")

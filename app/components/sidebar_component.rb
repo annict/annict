@@ -20,8 +20,15 @@ class SidebarComponent < ApplicationComponent
             class: "c-sidebar__content",
             v_show: "slotProps.isSidebarOpen"
           ) do
-            el.a class: "c-sidebar__logo d-inline-block mb-3 py-3 text-center u-bg-mizuho w-100", href: "/" do
-              el.img alt: "Annict", height: "30", src: helpers.asset_bundle_url("images/logos/color-white.png"), width: "25"
+            el.a class: "c-sidebar__logo d-inline-block mb-3 text-center u-bg-mizuho w-100", href: "/" do
+              el.img(
+                alt: "Annict",
+                class: "js-lazy",
+                data_src: helpers.asset_bundle_url("images/logos/color-white.png"),
+                height: "30",
+                src: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1 1'%3E%3C/svg%3E",
+                width: "25"
+              )
             end
 
             if user
@@ -148,9 +155,9 @@ class SidebarComponent < ApplicationComponent
 
             el.ul class: "list-unstyled px-3" do
               [
-                [ENV.fetch("ANNICT_CURRENT_SEASON"), "snowflake", t("noun.current_season")],
-                [ENV.fetch("ANNICT_NEXT_SEASON"), "flower", t("noun.next_season")],
-                [ENV.fetch("ANNICT_PREVIOUS_SEASON"), "pumpkin", t("noun.previous_season")],
+                [ENV.fetch("ANNICT_CURRENT_SEASON"), "flower", t("noun.current_season")],
+                [ENV.fetch("ANNICT_NEXT_SEASON"), "island-tropical", t("noun.next_season")],
+                [ENV.fetch("ANNICT_PREVIOUS_SEASON"), "snowflake", t("noun.previous_season")],
                 [:popular, "fire", t("head.title.works.popular")],
                 [:newest, "bolt", t("head.title.works.newest")]
               ].each do |(page_type, icon_name, link_text)|

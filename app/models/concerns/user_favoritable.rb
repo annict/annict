@@ -13,7 +13,7 @@ module UserFavoritable
 
       favorite_resource = resource.favorites.create(user: self)
 
-      return if favorite_resource.instance_of?(FavoriteCharacter)
+      return if favorite_resource.instance_of?(CharacterFavorite)
 
       FavoritableWatchedWorksCountJob.perform_later(favorite_resource, self)
     end
@@ -24,12 +24,12 @@ module UserFavoritable
     end
 
     def update_watched_works_count
-      favorite_people.each do |favorite_person|
-        favorite_person.update_watched_works_count(self)
+      person_favorites.each do |person_favorite|
+        person_favorite.update_watched_works_count(self)
       end
 
-      favorite_organizations.each do |favorite_org|
-        favorite_org.update_watched_works_count(self)
+      organization_favorites.each do |organization_favorite|
+        organization_favorite.update_watched_works_count(self)
       end
     end
   end

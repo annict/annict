@@ -64,8 +64,8 @@ class Character < ApplicationRecord
   has_many :casts, dependent: :destroy
   has_many :db_activities, as: :trackable, dependent: :destroy
   has_many :db_comments, as: :resource, dependent: :destroy
-  has_many :favorite_characters
-  has_many :users, through: :favorite_characters
+  has_many :character_favorites
+  has_many :users, through: :character_favorites
   has_many :works, through: :casts
 
   validates :series_id, presence: true
@@ -74,7 +74,7 @@ class Character < ApplicationRecord
   validates :description_en, presence_pair: :description_source_en
 
   def favorites
-    favorite_characters
+    character_favorites
   end
 
   def oldest_work

@@ -9,8 +9,8 @@ describe "Api::Internal::Favorites" do
     end
 
     context "when user unfavorites character" do
-      let!(:favorite_character) { create(:favorite_character, user: user) }
-      let!(:data) { { resource_type: "Character", resource_id: favorite_character.character_id } }
+      let!(:character_favorite) { create(:character_favorite, user: user) }
+      let!(:data) { { resource_type: "Character", resource_id: character_favorite.character_id } }
 
       it "responses 200" do
         post api("/api/internal/favorites/unfavorite", data)
@@ -24,8 +24,8 @@ describe "Api::Internal::Favorites" do
     end
 
     context "when user unfavorites organization" do
-      let!(:favorite_organization) { create(:favorite_organization, user: user) }
-      let!(:data) { { resource_type: "Organization", resource_id: favorite_organization.organization_id } }
+      let!(:organization_favorite) { create(:organization_favorite, user: user) }
+      let!(:data) { { resource_type: "Organization", resource_id: organization_favorite.organization_id } }
 
       it "responses 200" do
         post api("/api/internal/favorites/unfavorite", data)
@@ -39,8 +39,8 @@ describe "Api::Internal::Favorites" do
     end
 
     context "when user unfavorites person" do
-      let!(:favorite_person) { create(:favorite_person, user: user) }
-      let!(:data) { { resource_type: "Person", resource_id: favorite_person.person_id } }
+      let!(:person_favorite) { create(:person_favorite, user: user) }
+      let!(:data) { { resource_type: "Person", resource_id: person_favorite.person_id } }
 
       it "responses 200" do
         post api("/api/internal/favorites/unfavorite", data)

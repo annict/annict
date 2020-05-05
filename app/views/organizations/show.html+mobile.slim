@@ -5,7 +5,7 @@
 
 = render "partial_layouts/v2/default" do
   .c-card.mb-3
-    = render "organizations/header", organization: @organization, favorite_resources: @favorite_orgs
+    = render "organizations/header", organization: @organization, favorite_resources: @organization_favorites
 
   h2.h4.font-weight-bold.text-center.mt-3.mb-4
     = t "noun.information"

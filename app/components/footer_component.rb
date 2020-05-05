@@ -59,7 +59,7 @@ class FooterComponent < ApplicationComponent
                     [t("noun.annict_supporters"), supporters_path]
                   ].each do |(link_title, link_url)|
                     el.li class: "mb-2" do
-                      el.a href: link_url, target: "_blank" do
+                      el.a href: link_url, rel: "noopener", target: "_blank" do
                         link_title
                       end
                     end

@@ -43,7 +43,6 @@ en:
     _empty:
       no_characters: No Characters
       no_episodes: No Episodes
-      no_items: No Items
       no_organizations: No Organizations
       no_people: No People
       no_projects: No Projects
@@ -259,7 +258,6 @@ en:
     works:
       view_all_n_characters: View All %{n} Characters
       view_all_n_episodes: View All %{n} Episodes
-      view_all_n_items: View All %{n} Items
       view_all_n_record_body_list: View All %{n} Comments
       view_all_n_staffs: View All %{n} Staffs
       creating_episodes_restricted_episodes_filled: "You can not add episodes because episodes are created enough."

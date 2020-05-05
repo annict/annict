@@ -7,7 +7,7 @@
   .container.py-3.mb-4
     .row
       .col-3.pr-0
-        = render "organizations/sidebar", organization: @organization
+        = render "organizations/sidebar", organization: @organization, organization_favorites: @organization_favorites
       .col-9
         = render "organizations/subnav", organization: @organization
 

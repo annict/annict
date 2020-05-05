@@ -12,7 +12,7 @@
           <div class="col-4 col-sm-12">
             <div class="mb-2 text-sm-left">
               <%= link_to work_path(@work.id) do %>
-                <%= render WorkImageComponent.new(image_url_1x: @work.image_url_1x, image_url_2x: @work.image_url_2x) %>
+                <%= render WorkImageComponent.new(image_url_1x: @work.image_url_1x, image_url_2x: @work.image_url_2x, alt: @work.local_title) %>
               <% end %>
               <div class="u-very-small text-muted">
                 <i class="far fa-copyright"></i>
@@ -452,7 +452,10 @@
                   <div class="mb-3 row">
                     <div class="col-auto pl-3 pr-0">
                       <%= link_to user_path(work_record.user.username) do %>
-                        <%= image_tag work_record.user.avatar_url, class: "img-fluid img-thumbnail rounded-circle" %>
+                        <%= render ProfileImageComponent.new(
+                            image_url_1x: work_record.user.avatar_url,
+                            alt: "@#{work_record.user.username}"
+                        ) %>
                       <% end %>
                     </div>
                     <div class="col">
@@ -645,7 +648,7 @@
                         <%= link_to work_path(series_work.id) do %>
                           <div class="c-hover-image">
                             <div class="c-hover-image__image">
-                              <%= image_tag series_work.image_url, class: "img-fluid img-thumbnail rounded" %>
+                              <%= render WorkImageComponent.new(image_url_1x: series_work.image_url_1x, image_url_2x: series_work.image_url_2x) %>
                             </div>
                             <div class="c-hover-image__over"></div>
                           </div>

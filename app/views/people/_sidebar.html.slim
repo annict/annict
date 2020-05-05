@@ -53,21 +53,21 @@ h1.h2.font-weight-bold
       dt.small = t "activerecord.attributes.person.wikipedia"
       dd = link_with_domain person.wikipedia_url
 
-- if @favorite_people.present?
+- if person_favorites.present?
   .mb-4
     h2.h4.font-weight-bold.mb-3
       = icon "users", class: "mr-1"
       = t "noun.fans"
       span.pl-1
-        = "(#{t('noun.users_count', count: @favorite_people.length)})"
+        = "(#{t('noun.users_count', count: person_favorites.length)})"
 
     .row.px-3
-      - @favorite_people.each do |favorite_person|
+      - person_favorites.each do |person_favorite|
         .col.col-auto.pl-0.pr-2.pb-2
-          = link_to user_path(favorite_person.user.username) do
-            = ann_image_tag(favorite_person.user.profile, :image, size: "30x30", class: "rounded-circle", alt: favorite_person.user.name_with_username, title: favorite_person.user.name_with_username)
+          = link_to user_path(person_favorite.user.username) do
+            = ann_image_tag(person_favorite.user.profile, :image, size: "30x30", class: "rounded-circle", alt: person_favorite.user.name_with_username, title: person_favorite.user.name_with_username)
 
-    - if @favorite_people.length > 30
+    - if person_favorites.length > 30
       .text-right
         = link_to t("verb.view_all"), person_fans_path(person)
 

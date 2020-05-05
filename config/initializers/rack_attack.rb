@@ -4,7 +4,7 @@ def remote_ip(req)
   @remote_ip ||= (req.env["action_dispatch.remote_ip"] || req.ip).to_s
 end
 
-Rack::Attack.throttle("requests by ip", limit: 5, period: 2.seconds) do |req|
+Rack::Attack.throttle("requests by ip", limit: 10, period: 2.seconds) do |req|
   remote_ip(req)
 end
 

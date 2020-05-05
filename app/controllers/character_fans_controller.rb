@@ -5,8 +5,8 @@ class CharacterFansController < ApplicationController
 
   def index
     @character = Character.only_kept.find(params[:character_id])
-    @favorite_characters = @character.
-      favorite_characters.
+    @character_favorites = @character.
+      character_favorites.
       joins(:user).
       merge(User.only_kept).
       order(id: :desc)

@@ -34,7 +34,7 @@ class WorkImage < ApplicationRecord
 
   validates :copyright, presence: true
 
-  belongs_to :work
+  belongs_to :work, touch: true
   belongs_to :user
 
   # Disable until the Paperclip -> Shrine migration is done

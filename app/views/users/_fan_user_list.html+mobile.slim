@@ -7,7 +7,7 @@
       .col.pr-0
         .row.align-items-center
           .col.px-0
-            - unless favorite_resource.instance_of?(FavoriteCharacter)
+            - unless favorite_resource.instance_of?(CharacterFavorite)
               .text-muted.u-very-small
                 = t "noun.n_works_watched", count: favorite_resource.watched_works_count
             = link_to favorite_resource.user.profile.name, user_path(username: favorite_resource.user.username)

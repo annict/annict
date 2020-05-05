@@ -8,7 +8,7 @@
 
   .c-card.mt-3.mb-4
     .container.py-2
-      = render "favorite_people/person_list", favorite_people: @favorite_people
+      = render "favorite_people/person_list", cast_favorites: @cast_favorites, staff_favorites: @staff_favorites
 
 - content_for :js_templates do
   = render "application/js_templates/favorite_button"

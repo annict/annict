@@ -76,19 +76,19 @@
         .p-users-show__count.col.px-0
           = link_to favorite_characters_path(@user.username), class: "p-users-show__count-link" do
             .h3.mb-1
-              = @favorite_characters.length
+              = @character_favorites.length
             .small
               = t "noun.favorite_characters_shorten"
         .p-users-show__count.col.px-0
           = link_to favorite_people_path(@user.username), class: "p-users-show__count-link" do
             .h3.mb-1
-              = @favorite_casts.length + @favorite_staffs.length
+              = @cast_favorites.length + @staff_favorites.length
             .small
               = t "noun.favorite_people_shorten"
         .p-users-show__count.col.px-0
           = link_to favorite_organizations_path(@user.username), class: "p-users-show__count-link" do
             .h3.mb-1
-              = @favorite_organizations.length
+              = @organization_favorites.length
             .small
               = t "noun.favorite_organizations_shorten"
 

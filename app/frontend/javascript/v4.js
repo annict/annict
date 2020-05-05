@@ -7,12 +7,6 @@ import LazyLoad from 'vanilla-lazyload';
 import vueApp from './web/vueApp';
 
 document.addEventListener('turbolinks:load', (_event) => {
-  window.WebFont.load({
-    google: {
-      families: ['Raleway'],
-    },
-  });
-
   vueApp.start();
 
   new LazyLoad({
