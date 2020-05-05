@@ -33,7 +33,7 @@ class SidebarComponent < ApplicationComponent
 
             if user
               el.div class: "mb-3 px-3" do
-                el.a class: "align-content-center d-flex", href: user_path(user.username) do
+                el.a class: "align-content-center d-flex", href: user_detail_path(user.username) do
                   el.img(
                     alt: user.username,
                     class: "rounded-circle",
@@ -73,7 +73,7 @@ class SidebarComponent < ApplicationComponent
 
               if user
                 el.li do
-                  el.a class: "d-flex justify-content-between py-2 w-100", href: user_path(user.username) do
+                  el.a class: "d-flex justify-content-between py-2 w-100", href: user_detail_path(user.username) do
                     el.div class: "c-sidebar__icon text-muted" do
                       el.i(class: "fal fa-user") {}
                     end

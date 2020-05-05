@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+USERNAME_FORMAT = /[A-Za-z0-9_]+/.freeze
+
 get "dummy_image", to: "application#dummy_image" if Rails.env.test?
 
 devise_for :users,
@@ -98,7 +100,7 @@ resources :users, only: [] do
   end
 end
 
-scope "@:username", username: /[A-Za-z0-9_]+/ do
+scope "@:username", username: USERNAME_FORMAT do
   get :following, to: "users#following", as: :following_user
   get :followers, to: "users#followers", as: :followers_user
   get :ics, to: "ics#show", as: :user_ics
@@ -119,8 +121,6 @@ scope "@:username", username: /[A-Za-z0-9_]+/ do
   resources :records, only: %i(index show destroy) do
     resources :comments, only: %i(create)
   end
-
-  root to: "users#show", as: :user
 end
 
 resources :works, only: %i(index) do
@@ -160,6 +160,7 @@ root "welcome#show",
 
 scope module: :v4 do
   constraints format: "html" do
-    get "/works/:id", to: "works#show", as: :work
+    match "/@:username", via: :get, as: :user_detail, to: "users#show", username: USERNAME_FORMAT
+    match "/works/:id",  via: :get, as: :work, to: "works#show"
   end
 end

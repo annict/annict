@@ -24,6 +24,8 @@
 #
 
 class OrganizationFavorite < ApplicationRecord
+  counter_culture :user
+
   belongs_to :organization, counter_cache: :favorite_users_count
   belongs_to :user
 

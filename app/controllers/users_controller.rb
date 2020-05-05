@@ -1,34 +1,9 @@
 # frozen_string_literal: true
 
 class UsersController < ApplicationController
-  before_action :load_i18n, only: %i(show following followers)
+  before_action :load_i18n, only: %i(following followers)
   before_action :authenticate_user!, only: %i(destroy share)
-  before_action :set_user, only: %i(show following followers)
-
-  def show
-    @watching_works = @user.works.watching.only_kept
-    tracked_works = @watching_works.tracked_by(@user).order("c2.record_id DESC")
-    other_works = @watching_works.where.not(id: tracked_works.pluck(:id))
-    @works = (tracked_works + other_works).first(9)
-    @character_favorites = @user.character_favorites.includes(:character).order(id: :desc)
-    @cast_favorites = @user.person_favorites.with_cast.includes(:person).order(id: :desc)
-    @staff_favorites = @user.person_favorites.with_staff.includes(:person).order(id: :desc)
-    @organization_favorites = @user.organization_favorites.includes(:organization).order(id: :desc)
-
-    activities = UserActivitiesQuery.new.call(
-      activities: @user.activities,
-      user: current_user,
-      page: 1
-    )
-    works = Work.only_kept.where(id: activities.all.map(&:work_id))
-
-    activity_data = render_jb("api/internal/activities/index",
-      user: user_signed_in? ? current_user : nil,
-      activities: activities,
-      works: works)
-
-    gon.push(activityData: activity_data)
-  end
+  before_action :set_user, only: %i(following followers)
 
   def following
     @users = @user.followings.only_kept.order("follows.id DESC")

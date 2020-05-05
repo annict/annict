@@ -1,0 +1,16 @@
+query($username: String!) {
+  user(username: $username) {
+    username
+    name
+    description
+    isSupporter
+    avatarUrl(size: size200)
+    recordsCount
+    watchingWorksCount
+    followingCount
+    followersCount
+    characterFavoritesCount
+    personFavoritesCount
+    organizationFavoritesCount
+  }
+}

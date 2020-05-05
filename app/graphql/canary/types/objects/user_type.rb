@@ -23,16 +23,19 @@ module Canary
         field :viewer_is_following, Boolean, null: false
         field :is_supporter, Boolean, null: false
         field :is_committer, Boolean, null: false
-        field :records_count, Integer, null: false
-        field :followings_count, Integer, null: false
-        field :followers_count, Integer, null: false
-        field :wanna_watch_count, Integer, null: false
-        field :watching_count, Integer, null: false
-        field :watched_count, Integer, null: false
-        field :on_hold_count, Integer, null: false
-        field :stop_watching_count, Integer, null: false
         field :locale, String, null: true
+        field :records_count, Integer, null: false
+        field :following_count, Integer, null: false
+        field :followers_count, Integer, null: false
+        field :plan_to_watch_works_count, Integer, null: false
+        field :watching_works_count, Integer, null: false
+        field :completed_works_count, Integer, null: false
+        field :on_hold_works_count, Integer, null: false
+        field :dropped_works_count, Integer, null: false
         field :notifications_count, Integer, null: true
+        field :character_favorites_count, Integer, null: false
+        field :person_favorites_count, Integer, null: false
+        field :organization_favorites_count, Integer, null: false
         field :created_at, Canary::Types::Scalars::DateTime, null: false
         field :following, Canary::Types::Objects::UserType.connection_type, null: true
         field :followers, Canary::Types::Objects::UserType.connection_type, null: true
@@ -98,35 +101,15 @@ module Canary
         end
 
         def records_count
-          object.episode_records_count
+          object.records_count
         end
 
-        def followings_count
+        def following_count
           object.followings.only_kept.count
         end
 
         def followers_count
           object.followers.only_kept.count
-        end
-
-        def wanna_watch_count
-          object.library_entries.count_on(:wanna_watch)
-        end
-
-        def watching_count
-          object.library_entries.count_on(:watching)
-        end
-
-        def watched_count
-          object.library_entries.count_on(:watched)
-        end
-
-        def on_hold_count
-          object.library_entries.count_on(:on_hold)
-        end
-
-        def stop_watching_count
-          object.library_entries.count_on(:stop_watching)
         end
 
         def viewer_can_follow

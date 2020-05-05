@@ -22,6 +22,8 @@
 #
 
 class CharacterFavorite < ApplicationRecord
+  counter_culture :user
+
   belongs_to :character, counter_cache: :favorite_users_count
   belongs_to :user
 end
