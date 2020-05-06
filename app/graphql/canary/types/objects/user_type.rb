@@ -66,6 +66,22 @@ module Canary
           argument :order_by, Canary::Types::InputObjects::SlotOrder, required: false
         end
 
+        field :character_favorites, Canary::Types::Objects::CharacterFavoriteType.connection_type, null: true do
+          argument :order_by, Canary::Types::InputObjects::CharacterFavoriteOrder, required: false
+        end
+
+        field :cast_favorites, Canary::Types::Objects::PersonFavoriteType.connection_type, null: true do
+          argument :order_by, Canary::Types::InputObjects::PersonFavoriteOrder, required: false
+        end
+
+        field :staff_favorites, Canary::Types::Objects::PersonFavoriteType.connection_type, null: true do
+          argument :order_by, Canary::Types::InputObjects::PersonFavoriteOrder, required: false
+        end
+
+        field :organization_favorites, Canary::Types::Objects::OrganizationFavoriteType.connection_type, null: true do
+          argument :order_by, Canary::Types::InputObjects::OrganizationFavoriteOrder, required: false
+        end
+
         def name
           Canary::RecordLoader.for(Profile, column: :user_id).load(object.id).then(&:name)
         end
@@ -85,31 +101,19 @@ module Canary
         end
 
         def background_image_url
-          ann_api_assets_background_image_url(object.profile)
+          Canary::RecordLoader.for(Profile, column: :user_id).load(object.id).then do |profile|
+            ann_api_assets_background_image_url(profile)
+          end
         end
 
         def is_supporter
-          return object.supporter? if context[:viewer] == object
-
           Canary::RecordLoader.for(Setting, column: :user_id).load(object.id).then do |setting|
-            object.supporter? && setting.hide_supporter_badge?
+            object.supporter? && !setting.hide_supporter_badge?
           end
         end
 
         def is_committer
           object.committer?
-        end
-
-        def records_count
-          object.records_count
-        end
-
-        def following_count
-          object.followings.only_kept.count
-        end
-
-        def followers_count
-          object.followers.only_kept.count
         end
 
         def viewer_can_follow
@@ -183,6 +187,26 @@ module Canary
             watched: watched,
             order: build_order(order_by)
           ).call
+        end
+
+        def character_favorites(order_by: nil)
+          order = build_order(order_by)
+          object.character_favorites.order(order.field => order.direction)
+        end
+
+        def cast_favorites(order_by: nil)
+          order = build_order(order_by)
+          object.person_favorites.with_cast.order(order.field => order.direction)
+        end
+
+        def staff_favorites(order_by: nil)
+          order = build_order(order_by)
+          object.person_favorites.with_staff.order(order.field => order.direction)
+        end
+
+        def organization_favorites(order_by: nil)
+          order = build_order(order_by)
+          object.organization_favorites.order(order.field => order.direction)
         end
       end
     end

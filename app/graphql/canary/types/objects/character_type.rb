@@ -34,6 +34,10 @@ module Canary
         field :description_source_en, String, null: false
         field :favorite_users_count, Integer, null: false
         field :series, Canary::Types::Objects::SeriesType, null: false
+
+        def series
+          Canary::RecordLoader.for(Series).load(object.series_id)
+        end
       end
     end
   end

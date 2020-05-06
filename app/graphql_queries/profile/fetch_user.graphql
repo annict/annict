@@ -3,8 +3,9 @@ query($username: String!) {
     username
     name
     description
-    isSupporter
     avatarUrl(size: size200)
+    backgroundImageUrl
+    isSupporter
     recordsCount
     watchingWorksCount
     followingCount
@@ -12,5 +13,44 @@ query($username: String!) {
     characterFavoritesCount
     personFavoritesCount
     organizationFavoritesCount
+    characterFavorites(orderBy: { field: CREATED_AT, direction: DESC }, first: 6) {
+      nodes {
+        character {
+          name
+          nameEn
+          series {
+            name
+            nameEn
+          }
+        }
+      }
+    }
+    castFavorites(orderBy: { field: CREATED_AT, direction: DESC }, first: 6) {
+      nodes {
+        person {
+          name
+          nameEn
+        }
+        watchedWorksCount
+      }
+    }
+    staffFavorites(orderBy: { field: CREATED_AT, direction: DESC }, first: 6) {
+      nodes {
+        person {
+          name
+          nameEn
+        }
+        watchedWorksCount
+      }
+    }
+    organizationFavorites(orderBy: { field: CREATED_AT, direction: DESC }, first: 6) {
+      nodes {
+        organization {
+          name
+          nameEn
+        }
+        watchedWorksCount
+      }
+    }
   }
 }
