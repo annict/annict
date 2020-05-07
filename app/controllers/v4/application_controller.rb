@@ -12,9 +12,14 @@ module V4
     helper_method :client_uuid, :local_url_with_path, :locale_en?, :locale_ja?, :local_url, :page_category
 
     before_action :set_raven_context
+    before_action :set_search_params
     around_action :set_locale
 
     private
+
+    def set_search_params
+      @search = SearchService.new(params[:q])
+    end
 
     # Override `Devise::Controllers::Helpers#signed_in_root_path`
     def signed_in_root_path(_resource_or_scope)
