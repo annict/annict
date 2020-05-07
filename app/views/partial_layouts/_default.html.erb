@@ -1,6 +1,6 @@
 <div class="pl-default">
   <div class="pl-default__sidebar">
-    <%= render SidebarComponent.new(user: current_user) %>
+    <%= render SidebarComponent.new(user: current_user, search: @search) %>
   </div>
 
   <div class="pl-default__main d-flex flex-column">

@@ -5,24 +5,6 @@ class FlashComponent < ApplicationComponent
     @flash = flash
   end
 
-  def call
-    return unless flash_key
-
-    Htmlrb.build do |el|
-      el.div class: "alert alert-dismissible align-content-center d-flex mb-0 #{alert_class}" do
-        el.i(class: "far h2 mb-0 mr-2 #{alert_icon_class}") {}
-
-        el.span do
-          flash[flash_key]
-        end
-
-        el.button aria_label: "Close", class: "close", data_dismiss: "alert", type: "button" do
-          el.i(aria_hidden: "true", class: "fas fa-times") {}
-        end
-      end
-    end.html_safe
-  end
-
   private
 
   attr_reader :flash

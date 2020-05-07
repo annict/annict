@@ -6,14 +6,6 @@ module Db
       @resource = resource
     end
 
-    def call
-      Htmlrb.build do |el|
-        el.div class: label_class do
-          label_text
-        end
-      end.html_safe
-    end
-
     private
 
     attr_reader :resource

@@ -8,19 +8,6 @@ class WorkImageComponent < ApplicationComponent
     @bg_color = bg_color
   end
 
-  def call
-    Htmlrb.build do |el|
-      el.div(
-        class: "c-work-image img-fluid js-lazy",
-        data_bg: image_url_1x,
-        data_bg_hidpi: image_url_2x,
-        style: "background-color: #{bg_color};"
-      ) do
-        el.img alt: alt, src: dummy_src
-      end
-    end.html_safe
-  end
-
   private
 
   attr_reader :alt, :image_url_1x, :image_url_2x, :bg_color
