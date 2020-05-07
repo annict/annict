@@ -271,7 +271,6 @@ GEM
     html-pipeline (2.12.3)
       activesupport (>= 2)
       nokogiri (>= 1.4)
-    htmlrb (0.1.0)
     http (4.4.1)
       addressable (~> 2.3)
       http-cookie (~> 1.0)
@@ -678,7 +677,6 @@ DEPENDENCIES
   groupdate
   hashdiff
   hiredis
-  htmlrb
   http_accept_language
   httparty
   i18n-tasks
