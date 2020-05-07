@@ -15,10 +15,12 @@
 
       <% if user %>
         <div class="mb-3 px-3">
-          <%= link_to user_path(user.username), class: "align-content-center d-flex" do %>
-            <%= render ProfileImageComponent.new(image_url_1x: helpers.ann_image_url(user.profile, :image, size: "50x50"), alt: "@#{user.username}") %>
+          <%= link_to user_path(user.username), class: "align-content-center row" do %>
+            <div class="col-3 pr-0">
+              <%= render ProfileImageComponent.new(image_url_1x: helpers.ann_image_url(user.profile, :image, size: "50x50"), alt: "@#{user.username}") %>
+            </div>
 
-            <div class="ml-2">
+            <div class="col-auto">
               <div class="font-weight-bold u-text-body">
                 <%= user.profile.name %>
               </div>
