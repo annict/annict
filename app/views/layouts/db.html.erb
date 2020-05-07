@@ -40,7 +40,7 @@
   <body>
     <div class="f-app">
       <div class="f-app__sidebar">
-        <%= render Db::SidebarComponent.new %>
+        <%= render Db::SidebarComponent.new(search: @search) %>
       </div>
       <div class="f-app__main d-flex flex-column">
         <div class="f-application__main__content">

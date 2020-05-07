@@ -1,0 +1,13 @@
+<div class="btn-group btn-group-sm" role="actions" aria-label="Actions">
+  <% if db_resource_policy.edit? %>
+    <%= link_to t("noun.edit"), edit_path, class: "btn btn-primary btn-sm" %>
+  <% end %>
+
+  <% if db_resource_policy.unpublish? %>
+    <%= link_to publishing_text, publishing_path, class: "btn btn-sm #{publishing_btn_class}", data: { method: publishing_method, confirm: t("messages._common.are_you_sure") } %>
+  <% end %>
+
+  <% if db_resource_policy.destroy? %>
+    <%= link_to t("noun.delete"), detail_path, class: "btn btn-danger btn-sm", data: { method: "delete", confirm: t("messages._common.are_you_sure") } %>
+  <% end %>
+</div>
