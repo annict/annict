@@ -13,7 +13,7 @@ class WorkEntity < ApplicationEntity
   attribute? :season_year, Types::Integer.optional
   attribute? :season_type, Types::SeasonKinds.optional
   attribute? :season_slug, Types::String.optional
-  attribute? :started_on, Types::Date.optional
+  attribute? :started_on, Types::Params::Date.optional
   attribute? :episodes_count, Types::Integer
   attribute? :watchers_count, Types::Integer
   attribute? :satisfaction_rate, Types::Float.optional
