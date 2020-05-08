@@ -4,6 +4,6 @@
 - image_url = ann_image_url(@work.work_image, :image, size: "640x", ratio: "3:4")
 - set_meta_tags(title: title, description: description, keywords: keywords, og: { title: title, description: description, image: image_url }, reverse: true, prefix: false)
 
-= render "partial_layouts/v2/default" do
+= render "partial_layouts/default" do
   .c-card.p-3.mb-4
     = render "episode_records/form", episode_record: @episode_record

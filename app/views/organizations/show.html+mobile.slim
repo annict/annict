@@ -3,7 +3,7 @@
 - keywords = meta_keywords(@organization.name_with_other_name)
 - set_meta_tags(title: title, description: description, keywords: keywords, og: { description: description }, twitter: { description: description }, reverse: true, prefix: false)
 
-= render "partial_layouts/v2/default" do
+= render "partial_layouts/default" do
   .c-card.mb-3
     = render "organizations/header", organization: @organization, favorite_resources: @organization_favorites
 

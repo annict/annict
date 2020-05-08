@@ -6,7 +6,7 @@
 
 - breadcrumb :work_record_list, @work
 
-= render "partial_layouts/v2/default", page_category: "record-list" do
+= render "partial_layouts/default", page_category: "record-list" do
   = render "works/header", work: @work
 
   - if user_signed_in?

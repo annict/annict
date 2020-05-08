@@ -3,7 +3,7 @@
 
 - breadcrumb :forum_post_detail, @post
 
-= render "partial_layouts/v2/default" do
+= render "partial_layouts/default" do
   .container.my-3
     .mb-1
       = link_to @post.forum_category.local_name,  forum_category_path(@post.forum_category.slug), class: "badge badge-secondary"
