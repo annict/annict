@@ -28,7 +28,6 @@ import episodeRatingStateChart from './common/components/episodeRatingStateChart
 import episodeRecordsChart from './common/components/episodeRecordsChart';
 import favoriteButton from './common/components/favoriteButton';
 import forumEditLink from './common/components/forumEditLink';
-import followButton from './common/components/followButton';
 import impressionButton from './common/components/impressionButton';
 import impressionButtonModal from './common/components/impressionButtonModal';
 import inputWordsCount from './common/components/inputWordsCount';
@@ -54,6 +53,7 @@ import workTags from './common/components/workTags';
 import youtubeModalPlayer from './common/components/youtubeModalPlayer';
 
 import flash from './web/components/flash';
+import followButton from './web/components/followButton';
 import likeButton from './web/components/likeButton';
 import ratingLabel from './web/components/ratingLabel';
 import shareToFacebookButton from './web/components/shareToFacebookButton';

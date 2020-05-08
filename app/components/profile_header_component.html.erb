@@ -1,0 +1,30 @@
+<div class="c-profile-header">
+  <div class="c-profile-header__background" style="background-image: url(<%= user_entity.background_image_url %>);"></div>
+  <div class="container-fluid">
+    <div class="row">
+      <div class="col-auto c-profile-header__profile-image">
+        <%= render ProfileImageComponent.new(image_url_1x: user_entity.avatar_url, alt: "@#{user_entity.username}") %>
+      </div>
+
+      <div class="col mb-2 mb-lg-0">
+        <div class="align-self-center px-3 py-2">
+          <%= render SupporterBadgeComponent.new(user_entity: user_entity) %>
+
+          <h1 class="h2 mb-0">
+            <%= user_entity.name %>
+            <div class="c-profile-header__username text-muted">
+              @<%= user_entity.username %>
+            </div>
+          </h1>
+        </div>
+      </div>
+
+      <div class="align-self-center col-12 col-lg text-center text-lg-right">
+        <% if current_user&.id != user_entity.id %>
+          <c-follow-button :user-id="<%= user_entity.id %>"></c-follow-button>
+          <c-user-actions-dropdown :user-id="<%= user_entity.id %>"></c-user-actions-dropdown>
+        <% end %>
+      </div>
+    </div>
+  </div>
+</div>

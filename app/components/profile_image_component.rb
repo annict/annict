@@ -11,7 +11,7 @@ class ProfileImageComponent < ApplicationComponent
   def call
     helpers.image_tag(dummy_src, {
       alt: alt,
-      class: "img-fluid img-thumbnail js-lazy rounded-circle",
+      class: "c-profile-image img-fluid img-thumbnail js-lazy rounded-circle",
       "data-src": image_url_1x,
       style: "background-color: #{bg_color};"
     }.merge(img_options))

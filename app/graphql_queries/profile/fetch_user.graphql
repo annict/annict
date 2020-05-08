@@ -1,11 +1,12 @@
 query($username: String!) {
   user(username: $username) {
+    annictId
     username
     name
     description
     avatarUrl(size: size200)
     backgroundImageUrl
-    isSupporter
+    displaySupporterBadge
     recordsCount
     watchingWorksCount
     followingCount

@@ -1,6 +1,7 @@
 import Vue from 'vue';
 
 import flash from './components/flash';
+import followButton from './components/followButton';
 import likeButton from './components/likeButton';
 import ratingLabel from './components/ratingLabel';
 import shareToFacebookButton from './components/shareToFacebookButton';
@@ -9,6 +10,7 @@ import sidebar from './components/sidebar';
 import signUpModal from './components/signUpModal';
 import statusSelector from './components/statusSelector';
 import tabBar from './components/tabBar';
+import userActionsDropdown from './components/userActionsDropdown';
 import userDataFetcher from './components/userDataFetcher';
 import workStatusChart from './components/workStatusChart';
 import workWatchersChart from './components/workWatchersChart';
@@ -20,6 +22,7 @@ export default {
 
       components: {
         'c-flash': flash,
+        'c-follow-button': followButton,
         'c-like-button': likeButton,
         'c-rating-label': ratingLabel,
         'c-share-to-facebook-button': shareToFacebookButton,
@@ -28,6 +31,7 @@ export default {
         'c-sign-up-modal': signUpModal,
         'c-status-selector': statusSelector,
         'c-tab-bar': tabBar,
+        'c-user-actions-dropdown': userActionsDropdown,
         'c-user-data-fetcher': userDataFetcher,
         'c-work-status-chart': workStatusChart,
         'c-work-watchers-chart': workWatchersChart,

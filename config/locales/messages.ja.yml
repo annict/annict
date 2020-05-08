@@ -133,7 +133,6 @@ ja:
       load_more_button:
         more: もっと見る
       mute_user_button:
-        mute_this_user: この人をミュートする...
         the_user_has_been_muted: ミュートしました
       slot_list:
         tracked: 記録しました

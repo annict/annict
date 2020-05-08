@@ -133,7 +133,6 @@ en:
       load_more_button:
         more: View more
       mute_user_button:
-        mute_this_user: Mute this user...
         the_user_has_been_muted: The user has been muted.
       slot_list:
         tracked: Tracked.

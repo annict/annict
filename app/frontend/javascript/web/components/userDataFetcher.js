@@ -1,5 +1,6 @@
 import eventHub from '../../common/eventHub';
 
+import followingRequest from '../requests/followingRequest';
 import libraryEntriesRequest from '../requests/libraryEntriesRequest';
 import likesRequest from '../requests/likesRequest';
 
@@ -18,7 +19,7 @@ const REQUEST_LIST = {
   'work-detail': [libraryEntriesRequest, likesRequest],
   'work-list': [libraryEntriesRequest],
   'work-record-list': [libraryEntriesRequest, likesRequest],
-  profile: [libraryEntriesRequest, likesRequest],
+  profile: [followingRequest, libraryEntriesRequest, likesRequest],
 };
 
 export default {

@@ -47,7 +47,12 @@ module ApplicationHelper
         message: flash[flash.keys.first]
       },
       i18n: {
+        messages: {
+          areYouSure: t("messages._common.are_you_sure"),
+          userHasBeenMuted: t("messages.components.mute_user_button.the_user_has_been_muted")
+        },
         noun: {
+          following: t("noun.following"),
           share: t("noun.share"),
           signIn: t("noun.sign_in"),
           signUp: t("noun.sign_up"),
@@ -61,6 +66,11 @@ module ApplicationHelper
         },
         signUpModal: {
           body: t("messages._components.sign_up_modal.body")
+        },
+        verb: {
+          follow: t("verb.follow"),
+          mute: t("verb.mute"),
+          unmute: t("verb.unmute")
         }
       },
       statusOptions: Status.kind.options.insert(0, [t("messages.components.status_selector.select_status"), "no_select"])

@@ -24,6 +24,7 @@ module Canary
         field :is_supporter, Boolean, null: false
         field :is_committer, Boolean, null: false
         field :locale, String, null: true
+        field :display_supporter_badge, Boolean, null: false
         field :records_count, Integer, null: false
         field :following_count, Integer, null: false
         field :followers_count, Integer, null: false
@@ -108,12 +109,18 @@ module Canary
 
         def is_supporter
           Canary::RecordLoader.for(Setting, column: :user_id).load(object.id).then do |setting|
-            object.supporter? && !setting.hide_supporter_badge?
+            context[:viewer] == object ? object.supporter? : object.supporter? && !setting.hide_supporter_badge?
           end
         end
 
         def is_committer
           object.committer?
+        end
+
+        def display_supporter_badge
+          Canary::RecordLoader.for(Setting, column: :user_id).load(object.id).then do |setting|
+            context[:viewer] == object ? !setting.hide_supporter_badge? : object.supporter? && !setting.hide_supporter_badge?
+          end
         end
 
         def viewer_can_follow

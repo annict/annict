@@ -12,6 +12,7 @@ en:
     follow: Follow
     hide: Hide
     more: More
+    mute: Mute
     next: Next
     post: Post
     previous: Prev
@@ -26,6 +27,7 @@ en:
     track: Track
     tweet: Tweet
     uncheck_all: Uncheck All
+    unmute: Unmute
     update: Update
     upload: Upload
     view: View

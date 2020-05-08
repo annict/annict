@@ -7,10 +7,13 @@ module UserDetail
       node = result.to_h.dig("data", "user")
 
       UserEntity.new(
+        id: node["annictId"],
         username: node["username"],
         name: node["name"],
         description: node["description"],
-        avatar_url: node["avatar_url"]
+        avatar_url: node["avatarUrl"],
+        background_image_url: node["backgroundImageUrl"],
+        display_supporter_badge: node["displaySupporterBadge"],
       )
     end
 
