@@ -2,7 +2,7 @@ import eventHub from '../../common/eventHub';
 
 export default {
   template: `
-    <div :class="alertClass" class="alert alert-dismissible align-content-center d-flex mb-0" v-if="show">
+    <div :class="alertClass" class="alert alert-dismissible align-content-center border-0 d-flex mb-0 rounded-0" v-if="show">
       <i :class="alertIcon" class="far h2 mb-0 mr-2"></i>
 
       <span v-html="message"></span>
