@@ -102,6 +102,7 @@ ja:
       new_programs: 新規登録
     user:
       is_wrong: が間違っています
+      start_date: "サービス開始日: %{started_on} (%{days}日経過)"
     userland_project:
       delete: プロジェクト削除
       edit: プロジェクト編集

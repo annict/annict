@@ -8,8 +8,41 @@
 
   <div class="container-fluid py-3">
     <div class="row">
-      <div class="col-12 col-lg-5 order-first order-lg-last">
-        <%= @user.description %>
+      <div class="col-12 col-lg-5 mb-3 mb-lg-0 order-first order-lg-last">
+        <div class="mb-5">
+          <%= @user.description %>
+
+          <p class="small">
+            <%= t("resources.user.start_date", started_on: display_date(@user.created_at), days: @user.days_from_started(local_time_zone)) %>
+          </p>
+        </div>
+
+        <h2 class="font-weight-bold h3 mb-3">
+          <%= t "noun.your_statistics" %>
+        </h2>
+
+        <c-user-heatmap class="mb-3" username="<%= @user.username %>"></c-user-heatmap>
+
+        <div class="row">
+          <% [
+            [records_path(@user.username), @user.records_count, "Records"],
+            [library_path(@user.username, :watching), @user.watching_works_count, "Watching"],
+            [following_user_path(@user.username), @user.following_count, "Following"],
+            [followers_user_path(@user.username), @user.followers_count, "Followers"],
+            [favorite_characters_path(@user.username), @user.character_favorites_count, "Characters"],
+            [favorite_people_path(@user.username), @user.person_favorites_count, "People"],
+            [favorite_organizations_path(@user.username), @user.organization_favorites_count, "Organizations"],
+          ].each do |path, count, text| %>
+            <div class="col-3 mb-4">
+              <%= link_to path, class: "text-body" do %>
+                <div class="h3">
+                  <%= count %>
+                </div>
+                <%= text %>
+              <% end %>
+            </div>
+          <% end %>
+        </div>
       </div>
 
       <div class="col-12 col-lg-7 order-last order-lg-first">

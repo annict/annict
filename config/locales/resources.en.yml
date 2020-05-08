@@ -102,6 +102,7 @@ en:
       new_programs: New Link
     user:
       is_wrong: is wrong
+      start_date: "Started: %{started_on} (%{days} days ago)"
     userland_project:
       delete: Delete Project
       edit: Edit Project

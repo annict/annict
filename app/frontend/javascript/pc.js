@@ -45,7 +45,6 @@ import stickyMessage from './common/components/stickyMessage';
 import timeAgo from './common/components/timeAgo';
 import tips from './common/components/tips';
 import untrackedEpisodeList from './common/components/untrackedEpisodeList';
-import userHeatmap from './common/components/userHeatmap';
 import usernamePreview from './common/components/usernamePreview';
 import workComment from './common/components/workComment';
 import workFriends from './common/components/workFriends';
@@ -63,6 +62,7 @@ import signUpModal from './web/components/signUpModal';
 import statusSelector from './web/components/statusSelector';
 import tabBar from './web/components/tabBar';
 import userDataFetcher from './web/components/userDataFetcher';
+import userHeatmap from './web/components/userHeatmap';
 
 import resourceSelect from './common/directives/resourceSelect';
 import prerender from './pc/directives/prerender';

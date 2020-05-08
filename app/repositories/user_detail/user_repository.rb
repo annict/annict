@@ -14,6 +14,15 @@ module UserDetail
         avatar_url: node["avatarUrl"],
         background_image_url: node["backgroundImageUrl"],
         display_supporter_badge: node["displaySupporterBadge"],
+        records_count: node["recordsCount"],
+        watching_works_count: node["watchingWorksCount"],
+        following_count: node["followingCount"],
+        followers_count: node["followersCount"],
+        character_favorites_count: node["characterFavoritesCount"],
+        person_favorites_count: node["personFavoritesCount"],
+        organization_favorites_count: node["organizationFavoritesCount"],
+        organization_favorites_count: node["organizationFavoritesCount"],
+        created_at: node["createdAt"],
       )
     end
 

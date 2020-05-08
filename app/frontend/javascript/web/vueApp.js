@@ -12,6 +12,7 @@ import statusSelector from './components/statusSelector';
 import tabBar from './components/tabBar';
 import userActionsDropdown from './components/userActionsDropdown';
 import userDataFetcher from './components/userDataFetcher';
+import userHeatmap from './components/userHeatmap';
 import workStatusChart from './components/workStatusChart';
 import workWatchersChart from './components/workWatchersChart';
 
@@ -33,6 +34,7 @@ export default {
         'c-tab-bar': tabBar,
         'c-user-actions-dropdown': userActionsDropdown,
         'c-user-data-fetcher': userDataFetcher,
+        'c-user-heatmap': userHeatmap,
         'c-work-status-chart': workStatusChart,
         'c-work-watchers-chart': workWatchersChart,
       },
