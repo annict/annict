@@ -3,8 +3,6 @@
 - keywords = meta_keywords
 - set_meta_tags(title: title, description: description, keywords: keywords, og: { description: description }, twitter: { description: description }, reverse: true, prefix: false)
 
-- breadcrumb :newest_works
-
 = render "partial_layouts/default", page_category: "work-list" do
   h1.text-center.mb-0.mt-3
     = title
@@ -25,9 +23,6 @@
   - if @works.present? && @works.total_pages > 1
     .mb-3.text-center
       = paginate @works
-
-  .container
-    = render "application/components/breadcrumb"
 
 - content_for :js_templates do
   = render "application/js_templates/omitted_synopsis"

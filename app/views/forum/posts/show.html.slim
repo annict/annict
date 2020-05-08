@@ -1,6 +1,5 @@
 - title = "#{t('head.title.forum.posts.show', title: @post.title)} - Forum"
 - set_meta_tags(title: title, reverse: true, prefix: false)
-- breadcrumb :forum_post_detail, @post
 
 = render "partial_layouts/default" do
   = render "forum/application/subnav", post: @post
@@ -54,8 +53,6 @@
         .c-card.p-3.mb-3
           = render "forum/comments/form", comment: @comment
       .col-4
-
-    = render "application/components/breadcrumb"
 
 - content_for :js_templates
   = render "application/js_templates/forum_edit_link"

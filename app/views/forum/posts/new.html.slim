@@ -1,12 +1,9 @@
 - title = "#{t('head.title.forum.posts.new')} - Forum"
 - set_meta_tags(title: title, og: { title: title }, reverse: true, prefix: false)
 
-- breadcrumb :forum_new_post, @post
-
 = render "partial_layouts/default" do
   = render "forum/application/subnav", post: @post
 
   .container.py-3.mb-3
-    = render "application/components/breadcrumb"
     .c-card.p-3
       = render "forum/posts/form", post: @post

@@ -1,11 +1,8 @@
 - title = t "head.title.userland.home.index"
 - set_meta_tags(title: title, reverse: true, prefix: false)
 
-- breadcrumb :userland_root
-
 = render "partial_layouts/default" do
   .container.py-3.mb-3
-    = render "application/components/breadcrumb"
     .row
       .col-8
         - @categories.each do |category|

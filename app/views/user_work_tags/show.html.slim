@@ -1,8 +1,6 @@
 - title = t "head.title.user_work_tags.show", profile_name: @user.profile.name, username: @user.username, tag_name: @tag.name
 - set_meta_tags(title: title, reverse: true, prefix: false)
 
-- breadcrumb :user_work_tag_detail, @user, @tag
-
 = render "partial_layouts/default", page_category: "user-work-tag-detail" do
   .container.py-3
     .row
@@ -56,8 +54,6 @@
                 | (
                 = link_to "@#{@user.username}", profile_path(username: @user.username)
                 | )
-
-    = render "application/components/breadcrumb"
 
 c-impression-button-modal
 

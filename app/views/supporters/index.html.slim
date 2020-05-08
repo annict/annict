@@ -1,11 +1,6 @@
 - title = t "head.title.supporters.index"
 - set_meta_tags(title: title, reverse: true, prefix: false)
 
-- breadcrumb :supporters_index
-
 = render "partial_layouts/default" do
   .c-card.u-mw-600.mx-auto.p-3.my-3
     = render "index_body"
-
-  .container
-    = render "application/components/breadcrumb"

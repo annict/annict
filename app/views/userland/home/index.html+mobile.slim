@@ -1,8 +1,6 @@
 - title = t "head.title.userland.home.index"
 - set_meta_tags(title: title, reverse: true, prefix: false)
 
-- breadcrumb :userland_root
-
 = render "partial_layouts/default" do
   .mb-3
     .container.mt-3
@@ -30,5 +28,3 @@
                     = project.summary
         - else
           = render "application/components/empty", text: t("messages._empty.no_projects")
-
-  = render "application/components/breadcrumb"

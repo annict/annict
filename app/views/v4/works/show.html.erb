@@ -2,7 +2,6 @@
 <% description = meta_description(t("head.meta.description.works.show", title: @work.local_title)) %>
 <% image_url = @work.image_url_1x %>
 <% set_meta_tags(title: title, description: description, og: { description: description, image: image_url }, twitter: { description: description, image: image_url }, reverse: true, prefix: false) %>
-<% breadcrumb :work_detail_v4, @work %>
 
 <%= render "partial_layouts/default", page_category: "work-detail" do %>
   <div class="container-fluid py-3">

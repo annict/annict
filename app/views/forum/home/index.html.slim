@@ -1,6 +1,5 @@
 - title = t "head.title.forum.home.index"
 - set_meta_tags(title: title, reverse: true, prefix: false)
-- breadcrumb :forum_root
 
 = render "partial_layouts/default" do
   = render "forum/application/subnav"
@@ -18,5 +17,3 @@
     - if @posts.present?
       .text-center.mt-3
         = paginate @posts
-
-    = render "application/components/breadcrumb"

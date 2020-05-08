@@ -1,8 +1,6 @@
 - title = t "head.title.notifications.index"
 - set_meta_tags(title: title, reverse: true, prefix: false)
 
-- breadcrumb :notifications_index
-
 = render "partial_layouts/default" do
   .c-card.container.my-3.u-mw-600
     - if @notifications.present?
@@ -12,6 +10,3 @@
       = render "application/components/empty", text: t("messages.notifications.no_notifications")
   .text-center
     = paginate @notifications
-
-  .container
-    = render "application/components/breadcrumb"

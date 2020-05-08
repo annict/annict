@@ -4,8 +4,6 @@
 - image_url = ann_image_url(@work.work_image, :image, size: "640x", ratio: "3:4")
 - set_meta_tags(title: title, description: description, keywords: keywords, og: { description: description, image: image_url }, twitter: { description: description, image: image_url }, reverse: true, prefix: false)
 
-- breadcrumb :work_record_detail, @work_record
-
 = render "partial_layouts/default", page_category: "record-detail" do
   .c-card.container.pt-3.mb-3
     = render "works/work_info", work: @work
@@ -33,5 +31,3 @@
               .small
                 = link_to record_path(work_record.user.username, work_record), title: local_datetime(work_record.created_at), class: "u-text-body" do
                   = local_time_ago_in_words(work_record.created_at)
-
-  = render "application/components/breadcrumb"

@@ -1,8 +1,6 @@
 - title = "#{t('head.title.forum.categories.show', name: @category.local_name)} - Forum"
 - set_meta_tags(title: title, reverse: true, prefix: false)
 
-- breadcrumb :forum_category_detail, @category
-
 = render "partial_layouts/default" do
   .p-3
     .row.align-items-center
@@ -22,5 +20,3 @@
   - if @posts.total_pages > 1
     .text-center.mb-3
       = paginate @posts
-
-  = render "application/components/breadcrumb"

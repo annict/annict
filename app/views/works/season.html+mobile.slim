@@ -2,7 +2,6 @@
 - description = meta_description(t("head.meta.description.works.season", name: @season.local_name))
 - keywords = meta_keywords(@season.local_name)
 - set_meta_tags(title: title, description: description, keywords: keywords, og: { description: description }, reverse: true, prefix: false)
-- breadcrumb :seasonal_works, @season.slug, @season.local_name
 
 = render "partial_layouts/default", page_category: "work-list" do
   h1.h2.text-center.my-3
@@ -35,8 +34,6 @@
   - if @works.present? && @works.total_pages > 1
     .mb-3.text-center
       = paginate @works, window: 2
-
-  = render "application/components/breadcrumb"
 
 - content_for :js_templates do
   = render "application/js_templates/omitted_synopsis"

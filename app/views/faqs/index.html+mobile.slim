@@ -1,8 +1,6 @@
 - title = t "head.title.faqs.index"
 - set_meta_tags(title: title, reverse: true, prefix: false)
 
-- breadcrumb :faq_list
-
 = render "partial_layouts/default" do
   .mb-3
     - @faq_categories.each do |category|
@@ -19,5 +17,3 @@
                 .collapse id="collapse#{content.id}"
                   .card-block.p-3
                     == render_markdown content.answer
-
-  = render "application/components/breadcrumb"
