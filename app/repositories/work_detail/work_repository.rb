@@ -154,7 +154,7 @@ module WorkDetail
     private
 
     def query
-      load_query "work_detail/fetch_work.graphql"
+      load_query "work_detail/work.graphql"
     end
   end
 end

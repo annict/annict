@@ -20,7 +20,7 @@ module WorkDetail
     private
 
     def query
-      load_query "work_detail/fetch_vod_channels.graphql"
+      load_query "work_detail/vod_channels.graphql"
     end
   end
 end

@@ -33,7 +33,7 @@ module UserDetail
     private
 
     def query
-      load_query "profile/fetch_user.graphql"
+      load_query "profile/user.graphql"
     end
 
     def character_favorites(nodes)
