@@ -42,6 +42,10 @@ module ApplicationHelper
       facebook: {
         appId: ENV.fetch("FACEBOOK_APP_ID")
       },
+      flash: {
+        type: flash.keys.first,
+        message: flash[flash.keys.first]
+      },
       i18n: {
         noun: {
           share: t("noun.share"),

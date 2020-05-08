@@ -1,5 +1,6 @@
 import Vue from 'vue';
 
+import flash from './components/flash';
 import likeButton from './components/likeButton';
 import ratingLabel from './components/ratingLabel';
 import shareToFacebookButton from './components/shareToFacebookButton';
@@ -18,6 +19,7 @@ export default {
       el: '.ann-application',
 
       components: {
+        'c-flash': flash,
         'c-like-button': likeButton,
         'c-rating-label': ratingLabel,
         'c-share-to-facebook-button': shareToFacebookButton,

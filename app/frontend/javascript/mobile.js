@@ -24,7 +24,6 @@ import commentGuard from './common/components/commentGuard';
 import episodeList from './common/components/episodeList';
 import episodeProgress from './common/components/episodeProgress';
 import favoriteButton from './common/components/favoriteButton';
-import flash from './common/components/flash';
 import forumEditLink from './common/components/forumEditLink';
 import followButton from './common/components/followButton';
 import impressionButton from './common/components/impressionButton';
@@ -50,6 +49,7 @@ import workFriends from './common/components/workFriends';
 import workTags from './common/components/workTags';
 import youtubeModalPlayer from './common/components/youtubeModalPlayer';
 
+import flash from './web/components/flash';
 import likeButton from './web/components/likeButton';
 import ratingLabel from './web/components/ratingLabel';
 import shareToTwitterButton from './web/components/shareToTwitterButton';

@@ -1,12 +1,22 @@
 import eventHub from '../../common/eventHub';
 
 export default {
-  template: '#t-flash',
+  template: `
+    <div :class="alertClass" class="alert alert-dismissible align-content-center d-flex mb-0" v-if="show">
+      <i :class="alertIcon" class="far h2 mb-0 mr-2"></i>
+
+      <span v-html="message"></span>
+
+      <button aria-label="Close" class="close" data-dismiss="alert" type="button">
+        <i aria-hidden="true" class="fas fa-times"></i>
+      </button>
+    </div>
+  `,
 
   data() {
     return {
-      type: gon.flash.type || '',
-      message: gon.flash.message || '',
+      type: AnnConfig.flash?.type || '',
+      message: AnnConfig.flash?.message || '',
     };
   },
 
@@ -14,6 +24,7 @@ export default {
     show() {
       return !!this.message;
     },
+
     alertClass() {
       switch (this.type) {
         case 'notice':
@@ -22,6 +33,7 @@ export default {
           return 'alert-danger';
       }
     },
+
     alertIcon() {
       switch (this.type) {
         case 'notice':
@@ -34,38 +46,17 @@ export default {
 
   methods: {
     close() {
-      return (this.message = '');
+      this.message = '';
     },
   },
 
   created() {
     eventHub.$on('flash:show', (message, type) => {
-      if (type == null) {
+      if (!type) {
         type = 'notice';
       }
       this.message = message;
       this.type = type;
-      return setTimeout(() => {
-        return this.close();
-      }, 6000);
     });
-
-    eventHub.$on('app:loaded', () => {
-      const appData = this.$root.appData;
-
-      if (!appData.flash || !appData.flash.type) {
-        return;
-      }
-
-      eventHub.$emit('flash:show', appData.flash.message, appData.flash.type);
-    });
-  },
-
-  mounted() {
-    if (this.show) {
-      return setTimeout(() => {
-        return this.close();
-      }, 6000);
-    }
   },
 };
