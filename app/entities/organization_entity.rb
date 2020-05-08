@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class PersonEntity < ApplicationEntity
+class OrganizationEntity < ApplicationEntity
   local_attributes :name
 
   attribute? :id, Types::Integer

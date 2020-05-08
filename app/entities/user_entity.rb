@@ -20,6 +20,10 @@ class UserEntity < ApplicationEntity
   attribute? :person_favorites_count, Types::Integer
   attribute? :organization_favorites_count, Types::Integer
   attribute? :created_at, Types::Params::Time
+  attribute? :character_favorites, Types::Array.of(CharacterFavoriteEntity)
+  attribute? :cast_favorites, Types::Array.of(PersonFavoriteEntity)
+  attribute? :staff_favorites, Types::Array.of(PersonFavoriteEntity)
+  attribute? :organization_favorites, Types::Array.of(OrganizationFavoriteEntity)
 
   def days_from_started(time_zone)
     ((Time.zone.now.in_time_zone(time_zone) - created_at.in_time_zone(time_zone)) / 86_400).ceil

@@ -15,9 +15,10 @@ query($username: String!) {
     personFavoritesCount
     organizationFavoritesCount
     createdAt
-    characterFavorites(orderBy: { field: CREATED_AT, direction: DESC }, first: 6) {
+    characterFavorites(orderBy: { field: CREATED_AT, direction: DESC }, first: 7) {
       nodes {
         character {
+          annictId
           name
           nameEn
           series {
@@ -27,18 +28,20 @@ query($username: String!) {
         }
       }
     }
-    castFavorites(orderBy: { field: CREATED_AT, direction: DESC }, first: 6) {
+    castFavorites(orderBy: { field: CREATED_AT, direction: DESC }, first: 7) {
       nodes {
         person {
+          annictId
           name
           nameEn
         }
         watchedWorksCount
       }
     }
-    staffFavorites(orderBy: { field: CREATED_AT, direction: DESC }, first: 6) {
+    staffFavorites(orderBy: { field: CREATED_AT, direction: DESC }, first: 7) {
       nodes {
         person {
+          annictId
           name
           nameEn
         }
@@ -48,6 +51,7 @@ query($username: String!) {
     organizationFavorites(orderBy: { field: CREATED_AT, direction: DESC }, first: 6) {
       nodes {
         organization {
+          annictId
           name
           nameEn
         }
