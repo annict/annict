@@ -10,9 +10,9 @@
         = link_to t("messages.user_work_tags.anime_list_tagged", tag_name: @tag.name), user_work_tag_path(@user.username, @tag.name), class: "u-text-body"
       .small
         span.mr-1 by
-        = link_to @user.profile.name, user_path(username: @user.username), class: "mr-1"
+        = link_to @user.profile.name, profile_path(username: @user.username), class: "mr-1"
         | (
-        = link_to "@#{@user.username}", user_path(username: @user.username)
+        = link_to "@#{@user.username}", profile_path(username: @user.username)
         | )
       / - if @collection.description.present?
       /   = @collection.description

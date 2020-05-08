@@ -1,11 +1,11 @@
 .row
   .col-auto.pl-3.pr-0
-    = link_to user_path(work_record.user.username) do
+    = link_to profile_path(work_record.user.username) do
       = ann_image_tag work_record.user.profile, :image, size: "50x50", class: "rounded-circle"
   .col
     .mb-3
       .text-left
-        = link_to work_record.user.profile.name, user_path(work_record.user.username)
+        = link_to work_record.user.profile.name, profile_path(work_record.user.username)
         - if work_record.user.supporter? && !work_record.user.setting.hide_supporter_badge?
           span.badge.u-badge-supporter.ml-1
             = t "noun.supporter"

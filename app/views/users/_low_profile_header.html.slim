@@ -4,10 +4,10 @@
     .container
       .row
         .col.u-flex-grow-0
-          = link_to user_path(username: user.username) do
+          = link_to profile_path(username: user.username) do
             = ann_image_tag(user.profile, :image, size: "80x80", class: "p-profile-header__avatar rounded-circle")
         .col.pt-2.pl-0
           h1
-            = link_to user.profile.name, user_path(username: user.username), class: "font-weight-bold text-white"
+            = link_to user.profile.name, profile_path(username: user.username), class: "font-weight-bold text-white"
           .mt-2
-            = link_to "@#{user.username}", user_path(username: user.username), class: "text-white"
+            = link_to "@#{user.username}", profile_path(username: user.username), class: "text-white"

@@ -6,7 +6,7 @@
   - if user_signed_in?
     .row
       .col-4.text-center.mb-5
-        = link_to user_path(current_user.username) do
+        = link_to profile_path(current_user.username) do
           .h1.mb-1.text-primary
             = icon "user"
           .small.u-text-body

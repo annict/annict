@@ -13,10 +13,10 @@
   .c-card.p-3.mb-3
     .row.mb-3
       .col.col-auto.pr-0
-        = link_to user_path(@post.user.username) do
+        = link_to profile_path(@post.user.username) do
           = ann_image_tag @post.user.profile, :image, size: "45x45", class: "rounded-circle"
       .col.pl-2
-        = link_to @post.user.profile.name, user_path(@post.user.username), class: "mr-2"
+        = link_to @post.user.profile.name, profile_path(@post.user.username), class: "mr-2"
         = @post.user.role_badge
         .mt-1
           = link_to forum_post_path(@post), class: "small text-muted", title: display_time(@post.created_at) do
@@ -33,10 +33,10 @@
           .u-underline.py-3
             .row.mb-3
               .col.col-auto.pr-0
-                = link_to user_path(comment.user.username) do
+                = link_to profile_path(comment.user.username) do
                   = ann_image_tag comment.user.profile, :image, size: "45x45", class: "rounded-circle"
               .col.pl-2
-                = link_to comment.user.profile.name, user_path(comment.user.username), class: "mr-2"
+                = link_to comment.user.profile.name, profile_path(comment.user.username), class: "mr-2"
                 = comment.user.role_badge
                 .mt-1
                   span.small.text-muted title="#{display_time(comment.created_at)}"

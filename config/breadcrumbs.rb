@@ -112,7 +112,7 @@ crumb :supporters_index do
 end
 
 crumb :user_detail do |user|
-  link user.profile.name, user_path(user.username)
+  link user.profile.name, profile_path(user.username)
   parent :root
 end
 

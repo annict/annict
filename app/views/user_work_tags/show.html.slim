@@ -13,9 +13,9 @@
               = link_to t("messages.user_work_tags.anime_list_tagged", tag_name: @tag.name), user_work_tag_path(@user.username, @tag.name), class: "u-text-body"
             .small
               span.mr-1 by
-              = link_to @user.profile.name, user_path(username: @user.username), class: "mr-1"
+              = link_to @user.profile.name, profile_path(username: @user.username), class: "mr-1"
               | (
-              = link_to "@#{@user.username}", user_path(username: @user.username)
+              = link_to "@#{@user.username}", profile_path(username: @user.username)
               | )
             / - if @taggable.description.present?
             /   = @taggable.description
@@ -48,13 +48,13 @@
         .c-card.container.py-3
           .row.align-items-center
             .col.col-auto
-              = link_to user_path(username: @user.username) do
+              = link_to profile_path(username: @user.username) do
                 = ann_image_tag(@user.profile, :image, size: "65x65", class: "img-thumbnail rounded-circle")
             .col.pl-0
               .text-left
-                = link_to @user.profile.name, user_path(username: @user.username), class: "mr-1"
+                = link_to @user.profile.name, profile_path(username: @user.username), class: "mr-1"
                 | (
-                = link_to "@#{@user.username}", user_path(username: @user.username)
+                = link_to "@#{@user.username}", profile_path(username: @user.username)
                 | )
 
     = render "application/components/breadcrumb"
