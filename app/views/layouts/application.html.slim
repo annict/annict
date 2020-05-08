@@ -11,9 +11,6 @@ html lang="#{I18n.locale}"
       - if show_privacy_policy_modal?
         c-privacy-policy-modal :hide="#{params[:hide_privacy_policy_modal] == 'true'}"
 
-      - if !user_signed_in? && !page_category.in?(%w(sessions_new registrations_new))
-        = render "application/components/sign_up_modal", user: @new_user
-
       = render "application/analytics"
 
     = render "application/font_awesome"

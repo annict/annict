@@ -59,6 +59,7 @@ import ratingLabel from './web/components/ratingLabel';
 import shareToFacebookButton from './web/components/shareToFacebookButton';
 import shareToTwitterButton from './web/components/shareToTwitterButton';
 import sidebar from './web/components/sidebar';
+import signUpModal from './web/components/signUpModal';
 import statusSelector from './web/components/statusSelector';
 import tabBar from './web/components/tabBar';
 import userDataFetcher from './web/components/userDataFetcher';
@@ -118,6 +119,7 @@ document.addEventListener('turbolinks:load', (event) => {
   Vue.component('c-share-button-facebook', shareToFacebookButton);
   Vue.component('c-share-button-twitter', shareToTwitterButton);
   Vue.component('c-sidebar', sidebar);
+  Vue.component('c-sign-up-modal', signUpModal);
   Vue.component('c-status-selector', statusSelector);
   Vue.component('c-sticky-message', stickyMessage);
   Vue.component('c-tab-bar', tabBar);
