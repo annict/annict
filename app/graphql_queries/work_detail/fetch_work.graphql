@@ -107,7 +107,7 @@ query($annictId: Int!) {
             username
             name
             avatarUrl(size: size50)
-            isSupporter
+            displaySupporterBadge
           }
           record {
             annictId

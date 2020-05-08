@@ -122,7 +122,7 @@ module WorkDetail
             username: child_node.dig("user", "username"),
             name: child_node.dig("user", "name"),
             avatar_url: child_node.dig("user", "avatarUrl"),
-            is_supporter: child_node.dig("user", "isSupporter")
+            display_supporter_badge: child_node.dig("user", "displaySupporterBadge")
           },
           record: {
             id: child_node.dig("record", "annictId")

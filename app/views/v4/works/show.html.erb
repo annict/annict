@@ -463,7 +463,7 @@
                         <%= link_to profile_path(work_record.user.username) do %>
                           <%= work_record.user.name %>
                         <% end %>
-                        <% if work_record.user.is_supporter %>
+                        <% if work_record.user.display_supporter_badge %>
                         <span class="badge u-badge-supporter ml-1">
                           <%= t "noun.supporter" %>
                         </span>
