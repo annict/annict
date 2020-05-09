@@ -127,10 +127,6 @@ class EpisodeRecord < ApplicationRecord
     SecureRandom.urlsafe_base64.slice(0, 10)
   end
 
-  def work
-    episode.work
-  end
-
   def setup_shared_sns(user)
     self.shared_twitter =
       user.twitter.present? &&
