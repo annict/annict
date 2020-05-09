@@ -21,6 +21,7 @@
 #  twitter_url_hash           :string(510)
 #  created_at                 :datetime
 #  updated_at                 :datetime
+#  activity_id                :bigint
 #  episode_id                 :bigint           not null
 #  multiple_episode_record_id :bigint
 #  oauth_application_id       :bigint
@@ -34,6 +35,7 @@
 #  checkins_facebook_url_hash_key                       (facebook_url_hash) UNIQUE
 #  checkins_twitter_url_hash_key                        (twitter_url_hash) UNIQUE
 #  checkins_user_id_idx                                 (user_id)
+#  index_episode_records_on_activity_id                 (activity_id)
 #  index_episode_records_on_episode_id_and_deleted_at   (episode_id,deleted_at)
 #  index_episode_records_on_locale                      (locale)
 #  index_episode_records_on_multiple_episode_record_id  (multiple_episode_record_id)
@@ -48,6 +50,7 @@
 #  checkins_episode_id_fk  (episode_id => episodes.id) ON DELETE => cascade
 #  checkins_user_id_fk     (user_id => users.id) ON DELETE => cascade
 #  checkins_work_id_fk     (work_id => works.id)
+#  fk_rails_...            (activity_id => activities.id)
 #  fk_rails_...            (multiple_episode_record_id => multiple_episode_records.id)
 #  fk_rails_...            (oauth_application_id => oauth_applications.id)
 #  fk_rails_...            (record_id => records.id)

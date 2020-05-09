@@ -6,6 +6,7 @@
 #  id                         :bigint           not null, primary key
 #  action                     :string(510)      not null
 #  recipient_type             :string(510)      not null
+#  resources_count            :integer          default(0), not null
 #  trackable_type             :string(510)      not null
 #  created_at                 :datetime
 #  updated_at                 :datetime
@@ -60,7 +61,24 @@ class Activity < ApplicationRecord
   belongs_to :user
   belongs_to :work, optional: true
 
+  has_many :episode_records, dependent: :nullify
+  has_many :statuses, dependent: :nullify
+  has_many :work_records, dependent: :nullify
+
   scope :records_and_reviews, -> { with_action(:create_episode_record, :create_work_record, :create_multiple_episode_records) }
+
+  def resources
+    case action
+    when "create_status"
+      statuses
+    when "create_episode_record"
+      episode_records
+    when "create_work_record"
+      work_records
+    else
+      []
+    end
+  end
 
   def deprecated_action
     case action

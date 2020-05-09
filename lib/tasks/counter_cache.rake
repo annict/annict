@@ -17,6 +17,7 @@ namespace :counter_cache do
 
   task refresh_all: :environment do
     [
+      :refresh_on_activities,
       :refresh_on_characters,
       :refresh_on_episode_records,
       :refresh_on_episodes,
@@ -34,6 +35,26 @@ namespace :counter_cache do
     ].each do |task_name|
       puts "============== #{task_name} =============="
       Rake::Task["counter_cache:#{task_name}"].invoke
+    end
+  end
+
+  task refresh_on_activities: :environment do
+    clear_readonly_attributes!(Activity)
+
+    Activity.find_each do |activity|
+      resources_count = activity.resources.count
+
+      next if activity.resources_count == resources_count
+
+      puts [
+        "Activity: #{activity.id}",
+        "resources_count: #{activity.resources_count} -> #{resources_count}"
+      ].join(", ")
+
+      activity.update_columns(
+        resources_count: resources_count,
+        updated_at: Time.zone.now
+      )
     end
   end
 

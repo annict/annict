@@ -70,7 +70,8 @@ CREATE TABLE public.activities (
     status_id bigint,
     episode_record_id bigint,
     multiple_episode_record_id bigint,
-    work_record_id bigint
+    work_record_id bigint,
+    resources_count integer DEFAULT 0 NOT NULL
 );
 
 
@@ -648,7 +649,8 @@ CREATE TABLE public.episode_records (
     aasm_state character varying DEFAULT 'published'::character varying NOT NULL,
     locale character varying DEFAULT 'other'::character varying NOT NULL,
     record_id bigint NOT NULL,
-    deleted_at timestamp without time zone
+    deleted_at timestamp without time zone,
+    activity_id bigint
 );
 
 
@@ -2100,7 +2102,8 @@ CREATE TABLE public.statuses (
     likes_count integer DEFAULT 0 NOT NULL,
     created_at timestamp with time zone,
     updated_at timestamp with time zone,
-    oauth_application_id bigint
+    oauth_application_id bigint,
+    activity_id bigint
 );
 
 
@@ -2608,7 +2611,8 @@ CREATE TABLE public.work_records (
     oauth_application_id bigint,
     locale character varying DEFAULT 'other'::character varying NOT NULL,
     record_id bigint NOT NULL,
-    deleted_at timestamp without time zone
+    deleted_at timestamp without time zone,
+    activity_id bigint
 );
 
 
@@ -4292,6 +4296,13 @@ CREATE UNIQUE INDEX index_email_notifications_on_user_id ON public.email_notific
 
 
 --
+-- Name: index_episode_records_on_activity_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_episode_records_on_activity_id ON public.episode_records USING btree (activity_id);
+
+
+--
 -- Name: index_episode_records_on_episode_id_and_deleted_at; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -5118,6 +5129,13 @@ CREATE INDEX index_staffs_on_work_id ON public.staffs USING btree (work_id);
 
 
 --
+-- Name: index_statuses_on_activity_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_statuses_on_activity_id ON public.statuses USING btree (activity_id);
+
+
+--
 -- Name: index_statuses_on_oauth_application_id; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -5311,6 +5329,13 @@ CREATE INDEX index_work_images_on_user_id ON public.work_images USING btree (use
 --
 
 CREATE INDEX index_work_images_on_work_id ON public.work_images USING btree (work_id);
+
+
+--
+-- Name: index_work_records_on_activity_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_work_records_on_activity_id ON public.work_records USING btree (activity_id);
 
 
 --
@@ -5733,6 +5758,14 @@ ALTER TABLE ONLY public.character_images
 
 ALTER TABLE ONLY public.comments
     ADD CONSTRAINT fk_rails_09d346abb6 FOREIGN KEY (work_id) REFERENCES public.works(id);
+
+
+--
+-- Name: episode_records fk_rails_0a68515ca3; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.episode_records
+    ADD CONSTRAINT fk_rails_0a68515ca3 FOREIGN KEY (activity_id) REFERENCES public.activities(id);
 
 
 --
@@ -6256,6 +6289,14 @@ ALTER TABLE ONLY public.works
 
 
 --
+-- Name: work_records fk_rails_c0d7b05359; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.work_records
+    ADD CONSTRAINT fk_rails_c0d7b05359 FOREIGN KEY (activity_id) REFERENCES public.activities(id);
+
+
+--
 -- Name: forum_posts fk_rails_c76798dc77; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -6285,6 +6326,14 @@ ALTER TABLE ONLY public.character_images
 
 ALTER TABLE ONLY public.forum_comments
     ADD CONSTRAINT fk_rails_ce6ed0c47a FOREIGN KEY (user_id) REFERENCES public.users(id);
+
+
+--
+-- Name: statuses fk_rails_cfe6573a76; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.statuses
+    ADD CONSTRAINT fk_rails_cfe6573a76 FOREIGN KEY (activity_id) REFERENCES public.activities(id);
 
 
 --
