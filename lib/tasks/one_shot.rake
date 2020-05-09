@@ -37,34 +37,4 @@ namespace :one_shot do
       end
     end
   end
-
-  task update_counter_cache: :environment do
-    [
-      [CharacterFavorite, :character_favorites_count, :character_favorites],
-      [OrganizationFavorite, :organization_favorites_count, :organization_favorites],
-      [PersonFavorite, :person_favorites_count, :person_favorites]
-    ].each do |(model, field, assoc)|
-      User.only_kept.where(id: model.select(:user_id).distinct).find_each do |user|
-        puts "#{model.name} > user: #{user.id}"
-        user.update_column(field, user.send(assoc).size)
-      end
-    end
-
-    User.only_kept.find_each do |user|
-      puts "LibraryEntry > user: #{user.id}"
-
-      [
-        %i(plan_to_watch_works_count wanna_watch),
-        %i(watching_works_count watching),
-        %i(completed_works_count watched),
-        %i(on_hold_works_count on_hold),
-        %i(dropped_works_count stop_watching)
-      ].each do |(counter_field, status_kind)|
-        user.update_column(counter_field, user.library_entries.count_on(status_kind))
-      end
-
-      user.update_column(:following_count, user.followings.only_kept.count)
-      user.update_column(:followers_count, user.followers.only_kept.count)
-    end
-  end
 end

@@ -261,25 +261,65 @@ namespace :counter_cache do
     clear_readonly_attributes!(User)
 
     User.only_kept.find_each do |user|
+      character_favorites_count = user.character_favorites.count
+      completed_works_count = user.library_entries.count_on(:watched)
+      dropped_works_count = user.library_entries.count_on(:stop_watching)
       episode_records_count = user.episode_records.only_kept.count
+      followers_count = user.followers.only_kept.count
+      following_count = user.followings.only_kept.count
       notifications_count = user.notifications.unread.count
+      on_hold_works_count = user.library_entries.count_on(:on_hold)
+      organization_favorites_count = user.organization_favorites.count
+      person_favorites_count = user.person_favorites.count
+      plan_to_watch_works_count = user.library_entries.count_on(:wanna_watch)
       records_count = user.records.only_kept.count
+      watching_works_count = user.library_entries.count_on(:watching)
 
-      next if user.episode_records_count == episode_records_count &&
+      next if user.character_favorites_count == character_favorites_count &&
+        user.completed_works_count == completed_works_count &&
+        user.dropped_works_count == dropped_works_count &&
+        user.episode_records_count == episode_records_count &&
+        user.followers_count == followers_count &&
+        user.following_count == following_count &&
         user.notifications_count == notifications_count &&
-        user.records_count == records_count
+        user.on_hold_works_count == on_hold_works_count &&
+        user.organization_favorites_count == organization_favorites_count &&
+        user.person_favorites_count == person_favorites_count &&
+        user.plan_to_watch_works_count == plan_to_watch_works_count &&
+        user.records_count == records_count &&
+        user.watching_works_count == watching_works_count
 
       puts [
         "User: #{user.id}",
+        "character_favorites_count: #{user.character_favorites_count} -> #{character_favorites_count}",
+        "completed_works_count: #{user.completed_works_count} -> #{completed_works_count}",
+        "dropped_works_count: #{user.dropped_works_count} -> #{dropped_works_count}",
         "episode_records_count: #{user.episode_records_count} -> #{episode_records_count}",
+        "followers_count: #{user.followers_count} -> #{followers_count}",
+        "following_count: #{user.following_count} -> #{following_count}",
         "notifications_count: #{user.notifications_count} -> #{notifications_count}",
-        "records_count: #{user.records_count} -> #{records_count}"
+        "on_hold_works_count: #{user.on_hold_works_count} -> #{on_hold_works_count}",
+        "organization_favorites_count: #{user.organization_favorites_count} -> #{organization_favorites_count}",
+        "person_favorites_count: #{user.person_favorites_count} -> #{person_favorites_count}",
+        "plan_to_watch_works_count: #{user.plan_to_watch_works_count} -> #{plan_to_watch_works_count}",
+        "records_count: #{user.records_count} -> #{records_count}",
+        "watching_works_count: #{user.watching_works_count} -> #{watching_works_count}"
       ].join(", ")
 
       user.update_columns(
+        character_favorites_count: character_favorites_count,
+        completed_works_count: completed_works_count,
+        dropped_works_count: dropped_works_count,
         episode_records_count: episode_records_count,
+        followers_count: followers_count,
+        following_count: following_count,
         notifications_count: notifications_count,
+        on_hold_works_count: on_hold_works_count,
+        organization_favorites_count: organization_favorites_count,
+        person_favorites_count: person_favorites_count,
+        plan_to_watch_works_count: plan_to_watch_works_count,
         records_count: records_count,
+        watching_works_count: watching_works_count,
         updated_at: Time.zone.now
       )
     end
