@@ -72,9 +72,6 @@ GEM
       activerecord (>= 4.2)
     addressable (2.7.0)
       public_suffix (>= 2.0.2, < 5.0)
-    after_commit_action (1.1.0)
-      activerecord (>= 3.0.0)
-      activesupport (>= 3.0.0)
     annotate (3.1.1)
       activerecord (>= 3.2, < 7.0)
       rake (>= 10.4, < 14.0)
@@ -141,10 +138,6 @@ GEM
       ruby-enum (~> 0.5)
     concurrent-ruby (1.1.6)
     content_disposition (1.0.0)
-    counter_culture (2.3.0)
-      activerecord (>= 4.2)
-      activesupport (>= 4.2)
-      after_commit_action (~> 1.0)
     crass (1.0.6)
     debug_inspector (0.0.3)
     delayed_job (4.1.8)
@@ -655,7 +648,6 @@ DEPENDENCIES
   capybara
   cld
   commonmarker
-  counter_culture
   delayed_job_active_record
   derailed_benchmarks
   devise
