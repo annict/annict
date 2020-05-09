@@ -14,5 +14,7 @@ class ChangeSchemaForUserDetail202005 < ActiveRecord::Migration[6.0]
 
     add_column :users, :following_count, :integer, null: false, default: 0
     add_column :users, :followers_count, :integer, null: false, default: 0
+
+    rename_column :works, :auto_episodes_count, :episodes_count
   end
 end

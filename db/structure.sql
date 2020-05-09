@@ -2757,7 +2757,7 @@ CREATE TABLE public.works (
     media integer NOT NULL,
     official_site_url character varying(510) DEFAULT ''::character varying NOT NULL,
     wikipedia_url character varying(510) DEFAULT ''::character varying NOT NULL,
-    auto_episodes_count integer DEFAULT 0 NOT NULL,
+    episodes_count integer DEFAULT 0 NOT NULL,
     watchers_count integer DEFAULT 0 NOT NULL,
     released_at date,
     created_at timestamp with time zone,
