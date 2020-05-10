@@ -4,9 +4,6 @@ class HomeController < ApplicationController
   before_action :load_i18n, only: %i(show)
 
   def show
-    @tips = current_user.tips.unfinished.with_locale(current_user.locale)
-    tips_data = render_jb("home/_tips", tips: @tips.limit(3))
-
     library_entries = TrackableService.new(current_user).library_entries
     library_entry_data = render_jb "api/internal/library_entries/index",
       user: current_user,
@@ -32,7 +29,6 @@ class HomeController < ApplicationController
     end
 
     gon.push(
-      tipsData: tips_data,
       latestStatusData: library_entry_data,
       activityData: activity_data
     )

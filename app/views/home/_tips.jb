@@ -1,9 +1,0 @@
-# frozen_string_literal: true
-
-@tips.map do |tip|
-  {
-    slug: tip.slug,
-    icon_name: tip.icon_name,
-    title: tip.title
-  }
-end

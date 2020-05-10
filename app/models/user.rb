@@ -100,7 +100,6 @@ class User < ApplicationRecord
   has_many :episode_records, dependent: :destroy
   has_many :db_activities, dependent: :destroy
   has_many :db_comments, dependent: :destroy
-  has_many :finished_tips, dependent: :destroy
   has_many :follows, dependent: :destroy
   has_many :followings, through: :follows
   has_many :forum_post_participants, dependent: :destroy
@@ -184,10 +183,6 @@ class User < ApplicationRecord
 
   def works_on(*status_kinds)
     Work.joins(:library_entries).merge(library_entries.with_status(*status_kinds))
-  end
-
-  def tips
-    @tips ||= UserTipsQuery.new(self)
   end
 
   def social_friends

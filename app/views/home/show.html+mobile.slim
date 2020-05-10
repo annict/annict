@@ -3,10 +3,6 @@
 
 = render "partial_layouts/v2/default" do
   .mt-3
-    - if @tips.present?
-      .c-card.mb-3
-        = render "tips"
-
     .container.mb-3
       = render "home/subnav"
 
@@ -17,4 +13,3 @@
 
 - content_for :js_templates
   = render "application/js_templates/untracked_episode_list"
-  = render "application/js_templates/tips"

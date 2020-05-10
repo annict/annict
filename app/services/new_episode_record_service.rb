@@ -25,7 +25,6 @@ class NewEpisodeRecordService
 
     @episode_record.share_to_sns
     save_activity
-    finish_tips
     create_ga_event
 
     true
@@ -36,10 +35,6 @@ class NewEpisodeRecordService
   def save_activity
     return if @episode_record.multiple_episode_record.present?
     CreateEpisodeRecordActivityJob.perform_later(@user.id, @episode_record.id)
-  end
-
-  def finish_tips
-    FinishUserTipsJob.perform_later(@user, "record") if @user.episode_records.initial?(@episode_record)
   end
 
   def update_library_entry

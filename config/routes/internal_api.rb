@@ -42,10 +42,6 @@ namespace :api do
 
     resources :multiple_records, only: %i(create)
 
-    resources :tips, only: [] do
-      post :close, on: :collection
-    end
-
     resources :reactions, only: [] do
       post :add, on: :collection
       post :remove, on: :collection

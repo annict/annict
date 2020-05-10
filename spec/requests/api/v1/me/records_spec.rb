@@ -6,7 +6,6 @@ describe "Api::V1::Me::Records" do
   let(:access_token) { create(:oauth_access_token, application: application) }
   let(:work) { create(:work, :with_current_season) }
   let(:episode) { create(:episode, work: work) }
-  let!(:tip) { create(:record_tip) }
 
   describe "POST /v1/me/records" do
     before do

@@ -41,7 +41,6 @@ import recordSorter from './common/components/recordSorter';
 import recordTextarea from './common/components/recordTextarea';
 import recordWordCount from './common/components/recordWordCount';
 import timeAgo from './common/components/timeAgo';
-import tips from './common/components/tips';
 import untrackedEpisodeList from './common/components/untrackedEpisodeList';
 import userHeatmap from './common/components/userHeatmap';
 import usernamePreview from './common/components/usernamePreview';
@@ -114,7 +113,6 @@ document.addEventListener('turbolinks:load', (event) => {
   Vue.component('c-status-selector', statusSelector);
   Vue.component('c-tab-bar', tabBar);
   Vue.component('c-time-ago', timeAgo);
-  Vue.component('c-tips', tips);
   Vue.component('c-untracked-episode-list', untrackedEpisodeList);
   Vue.component('c-user-data-fetcher', userDataFetcher);
   Vue.component('c-user-heatmap', userHeatmap);

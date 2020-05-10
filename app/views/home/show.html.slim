@@ -14,10 +14,6 @@
               .c-loading__core Loading...
 
       .col-5.pl-0
-        - if @tips.present?
-          .mb-3
-            = render "home/tips"
-
         h2.h4.font-weight-bold.mb-3.text-center
           = t "noun.activities"
 
@@ -42,5 +38,4 @@
 
 - content_for :js_templates
   = render "application/js_templates/activities"
-  = render "application/js_templates/tips"
   = render "application/js_templates/untracked_episode_list"

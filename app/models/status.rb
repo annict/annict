@@ -61,7 +61,6 @@ class Status < ApplicationRecord
     dependent: :destroy,
     as: :recipient
 
-  after_create :finish_tips
   after_create :refresh_watchers_count
   after_create :save_activity
   after_create :save_library_entry
@@ -180,10 +179,6 @@ class Status < ApplicationRecord
     else
       ChannelWorkService.new(user).delete(work)
     end
-  end
-
-  def finish_tips
-    UserTipsService.new(user).finish!(:status) if user.statuses.initial?(self)
   end
 
   def save_library_entry
