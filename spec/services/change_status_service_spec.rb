@@ -8,15 +8,18 @@ describe ChangeStatusService, type: :service do
 
       it "creates status" do
         expect(Status.count).to eq 0
+        expect(Activity.count).to eq 0
 
         ChangeStatusService.new(user: user, work: work).call(status_kind: :watching)
 
         expect(Status.count).to eq 1
+        expect(Activity.count).to eq 1
 
         status = user.statuses.where(work: work).first
+        activity = user.activities.first
 
         expect(status.kind).to eq "watching"
-        expect(status.activity).not_to be_nil
+        expect(status.activity_id).to eq activity.id
       end
     end
 
