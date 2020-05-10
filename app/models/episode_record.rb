@@ -66,6 +66,7 @@ class EpisodeRecord < ApplicationRecord
 
   enumerize :rating_state, in: Record::RATING_STATES, scope: true
 
+  belongs_to :activity, counter_cache: :resources_count, optional: true
   belongs_to :oauth_application, class_name: "Doorkeeper::Application", optional: true
   belongs_to :record
   belongs_to :review, optional: true
@@ -189,5 +190,9 @@ class EpisodeRecord < ApplicationRecord
     else
       "Watched."
     end
+  end
+
+  def needs_solo_activity?
+    body.present?
   end
 end

@@ -12,11 +12,8 @@ module Canary
         raise Annict::Errors::InvalidAPITokenScopeError unless context[:writable]
 
         work = Work.only_kept.find_by_graphql_id(work_id)
-        status = StatusService.new(context[:viewer], work)
-        status.app = context[:application]
-        status.via = context[:via]
 
-        status.change!(Status.kind_v3_to_v2(kind.downcase).to_s)
+        ChangeStatusService.new(user: context[:viewer], work: work).call(status_kind: Status.kind_v3_to_v2(kind.downcase).to_s)
 
         {
           work: work

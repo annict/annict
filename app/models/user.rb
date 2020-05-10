@@ -431,6 +431,39 @@ class User < ApplicationRecord
     created_at > Time.zone.parse("2020-04-07 0:00:00")
   end
 
+  def create_or_last_activity!(resource, action)
+    resource_type = resource.class.name
+
+    if resource.needs_solo_activity?
+      return activities.create!(trackable_type: resource_type, action: action, solo: true)
+    end
+
+    activity = activities.order(created_at: :desc).first
+
+    if activity.nil? || activity.solo?
+      return activities.create!(trackable_type: resource_type, action: action)
+    end
+
+    if activity.trackable_type == resource_type && activity.action.to_sym == action.to_sym
+      return activity
+    end
+
+    activities.create!(trackable_type: resource_type, action: action)
+  end
+
+  def update_works_count!(prev_state_kind, next_state_kind)
+    works_count_fields = {
+      wanna_watch: :plan_to_watch_works_count,
+      watching: :watching_works_count,
+      watched: :completed_works_count,
+      on_hold: :on_hold_works_count,
+      stop_watching: :dropped_works_count
+    }.freeze
+
+    decrement!(works_count_fields[prev_state_kind.to_sym]) if prev_state_kind
+    increment!(works_count_fields[next_state_kind.to_sym])
+  end
+
   private
 
   def get_large_avatar_image(provider, image_url)

@@ -11,10 +11,6 @@ module Mutations
       raise Annict::Errors::InvalidAPITokenScopeError unless context[:doorkeeper_token].writable?
 
       work = Work.only_kept.find_by_graphql_id(work_id)
-      status = StatusService.new(context[:viewer], work)
-      status.app = context[:doorkeeper_token].application
-      status.ga_client = context[:ga_client]
-      status.via = "graphql_api"
 
       state = case state
       when "NO_STATE" then "no_select"
@@ -22,7 +18,7 @@ module Mutations
         state.downcase
       end
 
-      status.change!(state)
+      ChangeStatusService.new(user: context[:viewer], work: work).call(status_kind: state)
 
       {
         work: work

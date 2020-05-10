@@ -8,12 +8,8 @@ module Api
 
         def create
           work = Work.only_kept.find(@params.work_id)
-          status = StatusService.new(current_user, work)
-          status.app = doorkeeper_token.application
-          status.ga_client = ga_client
-          status.via = "rest_api"
 
-          status.change!(@params.kind)
+          ChangeStatusService.new(user: current_user, work: work).call(status_kind: @params.kind)
 
           head 204
         end

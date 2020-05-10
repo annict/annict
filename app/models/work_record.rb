@@ -63,6 +63,7 @@ class WorkRecord < ApplicationRecord
     enumerize state, in: Record::RATING_STATES
   end
 
+  belongs_to :activity, counter_cache: :resources_count, optional: true
   belongs_to :oauth_application, class_name: "Doorkeeper::Application", optional: true
   belongs_to :record
   belongs_to :user
@@ -122,6 +123,10 @@ class WorkRecord < ApplicationRecord
     else
       "Watched."
     end
+  end
+
+  def needs_solo_activity?
+    body.present?
   end
 
   private
