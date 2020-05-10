@@ -26,9 +26,7 @@ export default {
       domain: 'month',
       range: 6,
       domainLabelFormat: '%Y-%m',
-      start: moment()
-        .subtract(5, 'month')
-        .toDate(),
+      start: moment().subtract(5, 'month').toDate(),
       data: requestPath,
       tooltip: true,
       legend: [2, 4, 6, 8],
