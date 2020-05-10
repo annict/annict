@@ -18,7 +18,7 @@ module Api
           end
           record.rating_state = record.rating_to_rating_state if record.rating.present?
 
-          service = NewEpisodeRecordService.new(current_user, record)
+          service = CreateEpisodeRecordService.new(current_user, record)
           service.ga_client = ga_client
           service.app = doorkeeper_token.application
           service.via = "rest_api"

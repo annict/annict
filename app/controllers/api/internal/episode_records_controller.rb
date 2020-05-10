@@ -14,7 +14,7 @@ module Api
         end
         ga_client.page_category = params[:page_category]
 
-        service = NewEpisodeRecordService.new(current_user, episode_record)
+        service = CreateEpisodeRecordService.new(current_user, episode_record)
         service.page_category = params[:page_category]
         service.ga_client = ga_client
         service.via = "internal_api"

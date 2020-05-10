@@ -111,7 +111,7 @@ describe UserSlotsQuery, type: :query do
           let(:episode_record) { build :episode_record, user: user, episode: episode_1 }
 
           before do
-            NewEpisodeRecordService.new(user, episode_record).save!
+            CreateEpisodeRecordService.new(user, episode_record).save!
           end
 
           context "when the `watched` option is not specified" do
@@ -241,7 +241,7 @@ describe UserSlotsQuery, type: :query do
           let(:episode_record) { build :episode_record, user: user, episode: episode_1 }
 
           before do
-            NewEpisodeRecordService.new(user, episode_record).save!
+            CreateEpisodeRecordService.new(user, episode_record).save!
           end
 
           context "when the `watched` option is not specified" do

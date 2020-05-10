@@ -23,7 +23,7 @@ module Mutations
         r.oauth_application = context[:doorkeeper_token].application
       end
 
-      service = NewEpisodeRecordService.new(context[:viewer], record)
+      service = CreateEpisodeRecordService.new(context[:viewer], record)
       service.ga_client = context[:ga_client]
       service.app = context[:doorkeeper_token].application
       service.via = "graphql_api"

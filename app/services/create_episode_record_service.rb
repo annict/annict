@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class NewEpisodeRecordService
+class CreateEpisodeRecordService
   attr_writer :app, :via, :ga_client, :page_category
   attr_reader :episode_record
 

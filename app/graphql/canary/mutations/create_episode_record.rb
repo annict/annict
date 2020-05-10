@@ -33,7 +33,7 @@ module Canary
           r.oauth_application = context[:application]
         end
 
-        service = NewEpisodeRecordService.new(context[:viewer], record)
+        service = CreateEpisodeRecordService.new(context[:viewer], record)
         service.app = context[:application]
         service.via = context[:via]
 
