@@ -25,7 +25,7 @@
 
 class OrganizationFavorite < ApplicationRecord
   belongs_to :organization, counter_cache: :favorite_users_count
-  belongs_to :user
+  belongs_to :user, counter_cache: true
 
   def update_watched_works_count(user)
     staff_work_ids = organization.staff_works.pluck(:id)
