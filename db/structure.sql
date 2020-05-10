@@ -71,7 +71,8 @@ CREATE TABLE public.activities (
     episode_record_id bigint,
     multiple_episode_record_id bigint,
     work_record_id bigint,
-    resources_count integer DEFAULT 0 NOT NULL
+    resources_count integer DEFAULT 0 NOT NULL,
+    solo boolean DEFAULT false NOT NULL
 );
 
 
