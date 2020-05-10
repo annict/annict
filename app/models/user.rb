@@ -464,6 +464,12 @@ class User < ApplicationRecord
     increment!(works_count_fields[next_state_kind.to_sym])
   end
 
+  def update_share_record_status(share_record)
+    return if setting.share_record_to_twitter? == share_record
+
+    setting.update_column(:share_record_to_twitter, share_record)
+  end
+
   private
 
   def get_large_avatar_image(provider, image_url)

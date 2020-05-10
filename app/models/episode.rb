@@ -136,6 +136,15 @@ class Episode < ApplicationRecord
     number
   end
 
+  def update_episode_record_bodies_count!(prev_episode_record, next_episode_record)
+    body_pair = [prev_episode_record&.body.present?, next_episode_record.body.present?]
+
+    case body_pair
+    when [false, true] then increment!(:episode_record_bodies_count)
+    when [true, false] then decrement!(:episode_record_bodies_count)
+    end
+  end
+
   private
 
   def unset_prev_episode_id

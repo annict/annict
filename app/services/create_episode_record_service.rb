@@ -1,53 +1,39 @@
 # frozen_string_literal: true
 
 class CreateEpisodeRecordService
-  attr_writer :app, :via, :ga_client, :page_category
-  attr_reader :episode_record
-
-  def initialize(user, episode_record)
+  def initialize(user:, episode:)
     @user = user
-    @episode_record = episode_record
-    @work = @episode_record.episode.work
+    @episode = episode
+    @work = @episode.work
   end
 
-  def save!
-    @episode_record.user = @user
-    @episode_record.work = @work
-    @episode_record.detect_locale!(:body)
+  def call(episode_record_attributes, share_record: false)
+    episode_record = user.episode_records.new(episode_record_attributes)
+    episode_record.episode = episode
+    episode_record.work = work
+    episode_record.detect_locale!(:body)
 
     ActiveRecord::Base.transaction do
-      @episode_record.record = @user.records.create!(work: @work)
-      @episode_record.save!
-      @episode_record.update_share_record_status
-      update_episode_record_bodies_count
-      update_library_entry
+      episode_record.activity = user.create_or_last_activity!(episode_record, :create_episode_record)
+      episode_record.record = user.records.create!(work: work)
+
+      episode_record.save!
+
+      user.update_share_record_status(share_record)
+      episode.update_episode_record_bodies_count!(nil, episode_record)
+      library_entry&.append_episode!(episode)
+
+      if share_record
+        ShareEpisodeRecordToTwitterJob.perform_later(user.id, episode_record.id)
+      end
     end
-
-    @episode_record.share_to_sns
-    save_activity
-    create_ga_event
-
-    true
   end
 
   private
 
-  def save_activity
-    return if @episode_record.multiple_episode_record.present?
-    CreateEpisodeRecordActivityJob.perform_later(@user.id, @episode_record.id)
-  end
+  attr_reader :user, :episode, :work
 
-  def update_library_entry
-    library_entry = @user.library_entries.find_by(work: @episode_record.work)
-    library_entry.append_episode!(@episode_record.episode) if library_entry.present?
-  end
-
-  def create_ga_event
-    return if @ga_client.blank?
-    @ga_client.events.create(:records, :create, el: "Episode", ds: @via)
-  end
-
-  def update_episode_record_bodies_count
-    @episode_record.episode.increment!(:episode_record_bodies_count) if @episode_record.body.present?
+  def library_entry
+    @library_entry ||= user.library_entries.find_by(work: work)
   end
 end

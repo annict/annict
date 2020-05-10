@@ -64,12 +64,13 @@ class EpisodeRecord < ApplicationRecord
   include Shareable
   include SoftDeletable
 
+  self.ignored_columns = %w(aasm_state multiple_episode_record_id review_id shared_facebook shared_twitter)
+
   enumerize :rating_state, in: Record::RATING_STATES, scope: true
 
   belongs_to :activity, counter_cache: :resources_count, optional: true
   belongs_to :oauth_application, class_name: "Doorkeeper::Application", optional: true
   belongs_to :record
-  belongs_to :review, optional: true
   belongs_to :work
   belongs_to :episode, counter_cache: true
   belongs_to :multiple_episode_record, optional: true
@@ -140,16 +141,6 @@ class EpisodeRecord < ApplicationRecord
 
   def shared_sns?
     twitter_url_hash.present? || shared_twitter?
-  end
-
-  def update_share_record_status
-    if user.setting.share_record_to_twitter? != shared_twitter?
-      user.setting.update_column(:share_record_to_twitter, shared_twitter?)
-    end
-  end
-
-  def share_to_sns
-    ShareEpisodeRecordToTwitterJob.perform_later(user_id, id) if shared_twitter?
   end
 
   def share_url
