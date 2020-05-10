@@ -62,19 +62,19 @@ class Activity < ApplicationRecord
   belongs_to :user
   belongs_to :work, optional: true
 
-  has_many :episode_records, dependent: :nullify
-  has_many :statuses, dependent: :nullify
-  has_many :work_records, dependent: :nullify
+  has_many :episode_records, dependent: :destroy
+  has_many :statuses, dependent: :destroy
+  has_many :work_records, dependent: :destroy
 
   scope :records_and_reviews, -> { with_action(:create_episode_record, :create_work_record, :create_multiple_episode_records) }
 
   def resources
-    case action
-    when "create_status"
+    case trackable_type
+    when "Status"
       statuses
-    when "create_episode_record"
+    when "EpisodeRecord"
       episode_records
-    when "create_work_record"
+    when "WorkRecord"
       work_records
     else
       []
