@@ -3,23 +3,14 @@
 #
 # Table name: activities
 #
-#  id                         :bigint           not null, primary key
-#  action                     :string(510)      not null
-#  recipient_type             :string(510)      not null
-#  resources_count            :integer          default(0), not null
-#  solo                       :boolean          default(FALSE), not null
-#  trackable_type             :string(510)      not null
-#  created_at                 :datetime
-#  updated_at                 :datetime
-#  episode_id                 :bigint
-#  episode_record_id          :bigint
-#  multiple_episode_record_id :bigint
-#  recipient_id               :bigint           not null
-#  status_id                  :bigint
-#  trackable_id               :bigint           not null
-#  user_id                    :bigint           not null
-#  work_id                    :bigint
-#  work_record_id             :bigint
+#  id              :bigint           not null, primary key
+#  action          :string(510)      not null
+#  resources_count :integer          default(0), not null
+#  solo            :boolean          default(FALSE), not null
+#  trackable_type  :string(510)      not null
+#  created_at      :datetime
+#  updated_at      :datetime
+#  user_id         :bigint           not null
 #
 # Indexes
 #
@@ -45,6 +36,11 @@
 class Activity < ApplicationRecord
   extend Enumerize
 
+  self.ignored_columns = %w(
+    recipient_id recipient_type trackable_id work_id episode_id status_id episode_record_id
+    multiple_episode_record_id work_record_id
+  )
+
   enumerize :action, in: %w(
     create_status
     create_episode_record
@@ -52,15 +48,7 @@ class Activity < ApplicationRecord
     create_multiple_episode_records
   ), scope: true
 
-  belongs_to :episode, optional: true
-  belongs_to :multiple_episode_record, optional: true
-  belongs_to :recipient, polymorphic: true
-  belongs_to :episode_record, optional: true
-  belongs_to :work_record, optional: true
-  belongs_to :status, optional: true
-  belongs_to :trackable, polymorphic: true
   belongs_to :user
-  belongs_to :work, optional: true
 
   has_many :episode_records, dependent: :destroy
   has_many :statuses, dependent: :destroy
