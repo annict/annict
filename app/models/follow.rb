@@ -21,8 +21,8 @@
 #
 
 class Follow < ApplicationRecord
-  belongs_to :following, class_name: 'User'
-  belongs_to :user
+  belongs_to :following, class_name: "User", counter_cache: :followers_count
+  belongs_to :user, counter_cache: :following_count
 
   after_create  :save_notification
   after_destroy :delete_notification
