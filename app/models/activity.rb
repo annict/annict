@@ -54,8 +54,6 @@ class Activity < ApplicationRecord
   has_many :statuses, dependent: :destroy
   has_many :work_records, dependent: :destroy
 
-  scope :records_and_reviews, -> { with_action(:create_episode_record, :create_work_record, :create_multiple_episode_records) }
-
   def resources
     case trackable_type
     when "Status"
