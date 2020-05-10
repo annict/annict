@@ -67,4 +67,12 @@ namespace :one_shot do
       end
     end
   end
+
+  task update_activities_by_multiple_episode_record: :environment do
+    Activity.with_action(:create_multiple_episode_records).find_each do |activity|
+      puts "----- Activity: #{activity.id}"
+
+      activity.update_column(:action, :create_episode_record)
+    end
+  end
 end
