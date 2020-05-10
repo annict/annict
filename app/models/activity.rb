@@ -41,6 +41,12 @@ class Activity < ApplicationRecord
     multiple_episode_record_id work_record_id
   )
 
+  enumerize :trackable_type, in: %w(
+    Status
+    EpisodeRecord
+    WorkRecord
+  ), scope: true
+
   enumerize :action, in: %w(
     create_status
     create_episode_record
