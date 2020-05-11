@@ -14,10 +14,15 @@ class CreateEpisodeRecordService
     episode_record.detect_locale!(:body)
 
     ActiveRecord::Base.transaction do
-      episode_record.activity = user.create_or_last_activity!(episode_record, :create_episode_record)
       episode_record.record = user.records.create!(work: work)
+      episode_record.activity = user.build_or_last_activity(episode_record, episode, :create_episode_record)
+      persisted_activity = episode_record.activity.persisted?
 
       episode_record.save!
+
+      if persisted_activity
+        user.create_repetitive_activity!(episode_record, episode, :create_episode_record)
+      end
 
       user.update_share_record_setting(share_record_to_twitter)
       episode.update_record_body_count!(nil, episode_record, field: :episode_record_bodies_count)

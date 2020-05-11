@@ -432,24 +432,27 @@ class User < ApplicationRecord
     created_at > Time.zone.parse("2020-04-07 0:00:00")
   end
 
-  def create_or_last_activity!(resource, action)
-    resource_type = resource.class.name
-
+  def build_or_last_activity(resource, recipient, action)
     if resource.needs_single_activity?
-      return activities.create!(trackable_type: resource_type, action: action, single: true)
+      return activities.build(trackable: resource, recipient: recipient, action: action, single: true)
     end
 
     last_activity = activities.order(created_at: :desc).first
 
     if last_activity.nil? || last_activity.single?
-      return activities.create!(trackable_type: resource_type, action: action)
+      return activities.build(trackable: resource, recipient: recipient, action: action)
     end
 
-    if last_activity.trackable_type == resource_type && last_activity.action.to_sym == action.to_sym
+    if last_activity.trackable_type == resource.class.name && last_activity.action.to_sym == action.to_sym
       return last_activity
     end
 
-    activities.create!(trackable_type: resource_type, action: action)
+    activities.build(trackable: resource, recipient: recipient, action: action)
+  end
+
+  # Create activity for backward compatibility (Annict API)
+  def create_repetitive_activity!(resource, recipient, action)
+    activities.create!(trackable: resource, recipient: recipient, action: action, repetitiveness: true)
   end
 
   def update_works_count!(prev_state_kind, next_state_kind)
