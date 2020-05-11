@@ -5,12 +5,15 @@
 #
 #  id              :bigint           not null, primary key
 #  action          :string(510)      not null
+#  recipient_type  :string(510)      not null
 #  repetitiveness  :boolean          default(FALSE), not null
 #  resources_count :integer          default(0), not null
 #  single          :boolean          default(FALSE), not null
 #  trackable_type  :string(510)      not null
 #  created_at      :datetime
 #  updated_at      :datetime
+#  recipient_id    :bigint           not null
+#  trackable_id    :bigint           not null
 #  user_id         :bigint           not null
 #
 # Indexes
@@ -38,10 +41,7 @@
 class Activity < ApplicationRecord
   extend Enumerize
 
-  self.ignored_columns = %w(
-    recipient_id recipient_type trackable_id work_id episode_id status_id episode_record_id
-    multiple_episode_record_id work_record_id
-  )
+  self.ignored_columns = %w(work_id episode_id status_id episode_record_id multiple_episode_record_id work_record_id)
 
   enumerize :trackable_type, in: %w(
     Status
@@ -56,6 +56,8 @@ class Activity < ApplicationRecord
     create_multiple_episode_records
   ), scope: true
 
+  belongs_to :recipient, polymorphic: true
+  belongs_to :trackable, polymorphic: true
   belongs_to :user
 
   has_many :episode_records, dependent: :destroy
