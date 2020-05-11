@@ -31,5 +31,8 @@ class ChangeSchemaForUserDetail202005 < ActiveRecord::Migration[6.0]
 
     add_column :activities, :resources_count, :integer, null: false, default: 0
     add_column :activities, :single, :boolean, null: false, default: false
+    add_column :activities, :repetitiveness, :boolean, null: false, default: false
+
+    add_index :activities, :repetitiveness
   end
 end
