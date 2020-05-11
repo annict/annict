@@ -25,7 +25,7 @@ module Api
             share_review_to_facebook: @params.share_facebook == "true"
           }
 
-          service = NewWorkRecordService.new(current_user, work_record, current_user.setting)
+          service = CreateWorkRecordService.new(current_user, work_record, current_user.setting)
           service.ga_client = ga_client
           service.app = doorkeeper_token.application
           service.via = "rest_api"

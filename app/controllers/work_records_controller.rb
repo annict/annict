@@ -21,7 +21,7 @@ class WorkRecordsController < ApplicationController
     current_user.setting.attributes = setting_params
     ga_client.page_category = params[:page_category]
 
-    service = NewWorkRecordService.new(current_user, @work_record, current_user.setting)
+    service = CreateWorkRecordService.new(current_user, @work_record, current_user.setting)
     service.ga_client = ga_client
     service.page_category = params[:page_category]
     service.via = "web"

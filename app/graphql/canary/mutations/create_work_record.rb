@@ -64,7 +64,7 @@ module Canary
       private
 
       def work_record_service(review)
-        service = NewWorkRecordService.new(context[:viewer], review, context[:viewer].setting)
+        service = CreateWorkRecordService.new(context[:viewer], review, context[:viewer].setting)
         service.via = context[:via]
         service.app = context[:application]
 

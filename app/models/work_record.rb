@@ -82,10 +82,6 @@ class WorkRecord < ApplicationRecord
 
   before_save :append_title_to_body
 
-  def share_to_sns
-    ShareWorkRecordToTwitterJob.perform_later(user.id, id) if user.setting.share_review_to_twitter?
-  end
-
   def share_url
     "#{user.preferred_annict_url}/@#{user.username}/records/#{record.id}"
   end

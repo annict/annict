@@ -57,7 +57,7 @@ module Mutations
     private
 
     def work_record_service(review)
-      service = NewWorkRecordService.new(context[:viewer], review, context[:viewer].setting)
+      service = CreateWorkRecordService.new(context[:viewer], review, context[:viewer].setting)
       service.via = "graphql_api"
       service.app = context[:doorkeeper_token].application
       service.ga_client = context[:ga_client]

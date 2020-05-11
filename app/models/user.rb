@@ -141,6 +141,7 @@ class User < ApplicationRecord
   has_one :setting, dependent: :destroy
 
   delegate :admin?, :editor?, to: :role
+  delegate :share_record_to_twitter?, to: :setting
 
   validates :email,
     presence: true,
@@ -438,14 +439,14 @@ class User < ApplicationRecord
       return activities.create!(trackable_type: resource_type, action: action, solo: true)
     end
 
-    activity = activities.order(created_at: :desc).first
+    last_activity = activities.order(created_at: :desc).first
 
-    if activity.nil? || activity.solo?
+    if last_activity.nil? || last_activity.solo?
       return activities.create!(trackable_type: resource_type, action: action)
     end
 
-    if activity.trackable_type == resource_type && activity.action.to_sym == action.to_sym
-      return activity
+    if last_activity.trackable_type == resource_type && last_activity.action.to_sym == action.to_sym
+      return last_activity
     end
 
     activities.create!(trackable_type: resource_type, action: action)
@@ -464,10 +465,16 @@ class User < ApplicationRecord
     increment!(works_count_fields[next_state_kind.to_sym])
   end
 
-  def update_share_record_status(share_record)
-    return if setting.share_record_to_twitter? == share_record
+  def update_share_record_setting(share_record_to_twitter)
+    setting.update_column(:share_record_to_twitter, share_record_to_twitter)
+  end
 
-    setting.update_column(:share_record_to_twitter, share_record)
+  def share_episode_record_to_twitter(episode_record)
+    ShareEpisodeRecordToTwitterJob.perform_later(id, episode_record.id)
+  end
+
+  def share_work_record_to_twitter(work_record)
+    ShareWorkRecordToTwitterJob.perform_later(id, work_record.id)
   end
 
   private
