@@ -11,10 +11,7 @@
 #  hide_supporter_badge          :boolean          default(FALSE), not null
 #  privacy_policy_agreed         :boolean          default(FALSE), not null
 #  records_sort_type             :string           default("created_at_desc"), not null
-#  share_record_to_facebook      :boolean          default(FALSE)
 #  share_record_to_twitter       :boolean          default(FALSE)
-#  share_review_to_facebook      :boolean          default(FALSE), not null
-#  share_review_to_twitter       :boolean          default(FALSE), not null
 #  share_status_to_facebook      :boolean          default(FALSE), not null
 #  share_status_to_twitter       :boolean          default(FALSE), not null
 #  slots_sort_type               :string           default(NULL), not null
