@@ -48,6 +48,7 @@
 class Episode < ApplicationRecord
   include DbActivityMethods
   include Unpublishable
+  include Recordable
 
   DIFF_FIELDS = %i(
     number sort_number sc_count title prev_episode_id fetch_syobocal raw_number title_en
@@ -134,15 +135,6 @@ class Episode < ApplicationRecord
     return "##{raw_number}" if raw_number
 
     number
-  end
-
-  def update_episode_record_bodies_count!(prev_episode_record, next_episode_record)
-    body_pair = [prev_episode_record&.body.present?, next_episode_record.body.present?]
-
-    case body_pair
-    when [false, true] then increment!(:episode_record_bodies_count)
-    when [true, false] then decrement!(:episode_record_bodies_count)
-    end
   end
 
   private
