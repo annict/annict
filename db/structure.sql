@@ -58,9 +58,9 @@ SET default_tablespace = '';
 CREATE TABLE public.activities (
     id bigint DEFAULT nextval('public.activities_id_seq'::regclass) NOT NULL,
     user_id bigint NOT NULL,
-    recipient_id bigint,
-    recipient_type character varying(510),
-    trackable_id bigint,
+    recipient_id bigint NOT NULL,
+    recipient_type character varying(510) NOT NULL,
+    trackable_id bigint NOT NULL,
     trackable_type character varying(510) NOT NULL,
     action character varying(510) NOT NULL,
     created_at timestamp with time zone,
@@ -6858,7 +6858,6 @@ INSERT INTO "schema_migrations" (version) VALUES
 ('20200322025837'),
 ('20200503204607'),
 ('20200504053317'),
-('20200510070747'),
 ('99999999999999');
 
 
