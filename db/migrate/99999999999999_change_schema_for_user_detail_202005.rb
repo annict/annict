@@ -30,6 +30,6 @@ class ChangeSchemaForUserDetail202005 < ActiveRecord::Migration[6.0]
     add_foreign_key :work_records, :activities
 
     add_column :activities, :resources_count, :integer, null: false, default: 0
-    add_column :activities, :solo, :boolean, null: false, default: false
+    add_column :activities, :single, :boolean, null: false, default: false
   end
 end

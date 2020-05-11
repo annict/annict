@@ -7,7 +7,7 @@
 #  action                     :string(510)      not null
 #  recipient_type             :string(510)      not null
 #  resources_count            :integer          default(0), not null
-#  solo                       :boolean          default(FALSE), not null
+#  single                     :boolean          default(FALSE), not null
 #  trackable_type             :string(510)      not null
 #  created_at                 :datetime
 #  updated_at                 :datetime
