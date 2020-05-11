@@ -126,7 +126,7 @@ class Status < ApplicationRecord
     base_body % work_title
   end
 
-  def needs_solo_activity?
+  def needs_single_activity?
     false
   end
 

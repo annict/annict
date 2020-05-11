@@ -435,13 +435,13 @@ class User < ApplicationRecord
   def create_or_last_activity!(resource, action)
     resource_type = resource.class.name
 
-    if resource.needs_solo_activity?
-      return activities.create!(trackable_type: resource_type, action: action, solo: true)
+    if resource.needs_single_activity?
+      return activities.create!(trackable_type: resource_type, action: action, single: true)
     end
 
     last_activity = activities.order(created_at: :desc).first
 
-    if last_activity.nil? || last_activity.solo?
+    if last_activity.nil? || last_activity.single?
       return activities.create!(trackable_type: resource_type, action: action)
     end
 

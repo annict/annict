@@ -183,7 +183,7 @@ class EpisodeRecord < ApplicationRecord
     end
   end
 
-  def needs_solo_activity?
+  def needs_single_activity?
     body.present?
   end
 end

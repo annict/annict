@@ -118,7 +118,7 @@ describe ChangeStatusService, type: :service do
 
       expect(activity.action).to eq "create_status"
       expect(activity.resources_count).to eq 1
-      expect(activity.solo).to eq false
+      expect(activity.single).to eq false
       expect(activity.trackable_type).to eq "Status"
     end
   end

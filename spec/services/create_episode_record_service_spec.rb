@@ -40,7 +40,7 @@ describe CreateEpisodeRecordService, type: :service do
       expect(record.work_id).to eq work.id
 
       expect(activity.action).to eq "create_episode_record"
-      expect(activity.solo).to eq true
+      expect(activity.single).to eq true
       expect(activity.trackable_type).to eq "EpisodeRecord"
     end
   end
