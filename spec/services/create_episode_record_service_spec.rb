@@ -10,6 +10,8 @@ describe CreateEpisodeRecordService, type: :service do
       expect(EpisodeRecord.count).to eq 0
       expect(Record.count).to eq 0
       expect(Activity.count).to eq 0
+      expect(episode.episode_record_bodies_count).to eq 0
+      expect(user.share_record_to_twitter?).to eq false
 
       attrs = {
         body: "すごく面白かった。",
@@ -20,6 +22,8 @@ describe CreateEpisodeRecordService, type: :service do
       expect(EpisodeRecord.count).to eq 1
       expect(Record.count).to eq 1
       expect(Activity.count).to eq 1
+      expect(episode.episode_record_bodies_count).to eq 1
+      expect(user.share_record_to_twitter?).to eq false
 
       episode_record = user.episode_records.first
       record = user.records.first

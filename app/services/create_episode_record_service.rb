@@ -7,7 +7,7 @@ class CreateEpisodeRecordService
     @work = @episode.work
   end
 
-  def call(episode_record_attributes, share_record: false)
+  def call(episode_record_attributes, share_record_to_twitter: false)
     episode_record = user.episode_records.new(episode_record_attributes)
     episode_record.episode = episode
     episode_record.work = work
@@ -19,12 +19,12 @@ class CreateEpisodeRecordService
 
       episode_record.save!
 
-      user.update_share_record_status(share_record)
-      episode.update_episode_record_bodies_count!(nil, episode_record)
+      user.update_share_record_setting(share_record_to_twitter)
+      episode.update_record_body_count!(nil, episode_record, field: :episode_record_bodies_count)
       library_entry&.append_episode!(episode)
 
-      if share_record
-        ShareEpisodeRecordToTwitterJob.perform_later(user.id, episode_record.id)
+      if user.share_record_to_twitter?
+        user.share_episode_record_to_twitter(episode_record)
       end
     end
   end
