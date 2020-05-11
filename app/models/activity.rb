@@ -5,6 +5,7 @@
 #
 #  id              :bigint           not null, primary key
 #  action          :string(510)      not null
+#  repetitiveness  :boolean          default(FALSE), not null
 #  resources_count :integer          default(0), not null
 #  single          :boolean          default(FALSE), not null
 #  trackable_type  :string(510)      not null
@@ -18,6 +19,7 @@
 #  index_activities_on_episode_id                  (episode_id)
 #  index_activities_on_episode_record_id           (episode_record_id)
 #  index_activities_on_multiple_episode_record_id  (multiple_episode_record_id)
+#  index_activities_on_repetitiveness              (repetitiveness)
 #  index_activities_on_status_id                   (status_id)
 #  index_activities_on_work_id                     (work_id)
 #  index_activities_on_work_record_id              (work_record_id)

@@ -72,7 +72,8 @@ CREATE TABLE public.activities (
     multiple_episode_record_id bigint,
     work_record_id bigint,
     resources_count integer DEFAULT 0 NOT NULL,
-    single boolean DEFAULT false NOT NULL
+    single boolean DEFAULT false NOT NULL,
+    repetitiveness boolean DEFAULT false NOT NULL
 );
 
 
@@ -4000,6 +4001,13 @@ CREATE INDEX index_activities_on_episode_record_id ON public.activities USING bt
 --
 
 CREATE INDEX index_activities_on_multiple_episode_record_id ON public.activities USING btree (multiple_episode_record_id);
+
+
+--
+-- Name: index_activities_on_repetitiveness; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_activities_on_repetitiveness ON public.activities USING btree (repetitiveness);
 
 
 --
