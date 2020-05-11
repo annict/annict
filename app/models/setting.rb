@@ -34,6 +34,8 @@
 class Setting < ApplicationRecord
   extend Enumerize
 
+  self.ignored_columns = %w(share_record_to_facebook share_review_to_facebook share_review_to_twitter)
+
   belongs_to :user
 
   enumerize :slots_sort_type,
