@@ -34,5 +34,6 @@ class ChangeSchemaForUserDetail202005 < ActiveRecord::Migration[6.0]
     add_column :activities, :repetitiveness, :boolean, null: false, default: false
 
     add_index :activities, :repetitiveness
+    add_index :activities, :created_at
   end
 end

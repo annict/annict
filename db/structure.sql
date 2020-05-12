@@ -3983,6 +3983,13 @@ CREATE INDEX follows_user_id_idx ON public.follows USING btree (user_id);
 
 
 --
+-- Name: index_activities_on_created_at; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_activities_on_created_at ON public.activities USING btree (created_at);
+
+
+--
 -- Name: index_activities_on_episode_id; Type: INDEX; Schema: public; Owner: -
 --
 
