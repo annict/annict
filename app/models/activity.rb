@@ -19,6 +19,7 @@
 # Indexes
 #
 #  activities_user_id_idx                          (user_id)
+#  index_activities_on_created_at                  (created_at)
 #  index_activities_on_episode_id                  (episode_id)
 #  index_activities_on_episode_record_id           (episode_record_id)
 #  index_activities_on_multiple_episode_record_id  (multiple_episode_record_id)
