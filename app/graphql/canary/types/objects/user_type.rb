@@ -37,11 +37,11 @@ module Canary
         field :following, Canary::Types::Objects::UserType.connection_type, null: true
         field :followers, Canary::Types::Objects::UserType.connection_type, null: true
 
-        field :activities, Canary::Connections::ActivityConnection, null: true, connection: true do
+        field :activities, Canary::Types::Objects::ActivityType.connection_type, null: true do
           argument :order_by, Canary::Types::InputObjects::ActivityOrder, required: false
         end
 
-        field :following_activities, Canary::Connections::ActivityConnection, null: true, connection: true do
+        field :following_activities, Canary::Types::Objects::ActivityType.connection_type, null: true do
           argument :order_by, Canary::Types::InputObjects::ActivityOrder, required: false
         end
 
@@ -165,12 +165,7 @@ module Canary
         end
 
         def following_activities(order_by: nil)
-          following_ids = object.followings.only_kept.pluck(:id)
-          following_ids << object.id
-          SearchActivitiesQuery.new(
-            Activity.where(user_id: following_ids),
-            order_by: order_by
-          ).call
+          object.filter_following_activities(viewer: context[:viewer], order: build_order(order_by))
         end
 
         def episode_records(order_by: nil, has_body: nil)

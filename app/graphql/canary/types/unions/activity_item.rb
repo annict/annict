@@ -6,8 +6,7 @@ module Canary
       class ActivityItem < Canary::Types::Unions::Base
         possible_types Canary::Types::Objects::StatusType,
           Canary::Types::Objects::EpisodeRecordType,
-          Canary::Types::Objects::WorkRecordType,
-          Canary::Types::Objects::MultipleEpisodeRecordType
+          Canary::Types::Objects::WorkRecordType
       end
     end
   end

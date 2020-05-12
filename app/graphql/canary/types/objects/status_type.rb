@@ -24,7 +24,7 @@ module Canary
         end
 
         def kind
-          Status.kind_v2_to_v3(object.kind).upcase
+          Status.kind_v2_to_v3(object.kind).upcase.to_s
         end
       end
     end
