@@ -71,7 +71,8 @@ CREATE TABLE public.activities (
     episode_record_id bigint,
     multiple_episode_record_id bigint,
     work_record_id bigint,
-    activity_group_id bigint
+    activity_group_id bigint,
+    activity_type character varying
 );
 
 
@@ -81,7 +82,8 @@ CREATE TABLE public.activities (
 
 CREATE TABLE public.activity_groups (
     id bigint NOT NULL,
-    action character varying NOT NULL,
+    user_id bigint NOT NULL,
+    activity_type character varying NOT NULL,
     single boolean DEFAULT false NOT NULL,
     activities_count integer DEFAULT 0 NOT NULL,
     created_at timestamp(6) without time zone NOT NULL,
@@ -4033,6 +4035,20 @@ CREATE INDEX index_activities_on_activity_group_id ON public.activities USING bt
 
 
 --
+-- Name: index_activities_on_activity_group_id_and_created_at; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_activities_on_activity_group_id_and_created_at ON public.activities USING btree (activity_group_id, created_at);
+
+
+--
+-- Name: index_activities_on_created_at; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_activities_on_created_at ON public.activities USING btree (created_at);
+
+
+--
 -- Name: index_activities_on_episode_id; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -4079,6 +4095,13 @@ CREATE INDEX index_activities_on_work_record_id ON public.activities USING btree
 --
 
 CREATE INDEX index_activity_groups_on_created_at ON public.activity_groups USING btree (created_at);
+
+
+--
+-- Name: index_activity_groups_on_user_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_activity_groups_on_user_id ON public.activity_groups USING btree (user_id);
 
 
 --
@@ -5967,6 +5990,14 @@ ALTER TABLE ONLY public.organization_favorites
 
 
 --
+-- Name: activities fk_rails_4ef7271728; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.activities
+    ADD CONSTRAINT fk_rails_4ef7271728 FOREIGN KEY (activity_group_id) REFERENCES public.activity_groups(id);
+
+
+--
 -- Name: activities fk_rails_4f614ccd13; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -6044,6 +6075,14 @@ ALTER TABLE ONLY public.person_favorites
 
 ALTER TABLE ONLY public.casts
     ADD CONSTRAINT fk_rails_691c85cc04 FOREIGN KEY (person_id) REFERENCES public.people(id);
+
+
+--
+-- Name: activity_groups fk_rails_694252c49b; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.activity_groups
+    ADD CONSTRAINT fk_rails_694252c49b FOREIGN KEY (user_id) REFERENCES public.users(id);
 
 
 --
