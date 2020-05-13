@@ -1,0 +1,63 @@
+<div class="c-timeline__status-activity">
+  <div class="mb-2">
+    <span class="c-timeline__user-name">
+      <%= link_to activity.user.name, user_path(activity.user.username), class: "text-body font-weight-bold u-link" %>
+    </span>
+
+    <small class="mr-1">
+      <%= t "messages._components.activities.status.changed" %>
+    </small>
+
+    <c-relative-time class="small text-muted" time="<%= activity.created_at %>"></c-relative-time>
+  </div>
+
+  <div class="card mb-2">
+    <div class="card-body pb-0 pt-2 px-2">
+      <% statuses.first(3).each do |status| %>
+        <div class="row mb-2">
+          <div class="col-auto pr-0">
+            <%= link_to work_path(status.work.id) do %>
+              <%= render WorkImageComponent.new(
+                  image_url_1x: status.work.image_url_1x,
+                  image_url_2x: status.work.image_url_2x,
+                  alt: status.work.local_title
+              ) %>
+            <% end %>
+          </div>
+
+          <div class="col">
+            <div>
+              <span class="badge u-badge-<%= status.kind %>">
+                <%= t "enumerize.status.kind_v3.#{status.kind}" %>
+              </span>
+            </div>
+
+            <div class="mb-1">
+              <%= link_to status.work.local_title, work_path(status.work.id) %>
+            </div>
+
+            <c-status-selector :work-id="<%= status.work.id %>" page-category="user-home" class="c-status-selector--small"></c-status-selector>
+          </div>
+        </div>
+      <% end %>
+
+      <% if statuses.length > 3 %>
+        <div class="mb-2 text-right">
+          <%= link_to "", class: "small" do %>
+            <i class="fal fa-angle-right"></i>
+            <%= t "messages._components.activities.status.more", n: statuses.length - 3 %>
+          <% end %>
+        </div>
+      <% end %>
+    </div>
+  </div>
+
+  <c-like-button
+    :init-likes-count="<%= 0 %>"
+    :is-signed-in="true"
+    :resource-id="<%= activity.id %>"
+    class="u-fake-link"
+    page-category="user-home"
+    resource-name="Status"
+  ></c-like-button>
+</div>

@@ -18,9 +18,7 @@
           = t "noun.activities"
 
         .mb-3
-          c-activities.pb-3
-            .c-loading
-              .c-loading__core Loading...
+          = render TimelineComponent.new(activities: @activity_result[:activities], pagination: @activity_result[:pagination])
 
         - if @forum_posts.present?
           h2.h4.font-weight-bold.mb-3.text-center
@@ -37,5 +35,4 @@
               = t "messages.forum._common.view_all_site_news"
 
 - content_for :js_templates
-  = render "application/js_templates/activities"
   = render "application/js_templates/untracked_episode_list"

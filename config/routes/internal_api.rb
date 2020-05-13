@@ -9,7 +9,6 @@ namespace :api do
     resource :slots_sort_type, only: [:update]
     resource :records_sort_type, only: %i(update)
     resource :search, only: [:show]
-    resources :activities, only: [:index]
     resources :app_data, only: %i(index)
     resources :characters, only: [:index]
     resources :mute_users, only: [:create]

@@ -12,6 +12,7 @@ module Canary
         field :resource_type, Canary::Types::Enums::ActivityResourceType, null: false
         field :action, Canary::Types::Enums::ActivityAction, null: false
         field :resources_count, Integer, null: false
+        field :single, Boolean, null: false
         field :created_at, Canary::Types::Scalars::DateTime, null: false
         field :user, Canary::Types::Objects::UserType, null: false
         field :resources, [Canary::Types::Unions::ActivityItem], null: true
@@ -33,7 +34,7 @@ module Canary
         end
 
         def resources
-          Canary::AssociationLoader.for(Activity, %i(episode_records statuses work_records)).load(object)
+          Canary::AssociationLoader.for(Activity, %i(ordered_episode_records ordered_statuses ordered_work_records)).load(object)
         end
       end
     end

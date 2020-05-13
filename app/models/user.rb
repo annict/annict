@@ -217,14 +217,6 @@ class User < ApplicationRecord
     self
   end
 
-  def following_activities
-    mute_user_ids = mute_users.pluck(:muted_user_id)
-    following_ids = followings.where.not(id: mute_user_ids).pluck(:id)
-    following_ids << self.id
-
-    Activity.where(user_id: following_ids)
-  end
-
   def read_notifications!
     transaction do
       unread_count = notifications.unread.update_all(read: true)
@@ -480,9 +472,9 @@ class User < ApplicationRecord
     ShareWorkRecordToTwitterJob.perform_later(id, work_record.id)
   end
 
-  def filter_following_activities(viewer: nil, order: OrderProperty.new)
+  def following_activities(viewer: nil, order: OrderProperty.new)
     target_user_ids = followings.only_kept.pluck(:id)
-    target_user_ids -= viewer&.mute_users.pluck(:muted_user_id)
+    target_user_ids -= viewer&.mute_users&.pluck(:muted_user_id).presence || []
     target_user_ids << id
     target_users = User.where(id: target_user_ids).only_kept
     activities = Activity.without_repetitiveness.joins(:user).merge(target_users)

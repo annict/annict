@@ -14,7 +14,6 @@ import app from './common/app';
 import eventHub from './common/eventHub';
 import vueLazyLoad from './common/vueLazyLoad';
 
-import activities from './common/components/activities';
 import analytics from './common/components/analytics';
 import autosizeTextarea from './common/components/autosizeTextarea';
 import body from './common/components/body';
@@ -40,7 +39,6 @@ import recordRating from './common/components/recordRating';
 import recordSorter from './common/components/recordSorter';
 import recordTextarea from './common/components/recordTextarea';
 import recordWordCount from './common/components/recordWordCount';
-import timeAgo from './common/components/timeAgo';
 import untrackedEpisodeList from './common/components/untrackedEpisodeList';
 import userHeatmap from './common/components/userHeatmap';
 import usernamePreview from './common/components/usernamePreview';
@@ -51,6 +49,7 @@ import youtubeModalPlayer from './common/components/youtubeModalPlayer';
 
 import likeButton from './web/components/likeButton';
 import ratingLabel from './web/components/ratingLabel';
+import relativeTime from './web/components/relativeTime';
 import shareToTwitterButton from './web/components/shareToTwitterButton';
 import shareToFacebookButton from './web/components/shareToFacebookButton';
 import sidebar from './web/components/sidebar';
@@ -79,7 +78,6 @@ document.addEventListener('turbolinks:load', (event) => {
 
   Vue.use(VueLazyload);
 
-  Vue.component('c-activities', activities);
   Vue.component('c-analytics', analytics(event));
   Vue.component('c-autosize-textarea', autosizeTextarea);
   Vue.component('c-body', body);
@@ -107,12 +105,12 @@ document.addEventListener('turbolinks:load', (event) => {
   Vue.component('c-record-sorter', recordSorter);
   Vue.component('c-record-textarea', recordTextarea);
   Vue.component('c-record-word-count', recordWordCount);
+  Vue.component('c-relative-time', relativeTime);
   Vue.component('c-share-button-facebook', shareToFacebookButton);
   Vue.component('c-share-button-twitter', shareToTwitterButton);
   Vue.component('c-sidebar', sidebar);
   Vue.component('c-status-selector', statusSelector);
   Vue.component('c-tab-bar', tabBar);
-  Vue.component('c-time-ago', timeAgo);
   Vue.component('c-untracked-episode-list', untrackedEpisodeList);
   Vue.component('c-user-data-fetcher', userDataFetcher);
   Vue.component('c-user-heatmap', userHeatmap);

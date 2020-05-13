@@ -18,6 +18,14 @@ ja:
       welcome_to_annict: Annictにようこそ！
       you_can_not_access_there: アクセスできません
     _components:
+      activities:
+        episode_record:
+          created: "が記録しました"
+        status:
+          changed: "がステータスを変更しました"
+          more: "残り%{n}件のステータス変更を見る"
+        work_record:
+          created: "が記録しました"
       favorite_button:
         add_to_favorites: お気に入りに登録
         added_to_favorites: 登録済み

@@ -64,6 +64,9 @@ class Activity < ApplicationRecord
   has_many :episode_records, dependent: :destroy
   has_many :statuses, dependent: :destroy
   has_many :work_records, dependent: :destroy
+  has_many :ordered_episode_records, -> { order(created_at: :desc) }, class_name: "EpisodeRecord"
+  has_many :ordered_statuses, -> { order(created_at: :desc) }, class_name: "Status"
+  has_many :ordered_work_records, -> { order(created_at: :desc) }, class_name: "WorkRecord"
 
   scope :without_repetitiveness, -> { where(repetitiveness: false) }
 

@@ -1,16 +1,11 @@
-/*
- * decaffeinate suggestions:
- * DS102: Remove unnecessary code created because of implicit returns
- * Full docs: https://github.com/decaffeinate/decaffeinate/blob/master/docs/suggestions.md
- */
 import moment from 'moment';
 
 export default {
-  template: `\
-<span class='c-time-ago' :title='timeAgoDetail'>
-  {{ timeAgo }}
-</span>\
-`,
+  template: `
+    <span class='c-relative-time' :title='absoluteTime'>
+      {{ timeAgo }}
+    </span>
+  `,
 
   props: {
     time: {
@@ -20,7 +15,9 @@ export default {
   },
 
   data() {
-    return { datetime: moment(this.time) };
+    return {
+      datetime: moment(this.time),
+    };
   },
 
   computed: {
@@ -38,7 +35,7 @@ export default {
       }
     },
 
-    timeAgoDetail() {
+    absoluteTime() {
       return this.datetime.format('YYYY/MM/DD HH:mm');
     },
   },

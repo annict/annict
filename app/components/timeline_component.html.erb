@@ -1,0 +1,25 @@
+<div class="c-timeline">
+  <% activities.each do |activity| %>
+    <div class="c-timeline__activity py-3 u-underline">
+      <div class="row">
+        <div class="col-auto pr-0">
+          <%= link_to user_path(activity.user.username) do %>
+            <%= render ProfileImageComponent.new(
+                image_url_1x: activity.user.avatar_url,
+                alt: "@#{activity.user.username}"
+            ) %>
+          <% end %>
+        </div>
+
+        <div class="col">
+          <% if activity.resource_type == "status" %>
+            <%= render StatusActivityComponent.new(activity: activity) %>
+          <% elsif activity.resource_type == "episode_record" %>
+            <%= render EpisodeRecordActivityComponent.new(activity: activity) %>
+          <% elsif activity.resource_type == "work_record" %>
+          <% end %>
+        </div>
+      </div>
+    </div>
+  <% end %>
+</div>

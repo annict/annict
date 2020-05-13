@@ -1,0 +1,87 @@
+query($username: String!, $cursor: String) {
+  user(username: $username) {
+    followingActivities(
+      orderBy: { field: CREATED_AT, direction: DESC },
+      first: 30,
+      after: $cursor
+    ) {
+      pageInfo {
+        endCursor
+        hasNextPage
+      }
+
+      nodes {
+        annictId
+        resourceType
+        resourcesCount
+        single
+        createdAt
+
+        user {
+          username
+          name
+          avatarUrl(size: size100)
+        }
+
+        resources {
+          __typename
+
+          ... on Status {
+            kind
+            likesCount
+
+            work {
+              annictId
+              title
+              titleEn
+              image {
+                internalUrl1x: internalUrl(size: "100x")
+                internalUrl2x: internalUrl(size: "200x")
+              }
+            }
+          }
+
+          ... on EpisodeRecord {
+            ratingState
+            bodyHtml
+            likesCount
+            commentsCount
+
+            work {
+              annictId
+              title
+              titleEn
+              image {
+                internalUrl1x: internalUrl(size: "100x")
+                internalUrl2x: internalUrl(size: "200x")
+              }
+            }
+
+            episode {
+              annictId
+              numberText
+              title
+              titleEn
+            }
+          }
+
+          ... on WorkRecord {
+            ratingOverallState
+            bodyHtml
+            likesCount
+
+            work {
+              annictId
+              title
+              titleEn
+              image {
+                internalUrl1x: internalUrl(size: "100x")
+                internalUrl2x: internalUrl(size: "200x")
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,45 @@
+<div class="c-timeline__episode-record-activity">
+  <div class="mb-2">
+    <span class="c-timeline__user-name">
+      <%= link_to activity.user.name, user_path(activity.user.username), class: "text-body font-weight-bold u-link" %>
+    </span>
+
+    <small>
+      <%= t "messages._components.activities.episode_record.created" %>
+    </small>
+  </div>
+
+  <% if activity.single %>
+    <div>
+      <%= activity.resources.first.body_html.html_safe %>
+    </div>
+  <% end %>
+
+  <div class="card">
+    <div class="card-body p-2">
+      <% activity.resources.first(3).each do |record| %>
+        <div class="row">
+          <div class="col-auto pr-0">
+            <%= link_to work_path(record.work.id) do %>
+              <%= render WorkImageComponent.new(
+                  image_url_1x: record.work.image_url_1x,
+                  image_url_2x: record.work.image_url_2x,
+                  alt: record.work.local_title
+              ) %>
+            <% end %>
+          </div>
+          <div class="col">
+            <%= link_to record.work.local_title, work_path(record.work.id), class: "d-block" %>
+            <%= link_to work_episode_path(record.work.id, record.episode.id), class: "d-block small" do %>
+              <span class="pr-1">
+                <%= record.episode.number_text %>
+              </span>
+
+              <%= record.episode.local_title %>
+            <% end %>
+          </div>
+        </div>
+      <% end %>
+    </div>
+  </div>
+</div>

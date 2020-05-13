@@ -165,7 +165,7 @@ module Canary
         end
 
         def following_activities(order_by: nil)
-          object.filter_following_activities(viewer: context[:viewer], order: build_order(order_by))
+          object.following_activities(viewer: context[:viewer], order: build_order(order_by))
         end
 
         def episode_records(order_by: nil, has_body: nil)
