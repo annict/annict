@@ -6,12 +6,10 @@
 #  id                         :bigint           not null, primary key
 #  action                     :string(510)      not null
 #  recipient_type             :string(510)      not null
-#  repetitiveness             :boolean          default(FALSE), not null
-#  resources_count            :integer          default(0), not null
-#  single                     :boolean          default(FALSE), not null
 #  trackable_type             :string(510)      not null
 #  created_at                 :datetime
 #  updated_at                 :datetime
+#  activity_group_id          :bigint
 #  episode_id                 :bigint
 #  episode_record_id          :bigint
 #  multiple_episode_record_id :bigint
@@ -25,11 +23,10 @@
 # Indexes
 #
 #  activities_user_id_idx                          (user_id)
-#  index_activities_on_created_at                  (created_at)
+#  index_activities_on_activity_group_id           (activity_group_id)
 #  index_activities_on_episode_id                  (episode_id)
 #  index_activities_on_episode_record_id           (episode_record_id)
 #  index_activities_on_multiple_episode_record_id  (multiple_episode_record_id)
-#  index_activities_on_repetitiveness              (repetitiveness)
 #  index_activities_on_status_id                   (status_id)
 #  index_activities_on_work_id                     (work_id)
 #  index_activities_on_work_record_id              (work_record_id)
@@ -65,24 +62,7 @@ class Activity < ApplicationRecord
   belongs_to :user
   belongs_to :work, optional: true
 
-  has_many :episode_records, dependent: :destroy
-  has_many :statuses, dependent: :destroy
-  has_many :work_records, dependent: :destroy
-
   scope :records_and_reviews, -> { with_action(:create_episode_record, :create_work_record, :create_multiple_episode_records) }
-
-  def resources
-    case trackable_type
-    when "Status"
-      statuses
-    when "EpisodeRecord"
-      episode_records
-    when "WorkRecord"
-      work_records
-    else
-      []
-    end
-  end
 
   def deprecated_action
     case action
