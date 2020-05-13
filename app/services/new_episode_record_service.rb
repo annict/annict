@@ -7,7 +7,7 @@ class NewEpisodeRecordService
   def initialize(user, episode_record)
     @user = user
     @episode_record = episode_record
-    @work = @episode_record.episode.work
+    @work = @episode_record.work
   end
 
   def save!
