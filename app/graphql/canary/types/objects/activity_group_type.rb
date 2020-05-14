@@ -17,7 +17,7 @@ module Canary
         field :activities, Canary::Types::Objects::ActivityType.connection_type, null: false
 
         def resource_type
-          object.activity_type.upcase
+          object.resource_type.upcase
         end
 
         def user

@@ -17,7 +17,7 @@ module Canary
         field :resource, Canary::Types::Unions::ActivityItem, null: false
 
         def resource_type
-          object.activity_type.upcase
+          object.resource_type.upcase
         end
 
         def user
@@ -25,7 +25,7 @@ module Canary
         end
 
         def resource
-          case object.activity_type.to_sym
+          case object.resource_type.to_sym
           when :episode_record
             RecordLoader.for(EpisodeRecord).load(object.episode_record_id)
           when :status
