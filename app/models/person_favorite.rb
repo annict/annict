@@ -25,6 +25,7 @@
 
 class PersonFavorite < ApplicationRecord
   counter_culture :person, column_name: :favorite_users_count
+  counter_culture :user
 
   belongs_to :person
   belongs_to :user

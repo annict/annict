@@ -25,6 +25,7 @@
 
 class OrganizationFavorite < ApplicationRecord
   counter_culture :organization, column_name: :favorite_users_count
+  counter_culture :user
 
   belongs_to :organization
   belongs_to :user

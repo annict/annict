@@ -21,6 +21,9 @@
 #
 
 class Follow < ApplicationRecord
+  counter_culture :following, column_name: :followers_count
+  counter_culture :user, column_name: :following_count
+
   belongs_to :following, class_name: 'User'
   belongs_to :user
 
