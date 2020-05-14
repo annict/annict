@@ -96,7 +96,6 @@ module WorkDetail
 
       node["programs"]["nodes"].map do |child_node|
         work[:programs] << {
-          vod_title_code: child_node["vodTitleCode"],
           vod_title_name: child_node["vodTitleName"],
           vod_title_url: child_node["vodTitleUrl"],
           channel: {
