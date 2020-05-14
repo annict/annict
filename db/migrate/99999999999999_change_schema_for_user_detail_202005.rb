@@ -18,7 +18,7 @@ class ChangeSchemaForUserDetail202005 < ActiveRecord::Migration[6.0]
     rename_column :works, :auto_episodes_count, :episodes_count
 
     add_column :activities, :activity_group_id, :bigint
-    add_column :activities, :activity_type, :string
+    add_column :activities, :resource_type, :string
 
     add_index :activities, :activity_group_id
     add_index :activities, :created_at
