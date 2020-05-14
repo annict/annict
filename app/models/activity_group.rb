@@ -32,4 +32,5 @@ class ActivityGroup < ApplicationRecord
 
   belongs_to :user
   has_many :activities, dependent: :destroy
+  has_many :ordered_activities, -> { order(created_at: :desc) }, class_name: "Activity"
 end

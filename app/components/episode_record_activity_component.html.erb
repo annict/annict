@@ -1,7 +1,7 @@
 <div class="c-timeline__episode-record-activity">
   <div class="mb-2">
     <span class="c-timeline__user-name">
-      <%= link_to activity.user.name, user_path(activity.user.username), class: "text-body font-weight-bold u-link" %>
+      <%= link_to activity_group.user.name, user_path(activity_group.user.username), class: "text-body font-weight-bold u-link" %>
     </span>
 
     <small>
@@ -9,15 +9,15 @@
     </small>
   </div>
 
-  <% if activity.single %>
+  <% if activity_group.single %>
     <div>
-      <%= activity.resources.first.body_html.html_safe %>
+      <%= episode_records.first.body_html.html_safe %>
     </div>
   <% end %>
 
   <div class="card">
     <div class="card-body p-2">
-      <% activity.resources.first(3).each do |record| %>
+      <% episode_records.first(3).each do |record| %>
         <div class="row">
           <div class="col-auto pr-0">
             <%= link_to work_path(record.work.id) do %>

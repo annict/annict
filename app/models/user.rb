@@ -471,14 +471,15 @@ class User < ApplicationRecord
     ShareWorkRecordToTwitterJob.perform_later(id, work_record.id)
   end
 
-  def following_activities(viewer: nil, order: OrderProperty.new)
+  def following_resources(model: Activity, viewer: nil, order: OrderProperty.new)
     target_user_ids = followings.only_kept.pluck(:id)
     target_user_ids -= viewer&.mute_users&.pluck(:muted_user_id).presence || []
     target_user_ids << id
     target_users = User.where(id: target_user_ids).only_kept
-    activities = Activity.without_repetitiveness.joins(:user).merge(target_users)
 
-    activities.order(order.field => order.direction)
+    resources = model.joins(:user).merge(target_users)
+
+    resources.order(order.field => order.direction)
   end
 
   private

@@ -1,14 +1,14 @@
 <div class="c-timeline__status-activity">
   <div class="mb-2">
     <span class="c-timeline__user-name">
-      <%= link_to activity.user.name, user_path(activity.user.username), class: "text-body font-weight-bold u-link" %>
+      <%= link_to activity_group.user.name, user_path(activity_group.user.username), class: "text-body font-weight-bold u-link" %>
     </span>
 
     <small class="mr-1">
       <%= t "messages._components.activities.status.changed" %>
     </small>
 
-    <c-relative-time class="small text-muted" time="<%= activity.created_at %>"></c-relative-time>
+    <c-relative-time class="small text-muted" time="<%= activity_group.created_at %>"></c-relative-time>
   </div>
 
   <div class="card mb-2">
@@ -36,6 +36,15 @@
               <%= link_to status.work.local_title, work_path(status.work.id) %>
             </div>
 
+            <c-like-button
+              :init-likes-count="<%= 0 %>"
+              :is-signed-in="true"
+              :resource-id="<%= status.id %>"
+              class="u-fake-link"
+              page-category="user-home"
+              resource-name="Status"
+            ></c-like-button>
+
             <c-status-selector :work-id="<%= status.work.id %>" page-category="user-home" class="c-status-selector--small"></c-status-selector>
           </div>
         </div>
@@ -51,13 +60,4 @@
       <% end %>
     </div>
   </div>
-
-  <c-like-button
-    :init-likes-count="<%= 0 %>"
-    :is-signed-in="true"
-    :resource-id="<%= activity.id %>"
-    class="u-fake-link"
-    page-category="user-home"
-    resource-name="Status"
-  ></c-like-button>
 </div>

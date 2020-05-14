@@ -3,16 +3,16 @@
 class StatusActivityComponent < ApplicationComponent
   include TimeZoneHelper
 
-  # @param activity [ActivityEntity]
-  def initialize(activity:)
-    @activity = activity
+  # @param activity_group [ActivityGroupEntity]
+  def initialize(activity_group:)
+    @activity_group = activity_group
   end
 
   private
 
-  attr_reader :activity
+  attr_reader :activity_group
 
   def statuses
-    activity.resources
+    activity_group.resources
   end
 end

@@ -1,25 +1,24 @@
 # frozen_string_literal: true
 
 module UserHome
-  class FollowingActivitiesRepository < ApplicationRepository
+  class FollowingActivityGroupsRepository < ApplicationRepository
     def fetch(username:, cursor:)
       result = graphql_client.execute(query, variables: { username: username, cursor: cursor.presence || "" })
-      data = result.to_h.dig("data", "user", "followingActivities")
+      data = result.to_h.dig("data", "user", "followingActivityGroups")
 
       {
         pagination: {
           end_cursor: data.dig("pageInfo", "endCursor"),
           has_next_page: data.dig("pageInfo", "hasNextPage")
         },
-        activities: data["nodes"].map do |node|
-          ActivityEntity.new(
-            id: node["annictId"],
+        activity_groups: data["nodes"].map do |node|
+          ActivityGroupEntity.new(
             resource_type: node["resourceType"].downcase,
-            resources_count: node["resourcesCount"],
             single: node["single"],
+            activities_count: node["activitiesCount"],
             created_at: node["createdAt"],
             user: build_user(node["user"]),
-            resources: build_resources(node["resources"])
+            resources: build_resources(node.dig("activities", "nodes"))
           )
         end
       }
@@ -28,7 +27,7 @@ module UserHome
     private
 
     def query
-      load_query "user_home/following_activities.graphql"
+      load_query "user_home/following_activity_groups.graphql"
     end
 
     def build_user(user)
@@ -39,12 +38,15 @@ module UserHome
       )
     end
 
-    def build_resources(resources)
-      resources.map do |resource|
-        case resource["__typename"]
-        when "EpisodeRecord"
+    def build_resources(activities)
+      activities.map do |activity|
+        resource = activity["resource"]
+
+        case activity["resourceType"]
+        when "EPISODE_RECORD"
           EpisodeRecordEntity.new(
             type: "episode_record",
+            id: resource["annictId"],
             rating_state: resource["ratingState"]&.downcase,
             body_html: resource["bodyHtml"],
             likes_count: resource["likesCount"],
@@ -52,16 +54,18 @@ module UserHome
             work: build_work(resource["work"]),
             episode: build_episode(resource["episode"])
           )
-        when "Status"
+        when "STATUS"
           StatusEntity.new(
             type: "status",
+            id: resource["annictId"],
             kind: resource["kind"].downcase,
             likes_count: resource["likesCount"],
             work: build_work(resource["work"])
           )
-        when "WorkRecord"
+        when "WORK_RECORD"
           WorkRecordEntity.new(
             type: "work_record",
+            id: resource["annictId"],
             rating_overall_state: resource["ratingOverallState"]&.downcase,
             body_html: resource["bodyHtml"],
             likes_count: resource["likesCount"],

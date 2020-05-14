@@ -1,0 +1,93 @@
+query($username: String!, $cursor: String) {
+  user(username: $username) {
+    followingActivityGroups(
+      orderBy: { field: CREATED_AT, direction: DESC },
+      first: 30,
+      after: $cursor
+    ) {
+      pageInfo {
+        endCursor
+        hasNextPage
+      }
+
+      nodes {
+        resourceType
+        single
+        activitiesCount
+        createdAt
+
+        user {
+          username
+          name
+          avatarUrl(size: size100)
+        }
+
+        activities(first: 3) {
+          nodes {
+            resourceType
+
+            resource {
+              ... on Status {
+                annictId
+                kind
+                likesCount
+
+                work {
+                  annictId
+                  title
+                  titleEn
+                  image {
+                    internalUrl1x: internalUrl(size: "100x")
+                    internalUrl2x: internalUrl(size: "200x")
+                  }
+                }
+              }
+
+              ... on EpisodeRecord {
+                annictId
+                ratingState
+                bodyHtml
+                likesCount
+                commentsCount
+
+                work {
+                  annictId
+                  title
+                  titleEn
+                  image {
+                    internalUrl1x: internalUrl(size: "100x")
+                    internalUrl2x: internalUrl(size: "200x")
+                  }
+                }
+
+                episode {
+                  annictId
+                  numberText
+                  title
+                  titleEn
+                }
+              }
+
+              ... on WorkRecord {
+                annictId
+                ratingOverallState
+                bodyHtml
+                likesCount
+
+                work {
+                  annictId
+                  title
+                  titleEn
+                  image {
+                    internalUrl1x: internalUrl(size: "100x")
+                    internalUrl2x: internalUrl(size: "200x")
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

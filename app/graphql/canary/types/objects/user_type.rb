@@ -41,6 +41,10 @@ module Canary
           argument :order_by, Canary::Types::InputObjects::ActivityOrder, required: false
         end
 
+        field :following_activity_groups, Canary::Types::Objects::ActivityGroupType.connection_type, null: true do
+          argument :order_by, Canary::Types::InputObjects::ActivityOrder, required: false
+        end
+
         field :following_activities, Canary::Types::Objects::ActivityType.connection_type, null: true do
           argument :order_by, Canary::Types::InputObjects::ActivityOrder, required: false
         end
@@ -164,8 +168,12 @@ module Canary
           ).call
         end
 
+        def following_activity_groups(order_by: nil)
+          object.following_resources(model: ActivityGroup, viewer: context[:viewer], order: build_order(order_by))
+        end
+
         def following_activities(order_by: nil)
-          object.following_activities(viewer: context[:viewer], order: build_order(order_by))
+          object.following_resources(model: Activity, viewer: context[:viewer], order: build_order(order_by))
         end
 
         def episode_records(order_by: nil, has_body: nil)

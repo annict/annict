@@ -18,7 +18,7 @@
           = t "noun.activities"
 
         .mb-3
-          = render TimelineComponent.new(activities: @activity_result[:activities], pagination: @activity_result[:pagination])
+          = render TimelineComponent.new(activity_groups: @activity_group_result[:activity_groups], pagination: @activity_group_result[:pagination])
 
         - if @forum_posts.present?
           h2.h4.font-weight-bold.mb-3.text-center

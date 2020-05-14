@@ -22,7 +22,9 @@ module Canary
     def self.resolve_type(_type, obj, _ctx)
       case obj
       when Activity
-        Canary::Types::Unions::ActivityItem
+        Canary::Types::Objects::ActivityType
+      when ActivityGroup
+        Canary::Types::Objects::ActivityGroupType
       when EpisodeRecord
         Canary::Types::Objects::EpisodeRecordType
       when Episode

@@ -18,7 +18,7 @@ class HomeController < ApplicationController
       @forum_posts = localable_resources(@forum_posts).order(created_at: :desc).limit(5)
     end
 
-    @activity_result = UserHome::FollowingActivitiesRepository.new(
+    @activity_group_result = UserHome::FollowingActivityGroupsRepository.new(
       graphql_client: graphql_client(viewer: current_user)
     ).fetch(username: current_user.username, cursor: params[:cursor])
 
