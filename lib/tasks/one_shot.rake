@@ -37,18 +37,4 @@ namespace :one_shot do
       end
     end
   end
-
-  task update_episode_records_by_multiple_episode_record: :environment do
-    Activity.with_action(:create_multiple_episode_records).find_each do |activity|
-      puts "----- Activity: #{activity.id}"
-
-      multiple_episode_record = activity.trackable
-
-      ActiveRecord::Base.transaction do
-        multiple_episode_record.episode_records.where(activity_id: nil).each do |episode_record|
-          episode_record.update_column(:activity_id, activity.id)
-        end
-      end
-    end
-  end
 end
