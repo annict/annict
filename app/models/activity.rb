@@ -4,16 +4,12 @@
 # Table name: activities
 #
 #  id                :bigint           not null, primary key
-#  resource_type     :string
+#  trackable_type    :string(510)      not null
 #  created_at        :datetime
 #  updated_at        :datetime
 #  activity_group_id :bigint
-#  episode_id        :bigint
-#  episode_record_id :bigint
-#  status_id         :bigint
+#  trackable_id      :bigint           not null
 #  user_id           :bigint           not null
-#  work_id           :bigint
-#  work_record_id    :bigint
 #
 # Indexes
 #
@@ -45,11 +41,14 @@ class Activity < ApplicationRecord
 
   self.ignored_columns = %w(
     action
+    episode_id
+    episode_record_id
     multiple_episode_record_id
     recipient_id
     recipient_type
-    trackable_id
-    trackable_type
+    status_id
+    work_id
+    work_record_id
   )
 
   enumerize :trackable_type, in: %w(
@@ -68,15 +67,12 @@ class Activity < ApplicationRecord
   counter_culture :activity_group
 
   belongs_to :activity_group, optional: true
-  belongs_to :episode, optional: true
-  belongs_to :multiple_episode_record, optional: true
-  belongs_to :recipient, polymorphic: true
-  belongs_to :episode_record, optional: true
-  belongs_to :work_record, optional: true
-  belongs_to :status, optional: true
-  belongs_to :trackable, polymorphic: true
+  belongs_to :itemable, foreign_key: :trackable_id, foreign_type: :trackable_type, polymorphic: true
   belongs_to :user
-  belongs_to :work, optional: true
+
+  def itemable_type
+    trackable_type
+  end
 
   def deprecated_action
     case action
