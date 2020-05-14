@@ -45,7 +45,6 @@ module UserHome
         case activity["resourceType"]
         when "EPISODE_RECORD"
           EpisodeRecordEntity.new(
-            type: "episode_record",
             id: resource["annictId"],
             rating_state: resource["ratingState"]&.downcase,
             body_html: resource["bodyHtml"],
@@ -56,7 +55,6 @@ module UserHome
           )
         when "STATUS"
           StatusEntity.new(
-            type: "status",
             id: resource["annictId"],
             kind: resource["kind"].downcase,
             likes_count: resource["likesCount"],
@@ -64,7 +62,6 @@ module UserHome
           )
         when "WORK_RECORD"
           WorkRecordEntity.new(
-            type: "work_record",
             id: resource["annictId"],
             rating_overall_state: resource["ratingOverallState"]&.downcase,
             body_html: resource["bodyHtml"],

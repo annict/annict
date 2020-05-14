@@ -1,8 +1,6 @@
 # frozen_string_literal: true
 
 class WorkRecordEntity < ApplicationEntity
-  attribute :type, Types::Value("work_record")
-
   attribute? :id, Types::Integer
   attribute? :rating_animation_state, Types::RecordRatingStateKinds.optional
   attribute? :rating_music_state, Types::RecordRatingStateKinds.optional

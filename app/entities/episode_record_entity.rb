@@ -1,8 +1,6 @@
 # frozen_string_literal: true
 
 class EpisodeRecordEntity < ApplicationEntity
-  attribute :type, Types::Value("episode_record")
-
   attribute? :id, Types::Integer
   attribute? :rating_state, Types::RecordRatingStateKinds.optional
   attribute? :body, Types::String.optional
