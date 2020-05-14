@@ -65,12 +65,6 @@ class Activity < ApplicationRecord
     create_multiple_episode_records
   ), scope: true
 
-  enumerize :resource_type, in: %w(
-    status
-    episode_record
-    work_record
-  ), scope: true
-
   counter_culture :activity_group
 
   belongs_to :activity_group, optional: true
