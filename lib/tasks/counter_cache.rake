@@ -3,7 +3,7 @@
 namespace :counter_cache do
   task refresh_all: :environment do
     [
-      :refresh_on_activities,
+      :refresh_on_activity_group,
       :refresh_on_characters,
       :refresh_on_episode_records,
       :refresh_on_episodes,
@@ -24,19 +24,19 @@ namespace :counter_cache do
     end
   end
 
-  task refresh_on_activities: :environment do
-    Activity.find_each do |activity|
-      resources_count = activity.resources.count
+  task refresh_on_activity_group: :environment do
+    ActivityGroup.find_each do |activity_group|
+      activities_count = activity_group.activities.count
 
-      next if activity.resources_count == resources_count
+      next if activity_group.activities_count == activities_count
 
       puts [
-        "Activity: #{activity.id}",
-        "resources_count: #{activity.resources_count} -> #{resources_count}"
+        "ActivityGroup: #{activity_group.id}",
+        "activities_count: #{activity_group.activities_count} -> #{activities_count}"
       ].join(", ")
 
-      activity.update_columns(
-        resources_count: resources_count,
+      activity_group.update_columns(
+        activities_count: activities_count,
         updated_at: Time.zone.now
       )
     end
