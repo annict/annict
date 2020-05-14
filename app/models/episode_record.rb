@@ -18,7 +18,6 @@
 #  twitter_url_hash     :string(510)
 #  created_at           :datetime
 #  updated_at           :datetime
-#  activity_id          :bigint
 #  episode_id           :bigint           not null
 #  oauth_application_id :bigint
 #  record_id            :bigint           not null

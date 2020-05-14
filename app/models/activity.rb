@@ -3,18 +3,17 @@
 #
 # Table name: activities
 #
-#  id              :bigint           not null, primary key
-#  action          :string(510)      not null
-#  recipient_type  :string(510)      not null
-#  repetitiveness  :boolean          default(FALSE), not null
-#  resources_count :integer          default(0), not null
-#  single          :boolean          default(FALSE), not null
-#  trackable_type  :string(510)      not null
-#  created_at      :datetime
-#  updated_at      :datetime
-#  recipient_id    :bigint           not null
-#  trackable_id    :bigint           not null
-#  user_id         :bigint           not null
+#  id                :bigint           not null, primary key
+#  action            :string(510)      not null
+#  activity_type     :string
+#  recipient_type    :string(510)      not null
+#  trackable_type    :string(510)      not null
+#  created_at        :datetime
+#  updated_at        :datetime
+#  activity_group_id :bigint
+#  recipient_id      :bigint           not null
+#  trackable_id      :bigint           not null
+#  user_id           :bigint           not null
 #
 # Indexes
 #
