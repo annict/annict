@@ -4,7 +4,7 @@
 # Table name: activities
 #
 #  id                :bigint           not null, primary key
-#  activity_type     :string
+#  resource_type     :string
 #  created_at        :datetime
 #  updated_at        :datetime
 #  activity_group_id :bigint
@@ -65,7 +65,7 @@ class Activity < ApplicationRecord
     create_multiple_episode_records
   ), scope: true
 
-  enumerize :activity_type, in: %w(
+  enumerize :resource_type, in: %w(
     status
     episode_record
     work_record

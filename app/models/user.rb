@@ -426,19 +426,19 @@ class User < ApplicationRecord
   end
 
   def create_or_last_activity_group!(resource)
-    activity_type = resource.class.name.underscore
+    resource_type = resource.class.name.underscore
 
     if resource.needs_single_activity_group?
-      return activity_groups.create!(activity_type: activity_type, single: true)
+      return activity_groups.create!(resource_type: resource_type, single: true)
     end
 
     last_activity_group = activity_groups.order(created_at: :desc).first
 
-    if last_activity_group&.activity_type == activity_type && !last_activity_group.single?
+    if last_activity_group&.resource_type == resource_type && !last_activity_group.single?
       return last_activity_group
     end
 
-    activity_groups.create!(activity_type: activity_type, single: false)
+    activity_groups.create!(resource_type: resource_type, single: false)
   end
 
   # Create activity for backward compatibility (Annict API)
