@@ -13,6 +13,6 @@ class StatusActivityComponent < ApplicationComponent
   attr_reader :activity_group
 
   def statuses
-    activity_group.resources
+    activity_group.itemables
   end
 end

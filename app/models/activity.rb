@@ -51,11 +51,7 @@ class Activity < ApplicationRecord
     work_record_id
   )
 
-  enumerize :trackable_type, in: %w(
-    Status
-    EpisodeRecord
-    WorkRecord
-  ), scope: true
+  enumerize :trackable_type, in: ActivityGroup::ITEMABLE_TYPES, scope: true
 
   enumerize :action, in: %w(
     create_status
@@ -72,6 +68,10 @@ class Activity < ApplicationRecord
 
   def itemable_type
     trackable_type
+  end
+
+  def itemable_id
+    trackable_id
   end
 
   def deprecated_action

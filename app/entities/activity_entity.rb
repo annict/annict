@@ -2,6 +2,6 @@
 
 class ActivityEntity < ApplicationEntity
   attribute? :id, Types::Integer
-  attribute? :resource_type, Types::ActivityResourceKinds
-  attribute? :resource, EpisodeRecordEntity | StatusEntity | WorkRecordEntity
+  attribute? :itemable_type, Types::ActivityResourceKinds
+  attribute? :itemable, EpisodeRecordEntity | StatusEntity | WorkRecordEntity
 end

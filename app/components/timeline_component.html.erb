@@ -12,11 +12,11 @@
         </div>
 
         <div class="col">
-          <% if activity_group.resource_type == "status" %>
+          <% if activity_group.status? %>
             <%= render StatusActivityComponent.new(activity_group: activity_group) %>
-          <% elsif activity_group.resource_type == "episode_record" %>
+          <% elsif activity_group.episode_record? %>
             <%= render EpisodeRecordActivityComponent.new(activity_group: activity_group) %>
-          <% elsif activity_group.resource_type == "work_record" %>
+          <% elsif activity_group.work_record? %>
           <% end %>
         </div>
       </div>

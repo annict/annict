@@ -11,7 +11,7 @@ query($username: String!, $cursor: String) {
       }
 
       nodes {
-        resourceType
+        itemableType
         single
         activitiesCount
         createdAt
@@ -24,9 +24,9 @@ query($username: String!, $cursor: String) {
 
         activities(first: 3) {
           nodes {
-            resourceType
+            itemableType
 
-            resource {
+            itemable {
               ... on Status {
                 annictId
                 kind

@@ -3,7 +3,9 @@
 module Canary
   module Types
     module Unions
-      class ActivityItem < Canary::Types::Unions::Base
+      class ActivityItemable < Canary::Types::Unions::Base
+        graphql_name "ActivityItemable"
+
         possible_types Canary::Types::Objects::StatusType,
           Canary::Types::Objects::EpisodeRecordType,
           Canary::Types::Objects::WorkRecordType

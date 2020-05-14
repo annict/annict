@@ -3,8 +3,8 @@
 module Canary
   module Types
     module Enums
-      class ActivityType < Types::Enums::Base
-        graphql_name "ActivityType"
+      class ActivityItemableType < Types::Enums::Base
+        graphql_name "ActivityItemableType"
 
         value "EPISODE_RECORD", ""
         value "STATUS", ""

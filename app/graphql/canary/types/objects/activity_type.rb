@@ -4,34 +4,32 @@ module Canary
   module Types
     module Objects
       class ActivityType < Canary::Types::Objects::Base
-        graphql_name "Activity"
-
         implements GraphQL::Relay::Node.interface
 
         global_id_field :id
 
         field :annict_id, Integer, null: false
-        field :resource_type, Canary::Types::Enums::ActivityType, null: false
+        field :itemable_type, Canary::Types::Enums::ActivityItemableType, null: false
         field :created_at, Canary::Types::Scalars::DateTime, null: false
         field :user, Canary::Types::Objects::UserType, null: false
-        field :resource, Canary::Types::Unions::ActivityItem, null: false
+        field :itemable, Canary::Types::Unions::ActivityItemable, null: false
 
-        def resource_type
-          object.resource_type.upcase
+        def itemable_type
+          object.itemable_type.underscore.upcase
         end
 
         def user
           RecordLoader.for(User).load(object.user_id)
         end
 
-        def resource
-          case object.resource_type.to_sym
-          when :episode_record
-            RecordLoader.for(EpisodeRecord).load(object.episode_record_id)
-          when :status
-            RecordLoader.for(Status).load(object.status_id)
-          when :work_record
-            RecordLoader.for(WorkRecord).load(object.work_record_id)
+        def itemable
+          case object.itemable_type
+          when "EpisodeRecord"
+            RecordLoader.for(EpisodeRecord).load(object.itemable_id)
+          when "Status"
+            RecordLoader.for(Status).load(object.itemable_id)
+          when "WorkRecord"
+            RecordLoader.for(WorkRecord).load(object.itemable_id)
           end
         end
       end

@@ -11,6 +11,6 @@ class EpisodeRecordActivityComponent < ApplicationComponent
   attr_reader :activity_group
 
   def episode_records
-    activity_group.resources
+    activity_group.itemables
   end
 end

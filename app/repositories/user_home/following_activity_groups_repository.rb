@@ -13,12 +13,12 @@ module UserHome
         },
         activity_groups: data["nodes"].map do |node|
           ActivityGroupEntity.new(
-            resource_type: node["resourceType"].downcase,
+            itemable_type: node["itemableType"].downcase,
             single: node["single"],
             activities_count: node["activitiesCount"],
             created_at: node["createdAt"],
             user: build_user(node["user"]),
-            resources: build_resources(node.dig("activities", "nodes"))
+            itemables: build_itemables(node.dig("activities", "nodes"))
           )
         end
       }
@@ -38,35 +38,35 @@ module UserHome
       )
     end
 
-    def build_resources(activities)
+    def build_itemables(activities)
       activities.map do |activity|
-        resource = activity["resource"]
+        itemable = activity["itemable"]
 
-        case activity["resourceType"]
+        case activity["itemableType"]
         when "EPISODE_RECORD"
           EpisodeRecordEntity.new(
-            id: resource["annictId"],
-            rating_state: resource["ratingState"]&.downcase,
-            body_html: resource["bodyHtml"],
-            likes_count: resource["likesCount"],
-            comments_count: resource["commentsCount"],
-            work: build_work(resource["work"]),
-            episode: build_episode(resource["episode"])
+            id: itemable["annictId"],
+            rating_state: itemable["ratingState"]&.downcase,
+            body_html: itemable["bodyHtml"],
+            likes_count: itemable["likesCount"],
+            comments_count: itemable["commentsCount"],
+            work: build_work(itemable["work"]),
+            episode: build_episode(itemable["episode"])
           )
         when "STATUS"
           StatusEntity.new(
-            id: resource["annictId"],
-            kind: resource["kind"].downcase,
-            likes_count: resource["likesCount"],
-            work: build_work(resource["work"])
+            id: itemable["annictId"],
+            kind: itemable["kind"].downcase,
+            likes_count: itemable["likesCount"],
+            work: build_work(itemable["work"])
           )
         when "WORK_RECORD"
           WorkRecordEntity.new(
-            id: resource["annictId"],
-            rating_overall_state: resource["ratingOverallState"]&.downcase,
-            body_html: resource["bodyHtml"],
-            likes_count: resource["likesCount"],
-            work: build_work(resource["work"]),
+            id: itemable["annictId"],
+            rating_overall_state: itemable["ratingOverallState"]&.downcase,
+            body_html: itemable["bodyHtml"],
+            likes_count: itemable["likesCount"],
+            work: build_work(itemable["work"]),
           )
         end
       end

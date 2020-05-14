@@ -9,15 +9,15 @@ module Canary
         global_id_field :id
 
         field :annict_id, Integer, null: false
-        field :resource_type, Canary::Types::Enums::ActivityType, null: false
+        field :itemable_type, Canary::Types::Enums::ActivityItemableType, null: false
         field :single, Boolean, null: false
         field :activities_count, Integer, null: false
         field :created_at, Canary::Types::Scalars::DateTime, null: false
         field :user, Canary::Types::Objects::UserType, null: false
         field :activities, Canary::Types::Objects::ActivityType.connection_type, null: false
 
-        def resource_type
-          object.resource_type.upcase
+        def itemable_type
+          object.itemable_type.underscore.upcase
         end
 
         def user
