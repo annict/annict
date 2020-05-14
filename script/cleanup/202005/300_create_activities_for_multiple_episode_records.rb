@@ -13,7 +13,7 @@ activities.with_action(:create_multiple_episode_records).find_each do |activity|
 
   ActiveRecord::Base.transaction do
     activity_group = user.activity_groups.create!(
-      resource_type: :episode_record,
+      itemable_type: "EpisodeRecord",
       single: false,
       created_at: multiple_episode_record.created_at,
       updated_at: multiple_episode_record.updated_at
@@ -25,7 +25,6 @@ activities.with_action(:create_multiple_episode_records).find_each do |activity|
 
       user.activities.create!(
         action: :create_episode_record,
-        resource_type: :episode_record,
         recipient: episode,
         trackable: episode_record,
         activity_group: activity_group,

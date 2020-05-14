@@ -5,7 +5,6 @@
 #
 #  id                         :bigint           not null, primary key
 #  action                     :string(510)      not null
-#  resource_type              :string
 #  recipient_type             :string(510)      not null
 #  trackable_type             :string(510)      not null
 #  created_at                 :datetime
@@ -54,12 +53,6 @@ class Activity < ApplicationRecord
     create_episode_record
     create_work_record
     create_multiple_episode_records
-  ), scope: true
-
-  enumerize :resource_type, in: %w(
-    status
-    episode_record
-    work_record
   ), scope: true
 
   counter_culture :activity_group

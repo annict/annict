@@ -26,8 +26,7 @@ users.find_each do |user|
           activity_group_id: activity_group.id,
           episode_id: episode_record.episode_id,
           work_id: episode_record.work_id,
-          episode_record_id: episode_record.id,
-          resource_type: :episode_record
+          episode_record_id: episode_record.id
         )
       when "WorkRecord"
         work_record = activity.trackable
@@ -35,8 +34,7 @@ users.find_each do |user|
         activity.update_columns(
           activity_group_id: activity_group.id,
           work_id: work_record.work_id,
-          work_record_id: work_record.id,
-          resource_type: :work_record
+          work_record_id: work_record.id
         )
       when "Status"
         status = activity.trackable
@@ -44,8 +42,7 @@ users.find_each do |user|
         activity.update_columns(
           activity_group_id: activity_group.id,
           work_id: status.work_id,
-          status_id: status.id,
-          resource_type: :status
+          status_id: status.id
         )
       end
     end

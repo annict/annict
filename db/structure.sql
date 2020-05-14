@@ -71,8 +71,7 @@ CREATE TABLE public.activities (
     episode_record_id bigint,
     multiple_episode_record_id bigint,
     work_record_id bigint,
-    activity_group_id bigint,
-    resource_type character varying
+    activity_group_id bigint
 );
 
 
@@ -83,7 +82,7 @@ CREATE TABLE public.activities (
 CREATE TABLE public.activity_groups (
     id bigint NOT NULL,
     user_id bigint NOT NULL,
-    resource_type character varying NOT NULL,
+    itemable_type character varying NOT NULL,
     single boolean DEFAULT false NOT NULL,
     activities_count integer DEFAULT 0 NOT NULL,
     created_at timestamp(6) without time zone NOT NULL,

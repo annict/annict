@@ -437,20 +437,20 @@ class User < ApplicationRecord
     created_at > Time.zone.parse("2020-04-07 0:00:00")
   end
 
-  def create_or_last_activity_group!(resource)
-    resource_type = resource.class.name.underscore
+  def create_or_last_activity_group!(itemable)
+    itemable_type = itemable.class.name
 
-    if resource.needs_single_activity_group?
-      return activity_groups.create!(resource_type: resource_type, single: true)
+    if itemable.needs_single_activity_group?
+      return activity_groups.create!(itemable_type: itemable_type, single: true)
     end
 
     last_activity_group = activity_groups.order(created_at: :desc).first
 
-    if last_activity_group&.resource_type == resource_type && !last_activity_group.single?
+    if last_activity_group&.itemable_type == itemable_type && !last_activity_group.single?
       return last_activity_group
     end
 
-    activity_groups.create!(resource_type: resource_type, single: false)
+    activity_groups.create!(itemable_type: itemable_type, single: false)
   end
 
   private
