@@ -2,7 +2,7 @@
 
 users = User.only_kept
 # For test
-users = User.find_by(username: "shimbaco").followings
+# users = User.find_by(username: "shimbaco").followings
 
 users.find_each do |user|
   activities = user.
