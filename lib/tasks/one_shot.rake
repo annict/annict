@@ -38,22 +38,6 @@ namespace :one_shot do
     end
   end
 
-  task update_activity_resource: :environment do
-    User.only_kept.find_each do |user|
-      activities = user.
-        activities.
-        with_action(:create_status, :create_episode_record, :create_work_record).
-        order(:created_at)
-      activities.each do |activity|
-        puts "----- User: #{user.id}, Activity: #{activity.id}"
-
-        next if activity.trackable.activity_id
-
-        activity.trackable.update_column(:activity_id, activity.id)
-      end
-    end
-  end
-
   task update_episode_records_by_multiple_episode_record: :environment do
     Activity.with_action(:create_multiple_episode_records).find_each do |activity|
       puts "----- Activity: #{activity.id}"

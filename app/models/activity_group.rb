@@ -22,4 +22,14 @@
 #  fk_rails_...  (user_id => users.id)
 #
 class ActivityGroup < ApplicationRecord
+  extend Enumerize
+
+  enumerize :activity_type, in: %w(
+    status
+    episode_record
+    work_record
+  ), scope: true
+
+  belongs_to :user
+  has_many :activities, dependent: :destroy
 end

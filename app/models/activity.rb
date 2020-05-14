@@ -56,6 +56,13 @@ class Activity < ApplicationRecord
     create_multiple_episode_records
   ), scope: true
 
+  enumerize :activity_type, in: %w(
+    status
+    episode_record
+    work_record
+  ), scope: true
+
+  belongs_to :activity_group, counter_cache: true, optional: true
   belongs_to :episode, optional: true
   belongs_to :multiple_episode_record, optional: true
   belongs_to :recipient, polymorphic: true

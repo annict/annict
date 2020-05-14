@@ -121,6 +121,10 @@ class WorkRecord < ApplicationRecord
     end
   end
 
+  def needs_single_activity_group?
+    body.present?
+  end
+
   private
 
   # For backward compatible on API

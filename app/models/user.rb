@@ -89,6 +89,7 @@ class User < ApplicationRecord
   enumerize :role, in: { user: 0, admin: 1, editor: 2 }, default: :user, scope: true
 
   belongs_to :gumroad_subscriber, optional: true
+  has_many :activity_groups, dependent: :destroy
   has_many :activities, dependent: :destroy
   has_many :channel_works, dependent: :destroy
   has_many :character_favorites, dependent: :destroy
@@ -434,6 +435,22 @@ class User < ApplicationRecord
   def registered_after_email_confirmation_required?
     # After 2020-04-07, registered users must confirm email before sign in
     created_at > Time.zone.parse("2020-04-07 0:00:00")
+  end
+
+  def create_or_last_activity_group!(resource)
+    activity_type = resource.class.name.underscore
+
+    if resource.needs_single_activity_group?
+      return activity_groups.create!(activity_type: activity_type, single: true)
+    end
+
+    last_activity_group = activity_groups.order(created_at: :desc).first
+
+    if last_activity_group&.activity_type == activity_type && !last_activity_group.single?
+      return last_activity_group
+    end
+
+    activity_groups.create!(activity_type: activity_type, single: false)
   end
 
   private
