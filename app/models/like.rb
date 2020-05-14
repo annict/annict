@@ -21,7 +21,9 @@
 #
 
 class Like < ApplicationRecord
-  belongs_to :recipient, polymorphic: true, counter_cache: true
+  counter_culture :recipient
+
+  belongs_to :recipient, polymorphic: true
   belongs_to :user
   has_many :notifications,
     foreign_key: :trackable_id,

@@ -54,11 +54,13 @@ class Episode < ApplicationRecord
     number sort_number sc_count title prev_episode_id fetch_syobocal raw_number title_en
   ).freeze
 
+  counter_culture :work, column_name: -> (episode) { episode.published? ? :episodes_count : nil }
+
   belongs_to :prev_episode,
     class_name: "Episode",
     foreign_key: :prev_episode_id,
     optional: true
-  belongs_to :work, counter_cache: true, touch: true
+  belongs_to :work, touch: true
   has_many :activities, as: :recipient
   has_many :db_activities, as: :trackable, dependent: :destroy
   has_many :db_comments, as: :resource, dependent: :destroy

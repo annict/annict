@@ -19,7 +19,6 @@
 #  title                  :string           default("")
 #  created_at             :datetime         not null
 #  updated_at             :datetime         not null
-#  activity_id            :bigint
 #  oauth_application_id   :bigint
 #  record_id              :bigint           not null
 #  user_id                :bigint           not null
@@ -27,7 +26,6 @@
 #
 # Indexes
 #
-#  index_work_records_on_activity_id           (activity_id)
 #  index_work_records_on_deleted_at            (deleted_at)
 #  index_work_records_on_locale                (locale)
 #  index_work_records_on_oauth_application_id  (oauth_application_id)
@@ -37,7 +35,6 @@
 #
 # Foreign Keys
 #
-#  fk_rails_...  (activity_id => activities.id)
 #  fk_rails_...  (oauth_application_id => oauth_applications.id)
 #  fk_rails_...  (record_id => records.id)
 #  fk_rails_...  (user_id => users.id)
@@ -63,11 +60,13 @@ class WorkRecord < ApplicationRecord
     enumerize state, in: Record::RATING_STATES
   end
 
-  belongs_to :activity, counter_cache: :resources_count, optional: true
+  counter_culture :work
+  counter_culture :work, column_name: -> (work_record) { work_record.body.present? ? :work_records_with_body_count : nil }
+
   belongs_to :oauth_application, class_name: "Doorkeeper::Application", optional: true
   belongs_to :record
   belongs_to :user
-  belongs_to :work, counter_cache: true
+  belongs_to :work
   has_many :activities,
     dependent: :destroy,
     as: :trackable
@@ -121,7 +120,7 @@ class WorkRecord < ApplicationRecord
     end
   end
 
-  def needs_single_activity?
+  def needs_single_activity_group?
     body.present?
   end
 

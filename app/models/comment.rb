@@ -30,7 +30,9 @@
 class Comment < ApplicationRecord
   include Localizable
 
-  belongs_to :episode_record, counter_cache: true
+  counter_culture :episode_record
+
+  belongs_to :episode_record
   belongs_to :user
   belongs_to :work
   has_many :likes,

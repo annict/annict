@@ -25,7 +25,9 @@
 #
 
 class WorkTagging < ApplicationRecord
+  counter_culture :work_tag
+
   belongs_to :user
   belongs_to :work
-  belongs_to :work_tag, counter_cache: true
+  belongs_to :work_tag
 end

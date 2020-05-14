@@ -18,19 +18,21 @@
 #
 # Indexes
 #
-#  activities_user_id_idx                          (user_id)
-#  index_activities_on_created_at                  (created_at)
-#  index_activities_on_episode_id                  (episode_id)
-#  index_activities_on_episode_record_id           (episode_record_id)
-#  index_activities_on_multiple_episode_record_id  (multiple_episode_record_id)
-#  index_activities_on_repetitiveness              (repetitiveness)
-#  index_activities_on_status_id                   (status_id)
-#  index_activities_on_work_id                     (work_id)
-#  index_activities_on_work_record_id              (work_record_id)
+#  activities_user_id_idx                                (user_id)
+#  index_activities_on_activity_group_id                 (activity_group_id)
+#  index_activities_on_activity_group_id_and_created_at  (activity_group_id,created_at)
+#  index_activities_on_created_at                        (created_at)
+#  index_activities_on_episode_id                        (episode_id)
+#  index_activities_on_episode_record_id                 (episode_record_id)
+#  index_activities_on_multiple_episode_record_id        (multiple_episode_record_id)
+#  index_activities_on_status_id                         (status_id)
+#  index_activities_on_work_id                           (work_id)
+#  index_activities_on_work_record_id                    (work_record_id)
 #
 # Foreign Keys
 #
 #  activities_user_id_fk  (user_id => users.id) ON DELETE => cascade
+#  fk_rails_...           (activity_group_id => activity_groups.id)
 #  fk_rails_...           (episode_id => episodes.id)
 #  fk_rails_...           (episode_record_id => episode_records.id)
 #  fk_rails_...           (multiple_episode_record_id => multiple_episode_records.id)
@@ -57,31 +59,24 @@ class Activity < ApplicationRecord
     create_multiple_episode_records
   ), scope: true
 
+  enumerize :activity_type, in: %w(
+    status
+    episode_record
+    work_record
+  ), scope: true
+
+  counter_culture :activity_group
+
+  belongs_to :activity_group, optional: true
+  belongs_to :episode, optional: true
+  belongs_to :multiple_episode_record, optional: true
   belongs_to :recipient, polymorphic: true
+  belongs_to :episode_record, optional: true
+  belongs_to :work_record, optional: true
+  belongs_to :status, optional: true
   belongs_to :trackable, polymorphic: true
   belongs_to :user
-
-  has_many :episode_records, dependent: :destroy
-  has_many :statuses, dependent: :destroy
-  has_many :work_records, dependent: :destroy
-  has_many :ordered_episode_records, -> { order(created_at: :desc) }, class_name: "EpisodeRecord"
-  has_many :ordered_statuses, -> { order(created_at: :desc) }, class_name: "Status"
-  has_many :ordered_work_records, -> { order(created_at: :desc) }, class_name: "WorkRecord"
-
-  scope :without_repetitiveness, -> { where(repetitiveness: false) }
-
-  def resources
-    case trackable_type
-    when "Status"
-      statuses
-    when "EpisodeRecord"
-      episode_records
-    when "WorkRecord"
-      work_records
-    else
-      []
-    end
-  end
+  belongs_to :work, optional: true
 
   def deprecated_action
     case action

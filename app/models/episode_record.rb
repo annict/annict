@@ -30,7 +30,6 @@
 #  checkins_facebook_url_hash_key                       (facebook_url_hash) UNIQUE
 #  checkins_twitter_url_hash_key                        (twitter_url_hash) UNIQUE
 #  checkins_user_id_idx                                 (user_id)
-#  index_episode_records_on_activity_id                 (activity_id)
 #  index_episode_records_on_episode_id_and_deleted_at   (episode_id,deleted_at)
 #  index_episode_records_on_locale                      (locale)
 #  index_episode_records_on_multiple_episode_record_id  (multiple_episode_record_id)
@@ -45,7 +44,6 @@
 #  checkins_episode_id_fk  (episode_id => episodes.id) ON DELETE => cascade
 #  checkins_user_id_fk     (user_id => users.id) ON DELETE => cascade
 #  checkins_work_id_fk     (work_id => works.id)
-#  fk_rails_...            (activity_id => activities.id)
 #  fk_rails_...            (multiple_episode_record_id => multiple_episode_records.id)
 #  fk_rails_...            (oauth_application_id => oauth_applications.id)
 #  fk_rails_...            (record_id => records.id)
@@ -63,13 +61,16 @@ class EpisodeRecord < ApplicationRecord
 
   enumerize :rating_state, in: Record::RATING_STATES, scope: true
 
-  belongs_to :activity, counter_cache: :resources_count, optional: true
+  counter_culture :episode
+  counter_culture :episode, column_name: -> (episode_record) { episode_record.body.present? ? :episode_record_bodies_count : nil }
+  counter_culture :user
+
   belongs_to :oauth_application, class_name: "Doorkeeper::Application", optional: true
   belongs_to :record
   belongs_to :work
-  belongs_to :episode, counter_cache: true
+  belongs_to :episode
   belongs_to :multiple_episode_record, optional: true
-  belongs_to :user, counter_cache: true
+  belongs_to :user
   has_many :comments, dependent: :destroy
   has_many :activities,
     dependent: :destroy,
@@ -178,7 +179,7 @@ class EpisodeRecord < ApplicationRecord
     end
   end
 
-  def needs_single_activity?
+  def needs_single_activity_group?
     body.present?
   end
 end
