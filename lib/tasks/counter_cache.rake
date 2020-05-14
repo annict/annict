@@ -1,20 +1,6 @@
 # frozen_string_literal: true
 
 namespace :counter_cache do
-  this = self
-
-  using Module.new {
-    refine this.singleton_class do
-      def clear_readonly_attributes!(model)
-        model.class_eval do
-          def self.readonly_attributes
-            []
-          end
-        end
-      end
-    end
-  }
-
   task refresh_all: :environment do
     [
       :refresh_on_activities,
@@ -39,8 +25,6 @@ namespace :counter_cache do
   end
 
   task refresh_on_activities: :environment do
-    clear_readonly_attributes!(Activity)
-
     Activity.find_each do |activity|
       resources_count = activity.resources.count
 
@@ -59,8 +43,6 @@ namespace :counter_cache do
   end
 
   task refresh_on_characters: :environment do
-    clear_readonly_attributes!(Character)
-
     Character.only_kept.find_each do |character|
       favorite_users_count = character.users.only_kept.count
 
@@ -79,8 +61,6 @@ namespace :counter_cache do
   end
 
   task refresh_on_episode_records: :environment do
-    clear_readonly_attributes!(EpisodeRecord)
-
     EpisodeRecord.only_kept.find_each do |episode_record|
       comments_count = episode_record.comments.count
       likes_count = episode_record.likes.count
@@ -103,8 +83,6 @@ namespace :counter_cache do
   end
 
   task refresh_on_episodes: :environment do
-    clear_readonly_attributes!(Episode)
-
     Episode.only_kept.find_each do |episode|
       episode_record_bodies_count = episode.episode_records.only_kept.with_body.count
       episode_records_count = episode.episode_records.only_kept.count
@@ -127,8 +105,6 @@ namespace :counter_cache do
   end
 
   task refresh_on_forum_posts: :environment do
-    clear_readonly_attributes!(ForumPost)
-
     ForumPost.find_each do |forum_post|
       forum_comments_count = forum_post.forum_comments.count
 
@@ -147,8 +123,6 @@ namespace :counter_cache do
   end
 
   task refresh_on_multiple_episode_records: :environment do
-    clear_readonly_attributes!(MultipleEpisodeRecord)
-
     MultipleEpisodeRecord.find_each do |multiple_episode_record|
       likes_count = multiple_episode_record.likes.count
 
@@ -167,8 +141,6 @@ namespace :counter_cache do
   end
 
   task refresh_on_organizations: :environment do
-    clear_readonly_attributes!(Organization)
-
     Organization.only_kept.find_each do |organization|
       favorite_users_count = organization.organization_favorites.count
       staffs_count = organization.staffs.only_kept.count
@@ -191,8 +163,6 @@ namespace :counter_cache do
   end
 
   task refresh_on_people: :environment do
-    clear_readonly_attributes!(Person)
-
     Person.only_kept.find_each do |person|
       casts_count = person.casts.only_kept.count
       favorite_users_count = person.person_favorites.count
@@ -219,8 +189,6 @@ namespace :counter_cache do
   end
 
   task refresh_on_series: :environment do
-    clear_readonly_attributes!(Series)
-
     Series.only_kept.find_each do |series|
       series_works_count = series.series_works.only_kept.count
 
@@ -239,8 +207,6 @@ namespace :counter_cache do
   end
 
   task refresh_on_statuses: :environment do
-    clear_readonly_attributes!(Status)
-
     Status.find_each do |status|
       likes_count = status.likes.count
 
@@ -259,8 +225,6 @@ namespace :counter_cache do
   end
 
   task refresh_on_userland_categories: :environment do
-    clear_readonly_attributes!(UserlandCategory)
-
     UserlandCategory.find_each do |userland_category|
       userland_projects_count = userland_category.userland_projects.count
 
@@ -279,8 +243,6 @@ namespace :counter_cache do
   end
 
   task refresh_on_users: :environment do
-    clear_readonly_attributes!(User)
-
     User.only_kept.find_each do |user|
       character_favorites_count = user.character_favorites.count
       completed_works_count = user.library_entries.count_on(:watched)
@@ -347,8 +309,6 @@ namespace :counter_cache do
   end
 
   task refresh_on_work_records: :environment do
-    clear_readonly_attributes!(WorkRecord)
-
     WorkRecord.only_kept.find_each do |work_record|
       likes_count = work_record.likes.count
 
@@ -367,8 +327,6 @@ namespace :counter_cache do
   end
 
   task refresh_on_work_tags: :environment do
-    clear_readonly_attributes!(WorkTag)
-
     WorkTag.only_kept.find_each do |work_tag|
       work_taggings_count = work_tag.work_taggings.count
 
@@ -387,8 +345,6 @@ namespace :counter_cache do
   end
 
   task refresh_on_works: :environment do
-    clear_readonly_attributes!(Work)
-
     Work.only_kept.find_each do |work|
       kinds = %w(wanna_watch watching watched).freeze
 
