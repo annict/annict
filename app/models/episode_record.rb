@@ -63,13 +63,17 @@ class EpisodeRecord < ApplicationRecord
 
   enumerize :rating_state, in: Record::RATING_STATES, scope: true
 
+  counter_culture :episode
+  counter_culture :episode, column_name: -> (episode_record) { episode_record.body.present? ? :episode_record_bodies_count : nil }
+  counter_culture :user
+
   belongs_to :oauth_application, class_name: "Doorkeeper::Application", optional: true
   belongs_to :record
   belongs_to :review, optional: true
   belongs_to :work
-  belongs_to :episode, counter_cache: true
+  belongs_to :episode
   belongs_to :multiple_episode_record, optional: true
-  belongs_to :user, counter_cache: true
+  belongs_to :user
   has_many :comments, dependent: :destroy
   has_many :activities,
     dependent: :destroy,

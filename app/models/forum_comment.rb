@@ -27,7 +27,9 @@
 class ForumComment < ApplicationRecord
   include Localizable
 
-  belongs_to :forum_post, counter_cache: true
+  counter_culture :forum_post
+
+  belongs_to :forum_post
   belongs_to :user
 
   validates :body, presence: true, length: { maximum: 5000 }

@@ -34,7 +34,9 @@ class SeriesWork < ApplicationRecord
 
   DIFF_FIELDS = %i(work_id).freeze
 
-  belongs_to :series, counter_cache: true
+  counter_culture :series, column_name: -> (series_work) { series_work.published? ? :series_works_count : nil }
+
+  belongs_to :series
   belongs_to :work, touch: true
   has_many :db_activities, as: :trackable, dependent: :destroy
   has_many :db_comments, as: :resource, dependent: :destroy

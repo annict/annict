@@ -60,10 +60,13 @@ class WorkRecord < ApplicationRecord
     enumerize state, in: Record::RATING_STATES
   end
 
+  counter_culture :work
+  counter_culture :work, column_name: -> (work_record) { work_record.body.present? ? :work_records_with_body_count : nil }
+
   belongs_to :oauth_application, class_name: "Doorkeeper::Application", optional: true
   belongs_to :record
   belongs_to :user
-  belongs_to :work, counter_cache: true
+  belongs_to :work
   has_many :activities,
     dependent: :destroy,
     as: :trackable

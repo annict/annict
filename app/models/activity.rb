@@ -62,7 +62,9 @@ class Activity < ApplicationRecord
     work_record
   ), scope: true
 
-  belongs_to :activity_group, counter_cache: true, optional: true
+  counter_culture :activity_group
+
+  belongs_to :activity_group, optional: true
   belongs_to :episode, optional: true
   belongs_to :multiple_episode_record, optional: true
   belongs_to :recipient, polymorphic: true
