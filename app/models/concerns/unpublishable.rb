@@ -15,11 +15,11 @@ module Unpublishable
     end
 
     def publish
-      update_attribute(:unpublished_at, nil)
+      update(unpublished_at: nil)
     end
 
     def unpublish
-      touch :unpublished_at
+      update(unpublished_at: Time.zone.now)
     end
 
     def published?
