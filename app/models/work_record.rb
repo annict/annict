@@ -63,6 +63,8 @@ class WorkRecord < ApplicationRecord
   counter_culture :work
   counter_culture :work, column_name: -> (work_record) { work_record.body.present? ? :work_records_with_body_count : nil }
 
+  attr_accessor :share_to_twitter, :mutation_error
+
   belongs_to :oauth_application, class_name: "Doorkeeper::Application", optional: true
   belongs_to :record
   belongs_to :user
