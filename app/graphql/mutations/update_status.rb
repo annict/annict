@@ -2,6 +2,8 @@
 
 module Mutations
   class UpdateStatus < Mutations::Base
+    include V4::GraphqlRunnable
+
     argument :work_id, ID, required: true
     argument :state, Types::Enums::StatusState, required: true
 
@@ -18,7 +20,9 @@ module Mutations
         state.downcase
       end
 
-      ChangeStatusService.new(user: context[:viewer], work: work).call(status_kind: state)
+      UpdateStatusRepository.new(
+        graphql_client: graphql_client(viewer: context[:viewer])
+      ).create(work: work, kind: state)
 
       {
         work: work

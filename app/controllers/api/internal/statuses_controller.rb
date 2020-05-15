@@ -3,12 +3,16 @@
 module Api
   module Internal
     class StatusesController < Api::Internal::ApplicationController
+      include V4::GraphqlRunnable
+
       before_action :authenticate_user!
 
       def select
         @work = Work.only_kept.find(params[:work_id])
 
-        ChangeStatusService.new(user: current_user, work: @work).call(status_kind: params[:status_kind])
+        UpdateStatusRepository.new(
+          graphql_client: graphql_client(viewer: current_user)
+        ).create(work: @work, kind: params[:status_kind])
 
         head 200
       end
