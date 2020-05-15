@@ -160,6 +160,6 @@ root "welcome#show",
 
 scope module: :v4 do
   constraints format: "html" do
-    get "/works/:id", to: "works#show", as: :work
+    match "/works/:id", via: :get,  as: :work, to: "works#show"
   end
 end
