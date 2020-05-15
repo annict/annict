@@ -441,11 +441,6 @@ class User < ApplicationRecord
     activity_groups.create!(itemable_type: itemable_type, single: false)
   end
 
-  # Create activity for backward compatibility (Annict API)
-  def create_repetitive_activity!(resource, recipient, action)
-    activities.create!(trackable: resource, recipient: recipient, action: action, repetitiveness: true)
-  end
-
   def update_works_count!(prev_state_kind, next_state_kind)
     works_count_fields = {
       wanna_watch: :plan_to_watch_works_count,
