@@ -4,31 +4,30 @@ module Api
   module V1
     module Me
       class RecordsController < Api::V1::ApplicationController
+        include V4::GraphqlRunnable
+
         before_action :prepare_params!, only: %i(create update destroy)
 
         def create
           episode = Episode.only_kept.find(@params.episode_id)
-          record = episode.episode_records.new do |r|
-            r.rating = @params.rating
-            r.rating_state = @params.rating_state
-            r.body = @params.comment
-            r.shared_twitter = @params.share_twitter == "true"
-            r.shared_facebook = @params.share_facebook == "true"
-            r.oauth_application = doorkeeper_token.application
-          end
-          record.rating_state = record.rating_to_rating_state if record.rating.present?
 
-          service = CreateEpisodeRecordService.new(current_user, record)
-          service.ga_client = ga_client
-          service.app = doorkeeper_token.application
-          service.via = "rest_api"
+          episode_record, err = CreateEpisodeRecordRepository.new(
+            graphql_client: graphql_client(viewer: current_user)
+          ).create(
+            episode: episode,
+            params: {
+              rating: @params.rating,
+              rating_state: @params.rating_state,
+              body: @params.comment,
+              share_to_twitter: @params.share_twitter
+            }
+          )
 
-          begin
-            service.save!
-            @episode_record = service.episode_record
-          rescue
-            render_validation_errors service.episode_record
+          if err
+            return render_validation_error(err.message)
           end
+
+          @episode_record = current_user.episode_records.find(episode_record.id)
         end
 
         def update
@@ -71,6 +70,20 @@ module Api
           end
 
           render json: { errors: errors }, status: 400
+        end
+
+        def render_validation_error(message)
+          render(
+            json: {
+              errors: [
+                {
+                  type: "invalid_params",
+                  message: message
+                }
+              ]
+            },
+            status: 400
+          )
         end
       end
     end

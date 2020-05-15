@@ -1,6 +1,7 @@
 mutation (
   $episodeId: ID!,
   $body: String,
+  $rating: Float,
   $ratingState: RatingState,
   $shareToTwitter: Boolean
 ) {
@@ -8,6 +9,7 @@ mutation (
     input: {
       episodeId: $episodeId,
       body: $body,
+      rating: $rating,
       ratingState: $ratingState,
       shareToTwitter: $shareToTwitter
     }

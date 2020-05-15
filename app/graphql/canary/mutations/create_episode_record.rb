@@ -8,6 +8,9 @@ module Canary
       argument :body, String,
         required: false,
         description: "エピソードへの感想"
+      argument :rating, Float,
+        required: false,
+        description: "[非推奨] 旧レーティング。今後は `rating_state` を使用してください。"
       argument :rating_state, Canary::Types::Enums::RatingState,
         required: false,
         description: "エピソードへの評価"
@@ -17,7 +20,7 @@ module Canary
 
       field :episode_record, Canary::Types::Objects::EpisodeRecordType, null: true
 
-      def resolve(episode_id:, body: nil, rating_state: nil, share_to_twitter: nil)
+      def resolve(episode_id:, body: nil, rating: nil, rating_state: nil, share_to_twitter: nil)
         raise Annict::Errors::InvalidAPITokenScopeError unless context[:writable]
 
         viewer = context[:viewer]
@@ -25,6 +28,7 @@ module Canary
         work = episode.work
 
         episode_record = viewer.episode_records.new(
+          rating: rating,
           rating_state: rating_state&.downcase,
           body: body,
           share_to_twitter: share_to_twitter

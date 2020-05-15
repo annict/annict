@@ -5,8 +5,9 @@ class CreateEpisodeRecordRepository < ApplicationRepository
     result = execute(variables: {
       episodeId: Canary::AnnictSchema.id_from_object(episode, Episode),
       body: params[:body],
+      rating: params[:rating]&.to_f,
       ratingState: params[:rating_state]&.upcase.presence || nil,
-      shareToTwitter: params[:share_to_twitter] == "1"
+      shareToTwitter: params[:share_to_twitter].in?(%w(true 1))
     })
 
     if result.to_h["errors"]
