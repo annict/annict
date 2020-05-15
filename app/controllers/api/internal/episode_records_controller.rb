@@ -3,28 +3,29 @@
 module Api
   module Internal
     class EpisodeRecordsController < Api::Internal::ApplicationController
+      include V4::GraphqlRunnable
+
       before_action :authenticate_user!, only: %i(create)
 
       def create
         episode = Episode.only_kept.find(params[:episode_id])
-        episode_record = episode.episode_records.new do |er|
-          er.body = episode_record_params[:body]
-          er.shared_twitter = episode_record_params[:shared_twitter]
-          er.rating_state = episode_record_params[:rating_state]
-        end
-        ga_client.page_category = params[:page_category]
 
-        service = CreateEpisodeRecordService.new(current_user, episode_record)
-        service.page_category = params[:page_category]
-        service.ga_client = ga_client
-        service.via = "internal_api"
+        episode_record, err = CreateEpisodeRecordRepository.new(
+          graphql_client: graphql_client(viewer: current_user)
+        ).create(
+          episode: episode,
+          params: {
+            rating_state: episode_record_params[:rating_state],
+            body: episode_record_params[:body],
+            share_to_twitter: episode_record_params[:shared_twitter]
+          }
+        )
 
-        begin
-          service.save!
-          head 201
-        rescue => err
-          render status: 400, json: { message: err.message }
+        if err
+          return render(status: 400, json: { message: err.message })
         end
+
+        head 201
       end
 
       private

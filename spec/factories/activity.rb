@@ -3,6 +3,7 @@
 FactoryBot.define do
   factory :activity do
     association :user
+    association :activity_group
 
     factory :create_episode_record_activity do
       recipient { create(:episode) }

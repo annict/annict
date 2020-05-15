@@ -50,6 +50,7 @@ describe UserEpisodesQuery, type: :query do
 
   context "when the user sets status of work_1 to watching" do
     let!(:status) { create :status, user: user, work: work_1, kind: :watching }
+    let!(:library_entry) { create(:library_entry, user: user, work: work_1, status: status) }
 
     context "when the user does not track episodes" do
       context "when the `watched` option is not specified" do
@@ -89,10 +90,10 @@ describe UserEpisodesQuery, type: :query do
     end
 
     context "when the user tracks episode_1 which belongs to work_1" do
-      let(:episode_record) { build :episode_record, user: user, episode: episode_1 }
+      let(:episode_record) { create :episode_record, user: user, episode: episode_1 }
 
       before do
-        CreateEpisodeRecordService.new(user, episode_record).save!
+        library_entry.update(watched_episode_ids: [episode_1.id])
       end
 
       context "when the `watched` option is not specified" do
@@ -132,11 +133,7 @@ describe UserEpisodesQuery, type: :query do
     end
 
     context "when the user tracks episode_3 which belongs to work_2 which is not set status" do
-      let(:episode_record) { build :episode_record, user: user, episode: episode_3 }
-
-      before do
-        CreateEpisodeRecordService.new(user, episode_record).save!
-      end
+      let(:episode_record) { create :episode_record, user: user, episode: episode_3 }
 
       context "when the `watched` option is not specified" do
         it "returns episodes" do
@@ -178,6 +175,8 @@ describe UserEpisodesQuery, type: :query do
   context "when the user sets status of work_1 and work_2 to watching" do
     let!(:status_1) { create :status, user: user, work: work_1, kind: :watching }
     let!(:status_2) { create :status, user: user, work: work_2, kind: :watching }
+    let!(:library_entry_1) { create(:library_entry, user: user, work: work_1, status: status_1) }
+    let!(:library_entry_2) { create(:library_entry, user: user, work: work_2, status: status_2) }
 
     context "when the user does not track episodes" do
       context "when the `watched` option is not specified" do
@@ -217,10 +216,10 @@ describe UserEpisodesQuery, type: :query do
     end
 
     context "when the user tracks episode_1 which belongs to work_1" do
-      let(:episode_record) { build :episode_record, user: user, episode: episode_1 }
+      let(:episode_record) { create :episode_record, user: user, episode: episode_1 }
 
       before do
-        CreateEpisodeRecordService.new(user, episode_record).save!
+        library_entry_1.update(watched_episode_ids: [episode_1.id])
       end
 
       context "when the `watched` option is not specified" do
@@ -263,6 +262,8 @@ describe UserEpisodesQuery, type: :query do
   context "when the user sets status of work_1 to watching and work_2 to dropped" do
     let!(:status_1) { create :status, user: user, work: work_1, kind: :watching }
     let!(:status_2) { create :status, user: user, work: work_2, kind: :stop_watching }
+    let!(:library_entry_1) { create(:library_entry, user: user, work: work_1, status: status_1) }
+    let!(:library_entry_2) { create(:library_entry, user: user, work: work_2, status: status_2) }
 
     context "when the user does not track episodes" do
       context "when the `watched` option is not specified" do
@@ -302,10 +303,10 @@ describe UserEpisodesQuery, type: :query do
     end
 
     context "when the user tracks episode_1 which belongs to work_1" do
-      let(:episode_record) { build :episode_record, user: user, episode: episode_1 }
+      let(:episode_record) { create :episode_record, user: user, episode: episode_1 }
 
       before do
-        CreateEpisodeRecordService.new(user, episode_record).save!
+        library_entry_1.update(watched_episode_ids: [episode_1.id])
       end
 
       context "when the `watched` option is not specified" do
@@ -345,10 +346,10 @@ describe UserEpisodesQuery, type: :query do
     end
 
     context "when the user tracks episode_3 which belongs to work_2" do
-      let(:episode_record) { build :episode_record, user: user, episode: episode_3 }
+      let(:episode_record) { create :episode_record, user: user, episode: episode_3 }
 
       before do
-        CreateEpisodeRecordService.new(user, episode_record).save!
+        library_entry_2.update(watched_episode_ids: [episode_3.id])
       end
 
       context "when the `watched` option is not specified" do
