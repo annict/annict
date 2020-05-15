@@ -25,7 +25,6 @@ class CreateEpisodeRecordService
       end
 
       user.update_share_record_setting(share_record_to_twitter)
-      episode.update_record_body_count!(nil, episode_record, field: :episode_record_bodies_count)
       library_entry&.append_episode!(episode)
 
       if user.share_record_to_twitter?

@@ -80,7 +80,6 @@ class Work < ApplicationRecord
   include DbActivityMethods
   include RootResourceCommon
   include Unpublishable
-  include Recordable
 
   DIFF_FIELDS = %i(
     sc_tid title title_kana title_en media official_site_url

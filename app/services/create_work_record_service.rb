@@ -23,7 +23,6 @@ class CreateWorkRecordService
       end
 
       user.update_share_record_setting(share_record_to_twitter)
-      work.update_record_body_count!(nil, work_record, field: :work_records_with_body_count)
 
       if user.share_record_to_twitter?
         user.share_work_record_to_twitter(work_record)
