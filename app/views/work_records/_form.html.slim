@@ -19,14 +19,12 @@
   - if current_user.authorized_to?(:twitter, shareable: true) || current_user.authorized_to?(:facebook, shareable: true)
     .mt-4
       - if current_user.authorized_to?(:twitter, shareable: true)
-        = fields_for :setting, current_user.setting do |sf|
-          .form-check
-            label.form-check-label
-              = sf.check_box :share_review_to_twitter, class: "form-check-input"
-              = t "messages._common.share_to_twitter"
+        .form-check
+          label.form-check-label
+            = f.check_box :share_to_twitter, class: "form-check-input"
+            = t "messages._common.share_to_twitter"
   - else
-    = fields_for :setting, current_user.setting do |sf|
-      = sf.hidden_field :share_review_to_twitter, value: false
+    = f.hidden_field :share_to_twitter, value: false
 
   .form-group.text-center.mt-3
     = f.button class: "btn btn-primary" do

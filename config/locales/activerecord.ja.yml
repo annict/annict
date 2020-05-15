@@ -228,6 +228,7 @@ ja:
       work_record:
         title: タイトル
         body: 本文
+        mutation_error: ""
         rating_animation_state: 映像
         rating_music_state: 音楽
         rating_story_state: ストーリー

@@ -129,13 +129,6 @@ class EpisodeRecord < ApplicationRecord
     SecureRandom.urlsafe_base64.slice(0, 10)
   end
 
-  def setup_shared_sns(user)
-    self.share_to_twitter =
-      user.twitter.present? &&
-      user.authorized_to?(:twitter, shareable: true) &&
-      user.setting.share_record_to_twitter?
-  end
-
   def share_url
     "#{user.preferred_annict_url}/@#{user.username}/records/#{record.id}"
   end
