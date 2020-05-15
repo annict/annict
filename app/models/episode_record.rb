@@ -64,6 +64,8 @@ class EpisodeRecord < ApplicationRecord
   counter_culture :episode, column_name: -> (episode_record) { episode_record.body.present? ? :episode_record_bodies_count : nil }
   counter_culture :user
 
+  attr_accessor :share_to_twitter, :mutation_error
+
   belongs_to :oauth_application, class_name: "Doorkeeper::Application", optional: true
   belongs_to :record
   belongs_to :work
@@ -128,14 +130,10 @@ class EpisodeRecord < ApplicationRecord
   end
 
   def setup_shared_sns(user)
-    self.shared_twitter =
+    self.share_to_twitter =
       user.twitter.present? &&
       user.authorized_to?(:twitter, shareable: true) &&
       user.setting.share_record_to_twitter?
-  end
-
-  def shared_sns?
-    twitter_url_hash.present? || shared_twitter?
   end
 
   def share_url

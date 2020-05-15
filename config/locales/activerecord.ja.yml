@@ -65,8 +65,9 @@ ja:
         title: タイトル
         title_en: タイトル (英)
       episode_record:
-        comment: 感想
-        rating: レーティング
+        body: 感想
+        rating_state: レーティング
+        mutation_error: ""
       forum_comment:
         body: 本文
       forum_post:

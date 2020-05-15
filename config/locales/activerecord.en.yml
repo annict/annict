@@ -66,8 +66,9 @@ en:
         title: Title
         title_en: Title (en)
       episode_record:
-        comment: Comment
-        rating: Rating
+        body: Comment
+        rating_state: Rating
+        mutation_error: ""
       forum_comment:
         body: Body
       forum_post:

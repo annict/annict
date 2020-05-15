@@ -1,0 +1,27 @@
+# frozen_string_literal: true
+
+class CreateEpisodeRecordRepository < ApplicationRepository
+  def create(episode:, params:)
+    result = execute(variables: {
+      episodeId: Canary::AnnictSchema.id_from_object(episode, Episode),
+      body: params[:body],
+      ratingState: params[:rating_state]&.upcase.presence || nil,
+      shareToTwitter: params[:share_to_twitter] == "1"
+    })
+
+    if result.to_h["errors"]
+      return [nil, MutationError.new(message: result.to_h["errors"][0]["message"])]
+    end
+
+    data = result.dig("data", "createEpisodeRecord", "episodeRecord")
+    entity = EpisodeRecordEntity.new(
+      id: data["annictId"],
+      rating_state: data["ratingState"]&.downcase,
+      body_html: data["data"],
+      likes_count: data["likesCount"],
+      comments_count: data["commentsCount"]
+    )
+
+    [entity, nil]
+  end
+end

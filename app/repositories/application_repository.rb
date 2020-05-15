@@ -1,6 +1,14 @@
 # frozen_string_literal: true
 
 class ApplicationRepository
+  module Types
+    include Dry.Types()
+  end
+
+  class MutationError < Dry::Struct
+    attribute :message, Types::String
+  end
+
   def initialize(graphql_client:)
     @graphql_client = graphql_client
   end

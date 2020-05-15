@@ -459,8 +459,10 @@ class User < ApplicationRecord
     increment!(works_count_fields[next_state_kind.to_sym])
   end
 
-  def update_share_record_setting(share_record_to_twitter)
-    setting.update_column(:share_record_to_twitter, share_record_to_twitter)
+  def update_share_record_setting(share_to_twitter)
+    return if share_to_twitter == setting.share_record_to_twitter
+
+    setting.update_column(:share_record_to_twitter, share_to_twitter)
   end
 
   def share_episode_record_to_twitter(episode_record)

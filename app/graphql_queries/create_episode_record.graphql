@@ -1,0 +1,23 @@
+mutation (
+  $episodeId: ID!,
+  $body: String,
+  $ratingState: RatingState,
+  $shareToTwitter: Boolean
+) {
+  createEpisodeRecord(
+    input: {
+      episodeId: $episodeId,
+      body: $body,
+      ratingState: $ratingState,
+      shareToTwitter: $shareToTwitter
+    }
+  ) {
+    episodeRecord {
+      annictId
+      ratingState
+      bodyHtml
+      likesCount
+      commentsCount
+    }
+  }
+}
