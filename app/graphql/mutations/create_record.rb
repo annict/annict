@@ -15,10 +15,11 @@ module Mutations
     def resolve(episode_id:, comment: nil, rating_state: nil, share_twitter: nil, share_facebook: nil)
       raise Annict::Errors::InvalidAPITokenScopeError unless context[:doorkeeper_token].writable?
 
+      viewer = context[:viewer]
       episode = Episode.only_kept.find_by_graphql_id(episode_id)
 
-      episode_record, err = CreateEpisodeRecordRepository.new(
-        graphql_client: graphql_client(viewer: context[:viewer])
+      episode_record_entity, err = CreateEpisodeRecordRepository.new(
+        graphql_client: graphql_client(viewer: viewer)
       ).create(
         episode: episode,
         params: {
@@ -33,7 +34,7 @@ module Mutations
       end
 
       {
-        record: EpisodeRecord.find(episode_record.id)
+        record: viewer.episode_records.find(episode_record_entity.id)
       }
     end
   end
