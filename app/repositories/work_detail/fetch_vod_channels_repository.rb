@@ -1,9 +1,9 @@
 # frozen_string_literal: true
 
 module WorkDetail
-  class VodChannelsRepository < ApplicationRepository
+  class FetchVodChannelsRepository < ApplicationRepository
     def fetch(work:)
-      result = graphql_client.execute(query)
+      result = execute
       data = result.to_h.dig("data", "channels")
 
       data["nodes"].map do |node|
@@ -15,12 +15,6 @@ module WorkDetail
           end
         )
       end
-    end
-
-    private
-
-    def query
-      load_query "work_detail/fetch_vod_channels.graphql"
     end
   end
 end

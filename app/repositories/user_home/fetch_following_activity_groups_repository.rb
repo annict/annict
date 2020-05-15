@@ -1,9 +1,9 @@
 # frozen_string_literal: true
 
 module UserHome
-  class FollowingActivityGroupsRepository < ApplicationRepository
+  class FetchFollowingActivityGroupsRepository < ApplicationRepository
     def fetch(username:, cursor:)
-      result = graphql_client.execute(query, variables: { username: username, cursor: cursor.presence || "" })
+      result = execute(variables: { username: username, cursor: cursor.presence || "" })
       data = result.to_h.dig("data", "user", "followingActivityGroups")
 
       {
@@ -25,10 +25,6 @@ module UserHome
     end
 
     private
-
-    def query
-      load_query "user_home/following_activity_groups.graphql"
-    end
 
     def build_user(user)
       UserEntity.new(

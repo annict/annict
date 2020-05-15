@@ -1,9 +1,9 @@
 # frozen_string_literal: true
 
 module WorkDetail
-  class WorkRepository < ApplicationRepository
+  class FetchWorkRepository < ApplicationRepository
     def fetch(work_id:)
-      result = graphql_client.execute(query, variables: { annictId: work_id.to_i })
+      result = execute(variables: { annictId: work_id.to_i })
       data = result.to_h.dig("data", "works")
       node = data["nodes"].first
 
@@ -148,12 +148,6 @@ module WorkDetail
       end
 
       WorkEntity.new(work)
-    end
-
-    private
-
-    def query
-      load_query "work_detail/fetch_work.graphql"
     end
   end
 end
