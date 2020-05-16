@@ -11,7 +11,14 @@
   }
 
   &.is-small {
-    height: 25px;
+    height: 31px;
+
+    .btn-sm {
+      border-radius: 8px;
+      font-size: 1rem;
+      line-height: 1;
+      padding: 0.4rem;
+    }
 
     .fa-ellipsis-h {
       height: 100%;
