@@ -47,7 +47,8 @@ module UserHome
             likes_count: itemable["likesCount"],
             comments_count: itemable["commentsCount"],
             work: build_work(itemable["work"]),
-            episode: build_episode(itemable["episode"])
+            episode: build_episode(itemable["episode"]),
+            record: build_record(itemable["record"])
           )
         when "STATUS"
           StatusEntity.new(
@@ -84,6 +85,12 @@ module UserHome
         number_text: episode["numberText"],
         title: episode["title"],
         title_en: episode["titleEn"]
+      )
+    end
+
+    def build_record(record)
+      RecordEntity.new(
+        id: record["annictId"]
       )
     end
   end

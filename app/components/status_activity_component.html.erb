@@ -1,20 +1,31 @@
 <div class="c-timeline__status-activity">
-  <div class="mb-2">
-    <span class="c-timeline__user-name">
-      <%= link_to activity_group.user.name, user_path(activity_group.user.username), class: "text-body font-weight-bold u-link" %>
-    </span>
+  <div class="row mb-2">
+    <div class="col-auto pr-0">
+      <%= link_to user_path(activity_group.user.username) do %>
+        <%= render ProfileImageComponent.new(
+            image_url_1x: activity_group.user.avatar_url,
+            alt: "@#{activity_group.user.username}"
+        ) %>
+      <% end %>
+    </div>
 
-    <small class="mr-1">
-      <%= t "messages._components.activities.status.changed" %>
-    </small>
+    <div class="col">
+      <span class="c-timeline__user-name">
+        <%= link_to activity_group.user.name, user_path(activity_group.user.username), class: "text-body font-weight-bold u-link" %>
+      </span>
 
-    <c-relative-time class="small text-muted" time="<%= activity_group.created_at %>"></c-relative-time>
+      <small class="mr-1">
+        <%= t "messages._components.activities.status.changed" %>
+      </small>
+
+      <c-relative-time class="small text-muted" time="<%= activity_group.created_at %>"></c-relative-time>
+    </div>
   </div>
 
-  <div class="card mb-2">
-    <div class="card-body pb-0 pt-2 px-2">
-      <% statuses.first(3).each do |status| %>
-        <div class="row mb-2">
+  <% statuses.each do |status| %>
+    <div class="card col-11 col-lg-10 mb-2 px-0">
+      <div class="card-body p-2">
+        <div class="row">
           <div class="col-auto pr-0">
             <%= link_to work_path(status.work.id) do %>
               <%= render WorkImageComponent.new(
@@ -36,28 +47,30 @@
               <%= link_to status.work.local_title, work_path(status.work.id) %>
             </div>
 
-            <c-like-button
-              :init-likes-count="<%= 0 %>"
-              :is-signed-in="true"
-              :resource-id="<%= status.id %>"
-              class="u-fake-link"
-              page-category="user-home"
-              resource-name="Status"
-            ></c-like-button>
-
             <c-status-selector :work-id="<%= status.work.id %>" page-category="user-home" class="c-status-selector--small"></c-status-selector>
           </div>
         </div>
-      <% end %>
+      </div>
+    </div>
 
-      <% if statuses.length > 3 %>
-        <div class="mb-2 text-right">
-          <%= link_to "", class: "small" do %>
-            <i class="fal fa-angle-right"></i>
-            <%= t "messages._components.activities.status.more", n: statuses.length - 3 %>
-          <% end %>
-        </div>
+    <div class="mb-3">
+      <c-like-button
+        :init-likes-count="<%= status.likes_count %>"
+        :is-signed-in="true"
+        :resource-id="<%= status.id %>"
+        class="u-fake-link"
+        page-category="user-home"
+        resource-name="Status"
+      ></c-like-button>
+    </div>
+  <% end %>
+
+  <% if activity_group.activities_count > 2 %>
+    <div class="mb-3 text-center">
+      <%= link_to "", class: "c-timeline__more-btn btn btn-outline-secondary btn-small py-1" do %>
+        <i class="fal fa-chevron-double-down"></i>
+        <%= t "messages._components.activities.status.more", n: activity_group.activities_count - 2 %>
       <% end %>
     </div>
-  </div>
+  <% end %>
 </div>

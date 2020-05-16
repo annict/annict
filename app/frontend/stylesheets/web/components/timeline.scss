@@ -1,13 +1,18 @@
 .c-timeline {
-  .c-profile-image {
-    width: 45px;
+  &__more-btn {
+    font-size: 0.8rem;
   }
 
   &__status-activity,
-  &__episode-record-activity {
+  &__episode-record-activity,
+  &__work-record-activity {
     .c-work-image {
       width: 50px;
     }
+  }
+
+  .c-profile-image {
+    width: 45px;
   }
 
   .c-status-selector {

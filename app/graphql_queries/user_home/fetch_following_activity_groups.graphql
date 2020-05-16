@@ -22,7 +22,11 @@ query($username: String!, $cursor: String) {
           avatarUrl(size: size100)
         }
 
-        activities(first: 3) {
+        activities(first: 2) {
+          pageInfo {
+            hasNextPage
+          }
+
           nodes {
             itemableType
 
@@ -49,6 +53,10 @@ query($username: String!, $cursor: String) {
                 bodyHtml
                 likesCount
                 commentsCount
+
+                record {
+                  annictId
+                }
 
                 work {
                   annictId
