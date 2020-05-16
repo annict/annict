@@ -7983,10 +7983,10 @@ select-hose@^2.0.0:
   resolved "https://registry.yarnpkg.com/select-hose/-/select-hose-2.0.0.tgz#625d8658f865af43ec962bfc376a37359a4994ca"
   integrity sha1-Yl2GWPhlr0Psliv8N2o3NZpJlMo=
 
-select2@latest:
-  version "4.1.0-beta.0"
-  resolved "https://registry.yarnpkg.com/select2/-/select2-4.1.0-beta.0.tgz#7d46dafcb9764949288da1b0b7986bc90e09d8fa"
-  integrity sha512-lDzY6Uw5fizaksQzLHr8r2uDtcNtCdXluDVzRjqsrL1oag9Pf90Bs2wVO+oM6sManO81romEBkvw050TmXXtEw==
+select2@next:
+  version "4.1.0-beta.1"
+  resolved "https://registry.yarnpkg.com/select2/-/select2-4.1.0-beta.1.tgz#cf129905e319825db168021aee11cbce8119cbba"
+  integrity sha512-OlLOoJFSVWurHxPmmQrkcIJuoRBskcWrlP38ebpoTfvHEQ1bktVj66WFm7dYk6xwh3Ng5y0HXLplk3DVMNj7kg==
 
 selfsigned@^1.10.7:
   version "1.10.7"
