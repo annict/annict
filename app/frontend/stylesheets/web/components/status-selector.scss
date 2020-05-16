@@ -1,4 +1,6 @@
 .c-status-selector {
+  $root: &;
+
   border-radius: $border-radius;
   color: $ann-color-white;
   display: inline-block;
@@ -15,6 +17,19 @@
       select {
         background-color: rgba(255, 255, 255, 0);
         color: $ann-color-green;
+      }
+    }
+  }
+
+  &--small {
+    #{$root}__object {
+      select {
+        font-size: 0.9rem;
+        height: 31px;
+      }
+
+      .fa-caret-down {
+        top: 7px;
       }
     }
   }
