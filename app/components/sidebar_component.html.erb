@@ -86,6 +86,18 @@
           </li>
 
           <li>
+            <%= link_to track_path, class: "d-flex justify-content-between py-2" do %>
+              <div class="c-sidebar__icon text-muted">
+                <i class="fal fa-tasks"></i>
+              </div>
+
+              <div class="flex-grow-1 text-body">
+                <%= t "verb.track" %>
+              </div>
+            <% end %>
+          </li>
+
+          <li>
             <%= link_to programs_path, class: "d-flex justify-content-between py-2" do %>
               <div class="c-sidebar__icon text-muted">
                 <i class="fal fa-calendar"></i>
