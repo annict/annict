@@ -1,8 +1,4 @@
 .c-timeline {
-  &__more-btn {
-    font-size: 0.8rem;
-  }
-
   &__status-activity,
   &__episode-record-activity,
   &__work-record-activity {
@@ -17,5 +13,9 @@
 
   .c-status-selector {
     width: 150px;
+  }
+
+  .c-activity-more-button {
+    font-size: 0.8rem;
   }
 }

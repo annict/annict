@@ -1,0 +1,88 @@
+# frozen_string_literal: true
+
+module UserHome
+  module Itemable
+    def build_itemables(activities, user)
+      activities.map do |activity|
+        itemable = activity["itemable"]
+
+        case activity["itemableType"]
+        when "EPISODE_RECORD"
+          build_episode_record(itemable, user)
+        when "STATUS"
+          build_status(itemable, user)
+        when "WORK_RECORD"
+          build_work_record(itemable, user)
+        end
+      end
+    end
+
+    def build_user(user)
+      UserEntity.new(
+        username: user["username"],
+        name: user["name"],
+        avatar_url: user["avatarUrl"]
+      )
+    end
+
+    def build_episode_record(itemable, user)
+      EpisodeRecordEntity.new(
+        id: itemable["annictId"],
+        rating_state: itemable["ratingState"]&.downcase,
+        body_html: itemable["bodyHtml"],
+        likes_count: itemable["likesCount"],
+        comments_count: itemable["commentsCount"],
+        work: build_work(itemable["work"]),
+        episode: build_episode(itemable["episode"]),
+        record: build_record(itemable["record"]),
+        user: user
+      )
+    end
+
+    def build_status(itemable, user)
+      StatusEntity.new(
+        id: itemable["annictId"],
+        kind: itemable["kind"].downcase,
+        likes_count: itemable["likesCount"],
+        work: build_work(itemable["work"]),
+        user: user
+      )
+    end
+
+    def build_work_record(itemable, user)
+      WorkRecordEntity.new(
+        id: itemable["annictId"],
+        rating_overall_state: itemable["ratingOverallState"]&.downcase,
+        body_html: itemable["bodyHtml"],
+        likes_count: itemable["likesCount"],
+        work: build_work(itemable["work"]),
+        user: user
+      )
+    end
+
+    def build_work(work)
+      WorkEntity.new(
+        id: work["annictId"],
+        title: work["title"],
+        title_en: work["titleEn"],
+        image_url_1x: work.dig("image", "internalUrl1x"),
+        image_url_2x: work.dig("image", "internalUrl2x")
+      )
+    end
+
+    def build_episode(episode)
+      EpisodeEntity.new(
+        id: episode["annictId"],
+        number_text: episode["numberText"],
+        title: episode["title"],
+        title_en: episode["titleEn"]
+      )
+    end
+
+    def build_record(record)
+      RecordEntity.new(
+        id: record["annictId"]
+      )
+    end
+  end
+end

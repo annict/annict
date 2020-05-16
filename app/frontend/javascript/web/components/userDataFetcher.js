@@ -34,7 +34,7 @@ export default {
   mounted() {
     this.fetchAll();
 
-    eventHub.$on('userDataFetcher:refetch', () => {
+    eventHub.$on('user-data-fetcher:refetch', () => {
       this.fetchAll();
     });
   },

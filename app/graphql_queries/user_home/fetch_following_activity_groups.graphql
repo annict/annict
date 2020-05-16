@@ -11,6 +11,7 @@ query($username: String!, $cursor: String) {
       }
 
       nodes {
+        id
         itemableType
         single
         activitiesCount
@@ -24,7 +25,7 @@ query($username: String!, $cursor: String) {
 
         activities(first: 2) {
           pageInfo {
-            hasNextPage
+            endCursor
           }
 
           nodes {

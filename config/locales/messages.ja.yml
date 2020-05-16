@@ -21,11 +21,13 @@ ja:
       activities:
         episode_record:
           created: "が記録しました"
+          more: "残り%{n}件の記録を見る"
         status:
           changed: "がステータスを変更しました"
           more: "残り%{n}件のステータス変更を見る"
         work_record:
           created: "が記録しました"
+          more: "残り%{n}件の記録を見る"
       favorite_button:
         add_to_favorites: お気に入りに登録
         added_to_favorites: 登録済み

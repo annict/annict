@@ -32,40 +32,17 @@
     </div>
   <% end %>
 
-  <% work_records.each do |work_record| %>
-    <div class="card col-11 col-lg-10 mb-2 px-0">
-      <div class="card-body p-2">
-        <div class="row">
-          <div class="col-auto pr-0">
-            <%= link_to work_path(work_record.work.id) do %>
-              <%= render WorkImageComponent.new(
-                  image_url_1x: work_record.work.image_url_1x,
-                  image_url_2x: work_record.work.image_url_2x,
-                  alt: work_record.work.local_title
-              ) %>
-            <% end %>
-          </div>
+  <%= render WorkRecordActivityCardsComponent.new(activity_group: activity_group) %>
 
-          <div class="col">
-            <div class="mb-1">
-              <%= link_to work_record.work.local_title, work_path(work_record.work.id), class: "d-block" %>
-            </div>
+  <% if activity_group.activities_count > 2 %>
+    <c-activity-more-button
+      activity-group-id="<%= activity_group.id %>"
+      cursor="<%= activity_group.activities_page_info.end_cursor %>"
+    >
+      <i class="fal fa-chevron-double-down"></i>
+      <%= t "messages._components.activities.work_record.more", n: activity_group.activities_count - 2 %>
+    </c-activity-more-button>
 
-            <c-status-selector :work-id="<%= work_record.work.id %>" page-category="user-home" class="c-status-selector--small"></c-status-selector>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <div class="mb-3">
-      <c-like-button
-        :init-likes-count="<%= work_record.likes_count %>"
-        :is-signed-in="true"
-        :resource-id="<%= work_record.id %>"
-        class="u-fake-link mr-3"
-        page-category="user-home"
-        resource-name="WorkRecord"
-      ></c-like-button>
-    </div>
+    <c-activity-more-content activity-group-id="<%= activity_group.id %>"></c-activity-more-content>
   <% end %>
 </div>

@@ -78,5 +78,11 @@ scope module: :api do
       match "/api/internal/likes",           via: :get, as: :internal_api_like_list,          to: "likes#index"
       # rubocop:enable Layout/ExtraSpacing, Layout/LineLength
     end
+
+    constraints format: "html" do
+      # rubocop:disable Layout/ExtraSpacing, Layout/LineLength
+      match "/api/internal/activities", via: :get, as: :internal_api_activity_list, to: "activities#index"
+      # rubocop:enable Layout/ExtraSpacing, Layout/LineLength
+    end
   end
 end

@@ -47,6 +47,8 @@ import workFriends from './common/components/workFriends';
 import workTags from './common/components/workTags';
 import youtubeModalPlayer from './common/components/youtubeModalPlayer';
 
+import activityMoreButton from './web/components/activityMoreButton';
+import activityMoreContent from './web/components/activityMoreContent';
 import likeButton from './web/components/likeButton';
 import ratingLabel from './web/components/ratingLabel';
 import relativeTime from './web/components/relativeTime';
@@ -78,6 +80,8 @@ document.addEventListener('turbolinks:load', (event) => {
 
   Vue.use(VueLazyload);
 
+  Vue.component('c-activity-more-button', activityMoreButton);
+  Vue.component('c-activity-more-content', activityMoreContent);
   Vue.component('c-analytics', analytics(event));
   Vue.component('c-autosize-textarea', autosizeTextarea);
   Vue.component('c-body', body);

@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class StatusActivityComponent < ApplicationComponent
+class StatusActivityCardsComponent < ApplicationComponent
   # @param activity_group [ActivityGroupEntity]
   def initialize(activity_group:)
     @activity_group = activity_group

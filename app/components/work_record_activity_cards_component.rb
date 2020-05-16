@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class StatusActivityComponent < ApplicationComponent
+class WorkRecordActivityCardsComponent < ApplicationComponent
   # @param activity_group [ActivityGroupEntity]
   def initialize(activity_group:)
     @activity_group = activity_group
@@ -10,7 +10,7 @@ class StatusActivityComponent < ApplicationComponent
 
   attr_reader :activity_group
 
-  def statuses
+  def work_records
     activity_group.itemables
   end
 end

@@ -32,53 +32,17 @@
     </div>
   <% end %>
 
-  <% episode_records.each do |episode_record| %>
-    <div class="card col-11 col-lg-10 mb-2 px-0">
-      <div class="card-body p-2">
-        <div class="row">
-          <div class="col-auto pr-0">
-            <%= link_to work_path(episode_record.work.id) do %>
-              <%= render WorkImageComponent.new(
-                  image_url_1x: episode_record.work.image_url_1x,
-                  image_url_2x: episode_record.work.image_url_2x,
-                  alt: episode_record.work.local_title
-              ) %>
-            <% end %>
-          </div>
+  <%= render EpisodeRecordActivityCardsComponent.new(activity_group: activity_group) %>
 
-          <div class="col">
-            <div class="mb-1">
-              <%= link_to episode_record.work.local_title, work_path(episode_record.work.id), class: "d-block" %>
+  <% if activity_group.activities_count > 2 %>
+    <c-activity-more-button
+      activity-group-id="<%= activity_group.id %>"
+      cursor="<%= activity_group.activities_page_info.end_cursor %>"
+    >
+      <i class="fal fa-chevron-double-down"></i>
+      <%= t "messages._components.activities.episode_record.more", n: activity_group.activities_count - 2 %>
+    </c-activity-more-button>
 
-              <%= link_to work_episode_path(episode_record.work.id, episode_record.episode.id), class: "d-block small" do %>
-                <span class="pr-1">
-                  <%= episode_record.episode.number_text %>
-                </span>
-
-                <%= episode_record.episode.local_title %>
-              <% end %>
-            </div>
-
-            <c-status-selector :work-id="<%= episode_record.work.id %>" page-category="user-home" class="c-status-selector--small"></c-status-selector>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <div class="mb-3">
-      <c-like-button
-        :init-likes-count="<%= episode_record.likes_count %>"
-        :is-signed-in="true"
-        :resource-id="<%= episode_record.id %>"
-        class="u-fake-link mr-3"
-        page-category="user-home"
-        resource-name="EpisodeRecord"
-      ></c-like-button>
-
-      <%= link_to record_path(activity_group.user.username, episode_record.record.id) do %>
-        <i class="far fa-comment"></i>
-        <%= episode_record.comments_count %>
-      <% end %>
-    </div>
+    <c-activity-more-content activity-group-id="<%= activity_group.id %>"></c-activity-more-content>
   <% end %>
 </div>
