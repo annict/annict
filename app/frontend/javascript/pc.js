@@ -20,6 +20,7 @@ import autosizeTextarea from './common/components/autosizeTextarea';
 import body from './common/components/body';
 import channelReceiveButton from './common/components/channelReceiveButton';
 import channelSelector from './common/components/channelSelector';
+import commentGuard from './common/components/commentGuard';
 import episodeList from './common/components/episodeList';
 import episodeProgress from './common/components/episodeProgress';
 import episodeRatingStateChart from './common/components/episodeRatingStateChart';
@@ -96,6 +97,7 @@ document.addEventListener('turbolinks:load', (event) => {
   Vue.component('c-body', body);
   Vue.component('c-channel-receive-button', channelReceiveButton);
   Vue.component('c-channel-selector', channelSelector);
+  Vue.component('c-comment-guard', commentGuard);
   Vue.component('c-episode-list', episodeList);
   Vue.component('c-episode-progress', episodeProgress);
   Vue.component('c-episode-rating-state-chart', episodeRatingStateChart);

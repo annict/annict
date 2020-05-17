@@ -1,0 +1,14 @@
+$color-guard-text: rgba(0, 0, 0, .5);
+
+.c-comment-guard {
+  color: $color-guard-text;
+  filter: blur(4px);
+
+  &:hover {
+    cursor: pointer;
+  }
+
+  .badge {
+    display: none;
+  }
+}
