@@ -56,6 +56,7 @@ import relativeTime from './web/components/relativeTime';
 import shareToTwitterButton from './web/components/shareToTwitterButton';
 import shareToFacebookButton from './web/components/shareToFacebookButton';
 import sidebar from './web/components/sidebar';
+import spoilerGuard from './web/components/spoilerGuard';
 import statusSelector from './web/components/statusSelector';
 import tabBar from './web/components/tabBar';
 import userDataFetcher from './web/components/userDataFetcher';
@@ -115,6 +116,7 @@ document.addEventListener('turbolinks:load', (event) => {
   Vue.component('c-share-button-facebook', shareToFacebookButton);
   Vue.component('c-share-button-twitter', shareToTwitterButton);
   Vue.component('c-sidebar', sidebar);
+  Vue.component('c-spoiler-guard', spoilerGuard);
   Vue.component('c-status-selector', statusSelector);
   Vue.component('c-tab-bar', tabBar);
   Vue.component('c-untracked-episode-list', untrackedEpisodeList);

@@ -2,6 +2,7 @@ import eventHub from '../../common/eventHub';
 
 import libraryEntriesRequest from '../requests/libraryEntriesRequest';
 import likesRequest from '../requests/likesRequest';
+import trackedResourcesRequest from '../requests/trackedResourcesRequest';
 
 const REQUEST_LIST = {
   'activity-list': [libraryEntriesRequest, likesRequest],
@@ -14,7 +15,7 @@ const REQUEST_LIST = {
   'record-list': [libraryEntriesRequest, likesRequest],
   'search-detail': [libraryEntriesRequest],
   'user-detail': [libraryEntriesRequest, likesRequest],
-  'user-home': [libraryEntriesRequest, likesRequest],
+  'user-home': [libraryEntriesRequest, likesRequest, trackedResourcesRequest],
   'user-work-tag-detail': [libraryEntriesRequest],
   'work-detail': [libraryEntriesRequest, likesRequest],
   'work-list': [libraryEntriesRequest],
@@ -45,8 +46,9 @@ export default {
     },
 
     fetchAll() {
-      Promise.all(this.getRequests().map((req) => req.execute())).then(() => {
-        eventHub.$emit('userDataFetcher:fetched');
+      Promise.all(this.getRequests().map((req) => req.execute())).then((results) => {
+        const data = results.reduce((obj, val) => Object.assign(obj, val, {}));
+        eventHub.$emit('user-data-fetcher:fetched', data);
       });
     },
   },
