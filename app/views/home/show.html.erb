@@ -3,15 +3,34 @@
 
 <%= render "partial_layouts/v2/default", page_category: "user-home" do %>
   <div class="container-fluid py-3">
-    <div class="d-lg-none">
-      <%= render "home/subnav" %>
-    </div>
-
     <div class="row">
       <div class="col-12 col-lg-7">
-        <h2 class="d-none d-lg-block font-weight-bold h3 mb-0">
-          <%= t "noun.timeline" %>
-        </h2>
+        <div class="align-items-center justify-content-between row">
+          <div class="col-auto">
+            <h2 class="font-weight-bold h3 mb-0">
+              <%= t "noun.timeline" %>
+            </h2>
+          </div>
+
+          <div class="col text-right">
+            <div class="c-timeline-mode-switcher">
+              <%= form_with html: { class: "d-inline", method: :patch }, local: true, url: timeline_mode_path do %>
+                <%= hidden_field_tag :timeline_mode, "following" %>
+                <%= submit_tag(
+                  t("noun.following_shorten"),
+                  class: "btn btn-sm rounded-left #{current_user.timeline_mode.following? ? 'btn-secondary' : 'btn-outline-secondary'}"
+                ) %>
+              <% end %>
+              <%= form_with html: { class: "d-inline", method: :patch }, local: true, url: timeline_mode_path do %>
+                <%= hidden_field_tag :timeline_mode, "global" %>
+                <%= submit_tag(
+                  t("noun.global"),
+                  class: "btn btn-sm rounded-right #{current_user.timeline_mode.global? ? 'btn-secondary' : 'btn-outline-secondary'}"
+                ) %>
+              <% end %>
+            </div>
+          </div>
+        </div>
 
         <%= render TimelineComponent.new(activity_groups: @activity_group_result[:activity_groups], page_info: @activity_group_result[:page_info]) %>
       </div>

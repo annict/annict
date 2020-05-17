@@ -161,6 +161,7 @@ root "welcome#show",
 
 scope module: :v4 do
   constraints format: "html" do
-    match "/works/:id", via: :get,  as: :work, to: "works#show"
+    match "/timeline_mode", via: :patch, as: :timeline_mode, to: "timeline_mode#update"
+    match "/works/:id",     via: :get,   as: :work,          to: "works#show"
   end
 end

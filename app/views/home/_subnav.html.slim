@@ -1,3 +1,0 @@
-nav.nav.nav-pills.nav-fill.nav-justified
-  = active_link_to t("noun.timeline"), root_path, class: "nav-item nav-link", class_active: "active", active: params[:controller] == "home" && params[:action].in?(%w(show))
-  = active_link_to t("noun.untracked_episodes"), track_path, class: "nav-item nav-link", class_active: "active", active: params[:controller] == "tracks" && params[:action].in?(%w(show))

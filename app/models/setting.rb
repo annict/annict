@@ -15,6 +15,7 @@
 #  share_status_to_facebook      :boolean          default(FALSE), not null
 #  share_status_to_twitter       :boolean          default(FALSE), not null
 #  slots_sort_type               :string           default(NULL), not null
+#  timeline_mode                 :string           default("following"), not null
 #  created_at                    :datetime         not null
 #  updated_at                    :datetime         not null
 #  user_id                       :bigint           not null
@@ -72,4 +73,11 @@ class Setting < ApplicationRecord
       my_episode_records
     ),
     default: :all_comments
+
+  enumerize :timeline_mode,
+    in: %i(
+      following
+      global
+    ),
+    default: :following
 end

@@ -142,7 +142,7 @@ class User < ApplicationRecord
   has_one :setting, dependent: :destroy
 
   delegate :admin?, :editor?, to: :role
-  delegate :share_record_to_twitter?, to: :setting
+  delegate :share_record_to_twitter?, :timeline_mode, to: :setting
 
   validates :email,
     presence: true,
