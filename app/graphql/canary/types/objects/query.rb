@@ -48,6 +48,10 @@ module Canary
           argument :is_vod, Boolean, required: false
         end
 
+        field :activity_groups, Canary::Types::Objects::ActivityGroupType.connection_type, null: true do
+          argument :order_by, Canary::Types::InputObjects::ActivityOrder, required: false
+        end
+
         def viewer
           context[:viewer]
         end
@@ -101,6 +105,11 @@ module Canary
             Channel.only_kept,
             is_vod: is_vod
           ).call
+        end
+
+        def activity_groups(order_by: nil)
+          order = build_order(order_by)
+          ActivityGroup.joins(:user).merge(User.only_kept).order(order.field => order.direction)
         end
       end
     end

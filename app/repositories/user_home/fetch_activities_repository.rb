@@ -2,7 +2,7 @@
 
 module UserHome
   class FetchActivitiesRepository < ApplicationRepository
-    include Itemable
+    include ActivityBuildable
 
     def fetch(activity_group_id:, cursor:)
       result = execute(variables: { activityGroupId: activity_group_id, cursor: cursor.presence || "" })
