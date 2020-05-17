@@ -482,72 +482,74 @@
                     </div>
                   </div>
                   <div class="mb-3">
-                    <div class="row">
-                      <div class="col-12 col-xl-4 order-1 order-xl-2">
-                        <% if work_record.rating_overall_state.present? %>
-                          <div class="mb-3 mb-xl-0 p-3 rounded u-bg-black-000">
-                            <div class="small font-weight-bold text-center mb-2">
-                              <%= t "noun.rating" %>
+                    <c-spoiler-guard :work-id="<%= @work.id %>">
+                      <div class="row">
+                        <div class="col-12 col-xl-4 order-1 order-xl-2">
+                          <% if work_record.rating_overall_state.present? %>
+                            <div class="mb-3 mb-xl-0 p-3 rounded u-bg-black-000">
+                              <div class="small font-weight-bold text-center mb-2">
+                                <%= t "noun.rating" %>
+                              </div>
+                              <% if work_record.rating_animation_state.present? %>
+                                <div class="row">
+                                  <div class="col">
+                                    <%= t "noun.animation" %>
+                                  </div>
+                                  <div class="col pl-0 text-right">
+                                    <c-rating-label init-kind="<%= work_record.rating_animation_state %>"></c-rating-label>
+                                  </div>
+                                </div>
+                              <% end %>
+                              <% if work_record.rating_music_state.present? %>
+                                <div class="row">
+                                  <div class="col">
+                                    <%= t "noun.music" %>
+                                  </div>
+                                  <div class="col pl-0 text-right">
+                                    <c-rating-label init-kind="<%= work_record.rating_music_state %>"></c-rating-label>
+                                  </div>
+                                </div>
+                              <% end %>
+                              <% if work_record.rating_story_state.present? %>
+                                <div class="row">
+                                  <div class="col">
+                                    <%= t "noun.story" %>
+                                  </div>
+                                  <div class="col pl-0 text-right">
+                                    <c-rating-label init-kind="<%= work_record.rating_story_state %>"></c-rating-label>
+                                  </div>
+                                </div>
+                              <% end %>
+                              <% if work_record.rating_character_state.present? %>
+                                <div class="row">
+                                  <div class="col">
+                                    <%= t "noun.character" %>
+                                  </div>
+                                  <div class="col pl-0 text-right">
+                                    <c-rating-label init-kind="<%= work_record.rating_character_state %>"></c-rating-label>
+                                  </div>
+                                </div>
+                              <% end %>
+                              <% if work_record.rating_overall_state.present? %>
+                                <div class="row">
+                                  <div class="col">
+                                    <%= t "noun.overall" %>
+                                  </div>
+                                  <div class="col pl-0 text-right">
+                                    <c-rating-label init-kind="<%= work_record.rating_overall_state %>"></c-rating-label>
+                                  </div>
+                                </div>
+                              <% end %>
                             </div>
-                            <% if work_record.rating_animation_state.present? %>
-                              <div class="row">
-                                <div class="col">
-                                  <%= t "noun.animation" %>
-                                </div>
-                                <div class="col pl-0 text-right">
-                                  <c-rating-label init-kind="<%= work_record.rating_animation_state %>"></c-rating-label>
-                                </div>
-                              </div>
-                            <% end %>
-                            <% if work_record.rating_music_state.present? %>
-                              <div class="row">
-                                <div class="col">
-                                  <%= t "noun.music" %>
-                                </div>
-                                <div class="col pl-0 text-right">
-                                  <c-rating-label init-kind="<%= work_record.rating_music_state %>"></c-rating-label>
-                                </div>
-                              </div>
-                            <% end %>
-                            <% if work_record.rating_story_state.present? %>
-                              <div class="row">
-                                <div class="col">
-                                  <%= t "noun.story" %>
-                                </div>
-                                <div class="col pl-0 text-right">
-                                  <c-rating-label init-kind="<%= work_record.rating_story_state %>"></c-rating-label>
-                                </div>
-                              </div>
-                            <% end %>
-                            <% if work_record.rating_character_state.present? %>
-                              <div class="row">
-                                <div class="col">
-                                  <%= t "noun.character" %>
-                                </div>
-                                <div class="col pl-0 text-right">
-                                  <c-rating-label init-kind="<%= work_record.rating_character_state %>"></c-rating-label>
-                                </div>
-                              </div>
-                            <% end %>
-                            <% if work_record.rating_overall_state.present? %>
-                              <div class="row">
-                                <div class="col">
-                                  <%= t "noun.overall" %>
-                                </div>
-                                <div class="col pl-0 text-right">
-                                  <c-rating-label init-kind="<%= work_record.rating_overall_state %>"></c-rating-label>
-                                </div>
-                              </div>
-                            <% end %>
+                          <% end %>
+                        </div>
+                        <div class="col-12 col-xl-8 order-2 order-xl-1">
+                          <div class="c-body mb-3">
+                            <%== work_record.body_html %>
                           </div>
-                        <% end %>
-                      </div>
-                      <div class="col-12 col-xl-8 order-2 order-xl-1">
-                        <div class="c-body mb-3">
-                          <%== work_record.body_html %>
                         </div>
                       </div>
-                    </div>
+                    </c-spoiler-guard>
                   </div>
 
                   <div class="align-items-center px-3 row">

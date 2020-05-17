@@ -17,7 +17,7 @@ const REQUEST_LIST = {
   'user-detail': [libraryEntriesRequest, likesRequest],
   'user-home': [libraryEntriesRequest, likesRequest, trackedResourcesRequest],
   'user-work-tag-detail': [libraryEntriesRequest],
-  'work-detail': [libraryEntriesRequest, likesRequest],
+  'work-detail': [libraryEntriesRequest, likesRequest, trackedResourcesRequest],
   'work-list': [libraryEntriesRequest],
   'work-record-list': [libraryEntriesRequest, likesRequest],
 };
