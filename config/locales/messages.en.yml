@@ -50,6 +50,8 @@ en:
           body: Do you want to create own anime lists? Let's get started!
         records_show:
           body: Do you want to create own anime lists? Let's get started!
+      timeline:
+        more: Load More
     _empty:
       no_characters: No Characters
       no_episodes: No Episodes

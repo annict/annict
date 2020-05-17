@@ -1,12 +1,12 @@
 # frozen_string_literal: true
 
 class TimelineComponent < ApplicationComponent
-  def initialize(activity_groups:, pagination:)
+  def initialize(activity_groups:, page_info:)
     @activity_groups = activity_groups
-    @pagination = pagination
+    @page_info = page_info
   end
 
   private
 
-  attr_reader :activity_groups, :pagination
+  attr_reader :activity_groups, :page_info
 end

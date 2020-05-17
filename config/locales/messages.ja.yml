@@ -50,6 +50,8 @@ ja:
           body: "Annict (アニクト) で自分が見たアニメを管理しよう！"
         records_show:
           body: "Annict (アニクト) で見たアニメを記録しよう！"
+      timeline:
+        more: もっと見る
     _empty:
       no_characters: キャラクターはいません
       no_episodes: エピソードはありません

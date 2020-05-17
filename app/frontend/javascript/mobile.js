@@ -47,6 +47,8 @@ import workFriends from './common/components/workFriends';
 import workTags from './common/components/workTags';
 import youtubeModalPlayer from './common/components/youtubeModalPlayer';
 
+import activityGroupMoreButton from './web/components/activityGroupMoreButton';
+import activityGroupMoreContent from './web/components/activityGroupMoreContent';
 import activityMoreButton from './web/components/activityMoreButton';
 import activityMoreContent from './web/components/activityMoreContent';
 import likeButton from './web/components/likeButton';
@@ -80,6 +82,8 @@ document.addEventListener('turbolinks:load', (event) => {
 
   Vue.use(VueLazyload);
 
+  Vue.component('c-activity-group-more-button', activityGroupMoreButton);
+  Vue.component('c-activity-group-more-content', activityGroupMoreContent);
   Vue.component('c-activity-more-button', activityMoreButton);
   Vue.component('c-activity-more-content', activityMoreContent);
   Vue.component('c-analytics', analytics(event));

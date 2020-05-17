@@ -13,7 +13,7 @@
           <%= t "noun.timeline" %>
         </h2>
 
-        <%= render TimelineComponent.new(activity_groups: @activity_group_result[:activity_groups], pagination: @activity_group_result[:pagination]) %>
+        <%= render TimelineComponent.new(activity_groups: @activity_group_result[:activity_groups], page_info: @activity_group_result[:page_info]) %>
       </div>
 
       <div class="col-12 col-lg-5">

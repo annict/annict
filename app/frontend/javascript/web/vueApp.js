@@ -1,7 +1,5 @@
 import Vue from 'vue';
 
-import activityMoreButton from './components/activityMoreButton';
-import activityMoreContent from './components/activityMoreContent';
 import likeButton from './components/likeButton';
 import ratingLabel from './components/ratingLabel';
 import shareToFacebookButton from './components/shareToFacebookButton';
@@ -20,7 +18,6 @@ export default {
       el: '.ann-application',
 
       components: {
-        'c-activity-more-button': activityMoreButton,
         'c-like-button': likeButton,
         'c-rating-label': ratingLabel,
         'c-share-to-facebook-button': shareToFacebookButton,
