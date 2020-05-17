@@ -7,15 +7,15 @@ module V4
     def update
       current_user.setting.timeline_mode = permitted_params[:timeline_mode]
 
-      if current_user.setting.save
-        redirect_to root_path
-      end
+      current_user.setting.save
+
+      redirect_to root_path
     end
 
     private
 
     def permitted_params
-      params.permit(:timeline_mode)
+      params.require(:setting).permit(:timeline_mode)
     end
   end
 end

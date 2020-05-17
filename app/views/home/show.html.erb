@@ -15,14 +15,14 @@
           <div class="col text-right">
             <div class="c-timeline-mode-switcher">
               <%= form_with html: { class: "d-inline", method: :patch }, local: true, url: timeline_mode_path do %>
-                <%= hidden_field_tag :timeline_mode, "following" %>
+                <%= hidden_field_tag "setting[timeline_mode]", "following" %>
                 <%= submit_tag(
                   t("noun.following_shorten"),
                   class: "btn btn-sm rounded-left #{current_user.timeline_mode.following? ? 'btn-secondary' : 'btn-outline-secondary'}"
                 ) %>
               <% end %>
               <%= form_with html: { class: "d-inline", method: :patch }, local: true, url: timeline_mode_path do %>
-                <%= hidden_field_tag :timeline_mode, "global" %>
+                <%= hidden_field_tag "setting[timeline_mode]", "global" %>
                 <%= submit_tag(
                   t("noun.global"),
                   class: "btn btn-sm rounded-right #{current_user.timeline_mode.global? ? 'btn-secondary' : 'btn-outline-secondary'}"
