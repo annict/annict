@@ -36,29 +36,74 @@
       </div>
 
       <div class="col-12 col-lg-5">
-        <% if @forum_posts.present? %>
-          <h2 class="font-weight-bold h3 mb-3">
-            <%= t "resources.forum_category.site_news" %>
-          </h2>
+        <div class="mb-5">
+          <% if @userland_projects.present? %>
+            <div class="align-items-start justify-content-between mb-3 row">
+              <div class="col-auto">
+                <h2 class="font-weight-bold h3 mb-0">
+                  Userland
+                </h2>
+              </div>
 
-          <ul class="list-unstyled">
-            <% @forum_posts.each do |p| %>
-              <li class="mb-2">
-                <div class="small text-muted">
-                  <%= display_time p.created_at %>
+              <div class="col text-right">
+                <%= link_to userland_root_path, class: "small" do %>
+                  <%= icon "angle-right", class: "mr-1" %>
+                  <%= t "verb.view_all" %>
+                <% end %>
+              </div>
+            </div>
+
+            <% @userland_projects.each do |project| %>
+              <div class="row mb-3">
+                <div class="col-auto pr-0">
+                  <%= link_to userland_project_path(project) do %>
+                    <%= ann_image_tag project, :image, size: "80x80", class: "img-fluid img-thumbnail rounded" %>
+                  <% end %>
                 </div>
-                <%= link_to p.title, forum_post_path(p) %>
-              </li>
-            <% end %>
-          </ul>
 
-          <div class="small text-right mb-3">
-            <%= link_to forum_category_path(:site_news) do %>
-              <%= icon "angle-right", class: "mr-1" %>
-              <%= t "messages.forum._common.view_all_site_news" %>
+                <div class="col">
+                  <div class="mb-2">
+                    <%= link_to project.name, userland_project_path(project) %>
+                  </div>
+
+                  <div class="small text-muted">
+                    <%= project.summary %>
+                  </div>
+                </div>
+              </div>
             <% end %>
-          </div>
-        <% end %>
+          <% end %>
+        </div>
+
+        <div class="mb-5">
+          <% if @forum_posts.present? %>
+            <div class="align-items-start justify-content-between row">
+              <div class="col-auto">
+                <h2 class="font-weight-bold h3 mb-3">
+                  <%= t "resources.forum_category.site_news" %>
+                </h2>
+              </div>
+
+              <div class="col text-right">
+                <%= link_to forum_category_path(:site_news), class: "small" do %>
+                  <%= icon "angle-right", class: "mr-1" %>
+                  <%= t "messages.forum._common.view_all_site_news" %>
+                <% end %>
+              </div>
+            </div>
+
+            <ul class="list-unstyled">
+              <% @forum_posts.each do |p| %>
+                <li class="mb-2">
+                  <div class="small text-muted">
+                    <%= display_time p.created_at %>
+                  </div>
+                  <%= link_to p.title, forum_post_path(p) %>
+                </li>
+              <% end %>
+            </ul>
+          <% end %>
+        </div>
       </div>
     </div>
   </div>

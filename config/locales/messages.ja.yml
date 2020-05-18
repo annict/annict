@@ -117,7 +117,7 @@ ja:
       no_people: 人物はいません
     forum:
       _common:
-        view_all_site_news: "全てのお知らせを見る"
+        view_all_site_news: "全て見る"
       comments:
         created: 投稿しました
         leave_a_comment: コメントを書く

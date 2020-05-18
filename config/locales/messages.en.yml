@@ -117,7 +117,7 @@ en:
       no_people: No Poeple
     forum:
       _common:
-        view_all_site_news: "View All Site News"
+        view_all_site_news: "View All"
       comments:
         created: Created
         leave_a_comment: Leave a comment
