@@ -53,6 +53,7 @@ en:
       timeline:
         more: Load More
     _empty:
+      no_activities: No Activities
       no_characters: No Characters
       no_episodes: No Episodes
       no_organizations: No Organizations

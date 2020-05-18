@@ -53,6 +53,7 @@ ja:
       timeline:
         more: もっと見る
     _empty:
+      no_activities: アクティビティはありません
       no_characters: キャラクターはいません
       no_episodes: エピソードはありません
       no_organizations: 団体はありません

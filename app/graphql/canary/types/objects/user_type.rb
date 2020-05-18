@@ -171,10 +171,8 @@ module Canary
         end
 
         def activities(order_by: nil)
-          SearchActivitiesQuery.new(
-            object.activities,
-            order_by: order_by
-          ).call
+          order = build_order(order_by)
+          object.activities.order(order.field => order.direction)
         end
 
         def following_activity_groups(order_by: nil)

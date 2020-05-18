@@ -33,7 +33,6 @@ module Canary
         record.detect_locale!(:body)
 
         record.save!
-        record.update_share_record_status
         record.share_to_sns
 
         {

@@ -41,7 +41,10 @@
   .p-users-show__main.container.pt-3
     .row
       .col-7
-        = render TimelineComponent.new(username: @user.username, page_category: "profile-detail", activity_groups: @activity_group_result[:activity_groups], page_info: @activity_group_result[:page_info])
+        - if @activity_group_result[:activity_groups].present?
+          = render TimelineComponent.new(username: @user.username, page_category: "profile-detail", activity_groups: @activity_group_result[:activity_groups], page_info: @activity_group_result[:page_info])
+        - else
+          = render EmptyComponent.new(text: t("messages._empty.no_activities"))
 
       .col-5
         .text-center.mb-4

@@ -35,8 +35,7 @@ module Api
           @episode_record.rating = @params.rating
           @episode_record.rating_state = @params.rating_state
           @episode_record.body = @params.comment
-          @episode_record.shared_twitter = @params.share_twitter == "true"
-          @episode_record.shared_facebook = @params.share_facebook == "true"
+          @episode_record.share_to_twitter = @params.share_twitter == "true"
           @episode_record.modify_body = true
           @episode_record.oauth_application = doorkeeper_token.application
           @episode_record.detect_locale!(:body)
@@ -44,8 +43,11 @@ module Api
           if @episode_record.valid?
             ActiveRecord::Base.transaction do
               @episode_record.save(validate: false)
-              @episode_record.update_share_record_status
-              @episode_record.share_to_sns
+              current_user.update_share_record_setting(@episode_record.share_to_twitter)
+
+              if current_user.share_record_to_twitter?
+                current_user.share_episode_record_to_twitter(@episode_record)
+              end
             end
           else
             render_validation_errors(@episode_record)

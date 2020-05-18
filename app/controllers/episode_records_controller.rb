@@ -59,7 +59,6 @@ class EpisodeRecordsController < ApplicationController
     @episode_record.detect_locale!(:body)
 
     if @episode_record.update(episode_record_params)
-      @episode_record.update_share_record_status
       @episode_record.share_to_sns
       path = record_path(current_user.username, @episode_record.record)
       redirect_to path, notice: t("messages._common.updated")

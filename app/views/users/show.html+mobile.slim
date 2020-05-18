@@ -94,7 +94,10 @@
 
   .mb-4
     .container
-      = render TimelineComponent.new(username: @user.username, page_category: "profile-detail", activity_groups: @activity_group_result[:activity_groups], page_info: @activity_group_result[:page_info])
+      - if @activity_group_result[:activity_groups].present?
+        = render TimelineComponent.new(username: @user.username, page_category: "profile-detail", activity_groups: @activity_group_result[:activity_groups], page_info: @activity_group_result[:page_info])
+      - else
+        = render EmptyComponent.new(text: t("messages._empty.no_activities"))
 
 - content_for :js_templates
   = render "application/js_templates/follow_button"

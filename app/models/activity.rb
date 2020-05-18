@@ -54,13 +54,6 @@ class Activity < ApplicationRecord
 
   enumerize :trackable_type, in: ActivityGroup::ITEMABLE_TYPES, scope: true
 
-  enumerize :action, in: %w(
-    create_status
-    create_episode_record
-    create_work_record
-    create_multiple_episode_records
-  ), scope: true
-
   counter_culture :activity_group
 
   belongs_to :activity_group, optional: true
@@ -77,6 +70,12 @@ class Activity < ApplicationRecord
     trackable_id
   end
 
+  # @deprecated
+  def action
+    "create_#{itemable_type.underscore}"
+  end
+
+  # @deprecated
   def deprecated_action
     case action
     when "create_episode_record"
