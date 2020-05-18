@@ -18,7 +18,7 @@
         <%= t "messages._components.activities.episode_record.created" %>
       </small>
 
-      <c-relative-time class="small text-muted" time="<%= activity_group.created_at %>"></c-relative-time>
+      <c-relative-time class="small text-muted" time="<%= activity_group.created_at.iso8601 %>"></c-relative-time>
     </div>
   </div>
 
