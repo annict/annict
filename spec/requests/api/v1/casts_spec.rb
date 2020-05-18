@@ -97,8 +97,8 @@ describe "Api::V1::Casts" do
             "blood_type" => cast.person.blood_type,
             "height" => cast.person.height,
             "favorite_people_count" => cast.person.favorite_users_count,
-            "casts_count" => cast.person.casts_count,
-            "staffs_count" => cast.person.staffs_count,
+            "casts_count" => cast.person.casts.count,
+            "staffs_count" => cast.person.staffs.count,
           }
         }
         expect(json["casts"][0]).to include(expected_hash)
