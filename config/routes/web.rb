@@ -26,7 +26,6 @@ resource :menu, only: %i(show)
 resource :search, only: [:show]
 resource :track, only: :show
 resource :work_display_option, only: %i(show)
-resources :activities, only: %i(index)
 resources :comments, only: %i(edit update destroy)
 resources :faqs, only: %i(index)
 resources :friends, only: [:index]
