@@ -90,7 +90,7 @@ describe "Api::V1::Activities" do
             "sort_number" => record.episode.sort_number,
             "title" => record.episode.title,
             "records_count" => 1,
-            "record_comments_count" => 0
+            "record_comments_count" => 1
           },
           "record" => {
             "id" => record.id,
