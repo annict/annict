@@ -62,7 +62,10 @@
                 </div>
 
                 <div class="col">
-                  <div class="mb-2">
+                  <div class="mb-1">
+                    <div class="small">
+                      <%= project.userland_category.local_name %>
+                    </div>
                     <%= link_to project.name, userland_project_path(project) %>
                   </div>
 
