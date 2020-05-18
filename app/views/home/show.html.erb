@@ -35,6 +35,8 @@
         <%= render TimelineComponent.new(activity_groups: @activity_group_result[:activity_groups], page_info: @activity_group_result[:page_info]) %>
       </div>
 
+      <hr class="col-12 d-lg-none my-5">
+
       <div class="col-12 col-lg-5">
         <div class="mb-5">
           <% if @userland_projects.present? %>
@@ -78,7 +80,7 @@
           <% end %>
         </div>
 
-        <div class="mb-5">
+        <div>
           <% if @forum_posts.present? %>
             <div class="align-items-start justify-content-between row">
               <div class="col-auto">

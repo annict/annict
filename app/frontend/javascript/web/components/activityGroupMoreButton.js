@@ -4,7 +4,7 @@ import eventHub from '../../common/eventHub';
 
 export default {
   template: `
-    <div class="mb-3 text-center" v-if="!fetched">
+    <div class="text-center" v-if="!fetched">
       <div class="c-activity-group-more-button btn btn-secondary py-1 w-100" @click="more">
         <slot></slot>
       </div>
