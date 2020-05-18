@@ -29,7 +29,9 @@
           <c-rating-label class="mb-1" init-kind="<%= work_records.first.rating_overall_state.downcase %>"></c-rating-label>
         <% end %>
 
-        <%= work_records.first.body_html.html_safe %>
+        <div class="c-body">
+          <%= work_records.first.body_html.html_safe %>
+        </div>
       </div>
     </c-spoiler-guard>
   <% end %>

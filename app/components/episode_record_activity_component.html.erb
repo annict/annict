@@ -29,7 +29,9 @@
           <c-rating-label class="mb-1" init-kind="<%= episode_records.first.rating_state.downcase %>"></c-rating-label>
         <% end %>
 
-        <%= episode_records.first.body_html.html_safe %>
+        <div class="c-body">
+          <%= episode_records.first.body_html.html_safe %>
+        </div>
       </div>
     </c-spoiler-guard>
   <% end %>
