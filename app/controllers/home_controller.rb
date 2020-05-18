@@ -4,12 +4,16 @@ class HomeController < ApplicationController
   include V4::GraphqlRunnable
 
   def show
-    @forum_posts = ForumPost.
-      joins(:forum_category).
-      merge(ForumCategory.with_slug(:site_news))
-    @forum_posts = localable_resources(@forum_posts).order(created_at: :desc).limit(5)
+    @forum_posts = Rails.cache.fetch("user-home-forum-posts", expires_in: 1.hour) do
+      posts = ForumPost.
+        joins(:forum_category).
+        merge(ForumCategory.with_slug(:site_news))
+      localable_resources(posts).order(created_at: :desc).limit(5)
+    end
 
-    @userland_projects = UserlandProject.where(id: UserlandProject.pluck(:id).sample(3))
+    @userland_projects = Rails.cache.fetch("user-home-userland-projects", expires_in: 12.hours) do
+      UserlandProject.where(id: UserlandProject.pluck(:id).sample(3))
+    end
 
     @activity_group_result = if current_user.timeline_mode.following?
       UserHome::FetchFollowingActivityGroupsRepository.new(
