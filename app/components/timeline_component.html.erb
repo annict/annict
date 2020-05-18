@@ -16,7 +16,11 @@
   </div>
 
   <% if page_info.has_next_page %>
-    <c-activity-group-more-button cursor="<%= page_info.end_cursor %>">
+    <c-activity-group-more-button
+      username="<%= username %>"
+      page-category="<%= page_category %>"
+      cursor="<%= page_info.end_cursor %>"
+    >
       <i class="fal fa-chevron-double-down"></i>
       <%= t "messages._components.timeline.more" %>
     </c-activity-group-more-button>

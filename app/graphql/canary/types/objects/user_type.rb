@@ -37,6 +37,10 @@ module Canary
         field :following, Canary::Types::Objects::UserType.connection_type, null: true
         field :followers, Canary::Types::Objects::UserType.connection_type, null: true
 
+        field :activity_groups, Canary::Types::Objects::ActivityGroupType.connection_type, null: true do
+          argument :order_by, Canary::Types::InputObjects::ActivityOrder, required: false
+        end
+
         field :activities, Canary::Types::Objects::ActivityType.connection_type, null: true do
           argument :order_by, Canary::Types::InputObjects::ActivityOrder, required: false
         end
@@ -159,6 +163,11 @@ module Canary
 
         def followers
           ForeignKeyLoader.for(User, :id).load(object.followers.only_kept.pluck(:id))
+        end
+
+        def activity_groups(order_by: nil)
+          order = build_order(order_by)
+          object.activity_groups.order(order.field => order.direction)
         end
 
         def activities(order_by: nil)

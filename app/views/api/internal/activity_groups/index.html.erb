@@ -1,1 +1,6 @@
-<%= render TimelineComponent.new(activity_groups: @activity_group_result[:activity_groups], page_info: @activity_group_result[:page_info]) %>
+<%= render TimelineComponent.new(
+  username: @username,
+  page_category: @page_category,
+  activity_groups: @activity_group_result[:activity_groups],
+  page_info: @activity_group_result[:page_info]
+) %>

@@ -4,8 +4,8 @@
 - image_url = ann_image_url(@user.profile, :image, size: "640x")
 - set_meta_tags(title: title, description: description, keywords: keywords, og: { description: description }, twitter: { description: description }, reverse: true, prefix: false)
 
-= render "partial_layouts/v2/default", page_category: "user-detail" do
-  .c-card.mb-3
+= render "partial_layouts/v2/default", page_category: "profile-detail" do
+  .c-card
     .p-profile-header
       .p-profile-header__cover
         .p-profile-header__cover-image style="background-image: url(#{profile_background_image_url(@user.profile, size: '320x209', size_rate: 2)});"
@@ -92,13 +92,10 @@
             .small
               = t "noun.favorite_organizations_shorten"
 
-  .mt-3.mb-4
-    c-activities username="#{@user.username}"
+  .mb-4
+    .container
+      = render TimelineComponent.new(username: @user.username, page_category: "profile-detail", activity_groups: @activity_group_result[:activity_groups], page_info: @activity_group_result[:page_info])
 
 - content_for :js_templates
-  = render "application/js_templates/activities"
-  = render "application/js_templates/create_multiple_episode_records_activity"
-  = render "application/js_templates/create_episode_record_activity"
-  = render "application/js_templates/create_status_activity"
   = render "application/js_templates/follow_button"
   = render "application/js_templates/mute_user_button"

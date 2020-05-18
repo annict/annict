@@ -1,0 +1,102 @@
+query($username: String!, $cursor: String) {
+  user(username: $username) {
+    activityGroups(
+      orderBy: { field: CREATED_AT, direction: DESC },
+      first: 30,
+      after: $cursor
+    ) {
+      pageInfo {
+        endCursor
+        hasNextPage
+      }
+
+      nodes {
+        id
+        itemableType
+        single
+        activitiesCount
+        createdAt
+
+        user {
+          username
+          name
+          avatarUrl(size: size100)
+        }
+
+        activities(first: 2) {
+          pageInfo {
+            endCursor
+          }
+
+          nodes {
+            itemableType
+
+            itemable {
+              ... on Status {
+                annictId
+                kind
+                likesCount
+
+                work {
+                  annictId
+                  title
+                  titleEn
+                  image {
+                    internalUrl1x: internalUrl(size: "100x")
+                    internalUrl2x: internalUrl(size: "200x")
+                  }
+                }
+              }
+
+              ... on EpisodeRecord {
+                annictId
+                ratingState
+                bodyHtml
+                likesCount
+                commentsCount
+
+                record {
+                  annictId
+                }
+
+                work {
+                  annictId
+                  title
+                  titleEn
+                  image {
+                    internalUrl1x: internalUrl(size: "100x")
+                    internalUrl2x: internalUrl(size: "200x")
+                  }
+                }
+
+                episode {
+                  annictId
+                  numberText
+                  title
+                  titleEn
+                }
+              }
+
+              ... on WorkRecord {
+                annictId
+                ratingOverallState
+                bodyHtml
+                likesCount
+
+                work {
+                  annictId
+                  title
+                  titleEn
+                  image {
+                    internalUrl1x: internalUrl(size: "100x")
+                    internalUrl2x: internalUrl(size: "200x")
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

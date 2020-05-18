@@ -6,15 +6,15 @@ import trackedResourcesRequest from '../requests/trackedResourcesRequest';
 
 const REQUEST_LIST = {
   'activity-list': [libraryEntriesRequest, likesRequest],
-  'episode-detail': [libraryEntriesRequest, likesRequest],
   'edit-record': [libraryEntriesRequest],
+  'episode-detail': [libraryEntriesRequest, likesRequest],
   'episode-list': [libraryEntriesRequest],
   'guest-home': [libraryEntriesRequest],
   'library-detail': [libraryEntriesRequest],
+  'profile-detail': [libraryEntriesRequest, likesRequest, trackedResourcesRequest],
   'record-detail': [libraryEntriesRequest, likesRequest],
   'record-list': [libraryEntriesRequest, likesRequest],
   'search-detail': [libraryEntriesRequest],
-  'user-detail': [libraryEntriesRequest, likesRequest],
   'user-home': [libraryEntriesRequest, likesRequest, trackedResourcesRequest],
   'user-work-tag-detail': [libraryEntriesRequest],
   'work-detail': [libraryEntriesRequest, likesRequest, trackedResourcesRequest],

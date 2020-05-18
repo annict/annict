@@ -32,7 +32,12 @@
           </div>
         </div>
 
-        <%= render TimelineComponent.new(activity_groups: @activity_group_result[:activity_groups], page_info: @activity_group_result[:page_info]) %>
+        <%= render TimelineComponent.new(
+          username: current_user.username,
+          page_category: "user-home",
+          activity_groups: @activity_group_result[:activity_groups],
+          page_info: @activity_group_result[:page_info]
+        ) %>
       </div>
 
       <hr class="col-12 d-lg-none my-5">

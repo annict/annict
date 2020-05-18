@@ -12,6 +12,16 @@ export default {
   `,
 
   props: {
+    username: {
+      type: String,
+      required: true,
+    },
+
+    pageCategory: {
+      type: String,
+      required: true,
+    },
+
     cursor: {
       type: String,
       required: true,
@@ -30,6 +40,8 @@ export default {
         method: 'GET',
         url: '/api/internal/activity_groups',
         data: {
+          username: this.username,
+          page_category: this.pageCategory,
           cursor: this.cursor,
         },
       }).done((html) => {
