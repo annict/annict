@@ -4077,6 +4077,13 @@ CREATE INDEX index_activities_on_status_id ON public.activities USING btree (sta
 
 
 --
+-- Name: index_activities_on_trackable_id_and_trackable_type; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_activities_on_trackable_id_and_trackable_type ON public.activities USING btree (trackable_id, trackable_type);
+
+
+--
 -- Name: index_activities_on_work_id; Type: INDEX; Schema: public; Owner: -
 --
 
