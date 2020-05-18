@@ -6,10 +6,8 @@ module Api
       before_action :authenticate_user!
 
       def create
-        records = MultipleRecordsService.new(current_user)
-        records.save!(params[:episode_ids])
-        ga_client.page_category = params[:page_category]
-        ga_client.events.create(:multiple_records, :create, ds: "internal_api")
+        CreateMultipleEpisodeRecordsJob.perform_later(current_user.id, params[:episode_ids])
+
         flash[:notice] = t "messages.multiple_records.create.saved"
         head 201
       end
