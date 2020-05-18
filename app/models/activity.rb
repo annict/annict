@@ -66,6 +66,8 @@ class Activity < ApplicationRecord
   belongs_to :itemable, foreign_key: :trackable_id, foreign_type: :trackable_type, polymorphic: true
   belongs_to :user
 
+  after_destroy :destroy_activity_group
+
   def itemable_type
     trackable_type
   end
@@ -84,6 +86,14 @@ class Activity < ApplicationRecord
       "create_multiple_records"
     else
       action
+    end
+  end
+
+  private
+
+  def destroy_activity_group
+    unless activity_group.activities.exists?
+      activity_group.destroy
     end
   end
 end
