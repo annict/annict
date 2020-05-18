@@ -16,10 +16,6 @@ mutation (
   ) {
     episodeRecord {
       annictId
-      ratingState
-      bodyHtml
-      likesCount
-      commentsCount
     }
   }
 }

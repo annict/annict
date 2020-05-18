@@ -16,11 +16,7 @@ class CreateEpisodeRecordRepository < ApplicationRepository
 
     data = result.dig("data", "createEpisodeRecord", "episodeRecord")
     entity = EpisodeRecordEntity.new(
-      id: data["annictId"],
-      rating_state: data["ratingState"]&.downcase,
-      body_html: data["data"],
-      likes_count: data["likesCount"],
-      comments_count: data["commentsCount"]
+      id: data["annictId"]
     )
 
     [entity, nil]
