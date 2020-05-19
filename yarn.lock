@@ -821,9 +821,9 @@
   integrity sha512-pH4KCsbtBLLe7eqUrw8brcuFO8IZlN36JjdKlOublibVdAIPHCzEnpBWOVUXK5sCf+DpBi8ZtuWtjF0srybdeA==
 
 "@rails/ujs@latest":
-  version "6.0.2-2"
-  resolved "https://registry.yarnpkg.com/@rails/ujs/-/ujs-6.0.2-2.tgz#7a28774789ca3f4a8e95e58e5a19dbaa9d6c0feb"
-  integrity sha512-JtDia3bpMbk4WeI4TwGzBfO9ahe6JeNaVE5d6qt1dS0c2KSSXxtKG4YpdiSQLZbutKAiakJPLZ3ZeoD6wRRIXg==
+  version "6.0.3-1"
+  resolved "https://registry.yarnpkg.com/@rails/ujs/-/ujs-6.0.3-1.tgz#7eef443207cc50ac70604216e8bb02f63d97324e"
+  integrity sha512-OjbJo15U5Gn8FGfmJnbnTcE1MyVdtGrEbAXVS0u1/n4th0jWxJX5G5W793Ll85K31/VDr5Pbz4S8hdR0iXsh/g==
 
 "@types/color-name@^1.1.1":
   version "1.1.1"
