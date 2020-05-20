@@ -71,7 +71,9 @@ CREATE TABLE public.activities (
     episode_record_id bigint,
     multiple_episode_record_id bigint,
     work_record_id bigint,
-    activity_group_id bigint
+    activity_group_id bigint,
+    migrated_at timestamp without time zone,
+    mer_processed_at timestamp without time zone
 );
 
 

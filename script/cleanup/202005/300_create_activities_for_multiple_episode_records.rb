@@ -4,7 +4,7 @@ activities = Activity
 # For test
 # activities = User.find_by(username: "shimbaco").following_activities
 
-activities.with_action(:create_multiple_episode_records).find_each do |activity|
+activities.with_action(:create_multiple_episode_records).where(mer_processed_at: nil).find_each do |activity|
   puts "----- Activity: #{activity.id}"
 
   user = activity.user
@@ -32,10 +32,11 @@ activities.with_action(:create_multiple_episode_records).find_each do |activity|
         episode_record: episode_record,
         work: work,
         created_at: episode_record.created_at,
-        updated_at: episode_record.updated_at
+        updated_at: episode_record.updated_at,
+        migrated_at: Time.zone.now
       )
     end
 
-    activity.destroy!
+    activity.update_column(:mer_processed_at, Time.zone.now)
   end
 end

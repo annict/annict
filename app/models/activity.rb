@@ -5,6 +5,8 @@
 #
 #  id                         :bigint           not null, primary key
 #  action                     :string(510)      not null
+#  mer_processed_at           :datetime
+#  migrated_at                :datetime
 #  recipient_type             :string(510)      not null
 #  trackable_type             :string(510)      not null
 #  created_at                 :datetime
@@ -70,6 +72,8 @@ class Activity < ApplicationRecord
   belongs_to :work, optional: true
 
   scope :records_and_reviews, -> { with_action(:create_episode_record, :create_work_record, :create_multiple_episode_records) }
+
+  default_scope { where(migrated_at: nil) }
 
   def deprecated_action
     case action
