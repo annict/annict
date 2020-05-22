@@ -29,8 +29,11 @@ class Record < ApplicationRecord
 
   RATING_STATES = %i(bad average good great).freeze
 
-  belongs_to :user, counter_cache: true
-  belongs_to :work, counter_cache: true
+  counter_culture :user
+  counter_culture :work
+
+  belongs_to :user
+  belongs_to :work
   has_one :episode_record, dependent: :destroy
   has_one :work_record, dependent: :destroy
 

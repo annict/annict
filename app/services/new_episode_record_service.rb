@@ -7,7 +7,7 @@ class NewEpisodeRecordService
   def initialize(user, episode_record)
     @user = user
     @episode_record = episode_record
-    @work = @episode_record.work
+    @work = @episode_record.episode.work
   end
 
   def save!
@@ -19,7 +19,6 @@ class NewEpisodeRecordService
       @episode_record.record = @user.records.create!(work: @work)
       @episode_record.save!
       @episode_record.update_share_record_status
-      update_episode_record_bodies_count
       update_library_entry
     end
 
@@ -50,9 +49,5 @@ class NewEpisodeRecordService
   def create_ga_event
     return if @ga_client.blank?
     @ga_client.events.create(:records, :create, el: "Episode", ds: @via)
-  end
-
-  def update_episode_record_bodies_count
-    @episode_record.episode.increment!(:episode_record_bodies_count) if @episode_record.body.present?
   end
 end

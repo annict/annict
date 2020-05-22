@@ -70,8 +70,45 @@ CREATE TABLE public.activities (
     status_id bigint,
     episode_record_id bigint,
     multiple_episode_record_id bigint,
-    work_record_id bigint
+    work_record_id bigint,
+    activity_group_id bigint,
+    migrated_at timestamp without time zone,
+    mer_processed_at timestamp without time zone
 );
+
+
+--
+-- Name: activity_groups; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.activity_groups (
+    id bigint NOT NULL,
+    user_id bigint NOT NULL,
+    itemable_type character varying NOT NULL,
+    single boolean DEFAULT false NOT NULL,
+    activities_count integer DEFAULT 0 NOT NULL,
+    created_at timestamp(6) without time zone NOT NULL,
+    updated_at timestamp(6) without time zone NOT NULL
+);
+
+
+--
+-- Name: activity_groups_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE public.activity_groups_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: activity_groups_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE public.activity_groups_id_seq OWNED BY public.activity_groups.id;
 
 
 --
@@ -2431,7 +2468,17 @@ CREATE TABLE public.users (
     allowed_locales character varying[],
     records_count integer DEFAULT 0 NOT NULL,
     aasm_state character varying DEFAULT 'published'::character varying NOT NULL,
-    deleted_at timestamp without time zone
+    deleted_at timestamp without time zone,
+    character_favorites_count integer DEFAULT 0 NOT NULL,
+    person_favorites_count integer DEFAULT 0 NOT NULL,
+    organization_favorites_count integer DEFAULT 0 NOT NULL,
+    plan_to_watch_works_count integer DEFAULT 0 NOT NULL,
+    watching_works_count integer DEFAULT 0 NOT NULL,
+    completed_works_count integer DEFAULT 0 NOT NULL,
+    on_hold_works_count integer DEFAULT 0 NOT NULL,
+    dropped_works_count integer DEFAULT 0 NOT NULL,
+    following_count integer DEFAULT 0 NOT NULL,
+    followers_count integer DEFAULT 0 NOT NULL
 );
 
 
@@ -2747,7 +2794,7 @@ CREATE TABLE public.works (
     media integer NOT NULL,
     official_site_url character varying(510) DEFAULT ''::character varying NOT NULL,
     wikipedia_url character varying(510) DEFAULT ''::character varying NOT NULL,
-    auto_episodes_count integer DEFAULT 0 NOT NULL,
+    episodes_count integer DEFAULT 0 NOT NULL,
     watchers_count integer DEFAULT 0 NOT NULL,
     released_at date,
     created_at timestamp with time zone,
@@ -2789,6 +2836,13 @@ CREATE TABLE public.works (
     title_alter_en character varying DEFAULT ''::character varying NOT NULL,
     unpublished_at timestamp without time zone
 );
+
+
+--
+-- Name: activity_groups id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.activity_groups ALTER COLUMN id SET DEFAULT nextval('public.activity_groups_id_seq'::regclass);
 
 
 --
@@ -3168,6 +3222,14 @@ ALTER TABLE ONLY public.work_tags ALTER COLUMN id SET DEFAULT nextval('public.wo
 
 ALTER TABLE ONLY public.activities
     ADD CONSTRAINT activities_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: activity_groups activity_groups_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.activity_groups
+    ADD CONSTRAINT activity_groups_pkey PRIMARY KEY (id);
 
 
 --
@@ -3967,6 +4029,27 @@ CREATE INDEX follows_user_id_idx ON public.follows USING btree (user_id);
 
 
 --
+-- Name: index_activities_on_activity_group_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_activities_on_activity_group_id ON public.activities USING btree (activity_group_id);
+
+
+--
+-- Name: index_activities_on_activity_group_id_and_created_at; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_activities_on_activity_group_id_and_created_at ON public.activities USING btree (activity_group_id, created_at);
+
+
+--
+-- Name: index_activities_on_created_at; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_activities_on_created_at ON public.activities USING btree (created_at);
+
+
+--
 -- Name: index_activities_on_episode_id; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -3995,6 +4078,13 @@ CREATE INDEX index_activities_on_status_id ON public.activities USING btree (sta
 
 
 --
+-- Name: index_activities_on_trackable_id_and_trackable_type; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_activities_on_trackable_id_and_trackable_type ON public.activities USING btree (trackable_id, trackable_type);
+
+
+--
 -- Name: index_activities_on_work_id; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -4006,6 +4096,20 @@ CREATE INDEX index_activities_on_work_id ON public.activities USING btree (work_
 --
 
 CREATE INDEX index_activities_on_work_record_id ON public.activities USING btree (work_record_id);
+
+
+--
+-- Name: index_activity_groups_on_created_at; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_activity_groups_on_created_at ON public.activity_groups USING btree (created_at);
+
+
+--
+-- Name: index_activity_groups_on_user_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_activity_groups_on_user_id ON public.activity_groups USING btree (user_id);
 
 
 --
@@ -5894,6 +5998,14 @@ ALTER TABLE ONLY public.organization_favorites
 
 
 --
+-- Name: activities fk_rails_4ef7271728; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.activities
+    ADD CONSTRAINT fk_rails_4ef7271728 FOREIGN KEY (activity_group_id) REFERENCES public.activity_groups(id);
+
+
+--
 -- Name: activities fk_rails_4f614ccd13; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -5971,6 +6083,14 @@ ALTER TABLE ONLY public.person_favorites
 
 ALTER TABLE ONLY public.casts
     ADD CONSTRAINT fk_rails_691c85cc04 FOREIGN KEY (person_id) REFERENCES public.people(id);
+
+
+--
+-- Name: activity_groups fk_rails_694252c49b; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.activity_groups
+    ADD CONSTRAINT fk_rails_694252c49b FOREIGN KEY (user_id) REFERENCES public.users(id);
 
 
 --
@@ -6789,6 +6909,8 @@ INSERT INTO "schema_migrations" (version) VALUES
 ('20200310195638'),
 ('20200322025837'),
 ('20200503204607'),
-('20200504053317');
+('20200504053317'),
+('20200513125708'),
+('20200513125709');
 
 

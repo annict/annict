@@ -5,9 +5,9 @@
 #
 #  id                           :bigint           not null, primary key
 #  aasm_state                   :string           default("published"), not null
-#  auto_episodes_count          :integer          default(0), not null
 #  deleted_at                   :datetime
 #  ended_on                     :date
+#  episodes_count               :integer          default(0), not null
 #  facebook_og_image_url        :string           default(""), not null
 #  manual_episodes_count        :integer
 #  media                        :integer          not null
@@ -444,8 +444,8 @@ class Work < ApplicationRecord
     30
   end
 
-  def episodes_count
-    manual_episodes_count.presence || auto_episodes_count
+  def actual_episodes_count
+    manual_episodes_count.presence || episodes_count
   end
 
   def hashtag_with_hash

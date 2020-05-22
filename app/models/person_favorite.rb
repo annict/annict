@@ -24,7 +24,10 @@
 #
 
 class PersonFavorite < ApplicationRecord
-  belongs_to :person, counter_cache: :favorite_users_count
+  counter_culture :person, column_name: :favorite_users_count
+  counter_culture :user
+
+  belongs_to :person
   belongs_to :user
 
   scope :with_cast, -> { joins(:person).where("people.casts_count > ?", 0) }

@@ -73,8 +73,8 @@ describe "Api::V1::Staffs" do
             "blood_type" => staff.resource.blood_type,
             "height" => staff.resource.height,
             "favorite_people_count" => staff.resource.favorite_users_count,
-            "casts_count" => staff.resource.casts_count,
-            "staffs_count" => staff.resource.staffs_count
+            "casts_count" => staff.resource.casts.count,
+            "staffs_count" => staff.resource.staffs.count
           }
         }
         expect(json["staffs"][0]).to include(expected_hash)

@@ -60,7 +60,8 @@ class WorkRecord < ApplicationRecord
     enumerize state, in: Record::RATING_STATES
   end
 
-  counter_culture :work, column_name: proc { |model| model.not_deleted? ? "work_records_count" : nil }
+  counter_culture :work
+  counter_culture :work, column_name: -> (work_record) { work_record.body.present? ? :work_records_with_body_count : nil }
 
   belongs_to :oauth_application, class_name: "Doorkeeper::Application", optional: true
   belongs_to :record
@@ -121,6 +122,10 @@ class WorkRecord < ApplicationRecord
     else
       "Watched."
     end
+  end
+
+  def needs_single_activity_group?
+    body.present?
   end
 
   private

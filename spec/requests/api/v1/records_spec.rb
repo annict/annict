@@ -92,7 +92,7 @@ describe "Api::V1::Records" do
             "sort_number" => episode.sort_number,
             "title" => episode.title,
             "records_count" => 1,
-            "record_comments_count" => 0
+            "record_comments_count" => 1
           }
         }
         actual_hash = json["records"][0]

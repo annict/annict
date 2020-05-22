@@ -124,6 +124,10 @@ class Status < ApplicationRecord
     base_body % work_title
   end
 
+  def needs_single_activity_group?
+    false
+  end
+
   private
 
   def save_activity

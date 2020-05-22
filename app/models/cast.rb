@@ -40,8 +40,10 @@ class Cast < ApplicationRecord
 
   DIFF_FIELDS = %i(person_id name part sort_number character_id name_en).freeze
 
+  counter_culture :person, column_name: -> (cast) { cast.published? ? :casts_count : nil }
+
   belongs_to :character, touch: true
-  belongs_to :person, touch: true, counter_cache: true
+  belongs_to :person, touch: true
   belongs_to :work, touch: true
   has_many :db_activities, as: :trackable, dependent: :destroy
   has_many :db_comments, as: :resource, dependent: :destroy

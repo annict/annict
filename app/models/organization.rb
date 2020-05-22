@@ -49,6 +49,7 @@ class Organization < ApplicationRecord
 
   has_many :db_activities, as: :trackable, dependent: :destroy
   has_many :db_comments, as: :resource, dependent: :destroy
+  # organization_favorites are user data. so do not add `dependent: :destroy`
   has_many :organization_favorites
   has_many :staffs, as: :resource, dependent: :destroy
   has_many :staff_works, through: :staffs, source: :work

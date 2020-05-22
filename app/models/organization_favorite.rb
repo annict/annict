@@ -24,7 +24,10 @@
 #
 
 class OrganizationFavorite < ApplicationRecord
-  belongs_to :organization, counter_cache: :favorite_users_count
+  counter_culture :organization, column_name: :favorite_users_count
+  counter_culture :user
+
+  belongs_to :organization
   belongs_to :user
 
   def update_watched_works_count(user)

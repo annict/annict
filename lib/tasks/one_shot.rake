@@ -37,23 +37,4 @@ namespace :one_shot do
       end
     end
   end
-
-  task update_name_on_series: :environment do
-    Series.where.not(name_en: "").find_each do |series|
-      puts "series.id: #{series.id}"
-      series.update_column(:name_alter_en, series.name_en)
-    end
-
-    Series.where.not(name_ro: "").find_each do |series|
-      puts "series.id: #{series.id}"
-      series.update_column(:name_en, series.name_ro)
-    end
-
-    Series.where.not(name_alter_en: "").find_each do |series|
-      puts "series.id: #{series.id}"
-      if series.name_alter_en == series.name_en
-        series.update_column(:name_alter_en, "")
-      end
-    end
-  end
 end

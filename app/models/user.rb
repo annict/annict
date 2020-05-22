@@ -6,19 +6,28 @@
 #  id                            :bigint           not null, primary key
 #  aasm_state                    :string           default("published"), not null
 #  allowed_locales               :string           is an Array
+#  character_favorites_count     :integer          default(0), not null
+#  completed_works_count         :integer          default(0), not null
 #  confirmation_sent_at          :datetime
 #  confirmation_token            :string(510)
 #  confirmed_at                  :datetime
 #  current_sign_in_at            :datetime
 #  current_sign_in_ip            :string(510)
 #  deleted_at                    :datetime
+#  dropped_works_count           :integer          default(0), not null
 #  email                         :citext           not null
 #  encrypted_password            :string(510)      default(""), not null
 #  episode_records_count         :integer          default(0), not null
+#  followers_count               :integer          default(0), not null
+#  following_count               :integer          default(0), not null
 #  last_sign_in_at               :datetime
 #  last_sign_in_ip               :string(510)
 #  locale                        :string           not null
 #  notifications_count           :integer          default(0), not null
+#  on_hold_works_count           :integer          default(0), not null
+#  organization_favorites_count  :integer          default(0), not null
+#  person_favorites_count        :integer          default(0), not null
+#  plan_to_watch_works_count     :integer          default(0), not null
 #  record_cache_expired_at       :datetime
 #  records_count                 :integer          default(0), not null
 #  remember_created_at           :datetime
@@ -30,6 +39,7 @@
 #  time_zone                     :string           not null
 #  unconfirmed_email             :string(510)
 #  username                      :citext           not null
+#  watching_works_count          :integer          default(0), not null
 #  work_comment_cache_expired_at :datetime
 #  work_tag_cache_expired_at     :datetime
 #  created_at                    :datetime
@@ -79,6 +89,7 @@ class User < ApplicationRecord
   enumerize :role, in: { user: 0, admin: 1, editor: 2 }, default: :user, scope: true
 
   belongs_to :gumroad_subscriber, optional: true
+  has_many :activity_groups, dependent: :destroy
   has_many :activities, dependent: :destroy
   has_many :channel_works, dependent: :destroy
   has_many :character_favorites, dependent: :destroy
@@ -424,6 +435,48 @@ class User < ApplicationRecord
   def registered_after_email_confirmation_required?
     # After 2020-04-07, registered users must confirm email before sign in
     created_at > Time.zone.parse("2020-04-07 0:00:00")
+  end
+
+  def create_or_last_activity_group!(itemable)
+    itemable_type = itemable.class.name
+
+    if itemable.needs_single_activity_group?
+      return activity_groups.create!(itemable_type: itemable_type, single: true)
+    end
+
+    last_activity_group = activity_groups.after(Time.zone.now - 1.hour).order(created_at: :desc).first
+
+    if last_activity_group&.itemable_type == itemable_type && !last_activity_group.single?
+      return last_activity_group
+    end
+
+    activity_groups.create!(itemable_type: itemable_type, single: false)
+  end
+
+  def create_or_last_activity_group_for_init!(itemable)
+    itemable_type = itemable.class.name
+
+    if itemable.needs_single_activity_group?
+      return activity_groups.create!(
+        itemable_type: itemable_type,
+        single: true,
+        created_at: itemable.created_at,
+        updated_at: itemable.created_at
+      )
+    end
+
+    last_activity_group = activity_groups.after(itemable.created_at - 1.hour).order(created_at: :desc).first
+
+    if last_activity_group&.itemable_type == itemable_type && !last_activity_group.single?
+      return last_activity_group
+    end
+
+    activity_groups.create!(
+      itemable_type: itemable_type,
+      single: false,
+      created_at: itemable.created_at,
+      updated_at: itemable.created_at
+    )
   end
 
   private
