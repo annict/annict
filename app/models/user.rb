@@ -441,32 +441,6 @@ class User < ApplicationRecord
     activity_groups.create!(itemable_type: itemable_type, single: false)
   end
 
-  def create_or_last_activity_group_for_init!(itemable)
-    itemable_type = itemable.class.name
-
-    if itemable.needs_single_activity_group?
-      return activity_groups.create!(
-        itemable_type: itemable_type,
-        single: true,
-        created_at: itemable.created_at,
-        updated_at: itemable.created_at
-      )
-    end
-
-    last_activity_group = activity_groups.after(itemable.created_at - 1.hour).order(created_at: :desc).first
-
-    if last_activity_group&.itemable_type == itemable_type && !last_activity_group.single?
-      return last_activity_group
-    end
-
-    activity_groups.create!(
-      itemable_type: itemable_type,
-      single: false,
-      created_at: itemable.created_at,
-      updated_at: itemable.created_at
-    )
-  end
-
   def update_works_count!(prev_state_kind, next_state_kind)
     works_count_fields = {
       wanna_watch: :plan_to_watch_works_count,
