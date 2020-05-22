@@ -60,6 +60,8 @@ class Activity < ApplicationRecord
   belongs_to :itemable, foreign_key: :trackable_id, foreign_type: :trackable_type, polymorphic: true
   belongs_to :user
 
+  default_scope { where(migrated_at: nil) }
+
   after_destroy :destroy_activity_group
 
   def itemable_type
