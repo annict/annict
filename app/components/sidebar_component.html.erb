@@ -15,7 +15,7 @@
 
       <% if user %>
         <div class="mb-3 px-3">
-          <%= link_to profile_path(user.username), class: "align-content-center row" do %>
+          <%= link_to profile_detail_path(user.username), class: "align-content-center row" do %>
             <div class="col-3 pr-0">
               <%= render ProfileImageComponent.new(image_url_1x: helpers.ann_image_url(user.profile, :image, size: "50x50"), alt: "@#{user.username}") %>
             </div>
@@ -54,7 +54,7 @@
 
         <% if user %>
           <li>
-            <%= link_to profile_path(user.username), class: "d-flex justify-content-between py-2" do %>
+            <%= link_to profile_detail_path(user.username), class: "d-flex justify-content-between py-2" do %>
               <div class="c-sidebar__icon text-muted">
                 <i class="fal fa-user"></i>
               </div>
@@ -82,6 +82,18 @@
                   </span>
                 </div>
               <% end %>
+            <% end %>
+          </li>
+
+          <li>
+            <%= link_to track_path, class: "d-flex justify-content-between py-2" do %>
+              <div class="c-sidebar__icon text-muted">
+                <i class="fal fa-tasks"></i>
+              </div>
+
+              <div class="flex-grow-1 text-body">
+                <%= t "verb.track" %>
+              </div>
             <% end %>
           </li>
 

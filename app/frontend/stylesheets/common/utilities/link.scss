@@ -1,8 +1,8 @@
 @import '~bootstrap/scss/mixins';
 
 .u-link {
-  &--hovered {
-    color: $link-hover-color;
+  @include hover-focus {
+    color: $link-hover-color !important;
   }
 }
 

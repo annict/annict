@@ -19,7 +19,7 @@ export default {
   },
 
   methods: {
-    isDisplayable: function() {
+    isDisplayable: function () {
       return !this.appData.isUserSignedIn;
     },
   },

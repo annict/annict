@@ -6,8 +6,12 @@ module V4
       user = User.only_kept.find_by!(username: params[:username])
 
       @user = Rails.cache.fetch(profile_user_cache_key(user), expires_in: 3.hours) do
-        UserDetail::UserRepository.new(graphql_client: graphql_client).fetch(username: user.username)
+        ProfileDetail::FetchUserRepository.new(graphql_client: graphql_client).fetch(username: user.username)
       end
+
+      @activity_group_result = ProfileDetail::FetchUserActivityGroupsRepository.new(
+        graphql_client: graphql_client(viewer: current_user)
+      ).fetch(username: current_user.username, cursor: params[:cursor])
     end
 
     private

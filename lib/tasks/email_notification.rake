@@ -2,7 +2,7 @@
 
 namespace :email_notification do
   task notify_untouched_works: :environment do
-    works = Work.where(auto_episodes_count: 0).order(watchers_count: :desc).limit(3)
+    works = Work.where(episodes_count: 0).order(watchers_count: :desc).limit(3)
     WorkMailer.untouched_works_notification(works.pluck(:id)).deliver_later
   end
 

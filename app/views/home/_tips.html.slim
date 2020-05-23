@@ -1,8 +1,0 @@
-.p-tips.c-card
-  .container.pt-3
-    h2.text-center.mb-0
-      - if current_user.tips.unfinished_for_new_user.present?
-        = t "messages._common.welcome_to_annict"
-      - else
-        = t "noun.tips"
-    c-tips

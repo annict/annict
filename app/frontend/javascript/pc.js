@@ -15,7 +15,6 @@ import app from './common/app';
 import eventHub from './common/eventHub';
 import vueLazyLoad from './common/vueLazyLoad';
 
-import activities from './common/components/activities';
 import analytics from './common/components/analytics';
 import autosizeTextarea from './common/components/autosizeTextarea';
 import body from './common/components/body';
@@ -42,8 +41,6 @@ import recordSorter from './common/components/recordSorter';
 import recordTextarea from './common/components/recordTextarea';
 import recordWordCount from './common/components/recordWordCount';
 import stickyMessage from './common/components/stickyMessage';
-import timeAgo from './common/components/timeAgo';
-import tips from './common/components/tips';
 import untrackedEpisodeList from './common/components/untrackedEpisodeList';
 import usernamePreview from './common/components/usernamePreview';
 import workComment from './common/components/workComment';
@@ -51,14 +48,20 @@ import workFriends from './common/components/workFriends';
 import workTags from './common/components/workTags';
 import youtubeModalPlayer from './common/components/youtubeModalPlayer';
 
+import activityGroupMoreButton from './web/components/activityGroupMoreButton';
+import activityGroupMoreContent from './web/components/activityGroupMoreContent';
+import activityMoreButton from './web/components/activityMoreButton';
+import activityMoreContent from './web/components/activityMoreContent';
 import flash from './web/components/flash';
 import followButton from './web/components/followButton';
 import likeButton from './web/components/likeButton';
 import ratingLabel from './web/components/ratingLabel';
+import relativeTime from './web/components/relativeTime';
 import shareToFacebookButton from './web/components/shareToFacebookButton';
 import shareToTwitterButton from './web/components/shareToTwitterButton';
 import sidebar from './web/components/sidebar';
 import signUpModal from './web/components/signUpModal';
+import spoilerGuard from './web/components/spoilerGuard';
 import statusSelector from './web/components/statusSelector';
 import tabBar from './web/components/tabBar';
 import userDataFetcher from './web/components/userDataFetcher';
@@ -86,7 +89,10 @@ document.addEventListener('turbolinks:load', (event) => {
 
   Vue.use(VueLazyload);
 
-  Vue.component('c-activities', activities);
+  Vue.component('c-activity-group-more-button', activityGroupMoreButton);
+  Vue.component('c-activity-group-more-content', activityGroupMoreContent);
+  Vue.component('c-activity-more-button', activityMoreButton);
+  Vue.component('c-activity-more-content', activityMoreContent);
   Vue.component('c-analytics', analytics(event));
   Vue.component('c-autosize-textarea', autosizeTextarea);
   Vue.component('c-body', body);
@@ -99,8 +105,8 @@ document.addEventListener('turbolinks:load', (event) => {
   Vue.component('c-episode-records-chart', episodeRecordsChart);
   Vue.component('c-favorite-button', favoriteButton);
   Vue.component('c-flash', flash);
-  Vue.component('c-forum-edit-link', forumEditLink);
   Vue.component('c-follow-button', followButton);
+  Vue.component('c-forum-edit-link', forumEditLink);
   Vue.component('c-impression-button', impressionButton);
   Vue.component('c-impression-button-modal', impressionButtonModal);
   Vue.component('c-input-words-count', inputWordsCount);
@@ -108,7 +114,6 @@ document.addEventListener('turbolinks:load', (event) => {
   Vue.component('c-mute-user-button', muteUserButton);
   Vue.component('c-omitted-synopsis', omittedSynopsis);
   Vue.component('c-privacy-policy-modal', privacyPolicyModal);
-  Vue.component('c-slot-list', slotList);
   Vue.component('c-rating-label', ratingLabel);
   Vue.component('c-reaction-button', reactionButton);
   Vue.component('c-record', record);
@@ -116,15 +121,16 @@ document.addEventListener('turbolinks:load', (event) => {
   Vue.component('c-record-sorter', recordSorter);
   Vue.component('c-record-textarea', recordTextarea);
   Vue.component('c-record-word-count', recordWordCount);
+  Vue.component('c-relative-time', relativeTime);
   Vue.component('c-share-button-facebook', shareToFacebookButton);
   Vue.component('c-share-button-twitter', shareToTwitterButton);
   Vue.component('c-sidebar', sidebar);
   Vue.component('c-sign-up-modal', signUpModal);
+  Vue.component('c-slot-list', slotList);
+  Vue.component('c-spoiler-guard', spoilerGuard);
   Vue.component('c-status-selector', statusSelector);
   Vue.component('c-sticky-message', stickyMessage);
   Vue.component('c-tab-bar', tabBar);
-  Vue.component('c-time-ago', timeAgo);
-  Vue.component('c-tips', tips);
   Vue.component('c-untracked-episode-list', untrackedEpisodeList);
   Vue.component('c-user-data-fetcher', userDataFetcher);
   Vue.component('c-user-heatmap', userHeatmap);

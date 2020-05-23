@@ -20,14 +20,7 @@ module Edges
     end
 
     def action
-      activity = object.node
-
-      case activity.action
-      when "create_status" then "CREATE"
-      when "create_episode_record" then "CREATE"
-      when "create_work_record" then "CREATE"
-      when "create_multiple_episode_records" then "CREATE"
-      end
+      "CREATE"
     end
 
     def node

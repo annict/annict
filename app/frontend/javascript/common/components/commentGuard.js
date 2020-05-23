@@ -18,18 +18,14 @@ export default {
 
   methods: {
     remove() {
-      $(this.$el)
-        .children()
-        .removeClass('c-comment-guard');
+      $(this.$el).children().removeClass('c-comment-guard');
       return (this.isSpoiler = false);
     },
   },
 
   mounted() {
     if (this.isSpoiler) {
-      return $(this.$el)
-        .children()
-        .addClass('c-comment-guard');
+      return $(this.$el).children().addClass('c-comment-guard');
     }
   },
 };

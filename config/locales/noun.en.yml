@@ -69,8 +69,10 @@ en:
     favorite_voice_actors: Favorite Voice Actors
     first: First
     following: Following
+    following_shorten: Following
     friend_comments: Friend's Comments
     friends_who_are_watching: Friends Who Are Watching
+    global: Global
     google_calendar: Google Calendar
     home: Home
     information: Information
@@ -167,6 +169,7 @@ en:
     syobocal: Syobocal
     tags: Tags
     terms_of_use: Terms of Use
+    timeline: Timeline
     title: Title
     tonight: Tonight
     tweet: Tweet

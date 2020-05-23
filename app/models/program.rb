@@ -68,6 +68,8 @@ class Program < ApplicationRecord
   end
 
   def vod_title_url
+    return "" if vod_title_code.blank?
+
     case channel_id
     when Channel::AMAZON_VIDEO_ID
       "https://www.amazon.co.jp/dp/#{vod_title_code}"

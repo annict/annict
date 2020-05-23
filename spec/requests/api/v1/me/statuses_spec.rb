@@ -3,7 +3,6 @@
 describe "Api::V1::Me::Statuses" do
   let(:access_token) { create(:oauth_access_token) }
   let(:work) { create(:work, :with_current_season) }
-  let!(:tip) { create(:status_tip) }
 
   describe "POST /v1/me/statuses", debug: true do
     before do

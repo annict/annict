@@ -27,7 +27,7 @@ if params.fields_contain?("#{field_prefix}images")
   json[:images][:twitter][:original_avatar_url] = work.twitter_avatar_url
   json[:images][:twitter][:image_url] = work.twitter_image_url
 end
-json[:episodes_count] = work.episodes_count if params.fields_contain?("#{field_prefix}episodes_count")
+json[:episodes_count] = work.actual_episodes_count if params.fields_contain?("#{field_prefix}episodes_count")
 json[:watchers_count] = work.watchers_count if params.fields_contain?("#{field_prefix}watchers_count")
 json[:reviews_count] = work.work_records_with_body_count if params.fields_contain?("#{field_prefix}reviews_count")
 json[:no_episodes] = work.no_episodes? if params.fields_contain?("#{field_prefix}no_episodes")

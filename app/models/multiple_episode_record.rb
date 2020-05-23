@@ -28,6 +28,9 @@ class MultipleEpisodeRecord < ApplicationRecord
     dependent: :destroy,
     as: :trackable
   has_many :episode_records, dependent: :destroy
+  has_many :likes,
+    dependent: :destroy,
+    as: :recipient
 
   validates :user_id, presence: true
 

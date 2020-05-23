@@ -4,31 +4,30 @@ module Api
   module V1
     module Me
       class RecordsController < Api::V1::ApplicationController
+        include V4::GraphqlRunnable
+
         before_action :prepare_params!, only: %i(create update destroy)
 
         def create
           episode = Episode.only_kept.find(@params.episode_id)
-          record = episode.episode_records.new do |r|
-            r.rating = @params.rating
-            r.rating_state = @params.rating_state
-            r.body = @params.comment
-            r.shared_twitter = @params.share_twitter == "true"
-            r.shared_facebook = @params.share_facebook == "true"
-            r.oauth_application = doorkeeper_token.application
-          end
-          record.rating_state = record.rating_to_rating_state if record.rating.present?
 
-          service = NewEpisodeRecordService.new(current_user, record)
-          service.ga_client = ga_client
-          service.app = doorkeeper_token.application
-          service.via = "rest_api"
+          episode_record, err = CreateEpisodeRecordRepository.new(
+            graphql_client: graphql_client(viewer: current_user)
+          ).create(
+            episode: episode,
+            params: {
+              rating: @params.rating,
+              rating_state: @params.rating_state,
+              body: @params.comment,
+              share_to_twitter: @params.share_twitter
+            }
+          )
 
-          begin
-            service.save!
-            @episode_record = service.episode_record
-          rescue
-            render_validation_errors service.episode_record
+          if err
+            return render_validation_error(err.message)
           end
+
+          @episode_record = current_user.episode_records.find(episode_record.id)
         end
 
         def update
@@ -36,8 +35,7 @@ module Api
           @episode_record.rating = @params.rating
           @episode_record.rating_state = @params.rating_state
           @episode_record.body = @params.comment
-          @episode_record.shared_twitter = @params.share_twitter == "true"
-          @episode_record.shared_facebook = @params.share_facebook == "true"
+          @episode_record.share_to_twitter = @params.share_twitter == "true"
           @episode_record.modify_body = true
           @episode_record.oauth_application = doorkeeper_token.application
           @episode_record.detect_locale!(:body)
@@ -45,8 +43,11 @@ module Api
           if @episode_record.valid?
             ActiveRecord::Base.transaction do
               @episode_record.save(validate: false)
-              @episode_record.update_share_record_status
-              @episode_record.share_to_sns
+              current_user.update_share_record_setting(@episode_record.share_to_twitter)
+
+              if current_user.share_record_to_twitter?
+                current_user.share_episode_record_to_twitter(@episode_record)
+              end
             end
           else
             render_validation_errors(@episode_record)
@@ -71,6 +72,20 @@ module Api
           end
 
           render json: { errors: errors }, status: 400
+        end
+
+        def render_validation_error(message)
+          render(
+            json: {
+              errors: [
+                {
+                  type: "invalid_params",
+                  message: message
+                }
+              ]
+            },
+            status: 400
+          )
         end
       end
     end

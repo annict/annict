@@ -34,7 +34,9 @@ class UserlandProject < ApplicationRecord
   include Localizable
   include ImageUploadable
 
-  belongs_to :userland_category, counter_cache: true
+  counter_culture :userland_category
+
+  belongs_to :userland_category
   has_many :userland_project_members, dependent: :destroy
   has_many :users, through: :userland_project_members
 

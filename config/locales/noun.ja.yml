@@ -69,8 +69,10 @@ ja:
     favorite_voice_actors: お気に入りの声優
     first: First
     following: フォロー中
+    following_shorten: フォロー
     friend_comments: 友達の感想
     friends_who_are_watching: 見てる友達
+    global: グローバル
     google_calendar: Googleカレンダー
     home: ホーム
     information: 基本情報
@@ -167,6 +169,7 @@ ja:
     syobocal: しょぼいカレンダー
     tags: タグ
     terms_of_use: 利用規約
+    timeline: タイムライン
     title: タイトル
     tonight: 今夜
     tweet: ツイート

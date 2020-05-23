@@ -3,31 +3,26 @@
 #
 # Table name: episode_records
 #
-#  id                         :bigint           not null, primary key
-#  aasm_state                 :string           default("published"), not null
-#  body                       :text
-#  comments_count             :integer          default(0), not null
-#  deleted_at                 :datetime
-#  facebook_click_count       :integer          default(0), not null
-#  facebook_url_hash          :string(510)
-#  likes_count                :integer          default(0), not null
-#  locale                     :string           default("other"), not null
-#  modify_body                :boolean          default(FALSE), not null
-#  rating                     :float
-#  rating_state               :string
-#  shared_facebook            :boolean          default(FALSE), not null
-#  shared_twitter             :boolean          default(FALSE), not null
-#  twitter_click_count        :integer          default(0), not null
-#  twitter_url_hash           :string(510)
-#  created_at                 :datetime
-#  updated_at                 :datetime
-#  episode_id                 :bigint           not null
-#  multiple_episode_record_id :bigint
-#  oauth_application_id       :bigint
-#  record_id                  :bigint           not null
-#  review_id                  :bigint
-#  user_id                    :bigint           not null
-#  work_id                    :bigint           not null
+#  id                   :bigint           not null, primary key
+#  body                 :text
+#  comments_count       :integer          default(0), not null
+#  deleted_at           :datetime
+#  facebook_click_count :integer          default(0), not null
+#  facebook_url_hash    :string(510)
+#  likes_count          :integer          default(0), not null
+#  locale               :string           default("other"), not null
+#  modify_body          :boolean          default(FALSE), not null
+#  rating               :float
+#  rating_state         :string
+#  twitter_click_count  :integer          default(0), not null
+#  twitter_url_hash     :string(510)
+#  created_at           :datetime
+#  updated_at           :datetime
+#  episode_id           :bigint           not null
+#  oauth_application_id :bigint
+#  record_id            :bigint           not null
+#  user_id              :bigint           not null
+#  work_id              :bigint           not null
 #
 # Indexes
 #
@@ -61,15 +56,22 @@ class EpisodeRecord < ApplicationRecord
   include Shareable
   include SoftDeletable
 
+  self.ignored_columns = %w(aasm_state multiple_episode_record_id review_id shared_facebook shared_twitter)
+
   enumerize :rating_state, in: Record::RATING_STATES, scope: true
+
+  counter_culture :episode
+  counter_culture :episode, column_name: -> (episode_record) { episode_record.body.present? ? :episode_record_bodies_count : nil }
+  counter_culture :user
+
+  attr_accessor :share_to_twitter, :mutation_error
 
   belongs_to :oauth_application, class_name: "Doorkeeper::Application", optional: true
   belongs_to :record
-  belongs_to :review, optional: true
   belongs_to :work
-  belongs_to :episode, counter_cache: true
+  belongs_to :episode
   belongs_to :multiple_episode_record, optional: true
-  belongs_to :user, counter_cache: true
+  belongs_to :user
   has_many :comments, dependent: :destroy
   has_many :activities,
     dependent: :destroy,
@@ -127,31 +129,6 @@ class EpisodeRecord < ApplicationRecord
     SecureRandom.urlsafe_base64.slice(0, 10)
   end
 
-  def work
-    episode.work
-  end
-
-  def setup_shared_sns(user)
-    self.shared_twitter =
-      user.twitter.present? &&
-      user.authorized_to?(:twitter, shareable: true) &&
-      user.setting.share_record_to_twitter?
-  end
-
-  def shared_sns?
-    twitter_url_hash.present? || shared_twitter?
-  end
-
-  def update_share_record_status
-    if user.setting.share_record_to_twitter? != shared_twitter?
-      user.setting.update_column(:share_record_to_twitter, shared_twitter?)
-    end
-  end
-
-  def share_to_sns
-    ShareEpisodeRecordToTwitterJob.perform_later(user_id, id) if shared_twitter?
-  end
-
   def share_url
     "#{user.preferred_annict_url}/@#{user.username}/records/#{record.id}"
   end
@@ -190,5 +167,9 @@ class EpisodeRecord < ApplicationRecord
     else
       "Watched."
     end
+  end
+
+  def needs_single_activity_group?
+    body.present?
   end
 end

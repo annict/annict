@@ -15,9 +15,7 @@ describe "Api::V1::Me::FollowingActivities" do
     let(:access_token) { create(:oauth_access_token, owner: user1) }
     let!(:follow) { create(:follow, user: user1, following: user2) }
     let!(:record) { create(:episode_record, user: user2) }
-    let!(:activity) do
-      create(:activity, user: user2, recipient: record.episode, trackable: record, action: "create_episode_record")
-    end
+    let!(:activity) { create(:activity, user: user2, itemable: record) }
 
     before do
       params = {
@@ -92,7 +90,7 @@ describe "Api::V1::Me::FollowingActivities" do
             "sort_number" => record.episode.sort_number,
             "title" => record.episode.title,
             "records_count" => 1,
-            "record_comments_count" => 0
+            "record_comments_count" => 1
           },
           "record" => {
             "id" => record.id,

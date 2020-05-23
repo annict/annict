@@ -26,8 +26,8 @@ end
 resource :confirmation, only: [:show]
 resource :menu, only: %i(show)
 resource :search, only: [:show]
+resource :track, only: :show
 resource :work_display_option, only: %i(show)
-resources :activities, only: %i(index)
 resources :comments, only: %i(edit update destroy)
 resources :faqs, only: %i(index)
 resources :friends, only: [:index]
@@ -160,7 +160,8 @@ root "welcome#show",
 
 scope module: :v4 do
   constraints format: "html" do
-    match "/@:username", via: :get, as: :profile, to: "users#show", username: USERNAME_FORMAT
-    match "/works/:id",  via: :get, as: :work,    to: "works#show"
+    match "/@:username",    via: :get,   as: :profile_detail, to: "users#show", username: USERNAME_FORMAT
+    match "/timeline_mode", via: :patch, as: :timeline_mode,  to: "timeline_mode#update"
+    match "/works/:id",     via: :get,   as: :work,           to: "works#show"
   end
 end

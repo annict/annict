@@ -9,10 +9,6 @@ module Canary
         global_id_field :id
 
         field :annict_id, Integer, null: false
-        field :user, Canary::Types::Objects::UserType, null: false
-        field :work, Canary::Types::Objects::WorkType, null: false
-        field :episode, Canary::Types::Objects::EpisodeType, null: false
-        field :record, Canary::Types::Objects::RecordType, null: false
         field :body, String, null: true
         field :body_html, String, null: true
         field :rating, Float, null: true
@@ -24,6 +20,14 @@ module Canary
         field :facebook_click_count, Integer, null: false
         field :created_at, Canary::Types::Scalars::DateTime, null: false
         field :updated_at, Canary::Types::Scalars::DateTime, null: false
+        field :user, Canary::Types::Objects::UserType, null: false
+        field :work, Canary::Types::Objects::WorkType, null: false
+        field :episode, Canary::Types::Objects::EpisodeType, null: false
+        field :record, Canary::Types::Objects::RecordType, null: false
+
+        def body_html
+          render_markdown(object.body)
+        end
 
         def body_html
           render_markdown(object.body)

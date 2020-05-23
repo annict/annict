@@ -1,0 +1,26 @@
+$color-guard-text: rgba(0, 0, 0, .5);
+
+c-spoiler-guard {
+  display: block;
+}
+
+c-spoiler-guard,
+.c-spoiler-guard {
+  color: $color-guard-text;
+  filter: blur(5px);
+
+  &.is-not-spoiler {
+    color: $ann-color-body;
+    filter: none;
+  }
+
+  &.is-spoiler {
+    &:hover {
+      cursor: pointer;
+    }
+
+    .badge {
+      display: none;
+    }
+  }
+}

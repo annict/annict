@@ -23,7 +23,7 @@
     add terms_path
 
     User.only_kept.find_each do |u|
-      add profile_path(u.username), priority: 0.9, lastmod: u.updated_at
+      add profile_detail_path(u.username), priority: 0.9, lastmod: u.updated_at
 
       Status.kind.values.each do |k|
         add library_path(u.username, k), priority: 0.8

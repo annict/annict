@@ -7,7 +7,6 @@ namespace :seed do
     Rake::Task["seed:generate_works_csv"].invoke
     Rake::Task["seed:generate_number_formats_csv"].invoke
     Rake::Task["seed:generate_prefectures_csv"].invoke
-    Rake::Task["seed:generate_tips_csv"].invoke
   end
 
   task generate_channel_groups_csv: :environment do
@@ -121,19 +120,6 @@ namespace :seed do
 
       Prefecture.select(attrs).find_each do |record|
         puts "Inserting Prefecture: #{record.id}"
-        csv << attrs.map { |attr| record.send(attr) }
-      end
-    end
-  end
-
-  task generate_tips_csv: :environment do
-    attrs = %w(id target slug title icon_name)
-
-    CSV.open("#{Dir.pwd}/db/data/csv/tips.csv", "wb") do |csv|
-      csv << attrs
-
-      Tip.select(attrs).find_each do |record|
-        puts "Inserting Tip: #{record.id}"
         csv << attrs.map { |attr| record.send(attr) }
       end
     end

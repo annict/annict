@@ -29,7 +29,7 @@ export default {
           work_id: this.workId,
         },
       })
-        .done(data => {
+        .done((data) => {
           this.tagNames = data.tag_names;
           this.allTagNames = data.all_tag_names;
           this.popularTagNames = data.popular_tag_names;
@@ -40,15 +40,15 @@ export default {
             $tagsInput.select2({
               tags: true,
             });
-            $tagsInput.on('select2:select', event => {
+            $tagsInput.on('select2:select', (event) => {
               return (this.tagNames = $(event.currentTarget).val());
             });
-            return $tagsInput.on('select2:unselect', event => {
+            return $tagsInput.on('select2:unselect', (event) => {
               return (this.tagNames = $(event.currentTarget).val() || []);
             });
           });
         })
-        .fail(function() {
+        .fail(function () {
           const message = gon.I18n['messages._components.impression_button.error'];
           return eventHub.$emit('flash:show', message, 'alert');
         })
@@ -81,13 +81,13 @@ export default {
           comment: this.comment,
         },
       })
-        .done(data => {
+        .done((data) => {
           $('.c-impression-button-modal').modal('hide');
           eventHub.$emit('workTags:saved', this.workId, data.tags);
           eventHub.$emit('workComment:saved', this.workId, data.comment);
           return eventHub.$emit('flash:show', gon.I18n['messages._common.updated']);
         })
-        .fail(function() {
+        .fail(function () {
           const message = gon.I18n['messages._components.impression_button.error'];
           return eventHub.$emit('flash:show', message, 'alert');
         })
@@ -98,7 +98,7 @@ export default {
   },
 
   created() {
-    return eventHub.$on('impressionButtonModal:show', workId => {
+    return eventHub.$on('impressionButtonModal:show', (workId) => {
       this.workId = workId;
       this.load();
       return $('.c-impression-button-modal').modal('show');

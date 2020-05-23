@@ -1,0 +1,52 @@
+<div class="c-timeline__episode-record-activity">
+  <div class="row mb-2">
+    <div class="col-auto pr-0">
+      <%= link_to profile_detail_path(activity_group.user.username) do %>
+        <%= render ProfileImageComponent.new(
+            image_url_1x: activity_group.user.avatar_url,
+            alt: "@#{activity_group.user.username}"
+        ) %>
+      <% end %>
+    </div>
+
+    <div class="col">
+      <span class="c-timeline__user-name">
+        <%= link_to activity_group.user.name, profile_detail_path(activity_group.user.username), class: "text-body font-weight-bold u-link" %>
+      </span>
+
+      <small class="mr-1">
+        <%= t "messages._components.activities.episode_record.created" %>
+      </small>
+
+      <c-relative-time class="small text-muted" time="<%= activity_group.created_at.iso8601 %>"></c-relative-time>
+    </div>
+  </div>
+
+  <% if activity_group.single %>
+    <c-spoiler-guard :work-id="<%= episode_records.first.work.id %>" :episode-id="<%= episode_records.first.episode.id %>">
+      <div>
+        <% if episode_records.first.rating_state %>
+          <c-rating-label class="mb-1" init-kind="<%= episode_records.first.rating_state.downcase %>"></c-rating-label>
+        <% end %>
+
+        <div class="c-body">
+          <%= episode_records.first.body_html.html_safe %>
+        </div>
+      </div>
+    </c-spoiler-guard>
+  <% end %>
+
+  <%= render EpisodeRecordActivityCardsComponent.new(activity_group: activity_group) %>
+
+  <% if activity_group.activities_count > 2 %>
+    <c-activity-more-button
+      activity-group-id="<%= activity_group.id %>"
+      cursor="<%= activity_group.activities_page_info.end_cursor %>"
+    >
+      <i class="fal fa-chevron-double-down"></i>
+      <%= t "messages._components.activities.episode_record.more", n: activity_group.activities_count - 2 %>
+    </c-activity-more-button>
+
+    <c-activity-more-content activity-group-id="<%= activity_group.id %>"></c-activity-more-content>
+  <% end %>
+</div>

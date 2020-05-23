@@ -2,7 +2,7 @@ script#t-untracked-episode-list type="x-template"
   .c-untracked-episode-list
     template v-if="libraryEntries.length > 0"
       template v-for="status in filterNoNextEpisode(libraryEntries)"
-        .py-3
+        .mb-5
           .row
             .col.col-auto.pr-0
               a :href='"/works/" + status.work.id'

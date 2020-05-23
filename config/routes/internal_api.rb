@@ -9,7 +9,6 @@ namespace :api do
     resource :slots_sort_type, only: [:update]
     resource :records_sort_type, only: %i(update)
     resource :search, only: [:show]
-    resources :activities, only: [:index]
     resources :app_data, only: %i(index)
     resources :characters, only: [:index]
     resources :mute_users, only: [:create]
@@ -41,10 +40,6 @@ namespace :api do
     end
 
     resources :multiple_records, only: %i(create)
-
-    resources :tips, only: [] do
-      post :close, on: :collection
-    end
 
     resources :reactions, only: [] do
       post :add, on: :collection
@@ -79,9 +74,17 @@ scope module: :api do
   scope module: :internal do
     constraints format: "json" do
       # rubocop:disable Layout/ExtraSpacing, Layout/LineLength
-      match "/api/internal/following",       via: :get, as: :internal_api_following_list,     to: "following#index"
-      match "/api/internal/library_entries", via: :get, as: :internal_api_library_entry_list, to: "library_entries#index"
-      match "/api/internal/likes",           via: :get, as: :internal_api_like_list,          to: "likes#index"
+      match "/api/internal/following",         via: :get, as: :internal_api_following_list,        to: "following#index"
+      match "/api/internal/library_entries",   via: :get, as: :internal_api_library_entry_list,    to: "library_entries#index"
+      match "/api/internal/likes",             via: :get, as: :internal_api_like_list,             to: "likes#index"
+      match "/api/internal/tracked_resources", via: :get, as: :internal_api_tracked_resource_list, to: "tracked_resources#index"
+      # rubocop:enable Layout/ExtraSpacing, Layout/LineLength
+    end
+
+    constraints format: "html" do
+      # rubocop:disable Layout/ExtraSpacing, Layout/LineLength
+      match "/api/internal/activities",      via: :get, as: :internal_api_activity_list,       to: "activities#index"
+      match "/api/internal/activity_groups", via: :get, as: :internal_api_activity_group_list, to: "activity_groups#index"
       # rubocop:enable Layout/ExtraSpacing, Layout/LineLength
     end
   end

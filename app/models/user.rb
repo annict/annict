@@ -89,6 +89,7 @@ class User < ApplicationRecord
   enumerize :role, in: { user: 0, admin: 1, editor: 2 }, default: :user, scope: true
 
   belongs_to :gumroad_subscriber, optional: true
+  has_many :activity_groups, dependent: :destroy
   has_many :activities, dependent: :destroy
   has_many :channel_works, dependent: :destroy
   has_many :character_favorites, dependent: :destroy
@@ -100,7 +101,6 @@ class User < ApplicationRecord
   has_many :episode_records, dependent: :destroy
   has_many :db_activities, dependent: :destroy
   has_many :db_comments, dependent: :destroy
-  has_many :finished_tips, dependent: :destroy
   has_many :follows, dependent: :destroy
   has_many :followings, through: :follows
   has_many :forum_post_participants, dependent: :destroy
@@ -142,6 +142,7 @@ class User < ApplicationRecord
   has_one :setting, dependent: :destroy
 
   delegate :admin?, :editor?, to: :role
+  delegate :share_record_to_twitter?, :timeline_mode, to: :setting
 
   validates :email,
     presence: true,
@@ -186,10 +187,6 @@ class User < ApplicationRecord
     Work.joins(:library_entries).merge(library_entries.with_status(*status_kinds))
   end
 
-  def tips
-    @tips ||= UserTipsQuery.new(self)
-  end
-
   def social_friends
     @social_friends ||= UserSocialFriendsQuery.new(self)
   end
@@ -219,14 +216,6 @@ class User < ApplicationRecord
     build_email_notification(unsubscription_key: unsubscription_key)
 
     self
-  end
-
-  def following_activities
-    mute_user_ids = mute_users.pluck(:muted_user_id)
-    following_ids = followings.where.not(id: mute_user_ids).pluck(:id)
-    following_ids << self.id
-
-    Activity.where(user_id: following_ids)
   end
 
   def read_notifications!
@@ -436,13 +425,71 @@ class User < ApplicationRecord
     created_at > Time.zone.parse("2020-04-07 0:00:00")
   end
 
+  def create_or_last_activity_group!(itemable)
+    itemable_type = itemable.class.name
+
+    if itemable.needs_single_activity_group?
+      return activity_groups.create!(itemable_type: itemable_type, single: true)
+    end
+
+    last_activity_group = activity_groups.after(Time.zone.now - 1.hour).order(created_at: :desc).first
+
+    if last_activity_group&.itemable_type == itemable_type && !last_activity_group.single?
+      return last_activity_group
+    end
+
+    activity_groups.create!(itemable_type: itemable_type, single: false)
+  end
+
+  def update_works_count!(prev_state_kind, next_state_kind)
+    works_count_fields = {
+      wanna_watch: :plan_to_watch_works_count,
+      watching: :watching_works_count,
+      watched: :completed_works_count,
+      on_hold: :on_hold_works_count,
+      stop_watching: :dropped_works_count
+    }.freeze
+
+    decrement!(works_count_fields[prev_state_kind.to_sym]) if prev_state_kind
+    increment!(works_count_fields[next_state_kind.to_sym])
+  end
+
+  def update_share_record_setting(share_to_twitter)
+    return if share_to_twitter == setting.share_record_to_twitter
+
+    setting.update_column(:share_record_to_twitter, share_to_twitter)
+  end
+
+  def share_episode_record_to_twitter(episode_record)
+    return unless share_record_to_twitter?
+
+    ShareEpisodeRecordToTwitterJob.perform_later(id, episode_record.id)
+  end
+
+  def share_work_record_to_twitter(work_record)
+    return unless share_record_to_twitter?
+
+    ShareWorkRecordToTwitterJob.perform_later(id, work_record.id)
+  end
+
+  def following_resources(model: Activity, viewer: nil, order: OrderProperty.new)
+    target_user_ids = followings.only_kept.pluck(:id)
+    target_user_ids -= viewer&.mute_users&.pluck(:muted_user_id).presence || []
+    target_user_ids << id
+    target_users = User.where(id: target_user_ids).only_kept
+
+    resources = model.joins(:user).merge(target_users)
+
+    resources.order(order.field => order.direction)
+  end
+
   private
 
   def get_large_avatar_image(provider, image_url)
     url = case provider
-          when 'twitter'  then image_url.sub('_normal', '')
-          when 'facebook' then "#{image_url.sub("http://", "https://")}?type=large"
-          end
+    when 'twitter'  then image_url.sub('_normal', '')
+    when 'facebook' then "#{image_url.sub("http://", "https://")}?type=large"
+    end
     url
   end
 end

@@ -137,19 +137,12 @@ module Types
       end
 
       def activities(order_by: nil)
-        SearchActivitiesQuery.new(
-          object.activities,
-          order_by: order_by
-        ).call
+        order = build_order(order_by)
+        object.activities.order(order.field => order.direction)
       end
 
       def following_activities(order_by: nil)
-        following_ids = object.followings.only_kept.pluck(:id)
-        following_ids << object.id
-        SearchActivitiesQuery.new(
-          Activity.where(user_id: following_ids),
-          order_by: order_by
-        ).call
+        object.following_resources(model: Activity, viewer: context[:viewer], order: build_order(order_by))
       end
 
       def records(order_by: nil, has_comment: nil)
