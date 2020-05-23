@@ -27,7 +27,8 @@ module Mutations
     )
       raise Annict::Errors::InvalidAPITokenScopeError unless context[:doorkeeper_token].writable?
 
-      work_record = context[:viewer].work_records.only_kept.find_by_graphql_id(review_id)
+      viewer = context[:viewer]
+      work_record = viewer.work_records.only_kept.find_by_graphql_id(review_id)
 
       work_record.title = title
       work_record.body = body
@@ -38,14 +39,17 @@ module Mutations
       work_record.oauth_application = context[:doorkeeper_token].application
       work_record.detect_locale!(:body)
 
-      context[:viewer].setting.attributes = {
+      viewer.setting.attributes = {
         share_review_to_twitter: share_twitter == true,
         share_review_to_facebook: share_facebook == true
       }
 
       work_record.save!
-      context[:viewer].setting.save!
-      work_record.share_to_sns
+      viewer.setting.save!
+
+      if share_twitter
+        viewer.share_work_record_to_twitter(work_record)
+      end
 
       {
         review: work_record

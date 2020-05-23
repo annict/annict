@@ -15,7 +15,7 @@
       - if current_user.authorized_to?(:twitter, shareable: true)
         label
           = icon "twitter", "fab", class: "u-text-twitter mr-1"
-          = f.check_box :share_to_twitter
+          = f.check_box :share_to_twitter, checked: current_user.share_record_to_twitter?
     .col.col-auto
       .text-center
         = f.button class: "btn btn-primary" do

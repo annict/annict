@@ -66,15 +66,12 @@ class WorkRecordsController < ApplicationController
     @work_record.attributes = work_record_params
     @work_record.detect_locale!(:body)
     @work_record.modified_at = Time.now
-    current_user.setting.attributes = setting_params
 
     begin
       ActiveRecord::Base.transaction do
         @work_record.save!
-        current_user.setting.save!
-      end
-      if current_user.setting.share_review_to_twitter?
-        ShareWorkRecordToTwitterJob.perform_later(current_user.id, @work_record.id)
+        current_user.update_share_record_setting(@work_record.share_to_twitter == "1")
+        current_user.share_work_record_to_twitter(@work_record)
       end
       flash[:notice] = t("messages._common.updated")
       redirect_to record_path(@work_record.user.username, @work_record.record)
@@ -85,10 +82,6 @@ class WorkRecordsController < ApplicationController
   end
 
   private
-
-  def setting_params
-    params.require(:setting).permit(:share_review_to_twitter, :share_review_to_facebook)
-  end
 
   def work_record_params
     params.require(:work_record).permit(

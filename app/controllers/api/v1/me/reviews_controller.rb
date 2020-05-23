@@ -53,8 +53,11 @@ module Api
           if @work_record.valid?
             ActiveRecord::Base.transaction do
               @work_record.save(validate: false)
-              @work_record.share_to_sns
               current_user.setting.save!
+            end
+
+            if @params.share_twitter == "true"
+              current_user.share_work_record_to_twitter(@work_record)
             end
           else
             render_validation_errors(@work_record)

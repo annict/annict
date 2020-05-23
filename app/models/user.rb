@@ -461,10 +461,14 @@ class User < ApplicationRecord
   end
 
   def share_episode_record_to_twitter(episode_record)
+    return unless share_record_to_twitter?
+
     ShareEpisodeRecordToTwitterJob.perform_later(id, episode_record.id)
   end
 
   def share_work_record_to_twitter(work_record)
+    return unless share_record_to_twitter?
+
     ShareWorkRecordToTwitterJob.perform_later(id, work_record.id)
   end
 
