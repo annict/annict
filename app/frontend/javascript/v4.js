@@ -2,16 +2,13 @@ import 'bootstrap';
 
 import ujs from '@rails/ujs';
 import Turbolinks from 'turbolinks';
-import LazyLoad from 'vanilla-lazyload';
 
 import vueApp from './web/vueApp';
+import lazyLoad from './web/utils/lazyLoad';
 
 document.addEventListener('turbolinks:load', (_event) => {
   vueApp.start();
-
-  new LazyLoad({
-    elements_selector: '.js-lazy',
-  });
+  lazyLoad.update();
 });
 
 ujs.start();
