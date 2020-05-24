@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 class HomeController < ApplicationController
+  before_action :authenticate_user!
   before_action :load_i18n, only: %i(show)
 
   def show
