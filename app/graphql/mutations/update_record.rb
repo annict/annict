@@ -13,19 +13,20 @@ module Mutations
     def resolve(record_id:, comment: nil, rating_state: nil, share_twitter: nil, share_facebook: nil)
       raise Annict::Errors::InvalidAPITokenScopeError unless context[:doorkeeper_token].writable?
 
-      record = context[:viewer].episode_records.only_kept.find_by_graphql_id(record_id)
+      viewer = context[:viewer]
+      record = viewer.episode_records.only_kept.find_by_graphql_id(record_id)
 
       record.rating_state = rating_state&.downcase
       record.modify_body = record.body != comment
       record.body = comment
-      record.shared_twitter = share_twitter == true
-      record.shared_facebook = share_facebook == true
       record.oauth_application = context[:doorkeeper_token].application
       record.detect_locale!(:comment)
 
       record.save!
-      record.update_share_record_status
-      record.share_to_sns
+
+      if share_twitter
+        viewer.share_episode_record_to_twitter(record)
+      end
 
       {
         record: record

@@ -34,7 +34,8 @@ module Canary
       )
         raise Annict::Errors::InvalidAPITokenScopeError unless context[:writable]
 
-        work_record = context[:viewer].work_records.only_kept.find_by_graphql_id(work_record_id)
+        viewer = context[:viewer]
+        work_record = viewer.work_records.only_kept.find_by_graphql_id(work_record_id)
 
         work_record.body = body
         WorkRecord::STATES.each do |state|
@@ -44,14 +45,17 @@ module Canary
         work_record.oauth_application = context[:application]
         work_record.detect_locale!(:body)
 
-        context[:viewer].setting.attributes = {
+        viewer.setting.attributes = {
           share_review_to_twitter: share_twitter == true,
           share_review_to_facebook: share_facebook == true
         }
 
         work_record.save!
-        context[:viewer].setting.save!
-        work_record.share_to_sns
+        viewer.setting.save!
+
+        if share_twitter
+          viewer.share_work_record_to_twitter(work_record)
+        end
 
         {
           work_record: work_record

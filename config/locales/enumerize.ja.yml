@@ -48,6 +48,12 @@ ja:
         watched: 見た
         on_hold: 一時中断
         stop_watching: 視聴中止
+      kind_v3:
+        plan_to_watch: 見たい
+        watching: 見てる
+        completed: 見た
+        on_hold: 一時中断
+        dropped: 視聴中止
       kind_action:
         wanna_watch: 見たい
         watching: 見てる

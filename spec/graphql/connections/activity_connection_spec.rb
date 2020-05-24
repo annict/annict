@@ -5,6 +5,7 @@ describe Connections::ActivityConnection do
   let(:id) { GraphQL::Schema::UniqueWithinType.encode(user.class.name, user.id) }
   let!(:activity) { create(:create_episode_record_activity, user: user) }
   let!(:status) { create(:status, user: user) }
+  let!(:activity_2) { create(:activity, user: user, itemable: status) }
   let(:result) do
     query_string = <<~GRAPHQL
       query {
@@ -49,7 +50,7 @@ describe Connections::ActivityConnection do
               },
               {
                 node: {
-                  comment: activity.trackable.body
+                  comment: activity.itemable.body
                 }
               }
             ]

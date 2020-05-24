@@ -13,5 +13,12 @@ module Shareable
 
       "#{share_url}?#{utm.to_query}"
     end
+
+    def setup_shared_sns(user)
+      self.share_to_twitter =
+        user.twitter.present? &&
+          user.authorized_to?(:twitter, shareable: true) &&
+          user.share_record_to_twitter?
+    end
   end
 end

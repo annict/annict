@@ -2,10 +2,10 @@
 
 describe "Api::V1::Me::Works" do
   let(:access_token) { create(:oauth_access_token) }
-  let(:work) { create(:work, :with_current_season) }
-  let!(:status) do
-    create(:status, kind: "watching", work: work, user: access_token.owner)
-  end
+  let(:user) { access_token.owner }
+  let(:work) { create(:work, :with_current_season, watchers_count: 1) }
+  let!(:status) { create(:status, kind: "watching", work: work, user: user) }
+  let!(:library_entry) { create(:library_entry, user: user, work: work, status: status) }
 
   describe "GET /v1/me/works" do
     before do

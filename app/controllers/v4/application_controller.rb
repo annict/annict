@@ -6,6 +6,7 @@ module V4
     include V4::Loggable
     include V4::Localizable
     include V4::PageCategorizable
+    include V4::GraphqlRunnable
 
     layout "v4"
 
@@ -29,13 +30,6 @@ module V4
     # Override `Devise::Controllers::Helpers#after_sign_out_path_for`
     def after_sign_out_path_for(_resource_or_scope)
       root_path
-    end
-
-    def graphql_client
-      @graphql_client ||= Annict::Graphql::InternalClient.new(
-        # We don't fetch user related data from GraphQL to cache GraphQL data.
-        viewer: nil
-      )
     end
   end
 end

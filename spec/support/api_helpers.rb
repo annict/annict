@@ -4,7 +4,7 @@ module ApiHelpers
   def api(path, data = {})
     return path if data.blank?
 
-    params = data.map { |key, val| "#{key}=#{val}" }.join("&")
+    params = data.map { |key, val| "#{key}=#{CGI.escape(val.to_s)}" }.join("&")
     "#{path}?#{params}"
   end
 

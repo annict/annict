@@ -31,6 +31,8 @@ class Status < ApplicationRecord
 
   include Shareable
 
+  POSITIVE_KINDS = %i(wanna_watch watching watched).freeze
+
   KIND_MAPPING = {
     wanna_watch: :plan_to_watch,
     watching: :watching,
@@ -48,6 +50,7 @@ class Status < ApplicationRecord
     stop_watching: 4
   }
 
+  belongs_to :activity, counter_cache: :resources_count, optional: true
   belongs_to :oauth_application, class_name: "Doorkeeper::Application", optional: true
   belongs_to :user
   belongs_to :work
@@ -58,13 +61,7 @@ class Status < ApplicationRecord
     dependent: :destroy,
     as: :recipient
 
-  after_create :finish_tips
-  after_create :refresh_watchers_count
-  after_create :save_activity
-  after_create :save_library_entry
-  after_create :update_channel_work
-
-  scope :positive, -> { with_kind(:wanna_watch, :watching, :watched) }
+  scope :positive, -> { with_kind(*POSITIVE_KINDS) }
   scope :with_not_deleted_work, -> { joins(:work).merge(Work.only_kept) }
 
   def self.kind_v2_to_v3(kind_v2)
@@ -88,7 +85,9 @@ class Status < ApplicationRecord
   end
 
   def share_to_sns
-    ShareStatusToTwitterJob.perform_later(user.id, id) if user.setting.share_status_to_twitter? && user.authorized_to?(:twitter, shareable: true)
+    return if !user.setting.share_status_to_twitter? || !user.authorized_to?(:twitter, shareable: true)
+
+    ShareStatusToTwitterJob.perform_later(user.id, id)
   end
 
   def share_url
@@ -128,52 +127,6 @@ class Status < ApplicationRecord
     false
   end
 
-  private
-
-  def save_activity
-    Activity.create do |a|
-      a.user = user
-      a.recipient = work
-      a.trackable = self
-      a.action = "create_status"
-      a.work = work
-      a.status = self
-    end
-  end
-
-  def refresh_watchers_count
-    if become_to == :watch
-      work.increment!(:watchers_count)
-    elsif become_to == :drop
-      work.decrement!(:watchers_count)
-    end
-  end
-
-  # ステータスを何から何に変えたかを返す
-  def become_to
-    watches = %i(wanna_watch watching watched)
-
-    if last_2_statuses.length == 2
-      return :watch if !watches.include?(prev_status) && watches.include?(new_status)
-      return :drop  if watches.include?(prev_status)  && !watches.include?(new_status)
-      return :keep # 見たい系 -> 見たい系 または 中止系 -> 中止系
-    end
-
-    watches.include?(new_status) ? :watch : :drop_first
-  end
-
-  def last_2_statuses
-    @last_2_statuses ||= user.statuses.where(work_id: work.id).includes(:work).last(2)
-  end
-
-  def prev_status
-    @prev_status ||= last_2_statuses.first.kind.to_sym
-  end
-
-  def new_status
-    @new_status ||= last_2_statuses.last.kind.to_sym
-  end
-
   def update_channel_work
     case kind
     when "wanna_watch", "watching"
@@ -181,10 +134,6 @@ class Status < ApplicationRecord
     else
       ChannelWorkService.new(user).delete(work)
     end
-  end
-
-  def finish_tips
-    UserTipsService.new(user).finish!(:status) if user.statuses.initial?(self)
   end
 
   def save_library_entry

@@ -2,6 +2,8 @@
 
 module Mutations
   class CreateReview < Mutations::Base
+    include V4::GraphqlRunnable
+
     argument :work_id, ID, required: true
     argument :title, String, required: false
     argument :body, String, required: true
@@ -27,42 +29,32 @@ module Mutations
     )
       raise Annict::Errors::InvalidAPITokenScopeError unless context[:doorkeeper_token].writable?
 
+
+      viewer = context[:viewer]
       work = Work.only_kept.find_by_graphql_id(work_id)
 
-      review = work.work_records.new do |r|
-        r.user = context[:viewer]
-        r.work = work
-        r.title = title
-        r.body = body
-        r.rating_overall_state = rating_overall_state
-        r.rating_animation_state = rating_animation_state
-        r.rating_music_state = rating_music_state
-        r.rating_story_state = rating_story_state
-        r.rating_character_state = rating_character_state
-        r.oauth_application = context[:doorkeeper_token].application
-      end
-      context[:viewer].setting.attributes = {
-        share_review_to_twitter: share_twitter == true,
-        share_review_to_facebook: :share_facebook == true
+      body = title.present? ? "#{title}\n\n#{body}" : body
+      work_record_params = {
+        body: body,
+        rating_animation_state: rating_animation_state,
+        rating_music_state: rating_music_state,
+        rating_story_state: rating_story_state,
+        rating_character_state: rating_character_state,
+        rating_overall_state: rating_overall_state,
+        share_to_twitter: share_twitter&.to_s
       }
 
-      service = work_record_service(review)
-      service.save!
+      work_record_entity, err = CreateWorkRecordRepository.
+        new(graphql_client: graphql_client(viewer: viewer)).
+        create(work: work, params: work_record_params)
+
+      if err
+        raise GraphQL::ExecutionError, err.message
+      end
 
       {
-        review: service.work_record
+        review: viewer.work_records.find(work_record_entity.id)
       }
-    end
-
-    private
-
-    def work_record_service(review)
-      service = NewWorkRecordService.new(context[:viewer], review, context[:viewer].setting)
-      service.via = "graphql_api"
-      service.app = context[:doorkeeper_token].application
-      service.ga_client = context[:ga_client]
-
-      service
     end
   end
 end

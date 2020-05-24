@@ -1,54 +1,31 @@
 # frozen_string_literal: true
 
 class HomeController < ApplicationController
+  include V4::GraphqlRunnable
+
   before_action :authenticate_user!
   before_action :load_i18n, only: %i(show)
 
   def show
-    @tips = current_user.tips.unfinished.with_locale(current_user.locale)
-    tips_data = render_jb("home/_tips", tips: @tips.limit(3))
-
-    library_entries = TrackableService.new(current_user).library_entries
-    library_entry_data = render_jb "api/internal/library_entries/index",
-      user: current_user,
-      library_entries: library_entries
-
-    if device_pc?
-      @forum_posts = ForumPost.
+    @forum_posts = Rails.cache.fetch("user-home-forum-posts", expires_in: 1.hour) do
+      posts = ForumPost.
         joins(:forum_category).
         merge(ForumCategory.with_slug(:site_news))
-      @forum_posts = localable_resources(@forum_posts).order(created_at: :desc).limit(5)
-
-      activities = UserActivitiesQuery.new.call(
-        activities: current_user.following_activities,
-        user: current_user,
-        page: 1
-      )
-      works = Work.where(id: activities.all.map(&:work_id))
-
-      activity_data = render_jb("api/internal/activities/index",
-        user: current_user,
-        activities: activities,
-        works: works)
+      localable_resources(posts).order(created_at: :desc).limit(5)
     end
 
-    gon.push(
-      tipsData: tips_data,
-      latestStatusData: library_entry_data,
-      activityData: activity_data
-    )
-  end
+    @userland_projects = Rails.cache.fetch("user-home-userland-projects", expires_in: 12.hours) do
+      UserlandProject.where(id: UserlandProject.pluck(:id).sample(3))
+    end
 
-  private
-
-  def load_i18n
-    keys = {
-      "messages._common.are_you_sure": nil,
-      "messages.tracks.see_records": nil,
-      "messages.tracks.skip_episode_confirmation": nil,
-      "messages.tracks.tracked": nil
-    }
-
-    load_i18n_into_gon keys
+    @activity_group_result = if current_user.timeline_mode.following?
+      UserHome::FetchFollowingActivityGroupsRepository.new(
+        graphql_client: graphql_client(viewer: current_user)
+      ).fetch(username: current_user.username, cursor: params[:cursor])
+    else
+      UserHome::FetchGlobalActivityGroupsRepository.new(
+        graphql_client: graphql_client
+      ).fetch(cursor: params[:cursor])
+    end
   end
 end

@@ -3,24 +3,13 @@
 #
 # Table name: activities
 #
-#  id                         :bigint           not null, primary key
-#  action                     :string(510)      not null
-#  mer_processed_at           :datetime
-#  migrated_at                :datetime
-#  recipient_type             :string(510)      not null
-#  trackable_type             :string(510)      not null
-#  created_at                 :datetime
-#  updated_at                 :datetime
-#  activity_group_id          :bigint
-#  episode_id                 :bigint
-#  episode_record_id          :bigint
-#  multiple_episode_record_id :bigint
-#  recipient_id               :bigint           not null
-#  status_id                  :bigint
-#  trackable_id               :bigint           not null
-#  user_id                    :bigint           not null
-#  work_id                    :bigint
-#  work_record_id             :bigint
+#  id                :bigint           not null, primary key
+#  trackable_type    :string(510)      not null
+#  created_at        :datetime
+#  updated_at        :datetime
+#  activity_group_id :bigint
+#  trackable_id      :bigint           not null
+#  user_id           :bigint           not null
 #
 # Indexes
 #
@@ -51,30 +40,44 @@
 class Activity < ApplicationRecord
   extend Enumerize
 
-  enumerize :action, in: %w(
-    create_status
-    create_episode_record
-    create_work_record
-    create_multiple_episode_records
-  ), scope: true
+  self.ignored_columns = %w(
+    action
+    episode_id
+    episode_record_id
+    mer_processed_at
+    migrated_at
+    multiple_episode_record_id
+    recipient_id
+    recipient_type
+    status_id
+    work_id
+    work_record_id
+  )
+
+  enumerize :trackable_type, in: ActivityGroup::ITEMABLE_TYPES, scope: true
 
   counter_culture :activity_group
 
   belongs_to :activity_group, optional: true
-  belongs_to :episode, optional: true
-  belongs_to :multiple_episode_record, optional: true
-  belongs_to :recipient, polymorphic: true
-  belongs_to :episode_record, optional: true
-  belongs_to :work_record, optional: true
-  belongs_to :status, optional: true
-  belongs_to :trackable, polymorphic: true
+  belongs_to :itemable, foreign_key: :trackable_id, foreign_type: :trackable_type, polymorphic: true
   belongs_to :user
-  belongs_to :work, optional: true
 
-  scope :records_and_reviews, -> { with_action(:create_episode_record, :create_work_record, :create_multiple_episode_records) }
+  after_destroy :destroy_activity_group
 
-  default_scope { where(migrated_at: nil) }
+  def itemable_type
+    trackable_type
+  end
 
+  def itemable_id
+    trackable_id
+  end
+
+  # @deprecated
+  def action
+    "create_#{itemable_type.underscore}"
+  end
+
+  # @deprecated
   def deprecated_action
     case action
     when "create_episode_record"
@@ -85,6 +88,14 @@ class Activity < ApplicationRecord
       "create_multiple_records"
     else
       action
+    end
+  end
+
+  private
+
+  def destroy_activity_group
+    unless activity_group.activities.exists?
+      activity_group.destroy
     end
   end
 end

@@ -26,12 +26,15 @@ class ActivityGroup < ApplicationRecord
 
   include BatchDestroyable
 
-  enumerize :itemable_type, in: %w(
+  ITEMABLE_TYPES = %w(
     Status
     EpisodeRecord
     WorkRecord
-  ), scope: true
+  ).freeze
+
+  enumerize :itemable_type, in: ITEMABLE_TYPES, scope: true
 
   belongs_to :user
   has_many :activities, dependent: :destroy
+  has_many :ordered_activities, -> { order(created_at: :desc) }, class_name: "Activity"
 end

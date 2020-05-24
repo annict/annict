@@ -9,7 +9,6 @@ FactoryBot.define do
     rating { 3.0 }
 
     before(:create) do |episode_record|
-      Tip.where(slug: "record").first_or_create(attributes_for(:record_tip))
       episode_record.work = episode_record.episode.work
       episode_record.record = create(:record, user: episode_record.user, work: episode_record.work)
     end

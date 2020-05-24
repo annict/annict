@@ -37,11 +37,19 @@ module Canary
         field :following, Canary::Types::Objects::UserType.connection_type, null: true
         field :followers, Canary::Types::Objects::UserType.connection_type, null: true
 
-        field :activities, Canary::Connections::ActivityConnection, null: true, connection: true do
+        field :activity_groups, Canary::Types::Objects::ActivityGroupType.connection_type, null: true do
           argument :order_by, Canary::Types::InputObjects::ActivityOrder, required: false
         end
 
-        field :following_activities, Canary::Connections::ActivityConnection, null: true, connection: true do
+        field :activities, Canary::Types::Objects::ActivityType.connection_type, null: true do
+          argument :order_by, Canary::Types::InputObjects::ActivityOrder, required: false
+        end
+
+        field :following_activity_groups, Canary::Types::Objects::ActivityGroupType.connection_type, null: true do
+          argument :order_by, Canary::Types::InputObjects::ActivityOrder, required: false
+        end
+
+        field :following_activities, Canary::Types::Objects::ActivityType.connection_type, null: true do
           argument :order_by, Canary::Types::InputObjects::ActivityOrder, required: false
         end
 
@@ -157,20 +165,22 @@ module Canary
           ForeignKeyLoader.for(User, :id).load(object.followers.only_kept.pluck(:id))
         end
 
+        def activity_groups(order_by: nil)
+          order = build_order(order_by)
+          object.activity_groups.order(order.field => order.direction)
+        end
+
         def activities(order_by: nil)
-          SearchActivitiesQuery.new(
-            object.activities,
-            order_by: order_by
-          ).call
+          order = build_order(order_by)
+          object.activities.order(order.field => order.direction)
+        end
+
+        def following_activity_groups(order_by: nil)
+          object.following_resources(model: ActivityGroup, viewer: context[:viewer], order: build_order(order_by))
         end
 
         def following_activities(order_by: nil)
-          following_ids = object.followings.only_kept.pluck(:id)
-          following_ids << object.id
-          SearchActivitiesQuery.new(
-            Activity.where(user_id: following_ids),
-            order_by: order_by
-          ).call
+          object.following_resources(model: Activity, viewer: context[:viewer], order: build_order(order_by))
         end
 
         def episode_records(order_by: nil, has_body: nil)

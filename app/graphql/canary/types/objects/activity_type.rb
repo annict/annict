@@ -9,10 +9,28 @@ module Canary
         global_id_field :id
 
         field :annict_id, Integer, null: false
+        field :itemable_type, Canary::Types::Enums::ActivityItemableType, null: false
+        field :created_at, Canary::Types::Scalars::DateTime, null: false
         field :user, Canary::Types::Objects::UserType, null: false
+        field :itemable, Canary::Types::Unions::ActivityItemable, null: false
+
+        def itemable_type
+          object.itemable_type.underscore.upcase
+        end
 
         def user
           RecordLoader.for(User).load(object.user_id)
+        end
+
+        def itemable
+          case object.itemable_type
+          when "EpisodeRecord"
+            RecordLoader.for(EpisodeRecord).load(object.itemable_id)
+          when "Status"
+            RecordLoader.for(Status).load(object.itemable_id)
+          when "WorkRecord"
+            RecordLoader.for(WorkRecord).load(object.itemable_id)
+          end
         end
       end
     end

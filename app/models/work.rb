@@ -516,4 +516,14 @@ class Work < ApplicationRecord
 
     number_format.format % number
   end
+
+  def update_watchers_count!(prev_state_kind, next_state_kind)
+    is_prev_positive = prev_state_kind&.to_sym.in?(Status::POSITIVE_KINDS)
+    is_next_positive = next_state_kind.to_sym.in?(Status::POSITIVE_KINDS)
+
+    return if is_prev_positive && is_next_positive
+
+    decrement!(:watchers_count) if is_prev_positive
+    increment!(:watchers_count) if is_next_positive
+  end
 end

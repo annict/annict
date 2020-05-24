@@ -1,0 +1,9 @@
+<div>
+  <% if @activity_group.status? %>
+    <%= render StatusActivityCardsComponent.new(activity_group: @activity_group) %>
+  <% elsif @activity_group.episode_record? %>
+    <%= render EpisodeRecordActivityCardsComponent.new(activity_group: @activity_group) %>
+  <% elsif @activity_group.work_record? %>
+    <%= render WorkRecordActivityCardsComponent.new(activity_group: @activity_group) %>
+  <% end %>
+</div>

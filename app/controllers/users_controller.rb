@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 class UsersController < ApplicationController
+  include V4::GraphqlRunnable
+
   before_action :load_i18n, only: %i(show following followers)
   before_action :authenticate_user!, only: %i(destroy share)
   before_action :set_user, only: %i(show following followers)
@@ -15,19 +17,9 @@ class UsersController < ApplicationController
     @staff_favorites = @user.person_favorites.with_staff.includes(:person).order(id: :desc)
     @organization_favorites = @user.organization_favorites.includes(:organization).order(id: :desc)
 
-    activities = UserActivitiesQuery.new.call(
-      activities: @user.activities,
-      user: current_user,
-      page: 1
-    )
-    works = Work.only_kept.where(id: activities.all.map(&:work_id))
-
-    activity_data = render_jb("api/internal/activities/index",
-      user: user_signed_in? ? current_user : nil,
-      activities: activities,
-      works: works)
-
-    gon.push(activityData: activity_data)
+    @activity_group_result = ProfileDetail::FetchUserActivityGroupsRepository.new(
+      graphql_client: graphql_client(viewer: current_user)
+    ).fetch(username: current_user.username, cursor: params[:cursor])
   end
 
   def following
