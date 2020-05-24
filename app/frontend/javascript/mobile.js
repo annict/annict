@@ -63,8 +63,6 @@ import tabBar from './web/components/tabBar';
 import userDataFetcher from './web/components/userDataFetcher';
 import userHeatmap from './web/components/userHeatmap';
 
-import resourceSelect from './common/directives/resourceSelect';
-
 document.addEventListener('turbolinks:load', (event) => {
   moment.locale(gon.user.locale);
   Cookies.set('ann_time_zone', moment.tz.guess(), {
@@ -131,8 +129,6 @@ document.addEventListener('turbolinks:load', (event) => {
   Vue.component('c-work-friends', workFriends);
   Vue.component('c-work-tags', workTags);
   Vue.component('c-youtube-modal-player', youtubeModalPlayer);
-
-  Vue.directive('resource-select', resourceSelect);
 
   Vue.nextTick(() => vueLazyLoad.refresh());
 

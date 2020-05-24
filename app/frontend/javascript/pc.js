@@ -67,7 +67,6 @@ import tabBar from './web/components/tabBar';
 import userDataFetcher from './web/components/userDataFetcher';
 import userHeatmap from './web/components/userHeatmap';
 
-import resourceSelect from './common/directives/resourceSelect';
 import prerender from './pc/directives/prerender';
 
 document.addEventListener('turbolinks:load', (event) => {
@@ -140,7 +139,6 @@ document.addEventListener('turbolinks:load', (event) => {
   Vue.component('c-work-tags', workTags);
   Vue.component('c-youtube-modal-player', youtubeModalPlayer);
 
-  Vue.directive('resource-select', resourceSelect);
   Vue.directive('prerender', prerender);
 
   Vue.nextTick(() => {
