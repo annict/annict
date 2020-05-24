@@ -1,4 +1,4 @@
-import 'bootstrap';
+import 'bootstrap/js/dist/dropdown';
 
 import ujs from '@rails/ujs';
 import Turbolinks from 'turbolinks';
