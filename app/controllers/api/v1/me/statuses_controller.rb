@@ -4,16 +4,16 @@ module Api
   module V1
     module Me
       class StatusesController < Api::V1::ApplicationController
+        include V4::GraphqlRunnable
+
         before_action :prepare_params!, only: [:create]
 
         def create
           work = Work.only_kept.find(@params.work_id)
-          status = StatusService.new(current_user, work)
-          status.app = doorkeeper_token.application
-          status.ga_client = ga_client
-          status.via = "rest_api"
 
-          status.change!(@params.kind)
+          UpdateStatusRepository.new(
+            graphql_client: graphql_client(viewer: current_user)
+          ).create(work: work, kind: @params.kind)
 
           head 204
         end

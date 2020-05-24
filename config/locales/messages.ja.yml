@@ -18,6 +18,16 @@ ja:
       welcome_to_annict: Annictにようこそ！
       you_can_not_access_there: アクセスできません
     _components:
+      activities:
+        episode_record:
+          created: "が記録しました"
+          more: "残り%{n}件の記録を見る"
+        status:
+          changed: "がステータスを変更しました"
+          more: "残り%{n}件のステータス変更を見る"
+        work_record:
+          created: "が記録しました"
+          more: "残り%{n}件の記録を見る"
       favorite_button:
         add_to_favorites: お気に入りに登録
         added_to_favorites: 登録済み
@@ -40,7 +50,10 @@ ja:
           body: "Annict (アニクト) で自分が見たアニメを管理しよう！"
         records_show:
           body: "Annict (アニクト) で見たアニメを記録しよう！"
+      timeline:
+        more: もっと見る
     _empty:
+      no_activities: アクティビティはありません
       no_characters: キャラクターはいません
       no_episodes: エピソードはありません
       no_organizations: 団体はありません
@@ -105,7 +118,7 @@ ja:
       no_people: 人物はいません
     forum:
       _common:
-        view_all_site_news: "全てのお知らせを見る"
+        view_all_site_news: "全て見る"
       comments:
         created: 投稿しました
         leave_a_comment: コメントを書く

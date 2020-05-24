@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 class WorkRecordsController < ApplicationController
+  include V4::GraphqlRunnable
+
   before_action :authenticate_user!, only: %i(create edit update destroy)
 
   def index
@@ -10,33 +12,33 @@ class WorkRecordsController < ApplicationController
     return unless user_signed_in?
 
     @work_record = @work.work_records.new
+    @work_record.setup_shared_sns(current_user)
 
     store_page_params(work: @work)
   end
 
   def create
     @work = Work.only_kept.find(params[:work_id])
-    @work_record = @work.work_records.new(work_record_params)
-    @work_record.user = current_user
-    current_user.setting.attributes = setting_params
-    ga_client.page_category = params[:page_category]
 
-    service = NewWorkRecordService.new(current_user, @work_record, current_user.setting)
-    service.ga_client = ga_client
-    service.page_category = params[:page_category]
-    service.via = "web"
+    _, err = CreateWorkRecordRepository.new(
+      graphql_client: graphql_client(viewer: current_user)
+    ).create(work: @work, params: work_record_params)
 
-    begin
-      service.save!
-      flash[:notice] = t("messages._common.post")
-      redirect_to work_records_path(@work)
-    rescue
+    if err
       load_work_records
+
+      @work_record = @work.work_records.new(work_record_params)
+      @work_record.errors.add(:mutation_error, err.message)
+      @work_record.setup_shared_sns(current_user)
 
       store_page_params(work: @work)
 
-      render "work_records/index"
+      return render "work_records/index"
     end
+
+    flash[:notice] = t("messages._common.post")
+
+    redirect_to work_records_path(@work)
   end
 
   def edit
@@ -64,15 +66,12 @@ class WorkRecordsController < ApplicationController
     @work_record.attributes = work_record_params
     @work_record.detect_locale!(:body)
     @work_record.modified_at = Time.now
-    current_user.setting.attributes = setting_params
 
     begin
       ActiveRecord::Base.transaction do
         @work_record.save!
-        current_user.setting.save!
-      end
-      if current_user.setting.share_review_to_twitter?
-        ShareWorkRecordToTwitterJob.perform_later(current_user.id, @work_record.id)
+        current_user.update_share_record_setting(@work_record.share_to_twitter == "1")
+        current_user.share_work_record_to_twitter(@work_record)
       end
       flash[:notice] = t("messages._common.updated")
       redirect_to record_path(@work_record.user.username, @work_record.record)
@@ -84,14 +83,10 @@ class WorkRecordsController < ApplicationController
 
   private
 
-  def setting_params
-    params.require(:setting).permit(:share_review_to_twitter, :share_review_to_facebook)
-  end
-
   def work_record_params
     params.require(:work_record).permit(
       :body, :rating_animation_state, :rating_music_state, :rating_story_state,
-      :rating_character_state, :rating_overall_state
+      :rating_character_state, :rating_overall_state, :share_to_twitter
     )
   end
 

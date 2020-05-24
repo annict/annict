@@ -1,0 +1,29 @@
+<div class="c-timeline">
+  <div>
+    <% activity_groups.each do |activity_group| %>
+      <div class="c-timeline__activity pt-3 u-underline">
+        <% if activity_group.status? %>
+          <%= render StatusActivityComponent.new(activity_group: activity_group) %>
+
+        <% elsif activity_group.episode_record? %>
+          <%= render EpisodeRecordActivityComponent.new(activity_group: activity_group) %>
+
+        <% elsif activity_group.work_record? %>
+          <%= render WorkRecordActivityComponent.new(activity_group: activity_group) %>
+        <% end %>
+      </div>
+    <% end %>
+  </div>
+
+  <% if page_info.has_next_page %>
+    <c-activity-group-more-button
+      username="<%= username %>"
+      page-category="<%= page_category %>"
+      cursor="<%= page_info.end_cursor %>"
+    >
+      <i class="fal fa-chevron-double-down"></i>
+      <%= t "messages._components.timeline.more" %>
+    </c-activity-group-more-button>
+    <c-activity-group-more-content cursor="<%= page_info.end_cursor %>"></c-activity-group-more-content>
+  <% end %>
+</div>

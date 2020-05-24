@@ -63,6 +63,8 @@ class WorkRecord < ApplicationRecord
   counter_culture :work
   counter_culture :work, column_name: -> (work_record) { work_record.body.present? ? :work_records_with_body_count : nil }
 
+  attr_accessor :share_to_twitter, :mutation_error
+
   belongs_to :oauth_application, class_name: "Doorkeeper::Application", optional: true
   belongs_to :record
   belongs_to :user
@@ -80,10 +82,6 @@ class WorkRecord < ApplicationRecord
   scope :with_no_body, -> { where(body: ["", nil]) }
 
   before_save :append_title_to_body
-
-  def share_to_sns
-    ShareWorkRecordToTwitterJob.perform_later(user.id, id) if user.setting.share_review_to_twitter?
-  end
 
   def share_url
     "#{user.preferred_annict_url}/@#{user.username}/records/#{record.id}"

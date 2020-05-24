@@ -24,18 +24,7 @@ class Reception < ApplicationRecord
   belongs_to :channel
   belongs_to :user
 
-  after_create :finish_tips
-
-
   def self.initial?(reception)
     count == 1 && first.id == reception.id
-  end
-
-  private
-
-  def finish_tips
-    if user.receptions.initial?(self)
-      UserTipsService.new(user).finish!(:channel)
-    end
   end
 end

@@ -108,11 +108,8 @@ describe UserSlotsQuery, type: :query do
         end
 
         context "when the user watches episode_1" do
-          let(:episode_record) { build :episode_record, user: user, episode: episode_1 }
-
-          before do
-            NewEpisodeRecordService.new(user, episode_record).save!
-          end
+          let!(:episode_record) { build :episode_record, user: user, episode: episode_1 }
+          let!(:library_entry) { create(:library_entry, user: user, work: episode_1.work, watched_episode_ids: [episode_1]) }
 
           context "when the `watched` option is not specified" do
             it "returns no slots" do
@@ -196,9 +193,11 @@ describe UserSlotsQuery, type: :query do
 
     context "when the user is watching work_1" do
       let!(:status_1) { create :status, user: user, work: work_1, kind: :watching }
+      let!(:library_entry_1) { create(:library_entry, user: user, work: work_1, status: status_1) }
 
       context "when the user is watching work_2" do
         let!(:status_2) { create :status, user: user, work: work_2, kind: :watching }
+        let!(:library_entry_2) { create(:library_entry, user: user, work: work_2, status: status_2) }
 
         context "when the user does not watch episodes" do
           context "when the `watched` option is not specified" do
@@ -238,10 +237,10 @@ describe UserSlotsQuery, type: :query do
         end
 
         context "when the user watches episode_1" do
-          let(:episode_record) { build :episode_record, user: user, episode: episode_1 }
+          let!(:episode_record) { create(:episode_record, user: user, episode: episode_1) }
 
           before do
-            NewEpisodeRecordService.new(user, episode_record).save!
+            library_entry_1.update(watched_episode_ids: [episode_1.id])
           end
 
           context "when the `watched` option is not specified" do

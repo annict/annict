@@ -2,6 +2,8 @@
 
 module Mutations
   class UpdateStatus < Mutations::Base
+    include V4::GraphqlRunnable
+
     argument :work_id, ID, required: true
     argument :state, Types::Enums::StatusState, required: true
 
@@ -11,10 +13,6 @@ module Mutations
       raise Annict::Errors::InvalidAPITokenScopeError unless context[:doorkeeper_token].writable?
 
       work = Work.only_kept.find_by_graphql_id(work_id)
-      status = StatusService.new(context[:viewer], work)
-      status.app = context[:doorkeeper_token].application
-      status.ga_client = context[:ga_client]
-      status.via = "graphql_api"
 
       state = case state
       when "NO_STATE" then "no_select"
@@ -22,7 +20,9 @@ module Mutations
         state.downcase
       end
 
-      status.change!(state)
+      UpdateStatusRepository.new(
+        graphql_client: graphql_client(viewer: context[:viewer])
+      ).create(work: work, kind: state)
 
       {
         work: work

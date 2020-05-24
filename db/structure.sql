@@ -58,11 +58,11 @@ SET default_tablespace = '';
 CREATE TABLE public.activities (
     id bigint DEFAULT nextval('public.activities_id_seq'::regclass) NOT NULL,
     user_id bigint NOT NULL,
-    recipient_id bigint NOT NULL,
-    recipient_type character varying(510) NOT NULL,
+    recipient_id bigint,
+    recipient_type character varying(510),
     trackable_id bigint NOT NULL,
     trackable_type character varying(510) NOT NULL,
-    action character varying(510) NOT NULL,
+    action character varying(510),
     created_at timestamp with time zone,
     updated_at timestamp with time zone,
     work_id bigint,
@@ -2000,7 +2000,8 @@ CREATE TABLE public.settings (
     hide_supporter_badge boolean DEFAULT false NOT NULL,
     share_status_to_twitter boolean DEFAULT false NOT NULL,
     share_status_to_facebook boolean DEFAULT false NOT NULL,
-    privacy_policy_agreed boolean DEFAULT false NOT NULL
+    privacy_policy_agreed boolean DEFAULT false NOT NULL,
+    timeline_mode character varying DEFAULT 'following'::character varying NOT NULL
 );
 
 
@@ -6911,6 +6912,7 @@ INSERT INTO "schema_migrations" (version) VALUES
 ('20200503204607'),
 ('20200504053317'),
 ('20200513125708'),
-('20200513125709');
+('20200513125709'),
+('20200515062450');
 
 

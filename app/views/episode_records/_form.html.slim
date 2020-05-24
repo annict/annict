@@ -1,7 +1,7 @@
 - url = episode_record.new_record? ? episode_records_path(episode_record.episode) : episode_record_path(episode_record.episode, episode_record.record)
 = form_for episode_record, url: url do |f|
   = render "application/components/error_panel", resource: episode_record
-  
+
   = f.hidden_field :episode_id
   = hidden_field_tag :page_category, page_category
 
@@ -15,7 +15,7 @@
       - if current_user.authorized_to?(:twitter, shareable: true)
         label
           = icon "twitter", "fab", class: "u-text-twitter mr-1"
-          = f.check_box :shared_twitter
+          = f.check_box :share_to_twitter, checked: current_user.share_record_to_twitter?
     .col.col-auto
       .text-center
         = f.button class: "btn btn-primary" do

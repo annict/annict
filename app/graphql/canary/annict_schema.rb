@@ -7,11 +7,11 @@ module Canary
 
     use GraphQL::Batch
 
-    def self.id_from_object(object, type_definition, _query_ctx)
+    def self.id_from_object(object, type_definition, query_ctx = nil)
       GraphQL::Schema::UniqueWithinType.encode(type_definition.name, object.id)
     end
 
-    def self.object_from_id(id, _query_ctx)
+    def self.object_from_id(id, query_ctx = nil)
       type_name, item_id = GraphQL::Schema::UniqueWithinType.decode(id)
 
       return nil if type_name.blank? || item_id.blank?
@@ -22,7 +22,9 @@ module Canary
     def self.resolve_type(_type, obj, _ctx)
       case obj
       when Activity
-        Canary::Types::Unions::ActivityItem
+        Canary::Types::Objects::ActivityType
+      when ActivityGroup
+        Canary::Types::Objects::ActivityGroupType
       when EpisodeRecord
         Canary::Types::Objects::EpisodeRecordType
       when Episode

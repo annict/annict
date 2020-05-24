@@ -18,6 +18,16 @@ en:
       welcome_to_annict: Welcome to Annict!
       you_can_not_access_there: You can not access there.
     _components:
+      activities:
+        episode_record:
+          created: "tracked"
+          more: "Show %{n} records"
+        status:
+          changed: "changed status"
+          more: "Show %{n} status changes"
+        work_record:
+          created: "tracked"
+          more: "Show %{n} records"
       favorite_button:
         add_to_favorites: Add to Favorites
         added_to_favorites: Added to Favorites
@@ -40,7 +50,10 @@ en:
           body: Do you want to create own anime lists? Let's get started!
         records_show:
           body: Do you want to create own anime lists? Let's get started!
+      timeline:
+        more: Load More
     _empty:
+      no_activities: No Activities
       no_characters: No Characters
       no_episodes: No Episodes
       no_organizations: No Organizations
@@ -105,7 +118,7 @@ en:
       no_people: No Poeple
     forum:
       _common:
-        view_all_site_news: "View All Site News"
+        view_all_site_news: "View All"
       comments:
         created: Created
         leave_a_comment: Leave a comment

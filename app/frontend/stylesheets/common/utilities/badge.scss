@@ -13,10 +13,15 @@ $ann-bootstrap-badge-colors: (
 $ann-badge-colors: (
   average: $ann-color-average,
   bad: $ann-color-bad,
+  completed: $ann-color-green-005,
+  dropped: $ann-color-black-005,
   good: $ann-color-good,
   great: $ann-color-great,
   mizuho: $ann-color-mizuho,
-  supporter: $ann-color-supporter
+  on_hold: $ann-color-red-005,
+  plan_to_watch: $ann-color-orange-005,
+  supporter: $ann-color-supporter,
+  watching: $ann-color-blue-005
 );
 
 @each $color-name, $color in $ann-badge-colors {

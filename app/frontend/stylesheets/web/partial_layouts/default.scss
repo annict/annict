@@ -9,7 +9,10 @@
 
     #{$root}__content {
       flex: 1;
-      max-width: 1400px;
+
+      .container-fluid {
+        max-width: 1400px;
+      }
     }
   }
 }

@@ -1,24 +1,19 @@
 # frozen_string_literal: true
 
 class EpisodeRecordsController < ApplicationController
+  include V4::GraphqlRunnable
+
   before_action :authenticate_user!, only: %i(create edit update switch)
 
   def create
-    @episode = Episode.only_kept.find(episode_record_params[:episode_id])
+    @episode = Episode.only_kept.find(params[:episode_id])
     @work = @episode.work
-    @episode_record = @episode.episode_records.new(episode_record_params)
-    ga_client.page_category = params[:page_category]
 
-    service = NewEpisodeRecordService.new(current_user, @episode_record)
-    service.page_category = params[:page_category]
-    service.ga_client = ga_client
-    service.via = "web"
+    episode_record, err = CreateEpisodeRecordRepository.new(
+      graphql_client: graphql_client(viewer: current_user)
+    ).create(episode: @episode, params: episode_record_params)
 
-    begin
-      service.save!
-      flash[:notice] = t("messages.episode_records.created")
-      redirect_to work_episode_path(@work, @episode)
-    rescue
+    if err
       params[:locale_en] = locale_en?
       params[:locale_ja] = locale_ja?
       service = EpisodeRecordsListService.new(current_user, @episode, params)
@@ -38,9 +33,16 @@ class EpisodeRecordsController < ApplicationController
       store_page_params(work: @work)
 
       @is_spoiler = current_user.hide_episode_record_body?(@episode)
+      @episode_record = @episode.episode_records.new(episode_record_params)
+      @episode_record.errors.add(:mutation_error, err.message)
+      @episode_record.setup_shared_sns(current_user)
 
-      render "/episodes/show"
+      return render "/episodes/show"
     end
+
+    flash[:notice] = t("messages.episode_records.created")
+
+    redirect_to work_episode_path(@work, @episode)
   end
 
   def edit
@@ -57,8 +59,9 @@ class EpisodeRecordsController < ApplicationController
     @episode_record.detect_locale!(:body)
 
     if @episode_record.update(episode_record_params)
-      @episode_record.update_share_record_status
-      @episode_record.share_to_sns
+      current_user.update_share_record_setting(@episode_record.share_to_twitter == "1")
+      current_user.share_episode_record_to_twitter(@episode_record)
+
       path = record_path(current_user.username, @episode_record.record)
       redirect_to path, notice: t("messages._common.updated")
     else
@@ -92,6 +95,6 @@ class EpisodeRecordsController < ApplicationController
   private
 
   def episode_record_params
-    params.require(:episode_record).permit(:episode_id, :body, :shared_twitter, :rating_state)
+    params.require(:episode_record).permit(:episode_id, :body, :share_to_twitter, :rating_state)
   end
 end

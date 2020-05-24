@@ -13,9 +13,7 @@ describe "Api::V1::Activities" do
     let(:user) { create(:user, :with_profile) }
     let(:access_token) { create(:oauth_access_token, owner: user) }
     let!(:record) { create(:episode_record, user: user) }
-    let!(:activity) do
-      create(:activity, user: user, recipient: record.episode, trackable: record, action: "create_episode_record")
-    end
+    let!(:activity) { create(:activity, user: user, itemable: record) }
 
     before do
       params = {
