@@ -24,6 +24,8 @@
 class ActivityGroup < ApplicationRecord
   extend Enumerize
 
+  include BatchDestroyable
+
   enumerize :itemable_type, in: %w(
     Status
     EpisodeRecord

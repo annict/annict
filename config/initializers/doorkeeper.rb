@@ -125,6 +125,8 @@ Doorkeeper::Application.class_eval do
 end
 
 Doorkeeper::AccessToken.class_eval do
+  include BatchDestroyable
+
   belongs_to :owner, class_name: "User", foreign_key: :resource_owner_id
 
   scope :available, -> { where(revoked_at: nil) }
@@ -137,4 +139,8 @@ Doorkeeper::AccessToken.class_eval do
   def writable?
     scopes.include?("write")
   end
+end
+
+Doorkeeper::AccessGrant.class_eval do
+  include BatchDestroyable
 end
