@@ -58,8 +58,8 @@ c-comment-guard inline-template="" :init-is-spoiler="#{is_spoiler == true}"
 .row
   .col
     .text-right
-      c-share-button-twitter.mr-2 text="#{t("head.title.work_records.show", profile_name: work_record.user.profile.name, username: work_record.user.username, work_title: work_record.work.local_title)}" url="#{local_url}#{record_path(work_record.user.username, work_record.record)}" hashtags="#{work_record.work.twitter_hashtag.presence || ''}"
-      c-share-button-facebook.mr-2 url="#{local_url}#{record_path(work_record.user.username, work_record.record)}"
+      c-share-to-twitter-button.mr-2 text="#{t("head.title.work_records.show", profile_name: work_record.user.profile.name, username: work_record.user.username, work_title: work_record.work.local_title)}" url="#{local_url}#{record_path(work_record.user.username, work_record.record)}" hashtags="#{work_record.work.twitter_hashtag.presence || ''}"
+      c-share-to-facebook-button.mr-2 url="#{local_url}#{record_path(work_record.user.username, work_record.record)}"
       c-like-button.ml-2 resource-name="WorkRecord" :resource-id="#{work_record.id}" :init-likes-count="#{work_record.likes_count}" :is-signed-in="#{user_signed_in?}"
 
 - if policy(work_record).update?

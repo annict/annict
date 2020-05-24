@@ -2,7 +2,7 @@ import urlParams from '../utils/urlParams';
 
 export default {
   template: `
-    <span class="c-share-button-twitter">
+    <span class="c-share-to-twitter-button">
       <span class="btn btn-sm u-btn-twitter" @click="open">
         <div class="small">
           <i class="fab fa-twitter mr-1"></i>

@@ -88,8 +88,8 @@ dl
 h2.h4.font-weight-bold.mt-4.mb-3
   = t "noun.share"
 
-c-share-button-twitter.mr-2 text="#{work.local_title}" url="#{local_url}#{work_path(work)}" hashtags="#{work.twitter_hashtag.presence || ''}"
-c-share-button-facebook url="#{local_url}#{work_path(work)}"
+c-share-to-twitter-button.mr-2 text="#{work.local_title}" url="#{local_url}#{work_path(work)}" hashtags="#{work.twitter_hashtag.presence || ''}"
+c-share-to-facebook-button url="#{local_url}#{work_path(work)}"
 
 - if user_signed_in? && current_user.committer?
   .mt-4

@@ -10,8 +10,8 @@
   .mb-3 class="#{@display_option == "list_detailed" ? 'container pr-0' : 'px-3'}"
     .row.align-items-center
       .col
-        c-share-button-twitter.mr-2 text="#{title}" url="#{local_url}#{season_works_path(slug: @season.slug)}"
-        c-share-button-facebook url="#{local_url}#{season_works_path(slug: @season.slug)}"
+        c-share-to-twitter-button.mr-2 text="#{title}" url="#{local_url}#{season_works_path(slug: @season.slug)}"
+        c-share-to-facebook-button url="#{local_url}#{season_works_path(slug: @season.slug)}"
       .col.text-center
         - if @prev_season.present?
           = link_to season_works_path(slug: @prev_season.slug, display: params[:display]), class: "mr-3" do

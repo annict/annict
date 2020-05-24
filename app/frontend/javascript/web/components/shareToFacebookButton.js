@@ -2,7 +2,7 @@ import urlParams from '../utils/urlParams';
 
 export default {
   template: `
-    <span class="c-share-button-facebook">
+    <span class="c-share-to-facebook-button">
       <span class="btn btn-sm u-btn-facebook" @click="open">
         <div class="small">
           <i class="fab fa-facebook mr-1"></i>

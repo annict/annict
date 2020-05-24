@@ -20,8 +20,8 @@
 
   - if @seasons.present?
     .text-center.mb-3
-      c-share-button-twitter.mr-2 text="#{title}" url="#{local_url}#{library_path(@user.username, params[:status_kind])}"
-      c-share-button-facebook url="#{local_url}#{library_path(@user.username, params[:status_kind])}"
+      c-share-to-twitter-button.mr-2 text="#{title}" url="#{local_url}#{library_path(@user.username, params[:status_kind])}"
+      c-share-to-facebook-button url="#{local_url}#{library_path(@user.username, params[:status_kind])}"
     .mb-3
       - @seasons.each_with_index do |season, i|
         .mb-3

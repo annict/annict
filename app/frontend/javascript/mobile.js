@@ -53,8 +53,6 @@ import followButton from './web/components/followButton';
 import likeButton from './web/components/likeButton';
 import ratingLabel from './web/components/ratingLabel';
 import relativeTime from './web/components/relativeTime';
-import shareToFacebookButton from './web/components/shareToFacebookButton';
-import shareToTwitterButton from './web/components/shareToTwitterButton';
 import sidebar from './web/components/sidebar';
 import signUpModal from './web/components/signUpModal';
 import spoilerGuard from './web/components/spoilerGuard';
@@ -113,8 +111,6 @@ document.addEventListener('turbolinks:load', (event) => {
   Vue.component('c-record-textarea', recordTextarea);
   Vue.component('c-record-word-count', recordWordCount);
   Vue.component('c-relative-time', relativeTime);
-  Vue.component('c-share-button-facebook', shareToFacebookButton);
-  Vue.component('c-share-button-twitter', shareToTwitterButton);
   Vue.component('c-sidebar', sidebar);
   Vue.component('c-sign-up-modal', signUpModal);
   Vue.component('c-slot-list', slotList);
