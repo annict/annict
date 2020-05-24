@@ -5,7 +5,7 @@ html lang="#{I18n.locale}"
   body class="#{body_classes} #{user_signed_in? ? 'is-user' : 'is-guest'}"
     = include_gon
 
-    .p-application
+    .ann-application
       = yield
 
       - if show_privacy_policy_modal?
