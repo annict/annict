@@ -71,7 +71,7 @@ CREATE TABLE public.activities (
     episode_record_id bigint,
     multiple_episode_record_id bigint,
     work_record_id bigint,
-    activity_group_id bigint,
+    activity_group_id bigint NOT NULL,
     migrated_at timestamp without time zone,
     mer_processed_at timestamp without time zone
 );
@@ -6914,6 +6914,7 @@ INSERT INTO "schema_migrations" (version) VALUES
 ('20200513125708'),
 ('20200513125709'),
 ('20200515062450'),
-('20200525110837');
+('20200525110837'),
+('20200525201620');
 
 
