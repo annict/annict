@@ -9,7 +9,7 @@ export default {
   },
 
   existsPageParams() {
-    return !!gon.page.params;
+    return window.gon && !!gon.page.params;
   },
 
   loadPageData() {

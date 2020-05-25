@@ -1,7 +1,0 @@
-script#t-reaction-button type="x-template"
-  .c-reaction-button.btn :class='{ "u-btn-great": isReacted, "u-btn-outline-great": !isReacted, "c-spinner": isLoading }' @click="toggleReact"
-    i.fa.mr-1 :class='{ "fa-thumbs-up": isReacted, "far fa-thumbs-up": !isReacted }'
-    span
-      = t "messages._components.reaction_button.kind.thumbs_up.exactly"
-    span.ml-2
-      | {{ reactionsCount }}

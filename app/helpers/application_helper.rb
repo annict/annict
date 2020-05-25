@@ -33,12 +33,9 @@ module ApplicationHelper
     I18n.locale == :ja ? "@AnnictJP" : "@anannict"
   end
 
-  def show_privacy_policy_modal?
-    user_signed_in? && !current_user.setting.privacy_policy_agreed?
-  end
-
   def annict_config
     config = {
+      domain: locale == :ja ? ENV.fetch("ANNICT_JP_DOMAIN") : ENV.fetch("ANNICT_DOMAIN"),
       facebook: {
         appId: ENV.fetch("FACEBOOK_APP_ID")
       },
@@ -73,7 +70,13 @@ module ApplicationHelper
           unmute: t("verb.unmute")
         }
       },
-      statusOptions: Status.kind.options.insert(0, [t("messages.components.status_selector.select_status"), "no_select"])
+      rails: {
+        env: Rails.env
+      },
+      statusOptions: Status.kind.options.insert(0, [t("messages.components.status_selector.select_status"), "no_select"]),
+      viewer: {
+        locale: locale,
+      }
     }.freeze
 
     javascript_tag "window.AnnConfig = #{config.to_json.html_safe};"
