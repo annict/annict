@@ -7,7 +7,7 @@
 #  trackable_type    :string(510)      not null
 #  created_at        :datetime
 #  updated_at        :datetime
-#  activity_group_id :bigint
+#  activity_group_id :bigint           not null
 #  trackable_id      :bigint           not null
 #  user_id           :bigint           not null
 #
@@ -58,7 +58,7 @@ class Activity < ApplicationRecord
 
   counter_culture :activity_group
 
-  belongs_to :activity_group, optional: true
+  belongs_to :activity_group
   belongs_to :itemable, foreign_key: :trackable_id, foreign_type: :trackable_type, polymorphic: true
   belongs_to :user
 
@@ -94,8 +94,6 @@ class Activity < ApplicationRecord
   private
 
   def destroy_activity_group
-    return unless activity_group
-
     unless activity_group.activities.exists?
       activity_group.destroy
     end
