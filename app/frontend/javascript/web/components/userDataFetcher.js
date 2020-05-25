@@ -47,6 +47,10 @@ export default {
     },
 
     fetchAll() {
+      if (!this.getRequests().length) {
+        return;
+      }
+
       Promise.all(this.getRequests().map((req) => req.execute())).then((results) => {
         const data = results.reduce((obj, val) => Object.assign(obj, val, {}));
         eventHub.$emit('user-data-fetcher:fetched', data);

@@ -1,16 +1,7 @@
 <!DOCTYPE html>
 <html lang="<%= I18n.locale %>">
   <head>
-    <!-- Global site tag (gtag.js) - Google Analytics -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id=<%= ga_tracking_id(request) %>"></script>
-    <script>
-      window.dataLayer = window.dataLayer || [];
-      function gtag(){dataLayer.push(arguments);}
-      gtag('js', new Date());
-
-      gtag('config', '<%= ga_tracking_id(request) %>');
-    </script>
-
+    <%= render "application/google_tag_manager" %>
     <%= ann_display_meta_tags %>
 
     <meta http-equiv="x-dns-prefetch-control" content="on">

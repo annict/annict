@@ -1,3 +1,5 @@
+import 'bootstrap/js/dist/alert';
+
 import eventHub from '../../common/eventHub';
 
 export default {

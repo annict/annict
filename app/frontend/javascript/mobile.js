@@ -1,6 +1,5 @@
 import $ from 'jquery';
 import 'bootstrap';
-import 'select2';
 import ujs from '@rails/ujs';
 import Cookies from 'js-cookie';
 import moment from 'moment-timezone';
@@ -14,7 +13,6 @@ import app from './common/app';
 import eventHub from './common/eventHub';
 import vueLazyLoad from './common/vueLazyLoad';
 
-import analytics from './common/components/analytics';
 import autosizeTextarea from './common/components/autosizeTextarea';
 import body from './common/components/body';
 import channelReceiveButton from './common/components/channelReceiveButton';
@@ -24,8 +22,6 @@ import episodeList from './common/components/episodeList';
 import episodeProgress from './common/components/episodeProgress';
 import favoriteButton from './common/components/favoriteButton';
 import forumEditLink from './common/components/forumEditLink';
-import impressionButton from './common/components/impressionButton';
-import impressionButtonModal from './common/components/impressionButtonModal';
 import inputWordsCount from './common/components/inputWordsCount';
 import omittedSynopsis from './common/components/omittedSynopsis';
 import muteUserButton from './common/components/muteUserButton';
@@ -84,7 +80,6 @@ document.addEventListener('turbolinks:load', (event) => {
   Vue.component('c-activity-group-more-content', activityGroupMoreContent);
   Vue.component('c-activity-more-button', activityMoreButton);
   Vue.component('c-activity-more-content', activityMoreContent);
-  Vue.component('c-analytics', analytics(event));
   Vue.component('c-autosize-textarea', autosizeTextarea);
   Vue.component('c-body', body);
   Vue.component('c-channel-receive-button', channelReceiveButton);
@@ -95,9 +90,6 @@ document.addEventListener('turbolinks:load', (event) => {
   Vue.component('c-favorite-button', favoriteButton);
   Vue.component('c-flash', flash);
   Vue.component('c-follow-button', followButton);
-  Vue.component('c-forum-edit-link', forumEditLink);
-  Vue.component('c-impression-button', impressionButton);
-  Vue.component('c-impression-button-modal', impressionButtonModal);
   Vue.component('c-input-words-count', inputWordsCount);
   Vue.component('c-like-button', likeButton);
   Vue.component('c-mute-user-button', muteUserButton);

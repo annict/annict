@@ -11,8 +11,6 @@ html lang="#{I18n.locale}"
       - if show_privacy_policy_modal?
         c-privacy-policy-modal :hide="#{params[:hide_privacy_policy_modal] == 'true'}"
 
-      = render "application/analytics"
-
     = render "application/font_awesome"
     = render "application/js_templates/privacy_policy_modal"
     = render "application/js_templates/sticky_message"

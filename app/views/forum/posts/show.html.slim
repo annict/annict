@@ -27,7 +27,12 @@
           c-body :markdown="true" inline-template=""
             .c-body__content
               = @post.body
-          c-forum-edit-link.text-right.small :user-id="#{@post.user_id}" path="#{edit_forum_post_path(@post)}"
+
+          - if user_signed_in? && current_user == @post.user
+            .text-right
+              = link_to edit_forum_post_path(@post), class: "small" do
+                = icon "pencil-alt", class: "mr-1"
+                = t "noun.edit"
 
         - if @comments.present?
           - @comments.each do |comment|
@@ -46,7 +51,12 @@
                 c-body :markdown="true" inline-template=""
                   .c-body__content
                     = comment.body
-                c-forum-edit-link.text-right.small :user-id="#{comment.user_id}" path="#{edit_forum_post_comment_path(@post, comment)}"
+
+                - if user_signed_in? && current_user == comment.user
+                  .text-right
+                    = link_to edit_forum_post_comment_path(@post, comment), class: "small" do
+                      = icon "pencil-alt", class: "mr-1"
+                      = t "noun.edit"
               - else
                 = t "messages.forum.comments.deleted"
         - else
@@ -56,6 +66,3 @@
         .c-card.p-3.mb-3
           = render "forum/comments/form", comment: @comment
       .col-4
-
-- content_for :js_templates
-  = render "application/js_templates/forum_edit_link"

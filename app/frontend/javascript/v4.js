@@ -1,3 +1,4 @@
+import 'bootstrap/js/dist/collapse';
 import 'bootstrap/js/dist/dropdown';
 
 import ujs from '@rails/ujs';
