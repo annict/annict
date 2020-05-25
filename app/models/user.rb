@@ -103,7 +103,9 @@ class User < ApplicationRecord
   has_many :db_comments, dependent: :destroy
   has_many :follows, dependent: :destroy
   has_many :followings, through: :follows
+  has_many :forum_comments, dependent: :nullify
   has_many :forum_post_participants, dependent: :destroy
+  has_many :forum_posts, dependent: :destroy
   has_many :library_entries, dependent: :destroy
   has_many :likes, dependent: :destroy
   has_many :notifications, dependent: :destroy

@@ -936,7 +936,7 @@ ALTER SEQUENCE public.forum_categories_id_seq OWNED BY public.forum_categories.i
 
 CREATE TABLE public.forum_comments (
     id bigint NOT NULL,
-    user_id bigint NOT NULL,
+    user_id bigint,
     forum_post_id bigint NOT NULL,
     body text NOT NULL,
     edited_at timestamp without time zone,
@@ -6913,6 +6913,7 @@ INSERT INTO "schema_migrations" (version) VALUES
 ('20200504053317'),
 ('20200513125708'),
 ('20200513125709'),
-('20200515062450');
+('20200515062450'),
+('20200525110837');
 
 

@@ -10,8 +10,8 @@ module V4
       end
 
       @activity_group_result = ProfileDetail::FetchUserActivityGroupsRepository.new(
-        graphql_client: graphql_client(viewer: current_user)
-      ).fetch(username: current_user.username, cursor: params[:cursor])
+        graphql_client: graphql_client
+      ).fetch(username: @user.username, cursor: params[:cursor])
     end
 
     private

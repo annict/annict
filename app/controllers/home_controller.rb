@@ -3,6 +3,8 @@
 class HomeController < ApplicationController
   include V4::GraphqlRunnable
 
+  before_action :authenticate_user!
+
   def show
     @forum_posts = Rails.cache.fetch("user-home-forum-posts", expires_in: 1.hour) do
       posts = ForumPost.

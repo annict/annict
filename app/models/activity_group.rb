@@ -24,6 +24,8 @@
 class ActivityGroup < ApplicationRecord
   extend Enumerize
 
+  include BatchDestroyable
+
   ITEMABLE_TYPES = %w(
     Status
     EpisodeRecord

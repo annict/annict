@@ -29,20 +29,23 @@
       - if @comments.present?
         - @comments.each do |comment|
           .u-underline.py-3
-            .row.mb-3
-              .col.col-auto.pr-0
-                = link_to profile_detail_path(comment.user.username) do
-                  = ann_image_tag comment.user.profile, :image, size: "45x45", class: "rounded-circle"
-              .col.pl-2
-                = link_to comment.user.profile.name, profile_detail_path(comment.user.username), class: "mr-2"
-                = comment.user.role_badge
-                .mt-1
-                  span.small.text-muted title="#{display_time(comment.created_at)}"
-                    = display_time(comment.created_at)
-            c-body :markdown="true" inline-template=""
-              .c-body__content
-                = comment.body
-            c-forum-edit-link.text-right.small :user-id="#{comment.user_id}" path="#{edit_forum_post_comment_path(@post, comment)}"
+            - if comment.user
+              .row.mb-3
+                .col.col-auto.pr-0
+                  = link_to profile_detail_path(comment.user.username) do
+                    = ann_image_tag comment.user.profile, :image, size: "45x45", class: "rounded-circle"
+                .col.pl-2
+                  = link_to comment.user.profile.name, profile_detail_path(comment.user.username), class: "mr-2"
+                  = comment.user.role_badge
+                  .mt-1
+                    span.small.text-muted title="#{display_time(comment.created_at)}"
+                      = display_time(comment.created_at)
+              c-body :markdown="true" inline-template=""
+                .c-body__content
+                  = comment.body
+              c-forum-edit-link.text-right.small :user-id="#{comment.user_id}" path="#{edit_forum_post_comment_path(@post, comment)}"
+            - else
+              = t "messages.forum.comments.deleted"
       - else
         .mb-3
           = render "application/components/empty", text: t("messages.forum.posts.no_comments")
