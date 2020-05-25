@@ -11,7 +11,7 @@ module V4
 
       @activity_group_result = ProfileDetail::FetchUserActivityGroupsRepository.new(
         graphql_client: graphql_client
-      ).fetch(username: @user.username, cursor: params[:cursor])
+      ).fetch(username: user.username, cursor: params[:cursor])
     end
 
     private
