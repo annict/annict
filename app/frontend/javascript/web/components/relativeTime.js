@@ -1,4 +1,7 @@
-import moment from 'moment';
+import dayjs from 'dayjs';
+import relativeTime from 'dayjs/plugin/relativeTime';
+
+dayjs.extend(relativeTime);
 
 export default {
   template: `
@@ -14,29 +17,22 @@ export default {
     },
   },
 
-  data() {
-    return {
-      datetime: moment(this.time),
-    };
-  },
-
   computed: {
     timeAgo() {
-      const current = moment();
-      const date = this.datetime.format('YYYY-MM-DD');
-      const currentDate = current.format('YYYY-MM-DD');
+      const currentTime = dayjs();
+      const time = dayjs(this.time);
 
-      const passageDays = moment(currentDate).diff(moment(date), 'days');
+      const passageDays = dayjs(currentTime).diff(time, 'day');
 
       if (passageDays > 3) {
-        return this.datetime.format('YYYY/MM/DD');
+        return time.format('YYYY-MM-DD');
       } else {
-        return this.datetime.fromNow();
+        return time.fromNow();
       }
     },
 
     absoluteTime() {
-      return this.datetime.format('YYYY/MM/DD HH:mm');
+      return dayjs(this.time).format('YYYY-MM-DD HH:mm');
     },
   },
 };

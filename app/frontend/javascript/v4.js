@@ -1,19 +1,22 @@
 import 'bootstrap/js/dist/collapse';
 import 'bootstrap/js/dist/dropdown';
 
+import 'dayjs/locale/ja'
+
 import ujs from '@rails/ujs';
+import dayjs from 'dayjs'
 import $ from "jquery";
 import Cookies from "js-cookie";
-import moment from "moment-timezone";
 import Turbolinks from 'turbolinks';
 
 import vueApp from './web/vueApp';
 import lazyLoad from './web/utils/lazyLoad';
+import { getTimeZone } from './web/utils/timeZone'
 
 document.addEventListener('turbolinks:load', (_event) => {
-  moment.locale(AnnConfig.viewer.locale);
+  dayjs.locale(AnnConfig.viewer.locale);
 
-  Cookies.set('ann_time_zone', moment.tz.guess(), {
+  Cookies.set('ann_time_zone', getTimeZone(), {
     domain: `.${AnnConfig.domain}`,
     secure: AnnConfig.rails.env === 'production',
   });

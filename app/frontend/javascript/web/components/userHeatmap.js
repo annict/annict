@@ -1,5 +1,5 @@
 import CalHeatMap from 'cal-heatmap';
-import moment from 'moment';
+import dayjs from 'dayjs';
 
 export default {
   template: `<div class="c-user-heatmap"></div>`,
@@ -25,7 +25,7 @@ export default {
       domain: 'month',
       range: 6,
       domainLabelFormat: '%Y-%m',
-      start: moment().subtract(5, 'month').toDate(),
+      start: dayjs().subtract(5, 'month').toDate(),
       data: requestPath,
       tooltip: true,
       legend: [2, 4, 6, 8],

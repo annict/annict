@@ -1,6 +1,6 @@
 import $ from 'jquery';
 import _ from 'lodash';
-import moment from 'moment';
+import dayjs from 'dayjs';
 
 import eventHub from '../../common/eventHub';
 import vueLazyLoad from '../../common/vueLazyLoad';
@@ -35,8 +35,8 @@ export default {
     },
 
     initSlots(slots) {
-      return _.each(slots, function(slot) {
-        slot.isBroadcasted = moment().isAfter(slot.started_at);
+      return _.each(slots, function (slot) {
+        slot.isBroadcasted = dayjs().isAfter(slot.started_at);
         return (slot.record = {
           uid: _.uniqueId(),
           body: '',
@@ -62,7 +62,7 @@ export default {
         method: 'GET',
         url: '/api/internal/user/slots',
         data: this.requestData(),
-      }).done(data => {
+      }).done((data) => {
         this.isLoading = false;
         if (data.slots.length > 0) {
           this.hasNext = true;
@@ -96,13 +96,13 @@ export default {
           page_category: gon.page.category,
         },
       })
-        .done(function(data) {
+        .done(function (data) {
           slot.record.isSaving = false;
           slot.record.isRecorded = true;
           const msg = gon.I18n['messages.components.slot_list.tracked'];
           return eventHub.$emit('flash:show', msg);
         })
-        .fail(function(data) {
+        .fail(function (data) {
           slot.record.isSaving = false;
           return eventHub.$emit('flash:show', data.responseJSON.message, 'alert');
         });
