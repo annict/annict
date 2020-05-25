@@ -93,6 +93,8 @@ class User < ApplicationRecord
   has_many :activities, dependent: :destroy
   has_many :channel_works, dependent: :destroy
   has_many :character_favorites, dependent: :destroy
+  has_many :collections, dependent: :destroy
+  has_many :collection_items, dependent: :destroy
   has_many :organization_favorites, dependent: :destroy
   has_many :person_favorites, dependent: :destroy
   has_many :favorite_characters, through: :character_favorites, source: :character
