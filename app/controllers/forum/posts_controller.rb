@@ -29,7 +29,7 @@ module Forum
 
     def show
       @post = ForumPost.joins(:user).merge(User.only_kept).find(params[:id])
-      @comments = @post.forum_comments.joins(:user).merge(User.only_kept).order(:created_at)
+      @comments = @post.forum_comments.order(:created_at)
       @comment = @post.forum_comments.new
 
       store_page_params(post: @post, comments: @comments)

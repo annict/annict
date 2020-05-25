@@ -10,7 +10,7 @@
 #  created_at                                           :datetime         not null
 #  updated_at                                           :datetime         not null
 #  forum_post_id                                        :bigint           not null
-#  user_id                                              :bigint           not null
+#  user_id                                              :bigint
 #
 # Indexes
 #
@@ -30,7 +30,7 @@ class ForumComment < ApplicationRecord
   counter_culture :forum_post
 
   belongs_to :forum_post
-  belongs_to :user
+  belongs_to :user, optional: true
 
   validates :body, presence: true, length: { maximum: 5000 }
   validates :forum_post, presence: true

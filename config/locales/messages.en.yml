@@ -121,6 +121,7 @@ en:
         view_all_site_news: "View All"
       comments:
         created: Created
+        deleted: This comment has been deleted.
         leave_a_comment: Leave a comment
         updated: Updated
       posts:

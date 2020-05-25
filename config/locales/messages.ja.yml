@@ -121,6 +121,7 @@ ja:
         view_all_site_news: "全て見る"
       comments:
         created: 投稿しました
+        deleted: このコメントは削除されています
         leave_a_comment: コメントを書く
         updated: 更新しました
       posts:
