@@ -94,6 +94,8 @@ class Activity < ApplicationRecord
   private
 
   def destroy_activity_group
+    return unless activity_group
+
     unless activity_group.activities.exists?
       activity_group.destroy
     end
