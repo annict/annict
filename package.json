@@ -14,7 +14,6 @@
     "@babel/core": "latest",
     "@babel/preset-env": "latest",
     "@rails/ujs": "latest",
-    "async": "latest",
     "autoprefixer": "latest",
     "autosize": "latest",
     "babel-loader": "latest",
@@ -33,7 +32,6 @@
     "lodash": "latest",
     "marked": "latest",
     "mjml": "latest",
-    "mousetrap": "latest",
     "popper.js": "latest",
     "postcss-smart-import": "latest",
     "select2": "next",
@@ -41,7 +39,6 @@
     "turbolinks": "latest",
     "vanilla-lazyload": "^15.1.1",
     "vue": "latest",
-    "vue-i18n": "latest",
     "vue-lazyload": "latest",
     "webpack-merge": "latest"
   },
