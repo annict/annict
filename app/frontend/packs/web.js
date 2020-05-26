@@ -1,4 +1,4 @@
-import '../javascript/v4';
-import '../stylesheets/v4';
+import '../javascript/web';
+import '../stylesheets/web';
 
 require.context('images', true, /\.(jpg|jpeg|png|svg)$/);
