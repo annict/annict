@@ -1,10 +1,12 @@
-.p-home-show {
-  $root: &;
+@include media-breakpoint-up(lg) {
+  .p-home-show {
+    $root: &;
 
-  &.is-user {
-    .c-timeline {
-      overflow-x: hidden;
-      overflow-y: scroll;
+    &.is-user {
+      .c-timeline {
+        overflow-x: hidden;
+        overflow-y: scroll;
+      }
     }
   }
 }

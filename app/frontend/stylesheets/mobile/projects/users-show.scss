@@ -1,20 +1,22 @@
-.p-users-show {
-  $root: &;
+@include media-breakpoint-down(lg) {
+  .p-users-show {
+    $root: &;
 
-  &__follow-button {
-    position: relative;
+    &__follow-button {
+      position: relative;
 
-    .c-user-options-dropdown {
-      left: 50%;
-      margin-left: -95px;
-      position: absolute;
-      top: 4px;
+      .c-user-options-dropdown {
+        left: 50%;
+        margin-left: -95px;
+        position: absolute;
+        top: 4px;
+      }
     }
-  }
 
-  &__count {
-    #{$root}__count-link {
-      color: $body-color;
+    &__count {
+      #{$root}__count-link {
+        color: $body-color;
+      }
     }
   }
 }

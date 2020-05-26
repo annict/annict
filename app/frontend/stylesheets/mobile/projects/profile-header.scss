@@ -1,25 +1,27 @@
-.p-profile-header {
-  &__cover {
-    height: 180px;
-    position: relative;
-  }
+@include media-breakpoint-down(lg) {
+  .p-profile-header {
+    &__cover {
+      height: 180px;
+      position: relative;
+    }
 
-  &__cover-image {
-    background-position: center;
-    background-repeat: no-repeat;
-    background-size: cover;
-    height: 100%;
-  }
+    &__cover-image {
+      background-position: center;
+      background-repeat: no-repeat;
+      background-size: cover;
+      height: 100%;
+    }
 
-  &__avatar {
-    border: 3px solid $ann-color-white;
-    bottom: -40px;
-    left: 50%;
-    margin-left: -40px;
-    position: absolute;
-  }
+    &__avatar {
+      border: 3px solid $ann-color-white;
+      bottom: -40px;
+      left: 50%;
+      margin-left: -40px;
+      position: absolute;
+    }
 
-  &__profile {
-    margin-top: 40px;
+    &__profile {
+      margin-top: 40px;
+    }
   }
 }

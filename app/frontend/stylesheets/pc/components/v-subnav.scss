@@ -1,16 +1,18 @@
-.c-v-subnav {
-  $root: &;
+@include media-breakpoint-up(lg) {
+  .c-v-subnav {
+    $root: &;
 
-  &__item {
-    align-items: center;
-    display: flex;
-    height: 50px;
-    padding-left: 1rem;
-  }
+    &__item {
+      align-items: center;
+      display: flex;
+      height: 50px;
+      padding-left: 1rem;
+    }
 
-  &__link--active {
-    #{$root}__item {
-      border-left: solid .15rem $ann-color-mizuho;
+    &__link--active {
+      #{$root}__item {
+        border-left: solid .15rem $ann-color-mizuho;
+      }
     }
   }
 }
