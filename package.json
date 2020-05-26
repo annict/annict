@@ -35,6 +35,7 @@
     "popper.js": "latest",
     "postcss-smart-import": "latest",
     "select2": "next",
+    "stimulus": "latest",
     "tether": "latest",
     "turbolinks": "latest",
     "vanilla-lazyload": "latest",
