@@ -23,18 +23,28 @@
         <div class="form-group">
           <% if f.object.resource_type == "Person" %>
             <%= f.label :resource_id, value: t("noun.person") %>
-            <c-resource-selector class="form-control" model-name="Person" name="staff[resource_id]">
+            <select
+              class="form-control"
+              data-controller="resource-selector"
+              data-resource-selector-model-name="Person"
+              name="staff[resource_id]"
+            >
               <option value="<%= f.object.resource.id %>" selected="">
                 <%= f.object.resource.name %>
               </option>
-            </c-resource-selector>
+            </select>
           <% elsif f.object.resource_type == "Organization" %>
             <%= f.label :resource_id, value: t("noun.organization") %>
-            <c-resource-selector class="form-control" model-name="Organization" name="staff[resource_id]">
+            <select
+              class="form-control"
+              data-controller="resource-selector"
+              data-resource-selector-model-name="Organization"
+              name="staff[resource_id]"
+            >
               <option value="<%= f.object.resource.id %>" selected="">
                 <%= f.object.resource.name %>
               </option>
-            </c-resource-selector>
+            </select>
           <% end %>
           <%= hidden_field_tag "#{f.object.class.name.underscore}[resource_type]", f.object.resource_type %>
         </div>

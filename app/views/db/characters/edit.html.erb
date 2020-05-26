@@ -47,7 +47,12 @@
 
         <div class="form-group">
           <%= f.label :series_id %>
-          <c-resource-selector class="form-control" model-name="Series" name="character[series_id]">
+          <select
+            class="form-control"
+            data-controller="resource-selector"
+            data-resource-selector-model-name="Series"
+            name="character[series_id]"
+          >
             <% if f.object.series&.id %>
               <option value="<%= f.object.series.id %>" selected="">
                 <%= f.object.series.local_name %>
@@ -55,7 +60,7 @@
             <% else %>
               <option value="" selected=""></option>
             <% end %>
-          </c-resource-selector>
+          </select>
         </div>
 
         <div class="form-group">

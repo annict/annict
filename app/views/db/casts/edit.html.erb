@@ -22,7 +22,12 @@
 
         <div class="form-group">
           <%= f.label :character_id %>
-          <c-resource-selector class="form-control" model-name="Character" name="cast[character_id]">
+          <select
+            class="form-control"
+            data-controller="resource-selector"
+            data-resource-selector-model-name="Character"
+            name="cast[character_id]"
+          >
             <% if f.object.character&.id %>
               <option value="<%= f.object.character.id %>" selected="">
                 <%= f.object.character.name %>
@@ -30,12 +35,17 @@
             <% else %>
               <option value="" selected=""></option>
             <% end %>
-          </c-resource-selector>
+          </select>
         </div>
 
         <div class="form-group">
           <%= f.label :person_id %>
-          <c-resource-selector class="form-control" model-name="Person" name="cast[person_id]">
+          <select
+            class="form-control"
+            data-controller="resource-selector"
+            data-resource-selector-model-name="Person"
+            name="cast[person_id]"
+          >
             <% if f.object.person&.id %>
               <option value="<%= f.object.person.id %>" selected="">
                 <%= f.object.person.name %>
@@ -43,7 +53,7 @@
             <% else %>
               <option value="" selected=""></option>
             <% end %>
-          </c-resource-selector>
+          </select>
         </div>
 
         <div class="form-group">
