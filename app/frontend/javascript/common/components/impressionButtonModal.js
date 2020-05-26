@@ -1,5 +1,5 @@
 import $ from 'jquery';
-import _ from 'lodash';
+import uniq from 'lodash/uniq';
 
 import eventHub from '../../common/eventHub';
 
@@ -61,9 +61,9 @@ export default {
       const $tagsInput = $('.js-impression-tags');
 
       this.allTagNames.push(tagName);
-      this.allTagNames = _.uniq(this.allTagNames);
+      this.allTagNames = uniq(this.allTagNames);
       this.tagNames.push(tagName);
-      this.tagNames = _.uniq(this.tagNames);
+      this.tagNames = uniq(this.tagNames);
 
       $tagsInput.val(this.tagNames);
       return $tagsInput.trigger('change');

@@ -1,5 +1,5 @@
 import Choices from 'choices.js';
-import debounce from 'lodash.debounce';
+import debounce from 'lodash/debounce';
 
 export default {
   template: `

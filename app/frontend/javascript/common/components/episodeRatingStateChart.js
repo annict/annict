@@ -1,4 +1,4 @@
-import _ from 'lodash';
+import sortBy from 'lodash/fp/sortBy';
 import * as d3Selection from 'd3-selection';
 import DonutChart from 'britecharts/dist/umd/donut.min';
 
@@ -14,7 +14,7 @@ export default {
 
   data() {
     return {
-      dataset: _.sortBy(JSON.parse(this.initDataset), data => data.name_key),
+      dataset: sortBy(JSON.parse(this.initDataset), data => data.name_key),
     };
   },
 

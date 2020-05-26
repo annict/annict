@@ -1,5 +1,7 @@
 import $ from 'jquery';
-import _ from 'lodash';
+import each from 'lodash/each';
+import uniqueId from 'lodash/uniqueId';
+import findIndex from 'lodash/findIndex';
 
 import eventHub from '../../common/eventHub';
 import vueLazyLoad from '../../common/vueLazyLoad';
@@ -18,7 +20,7 @@ export default {
 
   methods: {
     load() {
-      this.libraryEntries = _.each(this._latestStatusData().library_entries, this._initLibraryEntry);
+      this.libraryEntries = each(this._latestStatusData().library_entries, this._initLibraryEntry);
       this.user = this._latestStatusData().user;
       this.isLoading = false;
       return this.$nextTick(() => vueLazyLoad.refresh());
@@ -82,7 +84,7 @@ export default {
         isSaving: false,
         ratingState: null,
         isEditingBody: false,
-        uid: _.uniqueId(),
+        uid: uniqueId(),
         wordCount: 0,
         commentRows: 1,
       };
@@ -90,7 +92,7 @@ export default {
     },
 
     _getLibraryEntryIndex(latestStatus) {
-      return _.findIndex(this.libraryEntries, status => status.id === latestStatus.id);
+      return findIndex(this.libraryEntries, status => status.id === latestStatus.id);
     },
 
     _flashMessage(latestStatus) {

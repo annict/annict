@@ -1,4 +1,4 @@
-import _ from 'lodash';
+import difference from 'lodash/difference';
 import * as d3Selection from 'd3-selection';
 import BarChart from 'britecharts/dist/umd/bar.min';
 
@@ -27,7 +27,7 @@ export default {
         url: `/api/internal/works/${this.workId}/status_chart_data`,
       }).done((data) => {
         // Remove colors which corresponded to status if its quantity is zero.
-        _.forEach(data, function (data, i) {
+        data.forEach(function (data, i) {
           if (data.quantity === 0) {
             return removedColors.push(colors[i]);
           }
@@ -43,7 +43,7 @@ export default {
           .width(containerWidth)
           .height(200)
           .isHorizontal(true)
-          .colorSchema(_.difference(colors, removedColors));
+          .colorSchema(difference(colors, removedColors));
 
         container.datum(data.reverse()).call(barChart);
       });

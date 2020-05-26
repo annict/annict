@@ -1,5 +1,5 @@
 import $ from 'jquery';
-import _ from 'lodash';
+import uniqueId from 'lodash/uniqueId';
 import dayjs from 'dayjs';
 
 import eventHub from '../../common/eventHub';
@@ -35,10 +35,10 @@ export default {
     },
 
     initSlots(slots) {
-      return _.each(slots, function (slot) {
+      return slots.map(function (slot) {
         slot.isBroadcasted = dayjs().isAfter(slot.started_at);
-        return (slot.record = {
-          uid: _.uniqueId(),
+        slot.record = {
+          uid: uniqueId(),
           body: '',
           isEditingBody: false,
           isRecorded: false,
@@ -46,7 +46,8 @@ export default {
           ratingState: null,
           wordCount: 0,
           bodyRows: 1,
-        });
+        };
+        return slot;
       });
     },
 

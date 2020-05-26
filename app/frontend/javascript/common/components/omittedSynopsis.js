@@ -1,5 +1,4 @@
-import _ from 'lodash';
-import Vue from 'vue';
+import truncate from 'lodash/truncate';
 
 import newLine from '../filters/newLine';
 
@@ -15,7 +14,7 @@ export default {
 
   data() {
     return {
-      shortenText: _.truncate(this.text, { length: 100 }),
+      shortenText: truncate(this.text, { length: 100 }),
       canViewFullSynopsis: false,
     };
   },
