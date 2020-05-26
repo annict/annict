@@ -31,6 +31,11 @@ export default {
       type: String,
       required: true,
     },
+
+    params: {
+      type: Object,
+      required: true,
+    }
   },
 
   mounted() {
@@ -51,7 +56,7 @@ export default {
         return;
       }
 
-      Promise.all(this.getRequests().map((req) => req.execute())).then((results) => {
+      Promise.all(this.getRequests().map((req) => req.execute(this.params))).then((results) => {
         const data = results.reduce((obj, val) => Object.assign(obj, val, {}));
         eventHub.$emit('user-data-fetcher:fetched', data);
       });

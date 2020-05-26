@@ -1,7 +1,7 @@
 import eventHub from '../../common/eventHub';
 
 export default {
-  execute() {
+  execute(_params) {
     return new Promise((resolve, reject) => {
       fetch('/api/internal/likes')
         .then((response) => {

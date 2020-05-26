@@ -19,5 +19,5 @@
   </div>
 </div>
 
-<c-user-data-fetcher page-category="<%= page_category %>"></c-user-data-fetcher>
+<c-user-data-fetcher page-category="<%= page_category %>" :params="<%= user_data_fetcher_params.to_json %>"></c-user-data-fetcher>
 <c-sign-up-modal></c-sign-up-modal>
