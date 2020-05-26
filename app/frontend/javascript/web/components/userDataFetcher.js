@@ -9,7 +9,7 @@ import workFriendsRequest from '../requests/workFriendsRequest';
 const REQUEST_LIST = {
   'activity-list': [libraryEntriesRequest, likesRequest],
   'edit-record': [libraryEntriesRequest],
-  'episode-detail': [libraryEntriesRequest, likesRequest],
+  'episode-detail': [libraryEntriesRequest, likesRequest, trackedResourcesRequest],
   'episode-list': [libraryEntriesRequest],
   'guest-home': [libraryEntriesRequest],
   'library-detail': [libraryEntriesRequest],

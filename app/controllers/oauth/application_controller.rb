@@ -13,6 +13,7 @@ module Oauth
     include ViewSelector
     include RavenContext
     include PageCategoryMethods
+    include V4::UserDataFetchable
 
     helper_method :gon, :locale_ja?, :locale_en?, :local_url
 

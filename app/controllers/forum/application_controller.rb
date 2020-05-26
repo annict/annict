@@ -13,6 +13,7 @@ module Forum
     include ViewSelector
     include RavenContext
     include PageCategoryMethods
+    include V4::UserDataFetchable
 
     layout "application"
 

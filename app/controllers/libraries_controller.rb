@@ -25,8 +25,6 @@ class LibrariesController < ApplicationController
     if @display_option.in?(Setting.display_option_user_work_list.values)
       current_user.setting.update_column(:display_option_user_work_list, @display_option)
     end
-
-    store_page_params(works: @seasons.flat_map { |s| s.no_season? ? @works.with_no_season : @works.by_season(s.slug) })
   end
 
   private

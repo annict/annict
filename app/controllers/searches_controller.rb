@@ -13,10 +13,6 @@ class SearchesController < ApplicationController
       [Work.none, Character.none, Person.none, Organization.none]
     end
     @view = select_view(params[:resource].presence || "work")
-
-    return unless user_signed_in?
-
-    store_page_params(works: @works)
   end
 
   private

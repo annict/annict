@@ -13,8 +13,6 @@ class WorkRecordsController < ApplicationController
 
     @work_record = @work.work_records.new
     @work_record.setup_shared_sns(current_user)
-
-    store_page_params(work: @work)
   end
 
   def create
@@ -30,8 +28,6 @@ class WorkRecordsController < ApplicationController
       @work_record = @work.work_records.new(work_record_params)
       @work_record.errors.add(:mutation_error, err.message)
       @work_record.setup_shared_sns(current_user)
-
-      store_page_params(work: @work)
 
       return render "work_records/index"
     end
@@ -50,7 +46,6 @@ class WorkRecordsController < ApplicationController
       find(@record.work_record&.id)
     @work = @work_record.work
     authorize @work_record, :edit?
-    store_page_params(work: @work)
   end
 
   def update
@@ -76,7 +71,6 @@ class WorkRecordsController < ApplicationController
       flash[:notice] = t("messages._common.updated")
       redirect_to record_path(@work_record.user.username, @work_record.record)
     rescue
-      store_page_params(work: @work)
       render :edit
     end
   end

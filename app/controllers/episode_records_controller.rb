@@ -30,8 +30,6 @@ class EpisodeRecordsController < ApplicationController
       }
       gon.push(data)
 
-      store_page_params(work: @work)
-
       @is_spoiler = current_user.hide_episode_record_body?(@episode)
       @episode_record = @episode.episode_records.new(episode_record_params)
       @episode_record.errors.add(:mutation_error, err.message)
