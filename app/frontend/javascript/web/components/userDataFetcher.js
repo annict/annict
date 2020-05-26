@@ -4,6 +4,7 @@ import followingRequest from '../requests/followingRequest';
 import libraryEntriesRequest from '../requests/libraryEntriesRequest';
 import likesRequest from '../requests/likesRequest';
 import trackedResourcesRequest from '../requests/trackedResourcesRequest';
+import workFriendsRequest from '../requests/workFriendsRequest';
 
 const REQUEST_LIST = {
   'activity-list': [libraryEntriesRequest, likesRequest],
@@ -19,7 +20,7 @@ const REQUEST_LIST = {
   'user-home': [libraryEntriesRequest, likesRequest, trackedResourcesRequest],
   'user-work-tag-detail': [libraryEntriesRequest],
   'work-detail': [libraryEntriesRequest, likesRequest, trackedResourcesRequest],
-  'work-list': [libraryEntriesRequest],
+  'work-list': [libraryEntriesRequest, workFriendsRequest],
   'work-record-list': [libraryEntriesRequest, likesRequest],
 };
 
