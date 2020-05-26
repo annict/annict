@@ -1,0 +1,17 @@
+{
+  "compilerOptions": {
+    "allowSyntheticDefaultImports": true,
+    "declaration": false,
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true,
+    "lib": ["es6", "dom"],
+    "module": "ES2015", // To enable Tree Shaking on webpack
+    "moduleResolution": "node",
+    "noEmit": true,
+    "sourceMap": true,
+    "strict": true,
+    "target": "ES5"
+  },
+  "exclude": ["node_modules", "public/packs"],
+  "include": ["app/frontend/javascript/**/*"]
+}
