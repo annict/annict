@@ -37,7 +37,7 @@
     "select2": "next",
     "tether": "latest",
     "turbolinks": "latest",
-    "vanilla-lazyload": "^15.1.1",
+    "vanilla-lazyload": "latest",
     "vue": "latest",
     "vue-lazyload": "latest",
     "webpack-merge": "latest"
