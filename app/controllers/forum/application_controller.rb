@@ -13,7 +13,6 @@ module Forum
     include ViewSelector
     include RavenContext
     include PageCategoryMethods
-    include PageParamsMethods
 
     layout "application"
 

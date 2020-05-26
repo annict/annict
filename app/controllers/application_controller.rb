@@ -9,7 +9,6 @@ class ApplicationController < ActionController::Base
   include LogrageSetting
   include Gonable
   include PageCategoryMethods
-  include PageParamsMethods
   include ViewSelector
   include FlashMessage
   include RavenContext

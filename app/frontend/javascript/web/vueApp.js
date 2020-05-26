@@ -1,37 +1,35 @@
 import Vue from 'vue';
 import VueLazyload from 'vue-lazyload';
 
-import app from "../common/app";
-import eventHub from "../common/eventHub";
 import vueLazyLoad from '../common/vueLazyLoad';
 
-import autosizeTextarea from "../common/components/autosizeTextarea";
-import body from "../common/components/body";
-import channelReceiveButton from "../common/components/channelReceiveButton";
-import channelSelector from "../common/components/channelSelector";
-import commentGuard from "../common/components/commentGuard";
-import episodeList from "../common/components/episodeList";
-import episodeProgress from "../common/components/episodeProgress";
-import episodeRatingStateChart from "../common/components/episodeRatingStateChart";
-import episodeRecordsChart from "../common/components/episodeRecordsChart";
-import favoriteButton from "../common/components/favoriteButton";
+import autosizeTextarea from '../common/components/autosizeTextarea';
+import body from '../common/components/body';
+import channelReceiveButton from '../common/components/channelReceiveButton';
+import channelSelector from '../common/components/channelSelector';
+import commentGuard from '../common/components/commentGuard';
+import episodeList from '../common/components/episodeList';
+import episodeProgress from '../common/components/episodeProgress';
+import episodeRatingStateChart from '../common/components/episodeRatingStateChart';
+import episodeRecordsChart from '../common/components/episodeRecordsChart';
+import favoriteButton from '../common/components/favoriteButton';
 import impressionButton from '../common/components/impressionButton';
 import impressionButtonModal from '../common/components/impressionButtonModal';
-import inputWordsCount from "../common/components/inputWordsCount";
-import muteUserButton from "../common/components/muteUserButton";
-import omittedSynopsis from "../common/components/omittedSynopsis";
-import record from "../common/components/record";
-import recordRating from "../common/components/recordRating";
-import recordSorter from "../common/components/recordSorter";
-import recordTextarea from "../common/components/recordTextarea";
-import recordWordCount from "../common/components/recordWordCount";
-import slotList from "../common/components/slotList";
-import untrackedEpisodeList from "../common/components/untrackedEpisodeList";
-import usernamePreview from "../common/components/usernamePreview";
-import workComment from "../common/components/workComment";
-import workFriends from "../common/components/workFriends";
-import workTags from "../common/components/workTags";
-import youtubeModalPlayer from "../common/components/youtubeModalPlayer";
+import inputWordsCount from '../common/components/inputWordsCount';
+import muteUserButton from '../common/components/muteUserButton';
+import omittedSynopsis from '../common/components/omittedSynopsis';
+import record from '../common/components/record';
+import recordRating from '../common/components/recordRating';
+import recordSorter from '../common/components/recordSorter';
+import recordTextarea from '../common/components/recordTextarea';
+import recordWordCount from '../common/components/recordWordCount';
+import slotList from '../common/components/slotList';
+import untrackedEpisodeList from '../common/components/untrackedEpisodeList';
+import usernamePreview from '../common/components/usernamePreview';
+import workComment from '../common/components/workComment';
+import workFriends from '../common/components/workFriends';
+import workTags from '../common/components/workTags';
+import youtubeModalPlayer from '../common/components/youtubeModalPlayer';
 
 import activityGroupMoreButton from './components/activityGroupMoreButton';
 import activityGroupMoreContent from './components/activityGroupMoreContent';
@@ -114,29 +112,6 @@ export default {
 
     new Vue({
       el: '.ann-application',
-
-      data() {
-        return {
-          appData: {},
-          pageData: {},
-        };
-      },
-
-      created() {
-        app.loadAppData().done((appData) => {
-          this.appData = appData;
-
-          if (!appData.isUserSignedIn || !app.existsPageParams()) {
-            eventHub.$emit('app:loaded');
-            return;
-          }
-
-          app.loadPageData().done((pageData) => {
-            this.pageData = pageData;
-            eventHub.$emit('app:loaded');
-          });
-        });
-      },
     });
   },
 };
