@@ -17,20 +17,19 @@
             <%= link_to work_record.work.local_title, work_path(work_record.work.id), class: "d-block" %>
           </div>
 
-          <c-status-selector :work-id="<%= work_record.work.id %>" page-category="user-home" class="c-status-selector--small"></c-status-selector>
+          <%= render StatusSelectorComponent.new(work_id: work_record.work.id, page_category: "user-home", small: true) %>
         </div>
       </div>
     </div>
   </div>
 
   <div class="mb-3">
-    <c-like-button
-      :init-likes-count="<%= work_record.likes_count %>"
-      :is-signed-in="true"
-      :resource-id="<%= work_record.id %>"
-      class="u-fake-link mr-3"
-      page-category="user-home"
-      resource-name="WorkRecord"
-    ></c-like-button>
+    <%= render LikeButtonComponent.new(
+      resource_name: "WorkRecord",
+      resource_id: work_record.id,
+      likes_count: work_record.likes_count,
+      page_category: "user-home",
+      class_name: "mr-3"
+    ) %>
   </div>
 <% end %>

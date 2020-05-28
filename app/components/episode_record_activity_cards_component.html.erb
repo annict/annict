@@ -25,21 +25,20 @@
             <% end %>
           </div>
 
-          <c-status-selector :work-id="<%= episode_record.work.id %>" page-category="user-home" class="c-status-selector--small"></c-status-selector>
+          <%= render StatusSelectorComponent.new(work_id: episode_record.work.id, page_category: "user-home", small: true) %>
         </div>
       </div>
     </div>
   </div>
 
   <div class="mb-3">
-    <c-like-button
-      :init-likes-count="<%= episode_record.likes_count %>"
-      :is-signed-in="true"
-      :resource-id="<%= episode_record.id %>"
-      class="u-fake-link mr-3"
-      page-category="user-home"
-      resource-name="EpisodeRecord"
-    ></c-like-button>
+    <%= render LikeButtonComponent.new(
+      resource_name: "EpisodeRecord",
+      resource_id: episode_record.id,
+      likes_count: episode_record.likes_count,
+      page_category: "user-home",
+      class_name: "mr-3"
+    ) %>
 
     <%= link_to record_path(episode_record.user.username, episode_record.record.id) do %>
       <i class="far fa-comment"></i>

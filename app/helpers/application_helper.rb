@@ -51,18 +51,7 @@ module ApplicationHelper
         noun: {
           following: t("noun.following"),
           share: t("noun.share"),
-          signIn: t("noun.sign_in"),
-          signUp: t("noun.sign_up"),
           tweet: t("noun.tweet")
-        },
-        ratingState: {
-          average: t("enumerize.episode_record.rating_state.average"),
-          bad: t("enumerize.episode_record.rating_state.bad"),
-          good: t("enumerize.episode_record.rating_state.good"),
-          great: t("enumerize.episode_record.rating_state.great")
-        },
-        signUpModal: {
-          body: t("messages._components.sign_up_modal.body")
         },
         verb: {
           follow: t("verb.follow"),
@@ -73,7 +62,6 @@ module ApplicationHelper
       rails: {
         env: Rails.env
       },
-      statusOptions: Status.kind.options.insert(0, [t("messages.components.status_selector.select_status"), "no_select"]),
       viewer: {
         locale: locale,
       }

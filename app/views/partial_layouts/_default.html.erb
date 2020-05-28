@@ -1,11 +1,16 @@
-<div class="pl-default">
+<div
+  class="pl-default"
+  data-controller="application"
+  data-application-page-category="<%= page_category %>"
+  data-application-params="<%= user_data_fetcher_params.to_json %>"
+>
   <div class="pl-default__sidebar">
     <%= render SidebarComponent.new(user: current_user, search: @search) %>
   </div>
 
   <div class="pl-default__main d-flex flex-column">
     <div class="pl-default__content">
-      <c-flash></c-flash>
+      <%= render FlashComponent.new(flash) %>
       <%= yield %>
     </div>
 
@@ -19,5 +24,4 @@
   </div>
 </div>
 
-<c-user-data-fetcher page-category="<%= page_category %>" :params="<%= user_data_fetcher_params.to_json %>"></c-user-data-fetcher>
-<c-sign-up-modal></c-sign-up-modal>
+<%= render "application/sign_up_modal" %>
