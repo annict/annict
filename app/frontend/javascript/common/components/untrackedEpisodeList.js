@@ -4,7 +4,6 @@ import uniqueId from 'lodash/uniqueId';
 import findIndex from 'lodash/findIndex';
 
 import eventHub from '../../common/eventHub';
-import vueLazyLoad from '../../common/vueLazyLoad';
 
 export default {
   template: '#t-untracked-episode-list',
@@ -23,7 +22,6 @@ export default {
       this.libraryEntries = each(this._latestStatusData().library_entries, this._initLibraryEntry);
       this.user = this._latestStatusData().user;
       this.isLoading = false;
-      return this.$nextTick(() => vueLazyLoad.refresh());
     },
 
     filterNoNextEpisode(libraryEntries) {

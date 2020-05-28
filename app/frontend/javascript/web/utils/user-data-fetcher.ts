@@ -13,14 +13,14 @@ const REQUEST_LIST: any = {
   'guest-home': [libraryEntriesRequest],
   'library-detail': [libraryEntriesRequest],
   'profile-detail': [followingRequest, libraryEntriesRequest, likesRequest, trackedResourcesRequest],
-  'record-detail': [libraryEntriesRequest, likesRequest],
+  'record-detail': [libraryEntriesRequest, likesRequest, trackedResourcesRequest],
   'record-list': [libraryEntriesRequest, likesRequest],
   'search-detail': [libraryEntriesRequest],
   'user-home': [libraryEntriesRequest, likesRequest, trackedResourcesRequest],
   'user-work-tag-detail': [libraryEntriesRequest],
   'work-detail': [libraryEntriesRequest, likesRequest, trackedResourcesRequest],
   'work-list': [libraryEntriesRequest, workFriendsRequest],
-  'work-record-list': [libraryEntriesRequest, likesRequest],
+  'work-record-list': [libraryEntriesRequest, likesRequest, trackedResourcesRequest],
 };
 
 export class UserDataFetcher {

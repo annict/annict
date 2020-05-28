@@ -17,16 +17,16 @@
           .row.mb-3
             .col.col-auto.pr-0
               = link_to profile_detail_path(@post.user.username) do
-                = ann_image_tag @post.user.profile, :image, size: "45x45", class: "rounded-circle"
+                = render ProfileImageComponent.new(image_url_1x: ann_image_url(@post.user.profile, :image, size: "45x", ratio: "1:1"), alt: "@#{@post.user.username}")
             .col.pl-2
               = link_to @post.user.profile.name, profile_detail_path(@post.user.username), class: "mr-2"
               = @post.user.role_badge
               .mt-1
                 = link_to forum_post_path(@post), class: "small text-muted", title: display_time(@post.created_at) do
                   = display_time(@post.created_at)
-          c-body :markdown="true" inline-template=""
-            .c-body__content
-              = @post.body
+
+          .c-body
+            == render_markdown @post.body
 
           - if user_signed_in? && current_user == @post.user
             .text-right
@@ -41,16 +41,16 @@
                 .row.mb-3
                   .col.col-auto.pr-0
                     = link_to profile_detail_path(comment.user.username) do
-                      = ann_image_tag comment.user.profile, :image, size: "45x45", class: "rounded-circle"
+                      = render ProfileImageComponent.new(image_url_1x: ann_image_url(comment.user.profile, :image, size: "45x", ratio: "1:1"), alt: "@#{comment.user.username}")
                   .col.pl-2
                     = link_to comment.user.profile.name, profile_detail_path(comment.user.username), class: "mr-2"
                     = comment.user.role_badge
                     .mt-1
                       span.small.text-muted title="#{display_time(comment.created_at)}"
                         = display_time(comment.created_at)
-                c-body :markdown="true" inline-template=""
-                  .c-body__content
-                    = comment.body
+
+                .c-body
+                  == render_markdown comment.body
 
                 - if user_signed_in? && current_user == comment.user
                   .text-right

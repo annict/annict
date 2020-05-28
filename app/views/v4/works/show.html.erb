@@ -54,7 +54,7 @@
             </div>
 
             <div class="mb-3">
-              <c-status-selector :work-id="<%= @work.id %>" page_category="work-detail"></c-status-selector>
+              <%= render StatusSelectorComponent.new(work_id: @work.id, page_category: "work-detail") %>
             </div>
           </div>
         </div>
@@ -251,15 +251,15 @@
             <%= t "noun.share" %>
           </h2>
 
-          <c-share-to-twitter-button
-            text="<%= @work.local_title %>"
-            url="<%= "#{local_url}/works/#{@work.id}" %>"
-            hashtags="<%= @work.twitter_hashtag.presence || '' %>"
-          ></c-share-to-twitter-button>
+          <%= render ShareToTwitterButtonComponent.new(
+            text: @work.local_title,
+            url: "#{local_url}/works/#{@work.id}",
+            hashtags: @work.twitter_hashtag.presence || ''
+          ) %>
 
-          <c-share-to-facebook-button
-            url="<%= "#{local_url}/works/#{@work.id}" %>"
-          ></c-share-to-facebook-button>
+          <%= render ShareToFacebookButtonComponent.new(
+            url: "#{local_url}/works/#{@work.id}",
+          ) %>
         </div>
 
         <% if user_signed_in? && current_user.committer? %>

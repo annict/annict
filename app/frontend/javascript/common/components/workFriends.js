@@ -1,7 +1,7 @@
 import take from 'lodash/take';
 
 import eventHub from '../eventHub';
-import lazyLoad from '../../web/utils/lazyLoad';
+import lazyLoad from '../../web/utils/lazy-load';
 
 const DISPLAY_USERS_LIMIT = 12;
 

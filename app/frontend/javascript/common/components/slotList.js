@@ -3,7 +3,6 @@ import uniqueId from 'lodash/uniqueId';
 import dayjs from 'dayjs';
 
 import eventHub from '../../common/eventHub';
-import vueLazyLoad from '../../common/vueLazyLoad';
 import loadMoreButton from './loadMoreButton';
 
 export default {
@@ -113,7 +112,6 @@ export default {
       this.slots = this.initSlots(this._pageObject().slots);
       this.hasNext = this.slots.length > 0;
       this.user = this._pageObject().user;
-      return this.$nextTick(() => vueLazyLoad.refresh());
     },
 
     updateSlotsSortType(callback) {

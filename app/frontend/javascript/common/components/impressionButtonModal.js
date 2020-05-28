@@ -1,3 +1,5 @@
+import 'select2'
+
 import $ from 'jquery';
 import uniq from 'lodash/uniq';
 

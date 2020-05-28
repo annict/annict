@@ -9,7 +9,8 @@
       - if work.work_image.present?
         .u-very-small
           = work.work_image.asin_or_copyright_text
-      c-status-selector.mt-2 :work-id="#{work.id}"
+      .mt-2
+        = render StatusSelectorComponent.new(work_id: work.id, page_category: "work-list")
 
     .col
       .mb-1.u-lh-0
@@ -24,7 +25,8 @@
         .font-weight-bold.mb-1
           = t "activerecord.attributes.work.synopsis"
         .mb-3
-          c-omitted-synopsis text="#{work.local_synopsis(raw: true)}"
+          = render BodyComponent.new(height: 250, markdown: false) do
+            = sanitize(work.local_synopsis(raw: true))
           .small.mt-2.text-right
             span.mr-1
               = t "noun.source"

@@ -1,4 +1,4 @@
-import sortBy from 'lodash/fp/sortBy';
+import sortBy from 'lodash/sortBy';
 import * as d3Selection from 'd3-selection';
 import DonutChart from 'britecharts/dist/umd/donut.min';
 
@@ -34,7 +34,7 @@ export default {
         .internalRadius(containerWidth / 5)
         .colorSchema(colors);
 
-      return container.datum(this.dataset).call(donutChart);
+      container.datum(this.dataset).call(donutChart);
     }
   },
 };

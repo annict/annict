@@ -54,8 +54,8 @@
                   .col
                     .small.text-right
                       = local_time_ago_in_words(comment.created_at)
-                c-body inline-template=""
-                  .c-body__content = comment.body
+                .c-body
+                  = render_markdown comment.body
             - if policy(comment).update?
               .small.text-right.mb-2
                 = link_to edit_comment_path(comment), class: "mr-2" do

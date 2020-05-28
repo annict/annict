@@ -28,6 +28,8 @@ en:
         work_record:
           created: "tracked"
           more: "Show %{n} records"
+      body:
+        view_full_text: View Full Text
       favorite_button:
         add_to_favorites: Add to Favorites
         added_to_favorites: Added to Favorites

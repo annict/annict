@@ -16,7 +16,7 @@
       <div class="mb-3 px-3">
         <%= link_to profile_detail_path(user.username), class: "align-content-center row" do %>
           <div class="col-3 pr-0">
-            <%= render ProfileImageComponent.new(image_url_1x: helpers.ann_image_url(user.profile, :image, size: "50x50"), alt: "@#{user.username}") %>
+            <%= render ProfileImageComponent.new(image_url_1x: helpers.ann_image_url(user.profile, :image, size: "50x50", ratio: "1:1"), alt: "@#{user.username}") %>
           </div>
 
           <div class="col-auto">

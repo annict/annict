@@ -36,9 +36,6 @@ module ApplicationHelper
   def annict_config
     config = {
       domain: locale == :ja ? ENV.fetch("ANNICT_JP_DOMAIN") : ENV.fetch("ANNICT_DOMAIN"),
-      facebook: {
-        appId: ENV.fetch("FACEBOOK_APP_ID")
-      },
       flash: {
         type: flash.keys.first,
         message: flash[flash.keys.first]
@@ -49,9 +46,7 @@ module ApplicationHelper
           userHasBeenMuted: t("messages.components.mute_user_button.the_user_has_been_muted")
         },
         noun: {
-          following: t("noun.following"),
-          share: t("noun.share"),
-          tweet: t("noun.tweet")
+          following: t("noun.following")
         },
         verb: {
           follow: t("verb.follow"),

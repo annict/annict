@@ -9,9 +9,9 @@ import Cookies from 'js-cookie';
 import { Application } from 'stimulus';
 import { definitionsFromContext } from 'stimulus/webpack-helpers';
 import Turbolinks from 'turbolinks';
-import Vue from 'vue';
 
 import { getTimeZone } from './web/utils/time-zone';
+import vueApp from "./common/vueApp";
 
 document.addEventListener('turbolinks:load', (_event) => {
   const annConfig = (window as any).AnnConfig;
@@ -31,10 +31,9 @@ document.addEventListener('turbolinks:load', (_event) => {
   const context = (require as any).context('./web/controllers', true, /\.ts$/);
   application.load(definitionsFromContext(context));
 
-  new Vue({
-    el: '.ann-application',
-  });
+  vueApp.start();
 });
+
 
 ujs.start();
 Turbolinks.start();
