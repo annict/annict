@@ -481,7 +481,7 @@
                     </div>
                   </div>
                   <div class="mb-3">
-                    <c-spoiler-guard :work-id="<%= @work.id %>">
+                    <%= render SpoilerGuardComponent.new(work_id: @work.id) do %>
                       <div class="row">
                         <div class="col-12 col-xl-4 order-1 order-xl-2">
                           <% if work_record.rating_overall_state.present? %>
@@ -495,7 +495,7 @@
                                     <%= t "noun.animation" %>
                                   </div>
                                   <div class="col pl-0 text-right">
-                                    <c-rating-label init-kind="<%= work_record.rating_animation_state %>"></c-rating-label>
+                                    <%= render RatingLabelComponent.new(kind: work_record.rating_animation_state) %>
                                   </div>
                                 </div>
                               <% end %>
@@ -505,7 +505,7 @@
                                     <%= t "noun.music" %>
                                   </div>
                                   <div class="col pl-0 text-right">
-                                    <c-rating-label init-kind="<%= work_record.rating_music_state %>"></c-rating-label>
+                                    <%= render RatingLabelComponent.new(kind: work_record.rating_music_state) %>
                                   </div>
                                 </div>
                               <% end %>
@@ -515,7 +515,7 @@
                                     <%= t "noun.story" %>
                                   </div>
                                   <div class="col pl-0 text-right">
-                                    <c-rating-label init-kind="<%= work_record.rating_story_state %>"></c-rating-label>
+                                    <%= render RatingLabelComponent.new(kind: work_record.rating_story_state) %>
                                   </div>
                                 </div>
                               <% end %>
@@ -525,7 +525,7 @@
                                     <%= t "noun.character" %>
                                   </div>
                                   <div class="col pl-0 text-right">
-                                    <c-rating-label init-kind="<%= work_record.rating_character_state %>"></c-rating-label>
+                                    <%= render RatingLabelComponent.new(kind: work_record.rating_character_state) %>
                                   </div>
                                 </div>
                               <% end %>
@@ -535,7 +535,7 @@
                                     <%= t "noun.overall" %>
                                   </div>
                                   <div class="col pl-0 text-right">
-                                    <c-rating-label init-kind="<%= work_record.rating_overall_state %>"></c-rating-label>
+                                    <%= render RatingLabelComponent.new(kind: work_record.rating_overall_state) %>
                                   </div>
                                 </div>
                               <% end %>
@@ -543,37 +543,34 @@
                           <% end %>
                         </div>
                         <div class="col-12 col-xl-8 order-2 order-xl-1">
-                          <div class="c-body mb-3">
+                          <%= render BodyComponent.new(height: 300, markdown: false, class_name: "mb-3") do %>
                             <%== work_record.body_html %>
-                          </div>
+                          <% end %>
                         </div>
                       </div>
-                    </c-spoiler-guard>
+                    <% end %>
                   </div>
 
                   <div class="align-items-center px-3 row">
                     <div class="col text-right">
-                    <span class="mr-2">
-                      <c-share-to-twitter-button
-                        text="<%= t("head.title.work_records.show", work_title: @work.local_title, profile_name: work_record.user.name, username: work_record.user.username) %>"
-                        url="<%= "#{local_url}/@#{work_record.user.username}/records/#{work_record.record.id}" %>"
-                        hashtags="<%= @work.twitter_hashtag.presence || '' %>"
-                      ></c-share-to-twitter-button>
-                    </span>
+                      <span class="mr-2">
+                        <%= render ShareToTwitterButtonComponent.new(
+                          text: t("head.title.work_records.show", work_title: @work.local_title, profile_name: work_record.user.name, username: work_record.user.username),
+                          url: "#{local_url}/@#{work_record.user.username}/records/#{work_record.record.id}",
+                          hashtags: @work.twitter_hashtag.presence || ''
+                        ) %>
+                      </span>
 
                       <span class="mr-2">
-                      <c-share-to-facebook-button
-                        url="<%= "#{local_url}/@#{work_record.user.username}/records/#{work_record.record.id}" %>"
-                      ></c-share-to-facebook-button>
-                    </span>
+                        <%= render ShareToFacebookButtonComponent.new(url: "#{local_url}/@#{work_record.user.username}/records/#{work_record.record.id}") %>
+                      </span>
 
-                      <c-like-button
-                        resource-name="WorkRecord"
-                        :resource-id="<%= work_record.id %>"
-                        :init-likes-count="<%= work_record.likes_count %>"
-                        :is-signed-in="<%= user_signed_in? ? 'true' : 'false' %>"
-                        page-category="work-detail"
-                      ></c-like-button>
+                      <%= render LikeButtonComponent.new(
+                        resource_name: "WorkRecord",
+                        resource_id: work_record.id,
+                        likes_count: work_record.likes_count,
+                        page_category: "work-detail",
+                      ) %>
                     </div>
                   </div>
 
