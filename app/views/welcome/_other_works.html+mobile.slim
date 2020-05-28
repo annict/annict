@@ -10,4 +10,4 @@
           span.text-muted.small Watchers
         h3.h4.mb-1
           = link_to work.local_title, work_path(work), class: "text-truncate w-100 d-inline-block"
-        c-status-selector class="c-status-selector--small" :work-id="#{work.id}"
+        = render StatusSelectorComponent.new(work_id: work.id, small: true, page_category: page_category)

@@ -29,10 +29,6 @@ module Canary
           render_markdown(object.body)
         end
 
-        def body_html
-          render_markdown(object.body)
-        end
-
         def user
           RecordLoader.for(User).load(object.user_id)
         end

@@ -3,7 +3,6 @@ import Vue from 'vue';
 import autosizeTextarea from './components/autosizeTextarea';
 import channelReceiveButton from './components/channelReceiveButton';
 import channelSelector from './components/channelSelector';
-import commentGuard from './components/commentGuard';
 import episodeList from './components/episodeList';
 import episodeProgress from './components/episodeProgress';
 import episodeRatingStateChart from './components/episodeRatingStateChart';
@@ -37,7 +36,6 @@ export default {
     Vue.component('c-autosize-textarea', autosizeTextarea);
     Vue.component('c-channel-receive-button', channelReceiveButton);
     Vue.component('c-channel-selector', channelSelector);
-    Vue.component('c-comment-guard', commentGuard);
     Vue.component('c-episode-list', episodeList);
     Vue.component('c-episode-progress', episodeProgress);
     Vue.component('c-episode-rating-state-chart', episodeRatingStateChart);

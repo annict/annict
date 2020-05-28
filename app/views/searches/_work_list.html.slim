@@ -17,6 +17,7 @@
             .mb-2
               span.font-weight-bold.mr-1 = work.watchers_count
               span.text-muted.small Watchers
-            c-status-selector :work-id="#{work.id}" style="width: 200px;"
+            .div style="width: 200px;"
+              = render StatusSelectorComponent.new(work_id: work.id, page_category: page_category)
 - else
   = render "application/components/empty", text: t("messages._empty.no_works")

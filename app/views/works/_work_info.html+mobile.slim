@@ -32,7 +32,7 @@
           = t "noun.ratings_count"
 
     .mb-3
-      c-status-selector :work-id="#{work.id}"
+      = render StatusSelectorComponent.new(work_id: work.id, page_category: page_category)
 
-    c-share-to-twitter-button.mr-2 text="#{work.local_title}" url="#{local_url}#{work_path(work)}" hashtags="#{work.twitter_hashtag.presence || ''}"
-    c-share-to-facebook-button url="#{local_url}#{work_path(work)}"
+    = render ShareToTwitterButtonComponent.new(text: "#{work.local_title}", url: "#{local_url}#{work_path(work)}", hashtags: "#{work.twitter_hashtag.presence || ''}", class_name: "mr-2")
+    = render ShareToFacebookButtonComponent.new(url: "#{local_url}#{work_path(work)}")

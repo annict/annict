@@ -53,7 +53,7 @@
                     = t "noun.overall"
                   td
                     = render RatingLabelComponent.new(kind: work_record.rating_overall_state)
-        .c-body.mb-3
+        .mb-3
           = render BodyComponent.new(height: 300, markdown: false) do
             = work_record.body
 

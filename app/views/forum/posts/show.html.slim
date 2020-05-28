@@ -25,8 +25,8 @@
                 = link_to forum_post_path(@post), class: "small text-muted", title: display_time(@post.created_at) do
                   = display_time(@post.created_at)
 
-          .c-body
-            == render_markdown @post.body
+          = render BodyComponent.new(markdown: true) do
+            = @post.body
 
           - if user_signed_in? && current_user == @post.user
             .text-right
@@ -49,8 +49,8 @@
                       span.small.text-muted title="#{display_time(comment.created_at)}"
                         = display_time(comment.created_at)
 
-                .c-body
-                  == render_markdown comment.body
+                = render BodyComponent.new(markdown: true) do
+                  = comment.body
 
                 - if user_signed_in? && current_user == comment.user
                   .text-right

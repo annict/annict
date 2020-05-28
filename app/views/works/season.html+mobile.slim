@@ -25,8 +25,8 @@
           = icon "angle-right", class: "ml-2"
     .row.align-items-center.mb-3
       .col.pr-0
-        c-share-to-twitter-button.mr-2 text="#{title}" url="#{local_url}#{season_works_path(slug: @season.slug)}"
-        c-share-to-facebook-button url="#{local_url}#{season_works_path(slug: @season.slug)}"
+        = render ShareToTwitterButtonComponent.new(text: title, url: "#{local_url}#{season_works_path(slug: @season.slug)}", class_name: "mr-2")
+        = render ShareToFacebookButtonComponent.new(url: "#{local_url}#{season_works_path(slug: @season.slug)}")
       .col.text-right
         = render "display_option_buttons", display_option: @display_option
 

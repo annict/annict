@@ -14,7 +14,7 @@ const REQUEST_LIST: any = {
   'library-detail': [libraryEntriesRequest],
   'profile-detail': [followingRequest, libraryEntriesRequest, likesRequest, trackedResourcesRequest],
   'record-detail': [libraryEntriesRequest, likesRequest, trackedResourcesRequest],
-  'record-list': [libraryEntriesRequest, likesRequest],
+  'record-list': [libraryEntriesRequest, likesRequest, trackedResourcesRequest],
   'search-detail': [libraryEntriesRequest],
   'user-home': [libraryEntriesRequest, likesRequest, trackedResourcesRequest],
   'user-work-tag-detail': [libraryEntriesRequest],

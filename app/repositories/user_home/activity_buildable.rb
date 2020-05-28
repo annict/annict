@@ -53,7 +53,7 @@ module UserHome
       EpisodeRecordEntity.new(
         id: itemable["annictId"],
         rating_state: itemable["ratingState"]&.downcase,
-        body_html: itemable["bodyHtml"],
+        body: itemable["body"],
         likes_count: itemable["likesCount"],
         comments_count: itemable["commentsCount"],
         work: build_work(itemable["work"]),
@@ -77,7 +77,7 @@ module UserHome
       WorkRecordEntity.new(
         id: itemable["annictId"],
         rating_overall_state: itemable["ratingOverallState"]&.downcase,
-        body_html: itemable["bodyHtml"],
+        body: itemable["body"],
         likes_count: itemable["likesCount"],
         work: build_work(itemable["work"]),
         user: user

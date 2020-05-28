@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class WorkEntity < ApplicationEntity
-  local_attributes :title, :title_alter, :synopsis_source
+  local_attributes :title, :title_alter, :synopsis, :synopsis_source
 
   attribute? :id, Types::Integer
   attribute? :title, Types::String
@@ -28,6 +28,8 @@ class WorkEntity < ApplicationEntity
   attribute? :syobocal_tid, Types::String.optional
   attribute? :mal_anime_id, Types::String.optional
   attribute? :is_no_episodes, Types::Bool
+  attribute? :synopsis, Types::String.optional
+  attribute? :synopsis_en, Types::String.optional
   attribute? :synopsis_html, Types::String.optional
   attribute? :synopsis_en_html, Types::String.optional
   attribute? :synopsis_source, Types::String.optional
@@ -49,12 +51,6 @@ class WorkEntity < ApplicationEntity
       syobocal_tid: work.sc_tid&.to_s,
       mal_anime_id: work.mal_anime_id&.to_s
     )
-  end
-
-  def local_synopsis_html
-    return synopsis_en_html if I18n.locale == :en
-
-    synopsis_html
   end
 
   def local_season_name

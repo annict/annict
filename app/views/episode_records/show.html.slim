@@ -38,10 +38,10 @@
                         .col
                           .small.text-right
                             = local_time_ago_in_words(comment.created_at)
-                      c-body inline-template=""
-                        .c-body__content = comment.body
+                      = render BodyComponent.new(height: 300, markdown: false) do
+                        = comment.body
                   .text-right
-                    c-like-button resource-name="Comment" :resource-id="#{comment.id}" :init-likes-count="#{comment.likes_count}" :is-signed-in="#{user_signed_in?}"
+                    = render LikeButtonComponent.new(resource_name: "Comment", resource_id: comment.id, likes_count: comment.likes_count, page_category: page_category)
                   - if policy(comment).update?
                     .small.text-right.mb-2
                       = link_to edit_comment_path(comment), class: "mr-2" do
@@ -61,7 +61,7 @@
               = @work.work_image.asin_or_copyright_text
         h2.font-weight-bold.mb-3
           = link_to @work.local_title, work_path(@work), class: "u-text-body"
-        c-status-selector :work-id="#{@work.id}"
+        = render StatusSelectorComponent.new(work_id: @work.id, page_category: page_category)
         .mb-3
           = link_to work_path(@work), class: "btn btn-primary w-100" do
             = icon "angle-right"

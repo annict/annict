@@ -29,9 +29,9 @@
           <%= render RatingLabelComponent.new(kind: work_records.first.rating_overall_state.downcase, class_name: "mb-1") %>
         <% end %>
 
-        <div class="c-body">
-          <%= work_records.first.body_html.html_safe %>
-        </div>
+        <%= render BodyComponent.new(height: 300, markdown: false) do %>
+          <%= work_records.first.body %>
+        <% end %>
       </div>
     <% end %>
   <% end %>

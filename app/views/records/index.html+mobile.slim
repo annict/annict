@@ -26,7 +26,7 @@
                     = link_to record.work.local_title, work_path(record.work), class: "u-text-body"
                   .h4
                     = link_to record.episode.title_with_number(fallback: false), work_episode_path(record.work, record.episode), class: "u-text-body"
-                  c-status-selector :work-id="#{record.work_id}"
+                  = render StatusSelectorComponent.new(work_id: record.work_id, small: true, page_category: page_category)
 
       - else
         = render "application/components/empty", text: t("messages._empty.no_records")

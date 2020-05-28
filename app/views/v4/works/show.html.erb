@@ -298,15 +298,15 @@
           </div>
         <% end %>
 
-        <% if @work.local_synopsis_html.present? %>
+        <% if @work.local_synopsis.present? %>
           <div class="mb-3">
             <h2 class="font-weight-bold h3 mb-3">
               <%= t "activerecord.attributes.work.synopsis" %>
             </h2>
 
-            <div class="c-body">
-              <%= @work.local_synopsis_html.html_safe %>
-            </div>
+            <%= render BodyComponent.new(markdown: false) do %>
+              <%= @work.local_synopsis.html_safe %>
+            <% end %>
 
             <div class="small text-right">
               <%= t "noun.source" %>: <%= @work.local_synopsis_source %>
@@ -544,7 +544,7 @@
                         </div>
                         <div class="col-12 col-xl-8 order-2 order-xl-1">
                           <%= render BodyComponent.new(height: 300, markdown: false, class_name: "mb-3") do %>
-                            <%== work_record.body_html %>
+                            <%= work_record.body %>
                           <% end %>
                         </div>
                       </div>

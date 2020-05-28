@@ -7,9 +7,5 @@
       = render "db/activities/activity_root_resources_action", activity: activity
     .col-3.text-right
       = local_time_ago_in_words(activity.created_at)
-  - if activity.action_table_name == "comments"
-    c-body inline-template=""
-      .c-body__content
-        = activity.object.body
   - else
     = activity.resource_diff_table

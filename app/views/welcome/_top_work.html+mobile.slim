@@ -7,7 +7,7 @@
 h3.h2.font-weight-bold.mb-2
   = link_to top_work.local_title, work_path(top_work), class: "u-text-body"
 .text-center.mb-3
-  c-status-selector :work-id="#{top_work.id}"
+  = render StatusSelectorComponent.new(work_id: top_work.id, page_category: page_category)
 - casts = top_work.casts.order(:sort_number).limit(10)
 - casts = casts.select { |c| locale_ja? ? true : c.support_en? }
 - if casts.present?
