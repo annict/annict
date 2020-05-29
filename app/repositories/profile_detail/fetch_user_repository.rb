@@ -11,6 +11,7 @@ module ProfileDetail
         username: node["username"],
         name: node["name"],
         description: node["description"],
+        url: node["url"],
         avatar_url: node["avatarUrl"],
         background_image_url: node["backgroundImageUrl"],
         display_supporter_badge: node["displaySupporterBadge"],

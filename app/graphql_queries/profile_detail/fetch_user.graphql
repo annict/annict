@@ -4,6 +4,7 @@ query($username: String!) {
     username
     name
     description
+    url
     avatarUrl(size: size200)
     backgroundImageUrl
     displaySupporterBadge

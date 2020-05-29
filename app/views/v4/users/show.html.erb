@@ -23,7 +23,13 @@
 
         <div class="mb-5">
           <div class="mb-1">
-            <%= @user.description %>
+            <div>
+              <%= @user.description %>
+            </div>
+
+            <% if @user.url.present? %>
+              <%= link_with_domain(@user.url) %>
+            <% end %>
           </div>
 
           <p class="small">
