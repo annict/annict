@@ -1,3 +1,5 @@
+import { EventDispatcher } from '../utils/event-dispatcher';
+
 export default {
   execute(_params: any) {
     return new Promise((resolve, reject) => {
@@ -6,7 +8,7 @@ export default {
           return response.json();
         })
         .then((following) => {
-          // eventHub.$emit('request:following:fetched', following);
+          new EventDispatcher('user-data-fetcher:following:fetched', { following }).dispatch();
           resolve({ following });
         });
     });

@@ -10,7 +10,7 @@ import { Application } from 'stimulus';
 import { definitionsFromContext } from 'stimulus/webpack-helpers';
 import Turbolinks from 'turbolinks';
 
-import { getTimeZone } from './web/utils/time-zone';
+import { getTimeZone } from './utils/time-zone';
 import vueApp from "./common/vueApp";
 
 document.addEventListener('turbolinks:load', (_event) => {
@@ -28,7 +28,7 @@ document.addEventListener('turbolinks:load', (_event) => {
     ?.getAttribute('content');
 
   const application = Application.start();
-  const context = (require as any).context('./web/controllers', true, /\.ts$/);
+  const context = (require as any).context('./controllers', true, /\.ts$/);
   application.load(definitionsFromContext(context));
 
   vueApp.start();

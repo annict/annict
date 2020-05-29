@@ -1,3 +1,4 @@
+import $ from 'jquery';
 import axios from 'axios';
 import { Controller } from 'stimulus';
 
@@ -47,11 +48,6 @@ export default class extends Controller {
   }
 
   toggle() {
-    // if (!this.isSignedIn) {
-    //   $('.c-sign-up-modal').modal('show');
-    //   return;
-    // }
-
     if (this.isLoading) {
       return;
     }
@@ -78,9 +74,14 @@ export default class extends Controller {
           page_category: this.pageCategory,
         })
         .then(() => {
-          this.isLoading = false;
           this.likesCount += 1;
           this.isLiked = true;
+        })
+        .catch(() => {
+          $('.c-sign-up-modal').modal('show');
+        })
+        .then(() => {
+          this.isLoading = false;
           this.render();
         });
     }

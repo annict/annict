@@ -21,7 +21,7 @@ script#t-slot-list type="x-template"
             .row.mb-2
               .col.pr-0.u-flex-grow-0
                 a :href='"/works/" + slot.work.id'
-                  img.rounded v-lazy="slot.work.image_url" width="48" :alt="slot.work.title"
+                  img.rounded :src="slot.work.image_url" width="48" :alt="slot.work.title"
               .col
                 .text-xs-left
                   a :href='"/works/" + slot.work.id'

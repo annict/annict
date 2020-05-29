@@ -1,9 +1,10 @@
-import 'select2'
+import 'select2';
 
 import $ from 'jquery';
 import uniq from 'lodash/uniq';
 
 import eventHub from '../../common/eventHub';
+import { EventDispatcher } from '../../utils/event-dispatcher';
 
 export default {
   template: '#t-impression-button-modal',
@@ -52,7 +53,7 @@ export default {
         })
         .fail(function () {
           const message = gon.I18n['messages._components.impression_button.error'];
-          return eventHub.$emit('flash:show', message, 'alert');
+          new EventDispatcher('flash:show', { type: 'alert', message }).dispatch();
         })
         .always(() => {
           return (this.isLoading = false);
@@ -87,11 +88,11 @@ export default {
           $('.c-impression-button-modal').modal('hide');
           eventHub.$emit('workTags:saved', this.workId, data.tags);
           eventHub.$emit('workComment:saved', this.workId, data.comment);
-          return eventHub.$emit('flash:show', gon.I18n['messages._common.updated']);
+          new EventDispatcher('flash:show', { message: gon.I18n['messages._common.updated'] }).dispatch();
         })
         .fail(function () {
           const message = gon.I18n['messages._components.impression_button.error'];
-          return eventHub.$emit('flash:show', message, 'alert');
+          new EventDispatcher('flash:show', { type: 'alert', message }).dispatch();
         })
         .always(() => {
           return (this.isSaving = false);

@@ -3,7 +3,7 @@ import libraryEntriesRequest from '../requests/library-entries-request';
 import likesRequest from '../requests/likes-request';
 import trackedResourcesRequest from '../requests/tracked-resources-request';
 import workFriendsRequest from '../requests/work-friends-request';
-import {EventDispatcher} from "./event-dispatcher";
+import { EventDispatcher } from './event-dispatcher';
 
 const REQUEST_LIST: any = {
   'activity-list': [libraryEntriesRequest, likesRequest],
@@ -24,16 +24,16 @@ const REQUEST_LIST: any = {
 };
 
 export class UserDataFetcher {
-  pageCategory!: string
-  params!: {}
+  pageCategory!: string;
+  params!: {};
 
   constructor(pageCategory: string, params = {}) {
-    this.pageCategory = pageCategory
-    this.params = params
+    this.pageCategory = pageCategory;
+    this.params = params;
   }
 
   async start() {
-    await this.fetchAndDispatch()
+    await this.fetchAndDispatch();
 
     document.addEventListener('user-data-fetcher:refetch', async (event: any) => {
       await this.fetchAndDispatch();
@@ -53,8 +53,8 @@ export class UserDataFetcher {
   }
 
   async fetchAndDispatch() {
-    const data = await this.fetchAll()
+    const data = await this.fetchAll();
 
-    new EventDispatcher("user-data-fetcher:fetched-all", data).dispatch()
+    new EventDispatcher('user-data-fetcher:fetched-all', data).dispatch();
   }
 }

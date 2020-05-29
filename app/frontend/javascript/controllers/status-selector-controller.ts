@@ -1,3 +1,4 @@
+import $ from 'jquery';
 import axios from 'axios';
 import { Controller } from 'stimulus';
 
@@ -63,7 +64,7 @@ export default class extends Controller {
           this.element.classList.remove('unselected');
         })
         .catch(() => {
-          // $('.c-sign-up-modal').modal('show');
+          $('.c-sign-up-modal').modal('show');
           this.resetKind();
         })
         .then(() => {

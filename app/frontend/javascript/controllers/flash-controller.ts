@@ -3,20 +3,20 @@ import 'bootstrap/js/dist/alert';
 import { Controller } from 'stimulus';
 
 export default class extends Controller {
-  type!: string | null;
-  message!: string | null;
+  type!: string;
+  message!: string;
 
   initialize() {
-    this.type = this.data.get('type');
-    this.message = this.data.get('message');
+    this.type = this.data.get('type') || 'notice';
+    this.message = this.data.get('message') || '';
 
     if (this.type && this.message) {
       this.displayMessage();
     }
 
-    document.addEventListener('flash:show', (event: any) => {
-      this.type = event.detail.type;
-      this.message = event.detail.message;
+    document.addEventListener('flash:show', ({ detail: { type, message } }: any) => {
+      this.type = type || 'notice';
+      this.message = message || '';
 
       this.displayMessage();
     });
@@ -29,30 +29,26 @@ export default class extends Controller {
     if (alertIconElm && messageElm) {
       this.element.classList.remove('d-none');
       this.element.classList.add(this.alertClass);
-      alertIconElm.classList.add(this.alertIconClass);
-      messageElm.innerHTML = this.message || '';
+      alertIconElm.innerHTML = this.alertIcon; // Using innerHTML to render fontawesome icon after refetch
+      messageElm.innerHTML = this.message;
     }
   }
 
   get alertClass() {
     switch (this.type) {
-      case 'notice':
-        return 'alert-success';
       case 'alert':
         return 'alert-danger';
       default:
-        return '';
+        return 'alert-success';
     }
   }
 
-  get alertIconClass() {
+  get alertIcon() {
     switch (this.type) {
-      case 'notice':
-        return 'fa-check-circle';
       case 'alert':
-        return 'fa-exclamation-triangle';
+        return '<i class="far fa-exclamation-triangle"></i>';
       default:
-        return '';
+        return '<i class="far fa-check-circle"></i>';
     }
   }
 }

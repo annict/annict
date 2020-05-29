@@ -5,9 +5,9 @@ module Api
     class StatusesController < Api::Internal::ApplicationController
       include V4::GraphqlRunnable
 
-      before_action :authenticate_user!
-
       def select
+        return head(:unauthorized) unless user_signed_in?
+
         @work = Work.only_kept.find(params[:work_id])
 
         UpdateStatusRepository.new(

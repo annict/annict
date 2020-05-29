@@ -8,6 +8,7 @@ import episodeProgress from './components/episodeProgress';
 import episodeRatingStateChart from './components/episodeRatingStateChart';
 import episodeRecordsChart from './components/episodeRecordsChart';
 import favoriteButton from './components/favoriteButton';
+import followButton from './components/followButton';
 import impressionButton from './components/impressionButton';
 import impressionButtonModal from './components/impressionButtonModal';
 import inputWordsCount from './components/inputWordsCount';
@@ -19,6 +20,7 @@ import recordTextarea from './components/recordTextarea';
 import recordWordCount from './components/recordWordCount';
 import slotList from './components/slotList';
 import untrackedEpisodeList from './components/untrackedEpisodeList';
+import userActionsDropdown from './components/userActionsDropdown';
 import userHeatmap from './components/userHeatmap';
 import usernamePreview from './components/usernamePreview';
 import workComment from './components/workComment';
@@ -27,9 +29,6 @@ import workStatusChart from './components/workStatusChart';
 import workTags from './components/workTags';
 import workWatchersChart from './components/workWatchersChart';
 import youtubeModalPlayer from './components/youtubeModalPlayer';
-
-// import followButton from './components/followButton';
-// import userActionsDropdown from './components/userActionsDropdown';
 
 export default {
   start() {
@@ -41,7 +40,7 @@ export default {
     Vue.component('c-episode-rating-state-chart', episodeRatingStateChart);
     Vue.component('c-episode-records-chart', episodeRecordsChart);
     Vue.component('c-favorite-button', favoriteButton);
-    // Vue.component('c-follow-button', followButton);
+    Vue.component('c-follow-button', followButton);
     Vue.component('c-impression-button', impressionButton);
     Vue.component('c-impression-button-modal', impressionButtonModal);
     Vue.component('c-input-words-count', inputWordsCount);
@@ -53,7 +52,7 @@ export default {
     Vue.component('c-record-word-count', recordWordCount);
     Vue.component('c-slot-list', slotList);
     Vue.component('c-untracked-episode-list', untrackedEpisodeList);
-    // Vue.component('c-user-actions-dropdown', userActionsDropdown);
+    Vue.component('c-user-actions-dropdown', userActionsDropdown);
     Vue.component('c-user-heatmap', userHeatmap);
     Vue.component('c-username-preview', usernamePreview);
     Vue.component('c-work-comment', workComment);
