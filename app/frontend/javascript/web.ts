@@ -27,13 +27,12 @@ document.addEventListener('turbolinks:load', (_event) => {
     .querySelector('meta[name="csrf-token"]')
     ?.getAttribute('content');
 
-  const application = Application.start();
-  const context = (require as any).context('./controllers', true, /\.ts$/);
-  application.load(definitionsFromContext(context));
-
   vueApp.start();
 });
 
+const application = Application.start();
+const context = (require as any).context('./controllers', true, /\.ts$/);
+application.load(definitionsFromContext(context));
 
 ujs.start();
 Turbolinks.start();

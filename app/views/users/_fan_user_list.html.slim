@@ -18,6 +18,3 @@
               c-follow-button username="#{favorite_resource.user.username}" :init-is-following="#{current_user.following?(favorite_resource.user)}" :is-signed-in="true"
             - elsif !user_signed_in?
               c-follow-button username="" :init-is-following="false"
-
-- content_for :js_templates
-  = render "application/js_templates/follow_button"

@@ -42,13 +42,19 @@ module ProfileDetail
             id: character["annictId"],
             name: character["name"],
             name_en: character["nameEn"],
-            series: SeriesEntity.new(
-              name: series["name"],
-              name_en: series["nameEn"]
-            )
+            series: build_series(series)
           )
         )
       end
+    end
+
+    def build_series(series)
+      return unless series
+
+      SeriesEntity.new(
+        name: series["name"],
+        name_en: series["nameEn"]
+      )
     end
 
     def person_favorites(nodes)

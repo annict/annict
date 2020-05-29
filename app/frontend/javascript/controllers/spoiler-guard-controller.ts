@@ -18,6 +18,10 @@ export default class extends Controller {
         this.libraryEntries = libraryEntries;
         this.trackedResources = trackedResources;
 
+        if (!this.libraryEntries || !this.trackedResources) {
+          return;
+        }
+
         this.checkSpoiler();
         this.render();
       },

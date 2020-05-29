@@ -5,11 +5,7 @@ module Api
     class ActivityGroupsController < Api::Internal::ApplicationController
       include V4::GraphqlRunnable
 
-      before_action :authenticate_user!, only: %i(index)
-
       def index
-        return render(nothing: true) unless user_signed_in?
-
         @username = params[:username]
         @page_category = params[:page_category]
 
@@ -21,7 +17,7 @@ module Api
       def fetch_activity_group_result
         if params[:page_category] == "profile-detail"
           return ProfileDetail::FetchUserActivityGroupsRepository.
-            new(graphql_client: graphql_client(viewer: current_user)).
+            new(graphql_client: graphql_client).
             fetch(username: params[:username], cursor: params[:cursor])
         end
 
