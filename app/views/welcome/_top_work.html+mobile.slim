@@ -13,9 +13,9 @@ h3.h2.font-weight-bold.mb-2
 - if casts.present?
   .font-weight-bold.mb-2
     = t "noun.casts"
-  ul.list-inline
+  ul.list-inline.u-lh-5
     - casts.each do |cast|
-      li.list-inline-item
+      li.list-inline-item.mr-3
         span.mr-1
           = cast.character.decorate.name_link
           | :
@@ -25,8 +25,8 @@ h3.h2.font-weight-bold.mb-2
 - if staffs.present?
   .font-weight-bold.mb-2
     = t "noun.staffs"
-  ul.list-inline.mb-0
+  ul.list-inline.mb-0.u-lh-5
     - staffs.each do |staff|
-      li.list-inline-item
+      li.list-inline-item.mr-3
         = "#{staff.decorate.role_name}: "
         = staff.decorate.local_name_with_old_link

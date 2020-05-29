@@ -9,4 +9,7 @@
   = render "users/follow_nav", user: @user
 
   .c-card.mt-3.mb-4
-    = render "users/user_list", users: @users
+    - if @users.present?
+      = render "users/user_list", users: @users
+    - else
+      = render EmptyComponent.new(text: t("messages._empty.no_following"))
