@@ -9,6 +9,18 @@
   <div class="container-fluid py-3">
     <div class="row">
       <div class="col-12 col-lg-5 mb-lg-0 order-first order-lg-last pl-lg-0">
+        <div class="text-center mb-3">
+          <%= render ShareToTwitterButtonComponent.new(
+            text: title,
+            url: "#{local_url}#{profile_detail_path(@user.username)}",
+            class_name: "mr-2"
+          ) %>
+
+          <%= render ShareToFacebookButtonComponent.new(
+            url: "#{local_url}#{profile_detail_path(@user.username)}"
+          ) %>
+        </div>
+
         <div class="mb-5">
           <div class="mb-1">
             <%= @user.description %>
