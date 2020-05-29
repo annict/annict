@@ -1,7 +1,6 @@
 import take from 'lodash/take';
 
-import eventHub from '../eventHub';
-import lazyLoad from '../../web/utils/lazyLoad';
+import lazyLoad from '../../utils/lazy-load';
 
 const DISPLAY_USERS_LIMIT = 12;
 
@@ -90,8 +89,8 @@ export default {
   },
 
   mounted() {
-    eventHub.$on('request:work-friends:fetched', (result) => {
-      this.usersData = result;
+    document.addEventListener('user-data-fetcher:work-friends:fetched', ({ detail: { workFriendsResult } }) => {
+      this.usersData = workFriendsResult;
 
       this.$nextTick(() => {
         lazyLoad.update();

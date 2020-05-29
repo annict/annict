@@ -18,35 +18,40 @@
         <%= t "messages._components.activities.episode_record.created" %>
       </small>
 
-      <c-relative-time class="small text-muted" time="<%= activity_group.created_at.iso8601 %>"></c-relative-time>
+      <%= render RelativeTimeComponent.new(time: activity_group.created_at.iso8601, class_name: "small text-muted") %>
     </div>
   </div>
 
   <% if activity_group.single %>
-    <c-spoiler-guard :work-id="<%= episode_records.first.work.id %>" :episode-id="<%= episode_records.first.episode.id %>">
+    <%= render SpoilerGuardComponent.new(work_id: episode_records.first.work.id, episode_id: episode_records.first.episode.id) do %>
       <div>
         <% if episode_records.first.rating_state %>
-          <c-rating-label class="mb-1" init-kind="<%= episode_records.first.rating_state.downcase %>"></c-rating-label>
+          <%= render RatingLabelComponent.new(kind: episode_records.first.rating_state.downcase, class_name: "mb-1") %>
         <% end %>
 
-        <div class="c-body">
-          <%= episode_records.first.body_html.html_safe %>
-        </div>
+        <%= render BodyComponent.new(height: 300, markdown: false) do %>
+          <%= episode_records.first.body %>
+        <% end %>
       </div>
-    </c-spoiler-guard>
+    <% end %>
   <% end %>
 
-  <%= render EpisodeRecordActivityCardsComponent.new(activity_group: activity_group) %>
+  <div class="c-timeline__activity-cards">
+    <%= render EpisodeRecordActivityCardsComponent.new(activity_group: activity_group) %>
+  </div>
 
   <% if activity_group.activities_count > 2 %>
-    <c-activity-more-button
-      activity-group-id="<%= activity_group.id %>"
-      cursor="<%= activity_group.activities_page_info.end_cursor %>"
+    <div
+      class="text-center"
+      data-action="click->timeline-activity#next"
+      data-target="timeline-activity.nextButton"
     >
-      <i class="fal fa-chevron-double-down"></i>
-      <%= t "messages._components.activities.episode_record.more", n: activity_group.activities_count - 2 %>
-    </c-activity-more-button>
-
-    <c-activity-more-content activity-group-id="<%= activity_group.id %>"></c-activity-more-content>
+      <div class="mb-3 text-center">
+        <div class="c-activity-more-button btn btn-outline-secondary btn-small py-1">
+          <i class="fal fa-chevron-double-down"></i>
+          <%= t "messages._components.activities.episode_record.more", n: activity_group.activities_count - 2 %>
+        </div>
+      </div>
+    </div>
   <% end %>
 </div>

@@ -1,0 +1,18 @@
+{
+  "compilerOptions": {
+    "allowJs": true,
+    "allowSyntheticDefaultImports": true,
+    "declaration": false,
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true,
+    "lib": ["ES6", "DOM"],
+    "module": "ES6", // To enable Tree Shaking on webpack
+    "moduleResolution": "Node",
+    "noEmit": true,
+    "sourceMap": true,
+    "strict": true,
+    "target": "ESNext"
+  },
+  "exclude": ["node_modules", "public/packs"],
+  "include": ["app/frontend/javascript/**/*"]
+}

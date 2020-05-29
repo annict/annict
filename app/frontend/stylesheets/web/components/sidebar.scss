@@ -48,17 +48,6 @@
   &__content.active {
     display: block;
   }
-
-  .slide-enter-active,
-  .slide-leave-active {
-    transition: transform 0.2s ease;
-  }
-
-  .slide-enter,
-  .slide-leave-to {
-    transform: translateX(-100%);
-    transition: all 150ms ease-out 0s;
-  }
 }
 
 @include media-breakpoint-up(lg) {

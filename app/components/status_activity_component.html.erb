@@ -18,21 +18,26 @@
         <%= t "messages._components.activities.status.changed" %>
       </small>
 
-      <c-relative-time class="small text-muted" time="<%= activity_group.created_at.iso8601 %>"></c-relative-time>
+      <%= render RelativeTimeComponent.new(time: activity_group.created_at.iso8601, class_name: "small text-muted") %>
     </div>
   </div>
 
-  <%= render StatusActivityCardsComponent.new(activity_group: activity_group) %>
+  <div class="c-timeline__activity-cards">
+    <%= render StatusActivityCardsComponent.new(activity_group: activity_group) %>
+  </div>
 
   <% if activity_group.activities_count > 2 %>
-    <c-activity-more-button
-      activity-group-id="<%= activity_group.id %>"
-      cursor="<%= activity_group.activities_page_info.end_cursor %>"
+    <div
+      class="text-center"
+      data-action="click->timeline-activity#next"
+      data-target="timeline-activity.nextButton"
     >
-      <i class="fal fa-chevron-double-down"></i>
-      <%= t "messages._components.activities.status.more", n: activity_group.activities_count - 2 %>
-    </c-activity-more-button>
-
-    <c-activity-more-content activity-group-id="<%= activity_group.id %>"></c-activity-more-content>
+      <div class="mb-3 text-center">
+        <div class="c-activity-more-button btn btn-outline-secondary btn-small py-1">
+          <i class="fal fa-chevron-double-down"></i>
+          <%= t "messages._components.activities.episode_record.more", n: activity_group.activities_count - 2 %>
+        </div>
+      </div>
+    </div>
   <% end %>
 </div>

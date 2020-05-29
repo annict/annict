@@ -19,13 +19,14 @@
           .mb-2
             span.font-weight-bold.mr-1 = work.watchers_count
             span.text-muted.small Watchers
-          c-status-selector :work-id="#{work.id}"
+          = render StatusSelectorComponent.new(work_id: work.id, page_category: page_category)
 
       - if work.local_synopsis.present?
         .font-weight-bold.mb-1
           = t "activerecord.attributes.work.synopsis"
         .mb-3
-          c-omitted-synopsis text="#{work.local_synopsis(raw: true)}"
+          = render BodyComponent.new(height: 250, markdown: false) do
+            = sanitize(work.local_synopsis(raw: true))
           .small.mt-2.text-right
             span.mr-1
               = t "noun.source"
@@ -54,9 +55,9 @@
       - if casts.present?
         .font-weight-bold.mb-1
           = t "noun.casts"
-        ul.list-inline.mb-0
+        ul.list-inline.mb-0.u-lh-5
           - casts.first(10).each do |cast|
-            li.list-inline-item
+            li.list-inline-item.mr-3
               span.mr-1
                 = cast.character.decorate.name_link
                 | :
@@ -68,9 +69,9 @@
         .mt-3
           .font-weight-bold.mb-1
             = t "noun.staffs"
-          ul.list-inline.mb-0
+          ul.list-inline.mb-0.u-lh-5
             - staffs.each do |staff|
-              li.list-inline-item
+              li.list-inline-item.mr-3
                 = "#{staff.decorate.role_name}: "
                 = staff.decorate.local_name_with_old_link
 

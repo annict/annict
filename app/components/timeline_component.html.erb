@@ -1,7 +1,18 @@
-<div class="c-timeline">
-  <div>
+<div
+  class="c-timeline"
+  data-controller="timeline"
+  data-timeline-username="<%= username %>"
+  data-timeline-page-category="<%= page_category %>"
+  data-timeline-cursor="<%= page_info.end_cursor %>"
+>
+  <div class="c-timeline__activities">
     <% activity_groups.each do |activity_group| %>
-      <div class="c-timeline__activity pt-3 u-underline">
+      <div
+        class="c-timeline__activity pt-3 u-underline"
+        data-controller="timeline-activity"
+        data-timeline-activity-activity-group-id="<%= activity_group.id %>"
+        data-timeline-activity-cursor="<%= activity_group.activities_page_info.end_cursor %>"
+      >
         <% if activity_group.status? %>
           <%= render StatusActivityComponent.new(activity_group: activity_group) %>
 
@@ -16,14 +27,15 @@
   </div>
 
   <% if page_info.has_next_page %>
-    <c-activity-group-more-button
-      username="<%= username %>"
-      page-category="<%= page_category %>"
-      cursor="<%= page_info.end_cursor %>"
+    <div
+      class="text-center"
+      data-action="click->timeline#next"
+      data-target="timeline.nextButton"
     >
-      <i class="fal fa-chevron-double-down"></i>
-      <%= t "messages._components.timeline.more" %>
-    </c-activity-group-more-button>
-    <c-activity-group-more-content cursor="<%= page_info.end_cursor %>"></c-activity-group-more-content>
+      <div class="c-activity-group-more-button btn btn-secondary py-1 w-100">
+        <i class="fal fa-chevron-double-down"></i>
+        <%= t "messages._components.timeline.more" %>
+      </div>
+    </div>
   <% end %>
 </div>

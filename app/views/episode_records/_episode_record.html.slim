@@ -16,17 +16,15 @@
           - if episode_record.modify_body?
             small.ml-1.text-muted
               = icon "pencil-alt"
-        c-comment-guard inline-template="" :init-is-spoiler="#{is_spoiler == true}"
-          .c-record__content
-            - if episode_record.rating.present?
-              c-rating-label init-kind="#{episode_record.rating_to_rating_state}" v-show="!isSpoiler"
-            - elsif episode_record.rating_state.present?
-              c-rating-label init-kind="#{episode_record.rating_state}" v-show="!isSpoiler"
-            .c-body @click="remove"
-              c-body inline-template=""
-                .c-body__content = episode_record.body
+        = render SpoilerGuardComponent.new(work_id: episode_record.work_id, episode_id: episode_record.episode_id) do
+          - if episode_record.rating.present?
+            = render RatingLabelComponent.new(kind: episode_record.rating_to_rating_state)
+          - elsif episode_record.rating_state.present?
+            = render RatingLabelComponent.new(kind: episode_record.rating_state)
+          = render BodyComponent.new(height: 300, markdown: false) do
+            = episode_record.body
         .text-right
-          c-like-button resource-name="EpisodeRecord" :resource-id="#{episode_record.id}" :init-likes-count="#{episode_record.likes_count}" :is-signed-in="#{user_signed_in?}"
+          = render LikeButtonComponent.new(resource_name: "EpisodeRecord", resource_id: episode_record.id, likes_count: episode_record.likes_count, page_category: "episode-detail")
           = link_to record_path(episode_record.user.username, episode_record.record), class: "d-inline-block ml-2" do
             = icon "comment", "far", class: "mr-1"
             = episode_record.comments_count

@@ -23,20 +23,18 @@
             <%= link_to status.work.local_title, work_path(status.work.id) %>
           </div>
 
-          <c-status-selector :work-id="<%= status.work.id %>" page-category="user-home" class="c-status-selector--small"></c-status-selector>
+          <%= render StatusSelectorComponent.new(work_id: status.work.id, page_category: "user-home", small: true) %>
         </div>
       </div>
     </div>
   </div>
 
   <div class="mb-3">
-    <c-like-button
-      :init-likes-count="<%= status.likes_count %>"
-      :is-signed-in="true"
-      :resource-id="<%= status.id %>"
-      class="u-fake-link"
-      page-category="user-home"
-      resource-name="Status"
-    ></c-like-button>
+    <%= render LikeButtonComponent.new(
+      resource_name: "Status",
+      resource_id: status.id,
+      likes_count: status.likes_count,
+      page_category: "user-home"
+    ) %>
   </div>
 <% end %>

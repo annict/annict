@@ -33,8 +33,8 @@
       .row.mt-3
         .col
           .text-right
-            c-share-to-twitter-button.mr-2 text="#{title}" url="#{local_url}#{user_work_tag_path(@user.username, @tag.name)}"
-            c-share-to-facebook-button.mr-2 url="#{local_url}#{user_work_tag_path(@user.username, @tag.name)}"
+            = render ShareToTwitterButtonComponent.new(text: title, url: "#{local_url}#{user_work_tag_path(@user.username, @tag.name)}", class_name: "mr-2")
+            = render ShareToFacebookButtonComponent.new(url: "#{local_url}#{user_work_tag_path(@user.username, @tag.name)}")
 
 c-impression-button-modal
 

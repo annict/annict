@@ -13,7 +13,7 @@
           small.ml-2.text-muted
             = icon "pencil-alt"
 
-c-comment-guard inline-template="" :init-is-spoiler="#{is_spoiler == true}"
+= render SpoilerGuardComponent.new(work_id: work_record.work_id) do
   div
     - if work_record.rating_overall_state.present?
       .mb-3.p-3
@@ -26,41 +26,41 @@ c-comment-guard inline-template="" :init-is-spoiler="#{is_spoiler == true}"
                 th.font-weight-normal.pr-2
                   = t "noun.animation"
                 td
-                  c-rating-label :init-kind=="'#{work_record.rating_animation_state}'" v-show="!isSpoiler"
+                  = render RatingLabelComponent.new(kind: work_record.rating_animation_state)
             - if work_record.rating_music_state.present?
               tr
                 th.font-weight-normal.pr-2
                   = t "noun.music"
                 td
-                  c-rating-label :init-kind=="'#{work_record.rating_music_state}'" v-show="!isSpoiler"
+                  = render RatingLabelComponent.new(kind: work_record.rating_music_state)
             - if work_record.rating_story_state.present?
               tr
                 th.font-weight-normal.pr-2
                   = t "noun.story"
                 td
-                  c-rating-label :init-kind=="'#{work_record.rating_story_state}'" v-show="!isSpoiler"
+                  = render RatingLabelComponent.new(kind: work_record.rating_story_state)
             - if work_record.rating_character_state.present?
               tr
                 th.font-weight-normal.pr-2
                   = t "noun.character"
                 td
-                  c-rating-label :init-kind=="'#{work_record.rating_character_state}'" v-show="!isSpoiler"
+                  = render RatingLabelComponent.new(kind: work_record.rating_character_state)
             tr
               th.font-weight-normal.pr-2
                 = t "noun.overall"
               td
-                c-rating-label :init-kind=="'#{work_record.rating_overall_state}'" v-show="!isSpoiler"
-    .c-body.mb-3 @click="remove"
-      c-body inline-template=""
-        .c-body__content
-          = work_record.body
+                = render RatingLabelComponent.new(kind: work_record.rating_overall_state)
+
+    = render BodyComponent.new(height: 300, markdown: false, class_name: "mb-3") do
+      = work_record.body
+
 
 .row
   .col
     .text-right
-      c-share-to-twitter-button.mr-2 text="#{t("head.title.work_records.show", profile_name: work_record.user.profile.name, username: work_record.user.username, work_title: work_record.work.local_title)}" url="#{local_url}#{record_path(work_record.user.username, work_record.record)}" hashtags="#{work_record.work.twitter_hashtag.presence || ''}"
-      c-share-to-facebook-button.mr-2 url="#{local_url}#{record_path(work_record.user.username, work_record.record)}"
-      c-like-button.ml-2 resource-name="WorkRecord" :resource-id="#{work_record.id}" :init-likes-count="#{work_record.likes_count}" :is-signed-in="#{user_signed_in?}"
+      = render ShareToTwitterButtonComponent.new(text: "#{t("head.title.work_records.show", profile_name: work_record.user.profile.name, username: work_record.user.username, work_title: work_record.work.local_title)}", url: "#{local_url}#{record_path(work_record.user.username, work_record.record)}", hashtags: "#{work_record.work.twitter_hashtag.presence || ''}", class_name: "mr-2")
+      = render ShareToFacebookButtonComponent.new(url: "#{local_url}#{record_path(work_record.user.username, work_record.record)}")
+      = render LikeButtonComponent.new(resource_name: "WorkRecord", resource_id: work_record.id, likes_count: work_record.likes_count, page_category: page_category, class_name: "ml-2")
 
 - if policy(work_record).update?
   .text-right.mt-2

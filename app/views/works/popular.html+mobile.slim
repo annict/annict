@@ -10,8 +10,8 @@
   .px-3
     .row.align-items-center.mb-3
       .col.pr-0
-        c-share-to-twitter-button.mr-2 text="#{title}" url="#{local_url}#{popular_works_path}"
-        c-share-to-facebook-button url="#{local_url}#{popular_works_path}"
+        = render ShareToTwitterButtonComponent.new(text: title, url: "#{local_url}#{popular_works_path}", class_name: "mr-2")
+        = render ShareToFacebookButtonComponent.new(url: "#{local_url}#{popular_works_path}")
       .col.text-right
         = render "display_option_buttons", display_option: @display_option
 
@@ -21,5 +21,4 @@
       = paginate @works, window: 2
 
 - content_for :js_templates do
-  = render "application/js_templates/omitted_synopsis"
   = render "application/js_templates/youtube_modal_player"

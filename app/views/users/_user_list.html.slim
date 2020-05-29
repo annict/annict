@@ -12,10 +12,5 @@
             .small
               = link_to "@#{user.username}", profile_detail_path(username: user.username)
           .col-auto.pr-0.u-flex-grow-0
-            - if user_signed_in? && current_user != user
-              c-follow-button username="#{user.username}" :init-is-following="#{current_user.following?(user)}" :is-signed-in="true"
-            - elsif !user_signed_in?
-              c-follow-button username="" :init-is-following="false"
-
-- content_for :js_templates
-  = render "application/js_templates/follow_button"
+            - if current_user != user
+              c-follow-button :user-id="#{user.id}"

@@ -23,7 +23,7 @@
                 = link_to record.work.local_title, work_path(record.work), class: "u-text-body"
               .mb-2
                 = link_to record.episode.title_with_number(fallback: false), work_episode_path(record.work, record.episode), class: "u-text-body"
-              c-status-selector :work-id="#{record.work.id}"
+              = render StatusSelectorComponent.new(work_id: record.work_id, page_category: page_category)
             .col-9
               = render "episode_records/episode_record", episode_record: record, is_spoiler: user_signed_in? && current_user.hide_episode_record_body?(record.episode)
 

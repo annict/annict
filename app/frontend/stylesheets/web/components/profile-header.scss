@@ -15,7 +15,6 @@
       position: absolute;
       top: -20px;
       width: 100px;
-
     }
   }
 
@@ -28,6 +27,10 @@
   .c-profile-header {
     &__background {
       height: 200px;
+    }
+
+    &__content {
+      height: 90px;
     }
 
     &__profile-image {

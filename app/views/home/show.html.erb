@@ -68,7 +68,7 @@
               <div class="row mb-3">
                 <div class="col-auto pr-0">
                   <%= link_to userland_project_path(project) do %>
-                    <%= ann_image_tag project, :image, size: "80x80", class: "img-fluid img-thumbnail rounded" %>
+                    <%= render UserlandProjectImageComponent.new(image_url_1x: ann_image_url(project, :image, size: "80x"), alt: project.name) %>
                   <% end %>
                 </div>
 

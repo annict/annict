@@ -37,11 +37,11 @@ module ImageHelper
     url = ann_image_url(record, field, options)
     url2x = ann_image_url(record, field, options.merge(size_rate: 2))
 
-    options["v-lazy"] = "{ src: '#{url}' }"
+    options["data-src"] = url
     options[:class] = if options[:class].present?
-      options[:class].split(" ").push("c-vue-lazyload").join(" ")
+      options[:class].split(" ").push("js-lazy").join(" ")
     else
-      "c-vue-lazyload"
+      "js-lazy"
     end
     options["data-srcset"] = "#{url} 320w, #{url2x} 640w"
 

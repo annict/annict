@@ -9,7 +9,15 @@ module.exports = function (api) {
           corejs: 3,
           forceAllTransforms: api.env('production'),
         },
+        "@babel/preset-typescript"
       ],
+    ],
+
+    plugins: [
+      '@babel/plugin-transform-typescript',
+      '@babel/plugin-proposal-class-properties',
+      '@babel/plugin-transform-runtime',
+      '@babel/plugin-proposal-object-rest-spread',
     ],
   };
 };

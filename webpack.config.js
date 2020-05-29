@@ -3,6 +3,7 @@ const path = require('path');
 
 const ManifestPlugin = require('webpack-manifest-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
+const ForkTsCheckerWebpackPlugin = require('fork-ts-checker-webpack-plugin');
 
 const isProd = process.env.NODE_ENV === 'production';
 
@@ -31,14 +32,11 @@ module.exports = {
   module: {
     rules: [
       {
-        test: /\.js$/,
+        test: /\.(js|ts)$/,
         exclude: /node_modules/,
         use: [
           {
             loader: 'babel-loader',
-            options: {
-              presets: ['@babel/preset-env'],
-            },
           },
         ],
       },
@@ -102,7 +100,7 @@ module.exports = {
       vue: isProd ? 'vue/dist/vue.min.js' : 'vue/dist/vue.js',
     },
     modules: ['node_modules', path.resolve(__dirname, 'app', 'frontend')],
-    extensions: ['.css', '.gif', '.jpeg', '.jpg', '.js', '.json', '.png', '.scss', '.svg'],
+    extensions: ['.css', '.gif', '.jpeg', '.jpg', '.js', '.json', '.png', '.scss', '.svg', '.ts'],
   },
   plugins: [
     new ManifestPlugin({
@@ -116,6 +114,7 @@ module.exports = {
       filename: '[name]-[hash].css',
       chunkFilename: '[name].bundle-[hash].css',
     }),
+    new ForkTsCheckerWebpackPlugin(),
   ],
   devServer: {
     contentBase: path.resolve(__dirname, 'public', 'packs'),

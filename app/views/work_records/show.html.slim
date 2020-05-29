@@ -21,7 +21,7 @@
                 .row.py-3.u-underline
                   .col-auto
                     = link_to work_path(work_record.work) do
-                      = ann_image_tag work_record.work.work_image, :image, size: "70x", ratio: "3:4", class: "img-fluid img-thumbnail rounded"
+                      = render WorkImageComponent.new(image_url_1x: ann_image_url(work_record.work.work_image, :image, size: "120x"), image_url_2x: ann_image_url(work_record.work.work_image, :image, size: "240x"), class_name: "img-fluid img-thumbnail rounded")
                   .col
                     .small.text-muted.mb-1
                       = link_to work_record.work.local_title, work_path(work_record.work), class: "u-text-body"
@@ -40,7 +40,7 @@
               = @work.work_image.asin_or_copyright_text
         h2.font-weight-bold.mb-3
           = link_to @work.local_title, work_path(@work), class: "u-text-body"
-        c-status-selector :work-id="#{@work.id}"
+        = render StatusSelectorComponent.new(work_id: @work.id, page_category: "record-detail")
         .mb-3
           = link_to work_path(@work), class: "btn btn-primary w-100" do
             = icon "angle-right"

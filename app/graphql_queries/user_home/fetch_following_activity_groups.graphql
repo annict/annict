@@ -51,7 +51,7 @@ query($username: String!, $cursor: String) {
               ... on EpisodeRecord {
                 annictId
                 ratingState
-                bodyHtml
+                body
                 likesCount
                 commentsCount
 
@@ -80,7 +80,7 @@ query($username: String!, $cursor: String) {
               ... on WorkRecord {
                 annictId
                 ratingOverallState
-                bodyHtml
+                body
                 likesCount
 
                 work {

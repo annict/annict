@@ -1,6 +1,6 @@
 <div class="c-profile-header">
   <div class="c-profile-header__background" style="background-image: url(<%= user_entity.background_image_url %>);"></div>
-  <div class="container-fluid">
+  <div class="c-profile-header__content container-fluid">
     <div class="row">
       <div class="col-auto c-profile-header__profile-image">
         <%= render ProfileImageComponent.new(image_url_1x: user_entity.avatar_url, alt: "@#{user_entity.username}") %>

@@ -6,15 +6,15 @@
     tr
       td = t("activerecord.attributes.#{resource.class.name.underscore}.#{field}")
       - if diff[0] == "+"
-        td.success = draft_value.html_safe
+        td.success = sanitize(draft_value).html_safe
       - elsif diff[0] == "-"
         td
       - elsif diff[0] == "~"
-        td.warning = draft_value.html_safe
-      
+        td.warning = sanitize(draft_value).html_safe
+
       - if diff[0] == "+"
         td
       - elsif diff[0] == "-"
-        td.danger = origin_value.html_safe
+        td.danger = sanitize(origin_value).html_safe
       - elsif diff[0] == "~"
-        td.warning = origin_value.html_safe
+        td.warning = sanitize(origin_value).html_safe

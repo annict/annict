@@ -26,8 +26,8 @@ query($annictId: Int!) {
       syobocalTid
       malAnimeId
       isNoEpisodes
-      synopsisHtml
-      synopsisEnHtml
+      synopsis
+      synopsisEn
       synopsisSource
       synopsisSourceEn
       copyright
@@ -99,7 +99,7 @@ query($annictId: Int!) {
           ratingStoryState
           ratingCharacterState
           ratingOverallState
-          bodyHtml
+          body
           likesCount
           createdAt
           modifiedAt

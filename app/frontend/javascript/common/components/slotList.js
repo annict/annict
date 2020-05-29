@@ -2,9 +2,8 @@ import $ from 'jquery';
 import uniqueId from 'lodash/uniqueId';
 import dayjs from 'dayjs';
 
-import eventHub from '../../common/eventHub';
-import vueLazyLoad from '../../common/vueLazyLoad';
 import loadMoreButton from './loadMoreButton';
+import { EventDispatcher } from '../../utils/event-dispatcher';
 
 export default {
   template: '#t-slot-list',
@@ -100,12 +99,12 @@ export default {
         .done(function (data) {
           slot.record.isSaving = false;
           slot.record.isRecorded = true;
-          const msg = gon.I18n['messages.components.slot_list.tracked'];
-          return eventHub.$emit('flash:show', msg);
+          const message = gon.I18n['messages.components.slot_list.tracked'];
+          new EventDispatcher('flash:show', { message }).dispatch();
         })
         .fail(function (data) {
           slot.record.isSaving = false;
-          return eventHub.$emit('flash:show', data.responseJSON.message, 'alert');
+          new EventDispatcher('flash:show', { type: 'alert', message: data.responseJSON.message }).dispatch();
         });
     },
 
@@ -113,7 +112,6 @@ export default {
       this.slots = this.initSlots(this._pageObject().slots);
       this.hasNext = this.slots.length > 0;
       this.user = this._pageObject().user;
-      return this.$nextTick(() => vueLazyLoad.refresh());
     },
 
     updateSlotsSortType(callback) {

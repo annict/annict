@@ -2,6 +2,6 @@
 
 .c-work-action.row
   .col.pr-0.u-lh-0
-    c-status-selector.c-status-selector--small :work-id="#{work_id}" size="#{size}"
+    = render StatusSelectorComponent.new(work_id: work_id, small: true, page_category: "library-detail")
   .col.col-auto.pl-1
     c-impression-button :work-id="#{work_id}" size="#{size}"
