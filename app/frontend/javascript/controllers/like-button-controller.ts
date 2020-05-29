@@ -78,7 +78,7 @@ export default class extends Controller {
           this.isLiked = true;
         })
         .catch(() => {
-          $('.c-sign-up-modal').modal('show');
+          ($('.c-sign-up-modal') as any).modal('show');
         })
         .then(() => {
           this.isLoading = false;

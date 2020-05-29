@@ -64,7 +64,7 @@ export default class extends Controller {
           this.element.classList.remove('unselected');
         })
         .catch(() => {
-          $('.c-sign-up-modal').modal('show');
+          ($('.c-sign-up-modal') as any).modal('show');
           this.resetKind();
         })
         .then(() => {
