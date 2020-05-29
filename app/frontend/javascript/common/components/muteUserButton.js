@@ -2,6 +2,7 @@ import $ from 'jquery';
 import Vue from 'vue';
 
 import eventHub from '../../common/eventHub';
+import {EventDispatcher} from "../../utils/event-dispatcher";
 
 export default {
   template: '#t-mute-user-button',
@@ -24,8 +25,8 @@ export default {
           },
         }).done(() => {
           eventHub.$emit('muteUser:mute', this.userId);
-          const msg = gon.I18n['messages.components.mute_user_button.the_user_has_been_muted'];
-          return eventHub.$emit('flash:show', msg);
+          const message = gon.I18n['messages.components.mute_user_button.the_user_has_been_muted'];
+          new EventDispatcher('flash:show', { message }).dispatch();
         });
       }
     },

@@ -5,6 +5,6 @@ class SettingsController < ApplicationController
 
   def index
     return render(:index) unless device_pc?
-    redirect_to profile_path
+    redirect_to profile_setting_path
   end
 end

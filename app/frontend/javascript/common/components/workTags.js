@@ -1,5 +1,3 @@
-import _ from 'lodash';
-
 import eventHub from '../eventHub';
 
 export default {

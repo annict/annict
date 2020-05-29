@@ -28,34 +28,22 @@ en:
         work_record:
           created: "tracked"
           more: "Show %{n} records"
+      body:
+        view_full_text: View Full Text
       favorite_button:
         add_to_favorites: Add to Favorites
         added_to_favorites: Added to Favorites
         hint: If you add this %{resource_type} into your favorites, you'll get a notification when upcoming animes which is related to this %{resource_type} will be added to Annict.
-      privacy_policy_modal:
-        body_html: "Our <a href='/privacy?hide_privacy_policy_modal=true' target='_blank'>Privacy policy</a> has been updated. Please take a moment to review some changes to our policy. Let us know if you agree to them to continue using Annict."
-        changelog_title: Changelog
-        changelog_body: Updated a sentence related to Annict API.
-        title: Updates to our privacy policy
-      reaction_button:
-        kind:
-          thumbs_up:
-            exactly: Exactly
       sign_up_modal:
         body: You can use this feature after sign up.
-      sticky_message:
-        about: "Learn more"
-        sign_up: "Get started"
-        libraries_show:
-          body: Do you want to create own anime lists? Let's get started!
-        records_show:
-          body: Do you want to create own anime lists? Let's get started!
       timeline:
         more: Load More
     _empty:
       no_activities: No Activities
       no_characters: No Characters
       no_episodes: No Episodes
+      no_followers: No Followers
+      no_following: No Following Users
       no_organizations: No Organizations
       no_people: No People
       no_projects: No Projects
@@ -147,7 +135,6 @@ en:
       load_more_button:
         more: View more
       mute_user_button:
-        mute_this_user: Mute this user...
         the_user_has_been_muted: The user has been muted.
       slot_list:
         tracked: Tracked.

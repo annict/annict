@@ -1,8 +1,7 @@
 - title = "#{t('head.title.forum.posts.show', title: @post.title)} - Forum"
 - set_meta_tags(title: title, reverse: true, prefix: false)
-- breadcrumb :forum_post_detail, @post
 
-= render "partial_layouts/v2/default" do
+= render "partial_layouts/default" do
   = render "forum/application/subnav", post: @post
 
   .container.py-3.mb-3
@@ -17,18 +16,23 @@
         .c-card.p-3.mb-3
           .row.mb-3
             .col.col-auto.pr-0
-              = link_to user_path(@post.user.username) do
-                = ann_image_tag @post.user.profile, :image, size: "45x45", class: "rounded-circle"
+              = link_to profile_detail_path(@post.user.username) do
+                = render ProfileImageComponent.new(image_url_1x: ann_image_url(@post.user.profile, :image, size: "45x", ratio: "1:1"), alt: "@#{@post.user.username}")
             .col.pl-2
-              = link_to @post.user.profile.name, user_path(@post.user.username), class: "mr-2"
+              = link_to @post.user.profile.name, profile_detail_path(@post.user.username), class: "mr-2"
               = @post.user.role_badge
               .mt-1
                 = link_to forum_post_path(@post), class: "small text-muted", title: display_time(@post.created_at) do
                   = display_time(@post.created_at)
-          c-body :markdown="true" inline-template=""
-            .c-body__content
-              = @post.body
-          c-forum-edit-link.text-right.small :user-id="#{@post.user_id}" path="#{edit_forum_post_path(@post)}"
+
+          = render BodyComponent.new(markdown: true) do
+            = @post.body
+
+          - if user_signed_in? && current_user == @post.user
+            .text-right
+              = link_to edit_forum_post_path(@post), class: "small" do
+                = icon "pencil-alt", class: "mr-1"
+                = t "noun.edit"
 
         - if @comments.present?
           - @comments.each do |comment|
@@ -36,18 +40,23 @@
               - if comment.user
                 .row.mb-3
                   .col.col-auto.pr-0
-                    = link_to user_path(comment.user.username) do
-                      = ann_image_tag comment.user.profile, :image, size: "45x45", class: "rounded-circle"
+                    = link_to profile_detail_path(comment.user.username) do
+                      = render ProfileImageComponent.new(image_url_1x: ann_image_url(comment.user.profile, :image, size: "45x", ratio: "1:1"), alt: "@#{comment.user.username}")
                   .col.pl-2
-                    = link_to comment.user.profile.name, user_path(comment.user.username), class: "mr-2"
+                    = link_to comment.user.profile.name, profile_detail_path(comment.user.username), class: "mr-2"
                     = comment.user.role_badge
                     .mt-1
                       span.small.text-muted title="#{display_time(comment.created_at)}"
                         = display_time(comment.created_at)
-                c-body :markdown="true" inline-template=""
-                  .c-body__content
-                    = comment.body
-                c-forum-edit-link.text-right.small :user-id="#{comment.user_id}" path="#{edit_forum_post_comment_path(@post, comment)}"
+
+                = render BodyComponent.new(markdown: true) do
+                  = comment.body
+
+                - if user_signed_in? && current_user == comment.user
+                  .text-right
+                    = link_to edit_forum_post_comment_path(@post, comment), class: "small" do
+                      = icon "pencil-alt", class: "mr-1"
+                      = t "noun.edit"
               - else
                 = t "messages.forum.comments.deleted"
         - else
@@ -57,8 +66,3 @@
         .c-card.p-3.mb-3
           = render "forum/comments/form", comment: @comment
       .col-4
-
-    = render "application/components/breadcrumb"
-
-- content_for :js_templates
-  = render "application/js_templates/forum_edit_link"

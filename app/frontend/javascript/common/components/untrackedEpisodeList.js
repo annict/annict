@@ -1,8 +1,9 @@
 import $ from 'jquery';
-import _ from 'lodash';
+import each from 'lodash/each';
+import uniqueId from 'lodash/uniqueId';
+import findIndex from 'lodash/findIndex';
 
-import eventHub from '../../common/eventHub';
-import vueLazyLoad from '../../common/vueLazyLoad';
+import { EventDispatcher } from '../../utils/event-dispatcher';
 
 export default {
   template: '#t-untracked-episode-list',
@@ -18,14 +19,13 @@ export default {
 
   methods: {
     load() {
-      this.libraryEntries = _.each(this._latestStatusData().library_entries, this._initLibraryEntry);
+      this.libraryEntries = each(this._latestStatusData().library_entries, this._initLibraryEntry);
       this.user = this._latestStatusData().user;
       this.isLoading = false;
-      return this.$nextTick(() => vueLazyLoad.refresh());
     },
 
     filterNoNextEpisode(libraryEntries) {
-      return libraryEntries.filter(latestStatus => !!latestStatus.next_episode);
+      return libraryEntries.filter((latestStatus) => !!latestStatus.next_episode);
     },
 
     skipEpisode(latestStatus) {
@@ -33,7 +33,7 @@ export default {
         return $.ajax({
           method: 'PATCH',
           url: `/api/internal/library_entries/${latestStatus.id}/skip_episode`,
-        }).done(latestStatus => {
+        }).done((latestStatus) => {
           const index = this._getLibraryEntryIndex(latestStatus);
           return this.$set(this.libraryEntries, index, this._initLibraryEntry(latestStatus));
         });
@@ -47,7 +47,7 @@ export default {
 
       latestStatus.record.isSaving = true;
 
-      return $.ajax({
+      $.ajax({
         method: 'POST',
         url: `/api/internal/episodes/${latestStatus.next_episode.id}/records`,
         data: {
@@ -63,16 +63,16 @@ export default {
           return $.ajax({
             method: 'GET',
             url: `/api/internal/works/${latestStatus.work.id}/library_entry`,
-          }).done(newLibraryEntry => {
-            eventHub.$emit('flash:show', this._flashMessage(latestStatus));
+          }).done((newLibraryEntry) => {
+            new EventDispatcher('flash:show', { message: this._flashMessage(latestStatus) }).dispatch();
             const index = this._getLibraryEntryIndex(newLibraryEntry);
             return this.$set(this.libraryEntries, index, this._initLibraryEntry(newLibraryEntry));
           });
         })
-        .fail(function(data) {
+        .fail(function (data) {
           latestStatus.record.isSaving = false;
           const msg = (data.responseJSON != null ? data.responseJSON.message : undefined) || 'Error';
-          return eventHub.$emit('flash:show', msg, 'alert');
+          new EventDispatcher('flash:show', { type: 'alert', message: msg }).dispatch();
         });
     },
 
@@ -82,7 +82,7 @@ export default {
         isSaving: false,
         ratingState: null,
         isEditingBody: false,
-        uid: _.uniqueId(),
+        uid: uniqueId(),
         wordCount: 0,
         commentRows: 1,
       };
@@ -90,7 +90,7 @@ export default {
     },
 
     _getLibraryEntryIndex(latestStatus) {
-      return _.findIndex(this.libraryEntries, status => status.id === latestStatus.id);
+      return findIndex(this.libraryEntries, (status) => status.id === latestStatus.id);
     },
 
     _flashMessage(latestStatus) {

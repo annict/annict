@@ -1,7 +1,7 @@
 script#t-youtube-modal-player type="x-template"
   .c-video-modal-player
     .c-video-thumbnail @click="openModal"
-      .c-video-thumbnail__image v-lazy:background-image='{ src: thumbnailUrl }'
+      .c-video-thumbnail__image.js-lazy :data-bg="thumbnailUrl"
       = icon "play-circle", "far"
     .small v-if="videoTitle"
       | {{ videoTitle }}

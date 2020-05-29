@@ -1,11 +1,8 @@
 - title = t "head.title.work_records.edit"
 - set_meta_tags(title: title, og: { title: title }, reverse: true, prefix: false)
 
-- breadcrumb :edit_work_record, @work_record
-
-= render "partial_layouts/v2/default", page_category: "edit-record" do
+= render "partial_layouts/default", page_category: "edit-record" do
   .container.py-3.mb-3
-    = render "application/components/breadcrumb"
     .row
       .col-3.pr-0
         = render "works/sidebar", work: @work

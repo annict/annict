@@ -1,11 +1,11 @@
 .row
   .col-auto.pl-3.pr-0
-    = link_to user_path(work_record.user.username) do
+    = link_to profile_detail_path(work_record.user.username) do
       = ann_image_tag work_record.user.profile, :image, size: "50x50", class: "rounded-circle"
   .col
     .mb-3
       .text-left
-        = link_to work_record.user.profile.name, user_path(work_record.user.username)
+        = link_to work_record.user.profile.name, profile_detail_path(work_record.user.username)
         - if work_record.user.supporter? && !work_record.user.setting.hide_supporter_badge?
           span.badge.u-badge-supporter.ml-1
             = t "noun.supporter"
@@ -16,8 +16,8 @@
           small.ml-2.text-muted
             = icon "pencil-alt"
 
-    c-comment-guard inline-template="" :init-is-spoiler="#{is_spoiler == true}"
-      .p-work-records-show__content.clearfix @click="remove"
+    = render SpoilerGuardComponent.new(work_id: work_record.work_id) do
+      .p-work-records-show__content.clearfix
         - if work_record.rating_overall_state.present?
           .float-right.ml-4.mb-4.p-3.u-bg-black-000
             .small.font-weight-bold.text-center.mb-2
@@ -29,41 +29,40 @@
                     th.font-weight-normal
                       = t "noun.animation"
                     td
-                      c-rating-label :init-kind=="'#{work_record.rating_animation_state}'" v-show="!isSpoiler"
+                      = render RatingLabelComponent.new(kind: work_record.rating_animation_state)
                 - if work_record.rating_music_state.present?
                   tr
                     th.font-weight-normal
                       = t "noun.music"
                     td
-                      c-rating-label :init-kind=="'#{work_record.rating_music_state}'" v-show="!isSpoiler"
+                      = render RatingLabelComponent.new(kind: work_record.rating_music_state)
                 - if work_record.rating_story_state.present?
                   tr
                     th.font-weight-normal
                       = t "noun.story"
                     td
-                      c-rating-label :init-kind=="'#{work_record.rating_story_state}'" v-show="!isSpoiler"
+                      = render RatingLabelComponent.new(kind: work_record.rating_story_state)
                 - if work_record.rating_character_state.present?
                   tr
                     th.font-weight-normal
                       = t "noun.character"
                     td
-                      c-rating-label :init-kind=="'#{work_record.rating_character_state}'" v-show="!isSpoiler"
+                      = render RatingLabelComponent.new(kind: work_record.rating_character_state)
                 tr
                   th.font-weight-normal
                     = t "noun.overall"
                   td
-                    c-rating-label :init-kind=="'#{work_record.rating_overall_state}'" v-show="!isSpoiler"
-        .c-body.mb-3
-          c-body inline-template=""
-            .c-body__content
-              = work_record.body
+                    = render RatingLabelComponent.new(kind: work_record.rating_overall_state)
+        .mb-3
+          = render BodyComponent.new(height: 300, markdown: false) do
+            = work_record.body
 
     .row.align-items-center
       .col
         .text-right
-          c-share-button-twitter.mr-2 text="#{t("head.title.work_records.show", profile_name: work_record.user.profile.name, username: work_record.user.username, work_title: work_record.work.local_title)}" url="#{local_url}#{record_path(work_record.user.username, work_record.record)}" hashtags="#{work_record.work.twitter_hashtag.presence || ''}"
-          c-share-button-facebook.mr-2 url="#{local_url}#{record_path(work_record.user.username, work_record.record)}"
-          c-like-button.ml-2 resource-name="WorkRecord" :resource-id="#{work_record.id}" :init-likes-count="#{work_record.likes_count}" :is-signed-in="#{user_signed_in?}"
+          = render ShareToTwitterButtonComponent.new(text: t("head.title.work_records.show", profile_name: work_record.user.profile.name, username: work_record.user.username, work_title: work_record.work.local_title), url: "#{local_url}#{record_path(work_record.user.username, work_record.record)}", hashtags: work_record.work.twitter_hashtag.presence || '', class_name: "mr-2")
+          = render ShareToFacebookButtonComponent.new(url: "#{local_url}#{record_path(work_record.user.username, work_record.record)}", class_name: "mr-2")
+          = render LikeButtonComponent.new(resource_name: "WorkRecord", resource_id: work_record.id, likes_count: work_record.likes_count, page_category: page_category, class_name: "ml-2")
 
     - if policy(work_record).update?
       .small.text-right.mt-2

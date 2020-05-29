@@ -5,12 +5,12 @@ class ProfilesController < ApplicationController
 
   def update
     if current_user.profile.update(profile_params)
-      redirect_to profile_path, notice: t("messages.profiles.saved")
+      redirect_to profile_setting_path, notice: t("messages.profiles.saved")
     else
       render :show
     end
   end
-  
+
   private
 
   def profile_params

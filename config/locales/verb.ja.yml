@@ -12,6 +12,7 @@ ja:
     follow: フォロー
     hide: 隠す
     more: もっと見る
+    mute: ミュートする
     next: 次へ
     post: 投稿する
     previous: 前へ
@@ -26,6 +27,7 @@ ja:
     track: 記録する
     tweet: ツイートする
     uncheck_all: 全て解除する
+    unmute: ミュートを解除する
     update: 更新する
     upload: アップロード
     view: 見る

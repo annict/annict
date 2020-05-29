@@ -3,11 +3,11 @@
   .p-profile-header__info.align-self-end.py-3
     .container
       .row
-        .col.u-flex-grow-0
-          = link_to user_path(username: user.username) do
-            = ann_image_tag(user.profile, :image, size: "80x80", class: "p-profile-header__avatar rounded-circle")
+        .col-auto
+          = link_to profile_detail_path(username: user.username) do
+            = render ProfileImageComponent.new(image_url_1x: ann_image_url(user.profile, :image, size: "80x", ratio: "1:1"), alt: "@#{user.username}", class_name: "p-profile-header__avatar", img_options: { size: "80x80" })
         .col.pt-2.pl-0
           h1
-            = link_to user.profile.name, user_path(username: user.username), class: "font-weight-bold text-white"
+            = link_to user.profile.name, profile_detail_path(username: user.username), class: "font-weight-bold text-white"
           .mt-2
-            = link_to "@#{user.username}", user_path(username: user.username), class: "text-white"
+            = link_to "@#{user.username}", profile_detail_path(username: user.username), class: "text-white"

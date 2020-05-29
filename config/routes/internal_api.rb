@@ -9,11 +9,9 @@ namespace :api do
     resource :slots_sort_type, only: [:update]
     resource :records_sort_type, only: %i(update)
     resource :search, only: [:show]
-    resources :app_data, only: %i(index)
     resources :characters, only: [:index]
     resources :mute_users, only: [:create]
     resources :organizations, only: [:index]
-    resources :page_data, only: %i(index)
     resources :people, only: [:index]
     resources :receptions, only: %i(create destroy)
     resources :series_list, only: %i(index)
@@ -74,9 +72,11 @@ scope module: :api do
   scope module: :internal do
     constraints format: "json" do
       # rubocop:disable Layout/ExtraSpacing, Layout/LineLength
+      match "/api/internal/following",         via: :get, as: :internal_api_following_list,        to: "following#index"
       match "/api/internal/library_entries",   via: :get, as: :internal_api_library_entry_list,    to: "library_entries#index"
       match "/api/internal/likes",             via: :get, as: :internal_api_like_list,             to: "likes#index"
       match "/api/internal/tracked_resources", via: :get, as: :internal_api_tracked_resource_list, to: "tracked_resources#index"
+      match "/api/internal/work_friends",      via: :get, as: :internal_api_work_friend_list,      to: "work_friends#index"
       # rubocop:enable Layout/ExtraSpacing, Layout/LineLength
     end
 

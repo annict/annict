@@ -3,9 +3,8 @@
 - keywords = meta_keywords(@work.local_title)
 - image_url = ann_image_url(@work.work_image, :image, size: "640x", ratio: "3:4")
 - set_meta_tags(title: title, description: description, keywords: keywords, og: { description: description, image: image_url }, twitter: { description: description, image: image_url }, reverse: true, prefix: false)
-- breadcrumb :episode_record_detail, @episode_record
 
-= render "partial_layouts/v2/default", page_category: "record-detail" do
+= render "partial_layouts/default", page_category: "record-detail" do
   .container.py-3
     .row
       .col-9.pr-0
@@ -30,19 +29,19 @@
                 .c-record-comment
                   .row
                     .c-record-comment__avatar.col.pr-0.u-flex-grow-0
-                      = link_to user_path(comment.user.username) do
+                      = link_to profile_detail_path(comment.user.username) do
                         = ann_image_tag comment.user.profile, :image, size: "50x50", class: "rounded-circle"
                     .col
                       .row.mb-2
                         .col
-                          = link_to comment.user.profile.name, user_path(comment.user.username)
+                          = link_to comment.user.profile.name, profile_detail_path(comment.user.username)
                         .col
                           .small.text-right
                             = local_time_ago_in_words(comment.created_at)
-                      c-body inline-template=""
-                        .c-body__content = comment.body
+                      = render BodyComponent.new(height: 300, markdown: false) do
+                        = comment.body
                   .text-right
-                    c-like-button resource-name="Comment" :resource-id="#{comment.id}" :init-likes-count="#{comment.likes_count}" :is-signed-in="#{user_signed_in?}"
+                    = render LikeButtonComponent.new(resource_name: "Comment", resource_id: comment.id, likes_count: comment.likes_count, page_category: page_category)
                   - if policy(comment).update?
                     .small.text-right.mb-2
                       = link_to edit_comment_path(comment), class: "mr-2" do
@@ -62,13 +61,11 @@
               = @work.work_image.asin_or_copyright_text
         h2.font-weight-bold.mb-3
           = link_to @work.local_title, work_path(@work), class: "u-text-body"
-        c-status-selector :work-id="#{@work.id}"
+        = render StatusSelectorComponent.new(work_id: @work.id, page_category: page_category)
         .mb-3
           = link_to work_path(@work), class: "btn btn-primary w-100" do
             = icon "angle-right"
             = t "verb.view_work_detail"
-
-    = render "application/components/breadcrumb"
 
 - content_for :js_templates do
   = render "application/js_templates/mute_user_button"

@@ -10,8 +10,8 @@ class WorkRecordEntity < ApplicationEntity
   attribute? :body, Types::String.optional
   attribute? :body_html, Types::String.optional
   attribute? :likes_count, Types::Integer
-  attribute? :created_at, Types::Time
-  attribute? :modified_at, Types::Time.optional
+  attribute? :created_at, Types::Params::Time
+  attribute? :modified_at, Types::Params::Time.optional
   attribute? :user, UserEntity
   attribute? :record, RecordEntity
   attribute? :work, WorkEntity

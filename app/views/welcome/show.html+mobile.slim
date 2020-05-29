@@ -1,7 +1,7 @@
 - title = t "head.title.home.index_guest"
 - set_meta_tags(title: title, reverse: false)
 
-= render "partial_layouts/v2/default", page_category: "guest-home" do
+= render "partial_layouts/default", page_category: "guest-home" do
   .p-top-hero
     .p-top-hero__bg-image style="background-image: url(#{ann_image_url(@cover_image_work.work_image, :image, size: '640x', ratio: "4:3", blur: 40)});"
     .p-top-hero__content.text-center.p-3

@@ -1,9 +1,7 @@
 - title = t "head.title.userland.projects.show", name: @project.name
 - set_meta_tags(title: title, reverse: true, prefix: false)
 
-- breadcrumb :userland_project_detail, @project
-
-= render "partial_layouts/v2/default" do
+= render "partial_layouts/default" do
   .c-card.mb-3
     .container.py-3
       .text-center
@@ -34,5 +32,3 @@
     = t "noun.development_members"
   .c-card.mb-3
     = render "users/user_list", users: @project.users.only_kept
-
-  = render "application/components/breadcrumb"

@@ -33,7 +33,11 @@ module Canary
         field :description_source, String, null: false
         field :description_source_en, String, null: false
         field :favorite_users_count, Integer, null: false
-        field :series, Canary::Types::Objects::SeriesType, null: false
+        field :series, Canary::Types::Objects::SeriesType, null: true
+
+        def series
+          Canary::RecordLoader.for(Series).load(object.series_id)
+        end
       end
     end
   end

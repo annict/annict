@@ -1,27 +1,29 @@
-.c-slidable-subnav {
-  overflow-y: hidden;
+@include media-breakpoint-down(lg) {
+  .c-slidable-subnav {
+    overflow-y: hidden;
 
-  .list-inline {
-    margin-bottom: 0;
-    overflow-x: auto;
-    white-space: nowrap;
+    .list-inline {
+      margin-bottom: 0;
+      overflow-x: auto;
+      white-space: nowrap;
 
-    &::-webkit-scrollbar {
-      display: none;
+      &::-webkit-scrollbar {
+        display: none;
+      }
+
+      .list-inline-item:not(:last-child) {
+        margin-right: 1rem;
+      }
     }
 
-    .list-inline-item:not(:last-child) {
-      margin-right: 1rem;
-    }
-  }
+    &__link {
+      display: inline-block;
+      height: 37px;
+      line-height: 37px;
 
-  &__link {
-    display: inline-block;
-    height: 37px;
-    line-height: 37px;
-
-    &--active {
-      border-bottom: solid .15rem $ann-color-mizuho;
+      &--active {
+        border-bottom: solid .15rem $ann-color-mizuho;
+      }
     }
   }
 }

@@ -75,6 +75,9 @@ class WorksController < ApplicationController
       @channels = Channel.only_kept.with_vod
     end
 
-    store_page_params(works: @works, display_option: @display_option)
+    set_user_data_fetcher_params(
+      work_ids: @works.pluck(:id),
+      display_option: @display_option
+    )
   end
 end

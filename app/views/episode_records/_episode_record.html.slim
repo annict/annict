@@ -2,11 +2,11 @@
   c-record inline-template="" :user-id="#{episode_record.user.id}"
     .row
       .c-record__avatar.col.pr-0
-        = link_to user_path(episode_record.user.username) do
+        = link_to profile_detail_path(episode_record.user.username) do
           = ann_image_tag episode_record.user.profile, :image, size: "50x50", class: "rounded-circle"
       .col
         .text-left
-          = link_to episode_record.user.profile.name, user_path(episode_record.user.username)
+          = link_to episode_record.user.profile.name, profile_detail_path(episode_record.user.username)
           - if episode_record.user.supporter? && !episode_record.user.setting.hide_supporter_badge?
             span.badge.u-badge-supporter.ml-1
               = t "noun.supporter"
@@ -16,17 +16,15 @@
           - if episode_record.modify_body?
             small.ml-1.text-muted
               = icon "pencil-alt"
-        c-comment-guard inline-template="" :init-is-spoiler="#{is_spoiler == true}"
-          .c-record__content
-            - if episode_record.rating.present?
-              c-rating-label init-kind="#{episode_record.rating_to_rating_state}" v-show="!isSpoiler"
-            - elsif episode_record.rating_state.present?
-              c-rating-label init-kind="#{episode_record.rating_state}" v-show="!isSpoiler"
-            .c-body @click="remove"
-              c-body inline-template=""
-                .c-body__content = episode_record.body
+        = render SpoilerGuardComponent.new(work_id: episode_record.work_id, episode_id: episode_record.episode_id) do
+          - if episode_record.rating.present?
+            = render RatingLabelComponent.new(kind: episode_record.rating_to_rating_state)
+          - elsif episode_record.rating_state.present?
+            = render RatingLabelComponent.new(kind: episode_record.rating_state)
+          = render BodyComponent.new(height: 300, markdown: false) do
+            = episode_record.body
         .text-right
-          c-like-button resource-name="EpisodeRecord" :resource-id="#{episode_record.id}" :init-likes-count="#{episode_record.likes_count}" :is-signed-in="#{user_signed_in?}"
+          = render LikeButtonComponent.new(resource_name: "EpisodeRecord", resource_id: episode_record.id, likes_count: episode_record.likes_count, page_category: "episode-detail")
           = link_to record_path(episode_record.user.username, episode_record.record), class: "d-inline-block ml-2" do
             = icon "comment", "far", class: "mr-1"
             = episode_record.comments_count

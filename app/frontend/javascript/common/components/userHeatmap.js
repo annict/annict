@@ -1,9 +1,8 @@
 import CalHeatMap from 'cal-heatmap';
-import Vue from 'vue';
-import moment from 'moment';
+import dayjs from 'dayjs';
 
 export default {
-  template: "<div class='c-user-heatmap'></div>",
+  template: `<div class="c-user-heatmap"></div>`,
 
   props: {
     username: {
@@ -21,12 +20,12 @@ export default {
       '&end_date={{d:end}}',
     ].join('');
 
-    return cal.init({
+    cal.init({
       itemSelector: '.c-user-heatmap',
       domain: 'month',
       range: 6,
       domainLabelFormat: '%Y-%m',
-      start: moment().subtract(5, 'month').toDate(),
+      start: dayjs().subtract(5, 'month').toDate(),
       data: requestPath,
       tooltip: true,
       legend: [2, 4, 6, 8],

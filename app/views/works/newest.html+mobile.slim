@@ -3,17 +3,15 @@
 - keywords = meta_keywords
 - set_meta_tags(title: title, description: description, keywords: keywords, og: { description: description }, twitter: { description: description }, reverse: true, prefix: false)
 
-- breadcrumb :newest_works
-
-= render "partial_layouts/v2/default", page_category: "work-list" do
+= render "partial_layouts/default", page_category: "work-list" do
   h1.h2.text-center.my-3
     = title
 
   .px-3
     .row.align-items-center.mb-3
       .col.pr-0
-        c-share-button-twitter.mr-2 text="#{title}" url="#{local_url}#{newest_works_path}"
-        c-share-button-facebook url="#{local_url}#{newest_works_path}"
+        = render ShareToTwitterButtonComponent.new(text: title, url: "#{local_url}#{newest_works_path}", class_name: "mr-2")
+        = render ShareToFacebookButtonComponent.new(url: "#{local_url}#{newest_works_path}")
       .col.text-right
         = render "display_option_buttons", display_option: @display_option
 
@@ -22,9 +20,5 @@
     .mb-3.text-center
       = paginate @works, window: 2
 
-  = render "application/components/breadcrumb"
-
 - content_for :js_templates do
-  = render "application/js_templates/omitted_synopsis"
-  = render "application/js_templates/work_friends"
   = render "application/js_templates/youtube_modal_player"

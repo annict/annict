@@ -3,7 +3,7 @@
 module Api
   module Internal
     class LikesController < Api::Internal::ApplicationController
-      before_action :authenticate_user!, only: %i(create unlike)
+      before_action :authenticate_user!, only: %i(unlike)
 
       def index
         return render(json: []) unless user_signed_in?
@@ -19,6 +19,8 @@ module Api
       end
 
       def create
+        return head(:unauthorized) unless user_signed_in?
+
         recipient = params[:recipient_type].constantize.find(params[:recipient_id])
         current_user.like(recipient)
         ga_client.page_category = params[:page_category]

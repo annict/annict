@@ -1,7 +1,7 @@
 <div class="c-timeline__work-record-activity">
   <div class="row mb-2">
     <div class="col-auto pr-0">
-      <%= link_to user_path(activity_group.user.username) do %>
+      <%= link_to profile_detail_path(activity_group.user.username) do %>
         <%= render ProfileImageComponent.new(
             image_url_1x: activity_group.user.avatar_url,
             alt: "@#{activity_group.user.username}"
@@ -11,42 +11,47 @@
 
     <div class="col">
       <span class="c-timeline__user-name">
-        <%= link_to activity_group.user.name, user_path(activity_group.user.username), class: "text-body font-weight-bold u-link" %>
+        <%= link_to activity_group.user.name, profile_detail_path(activity_group.user.username), class: "text-body font-weight-bold u-link" %>
       </span>
 
       <small class="mr-1">
         <%= t "messages._components.activities.work_record.created" %>
       </small>
 
-      <c-relative-time class="small text-muted" time="<%= activity_group.created_at.iso8601 %>"></c-relative-time>
+      <%= render RelativeTimeComponent.new(time: activity_group.created_at.iso8601, class_name: "small text-muted") %>
     </div>
   </div>
 
   <% if activity_group.single %>
-    <c-spoiler-guard :work-id="<%= work_records.first.work.id %>">
+    <%= render SpoilerGuardComponent.new(work_id: work_records.first.work.id) do %>
       <div>
         <% if work_records.first.rating_overall_state %>
-          <c-rating-label class="mb-1" init-kind="<%= work_records.first.rating_overall_state.downcase %>"></c-rating-label>
+          <%= render RatingLabelComponent.new(kind: work_records.first.rating_overall_state.downcase, class_name: "mb-1") %>
         <% end %>
 
-        <div class="c-body">
-          <%= work_records.first.body_html.html_safe %>
-        </div>
+        <%= render BodyComponent.new(height: 300, markdown: false) do %>
+          <%= work_records.first.body %>
+        <% end %>
       </div>
-    </c-spoiler-guard>
+    <% end %>
   <% end %>
 
-  <%= render WorkRecordActivityCardsComponent.new(activity_group: activity_group) %>
+  <div class="c-timeline__activity-cards">
+    <%= render WorkRecordActivityCardsComponent.new(activity_group: activity_group) %>
+  </div>
 
   <% if activity_group.activities_count > 2 %>
-    <c-activity-more-button
-      activity-group-id="<%= activity_group.id %>"
-      cursor="<%= activity_group.activities_page_info.end_cursor %>"
+    <div
+      class="text-center"
+      data-action="click->timeline-activity#next"
+      data-target="timeline-activity.nextButton"
     >
-      <i class="fal fa-chevron-double-down"></i>
-      <%= t "messages._components.activities.work_record.more", n: activity_group.activities_count - 2 %>
-    </c-activity-more-button>
-
-    <c-activity-more-content activity-group-id="<%= activity_group.id %>"></c-activity-more-content>
+      <div class="mb-3 text-center">
+        <div class="c-activity-more-button btn btn-outline-secondary btn-small py-1">
+          <i class="fal fa-chevron-double-down"></i>
+          <%= t "messages._components.activities.episode_record.more", n: activity_group.activities_count - 2 %>
+        </div>
+      </div>
+    </div>
   <% end %>
 </div>

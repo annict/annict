@@ -5,6 +5,6 @@ class CastEntity < ApplicationEntity
 
   attribute? :accurate_name, Types::String
   attribute? :accurate_name_en, Types::String.optional
-  attribute? :character, CastCharacterEntity
+  attribute? :character, CharacterEntity
   attribute? :person, PersonEntity
 end

@@ -71,7 +71,7 @@ h1.h2.font-weight-bold
     .row.px-3
       - character_favorites.each do |character_favorite|
         .col.col-auto.pl-0.pr-2.pb-2
-          = link_to user_path(character_favorite.user.username) do
+          = link_to profile_detail_path(character_favorite.user.username) do
             = ann_image_tag(character_favorite.user.profile, :image, size: "30x30", class: "rounded-circle", alt: character_favorite.user.name_with_username, title: character_favorite.user.name_with_username)
 
     - if character_favorites.length > 30

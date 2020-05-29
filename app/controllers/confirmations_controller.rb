@@ -7,7 +7,7 @@ class ConfirmationsController < ApplicationController
     if user.errors.empty?
       redirect_to new_user_session_path, notice: t("messages.confirmations.confirmed")
     else
-      redirect_to root_path, danger: t("messages.confirmations.failure")
+      redirect_to root_path, alert: t("messages.confirmations.failure")
     end
   end
 end

@@ -1,9 +1,7 @@
 - title = t "head.title.user_work_tags.show", profile_name: @user.profile.name, username: @user.username, tag_name: @tag.name
 - set_meta_tags(title: title, reverse: true, prefix: false)
 
-- breadcrumb :user_work_tag_detail, @user, @tag
-
-= render "partial_layouts/v2/default", page_category: "user-work-tag-detail" do
+= render "partial_layouts/default", page_category: "user-work-tag-detail" do
   .container.py-3
     .row
       .col-8.pr-0
@@ -13,9 +11,9 @@
               = link_to t("messages.user_work_tags.anime_list_tagged", tag_name: @tag.name), user_work_tag_path(@user.username, @tag.name), class: "u-text-body"
             .small
               span.mr-1 by
-              = link_to @user.profile.name, user_path(username: @user.username), class: "mr-1"
+              = link_to @user.profile.name, profile_detail_path(username: @user.username), class: "mr-1"
               | (
-              = link_to "@#{@user.username}", user_path(username: @user.username)
+              = link_to "@#{@user.username}", profile_detail_path(username: @user.username)
               | )
             / - if @taggable.description.present?
             /   = @taggable.description
@@ -42,28 +40,25 @@
             .row.mt-3
               .col
                 .text-right
-                  c-share-button-twitter.mr-2 text="#{title}" url="#{local_url}#{user_work_tag_path(@user.username, @tag.name)}"
-                  c-share-button-facebook.mr-2 url="#{local_url}#{user_work_tag_path(@user.username, @tag.name)}"
+                  = render ShareToTwitterButtonComponent.new(text: title, url: "#{local_url}#{user_work_tag_path(@user.username, @tag.name)}", class_name: "mr-2")
+                  = render ShareToFacebookButtonComponent.new(url: "#{local_url}#{user_work_tag_path(@user.username, @tag.name)}")
       .col-4
         .c-card.container.py-3
           .row.align-items-center
             .col.col-auto
-              = link_to user_path(username: @user.username) do
+              = link_to profile_detail_path(username: @user.username) do
                 = ann_image_tag(@user.profile, :image, size: "65x65", class: "img-thumbnail rounded-circle")
             .col.pl-0
               .text-left
-                = link_to @user.profile.name, user_path(username: @user.username), class: "mr-1"
+                = link_to @user.profile.name, profile_detail_path(username: @user.username), class: "mr-1"
                 | (
-                = link_to "@#{@user.username}", user_path(username: @user.username)
+                = link_to "@#{@user.username}", profile_detail_path(username: @user.username)
                 | )
-
-    = render "application/components/breadcrumb"
 
 c-impression-button-modal
 
 - content_for :js_templates do
   = render "application/js_templates/impression_button_modal"
   = render "application/js_templates/impression_button"
-  = render "application/js_templates/reaction_button"
   = render "application/js_templates/work_comment"
   = render "application/js_templates/work_tags"

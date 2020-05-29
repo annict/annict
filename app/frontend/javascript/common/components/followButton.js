@@ -1,77 +1,87 @@
 import $ from 'jquery';
 
 export default {
-  template: '#t-follow-button',
+  template: `
+    <div
+      class="c-follow-button btn"
+      :class="{ 'u-btn-outline-green': !isFollowing, 'u-btn-green': isFollowing, 'c-spinner': isSaving }"
+      @click="toggle"
+    >
+      <i class="fa mr-2" :class="{ 'fa-plus': !isFollowing, 'fa-check': isFollowing }"></i>
+      <span>
+        {{ buttonText }}
+      </span>
+    </div>
+  `,
 
   props: {
-    username: {
-      type: String,
+    userId: {
+      type: Number,
       required: true,
-    },
-    initIsFollowing: {
-      type: Boolean,
-      required: true,
-    },
-    isSmall: {
-      type: Boolean,
-      default: false,
-    },
-    isSignedIn: {
-      type: Boolean,
-      default: false,
     },
   },
 
   data() {
     return {
-      isFollowing: this.initIsFollowing,
+      isFollowing: false,
       isSaving: false,
     };
   },
 
   computed: {
+    i18n() {
+      return AnnConfig.i18n;
+    },
+
     buttonText() {
       if (this.isFollowing) {
-        return window.gon.I18n['noun.following'];
+        return this.i18n.noun.following;
       } else {
-        return window.gon.I18n['verb.follow'];
+        return this.i18n.verb.follow;
       }
     },
   },
 
   methods: {
     toggle() {
-      if (!this.isSignedIn) {
-        $('.c-sign-up-modal').modal('show');
-        return;
-      }
-
       this.isSaving = true;
 
       if (this.isFollowing) {
-        return $.ajax({
+        $.ajax({
           method: 'POST',
           url: '/api/internal/follows/unfollow',
           data: {
-            username: this.username,
+            user_id: this.userId,
           },
         }).done(() => {
           this.isFollowing = false;
-          return (this.isSaving = false);
+          this.isSaving = false;
         });
       } else {
-        return $.ajax({
+        $.ajax({
           method: 'POST',
           url: '/api/internal/follows',
           data: {
-            username: this.username,
-            page_category: gon.page.category,
+            user_id: this.userId,
           },
-        }).done(() => {
-          this.isFollowing = true;
-          return (this.isSaving = false);
-        });
+        })
+          .done(() => {
+            this.isFollowing = true;
+            this.isSaving = false;
+          })
+          .fail(() => {
+            $('.c-sign-up-modal').modal('show');
+            this.isSaving = false;
+          });
       }
     },
+  },
+
+  mounted() {
+    document.addEventListener('user-data-fetcher:following:fetched', ({ detail: { following } }) => {
+      this.isFollowing = !!following.filter((f) => {
+        return f.user_id === this.userId;
+      })[0];
+    });
   },
 };

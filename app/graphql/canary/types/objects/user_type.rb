@@ -23,16 +23,20 @@ module Canary
         field :viewer_is_following, Boolean, null: false
         field :is_supporter, Boolean, null: false
         field :is_committer, Boolean, null: false
-        field :records_count, Integer, null: false
-        field :followings_count, Integer, null: false
-        field :followers_count, Integer, null: false
-        field :wanna_watch_count, Integer, null: false
-        field :watching_count, Integer, null: false
-        field :watched_count, Integer, null: false
-        field :on_hold_count, Integer, null: false
-        field :stop_watching_count, Integer, null: false
         field :locale, String, null: true
+        field :display_supporter_badge, Boolean, null: false
+        field :records_count, Integer, null: false
+        field :following_count, Integer, null: false
+        field :followers_count, Integer, null: false
+        field :plan_to_watch_works_count, Integer, null: false
+        field :watching_works_count, Integer, null: false
+        field :completed_works_count, Integer, null: false
+        field :on_hold_works_count, Integer, null: false
+        field :dropped_works_count, Integer, null: false
         field :notifications_count, Integer, null: true
+        field :character_favorites_count, Integer, null: false
+        field :person_favorites_count, Integer, null: false
+        field :organization_favorites_count, Integer, null: false
         field :created_at, Canary::Types::Scalars::DateTime, null: false
         field :following, Canary::Types::Objects::UserType.connection_type, null: true
         field :followers, Canary::Types::Objects::UserType.connection_type, null: true
@@ -71,12 +75,28 @@ module Canary
           argument :order_by, Canary::Types::InputObjects::SlotOrder, required: false
         end
 
+        field :character_favorites, Canary::Types::Objects::CharacterFavoriteType.connection_type, null: true do
+          argument :order_by, Canary::Types::InputObjects::CharacterFavoriteOrder, required: false
+        end
+
+        field :cast_favorites, Canary::Types::Objects::PersonFavoriteType.connection_type, null: true do
+          argument :order_by, Canary::Types::InputObjects::PersonFavoriteOrder, required: false
+        end
+
+        field :staff_favorites, Canary::Types::Objects::PersonFavoriteType.connection_type, null: true do
+          argument :order_by, Canary::Types::InputObjects::PersonFavoriteOrder, required: false
+        end
+
+        field :organization_favorites, Canary::Types::Objects::OrganizationFavoriteType.connection_type, null: true do
+          argument :order_by, Canary::Types::InputObjects::OrganizationFavoriteOrder, required: false
+        end
+
         def name
-          Canary::RecordBelongsToUserLoader.for(Profile).load(object.id).then(&:name)
+          Canary::RecordLoader.for(Profile, column: :user_id).load(object.id).then(&:name)
         end
 
         def description
-          object.profile.description
+          Canary::RecordLoader.for(Profile, column: :user_id).load(object.id).then(&:description)
         end
 
         def url
@@ -84,20 +104,20 @@ module Canary
         end
 
         def avatar_url(size:)
-          Canary::RecordBelongsToUserLoader.for(Profile).load(object.id).then do |profile|
+          Canary::RecordLoader.for(Profile, column: :user_id).load(object.id).then do |profile|
             api_user_avatar_url(profile, size)
           end
         end
 
         def background_image_url
-          ann_api_assets_background_image_url(object.profile)
+          Canary::RecordLoader.for(Profile, column: :user_id).load(object.id).then do |profile|
+            ann_api_assets_background_image_url(profile)
+          end
         end
 
         def is_supporter
-          return object.supporter? if context[:viewer] == object
-
-          Canary::RecordBelongsToUserLoader.for(Setting).load(object.id).then do |setting|
-            object.supporter? && setting.hide_supporter_badge?
+          Canary::RecordLoader.for(Setting, column: :user_id).load(object.id).then do |setting|
+            context[:viewer] == object ? object.supporter? : object.supporter? && !setting.hide_supporter_badge?
           end
         end
 
@@ -105,36 +125,10 @@ module Canary
           object.committer?
         end
 
-        def records_count
-          object.episode_records_count
-        end
-
-        def followings_count
-          object.followings.only_kept.count
-        end
-
-        def followers_count
-          object.followers.only_kept.count
-        end
-
-        def wanna_watch_count
-          object.library_entries.count_on(:wanna_watch)
-        end
-
-        def watching_count
-          object.library_entries.count_on(:watching)
-        end
-
-        def watched_count
-          object.library_entries.count_on(:watched)
-        end
-
-        def on_hold_count
-          object.library_entries.count_on(:on_hold)
-        end
-
-        def stop_watching_count
-          object.library_entries.count_on(:stop_watching)
+        def display_supporter_badge
+          Canary::RecordLoader.for(Setting, column: :user_id).load(object.id).then do |setting|
+            context[:viewer] == object ? !setting.hide_supporter_badge? : object.supporter? && !setting.hide_supporter_badge?
+          end
         end
 
         def viewer_can_follow
@@ -210,6 +204,26 @@ module Canary
             watched: watched,
             order: build_order(order_by)
           ).call
+        end
+
+        def character_favorites(order_by: nil)
+          order = build_order(order_by)
+          object.character_favorites.order(order.field => order.direction)
+        end
+
+        def cast_favorites(order_by: nil)
+          order = build_order(order_by)
+          object.person_favorites.with_cast.order(order.field => order.direction)
+        end
+
+        def staff_favorites(order_by: nil)
+          order = build_order(order_by)
+          object.person_favorites.with_staff.order(order.field => order.direction)
+        end
+
+        def organization_favorites(order_by: nil)
+          order = build_order(order_by)
+          object.organization_favorites.order(order.field => order.direction)
         end
       end
     end

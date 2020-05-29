@@ -1,7 +1,7 @@
-<c-tab-bar class="bg-white" v-slot="tabBar">
+<div class="c-tab-bar bg-white" data-controller="tab-bar">
   <div class="d-block h-100 navbar navbar-expand navbar-white px-0">
     <ul class="align-items-center h-100 justify-content-around navbar-nav">
-      <li class="col nav-item px-0 text-center" v-on:click.prevent="tabBar.showSidebar">
+      <li class="col nav-item px-0 text-center" data-action="click->tab-bar#showSidebar">
         <%= link_to "#", class: "text-dark" do %>
           <i class="fal fa-bars"></i>
 
@@ -84,4 +84,4 @@
       <% end %>
     </ul>
   </div>
-</c-tab-bar>
+</div>

@@ -33,33 +33,33 @@ module ApplicationHelper
     I18n.locale == :ja ? "@AnnictJP" : "@anannict"
   end
 
-  def show_privacy_policy_modal?
-    user_signed_in? && !current_user.setting.privacy_policy_agreed?
-  end
-
   def annict_config
     config = {
-      facebook: {
-        appId: ENV.fetch("FACEBOOK_APP_ID")
+      domain: locale == :ja ? ENV.fetch("ANNICT_JP_DOMAIN") : ENV.fetch("ANNICT_DOMAIN"),
+      flash: {
+        type: flash.keys.first,
+        message: flash[flash.keys.first]
       },
       i18n: {
+        messages: {
+          areYouSure: t("messages._common.are_you_sure"),
+          userHasBeenMuted: t("messages.components.mute_user_button.the_user_has_been_muted")
+        },
         noun: {
-          share: t("noun.share"),
-          signIn: t("noun.sign_in"),
-          signUp: t("noun.sign_up"),
-          tweet: t("noun.tweet")
+          following: t("noun.following")
         },
-        ratingState: {
-          average: t("enumerize.episode_record.rating_state.average"),
-          bad: t("enumerize.episode_record.rating_state.bad"),
-          good: t("enumerize.episode_record.rating_state.good"),
-          great: t("enumerize.episode_record.rating_state.great")
-        },
-        signUpModal: {
-          body: t("messages._components.sign_up_modal.body")
+        verb: {
+          follow: t("verb.follow"),
+          mute: t("verb.mute"),
+          unmute: t("verb.unmute")
         }
       },
-      statusOptions: Status.kind.options.insert(0, [t("messages.components.status_selector.select_status"), "no_select"])
+      rails: {
+        env: Rails.env
+      },
+      viewer: {
+        locale: locale,
+      }
     }.freeze
 
     javascript_tag "window.AnnConfig = #{config.to_json.html_safe};"

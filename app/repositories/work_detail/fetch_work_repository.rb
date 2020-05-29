@@ -18,7 +18,7 @@ module WorkDetail
         season_year: node["seasonYear"],
         season_type: node["seasonType"]&.downcase,
         season_slug: node["seasonSlug"],
-        started_on: node["startedOn"] ? Date.parse(node["startedOn"]) : nil,
+        started_on: node["startedOn"],
         episodes_count: node["episodesCount"],
         watchers_count: node["watchersCount"],
         satisfaction_rate: node["satisfactionRate"],
@@ -33,8 +33,8 @@ module WorkDetail
         syobocal_tid: node["syobocalTid"],
         mal_anime_id: node["malAnimeId"],
         is_no_episodes: node["isNoEpisodes"],
-        synopsis_html: node["synopsisHtml"],
-        synopsis_en_html: node["synopsis_en_html"],
+        synopsis: node["synopsis"],
+        synopsis_en: node["synopsisEn"],
         synopsis_source: node["synopsisSource"],
         synopsis_source_en: node["synopsisSourceEn"],
         copyright: node["copyright"],
@@ -113,15 +113,15 @@ module WorkDetail
           rating_story_state: child_node["ratingStoryState"]&.downcase,
           rating_character_state: child_node["ratingCharacterState"]&.downcase,
           rating_overall_state: child_node["ratingOverallState"]&.downcase,
-          body_html: child_node["bodyHtml"],
+          body: child_node["body"],
           likes_count: child_node["likesCount"],
-          created_at: Time.parse(child_node["createdAt"]),
-          modified_at: child_node["modifiedAt"] ? Time.parse(child_node["modifiedAt"]) : nil,
+          created_at: child_node["createdAt"],
+          modified_at: child_node["modifiedAt"],
           user: {
             username: child_node.dig("user", "username"),
             name: child_node.dig("user", "name"),
             avatar_url: child_node.dig("user", "avatarUrl"),
-            is_supporter: child_node.dig("user", "isSupporter")
+            display_supporter_badge: child_node.dig("user", "displaySupporterBadge")
           },
           record: {
             id: child_node.dig("record", "annictId")

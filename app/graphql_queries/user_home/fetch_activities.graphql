@@ -33,7 +33,7 @@ query($activityGroupId: ID!, $cursor: String) {
             ... on EpisodeRecord {
               annictId
               ratingState
-              bodyHtml
+              body
               likesCount
               commentsCount
 
@@ -62,7 +62,7 @@ query($activityGroupId: ID!, $cursor: String) {
             ... on WorkRecord {
               annictId
               ratingOverallState
-              bodyHtml
+              body
               likesCount
 
               work {

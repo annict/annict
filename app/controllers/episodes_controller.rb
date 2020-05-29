@@ -8,10 +8,6 @@ class EpisodesController < ApplicationController
     raise ActionController::RoutingError, "Not Found" if @work.no_episodes?
 
     @episodes = @work.episodes.only_kept.order(:sort_number)
-
-    return unless user_signed_in?
-
-    store_page_params(work: @work)
   end
 
   def show
@@ -38,8 +34,6 @@ class EpisodesController < ApplicationController
     @is_spoiler = current_user.hide_episode_record_body?(@episode)
     @episode_record = @episode.episode_records.new
     @episode_record.setup_shared_sns(current_user)
-
-    store_page_params(work: @work)
   end
 
   private

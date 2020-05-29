@@ -2,14 +2,9 @@
   .c-db-activity__header.row.mb-3
     .col
       span.c-db-activity__avatar
-        = link_to annict_url(:user_url, activity.user.username) do
+        = link_to annict_url(:profile_detail_url, activity.user.username) do
           = image_tag ann_image_url(activity.user.profile, :image, size: "35x35"), alt: activity.user.username, class: "rounded-circle", loading: :lazy
       = render "db/activities/activity_root_resources_action", activity: activity
     .col-3.text-right
       = local_time_ago_in_words(activity.created_at)
-  - if activity.action_table_name == "comments"
-    c-body inline-template=""
-      .c-body__content
-        = activity.object.body
-  - else
-    = activity.resource_diff_table
+  = activity.resource_diff_table

@@ -13,7 +13,6 @@ class RecordsController < ApplicationController
     return unless user_signed_in?
 
     works = Work.only_kept.where(id: @records.pluck(:work_id))
-    store_page_params(works: works)
   end
 
   def show
@@ -32,7 +31,6 @@ class RecordsController < ApplicationController
       @comments = @episode_record.comments.order(created_at: :desc)
       @comment = @episode_record.comments.new
       @is_spoiler = user_signed_in? && current_user.hide_episode_record_body?(@episode)
-      store_page_params(work: @work)
       render "episode_records/show"
     else
       @work_record = UserWorkRecordsQuery.new.call(
@@ -47,7 +45,6 @@ class RecordsController < ApplicationController
         work_records: @user.work_records.where.not(id: @work_record.id),
         user: current_user
       )
-      store_page_params(work: @work)
       render "work_records/show"
     end
   end

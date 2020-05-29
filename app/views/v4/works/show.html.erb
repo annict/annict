@@ -2,7 +2,6 @@
 <% description = meta_description(t("head.meta.description.works.show", title: @work.local_title)) %>
 <% image_url = @work.image_url_1x %>
 <% set_meta_tags(title: title, description: description, og: { description: description, image: image_url }, twitter: { description: description, image: image_url }, reverse: true, prefix: false) %>
-<% breadcrumb :work_detail_v4, @work %>
 
 <%= render "partial_layouts/default", page_category: "work-detail" do %>
   <div class="container-fluid py-3">
@@ -55,7 +54,7 @@
             </div>
 
             <div class="mb-3">
-              <c-status-selector :work-id="<%= @work.id %>" page_category="work-detail"></c-status-selector>
+              <%= render StatusSelectorComponent.new(work_id: @work.id, page_category: "work-detail") %>
             </div>
           </div>
         </div>
@@ -252,15 +251,15 @@
             <%= t "noun.share" %>
           </h2>
 
-          <c-share-to-twitter-button
-            text="<%= @work.local_title %>"
-            url="<%= "#{local_url}/works/#{@work.id}" %>"
-            hashtags="<%= @work.twitter_hashtag.presence || '' %>"
-          ></c-share-to-twitter-button>
+          <%= render ShareToTwitterButtonComponent.new(
+            text: @work.local_title,
+            url: "#{local_url}/works/#{@work.id}",
+            hashtags: @work.twitter_hashtag.presence || ''
+          ) %>
 
-          <c-share-to-facebook-button
-            url="<%= "#{local_url}/works/#{@work.id}" %>"
-          ></c-share-to-facebook-button>
+          <%= render ShareToFacebookButtonComponent.new(
+            url: "#{local_url}/works/#{@work.id}",
+          ) %>
         </div>
 
         <% if user_signed_in? && current_user.committer? %>
@@ -299,15 +298,15 @@
           </div>
         <% end %>
 
-        <% if @work.local_synopsis_html.present? %>
+        <% if @work.local_synopsis.present? %>
           <div class="mb-3">
             <h2 class="font-weight-bold h3 mb-3">
               <%= t "activerecord.attributes.work.synopsis" %>
             </h2>
 
-            <div class="c-body">
-              <%= @work.local_synopsis_html.html_safe %>
-            </div>
+            <%= render BodyComponent.new(markdown: false) do %>
+              <%= @work.local_synopsis.html_safe %>
+            <% end %>
 
             <div class="small text-right">
               <%= t "noun.source" %>: <%= @work.local_synopsis_source %>
@@ -451,7 +450,7 @@
                 <div class="py-3 u-underline">
                   <div class="mb-3 row">
                     <div class="col-auto pl-3 pr-0">
-                      <%= link_to user_path(work_record.user.username) do %>
+                      <%= link_to profile_detail_path(work_record.user.username) do %>
                         <%= render ProfileImageComponent.new(
                             image_url_1x: work_record.user.avatar_url,
                             alt: "@#{work_record.user.username}"
@@ -460,10 +459,10 @@
                     </div>
                     <div class="col">
                       <div>
-                        <%= link_to user_path(work_record.user.username) do %>
+                        <%= link_to profile_detail_path(work_record.user.username) do %>
                           <%= work_record.user.name %>
                         <% end %>
-                        <% if work_record.user.is_supporter %>
+                        <% if work_record.user.display_supporter_badge %>
                         <span class="badge u-badge-supporter ml-1">
                           <%= t "noun.supporter" %>
                         </span>
@@ -482,7 +481,7 @@
                     </div>
                   </div>
                   <div class="mb-3">
-                    <c-spoiler-guard :work-id="<%= @work.id %>">
+                    <%= render SpoilerGuardComponent.new(work_id: @work.id) do %>
                       <div class="row">
                         <div class="col-12 col-xl-4 order-1 order-xl-2">
                           <% if work_record.rating_overall_state.present? %>
@@ -496,7 +495,7 @@
                                     <%= t "noun.animation" %>
                                   </div>
                                   <div class="col pl-0 text-right">
-                                    <c-rating-label init-kind="<%= work_record.rating_animation_state %>"></c-rating-label>
+                                    <%= render RatingLabelComponent.new(kind: work_record.rating_animation_state) %>
                                   </div>
                                 </div>
                               <% end %>
@@ -506,7 +505,7 @@
                                     <%= t "noun.music" %>
                                   </div>
                                   <div class="col pl-0 text-right">
-                                    <c-rating-label init-kind="<%= work_record.rating_music_state %>"></c-rating-label>
+                                    <%= render RatingLabelComponent.new(kind: work_record.rating_music_state) %>
                                   </div>
                                 </div>
                               <% end %>
@@ -516,7 +515,7 @@
                                     <%= t "noun.story" %>
                                   </div>
                                   <div class="col pl-0 text-right">
-                                    <c-rating-label init-kind="<%= work_record.rating_story_state %>"></c-rating-label>
+                                    <%= render RatingLabelComponent.new(kind: work_record.rating_story_state) %>
                                   </div>
                                 </div>
                               <% end %>
@@ -526,7 +525,7 @@
                                     <%= t "noun.character" %>
                                   </div>
                                   <div class="col pl-0 text-right">
-                                    <c-rating-label init-kind="<%= work_record.rating_character_state %>"></c-rating-label>
+                                    <%= render RatingLabelComponent.new(kind: work_record.rating_character_state) %>
                                   </div>
                                 </div>
                               <% end %>
@@ -536,7 +535,7 @@
                                     <%= t "noun.overall" %>
                                   </div>
                                   <div class="col pl-0 text-right">
-                                    <c-rating-label init-kind="<%= work_record.rating_overall_state %>"></c-rating-label>
+                                    <%= render RatingLabelComponent.new(kind: work_record.rating_overall_state) %>
                                   </div>
                                 </div>
                               <% end %>
@@ -544,37 +543,34 @@
                           <% end %>
                         </div>
                         <div class="col-12 col-xl-8 order-2 order-xl-1">
-                          <div class="c-body mb-3">
-                            <%== work_record.body_html %>
-                          </div>
+                          <%= render BodyComponent.new(height: 300, markdown: false, class_name: "mb-3") do %>
+                            <%= work_record.body %>
+                          <% end %>
                         </div>
                       </div>
-                    </c-spoiler-guard>
+                    <% end %>
                   </div>
 
                   <div class="align-items-center px-3 row">
                     <div class="col text-right">
-                    <span class="mr-2">
-                      <c-share-to-twitter-button
-                        text="<%= t("head.title.work_records.show", work_title: @work.local_title, profile_name: work_record.user.name, username: work_record.user.username) %>"
-                        url="<%= "#{local_url}/@#{work_record.user.username}/records/#{work_record.record.id}" %>"
-                        hashtags="<%= @work.twitter_hashtag.presence || '' %>"
-                      ></c-share-to-twitter-button>
-                    </span>
+                      <span class="mr-2">
+                        <%= render ShareToTwitterButtonComponent.new(
+                          text: t("head.title.work_records.show", work_title: @work.local_title, profile_name: work_record.user.name, username: work_record.user.username),
+                          url: "#{local_url}/@#{work_record.user.username}/records/#{work_record.record.id}",
+                          hashtags: @work.twitter_hashtag.presence || ''
+                        ) %>
+                      </span>
 
                       <span class="mr-2">
-                      <c-share-to-facebook-button
-                        url="<%= "#{local_url}/@#{work_record.user.username}/records/#{work_record.record.id}" %>"
-                      ></c-share-to-facebook-button>
-                    </span>
+                        <%= render ShareToFacebookButtonComponent.new(url: "#{local_url}/@#{work_record.user.username}/records/#{work_record.record.id}") %>
+                      </span>
 
-                      <c-like-button
-                        resource-name="WorkRecord"
-                        :resource-id="<%= work_record.id %>"
-                        :init-likes-count="<%= work_record.likes_count %>"
-                        :is-signed-in="<%= user_signed_in? ? 'true' : 'false' %>"
-                        page-category="work-detail"
-                      ></c-like-button>
+                      <%= render LikeButtonComponent.new(
+                        resource_name: "WorkRecord",
+                        resource_id: work_record.id,
+                        likes_count: work_record.likes_count,
+                        page_category: "work-detail",
+                      ) %>
                     </div>
                   </div>
 

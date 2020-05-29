@@ -1,38 +1,40 @@
-.p-episode-title-header {
-  position: relative;
+@include media-breakpoint-down(lg) {
+  .p-episode-title-header {
+    position: relative;
 
-  &__prev,
-  &__next {
-    bottom: 0;
-    position: absolute;
-    top: 0;
-    width: 30px;
-
-    i {
-      height: 10px;
-      margin-top: -10px;
+    &__prev,
+    &__next {
+      bottom: 0;
       position: absolute;
-      top: 50%;
+      top: 0;
+      width: 30px;
+
+      i {
+        height: 10px;
+        margin-top: -10px;
+        position: absolute;
+        top: 50%;
+      }
     }
-  }
 
-  &__prev {
-    left: 0;
+    &__prev {
+      left: 0;
 
-    i {
-      left: 10px;
+      i {
+        left: 10px;
+      }
     }
-  }
 
-  &__next {
-    right: 0;
+    &__next {
+      right: 0;
 
-    i {
-      right: 10px;
+      i {
+        right: 10px;
+      }
     }
-  }
 
-  &__main {
-    margin: 0 30px;
+    &__main {
+      margin: 0 30px;
+    }
   }
 }

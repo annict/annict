@@ -1,13 +1,9 @@
 - title = t "head.title.forum.posts.edit"
 - set_meta_tags(title: title, og: { title: title }, reverse: true, prefix: false)
 
-- breadcrumb :forum_edit_post, @post
-
-= render "partial_layouts/v2/default" do
+= render "partial_layouts/default" do
   = render "forum/application/subnav", post: @post
 
   .container.py-3.mb-3
     .c-card.p-3
       = render "forum/posts/form", post: @post
-
-    = render "application/components/breadcrumb"

@@ -1,4 +1,5 @@
 import $ from 'jquery';
+import 'bootstrap/js/dist/modal';
 
 export default {
   template: '#t-youtube-modal-player',

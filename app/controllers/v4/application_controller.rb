@@ -7,6 +7,7 @@ module V4
     include V4::Localizable
     include V4::PageCategorizable
     include V4::GraphqlRunnable
+    include V4::UserDataFetchable
 
     layout "v4"
 

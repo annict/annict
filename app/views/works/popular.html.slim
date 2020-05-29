@@ -3,9 +3,7 @@
 - keywords = meta_keywords
 - set_meta_tags(title: title, description: description, keywords: keywords, og: { description: description }, twitter: { description: description }, reverse: true, prefix: false)
 
-- breadcrumb :popular_works
-
-= render "partial_layouts/v2/default", page_category: "work-list" do
+= render "partial_layouts/default", page_category: "work-list" do
   h1.text-center.mb-0.my-3
     = title
 
@@ -26,10 +24,5 @@
     .mb-3.text-center
       = paginate @works
 
-  .container
-    = render "application/components/breadcrumb"
-
 - content_for :js_templates do
-  = render "application/js_templates/omitted_synopsis"
-  = render "application/js_templates/work_friends"
   = render "application/js_templates/youtube_modal_player"

@@ -9,10 +9,10 @@ class ApplicationController < ActionController::Base
   include LogrageSetting
   include Gonable
   include PageCategoryMethods
-  include PageParamsMethods
   include ViewSelector
   include FlashMessage
   include RavenContext
+  include V4::UserDataFetchable
 
   # Prevent CSRF attacks by raising an exception.
   # For APIs, you may want to use :null_session instead.

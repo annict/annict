@@ -1,9 +1,7 @@
 - title = t "head.title.forum.home.index"
 - set_meta_tags(title: title, reverse: true, prefix: false)
 
-- breadcrumb :forum_root
-
-= render "partial_layouts/v2/default" do
+= render "partial_layouts/default" do
   .text-right.m-3
     = link_to new_forum_post_path, class: "btn btn-primary" do
       = icon "plus"
@@ -17,5 +15,3 @@
   - if @posts.present?
     .text-center.mb-3
       = paginate @posts
-
-  = render "application/components/breadcrumb"

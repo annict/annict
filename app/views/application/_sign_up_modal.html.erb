@@ -1,0 +1,22 @@
+<div class="c-sign-up-modal modal">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-body text-center">
+        <p class="display-1 text-muted">
+          <i class="fal fa-info-circle"></i>
+        </p>
+        <p>
+          <%= t "messages._components.sign_up_modal.body" %>
+        </p>
+        <%= link_to new_user_registration_path, class: "btn btn-primary mr-2" do %>
+          <i class="fas fa-rocket mr-1"></i>
+          <%= t "noun.sign_up" %>
+        <% end %>
+
+        <%= link_to new_user_session_path, class: "btn btn-outline-secondary" do %>
+          <%= t "noun.sign_in" %>
+        <% end %>
+      </div>
+    </div>
+  </div>
+</div>

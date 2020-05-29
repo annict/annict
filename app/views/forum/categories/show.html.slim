@@ -1,8 +1,7 @@
 - title = "#{t('head.title.forum.categories.show', name: @category.local_name)} - Forum"
 - set_meta_tags(title: title, reverse: true, prefix: false)
-- breadcrumb :forum_category_detail, @category
 
-= render "partial_layouts/v2/default" do
+= render "partial_layouts/default" do
   = render "forum/application/subnav"
 
   .container.py-3.mb-3
@@ -24,5 +23,3 @@
     - if @posts.total_pages > 1
       .text-center.mt-3
         = paginate @posts
-
-    = render "application/components/breadcrumb"

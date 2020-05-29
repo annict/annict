@@ -11,4 +11,4 @@
                 .c-grid-work__work-title.small.font-weight-bold
                   = work.local_title
         - if page_category.in?(%w(works_season works_popular works_newest))
-          c-status-selector :work-id="#{work.id}"
+          = render StatusSelectorComponent.new(work_id: work.id, small: true, page_category: page_category)
