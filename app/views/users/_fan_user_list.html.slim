@@ -15,6 +15,6 @@
               = link_to "@#{favorite_resource.user.username}", profile_detail_path(username: favorite_resource.user.username)
           .col-auto.pr-0.u-flex-grow-0
             - if user_signed_in? && current_user != favorite_resource.user
-              c-follow-button username="#{favorite_resource.user.username}" :init-is-following="#{current_user.following?(favorite_resource.user)}" :is-signed-in="true"
+              c-follow-button :user-id="#{favorite_resource.user.id}"
             - elsif !user_signed_in?
-              c-follow-button username="" :init-is-following="false"
+              c-follow-button :user-id="#{favorite_resource.user.id}"

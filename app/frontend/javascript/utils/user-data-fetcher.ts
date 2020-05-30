@@ -7,11 +7,16 @@ import { EventDispatcher } from './event-dispatcher';
 
 const REQUEST_LIST: any = {
   'activity-list': [libraryEntriesRequest, likesRequest],
+  'character-fan-list': [followingRequest],
   'edit-record': [libraryEntriesRequest],
   'episode-detail': [libraryEntriesRequest, likesRequest, trackedResourcesRequest],
   'episode-list': [libraryEntriesRequest],
+  'follower-list': [followingRequest],
+  'following-list': [followingRequest],
   'guest-home': [libraryEntriesRequest],
   'library-detail': [libraryEntriesRequest],
+  'organization-fan-list': [followingRequest],
+  'person-fan-list': [followingRequest],
   'profile-detail': [followingRequest, libraryEntriesRequest, likesRequest, trackedResourcesRequest],
   'record-detail': [libraryEntriesRequest, likesRequest, trackedResourcesRequest],
   'record-list': [libraryEntriesRequest, likesRequest, trackedResourcesRequest],

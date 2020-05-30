@@ -3,7 +3,7 @@
 - keywords = meta_keywords @person.local_name
 - set_meta_tags(title: title, description: description, keywords: keywords, og: { description: description }, twitter: { description: description }, reverse: true, prefix: false)
 
-= render "partial_layouts/default" do
+= render "partial_layouts/default", page_category: "person-fan-list" do
   .container.py-3.mb-4
     .row
       .col-3.pr-0
