@@ -8,7 +8,7 @@
     = f.label :body
     c-autosize-textarea.form-control name="work_record[body]" value="#{f.object.body}" placeholder="#{t('messages.work_records.new.write_your_comment')}"
     .text-right.text-muted.small
-      c-input-words-count :max-words-count="1500" :init-words-count="#{f.object.body&.length.presence || 0}" input-name="work_record[body]"
+      c-input-words-count :max-words-count="1048596" :init-words-count="#{f.object.body&.length.presence || 0}" input-name="work_record[body]"
 
   .form-row
     - WorkRecord::STATES.each do |state|

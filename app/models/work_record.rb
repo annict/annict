@@ -76,7 +76,7 @@ class WorkRecord < ApplicationRecord
     dependent: :destroy,
     as: :recipient
 
-  validates :body, length: { maximum: 1_500 }
+  validates :body, length: { maximum: 1_048_596 }
 
   scope :with_body, -> { where.not(body: ["", nil]) }
   scope :with_no_body, -> { where(body: ["", nil]) }

@@ -63,7 +63,7 @@ describe "POST /v1/me/reviews" do
     it "returns error" do
       data = {
         work_id: work.id,
-        body: "あぁ^～心がぴょんぴょんするんじゃぁ^～" * 1_000, # too long body
+        body: "あぁ^～心がぴょんぴょんするんじゃぁ^～" * 52_430, # too long body
         access_token: access_token.token
       }
       post api("/v1/me/reviews", data)
@@ -74,7 +74,7 @@ describe "POST /v1/me/reviews" do
         errors: [
           {
             type: "invalid_params",
-            message: "本文は1500文字以内で入力してください"
+            message: "本文は1048596文字以内で入力してください"
           }
         ]
       }

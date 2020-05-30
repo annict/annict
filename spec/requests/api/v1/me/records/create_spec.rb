@@ -68,7 +68,7 @@ describe "POST /v1/me/records" do
     it "returns error" do
       data = {
         episode_id: episode.id,
-        comment: "あぁ^～心がぴょんぴょんするんじゃぁ^～" * 1_000, # too long body
+        comment: "あぁ^～心がぴょんぴょんするんじゃぁ^～" * 52_430, # too long body
         rating: 4.5,
         rating_state: "great",
         access_token: access_token.token
@@ -81,7 +81,7 @@ describe "POST /v1/me/records" do
         errors: [
           {
             type: "invalid_params",
-            message: "感想は1000文字以内で入力してください"
+            message: "感想は1048596文字以内で入力してください"
           }
         ]
       }
