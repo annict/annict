@@ -49,7 +49,7 @@ query($username: String!) {
         watchedWorksCount
       }
     }
-    organizationFavorites(orderBy: { field: CREATED_AT, direction: DESC }, first: 6) {
+    organizationFavorites(orderBy: { field: CREATED_AT, direction: DESC }, first: 7) {
       nodes {
         organization {
           annictId
