@@ -37,7 +37,7 @@ class Profile < ApplicationRecord
   include ProfileImageUploader::Attachment.new(:background_image)
   include ImageUploadable
 
-  belongs_to :user
+  belongs_to :user, touch: true
 
   validates :description, length: { maximum: 150 }
   validates :name, presence: true

@@ -21,7 +21,15 @@ module V4
         "profile",
         "user",
         user.id,
-        user.updated_at.rfc3339
+        user.updated_at.rfc3339,
+        user.records_count,
+        user.watching_works_count,
+        user.completed_works_count,
+        user.following_count,
+        user.followers_count,
+        user.character_favorites_count,
+        user.person_favorites_count,
+        user.organization_favorites_count
       ].freeze
     end
   end
