@@ -2,6 +2,7 @@ import followingRequest from '../requests/following-request';
 import libraryEntriesRequest from '../requests/library-entries-request';
 import likesRequest from '../requests/likes-request';
 import trackedResourcesRequest from '../requests/tracked-resources-request';
+import userRequest from '../requests/user-request';
 import workFriendsRequest from '../requests/work-friends-request';
 import { EventDispatcher } from './event-dispatcher';
 
@@ -9,7 +10,7 @@ const REQUEST_LIST: any = {
   'activity-list': [libraryEntriesRequest, likesRequest],
   'character-fan-list': [followingRequest],
   'edit-record': [libraryEntriesRequest],
-  'episode-detail': [libraryEntriesRequest, likesRequest, trackedResourcesRequest],
+  'episode-detail': [libraryEntriesRequest, likesRequest, trackedResourcesRequest, userRequest],
   'episode-list': [libraryEntriesRequest],
   'follower-list': [followingRequest],
   'following-list': [followingRequest],
@@ -17,15 +18,15 @@ const REQUEST_LIST: any = {
   'library-detail': [libraryEntriesRequest],
   'organization-fan-list': [followingRequest],
   'person-fan-list': [followingRequest],
-  'profile-detail': [followingRequest, libraryEntriesRequest, likesRequest, trackedResourcesRequest],
-  'record-detail': [libraryEntriesRequest, likesRequest, trackedResourcesRequest],
-  'record-list': [libraryEntriesRequest, likesRequest, trackedResourcesRequest],
+  'profile-detail': [followingRequest, libraryEntriesRequest, likesRequest, trackedResourcesRequest, userRequest],
+  'record-detail': [libraryEntriesRequest, likesRequest, trackedResourcesRequest, userRequest],
+  'record-list': [libraryEntriesRequest, likesRequest, trackedResourcesRequest, userRequest],
   'search-detail': [libraryEntriesRequest],
-  'user-home': [libraryEntriesRequest, likesRequest, trackedResourcesRequest],
+  'user-home': [libraryEntriesRequest, likesRequest, trackedResourcesRequest, userRequest],
   'user-work-tag-detail': [libraryEntriesRequest],
-  'work-detail': [libraryEntriesRequest, likesRequest, trackedResourcesRequest],
+  'work-detail': [libraryEntriesRequest, likesRequest, trackedResourcesRequest, userRequest],
   'work-list': [libraryEntriesRequest, workFriendsRequest],
-  'work-record-list': [libraryEntriesRequest, likesRequest, trackedResourcesRequest],
+  'work-record-list': [libraryEntriesRequest, likesRequest, trackedResourcesRequest, userRequest],
 };
 
 export class UserDataFetcher {

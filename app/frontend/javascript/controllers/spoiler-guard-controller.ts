@@ -5,6 +5,7 @@ export default class extends Controller {
   episodeId!: number;
   libraryEntries!: { work_id: number; status_kind: string }[];
   trackedResources!: any;
+  user!: any;
   isSpoiler!: boolean;
 
   initialize() {
@@ -14,11 +15,12 @@ export default class extends Controller {
 
     document.addEventListener(
       'user-data-fetcher:fetched-all',
-      ({ detail: { libraryEntries, trackedResources } }: any) => {
+      ({ detail: { libraryEntries, trackedResources, user } }: any) => {
         this.libraryEntries = libraryEntries;
         this.trackedResources = trackedResources;
+        this.user = user;
 
-        if (!this.libraryEntries || !this.trackedResources) {
+        if (!this.libraryEntries || !this.trackedResources || !this.user) {
           return;
         }
 
@@ -29,6 +31,11 @@ export default class extends Controller {
   }
 
   checkSpoiler() {
+    if (!this.user.hide_record_body) {
+      this.isSpoiler = false;
+      return;
+    }
+
     const work = this.libraryEntries.filter((entry) => {
       return entry.work_id === this.workId;
     })[0];
