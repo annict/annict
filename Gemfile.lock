@@ -544,8 +544,6 @@ GEM
       json (>= 1.8, < 3)
       simplecov-html (~> 0.10.0)
     simplecov-html (0.10.2)
-    sitemap_generator (6.1.0)
-      builder (~> 3.0)
     slim (4.0.1)
       temple (>= 0.7.6, < 0.9)
       tilt (>= 2.0.6, < 2.1)
@@ -723,7 +721,6 @@ DEPENDENCIES
   sentry-raven
   shrine
   simplecov (< 0.18)
-  sitemap_generator
   slim
   solargraph
   spring

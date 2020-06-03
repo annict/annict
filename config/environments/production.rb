@@ -122,11 +122,6 @@ Rails.application.configure do
   # config.active_record.database_resolver = ActiveRecord::Middleware::DatabaseSelector::Resolver
   # config.active_record.database_resolver_context = ActiveRecord::Middleware::DatabaseSelector::Resolver::Session
 
-  config.middleware.insert_before(Rack::Runtime, Rack::Rewrite) do
-    # https://annict.com/sitemap.xml.gz でS3にアップロードされてるサイトマップを取得する
-    r301 %r{\A/(sitemaps.*)}, "#{ENV.fetch('ANNICT_SITEMAP_URL')}/$1"
-  end
-
   config.imgix = {
     use_https: true,
     source: ENV.fetch("IMGIX_SOURCE"),

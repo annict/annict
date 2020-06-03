@@ -109,9 +109,6 @@
     "ANNICT_PREVIOUS_SEASON": {
       "required": true
     },
-    "ANNICT_SITEMAP_URL": {
-      "required": true
-    },
     "ANNICT_URL": {
       "required": true
     },
