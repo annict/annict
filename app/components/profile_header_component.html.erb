@@ -3,7 +3,9 @@
   <div class="c-profile-header__content container-fluid">
     <div class="row">
       <div class="col-auto c-profile-header__profile-image">
-        <%= render ProfileImageComponent.new(image_url_1x: user_entity.avatar_url, alt: "@#{user_entity.username}") %>
+        <%= link_to profile_detail_path do %>
+          <%= render ProfileImageComponent.new(image_url_1x: user_entity.avatar_url, alt: "@#{user_entity.username}") %>
+        <% end %>
       </div>
 
       <div class="col mb-2 mb-lg-0">
@@ -11,10 +13,12 @@
           <%= render SupporterBadgeComponent.new(user_entity: user_entity) %>
 
           <h1 class="h2 mb-0">
-            <%= user_entity.name %>
-            <div class="c-profile-header__username text-muted">
-              @<%= user_entity.username %>
-            </div>
+            <%= link_to profile_detail_path, class: "text-body" do %>
+              <%= user_entity.name %>
+              <div class="c-profile-header__username text-muted">
+                @<%= user_entity.username %>
+              </div>
+            <% end %>
           </h1>
         </div>
       </div>
