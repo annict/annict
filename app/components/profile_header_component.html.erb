@@ -31,4 +31,51 @@
       </div>
     </div>
   </div>
+
+  <div class="c-subnav2">
+    <ul class="c-subnav2__list">
+      <li class="c-subnav2__item">
+        <%= active_link_to t("noun.profile"), profile_detail_path(user_entity.username),
+            class: "c-subnav2__link",
+            class_active: "c-subnav2__link--active",
+            active: params[:controller] == "v4/users" && params[:action] == "show"
+        %>
+      </li>
+      <li class="c-subnav2__item">
+        <%= active_link_to t("noun.records"), records_path(user_entity.username),
+            class: "c-subnav2__link",
+            class_active: "c-subnav2__link--active",
+            active: params[:controller] == "records" && params[:action] == "index"
+        %>
+      </li>
+      <li class="c-subnav2__item">
+        <%= active_link_to t("noun.library"), library_path(user_entity.username, :watching),
+            class: "c-subnav2__link",
+            class_active: "c-subnav2__link--active",
+            active: params[:controller] == "libraries" && params[:action] == "show"
+        %>
+      </li>
+      <li class="c-subnav2__item">
+        <%= active_link_to t("noun.favorites"), favorite_characters_path(user_entity.username),
+            class: "c-subnav2__link",
+            class_active: "c-subnav2__link--active",
+            active: params[:controller].in?(%w(favorite_characters favorite_people favorite_organizations)) && params[:action] == "index"
+        %>
+      </li>
+      <li class="c-subnav2__item">
+        <%= active_link_to t("noun.following"), following_user_path(user_entity.username),
+            class: "c-subnav2__link",
+            class_active: "c-subnav2__link--active",
+            active: params[:controller] == "users" && params[:action] == "following"
+        %>
+      </li>
+      <li class="c-subnav2__item">
+        <%= active_link_to t("noun.followers"), followers_user_path(user_entity.username),
+            class: "c-subnav2__link",
+            class_active: "c-subnav2__link--active",
+            active: params[:controller] == "users" && params[:action] == "followers"
+        %>
+      </li>
+    </ul>
+  </div>
 </div>
