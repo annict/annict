@@ -10,29 +10,33 @@
     <div class="row">
       <div class="col-12 col-lg-9">
         <div class="mb-3">
-          <% @record_entities.each do |record_entity| %>
-            <div class="py-3 u-underline">
-              <div class="mb-3">
-                <%= render RecordHeaderComponent.new(user_entity: @user_entity, record_entity: record_entity) %>
-              </div>
+          <% if @record_entities.present? %>
+            <% @record_entities.each do |record_entity| %>
+              <div class="py-3 u-underline">
+                <div class="mb-3">
+                  <%= render RecordHeaderComponent.new(user_entity: @user_entity, record_entity: record_entity) %>
+                </div>
 
-              <% if record_entity.itemable_type == "episode_record" %>
-                <%= render EpisodeRecordContentComponent.new(
-                    user_entity: @user_entity,
-                    work_entity: record_entity.work,
-                    episode_entity: record_entity.itemable.episode,
-                    record_entity: record_entity,
-                    episode_record_entity: record_entity.itemable
-                ) %>
-              <% elsif record_entity.itemable_type == "work_record" %>
-                <%= render WorkRecordContentComponent.new(
-                    user_entity: @user_entity,
-                    work_entity: record_entity.work,
-                    record_entity: record_entity,
-                    work_record_entity: record_entity.itemable
-                ) %>
-              <% end %>
-            </div>
+                <% if record_entity.itemable_type == "episode_record" %>
+                  <%= render EpisodeRecordContentComponent.new(
+                      user_entity: @user_entity,
+                      work_entity: record_entity.work,
+                      episode_entity: record_entity.itemable.episode,
+                      record_entity: record_entity,
+                      episode_record_entity: record_entity.itemable
+                  ) %>
+                <% elsif record_entity.itemable_type == "work_record" %>
+                  <%= render WorkRecordContentComponent.new(
+                      user_entity: @user_entity,
+                      work_entity: record_entity.work,
+                      record_entity: record_entity,
+                      work_record_entity: record_entity.itemable
+                  ) %>
+                <% end %>
+              </div>
+            <% end %>
+          <% else %>
+            <%= render EmptyComponent.new(text: t("messages._empty.no_records")) %>
           <% end %>
         </div>
 
