@@ -3,18 +3,6 @@
 class RecordsController < ApplicationController
   before_action :authenticate_user!, only: %i(destroy)
 
-  def index
-    @user = User.only_kept.find_by!(username: params[:username])
-    @records = UserEpisodeRecordsQuery.new.call(
-      episode_records: @user.episode_records,
-      user: @user
-    ).order(created_at: :desc).page(params[:page])
-
-    return unless user_signed_in?
-
-    works = Work.only_kept.where(id: @records.pluck(:work_id))
-  end
-
   def show
     @user = User.only_kept.find_by!(username: params[:username])
     @record = @user.records.only_kept.find(params[:id])

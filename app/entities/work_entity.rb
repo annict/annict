@@ -4,6 +4,7 @@ class WorkEntity < ApplicationEntity
   local_attributes :title, :title_alter, :synopsis, :synopsis_source
 
   attribute? :id, Types::Integer
+  attribute? :database_id, Types::Integer
   attribute? :title, Types::String
   attribute? :title_en, Types::String.optional
   attribute? :title_kana, Types::String.optional
@@ -51,6 +52,32 @@ class WorkEntity < ApplicationEntity
       syobocal_tid: work.sc_tid&.to_s,
       mal_anime_id: work.mal_anime_id&.to_s
     )
+  end
+
+  def self.from_node(work_node)
+    attrs = {}
+
+    if database_id = work_node["annictId"]
+      attrs[:database_id] = database_id
+    end
+
+    if title = work_node["title"]
+      attrs[:title] = title
+    end
+
+    if title_en = work_node["titleEn"]
+      attrs[:title_en] = title_en
+    end
+
+    if image_url_1x = work_node.dig("image", "internalUrl1x")
+      attrs[:image_url_1x] = image_url_1x
+    end
+
+    if image_url_2x = work_node.dig("image", "internalUrl2x")
+      attrs[:image_url_2x] = image_url_2x
+    end
+
+    new attrs
   end
 
   def local_season_name

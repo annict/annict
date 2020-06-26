@@ -1,0 +1,64 @@
+query($username: String!, $month: String, $first: Int, $last: Int, $before: String, $after: String) {
+  user(username: $username) {
+    records(
+      month: $month,
+      orderBy: { field: CREATED_AT, direction: DESC },
+      first: $first,
+      last: $last,
+      before: $before,
+      after: $after
+    ) {
+      pageInfo {
+        startCursor
+        endCursor
+        hasNextPage
+        hasPreviousPage
+      }
+
+      nodes {
+        annictId
+        itemableType
+        modifiedAt
+        createdAt
+
+        work {
+          annictId
+          title
+          titleEn
+          image {
+            internalUrl1x: internalUrl(size: "60x")
+            internalUrl2x: internalUrl(size: "120x")
+          }
+        }
+
+        itemable {
+          ... on EpisodeRecord {
+            annictId
+            ratingState
+            body
+            likesCount
+            commentsCount
+
+            episode {
+              annictId
+              numberText
+              title
+              titleEn
+            }
+          }
+
+          ... on WorkRecord {
+            annictId
+            ratingAnimationState
+            ratingMusicState
+            ratingStoryState
+            ratingCharacterState
+            ratingOverallState
+            body
+            likesCount
+          }
+        }
+      }
+    }
+  }
+}

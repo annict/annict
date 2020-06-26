@@ -24,9 +24,9 @@
       </div>
 
       <div class="align-self-center col-12 col-lg text-center text-lg-right">
-        <% if current_user&.id != user_entity.id %>
-          <c-follow-button :user-id="<%= user_entity.id %>"></c-follow-button>
-          <c-user-actions-dropdown :user-id="<%= user_entity.id %>"></c-user-actions-dropdown>
+        <% if current_user&.id != user_entity.database_id %>
+          <c-follow-button :user-id="<%= user_entity.database_id %>"></c-follow-button>
+          <c-user-actions-dropdown :user-id="<%= user_entity.database_id %>"></c-user-actions-dropdown>
         <% end %>
       </div>
     </div>
@@ -42,10 +42,10 @@
         %>
       </li>
       <li class="c-subnav2__item">
-        <%= active_link_to t("noun.records"), records_path(user_entity.username),
+        <%= active_link_to t("noun.records"), record_list_path(user_entity.username),
             class: "c-subnav2__link",
             class_active: "c-subnav2__link--active",
-            active: params[:controller] == "records" && params[:action] == "index"
+            active: params[:controller] == "v4/records" && params[:action] == "index"
         %>
       </li>
       <li class="c-subnav2__item">

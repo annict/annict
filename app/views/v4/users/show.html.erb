@@ -47,7 +47,7 @@
 
         <div class="mb-3 row">
           <% [
-            [records_path(@user.username), @user.records_count, "Records"],
+            [record_list_path(@user.username), @user.records_count, "Records"],
             [library_path(@user.username, :watching), @user.watching_works_count, "Watching"],
             [following_user_path(@user.username), @user.following_count, "Following"],
             [followers_user_path(@user.username), @user.followers_count, "Followers"],

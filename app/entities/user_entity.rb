@@ -2,6 +2,7 @@
 
 class UserEntity < ApplicationEntity
   attribute? :id, Types::Integer
+  attribute? :database_id, Types::Integer
   attribute? :username, Types::String
   attribute? :name, Types::String.optional
   attribute? :description, Types::String.optional
@@ -25,6 +26,36 @@ class UserEntity < ApplicationEntity
   attribute? :cast_favorites, Types::Array.of(PersonFavoriteEntity)
   attribute? :staff_favorites, Types::Array.of(PersonFavoriteEntity)
   attribute? :organization_favorites, Types::Array.of(OrganizationFavoriteEntity)
+
+  def self.from_node(user_node)
+    attrs = {}
+
+    if database_id = user_node["annictId"]
+      attrs[:database_id] = database_id
+    end
+
+    if username = user_node["username"]
+      attrs[:username] = username
+    end
+
+    if name = user_node["name"]
+      attrs[:name] = name
+    end
+
+    if avatar_url = user_node["avatarUrl"]
+      attrs[:avatar_url] = avatar_url
+    end
+
+    if background_image_url = user_node["backgroundImageUrl"]
+      attrs[:background_image_url] = background_image_url
+    end
+
+    if display_supporter_badge = user_node["displaySupporterBadge"]
+      attrs[:display_supporter_badge] = display_supporter_badge
+    end
+
+    new attrs
+  end
 
   def days_from_started(time_zone)
     ((Time.zone.now.in_time_zone(time_zone) - created_at.in_time_zone(time_zone)) / 86_400).ceil

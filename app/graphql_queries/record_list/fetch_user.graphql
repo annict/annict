@@ -1,0 +1,10 @@
+query($username: String!) {
+  user(username: $username) {
+    annictId
+    username
+    name
+    avatarUrl(size: size200)
+    backgroundImageUrl
+    displaySupporterBadge
+  }
+}

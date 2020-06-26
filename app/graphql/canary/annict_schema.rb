@@ -5,7 +5,10 @@ module Canary
     query Canary::Types::Objects::Query
     mutation Canary::Types::Objects::Mutation
 
+    use GraphQL::Pagination::Connections
     use GraphQL::Batch
+
+    default_max_page_size 50
 
     def self.id_from_object(object, type_definition, query_ctx = nil)
       GraphQL::Schema::UniqueWithinType.encode(type_definition.name, object.id)

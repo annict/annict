@@ -105,7 +105,7 @@ module UserHome
 
     def build_record(record)
       RecordEntity.new(
-        id: record["annictId"]
+        database_id: record["annictId"]
       )
     end
   end
