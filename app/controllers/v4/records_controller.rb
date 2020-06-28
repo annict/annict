@@ -11,13 +11,11 @@ module V4
         RecordList::FetchUserRepository.new(graphql_client: graphql_client).fetch(username: user.username)
       end
 
-      @page_info_entity, @record_entities = RecordList::FetchRecordsRepository.
+      @record_entities, @page_info_entity = RecordList::FetchRecordsRepository.
         new(graphql_client: graphql_client).
         fetch(
           username: user.username,
-          before: params[:before],
-          after: params[:after],
-          per: 30,
+          pagination: Annict::Pagination.new(before: params[:before], after: params[:after], per: 30),
           month: params[:month]
         )
     end

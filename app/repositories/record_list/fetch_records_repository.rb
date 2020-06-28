@@ -2,28 +2,20 @@
 
 module RecordList
   class FetchRecordsRepository < ApplicationRepository
-    def fetch(username:, before:, after:, per:, month: nil)
+    def fetch(username:, pagination:, month: nil)
       result = execute(
         variables: {
           username: username,
           month: month,
-          first: per,
-          last: per,
-          before: before,
-          after: after
+          first: pagination.first,
+          last: pagination.last,
+          before: pagination.before,
+          after: pagination.after
         }
       )
-      records = result.to_h.dig("data", "user", "records")
+      records_data = result.to_h.dig("data", "user", "records")
 
-      [PageInfoEntity.from_node(records["pageInfo"]), build_records(records["nodes"])]
-    end
-
-    private
-
-    def build_records(record_nodes)
-      record_nodes.map do |record_node|
-        RecordEntity.from_node(record_node)
-      end
+      [RecordEntity.from_nodes(records_data["nodes"]), PageInfoEntity.from_node(records_data["pageInfo"])]
     end
   end
 end

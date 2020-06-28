@@ -9,6 +9,12 @@ class RecordEntity < ApplicationEntity
   attribute? :work, WorkEntity
   attribute? :itemable, EpisodeRecordEntity | WorkRecordEntity
 
+  def self.from_nodes(record_nodes)
+    record_nodes.map do |record_node|
+      from_node(record_node)
+    end
+  end
+
   def self.from_node(record_node)
     attrs = {}
 
