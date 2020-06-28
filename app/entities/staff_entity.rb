@@ -9,7 +9,7 @@ class StaffEntity < ApplicationEntity
   attribute? :role_en, Types::String.optional
   attribute? :resource do
     attribute :typename, Types::String
-    attribute :id, Types::Integer
+    attribute :database_id, Types::Integer
   end
 
   def person?

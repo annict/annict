@@ -12,7 +12,7 @@ class RecordEntity < ApplicationEntity
   def self.from_node(record_node)
     attrs = {}
 
-    if database_id = record_node["annictId"]
+    if database_id = record_node["databaseId"]
       attrs[:database_id] = database_id
     end
 

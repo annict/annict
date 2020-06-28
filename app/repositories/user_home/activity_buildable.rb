@@ -51,7 +51,7 @@ module UserHome
 
     def build_episode_record(itemable, user)
       EpisodeRecordEntity.new(
-        id: itemable["annictId"],
+        id: itemable["databaseId"],
         rating_state: itemable["ratingState"]&.downcase,
         body: itemable["body"],
         likes_count: itemable["likesCount"],
@@ -65,7 +65,7 @@ module UserHome
 
     def build_status(itemable, user)
       StatusEntity.new(
-        id: itemable["annictId"],
+        id: itemable["databaseId"],
         kind: itemable["kind"].downcase,
         likes_count: itemable["likesCount"],
         work: build_work(itemable["work"]),
@@ -75,7 +75,7 @@ module UserHome
 
     def build_work_record(itemable, user)
       WorkRecordEntity.new(
-        id: itemable["annictId"],
+        id: itemable["databaseId"],
         rating_overall_state: itemable["ratingOverallState"]&.downcase,
         body: itemable["body"],
         likes_count: itemable["likesCount"],
@@ -86,7 +86,7 @@ module UserHome
 
     def build_work(work)
       WorkEntity.new(
-        id: work["annictId"],
+        id: work["databaseId"],
         title: work["title"],
         title_en: work["titleEn"],
         image_url_1x: work.dig("image", "internalUrl1x"),
@@ -96,7 +96,7 @@ module UserHome
 
     def build_episode(episode)
       EpisodeEntity.new(
-        id: episode["annictId"],
+        id: episode["databaseId"],
         number_text: episode["numberText"],
         title: episode["title"],
         title_en: episode["titleEn"]
@@ -105,7 +105,7 @@ module UserHome
 
     def build_record(record)
       RecordEntity.new(
-        database_id: record["annictId"]
+        database_id: record["databaseId"]
       )
     end
   end

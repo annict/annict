@@ -8,7 +8,7 @@ module Canary
         include ImageHelper
         include MarkdownHelper
 
-        def annict_id
+        def database_id
           object.id
         end
 

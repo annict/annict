@@ -8,10 +8,10 @@ module WorkDetail
 
       data["nodes"].map do |node|
         VodChannelEntity.new(
-          id: node["annictId"],
+          id: node["databaseId"],
           name: node["name"],
           programs: work.programs.select do |program|
-            program.channel.id == node["annictId"]
+            program.channel.id == node["databaseId"]
           end
         )
       end

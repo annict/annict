@@ -8,7 +8,7 @@ module Canary
 
         global_id_field :id
 
-        field :annict_id, Integer, null: false
+        field :database_id, Integer, null: false
         field :itemable_type, Canary::Types::Enums::ActivityItemableType, null: false
         field :single, Boolean, null: false
         field :activities_count, Integer, null: false

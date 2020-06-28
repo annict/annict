@@ -8,7 +8,7 @@ module Canary
 
         global_id_field :id
 
-        field :annict_id, Integer, null: false
+        field :database_id, Integer, null: false
         field :username, String, null: false
         field :name, String, null: false
         field :email, String, null: true
@@ -68,7 +68,7 @@ module Canary
         end
 
         field :works, Canary::Types::Objects::WorkType.connection_type, null: true do
-          argument :annict_ids, [Integer], required: false
+          argument :database_ids, [Integer], required: false
           argument :seasons, [String], required: false
           argument :titles, [String], required: false
           argument :status_kind, Canary::Types::Enums::StatusKind, required: false
@@ -207,11 +207,11 @@ module Canary
           ).call
         end
 
-        def works(annict_ids: nil, seasons: nil, titles: nil, status_kind: nil, order_by: nil)
+        def works(database_ids: nil, seasons: nil, titles: nil, status_kind: nil, order_by: nil)
           SearchWorksQuery.new(
             object.works.all,
             user: object,
-            annict_ids: annict_ids,
+            annict_ids: database_ids,
             seasons: seasons,
             titles: titles,
             state: status_kind,

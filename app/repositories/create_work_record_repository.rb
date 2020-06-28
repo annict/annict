@@ -19,7 +19,7 @@ class CreateWorkRecordRepository < ApplicationRepository
 
     data = result.dig("data", "createWorkRecord", "workRecord")
     entity = WorkRecordEntity.new(
-      id: data["annictId"]
+      id: data["databaseId"]
     )
 
     [entity, nil]

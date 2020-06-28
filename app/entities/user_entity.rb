@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 
 class UserEntity < ApplicationEntity
-  attribute? :id, Types::Integer
   attribute? :database_id, Types::Integer
   attribute? :username, Types::String
   attribute? :name, Types::String.optional
@@ -30,7 +29,7 @@ class UserEntity < ApplicationEntity
   def self.from_node(user_node)
     attrs = {}
 
-    if database_id = user_node["annictId"]
+    if database_id = user_node["databaseId"]
       attrs[:database_id] = database_id
     end
 

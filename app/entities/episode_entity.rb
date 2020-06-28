@@ -3,7 +3,6 @@
 class EpisodeEntity < ApplicationEntity
   local_attributes :title
 
-  attribute? :id, Types::Integer
   attribute? :database_id, Types::Integer
   attribute? :number_text, Types::String.optional
   attribute? :title, Types::String.optional
@@ -12,7 +11,7 @@ class EpisodeEntity < ApplicationEntity
   def self.from_node(episode_node)
     attrs = {}
 
-    if database_id = episode_node["annictId"]
+    if database_id = episode_node["databaseId"]
       attrs[:database_id] = database_id
     end
 

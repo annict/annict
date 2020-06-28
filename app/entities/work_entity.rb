@@ -3,7 +3,6 @@
 class WorkEntity < ApplicationEntity
   local_attributes :title, :title_alter, :synopsis, :synopsis_source
 
-  attribute? :id, Types::Integer
   attribute? :database_id, Types::Integer
   attribute? :title, Types::String
   attribute? :title_en, Types::String.optional
@@ -57,7 +56,7 @@ class WorkEntity < ApplicationEntity
   def self.from_node(work_node)
     attrs = {}
 
-    if database_id = work_node["annictId"]
+    if database_id = work_node["databaseId"]
       attrs[:database_id] = database_id
     end
 

@@ -13,7 +13,7 @@ class UpdateStatusRepository < ApplicationRepository
 
     data = result.dig("data", "updateStatus", "work")
     entity = WorkEntity.new(
-      id: data["annictId"]
+      id: data["databaseId"]
     )
 
     [entity, nil]

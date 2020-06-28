@@ -8,7 +8,7 @@ module Canary
 
         global_id_field :id
 
-        field :annict_id, Integer, null: false
+        field :database_id, Integer, null: false
         field :itemable_type, Canary::Types::Enums::RecordItemableType, null: false
         field :modified_at, Canary::Types::Scalars::DateTime, null: true
         field :created_at, Canary::Types::Scalars::DateTime, null: false

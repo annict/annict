@@ -8,7 +8,7 @@ module Canary
 
         global_id_field :id
 
-        field :annict_id, Integer, null: false
+        field :database_id, Integer, null: false
         field :body, String, null: true
         field :body_html, String, null: true
         field :rating, Float, null: true

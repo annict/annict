@@ -3,12 +3,12 @@
 module WorkDetail
   class FetchWorkRepository < ApplicationRepository
     def fetch(work_id:)
-      result = execute(variables: { annictId: work_id.to_i })
+      result = execute(variables: { databaseId: work_id.to_i })
       data = result.to_h.dig("data", "works")
       node = data["nodes"].first
 
       work = {
-        id: node["annictId"],
+        id: node["databaseId"],
         title: node["title"],
         title_en: node["title_en"],
         title_kana: node["titleKana"],
@@ -62,12 +62,12 @@ module WorkDetail
           accurate_name: child_node["accurateName"],
           accurate_name_en: child_node["accurateNameEn"],
           character: {
-            id: child_node.dig("character", "annictId"),
+            id: child_node.dig("character", "databaseId"),
             name: child_node.dig("character", "name"),
             name_en: child_node.dig("character", "nameEn")
           },
           person: {
-            id: child_node.dig("person", "annictId")
+            id: child_node.dig("person", "databaseId")
           }
         }
       end
@@ -80,14 +80,14 @@ module WorkDetail
           role_en: child_node["roleEn"],
           resource: {
             typename: child_node.dig("resource", "__typename"),
-            id: child_node.dig("resource", "annictId")
+            id: child_node.dig("resource", "databaseId")
           }
         }
       end
 
       node["episodes"]["nodes"].map do |child_node|
         work[:episodes] << {
-          id: child_node["annictId"],
+          id: child_node["databaseId"],
           number_text: child_node["numberText"],
           title: child_node["title"],
           title_en: child_node["titleEn"]

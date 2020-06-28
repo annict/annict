@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 
 class EpisodeRecordEntity < ApplicationEntity
-  attribute? :id, Types::Integer
   attribute? :database_id, Types::Integer
   attribute? :rating_state, Types::RecordRatingStateKinds.optional
   attribute? :body, Types::String.optional
@@ -16,7 +15,7 @@ class EpisodeRecordEntity < ApplicationEntity
   def self.from_node(episode_record_node, user_node: nil)
     attrs = {}
 
-    if database_id = episode_record_node["annictId"]
+    if database_id = episode_record_node["databaseId"]
       attrs[:database_id] = database_id
     end
 

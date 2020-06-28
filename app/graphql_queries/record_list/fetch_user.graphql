@@ -1,6 +1,6 @@
 query($username: String!) {
   user(username: $username) {
-    annictId
+    databaseId
     username
     name
     avatarUrl(size: size200)

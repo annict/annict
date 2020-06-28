@@ -8,7 +8,7 @@ module Canary
 
         global_id_field :id
 
-        field :annict_id, Integer, null: false
+        field :database_id, Integer, null: false
         field :user, Canary::Types::Objects::UserType, null: false
         field :work, Canary::Types::Objects::WorkType, null: false
         field :records, Canary::Types::Objects::EpisodeRecordType.connection_type, null: true

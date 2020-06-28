@@ -1,6 +1,6 @@
 query($username: String!) {
   user(username: $username) {
-    annictId
+    databaseId
     username
     name
     description
@@ -19,7 +19,7 @@ query($username: String!) {
     characterFavorites(orderBy: { field: CREATED_AT, direction: DESC }, first: 7) {
       nodes {
         character {
-          annictId
+          databaseId
           name
           nameEn
           series {
@@ -32,7 +32,7 @@ query($username: String!) {
     castFavorites(orderBy: { field: CREATED_AT, direction: DESC }, first: 7) {
       nodes {
         person {
-          annictId
+          databaseId
           name
           nameEn
         }
@@ -42,7 +42,7 @@ query($username: String!) {
     staffFavorites(orderBy: { field: CREATED_AT, direction: DESC }, first: 7) {
       nodes {
         person {
-          annictId
+          databaseId
           name
           nameEn
         }
@@ -52,7 +52,7 @@ query($username: String!) {
     organizationFavorites(orderBy: { field: CREATED_AT, direction: DESC }, first: 7) {
       nodes {
         organization {
-          annictId
+          databaseId
           name
           nameEn
         }

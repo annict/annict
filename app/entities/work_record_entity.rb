@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 
 class WorkRecordEntity < ApplicationEntity
-  attribute? :id, Types::Integer
   attribute? :database_id, Types::Integer
   attribute? :rating_animation_state, Types::RecordRatingStateKinds.optional
   attribute? :rating_music_state, Types::RecordRatingStateKinds.optional
@@ -19,7 +18,7 @@ class WorkRecordEntity < ApplicationEntity
   def self.from_node(work_record_node, user_node: nil)
     attrs = {}
 
-    if database_id = work_record_node["annictId"]
+    if database_id = work_record_node["databaseId"]
       attrs[:database_id] = database_id
     end
 

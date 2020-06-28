@@ -10,7 +10,7 @@ module Canary
 
         global_id_field :id
 
-        field :annict_id, Integer, null: false
+        field :database_id, Integer, null: false
         field :number, Float, null: true
         field :number_text, String, null: true
         field :sort_number, Integer, null: false

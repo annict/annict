@@ -8,7 +8,7 @@ module Canary
 
         global_id_field :id
 
-        field :annict_id, Integer, null: false
+        field :database_id, Integer, null: false
         field :channel, Canary::Types::Objects::ChannelType, null: false
         field :work, Canary::Types::Objects::WorkType, null: false
         field :started_at, Canary::Types::Scalars::DateTime, null: false

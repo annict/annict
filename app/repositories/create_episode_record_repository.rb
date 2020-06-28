@@ -16,7 +16,7 @@ class CreateEpisodeRecordRepository < ApplicationRepository
 
     data = result.dig("data", "createEpisodeRecord", "episodeRecord")
     entity = EpisodeRecordEntity.new(
-      id: data["annictId"]
+      id: data["databaseId"]
     )
 
     [entity, nil]

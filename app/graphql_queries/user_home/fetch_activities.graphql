@@ -15,12 +15,12 @@ query($activityGroupId: ID!, $cursor: String) {
 
           itemable {
             ... on Status {
-              annictId
+              databaseId
               kind
               likesCount
 
               work {
-                annictId
+                databaseId
                 title
                 titleEn
                 image {
@@ -31,18 +31,18 @@ query($activityGroupId: ID!, $cursor: String) {
             }
 
             ... on EpisodeRecord {
-              annictId
+              databaseId
               ratingState
               body
               likesCount
               commentsCount
 
               record {
-                annictId
+                databaseId
               }
 
               work {
-                annictId
+                databaseId
                 title
                 titleEn
                 image {
@@ -52,7 +52,7 @@ query($activityGroupId: ID!, $cursor: String) {
               }
 
               episode {
-                annictId
+                databaseId
                 numberText
                 title
                 titleEn
@@ -60,13 +60,13 @@ query($activityGroupId: ID!, $cursor: String) {
             }
 
             ... on WorkRecord {
-              annictId
+              databaseId
               ratingOverallState
               body
               likesCount
 
               work {
-                annictId
+                databaseId
                 title
                 titleEn
                 image {
