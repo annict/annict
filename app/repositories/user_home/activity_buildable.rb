@@ -9,35 +9,10 @@ module UserHome
       )
     end
 
-    def build_activity_groups(activity_group_nodes)
-      activity_group_nodes.map do |node|
-        ActivityGroupEntity.new(
-          id: node["id"],
-          itemable_type: node["itemableType"].downcase,
-          single: node["single"],
-          activities_count: node["activitiesCount"],
-          created_at: node["createdAt"],
-          user: build_user(node["user"]),
-          itemables: build_itemables(node.dig("activities", "nodes"), build_user(node["user"])),
-          activities_page_info: PageInfoEntity.new(
-            end_cursor: node.dig("activities", "pageInfo", "endCursor")
-          )
-        )
-      end
-    end
-
     def build_itemables(activities, user)
       activities.map do |activity|
         itemable = activity["itemable"]
 
-        case activity["itemableType"]
-        when "EPISODE_RECORD"
-          build_episode_record(itemable, user)
-        when "STATUS"
-          build_status(itemable, user)
-        when "WORK_RECORD"
-          build_work_record(itemable, user)
-        end
       end
     end
 
@@ -59,16 +34,6 @@ module UserHome
         work: build_work(itemable["work"]),
         episode: build_episode(itemable["episode"]),
         record: build_record(itemable["record"]),
-        user: user
-      )
-    end
-
-    def build_status(itemable, user)
-      StatusEntity.new(
-        id: itemable["databaseId"],
-        kind: itemable["kind"].downcase,
-        likes_count: itemable["likesCount"],
-        work: build_work(itemable["work"]),
         user: user
       )
     end

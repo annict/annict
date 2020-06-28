@@ -5,13 +5,16 @@ module V4
     def show
       user = User.only_kept.find_by!(username: params[:username])
 
-      @user = Rails.cache.fetch(profile_user_cache_key(user), expires_in: 3.hours) do
+      @user_entity = Rails.cache.fetch(profile_user_cache_key(user), expires_in: 3.hours) do
         ProfileDetail::FetchUserRepository.new(graphql_client: graphql_client).fetch(username: user.username)
       end
 
-      @activity_group_result = ProfileDetail::FetchUserActivityGroupsRepository.new(
+      @activity_group_entities, @page_info_entity = ProfileDetail::FetchUserActivityGroupsRepository.new(
         graphql_client: graphql_client
-      ).fetch(username: user.username, cursor: params[:cursor])
+      ).fetch(
+        username: user.username,
+        pagination: Annict::Pagination.new(before: params[:before], after: params[:after], per: 30)
+      )
     end
 
     private

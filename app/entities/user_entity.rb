@@ -41,6 +41,14 @@ class UserEntity < ApplicationEntity
       attrs[:name] = name
     end
 
+    if description = user_node["description"]
+      attrs[:description] = description
+    end
+
+    if url = user_node["url"]
+      attrs[:url] = url
+    end
+
     if avatar_url = user_node["avatarUrl"]
       attrs[:avatar_url] = avatar_url
     end
@@ -51,6 +59,66 @@ class UserEntity < ApplicationEntity
 
     if display_supporter_badge = user_node["displaySupporterBadge"]
       attrs[:display_supporter_badge] = display_supporter_badge
+    end
+
+    if records_count = user_node["recordsCount"]
+      attrs[:records_count] = records_count
+    end
+
+    if watching_works_count = user_node["watchingWorksCount"]
+      attrs[:watching_works_count] = watching_works_count
+    end
+
+    if following_count = user_node["followingCount"]
+      attrs[:following_count] = following_count
+    end
+
+    if followers_count = user_node["followersCount"]
+      attrs[:followers_count] = followers_count
+    end
+
+    if character_favorites_count = user_node["characterFavoritesCount"]
+      attrs[:character_favorites_count] = character_favorites_count
+    end
+
+    if person_favorites_count = user_node["personFavoritesCount"]
+      attrs[:person_favorites_count] = person_favorites_count
+    end
+
+    if organization_favorites_count = user_node["organizationFavoritesCount"]
+      attrs[:organization_favorites_count] = organization_favorites_count
+    end
+
+    if created_at = user_node["createdAt"]
+      attrs[:created_at] = created_at
+    end
+
+    character_favorite_nodes = user_node.dig("characterFavorites", "nodes")
+    if character_favorite_nodes.present?
+      attrs[:character_favorites] = character_favorite_nodes.map do |character_favorite_node|
+        CharacterFavoriteEntity.from_node(character_favorite_node)
+      end
+    end
+
+    cast_favorite_nodes = user_node.dig("castFavorites", "nodes")
+    if cast_favorite_nodes.present?
+      attrs[:cast_favorites] = cast_favorite_nodes.map do |cast_favorite_node|
+        PersonFavoriteEntity.from_node(cast_favorite_node)
+      end
+    end
+
+    staff_favorite_nodes = user_node.dig("staffFavorites", "nodes")
+    if staff_favorite_nodes.present?
+      attrs[:staff_favorites] = staff_favorite_nodes.map do |staff_favorite_node|
+        PersonFavoriteEntity.from_node(staff_favorite_node)
+      end
+    end
+
+    organization_favorite_nodes = user_node.dig("organizationFavorites", "nodes")
+    if organization_favorite_nodes.present?
+      attrs[:organization_favorites] = organization_favorite_nodes.map do |organization_favorite_node|
+        OrganizationFavoriteEntity.from_node(organization_favorite_node)
+      end
     end
 
     new attrs

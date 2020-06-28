@@ -83,8 +83,7 @@ scope module: :api do
 
     constraints format: "html" do
       # rubocop:disable Layout/ExtraSpacing, Layout/LineLength
-      match "/api/internal/activities",      via: :get, as: :internal_api_activity_list,       to: "activities#index"
-      match "/api/internal/activity_groups", via: :get, as: :internal_api_activity_group_list, to: "activity_groups#index"
+      match "/api/internal/activities", via: :get, as: :internal_api_activity_list, to: "activities#index"
       # rubocop:enable Layout/ExtraSpacing, Layout/LineLength
     end
   end

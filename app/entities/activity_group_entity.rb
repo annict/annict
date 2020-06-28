@@ -11,6 +11,51 @@ class ActivityGroupEntity < ApplicationEntity
   attribute? :itemables, Types::Array.of(EpisodeRecordEntity | StatusEntity | WorkRecordEntity)
   attribute? :activities_page_info, PageInfoEntity
 
+  def self.from_nodes(activity_group_nodes)
+    activity_group_nodes.map do |activity_group_node|
+      from_node(activity_group_node)
+    end
+  end
+
+  def self.from_node(activity_group_node)
+    attrs = {}
+
+    if id = activity_group_node["id"]
+      attrs[:id] = id
+    end
+
+    if itemable_type = activity_group_node["itemableType"]
+      attrs[:itemable_type] = itemable_type.downcase
+    end
+
+    if single = activity_group_node["single"]
+      attrs[:single] = single
+    end
+
+    if activities_count = activity_group_node["activitiesCount"]
+      attrs[:activities_count] = activities_count
+    end
+
+    if created_at = activity_group_node["createdAt"]
+      attrs[:created_at] = created_at
+    end
+
+    if user_node = activity_group_node["user"]
+      attrs[:user] = UserEntity.from_node(user_node)
+    end
+
+    activity_nodes = activity_group_node.dig("activities", "nodes")
+    if user_node && activity_nodes.present?
+      attrs[:itemables] = ActivityEntity.from_nodes(activity_nodes, user_node: user_node).map(&:itemable)
+    end
+
+    if page_info_node = activity_group_node.dig("activities", "pageInfo")
+      attrs[:activities_page_info] = PageInfoEntity.from_node(page_info_node)
+    end
+
+    new attrs
+  end
+
   def status?
     itemable_type == "status"
   end

@@ -36,8 +36,6 @@ en:
         hint: If you add this %{resource_type} into your favorites, you'll get a notification when upcoming animes which is related to this %{resource_type} will be added to Annict.
       sign_up_modal:
         body: You can use this feature after sign up.
-      timeline:
-        more: Load More
     _empty:
       no_activities: No Activities
       no_characters: No Characters

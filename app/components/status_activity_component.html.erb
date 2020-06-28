@@ -1,41 +1,45 @@
 <div class="c-timeline__status-activity">
-  <div class="row mb-2">
+  <div class="row mb-3">
     <div class="col-auto pr-0">
-      <%= link_to profile_detail_path(activity_group.user.username) do %>
+      <%= link_to profile_detail_path(activity_group_entity.user.username) do %>
         <%= render ProfileImageComponent.new(
-            image_url_1x: activity_group.user.avatar_url,
-            alt: "@#{activity_group.user.username}"
+            image_url_1x: activity_group_entity.user.avatar_url,
+            alt: "@#{activity_group_entity.user.username}"
         ) %>
       <% end %>
     </div>
 
     <div class="col">
       <span class="c-timeline__user-name">
-        <%= link_to activity_group.user.name, profile_detail_path(activity_group.user.username), class: "text-body font-weight-bold u-link" %>
+        <%= link_to activity_group_entity.user.name, profile_detail_path(activity_group_entity.user.username), class: "text-body font-weight-bold u-link" %>
       </span>
 
       <small class="mr-1">
         <%= t "messages._components.activities.status.changed" %>
       </small>
 
-      <%= render RelativeTimeComponent.new(time: activity_group.created_at.iso8601, class_name: "small text-muted") %>
+      <%= render RelativeTimeComponent.new(time: activity_group_entity.created_at.iso8601, class_name: "small text-muted") %>
     </div>
   </div>
 
   <div class="c-timeline__activity-cards">
-    <%= render StatusActivityCardsComponent.new(activity_group: activity_group) %>
+    <% status_entities.each do |status_entity| %>
+      <div class="mb-3">
+        <%= render StatusContentComponent.new(status_entity: status_entity, page_category: page_category) %>
+      </div>
+    <% end %>
   </div>
 
-  <% if activity_group.activities_count > 2 %>
+  <% if activity_group_entity.activities_count > 2 %>
     <div
       class="text-center"
       data-action="click->timeline-activity#next"
       data-target="timeline-activity.nextButton"
     >
-      <div class="mb-3 text-center">
+      <div class="text-center">
         <div class="c-activity-more-button btn btn-outline-secondary btn-small py-1">
           <i class="fal fa-chevron-double-down"></i>
-          <%= t "messages._components.activities.episode_record.more", n: activity_group.activities_count - 2 %>
+          <%= t "messages._components.activities.status.more", n: activity_group_entity.activities_count - 2 %>
         </div>
       </div>
     </div>
