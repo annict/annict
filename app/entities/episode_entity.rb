@@ -8,6 +8,12 @@ class EpisodeEntity < ApplicationEntity
   attribute? :title, Types::String.optional
   attribute? :title_en, Types::String.optional
 
+  def self.from_nodes(episode_nodes)
+    episode_nodes.map do |episode_node|
+      from_node(episode_node)
+    end
+  end
+
   def self.from_node(episode_node)
     attrs = {}
 

@@ -10,10 +10,17 @@ class WorkRecordEntity < ApplicationEntity
   attribute? :body, Types::String.optional
   attribute? :body_html, Types::String.optional
   attribute? :likes_count, Types::Integer
+  attribute? :modified_at, Types::Params::Time.optional
   attribute? :created_at, Types::Params::Time
   attribute? :user, UserEntity
   attribute? :record, RecordEntity
   attribute? :work, WorkEntity
+
+  def self.from_nodes(work_record_nodes)
+    work_record_nodes.map do |work_record_node|
+      from_node(work_record_node)
+    end
+  end
 
   def self.from_node(work_record_node, user_node: nil)
     attrs = {}
@@ -36,12 +43,24 @@ class WorkRecordEntity < ApplicationEntity
       attrs[:likes_count] = likes_count
     end
 
+    if modified_at = work_record_node["modifiedAt"]
+      attrs[:modified_at] = modified_at
+    end
+
+    if created_at = work_record_node["createdAt"]
+      attrs[:created_at] = created_at
+    end
+
     if work_node = work_record_node["work"]
       attrs[:work] = WorkEntity.from_node(work_node)
     end
 
     if user_node = work_record_node["user"] || user_node
       attrs[:user] = UserEntity.from_node(user_node)
+    end
+
+    if record_node = work_record_node["record"]
+      attrs[:record] = RecordEntity.from_node(record_node)
     end
 
     new attrs

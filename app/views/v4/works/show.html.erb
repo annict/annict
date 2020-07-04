@@ -1,6 +1,6 @@
-<% title = t "head.title.works.show", title: @work.local_title %>
-<% description = meta_description(t("head.meta.description.works.show", title: @work.local_title)) %>
-<% image_url = @work.image_url_1x %>
+<% title = t "head.title.works.show", title: @work_entity.local_title %>
+<% description = meta_description(t("head.meta.description.works.show", title: @work_entity.local_title)) %>
+<% image_url = @work_entity.image_url_1x %>
 <% set_meta_tags(title: title, description: description, og: { description: description, image: image_url }, twitter: { description: description, image: image_url }, reverse: true, prefix: false) %>
 
 <%= render "partial_layouts/default", page_category: "work-detail" do %>
@@ -10,26 +10,26 @@
         <div class="row mb-3 mb-sm-0">
           <div class="col-4 col-sm-12">
             <div class="mb-2 text-sm-left">
-              <%= link_to work_path(@work.id) do %>
-                <%= render WorkImageComponent.new(image_url_1x: @work.image_url_1x, image_url_2x: @work.image_url_2x, alt: @work.local_title) %>
+              <%= link_to work_path(@work_entity.database_id) do %>
+                <%= render WorkImageComponent.new(image_url_1x: @work_entity.image_url_1x, image_url_2x: @work_entity.image_url_2x, alt: @work_entity.local_title) %>
               <% end %>
               <div class="u-very-small text-muted">
                 <i class="far fa-copyright"></i>
-                <%= @work.copyright %>
+                <%= @work_entity.copyright %>
               </div>
             </div>
           </div>
           <div class="col-8 col-sm-12 pl-0 pl-sm-3">
             <h1 class="h2 font-weight-bold mb-3 text-sm-left">
-              <%= link_to work_path(@work.id), class: "u-text-body" do %>
-                <%= @work.local_title %>
+              <%= link_to work_path(@work_entity.database_id), class: "u-text-body" do %>
+                <%= @work_entity.local_title %>
               <% end %>
             </h1>
 
             <div class="row mb-3">
               <div class="col text-center">
                 <div class="h4 font-weight-bold mb-1">
-                  <%= @work.watchers_count %>
+                  <%= @work_entity.watchers_count %>
                 </div>
                 <div class="text-muted small">
                   <%= t "noun.watchers_count" %>
@@ -37,7 +37,7 @@
               </div>
               <div class="col text-center">
                 <div class="h4 font-weight-bold mb-1">
-                  <%= @work.satisfaction_rate.presence || "-" %><span class="small ml-1">%</span>
+                  <%= @work_entity.satisfaction_rate.presence || "-" %><span class="small ml-1">%</span>
                 </div>
                 <div class="text-muted small">
                   <%= t "noun.satisfaction_rate_shorten" %>
@@ -45,7 +45,7 @@
               </div>
               <div class="col text-center">
                 <div class="h4 font-weight-bold mb-1">
-                  <%= @work.ratings_count %>
+                  <%= @work_entity.ratings_count %>
                 </div>
                 <div class="text-muted small">
                   <%= t "noun.ratings_count" %>
@@ -54,7 +54,7 @@
             </div>
 
             <div class="mb-3">
-              <%= render StatusSelectorComponent.new(work_id: @work.id, page_category: "work-detail") %>
+              <%= render StatusSelectorComponent.new(work_id: @work_entity.database_id, page_category: "work-detail") %>
             </div>
           </div>
         </div>
@@ -65,46 +65,46 @@
           </h2>
 
           <div class="mb-3 row">
-            <% if @work.title_kana.present? %>
+            <% if @work_entity.title_kana.present? %>
               <div class="col-6 col-sm-12 mb-2">
                 <div class="small">
                   <%= t "activerecord.attributes.work.title_kana" %>
                 </div>
                 <div>
-                  <%= @work.title_kana %>
+                  <%= @work_entity.title_kana %>
                 </div>
               </div>
             <% end %>
 
-            <% if @work.title_alter.present? %>
+            <% if @work_entity.title_alter.present? %>
               <div class="col-6 col-sm-12 mb-2">
                 <div class="small">
                   <%= t "activerecord.attributes.work.title_alter" %>
                 </div>
                 <div>
-                  <%= @work.title_alter %>
+                  <%= @work_entity.title_alter %>
                 </div>
               </div>
             <% end %>
 
-            <% if @work.title_en.present? %>
+            <% if @work_entity.title_en.present? %>
               <div class="col-6 col-sm-12 mb-2">
                 <div class="small">
                   <%= t "activerecord.attributes.work.title_en" %>
                 </div>
                 <div>
-                  <%= @work.title_en %>
+                  <%= @work_entity.title_en %>
                 </div>
               </div>
             <% end %>
 
-            <% if @work.title_alter_en.present? %>
+            <% if @work_entity.title_alter_en.present? %>
               <div class="col-6 col-sm-12 mb-2">
                 <div class="small">
                   <%= t "activerecord.attributes.work.title_alter_en" %>
                 </div>
                 <div>
-                  <%= @work.title_alter_en %>
+                  <%= @work_entity.title_alter_en %>
                 </div>
               </div>
             <% end %>
@@ -114,116 +114,116 @@
                 <%= t "activerecord.attributes.work.media" %>
               </div>
               <div>
-                <%= @work.media_text %>
+                <%= @work_entity.media_text %>
               </div>
             </div>
 
-            <% if @work.season_year.present? %>
+            <% if @work_entity.season_year.present? %>
               <div class="col-6 col-sm-12 mb-2">
                 <div class="small">
                   <%= t "noun.release_season" %>
                 </div>
                 <div>
-                  <%= link_to @work.local_season_name, season_works_path(slug: @work.season_slug) %>
+                  <%= link_to @work_entity.local_season_name, season_works_path(slug: @work_entity.season_slug) %>
                 </div>
               </div>
             <% end %>
 
-            <% if @work.started_on.present? %>
+            <% if @work_entity.started_on.present? %>
               <div class="col-6 col-sm-12 mb-2">
                 <div class="small">
                   <%= t "noun.aired" %>
                 </div>
                 <div>
-                  <%= @work.started_on %>
+                  <%= @work_entity.started_on %>
                 </div>
               </div>
             <% end %>
 
-            <% if @work.official_site_url.present? %>
+            <% if @work_entity.official_site_url.present? %>
               <div class="col-6 col-sm-12 mb-2">
                 <div class="small">
                   <%= t "activerecord.attributes.work.official_site_url" %>
                 </div>
                 <div>
-                  <%= link_with_domain(@work.official_site_url) %>
+                  <%= link_with_domain(@work_entity.official_site_url) %>
                 </div>
               </div>
             <% end %>
 
-            <% if @work.official_site_url_en.present? %>
+            <% if @work_entity.official_site_url_en.present? %>
               <div class="col-6 col-sm-12 mb-2">
                 <div class="small">
                   <%= t "activerecord.attributes.work.official_site_url_en" %>
                 </div>
                 <div>
-                  <%= link_with_domain(@work.official_site_url_en) %>
+                  <%= link_with_domain(@work_entity.official_site_url_en) %>
                 </div>
               </div>
             <% end %>
 
-            <% if @work.twitter_username.present? %>
+            <% if @work_entity.twitter_username.present? %>
               <div class="col-6 col-sm-12 mb-2">
                 <div class="small">
                   <%= t "activerecord.attributes.work.twitter_username" %>
                 </div>
                 <div>
-                  <%= render TwitterProfileLinkComponent.new(entity: @work)  %>
+                  <%= render TwitterProfileLinkComponent.new(entity: @work_entity)  %>
                 </div>
               </div>
             <% end %>
 
-            <% if @work.twitter_hashtag.present? %>
+            <% if @work_entity.twitter_hashtag.present? %>
               <div class="col-6 col-sm-12 mb-2">
                 <div class="small">
                   <%= t "activerecord.attributes.work.twitter_hashtag" %>
                 </div>
                 <div>
-                  <%= render TwitterHashtagLinkComponent.new(entity: @work) %>
+                  <%= render TwitterHashtagLinkComponent.new(entity: @work_entity) %>
                 </div>
               </div>
             <% end %>
 
-            <% if @work.wikipedia_url.present? %>
+            <% if @work_entity.wikipedia_url.present? %>
               <div class="col-6 col-sm-12 mb-2">
                 <div class="small">
                   <%= t "activerecord.attributes.work.wikipedia_url" %>
                 </div>
                 <div>
-                  <%= link_with_domain(@work.wikipedia_url) %>
+                  <%= link_with_domain(@work_entity.wikipedia_url) %>
                 </div>
               </div>
             <% end %>
 
-            <% if @work.wikipedia_url_en.present? %>
+            <% if @work_entity.wikipedia_url_en.present? %>
               <div class="col-6 col-sm-12 mb-2">
                 <div class="small">
                   <%= t "activerecord.attributes.work.wikipedia_url_en" %>
                 </div>
                 <div>
-                  <%= link_with_domain(@work.wikipedia_url_en) %>
+                  <%= link_with_domain(@work_entity.wikipedia_url_en) %>
                 </div>
               </div>
             <% end %>
 
-            <% if @work.syobocal_tid.present? %>
+            <% if @work_entity.syobocal_tid.present? %>
               <div class="col-6 col-sm-12 mb-2">
                 <div class="small">
                   <%= t "noun.syobocal" %>
                 </div>
                 <div>
-                  <%= render SyobocalLinkComponent.new(work_entity: @work) %>
+                  <%= render SyobocalLinkComponent.new(work_entity: @work_entity) %>
                 </div>
               </div>
             <% end %>
 
-            <% if @work.mal_anime_id.present? %>
+            <% if @work_entity.mal_anime_id.present? %>
               <div class="col-6 col-sm-12 mb-2">
                 <div class="small">
                   <%= t "noun.my_anime_list" %>
                 </div>
                 <div>
-                  <%= render MalLinkComponent.new(work_entity: @work) %>
+                  <%= render MalLinkComponent.new(work_entity: @work_entity) %>
                 </div>
               </div>
             <% end %>
@@ -252,36 +252,36 @@
           </h2>
 
           <%= render ShareToTwitterButtonComponent.new(
-            text: @work.local_title,
-            url: "#{local_url}/works/#{@work.id}",
-            hashtags: @work.twitter_hashtag.presence || ''
+            text: @work_entity.local_title,
+            url: "#{local_url}/works/#{@work_entity.database_id}",
+            hashtags: @work_entity.twitter_hashtag.presence || ''
           ) %>
 
           <%= render ShareToFacebookButtonComponent.new(
-            url: "#{local_url}/works/#{@work.id}",
+            url: "#{local_url}/works/#{@work_entity.database_id}",
           ) %>
         </div>
 
         <% if user_signed_in? && current_user.committer? %>
           <div class="mt-3">
-            <%= link_to t("messages._common.edit_on_annict_db"), db_edit_work_path(@work.id), class: "btn btn-secondary w-100 mt-2" %>
+            <%= link_to t("messages._common.edit_on_annict_db"), db_edit_work_path(@work_entity.database_id), class: "btn btn-secondary w-100 mt-2" %>
           </div>
         <% end %>
       </div>
 
       <div class="col-md-9">
         <div class="mb-3">
-          <%= render WorkSubNavComponent.new(work: @work, page_category: "work_detail") %>
+          <%= render WorkSubNavComponent.new(work_entity: @work_entity, page_category: "work_detail") %>
         </div>
 
-        <% if @work.trailers.present? %>
+        <% if @work_entity.trailers.present? %>
           <div>
             <h2 class="font-weight-bold h3 mb-3">
               <%= t "noun.pv" %>
             </h2>
 
             <div class="row">
-              <% @work.trailers.each do |trailer| %>
+              <% @work_entity.trailers.each do |trailer| %>
                 <div class="col-md-4 col-6 text-center mb-4">
                   <%= link_to trailer.url, rel: "noopener", target: "_blank" do %>
                     <div class="c-video-thumbnail">
@@ -298,46 +298,46 @@
           </div>
         <% end %>
 
-        <% if @work.local_synopsis.present? %>
+        <% if @work_entity.local_synopsis.present? %>
           <div class="mb-3">
             <h2 class="font-weight-bold h3 mb-3">
               <%= t "activerecord.attributes.work.synopsis" %>
             </h2>
 
             <%= render BodyComponent.new(markdown: false) do %>
-              <%= @work.local_synopsis.html_safe %>
+              <%= @work_entity.local_synopsis.html_safe %>
             <% end %>
 
             <div class="small text-right">
-              <%= t "noun.source" %>: <%= @work.local_synopsis_source %>
+              <%= t "noun.source" %>: <%= @work_entity.local_synopsis_source %>
             </div>
           </div>
         <% end %>
 
-        <% unless @work.is_no_episodes %>
+        <% unless @work_entity.is_no_episodes %>
           <div class="mb-3">
             <h2 class="font-weight-bold h3 mb-3">
               <%= t "noun.episodes" %>
             </h2>
 
-            <% if @work.episodes.length > 0 %>
+            <% if @work_entity.episodes.length > 0 %>
               <div class="row">
-                <% @work.episodes.each do |episode| %>
+                <% @work_entity.episodes.each do |episode_entity| %>
                   <div class="col-6 col-sm-4 mb-3">
-                    <%= link_to work_episode_path(@work.id, episode.id) do %>
-                      <%= episode.number_text %>
+                    <%= link_to work_episode_path(@work_entity.database_id, episode_entity.database_id) do %>
+                      <%= episode_entity.number_text %>
                       <div class="small u-text-body">
-                        <%= episode.local_title %>
+                        <%= episode_entity.local_title %>
                       </div>
                     <% end %>
                   </div>
                 <% end %>
 
-                <% if @work.episodes_count > 50 %>
+                <% if @work_entity.episodes_count > 50 %>
                   <div class="container my-3">
-                    <%= link_to work_episodes_path(@work.id), class: "btn btn-secondary w-100" do %>
+                    <%= link_to work_episodes_path(@work_entity.database_id), class: "btn btn-secondary w-100" do %>
                       <i class="fas fa-angle-right"></i>
-                      <%= t "messages.works.view_all_n_episodes", n: @work.episodes_count %>
+                      <%= t "messages.works.view_all_n_episodes", n: @work_entity.episodes_count %>
                     <% end %>
                   </div>
                 <% end %>
@@ -353,14 +353,14 @@
             <%= t "noun.characters" %>
           </h2>
 
-          <% if @work.casts.present? %>
+          <% if @work_entity.casts.present? %>
             <div class="row">
-              <% @work.casts.each do |cast| %>
+              <% @work_entity.casts.each do |cast| %>
                 <div class="col-6 col-sm-3 mb-3">
-                  <%= link_to cast.character.local_name, character_path(cast.character.id) %>
+                  <%= link_to cast.character.local_name, character_path(cast.character.database_id) %>
                   <div class="small">
                     <span>CV:</span>
-                    <%= link_to cast.local_accurate_name, person_path(cast.person.id) %>
+                    <%= link_to cast.local_accurate_name, person_path(cast.person.database_id) %>
                   </div>
                 </div>
               <% end %>
@@ -375,14 +375,14 @@
             <%= t "noun.staffs" %>
           </h2>
 
-          <% if @work.staffs.present? %>
+          <% if @work_entity.staffs.present? %>
             <div class="row">
-              <% @work.staffs.each do |staff| %>
+              <% @work_entity.staffs.each do |staff| %>
                 <div class="col-6 col-sm-3 mb-3">
                   <% if staff.person? %>
-                    <%= link_to staff.local_accurate_name, person_path(staff.resource.id) %>
+                    <%= link_to staff.local_accurate_name, person_path(staff.resource.database_id) %>
                   <% else %>
-                    <%= link_to staff.local_accurate_name, organization_path(staff.resource.id) %>
+                    <%= link_to staff.local_accurate_name, organization_path(staff.resource.database_id) %>
                   <% end %>
                   <div class="small">
                     <%= staff.local_role %>
@@ -436,7 +436,7 @@
               </h2>
 
               <div>
-                <%= link_to work_records_path(@work.id), class: "btn btn-primary btn-sm" do %>
+                <%= link_to work_records_path(@work_entity.database_id), class: "btn btn-primary btn-sm" do %>
                   <i class="far fa-edit mr-1"></i>
                   <%= t "verb.track" %>
                 <% end %>
@@ -444,9 +444,9 @@
             </div>
           </div>
 
-          <% if @work.work_records.present? %>
+          <% if @work_entity.work_records.present? %>
             <div>
-              <% @work.work_records.first(10).each do |work_record| %>
+              <% @work_entity.work_records.first(10).each do |work_record| %>
                 <div class="py-3 u-underline">
                   <div class="mb-3 row">
                     <div class="col-auto pl-3 pr-0">
@@ -469,7 +469,7 @@
                         <% end %>
                       </div>
                       <div>
-                        <%= link_to record_path(work_record.user.username, work_record.record.id), class: "small text-muted" do %>
+                        <%= link_to record_path(work_record.user.username, work_record.record.database_id), class: "small text-muted" do %>
                           <%= display_time(work_record.created_at) %>
                         <% end %>
                         <% if work_record.modified_at.present? %>
@@ -481,7 +481,7 @@
                     </div>
                   </div>
                   <div class="mb-3">
-                    <%= render SpoilerGuardComponent.new(work_id: @work.id) do %>
+                    <%= render SpoilerGuardComponent.new(work_id: @work_entity.database_id) do %>
                       <div class="row">
                         <div class="col-12 col-xl-4 order-1 order-xl-2">
                           <% if work_record.rating_overall_state.present? %>
@@ -555,19 +555,19 @@
                     <div class="col text-right">
                       <span class="mr-2">
                         <%= render ShareToTwitterButtonComponent.new(
-                          text: t("head.title.work_records.show", work_title: @work.local_title, profile_name: work_record.user.name, username: work_record.user.username),
-                          url: "#{local_url}/@#{work_record.user.username}/records/#{work_record.record.id}",
-                          hashtags: @work.twitter_hashtag.presence || ''
+                          text: t("head.title.work_records.show", work_title: @work_entity.local_title, profile_name: work_record.user.name, username: work_record.user.username),
+                          url: "#{local_url}/@#{work_record.user.username}/records/#{work_record.record.database_id}",
+                          hashtags: @work_entity.twitter_hashtag.presence || ''
                         ) %>
                       </span>
 
                       <span class="mr-2">
-                        <%= render ShareToFacebookButtonComponent.new(url: "#{local_url}/@#{work_record.user.username}/records/#{work_record.record.id}") %>
+                        <%= render ShareToFacebookButtonComponent.new(url: "#{local_url}/@#{work_record.user.username}/records/#{work_record.record.database_id}") %>
                       </span>
 
                       <%= render LikeButtonComponent.new(
                         resource_name: "WorkRecord",
-                        resource_id: work_record.id,
+                        resource_id: work_record.database_id,
                         likes_count: work_record.likes_count,
                         page_category: "work-detail",
                       ) %>
@@ -576,11 +576,11 @@
 
                   <% if user_signed_in? && current_user.username == work_record.user.username %>
                     <div class="small text-right mt-2">
-                      <%= link_to edit_work_record_path(@work.id, work_record.record.id), class: "mr-2" do %>
+                      <%= link_to edit_work_record_path(@work_entity.database_id, work_record.record.database_id), class: "mr-2" do %>
                         <i class="fab fa-edit mr-1"></i>
                         <%= t "noun.edit" %>
                       <% end %>
-                      <%= link_to record_path(work_record.user.username, work_record.record.id), method: :delete do %>
+                      <%= link_to record_path(work_record.user.username, work_record.record.database_id), method: :delete do %>
                         <i class="far fa-trash-alt mr-1"></i>
                         <%= t "noun.delete" %>
                       <% end %>
@@ -590,11 +590,11 @@
               <% end %>
             </div>
 
-            <% if @work.work_records.length > 10 %>
+            <% if @work_entity.work_records.length > 10 %>
               <div class="container mb-3">
-                <%= link_to work_records_path(@work.id), class: "btn btn-secondary w-100" do %>
+                <%= link_to work_records_path(@work_entity.database_id), class: "btn btn-secondary w-100" do %>
                   <i class="fas fa-angle-right"></i>
-                  <%= t "messages.works.view_all_n_record_body_list", n: @work.work_records_with_body_count %>
+                  <%= t "messages.works.view_all_n_record_body_list", n: @work_entity.work_records_with_body_count %>
                 <% end %>
               </div>
             <% end %>
@@ -615,7 +615,7 @@
                   Watchers
                 </h3>
 
-                <c-work-watchers-chart :work-id="<%= @work.id %>"></c-work-watchers-chart>
+                <c-work-watchers-chart :work-id="<%= @work_entity.database_id %>"></c-work-watchers-chart>
               </div>
 
               <div class="col-12 col-sm-6 mb-3">
@@ -623,18 +623,18 @@
                   Status
                 </h3>
 
-                <c-work-status-chart :work-id="<%= @work.id %>"></c-work-status-chart>
+                <c-work-status-chart :work-id="<%= @work_entity.database_id %>"></c-work-status-chart>
               </div>
             </div>
           </div>
         </div>
 
-        <% if @work.series_list.present? %>
+        <% if @work_entity.series_list.present? %>
           <h2 class="h4 text-center my-4 font-weight-bold">
             <%= t "noun.related_works" %>
           </h2>
           <div class="p-works-show__series mt-3 pl-3 py-3">
-            <% @work.series_list.each do |series| %>
+            <% @work_entity.series_list.each do |series| %>
               <h3 class="text-center mb-3">
                 <%= t "noun.series_with_name", series_name: series.local_name %>
               </h3>
@@ -643,7 +643,7 @@
                   <% series.series_works.each do |series_work| %>
                     <div class="col-4 col-sm-2 p-0 pr-3 mb-3">
                       <div class="c-card">
-                        <%= link_to work_path(series_work.id) do %>
+                        <%= link_to work_path(series_work.database_id) do %>
                           <div class="c-hover-image">
                             <div class="c-hover-image__image">
                               <%= render WorkImageComponent.new(image_url_1x: series_work.image_url_1x, image_url_2x: series_work.image_url_2x) %>
@@ -653,7 +653,7 @@
                         <% end %>
                         <div class="p-1">
                           <div class="u-very-small">
-                            <%= link_to series_work.local_title, work_path(series_work.id) %>
+                            <%= link_to series_work.local_title, work_path(series_work.database_id) %>
                           </div>
                           <% if series_work.local_summary.present? %>
                             <div class="u-very-small">

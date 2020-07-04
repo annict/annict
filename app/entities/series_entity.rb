@@ -7,6 +7,12 @@ class SeriesEntity < ApplicationEntity
   attribute? :name_en, Types::String.optional
   attribute? :series_works, Types::Array.of(SeriesWorkEntity)
 
+  def self.from_nodes(series_nodes)
+    series_nodes.map do |series_node|
+      from_node(series_node)
+    end
+  end
+
   def self.from_node(series_node)
     attrs = {}
 
@@ -16,6 +22,11 @@ class SeriesEntity < ApplicationEntity
 
     if name_en = series_node["nameEn"]
       attrs[:name_en] = name_en
+    end
+
+    series_work_edges = series_node.dig("works", "edges")
+    if series_work_edges.present?
+      attrs[:series_works] = SeriesWorkEntity.from_edges(series_work_edges)
     end
 
     new attrs
