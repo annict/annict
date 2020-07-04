@@ -1,13 +1,17 @@
-query($username: String!, $cursor: String) {
+query($username: String!, $first: Int, $last: Int, $before: String, $after: String) {
   user(username: $username) {
     followingActivityGroups(
       orderBy: { field: CREATED_AT, direction: DESC },
-      first: 30,
-      after: $cursor
+      first: $first,
+      last: $last,
+      before: $before,
+      after: $after
     ) {
       pageInfo {
+        startCursor
         endCursor
         hasNextPage
+        hasPreviousPage
       }
 
       nodes {

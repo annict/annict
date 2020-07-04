@@ -2,16 +2,17 @@
 
 module UserHome
   class FetchFollowingActivityGroupsRepository < ApplicationRepository
-    include ActivityBuildable
-
-    def fetch(username:, cursor:)
-      result = execute(variables: { username: username, cursor: cursor.presence || "" })
+    def fetch(username:, pagination:)
+      result = execute(variables: {
+        username: username,
+        first: pagination.first,
+        last: pagination.last,
+        before: pagination.before,
+        after: pagination.after
+      })
       data = result.to_h.dig("data", "user", "followingActivityGroups")
 
-      {
-        page_info: build_page_info(data["pageInfo"]),
-        activity_groups: build_activity_groups(data["nodes"])
-      }
+      [ActivityGroupEntity.from_nodes(data["nodes"]), PageInfoEntity.from_node(data["pageInfo"])]
     end
   end
 end

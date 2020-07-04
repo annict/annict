@@ -1,12 +1,16 @@
-query($cursor: String) {
+query($first: Int, $last: Int, $before: String, $after: String) {
   activityGroups(
     orderBy: { field: CREATED_AT, direction: DESC },
-    first: 30,
-    after: $cursor
+    first: $first,
+    last: $last,
+    before: $before,
+    after: $after
   ) {
     pageInfo {
+      startCursor
       endCursor
       hasNextPage
+      hasPreviousPage
     }
 
     nodes {
