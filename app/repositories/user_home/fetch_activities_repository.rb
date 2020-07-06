@@ -2,8 +2,6 @@
 
 module UserHome
   class FetchActivitiesRepository < ApplicationRepository
-    include ActivityBuildable
-
     def fetch(activity_group_id:, cursor:)
       result = execute(variables: { activityGroupId: activity_group_id, cursor: cursor.presence || "" })
       activity_group_node = result.to_h.dig("data", "node")
