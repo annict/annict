@@ -14,11 +14,8 @@ class CreateEpisodeRecordRepository < ApplicationRepository
       return [nil, MutationError.new(message: result.to_h["errors"][0]["message"])]
     end
 
-    data = result.dig("data", "createEpisodeRecord", "episodeRecord")
-    entity = EpisodeRecordEntity.new(
-      id: data["databaseId"]
-    )
+    episode_record_node = result.dig("data", "createEpisodeRecord", "episodeRecord")
 
-    [entity, nil]
+    [EpisodeRecordEntity.from_node(episode_record_node), nil]
   end
 end
