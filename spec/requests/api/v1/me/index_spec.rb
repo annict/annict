@@ -37,7 +37,7 @@ describe "Api::V1::Me::Index" do
         "watched_count" => 0,
         "on_hold_count" => 0,
         "stop_watching_count" => 0,
-        "created_at" => "2017-01-28T23:39:04.000Z",
+        "created_at" => "2017-01-28T23:39:04Z",
         "email" => "#{user.username}@example.com",
         "notifications_count" => 0
       }
