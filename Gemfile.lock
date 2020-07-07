@@ -611,7 +611,7 @@ GEM
     validate_url (1.0.8)
       activemodel (>= 3.0.0)
       public_suffix
-    view_component (2.5.1)
+    view_component (2.14.0)
       activesupport (>= 5.0.0, < 7.0)
     virtus (1.0.5)
       axiom-types (~> 0.1)
@@ -631,7 +631,7 @@ GEM
     xpath (3.2.0)
       nokogiri (~> 1.8)
     yard (0.9.25)
-    zeitwerk (2.3.0)
+    zeitwerk (2.3.1)
 
 PLATFORMS
   ruby
