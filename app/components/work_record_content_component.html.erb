@@ -1,7 +1,7 @@
 <div class="c-work-record-content c-record-content">
   <% if work_record_entity.rating_overall_state || work_record_entity.body.present? %>
     <%= render SpoilerGuardComponent.new(work_id: work_entity.database_id) do %>
-      <div class="row">
+      <div class="c-record-content__wrapper mb-3 row">
         <div class="col-12 col-xl-4 order-1 order-xl-2">
           <% if work_record_entity.rating_overall_state %>
             <div class="mb-3 mb-xl-0 p-3 rounded u-bg-black-000">
