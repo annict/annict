@@ -190,9 +190,9 @@ module Canary
               raise GraphQL::ExecutionError, "The `month` argument should be like `2020-03`"
             end
 
-            Time.zone = object.time_zone
-            y, m = month.split("-").map(&:to_i)
-            collection = collection.by_month(m, year: y)
+            start_time = Time.zone.parse("#{month}-01").in_time_zone(object.time_zone).beginning_of_month
+            end_time = start_time.end_of_month
+            collection = collection.between_times(start_time, end_time)
           end
 
           order = build_order(order_by)
