@@ -320,7 +320,7 @@
               <%= t "noun.episodes" %>
             </h2>
 
-            <% if @work_entity.episodes.length > 0 %>
+            <% if @work_entity.episodes && @work_entity.episodes.length > 0 %>
               <div class="row">
                 <% @work_entity.episodes.each do |episode_entity| %>
                   <div class="col-6 col-sm-4 mb-3">
