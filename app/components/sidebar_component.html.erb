@@ -144,9 +144,9 @@
 
     <ul class="list-unstyled px-3">
       <% [
-        [ENV.fetch("ANNICT_CURRENT_SEASON"), "flower", t("noun.current_season")],
-        [ENV.fetch("ANNICT_NEXT_SEASON"), "island-tropical", t("noun.next_season")],
-        [ENV.fetch("ANNICT_PREVIOUS_SEASON"), "snowflake", t("noun.previous_season")],
+        [ENV.fetch("ANNICT_CURRENT_SEASON"), "island-tropical", t("noun.current_season")],
+        [ENV.fetch("ANNICT_NEXT_SEASON"), "pumpkin", t("noun.next_season")],
+        [ENV.fetch("ANNICT_PREVIOUS_SEASON"), "flower", t("noun.previous_season")],
         [:popular, "fire", t("head.title.works.popular")],
         [:newest, "bolt", t("head.title.works.newest")]
       ].each do |page_type, icon_name, link_text| %>

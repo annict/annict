@@ -10,6 +10,6 @@ class InternalStatisticMailer < ActionMailer::Base
     end
     @data = Hash[@data]
 
-    mail(to: "anannict@gmail.com", subject: "Annict Statistic - #{date_str}")
+    mail(to: "hello@annict.com", subject: "Annict Statistic - #{date_str}")
   end
 end
