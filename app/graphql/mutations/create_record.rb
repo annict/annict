@@ -34,7 +34,7 @@ module Mutations
       end
 
       {
-        record: viewer.episode_records.find(episode_record_entity.id)
+        record: viewer.episode_records.find(episode_record_entity.database_id)
       }
     end
   end

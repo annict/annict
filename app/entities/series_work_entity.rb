@@ -20,7 +20,7 @@ class SeriesWorkEntity < ApplicationEntity
   def self.from_edge(series_work_edge)
     attrs = {}
 
-    if database_id = series_work_edge.dig("node", "annictId")
+    if database_id = series_work_edge.dig("node", "databaseId")
       attrs[:database_id] = database_id
     end
 

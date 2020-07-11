@@ -53,7 +53,7 @@ module Mutations
       end
 
       {
-        review: viewer.work_records.find(work_record_entity.id)
+        review: viewer.work_records.find(work_record_entity.database_id)
       }
     end
   end
