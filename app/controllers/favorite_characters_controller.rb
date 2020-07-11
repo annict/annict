@@ -5,6 +5,7 @@ class FavoriteCharactersController < ApplicationController
 
   def index
     @user = User.only_kept.find_by!(username: params[:username])
+    @user_entity = UserEntity.from_model(@user)
     @favorite_characters = @user.favorite_characters.order(id: :desc)
   end
 

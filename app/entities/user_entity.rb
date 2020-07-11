@@ -124,6 +124,20 @@ class UserEntity < ApplicationEntity
     new attrs
   end
 
+  def self.from_model(user)
+    extend Imgix::Rails::UrlHelper
+    extend ImageHelper
+
+    new({
+      database_id: user.id,
+      username: user.username,
+      name: user.profile.name,
+      avatar_url: api_user_avatar_url(user.profile, "size200"),
+      background_image_url: ann_api_assets_background_image_url(user.profile),
+      display_supporter_badge: user.supporter? && !user.setting.hide_supporter_badge?
+    })
+  end
+
   def days_from_started(time_zone)
     ((Time.zone.now.in_time_zone(time_zone) - created_at.in_time_zone(time_zone)) / 86_400).ceil
   end

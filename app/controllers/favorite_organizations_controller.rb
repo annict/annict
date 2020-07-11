@@ -5,6 +5,7 @@ class FavoriteOrganizationsController < ApplicationController
 
   def index
     @user = User.only_kept.find_by!(username: params[:username])
+    @user_entity = UserEntity.from_model(@user)
     @organization_favorites = @user.
       organization_favorites.
       preload(:organization).
