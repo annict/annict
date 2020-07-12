@@ -25,9 +25,7 @@ class SeriesEntity < ApplicationEntity
     end
 
     series_work_edges = series_node.dig("works", "edges")
-    if series_work_edges.present?
-      attrs[:series_works] = SeriesWorkEntity.from_edges(series_work_edges)
-    end
+    attrs[:series_works] = SeriesWorkEntity.from_edges(series_work_edges || [])
 
     new attrs
   end

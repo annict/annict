@@ -94,31 +94,23 @@ class UserEntity < ApplicationEntity
     end
 
     character_favorite_nodes = user_node.dig("characterFavorites", "nodes")
-    if character_favorite_nodes.present?
-      attrs[:character_favorites] = character_favorite_nodes.map do |character_favorite_node|
-        CharacterFavoriteEntity.from_node(character_favorite_node)
-      end
+    attrs[:character_favorites] = (character_favorite_nodes || []).map do |character_favorite_node|
+      CharacterFavoriteEntity.from_node(character_favorite_node)
     end
 
     cast_favorite_nodes = user_node.dig("castFavorites", "nodes")
-    if cast_favorite_nodes.present?
-      attrs[:cast_favorites] = cast_favorite_nodes.map do |cast_favorite_node|
-        PersonFavoriteEntity.from_node(cast_favorite_node)
-      end
+    attrs[:cast_favorites] = (cast_favorite_nodes || []).map do |cast_favorite_node|
+      PersonFavoriteEntity.from_node(cast_favorite_node)
     end
 
     staff_favorite_nodes = user_node.dig("staffFavorites", "nodes")
-    if staff_favorite_nodes.present?
-      attrs[:staff_favorites] = staff_favorite_nodes.map do |staff_favorite_node|
-        PersonFavoriteEntity.from_node(staff_favorite_node)
-      end
+    attrs[:staff_favorites] = (staff_favorite_nodes || []).map do |staff_favorite_node|
+      PersonFavoriteEntity.from_node(staff_favorite_node)
     end
 
     organization_favorite_nodes = user_node.dig("organizationFavorites", "nodes")
-    if organization_favorite_nodes.present?
-      attrs[:organization_favorites] = organization_favorite_nodes.map do |organization_favorite_node|
-        OrganizationFavoriteEntity.from_node(organization_favorite_node)
-      end
+    attrs[:organization_favorites] = (organization_favorite_nodes || []).map do |organization_favorite_node|
+      OrganizationFavoriteEntity.from_node(organization_favorite_node)
     end
 
     new attrs

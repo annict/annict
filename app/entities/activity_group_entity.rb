@@ -45,9 +45,7 @@ class ActivityGroupEntity < ApplicationEntity
     end
 
     activity_nodes = activity_group_node.dig("activities", "nodes")
-    if user_node && activity_nodes.present?
-      attrs[:itemables] = ActivityEntity.from_nodes(activity_nodes, user_node: user_node).map(&:itemable)
-    end
+    attrs[:itemables] = user_node && activity_nodes ? ActivityEntity.from_nodes(activity_nodes, user_node: user_node).map(&:itemable) : []
 
     if page_info_node = activity_group_node.dig("activities", "pageInfo")
       attrs[:activities_page_info] = PageInfoEntity.from_node(page_info_node)

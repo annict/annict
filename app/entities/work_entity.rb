@@ -185,25 +185,25 @@ class WorkEntity < ApplicationEntity
     end
 
     trailer_nodes = work_node.dig("trailers", "nodes")
-    attrs[:trailers] = trailer_nodes.present? ? TrailerEntity.from_nodes(trailer_nodes) : []
+    attrs[:trailers] = TrailerEntity.from_nodes(trailer_nodes || [])
 
     cast_nodes = work_node.dig("casts", "nodes")
-    attrs[:casts] = cast_nodes.present? ? CastEntity.from_nodes(cast_nodes) : []
+    attrs[:casts] = CastEntity.from_nodes(cast_nodes || [])
 
     staff_nodes = work_node.dig("staffs", "nodes")
-    attrs[:staffs] = staff_nodes.present? ? StaffEntity.from_nodes(staff_nodes) : []
+    attrs[:staffs] = StaffEntity.from_nodes(staff_nodes || [])
 
     episode_nodes = work_node.dig("episodes", "nodes")
-    attrs[:episodes] = episode_nodes.present? ? EpisodeEntity.from_nodes(episode_nodes) : []
+    attrs[:episodes] = EpisodeEntity.from_nodes(episode_nodes || [])
 
     program_nodes = work_node.dig("programs", "nodes")
-    attrs[:programs] = program_nodes.present? ? ProgramEntity.from_nodes(program_nodes) : []
+    attrs[:programs] = ProgramEntity.from_nodes(program_nodes || [])
 
     work_record_nodes = work_node.dig("workRecords", "nodes")
-    attrs[:work_records] = work_record_nodes.present? ? WorkRecordEntity.from_nodes(work_record_nodes) : []
+    attrs[:work_records] = WorkRecordEntity.from_nodes(work_record_nodes || [])
 
     series_nodes = work_node.dig("seriesList", "nodes")
-    attrs[:series_list] = series_nodes.present? ? SeriesEntity.from_nodes(series_nodes) : []
+    attrs[:series_list] = SeriesEntity.from_nodes(series_nodes || [])
 
     new attrs
   end
