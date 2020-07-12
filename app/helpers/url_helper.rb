@@ -10,4 +10,8 @@ module UrlHelper
     options = options.merge(protocol: "https") if Rails.env.production?
     send(method, *args, options)
   end
+
+  def current_path_with_query
+    [request.path, request.query_string].select(&:present?).join("?")
+  end
 end

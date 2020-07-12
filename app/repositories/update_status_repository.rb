@@ -11,11 +11,8 @@ class UpdateStatusRepository < ApplicationRepository
       return [nil, MutationError.new(message: result.to_h["errors"][0]["message"])]
     end
 
-    data = result.dig("data", "updateStatus", "work")
-    entity = WorkEntity.new(
-      id: data["annictId"]
-    )
+    work_node = result.dig("data", "updateStatus", "work")
 
-    [entity, nil]
+    [WorkEntity.from_node(work_node), nil]
   end
 end

@@ -3,7 +3,7 @@
 - set_meta_tags(title: title, description: description, og: { description: description }, twitter: { description: description }, reverse: true, prefix: false)
 
 = render "partial_layouts/default" do
-  = render "users/low_profile_header", user: @user
+  = render ProfileHeaderComponent.new(user_entity: @user_entity, current_user: current_user)
   = render "users/favorite_nav", user: @user
 
   .row.justify-content-center.my-3

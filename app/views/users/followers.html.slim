@@ -5,8 +5,7 @@
 - set_meta_tags(title: title, description: description, keywords: keywords, og: { description: description }, twitter: { description: description }, reverse: true, prefix: false)
 
 = render "partial_layouts/default", page_category: "follower-list" do
-  = render "users/low_profile_header", user: @user
-  = render "users/follow_nav", user: @user
+  = render ProfileHeaderComponent.new(user_entity: @user_entity, current_user: current_user)
 
   .row.justify-content-center.my-3
     .c-card.col-6

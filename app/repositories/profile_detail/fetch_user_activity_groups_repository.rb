@@ -2,16 +2,17 @@
 
 module ProfileDetail
   class FetchUserActivityGroupsRepository < ApplicationRepository
-    include UserHome::ActivityBuildable
+    def fetch(username:, pagination:)
+      result = execute(variables: {
+        username: username,
+        first: pagination.first,
+        last: pagination.last,
+        before: pagination.before,
+        after: pagination.after
+      })
+      activity_groups_data = result.to_h.dig("data", "user", "activityGroups")
 
-    def fetch(username:, cursor:)
-      result = execute(variables: { username: username, cursor: cursor.presence || "" })
-      data = result.to_h.dig("data", "user", "activityGroups")
-
-      {
-        page_info: build_page_info(data["pageInfo"]),
-        activity_groups: build_activity_groups(data["nodes"])
-      }
+      [ActivityGroupEntity.from_nodes(activity_groups_data["nodes"]), PageInfoEntity.from_node(activity_groups_data["pageInfo"])]
     end
   end
 end

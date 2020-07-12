@@ -15,7 +15,7 @@ json[:followers_count] = user.followers.only_kept.count if @params.fields_contai
 Status.kind.values.each do |kind|
   json["#{kind}_count".to_sym] = user.library_entries.count_on(kind.to_sym) if @params.fields_contain?("#{field_prefix}#{kind}_count")
 end
-json[:created_at] = user.created_at if @params.fields_contain?("#{field_prefix}created_at")
+json[:created_at] = user.created_at.iso8601 if @params.fields_contain?("#{field_prefix}created_at")
 
 if show_all
   json[:email] = user.email if @params.fields_contain?("#{field_prefix}email")

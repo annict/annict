@@ -30,7 +30,7 @@ module Api
             return render_validation_error(err.message)
           end
 
-          @work_record = current_user.work_records.find(work_record_entity.id)
+          @work_record = current_user.work_records.find(work_record_entity.database_id)
         end
 
         def update

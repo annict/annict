@@ -15,7 +15,7 @@ mutation (
     }
   ) {
     episodeRecord {
-      annictId
+      databaseId
     }
   }
 }

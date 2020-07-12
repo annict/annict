@@ -17,14 +17,17 @@ class HomeController < ApplicationController
       UserlandProject.where(id: UserlandProject.pluck(:id).sample(3))
     end
 
-    @activity_group_result = if current_user.timeline_mode.following?
+    @activity_group_entities, @page_info_entity = if current_user.timeline_mode.following?
       UserHome::FetchFollowingActivityGroupsRepository.new(
         graphql_client: graphql_client(viewer: current_user)
-      ).fetch(username: current_user.username, cursor: params[:cursor])
+      ).fetch(
+        username: current_user.username,
+        pagination: Annict::Pagination.new(before: params[:before], after: params[:after], per: 30)
+      )
     else
       UserHome::FetchGlobalActivityGroupsRepository.new(
         graphql_client: graphql_client
-      ).fetch(cursor: params[:cursor])
+      ).fetch(pagination: Annict::Pagination.new(before: params[:before], after: params[:after], per: 30))
     end
   end
 end

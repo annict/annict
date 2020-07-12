@@ -118,7 +118,7 @@ scope "@:username", username: USERNAME_FORMAT do
   resources :tags, only: %i(show), controller: :user_work_tags, as: :user_work_tag
   resources :reviews, only: %i(show)
 
-  resources :records, only: %i(index show destroy) do
+  resources :records, only: %i(show destroy) do
     resources :comments, only: %i(create)
   end
 end
@@ -160,8 +160,9 @@ root "welcome#show",
 
 scope module: :v4 do
   constraints format: "html" do
-    match "/@:username",    via: :get,   as: :profile_detail, to: "users#show", username: USERNAME_FORMAT
-    match "/timeline_mode", via: :patch, as: :timeline_mode,  to: "timeline_mode#update"
-    match "/works/:id",     via: :get,   as: :work,           to: "works#show"
+    match "/@:username",         via: :get,   as: :profile_detail, to: "users#show",    username: USERNAME_FORMAT
+    match "/@:username/records", via: :get,   as: :record_list,    to: "records#index", username: USERNAME_FORMAT
+    match "/timeline_mode",      via: :patch, as: :timeline_mode,  to: "timeline_mode#update"
+    match "/works/:id",          via: :get,   as: :work,           to: "works#show"
   end
 end

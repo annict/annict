@@ -2,19 +2,11 @@
 
 module WorkDetail
   class FetchVodChannelsRepository < ApplicationRepository
-    def fetch(work:)
+    def fetch(work_entity:)
       result = execute
-      data = result.to_h.dig("data", "channels")
+      channel_nodes = result.to_h.dig("data", "channels", "nodes")
 
-      data["nodes"].map do |node|
-        VodChannelEntity.new(
-          id: node["annictId"],
-          name: node["name"],
-          programs: work.programs.select do |program|
-            program.channel.id == node["annictId"]
-          end
-        )
-      end
+      VodChannelEntity.from_nodes(channel_nodes, work_entity: work_entity)
     end
   end
 end

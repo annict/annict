@@ -6,10 +6,12 @@ class UsersController < ApplicationController
   before_action :set_user, only: %i(following followers)
 
   def following
+    @user_entity = UserEntity.from_model(@user)
     @users = @user.followings.only_kept.order("follows.id DESC")
   end
 
   def followers
+    @user_entity = UserEntity.from_model(@user)
     @users = @user.followers.only_kept.order("follows.id DESC")
   end
 

@@ -27,7 +27,7 @@ module Api
             return render_validation_error(err.message)
           end
 
-          @episode_record = current_user.episode_records.find(episode_record.id)
+          @episode_record = current_user.episode_records.find(episode_record.database_id)
         end
 
         def update

@@ -5,6 +5,7 @@ class LibrariesController < ApplicationController
   before_action :set_display_option, only: %i(show)
 
   def show
+    @user_entity = UserEntity.from_model(@user)
     @works = @user.works.on(params[:status_kind]).only_kept
     season_slugs = @works.map(&:season).select(&:present?).map(&:slug).uniq
     @seasons = season_slugs.

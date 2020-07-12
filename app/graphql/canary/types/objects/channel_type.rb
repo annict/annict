@@ -8,7 +8,7 @@ module Canary
 
         global_id_field :id
 
-        field :annict_id, Integer, null: false
+        field :database_id, Integer, null: false
         field :slots, Canary::Types::Objects::SlotType.connection_type, null: true
         field :channel_group, Canary::Types::Objects::ChannelGroupType, null: false
         field :sc_chid, Integer,

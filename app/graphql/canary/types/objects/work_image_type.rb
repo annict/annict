@@ -8,7 +8,7 @@ module Canary
 
         global_id_field :id
 
-        field :annict_id, Integer, null: true
+        field :database_id, Integer, null: true
         field :work, Canary::Types::Objects::WorkType, null: true
         field :facebook_og_image_url, String, null: true
         field :twitter_avatar_url, String, null: true

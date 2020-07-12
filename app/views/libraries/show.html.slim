@@ -6,7 +6,7 @@
 - set_meta_tags(title: title, description: description, keywords: keywords, og: { description: description }, twitter: { description: description }, reverse: true, prefix: false)
 
 = render "partial_layouts/default", page_category: "library-detail" do
-  = render "users/low_profile_header", user: @user
+  = render ProfileHeaderComponent.new(user_entity: @user_entity, current_user: current_user)
 
   .p-libraries-show__subnav.c-subnav.mb-3
     - %i(watching wanna_watch watched on_hold stop_watching).each do |status_kind|

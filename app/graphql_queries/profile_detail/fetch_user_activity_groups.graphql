@@ -1,13 +1,17 @@
-query($username: String!, $cursor: String) {
+query($username: String!, $first: Int, $last: Int, $before: String, $after: String) {
   user(username: $username) {
     activityGroups(
       orderBy: { field: CREATED_AT, direction: DESC },
-      first: 30,
-      after: $cursor
+      first: $first,
+      last: $last,
+      before: $before,
+      after: $after
     ) {
       pageInfo {
+        startCursor
         endCursor
         hasNextPage
+        hasPreviousPage
       }
 
       nodes {
@@ -33,44 +37,44 @@ query($username: String!, $cursor: String) {
 
             itemable {
               ... on Status {
-                annictId
+                databaseId
                 kind
                 likesCount
 
                 work {
-                  annictId
+                  databaseId
                   title
                   titleEn
                   image {
-                    internalUrl1x: internalUrl(size: "100x")
-                    internalUrl2x: internalUrl(size: "200x")
+                    internalUrl1x: internalUrl(size: "60x")
+                    internalUrl2x: internalUrl(size: "120x")
                   }
                 }
               }
 
               ... on EpisodeRecord {
-                annictId
+                databaseId
                 ratingState
                 body
                 likesCount
                 commentsCount
 
                 record {
-                  annictId
+                  databaseId
                 }
 
                 work {
-                  annictId
+                  databaseId
                   title
                   titleEn
                   image {
-                    internalUrl1x: internalUrl(size: "100x")
-                    internalUrl2x: internalUrl(size: "200x")
+                    internalUrl1x: internalUrl(size: "60x")
+                    internalUrl2x: internalUrl(size: "120x")
                   }
                 }
 
                 episode {
-                  annictId
+                  databaseId
                   numberText
                   title
                   titleEn
@@ -78,18 +82,18 @@ query($username: String!, $cursor: String) {
               }
 
               ... on WorkRecord {
-                annictId
+                databaseId
                 ratingOverallState
                 body
                 likesCount
 
                 work {
-                  annictId
+                  databaseId
                   title
                   titleEn
                   image {
-                    internalUrl1x: internalUrl(size: "100x")
-                    internalUrl2x: internalUrl(size: "200x")
+                    internalUrl1x: internalUrl(size: "60x")
+                    internalUrl2x: internalUrl(size: "120x")
                   }
                 }
               }

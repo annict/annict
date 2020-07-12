@@ -17,11 +17,8 @@ class CreateWorkRecordRepository < ApplicationRepository
       return [nil, MutationError.new(message: result.to_h["errors"][0]["message"])]
     end
 
-    data = result.dig("data", "createWorkRecord", "workRecord")
-    entity = WorkRecordEntity.new(
-      id: data["annictId"]
-    )
+    work_record_node = result.dig("data", "createWorkRecord", "workRecord")
 
-    [entity, nil]
+    [WorkRecordEntity.from_node(work_record_node), nil]
   end
 end

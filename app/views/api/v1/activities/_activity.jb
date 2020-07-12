@@ -5,7 +5,7 @@ json = {}
 json[:id] = activity.id if params.fields_contain?("#{field_prefix}id")
 json[:user] = render("api/v1/users/user", user: activity.user, show_all: false, params: params, field_prefix: "user.")
 json[:action] = activity.deprecated_action if params.fields_contain?("#{field_prefix}action")
-json[:created_at] = activity.created_at if params.fields_contain?("#{field_prefix}created_at")
+json[:created_at] = activity.created_at.iso8601 if params.fields_contain?("#{field_prefix}created_at")
 
 case activity.action
 when "create_episode_record"

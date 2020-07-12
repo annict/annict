@@ -1,7 +1,7 @@
-query($annictId: Int!) {
-  works(annictIds: [$annictId]) {
+query($databaseId: Int!) {
+  works(databaseIds: [$databaseId]) {
     nodes {
-      annictId
+      databaseId
       title
       titleEn
       titleKana
@@ -47,12 +47,12 @@ query($annictId: Int!) {
           accurateName
           accurateNameEn
           character {
-            annictId
+            databaseId
             name
             nameEn
           }
           person {
-            annictId
+            databaseId
           }
         }
       }
@@ -65,17 +65,17 @@ query($annictId: Int!) {
           resource {
             __typename
             ... on Person {
-              annictId
+              databaseId
             }
             ... on Organization {
-              annictId
+              databaseId
             }
           }
         }
       }
       episodes(orderBy: { field: SORT_NUMBER, direction: ASC }, first: 50) {
         nodes {
-          annictId
+          databaseId
           numberText
           title
           titleEn
@@ -86,14 +86,14 @@ query($annictId: Int!) {
           vodTitleName
           vodTitleUrl
           channel {
-            annictId
+            databaseId
             name
           }
         }
       }
       workRecords(hasBody: true, orderBy: { field: CREATED_AT, direction: DESC }, first: 11) { # Get 11 work records to display more records link
         nodes {
-          annictId
+          databaseId
           ratingAnimationState
           ratingMusicState
           ratingStoryState
@@ -110,7 +110,7 @@ query($annictId: Int!) {
             displaySupporterBadge
           }
           record {
-            annictId
+            databaseId
           }
         }
       }
@@ -123,7 +123,7 @@ query($annictId: Int!) {
               summary
               summaryEn
               node {
-                annictId
+                databaseId
                 title
                 titleEn
                 image {

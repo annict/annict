@@ -1,16 +1,16 @@
 # frozen_string_literal: true
 
 class StatusActivityComponent < ApplicationComponent
-  # @param activity_group [ActivityGroupEntity]
-  def initialize(activity_group:)
-    @activity_group = activity_group
+  def initialize(activity_group_entity:, page_category:)
+    @activity_group_entity = activity_group_entity
+    @page_category = page_category
   end
 
   private
 
-  attr_reader :activity_group
+  attr_reader :activity_group_entity, :page_category
 
-  def statuses
-    activity_group.itemables
+  def status_entities
+    activity_group_entity.itemables
   end
 end

@@ -32,12 +32,12 @@
           </div>
         </div>
 
-        <% if @activity_group_result[:activity_groups].present? %>
+        <% if @activity_group_entities.present? %>
           <%= render TimelineComponent.new(
             username: current_user.username,
             page_category: "user-home",
-            activity_groups: @activity_group_result[:activity_groups],
-            page_info: @activity_group_result[:page_info]
+            activity_group_entities: @activity_group_entities,
+            page_info_entity: @page_info_entity
           ) %>
         <% else %>
           <%= render EmptyComponent.new(text: t("messages._empty.no_activities")) %>

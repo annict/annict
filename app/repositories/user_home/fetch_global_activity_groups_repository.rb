@@ -2,16 +2,16 @@
 
 module UserHome
   class FetchGlobalActivityGroupsRepository < ApplicationRepository
-    include ActivityBuildable
-
-    def fetch(cursor:)
-      result = execute(variables: { cursor: cursor.presence || "" })
+    def fetch(pagination:)
+      result = execute(variables: {
+        first: pagination.first,
+        last: pagination.last,
+        before: pagination.before,
+        after: pagination.after
+      })
       data = result.to_h.dig("data", "activityGroups")
 
-      {
-        page_info: build_page_info(data["pageInfo"]),
-        activity_groups: build_activity_groups(data["nodes"])
-      }
+      [ActivityGroupEntity.from_nodes(data["nodes"]), PageInfoEntity.from_node(data["pageInfo"])]
     end
   end
 end

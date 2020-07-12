@@ -8,7 +8,7 @@ module Canary
 
         global_id_field :id
 
-        field :annict_id, Integer, null: false
+        field :database_id, Integer, null: false
         field :username, String, null: false
         field :name, String, null: false
         field :email, String, null: true
@@ -57,13 +57,18 @@ module Canary
           argument :order_by, Canary::Types::InputObjects::ActivityOrder, required: false
         end
 
+        field :records, Canary::Types::Objects::RecordType.connection_type, null: true do
+          argument :month, String, required: false
+          argument :order_by, Canary::Types::InputObjects::RecordOrder, required: false
+        end
+
         field :episode_records, Canary::Types::Objects::EpisodeRecordType.connection_type, null: true do
           argument :order_by, Canary::Types::InputObjects::EpisodeRecordOrder, required: false
           argument :has_body, Boolean, required: false
         end
 
         field :works, Canary::Types::Objects::WorkType.connection_type, null: true do
-          argument :annict_ids, [Integer], required: false
+          argument :database_ids, [Integer], required: false
           argument :seasons, [String], required: false
           argument :titles, [String], required: false
           argument :status_kind, Canary::Types::Enums::StatusKind, required: false
@@ -177,6 +182,23 @@ module Canary
           object.following_resources(model: Activity, viewer: context[:viewer], order: build_order(order_by))
         end
 
+        def records(month: nil, order_by: nil)
+          collection = object.records.only_kept
+
+          if month
+            if !%r{[0-9]{4}-[0-9]{2}}.match?(month)
+              raise GraphQL::ExecutionError, "The `month` argument should be like `2020-03`"
+            end
+
+            start_time = Time.zone.parse("#{month}-01").in_time_zone(object.time_zone).beginning_of_month
+            end_time = start_time.end_of_month
+            collection = collection.between_times(start_time, end_time)
+          end
+
+          order = build_order(order_by)
+          collection.order(order.field => order.direction)
+        end
+
         def episode_records(order_by: nil, has_body: nil)
           SearchEpisodeRecordsQuery.new(
             object.episode_records,
@@ -185,11 +207,11 @@ module Canary
           ).call
         end
 
-        def works(annict_ids: nil, seasons: nil, titles: nil, status_kind: nil, order_by: nil)
+        def works(database_ids: nil, seasons: nil, titles: nil, status_kind: nil, order_by: nil)
           SearchWorksQuery.new(
             object.works.all,
             user: object,
-            annict_ids: annict_ids,
+            annict_ids: database_ids,
             seasons: seasons,
             titles: titles,
             state: status_kind,

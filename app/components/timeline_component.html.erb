@@ -1,41 +1,24 @@
-<div
-  class="c-timeline"
-  data-controller="timeline"
-  data-timeline-username="<%= username %>"
-  data-timeline-page-category="<%= page_category %>"
-  data-timeline-cursor="<%= page_info.end_cursor %>"
->
-  <div class="c-timeline__activities">
-    <% activity_groups.each do |activity_group| %>
+<div class="c-timeline">
+  <div class="c-timeline__activities mb-3">
+    <% activity_group_entities.each do |activity_group_entity| %>
       <div
-        class="c-timeline__activity pt-3 u-underline"
+        class="c-timeline__activity py-3 u-underline"
         data-controller="timeline-activity"
-        data-timeline-activity-activity-group-id="<%= activity_group.id %>"
-        data-timeline-activity-cursor="<%= activity_group.activities_page_info.end_cursor %>"
+        data-timeline-activity-activity-group-id="<%= activity_group_entity.id %>"
+        data-timeline-activity-cursor="<%= activity_group_entity.activities_page_info.end_cursor %>"
       >
-        <% if activity_group.status? %>
-          <%= render StatusActivityComponent.new(activity_group: activity_group) %>
+        <% if activity_group_entity.status? %>
+          <%= render StatusActivityComponent.new(activity_group_entity: activity_group_entity, page_category: page_category) %>
 
-        <% elsif activity_group.episode_record? %>
-          <%= render EpisodeRecordActivityComponent.new(activity_group: activity_group) %>
+        <% elsif activity_group_entity.episode_record? %>
+          <%= render EpisodeRecordActivityComponent.new(activity_group_entity: activity_group_entity, page_category: page_category) %>
 
-        <% elsif activity_group.work_record? %>
-          <%= render WorkRecordActivityComponent.new(activity_group: activity_group) %>
+        <% elsif activity_group_entity.work_record? %>
+          <%= render WorkRecordActivityComponent.new(activity_group_entity: activity_group_entity, page_category: page_category) %>
         <% end %>
       </div>
     <% end %>
   </div>
 
-  <% if page_info.has_next_page %>
-    <div
-      class="text-center"
-      data-action="click->timeline#next"
-      data-target="timeline.nextButton"
-    >
-      <div class="c-activity-group-more-button btn btn-secondary py-1 w-100">
-        <i class="fal fa-chevron-double-down"></i>
-        <%= t "messages._components.timeline.more" %>
-      </div>
-    </div>
-  <% end %>
+  <%= render PaginationComponent.new(page_info_entity: @page_info_entity, resources_path: helpers.current_path_with_query) %>
 </div>
