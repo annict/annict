@@ -2,7 +2,7 @@
 - description = meta_description(t("head.meta.description.favorite_organizations.index", profile_name: @user.profile.name, username: @user.username))
 - set_meta_tags(title: title, description: description, og: { description: description }, twitter: { description: description }, reverse: true, prefix: false)
 
-= render "partial_layouts/default" do
+= render "partial_layouts/default", page_category: "favorite-organization-list" do
   = render ProfileHeaderComponent.new(user_entity: @user_entity, current_user: current_user)
   = render "users/favorite_nav", user: @user
 
