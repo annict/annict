@@ -22,7 +22,6 @@ import slotList from './components/slotList';
 import untrackedEpisodeList from './components/untrackedEpisodeList';
 import userActionsDropdown from './components/userActionsDropdown';
 import userHeatmap from './components/userHeatmap';
-import usernamePreview from './components/usernamePreview';
 import workComment from './components/workComment';
 import workFriends from './components/workFriends';
 import workStatusChart from './components/workStatusChart';
@@ -54,7 +53,6 @@ export default {
     Vue.component('c-untracked-episode-list', untrackedEpisodeList);
     Vue.component('c-user-actions-dropdown', userActionsDropdown);
     Vue.component('c-user-heatmap', userHeatmap);
-    Vue.component('c-username-preview', usernamePreview);
     Vue.component('c-work-comment', workComment);
     Vue.component('c-work-friends', workFriends);
     Vue.component('c-work-status-chart', workStatusChart);

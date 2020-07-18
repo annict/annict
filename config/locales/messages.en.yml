@@ -194,8 +194,6 @@ en:
         sign_in_link_html: Already have an account? %{link}
         start_with_facebook: Start with Facebook
         start_with_twitter: Start with Twitter
-        username_preview: "Your profile will be:"
-        username_preview_mobile: "Your profile:"
       create:
         confirmation_mail_has_sent: Confirmation mail has sent.
     reviews:

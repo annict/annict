@@ -50,14 +50,7 @@ module Gonable
   end
 
   def default_i18n_data
-    username_preview_val = if !device_pc?
-      I18n.t("messages.registrations.new.username_preview_mobile")
-    else
-      I18n.t("messages.registrations.new.username_preview")
-    end
-
     {
-      "messages.registrations.new.username_preview": username_preview_val,
       "messages._common.updated": I18n.t("messages._common.updated")
     }
   end

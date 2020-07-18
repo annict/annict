@@ -16,7 +16,6 @@
         .form-group
           = f.label :username
           = f.text_field :username, class: "form-control", autofocus: true, required: true
-          c-username-preview
 
         .form-group
           = f.label :email
@@ -31,6 +30,3 @@
           = f.button class: "btn btn-primary" do
             = icon "rocket"
             = t "noun.sign_up"
-
-- content_for :js_templates
-  = render "application/js_templates/username_preview"

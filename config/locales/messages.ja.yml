@@ -194,8 +194,6 @@ ja:
         sign_in_link_html: 登録済みですか？ %{link}
         start_with_facebook: Facebookで始める
         start_with_twitter: Twitterで始める
-        username_preview: "プロフィールURL:"
-        username_preview_mobile: "プロフィールURL:"
       create:
         confirmation_mail_has_sent: 確認メールを送信しました
     reviews:
