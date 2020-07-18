@@ -9,10 +9,8 @@ devise_for :users,
   skip: %i(passwords registrations sessions)
 
 devise_scope :user do
-  get "sign_up", to: "registrations#new", as: :new_user_registration
   get "sign_in", to: "sessions#new", as: :new_user_session
   post "sign_in", to: "sessions#create", as: :user_session
-  post "users", to: "registrations#create", as: :user_registration
   delete "sign_out", to: "sessions#destroy", as: :destroy_user_session
   resource :password, only: %i(new create edit update)
   resources :oauth_users, only: %i(new create)
@@ -162,6 +160,8 @@ scope module: :v4 do
   constraints format: "html" do
     match "/@:username",         via: :get,   as: :profile_detail, to: "users#show",    username: USERNAME_FORMAT
     match "/@:username/records", via: :get,   as: :record_list,    to: "records#index", username: USERNAME_FORMAT
+    match "/sign_up",            via: :get,   as: :sign_up,        to: "registrations#new"
+    match "/sign_up",            via: :post,                       to: "registrations#create"
     match "/timeline_mode",      via: :patch, as: :timeline_mode,  to: "timeline_mode#update"
     match "/works/:id",          via: :get,   as: :work,           to: "works#show"
   end

@@ -8,7 +8,7 @@
     h1.mb-3 = t("messages.home.index_guest.hero_title_mobile_html")
     p.p-top-hero__description.mb-4
       = t "messages.home.index_guest.hero_description_mobile_html"
-    = link_to new_user_registration_path, class: "btn btn-primary mr-2" do
+    = link_to sign_up_path, class: "btn btn-primary mr-2" do
       = icon "rocket"
       = t("noun.sign_up")
     = link_to new_user_session_path, class: "btn btn-outline-light" do
