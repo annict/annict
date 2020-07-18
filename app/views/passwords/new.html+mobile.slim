@@ -23,6 +23,6 @@
           = f.button class: "btn btn-primary" do
             = icon "send"
             = t "verb.submit"
-      
+
   .text-center
-    small = t "messages.registrations.new.sign_in_link_html", link: link_to(t("noun.sign_in"), new_user_session_path)
+    small = t "messages.registrations.new.sign_in_link_html", link: link_to(t("noun.sign_in"), sign_in_path)
