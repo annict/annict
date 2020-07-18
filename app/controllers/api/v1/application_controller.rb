@@ -6,13 +6,11 @@ module Api
       include Analyzable
       include LogrageSetting
       include RavenContext
-      include PageCategoryMethods
 
       rescue_from ActiveRecord::RecordNotFound, with: :not_found
 
       attr_reader :current_user
 
-      before_action :store_page_category
       before_action -> { doorkeeper_authorize! :read }, only: %i(index show)
       before_action only: %i(create update destroy) do
         doorkeeper_authorize! :write

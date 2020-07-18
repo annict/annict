@@ -7,7 +7,6 @@ module Db
     include V4::RavenContext
     include V4::Loggable
     include V4::Localizable
-    include V4::PageCategorizable
 
     layout "db"
 
