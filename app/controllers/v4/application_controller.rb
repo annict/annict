@@ -2,6 +2,7 @@
 
 module V4
   class ApplicationController < ActionController::Base
+    include PageCategorizable
     include V4::RavenContext
     include V4::Loggable
     include V4::Localizable
