@@ -9,7 +9,6 @@ devise_for :users,
   skip: %i(passwords registrations sessions)
 
 devise_scope :user do
-  delete "sign_out", to: "sessions#destroy", as: :destroy_user_session
   resource :password, only: %i(new create edit update)
   resources :oauth_users, only: %i(new create)
 end
@@ -157,10 +156,11 @@ root "welcome#show",
 scope module: :v4 do
   constraints format: "html" do
     devise_scope :user do
-      match "/sign_in", via: :get,  as: :sign_in,           to: "sessions#new"
-      match "/sign_in", via: :post, as: :user_session,      to: "sessions#create"
-      match "/sign_up", via: :get,  as: :sign_up,           to: "registrations#new"
-      match "/sign_up", via: :post, as: :user_registration, to: "registrations#create"
+      match "/sign_in",  via: :get,    as: :sign_in,           to: "sessions#new"
+      match "/sign_in",  via: :post,   as: :user_session,      to: "sessions#create"
+      match "/sign_out", via: :delete, as: :sign_out,          to: "sessions#destroy"
+      match "/sign_up",  via: :get,    as: :sign_up,           to: "registrations#new"
+      match "/sign_up",  via: :post,   as: :user_registration, to: "registrations#create"
     end
 
     match "/@:username",         via: :get,   as: :profile_detail, to: "users#show",    username: USERNAME_FORMAT

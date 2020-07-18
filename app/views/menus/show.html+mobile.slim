@@ -116,7 +116,7 @@
           .small.u-text-body
             = t "head.title.pages.about"
       .col-4.text-center.mb-5
-        = link_to destroy_user_session_path, method: "delete" do
+        = link_to sign_out_path, method: "delete" do
           .h1.mb-1.text-primary
             = icon "sign-out-alt"
           .small.u-text-body

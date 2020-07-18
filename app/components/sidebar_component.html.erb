@@ -235,7 +235,7 @@
       <li>
         <% if user %>
           <%= link_to(
-            destroy_user_session_path,
+            sign_out_path,
             class: "d-flex justify-content-between py-2",
             data: {
               confirm: t("messages._common.are_you_sure"),
