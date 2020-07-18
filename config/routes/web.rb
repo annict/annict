@@ -158,10 +158,13 @@ root "welcome#show",
 
 scope module: :v4 do
   constraints format: "html" do
+    devise_scope :user do
+      match "/sign_up", via: :get,  as: :sign_up,           to: "registrations#new"
+      match "/sign_up", via: :post, as: :user_registration, to: "registrations#create"
+    end
+
     match "/@:username",         via: :get,   as: :profile_detail, to: "users#show",    username: USERNAME_FORMAT
     match "/@:username/records", via: :get,   as: :record_list,    to: "records#index", username: USERNAME_FORMAT
-    match "/sign_up",            via: :get,   as: :sign_up,        to: "registrations#new"
-    match "/sign_up",            via: :post,                       to: "registrations#create"
     match "/timeline_mode",      via: :patch, as: :timeline_mode,  to: "timeline_mode#update"
     match "/works/:id",          via: :get,   as: :work,           to: "works#show"
   end

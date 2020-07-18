@@ -13,7 +13,7 @@
   .text-muted.text-center.mt-4.mb-3
     = t "noun.or"
 
-  = form_for user, url: user_registration_path do |f|
+  = form_for user, url: sign_up_path do |f|
     = render "application/components/error_panel", resource: user
 
     .form-group
