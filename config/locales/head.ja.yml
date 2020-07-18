@@ -167,8 +167,6 @@ ja:
         index_guest: 見たアニメを記録して、共有しよう
       libraries:
         show: "%{profile_name} (%{username})が%{action}アニメ"
-      menus:
-        show: メニュー
       mutes:
         index: ミュート
       notifications:

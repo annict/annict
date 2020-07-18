@@ -169,8 +169,6 @@ en:
         index_guest: The platform for anime addicts.
       libraries:
         show: "%{profile_name} (%{username})'s \"%{action}\" anime"
-      menus:
-        show: Menu
       mutes:
         index: Mute Filters
       notifications:
