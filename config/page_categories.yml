@@ -9,16 +9,13 @@ default: &default
   following_list: following-list
   guest_home: guest-home
   library_detail: library-detail
-  newest_work_list: newest-work-list
   organization_fan_list: organization-fan-list
   person_fan_list: person-fan-list
-  popular_work_list: popular-work-list
   profile_detail: profile-detail
   record_detail: record-detail
   record_edit: record-edit
   record_list: record-list
   search_detail: search-detail
-  seasonal_work_list: seasonal-work-list
   slot_list: slot-list
   track_detail: track-detail
   user_home: user-home

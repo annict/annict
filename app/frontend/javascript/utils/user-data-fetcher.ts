@@ -28,7 +28,9 @@ const REQUEST_LIST: any = {
   'user-home': [libraryEntriesRequest, likesRequest, trackedResourcesRequest, userRequest],
   'user-work-tag-detail': [libraryEntriesRequest],
   'work-detail': [libraryEntriesRequest, likesRequest, trackedResourcesRequest, userRequest],
-  'work-list': [libraryEntriesRequest, workFriendsRequest],
+  'work-list-newest': [libraryEntriesRequest, workFriendsRequest],
+  'work-list-popular': [libraryEntriesRequest, workFriendsRequest],
+  'work-list-season': [libraryEntriesRequest, workFriendsRequest],
   'work-record-list': [libraryEntriesRequest, likesRequest, trackedResourcesRequest, userRequest],
 };
 
