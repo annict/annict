@@ -4,15 +4,17 @@
 
 <div class="container">
   <div class="justify-content-center row">
-    <div class="col-6 py-5">
+    <div class="col-12 col-lg-6 py-5">
       <div class="mb-5 text-center">
         <%= link_to root_path do %>
           <%= image_tag asset_bundle_path("images/logos/color-mizuho.png"), size: "50x61", alt: "Annict" %>
         <% end %>
       </div>
-      <div class="c-card px-3 mb-3">
+
+      <div class="px-3 mb-3">
         <%= render "application/components/sign_up_form", user: @new_user %>
       </div>
+
       <div class="text-center">
         <small>
           <%= t "messages.registrations.new.sign_in_link_html", link: link_to(t("noun.sign_in"), sign_in_path) %>
