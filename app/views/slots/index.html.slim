@@ -1,13 +1,12 @@
 - title = t "head.title.slots.index"
 - set_meta_tags(title: title, reverse: true, prefix: false)
 
-= render "partial_layouts/default" do
-  .container.pt-3
-    .row.justify-content-center
-      .col-7
-        c-slot-list
-          .c-loading
-            .c-loading__core Loading...
+.container.pt-3
+  .row.justify-content-center
+    .col-7
+      c-slot-list
+        .c-loading
+          .c-loading__core Loading...
 
 - content_for :js_templates do
   = render "application/js_templates/slot_list"

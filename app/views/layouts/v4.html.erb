@@ -1,40 +1,37 @@
 <!DOCTYPE html>
 <html lang="<%= I18n.locale %>">
   <head>
-    <%= render "application/google_tag_manager" %>
-    <%= ann_display_meta_tags %>
-
-    <meta http-equiv="x-dns-prefetch-control" content="on">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-
-    <link rel="dns-prefetch" href="//annict.imgix.net">
-    <link rel="dns-prefetch" href="//kit.fontawesome.com">
-    <link rel="dns-prefetch" href="//www.googletagmanager.com">
-
-    <link rel="shortcut icon" href="/images/favicon.png" type="image/png">
-    <link rel="canonical" href="<%= "#{request.protocol}#{request.host_with_port}#{request.path}" %>">
-    <link rel="alternate" hreflang="ja" href="<%= "#{ENV.fetch('ANNICT_JP_URL')}#{request.path}" %>">
-    <link rel="alternate" hreflang="en" href="<%= "#{ENV.fetch('ANNICT_URL')}#{request.path}" %>">
-    <link rel="alternate" hreflang="x-default" href="<%= "#{ENV.fetch('ANNICT_URL')}#{request.path}" %>">
-
-    <script>
-      <%# Set this config to rerender icon when Vue's state changed %>
-      window.FontAwesomeConfig = { autoReplaceSvg: 'nest' };
-    </script>
-    <script data-mutate-approach="sync" crossorigin="anonymous" src="https://kit.fontawesome.com/0099029c12.js" defer></script>
-    <link href="https://fonts.googleapis.com/css2?family=Raleway&display=swap" rel="stylesheet">
-
-    <%= csrf_meta_tags %>
-    <%= csp_meta_tag %>
-
-    <%= annict_config %>
-
-    <%= stylesheet_bundle_tag "web.css", media: "all", "data-turbolinks-track": "reload" %>
-    <%= javascript_bundle_tag "web.js", defer: "", "data-turbolinks-track": "reload" %>
+    <%= render "application/v4/head" %>
   </head>
   <body>
     <div class="ann-application">
-      <%= yield %>
+      <div
+        class="pl-default"
+        data-controller="application"
+        data-application-page-category="<%= page_category %>"
+        data-application-params="<%= user_data_fetcher_params.to_json %>"
+      >
+        <div class="pl-default__sidebar">
+          <%= render SidebarComponent.new(user: current_user, search: @search) %>
+        </div>
+
+        <div class="pl-default__main d-flex flex-column">
+          <div class="pl-default__content">
+            <%= render FlashComponent.new(flash) %>
+            <%= yield %>
+          </div>
+
+          <div class="pl-default__footer">
+            <%= render FooterComponent.new %>
+          </div>
+
+          <div class="pl-default__tab_bar">
+            <%= render TabBarComponent.new(user: current_user) %>
+          </div>
+        </div>
+      </div>
+
+      <%= render "application/sign_up_modal" %>
     </div>
   </body>
 </html>

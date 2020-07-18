@@ -4,11 +4,10 @@
 - image_url = ann_image_url(@user.profile, :image, size: "640x")
 - set_meta_tags(title: title, description: description, keywords: keywords, og: { description: description }, twitter: { description: description }, reverse: true, prefix: false)
 
-= render "partial_layouts/default", page_category: "following-list" do
-  = render ProfileHeaderComponent.new(user_entity: @user_entity, current_user: current_user)
+= render ProfileHeaderComponent.new(user_entity: @user_entity, current_user: current_user)
 
-  .c-card.mt-3.mb-4
-    - if @users.present?
-      = render "users/user_list", users: @users
-    - else
-      = render EmptyComponent.new(text: t("messages._empty.no_following"))
+.c-card.mt-3.mb-4
+  - if @users.present?
+    = render "users/user_list", users: @users
+  - else
+    = render EmptyComponent.new(text: t("messages._empty.no_following"))

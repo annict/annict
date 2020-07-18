@@ -1,10 +1,9 @@
 - title = t "head.title.providers.index"
 - set_meta_tags(title: title, og: { title: title }, reverse: true, prefix: false)
 
-= render "partial_layouts/default" do
-  .container
-    .my-3
-      = render "settings/subnav"
+.container
+  .my-3
+    = render "settings/subnav"
 
-  .py-3
-    = render "providers/provider_list"
+.py-3
+  = render "providers/provider_list"

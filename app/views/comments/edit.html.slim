@@ -3,9 +3,8 @@
 - keywords = meta_keywords
 - set_meta_tags(title: title, description: description, keywords: keywords, og: { title: title, description: description }, reverse: true, prefix: false)
 
-= render "partial_layouts/default" do
-  .container.my-3
-    .row.justify-content-center
-      .col-6
-        .c-card.p-3
-          = render "comments/form", record: @record, comment: @comment, user: @user
+.container.my-3
+  .row.justify-content-center
+    .col-6
+      .c-card.p-3
+        = render "comments/form", record: @record, comment: @comment, user: @user

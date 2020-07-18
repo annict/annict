@@ -1,9 +1,8 @@
 - title = t "head.title.mutes.index"
 - set_meta_tags(title: title, og: { title: title }, reverse: true, prefix: false)
 
-= render "partial_layouts/default" do
-  .container.py-3
-    .mb-3
-      = render "settings/subnav"
+.container.py-3
+  .mb-3
+    = render "settings/subnav"
 
-    = render "mutes/user_list", users: @mute_users
+  = render "mutes/user_list", users: @mute_users

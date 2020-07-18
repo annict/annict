@@ -4,11 +4,10 @@
 - content_for :head do
   meta name="robots" content="noindex, nofollow"
 
-= render "partial_layouts/default" do
-  .container.my-3
-    .row.justify-content-center
-      .col-7.c-card
-        .c-unsubscribe-message.p-5.text-center
-          = icon "check-circle", "far", class: "mb-2"
-          .c-unsubscribe-message__message
-            = t "messages.settings.email_notifications.unsubscribed"
+.container.my-3
+  .row.justify-content-center
+    .col-7.c-card
+      .c-unsubscribe-message.p-5.text-center
+        = icon "check-circle", "far", class: "mb-2"
+        .c-unsubscribe-message__message
+          = t "messages.settings.email_notifications.unsubscribed"

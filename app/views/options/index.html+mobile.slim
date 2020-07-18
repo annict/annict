@@ -1,9 +1,8 @@
 - title = t "head.title.options.index"
 - set_meta_tags(title: title, reverse: true, prefix: false)
 
-= render "partial_layouts/default" do
-  .container.py-3
-    .mb-5
-      = render "settings/subnav"
+.container.py-3
+  .mb-5
+    = render "settings/subnav"
 
-    = render "options/form"
+  = render "options/form"
