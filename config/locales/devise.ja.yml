@@ -9,6 +9,8 @@ ja:
     mailer:
       confirmation_instructions:
         subject: メールアドレスの確認 - Annict
+      reset_password_instructions:
+        subject: パスワード再設定 - Annict
     omniauth_callbacks:
       user:
         failure: 認証に失敗しました。時間をおいて再度お願いします
