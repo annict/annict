@@ -17,8 +17,6 @@ module V4
 
       @new_user.setting.privacy_policy_agreed = true
       @new_user.save!
-      ga_client.user = @new_user
-      ga_client.events.create(:users, :create, el: "via_web")
 
       flash[:notice] = t("messages.registrations.create.confirmation_mail_has_sent")
       redirect_to root_path
