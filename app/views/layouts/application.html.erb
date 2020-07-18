@@ -8,26 +8,26 @@
 
     <div class="ann-application">
       <div
-        class="pl-default"
+        class="l-default"
         data-controller="application"
         data-application-page-category="<%= page_category %>"
         data-application-params="<%= user_data_fetcher_params.to_json %>"
       >
-        <div class="pl-default__sidebar">
+        <div class="l-default__sidebar">
           <%= render SidebarComponent.new(user: current_user, search: @search) %>
         </div>
 
-        <div class="pl-default__main d-flex flex-column">
-          <div class="pl-default__content">
+        <div class="l-default__main d-flex flex-column">
+          <div class="l-default__content">
             <%= render FlashComponent.new(flash) %>
             <%= yield %>
           </div>
 
-          <div class="pl-default__footer">
+          <div class="l-default__footer">
             <%= render FooterComponent.new %>
           </div>
 
-          <div class="pl-default__tab_bar">
+          <div class="l-default__tab_bar">
             <%= render TabBarComponent.new(user: current_user) %>
           </div>
         </div>
