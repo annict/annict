@@ -191,9 +191,11 @@ en:
       view_record_body: "View Comment"
     registrations:
       new:
+        password_hint: At least 8 characters.
         sign_in_link_html: Already have an account? %{link}
         start_with_facebook: Start with Facebook
         start_with_twitter: Start with Twitter
+        username_hint: Only letters, numbers, and underscores.
       create:
         confirmation_mail_has_sent: Confirmation mail has sent.
     reviews:

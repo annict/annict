@@ -191,9 +191,11 @@ ja:
       view_record_body: "感想を見る"
     registrations:
       new:
+        password_hint: 8文字以上入力してください。
         sign_in_link_html: 登録済みですか？ %{link}
         start_with_facebook: Facebookで始める
         start_with_twitter: Twitterで始める
+        username_hint: 半角英数字とアンダースコア (_) が利用できます。
       create:
         confirmation_mail_has_sent: 確認メールを送信しました
     reviews:

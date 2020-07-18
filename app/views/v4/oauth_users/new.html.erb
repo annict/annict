@@ -20,12 +20,15 @@
 
           <div class="form-group">
             <%= f.label :username %>
-            <%= f.text_field :username, class: "form-control", autofocus: true, required: true %>
+            <%= f.text_field :username, class: "form-control", autofocus: true, required: true, placeholder: "BK201" %>
+            <small class="text-muted form-text">
+              <%= t "messages.registrations.new.username_hint" %>
+            </small>
           </div>
 
           <div class="form-group">
             <%= f.label :email %>
-            <%= f.text_field :email, type: "email", class: "form-control", required: true %>
+            <%= f.text_field :email, type: "email", class: "form-control", required: true, placeholder: "hei@example.com" %>
           </div>
 
           <div class="form-group form-check">
