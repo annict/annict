@@ -6,6 +6,8 @@ class TracksController < ApplicationController
   before_action :authenticate_user!
 
   def show
+    set_page_category Rails.configuration.page_categories.track_detail
+
     library_entries = TrackableService.new(current_user).library_entries
     library_entry_data = render_jb "api/internal/library_entries/index",
       user: current_user,

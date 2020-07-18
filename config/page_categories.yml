@@ -1,0 +1,39 @@
+default: &default
+  character_fan_list: character-fan-list
+  episode_detail: episode-detail
+  episode_list: episode-list
+  favorite_character_list: favorite-character-list
+  favorite_organization_list: favorite-organization-list
+  favorite_person_list: favorite-person-list
+  follower_list: follower-list
+  following_list: following-list
+  guest_home: guest-home
+  library_detail: library-detail
+  newest_work_list: newest-work-list
+  organization_fan_list: organization-fan-list
+  person_fan_list: person-fan-list
+  popular_work_list: popular-work-list
+  profile_detail: profile-detail
+  record_detail: record-detail
+  record_edit: record-edit
+  record_list: record-list
+  search_detail: search-detail
+  seasonal_work_list: seasonal-work-list
+  slot_list: slot-list
+  track_detail: track-detail
+  user_home: user-home
+  user_work_tag_detail: user-work-tag-detail
+  work_detail: work-detail
+  work_list_newest: work-list-newest
+  work_list_popular: work-list-popular
+  work_list_season: work-list-season
+  work_record_list: work-record-list
+
+development:
+  <<: *default
+
+test:
+  <<: *default
+
+production:
+  <<: *default

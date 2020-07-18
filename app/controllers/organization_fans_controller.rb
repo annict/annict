@@ -4,6 +4,8 @@ class OrganizationFansController < ApplicationController
   before_action :load_i18n, only: %i(index)
 
   def index
+    set_page_category Rails.configuration.page_categories.organization_fan_list
+
     @organization = Organization.only_kept.find(params[:organization_id])
     @organization_favorites = @organization.
       organization_favorites.

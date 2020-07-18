@@ -63,6 +63,8 @@ module Annict
 
     config.active_record.schema_format = :sql
 
+    config.page_categories = config_for(:page_categories)
+
     config.middleware.insert_before(Rack::Runtime, Rack::Rewrite) do
       # Redirect: annict.herokuapp.com -> annict.com
       r301 /.*/, "https://#{ENV.fetch('ANNICT_HOST')}$&", if: proc { |rack_env|

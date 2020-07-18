@@ -3,6 +3,8 @@
 module V4
   class WorksController < V4::ApplicationController
     def show
+      set_page_category Rails.configuration.page_categories.work_detail
+
       work = Work.only_kept.find(params[:id])
 
       @work_entity = Rails.cache.fetch(work_detail_work_cache_key(work), expires_in: 3.hours) do

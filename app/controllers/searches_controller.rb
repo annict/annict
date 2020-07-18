@@ -2,6 +2,8 @@
 
 class SearchesController < ApplicationController
   def show
+    set_page_category Rails.configuration.page_categories.search_detail
+
     @works, @characters, @people, @organizations = if params[:q]
       [
         @search.works.order(id: :desc),

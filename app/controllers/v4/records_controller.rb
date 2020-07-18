@@ -3,6 +3,8 @@
 module V4
   class RecordsController < V4::ApplicationController
     def index
+      set_page_category Rails.configuration.page_categories.record_list
+
       user = User.only_kept.find_by!(username: params[:username])
 
       @months = user.records.only_kept.group_by_month(:created_at, time_zone: user.time_zone).count.to_a.reverse.to_h

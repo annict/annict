@@ -4,6 +4,8 @@ class RecordsController < ApplicationController
   before_action :authenticate_user!, only: %i(destroy)
 
   def show
+    set_page_category Rails.configuration.page_categories.record_detail
+
     @user = User.only_kept.find_by!(username: params[:username])
     @record = @user.records.only_kept.find(params[:id])
 

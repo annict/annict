@@ -11,6 +11,8 @@ class WorksController < ApplicationController
   end
 
   def popular
+    set_page_category Rails.configuration.page_categories.work_list_popular
+
     @works = Work.
       only_kept.
       preload(:work_image).
@@ -22,6 +24,8 @@ class WorksController < ApplicationController
   end
 
   def newest
+    set_page_category Rails.configuration.page_categories.work_list_newest
+
     @works = Work.
       only_kept.
       preload(:work_image).
@@ -33,6 +37,8 @@ class WorksController < ApplicationController
   end
 
   def season
+    set_page_category Rails.configuration.page_categories.work_list_season
+
     @works = Work.
       only_kept.
       by_season(params[:slug]).

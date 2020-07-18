@@ -6,6 +6,8 @@ class WorkRecordsController < ApplicationController
   before_action :authenticate_user!, only: %i(create edit update destroy)
 
   def index
+    set_page_category Rails.configuration.page_categories.record_list
+
     @work = Work.only_kept.find(params[:work_id])
     load_work_records
 
@@ -38,6 +40,8 @@ class WorkRecordsController < ApplicationController
   end
 
   def edit
+    set_page_category Rails.configuration.page_categories.record_edit
+
     @record = current_user.records.find(params[:id])
     @work_record = current_user.
       work_records.

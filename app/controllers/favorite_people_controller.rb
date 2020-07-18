@@ -4,6 +4,8 @@ class FavoritePeopleController < ApplicationController
   before_action :load_i18n, only: %i(index)
 
   def index
+    set_page_category Rails.configuration.page_categories.favorite_person_list
+
     @user = User.only_kept.find_by!(username: params[:username])
     @user_entity = UserEntity.from_model(@user)
     @cast_favorites = @user.

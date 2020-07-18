@@ -4,6 +4,8 @@ class EpisodesController < ApplicationController
   before_action :load_i18n, only: %i(show)
 
   def index
+    set_page_category Rails.configuration.page_categories.episode_list
+
     @work = Work.only_kept.find(params[:work_id])
     raise ActionController::RoutingError, "Not Found" if @work.no_episodes?
 
@@ -11,6 +13,8 @@ class EpisodesController < ApplicationController
   end
 
   def show
+    set_page_category Rails.configuration.page_categories.episode_detail
+
     @work = Work.only_kept.find(params[:work_id])
     @episode = @work.episodes.only_kept.find(params[:id])
     params[:locale_en] = locale_en?

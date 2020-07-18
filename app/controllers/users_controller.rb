@@ -6,11 +6,15 @@ class UsersController < ApplicationController
   before_action :set_user, only: %i(following followers)
 
   def following
+    set_page_category Rails.configuration.page_categories.following_list
+
     @user_entity = UserEntity.from_model(@user)
     @users = @user.followings.only_kept.order("follows.id DESC")
   end
 
   def followers
+    set_page_category Rails.configuration.page_categories.follower_list
+
     @user_entity = UserEntity.from_model(@user)
     @users = @user.followers.only_kept.order("follows.id DESC")
   end
